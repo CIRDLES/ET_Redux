@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://www.earth-time.org"
+           xmlns="http://www.earth-time.org"
+           elementFormDefault="qualified">
+    <xs:annotation>
+        <xs:documentation xml:lang="en">
+      This schema defines the contents of an EARTHTIME GeologicAge.
+
+      Copyright 2006-2012 EarthChem and EARTHTIME
+
+      Licensed under the Apache License, Version 2.0 (the "License");
+      you may not use this file except in compliance with the License.
+      You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+        </xs:documentation>
+    </xs:annotation>
+
+    <xs:simpleType name="GeologicAge">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="NONE ( 0 Ma - 0 Ma )"/>
+            <xs:enumeration value="CENOZOIC ( 0 Ma - 65.5 Ma )"/>
+            <xs:enumeration value="QUATERNARY ( 0 Ma - 2.6 Ma )"/>
+            <xs:enumeration value="HOLOCENE ( 0 Ma - 0.01 Ma )"/>
+            <xs:enumeration value="PLEISTOCENE ( 0.01 Ma - 2.6 Ma )"/>
+            <xs:enumeration value="CALABRIAN ( 0.01 Ma - 1.8 Ma )"/>
+            <xs:enumeration value="GELASIAN ( 1.8 Ma - 2.6 Ma )"/>
+            <xs:enumeration value="TERTIARY ( 2.6 Ma - 65.5 Ma )"/>
+            <xs:enumeration value="NEOGENE ( 2.6 Ma - 23 Ma )"/>
+            <xs:enumeration value="PLIOCENE ( 2.6 Ma - 5.3 Ma )"/>
+            <xs:enumeration value="PIACENZIAN ( 2.6 Ma - 3.6 Ma )"/>
+            <xs:enumeration value="ZANCLEAN ( 3.6 Ma - 5.3 Ma )"/>
+            <xs:enumeration value="MIOCENE ( 5.3 Ma - 23 Ma )"/>
+            <xs:enumeration value="MESSINIAN ( 5.3 Ma - 7.2 Ma )"/>
+            <xs:enumeration value="TORTONIAN ( 7.3 Ma - 11.6 Ma )"/>
+            <xs:enumeration value="SERRAVALLIAN ( 11.6 Ma - 13.8 Ma )"/>
+            <xs:enumeration value="LANGHIAN ( 13.8 Ma - 16 Ma )"/>
+            <xs:enumeration value="BURDIGALIAN ( 16 Ma - 20.4 Ma )"/>
+            <xs:enumeration value="AQUITANIAN ( 20.4 Ma - 23 Ma )"/>
+            <xs:enumeration value="OLIGOCENE ( 23 Ma - 33.9 Ma )"/>
+            <xs:enumeration value="CHATTIAN ( 23 Ma - 28.4 Ma )"/>
+            <xs:enumeration value="RUPELIAN ( 28.4 Ma - 33.9 Ma )"/>
+            <xs:enumeration value="EOCENE ( 33.9 Ma - 55.8 Ma )"/>
+            <xs:enumeration value="PRIABONIAN ( 33.9 Ma - 37.2 Ma )"/>
+            <xs:enumeration value="BARTONIAN ( 37.2 Ma - 40.4 Ma )"/>
+            <xs:enumeration value="LUTETIAN ( 40.4 Ma - 48.6 Ma )"/>
+            <xs:enumeration value="YPRESIAN ( 48.6 Ma - 55.8 Ma )"/>
+            <xs:enumeration value="PALEOCENE ( 55.8 Ma - 65.5 Ma )"/>
+            <xs:enumeration value="THANETIAN ( 55.8 Ma - 58.7 Ma )"/>
+            <xs:enumeration value="SELANDIAN ( 58.7 Ma - 61.7 Ma )"/>
+            <xs:enumeration value="DANIAN ( 61.7 Ma - 65.5 Ma )"/>
+            <xs:enumeration value="MESOZOIC ( 65.5 Ma - 251 Ma )"/>
+            <xs:enumeration value="CRETACEOUS ( 65.5 Ma - 145.5 Ma )"/>
+            <xs:enumeration value="LATE CRETACEOUS ( 65.5 Ma - 99.6 Ma )"/>
+            <xs:enumeration value="MAASTRICHTIAN ( 65.5 Ma - 70.6 Ma )"/>
+            <xs:enumeration value="CAMPANIAN ( 70.6 Ma - 83.5 Ma )"/>
+            <xs:enumeration value="SANTONIAN ( 83.5 Ma - 85.8 Ma )"/>
+            <xs:enumeration value="CONIACIAN ( 85.8 Ma - 89.3 Ma )"/>
+            <xs:enumeration value="TURONIAN ( 89.3 Ma - 93.5 Ma )"/>
+            <xs:enumeration value="CENOMANIAN ( 93.5 Ma - 99.6 Ma )"/>
+            <xs:enumeration value="EARLY CRETACIOUS ( 99.6 Ma - 145.5 Ma )"/>
+            <xs:enumeration value="ALBIAN ( 99.6 Ma - 112 Ma )"/>
+            <xs:enumeration value="APTIAN ( 112 Ma - 125 Ma )"/>
+            <xs:enumeration value="BARREMIAN ( 125 Ma - 130 Ma )"/>
+            <xs:enumeration value="HAUTERIVIAN ( 130 Ma - 136 Ma )"/>
+            <xs:enumeration value="VALANGINIAN ( 136 Ma - 140 Ma )"/>
+            <xs:enumeration value="BERRIASIAN ( 140 Ma - 145.5 Ma )"/>
+            <xs:enumeration value="JURASSIC ( 145.5 Ma - 201.6 Ma )"/>
+            <xs:enumeration value="LATE JURASSIC ( 145.5 Ma - 161 Ma )"/>
+            <xs:enumeration value="TITHONIAN ( 145.5 Ma - 151 Ma )"/>
+            <xs:enumeration value="KIMMERIDGIAN ( 151 Ma - 156 Ma )"/>
+            <xs:enumeration value="OXFORDIAN ( 156 Ma - 161 Ma )"/>
+            <xs:enumeration value="MIDDLE JURASSIC ( 161 Ma - 176 Ma )"/>
+            <xs:enumeration value="CALLOVIAN ( 161 Ma - 165 Ma )"/>
+            <xs:enumeration value="BATHONIAN ( 165 Ma - 168 Ma )"/>
+            <xs:enumeration value="BAJOCIAN ( 168 Ma - 172 Ma )"/>
+            <xs:enumeration value="AALENIAN ( 172 Ma - 176 Ma )"/>
+            <xs:enumeration value="EARLY JURASSIC ( 176 Ma - 201.6 Ma )"/>
+            <xs:enumeration value="TOARCIAN ( 176 Ma - 183 Ma )"/>
+            <xs:enumeration value="PLIENSBACHIAN ( 183 Ma - 190 Ma )"/>
+            <xs:enumeration value="SINEMURIAN ( 190 Ma - 197 Ma )"/>
+            <xs:enumeration value="HETTANGIAN ( 197 Ma - 201.6 Ma )"/>
+            <xs:enumeration value="TRIASSIC ( 201.6 Ma - 251 Ma )"/>
+            <xs:enumeration value="LATE TRIASSIC ( 201.6 Ma - 235 Ma )"/>
+            <xs:enumeration value="RHAETIAN ( 201.6 Ma - 204 Ma )"/>
+            <xs:enumeration value="NORIAN ( 204 Ma - 228 Ma )"/>
+            <xs:enumeration value="CARNIAN ( 228 Ma - 235 Ma )"/>
+            <xs:enumeration value="MIDDLE TRIASSIC ( 235 Ma - 245 Ma )"/>
+            <xs:enumeration value="LADINIAN ( 235 Ma - 241 Ma )"/>
+            <xs:enumeration value="ANISIAN ( 241 Ma - 245 Ma )"/>
+            <xs:enumeration value="EARLY TRIASSIC ( 245 Ma - 251 Ma )"/>
+            <xs:enumeration value="OLENEKIAN ( 245 Ma - 250 Ma )"/>
+            <xs:enumeration value="INDUAN ( 250 Ma - 251 Ma )"/>
+            <xs:enumeration value="PALEOZOIC ( 251 Ma - 542 Ma )"/>
+            <xs:enumeration value="PERMIAN ( 251 Ma - 299 Ma )"/>
+            <xs:enumeration value="LATE PERMIAN ( 251 Ma - 260 Ma )"/>
+            <xs:enumeration value="CHANGHSINGIAN ( 251 Ma - 254 Ma )"/>
+            <xs:enumeration value="WUCHIAPINGIAN ( 254 Ma - 260 Ma )"/>
+            <xs:enumeration value="MIDLE PERMIAN ( 260 Ma - 271 Ma )"/>
+            <xs:enumeration value="CAPITANIAN ( 260 Ma - 266 Ma )"/>
+            <xs:enumeration value="WORDIAN ( 266 Ma - 268 Ma )"/>
+            <xs:enumeration value="ROADIAN ( 268 Ma - 271 Ma )"/>
+            <xs:enumeration value="EARLY PERMIAN ( 271 Ma - 299 Ma )"/>
+            <xs:enumeration value="KUNGURIAN ( 271 Ma - 276 Ma )"/>
+            <xs:enumeration value="ARTINSKIAN ( 276 Ma - 284 Ma )"/>
+            <xs:enumeration value="SAKMARIAN ( 284 Ma - 297 Ma )"/>
+            <xs:enumeration value="ASSELIAN ( 297 Ma - 299 Ma )"/>
+            <xs:enumeration value="CARBONIFEROUS ( 299 Ma - 359 Ma )"/>
+            <xs:enumeration value="PENNSYLVANIAN ( 299 Ma - 318 Ma )"/>
+            <xs:enumeration value="GZELIAN ( 299 Ma - 304 Ma )"/>
+            <xs:enumeration value="KASIMOVIAN ( 304 Ma - 306 Ma )"/>
+            <xs:enumeration value="MOSCOVIAN ( 306 Ma - 312 Ma )"/>
+            <xs:enumeration value="BASHKIRIAN ( 312 Ma - 318 Ma )"/>
+            <xs:enumeration value="MISSISSIPPIAN ( 318 Ma - 359 Ma )"/>
+            <xs:enumeration value="SERPUKHOVIAN ( 318 Ma - 326 Ma )"/>
+            <xs:enumeration value="VISEAN ( 326 Ma - 345 Ma )"/>
+            <xs:enumeration value="TOURNAISIAN ( 345 Ma - 359 Ma )"/>
+            <xs:enumeration value="DEVONIAN ( 359 Ma - 416 Ma )"/>
+            <xs:enumeration value="LATE DEVONIAN ( 359 Ma - 385 Ma )"/>
+            <xs:enumeration value="FAMENNIAN ( 359 Ma - 374 Ma )"/>
+            <xs:enumeration value="FRASNIAN ( 374 Ma - 385 Ma )"/>
+            <xs:enumeration value="MIDDLE DEVONIAN ( 385 Ma - 398 Ma )"/>
+            <xs:enumeration value="GIVETIAN ( 385 Ma - 392 Ma )"/>
+            <xs:enumeration value="EIFELIAN ( 392 Ma - 398 Ma )"/>
+            <xs:enumeration value="EARLY DEVONIAN ( 398 Ma - 416 Ma )"/>
+            <xs:enumeration value="EMSIAN ( 398 Ma - 407 Ma )"/>
+            <xs:enumeration value="PRAGHIAN ( 407 Ma - 411 Ma )"/>
+            <xs:enumeration value="LOCKHOVIAN ( 411 Ma - 416 Ma )"/>
+            <xs:enumeration value="SILURIAN ( 416 Ma - 444 Ma )"/>
+            <xs:enumeration value="LATE SILURIAN ( 416 Ma - 423 Ma )"/>
+            <xs:enumeration value="PRIDOLIAN ( 416 Ma - 419 Ma )"/>
+            <xs:enumeration value="LUDFORDIAN ( 419 Ma - 421 Ma )"/>
+            <xs:enumeration value="GORSTIAN ( 421 Ma - 423 Ma )"/>
+            <xs:enumeration value="MIDDLE SILURIAN ( 423 Ma - 428 Ma )"/>
+            <xs:enumeration value="HOMERIAN ( 423 Ma - 426 Ma )"/>
+            <xs:enumeration value="SHEINWOODIAN ( 426 Ma - 428 Ma )"/>
+            <xs:enumeration value="EARLY SILURIAN ( 428 Ma - 444 Ma )"/>
+            <xs:enumeration value="TELYCHIAN ( 428 Ma - 436 Ma )"/>
+            <xs:enumeration value="AERONIAN ( 436 Ma - 439 Ma )"/>
+            <xs:enumeration value="RHUDDANIAN ( 439 Ma - 444 Ma )"/>
+            <xs:enumeration value="ORDOVICIAN ( 444 Ma - 488 Ma )"/>
+            <xs:enumeration value="LATE ORDOVICIAN ( 444 Ma - 461 Ma )"/>
+            <xs:enumeration value="HIRNANTIAN ( 444 Ma - 446 Ma )"/>
+            <xs:enumeration value="KATIAN ( 446 Ma - 455 Ma )"/>
+            <xs:enumeration value="SANDBIAN ( 455 Ma - 461 Ma )"/>
+            <xs:enumeration value="MIDDLE ORDOVICIAN ( 461 Ma - 472 Ma )"/>
+            <xs:enumeration value="DARRIWILIAN ( 461 Ma - 468 Ma )"/>
+            <xs:enumeration value="DAPINGIAN ( 468 Ma - 472 Ma )"/>
+            <xs:enumeration value="EARLY ORDOVICIAN ( 472 Ma - 488 Ma )"/>
+            <xs:enumeration value="FLOIAN ( 472 Ma - 479 Ma )"/>
+            <xs:enumeration value="TREMADOCIAN ( 479 Ma - 488 Ma )"/>
+            <xs:enumeration value="CAMBRIAN ( 488 Ma - 542 Ma )"/>
+            <xs:enumeration value="FURONGIAN ( 488 Ma - 501 Ma )"/>
+            <xs:enumeration value="STAGE 10 ( 488 Ma - 492 Ma )"/>
+            <xs:enumeration value="STAGE 9 ( 492 Ma - 496 Ma )"/>
+            <xs:enumeration value="PAIBIAN ( 496 Ma - 501 Ma )"/>
+            <xs:enumeration value="SERIES 3 ( 501 Ma - 510 Ma )"/>
+            <xs:enumeration value="GUZHANGIAN ( 501 Ma - 503 Ma )"/>
+            <xs:enumeration value="DRUMIAN ( 503 Ma - 507 Ma )"/>
+            <xs:enumeration value="STAGE 5 ( 507 Ma - 510 Ma )"/>
+            <xs:enumeration value="SERIES 2 ( 510 Ma - 521 Ma )"/>
+            <xs:enumeration value="STAGE 4 ( 510 Ma - 517 Ma )"/>
+            <xs:enumeration value="STAGE 3 ( 517 Ma - 521 Ma )"/>
+            <xs:enumeration value="TERREVEUVIAN ( 521 Ma - 542 Ma )"/>
+            <xs:enumeration value="STAGE 2 ( 521 Ma - 535 Ma )"/>
+            <xs:enumeration value="FORTUNIAN ( 535 Ma - 542 Ma )"/>
+            <xs:enumeration value="PRECAMBRIAN ( 542 Ma - 3850 Ma )"/>
+            <xs:enumeration value="PROTEROZOIC ( 542 Ma - 1600 Ma )"/>
+            <xs:enumeration value="NEOPROTEROZOIC ( 542 Ma - 1000 Ma )"/>
+            <xs:enumeration value="EDIACARAN ( 542 Ma - 630 Ma )"/>
+            <xs:enumeration value="CRYOGENIAN ( 630 Ma - 850 Ma )"/>
+            <xs:enumeration value="TONIAN ( 850 Ma - 1000 Ma )"/>
+            <xs:enumeration value="MESEOPROTEROZOIC ( 1000 Ma - 1600 Ma )"/>
+            <xs:enumeration value="STENIAN ( 1000 Ma - 1200 Ma )"/>
+            <xs:enumeration value="ECTASIAN ( 1200 Ma - 1400 Ma )"/>
+            <xs:enumeration value="CALYMMIAN ( 1400 Ma - 1600 Ma )"/>
+            <xs:enumeration value="PALEOPROTEROZOIC ( 1600 Ma - 2500 Ma )"/>
+            <xs:enumeration value="STATHERIAN ( 1600 Ma - 1800 Ma )"/>
+            <xs:enumeration value="OROSIRIAN ( 1800 Ma - 2050 Ma )"/>
+            <xs:enumeration value="RHYACIAN ( 2050 Ma - 2300 Ma )"/>
+            <xs:enumeration value="SIDERIAN ( 2300 Ma - 2500 Ma )"/>
+            <xs:enumeration value="ARCHEAN ( 2500 Ma - 3850 Ma )"/>
+            <xs:enumeration value="NEOARCHEAN ( 2500 Ma - 2800 Ma )"/>
+            <xs:enumeration value="MESOARCHEAN ( 2800 Ma - 3200 Ma )"/>
+            <xs:enumeration value="PALEOARCHEAN ( 3200 Ma - 3600 Ma )"/>
+            <xs:enumeration value="EOARCHEAN ( 3600 Ma - 3850 Ma )"/>
+            <xs:enumeration value="HADEAN ( 3850 Ma - 4700 Ma )"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="DetritalType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="NONE"/>
+            <xs:enumeration value="carbonate"/>
+            <xs:enumeration value="conglomerate"/>
+            <xs:enumeration value="mudstone"/>
+            <xs:enumeration value="sandstone"/>
+            <xs:enumeration value="siltstone"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>
+

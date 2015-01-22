@@ -1,0 +1,12 @@
+# Maven
+target
+
+# Netbeans
+nbactions.xml
+dependency-reduced-pom.xml
+
+# Generated
+*.txt
+
+# MACOS
+.DS_Store
