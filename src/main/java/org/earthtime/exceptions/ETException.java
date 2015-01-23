@@ -33,28 +33,16 @@ public class ETException extends Exception {
     private static final Logger LOGGER
             = Logger.getLogger(ETException.class.getName());
     
-    /**
-     * Creates a new instance of ETException
-     */
-    public ETException() {
+    public ETException(String message) {
+        super(message);
     }
     
-    /**
-     * 
-     * @param parent
-     * @param msg
-     */
-    public ETException(Component parent, String[] msg) {
-        LOGGER.warning(String.join(" ", msg));
+    public ETException(Component parent, String message) {
+        this(message);
     }
     
-    /**
-     * 
-     * @param parent
-     * @param msg
-     */
-    public ETException(Component parent, String msg) {
-        LOGGER.warning(String.join(" ", msg));
+    public ETException(Component parent, String[] message) {
+        this(String.join(" ", message));
     }
     
 }
