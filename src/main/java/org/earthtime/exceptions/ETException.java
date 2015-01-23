@@ -22,13 +22,16 @@
 package org.earthtime.exceptions;
 
 import java.awt.Component;
-import javax.swing.JOptionPane;
+import java.util.logging.Logger;
 
 /**
  *
  * @author James F. Bowring
  */
-public class ETException extends Exception{
+public class ETException extends Exception {
+    
+    private static final Logger LOGGER
+            = Logger.getLogger(ETException.class.getName());
     
     /**
      * Creates a new instance of ETException
@@ -36,17 +39,13 @@ public class ETException extends Exception{
     public ETException() {
     }
     
-    
     /**
      * 
      * @param parent
      * @param msg
      */
     public ETException(Component parent, String[] msg) {
-        JOptionPane.showMessageDialog(parent,
-                msg,
-                "EARTHTIME Warning",
-                JOptionPane.WARNING_MESSAGE);
+        LOGGER.warning(String.join(" ", msg));
     }
     
     /**
@@ -55,13 +54,7 @@ public class ETException extends Exception{
      * @param msg
      */
     public ETException(Component parent, String msg) {
-       // this(parent, new String[] {msg});
-        JOptionPane.showMessageDialog(parent,
-                msg,
-                "EARTHTIME Warning",
-                JOptionPane.WARNING_MESSAGE);
+        LOGGER.warning(String.join(" ", msg));
     }
-    
-    
     
 }
