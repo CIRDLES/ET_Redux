@@ -993,7 +993,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                                                 leftMargin + drawnWidth,
                                                 drawnHeight + topMargin + lineHeight);
 
-                                    } catch (Exception exception) {
+                                    } catch (Exception ex) {
                                         g2D.drawString("",
                                                 leftMargin + drawnWidth,
                                                 drawnHeight + topMargin + lineHeight);

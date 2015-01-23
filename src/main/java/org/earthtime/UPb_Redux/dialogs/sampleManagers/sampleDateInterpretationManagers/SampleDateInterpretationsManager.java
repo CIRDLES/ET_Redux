@@ -87,6 +87,7 @@ import org.earthtime.dataDictionaries.MatrixSpecifications;
 import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.exceptions.ETException;
+import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.utilities.CollectionHelpers;
 import org.earthtime.utilities.FileHelper;
 
@@ -1871,7 +1872,8 @@ public class SampleDateInterpretationsManager extends DialogEditor
     private void writeConcordiaPDF_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_writeConcordiaPDF_buttonActionPerformed
         try {
             createConcordiaSVGandPDF();
-        } catch (ETException uPbReduxException) {
+        } catch (ETException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
 }//GEN-LAST:event_writeConcordiaPDF_buttonActionPerformed
 //todo clean up this code with a change listener

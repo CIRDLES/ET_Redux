@@ -35,6 +35,7 @@ import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.dataDictionaries.MineralTypes;
 import org.earthtime.dataDictionaries.SampleRegistries;
 import org.earthtime.exceptions.ETException;
+import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 
 /**
@@ -86,7 +87,8 @@ public abstract class AbstractSampleFromProjectManagerDialog extends DialogEdito
                 validSampleID_label.repaint();
                 mySample.setValidatedSampleIGSN(valid);
             }
-        } catch (ETException eTException) {
+        } catch (ETException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
     }
 
@@ -137,6 +139,7 @@ public abstract class AbstractSampleFromProjectManagerDialog extends DialogEdito
         try {
             physicalConstantsModelChooser.setSelectedItem( getMySample().getPhysicalConstantsModel().getReduxLabDataElementName() );
         } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
 
         // set up StandardMineral chooser
@@ -215,7 +218,8 @@ public abstract class AbstractSampleFromProjectManagerDialog extends DialogEdito
         try {
             currentPhysicalConstantsModelName = getMySample().getPhysicalConstantsModel().getNameAndVersion();
 
-        } catch (BadLabDataException badLabDataException) {
+        } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
         if (  ! ((String) physicalConstantsModelChooser.getSelectedItem()).equalsIgnoreCase( currentPhysicalConstantsModelName ) ) {
             try {
@@ -223,7 +227,8 @@ public abstract class AbstractSampleFromProjectManagerDialog extends DialogEdito
                         getMySample().getMyReduxLabData().
                         getAPhysicalConstantsModel( ((String) physicalConstantsModelChooser.getSelectedItem()) ) );
 
-            } catch (BadLabDataException badLabDataException) {
+            } catch (BadLabDataException ex) {
+                new ETWarningDialog(ex).setVisible(true);
             }
         }
 
@@ -256,7 +261,8 @@ public abstract class AbstractSampleFromProjectManagerDialog extends DialogEdito
                     ((UPbFractionI) f).calculateTeraWasserburgRho();
                 }
 
-            } catch (BadLabDataException badLabDataException) {
+            } catch (BadLabDataException ex) {
+                new ETWarningDialog(ex).setVisible(true);
             }
         }
 
@@ -560,6 +566,7 @@ public abstract class AbstractSampleFromProjectManagerDialog extends DialogEdito
             close();
         } catch (ETException ex) {
             ex.printStackTrace();
+            new ETWarningDialog(ex).setVisible(true);
         }
 
     }//GEN-LAST:event_saveAndCloseActionPerformed

@@ -26,6 +26,7 @@ import javax.swing.JLayeredPane;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.dataDictionaries.TracerUPbTypesEnum;
 import org.earthtime.exceptions.ETException;
+import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.tracers.TracerUPbModel;
 
@@ -76,7 +77,7 @@ public abstract class TracerUPbRatiosAbstractDataView extends AbstractRatiosData
         }
         tracerTypeChooser.setSelectedItem( TracerUPbTypesEnum.valueFromName( ((TracerUPbModel) dataModel).getTracerType() ) );
         tracerTypeChooser.setEnabled( editable );
-        tracerTypeChooser.addActionListener( new ActionListener() {
+        tracerTypeChooser.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed ( ActionEvent e ) {
                 ((TracerUPbModel) dataModel)//
@@ -95,7 +96,8 @@ public abstract class TracerUPbRatiosAbstractDataView extends AbstractRatiosData
 
                 try {
                     saveAndUpdateModelView( false );
-                } catch (ETException eTException) {
+                } catch (ETException ex) {
+                    new ETWarningDialog(ex).setVisible(true);
                 }
             }
         } );

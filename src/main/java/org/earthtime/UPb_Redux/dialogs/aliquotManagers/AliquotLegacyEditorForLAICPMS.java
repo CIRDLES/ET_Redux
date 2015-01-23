@@ -47,6 +47,7 @@ import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.dataDictionaries.MeasuredRatios;
 import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.exceptions.ETException;
+import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.xmlUtilities.XMLSerializationI;
 import org.jdesktop.layout.GroupLayout.ParallelGroup;
 import org.jdesktop.layout.GroupLayout.SequentialGroup;
@@ -955,7 +956,8 @@ public class AliquotLegacyEditorForLAICPMS extends AliquotEditorDialog {
                 try {
                     getMyAliquot().getMineralStandardModels().add(//
                             getSample().getMyReduxLabData().getAMineralStandardModel( ((JCheckBox) cb).getText() ) );
-                } catch (BadLabDataException badLabDataException) {
+                } catch (BadLabDataException ex) {
+                    new ETWarningDialog(ex).setVisible(true);
                 }
             }
         }
@@ -1130,7 +1132,8 @@ public class AliquotLegacyEditorForLAICPMS extends AliquotEditorDialog {
         saveAliquot();
         try {
             uploadAliquotToGeochronZip();
-        } catch (ETException eTException) {
+        } catch (ETException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
     }
 }

@@ -230,7 +230,7 @@ public class SampleDateInterpretationGUIOptions
 
         try {
             retVal = ((Map<String, Map<String, String>>) getAliquotOptions()).get(aliquotName);
-        } catch (Exception exception) {
+        } catch (Exception ex) {
             retVal = null;
         }
 
