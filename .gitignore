@@ -7,6 +7,7 @@ dependency-reduced-pom.xml
 
 # Generated
 *.txt
+*.html
 
 # MACOS
 .DS_Store
