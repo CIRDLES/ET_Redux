@@ -48,7 +48,7 @@ public final class NUPlasmaMultiCollFaradayTRARawDataTemplate extends AbstractRa
         this.blockStartOffset = 0; // not used
         this.blockSize = 0;// determined from data values; not constant
         this.standardIDs = new String[]//
-        {"SL"};
+        {"SL","R33"};
         this.timeZone = TimeZone.getTimeZone( "MST" );
         this.defaultParsingOfFractionsBehavior = 1;
 

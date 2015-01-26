@@ -68,8 +68,10 @@ public class NUPlasmaMultiCollFaradayTRAFileHandler extends AbstractRawDataFileH
 
         NAME = "NU Plasma MC Faraday TRA File";
 
-        aboutInfo = "Details: This is the default protocol for handling files produced at the Arizona Laserchron Center "//
-                + " for Faraday analysis on the NU-Plasma with TRA (time-resolved analysis.) ";
+        aboutInfo = "Details: This is the default protocol for handling files produced at "//
+                + "the Arizona Laserchron Center "//
+                + "for Faraday analysis on the NU-Plasma with TRA (time-resolved analysis.) "//
+                + "Pattern of aquisitions dated 21 July 2014.";
 
     }
 
@@ -247,6 +249,7 @@ public class NUPlasmaMultiCollFaradayTRAFileHandler extends AbstractRawDataFileH
     /**
      *
      * @param acquisitionModel
+     * @return 
      */
     protected boolean loadDataSetupParametersFromRawDataFileHeader(AbstractAcquisitionModel acquisitionModel) {
         boolean retVal = true;
@@ -263,7 +266,7 @@ public class NUPlasmaMultiCollFaradayTRAFileHandler extends AbstractRawDataFileH
             // OCT 2012
             // customize massspec setup for this data aquisition
             // extract gains and deadtimes
-            String[] headerDetails = headerData[0].trim().split("\n");
+//            String[] headerDetails = headerData[0].trim().split("\n");
 
 //            // march 2014 to handle possible tab delimiters such as 20 analysis runs
 //            String gainsPass1 = headerDetails[1].split(":")[1];
@@ -295,7 +298,7 @@ public class NUPlasmaMultiCollFaradayTRAFileHandler extends AbstractRawDataFileH
 //            String[] deadTimes = headerDetails[3].split(":")[1].split(dataDelimiter);
             // build gains models
             Map<String, Double> collectorNameToDeadTimesMap = new TreeMap<>();
-            for (int i = 0; i < NUPlasmaCollectorsEnum.getIonCounterCollectorNames().length; i++) {
+            for (String ionCounterCollectorName : NUPlasmaCollectorsEnum.getIonCounterCollectorNames()) {
                 double deadTime = 0.0;
 //                try {
 //                    deadTime = Double.valueOf(deadTimes[i + 1]);
@@ -303,8 +306,8 @@ public class NUPlasmaMultiCollFaradayTRAFileHandler extends AbstractRawDataFileH
 //                }
                 // in order
                 try {
-                    collectorNameToDeadTimesMap.put(NUPlasmaCollectorsEnum.getIonCounterCollectorNames()[i], deadTime);
-                } catch (Exception e) {
+                    collectorNameToDeadTimesMap.put(ionCounterCollectorName, deadTime);
+                }catch (Exception e) {
                 }
             }
 
@@ -400,39 +403,44 @@ public class NUPlasmaMultiCollFaradayTRAFileHandler extends AbstractRawDataFileH
             final int limit = ((100 * (i)) / (rawAcquisitions.length));
             loadDataTask.firePropertyChange("progress", 0, limit);
 
+            // this hard-wired specification from the lab dated july 21 2014
             if (fractionCounter < 133) {
                 String[] rawIntensities = rawAcquisitions[i].split(",");
                 double i238 = Double.parseDouble(rawIntensities[0]);
                 boolean isStandard = false;
                 if (fractionCounter < 5) {
                     isStandard = true;
-                } else if (fractionCounter == 124) {
+                } else if (((fractionCounter - 4) % 6) == 0){//          (fractionCounter == 124) {
                     isStandard = true;
-                } else if (fractionCounter > 129) {
+                } else if (fractionCounter >= 130) {
                     isStandard = true;
                 }
 
                 
-                // test if have  pair of background and peak = comppleted fraction
+                // test if have  pair of background and peak = completed fraction
                 if (readingPeaks && (i238 <= 0.001)) {
                     // process new fraction and reset data collectors *************
 
                     int readCountBackgroundAcquisitions = backgroundAcquisitions.size();
                     int readCountPeakAcquisitions = peakAcquisitions.size();
                     // trim front and back of data
-                    for (int c = 0; c < 15; c++) {
+                    int trimCountFront = 5;
+                    for (int c = 0; c < trimCountFront; c++) {
                         backgroundAcquisitions.remove(0);
                         peakAcquisitions.remove(0);
                     }
-                    for (int c = 0; c < 15; c++) {
+                    int trimCountBack =15;
+                    for (int c = 0; c < trimCountBack; c++) {
                         backgroundAcquisitions.remove(backgroundAcquisitions.size() - 1);
                         peakAcquisitions.remove(peakAcquisitions.size() - 1);
                     }
                     System.out.println("read in fraction " + fractionCounter + "  " + backgroundAcquisitions.size() + "   " + peakAcquisitions.size());
 
-                    String theFractionID = sampleRunName + "-" + String.valueOf(fractionCounter);
+                    String theFractionID;
                     if (isStandard) {
-                        theFractionID += "-STD";
+                        theFractionID = sampleRunName + "-STD." + String.valueOf(fractionCounter);
+                    } else {
+                        theFractionID = sampleRunName + "-" + String.valueOf(fractionCounter);
                     }
 
                     // nov 2014 broke into steps to provide cleaner logic
