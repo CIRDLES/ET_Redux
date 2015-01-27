@@ -619,6 +619,12 @@ public class TripoliFraction implements //
         for (int i = 0; i < dataActiveMap.length; i++) {
             toggleOneDataAquisition(i, included);
         }
+        
+        // jan 2015
+        // force masking array
+        if (included) {
+            applyMaskingArray();
+        }
     }
 
     /**

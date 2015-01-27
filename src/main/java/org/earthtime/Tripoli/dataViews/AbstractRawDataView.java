@@ -40,6 +40,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import javax.swing.JLayeredPane;
 import javax.swing.event.MouseInputListener;
+import org.earthtime.ETReduxFrame;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
 import org.earthtime.Tripoli.dataModels.sessionModels.AbstractSessionForStandardDataModel;
 import org.earthtime.Tripoli.dataViews.dataMonitorViews.AbstractDataMonitorView;
@@ -50,7 +51,6 @@ import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.Tripoli.fractions.TripoliFractionIncludeChangeInterface;
 import org.earthtime.Tripoli.sessions.TripoliSessionFractionationCalculatorInterface;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.ETReduxFrame;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.dataDictionaries.DataPresentationModeEnum;
 import org.earthtime.dataDictionaries.IncludedTypeEnum;
@@ -1136,19 +1136,19 @@ public abstract class AbstractRawDataView extends JLayeredPane implements MouseI
             System.out.println("UPDATETABLE ABSTRACTRAWDATA  SESSION");
         }
 
-        if (uPbReduxFrame == null) {
-            uPbReduxFrame = ((AbstractRawDataView) sampleSessionDataView).getuPbReduxFrame();
-            uPbReduxFrame.updateReportTable(true);
-        }
+        updateReportTableView();
 
-//        try {
-//            uPbReduxFrame.updateReportTable(true);
-//        } catch (Exception e) {
-//        }
         if (sampleSessionDataView instanceof AbstractDataMonitorView) {
             ((AbstractDataMonitorView) sampleSessionDataView).prepareConcordia();
         }
 
+    }
+
+    public void updateReportTableView() {
+        if (uPbReduxFrame == null) {
+            uPbReduxFrame = ((AbstractRawDataView) sampleSessionDataView).getuPbReduxFrame();
+            uPbReduxFrame.updateReportTable(true);
+        }
     }
 
     /**

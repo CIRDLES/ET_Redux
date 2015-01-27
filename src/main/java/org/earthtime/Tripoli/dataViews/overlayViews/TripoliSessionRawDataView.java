@@ -632,7 +632,7 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
             boolean atLeastOneStandard = false;
 
             for (int f = 0; f < (fractionCountForHorizontalLayout); f++) {//        fractionMap.length; f ++) {
-                if (fractionMap[f].isStandard()) {
+                if (fractionMap[f].isStandard() && fractionMap[f].isIncluded()) {
 //                    atLeastOneStandard = true;
                     // if (  ! rawDataModelViews[i][f].isNotShownDueToBelowDetectionFlag() ) {
                     atLeastOneStandard = true;

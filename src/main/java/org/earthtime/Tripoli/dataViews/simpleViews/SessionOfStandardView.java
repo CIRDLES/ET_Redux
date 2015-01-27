@@ -527,6 +527,7 @@ public class SessionOfStandardView extends AbstractRawDataView implements FitFun
                             ((TripoliSessionFractionationCalculatorInterface) sampleSessionDataView).calculateSessionFitFunctionsForPrimaryStandard();
                             //((AbstractRawDataView) sampleSessionDataView).refreshPanel();
                         } catch (Exception e) {
+                            System.out.println(">>>>>>>>>>>>trouble at standard exclude");
                         }
                         updateReportTable();
                         ((AbstractRawDataView) sampleSessionDataView).refreshPanel();
@@ -546,6 +547,7 @@ public class SessionOfStandardView extends AbstractRawDataView implements FitFun
                             ((TripoliSessionFractionationCalculatorInterface) sampleSessionDataView).calculateSessionFitFunctionsForPrimaryStandard();
                             //((AbstractRawDataView) sampleSessionDataView).refreshPanel();
                         } catch (Exception e) {
+                            System.out.println(">>>>>>>>>>>>trouble at standard include");
                         }
                         updateReportTable();
                         ((AbstractRawDataView) sampleSessionDataView).refreshPanel();
