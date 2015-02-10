@@ -38,6 +38,7 @@ import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.Red
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.UncertaintyZoomLayer;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.exceptions.ETException;
+import org.earthtime.exceptions.ETWarningDialog;
 
 /**
  *
@@ -657,7 +658,7 @@ private void InitializeTextBoxes(
             Save();
             close();
         } catch (ETException ex) {
-            //ex.printStackTrace();
+            new ETWarningDialog(ex).setVisible(true);
         }
 }//GEN-LAST:event_saveAndClose_buttonActionPerformed
 
@@ -695,8 +696,8 @@ private void save_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
     //  Save();
     // InitializeKwikiTab();
     } catch (ETException ex) {
-        //ex.printStackTrace();
-        }
+        new ETWarningDialog(ex).setVisible(true);
+    }
 }//GEN-LAST:event_save_buttonActionPerformed
 
 private void ChangedTabs(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ChangedTabs

@@ -83,6 +83,7 @@ import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UPb_Redux.valueModels.definedValueModels.Age207_206r;
 import org.earthtime.dataDictionaries.Lambdas;
 import org.earthtime.dataDictionaries.RadRatiosPbcCorrected;
+import org.earthtime.exceptions.ETWarningDialog;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 
@@ -200,7 +201,8 @@ public class ConcordiaGraphPanel extends JLayeredPane
             lambda235 = sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda235.getName());
             lambda238 = sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda238.getName());
             lambda232 = sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda232.getName());
-        } catch (BadLabDataException badLabDataException) {
+        } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
 
         setViewOptions();
@@ -1537,7 +1539,8 @@ public class ConcordiaGraphPanel extends JLayeredPane
                 setLambda235(sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda235.getName()));
                 getCurrentGraphAxesSetup().setLambda235(lambda235.getValue().doubleValue());
             }
-        } catch (BadLabDataException badLabDataException) {
+        } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
         setLambda238(lambda238);
 

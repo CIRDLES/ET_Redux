@@ -41,6 +41,7 @@ import org.earthtime.UPb_Redux.samples.sampleImporters.AbstractSampleImporterFro
 import org.earthtime.dataDictionaries.MineralTypes;
 import org.earthtime.dataDictionaries.SampleRegistries;
 import org.earthtime.exceptions.ETException;
+import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 
 /**
@@ -172,6 +173,7 @@ public abstract class AbstractSampleLAICPMSRawDataManagerDialog extends DialogEd
         try {
             physicalConstantsModelChooser.setSelectedItem( getMySample().getPhysicalConstantsModel().getNameAndVersion() );
         } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
 
         // set up StandardMineral chooser
@@ -250,7 +252,8 @@ public abstract class AbstractSampleLAICPMSRawDataManagerDialog extends DialogEd
         try {
             currentPhysicalConstantsModelName = getMySample().getPhysicalConstantsModel().getNameAndVersion();
 
-        } catch (BadLabDataException badLabDataException) {
+        } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
         if (  ! ((String) physicalConstantsModelChooser.getSelectedItem()).equalsIgnoreCase( currentPhysicalConstantsModelName ) ) {
             try {
@@ -258,7 +261,8 @@ public abstract class AbstractSampleLAICPMSRawDataManagerDialog extends DialogEd
                         getMySample().getMyReduxLabData().
                         getAPhysicalConstantsModel( ((String) physicalConstantsModelChooser.getSelectedItem()) ) );
 
-            } catch (BadLabDataException badLabDataException) {
+            } catch (BadLabDataException ex) {
+                new ETWarningDialog(ex).setVisible(true);
             }
         }
 
@@ -275,7 +279,8 @@ public abstract class AbstractSampleLAICPMSRawDataManagerDialog extends DialogEd
                     getMySample().addDefaultUPbLegacyFractionToAliquot( myAliquotNumber );
                     setInitialized( true );
                     getMySample().setChanged( true );
-                } catch (BadLabDataException badLabDataException) {
+                } catch (BadLabDataException ex) {
+                    new ETWarningDialog(ex).setVisible(true);
                 }
             } else {
                 // bulk mode
@@ -288,7 +293,8 @@ public abstract class AbstractSampleLAICPMSRawDataManagerDialog extends DialogEd
 
                     setImportFractionFolderMRU( converter.getMruFolder() );
                 } catch (FileNotFoundException fileNotFoundException) {
-                } catch (BadImportedCSVLegacyFileException badImportedCSVLegacyFileException) {
+                } catch (BadImportedCSVLegacyFileException ex) {
+                    new ETWarningDialog(ex).setVisible(true);
                 }
             }
 
@@ -324,7 +330,8 @@ public abstract class AbstractSampleLAICPMSRawDataManagerDialog extends DialogEd
                     ((UPbLegacyFraction) f).calculateTeraWasserburgRho();
                 }
 
-            } catch (BadLabDataException badLabDataException) {
+            } catch (BadLabDataException ex) {
+                new ETWarningDialog(ex).setVisible(true);
             }
         }
 
@@ -770,7 +777,7 @@ public abstract class AbstractSampleLAICPMSRawDataManagerDialog extends DialogEd
             saveSampleData();
             close();
         } catch (ETException ex) {
-//            ex.printStackTrace();
+            new ETWarningDialog(ex).setVisible(true);
         }
 
     }//GEN-LAST:event_saveAndCloseActionPerformed

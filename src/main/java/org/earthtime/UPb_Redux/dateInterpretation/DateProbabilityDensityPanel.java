@@ -796,7 +796,7 @@ public class DateProbabilityDensityPanel extends JLayeredPane
                 maxKDE = Math.max(maxKDE, pdfOfKDE[i]);
             }
 
-        } catch (Exception exception) {
+        } catch (Exception ex) {
         }
         // end vermeesch ************************
 

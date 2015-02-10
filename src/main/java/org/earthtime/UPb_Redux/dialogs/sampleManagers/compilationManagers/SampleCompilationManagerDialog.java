@@ -36,6 +36,7 @@ import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
 import org.earthtime.exceptions.ETException;
+import org.earthtime.exceptions.ETWarningDialog;
 
 /**
  *
@@ -607,15 +608,10 @@ public class SampleCompilationManagerDialog extends DialogEditor {
         try {
             SaveSampleData();
             close();
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger( SampleCompilationManagerDialog.class.getName() ).log( Level.SEVERE, null, ex );
-        } catch (BadLabDataException ex) {
-            Logger.getLogger( SampleCompilationManagerDialog.class.getName() ).log( Level.SEVERE, null, ex );
-        } catch (IOException ex) {
-            Logger.getLogger( SampleCompilationManagerDialog.class.getName() ).log( Level.SEVERE, null, ex );
-        } catch (BadOrMissingXMLSchemaException ex) {
+        } catch (BadLabDataException | BadOrMissingXMLSchemaException | IOException ex) {
             Logger.getLogger( SampleCompilationManagerDialog.class.getName() ).log( Level.SEVERE, null, ex );
         } catch (ETException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
 
     }//GEN-LAST:event_saveAndCloseAndProceedToAliquotChooser_buttonActionPerformed
