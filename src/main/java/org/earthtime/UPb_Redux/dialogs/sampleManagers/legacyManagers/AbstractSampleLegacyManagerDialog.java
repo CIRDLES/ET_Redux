@@ -40,6 +40,7 @@ import org.earthtime.UPb_Redux.samples.sampleImporters.AbstractSampleImporterFro
 import org.earthtime.dataDictionaries.MineralTypes;
 import org.earthtime.dataDictionaries.SampleRegistries;
 import org.earthtime.exceptions.ETException;
+import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 
 /**
@@ -126,7 +127,8 @@ public abstract class AbstractSampleLegacyManagerDialog extends DialogEditor {
                 validSampleID_label.setText((String) (valid ? "Sample ID is Valid at registry." : "Sample ID is NOT valid at registry."));
                 mySample.setValidatedSampleIGSN(valid);
             }
-        } catch (ETException eTException) {
+        } catch (ETException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
     }
 
@@ -177,6 +179,7 @@ public abstract class AbstractSampleLegacyManagerDialog extends DialogEditor {
         try {
             physicalConstantsModelChooser.setSelectedItem( getMySample().getPhysicalConstantsModel().getReduxLabDataElementName() );
         } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
 
         // set up StandardMineral chooser
@@ -255,7 +258,8 @@ public abstract class AbstractSampleLegacyManagerDialog extends DialogEditor {
         try {
             currentPhysicalConstantsModelName = getMySample().getPhysicalConstantsModel().getNameAndVersion();
 
-        } catch (BadLabDataException badLabDataException) {
+        } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
         if (  ! ((String) physicalConstantsModelChooser.getSelectedItem()).equalsIgnoreCase( currentPhysicalConstantsModelName ) ) {
             try {
@@ -263,7 +267,8 @@ public abstract class AbstractSampleLegacyManagerDialog extends DialogEditor {
                         getMySample().getMyReduxLabData().
                         getAPhysicalConstantsModel( ((String) physicalConstantsModelChooser.getSelectedItem()) ) );
 
-            } catch (BadLabDataException badLabDataException) {
+            } catch (BadLabDataException ex) {
+                new ETWarningDialog(ex).setVisible(true);
             }
         }
 
@@ -280,7 +285,8 @@ public abstract class AbstractSampleLegacyManagerDialog extends DialogEditor {
                     getMySample().addDefaultUPbLegacyFractionToAliquot( myAliquotNumber );
                     setInitialized( true );
                     getMySample().setChanged( true );
-                } catch (BadLabDataException badLabDataException) {
+                } catch (BadLabDataException ex) {
+                    new ETWarningDialog(ex).setVisible(true);
                 }
             } else {
                 // bulk mode
@@ -293,7 +299,8 @@ public abstract class AbstractSampleLegacyManagerDialog extends DialogEditor {
 
                     setImportFractionFolderMRU( converter.getMruFolder() );
                 } catch (FileNotFoundException fileNotFoundException) {
-                } catch (BadImportedCSVLegacyFileException badImportedCSVLegacyFileException) {
+                } catch (BadImportedCSVLegacyFileException ex) {
+                    new ETWarningDialog(ex).setVisible(true);
                 }
             }
 
@@ -329,7 +336,8 @@ public abstract class AbstractSampleLegacyManagerDialog extends DialogEditor {
                     ((UPbFractionI) f).calculateTeraWasserburgRho();
                 }
 
-            } catch (BadLabDataException badLabDataException) {
+            } catch (BadLabDataException ex) {
+                new ETWarningDialog(ex).setVisible(true);
             }
         }
 
@@ -701,6 +709,7 @@ public abstract class AbstractSampleLegacyManagerDialog extends DialogEditor {
             close();
         } catch (ETException ex) {
             ex.printStackTrace();
+            new ETWarningDialog(ex).setVisible(true);
         }
 
     }//GEN-LAST:event_saveAndCloseActionPerformed

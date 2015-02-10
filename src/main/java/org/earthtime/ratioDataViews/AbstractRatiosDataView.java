@@ -44,6 +44,7 @@ import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.valueModelPanelViews.AbstractValueModelsPanelView;
 import org.earthtime.exceptions.ETException;
+import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.matrices.matrixViews.AbstractMatrixGridView;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 
@@ -487,7 +488,8 @@ public abstract class AbstractRatiosDataView extends JLayeredPane implements Dat
     public void dataEntryDetected() {
         try {
             saveAndUpdateModelView(false);
-        } catch (ETException eTException) {
+        } catch (ETException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
     }
 }

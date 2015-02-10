@@ -21,7 +21,6 @@
 package org.earthtime.UPb_Redux.exceptions;
 
 import java.awt.Component;
-import javax.swing.JOptionPane;
 import org.earthtime.exceptions.ETException;
 
 /**

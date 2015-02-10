@@ -27,6 +27,7 @@ import java.util.logging.Logger;
 /**
  *
  * @author James F. Bowring
+ * @author John Zeringue
  */
 public class ETException extends Exception {
     

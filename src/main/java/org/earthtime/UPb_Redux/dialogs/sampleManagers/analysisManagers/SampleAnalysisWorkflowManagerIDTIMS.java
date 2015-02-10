@@ -84,6 +84,7 @@ import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.dataDictionaries.SampleRegistries;
 import org.earthtime.exceptions.ETException;
+import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.initialPbModelsET.InitialPbModelET;
 import org.earthtime.ratioDataModels.initialPbModelsET.StaceyKramersInitialPbModelET;
@@ -228,7 +229,8 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
         try {
             initSampleFields();
             initSampleAliquots();
-        } catch (ETException eTException) {
+        } catch (ETException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
 
         sampleToolBar_buttonGroup.clearSelection();
@@ -353,7 +355,8 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
                 if (index >= 0) {
                     try {
                         throw new ETException(null, "Duplicate Fraction ID, please use another.");
-                    } catch (ETException eTException) {
+                    } catch (ETException ex) {
+                        new ETWarningDialog(ex).setVisible(true);
                     }
                 } else {
                     // prepare fields
@@ -373,7 +376,8 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
                                 .setInitialPbModel(labData.getAnInitialPbModel((String) masterInitialPbModelChooser.getSelectedItem()));//march 2012 update.copy());
                         ((UPbFraction) addedFraction)//
                                 .setPhysicalConstantsModel(mySample.getPhysicalConstantsModel());
-                    } catch (BadLabDataException badLabDataException) {
+                    } catch (BadLabDataException ex) {
+                        new ETWarningDialog(ex).setVisible(true);
                     }
                     addedFraction.setEstimatedDate(new BigDecimal(masterEstimatedDate.getText()));
 
@@ -428,7 +432,8 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
                 try {
                     AbstractRatiosDataModel tracer = ((UPbReduxAliquot) aliquot).getMyReduxLabData().getATracerModel(tracerName);
                     masterTracerChooser.setToolTipText(ReduxLabData.toolTipForTracer(tracer));
-                } catch (BadLabDataException badLabDataException) {
+                } catch (BadLabDataException ex) {
+                    new ETWarningDialog(ex).setVisible(true);
                 }
             }
         });
@@ -806,7 +811,8 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
                 try {
                     AbstractRatiosDataModel tracer = mySample.getMyReduxLabData().getATracerModel(tracerName);
                     comboBox.setToolTipText(ReduxLabData.toolTipForTracer(tracer));
-                } catch (BadLabDataException badLabDataException) {
+                } catch (BadLabDataException ex) {
+                    new ETWarningDialog(ex).setVisible(true);
                 }
             }
         });
@@ -1434,7 +1440,8 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
         try {
             initialPbNoneModel = mySample.getMyReduxLabData().getNoneInitialPbModel();
             initialPbDefaultModel = mySample.getMyReduxLabData().getDefaultLabInitialPbModel();
-        } catch (BadLabDataException badLabDataException) {
+        } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
 
         // set labels for disabled chooser
@@ -1636,6 +1643,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
         try {
             physicalConstantsModelChooser.setSelectedItem(getMySample().getPhysicalConstantsModel().getReduxLabDataElementName());
         } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
 
         sampleNotes_textArea.setDocument(new UnDoAbleDocument(sampleNotes_textArea, true));
@@ -1708,7 +1716,8 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
         try {
             currentPhysicalConstantsModelName = getMySample().getPhysicalConstantsModel().getNameAndVersion();
 
-        } catch (BadLabDataException badLabDataException) {
+        } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
 
         if (!((String) physicalConstantsModelChooser.getSelectedItem()).equalsIgnoreCase(currentPhysicalConstantsModelName)) {
@@ -1718,7 +1727,8 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
                         getAPhysicalConstantsModel(((String) physicalConstantsModelChooser.getSelectedItem())));
                 //getMySample().setChanged(true);
 
-            } catch (BadLabDataException badLabDataException) {
+            } catch (BadLabDataException ex) {
+                new ETWarningDialog(ex).setVisible(true);
             }
         }
 
@@ -1805,6 +1815,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
                 ((UPbFraction) tempFrac).setTracer(tracer);
             } catch (BadLabDataException ex) {
                 ex.printStackTrace();
+                new ETWarningDialog(ex).setVisible(true);
             }
         }
 
@@ -1821,7 +1832,8 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
                 // does not need alphaPb model
                 ((UPbFraction) tempFrac).setAlphaPbModel(noneAlphaPb);
             }
-        } catch (BadLabDataException badLabDataException) {
+        } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
 
         try {
@@ -1840,7 +1852,8 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
             // handles auto-u generation case
             ((UPbFraction) tempFrac).setInputAlphaU(((UPbFraction) tempFrac).getAlphaUModel());
 
-        } catch (BadLabDataException badLabDataException) {
+        } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
 
         tempFrac.getAnalysisMeasure(AnalysisMeasures.tracerMassInGrams.getName())//
@@ -1854,6 +1867,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
                     getAPbBlankModel((String) fractionPbBlankChoice.get(row).getSelectedItem());
             ((UPbFraction) tempFrac).setPbBlank(pbBlank);
         } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
 
         // set special fields for Stacey Kramers
@@ -1867,6 +1881,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
             ((UPbFraction) tempFrac).calculateStaceyKramersInitialPbModelValues();
 
         } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
 
         // set fraction's pbBlankMass
@@ -1960,7 +1975,8 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
 
                 retVal = true;
 
-            } catch (ETException eTException) {
+            } catch (ETException ex) {
+                new ETWarningDialog(ex).setVisible(true);
             }
 
         }
@@ -2039,7 +2055,8 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
             // save any work
             try {
                 saveSampleData();
-            } catch (ETException eTException) {
+            } catch (ETException ex) {
+                new ETWarningDialog(ex).setVisible(true);
             }
 
             // add fractions per spinner
@@ -2047,7 +2064,8 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
                 try {
                     int aliquotNumber = ((UPbReduxAliquot) myCurrentAliquot).getAliquotNumber();
                     mySample.addDefaultUPbFractionToAliquot(aliquotNumber);
-                } catch (BadLabDataException badLabDataException) {
+                } catch (BadLabDataException ex) {
+                    new ETWarningDialog(ex).setVisible(true);
                 }
             }
 
@@ -2062,7 +2080,8 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
             // save any work
             try {
                 saveSampleData();
-            } catch (ETException eTException) {
+            } catch (ETException ex) {
+                new ETWarningDialog(ex).setVisible(true);
             }
 
             int aliquotNumber = ((UPbReduxAliquot) myCurrentAliquot).getAliquotNumber();
@@ -2073,7 +2092,8 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
                         getMySample().importUPbFractionXMLDataFiles(
                                 getImportedXMLFractionsFolder(), aliquotNumber, true);
             } catch (FileNotFoundException fileNotFoundException) {
-            } catch (BadLabDataException badLabDataException) {
+            } catch (BadLabDataException ex) {
+                new ETWarningDialog(ex).setVisible(true);
             }
 
             if (importFolder != null) {
@@ -2206,7 +2226,8 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
 
             try {
                 saveSampleData();
-            } catch (ETException eTException) {
+            } catch (ETException ex) {
+                new ETWarningDialog(ex).setVisible(true);
             }
 
             if (!doSaveAs && (new File(mySample.getReduxSampleFilePath()).exists())) {
@@ -2217,7 +2238,8 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
                 try {
                     sampleFile = mySample.saveSampleFileAs();
                     setSampleFolder(new File(sampleFile.getParent()));
-                } catch (BadLabDataException badLabDataException) {
+                } catch (BadLabDataException ex) {
+                    new ETWarningDialog(ex).setVisible(true);
                 } catch (NullPointerException nullPointerException) {
                 }
             }
@@ -2244,7 +2266,8 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
 
             try {
                 saveSampleData();
-            } catch (ETException eTException) {
+            } catch (ETException ex) {
+                new ETWarningDialog(ex).setVisible(true);
             }
 
             if (!doSaveAs && (new File(mySample.getReduxSampleFilePath()).exists())) {
@@ -2257,7 +2280,8 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
                         setSampleFolder(new File(sampleFile.getParent()));
                     } catch (Exception e) {
                     }
-                } catch (BadLabDataException badLabDataException) {
+                } catch (BadLabDataException ex) {
+                    new ETWarningDialog(ex).setVisible(true);
                 }
             }
 
@@ -2269,7 +2293,8 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
                 } else {
                     initialized = false;
                 }
-            } catch (ETException eTException) {
+            } catch (ETException ex) {
+                new ETWarningDialog(ex).setVisible(true);
             }
 
         }
