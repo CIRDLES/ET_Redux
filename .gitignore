@@ -9,6 +9,7 @@ dependency-reduced-pom.xml
 *.txt
 *.html
 *.xml
+*.svg
 
 # MACOS
 .DS_Store
