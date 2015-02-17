@@ -18,7 +18,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.earthtime.utilities;
+package org.earthtime.archivingTools;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -326,7 +326,7 @@ public class URIHelper {
                     });
             ex.printStackTrace();
         }
-        return ConvertXMLTextToDOMdocument(new File(tempSESARFileName));
+        return convertXMLTextToDOMdocument(new File(tempSESARFileName));
     }
 
     /**
@@ -375,7 +375,7 @@ public class URIHelper {
      * @param XMLfile
      * @return
      */
-    public static org.w3c.dom.Document ConvertXMLTextToDOMdocument(File XMLfile) {
+    public static org.w3c.dom.Document convertXMLTextToDOMdocument(File XMLfile) {
         org.w3c.dom.Document doc = null;
 
         // Parses an XML file and returns a DOM document.
