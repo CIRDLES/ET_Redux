@@ -1,5 +1,5 @@
 /*
- * AcquisitionTypesEnum.java
+ * SESAR_ObjectTypesEnum.java
  *
  *
  * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
@@ -22,24 +22,20 @@ package org.earthtime.dataDictionaries;
  *
  * @author James F. Bowring
  */
-public enum AcquisitionTypesEnum {
+public enum SESAR_ObjectTypesEnum {
     
     /**
      * 
      */
-    STATIC("STATIC"),
+    IndividualSample("Individual Sample"),
     /**
      * 
      */
-    SINGLE_COLLECTOR("SINGLE_COLLECTOR"),
-    /**
-     * 
-     */
-    MULTI_SEQUENCE("MULTI_SEQUENCE");
+    Other("Other");
     
     private String name;
     
-    private AcquisitionTypesEnum(String name){
+    private SESAR_ObjectTypesEnum(String name){
         this.name = name;        
     }
 
@@ -49,4 +45,11 @@ public enum AcquisitionTypesEnum {
     public String getName () {
         return name;
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
+    
+    
 }
