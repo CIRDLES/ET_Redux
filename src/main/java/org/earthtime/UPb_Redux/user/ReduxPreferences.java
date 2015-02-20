@@ -37,12 +37,12 @@ public class ReduxPreferences implements Serializable {
     private URI tripoliSubscriptionFile;
     private String geochronUserName;
     private String geochronPassWord;
-    private String sesarUserName;
-    private String sesarPassWord ;
     private ANALYSIS_PURPOSE defaultSampleAnalysisPurpose;
 
-    /** Creates a new instance of ReduxPreferences */
-    public ReduxPreferences () {
+    /**
+     * Creates a new instance of ReduxPreferences
+     */
+    public ReduxPreferences() {
 
         this.fractionDataOverriddenOnImport = true;
         this.tripoliSubscriptionFile = null;
@@ -51,48 +51,44 @@ public class ReduxPreferences implements Serializable {
 
         this.geochronPassWord = "longpassword";
 
-        this.sesarUserName = "username";
-
-        this.sesarPassWord = "longpassword";
-
         this.defaultSampleAnalysisPurpose = ANALYSIS_PURPOSE.NONE;
     }
 
     /**
-     * 
+     *
      * @return
      */
-    public boolean isFractionDataOverriddenOnImport () {
+    public boolean isFractionDataOverriddenOnImport() {
         return fractionDataOverriddenOnImport;
     }
 
     /**
-     * 
+     *
      * @param fractionDataOverriddenOnImport
      */
-    public void setFractionDataOverriddenOnImport ( boolean fractionDataOverriddenOnImport ) {
+    public void setFractionDataOverriddenOnImport(boolean fractionDataOverriddenOnImport) {
         this.fractionDataOverriddenOnImport = fractionDataOverriddenOnImport;
     }
 
     /**
      * @return the tripoliSubscriptionFile
      */
-    public URI getTripoliSubscriptionFile () {
+    public URI getTripoliSubscriptionFile() {
         return tripoliSubscriptionFile;
     }
 
     /**
      * @param tripoliSubscriptionFile the tripoliSubscriptionFile to set
      */
-    public void setTripoliSubscriptionFile ( URI tripoliSubscriptionFile ) {
+    public void setTripoliSubscriptionFile(URI tripoliSubscriptionFile) {
         this.tripoliSubscriptionFile = tripoliSubscriptionFile;
     }
 
     /**
      * @return the geochronUserName
      */
-    public String getGeochronUserName () {
-        if ( geochronUserName == null ) {
+    public String getGeochronUserName() {
+        if (geochronUserName == null) {
             geochronUserName = "username";
         }
         return geochronUserName;
@@ -101,15 +97,15 @@ public class ReduxPreferences implements Serializable {
     /**
      * @param geochronUserName the geochronUserName to set
      */
-    public void setGeochronUserName ( String geochronUserName ) {
+    public void setGeochronUserName(String geochronUserName) {
         this.geochronUserName = geochronUserName;
     }
 
     /**
      * @return the geochronPassWord
      */
-    public String getGeochronPassWord () {
-        if ( geochronPassWord == null ) {
+    public String getGeochronPassWord() {
+        if (geochronPassWord == null) {
             geochronPassWord = "longpassword";
         }
         return geochronPassWord;
@@ -118,58 +114,25 @@ public class ReduxPreferences implements Serializable {
     /**
      * @param geochronPassWord the geochronPassWord to set
      */
-    public void setGeochronPassWord ( String geochronPassWord ) {
+    public void setGeochronPassWord(String geochronPassWord) {
         this.geochronPassWord = geochronPassWord;
-    }
-
-    /**
-     * @return the sesarUserName
-     */
-    public String getSesarUserName () {
-        if ( sesarUserName == null ) {
-            sesarUserName = "username";
-        }
-        return sesarUserName;
-    }
-
-    /**
-     * @param sesarUserName the sesarUserName to set
-     */
-    public void setSesarUserName ( String sesarUserName ) {
-        this.sesarUserName = sesarUserName;
-    }
-
-    /**
-     * @return the sesarPassWord
-     */
-    public String getSesarPassWord () {
-        if ( sesarPassWord == null ) {
-            sesarPassWord = "longpassword";
-        }
-        return sesarPassWord;
-    }
-
-    /**
-     * @param sesarPassWord the sesarPassWord to set
-     */
-    public void setSesarPassWord ( String sesarPassWord ) {
-        this.sesarPassWord = sesarPassWord;
     }
 
     /**
      * @return the defaultSampleAnalysisPurpose
      */
-    public ANALYSIS_PURPOSE getDefaultSampleAnalysisPurpose () {
-        if (defaultSampleAnalysisPurpose == null){
+    public ANALYSIS_PURPOSE getDefaultSampleAnalysisPurpose() {
+        if (defaultSampleAnalysisPurpose == null) {
             defaultSampleAnalysisPurpose = ANALYSIS_PURPOSE.NONE;
         }
         return defaultSampleAnalysisPurpose;
     }
 
     /**
-     * @param defaultSampleAnalysisPurpose the defaultSampleAnalysisPurpose to set
+     * @param defaultSampleAnalysisPurpose the defaultSampleAnalysisPurpose to
+     * set
      */
-    public void setDefaultSampleAnalysisPurpose ( ANALYSIS_PURPOSE defaultSampleAnalysisPurpose ) {
+    public void setDefaultSampleAnalysisPurpose(ANALYSIS_PURPOSE defaultSampleAnalysisPurpose) {
         this.defaultSampleAnalysisPurpose = defaultSampleAnalysisPurpose;
     }
 }
