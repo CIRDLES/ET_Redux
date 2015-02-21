@@ -1,5 +1,7 @@
 /*
- * Copyright 2015 CIRDLES.
+ * GeochronProjectExportManager.java
+ *
+ * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,14 +17,35 @@
  */
 package org.earthtime.UPb_Redux.dialogs.projectManagers.exportManagers;
 
+import java.awt.Desktop;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.io.File;
 import java.io.IOException;
-import java.nio.file.DirectoryIteratorException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Map;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JLayeredPane;
+import javax.swing.JPanel;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
+import org.earthtime.UPb_Redux.ReduxConstants;
+import org.earthtime.UPb_Redux.dateInterpretation.DateProbabilityDensityPanel;
+import org.earthtime.UPb_Redux.dateInterpretation.concordia.ConcordiaGraphPanel;
+import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetup;
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
+import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
+import org.earthtime.UPb_Redux.reports.ReportPainterI;
+import org.earthtime.UPb_Redux.samples.Sample;
+import org.earthtime.UPb_Redux.samples.SampleI;
 import org.earthtime.UPb_Redux.user.ReduxPersistentState;
-import org.earthtime.UPb_Redux.utilities.BrowserControl;
+import org.earthtime.archivingTools.GeochronAliquotManager;
+import org.earthtime.archivingTools.IEDACredentialsValidator;
+import org.earthtime.beans.ET_JButton;
+import org.earthtime.dataDictionaries.RadDates;
+import org.earthtime.projects.ProjectI;
 
 /**
  *
@@ -30,39 +53,152 @@ import org.earthtime.UPb_Redux.utilities.BrowserControl;
  */
 public class GeochronProjectExportManager extends DialogEditor {
 
-    private Path projectSamplesFolderPath;
-    private ReduxPersistentState reduxPersistentState;
+    private ReportPainterI parent;
+    private ReduxPersistentState myState;
+    private ProjectI project;
+    private String userCode;
+    private String sesarUserCodeForConfirm;
+    private boolean userIsValidated;
+    private ArrayList<JButton> sampleShowConcordiaButtons;
+    private ArrayList<JButton> sampleShowPDFButtons;
+    private ArrayList<JCheckBox> samplePublicCheckBoxes;
+
+    private ArrayList<JButton> sampleUploadButtons;
 
     /**
      * Creates new form GeochronProjectExportManager
+     *
+     * @param parent the value of parent
+     * @param modal the value of modal
+     * @param project the value of project
+     * @param myState the value of myState
      */
-    public GeochronProjectExportManager(java.awt.Frame parent, boolean modal, Path projectSamplesFolderPath, ReduxPersistentState reduxPersistentState) {
-        super(parent, modal);
-        this.projectSamplesFolderPath = projectSamplesFolderPath;
-        this.reduxPersistentState = reduxPersistentState;
+    public GeochronProjectExportManager(ReportPainterI parent, boolean modal, ProjectI project, ReduxPersistentState myState) {
+        super((Frame) parent, modal);
+
+        this.parent = parent;
+        this.myState = myState;
+        this.project = project;
+        this.userCode = "";
+        this.sesarUserCodeForConfirm = "";
+        this.userIsValidated = false;
 
         initComponents();
+        setSize(1200, 750);
 
-        geochronUserName_text.setDocument(new UnDoAbleDocument(geochronUserName_text, true));
-        geochronUserName_text.setText(reduxPersistentState.getReduxPreferences().getGeochronUserName());
+        initGeochron();
 
-        geochronPassword_passwordField.setDocument(new UnDoAbleDocument(geochronPassword_passwordField, true));
-        geochronPassword_passwordField.setText(reduxPersistentState.getReduxPreferences().getGeochronPassWord());
+        processUserValidation();
 
-        setSize(500, 500);
-
-        // test
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(projectSamplesFolderPath)) {
-            for (Path file : stream) {
-                System.out.println(file.getFileName());
-            }
-        } catch (IOException | DirectoryIteratorException x) {
-            // IOException can never be thrown by the iteration.
-            // In this snippet, it can only be thrown by newDirectoryStream.
-            System.err.println(x.getMessage());
-        }
     }
 
+    private void initGeochron() {
+
+        geochronUserName_text.setDocument(new UnDoAbleDocument(geochronUserName_text, true));
+        geochronUserName_text.setText(myState.getReduxPreferences().getGeochronUserName());
+
+        geochronPassword_passwordField.setDocument(new UnDoAbleDocument(geochronPassword_passwordField, true));
+        geochronPassword_passwordField.setText(myState.getReduxPreferences().getGeochronPassWord());
+
+        validateGeochronAndSESARCredentials(false);
+
+    }
+
+    private void initSamplesDisplay() {
+        aliquotsLayeredPane.removeAll();
+        
+        sampleShowConcordiaButtons = new ArrayList<>();
+        sampleShowPDFButtons = new ArrayList<>();
+        samplePublicCheckBoxes = new ArrayList<>();
+        sampleUploadButtons = new ArrayList<>();
+
+        int leftMargin = 40;
+        int topMarginForSampleDetails = 10;
+
+        int row = 0;
+        for (SampleI sample : project.getProjectSamples()) {
+            JPanel geochronAliquotManager = //
+                    new GeochronAliquotManager(//
+                            project,// needs to be interfaced
+                            sample, //
+                            myState.getReduxPreferences().getGeochronUserName(), //
+                            myState.getReduxPreferences().getGeochronPassWord(), //
+                            userCode, //
+                            leftMargin, //
+                            topMarginForSampleDetails + row * 100, 1100, 100);
+            aliquotsLayeredPane.add(geochronAliquotManager, JLayeredPane.DEFAULT_LAYER);
+            geochronAliquotManager.repaint();
+
+//            JButton showConcordiaButton = new ET_JButton("View Concordia in browser");
+//            showConcordiaButton.setBounds(leftMargin + 150 + 100 + 50 + 2, topMarginForSampleDetails + row * 25, 150, 25);
+//            showConcordiaButton.setFont(ReduxConstants.sansSerif_10_Bold);
+//            showConcordiaButton.setName(String.valueOf(row));
+//            showConcordiaButton.setVisible(false);
+//            sampleShowConcordiaButtons.add(showConcordiaButton);
+//            exportManagerLayeredPane.add(showConcordiaButton, JLayeredPane.DEFAULT_LAYER);
+//            showConcordiaButton.addActionListener((ActionEvent e) -> {
+////                EarthTimeSerializedFileInterface deserializedFile = //
+////                        (EarthTimeSerializedFileInterface) ETSerializer.GetSerializedObjectFromFile(ss.getSampleReduxFilePath().toString());
+////                Sample sample = (Sample) deserializedFile;
+////                produceConcordiaGraph(sample);
+//            });
+//
+//            JButton showPDFButton = new ET_JButton("View PDF in browser");
+//            showPDFButton.setBounds(leftMargin + 150 + 100 + 50 + 2 + 150 + 2, topMarginForSampleDetails + row * 25, 150, 25);
+//            showPDFButton.setFont(ReduxConstants.sansSerif_10_Bold);
+//            showPDFButton.setName(String.valueOf(row));
+//            showPDFButton.setVisible(false);
+//            sampleShowPDFButtons.add(showPDFButton);
+//            exportManagerLayeredPane.add(showPDFButton, JLayeredPane.DEFAULT_LAYER);
+//            showPDFButton.addActionListener((ActionEvent e) -> {
+////                EarthTimeSerializedFileInterface deserializedFile = //
+////                        (EarthTimeSerializedFileInterface) ETSerializer.GetSerializedObjectFromFile(ss.getSampleReduxFilePath().toString());
+////                Sample sample = (Sample) deserializedFile;
+////                producePDFImage(sample);
+//            });
+//
+//            JCheckBox publicOptionCheckBox = new JCheckBox("Public ?");
+//            publicOptionCheckBox.setBounds(leftMargin + 150 + 100 + 50 + 2 + 150 + 2 + 150 + 2, topMarginForSampleDetails + row * 25, 100, 25);
+//            publicOptionCheckBox.setFont(ReduxConstants.sansSerif_10_Bold);
+//            publicOptionCheckBox.setName(String.valueOf(row));
+//            publicOptionCheckBox.setVisible(false);
+//            samplePublicCheckBoxes.add(publicOptionCheckBox);
+//            exportManagerLayeredPane.add(publicOptionCheckBox, JLayeredPane.DEFAULT_LAYER);
+//
+            row++;
+        }
+
+        aliquotsLayeredPane.setPreferredSize(new Dimension(1100, topMarginForSampleDetails + (row + 1) * 100));
+        aliquotsLayeredPane.validate();
+
+        instructionsTextPane.addHyperlinkListener(new HyperlinkListener() {
+            @Override
+            public void hyperlinkUpdate(HyperlinkEvent e) {
+                if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                    if (Desktop.isDesktopSupported()) {
+                        try {
+                            Desktop.getDesktop().browse(e.getURL().toURI());
+                        } catch (IOException e1) {
+                            // TODO Auto-generated catch block
+                            e1.printStackTrace();
+                        } catch (URISyntaxException e1) {
+                            // TODO Auto-generated catch block
+                            e1.printStackTrace();
+                        }
+                    }
+                }
+            }
+        });
+
+    }
+
+//    private void updateValidSampleDisplay(int row, boolean visible) {
+//        sampleShowConcordiaButtons.get(row).setVisible(visible);
+//        sampleShowPDFButtons.get(row).setVisible(visible);
+//        samplePublicCheckBoxes.get(row).setVisible(visible);
+//
+//        sampleUploadButtons.get(row).setVisible(visible);
+//    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -75,13 +211,18 @@ public class GeochronProjectExportManager extends DialogEditor {
         exportManagerLayeredPane = new javax.swing.JLayeredPane();
         geochronPassword_passwordField = new javax.swing.JPasswordField();
         geochronUserName_text = new javax.swing.JTextField();
-        credentialsValidReport_label = new javax.swing.JLabel();
-        validateGeochronCredentials_button = new javax.swing.JButton();
-        visitGeochron_button = new javax.swing.JButton();
+        geochronCredentialsValidReport_label = new javax.swing.JLabel();
+        validateGeochronAndSesarCredentials_button = new ET_JButton();
         userNameGeochron_label = new javax.swing.JLabel();
         passwordGeochron_label = new javax.swing.JLabel();
-        saveAndCloseAndProceedToAliquotChooser_button = new javax.swing.JButton();
-        userNameGeochron_label1 = new javax.swing.JLabel();
+        step1_label = new javax.swing.JLabel();
+        credentialSummaryLabel = new javax.swing.JLabel();
+        step2_label = new javax.swing.JLabel();
+        sesarCredentialsValidReport_label = new javax.swing.JLabel();
+        instructionsScrollPane = new javax.swing.JScrollPane();
+        instructionsTextPane = new javax.swing.JTextPane();
+        aliquotsScrollPane = new javax.swing.JScrollPane();
+        aliquotsLayeredPane = new javax.swing.JLayeredPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -89,74 +230,106 @@ public class GeochronProjectExportManager extends DialogEditor {
                 formComponentResized(evt);
             }
         });
-        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
+        getContentPane().setLayout(null);
 
-        exportManagerLayeredPane.setBackground(new java.awt.Color(255, 255, 255));
+        exportManagerLayeredPane.setBackground(new java.awt.Color(250, 255, 255));
         exportManagerLayeredPane.setOpaque(true);
         exportManagerLayeredPane.setPreferredSize(new java.awt.Dimension(1000, 600));
-        exportManagerLayeredPane.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         geochronPassword_passwordField.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         geochronPassword_passwordField.setText("############");
-        exportManagerLayeredPane.add(geochronPassword_passwordField, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 90, -1, -1));
+        exportManagerLayeredPane.add(geochronPassword_passwordField);
+        geochronPassword_passwordField.setBounds(380, 160, 150, 25);
 
         geochronUserName_text.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         geochronUserName_text.setText("username");
-        exportManagerLayeredPane.add(geochronUserName_text, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 50, 170, -1));
+        exportManagerLayeredPane.add(geochronUserName_text);
+        geochronUserName_text.setBounds(380, 130, 150, 25);
 
-        credentialsValidReport_label.setBackground(new java.awt.Color(255, 255, 255));
-        credentialsValidReport_label.setFont(new java.awt.Font("Tahoma", 3, 12)); // NOI18N
-        credentialsValidReport_label.setForeground(new java.awt.Color(255, 51, 51));
-        credentialsValidReport_label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        credentialsValidReport_label.setText("credentials are VALID");
-        credentialsValidReport_label.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        credentialsValidReport_label.setOpaque(true);
-        exportManagerLayeredPane.add(credentialsValidReport_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 50, 170, -1));
+        geochronCredentialsValidReport_label.setBackground(new java.awt.Color(255, 255, 255));
+        geochronCredentialsValidReport_label.setFont(new java.awt.Font("Tahoma", 3, 12)); // NOI18N
+        geochronCredentialsValidReport_label.setForeground(new java.awt.Color(102, 204, 0));
+        geochronCredentialsValidReport_label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        geochronCredentialsValidReport_label.setText("GeoChron credentials are NOT valid.");
+        geochronCredentialsValidReport_label.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        geochronCredentialsValidReport_label.setOpaque(true);
+        geochronCredentialsValidReport_label.setPreferredSize(new java.awt.Dimension(255, 25));
+        exportManagerLayeredPane.add(geochronCredentialsValidReport_label);
+        geochronCredentialsValidReport_label.setBounds(710, 130, 360, 25);
 
-        validateGeochronCredentials_button.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        validateGeochronCredentials_button.setForeground(new java.awt.Color(255, 51, 51));
-        validateGeochronCredentials_button.setText("<html><b>Validate</b> Geochron credentials</html>");
-        validateGeochronCredentials_button.setName("false"); // NOI18N
-        validateGeochronCredentials_button.addActionListener(new java.awt.event.ActionListener() {
+        validateGeochronAndSesarCredentials_button.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        validateGeochronAndSesarCredentials_button.setForeground(new java.awt.Color(255, 51, 51));
+        validateGeochronAndSesarCredentials_button.setText("<html><style>p{margin:10px;text-align:center;}</style>\n<p>Validate credentials at <b>Geochron</b> and <b>SESAR</b></p>\n</html>");
+        validateGeochronAndSesarCredentials_button.setActionCommand("<html><style>p{margin:1px;text-align:center;}</style>\n<p>Validate credentials at <b>Geochron</b> and <b>SESAR</b></p>\n</html>");
+        validateGeochronAndSesarCredentials_button.setName("false"); // NOI18N
+        validateGeochronAndSesarCredentials_button.setPreferredSize(new java.awt.Dimension(255, 25));
+        validateGeochronAndSesarCredentials_button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                validateGeochronCredentials_buttonActionPerformed(evt);
+                validateGeochronAndSesarCredentials_buttonActionPerformed(evt);
             }
         });
-        exportManagerLayeredPane.add(validateGeochronCredentials_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 90, -1, -1));
+        exportManagerLayeredPane.add(validateGeochronAndSesarCredentials_button);
+        validateGeochronAndSesarCredentials_button.setBounds(530, 130, 180, 55);
 
-        visitGeochron_button.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        visitGeochron_button.setText("Visit Geochron");
-        visitGeochron_button.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                visitGeochron_buttonActionPerformed(evt);
-            }
-        });
-        exportManagerLayeredPane.add(visitGeochron_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 130, -1, -1));
-
-        userNameGeochron_label.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        userNameGeochron_label.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         userNameGeochron_label.setText("user name:");
-        exportManagerLayeredPane.add(userNameGeochron_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 50, -1, -1));
+        exportManagerLayeredPane.add(userNameGeochron_label);
+        userNameGeochron_label.setBounds(300, 130, 68, 25);
 
-        passwordGeochron_label.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        passwordGeochron_label.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         passwordGeochron_label.setText("password:");
-        exportManagerLayeredPane.add(passwordGeochron_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 90, -1, -1));
+        exportManagerLayeredPane.add(passwordGeochron_label);
+        passwordGeochron_label.setBounds(300, 160, 63, 25);
 
-        saveAndCloseAndProceedToAliquotChooser_button.setForeground(new java.awt.Color(255, 51, 0));
-        saveAndCloseAndProceedToAliquotChooser_button.setText("Proceed to Aliquot Chooser");
-        saveAndCloseAndProceedToAliquotChooser_button.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        saveAndCloseAndProceedToAliquotChooser_button.setPreferredSize(new java.awt.Dimension(110, 23));
-        saveAndCloseAndProceedToAliquotChooser_button.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                saveAndCloseAndProceedToAliquotChooser_buttonActionPerformed(evt);
-            }
-        });
-        exportManagerLayeredPane.add(saveAndCloseAndProceedToAliquotChooser_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 190, 250, -1));
+        step1_label.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
+        step1_label.setText("Step 1) Validate GeoPass credentials:");
+        exportManagerLayeredPane.add(step1_label);
+        step1_label.setBounds(10, 130, 280, 25);
 
-        userNameGeochron_label1.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        userNameGeochron_label1.setText("user name:");
-        exportManagerLayeredPane.add(userNameGeochron_label1, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 20, -1, -1));
+        credentialSummaryLabel.setFont(new java.awt.Font("SansSerif", 3, 14)); // NOI18N
+        credentialSummaryLabel.setText("Note: your user code is XXXXX and your IGSNs will be of the form XXXXXNNNN, where N is any digit or any capital letter.");
+        exportManagerLayeredPane.add(credentialSummaryLabel);
+        credentialSummaryLabel.setBounds(190, 190, 880, 25);
 
-        getContentPane().add(exportManagerLayeredPane, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1160, 710));
+        step2_label.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
+        step2_label.setText("Step 2) Confirm Sample Details and upload to Geochron.org (Note - uploads overwrite previous uploads):");
+        exportManagerLayeredPane.add(step2_label);
+        step2_label.setBounds(10, 220, 830, 25);
+
+        sesarCredentialsValidReport_label.setBackground(new java.awt.Color(255, 255, 255));
+        sesarCredentialsValidReport_label.setFont(new java.awt.Font("Tahoma", 3, 12)); // NOI18N
+        sesarCredentialsValidReport_label.setForeground(new java.awt.Color(102, 204, 0));
+        sesarCredentialsValidReport_label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        sesarCredentialsValidReport_label.setText("SESAR credentials are NOT valid.");
+        sesarCredentialsValidReport_label.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        sesarCredentialsValidReport_label.setOpaque(true);
+        sesarCredentialsValidReport_label.setPreferredSize(new java.awt.Dimension(255, 25));
+        exportManagerLayeredPane.add(sesarCredentialsValidReport_label);
+        sesarCredentialsValidReport_label.setBounds(710, 160, 360, 25);
+
+        instructionsScrollPane.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        instructionsScrollPane.setFont(new java.awt.Font("Serif", 0, 12)); // NOI18N
+
+        instructionsTextPane.setEditable(false);
+        instructionsTextPane.setContentType("text/html"); // NOI18N
+        instructionsTextPane.setText("<html>\n  <head>\n\n  </head>\n  <body>\n    <p style=\"margin: 5px 0px 0px 5px; font-family:sansserif; font-size:14\">\n      <strong style=\"color:red\">Instructions: </strong>We want you to uniquely register your samples and aliquots by giving them an IGSN (International Geo Sample Number).  \n\tTo do so, you need credentials -<strong style=\"color:red\">username</strong> and <strong style=\"color:red\">password</strong> - established \n\tat <a href=\"https://geopass.iedadata.org\">GeoPass</a>.  \n\tYou use these credentials to register at <a href=\"http://geochron.org/\">Geochron</> and at <a href=\"http://geosamples.org\">SEASAR</a>.\n\tAt SESAR, you will choose a 5-letter user code (3-letter codes are grandfathered) that will be the prefix used for the IGSNs for every sample you register.\n\tFor each sample you register, you will specify (or ask SESAR to generate) a 4-character code (6 characters if you have 3-letter user code) using any combination\n\tof digits and capital letters.  For example, if your user code is JAMES, then an IGSN might be JAMES09AZ.  You will assign each <strong>Aliquot</strong> \n\tan IGSN in the same way and it will be a child of the parent sample's IGSN.  While you can specify any IGSN for the parent - say you have a piece of a sample from a colleague -\n\tyour Aliquot or child IGSNs will always have your user code as a prefix.\n    </p>\n  </body>\n</html>\n");
+        instructionsScrollPane.setViewportView(instructionsTextPane);
+
+        exportManagerLayeredPane.add(instructionsScrollPane);
+        instructionsScrollPane.setBounds(10, 10, 1180, 110);
+
+        aliquotsScrollPane.setViewportView(aliquotsLayeredPane);
+
+        exportManagerLayeredPane.add(aliquotsScrollPane);
+        aliquotsScrollPane.setBounds(10, 250, 1180, 450);
+
+        getContentPane().add(exportManagerLayeredPane);
+        exportManagerLayeredPane.setBounds(0, 0, 1200, 700);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -165,52 +338,190 @@ public class GeochronProjectExportManager extends DialogEditor {
         exportManagerLayeredPane.setSize(this.getSize());
     }//GEN-LAST:event_formComponentResized
 
-    private void validateGeochronCredentials_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_validateGeochronCredentials_buttonActionPerformed
-        validateGeochronCredentials(true);
-    }//GEN-LAST:event_validateGeochronCredentials_buttonActionPerformed
+    private void validateGeochronAndSesarCredentials_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_validateGeochronAndSesarCredentials_buttonActionPerformed
+        validateGeochronAndSESARCredentials(false);
+    }//GEN-LAST:event_validateGeochronAndSesarCredentials_buttonActionPerformed
 
-    private void visitGeochron_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_visitGeochron_buttonActionPerformed
-        BrowserControl.displayURL("http://www.geochron.org/");
-    }//GEN-LAST:event_visitGeochron_buttonActionPerformed
-
-    private void saveAndCloseAndProceedToAliquotChooser_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveAndCloseAndProceedToAliquotChooser_buttonActionPerformed
-
-    }//GEN-LAST:event_saveAndCloseAndProceedToAliquotChooser_buttonActionPerformed
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        parent.loadAndShowReportTableData();
+    }//GEN-LAST:event_formWindowClosing
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel credentialsValidReport_label;
+    private javax.swing.JLayeredPane aliquotsLayeredPane;
+    private javax.swing.JScrollPane aliquotsScrollPane;
+    private javax.swing.JLabel credentialSummaryLabel;
     private javax.swing.JLayeredPane exportManagerLayeredPane;
+    private javax.swing.JLabel geochronCredentialsValidReport_label;
     private javax.swing.JPasswordField geochronPassword_passwordField;
     private javax.swing.JTextField geochronUserName_text;
+    private javax.swing.JScrollPane instructionsScrollPane;
+    private javax.swing.JTextPane instructionsTextPane;
     private javax.swing.JLabel passwordGeochron_label;
-    private javax.swing.JButton saveAndCloseAndProceedToAliquotChooser_button;
+    private javax.swing.JLabel sesarCredentialsValidReport_label;
+    private javax.swing.JLabel step1_label;
+    private javax.swing.JLabel step2_label;
     private javax.swing.JLabel userNameGeochron_label;
-    private javax.swing.JLabel userNameGeochron_label1;
-    private javax.swing.JButton validateGeochronCredentials_button;
-    private javax.swing.JButton visitGeochron_button;
+    private javax.swing.JButton validateGeochronAndSesarCredentials_button;
     // End of variables declaration//GEN-END:variables
 
-    /**
-     * @param projectSamplesFolderPath the projectSamplesFolderPath to set
-     */
-    public void setProjectSamplesFolderPath(Path projectSamplesFolderPath) {
-        this.projectSamplesFolderPath = projectSamplesFolderPath;
-    }
+    private void validateGeochronAndSESARCredentials(boolean isVerbose) {
+        userCode = //
+                IEDACredentialsValidator.validateGeochronCredentials(//
+                        geochronUserName_text.getText().trim(),//
+                        new String(geochronPassword_passwordField.getPassword()), isVerbose);
 
-    private void validateGeochronCredentials(boolean isVerbose) {
-        boolean valid = reduxPersistentState.validateGeochronCredentials(//
-                geochronUserName_text.getText().trim(),//
-                new String(geochronPassword_passwordField.getPassword()), isVerbose);
-
+        boolean valid = (userCode.trim().length() > 0);
         if (valid) {
-            credentialsValidReport_label.setText("Credentials are VALID.");
+            geochronCredentialsValidReport_label.setText("GeoChron credentials are VALID. User Code = " + userCode);
         } else {
-            credentialsValidReport_label.setText("Credentials are NOT valid.");
+            geochronCredentialsValidReport_label.setText("GeoChron credentials are NOT valid.");
         }
 
-        saveAndCloseAndProceedToAliquotChooser_button.setEnabled(valid);
-        credentialsValidReport_label.setVisible(true);
+        sesarUserCodeForConfirm = //
+                IEDACredentialsValidator.validateSesarCredentials(//
+                        geochronUserName_text.getText().trim(),//
+                        new String(geochronPassword_passwordField.getPassword()), isVerbose);
+
+        boolean validSesar = (sesarUserCodeForConfirm.trim().length() > 0);
+        if (validSesar) {
+            sesarCredentialsValidReport_label.setText("SESAR Credentials are VALID. User Code = " + sesarUserCodeForConfirm);
+        } else {
+            sesarCredentialsValidReport_label.setText("SESAR Credentials are NOT valid.");
+        }
+
+        if ((userCode.length() > 0) && (userCode.compareToIgnoreCase(sesarUserCodeForConfirm) == 0)) {
+            credentialSummaryLabel.setText(//
+                    "Note: your user code is " + userCode + " and your IGSNs will be of the form " //
+                    + userCode + "NNNNNNN".substring(0, (9 - userCode.length())) + ", where N is any digit or any capital letter." //
+            );
+            userIsValidated = true;
+        } else {
+            userIsValidated = false;
+        }
+
+        processUserValidation();
+    }
+
+    private void processUserValidation() {
+        credentialSummaryLabel.setVisible(userIsValidated);
+        step2_label.setVisible(userIsValidated);
+
+        aliquotsScrollPane.setVisible(userIsValidated);
+        if (userIsValidated) {
+            initSamplesDisplay();
+        } 
+    }
+
+    private void produceConcordiaGraph(Sample sample) {
+        // feb 2015 code copied and modified from aliquot manager for user interface prototyping
+        // TODO: refactor both locations to smaple and make more robust
+        // TODO: use create virtual file system
+
+//        try {
+//            FileSystem virtualFileSystem = Jimfs.newFileSystem(Configuration.unix());
+//            Path virtualPathToSVG = virtualFileSystem.getPath("", sample.getSampleName() + ".svg");
+//
+//        } catch (Exception e) {
+//            System.out.println("JIMFS Worked");
+//        }
+        File tempConcordiaSVG = new File(sample.getSampleName() + "_tempConcordia.svg");
+        sample.setMyReduxLabData(ReduxLabData.getInstance());
+
+        ConcordiaGraphPanel concordiaGraphPanel = new ConcordiaGraphPanel(sample, null);
+
+        sample.getSampleDateInterpretationGUISettings().//
+                setConcordiaOptions(concordiaGraphPanel.getConcordiaOptions());
+        concordiaGraphPanel.//
+                setFadedDeselectedFractions(false);
+
+        // set choices per options code copied (TODO: REFACTOR ME) from SampleDateInterpretations
+        Map<String, String> CGO = concordiaGraphPanel.getConcordiaOptions();
+        if (CGO.containsKey("showEllipseLabels")) {
+            concordiaGraphPanel.setShowEllipseLabels(false);
+        }
+        if (CGO.containsKey("showExcludedEllipses")) {
+            concordiaGraphPanel.setShowExcludedEllipses(true);
+        }
+
+        concordiaGraphPanel.setSelectedFractions(sample.getUPbFractions());
+
+        concordiaGraphPanel.setBounds(510, 0, 580, 405);
+        concordiaGraphPanel.setCurrentGraphAxesSetup(new GraphAxesSetup("C", 2));
+        concordiaGraphPanel.setGraphWidth(565 - GraphAxesSetup.DEFAULT_GRAPH_LEFT_MARGIN_VERTICAL_LABELS);
+        concordiaGraphPanel.setGraphHeight(385);
+
+        concordiaGraphPanel.setYorkFitLine(null);
+        concordiaGraphPanel.getDeSelectedFractions().clear();
+        concordiaGraphPanel.setPreferredDatePanel(null);
+
+        concordiaGraphPanel.setShowTightToEdges(true);
+
+        concordiaGraphPanel.refreshPanel();
+
+        concordiaGraphPanel.setShowTightToEdges(false);
+
+        boolean saveShowTitleBox = concordiaGraphPanel.isShowTitleBox();
+        concordiaGraphPanel.setShowTitleBox(false);
+        concordiaGraphPanel.setUploadToGeochronMode(true);
+
+        concordiaGraphPanel.outputToSVG(tempConcordiaSVG);
+        // concordiaGraphPanel.outputToSVG(virtualPathToSVG.toFile());
+
+        concordiaGraphPanel.setShowTitleBox(saveShowTitleBox);
+        concordiaGraphPanel.setUploadToGeochronMode(false);
+
+        // show in a browser
+//            Desktop.getDesktop().browse(virtualPathToSVG.toUri());
+        try {
+            Desktop.getDesktop().browse(tempConcordiaSVG.toURI());
+        } catch (IOException iOException) {
+            System.out.println("Browser issue " + iOException.getMessage());
+        }
 
     }
 
+    private void producePDFImage(Sample sample) {
+        File tempProbabilitySVG = new File(sample.getSampleName() + "_tempProbabilityDensity.svg");
+        sample.setMyReduxLabData(ReduxLabData.getInstance());
+
+        DateProbabilityDensityPanel probabilityPanel = new DateProbabilityDensityPanel(sample);
+
+        // use default if user has not initialized
+        if (probabilityPanel.getSelectedFractions().isEmpty()) {
+            probabilityPanel.//
+                    setSelectedFractions(sample.getUpbFractionsUnknown());
+            probabilityPanel.//
+                    getDeSelectedFractions().clear();
+
+            probabilityPanel.setGraphWidth(565);
+            probabilityPanel.setGraphHeight(385);
+
+            probabilityPanel.setSelectedHistogramBinCount(5);
+
+            if (sample.isTypeLegacy() & sample.getAnalysisPurpose().equals(ReduxConstants.ANALYSIS_PURPOSE.DetritalSpectrum)) {
+                probabilityPanel.setChosenDateName(RadDates.bestAge.getName());
+            } else {
+                probabilityPanel.setChosenDateName(RadDates.age207_206r.getName());
+            }
+
+            probabilityPanel.showTight();
+
+        } else {
+            probabilityPanel.setGraphWidth(565);
+            probabilityPanel.setGraphHeight(385);
+        }
+
+        probabilityPanel.setUploadToGeochronMode(true);
+
+        probabilityPanel.outputToSVG(tempProbabilitySVG);
+
+        probabilityPanel.setUploadToGeochronMode(false);
+
+        try {
+            Desktop.getDesktop().browse(tempProbabilitySVG.toURI());
+        } catch (IOException iOException) {
+            System.out.println("Browser issue " + iOException.getMessage());
+        }
+
+    }
 }

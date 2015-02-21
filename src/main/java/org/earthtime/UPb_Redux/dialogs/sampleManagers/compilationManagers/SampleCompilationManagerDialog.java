@@ -29,39 +29,40 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import org.earthtime.ETReduxFrame;
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.samples.Sample;
+import org.earthtime.UPb_Redux.user.ReduxPersistentState;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
+import org.earthtime.archivingTools.IEDACredentialsValidator;
 import org.earthtime.exceptions.ETException;
 
 /**
  *
- * @author  James F. Bowring
+ * @author James F. Bowring
  */
 public class SampleCompilationManagerDialog extends DialogEditor {
 
     private Sample mySample = null;
     private File importFractionFolderMRU;
     private boolean initialized = false;
-    private boolean automaticFractionCreation = false;
-    private Frame parent;
+    private final boolean automaticFractionCreation = false;
+    private final Frame parent;
 
     /**
-     * 
+     *
      * @return
      */
-    public boolean isNewSample () {
+    public boolean isNewSample() {
         return newSample;
     }
 
     /**
-     * 
+     *
      * @param newSample
      */
-    public void setNewSample ( boolean newSample ) {
+    public void setNewSample(boolean newSample) {
         this.newSample = newSample;
     }
 
@@ -79,17 +80,18 @@ public class SampleCompilationManagerDialog extends DialogEditor {
 
     /**
      * Creates new form SampleManagerDialog
+     *
      * @param parent
-     * @param modal 
+     * @param modal
      * @param importFractionFolderMRU
-     * @param sample  
+     * @param sample
      */
-    public SampleCompilationManagerDialog (
+    public SampleCompilationManagerDialog(
             java.awt.Frame parent,
             boolean modal,
             Sample sample,
-            File importFractionFolderMRU ) {
-        super( parent, modal );
+            File importFractionFolderMRU) {
+        super(parent, modal);
 
         this.parent = parent;
 
@@ -97,134 +99,132 @@ public class SampleCompilationManagerDialog extends DialogEditor {
 
         initComponents();
 
-
-
         //Register listeners for the radio buttons.
         sourceOfFractionsListener mySourceOfFractionsListener = new sourceOfFractionsListener();
 
-        sourceFolder_jRadioButton.addActionListener( mySourceOfFractionsListener );
-        sourceSingle_jRadioButton.addActionListener( mySourceOfFractionsListener );
-        sourceGeochron_jRadioButton.addActionListener( mySourceOfFractionsListener );
+        sourceFolder_jRadioButton.addActionListener(mySourceOfFractionsListener);
+        sourceSingle_jRadioButton.addActionListener(mySourceOfFractionsListener);
+        sourceGeochron_jRadioButton.addActionListener(mySourceOfFractionsListener);
 
         this.mySample = sample;
 
         InitSampleFields();
 
-        credentialsValidReport_label.setVisible( false);
+        credentialsValidReport_label.setVisible(false);
 
     }
 
     class automaticFractionsListener implements ItemListener {
 
-        public void itemStateChanged ( ItemEvent e ) {
+        public void itemStateChanged(ItemEvent e) {
             Object source = e.getItemSelectable();
-            sourceFolder_jRadioButton.setEnabled( automaticFractionCreation );
-            sourceSingle_jRadioButton.setEnabled( automaticFractionCreation );
-            sourceGeochron_jRadioButton.setEnabled( automaticFractionCreation );
+            sourceFolder_jRadioButton.setEnabled(automaticFractionCreation);
+            sourceSingle_jRadioButton.setEnabled(automaticFractionCreation);
+            sourceGeochron_jRadioButton.setEnabled(automaticFractionCreation);
 
         }
     }
 
     class sourceOfFractionsListener implements ActionListener {
 
-        public void actionPerformed ( ActionEvent evt ) {
-            System.out.println( evt.getActionCommand() );
-            fractionSource = fractionSources.valueOf( evt.getActionCommand() );
+        public void actionPerformed(ActionEvent evt) {
+            System.out.println(evt.getActionCommand());
+            fractionSource = fractionSources.valueOf(evt.getActionCommand());
         }
     }
 
     /**
-     * 
+     *
      */
-    public void setSize () {
-        setSize( 480, 660 );
+    public void setSize() {
+        setSize(480, 660);
     }
 
     /**
-     * 
+     *
      * @return
      */
-    public File getImportFractionFolderMRU () {
+    public File getImportFractionFolderMRU() {
         return importFractionFolderMRU;
     }
 
     /**
-     * 
+     *
      * @param importFractionFolderMRU
      */
-    public void setImportFractionFolderMRU ( File importFractionFolderMRU ) {
+    public void setImportFractionFolderMRU(File importFractionFolderMRU) {
         this.importFractionFolderMRU = importFractionFolderMRU;
     }
 
-    private void InitSampleFields () {
+    private void InitSampleFields() {
         // init input fields
 
         // sample name is fixed once populated with fractions
         sampleName_text.setDocument(
-                new UnDoAbleDocument( sampleName_text, true ) );
-        sampleName_text.setText( getMySample().getSampleName() );
+                new UnDoAbleDocument(sampleName_text, true));
+        sampleName_text.setText(getMySample().getSampleName());
 
-        sampleNotes_textArea.setDocument( new UnDoAbleDocument( sampleNotes_textArea, true ) );
-        sampleNotes_textArea.setText( getMySample().getSampleAnnotations() );
+        sampleNotes_textArea.setDocument(new UnDoAbleDocument(sampleNotes_textArea, true));
+        sampleNotes_textArea.setText(getMySample().getSampleAnnotations());
 
         // init display fields - html allows multi-line
         sampleReduxFileName_label.setText(
-                "<html><p>" + getMySample().getReduxSampleFilePath() + "</p></html>" );
+                "<html><p>" + getMySample().getReduxSampleFilePath() + "</p></html>");
 
-        geochronUserName_text.setDocument( new UnDoAbleDocument( geochronUserName_text, true ) );
-        geochronUserName_text.setText(((ETReduxFrame) parent).getMyState().getReduxPreferences().getGeochronUserName() );
+        geochronUserName_text.setDocument(new UnDoAbleDocument(geochronUserName_text, true));
+        geochronUserName_text.setText(ReduxPersistentState.getExistingPersistentState().getReduxPreferences().getGeochronUserName());
 
-        geochronPassword_passwordField.setDocument( new UnDoAbleDocument( geochronPassword_passwordField, true ) );
-        geochronPassword_passwordField.setText(((ETReduxFrame) parent).getMyState().getReduxPreferences().getGeochronPassWord() );
+        geochronPassword_passwordField.setDocument(new UnDoAbleDocument(geochronPassword_passwordField, true));
+        geochronPassword_passwordField.setText(ReduxPersistentState.getExistingPersistentState().getReduxPreferences().getGeochronPassWord());
 
     }
 
-    private void SaveSampleData ()
+    private void SaveSampleData()
             throws ETException,
             FileNotFoundException,
             BadLabDataException,
             IOException,
             BadOrMissingXMLSchemaException {
         // TODO: validate fields - make this more sophisticated
-        if ( sampleName_text.getText().length() == 0 ) {
+        if (sampleName_text.getText().length() == 0) {
             return;
         } else {
-            setVisible( false );
+            setVisible(false);
 
             String success = "";
 
             // get aliquots as specified
             switch (fractionSource) {
                 case SINGLE_LOCAL:
-                    success = getMySample().importAliquotLocalXMLDataFile( importFractionFolderMRU );
-                    if (  ! success.equalsIgnoreCase( "" ) ) {
-                        getMySample().setSampleName( sampleName_text.getText() );
+                    success = getMySample().importAliquotLocalXMLDataFile(importFractionFolderMRU);
+                    if (!success.equalsIgnoreCase("")) {
+                        getMySample().setSampleName(sampleName_text.getText());
 
-                        getMySample().setSampleAnnotations( sampleNotes_textArea.getText() );
+                        getMySample().setSampleAnnotations(sampleNotes_textArea.getText());
 
-                        setImportFractionFolderMRU( new File( success ) );
+                        setImportFractionFolderMRU(new File(success));
 
-                        setInitialized( true );
+                        setInitialized(true);
                     }
                     break;
                 case FOLDER_LOCAL:
                     break;
                 case ONE_OR_MORE_GEOCHRON:
                     success = getMySample().importOneOrMoreGeochronAliquotXMLDataFiles();
-                    if ( success.contains( "Found" ) ) {
-                        getMySample().setSampleName( sampleName_text.getText() );
+                    if (success.contains("Found")) {
+                        getMySample().setSampleName(sampleName_text.getText());
 
-                        getMySample().setSampleAnnotations( sampleNotes_textArea.getText() );
+                        getMySample().setSampleAnnotations(sampleNotes_textArea.getText());
 
-                        setInitialized( true );
+                        setInitialized(true);
                     }
 
-                    if ( success.contains( "Missing" ) ) {
-                        System.out.println( success );
-                        JOptionPane.showMessageDialog( this,
+                    if (success.contains("Missing")) {
+                        System.out.println(success);
+                        JOptionPane.showMessageDialog(this,
                                 success,
                                 "Geochron Warning",
-                                JOptionPane.WARNING_MESSAGE );
+                                JOptionPane.WARNING_MESSAGE);
                     }
                     break;
             }
@@ -232,41 +232,41 @@ public class SampleCompilationManagerDialog extends DialogEditor {
     }
 
     /**
-     * 
+     *
      * @return
      */
-    public Sample getMySample () {
+    public Sample getMySample() {
         return mySample;
     }
 
     /**
-     * 
+     *
      * @param mySample
      */
-    public void setMySample ( Sample mySample ) {
+    public void setMySample(Sample mySample) {
         this.mySample = mySample;
     }
 
     /**
-     * 
+     *
      * @return
      */
-    public boolean isInitialized () {
+    public boolean isInitialized() {
         return initialized;
     }
 
     /**
-     * 
+     *
      * @param isSaved
      */
-    public void setInitialized ( boolean isSaved ) {
+    public void setInitialized(boolean isSaved) {
         this.initialized = isSaved;
     }
 
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
      */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -305,26 +305,40 @@ public class SampleCompilationManagerDialog extends DialogEditor {
         jPanel1.setBackground(new java.awt.Color(245, 236, 206));
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
         jPanel1.setMaximumSize(new java.awt.Dimension(480, 620));
+        jPanel1.setLayout(null);
 
         sampleName_label.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         sampleName_label.setText("Lab's Name for this Compilation Sample:");
+        jPanel1.add(sampleName_label);
+        sampleName_label.setBounds(8, 63, 224, 14);
 
         sampleName_text.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         sampleName_text.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         sampleName_text.setText("Sample Name");
+        jPanel1.add(sampleName_text);
+        sampleName_text.setBounds(238, 56, 218, 27);
 
         sampleReduxFile_label.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         sampleReduxFile_label.setText("File path for this Sample:");
+        jPanel1.add(sampleReduxFile_label);
+        sampleReduxFile_label.setBounds(8, 447, 139, 14);
 
         sampleReduxFileName_label.setText("<Not Saved>");
         sampleReduxFileName_label.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        jPanel1.add(sampleReduxFileName_label);
+        sampleReduxFileName_label.setBounds(28, 467, 428, 64);
 
         sampleNotes_label.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         sampleNotes_label.setText("Notes about this Sample:");
+        jPanel1.add(sampleNotes_label);
+        sampleNotes_label.setBounds(8, 337, 141, 14);
 
         sampleNotes_textArea.setColumns(20);
         sampleNotes_textArea.setRows(5);
         sampleNotes_scrollPane.setViewportView(sampleNotes_textArea);
+
+        jPanel1.add(sampleNotes_scrollPane);
+        sampleNotes_scrollPane.setBounds(32, 357, 440, 84);
 
         jPanel3.setBackground(new java.awt.Color(255, 255, 224));
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Source of Aliquots", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Lucida Grande", 0, 13), new java.awt.Color(204, 0, 0))); // NOI18N
@@ -356,7 +370,7 @@ public class SampleCompilationManagerDialog extends DialogEditor {
 
         sourceOfFractionsOptions_buttonGroup.add(sourceGeochron_jRadioButton);
         sourceGeochron_jRadioButton.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        sourceGeochron_jRadioButton.setText("<html>Import one or more Aliquots from <b>Geochron</b> database</html>");
+        sourceGeochron_jRadioButton.setText("<html>Import one or more Aliquots from <b>Geochron.org</b> database</html>");
         sourceGeochron_jRadioButton.setActionCommand(fractionSource.ONE_OR_MORE_GEOCHRON.toString());
         sourceGeochron_jRadioButton.setContentAreaFilled(false);
         sourceGeochron_jRadioButton.addActionListener(new java.awt.event.ActionListener() {
@@ -422,9 +436,9 @@ public class SampleCompilationManagerDialog extends DialogEditor {
                                     .add(geochronPassword_passwordField)
                                     .add(geochronUserName_text))
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                                    .add(credentialsValidReport_label, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 211, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                    .add(validateGeochronCredentials_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                                .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                                    .add(credentialsValidReport_label, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 217, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                    .add(validateGeochronCredentials_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 226, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
                             .add(jPanel3Layout.createSequentialGroup()
                                 .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                                     .add(sourceSingle_jRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -433,11 +447,8 @@ public class SampleCompilationManagerDialog extends DialogEditor {
                     .add(jPanel3Layout.createSequentialGroup()
                         .add(102, 102, 102)
                         .add(visitGeochron_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 208, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(18, Short.MAX_VALUE))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-
-        jPanel3Layout.linkSize(new java.awt.Component[] {credentialsValidReport_label, validateGeochronCredentials_button}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
-
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel3Layout.createSequentialGroup()
@@ -463,63 +474,13 @@ public class SampleCompilationManagerDialog extends DialogEditor {
                 .add(visitGeochron_button))
         );
 
+        jPanel1.add(jPanel3);
+        jPanel3.setBounds(31, 109, 440, 210);
+
         sampleName_label1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         sampleName_label1.setText("<html>Note: Compilation mode provides a mechanism to load in various <br>  aliquots from the same or different Samples and to view and save them <br>as a single ET_Redux sample\n file.</html>");
-
-        org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .add(sampleNotes_label)
-                .addContainerGap(350, Short.MAX_VALUE))
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1Layout.createSequentialGroup()
-                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(jPanel1Layout.createSequentialGroup()
-                                .add(sampleName_label)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(sampleName_text, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE))
-                            .add(sampleName_label1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 448, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel1Layout.createSequentialGroup()
-                        .add(29, 29, 29)
-                        .add(jPanel3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel1Layout.createSequentialGroup()
-                        .add(30, 30, 30)
-                        .add(sampleNotes_scrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 428, Short.MAX_VALUE))
-                    .add(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(sampleReduxFile_label)
-                            .add(jPanel1Layout.createSequentialGroup()
-                                .add(20, 20, 20)
-                                .add(sampleReduxFileName_label, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 428, Short.MAX_VALUE)))))
-                .add(43, 43, 43))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .add(sampleName_label1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 38, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(10, 10, 10)
-                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(sampleName_text, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(sampleName_label))
-                .add(26, 26, 26)
-                .add(jPanel3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(18, 18, 18)
-                .add(sampleNotes_label)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(sampleNotes_scrollPane, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(sampleReduxFile_label)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(sampleReduxFileName_label, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 64, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        jPanel1.add(sampleName_label1);
+        sampleName_label1.setBounds(8, 8, 448, 38);
 
         jPanel2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
 
@@ -551,7 +512,7 @@ public class SampleCompilationManagerDialog extends DialogEditor {
                 .addContainerGap()
                 .add(saveAndCloseAndProceedToAliquotChooser_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 242, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(cancel_button, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 225, Short.MAX_VALUE)
+                .add(cancel_button, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -572,7 +533,7 @@ public class SampleCompilationManagerDialog extends DialogEditor {
         sampleType_panel.setLayout(sampleType_panelLayout);
         sampleType_panelLayout.setHorizontalGroup(
             sampleType_panelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(sampleType_label, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 503, Short.MAX_VALUE)
+            .add(sampleType_label, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 488, Short.MAX_VALUE)
         );
         sampleType_panelLayout.setVerticalGroup(
             sampleType_panelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -585,14 +546,14 @@ public class SampleCompilationManagerDialog extends DialogEditor {
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .add(sampleType_panel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .add(jPanel1, 0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .add(jPanel1, 0, 490, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                 .add(sampleType_panel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 501, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
@@ -608,36 +569,34 @@ public class SampleCompilationManagerDialog extends DialogEditor {
             SaveSampleData();
             close();
         } catch (FileNotFoundException ex) {
-            Logger.getLogger( SampleCompilationManagerDialog.class.getName() ).log( Level.SEVERE, null, ex );
-        } catch (BadLabDataException ex) {
-            Logger.getLogger( SampleCompilationManagerDialog.class.getName() ).log( Level.SEVERE, null, ex );
-        } catch (IOException ex) {
-            Logger.getLogger( SampleCompilationManagerDialog.class.getName() ).log( Level.SEVERE, null, ex );
-        } catch (BadOrMissingXMLSchemaException ex) {
-            Logger.getLogger( SampleCompilationManagerDialog.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(SampleCompilationManagerDialog.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (BadLabDataException | BadOrMissingXMLSchemaException | IOException ex) {
+            Logger.getLogger(SampleCompilationManagerDialog.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ETException ex) {
         }
 
     }//GEN-LAST:event_saveAndCloseAndProceedToAliquotChooser_buttonActionPerformed
 
-    private void validateGeochronCredentials (boolean isVerbose) {
-        boolean valid = ((ETReduxFrame) parent).getMyState().validateGeochronCredentials(//
-                geochronUserName_text.getText().trim(),//
-                new String( geochronPassword_passwordField.getPassword() ), isVerbose );
+    private void validateGeochronCredentials(boolean isVerbose) {
+        String userCode = //
+                IEDACredentialsValidator.validateGeochronCredentials(//
+                        geochronUserName_text.getText().trim(),//
+                        new String(geochronPassword_passwordField.getPassword()), isVerbose);
 
-        if ( valid ) {
-            credentialsValidReport_label.setText( "Credentials are VALID." );
+        boolean valid = (userCode.trim().length() > 0);
+        if (valid) {
+            credentialsValidReport_label.setText("Credentials are VALID.");
         } else {
-            credentialsValidReport_label.setText( "Credentials are NOT valid." );
+            credentialsValidReport_label.setText("Credentials are NOT valid.");
         }
 
-        saveAndCloseAndProceedToAliquotChooser_button.setEnabled( valid );
-        credentialsValidReport_label.setVisible( true);
+        saveAndCloseAndProceedToAliquotChooser_button.setEnabled(valid);
+        credentialsValidReport_label.setVisible(true);
 
     }
 
     private void sourceSingle_jRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sourceSingle_jRadioButtonActionPerformed
-        saveAndCloseAndProceedToAliquotChooser_button.setEnabled( true );
+        saveAndCloseAndProceedToAliquotChooser_button.setEnabled(true);
 }//GEN-LAST:event_sourceSingle_jRadioButtonActionPerformed
 
     private void validateGeochronCredentials_buttonActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_validateGeochronCredentials_buttonActionPerformed
@@ -645,7 +604,7 @@ public class SampleCompilationManagerDialog extends DialogEditor {
 }//GEN-LAST:event_validateGeochronCredentials_buttonActionPerformed
 
     private void visitGeochron_buttonActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_visitGeochron_buttonActionPerformed
-        BrowserControl.displayURL( "http://www.geochron.org/" );
+        BrowserControl.displayURL("http://www.geochron.org/");
 }//GEN-LAST:event_visitGeochron_buttonActionPerformed
 
     private void sourceGeochron_jRadioButtonActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sourceGeochron_jRadioButtonActionPerformed
@@ -653,7 +612,7 @@ public class SampleCompilationManagerDialog extends DialogEditor {
     }//GEN-LAST:event_sourceGeochron_jRadioButtonActionPerformed
 
     private void sourceFolder_jRadioButtonActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sourceFolder_jRadioButtonActionPerformed
-        saveAndCloseAndProceedToAliquotChooser_button.setEnabled( true );
+        saveAndCloseAndProceedToAliquotChooser_button.setEnabled(true);
     }//GEN-LAST:event_sourceFolder_jRadioButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancel_button;

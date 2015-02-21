@@ -33,18 +33,13 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -52,8 +47,6 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.Vector;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
@@ -73,8 +66,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.text.JTextComponent;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import org.earthtime.ETReduxFrame;
 import org.earthtime.UPb_Redux.ReduxConstants;
@@ -100,10 +91,13 @@ import org.earthtime.UPb_Redux.reports.reportViews.ReportAliquotFractionsView;
 import org.earthtime.UPb_Redux.reports.reportViews.TabbedReportViews;
 import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
-import org.earthtime.UPb_Redux.utilities.ClientHttpRequest;
 import org.earthtime.UPb_Redux.utilities.Thumbnail;
 import org.earthtime.UPb_Redux.utilities.UPbReduxFocusTraversalPolicy;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
+import org.earthtime.archivingTools.GeochronUploadImagesHelper;
+import org.earthtime.archivingTools.GeochronUploaderUtility;
+import org.earthtime.archivingTools.IEDACredentialsValidator;
+import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.dataDictionaries.AnalysisImageTypes;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.dataDictionaries.DataDictionary;
@@ -119,15 +113,12 @@ import org.earthtime.ratioDataModels.initialPbModelsET.StaceyKramersInitialPbMod
 import org.earthtime.ratioDataModels.mineralStandardModels.MineralStandardUPbModel;
 import org.earthtime.ratioDataModels.tracers.TracerUPbModel;
 import org.earthtime.utilities.FileHelper;
-import org.earthtime.utilities.GeochronUploadImagesHelper;
-import org.earthtime.utilities.URIHelper;
 import org.earthtime.xmlUtilities.SimpleTransform;
 import org.jdesktop.layout.GroupLayout.ParallelGroup;
 import org.jdesktop.layout.GroupLayout.SequentialGroup;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 /**
  *
@@ -1242,8 +1233,8 @@ public class AliquotEditorDialog extends DialogEditor {
         title_panel.add(aliquotName_text, new org.netbeans.lib.awtextra.AbsoluteConstraints(55, 5, 172, -1));
 
         SampleIGSN_label.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        SampleIGSN_label.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        SampleIGSN_label.setText("<html>Sample Identifier:</html>");
+        SampleIGSN_label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        SampleIGSN_label.setText("<html>Sample IGSN:</html>");
         title_panel.add(SampleIGSN_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(233, 0, 60, 38));
 
         analystName_label.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
@@ -1908,7 +1899,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
                         = JOptionPane.showConfirmDialog(
                                 null,
                                 new String[]{"You must first save the Aliquot ... proceed?"},
-                                "U-Pb Redux Warning",
+                                "ET Redux Warning",
                                 JOptionPane.WARNING_MESSAGE);
                 if (result == JOptionPane.OK_OPTION) {
                     proceed = true;
@@ -2203,7 +2194,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
 //                        JOptionPane.showMessageDialog(
 //                                null,
 //                                new String[]{"Duplicate Fraction ID, please use another."},
-//                                "U-Pb Redux Warning",
+//                                "ET Redux Warning",
 //                                JOptionPane.WARNING_MESSAGE);
 //
 //                    } else {
@@ -4639,16 +4630,18 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
      */
     private void validateGeochronCredentials(boolean isVerbose) {
 
+        String userCode = "";
         boolean valid;
 
         try {
-            valid = ((ETReduxFrame) parent).getMyState().validateGeochronCredentials(//
+            userCode = IEDACredentialsValidator.validateGeochronCredentials(//
                     geochronUserName_text.getText().trim(),//
                     new String(geochronPassword_passwordField.getPassword()), isVerbose);
         } catch (Exception e) {
             valid = false;
         }
 
+        valid = (userCode.trim().length() > 0);
         showArchiveNote(getMyAliquot(), valid);
 
         if (valid) {
@@ -4871,92 +4864,101 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
         saveAliquot();
 
         // proceed with upload of Aliquot
-        String content = getMyAliquot().serializeXMLObject();
-        // Construct data
-        // June 2010 added overwrite and public choices
-        String isPublic = geochronPublicRecord_chkBox.isSelected() ? "yes" : "no";
-        String overWrite = geochronOverwrite_chkBox.isSelected() ? "yes" : "no";
-        try {
-            data
-                    = URLEncoder.encode("username", "UTF-8") + "=" + URLEncoder.encode(userName, "UTF-8");
-            data += "&" + URLEncoder.encode("password", "UTF-8") + "=" + URLEncoder.encode(password, "UTF-8");
-            data += "&" + URLEncoder.encode("public", "UTF-8") + "=" + URLEncoder.encode(isPublic, "UTF-8");
-            data += "&" + URLEncoder.encode("content", "UTF-8") + "=" + URLEncoder.encode(content, "UTF-8");
-            data += "&" + URLEncoder.encode("overwrite", "UTF-8") + "=" + URLEncoder.encode(overWrite, "UTF-8");
-        } catch (UnsupportedEncodingException unsupportedEncodingException) {
-        }
+        // feb 2015 refactored to another class
+        GeochronUploaderUtility.uploadAliquotToGeochron(//
+                sample, myAliquot, //
+                userName, //
+                password, //
+                geochronPublicRecord_chkBox.isSelected(), //
+                geochronOverwrite_chkBox.isSelected());
 
-        // april 2009 move to zipping for improved upload performance
-        // http://www.exampledepot.com/egs/java.util.zip/CreateZip.html
-        // These are the files to include in the ZIP file
-        // geochron expects this file name exactly
-        String fileName = "tempDataForAliquotUpload";
-
-        // Create a buffer for reading the files
-        byte[] buf = new byte[2048];
-
-        try {
-            // Create the ZIP file
-            String outFilename = "tempDataForAliquotUploadzip";
-            ZipOutputStream out = new ZipOutputStream(new FileOutputStream(outFilename));
-
-            // Compress the file
-            //FileInputStream in = new FileInputStream(fileName);
-            InputStream in = new ByteArrayInputStream(data.getBytes());
-
-            // Add ZIP entry to output stream.
-            out.putNextEntry(new ZipEntry(fileName));
-
-            // Transfer bytes from the file to the ZIP file
-            int len;
-            while ((len = in.read(buf)) > 0) {
-                out.write(buf, 0, len);
-            }
-
-            // Complete the entry
-            out.closeEntry();
-            in.close();
-
-            // Complete the ZIP file
-            out.close();
-        } catch (IOException e) {
-        }
-
-        File uploadFile = new File("tempDataForAliquotUploadzip");
-
-        InputStream response = null;
-        try {
-            response = ClientHttpRequest.post(//
-                    new URL("http://www.geochron.org/redux_service.php"),//
-                    "filetoupload",
-                    uploadFile);
-        } catch (IOException iOException) {
-        }
-
-        org.w3c.dom.Document doc = null;
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setValidating(false);
-        try {
-            doc = factory.newDocumentBuilder().parse(response);
-        } catch (ParserConfigurationException | SAXException | IOException parserConfigurationException) {
-        }
-
-        String error = "no";
-        String message = "";
-        if (doc != null) {
-            if (doc.getElementsByTagName("error").getLength() > 0) {
-                error = doc.getElementsByTagName("error").item(0).getTextContent();
-                message = doc.getElementsByTagName("message").item(0).getTextContent();
-            }
-        }
-
-        sample.setArchivedInRegistry(error.equalsIgnoreCase("no"));
-
-        JOptionPane.showMessageDialog(this,
-                new String[]{
-                    !error.equalsIgnoreCase("no") ? "Failure!\n" : "Success!\n",
-                    message + "   " + myAliquot.getSampleIGSN() + "::" + myAliquot.getAliquotName()
-                });
+////        String content = ((UPbReduxAliquot)myAliquot).serializeXMLObject();
+////        // Construct data
+////        // June 2010 added overwrite and public choices
+////        String isPublic = geochronPublicRecord_chkBox.isSelected() ? "yes" : "no";
+////        String overWrite = geochronOverwrite_chkBox.isSelected() ? "yes" : "no";
+////
+////        try {
+////            data
+////                    = URLEncoder.encode("username", "UTF-8") + "=" + URLEncoder.encode(userName, "UTF-8");
+////            data += "&" + URLEncoder.encode("password", "UTF-8") + "=" + URLEncoder.encode(password, "UTF-8");
+////            data += "&" + URLEncoder.encode("public", "UTF-8") + "=" + URLEncoder.encode(isPublic, "UTF-8");
+////            data += "&" + URLEncoder.encode("content", "UTF-8") + "=" + URLEncoder.encode(content, "UTF-8");
+////            data += "&" + URLEncoder.encode("overwrite", "UTF-8") + "=" + URLEncoder.encode(overWrite, "UTF-8");
+////        } catch (UnsupportedEncodingException unsupportedEncodingException) {
+////        }
+////
+////        // april 2009 move to zipping for improved upload performance
+////        // http://www.exampledepot.com/egs/java.util.zip/CreateZip.html
+////        // These are the files to include in the ZIP file
+////        // geochron expects this file name exactly
+////        String fileName = "tempDataForAliquotUpload";
+////
+////        // Create a buffer for reading the files
+////        byte[] buf = new byte[2048];
+////
+////        try {
+////            // Create the ZIP file
+////            String outFilename = "tempDataForAliquotUploadzip";
+////            ZipOutputStream out = new ZipOutputStream(new FileOutputStream(outFilename));
+////
+////            // Compress the file
+////            //FileInputStream in = new FileInputStream(fileName);
+////            InputStream in = new ByteArrayInputStream(data.getBytes());
+////
+////            // Add ZIP entry to output stream.
+////            out.putNextEntry(new ZipEntry(fileName));
+////
+////            // Transfer bytes from the file to the ZIP file
+////            int len;
+////            while ((len = in.read(buf)) > 0) {
+////                out.write(buf, 0, len);
+////            }
+////
+////            // Complete the entry
+////            out.closeEntry();
+////            in.close();
+////
+////            // Complete the ZIP file
+////            out.close();
+////        } catch (IOException e) {
+////        }
+////
+////        File uploadFile = new File("tempDataForAliquotUploadzip");
+////
+////        InputStream response = null;
+////        try {
+////            response = ClientHttpRequest.post(//
+////                    new URL("http://www.geochron.org/redux_service.php"),//
+////                    "filetoupload",
+////                    uploadFile);
+////        } catch (IOException iOException) {
+////        }
+////
+////        org.w3c.dom.Document doc = null;
+////        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+////        factory.setValidating(false);
+////        try {
+////            doc = factory.newDocumentBuilder().parse(response);
+////        } catch (ParserConfigurationException | SAXException | IOException parserConfigurationException) {
+////        }
+////
+////        String error = "no";
+////        String message = "";
+////        if (doc != null) {
+////            if (doc.getElementsByTagName("error").getLength() > 0) {
+////                error = doc.getElementsByTagName("error").item(0).getTextContent();
+////                message = doc.getElementsByTagName("message").item(0).getTextContent();
+////            }
+////        }
+////
+////        sample.setArchivedInRegistry(error.equalsIgnoreCase("no"));
+////
+////        JOptionPane.showMessageDialog(this,
+////                new String[]{
+////                    !error.equalsIgnoreCase("no") ? "Failure!\n" : "Success!\n",
+////                    message + "   " + myAliquot.getSampleIGSN() + "::" + myAliquot.getAliquotName()
+////                });
 
     }
 

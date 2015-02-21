@@ -2182,7 +2182,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
         // first check on saving
         int response = JOptionPane.showConfirmDialog(this,
                 new String[]{"Save data and continue with export ?"},
-                "U-Pb Redux Warning",
+                "ET Redux Warning",
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.WARNING_MESSAGE);
         if (response == JOptionPane.NO_OPTION) {
@@ -4421,7 +4421,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
         int response = JOptionPane.showConfirmDialog(
                 this,
                 new String[]{"Are you sure you want to delete this fraction?"},
-                "U-Pb Redux Warning",
+                "ET Redux Warning",
                 JOptionPane.YES_NO_CANCEL_OPTION,
                 JOptionPane.WARNING_MESSAGE);
         switch (response) {
