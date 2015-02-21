@@ -71,12 +71,20 @@ public class SesarSample {
     private String collection_start_date;
     private String originalArchive;
     private String[] children;
+    private boolean isChild;
 
     public SesarSample() {
-        this("", "", "");
+        this("", "", "", false);
     }
 
-    public SesarSample(String userCode, String userName, String password) {
+    /**
+     *
+     * @param userCode the value of userCode
+     * @param userName the value of userName
+     * @param password the value of password
+     * @param isParent the value of isParent
+     */
+    public SesarSample(String userCode, String userName, String password, boolean isChild) {
         this.userCode = userCode;
         this.userName = userName;
         this.password = password;
@@ -94,6 +102,11 @@ public class SesarSample {
         this.collection_start_date = "";
         this.originalArchive = "";
         this.children = new String[0];
+        this.isChild = isChild;
+    }
+
+    public boolean confirmUserCodeCompliance(String proposedIGSN) {
+        return proposedIGSN.toUpperCase().startsWith(userCode.toUpperCase());
     }
 
     public SESAR_ObjectTypesEnum getSesarObjectType() {
@@ -215,7 +228,7 @@ public class SesarSample {
 
         String content = serializeForUploadToSesar();
 
-        Map <String, String>dataToPost = new HashMap<>();
+        Map<String, String> dataToPost = new HashMap<>();
         dataToPost.put("username", userName);
         dataToPost.put("password", password);
         dataToPost.put("content", content);
@@ -237,37 +250,21 @@ public class SesarSample {
             System.out.println("PARSE error " + parserConfigurationException.getMessage());
         }
 
-//        String error = "no";
-//        String message = "";
-//        if (doc != null) {
-//            if (doc.getElementsByTagName("error").getLength() > 0) {
-//                error = doc.getElementsByTagName("error").item(0).getTextContent();
-//                message = doc.getElementsByTagName("status").item(0).getTextContent();
-//            }
-//        }
-//        
-//        JOptionPane.showMessageDialog(null,
-//                new String[]{
-//                    !error.equalsIgnoreCase("no") ? "Failure!\n" : "Success!\n",
-//                    message + "   " + IGSN 
-//                });
-        
-        // feb 2015
         String statusMessage = "SESAR registration status: ";
         String igsnMessage = "IGSN = ";
-        String igsnValue ="";
+        String igsnValue = "";
         String errorMessage = "";
-        if (doc!= null){
+        if (doc != null) {
             if (doc.getElementsByTagName("status").getLength() > 0) {
-                 statusMessage += doc.getElementsByTagName("status").item(0).getTextContent();
-                 if (doc.getElementsByTagName("igsn").getLength() > 0) {
-                     // success
-                     igsnValue = doc.getElementsByTagName("igsn").item(0).getTextContent();
-                     igsnMessage += igsnValue;
-                 } else if (doc.getElementsByTagName("error").getLength() > 0){
-                     // take first error
-                     errorMessage = doc.getElementsByTagName("error").item(0).getTextContent();
-                 }
+                statusMessage += doc.getElementsByTagName("status").item(0).getTextContent();
+                if (doc.getElementsByTagName("igsn").getLength() > 0) {
+                    // success
+                    igsnValue = doc.getElementsByTagName("igsn").item(0).getTextContent();
+                    igsnMessage += igsnValue;
+                } else if (doc.getElementsByTagName("error").getLength() > 0) {
+                    // take first error
+                    errorMessage = doc.getElementsByTagName("error").item(0).getTextContent();
+                }
             }
         }
 
@@ -277,8 +274,8 @@ public class SesarSample {
                     (igsnValue.length() == 0) ? errorMessage : igsnMessage
                 }, //
                 (igsnValue.length() == 0) ? "ET Redux Warning" : "ET Redux Information",//
-                (igsnValue.length() == 0) ? JOptionPane.WARNING_MESSAGE : JOptionPane.INFORMATION_MESSAGE);       
-        
+                (igsnValue.length() == 0) ? JOptionPane.WARNING_MESSAGE : JOptionPane.INFORMATION_MESSAGE);
+
         return igsnValue;
     }
 
@@ -367,7 +364,6 @@ public class SesarSample {
             outFile.close();
 
         } catch (IOException e) {
-//            e.printStackTrace();
         }
     }
 
@@ -387,11 +383,16 @@ public class SesarSample {
         return retVal;
     }
 
-    public static boolean isWellFormedIGSN(String igsn) {
+    public static boolean isWellFormedIGSN(String igsn, String userCode) {
         boolean retval = (igsn.length() == 9);
 
-        retval = retval && igsn.substring(0, 3).toUpperCase().matches("^[A-Z]{3}");
-        retval = retval && igsn.substring(3, 9).matches("^[A-F0-9]{6}");
+        if (userCode.length() == 3) {
+            retval = retval && igsn.substring(0, 3).toUpperCase().matches("^[A-Z]{3}");
+        } else { // assume length 5
+            retval = retval && igsn.substring(0, 5).toUpperCase().matches("^[A-Z]{5}");
+        }
+
+        retval = retval && igsn.substring(userCode.length(), 9).matches("^[A-Z0-9]{" + (igsn.length() - userCode.length()) + "}");
 
         return retval;
 
@@ -591,15 +592,6 @@ public class SesarSample {
      */
     public void setChildren(String[] children) {
         this.children = children;
-    }
-
-    public static void main(String[] args) throws Exception {
-
-        SesarSample sesarSample = new SesarSample("JFB","","");
-        sesarSample.serializeXMLObject("TESTTEST.xml");
-//        String testFileName = retrieveXMLFileFromSesarForIGSN("JFB000052").getAbsolutePath();
-        sesarSample.readXMLObject("IGSN_JFB000052_fromSESAR.xml");
-
     }
 
     /**

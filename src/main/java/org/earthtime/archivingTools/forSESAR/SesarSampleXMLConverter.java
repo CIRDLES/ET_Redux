@@ -23,6 +23,7 @@ import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import java.math.BigDecimal;
 import org.earthtime.dataDictionaries.SESAR_MaterialTypesEnum;
 import org.earthtime.dataDictionaries.SESAR_ObjectTypesEnum;
 
@@ -91,15 +92,15 @@ public class SesarSampleXMLConverter implements Converter {
         writer.startNode("userCode");
         writer.setValue(sesarSample.getUserCode());
         writer.endNode();
-        
+
         writer.startNode("sample_type");
         writer.setValue(sesarSample.getSampleType());
         writer.endNode();
-        
+
         writer.startNode("material");
         writer.setValue(sesarSample.getMaterial());
         writer.endNode();
-        
+
         writer.startNode("igsn");
         writer.setValue(sesarSample.getIGSN());
         writer.endNode();
@@ -149,28 +150,67 @@ public class SesarSampleXMLConverter implements Converter {
         reader.moveDown();
         String sampleType = reader.getValue();
         try {
-            sampleType = SESAR_ObjectTypesEnum.valueOf(sampleType.replace(" ", "")).getName();            
+            sampleType = SESAR_ObjectTypesEnum.valueOf(sampleType.replace(" ", "")).getName();
         } catch (Exception e) {
             sampleType = "Other";
         }
-       sesarSample.setSampleType(sampleType);
+        sesarSample.setSampleType(sampleType);
         reader.moveUp();
 
         reader.moveDown();
-        sesarSample.setParentIGSN(reader.getValue());
+        sesarSample.setParentIGSN(cleanStringElement(reader.getValue()));
         reader.moveUp();
 
         reader.moveDown();
         String material = reader.getValue();
         try {
-            material = SESAR_MaterialTypesEnum.valueOf(material.replace(" ", "")).getName();            
+            material = SESAR_MaterialTypesEnum.valueOf(material.replace(" ", "")).getName();
         } catch (Exception e) {
             material = "Other";
         }
         sesarSample.setMaterial(material);
         reader.moveUp();
 
+        skipElements(reader, 11);
+
+        reader.moveDown();
+        sesarSample.setLatitude(new BigDecimal(cleanNumberElement(reader.getValue())));
+        reader.moveUp();
+
+        reader.moveDown();
+        sesarSample.setLongitude(new BigDecimal(cleanNumberElement(reader.getValue())));
+        reader.moveUp();
+
         return sesarSample;
+    }
+
+    private void skipElements(HierarchicalStreamReader reader, int count) {
+        for (int i = 0; i < count; i++) {
+            reader.moveDown();
+            reader.moveUp();
+        }
+    } 
+    
+    private String cleanStringElement(String element){
+        String retval;
+        if (element.trim().startsWith("Not Provided")){
+            retval = "";
+        } else {
+            retval = element.trim();
+        }
+        
+        return retval;
+    }
+    
+    private String cleanNumberElement(String element){
+        String retval;
+        if (element.trim().startsWith("Not Provided")){
+            retval = "0";
+        } else {
+            retval = element.trim();
+        }
+        
+        return retval;
     }
 
 }

@@ -19,6 +19,7 @@ import java.awt.Color;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.math.BigDecimal;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -29,6 +30,7 @@ import javax.swing.JTextField;
 import static javax.swing.SwingConstants.RIGHT;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
+import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.dataDictionaries.SESAR_MaterialTypesEnum;
 import org.earthtime.dataDictionaries.SESAR_ObjectTypesEnum;
@@ -89,6 +91,15 @@ public class SesarSampleManager extends DialogEditor {
                     }
                 }
             });
+        } else {
+            // provide button to see full record
+            JButton viewSesarRecordButton = new ET_JButton("View full record at SESAR");
+            viewSesarRecordButton.setBounds(225, 10, 200, ROW_HEIGHT);
+            viewSesarRecordButton.setFont(ReduxConstants.sansSerif_12_Bold);
+            sesarSampleDetailsLayeredPane.add(viewSesarRecordButton);
+            viewSesarRecordButton.addActionListener((ActionEvent e) -> {
+                BrowserControl.displayURL("http://app.geosamples.org/sample/igsn/" + sesarSample.getIGSN());
+            });
         }
 
         sesarSampleDetailsLayeredPane.add(labelFactory("Sample Name:", 10, 40, 100));
@@ -102,7 +113,7 @@ public class SesarSampleManager extends DialogEditor {
         if (!editable) {
             // check for name inconsistency
             if (sesarSample.hasNameClashBetweenLocalAndSesar()) {
-                JLabel nameClashWarning = labelFactory("<html>The local sample name <" + sesarSample.getNameOfLocalSample() + "> differs!</html>", 275, 25, 150);
+                JLabel nameClashWarning = labelFactory("<html>The local sample name <" + sesarSample.getNameOfLocalSample() + "> differs!</html>", 275, 28, 150);
                 nameClashWarning.setForeground(Color.red);
                 nameClashWarning.setSize(150, 50);
                 sesarSampleDetailsLayeredPane.add(nameClashWarning);
@@ -129,6 +140,31 @@ public class SesarSampleManager extends DialogEditor {
         sesarSampleDetailsLayeredPane.add(sesarMaterialTypesCombo);
         sesarMaterialTypesCombo.setSelectedItem(sesarSample.getSesarMaterialType());
 
+        sesarSampleDetailsLayeredPane.add(labelFactory("decimal Lat:", 10, 130, 100));
+        JTextField decimalLatitude = new JTextField();
+        decimalLatitude.setDocument(new BigDecimalDocument(decimalLatitude, editable));
+        decimalLatitude.setText(sesarSample.getLatitude().setScale(6).toPlainString());
+        decimalLatitude.setBounds(120, 130, 100, ROW_HEIGHT);
+        decimalLatitude.setFont(ReduxConstants.sansSerif_12_Bold);
+        sesarSampleDetailsLayeredPane.add(decimalLatitude);
+
+        sesarSampleDetailsLayeredPane.add(labelFactory("decimal Long:", 10, 160, 100));
+        JTextField decimalLongitude = new JTextField();
+        decimalLongitude.setDocument(new BigDecimalDocument(decimalLongitude, editable));
+        decimalLongitude.setText(sesarSample.getLongitude().setScale(6).toPlainString());
+        decimalLongitude.setBounds(120, 160, 100, ROW_HEIGHT);
+        decimalLongitude.setFont(ReduxConstants.sansSerif_12_Bold);
+        sesarSampleDetailsLayeredPane.add(decimalLongitude);
+
+        JButton showMapButton = new ET_JButton("Show map");
+        showMapButton.setBounds(320, 145, 100, 25);
+        showMapButton.setFont(ReduxConstants.sansSerif_12_Bold);
+        sesarSampleDetailsLayeredPane.add(showMapButton);
+        showMapButton.addActionListener((ActionEvent e) -> {
+            CoordinateSystemConversions.launchGoogleMapsForLatLong(//
+                    new BigDecimal(decimalLatitude.getText()), new BigDecimal(decimalLongitude.getText()));
+        });
+
         if (editable) {
             JButton registerSampleButton = new ET_JButton("Register this Sample");
             registerSampleButton.setBounds(120, 200, 200, 25);
@@ -142,12 +178,12 @@ public class SesarSampleManager extends DialogEditor {
                     String messageText = "";
                     if (!autoGenerateCheckBox.isSelected()) {
                         String proposedIGSN = sampleIGSNText.getText();
-                        if (!proposedIGSN.startsWith(sesarSample.getUserCode())) {
+                        if (!sesarSample.confirmUserCodeCompliance(proposedIGSN)) {
                             messageText = "User code prefix of IGSN should be: " + sesarSample.getUserCode();
                         } else if (SesarSample.validateIGSNatSESAR(proposedIGSN)) {
                             messageText = "The IGSN: " + proposedIGSN + " is already in use.";
-                        } else if (!SesarSample.isWellFormedIGSN(proposedIGSN)) {
-                            messageText = "The IGSN: " + proposedIGSN + " is not of the form [UserCode][6 Hexadecimal digits].";
+                        } else if (!SesarSample.isWellFormedIGSN(proposedIGSN, sesarSample.getUserCode())) {
+                            messageText = "The IGSN: " + proposedIGSN + " is not of the form " + sesarSample.getUserCode() + "NNNNNNN\".substring(0, (9 - userCode.length())) + \", where N is any digit or any capital letter.";
                         } else {
                             sesarSample.setIGSN(proposedIGSN);
                             doRegister = true;

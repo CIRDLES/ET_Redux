@@ -21,6 +21,8 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Vector;
 import javax.swing.InputVerifier;
@@ -79,7 +81,7 @@ public class GeochronAliquotManager extends JPanel {
         this.width = width;
 
         this.sampleIGSN = "IGSN";
-        this.sesarSample = new SesarSample(userCode, userName, password);
+        this.sesarSample = new SesarSample(userCode, userName, password, false);
         this.sesarAliquots = new ArrayList<>();
 
         setOpaque(true);
@@ -125,6 +127,15 @@ public class GeochronAliquotManager extends JPanel {
         sampleIGSNText.setFont(ReduxConstants.sansSerif_12_Bold);
         add(sampleIGSNText);
         sampleIGSNText.setInputVerifier(new IGSNVerifier());
+        sampleIGSNText.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent e) {
+                int key = e.getKeyCode();
+                if ((key == KeyEvent.VK_ENTER) || (key == KeyEvent.VK_TAB)) {
+                    sampleIGSNText.getInputVerifier().verify(sampleIGSNText);
+                }
+            }
+        }
+        );
         cumulativeWidth += 90;
 
         // next two occupy same space and show depending on condition
@@ -258,7 +269,8 @@ public class GeochronAliquotManager extends JPanel {
 
         public boolean verify(JComponent input) {
             JTextField textField = (JTextField) input;
-            String proposedIGSN = textField.getText();
+            String proposedIGSN = textField.getText().toUpperCase();
+            textField.setText(proposedIGSN);
             if (SesarSample.validateIGSNatSESAR(proposedIGSN)) {
                 sampleIGSN = proposedIGSN.trim().toUpperCase();
                 saveSample();
@@ -266,9 +278,10 @@ public class GeochronAliquotManager extends JPanel {
             } else {
                 if (userCode.trim().length() == 0) {
                     xMarkForInValidSampleIGSN_label.setToolTipText("Please validate GeochronPortal.org credentials above.");
-                } else if (!proposedIGSN.toUpperCase().startsWith(userCode.toUpperCase())) {
-                    xMarkForInValidSampleIGSN_label.setToolTipText(proposedIGSN + " uses incorrect User Code.  Your User Code is: " + userCode);
-                } else {
+                } //note: allow any igsn as parent //else if (!proposedIGSN.toUpperCase().startsWith(userCode.toUpperCase())) {
+                //xMarkForInValidSampleIGSN_label.setToolTipText(proposedIGSN + " uses incorrect User Code.  Your User Code is: " + userCode);
+                // } 
+                else {
                     xMarkForInValidSampleIGSN_label.setToolTipText("SESAR does not have a record of IGSN " + proposedIGSN);
                 }
 
