@@ -27,7 +27,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.math.BigDecimal;
 import org.earthtime.exceptions.ETException;
-import org.earthtime.utilities.URIHelper;
+import org.earthtime.archivingTools.URIHelper;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import org.junit.Test;
