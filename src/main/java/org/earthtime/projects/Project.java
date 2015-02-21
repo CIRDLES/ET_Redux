@@ -23,6 +23,7 @@ import java.awt.Frame;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.SortedSet;
@@ -40,7 +41,6 @@ import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.filters.ReduxFileFilter;
 import org.earthtime.UPb_Redux.fractions.Fraction;
-import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLAICPMSFraction;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.samples.Sample;
@@ -194,9 +194,6 @@ public class Project implements
         // make a super-sample or projectsample to leverage existing Redux
         try {
             compiledSuperSample = new Sample( //
-                    //
-                    //
-                    //
                     projectName, //
                     SampleTypesEnum.PROJECT.getName(), //
                     SampleAnalysisTypesEnum.TRIPOLIZED.getName(), //
@@ -234,6 +231,8 @@ public class Project implements
 
                         // automatically added to aliquot #1 as we are assuming only one aliquot in this scenario
                         sample.addUPbFraction(uPbLAICPMSFraction);
+                        // feb 2015 in prep for export
+                        ((UPbReduxAliquot)aliquot).getAliquotFractions().add(uPbLAICPMSFraction);
                     }
 
                     // this forces aliquot fraction population
@@ -263,7 +262,7 @@ public class Project implements
      *
      */
     @Override
-    public void exportProjectSamples() throws ETException{
+    public Path exportProjectSamples() throws ETException {
 
         File projectSamplesFolder = new File(locationOfProjectReduxFile.getParent() + File.separatorChar + projectName + "_Samples");
         boolean jobCompleted = true;
@@ -278,9 +277,10 @@ public class Project implements
         }
 
         if (jobCompleted) {
+            prepareSamplesForExport();
+
             for (int i = 0; i < projectSamples.size(); i++) {
                 SampleI sample = projectSamples.get(i);
-                System.out.println("Sample: " + sample.getSampleName());
 
                 File sampleFile = new File(//
                         projectSamplesFolder.getAbsolutePath() + File.separatorChar + sample.getSampleName());
@@ -288,29 +288,55 @@ public class Project implements
                 // first write sample out
                 sample.saveTheSampleAsSerializedReduxFile(sampleFile);
 
-                // then read back in and repair aliquot number in fractions as there is only 1 aliquot per sample
-                EarthTimeSerializedFileInterface deserializedFile = //
-                        (EarthTimeSerializedFileInterface) ETSerializer.GetSerializedObjectFromFile(sample.getReduxSampleFilePath());
-
-                Sample deserializedSample = (Sample) deserializedFile;
-
-                for (int j = 0; j < deserializedSample.getUPbFractions().size(); j++) {
-                    ((UPbFractionI) deserializedSample.getUPbFractions().get(j)).setAliquotNumber(1);
-                }
-
-                // oct 2014 specify sample types
-                if (compiledSuperSample.isAnalysisTypeTripolized()) {
-                    deserializedSample.setSampleType(SampleTypesEnum.ANALYSIS.getName());
-                } else {
-                    deserializedSample.setSampleType(SampleTypesEnum.LEGACY.getName());
-                    deserializedSample.setAnalyzed(true);
-                }
-                deserializedSample.setLegacyStatusForReportTable();
-                // rewrite sample
-                deserializedSample.saveTheSampleAsSerializedReduxFile(sampleFile);
+//                // then read back in and repair aliquot number in fractions as there is only 1 aliquot per sample
+//                EarthTimeSerializedFileInterface deserializedFile = //
+//                        (EarthTimeSerializedFileInterface) ETSerializer.GetSerializedObjectFromFile(sample.getReduxSampleFilePath());
+//
+//                Sample deserializedSample = (Sample) deserializedFile;
+//
+//                for (int j = 0; j < deserializedSample.getUPbFractions().size(); j++) {
+//                    ((UPbFractionI) deserializedSample.getUPbFractions().get(j)).setAliquotNumber(1);
+//                }
+//
+//                // oct 2014 specify sample types
+//                if (compiledSuperSample.isAnalysisTypeTripolized()) {
+//                    deserializedSample.setSampleType(SampleTypesEnum.ANALYSIS.getName());
+//                } else {
+//                    deserializedSample.setSampleType(SampleTypesEnum.LEGACY.getName());
+//                    deserializedSample.setAnalyzed(true);
+//                }
+//                deserializedSample.setLegacyStatusForReportTable();
+//
+//                // rewrite sample
+//                deserializedSample.saveTheSampleAsSerializedReduxFile(sampleFile);
 
             }
-        } else throw new ETException(null, "Unable to process " + projectSamplesFolder.getAbsolutePath());
+        } else {
+            throw new ETException(null, "Unable to process " + projectSamplesFolder.getAbsolutePath());
+        }
+
+        return projectSamplesFolder.toPath();
+    }
+
+    public void prepareSamplesForExport() {
+        for (int i = 0; i < projectSamples.size(); i++) {
+            SampleI sample = projectSamples.get(i);
+            System.out.println("Preparing for export Sample: " + sample.getSampleName());
+
+            // only on export and then not neccesary ?
+//            for (int j = 0; j < sample.getUPbFractions().size(); j++) {
+//                ((UPbFractionI) sample.getUPbFractions().get(j)).setAliquotNumber(1);
+//            }
+
+            // oct 2014 specify sample types
+            if (compiledSuperSample.isAnalysisTypeTripolized()) {
+                sample.setSampleType(SampleTypesEnum.ANALYSIS.getName());
+            } else {
+                sample.setSampleType(SampleTypesEnum.LEGACY.getName());
+                sample.setAnalyzed(true);
+            }
+            sample.setLegacyStatusForReportTable();
+        }
     }
 
     /**
@@ -454,5 +480,12 @@ public class Project implements
      */
     public void setRawDataFileHandler(AbstractRawDataFileHandler rawDataFileHandler) {
         this.rawDataFileHandler = rawDataFileHandler;
+    }
+
+    /**
+     * @return the compiledSuperSample
+     */
+    public SampleI getCompiledSuperSample() {
+        return compiledSuperSample;
     }
 }

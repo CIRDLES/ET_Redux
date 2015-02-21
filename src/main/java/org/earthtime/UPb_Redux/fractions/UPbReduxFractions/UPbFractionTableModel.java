@@ -33,8 +33,8 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.table.AbstractTableModel;
-import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.ETReduxFrame;
+import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.dialogs.fractionManagers.FractionNotesDialog;
 import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.renderers.EditFractionButton;
@@ -178,13 +178,6 @@ public class UPbFractionTableModel extends AbstractTableModel {
         Vector<Fraction> myFractions = getFractionsSorted();
 
         for (int row = 0; row < myFractions.size(); row++) {
-////            if (performReduction) {
-////                // perform data reduction on flag
-////                Fraction fraction = myFractions.get(row);
-////
-////                UPbFractionReducer.fullFractionReduce(fraction, true);
-////
-////            }
 
             Object[] myFractionData = ((UPbFractionI) myFractions.get(row)).getFractionTableRowData();
             data.add(myFractionData);

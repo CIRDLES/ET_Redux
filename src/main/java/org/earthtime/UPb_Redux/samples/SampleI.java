@@ -746,4 +746,5 @@ public interface SampleI {
      */
     public void setReportSettingsModel(ReportSettings reportSettingsModel);
 
+    public void setLegacyStatusForReportTable();
 }

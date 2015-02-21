@@ -3077,7 +3077,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
 
         currentGraphAxesSetup.setLambda238(lambda238.getValue().doubleValue());
         currentGraphAxesSetup.setDefaultR238_235s( //
-                getSample().getMyReduxLabData().getDefaultR238_235s().getValue().doubleValue());
+                sample.getMyReduxLabData().getDefaultR238_235s().getValue().doubleValue());
     }
 
     /**

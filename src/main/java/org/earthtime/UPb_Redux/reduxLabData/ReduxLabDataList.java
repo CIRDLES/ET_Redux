@@ -168,7 +168,7 @@ public class ReduxLabDataList<listType> extends ArrayList<listType> {
                     JOptionPane.showMessageDialog( null,
                             new String[]{listTypeName + " "//
                             + ((ReduxLabDataListElementI) element).getReduxLabDataElementName() + " is already registered with LabData."},
-                            "U-Pb Redux Warning",
+                            "ET Redux Warning",
                             JOptionPane.WARNING_MESSAGE );
                 }
             } else {

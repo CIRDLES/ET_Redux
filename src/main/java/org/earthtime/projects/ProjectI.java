@@ -5,6 +5,7 @@
 package org.earthtime.projects;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.AbstractAcquisitionModel;
 import org.earthtime.Tripoli.rawDataFiles.handlers.AbstractRawDataFileHandler;
@@ -129,5 +130,7 @@ public interface ProjectI {
     /**
      *
      */
-    public void exportProjectSamples()throws ETException;
+    public Path exportProjectSamples()throws ETException;
+    
+    public SampleI getCompiledSuperSample();
 }

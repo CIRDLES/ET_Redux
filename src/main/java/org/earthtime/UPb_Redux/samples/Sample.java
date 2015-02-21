@@ -1045,9 +1045,9 @@ public class Sample implements
                     fraction);
 
             ((UPbFractionI) fraction).setAliquotNumber(aliquotNumber);
-            ((UPbReduxAliquot) importedAliquot).getAliquotFractions().add(fraction);//nextFraction );
+            ((UPbReduxAliquot) importedAliquot).getAliquotFractions().add(fraction);
 
-            UPbFractions.add(fraction);//nextFraction );
+            UPbFractions.add(fraction);
         }
 
         aliquots.add(importedAliquot);
@@ -1585,7 +1585,7 @@ public class Sample implements
                     if (f < (fractions.length - 1)) {
                         int response = JOptionPane.showConfirmDialog(null,
                                 new String[]{"Continue to process folder?"},
-                                "U-Pb Redux Warning",
+                                "ET Redux Warning",
                                 JOptionPane.YES_NO_OPTION,
                                 JOptionPane.WARNING_MESSAGE);
                         if (response == JOptionPane.NO_OPTION) {
@@ -2031,7 +2031,6 @@ public class Sample implements
 
         if (isChanged()) {
             updateSampleFractionsWithSampleName(sampleName);
-
         }
 
     }
@@ -2585,9 +2584,9 @@ public class Sample implements
      */
     public void repairAliquotNumberingDec2011() {
         // walk aliquots and remove empty ones 
-        ArrayList<Aliquot> aliquotsToDelete = new ArrayList<Aliquot>();
+        ArrayList<Aliquot> aliquotsToDelete = new ArrayList<>();
         for (int i = 0; i < aliquots.size(); i++) {
-            Aliquot aliquot = getAliquotByNumber(i + 1);
+            Aliquot aliquot = aliquots.get(i);//    Feb 2015 getAliquotByNumber(i + 1);
             if (((UPbReduxAliquot) aliquot).getAliquotFractions().isEmpty()) {
                 // save aliquot for later deletion
                 aliquotsToDelete.add(aliquot);
