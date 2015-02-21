@@ -111,10 +111,20 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="exportProjectSamples">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Export Project Samples"/>
+                <Property name="text" type="java.lang.String" value="Export Project Samples to Local Folder"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportProjectSamplesActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="exportProjectSamplesToGeochron">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Export Project Samples to Geochron"/>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportProjectSamplesToGeochronActionPerformed"/>
               </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator10">
@@ -623,7 +633,7 @@
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="visitCIRDLES">
               <Properties>
-                <Property name="text" type="java.lang.String" value="CIRDLES"/>
+                <Property name="text" type="java.lang.String" value="CIRDLES.org"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="visitCIRDLESActionPerformed"/>
@@ -639,7 +649,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="visitGeochron">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Geochron"/>
+                <Property name="text" type="java.lang.String" value="Geochron.org"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="visitGeochronActionPerformed"/>
@@ -647,7 +657,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="visitGeoSamplesOrg">
               <Properties>
-                <Property name="text" type="java.lang.String" value="SESAR (IGSN)"/>
+                <Property name="text" type="java.lang.String" value="SESAR (geoSamples.org)"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="visitGeoSamplesOrgActionPerformed"/>
@@ -736,6 +746,14 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="producePbCCorrReport_jMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="jMenuItem1">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="jMenuItem1"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItem1ActionPerformed"/>
               </Events>
             </MenuItem>
           </SubComponents>

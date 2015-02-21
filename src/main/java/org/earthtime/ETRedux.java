@@ -114,7 +114,7 @@ public class ETRedux {
 //                File reduxFile = new File(evt.getFilename());
 //                JOptionPane.showMessageDialog(null,
 //                        new String[]{evt.getFilename()},
-//                        "U-Pb Redux Warning",
+//                        "ET Redux Warning",
 //                        JOptionPane.WARNING_MESSAGE);
 //                if (reduxFile.exists()) {
 //                    new ETRedux(reduxFile);

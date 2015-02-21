@@ -39,7 +39,7 @@ import static org.earthtime.UPb_Redux.ReduxConstants.getMonthConversions;
 import org.earthtime.UPb_Redux.filters.txtFileFilter;
 import org.earthtime.utilities.FileHelper;
 import org.earthtime.utilities.TimeToString;
-import org.earthtime.utilities.URIHelper;
+import org.earthtime.archivingTools.URIHelper;
 
 /**
  *
@@ -107,7 +107,7 @@ public class NUPlasmaMultiCollIonCounterFileHandler extends AbstractRawDataFileH
                 JOptionPane.showMessageDialog(
                         null,
                         new String[]{"Selected raw data file was not valid."},
-                        "U-Pb Redux Warning",
+                        "ET Redux Warning",
                         JOptionPane.WARNING_MESSAGE);
             }
         }
@@ -236,7 +236,7 @@ public class NUPlasmaMultiCollIonCounterFileHandler extends AbstractRawDataFileH
             JOptionPane.showMessageDialog(
                     null,
                     new String[]{"Selected raw data file was not valid."},
-                    "U-Pb Redux Warning",
+                    "ET Redux Warning",
                     JOptionPane.WARNING_MESSAGE);
             
             retVal = false;

@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Vector;
@@ -71,6 +72,7 @@ import org.earthtime.UPb_Redux.dialogs.PreferencesEditorDialog;
 import org.earthtime.UPb_Redux.dialogs.ReportSettingsManager;
 import org.earthtime.UPb_Redux.dialogs.fractionManagers.UPbFractionEditorDialog;
 import org.earthtime.UPb_Redux.dialogs.projectManagers.ProjectManagerFor_LAICPMS_FromRawData;
+import org.earthtime.UPb_Redux.dialogs.projectManagers.exportManagers.GeochronProjectExportManager;
 import org.earthtime.UPb_Redux.dialogs.projectManagers.projectLegacyManagers.AbstractProjectOfLegacySamplesDataManagerDialog;
 import org.earthtime.UPb_Redux.dialogs.projectManagers.projectLegacyManagers.ProjectOfLegacySamplesDataManagerDialogForGenericUPb_A;
 import org.earthtime.UPb_Redux.dialogs.projectManagers.projectLegacyManagers.ProjectOfLegacySamplesDataManagerDialogForUCSB_LASS_A;
@@ -121,6 +123,7 @@ import org.earthtime.UPb_Redux.utilities.CustomIcon;
 import org.earthtime.UPb_Redux.utilities.ETSerializer;
 import org.earthtime.UPb_Redux.utilities.JHelpAction;
 import org.earthtime.UPb_Redux.utilities.MacOSAboutHandler;
+import org.earthtime.archivingTools.forSESAR.CoordinateSystemConversions;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.dataDictionaries.SampleTypesEnum;
@@ -179,7 +182,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
     /**
      *
      */
-    protected JLayeredPane messagePane = null;
+    protected JLayeredPane announcementPane = null;
     private final Timer liveUpdateTimer;
 ////    private int DATATABLE_TOP_HEIGHT = 62;//72;//62
     private DialogEditor myProjectManager;
@@ -222,7 +225,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         this.myLabData = myLabData;
         initComponents();
 
-        messagePane = new AnnouncementPane();
+        announcementPane = new AnnouncementPane();
 
         // TODO: refactor these things into another init method
         // load resources
@@ -357,7 +360,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                 visitCIRDLESbutton.setFont(ReduxConstants.sansSerif_12_Bold);
                 visitCIRDLESbutton.setBounds(400, 75, 350, 25);
                 visitCIRDLESbutton.addActionListener(new ActionListenerForGotoCirdles());
-                messagePane.add(visitCIRDLESbutton);
+                announcementPane.add(visitCIRDLESbutton);
 
                 JTextArea announce = new JTextArea(//
                         "ANNOUNCEMENT:   2015 brings changes to this project. "//
@@ -370,7 +373,8 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                 announce.setWrapStyleWord(true);
                 announce.setAlignmentX(CENTER_ALIGNMENT);
                 announce.setAlignmentY(CENTER_ALIGNMENT);
-                messagePane.add(announce);
+                announce.setOpaque(true);
+                announcementPane.add(announce);
 
                 JButton visitTOPSOIL = new ET_JButton("Checkout Topsoil - the Isoplot replacement project that you can join at github.com/CIRDLES/topsoil");
                 visitTOPSOIL.setFont(ReduxConstants.sansSerif_12_Bold);
@@ -381,7 +385,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                         BrowserControl.displayURL("https://github.com/CIRDLES/topsoil");
                     }
                 });
-                messagePane.add(visitTOPSOIL);
+                announcementPane.add(visitTOPSOIL);
 
                 JButton releaseNotes = new ET_JButton("Click to see Latest Release Notes.");
                 releaseNotes.setFont(ReduxConstants.sansSerif_10_Bold);
@@ -393,11 +397,11 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                     }
                 });
 
-                theFractionTableScrollPane.setViewportView(messagePane);
+                theFractionTableScrollPane.setViewportView(announcementPane);
                 break;
             case WAITING:
-                ((AnnouncementPane) messagePane).initializeAnnouncementPane("Waiting");
-                theFractionTableScrollPane.setViewportView(messagePane);
+                ((AnnouncementPane) announcementPane).initializeAnnouncementPane("Waiting");
+                theFractionTableScrollPane.setViewportView(announcementPane);
                 break;
             case FRACTIONS:
                 theFractionTableScrollPane.setViewportView(theFractionTable);
@@ -437,7 +441,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
      */
     public void quickSaveReduxPersistentState() {
         try {
-            ETSerializer.SerializeObjectToFile(getMyState(), ReduxPersistentState.getMySerializedName());
+            ETSerializer.SerializeObjectToFile(myState, ReduxPersistentState.getMySerializedName());
         } catch (ETException eTException) {
         }
 
@@ -480,12 +484,15 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                 isTripolized = superSample.isAnalysisTypeTripolized();
             }
         }
+
         // project open
         manageProject_menuItem.setEnabled(!sampleTrueProjectFalse && isTripolized);
         manageRawData_menuItem.setEnabled(!sampleTrueProjectFalse && isTripolized);
         saveProjectFile_menuItem.setEnabled(!sampleTrueProjectFalse);
         saveProjectFileAs_menuItem.setEnabled(!sampleTrueProjectFalse);
         closeProjectFile_menuItem.setEnabled(!sampleTrueProjectFalse);
+        exportProjectSamples.setEnabled(!sampleTrueProjectFalse);
+        exportProjectSamplesToGeochron.setEnabled(!sampleTrueProjectFalse);
 
         // sample open
         manageSampleModel_menuItem.setEnabled(sampleTrueProjectFalse);
@@ -600,7 +607,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                         new String[]{"The current Project " + theProject.getProjectName() + " has been changed.",
                             "Do you want to Save it before proceeding ?"
                         },
-                        "U-Pb Redux Warning",
+                        "ET Redux Warning",
                         JOptionPane.YES_NO_OPTION,
                         JOptionPane.WARNING_MESSAGE);
                 switch (response) {
@@ -627,7 +634,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
     private void saveTheProject() throws BadLabDataException {
         if (theProject != null) {
-            getMyState().getReduxPreferences().setDefaultSampleAnalysisPurpose(theProject.getAnalysisPurpose());
+            myState.getReduxPreferences().setDefaultSampleAnalysisPurpose(theProject.getAnalysisPurpose());
             theProject.saveTheProjectAsSerializedReduxFile();
             setUpTheProject(false);
         }
@@ -878,6 +885,17 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         }
     }
 
+    private void exportProjectSamplesToGeochron() {
+
+        theProject.prepareSamplesForExport();
+
+        // launch manager
+        DialogEditor geochronProjectExportManager = //
+                new GeochronProjectExportManager(this, true, theProject, myState);
+
+        geochronProjectExportManager.setVisible(true);
+    }
+
     // ********* end  ***************** P R O J E C T S ******************************
     private boolean checkSavedStatusTheSample() {
         boolean retval = true;
@@ -888,7 +906,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                         new String[]{"The current Sample " + theSample.getSampleName() + " has been changed.",
                             "Do you want to Save it before proceeding ?"
                         },
-                        "U-Pb Redux Warning",
+                        "ET Redux Warning",
                         JOptionPane.YES_NO_OPTION,//.YES_NO_CANCEL_OPTION,
                         JOptionPane.WARNING_MESSAGE);
                 switch (response) {
@@ -1206,7 +1224,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
      */
     private void saveTheSample() throws BadLabDataException {
         if (theSample != null) {
-            getMyState().getReduxPreferences().setDefaultSampleAnalysisPurpose(theSample.getAnalysisPurpose());
+            myState.getReduxPreferences().setDefaultSampleAnalysisPurpose(theSample.getAnalysisPurpose());
             theSample.saveTheSampleAsSerializedReduxFile();
             setUpTheSample(false);
         }
@@ -1841,6 +1859,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         manageRawData_menuItem = new javax.swing.JMenuItem();
         jSeparator5 = new javax.swing.JPopupMenu.Separator();
         exportProjectSamples = new javax.swing.JMenuItem();
+        exportProjectSamplesToGeochron = new javax.swing.JMenuItem();
         jSeparator10 = new javax.swing.JPopupMenu.Separator();
         openProjectFile_menuItem = new javax.swing.JMenuItem();
         saveProjectFile_menuItem = new javax.swing.JMenuItem();
@@ -1922,6 +1941,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         writeCSVFileOfLAICPMSLegacyDataSampleFieldNames_SC_WSU_vB = new javax.swing.JMenuItem();
         writeCSVFileOfLAICPMSLegacyDataSampleFieldNames_NIGL = new javax.swing.JMenuItem();
         producePbCCorrReport_jMenuItem = new javax.swing.JMenuItem();
+        jMenuItem1 = new javax.swing.JMenuItem();
         helpMenu = new javax.swing.JMenu();
         helpMenuItem = new javax.swing.JMenuItem();
         changeLogMenuItem = new javax.swing.JMenuItem();
@@ -2220,13 +2240,23 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         project_menu.add(manageRawData_menuItem);
         project_menu.add(jSeparator5);
 
-        exportProjectSamples.setText("Export Project Samples");
+        exportProjectSamples.setText("Export Project Samples to Local Folder");
+        exportProjectSamples.setEnabled(false);
         exportProjectSamples.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 exportProjectSamplesActionPerformed(evt);
             }
         });
         project_menu.add(exportProjectSamples);
+
+        exportProjectSamplesToGeochron.setText("Export Project Samples to Geochron");
+        exportProjectSamplesToGeochron.setEnabled(false);
+        exportProjectSamplesToGeochron.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportProjectSamplesToGeochronActionPerformed(evt);
+            }
+        });
+        project_menu.add(exportProjectSamplesToGeochron);
         project_menu.add(jSeparator10);
 
         openProjectFile_menuItem.setText("Open Project File");
@@ -2717,7 +2747,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             }
         });
 
-        visitCIRDLES.setText("CIRDLES");
+        visitCIRDLES.setText("CIRDLES.org");
         visitCIRDLES.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 visitCIRDLESActionPerformed(evt);
@@ -2733,7 +2763,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         });
         earthTimeWebSiteMenu.add(visitEarthTimeOrg);
 
-        visitGeochron.setText("Geochron");
+        visitGeochron.setText("Geochron.org");
         visitGeochron.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 visitGeochronActionPerformed(evt);
@@ -2741,7 +2771,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         });
         earthTimeWebSiteMenu.add(visitGeochron);
 
-        visitGeoSamplesOrg.setText("SESAR (IGSN)");
+        visitGeoSamplesOrg.setText("SESAR (geoSamples.org)");
         visitGeoSamplesOrg.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 visitGeoSamplesOrgActionPerformed(evt);
@@ -2824,6 +2854,14 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             }
         });
         toolsMenu.add(producePbCCorrReport_jMenuItem);
+
+        jMenuItem1.setText("jMenuItem1");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        toolsMenu.add(jMenuItem1);
 
         mainMenuBar.add(toolsMenu);
 
@@ -3782,6 +3820,31 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
         }        // TODO add your handling code here:
     }//GEN-LAST:event_manageLAICPMSLabDefaultsActionPerformed
 
+    private void exportProjectSamplesToGeochronActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportProjectSamplesToGeochronActionPerformed
+        exportProjectSamplesToGeochron();
+    }//GEN-LAST:event_exportProjectSamplesToGeochronActionPerformed
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+//        //testing
+//        BigDecimal a = new BigDecimal(38.889723);
+//        BigDecimal sixty = new BigDecimal(60);
+//
+//        BigDecimal[] mod = a.multiply(sixty).setScale(0, RoundingMode.FLOOR).divideAndRemainder(sixty);
+//        System.out.println(mod[0] + "    " + mod[1]);
+//
+//        BigDecimal[] mod2 = a.multiply(sixty).multiply(sixty).setScale(4, RoundingMode.HALF_EVEN).divideAndRemainder(sixty);
+//        System.out.println(mod2[0] + "    " + mod2[1]);
+
+        BigDecimal DMS[] = CoordinateSystemConversions.convertDecimalCoordinateToDMS(new BigDecimal(38.889722));
+        System.out.println(DMS[0] + "  " + DMS[1] + "  " + DMS[2] + "  >>  " + CoordinateSystemConversions.convertDMSCoordinateToDecimal(DMS));
+
+        DMS = CoordinateSystemConversions.convertDecimalCoordinateToDMS(new BigDecimal(-38.889722));
+        System.out.println(DMS[0] + "  " + DMS[1] + "  " + DMS[2] + "  >>  " + CoordinateSystemConversions.convertDMSCoordinateToDecimal(DMS));
+        
+        CoordinateSystemConversions.launchGoogleMapsForLatLong(new BigDecimal(52.08),new BigDecimal(-175.17));
+
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+
     private void helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
         //Needed for having a nice look in windows... weird
         ETReduxFrame.setDefaultLookAndFeelDecorated(false);
@@ -3822,6 +3885,7 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     private javax.swing.JSeparator exitSeparator;
     private javax.swing.JMenuItem exit_menuItem;
     private javax.swing.JMenuItem exportProjectSamples;
+    private javax.swing.JMenuItem exportProjectSamplesToGeochron;
     private javax.swing.JMenu fractionsMenu;
     private javax.swing.JLayeredPane fractionsTabulatedResultsLayeredPane;
     private javax.swing.JMenuItem gCubedPaperReductionEquations_menuItem;
@@ -3830,6 +3894,7 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     private javax.swing.JMenu helpMenu;
     private javax.swing.JMenuItem helpMenuItem;
     private javax.swing.JButton interpretSampleDates_button;
+    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem13;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem4;
