@@ -367,7 +367,7 @@ public class SesarSample {
         }
     }
 
-    public static boolean validateIGSNatSESAR(String igsn) {
+    public static boolean validateSampleIGSNatSESAR(String igsn) {
         File file = retrieveXMLFileFromSesarForIGSN(igsn);
         Document doc = convertXMLTextToDOMdocument(file);
         boolean retVal = false;
@@ -377,6 +377,27 @@ public class SesarSample {
                 boolean resultsElementPresent = doc.getFirstChild().getNodeName().equalsIgnoreCase("results");
                 if (resultsElementPresent) {
                     retVal = doc.getElementsByTagName("error").getLength() == 0;
+                }
+            }
+        }
+        return retVal;
+    }
+
+    public static boolean validateAliquotIGSNatSESAR(String aliquotIgsn, String parentIgsn) {
+        File file = retrieveXMLFileFromSesarForIGSN(aliquotIgsn);
+        Document doc = convertXMLTextToDOMdocument(file);
+        boolean retVal = false;
+
+        if (doc != null) {
+            if (doc.hasChildNodes()) {
+                boolean resultsElementPresent = doc.getFirstChild().getNodeName().equalsIgnoreCase("results");
+                if (resultsElementPresent) {
+                    retVal = doc.getElementsByTagName("error").getLength() == 0;
+                    if (retVal){
+                        // test if parent present
+                        String parentIgsnFromSesar = doc.getElementsByTagName("parent_igsn").item(0).getTextContent();
+                        retVal = parentIgsnFromSesar.compareToIgnoreCase(parentIgsn) == 0;
+                    }
                 }
             }
         }

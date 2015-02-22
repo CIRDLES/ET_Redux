@@ -59,6 +59,7 @@ public class GeochronProjectExportManager extends DialogEditor {
     private String userCode;
     private String sesarUserCodeForConfirm;
     private boolean userIsValidated;
+    private boolean samplesAreLoaded;
     private ArrayList<JButton> sampleShowConcordiaButtons;
     private ArrayList<JButton> sampleShowPDFButtons;
     private ArrayList<JCheckBox> samplePublicCheckBoxes;
@@ -82,6 +83,7 @@ public class GeochronProjectExportManager extends DialogEditor {
         this.userCode = "";
         this.sesarUserCodeForConfirm = "";
         this.userIsValidated = false;
+        this.samplesAreLoaded = false;
 
         initComponents();
         setSize(1200, 750);
@@ -237,7 +239,7 @@ public class GeochronProjectExportManager extends DialogEditor {
         });
         getContentPane().setLayout(null);
 
-        exportManagerLayeredPane.setBackground(new java.awt.Color(250, 255, 255));
+        exportManagerLayeredPane.setBackground(new java.awt.Color(245, 255, 255));
         exportManagerLayeredPane.setOpaque(true);
         exportManagerLayeredPane.setPreferredSize(new java.awt.Dimension(1000, 600));
 
@@ -323,6 +325,8 @@ public class GeochronProjectExportManager extends DialogEditor {
         exportManagerLayeredPane.add(instructionsScrollPane);
         instructionsScrollPane.setBounds(10, 10, 1180, 110);
 
+        aliquotsLayeredPane.setBackground(new java.awt.Color(245, 255, 255));
+        aliquotsLayeredPane.setOpaque(true);
         aliquotsScrollPane.setViewportView(aliquotsLayeredPane);
 
         exportManagerLayeredPane.add(aliquotsScrollPane);
@@ -399,6 +403,8 @@ public class GeochronProjectExportManager extends DialogEditor {
             userIsValidated = false;
         }
 
+        samplesAreLoaded = false;
+        
         processUserValidation();
     }
 
@@ -407,8 +413,9 @@ public class GeochronProjectExportManager extends DialogEditor {
         step2_label.setVisible(userIsValidated);
 
         aliquotsScrollPane.setVisible(userIsValidated);
-        if (userIsValidated) {
+        if (userIsValidated && !samplesAreLoaded) {
             initSamplesDisplay();
+            samplesAreLoaded = true;
         } 
     }
 

@@ -32,7 +32,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Vector;
@@ -123,7 +122,6 @@ import org.earthtime.UPb_Redux.utilities.CustomIcon;
 import org.earthtime.UPb_Redux.utilities.ETSerializer;
 import org.earthtime.UPb_Redux.utilities.JHelpAction;
 import org.earthtime.UPb_Redux.utilities.MacOSAboutHandler;
-import org.earthtime.archivingTools.forSESAR.CoordinateSystemConversions;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.dataDictionaries.SampleTypesEnum;
@@ -1941,7 +1939,6 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         writeCSVFileOfLAICPMSLegacyDataSampleFieldNames_SC_WSU_vB = new javax.swing.JMenuItem();
         writeCSVFileOfLAICPMSLegacyDataSampleFieldNames_NIGL = new javax.swing.JMenuItem();
         producePbCCorrReport_jMenuItem = new javax.swing.JMenuItem();
-        jMenuItem1 = new javax.swing.JMenuItem();
         helpMenu = new javax.swing.JMenu();
         helpMenuItem = new javax.swing.JMenuItem();
         changeLogMenuItem = new javax.swing.JMenuItem();
@@ -2854,14 +2851,6 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             }
         });
         toolsMenu.add(producePbCCorrReport_jMenuItem);
-
-        jMenuItem1.setText("jMenuItem1");
-        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem1ActionPerformed(evt);
-            }
-        });
-        toolsMenu.add(jMenuItem1);
 
         mainMenuBar.add(toolsMenu);
 
@@ -3824,27 +3813,6 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
         exportProjectSamplesToGeochron();
     }//GEN-LAST:event_exportProjectSamplesToGeochronActionPerformed
 
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-//        //testing
-//        BigDecimal a = new BigDecimal(38.889723);
-//        BigDecimal sixty = new BigDecimal(60);
-//
-//        BigDecimal[] mod = a.multiply(sixty).setScale(0, RoundingMode.FLOOR).divideAndRemainder(sixty);
-//        System.out.println(mod[0] + "    " + mod[1]);
-//
-//        BigDecimal[] mod2 = a.multiply(sixty).multiply(sixty).setScale(4, RoundingMode.HALF_EVEN).divideAndRemainder(sixty);
-//        System.out.println(mod2[0] + "    " + mod2[1]);
-
-        BigDecimal DMS[] = CoordinateSystemConversions.convertDecimalCoordinateToDMS(new BigDecimal(38.889722));
-        System.out.println(DMS[0] + "  " + DMS[1] + "  " + DMS[2] + "  >>  " + CoordinateSystemConversions.convertDMSCoordinateToDecimal(DMS));
-
-        DMS = CoordinateSystemConversions.convertDecimalCoordinateToDMS(new BigDecimal(-38.889722));
-        System.out.println(DMS[0] + "  " + DMS[1] + "  " + DMS[2] + "  >>  " + CoordinateSystemConversions.convertDMSCoordinateToDecimal(DMS));
-        
-        CoordinateSystemConversions.launchGoogleMapsForLatLong(new BigDecimal(52.08),new BigDecimal(-175.17));
-
-    }//GEN-LAST:event_jMenuItem1ActionPerformed
-
     private void helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
         //Needed for having a nice look in windows... weird
         ETReduxFrame.setDefaultLookAndFeelDecorated(false);
@@ -3894,7 +3862,6 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     private javax.swing.JMenu helpMenu;
     private javax.swing.JMenuItem helpMenuItem;
     private javax.swing.JButton interpretSampleDates_button;
-    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem13;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem4;

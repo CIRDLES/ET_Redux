@@ -63,5 +63,9 @@ public class CoordinateSystemConversions {
                 + displayString + "&markers=color:red%7Clabel:S%7C" //
                 + displayString + "&zoom=11&size=400x400");
     }
+    
+    public static String getDecimalCoordinateAsString(BigDecimal coordinate){
+        return coordinate.setScale(6).toPlainString();
+    }
 
 }

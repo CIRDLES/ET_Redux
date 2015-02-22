@@ -112,6 +112,16 @@ public class SesarSampleXMLConverter implements Converter {
         writer.startNode("parent_igsn");
         writer.setValue(sesarSample.getParentIGSN());
         writer.endNode();
+
+        writer.startNode("latitude");
+        writer.setValue(CoordinateSystemConversions.getDecimalCoordinateAsString(sesarSample.getLatitude()));
+        writer.endNode();
+
+        writer.startNode("longitude");
+        writer.setValue(CoordinateSystemConversions.getDecimalCoordinateAsString(sesarSample.getLongitude()));
+        writer.endNode();
+
+    
     }
 
     /**

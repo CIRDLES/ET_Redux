@@ -19,11 +19,15 @@ import java.awt.Color;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.math.BigDecimal;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.InputVerifier;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -83,7 +87,7 @@ public class SesarSampleManager extends DialogEditor {
                 public void actionPerformed(ActionEvent event) {
                     JCheckBox cb = (JCheckBox) event.getSource();
                     if (cb.isSelected()) {
-                        sampleIGSNText.setText("<auto-fill>");
+                        sampleIGSNText.setText(sesarSample.getUserCode() + "------".substring(0, (9 - sesarSample.getUserCode().length())));
                         sampleIGSNText.setEditable(false);
                     } else {
                         sampleIGSNText.setText(sesarSample.getIGSN());
@@ -147,6 +151,30 @@ public class SesarSampleManager extends DialogEditor {
         decimalLatitude.setBounds(120, 130, 100, ROW_HEIGHT);
         decimalLatitude.setFont(ReduxConstants.sansSerif_12_Bold);
         sesarSampleDetailsLayeredPane.add(decimalLatitude);
+        decimalLatitude.setInputVerifier(new InputVerifier() {
+
+            @Override
+            public boolean verify(JComponent input) {
+                JTextField textField = (JTextField) input;
+                if (textField.getText().trim().length() == 0) {
+                    textField.setText("0.0");
+                }
+                double latitude = Double.parseDouble(textField.getText().trim());
+                if (Math.abs(latitude) > 90.0) {
+                    textField.setText(latitude < 0 ? "-90.0" : "90.0");
+                }
+                return true;
+            }
+        });
+        decimalLatitude.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent e) {
+                int key = e.getKeyCode();
+                if ((key == KeyEvent.VK_ENTER) || (key == KeyEvent.VK_TAB)) {
+                    decimalLatitude.getInputVerifier().verify(decimalLatitude);
+                }
+            }
+        }
+        );
 
         sesarSampleDetailsLayeredPane.add(labelFactory("decimal Long:", 10, 160, 100));
         JTextField decimalLongitude = new JTextField();
@@ -155,6 +183,30 @@ public class SesarSampleManager extends DialogEditor {
         decimalLongitude.setBounds(120, 160, 100, ROW_HEIGHT);
         decimalLongitude.setFont(ReduxConstants.sansSerif_12_Bold);
         sesarSampleDetailsLayeredPane.add(decimalLongitude);
+        decimalLongitude.setInputVerifier(new InputVerifier() {
+
+            @Override
+            public boolean verify(JComponent input) {
+                JTextField textField = (JTextField) input;
+                if (textField.getText().trim().length() == 0) {
+                    textField.setText("0.0");
+                }
+                double longitude = Double.parseDouble(textField.getText().trim());
+                if (Math.abs(longitude) > 180.0) {
+                    textField.setText(longitude < 0 ? "-180.0" : "180.0");
+                }
+                return true;
+            }
+        });
+        decimalLongitude.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent e) {
+                int key = e.getKeyCode();
+                if ((key == KeyEvent.VK_ENTER) || (key == KeyEvent.VK_TAB)) {
+                    decimalLongitude.getInputVerifier().verify(decimalLongitude);
+                }
+            }
+        }
+        );
 
         JButton showMapButton = new ET_JButton("Show map");
         showMapButton.setBounds(320, 145, 100, 25);
@@ -180,7 +232,7 @@ public class SesarSampleManager extends DialogEditor {
                         String proposedIGSN = sampleIGSNText.getText();
                         if (!sesarSample.confirmUserCodeCompliance(proposedIGSN)) {
                             messageText = "User code prefix of IGSN should be: " + sesarSample.getUserCode();
-                        } else if (SesarSample.validateIGSNatSESAR(proposedIGSN)) {
+                        } else if (SesarSample.validateSampleIGSNatSESAR(proposedIGSN)) {
                             messageText = "The IGSN: " + proposedIGSN + " is already in use.";
                         } else if (!SesarSample.isWellFormedIGSN(proposedIGSN, sesarSample.getUserCode())) {
                             messageText = "The IGSN: " + proposedIGSN + " is not of the form " + sesarSample.getUserCode() + "NNNNNNN\".substring(0, (9 - userCode.length())) + \", where N is any digit or any capital letter.";
@@ -195,6 +247,8 @@ public class SesarSampleManager extends DialogEditor {
                     if (doRegister) {
                         sesarSample.setSampleType(((SESAR_ObjectTypesEnum) sesarObjectTypesCombo.getSelectedItem()).getName());
                         sesarSample.setMaterial(((SESAR_MaterialTypesEnum) sesarMaterialTypesCombo.getSelectedItem()).getName());
+                        sesarSample.setLatitude(new BigDecimal(decimalLatitude.getText()));
+                        sesarSample.setLongitude(new BigDecimal(decimalLongitude.getText()));
                         // register at SESAR
                         String igsnValue = sesarSample.uploadAndRegisterSesarSample();
                         if (igsnValue.length() > 0) {
