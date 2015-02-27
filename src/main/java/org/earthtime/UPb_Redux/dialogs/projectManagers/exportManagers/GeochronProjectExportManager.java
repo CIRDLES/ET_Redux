@@ -20,31 +20,22 @@ package org.earthtime.UPb_Redux.dialogs.projectManagers.exportManagers;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
-import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.dateInterpretation.DateProbabilityDensityPanel;
-import org.earthtime.UPb_Redux.dateInterpretation.concordia.ConcordiaGraphPanel;
-import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetup;
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
-import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.reports.ReportPainterI;
-import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.UPb_Redux.samples.SampleI;
 import org.earthtime.UPb_Redux.user.ReduxPersistentState;
 import org.earthtime.archivingTools.GeochronAliquotManager;
 import org.earthtime.archivingTools.IEDACredentialsValidator;
 import org.earthtime.beans.ET_JButton;
-import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.projects.ProjectI;
 
 /**
@@ -131,42 +122,6 @@ public class GeochronProjectExportManager extends DialogEditor {
             aliquotsLayeredPane.add(geochronAliquotManager, JLayeredPane.DEFAULT_LAYER);
             geochronAliquotManager.repaint();
 
-//            JButton showConcordiaButton = new ET_JButton("View Concordia in browser");
-//            showConcordiaButton.setBounds(leftMargin + 150 + 100 + 50 + 2, topMarginForSampleDetails + row * 25, 150, 25);
-//            showConcordiaButton.setFont(ReduxConstants.sansSerif_10_Bold);
-//            showConcordiaButton.setName(String.valueOf(row));
-//            showConcordiaButton.setVisible(false);
-//            sampleShowConcordiaButtons.add(showConcordiaButton);
-//            exportManagerLayeredPane.add(showConcordiaButton, JLayeredPane.DEFAULT_LAYER);
-//            showConcordiaButton.addActionListener((ActionEvent e) -> {
-////                EarthTimeSerializedFileInterface deserializedFile = //
-////                        (EarthTimeSerializedFileInterface) ETSerializer.GetSerializedObjectFromFile(ss.getSampleReduxFilePath().toString());
-////                Sample sample = (Sample) deserializedFile;
-////                produceConcordiaGraph(sample);
-//            });
-//
-//            JButton showPDFButton = new ET_JButton("View PDF in browser");
-//            showPDFButton.setBounds(leftMargin + 150 + 100 + 50 + 2 + 150 + 2, topMarginForSampleDetails + row * 25, 150, 25);
-//            showPDFButton.setFont(ReduxConstants.sansSerif_10_Bold);
-//            showPDFButton.setName(String.valueOf(row));
-//            showPDFButton.setVisible(false);
-//            sampleShowPDFButtons.add(showPDFButton);
-//            exportManagerLayeredPane.add(showPDFButton, JLayeredPane.DEFAULT_LAYER);
-//            showPDFButton.addActionListener((ActionEvent e) -> {
-////                EarthTimeSerializedFileInterface deserializedFile = //
-////                        (EarthTimeSerializedFileInterface) ETSerializer.GetSerializedObjectFromFile(ss.getSampleReduxFilePath().toString());
-////                Sample sample = (Sample) deserializedFile;
-////                producePDFImage(sample);
-//            });
-//
-//            JCheckBox publicOptionCheckBox = new JCheckBox("Public ?");
-//            publicOptionCheckBox.setBounds(leftMargin + 150 + 100 + 50 + 2 + 150 + 2 + 150 + 2, topMarginForSampleDetails + row * 25, 100, 25);
-//            publicOptionCheckBox.setFont(ReduxConstants.sansSerif_10_Bold);
-//            publicOptionCheckBox.setName(String.valueOf(row));
-//            publicOptionCheckBox.setVisible(false);
-//            samplePublicCheckBoxes.add(publicOptionCheckBox);
-//            exportManagerLayeredPane.add(publicOptionCheckBox, JLayeredPane.DEFAULT_LAYER);
-//
             row++;
         }
 
@@ -419,116 +374,5 @@ public class GeochronProjectExportManager extends DialogEditor {
         } 
     }
 
-    private void produceConcordiaGraph(Sample sample) {
-        // feb 2015 code copied and modified from aliquot manager for user interface prototyping
-        // TODO: refactor both locations to smaple and make more robust
-        // TODO: use create virtual file system
 
-//        try {
-//            FileSystem virtualFileSystem = Jimfs.newFileSystem(Configuration.unix());
-//            Path virtualPathToSVG = virtualFileSystem.getPath("", sample.getSampleName() + ".svg");
-//
-//        } catch (Exception e) {
-//            System.out.println("JIMFS Worked");
-//        }
-        File tempConcordiaSVG = new File(sample.getSampleName() + "_tempConcordia.svg");
-        sample.setMyReduxLabData(ReduxLabData.getInstance());
-
-        ConcordiaGraphPanel concordiaGraphPanel = new ConcordiaGraphPanel(sample, null);
-
-        sample.getSampleDateInterpretationGUISettings().//
-                setConcordiaOptions(concordiaGraphPanel.getConcordiaOptions());
-        concordiaGraphPanel.//
-                setFadedDeselectedFractions(false);
-
-        // set choices per options code copied (TODO: REFACTOR ME) from SampleDateInterpretations
-        Map<String, String> CGO = concordiaGraphPanel.getConcordiaOptions();
-        if (CGO.containsKey("showEllipseLabels")) {
-            concordiaGraphPanel.setShowEllipseLabels(false);
-        }
-        if (CGO.containsKey("showExcludedEllipses")) {
-            concordiaGraphPanel.setShowExcludedEllipses(true);
-        }
-
-        concordiaGraphPanel.setSelectedFractions(sample.getUPbFractions());
-
-        concordiaGraphPanel.setBounds(510, 0, 580, 405);
-        concordiaGraphPanel.setCurrentGraphAxesSetup(new GraphAxesSetup("C", 2));
-        concordiaGraphPanel.setGraphWidth(565 - GraphAxesSetup.DEFAULT_GRAPH_LEFT_MARGIN_VERTICAL_LABELS);
-        concordiaGraphPanel.setGraphHeight(385);
-
-        concordiaGraphPanel.setYorkFitLine(null);
-        concordiaGraphPanel.getDeSelectedFractions().clear();
-        concordiaGraphPanel.setPreferredDatePanel(null);
-
-        concordiaGraphPanel.setShowTightToEdges(true);
-
-        concordiaGraphPanel.refreshPanel();
-
-        concordiaGraphPanel.setShowTightToEdges(false);
-
-        boolean saveShowTitleBox = concordiaGraphPanel.isShowTitleBox();
-        concordiaGraphPanel.setShowTitleBox(false);
-        concordiaGraphPanel.setUploadToGeochronMode(true);
-
-        concordiaGraphPanel.outputToSVG(tempConcordiaSVG);
-        // concordiaGraphPanel.outputToSVG(virtualPathToSVG.toFile());
-
-        concordiaGraphPanel.setShowTitleBox(saveShowTitleBox);
-        concordiaGraphPanel.setUploadToGeochronMode(false);
-
-        // show in a browser
-//            Desktop.getDesktop().browse(virtualPathToSVG.toUri());
-        try {
-            Desktop.getDesktop().browse(tempConcordiaSVG.toURI());
-        } catch (IOException iOException) {
-            System.out.println("Browser issue " + iOException.getMessage());
-        }
-
-    }
-
-    private void producePDFImage(Sample sample) {
-        File tempProbabilitySVG = new File(sample.getSampleName() + "_tempProbabilityDensity.svg");
-        sample.setMyReduxLabData(ReduxLabData.getInstance());
-
-        DateProbabilityDensityPanel probabilityPanel = new DateProbabilityDensityPanel(sample);
-
-        // use default if user has not initialized
-        if (probabilityPanel.getSelectedFractions().isEmpty()) {
-            probabilityPanel.//
-                    setSelectedFractions(sample.getUpbFractionsUnknown());
-            probabilityPanel.//
-                    getDeSelectedFractions().clear();
-
-            probabilityPanel.setGraphWidth(565);
-            probabilityPanel.setGraphHeight(385);
-
-            probabilityPanel.setSelectedHistogramBinCount(5);
-
-            if (sample.isTypeLegacy() & sample.getAnalysisPurpose().equals(ReduxConstants.ANALYSIS_PURPOSE.DetritalSpectrum)) {
-                probabilityPanel.setChosenDateName(RadDates.bestAge.getName());
-            } else {
-                probabilityPanel.setChosenDateName(RadDates.age207_206r.getName());
-            }
-
-            probabilityPanel.showTight();
-
-        } else {
-            probabilityPanel.setGraphWidth(565);
-            probabilityPanel.setGraphHeight(385);
-        }
-
-        probabilityPanel.setUploadToGeochronMode(true);
-
-        probabilityPanel.outputToSVG(tempProbabilitySVG);
-
-        probabilityPanel.setUploadToGeochronMode(false);
-
-        try {
-            Desktop.getDesktop().browse(tempProbabilitySVG.toURI());
-        } catch (IOException iOException) {
-            System.out.println("Browser issue " + iOException.getMessage());
-        }
-
-    }
 }

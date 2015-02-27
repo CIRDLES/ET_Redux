@@ -323,7 +323,7 @@ public class Project implements
             SampleI sample = projectSamples.get(i);
             System.out.println("Preparing for export Sample: " + sample.getSampleName());
 
-            // only on export and then not neccesary ?
+            // only on export and then not necessary ?
 //            for (int j = 0; j < sample.getUPbFractions().size(); j++) {
 //                ((UPbFractionI) sample.getUPbFractions().get(j)).setAliquotNumber(1);
 //            }

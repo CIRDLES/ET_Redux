@@ -747,4 +747,6 @@ public interface SampleI {
     public void setReportSettingsModel(ReportSettings reportSettingsModel);
 
     public void setLegacyStatusForReportTable();
+    
+    public String getNameOfAliquotFromSample(int aliquotNum);
 }

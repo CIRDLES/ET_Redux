@@ -661,6 +661,24 @@ public class Sample implements
 
         return retAliquot;
     }
+    
+    /**
+     * Feb 2015 This method handles the messy situation where a project refers to each of its aliquots
+     * by index 1...n but to upload project aliquots individually to Geochron with concordia etc
+     * means there is only one aliquot per sample and we ignore its number.
+     * @param aliquotnum
+     * @return 
+     */
+    public String getNameOfAliquotFromSample(int aliquotNum){
+        String retval;
+        if (aliquots.size() == 1){
+            retval = aliquots.get(0).getAliquotName();
+        } else {
+            retval = aliquots.get(aliquotNum - 1).getAliquotName();
+        }
+        
+        return retval;
+    }
 
     /**
      * finds the <code>Aliquot</code> named <code>file</code> in the array
