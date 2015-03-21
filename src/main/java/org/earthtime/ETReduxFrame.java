@@ -129,6 +129,7 @@ import org.earthtime.exceptions.ETException;
 import org.earthtime.projects.EarthTimeSerializedFileInterface;
 import org.earthtime.projects.Project;
 import org.earthtime.projects.projectImporters.ProjectOfLegacySamplesImporterFromCSVFile_GenericUPbIsotopic_A;
+import org.earthtime.projects.projectImporters.ProjectOfLegacySamplesImporterFromCSVFile_UCSB_LASS_A;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.mineralStandardModels.MineralStandardUPbModel;
 import org.earthtime.utilities.FileHelper;
@@ -1932,6 +1933,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         reduxPreferences = new javax.swing.JMenuItem();
         templatesForLegacyProjects_menu = new javax.swing.JMenu();
         writeCSVFileOfGenericUPbIsotopicLegacyDataSampleFieldNames_A = new javax.swing.JMenuItem();
+        writeCSVFileOfProjectLegacyDataSampleFieldNames_UCSB_LASS_A = new javax.swing.JMenuItem();
         templatesForLegacySample_menu = new javax.swing.JMenu();
         writeCSVFileOfIDTIMSLegacyDataSampleFieldNames_MIT = new javax.swing.JMenuItem();
         writeCSVFileOfLAICPMSLegacyDataSampleFieldNames_MC_USA = new javax.swing.JMenuItem();
@@ -2797,6 +2799,14 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             }
         });
         templatesForLegacyProjects_menu.add(writeCSVFileOfGenericUPbIsotopicLegacyDataSampleFieldNames_A);
+
+        writeCSVFileOfProjectLegacyDataSampleFieldNames_UCSB_LASS_A.setText("Open CSV File of UPb Isotopic Legacy Data Sample Field Names UCSB LASS (A)");
+        writeCSVFileOfProjectLegacyDataSampleFieldNames_UCSB_LASS_A.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                writeCSVFileOfProjectLegacyDataSampleFieldNames_UCSB_LASS_AActionPerformed(evt);
+            }
+        });
+        templatesForLegacyProjects_menu.add(writeCSVFileOfProjectLegacyDataSampleFieldNames_UCSB_LASS_A);
 
         toolsMenu.add(templatesForLegacyProjects_menu);
 
@@ -3813,6 +3823,10 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
         exportProjectSamplesToGeochron();
     }//GEN-LAST:event_exportProjectSamplesToGeochronActionPerformed
 
+    private void writeCSVFileOfProjectLegacyDataSampleFieldNames_UCSB_LASS_AActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_writeCSVFileOfProjectLegacyDataSampleFieldNames_UCSB_LASS_AActionPerformed
+        ProjectOfLegacySamplesImporterFromCSVFile_UCSB_LASS_A.writeAndOpenCSVFileOfLegacyDataSampleFieldNames();
+    }//GEN-LAST:event_writeCSVFileOfProjectLegacyDataSampleFieldNames_UCSB_LASS_AActionPerformed
+
     private void helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
         //Needed for having a nice look in windows... weird
         ETReduxFrame.setDefaultLookAndFeelDecorated(false);
@@ -3945,6 +3959,7 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     private javax.swing.JMenuItem writeCSVFileOfLAICPMSLegacyDataSampleFieldNames_NIGL;
     private javax.swing.JMenuItem writeCSVFileOfLAICPMSLegacyDataSampleFieldNames_SC_WSU_vA;
     private javax.swing.JMenuItem writeCSVFileOfLAICPMSLegacyDataSampleFieldNames_SC_WSU_vB;
+    private javax.swing.JMenuItem writeCSVFileOfProjectLegacyDataSampleFieldNames_UCSB_LASS_A;
     // End of variables declaration//GEN-END:variables
 
 }

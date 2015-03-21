@@ -691,6 +691,14 @@
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="writeCSVFileOfGenericUPbIsotopicLegacyDataSampleFieldNames_AActionPerformed"/>
                   </Events>
                 </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="writeCSVFileOfProjectLegacyDataSampleFieldNames_UCSB_LASS_A">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Open CSV File of UPb Isotopic Legacy Data Sample Field Names UCSB LASS (A)"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="writeCSVFileOfProjectLegacyDataSampleFieldNames_UCSB_LASS_AActionPerformed"/>
+                  </Events>
+                </MenuItem>
               </SubComponents>
             </Menu>
             <Menu class="javax.swing.JMenu" name="templatesForLegacySample_menu">
