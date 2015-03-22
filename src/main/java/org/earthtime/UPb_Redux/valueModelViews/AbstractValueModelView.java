@@ -27,6 +27,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JTextField;
@@ -120,7 +121,7 @@ public abstract class AbstractValueModelView extends JLayeredPane {
      */
     protected void initTextBoxes ( boolean editable ) {
         valueTextBox.setDocument( new DialogEditor.BigDecimalDocument( valueTextBox, editable ) );
-        valueTextBox.setText( valueModel.getValue().toString() );
+        valueTextBox.setText( valueModel.getValue().setScale(15, RoundingMode.HALF_UP).toPlainString() );
 
         uncertaintyTextBox.setDocument( new DialogEditor.BigDecimalDocument( uncertaintyTextBox, editable ) );
 
@@ -173,9 +174,9 @@ public abstract class AbstractValueModelView extends JLayeredPane {
 
     private void displayOneSigmaPerMode () {
         if ( isShowOneSigmaAsPerCent() ) {
-            uncertaintyTextBox.setText( valueModel.getOneSigmaPct().toString() );
+            uncertaintyTextBox.setText( valueModel.getOneSigmaPct().setScale(15, RoundingMode.HALF_UP).toPlainString() );
         } else {
-            uncertaintyTextBox.setText( valueModel.getOneSigmaAbs().toString() );
+            uncertaintyTextBox.setText( valueModel.getOneSigmaAbs().setScale(15, RoundingMode.HALF_UP).toPlainString() );
         }
 
     }
