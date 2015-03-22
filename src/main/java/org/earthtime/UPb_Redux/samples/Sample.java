@@ -661,6 +661,24 @@ public class Sample implements
 
         return retAliquot;
     }
+    
+    /**
+     * Feb 2015 This method handles the messy situation where a project refers to each of its aliquots
+     * by index 1...n but to upload project aliquots individually to Geochron with concordia etc
+     * means there is only one aliquot per sample and we ignore its number.
+     * @param aliquotnum
+     * @return 
+     */
+    public String getNameOfAliquotFromSample(int aliquotNum){
+        String retval;
+        if (aliquots.size() == 1){
+            retval = aliquots.get(0).getAliquotName();
+        } else {
+            retval = aliquots.get(aliquotNum - 1).getAliquotName();
+        }
+        
+        return retval;
+    }
 
     /**
      * finds the <code>Aliquot</code> named <code>file</code> in the array
@@ -844,6 +862,7 @@ public class Sample implements
         addUPbFraction(defFraction);
     }
 
+    //TODO: refactor these edit methods out of sample - MVC !!
     /**
      * opens aliquot modal editor for the <code>Fraction</code> indicated by
      * argument <code>fraction</code> and opened to the editing tab indicated by
@@ -883,7 +902,8 @@ public class Sample implements
                             selectedTab,
                             false);
         } else if (sampleAnalysisType.equalsIgnoreCase(SampleAnalysisTypesEnum.IDTIMS.getName())
-                || (sampleType.equalsIgnoreCase(SampleTypesEnum.COMPILATION.getName()))) {
+                || (sampleType.equalsIgnoreCase(SampleTypesEnum.COMPILATION.getName()))){
+// TODO: Need kwiki page for LAICPMS               || (sampleType.equalsIgnoreCase(SampleTypesEnum.PROJECT.getName()))) {
 
             myFractionEditor
                     = new UPbFractionEditorDialog(
@@ -1045,9 +1065,9 @@ public class Sample implements
                     fraction);
 
             ((UPbFractionI) fraction).setAliquotNumber(aliquotNumber);
-            ((UPbReduxAliquot) importedAliquot).getAliquotFractions().add(fraction);//nextFraction );
+            ((UPbReduxAliquot) importedAliquot).getAliquotFractions().add(fraction);
 
-            UPbFractions.add(fraction);//nextFraction );
+            UPbFractions.add(fraction);
         }
 
         aliquots.add(importedAliquot);
@@ -1585,7 +1605,7 @@ public class Sample implements
                     if (f < (fractions.length - 1)) {
                         int response = JOptionPane.showConfirmDialog(null,
                                 new String[]{"Continue to process folder?"},
-                                "U-Pb Redux Warning",
+                                "ET Redux Warning",
                                 JOptionPane.YES_NO_OPTION,
                                 JOptionPane.WARNING_MESSAGE);
                         if (response == JOptionPane.NO_OPTION) {
@@ -2031,7 +2051,6 @@ public class Sample implements
 
         if (isChanged()) {
             updateSampleFractionsWithSampleName(sampleName);
-
         }
 
     }
@@ -2585,9 +2604,9 @@ public class Sample implements
      */
     public void repairAliquotNumberingDec2011() {
         // walk aliquots and remove empty ones 
-        ArrayList<Aliquot> aliquotsToDelete = new ArrayList<Aliquot>();
+        ArrayList<Aliquot> aliquotsToDelete = new ArrayList<>();
         for (int i = 0; i < aliquots.size(); i++) {
-            Aliquot aliquot = getAliquotByNumber(i + 1);
+            Aliquot aliquot = aliquots.get(i);//    Feb 2015 getAliquotByNumber(i + 1);
             if (((UPbReduxAliquot) aliquot).getAliquotFractions().isEmpty()) {
                 // save aliquot for later deletion
                 aliquotsToDelete.add(aliquot);

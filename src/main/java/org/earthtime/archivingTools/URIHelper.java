@@ -18,10 +18,9 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.earthtime.utilities;
+package org.earthtime.archivingTools;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -82,7 +81,7 @@ public class URIHelper {
             urlConn.setUseCaches(false);
 
             retval = urlConn.getInputStream();
-            
+
         } catch (IOException iOException) {
             JOptionPane.showMessageDialog(null,
                     new String[]{"Error reaching server: "//
@@ -215,7 +214,6 @@ public class URIHelper {
 //
 //        return retval;
 //    }
-
     /**
      *
      * @param reader
@@ -326,56 +324,58 @@ public class URIHelper {
                     });
             ex.printStackTrace();
         }
-        return ConvertXMLTextToDOMdocument(new File(tempSESARFileName));
+        return convertXMLTextToDOMdocument(new File(tempSESARFileName));
     }
 
-    /**
-     *
-     * @param serviceURI
-     * @param data
-     * @return
-     */
-    public static File HTTP_PostAndResponse(String serviceURI, String data) {
-        File fileOut = new File("HTTP_PostAndResponse_tempXML.xml");
-        fileOut.delete();
-
-        try {
-            // Send data
-            URL url = new URL(serviceURI);
-            URLConnection conn = url.openConnection();
-            conn.setDoOutput(true);
-            conn.setDoInput(true);
-
-            // The POST line
-            try (DataOutputStream dstream = new DataOutputStream(conn.getOutputStream())) {
-                // The POST line
-                dstream.writeBytes(data);
-            }
-
-            FileOutputStream streamOut;
-            try ( // Read Response
-                    InputStream in = conn.getInputStream()) {
-                streamOut = new FileOutputStream(fileOut);
-                int x;
-                while ((x = in.read()) != -1) {
-                    streamOut.write(x);
-                    //System.out.write(x);
-                }
-            }
-            streamOut.close();
-        } catch (Exception e) {
-            return null;
-        }
-
-        return fileOut;
-    }
+//    /**
+//     *
+//     * @param serviceURI
+//     * @param data
+//     * @return
+//     */
+//    public static File HTTP_PostAndResponse(String serviceURI, String data, String fileTag) {
+//        File fileOut = null;
+//        try {
+//            // Send data
+//            URL url = new URL(serviceURI);
+//            URLConnection conn = url.openConnection();
+//            conn.setDoOutput(true);
+//            conn.setDoInput(true);
+//
+//            // The POST line
+//            try (DataOutputStream dstream = new DataOutputStream(conn.getOutputStream())) {
+//                // The POST line
+//                dstream.writeBytes(data);
+//            }
+//
+//            fileOut = new File(fileTag + "HTTP_PostAndResponse_tempXML.xml");
+//            fileOut.delete();
+//
+//            FileOutputStream streamOut;
+//
+//            try ( // Read Response
+//                    InputStream in = conn.getInputStream()) {//
+//                streamOut = new FileOutputStream(fileOut);
+//                int x;
+//                while ((x = in.read()) != -1) {
+//                    streamOut.write(x);
+//                    //System.out.write(x);
+//                }
+//            }
+//            streamOut.close();
+//        } catch (Exception e) {
+//            return null;
+//        }
+//
+//        return fileOut;
+//    }
 
     /**
      *
      * @param XMLfile
      * @return
      */
-    public static org.w3c.dom.Document ConvertXMLTextToDOMdocument(File XMLfile) {
+    public static org.w3c.dom.Document convertXMLTextToDOMdocument(File XMLfile) {
         org.w3c.dom.Document doc = null;
 
         // Parses an XML file and returns a DOM document.

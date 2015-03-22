@@ -416,7 +416,7 @@ public class LabDataEditorDialog extends DialogEditor {
 
             int response = JOptionPane.showConfirmDialog(this,
                     new String[]{"You have not saved the edited Tracer UPb Model ... Proceed anyway ?"},
-                    "U-Pb Redux Warning",
+                    "ET Redux Warning",
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.WARNING_MESSAGE);
             retval = (response == JOptionPane.YES_OPTION);
@@ -543,7 +543,7 @@ public class LabDataEditorDialog extends DialogEditor {
             JOptionPane.showConfirmDialog(
                     null,
                     new String[]{"This Tracer could not be imported...please confirm it conforms to the schema."},
-                    "U-Pb Redux Warning",
+                    "ET Redux Warning",
                     JOptionPane.WARNING_MESSAGE);
         }
     }
@@ -731,7 +731,7 @@ public class LabDataEditorDialog extends DialogEditor {
             //setVisible(false);
             int response = JOptionPane.showConfirmDialog(this,
                     new String[]{"You have not saved the edited Alpha U Model ... Proceed anyway ?"},
-                    "U-Pb Redux Warning",
+                    "ET Redux Warning",
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.WARNING_MESSAGE);
             retval = (response == JOptionPane.YES_OPTION);
@@ -869,7 +869,7 @@ public class LabDataEditorDialog extends DialogEditor {
                     = JOptionPane.showConfirmDialog(
                             null,
                             new String[]{"This AlphaUModel could not be imported...please confirm it conforms to the schema."},
-                            "U-Pb Redux Warning",
+                            "ET Redux Warning",
                             JOptionPane.WARNING_MESSAGE);
         }
     }
@@ -1016,7 +1016,7 @@ public class LabDataEditorDialog extends DialogEditor {
             //setVisible(false);
             int response = JOptionPane.showConfirmDialog(this,
                     new String[]{"You have not saved the edited Alpha U Model ... Proceed anyway ?"},
-                    "U-Pb Redux Warning",
+                    "ET Redux Warning",
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.WARNING_MESSAGE);
             retval = (response == JOptionPane.YES_OPTION);
@@ -1309,7 +1309,7 @@ public class LabDataEditorDialog extends DialogEditor {
 
             int response = JOptionPane.showConfirmDialog(this,
                     new String[]{"You have not saved the new Pb Blank Model ... Proceed anyway?"},
-                    "U-Pb Redux Warning",
+                    "ET Redux Warning",
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.WARNING_MESSAGE);
             retval = (response == JOptionPane.YES_OPTION);
@@ -1438,7 +1438,7 @@ public class LabDataEditorDialog extends DialogEditor {
             JOptionPane.showConfirmDialog(
                     null,
                     new String[]{"This PbBlank Model could not be imported...please confirm it conforms to the schema."},
-                    "U-Pb Redux Warning",
+                    "ET Redux Warning",
                     JOptionPane.WARNING_MESSAGE);
         }
 
@@ -1625,7 +1625,7 @@ public class LabDataEditorDialog extends DialogEditor {
         if (newEmptyInitialPbModel != null) {
             int response = JOptionPane.showConfirmDialog(this,
                     new String[]{"You have not saved the new Initial Pb Model ... Proceed anyway?"},
-                    "U-Pb Redux Warning",
+                    "ET Redux Warning",
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.WARNING_MESSAGE);
             retval = (response == JOptionPane.YES_OPTION);
@@ -1767,7 +1767,7 @@ public class LabDataEditorDialog extends DialogEditor {
             JOptionPane.showConfirmDialog(
                     null,
                     new String[]{"This Initial Pb Model could not be imported...please confirm it conforms to the schema."},
-                    "U-Pb Redux Warning",
+                    "ET Redux Warning",
                     JOptionPane.WARNING_MESSAGE);
         }
     }
@@ -1916,7 +1916,7 @@ public class LabDataEditorDialog extends DialogEditor {
 
             int response = JOptionPane.showConfirmDialog(this,
                     new String[]{"You have not saved the edited Physical Constants Model ... Proceed anyway ?"},
-                    "U-Pb Redux Warning",
+                    "ET Redux Warning",
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.WARNING_MESSAGE);
             retval = (response == JOptionPane.YES_OPTION);
@@ -2183,7 +2183,7 @@ public class LabDataEditorDialog extends DialogEditor {
 
             int response = JOptionPane.showConfirmDialog(this,
                     new String[]{"You have not saved the new Mineral Standard Model ... Proceed anyway?"},
-                    "U-Pb Redux Warning",
+                    "ET Redux Warning",
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.WARNING_MESSAGE);
             retval = (response == JOptionPane.YES_OPTION);
@@ -2315,7 +2315,7 @@ public class LabDataEditorDialog extends DialogEditor {
             JOptionPane.showConfirmDialog(
                     null,
                     new String[]{"This Mineral Standard could not be imported...please confirm it conforms to the schema."},
-                    "U-Pb Redux Warning",
+                    "ET Redux Warning",
                     JOptionPane.WARNING_MESSAGE);
         }
     }

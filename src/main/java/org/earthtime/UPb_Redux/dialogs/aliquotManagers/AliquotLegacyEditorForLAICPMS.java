@@ -267,7 +267,7 @@ public class AliquotLegacyEditorForLAICPMS extends AliquotEditorDialog {
 //                    JOptionPane.showMessageDialog(
 //                            null,
 //                            new String[]{"Duplicate Fraction ID, please use another."},
-//                            "U-Pb Redux Warning",
+//                            "ET Redux Warning",
 //                            JOptionPane.WARNING_MESSAGE );
 //
 //                } else {
@@ -884,7 +884,7 @@ public class AliquotLegacyEditorForLAICPMS extends AliquotEditorDialog {
                         JOptionPane.showConfirmDialog(
                         null,
                         new String[]{"You must first save the Aliquot ... proceed?"},
-                        "U-Pb Redux Warning",
+                        "ET Redux Warning",
                         JOptionPane.WARNING_MESSAGE );
                 if ( result == JOptionPane.OK_OPTION ) {
                     proceed = true;

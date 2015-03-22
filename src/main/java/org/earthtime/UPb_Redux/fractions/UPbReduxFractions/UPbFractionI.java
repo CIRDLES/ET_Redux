@@ -325,4 +325,10 @@ public interface UPbFractionI {
     public void calculateTeraWasserburgRho();
     
     public boolean isCommonLeadLossCorrected();
+    
+    public boolean hasXMLUSourceFile ();
+    
+    public boolean hasXMLPbSourceFile ();
+    
+    public boolean isAnOxide();
 }

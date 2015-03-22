@@ -44,12 +44,12 @@ public class ETRedux {
     /**
      * Version 3.0.0 initiates switch to ET_Redux from U-Pb_Redux
      */
-    public static String VERSION = "3.0.1";
+    public static String VERSION = "3.0.4";
 
     /**
      *
      */
-    public static String RELEASE_DATE = "22 January 2015";
+    public static String RELEASE_DATE = "22 March 2015";
 
     /**
      * Creates a new instance of UPbRedux
@@ -114,7 +114,7 @@ public class ETRedux {
 //                File reduxFile = new File(evt.getFilename());
 //                JOptionPane.showMessageDialog(null,
 //                        new String[]{evt.getFilename()},
-//                        "U-Pb Redux Warning",
+//                        "ET Redux Warning",
 //                        JOptionPane.WARNING_MESSAGE);
 //                if (reduxFile.exists()) {
 //                    new ETRedux(reduxFile);

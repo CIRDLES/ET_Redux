@@ -25,8 +25,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
-import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.ETRedux;
+import org.earthtime.UPb_Redux.ReduxConstants;
 
 /**
  *
@@ -92,7 +92,7 @@ public class AnnouncementPane extends JLayeredPane {
 
         ((MessagePanel) this.messagePanel).setMessage(message);
 
-        this.add(messagePanel);
+        this.add(messagePanel, DEFAULT_LAYER);
 
     }
 

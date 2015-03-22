@@ -18,7 +18,7 @@
  */
 package org.earthtime.dataDictionaries;
 
-import org.earthtime.utilities.URIHelper;
+import org.earthtime.archivingTools.URIHelper;
 import org.w3c.dom.Node;
 
 /**

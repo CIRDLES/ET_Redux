@@ -57,7 +57,7 @@ import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
 import org.earthtime.dataDictionaries.DataDictionary;
 import org.earthtime.dataDictionaries.RatioNamePrettyPrinter;
 import org.earthtime.exceptions.ETException;
-import org.earthtime.utilities.URIHelper;
+import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.xmlUtilities.XMLSerializationI;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;

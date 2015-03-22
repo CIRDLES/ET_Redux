@@ -398,7 +398,7 @@ public abstract class AbstractRawDataFileHandler implements //
                         Iterator<TripoliFraction> sampleFractionsIterator = sampleFractions.iterator();
 
                         // save off the standards
-                        SortedSet<TripoliFraction> standardsToMoveMap = new TreeSet<TripoliFraction>();
+                        SortedSet<TripoliFraction> standardsToMoveMap = new TreeSet<>();
 
                         while (sampleFractionsIterator.hasNext()) {
                             tf = sampleFractionsIterator.next();

@@ -103,7 +103,7 @@ public class FileHelper {
                             new String[]{"The file exists.",
                                 "Do you want to replace it?"
                             },
-                            "U-Pb Redux Warning",
+                            "ET Redux Warning",
                             JOptionPane.YES_NO_OPTION,
                             JOptionPane.WARNING_MESSAGE);
                     if (response == JOptionPane.NO_OPTION) {
@@ -199,7 +199,7 @@ public class FileHelper {
             if (!fractionFolder.exists()) {
                 JOptionPane.showMessageDialog(null,
                         new String[]{"The folder does NOT exist."},
-                        "U-Pb Redux Warning",
+                        "ET Redux Warning",
                         JOptionPane.WARNING_MESSAGE);
             }
         }

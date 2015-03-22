@@ -45,7 +45,7 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 import org.earthtime.exceptions.ETException;
-import org.earthtime.utilities.URIHelper;
+import org.earthtime.archivingTools.URIHelper;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import java.io.File;

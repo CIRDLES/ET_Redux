@@ -37,7 +37,7 @@ import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.ratioDataModels.initialPbModelsET.InitialPbModelET;
 import org.earthtime.ratioDataModels.initialPbModelsET.InitialPbModelETXMLConverter;
-import org.earthtime.utilities.URIHelper;
+import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.xmlUtilities.XMLSerializationI;
 
 /**

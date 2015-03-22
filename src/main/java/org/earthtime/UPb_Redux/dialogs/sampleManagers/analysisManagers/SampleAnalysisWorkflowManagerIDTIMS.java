@@ -243,7 +243,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
                 new UnDoAbleDocument(aliquotName_text, true));
         aliquotName_text.setText("Aliquot Name");
 
-        aliquotList = new ArrayList<String>();
+        aliquotList = new ArrayList<>();
         if (mySample.getUPbFractions().size() > 0) {
             for (int i = 0; i < mySample.getAliquots().size(); i++) {
                 // only show aliquots with fractions because removed aliquots still exist with zero fraction

@@ -277,7 +277,9 @@ public abstract class DialogEditor extends JDialog {
                 try {
                     double tempVal = Double.parseDouble(newValue);
 
-                    if ((maxValue > 0.0)){//jan 2014 removed positive constraint && (tempVal > maxValue)) {
+//                    if ((maxValue > 0.0)){//jan 2014 removed positive constraint && (tempVal > maxValue)) {
+                    // jan 2015 repalced to original
+                    if ((maxValue > 0.0) && (tempVal > maxValue)) {
                         string = Double.toString(maxValue);
                         offset = 0;
                         textF.setText("");

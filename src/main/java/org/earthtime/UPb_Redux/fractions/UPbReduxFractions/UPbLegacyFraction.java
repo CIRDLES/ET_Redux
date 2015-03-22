@@ -709,4 +709,19 @@ public class UPbLegacyFraction extends Fraction implements
     public boolean isCommonLeadLossCorrected() {
         return false; // dec 2014 until we learn that this is the case
     }
+
+    @Override
+    public boolean hasXMLUSourceFile() {
+        return false;
+    }
+
+    @Override
+    public boolean hasXMLPbSourceFile() {
+        return false;
+    }
+
+    @Override
+    public boolean isAnOxide() {
+        return false;
+    }
 }

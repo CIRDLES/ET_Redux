@@ -84,7 +84,7 @@ import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsMo
 import org.earthtime.ratioDataModels.tracers.TracerUPbModel;
 import org.earthtime.ratioDataModels.tracers.TracerUPbModelXMLConverter;
 import org.earthtime.utilities.CollectionHelpers;
-import org.earthtime.utilities.URIHelper;
+import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.xmlUtilities.XMLSerializationI;
 
 /**

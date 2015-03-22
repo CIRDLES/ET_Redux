@@ -166,6 +166,9 @@ public class DataPresentationModeChooserPanel extends AbstractRawDataView {
 
                 ((TripoliSessionRawDataView) sampleSessionDataView).getTripoliSession().applyMaskingArray();
                 ((TripoliSessionRawDataView) sampleSessionDataView).getTripoliSession().reFitAllFractions();
+                
+                // jan 2015 force refit after applying shade
+                ((TripoliSessionRawDataView) sampleSessionDataView).getTripoliSession().calculateSessionFitFunctionsForPrimaryStandard();
 
                 ((AbstractRawDataView) sampleSessionDataView).refreshPanel();
 

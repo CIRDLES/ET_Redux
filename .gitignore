@@ -7,6 +7,11 @@ dependency-reduced-pom.xml
 
 # Generated
 *.txt
+*.html
+*.xml
+*.svg
+*.densityplotter
+*.csv
 
 # MACOS
 .DS_Store

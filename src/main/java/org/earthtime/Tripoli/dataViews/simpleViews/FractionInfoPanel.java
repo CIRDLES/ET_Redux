@@ -33,6 +33,7 @@ import org.earthtime.Tripoli.dataViews.overlayViews.TripoliSessionRawDataView;
 import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.FitFunctionsOnRatioDataView;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.Tripoli.fractions.TripoliFractionIncludeChangeInterface;
+import org.earthtime.Tripoli.sessions.TripoliSessionFractionationCalculatorInterface;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.utilities.TimeToString;
@@ -164,10 +165,16 @@ public class FractionInfoPanel extends AbstractRawDataView {
             //if (  ! tripoliFraction.isStandard() ) {
             ((UPbFractionI) tripoliFraction.getuPbFraction()).setRejected(!isSelected);
 
-            if (isSelected) {
-                tripoliFraction.updateInterceptFitFunctionsIncludingCommonLead();
+//            if (isSelected) {
+//                tripoliFraction.updateInterceptFitFunctionsIncludingCommonLead();
+//            }
+            // jan 2015
+            if (tripoliFraction.isStandard()) {
+                ((TripoliSessionFractionationCalculatorInterface) sampleSessionDataView).calculateSessionFitFunctionsForPrimaryStandard();
+                updateReportTable();
+            } else {
+                updateReportTableView();
             }
-            updateReportTable();
 
             //}
         }

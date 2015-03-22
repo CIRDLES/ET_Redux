@@ -415,14 +415,12 @@ public class TripoliFraction implements //
             }
 
             AbstractFunctionOfX FofX = null;
-//            try {
+
             FofX = ((DataModelFitFunctionInterface) rr).getSelectedFitFunction();
             if (FofX != null) {
                 Matrix JacobianYInterceptLogRatioXY = FofX.getMatrixJacobianYInterceptLogRatioXY();
                 JacobianYInterceptLogRatioAll.setMatrix(totalRatiosUsed, totalRatiosUsed, totalColumnsUsed, totalColumnsUsed + columnsCount - 1, JacobianYInterceptLogRatioXY);
             }
-//            } catch (Exception e) {
-//            }
             totalColumnsUsed += columnsCount;
             totalRatiosUsed += 1;
         }
@@ -483,46 +481,6 @@ public class TripoliFraction implements //
                 SlogRatioAll.setMatrix(columnsCount, columnsCount, 0 + 3 * columnsCount, +3 * columnsCount + matrixIndex - 1, Sopbclr_206CorrectedCols);
 
                 SlogRatioAll.setMatrix(0, 0, matrixIndex + 3 * columnsCount, 2 * matrixIndex + 3 * columnsCount - 1, Sopbclr_207CorrectedCols);
-
-//                // compute the intersection of indices
-//                ArrayList<Integer> selectedIndexes = new ArrayList<>();
-//
-//                int index = 0;
-//                for (int i = 0; i < rr.getDataActiveMap().length; i++) {
-//                    if (rr.getDataActiveMap()[i] && savedCommonLeadDataActiveMap[i]) {
-//                        selectedIndexes.add(index);
-//                        index++;
-//                    }
-//                }
-//                // TODO check for a different count
-//                //
-//                // remove rows for below diagonal
-//                Matrix Sopbclr_206CorrectedRows = new Matrix(selectedIndexes.size(), Sopbclr_206.getColumnDimension(), 0.0);
-//                Matrix Sopbclr_207CorrectedRows = new Matrix(selectedIndexes.size(), Sopbclr_207.getColumnDimension(), 0.0);
-//                for (int i = 0; i < selectedIndexes.size(); i++) {
-//                    index = selectedIndexes.get(i);
-//                    Sopbclr_206CorrectedRows.setMatrix(i, i, 0, columnsCount - 1, Sopbclr_206.getMatrix(index, index, 0, columnsCount - 1));
-//                    Sopbclr_207CorrectedRows.setMatrix(i, i, 0, columnsCount - 1, Sopbclr_207.getMatrix(index, index, 0, columnsCount - 1));
-//                }
-//
-//                SlogRatioAll.setMatrix(0 + 3 * columnsCount, selectedIndexes.size() + 3 * columnsCount - 1, 0, columnsCount - 1, Sopbclr_206CorrectedRows);
-//                SlogRatioAll.setMatrix(0 + 3 * columnsCount, selectedIndexes.size() + 3 * columnsCount - 1, columnsCount, 2 * columnsCount - 1, Sopbclr_206CorrectedRows);
-//
-//                SlogRatioAll.setMatrix(selectedIndexes.size() + 3 * columnsCount, 2 * selectedIndexes.size() + 3 * columnsCount - 1, 0, columnsCount - 1, Sopbclr_207CorrectedRows);
-//
-//                // remove cols for above diagonal
-//                Matrix Sopbclr_206CorrectedCols = new Matrix(Sopbclr_206.getRowDimension(), selectedIndexes.size(), 0.0);
-//                Matrix Sopbclr_207CorrectedCols = new Matrix(Sopbclr_207.getRowDimension(), selectedIndexes.size(), 0.0);
-//                for (int i = 0; i < selectedIndexes.size(); i++) {
-//                    index = selectedIndexes.get(i);
-//                    Sopbclr_206CorrectedCols.setMatrix(0, columnsCount - 1, i, i, Sopbclr_206.getMatrix(0, columnsCount - 1, index, index));
-//                    Sopbclr_207CorrectedCols.setMatrix(0, columnsCount - 1, i, i, Sopbclr_207.getMatrix(0, columnsCount - 1, index, index));
-//                }
-//
-//                SlogRatioAll.setMatrix(0, 0, 0 + 3 * columnsCount, +3 * columnsCount + selectedIndexes.size() - 1, Sopbclr_206CorrectedRows);
-//                SlogRatioAll.setMatrix(columnsCount, columnsCount, 0 + 3 * columnsCount, +3 * columnsCount + selectedIndexes.size() - 1, Sopbclr_206CorrectedRows);
-//
-//                SlogRatioAll.setMatrix(0, 0, selectedIndexes.size() + 3 * columnsCount, 2 * selectedIndexes.size() + 3 * columnsCount - 1, Sopbclr_207CorrectedRows);
             }
 
             if (rr.getRawRatioModelName().compareTo(RawRatioNames.r208_232w) == 0) {
@@ -563,47 +521,12 @@ public class TripoliFraction implements //
 
                 SlogRatioAll.setMatrix(2 * columnsCount, 3 * columnsCount - 1, 3 * columnsCount + 2 * matrixIndex, 3 * columnsCount + 3 * matrixIndex - 1, Sopbclr_208CorrectedCols);
 
-//                Matrix Sopbclr_208 = ((RawRatioDataModel) rr).getTopSopbclr();
-//                // compute the intersection of indices
-//                ArrayList<Integer> selectedIndexes = new ArrayList<>();
-//
-//                int index = 0;
-//                for (int i = 0; i < rr.getDataActiveMap().length; i++) {
-//                    if (rr.getDataActiveMap()[i] && savedCommonLeadDataActiveMap[i]) {
-//                        selectedIndexes.add(index);
-//                        index++;
-//                    }
-//                }
-//
-//                // TODO check for a different count
-//                //
-//                // remove rows for below diagonal
-//                Matrix Sopbclr_208CorrectedRows = new Matrix(selectedIndexes.size(), Sopbclr_208.getColumnDimension(), 0.0);
-//                for (int i = 0; i < selectedIndexes.size(); i++) {
-//                    index = selectedIndexes.get(i);
-//                    Sopbclr_208CorrectedRows.setMatrix(i, i, 0, columnsCount - 1, Sopbclr_208.getMatrix(index, index, 0, columnsCount - 1));
-//                }
-//
-//                SlogRatioAll.setMatrix(3 * columnsCount + 2 * selectedIndexes.size(), 3 * columnsCount + 3 * selectedIndexes.size() - 1, 2 * columnsCount, 3 * columnsCount - 1, Sopbclr_208CorrectedRows);
-//
-//                // remove cols for above diagonal
-//                Matrix Sopbclr_208CorrectedCols = new Matrix(Sopbclr_208.getRowDimension(), selectedIndexes.size(), 0.0);
-//                for (int i = 0; i < selectedIndexes.size(); i++) {
-//                    index = selectedIndexes.get(i);
-//                    Sopbclr_208CorrectedCols.setMatrix(0, columnsCount - 1, i, i, Sopbclr_208.getMatrix(0, columnsCount - 1, index, index));
-//                }
-//
-//                SlogRatioAll.setMatrix(2 * columnsCount, 3 * columnsCount - 1, 3 * columnsCount + 2 * selectedIndexes.size(), 3 * columnsCount + 3 * selectedIndexes.size() - 1, Sopbclr_208CorrectedCols);
             }
 
         }
 
         Matrix Sfci = JacobianYInterceptLogRatioAll.times(SlogRatioAll).times(JacobianYInterceptLogRatioAll.transpose());
 
-        // moved here from abstractmassspecu  Nov 2014
-//        for (DataModelInterface rr : rawRatios) {
-////////            ((DataModelFitFunctionInterface) rr).cleanupUnctCalcs();
-//        }
         System.gc();
 
         return Sfci;
@@ -618,6 +541,12 @@ public class TripoliFraction implements //
         this.included = included;
         for (int i = 0; i < dataActiveMap.length; i++) {
             toggleOneDataAquisition(i, included);
+        }
+        
+        // jan 2015
+        // force masking array
+        if (included) {
+            applyMaskingArray();
         }
     }
 

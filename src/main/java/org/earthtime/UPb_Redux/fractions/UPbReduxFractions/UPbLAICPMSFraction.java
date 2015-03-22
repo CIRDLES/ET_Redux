@@ -1457,4 +1457,19 @@ public class UPbLAICPMSFraction extends Fraction implements
     public void setCorrectedForPbc(boolean correctedForPbc) {
         this.correctedForPbc = correctedForPbc;
     }
+
+    @Override
+    public boolean hasXMLUSourceFile() {
+        return false;
+    }
+
+    @Override
+    public boolean hasXMLPbSourceFile() {
+        return false;
+    }
+    
+    @Override
+    public boolean isAnOxide(){
+        return false;
+    }
 }

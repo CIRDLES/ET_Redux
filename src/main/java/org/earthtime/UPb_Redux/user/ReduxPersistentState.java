@@ -23,15 +23,11 @@ package org.earthtime.UPb_Redux.user;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
-import javax.swing.JOptionPane;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import static org.earthtime.UPb_Redux.ReduxConstants.myUsersUPbReduxDataFolderName;
 import org.earthtime.UPb_Redux.utilities.ETSerializer;
 import org.earthtime.exceptions.ETException;
-import org.earthtime.utilities.URIHelper;
 
 /**
  *
@@ -42,6 +38,7 @@ public class ReduxPersistentState implements Serializable {
 
     // class variables
     private static final long serialVersionUID = -2957701651505126654L;
+    private static ReduxPersistentState instance = null;
     private static final String persistentStateFileName = "ReduxPersistentState.ser";
     private static int MRU_COUNT = 10;
     // instance variables
@@ -106,7 +103,7 @@ public class ReduxPersistentState implements Serializable {
         serializeSelf();
     }
 
-    private void serializeSelf() {
+    public void serializeSelf() {
         // save off initial persistent state serialized file
         try {
             ETSerializer.SerializeObjectToFile(this, getMySerializedName());
@@ -194,134 +191,21 @@ public class ReduxPersistentState implements Serializable {
             dataFolder.mkdir();
         }
 
-        ReduxPersistentState retval;
-        retval = (ReduxPersistentState) ETSerializer.GetSerializedObjectFromFile(ReduxPersistentState.getMySerializedName());
-        if (retval == null) {
+        //instance = (ReduxPersistentState) ETSerializer.GetSerializedObjectFromFile(getMySerializedName());
+        if (instance == null) {
             // test for transition to ET_Redux from U-Pb_Redux
             // jan 2015 check if old U-Pb_Redux folder exists and copy file from there
             File dataFolderUPbRedux = new File(
                     File.separator + System.getProperty("user.home") + File.separator + myUsersUPbReduxDataFolderName);
             if (dataFolderUPbRedux.exists()) {
-                try {
-                    retval = (ReduxPersistentState) ETSerializer.GetSerializedObjectFromFile(dataFolderUPbRedux.getCanonicalPath() + File.separator + persistentStateFileName);
-                } catch (IOException iOException) {
-                }
+                instance = (ReduxPersistentState) ETSerializer.GetSerializedObjectFromFile(getMySerializedName());
             }
-            if (retval == null) {
-                retval = new ReduxPersistentState();
+            if (instance == null) {
+                instance = new ReduxPersistentState();
             }
         }
 
-        return retval;
-    }
-
-    /**
-     *
-     * http://www.geochronportal.org/post_to_credentials_service.html
-     *
-     * @param username
-     * @param password
-     * @param isVerbose
-     * @return
-     */
-    public boolean validateGeochronCredentials(String username, String password, boolean isVerbose) {
-
-        String geochronCredentialsService = "http://www.geochron.org/credentials_service.php";
-        boolean valid = false;
-
-        getReduxPreferences().setGeochronUserName(username);
-        getReduxPreferences().setGeochronPassWord(password);
-
-        String data = null;
-        try {
-            data = //
-                    URLEncoder.encode("username", "UTF-8") + "=" + URLEncoder.encode(username, "UTF-8");
-            data += "&" + URLEncoder.encode("password", "UTF-8") + "=" + URLEncoder.encode(password, "UTF-8");
-        } catch (UnsupportedEncodingException unsupportedEncodingException) {
-        }
-
-        File fileOut = URIHelper.HTTP_PostAndResponse(//
-                geochronCredentialsService,
-                data);
-
-        if (fileOut != null) {
-            org.w3c.dom.Document doc = URIHelper.ConvertXMLTextToDOMdocument(fileOut);
-
-            if (doc != null) {
-                if (doc.getElementsByTagName("valid").getLength() > 0) {
-                    valid = doc.getElementsByTagName("valid").item(0).getTextContent().trim().equalsIgnoreCase("yes");
-                    System.out.println("valid = " + valid);
-                }
-            }
-            if (isVerbose) {
-                JOptionPane.showMessageDialog(null,
-                        new String[]{
-                            valid ? "Geochron Credentials are VALID!\n" : "Credentials NOT valid!\n"
-                        });
-            }
-        } else {
-            if (isVerbose) {
-                JOptionPane.showMessageDialog(null,
-                        new String[]{"Credentials Server " + geochronCredentialsService + " cannot be located.\n"
-                        });
-            }
-        }
-        return valid;
-    }
-
-    /**
-     *
-     * http://www.geosamples.org/post_to_credentials_service.html
-     *
-     * @param username
-     * @param password
-     * @param isVerbose
-     * @return
-     */
-    public boolean validateSESARCredentials(String username, String password, boolean isVerbose) {
-        String SESARCredentialsService = "http://www.geosamples.org/credentials_service.php";
-        boolean valid = false;
-
-        getReduxPreferences().setSesarUserName(username);
-        getReduxPreferences().setSesarPassWord(password);
-
-        String data = null;
-        try {
-            data = //
-                    URLEncoder.encode("username", "UTF-8") + "=" + URLEncoder.encode(username, "UTF-8");
-            data += "&" + URLEncoder.encode("password", "UTF-8") + "=" + URLEncoder.encode(password, "UTF-8");
-        } catch (UnsupportedEncodingException unsupportedEncodingException) {
-        }
-
-        File fileOut = URIHelper.HTTP_PostAndResponse(//
-                SESARCredentialsService,
-                data);
-        if (fileOut != null) {
-            org.w3c.dom.Document doc = URIHelper.ConvertXMLTextToDOMdocument(fileOut);
-
-            if (doc != null) {
-                if (doc.getElementsByTagName("valid").getLength() > 0) {
-                    valid = doc.getElementsByTagName("valid").item(0).getTextContent().trim().equalsIgnoreCase("yes");
-                    System.out.println("valid = " + valid);
-                }
-            }
-
-            if (isVerbose) {
-                JOptionPane.showMessageDialog(null,
-                        new String[]{
-                            valid ? "SESAR Credentials are VALID!\n" : "Credentials NOT valid!\n"
-                        });
-            }
-
-        } else {
-            if (isVerbose) {
-                JOptionPane.showMessageDialog(null,
-                        new String[]{"Credentials Server " + SESARCredentialsService + " cannot be located.\n"
-                        });
-            }
-        }
-
-        return valid;
+        return instance;
     }
 
     //properties

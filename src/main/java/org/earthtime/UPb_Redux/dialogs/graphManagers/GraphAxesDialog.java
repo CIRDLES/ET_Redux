@@ -120,7 +120,7 @@ public class GraphAxesDialog extends javax.swing.JDialog {
 
         initComponents();
 
-        setSize(560, 680);
+        setSize(560, 780);
         //Get the screen size
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Dimension screenSize = toolkit.getScreenSize();
@@ -967,7 +967,7 @@ public class GraphAxesDialog extends javax.swing.JDialog {
         saveSettings();
 
 
-        ((ConcordiaGraphPanel) concordiaGraphPanel).repaint();
+        concordiaGraphPanel.repaint();
     }//GEN-LAST:event_apply_buttonActionPerformed
     private void snapXConcordiaToDiagonal_buttonActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_snapXConcordiaToDiagonal_buttonActionPerformed
         yDateMin_text.setText(xDateMin_text.getText());

@@ -1,5 +1,5 @@
 /*
- * ProjectOfLegacySamplesImporterFromCSVFile_UCSB_LASS_A.java
+ * ProjectOfLegacySamplesFieldNames_UCSB_LASS_A.java
  *
  * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
  *
@@ -19,6 +19,9 @@ package org.earthtime.projects.projectImporters;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -32,10 +35,12 @@ import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLegacyFraction;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.UPb_Redux.samples.SampleI;
+import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UPb_Redux.valueModels.definedValueModels.PercentDiscordance;
 import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.dataDictionaries.SampleTypesEnum;
+import org.earthtime.dataDictionaries.TemplatesForCsvImport;
 import org.earthtime.dataDictionaries.TraceElements;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.projects.ProjectI;
@@ -148,8 +153,11 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_UCSB_LASS_A extends Abstr
                             .setValue(readCSVCell(myFractionData.get(8)).// column I
                                     movePointLeft(6));
 
-                    // Th ppm missing = column J (9)
-                    //
+                    datumName = "concTh";
+                    myFraction.getCompositionalMeasureByName(datumName)//
+                            .setValue(readCSVCell(myFractionData.get(9)).// column J
+                                    movePointLeft(6));
+
                     datumName = "rTh_Usample";
                     myFraction.getCompositionalMeasureByName(datumName)//
                             .setValue(readCSVCell(myFractionData.get(10)));// column K
@@ -259,10 +267,10 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_UCSB_LASS_A extends Abstr
 
                     datumName = RadDates.age208_232r.getName();
                     myFraction.getRadiogenicIsotopeDateByName(datumName)//
-                            .setValue(readCSVCell(myFractionData.get(32)).// column AE
+                            .setValue(readCSVCell(myFractionData.get(32)).// column AG
                                     movePointRight(6));
                     myFraction.getRadiogenicIsotopeDateByName(datumName)//
-                            .setOneSigma(readCSVCell(myFractionData.get(33)).// column AF
+                            .setOneSigma(readCSVCell(myFractionData.get(33)).// column AH
                                     divide(new BigDecimal(2.0)).movePointRight(6));
 
                     // calculate percentDiscordance
@@ -318,39 +326,39 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_UCSB_LASS_A extends Abstr
     }
 
     private void traceElementProcessor(String datumName, Fraction myFraction, Vector<String> myFractionData, int col) {
-        myFraction.getTraceElementByName(datumName)//
-                .setValue(readCSVCell(myFractionData.get(col)).
-                        movePointLeft(6));
+        // check for missing fields at end of row
+        if (col < myFractionData.size()) {
+            myFraction.getTraceElementByName(datumName)//
+                    .setValue(readCSVCell(myFractionData.get(col)).
+                            movePointLeft(6));
+        } else {
+            myFraction.getTraceElementByName(datumName)//
+                    .setValue(BigDecimal.ZERO);
+        }
     }
 
-//    /**
-//     *
-//     */
-//    public static void writeAndOpenCSVFileOfLegacyDataSampleFieldNames() {
-//        String fieldNames = TemplatesForCsvImport.GenericUPbIsotopicLegacyDataSampleFieldNames_A;
-//        File CSVFile = new File("GenericUPbLegacySampleFieldNamesTemplate_A" + ".csv");
-//        CSVFile.delete();
-//        PrintWriter outputWriter = null;
-//        try {
-//            outputWriter = new PrintWriter(new FileWriter(CSVFile));
-//
-//            outputWriter.println("GENERIC UPb Isotopic LEGACY DATA SAMPLE FIELD NAMES FOR IMPORT INTO U-Pb_Redux\n");
-////            outputWriter.println( "FractionName, IsotopicRatios, , , , , , , , , Composition, , , , , , , IsotopicDates (Ma)" );
-//            outputWriter.println(fieldNames);
-//
-//            outputWriter.println("Leave this line blank");
-//            outputWriter.println("First Sample Name here");
-//            outputWriter.println("First fraction row here");
-//
-//            outputWriter.close();
-//
-//        } catch (IOException iOException) {
-//        }
-//
-//        try {
-//            BrowserControl.displayURL(CSVFile.getCanonicalPath());
-//        } catch (IOException ex) {
-//        }
-//
-//    }
+    /**
+     *
+     */
+    public static void writeAndOpenCSVFileOfLegacyDataSampleFieldNames() {
+        String fieldNames = TemplatesForCsvImport.ProjectOfLegacySamplesFieldNames_UCSB_LASS_A;
+        File CSVFile = new File("ProjectOfLegacySamples_UCSB_LASS_A_CSVFile_Template" + ".csv");
+        CSVFile.delete();
+        PrintWriter outputWriter = null;
+        try {
+            outputWriter = new PrintWriter(new FileWriter(CSVFile));
+
+            outputWriter.println(fieldNames);
+
+            outputWriter.close();
+
+        } catch (IOException iOException) {
+        }
+
+        try {
+            BrowserControl.displayURL(CSVFile.getCanonicalPath());
+        } catch (IOException ex) {
+        }
+
+    }
 }

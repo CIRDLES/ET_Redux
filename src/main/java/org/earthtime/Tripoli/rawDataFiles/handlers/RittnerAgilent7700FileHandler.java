@@ -29,7 +29,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.utilities.FileHelper;
-import org.earthtime.utilities.URIHelper;
+import org.earthtime.archivingTools.URIHelper;
 
 /**
  *
@@ -127,7 +127,7 @@ public class RittnerAgilent7700FileHandler extends AbstractRawDataFileHandler im
             JOptionPane.showMessageDialog(
                     null,
                     new String[]{"Selected raw data folder does not contain valid files."},
-                    "U-Pb Redux Warning",
+                    "ET Redux Warning",
                     JOptionPane.WARNING_MESSAGE);
 
             rawDataFile = null;
