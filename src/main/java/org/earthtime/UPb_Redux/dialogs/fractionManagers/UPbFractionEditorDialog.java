@@ -52,8 +52,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileFilter;
-import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.ETReduxFrame;
+import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.aliquots.Aliquot;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.beans.ValueModelClump;
@@ -185,8 +185,10 @@ public class UPbFractionEditorDialog extends DialogEditor {
         showDates = new boolean[]{true, true, true};
 
         // inAutoUraniumMode = false;
-        ((UPbFraction) myFraction).setInAutoUraniumMode(false);
-
+        try {
+            ((UPbFraction) myFraction).setInAutoUraniumMode(false);
+        } catch (Exception e) {
+        }
         initComponents();
 
         toggleStartStopLiveUpdate_button.setText(((ETReduxFrame) parent).getupdateSample_buttonText());
@@ -218,7 +220,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
         }
         // add the not-rejected fractions
         for (Fraction f : ((UPbReduxAliquot) aliquot).getAliquotFractions()) {
-            if (!((UPbFraction) f).isRejected()) {
+            if (!((UPbFractionI) f).isRejected()) {
                 fraction_Chooser.addItem(f);
             }
         }
@@ -250,9 +252,11 @@ public class UPbFractionEditorDialog extends DialogEditor {
         }
 
         // reset input estimated age for auto uranium mode to date 207/206
-        ((UPbFraction) myFraction).//
-                setInputDate206_238r(myFraction.getRadiogenicIsotopeDateByName(RadDates.age207_206r).getValue());
-
+        try {
+            ((UPbFraction) myFraction).//
+                    setInputDate206_238r(myFraction.getRadiogenicIsotopeDateByName(RadDates.age207_206r).getValue());
+        } catch (Exception e) {
+        }
         InitializeFractionData(myFraction);
 //        fraction_Chooser.setSelectedItem( myFraction );
 
@@ -278,7 +282,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
 
         // if this is an added default fraction, the isdeleted field is true and
         // hence we do not need the button active
-        delete_button.setEnabled(!((UPbFraction) myFraction).isDeleted() && !isCompiled());
+        delete_button.setEnabled(!((UPbFractionI) myFraction).isDeleted() && !isCompiled());
 
         InitializeTextBoxes(myFraction);
         showSavedData(myFraction);
@@ -1006,15 +1010,13 @@ public class UPbFractionEditorDialog extends DialogEditor {
         // Determine whether the Pb and U data are editable based on presence of source files
         // April 2009 decided to make this more restrictive
         boolean editablePb
-                = !((UPbFraction) myFraction).hasXMLPbSourceFile()
-                && //(((UPbFraction) myFraction).getMeanAlphaPb().compareTo(BigDecimal.ZERO) == 0) &&
-                !isCompiled();
+                = !((UPbFractionI) myFraction).hasXMLPbSourceFile()
+                && !isCompiled();
         boolean editableU
-                = !((UPbFraction) myFraction).hasXMLUSourceFile()
-                && //(((UPbFraction) myFraction).getMeanAlphaU().compareTo(BigDecimal.ZERO) == 0) &&
-                !isCompiled();
+                = !((UPbFractionI) myFraction).hasXMLUSourceFile()
+                && !isCompiled();
         // Determine whether fraction is a metal or oxide for editing
-        boolean fractionIsOxide = ((UPbFraction) myFraction).isAnOxide();
+        boolean fractionIsOxide = ((UPbFractionI) myFraction).isAnOxide();
 
         // set properties of text boxes
         // top panel
@@ -1132,7 +1134,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
 
         // aug 2010 oxide correction refinements
         r18O_16OUsed_textOnUTab.setDocument(new BigDecimalDocument(r18O_16OUsed_textOnUTab, true));
-        fractionIsMetal_rb.setEnabled(!((UPbFraction) myFraction).hasXMLUSourceFile());
+        fractionIsMetal_rb.setEnabled(!((UPbFractionI) myFraction).hasXMLUSourceFile());
         fractionIsMetal_rb.addActionListener(new ActionListener() {
 
             @Override
@@ -1165,7 +1167,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
             }
         });
 
-        if (((UPbFraction) myFraction).isAnOxide()) {
+        if (((UPbFractionI) myFraction).isAnOxide()) {
             fractionIsOxide_rb.setSelected(true);
         } else {
             fractionIsMetal_rb.setSelected(true);

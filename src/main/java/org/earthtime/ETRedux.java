@@ -49,7 +49,7 @@ public class ETRedux {
     /**
      *
      */
-    public static String RELEASE_DATE = "2 March 2015";
+    public static String RELEASE_DATE = "22 March 2015";
 
     /**
      * Creates a new instance of UPbRedux

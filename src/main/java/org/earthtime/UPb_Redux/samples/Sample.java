@@ -862,6 +862,7 @@ public class Sample implements
         addUPbFraction(defFraction);
     }
 
+    //TODO: refactor these edit methods out of sample - MVC !!
     /**
      * opens aliquot modal editor for the <code>Fraction</code> indicated by
      * argument <code>fraction</code> and opened to the editing tab indicated by
@@ -901,7 +902,8 @@ public class Sample implements
                             selectedTab,
                             false);
         } else if (sampleAnalysisType.equalsIgnoreCase(SampleAnalysisTypesEnum.IDTIMS.getName())
-                || (sampleType.equalsIgnoreCase(SampleTypesEnum.COMPILATION.getName()))) {
+                || (sampleType.equalsIgnoreCase(SampleTypesEnum.COMPILATION.getName()))){
+// TODO: Need kwiki page for LAICPMS               || (sampleType.equalsIgnoreCase(SampleTypesEnum.PROJECT.getName()))) {
 
             myFractionEditor
                     = new UPbFractionEditorDialog(
