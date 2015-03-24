@@ -1,5 +1,7 @@
 ET_Redux
-===
+========
+
+[![Build Status](https://travis-ci.org/CIRDLES/ET_Redux.svg?branch=master)](https://travis-ci.org/CIRDLES/ET_Redux)
 
 **ET_Redux** is the flagship cyber infrastructure product of [CIRDLES](http://cirdles.org),
 the Cyber Infrastructure Research and Development Lab for the Earth Sciences, 
