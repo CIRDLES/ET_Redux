@@ -107,6 +107,7 @@ import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.dataDictionaries.SampleRegistries;
 import org.earthtime.dataDictionaries.SampleTypesEnum;
 import org.earthtime.exceptions.ETException;
+import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.initialPbModelsET.InitialPbModelET;
 import org.earthtime.ratioDataModels.initialPbModelsET.StaceyKramersInitialPbModelET;
@@ -985,6 +986,7 @@ public class AliquotEditorDialog extends DialogEditor {
                             getATracerModel((String) fractionTracerChoice.get(row).getSelectedItem());
                     ((UPbFraction) fractionToSave).setTracer(tracer);
                 } catch (BadLabDataException ex) {
+                    new ETWarningDialog(ex).setVisible(true);
                 }
             }
 
@@ -1001,6 +1003,7 @@ public class AliquotEditorDialog extends DialogEditor {
                 }
                 ((UPbFractionI) fractionToSave).setAlphaPbModel(alphaPb);
             } catch (BadLabDataException ex) {
+                new ETWarningDialog(ex).setVisible(true);
             }
 
             try {
@@ -1012,6 +1015,7 @@ public class AliquotEditorDialog extends DialogEditor {
                 // handles auto-u generation case
                 ((UPbFraction) fractionToSave).setInputAlphaU(alphaU);
             } catch (BadLabDataException ex) {
+                new ETWarningDialog(ex).setVisible(true);
             }
 
             try {
@@ -1019,6 +1023,7 @@ public class AliquotEditorDialog extends DialogEditor {
                 pbBlank = ((UPbFraction) fractionToSave).getMyLabData().getAPbBlankModel((String) fractionPbBlankChoice.get(row).getSelectedItem());
                 ((UPbFraction) fractionToSave).setPbBlank(pbBlank);
             } catch (BadLabDataException ex) {
+                new ETWarningDialog(ex).setVisible(true);
             }
 
             try {
@@ -1042,6 +1047,7 @@ public class AliquotEditorDialog extends DialogEditor {
                 }
 
             } catch (BadLabDataException ex) {
+                new ETWarningDialog(ex).setVisible(true);
             }
 
             // set fraction's pbBlankMass
@@ -1792,7 +1798,8 @@ public class AliquotEditorDialog extends DialogEditor {
         saveAliquot();
         try {
             uploadAliquotToGeochronZip();
-        } catch (ETException eTException) {
+        } catch (ETException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
         showArchiveNote(myAliquot, true);
 }//GEN-LAST:event_saveAndUploadAliquotToGeochron_buttonActionPerformed
@@ -1983,7 +1990,8 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
                     // none tracer chosen
                     ((JTextField) fractionTracerMassText.get(row)).setText("0.0");
                 }
-            } catch (BadLabDataException badLabDataException) {
+            } catch (BadLabDataException ex) {
+                new ETWarningDialog(ex).setVisible(true);
             }
 
         }
@@ -2032,7 +2040,8 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
                 fractionEstDateText.get(row).setEnabled(isStaceyKramersModel);
                 fractionStaceyKramersPctUncertaintyText.get(row).setEnabled(isStaceyKramersModel);
                 fractionStaceyKramersCorrelationCoeffsText.get(row).setEnabled(isStaceyKramersModel);
-            } catch (BadLabDataException badLabDataException) {
+            } catch (BadLabDataException ex) {
+                new ETWarningDialog(ex).setVisible(true);
             }
         }
     }
@@ -2327,7 +2336,8 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
                 try {
                     AbstractRatiosDataModel tracer = getMyAliquot().getMyReduxLabData().getATracerModel(tracerName);
                     masterTracerChooser.setToolTipText(ReduxLabData.toolTipForTracer(tracer));
-                } catch (BadLabDataException badLabDataException) {
+                } catch (BadLabDataException ex) {
+                    new ETWarningDialog(ex).setVisible(true);
                 }
             }
         });
@@ -2411,7 +2421,8 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
                 try {
                     ValueModel alphaPb = getMyAliquot().getMyReduxLabData().getAnAlphaPbModel(alphaPbModelName);
                     masterAlphaPbChooser.setToolTipText(ReduxLabData.toolTipForAlphaPbModel(alphaPb));
-                } catch (BadLabDataException badLabDataException) {
+                } catch (BadLabDataException ex) {
+                    new ETWarningDialog(ex).setVisible(true);
                 }
             }
         });
@@ -2444,7 +2455,8 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
                 try {
                     ValueModel alphaU = getMyAliquot().getMyReduxLabData().getAnAlphaUModel(alphaUModelName);
                     masterAlphaUChooser.setToolTipText(ReduxLabData.toolTipForAlphaUModel(alphaU));
-                } catch (BadLabDataException badLabDataException) {
+                } catch (BadLabDataException ex) {
+                    new ETWarningDialog(ex).setVisible(true);
                 }
             }
         });
@@ -3006,7 +3018,8 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
                 try {
                     AbstractRatiosDataModel tracer = getMyAliquot().getMyReduxLabData().getATracerModel(tracerName);
                     comboBox.setToolTipText(ReduxLabData.toolTipForTracer(tracer));
-                } catch (BadLabDataException badLabDataException) {
+                } catch (BadLabDataException ex) {
+                    new ETWarningDialog(ex).setVisible(true);
                 }
             }
         });
@@ -3051,7 +3064,8 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
                     try {
                         ValueModel alphaPb = getMyAliquot().getMyReduxLabData().getAnAlphaPbModel(alphaPbModelName);
                         comboBox.setToolTipText(ReduxLabData.toolTipForAlphaPbModel(alphaPb));
-                    } catch (BadLabDataException badLabDataException) {
+                    } catch (BadLabDataException ex) {
+                        new ETWarningDialog(ex).setVisible(true);
                     }
                 }
             }
@@ -3077,7 +3091,8 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
                     try {
                         ValueModel alphaU = getMyAliquot().getMyReduxLabData().getAnAlphaUModel(alphaUModelName);
                         comboBox.setToolTipText(ReduxLabData.toolTipForAlphaUModel(alphaU));
-                    } catch (BadLabDataException badLabDataException) {
+                    } catch (BadLabDataException ex) {
+                        new ETWarningDialog(ex).setVisible(true);
                     }
                 }
             }
@@ -3918,7 +3933,8 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
         try {
             alphaPbNoneModel = getMyAliquot().getMyReduxLabData().getNoneAlphaPbModel();
             alphaPbDefaultModel = getMyAliquot().getDefaultAlphaPbModel();
-        } catch (BadLabDataException badLabDataException) {
+        } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
 
         // set labels for disabled chooser
@@ -3959,7 +3975,8 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
         try {
             alphaUNoneModel = getMyAliquot().getMyReduxLabData().getNoneAlphaUModel();
             alphaUDefaultModel = getMyAliquot().getDefaultAlphaUModel();
-        } catch (BadLabDataException badLabDataException) {
+        } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
 
         // set labels for disabled chooser
@@ -4300,7 +4317,8 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
                 try {
                     getMyAliquot().getMineralStandardModels().add(//
                             getSample().getMyReduxLabData().getAMineralStandardModel(((JCheckBox) cb).getText()));
-                } catch (BadLabDataException badLabDataException) {
+                } catch (BadLabDataException ex) {
+                    new ETWarningDialog(ex).setVisible(true);
                 }
             }
         }

@@ -42,6 +42,7 @@ import static org.earthtime.UPb_Redux.ReduxConstants.sansSerif_11_Plain;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.beans.ET_JButton;
+import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.initialPbModelsET.StaceyKramersInitialPbModelET;
 import org.earthtime.ratioDataModels.initialPbModelsET.commonLeadLossCorrectionSchemes.CommonLeadLossCorrectionSchemeA1;
@@ -373,7 +374,8 @@ public class SamplesCommonLeadPane extends JLayeredPane {
                     try {
                         AbstractRatiosDataModel initialPbModelET = ReduxLabData.getInstance().getAnInitialPbModel((String) initialPbModelChooser.getSelectedItem());
                         tripoliSample.setInitialPbModelForAllFractions(initialPbModelET);
-                    } catch (BadLabDataException badLabDataException) {
+                    } catch (BadLabDataException ex) {
+                        new ETWarningDialog(ex).setVisible(true);
                     }
                     break;
 

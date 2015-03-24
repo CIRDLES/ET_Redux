@@ -29,6 +29,7 @@ import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.user.ReduxPersistentState;
 import org.earthtime.UPb_Redux.utilities.JHelpAction;
+import org.earthtime.exceptions.ETWarningDialog;
 
 /**
  *
@@ -84,6 +85,7 @@ public class ETRedux {
         try {
             theUPbReduxFrame = new ETReduxFrame(myState, myLabData, reduxFile);
         } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
         ETReduxFrame.setDefaultLookAndFeelDecorated(true);
 

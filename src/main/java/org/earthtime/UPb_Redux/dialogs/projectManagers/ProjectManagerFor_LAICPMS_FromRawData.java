@@ -79,6 +79,7 @@ import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.UPb_Redux.utilities.ETSerializer;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.exceptions.ETException;
+import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.projects.Project;
 import org.earthtime.projects.ProjectI;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
@@ -424,7 +425,8 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
             acquisitionModel.setPrimaryMineralStandardModel(ReduxLabData.getInstance().getDefaultLAICPMSPrimaryMineralStandardModel());
             acquisitionModel.setLeftShadeCount(ReduxLabData.getInstance().getDefaultLeftShadeCountForLAICPMSAquisitions());
 
-        } catch (BadLabDataException badLabDataException) {
+        } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
         project.setAcquisitionModel(acquisitionModel);
 
@@ -1013,7 +1015,8 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
                 uPbReduxFrame.initializeProject();
 
                 initializeSessionManager(true, true, true);
-            } catch (ETException eTException) {
+            } catch (ETException ex) {
+                new ETWarningDialog(ex).setVisible(true);
             }
         } else {
             refreshMaskingArray();

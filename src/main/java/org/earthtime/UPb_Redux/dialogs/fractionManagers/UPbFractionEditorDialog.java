@@ -87,6 +87,7 @@ import org.earthtime.dataDictionaries.MeasuredRatios;
 import org.earthtime.dataDictionaries.MineralTypes;
 import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.exceptions.ETException;
+import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.matrices.matrixModels.CovarianceMatrixWithSubMatricesModel;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.initialPbModelsET.StaceyKramersInitialPbModelET;
@@ -392,7 +393,8 @@ public class UPbFractionEditorDialog extends DialogEditor {
 
             try {
                 save(fraction);
-            } catch (ETException eTException) {
+            } catch (ETException ex) {
+                new ETWarningDialog(ex).setVisible(true);
             }
             if (((UPbFraction) fraction).isInAutoUraniumMode()) {
                 ((UPbFraction) fraction).zeroUraniumRatios();
@@ -1564,6 +1566,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
         try {
             initTracerModelChooser();
         } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
 
         // Corrections tab ****************************************************
@@ -1587,6 +1590,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
         try {
             initPbBlankModelChooser();
         } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
 
         // Initial Pb Model Tab modified June 2012 ********************************
@@ -1599,6 +1603,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
         try {
             initInitialPbModelChooser();
         } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
 
         setVisibleInitialPbTabComponents(!myFraction.isZircon());
@@ -1825,7 +1830,8 @@ public class UPbFractionEditorDialog extends DialogEditor {
             initialPbModelsTab_panel.add(initialPbModelView);
             initialPbModelsTab_panel.validate();
             initialPbModelView.repaint();
-        } catch (BadLabDataException badLabDataException) {
+        } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
     }
 
@@ -1890,6 +1896,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
             try {
                 initialPbModel = ((UPbFraction) myFraction).getMyLabData().getAnInitialPbModel((String) evt.getItem());
             } catch (BadLabDataException ex) {
+                new ETWarningDialog(ex).setVisible(true);
             }
 
             if (evt.getStateChange() == ItemEvent.SELECTED) {
@@ -1918,6 +1925,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
             try {
                 blank = ((UPbFraction) myFraction).getMyLabData().getAPbBlankModel((String) evt.getItem());
             } catch (BadLabDataException ex) {
+                new ETWarningDialog(ex).setVisible(true);
             }
 
             if (evt.getStateChange() == ItemEvent.SELECTED) {
@@ -1947,6 +1955,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
             try {
                 tracer = ((UPbFraction) myFraction).getMyLabData().getATracerModel((String) evt.getItem());
             } catch (BadLabDataException ex) {
+                new ETWarningDialog(ex).setVisible(true);
             }
 
             if (evt.getStateChange() == ItemEvent.SELECTED) {
@@ -2040,6 +2049,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
                 ((UPbFraction) myFraction).setTracer(((UPbFraction) myFraction).//
                         getMyLabData().getATracerModel((String) tracerChooser.getSelectedItem()));
             } catch (BadLabDataException ex) {
+                new ETWarningDialog(ex).setVisible(true);
             }
 
             // aug 2010, reset tracer mass to zero if no tracer chosen ... tracer mass is a test for legacy status
@@ -2096,6 +2106,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
                 ((UPbFraction) myFraction).setPbBlank(((UPbFraction) myFraction).//
                         getMyLabData().getAPbBlankModel((String) PbBlankChooser.getSelectedItem()));
             } catch (BadLabDataException ex) {
+                new ETWarningDialog(ex).setVisible(true);
             }
 
             // Initial Pb Model Tab************************************
@@ -2103,6 +2114,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
                 ((UPbFraction) myFraction).setInitialPbModel(((UPbFraction) myFraction).//
                         getMyLabData().getAnInitialPbModel((String) InitialPbModelChooser.getSelectedItem()));
             } catch (BadLabDataException ex) {
+                new ETWarningDialog(ex).setVisible(true);
             }
 
             // set fraction's pbBlankMass
@@ -2194,6 +2206,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
                 save(myFraction);
             } catch (ETException ex) {
                 ex.printStackTrace();
+                new ETWarningDialog(ex).setVisible(true);
             }
         }
 
@@ -4320,7 +4333,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
         try {
             save(myFraction);
         } catch (ETException ex) {
-//            ex.printStackTrace();
+            new ETWarningDialog(ex).setVisible(true);
         }
         ((UPbFraction) myFraction).reduceData(isCompiled());//reduceFraction(isCompiled());
 }//GEN-LAST:event_refreshOutputs_ButtonActionPerformed
@@ -4329,7 +4342,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
         try {
             save(myFraction);
         } catch (ETException ex) {
-//            ex.printStackTrace();
+            new ETWarningDialog(ex).setVisible(true);
         }
         ((UPbFraction) myFraction).reduceData(isCompiled());//reduceFraction(isCompiled());
         PopulateCorrectionsTab(myFraction);
@@ -4367,7 +4380,8 @@ public class UPbFractionEditorDialog extends DialogEditor {
 
         try {
             save(myFraction); // includes a restore as well
-        } catch (ETException eTException) {
+        } catch (ETException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
 
         if (((UPbFraction) myFraction).isInAutoUraniumMode()) {
@@ -4466,6 +4480,7 @@ private void save_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
         reInitializeKwikiTab(myFraction);
 
     } catch (ETException ex) {
+        new ETWarningDialog(ex).setVisible(true);
     }
 }//GEN-LAST:event_save_buttonActionPerformed
 

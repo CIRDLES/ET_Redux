@@ -286,7 +286,7 @@ public abstract class DialogEditor extends JDialog {
                     }
                     super.insertString(offset, string,
                             attributes);
-                } catch (NumberFormatException exception) {
+                } catch (NumberFormatException ex) {
                     Toolkit.getDefaultToolkit().beep();
                 }
             }
@@ -349,7 +349,7 @@ public abstract class DialogEditor extends JDialog {
                     Integer.parseInt(newValue);
                     super.insertString(offset, string,
                             attributes);
-                } catch (NumberFormatException exception) {
+                } catch (NumberFormatException ex) {
                     Toolkit.getDefaultToolkit().beep();
                 }
             }
@@ -443,7 +443,7 @@ public abstract class DialogEditor extends JDialog {
                     }
                     super.insertString(offset, string,
                             attributes);
-                } catch (NumberFormatException exception) {
+                } catch (NumberFormatException ex) {
                     Toolkit.getDefaultToolkit().beep();
                 }
             }

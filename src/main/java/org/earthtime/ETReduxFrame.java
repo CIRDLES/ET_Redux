@@ -126,6 +126,7 @@ import org.earthtime.beans.ET_JButton;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.dataDictionaries.SampleTypesEnum;
 import org.earthtime.exceptions.ETException;
+import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.projects.EarthTimeSerializedFileInterface;
 import org.earthtime.projects.Project;
 import org.earthtime.projects.projectImporters.ProjectOfLegacySamplesImporterFromCSVFile_GenericUPbIsotopic_A;
@@ -440,13 +441,15 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
      */
     public void quickSaveReduxPersistentState() {
         try {
-            ETSerializer.SerializeObjectToFile(myState, ReduxPersistentState.getMySerializedName());
-        } catch (ETException eTException) {
+            ETSerializer.SerializeObjectToFile(getMyState(), ReduxPersistentState.getMySerializedName());
+        } catch (ETException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
 
         try {
             ETSerializer.SerializeObjectToFile(myLabData, ReduxLabData.getMySerializedName());
-        } catch (ETException eTException) {
+        } catch (ETException ex) {
+            new ETWarningDialog(ex).setVisible(true);
             System.out.println("LabData did not save");
         }
     }
@@ -613,7 +616,8 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                     case JOptionPane.YES_OPTION:
                         try {
                             saveTheProject();
-                        } catch (BadLabDataException badLabDataException) {
+                        } catch (BadLabDataException ex) {
+                            new ETWarningDialog(ex).setVisible(true);
                             retval = false;
                             throw new RuntimeException();
                         }
@@ -829,7 +833,8 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                         SampleAnalysisTypesEnum.COMPILED.getName(),//
                         myLabData,//
                         myState.getReduxPreferences().getDefaultSampleAnalysisPurpose());
-            } catch (BadLabDataException badLabDataException) {
+            } catch (BadLabDataException ex) {
+                new ETWarningDialog(ex).setVisible(true);
             }
 
             theProject.setSuperSample(theSample);
@@ -865,7 +870,8 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             setUpTheProject(false);
             try {
                 saveTheProject();
-            } catch (BadLabDataException badLabDataException) {
+            } catch (BadLabDataException ex) {
+                new ETWarningDialog(ex).setVisible(true);
             }
         }
     }
@@ -880,7 +886,8 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
         try {
             theProject.exportProjectSamples();
-        } catch (ETException eTException) {
+        } catch (ETException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
     }
 
@@ -2939,6 +2946,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         try {
             saveTheSampleOrProject();
         } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
 
         quickSaveReduxPersistentState();
@@ -2957,6 +2965,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         try {
             saveTheSampleOrProject();
         } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
 
         quickSaveReduxPersistentState();
@@ -2980,6 +2989,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             try {
                 openTheSample(new File(((AbstractButton) evt.getSource()).getText()), true);
             } catch (BadLabDataException ex) {
+                new ETWarningDialog(ex).setVisible(true);
             }
 
         }
@@ -2989,7 +2999,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         try {
             editLabData(0);
         } catch (BadLabDataException ex) {
-            //           ex.printStackTrace();
+            new ETWarningDialog(ex).setVisible(true);
         }
 }//GEN-LAST:event_editLabTracersActionPerformed
 
@@ -3016,6 +3026,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         try {
             openTheSample(new File(MRUSampleMenu.getItem(0).getText()), checkSavedStatus);
         } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
             System.out.println("No Recent File");
         }
     }
@@ -3133,7 +3144,8 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
     private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
         try {
             AboutBoxDisplay();
-        } catch (BadLabDataException badLabDataException) {
+        } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
     }//GEN-LAST:event_aboutMenuItemActionPerformed
 
@@ -3158,13 +3170,15 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         // open the manager
         try {
             manageTheSample();
-        } catch (ETException eTException) {
+        } catch (ETException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
 
         // setup sample and views with no datareduction flag = true
         try {
             setUpTheSample(!theSample.isAnalyzed());
-        } catch (BadLabDataException badLabDataException) {
+        } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
 }//GEN-LAST:event_manageSampleModel_menuItemActionPerformed
 
@@ -3172,6 +3186,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         try {
             saveSampleFileAs();
         } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
     }//GEN-LAST:event_saveSampleFileAsActionPerformed
 
@@ -3179,6 +3194,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         try {
             closeTheSample();
         } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
     }//GEN-LAST:event_closeSampleFileActionPerformed
 
@@ -3186,6 +3202,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         try {
             saveTheSample();
         } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
     }//GEN-LAST:event_saveSampleFileActionPerformed
 
@@ -3207,8 +3224,8 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             try {
                 openSampleFile();
             } catch (BadLabDataException ex) {
+                new ETWarningDialog(ex).setVisible(true);
             }
-
         }
     }//GEN-LAST:event_openSampleFileActionPerformed
 
@@ -3216,6 +3233,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         try {
             editLabData(1);
         } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
     }//GEN-LAST:event_editLabFractionationModelsActionPerformed
 
@@ -3223,6 +3241,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         try {
             editLabData(2);
         } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
 }//GEN-LAST:event_editPbBlanksActionPerformed
 
@@ -3230,6 +3249,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         try {
             editLabData(3);
         } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
     }//GEN-LAST:event_editInitialPbModelsActionPerformed
 
@@ -3237,6 +3257,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         try {
             editLabData(4);
         } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
     }//GEN-LAST:event_editPhysicalConstantsModelsActionPerformed
 
@@ -3244,6 +3265,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         try {
             editLabData(7);
         } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
     }//GEN-LAST:event_manageTIMSLabDefaultsActionPerformed
 
@@ -3251,6 +3273,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         try {
             editLabData(5);
         } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
 }//GEN-LAST:event_editMineralStandardsModelsActionPerformed
 
@@ -3344,8 +3367,8 @@ private void LAICPMS_LegacyAnalysis_MC_UA_menuItemActionPerformed(java.awt.event
     try {
         setUpNewSample(SampleTypesEnum.LEGACY.getName(), "LAICPMS_MCUA");
         changeContentOfTopPanel(ReduxConstants.TOP_PANEL_CONTENTS.FRACTIONS);
-    } catch (BadLabDataException ex) {
-    } catch (ETException ete) {
+    } catch (ETException ex) {
+        new ETWarningDialog(ex).setVisible(true);
     }
 
 }//GEN-LAST:event_LAICPMS_LegacyAnalysis_MC_UA_menuItemActionPerformed
@@ -3370,7 +3393,8 @@ private void editCurrentReportSettingsModel_menuItemActionPerformed(java.awt.eve
 
     try {
         EditReportSettings();
-    } catch (BadLabDataException badLabDataException) {
+    } catch (BadLabDataException ex) {
+        new ETWarningDialog(ex).setVisible(true);
     }
 
     updateReportTable(false);
@@ -3394,6 +3418,7 @@ private void reportResultsTableAsPDF_menuItemActionPerformed(java.awt.event.Acti
     try {
         ((TabbedReportViews) getReportTableTabbedPane()).createReportSVGandPDF(theSample.getSampleName().trim(), true);
     } catch (ETException ex) {
+        new ETWarningDialog(ex).setVisible(true);
         Logger.getLogger(ETReduxFrame.class.getName()).log(Level.SEVERE, null, ex);
     }
 }//GEN-LAST:event_reportResultsTableAsPDF_menuItemActionPerformed
@@ -3405,8 +3430,8 @@ private void visitGeochronActionPerformed(java.awt.event.ActionEvent evt) {//GEN
 private void newSampleCompilation_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newSampleCompilation_menuItemActionPerformed
     try {
         setUpNewSample(SampleTypesEnum.COMPILATION.getName(), SampleAnalysisTypesEnum.COMPILED.getName());
-    } catch (BadLabDataException ex) {
-    } catch (ETException ete) {
+    } catch (ETException ex) {
+        new ETWarningDialog(ex).setVisible(true);
     }
 }//GEN-LAST:event_newSampleCompilation_menuItemActionPerformed
 
@@ -3506,7 +3531,8 @@ private void startStopLiveUpdate_buttonActionPerformed(java.awt.event.ActionEven
         liveUpdateSample();
         try {
             setUpTheSample(false);
-        } catch (BadLabDataException badLabDataException) {
+        } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
     }
 
@@ -3521,7 +3547,8 @@ private void startStopLiveUpdate_buttonActionPerformed(java.awt.event.ActionEven
     private synchronized void liveUpdateSample() {
         try {
             theSample.automaticUpdateOfUPbSampleFolder();
-        } catch (ETException eTException) {
+        } catch (ETException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
 
         rebuildFractionDisplays(false);
@@ -3531,8 +3558,8 @@ private void ID_TIMSLegacyAnalysis_MIT_menuItemActionPerformed(java.awt.event.Ac
     try {
         setUpNewSample(SampleTypesEnum.LEGACY.getName(), SampleAnalysisTypesEnum.IDTIMS.getName());
         changeContentOfTopPanel(ReduxConstants.TOP_PANEL_CONTENTS.FRACTIONS);
-    } catch (BadLabDataException ex) {
-    } catch (ETException ete) {
+    } catch (ETException ex) {
+        new ETWarningDialog(ex).setVisible(true);
     }
 }//GEN-LAST:event_ID_TIMSLegacyAnalysis_MIT_menuItemActionPerformed
 
@@ -3560,8 +3587,8 @@ private void writeCSVFileOfIDTIMSLegacyDataSampleFieldNames_MITActionPerformed(j
 private void newSampleAnalysisForIDTIMS_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newSampleAnalysisForIDTIMS_menuItemActionPerformed
     try {
         setUpNewSample(SampleTypesEnum.ANALYSIS.getName(), SampleAnalysisTypesEnum.IDTIMS.getName());
-    } catch (BadLabDataException ex) {
-    } catch (ETException ete) {
+    } catch (ETException ex) {
+        new ETWarningDialog(ex).setVisible(true);
     }
 }//GEN-LAST:event_newSampleAnalysisForIDTIMS_menuItemActionPerformed
 
@@ -3587,7 +3614,8 @@ private void saveCurrentReportSettingsModelAsLocalXMLFileActionPerformed(java.aw
     try {
         String reportSettingsFileParentFolder = theSample.saveReportSettingsToFile(myState.getMRUReportSettingsModelFolder());
         myState.setMRUReportSettingsModelFolder(reportSettingsFileParentFolder);
-    } catch (BadLabDataException badLabDataException) {
+    } catch (BadLabDataException ex) {
+        new ETWarningDialog(ex).setVisible(true);
     }
 }//GEN-LAST:event_saveCurrentReportSettingsModelAsLocalXMLFileActionPerformed
 
@@ -3605,9 +3633,12 @@ private void LAICPMS_LegacyAnalysis_SC_WSU_vB_menuItemActionPerformed (java.awt.
     try {
         setUpNewSample(SampleTypesEnum.LEGACY.getName(), "LAICPMS_SCWSU_vB");
         changeContentOfTopPanel(ReduxConstants.TOP_PANEL_CONTENTS.FRACTIONS);
-    } catch (BadLabDataException ex) {
-        ex.printStackTrace();
-    } catch (ETException ete) {
+    } catch (ETException ex) {
+        if (ex instanceof BadLabDataException) {
+            ex.printStackTrace();
+        }
+        
+        new ETWarningDialog(ex).setVisible(true);
     }
 }//GEN-LAST:event_LAICPMS_LegacyAnalysis_SC_WSU_vB_menuItemActionPerformed
 
@@ -3619,8 +3650,8 @@ private void LAICPMS_LegacyAnalysis_NIGL_menuItemActionPerformed (java.awt.event
     try {
         setUpNewSample(SampleTypesEnum.LEGACY.getName(), "LAICPMS_NIGL");
         changeContentOfTopPanel(ReduxConstants.TOP_PANEL_CONTENTS.FRACTIONS);
-    } catch (BadLabDataException ex) {
-    } catch (ETException ete) {
+    } catch (ETException ex) {
+        new ETWarningDialog(ex).setVisible(true);
     }
 }//GEN-LAST:event_LAICPMS_LegacyAnalysis_NIGL_menuItemActionPerformed
 
@@ -3644,9 +3675,12 @@ private void LAICPMS_LegacyAnalysis_SC_WSU_vA_menuItemActionPerformed (java.awt.
     try {
         setUpNewSample(SampleTypesEnum.LEGACY.getName(), "LAICPMS_SCWSU_vA");
         changeContentOfTopPanel(ReduxConstants.TOP_PANEL_CONTENTS.FRACTIONS);
-    } catch (BadLabDataException ex) {
-        ex.printStackTrace();
-    } catch (ETException ete) {
+    } catch (ETException ex) {
+        if (ex instanceof BadLabDataException) {
+            ex.printStackTrace();
+        }
+        
+        new ETWarningDialog(ex).setVisible(true);
     }
 }//GEN-LAST:event_LAICPMS_LegacyAnalysis_SC_WSU_vA_menuItemActionPerformed
 
@@ -3665,8 +3699,8 @@ private void LAICPMS_LegacyAnalysis_SC_WSU_vV_menuItemActionPerformed(java.awt.e
     try {
         setUpNewSample(SampleTypesEnum.LEGACY.getName(), "LAICPMS_SCWSU_vV");
         changeContentOfTopPanel(ReduxConstants.TOP_PANEL_CONTENTS.FRACTIONS);
-    } catch (BadLabDataException ex) {
-    } catch (ETException ete) {
+    } catch (ETException ex) {
+        new ETWarningDialog(ex).setVisible(true);
     }
 
 }//GEN-LAST:event_LAICPMS_LegacyAnalysis_SC_WSU_vV_menuItemActionPerformed
@@ -3674,8 +3708,8 @@ private void LAICPMS_LegacyAnalysis_SC_WSU_vV_menuItemActionPerformed(java.awt.e
 private void newSampleAnalysisForLAICPMS_MC_menuItemActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newSampleAnalysisForLAICPMS_MC_menuItemActionPerformed
     try {
         setUpNewSample(SampleTypesEnum.ANALYSIS.getName(), "LAICPMSMC");
-    } catch (BadLabDataException ex) {
-    } catch (ETException ete) {
+    } catch (ETException ex) {
+        new ETWarningDialog(ex).setVisible(true);
     }
 }//GEN-LAST:event_newSampleAnalysisForLAICPMS_MC_menuItemActionPerformed
 
@@ -3683,8 +3717,8 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     try {
         setUpNewSample(SampleTypesEnum.LEGACY.getName(), "LAICPMS_UH");
         changeContentOfTopPanel(ReduxConstants.TOP_PANEL_CONTENTS.FRACTIONS);
-    } catch (BadLabDataException ex) {
-    } catch (ETException ete) {
+    } catch (ETException ex) {
+        new ETWarningDialog(ex).setVisible(true);
     }
 
 }//GEN-LAST:event_LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed
@@ -3756,7 +3790,8 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     private void closeProjectFile_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeProjectFile_menuItemActionPerformed
         try {
             closeTheProject();
-        } catch (BadLabDataException badLabDataException) {
+        } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
 
 
@@ -3765,7 +3800,8 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     private void saveProjectFileAs_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveProjectFileAs_menuItemActionPerformed
         try {
             saveProjectFileAs();
-        } catch (BadLabDataException badLabDataException) {
+        } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
 
 
@@ -3809,6 +3845,7 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
         try {
             editLabData(6);
         } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }        // TODO add your handling code here:
     }//GEN-LAST:event_manageRareEarthElementModelsActionPerformed
 
@@ -3816,6 +3853,7 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
         try {
             editLabData(9);
         } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }        // TODO add your handling code here:
     }//GEN-LAST:event_manageLAICPMSLabDefaultsActionPerformed
 

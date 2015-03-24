@@ -12,6 +12,7 @@ dependency-reduced-pom.xml
 *.svg
 *.densityplotter
 *.csv
+test_*
 
 # MACOS
 .DS_Store

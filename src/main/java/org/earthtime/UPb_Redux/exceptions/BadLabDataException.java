@@ -21,27 +21,21 @@
 package org.earthtime.UPb_Redux.exceptions;
 
 import java.awt.Component;
-import javax.swing.JOptionPane;
 import org.earthtime.exceptions.ETException;
 
 /**
  *
  * @author James F. Bowring
  */
-public class BadLabDataException extends ETException{
-    
-    /**
-     * Creates a new instance of BadLabDataException
-     */
-    public BadLabDataException() {
-    }
+public class BadLabDataException extends ETException {
     
     /**
      * 
      * @param parent
-     * @param msg
+     * @param message
      */
-    public BadLabDataException(Component parent, String msg) {
-        new ETException(parent, new String[] {msg});
+    public BadLabDataException(Component parent, String message) {
+        super(parent, message);
     }
+    
 }

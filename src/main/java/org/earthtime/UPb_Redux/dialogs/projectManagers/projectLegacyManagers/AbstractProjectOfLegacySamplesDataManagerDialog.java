@@ -28,6 +28,7 @@ import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.exceptions.BadImportedCSVLegacyFileException;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.exceptions.ETException;
+import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.projects.ProjectI;
 import org.earthtime.projects.projectImporters.AbstractProjectImporterFromLegacyCSVFile;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
@@ -197,7 +198,8 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
 
             setImportFractionFolderMRU( converter.getMruFolder() );
         } catch (FileNotFoundException fileNotFoundException) {
-        } catch (BadImportedCSVLegacyFileException badImportedCSVLegacyFileException) {
+        } catch (BadImportedCSVLegacyFileException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
 
 
@@ -422,6 +424,7 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
             close();
         } catch (ETException ex) {
             ex.printStackTrace();
+            new ETWarningDialog(ex).setVisible(true);
         }
 
     }//GEN-LAST:event_saveAndCloseActionPerformed
