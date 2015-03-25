@@ -43,6 +43,7 @@ public class AnnouncementPane extends JLayeredPane {
     public AnnouncementPane() {
         super();
         setOpaque(true);
+        setBackground(Color.white);
 
         // setup U-Pb_Redux icon
         ClassLoader cldr = this.getClass().getClassLoader();
