@@ -41,9 +41,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
+import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -232,14 +232,13 @@ public class UPbFractionEditorDialog extends DialogEditor {
             public void actionPerformed(ActionEvent e) {
                 JComboBox cb = (JComboBox) e.getSource();
                 restoreFractionFromKwikiChanges(myFraction);
-                // InitializeKwikiTab( myFraction );//nov 2009
+
                 reInitializeKwikiTab(myFraction);
 
                 myFraction = (Fraction) cb.getSelectedItem();
-                // reductionHandlerExists = (((UPbFraction) myFraction).getReductionHandler() != null);
+
                 InitializeFractionData(myFraction);
 
-                //InitializeKwikiTab( myFraction );
                 reInitializeKwikiTab(myFraction);
 
             }
@@ -259,7 +258,6 @@ public class UPbFractionEditorDialog extends DialogEditor {
         } catch (Exception e) {
         }
         InitializeFractionData(myFraction);
-//        fraction_Chooser.setSelectedItem( myFraction );
 
         InitializeKwikiTab(myFraction);
 
@@ -366,11 +364,11 @@ public class UPbFractionEditorDialog extends DialogEditor {
         }
 
         public void actionPerformed(ActionEvent e) {
-            setVisibleInitialPbTabComponents(!((JCheckBox) e.getSource()).isSelected());
+            setVisibleInitialPbTabComponents(!((AbstractButton) e.getSource()).isSelected());
             try {
                 restoreFractionFromKwikiChanges(myFraction);
 
-                myFraction.setZircon(((JCheckBox) e.getSource()).isSelected());
+                myFraction.setZircon(((AbstractButton) e.getSource()).isSelected());
 
                 FireDataReducer(myFraction, true);//nov 2009
                 reInitializeKwikiTab(myFraction);
@@ -380,6 +378,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
     }
 
     // helper class to manage auto uranium toggle
+    // TODO: could /should use myFraction ?
     private class actionAutoUraniumListener implements ActionListener {
 
         private Fraction fraction;
@@ -388,6 +387,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
             this.fraction = fraction;
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             restoreFractionFromKwikiChanges(fraction);
 
@@ -402,9 +402,13 @@ public class UPbFractionEditorDialog extends DialogEditor {
                 ((UPbFraction) fraction).autoGenerateMeasuredUranium();
             }
 
-            InitializeFractionData(fraction);
             FireDataReducer(fraction, true);
+            restoreFractionFromKwikiChanges(fraction);
+            InitializeFractionData(fraction);
             reInitializeKwikiTab(fraction);
+            
+            // bring into view
+            ((PlottingDetailsDisplayInterface) concordiaGraphPanel).resetPanel();
         }
 
         /**
@@ -632,7 +636,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
                 (!(((UPbFraction) fraction).hasMeasuredUranium() && !((UPbFraction) fraction).isInAutoUraniumMode())));////
 
         // set visibility of auto-u details on U tab
-        autoUSettings_panel.setVisible(!((UPbFraction) fraction).hasMeasuredUranium());
+        autoUSettings_panel.setVisible(!((UPbFractionI) fraction).hasMeasuredUranium());
 
         // resetAll button
         kwikiResetAll_button = new javax.swing.JButton();
@@ -936,10 +940,10 @@ public class UPbFractionEditorDialog extends DialogEditor {
                         setAutoUraniumGeneratedDate(((UPbFraction) fraction).isInAutoUraniumMode());
                 ((KwikiDateDisplayPanel) kwikiDateDisplayPanel).refreshPanel();//.repaint();
 
-                ((ConcordiaGraphPanel) concordiaGraphPanel).repaint();
+                concordiaGraphPanel.repaint();
 
                 ((KwikiSynopticOutputPanel) kwikiOutputPanel).setFraction(fraction);
-                ((KwikiSynopticOutputPanel) kwikiOutputPanel).repaint();
+                kwikiOutputPanel.repaint();
 
                 ((UncertaintyGraphPanel) date206_238rUncertainties).setZoomLayer(//
                         GenerateUncertaintyZoomLayer(dateNamesByCorrection.get(correctionModeForDates)[0], uncertaintyModeForDates, fraction));
@@ -1003,6 +1007,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
     private void FireDataReducer(Fraction fraction, boolean calculateCovariances) {
 
         //if (reductionHandlerExists) {
+        // currently non-static call on purpose - jfb
         UPbFractionReducer.getInstance().fullFractionReduce(fraction, calculateCovariances);
         //}
     }

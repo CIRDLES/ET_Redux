@@ -331,11 +331,10 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             System.out.println();
         }
 
-        liveUpdateTimer = new Timer(5000, new ActionListener() {//5 sec
-            public void actionPerformed(ActionEvent e) {
-                liveUpdateSample();
-            }
-        });
+        liveUpdateTimer = new Timer(5000, (ActionEvent e) -> {
+            liveUpdateSample();
+        } //5 sec
+        );
 
         loadLastProject_button.setBackground(Color.WHITE);
         openProject_button.setBackground(Color.WHITE);
@@ -356,7 +355,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
         switch (contents) {
             case WELCOME:
-                JButton visitCIRDLESbutton = new ET_JButton("Welcome!  Please Visit us at CIRDLES.org");
+                JButton visitCIRDLESbutton = new ET_JButton("Welcome!  Please Visit us at GitHub.com");// 3/25/2015 updated CIRDLES.org");
                 visitCIRDLESbutton.setFont(ReduxConstants.sansSerif_12_Bold);
                 visitCIRDLESbutton.setBounds(400, 75, 350, 25);
                 visitCIRDLESbutton.addActionListener(new ActionListenerForGotoCirdles());
@@ -368,12 +367,14 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                         + "We are moving the project to a GitHub repository in the near future to make collaboration easier and more transparent.  "
                         + "We are seeking a new logo for ET_Redux and invite your submissions.");
                 announce.setFont(ReduxConstants.sansSerif_12_Bold);
-                announce.setBounds(200, 125, 750, 100);
+                announce.setBounds(200, 125, 750, 65);
                 announce.setLineWrap(true);
                 announce.setWrapStyleWord(true);
                 announce.setAlignmentX(CENTER_ALIGNMENT);
                 announce.setAlignmentY(CENTER_ALIGNMENT);
                 announce.setOpaque(true);
+                //announce.setBorder(new LineBorder(Color.black));
+                announce.setBackground(announcementPane.getBackground());
                 announcementPane.add(announce);
 
                 JButton visitTOPSOIL = new ET_JButton("Checkout Topsoil - the Isoplot replacement project that you can join at github.com/CIRDLES/topsoil");
@@ -418,7 +419,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            BrowserControl.displayURL("https://cirdles.org");
+            BrowserControl.displayURL("https://github.com/CIRDLES/ET_Redux");// 25 Mar 2015 updated https://cirdles.org");
         }
     }
 
