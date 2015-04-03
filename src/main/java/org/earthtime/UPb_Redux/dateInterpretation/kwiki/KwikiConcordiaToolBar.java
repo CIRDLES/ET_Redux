@@ -165,7 +165,7 @@ public class KwikiConcordiaToolBar extends JLayeredPane implements GraphPanelMod
         zoomBoxToggle.setOpaque(false);
         zoomBoxToggle.setForeground(Color.black);
         zoomBoxToggle.setFont(ReduxConstants.sansSerif_12_Bold);
-        zoomBoxToggle.setBounds(55, 25, 68, 24);
+        zoomBoxToggle.setBounds(55, 24, 68, 24);
         zoomBoxToggle.setMargin(new Insets(0, 0, 0, 0));
 
 
@@ -185,7 +185,7 @@ public class KwikiConcordiaToolBar extends JLayeredPane implements GraphPanelMod
         ellipseCentersToggle.setOpaque(false);
         ellipseCentersToggle.setForeground(Color.black);
         ellipseCentersToggle.setFont(ReduxConstants.sansSerif_12_Bold);
-        ellipseCentersToggle.setBounds(121, 1, 60, 15);
+        ellipseCentersToggle.setBounds(119, 2, 60, 15);
         ellipseCentersToggle.setMargin(new Insets(0, 0, 0, 0));
 
         ellipseCentersToggle.addChangeListener(new ChangeListener() {
@@ -204,7 +204,7 @@ public class KwikiConcordiaToolBar extends JLayeredPane implements GraphPanelMod
         ellipseLabelsToggle.setOpaque(false);
         ellipseLabelsToggle.setForeground(Color.black);
         ellipseLabelsToggle.setFont(ReduxConstants.sansSerif_12_Bold);
-        ellipseLabelsToggle.setBounds(121, 16, 60, 15);
+        ellipseLabelsToggle.setBounds(119, 17, 60, 15);
         ellipseLabelsToggle.setMargin(new Insets(0, 0, 0, 0));
 
         ellipseLabelsToggle.addChangeListener(new ChangeListener() {
@@ -224,7 +224,7 @@ public class KwikiConcordiaToolBar extends JLayeredPane implements GraphPanelMod
         concordiaErrorsToggle.setOpaque(false);
         concordiaErrorsToggle.setForeground(Color.black);
         concordiaErrorsToggle.setFont(ReduxConstants.sansSerif_12_Bold);
-        concordiaErrorsToggle.setBounds(121, 32, 60, 15);
+        concordiaErrorsToggle.setBounds(119, 32, 60, 15);
         concordiaErrorsToggle.setMargin(new Insets(0, 0, 0, 0));
 
         concordiaErrorsToggle.addChangeListener(new ChangeListener() {

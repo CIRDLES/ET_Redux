@@ -115,7 +115,7 @@ public class KwikiDateModesSelectorPanel extends JLayeredPane {
         correctTh.setActionCommand( "Th" );
         correctTh.setOpaque( false );
         correctTh.setForeground( new java.awt.Color( 204, 0, 0 ) );
-        correctTh.setFont( new Font( "SansSerif", Font.BOLD, 10 ) );
+        correctTh.setFont( new Font( "SansSerif", Font.BOLD, 9 ) );
         correctTh.setBounds( 125, 20, 45, 15 );
         correctTh.setEnabled( enableThPa );
         correctTh.addActionListener( dateCorrectionChkBoxActionListener );
@@ -125,7 +125,7 @@ public class KwikiDateModesSelectorPanel extends JLayeredPane {
         correctPa.setActionCommand( "Pa" );
         correctPa.setOpaque( false );
         correctPa.setForeground( new java.awt.Color( 204, 0, 0 ) );
-        correctPa.setFont( new Font( "SansSerif", Font.BOLD, 10 ) );
+        correctPa.setFont( new Font( "SansSerif", Font.BOLD, 9 ) );
         correctPa.setBounds( 125, 40, 45, 15 );
         correctPa.setEnabled( enableThPa );
         correctPa.addActionListener( dateCorrectionChkBoxActionListener );
@@ -148,7 +148,7 @@ public class KwikiDateModesSelectorPanel extends JLayeredPane {
         sliderLockCheckBox.setOpaque( false );
         sliderLockCheckBox.setForeground( new java.awt.Color( 204, 0, 0 ) );
         sliderLockCheckBox.setFont( new Font( "SansSerif", Font.BOLD, 9 ) );
-        sliderLockCheckBox.setBounds( 3, 60, 112, 15 );
+        sliderLockCheckBox.setBounds( 1, 60, 120, 15 );
         sliderLockCheckBox.addChangeListener( sliderLockChangeListener );
         add( sliderLockCheckBox, javax.swing.JLayeredPane.DEFAULT_LAYER );
 
@@ -173,8 +173,8 @@ public class KwikiDateModesSelectorPanel extends JLayeredPane {
         uncertaintyModeGroup.add( analyticalRB );
         analyticalRB.setOpaque( false );
         analyticalRB.setForeground( new java.awt.Color( 204, 0, 0 ) );
-        analyticalRB.setFont( new Font( "SansSerif", Font.BOLD, 10 ) );
-        analyticalRB.setBounds( 1, 3, 130, 15 );
+        analyticalRB.setFont( new Font( "SansSerif", Font.BOLD, 9 ) );
+        analyticalRB.setBounds( 1, 2, 130, 16 );
         analyticalRB.addActionListener( uncertaintyModeActionListener );
         add( analyticalRB, javax.swing.JLayeredPane.DEFAULT_LAYER );
 
@@ -183,8 +183,8 @@ public class KwikiDateModesSelectorPanel extends JLayeredPane {
         uncertaintyModeGroup.add( tracerRB );
         tracerRB.setOpaque( false );
         tracerRB.setForeground( new java.awt.Color( 204, 0, 0 ) );
-        tracerRB.setFont( new Font( "SansSerif", Font.BOLD, 10 ) );
-        tracerRB.setBounds( 1, 21, 130, 15 );
+        tracerRB.setFont( new Font( "SansSerif", Font.BOLD, 9 ) );
+        tracerRB.setBounds( 1, 21, 130, 16 );
         tracerRB.addActionListener( uncertaintyModeActionListener );
         add( tracerRB, javax.swing.JLayeredPane.DEFAULT_LAYER );
 
@@ -193,8 +193,8 @@ public class KwikiDateModesSelectorPanel extends JLayeredPane {
         uncertaintyModeGroup.add( lambdaRB );
         lambdaRB.setOpaque( false );
         lambdaRB.setForeground( new java.awt.Color( 204, 0, 0 ) );
-        lambdaRB.setFont( new Font( "SansSerif", Font.BOLD, 10 ) );
-        lambdaRB.setBounds( 1, 39, 130, 15 );
+        lambdaRB.setFont( new Font( "SansSerif", Font.BOLD, 9 ) );
+        lambdaRB.setBounds( 1, 40, 130, 16 );
         lambdaRB.addActionListener( uncertaintyModeActionListener );
         add( lambdaRB, javax.swing.JLayeredPane.DEFAULT_LAYER );
 
