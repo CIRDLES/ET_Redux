@@ -123,7 +123,7 @@ public class KwikiDateDisplayPanel extends JPanel {
             // strip out "age" and split on underscore
             String[] dateName = dates[i].getName().substring( 3 ).split( "_" );
 
-            g2d.setFont( new Font( "SansSerif", Font.BOLD, 12 ) );
+            g2d.setFont( new Font( "SansSerif", Font.BOLD, 10 ) );
             if ( isAutoUraniumGeneratedDate() && i < 2 ) {
                 // non 206/207
                 g2d.drawString(
@@ -133,12 +133,12 @@ public class KwikiDateDisplayPanel extends JPanel {
             }
             g2d.drawString(
                     dateName[0] + "/",
-                    (float) MapX( getMinX(), getMinX(), rangeX, getWidth() ) + leftOffset,
+                    (float) MapX( getMinX(), getMinX(), rangeX, getWidth() ) + leftOffset - 5,
                     (float) MapY( getMinY(), getMaxY(), rangeY, getHeight() ) - 9 );
 
             g2d.drawString(
                     dateName[1].substring( 0, 3 ),
-                    (float) MapX( getMinX(), getMinX(), rangeX, getWidth() ) + leftOffset + 24,
+                    (float) MapX( getMinX(), getMinX(), rangeX, getWidth() ) + leftOffset + 24 - 5,
                     (float) MapY( getMinY(), getMaxY(), rangeY, getHeight() ) - 5 );
 
 
@@ -148,7 +148,7 @@ public class KwikiDateDisplayPanel extends JPanel {
             if ( correctionIndex > 0 ) {
                 g2d.drawString(
                         "<" + dates[i].getName().substring( correctionIndex + 2, dates[i].getName().length() ) + ">",
-                        (float) MapX( getMinX(), getMinX(), rangeX, getWidth() ) + leftOffset + 45,
+                        (float) MapX( getMinX(), getMinX(), rangeX, getWidth() ) + leftOffset + 45 - 5,
                         (float) MapY( getMinY(), getMaxY(), rangeY, getHeight() ) - 5 );
             }
 
@@ -163,7 +163,7 @@ public class KwikiDateDisplayPanel extends JPanel {
             }
             g2d.drawString(
                     dateValue,
-                    (float) MapX( getMinX(), getMinX(), rangeX, getWidth() ) + leftOffset + 85,
+                    (float) MapX( getMinX(), getMinX(), rangeX, getWidth() ) + leftOffset + 85 - 30,
                     (float) MapY( getMinY(), getMaxY(), rangeY, getHeight() ) - 5 );
         }
 
