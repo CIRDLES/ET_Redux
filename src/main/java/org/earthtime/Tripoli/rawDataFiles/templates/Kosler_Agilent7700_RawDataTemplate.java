@@ -43,7 +43,7 @@ public final class Kosler_Agilent7700_RawDataTemplate extends AbstractRawDataFil
         this.startOfDataSectionFirstLine = "Time";
         this.startOfEachBlockFirstLine = "Time";
         this.blockStartOffset = 4;
-        this.blockSize = 360;
+        this.blockSize = 346;//360;
         this.standardIDs = new String[]//
         {"91500"};
         this.timeZone = TimeZone.getTimeZone( "GMT" );

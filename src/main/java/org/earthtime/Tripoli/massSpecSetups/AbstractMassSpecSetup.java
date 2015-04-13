@@ -390,7 +390,7 @@ public abstract class AbstractMassSpecSetup implements //
                 }
             }
         }
-
+System.out.println("Processing fraction " + fractionID);
         if (Pb204 != null) {
             validateOnPeakBaselineCorrectedIsotope(Pb204, fractionID);
         }

@@ -28,9 +28,8 @@ import java.util.TreeSet;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
-import org.earthtime.Tripoli.sessions.TripoliSessionInterface;
-import org.earthtime.utilities.FileHelper;
 import org.earthtime.archivingTools.URIHelper;
+import org.earthtime.utilities.FileHelper;
 
 /**
  *
@@ -48,13 +47,9 @@ public class KoslerAgilent7700FileHandler extends AbstractRawDataFileHandler imp
      * @param massSpec
      * @param rawDataFileTemplate
      */
-    private KoslerAgilent7700FileHandler( //
-            /*
-             * AbstractMassSpecSetup massSpec,// AbstractRawDataFileTemplate
-             * rawDataFileTemplate
-             */) {
+    private KoslerAgilent7700FileHandler() {
 
-        super();//massSpec, rawDataFileTemplate );
+        super();
 
         NAME = "Kosler Agilent 7700 File";
 
@@ -65,11 +60,7 @@ public class KoslerAgilent7700FileHandler extends AbstractRawDataFileHandler imp
      *
      * @return
      */
-    public static KoslerAgilent7700FileHandler getInstance( //
-            /*
-             * AbstractMassSpecSetup massSpec,// AbstractRawDataFileTemplate
-             * rawDataFileTemplate
-             */) {
+    public static KoslerAgilent7700FileHandler getInstance() {
         if (instance == null) {
             instance = new KoslerAgilent7700FileHandler();//massSpec, rawDataFileTemplate );
         }
@@ -101,7 +92,7 @@ public class KoslerAgilent7700FileHandler extends AbstractRawDataFileHandler imp
     @Override
     public File getAndLoadRawIntensityDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions) {
 
-        // Agilent has folder of folders plus some xls files
+        // Agilent has folder of csv files plus some xls files
         analysisFiles = rawDataFile.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
@@ -179,7 +170,6 @@ public class KoslerAgilent7700FileHandler extends AbstractRawDataFileHandler imp
             }
             loadDataTask.firePropertyChange("progress", 0, ((100 * f) / analysisFiles.length));
 
-            // there should be one only .csv file per folder
             String fractionID = analysisFiles[f].getName().toUpperCase().replace(".CSV", "");
 
             // get file contents
@@ -203,8 +193,8 @@ public class KoslerAgilent7700FileHandler extends AbstractRawDataFileHandler imp
             try {
                 fractionDateValue = fractionTimeFormat.parse(fractionDate);
 
-                // assume change to peak at line 119 for now
-                int assumedBackgrounRowCount = 180;
+                // assume change to peak at line 173 for now
+                int assumedBackgrounRowCount = 173;
                 long fractionBackgroundTimeStamp = fractionDateValue.getTime();
                 long fractionPeakTimeStamp = fractionDateValue.getTime() + assumedBackgrounRowCount * massSpec.getCOLLECTOR_DATA_FREQUENCY_MILLISECS();
 
@@ -229,7 +219,7 @@ public class KoslerAgilent7700FileHandler extends AbstractRawDataFileHandler imp
                     }
 
                     if (i < assumedBackgrounRowCount) {
-                        // column 5 is first isotope
+                        // column 5 is first isotope Hg202
                         // background
                         for (int j = 5; j < (massSpec.getVIRTUAL_COLLECTOR_COUNT() / 2) + 5; j++) {
                             scanData[i][j - 5] = fractionCollectorsColumns[j].trim();
@@ -248,26 +238,11 @@ public class KoslerAgilent7700FileHandler extends AbstractRawDataFileHandler imp
 
                 TripoliFraction tripoliFraction = //                           
                         new TripoliFraction( //
-                                //
-                                //
-                                //
-                                //
-                                //
-                                //
-                                //
-                                //
-                                //
-                                //
-                                //
-                                //
-                                //
-                                //
-                                //
                                 fractionID, //
                                 massSpec.getCommonLeadCorrectionHighestLevel(), //
                                 isStandard,
                                 fractionBackgroundTimeStamp, //
-                                fractionPeakTimeStamp,massSpec.rawRatiosFactory(scanData, isStandard, fractionID, usingFullPropagation, null));
+                                fractionPeakTimeStamp, massSpec.rawRatiosFactory(scanData, isStandard, fractionID, usingFullPropagation, null));
 
                 tripoliFraction.shadeDataActiveMapLeft(leftShadeCount);
                 tripoliFractions.add(tripoliFraction);

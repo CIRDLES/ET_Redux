@@ -60,14 +60,15 @@ public final class KoslerAgilent7700SetupUPb extends AbstractMassSpecSetup imple
         isotopeMappingModel = new IsotopeMappingModel();
 
         collectorNameToModelMap = new TreeMap<>();
+        
+        useConstantBackgroundFitFunction = false;
 
-        this.commonLeadCorrectionHighestLevel = "A2";
+        this.commonLeadCorrectionHighestLevel = "B2";
 
         // deadtime may be in data already
         AbstractCollectorModel singleCollector = //
                 new IonCounterCollectorModel(//
-                        //
-                        "Single",                        new ValueModel("DeadTime", BigDecimal.ZERO, //
+                        "Single", new ValueModel("DeadTime", BigDecimal.ZERO, //
                                 "ABS", BigDecimal.ZERO, BigDecimal.ZERO), //
                         IonCounterCollectorModel.CollectedDataStyle.COUNTS);
 
@@ -129,7 +130,8 @@ public final class KoslerAgilent7700SetupUPb extends AbstractMassSpecSetup imple
      * @param fractionID the value of fractionID
      * @param usingFullPropagation the value of usingFullPropagation
      * @param tripoliFraction the value of tripoliFraction
-     * @return the java.util.SortedSet<org.earthtime.Tripoli.dataModels.DataModelInterface>
+     * @return the
+     * java.util.SortedSet<org.earthtime.Tripoli.dataModels.DataModelInterface>
      */
     @Override
     public SortedSet<DataModelInterface> rawRatiosFactory(String[][] intensitiesScan, boolean isStandard, String fractionID, boolean usingFullPropagation, TripoliFraction tripoliFraction) {
@@ -212,12 +214,18 @@ public final class KoslerAgilent7700SetupUPb extends AbstractMassSpecSetup imple
         rawRatios.add(r206_238w);
         DataModelInterface r206_207w = new RawRatioDataModel(RawRatioNames.r206_207w, Pb206, Pb207, true, false, COLLECTOR_DATA_FREQUENCY_MILLISECS);
         rawRatios.add(r206_207w);
-        DataModelInterface r206_204w = new RawRatioDataModel(RawRatioNames.r206_204w, Pb206, Pb204, false, false, COLLECTOR_DATA_FREQUENCY_MILLISECS);
-        rawRatios.add(r206_204w);
         DataModelInterface r208_232w = new RawRatioDataModel(RawRatioNames.r208_232w, Pb208, Th232, true, false, COLLECTOR_DATA_FREQUENCY_MILLISECS);
         rawRatios.add(r208_232w);
         // special case to handle mercury isotope
         rawRatios.add(new RawRatioDataModel(RawRatioNames.r202_202w, Hg202, Hg202, false, false, COLLECTOR_DATA_FREQUENCY_MILLISECS));
+
+        // oct 2014 to handle B schemas for common lead correction
+        DataModelInterface r206_204w = new RawRatioDataModel(RawRatioNames.r206_204w, Pb206, Pb204, false, true, COLLECTOR_DATA_FREQUENCY_MILLISECS);
+        rawRatios.add(r206_204w);
+        DataModelInterface r207_204w = new RawRatioDataModel(RawRatioNames.r207_204w, Pb207, Pb204, false, true, COLLECTOR_DATA_FREQUENCY_MILLISECS);
+        rawRatios.add(r207_204w);
+        DataModelInterface r208_204w = new RawRatioDataModel(RawRatioNames.r208_204w, Pb208, Pb204, false, true, COLLECTOR_DATA_FREQUENCY_MILLISECS);
+        rawRatios.add(r208_204w);
 
         processFractionRawRatios(intensitiesScan, isStandard, fractionID, usingFullPropagation, null);
 
