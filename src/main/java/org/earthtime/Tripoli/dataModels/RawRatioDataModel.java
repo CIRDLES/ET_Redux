@@ -558,19 +558,19 @@ public class RawRatioDataModel //
 
         AbstractFunctionOfX fOfX_FORCEDMEAN;
 
-        if (USING_FULL_PROPAGATION) {
-            fOfX_FORCEDMEAN = ConstantFitFunctionWithCovS.getInstance().getFunctionOfX(//
-                    activeData, //
-                    activeXvalues, //
-                    forcedMeanValues, //,
-                    SlogRatioX_Y, false);
-        } else {
-            fOfX_FORCEDMEAN = ConstantFitFunctionWithCovS.getInstance().getFunctionOfX(//
-                    activeData, //
-                    activeXvalues, //
-                    forcedMeanValues, //,
-                    SlogRatioX_Y, false);
-        }
+        // april 2015 replacing code below
+        Matrix matrixTopMeanBotMean = new Matrix(//
+                new double[]{//
+                    ((RawIntensityDataModel) topIsotope).getForcedMeanForCommonLeadRatios(), //
+                    ((RawIntensityDataModel) botIsotope).getForcedMeanForCommonLeadRatios()}, //
+                1);
+        fOfX_FORCEDMEAN = MeanFitFunction.getInstance()//
+                .getFunctionOfX(//
+                        activeData, //
+                        activeXvalues, //
+                        activeYvalues,//
+                        matrixTopMeanBotMean,//null, //
+                        false);
 
         fOfX_FORCEDMEAN.setShortName(FitFunctionTypeEnum.MEANRATIO);
         logRatioFitFunctionsNoOD.put(FitFunctionTypeEnum.MEANRATIO.getName(), fOfX_FORCEDMEAN);
