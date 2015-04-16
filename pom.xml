@@ -67,6 +67,10 @@
             <url>http://bits.netbeans.org/maven2/</url>
             <layout>default</layout>
         </repository> 
+        <repository>
+	    <id>jitpack.io</id>
+	    <url>https://jitpack.io</url>
+	</repository>
     </repositories>
     <dependencies>
         <dependency>
@@ -206,6 +210,11 @@
             <artifactId>fluent-hc</artifactId>
             <version>4.4</version>
         </dependency>
+        <dependency>
+	    <groupId>com.github.cirdles</groupId>
+	    <artifactId>topsoil</artifactId>
+	    <version>v0.4.2</version>
+	</dependency>
     </dependencies>
     <build>
         <plugins>
