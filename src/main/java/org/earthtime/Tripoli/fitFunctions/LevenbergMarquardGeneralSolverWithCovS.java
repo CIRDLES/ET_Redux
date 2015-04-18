@@ -245,7 +245,7 @@ public class LevenbergMarquardGeneralSolverWithCovS implements FitFunctionInterf
                         if (!FofX.verifyPositiveVariances()) {
                             FofX = null;
                         } else {
-                            System.out.println("LM with YES OD for " + FofX.getShortNameString() + "after " + iterations + "\n");
+                            System.out.println("LM with YES OD for " + FofX.getShortNameString() + " after " + iterations + "\n");
                         }
                     }
                     // let's get out of here

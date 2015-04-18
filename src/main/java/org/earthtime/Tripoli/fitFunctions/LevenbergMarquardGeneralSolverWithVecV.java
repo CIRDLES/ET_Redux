@@ -76,8 +76,6 @@ public class LevenbergMarquardGeneralSolverWithVecV implements FitFunctionInterf
             Matrix MeasuredCovMatrixS,//
             boolean calculateHatMatrix ) {
 
-        //Matrix MeasuredCovVectorV = makeMeasuredCovVectorV( MeasuredCovMatrixS );
-
         overDispersionLMAlgorithm = odFunctionFactory( fitFunctionType );
 
         overDispersionLMAlgorithm.coldInitializeFunctionAlgorithm(//
@@ -265,7 +263,7 @@ public class LevenbergMarquardGeneralSolverWithVecV implements FitFunctionInterf
                         if (  ! FofX.verifyPositiveVariances() ) {
                             FofX = null;
                         } else {
-                            System.out.println( "LM with YES OD for " + FofX.getShortNameString() + "after " + iterations + "\n" );
+                            System.out.println( "LM with YES OD for " + FofX.getShortNameString() + " after " + iterations + "\n" );
                         }
                     }
                     // let's get out of here
@@ -301,17 +299,7 @@ public class LevenbergMarquardGeneralSolverWithVecV implements FitFunctionInterf
         // part of section 7a
         overDispersionLMAlgorithm.assignMatrixJypToFitFunctions();
 
-//        // june 2013 tidy up
-//        try {
-//            overDispersionLMAlgorithm.getInitialFofX().setMatrixSf( null );
-//        } catch (Exception e) {
-//        }
-//        try {
-//            overDispersionLMAlgorithm.getFinalFofX().setMatrixSf( null );
-//        } catch (Exception e) {
-//        }
-
-        return FofX;//overDispersionLMAlgorithm;
+        return FofX;
     }
 
     /**
@@ -1321,16 +1309,6 @@ public class LevenbergMarquardGeneralSolverWithVecV implements FitFunctionInterf
         public boolean fitFound () {
             throw new UnsupportedOperationException( "Not supported yet." );
         }
-//  
-//        private void readObject (
-//                ObjectInputStream stream )
-//                throws IOException, ClassNotFoundException {
-//            stream.defaultReadObject();
-//            ObjectStreamClass myObject = ObjectStreamClass.lookup(
-//                    Class.forName( org.earthtime.Tripoli.fitFunctions.LevenbergMarquardGeneralSolverWithCovS.OdMeanFofX.class.getCanonicalName() ) );
-//            long theSUID = myObject.getSerialVersionUID();
-//            System.out.println( "Customized De-serialization of OdMeanFofX " + theSUID );
-//        }
 
         @Override
         protected Matrix extractMatrixJIntpFromJpy ( Matrix Jpy ) {
