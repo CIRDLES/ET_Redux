@@ -797,11 +797,11 @@ public class TripoliSession implements
 
     private void prepareForReductionAndCommonLeadCorrection(FractionSelectionTypeEnum fractionSelectionTypeEnum) {
 
-        SortedSet<TripoliFraction> unknownFractions = getTripoliFractionsFiltered(fractionSelectionTypeEnum, IncludedTypeEnum.INCLUDED);
-        int countOfUnknowns = unknownFractions.size();
+        SortedSet<TripoliFraction> selectedFractions = getTripoliFractionsFiltered(fractionSelectionTypeEnum, IncludedTypeEnum.INCLUDED);
+        int countOfSelectedFractions = selectedFractions.size();
         // nov 2014 section 11
         // walk the sessions and build double[][] of diagonals (3 rows by countof unkowns - one row for each session ratio
-        double[][] sessionRatioDiagonalSu = new double[3][countOfUnknowns];
+        double[][] sessionRatioDiagonalSu = new double[3][countOfSelectedFractions];
         Iterator<RawRatioNames> sessionForStandardsIterator = sessionForStandardsInterceptFractionation.keySet().iterator();
         while (sessionForStandardsIterator.hasNext()) {
             RawRatioNames rrName = sessionForStandardsIterator.next();
@@ -838,10 +838,16 @@ public class TripoliSession implements
 
         // need to package the common lead correction parameters and scheme and assign them to UPbLAICPMSFraction in each case
         // need strategy for stacey kramer
-        Iterator<TripoliFraction> unknownFractionIterator = unknownFractions.iterator();
+        Iterator<TripoliFraction> selectedFractionsIterator = selectedFractions.iterator();
         int fractionCounter = 0;
-        while (unknownFractionIterator.hasNext()) {
-            TripoliFraction tf = unknownFractionIterator.next();
+        while (selectedFractionsIterator.hasNext()) {
+            TripoliFraction tf = selectedFractionsIterator.next();
+            
+            // undo Pbc correction for standard
+            if (tf.isStandard()){
+                tf.setCommonLeadLossCorrectionScheme(CommonLeadLossCorrectionSchemeNONE.getInstance());
+            }
+            
             SortedMap<String, ValueModel> parameters = tf.assembleCommonLeadCorrectionParameters();
             SortedMap<String, BigDecimal> parametersSK = tf.assembleStaceyKramerCorrectionParameters();
 
@@ -877,9 +883,7 @@ public class TripoliSession implements
             }
             // the rest of this math occurs in fraction reduction once we are in Redux part
             fractionCounter++;
-
         }
-
     }
 
     @Override
@@ -1058,7 +1062,7 @@ public class TripoliSession implements
      * @param fractionSelectionTypeEnum the value of fractionSelectionTypeEnum
      * @param sessionFofX the value of sessionFofX
      * @param unknownFractionIDs the value of unknownFractionIDs
-     * @param countOfUnknowns the value of countOfUnknowns
+     * @param countOfUnknowns the value of countOfSelectedFractions
      * @param unknownsAnalyticalCovarianceSu the value of
      * unknownsAnalyticalCovarianceSu
      * @param sessionStandardValue the value of sessionStandardValue
