@@ -21,6 +21,8 @@ package org.earthtime.Tripoli.dataModels;
 
 import Jama.Matrix;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Map;
@@ -86,7 +88,8 @@ public class RawRatioDataModel //
     protected boolean overDispersionSelected;
     private FitFunctionTypeEnum selectedFitFunctionType;
     private boolean belowDetection;
-    private Matrix SlogRatioX_Y;
+    private Matrix SlogRatioX_Yfull;
+    private transient Matrix SlogRatioX_Y;
     private transient Matrix matrixSxyod;
     private boolean calculatedInitialFitFunctions;
     // these three introduced feb 2013 to streamline choice of points in function fitting
@@ -137,6 +140,7 @@ public class RawRatioDataModel //
 
         this.selectedFitFunctionType = FitFunctionTypeEnum.LINE;//.LINE;
         this.belowDetection = false;
+        this.SlogRatioX_Yfull = null;
         this.SlogRatioX_Y = null;
 
         this.calculatedInitialFitFunctions = false;
@@ -265,84 +269,97 @@ public class RawRatioDataModel //
      */
     public void propagateUnctInRatios() {
 
-        boolean cleanTop = false;
-        boolean cleanBot = false;
+        // April 2015
+        // refactor to improve performance
+        // Since SLogRatioX_Y is calculated on the first pass, we can merely
+        // toggle rows and columns per dagtaactive map instead of recalculating everything
+        // make the current version transient and save only the full
+        if (SlogRatioX_Yfull == null) {
+            // create all true dataActiveMap for initial pass
+            boolean[] allTrueDataActiveMap = new boolean[dataActiveMap.length];
+            Arrays.fill(allTrueDataActiveMap, Boolean.TRUE);
 
-        // nov 2014 need to catch special case where */pb204 ratios have different dataactivemaps
-        boolean[] topDataActiveMap = ((RawIntensityDataModel) topIsotope).getOnPeakVirtualCollector().getDataActiveMap();
-        ((RawIntensityDataModel) topIsotope).getOnPeakVirtualCollector().setDataActiveMap(dataActiveMap.clone());
+            boolean[] topDataActiveMap = ((RawIntensityDataModel) topIsotope).getOnPeakVirtualCollector().getDataActiveMap();
+            ((RawIntensityDataModel) topIsotope).getOnPeakVirtualCollector().setDataActiveMap(allTrueDataActiveMap);//dataActiveMap.clone());
 
-        if (((RawIntensityDataModel) topIsotope).getSopbclr() == null) {
-            cleanTop = true;
             ((RawIntensityDataModel) topIsotope).prepareDataForFitFunctions();
             ((RawIntensityDataModel) topIsotope).propagateUnctInBaselineCorrOnPeakIntensities();
-        }
-        // restore
-        ((RawIntensityDataModel) topIsotope).getOnPeakVirtualCollector().setDataActiveMap(topDataActiveMap);
-
-        boolean[] botDataActiveMap = ((RawIntensityDataModel) botIsotope).getOnPeakVirtualCollector().getDataActiveMap();
-        ((RawIntensityDataModel) botIsotope).getOnPeakVirtualCollector().setDataActiveMap(dataActiveMap.clone());
-
-        if (((RawIntensityDataModel) botIsotope).getSopbclr() == null) {
-            cleanBot = true;
-            ((RawIntensityDataModel) botIsotope).prepareDataForFitFunctions();
-            ((RawIntensityDataModel) botIsotope).propagateUnctInBaselineCorrOnPeakIntensities();
-        }
-        // restore
-        ((RawIntensityDataModel) botIsotope).getOnPeakVirtualCollector().setDataActiveMap(botDataActiveMap);
-
-        Matrix numerator = ((RawIntensityDataModel) topIsotope).getSopbclr();
-        Matrix denominator = ((RawIntensityDataModel) botIsotope).getSopbclr();
-
-        if ((numerator != null) & (denominator != null)) {
-
-            // only if both numerator and denominator are ion counters do we do matrixSxyod below       
-            if ((topIsotope.getCollectorModel() //
-                    instanceof IonCounterCollectorModel)//
-                    && //
-                    (botIsotope.getCollectorModel() //
-                    instanceof IonCounterCollectorModel)//
-                    &&//
-                    // v3 jan 2013 check if the SAME ion counter
-                    hasTwoIdenticalIonCounters()) {
-
-                matrixSxyod = //
-                        ((RawIntensityDataModel) topIsotope).getColumnVectorOfCorrectedOnPeakIntensities()//
-                        .times(((RawIntensityDataModel) botIsotope).getColumnVectorOfCorrectedOnPeakIntensities().transpose());
-
-                double deadtimeOneSigmaAbsSqr = //
-                        ((IonCounterCollectorModel) botIsotope//
-                        .getCollectorModel()).getDeadTime().getOneSigmaAbs().movePointLeft(0).pow(2).doubleValue();
-
-                matrixSxyod.timesEquals(deadtimeOneSigmaAbsSqr);
-
-                SlogRatioX_Y = numerator.plus(denominator).minus(matrixSxyod.times(2.0));
-
-            } else {
-                try {
-                    SlogRatioX_Y = numerator.plus(denominator);
-                } catch (Exception e) {
-                    System.out.println("slogratiox_y trouble" + e.getMessage());
-                }
-            }
-
-            // nov 2014
-//            if (botIsotope.getDataModelName().equalsIgnoreCase(IsotopeNames.Pb204.getName())) {
-            topSopbclr = numerator.copy();
-            botSopbclr = denominator.copy();
 //            }
 
-//            System.out.println("Checkpoint for Ratio uncertainty: " + getDataModelName());
-        }
+            boolean[] botDataActiveMap = ((RawIntensityDataModel) botIsotope).getOnPeakVirtualCollector().getDataActiveMap();
+            ((RawIntensityDataModel) botIsotope).getOnPeakVirtualCollector().setDataActiveMap(allTrueDataActiveMap);//dataActiveMap.clone());
 
-        if (cleanTop) {
+            ((RawIntensityDataModel) botIsotope).prepareDataForFitFunctions();
+            ((RawIntensityDataModel) botIsotope).propagateUnctInBaselineCorrOnPeakIntensities();
+
+            Matrix numerator = ((RawIntensityDataModel) topIsotope).getSopbclr();
+            Matrix denominator = ((RawIntensityDataModel) botIsotope).getSopbclr();
+
+            if ((numerator != null) & (denominator != null)) {
+
+                // only if both numerator and denominator are ion counters do we do matrixSxyod below       
+                if ((topIsotope.getCollectorModel() //
+                        instanceof IonCounterCollectorModel)//
+                        && //
+                        (botIsotope.getCollectorModel() //
+                        instanceof IonCounterCollectorModel)//
+                        &&//
+                        // v3 jan 2013 check if the SAME ion counter
+                        hasTwoIdenticalIonCounters()) {
+
+                    matrixSxyod = //
+                            ((RawIntensityDataModel) topIsotope).getColumnVectorOfCorrectedOnPeakIntensities()//
+                            .times(((RawIntensityDataModel) botIsotope).getColumnVectorOfCorrectedOnPeakIntensities().transpose());
+
+                    double deadtimeOneSigmaAbsSqr = //
+                            ((IonCounterCollectorModel) botIsotope//
+                            .getCollectorModel()).getDeadTime().getOneSigmaAbs().movePointLeft(0).pow(2).doubleValue();
+
+                    matrixSxyod.timesEquals(deadtimeOneSigmaAbsSqr);
+
+                    SlogRatioX_Yfull = numerator.plus(denominator).minus(matrixSxyod.times(2.0));
+
+                } else {
+                    try {
+                        SlogRatioX_Yfull = numerator.plus(denominator);
+                    } catch (Exception e) {
+                        System.out.println("SlogRatioX_Yfull trouble" + e.getMessage());
+                    }
+                }
+
+                // restore active data maps to normal status
+                ((RawIntensityDataModel) topIsotope).getOnPeakVirtualCollector().setDataActiveMap(topDataActiveMap);
+                ((RawIntensityDataModel) botIsotope).getOnPeakVirtualCollector().setDataActiveMap(botDataActiveMap);
+
+                topSopbclr = numerator.copy();
+                botSopbclr = denominator.copy();
+            }
+
             ((DataModelFitFunctionInterface) topIsotope).cleanupUnctCalcs();
-        }
-        if (cleanBot) {
             ((DataModelFitFunctionInterface) botIsotope).cleanupUnctCalcs();
+
+            System.gc();
+
+        }
+        calculateSlogRatioX_Y();
+    }
+
+    private void calculateSlogRatioX_Y() {
+        // choose rows and columns based on active data
+        // nov 2014 need to catch special case where */pb204 ratios have different dataactivemaps
+        ArrayList<Integer> selectedRowsColsList = new ArrayList<>();
+        for (int i = 0; i < dataActiveMap.length; i++) {
+            if (dataActiveMap[i]) {
+                selectedRowsColsList.add(i);
+            }
         }
 
-        System.gc();
+        int[] selectedRowsCols = new int[selectedRowsColsList.size()];
+        for (int i = 0; i < selectedRowsCols.length; i++) {
+            selectedRowsCols[i] = selectedRowsColsList.get(i);
+        }
+
+        SlogRatioX_Y = SlogRatioX_Yfull.getMatrix(selectedRowsCols, selectedRowsCols);
     }
 
     /**
@@ -458,7 +475,8 @@ public class RawRatioDataModel //
                         FitFunctionTypeEnum.MEAN,//
                         activeData, //
                         null, //
-                        differences, matrixSf.plus(SlogRatioX_Y),//
+                        differences,//
+                        matrixSf.plus(SlogRatioX_Y),//
                         false);
 
         // algorithmForMEAN contains both the non OD and OD versions
@@ -879,7 +897,7 @@ public class RawRatioDataModel //
      */
     @Override
     public void cleanupUnctCalcs() {
-        setSlogRatioX_Y(null);
+        // April 2015 saving a copy and using transient setSlogRatioX_Y(null);
         setMatrixSxyod(null);
     }
 
@@ -1461,6 +1479,9 @@ public class RawRatioDataModel //
      * @return the SlogRatioX_Y
      */
     public Matrix getSlogRatioX_Y() {
+        if (SlogRatioX_Y == null) {
+            calculateSlogRatioX_Y();
+        }
         return SlogRatioX_Y;
     }
 

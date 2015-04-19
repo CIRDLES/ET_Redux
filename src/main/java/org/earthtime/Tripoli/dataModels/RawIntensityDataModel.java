@@ -771,7 +771,7 @@ public class RawIntensityDataModel //
     public void prepareDataForFitFunctions() {
 
         // nov 2012 calculate the SigmaI matrix for the background fit
-        // first calculate the full matrix, then take upper left quadrant (assuming same number of background and foreground readings)
+        // first calculate the full matrix, then take upper left quadrant
         if (USING_FULL_PROPAGATION) {
 
             matrixSiCovarianceIntensities = collectorModel.buildMatrixSi(diagonalOfMatrixSIntensities, allItensities);
