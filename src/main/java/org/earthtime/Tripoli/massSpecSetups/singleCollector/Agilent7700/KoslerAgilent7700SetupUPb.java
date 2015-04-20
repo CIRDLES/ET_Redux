@@ -50,7 +50,7 @@ public final class KoslerAgilent7700SetupUPb extends AbstractMassSpecSetup imple
 
     private KoslerAgilent7700SetupUPb() {
         super();
-        NAME = "Agilent 7700 Setup";
+        NAME = "Kosler Agilent 7700 Setup";
         massSpecType = MassSpecTypeEnum.SINGLE;
         VIRTUAL_COLLECTOR_COUNT = 14;
         COLLECTOR_DATA_FREQUENCY_MILLISECS = 177;
@@ -137,6 +137,17 @@ public final class KoslerAgilent7700SetupUPb extends AbstractMassSpecSetup imple
     public SortedSet<DataModelInterface> rawRatiosFactory(String[][] intensitiesScan, boolean isStandard, String fractionID, boolean usingFullPropagation, TripoliFraction tripoliFraction) {
 
         countOfAcquisitions = intensitiesScan.length;
+
+        return rawRatiosFactoryRevised();
+    }
+
+    /**
+     *
+     *
+     * @return the
+     * java.util.SortedSet<org.earthtime.Tripoli.dataModels.DataModelInterface>
+     */
+    public SortedSet<DataModelInterface> rawRatiosFactoryRevised() {
 
         virtualCollectors = new ArrayList<>(VIRTUAL_COLLECTOR_COUNT);
         for (int i = 0; i < VIRTUAL_COLLECTOR_COUNT; i++) {
@@ -226,8 +237,6 @@ public final class KoslerAgilent7700SetupUPb extends AbstractMassSpecSetup imple
         rawRatios.add(r207_204w);
         DataModelInterface r208_204w = new RawRatioDataModel(RawRatioNames.r208_204w, Pb208, Pb204, false, true, COLLECTOR_DATA_FREQUENCY_MILLISECS);
         rawRatios.add(r208_204w);
-
-        processFractionRawRatios(intensitiesScan, isStandard, fractionID, usingFullPropagation, null);
 
         return rawRatios;
     }

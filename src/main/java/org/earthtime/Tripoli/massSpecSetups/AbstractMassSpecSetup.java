@@ -177,7 +177,6 @@ public abstract class AbstractMassSpecSetup implements //
 
         // TODO: make a user-set parameter
         this.r202Hg_204Hg = new ValueModel( //
-                //
                 "r202Hg_204Hg", new BigDecimal(4.346), "ABS", BigDecimal.ZERO, BigDecimal.ZERO);
         this.Hg202 = null;
         this.Pb204 = null;
@@ -269,7 +268,6 @@ public abstract class AbstractMassSpecSetup implements //
 
         calculateRawAndLogRatios(tripoliFraction);
 
-        // performbackgroundfitting already set the UsingFastPropagation flag
         propagateUnctInBaselineCorrOnPeakIntensities();
 
         propagateUnctInRatios(usingFullPropagation);
@@ -284,15 +282,38 @@ public abstract class AbstractMassSpecSetup implements //
 
         initializeVirtualCollectorsWithData(intensitiesScan);
 
-        processFractionRawRatiosStageII(isStandard, fractionID, usingFullPropagation, tripoliFraction);
+        processFractionRawRatiosStageII(isStandard, usingFullPropagation, tripoliFraction);
+    }
+
+    /**
+     * Updated version to handle case of background counts diff from peak counts
+     *
+     * @param backgroundAcquisitions
+     * @param peakAcquisitions
+     * @param isStandard
+     * @param usingFullPropagation
+     * @param virtualCollectorModelMapToFieldIndexes
+     * @param tripoliFraction
+     */
+    public void processFractionRawRatiosII(//
+            ArrayList<double[]> backgroundAcquisitions, //
+            ArrayList<double[]> peakAcquisitions, //
+            boolean isStandard, //
+            boolean usingFullPropagation, //
+            TripoliFraction tripoliFraction, //
+            Map<DataModelInterface, Integer> virtualCollectorModelMapToFieldIndexes) {
+
+        initializeVirtualCollectorsWithData(backgroundAcquisitions, peakAcquisitions, virtualCollectorModelMapToFieldIndexes);
+
+        processFractionRawRatiosStageII(isStandard, usingFullPropagation, tripoliFraction);
     }
 
     public void processFractionRawRatiosTRA(//
             ArrayList<double[]> backgroundAcquisitions, ArrayList<double[]> peakAcquisitions, boolean isStandard, String fractionID, boolean usingFullPropagation, TripoliFraction tripoliFraction) {
 
         initializeVirtualCollectorsWithDataTRA(backgroundAcquisitions, peakAcquisitions);
-        
-        processFractionRawRatiosStageII(isStandard, fractionID, usingFullPropagation, tripoliFraction);
+
+        processFractionRawRatiosStageII(isStandard, usingFullPropagation, tripoliFraction);
     }
 
     /**
@@ -303,10 +324,15 @@ public abstract class AbstractMassSpecSetup implements //
      * @param tripoliFraction the value of tripoliFraction
      */
     public void processFractionRawRatiosStageII(//
-            boolean isStandard, String fractionID, boolean usingFullPropagation, TripoliFraction tripoliFraction) {
+            boolean isStandard, boolean usingFullPropagation, TripoliFraction tripoliFraction) {
         // make fresh set of rawratios with map of collector instances
 
-        boolean writeReport = isStandard && isFirstReport;
+        String fractionID = tripoliFraction.getFractionID();
+
+        boolean isDebug = java.lang.management.ManagementFactory.getRuntimeMXBean().
+                getInputArguments().toString().indexOf("-Xdebug") > 0;
+
+        boolean writeReport = isStandard && isFirstReport & (!isDebug);
         PrintWriter outputWriter = null;
 
         if (writeReport) {
@@ -320,7 +346,6 @@ public abstract class AbstractMassSpecSetup implements //
 
         }
 
-//        initializeVirtualCollectorsWithData(intensitiesScan);
         if (writeReport) {
             if (outputWriter != null) {
                 outputWriter.println("\n\n1: Raw intensities, baseline and on-peak (as volts or cps) ********************");
@@ -390,14 +415,12 @@ public abstract class AbstractMassSpecSetup implements //
                 }
             }
         }
-System.out.println("Processing fraction " + fractionID);
+
+        System.out.println("Processing tripoli fraction " + fractionID);
         if (Pb204 != null) {
             validateOnPeakBaselineCorrectedIsotope(Pb204, fractionID);
         }
 
-//        if (Pb207 != null) {
-//            validateOnPeakBaselineCorrectedIsotope(Pb207);
-//        }
         // modification march 2014 to handle agilent see Noah email 3 mar 2014
         // We should disregard this test if the instrument is a 'single collector ion counter', like the Agilent 7700 and Jeff's Thermo Element2.
         if (Pb207 != null) {
@@ -413,8 +436,6 @@ System.out.println("Processing fraction " + fractionID);
 
         calculateRawAndLogRatios(tripoliFraction);
 
-        // uncertainty propagation for standards only
-//        if (true) {// isStandard ) {
         propagateUnctInBaselineCorrOnPeakIntensities();
 
         if (writeReport) {
@@ -547,7 +568,6 @@ System.out.println("Processing fraction " + fractionID);
                 }
             }
         }
-//        }
 
         cleanupUnctCalcs();
 
@@ -565,25 +585,17 @@ System.out.println("Processing fraction " + fractionID);
             ((DataModelFitFunctionInterface) dm).cleanupUnctCalcs();
         }
 
-        // nov 2014 moved to tripolisession to have for pbc corrections
-//        for (DataModelInterface rr : rawRatios) {
-//            ((DataModelFitFunctionInterface) rr).cleanupUnctCalcs();
-//        }
         System.gc();
     }
 
     private void convertRawIntensitiesToCountsPerSecond() {
-        for (DataModelInterface dm : genericIsotopeModels) {
+        genericIsotopeModels.stream().forEach((dm) -> {
             ((RawIntensityDataModel) dm).convertRawIntensitiesToCountsPerSecond();
-        }
+        });
     }
 
     private void performInterceptFittingToRatios() {
 
-//        for (DataModelInterface rr : rawRatios) {
-//            //april 2014
-//            rr.applyMaskingArray();
-//        }
         // generate fit function so can be done with big matrices
         for (DataModelInterface rr : rawRatios) {
             rr.generateSetOfFitFunctions(false, true);
@@ -596,7 +608,6 @@ System.out.println("Processing fraction " + fractionID);
      */
     private void propagateUnctInRatios(boolean usingFullPropagation) {
 
-        // RawRatioDataModel.setUSING_FULL_PROPAGATION(usingFullPropagation);
         for (DataModelInterface rr : rawRatios) {
             rr.setUSING_FULL_PROPAGATION(usingFullPropagation);
             ((RawRatioDataModel) rr).propagateUnctInRatios();
@@ -664,18 +675,7 @@ System.out.println("Processing fraction " + fractionID);
             nonParametricStats.calculateStats(dataActiveMap, isotopeOPBC);
             //((RawIntensityDataModel) Pb208).setForceMeanForCommonLeadRatios(true);
             ((RawIntensityDataModel) Pb208).setForcedMeanForCommonLeadRatios(nonParametricStats.getSampleMean());
-        }   // nov 2014 - the following logic is not needed, because in post-processing, the */204 ratios will have less than 10% neg by definition
-//        } else if (!belowDetection && !tenPercentOrMoreAreNegative && (((RawIntensityDataModel) isotope).getRawIsotopeModelName().compareTo(IsotopeNames.Pb204) == 0)) {
-//            // turn off just the lead datum still need to make this just lead
-//            System.out.println(isotope.getDataModelName() + " above detection with LESS than 10% neg for " + fractionID);
-//            ((RawIntensityDataModel) Pb207).setEitherPb204OrPb207HasLessThanTenPercentNegative(true);
-//
-//        } else if (!belowDetection && !tenPercentOrMoreAreNegative && (((RawIntensityDataModel) isotope).getRawIsotopeModelName().compareTo(IsotopeNames.Pb207) == 0)) {
-//            // turn off just the lead datum still need to make this just lead
-//            System.out.println(isotope.getDataModelName() + " above detection with LESS than 10% neg for " + fractionID);
-//            ((RawIntensityDataModel) Pb204).setEitherPb204OrPb207HasLessThanTenPercentNegative(true);
-//        }
-
+        }
         // turn off isotope
         ((RawIntensityDataModel) isotope).setBelowDetection(belowDetection);
 
@@ -690,7 +690,6 @@ System.out.println("Processing fraction " + fractionID);
     private void calculateRawAndLogRatios(TripoliFraction tripoliFraction) {
         // calculate ratios ****************************************************
         for (DataModelInterface rr : rawRatios) {
-//            ((RawRatioDataModel) rr).setDataActiveMap(tripoliFraction.getDataActiveMap());//         AbstractMassSpecSetup.defaultDataActiveMap(countOfAcquisitions));
             ((RawRatioDataModel) rr).calculateRawAndLogRatios(tripoliFraction);
             ((RawRatioDataModel) rr).setDataActiveMap(AbstractMassSpecSetup.defaultDataActiveMap(countOfAcquisitions));
             // april 2014
@@ -745,6 +744,60 @@ System.out.println("Processing fraction " + fractionID);
 
     }
 
+    /**
+     * Designed to handle background and peak acquisitions in the general case
+     *
+     * @param acquisitions
+     */
+    private void initializeVirtualCollectorsWithData(//
+            ArrayList<double[]> backgroundAcquisitions,//
+            ArrayList<double[]> peakAcquisitions,//
+            Map<DataModelInterface, Integer> virtualCollectorModelMapToFieldIndexes) {
+
+        int countOfBackgroundAcquisitions = backgroundAcquisitions.size();
+        int countOfPeakAcquisitions = peakAcquisitions.size();
+
+        // calculate acquire times
+        double[] backgroundAquireTimes = new double[countOfBackgroundAcquisitions];
+        double[] peakAquireTimes = new double[countOfPeakAcquisitions];
+
+        for (int i = 0; i < countOfBackgroundAcquisitions; i++) {
+            backgroundAquireTimes[i] = i * COLLECTOR_DATA_FREQUENCY_MILLISECS;
+        }
+        for (int i = 0; i < countOfPeakAcquisitions; i++) {
+            peakAquireTimes[i] = (i + countOfBackgroundAcquisitions) * COLLECTOR_DATA_FREQUENCY_MILLISECS;
+        }
+
+        // convert arraylists to transposed arrays
+        double[][] backgroundAcquisitionsArray = backgroundAcquisitions.toArray(new double[countOfBackgroundAcquisitions][]);
+        double[][] peakAcquisitionsArray = peakAcquisitions.toArray(new double[countOfPeakAcquisitions][]);
+
+        Matrix backgroundAcquisitionsMatrix = new Matrix(backgroundAcquisitionsArray);
+        Matrix peakAcquisitionsMatrix = new Matrix(peakAcquisitionsArray);
+
+        for (Map.Entry<DataModelInterface, Integer> vcmToIndex : virtualCollectorModelMapToFieldIndexes.entrySet()) {
+            VirtualCollectorModel backgroundVCM = prepareVirtualCollector(((RawIntensityDataModel) vcmToIndex.getKey()).getBackgroundVirtualCollector(), countOfBackgroundAcquisitions);
+            VirtualCollectorModel peakVCM = prepareVirtualCollector(((RawIntensityDataModel) vcmToIndex.getKey()).getOnPeakVirtualCollector(), countOfPeakAcquisitions);
+
+            int col = vcmToIndex.getValue();
+
+            backgroundVCM.setIntensities(backgroundAcquisitionsMatrix.getMatrix(0, countOfBackgroundAcquisitions - 1, col, col).getColumnPackedCopy());
+            peakVCM.setIntensities(peakAcquisitionsMatrix.getMatrix(0, countOfPeakAcquisitions - 1, col, col).getColumnPackedCopy());
+
+            backgroundVCM.setAquireTimes(backgroundAquireTimes);
+            peakVCM.setAquireTimes(peakAquireTimes);
+        }
+
+        for (DataModelInterface dm : genericIsotopeModels) {
+            ((RawIntensityDataModel) dm).correctIntensitiesForResistor();
+        }
+    }
+
+    /**
+     * this will be deprecated as soon as nu faraday file handler is updated
+     * @param backgroundAcquisitions
+     * @param peakAcquisitions 
+     */
     private void initializeVirtualCollectorsWithDataTRA(ArrayList<double[]> backgroundAcquisitions, ArrayList<double[]> peakAcquisitions) {
         // dec 2014 TRA version where scan data contains background then peak in columns
         // background collectors
@@ -955,9 +1008,6 @@ System.out.println("Processing fraction " + fractionID);
         }
     }
 
-//    public abstract void assignDeadTimesToCollectors ( Map<String, Double> collectorNameToDeadTimesMap );
-//
-//    public abstract void assignDeadTimesUnctToCollectors ( Map<String, Double> collectorNameToDeadTimesMap );
     /**
      * Assume deadTimes are supplied in NUPlasmaCollectors enum order
      *
@@ -1179,10 +1229,66 @@ System.out.println("Processing fraction " + fractionID);
                 this.rawRatios = rawRatios;
             }
 
-    /**
-     * @param countOfAcquisitions the countOfAcquisitions to set
-     */
-    public void setCountOfAcquisitions(int countOfAcquisitions) {
-        this.countOfAcquisitions = countOfAcquisitions;
-    }
+            /**
+             * @param countOfAcquisitions the countOfAcquisitions to set
+             */
+            public void setCountOfAcquisitions(int countOfAcquisitions) {
+                this.countOfAcquisitions = countOfAcquisitions;
+            }
+
+            /**
+             * @return the Pb207
+             */
+            public DataModelInterface getPb207() {
+                return Pb207;
+            }
+
+            /**
+             * @return the Pb208
+             */
+            public DataModelInterface getPb208() {
+                return Pb208;
+            }
+
+            /**
+             * @return the Pb206
+             */
+            public DataModelInterface getPb206() {
+                return Pb206;
+            }
+
+            /**
+             * @return the U238
+             */
+            public DataModelInterface getU238() {
+                return U238;
+            }
+
+            /**
+             * @return the Th232
+             */
+            public DataModelInterface getTh232() {
+                return Th232;
+            }
+
+            /**
+             * @return the U235
+             */
+            public DataModelInterface getU235() {
+                return U235;
+            }
+
+            /**
+             * @return the Hg202
+             */
+            public DataModelInterface getHg202() {
+                return Hg202;
+            }
+
+            /**
+             * @return the Pb204
+             */
+            public DataModelInterface getPb204() {
+                return Pb204;
+            }
 }

@@ -285,9 +285,6 @@ public class LevenbergMarquardGeneralSolverWithCovS implements FitFunctionInterf
             if (FofX.getMatrixJacobianYInterceptLogRatioXY() == null) {
                 FofX.setMatrixJacobianYInterceptLogRatioXY(overDispersionLMAlgorithm.getInitialFofX().getMatrixJacobianYInterceptLogRatioXY());
             }
-//            if (FofX.getMatrixJacobianYInterceptLogRatioXY() == null) {
-//                System.out.println("GOT A NULL" + FofX.getShortNameString());
-//            }
         }
 
         return FofX;//overDispersionLMAlgorithm;

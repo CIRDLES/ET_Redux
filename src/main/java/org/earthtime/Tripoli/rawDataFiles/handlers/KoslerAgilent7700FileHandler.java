@@ -18,16 +18,21 @@
 package org.earthtime.Tripoli.rawDataFiles.handlers;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.concurrent.ForkJoinPool;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
+import org.earthtime.Tripoli.dataModels.DataModelInterface;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
+import org.earthtime.Tripoli.massSpecSetups.singleCollector.Agilent7700.KoslerAgilent7700SetupUPb;
 import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.utilities.FileHelper;
 
@@ -40,6 +45,7 @@ public class KoslerAgilent7700FileHandler extends AbstractRawDataFileHandler imp
         Serializable {
 
     private static KoslerAgilent7700FileHandler instance = null;
+    public static ForkJoinPool fjPool = new ForkJoinPool();
     private File[] analysisFiles;
 
     /**
@@ -50,10 +56,8 @@ public class KoslerAgilent7700FileHandler extends AbstractRawDataFileHandler imp
     private KoslerAgilent7700FileHandler() {
 
         super();
-
         NAME = "Kosler Agilent 7700 File";
-
-        aboutInfo = "Details: This is the Kosler protocol for an Agilent 7700.";
+        aboutInfo = "Details: This is the Kosler protocol for an Agilent 7700 used in 2015 round robin.";
     }
 
     /**
@@ -77,7 +81,6 @@ public class KoslerAgilent7700FileHandler extends AbstractRawDataFileHandler imp
         String dialogTitle = "Select an Agilent 7700 Raw Data Folder:";
 
         rawDataFile = FileHelper.AllPlatformGetFolder(dialogTitle, tripoliRawDataFolder);
-
         return rawDataFile;
     }
 
@@ -93,12 +96,7 @@ public class KoslerAgilent7700FileHandler extends AbstractRawDataFileHandler imp
     public File getAndLoadRawIntensityDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions) {
 
         // Agilent has folder of csv files plus some xls files
-        analysisFiles = rawDataFile.listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return (name.toLowerCase().endsWith(".csv"));
-            }
-        });
+        analysisFiles = rawDataFile.listFiles((File dir, String name) -> (name.toLowerCase().endsWith(".csv")));
 
         if (analysisFiles.length > 0) {
             String onPeakFileContents = URIHelper.getTextFromURI(analysisFiles[0].getAbsolutePath());
@@ -106,7 +104,7 @@ public class KoslerAgilent7700FileHandler extends AbstractRawDataFileHandler imp
                     && //
                     areKeyWordsPresent(onPeakFileContents)) {
                 // create fractions from raw data and perform corrections and calculate ratios
-                loadRawDataFile(loadDataTask, usingFullPropagation, leftShadeCount, 0);
+                tripoliFractions = loadRawDataFile(loadDataTask, usingFullPropagation, leftShadeCount, 0);
             }
         } else {
             JOptionPane.showMessageDialog(
@@ -159,24 +157,35 @@ public class KoslerAgilent7700FileHandler extends AbstractRawDataFileHandler imp
      * @return
      */
     @Override
-    protected SortedSet<TripoliFraction> loadRawDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions) {
-        tripoliFractions = new TreeSet<>();
+    protected SortedSet<TripoliFraction> loadRawDataFile(//
+            SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions) {
 
-        // assume we are golden        
+        SortedSet myTripoliFractions = new TreeSet<>();
+
+//        RawFractionFolderProcesserTask rawFilesTask = new RawFractionFolderProcesserTask(analysisFiles);
+//         assume we are golden        
         for (int f = 0; f < analysisFiles.length; f++) {
 
             if (loadDataTask.isCancelled()) {
                 break;
             }
             loadDataTask.firePropertyChange("progress", 0, ((100 * f) / analysisFiles.length));
-
             String fractionID = analysisFiles[f].getName().toUpperCase().replace(".CSV", "");
+
+            // hard-wired april 2015
+            boolean isStandard = false;
+            if (f < 3) {
+                isStandard = true;
+            } else if ((analysisFiles.length - f) < 4) {
+                isStandard = true;
+            }
 
             // get file contents
             String fractionFileContents = URIHelper.getTextFromURI(analysisFiles[f].getAbsolutePath());
             String[] fractionFileRows = fractionFileContents.split("\n");
 
             // first get time stamp for file in row 2
+            // form = Acquired      : 04/04/2013 1:22:25 PM using AcqMethod SJ_ZRILC.m
             String timeStampFromRow2[] = fractionFileRows[2].split(" :")[1].split(" +");
 
             String fractionDate = //
@@ -193,48 +202,43 @@ public class KoslerAgilent7700FileHandler extends AbstractRawDataFileHandler imp
             try {
                 fractionDateValue = fractionTimeFormat.parse(fractionDate);
 
-                // assume change to peak at line 173 for now
-                int assumedBackgrounRowCount = 173;
+                // each acquisition file contains background followed by peak follwed by background
+                // iinitial soultion is to hard wire the first background and peak
+                // later we will give user interactive tools to pick them out
+                ArrayList<double[]> backgroundAcquisitions = new ArrayList<>();
+                ArrayList<double[]> peakAcquisitions = new ArrayList<>();
+
+                int assumedBackgrounRowCount = 175 - rawDataFileTemplate.getBlockStartOffset();
                 long fractionBackgroundTimeStamp = fractionDateValue.getTime();
                 long fractionPeakTimeStamp = fractionDateValue.getTime() + assumedBackgrounRowCount * massSpec.getCOLLECTOR_DATA_FREQUENCY_MILLISECS();
 
-                System.out.println("\n**** AGILENT FractionID " + fractionID + "  " + fractionDateValue.toString() + "  row count = " + fractionFileRows.length);
+                for (int i = rawDataFileTemplate.getBlockStartOffset(); i < rawDataFileTemplate.getBlockSize(); i++) {
+                    String[] fractionCollectorsColumns = fractionFileRows[i].split(",");
 
-                // then process whole file because it includes the background as well as the peak                   
-                // create background and peak 
-                // note each row has relative time stamp which we are hiding for now by using frequency of read
-                int expectedRowsOfData = rawDataFileTemplate.getBlockSize();
-                // scan data has background columns then peak columns per row
-                String[][] scanData = //
-                        new String[assumedBackgrounRowCount][massSpec.getVIRTUAL_COLLECTOR_COUNT()];
-
-                //TODO possible missing condition here if file lengths vary from template spec and fractionFileRows is too big
-                for (int i = 0; i < expectedRowsOfData; i++) {
-
-                    // handle case where there is not as many lines of data as expected
-                    String[] fractionCollectorsColumns = new String[]{"0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0",};
-                    if (fractionFileRows.length > (i + rawDataFileTemplate.getBlockStartOffset())) {
-                        fractionCollectorsColumns = //
-                                fractionFileRows[i + rawDataFileTemplate.getBlockStartOffset()].split(",");
+                    // Time [Sec]	Al27	Si29	Sr88	Zr96	Hg202	Pb204	Pb206	Pb207	Pb208	Th232	U238
+                    // hard coded for now April 2015
+                    if (i <= 175) {
+                        double[] backgroundIntensities = new double[7];
+                        backgroundAcquisitions.add(backgroundIntensities);
+                        backgroundIntensities[0] = Double.parseDouble(fractionCollectorsColumns[5]);
+                        backgroundIntensities[1] = Double.parseDouble(fractionCollectorsColumns[6]);
+                        backgroundIntensities[2] = Double.parseDouble(fractionCollectorsColumns[7]);
+                        backgroundIntensities[3] = Double.parseDouble(fractionCollectorsColumns[8]);
+                        backgroundIntensities[4] = Double.parseDouble(fractionCollectorsColumns[9]);
+                        backgroundIntensities[5] = Double.parseDouble(fractionCollectorsColumns[10]);
+                        backgroundIntensities[6] = Double.parseDouble(fractionCollectorsColumns[11]);
+                    } else if (i >= 185) {
+                        double[] peakIntensities = new double[7];
+                        peakAcquisitions.add(peakIntensities);
+                        peakIntensities[0] = Double.parseDouble(fractionCollectorsColumns[5]);
+                        peakIntensities[1] = Double.parseDouble(fractionCollectorsColumns[6]);
+                        peakIntensities[2] = Double.parseDouble(fractionCollectorsColumns[7]);
+                        peakIntensities[3] = Double.parseDouble(fractionCollectorsColumns[8]);
+                        peakIntensities[4] = Double.parseDouble(fractionCollectorsColumns[9]);
+                        peakIntensities[5] = Double.parseDouble(fractionCollectorsColumns[10]);
+                        peakIntensities[6] = Double.parseDouble(fractionCollectorsColumns[11]);
                     }
-
-                    if (i < assumedBackgrounRowCount) {
-                        // column 5 is first isotope Hg202
-                        // background
-                        for (int j = 5; j < (massSpec.getVIRTUAL_COLLECTOR_COUNT() / 2) + 5; j++) {
-                            scanData[i][j - 5] = fractionCollectorsColumns[j].trim();
-                        }
-                    } else {
-                        // onpeak
-                        for (int j = 5; j < (massSpec.getVIRTUAL_COLLECTOR_COUNT() / 2) + 5; j++) {
-                            scanData[i - assumedBackgrounRowCount][(massSpec.getVIRTUAL_COLLECTOR_COUNT() / 2) + j - 5] //
-                                    = fractionCollectorsColumns[j].trim();
-                        }
-                    }
-                }
-
-                // extract isStandard
-                boolean isStandard = isStandardFractionID(fractionID);
+                }  // i loop
 
                 TripoliFraction tripoliFraction = //                           
                         new TripoliFraction( //
@@ -242,26 +246,201 @@ public class KoslerAgilent7700FileHandler extends AbstractRawDataFileHandler imp
                                 massSpec.getCommonLeadCorrectionHighestLevel(), //
                                 isStandard,
                                 fractionBackgroundTimeStamp, //
-                                fractionPeakTimeStamp, massSpec.rawRatiosFactory(scanData, isStandard, fractionID, usingFullPropagation, null));
+                                fractionPeakTimeStamp,
+                                peakAcquisitions.size());
+
+                SortedSet<DataModelInterface> rawRatios = ((KoslerAgilent7700SetupUPb) massSpec).rawRatiosFactoryRevised();
+                tripoliFraction.setRawRatios(rawRatios);
+
+                massSpec.setCountOfAcquisitions(peakAcquisitions.size());
+
+                // establish map of virtual collectors to field indexes
+                Map<DataModelInterface, Integer> virtualCollectorModelMapToFieldIndexes = new HashMap<>();
+                virtualCollectorModelMapToFieldIndexes.put(massSpec.getHg202(), 0);
+                virtualCollectorModelMapToFieldIndexes.put(massSpec.getPb204(), 1);
+                virtualCollectorModelMapToFieldIndexes.put(massSpec.getPb206(), 2);
+                virtualCollectorModelMapToFieldIndexes.put(massSpec.getPb207(), 3);
+                virtualCollectorModelMapToFieldIndexes.put(massSpec.getPb208(), 4);
+                virtualCollectorModelMapToFieldIndexes.put(massSpec.getTh232(), 5);
+                virtualCollectorModelMapToFieldIndexes.put(massSpec.getU238(), 6);
+
+                massSpec.processFractionRawRatiosII(//
+                        backgroundAcquisitions, peakAcquisitions, isStandard, usingFullPropagation, tripoliFraction, virtualCollectorModelMapToFieldIndexes);
 
                 tripoliFraction.shadeDataActiveMapLeft(leftShadeCount);
-                tripoliFractions.add(tripoliFraction);
-//                System.out.println( "Successfully added frac " + fractionID + " >>  " + tripoliFractions.add( tripoliFraction ) );
-//
-//                System.out.println( "                                       Count of stored fractions = " + tripoliFractions.size() );
-//                System.out.println( fractionID //
-//                        + " " + isStandard + " time = " + TimeToString.secondsAsLongToTimeString( fractionPeakTimeStamp ) );
+                System.out.println("\n**** AGILENT FractionID  " + fractionID + "  " + fractionDateValue.toString());
 
-                // }
+                myTripoliFractions.add(tripoliFraction);
+
             } catch (ParseException parseException) {
                 // TODO: drop out here
             }
         }
+//        
+//
+//        fjPool.invoke(rawFilesTask);
+//        do {
+//            System.out.printf("******************************************\n");
+//            System.out.printf("Main: Parallelism: %d\n", fjPool.getParallelism());
+//            System.out.printf("Main: Active Threads: %d\n", fjPool.getActiveThreadCount());
+//            System.out.printf("Main: Task Count: %d\n", fjPool.getQueuedTaskCount());
+//            System.out.printf("Main: Steal Count: %d\n", fjPool.getStealCount());
+//            System.out.printf("******************************************\n");
+//            try {
+//                TimeUnit.SECONDS.sleep(1);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        } while (!rawFilesTask.isDone());
+//        //Shut down ForkJoinPool using the shutdown() method.
+//        fjPool.shutdown();
+//
+//        myTripoliFractions = rawFilesTask.join();
+//        System.out.printf("System: %d raw fraction files processed.\n", tripoliFractions.size());
 
-        if (tripoliFractions.isEmpty()) {
-            tripoliFractions = null;
+        if (myTripoliFractions.isEmpty()) {
+            myTripoliFractions = null;
         }
 
-        return tripoliFractions;
+        return myTripoliFractions;
     }
+
+////    class RawFractionProcessorTask extends RecursiveTask<TripoliFraction> {
+////
+////        private final File rawFractionFile;
+////
+////        public RawFractionProcessorTask(File rawFractionFile) {
+////            super();
+////            this.rawFractionFile = rawFractionFile;
+////        }
+////
+////        @Override
+////        protected TripoliFraction compute() {
+////            return convertRawFractionFile(rawFractionFile);
+////        }
+////    }
+////
+////    /**
+////     * http://www.oracle.com/technetwork/articles/java/fork-join-422606.html
+////     * http://howtodoinjava.com/2014/05/27/forkjoin-framework-tutorial-forkjoinpool-example/
+////     */
+////    class RawFractionFolderProcesserTask extends RecursiveTask<SortedSet<TripoliFraction>> {
+////
+////        private final File[] rawFractionFiles;
+////
+////        public RawFractionFolderProcesserTask(File[] rawFractionFiles) {
+////            super();
+////            this.rawFractionFiles = rawFractionFiles;
+////        }
+////
+////        @Override
+////        protected SortedSet<TripoliFraction> compute() {
+////            SortedSet tripoliFractions = new TreeSet<>();
+////            List<RecursiveTask<TripoliFraction>> tasks = new ArrayList<>();
+////
+////            for (File rawFractionFile : rawFractionFiles) {
+////                RawFractionProcessorTask task = new RawFractionProcessorTask(rawFractionFile);
+////                tasks.add(task);
+////                task.fork();
+////            }
+////
+////            for (RecursiveTask<TripoliFraction> task : tasks) {
+////                tripoliFractions.add(task.join());
+////            }
+////            return tripoliFractions;
+////        }
+////    }
+////
+////    public TripoliFraction convertRawFractionFile(File rawFractionFile) {
+////
+////        TripoliFraction tripoliFraction = null;
+////
+////        String fractionID = rawFractionFile.getName().toUpperCase().replace(".CSV", "");
+////
+////        // hard-wired april 2015
+////        boolean isStandard = true;
+////
+////        // get file contents
+////        String fractionFileContents = URIHelper.getTextFromURI(rawFractionFile.getAbsolutePath());
+////        String[] fractionFileRows = fractionFileContents.split("\n");
+////
+////        // first get time stamp for file in row 2
+////        // form = Acquired      : 04/04/2013 1:22:25 PM using AcqMethod SJ_ZRILC.m
+////        String timeStampFromRow2[] = fractionFileRows[2].split(" :")[1].split(" +");
+////
+////        String fractionDate = //
+////                timeStampFromRow2[1] + " " // day/month/year
+////                + timeStampFromRow2[2] + " " // hour:min:sec
+////                + timeStampFromRow2[3] + " " // AM/PM
+////                ;
+////
+////        // Get the default MEDIUM/SHORT DateFormat
+////        DateFormat fractionTimeFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.MEDIUM);
+////
+////        // Parse the fractionDateValue
+////        Date fractionDateValue;
+////        try {
+////            fractionDateValue = fractionTimeFormat.parse(fractionDate);
+////
+////            // each acquisition file contains background followed by peak follwed by background
+////            // iinitial soultion is to hard wire the first background and peak
+////            // later we will give user interactive tools to pick them out
+////            ArrayList<double[]> backgroundAcquisitions = new ArrayList<>();
+////            ArrayList<double[]> peakAcquisitions = new ArrayList<>();
+////
+////            int assumedBackgrounRowCount = 175 - rawDataFileTemplate.getBlockStartOffset();
+////            long fractionBackgroundTimeStamp = fractionDateValue.getTime();
+////            long fractionPeakTimeStamp = fractionDateValue.getTime() + assumedBackgrounRowCount * massSpec.getCOLLECTOR_DATA_FREQUENCY_MILLISECS();
+////
+////            for (int i = rawDataFileTemplate.getBlockStartOffset(); i < rawDataFileTemplate.getBlockSize(); i++) {
+////                String[] fractionCollectorsColumns = fractionFileRows[i].split(",");
+////
+////                // Time [Sec]	Al27	Si29	Sr88	Zr96	Hg202	Pb204	Pb206	Pb207	Pb208	Th232	U238
+////                // hard coded for now April 2015
+////                if (i <= 175) {
+////                    double[] backgroundIntensities = new double[7];
+////                    backgroundAcquisitions.add(backgroundIntensities);
+////                    backgroundIntensities[0] = Double.parseDouble(fractionCollectorsColumns[5]);
+////                    backgroundIntensities[1] = Double.parseDouble(fractionCollectorsColumns[6]);
+////                    backgroundIntensities[2] = Double.parseDouble(fractionCollectorsColumns[7]);
+////                    backgroundIntensities[3] = Double.parseDouble(fractionCollectorsColumns[8]);
+////                    backgroundIntensities[4] = Double.parseDouble(fractionCollectorsColumns[9]);
+////                    backgroundIntensities[5] = Double.parseDouble(fractionCollectorsColumns[10]);
+////                    backgroundIntensities[6] = Double.parseDouble(fractionCollectorsColumns[11]);
+////                } else if (i >= 185) {
+////                    double[] peakIntensities = new double[7];
+////                    peakAcquisitions.add(peakIntensities);
+////                    peakIntensities[0] = Double.parseDouble(fractionCollectorsColumns[5]);
+////                    peakIntensities[1] = Double.parseDouble(fractionCollectorsColumns[6]);
+////                    peakIntensities[2] = Double.parseDouble(fractionCollectorsColumns[7]);
+////                    peakIntensities[3] = Double.parseDouble(fractionCollectorsColumns[8]);
+////                    peakIntensities[4] = Double.parseDouble(fractionCollectorsColumns[9]);
+////                    peakIntensities[5] = Double.parseDouble(fractionCollectorsColumns[10]);
+////                    peakIntensities[6] = Double.parseDouble(fractionCollectorsColumns[11]);
+////                }
+////            }  // i loop
+////
+////            tripoliFraction = //                           
+////                    new TripoliFraction( //
+////                            fractionID, //
+////                            massSpec.getCommonLeadCorrectionHighestLevel(), //
+////                            isStandard,
+////                            fractionBackgroundTimeStamp, //
+////                            fractionPeakTimeStamp,
+////                            peakAcquisitions.size());
+////
+////            SortedSet<DataModelInterface> rawRatios = ((KoslerAgilent7700SetupUPb) massSpec).rawRatiosFactoryRevised();
+////            tripoliFraction.setRawRatios(rawRatios);
+////
+////            massSpec.setCountOfAcquisitions(peakAcquisitions.size());
+////            massSpec.processFractionRawRatiosTRA(backgroundAcquisitions, peakAcquisitions, isStandard, fractionID, true/*usingFullPropagation*/, tripoliFraction);
+////
+////            //  tripoliFraction.shadeDataActiveMapLeft(leftShadeCount);
+////            System.out.println("\n**** AGILENT FractionID  " + fractionID + "  " + fractionDateValue.toString());
+////        } catch (ParseException parseException) {
+////            // TODO: drop out here
+////        }
+////
+////        return tripoliFraction;
+////    }
 }
