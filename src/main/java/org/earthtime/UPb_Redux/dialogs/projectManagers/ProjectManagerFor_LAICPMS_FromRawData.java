@@ -1039,6 +1039,10 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
         setVisible(false);
 
         if (doSetup || (mySessionManager == null)) {
+            // kill existing
+            if (mySessionManager != null){
+                ((DialogEditor)mySessionManager).close();
+            }
             mySessionManager
                     = new SessionAnalysisWorkflowManagerLAICPMS(
                             this, //
@@ -1053,7 +1057,10 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
             // april 2014 to cause comon lead corrections and other changes to propagate
             // do the math
             tripoliSession.calculateSessionFitFunctionsForPrimaryStandard();
-            // jan 2015 moved to calculate sessionfit tripoliSession.applyCorrections();
+            // April 2105 added condition below jan 2015 moved to calculate sessionfit tripoliSession.applyCorrections();
+            if (!tripoliSession.isFitFunctionsUpToDate()){
+                tripoliSession.applyCorrections();
+            }
             try {
                 uPbReduxFrame.updateReportTable(true);
             } catch (Exception e) {
@@ -1382,5 +1389,10 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
         public void changedUpdate(DocumentEvent de) {
             updateDataChangeStatus(true);
         }
+    }
+    
+    public void close() {
+        setVisible(false);
+        dispose();
     }
 }

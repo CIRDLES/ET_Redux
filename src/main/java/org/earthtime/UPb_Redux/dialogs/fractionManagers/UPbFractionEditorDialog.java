@@ -4401,7 +4401,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
      *
      */
     @Override
-    protected void close() {
+    public void close() {
 
         super.close();
         restoreAllFractions(myFraction);

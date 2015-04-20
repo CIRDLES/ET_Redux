@@ -53,9 +53,9 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import org.earthtime.ETReduxFrame;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.ReduxConstants.ANALYSIS_PURPOSE;
-import org.earthtime.ETReduxFrame;
 import org.earthtime.UPb_Redux.aliquots.Aliquot;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
@@ -2267,7 +2267,7 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
      *
      */
     @Override
-    protected void close() {
+    public void close() {
         super.close();
         initialized = //
                 initialized

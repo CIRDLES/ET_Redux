@@ -37,6 +37,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import org.earthtime.ETReduxFrame;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
 import org.earthtime.Tripoli.dataModels.DownholeFractionationDataModel;
 import org.earthtime.Tripoli.dataModels.RawRatioDataModel;
@@ -52,7 +53,6 @@ import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.RawRatioData
 import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.Tripoli.sessions.TripoliSessionInterface;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.ETReduxFrame;
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.dialogs.projectManagers.ProjectManagerFor_LAICPMS_FromRawData;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
@@ -99,7 +99,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
             final TripoliSessionInterface tripoliSession) {
         // null parent allows focussed frame to be on top
         super(null, modal);
-
+        
         this.projectManager = projectManager;
 
         this.uPbReduxFrame = uPbReduxFrame;
@@ -1456,8 +1456,9 @@ private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.
     }//GEN-LAST:event_downholeCorrectedUnknownRatios_radioButtonActionPerformed
 
     private void switchToProjectManager_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_switchToProjectManager_buttonActionPerformed
-        saveProject();
-        this.setVisible(false);
+//        saveProject();
+        this.close();
+//        this.setVisible(false);
         projectManager.setVisible(true);
     }//GEN-LAST:event_switchToProjectManager_buttonActionPerformed
 
@@ -1466,7 +1467,7 @@ private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.
     }//GEN-LAST:event_restoreAllAquisitionsActionPerformed
 
     private void switchToReductionManager_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_switchToReductionManager_buttonActionPerformed
-        saveProject();
+//        saveProject();
         this.setVisible(false);
     }//GEN-LAST:event_switchToReductionManager_buttonActionPerformed
 

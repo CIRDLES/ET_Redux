@@ -115,7 +115,7 @@ public class PreferencesEditorDialog extends DialogEditor {
     /**
      * 
      */
-    protected void close(){
+    public void close(){
         getReduxPreferences().setFractionDataOverriddenOnImport(radioYesOverride.isSelected());
         super.close();
     }
