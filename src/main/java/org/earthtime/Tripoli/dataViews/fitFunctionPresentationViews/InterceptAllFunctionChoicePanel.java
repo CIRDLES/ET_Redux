@@ -34,6 +34,7 @@ import javax.swing.JLayeredPane;
 import org.earthtime.Tripoli.dataModels.DataModelFitFunctionInterface;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
 import org.earthtime.Tripoli.dataViews.AbstractRawDataView;
+import org.earthtime.Tripoli.dataViews.overlayViews.TripoliSessionRawDataView;
 import org.earthtime.Tripoli.dataViews.simpleViews.FitFunctionDataInterface;
 import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.FitFunctionsOnRatioDataView;
 import org.earthtime.beans.ET_JButton;
@@ -135,9 +136,11 @@ public class InterceptAllFunctionChoicePanel extends AbstractRawDataView {
                     }
                 }
 
+                ((TripoliSessionRawDataView)sampleSessionDataView).getTripoliSession().setFitFunctionsUpToDate(false);
                 ((AbstractRawDataView) sampleSessionDataView).refreshPanel();
 
-                // be sure changes to unkowns go to data table
+                
+                // be sure changes to unknowns go to data table
                 if (rawDataModelViews[0] instanceof FitFunctionsOnRatioDataView) {
                     if (((FitFunctionDataInterface) rawDataModelViews[0]).amShowingUnknownFraction()) {
                         updateReportTable();

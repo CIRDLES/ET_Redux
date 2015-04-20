@@ -219,7 +219,7 @@ public class CorrectedRatioDataView extends AbstractRawDataView  {
 //     */
 //    @Override
 //    public void toggleFractionInclusion ( boolean included ) {
-//        tripoliFraction.toggleAllData( included );
+//        tripoliFraction.toggleAllDataExceptShaded( included );
 //        tripoliFraction.updateCorrectedRatioStatistics();
 //        ((TripoliFractionViewInterface) tripoliFraction).setShowVerticalLineAtThisIndex( -1 );
 //        repaintFraction();    }

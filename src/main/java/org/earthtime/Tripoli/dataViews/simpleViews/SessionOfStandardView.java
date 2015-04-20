@@ -456,9 +456,6 @@ public class SessionOfStandardView extends AbstractRawDataView implements FitFun
             index++;
         }
 
-//        // X-axis lays out time 
-//        minX = zeroBasedFractionAquireTimes.get( 0 );
-//        maxX = zeroBasedFractionAquireTimes.get( zeroBasedFractionAquireTimes.size() - 1 );
         updateFittedData();
 
     }
@@ -498,8 +495,6 @@ public class SessionOfStandardView extends AbstractRawDataView implements FitFun
         }
 
         // handle right button or control button for mac mouse
-//        if ( evt.isPopupTrigger() && ((evt.getButton() == MouseEvent.BUTTON3) || evt.isControlDown()) ) {
-//        if ( evt.isPopupTrigger() && ((evt.getButton() != MouseEvent.BUTTON1) || evt.isControlDown()) ) {
         // feb 2013 this solves the mac/windows/one button/ two button problem
         if (evt.isPopupTrigger() || (evt.getButton() != MouseEvent.BUTTON1)) {
             //Create the popup menu.
@@ -520,7 +515,7 @@ public class SessionOfStandardView extends AbstractRawDataView implements FitFun
                     @Override
                     public void actionPerformed(ActionEvent arg0) {
 
-                        tripoliFraction.toggleAllData(false);
+                        tripoliFraction.toggleAllDataExceptShaded(false);
                         fractionIncludedMap[finalTimeSlot] = false;
                         tripoliFraction.setShowVerticalLineAtThisIndex(-1);
                         try {
@@ -540,7 +535,7 @@ public class SessionOfStandardView extends AbstractRawDataView implements FitFun
                     @Override
                     public void actionPerformed(ActionEvent arg0) {
 
-                        tripoliFraction.toggleAllData(true);
+                        tripoliFraction.toggleAllDataExceptShaded(true);
                         fractionIncludedMap[finalTimeSlot] = true;
                         tripoliFraction.setShowVerticalLineAtThisIndex(-1);
                         try {

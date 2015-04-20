@@ -236,14 +236,14 @@ public class YAxisView extends AbstractRawDataView {
         if ( zoom ) {
             if ( yOnMouseDragged < yOnMousePress ) {
                 //System.out.println( "Mouse NORTH" ); zoomin
-                maxY = maxY - yDelta;
-                minY = minY + yDelta;
+                maxY -= yDelta;
+                minY += yDelta;
             }
 
             if ( yOnMouseDragged > yOnMousePress ) {
 //            System.out.println( "Mouse SOUTH" );zoomout
-                maxY = maxY + yDelta;
-                minY = minY - yDelta;
+                maxY += yDelta;
+                minY -= yDelta;
             }
 
 //            tics = TicGeneratorForAxes.generateTics( minY, maxY, (int) (rawDataModelViews[0].getHeight() / 20.0) );
@@ -253,14 +253,14 @@ public class YAxisView extends AbstractRawDataView {
             // panning
             if ( yOnMouseDragged < yOnMousePress ) {
                 //System.out.println( "Mouse NORTH" );
-                maxY = maxY - yDelta;
-                minY = minY - yDelta;
+                maxY -= yDelta;
+                minY -= yDelta;
             }
 
             if ( yOnMouseDragged > yOnMousePress ) {
 //            System.out.println( "Mouse SOUTH" );
-                maxY = maxY + yDelta;
-                minY = minY + yDelta;
+                maxY += yDelta;
+                minY += yDelta;
             }
         }
 

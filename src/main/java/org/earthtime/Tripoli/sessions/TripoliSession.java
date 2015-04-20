@@ -1316,7 +1316,7 @@ public class TripoliSession implements
                 filteredFractions.add(tf);
                 // turn off bad fractions
                 if (!tf.confirmHealthyFraction()) {
-                    tf.toggleAllData(false);
+                    tf.toggleAllDataExceptShaded(false);
                 }
             }
 
@@ -1354,7 +1354,7 @@ public class TripoliSession implements
                 filteredFractions.add(tf);
                 // turn off bad fractions
                 if (!tf.confirmHealthyFraction()) {
-                    tf.toggleAllData(false);
+                    tf.toggleAllDataExceptShaded(false);
                 }
             }
 
@@ -1381,7 +1381,7 @@ public class TripoliSession implements
         SortedSet<TripoliFraction> excludedTripoliFractions = //
                 getTripoliFractionsFiltered(fractionSelectionType, IncludedTypeEnum.EXCLUDED);
         excludedTripoliFractions.stream().forEach((f) -> {
-            f.toggleAllData(true);
+            f.toggleAllDataExceptShaded(true);
         });
     }
 
@@ -1391,7 +1391,7 @@ public class TripoliSession implements
     @Override
     public void includeAllAquisitions() {
         tripoliFractions.stream().forEach((f) -> {
-            f.toggleAllData(true);
+            f.toggleAllDataExceptShaded(true);
         });
     }
 
@@ -1637,5 +1637,12 @@ public class TripoliSession implements
      */
     public boolean isFitFunctionsUpToDate() {
         return fitFunctionsUpToDate;
+    }
+
+    /**
+     * @param fitFunctionsUpToDate the fitFunctionsUpToDate to set
+     */
+    public void setFitFunctionsUpToDate(boolean fitFunctionsUpToDate) {
+        this.fitFunctionsUpToDate = fitFunctionsUpToDate;
     }
 }

@@ -347,19 +347,23 @@ public class RawRatioDataModel //
     private void calculateSlogRatioX_Y() {
         // choose rows and columns based on active data
         // nov 2014 need to catch special case where */pb204 ratios have different dataactivemaps
-        ArrayList<Integer> selectedRowsColsList = new ArrayList<>();
-        for (int i = 0; i < dataActiveMap.length; i++) {
-            if (dataActiveMap[i]) {
-                selectedRowsColsList.add(i);
+        if (SlogRatioX_Yfull != null) {
+            ArrayList<Integer> selectedRowsColsList = new ArrayList<>();
+            for (int i = 0; i < dataActiveMap.length; i++) {
+                if (dataActiveMap[i]) {
+                    selectedRowsColsList.add(i);
+                }
             }
-        }
 
-        int[] selectedRowsCols = new int[selectedRowsColsList.size()];
-        for (int i = 0; i < selectedRowsCols.length; i++) {
-            selectedRowsCols[i] = selectedRowsColsList.get(i);
-        }
+            int[] selectedRowsCols = new int[selectedRowsColsList.size()];
+            for (int i = 0; i < selectedRowsCols.length; i++) {
+                selectedRowsCols[i] = selectedRowsColsList.get(i);
+            }
 
-        SlogRatioX_Y = SlogRatioX_Yfull.getMatrix(selectedRowsCols, selectedRowsCols);
+            SlogRatioX_Y = SlogRatioX_Yfull.getMatrix(selectedRowsCols, selectedRowsCols);
+        } else {
+            SlogRatioX_Y = null;
+        }
     }
 
     /**
