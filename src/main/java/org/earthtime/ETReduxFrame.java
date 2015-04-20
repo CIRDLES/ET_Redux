@@ -71,6 +71,7 @@ import org.earthtime.UPb_Redux.dialogs.PreferencesEditorDialog;
 import org.earthtime.UPb_Redux.dialogs.ReportSettingsManager;
 import org.earthtime.UPb_Redux.dialogs.fractionManagers.UPbFractionEditorDialog;
 import org.earthtime.UPb_Redux.dialogs.projectManagers.ProjectManagerFor_LAICPMS_FromRawData;
+import org.earthtime.UPb_Redux.dialogs.projectManagers.ProjectManagerSubscribeInterface;
 import org.earthtime.UPb_Redux.dialogs.projectManagers.exportManagers.GeochronProjectExportManager;
 import org.earthtime.UPb_Redux.dialogs.projectManagers.projectLegacyManagers.AbstractProjectOfLegacySamplesDataManagerDialog;
 import org.earthtime.UPb_Redux.dialogs.projectManagers.projectLegacyManagers.ProjectOfLegacySamplesDataManagerDialogForGenericUPb_A;
@@ -777,7 +778,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             myProjectManager = //
                     new ProjectManagerFor_LAICPMS_FromRawData(this, true, myState, theProject);
         }
-        ((ProjectManagerFor_LAICPMS_FromRawData) myProjectManager).initializeSessionManager(false, true, false);
+        ((ProjectManagerSubscribeInterface) myProjectManager).initializeSessionManager(false, true, false);
     }
 
     private void setUpNewProject(String projectAnalysisType, String sampleAnalysisType) {
