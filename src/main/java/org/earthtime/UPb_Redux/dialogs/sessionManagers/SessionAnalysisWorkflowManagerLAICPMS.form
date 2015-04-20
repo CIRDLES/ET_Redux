@@ -839,7 +839,7 @@
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                       <Font name="SansSerif" size="12" style="1"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="&lt;html&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Calculate  rhos and Pbc &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Corrected uncertainties&lt;/html&gt;"/>
+                    <Property name="text" type="java.lang.String" value="Update Report Table"/>
                     <Property name="actionCommand" type="java.lang.String" value=""/>
                     <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                       <Insets value="[0, 0, 0, 0]"/>
