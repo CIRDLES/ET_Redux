@@ -2860,25 +2860,6 @@ public class SampleDateModel extends ValueModel implements
     }
 
     /**
-     *
-     * @param args
-     * @throws Exception
-     */
-    public static void main(String[] args) throws Exception {
-
-        ValueModel valueModel
-                = new SampleDateModel("WM208_232", "WM208_232",//
-                        "r206_204b", new BigDecimal("1234567890"), "ABS", new BigDecimal("123000"));
-        System.out.println(
-                "Format Test: " + valueModel.formatValueAndTwoSigmaForPublicationSigDigMode("ABS", 6, 2));
-
-        String testFileName = "SampleDateModelTEST.xml";
-
-        valueModel.serializeXMLObject(testFileName);
-        valueModel.readXMLObject(testFileName, true);
-    }
-
-    /**
      * @return the sample
      */
     public Sample getSample() {

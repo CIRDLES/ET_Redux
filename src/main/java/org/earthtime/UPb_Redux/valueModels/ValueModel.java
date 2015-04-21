@@ -1233,35 +1233,6 @@ public class ValueModel implements
         return (hasPositiveValue() ? getValue() : BigDecimal.ZERO);
     }
 
-    /**
-     * tests <code>ValueModel</code>
-     *
-     * @param args command line arguments; none handled
-     * @throws java.lang.Exception a java.lang.Exception
-     */
-    public static void main(String[] args) throws Exception {
-
-        ValueModel valueModel
-                = new ValueModel("r206_204b", new BigDecimal("1234567890"), "ABS", new BigDecimal("123000"), BigDecimal.ZERO);
-        System.out.println(
-                "Format Test: " + valueModel.formatValueAndTwoSigmaForPublicationSigDigMode("ABS", 6, 2));
-
-        valueModel
-                = new ValueModel("r206_204b", new BigDecimal("1234567890"), "ABS", new BigDecimal("1230000"), BigDecimal.ZERO);
-        System.out.println(
-                "Format Test: " + valueModel.formatValueAndTwoSigmaForPublicationSigDigMode("ABS", 6, 2));
-
-        valueModel
-                = new ValueModel("r206_204b", new BigDecimal("1234567890"), "ABS", new BigDecimal("12300000"), BigDecimal.ZERO);
-        System.out.println(
-                "Format Test: " + valueModel.formatValueAndTwoSigmaForPublicationSigDigMode("ABS", 6, 2));
-
-        String testFileName = "ValueModelTEST.xml";
-
-        valueModel.serializeXMLObject(testFileName);
-        valueModel.readXMLObject(testFileName, true);
-
-    }
 
     /**
      * @return the valueTree

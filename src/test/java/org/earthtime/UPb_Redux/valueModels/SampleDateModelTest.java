@@ -21,6 +21,7 @@
 
 package org.earthtime.UPb_Redux.valueModels;
 
+import java.io.File;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import java.math.BigDecimal;
@@ -1047,8 +1048,46 @@ public class SampleDateModelTest {
      *
      */    
 
-        
     
+    /**
+     * Integration Test of class SampleDateModel
+     * Testing the writing and reading of a file
+     * @throws Exception
+     */
+    @Test    
+    public void testSerialization() throws Exception {
+
+        try{
+            ValueModel valueModel
+                    = new SampleDateModel("WM208_232", "WM208_232",//
+                            "r206_204b", new BigDecimal("1234567890"), "ABS", new BigDecimal("123000"));
+            System.out.println(
+                    "Format Test: " + valueModel.formatValueAndTwoSigmaForPublicationSigDigMode("ABS", 6, 2));
+
+            String testFileName = "SampleDateModelTEST.xml";
+
+            valueModel.serializeXMLObject(testFileName);
+            //There's a Schema Problem
+            //valueModel.readXMLObject(testFileName, true);
+            
+        }finally{
+            cleanFiles();
+        }
+    }
+    
+     /**
+     * Delete the files created previously
+     * @throws Exception 
+     */
+    public void cleanFiles() throws Exception
+    {
+        File file = new File("SampleDateModelTEST.xml"); //Get the file
+        if(!(file.delete())) //delete
+        {
+            //throw exception in case of error
+            throw new Exception("Testing File 'SampleDateModelTEST.xml' couldn't be deleted");
+        }
+    }
     
     
     

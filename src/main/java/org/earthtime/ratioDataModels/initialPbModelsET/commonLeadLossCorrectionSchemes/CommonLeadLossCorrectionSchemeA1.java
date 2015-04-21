@@ -37,7 +37,7 @@ public class CommonLeadLossCorrectionSchemeA1 extends AbstractCommonLeadLossCorr
     private static final long serialVersionUID = 4164254815966053479L;
     private static CommonLeadLossCorrectionSchemeA1 instance = null;
 
-    private CommonLeadLossCorrectionSchemeA1() {
+    CommonLeadLossCorrectionSchemeA1() {
         super("A1", false);
     }
 
@@ -52,7 +52,7 @@ public class CommonLeadLossCorrectionSchemeA1 extends AbstractCommonLeadLossCorr
         return instance;
     }
 
-    private double ageForScheme(UPbFraction fraction, double r238_235s, double r238_206fc, double r207_206fc, double r207_206c) {
+    double ageForScheme(UPbFraction fraction, double r238_235s, double r238_206fc, double r207_206fc, double r207_206c) {
         double age;
 
         double lambda235 = 0.00000000098485;
@@ -267,21 +267,6 @@ public class CommonLeadLossCorrectionSchemeA1 extends AbstractCommonLeadLossCorr
         }
 
     }
-
-    /**
-     *
-     * @param args
-     * @throws Exception
-     */
-    public static void main(String[] args) throws Exception {
-        System.out.println("CommonLeadLossCorrectionSchemeA1");
-
-        CommonLeadLossCorrectionSchemeA1 cllcsA = new CommonLeadLossCorrectionSchemeA1();
-
-        //double ageA1 = cllcsA.ageForScheme(null, 137.818, 10.0, 0.109, 0.860057344508161);
-        double ageA1 = cllcsA.ageForScheme(null, 137.8185, 14.766, 0.0567, 0.87143);
-        System.out.println("Scheme A1:   " + ageA1);
-
-    }
+    
 
 }

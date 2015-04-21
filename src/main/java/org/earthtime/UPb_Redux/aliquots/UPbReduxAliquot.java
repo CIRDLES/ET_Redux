@@ -1287,53 +1287,6 @@ public class UPbReduxAliquot extends Aliquot
     }
 
     /**
-     *
-     * @param args
-     * @throws Exception
-     */
-    public static void main(String[] args) throws Exception {
-        Aliquot aliquot
-                = new UPbReduxAliquot(
-                        0,
-                        "Test Aliquot",
-                        ReduxLabData.getInstance(),
-                        PhysicalConstantsModel.getEARTHTIMEPhysicalConstantsModel(),
-                        false,
-                        new SESARSampleMetadata());
-
-        Fraction uPbfraction = new UPbFraction("NONE");
-        uPbfraction.setSampleName("TestSample");
-        uPbfraction.setFractionID("TestFraction");
-        uPbfraction.setGrainID("TestFraction");
-        uPbfraction.setZircon(true);
-
-//        aliquot.getMineralStandardModels().add( new MineralStandardModel( "Test Model" ) );
-        SampleDateModel temp1 = new SampleDateModel(
-                "WM208_232",
-                "WM208_232",
-                "",
-                new BigDecimal("1.1"),
-                "PCT",
-                new BigDecimal("0.222"));
-
-        temp1.setPreferred(true);
-        aliquot.getSampleDateModels().add(temp1);
-
-        ((UPbReduxAliquot) aliquot).getAliquotFractions().clear();
-        ((UPbReduxAliquot) aliquot).getAliquotFractions().add(uPbfraction);
-        temp1.setAliquot(aliquot);
-        //     temp1.PopulateFractionVector();
-
-        ((UPbReduxAliquot) aliquot).prepareUPbReduxAliquotForXMLSerialization();
-
-        String testFileName = "UPbReduxAliquotTEST.xml";
-
-        ((UPbReduxAliquot) aliquot).serializeXMLObject(testFileName);
-        ((UPbReduxAliquot) aliquot).readXMLObject(testFileName, true);
-
-    }
-
-    /**
      * @return the aliquotFolderTimeStamp
      */
     public Date getAliquotFolderTimeStamp() {

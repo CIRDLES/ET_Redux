@@ -73,16 +73,4 @@ public class TracerUPbRatiosDataViewEditable extends TracerUPbRatiosAbstractData
         valueModelsPanelView.saveEdits();
     }
 
-    /**
-     *
-     * @param args
-     * @throws Exception
-     */
-    public static void main ( String[] args ) throws Exception {
-
-        AbstractRatiosDataView testView = new TracerUPbRatiosDataViewEditable( TracerUPbModel.getET535ModelInstance(), null, false );
-
-        testView.displayModelInFrame();
-
-    }
 }

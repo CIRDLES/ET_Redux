@@ -97,32 +97,6 @@ public class JacobianMatrixModel extends AbstractMatrixModel {
         return retVal;
     }
 
-    /**
-     *
-     * @param args
-     */
-    public static void main ( String[] args ) {
-        JacobianMatrixModel myMatrix = new JacobianMatrixModel( "0" );
-
-        String[] rowNames = new String[]{"first", "second", "fourth"};
-        myMatrix.setRows( rowNames );
-        myMatrix.setCols( myMatrix.getRows() );
-
-        rowNames = new String[]{"first", "second", "third", "fourth", "fifth"};
-        myMatrix.setRows( rowNames );
-
-        ConcurrentMap<String, BigDecimal> parDerivTerms = new ConcurrentHashMap<String, BigDecimal>();
-        parDerivTerms.put( "dThird__dSecond", new BigDecimal( 99.9 ) );
-        parDerivTerms.put( "dThird__dFourth", new BigDecimal( 11.1 ) );
-        parDerivTerms.put( "dFifth__dFirst", new BigDecimal( 22.2 ) );
-
-        if ( myMatrix.initializeMatrixModelWithDerivedTerms( parDerivTerms ) ) {
-            System.out.println( myMatrix.ToStringWithLabels() );
-            //  myMatrix.getMatrix().print(new DecimalFormat("0.000000E00"), 15);
-        }
-
-
-    }
 
     /**
      * 
@@ -134,4 +108,5 @@ public class JacobianMatrixModel extends AbstractMatrixModel {
     public void setValueAt ( int row, int col, double value ) {
         getMatrix().set( row, col, value );
     }
+    
 }

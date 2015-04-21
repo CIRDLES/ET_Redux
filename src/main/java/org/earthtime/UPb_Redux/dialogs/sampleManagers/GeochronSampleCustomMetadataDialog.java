@@ -356,24 +356,9 @@ public class GeochronSampleCustomMetadataDialog extends DialogEditor {
         close();
 }//GEN-LAST:event_close_buttonActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main ( String args[] ) {
-        java.awt.EventQueue.invokeLater( new Runnable() {
 
-            public void run () {
-                GeochronSampleCustomMetadataDialog dialog = new GeochronSampleCustomMetadataDialog( new javax.swing.JFrame(), true, new Sample() );
-                dialog.addWindowListener( new java.awt.event.WindowAdapter() {
+    
 
-                    public void windowClosing ( java.awt.event.WindowEvent e ) {
-                        System.exit( 0 );
-                    }
-                } );
-                dialog.setVisible( true );
-            }
-        } );
-    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> analysisPurposeChooser;
     private javax.swing.JPanel buttonsPanel;

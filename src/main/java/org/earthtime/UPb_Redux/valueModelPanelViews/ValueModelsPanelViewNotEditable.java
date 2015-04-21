@@ -61,20 +61,20 @@ public class ValueModelsPanelViewNotEditable extends AbstractValueModelsPanelVie
      * @param args
      * @throws Exception
      */
-    public static void main ( String[] args ) throws Exception {
-
-        JFrame testFrame = new JFrame();
-        testFrame.setBounds( 400, 400, 500, 300 );
-
-        ValueModel[] valueModels = new ValueModel[5];
-        for (int i = 0; i < 5; i ++) {
-            valueModels[i] = new ValueModel( "test " + i );
-        }
-        AbstractValueModelsPanelView testView = new ValueModelsPanelViewNotEditable( valueModels);
-        testView.setBorder( new LineBorder( Color.red ) );
-
-
-        testFrame.add( testView );
-        testFrame.setVisible( true );
-    }
+//    public static void main ( String[] args ) throws Exception {
+//
+//        JFrame testFrame = new JFrame();
+//        testFrame.setBounds( 400, 400, 500, 300 );
+//
+//        ValueModel[] valueModels = new ValueModel[5];
+//        for (int i = 0; i < 5; i ++) {
+//            valueModels[i] = new ValueModel( "test " + i );
+//        }
+//        AbstractValueModelsPanelView testView = new ValueModelsPanelViewNotEditable( valueModels);
+//        testView.setBorder( new LineBorder( Color.red ) );
+//
+//
+//        testFrame.add( testView );
+//        testFrame.setVisible( true );
+//    }
 }

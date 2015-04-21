@@ -489,22 +489,6 @@ public class TracerUPbModel extends AbstractRatiosDataModel {
         this.tracerType = tracerType;
     }
 
-    /**
-     *
-     * @param args
-     */
-    public static void main(String[] args) {
-        AbstractRatiosDataModel tracerUPbModel = TracerUPbModel.getET535ModelInstance();
-
-        String testFileName = "TracerUPbModelTEST.xml";
-
-        tracerUPbModel.serializeXMLObject(testFileName);
-        try {
-            tracerUPbModel.readXMLObject(testFileName, true);
-        } catch (FileNotFoundException fileNotFoundException) {
-        } catch (ETException eTException) {
-        } catch (BadOrMissingXMLSchemaException badOrMissingXMLSchemaException) {
-        }
-    }
+    
 
 }

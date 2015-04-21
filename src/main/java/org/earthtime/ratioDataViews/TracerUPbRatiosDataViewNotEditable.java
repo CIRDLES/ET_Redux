@@ -59,16 +59,4 @@ public class TracerUPbRatiosDataViewNotEditable extends TracerUPbRatiosAbstractD
         this.correlationVarUnctMatrixView = new MatrixGridViewNotEditable(dataModel.getDataCorrelationsVarUnct(), showTableOnly);
     }
 
-    /**
-     *
-     * @param args
-     * @throws Exception
-     */
-    public static void main(String[] args) throws Exception {
-
-        AbstractRatiosDataView testView = new TracerUPbRatiosDataViewNotEditable(TracerUPbModel.getET535ModelInstance(), null, false);
-
-        testView.displayModelInFrame();
-
-    }
 }

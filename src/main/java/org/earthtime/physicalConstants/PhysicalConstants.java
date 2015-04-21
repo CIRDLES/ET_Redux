@@ -587,29 +587,6 @@ public class PhysicalConstants implements
 
     /**
      *
-     * @param args
-     * @throws Exception
-     */
-    public static void main ( String[] args ) throws Exception {
-
-        PhysicalConstants physicalConstants = EARTHTIMEPhysicalConstants();
-//                new PhysicalConstants( "testset", 1 );
-        String testFileName = "PhysicalConstantsTEST.xml";
-
-        physicalConstants.serializeXMLObject( testFileName );
-
-
-//        PhysicalConstants physicalConstants2 = (PhysicalConstants) physicalConstants.readXMLObject( testFileName, true );
-
-
-//        ETSerializer.SerializeObjectToFile( physicalConstants, "test.ser" );
-//        PhysicalConstants test = (PhysicalConstants) ETSerializer.GetSerializedObjectFromFile( "test.ser" );
-
-//        System.out.println(physicalConstants2.getLambdasCovarianceMatrix().ToStringWithLabels());
-    }
-
-    /**
-     *
      */
     @Override
     public void removeSelf () {

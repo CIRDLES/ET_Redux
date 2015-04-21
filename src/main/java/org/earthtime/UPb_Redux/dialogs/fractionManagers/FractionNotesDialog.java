@@ -133,22 +133,7 @@ public class FractionNotesDialog extends javax.swing.JDialog {
         close();
     }//GEN-LAST:event_close_buttonActionPerformed
 
-    /**
-    * @param args the command line arguments
-    */
-    public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                FractionNotesDialog dialog = new FractionNotesDialog(new javax.swing.JFrame(), true, new UPbFraction("NONE"));
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        });
-    }
+ 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton close_button;

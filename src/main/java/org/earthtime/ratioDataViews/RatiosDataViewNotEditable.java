@@ -64,45 +64,5 @@ public class RatiosDataViewNotEditable extends AbstractRatiosDataView {
     }
 
     
-    /**
-     *
-     * @param args
-     * @throws Exception
-     */
-    public static void main ( String[] args ) throws Exception {
-
-         ValueModel[] myRatios = new ValueModel[3];
-        myRatios[0] = new ValueModel(//
-                //
-                "r206_204c", //
-                BigDecimal.ZERO, //
-                "ABS", //
-                new BigDecimal( 0.06298816629854530000 / 2.0 ), BigDecimal.ZERO );
-        myRatios[1] = new ValueModel(//
-                //
-                "r207_204c", //
-                BigDecimal.ZERO, //
-                "ABS", //
-                new BigDecimal( 0.92376003656586900000 / 2.0 ), BigDecimal.ZERO );
-        myRatios[2] = new ValueModel(//
-                //
-                "r208_204c", //
-                BigDecimal.ZERO, //
-                "ABS", //
-                new BigDecimal( 0.00040104065069202200 / 2.0 ), BigDecimal.ZERO );
-
-
-        Map<String, BigDecimal> correlations = new HashMap<String, BigDecimal>();
-        correlations.put( "rhoR206_204c__r207_204c", new BigDecimal(  - 0.0400671215735759 ) );
-        correlations.put( "rhoR206_204c__r208_204c", new BigDecimal(  - 0.0400671215735759 ) );
-        correlations.put( "rhoR207_204c__r208_204c", new BigDecimal(  - 0.0400671215735759 ) );
-        AbstractRatiosDataModel initialPbModel1 = //
-                InitialPbModelET.createInstance(//
-                "initialPbModel1", 1, 0,"Test Lab", "2012-04-01", "NO REF", "NO COMMENT", myRatios, correlations );
-
-        AbstractRatiosDataView testView = new RatiosDataViewNotEditable( initialPbModel1, null, false);
-        testView.displayModelInFrame();
-
-
-    }
+   
 }

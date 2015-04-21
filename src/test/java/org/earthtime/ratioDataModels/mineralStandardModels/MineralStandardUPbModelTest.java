@@ -22,12 +22,22 @@
 package org.earthtime.ratioDataModels.mineralStandardModels;
 
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
+import org.earthtime.UPb_Redux.utilities.ETSerializer;
+import org.earthtime.UPb_Redux.valueModels.MineralStandardUPbRatioModel;
+import org.earthtime.UPb_Redux.valueModels.ValueModel;
+import org.earthtime.dataDictionaries.MineralStandardUPbConcentrationsPPMEnum;
+import org.earthtime.dataDictionaries.MineralStandardUPbRatiosEnum;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
+import org.earthtime.ratioDataModels.initialPbModelsET.InitialPbModelET;
+import static org.earthtime.ratioDataModels.mineralStandardModels.MineralStandardUPbModel.createInstance;
+import org.junit.After;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import org.junit.Before;
 import org.junit.Test;
 /**
  *
@@ -538,6 +548,146 @@ public class MineralStandardUPbModelTest {
  */
 
     
+   /**
+     * Integration Test of class MineralStandardUPbModel
+     * Testing the writing and reading of a file
+     */
     
+    private static final ValueModel[] myConcentrationsPPM = new ValueModel[2];
+    
+    @Before
+    public void setUp()
+    {
+                // dec 2014 for LAICPMS
+        myConcentrationsPPM[0] = new ValueModel(//
+                MineralStandardUPbConcentrationsPPMEnum.concU238ppm.getName(), //
+                new BigDecimal("564"), //
+                "ABS", //
+                new BigDecimal("10"), BigDecimal.ZERO);
+
+        myConcentrationsPPM[1] = new ValueModel(//
+                MineralStandardUPbConcentrationsPPMEnum.concTh232ppm.getName(), //
+                new BigDecimal("150"), //
+                "ABS", //
+                new BigDecimal("10"), BigDecimal.ZERO);
+    }
+    
+    @Test
+    public void testSerialization() throws Exception
+    {
+        try{
+            ValueModel[] myTestRatios = new ValueModel[3];
+            myTestRatios[0] = new ValueModel(//
+                    //
+                    "r206_204c", //
+                    BigDecimal.ZERO, //
+                    "ABS", //
+                    new BigDecimal(0.06298816629854530000 / 2.0), BigDecimal.ZERO);
+            myTestRatios[1] = new ValueModel(//
+                    //
+                    "r207_204c", //
+                    BigDecimal.ZERO, //
+                    "ABS", //
+                    new BigDecimal(0.92376003656586900000 / 2.0), BigDecimal.ZERO);
+            myTestRatios[2] = new ValueModel(//
+                    //
+                    "r208_204c", //
+                    BigDecimal.ZERO, //
+                    "ABS", //
+                    new BigDecimal(0.00040104065069202200 / 2.0), BigDecimal.ZERO);
+
+            Map<String, BigDecimal> myTestCorrelations = new HashMap<>();
+            myTestCorrelations.put("rhoR206_204c__r207_204c", new BigDecimal(-0.0400671215735759));
+            myTestCorrelations.put("rhoR206_204c__r208_204c", new BigDecimal(-0.0400671215735759));
+            myTestCorrelations.put("rhoR207_204c__r208_204c", new BigDecimal(-0.0400671215735759));
+            AbstractRatiosDataModel initialPbModel1 = //
+                    InitialPbModelET.createInstance("initialPbModel1", 1, 0, "Test Lab", "2012-04-01", "NO REF", "NO COMMENT", myTestRatios, myTestCorrelations);
+
+            myTestRatios = new ValueModel[4];
+            myTestRatios[0] = new MineralStandardUPbRatioModel(//
+                    MineralStandardUPbRatiosEnum.r206_207r.getName(), //
+                    new BigDecimal(16.9432435810912), //
+                    "ABS", //
+                    new BigDecimal(0.06298816629854530000 / 2.0),//
+                    true);
+            myTestRatios[1] = new MineralStandardUPbRatioModel(//
+                    MineralStandardUPbRatiosEnum.r206_208r.getName(), //
+                    new BigDecimal(27.80), //
+                    "ABS", //
+                    new BigDecimal(0.92376003656586900000 / 2.0),//
+                    true);
+            myTestRatios[2] = new MineralStandardUPbRatioModel(//
+                    MineralStandardUPbRatiosEnum.r206_238r.getName(), //
+                    new BigDecimal(0.09130), //
+                    "ABS", //
+                    new BigDecimal(0.00040104065069202200 / 2.0),//
+                    true);
+            myTestRatios[3] = new MineralStandardUPbRatioModel(//
+                    MineralStandardUPbRatiosEnum.r238_235s.getName(), //
+                    new BigDecimal(137.818), //
+                    "ABS", //
+                    new BigDecimal(0.04500000000000000000 / 2.0),//
+                    true);
+
+            myTestCorrelations = new HashMap<String, BigDecimal>();
+            myTestCorrelations.put("rhoR206_207r__r206_238r", new BigDecimal(-0.0400671215735759));
+
+            AbstractRatiosDataModel sriLanka1 = createInstance(//
+                    "SriLanka", 1, 0, "Test Lab", "2000-01-01", "NO REF", "NO COMMENT", myTestRatios, myTestCorrelations, myConcentrationsPPM, "Sri Lanka", "zircon", initialPbModel1);
+
+            //Throws Exception
+            ETSerializer.SerializeObjectToFile(sriLanka1, "MineralStandardUPbModelTEST.ser");
+
+            AbstractRatiosDataModel sriLanka2 = //
+                    (AbstractRatiosDataModel) ETSerializer.GetSerializedObjectFromFile("MineralStandardUPbModelTEST.ser");
+
+            String testFileName = "MineralStandardUPbModelTEST.xml";
+            sriLanka2.serializeXMLObject(testFileName);
+
+            //Throws Exception
+            sriLanka2.readXMLObject(testFileName, false);
+
+            String results = 
+                    "MATRIX#=Correlations   r206_207r              r206_208r              r206_238r              r238_235s              \n" +
+                    "r206_207r              1.000000000E00         0.000000000E00         -4.006712157E-02       0.000000000E00         \n" +
+                    "r206_208r              0.000000000E00         1.000000000E00         0.000000000E00         0.000000000E00         \n" +
+                    "r206_238r              -4.006712157E-02       0.000000000E00         1.000000000E00         0.000000000E00         \n" +
+                    "r238_235s              0.000000000E00         0.000000000E00         0.000000000E00         1.000000000E00         \n" +
+                    "";
+            assertEquals(results, sriLanka2.getDataCorrelationsVarUnct().ToStringWithLabels());
+
+            results =
+                    "MATRIX#=Covariances    r206_207r              r206_208r              r206_238r              r238_235s              \n" +
+                    "r206_207r              9.918772734E-04        0.000000000E00         -2.530320384E-07       0.000000000E00         \n" +
+                    "r206_208r              0.000000000E00         2.133331513E-01        0.000000000E00         0.000000000E00         \n" +
+                    "r206_238r              -2.530320384E-07       0.000000000E00         4.020840088E-08        0.000000000E00         \n" +
+                    "r238_235s              0.000000000E00         0.000000000E00         0.000000000E00         5.062500000E-04        \n" +
+                    "";
+            assertEquals(results, sriLanka2.getDataCovariancesVarUnct().ToStringWithLabels());
+        }finally{
+            cleanFiles();
+        }
+    }
+    
+    /**
+     * Delete the files created previously
+     * @throws Exception 
+     */       
+    public void cleanFiles() throws Exception
+    {
+        File file = new File("MineralStandardUPbModelTEST.ser"); //Get the file
+        if(!(file.delete())) //delete
+        {
+            //throw exception in case of error
+            throw new Exception("Testing File 'MineralStandardUPbModelTEST.ser' couldn't be deleted");
+        }
+        
+        file = new File("MineralStandardUPbModelTEST.xml"); //Get the file
+        if(!(file.delete())) //delete
+        {
+            //throw exception in case of error
+            throw new Exception("Testing File 'MineralStandardUPbModelTEST.xml' couldn't be deleted");
+        }
+    } 
     
 }

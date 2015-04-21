@@ -65,15 +65,5 @@ public class RatiosDataViewEditable extends AbstractRatiosDataView {
         valueModelsPanelView.saveEdits();
     }
 
-    /**
-     *
-     * @param args
-     * @throws Exception
-     */
-    public static void main ( String[] args ) throws Exception {
-        AbstractRatiosDataView testView = new RatiosDataViewEditable( PbBlankICModel.createNewInstance(), null, false );
 
-        testView.displayModelInFrame();
-
-    }
 }

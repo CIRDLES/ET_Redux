@@ -72,16 +72,5 @@ public class PhysicalConstantsDataViewNotEditable extends PhysicalConstantsAbstr
         valueModelsPanelView.saveEdits();
     }
 
-    /**
-     *
-     * @param args
-     * @throws Exception
-     */
-    public static void main(String[] args) throws Exception {
-
-        AbstractRatiosDataView testView = new PhysicalConstantsDataViewNotEditable(PhysicalConstantsModel.getEARTHTIMEPhysicalConstantsModel(), null, false);
-
-        testView.displayModelInFrame();
-
-    }
+    
 }

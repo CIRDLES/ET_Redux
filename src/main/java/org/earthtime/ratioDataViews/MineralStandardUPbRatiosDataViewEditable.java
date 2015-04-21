@@ -72,16 +72,5 @@ public class MineralStandardUPbRatiosDataViewEditable extends MineralStandardUPb
                 .listFormattedApparentDatesHTML());
     }
 
-    /**
-     *
-     * @param args
-     * @throws Exception
-     */
-    public static void main(String[] args) throws Exception {
 
-        AbstractRatiosDataView testView = new MineralStandardUPbRatiosDataViewEditable(MineralStandardUPbModel.getEARTHTIMEPeixeStandardModelInstance(), null, false);
-
-        testView.displayModelInFrame();
-
-    }
 }

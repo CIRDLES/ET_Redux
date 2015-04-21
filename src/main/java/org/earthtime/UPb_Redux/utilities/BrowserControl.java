@@ -136,11 +136,4 @@ public class BrowserControl {
         }
     }
 
-    /**
-     * Simple example.
-     * @param args 
-     */
-    public static void main(String[] args) {
-        displayURL("http://www.javaworld.com");
-    }
 }

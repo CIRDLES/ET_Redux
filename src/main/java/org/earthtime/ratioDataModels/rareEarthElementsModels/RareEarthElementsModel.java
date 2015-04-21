@@ -307,16 +307,7 @@ public final class RareEarthElementsModel extends AbstractRatiosDataModel {
         return classNameAliasForXML;
     }
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-
-//        ETSerializer.SerializeObjectToFile(sriLanka1, "MineralStandardUPbModelTEST.ser");
-//        AbstractRatiosDataModel sriLanka2 = //
-//                (AbstractRatiosDataModel) ETSerializer.GetSerializedObjectFromFile("MineralStandardUPbModelTEST.ser");
-
-    }
+    
     
 //    private void readObject(
 //            ObjectInputStream stream)

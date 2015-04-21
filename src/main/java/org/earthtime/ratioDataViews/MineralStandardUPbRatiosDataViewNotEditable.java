@@ -63,18 +63,5 @@ public class MineralStandardUPbRatiosDataViewNotEditable extends MineralStandard
         throw new UnsupportedOperationException("Not saveable.");
     }
 
-    /**
-     *
-     * @param args
-     * @throws Exception
-     */
-    public static void main(String[] args) throws Exception {
 
-        AbstractRatiosDataView testView = //
-                new MineralStandardUPbRatiosDataViewNotEditable(MineralStandardUPbModel.getEARTHTIMEPeixeStandardModelInstance(),//
-                        null, false);
-
-        testView.displayModelInFrame();
-
-    }
 }

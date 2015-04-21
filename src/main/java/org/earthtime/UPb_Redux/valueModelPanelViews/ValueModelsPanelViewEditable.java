@@ -63,8 +63,8 @@ public class ValueModelsPanelViewEditable extends AbstractValueModelsPanelView {
      * @param args
      * @throws Exception
      */
-    public static void main ( String[] args ) throws Exception {
-
+//    public static void main ( String[] args ) throws Exception {
+//
 //        JFrame testFrame = new JFrame();
 //        testFrame.setBounds( 400, 400, 500, 300 );
 //
@@ -78,5 +78,5 @@ public class ValueModelsPanelViewEditable extends AbstractValueModelsPanelView {
 //
 //        testFrame.add( testView );
 //        testFrame.setVisible( true );
-    }
+//    }
 }

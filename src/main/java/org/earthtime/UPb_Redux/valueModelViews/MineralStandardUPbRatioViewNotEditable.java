@@ -74,23 +74,23 @@ public class MineralStandardUPbRatioViewNotEditable extends ValueModelViewNotEdi
      * @param args
      * @throws Exception
      */
-    public static void main ( String[] args ) throws Exception {
-
-        JFrame testFrame = new JFrame();
-        testFrame.setBounds( 400, 400, PANEL_WIDTH, PANEL_HEIGHT + 25 );
-
-        ValueModel valueModel = new MineralStandardUPbRatioModel( //
-                "test", //
-                new BigDecimal( 12345.67890 ), //
-                "ABS", //
-                new BigDecimal( 0.987654321 ),//
-                true);
-
-        AbstractValueModelView testView = new MineralStandardUPbRatioViewNotEditable( valueModel);
-        testView.setBorder( new LineBorder( Color.red ) );
-
-
-        testFrame.add( testView );
-        testFrame.setVisible( true );
-    }
+//    public static void main ( String[] args ) throws Exception {
+//
+//        JFrame testFrame = new JFrame();
+//        testFrame.setBounds( 400, 400, PANEL_WIDTH, PANEL_HEIGHT + 25 );
+//
+//        ValueModel valueModel = new MineralStandardUPbRatioModel( //
+//                "test", //
+//                new BigDecimal( 12345.67890 ), //
+//                "ABS", //
+//                new BigDecimal( 0.987654321 ),//
+//                true);
+//
+//        AbstractValueModelView testView = new MineralStandardUPbRatioViewNotEditable( valueModel);
+//        testView.setBorder( new LineBorder( Color.red ) );
+//
+//
+//        testFrame.add( testView );
+//        testFrame.setVisible( true );
+//    }
 }

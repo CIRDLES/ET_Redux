@@ -175,17 +175,6 @@ public class SampleDateInterpretationAny2AxesChooser extends DialogEditor {
     // End of variables declaration//GEN-END:variables
 
 
-    /**
-     * 
-     * @param args
-     */
-    public static void main ( String args[] ) {
-        java.awt.EventQueue.invokeLater( new Runnable() {
 
-            public void run () {
-                new SampleDateInterpretationAny2AxesChooser( new javax.swing.JFrame(), true, new Vector<String>() ).setVisible( true );
-            }
-        } );
-    }
 
 }

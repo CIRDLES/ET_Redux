@@ -89,11 +89,11 @@ public class ETWarningDialog extends JDialog {
         setLocationRelativeTo(getOwner());
     }
 
-    public static void main(String[] args) {
-        ETException ex = new ETException("Var Unct Correlations yield Var Unct covariance matrix NOT positive definite.");
-
-        new ETWarningDialog(ex).setVisible(true);
-        JOptionPane.showMessageDialog(null, ex.getMessage(), "EARTHTIME Warning", WARNING_MESSAGE);
-    }
+//    public static void main(String[] args) {
+//        ETException ex = new ETException("Var Unct Correlations yield Var Unct covariance matrix NOT positive definite.");
+//
+//        new ETWarningDialog(ex).setVisible(true);
+//        JOptionPane.showMessageDialog(null, ex.getMessage(), "EARTHTIME Warning", WARNING_MESSAGE);
+//    }
 
 }

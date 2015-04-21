@@ -302,25 +302,6 @@ public class ValueModelReferenced extends ValueModel implements
         return myValueModel;
     }
 
-    /**
-     *
-     * @param args
-     * @throws Exception
-     */
-    public static void main ( String[] args ) throws Exception {
-
-        ValueModel valueModel =
-                new ValueModelReferenced( "r206_204b", new BigDecimal( "1234567890" ), "ABS", new BigDecimal( "123000" ), BigDecimal.ZERO, "test reference" );
-        System.out.println(
-                "Format Test: " + valueModel.formatValueAndTwoSigmaForPublicationSigDigMode( "ABS", 6, 2 ) );
-
-
-        String testFileName = "ValueModelReferencedTEST.xml";
-
-        valueModel.serializeXMLObject( testFileName );
-        valueModel.readXMLObject( testFileName, true );
-
-    }
 //        private void readObject(
 //            ObjectInputStream stream)
 //            throws IOException, ClassNotFoundException {

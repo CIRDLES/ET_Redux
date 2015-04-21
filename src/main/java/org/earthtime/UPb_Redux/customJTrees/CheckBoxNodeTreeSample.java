@@ -26,38 +26,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
  *
  * @author http://www.java2s.com/Tutorial/Java/0240__Swing/CreatinganEditorJustforLeafNodes.htm
  */
-public class CheckBoxNodeTreeSample {
+public class CheckBoxNodeTreeSample 
+{
 
-    /**
-     * 
-     * @param args
-     */
-    public static void main(String args[]) {
-        JFrame frame = new JFrame("CheckBox Tree");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        DefaultMutableTreeNode accessibilityOptions[] = {new DefaultMutableTreeNode("A"),
-            new DefaultMutableTreeNode("B")
-        };
-        CheckBoxNode browsingOptions[] = {new CheckBoxNode("C", true, true), 
-        new CheckBoxNode("D", true, true),
-            new CheckBoxNode("E", true, true), new CheckBoxNode("F", false, true)
-        };
-        Vector<DefaultMutableTreeNode> accessVector = 
-                new TreeNodeVector<DefaultMutableTreeNode>("G", accessibilityOptions);
-        Vector<CheckBoxNode> browseVector = new TreeNodeVector<CheckBoxNode>("H", browsingOptions);
-        Object rootNodes[] = {accessVector, browseVector};
-        Vector<Object> rootVector = new TreeNodeVector<Object>("Root", rootNodes);
-        JTree tree = new JTree(rootVector);
-
-        CheckBoxNodeRenderer renderer = new CheckBoxNodeRenderer();
-        tree.setCellRenderer(renderer);
-
-        tree.setCellEditor(new CheckBoxNodeEditor(tree));
-        tree.setEditable(true);
-        JScrollPane scrollPane = new JScrollPane(tree);
-        frame.add(scrollPane, BorderLayout.CENTER);
-        frame.setSize(300, 150);
-        frame.setVisible(true);
-    }
+    //Moved to Tests : CheckBoxNodeTreeSampleTest
 }
