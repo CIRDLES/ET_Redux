@@ -42,6 +42,7 @@ import javax.swing.JLayeredPane;
 import javax.swing.event.MouseInputListener;
 import org.earthtime.ETReduxFrame;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
+import org.earthtime.Tripoli.dataModels.RawRatioDataModel;
 import org.earthtime.Tripoli.dataModels.sessionModels.AbstractSessionForStandardDataModel;
 import org.earthtime.Tripoli.dataViews.dataMonitorViews.AbstractDataMonitorView;
 import org.earthtime.Tripoli.dataViews.fitFunctionPresentationViews.AbstractFitFunctionPresentationView;
@@ -906,7 +907,7 @@ public abstract class AbstractRawDataView extends JLayeredPane implements MouseI
 
                 for (int i = 0; i < includedIndexes.size(); i++) {
                     // jan 2015 want to make Pbc ratios able to exclude additional points
-                    if (rawRatioDataModel.isUsedForCommonLeadCorrections()) {
+                    if ((rawRatioDataModel instanceof RawRatioDataModel) && rawRatioDataModel.isUsedForCommonLeadCorrections()) {
                         tripoliFraction.toggleOneDataAquisition(includedIndexes.get(i), !moreAreIncluded);
 
                     } else {
@@ -933,8 +934,10 @@ public abstract class AbstractRawDataView extends JLayeredPane implements MouseI
                         if (fractionRawDataView instanceof AbstractFitFunctionPresentationView) {
                             fractionRawDataView.refreshPanel();
                         } else if (fractionRawDataView != null) {
-
-                            fractionRawDataView.updatePlotsWithChanges((FitFunctionDataInterface) fractionRawDataView);
+                            // april 2015 added test
+                            if (fractionRawDataView instanceof FitFunctionDataInterface) {
+                                fractionRawDataView.updatePlotsWithChanges((FitFunctionDataInterface) fractionRawDataView);
+                            }
                         }
                     }
                 }
