@@ -144,7 +144,7 @@ public class LevenbergMarquardGeneralSolverWithCovS implements FitFunctionInterf
         int iterations = 0;
         int maxIterations = 100;
         double lambda = 1000.0;
-        double chiTolerance = 1e-10;
+        double chiTolerance = 1e-5;  // per noah april 2015 1e-10;
 
         AbstractFunctionOfX FofX = null;
 
