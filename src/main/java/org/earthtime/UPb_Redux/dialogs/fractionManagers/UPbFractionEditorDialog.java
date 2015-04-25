@@ -676,7 +676,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
         kwikiDateModesSelectorPanel = //
                 new KwikiDateModesSelectorPanel(//
                         329, 326, true);
-        ((KwikiDateModesSelectorPanel) kwikiDateModesSelectorPanel).addPropertyChangeListener(new KwikiDateModesSelectorListener(fraction));
+        kwikiDateModesSelectorPanel.addPropertyChangeListener(new KwikiDateModesSelectorListener(fraction));
         KwikiDateModesSelectorPanel.setDateCorrection(correctionModeForDates);
 
         kwikiTab.add(//
@@ -4401,7 +4401,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
      *
      */
     @Override
-    protected void close() {
+    public void close() {
 
         super.close();
         restoreAllFractions(myFraction);

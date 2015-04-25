@@ -529,7 +529,7 @@ public abstract class DialogEditor extends JDialog {
     /**
      *
      */
-    protected void close() {
+    public void close() {
         setVisible(false);
         dispose();
     }

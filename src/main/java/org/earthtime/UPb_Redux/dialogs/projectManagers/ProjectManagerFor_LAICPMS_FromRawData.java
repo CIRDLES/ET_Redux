@@ -42,6 +42,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import org.earthtime.ETReduxFrame;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
 import org.earthtime.Tripoli.dataModels.MaskingSingleton;
 import org.earthtime.Tripoli.dataModels.RawIntensityDataModel;
@@ -51,13 +52,16 @@ import org.earthtime.Tripoli.massSpecSetups.AbstractMassSpecSetup;
 import org.earthtime.Tripoli.massSpecSetups.multiCollector.NUPlasma.GehrelsNUPlasmaSetupUPbFar;
 import org.earthtime.Tripoli.massSpecSetups.multiCollector.NUPlasma.GehrelsNUPlasmaSetupUPbFarTRA;
 import org.earthtime.Tripoli.massSpecSetups.multiCollector.NUPlasma.GehrelsNUPlasmaSetupUPbIonCounter;
+import org.earthtime.Tripoli.massSpecSetups.singleCollector.Agilent7700.KoslerAgilent7700SetupUPb;
 import org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan.WashStateElement2SetupUPb;
 import org.earthtime.Tripoli.rawDataFiles.handlers.AbstractRawDataFileHandler;
+import org.earthtime.Tripoli.rawDataFiles.handlers.KoslerAgilent7700FileHandler;
 import org.earthtime.Tripoli.rawDataFiles.handlers.NUPlasmaMultiCollFaradayFileHandler;
 import org.earthtime.Tripoli.rawDataFiles.handlers.NUPlasmaMultiCollFaradayTRAFileHandler;
 import org.earthtime.Tripoli.rawDataFiles.handlers.NUPlasmaMultiCollIonCounterFileHandler;
 import org.earthtime.Tripoli.rawDataFiles.handlers.WashStateElement2SingleCollFileHandler;
 import org.earthtime.Tripoli.rawDataFiles.templates.AbstractRawDataFileTemplate;
+import org.earthtime.Tripoli.rawDataFiles.templates.Kosler_Agilent7700_RawDataTemplate;
 import org.earthtime.Tripoli.rawDataFiles.templates.NUPlasmaMultiCollFaradayRawDataTemplate;
 import org.earthtime.Tripoli.rawDataFiles.templates.NUPlasmaMultiCollFaradayTRARawDataTemplate;
 import org.earthtime.Tripoli.rawDataFiles.templates.NUPlasmaMultiCollIonCounterRawDataTemplate;
@@ -67,7 +71,6 @@ import org.earthtime.Tripoli.samples.AbstractTripoliSample;
 import org.earthtime.Tripoli.sessions.TripoliSession;
 import org.earthtime.Tripoli.sessions.TripoliSessionInterface;
 import org.earthtime.UPb_Redux.ReduxConstants.ANALYSIS_PURPOSE;
-import org.earthtime.ETReduxFrame;
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.dialogs.parameterManagers.LAICPMSProjectParametersManager;
 import org.earthtime.UPb_Redux.dialogs.sessionManagers.SessionAnalysisWorkflowManagerInterface;
@@ -182,8 +185,8 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
                 .add(TFElement2SingleColl_Valencia_RawDataTemplate.getInstance());
 
         knownRawDataFileHandlers.add(theThermoFinniganElement2SingleCollFileHandler);
-//
-//        // feb 2014 Agilent 7700
+
+        // feb 2014 Agilent 7700
 //        AbstractRawDataFileHandler theRittnerAgilent7700FileHandler = //
 //                RittnerAgilent7700FileHandler.getInstance();
 //        theRittnerAgilent7700FileHandler.getAvailableMassSpecSetups()//
@@ -194,15 +197,15 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
 //
 //        knownRawDataFileHandlers.add(theRittnerAgilent7700FileHandler);
 //
-//        AbstractRawDataFileHandler theKoslerAgilent7700FileHandler = //
-//                KoslerAgilent7700FileHandler.getInstance();
-//        theKoslerAgilent7700FileHandler.getAvailableMassSpecSetups()//
-//                .add(KoslerAgilent7700SetupUPb.getInstance());
-//
-//        theKoslerAgilent7700FileHandler.getAvailableRawDataFileTemplates()//
-//                .add(Kosler_Agilent7700_RawDataTemplate.getInstance());
-//
-//        knownRawDataFileHandlers.add(theKoslerAgilent7700FileHandler);
+        AbstractRawDataFileHandler theKoslerAgilent7700FileHandler = //
+                KoslerAgilent7700FileHandler.getInstance();
+        theKoslerAgilent7700FileHandler.getAvailableMassSpecSetups()//
+                .add(KoslerAgilent7700SetupUPb.getInstance());
+
+        theKoslerAgilent7700FileHandler.getAvailableRawDataFileTemplates()//
+                .add(Kosler_Agilent7700_RawDataTemplate.getInstance());
+
+        knownRawDataFileHandlers.add(theKoslerAgilent7700FileHandler);
 
         // move this section for robust file opening
         fileHandlerComboBox.removeAllItems();
@@ -1036,6 +1039,10 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
         setVisible(false);
 
         if (doSetup || (mySessionManager == null)) {
+            // kill existing
+            if (mySessionManager != null){
+                ((DialogEditor)mySessionManager).close();
+            }
             mySessionManager
                     = new SessionAnalysisWorkflowManagerLAICPMS(
                             this, //
@@ -1050,7 +1057,10 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
             // april 2014 to cause comon lead corrections and other changes to propagate
             // do the math
             tripoliSession.calculateSessionFitFunctionsForPrimaryStandard();
-            // jan 2015 moved to calculate sessionfit tripoliSession.applyCorrections();
+            // April 2105 added condition below jan 2015 moved to calculate sessionfit tripoliSession.applyCorrections();
+            if (!tripoliSession.isFitFunctionsUpToDate()){
+                tripoliSession.applyCorrections();
+            }
             try {
                 uPbReduxFrame.updateReportTable(true);
             } catch (Exception e) {
@@ -1379,5 +1389,10 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
         public void changedUpdate(DocumentEvent de) {
             updateDataChangeStatus(true);
         }
+    }
+    
+    public void close() {
+        setVisible(false);
+        dispose();
     }
 }

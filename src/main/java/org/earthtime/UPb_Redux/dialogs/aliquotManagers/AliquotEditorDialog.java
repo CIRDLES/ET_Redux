@@ -4470,8 +4470,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
      *
      */
     @Override
-    protected void close() {
-
+    public void close() {
         super.close();
     }
 

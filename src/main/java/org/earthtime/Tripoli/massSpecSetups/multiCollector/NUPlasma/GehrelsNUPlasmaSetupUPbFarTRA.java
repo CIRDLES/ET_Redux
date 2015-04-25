@@ -203,11 +203,6 @@ public final class GehrelsNUPlasmaSetupUPbFarTRA extends AbstractMassSpecSetup i
     /**
      *
      *
-     * @param intensitiesScan
-     * @param isStandard the value of isStandard
-     * @param fractionID the value of fractionID
-     * @param usingFullPropagation the value of usingFullPropagation
-     * @param tripoliFraction the value of tripoliFraction
      * @return the
      * java.util.SortedSet<org.earthtime.Tripoli.dataModels.DataModelInterface>
      */

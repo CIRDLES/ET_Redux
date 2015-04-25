@@ -30,6 +30,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.SortedSet;
 import javax.swing.Icon;
 import javax.swing.JLayeredPane;
@@ -37,6 +38,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import org.earthtime.ETReduxFrame;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
 import org.earthtime.Tripoli.dataModels.DownholeFractionationDataModel;
 import org.earthtime.Tripoli.dataModels.RawRatioDataModel;
@@ -52,7 +54,6 @@ import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.RawRatioData
 import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.Tripoli.sessions.TripoliSessionInterface;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.ETReduxFrame;
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.dialogs.projectManagers.ProjectManagerFor_LAICPMS_FromRawData;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
@@ -99,7 +100,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
             final TripoliSessionInterface tripoliSession) {
         // null parent allows focussed frame to be on top
         super(null, modal);
-
+        
         this.projectManager = projectManager;
 
         this.uPbReduxFrame = uPbReduxFrame;
@@ -1114,12 +1115,11 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         restoreAllAquisitions.setBounds(0, 400, 160, 20);
 
         applyCommonLeadCorrections_button.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
-        applyCommonLeadCorrections_button.setText("<html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Calculate  rhos and Pbc &nbsp;&nbsp;&nbsp;&nbsp;Corrected uncertainties</html>");
+        applyCommonLeadCorrections_button.setText("Update Report Table");
         applyCommonLeadCorrections_button.setActionCommand("");
         applyCommonLeadCorrections_button.setMargin(new java.awt.Insets(0, 0, 0, 0));
         applyCommonLeadCorrections_button.setOpaque(true);
         applyCommonLeadCorrections_button.setPreferredSize(new java.awt.Dimension(314, 36));
-        applyCommonLeadCorrections_button.setSize(new java.awt.Dimension(190, 36));
         applyCommonLeadCorrections_button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 applyCommonLeadCorrections_buttonActionPerformed(evt);
@@ -1456,8 +1456,9 @@ private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.
     }//GEN-LAST:event_downholeCorrectedUnknownRatios_radioButtonActionPerformed
 
     private void switchToProjectManager_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_switchToProjectManager_buttonActionPerformed
-        saveProject();
-        this.setVisible(false);
+//        saveProject();
+        this.close();
+//        this.setVisible(false);
         projectManager.setVisible(true);
     }//GEN-LAST:event_switchToProjectManager_buttonActionPerformed
 
@@ -1466,11 +1467,20 @@ private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.
     }//GEN-LAST:event_restoreAllAquisitionsActionPerformed
 
     private void switchToReductionManager_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_switchToReductionManager_buttonActionPerformed
-        saveProject();
+//        saveProject();
         this.setVisible(false);
     }//GEN-LAST:event_switchToReductionManager_buttonActionPerformed
 
     private void applyCommonLeadCorrections_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_applyCommonLeadCorrections_buttonActionPerformed
+        
+        // april 2015 refit any  fractions not currently fitted
+        Set <TripoliFraction> tripoliFractions = tripoliSession.getTripoliFractionsFiltered(FractionSelectionTypeEnum.ALL, IncludedTypeEnum.INCLUDED);
+        for (TripoliFraction tf : tripoliFractions){
+            if (!tf.isCurrentlyFitted()){
+                tf.updateInterceptFitFunctionsIncludingCommonLead();
+                tripoliSession.setFitFunctionsUpToDate(false);
+            }
+        }
         
         // jan 2015
         if (!tripoliSession.isFitFunctionsUpToDate()) {

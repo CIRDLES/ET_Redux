@@ -378,7 +378,7 @@ private void InitializeTextBoxes(
      * 
      */
     @Override
-    protected void close() {
+    public void close() {
 
         super.close();
     }

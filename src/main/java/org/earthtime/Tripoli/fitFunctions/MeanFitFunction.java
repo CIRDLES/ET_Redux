@@ -191,7 +191,7 @@ public class MeanFitFunction implements FitFunctionInterface, Serializable {
 
         @Override
         protected Matrix extractMatrixJIntpFromJpy(Matrix Jpy) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            return Jpy;
         }
     }
 }

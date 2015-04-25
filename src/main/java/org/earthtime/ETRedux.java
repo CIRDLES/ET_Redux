@@ -45,12 +45,12 @@ public class ETRedux {
     /**
      * Version 3.0.0 initiates switch to ET_Redux from U-Pb_Redux
      */
-    public static String VERSION = "3.0.5";
+    public static String VERSION = "3.0.7";
 
     /**
      *
      */
-    public static String RELEASE_DATE = "25 March 2015";
+    public static String RELEASE_DATE = "23 April 2015";
 
     /**
      * Creates a new instance of UPbRedux

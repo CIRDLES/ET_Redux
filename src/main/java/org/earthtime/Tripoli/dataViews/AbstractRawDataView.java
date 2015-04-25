@@ -42,6 +42,7 @@ import javax.swing.JLayeredPane;
 import javax.swing.event.MouseInputListener;
 import org.earthtime.ETReduxFrame;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
+import org.earthtime.Tripoli.dataModels.RawRatioDataModel;
 import org.earthtime.Tripoli.dataModels.sessionModels.AbstractSessionForStandardDataModel;
 import org.earthtime.Tripoli.dataViews.dataMonitorViews.AbstractDataMonitorView;
 import org.earthtime.Tripoli.dataViews.fitFunctionPresentationViews.AbstractFitFunctionPresentationView;
@@ -403,11 +404,7 @@ public abstract class AbstractRawDataView extends JLayeredPane implements MouseI
             // repaint fittedfunction
             sampleSessionDataView.repaint();
             updateReportTable();
-            //       } else if ( targetDataModelView instanceof FitFunctionsOnRatioDataView ) {
-//            if ( targetDataModelView.amShowingUnknownFraction() ) {
-            //               targetDataModelView.repaint();
-//                updateReportTable();
-            //           }
+
         } else {
             double saveMinY = ((AbstractRawDataView) targetDataModelView).getMinY();
             double saveMaxY = ((AbstractRawDataView) targetDataModelView).getMaxY();
@@ -910,26 +907,23 @@ public abstract class AbstractRawDataView extends JLayeredPane implements MouseI
 
                 for (int i = 0; i < includedIndexes.size(); i++) {
                     // jan 2015 want to make Pbc ratios able to exclude additional points
-                    if (rawRatioDataModel.isUsedForCommonLeadCorrections()) {
+                    if ((rawRatioDataModel instanceof RawRatioDataModel) && rawRatioDataModel.isUsedForCommonLeadCorrections()) {
                         tripoliFraction.toggleOneDataAquisition(includedIndexes.get(i), !moreAreIncluded);
-////                        tripoliFraction.toggleOneDataAquisitionForPbcOnly(includedIndexes.get(i), !moreAreIncluded);
+
                     } else {
                         tripoliFraction.toggleOneDataAquisition(includedIndexes.get(i), !moreAreIncluded);
                     }
-//                    tripoliFraction.updateIncludedStatus();
+
                     tripoliFraction.setShowVerticalLineAtThisIndex(-1);
                 }
 
                 tripoliFraction.updateIncludedStatus();
 
-                //???? Check for is active?
-//                // recalculate based on context     
-//                if (tripoliFraction.isStandard()) {
-//                    tripoliFraction.updateInterceptFitFunctionsIncludingCommonLead();//updateInterceptFitFunctions();
-//                } else {
-                tripoliFraction.updateInterceptFitFunctionsIncludingCommonLead();
-                updateReportTable();
-//                }
+                // april 2015 flag fraction for refitting instead of doing it on every mouse move
+                // added button to fraction column
+                tripoliFraction.setCurrentlyFitted(false);
+//////                tripoliFraction.updateInterceptFitFunctionsIncludingCommonLead();
+//////                updateReportTable();
 
                 // feb 2013 here we differentiate between session and ratios
                 // for ratios,we want data point toggle to only affect fraction and not disturb layout
@@ -940,11 +934,10 @@ public abstract class AbstractRawDataView extends JLayeredPane implements MouseI
                         if (fractionRawDataView instanceof AbstractFitFunctionPresentationView) {
                             fractionRawDataView.refreshPanel();
                         } else if (fractionRawDataView != null) {
-//                            try {
-                            // a bad fraction might not plot in ratio space, but plot in log space, so we have to handle missing views
-                            fractionRawDataView.updatePlotsWithChanges((FitFunctionDataInterface) fractionRawDataView);
-//                            } catch (Exception emissingview) {
-//                            }
+                            // april 2015 added test
+                            if (fractionRawDataView instanceof FitFunctionDataInterface) {
+                                fractionRawDataView.updatePlotsWithChanges((FitFunctionDataInterface) fractionRawDataView);
+                            }
                         }
                     }
                 }
@@ -1039,8 +1032,6 @@ public abstract class AbstractRawDataView extends JLayeredPane implements MouseI
                         calcListOfSelectedToToggleIndexes( //
                                 tripoliFraction.getShowVerticalLineAtThisIndex(), //
                                 tripoliFraction.getShowSecondVerticalLineAtThisIndex()));
-                // repaint fraction
-
                 repaintFraction();
             }
         }
@@ -1098,7 +1089,7 @@ public abstract class AbstractRawDataView extends JLayeredPane implements MouseI
 
     @Override
     public void toggleFractionInclusion(boolean included) {
-        tripoliFraction.toggleAllData(included);
+        tripoliFraction.toggleAllDataExceptShaded(included);
 
         // force masking array
         if (included) {

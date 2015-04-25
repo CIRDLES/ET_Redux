@@ -255,5 +255,7 @@ public interface TripoliSessionInterface extends TripoliSessionFractionationCalc
     public void setLeftShadeCount(int leftShadeCount);
     
     public boolean isFitFunctionsUpToDate();
+    
+    public void setFitFunctionsUpToDate(boolean fitFunctionsUpToDate);
 
 }

@@ -144,7 +144,7 @@ public class LevenbergMarquardGeneralSolverWithCovS implements FitFunctionInterf
         int iterations = 0;
         int maxIterations = 100;
         double lambda = 1000.0;
-        double chiTolerance = 1e-10;
+        double chiTolerance = 1e-5;  // per noah april 2015 1e-10;
 
         AbstractFunctionOfX FofX = null;
 
@@ -245,7 +245,7 @@ public class LevenbergMarquardGeneralSolverWithCovS implements FitFunctionInterf
                         if (!FofX.verifyPositiveVariances()) {
                             FofX = null;
                         } else {
-                            System.out.println("LM with YES OD for " + FofX.getShortNameString() + "after " + iterations + "\n");
+                            System.out.println("LM with YES OD for " + FofX.getShortNameString() + " after " + iterations + "\n");
                         }
                     }
                     // let's get out of here
@@ -285,9 +285,6 @@ public class LevenbergMarquardGeneralSolverWithCovS implements FitFunctionInterf
             if (FofX.getMatrixJacobianYInterceptLogRatioXY() == null) {
                 FofX.setMatrixJacobianYInterceptLogRatioXY(overDispersionLMAlgorithm.getInitialFofX().getMatrixJacobianYInterceptLogRatioXY());
             }
-//            if (FofX.getMatrixJacobianYInterceptLogRatioXY() == null) {
-//                System.out.println("GOT A NULL" + FofX.getShortNameString());
-//            }
         }
 
         return FofX;//overDispersionLMAlgorithm;

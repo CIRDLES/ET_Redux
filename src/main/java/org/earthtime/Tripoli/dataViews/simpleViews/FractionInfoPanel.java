@@ -107,23 +107,49 @@ public class FractionInfoPanel extends AbstractRawDataView {
                     new ShowLocalInterceptFitFunctionsCheckBoxActionListener(tripoliFraction, sampleSessionDataView));
             add(showLocalFitFunctionsCheckBox, JLayeredPane.DEFAULT_LAYER);
 
-            add(buttonForODChoiceFactory(68, "w/ OverDispersion", true), DEFAULT_LAYER);
-            add(buttonForODChoiceFactory(88, "w/out OverDispersion", false), DEFAULT_LAYER);
+            add(buttonForODChoiceFactory(68, "w/ OD", true), DEFAULT_LAYER);
+            add(buttonForODChoiceFactory(88, "w/out OD", false), DEFAULT_LAYER);
+            add(buttonForSelectAllFactory(68, "Select All"), DEFAULT_LAYER);
+            add(buttonForReFitFactory(88, "ReFit Functions"), DEFAULT_LAYER);
         }
 
+    }
+
+    private JButton buttonForSelectAllFactory(int pixelsFromTop, final String caption) {
+        JButton refitChoiceButton = new ET_JButton(caption);
+        refitChoiceButton.setFont(new Font("SansSerif", Font.PLAIN, 11));
+        refitChoiceButton.setBounds(70, pixelsFromTop, 88, 20);
+        refitChoiceButton.addActionListener((ActionEvent ae) -> {
+            tripoliFraction.toggleAllDataExceptShaded(true);
+            ((AbstractRawDataView) sampleSessionDataView).refreshPanel();
+        });
+
+        return refitChoiceButton;
+    }
+
+    private JButton buttonForReFitFactory(int pixelsFromTop, final String caption) {
+        JButton refitChoiceButton = new ET_JButton(caption);
+        refitChoiceButton.setFont(new Font("SansSerif", Font.PLAIN, 11));
+        refitChoiceButton.setBounds(70, pixelsFromTop, 88, 20);
+        refitChoiceButton.addActionListener((ActionEvent ae) -> {
+            if (!tripoliFraction.isCurrentlyFitted()) {
+                tripoliFraction.updateInterceptFitFunctionsIncludingCommonLead();
+                ((AbstractRawDataView) sampleSessionDataView).refreshPanel();
+                updateReportTable();
+            }
+        });
+
+        return refitChoiceButton;
     }
 
     private JButton buttonForODChoiceFactory(int pixelsFromTop, final String caption, final boolean setOD) {
 
         JButton ODChoiceButton = new ET_JButton(caption);
         ODChoiceButton.setFont(new Font("SansSerif", Font.PLAIN, 11));
-        ODChoiceButton.setBounds(6, pixelsFromTop, 115, 20);
-        ODChoiceButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                tripoliFraction.setODforAllRatios(setOD);
-                ((AbstractRawDataView) sampleSessionDataView).refreshPanel();
-            }
+        ODChoiceButton.setBounds(6, pixelsFromTop, 60, 20);
+        ODChoiceButton.addActionListener((ActionEvent ae) -> {
+            tripoliFraction.setODforAllRatios(setOD);
+            ((AbstractRawDataView) sampleSessionDataView).refreshPanel();
         });
 
         return ODChoiceButton;

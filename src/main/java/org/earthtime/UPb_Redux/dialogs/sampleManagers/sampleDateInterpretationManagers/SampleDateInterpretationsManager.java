@@ -866,7 +866,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
      *
      */
     @Override
-    protected void close() {
+    public void close() {
 
         // Save concordia options 
         ((ConcordiaGraphPanel) getConcordiaGraphPanel()).saveSettings();

@@ -224,9 +224,10 @@ public class Project implements
                     SortedSet<TripoliFraction> tripoliSampleFractions = tripoliSample.getSampleFractions();
                     for (Iterator<TripoliFraction> it = tripoliSampleFractions.iterator(); it.hasNext();) {
                         TripoliFraction tf = it.next();
+                        System.out.println("Processing tripoli fraction " + tf.getFractionID());
                         Fraction uPbLAICPMSFraction = new UPbLAICPMSFraction(tf.getFractionID());
                         uPbLAICPMSFraction.setSampleName(tripoliSample.getSampleName());
-                        // add to tripoi fraction so it UPbFraction can be contiunously updated
+                        // add to tripoli fraction so its UPbFraction can be contiunously updated
                         tf.setuPbFraction(uPbLAICPMSFraction);
 
                         // automatically added to aliquot #1 as we are assuming only one aliquot in this scenario
@@ -251,10 +252,6 @@ public class Project implements
 
         // first pass without any user interaction
         tripoliSession.setEstimatedPlottingPointsCount(1000);
-        // turns out Jf needs to be recalculated every time at least when a standard is added or subtracted
-//        tripoliSession.prepareMatrixJfMapUnknowns();
-//        tripoliSession.prepareMatrixJfPlotting( 1000 );
-        //save time feb 2013       tripoliSession.applyCorrections();
 
     }
 
