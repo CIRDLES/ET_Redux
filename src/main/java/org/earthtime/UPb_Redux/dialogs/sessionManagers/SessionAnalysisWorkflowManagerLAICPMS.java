@@ -976,7 +976,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         controlPanel_panel.add(jLabel4);
         jLabel4.setBounds(0, 150, 190, 13);
 
-        yAxisZoomSlider.setMaximum(1024);
+        yAxisZoomSlider.setMaximum(256);
         yAxisZoomSlider.setMinimum(32);
         yAxisZoomSlider.setOrientation(javax.swing.JSlider.VERTICAL);
         yAxisZoomSlider.setValue(128);
@@ -1244,7 +1244,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         controlPanel_panel.setBounds(0, 0, 191, 620);
 
         xAxisZoomSlider.setBackground(new java.awt.Color(230, 228, 228));
-        xAxisZoomSlider.setMaximum(2048);
+        xAxisZoomSlider.setMaximum(512);
         xAxisZoomSlider.setMinimum(4);
         xAxisZoomSlider.setValue(128);
         tripoliTab_layeredPane.add(xAxisZoomSlider);
