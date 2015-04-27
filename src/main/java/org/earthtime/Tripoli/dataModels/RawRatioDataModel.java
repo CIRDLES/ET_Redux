@@ -781,7 +781,6 @@ public class RawRatioDataModel //
         }
 
         AbstractOverDispersionLMAlgorithmInterface algorithmForEXPMAT;
-//        AbstractOverDispersionLMVecAlgorithm algorithmForEXPMAT;
 
         if (fOfX_ExpFast != null) //
         {
@@ -851,6 +850,9 @@ public class RawRatioDataModel //
                         } else {
                             logRatioFitFunctionsWithOD.put(fOfX_EXPOD.getShortNameString(), fOfX_EXPOD);
                         }
+                    } else {
+                        logRatioFitFunctionsWithOD.remove(FitFunctionTypeEnum.EXPONENTIAL.getName());
+                        selectedFitFunctionType = FitFunctionTypeEnum.LINE;
                     }
 
                 } else {
@@ -1007,9 +1009,16 @@ public class RawRatioDataModel //
                             String key = sessionFitFuncsNoOdIterator.next();
                             AbstractFunctionOfX FofX = logRatioFitFunctionsNoOD.get(key);
 
-                            Matrix JIntp = FofX.assembleMatrixJIntp(SlogRatioX_Y);
+                            if (FofX != null) {
+                                Matrix JIntp = FofX.assembleMatrixJIntp(SlogRatioX_Y);
 
-                            FofX.setdLrInt_dDt(JIntp.times(matrixIntDiff).get(0, 0));
+                                try {
+                                    FofX.setdLrInt_dDt(JIntp.times(matrixIntDiff).get(0, 0));
+                                } catch (Exception e) {
+                                }
+                            } else {
+                                logRatioFitFunctionsNoOD.remove(key);
+                            }
                         }
 
                         Iterator<String> sessionFitFuncsWithOdIterator = logRatioFitFunctionsWithOD.keySet().iterator();
@@ -1017,12 +1026,20 @@ public class RawRatioDataModel //
                             String key = sessionFitFuncsWithOdIterator.next();
                             AbstractFunctionOfX FofX = logRatioFitFunctionsWithOD.get(key);
 
-                            double OD = FofX.getOverDispersion();
-                            Matrix ODdiag = Matrix.identity(countOfActiveData, countOfActiveData).times(OD);
+                            if (FofX != null) {
+                                double OD = FofX.getOverDispersion();
+                                Matrix ODdiag = Matrix.identity(countOfActiveData, countOfActiveData).times(OD);
 
-                            Matrix JIntp = FofX.assembleMatrixJIntp(SlogRatioX_Y.plus(ODdiag));
+                                Matrix JIntp = FofX.assembleMatrixJIntp(SlogRatioX_Y.plus(ODdiag));
 
-                            FofX.setdLrInt_dDt(JIntp.times(matrixIntDiff).get(0, 0));
+                                try {
+                                    FofX.setdLrInt_dDt(JIntp.times(matrixIntDiff).get(0, 0));
+                                } catch (Exception e) {
+                                }
+                            } else {
+                                logRatioFitFunctionsWithOD.remove(key);
+                            }
+
                         }
                     }
                 }
@@ -1095,6 +1112,7 @@ public class RawRatioDataModel //
     /**
      * @return the rawRatioName
      */
+    @Override
     public RawRatioNames getRawRatioModelName() {
         return rawRatioName;
     }
