@@ -266,7 +266,9 @@ public abstract class AbstractMassSpecSetup implements //
         adjustNonPositiveCorrectedIntensities();
         calculateLogOnPeakCorrectedIntensities();
 
-        calculateRawAndLogRatios(tripoliFraction);
+        calculateRawAndLogRatios();
+        
+        tripoliFraction.reProcessToRejectNegativeRatios();
 
         propagateUnctInBaselineCorrOnPeakIntensities();
 
@@ -434,7 +436,9 @@ public abstract class AbstractMassSpecSetup implements //
 
         calculateLogOnPeakCorrectedIntensities();
 
-        calculateRawAndLogRatios(tripoliFraction);
+        calculateRawAndLogRatios();
+        
+        tripoliFraction.reProcessToRejectNegativeRatios();
 
         propagateUnctInBaselineCorrOnPeakIntensities();
 
@@ -685,12 +689,11 @@ public abstract class AbstractMassSpecSetup implements //
 
     /**
      *
-     * @param tripoliFraction the value of tripoliFraction
      */
-    private void calculateRawAndLogRatios(TripoliFraction tripoliFraction) {
+    private void calculateRawAndLogRatios() {
         // calculate ratios ****************************************************
         for (DataModelInterface rr : rawRatios) {
-            ((RawRatioDataModel) rr).calculateRawAndLogRatios(tripoliFraction);
+            ((RawRatioDataModel) rr).calculateRawAndLogRatios();
             ((RawRatioDataModel) rr).setDataActiveMap(AbstractMassSpecSetup.defaultDataActiveMap(countOfAcquisitions));
             // april 2014
             rr.applyMaskingArray();
@@ -795,8 +798,9 @@ public abstract class AbstractMassSpecSetup implements //
 
     /**
      * this will be deprecated as soon as nu faraday file handler is updated
+     *
      * @param backgroundAcquisitions
-     * @param peakAcquisitions 
+     * @param peakAcquisitions
      */
     private void initializeVirtualCollectorsWithDataTRA(ArrayList<double[]> backgroundAcquisitions, ArrayList<double[]> peakAcquisitions) {
         // dec 2014 TRA version where scan data contains background then peak in columns

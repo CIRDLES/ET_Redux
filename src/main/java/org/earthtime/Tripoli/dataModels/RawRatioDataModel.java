@@ -37,7 +37,6 @@ import org.earthtime.Tripoli.fitFunctions.LevenbergMarquardGeneralSolverWithCovS
 import org.earthtime.Tripoli.fitFunctions.LevenbergMarquardGeneralSolverWithVecV;
 import org.earthtime.Tripoli.fitFunctions.LevenbergMarquardGeneralSolverWithVecV.AbstractOverDispersionLMVecAlgorithm;
 import org.earthtime.Tripoli.fitFunctions.MeanFitFunction;
-import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.UPb_Redux.utilities.comparators.IntuitiveStringComparator;
 import org.earthtime.dataDictionaries.FitFunctionTypeEnum;
 import org.earthtime.dataDictionaries.IsotopeNames;
@@ -187,9 +186,8 @@ public class RawRatioDataModel //
 
     /**
      *
-     * @param tripoliFraction the value of tripoliFraction
      */
-    public void calculateRawAndLogRatios(TripoliFraction tripoliFraction) {
+    public void calculateRawAndLogRatios() {
         ratios = new double[((RawIntensityDataModel) topIsotope).getOnPeakVirtualCollector().getIntensities().length];
         logRatios = new double[ratios.length];
 
@@ -201,30 +199,12 @@ public class RawRatioDataModel //
             double[] botCorrectedIntensities;
             double[] topLogCorrectedIntensities;
             double[] botLogCorrectedIntensities;
-//
-//            if (isUsedForCommonLeadCorrections() && ((RawIntensityDataModel) botIsotope).isForceMeanForCommonLeadRatios()) {
-//                topCorrectedIntensities = new double[ratios.length];
-//                botCorrectedIntensities = new double[ratios.length];
-//
-//                topLogCorrectedIntensities = new double[ratios.length];
-//                botLogCorrectedIntensities = new double[ratios.length];
-//
-//                for (int i = 0; i < ratios.length; i++) {
-//                    topCorrectedIntensities[i] = ((RawIntensityDataModel) topIsotope).getForcedMeanForCommonLeadRatios();
-//                    botCorrectedIntensities[i] = ((RawIntensityDataModel) botIsotope).getForcedMeanForCommonLeadRatios();
-//
-//                    topLogCorrectedIntensities[i] = Math.log(topCorrectedIntensities[i]);
-//                    botLogCorrectedIntensities[i] = Math.log(botCorrectedIntensities[i]);
-//                }
-//
-//                System.out.println("COMMON LEAD FRACTIONS FORCED MEANS " + rawRatioName.getDisplayName() + " = " + topCorrectedIntensities[1] / botCorrectedIntensities[1]);
-//            } else {
+
             topCorrectedIntensities = ((RawIntensityDataModel) topIsotope).getOnPeakVirtualCollector().getCorrectedIntensities();
             botCorrectedIntensities = ((RawIntensityDataModel) botIsotope).getOnPeakVirtualCollector().getCorrectedIntensities();
 
             topLogCorrectedIntensities = ((RawIntensityDataModel) topIsotope).getOnPeakVirtualCollector().getLogCorrectedIntensities();
             botLogCorrectedIntensities = ((RawIntensityDataModel) botIsotope).getOnPeakVirtualCollector().getLogCorrectedIntensities();
-//            }
 
             alphas = new double[topCorrectedIntensities.length];
             fitFunctionLogValues = new double[topCorrectedIntensities.length];
@@ -236,14 +216,8 @@ public class RawRatioDataModel //
                 double bot = botCorrectedIntensities[i];
 
                 // dec 2012 these ratios are going to be for plotting only as we switch to log ratios for unct prop
-                //if ((bot <= Double.MIN_VALUE) || (top <= Double.MIN_VALUE)) {
-                //     ratios[i] = Double.MIN_VALUE;
-                //     logRatios[i] = Math.log(Double.MIN_VALUE);
-                //} else {
                 ratios[i] = top / bot;
                 logRatios[i] = topLogCorrectedIntensities[i] - botLogCorrectedIntensities[i];
-
-                // }
             }
             calculateAlphas();
         }
