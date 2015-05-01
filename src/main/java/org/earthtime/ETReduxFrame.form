@@ -69,6 +69,14 @@
                 <Property name="text" type="java.lang.String" value="New Project from Legacy Data Table"/>
               </Properties>
               <SubComponents>
+                <MenuItem class="javax.swing.JMenuItem" name="dibbs_USeries">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="DIBBs U-Series Legacy Data Table in .csv format"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="dibbs_USeriesActionPerformed"/>
+                  </Events>
+                </MenuItem>
                 <MenuItem class="javax.swing.JMenuItem" name="genericUPbDataTableInCSV_menuItem">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Generic UPb Legacy Data Table in .csv format"/>

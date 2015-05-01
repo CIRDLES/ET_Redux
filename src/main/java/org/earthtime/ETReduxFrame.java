@@ -1825,6 +1825,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         jMenuItem5 = new javax.swing.JMenuItem();
         jMenuItem9 = new javax.swing.JMenuItem();
         newProjectFromLegacyDataTable_menu = new javax.swing.JMenu();
+        dibbs_USeries = new javax.swing.JMenuItem();
         genericUPbDataTableInCSV_menuItem = new javax.swing.JMenuItem();
         ucsb_LASS_A_DataTableInCSV_menuItem = new javax.swing.JMenuItem();
         jSeparator9 = new javax.swing.JPopupMenu.Separator();
@@ -2184,6 +2185,14 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         project_menu.add(jMenuItem9);
 
         newProjectFromLegacyDataTable_menu.setText("New Project from Legacy Data Table");
+
+        dibbs_USeries.setText("DIBBs U-Series Legacy Data Table in .csv format");
+        dibbs_USeries.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dibbs_USeriesActionPerformed(evt);
+            }
+        });
+        newProjectFromLegacyDataTable_menu.add(dibbs_USeries);
 
         genericUPbDataTableInCSV_menuItem.setText("Generic UPb Legacy Data Table in .csv format");
         genericUPbDataTableInCSV_menuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -3839,6 +3848,10 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
         loadLastSample_button.setToolTipText(myMRUs.get(0));
     }//GEN-LAST:event_loadLastSample_buttonMouseEntered
 
+    private void dibbs_USeriesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dibbs_USeriesActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_dibbs_USeriesActionPerformed
+
     private void helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
         //Needed for having a nice look in windows... weird
         ETReduxFrame.setDefaultLookAndFeelDecorated(false);
@@ -3867,6 +3880,7 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     private javax.swing.JMenuItem credits_menuItem;
     private javax.swing.JMenuItem customizeSampleMetadata_menuItem;
     private javax.swing.JMenuItem deSelectAllFractions_menuItem;
+    private javax.swing.JMenuItem dibbs_USeries;
     private javax.swing.JMenu earthTimeWebSiteMenu;
     private javax.swing.JMenuItem editCurrentReportSettingsModel_menuItem;
     private javax.swing.JMenuItem editInitialPbModels;
