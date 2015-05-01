@@ -115,7 +115,7 @@ public class TripoliFraction implements //
     private transient double upperPhi_r206_207;
     private ValueModel sampleR238_235s;
     private RadDatesForPbCorrSynchEnum radDateForSKSynch;
-    
+
     private boolean currentlyFitted;
 
     public TripoliFraction( //
@@ -195,7 +195,7 @@ public class TripoliFraction implements //
         this.sampleR238_235s = new ValueModel("r238_235s");
 
         this.radDateForSKSynch = RadDatesForPbCorrSynchEnum.date206_238r;
-        
+
         this.currentlyFitted = false;
 
     }
@@ -292,6 +292,10 @@ public class TripoliFraction implements //
      *
      */
     public void updateInterceptFitFunctionsIncludingCommonLead() {
+
+        // may 2015 needed if user deselects illegal (negative ratios) data
+        reProcessToRejectNegativeRatios();
+
         Iterator ratiosIterator = getRatiosForFractionFitting().iterator();
         System.out.println("Update Intercept Fit Functions Including Pbc for " + fractionID);
         while (ratiosIterator.hasNext()) {
@@ -537,7 +541,7 @@ public class TripoliFraction implements //
         for (int i = 0; i < dataActiveMap.length; i++) {
             toggleOneDataAquisition(i, included);
         }
-        
+
         // jan 2015
         // force masking array
         if (included) {
@@ -669,7 +673,7 @@ public class TripoliFraction implements //
         SortedSet<DataModelInterface> ratiosForFractionFitting = new TreeSet<>((DataModelInterface rrdm1, DataModelInterface rrdm2) -> {
             RawRatioNames rmName = rrdm1.getRawRatioModelName();
             RawRatioNames myName = rrdm2.getRawRatioModelName();
-            
+
             return rmName.compareTo(myName);
         });
 
@@ -1480,8 +1484,20 @@ public class TripoliFraction implements //
         this.rawRatios = rawRatios;
     }
 
+    public void reProcessToRejectNegativeRatios() {
+        // may 2015 per Noah, turn off all negative values - neg in a ratio turns off all in that position for fraction
+        for (DataModelInterface rr : rawRatios) {
+            double[] ratios = ((RawRatioDataModel) rr).getRatios();
+            for (int i = 0; i < ratios.length; i++) {
+                if (ratios[i] < 0.0) {
+                    toggleOneDataAquisition(i, false);
+                }
+            }
+        }
+    }
+
     public void postProcessCommonLeadCorrectionRatios() {
-        System.out.println("Post process for Pbc on fraction  " + fractionID);
+        System.out.println("Post process for Pbc on fraction  " + fractionID + "***************************************************\n");
         for (DataModelInterface rr : rawRatios) {
             boolean rejectedAPoint = false;
             // select only those with pb204 in denom
