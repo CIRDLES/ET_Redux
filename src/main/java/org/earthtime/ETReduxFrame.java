@@ -796,37 +796,6 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             myProjectManager.setVisible(true);
         }
 
-//        if (projectAnalysisType.equalsIgnoreCase(SampleAnalysisTypesEnum.COMPILED.getName()) //
-//                &&//
-//                sampleAnalysisType.equalsIgnoreCase(SampleAnalysisTypesEnum.GENERIC_UPB.getName())) {
-//
-//            try {
-//                theSample = Sample.initializeNewSample(//
-//                        SampleTypesEnum.PROJECT.getName(), //
-//                        SampleAnalysisTypesEnum.COMPILED.getName(),//
-//                        myLabData,//
-//                        myState.getReduxPreferences().getDefaultSampleAnalysisPurpose());
-//            } catch (BadLabDataException badLabDataException) {
-//            }
-//
-//            theProject.setSuperSample(theSample);
-//            myProjectManager
-//                    = new ProjectOfLegacySamplesDataManagerDialogForGenericUPb_A(
-//                            this,
-//                            true,
-//                            theProject,
-//                            getMyState().getMRUImportFolderCompilationMode());
-//
-//            ((AbstractProjectOfLegacySamplesDataManagerDialog) myProjectManager).setSize();
-//
-//            // modal call
-//            myProjectManager.setVisible(true);
-//
-//            // remembers last folder used for import of single or set of fractions
-//            getMyState().setMRUImportFolderCompilationMode(
-//                    ((AbstractProjectOfLegacySamplesDataManagerDialog) myProjectManager).getImportFractionFolderMRU().toString());
-//
-//        }
         if (projectAnalysisType.equalsIgnoreCase(SampleAnalysisTypesEnum.COMPILED.getName())) {
 
             try {
@@ -1436,8 +1405,6 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         loadAndShowReportTableData();
 
         // oct 2014
-        // removed next line nov 2014
-//        theSample.updateAndSaveSampleDateModelsByAliquot();
         // this statement makes a difference if user went back to project manager and changed things
         if (sampleDateInterpDialog != null) {
             ((SampleDateInterpretationsManager) sampleDateInterpDialog).setSample(theSample);
@@ -1534,12 +1501,8 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
     private boolean closeTheProject() throws BadLabDataException {
 
         saveTheProject();
-        //boolean retval = checkSavedStatusTheSample();
         forceCloseOfSampleDateInterpretations();
-        //setLiveUpdateTimerIsRunning( false );
-        //if ( retval ) {
-        setUpEmptySample();//theSample.getSampleType() );
-        //}
+        setUpEmptySample();
 
         return true;
     }
@@ -1745,6 +1708,8 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
      *
      */
     public void producePbcCorrectionReport() {
+
+        // TODO: move to Project class
         if (theProject != null) {
             if (theProject.getSuperSample().isAnalysisTypeTripolized()) {
                 // oct 2014 have a LAICPMS project
@@ -1994,6 +1959,11 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         loadLastSample_button.setText("Last Sample");
         loadLastSample_button.setMargin(new java.awt.Insets(0, 0, 0, 0));
         loadLastSample_button.setPreferredSize(new java.awt.Dimension(140, 23));
+        loadLastSample_button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                loadLastSample_buttonMouseEntered(evt);
+            }
+        });
         loadLastSample_button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 loadLastSample_buttonActionPerformed(evt);
@@ -2099,6 +2069,11 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         loadLastProject_button.setText("Last Project");
         loadLastProject_button.setMargin(new java.awt.Insets(0, 0, 0, 0));
         loadLastProject_button.setPreferredSize(new java.awt.Dimension(140, 23));
+        loadLastProject_button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                loadLastProject_buttonMouseEntered(evt);
+            }
+        });
         loadLastProject_button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 loadLastProject_buttonActionPerformed(evt);
@@ -3014,9 +2989,8 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
      * @param checkSavedStatus
      */
     public void loadMostRecentProject(boolean checkSavedStatus) {
-        setupMRUProjectFiles();
-        openTheProject(new File(MRUProject_menu.getItem(0).getText()));
-
+        ArrayList<String> myMRUs = myState.getMRUProjectList();
+        openTheProject(new File(myMRUs.get(0)));
     }
 
     /**
@@ -3024,9 +2998,10 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
      * @param checkSavedStatus
      */
     public void loadMostRecentSample(boolean checkSavedStatus) {
-        setupMRUSampleFiles();
+        ArrayList<String> myMRUs = myState.getMRUSampleList();
+
         try {
-            openTheSample(new File(MRUSampleMenu.getItem(0).getText()), checkSavedStatus);
+            openTheSample(new File(myMRUs.get(0)), checkSavedStatus);
         } catch (BadLabDataException ex) {
             new ETWarningDialog(ex).setVisible(true);
             System.out.println("No Recent File");
@@ -3061,14 +3036,14 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         MRUSampleMenu.removeAll();
 
         // add valid items to menu
-        for (JMenuItem jmi : MRUMenuItemList) {
-            jmi.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    mruSampleMenuItemActionPerformed(evt);
-                }
+        MRUMenuItemList.stream().map((jmi) -> {
+            jmi.addActionListener((java.awt.event.ActionEvent evt) -> {
+                mruSampleMenuItemActionPerformed(evt);
             });
+            return jmi;
+        }).forEach((jmi) -> {
             MRUSampleMenu.add(jmi);
-        }
+        });
 
         if (MRUSampleMenu.getItemCount() == 0) {
             MRUSampleMenu.add(new JMenuItem("<empty>"));
@@ -3099,8 +3074,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         ArrayList<JMenuItem> MRUMenuItemList = new ArrayList<>();
 
         // validate File mappings and set up menu items
-        for (int i = 0; i
-                < myMRUs.size(); i++) {
+        for (int i = 0; i < myMRUs.size(); i++) {
             File f = new File(myMRUs.get(i));
             if (!f.isFile()) {
                 myMRUs.set(i, "");
@@ -3116,31 +3090,23 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         MRUProject_menu.removeAll();
 
         // add valid items to menu
-        for (JMenuItem jmi : MRUMenuItemList) {
-            jmi.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    mruProjectMenuItemActionPerformed(evt);
-                }
+        MRUMenuItemList.stream().map((jmi) -> {
+            jmi.addActionListener((java.awt.event.ActionEvent evt) -> {
+                mruProjectMenuItemActionPerformed(evt);
             });
+            return jmi;
+        }).forEach((jmi) -> {
             MRUProject_menu.add(jmi);
-        }
+        });
 
         if (MRUProject_menu.getItemCount() == 0) {
             MRUProject_menu.add(new JMenuItem("<empty>"));
             MRUProject_menu.getItem(0).setEnabled(false);
         }
-
     }
 
     private void mruProjectMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
-        // open the MRU sample file
-//        if ( checkSavedStatusTheSample() ) {
-//            try {
         openTheProject(new File(((JMenuItem) evt.getSource()).getText()));
-//            } catch (BadLabDataException ex) {
-//            }
-
-//        }
     }
 
     private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
@@ -3639,7 +3605,7 @@ private void LAICPMS_LegacyAnalysis_SC_WSU_vB_menuItemActionPerformed (java.awt.
         if (ex instanceof BadLabDataException) {
             ex.printStackTrace();
         }
-        
+
         new ETWarningDialog(ex).setVisible(true);
     }
 }//GEN-LAST:event_LAICPMS_LegacyAnalysis_SC_WSU_vB_menuItemActionPerformed
@@ -3681,7 +3647,7 @@ private void LAICPMS_LegacyAnalysis_SC_WSU_vA_menuItemActionPerformed (java.awt.
         if (ex instanceof BadLabDataException) {
             ex.printStackTrace();
         }
-        
+
         new ETWarningDialog(ex).setVisible(true);
     }
 }//GEN-LAST:event_LAICPMS_LegacyAnalysis_SC_WSU_vA_menuItemActionPerformed
@@ -3823,11 +3789,7 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
 
     private void openProject_buttonopenSampleFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openProject_buttonopenSampleFileActionPerformed
         if (checkSavedStatusTheProject()) {
-//            try {
             openProjectFile();
-//            } catch (BadLabDataException ex) {
-//            }
-
         }
     }//GEN-LAST:event_openProject_buttonopenSampleFileActionPerformed
 
@@ -3866,6 +3828,16 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     private void writeCSVFileOfProjectLegacyDataSampleFieldNames_UCSB_LASS_AActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_writeCSVFileOfProjectLegacyDataSampleFieldNames_UCSB_LASS_AActionPerformed
         ProjectOfLegacySamplesImporterFromCSVFile_UCSB_LASS_A.writeAndOpenCSVFileOfLegacyDataSampleFieldNames();
     }//GEN-LAST:event_writeCSVFileOfProjectLegacyDataSampleFieldNames_UCSB_LASS_AActionPerformed
+
+    private void loadLastProject_buttonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_loadLastProject_buttonMouseEntered
+        ArrayList<String> myMRUs = myState.getMRUProjectList();
+        loadLastProject_button.setToolTipText(myMRUs.get(0));
+    }//GEN-LAST:event_loadLastProject_buttonMouseEntered
+
+    private void loadLastSample_buttonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_loadLastSample_buttonMouseEntered
+        ArrayList<String> myMRUs = myState.getMRUSampleList();
+        loadLastSample_button.setToolTipText(myMRUs.get(0));
+    }//GEN-LAST:event_loadLastSample_buttonMouseEntered
 
     private void helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
         //Needed for having a nice look in windows... weird
