@@ -264,7 +264,7 @@ public class LevenbergMarquardGeneralSolverWithVecV implements FitFunctionInterf
                         }
                     }
                     // let's get out of here
-                    iterations = maxIterations;
+                    iterations = maxIterations - 1;
                 } else {
                     // improved but not solved
                     lambda /= 10.0;
@@ -282,7 +282,7 @@ public class LevenbergMarquardGeneralSolverWithVecV implements FitFunctionInterf
 
         if (FofX == null) {
             if (iterations == maxIterations) {
-                System.out.println("LM did not find a fit at code line 193" + "\n");
+                System.out.println("LM did not find a fit" + "\n");
             }
             FofX = overDispersionLMAlgorithm.getInitialFofX();
         }
