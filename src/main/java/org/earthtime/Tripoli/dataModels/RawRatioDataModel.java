@@ -961,10 +961,17 @@ public class RawRatioDataModel //
                     try {
                         generateLINEfitFunctionUsingLM();
                     } catch (Exception e) {
+                        System.out.println("Exception generating LINE");
+                        logRatioFitFunctionsNoOD.remove(FitFunctionTypeEnum.LINE.getName());
+                        logRatioFitFunctionsWithOD.remove(FitFunctionTypeEnum.LINE.getName());
+
                     }
                     try {
                         generateEXPONENTIALfitFunctionUsingLM();
                     } catch (Exception e) {
+                        System.out.println("Exception generating EXPONENTIAL");
+                        logRatioFitFunctionsNoOD.remove(FitFunctionTypeEnum.EXPONENTIAL.getName());
+                        logRatioFitFunctionsWithOD.remove(FitFunctionTypeEnum.EXPONENTIAL.getName());
                     }
                     calculatedInitialFitFunctions = true;
 

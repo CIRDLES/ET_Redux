@@ -237,7 +237,6 @@ public abstract class AbstractSessionForStandardDataModel implements Serializabl
                     ((RawRatioDataModel) getActiveStandardFractions().first().getRawRatioDataModelByName(rawRatioName));
             if (rawRatioFirst.hasTwoIdenticalIonCounters()) {
                 // calculate the covariance between each pair of standards
-
                 Matrix dLrInt_dDt = new Matrix(countOfIncludedStandards, 1);
                 int index2 = 0;
 
@@ -270,11 +269,6 @@ public abstract class AbstractSessionForStandardDataModel implements Serializabl
             calculateFitFunctions();
             calculatedInitialFitFunctions = true;
         }
-// end of section needed for fitting
-
-//        this.sessionOfStandardsFitFunctionsNoOD = new TreeMap<String, AbstractFunctionOfX>();
-//        this.sessionOfStandardsFitFunctionsWithOD = new TreeMap<String, AbstractFunctionOfX>();
-//        selectedFitFunctionType = FitFunctionTypeEnum.NONE;
     }
 
     private boolean generateMEANfitFunctionUsingLM() {
