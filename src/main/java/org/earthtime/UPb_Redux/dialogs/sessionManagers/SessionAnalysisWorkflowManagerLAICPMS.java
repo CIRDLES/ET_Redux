@@ -336,9 +336,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
     }
 
     private void showRawRatioDataModels() {
-        // assumption is that tripoliSessionRawDataView is initialized
-
-        ((TripoliSessionRawDataView) tripoliSessionRawDataView).modifyYAxisWidth(100);
+        // assumption is that tripoliSessionRawDataView is initialize
 
         if (TripoliSessionRawDataView.FRACTION_LAYOUT_VIEW_STYLE.//
                 equals(FractionLayoutViewStylesEnum.SESSION)//
@@ -976,8 +974,8 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         controlPanel_panel.add(jLabel4);
         jLabel4.setBounds(0, 150, 190, 13);
 
-        yAxisZoomSlider.setMaximum(256);
-        yAxisZoomSlider.setMinimum(32);
+        yAxisZoomSlider.setMaximum(320);
+        yAxisZoomSlider.setMinimum(64);
         yAxisZoomSlider.setOrientation(javax.swing.JSlider.VERTICAL);
         yAxisZoomSlider.setValue(128);
         controlPanel_panel.add(yAxisZoomSlider);
@@ -1244,7 +1242,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         controlPanel_panel.setBounds(0, 0, 191, 620);
 
         xAxisZoomSlider.setBackground(new java.awt.Color(230, 228, 228));
-        xAxisZoomSlider.setMaximum(512);
+        xAxisZoomSlider.setMaximum(640);
         xAxisZoomSlider.setMinimum(4);
         xAxisZoomSlider.setValue(128);
         tripoliTab_layeredPane.add(xAxisZoomSlider);
