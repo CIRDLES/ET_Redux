@@ -213,7 +213,7 @@
         <dependency>
 	    <groupId>com.github.johnzeringue</groupId>
 	    <artifactId>topsoil</artifactId>
-	    <version>30cf03aa</version>
+	    <version>60237a3</version>
 	</dependency>
     </dependencies>
     <build>
