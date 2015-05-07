@@ -211,9 +211,9 @@
             <version>4.4</version>
         </dependency>
         <dependency>
-	    <groupId>com.github.johnzeringue</groupId>
+	    <groupId>com.github.cirdles</groupId>
 	    <artifactId>topsoil</artifactId>
-	    <version>60237a3</version>
+	    <version>721788b</version>
 	</dependency>
     </dependencies>
     <build>
