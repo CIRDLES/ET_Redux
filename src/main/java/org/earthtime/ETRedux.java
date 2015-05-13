@@ -25,7 +25,6 @@ import java.io.File;
 import javax.help.SwingHelpUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
-import org.earthtime.UPb_Redux.dateInterpretation.TestTopsoil;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.user.ReduxPersistentState;
@@ -96,8 +95,7 @@ public class ETRedux {
             theUPbReduxFrame.setVisible(true);
         }
 
-        TestTopsoil test = new TestTopsoil();
-            // installer etc ref
+        // installer etc ref
         // http://www.centerkey.com/mac/java/
     }
 
