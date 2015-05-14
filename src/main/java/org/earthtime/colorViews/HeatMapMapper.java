@@ -25,9 +25,9 @@ import java.util.Vector;
 import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.reports.ReportColumn;
-import org.earthtime.UPb_Redux.samples.SampleI;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.colorModels.HeatMap;
+import org.earthtime.samples.SampleInterface;
 
 /**
  *
@@ -35,7 +35,7 @@ import org.earthtime.colorModels.HeatMap;
  */
 public class HeatMapMapper {
 
-    private final SampleI sample;
+    private final SampleInterface sample;
     private ReportColumn selectedReportColumn;
 
     private double min;
@@ -46,7 +46,7 @@ public class HeatMapMapper {
      * @param sample
      * @param selectedReportColumn
      */
-    public HeatMapMapper(SampleI sample, ReportColumn selectedReportColumn) {
+    public HeatMapMapper(SampleInterface sample, ReportColumn selectedReportColumn) {
         this.sample = sample;
         this.selectedReportColumn = selectedReportColumn;
     }

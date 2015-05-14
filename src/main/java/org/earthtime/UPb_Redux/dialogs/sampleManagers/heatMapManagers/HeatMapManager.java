@@ -43,12 +43,12 @@ import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.reports.ReportCategory;
 import org.earthtime.UPb_Redux.reports.ReportColumn;
 import org.earthtime.UPb_Redux.reports.ReportSettings;
-import org.earthtime.UPb_Redux.samples.SampleI;
 import org.earthtime.UPb_Redux.user.SampleDateInterpretationGUIOptions;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.colorViews.HeatMapMapper;
 import org.earthtime.colorViews.HeatMapView;
+import org.earthtime.samples.SampleInterface;
 
 /**
  *
@@ -58,7 +58,7 @@ public class HeatMapManager extends DialogEditor {
 
     private static final int WIDTH_OF_FORM = 765;
     private final HeatMapView heatMapView;
-    private final SampleI sample;
+    private final SampleInterface sample;
     private final Map<String, ReportColumn> mapOfCategoryColumns;
     private final Map<String, JRadioButton> mapOfCategoryButtons;
     private final ButtonGroup fieldsButtonGroup;
@@ -80,7 +80,7 @@ public class HeatMapManager extends DialogEditor {
      * @param aSample
      * @param dateInterpretationView the value of dateInterpretationView
      */
-    public HeatMapManager(java.awt.Frame parent, boolean modal, SampleI aSample, DateInterpretationUpdateViewI dateInterpretationView) {
+    public HeatMapManager(java.awt.Frame parent, boolean modal, SampleInterface aSample, DateInterpretationUpdateViewI dateInterpretationView) {
         super(parent, modal);
 
         this.sample = aSample;

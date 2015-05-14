@@ -34,7 +34,6 @@ import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLegacyFraction;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.samples.Sample;
-import org.earthtime.UPb_Redux.samples.SampleI;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UPb_Redux.valueModels.definedValueModels.PercentDiscordance;
@@ -45,6 +44,7 @@ import org.earthtime.dataDictionaries.TraceElements;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.projects.ProjectI;
 import org.earthtime.projects.projectImporters.AbstractProjectImporterFromLegacyCSVFile;
+import org.earthtime.samples.SampleInterface;
 
 /**
  *
@@ -65,11 +65,11 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_UCSB_LASS_A extends Abstr
     protected ProjectI extractProjectFromCSVFile(ProjectI project, File file)
             throws FileNotFoundException {
 
-        ArrayList<SampleI> projectSamples = new ArrayList<>();
+        ArrayList<SampleInterface> projectSamples = new ArrayList<>();
         // april 2014
         project.setProjectSamples(projectSamples);
 
-        SampleI currentSample = null;
+        SampleInterface currentSample = null;
         Aliquot currentAliquot = null;
 
         boolean readingFractions = false;

@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.util.Vector;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.aliquots.Aliquot;
-import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetup;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
@@ -40,7 +39,7 @@ import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
  * 
  * @author Stan Gasque
  */
-public interface SampleI {
+public interface UPbSampleInterface {
 
 //    /**
 //     * adds a <code>UPbFraction</code> with default parameters to this
@@ -73,17 +72,17 @@ public interface SampleI {
 //     */
 //    int addNewDefaultAliquot();
 
-    /**
-     * adds a <code>UPbFraction</code> to the <code>Sample</code>'s set of
-     * <code>Fractions</code>.
-     *
-     * @pre     this <code>Sample</code> exists
-     * @post    a new default <code>Fraction</code> is added to this
-     * <code>Sample</code>'s <code>Fractions</code>
-     * @param   newFraction the <code>Fraction</code> to add to this
-     * <code>Sample</code>
-     */
-    void addUPbFraction(Fraction newFraction);
+//    /**
+//     * adds a <code>UPbFraction</code> to the <code>Sample</code>'s set of
+//     * <code>Fractions</code>.
+//     *
+//     * @pre     this <code>Sample</code> exists
+//     * @post    a new default <code>Fraction</code> is added to this
+//     * <code>Sample</code>'s <code>Fractions</code>
+//     * @param   newFraction the <code>Fraction</code> to add to this
+//     * <code>Sample</code>
+//     */
+//    void addUPbFraction(Fraction newFraction);
 
     /**
      * opens a modal editor for the </code>Aliquot</code> specified by
@@ -298,68 +297,68 @@ public interface SampleI {
      */
     void updateAndSaveSampleDateModelsByAliquot();
 
-    /**
-     * sets the <code>changed</code> field of each <code>UPbFraction</code> in
-     * this <code>Sample</code> to <code>false</code> and saves this
-     * <code>Sample</code> as a .redux file to <code>reduxSampleFilePath</code>.
-     *
-     * @pre     this <code>Sample</code> exists
-     * @post    this <code>Sample</code> is saved as a .redux file to the
-     * location specified by <code>reduxSampleFilePath</code>
-     */
-    void saveTheSampleAsSerializedReduxFile();
+//    /**
+//     * sets the <code>changed</code> field of each <code>UPbFraction</code> in
+//     * this <code>Sample</code> to <code>false</code> and saves this
+//     * <code>Sample</code> as a .redux file to <code>reduxSampleFilePath</code>.
+//     *
+//     * @pre     this <code>Sample</code> exists
+//     * @post    this <code>Sample</code> is saved as a .redux file to the
+//     * location specified by <code>reduxSampleFilePath</code>
+//     */
+//    void saveTheSampleAsSerializedReduxFile();
+//
+//    /**
+//     * saves this <code>Sample</code> to the file specified by argument <code>file</code>.
+//     *
+//     * @pre     argument <code>file</code> is a valid file
+//     * @post    this <code>Sample</code> is saved to the location specified by
+//     * argument <code>file</code>
+//     * @param   file    the file where this <code>Sample</code> will be saved
+//     * @return  <code>String</code> - the path of the file where this
+//     * <code>Sample</code> was saved
+//     */
+//    String saveTheSampleAsSerializedReduxFile(File file);
 
-    /**
-     * saves this <code>Sample</code> to the file specified by argument <code>file</code>.
-     *
-     * @pre     argument <code>file</code> is a valid file
-     * @post    this <code>Sample</code> is saved to the location specified by
-     * argument <code>file</code>
-     * @param   file    the file where this <code>Sample</code> will be saved
-     * @return  <code>String</code> - the path of the file where this
-     * <code>Sample</code> was saved
-     */
-    String saveTheSampleAsSerializedReduxFile(File file);
+//    /**
+//     * finds the <code>Aliquot</code> named <code>name</code> in the array
+//     * <code>aliquots</code>.
+//     *
+//     * @pre     an <code>Aliquot</code> exists in <code>aliquots</code> named
+//     * <code>name</code>
+//     * @post    the <code>Aliquot</code> whose name corresponds to argument
+//     * <code>name</code> is found and returned
+//     * @param   name    name of the <code>Aliquot</code> to retrieve
+//     * @return  <code>Aliquot</code> - the <code>Aliquot</code> from
+//     * <code>aliquots</code> whose name correspongs to the argument
+//     * <code>name</code>
+//     */
+//    Aliquot getAliquotByName(String name);
 
-    /**
-     * finds the <code>Aliquot</code> named <code>name</code> in the array
-     * <code>aliquots</code>.
-     *
-     * @pre     an <code>Aliquot</code> exists in <code>aliquots</code> named
-     * <code>name</code>
-     * @post    the <code>Aliquot</code> whose name corresponds to argument
-     * <code>name</code> is found and returned
-     * @param   name    name of the <code>Aliquot</code> to retrieve
-     * @return  <code>Aliquot</code> - the <code>Aliquot</code> from
-     * <code>aliquots</code> whose name correspongs to the argument
-     * <code>name</code>
-     */
-    Aliquot getAliquotByName(String name);
+//    /**
+//     * finds the <code>Aliquot</code> numbered <code>aliquotNum</code> in the array
+//     * <code>aliquots</code>.
+//     *
+//     * @pre     an <code>Aliquot</code> exists in <code>aliquots</code> numbered
+//     * with <code>aliquotNum</code>
+//     * @post    the <code>Aliquot</code> whose number corresponds to argument
+//     * <code>aliquotNum</code> is found and returned
+//     * @param   aliquotNum  number of the <code>Aliquot</code> to retrieve
+//     * @return  <code>Aliquot</code> - the <code>Aliquot</code> from
+//     * <code>aliquots</code> whose number corresponds to the argument
+//     * <code>aliquotNum</code>
+//     */
+//    Aliquot getAliquotByNumber(int aliquotNum);
 
-    /**
-     * finds the <code>Aliquot</code> numbered <code>aliquotNum</code> in the array
-     * <code>aliquots</code>.
-     *
-     * @pre     an <code>Aliquot</code> exists in <code>aliquots</code> numbered
-     * with <code>aliquotNum</code>
-     * @post    the <code>Aliquot</code> whose number corresponds to argument
-     * <code>aliquotNum</code> is found and returned
-     * @param   aliquotNum  number of the <code>Aliquot</code> to retrieve
-     * @return  <code>Aliquot</code> - the <code>Aliquot</code> from
-     * <code>aliquots</code> whose number corresponds to the argument
-     * <code>aliquotNum</code>
-     */
-    Aliquot getAliquotByNumber(int aliquotNum);
-
-    /**
-     * gets the <code>aliquots</code> of this <code>Sample</code>.
-     *
-     * @pre     this <code>Sample</code> exists
-     * @post    returns the <code>aliquots</code> of this <code>Sample</code>
-     * @return  <code>Vector</code> - set of <code>Aliquots</code> of this
-     * <code>Sample</code>
-     */
-    Vector<Aliquot> getAliquots();
+//    /**
+//     * gets the <code>aliquots</code> of this <code>Sample</code>.
+//     *
+//     * @pre     this <code>Sample</code> exists
+//     * @post    returns the <code>aliquots</code> of this <code>Sample</code>
+//     * @return  <code>Vector</code> - set of <code>Aliquots</code> of this
+//     * <code>Sample</code>
+//     */
+//    Vector<Aliquot> getAliquots();
 
     /**
      * gets the <code>sampleAnnotations</code> of this <code>Sample</code>.
@@ -392,27 +391,27 @@ public interface SampleI {
      */
     String getDefaultFractionName();
 
-    /**
-     * gets the <code>myReduxLabData</code> of this <code>Sample</code>.
-     *
-     * @pre     this <code>Sample</code> exists
-     * @post    returns the <code>myReduxLabData</code> of this <code>Sampel</code>
-     * @return  <code>ReduxLabData</code> - <code>myReduxLabData</code> of this
-     * <code>Sample</code>
-     */
-    ReduxLabData getMyReduxLabData();
+//    /**
+//     * gets the <code>myReduxLabData</code> of this <code>Sample</code>.
+//     *
+//     * @pre     this <code>Sample</code> exists
+//     * @post    returns the <code>myReduxLabData</code> of this <code>Sampel</code>
+//     * @return  <code>ReduxLabData</code> - <code>myReduxLabData</code> of this
+//     * <code>Sample</code>
+//     */
+//    ReduxLabData getMyReduxLabData();
 
-    /**
-     * gets the <code>physicalConstantsModel</code> of this <code>Sample</code>.
-     *
-     * @pre     this <code>Sample</code> exists
-     * @post    returns the <code>physicalConstantsModel</code> of this
-     * <code>Sample</code>
-     * @return  <code>PhysicalConstants</code> - <code>physicalConstantsModel</code>
-     * of this <code>Sample</code>
-     * @throws  org.earthtime.UPb_Redux.exceptions.BadLabDataException  BadLabDataException
-     */
-    AbstractRatiosDataModel getPhysicalConstantsModel() throws BadLabDataException;
+//    /**
+//     * gets the <code>physicalConstantsModel</code> of this <code>Sample</code>.
+//     *
+//     * @pre     this <code>Sample</code> exists
+//     * @post    returns the <code>physicalConstantsModel</code> of this
+//     * <code>Sample</code>
+//     * @return  <code>PhysicalConstants</code> - <code>physicalConstantsModel</code>
+//     * of this <code>Sample</code>
+//     * @throws  org.earthtime.UPb_Redux.exceptions.BadLabDataException  BadLabDataException
+//     */
+//    AbstractRatiosDataModel getPhysicalConstantsModel() throws BadLabDataException;
 
     /**
      * gets the <code>reduxSampleFileName</code> of this <code>Sample</code>.
@@ -435,28 +434,28 @@ public interface SampleI {
      */
     String getReduxSampleFilePath();
 
-    /**
-     * gets the <code>sampleAgeInterpretationGUISettings</code> of this
-     * <code>Sample</code>
-     *
-     * @pre     this <code>Sample</code> exists
-     * @post    returns the <code>sampleAgeInterpretationGUISettings</code> of
-     * this <code>Sample</code>
-     * @return  <code>SampleDateInterpretationGUIOptions</code> -
-     * <code>sampleAgeInterpretationGUIOptions</code> of this
-     * <code>Sample</code>
-     */
-    SampleDateInterpretationGUIOptions getSampleDateInterpretationGUISettings();
+//    /**
+//     * gets the <code>sampleAgeInterpretationGUISettings</code> of this
+//     * <code>Sample</code>
+//     *
+//     * @pre     this <code>Sample</code> exists
+//     * @post    returns the <code>sampleAgeInterpretationGUISettings</code> of
+//     * this <code>Sample</code>
+//     * @return  <code>SampleDateInterpretationGUIOptions</code> -
+//     * <code>sampleAgeInterpretationGUIOptions</code> of this
+//     * <code>Sample</code>
+//     */
+//    SampleDateInterpretationGUIOptions getSampleDateInterpretationGUISettings();
 
-    /**
-     * gets the <code>sampleIGSN</code> of this <code>Sample</code>.
-     *
-     * @pre     this <code>Sample</code> exists
-     * @post    returns the <code>sampleIGSN</code> of this <code>Sample</code>
-     * @return  <code>String</code> - <code>sampleIGSN</code> of this
-     * <code>Sample</code>
-     */
-    String getSampleIGSN();
+//    /**
+//     * gets the <code>sampleIGSN</code> of this <code>Sample</code>.
+//     *
+//     * @pre     this <code>Sample</code> exists
+//     * @post    returns the <code>sampleIGSN</code> of this <code>Sample</code>
+//     * @return  <code>String</code> - <code>sampleIGSN</code> of this
+//     * <code>Sample</code>
+//     */
+//    String getSampleIGSN();
 
     /**
      * gets the <code>name</code> of this <code>Sample</code>.
@@ -477,15 +476,15 @@ public interface SampleI {
      */
     String getSampleType();
 
-    /**
-     * gets the <code>UPbFractions</code> of this <code>Sample</code>.
-     *
-     * @pre     this <code>Sample</code> exists
-     * @post    returns the <code>UPbFractions</code> of this <code>Sample</code>
-     * @return  <code>Vector</code> - set of <code>Fractions</code> that make up
-     * the <code>UPbFractions</code> of this <code>Sample</code>
-     */
-    Vector<Fraction> getUPbFractions();
+//    /**
+//     * gets the <code>UPbFractions</code> of this <code>Sample</code>.
+//     *
+//     * @pre     this <code>Sample</code> exists
+//     * @post    returns the <code>UPbFractions</code> of this <code>Sample</code>
+//     * @return  <code>Vector</code> - set of <code>Fractions</code> that make up
+//     * the <code>UPbFractions</code> of this <code>Sample</code>
+//     */
+//    Vector<Fraction> getUPbFractions();
 
     /**
      * gets the <code>analyzed</code> field of this <code>Sample</code>
@@ -531,17 +530,17 @@ public interface SampleI {
      */
     void setAliquots(Vector<Aliquot> aliquots);
 
-    /**
-     * sets the <code>analyzed</code> field of this <code>Sample</code> to
-     * the argument <code>analyzed</code>
-     *
-     * @pre     argument <code>analyzed</code> is a valid <code>boolean</code>
-     * @post    this <code>Sample</code>'s <code>analyzed</code> field is set
-     * to argument <code>analyzed</code>
-     * @param   analyzed    value to which <code>analyzed</code> field of
-     * this <code>Sample</code> will be set
-     */
-    void setAnalyzed(boolean analyzed);
+//    /**
+//     * sets the <code>analyzed</code> field of this <code>Sample</code> to
+//     * the argument <code>analyzed</code>
+//     *
+//     * @pre     argument <code>analyzed</code> is a valid <code>boolean</code>
+//     * @post    this <code>Sample</code>'s <code>analyzed</code> field is set
+//     * to argument <code>analyzed</code>
+//     * @param   analyzed    value to which <code>analyzed</code> field of
+//     * this <code>Sample</code> will be set
+//     */
+//    void setAnalyzed(boolean analyzed);
 
     /**
      * sets the <code>sampleAnnotations</code> of this <code>Sample</code> to
@@ -607,17 +606,17 @@ public interface SampleI {
      */
     void setFractionDataOverriddenOnImport(boolean fractionDataOverriddenOnImport);
 
-    /**
-     * sets the <code>myReduxLabData</code> field of this <code>Sample</code> to
-     * the argument <code>myReduxLabData</code>
-     *
-     * @pre     argument <code>myReduxLabData</code> is a valid <code>ReduxLabData</code>
-     * @post    this <code>Sample</code>'s <code>myReduxLabData</code> field is
-     * set to argument <code>myReduxLabData</code>
-     * @param   myReduxLabData  value to which <code>myReduxLabData</code> field
-     * of this <code>Sample</code> will be set
-     */
-    void setMyReduxLabData(ReduxLabData myReduxLabData);
+//    /**
+//     * sets the <code>myReduxLabData</code> field of this <code>Sample</code> to
+//     * the argument <code>myReduxLabData</code>
+//     *
+//     * @pre     argument <code>myReduxLabData</code> is a valid <code>ReduxLabData</code>
+//     * @post    this <code>Sample</code>'s <code>myReduxLabData</code> field is
+//     * set to argument <code>myReduxLabData</code>
+//     * @param   myReduxLabData  value to which <code>myReduxLabData</code> field
+//     * of this <code>Sample</code> will be set
+//     */
+//    void setMyReduxLabData(ReduxLabData myReduxLabData);
 
     /**
      * sets the <code>physicalConstantsModel</code> of this <code>Sample</code>
@@ -661,17 +660,6 @@ public interface SampleI {
      */
     void setSampleAgeInterpretationGUISettings(SampleDateInterpretationGUIOptions sampleAgeInterpretationGUISettings);
 
-    /**
-     * sets the <code>sampleIGSN</code> of this <code>Sample</code> to
-     * the argument <code>sampleIGSN</code>
-     *
-     * @pre     argument <code>sampleIGSN</code> is a valid <code>sampleIGSN</code>
-     * @post    this <code>Sample</code>'s <code>sampleIGSN</code> is set
-     * to argument <code>sampleIGSN</code>
-     * @param   sampleIGSN      value to which <code>sampleIGSN</code> of
-     * this <code>Sample</code> will be set
-     */
-    void setSampleIGSN(String sampleIGSN);
 
     /**
      * sets the <code>sampleName</code> of this <code>Sample</code> to the
@@ -685,17 +673,6 @@ public interface SampleI {
      */
     void setSampleName(String sampleName);
 
-    /**
-     * sets the <code>sampleType</code> of this <code>Sample</code> to
-     * the argument <code>sampleType</code>
-     *
-     * @pre     argument <code>sampleType</code> is a valid <code>sampleType</code>
-     * @post    this <code>Sample</code>'s <code>sampleType</code> is set
-     * to argument <code>sampleType</code>
-     * @param   sampleType  value to which <code>sampleType</code> of
-     * this <code>Sample</code> will be set
-     */
-    void setSampleType(String sampleType);
 
     /**
      * sets the <code>UPbFractions</code> of this <code>Sample</code> to
@@ -710,43 +687,14 @@ public interface SampleI {
      */
     void setUPbFractions(Vector<Fraction> UPbFractions);
     
-    public Vector<Aliquot> getActiveAliquots ();
+//    public Vector<Aliquot> getActiveAliquots ();
     
     public ReduxConstants.ANALYSIS_PURPOSE getAnalysisPurpose ();
-    
-    /**
-     *
-     * @return
-     */
-    public boolean isAnalysisTypeTripolized ();
-    
-    /**
-     *
-     * @return
-     */
-    public ReportSettings getReportSettingsModelUpdatedToLatestVersion ();
-    
-    public GraphAxesSetup getConcordiaGraphAxesSetup ();
-    
-    /**
-     *
-     * @return
-     */
-    public GraphAxesSetup getTerraWasserburgGraphAxesSetup ();
-    
-    /**
-     *
-     * @return
-     */
-    public ReportSettings getReportSettingsModel();
+
     
     /**
      *
      * @param reportSettingsModel
      */
     public void setReportSettingsModel(ReportSettings reportSettingsModel);
-
-    public void setLegacyStatusForReportTable();
-    
-    public String getNameOfAliquotFromSample(int aliquotNum);
 }

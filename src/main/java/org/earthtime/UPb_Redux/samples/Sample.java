@@ -80,7 +80,7 @@ import org.earthtime.dataDictionaries.SampleTypesEnum;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.projects.EarthTimeSerializedFileInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
-import org.earthtime.samples.AbstractSample;
+import org.earthtime.samples.SampleInterface;
 import org.earthtime.utilities.FileHelper;
 import org.earthtime.xmlUtilities.XMLSerializationI;
 
@@ -92,9 +92,10 @@ import org.earthtime.xmlUtilities.XMLSerializationI;
  *
  * @author James F. Bowring, javaDocs by Stan Gasque
  */
-public class Sample extends AbstractSample implements
+public class Sample implements
         Serializable,
-        SampleI,
+        SampleInterface,
+        UPbSampleInterface,
         EarthTimeSerializedFileInterface {
 
     /**
@@ -154,7 +155,7 @@ public class Sample extends AbstractSample implements
     /**
      * the file of this <code>Sample</code>.
      */
-//    private String sampleName;
+    private String sampleName;
     /**
      * the International Geo Sample Number of this <code>Sample</code>.
      */
@@ -1724,7 +1725,7 @@ public class Sample extends AbstractSample implements
 
                     if (myFractionEditor != null) {
                         if (doRestoreAutoUranium) {
-                            ((UPbFraction) savedCurrentFraction).autoGenerateMeasuredUranium();
+//                            ((UPbFraction) savedCurrentFraction).autoGenerateMeasuredUranium();
                         }
                         ((UPbFractionEditorDialog) myFractionEditor).InitializeFractionData(savedCurrentFraction);
 
@@ -2029,10 +2030,10 @@ public class Sample extends AbstractSample implements
 //     * @return <code>String</code> - <code>file</code> of this
 //     * <code>Sample</code>
 //     */
-//    public String getSampleName() {
-//        return sampleName;
-//
-//    }
+    public String getSampleName() {
+        return sampleName;
+
+    }
 
     /**
      * sets the <code>sampleName</code> of this <code>Sample</code> to the

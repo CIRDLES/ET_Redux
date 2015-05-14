@@ -21,7 +21,7 @@ package org.earthtime.projects;
 
 import java.io.Serializable;
 import org.earthtime.Tripoli.sessions.TripoliSessionInterface;
-import org.earthtime.UPb_Redux.samples.SampleI;
+import org.earthtime.UPb_Redux.samples.UPbSampleInterface;
 
 /**
  *
@@ -31,7 +31,7 @@ public class ProjectSample implements//
         ProjectSampleInterface,
         Serializable
 {
-    private SampleI sample;
+    private UPbSampleInterface sample;
     private TripoliSessionInterface tripoliSession;
     
 }

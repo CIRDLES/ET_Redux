@@ -110,7 +110,6 @@ import org.earthtime.UPb_Redux.reports.reportViews.ReportAliquotFractionsView;
 import org.earthtime.UPb_Redux.reports.reportViews.ReportUpdaterInterface;
 import org.earthtime.UPb_Redux.reports.reportViews.TabbedReportViews;
 import org.earthtime.UPb_Redux.samples.Sample;
-import org.earthtime.UPb_Redux.samples.SampleI;
 import org.earthtime.UPb_Redux.samples.sampleImporters.SampleImporterFromIDTIMSLegacyCSVFile_MIT;
 import org.earthtime.UPb_Redux.samples.sampleImporters.SampleImporterFromLAICPMSLegacyCVSFile_MC_UA;
 import org.earthtime.UPb_Redux.samples.sampleImporters.SampleImporterFromLAICPMSLegacyCVSFile_NIGL;
@@ -134,6 +133,7 @@ import org.earthtime.projects.projectImporters.UPbProjectImporters.ProjectOfLega
 import org.earthtime.projects.projectImporters.UPbProjectImporters.ProjectOfLegacySamplesImporterFromCSVFile_UCSB_LASS_A;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.mineralStandardModels.MineralStandardUPbModel;
+import org.earthtime.samples.SampleInterface;
 import org.earthtime.utilities.FileHelper;
 
 /**
@@ -465,7 +465,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
         boolean isTripolized = false;
         if (theProject != null) {
-            SampleI superSample = theProject.getSuperSample();
+            SampleInterface superSample = theProject.getSuperSample();
             if (superSample != null) {
                 isTripolized = superSample.isAnalysisTypeTripolized();
             }
@@ -690,7 +690,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
     public void setUpTheProject(boolean performReduction) {
         theSample.registerSampleWithLabData(myLabData);
 
-        SampleI superSample = theProject.getSuperSample();
+        SampleInterface superSample = theProject.getSuperSample();
 
         if (superSample != null) {
             if (superSample.isAnalysisTypeTripolized()) {
@@ -763,61 +763,72 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         ((ProjectManagerSubscribeInterface) myProjectManager).initializeSessionManager(false, true, false);
     }
 
-    private void setUpNewProject(String projectAnalysisType, String sampleAnalysisType) {
-
+    private void setUpNewTripolizedProject(String sampleAnalysisType) {
         theProject = new Project(myState);
 
-        if (projectAnalysisType.equalsIgnoreCase(SampleAnalysisTypesEnum.TRIPOLIZED.getName()) //
-                &&//
-                sampleAnalysisType.equalsIgnoreCase(SampleAnalysisTypesEnum.LAICPMS.getName())) {
+        if (sampleAnalysisType.equalsIgnoreCase(SampleAnalysisTypesEnum.LAICPMS.getName())) {
 
             myProjectManager = //
                     new ProjectManagerFor_LAICPMS_FromRawData(this, true, myState, theProject);
 
             // modal call
             myProjectManager.setVisible(true);
+
+            if (!theProject.getProjectSamples().isEmpty()) {
+                setUpTheProject(false);
+                try {
+                    saveTheProject();
+                } catch (BadLabDataException ex) {
+                    new ETWarningDialog(ex).setVisible(true);
+                }
+            }
+        }
+    }
+
+    /**
+     *
+     * @param sampleAnalysisType the value of sampleAnalysisType
+     */
+    private void setUpNewCompiledProject(String sampleAnalysisType) {
+
+        theProject = new Project(myState);
+
+        try {
+            theSample = Sample.initializeNewSample(//
+                    SampleTypesEnum.PROJECT.getName(), //
+                    SampleAnalysisTypesEnum.COMPILED.getName(),//
+                    myLabData,//
+                    myState.getReduxPreferences().getDefaultSampleAnalysisPurpose());
+        } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
 
-        if (projectAnalysisType.equalsIgnoreCase(SampleAnalysisTypesEnum.COMPILED.getName())) {
+        theProject.setSuperSample(theSample);
 
-            try {
-                theSample = Sample.initializeNewSample(//
-                        SampleTypesEnum.PROJECT.getName(), //
-                        SampleAnalysisTypesEnum.COMPILED.getName(),//
-                        myLabData,//
-                        myState.getReduxPreferences().getDefaultSampleAnalysisPurpose());
-            } catch (BadLabDataException ex) {
-                new ETWarningDialog(ex).setVisible(true);
-            }
-
-            theProject.setSuperSample(theSample);
-
-            if (sampleAnalysisType.equalsIgnoreCase(SampleAnalysisTypesEnum.GENERIC_UPB.getName())) {
-                myProjectManager
-                        = new ProjectOfLegacySamplesDataManagerDialogForGenericUPb_A(
-                                this,
-                                true,
-                                theProject,
-                                getMyState().getMRUImportFolderCompilationMode());
-            } else if (sampleAnalysisType.equalsIgnoreCase(SampleAnalysisTypesEnum.LASS.getName())) {
-                myProjectManager
-                        = new ProjectOfLegacySamplesDataManagerDialogForUCSB_LASS_A(
-                                this,
-                                true,
-                                theProject,
-                                getMyState().getMRUImportFolderCompilationMode());
-            }
-
-            ((AbstractProjectOfLegacySamplesDataManagerDialog) myProjectManager).setSize();
-
-            // modal call
-            myProjectManager.setVisible(true);
-
-            // remembers last folder used for import of single or set of fractions
-            getMyState().setMRUImportFolderCompilationMode(
-                    ((AbstractProjectOfLegacySamplesDataManagerDialog) myProjectManager).getImportFractionFolderMRU().toString());
-
+        if (sampleAnalysisType.equalsIgnoreCase(SampleAnalysisTypesEnum.GENERIC_UPB.getName())) {
+            myProjectManager
+                    = new ProjectOfLegacySamplesDataManagerDialogForGenericUPb_A(
+                            this,
+                            true,
+                            theProject,
+                            getMyState().getMRUImportFolderCompilationMode());
+        } else if (sampleAnalysisType.equalsIgnoreCase(SampleAnalysisTypesEnum.LASS.getName())) {
+            myProjectManager
+                    = new ProjectOfLegacySamplesDataManagerDialogForUCSB_LASS_A(
+                            this,
+                            true,
+                            theProject,
+                            getMyState().getMRUImportFolderCompilationMode());
         }
+
+        ((AbstractProjectOfLegacySamplesDataManagerDialog) myProjectManager).setSize();
+
+        // modal call
+        myProjectManager.setVisible(true);
+
+        // remembers last folder used for import of single or set of fractions
+        getMyState().setMRUImportFolderCompilationMode(
+                ((AbstractProjectOfLegacySamplesDataManagerDialog) myProjectManager).getImportFractionFolderMRU().toString());
 
         if (!theProject.getProjectSamples().isEmpty()) {
             setUpTheProject(false);
@@ -2168,7 +2179,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
         newProjectFromLegacyDataTable_menu.setText("New Project from Legacy Data Table");
 
-        dibbs_USeries.setText("DIBBs U-Series Legacy Data Table in .csv format");
+        dibbs_USeries.setText("DIBBs U-Series Legacy Data Table from Single Source in .csv format");
         dibbs_USeries.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 dibbs_USeriesActionPerformed(evt);
@@ -3708,7 +3719,7 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     }//GEN-LAST:event_reportResultsTableAsNumbersInCSV_menuItemActionPerformed
 
     private void newProjectRawDataLAICPMSActionPerformed ( java.awt.event.ActionEvent evt ) {//GEN-FIRST:event_newProjectRawDataLAICPMSActionPerformed
-        setUpNewProject(SampleAnalysisTypesEnum.TRIPOLIZED.getName(), SampleAnalysisTypesEnum.LAICPMS.getName());
+        setUpNewTripolizedProject(SampleAnalysisTypesEnum.LAICPMS.getName());
     }//GEN-LAST:event_newProjectRawDataLAICPMSActionPerformed
 
     private void openProjectFile_menuItemActionPerformed ( java.awt.event.ActionEvent evt ) {//GEN-FIRST:event_openProjectFile_menuItemActionPerformed
@@ -3737,13 +3748,7 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     }//GEN-LAST:event_manageRawData_menuItemActionPerformed
 
     private void genericUPbDataTableInCSV_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_genericUPbDataTableInCSV_menuItemActionPerformed
-//        try {
-        setUpNewProject(SampleAnalysisTypesEnum.COMPILED.getName(), SampleAnalysisTypesEnum.GENERIC_UPB.getName());
-//            setUpNewSample( SampleTypesEnum.PROJECT.getName(), SampleAnalysisTypesEnum.COMPILED.getName() );
-//            changeContentOfTopPanel( ReduxConstants.TOP_PANEL_CONTENTS.FRACTIONS );
-//        } catch (BadLabDataException ex) {
-//        } catch (ETException ete) {
-//        }
+        setUpNewCompiledProject(SampleAnalysisTypesEnum.GENERIC_UPB.getName());
     }//GEN-LAST:event_genericUPbDataTableInCSV_menuItemActionPerformed
 
     private void closeProjectFile_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeProjectFile_menuItemActionPerformed
@@ -3789,7 +3794,7 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     }//GEN-LAST:event_manageProjectRawData_buttonopenSampleFileActionPerformed
 
     private void ucsb_LASS_A_DataTableInCSV_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ucsb_LASS_A_DataTableInCSV_menuItemActionPerformed
-        setUpNewProject(SampleAnalysisTypesEnum.COMPILED.getName(), SampleAnalysisTypesEnum.LASS.getName());
+        setUpNewCompiledProject(SampleAnalysisTypesEnum.LASS.getName());
     }//GEN-LAST:event_ucsb_LASS_A_DataTableInCSV_menuItemActionPerformed
 
     private void producePbCCorrReport_jMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_producePbCCorrReport_jMenuItemActionPerformed

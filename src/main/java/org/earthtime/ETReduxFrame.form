@@ -71,7 +71,7 @@
               <SubComponents>
                 <MenuItem class="javax.swing.JMenuItem" name="dibbs_USeries">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="DIBBs U-Series Legacy Data Table in .csv format"/>
+                    <Property name="text" type="java.lang.String" value="DIBBs U-Series Legacy Data Table from Single Source in .csv format"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="dibbs_USeriesActionPerformed"/>

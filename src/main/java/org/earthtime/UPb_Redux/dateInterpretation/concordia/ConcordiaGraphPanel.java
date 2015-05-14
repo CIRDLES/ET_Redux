@@ -75,7 +75,6 @@ import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.reports.reportViews.ReportUpdaterInterface;
 import org.earthtime.UPb_Redux.samples.Sample;
-import org.earthtime.UPb_Redux.samples.SampleI;
 import org.earthtime.UPb_Redux.user.SampleDateInterpretationGUIOptions;
 import org.earthtime.UPb_Redux.valueModels.SampleDateInterceptModel;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
@@ -84,6 +83,7 @@ import org.earthtime.UPb_Redux.valueModels.definedValueModels.Age207_206r;
 import org.earthtime.dataDictionaries.Lambdas;
 import org.earthtime.dataDictionaries.RadRatiosPbcCorrected;
 import org.earthtime.exceptions.ETWarningDialog;
+import org.earthtime.samples.SampleInterface;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 
@@ -100,7 +100,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
 
     // Class Variables
     // Instance Variables
-    private SampleI sample;
+    private SampleInterface sample;
     private ValueModel lambda235;
     private ValueModel lambda238;
     private ValueModel lambda232;
@@ -1940,7 +1940,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
      *
      * @return
      */
-    public SampleI getSample() {
+    public SampleInterface getSample() {
         return sample;
     }
 
@@ -1948,7 +1948,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
      *
      * @param sample
      */
-    public void setSample(SampleI sample) {
+    public void setSample(SampleInterface sample) {
         this.sample = sample;
     }
 

@@ -45,12 +45,12 @@ import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetu
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.samples.Sample;
-import org.earthtime.UPb_Redux.samples.SampleI;
 import org.earthtime.archivingTools.forSESAR.SesarSample;
 import org.earthtime.archivingTools.forSESAR.SesarSampleManager;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.projects.ProjectI;
+import org.earthtime.samples.SampleInterface;
 
 /**
  *
@@ -59,7 +59,7 @@ import org.earthtime.projects.ProjectI;
 public class GeochronAliquotManager extends JPanel {
 
     private ProjectI project;
-    private SampleI sample;
+    private SampleInterface sample;
     private final String userName;
     private final String password;
     private String userCode;
@@ -95,7 +95,7 @@ public class GeochronAliquotManager extends JPanel {
     
     
 
-    public GeochronAliquotManager(ProjectI project, SampleI sample, String userName, String password, String userCode, int x, int y, int width, int height) {
+    public GeochronAliquotManager(ProjectI project, SampleInterface sample, String userName, String password, String userCode, int x, int y, int width, int height) {
         this.project = project;
         this.sample = sample;
         this.userName = userName;
@@ -553,7 +553,7 @@ public class GeochronAliquotManager extends JPanel {
         }
     }
 
-        private void produceConcordiaGraph(SampleI sample) {
+        private void produceConcordiaGraph(SampleInterface sample) {
         // feb 2015 code copied and modified from aliquot manager for user interface prototyping
         // TODO: refactor both locations to smaple and make more robust
         // TODO: use create virtual file system

@@ -37,8 +37,8 @@ import org.earthtime.UPb_Redux.dateInterpretation.DateProbabilityDensityPanel;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.GraphPanelModeChangeI;
 import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetup;
 import org.earthtime.UPb_Redux.samples.Sample;
-import org.earthtime.UPb_Redux.samples.SampleI;
 import org.earthtime.beans.ET_JButton;
+import org.earthtime.samples.SampleInterface;
 
 /**
  *
@@ -54,7 +54,7 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
     private JRadioButton date207_206_radioButton;
     private JRadioButton dateBest_radioButton;
     private ButtonGroup dateChooserButtonGroup;
-    private SampleI sample;
+    private SampleInterface sample;
 
     private final JLayeredPane pdfGraphPanel;
 
@@ -68,7 +68,7 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
      * @param sample the value of sample
      */
     public KwikiPDFToolBar(
-            int x, int y, JLayeredPane aPDFGraphPanel, PropertyChangeListener kwikiDateModesSelectorListener, SampleI sample) {
+            int x, int y, JLayeredPane aPDFGraphPanel, PropertyChangeListener kwikiDateModesSelectorListener, SampleInterface sample) {
 
         super();
 

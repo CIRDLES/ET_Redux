@@ -31,12 +31,12 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.reports.ReportPainterI;
-import org.earthtime.UPb_Redux.samples.SampleI;
 import org.earthtime.UPb_Redux.user.ReduxPersistentState;
 import org.earthtime.archivingTools.GeochronAliquotManager;
 import org.earthtime.archivingTools.IEDACredentialsValidator;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.projects.ProjectI;
+import org.earthtime.samples.SampleInterface;
 
 /**
  *
@@ -109,7 +109,7 @@ public class GeochronProjectExportManager extends DialogEditor {
         int topMarginForSampleDetails = 10;
 
         int row = 0;
-        for (SampleI sample : project.getProjectSamples()) {
+        for (SampleInterface sample : project.getProjectSamples()) {
             JPanel geochronAliquotManager = //
                     new GeochronAliquotManager(//
                             project,// needs to be interfaced
