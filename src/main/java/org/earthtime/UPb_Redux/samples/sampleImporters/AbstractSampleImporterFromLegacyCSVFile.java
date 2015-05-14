@@ -147,19 +147,6 @@ public abstract class AbstractSampleImporterFromLegacyCSVFile {
                 myLine.add( "0" );
             }
         }
-
-//        // detect if empty line after first four cells in case there is a comment
-//        boolean dataMissing = true;
-//        for (int i = 4; i < 32; i ++) {
-//            if ( ( ! myLine.get( i ).equalsIgnoreCase( "" ))//
-//                    && ( ! myLine.get( i ).equalsIgnoreCase( "0" )) ) {
-//                dataMissing = false;
-//            }
-//        }
-
-        // modified april 2011
-        // if (dataMissing && myLine.get(0).length() == 0) myLine.insertElementAt( "0", 0);
-
         return myLine;
     }
 

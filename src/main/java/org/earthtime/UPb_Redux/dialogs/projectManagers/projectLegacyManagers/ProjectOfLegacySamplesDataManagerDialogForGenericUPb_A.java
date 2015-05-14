@@ -21,7 +21,7 @@ package org.earthtime.UPb_Redux.dialogs.projectManagers.projectLegacyManagers;
 
 import java.awt.Frame;
 import java.io.File;
-import org.earthtime.projects.projectImporters.ProjectOfLegacySamplesImporterFromCSVFile_GenericUPbIsotopic_A;
+import org.earthtime.projects.projectImporters.UPbProjectImporters.ProjectOfLegacySamplesImporterFromCSVFile_GenericUPbIsotopic_A;
 import org.earthtime.projects.ProjectI;
 
 /**

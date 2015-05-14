@@ -22,7 +22,7 @@ package org.earthtime.UPb_Redux.dialogs.projectManagers.projectLegacyManagers;
 import java.awt.Frame;
 import java.io.File;
 import org.earthtime.projects.ProjectI;
-import org.earthtime.projects.projectImporters.ProjectOfLegacySamplesImporterFromCSVFile_UCSB_LASS_A;
+import org.earthtime.projects.projectImporters.UPbProjectImporters.ProjectOfLegacySamplesImporterFromCSVFile_UCSB_LASS_A;
 
 /**
  *

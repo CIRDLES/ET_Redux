@@ -15,7 +15,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.earthtime.projects.projectImporters;
+package org.earthtime.projects.projectImporters.UPbProjectImporters;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -44,6 +44,7 @@ import org.earthtime.dataDictionaries.TemplatesForCsvImport;
 import org.earthtime.dataDictionaries.TraceElements;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.projects.ProjectI;
+import org.earthtime.projects.projectImporters.AbstractProjectImporterFromLegacyCSVFile;
 
 /**
  *

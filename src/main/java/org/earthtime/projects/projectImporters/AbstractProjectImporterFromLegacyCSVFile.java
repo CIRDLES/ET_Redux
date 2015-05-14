@@ -182,9 +182,4 @@ public abstract class AbstractProjectImporterFromLegacyCSVFile {
         this.mruFolder = mruFolder;
     }
 
-    /**
-     *
-     */
-    public static void writeAndOpenCSVFileOfLegacyDataSampleFieldNames () {
-    }
 }
