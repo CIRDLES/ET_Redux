@@ -80,6 +80,7 @@ import org.earthtime.dataDictionaries.SampleTypesEnum;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.projects.EarthTimeSerializedFileInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
+import org.earthtime.samples.AbstractSample;
 import org.earthtime.utilities.FileHelper;
 import org.earthtime.xmlUtilities.XMLSerializationI;
 
@@ -91,7 +92,7 @@ import org.earthtime.xmlUtilities.XMLSerializationI;
  *
  * @author James F. Bowring, javaDocs by Stan Gasque
  */
-public class Sample implements
+public class Sample extends AbstractSample implements
         Serializable,
         SampleI,
         EarthTimeSerializedFileInterface {
@@ -153,7 +154,7 @@ public class Sample implements
     /**
      * the file of this <code>Sample</code>.
      */
-    private String sampleName;
+//    private String sampleName;
     /**
      * the International Geo Sample Number of this <code>Sample</code>.
      */
@@ -2019,19 +2020,19 @@ public class Sample implements
         return retVal;
     }
 
-    /**
-     * gets the <code>file</code> of this <code>Sample</code>.
-     *
-     * @pre this <code>Sample</code> exists
-     * @post returns the <code>file</code> of this <code>Sample</code>
-     *
-     * @return <code>String</code> - <code>file</code> of this
-     * <code>Sample</code>
-     */
-    public String getSampleName() {
-        return sampleName;
-
-    }
+//    /**
+//     * gets the <code>file</code> of this <code>Sample</code>.
+//     *
+//     * @pre this <code>Sample</code> exists
+//     * @post returns the <code>file</code> of this <code>Sample</code>
+//     *
+//     * @return <code>String</code> - <code>file</code> of this
+//     * <code>Sample</code>
+//     */
+//    public String getSampleName() {
+//        return sampleName;
+//
+//    }
 
     /**
      * sets the <code>sampleName</code> of this <code>Sample</code> to the
