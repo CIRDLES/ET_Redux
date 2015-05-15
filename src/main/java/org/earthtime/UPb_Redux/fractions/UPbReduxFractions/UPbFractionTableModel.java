@@ -287,10 +287,9 @@ public class UPbFractionTableModel extends AbstractTableModel {
         public void actionPerformed(ActionEvent e) {
             if ((e != null)) {
                 // here we edit the fraction and refresh the table
-                getSample().editUPbFraction(fraction, 8);// kwikitab
-                getParentFrame().updateReportTable(false);
+                parentFrame.editFraction(fraction, 8);// kwikitab
+                parentFrame.updateReportTable(false);
             }
-//            getParentFrame().rebuildFractionDisplays(false);
         }
     }
 
@@ -331,9 +330,9 @@ public class UPbFractionTableModel extends AbstractTableModel {
         public void actionPerformed(ActionEvent e) {
             if ((e != null) && (e.getSource() == this)) {
                 // here we edit the aliquot and refresh the table
-                getSample().editAliquotByNumber(getAliquotNum());
+                parentFrame.editAliquotByNumber(getAliquotNum());
             }
-            getParentFrame().rebuildFractionDisplays(true);//changed to true may 2012false);
+            parentFrame.rebuildFractionDisplays(true);//changed to true may 2012false);
         }
 
         public int getMyRow() {

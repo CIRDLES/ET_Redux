@@ -15,7 +15,6 @@
 
 package org.earthtime.UPb_Redux.samples;
 
-import java.awt.Component;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -40,77 +39,6 @@ import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
  * @author Stan Gasque
  */
 public interface UPbSampleInterface {
-
-//    /**
-//     * adds a <code>UPbFraction</code> with default parameters to this
-//     * <code>Sample</code>'s set of <code>Fractions</code>.
-//     *
-//     * @pre     this <code>Sample</code> exists
-//     * @post    a new default <code>Fraction</code> is created and added to this
-//     * <code>Sample</code>'s <code>Fractions</code>
-//     * @param   aliquotNumber   the number of the <code>Aliquot</code> to which
-//     * the new <code>Fraction</code> will be added
-//     * @throws  org.earthtime.UPb_Redux.exceptions.BadLabDataException  BadLabDataException
-//     */
-//    void addDefaultUPbFraction(int aliquotNumber) throws BadLabDataException;
-
-//    /**
-//     * adds an <code>Aliquot</code> to <code>aliquots</code>. It is created with
-//     * a number relative to its position in the array such that the first
-//     * <code>aliquot</code> in the array is given 1, the second is given 2, and
-//     * so on. It is created under the name <code>Aliquot-#</code> with <code>#</code>
-//     * being replaced by the same number that was given as the first paramater.
-//     * The remaining fields are set to correspond to the data found in this
-//     * <code>Sample</code>.
-//     *
-//     * @pre     this <code>Sample</code> exists with proper data
-//     * @post    a new <code>Aliquot</code> is created and added to
-//     * <code>aliquots</code> and the size of <code>Aliquots</code> is
-//     * returned
-//     * @return  <code>int</code> - if successful, returns the size of the array
-//     * after adding the new <code>Aliquot</code>. Else, returns -1.
-//     */
-//    int addNewDefaultAliquot();
-
-//    /**
-//     * adds a <code>UPbFraction</code> to the <code>Sample</code>'s set of
-//     * <code>Fractions</code>.
-//     *
-//     * @pre     this <code>Sample</code> exists
-//     * @post    a new default <code>Fraction</code> is added to this
-//     * <code>Sample</code>'s <code>Fractions</code>
-//     * @param   newFraction the <code>Fraction</code> to add to this
-//     * <code>Sample</code>
-//     */
-//    void addUPbFraction(Fraction newFraction);
-
-    /**
-     * opens a modal editor for the </code>Aliquot</code> specified by
-     * <code>aliquotNum</code>. The <code>Aliquot</code>'s <code>Fractions</code>
-     * are populated on the fly.
-     *
-     * @pre     an <code>Aliquot</code> exists with the number specified by
-     * argument <code>aliquotNum</code>
-     * @post    an editor for the specified <code>Aliquot</code> is opened
-     * @param   aliquotNum  the number of the <code>Aliquot</code> to be edited
-     */
-    void editAliquotByNumber(int aliquotNum);
-
-    /**
-     * opens a modal editor for the <code>Fraction</code> indicated by argument
-     * <code>fraction</code> and opened to the editing tab indicated by argument
-     * <code>selectedTab</code>. <code>selectedTab</code> is valid only if it
-     * contains a number between zero and seven inclusive.
-     *
-     * @pre     the <code>Fraction</code> corresponding to <code>fraction</code>
-     * exists in this <code>Sample</code> and <code>selectedTab</code>
-     * is a valid tab number
-     * @post    an editor for the specified <code>Fraction</code> is opened to
-     * the specified tab
-     * @param   fraction    the <code>Fraction</code> to be edited
-     * @param   selectedTab the tab to open the editor to
-     */
-    void editUPbFraction(Fraction fraction, int selectedTab);
 
     /**
      * imports all <code>Aliquots</code> found in the XML file specified by
@@ -147,7 +75,7 @@ public interface UPbSampleInterface {
      * @throws  java.io.FileNotFoundException                           FileNotFoundException
      * @throws  org.earthtime.UPb_Redux.exceptions.BadLabDataException  BadLabDataException
      */
-    public String importUPbFractionXMLDataFiles(File location, int aliquotNumber,boolean doValidate) throws FileNotFoundException, BadLabDataException;
+    public String importFractionXMLDataFiles(File location, int aliquotNumber,boolean doValidate) throws FileNotFoundException, BadLabDataException;
 
     /**
      * reads <code>Fractions</code> from the file specified by argument
@@ -169,40 +97,12 @@ public interface UPbSampleInterface {
     String importUPbFractionFolderForManualUpdate(File location, int aliquotNumber) throws ETException, BadLabDataException, FileNotFoundException;
 
     /**
-     * loads a Sample after a .redux file generation from an Excel file
-     *
-     * @pre     the chosen file located in the directory <code>dir</code> is a
-     * proper .redux file generated from an Excel file.
-     * @post    the file is returned for use by another method
-     * @param   frame   the frame where the samples names to save were selected
-     * @param   dir     the directory in which the redux files were saved
-     * @return  <code>File</code> - the loaded file
-     */
-    File loadSampleAfterExcelImport(Component frame, File dir);
-
-//    /**
-//     * processes aliquot read from xml file
-//     * <code>aliquot</code> and adds any <code>Aliquots</code> found in the
-//     * file to this <code>Sample</code>.
-//     *
-//     * @pre     file specified by <code>aliquotFile</code> is an XML file containing
-//     * valid <code>Aliquots</code>
-//     * @post    all <code>Aliquots</code> found in the file are added to this
-//     * <code>Sample</code>
-//     * @param   aliquotFile    the XML file to read data from
-//     * @throws  java.io.IOException                                         IOException
-//     * @throws  java.io.FileNotFoundException                               FileNotFoundException
-//     * @throws  org.earthtime.XMLExceptions.ETException               ETException
-//     * @throws  org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException  BadOrMissingXMLSchemaException
-//     * @throws  org.earthtime.UPb_Redux.exceptions.BadLabDataException      BadLabDataException
-//     */
-    /**
      * 
      * @param aliquot
      * @param aliquotSource
      * @throws IOException
      * @throws ETException
-     * @throws BadLabDataException
+     * @throws BadLabDataException 
      */
     public abstract void processXMLAliquot(Aliquot aliquot, String aliquotSource) throws IOException, ETException,  BadLabDataException;
 
@@ -270,21 +170,6 @@ public interface UPbSampleInterface {
      */
     void removeUPbReduxFraction(Fraction fraction);
 
-
-//    /**
-//     * sets the <code>Fractions</code> in this <code>Sample</code> that have
-//     * been selected
-//     *
-//     * @pre     argument <code>selectedRows</code> contains an array of valid
-//     * indexes into this <code>Sample</code>'s set of <code>Fractions</code>
-//     * @post    the <code>rejected</code> value of each <code>Fraction</code>
-//     * specified by <code>selectedRows</code> is set to <code>true</code>
-//     * and all others are set to <code>false</code>
-//     * @param   selectedRows    indexes into the collection of <code>Fractions</code>
-//     * to locate the selected <code>Fractions</code>
-//     */
-//    void SaveSampleSelectedFractions(int[] selectedRows);
-
     /**
      * removes <code>Fractions</code> from this <code>Sample</code>'s sample age
      * models that are no longer a part of this <code>Sample</code>'s
@@ -296,69 +181,6 @@ public interface UPbSampleInterface {
      * <code>Sample</code>'s <code>Aliquots</code> are removed
      */
     void updateAndSaveSampleDateModelsByAliquot();
-
-//    /**
-//     * sets the <code>changed</code> field of each <code>UPbFraction</code> in
-//     * this <code>Sample</code> to <code>false</code> and saves this
-//     * <code>Sample</code> as a .redux file to <code>reduxSampleFilePath</code>.
-//     *
-//     * @pre     this <code>Sample</code> exists
-//     * @post    this <code>Sample</code> is saved as a .redux file to the
-//     * location specified by <code>reduxSampleFilePath</code>
-//     */
-//    void saveTheSampleAsSerializedReduxFile();
-//
-//    /**
-//     * saves this <code>Sample</code> to the file specified by argument <code>file</code>.
-//     *
-//     * @pre     argument <code>file</code> is a valid file
-//     * @post    this <code>Sample</code> is saved to the location specified by
-//     * argument <code>file</code>
-//     * @param   file    the file where this <code>Sample</code> will be saved
-//     * @return  <code>String</code> - the path of the file where this
-//     * <code>Sample</code> was saved
-//     */
-//    String saveTheSampleAsSerializedReduxFile(File file);
-
-//    /**
-//     * finds the <code>Aliquot</code> named <code>name</code> in the array
-//     * <code>aliquots</code>.
-//     *
-//     * @pre     an <code>Aliquot</code> exists in <code>aliquots</code> named
-//     * <code>name</code>
-//     * @post    the <code>Aliquot</code> whose name corresponds to argument
-//     * <code>name</code> is found and returned
-//     * @param   name    name of the <code>Aliquot</code> to retrieve
-//     * @return  <code>Aliquot</code> - the <code>Aliquot</code> from
-//     * <code>aliquots</code> whose name correspongs to the argument
-//     * <code>name</code>
-//     */
-//    Aliquot getAliquotByName(String name);
-
-//    /**
-//     * finds the <code>Aliquot</code> numbered <code>aliquotNum</code> in the array
-//     * <code>aliquots</code>.
-//     *
-//     * @pre     an <code>Aliquot</code> exists in <code>aliquots</code> numbered
-//     * with <code>aliquotNum</code>
-//     * @post    the <code>Aliquot</code> whose number corresponds to argument
-//     * <code>aliquotNum</code> is found and returned
-//     * @param   aliquotNum  number of the <code>Aliquot</code> to retrieve
-//     * @return  <code>Aliquot</code> - the <code>Aliquot</code> from
-//     * <code>aliquots</code> whose number corresponds to the argument
-//     * <code>aliquotNum</code>
-//     */
-//    Aliquot getAliquotByNumber(int aliquotNum);
-
-//    /**
-//     * gets the <code>aliquots</code> of this <code>Sample</code>.
-//     *
-//     * @pre     this <code>Sample</code> exists
-//     * @post    returns the <code>aliquots</code> of this <code>Sample</code>
-//     * @return  <code>Vector</code> - set of <code>Aliquots</code> of this
-//     * <code>Sample</code>
-//     */
-//    Vector<Aliquot> getAliquots();
 
     /**
      * gets the <code>sampleAnnotations</code> of this <code>Sample</code>.
@@ -391,28 +213,6 @@ public interface UPbSampleInterface {
      */
     String getDefaultFractionName();
 
-//    /**
-//     * gets the <code>myReduxLabData</code> of this <code>Sample</code>.
-//     *
-//     * @pre     this <code>Sample</code> exists
-//     * @post    returns the <code>myReduxLabData</code> of this <code>Sampel</code>
-//     * @return  <code>ReduxLabData</code> - <code>myReduxLabData</code> of this
-//     * <code>Sample</code>
-//     */
-//    ReduxLabData getMyReduxLabData();
-
-//    /**
-//     * gets the <code>physicalConstantsModel</code> of this <code>Sample</code>.
-//     *
-//     * @pre     this <code>Sample</code> exists
-//     * @post    returns the <code>physicalConstantsModel</code> of this
-//     * <code>Sample</code>
-//     * @return  <code>PhysicalConstants</code> - <code>physicalConstantsModel</code>
-//     * of this <code>Sample</code>
-//     * @throws  org.earthtime.UPb_Redux.exceptions.BadLabDataException  BadLabDataException
-//     */
-//    AbstractRatiosDataModel getPhysicalConstantsModel() throws BadLabDataException;
-
     /**
      * gets the <code>reduxSampleFileName</code> of this <code>Sample</code>.
      *
@@ -434,29 +234,6 @@ public interface UPbSampleInterface {
      */
     String getReduxSampleFilePath();
 
-//    /**
-//     * gets the <code>sampleAgeInterpretationGUISettings</code> of this
-//     * <code>Sample</code>
-//     *
-//     * @pre     this <code>Sample</code> exists
-//     * @post    returns the <code>sampleAgeInterpretationGUISettings</code> of
-//     * this <code>Sample</code>
-//     * @return  <code>SampleDateInterpretationGUIOptions</code> -
-//     * <code>sampleAgeInterpretationGUIOptions</code> of this
-//     * <code>Sample</code>
-//     */
-//    SampleDateInterpretationGUIOptions getSampleDateInterpretationGUISettings();
-
-//    /**
-//     * gets the <code>sampleIGSN</code> of this <code>Sample</code>.
-//     *
-//     * @pre     this <code>Sample</code> exists
-//     * @post    returns the <code>sampleIGSN</code> of this <code>Sample</code>
-//     * @return  <code>String</code> - <code>sampleIGSN</code> of this
-//     * <code>Sample</code>
-//     */
-//    String getSampleIGSN();
-
     /**
      * gets the <code>name</code> of this <code>Sample</code>.
      *
@@ -475,16 +252,6 @@ public interface UPbSampleInterface {
      * <code>Sample</code>
      */
     String getSampleType();
-
-//    /**
-//     * gets the <code>UPbFractions</code> of this <code>Sample</code>.
-//     *
-//     * @pre     this <code>Sample</code> exists
-//     * @post    returns the <code>UPbFractions</code> of this <code>Sample</code>
-//     * @return  <code>Vector</code> - set of <code>Fractions</code> that make up
-//     * the <code>UPbFractions</code> of this <code>Sample</code>
-//     */
-//    Vector<Fraction> getUPbFractions();
 
     /**
      * gets the <code>analyzed</code> field of this <code>Sample</code>
@@ -529,18 +296,6 @@ public interface UPbSampleInterface {
      * this <code>Sample</code> will be set
      */
     void setAliquots(Vector<Aliquot> aliquots);
-
-//    /**
-//     * sets the <code>analyzed</code> field of this <code>Sample</code> to
-//     * the argument <code>analyzed</code>
-//     *
-//     * @pre     argument <code>analyzed</code> is a valid <code>boolean</code>
-//     * @post    this <code>Sample</code>'s <code>analyzed</code> field is set
-//     * to argument <code>analyzed</code>
-//     * @param   analyzed    value to which <code>analyzed</code> field of
-//     * this <code>Sample</code> will be set
-//     */
-//    void setAnalyzed(boolean analyzed);
 
     /**
      * sets the <code>sampleAnnotations</code> of this <code>Sample</code> to
@@ -606,18 +361,6 @@ public interface UPbSampleInterface {
      */
     void setFractionDataOverriddenOnImport(boolean fractionDataOverriddenOnImport);
 
-//    /**
-//     * sets the <code>myReduxLabData</code> field of this <code>Sample</code> to
-//     * the argument <code>myReduxLabData</code>
-//     *
-//     * @pre     argument <code>myReduxLabData</code> is a valid <code>ReduxLabData</code>
-//     * @post    this <code>Sample</code>'s <code>myReduxLabData</code> field is
-//     * set to argument <code>myReduxLabData</code>
-//     * @param   myReduxLabData  value to which <code>myReduxLabData</code> field
-//     * of this <code>Sample</code> will be set
-//     */
-//    void setMyReduxLabData(ReduxLabData myReduxLabData);
-
     /**
      * sets the <code>physicalConstantsModel</code> of this <code>Sample</code>
      * to the argument <code>physicalConstantsModel</code>
@@ -660,7 +403,6 @@ public interface UPbSampleInterface {
      */
     void setSampleAgeInterpretationGUISettings(SampleDateInterpretationGUIOptions sampleAgeInterpretationGUISettings);
 
-
     /**
      * sets the <code>sampleName</code> of this <code>Sample</code> to the
      * argument <code>sampleName</code>
@@ -672,7 +414,6 @@ public interface UPbSampleInterface {
      * <code>Sample</code> will be set
      */
     void setSampleName(String sampleName);
-
 
     /**
      * sets the <code>UPbFractions</code> of this <code>Sample</code> to
@@ -686,12 +427,9 @@ public interface UPbSampleInterface {
      * this <code>Sample</code> will be set
      */
     void setUPbFractions(Vector<Fraction> UPbFractions);
-    
-//    public Vector<Aliquot> getActiveAliquots ();
-    
-    public ReduxConstants.ANALYSIS_PURPOSE getAnalysisPurpose ();
 
-    
+    public ReduxConstants.ANALYSIS_PURPOSE getAnalysisPurpose ();
+   
     /**
      *
      * @param reportSettingsModel

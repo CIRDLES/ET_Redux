@@ -34,8 +34,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.text.JTextComponent;
-import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.ETReduxFrame;
+import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.aliquots.Aliquot;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
@@ -871,7 +871,7 @@ public class AliquotEditorForLAICPMS extends AliquotEditorDialog {
             if (proceed) {
                 saveAliquot();
                 saveAliquotFraction(fraction);
-                getSample().editUPbFraction(fraction, 8);
+                parent.editFraction(fraction, 8);
                 updateFractionRow(
                         fraction,
                         getMyAliquot().getAliquotFractions().indexOf(fraction));

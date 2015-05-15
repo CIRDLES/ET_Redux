@@ -29,6 +29,9 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import org.earthtime.ETReduxFrame;
+import org.earthtime.UPb_Redux.aliquots.Aliquot;
+import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.samples.Sample;
@@ -38,6 +41,7 @@ import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
 import org.earthtime.archivingTools.IEDACredentialsValidator;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
+import org.earthtime.xmlUtilities.XMLSerializationI;
 
 /**
  *
@@ -211,7 +215,7 @@ public class SampleCompilationManagerDialog extends DialogEditor {
                 case FOLDER_LOCAL:
                     break;
                 case ONE_OR_MORE_GEOCHRON:
-                    success = getMySample().importOneOrMoreGeochronAliquotXMLDataFiles();
+                    success = importOneOrMoreGeochronAliquotXMLDataFiles();
                     if (success.contains("Found")) {
                         getMySample().setSampleName(sampleName_text.getText());
 
@@ -230,6 +234,79 @@ public class SampleCompilationManagerDialog extends DialogEditor {
                     break;
             }
         }
+    }
+
+    /**
+     *
+     * http://www.geochronportal.org/post_to_search_service.html
+     *
+     * @return
+     * @throws java.io.FileNotFoundException
+     * @throws java.io.IOException
+     * @throws org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException
+     * @throws org.earthtime.XMLExceptions.ETException
+     */
+    public String importOneOrMoreGeochronAliquotXMLDataFiles()
+            throws FileNotFoundException,
+            BadLabDataException,
+            IOException,
+            BadOrMissingXMLSchemaException,
+            ETException {
+
+        String retval = "";
+
+        // ask the user for Aliquot IGSN         
+        String aliquotIGSNs = JOptionPane.showInputDialog(//
+                null,
+                "NOTE: If you need private records, set your GEOCHRON credentials\n"
+                + " in the Compilation Sample Manager. \n\n"//
+                + "Enter one or more Aliquot IGSN, separated by commas: \n",
+                "U-Pb_Redux for Geochron", 1);
+
+        if (aliquotIGSNs != null) {
+            String aliquotList[] = aliquotIGSNs.split(",");
+            for (int i = 0; i < aliquotList.length; i++) {
+                String aliquotIGSN = aliquotList[i].trim();
+                if (aliquotIGSN.length() > 0) {
+                    retval += retrieveGeochronAliquotFile(aliquotIGSN) + "\n";
+                }
+            }
+        }
+
+        return retval;
+    }
+
+    private String retrieveGeochronAliquotFile(String aliquotIGSN) {
+        Aliquot myDownAliquot = new UPbReduxAliquot();
+
+        String userName = ((ETReduxFrame) parent).getMyState().getReduxPreferences().getGeochronUserName();
+        String password = ((ETReduxFrame) parent).getMyState().getReduxPreferences().getGeochronPassWord();
+
+        String downloadURL = //
+                "http://www.geochron.org/getxml.php?igsn="//
+                + aliquotIGSN.toUpperCase().trim()//
+                + "&username="//
+                + userName//
+                + "&password="//
+                + password;
+
+        try {
+            myDownAliquot
+                    = (Aliquot) ((XMLSerializationI) myDownAliquot).readXMLObject(
+                            downloadURL, true);
+            if (myDownAliquot != null) {
+                // xml is added here for consistency and because we test whether aliquot source file is xml ... probably
+                // should get rid of xml test and just make it aliquot non-zero length string
+                mySample.processXMLAliquot(myDownAliquot, "GeochronDownloadOfAliquot_" + aliquotIGSN.toUpperCase().trim() + ".xml");
+                System.out.println("got one " + myDownAliquot.getAnalystName());
+            } else {
+                return "Missing (or private) aliquot: " + aliquotIGSN;
+            }
+        } catch (IOException | ETException | BadOrMissingXMLSchemaException ex) {
+            myDownAliquot = null;
+        }
+
+        return "Found: " + myDownAliquot.getAliquotIGSN();
     }
 
     /**

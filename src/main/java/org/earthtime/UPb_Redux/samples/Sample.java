@@ -19,7 +19,6 @@
  */
 package org.earthtime.UPb_Redux.samples;
 
-import java.awt.Component;
 import java.awt.Frame;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -34,11 +33,9 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
-import org.earthtime.ETReduxFrame;
 import org.earthtime.Tripoli.sessions.TripoliSession;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.ReduxConstants.ANALYSIS_PURPOSE;
@@ -46,12 +43,7 @@ import org.earthtime.UPb_Redux.aliquots.Aliquot;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetup;
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
-import org.earthtime.UPb_Redux.dialogs.aliquotManagers.AliquotEditorDialog;
-import org.earthtime.UPb_Redux.dialogs.aliquotManagers.AliquotEditorForLAICPMS;
-import org.earthtime.UPb_Redux.dialogs.aliquotManagers.AliquotLegacyEditorForIDTIMS;
-import org.earthtime.UPb_Redux.dialogs.aliquotManagers.AliquotLegacyEditorForLAICPMS;
 import org.earthtime.UPb_Redux.dialogs.fractionManagers.UPbFractionEditorDialog;
-import org.earthtime.UPb_Redux.dialogs.fractionManagers.UPbLegacyFractionEditorDialog;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.filters.FractionXMLFileFilter;
 import org.earthtime.UPb_Redux.filters.ReduxFileFilter;
@@ -108,14 +100,6 @@ public class Sample implements
      * {@link #SaveExcelSamplesFile SaveExcelSamplesFile}.
      */
     private static boolean saving;
-    /**
-     *
-     */
-    public static transient ETReduxFrame parentFrame;
-    /**
-     *
-     */
-    public transient DialogEditor myFractionEditor;
     /**
      * ReduxLabData, which is made available to any active sample; contains
      * information regarding tracers and the various models for each sample
@@ -400,10 +384,10 @@ public class Sample implements
                         legacyF.setSampleName(f.getSampleName());
                         legacyF.setZircon(f.isZircon());
 
-                        ((UPbFractionI) legacyF).setAliquotNumber(((UPbFraction) f).getAliquotNumber());
-                        ((UPbFractionI) legacyF).setRejected(((UPbFraction) f).isRejected());
-                        ((UPbFractionI) legacyF).setFractionNotes(((UPbFraction) f).getFractionNotes());
-                        ((UPbFractionI) legacyF).setPhysicalConstantsModel(((UPbFraction) f).getPhysicalConstantsModel());
+                        ((UPbFractionI) legacyF).setAliquotNumber(((UPbFractionI) f).getAliquotNumber());
+                        ((UPbFractionI) legacyF).setRejected(((UPbFractionI) f).isRejected());
+                        ((UPbFractionI) legacyF).setFractionNotes(((UPbFractionI) f).getFractionNotes());
+                        ((UPbFractionI) legacyF).setPhysicalConstantsModel(((UPbFractionI) f).getPhysicalConstantsModel());
                         ((UPbFractionI) legacyF).setChanged(false);
 
                         legacyF.setIsLegacy(true);
@@ -427,12 +411,8 @@ public class Sample implements
                          * (twRho == 0) ||
                          */(twRho < -1.0)) {
                     for (Fraction f : getUPbFractions()) {
-//                        try {
-                        //((UPbLegacyFraction) f).calculateTeraWasserburgRho();
                         f.getRadiogenicIsotopeRatioByName("rhoR207_206r__r238_206r")//
                                 .setValue(BigDecimal.ZERO);
-//                        } catch (Exception e) {
-//                        }
                     }
                 }
             }
@@ -456,14 +436,12 @@ public class Sample implements
      *
      * @pre this <code>Sample</code> exists with proper data
      * @post a new <code>Aliquot</code> is created and added to
-     * <code>aliquots</code> and the size of      <code>Aliquots</code> is
-     *          returned
+     * <code>aliquots</code> and the size of      <code>Aliquots</code> is returned
      *
-     * @return
-     * <code>int</code> - if successful, returns the size of the array after
-     * adding the new <code>Aliquot</code>. Else, returns -1.
+     * @return <code>int</code> - if successful, returns the size of the array
+     * after adding the new <code>Aliquot</code>. Else, returns -1.
      */
-    private int addNewDefaultAliquot() {
+    public int addNewDefaultAliquot() {
         int retval = -1;
         try {
             Aliquot tempAliquot
@@ -584,41 +562,6 @@ public class Sample implements
     }
 
     /**
-     * loads aliquot Sample after aliquot .redux file generation from an Excel
-     * file
-     *
-     * @pre the chosen file located in the directory <code>dir</code> is a
-     * proper .redux file generated from an Excel file.
-     * @post the file is returned for use by another method
-     *
-     * @param frame the frame where the samples names to save were selected
-     * @param dir the directory in which the redux files were saved
-     * @return <code>File</code> - the loaded file
-     */
-    public File loadSampleAfterExcelImport(Component frame, File dir) {
-
-        JOptionPane jopt = new JOptionPane();
-        File sampleFile = null;
-
-        int choice = JOptionPane.showConfirmDialog(
-                frame,
-                "Redux file(s) successfully generated."//
-                + "Do you want to open one of the imported files ?",//
-                "import a redux file?",//
-                JOptionPane.YES_NO_OPTION);
-        if (choice == 0) {
-            String dialogTitle = "Select a U-Pb Redux File to Open: *.redux";
-            final String fileExtension = ".redux";
-            FileFilter nonMacFileFilter = new ReduxFileFilter();
-
-            sampleFile
-                    = FileHelper.AllPlatformGetFile(dialogTitle, dir, fileExtension, nonMacFileFilter, false, new JFrame())[0];
-
-        }
-        return sampleFile;
-    }
-
-    /**
      *
      * @param aliquot
      */
@@ -663,22 +606,24 @@ public class Sample implements
 
         return retAliquot;
     }
-    
+
     /**
-     * Feb 2015 This method handles the messy situation where a project refers to each of its aliquots
-     * by index 1...n but to upload project aliquots individually to Geochron with concordia etc
-     * means there is only one aliquot per sample and we ignore its number.
+     * Feb 2015 This method handles the messy situation where a project refers
+     * to each of its aliquots by index 1...n but to upload project aliquots
+     * individually to Geochron with concordia etc means there is only one
+     * aliquot per sample and we ignore its number.
+     *
      * @param aliquotnum
-     * @return 
+     * @return
      */
-    public String getNameOfAliquotFromSample(int aliquotNum){
+    public String getNameOfAliquotFromSample(int aliquotNum) {
         String retval;
-        if (aliquots.size() == 1){
+        if (aliquots.size() == 1) {
             retval = aliquots.get(0).getAliquotName();
         } else {
             retval = aliquots.get(aliquotNum - 1).getAliquotName();
         }
-        
+
         return retval;
     }
 
@@ -817,7 +762,7 @@ public class Sample implements
         AbstractRatiosDataModel tracer = labData.getATracerModel(tracerID);
 
         ((UPbFraction) defFraction).setMyLabData(labData);
-        ((UPbFraction) defFraction).setTracer(tracer);
+        ((UPbFractionI) defFraction).setTracer(tracer);
 
     }
 
@@ -862,168 +807,6 @@ public class Sample implements
         ((UPbFractionI) defFraction).setChanged(false);
 
         addUPbFraction(defFraction);
-    }
-
-    //TODO: refactor these edit methods out of sample - MVC !!
-    /**
-     * opens aliquot modal editor for the <code>Fraction</code> indicated by
-     * argument <code>fraction</code> and opened to the editing tab indicated by
-     * argument <code>selectedTab</code>. <code>selectedTab</code> is valid only
-     * if it contains aliquot number between zero and seven inclusive.
-     *
-     * @pre the <code>Fraction</code> corresponding to <code>fraction</code>
-     * exists in this <code>Sample</code> and <code>selectedTab</code> is a
-     * valid tab number
-     * @post an editor for the specified <code>Fraction</code> is opened to the
-     * specified tab
-     *
-     * @param fraction the <code>Fraction</code> to be edited
-     * @param selectedTab the tab to open the editor to
-     */
-    @Override
-    public void editUPbFraction(Fraction fraction, int selectedTab) {
-
-        // oct 2014
-        parentFrame.forceCloseOfSampleDateInterpretations();
-
-        // Create aliquot new FractionEditorDialog
-        int aliquotNumber = ((UPbFractionI) fraction).getAliquotNumber();
-
-        myFractionEditor = null;
-
-        if (sampleType.equalsIgnoreCase(SampleTypesEnum.LEGACY.getName())
-                || (sampleType.equalsIgnoreCase(SampleTypesEnum.COMPILATION.getName())
-                && !fraction.getAnalysisMeasure(AnalysisMeasures.tracerMassInGrams.getName()).hasPositiveValue())//
-                || fraction.isLegacy()) {
-            myFractionEditor
-                    = new UPbLegacyFractionEditorDialog(
-                            parentFrame,
-                            true,
-                            getAliquotByNumber(aliquotNumber),
-                            fraction,
-                            selectedTab,
-                            false);
-        } else if (sampleAnalysisType.equalsIgnoreCase(SampleAnalysisTypesEnum.IDTIMS.getName())
-                || (sampleType.equalsIgnoreCase(SampleTypesEnum.COMPILATION.getName()))){
-// TODO: Need kwiki page for LAICPMS               || (sampleType.equalsIgnoreCase(SampleTypesEnum.PROJECT.getName()))) {
-
-            myFractionEditor
-                    = new UPbFractionEditorDialog(
-                            parentFrame,
-                            true,
-                            getAliquotByNumber(aliquotNumber),
-                            fraction,
-                            selectedTab,
-                            sampleType.equalsIgnoreCase(SampleTypesEnum.COMPILATION.getName()));
-        }
-
-        if (myFractionEditor != null) {
-            try {
-                myFractionEditor.setTitle(
-                        "Sample: "// 
-                        + getSampleName()// 
-                        + "   [Physical Constants: "//
-                        + getPhysicalConstantsModel().getNameAndVersion() + "]");
-
-            } catch (BadLabDataException badLabDataException) {
-            }
-
-            myFractionEditor.setVisible(true);
-
-            // post-process the editor's results
-            setChanged(isChanged() || ((UPbFractionI) fraction).isChanged());
-            // feb 2010
-            if (isChanged()) {
-                saveTheSampleAsSerializedReduxFile();
-            }
-
-            if (((UPbFractionI) fraction).isDeleted()) {
-                removeUPbReduxFraction(fraction);
-            }
-
-            // these statements release editor and prevent livwWorkflow from backtracking as it must do
-            // if navigating fractions while staying open
-            myFractionEditor.dispose();
-            myFractionEditor = null;
-        }
-
-    }
-
-    /**
-     * opens aliquot modal editor for the </code>Aliquot</code> specified by
-     * <code>aliquotNum</code>. The <code>Aliquot</code>'s
-     * <code>Fractions</code> are populated on the fly.
-     *
-     * @pre an <code>Aliquot</code> exists with the number specified by argument
-     * <code>aliquotNum</code>
-     * @post an editor for the specified <code>Aliquot</code> is opened
-     *
-     * @param aliquotNum the number of the <code>Aliquot</code> to be edited
-     */
-    public void editAliquotByNumber(int aliquotNum) {
-
-        // added march 2009 so that changes to fraction tab are saved upon use of aliquot button
-        this.saveTheSampleAsSerializedReduxFile();
-
-        editAliquot(getAliquotByNumber(aliquotNum));
-    }
-
-    /**
-     *
-     * @param aliquotName
-     */
-    public void editAliquotByName(String aliquotName) {
-
-        // added march 2009 so that changes to fraction tab are saved upon use of aliquot button
-        this.saveTheSampleAsSerializedReduxFile();
-
-        editAliquot(getAliquotByName(aliquotName));
-    }
-
-    /**
-     *
-     * @param aliquot
-     */
-    public void editAliquot(Aliquot aliquot) {
-        DialogEditor myEditor = null;
-
-        if (sampleType.equalsIgnoreCase(SampleTypesEnum.PROJECT.getName())) {
-            // do nothing for now
-            myEditor = new AliquotLegacyEditorForLAICPMS(parentFrame, true, this, aliquot);
-        } else if (sampleType.equalsIgnoreCase(SampleTypesEnum.LEGACY.getName())//
-                && getSampleAnalysisType().equalsIgnoreCase(SampleAnalysisTypesEnum.IDTIMS.getName())) {
-            // May 2010 backward compatibility
-            ((UPbReduxAliquot) aliquot).setCompiled(false);
-            myEditor = new AliquotLegacyEditorForIDTIMS(parentFrame, true, this, aliquot);
-
-        } else if (sampleType.equalsIgnoreCase(SampleTypesEnum.LEGACY.getName()) //
-                && getSampleAnalysisType().toUpperCase().startsWith(SampleAnalysisTypesEnum.LAICPMS.getName())) {
-            // May 2010 backward compatibility
-            ((UPbReduxAliquot) aliquot).setCompiled(false);
-            myEditor = new AliquotLegacyEditorForLAICPMS(parentFrame, true, this, aliquot);
-
-            // oct 2014 
-        } else if (sampleType.equalsIgnoreCase(SampleTypesEnum.LEGACY.getName()) //
-                && getSampleAnalysisType().toUpperCase().startsWith(SampleAnalysisTypesEnum.LASS.getName())) {
-            // May 2010 backward compatibility
-            ((UPbReduxAliquot) aliquot).setCompiled(false);
-            myEditor = new AliquotLegacyEditorForLAICPMS(parentFrame, true, this, aliquot);
-
-        } else if (sampleType.equalsIgnoreCase(SampleTypesEnum.ANALYSIS.getName()) //
-                && getSampleAnalysisType().toUpperCase().startsWith(SampleAnalysisTypesEnum.LAICPMS.getName())) {
-            // June 2013 temp for project samples from Tripolized LAICPMS
-            ((UPbReduxAliquot) aliquot).setCompiled(false);
-            myEditor = new AliquotEditorForLAICPMS(parentFrame, true, this, aliquot);
-
-        } else {
-            myEditor = new AliquotEditorDialog(parentFrame, true, this, aliquot);
-        }
-
-        JDialog.setDefaultLookAndFeelDecorated(true);
-
-        if (myEditor != null) {
-            myEditor.setVisible(true);
-        }
     }
 
     /**
@@ -1083,8 +866,7 @@ public class Sample implements
      * @param aliquot
      * @param aliquotSource
      * @pre file specified by <code>aliquotFile</code> is an XML file containing
-     * valid
-     * <code>Aliquots</code>
+     * valid <code>Aliquots</code>
      * @post all <code>Aliquots</code> found in the file are added to this
      * <code>Sample</code>
      * @throws java.io.IOException IOException
@@ -1188,7 +970,7 @@ public class Sample implements
 
                 getUPbFractions().add(nextFraction);
             }
-            
+
         } else if (aliquot.usesMCIPMS()) {
             while (aliquotFractionIterator.hasNext()) {
                 // convert analysisFraction to UPbReduxFraction
@@ -1327,9 +1109,11 @@ public class Sample implements
 
     /**
      *
-     * @return @throws BadLabDataException
+     * @param MRUSampleFolderPath the value of MRUSampleFolderPath @throws
+     * BadLabDataException
+     * @return the java.io.File
      */
-    public File saveSampleFileAs() throws BadLabDataException {
+    public File saveSampleFileAs(String MRUSampleFolderPath) throws BadLabDataException {
 
         String dialogTitle = "Save Redux file for this Sample: *.redux";
         final String fileExtension = ".redux";
@@ -1341,7 +1125,7 @@ public class Sample implements
         if (getSampleFolderSaved() != null) {
             sampleFolderPath = getSampleFolderSaved().getAbsolutePath();
         } else {
-            sampleFolderPath = ((ETReduxFrame) parentFrame).getMyState().getMRUSampleFolderPath();
+            sampleFolderPath = MRUSampleFolderPath;
         }
 
         selectedFile = FileHelper.AllPlatformSaveAs(
@@ -1415,86 +1199,6 @@ public class Sample implements
     }
 
     /**
-     *
-     * http://www.geochronportal.org/post_to_search_service.html
-     *
-     * @return
-     * @throws java.io.FileNotFoundException
-     * @throws java.io.IOException
-     * @throws org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException
-     * @throws org.earthtime.XMLExceptions.ETException
-     */
-    public String importOneOrMoreGeochronAliquotXMLDataFiles()
-            throws FileNotFoundException,
-            BadLabDataException,
-            IOException,
-            BadOrMissingXMLSchemaException,
-            ETException {
-
-        String retval = "";
-
-        // ask the user for Aliquot IGSN         
-        String aliquotIGSNs = JOptionPane.showInputDialog(//
-                null,
-                "NOTE: If you need private records, set your GEOCHRON credentials\n"
-                + " in the Compilation Sample Manager. \n\n"//
-                + "Enter one or more Aliquot IGSN, separated by commas: \n",
-                "U-Pb_Redux for Geochron", 1);
-
-        if (aliquotIGSNs != null) {
-            String aliquotList[] = aliquotIGSNs.split(",");
-            for (int i = 0; i < aliquotList.length; i++) {
-                String aliquotIGSN = aliquotList[i].trim();
-                if (aliquotIGSN.length() > 0) {
-                    retval += retrieveGeochronAliquotFile(aliquotIGSN) + "\n";
-                }
-            }
-        }
-
-        return retval;
-    }
-
-    private String retrieveGeochronAliquotFile(String aliquotIGSN) {
-        Aliquot myDownAliquot = new UPbReduxAliquot();
-
-        String userName = ((ETReduxFrame) parentFrame).getMyState().getReduxPreferences().getGeochronUserName();
-        String password = ((ETReduxFrame) parentFrame).getMyState().getReduxPreferences().getGeochronPassWord();
-
-        String downloadURL = //
-                "http://www.geochron.org/getxml.php?igsn="//
-                + aliquotIGSN.toUpperCase().trim()//
-                + "&username="//
-                + userName//
-                + "&password="//
-                + password;
-
-        try {
-            myDownAliquot
-                    = (Aliquot) ((UPbReduxAliquot) myDownAliquot).readXMLObject(
-                            downloadURL, true);
-            if (myDownAliquot != null) {
-                // xml is added here for consistency and because we test whether aliquot source file is xml ... probably
-                // should get rid of xml test and just make it aliquot non-zero length string
-                processXMLAliquot(myDownAliquot, "GeochronDownloadOfAliquot_" + aliquotIGSN.toUpperCase().trim() + ".xml");
-                System.out.println("got one " + myDownAliquot.getAnalystName());
-            } else {
-                return "Missing (or private) aliquot: " + aliquotIGSN;
-            }
-        } catch (IOException ex) {
-//            ex.printStackTrace();
-            myDownAliquot = null;
-        } catch (ETException ex) {
-//            ex.printStackTrace();
-            myDownAliquot = null;
-        } catch (BadOrMissingXMLSchemaException ex) {
-//            ex.printStackTrace();
-            myDownAliquot = null;
-        }
-
-        return "Found: " + myDownAliquot.getAliquotIGSN();
-    }
-
-    /**
      * imports all <code>UPbFractions</code> found in the XML file specified by
      * argument <code>location</code> to the <code>Aliquot</code> specified by
      * argument <code>aliquotNumber</code> in this <code>Sample</code>
@@ -1515,7 +1219,7 @@ public class Sample implements
      * BadLabDataException
      */
     @Override
-    public String importUPbFractionXMLDataFiles(
+    public String importFractionXMLDataFiles(
             File location,
             int aliquotNumber,
             boolean doValidate)
@@ -1628,9 +1332,10 @@ public class Sample implements
 
     /**
      *
+     * @param myFractionEditor the value of myFractionEditor
      * @throws ETException
      */
-    public synchronized void automaticUpdateOfUPbSampleFolder() throws ETException {
+    public synchronized void automaticUpdateOfUPbSampleFolder(DialogEditor myFractionEditor) throws ETException {
 
         File sampleFolder = new File(getReduxSampleFilePath()).getParentFile();
 
@@ -1654,7 +1359,6 @@ public class Sample implements
             for (final File aliquotFolder : aliquotFolders) {
 
                 // take the first prisoner
-                // if (aliquotFractionFiles.length == 0) {
                 aliquotFractionFiles = aliquotFolder.listFiles(new java.io.FileFilter() {
                     // 20 second cushion
                     @Override
@@ -1669,10 +1373,10 @@ public class Sample implements
                             return isXML;
                         }
                     }
-                });///(new FractionXMLFileFilter());
+                });
 
                 // assume xml files are in good shape with doValidate = false
-                updateSampleAliquot(aliquotFolder, aliquotFractionFiles, false);
+                updateSampleAliquot(aliquotFolder, aliquotFractionFiles, false, myFractionEditor);
             }
         }
 
@@ -1683,8 +1387,9 @@ public class Sample implements
      * @param aliquotFolder
      * @param aliquotFractionFiles
      * @param doValidate
+     * @param myFractionEditor the value of myFractionEditor
      */
-    public synchronized void updateSampleAliquot(File aliquotFolder, File[] aliquotFractionFiles, boolean doValidate) {
+    private synchronized void updateSampleAliquot(File aliquotFolder, File[] aliquotFractionFiles, boolean doValidate, DialogEditor myFractionEditor) {
 
         System.out.println("CHANGED count of fresh data = " + aliquotFractionFiles.length);
         int aliquotNumber;
@@ -1729,6 +1434,7 @@ public class Sample implements
                         }
                         ((UPbFractionEditorDialog) myFractionEditor).InitializeFractionData(savedCurrentFraction);
 
+                        // intential static call for now
                         UPbFractionReducer.getInstance().fullFractionReduce(savedCurrentFraction, true);
 
                         ((UPbFractionEditorDialog) myFractionEditor).reInitializeKwikiTab(savedCurrentFraction);
@@ -1742,8 +1448,7 @@ public class Sample implements
     /**
      * reads <code>Fractions</code> from the file specified by argument
      * <code>location</code> and adds them to the      <code>Aliquot</code> specified
-     * by argument
-     * <code>aliquotNumber</code> in this <code>Sample</code>.
+     * by argument <code>aliquotNumber</code> in this <code>Sample</code>.
      *
      * @pre argument <code>location</code> specifies an XML file with valid
      * <code>UPbFractions</code> and argument <code>aliquotNumber</code>
@@ -1804,8 +1509,7 @@ public class Sample implements
      * <code>Aliquots</code> and <code>Fractions</code> contained within to the
      * argument <code>labData</code>.
      *
-     * @pre argument      <code>labData</code> is valid
-     * <code>ReduxLabData</code>
+     * @pre argument      <code>labData</code> is valid <code>ReduxLabData</code>
      * @post <code>ReduxLabData</code> of this <code>Sample</code> and all of
      * its <code>Aliquots</code> and <code>Fractions</code> is set to argument
      * <code>labData</code>
@@ -1947,38 +1651,6 @@ public class Sample implements
 
     /**
      *
-     * @param MRUreportSettingsModelFolder
-     * @return
-     */
-    public String setReportSettingsModelFromXMLFile(String MRUreportSettingsModelFolder) {
-
-        String retVal = MRUreportSettingsModelFolder;
-        String dialogTitle = "Select a Report Settings Model xml file to LOAD: *.xml";
-        final String fileExtension = ".xml";
-        FileFilter nonMacFileFilter = new XMLFileFilter();
-
-        File returnFile
-                = FileHelper.AllPlatformGetFile(//
-                        dialogTitle, //
-                        new File(MRUreportSettingsModelFolder), //
-                        fileExtension, nonMacFileFilter, false, parentFrame)[0];
-
-        if (returnFile != null) {
-            ReportSettings reportSettings = new ReportSettings();
-            try {
-                reportSettingsModel = (ReportSettings) reportSettings.readXMLObject(returnFile.getAbsolutePath(), true);
-                retVal = returnFile.getParent();
-            } catch (FileNotFoundException fileNotFoundException) {
-            } catch (ETException eTException) {
-            } catch (BadOrMissingXMLSchemaException badOrMissingXMLSchemaException) {
-            }
-        }
-
-        return retVal;
-    }
-
-    /**
-     *
      */
     public void restoreDefaultReportSettingsModel() {
         try {
@@ -2021,18 +1693,18 @@ public class Sample implements
         return retVal;
     }
 
-//    /**
-//     * gets the <code>file</code> of this <code>Sample</code>.
-//     *
-//     * @pre this <code>Sample</code> exists
-//     * @post returns the <code>file</code> of this <code>Sample</code>
-//     *
-//     * @return <code>String</code> - <code>file</code> of this
-//     * <code>Sample</code>
-//     */
+    /**
+     * gets the <code>file</code> of this <code>Sample</code>.
+     *
+     * @pre this <code>Sample</code> exists
+     * @post returns the <code>file</code> of this <code>Sample</code>
+     *
+     * @return <code>String</code> - <code>file</code> of this
+     * <code>Sample</code>
+     */
+    @Override
     public String getSampleName() {
         return sampleName;
-
     }
 
     /**
@@ -2046,6 +1718,7 @@ public class Sample implements
      * @param sampleName value to which<code>sampleName</code> of this
      * <code>Sample</code> will be set
      */
+    @Override
     public void setSampleName(String sampleName) {
         setChanged(this.sampleName.compareToIgnoreCase(sampleName) != 0);
 
@@ -2067,6 +1740,7 @@ public class Sample implements
      * @return <code>String</code> - <code>sampleAnnotations</code> of this
      * <code>Sample</code>
      */
+    @Override
     public String getSampleAnnotations() {
         return sampleAnnotations;
 
@@ -2082,6 +1756,7 @@ public class Sample implements
      * @post this <code>Sample</code>'s <code>sampleAnnotations</code> is set to
      * argument <code>annotations</code>
      */
+    @Override
     public void setSampleAnnotations(String sampleAnnotations) {
         setChanged(this.sampleAnnotations.compareToIgnoreCase(sampleAnnotations) != 0);
 
@@ -2098,11 +1773,10 @@ public class Sample implements
      * @return <code>boolean</code> - <code>changed</code> field of this
      * <code>Sample</code>
      */
+    @Override
     public boolean isChanged() {
-        for (int UPbFractionsIndex = 0; UPbFractionsIndex
-                < UPbFractions.size(); UPbFractionsIndex++) {
-            changed = changed || ((UPbFractionI) UPbFractions.get(UPbFractionsIndex)).isChanged();
-
+        for (Fraction UPbFraction : UPbFractions) {
+            changed = changed || ((UPbFractionI) UPbFraction).isChanged();
         }
 
         return changed;
@@ -2408,11 +2082,9 @@ public class Sample implements
     public Vector<Fraction> getUpbFractionsUnknown() {
         Vector<Fraction> retval = new Vector<Fraction>();
 
-        for (Fraction f : UPbFractions) {
-            if (!((UPbFractionI) f).isStandard()) {
-                retval.add(f);
-            }
-        }
+        UPbFractions.stream().filter((f) -> (!((UPbFractionI) f).isStandard())).forEach((f) -> {
+            retval.add(f);
+        });
 
         return retval;
     }
@@ -2422,8 +2094,8 @@ public class Sample implements
      * @param filteredFractions
      */
     public void updateSetOfActiveFractions(Vector<Fraction> filteredFractions) {
-        for (int i = 0; i < UPbFractions.size(); i++) {
-            ((UPbFractionI) UPbFractions.get(i)).setRejected(!filteredFractions.contains(UPbFractions.get(i)));
+        for (Fraction UPbFraction : UPbFractions) {
+            ((UPbFractionI) UPbFraction).setRejected(!filteredFractions.contains(UPbFraction));
         }
     }
 
@@ -2453,18 +2125,18 @@ public class Sample implements
      *
      */
     public void selectAllFractions() {
-        for (Fraction f : UPbFractions) {
+        UPbFractions.stream().forEach((f) -> {
             ((UPbFractionI) f).setRejected(false);
-        }
+        });
     }
 
     /**
      *
      */
     public void deSelectAllFractions() {
-        for (Fraction f : UPbFractions) {
+        UPbFractions.stream().forEach((f) -> {
             ((UPbFractionI) f).setRejected(true);
-        }
+        });
     }
 
     /**
@@ -2574,14 +2246,9 @@ public class Sample implements
     public Vector<Aliquot> getActiveAliquots() {
         // May 2010  refresh aliquots to   remove empty ones
         Vector<Aliquot> activeAliquots = new Vector<Aliquot>();
-        for (Aliquot aliquot : aliquots) {
-            if (((UPbReduxAliquot) aliquot).getAliquotFractions().size() > 0) {
-                // oct 2014 check for no active fractions
-                if (((UPbReduxAliquot) aliquot).containsActiveFractions()) {
-                    activeAliquots.add(aliquot);
-                }
-            }
-        }
+        aliquots.stream().filter((aliquot) -> (((UPbReduxAliquot) aliquot).getAliquotFractions().size() > 0)).filter((aliquot) -> (((UPbReduxAliquot) aliquot).containsActiveFractions())).forEach((aliquot) -> {
+            activeAliquots.add(aliquot);
+        }); // oct 2014 check for no active fractions
         return activeAliquots;
     }
 
@@ -2652,9 +2319,8 @@ public class Sample implements
      * @post returns the <code>physicalConstantsModel</code> of this
      * <code>Sample</code>
      *
-     * @return <code>PhysicalConstants</code> -      <code>physicalConstantsModel</code>
-     *          of this
-     * <code>Sample</code>
+     * @return <code>PhysicalConstants</code> -
+     *      <code>physicalConstantsModel</code> of this <code>Sample</code>
      * @throws org.earthtime.UPb_Redux.exceptions.BadLabDataException
      * BadLabDataException
      */
@@ -2705,9 +2371,8 @@ public class Sample implements
      * @post returns the <code>reportSettingsModel</code> of this
      * <code>Sample</code>
      *
-     * @return <code>ReportSettings</code> -      <code>reportSettingsModel</code>
-     *          of this
-     * <code>Sample</code>
+     * @return <code>ReportSettings</code> -      <code>reportSettingsModel</code> of
+     * this <code>Sample</code>
      * @throws org.earthtime.UPb_Redux.exceptions.BadLabDataException
      * BadLabDataException
      */
@@ -3216,10 +2881,6 @@ public class Sample implements
         return retVal;
     }
 
-//    public String[][] reportAllFractionsByNumberStyle(boolean isNumeric) {
-//
-//        return getReportSettingsModel().reportAllFractionsByNumberStyle(this, isNumeric);
-//    }
     /**
      *
      * @param isNumeric

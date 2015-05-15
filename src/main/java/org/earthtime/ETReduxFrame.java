@@ -26,6 +26,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -69,7 +70,12 @@ import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.dialogs.LabDataEditorDialog;
 import org.earthtime.UPb_Redux.dialogs.PreferencesEditorDialog;
 import org.earthtime.UPb_Redux.dialogs.ReportSettingsManager;
+import org.earthtime.UPb_Redux.dialogs.aliquotManagers.AliquotEditorDialog;
+import org.earthtime.UPb_Redux.dialogs.aliquotManagers.AliquotEditorForLAICPMS;
+import org.earthtime.UPb_Redux.dialogs.aliquotManagers.AliquotLegacyEditorForIDTIMS;
+import org.earthtime.UPb_Redux.dialogs.aliquotManagers.AliquotLegacyEditorForLAICPMS;
 import org.earthtime.UPb_Redux.dialogs.fractionManagers.UPbFractionEditorDialog;
+import org.earthtime.UPb_Redux.dialogs.fractionManagers.UPbLegacyFractionEditorDialog;
 import org.earthtime.UPb_Redux.dialogs.projectManagers.ProjectManagerFor_LAICPMS_FromRawData;
 import org.earthtime.UPb_Redux.dialogs.projectManagers.ProjectManagerSubscribeInterface;
 import org.earthtime.UPb_Redux.dialogs.projectManagers.exportManagers.GeochronProjectExportManager;
@@ -95,7 +101,9 @@ import org.earthtime.UPb_Redux.dialogs.sampleManagers.sampleFromProjectManagers.
 import org.earthtime.UPb_Redux.dialogs.sampleManagers.sampleFromProjectManagers.SampleManagerDialogForTripolizedLAICPMS;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.filters.ReduxFileFilter;
+import org.earthtime.UPb_Redux.filters.XMLFileFilter;
 import org.earthtime.UPb_Redux.fractions.Fraction;
+import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionTable;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionTableModel;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLAICPMSFraction;
@@ -122,7 +130,9 @@ import org.earthtime.UPb_Redux.utilities.CustomIcon;
 import org.earthtime.UPb_Redux.utilities.ETSerializer;
 import org.earthtime.UPb_Redux.utilities.JHelpAction;
 import org.earthtime.UPb_Redux.utilities.MacOSAboutHandler;
+import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
 import org.earthtime.beans.ET_JButton;
+import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.dataDictionaries.SampleTypesEnum;
 import org.earthtime.exceptions.ETException;
@@ -189,6 +199,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
     private DialogEditor myProjectManager;
     //oct 2014
     private DialogEditor sampleDateInterpDialog;
+    private DialogEditor myFractionEditor;
 
     /**
      * Creates new form UPbReduxFrame
@@ -707,9 +718,6 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
         updateProjectDisplayTitleBar();
 
-        // static call to leave pointer to this frame
-        Sample.parentFrame = this;
-
         // oct 2014 reportsettings
         ReportSettings reportSettingsModel = superSample.getReportSettingsModel();
         if (reportSettingsModel != null) {
@@ -1206,7 +1214,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
      */
     private boolean saveSampleFileAs() throws BadLabDataException {
 
-        File selectedFile = theSample.saveSampleFileAs();
+        File selectedFile = theSample.saveSampleFileAs(myState.getMRUSampleFolderPath());
 
         if (selectedFile != null) {
             getMyState().updateMRUSampleList(selectedFile);
@@ -1257,9 +1265,9 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                 + theSample.getSampleAnalysisType()//
                 + " data");
 
-        // static call to leave pointer to this frame
-        Sample.parentFrame = this;
-
+//        // static call to leave pointer to this frame
+//        Sample.parentFrame = this;
+//
         // initialize sample with current user preferences
         theSample.setFractionDataOverriddenOnImport(
                 myState.getReduxPreferences().isFractionDataOverriddenOnImport());
@@ -1320,21 +1328,27 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         selectAllFractions_menuItem.setEnabled(false);
         deSelectAllFractions_menuItem.setEnabled(false);
 
-        for (final Aliquot a : theSample.getActiveAliquots()) {
+        theSample.getActiveAliquots().stream().map((a) -> {
             JMenuItem menuItem = aliquotsMenu.add(new JMenuItem(a.getAliquotName()));
-
             menuItem.addActionListener(new java.awt.event.ActionListener() {
                 @Override
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    theSample.editAliquotByNumber(((UPbReduxAliquot) a).getAliquotNumber());
+                    editAliquotByNumber(((UPbReduxAliquot) a).getAliquotNumber());
                 }
             });
-
+            return a;
+        }).map((_item) -> {
             aliquotsMenu.setEnabled(true);
+            return _item;
+        }).map((_item) -> {
             fractionsMenu.setEnabled(true);
+            return _item;
+        }).map((_item) -> {
             selectAllFractions_menuItem.setEnabled(true);
+            return _item;
+        }).forEach((_item) -> {
             deSelectAllFractions_menuItem.setEnabled(true);
-        }
+        });
     }
 
     private void customizeReduxSkin() {
@@ -3329,6 +3343,36 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
     }
 
     /**
+     *
+     * @param MRUreportSettingsModelFolder
+     * @return
+     */
+    public String setReportSettingsModelFromXMLFile(String MRUreportSettingsModelFolder) {
+
+        String retVal = MRUreportSettingsModelFolder;
+        String dialogTitle = "Select a Report Settings Model xml file to LOAD: *.xml";
+        final String fileExtension = ".xml";
+        FileFilter nonMacFileFilter = new XMLFileFilter();
+
+        File returnFile
+                = FileHelper.AllPlatformGetFile(//
+                        dialogTitle, //
+                        new File(MRUreportSettingsModelFolder), //
+                        fileExtension, nonMacFileFilter, false, this)[0];
+
+        if (returnFile != null) {
+            ReportSettings reportSettings = new ReportSettings();
+            try {
+                theSample.setReportSettingsModel((ReportSettings) reportSettings.readXMLObject(returnFile.getAbsolutePath(), true));
+                retVal = returnFile.getParent();
+            } catch (FileNotFoundException | ETException | BadOrMissingXMLSchemaException fileNotFoundException) {
+            }
+        }
+
+        return retVal;
+    }
+
+    /**
      * Method to be call when Import MC_ICPMS Excel File is selected
      *
      * @param evt
@@ -3353,7 +3397,7 @@ private void reportResultsTableAsStringsInExcel_menuItemActionPerformed(java.awt
 
 private void loadReportSettingsModelFromLocalXMLFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadReportSettingsModelFromLocalXMLFileActionPerformed
     myState.setMRUReportSettingsModelFolder(//
-            theSample.setReportSettingsModelFromXMLFile(myState.getMRUReportSettingsModelFolder()));
+            setReportSettingsModelFromXMLFile(myState.getMRUReportSettingsModelFolder()));
 
     updateReportTable(false);
 
@@ -3516,12 +3560,161 @@ private void startStopLiveUpdate_buttonActionPerformed(java.awt.event.ActionEven
 
     private synchronized void liveUpdateSample() {
         try {
-            theSample.automaticUpdateOfUPbSampleFolder();
+            theSample.automaticUpdateOfUPbSampleFolder(myFractionEditor);
         } catch (ETException ex) {
             new ETWarningDialog(ex).setVisible(true);
         }
 
         rebuildFractionDisplays(false);
+    }
+
+    /**
+     * opens aliquot modal editor for the <code>Fraction</code> indicated by
+     * argument <code>fraction</code> and opened to the editing tab indicated by
+     * argument <code>selectedTab</code>. <code>selectedTab</code> is valid only
+     * if it contains aliquot number between zero and seven inclusive.
+     *
+     * @pre the <code>Fraction</code> corresponding to <code>fraction</code>
+     * exists in this <code>Sample</code> and <code>selectedTab</code> is a
+     * valid tab number
+     * @post an editor for the specified <code>Fraction</code> is opened to the
+     * specified tab
+     *
+     * @param fraction the <code>Fraction</code> to be edited
+     * @param selectedTab the tab to open the editor to
+     */
+    @Override
+    public void editFraction(Fraction fraction, int selectedTab) {
+
+        // oct 2014
+        forceCloseOfSampleDateInterpretations();
+
+        Aliquot aliquot = theSample.getAliquotByNumber(((UPbFractionI) fraction).getAliquotNumber());
+        myFractionEditor = null;
+
+        String sampleType = theSample.getSampleType();
+        if (sampleType.equalsIgnoreCase(SampleTypesEnum.LEGACY.getName())
+                || (sampleType.equalsIgnoreCase(SampleTypesEnum.COMPILATION.getName())
+                && !fraction.getAnalysisMeasure(AnalysisMeasures.tracerMassInGrams.getName()).hasPositiveValue())//
+                || fraction.isLegacy()) {
+            myFractionEditor
+                    = new UPbLegacyFractionEditorDialog(
+                            this,
+                            true,
+                            aliquot,
+                            fraction,
+                            selectedTab,
+                            false);
+        } else if (theSample.getSampleAnalysisType().equalsIgnoreCase(SampleAnalysisTypesEnum.IDTIMS.getName())
+                || (sampleType.equalsIgnoreCase(SampleTypesEnum.COMPILATION.getName()))) {
+// TODO: Need kwiki page for LAICPMS               || (sampleType.equalsIgnoreCase(SampleTypesEnum.PROJECT.getName()))) {
+
+            myFractionEditor
+                    = new UPbFractionEditorDialog(
+                            this,
+                            true,
+                            aliquot,
+                            fraction,
+                            selectedTab,
+                            sampleType.equalsIgnoreCase(SampleTypesEnum.COMPILATION.getName()));
+        }
+
+        if (myFractionEditor != null) {
+            try {
+                myFractionEditor.setTitle(
+                        "Sample: "// 
+                        + theSample.getSampleName()// 
+                        + "   [Physical Constants: "//
+                        + theSample.getPhysicalConstantsModel().getNameAndVersion() + "]");
+
+            } catch (BadLabDataException badLabDataException) {
+            }
+
+            myFractionEditor.setVisible(true);
+
+            // post-process the editor's results
+            theSample.setChanged(theSample.isChanged() || ((UPbFractionI) fraction).isChanged());
+            // feb 2010
+            if (theSample.isChanged()) {
+                theSample.saveTheSampleAsSerializedReduxFile();
+            }
+
+            if (((UPbFractionI) fraction).isDeleted()) {
+                theSample.removeUPbReduxFraction(fraction);
+            }
+
+            // these statements release editor and prevent livwWorkflow from backtracking as it must do
+            // if navigating fractions while staying open
+            myFractionEditor.dispose();
+            myFractionEditor = null;
+        }
+
+    }
+
+    /**
+     * opens aliquot modal editor for the </code>Aliquot</code> specified by
+     * <code>aliquotNum</code>. The <code>Aliquot</code>'s
+     * <code>Fractions</code> are populated on the fly.
+     *
+     * @pre an <code>Aliquot</code> exists with the number specified by argument
+     * <code>aliquotNum</code>
+     * @post an editor for the specified <code>Aliquot</code> is opened
+     *
+     * @param aliquotNum the number of the <code>Aliquot</code> to be edited
+     */
+    public void editAliquotByNumber(int aliquotNum) {
+
+        // added march 2009 so that changes to fraction tab are saved upon use of aliquot button
+        theSample.saveTheSampleAsSerializedReduxFile();
+
+        editAliquot(theSample.getAliquotByNumber(aliquotNum));
+    }
+
+    /**
+     *
+     * @param aliquot
+     */
+    public void editAliquot(Aliquot aliquot) {
+        DialogEditor myEditor = null;
+
+        String sampleType = theSample.getSampleType();
+        String sampleAnalysisType = theSample.getSampleAnalysisType();
+
+        if (sampleType.equalsIgnoreCase(SampleTypesEnum.PROJECT.getName())) {
+            // do nothing for now
+            myEditor = new AliquotLegacyEditorForLAICPMS(this, true, theSample, aliquot);
+        } else if (sampleType.equalsIgnoreCase(SampleTypesEnum.LEGACY.getName())//
+                && sampleAnalysisType.equalsIgnoreCase(SampleAnalysisTypesEnum.IDTIMS.getName())) {
+            // May 2010 backward compatibility
+            ((UPbReduxAliquot) aliquot).setCompiled(false);
+            myEditor = new AliquotLegacyEditorForIDTIMS(this, true, theSample, aliquot);
+
+        } else if (sampleType.equalsIgnoreCase(SampleTypesEnum.LEGACY.getName()) //
+                && sampleAnalysisType.toUpperCase().startsWith(SampleAnalysisTypesEnum.LAICPMS.getName())) {
+            // May 2010 backward compatibility
+            ((UPbReduxAliquot) aliquot).setCompiled(false);
+            myEditor = new AliquotLegacyEditorForLAICPMS(this, true, theSample, aliquot);
+
+            // oct 2014 
+        } else if (sampleType.equalsIgnoreCase(SampleTypesEnum.LEGACY.getName()) //
+                && sampleAnalysisType.toUpperCase().startsWith(SampleAnalysisTypesEnum.LASS.getName())) {
+            // May 2010 backward compatibility
+            ((UPbReduxAliquot) aliquot).setCompiled(false);
+            myEditor = new AliquotLegacyEditorForLAICPMS(this, true, theSample, aliquot);
+
+        } else if (sampleType.equalsIgnoreCase(SampleTypesEnum.ANALYSIS.getName()) //
+                && sampleAnalysisType.toUpperCase().startsWith(SampleAnalysisTypesEnum.LAICPMS.getName())) {
+            // June 2013 temp for project samples from Tripolized LAICPMS
+            ((UPbReduxAliquot) aliquot).setCompiled(false);
+            myEditor = new AliquotEditorForLAICPMS(this, true, theSample, aliquot);
+
+        } else {
+            myEditor = new AliquotEditorDialog(this, true, theSample, aliquot);
+        }
+
+        JDialog.setDefaultLookAndFeelDecorated(true);
+
+        myEditor.setVisible(true);
     }
 
 private void ID_TIMSLegacyAnalysis_MIT_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ID_TIMSLegacyAnalysis_MIT_menuItemActionPerformed

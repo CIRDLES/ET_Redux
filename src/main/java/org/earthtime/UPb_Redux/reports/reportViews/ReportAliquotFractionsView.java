@@ -1076,7 +1076,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                                 notesDialog.setLocation(parentFrame.getX() + 300, parentFrame.getY() + 300);
                                 notesDialog.setVisible(true);
                             } else {
-                                sample.editUPbFraction(((Fraction) verticalPixelFractionMap.get(row).rowObject), 8);// kwikitab
+                                parentFrame.editFraction(((Fraction) verticalPixelFractionMap.get(row).rowObject), 8);// kwikitab
                                 updateReportTable(false);
                             }
                         } else {
@@ -1090,7 +1090,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                     if (fractionOrAliquot instanceof Aliquot) {
 
                         if (e.getModifiers() == InputEvent.BUTTON1_MASK) {
-                            sample.editAliquot(((Aliquot) verticalPixelFractionMap.get(row).rowObject));
+                            parentFrame.editAliquot(((Aliquot) verticalPixelFractionMap.get(row).rowObject));
                         } else {
                             sample.toggleAliquotFractionsRejectedStatus(((UPbReduxAliquot) verticalPixelFractionMap.get(row).rowObject));
                             parent.updateReportTable(false);

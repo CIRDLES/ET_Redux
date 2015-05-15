@@ -2089,7 +2089,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
             String importFolder = null;
             try {
                 importFolder = //
-                        getMySample().importUPbFractionXMLDataFiles(
+getMySample().importFractionXMLDataFiles(
                                 getImportedXMLFractionsFolder(), aliquotNumber, true);
             } catch (FileNotFoundException fileNotFoundException) {
             } catch (BadLabDataException ex) {
@@ -2236,7 +2236,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
                 sampleFile = new File(mySample.getReduxSampleFilePath());
             } else {
                 try {
-                    sampleFile = mySample.saveSampleFileAs();
+                    sampleFile = mySample.saveSampleFileAs(((ETReduxFrame)parentFrame).getMyState().getMRUSampleFolderPath());
                     setSampleFolder(new File(sampleFile.getParent()));
                 } catch (BadLabDataException ex) {
                     new ETWarningDialog(ex).setVisible(true);
@@ -2275,7 +2275,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
                 sampleFile = new File(mySample.getReduxSampleFilePath());
             } else {
                 try {
-                    sampleFile = mySample.saveSampleFileAs();
+                    sampleFile = mySample.saveSampleFileAs(((ETReduxFrame)parentFrame).getMyState().getMRUSampleFolderPath());
                     try {
                         setSampleFolder(new File(sampleFile.getParent()));
                     } catch (Exception e) {

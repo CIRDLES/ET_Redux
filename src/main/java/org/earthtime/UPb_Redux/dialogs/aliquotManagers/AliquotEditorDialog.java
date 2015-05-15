@@ -1919,7 +1919,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
                 saveAliquot();
                 saveAliquotFraction(fraction);
                 saveFractionArchivingData(fraction);
-                getSample().editUPbFraction(getFraction(), 8);
+                parent.editFraction(getFraction(), 8);
                 updateFractionRow(
                         fraction, getMyAliquot().getAliquotFractions().indexOf(fraction));
             }
