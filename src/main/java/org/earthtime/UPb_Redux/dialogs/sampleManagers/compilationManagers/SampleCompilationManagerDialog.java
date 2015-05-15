@@ -41,6 +41,7 @@ import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
 import org.earthtime.archivingTools.IEDACredentialsValidator;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
+import org.earthtime.samples.SampleInterface;
 import org.earthtime.xmlUtilities.XMLSerializationI;
 
 /**
@@ -297,7 +298,7 @@ public class SampleCompilationManagerDialog extends DialogEditor {
             if (myDownAliquot != null) {
                 // xml is added here for consistency and because we test whether aliquot source file is xml ... probably
                 // should get rid of xml test and just make it aliquot non-zero length string
-                mySample.processXMLAliquot(myDownAliquot, "GeochronDownloadOfAliquot_" + aliquotIGSN.toUpperCase().trim() + ".xml");
+                SampleInterface.importXMLAliquot(mySample, myDownAliquot, "GeochronDownloadOfAliquot_" + aliquotIGSN.toUpperCase().trim() + ".xml");
                 System.out.println("got one " + myDownAliquot.getAnalystName());
             } else {
                 return "Missing (or private) aliquot: " + aliquotIGSN;

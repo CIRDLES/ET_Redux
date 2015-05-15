@@ -699,7 +699,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
      * @param performReduction
      */
     public void setUpTheProject(boolean performReduction) {
-        theSample.registerSampleWithLabData(myLabData);
+        SampleInterface.registerSampleWithLabData(theSample, myLabData);
 
         SampleInterface superSample = theProject.getSuperSample();
 
@@ -3303,7 +3303,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         if (theSample != null) {
 
             // oct 2014 per bug report by Matt Rioux email
-            theSample.updateAndSaveSampleDateModelsByAliquot();
+            SampleInterface.updateAndSaveSampleDateModelsByAliquot(theSample);
 
             theSample.saveTheSampleAsSerializedReduxFile();
             myWeightedMeanGraphPanel

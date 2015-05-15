@@ -74,6 +74,7 @@ import org.earthtime.dataDictionaries.SampleRegistries;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
+import org.earthtime.samples.SampleInterface;
 import org.earthtime.utilities.FileHelper;
 import org.jdesktop.layout.GroupLayout.ParallelGroup;
 import org.jdesktop.layout.GroupLayout.SequentialGroup;
@@ -2214,7 +2215,7 @@ getMySample().importFractionXMLDataFiles(
         }
 
         // dec 2011 update sample date models
-        mySample.updateAndSaveSampleDateModelsByAliquot();
+        SampleInterface.updateAndSaveSampleDateModelsByAliquot(mySample);
 
         close();
     }

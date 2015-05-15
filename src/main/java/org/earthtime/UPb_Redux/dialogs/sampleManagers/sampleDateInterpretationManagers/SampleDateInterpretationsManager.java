@@ -88,6 +88,7 @@ import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
+import org.earthtime.samples.SampleInterface;
 import org.earthtime.utilities.CollectionHelpers;
 import org.earthtime.utilities.FileHelper;
 
@@ -2624,7 +2625,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                     ToggleAliquotFractionByName(//
                             temp[0].trim()));//,
 
-            sample.updateAndSaveSampleDateModelsByAliquot();
+            SampleInterface.updateAndSaveSampleDateModelsByAliquot(sample);
 
             if (graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab("Concordia")) {
                 // now redraw the sample age from the aliquot view

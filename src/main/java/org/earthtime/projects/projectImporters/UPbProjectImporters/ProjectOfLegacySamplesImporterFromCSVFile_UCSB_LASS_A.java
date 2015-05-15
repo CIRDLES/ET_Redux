@@ -93,8 +93,7 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_UCSB_LASS_A extends Abstr
                     // process existing if not first;
                     if ((currentSample != null) && (currentAliquot != null)) {
                         // this forces population of aliquot fractions
-                        ((Sample) project.getSuperSample())//
-                                .importAliquotFromAnotherSample(currentSample.getAliquotByName(currentAliquot.getAliquotName()));
+                        SampleInterface.copyAliquotIntoSample(currentSample.getAliquotByName(currentAliquot.getAliquotName()), project.getSuperSample());
                     }
 
                     if (readingFractions) {
@@ -310,16 +309,13 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_UCSB_LASS_A extends Abstr
                     traceElementProcessor(TraceElements.Yb.getName(), myFraction, myFractionData, 54);
                     traceElementProcessor(TraceElements.Lu.getName(), myFraction, myFractionData, 55);
                     traceElementProcessor(TraceElements.Hf.getName(), myFraction, myFractionData, 56);
-
                 }
-
             }
 
             // end of file
             if ((currentSample != null) && (currentAliquot != null)) {
                 // this forces population of aliquot fractions
-                ((Sample) project.getSuperSample())//
-                        .importAliquotFromAnotherSample(currentSample.getAliquotByName(currentAliquot.getAliquotName()));
+                SampleInterface.copyAliquotIntoSample(currentSample.getAliquotByName(currentAliquot.getAliquotName()), project.getSuperSample());
             }
         }
 

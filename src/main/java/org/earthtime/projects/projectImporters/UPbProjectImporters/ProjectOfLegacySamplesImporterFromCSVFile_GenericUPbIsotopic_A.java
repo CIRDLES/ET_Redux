@@ -95,7 +95,7 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_GenericUPbIsotopic_A exte
                     // process existing if not first;
                     if ((currentSample != null) && (currentAliquot != null)) {
                         // this forces population of aliquot fractions
-                        ((Sample) project.getSuperSample()).importAliquotFromAnotherSample(((Sample) currentSample).getAliquotByName(currentAliquot.getAliquotName()));
+                        SampleInterface.copyAliquotIntoSample(currentSample.getAliquotByName(currentAliquot.getAliquotName()), project.getSuperSample());
                         currentSample = null;
                     }
                 }
@@ -116,7 +116,7 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_GenericUPbIsotopic_A exte
                         // process existing if not first;
                         if ((currentSample != null) && (currentAliquot != null)) {
                             // this forces population of aliquot fractions
-                            ((Sample) project.getSuperSample()).importAliquotFromAnotherSample(((Sample) currentSample).getAliquotByName(currentAliquot.getAliquotName()));
+                            SampleInterface.copyAliquotIntoSample(currentSample.getAliquotByName(currentAliquot.getAliquotName()), project.getSuperSample());
                             currentSample = null;
                         }
 
@@ -279,7 +279,7 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_GenericUPbIsotopic_A exte
             // process existing if not first;
             if ((currentSample != null) && (currentAliquot != null)) {
                 // this forces population of aliquot fractions
-                ((Sample) project.getSuperSample()).importAliquotFromAnotherSample(currentSample.getAliquotByName(currentAliquot.getAliquotName()));
+                SampleInterface.copyAliquotIntoSample(currentSample.getAliquotByName(currentAliquot.getAliquotName()), project.getSuperSample());
                 // april 2014
                 project.setProjectSamples(projectSamples);
 

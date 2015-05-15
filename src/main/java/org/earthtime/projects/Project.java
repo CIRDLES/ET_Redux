@@ -214,7 +214,7 @@ public class Project implements
                             SampleTypesEnum.ANALYSIS.getName(), //
                             SampleAnalysisTypesEnum.LAICPMS.getName(), //
                             ReduxLabData.getInstance(), //
-                            analysisPurpose);//   ReduxConstants.ANALYSIS_PURPOSE.DetritalSpectrum );
+                            analysisPurpose);
 
                     projectSamples.add(sample);
 
@@ -237,7 +237,7 @@ public class Project implements
                     }
 
                     // this forces aliquot fraction population
-                    ((Sample) compiledSuperSample).importAliquotFromAnotherSample(sample.getAliquotByName(aliquot.getAliquotName()));
+                    SampleInterface.copyAliquotIntoSample(sample.getAliquotByName(aliquot.getAliquotName()), compiledSuperSample);
 
                     aliquot.setAnalysisPurpose(analysisPurpose);
                     // TODO: Enum of inst methods

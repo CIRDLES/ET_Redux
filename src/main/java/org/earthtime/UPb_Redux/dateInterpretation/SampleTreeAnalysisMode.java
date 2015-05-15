@@ -35,6 +35,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import org.earthtime.UPb_Redux.aliquots.Aliquot;
+import org.earthtime.UPb_Redux.aliquots.AliquotI;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.customJTrees.CheckBoxNode;
 import org.earthtime.UPb_Redux.customJTrees.CheckBoxNodeEditor;
@@ -47,6 +48,7 @@ import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
+import org.earthtime.samples.SampleInterface;
 
 /**
  *
@@ -440,7 +442,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
 
                         }
 
-                        sample.updateAndSaveSampleDateModelsByAliquot();
+                        SampleInterface.updateAndSaveSampleDateModelsByAliquot(sample);
 
                         int[] newNodes = new int[tempNewNodes.size()];
                         for (int i = 0; i < tempNewNodes.size(); i++) {
@@ -470,19 +472,16 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
                     JPopupMenu popup = new JPopupMenu();
 
                     JMenuItem menuItem = new JMenuItem("Set as Preferred Sample Date Interpretation");
-                    menuItem.addActionListener(new ActionListener() {
-
-                        public void actionPerformed(ActionEvent arg0) {
-                            DefaultMutableTreeNode parentNode
-                                    = (DefaultMutableTreeNode) ((DefaultMutableTreeNode) node).getParent();
-                            Object parentNodeInfo = parentNode.getUserObject();
-                            ((Aliquot) parentNodeInfo).setPreferredSampleDateModel((ValueModel) nodeInfo);
-                            sample.updateAndSaveSampleDateModelsByAliquot();
-
-                            // fix tree
-                            ((DefaultTreeModel) getModel()).nodeChanged(node);
-                            getSampleTreeChange().sampleTreeChangeAnalysisMode(node);
-                        }
+                    menuItem.addActionListener((ActionEvent arg0) -> {
+                        DefaultMutableTreeNode parentNode
+                                = (DefaultMutableTreeNode) node.getParent();
+                        Object parentNodeInfo = parentNode.getUserObject();
+                        ((Aliquot) parentNodeInfo).setPreferredSampleDateModel((ValueModel) nodeInfo);
+                        SampleInterface.updateAndSaveSampleDateModelsByAliquot(sample);
+                        
+                        // fix tree
+                        ((DefaultTreeModel) getModel()).nodeChanged(node);
+                        getSampleTreeChange().sampleTreeChangeAnalysisMode(node);
                     });
                     popup.add(menuItem);
                     menuItem = new JMenuItem("Delete Sample Date Interpretation");
@@ -504,7 +503,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
                             // May 2010 rework logic for when upper is preferred (i.e. intercepts in either order)
                             if (((SampleDateModel) nodeInfo).getMethodName().equalsIgnoreCase("LowerIntercept")//
                                     || ((SampleDateModel) nodeInfo).getMethodName().equalsIgnoreCase("UpperIntercept")) {
-                                DefaultMutableTreeNode previousInterceptNode = ((DefaultMutableTreeNode) node).getPreviousSibling();
+                                DefaultMutableTreeNode previousInterceptNode = node.getPreviousSibling();
                                 DefaultMutableTreeNode nextInterceptNode = ((DefaultMutableTreeNode) node).getNextSibling();
 
                                 if (previousInterceptNode != null) {
@@ -523,7 +522,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
                                         indicesOfIntercepts[0] = aliquotNode.getIndex(node);
                                         nodesOfIntercepts[0] = node;
                                         indicesOfIntercepts[1] = indicesOfIntercepts[0] + 1;
-                                        nodesOfIntercepts[1] = ((DefaultMutableTreeNode) node).getNextSibling();
+                                        nodesOfIntercepts[1] = node.getNextSibling();
                                     } catch (Exception e) {
                                     }
                                 }
@@ -531,9 +530,9 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
 
                             if (otherInterceptNodeInfo != null) {
                                 // this is the special case where the two intercept nodes were removed
-                                ((Aliquot) aliquotNodeInfo).getSampleDateModels().remove((ValueModel) nodeInfo);
-                                ((Aliquot) aliquotNodeInfo).getSampleDateModels().remove((ValueModel) otherInterceptNodeInfo);
-                                sample.updateAndSaveSampleDateModelsByAliquot();
+                                ((AliquotI) aliquotNodeInfo).getSampleDateModels().remove((ValueModel) nodeInfo);
+                                ((AliquotI) aliquotNodeInfo).getSampleDateModels().remove((ValueModel) otherInterceptNodeInfo);
+                                SampleInterface.updateAndSaveSampleDateModelsByAliquot(sample);
 
                                 // fix up tree
                                 aliquotNode.remove(nodesOfIntercepts[0]);
@@ -545,7 +544,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
                             } else {
 
                                 ((Aliquot) aliquotNodeInfo).getSampleDateModels().remove((ValueModel) nodeInfo);
-                                sample.updateAndSaveSampleDateModelsByAliquot();
+                                SampleInterface.updateAndSaveSampleDateModelsByAliquot(sample);
 
                                 // fix up tree
                                 int indexOfNode = aliquotNode.getIndex(node);
@@ -588,7 +587,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
                                 ((SampleDateModel) SampleDateNodeInfo).//
                                         setIncludedFractionIDsVector(new Vector<String>());
 
-                                sample.updateAndSaveSampleDateModelsByAliquot();
+                                SampleInterface.updateAndSaveSampleDateModelsByAliquot(sample);
 
                                 // fix tree
                                 for (int c = 0; c < node.getChildCount(); c++) {
@@ -612,9 +611,9 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
 
                             public void actionPerformed(ActionEvent arg0) {
                                 DefaultMutableTreeNode sampleDateNode = //
-                                        (DefaultMutableTreeNode) ((DefaultMutableTreeNode) node).getParent();
+                                        (DefaultMutableTreeNode) node.getParent();
                                 DefaultMutableTreeNode aliquotNode = //
-                                        (DefaultMutableTreeNode) ((DefaultMutableTreeNode) sampleDateNode).getParent();
+                                        (DefaultMutableTreeNode) sampleDateNode.getParent();
 
                                 Object SampleDateNodeInfo = sampleDateNode.getUserObject();
                                 Object AliquotNodeInfo = aliquotNode.getUserObject();
@@ -623,7 +622,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
                                         setIncludedFractionIDsVector(//
                                                 ((UPbReduxAliquot) AliquotNodeInfo).getAliquotFractionIDs());
 
-                                sample.updateAndSaveSampleDateModelsByAliquot();
+                                SampleInterface.updateAndSaveSampleDateModelsByAliquot(sample);
 
                                 // fix tree
                                 for (int c = 0; c < node.getChildCount(); c++) {

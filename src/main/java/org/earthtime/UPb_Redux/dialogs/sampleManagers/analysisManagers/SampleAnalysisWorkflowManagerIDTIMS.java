@@ -88,6 +88,7 @@ import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.initialPbModelsET.InitialPbModelET;
 import org.earthtime.ratioDataModels.initialPbModelsET.StaceyKramersInitialPbModelET;
+import org.earthtime.samples.SampleInterface;
 import org.earthtime.utilities.FileHelper;
 import org.jdesktop.layout.GroupLayout.ParallelGroup;
 import org.jdesktop.layout.GroupLayout.SequentialGroup;
@@ -2253,7 +2254,7 @@ getMySample().importFractionXMLDataFiles(
         }
 
         // dec 2011 update sample date models
-        mySample.updateAndSaveSampleDateModelsByAliquot();
+        SampleInterface.updateAndSaveSampleDateModelsByAliquot(mySample);
 
         close();
     }

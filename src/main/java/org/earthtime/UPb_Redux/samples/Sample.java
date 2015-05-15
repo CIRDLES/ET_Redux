@@ -48,11 +48,9 @@ import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.filters.FractionXMLFileFilter;
 import org.earthtime.UPb_Redux.filters.ReduxFileFilter;
 import org.earthtime.UPb_Redux.filters.XMLFileFilter;
-import org.earthtime.UPb_Redux.fractions.AnalysisFraction;
 import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
-import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLAICPMSFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLegacyFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.UPbFractionReducer;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
@@ -311,7 +309,6 @@ public class Sample implements
             analyzed = true;
         } else if (sampleType.equalsIgnoreCase(SampleTypesEnum.COMPILATION.getName())) {
             sampleName = "COMPILED SAMPLE";
-            //analyzed = false;//true;
         } else if (sampleType.equalsIgnoreCase("NONE")) {
             sampleName = "NONE";
         } else if (sampleType.equalsIgnoreCase(SampleTypesEnum.LIVEWORKFLOW.getName())) {
@@ -357,7 +354,7 @@ public class Sample implements
         updateWithRegistrySampleIGSN();
 
         if (!isTypeLegacy()) {
-            registerSampleWithLabData(myLabData);
+            SampleInterface.registerSampleWithLabData(this, myLabData);
         } else {
             setMyReduxLabData(myLabData);
 
@@ -822,186 +819,6 @@ public class Sample implements
     }
 
     /**
-     *
-     * @param aliquot
-     */
-    public void importAliquotFromAnotherSample(Aliquot aliquot) {
-        Aliquot importedAliquot = new UPbReduxAliquot();
-
-        // aliquot numbering is 1-based
-        int aliquotNumber = aliquots.size() + 1;
-
-        ((UPbReduxAliquot) importedAliquot).setAliquotNumber(aliquotNumber);
-        ((UPbReduxAliquot) importedAliquot).setMyReduxLabData(ReduxLabData.getInstance());
-        ((UPbReduxAliquot) importedAliquot).setCompiled(false);
-
-        // prepend filename of sample to aliquot
-        importedAliquot.setAliquotName(//
-                ((UPbReduxAliquot) aliquot).getAliquotFractions().get(0).getSampleName().trim()//
-                + "::"//
-                + aliquot.getAliquotName());
-
-        ((UPbReduxAliquot) importedAliquot).setAliquotFractions(new Vector<Fraction>());
-
-        Iterator<Fraction> aliquotFractionIterator = ((UPbReduxAliquot) aliquot).getAliquotFractions().iterator();
-        while (aliquotFractionIterator.hasNext()) {
-            Fraction fraction = aliquotFractionIterator.next();
-
-            Fraction nextFraction = new UPbLAICPMSFraction(
-                    aliquotNumber,
-                    fraction);
-
-            ((UPbFractionI) fraction).setAliquotNumber(aliquotNumber);
-            ((UPbReduxAliquot) importedAliquot).getAliquotFractions().add(fraction);
-
-            UPbFractions.add(fraction);
-        }
-
-        aliquots.add(importedAliquot);
-    }
-
-    /**
-     * reads in data from the XML file specified by argument
-     * <code>aliquotFile</code> and adds any <code>Aliquots</code> found in the
-     * file to this <code>Sample</code>.
-     *
-     * @param aliquot
-     * @param aliquotSource
-     * @pre file specified by <code>aliquotFile</code> is an XML file containing
-     * valid <code>Aliquots</code>
-     * @post all <code>Aliquots</code> found in the file are added to this
-     * <code>Sample</code>
-     * @throws java.io.IOException IOException
-     * @throws org.earthtime.XMLExceptions.ETException ETException
-     * @throws org.earthtime.UPb_Redux.exceptions.BadLabDataException
-     * BadLabDataException
-     */
-    @Override
-    public void processXMLAliquot(Aliquot aliquot, String aliquotSource)
-            throws IOException,
-            ETException,
-            BadLabDataException {
-
-        // aliquot numbering is 1-based
-        int aliquotNumber = aliquots.size() + 1;
-
-        ((UPbReduxAliquot) aliquot).setAliquotNumber(aliquotNumber);
-        ((UPbReduxAliquot) aliquot).setMyReduxLabData(ReduxLabData.getInstance());
-        ((UPbReduxAliquot) aliquot).setCompiled(true);
-
-        // prepend filename of sample to aliquot
-        aliquot.setAliquotName(//
-                aliquot.getAnalysisFractions().get(0).getSampleName().trim()//
-                + "::"//
-                + aliquot.getAliquotName());
-
-        ((UPbReduxAliquot) aliquot).setAliquotFractions(new Vector<Fraction>());
-
-        // jan 2015 this needs reworking to detect the type of fraction coming in
-        // for now we will assume an aliquot has all the same type of fraction
-        // in terms of instrumentalmethod
-        Iterator aliquotFractionIterator = aliquot.getAnalysisFractions().iterator();
-
-        if (aliquot.usesIDTIMS()) {
-            while (aliquotFractionIterator.hasNext()) {
-                // convert analysisFraction to UPbReduxFraction
-                AnalysisFraction fraction = (AnalysisFraction) aliquotFractionIterator.next();
-
-                // identify tracer and pbBlank
-                AbstractRatiosDataModel tracer = aliquot.getATracer(fraction.getTracerID());
-                if (tracer == null) {
-                    tracer = getMyReduxLabData().getNoneTracer();
-                }
-                AbstractRatiosDataModel pbBlank = aliquot.getAPbBlank(fraction.getPbBlankID());
-                if (pbBlank == null) {
-                    pbBlank = getMyReduxLabData().getNonePbBlankModel();
-                }
-
-                // aug 2010 set initialPbModel
-                if (fraction.getInitialPbModel() == null) {
-                    // model ReduxConstants.NONE
-                    fraction.setInitialPbModel(getMyReduxLabData().getNoneInitialPbModel());
-                }
-
-                Fraction nextFraction = null;
-                if (fraction.isLegacy()) {
-                    nextFraction = new UPbLegacyFraction(
-                            aliquotNumber,
-                            fraction);
-                } else {
-                    nextFraction = new UPbFraction(
-                            aliquotNumber,
-                            fraction,
-                            getMyReduxLabData(),
-                            tracer,
-                            pbBlank);
-
-                    // aug 2010 we need to reset mean alphas if fractionation corrected
-                    if (fraction.isFractionationCorrectedPb()) {
-                        ((UPbFraction) nextFraction).setMeanAlphaPb(fraction.getAnalysisMeasure(AnalysisMeasures.alphaPb.getName()).getValue());
-                    }
-
-                    if (fraction.isFractionationCorrectedU()) {
-                        ((UPbFraction) nextFraction).setMeanAlphaU(fraction.getAnalysisMeasure(AnalysisMeasures.alphaU.getName()).getValue());
-                    }
-
-                    // aug 2010 refine the source info for compiled fractions
-                    ((UPbFraction) nextFraction).setSourceFilePb(aliquotSource);
-                    ((UPbFraction) nextFraction).setSourceFileU(aliquotSource);
-
-                }
-
-                ValueModel alphaPbModel = aliquot.getAnAlphaPbModel(fraction.getAlphaPbModelID());
-                if (alphaPbModel == null) {
-                    alphaPbModel = myReduxLabData.getNoneAlphaPbModel();
-                    nextFraction.setAlphaPbModelID(alphaPbModel.getName());
-                }
-
-                ValueModel alphaUModel = aliquot.getAnAlphaUModel(fraction.getAlphaUModelID());
-                if (alphaUModel == null) {
-                    alphaUModel = myReduxLabData.getFirstAlphaUModel();
-                    nextFraction.setAlphaUModelID(alphaUModel.getName());
-                }
-
-                ((UPbFractionI) nextFraction).setAlphaPbModel(alphaPbModel);
-                ((UPbFractionI) nextFraction).setAlphaUModel(alphaUModel);
-
-                ((UPbFractionI) nextFraction).setPhysicalConstantsModel(aliquot.getPhysicalConstants());// was sample.getphys...
-
-                ((UPbReduxAliquot) aliquot).getAliquotFractions().add(nextFraction);
-
-                getFractions().add(nextFraction);
-            }
-
-        } else if (aliquot.usesMCIPMS()) {
-            while (aliquotFractionIterator.hasNext()) {
-                // convert analysisFraction to UPbReduxFraction
-                AnalysisFraction fraction = (AnalysisFraction) aliquotFractionIterator.next();
-
-                Fraction nextFraction = null;
-                if (fraction.isLegacy()) {
-                    nextFraction = new UPbLegacyFraction(
-                            aliquotNumber,
-                            fraction);
-                } else {
-                    nextFraction = new UPbLAICPMSFraction(
-                            aliquotNumber,
-                            fraction,
-                            getMyReduxLabData());
-                }
-
-                ((UPbFractionI) nextFraction).setPhysicalConstantsModel(aliquot.getPhysicalConstants());// was sample.getphys...
-
-                ((UPbReduxAliquot) aliquot).getAliquotFractions().add(nextFraction);
-
-                getFractions().add(nextFraction);
-            }
-        }
-        aliquots.add(aliquot);
-        setChanged(false);
-    }
-
-    /**
      * reads in data from the XML file specified by argument
      * <code>fractionFile</code> and adds any <code>Fractions</code> found in
      * the file to this <code>Sample</code> under the <code>Aliquot</code>
@@ -1186,7 +1003,7 @@ public class Sample implements
                         = (Aliquot) ((XMLSerializationI) aliquotFromFile).readXMLObject(
                                 aliquotFile.getCanonicalPath(), true);
 
-                processXMLAliquot(aliquotFromFile, aliquotFile.getName());
+                SampleInterface.importXMLAliquot(this, aliquotFromFile, aliquotFile.getName());
             } catch (ETException ex) {
             } finally {
                 // return folder for persistent state even if fails
@@ -1507,41 +1324,6 @@ public class Sample implements
     }
 
     /**
-     * sets <code>ReduxLabData</code> of this <code>Sample</code> and all
-     * <code>Aliquots</code> and <code>Fractions</code> contained within to the
-     * argument <code>labData</code>.
-     *
-     * @pre argument      <code>labData</code> is valid <code>ReduxLabData</code>
-     * @post <code>ReduxLabData</code> of this <code>Sample</code> and all of
-     * its <code>Aliquots</code> and <code>Fractions</code> is set to argument
-     * <code>labData</code>
-     *
-     * @param labData value to which this <code>Sample</code> and its
-     * <code>Aliquots</code> and <code>Fractions</code> should be set to
-     */
-    public void registerSampleWithLabData(ReduxLabData labData) {
-
-        setMyReduxLabData(labData);
-
-        // register incoming models - by file - with lab data
-        // TODO verify names and contents align
-        for (int UPbFractionsIndex = 0; UPbFractionsIndex
-                < getFractions().size(); UPbFractionsIndex++) {
-            Fraction nextFraction = getFractions().get(UPbFractionsIndex);
-            if (!nextFraction.isLegacy()) {
-                labData.registerFractionWithLabData(nextFraction);
-            }
-        }
-
-        for (Aliquot a : getActiveAliquots()) {
-            for (AbstractRatiosDataModel msm : a.getMineralStandardModels()) {
-                labData.registerMineralStandardModel(msm, false);
-            }
-
-        }
-    }
-
-    /**
      *
      */
     public void updateSampleLabName() {
@@ -1558,29 +1340,6 @@ public class Sample implements
         for (int i = 0; i
                 < getFractions().size(); i++) {
             getFractions().get(i).setSampleName(sampleName);
-        }
-
-    }
-
-    /**
-     * removes <code>Fractions</code> from this <code>Sample</code>'s sample age
-     * models that are no longer aliquot part of this <code>Sample</code>'s
-     * <code>Aliquots</code>.
-     *
-     * @pre this <code>Sample</code> exists
-     * @post any <code>Fractions</code> that are found in this
-     * <code>Sample</code>'s sample age models that are no longer a part of this
-     * <code>Sample</code>'s <code>Aliquots</code> are removed
-     */
-    @Override
-    public final void updateAndSaveSampleDateModelsByAliquot() {
-        // May 2008
-        // process all sampleAgeModels' included fraction vectors to remove missing aliquotFractionFiles
-        for (Aliquot nextAliquot : aliquots) {
-            // may 2012 next line to force reduction
-            ((UPbReduxAliquot) nextAliquot).reduceData();
-
-            nextAliquot.updateSampleDateModels();
         }
 
     }

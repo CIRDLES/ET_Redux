@@ -12,26 +12,22 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package org.earthtime.UPb_Redux.samples;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import org.earthtime.UPb_Redux.aliquots.Aliquot;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.Fraction;
-import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.user.SampleDateInterpretationGUIOptions;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
 import org.earthtime.exceptions.ETException;
 
-
 /**
  * Any class that implements <code>Sample</code> should contain all of the
- * scientific data related to that geological sample as well as the
- * additional methods to manipulate this data.
- * 
+ * scientific data related to that geological sample as well as the additional
+ * methods to manipulate this data.
+ *
  * @author Stan Gasque
  */
 public interface UPbSampleInterface {
@@ -40,16 +36,18 @@ public interface UPbSampleInterface {
      * imports all <code>Aliquots</code> found in the XML file specified by
      * argument <code>location</code> to this <code>Sample</code>.
      *
-     * @pre     argument <code>location</code> specifies an XML file containing
+     * @pre argument <code>location</code> specifies an XML file containing
      * valid <code>Aliquots</code>
-     * @post    all <code>Aliquots</code> found in the file are added to this
+     * @post all <code>Aliquots</code> found in the file are added to this
      * <code>Sample</code>
-     * @param   location    the file to read data from
+     * @param location the file to read data from
      * @return  <code>String</code> - parent of the file that was read
-     * @throws  java.io.FileNotFoundException                               FileNotFoundException
-     * @throws  org.earthtime.UPb_Redux.exceptions.BadLabDataException      BadLabDataException
-     * @throws  java.io.IOException                                         IOException
-     * @throws  org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException  BadOrMissingXMLSchemaException
+     * @throws java.io.FileNotFoundException FileNotFoundException
+     * @throws org.earthtime.UPb_Redux.exceptions.BadLabDataException
+     * BadLabDataException
+     * @throws java.io.IOException IOException
+     * @throws org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException
+     * BadOrMissingXMLSchemaException
      */
     String importAliquotLocalXMLDataFile(File location) throws FileNotFoundException, BadLabDataException, IOException, BadOrMissingXMLSchemaException;
 
@@ -58,49 +56,41 @@ public interface UPbSampleInterface {
      * argument <code>location</code> to the <code>Aliquot</code> specified by
      * argument <code>aliquotNumber</code> in this <code>Sample</code>
      *
-     * @pre     argument <code>location</code> specifies an XML file containing
+     * @pre argument <code>location</code> specifies an XML file containing
      * valid <code>UPbFractions</code>
-     * @post    all <code>UPbFractions</code> found in the file are added to the
-     * <code>Aliquot</code> specified by <code>aliquotNumber</code> in
-     * this <code>Sample</code>
-     * @param   location        the file to read data from
-     * @param   aliquotNumber   the number of the <code>Aliquot</code> which
-     * the <code>Fractions</code> belong to
-     * @param doValidate 
+     * @post all <code>UPbFractions</code> found in the file are added to the
+     * <code>Aliquot</code> specified by <code>aliquotNumber</code> in this
+     * <code>Sample</code>
+     * @param location the file to read data from
+     * @param aliquotNumber the number of the <code>Aliquot</code> which the
+     * <code>Fractions</code> belong to
+     * @param doValidate
      * @return  <code>String</code> - parent of the file that was read
-     * @throws  java.io.FileNotFoundException                           FileNotFoundException
-     * @throws  org.earthtime.UPb_Redux.exceptions.BadLabDataException  BadLabDataException
+     * @throws java.io.FileNotFoundException FileNotFoundException
+     * @throws org.earthtime.UPb_Redux.exceptions.BadLabDataException
+     * BadLabDataException
      */
-    public String importFractionXMLDataFiles(File location, int aliquotNumber,boolean doValidate) throws FileNotFoundException, BadLabDataException;
+    public String importFractionXMLDataFiles(File location, int aliquotNumber, boolean doValidate) throws FileNotFoundException, BadLabDataException;
 
     /**
      * reads <code>Fractions</code> from the file specified by argument
      * <code>location</code> and adds them to the <code>Aliquot</code> specified
      * by argument <code>aliquotNumber</code> in this <code>Sample</code>.
      *
-     * @pre     argument <code>location</code> specifies an XML file with valid
+     * @pre argument <code>location</code> specifies an XML file with valid
      * <code>UPbFractions</code> and argument <code>aliquotNumber</code>
      * specifies an <code>Aliquot</code> that exists in this <code>Sample</code>
-     * @post    all <code>Fractions</code> found in the specified file are added
-     * to the specified <code>Aliquot</code> in this <code>Sample</code>
-     * @param   location        file to read data from
-     * @param   aliquotNumber   number of <code>Aliquot</code> to add
+     * @post all <code>Fractions</code> found in the specified file are added to
+     * the specified <code>Aliquot</code> in this <code>Sample</code>
+     * @param location file to read data from
+     * @param aliquotNumber number of <code>Aliquot</code> to add
      * <code>Fractions</code> from the file to
      * @return  <code>String</code> - path of the file that data was read from
-     * @throws  org.earthtime.UPb_Redux.exceptions.BadLabDataException  BadLabDataException
-     * @throws  java.io.FileNotFoundException                           FileNotFoundException
+     * @throws org.earthtime.UPb_Redux.exceptions.BadLabDataException
+     * BadLabDataException
+     * @throws java.io.FileNotFoundException FileNotFoundException
      */
     String importUPbFractionFolderForManualUpdate(File location, int aliquotNumber) throws ETException, BadLabDataException, FileNotFoundException;
-
-    /**
-     * 
-     * @param aliquot
-     * @param aliquotSource
-     * @throws IOException
-     * @throws ETException
-     * @throws BadLabDataException 
-     */
-    public abstract void processXMLAliquot(Aliquot aliquot, String aliquotSource) throws IOException, ETException,  BadLabDataException;
 
     /**
      * reads in data from the XML file specified by argument
@@ -109,47 +99,31 @@ public interface UPbSampleInterface {
      * specified by argument <code>aliquotNumber</code>.
      *
      * @pre     <code>fractionFile</code> is an XML file containing valid
-     * <code>Fractions</code> and <code>aliquotNumber</code> specifies
-     * an existing <code>Aliquot</code> in this <code>Sample</code>
-     * @post    all <code>Fractions</code> found in the file are added to the
-     * <code>Aliquot</code> specified by <code>aliquotNumber</code> in
-     * this <code>Sample</code>
-     * @param   fractionFile    the file to read data from
-     * @param   aliquotNumber   the number of the <code>Aliquot</code> that
-     * the <code>Fractions</code> being read from the
-     * file belong to
-     * @param validateSampleName 
-     * @param doValidate 
-     * @return 
-     * @throws  org.earthtime.XMLExceptions.ETException           ETException
+     * <code>Fractions</code> and <code>aliquotNumber</code> specifies an
+     * existing <code>Aliquot</code> in this <code>Sample</code>
+     * @post all <code>Fractions</code> found in the file are added to the
+     * <code>Aliquot</code> specified by <code>aliquotNumber</code> in this
+     * <code>Sample</code>
+     * @param fractionFile the file to read data from
+     * @param aliquotNumber the number of the <code>Aliquot</code> that the
+     * <code>Fractions</code> being read from the file belong to
+     * @param validateSampleName
+     * @param doValidate
+     * @return
+     * @throws org.earthtime.XMLExceptions.ETException ETException
      */
-    public String processXMLFractionFile(File fractionFile, int aliquotNumber,Boolean validateSampleName,boolean doValidate) throws ETException, BadLabDataException;
-
-    /**
-     * sets <code>ReduxLabData</code> of this <code>Sample</code> and all
-     * <code>Aliquots</code> and <code>Fractions</code> contained within to the
-     * argument <code>labData</code>.
-     *
-     * @pre     argument <code>labData</code> is valid <code>ReduxLabData</code>
-     * @post    <code>ReduxLabData</code> of this <code>Sample</code> and all
-     * of its <code>Aliquots</code> and <code>Fractions</code> is set
-     * to argument <code>labData</code>
-     * @param   labData     value to which this <code>Sample</code> and its
-     * <code>Aliquots</code> and <code>Fractions</code>
-     * should be set to
-     */
-    void registerSampleWithLabData(ReduxLabData labData);
+    public String processXMLFractionFile(File fractionFile, int aliquotNumber, Boolean validateSampleName, boolean doValidate) throws ETException, BadLabDataException;
 
     /**
      * removes the <code>UPbFraction</code> found at <code>index</code> from
      * this <code>Sample</code>'s set of <code>Fractions</code>
      *
-     * @pre     a <code>Fraction</code> exists in this <code>Sample</code>'s set
-     * of <code>Fractions</code> at <code>index</code>
-     * @post    the <code>Fraction</code> found at <code>index</code> is removed
+     * @pre a <code>Fraction</code> exists in this <code>Sample</code>'s set of
+     * <code>Fractions</code> at <code>index</code>
+     * @post the <code>Fraction</code> found at <code>index</code> is removed
      * from the set of <code>Fractions</code>
-     * @param   index   the index into the array of <code>Fractions</code> where
-     * the <code>Fraction</code> to be removed can be found
+     * @param index the index into the array of <code>Fractions</code> where the
+     * <code>Fraction</code> to be removed can be found
      */
     void removeUPbReduxFraction(int index);
 
@@ -158,31 +132,19 @@ public interface UPbSampleInterface {
      * of <code>Fractions</code> that corresponds to the argument
      * <code>fraction</code>
      *
-     * @pre     a <code>Fraction</code> exists in this <code>Sample</code>'s set
-     * of <code>Fractions</code> that corresponds to <code>fraction</code>
-     * @post    the <code>Fraction</code> that corresponds to the argument
+     * @pre a <code>Fraction</code> exists in this <code>Sample</code>'s set of
+     * <code>Fractions</code> that corresponds to <code>fraction</code>
+     * @post the <code>Fraction</code> that corresponds to the argument
      * <code>fraction</code> is removed
-     * @param   fraction
+     * @param fraction
      */
     void removeUPbReduxFraction(Fraction fraction);
 
     /**
-     * removes <code>Fractions</code> from this <code>Sample</code>'s sample age
-     * models that are no longer a part of this <code>Sample</code>'s
-     * <code>Aliquots</code>.
-     *
-     * @pre     this <code>Sample</code> exists
-     * @post    any <code>Fractions</code> that are found in this <code>Sample</code>'s
-     * sample age models that are no longer a part of this
-     * <code>Sample</code>'s <code>Aliquots</code> are removed
-     */
-    void updateAndSaveSampleDateModelsByAliquot();
-
-    /**
      * gets the <code>defaultFractionCounter</code> of this <code>Sample</code>.
      *
-     * @pre     this <code>Sample</code> exists
-     * @post    returns the <code>defaultFractionCounter</code> of this
+     * @pre this <code>Sample</code> exists
+     * @post returns the <code>defaultFractionCounter</code> of this
      * <code>Sample</code>
      * @return  <code>int</code> - <code>defaultFractionCounter</code> of this
      * <code>Sample</code>
@@ -192,37 +154,38 @@ public interface UPbSampleInterface {
     /**
      * gets the <code>defaultFractionName</code> of this <code>Sample</code>
      *
-     * @pre     this <code>Sample</code> exists
-     * @post    returns the <code>defaultFractionName</code> of this <code>Sample</code>
+     * @pre this <code>Sample</code> exists
+     * @post returns the <code>defaultFractionName</code> of this
+     * <code>Sample</code>
      * @return  <code>String</code> - <code>defaultFractionName</code> of this
      * <code>Sample</code>
      */
     String getDefaultFractionName();
 
-
     /**
      * gets the <code>fractionDataOverriddenOnImport</code> field of this
      * <code>Sample</code>.
      *
-     * @pre     this <code>Sample</code> exists
-     * @post    returns the <code>fractionDataOverriddenOnImport</code> field
-     * of this <code>Sample</code>
-     * @return  <code>boolean</code> - <code>fractionDataOverriddenOnImport</code>
-     * field of this <code>Sample</code>
+     * @pre this <code>Sample</code> exists
+     * @post returns the <code>fractionDataOverriddenOnImport</code> field of
+     * this <code>Sample</code>
+     * @return  <code>boolean</code> -
+     * <code>fractionDataOverriddenOnImport</code> field of this
+     * <code>Sample</code>
      */
     boolean isFractionDataOverriddenOnImport();
-
 
     /**
      * sets the <code>defaultFractionCounter</code> of this <code>Sample</code>
      * to the argument <code>defaultFractionCounter</code>
      *
-     * @pre     argument <code>defaultFractionCounters</code> is a valid
+     * @pre argument <code>defaultFractionCounters</code> is a valid
      * <code>defaultFractionCounter</code>
-     * @post    this <code>Sample</code>'s <code>defaultFractionCounter</code>
-     * is set to argument <code>defaultFractionCounter</code>
-     * @param   defaultFractionCounter  value to which <code>defaultFractionCounter</code>
-     * of this <code>Sample</code> will be set
+     * @post this <code>Sample</code>'s <code>defaultFractionCounter</code> is
+     * set to argument <code>defaultFractionCounter</code>
+     * @param defaultFractionCounter value to which
+     * <code>defaultFractionCounter</code> of this <code>Sample</code> will be
+     * set
      */
     void setDefaultFractionCounter(int defaultFractionCounter);
 
@@ -230,44 +193,45 @@ public interface UPbSampleInterface {
      * sets the <code>defaultFractionName</code> of this <code>Sample</code> to
      * the argument <code>defaultFractionName</code>
      *
-     * @pre     argument <code>defaultFractionName</code> is a valid
+     * @pre argument <code>defaultFractionName</code> is a valid
      * <code>defaultFractionName</code>
-     * @post    this <code>Sample</code>'s <code>defaultFractionName</code> is
-     * set to argument <code>defaultFractionName</code>
-     * @param   defaultFractionName value to which <code>defaultFractionName</code>
-     * of this <code>Sample</code> will be set
+     * @post this <code>Sample</code>'s <code>defaultFractionName</code> is set
+     * to argument <code>defaultFractionName</code>
+     * @param defaultFractionName value to which
+     * <code>defaultFractionName</code> of this <code>Sample</code> will be set
      */
     void setDefaultFractionName(String defaultFractionName);
 
     /**
      * sets the <code>fractionDataOverriddenOnImport</code> field of this
-     * <code>Sample</code> to the argument <code>fractionDataOverriddenOnImport</code>
-     *
-     * @pre     argument <code>fractionDataOverriddenOnImport</code> is a valid
-     * <code>boolean</code>
-     * @post    this <code>Sample</code>'s <code>fractionDataOverriddenOnImport</code>
-     * is set to argument <code>fractionDataOverriddenOnImport</code>
-     * @param   fractionDataOverriddenOnImport  value to which
+     * <code>Sample</code> to the argument
      * <code>fractionDataOverriddenOnImport</code>
-     * of this <code>Sample</code> will be set
+     *
+     * @pre argument <code>fractionDataOverriddenOnImport</code> is a valid
+     * <code>boolean</code>
+     * @post this <code>Sample</code>'s
+     * <code>fractionDataOverriddenOnImport</code> is set to argument
+     * <code>fractionDataOverriddenOnImport</code>
+     * @param fractionDataOverriddenOnImport value to which
+     * <code>fractionDataOverriddenOnImport</code> of this <code>Sample</code>
+     * will be set
      */
     void setFractionDataOverriddenOnImport(boolean fractionDataOverriddenOnImport);
 
     /**
      * sets the <code>sampleAgeInterpretationGUISettings</code> of this
-     * <code>Sample</code> to the argument <code>sampleAgeInterpretationGUISettings</code>
+     * <code>Sample</code> to the argument
+     * <code>sampleAgeInterpretationGUISettings</code>
      *
-     * @pre     argument <code>sampleAgeInterpretationGUISettings</code> is a
-     * valid <code>SampleDateInterpretationGUIOptions</code>
-     * @post    this <code>Sample</code>'s <code>sampleAgeInterpretationGUISettings</code>
-     * is set to argument <code>sampleAgeInterpretationGUISettings</code>
-     * @param   sampleAgeInterpretationGUISettings  value to which <code>
-     * sampleAgeInterpretationGUISettings</code>
-     * of this <code>Sample</code>
+     * @pre argument <code>sampleAgeInterpretationGUISettings</code> is a valid
+     * <code>SampleDateInterpretationGUIOptions</code>
+     * @post this <code>Sample</code>'s
+     * <code>sampleAgeInterpretationGUISettings</code> is set to argument
+     * <code>sampleAgeInterpretationGUISettings</code>
+     * @param sampleAgeInterpretationGUISettings value to which <code>
+     * sampleAgeInterpretationGUISettings</code> of this <code>Sample</code>
      * will be set
      */
     void setSampleAgeInterpretationGUISettings(SampleDateInterpretationGUIOptions sampleAgeInterpretationGUISettings);
 
-
-   
 }
