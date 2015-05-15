@@ -81,7 +81,7 @@ public abstract class AbstractSampleLegacyManagerDialog extends DialogEditor {
 
         initSampleFields();
 
-        if ( sample.getUPbFractions().size() > 0 ) {
+        if ( sample.getFractions().size() > 0 ) {
             // we are in edit mode 
             fractionDestinationPanel_panel.setVisible( false );
             fractionSourcePanel_panel.setVisible( false );
@@ -273,7 +273,7 @@ public abstract class AbstractSampleLegacyManagerDialog extends DialogEditor {
         }
 
         // in legacy mode we only allow one aliquot
-        if ( getMySample().getUPbFractions().isEmpty() ) {
+        if ( getMySample().getFractions().isEmpty() ) {
             Aliquot myAliquot = getMySample().addNewAliquot( aliquotName_text.getText().trim() );
             // May 2010 allows publication of legacy results
             ((UPbReduxAliquot) myAliquot).setCompiled( false );
@@ -314,7 +314,7 @@ public abstract class AbstractSampleLegacyManagerDialog extends DialogEditor {
         }
 
         // moved outside conditional oct 2010 and added MineralName, etc ;;June 2010 add physical constants model
-        for (Fraction f : getMySample().getUPbFractions()) {
+        for (Fraction f : getMySample().getFractions()) {
             try {
                 ((UPbFractionI) f).setPhysicalConstantsModel( getMySample().getPhysicalConstantsModel() );
 

@@ -207,7 +207,7 @@ public class ReportSettings implements
      * @return
      */
 //    public String[][] reportAllFractionsByNumberStyle(final Sample sample, boolean numberStyleIsNumeric) {
-//        Vector<Fraction> uPbFractions = sample.getUPbFractions();
+//        Vector<Fraction> uPbFractions = sample.getFractions();
 //
 //        return reportFractionsByNumberStyle(uPbFractions, sample, numberStyleIsNumeric);
 //    }

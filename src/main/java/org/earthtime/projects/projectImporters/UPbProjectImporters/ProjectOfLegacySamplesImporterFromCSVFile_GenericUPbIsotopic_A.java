@@ -270,7 +270,7 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_GenericUPbIsotopic_A exte
                             null);
 
                     myFraction.setSampleName(currentSample.getSampleName());
-                    currentSample.addUPbFraction(myFraction);
+                    currentSample.addFraction(myFraction);
 
                 }
 

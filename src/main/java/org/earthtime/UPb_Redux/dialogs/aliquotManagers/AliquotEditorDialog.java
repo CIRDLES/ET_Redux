@@ -2178,9 +2178,9 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
 //                    Vector<String> fractionIDs = new Vector<String>();
 //
 //                    for (int f = 0;
-//                            f < getSample().getUPbFractions().size();
+//                            f < getSample().getFractions().size();
 //                            f++) {
-//                        fractionIDs.add(getSample().getUPbFractions().get(f).getFractionID());
+//                        fractionIDs.add(getSample().getFractions().get(f).getFractionID());
 //                    }
 //
 //                    // add pending new fractions
@@ -4337,7 +4337,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
         // handle added fractions
         for (int f = 0; f
                 < addedFractions.size(); f++) {
-            getSample().addUPbFraction((UPbFraction) addedFractions.get(f));
+            getSample().addFraction((UPbFraction) addedFractions.get(f));
             getMyAliquot().getAliquotFractions().add(addedFractions.get(f));
         }
 
@@ -4739,7 +4739,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
                     concordiaGraphPanel.setShowExcludedEllipses(true);
                 }
 
-                concordiaGraphPanel.setSelectedFractions(sample.getUPbFractions());
+                concordiaGraphPanel.setSelectedFractions(sample.getFractions());
 
                 concordiaGraphPanel.setBounds(510, 0, 580, 405);
                 concordiaGraphPanel.setCurrentGraphAxesSetup(new GraphAxesSetup("C", 2));

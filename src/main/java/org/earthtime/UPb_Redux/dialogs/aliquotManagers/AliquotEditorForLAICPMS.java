@@ -239,9 +239,9 @@ public class AliquotEditorForLAICPMS extends AliquotEditorDialog {
 //
 //                for (int f = 0;
 //                        f
-//                        < getSample().getUPbFractions().size();
+//                        < getSample().getFractions().size();
 //                        f ++) {
-//                    fractionIDs.add( getSample().getUPbFractions().get( f ).getFractionID() );
+//                    fractionIDs.add( getSample().getFractions().get( f ).getFractionID() );
 //                }
 //
 //                // add pending new fractions
@@ -948,7 +948,7 @@ public class AliquotEditorForLAICPMS extends AliquotEditorDialog {
         // handle added fractions
         for (int f = 0; f
                 < addedFractions.size(); f++) {
-            getSample().addUPbFraction((UPbFraction) addedFractions.get(f));
+            getSample().addFraction((UPbFraction) addedFractions.get(f));
             getMyAliquot().getAliquotFractions().add(addedFractions.get(f));
         }
 

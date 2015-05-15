@@ -789,7 +789,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         Aliquot standInAliquot = new UPbReduxAliquot();
         standInAliquot.setAliquotName(sample.getSampleName());
 
-        ((UPbReduxAliquot) standInAliquot).setAliquotFractions(sample.getUPbFractions());
+        ((UPbReduxAliquot) standInAliquot).setAliquotFractions(sample.getFractions());
 
         selectedModels[0][0] = standInAliquot;
 
@@ -835,14 +835,14 @@ public class SampleDateInterpretationsManager extends DialogEditor
 
         // strategy = complete plan to have reduction handler use matrixspecname instead of matrixspecs
         // then here call a method to build set of all names of matrix components across all fractions chosen
-        Fraction firstFraction = sample.getUPbFractions().get(0);
+        Fraction firstFraction = sample.getFractions().get(0);
         Vector<String> axesListing = new Vector<String>();
 
         if (firstFraction instanceof UPbFraction) {
             axesListing = //
                     CollectionHelpers.vectorSortedUniqueMembers( //
                             MatrixSpecifications.getMatrixSpecsByName(//
-                                    ((UPbFraction) sample.getUPbFractions().get(0)).getReductionHandler().getMatrixSpecsName()));// "mixed_202_205_233_235_Zircon_NotFcU_FcPb" ));
+                                    ((UPbFraction) sample.getFractions().get(0)).getReductionHandler().getMatrixSpecsName()));// "mixed_202_205_233_235_Zircon_NotFcU_FcPb" ));
             // remove lambdas
             axesListing.remove(Lambdas.lambda230.getName());
             axesListing.remove(Lambdas.lambda231.getName());
@@ -2404,7 +2404,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                 ((ConcordiaGraphPanel) concordiaGraphPanel).//
                         setYorkFitLine(null);
                 ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
-                        setSelectedFractions(sample.getUPbFractions());
+                        setSelectedFractions(sample.getFractions());
                 concordiaGraphPanel.//
                         repaint();//refreshPanel();
                 // zap deselected list as it is meaningless at level of aliquot or sample
@@ -2420,7 +2420,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
 //
 //                // march 2014 isoplot experiment
 //                ((AliquotDetailsDisplayInterface) ConcordiaGraphPanelIsoplot).//
-//                        setSelectedFractions(sample.getUPbFractions());
+//                        setSelectedFractions(sample.getFractions());
 //                ((AliquotDetailsDisplayInterface) ConcordiaGraphPanelIsoplot).//
 //                        refreshPanel();
             } else {
@@ -2694,7 +2694,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                     setYorkFitLine(null);
 
             ((ConcordiaGraphPanel) concordiaGraphPanel).//
-                    setSelectedFractions(sample.getUPbFractions());
+                    setSelectedFractions(sample.getFractions());
 
             concordiaGraphPanel.//
                     repaint();//refreshPanel();

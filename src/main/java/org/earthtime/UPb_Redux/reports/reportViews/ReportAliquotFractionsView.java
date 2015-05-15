@@ -344,7 +344,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
         removeAll();
 
         // also reset fractions selected re: red box
-        sample.deselectAllFractions();
+        sample.deSelectAllFractionsInDataTable();
 
         // first get reportFractions from sample
         prepareReportFractionsArrayForDisplay();

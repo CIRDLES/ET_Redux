@@ -17,6 +17,7 @@ package org.earthtime.samples;
 
 import java.io.File;
 import java.util.Vector;
+import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.aliquots.Aliquot;
 import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetup;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
@@ -61,6 +62,16 @@ public interface SampleInterface {
     public abstract void setSampleType(String sampleType);
 
     /**
+     * gets the <code>sampleType</code> of this <code>Sample</code>.
+     *
+     * @pre this <code>Sample</code> exists
+     * @post returns the <code>sampleType</code> of this <code>Sample</code>
+     * @return  <code>String</code> - <code>sampleType</code> of this
+     * <code>Sample</code>
+     */
+    public abstract String getSampleType();
+
+    /**
      * sets the <code>analyzed</code> field of this <code>Sample</code> to the
      * argument <code>analyzed</code>
      *
@@ -73,12 +84,6 @@ public interface SampleInterface {
     public abstract void setAnalyzed(boolean analyzed);
 
     /**
-     *
-     * @return
-     */
-    public abstract boolean isAnalysisTypeTripolized();
-
-    /**
      * gets the <code>analyzed</code> field of this <code>Sample</code>
      *
      * @pre this <code>Sample</code> exists
@@ -87,6 +92,97 @@ public interface SampleInterface {
      * <code>Sample</code>
      */
     public abstract boolean isAnalyzed();
+
+    /**
+     *
+     * @return
+     */
+    public abstract boolean isAnalysisTypeTripolized();
+
+    /**
+     * gets the <code>changed</code> field of this <code>Sample</code>
+     *
+     * @pre this <code>Sample</code> exists
+     * @post returns the <code>changed</code> field of this <code>Sample</code>
+     * @return  <code>boolean</code> - <code>changed</code> field of this
+     * <code>Sample</code>
+     */
+    boolean isChanged();
+
+    /**
+     * sets the <code>changed</code> field of this <code>Sample</code> to the
+     * argument <code>changed</code>
+     *
+     * @pre argument <code>changed</code> is a valid <code>boolean</code>
+     * @post this <code>Sample</code>'s <code>changed</code> field is set to
+     * argument <code>changed</code>
+     * @param changed vale to which <code>changed</code> field of this
+     * <code>Sample</code> will be set
+     */
+    public abstract void setChanged(boolean changed);
+
+    /**
+     * sets the <code>sampleAnnotations</code> of this <code>Sample</code> to
+     * the argument <code>annotations</code>
+     *
+     * @pre argument <code>annotations</code> is a valid
+     * <code>sampleAnnotations</code>
+     * @post this <code>Sample</code>'s <code>sampleAnnotations</code> is set to
+     * argument <code>annotations</code>
+     * @param annotations value to which <code>sampleAnnotations</code> of this
+     * <code>Sample</code> will be set
+     */
+    public abstract void setSampleAnnotations(String annotations);
+
+    /**
+     * gets the <code>sampleAnnotations</code> of this <code>Sample</code>.
+     *
+     * @pre this <code>Sample</code> exists
+     * @post returns the <code>sampleAnnotations</code> of this
+     * <code>Sample</code>
+     * @return  <code>String</code> - <code>sampleAnnotations</code> of this
+     * <code>Sample</code>
+     */
+    public abstract String getSampleAnnotations();
+
+    public abstract ReduxConstants.ANALYSIS_PURPOSE getAnalysisPurpose();
+
+    /**
+     * gets the <code>reduxSampleFileName</code> of this <code>Sample</code>.
+     *
+     * @pre this <code>Sample</code> exists
+     * @post returns the <code>reduxSampleFileName</code> of this
+     * <code>Sample</code>
+     * @return  <code>String</code> - <code>reduxSampleFileName</code> of this
+     * <code>Sample</code>
+     */
+    public abstract String getReduxSampleFileName();
+
+    /**
+     * gets the <code>reduxSampleFilePath</code> of this <code>Sample</code>.
+     *
+     * @pre this <code>Sample</code> exists
+     * @post returns the <code>reduxSampleFilePath</code> of this
+     * <code>Sample</code>
+     * @return  <code>String</code> - <code>reduxSampleFilePath</code> of this
+     * <code>Sample</code>
+     */
+    public abstract String getReduxSampleFilePath();
+
+    /**
+     * sets the <code>reduxSampleFilePath</code> and
+     * <code>reduxSampleFileName</code> of this <code>Sample</code> to the
+     * argument <code>reduxSampleFile</code>
+     *
+     * @pre argument <code>reduxSampleFile</code> is a valid file
+     * @post this <code>Sample</code>'s <code>reduxSampleFilePath</code> and
+     * <code>reduxSampleFileName</code> are set to argument
+     * <code>reduxSamplefile</code>
+     * @param reduxSampleFile value to which <code>reduxSampleFilePath</code>
+     * and <code>reduxSampleFileName</code> of this <code>Sample</code> will be
+     * set
+     */
+    public abstract void setReduxSampleFilePath(File reduxSampleFile);
 
     // Aliquots
     /**
@@ -117,6 +213,19 @@ public interface SampleInterface {
     public abstract Vector<Aliquot> getAliquots();
 
     /**
+     * sets the <code>aliquots</code> of this <code>Sample</code> to the
+     * argument <code>aliquots</code>
+     *
+     * @pre argument <code>aliquots</code> is a valid set of
+     * <code>Aliquots</code>
+     * @post this <code>Sample</code>'s <code>aliquots</code> is set to argument
+     * <code>aliquots</code>
+     * @param aliquots value to which <code>aliquots</code> of this
+     * <code>Sample</code> will be set
+     */
+    public abstract void setAliquots(Vector<Aliquot> aliquots);
+
+    /**
      * finds the <code>Aliquot</code> numbered <code>aliquotNum</code> in the
      * array <code>aliquots</code>.
      *
@@ -135,7 +244,7 @@ public interface SampleInterface {
 
     // Fractions
     /**
-     * adds a <code>UPbFraction</code> to the <code>Sample</code>'s set of
+     * adds a <code>Fraction</code> to the <code>Sample</code>'s set of
      * <code>Fractions</code>.
      *
      * @pre this <code>Sample</code> exists
@@ -144,17 +253,30 @@ public interface SampleInterface {
      * @param newFraction the <code>Fraction</code> to add to this
      * <code>Sample</code>
      */
-    public abstract void addUPbFraction(Fraction newFraction);
+    public abstract void addFraction(Fraction newFraction);
 
     /**
-     * gets the <code>UPbFractions</code> of this <code>Sample</code>.
+     * gets the <code>Fractions</code> of this <code>Sample</code>.
      *
      * @pre this <code>Sample</code> exists
-     * @post returns the <code>UPbFractions</code> of this <code>Sample</code>
+     * @post returns the <code>Fraction</code> of this <code>Sample</code>
      * @return  <code>Vector</code> - set of <code>Fractions</code> that make up
-     * the <code>UPbFractions</code> of this <code>Sample</code>
+     * the <code>Fraction</code> of this <code>Sample</code>
      */
-    public abstract Vector<Fraction> getUPbFractions();
+    public abstract Vector<Fraction> getFractions();
+
+    /**
+     * sets the <code>UPbFractions</code> of this <code>Sample</code> to the
+     * argument <code>UPbFractions</code>
+     *
+     * @pre argument <code>UPbFractions</code> is a valid set of
+     * <code>UPbFractions</code>
+     * @post this <code>Sample</code>'s <code>UPbFractions</code> is set to
+     * argument <code>UPbFractions</code>
+     * @param UPbFractions value to which <code>UPbFractions</code> of this
+     * <code>Sample</code> will be set
+     */
+    public abstract void setUPbFractions(Vector<Fraction> UPbFractions);
 
     // Report Settings
     /**
@@ -162,6 +284,12 @@ public interface SampleInterface {
      * @return
      */
     public abstract ReportSettings getReportSettingsModelUpdatedToLatestVersion();
+
+    /**
+     *
+     * @param reportSettingsModel
+     */
+    public abstract void setReportSettingsModel(ReportSettings reportSettingsModel);
 
     public abstract void setLegacyStatusForReportTable();
 
@@ -173,8 +301,8 @@ public interface SampleInterface {
 
     // Archiving
     /**
-     * sets the <code>changed</code> field of each <code>UPbFraction</code> in
-     * this <code>Sample</code> to <code>false</code> and saves this
+     * sets the <code>changed</code> field of each <code>Fraction</code> in this
+     * <code>Sample</code> to <code>false</code> and saves this
      * <code>Sample</code> as a .redux file to <code>reduxSampleFilePath</code>.
      *
      * @pre this <code>Sample</code> exists
@@ -231,6 +359,20 @@ public interface SampleInterface {
      * this <code>Sample</code> will be set
      */
     public abstract void setMyReduxLabData(ReduxLabData myReduxLabData);
+
+    /**
+     * sets the <code>physicalConstantsModel</code> of this <code>Sample</code>
+     * to the argument <code>physicalConstantsModel</code>
+     *
+     * @pre argument <code>physicalConstantsModel</code> is a valid
+     * <code>PhysicalConstants</code>
+     * @post this <code>Sample</code>'s <code>physicalConstantsModel</code> is
+     * set to argument <code>physicalConstantsModel</code>
+     * @param physicalConstantsModel value to which
+     * <code>physicalConstantsModel</code> of this <code>Sample</code> will be
+     * set
+     */
+    public abstract void setPhysicalConstantsModel(AbstractRatiosDataModel physicalConstantsModel);
 
     /**
      * gets the <code>physicalConstantsModel</code> of this <code>Sample</code>.

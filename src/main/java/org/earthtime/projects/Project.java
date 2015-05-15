@@ -231,7 +231,7 @@ public class Project implements
                         tf.setuPbFraction(uPbLAICPMSFraction);
 
                         // automatically added to aliquot #1 as we are assuming only one aliquot in this scenario
-                        sample.addUPbFraction(uPbLAICPMSFraction);
+                        sample.addFraction(uPbLAICPMSFraction);
                         // feb 2015 in prep for export
                         ((UPbReduxAliquot)aliquot).getAliquotFractions().add(uPbLAICPMSFraction);
                     }

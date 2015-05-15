@@ -97,8 +97,8 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
 
         // populate tree
         int saveAliquotNum = -1;
-        for (int i = 0; i < sample.getUPbFractions().size(); i++) {
-            Fraction tempFraction = sample.getUPbFractions().get(i);
+        for (int i = 0; i < sample.getFractions().size(); i++) {
+            Fraction tempFraction = sample.getFractions().get(i);
             Aliquot tempAliquot = null;
 
             if (!((UPbFractionI) tempFraction).isRejected()) {

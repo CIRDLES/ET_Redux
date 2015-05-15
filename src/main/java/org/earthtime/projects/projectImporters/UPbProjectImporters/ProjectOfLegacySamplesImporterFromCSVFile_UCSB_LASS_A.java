@@ -284,7 +284,7 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_UCSB_LASS_A extends Abstr
                             null);
 
                     myFraction.setSampleName(currentSample.getSampleName());
-                    currentSample.addUPbFraction(myFraction);
+                    currentSample.addFraction(myFraction);
 
                     // Trace Elements
                     traceElementProcessor(TraceElements.Si.getName(), myFraction, myFractionData, 34);

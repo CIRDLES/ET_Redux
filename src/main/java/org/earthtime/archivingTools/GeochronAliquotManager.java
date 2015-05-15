@@ -584,7 +584,7 @@ public class GeochronAliquotManager extends JPanel {
             concordiaGraphPanel.setShowExcludedEllipses(true);
         }
 
-        concordiaGraphPanel.setSelectedFractions(sample.getUPbFractions());
+        concordiaGraphPanel.setSelectedFractions(sample.getFractions());
 
         concordiaGraphPanel.setBounds(510, 0, 580, 405);
         concordiaGraphPanel.setCurrentGraphAxesSetup(new GraphAxesSetup("C", 2));

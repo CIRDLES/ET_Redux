@@ -230,7 +230,7 @@ public class UPbFractionTableModel extends AbstractTableModel {
 
     private Vector<Fraction> getFractionsSorted() {
         // here we sort the fractions so that they appear in alphabetical order by aliquot
-        Vector<Fraction> temp = sample.getUPbFractions();
+        Vector<Fraction> temp = sample.getFractions();
         Collections.sort(temp);
         return temp;
     }
@@ -384,7 +384,7 @@ public class UPbFractionTableModel extends AbstractTableModel {
         public void actionPerformed(ActionEvent e) {
             if ((e != null) && (e.getSource() == this)) {
                 // here we toggle fraction selection (via isRejected) and refresh table
-                ((UPbFractionI) getSample().getUPbFractions().get(myRow)).//
+                ((UPbFractionI) getSample().getFractions().get(myRow)).//
                         setRejected((Boolean) !this.isSelected());
                 
                 getParentFrame().updateReportTable( false);//.rebuildFractionDisplays(false);

@@ -77,7 +77,7 @@ public class HeatMapMapper {
         String unctType = selectedReportColumn.getUncertaintyType();
 
         if (meth != null) {
-            Vector<Fraction> fractions = sample.getUPbFractions();
+            Vector<Fraction> fractions = sample.getFractions();
             for (Fraction fraction : fractions) {
                 try {
                     if (!((UPbFractionI) fraction).isRejected()) {

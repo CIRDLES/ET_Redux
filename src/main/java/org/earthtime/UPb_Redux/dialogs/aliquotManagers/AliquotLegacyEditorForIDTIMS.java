@@ -1194,7 +1194,7 @@ public class AliquotLegacyEditorForIDTIMS extends AliquotEditorDialog {
         // handle added fractions
         for (int f = 0; f
                 < addedFractions.size(); f ++) {
-            getSample().addUPbFraction( (UPbFraction) addedFractions.get( f ) );
+            getSample().addFraction( (UPbFraction) addedFractions.get( f ) );
             getMyAliquot().getAliquotFractions().add( addedFractions.get( f ) );
         }
 

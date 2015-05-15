@@ -246,7 +246,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
         aliquotName_text.setText("Aliquot Name");
 
         aliquotList = new ArrayList<>();
-        if (mySample.getUPbFractions().size() > 0) {
+        if (mySample.getFractions().size() > 0) {
             for (int i = 0; i < mySample.getAliquots().size(); i++) {
                 // only show aliquots with fractions because removed aliquots still exist with zero fraction
                 if (((UPbReduxAliquot) mySample.getAliquots().get(i)).getAliquotFractions().size() > 0) {
@@ -344,9 +344,9 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
                 Vector<String> fractionIDs = new Vector<String>();
 
                 for (int f = 0;
-                        f < mySample.getUPbFractions().size();
+                        f < mySample.getFractions().size();
                         f++) {
-                    fractionIDs.add(mySample.getUPbFractions().get(f).getFractionID());
+                    fractionIDs.add(mySample.getFractions().get(f).getFractionID());
                 }
 
                 Collections.sort(fractionIDs, new IntuitiveStringComparator<String>());//String.CASE_INSENSITIVE_ORDER );
@@ -387,7 +387,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
                             "ABS",
                             BigDecimal.ZERO, BigDecimal.ZERO));
 
-                    mySample.addUPbFraction(addedFraction);
+                    mySample.addFraction(addedFraction);
 
                     // be sure aliquot has upbfractions too
                     // usingthis miserablehack nov 2009
@@ -1917,7 +1917,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
     public boolean canBeInitialized() {
         return //
                 (sampleName_text.getText().trim().length() > 0) && //
-                (mySample.getUPbFractions().size() > 0);
+                (mySample.getFractions().size() > 0);
 
     }
 
@@ -2311,7 +2311,7 @@ getMySample().importFractionXMLDataFiles(
         initialized = //
                 initialized
                 && (sampleName_text.getText().trim().length() > 0) && //
-                (mySample.getUPbFractions().size() > 0);
+                (mySample.getFractions().size() > 0);
 
         setVisible(false);
     }
@@ -2412,7 +2412,7 @@ getMySample().importFractionXMLDataFiles(
         }
 
         // then create current aliquot folders and populate with xml fraction files
-        FractionMetaData[] fractionsMetaData = new FractionMetaData[mySample.getUPbFractions().size()];
+        FractionMetaData[] fractionsMetaData = new FractionMetaData[mySample.getFractions().size()];
         int fractionMetaDataCount = 0;
         String sampleMetaDataFileName = mySample.getSampleName();
 

@@ -507,7 +507,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
 
         try {
             Vector<Fraction> selectedFractions =//
-                    project.getSuperSample().getUPbFractions();
+project.getSuperSample().getFractions();
 
             ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
                     setSelectedFractions(selectedFractions);

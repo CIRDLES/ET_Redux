@@ -362,10 +362,10 @@ public class Sample implements
             setMyReduxLabData(myLabData);
 
             // dec 2012
-            if (getUPbFractions().size() > 0) {
+            if (getFractions().size() > 0) {
                 // June 2010 fix for old legacy fractions
                 Vector<Fraction> convertedF = new Vector<Fraction>();
-                for (Fraction f : getUPbFractions()) {
+                for (Fraction f : getFractions()) {
                     if (f instanceof UPbFraction) {
                         // convert to UPbLegacyFraction
                         System.out.println("Converting legacy legacy");
@@ -405,12 +405,12 @@ public class Sample implements
                 // additional test for missing T-W rho calculation
                 // use first fraction to test for rho < -1 or 0  (both used as default for non-existent rho)
                 double twRho = //
-                        getUPbFractions().get(0).//
+                        getFractions().get(0).//
                         getRadiogenicIsotopeRatioByName("rhoR207_206r__r238_206r").getValue().doubleValue();
                 if ( /*
                          * (twRho == 0) ||
                          */(twRho < -1.0)) {
-                    for (Fraction f : getUPbFractions()) {
+                    for (Fraction f : getFractions()) {
                         f.getRadiogenicIsotopeRatioByName("rhoR207_206r__r238_206r")//
                                 .setValue(BigDecimal.ZERO);
                     }
@@ -594,7 +594,7 @@ public class Sample implements
 
         Vector<Fraction> retFractions = new Vector<Fraction>();
 
-        for (Iterator it = getUPbFractions().iterator(); it.hasNext();) {
+        for (Iterator it = getFractions().iterator(); it.hasNext();) {
             Fraction temp = ((Fraction) it.next());
             if (((UPbFractionI) temp).getAliquotNumber() == aliquotNum) {
                 retFractions.add(temp);
@@ -664,7 +664,7 @@ public class Sample implements
         for (Fraction f : fractions) {
             f.setSampleName(sampleName);
             ((UPbFractionI) f).setAliquotNumber(aliquotNumber);
-            addUPbFraction(f);
+            addFraction(f);
         }
     }
 
@@ -678,7 +678,7 @@ public class Sample implements
         for (Fraction f : fractions) {
             f.setSampleName(sampleName);
             ((UPbFractionI) f).setAliquotNumber(aliquotNumber);
-            addUPbFraction(f);
+            addFraction(f);
         }
     }
 
@@ -693,8 +693,9 @@ public class Sample implements
      * @param newFraction the <code>Fraction</code> to add to this
      * <code>Sample</code>
      */
-    public void addUPbFraction(Fraction newFraction) {
-        getUPbFractions().add(newFraction);
+    @Override
+    public void addFraction(Fraction newFraction) {
+        getFractions().add(newFraction);
         setChanged(true);
     }
 
@@ -710,10 +711,11 @@ public class Sample implements
      * @param index the index into the array of <code>Fractions</code> where the
      * <code>Fraction</code> to be removed can be found
      */
+    @Override
     public void removeUPbReduxFraction(int index) {
-        boolean fracStatus = ((UPbFractionI) getUPbFractions().get(index)).isChanged();
+        boolean fracStatus = ((UPbFractionI) getFractions().get(index)).isChanged();
         try {
-            getUPbFractions().remove(index);
+            getFractions().remove(index);
         } finally {
         }
         setChanged(isChanged() || fracStatus);
@@ -735,7 +737,7 @@ public class Sample implements
     public void removeUPbReduxFraction(Fraction fraction) {
         boolean fracStatus = ((UPbFractionI) fraction).isChanged();
         try {
-            getUPbFractions().remove(fraction);
+            getFractions().remove(fraction);
             ((UPbFractionI) fraction).getAliquotNumber();
         } finally {
         }
@@ -782,7 +784,7 @@ public class Sample implements
     private void initializeDefaultUPbFraction(Fraction defFraction)
             throws BadLabDataException {
         //reset counter if no aliquotFractionFiles
-        if (getUPbFractions().isEmpty()) {
+        if (getFractions().isEmpty()) {
             setDefaultFractionCounter(0);
         }
 
@@ -806,7 +808,7 @@ public class Sample implements
         ((UPbFractionI) defFraction).setDeleted(false);
         ((UPbFractionI) defFraction).setChanged(false);
 
-        addUPbFraction(defFraction);
+        addFraction(defFraction);
     }
 
     /**
@@ -968,7 +970,7 @@ public class Sample implements
 
                 ((UPbReduxAliquot) aliquot).getAliquotFractions().add(nextFraction);
 
-                getUPbFractions().add(nextFraction);
+                getFractions().add(nextFraction);
             }
 
         } else if (aliquot.usesMCIPMS()) {
@@ -992,7 +994,7 @@ public class Sample implements
 
                 ((UPbReduxAliquot) aliquot).getAliquotFractions().add(nextFraction);
 
-                getUPbFractions().add(nextFraction);
+                getFractions().add(nextFraction);
             }
         }
         aliquots.add(aliquot);
@@ -1064,7 +1066,7 @@ public class Sample implements
                     ((UPbFraction) fractionFromFile)//
                             .setTracer(((UPbFraction) fractionFromFile).getMyLabData().getNoneTracer());
                 }
-                addUPbFraction(fractionFromFile);
+                addFraction(fractionFromFile);
             } else {
                 System.out.println("Existing Fraction = " + existingFraction.getFractionID() + " updating type = " + ((UPbFraction) fractionFromFile).getRatioType());
                 boolean didUpdate
@@ -1240,7 +1242,7 @@ public class Sample implements
             // first determine if the sample is empty and if it is,
             // use the first xml file as the automatic source of the
             // sample file
-            if (getUPbFractions().size() <= 1) {
+            if (getFractions().size() <= 1) {
                 try {
                     setSampleName(processXMLFractionFile(returnFile[0], aliquotNumber, false, doValidate));
                     successCount = 1;
@@ -1286,7 +1288,7 @@ public class Sample implements
         // use the first xml file as the automatic source of the
         // sample file
         boolean retval = false;
-        if (getUPbFractions().isEmpty()) {
+        if (getFractions().isEmpty()) {
             try {
                 setSampleName(processXMLFractionFile(fractions[0], aliquotNumber, false, doValidate));
             } catch (ETException uPbReduxException) {
@@ -1496,7 +1498,7 @@ public class Sample implements
             }
 
         }
-        if (getUPbFractions().size() > 0) {
+        if (getFractions().size() > 0) {
             // return folder for persistent state
             retval = fractionFolder.getPath();
         }
@@ -1524,8 +1526,8 @@ public class Sample implements
         // register incoming models - by file - with lab data
         // TODO verify names and contents align
         for (int UPbFractionsIndex = 0; UPbFractionsIndex
-                < getUPbFractions().size(); UPbFractionsIndex++) {
-            Fraction nextFraction = getUPbFractions().get(UPbFractionsIndex);
+                < getFractions().size(); UPbFractionsIndex++) {
+            Fraction nextFraction = getFractions().get(UPbFractionsIndex);
             if (!nextFraction.isLegacy()) {
                 labData.registerFractionWithLabData(nextFraction);
             }
@@ -1554,8 +1556,8 @@ public class Sample implements
      */
     public void updateSampleFractionsWithSampleName(String sampleName) {
         for (int i = 0; i
-                < getUPbFractions().size(); i++) {
-            getUPbFractions().get(i).setSampleName(sampleName);
+                < getFractions().size(); i++) {
+            getFractions().get(i).setSampleName(sampleName);
         }
 
     }
@@ -1598,8 +1600,8 @@ public class Sample implements
         setChanged(false);
 
         for (int UPbFractionsIndex = 0; UPbFractionsIndex
-                < getUPbFractions().size(); UPbFractionsIndex++) {
-            ((UPbFractionI) getUPbFractions().get(UPbFractionsIndex)).setChanged(false);
+                < getFractions().size(); UPbFractionsIndex++) {
+            ((UPbFractionI) getFractions().get(UPbFractionsIndex)).setChanged(false);
         }
 
         if (getReduxSampleFilePath().length() > 0) {
@@ -1761,7 +1763,6 @@ public class Sample implements
         setChanged(this.sampleAnnotations.compareToIgnoreCase(sampleAnnotations) != 0);
 
         this.sampleAnnotations = sampleAnnotations;
-
     }
 
     /**
@@ -1858,6 +1859,7 @@ public class Sample implements
      * and <code>reduxSampleFileName</code> of this <code>Sample</code> will be
      * set
      */
+    @Override
     public void setReduxSampleFilePath(File reduxSampleFile) {
         boolean isChanged = false;
         // set redux extension
@@ -1895,6 +1897,7 @@ public class Sample implements
      * @return <code>String</code> - <code>reduxSampleFileName</code> of this
      * <code>Sample</code>
      */
+    @Override
     public String getReduxSampleFileName() {
         return reduxSampleFileName;
     }
@@ -1911,6 +1914,7 @@ public class Sample implements
      * <code>fractionDataOverriddenOnImport</code> field of this
      * <code>Sample</code>
      */
+    @Override
     public boolean isFractionDataOverriddenOnImport() {
         return fractionDataOverriddenOnImport;
     }
@@ -1930,6 +1934,7 @@ public class Sample implements
      * <code>fractionDataOverriddenOnImport</code> of this <code>Sample</code>
      * will be set
      */
+    @Override
     public void setFractionDataOverriddenOnImport(boolean fractionDataOverriddenOnImport) {
         this.fractionDataOverriddenOnImport = fractionDataOverriddenOnImport;
     }
@@ -2039,7 +2044,7 @@ public class Sample implements
      * the <code>UPbFractions</code> of this <code>Sample</code>
      */
     @Override
-    public Vector<Fraction> getUPbFractions() {
+    public Vector<Fraction> getFractions() {
         return UPbFractions;
     }
 
@@ -2127,15 +2132,6 @@ public class Sample implements
     public void selectAllFractions() {
         UPbFractions.stream().forEach((f) -> {
             ((UPbFractionI) f).setRejected(false);
-        });
-    }
-
-    /**
-     *
-     */
-    public void deSelectAllFractions() {
-        UPbFractions.stream().forEach((f) -> {
-            ((UPbFractionI) f).setRejected(true);
         });
     }
 
@@ -2320,7 +2316,7 @@ public class Sample implements
      * <code>Sample</code>
      *
      * @return <code>PhysicalConstants</code> -
-     *      <code>physicalConstantsModel</code> of this <code>Sample</code>
+     * <code>physicalConstantsModel</code> of this <code>Sample</code>
      * @throws org.earthtime.UPb_Redux.exceptions.BadLabDataException
      * BadLabDataException
      */
@@ -2696,14 +2692,11 @@ public class Sample implements
 
                         ((SampleDateModel) tempModel).setSample(this);
                     }
-
                     retVal.add(tempModel);
-
                 }
             }
         }
         return retVal;
-
     }
 
     /**
@@ -2714,12 +2707,10 @@ public class Sample implements
         // set all to false
         for (ValueModel sam : getSampleDateModels()) {
             ((SampleDateModel) sam).setPreferred(false);
-
         }
 
         ((SampleDateModel) sampleDateModel).setPreferred(true);
         Collections.sort(getSampleDateModels());
-
     }
 
     /**
@@ -2733,12 +2724,9 @@ public class Sample implements
         for (ValueModel sam : sampleDateModels) {
             if (sam.getName().equalsIgnoreCase(sampleDateModelName)) {
                 retVal = true;
-
             }
-
         }
         return retVal;
-
     }
 
     /**
@@ -2753,12 +2741,9 @@ public class Sample implements
         for (ValueModel sdm : sampleDateModels) {
             if (sdm.getName().equalsIgnoreCase(sampleDateModelName)) {
                 retVal = sdm;
-
             }
-
         }
         return retVal;
-
     }
 
     /**
@@ -2827,7 +2812,7 @@ public class Sample implements
             String name) {
         Fraction retVal = null;
 
-        for (Fraction f : getUPbFractions()) {
+        for (Fraction f : getFractions()) {
             if (f.getFractionID().equalsIgnoreCase(name)) {
                 retVal = f;
             }
@@ -3126,10 +3111,19 @@ public class Sample implements
     /**
      *
      */
-    public void deselectAllFractions() {
+    public void deSelectAllFractionsInDataTable() {
         for (Fraction UPbFraction : this.UPbFractions) {
             ((UPbFractionI) UPbFraction).setSelectedInDataTable(false);
         }
+    }
+
+    /**
+     *
+     */
+    public void deSelectAllFractions() {
+        UPbFractions.stream().forEach((f) -> {
+            ((UPbFractionI) f).setRejected(true);
+        });
     }
 
     /**
