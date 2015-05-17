@@ -32,8 +32,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.earthtime.UPb_Redux.aliquots.Aliquot;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
-import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.UPb_Redux.utilities.ClientHttpRequest;
+import org.earthtime.samples.SampleInterface;
 import org.xml.sax.SAXException;
 
 /**
@@ -43,7 +43,7 @@ import org.xml.sax.SAXException;
 public class GeochronUploaderUtility {
 
     
-    public static void uploadAliquotToGeochron(Sample sample, Aliquot aliquot, String userName, String password, boolean isPublic, boolean overWrite) {
+    public static void uploadAliquotToGeochron(SampleInterface sample, Aliquot aliquot, String userName, String password, boolean isPublic, boolean overWrite) {
         // feb 2015 part of refactoring effort ... this code cduplicate code in AliquotManager
         //TODO: complete refactoring
               

@@ -88,7 +88,7 @@ import org.earthtime.dataDictionaries.DataPresentationModeEnum;
 import org.earthtime.dataDictionaries.FractionSelectionTypeEnum;
 import org.earthtime.dataDictionaries.FractionationTechniquesEnum;
 import org.earthtime.dataDictionaries.IncludedTypeEnum;
-import org.earthtime.projects.ProjectI;
+import org.earthtime.projects.ProjectInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.utilities.TicGeneratorForAxes;
 
@@ -109,7 +109,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
     /**
      *
      */
-    protected ProjectI project;
+    protected ProjectInterface project;
 
 //    /**
 //     *
@@ -201,7 +201,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
      * @param projectManager the value of projectManager
      * @param uPbReduxFrame
      */
-    public AbstractDataMonitorView(ProjectI project, ProjectManagerSubscribeInterface projectManager, ETReduxFrame uPbReduxFrame) {
+    public AbstractDataMonitorView(ProjectInterface project, ProjectManagerSubscribeInterface projectManager, ETReduxFrame uPbReduxFrame) {
         this();
 
         this.project = project;

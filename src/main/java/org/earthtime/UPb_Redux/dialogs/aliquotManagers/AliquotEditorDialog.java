@@ -89,7 +89,6 @@ import org.earthtime.UPb_Redux.renderers.EditFractionButton;
 import org.earthtime.UPb_Redux.reports.excelReports.CsvResultsTable;
 import org.earthtime.UPb_Redux.reports.reportViews.ReportAliquotFractionsView;
 import org.earthtime.UPb_Redux.reports.reportViews.TabbedReportViews;
-import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.UPb_Redux.utilities.Thumbnail;
 import org.earthtime.UPb_Redux.utilities.UPbReduxFocusTraversalPolicy;
@@ -113,6 +112,7 @@ import org.earthtime.ratioDataModels.initialPbModelsET.InitialPbModelET;
 import org.earthtime.ratioDataModels.initialPbModelsET.StaceyKramersInitialPbModelET;
 import org.earthtime.ratioDataModels.mineralStandardModels.MineralStandardUPbModel;
 import org.earthtime.ratioDataModels.tracers.TracerUPbModel;
+import org.earthtime.samples.SampleInterface;
 import org.earthtime.utilities.FileHelper;
 import org.earthtime.xmlUtilities.SimpleTransform;
 import org.jdesktop.layout.GroupLayout.ParallelGroup;
@@ -158,7 +158,7 @@ public class AliquotEditorDialog extends DialogEditor {
     /**
      *
      */
-    protected Sample sample;
+    protected SampleInterface sample;
     /**
      *
      */
@@ -535,7 +535,7 @@ public class AliquotEditorDialog extends DialogEditor {
     public AliquotEditorDialog(
             SampleDateInterpretationSubscribeInterface parent,
             boolean modal,
-            Sample sample,
+            SampleInterface sample,
             Aliquot aliquot) {
         super((Frame) parent, modal);
         this.parent = parent;
@@ -1874,7 +1874,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
      *
      * @return
      */
-    public Sample getSample() {
+    public SampleInterface getSample() {
         return sample;
     }
 
@@ -1882,7 +1882,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
      *
      * @param sample
      */
-    public void setSample(Sample sample) {
+    public void setSample(SampleInterface sample) {
         this.sample = sample;
 
     }
@@ -4400,7 +4400,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
         // nov 2011 per Doug Walker, need to be sure lab name is correct
         myAliquot.setLaboratoryName(sample.getMyReduxLabData().getLabName());
 
-        sample.saveTheSampleAsSerializedReduxFile();
+        SampleInterface.saveSampleAsSerializedReduxFile(sample);
 
         System.out.println("**************** PRE-PUBLISH CHECKLIST FOR ALIQUOT");
 
@@ -4833,7 +4833,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
         if (reportSVGUpload_chkbox.isSelected()) {
             JTabbedPane tabbedReportViews = ((ETReduxFrame) parent).getReportTableTabbedPane();
 
-            String[][] reportFractions = sample.reportActiveAliquotFractionsByNumberStyle(myAliquot, false);
+            String[][] reportFractions = SampleInterface.reportActiveAliquotFractionsByNumberStyle(sample, myAliquot, false);
             ReportAliquotFractionsView.sortReportColumn(//
                     reportFractions, ((TabbedReportViews) ((ETReduxFrame) parent).getReportTableTabbedPane()).getActiveFractionsSortedColumn(), ((TabbedReportViews) ((ETReduxFrame) parent).getReportTableTabbedPane()).getActiveFractionsSortedColumnDirection());
 
@@ -4859,7 +4859,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
             File tempReportCSV = new File("UPLOADED_DATA_TABLE.csv");
             CsvResultsTable.setSampleName(sample.getSampleName());
 
-            String[][] reportFractions = sample.reportActiveAliquotFractionsByNumberStyle(myAliquot, true);
+            String[][] reportFractions = SampleInterface.reportActiveAliquotFractionsByNumberStyle(sample, myAliquot, true);
             ReportAliquotFractionsView.sortReportColumn(//
                     reportFractions, ((TabbedReportViews) ((ETReduxFrame) parent).getReportTableTabbedPane()).getActiveFractionsSortedColumn(), ((TabbedReportViews) ((ETReduxFrame) parent).getReportTableTabbedPane()).getActiveFractionsSortedColumnDirection());
 

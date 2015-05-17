@@ -74,7 +74,6 @@ import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.reports.reportViews.ReportUpdaterInterface;
-import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.UPb_Redux.user.SampleDateInterpretationGUIOptions;
 import org.earthtime.UPb_Redux.valueModels.SampleDateInterceptModel;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
@@ -157,7 +156,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
      * @param mySample
      * @param reportUpdater the value of reportUpdater
      */
-    public ConcordiaGraphPanel(Sample mySample, ReportUpdaterInterface reportUpdater) {
+    public ConcordiaGraphPanel(SampleInterface mySample, ReportUpdaterInterface reportUpdater) {
         super();
 
         this.sample = mySample;

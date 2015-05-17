@@ -27,9 +27,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import org.earthtime.UPb_Redux.aliquots.Aliquot;
-import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
+import org.earthtime.samples.SampleInterface;
 
 /**
  *
@@ -38,7 +38,7 @@ import org.earthtime.UPb_Redux.valueModels.ValueModel;
 public class DateInterpretationsDesktopPane extends JDesktopPane {
 
     // instance variables
-    private Sample sample;
+    private SampleInterface sample;
 
     /** Creates a new instance of DateInterpretationsDesktopPane */
     public DateInterpretationsDesktopPane() {
@@ -70,7 +70,7 @@ public class DateInterpretationsDesktopPane extends JDesktopPane {
      * @param sample
      * @param width  
      */
-    public void ClearAndShowSample(Sample sample, int width) {
+    public void ClearAndShowSample(SampleInterface sample, int width) {
         this.removeAll();
         
         this.sample = sample;

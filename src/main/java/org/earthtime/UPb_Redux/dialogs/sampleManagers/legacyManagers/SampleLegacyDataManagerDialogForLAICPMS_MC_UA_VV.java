@@ -21,9 +21,8 @@
 package org.earthtime.UPb_Redux.dialogs.sampleManagers.legacyManagers;
 
 import java.io.File;
-import org.earthtime.UPb_Redux.samples.Sample;
-import org.earthtime.UPb_Redux.samples.sampleImporters.SampleImporterFromLAICPMSLegacyCVSFile_MC_UA;
 import org.earthtime.UPb_Redux.samples.sampleImporters.SampleImporterFromLAICPMSLegacyCVSFile_SC_WSU_VV;
+import org.earthtime.samples.SampleInterface;
 
 /**
  *
@@ -41,7 +40,7 @@ public class SampleLegacyDataManagerDialogForLAICPMS_MC_UA_VV  extends AbstractS
     public SampleLegacyDataManagerDialogForLAICPMS_MC_UA_VV (
             java.awt.Frame parent,
             boolean modal,
-            Sample sample,
+            SampleInterface sample,
             File importFractionFolderMRU ) {
 
         super( parent,

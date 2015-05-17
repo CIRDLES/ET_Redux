@@ -34,7 +34,6 @@ import org.earthtime.UPb_Redux.aliquots.Aliquot;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
-import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.UPb_Redux.user.ReduxPersistentState;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
@@ -50,7 +49,7 @@ import org.earthtime.xmlUtilities.XMLSerializationI;
  */
 public class SampleCompilationManagerDialog extends DialogEditor {
 
-    private Sample mySample = null;
+    private SampleInterface mySample = null;
     private File importFractionFolderMRU;
     private boolean initialized = false;
     private final boolean automaticFractionCreation = false;
@@ -95,7 +94,7 @@ public class SampleCompilationManagerDialog extends DialogEditor {
     public SampleCompilationManagerDialog(
             java.awt.Frame parent,
             boolean modal,
-            Sample sample,
+            SampleInterface sample,
             File importFractionFolderMRU) {
         super(parent, modal);
 
@@ -202,7 +201,7 @@ public class SampleCompilationManagerDialog extends DialogEditor {
             // get aliquots as specified
             switch (fractionSource) {
                 case SINGLE_LOCAL:
-                    success = getMySample().importAliquotLocalXMLDataFile(importFractionFolderMRU);
+                    success = SampleInterface.importAliquotFromLocalXMLFileIntoSample(getMySample(), importFractionFolderMRU);
                     if (!success.equalsIgnoreCase("")) {
                         getMySample().setSampleName(sampleName_text.getText());
 
@@ -298,7 +297,7 @@ public class SampleCompilationManagerDialog extends DialogEditor {
             if (myDownAliquot != null) {
                 // xml is added here for consistency and because we test whether aliquot source file is xml ... probably
                 // should get rid of xml test and just make it aliquot non-zero length string
-                SampleInterface.importXMLAliquot(mySample, myDownAliquot, "GeochronDownloadOfAliquot_" + aliquotIGSN.toUpperCase().trim() + ".xml");
+                SampleInterface.importAliquotIntoSample(mySample, myDownAliquot, "GeochronDownloadOfAliquot_" + aliquotIGSN.toUpperCase().trim() + ".xml");
                 System.out.println("got one " + myDownAliquot.getAnalystName());
             } else {
                 return "Missing (or private) aliquot: " + aliquotIGSN;
@@ -314,7 +313,7 @@ public class SampleCompilationManagerDialog extends DialogEditor {
      *
      * @return
      */
-    public Sample getMySample() {
+    public SampleInterface getMySample() {
         return mySample;
     }
 
@@ -322,7 +321,7 @@ public class SampleCompilationManagerDialog extends DialogEditor {
      *
      * @param mySample
      */
-    public void setMySample(Sample mySample) {
+    public void setMySample(SampleInterface mySample) {
         this.mySample = mySample;
     }
 

@@ -164,7 +164,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
      */
     protected ImageIcon reduxIcon;
     // theSample is serialized as a *.redux file
-    private Sample theSample = null;
+    private SampleInterface theSample = null;
     // theProject is serialized as a *.redux file
     private Project theProject = null;
     // updated July 2012
@@ -938,7 +938,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         if (checkSavedStatusTheSample()) {
             // good to proceed
             // save off the existing sample
-            Sample saveTheSample = theSample;
+            SampleInterface saveTheSample = theSample;
 
             // set up a new empty sample based on sampleType
             theSample = Sample.initializeNewSample(//
@@ -1203,7 +1203,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
     private void saveTheSample() throws BadLabDataException {
         if (theSample != null) {
             myState.getReduxPreferences().setDefaultSampleAnalysisPurpose(theSample.getAnalysisPurpose());
-            theSample.saveTheSampleAsSerializedReduxFile();
+            SampleInterface.saveSampleAsSerializedReduxFile(theSample);
             setUpTheSample(false);
         }
     }
@@ -1214,7 +1214,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
      */
     private boolean saveSampleFileAs() throws BadLabDataException {
 
-        File selectedFile = theSample.saveSampleFileAs(myState.getMRUSampleFolderPath());
+        File selectedFile = SampleInterface.saveSampleFileAs(theSample, myState.getMRUSampleFolderPath());
 
         if (selectedFile != null) {
             getMyState().updateMRUSampleList(selectedFile);
@@ -1265,15 +1265,11 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                 + theSample.getSampleAnalysisType()//
                 + " data");
 
-//        // static call to leave pointer to this frame
-//        Sample.parentFrame = this;
-//
         // initialize sample with current user preferences
         theSample.setFractionDataOverriddenOnImport(
                 myState.getReduxPreferences().isFractionDataOverriddenOnImport());
 
         // this true causes data reduction
-        //System.out.println("setup the sample call");
         // may 2012 first pass reduction
         if (performReduction) {
             theSample.reduceSampleData();
@@ -1383,6 +1379,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
     /**
      *
      */
+    @Override
     public void updateReportTable() {
         updateReportTable(false);
     }
@@ -1393,8 +1390,6 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
      */
     @Override
     public void updateReportTable(boolean performReduction) {
-
-//        System.out.println("performreduction = " + performReduction);
         // march 2013
         try {
             UPbFractionReducer.getInstance().setSessionCorrectedUnknownsSummaries(//
@@ -1450,7 +1445,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             System.out.println("Opening a project");
         } else {
 
-            Sample deserializedSample = (Sample) deserializedFile;
+            SampleInterface deserializedSample = (SampleInterface) deserializedFile;
 
             if (deserializedSample != null) {
 
@@ -1458,7 +1453,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
                 // dec 2011 = fix the legacy problem of badly numbered aliquots
                 // compress them to 1,2,3...
-                theSample.repairAliquotNumberingDec2011();
+                ((Sample)theSample).repairAliquotNumberingDec2011();
 
                 // update MRU status
                 getMyState().updateMRUSampleList(selFile);
@@ -1484,7 +1479,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
                 // sept 2007 to be safe, we now save it back to update any minor changes due to version updates
                 theSample.setChanged(false);
-                theSample.saveTheSampleAsSerializedReduxFile(selFile);
+                SampleInterface.saveSampleAsSerializedReduxFile(theSample, selFile);
             }
         }
 
@@ -1628,7 +1623,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
      *
      * @return
      */
-    public Sample getTheSample() {
+    public SampleInterface getTheSample() {
         return theSample;
     }
 
@@ -1636,7 +1631,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
      *
      * @param theSample
      */
-    public void setTheSample(Sample theSample) {
+    public void setTheSample(SampleInterface theSample) {
         this.theSample = theSample;
     }
 
@@ -1685,7 +1680,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
      * @param isNumeric
      */
     public void produceExcelReport(boolean isNumeric) {
-        String[][] reportFractions = theSample.reportActiveFractionsByNumberStyle(isNumeric);
+        String[][] reportFractions = SampleInterface.reportActiveFractionsByNumberStyle(theSample, isNumeric);
         ReportAliquotFractionsView.sortReportColumn(//
                 reportFractions, //
                 ((TabbedReportViews) getReportTableTabbedPane()).getActiveFractionsSortedColumn(),//
@@ -1700,7 +1695,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
      *
      */
     public void produceCSVReport() {
-        String[][] reportFractions = theSample.reportActiveFractionsByNumberStyle(true);
+        String[][] reportFractions = SampleInterface.reportActiveFractionsByNumberStyle(theSample, true);
         ReportAliquotFractionsView.sortReportColumn(//
                 reportFractions, //
                 ((TabbedReportViews) getReportTableTabbedPane()).getActiveFractionsSortedColumn(),//
@@ -3149,7 +3144,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
         // feb 2010 simplification
         // first save the existing sample
-        theSample.saveTheSampleAsSerializedReduxFile();
+        SampleInterface.saveSampleAsSerializedReduxFile(theSample);
 
         // open the manager
         try {
@@ -3303,9 +3298,11 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         if (theSample != null) {
 
             // oct 2014 per bug report by Matt Rioux email
-            SampleInterface.updateAndSaveSampleDateModelsByAliquot(theSample);
+            if (!theSample.isAnalyzed()){
+                SampleInterface.updateAndSaveSampleDateModelsByAliquot(theSample);
+            }
 
-            theSample.saveTheSampleAsSerializedReduxFile();
+            SampleInterface.saveSampleAsSerializedReduxFile(theSample);
             myWeightedMeanGraphPanel
                     = new WeightedMeanGraphPanel(theSample);
 
@@ -3560,7 +3557,7 @@ private void startStopLiveUpdate_buttonActionPerformed(java.awt.event.ActionEven
 
     private synchronized void liveUpdateSample() {
         try {
-            theSample.automaticUpdateOfUPbSampleFolder(myFractionEditor);
+            theSample.automaticUpdateOfUPbSampleFolder(theSample, myFractionEditor);
         } catch (ETException ex) {
             new ETWarningDialog(ex).setVisible(true);
         }
@@ -3636,7 +3633,7 @@ private void startStopLiveUpdate_buttonActionPerformed(java.awt.event.ActionEven
             theSample.setChanged(theSample.isChanged() || ((UPbFractionI) fraction).isChanged());
             // feb 2010
             if (theSample.isChanged()) {
-                theSample.saveTheSampleAsSerializedReduxFile();
+                SampleInterface.saveSampleAsSerializedReduxFile(theSample);
             }
 
             if (((UPbFractionI) fraction).isDeleted()) {
@@ -3665,7 +3662,7 @@ private void startStopLiveUpdate_buttonActionPerformed(java.awt.event.ActionEven
     public void editAliquotByNumber(int aliquotNum) {
 
         // added march 2009 so that changes to fraction tab are saved upon use of aliquot button
-        theSample.saveTheSampleAsSerializedReduxFile();
+        SampleInterface.saveSampleAsSerializedReduxFile(theSample);
 
         editAliquot(theSample.getAliquotByNumber(aliquotNum));
     }

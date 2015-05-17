@@ -15,15 +15,22 @@
  */
 package org.earthtime.samples;
 
+import java.awt.Frame;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Vector;
+import javax.swing.JFrame;
+import javax.swing.filechooser.FileFilter;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.aliquots.Aliquot;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetup;
+import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
+import org.earthtime.UPb_Redux.filters.ReduxFileFilter;
+import org.earthtime.UPb_Redux.filters.XMLFileFilter;
 import org.earthtime.UPb_Redux.fractions.AnalysisFraction;
 import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
@@ -32,17 +39,31 @@ import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLAICPMSFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLegacyFraction;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.reports.ReportSettings;
+import org.earthtime.UPb_Redux.samples.SESARSampleMetadata;
+import org.earthtime.UPb_Redux.samples.UPbSampleInterface;
 import org.earthtime.UPb_Redux.user.SampleDateInterpretationGUIOptions;
+import org.earthtime.UPb_Redux.utilities.ETSerializer;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
+import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
+import org.earthtime.dataDictionaries.SampleRegistries;
+import org.earthtime.dataDictionaries.SampleTypesEnum;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
+import org.earthtime.utilities.FileHelper;
+import org.earthtime.xmlUtilities.XMLSerializationI;
 
 /**
  *
  * @author James F. Bowring <bowring at gmail.com>
  */
 public interface SampleInterface {
+
+    /**
+     *
+     * @param myLabData
+     */
+    public abstract void setUpSample(ReduxLabData myLabData);
 
     /**
      * gets the <code>file</code> of this <code>Sample</code>.
@@ -159,6 +180,11 @@ public interface SampleInterface {
     public abstract ReduxConstants.ANALYSIS_PURPOSE getAnalysisPurpose();
 
     /**
+     * @param analysisPurpose the analysisPurpose to set
+     */
+    public abstract void setAnalysisPurpose(ReduxConstants.ANALYSIS_PURPOSE analysisPurpose);
+
+    /**
      * gets the <code>reduxSampleFileName</code> of this <code>Sample</code>.
      *
      * @pre this <code>Sample</code> exists
@@ -195,7 +221,110 @@ public interface SampleInterface {
      */
     public abstract void setReduxSampleFilePath(File reduxSampleFile);
 
-    // Aliquots
+    /**
+     *
+     * @return
+     */
+    public abstract boolean isTypeAnalysis();
+
+    /**
+     * @param sampleAnalysisType the sampleAnalysisType to set
+     */
+    public abstract void setSampleAnalysisType(String sampleAnalysisType);
+
+    /**
+     *
+     * @return
+     */
+    public abstract boolean isAnalysisTypeIDTIMS();
+
+    /**
+     *
+     * @return
+     */
+    public abstract boolean isAnalysisTypeLAICPMS();
+
+    /**
+     *
+     * @return
+     */
+    public abstract boolean isTypeLiveUpdate();
+
+    /**
+     *
+     * @return
+     */
+    public abstract boolean isTypeLegacy();
+
+    /**
+     *
+     * @return
+     */
+    public abstract boolean isTypeProject();
+
+    /**
+     *
+     * @return
+     */
+    public abstract boolean isAnalysisTypeCompiled();
+
+    /**
+     *
+     * @return
+     */
+    public abstract boolean isSampleTypeLiveWorkflow();
+
+    /**
+     * @return the sampleAnalysisType
+     */
+    public abstract String getSampleAnalysisType();
+
+    /**
+     * @return the mineralName
+     */
+    public abstract String getMineralName();
+
+    /**
+     * @param mineralName the mineralName to set
+     */
+    public abstract void setMineralName(String mineralName);
+
+    /**
+     * @return the sampleFolderSaved
+     */
+    public abstract File getSampleFolderSaved();
+
+    /**
+     * @param sampleFolderSaved the sampleFolderSaved to set
+     */
+    public abstract void setSampleFolderSaved(File sampleFolderSaved);
+
+    /**
+     * @param automaticDataUpdateMode the automaticDataUpdateMode to set
+     */
+    public abstract void setAutomaticDataUpdateMode(boolean automaticDataUpdateMode);
+
+    /**
+     * @return the automaticDataUpdateMode
+     */
+    public abstract boolean isAutomaticDataUpdateMode();
+
+    /**
+     * @param calculateTWrhoForLegacyData the calculateTWrhoForLegacyData to set
+     */
+    public abstract void setCalculateTWrhoForLegacyData(boolean calculateTWrhoForLegacyData);
+
+    /**
+     * @return the calculateTWrhoForLegacyData
+     */
+    public abstract boolean isCalculateTWrhoForLegacyData();
+
+    /**
+     *
+     */
+    public abstract void reduceSampleData();
+
+    // Aliquots **************************************************************** Aliquots ****************************************************************
     /**
      * finds the <code>Aliquot</code> named <code>name</code> in the array
      * <code>aliquots</code>.
@@ -206,7 +335,7 @@ public interface SampleInterface {
      * <code>name</code> is found and returned
      * @param name name of the <code>Aliquot</code> to retrieve
      * @return  <code>Aliquot</code> - the <code>Aliquot</code> from
-     * <code>aliquots</code> whose name correspongs to the argument
+     * <code>aliquots</code> whose name corresponds to the argument
      * <code>name</code>
      */
     public abstract Aliquot getAliquotByName(String name);
@@ -252,6 +381,14 @@ public interface SampleInterface {
     public abstract Aliquot getAliquotByNumber(int aliquotNum);
 
     public abstract String getNameOfAliquotFromSample(int aliquotNum);
+
+    /**
+     *
+     * @param aliquotName
+     * @return
+     * @throws ETException
+     */
+    public abstract Aliquot addNewAliquot(String aliquotName) throws ETException;
 
     /**
      *
@@ -307,7 +444,7 @@ public interface SampleInterface {
      * @throws org.earthtime.UPb_Redux.exceptions.BadLabDataException
      * BadLabDataException
      */
-    public static void importXMLAliquot(SampleInterface sample, Aliquot aliquot, String aliquotSource)
+    public static void importAliquotIntoSample(SampleInterface sample, Aliquot aliquot, String aliquotSource)
             throws IOException,
             ETException,
             BadLabDataException {
@@ -353,7 +490,7 @@ public interface SampleInterface {
                     fraction.setInitialPbModel(sample.getMyReduxLabData().getNoneInitialPbModel());
                 }
 
-                Fraction nextFraction = null;
+                Fraction nextFraction;
                 if (fraction.isLegacy()) {
                     nextFraction = new UPbLegacyFraction(
                             aliquotNumber,
@@ -432,6 +569,120 @@ public interface SampleInterface {
     }
 
     /**
+     * imports all <code>Aliquots</code> found in the XML file specified by
+     * argument <code>folderName</code> to this <code>Sample</code>.
+     *
+     * @param sample the value of sample
+     * @param folderName the file to read data from
+     * @pre argument <code>location</code> specifies an XML file containing
+     * valid <code>Aliquots</code>
+     * @post all <code>Aliquots</code> found in the file are added to this
+     * <code>Sample</code>
+     * @throws java.io.FileNotFoundException FileNotFoundException
+     * @throws org.earthtime.UPb_Redux.exceptions.BadLabDataException
+     * BadLabDataException
+     * @throws java.io.IOException IOException
+     * @throws org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException
+     * BadOrMissingXMLSchemaException
+     * @return the java.lang.String
+     */
+    public static String importAliquotFromLocalXMLFileIntoSample(SampleInterface sample, File folderName)
+            throws FileNotFoundException, BadLabDataException, IOException, BadOrMissingXMLSchemaException {
+        String retval = "";
+
+        String dialogTitle = "Select a U-Pb Aliquot XML File to Open: *.xml";
+        final String fileExtension = ".xml";
+        FileFilter nonMacFileFilter = new XMLFileFilter();
+        File aliquotFile
+                = FileHelper.AllPlatformGetFile(dialogTitle, folderName, fileExtension, nonMacFileFilter, false, new JFrame())[0];
+
+        if (aliquotFile != null) {
+            try {
+                Aliquot aliquotFromFile = new UPbReduxAliquot();
+
+                aliquotFromFile
+                        = (Aliquot) ((XMLSerializationI) aliquotFromFile).readXMLObject(
+                                aliquotFile.getCanonicalPath(), true);
+
+                importAliquotIntoSample(sample, aliquotFromFile, aliquotFile.getName());
+            } catch (ETException ex) {
+            } finally {
+                // return folder for persistent state even if fails
+                retval = aliquotFile.getParent();
+            }
+        } else {
+            throw new FileNotFoundException();
+        }
+
+        return retval;
+    }
+
+    /**
+     * imports all <code>UPbFractions</code> found in the XML file specified by
+     * argument <code>location</code> to the <code>Aliquot</code> specified by
+     * argument <code>aliquotNumber</code> in this <code>Sample</code>
+     *
+     * @param sample the value of sample
+     * @param folder the file to read data from
+     * @param aliquotNumber the number of the <code>Aliquot</code> which the
+     * <code>Fractions</code> belong to
+     * @param doValidate
+     * @pre argument <code>location</code> specifies an XML file containing
+     * valid <code>UPbFractions</code>
+     * @post all <code>UPbFractions</code> found in the file are added to the
+     * <code>Aliquot</code> specified by <code>aliquotNumber</code> in this
+     * <code>Sample</code>
+     * @throws java.io.FileNotFoundException FileNotFoundException
+     * @throws org.earthtime.UPb_Redux.exceptions.BadLabDataException
+     * BadLabDataException
+     * @return the java.lang.String
+     */
+    public static String importFractionsFromXMLFilesIntoSample(
+            SampleInterface sample, File folder, int aliquotNumber, boolean doValidate)
+            throws FileNotFoundException, BadLabDataException {
+
+        String retval = null;
+
+        String dialogTitle = "Select one or more U-Pb Redux Fraction File(s) to Open: *.xml";
+        final String fileExtension = ".xml";
+        FileFilter nonMacFileFilter = new XMLFileFilter();
+
+        File[] returnFile
+                = FileHelper.AllPlatformGetFile(dialogTitle, folder, fileExtension, nonMacFileFilter, true, new JFrame());
+
+        int successCount = 0;
+        if (returnFile[0] != null) {
+            // nov 2008
+            // first determine if the sample is empty and if it is,
+            // use the first xml file as the automatic source of the
+            // sample file
+            if (sample.getFractions().size() <= 1) {
+                try {
+                    sample.setSampleName(((UPbSampleInterface) sample).processXMLFractionFile(returnFile[0], aliquotNumber, false, doValidate));
+                    successCount = 1;
+                } catch (ETException uPbReduxException) {
+                }
+            }
+
+            for (int i = successCount; i < returnFile.length; i++) {
+                try {
+                    ((UPbSampleInterface) sample).processXMLFractionFile(returnFile[i], aliquotNumber, true, doValidate);
+                    successCount++;
+                } catch (ETException ex) {
+                }
+            }
+            // return folder for persistent state 
+            if (successCount > 0) {
+                retval = returnFile[0].getParent();
+            }
+        } else {
+            throw new FileNotFoundException();
+        }
+
+        return retval;
+    }
+
+    /**
      * removes <code>Fractions</code> from this <code>Sample</code>'s sample age
      * models that are no longer aliquot part of this <code>Sample</code>'s
      * <code>Aliquots</code>.
@@ -454,7 +705,29 @@ public interface SampleInterface {
         });
     }
 
-    // Fractions
+    /**
+     *
+     * @param aliquot
+     */
+    public abstract void removeAliquot(Aliquot aliquot);
+
+    /**
+     *
+     * @param nameAliquotA
+     * @param nameAliquotB
+     * @return
+     */
+    public abstract boolean swapOrderOfTwoAliquots(String nameAliquotA, String nameAliquotB);
+
+    /**
+     *
+     * @param fID
+     * @return
+     */
+    public abstract String getAliquotNameByFractionID(
+            String fID);
+
+    // Fractions *************************************************************** Fractions ***************************************************************
     /**
      * adds a <code>Fraction</code> to the <code>Sample</code>'s set of
      * <code>Fractions</code>.
@@ -478,6 +751,20 @@ public interface SampleInterface {
     public abstract Vector<Fraction> getFractions();
 
     /**
+     * retrieves the <code>Fraction</code> specified by argument <code>ID</code>
+     * from this <code>Sample</code>'s set of <code>Fractions</code>.
+     *
+     * @pre a <code>Fraction</code> exists whose ID corresponds to argument
+     * <code>ID</code>
+     * @post that <code>Fraction</code> is found and returned
+     *
+     * @param ID the ID of the <code>Fraction</code> that should be retrieved
+     * @return <code>Fraction</code> - the <code>Fraction</code> in this
+     * <code>Sample</code> whose ID corresponds to argument <code>ID</code>
+     */
+    public abstract Fraction getFractionByID(String ID);
+
+    /**
      * sets the <code>UPbFractions</code> of this <code>Sample</code> to the
      * argument <code>UPbFractions</code>
      *
@@ -490,7 +777,129 @@ public interface SampleInterface {
      */
     public abstract void setUPbFractions(Vector<Fraction> UPbFractions);
 
-    // Report Settings
+    public abstract Vector<Fraction> getUpbFractionsRejected();
+
+    /**
+     * removes the <code>UPbFraction</code> found at <code>index</code> from
+     * this <code>Sample</code>'s set of <code>Fractions</code>
+     *
+     * @pre a <code>Fraction</code> exists in this <code>Sample</code>'s set of
+     * <code>Fractions</code> at <code>index</code>
+     * @post the <code>Fraction</code> found at <code>index</code> is removed
+     * from the set of <code>Fractions</code>
+     * @param index the index into the array of <code>Fractions</code> where the
+     * <code>Fraction</code> to be removed can be found
+     */
+    void removeUPbReduxFraction(int index);
+
+    /**
+     * removes the <code>UPbFraction</code> from this <code>Sample</code>'s set
+     * of <code>Fractions</code> that corresponds to the argument
+     * <code>fraction</code>
+     *
+     * @pre a <code>Fraction</code> exists in this <code>Sample</code>'s set of
+     * <code>Fractions</code> that corresponds to <code>fraction</code>
+     * @post the <code>Fraction</code> that corresponds to the argument
+     * <code>fraction</code> is removed
+     * @param fraction
+     */
+    void removeUPbReduxFraction(Fraction fraction);
+
+    /**
+     *
+     * @param name
+     * @return
+     */
+    public abstract Fraction getSampleFractionByName(
+            String name);
+
+    /**
+     *
+     * @return
+     */
+    public abstract Vector<Fraction> getUpbFractionsActive();
+
+    /**
+     *
+     * @return
+     */
+    public Vector<Fraction> getUpbFractionsUnknown();
+
+    /**
+     *
+     * @param filteredFractions
+     */
+    public abstract void updateSetOfActiveFractions(Vector<Fraction> filteredFractions);
+
+    /**
+     *
+     * @return
+     */
+    public abstract Vector<String> getSampleFractionIDs();
+
+    /**
+     *
+     */
+    public abstract void deSelectAllFractionsInDataTable();
+
+    /**
+     *
+     */
+    public abstract void deSelectAllFractions();
+
+    /**
+     *
+     */
+    public abstract void selectAllFractions();
+
+    /**
+     *
+     * @param fractions
+     * @param aliquotNumber
+     */
+    public abstract void addUPbFractionVector(Vector<Fraction> fractions, int aliquotNumber);
+
+    // Sample Date Models ***************************************************************** Sample Date Models *****************************************************************
+    /**
+     *
+     */
+    public abstract void updateSampleDateModels();
+
+    /**
+     * @param sampleDateModels the sampleDateModels to set
+     */
+    public abstract void setSampleDateModels(Vector<ValueModel> sampleDateModels);
+
+    /**
+     * @return the sampleDateModels
+     */
+    public abstract Vector<ValueModel> getSampleDateModels();
+
+    /**
+     *
+     * @param modelName
+     * @return
+     */
+    public abstract ValueModel getSampleDateModelByName(String modelName);
+
+    /**
+     * sets the <code>fractionDataOverriddenOnImport</code> field of this
+     * <code>Sample</code> to the argument
+     * <code>fractionDataOverriddenOnImport</code>
+     *
+     * @pre argument <code>fractionDataOverriddenOnImport</code> is a valid
+     * <code>boolean</code>
+     * @post this <code>Sample</code>'s
+     * <code>fractionDataOverriddenOnImport</code> is set to argument
+     * <code>fractionDataOverriddenOnImport</code>
+     *
+     * @param fractionDataOverriddenOnImport value to which
+     * <code>fractionDataOverriddenOnImport</code> of this <code>Sample</code>
+     * will be set
+     */
+    public abstract void setFractionDataOverriddenOnImport(boolean fractionDataOverriddenOnImport);
+    // Report Settings ***************************************************************Report Settings ************************************************************
+
     /**
      *
      * @return
@@ -511,31 +920,54 @@ public interface SampleInterface {
      */
     public abstract ReportSettings getReportSettingsModel();
 
-    // Archiving
     /**
-     * sets the <code>changed</code> field of each <code>Fraction</code> in this
-     * <code>Sample</code> to <code>false</code> and saves this
-     * <code>Sample</code> as a .redux file to <code>reduxSampleFilePath</code>.
      *
-     * @pre this <code>Sample</code> exists
-     * @post this <code>Sample</code> is saved as a .redux file to the location
-     * specified by <code>reduxSampleFilePath</code>
+     * @param sample the value of sample
+     * @param isNumeric
+     * @return the java.lang.String[][]
      */
-    public abstract void saveTheSampleAsSerializedReduxFile();
+    public static String[][] reportRejectedFractionsByNumberStyle(SampleInterface sample, boolean isNumeric) {
+        return sample.getReportSettingsModel().reportRejectedFractionsByNumberStyle(sample, isNumeric);
+    }
 
     /**
-     * saves this <code>Sample</code> to the file specified by argument
-     * <code>file</code>.
      *
-     * @pre argument <code>file</code> is a valid file
-     * @post this <code>Sample</code> is saved to the location specified by
-     * argument <code>file</code>
-     * @param file the file where this <code>Sample</code> will be saved
-     * @return  <code>String</code> - the path of the file where this
-     * <code>Sample</code> was saved
+     * @param sample the value of sample
+     * @param isNumeric
+     * @return the java.lang.String[][]
      */
-    public abstract String saveTheSampleAsSerializedReduxFile(File file);
+    public static String[][] reportActiveFractionsByNumberStyle(SampleInterface sample, boolean isNumeric) {
 
+        return sample.getReportSettingsModel().reportActiveFractionsByNumberStyle(sample, isNumeric);
+    }
+
+    /**
+     *
+     * @param sample the value of sample
+     * @param aliquot
+     * @param isNumeric
+     * @return the java.lang.String[][]
+     */
+    public static String[][] reportActiveAliquotFractionsByNumberStyle(SampleInterface sample, Aliquot aliquot, boolean isNumeric) {
+
+        return sample.getReportSettingsModel().reportActiveAliquotFractionsByNumberStyle(sample, ((UPbReduxAliquot) aliquot).getActiveAliquotFractions(), isNumeric);
+    }
+
+    /**
+     *
+     * @param reportsFolderPath
+     * @return
+     * @throws BadLabDataException
+     */
+    public abstract String saveReportSettingsToFile(String reportsFolderPath)
+            throws BadLabDataException;
+
+    /**
+     *
+     */
+    public abstract void restoreDefaultReportSettingsModel();
+
+    // Archiving *************************************************************** Archiving ***************************************************************
     /**
      * sets the <code>sampleIGSN</code> of this <code>Sample</code> to the
      * argument <code>sampleIGSN</code>
@@ -558,7 +990,138 @@ public interface SampleInterface {
      */
     public abstract String getSampleIGSN();
 
-    // Parameter Models
+    /**
+     * @param sampleRegistry the sampleRegistry to set
+     */
+    public abstract void setSampleRegistry(SampleRegistries sampleRegistry);
+
+    /**
+     *
+     * @return
+     */
+    public abstract String getSampleIGSNnoRegistry();
+
+    /**
+     * @return the archivedInRegistry
+     */
+    public abstract boolean isArchivedInRegistry();
+
+    /**
+     * @param archivedInRegistry the archivedInRegistry to set
+     */
+    public abstract void setArchivedInRegistry(boolean archivedInRegistry);
+
+    /**
+     * @return the sampleRegistry
+     */
+    public abstract SampleRegistries getSampleRegistry();
+
+    /**
+     * @param validatedSampleIGSN the validatedSampleIGSN to set
+     */
+    public abstract void setValidatedSampleIGSN(boolean validatedSampleIGSN);
+
+    /**
+     * @return the validatedSampleIGSN
+     */
+    public abstract boolean isValidatedSampleIGSN();
+
+    /**
+     * sets the <code>changed</code> field of each <code>UPbFraction</code> in
+     * this <code>Sample</code> to <code>false</code> and saves this
+     * <code>Sample</code> as aliquot .redux file to
+     * <code>reduxSampleFilePath</code>.
+     *
+     * @param sample the value of sample
+     * @pre this <code>Sample</code> exists
+     * @post this <code>Sample</code> is saved as a .redux file to the location
+     * specified by <code>reduxSampleFilePath</code>
+     */
+    public static void saveSampleAsSerializedReduxFile(SampleInterface sample) {
+        sample.setChanged(false);
+
+        for (int UPbFractionsIndex = 0; UPbFractionsIndex
+                < sample.getFractions().size(); UPbFractionsIndex++) {
+            ((UPbFractionI) sample.getFractions().get(UPbFractionsIndex)).setChanged(false);
+        }
+
+        if (sample.getReduxSampleFilePath().length() > 0) {
+
+            try {
+                ETSerializer.SerializeObjectToFile(sample, sample.getReduxSampleFilePath());
+            } catch (ETException eTException) {
+            }
+        }
+
+    }
+
+    /**
+     * saves this <code>Sample</code> to the file specified by argument
+     * <code>file</code>.
+     *
+     * @param sample the value of sample
+     * @param file the file where this <code>Sample</code> will be saved
+     * @pre argument <code>file</code> is a valid file
+     * @post this <code>Sample</code> is saved to the location specified by
+     * argument <code>file</code>
+     * @return the java.lang.String
+     */
+    public static String saveSampleAsSerializedReduxFile(
+            SampleInterface sample, File file) {
+        sample.setReduxSampleFilePath(file);
+        saveSampleAsSerializedReduxFile(sample);
+
+        return sample.getReduxSampleFilePath();
+    }
+
+    /**
+     *
+     * @param sample the value of sample
+     * @param MRUSampleFolderPath the value of MRUSampleFolderPath @throws
+     * BadLabDataException
+     * @return the java.io.File
+     * @throws org.earthtime.UPb_Redux.exceptions.BadLabDataException
+     */
+    public static File saveSampleFileAs(SampleInterface sample, String MRUSampleFolderPath) throws BadLabDataException {
+
+        String dialogTitle = "Save Redux file for this Sample: *.redux";
+        final String fileExtension = ".redux";
+        String sampleFileName = sample.getSampleName() + fileExtension;
+        FileFilter nonMacFileFilter = new ReduxFileFilter();
+
+        File selectedFile;
+        String sampleFolderPath = null;
+        if (sample.getSampleFolderSaved() != null) {
+            sampleFolderPath = sample.getSampleFolderSaved().getAbsolutePath();
+        } else {
+            sampleFolderPath = MRUSampleFolderPath;
+        }
+
+        selectedFile = FileHelper.AllPlatformSaveAs(
+                new Frame(),
+                dialogTitle,
+                sampleFolderPath,
+                fileExtension,
+                sampleFileName,
+                nonMacFileFilter);
+
+        if (selectedFile != null) {
+            saveSampleAsSerializedReduxFile(sample, selectedFile);
+
+            // handle LIVEWORKFLOW because it contains no data yet
+            if (sample.getSampleType().equalsIgnoreCase(SampleTypesEnum.LIVEWORKFLOW.getName())) {
+                sample.setSampleFolderSaved(selectedFile.getParentFile());
+            }
+        }
+        return selectedFile;
+    }
+
+    /**
+     * @return the mySESARSampleMetadata
+     */
+    public abstract SESARSampleMetadata getMySESARSampleMetadata();
+
+    // Parameter Models ********************************************************
     /**
      * sets the <code>myReduxLabData</code> field of this <code>Sample</code> to
      * the argument <code>myReduxLabData</code>
@@ -664,4 +1227,12 @@ public interface SampleInterface {
      */
     public abstract SampleDateInterpretationGUIOptions getSampleDateInterpretationGUISettings();
 
+    //TODO: Refactor to static
+    /**
+     *
+     * @param sample the value of sample
+     * @param myFractionEditor the value of myFractionEditor
+     * @throws ETException
+     */
+    public abstract void automaticUpdateOfUPbSampleFolder(SampleInterface sample, DialogEditor myFractionEditor) throws ETException;
 }

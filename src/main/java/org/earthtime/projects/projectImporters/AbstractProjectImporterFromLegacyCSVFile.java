@@ -28,7 +28,7 @@ import javax.swing.filechooser.FileFilter;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.exceptions.BadImportedCSVLegacyFileException;
 import org.earthtime.UPb_Redux.filters.LegacyCSVFileFilter;
-import org.earthtime.projects.ProjectI;
+import org.earthtime.projects.ProjectInterface;
 import org.earthtime.utilities.FileHelper;
 
 /**
@@ -55,7 +55,7 @@ public abstract class AbstractProjectImporterFromLegacyCSVFile {
      * @return @throws FileNotFoundException
      * @throws BadImportedCSVLegacyFileException
      */
-    public ProjectI readInProjectSamples (ProjectI project)
+    public ProjectInterface readInProjectSamples (ProjectInterface project)
             throws FileNotFoundException, BadImportedCSVLegacyFileException {
 
         File csvFile = openCSVFile( mruFolder );
@@ -74,7 +74,7 @@ public abstract class AbstractProjectImporterFromLegacyCSVFile {
      * @return
      * @throws FileNotFoundException
      */
-    protected abstract ProjectI extractProjectFromCSVFile (ProjectI project, File file )
+    protected abstract ProjectInterface extractProjectFromCSVFile (ProjectInterface project, File file )
             throws FileNotFoundException;
 
     private File openCSVFile ( File location )

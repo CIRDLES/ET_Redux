@@ -35,7 +35,7 @@ import org.earthtime.UPb_Redux.user.ReduxPersistentState;
 import org.earthtime.archivingTools.GeochronAliquotManager;
 import org.earthtime.archivingTools.IEDACredentialsValidator;
 import org.earthtime.beans.ET_JButton;
-import org.earthtime.projects.ProjectI;
+import org.earthtime.projects.ProjectInterface;
 import org.earthtime.samples.SampleInterface;
 
 /**
@@ -46,7 +46,7 @@ public class GeochronProjectExportManager extends DialogEditor {
 
     private ReportPainterI parent;
     private ReduxPersistentState myState;
-    private ProjectI project;
+    private ProjectInterface project;
     private String userCode;
     private String sesarUserCodeForConfirm;
     private boolean userIsValidated;
@@ -65,7 +65,7 @@ public class GeochronProjectExportManager extends DialogEditor {
      * @param project the value of project
      * @param myState the value of myState
      */
-    public GeochronProjectExportManager(ReportPainterI parent, boolean modal, ProjectI project, ReduxPersistentState myState) {
+    public GeochronProjectExportManager(ReportPainterI parent, boolean modal, ProjectInterface project, ReduxPersistentState myState) {
         super((Frame) parent, modal);
 
         this.parent = parent;

@@ -26,6 +26,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -53,7 +54,6 @@ import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.ReductionHandler;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.UPbFractionReducer;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
-import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.UPb_Redux.utilities.comparators.IntuitiveStringComparator;
 import org.earthtime.UPb_Redux.valueModels.definedValueModels.Age206_238r;
 import org.earthtime.UPb_Redux.valueModels.definedValueModels.Age207_206r;
@@ -71,6 +71,7 @@ import org.earthtime.matrices.matrixModels.AbstractMatrixModel;
 import org.earthtime.matrices.matrixModels.CovarianceMatrixModel;
 import org.earthtime.matrices.matrixModels.JacobianMatrixModel;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
+import org.earthtime.samples.SampleInterface;
 
 /**
  * A
@@ -148,7 +149,7 @@ public class SampleDateModel extends ValueModel implements
     private boolean displayedAsGraph;
     // transient fields
     // sample is used in compilation mode
-    private Sample sample;
+    private SampleInterface sample;
     // aliquot is used in analysis mode
     private Aliquot aliquot;
     private transient YorkLineFit yorkLineFit = null;
@@ -791,7 +792,7 @@ public class SampleDateModel extends ValueModel implements
                                 getMethodName(),
                                 new Class[]{Vector.class});
                 meth.invoke(this, new Object[]{includedFractions});
-            } catch (Throwable e) {
+            } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
                 System.err.println(e);
             }
         }
@@ -2881,14 +2882,14 @@ public class SampleDateModel extends ValueModel implements
     /**
      * @return the sample
      */
-    public Sample getSample() {
+    public SampleInterface getSample() {
         return sample;
     }
 
     /**
      * @param sample the sample to set
      */
-    public void setSample(Sample sample) {
+    public void setSample(SampleInterface sample) {
         this.sample = sample;
     }
 

@@ -77,8 +77,8 @@ import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.renderers.EditFractionButton;
-import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.UPb_Redux.samples.SampleMetaData;
+import org.earthtime.UPb_Redux.samples.UPbSampleInterface;
 import org.earthtime.UPb_Redux.utilities.comparators.IntuitiveStringComparator;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
@@ -103,7 +103,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
      *
      */
     protected static Font dropDownFont = new Font("SansSerif", Font.BOLD, 11);
-    private Sample mySample = null;
+    private SampleInterface mySample = null;
     private Aliquot myCurrentAliquot;
     private File importedXMLFractionsFolder;
     private File sampleFolder;
@@ -165,7 +165,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
     public SampleAnalysisWorkflowManagerIDTIMS(
             java.awt.Frame parent,
             boolean modal,
-            Sample sample,
+            SampleInterface sample,
             File sampleFolder,
             File sampleMetaDataFolder,
             File importedXMLFractionsFolder) {
@@ -1319,12 +1319,12 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
 
     class deleteFractionListener implements ActionListener {
 
-        private Sample sample;
+        private SampleInterface sample;
         private Aliquot aliquot;
         private Fraction fraction;
         private int row;
 
-        public deleteFractionListener(Sample sample, Aliquot aliquot, Fraction fraction, int row) {
+        public deleteFractionListener(SampleInterface sample, Aliquot aliquot, Fraction fraction, int row) {
             this.sample = sample;
             this.aliquot = aliquot;
             this.fraction = fraction;
@@ -1708,11 +1708,6 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
         mySample.setSampleRegistry((SampleRegistries) sampleRegistryChooser.getSelectedItem());
         mySample.setSampleAnnotations(sampleNotes_textArea.getText());
 
-// june 19 2012 not needed as validation already took place
-//        if (  ! getMySample().getSampleIGSN().equalsIgnoreCase( sampleIGSN_text.getText() ) ) {
-//            getMySample().setSampleIGSN( sampleIGSN_text.getText() );
-//            getMySample().setChanged( true );
-//        }
         String currentPhysicalConstantsModelName = "";
         try {
             currentPhysicalConstantsModelName = getMySample().getPhysicalConstantsModel().getNameAndVersion();
@@ -1726,7 +1721,6 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
                 getMySample().setPhysicalConstantsModel(
                         getMySample().getMyReduxLabData().
                         getAPhysicalConstantsModel(((String) physicalConstantsModelChooser.getSelectedItem())));
-                //getMySample().setChanged(true);
 
             } catch (BadLabDataException ex) {
                 new ETWarningDialog(ex).setVisible(true);
@@ -1735,8 +1729,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
 
         getMySample().setSampleAnnotations(sampleNotes_textArea.getText());
 
-        //setInitialized(true);
-        getMySample().setChanged(true);//true
+        getMySample().setChanged(true);
 
         if (myCurrentAliquot != null) {
             try {
@@ -1750,7 +1743,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
             a.setAnalysisPurpose(mySample.getAnalysisPurpose());
         }
 
-        getMySample().saveTheSampleAsSerializedReduxFile();
+        SampleInterface.saveSampleAsSerializedReduxFile(mySample);
 
         try {
             setSampleFolder(new File(getMySample().getReduxSampleFilePath()).getParentFile());
@@ -1899,7 +1892,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
      *
      * @return
      */
-    public Sample getMySample() {
+    public SampleInterface getMySample() {
         return mySample;
     }
 
@@ -1907,7 +1900,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
      *
      * @param mySample
      */
-    public void setMySample(Sample mySample) {
+    public void setMySample(SampleInterface mySample) {
         this.mySample = mySample;
     }
 
@@ -2064,7 +2057,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
             for (int i = 0; i < (Integer) insertFractionCount_spinner.getValue(); i++) {
                 try {
                     int aliquotNumber = ((UPbReduxAliquot) myCurrentAliquot).getAliquotNumber();
-                    mySample.addDefaultUPbFractionToAliquot(aliquotNumber);
+                    ((UPbSampleInterface)mySample).addDefaultUPbFractionToAliquot(aliquotNumber);
                 } catch (BadLabDataException ex) {
                     new ETWarningDialog(ex).setVisible(true);
                 }
@@ -2089,9 +2082,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
 
             String importFolder = null;
             try {
-                importFolder = //
-getMySample().importFractionXMLDataFiles(
-                                getImportedXMLFractionsFolder(), aliquotNumber, true);
+                importFolder = SampleInterface.importFractionsFromXMLFilesIntoSample(mySample, getImportedXMLFractionsFolder(), aliquotNumber, true);
             } catch (FileNotFoundException fileNotFoundException) {
             } catch (BadLabDataException ex) {
                 new ETWarningDialog(ex).setVisible(true);
@@ -2108,23 +2099,6 @@ getMySample().importFractionXMLDataFiles(
         }
     }
 
-////    private Aliquot prepareAliquotForFractions() {
-////        Aliquot tempA = null;
-////        // update status by saving changes to aliquot name if user forgot to
-////        if (addOrEditAliquotName()) {
-////
-////            // detect if aliquot has already been added
-////            tempA = mySample.getAliquotByName(aliquotName_text.getText().trim());
-////            if (tempA == null) {
-////                try {
-////                    tempA = mySample.addNewAliquot(aliquotName_text.getText().trim());
-////                } catch (ETException eTException) {
-////                }
-////            }
-////        }
-////
-////        return tempA;
-////    }
     private void completeAliquotFractionsUpdate(int aliquotNumber) {
         // this call updates aliquot with labdata and fractions
         // TODO: refactor this call and similar ones for law of demeter
@@ -2232,12 +2206,12 @@ getMySample().importFractionXMLDataFiles(
             }
 
             if (!doSaveAs && (new File(mySample.getReduxSampleFilePath()).exists())) {
-                mySample.saveTheSampleAsSerializedReduxFile();
+                SampleInterface.saveSampleAsSerializedReduxFile(mySample);
                 // capture sample name in file for MRUlist below
                 sampleFile = new File(mySample.getReduxSampleFilePath());
             } else {
                 try {
-                    sampleFile = mySample.saveSampleFileAs(((ETReduxFrame)parentFrame).getMyState().getMRUSampleFolderPath());
+                    sampleFile = SampleInterface.saveSampleFileAs(mySample, ((ETReduxFrame)parentFrame).getMyState().getMRUSampleFolderPath());
                     setSampleFolder(new File(sampleFile.getParent()));
                 } catch (BadLabDataException ex) {
                     new ETWarningDialog(ex).setVisible(true);
@@ -2272,11 +2246,11 @@ getMySample().importFractionXMLDataFiles(
             }
 
             if (!doSaveAs && (new File(mySample.getReduxSampleFilePath()).exists())) {
-                mySample.saveTheSampleAsSerializedReduxFile();
+                SampleInterface.saveSampleAsSerializedReduxFile(mySample);
                 sampleFile = new File(mySample.getReduxSampleFilePath());
             } else {
                 try {
-                    sampleFile = mySample.saveSampleFileAs(((ETReduxFrame)parentFrame).getMyState().getMRUSampleFolderPath());
+                    sampleFile = SampleInterface.saveSampleFileAs(mySample, ((ETReduxFrame)parentFrame).getMyState().getMRUSampleFolderPath());
                     try {
                         setSampleFolder(new File(sampleFile.getParent()));
                     } catch (Exception e) {

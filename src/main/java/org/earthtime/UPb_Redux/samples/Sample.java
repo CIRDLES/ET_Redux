@@ -33,7 +33,6 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 import org.earthtime.Tripoli.sessions.TripoliSession;
@@ -46,7 +45,6 @@ import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.dialogs.fractionManagers.UPbFractionEditorDialog;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.filters.FractionXMLFileFilter;
-import org.earthtime.UPb_Redux.filters.ReduxFileFilter;
 import org.earthtime.UPb_Redux.filters.XMLFileFilter;
 import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
@@ -72,7 +70,6 @@ import org.earthtime.projects.EarthTimeSerializedFileInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.samples.SampleInterface;
 import org.earthtime.utilities.FileHelper;
-import org.earthtime.xmlUtilities.XMLSerializationI;
 
 /**
  * A
@@ -291,7 +288,7 @@ public class Sample implements
      * @return
      * @throws BadLabDataException
      */
-    public static Sample initializeNewSample( //
+    public static SampleInterface initializeNewSample( //
             String sampleType, //
             String sampleAnalysisType,
             ReduxLabData labData,
@@ -318,13 +315,11 @@ public class Sample implements
             sampleName = "NEW SAMPLE";
         }
 
-        Sample retVal = //
+        SampleInterface retVal = //
                 new Sample(sampleName, sampleType, sampleAnalysisType, labData, analysisPurpose);
 
         //set flag for whether analysis was performed elsewhere and we just have legacy results
         retVal.setAnalyzed(analyzed);
-
-        retVal.setAutomaticDataUpdateMode(false);
 
         return retVal;
     }
@@ -746,6 +741,7 @@ public class Sample implements
      * @param aliquotNumber
      * @throws BadLabDataException
      */
+    @Override
     public void addDefaultUPbFractionToAliquot(int aliquotNumber)
             throws BadLabDataException {
         Fraction defFraction = new UPbFraction("NONE");
@@ -809,16 +805,6 @@ public class Sample implements
     }
 
     /**
-     *
-     * @param aliquot
-     */
-    public void toggleAliquotFractionsRejectedStatus(UPbReduxAliquot aliquot) {
-        for (int i = 0; i < aliquot.getAliquotFractions().size(); i++) {
-            ((UPbFractionI) aliquot.getAliquotFractions().get(i)).toggleRejectedStatus();
-        }
-    }
-
-    /**
      * reads in data from the XML file specified by argument
      * <code>fractionFile</code> and adds any <code>Fractions</code> found in
      * the file to this <code>Sample</code> under the <code>Aliquot</code>
@@ -865,10 +851,10 @@ public class Sample implements
         }
         if (!badFile) {
             if (validateSampleName
-                    && !((UPbFraction) fractionFromFile).getSampleName().equalsIgnoreCase(getSampleName())) {
+                    && !fractionFromFile.getSampleName().equalsIgnoreCase(getSampleName())) {
                 throw new ETException(
                         null,
-                        new String[]{"The sample name: " + ((UPbFraction) fractionFromFile).getSampleName() + "\n",
+                        new String[]{"The sample name: " + fractionFromFile.getSampleName() + "\n",
                             "specified in the Fraction File:\n",
                             fractionFile.getName() + "\n",
                             "differs from the open Sample's name: " + getSampleName() + ".\n",
@@ -880,7 +866,7 @@ public class Sample implements
                 System.out.println("New UPbReduxFraction");
                 // AUG 2011 moved this improved logic here from readXMLFraction
                 if (((UPbFraction) fractionFromFile).getTracer() == null) {
-                    ((UPbFraction) fractionFromFile)//
+                    ((UPbFractionI) fractionFromFile)//
                             .setTracer(((UPbFraction) fractionFromFile).getMyLabData().getNoneTracer());
                 }
                 addFraction(fractionFromFile);
@@ -898,7 +884,7 @@ public class Sample implements
         }
 
         // returns "NONE" if file is not processed
-        return ((UPbFraction) fractionFromFile).getSampleName();
+        return fractionFromFile.getSampleName();
     }
 
     /**
@@ -926,174 +912,6 @@ public class Sample implements
         return retFraction;
     }
 
-    /**
-     *
-     * @param MRUSampleFolderPath the value of MRUSampleFolderPath @throws
-     * BadLabDataException
-     * @return the java.io.File
-     */
-    public File saveSampleFileAs(String MRUSampleFolderPath) throws BadLabDataException {
-
-        String dialogTitle = "Save Redux file for this Sample: *.redux";
-        final String fileExtension = ".redux";
-        String sampleFileName = getSampleName() + fileExtension;
-        FileFilter nonMacFileFilter = new ReduxFileFilter();
-
-        File selectedFile;
-        String sampleFolderPath = null;
-        if (getSampleFolderSaved() != null) {
-            sampleFolderPath = getSampleFolderSaved().getAbsolutePath();
-        } else {
-            sampleFolderPath = MRUSampleFolderPath;
-        }
-
-        selectedFile = FileHelper.AllPlatformSaveAs(
-                new Frame(),
-                dialogTitle,
-                sampleFolderPath,
-                fileExtension,
-                sampleFileName,
-                nonMacFileFilter);
-
-        if (selectedFile != null) {
-            saveTheSampleAsSerializedReduxFile(selectedFile);
-
-            // handle LIVEWORKFLOW because it contains no data yet
-            if (getSampleType().equalsIgnoreCase(SampleTypesEnum.LIVEWORKFLOW.getName())) {
-                setSampleFolderSaved(selectedFile.getParentFile());
-            }
-        }
-        return selectedFile;
-    }
-
-    /**
-     * imports all <code>Aliquots</code> found in the XML file specified by
-     * argument <code>location</code> to this <code>Sample</code>.
-     *
-     * @pre argument <code>location</code> specifies an XML file containing
-     * valid <code>Aliquots</code>
-     * @post all <code>Aliquots</code> found in the file are added to this
-     * <code>Sample</code>
-     *
-     * @param location the file to read data from
-     * @return <code>String</code> - parent of the file that was read
-     * @throws java.io.FileNotFoundException FileNotFoundException
-     * @throws org.earthtime.UPb_Redux.exceptions.BadLabDataException
-     * BadLabDataException
-     * @throws java.io.IOException IOException
-     * @throws org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException
-     * BadOrMissingXMLSchemaException
-     */
-    @Override
-    public String importAliquotLocalXMLDataFile(File location)
-            throws FileNotFoundException, BadLabDataException, IOException, BadOrMissingXMLSchemaException {
-        String retval = "";
-
-        String dialogTitle = "Select a U-Pb Aliquot XML File to Open: *.xml";
-        final String fileExtension = ".xml";
-        FileFilter nonMacFileFilter = new XMLFileFilter();
-        File aliquotFile
-                = FileHelper.AllPlatformGetFile(dialogTitle, location, fileExtension, nonMacFileFilter, false, new JFrame())[0];
-
-        if (aliquotFile != null) {
-            try {
-                Aliquot aliquotFromFile = new UPbReduxAliquot();
-
-                aliquotFromFile
-                        = (Aliquot) ((XMLSerializationI) aliquotFromFile).readXMLObject(
-                                aliquotFile.getCanonicalPath(), true);
-
-                SampleInterface.importXMLAliquot(this, aliquotFromFile, aliquotFile.getName());
-            } catch (ETException ex) {
-            } finally {
-                // return folder for persistent state even if fails
-                retval = aliquotFile.getParent();
-            }
-        } else {
-            throw new FileNotFoundException();
-            //retval = location.getPath();
-        }
-
-        return retval;
-    }
-
-    /**
-     * imports all <code>UPbFractions</code> found in the XML file specified by
-     * argument <code>location</code> to the <code>Aliquot</code> specified by
-     * argument <code>aliquotNumber</code> in this <code>Sample</code>
-     *
-     * @pre argument <code>location</code> specifies an XML file containing
-     * valid <code>UPbFractions</code>
-     * @post all <code>UPbFractions</code> found in the file are added to the
-     * <code>Aliquot</code> specified by <code>aliquotNumber</code> in this
-     * <code>Sample</code>
-     *
-     * @param location the file to read data from
-     * @param aliquotNumber the number of the <code>Aliquot</code> which the
-     * <code>Fractions</code> belong to
-     * @param doValidate
-     * @return <code>String</code> - parent of the file that was read
-     * @throws java.io.FileNotFoundException FileNotFoundException
-     * @throws org.earthtime.UPb_Redux.exceptions.BadLabDataException
-     * BadLabDataException
-     */
-    @Override
-    public String importFractionXMLDataFiles(
-            File location,
-            int aliquotNumber,
-            boolean doValidate)
-            throws FileNotFoundException, BadLabDataException {
-
-        String retval = null;
-
-        String dialogTitle = "Select one or more U-Pb Redux Fraction File(s) to Open: *.xml";
-        final String fileExtension = ".xml";
-        FileFilter nonMacFileFilter = new XMLFileFilter();
-
-        File[] returnFile
-                = FileHelper.AllPlatformGetFile(dialogTitle, location, fileExtension, nonMacFileFilter, true, new JFrame());
-
-        int successCount = 0;
-        if (returnFile[0] != null) {
-            // nov 2008
-            // first determine if the sample is empty and if it is,
-            // use the first xml file as the automatic source of the
-            // sample file
-            if (getFractions().size() <= 1) {
-                try {
-                    setSampleName(processXMLFractionFile(returnFile[0], aliquotNumber, false, doValidate));
-                    successCount = 1;
-                } catch (ETException uPbReduxException) {
-                }
-            }
-
-            for (int i = successCount; i < returnFile.length; i++) {
-                try {
-                    processXMLFractionFile(returnFile[i], aliquotNumber, true, doValidate);
-                    successCount++;
-                } catch (ETException ex) {
-                    //ex.printStackTrace();
-                }
-            }
-            // return folder for persistent state 
-            if (successCount > 0) {
-                retval = returnFile[0].getParent();
-            }
-        } else {
-            throw new FileNotFoundException();
-        }
-
-        return retval;
-    }
-
-    /**
-     *
-     * @param fractions
-     * @param aliquotNumber
-     * @param doValidate
-     * @return
-     * @throws ETException
-     */
     public boolean importAliquotFolder(File[] fractions, int aliquotNumber, boolean doValidate)
             throws ETException {
         if (fractions == null) {
@@ -1151,12 +969,14 @@ public class Sample implements
 
     /**
      *
+     * @param sample the value of sample
      * @param myFractionEditor the value of myFractionEditor
      * @throws ETException
      */
-    public synchronized void automaticUpdateOfUPbSampleFolder(DialogEditor myFractionEditor) throws ETException {
+    @Override // should this be synchronized?
+    public void automaticUpdateOfUPbSampleFolder(SampleInterface sample, DialogEditor myFractionEditor) throws ETException {
 
-        File sampleFolder = new File(getReduxSampleFilePath()).getParentFile();
+        File sampleFolder = new File(sample.getReduxSampleFilePath()).getParentFile();
 
         File[] aliquotFolders = sampleFolder.listFiles(new java.io.FileFilter() {
             @Override
@@ -1201,13 +1021,6 @@ public class Sample implements
 
     }
 
-    /**
-     *
-     * @param aliquotFolder
-     * @param aliquotFractionFiles
-     * @param doValidate
-     * @param myFractionEditor the value of myFractionEditor
-     */
     private synchronized void updateSampleAliquot(File aliquotFolder, File[] aliquotFractionFiles, boolean doValidate, DialogEditor myFractionEditor) {
 
         System.out.println("CHANGED count of fresh data = " + aliquotFractionFiles.length);
@@ -1342,56 +1155,6 @@ public class Sample implements
             getFractions().get(i).setSampleName(sampleName);
         }
 
-    }
-
-    /**
-     * sets the <code>changed</code> field of each <code>UPbFraction</code> in
-     * this <code>Sample</code> to <code>false</code> and saves this
-     * <code>Sample</code> as aliquot .redux file to
-     * <code>reduxSampleFilePath</code>.
-     *
-     * @pre this <code>Sample</code> exists
-     * @post this <code>Sample</code> is saved as a .redux file to the location
-     * specified by <code>reduxSampleFilePath</code>
-     */
-    @Override
-    public final void saveTheSampleAsSerializedReduxFile() {
-        setChanged(false);
-
-        for (int UPbFractionsIndex = 0; UPbFractionsIndex
-                < getFractions().size(); UPbFractionsIndex++) {
-            ((UPbFractionI) getFractions().get(UPbFractionsIndex)).setChanged(false);
-        }
-
-        if (getReduxSampleFilePath().length() > 0) {
-
-            try {
-                ETSerializer.SerializeObjectToFile(this, getReduxSampleFilePath());
-            } catch (ETException eTException) {
-            }
-        }
-
-    }
-
-    /**
-     * saves this <code>Sample</code> to the file specified by argument
-     * <code>file</code>.
-     *
-     * @pre argument <code>file</code> is a valid file
-     * @post this <code>Sample</code> is saved to the location specified by
-     * argument <code>file</code>
-     *
-     * @param file the file where this <code>Sample</code> will be saved
-     * @return <code>String</code> - the path of the file where this
-     * <code>Sample</code> was saved
-     */
-    @Override
-    public final String saveTheSampleAsSerializedReduxFile(
-            File file) {
-        setReduxSampleFilePath(file);
-        saveTheSampleAsSerializedReduxFile();
-
-        return getReduxSampleFilePath();
     }
 
     /**
@@ -1812,13 +1575,11 @@ public class Sample implements
      * @return
      */
     public Vector<Fraction> getUpbFractionsActive() {
-        Vector<Fraction> retval = new Vector<Fraction>();
+        Vector<Fraction> retval = new Vector<>();
 
-        for (Fraction f : UPbFractions) {
-            if (!((UPbFractionI) f).isRejected()) {
-                retval.add(f);
-            }
-        }
+        UPbFractions.stream().filter((f) -> (!((UPbFractionI) f).isRejected())).forEach((f) -> {
+            retval.add(f);
+        });
 
         return retval;
     }
@@ -1827,6 +1588,7 @@ public class Sample implements
      *
      * @return
      */
+    @Override
     public Vector<Fraction> getUpbFractionsRejected() {
         Vector<Fraction> retval = new Vector<Fraction>();
 
@@ -2058,6 +1820,7 @@ public class Sample implements
     /**
      *
      */
+    @Override
     public void reduceSampleData() {
         for (Aliquot aliquot : aliquots) {
             ((UPbReduxAliquot) aliquot).reduceData();
@@ -2218,6 +1981,7 @@ public class Sample implements
      *
      * @return
      */
+    @Override
     public boolean isTypeAnalysis() {
         return (sampleType.equalsIgnoreCase(SampleTypesEnum.ANALYSIS.getName()));
     }
@@ -2226,6 +1990,7 @@ public class Sample implements
      *
      * @return
      */
+    @Override
     public boolean isTypeLiveUpdate() {
         return (sampleType.equalsIgnoreCase(SampleTypesEnum.LIVEWORKFLOW.getName()));
     }
@@ -2234,6 +1999,7 @@ public class Sample implements
      *
      * @return
      */
+    @Override
     public boolean isTypeLegacy() {
         return (sampleType.equalsIgnoreCase(SampleTypesEnum.LEGACY.getName()));
     }
@@ -2242,6 +2008,7 @@ public class Sample implements
      *
      * @return
      */
+    @Override
     public boolean isTypeProject() {
         return (sampleType.equalsIgnoreCase(SampleTypesEnum.PROJECT.getName()));
     }
@@ -2250,6 +2017,7 @@ public class Sample implements
      *
      * @return
      */
+    @Override
     public boolean isAnalysisTypeCompiled() {
         return (sampleAnalysisType.equalsIgnoreCase(SampleAnalysisTypesEnum.COMPILED.getName()));
     }
@@ -2258,6 +2026,7 @@ public class Sample implements
      *
      * @return
      */
+    @Override
     public boolean isAnalysisTypeTripolized() {
         return (sampleAnalysisType.equalsIgnoreCase(SampleAnalysisTypesEnum.TRIPOLIZED.getName()));
     }
@@ -2271,6 +2040,7 @@ public class Sample implements
      * @return <code>boolean</code> - <code>analyzed</code> field of this
      * <code>Sample</code>
      */
+    @Override
     public boolean isAnalyzed() {
         return analyzed;
     }
@@ -2286,6 +2056,7 @@ public class Sample implements
      * @param analyzed value to which <code>analyzed</code> field of this
      * <code>Sample</code> will be set
      */
+    @Override
     public void setAnalyzed(boolean analyzed) {
         this.analyzed = analyzed;
     }
@@ -2358,9 +2129,10 @@ public class Sample implements
     /**
      * @return the sampleDateModels
      */
+    @Override
     public Vector<ValueModel> getSampleDateModels() {
         if (sampleDateModels == null) {
-            sampleDateModels = new Vector<ValueModel>();
+            sampleDateModels = new Vector<>();
         }
         return sampleDateModels;
     }
@@ -2368,31 +2140,9 @@ public class Sample implements
     /**
      * @param sampleDateModels the sampleDateModels to set
      */
+    @Override
     public void setSampleDateModels(Vector<ValueModel> sampleDateModels) {
         this.sampleDateModels = sampleDateModels;
-    }
-
-    /**
-     *
-     * @param modelName
-     * @return
-     */
-    public ValueModel getASampleDateModelByName(
-            String modelName) {
-        Iterator it = getSampleDateModels().iterator();
-        ValueModel retval = null;
-
-        while (it.hasNext()) {
-            retval = (SampleDateModel) it.next();
-            if (retval.getName().
-                    equalsIgnoreCase(modelName)) {
-                return retval;
-
-            } else {
-                retval = null;
-            }
-        }
-        return retval;
     }
 
     /**
@@ -2425,7 +2175,7 @@ public class Sample implements
                     && SampleDateTypes.getSampleDateType(i).startsWith("single")) {
                 // do nothing
             } else {
-                if (getASampleDateModelByName(SampleDateTypes.getSampleDateType(i)) == null) {
+                if (getSampleDateModelByName(SampleDateTypes.getSampleDateType(i)) == null) {
                     ValueModel tempModel = null;
 
                     if (SampleDateTypes.getSampleDateType(i).endsWith("intercept")) {
@@ -2509,16 +2259,13 @@ public class Sample implements
      *
      * @return
      */
+    @Override
     public Vector<String> getSampleFractionIDs() {
-        Vector<String> retVal = new Vector<String>();
+        Vector<String> retVal = new Vector<>();
 
-        for (Fraction f : UPbFractions) {
-            if (!((UPbFractionI) f).isRejected()) {
-                retVal.add(f.getFractionID());
-
-            }
-
-        }
+        UPbFractions.stream().filter((f) -> (!((UPbFractionI) f).isRejected())).forEach((f) -> {
+            retVal.add(f.getFractionID());
+        });
         return retVal;
 
     }
@@ -2526,6 +2273,7 @@ public class Sample implements
     /**
      *
      */
+    @Override
     public final void updateSampleDateModels() {
         // process all sampleDateModels' included fraction vectors to remove missing aliquotFractionFiles
         Vector<String> includedFractionIDs = getSampleFractionIDs();
@@ -2546,9 +2294,9 @@ public class Sample implements
 
             }
             // remove found exclusions (these are ones that were rejected after processing
-            for (String fractionID : excludedFractionIDs) {
+            excludedFractionIDs.stream().forEach((fractionID) -> {
                 ((SampleDateModel) SAM).getIncludedFractionIDsVector().remove(fractionID);
-            }
+            });
 
             if (((SampleDateModel) SAM).isPreferred()) {
                 existsPreferredDate = true;
@@ -2567,6 +2315,7 @@ public class Sample implements
      * @param name
      * @return
      */
+    @Override
     public Fraction getSampleFractionByName(
             String name) {
         Fraction retVal = null;
@@ -2586,6 +2335,7 @@ public class Sample implements
      * @param fID
      * @return
      */
+    @Override
     public String getAliquotNameByFractionID(
             String fID) {
         return getAliquotByNumber(//
@@ -2598,7 +2348,7 @@ public class Sample implements
      * @return
      */
     public Vector<Fraction> getSampleDateModelSelectedFractions(Vector<String> selectedFractionIDs) {
-        Vector<Fraction> retVal = new Vector<Fraction>();
+        Vector<Fraction> retVal = new Vector<>();
 
         for (String fID : selectedFractionIDs) {
             retVal.add(getSampleFractionByName(fID));
@@ -2626,39 +2376,9 @@ public class Sample implements
     }
 
     /**
-     *
-     * @param isNumeric
-     * @return
-     */
-    public String[][] reportActiveFractionsByNumberStyle(boolean isNumeric) {
-
-        return getReportSettingsModel().reportActiveFractionsByNumberStyle(this, isNumeric);
-    }
-
-    /**
-     *
-     * @param aliquot
-     * @param isNumeric
-     * @return
-     */
-    public String[][] reportActiveAliquotFractionsByNumberStyle(Aliquot aliquot, boolean isNumeric) {
-
-        return getReportSettingsModel().reportActiveAliquotFractionsByNumberStyle(this, ((UPbReduxAliquot) aliquot).getActiveAliquotFractions(), isNumeric);
-    }
-
-    /**
-     *
-     * @param isNumeric
-     * @return
-     */
-    public String[][] reportRejectedFractionsByNumberStyle(boolean isNumeric) {
-
-        return getReportSettingsModel().reportRejectedFractionsByNumberStyle(this, isNumeric);
-    }
-
-    /**
      * @return the sampleAnalysisType
      */
+    @Override
     public String getSampleAnalysisType() {
         // May 2010 backwards compatible
         if (sampleAnalysisType == null) {
@@ -2670,6 +2390,7 @@ public class Sample implements
     /**
      * @param sampleAnalysisType the sampleAnalysisType to set
      */
+    @Override
     public void setSampleAnalysisType(String sampleAnalysisType) {
         this.sampleAnalysisType = sampleAnalysisType;
 
@@ -2679,6 +2400,7 @@ public class Sample implements
      *
      * @return
      */
+    @Override
     public boolean isAnalysisTypeIDTIMS() {
         boolean retVal = false;
         try {
@@ -2692,6 +2414,7 @@ public class Sample implements
      *
      * @return
      */
+    @Override
     public boolean isAnalysisTypeLAICPMS() {
         boolean retVal = false;
         try {
@@ -2704,6 +2427,7 @@ public class Sample implements
     /**
      * @return the concordiaGraphAxesSetup
      */
+    @Override
     public GraphAxesSetup getConcordiaGraphAxesSetup() {
         if (concordiaGraphAxesSetup == null) {
             concordiaGraphAxesSetup = new GraphAxesSetup("C", 2);
@@ -2740,6 +2464,7 @@ public class Sample implements
     /**
      * @return the mineralName
      */
+    @Override
     public String getMineralName() {
         if (mineralName == null) {
             mineralName = MineralTypes.OTHER.getName();
@@ -2750,6 +2475,7 @@ public class Sample implements
     /**
      * @param mineralName the mineralName to set
      */
+    @Override
     public void setMineralName(String mineralName) {
         this.mineralName = MineralTypes.validateStandardMineralTypeName(mineralName.trim());
     }
@@ -2768,6 +2494,7 @@ public class Sample implements
     /**
      * @param analysisPurpose the analysisPurpose to set
      */
+    @Override
     public void setAnalysisPurpose(ANALYSIS_PURPOSE analysisPurpose) {
         this.analysisPurpose = analysisPurpose;
     }
@@ -2775,6 +2502,7 @@ public class Sample implements
     /**
      * @return the calculateTWrhoForLegacyData
      */
+    @Override
     public boolean isCalculateTWrhoForLegacyData() {
         return calculateTWrhoForLegacyData;
     }
@@ -2782,6 +2510,7 @@ public class Sample implements
     /**
      * @param calculateTWrhoForLegacyData the calculateTWrhoForLegacyData to set
      */
+    @Override
     public void setCalculateTWrhoForLegacyData(boolean calculateTWrhoForLegacyData) {
         this.calculateTWrhoForLegacyData = calculateTWrhoForLegacyData;
     }
@@ -2813,6 +2542,7 @@ public class Sample implements
     /**
      * @param validatedSampleIGSN the validatedSampleIGSN to set
      */
+    @Override
     public void setValidatedSampleIGSN(boolean validatedSampleIGSN) {
         this.validatedSampleIGSN = validatedSampleIGSN;
     }
@@ -2870,15 +2600,17 @@ public class Sample implements
     /**
      *
      */
+    @Override
     public void deSelectAllFractionsInDataTable() {
-        for (Fraction UPbFraction : this.UPbFractions) {
+        this.UPbFractions.stream().forEach((UPbFraction) -> {
             ((UPbFractionI) UPbFraction).setSelectedInDataTable(false);
-        }
+        });
     }
 
     /**
      *
      */
+    @Override
     public void deSelectAllFractions() {
         UPbFractions.stream().forEach((f) -> {
             ((UPbFractionI) f).setRejected(true);
@@ -2891,5 +2623,30 @@ public class Sample implements
     @Override
     public ReportSettings getReportSettingsModel() {
         return reportSettingsModel;
+    }
+
+    // used for deserialization to enforce backwards compatibility
+    /**
+     *
+     * @return
+     */
+    protected Object readResolve() {
+        if (sampleAnalysisType == null) {
+            if (analyzed) {
+                sampleAnalysisType = SampleAnalysisTypesEnum.COMPILED.getName();
+            } else {
+                sampleAnalysisType = SampleAnalysisTypesEnum.IDTIMS.getName();
+            }
+
+            System.out.println("Sample backward compatibility readResolve set sampleAnalysisType to: " + sampleAnalysisType);
+        }
+
+        if (sampleAnalysisType.compareToIgnoreCase(SampleAnalysisTypesEnum.COMPILED.getName()) == 0) {
+            analyzed = true;
+
+            System.out.println("Sample backward compatibility readResolve set analyzed to true");
+        }
+
+        return this;
     }
 }

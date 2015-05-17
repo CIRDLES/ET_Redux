@@ -67,7 +67,7 @@ import org.earthtime.utilities.FileHelper;
 public class Project implements
         Serializable,
         EarthTimeSerializedFileInterface,
-        ProjectI {
+        ProjectInterface {
 
     // Class variables
     private static final long serialVersionUID = 6292924571103425985L;
@@ -283,7 +283,7 @@ public class Project implements
                         projectSamplesFolder.getAbsolutePath() + File.separatorChar + sample.getSampleName());
 
                 // first write sample out
-                sample.saveTheSampleAsSerializedReduxFile(sampleFile);
+                SampleInterface.saveSampleAsSerializedReduxFile(sample, sampleFile);
 
             }
         } else {

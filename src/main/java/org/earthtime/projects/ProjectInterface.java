@@ -18,7 +18,7 @@ import org.earthtime.samples.SampleInterface;
  *
  * @author samuelbowring
  */
-public interface ProjectI {
+public interface ProjectInterface {
 
     /**
      * @return the locationOfProjectReduxFile

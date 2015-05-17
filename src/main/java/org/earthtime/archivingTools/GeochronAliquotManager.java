@@ -49,7 +49,7 @@ import org.earthtime.archivingTools.forSESAR.SesarSample;
 import org.earthtime.archivingTools.forSESAR.SesarSampleManager;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.dataDictionaries.RadDates;
-import org.earthtime.projects.ProjectI;
+import org.earthtime.projects.ProjectInterface;
 import org.earthtime.samples.SampleInterface;
 
 /**
@@ -58,7 +58,7 @@ import org.earthtime.samples.SampleInterface;
  */
 public class GeochronAliquotManager extends JPanel {
 
-    private ProjectI project;
+    private ProjectInterface project;
     private SampleInterface sample;
     private final String userName;
     private final String password;
@@ -95,7 +95,7 @@ public class GeochronAliquotManager extends JPanel {
     
     
 
-    public GeochronAliquotManager(ProjectI project, SampleInterface sample, String userName, String password, String userCode, int x, int y, int width, int height) {
+    public GeochronAliquotManager(ProjectInterface project, SampleInterface sample, String userName, String password, String userCode, int x, int y, int width, int height) {
         this.project = project;
         this.sample = sample;
         this.userName = userName;

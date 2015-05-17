@@ -69,10 +69,10 @@ import org.earthtime.UPb_Redux.dateInterpretation.vermeeschKDE.OtherData;
 import org.earthtime.UPb_Redux.dateInterpretation.vermeeschKDE.Preferences;
 import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
-import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.UPb_Redux.user.SampleDateInterpretationGUIOptions;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.dataDictionaries.RadDates;
+import org.earthtime.samples.SampleInterface;
 import org.earthtime.utilities.TicGeneratorForAxes;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
@@ -94,7 +94,7 @@ public class DateProbabilityDensityPanel extends JLayeredPane
     /**
      *
      */
-    protected Sample sample;
+    protected SampleInterface sample;
     private int selectedAliquotNumber;
     private Vector<Fraction> selectedFractions;
     private Vector<Fraction> deSelectedFractions;
@@ -158,7 +158,7 @@ public class DateProbabilityDensityPanel extends JLayeredPane
      *
      * @param sample
      */
-    public DateProbabilityDensityPanel(Sample sample) {
+    public DateProbabilityDensityPanel(SampleInterface sample) {
         super();
 
         this.sample = sample;

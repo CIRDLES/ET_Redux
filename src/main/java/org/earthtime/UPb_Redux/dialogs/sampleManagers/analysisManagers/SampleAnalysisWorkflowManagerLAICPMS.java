@@ -68,7 +68,7 @@ import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.renderers.EditFractionButton;
-import org.earthtime.UPb_Redux.samples.Sample;
+import org.earthtime.UPb_Redux.samples.UPbSampleInterface;
 import org.earthtime.UPb_Redux.utilities.comparators.IntuitiveStringComparator;
 import org.earthtime.dataDictionaries.SampleRegistries;
 import org.earthtime.exceptions.ETException;
@@ -89,7 +89,7 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
      *
      */
     protected static Font dropDownFont = new Font("SansSerif", Font.BOLD, 11);
-    private Sample mySample = null;
+    private SampleInterface mySample = null;
     private Aliquot myCurrentAliquot;
     private File importedXMLFractionsFolder;
     private File sampleFolder;
@@ -151,7 +151,7 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
     public SampleAnalysisWorkflowManagerLAICPMS(
             java.awt.Frame parent,
             boolean modal,
-            Sample sample,
+            SampleInterface sample,
             File sampleFolder,
             File sampleMetaDataFolder,
             File importedXMLFractionsFolder) {
@@ -1282,12 +1282,12 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
 
     class deleteFractionListener implements ActionListener {
 
-        private Sample sample;
+        private SampleInterface sample;
         private Aliquot aliquot;
         private Fraction fraction;
         private int row;
 
-        public deleteFractionListener(Sample sample, Aliquot aliquot, Fraction fraction, int row) {
+        public deleteFractionListener(SampleInterface sample, Aliquot aliquot, Fraction fraction, int row) {
             this.sample = sample;
             this.aliquot = aliquot;
             this.fraction = fraction;
@@ -1719,7 +1719,7 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
             a.setAnalysisPurpose(mySample.getAnalysisPurpose());
         }
 
-        getMySample().saveTheSampleAsSerializedReduxFile();
+        SampleInterface.saveSampleAsSerializedReduxFile(mySample);
 
         try {
             setSampleFolder(new File(getMySample().getReduxSampleFilePath()).getParentFile());
@@ -1860,7 +1860,7 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
      *
      * @return
      */
-    public Sample getMySample() {
+    public SampleInterface getMySample() {
         return mySample;
     }
 
@@ -1868,7 +1868,7 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
      *
      * @param mySample
      */
-    public void setMySample(Sample mySample) {
+    public void setMySample(SampleInterface mySample) {
         this.mySample = mySample;
     }
 
@@ -1971,46 +1971,6 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
         return retVal;
     }
 
-//    private boolean addOrEditAliquotName() {
-//
-//        // user must select from list to populate the aliquotName textbox; default is <new> / Aliquot Name
-//        int selectedIndex = aliquotsList_jList.getSelectedIndex();
-//        String selectedAliquotName = (String) aliquotsList_jList.getSelectedValue();
-//        String aliquotName = aliquotName_text.getText().trim();
-//
-//        // if we are not at <new> and the name exists, we are good, pending edit save
-//        boolean retVal = (selectedIndex > 0) && aliquotList.contains(aliquotName);
-//
-//        // test for name length and existence
-//        if ((aliquotName.length() > 0) && (!aliquotList.contains(aliquotName))) {
-//            if (selectedIndex == 0) {
-//                // we add aliquot name
-//                aliquotList.add(aliquotName);
-//                // add aliquot with one fraction
-//                try {
-//                    Aliquot tempA = mySample.addNewAliquot(aliquotName);
-//                    int aliquotNumber = ((UPbReduxAliquot) tempA).getAliquotNumber();
-//                    mySample.addDefaultUPbFractionToAliquot(aliquotNumber);
-//                } catch (ETException eTException) {
-//                }
-//                retVal = true;
-//            } else {
-//                if (selectedIndex > 0) {
-//                    // edit mode
-//                    mySample.getAliquotByName(selectedAliquotName).setAliquotName(aliquotName);
-//                    aliquotList.set(aliquotsList_jList.getSelectedIndex(), aliquotName);
-//                    retVal = true;
-//                }
-//            }
-//
-//            // update displayed list
-//            aliquotsList_jList.setListData(aliquotList);
-//            aliquotsList_jList.setSelectedIndex(aliquotList.indexOf(aliquotName));
-//
-//        }
-//
-//        return retVal;
-//    }
     private void addEmptyFractions() {
 
         if (myCurrentAliquot != null) {
@@ -2025,7 +1985,7 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
             for (int i = 0; i < (Integer) insertFractionCount_spinner.getValue(); i++) {
                 try {
                     int aliquotNumber = ((UPbReduxAliquot) myCurrentAliquot).getAliquotNumber();
-                    mySample.addDefaultUPbFractionToAliquot(aliquotNumber);
+                    ((UPbSampleInterface)mySample).addDefaultUPbFractionToAliquot(aliquotNumber);
                 } catch (BadLabDataException ex) {
                     new ETWarningDialog(ex).setVisible(true);
                 }
@@ -2050,9 +2010,7 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
 
             String importFolder = null;
             try {
-                importFolder = //
-getMySample().importFractionXMLDataFiles(
-                                getImportedXMLFractionsFolder(), aliquotNumber, true);
+                importFolder = SampleInterface.importFractionsFromXMLFilesIntoSample(mySample, getImportedXMLFractionsFolder(), aliquotNumber, true);
             } catch (FileNotFoundException fileNotFoundException) {
             } catch (BadLabDataException ex) {
                 new ETWarningDialog(ex).setVisible(true);
@@ -2193,12 +2151,12 @@ getMySample().importFractionXMLDataFiles(
             }
 
             if (!doSaveAs && (new File(mySample.getReduxSampleFilePath()).exists())) {
-                mySample.saveTheSampleAsSerializedReduxFile();
+                SampleInterface.saveSampleAsSerializedReduxFile(mySample);
                 // capture sample name in file for MRUlist below
                 sampleFile = new File(mySample.getReduxSampleFilePath());
             } else {
                 try {
-                    sampleFile = mySample.saveSampleFileAs(((ETReduxFrame)parentFrame).getMyState().getMRUSampleFolderPath());
+                    sampleFile = SampleInterface.saveSampleFileAs(mySample, ((ETReduxFrame)parentFrame).getMyState().getMRUSampleFolderPath());
                     setSampleFolder(new File(sampleFile.getParent()));
                 } catch (BadLabDataException ex) {
                     new ETWarningDialog(ex).setVisible(true);
@@ -2233,11 +2191,11 @@ getMySample().importFractionXMLDataFiles(
             }
 
             if (!doSaveAs && (new File(mySample.getReduxSampleFilePath()).exists())) {
-                mySample.saveTheSampleAsSerializedReduxFile();
+                SampleInterface.saveSampleAsSerializedReduxFile(mySample);
                 sampleFile = new File(mySample.getReduxSampleFilePath());
             } else {
                 try {
-                    sampleFile = mySample.saveSampleFileAs(((ETReduxFrame)parentFrame).getMyState().getMRUSampleFolderPath());
+                    sampleFile = SampleInterface.saveSampleFileAs(mySample, ((ETReduxFrame)parentFrame).getMyState().getMRUSampleFolderPath());
                     try {
                         setSampleFolder(new File(sampleFile.getParent()));
                     } catch (Exception e) {

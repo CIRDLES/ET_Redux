@@ -22,6 +22,7 @@
 package org.earthtime.UPb_Redux.aliquots;
 
 import java.util.Vector;
+import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 
@@ -175,6 +176,16 @@ public interface AliquotI {
      */
     abstract void setMineralStandardModels(Vector<AbstractRatiosDataModel> MineralStandards);
     
+        /**
+     *
+     * @param aliquot
+     */
+    public static void toggleAliquotFractionsRejectedStatus(UPbReduxAliquot aliquot) {
+        for (int i = 0; i < aliquot.getAliquotFractions().size(); i++) {
+            ((UPbFractionI) aliquot.getAliquotFractions().get(i)).toggleRejectedStatus();
+        }
+    }
+
         
 }
 

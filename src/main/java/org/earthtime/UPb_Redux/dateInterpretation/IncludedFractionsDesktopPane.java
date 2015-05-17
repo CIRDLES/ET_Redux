@@ -28,9 +28,9 @@ import javax.swing.JLabel;
 import org.earthtime.UPb_Redux.aliquots.Aliquot;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.fractions.Fraction;
-import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
+import org.earthtime.samples.SampleInterface;
 
 /**
  *
@@ -39,7 +39,7 @@ import org.earthtime.UPb_Redux.valueModels.ValueModel;
 public class IncludedFractionsDesktopPane extends JDesktopPane {
 
     // instance variables
-    private Sample sample;
+    private SampleInterface sample;
 
     /** Creates a new instance of IncludedFractionsDesktopPane */
     public IncludedFractionsDesktopPane() {
@@ -72,7 +72,7 @@ public class IncludedFractionsDesktopPane extends JDesktopPane {
      * @param sample
      * @param width
      */
-    public void ClearAndShowSample(Sample sample, int width) {
+    public void ClearAndShowSample(SampleInterface sample, int width) {
         this.removeAll();
 
         this.sample = sample;

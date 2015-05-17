@@ -84,7 +84,7 @@ import org.earthtime.beans.ET_JButton;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.projects.Project;
-import org.earthtime.projects.ProjectI;
+import org.earthtime.projects.ProjectInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.utilities.TimeToString;
 
@@ -98,7 +98,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
     private SamplesOrganizerPane samplesOrganizerPane;
     private SamplesCommonLeadPane samplesCommonLeadPane;
     private final ReduxPersistentState myState;
-    private ProjectI project;
+    private ProjectInterface project;
     private TripoliSessionInterface tripoliSession;
     private AbstractRawDataFileHandler rawDataFileHandler;
     private final ArrayList<AbstractRawDataFileHandler> knownRawDataFileHandlers;
@@ -357,7 +357,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
     private void revertProject() {
         try {
             project =//
-                    (ProjectI) ETSerializer.GetSerializedObjectFromFile(//
+                    (ProjectInterface) ETSerializer.GetSerializedObjectFromFile(//
                             project.getLocationOfProjectReduxFile().getAbsolutePath());
 
             loadProject();
@@ -1362,7 +1362,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
     /**
      * @return the project
      */
-    public ProjectI getProject() {
+    public ProjectInterface getProject() {
         return project;
     }
 

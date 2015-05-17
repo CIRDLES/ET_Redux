@@ -42,12 +42,12 @@ import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.renderers.EditFractionButton;
-import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
+import org.earthtime.samples.SampleInterface;
 import org.jdesktop.layout.GroupLayout.ParallelGroup;
 import org.jdesktop.layout.GroupLayout.SequentialGroup;
 
@@ -106,7 +106,7 @@ public class AliquotLegacyEditorForIDTIMS extends AliquotEditorDialog {
     public AliquotLegacyEditorForIDTIMS (
             ETReduxFrame parent,
             boolean modal,
-            Sample sample,
+            SampleInterface sample,
             Aliquot aliquot ) {
         super( parent, modal, sample, aliquot );
 
@@ -1207,7 +1207,7 @@ public class AliquotLegacyEditorForIDTIMS extends AliquotEditorDialog {
         }
 
         // save the sample
-        sample.saveTheSampleAsSerializedReduxFile();
+        SampleInterface.saveSampleAsSerializedReduxFile(sample);
 
         System.out.println( "**************** PRE-PUBLISH CHECKLIST FOR ALIQUOT" );
 

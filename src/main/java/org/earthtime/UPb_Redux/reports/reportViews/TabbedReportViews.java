@@ -27,6 +27,7 @@ import org.earthtime.ETReduxFrame;
 import org.earthtime.UPb_Redux.reports.ReportSettings;
 import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.exceptions.ETException;
+import org.earthtime.samples.SampleInterface;
 
 /**
  *
@@ -34,7 +35,7 @@ import org.earthtime.exceptions.ETException;
  */
 public class TabbedReportViews extends JTabbedPane {
 
-    private Sample sample;
+    private SampleInterface sample;
     private JLayeredPane viewTabulatedAliquotActiveFractions;
     private JLayeredPane viewTabulatedAliquotRejectedFractions;
     private ETReduxFrame parentFrame;
@@ -128,7 +129,7 @@ public class TabbedReportViews extends JTabbedPane {
     /**
      * @param sample the sample to set
      */
-    public void setSample(Sample sample) {
+    public void setSample(SampleInterface sample) {
         this.sample = sample;
     }
 

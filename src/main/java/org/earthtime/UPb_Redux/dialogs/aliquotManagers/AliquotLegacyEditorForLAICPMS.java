@@ -42,12 +42,12 @@ import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.renderers.EditFractionButton;
-import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.dataDictionaries.MeasuredRatios;
 import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
+import org.earthtime.samples.SampleInterface;
 import org.earthtime.xmlUtilities.XMLSerializationI;
 import org.jdesktop.layout.GroupLayout.ParallelGroup;
 import org.jdesktop.layout.GroupLayout.SequentialGroup;
@@ -91,7 +91,7 @@ public class AliquotLegacyEditorForLAICPMS extends AliquotEditorDialog {
     public AliquotLegacyEditorForLAICPMS (
             ETReduxFrame parent,
             boolean modal,
-            Sample sample,
+            SampleInterface sample,
             Aliquot aliquot ) {
         super( parent, modal, sample, aliquot );
 
@@ -992,7 +992,7 @@ public class AliquotLegacyEditorForLAICPMS extends AliquotEditorDialog {
         // removed april 2011 as part of registry upgrade
 //        getMyAliquot().setSampleIGSN( sampleIGSN_text.getText().trim() );
 //        sample.setSampleIGSN( sampleIGSN_text.getText().trim() );
-        sample.saveTheSampleAsSerializedReduxFile();
+        SampleInterface.saveSampleAsSerializedReduxFile(sample);
 
         System.out.println( "**************** PRE-PUBLISH CHECKLIST FOR ALIQUOT" );
 

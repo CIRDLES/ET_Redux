@@ -36,13 +36,14 @@ import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLegacyFraction;
-import org.earthtime.UPb_Redux.samples.Sample;
+import org.earthtime.UPb_Redux.samples.UPbSampleInterface;
 import org.earthtime.UPb_Redux.samples.sampleImporters.AbstractSampleImporterFromLegacyCSVFile;
 import org.earthtime.dataDictionaries.MineralTypes;
 import org.earthtime.dataDictionaries.SampleRegistries;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
+import org.earthtime.samples.SampleInterface;
 
 /**
  *
@@ -50,7 +51,7 @@ import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
  */
 public abstract class AbstractSampleLAICPMSRawDataManagerDialog extends DialogEditor {
 
-    private Sample mySample = null;
+    private SampleInterface mySample = null;
     private File importFractionFolderMRU;
     private boolean initialized = false;
     private boolean newSample = false;
@@ -69,7 +70,7 @@ public abstract class AbstractSampleLAICPMSRawDataManagerDialog extends DialogEd
             java.awt.Frame parent,
             boolean modal,
             String dataTypeTitle,
-            Sample sample,
+            SampleInterface sample,
             AbstractSampleImporterFromLegacyCSVFile converter,
             File importFractionFolderMRU ) {
         super( parent, modal );
@@ -276,7 +277,7 @@ public abstract class AbstractSampleLAICPMSRawDataManagerDialog extends DialogEd
             // test for manual mode or bulk import from CSV file
             if ( manualMode_radioBut.isSelected() ) {
                 try {
-                    getMySample().addDefaultUPbLegacyFractionToAliquot( myAliquotNumber );
+                    ((UPbSampleInterface)mySample).addDefaultUPbLegacyFractionToAliquot( myAliquotNumber );
                     setInitialized( true );
                     getMySample().setChanged( true );
                 } catch (BadLabDataException ex) {
@@ -348,7 +349,7 @@ public abstract class AbstractSampleLAICPMSRawDataManagerDialog extends DialogEd
      * 
      * @return
      */
-    public Sample getMySample () {
+    public SampleInterface getMySample () {
         return mySample;
     }
 
@@ -356,7 +357,7 @@ public abstract class AbstractSampleLAICPMSRawDataManagerDialog extends DialogEd
      * 
      * @param mySample
      */
-    public void setMySample ( Sample mySample ) {
+    public void setMySample ( SampleInterface mySample ) {
         this.mySample = mySample;
     }
 

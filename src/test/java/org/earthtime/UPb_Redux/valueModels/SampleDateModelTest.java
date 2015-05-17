@@ -21,15 +21,16 @@
 
 package org.earthtime.UPb_Redux.valueModels;
 
-import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
-import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import java.math.BigDecimal;
 import java.util.Vector;
 import org.earthtime.UPb_Redux.aliquots.Aliquot;
+import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.YorkLineFit;
 import org.earthtime.UPb_Redux.fractions.Fraction;
+import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
+import org.earthtime.samples.SampleInterface;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
@@ -899,7 +900,7 @@ public class SampleDateModelTest {
         System.out.println("Testing SampleDateModel's getSample()");
         SampleDateModel instance = new SampleDateModel();
         Sample expResult = new Sample();
-        Sample result = instance.getSample();
+        SampleInterface result = instance.getSample();
         assertEquals(null, result);
 
         expResult=null;
@@ -916,7 +917,7 @@ public class SampleDateModelTest {
         System.out.println("Testing SampleDateModel's setSample(Sample sample)");
         SampleDateModel instance = new SampleDateModel();
         Sample expResult = new Sample();
-        Sample result = instance.getSample();
+        SampleInterface result = instance.getSample();
         assertEquals(null, result);
 
         expResult=null;

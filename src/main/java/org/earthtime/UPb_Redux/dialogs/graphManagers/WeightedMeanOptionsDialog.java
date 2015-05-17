@@ -26,8 +26,8 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import org.earthtime.UPb_Redux.aliquots.Aliquot;
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
-import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
+import org.earthtime.samples.SampleInterface;
 import org.jdesktop.layout.GroupLayout.ParallelGroup;
 import org.jdesktop.layout.GroupLayout.SequentialGroup;
 
@@ -48,7 +48,7 @@ public class WeightedMeanOptionsDialog extends DialogEditor {
     private ArrayList<JCheckBox> wm207_206r_ThCheckBox = new ArrayList<>();
     private ArrayList<JCheckBox> wm207_206r_PaCheckBox = new ArrayList<>();
     private ArrayList<JCheckBox> wm207_206r_ThPaCheckBox = new ArrayList<>();
-    private final Sample sample;
+    private final SampleInterface sample;
     private Object[][] selectedModels;
     private Map<String, String> weightedMeanOptions;
     private String wm207_235;
@@ -68,7 +68,7 @@ public class WeightedMeanOptionsDialog extends DialogEditor {
      */
     public WeightedMeanOptionsDialog ( java.awt.Frame parent,
             boolean modal,
-            Sample sample ) {
+            SampleInterface sample ) {
 
         super( parent, modal );
         this.sample = sample;

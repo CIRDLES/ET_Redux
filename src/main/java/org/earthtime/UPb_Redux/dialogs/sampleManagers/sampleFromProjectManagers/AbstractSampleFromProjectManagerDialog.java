@@ -31,12 +31,12 @@ import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
-import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.dataDictionaries.MineralTypes;
 import org.earthtime.dataDictionaries.SampleRegistries;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
+import org.earthtime.samples.SampleInterface;
 
 /**
  *
@@ -44,7 +44,7 @@ import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
  */
 public abstract class AbstractSampleFromProjectManagerDialog extends DialogEditor {
 
-    private Sample mySample = null;
+    private SampleInterface mySample = null;
     private boolean initialized = false;
     private boolean newSample = false;
 
@@ -56,7 +56,7 @@ public abstract class AbstractSampleFromProjectManagerDialog extends DialogEdito
      * @param sample  
      */
     public AbstractSampleFromProjectManagerDialog (
-            java.awt.Frame parent, boolean modal, String dataTypeTitle, Sample sample) {
+            java.awt.Frame parent, boolean modal, String dataTypeTitle, SampleInterface sample) {
         super( parent, modal );
 
         initComponents();
@@ -233,9 +233,9 @@ public abstract class AbstractSampleFromProjectManagerDialog extends DialogEdito
         }
 
         if ( TWZeroRho_radioBut.isSelected() ) {
-            getMySample().setCalculateTWrhoForLegacyData( false );
+            mySample.setCalculateTWrhoForLegacyData( false );
         } else {
-            getMySample().setCalculateTWrhoForLegacyData( true );
+            mySample.setCalculateTWrhoForLegacyData( true );
         }
 
         // moved outside conditional oct 2010 and added MineralName, etc ;;June 2010 add physical constants model
@@ -279,7 +279,7 @@ public abstract class AbstractSampleFromProjectManagerDialog extends DialogEdito
      * 
      * @return
      */
-    public Sample getMySample () {
+    public SampleInterface getMySample () {
         return mySample;
     }
 
@@ -287,7 +287,7 @@ public abstract class AbstractSampleFromProjectManagerDialog extends DialogEdito
      * 
      * @param mySample
      */
-    public void setMySample ( Sample mySample ) {
+    public void setMySample ( SampleInterface mySample ) {
         this.mySample = mySample;
     }
 

@@ -110,7 +110,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
      *
      */
     protected JLayeredPane probabilityPanel;
-    private Sample sample;
+    private SampleInterface sample;
     private JSVGCanvas svgConcordiaCanvas;
     private JSVGCanvas svgWeightedMeanCanvas;
     private SampleTreeI dateTreeByAliquot;
@@ -136,8 +136,8 @@ public class SampleDateInterpretationsManager extends DialogEditor
      */
     public SampleDateInterpretationsManager( //
             SampleDateInterpretationSubscribeInterface parent, //
-            boolean modal, JLayeredPane concordiaGraphPanel, JPanel weightedMeanGraphPanel, JLayeredPane normedProbabilityPanel, Sample sample, SampleTreeI dateTreeByAliquot, SampleTreeI dateTreeBySample) {
-        // super((Frame)parent, modal);
+            boolean modal, JLayeredPane concordiaGraphPanel, JPanel weightedMeanGraphPanel, JLayeredPane normedProbabilityPanel, SampleInterface sample, SampleTreeI dateTreeByAliquot, SampleTreeI dateTreeBySample) {
+
         super(null, modal);
 
         this.parentFrame = parent;
@@ -805,7 +805,6 @@ public class SampleDateInterpretationsManager extends DialogEditor
         }
 
         ((WeightedMeanGraphPanel) weightedMeanGraphPanel).setSelectedSampleDateModels(selectedModels);
-//        ((WeightedMeanGraphPanel) weightedMeanGraphPanel).setWeightedMeanOptions( weightedMeanOptions );
     }
 
     private void initializeWeightedMeanOptions(
@@ -837,7 +836,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         // strategy = complete plan to have reduction handler use matrixspecname instead of matrixspecs
         // then here call a method to build set of all names of matrix components across all fractions chosen
         Fraction firstFraction = sample.getFractions().get(0);
-        Vector<String> axesListing = new Vector<String>();
+        Vector<String> axesListing = new Vector<>();
 
         if (firstFraction instanceof UPbFraction) {
             axesListing = //
@@ -2065,7 +2064,7 @@ private void weightedMeansChooser_menuItemActionPerformed (java.awt.event.Action
     ((WeightedMeanGraphPanel) weightedMeanGraphPanel).//
             setSelectedSampleDateModels(((WeightedMeanOptionsDialog) myWMChooser).getSelectedModels());
 
-    ((WeightedMeanGraphPanel) weightedMeanGraphPanel).preparePanel();
+    ((PlottingDetailsDisplayInterface) weightedMeanGraphPanel).preparePanel();
 }//GEN-LAST:event_weightedMeansChooser_menuItemActionPerformed
 private void zoomInAny2X2_buttonActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zoomInAny2X2_buttonActionPerformed
     // TODO add your handling code here:
@@ -2098,7 +2097,7 @@ private void graphViewTabChanged (java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     if (graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab("Probability")) {
         if (((DateProbabilityDensityPanel) probabilityPanel).getSelectedFractions().isEmpty()) {
             ((DateProbabilityDensityPanel) probabilityPanel).//
-                    setSelectedFractions(filterActiveUPbFractions(sample.getUpbFractionsUnknown()));//getUpbFractionsActive()));//  sample.getUpbFractionsActive() );
+                    setSelectedFractions(filterActiveUPbFractions(sample.getUpbFractionsUnknown()));
             ((DateProbabilityDensityPanel) probabilityPanel).//
                     getDeSelectedFractions().clear();
             ((DateProbabilityDensityPanel) probabilityPanel).//
@@ -3232,7 +3231,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
     /**
      * @param sample the sample to set
      */
-    public void setSample(Sample sample) {
+    public void setSample(SampleInterface sample) {
         this.sample = sample;
     }
 

@@ -42,7 +42,7 @@ import org.earthtime.dataDictionaries.SampleTypesEnum;
 import org.earthtime.dataDictionaries.TemplatesForCsvImport;
 import org.earthtime.dataDictionaries.TraceElements;
 import org.earthtime.exceptions.ETException;
-import org.earthtime.projects.ProjectI;
+import org.earthtime.projects.ProjectInterface;
 import org.earthtime.projects.projectImporters.AbstractProjectImporterFromLegacyCSVFile;
 import org.earthtime.samples.SampleInterface;
 
@@ -62,7 +62,7 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_UCSB_LASS_A extends Abstr
      */
     @Override
     @SuppressWarnings("ValueOfIncrementOrDecrementUsed")
-    protected ProjectI extractProjectFromCSVFile(ProjectI project, File file)
+    protected ProjectInterface extractProjectFromCSVFile(ProjectInterface project, File file)
             throws FileNotFoundException {
 
         ArrayList<SampleInterface> projectSamples = new ArrayList<>();

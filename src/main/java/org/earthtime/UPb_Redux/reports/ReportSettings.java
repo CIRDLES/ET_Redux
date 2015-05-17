@@ -39,16 +39,16 @@ import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabDataListElementI;
-import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.UPb_Redux.user.UPbReduxConfigurator;
 import org.earthtime.UPb_Redux.valueModels.ValueModelReferenced;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
+import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.dataDictionaries.Lambdas;
 import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.dataDictionaries.ReportSpecifications;
 import org.earthtime.exceptions.ETException;
-import org.earthtime.archivingTools.URIHelper;
+import org.earthtime.samples.SampleInterface;
 import org.earthtime.xmlUtilities.XMLSerializationI;
 
 /**
@@ -200,18 +200,7 @@ public class ReportSettings implements
         return EARTHTIME;
     }
 
-    /**
-     *
-     * @param sample
-     * @param numberStyleIsNumeric
-     * @return
-     */
-//    public String[][] reportAllFractionsByNumberStyle(final Sample sample, boolean numberStyleIsNumeric) {
-//        Vector<Fraction> uPbFractions = sample.getFractions();
-//
-//        return reportFractionsByNumberStyle(uPbFractions, sample, numberStyleIsNumeric);
-//    }
-    public String[][] reportActiveFractionsByNumberStyle(final Sample sample, boolean numberStyleIsNumeric) {
+    public String[][] reportActiveFractionsByNumberStyle(final SampleInterface sample, boolean numberStyleIsNumeric) {
         Vector<Fraction> uPbFractions = sample.getUpbFractionsActive();
 
         return reportFractionsByNumberStyle(uPbFractions, sample, numberStyleIsNumeric);
@@ -223,7 +212,7 @@ public class ReportSettings implements
      * @param numberStyleIsNumeric
      * @return
      */
-    public String[][] reportRejectedFractionsByNumberStyle(final Sample sample, boolean numberStyleIsNumeric) {
+    public String[][] reportRejectedFractionsByNumberStyle(final SampleInterface sample, boolean numberStyleIsNumeric) {
         Vector<Fraction> uPbFractions = sample.getUpbFractionsRejected();
 
         return reportFractionsByNumberStyle(uPbFractions, sample, numberStyleIsNumeric);
@@ -236,14 +225,14 @@ public class ReportSettings implements
      * @param numberStyleIsNumeric
      * @return
      */
-    public String[][] reportActiveAliquotFractionsByNumberStyle(final Sample sample, Vector<Fraction> uPbFractions, boolean numberStyleIsNumeric) {
+    public String[][] reportActiveAliquotFractionsByNumberStyle(final SampleInterface sample, Vector<Fraction> uPbFractions, boolean numberStyleIsNumeric) {
 
         return reportFractionsByNumberStyle(uPbFractions, sample, numberStyleIsNumeric);
     }
 
     private String[][] reportFractionsByNumberStyle(//
             Vector<Fraction> uPbFractions,
-            final Sample sample,
+            final SampleInterface sample,
             boolean numberStyleIsNumeric) {
 
         // compatibility repair april 2012

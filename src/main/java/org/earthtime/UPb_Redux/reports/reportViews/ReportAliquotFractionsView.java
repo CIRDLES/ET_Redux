@@ -69,6 +69,7 @@ import org.apache.fop.svg.PDFTranscoder;
 import org.earthtime.ETReduxFrame;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.aliquots.Aliquot;
+import org.earthtime.UPb_Redux.aliquots.AliquotI;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.dialogs.fractionManagers.FractionNotesDialog;
 import org.earthtime.UPb_Redux.filters.SVGFileFilter;
@@ -76,11 +77,11 @@ import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.reports.ReportRowGUIInterface;
-import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.UPb_Redux.utilities.comparators.IntuitiveStringComparator;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.exceptions.ETException;
+import org.earthtime.samples.SampleInterface;
 import org.earthtime.utilities.FileHelper;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
@@ -92,7 +93,7 @@ import org.w3c.dom.Document;
 public class ReportAliquotFractionsView extends JLayeredPane implements ReportUpdaterInterface {
 
     private ETReduxFrame parentFrame;
-    private Sample sample;
+    private SampleInterface sample;
     private boolean activeTrueRejectsFalse;
     private String[][] reportFractions;
     private int aliquotCount;
@@ -154,7 +155,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
      * @param sample
      * @param activeTrueRejectsFalse
      */
-    public ReportAliquotFractionsView(ETReduxFrame parentFrame, Sample sample, boolean activeTrueRejectsFalse) {
+    public ReportAliquotFractionsView(ETReduxFrame parentFrame, SampleInterface sample, boolean activeTrueRejectsFalse) {
         this(parentFrame, activeTrueRejectsFalse);
 
         this.sample = sample;
@@ -163,15 +164,15 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
     /**
      * @param sample the sample to set
      */
-    public void setSample(Sample sample) {
+    public void setSample(SampleInterface sample) {
         this.sample = sample;
     }
 
     private synchronized void prepareReportFractionsArrayForDisplay() {
         if (activeTrueRejectsFalse) {
-            reportFractions = sample.reportActiveFractionsByNumberStyle(false);
+            reportFractions = SampleInterface.reportActiveFractionsByNumberStyle(sample, false);
         } else {
-            reportFractions = sample.reportRejectedFractionsByNumberStyle(false);
+            reportFractions = SampleInterface.reportRejectedFractionsByNumberStyle(sample, false);
         }
 
         sortReportColumn(reportFractions, sortedColumnNumber, sortedColumnDirection);
@@ -1092,7 +1093,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                         if (e.getModifiers() == InputEvent.BUTTON1_MASK) {
                             parentFrame.editAliquot(((Aliquot) verticalPixelFractionMap.get(row).rowObject));
                         } else {
-                            sample.toggleAliquotFractionsRejectedStatus(((UPbReduxAliquot) verticalPixelFractionMap.get(row).rowObject));
+                            AliquotI.toggleAliquotFractionsRejectedStatus(((UPbReduxAliquot) verticalPixelFractionMap.get(row).rowObject));
                             parent.updateReportTable(false);
                         }
 
