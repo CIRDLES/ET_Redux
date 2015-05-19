@@ -17,7 +17,6 @@ package org.earthtime.UPb_Redux.samples;
 import java.io.File;
 import java.io.FileNotFoundException;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
-import org.earthtime.UPb_Redux.user.SampleDateInterpretationGUIOptions;
 import org.earthtime.exceptions.ETException;
 
 /**
@@ -133,22 +132,6 @@ public interface UPbSampleInterface {
      * <code>defaultFractionName</code> of this <code>Sample</code> will be set
      */
     void setDefaultFractionName(String defaultFractionName);
-
-    /**
-     * sets the <code>sampleAgeInterpretationGUISettings</code> of this
-     * <code>Sample</code> to the argument
-     * <code>sampleAgeInterpretationGUISettings</code>
-     *
-     * @pre argument <code>sampleAgeInterpretationGUISettings</code> is a valid
-     * <code>SampleDateInterpretationGUIOptions</code>
-     * @post this <code>Sample</code>'s
-     * <code>sampleAgeInterpretationGUISettings</code> is set to argument
-     * <code>sampleAgeInterpretationGUISettings</code>
-     * @param sampleAgeInterpretationGUISettings value to which <code>
-     * sampleAgeInterpretationGUISettings</code> of this <code>Sample</code>
-     * will be set
-     */
-    void setSampleAgeInterpretationGUISettings(SampleDateInterpretationGUIOptions sampleAgeInterpretationGUISettings);
 
     /**
      *

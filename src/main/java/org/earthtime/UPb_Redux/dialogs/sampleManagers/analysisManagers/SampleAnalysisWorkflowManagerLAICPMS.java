@@ -1604,7 +1604,7 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
         }
 
         physicalConstantsModelChooser.removeAllItems();
-        ArrayList<AbstractRatiosDataModel> physicalConstantsModels = getMySample().getMyReduxLabData().getPhysicalConstantsModels();
+        ArrayList<AbstractRatiosDataModel> physicalConstantsModels = ReduxLabData.getInstance().getPhysicalConstantsModels();
         for (int i = (physicalConstantsModels.size() > 1 ? 1 : 0); i < physicalConstantsModels.size(); i++) {
             physicalConstantsModelChooser.addItem(physicalConstantsModels.get(i).getNameAndVersion());
         }
@@ -1693,7 +1693,7 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
         if (!((String) physicalConstantsModelChooser.getSelectedItem()).equalsIgnoreCase(currentPhysicalConstantsModelName)) {
             try {
                 getMySample().setPhysicalConstantsModel(
-                        getMySample().getMyReduxLabData().
+                        ReduxLabData.getInstance().
                         getAPhysicalConstantsModel(((String) physicalConstantsModelChooser.getSelectedItem())));
                 //getMySample().setChanged(true);
 

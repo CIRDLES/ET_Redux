@@ -27,6 +27,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Vector;
+import javax.swing.AbstractButton;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -41,6 +42,7 @@ import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
+import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.renderers.EditFractionButton;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.dataDictionaries.MeasuredRatios;
@@ -952,10 +954,10 @@ public class AliquotLegacyEditorForLAICPMS extends AliquotEditorDialog {
 
         getMyAliquot().getMineralStandardModels().clear();
         for (JComponent cb : mineralStandardsCheckBoxes) {
-            if ( ((JCheckBox) cb).isSelected() ) {
+            if ( ((AbstractButton) cb).isSelected() ) {
                 try {
                     getMyAliquot().getMineralStandardModels().add(//
-                            getSample().getMyReduxLabData().getAMineralStandardModel( ((JCheckBox) cb).getText() ) );
+                            ReduxLabData.getInstance().getAMineralStandardModel( ((JCheckBox) cb).getText() ) );
                 } catch (BadLabDataException ex) {
                     new ETWarningDialog(ex).setVisible(true);
                 }

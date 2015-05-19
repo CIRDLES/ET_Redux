@@ -154,7 +154,6 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
     // user-specific configurations
     private ReduxPersistentState myState;
-    private ReduxLabData myLabData;
     private final ClassLoader cldr;
     private final java.net.URL imageURL;
     private final InputStream changeLogURL;
@@ -195,7 +194,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
      */
     protected JLayeredPane announcementPane = null;
     private final Timer liveUpdateTimer;
-////    private int DATATABLE_TOP_HEIGHT = 62;//72;//62
+
     private DialogEditor myProjectManager;
     //oct 2014
     private DialogEditor sampleDateInterpDialog;
@@ -211,12 +210,10 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
      */
     public ETReduxFrame(
             ReduxPersistentState myState,
-            ReduxLabData myLabData,
             File reduxFile)
             throws BadLabDataException {
 
         this.myState = myState;
-        this.myLabData = myLabData;
         initComponents();
 
         announcementPane = new AnnouncementPane();
@@ -442,7 +439,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         }
 
         try {
-            ETSerializer.SerializeObjectToFile(myLabData, ReduxLabData.getMySerializedName());
+            ETSerializer.SerializeObjectToFile(ReduxLabData.getInstance(), ReduxLabData.getMySerializedName());
         } catch (ETException ex) {
             new ETWarningDialog(ex).setVisible(true);
             System.out.println("LabData did not save");
@@ -453,7 +450,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             throws BadLabDataException {
         if (!LabDataEditorDialog.amOpen) {
             myLabDataEditor
-                    = new LabDataEditorDialog(this, false, getMyLabData(), selectedTab);
+                    = new LabDataEditorDialog(this, false, ReduxLabData.getInstance(), selectedTab);
             ((LabDataEditorDialog) myLabDataEditor).setSize();
             JDialog.setDefaultLookAndFeelDecorated(true);
             myLabDataEditor.setVisible(true);
@@ -478,7 +475,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         if (theProject != null) {
             SampleInterface superSample = theProject.getSuperSample();
             if (superSample != null) {
-                isTripolized = superSample.isAnalysisTypeTripolized();
+                isTripolized = SampleInterface.isAnalysisTypeTripolized(superSample.getSampleAnalysisType());
             }
         }
 
@@ -576,7 +573,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             if (theProject.getSuperSample() != null) {
                 // oct 2014 first check for updated reportsettings
                 ReportSettings projectReportSettings = theProject.getSuperSample().getReportSettingsModelUpdatedToLatestVersion();
-                ((Sample) theProject.getSuperSample()).setReportSettingsModel(projectReportSettings);
+                theProject.getSuperSample().setReportSettingsModel(projectReportSettings);
                 theProject.saveTheProjectAsSerializedReduxFile();
 
                 // go straight to data table display
@@ -673,10 +670,6 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         theSample.setChanged(false);
 
         setUpTheProject(false);
-
-        // oct 2014 these are already handled
-//        loadAndShowReportTableData();
-//        updateReportTable(true);
     }
 
     /**
@@ -699,18 +692,18 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
      * @param performReduction
      */
     public void setUpTheProject(boolean performReduction) {
-        SampleInterface.registerSampleWithLabData(theSample, myLabData);
+        SampleInterface.registerSampleWithLabData(theSample);
 
         SampleInterface superSample = theProject.getSuperSample();
 
         if (superSample != null) {
-            if (superSample.isAnalysisTypeTripolized()) {
+            if (SampleInterface.isAnalysisTypeTripolized(superSample.getSampleAnalysisType())) {
                 // oct 2012 register mineralstandardmodel
                 AbstractRatiosDataModel primaryMineralStandard = theProject.getTripoliSession().getPrimaryMineralStandard();
                 if (primaryMineralStandard != null) {
-                    myLabData.registerMineralStandardModel(primaryMineralStandard, false);
+                    ReduxLabData.getInstance().registerMineralStandardModel(primaryMineralStandard, false);
                     if (((MineralStandardUPbModel) primaryMineralStandard).hasInitialPb()) {
-                        myLabData.registerInitialPbModel(((MineralStandardUPbModel) primaryMineralStandard).getInitialPbModelET(), false);
+                        ReduxLabData.getInstance().registerInitialPbModel(((MineralStandardUPbModel) primaryMineralStandard).getInitialPbModelET(), false);
                     }
                 }
             }
@@ -805,11 +798,21 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             theSample = Sample.initializeNewSample(//
                     SampleTypesEnum.PROJECT.getName(), //
                     SampleAnalysisTypesEnum.COMPILED.getName(),//
-                    myLabData,//
+                    ReduxLabData.getInstance(),//
                     myState.getReduxPreferences().getDefaultSampleAnalysisPurpose());
         } catch (BadLabDataException ex) {
             new ETWarningDialog(ex).setVisible(true);
         }
+
+////////        try {
+////////            theSample = ProjectSample.initializeNewSample(//                  
+////////                    myState.getReduxPreferences().getDefaultSampleAnalysisPurpose());
+////////        } catch (BadLabDataException ex) {
+////////            new ETWarningDialog(ex).setVisible(true);
+////////        }
+        
+        //set flag for whether analysis was performed elsewhere and we just have legacy results
+        theSample.setAnalyzed(true);
 
         theProject.setSuperSample(theSample);
 
@@ -942,7 +945,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
             // set up a new empty sample based on sampleType
             theSample = Sample.initializeNewSample(//
-                    sampleType, sampleAnalysisType, myLabData, myState.getReduxPreferences().getDefaultSampleAnalysisPurpose());
+                    sampleType, sampleAnalysisType, ReduxLabData.getInstance(), myState.getReduxPreferences().getDefaultSampleAnalysisPurpose());
 
             // manageTheSample sets up the correct form and returns whether it was successful
             // meantime, the form is opened modally to process user setting up sample data
@@ -1245,7 +1248,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
     public synchronized void setUpTheSample(boolean performReduction)
             throws BadLabDataException {
 
-        theSample.setUpSample(myLabData);
+        theSample.setUpSample(ReduxLabData.getInstance());
 
         String sampleUpdateType = "Manual Data Entry";
         if (theSample.isSampleTypeLiveWorkflow()) {
@@ -1437,7 +1440,8 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
         setLiveUpdateTimerIsRunning(false);
 
-        EarthTimeSerializedFileInterface deserializedFile = (EarthTimeSerializedFileInterface) ETSerializer.GetSerializedObjectFromFile(selFile.getPath());//     Sample.getTheSampleFromSerializedReduxFile( selFile );
+        EarthTimeSerializedFileInterface deserializedFile = //
+                (EarthTimeSerializedFileInterface) ETSerializer.GetSerializedObjectFromFile(selFile.getPath());
 
         // TODO: Oct 2011 check for Project file?? or is it automatically a project file
         // created here for a single sample??
@@ -1453,7 +1457,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
                 // dec 2011 = fix the legacy problem of badly numbered aliquots
                 // compress them to 1,2,3...
-                ((Sample)theSample).repairAliquotNumberingDec2011();
+                ((Sample) theSample).repairAliquotNumberingDec2011();
 
                 // update MRU status
                 getMyState().updateMRUSampleList(selFile);
@@ -1511,7 +1515,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
     private void setUpEmptySample() //
             throws BadLabDataException {
-        setTheSample(Sample.initializeNewSample("NONE", "", myLabData, myState.getReduxPreferences().getDefaultSampleAnalysisPurpose()));
+        setTheSample(Sample.initializeNewSample("NONE", "", ReduxLabData.getInstance(), myState.getReduxPreferences().getDefaultSampleAnalysisPurpose()));
         setUpTheSample(false);
 
         // editSample menu de-activated
@@ -1637,22 +1641,6 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
     /**
      *
-     * @return
-     */
-    public ReduxLabData getMyLabData() {
-        return myLabData;
-    }
-
-    /**
-     *
-     * @param myLabData
-     */
-    public void setMyLabData(ReduxLabData myLabData) {
-        this.myLabData = myLabData;
-    }
-
-    /**
-     *
      */
     public void showDataDictionary() {
         BrowserControl.displayURL(
@@ -1713,7 +1701,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
         // TODO: move to Project class
         if (theProject != null) {
-            if (theProject.getSuperSample().isAnalysisTypeTripolized()) {
+            if (SampleInterface.isAnalysisTypeTripolized(theProject.getSuperSample().getSampleAnalysisType())) {
                 // oct 2014 have a LAICPMS project
                 File pbcCorrReportFile = new File("LAICPMS_Pbc_Correction_Report_for_" + theProject.getProjectName() + ".txt");
                 PrintWriter outputWriter = null;
@@ -3298,7 +3286,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         if (theSample != null) {
 
             // oct 2014 per bug report by Matt Rioux email
-            if (!theSample.isAnalyzed()){
+            if (theSample.isAnalyzed()) {
                 SampleInterface.updateAndSaveSampleDateModelsByAliquot(theSample);
             }
 
@@ -3884,11 +3872,7 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
 }//GEN-LAST:event_LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed
 
     private void saveCurrentReportSettingsAsDefault_menuItemActionPerformed ( java.awt.event.ActionEvent evt ) {//GEN-FIRST:event_saveCurrentReportSettingsAsDefault_menuItemActionPerformed
-//        try {
-        theSample.getMyReduxLabData().setDefaultreportSettingsModel(theSample.getReportSettingsModel());//Initialized());getReportSettingsModelUpdatedToLatestVersion());
-//        } catch (BadLabDataException badLabDataException) {
-//        }
-
+        ReduxLabData.getInstance().setDefaultreportSettingsModel(theSample.getReportSettingsModel());
     }//GEN-LAST:event_saveCurrentReportSettingsAsDefault_menuItemActionPerformed
 
     private void loadEARTHTIMEDefaultReportSettingsModel_menuItemActionPerformed ( java.awt.event.ActionEvent evt ) {//GEN-FIRST:event_loadEARTHTIMEDefaultReportSettingsModel_menuItemActionPerformed

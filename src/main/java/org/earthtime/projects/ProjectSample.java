@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.Vector;
 import org.earthtime.UPb_Redux.ReduxConstants;
+import org.earthtime.UPb_Redux.ReduxConstants.ANALYSIS_PURPOSE;
 import org.earthtime.UPb_Redux.aliquots.Aliquot;
 import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetup;
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
@@ -33,7 +34,9 @@ import org.earthtime.UPb_Redux.reports.ReportSettings;
 import org.earthtime.UPb_Redux.samples.SESARSampleMetadata;
 import org.earthtime.UPb_Redux.user.SampleDateInterpretationGUIOptions;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
+import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.dataDictionaries.SampleRegistries;
+import org.earthtime.dataDictionaries.SampleTypesEnum;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.samples.SampleInterface;
@@ -44,8 +47,81 @@ import org.earthtime.samples.SampleInterface;
  */
 public class ProjectSample implements//
         SampleInterface,
-        Serializable
-{
+        Serializable {
+
+    private static final long serialVersionUID = -638058212764252304L;
+    private String sampleName;
+    private String sampleType;
+    private String sampleAnalysisType;
+    private ANALYSIS_PURPOSE analysisPurpose;
+    private boolean analyzed;
+    private Vector<Aliquot> aliquots;
+    private Vector<Fraction> fractions;
+    private ReportSettings reportSettingsModel;
+    private AbstractRatiosDataModel physicalConstantsModel;
+    private SampleDateInterpretationGUIOptions sampleAgeInterpretationGUISettings;
+    private boolean changed;
+    private String reduxSampleFileName;
+    private String reduxSampleFilePath;
+    private GraphAxesSetup concordiaGraphAxesSetup;
+    private GraphAxesSetup terraWasserburgGraphAxesSetup;
+       private Vector<ValueModel> sampleDateModels;
+
+
+    private transient ReduxLabData reduxLabData;
+
+    public ProjectSample(
+            String sampleName,
+            String sampleType,
+            String sampleAnalysisType,
+            ANALYSIS_PURPOSE analysisPurpose,
+            boolean analyzed)
+            throws BadLabDataException {
+
+        this.sampleName = sampleName;
+        this.sampleType = sampleType;
+        this.sampleAnalysisType = sampleAnalysisType;
+        this.analysisPurpose = analysisPurpose;
+        this.analyzed = false;
+        this.aliquots = new Vector<>();
+        this.fractions = new Vector<>();
+
+        this.reduxLabData = ReduxLabData.getInstance();
+        this.reportSettingsModel = reduxLabData.getDefaultReportSettingsModel();
+        this.physicalConstantsModel = reduxLabData.getDefaultPhysicalConstantsModel();
+        this.sampleAgeInterpretationGUISettings = new SampleDateInterpretationGUIOptions();
+        this.changed = false;
+        this.reduxSampleFileName = "";
+        this.reduxSampleFilePath = "";
+        this.concordiaGraphAxesSetup = new GraphAxesSetup("C", 2);
+        this.terraWasserburgGraphAxesSetup = new GraphAxesSetup("T-W", 2);
+        this.sampleDateModels = new Vector<>();
+
+    }
+
+    /**
+     *
+     * @param sampleType
+     * @param sampleAnalysisType
+     * @param labData
+     * @param analysisPurpose
+     * @return
+     * @throws BadLabDataException
+     */
+    public static SampleInterface initializeNewSample( //
+            ANALYSIS_PURPOSE analysisPurpose)
+            throws BadLabDataException {
+
+        SampleInterface retVal = //
+                new ProjectSample(//
+                        SampleTypesEnum.PROJECT.getName(),//
+                        SampleTypesEnum.PROJECT.getName(), //
+                        SampleAnalysisTypesEnum.COMPILED.getName(), //
+                        analysisPurpose,//
+                        true);
+
+        return retVal;
+    }
 
     @Override
     public void setUpSample(ReduxLabData myLabData) {
@@ -54,47 +130,42 @@ public class ProjectSample implements//
 
     @Override
     public String getSampleName() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return sampleName;
     }
 
     @Override
     public void setSampleName(String sampleName) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.sampleName = sampleName;
     }
 
     @Override
     public void setSampleType(String sampleType) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.sampleType = sampleType;
     }
 
     @Override
     public String getSampleType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return sampleType;
     }
 
     @Override
     public void setAnalyzed(boolean analyzed) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.analyzed = analyzed;
     }
 
     @Override
     public boolean isAnalyzed() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public boolean isAnalysisTypeTripolized() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return analyzed;
     }
 
     @Override
     public boolean isChanged() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return changed;
     }
 
     @Override
     public void setChanged(boolean changed) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.changed = changed;
     }
 
     @Override
@@ -117,19 +188,76 @@ public class ProjectSample implements//
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    /**
+     * gets the <code>reduxSampleFileName</code> of this <code>Sample</code>.
+     *
+     * @pre this <code>Sample</code> exists
+     * @post returns the <code>reduxSampleFileName</code> of this
+     * <code>Sample</code>
+     *
+     * @return <code>String</code> - <code>reduxSampleFileName</code> of this
+     * <code>Sample</code>
+     */
     @Override
     public String getReduxSampleFileName() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return reduxSampleFileName;
     }
 
-    @Override
+    /**
+     * gets the <code>reduxSampleFilePath</code> of this <code>Sample</code>.
+     *
+     * @pre this <code>Sample</code> exists
+     * @post returns the <code>reduxSampleFilePath</code> of this
+     * <code>Sample</code>
+     *
+     * @return <code>String</code> - <code>reduxSampleFilePath</code> of this
+     * <code>Sample</code>
+     */
     public String getReduxSampleFilePath() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return reduxSampleFilePath;
+
     }
 
+    /**
+     * sets the <code>reduxSampleFilePath</code> and
+     * <code>reduxSampleFileName</code> of this <code>Sample</code> to the
+     * argument <code>reduxSampleFile</code>
+     *
+     * @pre argument <code>reduxSampleFile</code> is a valid file
+     * @post this <code>Sample</code>'s <code>reduxSampleFilePath</code> and
+     * <code>reduxSampleFileName</code> are set to argument
+     * <code>reduxSamplefile</code>
+     *
+     * @param reduxSampleFile value to which <code>reduxSampleFilePath</code>
+     * and <code>reduxSampleFileName</code> of this <code>Sample</code> will be
+     * set
+     */
     @Override
     public void setReduxSampleFilePath(File reduxSampleFile) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        boolean isChanged = false;
+        // set redux extension
+
+        if (!reduxSampleFile.getPath().endsWith(".redux")) {
+            isChanged = isChanged || (this.reduxSampleFilePath.compareToIgnoreCase(reduxSampleFile.getPath() + ".redux") != 0);
+
+            this.reduxSampleFilePath = reduxSampleFile.getPath() + ".redux";
+            isChanged
+                    = isChanged || (this.reduxSampleFileName.compareToIgnoreCase(reduxSampleFile.getName() + ".redux") != 0);
+
+            this.reduxSampleFileName = reduxSampleFile.getName() + ".redux";
+
+        } else {
+            isChanged = isChanged || (this.reduxSampleFilePath.compareToIgnoreCase(reduxSampleFile.getPath()) != 0);
+
+            this.reduxSampleFilePath = reduxSampleFile.getPath();
+            isChanged
+                    = isChanged || (this.reduxSampleFileName.compareToIgnoreCase(reduxSampleFile.getName()) != 0);
+
+            this.reduxSampleFileName = reduxSampleFile.getName();
+
+        }
+
+        setChanged(isChanged);
     }
 
     @Override
@@ -143,28 +271,8 @@ public class ProjectSample implements//
     }
 
     @Override
-    public boolean isAnalysisTypeIDTIMS() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public boolean isAnalysisTypeLAICPMS() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public boolean isTypeLiveUpdate() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public boolean isTypeLegacy() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public boolean isTypeProject() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return true;
     }
 
     @Override
@@ -179,7 +287,7 @@ public class ProjectSample implements//
 
     @Override
     public String getSampleAnalysisType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return sampleAnalysisType;
     }
 
     @Override
@@ -209,7 +317,7 @@ public class ProjectSample implements//
 
     @Override
     public boolean isAutomaticDataUpdateMode() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return false;
     }
 
     @Override
@@ -228,47 +336,17 @@ public class ProjectSample implements//
     }
 
     @Override
-    public Aliquot getAliquotByName(String name) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Vector<Aliquot> getActiveAliquots() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public Vector<Aliquot> getAliquots() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return aliquots;
     }
 
     @Override
     public void setAliquots(Vector<Aliquot> aliquots) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Aliquot getAliquotByNumber(int aliquotNum) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public String getNameOfAliquotFromSample(int aliquotNum) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.aliquots = aliquots;
     }
 
     @Override
     public Aliquot addNewAliquot(String aliquotName) throws ETException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void removeAliquot(Aliquot aliquot) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public boolean swapOrderOfTwoAliquots(String nameAliquotA, String nameAliquotB) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -284,61 +362,11 @@ public class ProjectSample implements//
 
     @Override
     public Vector<Fraction> getFractions() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Fraction getFractionByID(String ID) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return fractions;
     }
 
     @Override
     public void setUPbFractions(Vector<Fraction> UPbFractions) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Vector<Fraction> getUpbFractionsRejected() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void removeUPbReduxFraction(int index) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void removeUPbReduxFraction(Fraction fraction) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Fraction getSampleFractionByName(String name) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Vector<Fraction> getUpbFractionsActive() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Vector<Fraction> getUpbFractionsUnknown() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void updateSetOfActiveFractions(Vector<Fraction> filteredFractions) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Vector<String> getSampleFractionIDs() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void deSelectAllFractionsInDataTable() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -348,48 +376,41 @@ public class ProjectSample implements//
     }
 
     @Override
-    public void selectAllFractions() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public void updateSampleDateModels() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    @Override
-    public void setSampleDateModels(Vector<ValueModel> sampleDateModels) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
+    /**
+     * @return the sampleDateModels
+     */
     @Override
     public Vector<ValueModel> getSampleDateModels() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (sampleDateModels == null) {
+            sampleDateModels = new Vector<>();
+        }
+        return sampleDateModels;
     }
 
+    /**
+     * @param sampleDateModels the sampleDateModels to set
+     */
+    @Override
+    public void setSampleDateModels(Vector<ValueModel> sampleDateModels) {
+        this.sampleDateModels = sampleDateModels;
+    }
     @Override
     public void setFractionDataOverriddenOnImport(boolean fractionDataOverriddenOnImport) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public ReportSettings getReportSettingsModelUpdatedToLatestVersion() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public void setReportSettingsModel(ReportSettings reportSettingsModel) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void setLegacyStatusForReportTable() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.reportSettingsModel = reportSettingsModel;
     }
 
     @Override
     public ReportSettings getReportSettingsModel() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return reportSettingsModel;
     }
 
     @Override
@@ -453,38 +474,60 @@ public class ProjectSample implements//
     }
 
     @Override
-    public void setMyReduxLabData(ReduxLabData myReduxLabData) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public void setPhysicalConstantsModel(AbstractRatiosDataModel physicalConstantsModel) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.physicalConstantsModel = physicalConstantsModel;
     }
 
     @Override
     public AbstractRatiosDataModel getPhysicalConstantsModel() throws BadLabDataException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return physicalConstantsModel;
     }
 
-    @Override
-    public ReduxLabData getMyReduxLabData() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
+    /**
+     * @return the terraWasserburgGraphAxesSetup
+     */
     @Override
     public GraphAxesSetup getTerraWasserburgGraphAxesSetup() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (terraWasserburgGraphAxesSetup == null) {
+            terraWasserburgGraphAxesSetup = new GraphAxesSetup("T-W", 2);
+        }
+        return terraWasserburgGraphAxesSetup;
     }
 
+    /**
+     * @return the concordiaGraphAxesSetup
+     */
     @Override
     public GraphAxesSetup getConcordiaGraphAxesSetup() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (concordiaGraphAxesSetup == null) {
+            concordiaGraphAxesSetup = new GraphAxesSetup("C", 2);
+        }
+        return concordiaGraphAxesSetup;
     }
 
     @Override
     public SampleDateInterpretationGUIOptions getSampleDateInterpretationGUISettings() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return sampleAgeInterpretationGUISettings;
+    }
+
+    /**
+     * sets the <code>sampleAgeInterpretationGUISettings</code> of this
+     * <code>Sample</code> to the argument
+     * <code>sampleAgeInterpretationGUISettings</code>
+     *
+     * @pre argument <code>sampleAgeInterpretationGUISettings</code> is a valid
+     * <code>SampleDateInterpretationGUIOptions</code>
+     * @post this <code>Sample</code>'s
+     * <code>sampleAgeInterpretationGUISettings</code> is set to argument
+     * <code>sampleAgeInterpretationGUISettings</code>
+     *
+     * @param sampleAgeInterpretationGUISettings value to which      <code>
+     *                                              sampleAgeInterpretationGUISettings</code> of this <code>Sample</code>
+     * will be set
+     */
+    @Override
+    public void setSampleAgeInterpretationGUISettings(SampleDateInterpretationGUIOptions sampleAgeInterpretationGUISettings) {
+        this.sampleAgeInterpretationGUISettings = sampleAgeInterpretationGUISettings;
     }
 
     @Override
@@ -501,5 +544,5 @@ public class ProjectSample implements//
     public ValueModel getSampleDateModelByName(String modelName) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-  
+
 }

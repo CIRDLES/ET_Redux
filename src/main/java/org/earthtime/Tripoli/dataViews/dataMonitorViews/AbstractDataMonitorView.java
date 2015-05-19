@@ -546,7 +546,7 @@ project.getSuperSample().getFractions();
         probabilityPanel = new DateProbabilityDensityPanel((Sample) project.getSuperSample());
 
         ((DateProbabilityDensityPanel) probabilityPanel).//
-                setSelectedFractions(filterActiveUPbFractions(((Sample) project.getSuperSample()).getUpbFractionsUnknown()));//.getUpbFractionsActive()));
+                setSelectedFractions(filterActiveUPbFractions(((Sample) project.getSuperSample()).getUpbFractionsUnknown()));//.getFractionsActive()));
 
         probabilityPanel.setBounds(1355, topMargin + 60, pdfWidth, pdfHeight - 5);
 

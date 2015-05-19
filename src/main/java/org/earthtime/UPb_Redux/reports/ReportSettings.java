@@ -111,7 +111,7 @@ public class ReportSettings implements
         this.reportSettingsComment = "";
 
         this.reportCategories = new ArrayList<>();
-        
+
         this.fractionCategory
                 = new ReportCategory(//
                         //
@@ -201,9 +201,9 @@ public class ReportSettings implements
     }
 
     public String[][] reportActiveFractionsByNumberStyle(final SampleInterface sample, boolean numberStyleIsNumeric) {
-        Vector<Fraction> uPbFractions = sample.getUpbFractionsActive();
+        Vector<Fraction> fractions = sample.getFractionsActive();
 
-        return reportFractionsByNumberStyle(uPbFractions, sample, numberStyleIsNumeric);
+        return reportFractionsByNumberStyle(fractions, sample, numberStyleIsNumeric);
     }
 
     /**
@@ -213,9 +213,9 @@ public class ReportSettings implements
      * @return
      */
     public String[][] reportRejectedFractionsByNumberStyle(final SampleInterface sample, boolean numberStyleIsNumeric) {
-        Vector<Fraction> uPbFractions = sample.getUpbFractionsRejected();
+        Vector<Fraction> fractions = sample.getFractionsRejected();
 
-        return reportFractionsByNumberStyle(uPbFractions, sample, numberStyleIsNumeric);
+        return reportFractionsByNumberStyle(fractions, sample, numberStyleIsNumeric);
     }
 
     /**
@@ -225,13 +225,13 @@ public class ReportSettings implements
      * @param numberStyleIsNumeric
      * @return
      */
-    public String[][] reportActiveAliquotFractionsByNumberStyle(final SampleInterface sample, Vector<Fraction> uPbFractions, boolean numberStyleIsNumeric) {
+    public String[][] reportActiveAliquotFractionsByNumberStyle(final SampleInterface sample, Vector<Fraction> fractions, boolean numberStyleIsNumeric) {
 
-        return reportFractionsByNumberStyle(uPbFractions, sample, numberStyleIsNumeric);
+        return reportFractionsByNumberStyle(fractions, sample, numberStyleIsNumeric);
     }
 
     private String[][] reportFractionsByNumberStyle(//
-            Vector<Fraction> uPbFractions,
+            Vector<Fraction> fractions,
             final SampleInterface sample,
             boolean numberStyleIsNumeric) {
 
@@ -247,12 +247,12 @@ public class ReportSettings implements
 
         // the first six (FRACTION_DATA_START_ROW) rows are provided for naming and formats
         String[][] retVal
-                = new String[uPbFractions.size() + FRACTION_DATA_START_ROW][];
+                = new String[fractions.size() + FRACTION_DATA_START_ROW][];
         // column 0 will contain true for included fractions and false for rejected fractions
         // column 1 will contain aliquot name
 
         // special case oct 2009 to see if we force the display of <ar231_235Pa> and Th_Umagma columns
-        if (uPbFractions.size() > 0) {
+        if (fractions.size() > 0) {
             // check whether all values are equal in displayed fractions
 
             // force to not visible
@@ -261,9 +261,9 @@ public class ReportSettings implements
 
             // get first activityValue and first Th_Umagma value and set standard footnote entries
             BigDecimal savedActivityValue = //
-                    uPbFractions.get(0).getAnalysisMeasure(AnalysisMeasures.ar231_235sample.getName()).getValue();
+                    fractions.get(0).getAnalysisMeasure(AnalysisMeasures.ar231_235sample.getName()).getValue();
             BigDecimal savedMagmaValue = //
-                    uPbFractions.get(0).getAnalysisMeasure(AnalysisMeasures.rTh_Umagma.getName()).getValue();
+                    fractions.get(0).getAnalysisMeasure(AnalysisMeasures.rTh_Umagma.getName()).getValue();
 
             activityFootnoteEntry = "= " + savedActivityValue.toString();
             thU_MagmaFootnoteEntry = "= " + savedMagmaValue.toString();
@@ -271,7 +271,7 @@ public class ReportSettings implements
             // modified april 2010 to account for zircon population
             int zirconCount = 0;
             int fractionCount = 0;
-            for (Fraction f : uPbFractions) {
+            for (Fraction f : fractions) {
                 if (!((UPbFractionI) f).isRejected()) {
 
                     BigDecimal activityValue = f.getAnalysisMeasure(AnalysisMeasures.ar231_235sample.getName()).getValue();
@@ -306,7 +306,7 @@ public class ReportSettings implements
 
         // a special case oct 2009 to decide if units of dates is Ma or ka or auto
         // repeated oct 2014 to handle Pbc corrected dates category also
-        if (uPbFractions.size() > 0) {
+        if (fractions.size() > 0) {
             if (getDatesCategory().getCategoryColumns().length > 0) {
                 // first get the unittype of the first date (all will be set the same so this is a flag)
                 String currentDateUnit = getDatesCategory().getCategoryColumns()[0].getUnits();
@@ -326,7 +326,7 @@ public class ReportSettings implements
                 if (isAuto) {
                     // let's find out
                     BigDecimal threshold = new BigDecimal(1000000);
-                    for (Fraction f : uPbFractions) {
+                    for (Fraction f : fractions) {
                         if (!((UPbFractionI) f).isRejected()) {
                             BigDecimal date206_238Value = f.getRadiogenicIsotopeDateByName(RadDates.age206_238r).getValue();
                             if (date206_238Value.compareTo(threshold) > 0) {
@@ -366,7 +366,7 @@ public class ReportSettings implements
                 if (isAuto) {
                     // let's find out
                     BigDecimal threshold = new BigDecimal(1000000);
-                    for (Fraction f : uPbFractions) {
+                    for (Fraction f : fractions) {
                         if (!((UPbFractionI) f).isRejected()) {
                             BigDecimal date206_238Value = f.getRadiogenicIsotopeDateByName(RadDates.age206_238_PbcCorr).getValue();
                             if (date206_238Value.compareTo(threshold) > 0) {
@@ -480,7 +480,7 @@ public class ReportSettings implements
 
                             // walk all the fractions for each column
                             int fractionRowCount = FRACTION_DATA_START_ROW;
-                            for (Fraction f : uPbFractions) {
+                            for (Fraction f : fractions) {
 
                                 // test for included fraction on first data pass col=2==>fractionID
                                 if (columnCount == 2) {
@@ -510,7 +510,7 @@ public class ReportSettings implements
                             // post process column
                             // if column is in sigfig mode, strip out spaces common to all rows (leading/trailing)
                             // if arbitrary, use digit counts to create an excel format for the 4th row
-                            if (uPbFractions.size() > 0) {
+                            if (fractions.size() > 0) {
 
                                 if (myCol.isDisplayedWithArbitraryDigitCount()) {
                                     // for now just trim. later need to handle case
@@ -614,7 +614,7 @@ public class ReportSettings implements
             retVal[6][i] = determineFootNoteLetter(i) + "&" + footNote;
         }
         // isValidOrAirplaneMode printing out of first fraction
-////        if (uPbFractions.size() > 0) {
+////        if (fractions.size() > 0) {
 ////            for (int c = 0; c < countOfAllColumns; c++) {
 ////                System.out.println(
 ////                        "COL " + c + "\t  "//
@@ -730,8 +730,8 @@ public class ReportSettings implements
             for (int f2 = FRACTION_DATA_START_ROW; f2 < retVal.length; f2++) {
                 if (retVal[f2][columnCount] != null) {
                     retVal[f2][columnCount] += new String(new char[maxWidth - retVal[f2][columnCount].trim().length()]).replace('\0', ' ') //
-                    // + "                                  ".substring( 0, maxWidth - retVal[f2][columnCount].length() );
-                    ;
+                            // + "                                  ".substring( 0, maxWidth - retVal[f2][columnCount].length() );
+                            ;
                 }
 
             }
@@ -793,7 +793,7 @@ public class ReportSettings implements
         reportCategories.stream().filter((rc) -> (rc != null)).forEach((rc) -> {
             retVal.put(rc.getPositionIndex(), rc);
         });
-        
+
 //        retVal.put(fractionCategory.getPositionIndex(), fractionCategory);
 //        retVal.put(compositionCategory.getPositionIndex(), compositionCategory);
 //        retVal.put(isotopicRatiosCategory.getPositionIndex(), isotopicRatiosCategory);
@@ -814,7 +814,6 @@ public class ReportSettings implements
 //        }
 //
 //        retVal.put(fractionCategory2.getPositionIndex(), fractionCategory2);
-
         return retVal;
     }
 
@@ -1196,7 +1195,7 @@ public class ReportSettings implements
      */
     public void setLegacyData(boolean legacyData) {
         this.legacyData = legacyData;
-        
+
         reportCategories.stream().filter((rc) -> (rc != null)).forEach((rc) -> {
             rc.setLegacyData(legacyData);
         });
@@ -1218,7 +1217,6 @@ public class ReportSettings implements
 //        datesPbcCorrCategory.setLegacyData(legacyData);
 //
 //        fractionCategory2.setLegacyData(legacyData);
-
     }
 
     /**

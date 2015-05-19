@@ -98,14 +98,11 @@ public class TabbedReportViews extends JTabbedPane {
     public void prepareTabs() {
 
         // default is active fractions
-////        setSelectedIndex(0);
 
         if (sample != null) {
             ((ReportAliquotFractionsView) viewTabulatedAliquotActiveFractions).setSample(sample);
-//            ((ReportAliquotFractionsView) viewTabulatedAliquotActiveFractions).preparePanel();
 
             ((ReportAliquotFractionsView) viewTabulatedAliquotRejectedFractions).setSample(sample);
-//            ((ReportAliquotFractionsView) viewTabulatedAliquotRejectedFractions).preparePanel();
 
             refreshTabs();
 

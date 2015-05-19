@@ -810,7 +810,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
                 String tracerName = (String) comboBox.getSelectedItem();
                 comboBox.setToolTipText(tracerName);
                 try {
-                    AbstractRatiosDataModel tracer = mySample.getMyReduxLabData().getATracerModel(tracerName);
+                    AbstractRatiosDataModel tracer = ReduxLabData.getInstance().getATracerModel(tracerName);
                     comboBox.setToolTipText(ReduxLabData.toolTipForTracer(tracer));
                 } catch (BadLabDataException ex) {
                     new ETWarningDialog(ex).setVisible(true);
@@ -818,7 +818,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
             }
         });
 
-        ArrayList<AbstractRatiosDataModel> tracers = mySample.getMyReduxLabData().getTracers();
+        ArrayList<AbstractRatiosDataModel> tracers = ReduxLabData.getInstance().getTracers();
         // must keep index 0 for none tracer here for temporary state of Pb only before U imported
         for (int i = 0; i < tracers.size(); i++) {
             tempJCB.addItem(((AbstractRatiosDataModel) tracers.get(i)).getNameAndVersion());
@@ -856,7 +856,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
             }
         });
 
-        ArrayList<AbstractRatiosDataModel> pbBlanks = mySample.getMyReduxLabData().getPbBlanks();
+        ArrayList<AbstractRatiosDataModel> pbBlanks = ReduxLabData.getInstance().getPbBlanks();
         for (int i = (pbBlanks.size() > 1 ? 1 : 0); i < pbBlanks.size(); i++) {
             tempJCB.addItem(((AbstractRatiosDataModel) pbBlanks.get(i)).getReduxLabDataElementName());
         }
@@ -874,11 +874,9 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
             }
         });
 
-        ArrayList<AbstractRatiosDataModel> initialPbModels = mySample.getMyReduxLabData().getInitialPbModels();
+        ArrayList<AbstractRatiosDataModel> initialPbModels = ReduxLabData.getInstance().getInitialPbModels();
         for (int i = (initialPbModels.size() > 1 ? 1 : 0); i < initialPbModels.size(); i++) {
-//            if (  ! (initialPbModels.get( i ) instanceof StaceyKramersInitialPbModelET) ) {
             tempJCB.addItem(((AbstractRatiosDataModel) initialPbModels.get(i)).getReduxLabDataElementName());
-//            }
         }
         // aug 2010
         tempJCB.addItemListener(new changeInitialPbModelItemListener(tempFrac, row));
@@ -1439,8 +1437,8 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
         AbstractRatiosDataModel initialPbNoneModel = InitialPbModelET.getNoneInstance();
         AbstractRatiosDataModel initialPbDefaultModel = InitialPbModelET.getNoneInstance();
         try {
-            initialPbNoneModel = mySample.getMyReduxLabData().getNoneInitialPbModel();
-            initialPbDefaultModel = mySample.getMyReduxLabData().getDefaultLabInitialPbModel();
+            initialPbNoneModel = ReduxLabData.getInstance().getNoneInitialPbModel();
+            initialPbDefaultModel = ReduxLabData.getInstance().getDefaultLabInitialPbModel();
         } catch (BadLabDataException ex) {
             new ETWarningDialog(ex).setVisible(true);
         }
@@ -1635,7 +1633,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
         }
 
         physicalConstantsModelChooser.removeAllItems();
-        ArrayList<AbstractRatiosDataModel> physicalConstantsModels = getMySample().getMyReduxLabData().getPhysicalConstantsModels();
+        ArrayList<AbstractRatiosDataModel> physicalConstantsModels = ReduxLabData.getInstance().getPhysicalConstantsModels();
         for (int i = (physicalConstantsModels.size() > 1 ? 1 : 0); i < physicalConstantsModels.size(); i++) {
             physicalConstantsModelChooser.addItem(physicalConstantsModels.get(i).getNameAndVersion());
         }
@@ -1719,7 +1717,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
         if (!((String) physicalConstantsModelChooser.getSelectedItem()).equalsIgnoreCase(currentPhysicalConstantsModelName)) {
             try {
                 getMySample().setPhysicalConstantsModel(
-                        getMySample().getMyReduxLabData().
+                        ReduxLabData.getInstance().
                         getAPhysicalConstantsModel(((String) physicalConstantsModelChooser.getSelectedItem())));
 
             } catch (BadLabDataException ex) {

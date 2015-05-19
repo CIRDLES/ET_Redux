@@ -299,7 +299,7 @@ public class Project implements
             System.out.println("Preparing for export Sample: " + sample.getSampleName());
 
             // oct 2014 specify sample types
-            if (compiledSuperSample.isAnalysisTypeTripolized()) {
+            if (SampleInterface.isAnalysisTypeTripolized(compiledSuperSample.getSampleAnalysisType())) {
                 sample.setSampleType(SampleTypesEnum.ANALYSIS.getName());
             } else {
                 sample.setSampleType(SampleTypesEnum.LEGACY.getName());

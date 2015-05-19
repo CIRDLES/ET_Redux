@@ -43,7 +43,6 @@ import org.earthtime.UPb_Redux.dateInterpretation.DateProbabilityDensityPanel;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.ConcordiaGraphPanel;
 import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetup;
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
-import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.archivingTools.forSESAR.SesarSample;
 import org.earthtime.archivingTools.forSESAR.SesarSampleManager;
@@ -558,15 +557,7 @@ public class GeochronAliquotManager extends JPanel {
         // TODO: refactor both locations to smaple and make more robust
         // TODO: use create virtual file system
 
-//        try {
-//            FileSystem virtualFileSystem = Jimfs.newFileSystem(Configuration.unix());
-//            Path virtualPathToSVG = virtualFileSystem.getPath("", sample.getSampleName() + ".svg");
-//
-//        } catch (Exception e) {
-//            System.out.println("JIMFS Worked");
-//        }
         File tempConcordiaSVG = new File(sample.getSampleName() + "_tempConcordia.svg");
-        sample.setMyReduxLabData(ReduxLabData.getInstance());
 
         ConcordiaGraphPanel concordiaGraphPanel = new ConcordiaGraphPanel((Sample)sample, null);
 
@@ -623,7 +614,6 @@ public class GeochronAliquotManager extends JPanel {
 
     private void producePDFImage(Sample sample) {
         File tempProbabilitySVG = new File(sample.getSampleName() + "_tempProbabilityDensity.svg");
-        sample.setMyReduxLabData(ReduxLabData.getInstance());
 
         DateProbabilityDensityPanel probabilityPanel = new DateProbabilityDensityPanel(sample);
 

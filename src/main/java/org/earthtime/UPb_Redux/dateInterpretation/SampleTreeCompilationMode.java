@@ -104,7 +104,7 @@ public class SampleTreeCompilationMode extends JTree implements SampleTreeI {
             ((DefaultMutableTreeNode) getModel().getRoot()).add( sampleDateModelNode );
 
             // remove from activefractionIDs any fraction with 0 date
-            Vector<String> zeroFractionDates = new Vector<String>();
+            Vector<String> zeroFractionDates = new Vector<>();
             for (int i = 0; i < activeFractionIDs.size(); i ++) {
                 if (  ! ((SampleDateModel) sample.getSampleDateModels().get( index )).//
                         fractionDateIsPositive( sample.getSampleFractionByName( activeFractionIDs.get( i ) ) ) ) {

@@ -626,7 +626,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
                 updateSlidersStatus(slider);
 
                 ((DateProbabilityDensityPanel) probabilityPanel).//
-                        setSelectedFractions(filterActiveUPbFractions(sample.getUpbFractionsUnknown()));//.getUpbFractionsActive()));
+                        setSelectedFractions(filterActiveUPbFractions(sample.getUpbFractionsUnknown()));//.getFractionsActive()));
                 // fire off date model to filter its deselected fractions
                 try {
                     ((SampleTreeI) dateTreeByAliquot).performLastUserSelectionOfSampleDate();
@@ -659,7 +659,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
                 updateSlidersStatus(slider);
 
                 // oct 2014 make choices stick to data table
-                Vector<Fraction> filteredFractions = filterActiveUPbFractions(sample.getUpbFractionsUnknown());// oct 2014 to handle live sliders.getUpbFractionsActive());
+                Vector<Fraction> filteredFractions = filterActiveUPbFractions(sample.getUpbFractionsUnknown());// oct 2014 to handle live sliders.getFractionsActive());
                 sample.updateSetOfActiveFractions(filteredFractions);
                 // oct 2014 repaint table
                 parentFrame.updateReportTable();
@@ -2122,7 +2122,7 @@ private void resetGraphProbability_buttonActionPerformed (java.awt.event.ActionE
 //    ((DateProbabilityDensityPanel) probabilityPanel).setMaxX( DateProbabilityDensityPanel.DEFAULT_DISPLAY_MAXX );
 //    ((DateProbabilityDensityPanel) probabilityPanel).setDisplayOffsetX( 0 );
     ((DateProbabilityDensityPanel) probabilityPanel).//
-            setSelectedFractions(filterActiveUPbFractions(sample.getUpbFractionsUnknown()));//.getUpbFractionsActive()));
+            setSelectedFractions(filterActiveUPbFractions(sample.getUpbFractionsUnknown()));//.getFractionsActive()));
 //    ((DateProbabilityDensityPanel) probabilityPanel).setSelectedHistogramBinCount( 0 );
     ((DateProbabilityDensityPanel) probabilityPanel).refreshPanel();
 }//GEN-LAST:event_resetGraphProbability_buttonActionPerformed
@@ -2426,7 +2426,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
             } else {
 
                 ((DateProbabilityDensityPanel) probabilityPanel).//
-                        setSelectedFractions(filterActiveUPbFractions(sample.getUpbFractionsUnknown()));//.getUpbFractionsActive()));
+                        setSelectedFractions(filterActiveUPbFractions(sample.getUpbFractionsUnknown()));//.getFractionsActive()));
                 ((DateProbabilityDensityPanel) probabilityPanel).//
                         getDeSelectedFractions().clear();
                 ((DateProbabilityDensityPanel) probabilityPanel).//

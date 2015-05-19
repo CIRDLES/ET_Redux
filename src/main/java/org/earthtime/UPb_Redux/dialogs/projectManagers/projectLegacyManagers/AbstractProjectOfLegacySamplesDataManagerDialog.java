@@ -194,37 +194,12 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
             converter.setMruFolder( importFractionFolderMRU );
             converter.readInProjectSamples(myProject);
             setInitialized( true );
-////            myProject.setChanged( true );
 
             setImportFractionFolderMRU( converter.getMruFolder() );
         } catch (FileNotFoundException fileNotFoundException) {
         } catch (BadImportedCSVLegacyFileException ex) {
             new ETWarningDialog(ex).setVisible(true);
         }
-
-
-
-
-//
-//        // moved outside conditional oct 2010 and added MineralName, etc ;;June 2010 add physical constants model
-//        for (Fraction f : mySample.getUPbFractions()) {
-//            try {
-//                ((UPbFractionI) f).setPhysicalConstantsModel( getMySample().getPhysicalConstantsModel() );
-//
-//                f.setIsLegacy( true );
-//
-//                ((UPbLegacyFraction) f).calculateTeraWasserburgRho();
-//
-//            } catch (BadLabDataException badLabDataException) {
-//            }
-//        }
-//
-//        Vector<Aliquot> aliquots = mySample.getActiveAliquots();
-//        for (Aliquot a : aliquots) {
-//            a.setAnalysisPurpose( mySample.getAnalysisPurpose() );
-//        }
-
-
     }
 
     /**

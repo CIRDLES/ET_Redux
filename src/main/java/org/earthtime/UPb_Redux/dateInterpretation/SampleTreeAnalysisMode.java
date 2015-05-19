@@ -459,7 +459,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
                         try {
                             expandPath(new TreePath(sampleDateModelNode.getPath()));
                         } catch (Exception eNoWM) {
-                            System.out.println("SampleTreeAnalysisMode line 456 = no WeightedMean available");
+                            System.out.println("SampleTreeAnalysisMode line 462 = no WeightedMean available");
                         }
 
                         getSampleTreeChange().sampleTreeChangeAnalysisMode(node);

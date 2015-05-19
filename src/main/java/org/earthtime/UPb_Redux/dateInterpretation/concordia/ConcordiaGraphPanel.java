@@ -73,6 +73,7 @@ import org.earthtime.UPb_Redux.dialogs.graphManagers.GraphAxesDialog;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
+import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.reports.reportViews.ReportUpdaterInterface;
 import org.earthtime.UPb_Redux.user.SampleDateInterpretationGUIOptions;
 import org.earthtime.UPb_Redux.valueModels.SampleDateInterceptModel;
@@ -3079,7 +3080,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
 
         currentGraphAxesSetup.setLambda238(lambda238.getValue().doubleValue());
         currentGraphAxesSetup.setDefaultR238_235s( //
-                sample.getMyReduxLabData().getDefaultR238_235s().getValue().doubleValue());
+                ReduxLabData.getInstance().getDefaultR238_235s().getValue().doubleValue());
     }
 
     /**

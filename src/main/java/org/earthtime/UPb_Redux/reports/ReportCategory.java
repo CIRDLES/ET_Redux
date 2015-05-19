@@ -195,6 +195,7 @@ public class ReportCategory implements Serializable, ReportListItemI {
      * 
      * @return
      */
+    @Override
     public String getDisplayName() {
         return displayName;
     }
@@ -219,6 +220,7 @@ public class ReportCategory implements Serializable, ReportListItemI {
      * 
      * @param positionIndex
      */
+    @Override
     public void setPositionIndex(int positionIndex) {
         this.positionIndex = positionIndex;
     }
@@ -243,6 +245,7 @@ public class ReportCategory implements Serializable, ReportListItemI {
      * 
      * @return
      */
+    @Override
     public boolean isVisible() {
         return visible;
     }

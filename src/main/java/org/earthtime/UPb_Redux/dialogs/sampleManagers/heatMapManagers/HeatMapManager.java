@@ -85,7 +85,7 @@ public class HeatMapManager extends DialogEditor {
 
         this.sample = aSample;
 
-        this.reportSettings = sample.getReportSettingsModel();//Initialized());getReportSettingsModelUpdatedToLatestVersion();
+        this.reportSettings = sample.getReportSettingsModel();
 
         this.heatMapOptions =//
                 sample.getSampleDateInterpretationGUISettings().getHeatMapOptions();

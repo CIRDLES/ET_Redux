@@ -20,8 +20,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Vector;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.aliquots.Aliquot;
@@ -43,12 +45,16 @@ import org.earthtime.UPb_Redux.samples.SESARSampleMetadata;
 import org.earthtime.UPb_Redux.samples.UPbSampleInterface;
 import org.earthtime.UPb_Redux.user.SampleDateInterpretationGUIOptions;
 import org.earthtime.UPb_Redux.utilities.ETSerializer;
+import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
+import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
+import org.earthtime.dataDictionaries.SampleDateTypes;
 import org.earthtime.dataDictionaries.SampleRegistries;
 import org.earthtime.dataDictionaries.SampleTypesEnum;
 import org.earthtime.exceptions.ETException;
+import org.earthtime.fractions.FractionInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.utilities.FileHelper;
 import org.earthtime.xmlUtilities.XMLSerializationI;
@@ -127,9 +133,12 @@ public interface SampleInterface {
 
     /**
      *
-     * @return
+     * @param analysisType the value of analysisType
+     * @return the boolean
      */
-    public abstract boolean isAnalysisTypeTripolized();
+    public static boolean isAnalysisTypeTripolized(String analysisType) {
+        return (analysisType.equalsIgnoreCase(SampleAnalysisTypesEnum.TRIPOLIZED.getName()));
+    }
 
     /**
      * gets the <code>changed</code> field of this <code>Sample</code>
@@ -236,25 +245,43 @@ public interface SampleInterface {
      *
      * @return
      */
-    public abstract boolean isAnalysisTypeIDTIMS();
+    public default boolean isAnalysisTypeIDTIMS() {
+        boolean retVal = false;
+        try {
+            retVal = SampleAnalysisTypesEnum.IDTIMS.equals(SampleAnalysisTypesEnum.valueOf(getSampleAnalysisType()));
+        } catch (Exception e) {
+        }
+        return retVal;
+    }
 
     /**
      *
      * @return
      */
-    public abstract boolean isAnalysisTypeLAICPMS();
+    public default boolean isAnalysisTypeLAICPMS() {
+        boolean retVal = false;
+        try {
+            retVal = SampleAnalysisTypesEnum.LAICPMS.equals(SampleAnalysisTypesEnum.valueOf(getSampleAnalysisType()));
+        } catch (Exception e) {
+        }
+        return retVal;
+    }
 
     /**
      *
      * @return
      */
-    public abstract boolean isTypeLiveUpdate();
+    public default boolean isTypeLiveUpdate() {
+        return false;
+    }
 
     /**
      *
      * @return
      */
-    public abstract boolean isTypeLegacy();
+    public default boolean isTypeLegacy() {
+        return (getSampleType().equalsIgnoreCase(SampleTypesEnum.LEGACY.getName()));
+    }
 
     /**
      *
@@ -266,7 +293,9 @@ public interface SampleInterface {
      *
      * @return
      */
-    public abstract boolean isAnalysisTypeCompiled();
+    public default boolean isAnalysisTypeCompiled() {
+        return (getSampleAnalysisType().equalsIgnoreCase(SampleAnalysisTypesEnum.COMPILED.getName()));
+    }
 
     /**
      *
@@ -326,21 +355,45 @@ public interface SampleInterface {
 
     // Aliquots **************************************************************** Aliquots ****************************************************************
     /**
-     * finds the <code>Aliquot</code> named <code>name</code> in the array
+     * finds the <code>Aliquot</code> named <code>file</code> in the array
      * <code>aliquots</code>.
      *
      * @pre an <code>Aliquot</code> exists in <code>aliquots</code> named
-     * <code>name</code>
-     * @post the <code>Aliquot</code> whose name corresponds to argument
-     * <code>name</code> is found and returned
-     * @param name name of the <code>Aliquot</code> to retrieve
-     * @return  <code>Aliquot</code> - the <code>Aliquot</code> from
-     * <code>aliquots</code> whose name corresponds to the argument
-     * <code>name</code>
+     * <code>file</code>
+     * @post the <code>Aliquot</code> whose file corresponds to argument
+     * <code>file</code> is found and returned
+     *
+     * @return <code>Aliquot</code> - the <code>Aliquot</code> from
+     * <code>aliquots</code> whose file correspongs to the argument
+     * <code>file</code>
      */
-    public abstract Aliquot getAliquotByName(String name);
+    public default Aliquot getAliquotByName(String name) {
+        Aliquot retAliquot = null;
+        Vector<Aliquot> aliquots = getAliquots();
+        for (int aliquotIndex = 0; aliquotIndex < aliquots.size(); aliquotIndex++) {
+            if (aliquots.get(aliquotIndex).getAliquotName().equalsIgnoreCase(name)) {
+                retAliquot = aliquots.get(aliquotIndex);
+                // update via this miserable hack the list of upbfractions Nov 2009 to support live update manager
+                getAliquotByNumber(aliquotIndex + 1);
+                break;
+            }
+        }
 
-    public abstract Vector<Aliquot> getActiveAliquots();
+        return retAliquot;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public default Vector<Aliquot> getActiveAliquots() {
+        // May 2010  refresh aliquots to   remove empty ones
+        Vector<Aliquot> activeAliquots = new Vector<>();
+        getAliquots().stream().filter((aliquot)
+                -> (((UPbReduxAliquot) aliquot).getAliquotFractions().size() > 0)).filter((aliquot)
+                        -> (((UPbReduxAliquot) aliquot).containsActiveFractions())).forEach(activeAliquots::add);
+        return activeAliquots;
+    }
 
     /**
      * gets the <code>aliquots</code> of this <code>Sample</code>.
@@ -373,14 +426,51 @@ public interface SampleInterface {
      * with <code>aliquotNum</code>
      * @post the <code>Aliquot</code> whose number corresponds to argument
      * <code>aliquotNum</code> is found and returned
+     *
      * @param aliquotNum number of the <code>Aliquot</code> to retrieve
-     * @return  <code>Aliquot</code> - the <code>Aliquot</code> from
+     * @return <code>Aliquot</code> - the <code>Aliquot</code> from
      * <code>aliquots</code> whose number corresponds to the argument
      * <code>aliquotNum</code>
      */
-    public abstract Aliquot getAliquotByNumber(int aliquotNum);
+    public default Aliquot getAliquotByNumber(int aliquotNum) {
+        // here we populate the aliquotFractionFiles of aliquot in case they have changed
+        // aliquots are really aliquot view of the aliquotFractionFiles (MVC architecture)
+        Aliquot retAliquot = getAliquots().get(aliquotNum - 1);
 
-    public abstract String getNameOfAliquotFromSample(int aliquotNum);
+        Vector<Fraction> retFractions = new Vector<>();
+
+        for (Iterator it = getFractions().iterator(); it.hasNext();) {
+            Fraction temp = ((Fraction) it.next());
+            if (((UPbFractionI) temp).getAliquotNumber() == aliquotNum) {
+                retFractions.add(temp);
+            }
+        }
+
+        ((UPbReduxAliquot) retAliquot).setAliquotFractions(retFractions);
+        ((UPbReduxAliquot) retAliquot).setMyReduxLabData(ReduxLabData.getInstance());
+
+        return retAliquot;
+    }
+
+    /**
+     * Feb 2015 This method handles the messy situation where a project refers
+     * to each of its aliquots by index 1...n but to upload project aliquots
+     * individually to Geochron with concordia etc means there is only one
+     * aliquot per sample and we ignore its number.
+     *
+     * @param aliquotnum
+     * @return
+     */
+    public default String getNameOfAliquotFromSample(int aliquotNum) {
+        String retval;
+        if (getAliquots().size() == 1) {
+            retval = getAliquots().get(0).getAliquotName();
+        } else {
+            retval = getAliquots().get(aliquotNum - 1).getAliquotName();
+        }
+
+        return retval;
+    }
 
     /**
      *
@@ -418,7 +508,7 @@ public interface SampleInterface {
         while (aliquotFractionIterator.hasNext()) {
             Fraction fraction = aliquotFractionIterator.next();
 
-            ((UPbFractionI) fraction).setAliquotNumber(aliquotNumber);
+            ((FractionInterface) fraction).setAliquotNumber(aliquotNumber);
             ((UPbReduxAliquot) importedAliquot).getAliquotFractions().add(fraction);
 
             sample.getFractions().add(fraction);
@@ -477,17 +567,17 @@ public interface SampleInterface {
                 // identify tracer and pbBlank
                 AbstractRatiosDataModel tracer = aliquot.getATracer(fraction.getTracerID());
                 if (tracer == null) {
-                    tracer = sample.getMyReduxLabData().getNoneTracer();
+                    tracer = ReduxLabData.getInstance().getNoneTracer();
                 }
                 AbstractRatiosDataModel pbBlank = aliquot.getAPbBlank(fraction.getPbBlankID());
                 if (pbBlank == null) {
-                    pbBlank = sample.getMyReduxLabData().getNonePbBlankModel();
+                    pbBlank = ReduxLabData.getInstance().getNonePbBlankModel();
                 }
 
                 // aug 2010 set initialPbModel
                 if (fraction.getInitialPbModel() == null) {
                     // model ReduxConstants.NONE
-                    fraction.setInitialPbModel(sample.getMyReduxLabData().getNoneInitialPbModel());
+                    fraction.setInitialPbModel(ReduxLabData.getInstance().getNoneInitialPbModel());
                 }
 
                 Fraction nextFraction;
@@ -499,7 +589,7 @@ public interface SampleInterface {
                     nextFraction = new UPbFraction(
                             aliquotNumber,
                             fraction,
-                            sample.getMyReduxLabData(),
+                            ReduxLabData.getInstance(),
                             tracer,
                             pbBlank);
 
@@ -520,20 +610,20 @@ public interface SampleInterface {
 
                 ValueModel alphaPbModel = aliquot.getAnAlphaPbModel(fraction.getAlphaPbModelID());
                 if (alphaPbModel == null) {
-                    alphaPbModel = sample.getMyReduxLabData().getNoneAlphaPbModel();
+                    alphaPbModel = ReduxLabData.getInstance().getNoneAlphaPbModel();
                     nextFraction.setAlphaPbModelID(alphaPbModel.getName());
                 }
 
                 ValueModel alphaUModel = aliquot.getAnAlphaUModel(fraction.getAlphaUModelID());
                 if (alphaUModel == null) {
-                    alphaUModel = sample.getMyReduxLabData().getFirstAlphaUModel();
+                    alphaUModel = ReduxLabData.getInstance().getFirstAlphaUModel();
                     nextFraction.setAlphaUModelID(alphaUModel.getName());
                 }
 
                 ((UPbFractionI) nextFraction).setAlphaPbModel(alphaPbModel);
                 ((UPbFractionI) nextFraction).setAlphaUModel(alphaUModel);
 
-                ((UPbFractionI) nextFraction).setPhysicalConstantsModel(aliquot.getPhysicalConstants());// was sample.getphys...
+                ((FractionInterface) nextFraction).setPhysicalConstantsModel(aliquot.getPhysicalConstants());// was sample.getphys...
 
                 ((UPbReduxAliquot) aliquot).getAliquotFractions().add(nextFraction);
 
@@ -554,10 +644,10 @@ public interface SampleInterface {
                     nextFraction = new UPbLAICPMSFraction(
                             aliquotNumber,
                             fraction,
-                            sample.getMyReduxLabData());
+                            ReduxLabData.getInstance());
                 }
 
-                ((UPbFractionI) nextFraction).setPhysicalConstantsModel(aliquot.getPhysicalConstants());
+                ((FractionInterface) nextFraction).setPhysicalConstantsModel(aliquot.getPhysicalConstants());
 
                 ((UPbReduxAliquot) aliquot).getAliquotFractions().add(nextFraction);
 
@@ -709,7 +799,13 @@ public interface SampleInterface {
      *
      * @param aliquot
      */
-    public abstract void removeAliquot(Aliquot aliquot);
+    public default void removeAliquot(Aliquot aliquot) {
+        Vector<Fraction> aliquotFractions = ((UPbReduxAliquot) aliquot).getAliquotFractions();
+        for (Fraction aliquotFraction : aliquotFractions) {
+            removeUPbReduxFraction(aliquotFraction);
+        }
+
+    }
 
     /**
      *
@@ -717,7 +813,57 @@ public interface SampleInterface {
      * @param nameAliquotB
      * @return
      */
-    public abstract boolean swapOrderOfTwoAliquots(String nameAliquotA, String nameAliquotB);
+    public default boolean swapOrderOfTwoAliquots(String nameAliquotA, String nameAliquotB) {
+
+        boolean retVal = false;
+
+        Aliquot aliquotA = getAliquotByName(nameAliquotA);
+        Aliquot aliquotB = getAliquotByName(nameAliquotB);
+
+        if ((aliquotA != null) && (aliquotB != null)) {
+
+            int numberAliquotA = ((UPbReduxAliquot) aliquotA).getAliquotNumber();
+            Vector<Fraction> fractionsAliquotA = ((UPbReduxAliquot) aliquotA).getAliquotFractions();
+
+            int numberAliquotB = ((UPbReduxAliquot) aliquotB).getAliquotNumber();
+            Vector<Fraction> fractionsAliquotB = ((UPbReduxAliquot) aliquotB).getAliquotFractions();
+
+            // switch assigned aliquot numbers
+            ((UPbReduxAliquot) aliquotA).setAliquotNumber(numberAliquotB);
+            for (Fraction f : fractionsAliquotA) {
+                ((UPbFractionI) f).setAliquotNumber(numberAliquotB);
+            }
+            ((UPbReduxAliquot) aliquotB).setAliquotNumber(numberAliquotA);
+            for (Fraction f : fractionsAliquotB) {
+                ((UPbFractionI) f).setAliquotNumber(numberAliquotA);
+            }
+            // switch aliquots in sample's aliquot vector which stores them in order
+            // note that this vector is effectively one-based so aliquot shift of one is required
+            getAliquots().setElementAt(aliquotA, numberAliquotB - 1);
+            getAliquots().setElementAt(aliquotB, numberAliquotA - 1);
+
+            // modified dec 2011 to also switch weighted mean display choices
+            Map<String, String> weightedMeanOptions = getSampleDateInterpretationGUISettings().getWeightedMeanOptions();
+
+            for (int i = 0; i < SampleDateTypes.getSampleDateModelTypes().length; i++) {
+                String sampleDateType = SampleDateTypes.getSampleDateType(i);
+                if (sampleDateType.startsWith("weighted")) {
+                    StringBuilder aliquotFlags = new StringBuilder(weightedMeanOptions.get(sampleDateType));
+                    String aliquotAWMflag = aliquotFlags.toString().substring(numberAliquotA - 1, numberAliquotA);
+                    String aliquotBWMflag = aliquotFlags.toString().substring(numberAliquotB - 1, numberAliquotB);
+                    aliquotFlags.replace(numberAliquotA - 1, numberAliquotA, aliquotBWMflag);
+                    aliquotFlags.replace(numberAliquotB - 1, numberAliquotB, aliquotAWMflag);
+
+                    weightedMeanOptions.put(sampleDateType, aliquotFlags.toString());
+                }
+
+            }
+
+            retVal = true;
+        }
+
+        return retVal;
+    }
 
     /**
      *
@@ -762,7 +908,19 @@ public interface SampleInterface {
      * @return <code>Fraction</code> - the <code>Fraction</code> in this
      * <code>Sample</code> whose ID corresponds to argument <code>ID</code>
      */
-    public abstract Fraction getFractionByID(String ID);
+    public default Fraction getFractionByID(String ID) {
+        Fraction retFraction = null;
+        Vector<Fraction> fractions = getFractions();
+
+        for (int fractionIndex = 0; fractionIndex < fractions.size(); fractionIndex++) {
+            if (fractions.get(fractionIndex).getFractionID().equalsIgnoreCase(ID)) {
+                retFraction = fractions.get(fractionIndex);
+                break;
+            }
+        }
+
+        return retFraction;
+    }
 
     /**
      * sets the <code>UPbFractions</code> of this <code>Sample</code> to the
@@ -777,7 +935,19 @@ public interface SampleInterface {
      */
     public abstract void setUPbFractions(Vector<Fraction> UPbFractions);
 
-    public abstract Vector<Fraction> getUpbFractionsRejected();
+    /**
+     *
+     * @return
+     */
+    public default Vector<Fraction> getFractionsRejected() {
+        Vector<Fraction> retval = new Vector<>();
+
+        getFractions().stream().filter((f) -> (((FractionInterface) f).isRejected())).forEach((f) -> {
+            retval.add(f);
+        });
+
+        return retval;
+    }
 
     /**
      * removes the <code>UPbFraction</code> found at <code>index</code> from
@@ -787,10 +957,19 @@ public interface SampleInterface {
      * <code>Fractions</code> at <code>index</code>
      * @post the <code>Fraction</code> found at <code>index</code> is removed
      * from the set of <code>Fractions</code>
+     *
      * @param index the index into the array of <code>Fractions</code> where the
      * <code>Fraction</code> to be removed can be found
      */
-    void removeUPbReduxFraction(int index);
+    public default void removeUPbReduxFraction(int index) {
+        boolean fracStatus = ((FractionInterface) getFractions().get(index)).isChanged();
+        try {
+            getFractions().remove(index);
+        } finally {
+        }
+        setChanged(isChanged() || fracStatus);
+
+    }
 
     /**
      * removes the <code>UPbFraction</code> from this <code>Sample</code>'s set
@@ -801,56 +980,114 @@ public interface SampleInterface {
      * <code>Fractions</code> that corresponds to <code>fraction</code>
      * @post the <code>Fraction</code> that corresponds to the argument
      * <code>fraction</code> is removed
+     *
      * @param fraction
      */
-    void removeUPbReduxFraction(Fraction fraction);
+    public default void removeUPbReduxFraction(Fraction fraction) {
+        boolean fracStatus = ((FractionInterface) fraction).isChanged();
+        try {
+            getFractions().remove(fraction);
+            ((FractionInterface) fraction).getAliquotNumber();
+        } finally {
+        }
+        setChanged(isChanged() || fracStatus);
+    }
 
     /**
      *
      * @param name
      * @return
      */
-    public abstract Fraction getSampleFractionByName(
-            String name);
+    public default Fraction getSampleFractionByName(String name) {
+        Fraction retVal = null;
+
+        for (Fraction f : getFractions()) {
+            if (f.getFractionID().equalsIgnoreCase(name)) {
+                retVal = f;
+            }
+        }
+        return retVal;
+
+    }
 
     /**
      *
      * @return
      */
-    public abstract Vector<Fraction> getUpbFractionsActive();
+    public default Vector<Fraction> getFractionsActive() {
+        Vector<Fraction> retval = new Vector<>();
+
+        getFractions().stream().filter((f) -> (!((FractionInterface) f).isRejected())).forEach((f) -> {
+            retval.add(f);
+        });
+
+        return retval;
+    }
 
     /**
      *
      * @return
      */
-    public Vector<Fraction> getUpbFractionsUnknown();
+    public default Vector<Fraction> getUpbFractionsUnknown() {
+        Vector<Fraction> retval = new Vector<>();
+
+        getFractions().stream().filter((f) -> (!((FractionInterface) f).isStandard())).forEach((f) -> {
+            retval.add(f);
+        });
+
+        return retval;
+    }
 
     /**
      *
      * @param filteredFractions
      */
-    public abstract void updateSetOfActiveFractions(Vector<Fraction> filteredFractions);
+    public default void updateSetOfActiveFractions(Vector<Fraction> filteredFractions) {
+        getFractions().stream().forEach((UPbFraction) -> {
+            ((FractionInterface) UPbFraction).setRejected(!filteredFractions.contains(UPbFraction));
+        });
+    }
 
     /**
      *
      * @return
      */
-    public abstract Vector<String> getSampleFractionIDs();
+    public default Vector<String> getSampleFractionIDs() {
+        Vector<String> retVal = new Vector<>();
+
+        getFractions().stream().filter((f) -> (!((UPbFractionI) f).isRejected())).forEach((f) -> {
+            retVal.add(f.getFractionID());
+        });
+        return retVal;
+
+    }
 
     /**
      *
      */
-    public abstract void deSelectAllFractionsInDataTable();
+    public default void deSelectAllFractionsInDataTable() {
+        getFractions().stream().forEach((fraction) -> {
+            ((FractionInterface) fraction).setSelectedInDataTable(false);
+        });
+    }
 
     /**
      *
      */
-    public abstract void deSelectAllFractions();
+    public default void deSelectAllFractions() {
+        getFractions().stream().forEach((f) -> {
+            ((UPbFractionI) f).setRejected(true);
+        });
+    }
 
     /**
      *
      */
-    public abstract void selectAllFractions();
+    public default void selectAllFractions() {
+        getFractions().stream().forEach((f) -> {
+            ((FractionInterface) f).setRejected(false);
+        });
+    }
 
     /**
      *
@@ -883,6 +1120,35 @@ public interface SampleInterface {
     public abstract ValueModel getSampleDateModelByName(String modelName);
 
     /**
+     *
+     * @param selectedFractionIDs
+     * @return
+     */
+    public default Vector<Fraction> getSampleDateModelSelectedFractions(Vector<String> selectedFractionIDs) {
+        Vector<Fraction> retVal = new Vector<>();
+
+        selectedFractionIDs.stream().forEach((fID) -> {
+            retVal.add(getSampleFractionByName(fID));
+        });
+
+        return retVal;
+    }
+
+    /**
+     *
+     * @param selectedFractionIDs
+     * @return
+     */
+    public default Vector<Fraction> getSampleDateModelDeSelectedFractions(Vector<String> selectedFractionIDs) {
+        Vector<Fraction> retVal = new Vector<>();
+
+        getSampleFractionIDs().stream().filter((fID) -> (!selectedFractionIDs.contains(fID))).forEach((fID) -> {
+            retVal.add(getSampleFractionByName(fID));
+        });
+        return retVal;
+    }
+
+    /**
      * sets the <code>fractionDataOverriddenOnImport</code> field of this
      * <code>Sample</code> to the argument
      * <code>fractionDataOverriddenOnImport</code>
@@ -898,13 +1164,65 @@ public interface SampleInterface {
      * will be set
      */
     public abstract void setFractionDataOverriddenOnImport(boolean fractionDataOverriddenOnImport);
-    // Report Settings ***************************************************************Report Settings ************************************************************
 
     /**
      *
      * @return
      */
-    public abstract ReportSettings getReportSettingsModelUpdatedToLatestVersion();
+    public default ValueModel getPreferredSampleDateModel() {
+        ValueModel retVal = null;
+        Iterator it = getSampleDateModels().iterator();
+
+        while (it.hasNext()) {
+            retVal = (ValueModel) it.next();
+            if (((SampleDateModel) retVal).isPreferred()) {
+                return retVal;
+            }
+        }
+        return retVal;
+    }
+
+    // Report Settings ***************************************************************Report Settings ************************************************************
+    /**
+     * gets the <code>reportSettingsModel</code> of this <code>Sample</code>.
+     *
+     * @pre this <code>Sample</code> exists
+     * @post returns the <code>reportSettingsModel</code> of this
+     * <code>Sample</code>
+     *
+     * @return <code>ReportSettings</code> -      <code>reportSettingsModel</code> of
+     * this <code>Sample</code>
+     * @throws org.earthtime.UPb_Redux.exceptions.BadLabDataException
+     * BadLabDataException
+     */
+    public default ReportSettings getReportSettingsModelUpdatedToLatestVersion() {
+        ReportSettings reportSettingsModel = getReportSettingsModel();
+        if (reportSettingsModel == null) {
+            try {
+                reportSettingsModel = ReduxLabData.getInstance().getDefaultReportSettingsModel();
+            } catch (BadLabDataException badLabDataException) {
+            }
+        } else {
+
+            // this provides for seamless updates to reportsettings implementation
+            // new approach oct 2014
+            if (reportSettingsModel.isOutOfDate()) {
+                JOptionPane.showMessageDialog(null,
+                        new String[]{"As part of our ongoing development efforts,",
+                            "the report settings file you are using is being updated.",
+                            "You may lose some report customizations. Thank you for your patience."//,
+                        //"If you need to save aliquot copy, please re-export."
+                        });
+                String myReportSettingsName = reportSettingsModel.getName();
+                reportSettingsModel = new ReportSettings(myReportSettingsName);
+            }
+        }
+
+        //TODO http://www.javaworld.com/article/2077736/open-source-tools/xml-merging-made-easy.html
+        setLegacyStatusForReportTable();
+
+        return reportSettingsModel;
+    }
 
     /**
      *
@@ -912,7 +1230,13 @@ public interface SampleInterface {
      */
     public abstract void setReportSettingsModel(ReportSettings reportSettingsModel);
 
-    public abstract void setLegacyStatusForReportTable();
+    /**
+     *
+     */
+    public default void setLegacyStatusForReportTable() {
+        // feb 2010 added legacyData field to force display when no reduction happening
+        getReportSettingsModel().setLegacyData(isAnalysisTypeCompiled() || isAnalyzed());
+    }
 
     /**
      *
@@ -937,7 +1261,6 @@ public interface SampleInterface {
      * @return the java.lang.String[][]
      */
     public static String[][] reportActiveFractionsByNumberStyle(SampleInterface sample, boolean isNumeric) {
-
         return sample.getReportSettingsModel().reportActiveFractionsByNumberStyle(sample, isNumeric);
     }
 
@@ -1042,7 +1365,7 @@ public interface SampleInterface {
 
         for (int UPbFractionsIndex = 0; UPbFractionsIndex
                 < sample.getFractions().size(); UPbFractionsIndex++) {
-            ((UPbFractionI) sample.getFractions().get(UPbFractionsIndex)).setChanged(false);
+            ((FractionInterface) sample.getFractions().get(UPbFractionsIndex)).setChanged(false);
         }
 
         if (sample.getReduxSampleFilePath().length() > 0) {
@@ -1123,19 +1446,6 @@ public interface SampleInterface {
 
     // Parameter Models ********************************************************
     /**
-     * sets the <code>myReduxLabData</code> field of this <code>Sample</code> to
-     * the argument <code>myReduxLabData</code>
-     *
-     * @pre argument <code>myReduxLabData</code> is a valid
-     * <code>ReduxLabData</code>
-     * @post this <code>Sample</code>'s <code>myReduxLabData</code> field is set
-     * to argument <code>myReduxLabData</code>
-     * @param myReduxLabData value to which <code>myReduxLabData</code> field of
-     * this <code>Sample</code> will be set
-     */
-    public abstract void setMyReduxLabData(ReduxLabData myReduxLabData);
-
-    /**
      * sets the <code>physicalConstantsModel</code> of this <code>Sample</code>
      * to the argument <code>physicalConstantsModel</code>
      *
@@ -1163,49 +1473,35 @@ public interface SampleInterface {
     public abstract AbstractRatiosDataModel getPhysicalConstantsModel() throws BadLabDataException;
 
     /**
-     * gets the <code>myReduxLabData</code> of this <code>Sample</code>.
-     *
-     * @pre this <code>Sample</code> exists
-     * @post returns the <code>myReduxLabData</code> of this <code>Sampel</code>
-     * @return  <code>ReduxLabData</code> - <code>myReduxLabData</code> of this
-     * <code>Sample</code>
-     */
-    public abstract ReduxLabData getMyReduxLabData();
-
-    /**
      * sets <code>ReduxLabData</code> of this <code>Sample</code> and all
      * <code>Aliquots</code> and <code>Fractions</code> contained within to the
      * argument <code>labData</code>.
      *
      * @param sample the value of sample
-     * @param labData value to which this <code>Sample</code> and its
-     * <code>Aliquots</code> and <code>Fractions</code> should be set to
      * @pre argument      <code>labData</code> is valid <code>ReduxLabData</code>
      * @post <code>ReduxLabData</code> of this <code>Sample</code> and all of
      * its <code>Aliquots</code> and <code>Fractions</code> is set to argument
      * <code>labData</code>
      */
-    public static void registerSampleWithLabData(SampleInterface sample, ReduxLabData labData) {
-        sample.setMyReduxLabData(labData);
-
+    public static void registerSampleWithLabData(SampleInterface sample) {
         // register incoming models - by file - with lab data
         // TODO verify names and contents align
         for (int UPbFractionsIndex = 0; UPbFractionsIndex
                 < sample.getFractions().size(); UPbFractionsIndex++) {
             Fraction nextFraction = sample.getFractions().get(UPbFractionsIndex);
             if (!nextFraction.isLegacy()) {
-                labData.registerFractionWithLabData(nextFraction);
+                ReduxLabData.getInstance().registerFractionWithLabData(nextFraction);
             }
         }
 
         for (Aliquot a : sample.getActiveAliquots()) {
             a.getMineralStandardModels().stream().forEach((msm) -> {
-                labData.registerMineralStandardModel(msm, false);
+                ReduxLabData.getInstance().registerMineralStandardModel(msm, false);
             });
         }
     }
 
-    // Graphics
+    // Graphics ********************************************************************
     /**
      *
      * @return
@@ -1226,6 +1522,22 @@ public interface SampleInterface {
      * <code>Sample</code>
      */
     public abstract SampleDateInterpretationGUIOptions getSampleDateInterpretationGUISettings();
+
+    /**
+     * sets the <code>sampleAgeInterpretationGUISettings</code> of this
+     * <code>Sample</code> to the argument
+     * <code>sampleAgeInterpretationGUISettings</code>
+     *
+     * @pre argument <code>sampleAgeInterpretationGUISettings</code> is a valid
+     * <code>SampleDateInterpretationGUIOptions</code>
+     * @post this <code>Sample</code>'s
+     * <code>sampleAgeInterpretationGUISettings</code> is set to argument
+     * <code>sampleAgeInterpretationGUISettings</code>
+     * @param sampleAgeInterpretationGUISettings value to which <code>
+     * sampleAgeInterpretationGUISettings</code> of this <code>Sample</code>
+     * will be set
+     */
+    void setSampleAgeInterpretationGUISettings(SampleDateInterpretationGUIOptions sampleAgeInterpretationGUISettings);
 
     //TODO: Refactor to static
     /**

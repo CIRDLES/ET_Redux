@@ -612,7 +612,7 @@ public class AliquotEditorDialog extends DialogEditor {
 
         mineralStandardsCheckBoxes = new ArrayList<JComponent>();
         int count = 0;
-        for (AbstractRatiosDataModel msm : sample.getMyReduxLabData().getMineralStandardModels()) {
+        for (AbstractRatiosDataModel msm : ReduxLabData.getInstance().getMineralStandardModels()) {
             if (!(msm.equals(MineralStandardUPbModel.getNoneInstance()))) {
                 count++;
                 JCheckBox msmCheckBox = new JCheckBox(msm.getReduxLabDataElementName());
@@ -4316,7 +4316,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
             if (((JCheckBox) cb).isSelected()) {
                 try {
                     getMyAliquot().getMineralStandardModels().add(//
-                            getSample().getMyReduxLabData().getAMineralStandardModel(((JCheckBox) cb).getText()));
+                            ReduxLabData.getInstance().getAMineralStandardModel(((JCheckBox) cb).getText()));
                 } catch (BadLabDataException ex) {
                     new ETWarningDialog(ex).setVisible(true);
                 }
@@ -4398,7 +4398,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
 //        sample.setSampleIGSN( sampleIGSN_text.getText().trim() );
 //
         // nov 2011 per Doug Walker, need to be sure lab name is correct
-        myAliquot.setLaboratoryName(sample.getMyReduxLabData().getLabName());
+        myAliquot.setLaboratoryName(ReduxLabData.getInstance().getLabName());
 
         SampleInterface.saveSampleAsSerializedReduxFile(sample);
 

@@ -47,6 +47,7 @@ import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.dataDictionaries.RadDatesForPbCorrSynchEnum;
 import org.earthtime.dataDictionaries.RadRatios;
 import org.earthtime.dataDictionaries.RadRatiosPbcCorrected;
+import org.earthtime.fractions.FractionInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.initialPbModelsET.StaceyKramersInitialPbModelET;
 import org.earthtime.ratioDataModels.initialPbModelsET.commonLeadLossCorrectionSchemes.AbstractCommonLeadLossCorrectionScheme;
@@ -62,6 +63,7 @@ import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsMo
 public class UPbLAICPMSFraction extends Fraction implements
         FractionI,
         UPbFractionI,
+        FractionInterface,
         ReportRowGUIInterface,
         Serializable {
 //TODO: refactor this class = quick copy and simplification of UPbFraction, but has many common features. a
@@ -165,11 +167,12 @@ public class UPbLAICPMSFraction extends Fraction implements
 
     /**
      * Jan 2015 specialty handler for serialized fractions
+     *
      * @param aliquotNum
      * @param fraction
      * @param labData
      * @param pbBlank
-     * @throws BadLabDataException 
+     * @throws BadLabDataException
      */
     public UPbLAICPMSFraction(
             int aliquotNum,
@@ -1467,9 +1470,9 @@ public class UPbLAICPMSFraction extends Fraction implements
     public boolean hasXMLPbSourceFile() {
         return false;
     }
-    
+
     @Override
-    public boolean isAnOxide(){
+    public boolean isAnOxide() {
         return false;
     }
 }

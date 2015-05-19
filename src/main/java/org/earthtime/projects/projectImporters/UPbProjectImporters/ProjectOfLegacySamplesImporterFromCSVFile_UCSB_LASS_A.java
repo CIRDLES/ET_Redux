@@ -99,9 +99,6 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_UCSB_LASS_A extends Abstr
                     if (readingFractions) {
                         try {
                             currentSample = new Sample(//
-                                    //
-                                    //
-                                    //
                                     myFractionData.get(0), //
                                     SampleTypesEnum.LEGACY.getName(), //
                                     "LASS", //
@@ -114,7 +111,7 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_UCSB_LASS_A extends Abstr
                             if (aliquotName.length() == 0) {
                                 aliquotName = myFractionData.get(0); // sample name
                             }
-                            currentAliquot = ((Sample) currentSample).addNewAliquot(aliquotName);
+                            currentAliquot = currentSample.addNewAliquot(aliquotName);
 
                         } catch (BadLabDataException badLabDataException) {
                         } catch (ETException eTException) {

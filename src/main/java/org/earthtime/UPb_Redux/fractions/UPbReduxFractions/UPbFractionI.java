@@ -295,12 +295,6 @@ public interface UPbFractionI {
 
     /**
      *
-     * @param selectedInDataTable
-     */
-    abstract void setSelectedInDataTable(boolean selectedInDataTable);
-
-    /**
-     *
      * @return
      */
     public boolean isStandard();

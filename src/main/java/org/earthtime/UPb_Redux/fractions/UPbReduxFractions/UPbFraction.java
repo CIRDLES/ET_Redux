@@ -80,6 +80,7 @@ import org.earthtime.dataDictionaries.MeasuredRatios;
 import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.dataDictionaries.TracerUPbRatiosAndConcentrations;
 import org.earthtime.exceptions.ETException;
+import org.earthtime.fractions.FractionInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsModel;
 import org.earthtime.ratioDataModels.tracers.TracerUPbModel;
@@ -94,6 +95,7 @@ import org.earthtime.xmlUtilities.XMLSerializationI;
 public class UPbFraction extends Fraction implements
         FractionI,
         UPbFractionI,
+        FractionInterface,
         ReportRowGUIInterface,
         Serializable,
         XMLSerializationI {

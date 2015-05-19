@@ -41,6 +41,7 @@ import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
+import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.renderers.EditFractionButton;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
@@ -1175,7 +1176,7 @@ public class AliquotLegacyEditorForIDTIMS extends AliquotEditorDialog {
             if ( ((JCheckBox) cb).isSelected() ) {
                 try {
                     getMyAliquot().getMineralStandardModels().add(//
-                            getSample().getMyReduxLabData().getAMineralStandardModel( ((JCheckBox) cb).getText() ) );
+                            ReduxLabData.getInstance().getAMineralStandardModel( ((JCheckBox) cb).getText() ) );
                 } catch (BadLabDataException ex) {
                     new ETWarningDialog(ex).setVisible(true);
                 }

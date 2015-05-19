@@ -63,6 +63,7 @@ import org.earthtime.UPb_Redux.valueModels.ValueModelReferenced;
 import org.earthtime.UPb_Redux.valueModels.ValueModelReferencedXMLConverter;
 import org.earthtime.UPb_Redux.valueModels.ValueModelXMLConverter;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
+import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.dataDictionaries.AnalysisImageTypes;
 import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.exceptions.ETException;
@@ -78,7 +79,6 @@ import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsMo
 import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsModelXMLConverter;
 import org.earthtime.ratioDataModels.tracers.TracerUPbModel;
 import org.earthtime.ratioDataModels.tracers.TracerUPbModelXMLConverter;
-import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.xmlUtilities.XMLSerializationI;
 
 /**
@@ -298,57 +298,10 @@ public class UPbReduxAliquot extends Aliquot
 
         this.mySESARSampleMetadata = mySESARSampleMetadata;
 
-//        this.isValidatedSESARChild = false;
         analysisImages = new ArrayList<AnalysisImage>();
 
     }
 
-//////    @Override
-//////    public int compareTo ( Aliquot aliquot ) throws ClassCastException {
-//////        String aliquotTwoName = aliquot.getAliquotName().trim();
-//////        String aliquotOneName = this.getAliquotName().trim();
-//////
-//////        // oct 2010 put here
-//////        Comparator<String> forNoah = new IntuitiveStringComparator<String>();
-//////        return forNoah.compare( aliquotOneName, aliquotTwoName );
-//////
-//////    }
-//////
-//////    /**
-//////     *
-//////     * @param fraction
-//////     * @return
-//////     */
-//////    @Override
-//////    public boolean equals ( Object aliquot ) {
-//////        //check for self-comparison
-//////        if ( this == aliquot ) {
-//////            return true;
-//////        }
-//////        if (  ! (aliquot instanceof Aliquot) ) {
-//////            return false;
-//////        }
-//////
-//////        Aliquot myAliquot = (Aliquot) aliquot;
-//////
-//////        // oct 2010 put here
-//////        Comparator<String> forNoah = new IntuitiveStringComparator<String>();
-//////        return forNoah.compare( this.getAliquotName().trim(), myAliquot.getAliquotName().trim() ) == 0;
-//////
-//////    }
-//////
-//////    // http://www.javaworld.com/javaworld/jw-01-1999/jw-01-object.html?page=4
-//////    /**
-//////     *
-//////     * @return
-//////     */
-//////    @Override
-//////    public int hashCode () {
-//////
-//////        int hash = 1;
-//////        hash = hash * 31 + ((Aliquot)this).getAliquotName().hashCode();
-//////        return hash;
-//////    }
     /**
      *
      */
