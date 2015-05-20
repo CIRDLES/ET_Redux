@@ -420,7 +420,8 @@ public class GeochronAliquotManager extends JPanel {
             aliquotUploadButtons[i].addActionListener((ActionEvent e) -> {
                 aliquot.setSampleIGSN("SSR." + sampleIGSN.trim());
                 GeochronUploaderUtility.uploadAliquotToGeochron(//
-                        (Sample) sample, aliquot, //
+                        sample, //
+                        aliquot, //
                         userName, //
                         password, //
                         true, true);
@@ -559,7 +560,7 @@ public class GeochronAliquotManager extends JPanel {
 
         File tempConcordiaSVG = new File(sample.getSampleName() + "_tempConcordia.svg");
 
-        ConcordiaGraphPanel concordiaGraphPanel = new ConcordiaGraphPanel((Sample)sample, null);
+        ConcordiaGraphPanel concordiaGraphPanel = new ConcordiaGraphPanel((SampleInterface)sample, null);
 
         sample.getSampleDateInterpretationGUISettings().//
                 setConcordiaOptions(concordiaGraphPanel.getConcordiaOptions());

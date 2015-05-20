@@ -25,7 +25,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.earthtime.ETReduxFrame;
 import org.earthtime.UPb_Redux.reports.ReportSettings;
-import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.samples.SampleInterface;
 
@@ -54,7 +53,7 @@ public class TabbedReportViews extends JTabbedPane {
      * @param parentFrame
      * @param sample
      */
-    public TabbedReportViews(ETReduxFrame parentFrame, Sample sample) {
+    public TabbedReportViews(ETReduxFrame parentFrame, SampleInterface sample) {
         this(parentFrame);
 
         this.sample = sample;

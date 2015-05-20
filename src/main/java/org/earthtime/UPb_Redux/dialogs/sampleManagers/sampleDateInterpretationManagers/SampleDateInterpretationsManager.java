@@ -41,6 +41,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
+import javax.swing.JTree;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
@@ -76,7 +77,6 @@ import org.earthtime.UPb_Redux.dialogs.sampleManagers.heatMapManagers.HeatMapMan
 import org.earthtime.UPb_Redux.filters.PDFFileFilter;
 import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
-import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
@@ -136,7 +136,9 @@ public class SampleDateInterpretationsManager extends DialogEditor
      */
     public SampleDateInterpretationsManager( //
             SampleDateInterpretationSubscribeInterface parent, //
-            boolean modal, JLayeredPane concordiaGraphPanel, JPanel weightedMeanGraphPanel, JLayeredPane normedProbabilityPanel, SampleInterface sample, SampleTreeI dateTreeByAliquot, SampleTreeI dateTreeBySample) {
+            boolean modal, JLayeredPane concordiaGraphPanel, //
+            JPanel weightedMeanGraphPanel, //
+            JLayeredPane normedProbabilityPanel, SampleInterface sample, SampleTreeI dateTreeByAliquot, SampleTreeI dateTreeBySample) {
 
         super(null, modal);
 
@@ -2397,7 +2399,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
         //  System.out.println("WOW MODE CALL BACK");
         Object nodeInfo = ((DefaultMutableTreeNode) node).getUserObject();
 
-        if (nodeInfo instanceof Sample) {
+        if (nodeInfo instanceof SampleInterface) {
 
             if (graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab("Concordia")) {
 
@@ -2542,7 +2544,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
 
                 Object sampleDateNodeInfo = //
                         ((DefaultMutableTreeNode) //
-                        ((DefaultMutableTreeNode) node).getParent()).getUserObject();
+                        ((TreeNode) node).getParent()).getUserObject();
 
                 if (graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab("Concordia")) {
 
@@ -2550,7 +2552,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                     ((ConcordiaGraphPanel) concordiaGraphPanel).//
                             setYorkFitLine(((SampleDateModel) sampleDateNodeInfo).getYorkLineFit());
 
-                    ((ConcordiaGraphPanel) concordiaGraphPanel).//
+                    ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
                             setSelectedFractions(((UPbReduxAliquot) aliquotNodeInfo).//
                                     getAliquotSampleDateModelSelectedFractions(((SampleDateModel) sampleDateNodeInfo).//
                                             getIncludedFractionIDsVector()));
@@ -2688,19 +2690,19 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
 //        System.out.println("WOW A SAMPLE CALL BACK");
         Object nodeInfo = ((DefaultMutableTreeNode) node).getUserObject();
 
-        if (nodeInfo instanceof Sample) {
+        if (nodeInfo instanceof SampleInterface) {
 
             ((ConcordiaGraphPanel) concordiaGraphPanel).//
                     setYorkFitLine(null);
 
-            ((ConcordiaGraphPanel) concordiaGraphPanel).//
+            ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
                     setSelectedFractions(sample.getFractions());
 
             concordiaGraphPanel.//
                     repaint();//refreshPanel();
 
             // zap delselected list as it is meaningless at level of aliquot or sample
-            ((ConcordiaGraphPanel) concordiaGraphPanel).//
+            ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
                     getDeSelectedFractions().clear();
             ((ConcordiaGraphPanel) concordiaGraphPanel).//
                     setPreferredDatePanel(null);
@@ -2712,25 +2714,22 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
         } else if (nodeInfo instanceof ValueModel) {
             // get aliquot and retrieve subset of fractions for this sample date
             Object sampleNodeInfo = //
-                    ((DefaultMutableTreeNode) ((DefaultMutableTreeNode) node).getParent()).getUserObject();
+                    ((DefaultMutableTreeNode) ((TreeNode) node).getParent()).getUserObject();
 
             // check for special case interpretations: lower and upper intercepts
             ((ConcordiaGraphPanel) concordiaGraphPanel).//
                     setYorkFitLine(((SampleDateModel) nodeInfo).getYorkLineFit());
 
-            ((ConcordiaGraphPanel) concordiaGraphPanel).//
-                    setSelectedFractions(((Sample) sampleNodeInfo).//
+            ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
+                    setSelectedFractions(((SampleInterface) sampleNodeInfo).//
                             getSampleDateModelSelectedFractions(((SampleDateModel) nodeInfo).//
                                     getIncludedFractionIDsVector()));
 
             ((ConcordiaGraphPanel) concordiaGraphPanel).//
-                    setDeSelectedFractions(((Sample) sampleNodeInfo).//
+                    setDeSelectedFractions(((SampleInterface) sampleNodeInfo).//
                             getSampleDateModelDeSelectedFractions(((SampleDateModel) nodeInfo).//
                                     getIncludedFractionIDsVector()));
 
-//            // for sample date interpretation, display date title box
-//            DateInterpretationBoxPanel dateInterpretationBoxPanel = //
-//                    new DateInterpretationBoxPanel(((SampleDateModel) nodeInfo));
             ((ConcordiaGraphPanel) concordiaGraphPanel).//
                     setPreferredDatePanel(null);
 
@@ -2758,12 +2757,12 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                 // check for special case interpretations: lower and upper intercepts
                 ((ConcordiaGraphPanel) concordiaGraphPanel).//
                         setYorkFitLine(((SampleDateModel) sampleDateNodeInfo).getYorkLineFit());
-                ((ConcordiaGraphPanel) concordiaGraphPanel).//
-                        setSelectedFractions(((Sample) sampleNodeInfo).//
+                ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
+                        setSelectedFractions(((SampleInterface) sampleNodeInfo).//
                                 getSampleDateModelSelectedFractions(((SampleDateModel) sampleDateNodeInfo).//
                                         getIncludedFractionIDsVector()));
                 ((ConcordiaGraphPanel) concordiaGraphPanel).//
-                        setDeSelectedFractions(((Sample) sampleNodeInfo).//
+                        setDeSelectedFractions(((SampleInterface) sampleNodeInfo).//
                                 getSampleDateModelDeSelectedFractions(((SampleDateModel) sampleDateNodeInfo).//
                                         getIncludedFractionIDsVector()));
 
@@ -2812,16 +2811,16 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
 
             // now redraw the sample age from the sample view
             ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
-                    setSelectedFractions(((Sample) sampleNodeInfo).//
+                    setSelectedFractions(((SampleInterface) sampleNodeInfo).//
                             getSampleDateModelSelectedFractions(//
                                     ((SampleDateModel) sampleDateNodeInfo).getIncludedFractionIDsVector()));
             ((ConcordiaGraphPanel) concordiaGraphPanel).//
-                    setDeSelectedFractions(((Sample) sampleNodeInfo).//
+                    setDeSelectedFractions(((SampleInterface) sampleNodeInfo).//
                             getSampleDateModelDeSelectedFractions(//
                                     ((SampleDateModel) sampleDateNodeInfo).getIncludedFractionIDsVector()));
 
             // fix dateTreeByAliquot
-            ((DefaultTreeModel) ((SampleTreeCompilationMode) dateTreeBySample).getModel()).//
+            ((DefaultTreeModel) ((JTree) dateTreeBySample).getModel()).//
                     nodeChanged(((DefaultMutableTreeNode) node).//
                             getParent().// aliquotnamenode
                             getParent().// aliquotfractionslabelnode
@@ -2832,10 +2831,6 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
             ((ConcordiaGraphPanel) concordiaGraphPanel).//
                     setYorkFitLine(((SampleDateModel) sampleDateNodeInfo).getYorkLineFit());
 
-            // for sample date interpretation, display date title box
-//            DateInterpretationBoxPanel dateInterpretationBoxPanel = //
-//                    new DateInterpretationBoxPanel(((SampleDateModel) sampleDateNodeInfo));
-//
             ((ConcordiaGraphPanel) concordiaGraphPanel).//
                     setPreferredDatePanel(null);
             concordiaGraphPanel.repaint();
@@ -2845,7 +2840,6 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
             probabilityPanel.repaint();
 
         }
-
     }
 
     private Vector<Fraction> filterActiveUPbFractions(Vector<Fraction> fractions) {
@@ -3153,7 +3147,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                 aliquotName,
                 ((AliquotOptionsDialog) myAliquotOptionsDialog).getAliquotOptions());
 
-        ((ConcordiaGraphPanel) getConcordiaGraphPanel()).repaint();
+        getConcordiaGraphPanel().repaint();
 
     }
 

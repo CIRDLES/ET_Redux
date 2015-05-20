@@ -19,21 +19,15 @@
  */
 package org.earthtime.UPb_Redux.samples;
 
-import java.awt.Frame;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
-import java.util.Map;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import javax.swing.filechooser.FileFilter;
 import org.earthtime.Tripoli.sessions.TripoliSession;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.ReduxConstants.ANALYSIS_PURPOSE;
@@ -44,7 +38,6 @@ import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.dialogs.fractionManagers.UPbFractionEditorDialog;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.filters.FractionXMLFileFilter;
-import org.earthtime.UPb_Redux.filters.XMLFileFilter;
 import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
@@ -53,18 +46,15 @@ import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.UPb
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.reports.ReportSettings;
 import org.earthtime.UPb_Redux.user.SampleDateInterpretationGUIOptions;
-import org.earthtime.UPb_Redux.utilities.ETSerializer;
-import org.earthtime.UPb_Redux.valueModels.SampleDateInterceptModel;
-import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.dataDictionaries.MineralTypes;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
-import org.earthtime.dataDictionaries.SampleDateTypes;
 import org.earthtime.dataDictionaries.SampleRegistries;
 import org.earthtime.dataDictionaries.SampleTypesEnum;
 import org.earthtime.exceptions.ETException;
+import org.earthtime.fractions.FractionInterface;
 import org.earthtime.projects.EarthTimeSerializedFileInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.samples.SampleInterface;
@@ -417,129 +407,6 @@ public class Sample implements
     }
 
     /**
-     * adds an <code>Aliquot</code> to <code>aliquots</code>. It is created with
-     * aliquot number relative to its position in the array such that the first
-     * <code>aliquot</code> in the array is given 1, the second is given 2, and
-     * so on. It is created under the file <code>Aliquot-#</code> with
-     * <code>#</code> being replaced by the same number that was given as the
-     * first paramater. The remaining fields are set to correspond to the data
-     * found in this <code>Sample</code>.
-     *
-     * @pre this <code>Sample</code> exists with proper data
-     * @post a new <code>Aliquot</code> is created and added to
-     * <code>aliquots</code> and the size of      <code>Aliquots</code> is returned
-     *
-     * @return <code>int</code> - if successful, returns the size of the array
-     * after adding the new <code>Aliquot</code>. Else, returns -1.
-     */
-    public int addNewDefaultAliquot() {
-        int retval = -1;
-        try {
-            Aliquot tempAliquot
-                    = new UPbReduxAliquot(
-                            aliquots.size() + 1,
-                            "Aliquot-" + Integer.toString(aliquots.size() + 1),
-                            ReduxLabData.getInstance(),
-                            getPhysicalConstantsModel(),
-                            isAnalyzed(),
-                            getMySESARSampleMetadata());
-
-            tempAliquot.setSampleIGSN(getSampleIGSN());
-            aliquots.add(tempAliquot);
-            setChanged(true);
-            retval = aliquots.size();
-        } catch (BadLabDataException ex) {
-            Logger.getLogger(Sample.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return retval;
-    }
-
-    /**
-     *
-     * @param aliquotName
-     * @return
-     * @throws ETException
-     */
-    @Override
-    public Aliquot addNewAliquot(String aliquotName) throws ETException {
-        if (getAliquotByName(aliquotName) == null) {
-            Aliquot tempAliquot;// = null;
-            tempAliquot = getAliquotByNumber(addNewDefaultAliquot());
-            if (aliquotName.length() > 0) {
-                tempAliquot.setAliquotName(aliquotName);
-            }
-
-            // dec 2011 initialize weighted mean options
-            Map<String, String> weightedMeanOptions = getSampleDateInterpretationGUISettings().getWeightedMeanOptions();
-
-            for (int i = 0; i < SampleDateTypes.getSampleDateModelTypes().length; i++) {
-                String sampleDateType = SampleDateTypes.getSampleDateType(i);
-                if (sampleDateType.startsWith("weighted")) {
-                    String aliquotFlagsString = weightedMeanOptions.get(sampleDateType);
-                    if (aliquotFlagsString == null) {
-                        aliquotFlagsString = "";
-                    }
-
-                    StringBuilder aliquotFlags = new StringBuilder(aliquotFlagsString);
-
-                    aliquotFlags.append("0");
-
-                    weightedMeanOptions.put(sampleDateType, aliquotFlags.toString());
-                }
-
-            }
-
-            return tempAliquot;
-        } else {
-            throw new ETException(null, "Sample already contains this aliquot name");
-        }
-    }
-
-    /**
-     *
-     * @param fractions
-     * @param aliquotNumber
-     */
-    public void addUPbFractionVector(Vector<Fraction> fractions, int aliquotNumber) {
-        for (Fraction f : fractions) {
-            f.setSampleName(sampleName);
-            ((UPbFractionI) f).setAliquotNumber(aliquotNumber);
-            addFraction(f);
-        }
-    }
-
-    /**
-     *
-     * @param fractions
-     * @param aliquotNumber
-     */
-    public void addUPbFractionArrayList(ArrayList<Fraction> fractions, int aliquotNumber) {
-
-        for (Fraction f : fractions) {
-            f.setSampleName(sampleName);
-            ((UPbFractionI) f).setAliquotNumber(aliquotNumber);
-            addFraction(f);
-        }
-    }
-
-    /**
-     * adds aliquot <code>UPbFraction</code> to the <code>Sample</code>'s set of
-     * <code>Fractions</code>.
-     *
-     * @pre this <code>Sample</code> exists
-     * @post a new default <code>Fraction</code> is added to this
-     * <code>Sample</code>'s <code>Fractions</code>
-     *
-     * @param newFraction the <code>Fraction</code> to add to this
-     * <code>Sample</code>
-     */
-    @Override
-    public void addFraction(Fraction newFraction) {
-        getFractions().add(newFraction);
-        setChanged(true);
-    }
-
-    /**
      *
      * @param aliquotNumber
      * @throws BadLabDataException
@@ -548,7 +415,7 @@ public class Sample implements
     public void addDefaultUPbFractionToAliquot(int aliquotNumber)
             throws BadLabDataException {
         Fraction defFraction = new UPbFraction("NONE");
-        ((UPbFractionI) defFraction).setAliquotNumber(aliquotNumber);
+        ((FractionInterface) defFraction).setAliquotNumber(aliquotNumber);
 
         initializeDefaultUPbFraction(defFraction);
 
@@ -569,6 +436,7 @@ public class Sample implements
      * @param aliquotNumber
      * @throws BadLabDataException
      */
+    @Override
     public void addDefaultUPbLegacyFractionToAliquot(int aliquotNumber)
             throws BadLabDataException {
         Fraction defFraction = new UPbLegacyFraction("NONE");
@@ -915,87 +783,6 @@ public class Sample implements
     }
 
     /**
-     *
-     */
-    public void updateSampleLabName() {
-        for (Aliquot a : aliquots) {
-            a.setLaboratoryName(ReduxLabData.getInstance().getLabName());
-        }
-    }
-
-    /**
-     *
-     * @param sampleName
-     */
-    public void updateSampleFractionsWithSampleName(String sampleName) {
-        for (int i = 0; i
-                < getFractions().size(); i++) {
-            getFractions().get(i).setSampleName(sampleName);
-        }
-
-    }
-
-    /**
-     * reads aliquot <code>Sample</code> from the file specified by argument
-     * <code>file</code> and returns it.
-     *
-     * @pre argument <code>file</code> specified a file containing a valid
-     * <code>Sample</code>
-     * @post returns the <code>Sample</code> read in from the file
-     *
-     * @param file the file to read aliquot <code>Sample</code> from
-     * @return <code>Sample</code> - the <code>Sample</code> that has been read
-     */
-    public static EarthTimeSerializedFileInterface getTheSampleFromSerializedReduxFile(
-            File file) {
-        return (EarthTimeSerializedFileInterface) ETSerializer.GetSerializedObjectFromFile(file.getPath());
-    }
-
-    /**
-     *
-     */
-    public void restoreDefaultReportSettingsModel() {
-        try {
-            reportSettingsModel = ReduxLabData.getInstance().getDefaultReportSettingsModel();
-        } catch (BadLabDataException badLabDataException) {
-        }
-    }
-
-    /**
-     *
-     * @param reportsFolderPath
-     * @return
-     * @throws BadLabDataException
-     */
-    public String saveReportSettingsToFile(String reportsFolderPath)
-            throws BadLabDataException {
-
-        String retVal = "";
-
-        String dialogTitle = "Save Report Settings Model as XML file: *.xml";
-        final String fileExtension = ".xml";
-        String sampleFileName = "ReportSettings" + fileExtension;
-        FileFilter nonMacFileFilter = new XMLFileFilter();
-
-        File selectedFile = null;
-
-        selectedFile = FileHelper.AllPlatformSaveAs(
-                new Frame(),
-                dialogTitle,
-                reportsFolderPath,
-                fileExtension,
-                sampleFileName,
-                nonMacFileFilter);
-
-        if (selectedFile != null) {
-            reportSettingsModel.serializeXMLObject(selectedFile.getAbsolutePath());
-            retVal = selectedFile.getParent();
-        }
-
-        return retVal;
-    }
-
-    /**
      * gets the <code>file</code> of this <code>Sample</code>.
      *
      * @pre this <code>Sample</code> exists
@@ -1318,7 +1105,7 @@ public class Sample implements
     public Vector<Fraction> getFractions() {
         return UPbFractions;
     }
-    
+
     /**
      * sets the <code>UPbFractions</code> of this <code>Sample</code> to the
      * argument <code>UPbFractions</code>
@@ -1464,19 +1251,6 @@ public class Sample implements
             for (int j = 0; j < aliquotFractions.size(); j++) {
                 ((UPbFractionI) aliquotFractions.get(j)).setAliquotNumber(i + 1);
             }
-        }
-    }
-
-    /**
-     *
-     */
-    @Override
-    public void reduceSampleData() {
-        for (Aliquot aliquot : aliquots) {
-            ((UPbReduxAliquot) aliquot).reduceData();
-
-            // oct 2014 
-            ((UPbReduxAliquot) aliquot).updateBestAge();
         }
     }
 
@@ -1722,150 +1496,6 @@ public class Sample implements
     }
 
     /**
-     *
-     * @param includeSingleDates
-     * @return
-     */
-    public Vector<ValueModel> determineUnusedSampleDateModels(boolean includeSingleDates) {
-        Vector<ValueModel> retVal = new Vector<ValueModel>();
-        // choose models not already in use by Aliquot
-        for (int i = 0; i < SampleDateTypes.getSampleDateModelTypes().length; i++) {
-            if (!includeSingleDates
-                    && SampleDateTypes.getSampleDateType(i).startsWith("single")) {
-                // do nothing
-            } else {
-                if (getSampleDateModelByName(SampleDateTypes.getSampleDateType(i)) == null) {
-                    ValueModel tempModel = null;
-
-                    if (SampleDateTypes.getSampleDateType(i).endsWith("intercept")) {
-                        tempModel = //
-                                new SampleDateInterceptModel(//
-                                        SampleDateTypes.getSampleDateType(i),
-                                        SampleDateTypes.getSampleDateTypeMethod(i),
-                                        SampleDateTypes.getSampleDateTypeName(i),
-                                        BigDecimal.ZERO,
-                                        "ABS",
-                                        BigDecimal.ZERO);
-
-                        ((SampleDateModel) tempModel).setSample(this);
-                    } else {
-                        tempModel = //
-                                new SampleDateModel(//
-                                        SampleDateTypes.getSampleDateType(i),
-                                        SampleDateTypes.getSampleDateTypeMethod(i),
-                                        SampleDateTypes.getSampleDateTypeName(i),
-                                        BigDecimal.ZERO,
-                                        "ABS",
-                                        BigDecimal.ZERO);
-
-                        ((SampleDateModel) tempModel).setSample(this);
-                    }
-                    retVal.add(tempModel);
-                }
-            }
-        }
-        return retVal;
-    }
-
-    /**
-     *
-     * @param sampleDateModel
-     */
-    public void setPreferredSampleDateModel(ValueModel sampleDateModel) {
-        // set all to false
-        for (ValueModel sam : getSampleDateModels()) {
-            ((SampleDateModel) sam).setPreferred(false);
-        }
-
-        ((SampleDateModel) sampleDateModel).setPreferred(true);
-        Collections.sort(getSampleDateModels());
-    }
-
-    /**
-     *
-     * @param sampleDateModelName
-     * @return
-     */
-    public boolean containsSampleDateModelByName(String sampleDateModelName) {
-        boolean retVal = false;
-
-        for (ValueModel sam : sampleDateModels) {
-            if (sam.getName().equalsIgnoreCase(sampleDateModelName)) {
-                retVal = true;
-            }
-        }
-        return retVal;
-    }
-
-    /**
-     *
-     * @param sampleDateModelName
-     * @return
-     */
-    public ValueModel getSampleDateModelByName(
-            String sampleDateModelName) {
-        ValueModel retVal = null;
-
-        for (ValueModel sdm : sampleDateModels) {
-            if (sdm.getName().equalsIgnoreCase(sampleDateModelName)) {
-                retVal = sdm;
-            }
-        }
-        return retVal;
-    }
-
-    /**
-     *
-     */
-    @Override
-    public final void updateSampleDateModels() {
-        // process all sampleDateModels' included fraction vectors to remove missing aliquotFractionFiles
-        Vector<String> includedFractionIDs = getSampleFractionIDs();
-        Vector<String> excludedFractionIDs = new Vector<String>();
-        boolean existsPreferredDate = false;
-
-        for (ValueModel SAM : getSampleDateModels()) {
-            Vector<String> SAMFractionIDs = ((SampleDateModel) SAM).getIncludedFractionIDsVector();
-
-            for (int f = 0; f
-                    < SAMFractionIDs.size(); f++) {
-                String fractionID = SAMFractionIDs.get(f);
-                // for (String fractionID : SAMFractionIDs) {
-
-                if (!includedFractionIDs.contains(fractionID)) {
-                    excludedFractionIDs.add(fractionID);
-                }
-
-            }
-            // remove found exclusions (these are ones that were rejected after processing
-            excludedFractionIDs.stream().forEach((fractionID) -> {
-                ((SampleDateModel) SAM).getIncludedFractionIDsVector().remove(fractionID);
-            });
-
-            if (((SampleDateModel) SAM).isPreferred()) {
-                existsPreferredDate = true;
-            }
-        }
-
-        // guarantee preferred date model
-        if (!existsPreferredDate && (getSampleDateModels().size() > 0)) {
-            ((SampleDateModel) getSampleDateModels().get(0)).setPreferred(true);
-        }
-    }
-
-    /**
-     *
-     * @param fID
-     * @return
-     */
-    @Override
-    public String getAliquotNameByFractionID(
-            String fID) {
-        return getAliquotByNumber(//
-                ((UPbFractionI) getFractionByID(fID)).getAliquotNumber()).getAliquotName();
-    }
-
-    /**
      * @return the sampleAnalysisType
      */
     @Override
@@ -2074,22 +1704,20 @@ public class Sample implements
      */
     protected Object readResolve() {
         if (sampleAnalysisType == null) {
-            // flip meaning of analyzed on older files
-            if (analyzed) {
+            // flip meaning of analyzed on older files - it now means analyzed as in legacy
+            if (!analyzed) {
                 sampleAnalysisType = SampleAnalysisTypesEnum.COMPILED.getName();
-                analyzed = false;
+                analyzed = true;
             } else {
                 sampleAnalysisType = SampleAnalysisTypesEnum.IDTIMS.getName();
-                analyzed = true;
+                analyzed = false;
             }
 
-            System.out.println("Sample backward compatibility readResolve set sampleAnalysisType to: " + sampleAnalysisType);
-        }
+            System.out.println("Sample backward compatibility readResolve set sampleAnalysisType to: " + sampleAnalysisType + "  and analyzed to : " + analyzed);
+        } else if (sampleAnalysisType.compareToIgnoreCase(SampleAnalysisTypesEnum.COMPILED.getName()) == 0) {
+            analyzed = true;
 
-        if (sampleAnalysisType.compareToIgnoreCase(SampleAnalysisTypesEnum.COMPILED.getName()) == 0) {
-            analyzed = false;
-
-            System.out.println("Sample backward compatibility readResolve set analyzed to false");
+            System.out.println("Sample backward compatibility readResolve set analyzed to true for compiled sample");
         }
 
         return this;

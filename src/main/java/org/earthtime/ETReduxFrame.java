@@ -139,10 +139,13 @@ import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.projects.EarthTimeSerializedFileInterface;
 import org.earthtime.projects.Project;
+import org.earthtime.projects.ProjectInterface;
+import org.earthtime.projects.ProjectSample;
 import org.earthtime.projects.projectImporters.UPbProjectImporters.ProjectOfLegacySamplesImporterFromCSVFile_GenericUPbIsotopic_A;
 import org.earthtime.projects.projectImporters.UPbProjectImporters.ProjectOfLegacySamplesImporterFromCSVFile_UCSB_LASS_A;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.mineralStandardModels.MineralStandardUPbModel;
+import org.earthtime.reports.ReportSettingsInterface;
 import org.earthtime.samples.SampleInterface;
 import org.earthtime.utilities.FileHelper;
 
@@ -545,9 +548,9 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         EarthTimeSerializedFileInterface deserializedFile =//
                 (EarthTimeSerializedFileInterface) ETSerializer.GetSerializedObjectFromFile(projectReduxFile.getPath());
 
-        if (deserializedFile instanceof Sample) {
+        if (deserializedFile instanceof SampleInterface) {
             System.out.println("Trying to open a SAMPLE .redux file as a Project.");
-        } else if (!(deserializedFile instanceof Project)) {
+        } else if (!(deserializedFile instanceof ProjectInterface)) {
             System.out.println("Trying to open an invalid .redux file.");
         } else {
 
@@ -572,8 +575,10 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             // decide what to do based on presence of compiled super sample
             if (theProject.getSuperSample() != null) {
                 // oct 2014 first check for updated reportsettings
-                ReportSettings projectReportSettings = theProject.getSuperSample().getReportSettingsModelUpdatedToLatestVersion();
-                theProject.getSuperSample().setReportSettingsModel(projectReportSettings);
+                theProject.getSuperSample().setReportSettingsModel(//
+                        ReportSettingsInterface.getReportSettingsModelUpdatedToLatestVersion(theProject.getSuperSample().getReportSettingsModel()));
+                theProject.getSuperSample().setLegacyStatusForReportTable();
+
                 theProject.saveTheProjectAsSerializedReduxFile();
 
                 // go straight to data table display
@@ -588,7 +593,6 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             }
 
             sampleMenuOnTrueProjectMenuOnFalse(false);
-
         }
     }
 
@@ -666,7 +670,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
      *
      */
     public void initializeProject() {
-        theSample = (Sample) theProject.getSuperSample();
+        theSample = theProject.getSuperSample();
         theSample.setChanged(false);
 
         setUpTheProject(false);
@@ -678,7 +682,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
     public void updateProjectDisplayTitleBar() {
         try {
             this.setTitle(
-                    "U-Pb Redux  " //
+                    "ET Redux  " //
                     + theSample.getSampleAnalysisType()//
                     + "  Project:   "//
                     + theProject.getProjectName() //
@@ -712,17 +716,21 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         updateProjectDisplayTitleBar();
 
         // oct 2014 reportsettings
-        ReportSettings reportSettingsModel = superSample.getReportSettingsModel();
-        if (reportSettingsModel != null) {
-            reportSettingsModel.setLegacyData(superSample.isAnalyzed());
+//        ReportSettings reportSettingsModel = superSample.getReportSettingsModel();
+//        if (reportSettingsModel != null) {
+//            reportSettingsModel.setLegacyData(superSample.isAnalyzed());
+//        }
+        
+        try {
+            superSample.setLegacyStatusForReportTable();
+        } catch (Exception e) {
         }
-
         rebuildFractionDisplays(performReduction);
 
         // set up concordia for use on fraction details window
         //as well as interpret date window and archiving
         myConcordiaGraphPanel = new ConcordiaGraphPanel(theSample, this);
-        UPbFractionEditorDialog.setConcordiaGraphPanel(getMyConcordiaGraphPanel());
+        UPbFractionEditorDialog.setConcordiaGraphPanel(myConcordiaGraphPanel);
 
         // set up probabilitydensity for archiving
         myNormedProbabilityPanel = new DateProbabilityDensityPanel(theSample);
@@ -790,26 +798,26 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
      *
      * @param sampleAnalysisType the value of sampleAnalysisType
      */
-    private void setUpNewCompiledProject(String sampleAnalysisType) {
+    private void setUpNewCompiledLegacyProject(String sampleAnalysisType) {
 
         theProject = new Project(myState);
 
+//        try {
+//            theSample = Sample.initializeNewSample(//
+//                    SampleTypesEnum.PROJECT.getName(), //
+//                    SampleAnalysisTypesEnum.COMPILED.getName(),//
+//                    ReduxLabData.getInstance(),//
+//                    myState.getReduxPreferences().getDefaultSampleAnalysisPurpose());
+//        } catch (BadLabDataException ex) {
+//            new ETWarningDialog(ex).setVisible(true);
+//        }
+
         try {
-            theSample = Sample.initializeNewSample(//
-                    SampleTypesEnum.PROJECT.getName(), //
-                    SampleAnalysisTypesEnum.COMPILED.getName(),//
-                    ReduxLabData.getInstance(),//
+            theSample = ProjectSample.initializeNewSample(//                  
                     myState.getReduxPreferences().getDefaultSampleAnalysisPurpose());
         } catch (BadLabDataException ex) {
             new ETWarningDialog(ex).setVisible(true);
         }
-
-////////        try {
-////////            theSample = ProjectSample.initializeNewSample(//                  
-////////                    myState.getReduxPreferences().getDefaultSampleAnalysisPurpose());
-////////        } catch (BadLabDataException ex) {
-////////            new ETWarningDialog(ex).setVisible(true);
-////////        }
         
         //set flag for whether analysis was performed elsewhere and we just have legacy results
         theSample.setAnalyzed(true);
@@ -909,7 +917,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
     }
 
     private void openSampleFile() throws BadLabDataException {
-        String dialogTitle = "Select a Redux Sample file to OPEN: *.redux";
+        String dialogTitle = "Select an ET Redux Sample file to OPEN: *.redux";
         final String fileExtension = ".redux";
         FileFilter nonMacFileFilter = new ReduxFileFilter();
 
@@ -1463,14 +1471,15 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                 getMyState().updateMRUSampleList(selFile);
 
                 // oct 2014 first check for updated reportsettings
-                ReportSettings sampleReportSettings = theSample.getReportSettingsModelUpdatedToLatestVersion();
-                theSample.setReportSettingsModel(sampleReportSettings);
+                theSample.setReportSettingsModel(//
+                        ReportSettingsInterface.getReportSettingsModelUpdatedToLatestVersion(theSample.getReportSettingsModel()));
+                theSample.setLegacyStatusForReportTable();
 
                 // feb 2010 catch case where saved as LIVEWORKFLOW
                 if (theSample.isTypeLiveUpdate()) {
                     theSample.setSampleType(SampleTypesEnum.ANALYSIS.getName());
                 }
-                setUpTheSample(!theSample.isAnalyzed());//.isTypeAnalysis());
+                setUpTheSample(!theSample.isAnalyzed());
 
                 // march 2009 - handle reflection for automatic update
                 // this means if sample is automode, then set its path to where found
@@ -3319,8 +3328,6 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                             dateTreeByAliquot,
                             dateTreeBySample);
 
-//            ((ConcordiaGraphPanel) myConcordiaGraphPanel).setShowTightToEdges(true);
-//            ((AliquotDetailsDisplayInterface) myConcordiaGraphPanel).resetPanel();
             sampleDateInterpDialog.setVisible(true);
 
         }
@@ -3922,7 +3929,7 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     }//GEN-LAST:event_manageRawData_menuItemActionPerformed
 
     private void genericUPbDataTableInCSV_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_genericUPbDataTableInCSV_menuItemActionPerformed
-        setUpNewCompiledProject(SampleAnalysisTypesEnum.GENERIC_UPB.getName());
+        setUpNewCompiledLegacyProject(SampleAnalysisTypesEnum.GENERIC_UPB.getName());
     }//GEN-LAST:event_genericUPbDataTableInCSV_menuItemActionPerformed
 
     private void closeProjectFile_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeProjectFile_menuItemActionPerformed
@@ -3968,7 +3975,7 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     }//GEN-LAST:event_manageProjectRawData_buttonopenSampleFileActionPerformed
 
     private void ucsb_LASS_A_DataTableInCSV_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ucsb_LASS_A_DataTableInCSV_menuItemActionPerformed
-        setUpNewCompiledProject(SampleAnalysisTypesEnum.LASS.getName());
+        setUpNewCompiledLegacyProject(SampleAnalysisTypesEnum.LASS.getName());
     }//GEN-LAST:event_ucsb_LASS_A_DataTableInCSV_menuItemActionPerformed
 
     private void producePbCCorrReport_jMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_producePbCCorrReport_jMenuItemActionPerformed

@@ -288,7 +288,7 @@ public abstract class AbstractSampleLAICPMSRawDataManagerDialog extends DialogEd
                 // bulk mode
                 try {
                     converter.setMruFolder( importFractionFolderMRU );
-                    getMySample().addUPbFractionVector( converter.readInFractions(), myAliquotNumber );
+                    getMySample().addFractionsVector( converter.readInFractions(), myAliquotNumber );
                     myAliquot.setAliquotName( converter.getAliquotName() );
                     setInitialized( true );
                     getMySample().setChanged( true );

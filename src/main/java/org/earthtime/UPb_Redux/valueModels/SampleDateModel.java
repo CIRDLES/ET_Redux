@@ -746,27 +746,32 @@ public class SampleDateModel extends ValueModel implements
      */
     public void CalculateDateInterpretationForAliquot() {
         // http://java.sun.com/developer/technicalArticles/ALT/Reflection/index.html
-        // create vector of fractions based on sample date model fraction list
-        Vector<Fraction> includedFractions = new Vector<Fraction>();
-        for (String fID : getIncludedFractionIDsVector()) {
-            includedFractions.add(((UPbReduxAliquot) aliquot).getAliquotFractionByName(fID));
-        }
 
-        // special case to detect upper/lower intercept
-        if (getMethodName().equalsIgnoreCase("UpperIntercept")) {
-            UpperIntercept(includedFractions, //
-                    //
-                    aliquot.getSampleDateModelByName("lower intercept"));
-        } else {
-            try {
-                Method meth
-                        = this.getClass().getMethod(//
-                                getMethodName(),
-                                new Class[]{Vector.class});
-                meth.invoke(this, new Object[]{includedFractions});
-            } catch (Throwable e) {
-                System.err.println(e);
+        // check to make sure there are fractions with positive dates
+        if (includedFractionIDsVector.size() > 0) {
+            // create vector of fractions based on sample date model fraction list
+            Vector<Fraction> includedFractions = new Vector<>();
+            for (String fID : includedFractionIDsVector) {
+                includedFractions.add(((UPbReduxAliquot) aliquot).getAliquotFractionByName(fID));
             }
+
+            // special case to detect upper/lower intercept
+            if (getMethodName().equalsIgnoreCase("UpperIntercept")) {
+                UpperIntercept(includedFractions, //
+                        aliquot.getSampleDateModelByName("lower intercept"));
+            } else {
+                try {
+                    Method meth
+                            = this.getClass().getMethod(//
+                                    getMethodName(),
+                                    new Class[]{Vector.class});
+                    meth.invoke(this, new Object[]{includedFractions});
+                } catch (Throwable e) {
+                    System.err.println(e + " For: " + getMethodName() + "  in CalculateDateInterpretationForAliquot");
+                }
+            }
+        } else {
+           // new ETWarningDialog("No positive dates found.").setVisible(true);
         }
     }
 
@@ -775,26 +780,32 @@ public class SampleDateModel extends ValueModel implements
      */
     public void CalculateDateInterpretationForSample() {
         // http://java.sun.com/developer/technicalArticles/ALT/Reflection/index.html
-        // create vector of fractions based on sample date model fraction list
-        Vector<Fraction> includedFractions = new Vector<Fraction>();
-        for (String fID : getIncludedFractionIDsVector()) {
-            includedFractions.add(sample.getSampleFractionByName(fID));
-        }
 
-        // special case to detect upper/lower intercept
-        if (getMethodName().equalsIgnoreCase("UpperIntercept")) {
-            UpperIntercept(includedFractions, //
-                    sample.getSampleDateModelByName("lower intercept"));
-        } else {
-            try {
-                Method meth
-                        = this.getClass().getMethod(//
-                                getMethodName(),
-                                new Class[]{Vector.class});
-                meth.invoke(this, new Object[]{includedFractions});
-            } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-                System.err.println(e);
+        // check to make sure there are fractions with positive dates
+        if (includedFractionIDsVector.size() > 0) {
+            // create vector of fractions based on sample date model fraction list
+            Vector<Fraction> includedFractions = new Vector<>();
+            for (String fID : includedFractionIDsVector) {
+                includedFractions.add(sample.getSampleFractionByName(fID));
             }
+
+            // special case to detect upper/lower intercept
+            if (getMethodName().equalsIgnoreCase("UpperIntercept")) {
+                UpperIntercept(includedFractions, //
+                        sample.getSampleDateModelByName("lower intercept"));
+            } else {
+                try {
+                    Method meth
+                            = this.getClass().getMethod(//
+                                    getMethodName(),
+                                    new Class[]{Vector.class});
+                    meth.invoke(this, new Object[]{includedFractions});
+                } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+                    System.err.println(e + " For: " + getMethodName() + "  in CalculateDateInterpretationForSample");
+                }
+            }
+        }else {
+           // new ETWarningDialog("No positive dates found.").setVisible(true);   
         }
     }
 
@@ -2155,7 +2166,7 @@ public class SampleDateModel extends ValueModel implements
 
             setValue(meanDate.getValue());
             setOneSigma(meanDate.getOneSigmaAbs());
-            
+
         }
     }
 

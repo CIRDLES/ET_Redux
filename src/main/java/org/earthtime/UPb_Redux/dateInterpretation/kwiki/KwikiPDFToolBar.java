@@ -36,7 +36,6 @@ import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.dateInterpretation.DateProbabilityDensityPanel;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.GraphPanelModeChangeI;
 import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetup;
-import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.samples.SampleInterface;
 
@@ -131,13 +130,10 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
 
                     ((DateProbabilityDensityPanel) pdfGraphPanel).setChosenDateName(chosenDateName);
                     ((DateProbabilityDensityPanel) pdfGraphPanel).//
-                            setSelectedFractions( ((Sample)sample).getUpbFractionsUnknown());
+                            setSelectedFractions( sample.getUpbFractionsUnknown());
                     ((DateProbabilityDensityPanel) pdfGraphPanel).prepareAndPaintPanel();//.refreshPanel();
                 }
             });
-//            if (((DateProbabilityDensityPanel) probabilityPanel).getChosenDateName().replace("r", "").startsWith(jrb.getName().replace("r", ""))) {
-//                jrb.setSelected(true);
-//            }
         }
 
     }

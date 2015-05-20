@@ -47,7 +47,8 @@ import org.earthtime.samples.SampleInterface;
  */
 public class ProjectSample implements//
         SampleInterface,
-        Serializable {
+        Serializable,
+        EarthTimeSerializedFileInterface  {
 
     private static final long serialVersionUID = -638058212764252304L;
     private String sampleName;
@@ -276,14 +277,15 @@ public class ProjectSample implements//
     }
 
     @Override
-    public boolean isAnalysisTypeCompiled() {
+    public boolean isSampleTypeLiveWorkflow() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public boolean isSampleTypeLiveWorkflow() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean isTypeLiveUpdate() {
+        return false;
     }
+    
 
     @Override
     public String getSampleAnalysisType() {
@@ -331,11 +333,6 @@ public class ProjectSample implements//
     }
 
     @Override
-    public void reduceSampleData() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public Vector<Aliquot> getAliquots() {
         return aliquots;
     }
@@ -346,37 +343,12 @@ public class ProjectSample implements//
     }
 
     @Override
-    public Aliquot addNewAliquot(String aliquotName) throws ETException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public String getAliquotNameByFractionID(String fID) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void addFraction(Fraction newFraction) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public Vector<Fraction> getFractions() {
         return fractions;
     }
 
     @Override
     public void setUPbFractions(Vector<Fraction> UPbFractions) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void deSelectAllFractions() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void updateSampleDateModels() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -411,16 +383,6 @@ public class ProjectSample implements//
     @Override
     public ReportSettings getReportSettingsModel() {
         return reportSettingsModel;
-    }
-
-    @Override
-    public String saveReportSettingsToFile(String reportsFolderPath) throws BadLabDataException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void restoreDefaultReportSettingsModel() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
@@ -536,13 +498,17 @@ public class ProjectSample implements//
     }
 
     @Override
-    public void addUPbFractionVector(Vector<Fraction> fractions, int aliquotNumber) {
+    public void addFractionsVector(Vector<Fraction> fractions, int aliquotNumber) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
-    @Override
-    public ValueModel getSampleDateModelByName(String modelName) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
+    
+    //    private void readObject(
+//            ObjectInputStream stream)
+//            throws IOException, ClassNotFoundException {
+//        stream.defaultReadObject();
+//        ObjectStreamClass myObject = ObjectStreamClass.lookup(
+//                Class.forName(AbstractTripoliSample.class.getCanonicalName()));
+//        long theSUID = myObject.getSerialVersionUID();
+//        System.out.println("Customized De-serialization of AbstractTripoliSample " + theSUID);
+//    }
 }

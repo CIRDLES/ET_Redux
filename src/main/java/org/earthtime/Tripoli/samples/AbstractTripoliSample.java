@@ -261,16 +261,6 @@ public abstract class AbstractTripoliSample implements //
         return sampleName;
     }
 
-//    private void readObject(
-//            ObjectInputStream stream)
-//            throws IOException, ClassNotFoundException {
-//        stream.defaultReadObject();
-//        ObjectStreamClass myObject = ObjectStreamClass.lookup(
-//                Class.forName(AbstractTripoliSample.class.getCanonicalName()));
-//        long theSUID = myObject.getSerialVersionUID();
-//        System.out.println("Customized De-serialization of AbstractTripoliSample " + theSUID);
-//    }
-
     /**
      * @return the sampleR238_235s
      */

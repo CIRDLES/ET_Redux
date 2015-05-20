@@ -19,11 +19,15 @@ import java.awt.Frame;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.aliquots.Aliquot;
@@ -42,9 +46,11 @@ import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLegacyFraction;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.reports.ReportSettings;
 import org.earthtime.UPb_Redux.samples.SESARSampleMetadata;
+import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.UPb_Redux.samples.UPbSampleInterface;
 import org.earthtime.UPb_Redux.user.SampleDateInterpretationGUIOptions;
 import org.earthtime.UPb_Redux.utilities.ETSerializer;
+import org.earthtime.UPb_Redux.valueModels.SampleDateInterceptModel;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
@@ -55,6 +61,7 @@ import org.earthtime.dataDictionaries.SampleRegistries;
 import org.earthtime.dataDictionaries.SampleTypesEnum;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.fractions.FractionInterface;
+import org.earthtime.projects.EarthTimeSerializedFileInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.utilities.FileHelper;
 import org.earthtime.xmlUtilities.XMLSerializationI;
@@ -271,9 +278,7 @@ public interface SampleInterface {
      *
      * @return
      */
-    public default boolean isTypeLiveUpdate() {
-        return false;
-    }
+    public boolean isTypeLiveUpdate();
 
     /**
      *
@@ -347,11 +352,6 @@ public interface SampleInterface {
      * @return the calculateTWrhoForLegacyData
      */
     public abstract boolean isCalculateTWrhoForLegacyData();
-
-    /**
-     *
-     */
-    public abstract void reduceSampleData();
 
     // Aliquots **************************************************************** Aliquots ****************************************************************
     /**
@@ -478,7 +478,77 @@ public interface SampleInterface {
      * @return
      * @throws ETException
      */
-    public abstract Aliquot addNewAliquot(String aliquotName) throws ETException;
+    public default Aliquot addNewAliquot(String aliquotName) throws ETException {
+        if (getAliquotByName(aliquotName) == null) {
+            Aliquot tempAliquot;
+            tempAliquot = getAliquotByNumber(addNewDefaultAliquot());
+            if (aliquotName.length() > 0) {
+                tempAliquot.setAliquotName(aliquotName);
+            }
+
+            // dec 2011 initialize weighted mean options
+            Map<String, String> weightedMeanOptions = getSampleDateInterpretationGUISettings().getWeightedMeanOptions();
+
+            for (int i = 0; i < SampleDateTypes.getSampleDateModelTypes().length; i++) {
+                String sampleDateType = SampleDateTypes.getSampleDateType(i);
+                if (sampleDateType.startsWith("weighted")) {
+                    String aliquotFlagsString = weightedMeanOptions.get(sampleDateType);
+                    if (aliquotFlagsString == null) {
+                        aliquotFlagsString = "";
+                    }
+
+                    StringBuilder aliquotFlags = new StringBuilder(aliquotFlagsString);
+
+                    aliquotFlags.append("0");
+
+                    weightedMeanOptions.put(sampleDateType, aliquotFlags.toString());
+                }
+
+            }
+
+            return tempAliquot;
+        } else {
+            throw new ETException(null, "Sample already contains this aliquot name");
+        }
+    }
+
+    /**
+     * adds an <code>Aliquot</code> to <code>aliquots</code>. It is created with
+     * aliquot number relative to its position in the array such that the first
+     * <code>aliquot</code> in the array is given 1, the second is given 2, and
+     * so on. It is created under the file <code>Aliquot-#</code> with
+     * <code>#</code> being replaced by the same number that was given as the
+     * first paramater. The remaining fields are set to correspond to the data
+     * found in this <code>Sample</code>.
+     *
+     * @pre this <code>Sample</code> exists with proper data
+     * @post a new <code>Aliquot</code> is created and added to
+     * <code>aliquots</code> and the size of      <code>Aliquots</code> is returned
+     *
+     * @return <code>int</code> - if successful, returns the size of the array
+     * after adding the new <code>Aliquot</code>. Else, returns -1.
+     */
+    public default int addNewDefaultAliquot() {
+        int retval = -1;
+        try {
+            Aliquot tempAliquot
+                    = new UPbReduxAliquot(
+                            getAliquots().size() + 1,
+                            "Aliquot-" + Integer.toString(getAliquots().size() + 1),
+                            ReduxLabData.getInstance(),
+                            getPhysicalConstantsModel(),
+                            isAnalyzed(),
+                            getMySESARSampleMetadata());
+
+            tempAliquot.setSampleIGSN(getSampleIGSN());
+            getAliquots().add(tempAliquot);
+            setChanged(true);
+            retval = getAliquots().size();
+        } catch (BadLabDataException ex) {
+            Logger.getLogger(Sample.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return retval;
+    }
 
     /**
      *
@@ -870,22 +940,12 @@ public interface SampleInterface {
      * @param fID
      * @return
      */
-    public abstract String getAliquotNameByFractionID(
-            String fID);
+    public default String getAliquotNameByFractionID(String fID) {
+        return getAliquotByNumber(//
+                ((FractionInterface) getFractionByID(fID)).getAliquotNumber()).getAliquotName();
+    }
 
     // Fractions *************************************************************** Fractions ***************************************************************
-    /**
-     * adds a <code>Fraction</code> to the <code>Sample</code>'s set of
-     * <code>Fractions</code>.
-     *
-     * @pre this <code>Sample</code> exists
-     * @post a new default <code>Fraction</code> is added to this
-     * <code>Sample</code>'s <code>Fractions</code>
-     * @param newFraction the <code>Fraction</code> to add to this
-     * <code>Sample</code>
-     */
-    public abstract void addFraction(Fraction newFraction);
-
     /**
      * gets the <code>Fractions</code> of this <code>Sample</code>.
      *
@@ -1091,16 +1151,92 @@ public interface SampleInterface {
 
     /**
      *
+     * @param sampleName
+     */
+    public default void updateSampleFractionsWithSampleName(String sampleName) {
+        for (int i = 0; i
+                < getFractions().size(); i++) {
+            getFractions().get(i).setSampleName(sampleName);
+        }
+
+    }
+
+    /**
+     *
      * @param fractions
      * @param aliquotNumber
      */
-    public abstract void addUPbFractionVector(Vector<Fraction> fractions, int aliquotNumber);
+    public default void addFractionsVector(Vector<Fraction> fractions, int aliquotNumber) {
+        for (Fraction f : fractions) {
+            f.setSampleName(getSampleName());
+            ((FractionInterface) f).setAliquotNumber(aliquotNumber);
+            addFraction(f);
+        }
+    }
+
+    /**
+     *
+     * @param fractions
+     * @param aliquotNumber
+     */
+    public default void addUPbFractionArrayList(ArrayList<Fraction> fractions, int aliquotNumber) {
+
+        for (Fraction f : fractions) {
+            f.setSampleName(getSampleName());
+            ((FractionInterface) f).setAliquotNumber(aliquotNumber);
+            addFraction(f);
+        }
+    }
+
+    /**
+     * adds aliquot <code>UPbFraction</code> to the <code>Sample</code>'s set of
+     * <code>Fractions</code>.
+     *
+     * @pre this <code>Sample</code> exists
+     * @post a new default <code>Fraction</code> is added to this
+     * <code>Sample</code>'s <code>Fractions</code>
+     *
+     * @param newFraction the <code>Fraction</code> to add to this
+     * <code>Sample</code>
+     */
+    public default void addFraction(Fraction newFraction) {
+        getFractions().add(newFraction);
+        setChanged(true);
+    }
 
     // Sample Date Models ***************************************************************** Sample Date Models *****************************************************************
     /**
      *
      */
-    public abstract void updateSampleDateModels();
+    public default void updateSampleDateModels() {
+        // process all sampleDateModels' included fraction vectors to remove missing aliquotFractionFiles
+        Vector<String> includedFractionIDs = getSampleFractionIDs();
+        Vector<String> excludedFractionIDs = new Vector<>();
+        boolean existsPreferredDate = false;
+
+        for (ValueModel SAM : getSampleDateModels()) {
+            Vector<String> SAMFractionIDs = ((SampleDateModel) SAM).getIncludedFractionIDsVector();
+
+            for (String fractionID : SAMFractionIDs) {
+                if (!includedFractionIDs.contains(fractionID)) {
+                    excludedFractionIDs.add(fractionID);
+                }
+            }
+            // remove found exclusions (these are ones that were rejected after processing
+            excludedFractionIDs.stream().forEach((fractionID) -> {
+                ((SampleDateModel) SAM).getIncludedFractionIDsVector().remove(fractionID);
+            });
+
+            if (((SampleDateModel) SAM).isPreferred()) {
+                existsPreferredDate = true;
+            }
+        }
+
+        // guarantee preferred date model
+        if (!existsPreferredDate && (getSampleDateModels().size() > 0)) {
+            ((SampleDateModel) getSampleDateModels().get(0)).setPreferred(true);
+        }
+    }
 
     /**
      * @param sampleDateModels the sampleDateModels to set
@@ -1111,13 +1247,6 @@ public interface SampleInterface {
      * @return the sampleDateModels
      */
     public abstract Vector<ValueModel> getSampleDateModels();
-
-    /**
-     *
-     * @param modelName
-     * @return
-     */
-    public abstract ValueModel getSampleDateModelByName(String modelName);
 
     /**
      *
@@ -1182,48 +1311,100 @@ public interface SampleInterface {
         return retVal;
     }
 
-    // Report Settings ***************************************************************Report Settings ************************************************************
     /**
-     * gets the <code>reportSettingsModel</code> of this <code>Sample</code>.
      *
-     * @pre this <code>Sample</code> exists
-     * @post returns the <code>reportSettingsModel</code> of this
-     * <code>Sample</code>
-     *
-     * @return <code>ReportSettings</code> -      <code>reportSettingsModel</code> of
-     * this <code>Sample</code>
-     * @throws org.earthtime.UPb_Redux.exceptions.BadLabDataException
-     * BadLabDataException
+     * @param sampleDateModel
      */
-    public default ReportSettings getReportSettingsModelUpdatedToLatestVersion() {
-        ReportSettings reportSettingsModel = getReportSettingsModel();
-        if (reportSettingsModel == null) {
-            try {
-                reportSettingsModel = ReduxLabData.getInstance().getDefaultReportSettingsModel();
-            } catch (BadLabDataException badLabDataException) {
-            }
-        } else {
-
-            // this provides for seamless updates to reportsettings implementation
-            // new approach oct 2014
-            if (reportSettingsModel.isOutOfDate()) {
-                JOptionPane.showMessageDialog(null,
-                        new String[]{"As part of our ongoing development efforts,",
-                            "the report settings file you are using is being updated.",
-                            "You may lose some report customizations. Thank you for your patience."//,
-                        //"If you need to save aliquot copy, please re-export."
-                        });
-                String myReportSettingsName = reportSettingsModel.getName();
-                reportSettingsModel = new ReportSettings(myReportSettingsName);
-            }
+    public default void setPreferredSampleDateModel(ValueModel sampleDateModel) {
+        // set all to false
+        for (ValueModel sam : getSampleDateModels()) {
+            ((SampleDateModel) sam).setPreferred(false);
         }
 
-        //TODO http://www.javaworld.com/article/2077736/open-source-tools/xml-merging-made-easy.html
-        setLegacyStatusForReportTable();
-
-        return reportSettingsModel;
+        ((SampleDateModel) sampleDateModel).setPreferred(true);
+        Collections.sort(getSampleDateModels());
     }
 
+    /**
+     *
+     * @param sampleDateModelName
+     * @return
+     */
+    public default boolean containsSampleDateModelByName(String sampleDateModelName) {
+        boolean retVal = false;
+
+        for (ValueModel sam : getSampleDateModels()) {
+            if (sam.getName().equalsIgnoreCase(sampleDateModelName)) {
+                retVal = true;
+            }
+        }
+        return retVal;
+    }
+
+    /**
+     *
+     * @param sampleDateModelName
+     * @return
+     */
+    public default ValueModel getSampleDateModelByName(
+            String sampleDateModelName) {
+        ValueModel retVal = null;
+
+        for (ValueModel sdm : getSampleDateModels()) {
+            if (sdm.getName().equalsIgnoreCase(sampleDateModelName)) {
+                retVal = sdm;
+            }
+        }
+        return retVal;
+    }
+
+    /**
+     *
+     * @param includeSingleDates
+     * @return
+     */
+    public default Vector<ValueModel> determineUnusedSampleDateModels(boolean includeSingleDates) {
+        Vector<ValueModel> retVal = new Vector<ValueModel>();
+        // choose models not already in use by Aliquot
+        for (int i = 0; i < SampleDateTypes.getSampleDateModelTypes().length; i++) {
+            if (!includeSingleDates
+                    && SampleDateTypes.getSampleDateType(i).startsWith("single")) {
+                // do nothing
+            } else {
+                if (getSampleDateModelByName(SampleDateTypes.getSampleDateType(i)) == null) {
+                    ValueModel tempModel = null;
+
+                    if (SampleDateTypes.getSampleDateType(i).endsWith("intercept")) {
+                        tempModel = //
+                                new SampleDateInterceptModel(//
+                                        SampleDateTypes.getSampleDateType(i),
+                                        SampleDateTypes.getSampleDateTypeMethod(i),
+                                        SampleDateTypes.getSampleDateTypeName(i),
+                                        BigDecimal.ZERO,
+                                        "ABS",
+                                        BigDecimal.ZERO);
+
+                        ((SampleDateModel) tempModel).setSample(this);
+                    } else {
+                        tempModel = //
+                                new SampleDateModel(//
+                                        SampleDateTypes.getSampleDateType(i),
+                                        SampleDateTypes.getSampleDateTypeMethod(i),
+                                        SampleDateTypes.getSampleDateTypeName(i),
+                                        BigDecimal.ZERO,
+                                        "ABS",
+                                        BigDecimal.ZERO);
+
+                        ((SampleDateModel) tempModel).setSample(this);
+                    }
+                    retVal.add(tempModel);
+                }
+            }
+        }
+        return retVal;
+    }
+
+    // Report Settings ***************************************************************Report Settings ************************************************************
     /**
      *
      * @param reportSettingsModel
@@ -1235,7 +1416,10 @@ public interface SampleInterface {
      */
     public default void setLegacyStatusForReportTable() {
         // feb 2010 added legacyData field to force display when no reduction happening
-        getReportSettingsModel().setLegacyData(isAnalysisTypeCompiled() || isAnalyzed());
+        try {
+            getReportSettingsModel().setLegacyData(isAnalysisTypeCompiled() || isAnalyzed());
+        } catch (Exception e) {
+        }
     }
 
     /**
@@ -1278,17 +1462,47 @@ public interface SampleInterface {
 
     /**
      *
+     */
+    public default void restoreDefaultReportSettingsModel() {
+        try {
+            setReportSettingsModel(ReduxLabData.getInstance().getDefaultReportSettingsModel());
+        } catch (BadLabDataException badLabDataException) {
+        }
+    }
+
+    /**
+     *
      * @param reportsFolderPath
      * @return
      * @throws BadLabDataException
      */
-    public abstract String saveReportSettingsToFile(String reportsFolderPath)
-            throws BadLabDataException;
+    public default String saveReportSettingsToFile(String reportsFolderPath)
+            throws BadLabDataException {
 
-    /**
-     *
-     */
-    public abstract void restoreDefaultReportSettingsModel();
+        String retVal = "";
+
+        String dialogTitle = "Save Report Settings Model as XML file: *.xml";
+        final String fileExtension = ".xml";
+        String sampleFileName = "ReportSettings" + fileExtension;
+        FileFilter nonMacFileFilter = new XMLFileFilter();
+
+        File selectedFile = null;
+
+        selectedFile = FileHelper.AllPlatformSaveAs(
+                new Frame(),
+                dialogTitle,
+                reportsFolderPath,
+                fileExtension,
+                sampleFileName,
+                nonMacFileFilter);
+
+        if (selectedFile != null) {
+            getReportSettingsModel().serializeXMLObject(selectedFile.getAbsolutePath());
+            retVal = selectedFile.getParent();
+        }
+
+        return retVal;
+    }
 
     // Archiving *************************************************************** Archiving ***************************************************************
     /**
@@ -1363,9 +1577,9 @@ public interface SampleInterface {
     public static void saveSampleAsSerializedReduxFile(SampleInterface sample) {
         sample.setChanged(false);
 
-        for (int UPbFractionsIndex = 0; UPbFractionsIndex
-                < sample.getFractions().size(); UPbFractionsIndex++) {
-            ((FractionInterface) sample.getFractions().get(UPbFractionsIndex)).setChanged(false);
+        for (int fractionsIndex = 0; fractionsIndex
+                < sample.getFractions().size(); fractionsIndex++) {
+            ((FractionInterface) sample.getFractions().get(fractionsIndex)).setChanged(false);
         }
 
         if (sample.getReduxSampleFilePath().length() > 0) {
@@ -1539,7 +1753,7 @@ public interface SampleInterface {
      */
     void setSampleAgeInterpretationGUISettings(SampleDateInterpretationGUIOptions sampleAgeInterpretationGUISettings);
 
-    //TODO: Refactor to static
+    //TODO: Refactor to static oe other tasks
     /**
      *
      * @param sample the value of sample
@@ -1547,4 +1761,41 @@ public interface SampleInterface {
      * @throws ETException
      */
     public abstract void automaticUpdateOfUPbSampleFolder(SampleInterface sample, DialogEditor myFractionEditor) throws ETException;
+
+    /**
+     *
+     */
+    public default void reduceSampleData() {
+        for (Aliquot aliquot : getAliquots()) {
+            ((UPbReduxAliquot) aliquot).reduceData();
+
+            // oct 2014 
+            ((UPbReduxAliquot) aliquot).updateBestAge();
+        }
+    }
+
+    /**
+     * reads aliquot <code>Sample</code> from the file specified by argument
+     * <code>file</code> and returns it.
+     *
+     * @pre argument <code>file</code> specified a file containing a valid
+     * <code>Sample</code>
+     * @post returns the <code>Sample</code> read in from the file
+     *
+     * @param file the file to read aliquot <code>Sample</code> from
+     * @return <code>Sample</code> - the <code>Sample</code> that has been read
+     */
+    public static EarthTimeSerializedFileInterface getTheSampleFromSerializedReduxFile(
+            File file) {
+        return (EarthTimeSerializedFileInterface) ETSerializer.GetSerializedObjectFromFile(file.getPath());
+    }
+
+    /**
+     *
+     */
+    public default void updateSampleLabName() {
+        for (Aliquot a : getAliquots()) {
+            a.setLaboratoryName(ReduxLabData.getInstance().getLabName());
+        }
+    }
 }

@@ -82,7 +82,6 @@ import org.earthtime.UPb_Redux.dialogs.projectManagers.ProjectManagerSubscribeIn
 import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.reports.reportViews.TabbedReportViews;
-import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.dataDictionaries.DataPresentationModeEnum;
 import org.earthtime.dataDictionaries.FractionSelectionTypeEnum;
@@ -394,7 +393,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
 
         savedCountOfFractions = tripoliFractions.size();
 
-        JTabbedPane reportTableTabbedPane = new TabbedReportViews(getuPbReduxFrame(), (Sample) project.getSuperSample());
+        JTabbedPane reportTableTabbedPane = new TabbedReportViews(getuPbReduxFrame(), project.getSuperSample());
         ((TabbedReportViews) reportTableTabbedPane).initializeTabs();
         ((TabbedReportViews) reportTableTabbedPane).prepareTabs();
 
@@ -475,7 +474,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
         }
 
         if (savedCountOfFractions == 0) {
-            concordiaGraphPanel = new ConcordiaGraphPanel((Sample) project.getSuperSample(), null);
+            concordiaGraphPanel = new ConcordiaGraphPanel(project.getSuperSample(), null);
 
             ((ConcordiaGraphPanel) concordiaGraphPanel).setCurrentGraphAxesSetup(new GraphAxesSetup("C", 2));
 
@@ -543,10 +542,10 @@ project.getSuperSample().getFractions();
             this.remove(kwikiPDFToolBar);
         }
 
-        probabilityPanel = new DateProbabilityDensityPanel((Sample) project.getSuperSample());
+        probabilityPanel = new DateProbabilityDensityPanel(project.getSuperSample());
 
         ((DateProbabilityDensityPanel) probabilityPanel).//
-                setSelectedFractions(filterActiveUPbFractions(((Sample) project.getSuperSample()).getUpbFractionsUnknown()));//.getFractionsActive()));
+                setSelectedFractions(filterActiveUPbFractions(project.getSuperSample().getUpbFractionsUnknown()));
 
         probabilityPanel.setBounds(1355, topMargin + 60, pdfWidth, pdfHeight - 5);
 

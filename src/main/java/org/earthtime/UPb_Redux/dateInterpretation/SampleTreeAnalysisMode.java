@@ -32,6 +32,7 @@ import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import org.earthtime.UPb_Redux.aliquots.Aliquot;
@@ -43,11 +44,11 @@ import org.earthtime.UPb_Redux.customJTrees.CheckBoxNodeRenderer;
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.dialogs.sampleManagers.sampleDateInterpretationManagers.SampleDateInterpretationChooserDialog;
 import org.earthtime.UPb_Redux.fractions.Fraction;
-import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
-import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
+import org.earthtime.UPb_Redux.valueModels.ValueModelI;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
+import org.earthtime.fractions.FractionInterface;
 import org.earthtime.samples.SampleInterface;
 
 /**
@@ -94,18 +95,19 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
         // oct 2014
         ((DefaultMutableTreeNode) getModel().getRoot()).removeAllChildren();
 
-        DefaultMutableTreeNode aliquotNode = null;
+        DefaultMutableTreeNode aliquotNode;
         this.removeAll();
 
         // populate tree
+        // todo: just walk aliquots now that ths mapping is fixed (may 2015)
         int saveAliquotNum = -1;
         for (int i = 0; i < sample.getFractions().size(); i++) {
             Fraction tempFraction = sample.getFractions().get(i);
-            Aliquot tempAliquot = null;
+            Aliquot tempAliquot;
 
-            if (!((UPbFractionI) tempFraction).isRejected()) {
-                if (saveAliquotNum != ((UPbFractionI) tempFraction).getAliquotNumber()) {
-                    saveAliquotNum = ((UPbFractionI) tempFraction).getAliquotNumber();
+            if (!((FractionInterface) tempFraction).isRejected()) {
+                if (saveAliquotNum != ((FractionInterface) tempFraction).getAliquotNumber()) {
+                    saveAliquotNum = ((FractionInterface) tempFraction).getAliquotNumber();
 
                     tempAliquot = sample.getAliquotByNumber(saveAliquotNum);
                     aliquotNode = new DefaultMutableTreeNode(tempAliquot);
@@ -178,8 +180,6 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
         }
 
         getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-//        getSelectionModel().setSelectionMode(
-//                TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
 
         //Listen for when the selection changes.
         addTreeSelectionListener(this);
@@ -248,12 +248,12 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
         //sampleTreeChange.sampleTreeChangeAnalysisMode(node);
         //  see below setSelectionRow(-1);
 
-        if (nodeInfo instanceof Sample) {
-            System.out.println(((Sample) nodeInfo).getSampleName());
+        if (nodeInfo instanceof SampleInterface) {
+            System.out.println(((SampleInterface) nodeInfo).getSampleName());
         } else if (nodeInfo instanceof Aliquot) {
             System.out.println(((Aliquot) nodeInfo).getAliquotName());
         } else if (nodeInfo instanceof ValueModel) {
-            System.out.println(((ValueModel) nodeInfo).getName());
+            System.out.println(((ValueModelI) nodeInfo).getName());
         } else if (nodeInfo instanceof CheckBoxNode) {
             System.out.println(((CheckBoxNode) nodeInfo).toString());
             // required for toggling because it allows re-focus
@@ -287,25 +287,25 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
 
         Object o = ((DefaultMutableTreeNode) value).getUserObject();
 
-        if (o instanceof Sample) {
-            return ((Sample) o).getSampleName();
+        if (o instanceof SampleInterface) {
+            return ((SampleInterface) o).getSampleName();
         } else if (o instanceof Aliquot) {
             return ((Aliquot) o).getAliquotName();
         } else if (o instanceof ValueModel) {
             if (((SampleDateModel) o).isPreferred()) {
-                return "PREFERRED: " + ((SampleDateModel) o).getName();
+                return "PREFERRED: " + ((ValueModelI) o).getName();
             } else {
                 // adding spaces provides for extra chars when needed
-                return ((ValueModel) o).getName() + "        ";
+                return ((ValueModelI) o).getName() + "        ";
             }
         } else if ((o instanceof String) && (((String) o).startsWith("date"))) {
             return //                
-                    ((SampleDateModel) ((DefaultMutableTreeNode) ((DefaultMutableTreeNode) value).//
+                    ((SampleDateModel) ((DefaultMutableTreeNode) ((TreeNode) value).//
                     getParent()).getUserObject()).ShowCustomDateNode();
 
         } else if ((o instanceof String) && (((String) o).startsWith("MSWD"))) {
             return //                
-                    ((SampleDateModel) ((DefaultMutableTreeNode) ((DefaultMutableTreeNode) value).//
+                    ((SampleDateModel) ((DefaultMutableTreeNode) ((TreeNode) value).//
                     getParent()).getUserObject()).ShowCustomMSWDwithN() + "              ";
 
         } else {
@@ -339,9 +339,9 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
 
         if (((DefaultMutableTreeNode) getLastNodeSelected()).getUserObject() instanceof CheckBoxNode) {
             DefaultMutableTreeNode parentNode
-                    = (DefaultMutableTreeNode) ((DefaultMutableTreeNode) getLastNodeSelected()).getParent();
+                    = (DefaultMutableTreeNode) ((TreeNode) getLastNodeSelected()).getParent();
             DefaultMutableTreeNode sampleAgeNode
-                    = (DefaultMutableTreeNode) ((DefaultMutableTreeNode) parentNode).getParent();
+                    = (DefaultMutableTreeNode) parentNode.getParent();
             getSampleTreeChange().sampleTreeChangeAnalysisMode(sampleAgeNode);
         }
     }
@@ -527,7 +527,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
 
                             if (otherInterceptNodeInfo != null) {
                                 // this is the special case where the two intercept nodes were removed
-                                ((AliquotI) aliquotNodeInfo).getSampleDateModels().remove((ValueModel) nodeInfo);
+                                ((AliquotI) aliquotNodeInfo).getSampleDateModels().remove(nodeInfo);
                                 ((AliquotI) aliquotNodeInfo).getSampleDateModels().remove((ValueModel) otherInterceptNodeInfo);
                                 SampleInterface.updateAndSaveSampleDateModelsByAliquot(sample);
 
@@ -554,10 +554,10 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
 
                             if (((SampleDateModel) nodeInfo).getMethodName().startsWith("WM")) {
                                 String aliquotFlags = sample.getSampleDateInterpretationGUISettings().getWeightedMeanOptions().//
-                                        get(((SampleDateModel) nodeInfo).getName());
+                                        get(((ValueModelI) nodeInfo).getName());
                                 aliquotFlags = setAliquotFlag(aliquotFlags, ((UPbReduxAliquot) aliquotNodeInfo).getAliquotNumber() - 1, "0");
                                 sample.getSampleDateInterpretationGUISettings().getWeightedMeanOptions().//
-                                        put(((SampleDateModel) nodeInfo).getName(), aliquotFlags);
+                                        put(((ValueModelI) nodeInfo).getName(), aliquotFlags);
                             }
 
                             getSampleTreeChange().sampleTreeChangeAnalysisMode(aliquotNode);

@@ -122,9 +122,6 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_GenericUPbIsotopic_A exte
 
                         try {
                             currentSample = new Sample(//
-                                    //
-                                    //
-                                    //
                                     myFractionData.get(0), //
                                     SampleTypesEnum.LEGACY.getName(), //
                                     "GENERIC_UPb", //
@@ -133,7 +130,7 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_GenericUPbIsotopic_A exte
 
                             projectSamples.add(currentSample);
 
-                            currentAliquot = ((Sample) currentSample).addNewAliquot(myFractionData.get(0));
+                            currentAliquot = currentSample.addNewAliquot(myFractionData.get(0));
 
                             readingFractions = true;
 
@@ -148,9 +145,6 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_GenericUPbIsotopic_A exte
                 }
 
                 if (readingFractions) {
-                    // process fraction line
-//                    System.out.println( "Reading Fraction " + myFractionData.get( 0 ) );
-
                     Fraction myFraction = new UPbLegacyFraction("NONE");
 
                     ((UPbFractionI) myFraction).setRatioType("UPb");

@@ -48,6 +48,7 @@ import org.earthtime.dataDictionaries.Lambdas;
 import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.dataDictionaries.ReportSpecifications;
 import org.earthtime.exceptions.ETException;
+import org.earthtime.reports.ReportSettingsInterface;
 import org.earthtime.samples.SampleInterface;
 import org.earthtime.xmlUtilities.XMLSerializationI;
 
@@ -57,6 +58,7 @@ import org.earthtime.xmlUtilities.XMLSerializationI;
  */
 public class ReportSettings implements
         Comparable<ReportSettings>,
+        ReportSettingsInterface,
         XMLSerializationI,
         Serializable,
         ReduxLabDataListElementI {
@@ -1199,24 +1201,6 @@ public class ReportSettings implements
         reportCategories.stream().filter((rc) -> (rc != null)).forEach((rc) -> {
             rc.setLegacyData(legacyData);
         });
-
-//        fractionCategory.setLegacyData(legacyData);
-//
-//        compositionCategory.setLegacyData(legacyData);
-//
-//        isotopicRatiosCategory.setLegacyData(legacyData);
-//
-//        datesCategory.setLegacyData(legacyData);
-//
-//        rhosCategory.setLegacyData(legacyData);
-//
-//        traceElementsCategory.setLegacyData(legacyData);
-//
-//        isotopicRatiosPbcCorrCategory.setLegacyData(legacyData);
-//
-//        datesPbcCorrCategory.setLegacyData(legacyData);
-//
-//        fractionCategory2.setLegacyData(legacyData);
     }
 
     /**

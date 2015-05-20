@@ -294,7 +294,7 @@ public abstract class AbstractSampleLegacyManagerDialog extends DialogEditor {
                 // bulk mode
                 try {
                     converter.setMruFolder( importFractionFolderMRU );
-                    mySample.addUPbFractionVector( converter.readInFractions(), myAliquotNumber );
+                    mySample.addFractionsVector( converter.readInFractions(), myAliquotNumber );
                     myAliquot.setAliquotName( converter.getAliquotName() );
                     setInitialized( true );
                     getMySample().setChanged( true );

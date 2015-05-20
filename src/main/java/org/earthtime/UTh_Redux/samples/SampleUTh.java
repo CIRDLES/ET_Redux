@@ -16,6 +16,7 @@
 package org.earthtime.UTh_Redux.samples;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.Vector;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.aliquots.Aliquot;
@@ -30,6 +31,7 @@ import org.earthtime.UPb_Redux.user.SampleDateInterpretationGUIOptions;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.dataDictionaries.SampleRegistries;
 import org.earthtime.exceptions.ETException;
+import org.earthtime.projects.EarthTimeSerializedFileInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.samples.SampleInterface;
 
@@ -37,7 +39,10 @@ import org.earthtime.samples.SampleInterface;
  *
  * @author James F. Bowring <bowring at gmail.com>
  */
-public class SampleUTh implements SampleInterface {
+public class SampleUTh implements 
+        SampleInterface,
+        Serializable,
+        EarthTimeSerializedFileInterface  {
 
     @Override
     public void setUpSample(ReduxLabData myLabData) {
@@ -140,11 +145,6 @@ public class SampleUTh implements SampleInterface {
     }
 
     @Override
-    public boolean isAnalysisTypeCompiled() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public boolean isSampleTypeLiveWorkflow() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
@@ -195,11 +195,6 @@ public class SampleUTh implements SampleInterface {
     }
 
     @Override
-    public void reduceSampleData() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public Vector<Aliquot> getAliquots() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
@@ -210,37 +205,12 @@ public class SampleUTh implements SampleInterface {
     }
 
     @Override
-    public Aliquot addNewAliquot(String aliquotName) throws ETException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public String getAliquotNameByFractionID(String fID) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void addFraction(Fraction newFraction) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public Vector<Fraction> getFractions() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void setUPbFractions(Vector<Fraction> UPbFractions) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void deSelectAllFractions() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void updateSampleDateModels() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -266,16 +236,6 @@ public class SampleUTh implements SampleInterface {
 
     @Override
     public ReportSettings getReportSettingsModel() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public String saveReportSettingsToFile(String reportsFolderPath) throws BadLabDataException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void restoreDefaultReportSettingsModel() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -365,13 +325,7 @@ public class SampleUTh implements SampleInterface {
     }
 
     @Override
-    public void addUPbFractionVector(Vector<Fraction> fractions, int aliquotNumber) {
+    public void addFractionsVector(Vector<Fraction> fractions, int aliquotNumber) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
-    @Override
-    public ValueModel getSampleDateModelByName(String modelName) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
 }

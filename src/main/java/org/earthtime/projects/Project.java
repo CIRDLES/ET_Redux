@@ -218,7 +218,7 @@ public class Project implements
 
                     projectSamples.add(sample);
 
-                    Aliquot aliquot = ((Sample) sample).addNewAliquot(tripoliSample.getSampleName());
+                    Aliquot aliquot = sample.addNewAliquot(tripoliSample.getSampleName());
                     System.out.println("New Aliquot is # " + ((UPbReduxAliquot) aliquot).getAliquotNumber() + " = " + aliquot.getAliquotName());
 
                     SortedSet<TripoliFraction> tripoliSampleFractions = tripoliSample.getSampleFractions();
