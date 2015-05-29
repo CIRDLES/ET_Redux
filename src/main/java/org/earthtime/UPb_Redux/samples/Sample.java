@@ -31,7 +31,6 @@ import javax.swing.JOptionPane;
 import org.earthtime.Tripoli.sessions.TripoliSession;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.ReduxConstants.ANALYSIS_PURPOSE;
-import org.earthtime.UPb_Redux.aliquots.Aliquot;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetup;
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
@@ -48,6 +47,7 @@ import org.earthtime.UPb_Redux.reports.ReportSettings;
 import org.earthtime.UPb_Redux.user.SampleDateInterpretationGUIOptions;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
+import org.earthtime.aliquots.AliquotI;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.dataDictionaries.MineralTypes;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
@@ -114,7 +114,7 @@ public class Sample implements
      * the collection of aliquots created for this <code>Sample</code>;
      * contained in aliquot vector for thread safety
      */
-    private Vector<Aliquot> aliquots;
+    private Vector<AliquotI> aliquots;
     /**
      * collection of individual aliquotFractionFiles within this
      * <code>Sample</code>.
@@ -327,7 +327,7 @@ public class Sample implements
         }
 
         // May 2010 update sampleAnalysisType in preparation for LAICPMS analysis
-        if (isTypeAnalysis() && getSampleAnalysisType().equals("")) {
+        if (isSampleTypeAnalysis() && getSampleAnalysisType().equals("")) {
             setSampleAnalysisType(SampleAnalysisTypesEnum.IDTIMS.getName());
         }
 
@@ -338,7 +338,7 @@ public class Sample implements
         // down to all Aliquots
         updateWithRegistrySampleIGSN();
 
-        if (!isTypeLegacy()) {
+        if (!isSampleTypeLegacy()) {
             SampleInterface.registerSampleWithLabData(this);
         } else {
 
@@ -400,7 +400,7 @@ public class Sample implements
         }
 
         // June 2010 be sure lab name is updated to labdata labname when used in reduction
-        if (isTypeAnalysis() || isTypeLiveUpdate() || isTypeLegacy()) {
+        if (isSampleTypeAnalysis() || isSampleTypeLiveWorkflow() || isSampleTypeLegacy()) {
             updateSampleLabName();
         }
 
@@ -420,7 +420,7 @@ public class Sample implements
         initializeDefaultUPbFraction(defFraction);
 
         // sept 2010 add Aliquot defaults
-        Aliquot aliquot = getAliquotByNumber(aliquotNumber);
+        AliquotI aliquot = getAliquotByNumber(aliquotNumber);
         ReduxLabData labData = ((UPbReduxAliquot) aliquot).getMyReduxLabData();
 
         String tracerID = ((UPbReduxAliquot) aliquot).getDefaultTracerID();
@@ -674,7 +674,7 @@ public class Sample implements
 
         // determine aliquot number
         if (aliquotFractionFiles.length > 0) {
-            Aliquot aliquot = getAliquotByName(aliquotFolder.getName());
+            AliquotI aliquot = getAliquotByName(aliquotFolder.getName());
             if (aliquot == null) {
                 // check if last aliquot was empty (i.e. the initial first dummy aliquot)
                 if (((UPbReduxAliquot) aliquots.get(aliquots.size() - 1)).getAliquotFractions().isEmpty()) {
@@ -1201,7 +1201,7 @@ public class Sample implements
      * <code>Sample</code>
      */
     @Override
-    public Vector<Aliquot> getAliquots() {
+    public Vector<AliquotI> getAliquots() {
         return aliquots;
     }
 
@@ -1218,7 +1218,7 @@ public class Sample implements
      * <code>Sample</code> will be set
      */
     @Override
-    public void setAliquots(Vector<Aliquot> aliquots) {
+    public void setAliquots(Vector<AliquotI> aliquots) {
         this.aliquots = aliquots;
     }
 
@@ -1227,9 +1227,9 @@ public class Sample implements
      */
     public void repairAliquotNumberingDec2011() {
         // walk aliquots and remove empty ones 
-        ArrayList<Aliquot> aliquotsToDelete = new ArrayList<>();
+        ArrayList<AliquotI> aliquotsToDelete = new ArrayList<>();
         for (int i = 0; i < aliquots.size(); i++) {
-            Aliquot aliquot = aliquots.get(i);//    Feb 2015 getAliquotByNumber(i + 1);
+            AliquotI aliquot = aliquots.get(i);//    Feb 2015 getAliquotByNumber(i + 1);
             if (((UPbReduxAliquot) aliquot).getAliquotFractions().isEmpty()) {
                 // save aliquot for later deletion
                 aliquotsToDelete.add(aliquot);
@@ -1244,7 +1244,7 @@ public class Sample implements
 
         // renumber remaining aliquots
         for (int i = 0; i < aliquots.size(); i++) {
-            Aliquot aliquot = aliquots.get(i);
+            AliquotI aliquot = aliquots.get(i);
             ((UPbReduxAliquot) aliquot).setAliquotNumber(i + 1);
 
             Vector<Fraction> aliquotFractions = ((UPbReduxAliquot) aliquot).getAliquotFractions();
@@ -1295,8 +1295,8 @@ public class Sample implements
             this.physicalConstantsModel = physicalConstantsModel;
             this.setChanged(true);
             // all existing UPbAliquots must be updated (they in turn update aliquotFractionFiles)
-            for (Aliquot aliquot : aliquots) {
-                Aliquot nextAliquot = getAliquotByNumber(((UPbReduxAliquot) aliquot).getAliquotNumber());
+            for (AliquotI aliquot : aliquots) {
+                AliquotI nextAliquot = getAliquotByNumber(((UPbReduxAliquot) aliquot).getAliquotNumber());
                 try {
                     nextAliquot.setPhysicalConstants(getPhysicalConstantsModel());
 
@@ -1318,14 +1318,6 @@ public class Sample implements
     @Override
     public String getSampleType() {
         return sampleType;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public boolean isSampleTypeLiveWorkflow() {
-        return sampleType.equalsIgnoreCase(SampleTypesEnum.LIVEWORKFLOW.getName());
     }
 
     /**
@@ -1357,25 +1349,7 @@ public class Sample implements
      * @return
      */
     @Override
-    public boolean isTypeAnalysis() {
-        return (sampleType.equalsIgnoreCase(SampleTypesEnum.ANALYSIS.getName()));
-    }
-
-    /**
-     *
-     * @return
-     */
-    @Override
-    public boolean isTypeLiveUpdate() {
-        return (sampleType.equalsIgnoreCase(SampleTypesEnum.LIVEWORKFLOW.getName()));
-    }
-
-    /**
-     *
-     * @return
-     */
-    @Override
-    public boolean isTypeProject() {
+    public boolean isSampleTypeProject() {
         return (sampleType.equalsIgnoreCase(SampleTypesEnum.PROJECT.getName()));
     }
 
@@ -1703,22 +1677,18 @@ public class Sample implements
      * @return
      */
     protected Object readResolve() {
-        if (sampleAnalysisType == null) {
-            // flip meaning of analyzed on older files - it now means analyzed as in legacy
-            if (!analyzed) {
-                sampleAnalysisType = SampleAnalysisTypesEnum.COMPILED.getName();
-                analyzed = true;
-            } else {
-                sampleAnalysisType = SampleAnalysisTypesEnum.IDTIMS.getName();
-                analyzed = false;
-            }
-
-            System.out.println("Sample backward compatibility readResolve set sampleAnalysisType to: " + sampleAnalysisType + "  and analyzed to : " + analyzed);
-        } else if (sampleAnalysisType.compareToIgnoreCase(SampleAnalysisTypesEnum.COMPILED.getName()) == 0) {
-            analyzed = true;
-
-            System.out.println("Sample backward compatibility readResolve set analyzed to true for compiled sample");
+        if ((sampleAnalysisType == null) && !analyzed && isSampleTypeAnalysis()) {
+            // backward compatible
+            sampleAnalysisType = SampleAnalysisTypesEnum.IDTIMS.getName();
         }
+
+        if ((sampleAnalysisType == null) && isSampleTypeCompilation()) {
+            sampleAnalysisType = SampleAnalysisTypesEnum.COMPILED.getName();
+            analyzed = true;
+        }
+
+        System.out.println("Sample backward compatibility readResolve set sampleAnalysisType to: " //
+                + sampleAnalysisType + "  with analyzed = " + analyzed);
 
         return this;
     }

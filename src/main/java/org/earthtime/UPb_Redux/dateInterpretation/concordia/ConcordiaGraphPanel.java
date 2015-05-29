@@ -63,7 +63,6 @@ import org.apache.batik.dom.GenericDOMImplementation;
 import org.apache.batik.svggen.SVGGraphics2D;
 import org.apache.batik.svggen.SVGGraphics2DIOException;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.aliquots.Aliquot;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.DateInterpretationBoxPanel;
 import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetup;
@@ -80,6 +79,7 @@ import org.earthtime.UPb_Redux.valueModels.SampleDateInterceptModel;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UPb_Redux.valueModels.definedValueModels.Age207_206r;
+import org.earthtime.aliquots.AliquotI;
 import org.earthtime.dataDictionaries.Lambdas;
 import org.earthtime.dataDictionaries.RadRatiosPbcCorrected;
 import org.earthtime.exceptions.ETWarningDialog;
@@ -147,7 +147,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
     private JLayeredPane heatMapLegendPanel;
     //oct 2014
     private transient double currentBestDate;
-    private transient Aliquot curAliquot;
+    private transient AliquotI curAliquot;
     private transient boolean changingBestDateDivider;
     private transient ReportUpdaterInterface reportUpdater;
 
@@ -999,7 +999,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
     }
 
     private void plotYorkBestFitLineAndUncertainty(
-            Aliquot curAliquot,
+            AliquotI curAliquot,
             Graphics2D g2d,
             float interceptLineWeight,
             Color interceptLineColor,
@@ -2760,7 +2760,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
     private void setAliquotOptions(Map<String, Map<String, String>> aliquotOptions) {
         // here we scan the sample and make sure there are aliquot options for each aliquot
         SampleDateInterpretationGUIOptions myOptions = sample.getSampleDateInterpretationGUISettings();
-        for (Aliquot a : sample.getActiveAliquots()) {
+        for (AliquotI a : sample.getActiveAliquots()) {
             // this finds or creates an aliquotOptions map
             myOptions.getAliquotOptionsMapByName(a.getAliquotName(), ((UPbReduxAliquot) a).getAliquotNumber());
         }

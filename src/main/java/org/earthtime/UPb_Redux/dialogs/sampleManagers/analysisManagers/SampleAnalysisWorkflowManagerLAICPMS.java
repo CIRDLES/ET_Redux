@@ -53,10 +53,10 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.text.JTextComponent;
 import org.earthtime.ETReduxFrame;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.ReduxConstants.ANALYSIS_PURPOSE;
-import org.earthtime.UPb_Redux.aliquots.Aliquot;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.dialogs.DialogEditor.BigDecimalDocument;
@@ -70,6 +70,7 @@ import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.renderers.EditFractionButton;
 import org.earthtime.UPb_Redux.samples.UPbSampleInterface;
 import org.earthtime.UPb_Redux.utilities.comparators.IntuitiveStringComparator;
+import org.earthtime.aliquots.AliquotI;
 import org.earthtime.dataDictionaries.SampleRegistries;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
@@ -90,7 +91,7 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
      */
     protected static Font dropDownFont = new Font("SansSerif", Font.BOLD, 11);
     private SampleInterface mySample = null;
-    private Aliquot myCurrentAliquot;
+    private AliquotI myCurrentAliquot;
     private File importedXMLFractionsFolder;
     private File sampleFolder;
     private File sampleMetaDataFolder;
@@ -264,7 +265,7 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
      *
      * @param aliquot
      */
-    public void initAliquot(final Aliquot aliquot) {
+    public void initAliquot(final AliquotI aliquot) {
 
         fastEdits_panel.removeAll();
 
@@ -687,7 +688,7 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
         buildFastEditDisplayPanel();
     }
 
-    private void showSavedDataII(Aliquot aliquot) {
+    private void showSavedDataII(AliquotI aliquot) {
         // default master fields
 //        masterZirconCaseCheckBox.setSelected( ((UPbReduxAliquot) aliquot).getDefaultIsZircon() );
 //
@@ -720,7 +721,7 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
         }
     }
 
-    private void addNewFractionRow(Aliquot aliquot, Fraction fraction) {
+    private void addNewFractionRow(AliquotI aliquot, Fraction fraction) {
         int row = fractionID.size();
 
         addFractionRow(aliquot, fraction, row, row + 1);
@@ -738,7 +739,7 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
         buildFastEditDisplayPanel();
     }
 
-    private void addFractionRow(Aliquot aliquot, Fraction tempFrac, int row, int max) {
+    private void addFractionRow(AliquotI aliquot, Fraction tempFrac, int row, int max) {
 
 //        // Buttons to allow deletion of fractions
 //        JButton tempJB = new EditFractionButton( "X", row, true );
@@ -1259,7 +1260,7 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
                 aliquotName_text.setText((String) list.getSelectedValue());
 
                 // decide if empty else process aliquot by name
-                Aliquot aliquot = mySample.getAliquotByName((String) list.getSelectedValue());
+                AliquotI aliquot = mySample.getAliquotByName((String) list.getSelectedValue());
                 if (aliquot != null) {
                     if (myCurrentAliquot != null) {
                         saveAliquot(myCurrentAliquot);
@@ -1283,11 +1284,11 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
     class deleteFractionListener implements ActionListener {
 
         private SampleInterface sample;
-        private Aliquot aliquot;
+        private AliquotI aliquot;
         private Fraction fraction;
         private int row;
 
-        public deleteFractionListener(SampleInterface sample, Aliquot aliquot, Fraction fraction, int row) {
+        public deleteFractionListener(SampleInterface sample, AliquotI aliquot, Fraction fraction, int row) {
             this.sample = sample;
             this.aliquot = aliquot;
             this.fraction = fraction;
@@ -1298,8 +1299,9 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
             return fraction;
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
-            sample.removeUPbReduxFraction((UPbFraction) fraction);
+            sample.removeUPbReduxFraction(fraction);
             removeFractionRow(aliquot, row);
 
             // be sure aliquot has upbfractions too
@@ -1504,7 +1506,7 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
 
     }
 
-    private void removeFractionRow(Aliquot aliquot, int row) {
+    private void removeFractionRow(AliquotI aliquot, int row) {
 //        fractionDeleteButtons.remove( row );
         fractionNoteButtons.remove(row);
         fractionID.remove(row);
@@ -1714,8 +1716,8 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
             }
         }
 
-        Vector<Aliquot> aliquots = mySample.getActiveAliquots();
-        for (Aliquot a : aliquots) {
+        Vector<AliquotI> aliquots = mySample.getActiveAliquots();
+        for (AliquotI a : aliquots) {
             a.setAnalysisPurpose(mySample.getAnalysisPurpose());
         }
 
@@ -1728,7 +1730,7 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
         }
     }
 
-    private void saveAliquot(Aliquot aliquot) {
+    private void saveAliquot(AliquotI aliquot) {
 
         // master fields
         ((UPbReduxAliquot) aliquot).setDefaultIsZircon(masterZirconCaseCheckBox.isSelected());
@@ -1754,103 +1756,21 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
 
     }
 
-    private void saveAliquotFraction(Aliquot aliquot, Fraction tempFrac)
+    private void saveAliquotFraction(AliquotI aliquot, Fraction tempFrac)
             throws NumberFormatException {
 
         // set temp variable for fractionation correction both u and Pb to use in locking fields
-        boolean fraCorrU = ((UPbFraction) tempFrac).isFractionationCorrectedU();//.getMeanAlphaU().compareTo( BigDecimal.ZERO ) != 0);
-        boolean fraCorrPb = ((UPbFraction) tempFrac).isFractionationCorrectedPb();//.getMeanAlphaPb().compareTo( BigDecimal.ZERO ) != 0);
+        boolean fraCorrU = tempFrac.isFractionationCorrectedU();//.getMeanAlphaU().compareTo( BigDecimal.ZERO ) != 0);
+        boolean fraCorrPb = tempFrac.isFractionationCorrectedPb();//.getMeanAlphaPb().compareTo( BigDecimal.ZERO ) != 0);
 
         int row = ((UPbReduxAliquot) aliquot).getAliquotFractions().indexOf(tempFrac);
 
         // fractionID
-        if (((JTextField) fractionID.get(row)).getText().trim().length() > 0) {
-            tempFrac.setFractionID(((JTextField) fractionID.get(row)).getText().trim());
+        if (((JTextComponent) fractionID.get(row)).getText().trim().length() > 0) {
+            tempFrac.setFractionID(((JTextComponent) fractionID.get(row)).getText().trim());
             tempFrac.setGrainID(tempFrac.getFractionID());
         }
 
-//        // feb 2009
-//        // test zircon state change for ReductionHandler
-//        if ( tempFrac.isZircon() != ((JCheckBox) fractionZirconCheckBox.get( row )).isSelected() ) {
-//            tempFrac.setZircon( ((JCheckBox) fractionZirconCheckBox.get( row )).isSelected() );
-//            ((UPbFraction) tempFrac).initializeReductionHandler();
-//        }
-//
-//        // check for locked down tracer first
-//        if (allowTracerChange_checkbox.isSelected() || (  ! (fraCorrU || fraCorrPb) ) ){
-//            try {
-//                AbstractRatiosDataModel tracer = null;
-//                tracer = ((UPbFraction) tempFrac).getMyLabData().//
-//                        getATracerModel( (String) fractionTracerChoice.get( row ).getSelectedItem() );
-//                ((UPbFraction) tempFrac).setTracer( tracer );
-//            } catch (BadLabDataException ex) {
-//                ex.printStackTrace();
-//            }
-//        }
-//        // set fractions to Aliquot's default fractionation models
-//        try {
-//            ValueModel noneAlphaPb = ((UPbFraction) tempFrac).getMyLabData().getNoneAlphaPbModel();
-//            if ( ((UPbFraction) tempFrac).needsAlphaPbModel() ) {
-//                if ( ((UPbFraction) tempFrac).getAlphaPbModel().equals( noneAlphaPb ) ) {
-//                    ValueModel alphaPb = //
-//                            ((UPbFraction) tempFrac).getMyLabData().getAnAlphaPbModel( ((UPbReduxAliquot) aliquot).getDefaultAlphaPbModelID() );
-//                    ((UPbFraction) tempFrac).setAlphaPbModel( alphaPb );
-//                }
-//            } else {
-//                // does not need alphaPb model
-//                ((UPbFraction) tempFrac).setAlphaPbModel( noneAlphaPb );
-//            }
-//        } catch (BadLabDataException badLabDataException) {
-//        }
-//
-//        try {
-//            ValueModel noneAlphaU = ((UPbFraction) tempFrac).getMyLabData().getNoneAlphaUModel();
-//            if ( ((UPbFraction) tempFrac).needsAlphaUModel() ) {
-//                if ( ((UPbFraction) tempFrac).getAlphaUModel().equals( noneAlphaU ) ) {
-//                    ValueModel alphaU = //
-//                            ((UPbFraction) tempFrac).getMyLabData().getAnAlphaUModel( ((UPbReduxAliquot) aliquot).getDefaultAlphaUModelID() );
-//                    ((UPbFraction) tempFrac).setAlphaUModel( alphaU );
-//                }
-//            } else {
-//                // does not need alphaU model
-//                ((UPbFraction) tempFrac).setAlphaUModel( noneAlphaU );
-//            }
-//
-//            // handles auto-u generation case
-//            ((UPbFraction) tempFrac).setInputAlphaU( ((UPbFraction) tempFrac).getAlphaUModel() );
-//
-//        } catch (BadLabDataException badLabDataException) {
-//        }
-//        tempFrac.getAnalysisMeasure( AnalysisMeasures.tracerMassInGrams.getName() )//
-//                .setValue( new BigDecimal( ((JTextField) fractionTracerMassText.get( row )).getText() ) );
-//
-//        tempFrac.getAnalysisMeasure( AnalysisMeasures.fractionMass.getName() )//
-//                .setValue( new BigDecimal( ((JTextField) fractionMassText.get( row )).getText() ) );
-//
-//        try {
-//            AbstractRatiosDataModel pbBlank = ((UPbFraction) tempFrac).getMyLabData().//
-//                    getAPbBlankModel( (String) fractionPbBlankChoice.get( row ).getSelectedItem() );
-//            ((UPbFraction) tempFrac).setPbBlank( pbBlank );
-//        } catch (BadLabDataException ex) {
-//        }
-//
-//        // set special fields for Stacey Kramers
-//        tempFrac.setEstimatedDate( new BigDecimal( ((JTextField) fractionEstDateText.get( row )).getText() ) );
-//
-//
-//        try {
-//            AbstractRatiosDataModel initialPbModel = ((UPbFraction) tempFrac).getMyLabData().//
-//                    getAnInitialPbModel( (String) fractionInitialPbChoice.get( row ).getSelectedItem() );
-//            ((UPbFraction) tempFrac).setInitialPbModel( initialPbModel );
-//
-//            ((UPbFraction) tempFrac).calculateStaceyKramersInitialPbModelValues();
-//
-//        } catch (BadLabDataException ex) {
-//        }
-//        // set fraction's pbBlankMass
-//        tempFrac.getAnalysisMeasure( AnalysisMeasures.pbBlankMassInGrams.getName() ).//
-//                setValue( new BigDecimal( ((JTextField) fractionPbBlankMassText.get( row )).getText() ).//
-//                movePointLeft( 12 ) );
         // better safe than sorry for now
         ((UPbFractionI) tempFrac).setChanged(true);
 
@@ -2027,23 +1947,6 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
         }
     }
 
-////    private Aliquot prepareAliquotForFractions() {
-////        Aliquot tempA = null;
-////        // update status by saving changes to aliquot name if user forgot to
-////        if (addOrEditAliquotName()) {
-////
-////            // detect if aliquot has already been added
-////            tempA = mySample.getAliquotByName(aliquotName_text.getText().trim());
-////            if (tempA == null) {
-////                try {
-////                    tempA = mySample.addNewAliquot(aliquotName_text.getText().trim());
-////                } catch (ETException eTException) {
-////                }
-////            }
-////        }
-////
-////        return tempA;
-////    }
     private void completeAliquotFractionsUpdate(int aliquotNumber) {
         // this call updates aliquot with labdata and fractions
         // TODO: refactor this call and similar ones for law of demeter

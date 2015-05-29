@@ -18,7 +18,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.earthtime.UPb_Redux.aliquots;
+package org.earthtime.archivingTools;
 
 import java.io.Serializable;
 import org.earthtime.dataDictionaries.AnalysisImageTypes;

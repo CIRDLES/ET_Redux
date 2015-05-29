@@ -24,7 +24,6 @@ import java.io.Serializable;
 import java.util.Vector;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.ReduxConstants.ANALYSIS_PURPOSE;
-import org.earthtime.UPb_Redux.aliquots.Aliquot;
 import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetup;
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
@@ -34,6 +33,7 @@ import org.earthtime.UPb_Redux.reports.ReportSettings;
 import org.earthtime.UPb_Redux.samples.SESARSampleMetadata;
 import org.earthtime.UPb_Redux.user.SampleDateInterpretationGUIOptions;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
+import org.earthtime.aliquots.AliquotI;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.dataDictionaries.SampleRegistries;
 import org.earthtime.dataDictionaries.SampleTypesEnum;
@@ -56,7 +56,7 @@ public class ProjectSample implements//
     private String sampleAnalysisType;
     private ANALYSIS_PURPOSE analysisPurpose;
     private boolean analyzed;
-    private Vector<Aliquot> aliquots;
+    private Vector<AliquotI> aliquots;
     private Vector<Fraction> fractions;
     private ReportSettings reportSettingsModel;
     private AbstractRatiosDataModel physicalConstantsModel;
@@ -262,30 +262,14 @@ public class ProjectSample implements//
     }
 
     @Override
-    public boolean isTypeAnalysis() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public void setSampleAnalysisType(String sampleAnalysisType) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public boolean isTypeProject() {
+    public boolean isSampleTypeProject() {
         return true;
     }
-
-    @Override
-    public boolean isSampleTypeLiveWorkflow() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public boolean isTypeLiveUpdate() {
-        return false;
-    }
-    
 
     @Override
     public String getSampleAnalysisType() {
@@ -333,12 +317,12 @@ public class ProjectSample implements//
     }
 
     @Override
-    public Vector<Aliquot> getAliquots() {
+    public Vector<AliquotI> getAliquots() {
         return aliquots;
     }
 
     @Override
-    public void setAliquots(Vector<Aliquot> aliquots) {
+    public void setAliquots(Vector<AliquotI> aliquots) {
         this.aliquots = aliquots;
     }
 

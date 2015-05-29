@@ -24,9 +24,9 @@ import java.util.Map;
 import java.util.Vector;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
-import org.earthtime.UPb_Redux.aliquots.Aliquot;
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
+import org.earthtime.aliquots.AliquotI;
 import org.earthtime.samples.SampleInterface;
 import org.jdesktop.layout.GroupLayout.ParallelGroup;
 import org.jdesktop.layout.GroupLayout.SequentialGroup;
@@ -171,7 +171,7 @@ public class WeightedMeanOptionsDialog extends DialogEditor {
 
         restoreSavedValues();
 
-        for (Aliquot aliquot : sample.getActiveAliquots()) {
+        for (AliquotI aliquot : sample.getActiveAliquots()) {
             JLabel aliquotLabel = new JLabel( aliquot.getAliquotName() );
             aliquotNameLabels.add( aliquotLabel );
 
@@ -366,7 +366,7 @@ public class WeightedMeanOptionsDialog extends DialogEditor {
     }
 
     private void OK () {
-        Vector<Aliquot> activeAliquots = sample.getActiveAliquots();
+        Vector<AliquotI> activeAliquots = sample.getActiveAliquots();
         selectedModels = new Object[activeAliquots.size()][10];
 
         // populate array of aliquots with selected wm date interpretations

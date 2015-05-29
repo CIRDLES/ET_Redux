@@ -36,7 +36,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import org.earthtime.ETReduxFrame;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.aliquots.Aliquot;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.Fraction;
@@ -45,6 +44,7 @@ import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.renderers.EditFractionButton;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
+import org.earthtime.aliquots.AliquotI;
 import org.earthtime.dataDictionaries.MeasuredRatios;
 import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.exceptions.ETException;
@@ -94,7 +94,7 @@ public class AliquotLegacyEditorForLAICPMS extends AliquotEditorDialog {
             ETReduxFrame parent,
             boolean modal,
             SampleInterface sample,
-            Aliquot aliquot ) {
+            AliquotI aliquot ) {
         super( parent, modal, sample, aliquot );
 
 

@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Vector;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.aliquots.Aliquot;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
@@ -37,6 +36,7 @@ import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UPb_Redux.valueModels.definedValueModels.PercentDiscordance;
+import org.earthtime.aliquots.AliquotI;
 import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.dataDictionaries.SampleTypesEnum;
 import org.earthtime.dataDictionaries.TemplatesForCsvImport;
@@ -70,7 +70,7 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_UCSB_LASS_A extends Abstr
         project.setProjectSamples(projectSamples);
 
         SampleInterface currentSample = null;
-        Aliquot currentAliquot = null;
+        AliquotI currentAliquot = null;
 
         boolean readingFractions = false;
 

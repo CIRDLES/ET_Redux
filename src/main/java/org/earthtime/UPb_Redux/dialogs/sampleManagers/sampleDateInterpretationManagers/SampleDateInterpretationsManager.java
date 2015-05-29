@@ -51,7 +51,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import org.apache.batik.swing.JSVGCanvas;
-import org.earthtime.UPb_Redux.aliquots.Aliquot;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.beans.ReduxSpinner;
 import org.earthtime.UPb_Redux.beans.ReduxSuppressComponentEventsI;
@@ -80,6 +79,7 @@ import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
+import org.earthtime.aliquots.AliquotI;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.beans.ET_JToggleButton;
 import org.earthtime.dataDictionaries.Lambdas;
@@ -256,7 +256,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
             concordiaErrors_checkbox.setSelected(Boolean.valueOf(CGO.get("showConcordiaErrors")));
             ((ConcordiaGraphPanel) concordiaGraphPanel).setShowConcordiaErrorBars(concordiaErrors_checkbox.isSelected());
         }
-        if (sample.isTypeLegacy() && (!sample.getSampleAnalysisType().equalsIgnoreCase(SampleAnalysisTypesEnum.IDTIMS.getName()))) {
+        if (sample.isSampleTypeLegacy() && (!sample.getSampleAnalysisType().equalsIgnoreCase(SampleAnalysisTypesEnum.IDTIMS.getName()))) {
             thoriumCorrectionSelector_checkbox.setEnabled(false);
             protactiniumCorrectionSelector_checkbox.setEnabled(false);
         } else {
@@ -789,7 +789,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         Object[][] selectedModels = new Object[1][9];
 
         // this standin aliquot for the whole sample makes weighted means graphs work
-        Aliquot standInAliquot = new UPbReduxAliquot();
+        AliquotI standInAliquot = new UPbReduxAliquot();
         standInAliquot.setAliquotName(sample.getSampleName());
 
         ((UPbReduxAliquot) standInAliquot).setAliquotFractions(sample.getFractions());
@@ -2437,7 +2437,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                         refreshPanel();
             }
 
-        } else if (nodeInfo instanceof Aliquot) {
+        } else if (nodeInfo instanceof AliquotI) {
 
             // oct 2011 removed conditionals here to force all tabs to update
             // if ( graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab( "Concordia" ) ) {
@@ -2710,7 +2710,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
             // setup weighted means
             weightedMeanGraphPanel.repaint();
 
-        } else if (nodeInfo instanceof Aliquot) {
+        } else if (nodeInfo instanceof AliquotI) {
         } else if (nodeInfo instanceof ValueModel) {
             // get aliquot and retrieve subset of fractions for this sample date
             Object sampleNodeInfo = //
@@ -3113,7 +3113,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
         // add menu item for each aliquot
         aliquotSpecificOptions_menu.removeAll();
 
-        for (final Aliquot a : sample.getActiveAliquots()) {//Aliquots()) {
+        for (final AliquotI a : sample.getActiveAliquots()) {//Aliquots()) {
             // april 2010 refine to leave out empty aliquots = no fractions
             //if ( ((UPbReduxAliquot) a).getAliquotFractions().size() > 0 ) {
             JMenuItem menuItem = aliquotSpecificOptions_menu.add(new JMenuItem(a.getAliquotName()));

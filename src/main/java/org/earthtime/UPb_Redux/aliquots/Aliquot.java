@@ -28,10 +28,12 @@ import java.util.Iterator;
 import java.util.Vector;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.ReduxConstants.ANALYSIS_PURPOSE;
+import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.valueModels.SampleDateInterceptModel;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
+import org.earthtime.aliquots.AliquotI;
 import org.earthtime.dataDictionaries.DataDictionary;
 import org.earthtime.dataDictionaries.SampleDateTypes;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
@@ -567,6 +569,7 @@ public abstract class Aliquot implements AliquotI, Serializable {
      *
      * @return
      */
+    @Override
     public Vector<AbstractRatiosDataModel> getMineralStandardModels() {
         return MineralStandardModels;
     }
@@ -575,6 +578,7 @@ public abstract class Aliquot implements AliquotI, Serializable {
      *
      * @param MineralStandards
      */
+    @Override
     public void setMineralStandardModels(Vector<AbstractRatiosDataModel> MineralStandards) {
         this.MineralStandardModels = MineralStandards;
     }
@@ -644,6 +648,7 @@ public abstract class Aliquot implements AliquotI, Serializable {
      *
      * @param sampleDateModels
      */
+    @Override
     public void setSampleDateModels(Vector<ValueModel> sampleDateModels) {
         this.sampleDateModels = sampleDateModels;
     }
@@ -657,7 +662,7 @@ public abstract class Aliquot implements AliquotI, Serializable {
         Iterator it = sampleDateModels.iterator();
         ValueModel retval = null;
         while (it.hasNext()) {
-            retval = (SampleDateModel) it.next();
+            retval = (ValueModel) it.next();
             if (retval.getName().
                     equalsIgnoreCase(modelName.trim())) {
                 return retval;
@@ -768,7 +773,8 @@ public abstract class Aliquot implements AliquotI, Serializable {
     /**
      *
      */
-    public final void updateSampleDateModels() {
+    @Override
+    public void updateSampleDateModels() {
         // Nov 2008
         // process all sampleDateModels' included fraction vectors to remove missing fractions
         Vector<String> includedFractionIDs = ((UPbReduxAliquot) this).getAliquotFractionIDs();

@@ -17,15 +17,14 @@
  *  limitations under the License.
  */
 
-package org.earthtime.UPb_Redux.aliquots;
+package org.earthtime.archivingTools;
 
-import org.earthtime.UPb_Redux.mineralStandardModels.*;
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-import org.earthtime.UPb_Redux.valueModels.ValueModelReferenced;
+import org.earthtime.UPb_Redux.mineralStandardModels.MineralStandardModel;
 
 /**
  *
@@ -38,6 +37,7 @@ public class AnalysisImageXMLConverter implements Converter {
      * @param clazz
      * @return
      */
+    @Override
     public boolean canConvert(Class clazz) {
         return clazz.equals(AnalysisImage.class);
     }
@@ -48,6 +48,7 @@ public class AnalysisImageXMLConverter implements Converter {
      * @param writer
      * @param context
      */
+    @Override
     public void marshal(Object value, HierarchicalStreamWriter writer,
             MarshallingContext context) {
         
@@ -68,21 +69,12 @@ public class AnalysisImageXMLConverter implements Converter {
      * @param context
      * @return
      */
+    @Override
     public Object unmarshal(HierarchicalStreamReader reader,
             UnmarshallingContext context) {
         
         MineralStandardModel mineralStandard = new MineralStandardModel();
-        
-//        reader.moveDown();
-//        mineralStandard.setName(reader.getValue());
-//        reader.moveUp();
-//
-//        reader.moveDown();
-//        mineralStandard.setMineralStandardName(reader.getValue());
-//        reader.moveUp();
-        
-      
-        
+   
         return mineralStandard;
     }
     

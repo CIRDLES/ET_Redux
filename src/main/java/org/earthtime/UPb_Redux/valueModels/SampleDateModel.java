@@ -45,7 +45,6 @@ import java.util.TreeSet;
 import java.util.Vector;
 import org.earthtime.Tripoli.dataModels.sessionModels.SessionCorrectedUnknownsSummary;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.aliquots.Aliquot;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.YorkLineFit;
 import org.earthtime.UPb_Redux.fractions.Fraction;
@@ -59,6 +58,7 @@ import org.earthtime.UPb_Redux.valueModels.definedValueModels.Age206_238r;
 import org.earthtime.UPb_Redux.valueModels.definedValueModels.Age207_206r;
 import org.earthtime.UPb_Redux.valueModels.definedValueModels.Age207_235r;
 import org.earthtime.UPb_Redux.valueModels.definedValueModels.Age208_232r;
+import org.earthtime.aliquots.AliquotI;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.dataDictionaries.Lambdas;
 import org.earthtime.dataDictionaries.RadDates;
@@ -151,7 +151,7 @@ public class SampleDateModel extends ValueModel implements
     // sample is used in compilation mode
     private SampleInterface sample;
     // aliquot is used in analysis mode
-    private Aliquot aliquot;
+    private AliquotI aliquot;
     private transient YorkLineFit yorkLineFit = null;
     // feb 2013
     // allows to differentiate among types so LAICPMS can use log-based analysis until we fully transition
@@ -2843,7 +2843,7 @@ public class SampleDateModel extends ValueModel implements
      *
      * @return
      */
-    public Aliquot getAliquot() {
+    public AliquotI getAliquot() {
         return aliquot;
     }
 
@@ -2851,7 +2851,7 @@ public class SampleDateModel extends ValueModel implements
      *
      * @param aliquot
      */
-    public void setAliquot(Aliquot aliquot) {
+    public void setAliquot(AliquotI aliquot) {
         this.aliquot = aliquot;
     }
 

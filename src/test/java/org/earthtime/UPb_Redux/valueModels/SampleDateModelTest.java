@@ -23,12 +23,12 @@ package org.earthtime.UPb_Redux.valueModels;
 
 import java.math.BigDecimal;
 import java.util.Vector;
-import org.earthtime.UPb_Redux.aliquots.Aliquot;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.YorkLineFit;
 import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.samples.Sample;
+import org.earthtime.aliquots.AliquotI;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.samples.SampleInterface;
 import static org.junit.Assert.assertEquals;
@@ -830,8 +830,8 @@ public class SampleDateModelTest {
     public void test_GetAliquot() {
         System.out.println("Testing SampleDateModel's getAliquot()");
         SampleDateModel instance = new SampleDateModel();
-        Aliquot expResult = new UPbReduxAliquot();
-        Aliquot result = instance.getAliquot();
+        AliquotI expResult = new UPbReduxAliquot();
+        AliquotI result = instance.getAliquot();
         assertEquals(null, result);
 
         expResult=null;
@@ -848,8 +848,8 @@ public class SampleDateModelTest {
     public void test_SetAliquot() {
         System.out.println("Testing SampleDateModel's setAliquot(Aliquot aliquot)");
         SampleDateModel instance = new SampleDateModel();
-        Aliquot expResult = new UPbReduxAliquot();
-        Aliquot result = instance.getAliquot();
+        AliquotI expResult = new UPbReduxAliquot();
+        AliquotI result = instance.getAliquot();
         assertEquals(null, result);
 
         expResult=null;

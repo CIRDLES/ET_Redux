@@ -18,7 +18,6 @@
  */
 package org.earthtime.UPb_Redux.dialogs.sampleManagers.compilationManagers;
 
-import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -29,19 +28,17 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import org.earthtime.ETReduxFrame;
-import org.earthtime.UPb_Redux.aliquots.Aliquot;
-import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.user.ReduxPersistentState;
+import org.earthtime.UPb_Redux.user.ReduxPreferences;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
+import org.earthtime.archivingTools.GeochronRetrievalUtility;
 import org.earthtime.archivingTools.IEDACredentialsValidator;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.samples.SampleInterface;
-import org.earthtime.xmlUtilities.XMLSerializationI;
 
 /**
  *
@@ -53,7 +50,7 @@ public class SampleCompilationManagerDialog extends DialogEditor {
     private File importFractionFolderMRU;
     private boolean initialized = false;
     private final boolean automaticFractionCreation = false;
-    private final Frame parent;
+    private final ReduxPreferences reduxPreferences;
 
     /**
      *
@@ -86,19 +83,18 @@ public class SampleCompilationManagerDialog extends DialogEditor {
     /**
      * Creates new form SampleManagerDialog
      *
-     * @param parent
+     * @param reduxPreferences the value of reduxPreferences
      * @param modal
-     * @param importFractionFolderMRU
      * @param sample
+     * @param importFractionFolderMRU
      */
-    public SampleCompilationManagerDialog(
-            java.awt.Frame parent,
-            boolean modal,
-            SampleInterface sample,
+    public SampleCompilationManagerDialog(//
+            ReduxPreferences reduxPreferences,//
+            boolean modal, SampleInterface sample,//
             File importFractionFolderMRU) {
-        super(parent, modal);
+        super(null, modal);
 
-        this.parent = parent;
+        this.reduxPreferences = reduxPreferences;
 
         this.importFractionFolderMRU = importFractionFolderMRU;
 
@@ -121,6 +117,7 @@ public class SampleCompilationManagerDialog extends DialogEditor {
 
     class automaticFractionsListener implements ItemListener {
 
+        @Override
         public void itemStateChanged(ItemEvent e) {
             Object source = e.getItemSelectable();
             sourceFolder_jRadioButton.setEnabled(automaticFractionCreation);
@@ -132,6 +129,7 @@ public class SampleCompilationManagerDialog extends DialogEditor {
 
     class sourceOfFractionsListener implements ActionListener {
 
+        @Override
         public void actionPerformed(ActionEvent evt) {
             System.out.println(evt.getActionCommand());
             fractionSource = fractionSources.valueOf(evt.getActionCommand());
@@ -184,16 +182,14 @@ public class SampleCompilationManagerDialog extends DialogEditor {
 
     }
 
-    private void SaveSampleData()
+    private void SaveAndImportSampleData()
             throws ETException,
             FileNotFoundException,
             BadLabDataException,
             IOException,
             BadOrMissingXMLSchemaException {
         // TODO: validate fields - make this more sophisticated
-        if (sampleName_text.getText().length() == 0) {
-            return;
-        } else {
+        if (sampleName_text.getText().length() > 0) {            
             setVisible(false);
 
             String success = "";
@@ -215,7 +211,10 @@ public class SampleCompilationManagerDialog extends DialogEditor {
                 case FOLDER_LOCAL:
                     break;
                 case ONE_OR_MORE_GEOCHRON:
-                    success = importOneOrMoreGeochronAliquotXMLDataFiles();
+                    success = GeochronRetrievalUtility.importOneOrMoreGeochronAliquotXMLDataFiles(//
+                            mySample,//
+                            reduxPreferences.getGeochronUserName(),//
+                            reduxPreferences.getGeochronPassWord());
                     if (success.contains("Found")) {
                         getMySample().setSampleName(sampleName_text.getText());
 
@@ -234,79 +233,6 @@ public class SampleCompilationManagerDialog extends DialogEditor {
                     break;
             }
         }
-    }
-
-    /**
-     *
-     * http://www.geochronportal.org/post_to_search_service.html
-     *
-     * @return
-     * @throws java.io.FileNotFoundException
-     * @throws java.io.IOException
-     * @throws org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException
-     * @throws org.earthtime.XMLExceptions.ETException
-     */
-    public String importOneOrMoreGeochronAliquotXMLDataFiles()
-            throws FileNotFoundException,
-            BadLabDataException,
-            IOException,
-            BadOrMissingXMLSchemaException,
-            ETException {
-
-        String retval = "";
-
-        // ask the user for Aliquot IGSN         
-        String aliquotIGSNs = JOptionPane.showInputDialog(//
-                null,
-                "NOTE: If you need private records, set your GEOCHRON credentials\n"
-                + " in the Compilation Sample Manager. \n\n"//
-                + "Enter one or more Aliquot IGSN, separated by commas: \n",
-                "U-Pb_Redux for Geochron", 1);
-
-        if (aliquotIGSNs != null) {
-            String aliquotList[] = aliquotIGSNs.split(",");
-            for (int i = 0; i < aliquotList.length; i++) {
-                String aliquotIGSN = aliquotList[i].trim();
-                if (aliquotIGSN.length() > 0) {
-                    retval += retrieveGeochronAliquotFile(aliquotIGSN) + "\n";
-                }
-            }
-        }
-
-        return retval;
-    }
-
-    private String retrieveGeochronAliquotFile(String aliquotIGSN) {
-        Aliquot myDownAliquot = new UPbReduxAliquot();
-
-        String userName = ((ETReduxFrame) parent).getMyState().getReduxPreferences().getGeochronUserName();
-        String password = ((ETReduxFrame) parent).getMyState().getReduxPreferences().getGeochronPassWord();
-
-        String downloadURL = //
-                "http://www.geochron.org/getxml.php?igsn="//
-                + aliquotIGSN.toUpperCase().trim()//
-                + "&username="//
-                + userName//
-                + "&password="//
-                + password;
-
-        try {
-            myDownAliquot
-                    = (Aliquot) ((XMLSerializationI) myDownAliquot).readXMLObject(
-                            downloadURL, true);
-            if (myDownAliquot != null) {
-                // xml is added here for consistency and because we test whether aliquot source file is xml ... probably
-                // should get rid of xml test and just make it aliquot non-zero length string
-                SampleInterface.importAliquotIntoSample(mySample, myDownAliquot, "GeochronDownloadOfAliquot_" + aliquotIGSN.toUpperCase().trim() + ".xml");
-                System.out.println("got one " + myDownAliquot.getAnalystName());
-            } else {
-                return "Missing (or private) aliquot: " + aliquotIGSN;
-            }
-        } catch (IOException | ETException | BadOrMissingXMLSchemaException ex) {
-            myDownAliquot = null;
-        }
-
-        return "Found: " + myDownAliquot.getAliquotIGSN();
     }
 
     /**
@@ -644,7 +570,7 @@ public class SampleCompilationManagerDialog extends DialogEditor {
 
     private void saveAndCloseAndProceedToAliquotChooser_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveAndCloseAndProceedToAliquotChooser_buttonActionPerformed
         try {
-            SaveSampleData();
+            SaveAndImportSampleData();
             close();
         } catch (BadLabDataException | BadOrMissingXMLSchemaException | IOException ex) {
             Logger.getLogger(SampleCompilationManagerDialog.class.getName()).log(Level.SEVERE, null, ex);

@@ -26,12 +26,12 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Vector;
 import org.earthtime.UPb_Redux.ReduxConstants.ANALYSIS_PURPOSE;
-import org.earthtime.UPb_Redux.aliquots.Aliquot;
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
+import org.earthtime.aliquots.AliquotI;
 import org.earthtime.dataDictionaries.MineralTypes;
 import org.earthtime.dataDictionaries.SampleRegistries;
 import org.earthtime.exceptions.ETException;
@@ -268,8 +268,8 @@ public abstract class AbstractSampleFromProjectManagerDialog extends DialogEdito
         }
 
         // there should be only one aliquot
-        Vector<Aliquot> aliquots = mySample.getActiveAliquots();
-        for (Aliquot a : aliquots) {
+        Vector<AliquotI> aliquots = mySample.getActiveAliquots();
+        for (AliquotI a : aliquots) {
             a.setAnalysisPurpose( mySample.getAnalysisPurpose() );
         }
 

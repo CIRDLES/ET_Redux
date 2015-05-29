@@ -63,6 +63,9 @@ import org.earthtime.UPb_Redux.valueModels.ValueModelReferenced;
 import org.earthtime.UPb_Redux.valueModels.ValueModelReferencedXMLConverter;
 import org.earthtime.UPb_Redux.valueModels.ValueModelXMLConverter;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
+import org.earthtime.aliquots.AliquotI;
+import org.earthtime.archivingTools.AnalysisImage;
+import org.earthtime.archivingTools.AnalysisImageXMLConverter;
 import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.dataDictionaries.AnalysisImageTypes;
 import org.earthtime.dataDictionaries.RadDates;
@@ -90,7 +93,6 @@ import org.earthtime.xmlUtilities.XMLSerializationI;
  */
 public class UPbReduxAliquot extends Aliquot
         implements AliquotI,
-        //        Comparable<Aliquot>,
         ReportRowGUIInterface,
         XMLSerializationI {
 
@@ -321,7 +323,7 @@ public class UPbReduxAliquot extends Aliquot
             }
         }
 
-        if (bestAgeDivider206_238 == null){
+        if (bestAgeDivider206_238 == null) {
             // backwards compatible
             bestAgeDivider206_238 = BigDecimal.ZERO;
         }
@@ -533,13 +535,14 @@ public class UPbReduxAliquot extends Aliquot
      * @throws ETException
      * @throws BadOrMissingXMLSchemaException
      */
+    @Override
     public Object readXMLObject(String filename, boolean doValidate)
             throws FileNotFoundException,
             ETException,
             FileNotFoundException,
             BadOrMissingXMLSchemaException {
 
-        Aliquot myAliquot = null;
+        AliquotI myAliquot = null;
 
         BufferedReader reader = URIHelper.getBufferedReader(filename);
 
@@ -551,15 +554,12 @@ public class UPbReduxAliquot extends Aliquot
             if (doValidate) {
                 isValidOrAirplaneMode = URIHelper.validateXML(reader, filename, aliquotXMLSchemaURL);
             }
-//            else {
-//                isValidOrAirplaneMode = true;
-//            }
 
             if (isValidOrAirplaneMode) {
                 // re-create reader
                 reader = URIHelper.getBufferedReader(filename);
                 try {
-                    myAliquot = (Aliquot) xstream.fromXML(reader);
+                    myAliquot = (AliquotI) xstream.fromXML(reader);
                 } catch (ConversionException e) {
                     throw new ETException(null, e.getMessage());
                 }
@@ -590,7 +590,7 @@ public class UPbReduxAliquot extends Aliquot
 
         // note fractions and SampleDateModels are already unique
         Collections.sort(aliquotFractions);
-        if (sampleDateModels != null){
+        if (sampleDateModels != null) {
             Collections.sort(sampleDateModels);
         }
 
@@ -1245,7 +1245,7 @@ public class UPbReduxAliquot extends Aliquot
      * @throws Exception
      */
     public static void main(String[] args) throws Exception {
-        Aliquot aliquot
+        AliquotI aliquot
                 = new UPbReduxAliquot(
                         0,
                         "Test Aliquot",
@@ -1281,8 +1281,8 @@ public class UPbReduxAliquot extends Aliquot
 
         String testFileName = "UPbReduxAliquotTEST.xml";
 
-        ((UPbReduxAliquot) aliquot).serializeXMLObject(testFileName);
-        ((UPbReduxAliquot) aliquot).readXMLObject(testFileName, true);
+        ((XMLSerializationI) aliquot).serializeXMLObject(testFileName);
+        ((XMLSerializationI) aliquot).readXMLObject(testFileName, true);
 
     }
 
@@ -1455,12 +1455,12 @@ public class UPbReduxAliquot extends Aliquot
     public void setSelectedInDataTable(boolean selectedInDataTable) {
         this.selectedInDataTable = selectedInDataTable;
     }
-    
+
     /**
      *
      * @return
      */
-    public boolean containsActiveFractions(){
+    public boolean containsActiveFractions() {
         return (!getActiveAliquotFractions().isEmpty());
     }
 }

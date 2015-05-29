@@ -34,7 +34,6 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
-import org.earthtime.UPb_Redux.aliquots.Aliquot;
 import org.earthtime.UPb_Redux.customJTrees.CheckBoxNode;
 import org.earthtime.UPb_Redux.customJTrees.CheckBoxNodeEditor;
 import org.earthtime.UPb_Redux.customJTrees.CheckBoxNodeRenderer;
@@ -44,6 +43,7 @@ import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModelI;
+import org.earthtime.aliquots.AliquotI;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.samples.SampleInterface;
 
@@ -219,8 +219,8 @@ public class SampleTreeCompilationMode extends JTree implements SampleTreeI {
 
         if ( nodeInfo instanceof Sample ) {
             System.out.println( ((SampleInterface) nodeInfo).getSampleName() );
-        } else if ( nodeInfo instanceof Aliquot ) {
-            System.out.println( ((Aliquot) nodeInfo).getAliquotName() );
+        } else if ( nodeInfo instanceof AliquotI ) {
+            System.out.println( ((AliquotI) nodeInfo).getAliquotName() );
         } else if ( nodeInfo instanceof ValueModel ) {
             System.out.println( ((ValueModelI) nodeInfo).getName() );
         } else if ( nodeInfo instanceof CheckBoxNode ) {
@@ -259,8 +259,8 @@ public class SampleTreeCompilationMode extends JTree implements SampleTreeI {
 
         if ( o instanceof Sample ) {
             return ((SampleInterface) o).getSampleName();
-        } else if ( o instanceof Aliquot ) {
-            return ((Aliquot) o).getAliquotName();
+        } else if ( o instanceof AliquotI ) {
+            return ((AliquotI) o).getAliquotName();
         } else if ( o instanceof ValueModel ) {
             String displayName = ((ValueModelI) o).getName();
             if ( ((SampleDateModel) o).isPreferred() ) {
@@ -395,7 +395,7 @@ public class SampleTreeCompilationMode extends JTree implements SampleTreeI {
                     }
 
 
-                } else if ( nodeInfo instanceof Aliquot ) {
+                } else if ( nodeInfo instanceof AliquotI ) {
                 } else if ( nodeInfo instanceof ValueModel ) {
                     //Create the popup menu.
                     JPopupMenu popup = new JPopupMenu();

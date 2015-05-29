@@ -35,8 +35,6 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
-import org.earthtime.UPb_Redux.aliquots.Aliquot;
-import org.earthtime.UPb_Redux.aliquots.AliquotI;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.customJTrees.CheckBoxNode;
 import org.earthtime.UPb_Redux.customJTrees.CheckBoxNodeEditor;
@@ -47,6 +45,7 @@ import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModelI;
+import org.earthtime.aliquots.AliquotI;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.fractions.FractionInterface;
 import org.earthtime.samples.SampleInterface;
@@ -103,7 +102,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
         int saveAliquotNum = -1;
         for (int i = 0; i < sample.getFractions().size(); i++) {
             Fraction tempFraction = sample.getFractions().get(i);
-            Aliquot tempAliquot;
+            AliquotI tempAliquot;
 
             if (!((FractionInterface) tempFraction).isRejected()) {
                 if (saveAliquotNum != ((FractionInterface) tempFraction).getAliquotNumber()) {
@@ -192,7 +191,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
 
     private void PopulateSampleDateModel(
             Vector<String> activeFractionIDs,
-            Aliquot aliquot,
+            AliquotI aliquot,
             ValueModel SAM,
             DefaultMutableTreeNode SAMnode) {
 
@@ -250,8 +249,8 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
 
         if (nodeInfo instanceof SampleInterface) {
             System.out.println(((SampleInterface) nodeInfo).getSampleName());
-        } else if (nodeInfo instanceof Aliquot) {
-            System.out.println(((Aliquot) nodeInfo).getAliquotName());
+        } else if (nodeInfo instanceof AliquotI) {
+            System.out.println(((AliquotI) nodeInfo).getAliquotName());
         } else if (nodeInfo instanceof ValueModel) {
             System.out.println(((ValueModelI) nodeInfo).getName());
         } else if (nodeInfo instanceof CheckBoxNode) {
@@ -289,8 +288,8 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
 
         if (o instanceof SampleInterface) {
             return ((SampleInterface) o).getSampleName();
-        } else if (o instanceof Aliquot) {
-            return ((Aliquot) o).getAliquotName();
+        } else if (o instanceof AliquotI) {
+            return ((AliquotI) o).getAliquotName();
         } else if (o instanceof ValueModel) {
             if (((SampleDateModel) o).isPreferred()) {
                 return "PREFERRED: " + ((ValueModelI) o).getName();
@@ -362,13 +361,13 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
             if (!e.isPopupTrigger() && (e.getButton() == MouseEvent.BUTTON1)) {
             } else if ((e.isPopupTrigger()) || (e.getButton() == MouseEvent.BUTTON3)) {
                 setSelectionPath(selPath);
-                if (nodeInfo instanceof Aliquot) {
+                if (nodeInfo instanceof AliquotI) {
 
                     DialogEditor myEditor
                             = new SampleDateInterpretationChooserDialog(
                                     null,
                                     true,
-                                    ((Aliquot) nodeInfo).determineUnusedSampleDateModels());
+                                    ((AliquotI) nodeInfo).determineUnusedSampleDateModels());
 
                     myEditor.setSize(340, 395);
                     JDialog.setDefaultLookAndFeelDecorated(true);
@@ -377,7 +376,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
 
                     // get a master vector of active fraction names
                     Vector<String> activeFractionIDs =//
-                            ((UPbReduxAliquot) ((Aliquot) nodeInfo)).//
+                            ((UPbReduxAliquot) ((AliquotI) nodeInfo)).//
                             getAliquotFractionIDs();
 
                     if (((SampleDateInterpretationChooserDialog) myEditor).getSelectedModels().size() > 0) {
@@ -415,7 +414,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
 
                                 PopulateSampleDateModel(
                                         activeFractionIDs,
-                                        ((Aliquot) nodeInfo),
+                                        ((AliquotI) nodeInfo),
                                         selectedSAM,
                                         sampleDateModelNode);
 
@@ -474,7 +473,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
                         DefaultMutableTreeNode parentNode
                                 = (DefaultMutableTreeNode) node.getParent();
                         Object parentNodeInfo = parentNode.getUserObject();
-                        ((Aliquot) parentNodeInfo).setPreferredSampleDateModel((ValueModel) nodeInfo);
+                        ((AliquotI) parentNodeInfo).setPreferredSampleDateModel((ValueModel) nodeInfo);
                         SampleInterface.updateAndSaveSampleDateModelsByAliquot(sample);
 
                         // fix tree

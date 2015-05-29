@@ -70,8 +70,6 @@ import javax.xml.transform.TransformerException;
 import org.earthtime.ETReduxFrame;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.ReduxConstants.ANALYSIS_PURPOSE;
-import org.earthtime.UPb_Redux.aliquots.Aliquot;
-import org.earthtime.UPb_Redux.aliquots.AnalysisImage;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.dateInterpretation.DateProbabilityDensityPanel;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.ConcordiaGraphPanel;
@@ -93,6 +91,8 @@ import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.UPb_Redux.utilities.Thumbnail;
 import org.earthtime.UPb_Redux.utilities.UPbReduxFocusTraversalPolicy;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
+import org.earthtime.aliquots.AliquotI;
+import org.earthtime.archivingTools.AnalysisImage;
 import org.earthtime.archivingTools.GeochronUploadImagesHelper;
 import org.earthtime.archivingTools.GeochronUploaderUtility;
 import org.earthtime.archivingTools.IEDACredentialsValidator;
@@ -154,7 +154,7 @@ public class AliquotEditorDialog extends DialogEditor {
     /**
      *
      */
-    protected Aliquot myAliquot;
+    protected AliquotI myAliquot;
     /**
      *
      */
@@ -536,7 +536,7 @@ public class AliquotEditorDialog extends DialogEditor {
             SampleDateInterpretationSubscribeInterface parent,
             boolean modal,
             SampleInterface sample,
-            Aliquot aliquot) {
+            AliquotI aliquot) {
         super((Frame) parent, modal);
         this.parent = parent;
 
@@ -551,12 +551,12 @@ public class AliquotEditorDialog extends DialogEditor {
 
         // set up arrow keys etc
         // nov 2010 modified to use left and right keys to edit values
-        Set<KeyStroke> forwardKeys = new HashSet<KeyStroke>();
+        Set<KeyStroke> forwardKeys = new HashSet<>();
         forwardKeys.add(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0));
 //        forwardKeys.add( KeyStroke.getKeyStroke( KeyEvent.VK_RIGHT, 0 ) );
         fastEdits_panel.setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, forwardKeys);
 
-        Set<KeyStroke> backwardKeys = new HashSet<KeyStroke>();
+        Set<KeyStroke> backwardKeys = new HashSet<>();
         backwardKeys.add(KeyStroke.getKeyStroke("shift TAB"));//    (KeyEvent.VK_SHIFT & KeyEvent.VK_TAB), 0));
 
 //        backwardKeys.add( KeyStroke.getKeyStroke( KeyEvent.VK_LEFT, 0 ) );
@@ -575,7 +575,7 @@ public class AliquotEditorDialog extends DialogEditor {
         this.setTitle("Aliquot Manager for:  " //
                 + sample.getSampleName()//
                 + "::"//
-                + ((UPbReduxAliquot) aliquot).getAliquotName()//
+                + aliquot.getAliquotName()//
                 + "  Purpose of Analysis is " + aliquot.getAnalysisPurpose());
 
         title_panel.setBackground(ReduxConstants.myAliquotGrayColor);
@@ -3743,7 +3743,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
      * @param aliquot
      * @param validUser
      */
-    protected void showArchiveNote(Aliquot aliquot, boolean validUser) {
+    protected void showArchiveNote(AliquotI aliquot, boolean validUser) {
         // determine if aliquot in GeochronID
         GeochronValidationResults validateAliquot = GeochronValidationResults.invalidUser;
 
@@ -3826,10 +3826,10 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
                 getMyAliquot().getKeyWordsCSV());
 
         for (JComponent cb : mineralStandardsCheckBoxes) {
-            if (getMyAliquot().getAMineralStandardModelByName(((JCheckBox) cb).getText()) != null) {
-                ((JCheckBox) cb).setSelected(true);
+            if (getMyAliquot().getAMineralStandardModelByName(((AbstractButton) cb).getText()) != null) {
+                ((AbstractButton) cb).setSelected(true);
             } else {
-                ((JCheckBox) cb).setSelected(false);
+                ((AbstractButton) cb).setSelected(false);
             }
         }
 
@@ -4343,7 +4343,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
 
         addedFractions.clear();
 
-        if (!sample.isTypeLegacy() && !sample.isAnalysisTypeLAICPMS()) {
+        if (!sample.isSampleTypeLegacy() && !sample.isAnalysisTypeLAICPMS()) {
             // master fields
             getMyAliquot().setDefaultIsZircon(masterZirconCaseCheckBox.isSelected());
             getMyAliquot().setDefaultTracerID((String) masterTracerChooser.getSelectedItem());
@@ -4486,7 +4486,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
      *
      * @param myAliquot
      */
-    public void setMyAliquot(Aliquot myAliquot) {
+    public void setMyAliquot(AliquotI myAliquot) {
         this.myAliquot = myAliquot;
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -4799,7 +4799,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
 
                 probabilityPanel.setSelectedHistogramBinCount(5);
 
-                if (sample.isTypeLegacy() & sample.getAnalysisPurpose().equals(ANALYSIS_PURPOSE.DetritalSpectrum)) {
+                if (sample.isSampleTypeLegacy() & sample.getAnalysisPurpose().equals(ANALYSIS_PURPOSE.DetritalSpectrum)) {
                     probabilityPanel.setChosenDateName(RadDates.bestAge.getName());
                 } else {
                     probabilityPanel.setChosenDateName(RadDates.age207_206r.getName());
@@ -5113,7 +5113,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
     }
 
     // refactor this stuff to reduce coupling
-    private GeochronValidationResults confirmAliquotArchivedInGeochron(Aliquot aliquot) {
+    private GeochronValidationResults confirmAliquotArchivedInGeochron(AliquotI aliquot) {
 
         String userName = ((ETReduxFrame) parent).getMyState().getReduxPreferences().getGeochronUserName();
         String password = ((ETReduxFrame) parent).getMyState().getReduxPreferences().getGeochronPassWord();

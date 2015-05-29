@@ -54,6 +54,7 @@ import org.earthtime.UPb_Redux.valueModels.SampleDateInterceptModel;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
+import org.earthtime.aliquots.AliquotI;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.dataDictionaries.SampleDateTypes;
@@ -241,7 +242,15 @@ public interface SampleInterface {
      *
      * @return
      */
-    public abstract boolean isTypeAnalysis();
+    public default boolean isSampleTypeAnalysis() {
+        return (getSampleType().equalsIgnoreCase(SampleTypesEnum.ANALYSIS.getName()));
+    }
+
+    public default boolean isSampleTypeCompilation() {
+        return (getSampleType().equalsIgnoreCase(SampleTypesEnum.COMPILATION.getName()));
+    }
+
+
 
     /**
      * @param sampleAnalysisType the sampleAnalysisType to set
@@ -278,13 +287,7 @@ public interface SampleInterface {
      *
      * @return
      */
-    public boolean isTypeLiveUpdate();
-
-    /**
-     *
-     * @return
-     */
-    public default boolean isTypeLegacy() {
+    public default boolean isSampleTypeLegacy() {
         return (getSampleType().equalsIgnoreCase(SampleTypesEnum.LEGACY.getName()));
     }
 
@@ -292,7 +295,7 @@ public interface SampleInterface {
      *
      * @return
      */
-    public abstract boolean isTypeProject();
+    public abstract boolean isSampleTypeProject();
 
     /**
      *
@@ -306,7 +309,10 @@ public interface SampleInterface {
      *
      * @return
      */
-    public abstract boolean isSampleTypeLiveWorkflow();
+    public default boolean isSampleTypeLiveWorkflow() {
+        return getSampleType().equalsIgnoreCase(SampleTypesEnum.LIVEWORKFLOW.getName());
+    }
+
 
     /**
      * @return the sampleAnalysisType
@@ -367,9 +373,9 @@ public interface SampleInterface {
      * <code>aliquots</code> whose file correspongs to the argument
      * <code>file</code>
      */
-    public default Aliquot getAliquotByName(String name) {
-        Aliquot retAliquot = null;
-        Vector<Aliquot> aliquots = getAliquots();
+    public default AliquotI getAliquotByName(String name) {
+        AliquotI retAliquot = null;
+        Vector<AliquotI> aliquots = getAliquots();
         for (int aliquotIndex = 0; aliquotIndex < aliquots.size(); aliquotIndex++) {
             if (aliquots.get(aliquotIndex).getAliquotName().equalsIgnoreCase(name)) {
                 retAliquot = aliquots.get(aliquotIndex);
@@ -386,9 +392,9 @@ public interface SampleInterface {
      *
      * @return
      */
-    public default Vector<Aliquot> getActiveAliquots() {
+    public default Vector<AliquotI> getActiveAliquots() {
         // May 2010  refresh aliquots to   remove empty ones
-        Vector<Aliquot> activeAliquots = new Vector<>();
+        Vector<AliquotI> activeAliquots = new Vector<>();
         getAliquots().stream().filter((aliquot)
                 -> (((UPbReduxAliquot) aliquot).getAliquotFractions().size() > 0)).filter((aliquot)
                         -> (((UPbReduxAliquot) aliquot).containsActiveFractions())).forEach(activeAliquots::add);
@@ -403,7 +409,7 @@ public interface SampleInterface {
      * @return  <code>Vector</code> - set of <code>Aliquots</code> of this
      * <code>Sample</code>
      */
-    public abstract Vector<Aliquot> getAliquots();
+    public abstract Vector<AliquotI> getAliquots();
 
     /**
      * sets the <code>aliquots</code> of this <code>Sample</code> to the
@@ -416,7 +422,7 @@ public interface SampleInterface {
      * @param aliquots value to which <code>aliquots</code> of this
      * <code>Sample</code> will be set
      */
-    public abstract void setAliquots(Vector<Aliquot> aliquots);
+    public abstract void setAliquots(Vector<AliquotI> aliquots);
 
     /**
      * finds the <code>Aliquot</code> numbered <code>aliquotNum</code> in the
@@ -432,10 +438,10 @@ public interface SampleInterface {
      * <code>aliquots</code> whose number corresponds to the argument
      * <code>aliquotNum</code>
      */
-    public default Aliquot getAliquotByNumber(int aliquotNum) {
+    public default AliquotI getAliquotByNumber(int aliquotNum) {
         // here we populate the aliquotFractionFiles of aliquot in case they have changed
         // aliquots are really aliquot view of the aliquotFractionFiles (MVC architecture)
-        Aliquot retAliquot = getAliquots().get(aliquotNum - 1);
+        AliquotI retAliquot = getAliquots().get(aliquotNum - 1);
 
         Vector<Fraction> retFractions = new Vector<>();
 
@@ -478,9 +484,9 @@ public interface SampleInterface {
      * @return
      * @throws ETException
      */
-    public default Aliquot addNewAliquot(String aliquotName) throws ETException {
+    public default AliquotI addNewAliquot(String aliquotName) throws ETException {
         if (getAliquotByName(aliquotName) == null) {
-            Aliquot tempAliquot;
+            AliquotI tempAliquot;
             tempAliquot = getAliquotByNumber(addNewDefaultAliquot());
             if (aliquotName.length() > 0) {
                 tempAliquot.setAliquotName(aliquotName);
@@ -531,7 +537,7 @@ public interface SampleInterface {
     public default int addNewDefaultAliquot() {
         int retval = -1;
         try {
-            Aliquot tempAliquot
+            AliquotI tempAliquot
                     = new UPbReduxAliquot(
                             getAliquots().size() + 1,
                             "Aliquot-" + Integer.toString(getAliquots().size() + 1),
@@ -555,10 +561,10 @@ public interface SampleInterface {
      * @param aliquot the value of aliquot
      * @param sample the value of sample
      */
-    public static void copyAliquotIntoSample(Aliquot aliquot, SampleInterface sample) {
-        Aliquot importedAliquot = new UPbReduxAliquot();
+    public static void copyAliquotIntoSample(AliquotI aliquot, SampleInterface sample) {
+        AliquotI importedAliquot = new UPbReduxAliquot();
 
-        Vector<Aliquot> aliquots = sample.getAliquots();
+        Vector<AliquotI> aliquots = sample.getAliquots();
         // aliquot numbering is 1-based
         int aliquotNumber = aliquots.size() + 1;
 
@@ -604,7 +610,7 @@ public interface SampleInterface {
      * @throws org.earthtime.UPb_Redux.exceptions.BadLabDataException
      * BadLabDataException
      */
-    public static void importAliquotIntoSample(SampleInterface sample, Aliquot aliquot, String aliquotSource)
+    public static void importAliquotIntoSample(SampleInterface sample, AliquotI aliquot, String aliquotSource)
             throws IOException,
             ETException,
             BadLabDataException {
@@ -869,7 +875,7 @@ public interface SampleInterface {
      *
      * @param aliquot
      */
-    public default void removeAliquot(Aliquot aliquot) {
+    public default void removeAliquot(AliquotI aliquot) {
         Vector<Fraction> aliquotFractions = ((UPbReduxAliquot) aliquot).getAliquotFractions();
         for (Fraction aliquotFraction : aliquotFractions) {
             removeUPbReduxFraction(aliquotFraction);
@@ -887,8 +893,8 @@ public interface SampleInterface {
 
         boolean retVal = false;
 
-        Aliquot aliquotA = getAliquotByName(nameAliquotA);
-        Aliquot aliquotB = getAliquotByName(nameAliquotB);
+        AliquotI aliquotA = getAliquotByName(nameAliquotA);
+        AliquotI aliquotB = getAliquotByName(nameAliquotB);
 
         if ((aliquotA != null) && (aliquotB != null)) {
 
@@ -1455,7 +1461,7 @@ public interface SampleInterface {
      * @param isNumeric
      * @return the java.lang.String[][]
      */
-    public static String[][] reportActiveAliquotFractionsByNumberStyle(SampleInterface sample, Aliquot aliquot, boolean isNumeric) {
+    public static String[][] reportActiveAliquotFractionsByNumberStyle(SampleInterface sample, AliquotI aliquot, boolean isNumeric) {
 
         return sample.getReportSettingsModel().reportActiveAliquotFractionsByNumberStyle(sample, ((UPbReduxAliquot) aliquot).getActiveAliquotFractions(), isNumeric);
     }
@@ -1708,7 +1714,7 @@ public interface SampleInterface {
             }
         }
 
-        for (Aliquot a : sample.getActiveAliquots()) {
+        for (AliquotI a : sample.getActiveAliquots()) {
             a.getMineralStandardModels().stream().forEach((msm) -> {
                 ReduxLabData.getInstance().registerMineralStandardModel(msm, false);
             });
@@ -1766,7 +1772,7 @@ public interface SampleInterface {
      *
      */
     public default void reduceSampleData() {
-        for (Aliquot aliquot : getAliquots()) {
+        for (AliquotI aliquot : getAliquots()) {
             ((UPbReduxAliquot) aliquot).reduceData();
 
             // oct 2014 
@@ -1794,7 +1800,7 @@ public interface SampleInterface {
      *
      */
     public default void updateSampleLabName() {
-        for (Aliquot a : getAliquots()) {
+        for (AliquotI a : getAliquots()) {
             a.setLaboratoryName(ReduxLabData.getInstance().getLabName());
         }
     }
