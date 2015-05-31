@@ -19,7 +19,7 @@
 package org.earthtime.UPb_Redux.reports;
 
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
-import org.earthtime.UPb_Redux.samples.Sample;
+import org.earthtime.samples.SampleInterface;
 
 /**
  *
@@ -42,7 +42,7 @@ public interface ReportPainterI {
      *
      * @param theSample
      */
-    public void setTheSample ( Sample theSample );
+    public void setTheSample ( SampleInterface theSample );
     
     /**
      *

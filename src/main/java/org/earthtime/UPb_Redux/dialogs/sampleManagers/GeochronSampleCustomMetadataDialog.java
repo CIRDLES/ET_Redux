@@ -27,6 +27,7 @@ import org.earthtime.UPb_Redux.ReduxConstants.ANALYSIS_PURPOSE;
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.samples.SESARSampleMetadata;
 import org.earthtime.UPb_Redux.samples.Sample;
+import org.earthtime.samples.SampleInterface;
 import org.earthtime.xmlUtilities.SchemaSimpleType;
 import org.earthtime.xmlUtilities.XMLSchemaProcessor;
 
@@ -36,7 +37,7 @@ import org.earthtime.xmlUtilities.XMLSchemaProcessor;
  */
 public class GeochronSampleCustomMetadataDialog extends DialogEditor {
 
-    private Sample sample;
+    private SampleInterface sample;
 
     /** Creates new form GeochronSampleCustomMetadataDialog
      * @param parent
@@ -46,7 +47,7 @@ public class GeochronSampleCustomMetadataDialog extends DialogEditor {
     public GeochronSampleCustomMetadataDialog (//
             java.awt.Frame parent,//
             boolean modal,//
-            Sample sample ) {
+            SampleInterface sample ) {
         super( parent, modal );
 
         this.sample = sample;
@@ -57,13 +58,13 @@ public class GeochronSampleCustomMetadataDialog extends DialogEditor {
         maxAbsAgeMa_txtBox.setDocument( new BigDecimalDocument( maxAbsAgeMa_txtBox, true ) );
 
         geologicAges_comboBox.setModel(//
-                new DefaultComboBoxModel<String>(//
+                new DefaultComboBoxModel<>(//
                 (new XMLSchemaProcessor()).getSimpleTypeEnumeration( SchemaSimpleType.GeologicAge ) ) );
         geologicAges_comboBox.setSelectedIndex( 0 );
 
 
         detritalTypes_comboBox.setModel(//
-                new DefaultComboBoxModel<String> (//
+                new DefaultComboBoxModel<> (//
                 (new XMLSchemaProcessor()).getSimpleTypeEnumeration( SchemaSimpleType.DetritalType ) ) );
         detritalTypes_comboBox.setSelectedIndex( 0 );
 

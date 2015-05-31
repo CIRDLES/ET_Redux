@@ -23,17 +23,13 @@ package org.earthtime.UPb_Redux.aliquots;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.Vector;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.ReduxConstants.ANALYSIS_PURPOSE;
 import org.earthtime.UPb_Redux.fractions.Fraction;
-import org.earthtime.UPb_Redux.valueModels.SampleDateInterceptModel;
-import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
+import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.dataDictionaries.DataDictionary;
-import org.earthtime.dataDictionaries.SampleDateTypes;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.pbBlankICModels.PbBlankICModel;
 import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsModel;
@@ -43,7 +39,7 @@ import org.earthtime.ratioDataModels.tracers.TracerUPbModel;
  *
  * @author James F. Bowring
  */
-public abstract class Aliquot implements AliquotI, Serializable {
+public abstract class Aliquot implements AliquotInterface, Serializable {
 
     // Class variables
     private static final long serialVersionUID = 6355007168312036059L;
@@ -255,21 +251,6 @@ public abstract class Aliquot implements AliquotI, Serializable {
     public void setAliquotInstrumentalMethod(String aliquotInstrumentalMethod) {
         this.aliquotInstrumentalMethod = aliquotInstrumentalMethod.trim();
     }
-    /* "ID-TIMS",
-     "SHRIMP Ion Probe",
-     "Cameca Ion Probe",
-     "Quad ICPMS",
-     "HR-ICPMS",
-     "MC-ICPMS"
-     */
-
-    public boolean usesIDTIMS() {
-        return (aliquotInstrumentalMethod.equalsIgnoreCase("ID-TIMS"));
-    }
-
-    public boolean usesMCIPMS() {
-        return (aliquotInstrumentalMethod.equalsIgnoreCase("MC-ICPMS"));
-    }
 
     /**
      *
@@ -348,27 +329,6 @@ public abstract class Aliquot implements AliquotI, Serializable {
 
     /**
      *
-     * @param pbBlankNameAndVersion
-     * @return
-     */
-    public AbstractRatiosDataModel getAPbBlank(String pbBlankNameAndVersion) {
-        // we look for name of PbBlank by walking list
-        Iterator it = getPbBlanks().iterator();
-        AbstractRatiosDataModel retval = null;
-        while (it.hasNext()) {
-            retval = (AbstractRatiosDataModel) it.next();
-            if (retval.getNameAndVersion().
-                    equalsIgnoreCase(pbBlankNameAndVersion.trim())) {
-                return retval;
-            } else {
-                retval = null;
-            }
-        }
-        return retval;
-    }
-
-    /**
-     *
      * @param pbBlanks
      */
     public void setPbBlanks(Vector<AbstractRatiosDataModel> pbBlanks) {
@@ -396,28 +356,6 @@ public abstract class Aliquot implements AliquotI, Serializable {
             }
         }
         return temp;
-    }
-
-    /**
-     *
-     * @param tracerNameandVersion
-     * @return
-     */
-    public AbstractRatiosDataModel getATracer(String tracerNameandVersion) {
-        // we look for name of Tracer by walking list
-        Iterator it = getTracers().iterator();
-        AbstractRatiosDataModel retval = null;
-        while (it.hasNext()) {
-            retval = (AbstractRatiosDataModel) it.next();
-            if (retval.getNameAndVersion().
-                    equalsIgnoreCase(tracerNameandVersion.trim())) {
-                return retval;
-            } else {
-                retval = null;
-            }
-        }
-
-        return retval;
     }
 
     /**
@@ -451,28 +389,6 @@ public abstract class Aliquot implements AliquotI, Serializable {
     }
 
     /**
-     *
-     * @param alphaPbModelName
-     * @return
-     */
-    public ValueModel getAnAlphaPbModel(String alphaPbModelName) {
-        // we look for name of AlphaPbModel by walking list
-        Iterator it = getAlphaPbModels().iterator();
-        ValueModel retval = null;
-        while (it.hasNext()) {
-            retval = (ValueModel) it.next();
-            if (retval.getName().
-                    equalsIgnoreCase(alphaPbModelName.trim())) {
-                return retval;
-            } else {
-                retval = null;
-            }
-        }
-
-        return retval;
-    }
-
-    /**
      * @param alphaPbModels the alphaPbModels to set
      */
     public void setAlphaPbModels(Vector<ValueModel> alphaPbModels) {
@@ -499,27 +415,6 @@ public abstract class Aliquot implements AliquotI, Serializable {
             }
         }
         return temp;
-    }
-
-    /**
-     *
-     * @param alphaUModelName
-     * @return
-     */
-    public ValueModel getAnAlphaUModel(String alphaUModelName) {
-        // we look for name of AlphaUModel by walking list
-        Iterator it = getAlphaUModels().iterator();
-        ValueModel retval = null;
-        while (it.hasNext()) {
-            retval = (ValueModel) it.next();
-            if (retval.getName().
-                    equalsIgnoreCase(alphaUModelName.trim())) {
-                return retval;
-            } else {
-                retval = null;
-            }
-        }
-        return retval;
     }
 
     /**
@@ -567,6 +462,7 @@ public abstract class Aliquot implements AliquotI, Serializable {
      *
      * @return
      */
+    @Override
     public Vector<AbstractRatiosDataModel> getMineralStandardModels() {
         return MineralStandardModels;
     }
@@ -575,28 +471,9 @@ public abstract class Aliquot implements AliquotI, Serializable {
      *
      * @param MineralStandards
      */
+    @Override
     public void setMineralStandardModels(Vector<AbstractRatiosDataModel> MineralStandards) {
         this.MineralStandardModels = MineralStandards;
-    }
-
-    /**
-     *
-     * @param modelNameAndVersion
-     * @return
-     */
-    public AbstractRatiosDataModel getAMineralStandardModelByName(String modelNameAndVersion) {
-        Iterator<AbstractRatiosDataModel> it = getMineralStandardModels().iterator();
-        AbstractRatiosDataModel retval = null;
-        while (it.hasNext()) {
-            retval = it.next();
-            if (retval.getNameAndVersion().
-                    equalsIgnoreCase(modelNameAndVersion.trim())) {
-                return retval;
-            } else {
-                retval = null;
-            }
-        }
-        return retval;
     }
 
     /**
@@ -609,199 +486,11 @@ public abstract class Aliquot implements AliquotI, Serializable {
 
     /**
      *
-     * @return
-     */
-    public Vector<ValueModel> legalizeSampleDateModels() {
-        // created april 2010 to remove any sample date model that has no fractions
-        // in preparation for publishing as xml
-
-        Vector<ValueModel> tempSampleDateModels = new Vector<ValueModel>();
-        boolean existsPreferredDate = false;
-
-        // first update models to clean up fraction lists
-        updateSampleDateModels();
-
-        // now check for empties
-        for (ValueModel vm : sampleDateModels) {
-            if (!((SampleDateModel) vm).getIncludedFractionIDsVector().isEmpty()) {
-                tempSampleDateModels.add(vm);
-                if (((SampleDateModel) vm).isPreferred()) {
-                    existsPreferredDate = true;
-                }
-            }
-        }
-
-        sampleDateModels = tempSampleDateModels;
-
-        // guarantee preferred date model
-        if (!existsPreferredDate && (sampleDateModels.size() > 0)) {
-            ((SampleDateModel) sampleDateModels.get(0)).setPreferred(true);
-        }
-        return sampleDateModels;
-    }
-
-    /**
-     *
      * @param sampleDateModels
      */
+    @Override
     public void setSampleDateModels(Vector<ValueModel> sampleDateModels) {
         this.sampleDateModels = sampleDateModels;
-    }
-
-    /**
-     *
-     * @param modelName
-     * @return
-     */
-    public ValueModel getASampleDateModelByName(String modelName) {
-        Iterator it = sampleDateModels.iterator();
-        ValueModel retval = null;
-        while (it.hasNext()) {
-            retval = (SampleDateModel) it.next();
-            if (retval.getName().
-                    equalsIgnoreCase(modelName.trim())) {
-                return retval;
-            } else {
-                retval = null;
-            }
-        }
-        return retval;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public ValueModel getPreferredSampleDateModel() {
-        ValueModel retVal = null;
-        Iterator it = sampleDateModels.iterator();
-
-        while (it.hasNext()) {
-            retVal = (SampleDateModel) it.next();
-            if (((SampleDateModel) retVal).isPreferred()) {
-                return retVal;
-            }
-        }
-
-        return retVal;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public Vector<ValueModel> determineUnusedSampleDateModels() {
-        Vector<ValueModel> retVal = new Vector<ValueModel>();
-        // choose models not already in use by Aliquot
-        for (int i = 0; i < SampleDateTypes.getSampleDateModelTypes().length; i++) {
-            if (getASampleDateModelByName(SampleDateTypes.getSampleDateType(i)) == null) {
-                ValueModel tempModel = null;
-                if (SampleDateTypes.getSampleDateType(i).endsWith("intercept")) {
-                    tempModel = //
-                            new SampleDateInterceptModel(//
-                                    SampleDateTypes.getSampleDateType(i),
-                                    SampleDateTypes.getSampleDateTypeMethod(i),
-                                    SampleDateTypes.getSampleDateTypeName(i),
-                                    BigDecimal.ZERO,
-                                    "ABS",
-                                    BigDecimal.ZERO);
-                } else {
-                    tempModel = //
-                            new SampleDateModel(//
-                                    SampleDateTypes.getSampleDateType(i),
-                                    SampleDateTypes.getSampleDateTypeMethod(i),
-                                    SampleDateTypes.getSampleDateTypeName(i),
-                                    BigDecimal.ZERO,
-                                    "ABS",
-                                    BigDecimal.ZERO);
-                }
-                ((SampleDateModel) tempModel).setAliquot(this);
-                retVal.add(tempModel);
-            }
-        }
-        return retVal;
-    }
-
-    /**
-     *
-     * @param sampleDateModel
-     */
-    public void setPreferredSampleDateModel(ValueModel sampleDateModel) {
-        // set all to false
-        for (ValueModel sam : sampleDateModels) {
-            ((SampleDateModel) sam).setPreferred(false);
-        }
-        ((SampleDateModel) sampleDateModel).setPreferred(true);
-        Collections.sort(sampleDateModels);
-    }
-
-    /**
-     *
-     * @param sampleDateModelName
-     * @return
-     */
-    public boolean containsSampleDateModelByName(String sampleDateModelName) {
-        boolean retVal = false;
-        for (ValueModel sam : sampleDateModels) {
-            if (sam.getName().equalsIgnoreCase(sampleDateModelName.trim())) {
-                retVal = true;
-            }
-        }
-        return retVal;
-    }
-
-    /**
-     *
-     * @param sampleDateModelName
-     * @return
-     */
-    public ValueModel getSampleDateModelByName(String sampleDateModelName) {
-        ValueModel retVal = null;
-        for (ValueModel sdm : sampleDateModels) {
-            if (sdm.getName().equalsIgnoreCase(sampleDateModelName.trim())) {
-                retVal = sdm;
-            }
-        }
-        return retVal;
-    }
-
-    /**
-     *
-     */
-    public final void updateSampleDateModels() {
-        // Nov 2008
-        // process all sampleDateModels' included fraction vectors to remove missing fractions
-        Vector<String> includedFractionIDs = ((UPbReduxAliquot) this).getAliquotFractionIDs();
-        Vector<String> excludedFractionIDs = new Vector<String>();
-
-        boolean existsPreferredDate = false;
-        for (ValueModel SAM : sampleDateModels) {
-            for (String fractionID : ((SampleDateModel) SAM).getIncludedFractionIDsVector()) {
-                if (!includedFractionIDs.contains(fractionID)) {
-                    excludedFractionIDs.add(fractionID);
-                }
-            }
-            // remove found exclusions (these are ones that were rejected after processing
-            for (String fractionID : excludedFractionIDs) {
-                ((SampleDateModel) SAM).getIncludedFractionIDsVector().remove(fractionID);
-            }
-
-            if (((SampleDateModel) SAM).isPreferred()) {
-                existsPreferredDate = true;
-            }
-
-            // oct 2014 per Matt Rioux email report
-            try {
-                ((SampleDateModel) SAM).setAliquot(this);
-                ((SampleDateModel) SAM).CalculateDateInterpretationForAliquot();
-            } catch (Exception e) {
-            }
-        }
-
-        // guarantee preferred date model
-        if (!existsPreferredDate && (sampleDateModels.size() > 0)) {
-            ((SampleDateModel) sampleDateModels.get(0)).setPreferred(true);
-        }
     }
 
     /**

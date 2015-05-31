@@ -63,7 +63,6 @@ import org.apache.batik.dom.GenericDOMImplementation;
 import org.apache.batik.svggen.SVGGraphics2D;
 import org.apache.batik.svggen.SVGGraphics2DIOException;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.aliquots.Aliquot;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.DateInterpretationBoxPanel;
 import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetup;
@@ -73,16 +72,18 @@ import org.earthtime.UPb_Redux.dialogs.graphManagers.GraphAxesDialog;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
+import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.reports.reportViews.ReportUpdaterInterface;
-import org.earthtime.UPb_Redux.samples.Sample;
-import org.earthtime.UPb_Redux.samples.SampleI;
 import org.earthtime.UPb_Redux.user.SampleDateInterpretationGUIOptions;
 import org.earthtime.UPb_Redux.valueModels.SampleDateInterceptModel;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UPb_Redux.valueModels.definedValueModels.Age207_206r;
+import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.dataDictionaries.Lambdas;
 import org.earthtime.dataDictionaries.RadRatiosPbcCorrected;
+import org.earthtime.exceptions.ETWarningDialog;
+import org.earthtime.samples.SampleInterface;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 
@@ -99,7 +100,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
 
     // Class Variables
     // Instance Variables
-    private SampleI sample;
+    private SampleInterface sample;
     private ValueModel lambda235;
     private ValueModel lambda238;
     private ValueModel lambda232;
@@ -146,7 +147,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
     private JLayeredPane heatMapLegendPanel;
     //oct 2014
     private transient double currentBestDate;
-    private transient Aliquot curAliquot;
+    private transient AliquotInterface curAliquot;
     private transient boolean changingBestDateDivider;
     private transient ReportUpdaterInterface reportUpdater;
 
@@ -156,7 +157,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
      * @param mySample
      * @param reportUpdater the value of reportUpdater
      */
-    public ConcordiaGraphPanel(Sample mySample, ReportUpdaterInterface reportUpdater) {
+    public ConcordiaGraphPanel(SampleInterface mySample, ReportUpdaterInterface reportUpdater) {
         super();
 
         this.sample = mySample;
@@ -200,7 +201,8 @@ public class ConcordiaGraphPanel extends JLayeredPane
             lambda235 = sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda235.getName());
             lambda238 = sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda238.getName());
             lambda232 = sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda232.getName());
-        } catch (BadLabDataException badLabDataException) {
+        } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
 
         setViewOptions();
@@ -997,7 +999,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
     }
 
     private void plotYorkBestFitLineAndUncertainty(
-            Aliquot curAliquot,
+            AliquotInterface curAliquot,
             Graphics2D g2d,
             float interceptLineWeight,
             Color interceptLineColor,
@@ -1026,10 +1028,10 @@ public class ConcordiaGraphPanel extends JLayeredPane
                 if (truncateRegressionCurves) {
                     // determine x value for lower and upper dates
                     lowerYorkDate = //
-                            curAliquot.getSampleDateModelByName("lower intercept").getValue().doubleValue();
+                            curAliquot.getASampleDateModelByName("lower intercept").getValue().doubleValue();
                     lowerYorkX = Math.expm1(lambda235.getValue().doubleValue() * lowerYorkDate);
                     upperYorkDate = //
-                            curAliquot.getSampleDateModelByName("upper intercept").getValue().doubleValue();
+                            curAliquot.getASampleDateModelByName("upper intercept").getValue().doubleValue();
                     upperYorkX = Math.expm1(lambda235.getValue().doubleValue() * upperYorkDate);
                 }
 
@@ -1048,10 +1050,10 @@ public class ConcordiaGraphPanel extends JLayeredPane
                 double endUpperMinusX = maxX_Display + xIncrement;
                 if (truncateRegressionCurves) {
                     double lowerPlus = //
-                            ((SampleDateInterceptModel) curAliquot.getSampleDateModelByName("lower intercept")).getPlusInternalTwoSigmaUnct().doubleValue();
+                            ((SampleDateInterceptModel) curAliquot.getASampleDateModelByName("lower intercept")).getPlusInternalTwoSigmaUnct().doubleValue();
                     startLowerPlusX = Math.expm1(lambda235.getValue().doubleValue() * (lowerYorkDate + lowerPlus));
                     double upperMinus = //
-                            ((SampleDateInterceptModel) curAliquot.getSampleDateModelByName("upper intercept")).getMinusInternalTwoSigmaUnct().doubleValue();
+                            ((SampleDateInterceptModel) curAliquot.getASampleDateModelByName("upper intercept")).getMinusInternalTwoSigmaUnct().doubleValue();
                     endUpperMinusX = Math.expm1(lambda235.getValue().doubleValue() * (upperYorkDate + upperMinus));
                 }
 
@@ -1095,10 +1097,10 @@ public class ConcordiaGraphPanel extends JLayeredPane
 
                 if (truncateRegressionCurves) {
                     double upperPlus = //
-                            ((SampleDateInterceptModel) curAliquot.getSampleDateModelByName("upper intercept")).getPlusInternalTwoSigmaUnct().doubleValue();
+                            ((SampleDateInterceptModel) curAliquot.getASampleDateModelByName("upper intercept")).getPlusInternalTwoSigmaUnct().doubleValue();
                     startUpperPlusX = Math.expm1(lambda235.getValue().doubleValue() * (upperYorkDate + upperPlus));
                     double lowerMinus = //
-                            ((SampleDateInterceptModel) curAliquot.getSampleDateModelByName("lower intercept")).getMinusInternalTwoSigmaUnct().doubleValue();
+                            ((SampleDateInterceptModel) curAliquot.getASampleDateModelByName("lower intercept")).getMinusInternalTwoSigmaUnct().doubleValue();
                     endLowerMinusX = Math.expm1(lambda235.getValue().doubleValue() * (lowerYorkDate + lowerMinus));
                 }
 
@@ -1537,7 +1539,8 @@ public class ConcordiaGraphPanel extends JLayeredPane
                 setLambda235(sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda235.getName()));
                 getCurrentGraphAxesSetup().setLambda235(lambda235.getValue().doubleValue());
             }
-        } catch (BadLabDataException badLabDataException) {
+        } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
         setLambda238(lambda238);
 
@@ -1937,7 +1940,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
      *
      * @return
      */
-    public SampleI getSample() {
+    public SampleInterface getSample() {
         return sample;
     }
 
@@ -1945,7 +1948,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
      *
      * @param sample
      */
-    public void setSample(SampleI sample) {
+    public void setSample(SampleInterface sample) {
         this.sample = sample;
     }
 
@@ -2757,7 +2760,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
     private void setAliquotOptions(Map<String, Map<String, String>> aliquotOptions) {
         // here we scan the sample and make sure there are aliquot options for each aliquot
         SampleDateInterpretationGUIOptions myOptions = sample.getSampleDateInterpretationGUISettings();
-        for (Aliquot a : sample.getActiveAliquots()) {
+        for (AliquotInterface a : sample.getActiveAliquots()) {
             // this finds or creates an aliquotOptions map
             myOptions.getAliquotOptionsMapByName(a.getAliquotName(), ((UPbReduxAliquot) a).getAliquotNumber());
         }
@@ -3077,7 +3080,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
 
         currentGraphAxesSetup.setLambda238(lambda238.getValue().doubleValue());
         currentGraphAxesSetup.setDefaultR238_235s( //
-                sample.getMyReduxLabData().getDefaultR238_235s().getValue().doubleValue());
+                ReduxLabData.getInstance().getDefaultR238_235s().getValue().doubleValue());
     }
 
     /**

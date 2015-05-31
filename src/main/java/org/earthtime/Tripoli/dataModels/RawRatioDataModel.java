@@ -21,6 +21,8 @@ package org.earthtime.Tripoli.dataModels;
 
 import Jama.Matrix;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Map;
@@ -35,7 +37,6 @@ import org.earthtime.Tripoli.fitFunctions.LevenbergMarquardGeneralSolverWithCovS
 import org.earthtime.Tripoli.fitFunctions.LevenbergMarquardGeneralSolverWithVecV;
 import org.earthtime.Tripoli.fitFunctions.LevenbergMarquardGeneralSolverWithVecV.AbstractOverDispersionLMVecAlgorithm;
 import org.earthtime.Tripoli.fitFunctions.MeanFitFunction;
-import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.UPb_Redux.utilities.comparators.IntuitiveStringComparator;
 import org.earthtime.dataDictionaries.FitFunctionTypeEnum;
 import org.earthtime.dataDictionaries.IsotopeNames;
@@ -86,7 +87,8 @@ public class RawRatioDataModel //
     protected boolean overDispersionSelected;
     private FitFunctionTypeEnum selectedFitFunctionType;
     private boolean belowDetection;
-    private Matrix SlogRatioX_Y;
+    private Matrix SlogRatioX_Yfull;
+    private transient Matrix SlogRatioX_Y;
     private transient Matrix matrixSxyod;
     private boolean calculatedInitialFitFunctions;
     // these three introduced feb 2013 to streamline choice of points in function fitting
@@ -137,6 +139,7 @@ public class RawRatioDataModel //
 
         this.selectedFitFunctionType = FitFunctionTypeEnum.LINE;//.LINE;
         this.belowDetection = false;
+        this.SlogRatioX_Yfull = null;
         this.SlogRatioX_Y = null;
 
         this.calculatedInitialFitFunctions = false;
@@ -183,9 +186,8 @@ public class RawRatioDataModel //
 
     /**
      *
-     * @param tripoliFraction the value of tripoliFraction
      */
-    public void calculateRawAndLogRatios(TripoliFraction tripoliFraction) {
+    public void calculateRawAndLogRatios() {
         ratios = new double[((RawIntensityDataModel) topIsotope).getOnPeakVirtualCollector().getIntensities().length];
         logRatios = new double[ratios.length];
 
@@ -197,30 +199,12 @@ public class RawRatioDataModel //
             double[] botCorrectedIntensities;
             double[] topLogCorrectedIntensities;
             double[] botLogCorrectedIntensities;
-//
-//            if (isUsedForCommonLeadCorrections() && ((RawIntensityDataModel) botIsotope).isForceMeanForCommonLeadRatios()) {
-//                topCorrectedIntensities = new double[ratios.length];
-//                botCorrectedIntensities = new double[ratios.length];
-//
-//                topLogCorrectedIntensities = new double[ratios.length];
-//                botLogCorrectedIntensities = new double[ratios.length];
-//
-//                for (int i = 0; i < ratios.length; i++) {
-//                    topCorrectedIntensities[i] = ((RawIntensityDataModel) topIsotope).getForcedMeanForCommonLeadRatios();
-//                    botCorrectedIntensities[i] = ((RawIntensityDataModel) botIsotope).getForcedMeanForCommonLeadRatios();
-//
-//                    topLogCorrectedIntensities[i] = Math.log(topCorrectedIntensities[i]);
-//                    botLogCorrectedIntensities[i] = Math.log(botCorrectedIntensities[i]);
-//                }
-//
-//                System.out.println("COMMON LEAD FRACTIONS FORCED MEANS " + rawRatioName.getDisplayName() + " = " + topCorrectedIntensities[1] / botCorrectedIntensities[1]);
-//            } else {
+
             topCorrectedIntensities = ((RawIntensityDataModel) topIsotope).getOnPeakVirtualCollector().getCorrectedIntensities();
             botCorrectedIntensities = ((RawIntensityDataModel) botIsotope).getOnPeakVirtualCollector().getCorrectedIntensities();
 
             topLogCorrectedIntensities = ((RawIntensityDataModel) topIsotope).getOnPeakVirtualCollector().getLogCorrectedIntensities();
             botLogCorrectedIntensities = ((RawIntensityDataModel) botIsotope).getOnPeakVirtualCollector().getLogCorrectedIntensities();
-//            }
 
             alphas = new double[topCorrectedIntensities.length];
             fitFunctionLogValues = new double[topCorrectedIntensities.length];
@@ -232,14 +216,8 @@ public class RawRatioDataModel //
                 double bot = botCorrectedIntensities[i];
 
                 // dec 2012 these ratios are going to be for plotting only as we switch to log ratios for unct prop
-                //if ((bot <= Double.MIN_VALUE) || (top <= Double.MIN_VALUE)) {
-                //     ratios[i] = Double.MIN_VALUE;
-                //     logRatios[i] = Math.log(Double.MIN_VALUE);
-                //} else {
                 ratios[i] = top / bot;
                 logRatios[i] = topLogCorrectedIntensities[i] - botLogCorrectedIntensities[i];
-
-                // }
             }
             calculateAlphas();
         }
@@ -265,84 +243,101 @@ public class RawRatioDataModel //
      */
     public void propagateUnctInRatios() {
 
-        boolean cleanTop = false;
-        boolean cleanBot = false;
+        // April 2015
+        // refactor to improve performance
+        // Since SLogRatioX_Y is calculated on the first pass, we can merely
+        // toggle rows and columns per dagtaactive map instead of recalculating everything
+        // make the current version transient and save only the full
+        if (SlogRatioX_Yfull == null) {
+            // create all true dataActiveMap for initial pass
+            boolean[] allTrueDataActiveMap = new boolean[dataActiveMap.length];
+            Arrays.fill(allTrueDataActiveMap, Boolean.TRUE);
 
-        // nov 2014 need to catch special case where */pb204 ratios have different dataactivemaps
-        boolean[] topDataActiveMap = ((RawIntensityDataModel) topIsotope).getOnPeakVirtualCollector().getDataActiveMap();
-        ((RawIntensityDataModel) topIsotope).getOnPeakVirtualCollector().setDataActiveMap(dataActiveMap.clone());
+            boolean[] topDataActiveMap = ((RawIntensityDataModel) topIsotope).getOnPeakVirtualCollector().getDataActiveMap();
+            ((RawIntensityDataModel) topIsotope).getOnPeakVirtualCollector().setDataActiveMap(allTrueDataActiveMap);//dataActiveMap.clone());
 
-        if (((RawIntensityDataModel) topIsotope).getSopbclr() == null) {
-            cleanTop = true;
             ((RawIntensityDataModel) topIsotope).prepareDataForFitFunctions();
             ((RawIntensityDataModel) topIsotope).propagateUnctInBaselineCorrOnPeakIntensities();
-        }
-        // restore
-        ((RawIntensityDataModel) topIsotope).getOnPeakVirtualCollector().setDataActiveMap(topDataActiveMap);
+//            }
 
-        boolean[] botDataActiveMap = ((RawIntensityDataModel) botIsotope).getOnPeakVirtualCollector().getDataActiveMap();
-        ((RawIntensityDataModel) botIsotope).getOnPeakVirtualCollector().setDataActiveMap(dataActiveMap.clone());
+            boolean[] botDataActiveMap = ((RawIntensityDataModel) botIsotope).getOnPeakVirtualCollector().getDataActiveMap();
+            ((RawIntensityDataModel) botIsotope).getOnPeakVirtualCollector().setDataActiveMap(allTrueDataActiveMap);//dataActiveMap.clone());
 
-        if (((RawIntensityDataModel) botIsotope).getSopbclr() == null) {
-            cleanBot = true;
             ((RawIntensityDataModel) botIsotope).prepareDataForFitFunctions();
             ((RawIntensityDataModel) botIsotope).propagateUnctInBaselineCorrOnPeakIntensities();
+
+            Matrix numerator = ((RawIntensityDataModel) topIsotope).getSopbclr();
+            Matrix denominator = ((RawIntensityDataModel) botIsotope).getSopbclr();
+
+            if ((numerator != null) & (denominator != null)) {
+
+                // only if both numerator and denominator are ion counters do we do matrixSxyod below       
+                if ((topIsotope.getCollectorModel() //
+                        instanceof IonCounterCollectorModel)//
+                        && //
+                        (botIsotope.getCollectorModel() //
+                        instanceof IonCounterCollectorModel)//
+                        &&//
+                        // v3 jan 2013 check if the SAME ion counter
+                        hasTwoIdenticalIonCounters()) {
+
+                    matrixSxyod = //
+                            ((RawIntensityDataModel) topIsotope).getColumnVectorOfCorrectedOnPeakIntensities()//
+                            .times(((RawIntensityDataModel) botIsotope).getColumnVectorOfCorrectedOnPeakIntensities().transpose());
+
+                    double deadtimeOneSigmaAbsSqr = //
+                            ((IonCounterCollectorModel) botIsotope//
+                            .getCollectorModel()).getDeadTime().getOneSigmaAbs().movePointLeft(0).pow(2).doubleValue();
+
+                    matrixSxyod.timesEquals(deadtimeOneSigmaAbsSqr);
+
+                    SlogRatioX_Yfull = numerator.plus(denominator).minus(matrixSxyod.times(2.0));
+
+                } else {
+                    try {
+                        SlogRatioX_Yfull = numerator.plus(denominator);
+                    } catch (Exception e) {
+                        System.out.println("SlogRatioX_Yfull trouble" + e.getMessage());
+                    }
+                }
+
+                // restore active data maps to normal status
+                ((RawIntensityDataModel) topIsotope).getOnPeakVirtualCollector().setDataActiveMap(topDataActiveMap);
+                ((RawIntensityDataModel) botIsotope).getOnPeakVirtualCollector().setDataActiveMap(botDataActiveMap);
+
+                topSopbclr = numerator.copy();
+                botSopbclr = denominator.copy();
+            }
+
+            ((DataModelFitFunctionInterface) topIsotope).cleanupUnctCalcs();
+            ((DataModelFitFunctionInterface) botIsotope).cleanupUnctCalcs();
+
+            System.gc();
+
         }
-        // restore
-        ((RawIntensityDataModel) botIsotope).getOnPeakVirtualCollector().setDataActiveMap(botDataActiveMap);
+        calculateSlogRatioX_Y();
+    }
 
-        Matrix numerator = ((RawIntensityDataModel) topIsotope).getSopbclr();
-        Matrix denominator = ((RawIntensityDataModel) botIsotope).getSopbclr();
-
-        if ((numerator != null) & (denominator != null)) {
-
-            // only if both numerator and denominator are ion counters do we do matrixSxyod below       
-            if ((topIsotope.getCollectorModel() //
-                    instanceof IonCounterCollectorModel)//
-                    && //
-                    (botIsotope.getCollectorModel() //
-                    instanceof IonCounterCollectorModel)//
-                    &&//
-                    // v3 jan 2013 check if the SAME ion counter
-                    hasTwoIdenticalIonCounters()) {
-
-                matrixSxyod = //
-                        ((RawIntensityDataModel) topIsotope).getColumnVectorOfCorrectedOnPeakIntensities()//
-                        .times(((RawIntensityDataModel) botIsotope).getColumnVectorOfCorrectedOnPeakIntensities().transpose());
-
-                double deadtimeOneSigmaAbsSqr = //
-                        ((IonCounterCollectorModel) botIsotope//
-                        .getCollectorModel()).getDeadTime().getOneSigmaAbs().movePointLeft(0).pow(2).doubleValue();
-
-                matrixSxyod.timesEquals(deadtimeOneSigmaAbsSqr);
-
-                SlogRatioX_Y = numerator.plus(denominator).minus(matrixSxyod.times(2.0));
-
-            } else {
-                try {
-                    SlogRatioX_Y = numerator.plus(denominator);
-                } catch (Exception e) {
-                    System.out.println("slogratiox_y trouble" + e.getMessage());
+    private void calculateSlogRatioX_Y() {
+        // choose rows and columns based on active data
+        // nov 2014 need to catch special case where */pb204 ratios have different dataactivemaps
+        if (SlogRatioX_Yfull != null) {
+            ArrayList<Integer> selectedRowsColsList = new ArrayList<>();
+            for (int i = 0; i < dataActiveMap.length; i++) {
+                if (dataActiveMap[i]) {
+                    selectedRowsColsList.add(i);
                 }
             }
 
-            // nov 2014
-//            if (botIsotope.getDataModelName().equalsIgnoreCase(IsotopeNames.Pb204.getName())) {
-            topSopbclr = numerator.copy();
-            botSopbclr = denominator.copy();
-//            }
+            int[] selectedRowsCols = new int[selectedRowsColsList.size()];
+            for (int i = 0; i < selectedRowsCols.length; i++) {
+                selectedRowsCols[i] = selectedRowsColsList.get(i);
+            }
 
-//            System.out.println("Checkpoint for Ratio uncertainty: " + getDataModelName());
+            SlogRatioX_Y = SlogRatioX_Yfull.getMatrix(selectedRowsCols, selectedRowsCols);
+        } else {
+            SlogRatioX_Y = null;
         }
-
-        if (cleanTop) {
-            ((DataModelFitFunctionInterface) topIsotope).cleanupUnctCalcs();
-        }
-        if (cleanBot) {
-            ((DataModelFitFunctionInterface) botIsotope).cleanupUnctCalcs();
-        }
-
-        System.gc();
     }
 
     /**
@@ -458,7 +453,8 @@ public class RawRatioDataModel //
                         FitFunctionTypeEnum.MEAN,//
                         activeData, //
                         null, //
-                        differences, matrixSf.plus(SlogRatioX_Y),//
+                        differences,//
+                        matrixSf.plus(SlogRatioX_Y),//
                         false);
 
         // algorithmForMEAN contains both the non OD and OD versions
@@ -558,19 +554,19 @@ public class RawRatioDataModel //
 
         AbstractFunctionOfX fOfX_FORCEDMEAN;
 
-        if (USING_FULL_PROPAGATION) {
-            fOfX_FORCEDMEAN = ConstantFitFunctionWithCovS.getInstance().getFunctionOfX(//
-                    activeData, //
-                    activeXvalues, //
-                    forcedMeanValues, //,
-                    SlogRatioX_Y, false);
-        } else {
-            fOfX_FORCEDMEAN = ConstantFitFunctionWithCovS.getInstance().getFunctionOfX(//
-                    activeData, //
-                    activeXvalues, //
-                    forcedMeanValues, //,
-                    SlogRatioX_Y, false);
-        }
+        // april 2015 replacing code below
+        Matrix matrixTopMeanBotMean = new Matrix(//
+                new double[]{//
+                    ((RawIntensityDataModel) topIsotope).getForcedMeanForCommonLeadRatios(), //
+                    ((RawIntensityDataModel) botIsotope).getForcedMeanForCommonLeadRatios()}, //
+                1);
+        fOfX_FORCEDMEAN = MeanFitFunction.getInstance()//
+                .getFunctionOfX(//
+                        activeData, //
+                        activeXvalues, //
+                        activeYvalues,//
+                        matrixTopMeanBotMean,//null, //
+                        false);
 
         fOfX_FORCEDMEAN.setShortName(FitFunctionTypeEnum.MEANRATIO);
         logRatioFitFunctionsNoOD.put(FitFunctionTypeEnum.MEANRATIO.getName(), fOfX_FORCEDMEAN);
@@ -759,7 +755,6 @@ public class RawRatioDataModel //
         }
 
         AbstractOverDispersionLMAlgorithmInterface algorithmForEXPMAT;
-//        AbstractOverDispersionLMVecAlgorithm algorithmForEXPMAT;
 
         if (fOfX_ExpFast != null) //
         {
@@ -829,6 +824,9 @@ public class RawRatioDataModel //
                         } else {
                             logRatioFitFunctionsWithOD.put(fOfX_EXPOD.getShortNameString(), fOfX_EXPOD);
                         }
+                    } else {
+                        logRatioFitFunctionsWithOD.remove(FitFunctionTypeEnum.EXPONENTIAL.getName());
+                        selectedFitFunctionType = FitFunctionTypeEnum.LINE;
                     }
 
                 } else {
@@ -879,7 +877,7 @@ public class RawRatioDataModel //
      */
     @Override
     public void cleanupUnctCalcs() {
-        setSlogRatioX_Y(null);
+        // April 2015 saving a copy and using transient setSlogRatioX_Y(null);
         setMatrixSxyod(null);
     }
 
@@ -963,10 +961,17 @@ public class RawRatioDataModel //
                     try {
                         generateLINEfitFunctionUsingLM();
                     } catch (Exception e) {
+                        System.out.println("Exception generating LINE");
+                        logRatioFitFunctionsNoOD.remove(FitFunctionTypeEnum.LINE.getName());
+                        logRatioFitFunctionsWithOD.remove(FitFunctionTypeEnum.LINE.getName());
+
                     }
                     try {
                         generateEXPONENTIALfitFunctionUsingLM();
                     } catch (Exception e) {
+                        System.out.println("Exception generating EXPONENTIAL");
+                        logRatioFitFunctionsNoOD.remove(FitFunctionTypeEnum.EXPONENTIAL.getName());
+                        logRatioFitFunctionsWithOD.remove(FitFunctionTypeEnum.EXPONENTIAL.getName());
                     }
                     calculatedInitialFitFunctions = true;
 
@@ -985,9 +990,16 @@ public class RawRatioDataModel //
                             String key = sessionFitFuncsNoOdIterator.next();
                             AbstractFunctionOfX FofX = logRatioFitFunctionsNoOD.get(key);
 
-                            Matrix JIntp = FofX.assembleMatrixJIntp(SlogRatioX_Y);
+                            if (FofX != null) {
+                                Matrix JIntp = FofX.assembleMatrixJIntp(SlogRatioX_Y);
 
-                            FofX.setdLrInt_dDt(JIntp.times(matrixIntDiff).get(0, 0));
+                                try {
+                                    FofX.setdLrInt_dDt(JIntp.times(matrixIntDiff).get(0, 0));
+                                } catch (Exception e) {
+                                }
+                            } else {
+                                logRatioFitFunctionsNoOD.remove(key);
+                            }
                         }
 
                         Iterator<String> sessionFitFuncsWithOdIterator = logRatioFitFunctionsWithOD.keySet().iterator();
@@ -995,12 +1007,20 @@ public class RawRatioDataModel //
                             String key = sessionFitFuncsWithOdIterator.next();
                             AbstractFunctionOfX FofX = logRatioFitFunctionsWithOD.get(key);
 
-                            double OD = FofX.getOverDispersion();
-                            Matrix ODdiag = Matrix.identity(countOfActiveData, countOfActiveData).times(OD);
+                            if (FofX != null) {
+                                double OD = FofX.getOverDispersion();
+                                Matrix ODdiag = Matrix.identity(countOfActiveData, countOfActiveData).times(OD);
 
-                            Matrix JIntp = FofX.assembleMatrixJIntp(SlogRatioX_Y.plus(ODdiag));
+                                Matrix JIntp = FofX.assembleMatrixJIntp(SlogRatioX_Y.plus(ODdiag));
 
-                            FofX.setdLrInt_dDt(JIntp.times(matrixIntDiff).get(0, 0));
+                                try {
+                                    FofX.setdLrInt_dDt(JIntp.times(matrixIntDiff).get(0, 0));
+                                } catch (Exception e) {
+                                }
+                            } else {
+                                logRatioFitFunctionsWithOD.remove(key);
+                            }
+
                         }
                     }
                 }
@@ -1073,6 +1093,7 @@ public class RawRatioDataModel //
     /**
      * @return the rawRatioName
      */
+    @Override
     public RawRatioNames getRawRatioModelName() {
         return rawRatioName;
     }
@@ -1461,6 +1482,9 @@ public class RawRatioDataModel //
      * @return the SlogRatioX_Y
      */
     public Matrix getSlogRatioX_Y() {
+        if (SlogRatioX_Y == null) {
+            calculateSlogRatioX_Y();
+        }
         return SlogRatioX_Y;
     }
 

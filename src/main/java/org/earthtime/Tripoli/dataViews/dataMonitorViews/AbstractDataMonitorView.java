@@ -82,13 +82,12 @@ import org.earthtime.UPb_Redux.dialogs.projectManagers.ProjectManagerSubscribeIn
 import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.reports.reportViews.TabbedReportViews;
-import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.dataDictionaries.DataPresentationModeEnum;
 import org.earthtime.dataDictionaries.FractionSelectionTypeEnum;
 import org.earthtime.dataDictionaries.FractionationTechniquesEnum;
 import org.earthtime.dataDictionaries.IncludedTypeEnum;
-import org.earthtime.projects.ProjectI;
+import org.earthtime.projects.ProjectInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.utilities.TicGeneratorForAxes;
 
@@ -109,7 +108,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
     /**
      *
      */
-    protected ProjectI project;
+    protected ProjectInterface project;
 
 //    /**
 //     *
@@ -201,7 +200,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
      * @param projectManager the value of projectManager
      * @param uPbReduxFrame
      */
-    public AbstractDataMonitorView(ProjectI project, ProjectManagerSubscribeInterface projectManager, ETReduxFrame uPbReduxFrame) {
+    public AbstractDataMonitorView(ProjectInterface project, ProjectManagerSubscribeInterface projectManager, ETReduxFrame uPbReduxFrame) {
         this();
 
         this.project = project;
@@ -394,7 +393,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
 
         savedCountOfFractions = tripoliFractions.size();
 
-        JTabbedPane reportTableTabbedPane = new TabbedReportViews(getuPbReduxFrame(), (Sample) project.getSuperSample());
+        JTabbedPane reportTableTabbedPane = new TabbedReportViews(getuPbReduxFrame(), project.getSuperSample());
         ((TabbedReportViews) reportTableTabbedPane).initializeTabs();
         ((TabbedReportViews) reportTableTabbedPane).prepareTabs();
 
@@ -475,7 +474,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
         }
 
         if (savedCountOfFractions == 0) {
-            concordiaGraphPanel = new ConcordiaGraphPanel((Sample) project.getSuperSample(), null);
+            concordiaGraphPanel = new ConcordiaGraphPanel(project.getSuperSample(), null);
 
             ((ConcordiaGraphPanel) concordiaGraphPanel).setCurrentGraphAxesSetup(new GraphAxesSetup("C", 2));
 
@@ -507,7 +506,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
 
         try {
             Vector<Fraction> selectedFractions =//
-                    project.getSuperSample().getUPbFractions();
+project.getSuperSample().getFractions();
 
             ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
                     setSelectedFractions(selectedFractions);
@@ -543,10 +542,10 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
             this.remove(kwikiPDFToolBar);
         }
 
-        probabilityPanel = new DateProbabilityDensityPanel((Sample) project.getSuperSample());
+        probabilityPanel = new DateProbabilityDensityPanel(project.getSuperSample());
 
         ((DateProbabilityDensityPanel) probabilityPanel).//
-                setSelectedFractions(filterActiveUPbFractions(((Sample) project.getSuperSample()).getUpbFractionsUnknown()));//.getUpbFractionsActive()));
+                setSelectedFractions(filterActiveUPbFractions(project.getSuperSample().getUpbFractionsUnknown()));
 
         probabilityPanel.setBounds(1355, topMargin + 60, pdfWidth, pdfHeight - 5);
 

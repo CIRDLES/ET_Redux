@@ -229,7 +229,7 @@ public abstract class AbstractFunctionOfX implements Serializable {
         } catch (Exception e) {
         }
         try {
-            setMatrixSf(copyFrom.matrixSf.copy());
+            setMatrixSf(copyFrom.getMatrixSf().copy());
         } catch (Exception e) {
         }
 
@@ -265,26 +265,16 @@ public abstract class AbstractFunctionOfX implements Serializable {
      * @return
      */
     public Matrix assembleMatrixJIntp(Matrix SlrXY) {
-
-//        Matrix SlogRatioX_Y_Solve_Jyp = SlogRatioX_Y.solve( matrixJyp );
-//        Matrix Jpy = (matrixJyp.transpose().times( SlogRatioX_Y_Solve_Jyp ).solve( SlogRatioX_Y_Solve_Jyp ).transpose());
-        Matrix Jpy = (matrixJyp.transpose().times(SlrXY.solve(matrixJyp)).solve(matrixJyp.transpose().solveTranspose(SlrXY)));
-
-        Matrix Jabc = extractMatrixJIntpFromJpy(Jpy);
-        // nov 2014
-//        Matrix Jyintp = new Matrix(new double[]{1.0, 0.0, 1.0}, 1);
-//        Matrix MatrixJacobianYInterceptLogRatioXY = Jyintp.times(Jabc.transpose().times(SlrXY.solve(Jabc)).solve(Jabc.transpose().times(SlrXY.inverse())));
-//
-//        if (initialFofX != null) {
-//            initialFofX.setMatrixJyp(Jabc);
-//            initialFofX.setMatrixJacobianYInterceptLogRatioXY(MatrixJacobianYInterceptLogRatioXY);
-//        }
-//
-//        if (finalFofX != null) {
-//            finalFofX.setMatrixJyp(Jabc);
-//            finalFofX.setMatrixJacobianYInterceptLogRatioXY(MatrixJacobianYInterceptLogRatioXY);
-//        }
-
+        Matrix Jabc = null;
+        
+        try {
+            Matrix Jpy = (matrixJyp.transpose().times(SlrXY.solve(matrixJyp)).solve(matrixJyp.transpose().solveTranspose(SlrXY)));
+            Jabc = extractMatrixJIntpFromJpy(Jpy);
+        } catch (Exception e) {
+            System.out.println(this.shortName + " matrix mismatch where MatrixJyp is " + matrixJyp.getRowDimension()//
+                    + " x " + matrixJyp.getColumnDimension() + "  SlrXY is " + SlrXY.getRowDimension() + " x " + SlrXY.getColumnDimension());
+        }
+ 
         return Jabc;
     }
 

@@ -624,7 +624,7 @@ public class DataViewsOverlay extends AbstractRawDataView implements MaskingShad
                                 @Override
                                 public void actionPerformed(ActionEvent arg0) {
 
-                                    myTripoliFraction.toggleAllData(false);
+                                    myTripoliFraction.toggleAllDataExceptShaded(false);
                                     myTripoliFraction.setColorMeExcluded(false);
                                     myTripoliFraction.setShowVerticalLineAtThisIndex(-1);
 
@@ -650,7 +650,7 @@ public class DataViewsOverlay extends AbstractRawDataView implements MaskingShad
                                 @Override
                                 public void actionPerformed(ActionEvent arg0) {
 
-                                    myTripoliFraction.toggleAllData(true);
+                                    myTripoliFraction.toggleAllDataExceptShaded(true);
                                     myTripoliFraction.setColorMeExcluded(false);
                                     myTripoliFraction.setShowVerticalLineAtThisIndex(-1);
 

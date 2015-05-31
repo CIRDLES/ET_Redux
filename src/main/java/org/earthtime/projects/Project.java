@@ -36,7 +36,6 @@ import org.earthtime.Tripoli.rawDataFiles.handlers.AbstractRawDataFileHandler;
 import org.earthtime.Tripoli.samples.AbstractTripoliSample;
 import org.earthtime.Tripoli.sessions.TripoliSessionInterface;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.aliquots.Aliquot;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.filters.ReduxFileFilter;
@@ -44,13 +43,14 @@ import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLAICPMSFraction;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.samples.Sample;
-import org.earthtime.UPb_Redux.samples.SampleI;
 import org.earthtime.UPb_Redux.user.ReduxPersistentState;
 import org.earthtime.UPb_Redux.utilities.ETSerializer;
+import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.dataDictionaries.DataDictionary;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.dataDictionaries.SampleTypesEnum;
 import org.earthtime.exceptions.ETException;
+import org.earthtime.samples.SampleInterface;
 import org.earthtime.utilities.FileHelper;
 
 /**
@@ -67,14 +67,14 @@ import org.earthtime.utilities.FileHelper;
 public class Project implements
         Serializable,
         EarthTimeSerializedFileInterface,
-        ProjectI {
+        ProjectInterface {
 
     // Class variables
     private static final long serialVersionUID = 6292924571103425985L;
     // instance variables
     private String projectName;
-    private SampleI compiledSuperSample;
-    private ArrayList<SampleI> projectSamples;
+    private SampleInterface compiledSuperSample;
+    private ArrayList<SampleInterface> projectSamples;
     private TripoliSessionInterface tripoliSession;
     private File locationOfProjectReduxFile;
     private boolean changed;
@@ -207,36 +207,37 @@ public class Project implements
             // check for primary standard and leave it out
             if (true) {//oct 2014 want to include standards now (!tripoliSample.isPrimaryStandard()) {
 //            if (!tripoliSample.isPrimaryStandard()) {
-                SampleI sample;
+                SampleInterface sample;
                 try {
                     sample = new Sample( //
                             tripoliSample.getSampleName(), //
                             SampleTypesEnum.ANALYSIS.getName(), //
                             SampleAnalysisTypesEnum.LAICPMS.getName(), //
                             ReduxLabData.getInstance(), //
-                            analysisPurpose);//   ReduxConstants.ANALYSIS_PURPOSE.DetritalSpectrum );
+                            analysisPurpose);
 
                     projectSamples.add(sample);
 
-                    Aliquot aliquot = ((Sample) sample).addNewAliquot(tripoliSample.getSampleName());
+                    AliquotInterface aliquot = sample.addNewAliquot(tripoliSample.getSampleName());
                     System.out.println("New Aliquot is # " + ((UPbReduxAliquot) aliquot).getAliquotNumber() + " = " + aliquot.getAliquotName());
 
                     SortedSet<TripoliFraction> tripoliSampleFractions = tripoliSample.getSampleFractions();
                     for (Iterator<TripoliFraction> it = tripoliSampleFractions.iterator(); it.hasNext();) {
                         TripoliFraction tf = it.next();
+                        System.out.println("Processing tripoli fraction " + tf.getFractionID());
                         Fraction uPbLAICPMSFraction = new UPbLAICPMSFraction(tf.getFractionID());
                         uPbLAICPMSFraction.setSampleName(tripoliSample.getSampleName());
-                        // add to tripoi fraction so it UPbFraction can be contiunously updated
+                        // add to tripoli fraction so its UPbFraction can be contiunously updated
                         tf.setuPbFraction(uPbLAICPMSFraction);
 
                         // automatically added to aliquot #1 as we are assuming only one aliquot in this scenario
-                        sample.addUPbFraction(uPbLAICPMSFraction);
+                        sample.addFraction(uPbLAICPMSFraction);
                         // feb 2015 in prep for export
                         ((UPbReduxAliquot)aliquot).getAliquotFractions().add(uPbLAICPMSFraction);
                     }
 
                     // this forces aliquot fraction population
-                    ((Sample) compiledSuperSample).importAliquotFromAnotherSample(sample.getAliquotByName(aliquot.getAliquotName()));
+                    SampleInterface.copyAliquotIntoSample(sample.getAliquotByName(aliquot.getAliquotName()), compiledSuperSample);
 
                     aliquot.setAnalysisPurpose(analysisPurpose);
                     // TODO: Enum of inst methods
@@ -251,10 +252,6 @@ public class Project implements
 
         // first pass without any user interaction
         tripoliSession.setEstimatedPlottingPointsCount(1000);
-        // turns out Jf needs to be recalculated every time at least when a standard is added or subtracted
-//        tripoliSession.prepareMatrixJfMapUnknowns();
-//        tripoliSession.prepareMatrixJfPlotting( 1000 );
-        //save time feb 2013       tripoliSession.applyCorrections();
 
     }
 
@@ -280,35 +277,13 @@ public class Project implements
             prepareSamplesForExport();
 
             for (int i = 0; i < projectSamples.size(); i++) {
-                SampleI sample = projectSamples.get(i);
+                SampleInterface sample = projectSamples.get(i);
 
                 File sampleFile = new File(//
                         projectSamplesFolder.getAbsolutePath() + File.separatorChar + sample.getSampleName());
 
                 // first write sample out
-                sample.saveTheSampleAsSerializedReduxFile(sampleFile);
-
-//                // then read back in and repair aliquot number in fractions as there is only 1 aliquot per sample
-//                EarthTimeSerializedFileInterface deserializedFile = //
-//                        (EarthTimeSerializedFileInterface) ETSerializer.GetSerializedObjectFromFile(sample.getReduxSampleFilePath());
-//
-//                Sample deserializedSample = (Sample) deserializedFile;
-//
-//                for (int j = 0; j < deserializedSample.getUPbFractions().size(); j++) {
-//                    ((UPbFractionI) deserializedSample.getUPbFractions().get(j)).setAliquotNumber(1);
-//                }
-//
-//                // oct 2014 specify sample types
-//                if (compiledSuperSample.isAnalysisTypeTripolized()) {
-//                    deserializedSample.setSampleType(SampleTypesEnum.ANALYSIS.getName());
-//                } else {
-//                    deserializedSample.setSampleType(SampleTypesEnum.LEGACY.getName());
-//                    deserializedSample.setAnalyzed(true);
-//                }
-//                deserializedSample.setLegacyStatusForReportTable();
-//
-//                // rewrite sample
-//                deserializedSample.saveTheSampleAsSerializedReduxFile(sampleFile);
+                SampleInterface.saveSampleAsSerializedReduxFile(sample, sampleFile);
 
             }
         } else {
@@ -320,16 +295,11 @@ public class Project implements
 
     public void prepareSamplesForExport() {
         for (int i = 0; i < projectSamples.size(); i++) {
-            SampleI sample = projectSamples.get(i);
+            SampleInterface sample = projectSamples.get(i);
             System.out.println("Preparing for export Sample: " + sample.getSampleName());
 
-            // only on export and then not necessary ?
-//            for (int j = 0; j < sample.getUPbFractions().size(); j++) {
-//                ((UPbFractionI) sample.getUPbFractions().get(j)).setAliquotNumber(1);
-//            }
-
             // oct 2014 specify sample types
-            if (compiledSuperSample.isAnalysisTypeTripolized()) {
+            if (SampleInterface.isAnalysisTypeTripolized(compiledSuperSample.getSampleAnalysisType())) {
                 sample.setSampleType(SampleTypesEnum.ANALYSIS.getName());
             } else {
                 sample.setSampleType(SampleTypesEnum.LEGACY.getName());
@@ -343,7 +313,7 @@ public class Project implements
      * @return the projectSamples
      */
     @Override
-    public ArrayList<SampleI> getProjectSamples() {
+    public ArrayList<SampleInterface> getProjectSamples() {
         return projectSamples;
     }
 
@@ -351,7 +321,7 @@ public class Project implements
      * @param projectSamples the projectSamples to set
      */
     @Override
-    public void setProjectSamples(ArrayList<SampleI> projectSamples) {
+    public void setProjectSamples(ArrayList<SampleInterface> projectSamples) {
         this.projectSamples = projectSamples;
     }
 
@@ -409,7 +379,7 @@ public class Project implements
      * @return the compiledSuperSample
      */
     @Override
-    public SampleI getSuperSample() {
+    public SampleInterface getSuperSample() {
         return compiledSuperSample;
     }
 
@@ -417,7 +387,7 @@ public class Project implements
      * @param superSample
      */
     @Override
-    public void setSuperSample(SampleI superSample) {
+    public void setSuperSample(SampleInterface superSample) {
         this.compiledSuperSample = superSample;
     }
 
@@ -485,7 +455,7 @@ public class Project implements
     /**
      * @return the compiledSuperSample
      */
-    public SampleI getCompiledSuperSample() {
+    public SampleInterface getCompiledSuperSample() {
         return compiledSuperSample;
     }
 }

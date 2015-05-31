@@ -48,6 +48,7 @@ import org.earthtime.Tripoli.rawDataFiles.handlers.AbstractRawDataFileHandler;
 import org.earthtime.Tripoli.samples.AbstractTripoliSample;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
+import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLAICPMSFraction;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
@@ -641,12 +642,17 @@ public class TripoliSession implements
 
         while (allFractionsIterator.hasNext()) {
             TripoliFraction tf = allFractionsIterator.next();
-            ((UPbLAICPMSFraction) tf.getuPbFraction()).setSfciTotal(null);
-            ((UPbLAICPMSFraction) tf.getuPbFraction()).initializeUpperPhiMap();
-            tf.getuPbFraction().getRadiogenicIsotopeRatioByName("rhoR206_238r__r207_235r").setValue(ReduxConstants.NO_RHO_FLAG);
-            tf.getuPbFraction().getRadiogenicIsotopeRatioByName("rhoR207_206r__r238_206r").setValue(ReduxConstants.NO_RHO_FLAG);
-            tf.getuPbFraction().getRadiogenicIsotopeRatioByName("rhoR206_238PbcCorr__r207_235PbcCorr").setValue(ReduxConstants.NO_RHO_FLAG);
-            tf.getuPbFraction().getRadiogenicIsotopeRatioByName("rhoR207_206PbcCorr__r238_206PbcCorr").setValue(ReduxConstants.NO_RHO_FLAG);
+            Fraction upbFraction = tf.getuPbFraction();
+            if (upbFraction == null) {
+                System.out.println("Missing upbFraction for " + tf.getFractionID());
+            } else {
+                ((UPbLAICPMSFraction) upbFraction).setSfciTotal(null);
+                ((UPbLAICPMSFraction) upbFraction).initializeUpperPhiMap();
+                upbFraction.getRadiogenicIsotopeRatioByName("rhoR206_238r__r207_235r").setValue(ReduxConstants.NO_RHO_FLAG);
+                upbFraction.getRadiogenicIsotopeRatioByName("rhoR207_206r__r238_206r").setValue(ReduxConstants.NO_RHO_FLAG);
+                upbFraction.getRadiogenicIsotopeRatioByName("rhoR206_238PbcCorr__r207_235PbcCorr").setValue(ReduxConstants.NO_RHO_FLAG);
+                upbFraction.getRadiogenicIsotopeRatioByName("rhoR207_206PbcCorr__r238_206PbcCorr").setValue(ReduxConstants.NO_RHO_FLAG);
+            }
         }
 
         calculateUThConcentrationsForUnknowns();
@@ -765,14 +771,19 @@ public class TripoliSession implements
                                 + ((double) (rightStandardTime - unknown.getZeroBasedTimeStamp()) / (double) (rightStandardTime - leftStandardTime)) * (rightStandardIntensityTh - leftStandardIntensityTh));
 
                         // record concentrations into fraction
-                        unknown.getuPbFraction().getCompositionalMeasureByName(MineralStandardUPbConcentrationsPPMEnum.concU238ppm.getName()).setValue(new BigDecimal(concUnknownU / 1e6));
-                        unknown.getuPbFraction().getCompositionalMeasureByName(MineralStandardUPbConcentrationsPPMEnum.concTh232ppm.getName()).setValue(new BigDecimal(concUnknownTh / 1e6));
-                        double rTh_Usample = 0.0;
-                        if (concUnknownU != 0.0) {
-                            rTh_Usample = concUnknownTh / concUnknownU;
-                        }
-                        unknown.getuPbFraction().getCompositionalMeasureByName(MineralStandardUPbConcentrationsPPMEnum.rTh_Usample.getName()).setValue(new BigDecimal(rTh_Usample));
+                        Fraction uPbFraction = unknown.getuPbFraction();
+                        if (uPbFraction == null) {
+                            System.out.println("Missing upbFraction for " + unknown.getFractionID());
+                        } else {
+                            uPbFraction.getCompositionalMeasureByName(MineralStandardUPbConcentrationsPPMEnum.concU238ppm.getName()).setValue(new BigDecimal(concUnknownU / 1e6));
+                            uPbFraction.getCompositionalMeasureByName(MineralStandardUPbConcentrationsPPMEnum.concTh232ppm.getName()).setValue(new BigDecimal(concUnknownTh / 1e6));
+                            double rTh_Usample = 0.0;
+                            if (concUnknownU != 0.0) {
+                                rTh_Usample = concUnknownTh / concUnknownU;
+                            }
+                            uPbFraction.getCompositionalMeasureByName(MineralStandardUPbConcentrationsPPMEnum.rTh_Usample.getName()).setValue(new BigDecimal(rTh_Usample));
 //                    System.out.println(" >> " + unknown.getFractionID() + "  " + unknown.getZeroBasedTimeStamp() + "  " + unknown.isStandard() + "  " + concUnknownU + "  " + concUnknownTh);
+                        }
                     }
 
                     // prepare for next set
@@ -786,11 +797,11 @@ public class TripoliSession implements
 
     private void prepareForReductionAndCommonLeadCorrection(FractionSelectionTypeEnum fractionSelectionTypeEnum) {
 
-        SortedSet<TripoliFraction> unknownFractions = getTripoliFractionsFiltered(fractionSelectionTypeEnum, IncludedTypeEnum.INCLUDED);
-        int countOfUnknowns = unknownFractions.size();
+        SortedSet<TripoliFraction> selectedFractions = getTripoliFractionsFiltered(fractionSelectionTypeEnum, IncludedTypeEnum.INCLUDED);
+        int countOfSelectedFractions = selectedFractions.size();
         // nov 2014 section 11
         // walk the sessions and build double[][] of diagonals (3 rows by countof unkowns - one row for each session ratio
-        double[][] sessionRatioDiagonalSu = new double[3][countOfUnknowns];
+        double[][] sessionRatioDiagonalSu = new double[3][countOfSelectedFractions];
         Iterator<RawRatioNames> sessionForStandardsIterator = sessionForStandardsInterceptFractionation.keySet().iterator();
         while (sessionForStandardsIterator.hasNext()) {
             RawRatioNames rrName = sessionForStandardsIterator.next();
@@ -827,18 +838,25 @@ public class TripoliSession implements
 
         // need to package the common lead correction parameters and scheme and assign them to UPbLAICPMSFraction in each case
         // need strategy for stacey kramer
-        Iterator<TripoliFraction> unknownFractionIterator = unknownFractions.iterator();
+        Iterator<TripoliFraction> selectedFractionsIterator = selectedFractions.iterator();
         int fractionCounter = 0;
-        while (unknownFractionIterator.hasNext()) {
-            TripoliFraction tf = unknownFractionIterator.next();
+        while (selectedFractionsIterator.hasNext()) {
+            TripoliFraction tf = selectedFractionsIterator.next();
+            
+            // undo Pbc correction for standard
+            if (tf.isStandard()){
+                tf.setCommonLeadLossCorrectionScheme(CommonLeadLossCorrectionSchemeNONE.getInstance());
+            }
+            
             SortedMap<String, ValueModel> parameters = tf.assembleCommonLeadCorrectionParameters();
             SortedMap<String, BigDecimal> parametersSK = tf.assembleStaceyKramerCorrectionParameters();
 
-            ((UPbLAICPMSFraction) tf.getuPbFraction()).setCommonLeadCorrectionParameters(parameters);
-            ((UPbLAICPMSFraction) tf.getuPbFraction()).setStaceyKramerCorrectionParameters(parametersSK);
-            ((UPbLAICPMSFraction) tf.getuPbFraction()).setUseStaceyKramer(tf.getInitialPbModelET() instanceof StaceyKramersInitialPbModelET);
-            ((UPbLAICPMSFraction) tf.getuPbFraction()).setCommonLeadLossCorrectionScheme(tf.getCommonLeadLossCorrectionScheme());
-            ((UPbLAICPMSFraction) tf.getuPbFraction()).setRadDateForSKSynch(tf.getRadDateForSKSynch());
+            Fraction uPbFraction = tf.getuPbFraction();
+            ((UPbLAICPMSFraction) uPbFraction).setCommonLeadCorrectionParameters(parameters);
+            ((UPbLAICPMSFraction) uPbFraction).setStaceyKramerCorrectionParameters(parametersSK);
+            ((UPbLAICPMSFraction) uPbFraction).setUseStaceyKramer(tf.getInitialPbModelET() instanceof StaceyKramersInitialPbModelET);
+            ((UPbLAICPMSFraction) uPbFraction).setCommonLeadLossCorrectionScheme(tf.getCommonLeadLossCorrectionScheme());
+            ((UPbLAICPMSFraction) uPbFraction).setRadDateForSKSynch(tf.getRadDateForSKSynch());
 
             try {
                 Matrix SfciTotal = tf.calculateUncertaintyPbcCorrections();
@@ -859,15 +877,13 @@ public class TripoliSession implements
                     SfciTotalPlus.set(6, 6, 0.0);
                 }
 
-                ((UPbLAICPMSFraction) tf.getuPbFraction()).setSfciTotal(SfciTotalPlus);
+                ((UPbLAICPMSFraction) uPbFraction).setSfciTotal(SfciTotalPlus);
             } catch (Exception e) {
                 // problem with matrix math
             }
             // the rest of this math occurs in fraction reduction once we are in Redux part
             fractionCounter++;
-
         }
-
     }
 
     @Override
@@ -1046,7 +1062,7 @@ public class TripoliSession implements
      * @param fractionSelectionTypeEnum the value of fractionSelectionTypeEnum
      * @param sessionFofX the value of sessionFofX
      * @param unknownFractionIDs the value of unknownFractionIDs
-     * @param countOfUnknowns the value of countOfUnknowns
+     * @param countOfUnknowns the value of countOfSelectedFractions
      * @param unknownsAnalyticalCovarianceSu the value of
      * unknownsAnalyticalCovarianceSu
      * @param sessionStandardValue the value of sessionStandardValue
@@ -1120,27 +1136,35 @@ public class TripoliSession implements
 
                 double oneSigmaOfCorrectedRatio = (upperTwoSigmaUncertaintyOfCorrectedRatio - lowerTwoSigmaUncertaintyOfCorrectedRatio) / 4.0;
 
-                ValueModel myMeasuredRatio = tf.getuPbFraction().getMeasuredRatioByName(rrName.getName().replace("w", "m"));
-                myMeasuredRatio.setValue(correctedRatio);
-                try {
-                    // measured ratios are expecting percent uncertainties from the old tripoli so we need to convert here
-                    myMeasuredRatio.setOneSigma(ValueModel.convertOneSigmaAbsToPctIfRequired(myMeasuredRatio, new BigDecimal(oneSigmaOfCorrectedRatio)));
-                } catch (Exception e) {
-                    myMeasuredRatio.setOneSigma(BigDecimal.ZERO);
-                }
+                Fraction uPbFraction = tf.getuPbFraction();
+                if (uPbFraction == null) {
+                    System.out.println("Missing upbFraction for " + tf.getFractionID());
+                } else {
+                    ValueModel myMeasuredRatio = uPbFraction.getMeasuredRatioByName(rrName.getName().replace("w", "m"));
+                    myMeasuredRatio.setValue(correctedRatio);
+                    try {
+                        // measured ratios are expecting percent uncertainties from the old tripoli so we need to convert here
+                        myMeasuredRatio.setOneSigma(ValueModel.convertOneSigmaAbsToPctIfRequired(myMeasuredRatio, new BigDecimal(oneSigmaOfCorrectedRatio)));
+                    } catch (Exception e) {
+                        myMeasuredRatio.setOneSigma(BigDecimal.ZERO);
+                    }
 
-                // oct 2014
-                ((UPbFractionI) tf.getuPbFraction()).setRejected(!tf.isIncluded());
-                //testing oct 2014
-                if (rrName.getName().contains("204")) {
-                    ((UPbLAICPMSFraction) tf.getuPbFraction()).getUpperPhiMap().put(nameOfUpperPhi, upperPhi);
+                    // oct 2014
+                    ((UPbFractionI) uPbFraction).setRejected(!tf.isIncluded());
+                    //testing oct 2014
+                    if (rrName.getName().contains("204")) {
+                        ((UPbLAICPMSFraction) uPbFraction).getUpperPhiMap().put(nameOfUpperPhi, upperPhi);
+                    }
                 }
 
             }
             index++;//increased even if no fit function
 
-            ((UPbFractionI) tf.getuPbFraction()).setRejected(!tf.isIncluded());
-            ((UPbFractionI) tf.getuPbFraction()).setStandard(tf.isStandard());
+            try {
+                ((UPbFractionI) tf.getuPbFraction()).setRejected(!tf.isIncluded());
+                ((UPbFractionI) tf.getuPbFraction()).setStandard(tf.isStandard());
+            } catch (Exception e) {
+            }
         }
 
         if (primaryMineralStandard != null) {
@@ -1292,7 +1316,7 @@ public class TripoliSession implements
                 filteredFractions.add(tf);
                 // turn off bad fractions
                 if (!tf.confirmHealthyFraction()) {
-                    tf.toggleAllData(false);
+                    tf.toggleAllDataExceptShaded(false);
                 }
             }
 
@@ -1330,7 +1354,7 @@ public class TripoliSession implements
                 filteredFractions.add(tf);
                 // turn off bad fractions
                 if (!tf.confirmHealthyFraction()) {
-                    tf.toggleAllData(false);
+                    tf.toggleAllDataExceptShaded(false);
                 }
             }
 
@@ -1357,7 +1381,7 @@ public class TripoliSession implements
         SortedSet<TripoliFraction> excludedTripoliFractions = //
                 getTripoliFractionsFiltered(fractionSelectionType, IncludedTypeEnum.EXCLUDED);
         excludedTripoliFractions.stream().forEach((f) -> {
-            f.toggleAllData(true);
+            f.toggleAllDataExceptShaded(true);
         });
     }
 
@@ -1367,7 +1391,7 @@ public class TripoliSession implements
     @Override
     public void includeAllAquisitions() {
         tripoliFractions.stream().forEach((f) -> {
-            f.toggleAllData(true);
+            f.toggleAllDataExceptShaded(true);
         });
     }
 
@@ -1613,5 +1637,12 @@ public class TripoliSession implements
      */
     public boolean isFitFunctionsUpToDate() {
         return fitFunctionsUpToDate;
+    }
+
+    /**
+     * @param fitFunctionsUpToDate the fitFunctionsUpToDate to set
+     */
+    public void setFitFunctionsUpToDate(boolean fitFunctionsUpToDate) {
+        this.fitFunctionsUpToDate = fitFunctionsUpToDate;
     }
 }

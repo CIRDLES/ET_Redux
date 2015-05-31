@@ -51,6 +51,7 @@ import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.dataDictionaries.RadDatesForPbCorrSynchEnum;
+import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.initialPbModelsET.InitialPbModelET;
 import org.earthtime.ratioDataModels.initialPbModelsET.PlaceholderInitialPb76Model;
@@ -471,6 +472,7 @@ public class TripoliFractionCommonLeadManager extends JPanel implements InitialP
                 initialPbModelET = ReduxLabData.getInstance().getAnInitialPbModel((String) evt.getItem());
 
             } catch (BadLabDataException ex) {
+                new ETWarningDialog(ex).setVisible(true);
             }
 
             if (evt.getStateChange() == ItemEvent.SELECTED) {

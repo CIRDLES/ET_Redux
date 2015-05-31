@@ -71,6 +71,7 @@ import org.earthtime.UPb_Redux.valueModels.definedValueModels.R270_265m;
 import org.earthtime.UPb_Redux.valueModels.definedValueModels.R270_267m;
 import org.earthtime.UPb_Redux.valueModels.definedValueModels.R270_268m;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
+import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.dataDictionaries.DataDictionary;
 import org.earthtime.dataDictionaries.Lambdas;
@@ -79,12 +80,12 @@ import org.earthtime.dataDictionaries.MeasuredRatios;
 import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.dataDictionaries.TracerUPbRatiosAndConcentrations;
 import org.earthtime.exceptions.ETException;
+import org.earthtime.fractions.FractionInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsModel;
 import org.earthtime.ratioDataModels.tracers.TracerUPbModel;
 import org.earthtime.ratioDataModels.tracers.TracerUPbModelXMLConverter;
 import org.earthtime.utilities.CollectionHelpers;
-import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.xmlUtilities.XMLSerializationI;
 
 /**
@@ -94,6 +95,7 @@ import org.earthtime.xmlUtilities.XMLSerializationI;
 public class UPbFraction extends Fraction implements
         FractionI,
         UPbFractionI,
+        FractionInterface,
         ReportRowGUIInterface,
         Serializable,
         XMLSerializationI {
@@ -103,9 +105,8 @@ public class UPbFraction extends Fraction implements
     // **********  serialization customization notes
     // http://www.mactech.com/articles/mactech/Vol.14/14.04/JavaSerialization/index.html
     // ****************
-//    private static transient Validator xmlValidator;
     private static transient String XMLSchemaURL;
-    
+
     // Instance variables
     // transient fields for uncertainty reduction
     // went static feb 2010
@@ -125,10 +126,6 @@ public class UPbFraction extends Fraction implements
     private transient Path2D errorEllipsePath;
     private transient double ellipseRho;
     private transient boolean selectedInDataTable;
-    // march 2014 for isoplot 
-////    private transient org.cirdles.isoplot.chart.concordia.ErrorEllipse errorEllipseNode;
-    //private transient boolean hasMeasuredLead;
-    //private transient boolean hasMeasuredUranium;
     // these fields are read in from xml UPbRedux files from Tripoli, for example
     // any of U, Pb, or UPb can be read in; 
     private String ratioType;
@@ -163,18 +160,8 @@ public class UPbFraction extends Fraction implements
     private boolean deleted;
     private String sourceFilePb;
     private String sourceFileU;
-    // nov 2009 these will become placeholders for new fractionNotes, but kept for compatibility backwards
-//    private String notesPb;
-//    private String notesU;
     // added nov 2009 as part of live update workflow manager development
     private String fractionNotes;
-    //oct 2010 moved to fraction 
-//    // march 2009 added in these two fields to handle customization of stacey kramers
-//    // basically they live in the UPbRedux fraction as inputs for StaceyKramer math set in  the
-//    // Aliquot fast fraction editor - but not saved in Aliquot for publication
-//    // as Stacey Kramers model will serialize with its current values when published
-//    private BigDecimal staceyKramersOnePctUnct;
-//    private BigDecimal staceyKramersCorrelationCoeffs;
     // added march 2008 to store fraction selections in persistent state
     private boolean rejected;
     // added march 2009 to preserve outputs for kwiki page
@@ -186,7 +173,7 @@ public class UPbFraction extends Fraction implements
     // added july 2010 for detrital filtering
     private boolean filtered;
     // isValidOrAirplaneMode add on for noah sept 2010
-        private boolean standard;
+    private boolean standard;
     /**
      *
      */
@@ -199,8 +186,8 @@ public class UPbFraction extends Fraction implements
     /**
      *
      */
-    public UPbFraction () {
-        super( ReduxConstants.DEFAULT_OBJECT_NAME, ReduxConstants.DEFAULT_OBJECT_NAME );
+    public UPbFraction() {
+        super(ReduxConstants.DEFAULT_OBJECT_NAME, ReduxConstants.DEFAULT_OBJECT_NAME);
 
         // transient fields
         this.myLabData = ReduxLabData.getInstance();
@@ -212,7 +199,7 @@ public class UPbFraction extends Fraction implements
         this.radiogenicIsotopeRatiosWithTracerUncertainty = new ValueModel[0];
         this.radiogenicIsotopeRatiosWithAllUncertainty = new ValueModel[0];
 
-        setIsLegacy( false );
+        setIsLegacy(false);
 
         this.ratioType = "UPb";
         this.pedigree = "NONE";
@@ -239,7 +226,7 @@ public class UPbFraction extends Fraction implements
 
             // Initial Pb Model is used by UPbFraction but stored in parent class
             // needs to be copy because of stacey-kramers
-            setInitialPbModel( myLabData.getFirstInitialPbModel() );//.getDefaultLabInitialPbModel().copy() );
+            setInitialPbModel(myLabData.getFirstInitialPbModel());//.getDefaultLabInitialPbModel().copy() );
 
         } catch (BadLabDataException badLabDataException) {
         }
@@ -263,49 +250,47 @@ public class UPbFraction extends Fraction implements
         this.standard = false;
 
         // set parent fields
-        setImageURL( "" );
+        setImageURL("");
 
-        getAnalysisMeasure( AnalysisMeasures.pbBlankMassInGrams.getName() )//
-                .copyValuesFrom( myLabData.getDefaultPbBlankMassInGrams() );
-        getAnalysisMeasure( AnalysisMeasures.uBlankMassInGrams.getName() )//
-                .copyValuesFrom( myLabData.getDefaultAssumedUBlankMassInGrams() );
-        getAnalysisMeasure( AnalysisMeasures.tracerMassInGrams.getName() )//
-                .copyValuesFrom( myLabData.getDefaultTracerMass() );
-        getAnalysisMeasure( AnalysisMeasures.r238_235b.getName() )//
-                .copyValuesFrom( myLabData.getDefaultR238_235b() );
-        getAnalysisMeasure( AnalysisMeasures.r238_235s.getName() )//
-                .copyValuesFrom( myLabData.getDefaultR238_235s() );
+        getAnalysisMeasure(AnalysisMeasures.pbBlankMassInGrams.getName())//
+                .copyValuesFrom(myLabData.getDefaultPbBlankMassInGrams());
+        getAnalysisMeasure(AnalysisMeasures.uBlankMassInGrams.getName())//
+                .copyValuesFrom(myLabData.getDefaultAssumedUBlankMassInGrams());
+        getAnalysisMeasure(AnalysisMeasures.tracerMassInGrams.getName())//
+                .copyValuesFrom(myLabData.getDefaultTracerMass());
+        getAnalysisMeasure(AnalysisMeasures.r238_235b.getName())//
+                .copyValuesFrom(myLabData.getDefaultR238_235b());
+        getAnalysisMeasure(AnalysisMeasures.r238_235s.getName())//
+                .copyValuesFrom(myLabData.getDefaultR238_235s());
 
         ValueModel r18O_16OZeroWithZeroUnct = //
-                new ValueModel( "tempZero", BigDecimal.ZERO, "ABS", BigDecimal.ZERO, BigDecimal.ZERO );
-        getAnalysisMeasure( AnalysisMeasures.r18O_16O.getName() )//
-                .copyValuesFrom( r18O_16OZeroWithZeroUnct );
-        getAnalysisMeasure( AnalysisMeasures.r18O_16O_revised.getName() )//
-                .copyValuesFrom( r18O_16OZeroWithZeroUnct );
+                new ValueModel("tempZero", BigDecimal.ZERO, "ABS", BigDecimal.ZERO, BigDecimal.ZERO);
+        getAnalysisMeasure(AnalysisMeasures.r18O_16O.getName())//
+                .copyValuesFrom(r18O_16OZeroWithZeroUnct);
+        getAnalysisMeasure(AnalysisMeasures.r18O_16O_revised.getName())//
+                .copyValuesFrom(r18O_16OZeroWithZeroUnct);
 
+        getAnalysisMeasure(AnalysisMeasures.rTh_Umagma.getName())//
+                .copyValuesFrom(myLabData.getDefaultRTh_Umagma());
 
-        getAnalysisMeasure( AnalysisMeasures.rTh_Umagma.getName() )//
-                .copyValuesFrom( myLabData.getDefaultRTh_Umagma() );
-
-        getAnalysisMeasure( AnalysisMeasures.ar231_235sample.getName() )//
-                .copyValuesFrom( myLabData.getDefaultAr231_235sample() );
-
+        getAnalysisMeasure(AnalysisMeasures.ar231_235sample.getName())//
+                .copyValuesFrom(myLabData.getDefaultAr231_235sample());
 
         this.outputs = new ValueModel[DataDictionary.uPbReduxOutputNames.length];
-        for (int i = 0; i < DataDictionary.uPbReduxOutputNames.length; i ++) {
-            outputs[i] =
-                    new ValueModel( DataDictionary.uPbReduxOutputNames[i],
-                    BigDecimal.ZERO,
-                    "ABS",
-                    BigDecimal.ZERO, BigDecimal.ZERO );
+        for (int i = 0; i < DataDictionary.uPbReduxOutputNames.length; i++) {
+            outputs[i]
+                    = new ValueModel(DataDictionary.uPbReduxOutputNames[i],
+                            BigDecimal.ZERO,
+                            "ABS",
+                            BigDecimal.ZERO, BigDecimal.ZERO);
         }
 
-        setStaceyKramersOnePctUnct( myLabData.getDefaultStaceyKramersOnePctUnct() );
-        setStaceyKramersCorrelationCoeffs( myLabData.getDefaultStaceyKramersCorrelationCoeffs() );
+        setStaceyKramersOnePctUnct(myLabData.getDefaultStaceyKramersOnePctUnct());
+        setStaceyKramersCorrelationCoeffs(myLabData.getDefaultStaceyKramersCorrelationCoeffs());
         this.inAutoUraniumMode = false;
 
         this.inputOneSigmaPct = BigDecimal.ZERO;
-        this.inputDate206_238r = getRadiogenicIsotopeDateByName( "age206_207r" ).getValue();
+        this.inputDate206_238r = getRadiogenicIsotopeDateByName("age206_207r").getValue();
 
         treatFractionAsZircon = isZircon();
 
@@ -321,9 +306,9 @@ public class UPbFraction extends Fraction implements
      *
      * @param fractionID
      */
-    public UPbFraction ( String fractionID ) {
+    public UPbFraction(String fractionID) {
         this();
-        this.setFractionID( fractionID );
+        this.setFractionID(fractionID);
     }
 
     /**
@@ -337,12 +322,12 @@ public class UPbFraction extends Fraction implements
      * @param pbBlank
      * @throws org.earthtime.UPb_Redux.exceptions.BadLabDataException
      */
-    public UPbFraction (
+    public UPbFraction(
             int aliquotNum,
             Fraction fraction,
             ReduxLabData labData,
             AbstractRatiosDataModel tracer,
-            AbstractRatiosDataModel pbBlank ) throws BadLabDataException {
+            AbstractRatiosDataModel pbBlank) throws BadLabDataException {
 
         this();
 
@@ -354,13 +339,13 @@ public class UPbFraction extends Fraction implements
         this.changed = false;
 
         // Fraction fields
-        this.setSampleName( fraction.getSampleName() );
-        this.setFractionID( fraction.getFractionID() );
-        this.setGrainID( fraction.getFractionID() );
+        this.setSampleName(fraction.getSampleName());
+        this.setFractionID(fraction.getFractionID());
+        this.setGrainID(fraction.getFractionID());
 
-        this.GetValuesFrom( fraction, true );
+        this.GetValuesFrom(fraction, true);
 
-        this.setMeasuredRatios( (MeasuredRatioModel[]) fraction.copyMeasuredRatios() );
+        this.setMeasuredRatios((MeasuredRatioModel[]) fraction.copyMeasuredRatios());
 
         treatFractionAsZircon = isZircon();
 
@@ -370,19 +355,19 @@ public class UPbFraction extends Fraction implements
      *
      * @return
      */
-    public boolean initializeReductionHandler () {
+    public boolean initializeReductionHandler() {
 
         // treatFractionAsZircon is set by fraction reducer
         String matrixSpecsName = "EMPTY";
         String tracerType = "";
 
-        if ( (getTracer() != null)
-                && (hasMeasuredLead()) ) {
+        if ((getTracer() != null)
+                && (hasMeasuredLead())) {
             tracerType = getTracerType();
-            if ( tracerType.equalsIgnoreCase( "mixed 205-233-235" ) ) {
-                if (  ! isFractionationCorrectedU() ) {//     getMeanAlphaU().compareTo( BigDecimal.ZERO ) == 0 ) {
+            if (tracerType.equalsIgnoreCase("mixed 205-233-235")) {
+                if (!isFractionationCorrectedU()) {//     getMeanAlphaU().compareTo( BigDecimal.ZERO ) == 0 ) {
                     // NotFcU **************************************************
-                    if ( treatFractionAsZircon ) {//isZircon() ) {
+                    if (treatFractionAsZircon) {//isZircon() ) {
                         matrixSpecsName = "mixed_205_233_235_Zircon_NotFcU";
                     } else {
                         matrixSpecsName = "mixed_205_233_235_NotZircon_NotFcU";
@@ -390,26 +375,26 @@ public class UPbFraction extends Fraction implements
                 } else {
                     // FcU *****************************************************
                 }
-            } else if ( tracerType.equalsIgnoreCase( "mixed 205-235" ) ) {
-                if ( treatFractionAsZircon ) {//isZircon() ) {
+            } else if (tracerType.equalsIgnoreCase("mixed 205-235")) {
+                if (treatFractionAsZircon) {//isZircon() ) {
                     matrixSpecsName = "mixed_205_235_Zircon";
                 } else {
                     matrixSpecsName = "mixed_205_235_NotZircon";
                 }
-            } else if ( tracerType.equalsIgnoreCase( "mixed 202-205-233-235" ) ) {
-                if (  ! isFractionationCorrectedU() ) {//getMeanAlphaU().compareTo( BigDecimal.ZERO ) == 0 ) {
+            } else if (tracerType.equalsIgnoreCase("mixed 202-205-233-235")) {
+                if (!isFractionationCorrectedU()) {//getMeanAlphaU().compareTo( BigDecimal.ZERO ) == 0 ) {
                     // NotFcU **************************************************
-                    if ( ( ! isFractionationCorrectedPb())//     getMeanAlphaPb().compareTo( BigDecimal.ZERO ) == 0)
-                            && (hasMeasured202_205()) ) {//
+                    if ((!isFractionationCorrectedPb())//     getMeanAlphaPb().compareTo( BigDecimal.ZERO ) == 0)
+                            && (hasMeasured202_205())) {//
                         //getValue().compareTo( BigDecimal.ZERO ) != 0) ) {
                         // NotFcPb *********************************************
-                        if ( treatFractionAsZircon ) {//note email Sept 19 2010 Noah re: set alphaPb to zero for this temporarily for reductions
+                        if (treatFractionAsZircon) {//note email Sept 19 2010 Noah re: set alphaPb to zero for this temporarily for reductions
                             matrixSpecsName = "mixed_202_205_233_235_Zircon_NotFcU_NotFcPb";
                         } else {
                         }
                     } else {
                         // FcPb
-                        if ( treatFractionAsZircon ) {//isZircon() ) {
+                        if (treatFractionAsZircon) {//isZircon() ) {
                             matrixSpecsName = "mixed_202_205_233_235_Zircon_NotFcU_FcPb";
                         } else {
                         }
@@ -417,10 +402,10 @@ public class UPbFraction extends Fraction implements
                 } else {
                     // FcU *****************************************************
                 }
-            } else if ( tracerType.equalsIgnoreCase( "mixed 205-233-236" ) ) {
-                if (  ! isFractionationCorrectedU() ) {
+            } else if (tracerType.equalsIgnoreCase("mixed 205-233-236")) {
+                if (!isFractionationCorrectedU()) {
                     // NotFcU **************************************************
-                    if ( treatFractionAsZircon ) {
+                    if (treatFractionAsZircon) {
                         matrixSpecsName = "mixed_205_233_236_Zircon_NotFcU";
                     } else {
                         matrixSpecsName = "mixed_205_233_236_NotZircon_NotFcU";
@@ -428,144 +413,142 @@ public class UPbFraction extends Fraction implements
                 } else {
                     // FcU *****************************************************
                 }
-            } else if ( tracerType.equalsIgnoreCase( "mixed 202-205-233-236" ) ) {
+            } else if (tracerType.equalsIgnoreCase("mixed 202-205-233-236")) {
             }
         }
 
-        if ( matrixSpecsName.equalsIgnoreCase( "EMPTY" )//        (matrixSpecs[0][0].compareToIgnoreCase( "EMPTY" ) == 0)
-                || ( ! getAnalysisMeasure( AnalysisMeasures.tracerMassInGrams.getName() ).hasPositiveValue())
-                || ( ! getMeasuredRatioByName( MeasuredRatios.r204_205m.getName() ).hasPositiveValue())
-                && ( ! getMeasuredRatioByName( MeasuredRatios.r206_205m.getName() ).hasPositiveValue())
-                && ( ! getMeasuredRatioByName( MeasuredRatios.r207_205m.getName() ).hasPositiveValue())
-                && ( ! getMeasuredRatioByName( MeasuredRatios.r208_205m.getName() ).hasPositiveValue()) ) {
-            setReductionHandler( null );
+        if (matrixSpecsName.equalsIgnoreCase("EMPTY")//        (matrixSpecs[0][0].compareToIgnoreCase( "EMPTY" ) == 0)
+                || (!getAnalysisMeasure(AnalysisMeasures.tracerMassInGrams.getName()).hasPositiveValue())
+                || (!getMeasuredRatioByName(MeasuredRatios.r204_205m.getName()).hasPositiveValue())
+                && (!getMeasuredRatioByName(MeasuredRatios.r206_205m.getName()).hasPositiveValue())
+                && (!getMeasuredRatioByName(MeasuredRatios.r207_205m.getName()).hasPositiveValue())
+                && (!getMeasuredRatioByName(MeasuredRatios.r208_205m.getName()).hasPositiveValue())) {
+            setReductionHandler(null);
         } else {
             setReductionHandler(//
-                    new ReductionHandler( this, matrixSpecsName ) );
+                    new ReductionHandler(this, matrixSpecsName));
 
-
-            if ( tracerType.trim().contains( "235" ) ) {
+            if (tracerType.trim().contains("235")) {
                 // *************FOR  TRACER  233_235 **********************
                 // added march 2009 to prepare for recalculate oxide correction
                 ValueModel r270_267m = new R270_267m();
-                setAnalysisMeasureByName( AnalysisMeasures.r270_267m.getName(), r270_267m );
+                setAnalysisMeasureByName(AnalysisMeasures.r270_267m.getName(), r270_267m);
                 r270_267m.calculateValue(
                         new ValueModel[]{
-                            getMeasuredRatioByName( MeasuredRatios.r238_235m.getName() ),
-                            getAnalysisMeasure( AnalysisMeasures.r18O_16O.getName() ),
-                            getMeasuredRatioByName( MeasuredRatios.r233_235m.getName() )},
-                        null );
+                            getMeasuredRatioByName(MeasuredRatios.r238_235m.getName()),
+                            getAnalysisMeasure(AnalysisMeasures.r18O_16O.getName()),
+                            getMeasuredRatioByName(MeasuredRatios.r233_235m.getName())},
+                        null);
 
-                ((R270_267m)r270_267m).calculateOneSigma( false,
+                ((R270_267m) r270_267m).calculateOneSigma(false,
                         false,
                         null,
-                        null );
+                        null);
 
                 ValueModel r265_267m = new R265_267m();
-                setAnalysisMeasureByName( AnalysisMeasures.r265_267m.getName(), r265_267m );
+                setAnalysisMeasureByName(AnalysisMeasures.r265_267m.getName(), r265_267m);
                 r265_267m.calculateValue(
                         new ValueModel[]{
-                            getAnalysisMeasure( AnalysisMeasures.r18O_16O.getName() ),
-                            getMeasuredRatioByName( MeasuredRatios.r233_235m.getName() )},
-                        null );
+                            getAnalysisMeasure(AnalysisMeasures.r18O_16O.getName()),
+                            getMeasuredRatioByName(MeasuredRatios.r233_235m.getName())},
+                        null);
 
-                ((R265_267m)r265_267m).calculateOneSigma( false,
+                ((R265_267m) r265_267m).calculateOneSigma(false,
                         false,
                         null,
-                        null );
+                        null);
 
                 // nov 2009 moved here from reducer to facilitate logic of providing for
                 // re-oxide correction and old/new r18O_16O
-                ValueModel r270_265m = new R270_265m( "235" );
-                setAnalysisMeasureByName( AnalysisMeasures.r270_265m.getName(), r270_265m );
+                ValueModel r270_265m = new R270_265m("235");
+                setAnalysisMeasureByName(AnalysisMeasures.r270_265m.getName(), r270_265m);
                 r270_265m.calculateValue(
                         new ValueModel[]{
-                            getMeasuredRatioByName( MeasuredRatios.r238_233m.getName() )},
-                        null );
+                            getMeasuredRatioByName(MeasuredRatios.r238_233m.getName())},
+                        null);
 
-                ((R270_265m)r270_265m).calculateOneSigma( false,
+                ((R270_265m) r270_265m).calculateOneSigma(false,
                         false,
                         null,
-                        null );
+                        null);
 
-            } else if ( tracerType.trim().contains( "236" ) ) {
+            } else if (tracerType.trim().contains("236")) {
                 // ADDED (by copy from above) Jan 2011
                 // *************FOR  TRACER  233_236 **********************
                 // added march 2009 to prepare for recalculate oxide correction
                 ValueModel r270_268m = new R270_268m();
-                setAnalysisMeasureByName( AnalysisMeasures.r270_268m.getName(), r270_268m );
+                setAnalysisMeasureByName(AnalysisMeasures.r270_268m.getName(), r270_268m);
                 r270_268m.calculateValue(
                         new ValueModel[]{
-                            getMeasuredRatioByName( MeasuredRatios.r238_236m.getName() ),
-                            getAnalysisMeasure( AnalysisMeasures.r18O_16O.getName() )},
-                        null );
+                            getMeasuredRatioByName(MeasuredRatios.r238_236m.getName()),
+                            getAnalysisMeasure(AnalysisMeasures.r18O_16O.getName())},
+                        null);
 
-               ((R270_268m) r270_268m).calculateOneSigma( false,
+                ((R270_268m) r270_268m).calculateOneSigma(false,
                         false,
                         null,
-                        null );
+                        null);
 
                 ValueModel r265_268m = new R265_268m();
-                setAnalysisMeasureByName( AnalysisMeasures.r265_268m.getName(), r265_268m );
+                setAnalysisMeasureByName(AnalysisMeasures.r265_268m.getName(), r265_268m);
                 r265_268m.calculateValue(
                         new ValueModel[]{
-                            getMeasuredRatioByName( MeasuredRatios.r233_236m.getName() )},
-                        null );
+                            getMeasuredRatioByName(MeasuredRatios.r233_236m.getName())},
+                        null);
 
-                ((R265_268m)r265_268m).calculateOneSigma( false,
+                ((R265_268m) r265_268m).calculateOneSigma(false,
                         false,
                         null,
-                        null );
+                        null);
 
                 // nov 2009 moved here from reducer to facilitate logic of providing for
                 // re-oxide correction and old/new r18O_16O
-                ValueModel r270_265m = new R270_265m( "236" );
-                setAnalysisMeasureByName( AnalysisMeasures.r270_265m.getName(), r270_265m );
+                ValueModel r270_265m = new R270_265m("236");
+                setAnalysisMeasureByName(AnalysisMeasures.r270_265m.getName(), r270_265m);
                 r270_265m.calculateValue(
                         new ValueModel[]{
-                            getMeasuredRatioByName( MeasuredRatios.r238_233m.getName() ),
-                            getAnalysisMeasure( AnalysisMeasures.r18O_16O.getName() )},
-                        null );
+                            getMeasuredRatioByName(MeasuredRatios.r238_233m.getName()),
+                            getAnalysisMeasure(AnalysisMeasures.r18O_16O.getName())},
+                        null);
 
-                ((R270_265m)r270_265m).calculateOneSigma( false,
+                ((R270_265m) r270_265m).calculateOneSigma(false,
                         false,
                         null,
-                        null );
+                        null);
 
             }
 
-
             // nov 2009 initialize revised oxide correction for legacy files
-            if ( getAnalysisMeasure( AnalysisMeasures.r18O_16O_revised.getName() ).getValue().compareTo( BigDecimal.ZERO ) == 0 ) {
-                ValueModel revisedOxide = getAnalysisMeasure( AnalysisMeasures.r18O_16O.getName() ).copy();
-                revisedOxide.setName( AnalysisMeasures.r18O_16O_revised.getName() );
-                setAnalysisMeasureByName( AnalysisMeasures.r18O_16O_revised.getName(), revisedOxide );
+            if (getAnalysisMeasure(AnalysisMeasures.r18O_16O_revised.getName()).getValue().compareTo(BigDecimal.ZERO) == 0) {
+                ValueModel revisedOxide = getAnalysisMeasure(AnalysisMeasures.r18O_16O.getName()).copy();
+                revisedOxide.setName(AnalysisMeasures.r18O_16O_revised.getName());
+                setAnalysisMeasureByName(AnalysisMeasures.r18O_16O_revised.getName(), revisedOxide);
             }
 
             // March 2009 bring use of model here for sensitivity use - prevents resetting of model
-            if ( ( ! isFractionationCorrectedPb())//     getMeanAlphaPb().compareTo( BigDecimal.ZERO ) == 0)
-                    && ( ! hasMeasured202_205()) ) {//
+            if ((!isFractionationCorrectedPb())//     getMeanAlphaPb().compareTo( BigDecimal.ZERO ) == 0)
+                    && (!hasMeasured202_205())) {//
                 //getValue().compareTo( BigDecimal.ZERO ) == 0) ) {
 
                 ValueModel alphaPb = getAlphaPbModel().copy();
-                alphaPb.setName( AnalysisMeasures.alphaPb.getName() );
-                setAnalysisMeasureByName( AnalysisMeasures.alphaPb.getName(), alphaPb );
+                alphaPb.setName(AnalysisMeasures.alphaPb.getName());
+                setAnalysisMeasureByName(AnalysisMeasures.alphaPb.getName(), alphaPb);
             }
 
             // March 2009 bring use of model here for sensitivity use - prevents resetting of model
             ValueModel alphaU = null;
-            if ( isInAutoUraniumMode() ) {
+            if (isInAutoUraniumMode()) {
                 alphaU = getInputAlphaU().copy();
             } else {
                 // modified march 2011
-                if ( needsAlphaUModel() ) {
+                if (needsAlphaUModel()) {
                     alphaU = getAlphaUModel().copy();
                 }
             }
             // modified march 2011
-            if ( alphaU != null ) {
-                alphaU.setName( AnalysisMeasures.alphaU.getName() );
-                setAnalysisMeasureByName( AnalysisMeasures.alphaU.getName(), alphaU );
+            if (alphaU != null) {
+                alphaU.setName(AnalysisMeasures.alphaU.getName());
+                setAnalysisMeasureByName(AnalysisMeasures.alphaU.getName(), alphaU);
             }
 
         }
@@ -577,14 +560,14 @@ public class UPbFraction extends Fraction implements
      *
      * @param calculateCovariances
      */
-    public void reduceData ( boolean calculateCovariances ) {
-        UPbFractionReducer.getInstance().fullFractionReduce( this, calculateCovariances );
+    public void reduceData(boolean calculateCovariances) {
+        UPbFractionReducer.getInstance().fullFractionReduce(this, calculateCovariances);
     }
 
     /**
      *
      */
-    public void autoGenerateMeasuredUranium () {
+    public void autoGenerateMeasuredUranium() {
 //TODO: parameterize
         BigDecimal oneSigmaPct = getInputOneSigmaPct();
 
@@ -592,73 +575,73 @@ public class UPbFraction extends Fraction implements
         ValueModel molU235s = new MolU235s();
 
         ((MolU238s) molU238s).EstimateValue(//
-                getOutputsByName( "molPb206r" ),
-                new ValueModel( "age207_206", getInputDate206_238r(), "ABS", BigDecimal.ZERO, BigDecimal.ZERO ),
-                getPhysicalConstantsModel().getDatumByName( Lambdas.lambda238.getName() ) );
+                getOutputsByName("molPb206r"),
+                new ValueModel("age207_206", getInputDate206_238r(), "ABS", BigDecimal.ZERO, BigDecimal.ZERO),
+                getPhysicalConstantsModel().getDatumByName(Lambdas.lambda238.getName()));
 
-        molU238s.setOneSigma( ValueModel.convertOneSigmaPctToAbsIfRequired( molU238s, oneSigmaPct ) );
-        setOutputByName( "molU238s", molU238s );
+        molU238s.setOneSigma(ValueModel.convertOneSigmaPctToAbsIfRequired(molU238s, oneSigmaPct));
+        setOutputByName("molU238s", molU238s);
 
         ((MolU235s) molU235s).EstimateValue(//
                 molU238s,
-                getAnalysisMeasure( AnalysisMeasures.r238_235s.getName() ) );
+                getAnalysisMeasure(AnalysisMeasures.r238_235s.getName()));
 
-        molU235s.setOneSigma( ValueModel.convertOneSigmaPctToAbsIfRequired( molU235s, oneSigmaPct ) );
-        setOutputByName( "molU235s", molU235s );
+        molU235s.setOneSigma(ValueModel.convertOneSigmaPctToAbsIfRequired(molU235s, oneSigmaPct));
+        setOutputByName("molU235s", molU235s);
 
         try {
             BigDecimal calcR238_235m = //
                     BigDecimal.ONE.//
-                    divide( BigDecimal.ONE.//
-                    add( new BigDecimal( 3.0 ).//
-                    multiply( getInputAlphaU().getValue() ) ), ReduxConstants.mathContext15 ).//
+                    divide(BigDecimal.ONE.//
+                            add(new BigDecimal(3.0).//
+                                    multiply(getInputAlphaU().getValue())), ReduxConstants.mathContext15).//
 
-                    multiply( getOutputsByName( "molU238b" ).getValue().//
-                    add( getOutputsByName( "molU238t" ).getValue().//
-                    add( getAnalysisMeasure( AnalysisMeasures.r238_235s.getName() ).getValue().//
-                    multiply( molU235s.getValue() ) ) ) ).//
+                    multiply(getOutputsByName("molU238b").getValue().//
+                            add(getOutputsByName("molU238t").getValue().//
+                                    add(getAnalysisMeasure(AnalysisMeasures.r238_235s.getName()).getValue().//
+                                            multiply(molU235s.getValue())))).//
 
-                    divide( molU235s.getValue().//
-                    add( getOutputsByName( "molU235b" ).getValue().//
-                    add( getOutputsByName( "molU235t" ).getValue() ) ), ReduxConstants.mathContext15 );
+                    divide(molU235s.getValue().//
+                            add(getOutputsByName("molU235b").getValue().//
+                                    add(getOutputsByName("molU235t").getValue())), ReduxConstants.mathContext15);
 
-            getMeasuredRatioByName( MeasuredRatios.r238_235m.getName() ).setValue( calcR238_235m );
-            getMeasuredRatioByName( MeasuredRatios.r238_235m.getName() ).setOneSigma( oneSigmaPct );
+            getMeasuredRatioByName(MeasuredRatios.r238_235m.getName()).setValue(calcR238_235m);
+            getMeasuredRatioByName(MeasuredRatios.r238_235m.getName()).setOneSigma(oneSigmaPct);
         } catch (Exception e) {
         }
 
-        if ( getTracerType().equalsIgnoreCase( "mixed 205-233-236" )
-                || getTracerType().equalsIgnoreCase( "mixed 202-205-233-236" ) ) {
+        if (getTracerType().equalsIgnoreCase("mixed 205-233-236")
+                || getTracerType().equalsIgnoreCase("mixed 202-205-233-236")) {
             // calculate r233_236m
             try {
                 BigDecimal calcR233_236m = //
-                        getTracer().getDatumByName( TracerUPbRatiosAndConcentrations.r233_236t.getName() ).getValue().//
-                        divide( BigDecimal.ONE.//
-                        subtract( new BigDecimal( 3.0 ).//
-                        multiply( getInputAlphaU().getValue() ) ), ReduxConstants.mathContext15 );
+                        getTracer().getDatumByName(TracerUPbRatiosAndConcentrations.r233_236t.getName()).getValue().//
+                        divide(BigDecimal.ONE.//
+                                subtract(new BigDecimal(3.0).//
+                                        multiply(getInputAlphaU().getValue())), ReduxConstants.mathContext15);
 
-                getMeasuredRatioByName( MeasuredRatios.r233_236m.getName() ).setValue( calcR233_236m );
-                getMeasuredRatioByName( MeasuredRatios.r233_236m.getName() ).setOneSigma( oneSigmaPct );
+                getMeasuredRatioByName(MeasuredRatios.r233_236m.getName()).setValue(calcR233_236m);
+                getMeasuredRatioByName(MeasuredRatios.r233_236m.getName()).setOneSigma(oneSigmaPct);
             } catch (Exception e) {
             }
 
-        } else if ( getTracerType().equalsIgnoreCase( "mixed 205-233-235" )
-                || getTracerType().equalsIgnoreCase( "mixed 202-205-233-235" )
-                || getTracerType().equalsIgnoreCase( "mixed 205-233-235-230Th" ) ) {
+        } else if (getTracerType().equalsIgnoreCase("mixed 205-233-235")
+                || getTracerType().equalsIgnoreCase("mixed 202-205-233-235")
+                || getTracerType().equalsIgnoreCase("mixed 205-233-235-230Th")) {
 
             try {
                 BigDecimal calcR233_235m = //
-                        getOutputsByName( "molU233t" ).getValue().//
-                        divide( BigDecimal.ONE.//
-                        subtract( new BigDecimal( 2.0 ).//
-                        multiply( getInputAlphaU().getValue() ) ), ReduxConstants.mathContext15 ).//
+                        getOutputsByName("molU233t").getValue().//
+                        divide(BigDecimal.ONE.//
+                                subtract(new BigDecimal(2.0).//
+                                        multiply(getInputAlphaU().getValue())), ReduxConstants.mathContext15).//
 
-                        divide( molU235s.getValue().//
-                        add( getOutputsByName( "molU235b" ).getValue().//
-                        add( getOutputsByName( "molU235t" ).getValue() ) ), ReduxConstants.mathContext15 );
+                        divide(molU235s.getValue().//
+                                add(getOutputsByName("molU235b").getValue().//
+                                        add(getOutputsByName("molU235t").getValue())), ReduxConstants.mathContext15);
 
-                getMeasuredRatioByName( MeasuredRatios.r233_235m.getName() ).setValue( calcR233_235m );
-                getMeasuredRatioByName( MeasuredRatios.r233_235m.getName() ).setOneSigma( oneSigmaPct );
+                getMeasuredRatioByName(MeasuredRatios.r233_235m.getName()).setValue(calcR233_235m);
+                getMeasuredRatioByName(MeasuredRatios.r233_235m.getName()).setOneSigma(oneSigmaPct);
             } catch (Exception e) {
             }
 
@@ -666,26 +649,26 @@ public class UPbFraction extends Fraction implements
 
 
         setInAutoUraniumMode( true );
-
+ 
     }
 
     /**
      *
      */
-    public void zeroUraniumRatios () {
-        getMeasuredRatioByName( MeasuredRatios.r238_235m.getName() ).setValue( BigDecimal.ZERO );
-        getMeasuredRatioByName( MeasuredRatios.r238_235m.getName() ).setOneSigma( BigDecimal.ZERO );
+    public void zeroUraniumRatios() {
+        getMeasuredRatioByName(MeasuredRatios.r238_235m.getName()).setValue(BigDecimal.ZERO);
+        getMeasuredRatioByName(MeasuredRatios.r238_235m.getName()).setOneSigma(ReduxConstants.NO_RHO_FLAG);//   BigDecimal.ZERO);
 
-        getMeasuredRatioByName( MeasuredRatios.r233_235m.getName() ).setValue( BigDecimal.ZERO );
-        getMeasuredRatioByName( MeasuredRatios.r233_235m.getName() ).setOneSigma( BigDecimal.ZERO );
+        getMeasuredRatioByName(MeasuredRatios.r233_235m.getName()).setValue(BigDecimal.ZERO);
+        getMeasuredRatioByName(MeasuredRatios.r233_235m.getName()).setOneSigma(ReduxConstants.NO_RHO_FLAG);//   BigDecimal.ZERO);
 
-        getMeasuredRatioByName( MeasuredRatios.r238_233m.getName() ).setValue( BigDecimal.ZERO );
-        getMeasuredRatioByName( MeasuredRatios.r238_233m.getName() ).setOneSigma( BigDecimal.ZERO );
+        getMeasuredRatioByName(MeasuredRatios.r238_233m.getName()).setValue(BigDecimal.ZERO);
+        getMeasuredRatioByName(MeasuredRatios.r238_233m.getName()).setOneSigma(ReduxConstants.NO_RHO_FLAG);//   BigDecimal.ZERO);
 
-        getMeasuredRatioByName( MeasuredRatios.r233_236m.getName() ).setValue( BigDecimal.ZERO );
-        getMeasuredRatioByName( MeasuredRatios.r233_236m.getName() ).setOneSigma( BigDecimal.ZERO );
+        getMeasuredRatioByName(MeasuredRatios.r233_236m.getName()).setValue(BigDecimal.ZERO);
+        getMeasuredRatioByName(MeasuredRatios.r233_236m.getName()).setOneSigma(ReduxConstants.NO_RHO_FLAG);//   BigDecimal.ZERO);
 
-        setInAutoUraniumMode( false );
+        setInAutoUraniumMode(false);
     }
 
     /**
@@ -696,14 +679,14 @@ public class UPbFraction extends Fraction implements
      * @throws java.lang.ClassCastException
      */
     @Override
-    public int compareTo ( Fraction fraction ) throws ClassCastException {
+    public int compareTo(Fraction fraction) throws ClassCastException {
         String uPbFractionID = fraction.getFractionID();
-        String uPbFractionAliquotNum = String.valueOf( ((UPbFractionI) fraction).getAliquotNumber() );
+        String uPbFractionAliquotNum = String.valueOf(((UPbFractionI) fraction).getAliquotNumber());
         String myID = (uPbFractionAliquotNum + "." + uPbFractionID).toUpperCase();
 
         Comparator<String> forNoah = new IntuitiveStringComparator<String>();
 
-        return forNoah.compare( (String.valueOf( this.getAliquotNumber() ) + "." + this.getFractionID()).toUpperCase(), myID );
+        return forNoah.compare((String.valueOf(this.getAliquotNumber()) + "." + this.getFractionID()).toUpperCase(), myID);
     }
 
     /**
@@ -714,7 +697,7 @@ public class UPbFraction extends Fraction implements
      * @throws BadLabDataException
      * @throws ETException
      */
-    public boolean updateUPbFraction ( Fraction fractionFromFile, boolean overrideData )
+    public boolean updateUPbFraction(Fraction fractionFromFile, boolean overrideData)
             throws BadLabDataException, ETException {
         // walk the new fraction being imported into an existing fraction
         // and check whether to override
@@ -723,25 +706,24 @@ public class UPbFraction extends Fraction implements
 
         // april 2008 check for conflicting tracers between u and pb
         // AUG 2011 update to use noneTracer
-        if (  ! getRatioType().equalsIgnoreCase( ((UPbFraction) fractionFromFile).getRatioType() )
-                && ( ! ((UPbFraction) this).getTracer().equals( getMyLabData().getNoneTracer() ))
-                && ( ! ((UPbFraction) fractionFromFile).getTracer().equals( getMyLabData().getNoneTracer() )) ) {
-            if (  ! ((UPbFraction) this).getTracer().getNameAndVersion().//
-                    equalsIgnoreCase( ((UPbFraction) fractionFromFile).getTracer().getNameAndVersion() ) ) {
-                throw new ETException( null,
-                        "Tracer in imported fraction " +   fractionFromFile.getFractionID()    +  " conflicts with existing fraction's tracer." );
+        if (!getRatioType().equalsIgnoreCase(((UPbFraction) fractionFromFile).getRatioType())
+                && (!((UPbFraction) this).getTracer().equals(getMyLabData().getNoneTracer()))
+                && (!((UPbFraction) fractionFromFile).getTracer().equals(getMyLabData().getNoneTracer()))) {
+            if (!((UPbFraction) this).getTracer().getNameAndVersion().//
+                    equalsIgnoreCase(((UPbFraction) fractionFromFile).getTracer().getNameAndVersion())) {
+                throw new ETException(null,
+                        "Tracer in imported fraction " + fractionFromFile.getFractionID() + " conflicts with existing fraction's tracer.");
             }
         }
 
-
         // update each ratio
-        for (int r = 0; r < fractionFromFile.getMeasuredRatios().length; r ++) {
+        for (int r = 0; r < fractionFromFile.getMeasuredRatios().length; r++) {
             MeasuredRatioModel tempR = (MeasuredRatioModel) fractionFromFile.getMeasuredRatios()[r];
-            MeasuredRatioModel knownR = (MeasuredRatioModel) getMeasuredRatioByName( tempR.getName() );
+            MeasuredRatioModel knownR = (MeasuredRatioModel) getMeasuredRatioByName(tempR.getName());
 
             // determine whether to overwrite the existing known ratio
-            if ( ((tempR.hasPositiveValue()) && overrideData) ) {
-                knownR.copyValuesFrom( tempR );
+            if (((tempR.hasPositiveValue()) && overrideData)) {
+                knownR.copyValuesFrom(tempR);
 
                 didUpdate = true;
             }
@@ -749,27 +731,27 @@ public class UPbFraction extends Fraction implements
         }
 
         // update ratio type and other fields
-        if ( didUpdate ) {
+        if (didUpdate) {
             // detect that u and pb are now together as they are the only options at this point
-            if (  ! getRatioType().equalsIgnoreCase( ((UPbFraction) fractionFromFile).getRatioType() ) ) {
-                setRatioType( "UPb" );
+            if (!getRatioType().equalsIgnoreCase(((UPbFraction) fractionFromFile).getRatioType())) {
+                setRatioType("UPb");
             }
 
             // handle incoming uranium fraction
-            if ( ((UPbFraction) fractionFromFile).getRatioType().indexOf( "U" ) > -1 ) {
-                setSourceFileU( ((UPbFraction) fractionFromFile).getSourceFileU() );
-                setPedigreeU( ((UPbFraction) fractionFromFile).getPedigreeU() );
-                setMeanAlphaU( ((UPbFraction) fractionFromFile).getMeanAlphaU() );
+            if (((UPbFraction) fractionFromFile).getRatioType().indexOf("U") > -1) {
+                setSourceFileU(((UPbFraction) fractionFromFile).getSourceFileU());
+                setPedigreeU(((UPbFraction) fractionFromFile).getPedigreeU());
+                setMeanAlphaU(((UPbFraction) fractionFromFile).getMeanAlphaU());
 
-                populateAnalysisMeasuresFromImportedFraction( fractionFromFile, this );
+                populateAnalysisMeasuresFromImportedFraction(fractionFromFile, this);
 
             }
 
             //handle incoming pb fraction
-            if ( ((UPbFraction) fractionFromFile).getRatioType().indexOf( "Pb" ) > -1 ) {
-                setSourceFilePb( ((UPbFraction) fractionFromFile).getSourceFilePb() );
-                setPedigreePb( ((UPbFraction) fractionFromFile).getPedigreePb() );
-                setMeanAlphaPb( ((UPbFraction) fractionFromFile).getMeanAlphaPb() ); // future feature
+            if (((UPbFraction) fractionFromFile).getRatioType().indexOf("Pb") > -1) {
+                setSourceFilePb(((UPbFraction) fractionFromFile).getSourceFilePb());
+                setPedigreePb(((UPbFraction) fractionFromFile).getPedigreePb());
+                setMeanAlphaPb(((UPbFraction) fractionFromFile).getMeanAlphaPb()); // future feature
 
             }
         }
@@ -778,11 +760,11 @@ public class UPbFraction extends Fraction implements
             // check for importing tracer (checked above for conflict)
             // rewritten march 2009 to handle auto update
             // update AUG 2011 to use noneTracer
-            if ( ((getTracer().equals( getMyLabData().getNoneTracer() )) && overrideData) ) {
-                if ( ((UPbFraction) fractionFromFile).getTracer().equals( getMyLabData().getNoneTracer() ) ) {
-                    setTracer( getMyLabData().getDefaultLabTracer() );
+            if (((getTracer().equals(getMyLabData().getNoneTracer())) && overrideData)) {
+                if (((UPbFraction) fractionFromFile).getTracer().equals(getMyLabData().getNoneTracer())) {
+                    setTracer(getMyLabData().getDefaultLabTracer());
                 } else {
-                    setTracer( ((UPbFraction) fractionFromFile).getTracer() );
+                    setTracer(((UPbFraction) fractionFromFile).getTracer());
                 }
                 didUpdate = true;
             }
@@ -790,10 +772,10 @@ public class UPbFraction extends Fraction implements
         } catch (BadLabDataException ex) {
         }
 
-        getMyLabData().registerTracer( getTracer(), false );
-        
+        getMyLabData().registerTracer(getTracer(), false);
+
         // added Sept 2012 - Matt Rioux wanted to make sure reduction happended on live update
-        UPbFractionReducer.getInstance().fullFractionReduce( this, true );
+        UPbFractionReducer.getInstance().fullFractionReduce(this, true);
 
         return didUpdate;
     }
@@ -803,38 +785,38 @@ public class UPbFraction extends Fraction implements
      * @return
      */
     @Override
-    public Object[] getFractionTableRowData () {
+    public Object[] getFractionTableRowData() {
         String tracerName = "N/A";
-        if ( getTracer() != null ) {
+        if (getTracer() != null) {
             tracerName = getTracer().getNameAndVersion();
         }
 
         Object[] retval = {
-            String.valueOf( getAliquotNumber() ), // for aliquot button
-            Boolean.valueOf(  ! isRejected() ), // oct 2009 for fraction selector where SELECTED = NOT rejected
+            String.valueOf(getAliquotNumber()), // for aliquot button
+            Boolean.valueOf(!isRejected()), // oct 2009 for fraction selector where SELECTED = NOT rejected
             getFractionNotes().length() > 0,// notes column added nov 2009 >0 ==> bold
             getFractionID(), // for fraction edit button
-            tableEntryForMeasuredRatio( MeasuredRatios.r206_204m.getName() ),
-            tableEntryForMeasuredRatio( MeasuredRatios.r206_207m.getName() ),
-            tableEntryForMeasuredRatio( MeasuredRatios.r206_208m.getName() ),
-            tableEntryForMeasuredRatio( MeasuredRatios.r206_205m.getName() ),
-            tableEntryForMeasuredRatio( MeasuredRatios.r207_205m.getName() ),
-            tableEntryForMeasuredRatio( MeasuredRatios.r208_205m.getName() ),
-            tableEntryForMeasuredRatio( MeasuredRatios.r202_205m.getName() ),
-            tableEntryForMeasuredRatio( MeasuredRatios.r238_235m.getName() ),
-            tableEntryForMeasuredRatio( MeasuredRatios.r233_235m.getName() ),
-            tableEntryForMeasuredRatio( MeasuredRatios.r233_236m.getName() ),
+            tableEntryForMeasuredRatio(MeasuredRatios.r206_204m.getName()),
+            tableEntryForMeasuredRatio(MeasuredRatios.r206_207m.getName()),
+            tableEntryForMeasuredRatio(MeasuredRatios.r206_208m.getName()),
+            tableEntryForMeasuredRatio(MeasuredRatios.r206_205m.getName()),
+            tableEntryForMeasuredRatio(MeasuredRatios.r207_205m.getName()),
+            tableEntryForMeasuredRatio(MeasuredRatios.r208_205m.getName()),
+            tableEntryForMeasuredRatio(MeasuredRatios.r202_205m.getName()),
+            tableEntryForMeasuredRatio(MeasuredRatios.r238_235m.getName()),
+            tableEntryForMeasuredRatio(MeasuredRatios.r233_235m.getName()),
+            tableEntryForMeasuredRatio(MeasuredRatios.r233_236m.getName()),
             tracerName
         };
 
         return retval;
     }
 
-    private String tableEntryForMeasuredRatio ( String measuredRatio ) {
+    private String tableEntryForMeasuredRatio(String measuredRatio) {
         String retVal = " ";
 
-        if ( ((MeasuredRatioModel) getMeasuredRatioByName( measuredRatio )).getValue().compareTo( BigDecimal.ZERO ) != 0 ) {
-            retVal = ((MeasuredRatioModel) getMeasuredRatioByName( measuredRatio )).toTableFormat();
+        if (((MeasuredRatioModel) getMeasuredRatioByName(measuredRatio)).getValue().compareTo(BigDecimal.ZERO) != 0) {
+            retVal = ((MeasuredRatioModel) getMeasuredRatioByName(measuredRatio)).toTableFormat();
         }
 
         return retVal;
@@ -845,8 +827,8 @@ public class UPbFraction extends Fraction implements
      * @param trName
      * @return
      */
-    public ValueModel getTracerRatioByName ( String trName ) {
-        return getTracer().getDatumByName( trName );
+    public ValueModel getTracerRatioByName(String trName) {
+        return getTracer().getDatumByName(trName);
     }
 
 //    /**
@@ -862,8 +844,8 @@ public class UPbFraction extends Fraction implements
      * @param pbrName
      * @return
      */
-    public ValueModel getPbBlankRatioByName ( String pbrName ) {
-        return getPbBlank().getDatumByName( pbrName );
+    public ValueModel getPbBlankRatioByName(String pbrName) {
+        return getPbBlank().getDatumByName(pbrName);
     }
 
     /**
@@ -871,15 +853,15 @@ public class UPbFraction extends Fraction implements
      * @param ipmName
      * @return
      */
-    public ValueModel getInitialPbModelRatioByName ( String ipmName ) {
-        return getInitialPbModel().getDatumByName( ipmName );
+    public ValueModel getInitialPbModelRatioByName(String ipmName) {
+        return getInitialPbModel().getDatumByName(ipmName);
     }
 
     /**
      *
      * @return
      */
-    public static String[] getColumnNames () {
+    public static String[] getColumnNames() {
         return columnNames;
     }
 
@@ -888,7 +870,7 @@ public class UPbFraction extends Fraction implements
      * @return
      */
     @Override
-    public int getAliquotNumber () {
+    public int getAliquotNumber() {
         return aliquotNumber;
     }
 
@@ -897,9 +879,9 @@ public class UPbFraction extends Fraction implements
      * @param aliquotNumber
      */
     @Override
-    public void setAliquotNumber ( int aliquotNumber ) {
+    public void setAliquotNumber(int aliquotNumber) {
         this.aliquotNumber = aliquotNumber;
-        setChanged( true );
+        setChanged(true);
     }
 
     /**
@@ -907,7 +889,7 @@ public class UPbFraction extends Fraction implements
      * @return
      */
     @Override
-    public String getRatioType () {
+    public String getRatioType() {
         return ratioType;
     }
 
@@ -916,7 +898,7 @@ public class UPbFraction extends Fraction implements
      * @param RatioType
      */
     @Override
-    public void setRatioType ( String RatioType ) {
+    public void setRatioType(String RatioType) {
         this.ratioType = RatioType;
     }
 
@@ -925,7 +907,7 @@ public class UPbFraction extends Fraction implements
      * @return
      */
     @Override
-    public AbstractRatiosDataModel getTracer () {
+    public AbstractRatiosDataModel getTracer() {
         return tracer;
     }
 
@@ -933,7 +915,7 @@ public class UPbFraction extends Fraction implements
      *
      * @return
      */
-    public String getTracerType () {
+    public String getTracerType() {
         return ((TracerUPbModel) tracer).getTracerType();
     }
 
@@ -942,7 +924,7 @@ public class UPbFraction extends Fraction implements
      * @param Tracer
      */
     @Override
-    public void setTracer ( AbstractRatiosDataModel Tracer ) {
+    public void setTracer(AbstractRatiosDataModel Tracer) {
         this.tracer = Tracer;
     }
 
@@ -951,7 +933,7 @@ public class UPbFraction extends Fraction implements
      * @return
      */
     @Override
-    public boolean isChanged () {
+    public boolean isChanged() {
         return changed;
     }
 
@@ -960,7 +942,7 @@ public class UPbFraction extends Fraction implements
      * @param changed
      */
     @Override
-    public void setChanged ( boolean changed ) {
+    public void setChanged(boolean changed) {
         this.changed = changed;
     }
 
@@ -969,7 +951,7 @@ public class UPbFraction extends Fraction implements
      * @return
      */
     @Override
-    public boolean isDeleted () {
+    public boolean isDeleted() {
         return deleted;
     }
 
@@ -978,7 +960,7 @@ public class UPbFraction extends Fraction implements
      * @param deleted
      */
     @Override
-    public void setDeleted ( boolean deleted ) {
+    public void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
 
@@ -986,7 +968,7 @@ public class UPbFraction extends Fraction implements
      *
      * @return
      */
-    public String getSourceFilePb () {
+    public String getSourceFilePb() {
         return sourceFilePb;
     }
 
@@ -994,7 +976,7 @@ public class UPbFraction extends Fraction implements
      *
      * @param sourceFilePb
      */
-    public void setSourceFilePb ( String sourceFilePb ) {
+    public void setSourceFilePb(String sourceFilePb) {
         this.sourceFilePb = sourceFilePb;
     }
 
@@ -1002,7 +984,7 @@ public class UPbFraction extends Fraction implements
      *
      * @return
      */
-    public String getSourceFileU () {
+    public String getSourceFileU() {
         return sourceFileU;
     }
 
@@ -1010,7 +992,7 @@ public class UPbFraction extends Fraction implements
      *
      * @param sourceFileU
      */
-    public void setSourceFileU ( String sourceFileU ) {
+    public void setSourceFileU(String sourceFileU) {
         this.sourceFileU = sourceFileU;
     }
 
@@ -1018,7 +1000,7 @@ public class UPbFraction extends Fraction implements
      *
      * @return
      */
-    public String getPedigree () {
+    public String getPedigree() {
         return pedigree;
     }
 
@@ -1026,7 +1008,7 @@ public class UPbFraction extends Fraction implements
      *
      * @param Pedigree
      */
-    public void setPedigree ( String Pedigree ) {
+    public void setPedigree(String Pedigree) {
         this.pedigree = Pedigree;
     }
 
@@ -1034,7 +1016,7 @@ public class UPbFraction extends Fraction implements
      *
      * @return
      */
-    public String getPedigreePb () {
+    public String getPedigreePb() {
         return pedigreePb;
     }
 
@@ -1042,7 +1024,7 @@ public class UPbFraction extends Fraction implements
      *
      * @param pedigreePb
      */
-    public void setPedigreePb ( String pedigreePb ) {
+    public void setPedigreePb(String pedigreePb) {
         this.pedigreePb = pedigreePb;
     }
 
@@ -1050,7 +1032,7 @@ public class UPbFraction extends Fraction implements
      *
      * @return
      */
-    public String getPedigreeU () {
+    public String getPedigreeU() {
         return pedigreeU;
     }
 
@@ -1058,7 +1040,7 @@ public class UPbFraction extends Fraction implements
      *
      * @param pedigreeU
      */
-    public void setPedigreeU ( String pedigreeU ) {
+    public void setPedigreeU(String pedigreeU) {
         this.pedigreeU = pedigreeU;
     }
 
@@ -1066,8 +1048,8 @@ public class UPbFraction extends Fraction implements
      *
      * @return
      */
-    public ReduxLabData getMyLabData () {
-        if ( myLabData == null ) {
+    public ReduxLabData getMyLabData() {
+        if (myLabData == null) {
             myLabData = ReduxLabData.getInstance();
         }
         return myLabData;
@@ -1077,7 +1059,7 @@ public class UPbFraction extends Fraction implements
      *
      * @param myLabData
      */
-    public void setMyLabData ( ReduxLabData myLabData ) {
+    public void setMyLabData(ReduxLabData myLabData) {
         this.myLabData = myLabData;
     }
 
@@ -1086,8 +1068,8 @@ public class UPbFraction extends Fraction implements
      * @return
      */
     @Override
-    public String getTracerID () {
-        if ( getTracer() == null ) {
+    public String getTracerID() {
+        if (getTracer() == null) {
             return ReduxConstants.NONE;
         } else {
             return getTracer().getNameAndVersion();
@@ -1098,11 +1080,11 @@ public class UPbFraction extends Fraction implements
      *
      * @return
      */
-    public boolean hasATracer () {
-        if ( getTracer() == null ) {
+    public boolean hasATracer() {
+        if (getTracer() == null) {
             return false;
         } else {
-            return  ! (getTracer().equals( TracerUPbModel.getNoneInstance() ));//  .getTracerName().equalsIgnoreCase( "<none>" ) || getTracer().getTracerName().equalsIgnoreCase( ReduxConstants.NONE ));
+            return !(getTracer().equals(TracerUPbModel.getNoneInstance()));//  .getTracerName().equalsIgnoreCase( "<none>" ) || getTracer().getTracerName().equalsIgnoreCase( ReduxConstants.NONE ));
         }
     }
 
@@ -1111,7 +1093,7 @@ public class UPbFraction extends Fraction implements
      * @return
      */
     @Override
-    public String getAlphaPbModelID () {
+    public String getAlphaPbModelID() {
         return getAlphaPbModel().getName();
     }
 
@@ -1120,7 +1102,7 @@ public class UPbFraction extends Fraction implements
      * @return
      */
     @Override
-    public String getAlphaUModelID () {
+    public String getAlphaUModelID() {
         return getAlphaUModel().getName();
     }
 
@@ -1129,7 +1111,7 @@ public class UPbFraction extends Fraction implements
      * @return
      */
     @Override
-    public String getPbBlankID () {
+    public String getPbBlankID() {
         return getPbBlank().getNameAndVersion();
     }
 
@@ -1138,7 +1120,7 @@ public class UPbFraction extends Fraction implements
      * @return
      */
     @Override
-    public String getPhysicalConstantsModelID () {
+    public String getPhysicalConstantsModelID() {
         return getPhysicalConstantsModel().getNameAndVersion();
     }
 
@@ -1146,7 +1128,7 @@ public class UPbFraction extends Fraction implements
      *
      * @return
      */
-    public BigDecimal getMeanAlphaU () {
+    public BigDecimal getMeanAlphaU() {
         return meanAlphaU;
     }
 
@@ -1154,7 +1136,7 @@ public class UPbFraction extends Fraction implements
      *
      * @param MeanAlphaU
      */
-    public void setMeanAlphaU ( BigDecimal MeanAlphaU ) {
+    public void setMeanAlphaU(BigDecimal MeanAlphaU) {
         this.meanAlphaU = MeanAlphaU;
     }
 
@@ -1162,7 +1144,7 @@ public class UPbFraction extends Fraction implements
      *
      * @return
      */
-    public BigDecimal getMeanAlphaPb () {
+    public BigDecimal getMeanAlphaPb() {
         return meanAlphaPb;
     }
 
@@ -1170,7 +1152,7 @@ public class UPbFraction extends Fraction implements
      *
      * @param MeanAlphaPb
      */
-    public void setMeanAlphaPb ( BigDecimal MeanAlphaPb ) {
+    public void setMeanAlphaPb(BigDecimal MeanAlphaPb) {
         this.meanAlphaPb = MeanAlphaPb;
     }
 
@@ -1179,7 +1161,7 @@ public class UPbFraction extends Fraction implements
      * @return
      */
     @Override
-    public AbstractRatiosDataModel getPbBlank () {
+    public AbstractRatiosDataModel getPbBlank() {
         return pbBlank;
     }
 
@@ -1188,7 +1170,7 @@ public class UPbFraction extends Fraction implements
      * @param pbBlank
      */
     @Override
-    public void setPbBlank ( AbstractRatiosDataModel pbBlank ) {
+    public void setPbBlank(AbstractRatiosDataModel pbBlank) {
         this.pbBlank = pbBlank;
     }
 
@@ -1197,8 +1179,8 @@ public class UPbFraction extends Fraction implements
      * @return
      */
     @Override
-    public AbstractRatiosDataModel getPhysicalConstantsModel () {
-        if ( physicalConstantsModel == null ) {
+    public AbstractRatiosDataModel getPhysicalConstantsModel() {
+        if (physicalConstantsModel == null) {
             try {
                 physicalConstantsModel = getMyLabData().getDefaultPhysicalConstantsModel();
             } catch (BadLabDataException badLabDataException) {
@@ -1212,14 +1194,14 @@ public class UPbFraction extends Fraction implements
      * @param physicalConstantsModel
      */
     @Override
-    public void setPhysicalConstantsModel ( AbstractRatiosDataModel physicalConstantsModel ) {
-        if ( (this.physicalConstantsModel == null)
-                || ( ! this.physicalConstantsModel.equals( physicalConstantsModel )) ) {
+    public void setPhysicalConstantsModel(AbstractRatiosDataModel physicalConstantsModel) {
+        if ((this.physicalConstantsModel == null)
+                || (!this.physicalConstantsModel.equals(physicalConstantsModel))) {
             this.physicalConstantsModel = physicalConstantsModel;
-            this.setChanged( true );
-            System.out.println( this.getFractionID() //
+            this.setChanged(true);
+            System.out.println(this.getFractionID() //
                     + "  is getting new physical constants model = "//
-                    + physicalConstantsModel.getNameAndVersion() );
+                    + physicalConstantsModel.getNameAndVersion());
         }
     }
 
@@ -1228,7 +1210,7 @@ public class UPbFraction extends Fraction implements
      * @return
      */
     @Override
-    public ValueModel getAlphaPbModel () {
+    public ValueModel getAlphaPbModel() {
         return alphaPbModel;
     }
 
@@ -1237,15 +1219,15 @@ public class UPbFraction extends Fraction implements
      * @param alphaPbModel
      */
     @Override
-    public void setAlphaPbModel ( ValueModel alphaPbModel ) {
-        if ( (this.alphaPbModel == null)
-                || ( ! this.alphaPbModel.equals( alphaPbModel )) ) {
+    public void setAlphaPbModel(ValueModel alphaPbModel) {
+        if ((this.alphaPbModel == null)
+                || (!this.alphaPbModel.equals(alphaPbModel))) {
             this.alphaPbModel = alphaPbModel;
             this.alphaPbModelSaved = alphaPbModel.copy();
-            this.setChanged( true );
-            System.out.println( this.getFractionID() //
+            this.setChanged(true);
+            System.out.println(this.getFractionID() //
                     + "  is getting new alphaPbModel = "//
-                    + alphaPbModel.getName() );
+                    + alphaPbModel.getName());
         }
     }
 
@@ -1253,14 +1235,14 @@ public class UPbFraction extends Fraction implements
      *
      * @return
      */
-    public boolean needsAlphaPbModel () {
+    public boolean needsAlphaPbModel() {
         return (//hasMeasuredLead()//
                 //&&//
-                ( ! isFractionationCorrectedPb())//
+                (!isFractionationCorrectedPb())//
                 &&//
-                ( ! hasMeasured202_205())//
+                (!hasMeasured202_205())//
                 &&//
-                ( ! hasDoublePbSpikeTracer()));
+                (!hasDoublePbSpikeTracer()));
     }
 
     // this method used for temporary changes in fastfraction tab
@@ -1269,14 +1251,14 @@ public class UPbFraction extends Fraction implements
      * @param tracerType
      * @return
      */
-    public boolean needsAlphaPbModel ( String tracerType ) {
+    public boolean needsAlphaPbModel(String tracerType) {
 
         boolean retVal = //
-                ( ! isFractionationCorrectedPb())//
+                (!isFractionationCorrectedPb())//
                 &&//
-                ( ! hasMeasured202_205())//
+                (!hasMeasured202_205())//
                 &&//
-                ( ! tracerType.contains( "202" ));
+                (!tracerType.contains("202"));
 
         return retVal;
     }
@@ -1285,23 +1267,23 @@ public class UPbFraction extends Fraction implements
      *
      * @return
      */
-    public boolean hasMeasured202_205 () {
-        return getMeasuredRatioByName( MeasuredRatios.r202_205m.getName() ).hasPositiveValue();
+    public boolean hasMeasured202_205() {
+        return getMeasuredRatioByName(MeasuredRatios.r202_205m.getName()).hasPositiveValue();
     }
 
     /**
      *
      * @return
      */
-    public boolean hasDoublePbSpikeTracer () {
+    public boolean hasDoublePbSpikeTracer() {
         boolean retVal = false;
 
         try {
-            String tracerType =
-                    ((TracerUPbModel) getMyLabData().//
-                    getATracerModel( getTracerID() )).getTracerType();
+            String tracerType
+                    = ((TracerUPbModel) getMyLabData().//
+                    getATracerModel(getTracerID())).getTracerType();
 
-            retVal = tracerType.contains( "202" );
+            retVal = tracerType.contains("202");
 
         } catch (BadLabDataException badLabDataException) {
         }
@@ -1313,7 +1295,7 @@ public class UPbFraction extends Fraction implements
      * @return
      */
     @Override
-    public ValueModel getAlphaUModel () {
+    public ValueModel getAlphaUModel() {
         return alphaUModel;
     }
 
@@ -1322,15 +1304,15 @@ public class UPbFraction extends Fraction implements
      * @param alphaUModel
      */
     @Override
-    public void setAlphaUModel ( ValueModel alphaUModel ) {
-        if ( (this.alphaUModel == null)
-                || ( ! this.alphaUModel.equals( alphaUModel )) ) {
+    public void setAlphaUModel(ValueModel alphaUModel) {
+        if ((this.alphaUModel == null)
+                || (!this.alphaUModel.equals(alphaUModel))) {
             this.alphaUModel = alphaUModel;
             this.alphaUModelSaved = alphaUModel;
-            this.setChanged( true );
-            System.out.println( this.getFractionID() //
+            this.setChanged(true);
+            System.out.println(this.getFractionID() //
                     + "  is getting new alphaUModel = "//
-                    + alphaUModel.getName() );
+                    + alphaUModel.getName());
         }
     }
 
@@ -1338,13 +1320,13 @@ public class UPbFraction extends Fraction implements
      *
      * @return
      */
-    public boolean needsAlphaUModel () {
+    public boolean needsAlphaUModel() {
 
         // sep 2010 made parallel construct to alphaPb
         boolean retVal =//
-                ( ! isFractionationCorrectedU())//
+                (!isFractionationCorrectedU())//
                 &&//
-                ( ! hasDoubleUSpikeTracer());
+                (!hasDoubleUSpikeTracer());
 
         return retVal;
     }
@@ -1355,30 +1337,29 @@ public class UPbFraction extends Fraction implements
      * @param tracerType
      * @return
      */
-    public boolean needsAlphaUModel ( String tracerType ) {
+    public boolean needsAlphaUModel(String tracerType) {
 
         boolean retVal = //
-                ( ! isFractionationCorrectedU())//
+                (!isFractionationCorrectedU())//
                 &&//
-                ( ! tracerType.contains( "233" ));
+                (!tracerType.contains("233"));
 
         return retVal;
     }
-
 
     /**
      *
      * @return
      */
-    public boolean hasDoubleUSpikeTracer () {
+    public boolean hasDoubleUSpikeTracer() {
         boolean retVal = false;
 
         try {
-            String tracerType =
-                    ((TracerUPbModel) getMyLabData().//
-                    getATracerModel( getTracerID() )).getTracerType();
+            String tracerType
+                    = ((TracerUPbModel) getMyLabData().//
+                    getATracerModel(getTracerID())).getTracerType();
 
-            retVal = tracerType.contains( "233" );
+            retVal = tracerType.contains("233");
 
         } catch (BadLabDataException badLabDataException) {
         }
@@ -1389,11 +1370,11 @@ public class UPbFraction extends Fraction implements
     /**
      *
      */
-    private void setClassXMLSchemaURL () {
+    private void setClassXMLSchemaURL() {
         UPbReduxConfigurator myConfigurator = new UPbReduxConfigurator();
 
-        XMLSchemaURL =
-                myConfigurator.getResourceURI( "URI_UPbReduxFractionXMLSchemaURL" );
+        XMLSchemaURL
+                = myConfigurator.getResourceURI("URI_UPbReduxFractionXMLSchemaURL");
 
 ////        // april 2009 - first step refactoring to speed update process
 ////        // if validator does not exist, make one
@@ -1411,26 +1392,26 @@ public class UPbFraction extends Fraction implements
      * @param filename
      */
     @Override
-    public void serializeXMLObject ( String filename ) {
+    public void serializeXMLObject(String filename) {
 
-        XStream xstream = getXStreamWriter( onExportShouldOmitTracer() );
+        XStream xstream = getXStreamWriter(onExportShouldOmitTracer());
 
-        String xml = xstream.toXML( this );
+        String xml = xstream.toXML(this);
 
         xml = ReduxConstants.XML_Header + xml;
 
-        xml = xml.replaceFirst( "UPbReduxFraction",
+        xml = xml.replaceFirst("UPbReduxFraction",
                 "UPbReduxFraction "//
                 + ReduxConstants.XML_ResourceHeader//
                 + XMLSchemaURL//
-                + "\"" );
+                + "\"");
 
         try {
-            FileWriter outFile = new FileWriter( filename );
-            PrintWriter out = new PrintWriter( outFile );
+            FileWriter outFile = new FileWriter(filename);
+            PrintWriter out = new PrintWriter(outFile);
 
             // Write xml to file
-            out.println( xml );
+            out.println(xml);
             out.flush();
             out.close();
             outFile.close();
@@ -1450,7 +1431,7 @@ public class UPbFraction extends Fraction implements
      * @throws BadOrMissingXMLSchemaException
      */
     @Override
-    public Object readXMLObject ( String filename, boolean doValidate )
+    public Object readXMLObject(String filename, boolean doValidate)
             throws FileNotFoundException,
             ETException,
             FileNotFoundException,
@@ -1458,33 +1439,31 @@ public class UPbFraction extends Fraction implements
 
         Fraction myUPbReduxFraction = null;
 
-        BufferedReader reader = URIHelper.getBufferedReader( filename );
+        BufferedReader reader = URIHelper.getBufferedReader(filename);
 
-        if ( reader != null ) {
+        if (reader != null) {
             boolean isValidOrAirplaneMode = !doValidate;
-            
+
             XStream xstream = getXStreamReader();
 
-            if ( doValidate ) {
-                isValidOrAirplaneMode = URIHelper.validateXML( reader, filename, XMLSchemaURL );
-            } 
-            
-            if ( isValidOrAirplaneMode ) {
+            if (doValidate) {
+                isValidOrAirplaneMode = URIHelper.validateXML(reader, filename, XMLSchemaURL);
+            }
+
+            if (isValidOrAirplaneMode) {
                 // re-create reader
-                reader = URIHelper.getBufferedReader( filename );
+                reader = URIHelper.getBufferedReader(filename);
                 try {
-                    myUPbReduxFraction = (UPbFraction) xstream.fromXML( reader );
+                    myUPbReduxFraction = (UPbFraction) xstream.fromXML(reader);
                 } catch (ConversionException e) {
-                    throw new ETException( null, e.getMessage() );
+                    throw new ETException(null, e.getMessage());
                 }
             } else {
-                throw new ETException( null, "XML data file does not conform to schema." );
+                throw new ETException(null, "XML data file does not conform to schema.");
             }
         } else {
-            throw new FileNotFoundException( "Missing XML data file." );
+            throw new FileNotFoundException("Missing XML data file.");
         }
-               
-        
 
         return (UPbFraction) myUPbReduxFraction;
 
@@ -1496,12 +1475,12 @@ public class UPbFraction extends Fraction implements
      * @param omitTracer
      * @return
      */
-    public XStream getXStreamWriter ( boolean omitTracer ) {
+    public XStream getXStreamWriter(boolean omitTracer) {
 
         XStream xstream = getXStreamWriter();
 
-        if ( omitTracer ) {
-            xstream.omitField( UPbFraction.class, "Tracer" );
+        if (omitTracer) {
+            xstream.omitField(UPbFraction.class, "Tracer");
         }
 
         return xstream;
@@ -1512,20 +1491,20 @@ public class UPbFraction extends Fraction implements
      *
      * @return
      */
-    public boolean onExportShouldOmitTracer () {
+    public boolean onExportShouldOmitTracer() {
 
-        return  ! ((((MeasuredRatioModel) getMeasuredRatioByName( MeasuredRatios.r238_235m.getName() )).isFracCorr())
-                || (((MeasuredRatioModel) getMeasuredRatioByName( MeasuredRatios.r233_235m.getName() )).isFracCorr()));
+        return !((((MeasuredRatioModel) getMeasuredRatioByName(MeasuredRatios.r238_235m.getName())).isFracCorr())
+                || (((MeasuredRatioModel) getMeasuredRatioByName(MeasuredRatios.r233_235m.getName())).isFracCorr()));
     }
 
     /**
      *
      * @return
      */
-    private XStream getXStreamWriter () {
+    private XStream getXStreamWriter() {
         XStream xstream = new XStream();
 
-        customizeXstream( xstream );
+        customizeXstream(xstream);
 
         return xstream;
     }
@@ -1534,19 +1513,19 @@ public class UPbFraction extends Fraction implements
      *
      * @param xstream
      */
-    private void customizeXstream ( XStream xstream ) {
+    private void customizeXstream(XStream xstream) {
 
-        xstream.registerConverter( new UPbFractionXMLConverter( this ) );
-        xstream.registerConverter( new TracerXMLConverter() );
-        xstream.registerConverter( new TracerUPbModelXMLConverter() );
-        xstream.registerConverter( new ValueModelXMLConverter() );
-        xstream.registerConverter( new MeasuredRatioModelXMLConverter() );
+        xstream.registerConverter(new UPbFractionXMLConverter(this));
+        xstream.registerConverter(new TracerXMLConverter());
+        xstream.registerConverter(new TracerUPbModelXMLConverter());
+        xstream.registerConverter(new ValueModelXMLConverter());
+        xstream.registerConverter(new MeasuredRatioModelXMLConverter());
 
-        xstream.alias( "UPbReduxFraction", UPbFraction.class );
-        xstream.alias( "ValueModel", ValueModel.class );
-        xstream.alias( "MeasuredRatioModel", MeasuredRatioModel.class );
-        xstream.alias( "Tracer", Tracer.class );
-        xstream.alias( "tracerUPbModel", TracerUPbModel.class );
+        xstream.alias("UPbReduxFraction", UPbFraction.class);
+        xstream.alias("ValueModel", ValueModel.class);
+        xstream.alias("MeasuredRatioModel", MeasuredRatioModel.class);
+        xstream.alias("Tracer", Tracer.class);
+        xstream.alias("tracerUPbModel", TracerUPbModel.class);
 
         setClassXMLSchemaURL();
     }
@@ -1555,11 +1534,11 @@ public class UPbFraction extends Fraction implements
      *
      * @return
      */
-    private XStream getXStreamReader () {
+    private XStream getXStreamReader() {
 
-        XStream xstream = new XStream( new DomDriver() );
+        XStream xstream = new XStream(new DomDriver());
 
-        customizeXstream( xstream );
+        customizeXstream(xstream);
 
         return xstream;
     }
@@ -1573,31 +1552,30 @@ public class UPbFraction extends Fraction implements
      * @return
      * @throws BadOrMissingXMLSchemaException
      */
-    public UPbFraction readXMLFraction ( String filename, int aliquotNumber, boolean doValidate )
+    public UPbFraction readXMLFraction(String filename, int aliquotNumber, boolean doValidate)
             throws BadOrMissingXMLSchemaException {
 
         Fraction myUPbReduxFraction = null;
 
         try {
-            myUPbReduxFraction = (Fraction) readXMLObject( filename, doValidate );
+            myUPbReduxFraction = (Fraction) readXMLObject(filename, doValidate);
 
             // set LabData
-            ((UPbFraction) myUPbReduxFraction).setMyLabData( this.getMyLabData() );
+            ((UPbFraction) myUPbReduxFraction).setMyLabData(this.getMyLabData());
 
             // fill missing fields
-            ((UPbFractionI) myUPbReduxFraction).setAliquotNumber( aliquotNumber );
+            ((UPbFractionI) myUPbReduxFraction).setAliquotNumber(aliquotNumber);
 
-            ((UPbFraction) myUPbReduxFraction).setPedigreePb( "" );
-            ((UPbFraction) myUPbReduxFraction).setPedigreeU( "" );
+            ((UPbFraction) myUPbReduxFraction).setPedigreePb("");
+            ((UPbFraction) myUPbReduxFraction).setPedigreeU("");
 
-            ((UPbFractionI) myUPbReduxFraction).setChanged( true );
-            ((UPbFractionI) myUPbReduxFraction).setDeleted( false );
+            ((UPbFractionI) myUPbReduxFraction).setChanged(true);
+            ((UPbFractionI) myUPbReduxFraction).setDeleted(false);
 
-            ((UPbFraction) myUPbReduxFraction).setNotesPb( "" );
-            ((UPbFraction) myUPbReduxFraction).setNotesU( "" );
-            ((UPbFraction) myUPbReduxFraction).setSourceFilePb( "NONE" );
-            ((UPbFraction) myUPbReduxFraction).setSourceFileU( "NONE" );
-
+            ((UPbFraction) myUPbReduxFraction).setNotesPb("");
+            ((UPbFraction) myUPbReduxFraction).setNotesU("");
+            ((UPbFraction) myUPbReduxFraction).setSourceFilePb("NONE");
+            ((UPbFraction) myUPbReduxFraction).setSourceFileU("NONE");
 
             // AUG 2011 Big BUG
             // Tracer is used for either case now that Bariatric etc corrections are made
@@ -1620,53 +1598,47 @@ public class UPbFraction extends Fraction implements
              * getMyLabData().getFirstTracer() ); } catch (BadLabDataException
              * ex) { } } }
              */
+            ((UPbFractionI) myUPbReduxFraction).setAlphaPbModel(this.getAlphaPbModel());
+            ((UPbFractionI) myUPbReduxFraction).setAlphaUModel(this.getAlphaUModel());
+            ((UPbFractionI) myUPbReduxFraction).setPbBlank(this.getPbBlank());
 
-
-
-            ((UPbFractionI) myUPbReduxFraction).setAlphaPbModel( this.getAlphaPbModel() );
-            ((UPbFractionI) myUPbReduxFraction).setAlphaUModel( this.getAlphaUModel() );
-            ((UPbFractionI) myUPbReduxFraction).setPbBlank( this.getPbBlank() );
-
-            ((UPbFractionI) myUPbReduxFraction).setPhysicalConstantsModel( this.getPhysicalConstantsModel() );
+            ((UPbFractionI) myUPbReduxFraction).setPhysicalConstantsModel(this.getPhysicalConstantsModel());
 
             // initialize parent fields
-            myUPbReduxFraction.GetValuesFrom( this, false );
-
+            myUPbReduxFraction.GetValuesFrom(this, false);
 
             // may 2008 discovered that reading u first did not set analysis measures
-            populateAnalysisMeasuresFromImportedFraction( myUPbReduxFraction, myUPbReduxFraction );
-
+            populateAnalysisMeasuresFromImportedFraction(myUPbReduxFraction, myUPbReduxFraction);
 
             // aug 2010
             myUPbReduxFraction.setFractionationCorrectedU( //
-                    ((UPbFraction) myUPbReduxFraction).getMeanAlphaU().compareTo( BigDecimal.ZERO ) == 1 );
+                    ((UPbFraction) myUPbReduxFraction).getMeanAlphaU().compareTo(BigDecimal.ZERO) == 1);
             // aug 2010
             myUPbReduxFraction.setFractionationCorrectedPb(//
-                    ((UPbFraction) myUPbReduxFraction).getMeanAlphaPb().compareTo( BigDecimal.ZERO ) == 1 );
-
+                    ((UPbFraction) myUPbReduxFraction).getMeanAlphaPb().compareTo(BigDecimal.ZERO) == 1);
 
             // check ratio_type and set source file
-            if (  ! ((((UPbFractionI) myUPbReduxFraction).getRatioType().equalsIgnoreCase( "U" ))//
-                    || (((UPbFractionI) myUPbReduxFraction).getRatioType().equalsIgnoreCase( "Pb" )) //
-                    || (((UPbFractionI) myUPbReduxFraction).getRatioType().equalsIgnoreCase( "UPb" ))) ) {
-                throw new ETException( null, "RatioType is NOT recognized." );
+            if (!((((UPbFractionI) myUPbReduxFraction).getRatioType().equalsIgnoreCase("U"))//
+                    || (((UPbFractionI) myUPbReduxFraction).getRatioType().equalsIgnoreCase("Pb")) //
+                    || (((UPbFractionI) myUPbReduxFraction).getRatioType().equalsIgnoreCase("UPb")))) {
+                throw new ETException(null, "RatioType is NOT recognized.");
             }
 
-            if ( ((UPbFractionI) myUPbReduxFraction).getRatioType().equalsIgnoreCase( "U" )//
-                    || ((UPbFractionI) myUPbReduxFraction).getRatioType().equalsIgnoreCase( "UPb" ) ) {
-                ((UPbFraction) myUPbReduxFraction).setSourceFileU( filename );
-                ((UPbFraction) myUPbReduxFraction).setPedigreeU( getPedigree() );
+            if (((UPbFractionI) myUPbReduxFraction).getRatioType().equalsIgnoreCase("U")//
+                    || ((UPbFractionI) myUPbReduxFraction).getRatioType().equalsIgnoreCase("UPb")) {
+                ((UPbFraction) myUPbReduxFraction).setSourceFileU(filename);
+                ((UPbFraction) myUPbReduxFraction).setPedigreeU(getPedigree());
 
             }
 
-            if ( ((UPbFractionI) myUPbReduxFraction).getRatioType().equalsIgnoreCase( "Pb" ) //
-                    || ((UPbFractionI) myUPbReduxFraction).getRatioType().equalsIgnoreCase( "UPb" ) ) {
-                ((UPbFraction) myUPbReduxFraction).setSourceFilePb( filename );
-                ((UPbFraction) myUPbReduxFraction).setPedigreePb( getPedigree() );
+            if (((UPbFractionI) myUPbReduxFraction).getRatioType().equalsIgnoreCase("Pb") //
+                    || ((UPbFractionI) myUPbReduxFraction).getRatioType().equalsIgnoreCase("UPb")) {
+                ((UPbFraction) myUPbReduxFraction).setSourceFilePb(filename);
+                ((UPbFraction) myUPbReduxFraction).setPedigreePb(getPedigree());
             }
 
         } catch (FileNotFoundException | ETException ex) {
-            Logger.getLogger( UPbFraction.class.getName() ).log( Level.SEVERE, null, ex );
+            Logger.getLogger(UPbFraction.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return (UPbFraction) myUPbReduxFraction;
@@ -1677,13 +1649,13 @@ public class UPbFraction extends Fraction implements
      *
      * @return
      */
-    public boolean isAnOxide () {
+    public boolean isAnOxide() {
         return //
-                ((((MeasuredRatioModel) getMeasuredRatioByName( MeasuredRatios.r238_235m.getName() )).isOxideCorr())
-                & (((MeasuredRatioModel) getMeasuredRatioByName( MeasuredRatios.r233_235m.getName() )).isOxideCorr())//
+                ((((MeasuredRatioModel) getMeasuredRatioByName(MeasuredRatios.r238_235m.getName())).isOxideCorr())
+                & (((MeasuredRatioModel) getMeasuredRatioByName(MeasuredRatios.r233_235m.getName())).isOxideCorr())//
                 ||//
-                (((MeasuredRatioModel) getMeasuredRatioByName( MeasuredRatios.r238_236m.getName() )).isOxideCorr())
-                & (((MeasuredRatioModel) getMeasuredRatioByName( MeasuredRatios.r233_236m.getName() )).isOxideCorr()));
+                (((MeasuredRatioModel) getMeasuredRatioByName(MeasuredRatios.r238_236m.getName())).isOxideCorr())
+                & (((MeasuredRatioModel) getMeasuredRatioByName(MeasuredRatios.r233_236m.getName())).isOxideCorr()));
     }
 
     // modified jan 2011
@@ -1692,65 +1664,65 @@ public class UPbFraction extends Fraction implements
      * @param isAnOxide
      * @param tracerType
      */
-    public void setFractionIsAnOxide ( boolean isAnOxide, String tracerType ) {
-        if ( tracerType.contains( "235" ) ) {
-            ((MeasuredRatioModel) getMeasuredRatioByName( MeasuredRatios.r238_235m.getName() )).setOxideCorr( isAnOxide );
-            ((MeasuredRatioModel) getMeasuredRatioByName( MeasuredRatios.r233_235m.getName() )).setOxideCorr( isAnOxide );
-        } else if ( tracerType.contains( "236" ) ) {
-            ((MeasuredRatioModel) getMeasuredRatioByName( MeasuredRatios.r238_236m.getName() )).setOxideCorr( isAnOxide );
-            ((MeasuredRatioModel) getMeasuredRatioByName( MeasuredRatios.r233_236m.getName() )).setOxideCorr( isAnOxide );
+    public void setFractionIsAnOxide(boolean isAnOxide, String tracerType) {
+        if (tracerType.contains("235")) {
+            ((MeasuredRatioModel) getMeasuredRatioByName(MeasuredRatios.r238_235m.getName())).setOxideCorr(isAnOxide);
+            ((MeasuredRatioModel) getMeasuredRatioByName(MeasuredRatios.r233_235m.getName())).setOxideCorr(isAnOxide);
+        } else if (tracerType.contains("236")) {
+            ((MeasuredRatioModel) getMeasuredRatioByName(MeasuredRatios.r238_236m.getName())).setOxideCorr(isAnOxide);
+            ((MeasuredRatioModel) getMeasuredRatioByName(MeasuredRatios.r233_236m.getName())).setOxideCorr(isAnOxide);
         }
     }
 
-    private void populateAnalysisMeasuresFromImportedFraction (
+    private void populateAnalysisMeasuresFromImportedFraction(
             Fraction sourceFraction,
-            Fraction sinkFraction ) {
+            Fraction sinkFraction) {
 
-        if ( isAnOxide() ) {
-            sinkFraction.getAnalysisMeasure( AnalysisMeasures.r18O_16O.getName() ).setValue( ((UPbFraction) sourceFraction).getR18O16O() );
-            sinkFraction.getAnalysisMeasure( AnalysisMeasures.r18O_16O.getName() ).setOneSigma( getMyLabData().getDefaultR18O_16O().getOneSigmaAbs() );
+        if (isAnOxide()) {
+            sinkFraction.getAnalysisMeasure(AnalysisMeasures.r18O_16O.getName()).setValue(((UPbFraction) sourceFraction).getR18O16O());
+            sinkFraction.getAnalysisMeasure(AnalysisMeasures.r18O_16O.getName()).setOneSigma(getMyLabData().getDefaultR18O_16O().getOneSigmaAbs());
 
             // march 2012 = prevent overwriting of revised values
-            ValueModel r18O_16O_revised = sinkFraction.getAnalysisMeasure( AnalysisMeasures.r18O_16O_revised.getName() );
-            if (  ! r18O_16O_revised.hasPositiveValue() ) {
-                sinkFraction.getAnalysisMeasure( AnalysisMeasures.r18O_16O_revised.getName() )//
-                        .setValue( ((UPbFraction) sourceFraction).getR18O16O() );
-                sinkFraction.getAnalysisMeasure( AnalysisMeasures.r18O_16O_revised.getName() )//
-                        .setOneSigma( getMyLabData().getDefaultR18O_16O().getOneSigmaAbs() );
+            ValueModel r18O_16O_revised = sinkFraction.getAnalysisMeasure(AnalysisMeasures.r18O_16O_revised.getName());
+            if (!r18O_16O_revised.hasPositiveValue()) {
+                sinkFraction.getAnalysisMeasure(AnalysisMeasures.r18O_16O_revised.getName())//
+                        .setValue(((UPbFraction) sourceFraction).getR18O16O());
+                sinkFraction.getAnalysisMeasure(AnalysisMeasures.r18O_16O_revised.getName())//
+                        .setOneSigma(getMyLabData().getDefaultR18O_16O().getOneSigmaAbs());
             }
         }
 
         updateAnalysisMeasure(//
-                ((UPbFraction) sourceFraction).getLabUBlankMass().movePointLeft( 12 ),//
+                ((UPbFraction) sourceFraction).getLabUBlankMass().movePointLeft(12),//
                 getMyLabData().getDefaultAssumedUBlankMassInGrams(),
-                sinkFraction.getAnalysisMeasure( AnalysisMeasures.uBlankMassInGrams.getName() ) );
+                sinkFraction.getAnalysisMeasure(AnalysisMeasures.uBlankMassInGrams.getName()));
 
         updateAnalysisMeasure(//
                 ((UPbFraction) sourceFraction).getR238_235s(),//
                 getMyLabData().getDefaultR238_235s(),
-                sinkFraction.getAnalysisMeasure( AnalysisMeasures.r238_235s.getName() ) );
+                sinkFraction.getAnalysisMeasure(AnalysisMeasures.r238_235s.getName()));
 
         updateAnalysisMeasure(//
                 ((UPbFraction) sourceFraction).getR238_235b(),//
                 getMyLabData().getDefaultR238_235b(),
-                sinkFraction.getAnalysisMeasure( AnalysisMeasures.r238_235b.getName() ) );
+                sinkFraction.getAnalysisMeasure(AnalysisMeasures.r238_235b.getName()));
 
         updateAnalysisMeasure(//
                 ((UPbFraction) sourceFraction).getTracerMass(),//
                 getMyLabData().getDefaultTracerMass(),
-                sinkFraction.getAnalysisMeasure( AnalysisMeasures.tracerMassInGrams.getName() ) );
+                sinkFraction.getAnalysisMeasure(AnalysisMeasures.tracerMassInGrams.getName()));
     }
 
-    private void updateAnalysisMeasure ( BigDecimal sourceValue, ValueModel labDefault, ValueModel sinkModel ) {
-        if ( sinkModel.getValue().compareTo( BigDecimal.ZERO ) == 0 ) {
-            if ( sourceValue.compareTo( BigDecimal.ZERO ) == 0 ) {
-                sinkModel.setValue( labDefault.getValue() );
+    private void updateAnalysisMeasure(BigDecimal sourceValue, ValueModel labDefault, ValueModel sinkModel) {
+        if (sinkModel.getValue().compareTo(BigDecimal.ZERO) == 0) {
+            if (sourceValue.compareTo(BigDecimal.ZERO) == 0) {
+                sinkModel.setValue(labDefault.getValue());
             } else {
-                sinkModel.setValue( sourceValue );
+                sinkModel.setValue(sourceValue);
             }
         }
-        if ( sinkModel.getOneSigma().compareTo( BigDecimal.ZERO ) == 0 ) {
-            sinkModel.setOneSigma( labDefault.getOneSigma() );
+        if (sinkModel.getOneSigma().compareTo(BigDecimal.ZERO) == 0) {
+            sinkModel.setOneSigma(labDefault.getOneSigma());
         }
     }
 
@@ -1759,13 +1731,13 @@ public class UPbFraction extends Fraction implements
      * @param args
      * @throws Exception
      */
-    public static void main ( String[] args ) throws Exception {
+    public static void main(String[] args) throws Exception {
 
-        Fraction myUPbReduxFraction = new UPbFraction( "NONE" );
+        Fraction myUPbReduxFraction = new UPbFraction("NONE");
 
-        ((XMLSerializationI) myUPbReduxFraction).serializeXMLObject( "UPbFractionTEST.xml" );
+        ((XMLSerializationI) myUPbReduxFraction).serializeXMLObject("UPbFractionTEST.xml");
 
-        myUPbReduxFraction = ((UPbFraction) myUPbReduxFraction).readXMLFraction( "UPbFractionTEST.xml", 1, true );
+        myUPbReduxFraction = ((UPbFraction) myUPbReduxFraction).readXMLFraction("UPbFractionTEST.xml", 1, true);
 
     }
 
@@ -1774,7 +1746,7 @@ public class UPbFraction extends Fraction implements
      * @return
      */
     @Override
-    public boolean isRejected () {
+    public boolean isRejected() {
         return rejected;
     }
 
@@ -1783,22 +1755,22 @@ public class UPbFraction extends Fraction implements
      * @param rejected
      */
     @Override
-    public void setRejected ( boolean rejected ) {
+    public void setRejected(boolean rejected) {
         this.rejected = rejected;
     }
-    
+
     /**
      *
      */
-    public void toggleRejectedStatus(){
-        this.rejected = ! this.rejected;
+    public void toggleRejectedStatus() {
+        this.rejected = !this.rejected;
     }
 
     /**
      *
      * @return
      */
-    public BigDecimal getR18O16O () {
+    public BigDecimal getR18O16O() {
         return r18O_16O;
     }
 
@@ -1806,7 +1778,7 @@ public class UPbFraction extends Fraction implements
      *
      * @param r18O16O
      */
-    public void setR18O16O ( BigDecimal r18O16O ) {
+    public void setR18O16O(BigDecimal r18O16O) {
         this.r18O_16O = r18O16O;
     }
 
@@ -1814,7 +1786,7 @@ public class UPbFraction extends Fraction implements
      *
      * @return
      */
-    public BigDecimal getLabUBlankMass () {
+    public BigDecimal getLabUBlankMass() {
         return labUBlankMass;
     }
 
@@ -1822,7 +1794,7 @@ public class UPbFraction extends Fraction implements
      *
      * @param labUBlankMass
      */
-    public void setLabUBlankMass ( BigDecimal labUBlankMass ) {
+    public void setLabUBlankMass(BigDecimal labUBlankMass) {
         this.labUBlankMass = labUBlankMass;
     }
 
@@ -1830,7 +1802,7 @@ public class UPbFraction extends Fraction implements
      *
      * @return
      */
-    public BigDecimal getR238_235b () {
+    public BigDecimal getR238_235b() {
         return r238_235b;
     }
 
@@ -1838,7 +1810,7 @@ public class UPbFraction extends Fraction implements
      *
      * @param r238_235b
      */
-    public void setR238_235b ( BigDecimal r238_235b ) {
+    public void setR238_235b(BigDecimal r238_235b) {
         this.r238_235b = r238_235b;
     }
 
@@ -1846,7 +1818,7 @@ public class UPbFraction extends Fraction implements
      *
      * @return
      */
-    public BigDecimal getR238_235s () {
+    public BigDecimal getR238_235s() {
         return r238_235s;
     }
 
@@ -1854,7 +1826,7 @@ public class UPbFraction extends Fraction implements
      *
      * @param r238_235s
      */
-    public void setR238_235s ( BigDecimal r238_235s ) {
+    public void setR238_235s(BigDecimal r238_235s) {
         this.r238_235s = r238_235s;
     }
 
@@ -1862,7 +1834,7 @@ public class UPbFraction extends Fraction implements
      *
      * @return
      */
-    public BigDecimal getTracerMass () {
+    public BigDecimal getTracerMass() {
         return tracerMass;
     }
 
@@ -1870,7 +1842,7 @@ public class UPbFraction extends Fraction implements
      *
      * @param tracerMass
      */
-    public void setTracerMass ( BigDecimal tracerMass ) {
+    public void setTracerMass(BigDecimal tracerMass) {
         this.tracerMass = tracerMass;
     }
 
@@ -1878,7 +1850,7 @@ public class UPbFraction extends Fraction implements
      *
      * @return
      */
-    public ValueModel[] getRadiogenicIsotopeDatesWithTracerUncertainty () {
+    public ValueModel[] getRadiogenicIsotopeDatesWithTracerUncertainty() {
         return radiogenicIsotopeDatesWithTracerUncertainty;
     }
 
@@ -1886,7 +1858,7 @@ public class UPbFraction extends Fraction implements
      *
      * @param radiogenicIsotopeDatesWithTracerUncertainty
      */
-    public void setRadiogenicIsotopeDatesWithTracerUncertainty ( ValueModel[] radiogenicIsotopeDatesWithTracerUncertainty ) {
+    public void setRadiogenicIsotopeDatesWithTracerUncertainty(ValueModel[] radiogenicIsotopeDatesWithTracerUncertainty) {
         this.radiogenicIsotopeDatesWithTracerUncertainty = radiogenicIsotopeDatesWithTracerUncertainty;
     }
 
@@ -1896,13 +1868,13 @@ public class UPbFraction extends Fraction implements
      * @return
      */
     @Override
-    public ValueModel getRadiogenicIsotopeDateWithTracerUnctByName ( String ratioName ) {
-        if ( getRadiogenicIsotopeDatesWithTracerUncertainty() == null ) {
-            setRadiogenicIsotopeDatesWithTracerUncertainty( new ValueModel[0] );
+    public ValueModel getRadiogenicIsotopeDateWithTracerUnctByName(String ratioName) {
+        if (getRadiogenicIsotopeDatesWithTracerUncertainty() == null) {
+            setRadiogenicIsotopeDatesWithTracerUncertainty(new ValueModel[0]);
         }
 
-        for (int i = 0; i < getRadiogenicIsotopeDatesWithTracerUncertainty().length; i ++) {
-            if ( getRadiogenicIsotopeDatesWithTracerUncertainty()[i].getName().equalsIgnoreCase( ratioName ) ) {
+        for (int i = 0; i < getRadiogenicIsotopeDatesWithTracerUncertainty().length; i++) {
+            if (getRadiogenicIsotopeDatesWithTracerUncertainty()[i].getName().equalsIgnoreCase(ratioName)) {
                 return getRadiogenicIsotopeDatesWithTracerUncertainty()[i];
             }
         }
@@ -1910,17 +1882,17 @@ public class UPbFraction extends Fraction implements
         // return a new model - handles backwards compatible
         // have to add element to array
         ValueModel[] temp = new ValueModel[getRadiogenicIsotopeDatesWithTracerUncertainty().length + 1];
-        System.arraycopy( getRadiogenicIsotopeDatesWithTracerUncertainty(), 0, temp, 0, getRadiogenicIsotopeDatesWithTracerUncertainty().length );
+        System.arraycopy(getRadiogenicIsotopeDatesWithTracerUncertainty(), 0, temp, 0, getRadiogenicIsotopeDatesWithTracerUncertainty().length);
 
-        ValueModel riaModel =
-                new ValueModel( ratioName,
-                BigDecimal.ZERO,
-                "ABS",
-                BigDecimal.ZERO, BigDecimal.ZERO );
+        ValueModel riaModel
+                = new ValueModel(ratioName,
+                        BigDecimal.ZERO,
+                        "ABS",
+                        BigDecimal.ZERO, BigDecimal.ZERO);
 
         temp[getRadiogenicIsotopeDatesWithTracerUncertainty().length] = riaModel;
 
-        setRadiogenicIsotopeDatesWithTracerUncertainty( temp );
+        setRadiogenicIsotopeDatesWithTracerUncertainty(temp);
 
         return riaModel;
     }
@@ -1929,7 +1901,7 @@ public class UPbFraction extends Fraction implements
      *
      * @return
      */
-    public ValueModel[] getRadiogenicIsotopeDatesWithAllUncertainty () {
+    public ValueModel[] getRadiogenicIsotopeDatesWithAllUncertainty() {
         return radiogenicIsotopeDatesWithAllUncertainty;
     }
 
@@ -1937,8 +1909,8 @@ public class UPbFraction extends Fraction implements
      *
      * @param radiogenicIsotopeDatesWithAllUncertainty
      */
-    public void setRadiogenicIsotopeDatesWithAllUncertainty (
-            ValueModel[] radiogenicIsotopeDatesWithAllUncertainty ) {
+    public void setRadiogenicIsotopeDatesWithAllUncertainty(
+            ValueModel[] radiogenicIsotopeDatesWithAllUncertainty) {
         this.radiogenicIsotopeDatesWithAllUncertainty = radiogenicIsotopeDatesWithAllUncertainty;
     }
 
@@ -1948,13 +1920,13 @@ public class UPbFraction extends Fraction implements
      * @return
      */
     @Override
-    public ValueModel getRadiogenicIsotopeDateWithAllUnctByName ( String ratioName ) {
-        if ( getRadiogenicIsotopeDatesWithAllUncertainty() == null ) {
-            setRadiogenicIsotopeDatesWithAllUncertainty( new ValueModel[0] );
+    public ValueModel getRadiogenicIsotopeDateWithAllUnctByName(String ratioName) {
+        if (getRadiogenicIsotopeDatesWithAllUncertainty() == null) {
+            setRadiogenicIsotopeDatesWithAllUncertainty(new ValueModel[0]);
         }
 
-        for (int i = 0; i < getRadiogenicIsotopeDatesWithAllUncertainty().length; i ++) {
-            if ( getRadiogenicIsotopeDatesWithAllUncertainty()[i].getName().equalsIgnoreCase( ratioName ) ) {
+        for (int i = 0; i < getRadiogenicIsotopeDatesWithAllUncertainty().length; i++) {
+            if (getRadiogenicIsotopeDatesWithAllUncertainty()[i].getName().equalsIgnoreCase(ratioName)) {
                 return getRadiogenicIsotopeDatesWithAllUncertainty()[i];
             }
         }
@@ -1962,17 +1934,17 @@ public class UPbFraction extends Fraction implements
         // return a new model - handles backwards compatible
         // have to add element to array
         ValueModel[] temp = new ValueModel[getRadiogenicIsotopeDatesWithAllUncertainty().length + 1];
-        System.arraycopy( getRadiogenicIsotopeDatesWithAllUncertainty(), 0, temp, 0, getRadiogenicIsotopeDatesWithAllUncertainty().length );
+        System.arraycopy(getRadiogenicIsotopeDatesWithAllUncertainty(), 0, temp, 0, getRadiogenicIsotopeDatesWithAllUncertainty().length);
 
-        ValueModel riaModel =
-                new ValueModel( ratioName,
-                BigDecimal.ZERO,
-                "ABS",
-                BigDecimal.ZERO, BigDecimal.ZERO );
+        ValueModel riaModel
+                = new ValueModel(ratioName,
+                        BigDecimal.ZERO,
+                        "ABS",
+                        BigDecimal.ZERO, BigDecimal.ZERO);
 
         temp[getRadiogenicIsotopeDatesWithAllUncertainty().length] = riaModel;
 
-        setRadiogenicIsotopeDatesWithAllUncertainty( temp );
+        setRadiogenicIsotopeDatesWithAllUncertainty(temp);
 
         return riaModel;
     }
@@ -1981,7 +1953,7 @@ public class UPbFraction extends Fraction implements
      *
      * @return
      */
-    public ValueModel[] getRadiogenicIsotopeRatiosWithTracerUncertainty () {
+    public ValueModel[] getRadiogenicIsotopeRatiosWithTracerUncertainty() {
         return radiogenicIsotopeRatiosWithTracerUncertainty;
     }
 
@@ -1989,7 +1961,7 @@ public class UPbFraction extends Fraction implements
      *
      * @param radiogenicIsotopeRatiosWithTracerUncertainty
      */
-    public void setRadiogenicIsotopeRatiosWithTracerUncertainty ( ValueModel[] radiogenicIsotopeRatiosWithTracerUncertainty ) {
+    public void setRadiogenicIsotopeRatiosWithTracerUncertainty(ValueModel[] radiogenicIsotopeRatiosWithTracerUncertainty) {
         this.radiogenicIsotopeRatiosWithTracerUncertainty = radiogenicIsotopeRatiosWithTracerUncertainty;
     }
 
@@ -1998,13 +1970,13 @@ public class UPbFraction extends Fraction implements
      * @param ratioName
      * @return
      */
-    public ValueModel getRadiogenicIsotopeRatioWithTracerUnctByName ( String ratioName ) {
-        if ( getRadiogenicIsotopeRatiosWithTracerUncertainty() == null ) {
-            setRadiogenicIsotopeRatiosWithTracerUncertainty( new ValueModel[0] );
+    public ValueModel getRadiogenicIsotopeRatioWithTracerUnctByName(String ratioName) {
+        if (getRadiogenicIsotopeRatiosWithTracerUncertainty() == null) {
+            setRadiogenicIsotopeRatiosWithTracerUncertainty(new ValueModel[0]);
         }
 
-        for (int i = 0; i < getRadiogenicIsotopeRatiosWithTracerUncertainty().length; i ++) {
-            if ( getRadiogenicIsotopeRatiosWithTracerUncertainty()[i].getName().equalsIgnoreCase( ratioName ) ) {
+        for (int i = 0; i < getRadiogenicIsotopeRatiosWithTracerUncertainty().length; i++) {
+            if (getRadiogenicIsotopeRatiosWithTracerUncertainty()[i].getName().equalsIgnoreCase(ratioName)) {
                 return getRadiogenicIsotopeRatiosWithTracerUncertainty()[i];
             }
         }
@@ -2012,17 +1984,17 @@ public class UPbFraction extends Fraction implements
         // return a new model - handles backwards compatible
         // have to add element to array
         ValueModel[] temp = new ValueModel[getRadiogenicIsotopeRatiosWithTracerUncertainty().length + 1];
-        System.arraycopy( getRadiogenicIsotopeRatiosWithTracerUncertainty(), 0, temp, 0, getRadiogenicIsotopeRatiosWithTracerUncertainty().length );
+        System.arraycopy(getRadiogenicIsotopeRatiosWithTracerUncertainty(), 0, temp, 0, getRadiogenicIsotopeRatiosWithTracerUncertainty().length);
 
-        ValueModel rirModel =
-                new ValueModel( ratioName,
-                BigDecimal.ZERO,
-                "ABS",
-                BigDecimal.ZERO, BigDecimal.ZERO );
+        ValueModel rirModel
+                = new ValueModel(ratioName,
+                        BigDecimal.ZERO,
+                        "ABS",
+                        BigDecimal.ZERO, BigDecimal.ZERO);
 
         temp[getRadiogenicIsotopeRatiosWithTracerUncertainty().length] = rirModel;
 
-        setRadiogenicIsotopeRatiosWithTracerUncertainty( temp );
+        setRadiogenicIsotopeRatiosWithTracerUncertainty(temp);
 
         return rirModel;
 
@@ -2032,7 +2004,7 @@ public class UPbFraction extends Fraction implements
      *
      * @return
      */
-    public ValueModel[] getRadiogenicIsotopeRatiosWithAllUncertainty () {
+    public ValueModel[] getRadiogenicIsotopeRatiosWithAllUncertainty() {
         return radiogenicIsotopeRatiosWithAllUncertainty;
     }
 
@@ -2040,7 +2012,7 @@ public class UPbFraction extends Fraction implements
      *
      * @param radiogenicIsotopeRatiosWithAllUncertainty
      */
-    public void setRadiogenicIsotopeRatiosWithAllUncertainty ( ValueModel[] radiogenicIsotopeRatiosWithAllUncertainty ) {
+    public void setRadiogenicIsotopeRatiosWithAllUncertainty(ValueModel[] radiogenicIsotopeRatiosWithAllUncertainty) {
         this.radiogenicIsotopeRatiosWithAllUncertainty = radiogenicIsotopeRatiosWithAllUncertainty;
     }
 
@@ -2049,30 +2021,30 @@ public class UPbFraction extends Fraction implements
      * @param ratioName
      * @return
      */
-    public ValueModel getRadiogenicIsotopeRatioWithAllUncertaintyByName ( String ratioName ) {
-        if ( getRadiogenicIsotopeRatiosWithAllUncertainty() == null ) {
-            setRadiogenicIsotopeRatiosWithAllUncertainty( new ValueModel[0] );
+    public ValueModel getRadiogenicIsotopeRatioWithAllUncertaintyByName(String ratioName) {
+        if (getRadiogenicIsotopeRatiosWithAllUncertainty() == null) {
+            setRadiogenicIsotopeRatiosWithAllUncertainty(new ValueModel[0]);
         }
 
-        for (int i = 0; i < getRadiogenicIsotopeRatiosWithAllUncertainty().length; i ++) {
-            if ( getRadiogenicIsotopeRatiosWithAllUncertainty()[i].getName().equalsIgnoreCase( ratioName ) ) {
+        for (int i = 0; i < getRadiogenicIsotopeRatiosWithAllUncertainty().length; i++) {
+            if (getRadiogenicIsotopeRatiosWithAllUncertainty()[i].getName().equalsIgnoreCase(ratioName)) {
                 return getRadiogenicIsotopeRatiosWithAllUncertainty()[i];
             }
         }
         // return a new model - handles backwards compatible
         // have to add element to array
         ValueModel[] temp = new ValueModel[getRadiogenicIsotopeRatiosWithAllUncertainty().length + 1];
-        System.arraycopy( getRadiogenicIsotopeRatiosWithAllUncertainty(), 0, temp, 0, getRadiogenicIsotopeRatiosWithAllUncertainty().length );
+        System.arraycopy(getRadiogenicIsotopeRatiosWithAllUncertainty(), 0, temp, 0, getRadiogenicIsotopeRatiosWithAllUncertainty().length);
 
-        ValueModel rirModel =
-                new ValueModel( ratioName,
-                BigDecimal.ZERO,
-                "ABS",
-                BigDecimal.ZERO, BigDecimal.ZERO );
+        ValueModel rirModel
+                = new ValueModel(ratioName,
+                        BigDecimal.ZERO,
+                        "ABS",
+                        BigDecimal.ZERO, BigDecimal.ZERO);
 
         temp[getRadiogenicIsotopeRatiosWithAllUncertainty().length] = rirModel;
 
-        setRadiogenicIsotopeRatiosWithAllUncertainty( temp );
+        setRadiogenicIsotopeRatiosWithAllUncertainty(temp);
 
         return rirModel;
     }
@@ -2080,21 +2052,21 @@ public class UPbFraction extends Fraction implements
     /**
      * @return the reductionHandler
      */
-    public ReductionHandler getReductionHandler () {
+    public ReductionHandler getReductionHandler() {
         return reductionHandler;
     }
 
     /**
      * @param reductionHandler the reductionHandler to set
      */
-    public void setReductionHandler ( ReductionHandler reductionHandler ) {
+    public void setReductionHandler(ReductionHandler reductionHandler) {
         this.reductionHandler = reductionHandler;
     }
 
     /**
      *
      */
-    public void restoreSavedFractionationModels () {
+    public void restoreSavedFractionationModels() {
         this.alphaPbModel = this.alphaPbModelSaved.copy();
         this.alphaUModel = this.alphaUModelSaved.copy();
     }
@@ -2104,7 +2076,7 @@ public class UPbFraction extends Fraction implements
      *
      */
     @Override
-    public void setSavedFractionationModels () {
+    public void setSavedFractionationModels() {
         try {
             this.alphaPbModelSaved = this.alphaPbModel.copy();
         } catch (Exception e) {
@@ -2118,178 +2090,173 @@ public class UPbFraction extends Fraction implements
     /**
      *
      */
-    public void toFileAllDataValues () {
-        File dataValuesFile = new File( "ALL_VALUES_" + getFractionID() + ".txt" );
+    public void toFileAllDataValues() {
+        File dataValuesFile = new File("ALL_VALUES_" + getFractionID() + ".txt");
         PrintWriter outputWriter = null;
         try {
-            outputWriter = new PrintWriter( new FileWriter( dataValuesFile ) );
-            outputWriter.println( "\n\n******   FRACTION " + getFractionID() + "   ********************\n\n" );
+            outputWriter = new PrintWriter(new FileWriter(dataValuesFile));
+            outputWriter.println("\n\n******   FRACTION " + getFractionID() + "   ********************\n\n");
 
             // measured ratios
-            outputWriter.println( "measured ratios" );
-            for (int i = 0; i < getMeasuredRatios().length; i ++) {
+            outputWriter.println("measured ratios");
+            for (int i = 0; i < getMeasuredRatios().length; i++) {
                 // special treatment for measured ratios printed here only per Noah July 2011
                 String dataLine = getMeasuredRatios()[i].formatValueAndOneSigmaABSForTesting();
-                if ( isFractionationCorrectedPb() ) {
+                if (isFractionationCorrectedPb()) {
                     // TODO: regular expresssion
-                    dataLine = dataLine.replace( "04m", "04fc" );
-                    dataLine = dataLine.replace( "07m", "07fc" );
-                    dataLine = dataLine.replace( "08m", "08fc" );
-                    dataLine = dataLine.replace( "05m", "05fc" );
+                    dataLine = dataLine.replace("04m", "04fc");
+                    dataLine = dataLine.replace("07m", "07fc");
+                    dataLine = dataLine.replace("08m", "08fc");
+                    dataLine = dataLine.replace("05m", "05fc");
                 }
-                outputWriter.println( dataLine );
+                outputWriter.println(dataLine);
             }
             outputWriter.println();
 
             // tracer ratios
-            outputWriter.println( "tracer ratios and IsotopeConcentrations" );
-            for (int i = 0; i < getTracer().getData().length; i ++) {
-                outputWriter.println( getTracer().getData()[i].formatValueAndOneSigmaABSForTesting() );
+            outputWriter.println("tracer ratios and IsotopeConcentrations");
+            for (int i = 0; i < getTracer().getData().length; i++) {
+                outputWriter.println(getTracer().getData()[i].formatValueAndOneSigmaABSForTesting());
             }
             outputWriter.println();
 
-            outputWriter.println( "Tracer Correlations" );
+            outputWriter.println("Tracer Correlations");
             Iterator<String> correlationsIterator = getTracer().getRhosVarUnct().keySet().iterator();
             while (correlationsIterator.hasNext()) {
                 String rhoName = correlationsIterator.next();
-                BigDecimal rhoValue = getTracer().getRhosVarUnct().get( rhoName );
-                if ( rhoValue.compareTo( BigDecimal.ZERO ) != 0 ) {
-                    outputWriter.println( "   " + rhoName + "\t = \t" + rhoValue.toString() );
+                BigDecimal rhoValue = getTracer().getRhosVarUnct().get(rhoName);
+                if (rhoValue.compareTo(BigDecimal.ZERO) != 0) {
+                    outputWriter.println("   " + rhoName + "\t = \t" + rhoValue.toString());
                 }
             }
             outputWriter.println();
 
             // pbblank ratios
-            outputWriter.println( "pbblank ratios" );
-            for (int i = 0; i < getPbBlank().getData().length; i ++) {
-                outputWriter.println( getPbBlank().getData()[i].formatValueAndOneSigmaABSForTesting() );
+            outputWriter.println("pbblank ratios");
+            for (int i = 0; i < getPbBlank().getData().length; i++) {
+                outputWriter.println(getPbBlank().getData()[i].formatValueAndOneSigmaABSForTesting());
             }
             outputWriter.println();
 
-            outputWriter.println( "pbblank Correlations" );
+            outputWriter.println("pbblank Correlations");
             Iterator<String> pbblankIterator = getPbBlank().getRhosVarUnct().keySet().iterator();
             while (pbblankIterator.hasNext()) {
                 String rhoName = pbblankIterator.next();
-                BigDecimal rhoValue = getPbBlank().getRhosVarUnct().get( rhoName );
-                if ( rhoValue.compareTo( BigDecimal.ZERO ) != 0 ) {
-                    outputWriter.println( "   " + rhoName + "\t = \t" + rhoValue.toString() );
+                BigDecimal rhoValue = getPbBlank().getRhosVarUnct().get(rhoName);
+                if (rhoValue.compareTo(BigDecimal.ZERO) != 0) {
+                    outputWriter.println("   " + rhoName + "\t = \t" + rhoValue.toString());
                 }
             }
             outputWriter.println();
 
-
             // InitialPbModel ratios
-            outputWriter.println( "InitialPbModel ratios" );
-            for (int i = 0; i < getInitialPbModel().getData().length; i ++) {
-                outputWriter.println( getInitialPbModel().getData()[i].formatValueAndOneSigmaABSForTesting() );
+            outputWriter.println("InitialPbModel ratios");
+            for (int i = 0; i < getInitialPbModel().getData().length; i++) {
+                outputWriter.println(getInitialPbModel().getData()[i].formatValueAndOneSigmaABSForTesting());
             }
             outputWriter.println();
 
-            outputWriter.println( "InitialPbModel Correlations" );
+            outputWriter.println("InitialPbModel Correlations");
             Iterator<String> initialPbModelIterator = getInitialPbModel().getRhosVarUnct().keySet().iterator();
             while (initialPbModelIterator.hasNext()) {
                 String rhoName = initialPbModelIterator.next();
-                BigDecimal rhoValue = getInitialPbModel().getRhosVarUnct().get( rhoName );
-                if ( rhoValue.compareTo( BigDecimal.ZERO ) != 0 ) {
-                    outputWriter.println( "   " + rhoName + "\t = \t" + rhoValue.toString() );
+                BigDecimal rhoValue = getInitialPbModel().getRhosVarUnct().get(rhoName);
+                if (rhoValue.compareTo(BigDecimal.ZERO) != 0) {
+                    outputWriter.println("   " + rhoName + "\t = \t" + rhoValue.toString());
                 }
             }
             outputWriter.println();
 
-
-
             // PhysicalConstantsModel AtomicMolarMasses
-            outputWriter.println( "PhysicalConstantsModel AtomicMolarMasses" );
+            outputWriter.println("PhysicalConstantsModel AtomicMolarMasses");
             Iterator<String> atomicMolarMassesIterator = ((PhysicalConstantsModel) getPhysicalConstantsModel()).getAtomicMolarMasses().keySet().iterator();
             while (atomicMolarMassesIterator.hasNext()) {
                 String massName = atomicMolarMassesIterator.next();
-                BigDecimal massValue = ((PhysicalConstantsModel) getPhysicalConstantsModel()).getAtomicMolarMasses().get( massName );
-                outputWriter.println( "   " + massName + "\t = \t" + massValue.toString() );
+                BigDecimal massValue = ((PhysicalConstantsModel) getPhysicalConstantsModel()).getAtomicMolarMasses().get(massName);
+                outputWriter.println("   " + massName + "\t = \t" + massValue.toString());
             }
             outputWriter.println();
 
             // PhysicalConstantsModel MeasuredConstants
-            outputWriter.println( "PhysicalConstantsModel MeasuredConstants" );
-            for (int i = 0; i < getPhysicalConstantsModel().getData().length; i ++) {
-                outputWriter.println( getPhysicalConstantsModel().getData()[i].formatValueAndOneSigmaABSForTesting() );
+            outputWriter.println("PhysicalConstantsModel MeasuredConstants");
+            for (int i = 0; i < getPhysicalConstantsModel().getData().length; i++) {
+                outputWriter.println(getPhysicalConstantsModel().getData()[i].formatValueAndOneSigmaABSForTesting());
             }
             outputWriter.println();
 
-            outputWriter.println( "MeasuredConstants Correlations" );
+            outputWriter.println("MeasuredConstants Correlations");
             Iterator<String> measuredConstantsIterator = getPhysicalConstantsModel().getRhosVarUnct().keySet().iterator();
             while (measuredConstantsIterator.hasNext()) {
                 String rhoName = measuredConstantsIterator.next();
-                BigDecimal rhoValue = getPhysicalConstantsModel().getRhosVarUnct().get( rhoName );
-                if ( rhoValue.compareTo( BigDecimal.ZERO ) != 0 ) {
-                    outputWriter.println( "   " + rhoName + "\t = \t" + rhoValue.toString() );
+                BigDecimal rhoValue = getPhysicalConstantsModel().getRhosVarUnct().get(rhoName);
+                if (rhoValue.compareTo(BigDecimal.ZERO) != 0) {
+                    outputWriter.println("   " + rhoName + "\t = \t" + rhoValue.toString());
                 }
             }
             outputWriter.println();
 
-
-
             // SampleIsochronRatios
-            outputWriter.println( "SampleIsochronRatios" );
-            Arrays.sort( getSampleIsochronRatios() );
-            for (int i = 0; i < getSampleIsochronRatios().length; i ++) {
-                outputWriter.println( getSampleIsochronRatios()[i].formatValueAndOneSigmaABSForTesting() );
+            outputWriter.println("SampleIsochronRatios");
+            Arrays.sort(getSampleIsochronRatios());
+            for (int i = 0; i < getSampleIsochronRatios().length; i++) {
+                outputWriter.println(getSampleIsochronRatios()[i].formatValueAndOneSigmaABSForTesting());
             }
             outputWriter.println();
 
             // AnalysisMeasures
-            outputWriter.println( "AnalysisMeasures" );
-            Arrays.sort( getAnalysisMeasures() );
-            for (int i = 0; i < getAnalysisMeasures().length; i ++) {
-                outputWriter.println( getAnalysisMeasures()[i].formatValueAndOneSigmaABSForTesting() );
+            outputWriter.println("AnalysisMeasures");
+            Arrays.sort(getAnalysisMeasures());
+            for (int i = 0; i < getAnalysisMeasures().length; i++) {
+                outputWriter.println(getAnalysisMeasures()[i].formatValueAndOneSigmaABSForTesting());
             }
             outputWriter.println();
 
             // CompositionalMeasures
-            outputWriter.println( "CompositionalMeasures" );
-            Arrays.sort( getCompositionalMeasures() );
-            for (int i = 0; i < getCompositionalMeasures().length; i ++) {
-                outputWriter.println( getCompositionalMeasures()[i].formatValueAndOneSigmaABSForTesting() );
+            outputWriter.println("CompositionalMeasures");
+            Arrays.sort(getCompositionalMeasures());
+            for (int i = 0; i < getCompositionalMeasures().length; i++) {
+                outputWriter.println(getCompositionalMeasures()[i].formatValueAndOneSigmaABSForTesting());
             }
             outputWriter.println();
 
             // RadiogenicIsotopeRatios
-            outputWriter.println( "RadiogenicIsotopeRatios" );
-            Arrays.sort( getRadiogenicIsotopeRatios() );
-            for (int i = 0; i < getRadiogenicIsotopeRatios().length; i ++) {
-                outputWriter.println( getRadiogenicIsotopeRatios()[i].formatValueAndOneSigmaABSForTesting() );
+            outputWriter.println("RadiogenicIsotopeRatios");
+            Arrays.sort(getRadiogenicIsotopeRatios());
+            for (int i = 0; i < getRadiogenicIsotopeRatios().length; i++) {
+                outputWriter.println(getRadiogenicIsotopeRatios()[i].formatValueAndOneSigmaABSForTesting());
             }
             outputWriter.println();
 
             // RadiogenicIsotopeDates
-            outputWriter.println( "RadiogenicIsotopeDates" );
-            Arrays.sort( getRadiogenicIsotopeDates() );
-            for (int i = 0; i < getRadiogenicIsotopeDates().length; i ++) {
-                outputWriter.println( getRadiogenicIsotopeDates()[i].formatValueAndOneSigmaABSForTesting() );
+            outputWriter.println("RadiogenicIsotopeDates");
+            Arrays.sort(getRadiogenicIsotopeDates());
+            for (int i = 0; i < getRadiogenicIsotopeDates().length; i++) {
+                outputWriter.println(getRadiogenicIsotopeDates()[i].formatValueAndOneSigmaABSForTesting());
             }
             outputWriter.println();
 
             // outputs
-            outputWriter.println( "outputs" );
-            for (int i = 0; i < getOutputs().length; i ++) {
-                outputWriter.println( getOutputs()[i].formatValueAndOneSigmaABSForTesting() );
+            outputWriter.println("outputs");
+            for (int i = 0; i < getOutputs().length; i++) {
+                outputWriter.println(getOutputs()[i].formatValueAndOneSigmaABSForTesting());
             }
             outputWriter.println();
 
             // input covariances
-            outputWriter.println( "input covariances" );
+            outputWriter.println("input covariances");
 
             NumberFormat formatter2 = null;
             try {
-                Map<String, BigDecimal> sortedMap = new TreeMap<String, BigDecimal>( getCoVariances() );
-                formatter2 = new DecimalFormat( "0.0000000000E0" );
+                Map<String, BigDecimal> sortedMap = new TreeMap<String, BigDecimal>(getCoVariances());
+                formatter2 = new DecimalFormat("0.0000000000E0");
 
                 Iterator it = sortedMap.keySet().iterator();
                 while (it.hasNext()) {
                     String key = (String) it.next();
-                    outputWriter.println( String.format( "   %1$-34s", key ) //
+                    outputWriter.println(String.format("   %1$-34s", key) //
                             + " = " //
-                            + String.format( "%1$-20s", formatter2.format( ((BigDecimal) sortedMap.get( key )).doubleValue() ) )//
-                            );
+                            + String.format("%1$-20s", formatter2.format(((BigDecimal) sortedMap.get(key)).doubleValue()))//
+                    );
 
                 }
             } catch (Exception e) {
@@ -2297,15 +2264,15 @@ public class UPbFraction extends Fraction implements
             outputWriter.println();
 
             // partial derivatives
-            outputWriter.println( "partial derivatives" );
+            outputWriter.println("partial derivatives");
             try {
-                Map<String, BigDecimal> sortedMap = new TreeMap<>( getParDerivTerms() );
+                Map<String, BigDecimal> sortedMap = new TreeMap<>(getParDerivTerms());
                 for (Iterator<String> it = sortedMap.keySet().iterator(); it.hasNext();) {
                     String key = it.next();
-                    if ( key.startsWith( "d" ) ) {
-                        outputWriter.println( String.format( "   %1$-34s", key ) //
+                    if (key.startsWith("d")) {
+                        outputWriter.println(String.format("   %1$-34s", key) //
                                 + " = " //
-                                + String.format( "%1$-20s", formatter2.format( sortedMap.get( key ).doubleValue() ) )//
+                                + String.format("%1$-20s", formatter2.format(sortedMap.get(key).doubleValue()))//
                         );
                     }
                 }
@@ -2313,24 +2280,23 @@ public class UPbFraction extends Fraction implements
             }
             outputWriter.println();
 
-
             // sept 2010
             // matrix entries
-            if ( getReductionHandler() != null ) {
-                outputWriter.println( "matrix entries for " + getReductionHandler().getMatrixSpecsName() + "\n" );
+            if (getReductionHandler() != null) {
+                outputWriter.println("matrix entries for " + getReductionHandler().getMatrixSpecsName() + "\n");
                 Vector<String> matrixEntriesListing = new Vector<String>();
 
                 matrixEntriesListing = //
                         CollectionHelpers.vectorSortedUniqueMembers( //
-                        MatrixSpecifications.getMatrixSpecsByName(//
-                        getReductionHandler().getMatrixSpecsName() ) );
+                                MatrixSpecifications.getMatrixSpecsByName(//
+                                        getReductionHandler().getMatrixSpecsName()));
                 // remove lambdas
-                matrixEntriesListing.remove( Lambdas.lambda230.getName() );
-                matrixEntriesListing.remove( Lambdas.lambda231.getName() );
-                matrixEntriesListing.remove( Lambdas.lambda232.getName() );
-                matrixEntriesListing.remove( Lambdas.lambda234.getName() );
-                matrixEntriesListing.remove( Lambdas.lambda235.getName() );
-                matrixEntriesListing.remove( Lambdas.lambda238.getName() );
+                matrixEntriesListing.remove(Lambdas.lambda230.getName());
+                matrixEntriesListing.remove(Lambdas.lambda231.getName());
+                matrixEntriesListing.remove(Lambdas.lambda232.getName());
+                matrixEntriesListing.remove(Lambdas.lambda234.getName());
+                matrixEntriesListing.remove(Lambdas.lambda235.getName());
+                matrixEntriesListing.remove(Lambdas.lambda238.getName());
 
                 // brute force find
                 for (String entry : matrixEntriesListing) {
@@ -2343,7 +2309,7 @@ public class UPbFraction extends Fraction implements
                         }
                     }
 
-                    if ( foundVal == null ) {
+                    if (foundVal == null) {
                         for (ValueModel analysisMeasure : getAnalysisMeasures()) {
                             if (analysisMeasure.getName().equalsIgnoreCase(entry)) {
                                 foundVal = analysisMeasure;
@@ -2352,7 +2318,7 @@ public class UPbFraction extends Fraction implements
                         }
                     }
 
-                    if ( foundVal == null ) {
+                    if (foundVal == null) {
                         for (ValueModel compositionalMeasure : getCompositionalMeasures()) {
                             if (compositionalMeasure.getName().equalsIgnoreCase(entry)) {
                                 foundVal = compositionalMeasure;
@@ -2361,7 +2327,7 @@ public class UPbFraction extends Fraction implements
                         }
                     }
 
-                    if ( foundVal == null ) {
+                    if (foundVal == null) {
                         for (ValueModel data : getTracer().getData()) {
                             if (data.getName().equalsIgnoreCase(entry)) {
                                 foundVal = data;
@@ -2378,8 +2344,7 @@ public class UPbFraction extends Fraction implements
 //                            }
 //                        }
 //                    }
-
-                    if ( foundVal == null ) {
+                    if (foundVal == null) {
                         for (ValueModel data : getPbBlank().getData()) {
                             if (data.getName().equalsIgnoreCase(entry)) {
                                 foundVal = data;
@@ -2388,28 +2353,28 @@ public class UPbFraction extends Fraction implements
                         }
                     }
 
-                    if ( foundVal == null ) {
-                        for (int i = 0; i < specialInputVariablesInOrder.size(); i ++) {
-                            if ( specialInputVariablesInOrder.get( i).getName().equalsIgnoreCase( entry ) ) {
-                                foundVal = specialInputVariablesInOrder.get( i);
+                    if (foundVal == null) {
+                        for (int i = 0; i < specialInputVariablesInOrder.size(); i++) {
+                            if (specialInputVariablesInOrder.get(i).getName().equalsIgnoreCase(entry)) {
+                                foundVal = specialInputVariablesInOrder.get(i);
                                 break;
                             }
                         }
                     }
 
-                    if ( foundVal == null ) {
-                        for (int i = 0; i < variablesInOrder.size(); i ++) {
-                            if ( variablesInOrder.get( i).getName().equalsIgnoreCase( entry ) ) {
-                                foundVal = variablesInOrder.get( i);
+                    if (foundVal == null) {
+                        for (int i = 0; i < variablesInOrder.size(); i++) {
+                            if (variablesInOrder.get(i).getName().equalsIgnoreCase(entry)) {
+                                foundVal = variablesInOrder.get(i);
                                 break;
                             }
                         }
                     }
 
-                    if ( foundVal != null ) {
-                        outputWriter.println( foundVal.formatValueAndOneSigmaABSForTesting() );
+                    if (foundVal != null) {
+                        outputWriter.println(foundVal.formatValueAndOneSigmaABSForTesting());
                     } else {
-                        outputWriter.println( entry );
+                        outputWriter.println(entry);
                     }
                 }
             }
@@ -2422,7 +2387,7 @@ public class UPbFraction extends Fraction implements
         }
 
         try {
-            BrowserControl.displayURL( dataValuesFile.getCanonicalPath() );
+            BrowserControl.displayURL(dataValuesFile.getCanonicalPath());
         } catch (IOException ex) {
         }
 
@@ -2431,8 +2396,8 @@ public class UPbFraction extends Fraction implements
     /**
      * @return the outputs
      */
-    public ValueModel[] getOutputs () {
-        if ( outputs == null ) {
+    public ValueModel[] getOutputs() {
+        if (outputs == null) {
             outputs = new ValueModel[0];
         }
         return outputs;
@@ -2441,7 +2406,7 @@ public class UPbFraction extends Fraction implements
     /**
      * @param outputs the outputs to set
      */
-    public void setOutputs ( ValueModel[] outputs ) {
+    public void setOutputs(ValueModel[] outputs) {
         this.outputs = outputs;
     }
 
@@ -2450,7 +2415,7 @@ public class UPbFraction extends Fraction implements
      * @param oName
      * @return
      */
-    public ValueModel getOutputsByName ( String oName ) {
+    public ValueModel getOutputsByName(String oName) {
         for (ValueModel output : getOutputs()) {
             if (output.getName().equalsIgnoreCase(oName)) {
                 return output;
@@ -2459,17 +2424,17 @@ public class UPbFraction extends Fraction implements
         // return a new model - handles backwards compatible
         // have to add element to array
         ValueModel[] temp = new ValueModel[getOutputs().length + 1];
-        System.arraycopy( getOutputs(), 0, temp, 0, getOutputs().length );
+        System.arraycopy(getOutputs(), 0, temp, 0, getOutputs().length);
 
-        ValueModel oModel =
-                new ValueModel( oName,
-                BigDecimal.ZERO,
-                "ABS",
-                BigDecimal.ZERO, BigDecimal.ZERO );
+        ValueModel oModel
+                = new ValueModel(oName,
+                        BigDecimal.ZERO,
+                        "ABS",
+                        BigDecimal.ZERO, BigDecimal.ZERO);
 
         temp[getOutputs().length] = oModel;
 
-        setOutputs( temp );
+        setOutputs(temp);
 
         return oModel;
     }
@@ -2479,11 +2444,11 @@ public class UPbFraction extends Fraction implements
      * @param oName
      * @param valueModel
      */
-    public void setOutputByName ( String oName, ValueModel valueModel ) {
+    public void setOutputByName(String oName, ValueModel valueModel) {
         // make sure it exists
-        getOutputsByName( oName );
-        for (int i = 0; i < getOutputs().length; i ++) {
-            if ( getOutputs()[i].getName().equalsIgnoreCase( oName ) ) {
+        getOutputsByName(oName);
+        for (int i = 0; i < getOutputs().length; i++) {
+            if (getOutputs()[i].getName().equalsIgnoreCase(oName)) {
                 getOutputs()[i] = valueModel;
             }
         }
@@ -2493,7 +2458,7 @@ public class UPbFraction extends Fraction implements
      * @return the parDerivTerms
      */
     @Override
-    public ConcurrentMap<String, BigDecimal> getParDerivTerms () {
+    public ConcurrentMap<String, BigDecimal> getParDerivTerms() {
         return parDerivTerms;
     }
 
@@ -2501,21 +2466,21 @@ public class UPbFraction extends Fraction implements
      * @param parDerivTerms the parDerivTerms to set
      */
     @Override
-    public void setParDerivTerms ( ConcurrentMap<String, BigDecimal> parDerivTerms ) {
+    public void setParDerivTerms(ConcurrentMap<String, BigDecimal> parDerivTerms) {
         this.parDerivTerms = parDerivTerms;
     }
 
     /**
      * @return the coVariances
      */
-    public Map<String, BigDecimal> getCoVariances () {
+    public Map<String, BigDecimal> getCoVariances() {
         return coVariances;
     }
 
     /**
      * @param coVariances the coVariances to set
      */
-    public void setCoVariances ( Map<String, BigDecimal> coVariances ) {
+    public void setCoVariances(Map<String, BigDecimal> coVariances) {
         this.coVariances = coVariances;
     }
 
@@ -2527,33 +2492,33 @@ public class UPbFraction extends Fraction implements
     /**
      * Added to handle text view in combo box
      */
-    public String toString () {
+    public String toString() {
         return getFractionID();
     }
 
     /**
      * @return the inAutoUraniumMode
      */
-    public boolean isInAutoUraniumMode () {
+    public boolean isInAutoUraniumMode() {
         return inAutoUraniumMode;
     }
 
     /**
      * @param inAutoUraniumMode the inAutoUraniumMode to set
      */
-    public void setInAutoUraniumMode ( boolean inAutoUraniumMode ) {
+    public void setInAutoUraniumMode(boolean inAutoUraniumMode) {
         this.inAutoUraniumMode = inAutoUraniumMode;
     }
 
     /**
      * @return the inputDate206_238r
      */
-    public BigDecimal getInputDate206_238r () {
-        if ( inputDate206_238r == null ) {
-            inputDate206_238r = getRadiogenicIsotopeDateByName( RadDates.age207_206r ).getValue();
+    public BigDecimal getInputDate206_238r() {
+        if (inputDate206_238r == null) {
+            inputDate206_238r = getRadiogenicIsotopeDateByName(RadDates.age207_206r).getValue();
         }
-        if ( inputDate206_238r.compareTo( BigDecimal.ZERO ) == 0 ) {
-            inputDate206_238r = getRadiogenicIsotopeDateByName( RadDates.age207_206r ).getValue();
+        if (inputDate206_238r.compareTo(BigDecimal.ZERO) == 0) {
+            inputDate206_238r = getRadiogenicIsotopeDateByName(RadDates.age207_206r).getValue();
         }
         return inputDate206_238r;
     }
@@ -2561,15 +2526,15 @@ public class UPbFraction extends Fraction implements
     /**
      * @param inputDate206_238r the inputDate206_238r to set
      */
-    public void setInputDate206_238r ( BigDecimal inputDate206_238r ) {
+    public void setInputDate206_238r(BigDecimal inputDate206_238r) {
         this.inputDate206_238r = inputDate206_238r;
     }
 
     /**
      * @return the inputAlphaU
      */
-    public ValueModel getInputAlphaU () {
-        if ( inputAlphaU == null ) {
+    public ValueModel getInputAlphaU() {
+        if (inputAlphaU == null) {
             try {
                 inputAlphaU = alphaUModelSaved.copy();
             } catch (Exception e) {
@@ -2581,15 +2546,15 @@ public class UPbFraction extends Fraction implements
     /**
      * @param inputAlphaU the inputAlphaU to set
      */
-    public void setInputAlphaU ( ValueModel inputAlphaU ) {
+    public void setInputAlphaU(ValueModel inputAlphaU) {
         this.inputAlphaU = inputAlphaU;
     }
 
     /**
      * @return the inputOneSigmaPct
      */
-    public BigDecimal getInputOneSigmaPct () {
-        if ( inputOneSigmaPct == null ) {
+    public BigDecimal getInputOneSigmaPct() {
+        if (inputOneSigmaPct == null) {
             inputOneSigmaPct = BigDecimal.ZERO;
         }
         return inputOneSigmaPct;
@@ -2598,7 +2563,7 @@ public class UPbFraction extends Fraction implements
     /**
      * @param inputOneSigmaPct the inputOneSigmaPct to set
      */
-    public void setInputOneSigmaPct ( BigDecimal inputOneSigmaPct ) {
+    public void setInputOneSigmaPct(BigDecimal inputOneSigmaPct) {
         this.inputOneSigmaPct = inputOneSigmaPct;
     }
 
@@ -2606,11 +2571,11 @@ public class UPbFraction extends Fraction implements
      *
      * @return
      */
-    public boolean tracerTypeIncludes233 () {
+    public boolean tracerTypeIncludes233() {
         boolean retval = false;
 
         try {
-            retval = getTracerType().indexOf( "233" ) > 0;
+            retval = getTracerType().indexOf("233") > 0;
         } catch (Exception e) {
         }
 
@@ -2621,23 +2586,23 @@ public class UPbFraction extends Fraction implements
      *
      * @return
      */
-    public boolean hasXMLUSourceFile () {
-        return getSourceFileU().matches( "(?i).*.xml" );
+    public boolean hasXMLUSourceFile() {
+        return getSourceFileU().matches("(?i).*.xml");
     }
 
     /**
      *
      * @return
      */
-    public boolean hasXMLPbSourceFile () {
-        return getSourceFilePb().matches( "(?i).*.xml" );
+    public boolean hasXMLPbSourceFile() {
+        return getSourceFilePb().matches("(?i).*.xml");
     }
 
     /**
      * @return the errorEllipsePath
      */
     @Override
-    public Path2D getErrorEllipsePath () {
+    public Path2D getErrorEllipsePath() {
         return errorEllipsePath;
     }
 
@@ -2645,7 +2610,7 @@ public class UPbFraction extends Fraction implements
      * @param errorEllipsePath the errorEllipsePath to set
      */
     @Override
-    public void setErrorEllipsePath ( Path2D errorEllipsePath ) {
+    public void setErrorEllipsePath(Path2D errorEllipsePath) {
         this.errorEllipsePath = errorEllipsePath;
     }
 
@@ -2653,7 +2618,7 @@ public class UPbFraction extends Fraction implements
      *
      * @return
      */
-    public String getNotesPb () {
+    public String getNotesPb() {
         return fractionNotes;//notesPb;
     }
 
@@ -2661,7 +2626,7 @@ public class UPbFraction extends Fraction implements
      *
      * @param NotesPb
      */
-    public void setNotesPb ( String NotesPb ) {
+    public void setNotesPb(String NotesPb) {
 //        this.notesPb = NotesPb;
         this.fractionNotes = NotesPb;
     }
@@ -2670,7 +2635,7 @@ public class UPbFraction extends Fraction implements
      *
      * @return
      */
-    public String getNotesU () {
+    public String getNotesU() {
         return fractionNotes;// notesU;
     }
 
@@ -2678,7 +2643,7 @@ public class UPbFraction extends Fraction implements
      *
      * @param NotesU
      */
-    public void setNotesU ( String NotesU ) {
+    public void setNotesU(String NotesU) {
 //        this.notesU = NotesU;
         this.fractionNotes = NotesU;
     }
@@ -2687,8 +2652,8 @@ public class UPbFraction extends Fraction implements
      * @return the fractionNotes
      */
     @Override
-    public String getFractionNotes () {
-        if ( fractionNotes == null ) {
+    public String getFractionNotes() {
+        if (fractionNotes == null) {
             fractionNotes = "";
         }
         return fractionNotes;
@@ -2698,7 +2663,7 @@ public class UPbFraction extends Fraction implements
      * @param fractionNotes the fractionNotes to set
      */
     @Override
-    public void setFractionNotes ( String fractionNotes ) {
+    public void setFractionNotes(String fractionNotes) {
         this.fractionNotes = fractionNotes;
     }
 
@@ -2706,17 +2671,17 @@ public class UPbFraction extends Fraction implements
      * @return the boolean showing presence of any lead > 0
      */
     @Override
-    public boolean hasMeasuredLead () {
+    public boolean hasMeasuredLead() {
         return //
-                getMeasuredRatioByName( MeasuredRatios.r206_204m.getName() ).hasPositiveValue()
-                || getMeasuredRatioByName( MeasuredRatios.r207_204m.getName() ).hasPositiveValue()
-                || getMeasuredRatioByName( MeasuredRatios.r208_204m.getName() ).hasPositiveValue()
-                || getMeasuredRatioByName( MeasuredRatios.r206_207m.getName() ).hasPositiveValue()
-                || getMeasuredRatioByName( MeasuredRatios.r206_208m.getName() ).hasPositiveValue()
-                || getMeasuredRatioByName( MeasuredRatios.r204_205m.getName() ).hasPositiveValue()
-                || getMeasuredRatioByName( MeasuredRatios.r206_205m.getName() ).hasPositiveValue()
-                || getMeasuredRatioByName( MeasuredRatios.r207_205m.getName() ).hasPositiveValue()
-                || getMeasuredRatioByName( MeasuredRatios.r208_205m.getName() ).hasPositiveValue()
+                getMeasuredRatioByName(MeasuredRatios.r206_204m.getName()).hasPositiveValue()
+                || getMeasuredRatioByName(MeasuredRatios.r207_204m.getName()).hasPositiveValue()
+                || getMeasuredRatioByName(MeasuredRatios.r208_204m.getName()).hasPositiveValue()
+                || getMeasuredRatioByName(MeasuredRatios.r206_207m.getName()).hasPositiveValue()
+                || getMeasuredRatioByName(MeasuredRatios.r206_208m.getName()).hasPositiveValue()
+                || getMeasuredRatioByName(MeasuredRatios.r204_205m.getName()).hasPositiveValue()
+                || getMeasuredRatioByName(MeasuredRatios.r206_205m.getName()).hasPositiveValue()
+                || getMeasuredRatioByName(MeasuredRatios.r207_205m.getName()).hasPositiveValue()
+                || getMeasuredRatioByName(MeasuredRatios.r208_205m.getName()).hasPositiveValue()
                 || hasMeasured202_205();
 
     }
@@ -2731,12 +2696,12 @@ public class UPbFraction extends Fraction implements
      * @return a boolean if any uranium values > 0
      */
     @Override
-    public boolean hasMeasuredUranium () {
+    public boolean hasMeasuredUranium() {
         return //
-                getMeasuredRatioByName( MeasuredRatios.r238_235m.getName() ).hasPositiveValue()
-                || getMeasuredRatioByName( MeasuredRatios.r233_236m.getName() ).hasPositiveValue()
-                || getMeasuredRatioByName( MeasuredRatios.r238_233m.getName() ).hasPositiveValue()
-                || getMeasuredRatioByName( MeasuredRatios.r233_236m.getName() ).hasPositiveValue();
+                getMeasuredRatioByName(MeasuredRatios.r238_235m.getName()).hasPositiveValue()
+                || getMeasuredRatioByName(MeasuredRatios.r233_236m.getName()).hasPositiveValue()
+                || getMeasuredRatioByName(MeasuredRatios.r238_233m.getName()).hasPositiveValue()
+                || getMeasuredRatioByName(MeasuredRatios.r233_236m.getName()).hasPositiveValue();
 
     }
 
@@ -2750,7 +2715,7 @@ public class UPbFraction extends Fraction implements
      * @return the ellipseTilt
      */
     @Override
-    public double getEllipseRho () {
+    public double getEllipseRho() {
         return ellipseRho;
     }
 
@@ -2758,7 +2723,7 @@ public class UPbFraction extends Fraction implements
      * @param ellipseRho
      */
     @Override
-    public void setEllipseRho ( double ellipseRho ) {
+    public void setEllipseRho(double ellipseRho) {
         this.ellipseRho = ellipseRho;
     }
 
@@ -2766,7 +2731,7 @@ public class UPbFraction extends Fraction implements
      * @return the filtered
      */
     @Override
-    public boolean isFiltered () {
+    public boolean isFiltered() {
         return filtered;
     }
 
@@ -2774,7 +2739,7 @@ public class UPbFraction extends Fraction implements
      * @param filtered the filtered to set
      */
     @Override
-    public void setFiltered ( boolean filtered ) {
+    public void setFiltered(boolean filtered) {
         this.filtered = filtered;
     }
 
@@ -2782,9 +2747,9 @@ public class UPbFraction extends Fraction implements
     /**
      * Override for backward compatibility Aug 2010
      */
-    public boolean isFractionationCorrectedU () {
+    public boolean isFractionationCorrectedU() {
         // AUG 2011 made to handle negative numbers
-        setFractionationCorrectedU( getMeanAlphaU().compareTo( BigDecimal.ZERO ) != 0 );
+        setFractionationCorrectedU(getMeanAlphaU().compareTo(BigDecimal.ZERO) != 0);
         return super.isFractionationCorrectedU();
     }
 
@@ -2792,23 +2757,23 @@ public class UPbFraction extends Fraction implements
     /**
      * Override for backward compatibility Aug 2010
      */
-    public boolean isFractionationCorrectedPb () {
+    public boolean isFractionationCorrectedPb() {
         // AUG 2011 made to handle negative numbers
-        setFractionationCorrectedPb( getMeanAlphaPb().compareTo( BigDecimal.ZERO ) != 0 );
+        setFractionationCorrectedPb(getMeanAlphaPb().compareTo(BigDecimal.ZERO) != 0);
         return super.isFractionationCorrectedPb();
     }
 
     /**
      * @return the treatFractionAsZircon
      */
-    public boolean treatFractionAsZircon () {
+    public boolean treatFractionAsZircon() {
         return treatFractionAsZircon;
     }
 
     /**
      * @param treatFractionAsZircon the treatFractionAsZircon to set
      */
-    public void setTreatFractionAsZircon ( boolean treatFractionAsZircon ) {
+    public void setTreatFractionAsZircon(boolean treatFractionAsZircon) {
         this.treatFractionAsZircon = treatFractionAsZircon;
     }
 
@@ -2816,7 +2781,7 @@ public class UPbFraction extends Fraction implements
      * @return the selectedInDataTable
      */
     @Override
-    public boolean isSelectedInDataTable () {
+    public boolean isSelectedInDataTable() {
         return selectedInDataTable;
     }
 
@@ -2824,11 +2789,10 @@ public class UPbFraction extends Fraction implements
      * @param selectedInDataTable the selectedInDataTable to set
      */
     @Override
-    public void setSelectedInDataTable ( boolean selectedInDataTable ) {
+    public void setSelectedInDataTable(boolean selectedInDataTable) {
         this.selectedInDataTable = selectedInDataTable;
     }
-    
-    
+
     /**
      * @return the standard
      */

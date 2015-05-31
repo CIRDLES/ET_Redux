@@ -144,7 +144,7 @@ public class LevenbergMarquardGeneralSolverWithCovS implements FitFunctionInterf
         int iterations = 0;
         int maxIterations = 100;
         double lambda = 1000.0;
-        double chiTolerance = 1e-10;
+        double chiTolerance = 1e-5;  // per noah april 2015 1e-10;
 
         AbstractFunctionOfX FofX = null;
 
@@ -157,22 +157,22 @@ public class LevenbergMarquardGeneralSolverWithCovS implements FitFunctionInterf
                 // for now dirty
                 System.out.println("FIT FAILED WITH SINGULAR MATRIX DURING h CALCULATIONS " + "\n");
                 FofX = null; // no fit = probably exp-fast
-                iterations = maxIterations;
-                return FofX;
+                // flags result
+                iterations = maxIterations + 1;
             }
 
             if (Double.isNaN(h.get(0, 0))) {
                 System.out.println("FIT FAILED WITH NANs in h " + "\n");
                 FofX = null; // no fit = probably exp-fast
-                iterations = maxIterations;
-                return FofX;
+                // flags result
+                iterations = maxIterations + 1;
             }
 
             double[] savePod = overDispersionLMAlgorithm.getPod().clone();
 
             double[] newPod = savePod.clone();
             for (int i = 0; i < newPod.length; i++) {
-                newPod[i] = newPod[i] + h.get(i, 0);
+                newPod[i] += h.get(i, 0);
             }
 
             overDispersionLMAlgorithm.setPod(newPod);
@@ -185,9 +185,9 @@ public class LevenbergMarquardGeneralSolverWithCovS implements FitFunctionInterf
 
             double LNew = overDispersionLMAlgorithm.calcL(rNew, SodNew);
 
-            if (LNew > L) {
+            if ((LNew > L) && Math.abs(1.0 - LNew / L) >= chiTolerance) {
                 // things got worse, so try again
-                lambda = lambda * 10.0;
+                lambda *= 10.0;
                 overDispersionLMAlgorithm.setPod(savePod);
             } else {
                 // things got better
@@ -210,7 +210,7 @@ public class LevenbergMarquardGeneralSolverWithCovS implements FitFunctionInterf
                                 SodNew.solve(rNew)).get(0, 0)//
                                 / (double) (countOfActiveData - overDispersionLMAlgorithm.getM()));
                         // if solved use this definition of L for expMatNoOD
-                        L = r.transpose().times(SodNew.solve(rNew)).get(0, 0) + overDispersionLMAlgorithm.reduxMatrixLogDeterminant(SodNew);//            Math.log(MeasuredCovMatrixS.det());
+                        L = r.transpose().times(SodNew.solve(rNew)).get(0, 0) + overDispersionLMAlgorithm.reduxMatrixLogDeterminant(SodNew);
                         FofX.setBIC(-2.0 * L + ((double) overDispersionLMAlgorithm.getM()) * Math.log(countOfActiveData));
                         FofX.setNegativeLogLikelihood(L);
                         FofX.setOverDispersionSelected(false);
@@ -245,14 +245,14 @@ public class LevenbergMarquardGeneralSolverWithCovS implements FitFunctionInterf
                         if (!FofX.verifyPositiveVariances()) {
                             FofX = null;
                         } else {
-                            System.out.println("LM with YES OD for " + FofX.getShortNameString() + "after " + iterations + "\n");
+                            System.out.println("LM with YES OD for " + FofX.getShortNameString() + " after " + iterations + "\n");
                         }
                     }
                     // let's get out of here
-                    iterations = maxIterations;
+                    iterations = maxIterations - 1;
                 } else {
                     // improved but not solved
-                    lambda = lambda / 10.0;
+                    lambda /= 10.0;
                     L = LNew;
                     r = rNew;
                     Sod = SodNew;
@@ -266,15 +266,10 @@ public class LevenbergMarquardGeneralSolverWithCovS implements FitFunctionInterf
         } // end of while
 
         if (FofX == null) {
-
-            if (FofX != null) {
-                System.out.println("********* FAILED TO FIT WITH OD USING " + FofX.getShortNameString() + "\n");
-            } else {
-                System.out.println("LM did not find a fit at code line 193" + "\n");
+            if (iterations == maxIterations) {
+                System.out.println("LM did not find a fit" + "\n");
             }
-
             FofX = overDispersionLMAlgorithm.getInitialFofX();
-
         }
 
         // part of section 7a
@@ -285,9 +280,6 @@ public class LevenbergMarquardGeneralSolverWithCovS implements FitFunctionInterf
             if (FofX.getMatrixJacobianYInterceptLogRatioXY() == null) {
                 FofX.setMatrixJacobianYInterceptLogRatioXY(overDispersionLMAlgorithm.getInitialFofX().getMatrixJacobianYInterceptLogRatioXY());
             }
-//            if (FofX.getMatrixJacobianYInterceptLogRatioXY() == null) {
-//                System.out.println("GOT A NULL" + FofX.getShortNameString());
-//            }
         }
 
         return FofX;//overDispersionLMAlgorithm;
@@ -397,14 +389,17 @@ public class LevenbergMarquardGeneralSolverWithCovS implements FitFunctionInterf
          * @param MeasuredCovMatrixS
          * @param myInitialFofX
          */
-        protected void hotInitializeFunctionAlgorithm(boolean[] dataActiveMap, double[] xValues, double[] yValues, Matrix MeasuredCovMatrixS, AbstractFunctionOfX myInitialFofX) {
+        protected void hotInitializeFunctionAlgorithm(boolean[] dataActiveMap, double[] xValues, double[] yValues, Matrix measuredCovMatrixS, AbstractFunctionOfX myInitialFofX) {
 
-            initializeFunctionAlgorithm(dataActiveMap, xValues, yValues, MeasuredCovMatrixS);
+            initializeFunctionAlgorithm(dataActiveMap, xValues, yValues, measuredCovMatrixS);
+
+            // May 2015 per Noah - improved OD primer
+            double avgs2 = calculateMeanOfCovarianceMatrixDiagonal(measuredCovMatrixS);
 
             initialFofX = myInitialFofX;
 
             if (initialFofX != null) {
-                initializeFunctionParameters(MeasuredCovMatrixS.get(0, 0) * 0.1);
+                initializeFunctionParameters(avgs2 * (initialFofX.getMSWD() - 1.0));//measuredCovMatrixS.get(0, 0) * 0.1);
             }
         }
 
@@ -413,25 +408,27 @@ public class LevenbergMarquardGeneralSolverWithCovS implements FitFunctionInterf
          * @param dataActiveMap
          * @param xValues
          * @param yValues
-         * @param MeasuredCovMatrixS
+         * @param measuredCovMatrixS
          */
-        protected void coldInitializeFunctionAlgorithm(boolean[] dataActiveMap, double[] xValues, double[] yValues, Matrix MeasuredCovMatrixS) {
+        protected void coldInitializeFunctionAlgorithm(boolean[] dataActiveMap, double[] xValues, double[] yValues, Matrix measuredCovMatrixS) {
 
-            initializeFunctionAlgorithm(dataActiveMap, xValues, yValues, MeasuredCovMatrixS);
+            initializeFunctionAlgorithm(dataActiveMap, xValues, yValues, measuredCovMatrixS);
+
+            // May 2015 per Noah - improved OD primer
+            double avgs2 = calculateMeanOfCovarianceMatrixDiagonal(measuredCovMatrixS);
 
             if (this instanceof ExponentialFastNoOD) {
                 // this first call is to prime the pump for internal exp-fast and mat
-//                this.xValues = xValues; // needed for data count
-                initializeFunctionParameters(MeasuredCovMatrixS.get(0, 0) * 0.1);
-                initialFofX = initialFuncFit.getFunctionOfX(dataActiveMap, xValues, yValues, MeasuredCovMatrixS, false);
+                // May 2015 moved after next statement initializeFunctionParameters(avgs2 );//measuredCovMatrixS.get(0, 0) * 0.1);
+                initialFofX = initialFuncFit.getFunctionOfX(dataActiveMap, xValues, yValues, measuredCovMatrixS, false);
+                initializeFunctionParameters(avgs2 * (initialFofX.getMSWD() - 1.0));//measuredCovMatrixS.get(0, 0) * 0.1);
             } else {
 
-                initialFofX = initialFuncFit.getFunctionOfX(dataActiveMap, xValues, yValues, MeasuredCovMatrixS, false);
+                initialFofX = initialFuncFit.getFunctionOfX(dataActiveMap, xValues, yValues, measuredCovMatrixS, false);
                 if (initialFofX != null) {
-                    initializeFunctionParameters(MeasuredCovMatrixS.get(0, 0) * 0.1);
+                    initializeFunctionParameters(avgs2 * (initialFofX.getMSWD() - 1.0));//measuredCovMatrixS.get(0, 0) * 0.1);
                 }
             }
-
         }
 
         private void initializeFunctionAlgorithm(boolean[] dataActiveMap, double[] xValues, double[] yValues, Matrix MeasuredCovMatrixS) {

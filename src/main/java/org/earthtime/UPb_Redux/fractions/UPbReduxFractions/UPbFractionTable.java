@@ -32,7 +32,7 @@ import org.earthtime.UPb_Redux.renderers.TableCellButtonEditor;
 import org.earthtime.UPb_Redux.renderers.TableCellRendererToButton;
 import org.earthtime.UPb_Redux.renderers.TracerNameCellRenderer;
 import org.earthtime.UPb_Redux.renderers.URatioCellRenderer;
-import org.earthtime.UPb_Redux.samples.Sample;
+import org.earthtime.samples.SampleInterface;
 
 /**
  *
@@ -40,7 +40,7 @@ import org.earthtime.UPb_Redux.samples.Sample;
  */
 public class UPbFractionTable extends JTable {
 
-    private Sample mySample;
+    private SampleInterface mySample;
 
     /**
      * Creates a new instance of UPbFractionTable
@@ -129,7 +129,7 @@ public class UPbFractionTable extends JTable {
      * 
      * @return
      */
-    public Sample getMySample() {
+    public SampleInterface getMySample() {
         return mySample;
     }
 
@@ -138,7 +138,7 @@ public class UPbFractionTable extends JTable {
      * @param myFrame
      * @param mySample
      */
-    public void setMySample(ETReduxFrame myFrame, Sample mySample) {
+    public void setMySample(ETReduxFrame myFrame, SampleInterface mySample) {
         this.mySample = mySample;
 
         setModel(new UPbFractionTableModel(myFrame, mySample));

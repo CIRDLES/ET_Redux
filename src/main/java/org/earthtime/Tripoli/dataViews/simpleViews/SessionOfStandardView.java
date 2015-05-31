@@ -263,7 +263,7 @@ public class SessionOfStandardView extends AbstractRawDataView implements FitFun
         maxY = -Double.MAX_VALUE;
 
         // X-axis lays out time 
-        minX = 0;//zeroBasedFractionAquireTimes.get(0);
+        minX = 0;
         maxX = zeroBasedFractionAquireTimes.get(zeroBasedFractionAquireTimes.size() - 1);
 
         AbstractFunctionOfX fitFunc = sessionForStandardDataModel.getSelectedFitFunction();
@@ -293,7 +293,6 @@ public class SessionOfStandardView extends AbstractRawDataView implements FitFun
                     double fitFuncValue = fitFunc.f(fitFunctionDataDisplay[0][i]);
                     double fitFuncUnct = Math.sqrt(variances[i]);
 
-//                    System.out.println(fitFuncUnct + " <<<");
                     fitFunctionDataDisplay[1][i] = convertLogDatumToPresentationMode(fitFuncValue);
                     fitFunctionMinusUnctDataDisplay[1][i] = convertLogDatumToPresentationMode(fitFuncValue - 2 * fitFuncUnct);
                     fitFunctionPlusUnctDataDisplay[1][i] = convertLogDatumToPresentationMode(fitFuncValue + 2 * fitFuncUnct);
@@ -317,13 +316,10 @@ public class SessionOfStandardView extends AbstractRawDataView implements FitFun
 
         // show data anyway
         if (!(((AbstractSessionForStandardDataModel) sessionForStandardDataModel).getIncludedStandardMeanLogRatios() == null)) {
-//            myOnPeakData = ((AbstractSessionForStandardDataModel) sessionForStandardDataModel).getIncludedStandardMeanLogRatios().clone();//         .getAllStandardsMeanLogRatios().clone();
-//            stdErrorOfMean = ((AbstractSessionForStandardDataModel) sessionForStandardDataModel).getIncludedStandardsMeanLogRatioStdErrs().clone();
 
             // nov 2014
-            myOnPeakData = ((AbstractSessionForStandardDataModel) sessionForStandardDataModel).getAllStandardsMeanLogRatios().clone();//         .getAllStandardsMeanLogRatios().clone();
+            myOnPeakData = ((AbstractSessionForStandardDataModel) sessionForStandardDataModel).getAllStandardsMeanLogRatios().clone();
             stdErrorOfMean = ((AbstractSessionForStandardDataModel) sessionForStandardDataModel).getAllStandardsMeanLogRatioStdErrs().clone();
-
 
             // prepare means data for display as alpha or ratio or log
             myOnPeakDataPlusUnct = new double[myOnPeakData.length];
@@ -353,7 +349,6 @@ public class SessionOfStandardView extends AbstractRawDataView implements FitFun
                     maxY = Math.max(maxY, myOnPeakDataLessUnct[i]);
                     maxY = Math.max(maxY, myOnPeakDataPlusUnct[i]);
                 } else {
-
                     // do both min and max to be sure especially as alphas may flip
                     // just use the one including plus OD  which will be bigger or equal to err
                     minY = Math.min(minY, myOnPeakDataPlusUnctPlusOD[i]);
@@ -369,64 +364,9 @@ public class SessionOfStandardView extends AbstractRawDataView implements FitFun
         minX -= xMarginStretch;
         maxX += xMarginStretch;
 
-        double yMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(minY, maxY, 12.0 / this.getHeight());//    0.05 );
+        double yMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(minY, maxY, 12.0 / this.getHeight());
         minY -= yMarginStretch;
         maxY += yMarginStretch;
-
-        // output plotted data for Noah
-//        if ( (fitFunc.getShortName().compareTo( FitFunctionTypeEnum.EXPONENTIAL ) == 0) ) {
-//            PrintWriter outputWriter = null;
-//
-//            File plotValuesFile = new File( "SESSION PLOT DATA FOR " + sessionForStandardDataModel.getRawRatioModelName() + ".txt" );
-//            try {
-//                outputWriter = new PrintWriter( new FileWriter( plotValuesFile ) );
-//            } catch (IOException iOException) {
-//            }
-//
-//            outputWriter.println( "****** " + fitFunc.getShortName() + " SESSION PLOT DATA FOR " + sessionForStandardDataModel.getRawRatioModelName() + " ********************" );
-//            outputWriter.println( "Data shown in " + dataPresentationMode.getName() + "\n" );
-//
-////            outputWriter.println( "\ngiminus" );
-////            for (int i = 0; i < ((SmoothingSplineWithCov.FofX_SmoothingSpline) fitFunc).gMinus.length; i ++) {
-////                outputWriter.print( ((SmoothingSplineWithCov.FofX_SmoothingSpline) fitFunc).gMinus[i] + ", " );
-////            }
-////            outputWriter.println();
-////
-////            outputWriter.println( "\nxminus" );
-////            for (int i = 0; i < ((SmoothingSplineWithCov.FofX_SmoothingSpline) fitFunc).xMinus.length; i ++) {
-////                outputWriter.print( ((SmoothingSplineWithCov.FofX_SmoothingSpline) fitFunc).xMinus[i] + ", " );
-////            }
-////            outputWriter.println();
-////
-////            outputWriter.println( "\ngammaminus" );
-////            for (int i = 0; i < ((SmoothingSplineWithCov.FofX_SmoothingSpline) fitFunc).gammaMinus.length; i ++) {
-////                outputWriter.print( ((SmoothingSplineWithCov.FofX_SmoothingSpline) fitFunc).gammaMinus[i] + ", " );
-////            }
-//
-//            outputWriter.println( "\nfitParameterCovarianceMatrix" );
-//            fitFunc.getFitParameterCovarianceMatrix().print( outputWriter, 15, 10 );
-//
-//
-//
-//
-//            outputWriter.println( "\n\nTIME ,\t\t PLUS ,\t\t\t LINE ,\t\t MINUS, \t\t J1, \t\t J2, \t\t J3" );
-//
-//            for (int i = 0; i < fitFunctionDataDisplay[1].length; i ++) {
-//                outputWriter.println( fitFunctionDataDisplay[0][i] //
-//                        + ",\t" + fitFunctionPlusUnctDataDisplay[1][i] //
-//                        + ",\t" + fitFunctionDataDisplay[1][i]//
-//                        + ",\t" + fitFunctionMinusUnctDataDisplay[1][i]
-//                        + ",\t" + fitFunctionJ1[1][i]
-//                        + ",\t" + fitFunctionJ2[1][i]
-//                        + ",\t" + fitFunctionJ3[1][i] );
-//            }
-//
-//            outputWriter.println();
-//
-//            outputWriter.flush();
-//            outputWriter.close();
-//
-//        }
     }
 
     /**
@@ -456,9 +396,6 @@ public class SessionOfStandardView extends AbstractRawDataView implements FitFun
             index++;
         }
 
-//        // X-axis lays out time 
-//        minX = zeroBasedFractionAquireTimes.get( 0 );
-//        maxX = zeroBasedFractionAquireTimes.get( zeroBasedFractionAquireTimes.size() - 1 );
         updateFittedData();
 
     }
@@ -498,8 +435,6 @@ public class SessionOfStandardView extends AbstractRawDataView implements FitFun
         }
 
         // handle right button or control button for mac mouse
-//        if ( evt.isPopupTrigger() && ((evt.getButton() == MouseEvent.BUTTON3) || evt.isControlDown()) ) {
-//        if ( evt.isPopupTrigger() && ((evt.getButton() != MouseEvent.BUTTON1) || evt.isControlDown()) ) {
         // feb 2013 this solves the mac/windows/one button/ two button problem
         if (evt.isPopupTrigger() || (evt.getButton() != MouseEvent.BUTTON1)) {
             //Create the popup menu.
@@ -520,7 +455,7 @@ public class SessionOfStandardView extends AbstractRawDataView implements FitFun
                     @Override
                     public void actionPerformed(ActionEvent arg0) {
 
-                        tripoliFraction.toggleAllData(false);
+                        tripoliFraction.toggleAllDataExceptShaded(false);
                         fractionIncludedMap[finalTimeSlot] = false;
                         tripoliFraction.setShowVerticalLineAtThisIndex(-1);
                         try {
@@ -540,7 +475,7 @@ public class SessionOfStandardView extends AbstractRawDataView implements FitFun
                     @Override
                     public void actionPerformed(ActionEvent arg0) {
 
-                        tripoliFraction.toggleAllData(true);
+                        tripoliFraction.toggleAllDataExceptShaded(true);
                         fractionIncludedMap[finalTimeSlot] = true;
                         tripoliFraction.setShowVerticalLineAtThisIndex(-1);
                         try {

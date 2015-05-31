@@ -28,27 +28,30 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Vector;
 import org.earthtime.UPb_Redux.ReduxConstants.ANALYSIS_PURPOSE;
-import org.earthtime.UPb_Redux.aliquots.Aliquot;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.exceptions.BadImportedCSVLegacyFileException;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
-import org.earthtime.UPb_Redux.samples.Sample;
+import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
+import org.earthtime.UPb_Redux.samples.UPbSampleInterface;
 import org.earthtime.UPb_Redux.samples.sampleImporters.AbstractSampleImporterFromLegacyCSVFile;
+import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.dataDictionaries.MineralTypes;
 import org.earthtime.dataDictionaries.SampleRegistries;
 import org.earthtime.exceptions.ETException;
+import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
+import org.earthtime.samples.SampleInterface;
 
 /**
  *
- * @author  James F. Bowring
+ * @author James F. Bowring
  */
 public abstract class AbstractSampleLegacyManagerDialog extends DialogEditor {
 
-    private Sample mySample = null;
+    private SampleInterface mySample = null;
     private File importFractionFolderMRU;
     private boolean initialized = false;
     private boolean newSample = false;
@@ -56,21 +59,22 @@ public abstract class AbstractSampleLegacyManagerDialog extends DialogEditor {
 
     /**
      * Creates new form AbstractSampleLegacyManagerDialog
-     * @param parent 
+     *
+     * @param parent
      * @param importFractionFolderMRU
      * @param modal
-     * @param sample 
+     * @param sample
      * @param dataTypeTitle
-     * @param converter  
+     * @param converter
      */
-    public AbstractSampleLegacyManagerDialog (
+    public AbstractSampleLegacyManagerDialog(
             java.awt.Frame parent,
             boolean modal,
             String dataTypeTitle,
-            Sample sample,
+            SampleInterface sample,
             AbstractSampleImporterFromLegacyCSVFile converter,
-            File importFractionFolderMRU ) {
-        super( parent, modal );
+            File importFractionFolderMRU) {
+        super(parent, modal);
 
         this.importFractionFolderMRU = importFractionFolderMRU;
 
@@ -80,130 +84,128 @@ public abstract class AbstractSampleLegacyManagerDialog extends DialogEditor {
 
         initSampleFields();
 
-        if ( sample.getUPbFractions().size() > 0 ) {
+        if (sample.getFractions().size() > 0) {
             // we are in edit mode 
-            fractionDestinationPanel_panel.setVisible( false );
-            fractionSourcePanel_panel.setVisible( false );
+            fractionDestinationPanel_panel.setVisible(false);
+            fractionSourcePanel_panel.setVisible(false);
         }
 
-        sampleType_label.setText( dataTypeTitle + sampleType_label.getText() );
+        sampleType_label.setText(dataTypeTitle + sampleType_label.getText());
 
         this.converter = converter;
 
+        // april 2011
+        validateSampleID();
     }
 
     /**
-     * 
+     *
      */
-    public void setSize () {
-        setSize( 480, 685 );
+    public void setSize() {
+        setSize(480, 685);
     }
 
     /**
-     * 
+     *
      * @return
      */
-    public File getImportFractionFolderMRU () {
+    public File getImportFractionFolderMRU() {
         return importFractionFolderMRU;
     }
 
     /**
-     * 
+     *
      * @param importFractionFolderMRU
      */
-    public void setImportFractionFolderMRU ( File importFractionFolderMRU ) {
+    public void setImportFractionFolderMRU(File importFractionFolderMRU) {
         this.importFractionFolderMRU = importFractionFolderMRU;
     }
 
-    private void validateSampleID () {
-        
+    private void validateSampleID() {
+
         try {
             saveSampleData();
-            
+
             if (!mySample.isArchivedInRegistry()) {
                 boolean valid = SampleRegistries.isSampleIdentifierValidAtRegistry(//
                         mySample.getSampleIGSN());
-                validSampleID_label.setText((String) (valid ? "Sample ID is Valid at registry." : "Sample ID is NOT valid at registry."));
+                validSampleIGSN_label.setText((String) (valid ? "Sample IGSN is Valid at registry." : "Sample IGSN is NOT valid at registry."));
                 mySample.setValidatedSampleIGSN(valid);
             }
-        } catch (ETException eTException) {
+        } catch (ETException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
     }
 
-    private void initSampleFields () {
+    private void initSampleFields() {
         // init input fields
 
         sampleName_text.setDocument(
-                new UnDoAbleDocument( sampleName_text,  ! mySample.isArchivedInRegistry() ) );
-        sampleName_text.setText( getMySample().getSampleName() );
+                new UnDoAbleDocument(sampleName_text, !mySample.isArchivedInRegistry()));
+        sampleName_text.setText(getMySample().getSampleName());
 
         sampleIGSN_text.setDocument(
-                new UnDoAbleDocument( sampleIGSN_text,  ! mySample.isArchivedInRegistry() ) );
-        sampleIGSN_text.setText( getMySample().getSampleIGSNnoRegistry() );
-
+                new UnDoAbleDocument(sampleIGSN_text, !mySample.isArchivedInRegistry()));
+        sampleIGSN_text.setText(getMySample().getSampleIGSNnoRegistry());
 
         for (SampleRegistries sr : SampleRegistries.values()) {
-            sampleRegistryChooser.addItem( sr );
+            sampleRegistryChooser.addItem(sr);
         }
-        sampleRegistryChooser.setEnabled(  ! mySample.isArchivedInRegistry() );
-        sampleRegistryChooser.setSelectedItem( mySample.getSampleRegistry() );
-        sampleRegistryChooser.addActionListener( new ActionListener() {
+        sampleRegistryChooser.setEnabled(!mySample.isArchivedInRegistry());
+        sampleRegistryChooser.setSelectedItem(mySample.getSampleRegistry());
+        sampleRegistryChooser.addActionListener(new ActionListener() {
 
             @Override
-            public void actionPerformed ( ActionEvent e ) {
-                mySample.setSampleIGSN( ((SampleRegistries) sampleRegistryChooser.getSelectedItem()).getCode() + "." + sampleIGSN_text.getText() );
+            public void actionPerformed(ActionEvent e) {
+                mySample.setSampleIGSN(((SampleRegistries) sampleRegistryChooser.getSelectedItem()).getCode() + "." + sampleIGSN_text.getText());
                 validateSampleID();
             }
-        } );
+        });
 
-        // april 2011
-        validateSampleID();
-
-        sampleNotes_textArea.setDocument( new UnDoAbleDocument( sampleNotes_textArea, true ) );
-        sampleNotes_textArea.setText( getMySample().getSampleAnnotations() );
+        sampleNotes_textArea.setDocument(new UnDoAbleDocument(sampleNotes_textArea, true));
+        sampleNotes_textArea.setText(getMySample().getSampleAnnotations());
 
         // init display fields - html allows multi-line
         sampleReduxFileName_label.setText(
-                "<html><p>" + getMySample().getReduxSampleFilePath() + "</p></html>" );
-        sampleReduxFileName_label.setToolTipText( getMySample().getReduxSampleFilePath() );
+                "<html><p>" + getMySample().getReduxSampleFilePath() + "</p></html>");
+        sampleReduxFileName_label.setToolTipText(getMySample().getReduxSampleFilePath());
 
         physicalConstantsModelChooser.removeAllItems();
-        ArrayList<AbstractRatiosDataModel> physicalConstantsModels = getMySample().getMyReduxLabData().getPhysicalConstantsModels();
-        for (int i = (physicalConstantsModels.size() > 1 ? 1 : 0); i < physicalConstantsModels.size(); i ++) {
-            physicalConstantsModelChooser.addItem( physicalConstantsModels.get( i ).getReduxLabDataElementName() );
+        ArrayList<AbstractRatiosDataModel> physicalConstantsModels = ReduxLabData.getInstance().getPhysicalConstantsModels();
+        for (int i = (physicalConstantsModels.size() > 1 ? 1 : 0); i < physicalConstantsModels.size(); i++) {
+            physicalConstantsModelChooser.addItem(physicalConstantsModels.get(i).getReduxLabDataElementName());
         }
 
-        physicalConstantsModelChooser.setSelectedIndex( 0 );
+        physicalConstantsModelChooser.setSelectedIndex(0);
         try {
-            physicalConstantsModelChooser.setSelectedItem( getMySample().getPhysicalConstantsModel().getReduxLabDataElementName() );
+            physicalConstantsModelChooser.setSelectedItem(getMySample().getPhysicalConstantsModel().getReduxLabDataElementName());
         } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
 
         // set up StandardMineral chooser
         standardMineralNameChooser.removeAllItems();
-        for (int i = 0; i < MineralTypes.values().length; i ++) {
-            standardMineralNameChooser.addItem( MineralTypes.values()[i].getName() );
+        for (int i = 0; i < MineralTypes.values().length; i++) {
+            standardMineralNameChooser.addItem(MineralTypes.values()[i].getName());
         }
 
-        standardMineralNameChooser.setSelectedItem( mySample.getMineralName() );
-        standardMineralNameChooser.addItemListener( new mineralNameItemListener() );
-
+        standardMineralNameChooser.setSelectedItem(mySample.getMineralName());
+        standardMineralNameChooser.addItemListener(new mineralNameItemListener());
 
         // set up analysisPurposeChooser
         analysisPurposeChooser.removeAllItems();
         for (ANALYSIS_PURPOSE ap : ANALYSIS_PURPOSE.values()) {
-            analysisPurposeChooser.addItem( ap.toString() );
+            analysisPurposeChooser.addItem(ap.toString());
         }
 
-        analysisPurposeChooser.setSelectedItem( mySample.getAnalysisPurpose().toString() );
-        analysisPurposeChooser.addItemListener( new analysisPurposeItemListener() );
+        analysisPurposeChooser.setSelectedItem(mySample.getAnalysisPurpose().toString());
+        analysisPurposeChooser.addItemListener(new analysisPurposeItemListener());
 
-        if ( getMySample().isCalculateTWrhoForLegacyData() ) {
-            TWCalculateRho_radioBut.setSelected( true );
+        if (getMySample().isCalculateTWrhoForLegacyData()) {
+            TWCalculateRho_radioBut.setSelected(true);
         } else {
-            TWZeroRho_radioBut.setSelected( true );
+            TWZeroRho_radioBut.setSelected(true);
         }
-
 
     }
 
@@ -211,13 +213,13 @@ public abstract class AbstractSampleLegacyManagerDialog extends DialogEditor {
         // This method is called only if a new item has been selected.
 
         @Override
-        public void itemStateChanged ( ItemEvent evt ) {
+        public void itemStateChanged(ItemEvent evt) {
 
-            if ( evt.getStateChange() == ItemEvent.SELECTED ) {
+            if (evt.getStateChange() == ItemEvent.SELECTED) {
                 // Item was just selected
-                mySample.setMineralName( (String) evt.getItem() );
+                mySample.setMineralName((String) evt.getItem());
 
-            } else if ( evt.getStateChange() == ItemEvent.DESELECTED ) {
+            } else if (evt.getStateChange() == ItemEvent.DESELECTED) {
                 // Item is no longer selected
             }
         }
@@ -226,174 +228,177 @@ public abstract class AbstractSampleLegacyManagerDialog extends DialogEditor {
     class analysisPurposeItemListener implements ItemListener {
         // This method is called only if a new item has been selected.
 
-        public void itemStateChanged ( ItemEvent evt ) {
+        public void itemStateChanged(ItemEvent evt) {
 
-            if ( evt.getStateChange() == ItemEvent.SELECTED ) {
+            if (evt.getStateChange() == ItemEvent.SELECTED) {
                 // Item was just selected
-                mySample.setAnalysisPurpose( ANALYSIS_PURPOSE.valueOf( (String) evt.getItem() ) );
-                
-            } else if ( evt.getStateChange() == ItemEvent.DESELECTED ) {
+                mySample.setAnalysisPurpose(ANALYSIS_PURPOSE.valueOf((String) evt.getItem()));
+
+            } else if (evt.getStateChange() == ItemEvent.DESELECTED) {
                 // Item is no longer selected
             }
         }
     }
 
-    private void saveSampleData ()
+    private void saveSampleData()
             throws ETException {
         // validate sample name
-        if ( (sampleName_text.getText().trim().length() == 0)
-                || (aliquotName_text.getText().trim().length() == 0) ) {
+        if ((sampleName_text.getText().trim().length() == 0)
+                || (aliquotName_text.getText().trim().length() == 0)) {
             return;
         }
 
-        mySample.setSampleName( sampleName_text.getText().trim() );
-        mySample.setSampleIGSN( ((SampleRegistries) sampleRegistryChooser.getSelectedItem()).getCode() + "." + sampleIGSN_text.getText().trim() );
-        mySample.setSampleRegistry( (SampleRegistries) sampleRegistryChooser.getSelectedItem() );
-        mySample.setSampleAnnotations( sampleNotes_textArea.getText() );
+        mySample.setSampleName(sampleName_text.getText().trim());
+        mySample.setSampleIGSN(((SampleRegistries) sampleRegistryChooser.getSelectedItem()).getCode() + "." + sampleIGSN_text.getText().trim());
+        mySample.setSampleRegistry((SampleRegistries) sampleRegistryChooser.getSelectedItem());
+        mySample.setSampleAnnotations(sampleNotes_textArea.getText());
 
         String currentPhysicalConstantsModelName = "";
         try {
             currentPhysicalConstantsModelName = getMySample().getPhysicalConstantsModel().getNameAndVersion();
 
-        } catch (BadLabDataException badLabDataException) {
+        } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
-        if (  ! ((String) physicalConstantsModelChooser.getSelectedItem()).equalsIgnoreCase( currentPhysicalConstantsModelName ) ) {
+        if (!((String) physicalConstantsModelChooser.getSelectedItem()).equalsIgnoreCase(currentPhysicalConstantsModelName)) {
             try {
                 getMySample().setPhysicalConstantsModel(
-                        getMySample().getMyReduxLabData().
-                        getAPhysicalConstantsModel( ((String) physicalConstantsModelChooser.getSelectedItem()) ) );
+                        ReduxLabData.getInstance().
+                        getAPhysicalConstantsModel(((String) physicalConstantsModelChooser.getSelectedItem())));
 
-            } catch (BadLabDataException badLabDataException) {
+            } catch (BadLabDataException ex) {
+                new ETWarningDialog(ex).setVisible(true);
             }
         }
 
         // in legacy mode we only allow one aliquot
-        if ( getMySample().getUPbFractions().isEmpty() ) {
-            Aliquot myAliquot = getMySample().addNewAliquot( aliquotName_text.getText().trim() );
+        if (getMySample().getFractions().isEmpty()) {
+            AliquotInterface myAliquot = getMySample().addNewAliquot(aliquotName_text.getText().trim());
             // May 2010 allows publication of legacy results
-            ((UPbReduxAliquot) myAliquot).setCompiled( false );
+            ((UPbReduxAliquot) myAliquot).setCompiled(false);
             int myAliquotNumber = ((UPbReduxAliquot) myAliquot).getAliquotNumber();
 
             // test for manual mode or bulk import from CSV file
-            if ( manualMode_radioBut.isSelected() ) {
+            if (manualMode_radioBut.isSelected()) {
                 try {
-                    getMySample().addDefaultUPbLegacyFractionToAliquot( myAliquotNumber );
-                    setInitialized( true );
-                    getMySample().setChanged( true );
-                } catch (BadLabDataException badLabDataException) {
+                    ((UPbSampleInterface) mySample).addDefaultUPbLegacyFractionToAliquot(myAliquotNumber);
+                    setInitialized(true);
+                    mySample.setChanged(true);
+                } catch (BadLabDataException ex) {
+                    new ETWarningDialog(ex).setVisible(true);
                 }
             } else {
                 // bulk mode
                 try {
-                    converter.setMruFolder( importFractionFolderMRU );
-                    getMySample().addUPbFractionVector( converter.readInFractions(), myAliquotNumber );
-                    myAliquot.setAliquotName( converter.getAliquotName() );
-                    setInitialized( true );
-                    getMySample().setChanged( true );
+                    converter.setMruFolder(importFractionFolderMRU);
+                    mySample.addFractionsVector(converter.readInFractions(), myAliquotNumber);
+                    myAliquot.setAliquotName(converter.getAliquotName());
+                    setInitialized(true);
+                    getMySample().setChanged(true);
 
-                    setImportFractionFolderMRU( converter.getMruFolder() );
+                    setImportFractionFolderMRU(converter.getMruFolder());
                 } catch (FileNotFoundException fileNotFoundException) {
-                } catch (BadImportedCSVLegacyFileException badImportedCSVLegacyFileException) {
+                } catch (BadImportedCSVLegacyFileException ex) {
+                    new ETWarningDialog(ex).setVisible(true);
                 }
             }
 
-
         }
 
-        if ( TWZeroRho_radioBut.isSelected() ) {
-            getMySample().setCalculateTWrhoForLegacyData( false );
+        if (TWZeroRho_radioBut.isSelected()) {
+            getMySample().setCalculateTWrhoForLegacyData(false);
         } else {
-            getMySample().setCalculateTWrhoForLegacyData( true );
+            getMySample().setCalculateTWrhoForLegacyData(true);
         }
 
         // moved outside conditional oct 2010 and added MineralName, etc ;;June 2010 add physical constants model
-        for (Fraction f : getMySample().getUPbFractions()) {
+        for (Fraction f : getMySample().getFractions()) {
             try {
-                ((UPbFractionI) f).setPhysicalConstantsModel( getMySample().getPhysicalConstantsModel() );
+                ((UPbFractionI) f).setPhysicalConstantsModel(getMySample().getPhysicalConstantsModel());
 
-                f.setMineralName( mySample.getMineralName() );
-                if ( mySample.getMineralName().equalsIgnoreCase( "zircon" ) ) {
-                    f.setZircon( true );
+                f.setMineralName(mySample.getMineralName());
+                if (mySample.getMineralName().equalsIgnoreCase("zircon")) {
+                    f.setZircon(true);
                 } else {
-                    f.setZircon( false );
+                    f.setZircon(false);
                 }
 
-                f.setIsLegacy( true );
+                f.setIsLegacy(true);
 
-                if ( TWZeroRho_radioBut.isSelected() ) {
+                if (TWZeroRho_radioBut.isSelected()) {
                     // set all T-W to zero
-                    f.getRadiogenicIsotopeRatioByName( "rhoR207_206r__r238_206r" )//
-                            .setValue( BigDecimal.ZERO );
+                    f.getRadiogenicIsotopeRatioByName("rhoR207_206r__r238_206r")//
+                            .setValue(BigDecimal.ZERO);
                 } else {
                     // calculate all T-W
                     ((UPbFractionI) f).calculateTeraWasserburgRho();
                 }
 
-            } catch (BadLabDataException badLabDataException) {
+            } catch (BadLabDataException ex) {
+                new ETWarningDialog(ex).setVisible(true);
             }
         }
 
         // there should be only one aliquot
-        Vector<Aliquot> aliquots = mySample.getActiveAliquots();
-        for (Aliquot a : aliquots) {
-            a.setAnalysisPurpose( mySample.getAnalysisPurpose() );
+        Vector<AliquotInterface> aliquots = mySample.getActiveAliquots();
+        for (AliquotInterface a : aliquots) {
+            a.setAnalysisPurpose(mySample.getAnalysisPurpose());
         }
-
 
     }
 
     /**
-     * 
+     *
      * @return
      */
-    public Sample getMySample () {
+    public SampleInterface getMySample() {
         return mySample;
     }
 
     /**
-     * 
+     *
      * @param mySample
      */
-    public void setMySample ( Sample mySample ) {
+    public void setMySample(SampleInterface mySample) {
         this.mySample = mySample;
     }
 
     /**
-     * 
+     *
      * @return
      */
-    public boolean isInitialized () {
+    public boolean isInitialized() {
         return initialized;
     }
 
     /**
-     * 
+     *
      * @param isSaved
      */
-    public void setInitialized ( boolean isSaved ) {
+    public void setInitialized(boolean isSaved) {
         this.initialized = isSaved;
     }
 
     /**
-     * 
+     *
      * @return
      */
-    public boolean isNewSample () {
+    public boolean isNewSample() {
         return newSample;
     }
 
     /**
-     * 
+     *
      * @param newSample
      */
-    public void setNewSample ( boolean newSample ) {
+    public void setNewSample(boolean newSample) {
         this.newSample = newSample;
     }
 
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
      */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -430,7 +435,7 @@ public abstract class AbstractSampleLegacyManagerDialog extends DialogEditor {
         TWCalculateRho_radioBut = new javax.swing.JRadioButton();
         sampleIGSN_label1 = new javax.swing.JLabel();
         sampleRegistryChooser = new javax.swing.JComboBox<SampleRegistries>();
-        validSampleID_label = new javax.swing.JLabel();
+        validSampleIGSN_label = new javax.swing.JLabel();
         validateIGSN = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         close = new javax.swing.JButton();
@@ -456,8 +461,8 @@ public abstract class AbstractSampleLegacyManagerDialog extends DialogEditor {
         jPanel1.add(sampleName_text, new org.netbeans.lib.awtextra.AbsoluteConstraints(259, 2, 199, -1));
 
         sampleIGSN_label.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        sampleIGSN_label.setText("Sample ID:");
-        jPanel1.add(sampleIGSN_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(233, 42, -1, -1));
+        sampleIGSN_label.setText("Sample IGSN:");
+        jPanel1.add(sampleIGSN_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(225, 42, -1, -1));
 
         sampleIGSN_text.setEditable(false);
         sampleIGSN_text.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
@@ -596,11 +601,11 @@ public abstract class AbstractSampleLegacyManagerDialog extends DialogEditor {
         sampleRegistryChooser.setBackground(new java.awt.Color(245, 236, 206));
         jPanel1.add(sampleRegistryChooser, new org.netbeans.lib.awtextra.AbsoluteConstraints(65, 36, 150, -1));
 
-        validSampleID_label.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        validSampleID_label.setForeground(new java.awt.Color(204, 51, 0));
-        validSampleID_label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        validSampleID_label.setText("Sample ID is Valid at registry.");
-        jPanel1.add(validSampleID_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(238, 67, 220, -1));
+        validSampleIGSN_label.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        validSampleIGSN_label.setForeground(new java.awt.Color(204, 51, 0));
+        validSampleIGSN_label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        validSampleIGSN_label.setText("Sample IGSN is Valid at registry.");
+        jPanel1.add(validSampleIGSN_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(238, 67, 220, -1));
 
         validateIGSN.setForeground(new java.awt.Color(255, 51, 0));
         validateIGSN.setText("Verify Sample ID");
@@ -701,6 +706,7 @@ public abstract class AbstractSampleLegacyManagerDialog extends DialogEditor {
             close();
         } catch (ETException ex) {
             ex.printStackTrace();
+            new ETWarningDialog(ex).setVisible(true);
         }
 
     }//GEN-LAST:event_saveAndCloseActionPerformed
@@ -751,21 +757,21 @@ public abstract class AbstractSampleLegacyManagerDialog extends DialogEditor {
     private javax.swing.ButtonGroup sourceOfFractionsOptions_buttonGroup;
     private javax.swing.JComboBox<String> standardMineralNameChooser;
     private javax.swing.ButtonGroup updateMode_buttonGroup;
-    private javax.swing.JLabel validSampleID_label;
+    private javax.swing.JLabel validSampleIGSN_label;
     private javax.swing.JButton validateIGSN;
     // End of variables declaration//GEN-END:variables
 
     /**
      * @return the converter
      */
-    public AbstractSampleImporterFromLegacyCSVFile getConverter () {
+    public AbstractSampleImporterFromLegacyCSVFile getConverter() {
         return converter;
     }
 
     /**
      * @param converter the converter to set
      */
-    public void setConverter ( AbstractSampleImporterFromLegacyCSVFile converter ) {
+    public void setConverter(AbstractSampleImporterFromLegacyCSVFile converter) {
         this.converter = converter;
     }
 }

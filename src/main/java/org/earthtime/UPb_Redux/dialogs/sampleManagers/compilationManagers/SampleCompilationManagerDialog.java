@@ -18,7 +18,6 @@
  */
 package org.earthtime.UPb_Redux.dialogs.sampleManagers.compilationManagers;
 
-import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -31,12 +30,15 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
-import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.UPb_Redux.user.ReduxPersistentState;
+import org.earthtime.UPb_Redux.user.ReduxPreferences;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
+import org.earthtime.archivingTools.GeochronRetrievalUtility;
 import org.earthtime.archivingTools.IEDACredentialsValidator;
 import org.earthtime.exceptions.ETException;
+import org.earthtime.exceptions.ETWarningDialog;
+import org.earthtime.samples.SampleInterface;
 
 /**
  *
@@ -44,11 +46,11 @@ import org.earthtime.exceptions.ETException;
  */
 public class SampleCompilationManagerDialog extends DialogEditor {
 
-    private Sample mySample = null;
+    private SampleInterface mySample = null;
     private File importFractionFolderMRU;
     private boolean initialized = false;
     private final boolean automaticFractionCreation = false;
-    private final Frame parent;
+    private final ReduxPreferences reduxPreferences;
 
     /**
      *
@@ -81,19 +83,18 @@ public class SampleCompilationManagerDialog extends DialogEditor {
     /**
      * Creates new form SampleManagerDialog
      *
-     * @param parent
+     * @param reduxPreferences the value of reduxPreferences
      * @param modal
-     * @param importFractionFolderMRU
      * @param sample
+     * @param importFractionFolderMRU
      */
-    public SampleCompilationManagerDialog(
-            java.awt.Frame parent,
-            boolean modal,
-            Sample sample,
+    public SampleCompilationManagerDialog(//
+            ReduxPreferences reduxPreferences,//
+            boolean modal, SampleInterface sample,//
             File importFractionFolderMRU) {
-        super(parent, modal);
+        super(null, modal);
 
-        this.parent = parent;
+        this.reduxPreferences = reduxPreferences;
 
         this.importFractionFolderMRU = importFractionFolderMRU;
 
@@ -116,6 +117,7 @@ public class SampleCompilationManagerDialog extends DialogEditor {
 
     class automaticFractionsListener implements ItemListener {
 
+        @Override
         public void itemStateChanged(ItemEvent e) {
             Object source = e.getItemSelectable();
             sourceFolder_jRadioButton.setEnabled(automaticFractionCreation);
@@ -127,6 +129,7 @@ public class SampleCompilationManagerDialog extends DialogEditor {
 
     class sourceOfFractionsListener implements ActionListener {
 
+        @Override
         public void actionPerformed(ActionEvent evt) {
             System.out.println(evt.getActionCommand());
             fractionSource = fractionSources.valueOf(evt.getActionCommand());
@@ -179,16 +182,14 @@ public class SampleCompilationManagerDialog extends DialogEditor {
 
     }
 
-    private void SaveSampleData()
+    private void SaveAndImportSampleData()
             throws ETException,
             FileNotFoundException,
             BadLabDataException,
             IOException,
             BadOrMissingXMLSchemaException {
         // TODO: validate fields - make this more sophisticated
-        if (sampleName_text.getText().length() == 0) {
-            return;
-        } else {
+        if (sampleName_text.getText().length() > 0) {            
             setVisible(false);
 
             String success = "";
@@ -196,7 +197,7 @@ public class SampleCompilationManagerDialog extends DialogEditor {
             // get aliquots as specified
             switch (fractionSource) {
                 case SINGLE_LOCAL:
-                    success = getMySample().importAliquotLocalXMLDataFile(importFractionFolderMRU);
+                    success = SampleInterface.importAliquotFromLocalXMLFileIntoSample(getMySample(), importFractionFolderMRU);
                     if (!success.equalsIgnoreCase("")) {
                         getMySample().setSampleName(sampleName_text.getText());
 
@@ -210,7 +211,10 @@ public class SampleCompilationManagerDialog extends DialogEditor {
                 case FOLDER_LOCAL:
                     break;
                 case ONE_OR_MORE_GEOCHRON:
-                    success = getMySample().importOneOrMoreGeochronAliquotXMLDataFiles();
+                    success = GeochronRetrievalUtility.importOneOrMoreGeochronAliquotXMLDataFiles(//
+                            mySample,//
+                            reduxPreferences.getGeochronUserName(),//
+                            reduxPreferences.getGeochronPassWord());
                     if (success.contains("Found")) {
                         getMySample().setSampleName(sampleName_text.getText());
 
@@ -235,7 +239,7 @@ public class SampleCompilationManagerDialog extends DialogEditor {
      *
      * @return
      */
-    public Sample getMySample() {
+    public SampleInterface getMySample() {
         return mySample;
     }
 
@@ -243,7 +247,7 @@ public class SampleCompilationManagerDialog extends DialogEditor {
      *
      * @param mySample
      */
-    public void setMySample(Sample mySample) {
+    public void setMySample(SampleInterface mySample) {
         this.mySample = mySample;
     }
 
@@ -566,13 +570,12 @@ public class SampleCompilationManagerDialog extends DialogEditor {
 
     private void saveAndCloseAndProceedToAliquotChooser_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveAndCloseAndProceedToAliquotChooser_buttonActionPerformed
         try {
-            SaveSampleData();
+            SaveAndImportSampleData();
             close();
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(SampleCompilationManagerDialog.class.getName()).log(Level.SEVERE, null, ex);
         } catch (BadLabDataException | BadOrMissingXMLSchemaException | IOException ex) {
             Logger.getLogger(SampleCompilationManagerDialog.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ETException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
 
     }//GEN-LAST:event_saveAndCloseAndProceedToAliquotChooser_buttonActionPerformed

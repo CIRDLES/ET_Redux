@@ -15,7 +15,13 @@
  */
 package org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction;
 
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Line2D;
@@ -28,7 +34,7 @@ import javax.swing.JLayeredPane;
  * UncertaintyGraphPanel is the bar graph JPanel that visualizes the various
  * contributions and covariances of a fraction's inputs
  *
- * @author jackom
+ * @author James F. Bowring, Michael Jacko
  */
 public class UncertaintyGraphPanel
         extends JLayeredPane

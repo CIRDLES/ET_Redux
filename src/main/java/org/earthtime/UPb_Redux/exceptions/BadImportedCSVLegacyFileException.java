@@ -25,21 +25,15 @@ import org.earthtime.exceptions.ETException;
  *
  * @author James F. Bowring
  */
-public class BadImportedCSVLegacyFileException extends ETException{
-    
-    /**
-     * Creates a new instance of BadLabDataException
-     */
-    public BadImportedCSVLegacyFileException() {
-    }
+public class BadImportedCSVLegacyFileException extends ETException {
     
     /**
      * 
      * @param parent
-     * @param msg
+     * @param message
      */
-    public BadImportedCSVLegacyFileException(Component parent, String msg) {
-        new ETException(parent, new String[] {msg});
+    public BadImportedCSVLegacyFileException(Component parent, String message) {
+        super(parent, message);
         
     }
 }

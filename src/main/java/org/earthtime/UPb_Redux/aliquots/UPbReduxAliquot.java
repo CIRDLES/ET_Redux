@@ -63,6 +63,10 @@ import org.earthtime.UPb_Redux.valueModels.ValueModelReferenced;
 import org.earthtime.UPb_Redux.valueModels.ValueModelReferencedXMLConverter;
 import org.earthtime.UPb_Redux.valueModels.ValueModelXMLConverter;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
+import org.earthtime.aliquots.AliquotInterface;
+import org.earthtime.archivingTools.AnalysisImage;
+import org.earthtime.archivingTools.AnalysisImageXMLConverter;
+import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.dataDictionaries.AnalysisImageTypes;
 import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.exceptions.ETException;
@@ -78,7 +82,6 @@ import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsMo
 import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsModelXMLConverter;
 import org.earthtime.ratioDataModels.tracers.TracerUPbModel;
 import org.earthtime.ratioDataModels.tracers.TracerUPbModelXMLConverter;
-import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.xmlUtilities.XMLSerializationI;
 
 /**
@@ -89,8 +92,7 @@ import org.earthtime.xmlUtilities.XMLSerializationI;
  * @since 1.0
  */
 public class UPbReduxAliquot extends Aliquot
-        implements AliquotI,
-        //        Comparable<Aliquot>,
+        implements AliquotInterface,
         ReportRowGUIInterface,
         XMLSerializationI {
 
@@ -298,57 +300,10 @@ public class UPbReduxAliquot extends Aliquot
 
         this.mySESARSampleMetadata = mySESARSampleMetadata;
 
-//        this.isValidatedSESARChild = false;
         analysisImages = new ArrayList<AnalysisImage>();
 
     }
 
-//////    @Override
-//////    public int compareTo ( Aliquot aliquot ) throws ClassCastException {
-//////        String aliquotTwoName = aliquot.getAliquotName().trim();
-//////        String aliquotOneName = this.getAliquotName().trim();
-//////
-//////        // oct 2010 put here
-//////        Comparator<String> forNoah = new IntuitiveStringComparator<String>();
-//////        return forNoah.compare( aliquotOneName, aliquotTwoName );
-//////
-//////    }
-//////
-//////    /**
-//////     *
-//////     * @param fraction
-//////     * @return
-//////     */
-//////    @Override
-//////    public boolean equals ( Object aliquot ) {
-//////        //check for self-comparison
-//////        if ( this == aliquot ) {
-//////            return true;
-//////        }
-//////        if (  ! (aliquot instanceof Aliquot) ) {
-//////            return false;
-//////        }
-//////
-//////        Aliquot myAliquot = (Aliquot) aliquot;
-//////
-//////        // oct 2010 put here
-//////        Comparator<String> forNoah = new IntuitiveStringComparator<String>();
-//////        return forNoah.compare( this.getAliquotName().trim(), myAliquot.getAliquotName().trim() ) == 0;
-//////
-//////    }
-//////
-//////    // http://www.javaworld.com/javaworld/jw-01-1999/jw-01-object.html?page=4
-//////    /**
-//////     *
-//////     * @return
-//////     */
-//////    @Override
-//////    public int hashCode () {
-//////
-//////        int hash = 1;
-//////        hash = hash * 31 + ((Aliquot)this).getAliquotName().hashCode();
-//////        return hash;
-//////    }
     /**
      *
      */
@@ -368,7 +323,7 @@ public class UPbReduxAliquot extends Aliquot
             }
         }
 
-        if (bestAgeDivider206_238 == null){
+        if (bestAgeDivider206_238 == null) {
             // backwards compatible
             bestAgeDivider206_238 = BigDecimal.ZERO;
         }
@@ -580,13 +535,14 @@ public class UPbReduxAliquot extends Aliquot
      * @throws ETException
      * @throws BadOrMissingXMLSchemaException
      */
+    @Override
     public Object readXMLObject(String filename, boolean doValidate)
             throws FileNotFoundException,
             ETException,
             FileNotFoundException,
             BadOrMissingXMLSchemaException {
 
-        Aliquot myAliquot = null;
+        AliquotInterface myAliquot = null;
 
         BufferedReader reader = URIHelper.getBufferedReader(filename);
 
@@ -598,15 +554,12 @@ public class UPbReduxAliquot extends Aliquot
             if (doValidate) {
                 isValidOrAirplaneMode = URIHelper.validateXML(reader, filename, aliquotXMLSchemaURL);
             }
-//            else {
-//                isValidOrAirplaneMode = true;
-//            }
 
             if (isValidOrAirplaneMode) {
                 // re-create reader
                 reader = URIHelper.getBufferedReader(filename);
                 try {
-                    myAliquot = (Aliquot) xstream.fromXML(reader);
+                    myAliquot = (AliquotInterface) xstream.fromXML(reader);
                 } catch (ConversionException e) {
                     throw new ETException(null, e.getMessage());
                 }
@@ -637,7 +590,7 @@ public class UPbReduxAliquot extends Aliquot
 
         // note fractions and SampleDateModels are already unique
         Collections.sort(aliquotFractions);
-        if (sampleDateModels != null){
+        if (sampleDateModels != null) {
             Collections.sort(sampleDateModels);
         }
 
@@ -1292,7 +1245,7 @@ public class UPbReduxAliquot extends Aliquot
      * @throws Exception
      */
     public static void main(String[] args) throws Exception {
-        Aliquot aliquot
+        AliquotInterface aliquot
                 = new UPbReduxAliquot(
                         0,
                         "Test Aliquot",
@@ -1328,8 +1281,8 @@ public class UPbReduxAliquot extends Aliquot
 
         String testFileName = "UPbReduxAliquotTEST.xml";
 
-        ((UPbReduxAliquot) aliquot).serializeXMLObject(testFileName);
-        ((UPbReduxAliquot) aliquot).readXMLObject(testFileName, true);
+        ((XMLSerializationI) aliquot).serializeXMLObject(testFileName);
+        ((XMLSerializationI) aliquot).readXMLObject(testFileName, true);
 
     }
 
@@ -1502,12 +1455,12 @@ public class UPbReduxAliquot extends Aliquot
     public void setSelectedInDataTable(boolean selectedInDataTable) {
         this.selectedInDataTable = selectedInDataTable;
     }
-    
+
     /**
      *
      * @return
      */
-    public boolean containsActiveFractions(){
+    public boolean containsActiveFractions() {
         return (!getActiveAliquotFractions().isEmpty());
     }
 }

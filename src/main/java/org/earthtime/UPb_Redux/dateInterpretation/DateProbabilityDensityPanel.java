@@ -60,7 +60,6 @@ import org.apache.batik.apps.rasterizer.SVGConverterException;
 import org.apache.batik.dom.GenericDOMImplementation;
 import org.apache.batik.svggen.SVGGraphics2D;
 import org.apache.batik.svggen.SVGGraphics2DIOException;
-import org.earthtime.UPb_Redux.aliquots.Aliquot;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.beans.ReduxSuppressComponentEventsI;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.GraphPanelModeChangeI;
@@ -69,10 +68,11 @@ import org.earthtime.UPb_Redux.dateInterpretation.vermeeschKDE.OtherData;
 import org.earthtime.UPb_Redux.dateInterpretation.vermeeschKDE.Preferences;
 import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
-import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.UPb_Redux.user.SampleDateInterpretationGUIOptions;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
+import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.dataDictionaries.RadDates;
+import org.earthtime.samples.SampleInterface;
 import org.earthtime.utilities.TicGeneratorForAxes;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
@@ -94,7 +94,7 @@ public class DateProbabilityDensityPanel extends JLayeredPane
     /**
      *
      */
-    protected Sample sample;
+    protected SampleInterface sample;
     private int selectedAliquotNumber;
     private Vector<Fraction> selectedFractions;
     private Vector<Fraction> deSelectedFractions;
@@ -158,7 +158,7 @@ public class DateProbabilityDensityPanel extends JLayeredPane
      *
      * @param sample
      */
-    public DateProbabilityDensityPanel(Sample sample) {
+    public DateProbabilityDensityPanel(SampleInterface sample) {
         super();
 
         this.sample = sample;
@@ -709,7 +709,7 @@ public class DateProbabilityDensityPanel extends JLayeredPane
         setMaxX(DateProbabilityDensityPanel.DEFAULT_DISPLAY_MAXX);
         setDisplayOffsetX(0);
 
-//        setSelectedFractions( sample.getUpbFractionsActive() );
+//        setSelectedFractions( sample.getFractionsActive() );
         //setSelectedHistogramBinCount( 0 );
         preparePanel();
         repaint();
@@ -796,7 +796,7 @@ public class DateProbabilityDensityPanel extends JLayeredPane
                 maxKDE = Math.max(maxKDE, pdfOfKDE[i]);
             }
 
-        } catch (Exception exception) {
+        } catch (Exception ex) {
         }
         // end vermeesch ************************
 
@@ -1106,7 +1106,7 @@ public class DateProbabilityDensityPanel extends JLayeredPane
     public void setAliquotOptions(Map<String, Map<String, String>> aliquotOptions) {
         // here we scan the sample and make sure there are aliquot options for each aliquot
         SampleDateInterpretationGUIOptions myOptions = sample.getSampleDateInterpretationGUISettings();
-        for (Aliquot a : sample.getActiveAliquots()) {
+        for (AliquotInterface a : sample.getActiveAliquots()) {
             // this finds or creates an aliquotOptions map
             myOptions.getAliquotOptionsMapByName(a.getAliquotName(), ((UPbReduxAliquot) a).getAliquotNumber());
         }

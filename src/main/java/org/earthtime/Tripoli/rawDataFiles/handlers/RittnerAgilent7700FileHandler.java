@@ -28,8 +28,8 @@ import java.util.TreeSet;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
-import org.earthtime.utilities.FileHelper;
 import org.earthtime.archivingTools.URIHelper;
+import org.earthtime.utilities.FileHelper;
 
 /**
  *
@@ -231,7 +231,7 @@ public class RittnerAgilent7700FileHandler extends AbstractRawDataFileHandler im
                     // note each row has relative time stamp which we are hiding for now by using frequency of read
                     int expectedRowsOfData = rawDataFileTemplate.getBlockSize();
                     // scan data has background columns then peak columns per row
-                    String[][] scanData =  new String[assumedBackgroundRowCount][massSpec.getVIRTUAL_COLLECTOR_COUNT()];
+                    String[][] scanData = new String[assumedBackgroundRowCount][massSpec.getVIRTUAL_COLLECTOR_COUNT()];
 
                     //TODO possible missing condition here if file lengths vary from template spec and fractionFileRows is too big
                     for (int i = 0; i < expectedRowsOfData; i++) {
@@ -268,7 +268,7 @@ public class RittnerAgilent7700FileHandler extends AbstractRawDataFileHandler im
                                     massSpec.getCommonLeadCorrectionHighestLevel(), //
                                     isStandard,
                                     fractionBackgroundTimeStamp, //
-                                    fractionPeakTimeStamp,massSpec.rawRatiosFactory(scanData, isStandard, fractionID, usingFullPropagation, null));
+                                    fractionPeakTimeStamp, massSpec.rawRatiosFactory(scanData, isStandard, fractionID, usingFullPropagation, null));
 
                     tripoliFraction.shadeDataActiveMapLeft(leftShadeCount);
                     tripoliFractions.add(tripoliFraction);

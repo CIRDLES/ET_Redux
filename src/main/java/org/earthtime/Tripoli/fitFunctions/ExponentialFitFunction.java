@@ -185,9 +185,9 @@ public class ExponentialFitFunction implements FitFunctionInterface, Serializabl
                 lambda *= 10.0;
             } else {
                 lambda /= 10.0;
-                a = a + delta_aM.get( 0, 0 );
-                b = b + delta_aM.get( 1, 0 );
-                c = c + delta_aM.get( 2, 0 );
+                a += delta_aM.get( 0, 0 );
+                b += delta_aM.get( 1, 0 );
+                c += delta_aM.get( 2, 0 );
 
                 myFofX = new FofX( a, b, c );
 

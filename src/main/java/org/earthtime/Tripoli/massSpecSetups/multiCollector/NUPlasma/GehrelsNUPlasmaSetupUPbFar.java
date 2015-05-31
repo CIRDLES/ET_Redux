@@ -143,9 +143,6 @@ public final class GehrelsNUPlasmaSetupUPbFar extends AbstractMassSpecSetup impl
 
         AbstractCollectorModel IC0 = //
                 new IonCounterCollectorModel(//
-                        //
-                        //
-                        //
                         NUPlasmaCollectorsEnum.IC0.name(), new ValueModel("DeadTime", new BigDecimal(12.0e-9, ReduxConstants.mathContext10), //
                                 "ABS", new BigDecimal(1.0e-9, ReduxConstants.mathContext10), BigDecimal.ZERO), //
                         IonCounterCollectorModel.CollectedDataStyle.VOLTS);
@@ -157,9 +154,6 @@ public final class GehrelsNUPlasmaSetupUPbFar extends AbstractMassSpecSetup impl
 
         AbstractCollectorModel IC2 = //
                 new IonCounterCollectorModel(//
-                        //
-                        //
-                        //
                         NUPlasmaCollectorsEnum.IC2.name(), new ValueModel("DeadTime", new BigDecimal(12.0e-9, ReduxConstants.mathContext10), //
                                 "ABS", new BigDecimal(1.0e-9, ReduxConstants.mathContext10), BigDecimal.ZERO), //
                         IonCounterCollectorModel.CollectedDataStyle.VOLTS);

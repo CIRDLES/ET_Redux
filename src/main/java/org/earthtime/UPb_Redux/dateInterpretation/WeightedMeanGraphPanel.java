@@ -69,6 +69,7 @@ import org.earthtime.UPb_Redux.user.SampleDateInterpretationGUIOptions;
 import org.earthtime.UPb_Redux.utilities.comparators.IntuitiveStringComparator;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.dataDictionaries.MSWDCoordinates;
+import org.earthtime.samples.SampleInterface;
 import org.earthtime.utilities.TicGeneratorForAxes;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
@@ -89,7 +90,7 @@ public class WeightedMeanGraphPanel extends JPanel
     private int topMargin = 1;//5;
     private int leftMargin = 15;
     // Instance Variables
-    private Sample sample;
+    private SampleInterface sample;
     private Object[][] selectedSampleDateModels;
     private double minX;
     private double maxX;
@@ -116,7 +117,7 @@ public class WeightedMeanGraphPanel extends JPanel
      *
      * @param sample
      */
-    public WeightedMeanGraphPanel(Sample sample) {
+    public WeightedMeanGraphPanel(SampleInterface sample) {
         super();
 
         this.sample = sample;
@@ -1554,25 +1555,10 @@ public class WeightedMeanGraphPanel extends JPanel
         this.weightedMeanOptions = weightedMeanOptions;
     }
 
-//    /**
-//     * 
-//     * @return
-//     */
-//    public boolean isInRandomMode () {
-//        return inRandomMode;
-//    }
-//
-//    /**
-//     * 
-//     * @param inRandomMode
-//     */
-//    public void setInRandomMode ( boolean inRandomMode ) {
-//        this.inRandomMode = inRandomMode;
-//    }
     /**
      * @return the sample
      */
-    public Sample getSample() {
+    public SampleInterface getSample() {
         return sample;
     }
 

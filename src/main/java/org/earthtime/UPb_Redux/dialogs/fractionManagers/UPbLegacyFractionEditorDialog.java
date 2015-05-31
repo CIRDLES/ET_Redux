@@ -28,7 +28,6 @@ import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.aliquots.Aliquot;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.fractions.Fraction;
@@ -36,19 +35,20 @@ import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.ReductionHandler;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.UncertaintyZoomLayer;
+import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.exceptions.ETException;
+import org.earthtime.exceptions.ETWarningDialog;
 
 /**
  *
- * @author  James F. Bowring
+ * @author James F. Bowring
  */
 public class UPbLegacyFractionEditorDialog extends DialogEditor {
 
-
     private static JPanel concordiaGraphPanel;
 
-    private Aliquot aliquot;
+    private AliquotInterface aliquot;
 
     private Fraction myFraction;
 
@@ -57,7 +57,6 @@ public class UPbLegacyFractionEditorDialog extends DialogEditor {
     private boolean analyzed;
 
     private JLayeredPane uncertaintyGraphPanel;
-
 
     /**
      * In Order reference to dates: 206/238, 207/235, 207/206
@@ -69,21 +68,21 @@ public class UPbLegacyFractionEditorDialog extends DialogEditor {
 //    private String correctionModeForDates;
 //
 //    private SampleUpdateAliquotFromFolderI sampleAliquotUpdater;
-
 //    private boolean inAutoUraniumMode;
     /**
      * Creates new form FractionEditorDialog
-     * @param parent 
-     * @param modal 
+     *
+     * @param parent
+     * @param modal
      * @param selectedTab
      * @param aliquot
-     * @param fraction 
-     * @param analyzed  
+     * @param fraction
+     * @param analyzed
      */
     public UPbLegacyFractionEditorDialog(
             java.awt.Frame parent,
             boolean modal,
-            Aliquot aliquot,
+            AliquotInterface aliquot,
             Fraction fraction,
             int selectedTab,
             boolean analyzed) {
@@ -95,7 +94,6 @@ public class UPbLegacyFractionEditorDialog extends DialogEditor {
         }
 
 //        this.sampleAliquotUpdater = sampleAliquotUpdater;
-
         setAnalyzed(analyzed);
 
         this.aliquot = aliquot;
@@ -146,7 +144,6 @@ public class UPbLegacyFractionEditorDialog extends DialogEditor {
             fractionIDs.add(f.getFractionID());
         }
 
-
         InitializeFractionData();
 
         // display selectedTab
@@ -167,18 +164,18 @@ public class UPbLegacyFractionEditorDialog extends DialogEditor {
     }
 
     /**
-     * 
+     *
      */
     public void setSize() {
         setSize(1125, 754);
     }
 
     private void reduceFraction(boolean isAnalyzed) {
-        ((UPbFraction)myFraction).reduceData(true);
+        ((UPbFraction) myFraction).reduceData(true);
     }
 
     /**
-     * 
+     *
      * @return
      */
     public boolean isAnalyzed() {
@@ -186,7 +183,7 @@ public class UPbLegacyFractionEditorDialog extends DialogEditor {
     }
 
     /**
-     * 
+     *
      * @param analyzed
      */
     public void setAnalyzed(boolean analyzed) {
@@ -194,7 +191,7 @@ public class UPbLegacyFractionEditorDialog extends DialogEditor {
     }
 
     /**
-     * 
+     *
      * @return
      */
     public JLayeredPane getUncertaintyGraphPanel() {
@@ -202,7 +199,7 @@ public class UPbLegacyFractionEditorDialog extends DialogEditor {
     }
 
     /**
-     * 
+     *
      * @param uncertaintyGraphPanel
      */
     public void setUncertaintyGraphPanel(JLayeredPane uncertaintyGraphPanel) {
@@ -237,26 +234,22 @@ public class UPbLegacyFractionEditorDialog extends DialogEditor {
         this.showDates = showDates;
     }
 
-
     private UncertaintyZoomLayer GenerateUncertaintyZoomLayer(String dateName, String mode) {
         ReductionHandler rh = ((UPbFraction) myFraction).getReductionHandler();
         return //
                 new UncertaintyZoomLayer(//
-                dateName,
-                rh.chooseCovarianceMatrixModelByMode(uncertaintyModeForDates),
-                //((CovarianceMatrixModel) rh.getMatrices()[0]).getAnalyticalCovarianceMatrix(),
-                rh.extractSensitivityVectorForDate(dateName, mode));
+                        dateName,
+                        rh.chooseCovarianceMatrixModelByMode(uncertaintyModeForDates),
+                        //((CovarianceMatrixModel) rh.getMatrices()[0]).getAnalyticalCovarianceMatrix(),
+                        rh.extractSensitivityVectorForDate(dateName, mode));
     }
 
-
-
-private void InitializeTextBoxes(
+    private void InitializeTextBoxes(
             final boolean editableU,
             final boolean editablePb,
             final boolean editableOxide) {
 
         // set properties of text boxes
-
         // top panel
         fractionID_text.setDocument(new UnDoAbleDocument(fractionID_text, (editablePb && editableU)));
 
@@ -272,7 +265,6 @@ private void InitializeTextBoxes(
                 getValue().setScale(ReduxConstants.DEFAULT_PARAMETERS_SCALE, RoundingMode.HALF_UP).toPlainString());
 
     }
-
 
     private void Save()
             throws ETException {
@@ -294,7 +286,6 @@ private void InitializeTextBoxes(
             myFraction.getAnalysisMeasure(AnalysisMeasures.fractionMass.getName()).
                     setValue(new BigDecimal(fractionMass_text.getText()));
 
-
         } catch (NumberFormatException ex) {
             throw new ETException(
                     this,
@@ -306,7 +297,6 @@ private void InitializeTextBoxes(
         // the next line undoes the default deleted status of a new default fraction
         ((UPbFraction) myFraction).setDeleted(false);
 
-
         // enable delete and restore button if off because of new default fraction
         delete_button.setEnabled(((UPbFractionI) myFraction).isChanged());
         restore_button.setEnabled(((UPbFractionI) myFraction).isChanged());
@@ -315,7 +305,6 @@ private void InitializeTextBoxes(
         reduceFraction(isAnalyzed());
 
     }
-
 
 ////    private boolean ExportUPbFractionPerInputSchema() {
 ////
@@ -372,18 +361,17 @@ private void InitializeTextBoxes(
 ////        //  setVisible(true);
 ////        return (selectedFile != null);
 ////    }
-
     /**
-     * 
+     *
      */
     @Override
-    protected void close() {
+    public void close() {
 
         super.close();
     }
 
     /**
-     * 
+     *
      * @return
      */
     public Fraction getMyFraction() {
@@ -391,17 +379,17 @@ private void InitializeTextBoxes(
     }
 
     /**
-     * 
+     *
      * @param myFraction
      */
     public void setMyFraction(Fraction myFraction) {
         this.myFraction = myFraction;
     }
 
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
      */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -657,7 +645,7 @@ private void InitializeTextBoxes(
             Save();
             close();
         } catch (ETException ex) {
-            //ex.printStackTrace();
+            new ETWarningDialog(ex).setVisible(true);
         }
 }//GEN-LAST:event_saveAndClose_buttonActionPerformed
 
@@ -693,10 +681,10 @@ private void save_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
         InitializeFractionData();
 
     //  Save();
-    // InitializeKwikiTab();
+        // InitializeKwikiTab();
     } catch (ETException ex) {
-        //ex.printStackTrace();
-        }
+        new ETWarningDialog(ex).setVisible(true);
+    }
 }//GEN-LAST:event_save_buttonActionPerformed
 
 private void ChangedTabs(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ChangedTabs

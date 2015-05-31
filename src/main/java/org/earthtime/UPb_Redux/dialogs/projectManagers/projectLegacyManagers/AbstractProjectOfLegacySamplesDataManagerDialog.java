@@ -28,7 +28,8 @@ import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.exceptions.BadImportedCSVLegacyFileException;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.exceptions.ETException;
-import org.earthtime.projects.ProjectI;
+import org.earthtime.exceptions.ETWarningDialog;
+import org.earthtime.projects.ProjectInterface;
 import org.earthtime.projects.projectImporters.AbstractProjectImporterFromLegacyCSVFile;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 
@@ -38,7 +39,7 @@ import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
  */
 public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends DialogEditor {
 
-    private ProjectI myProject = null;
+    private ProjectInterface myProject = null;
     private File importFractionFolderMRU;
     private boolean initialized = false;
     private boolean newSample = false;
@@ -72,7 +73,7 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
             Frame parent, //
             boolean modal, //
             String dataTypeTitle, //
-            ProjectI project, //
+            ProjectInterface project, //
             AbstractProjectImporterFromLegacyCSVFile converter,//
             File importFractionFolderMRU) {
         super( parent, modal );
@@ -193,43 +194,19 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
             converter.setMruFolder( importFractionFolderMRU );
             converter.readInProjectSamples(myProject);
             setInitialized( true );
-////            myProject.setChanged( true );
 
             setImportFractionFolderMRU( converter.getMruFolder() );
         } catch (FileNotFoundException fileNotFoundException) {
-        } catch (BadImportedCSVLegacyFileException badImportedCSVLegacyFileException) {
+        } catch (BadImportedCSVLegacyFileException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
-
-
-
-
-//
-//        // moved outside conditional oct 2010 and added MineralName, etc ;;June 2010 add physical constants model
-//        for (Fraction f : mySample.getUPbFractions()) {
-//            try {
-//                ((UPbFractionI) f).setPhysicalConstantsModel( getMySample().getPhysicalConstantsModel() );
-//
-//                f.setIsLegacy( true );
-//
-//                ((UPbLegacyFraction) f).calculateTeraWasserburgRho();
-//
-//            } catch (BadLabDataException badLabDataException) {
-//            }
-//        }
-//
-//        Vector<Aliquot> aliquots = mySample.getActiveAliquots();
-//        for (Aliquot a : aliquots) {
-//            a.setAnalysisPurpose( mySample.getAnalysisPurpose() );
-//        }
-
-
     }
 
     /**
      *
      * @return
      */
-    public ProjectI getMyProject () {
+    public ProjectInterface getMyProject () {
         return myProject;
     }
 
@@ -237,7 +214,7 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
      *
      * @param myProject
      */
-    public void setMyProject ( ProjectI myProject ) {
+    public void setMyProject ( ProjectInterface myProject ) {
         this.myProject = myProject;
     }
 
@@ -422,6 +399,7 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
             close();
         } catch (ETException ex) {
             ex.printStackTrace();
+            new ETWarningDialog(ex).setVisible(true);
         }
 
     }//GEN-LAST:event_saveAndCloseActionPerformed

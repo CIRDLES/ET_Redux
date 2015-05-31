@@ -41,9 +41,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
+import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -54,7 +54,6 @@ import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileFilter;
 import org.earthtime.ETReduxFrame;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.aliquots.Aliquot;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.beans.ValueModelClump;
 import org.earthtime.UPb_Redux.beans.ValueModelUncertSlider;
@@ -80,6 +79,7 @@ import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.utilities.Thumbnail;
 import org.earthtime.UPb_Redux.valueModels.MeasuredRatioModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
+import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.dataDictionaries.DataDictionary;
@@ -87,6 +87,7 @@ import org.earthtime.dataDictionaries.MeasuredRatios;
 import org.earthtime.dataDictionaries.MineralTypes;
 import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.exceptions.ETException;
+import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.matrices.matrixModels.CovarianceMatrixWithSubMatricesModel;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.initialPbModelsET.StaceyKramersInitialPbModelET;
@@ -127,7 +128,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
     private javax.swing.JButton kwikiResetAll_button;
     private javax.swing.JButton kwikiAutoU_button;
     private static JLayeredPane concordiaGraphPanel;
-    private Aliquot aliquot;
+    private AliquotInterface aliquot;
     private Fraction myFraction;
     private ArrayList<String> fractionIDs;
     private boolean compiled;
@@ -164,7 +165,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
     public UPbFractionEditorDialog(
             java.awt.Frame parent,
             boolean modal,
-            Aliquot aliquot,
+            AliquotInterface aliquot,
             Fraction fraction,
             int selectedTab,
             boolean compiled) {
@@ -231,14 +232,13 @@ public class UPbFractionEditorDialog extends DialogEditor {
             public void actionPerformed(ActionEvent e) {
                 JComboBox cb = (JComboBox) e.getSource();
                 restoreFractionFromKwikiChanges(myFraction);
-                // InitializeKwikiTab( myFraction );//nov 2009
+
                 reInitializeKwikiTab(myFraction);
 
                 myFraction = (Fraction) cb.getSelectedItem();
-                // reductionHandlerExists = (((UPbFraction) myFraction).getReductionHandler() != null);
+
                 InitializeFractionData(myFraction);
 
-                //InitializeKwikiTab( myFraction );
                 reInitializeKwikiTab(myFraction);
 
             }
@@ -258,7 +258,6 @@ public class UPbFractionEditorDialog extends DialogEditor {
         } catch (Exception e) {
         }
         InitializeFractionData(myFraction);
-//        fraction_Chooser.setSelectedItem( myFraction );
 
         InitializeKwikiTab(myFraction);
 
@@ -365,11 +364,11 @@ public class UPbFractionEditorDialog extends DialogEditor {
         }
 
         public void actionPerformed(ActionEvent e) {
-            setVisibleInitialPbTabComponents(!((JCheckBox) e.getSource()).isSelected());
+            setVisibleInitialPbTabComponents(!((AbstractButton) e.getSource()).isSelected());
             try {
                 restoreFractionFromKwikiChanges(myFraction);
 
-                myFraction.setZircon(((JCheckBox) e.getSource()).isSelected());
+                myFraction.setZircon(((AbstractButton) e.getSource()).isSelected());
 
                 FireDataReducer(myFraction, true);//nov 2009
                 reInitializeKwikiTab(myFraction);
@@ -379,6 +378,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
     }
 
     // helper class to manage auto uranium toggle
+    // TODO: could /should use myFraction ?
     private class actionAutoUraniumListener implements ActionListener {
 
         private Fraction fraction;
@@ -387,12 +387,14 @@ public class UPbFractionEditorDialog extends DialogEditor {
             this.fraction = fraction;
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             restoreFractionFromKwikiChanges(fraction);
 
             try {
                 save(fraction);
-            } catch (ETException eTException) {
+            } catch (ETException ex) {
+                new ETWarningDialog(ex).setVisible(true);
             }
             if (((UPbFraction) fraction).isInAutoUraniumMode()) {
                 ((UPbFraction) fraction).zeroUraniumRatios();
@@ -400,9 +402,13 @@ public class UPbFractionEditorDialog extends DialogEditor {
                 ((UPbFraction) fraction).autoGenerateMeasuredUranium();
             }
 
-            InitializeFractionData(fraction);
             FireDataReducer(fraction, true);
+            restoreFractionFromKwikiChanges(fraction);
+            InitializeFractionData(fraction);
             reInitializeKwikiTab(fraction);
+            
+            // bring into view
+            ((PlottingDetailsDisplayInterface) concordiaGraphPanel).resetPanel();
         }
 
         /**
@@ -630,7 +636,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
                 (!(((UPbFraction) fraction).hasMeasuredUranium() && !((UPbFraction) fraction).isInAutoUraniumMode())));////
 
         // set visibility of auto-u details on U tab
-        autoUSettings_panel.setVisible(!((UPbFraction) fraction).hasMeasuredUranium());
+        autoUSettings_panel.setVisible(!((UPbFractionI) fraction).hasMeasuredUranium());
 
         // resetAll button
         kwikiResetAll_button = new javax.swing.JButton();
@@ -670,7 +676,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
         kwikiDateModesSelectorPanel = //
                 new KwikiDateModesSelectorPanel(//
                         329, 326, true);
-        ((KwikiDateModesSelectorPanel) kwikiDateModesSelectorPanel).addPropertyChangeListener(new KwikiDateModesSelectorListener(fraction));
+        kwikiDateModesSelectorPanel.addPropertyChangeListener(new KwikiDateModesSelectorListener(fraction));
         KwikiDateModesSelectorPanel.setDateCorrection(correctionModeForDates);
 
         kwikiTab.add(//
@@ -934,10 +940,10 @@ public class UPbFractionEditorDialog extends DialogEditor {
                         setAutoUraniumGeneratedDate(((UPbFraction) fraction).isInAutoUraniumMode());
                 ((KwikiDateDisplayPanel) kwikiDateDisplayPanel).refreshPanel();//.repaint();
 
-                ((ConcordiaGraphPanel) concordiaGraphPanel).repaint();
+                concordiaGraphPanel.repaint();
 
                 ((KwikiSynopticOutputPanel) kwikiOutputPanel).setFraction(fraction);
-                ((KwikiSynopticOutputPanel) kwikiOutputPanel).repaint();
+                kwikiOutputPanel.repaint();
 
                 ((UncertaintyGraphPanel) date206_238rUncertainties).setZoomLayer(//
                         GenerateUncertaintyZoomLayer(dateNamesByCorrection.get(correctionModeForDates)[0], uncertaintyModeForDates, fraction));
@@ -1001,6 +1007,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
     private void FireDataReducer(Fraction fraction, boolean calculateCovariances) {
 
         //if (reductionHandlerExists) {
+        // currently non-static call on purpose - jfb
         UPbFractionReducer.getInstance().fullFractionReduce(fraction, calculateCovariances);
         //}
     }
@@ -1564,6 +1571,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
         try {
             initTracerModelChooser();
         } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
 
         // Corrections tab ****************************************************
@@ -1587,6 +1595,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
         try {
             initPbBlankModelChooser();
         } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
 
         // Initial Pb Model Tab modified June 2012 ********************************
@@ -1599,6 +1608,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
         try {
             initInitialPbModelChooser();
         } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
 
         setVisibleInitialPbTabComponents(!myFraction.isZircon());
@@ -1825,7 +1835,8 @@ public class UPbFractionEditorDialog extends DialogEditor {
             initialPbModelsTab_panel.add(initialPbModelView);
             initialPbModelsTab_panel.validate();
             initialPbModelView.repaint();
-        } catch (BadLabDataException badLabDataException) {
+        } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
     }
 
@@ -1890,6 +1901,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
             try {
                 initialPbModel = ((UPbFraction) myFraction).getMyLabData().getAnInitialPbModel((String) evt.getItem());
             } catch (BadLabDataException ex) {
+                new ETWarningDialog(ex).setVisible(true);
             }
 
             if (evt.getStateChange() == ItemEvent.SELECTED) {
@@ -1918,6 +1930,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
             try {
                 blank = ((UPbFraction) myFraction).getMyLabData().getAPbBlankModel((String) evt.getItem());
             } catch (BadLabDataException ex) {
+                new ETWarningDialog(ex).setVisible(true);
             }
 
             if (evt.getStateChange() == ItemEvent.SELECTED) {
@@ -1947,6 +1960,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
             try {
                 tracer = ((UPbFraction) myFraction).getMyLabData().getATracerModel((String) evt.getItem());
             } catch (BadLabDataException ex) {
+                new ETWarningDialog(ex).setVisible(true);
             }
 
             if (evt.getStateChange() == ItemEvent.SELECTED) {
@@ -2040,6 +2054,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
                 ((UPbFraction) myFraction).setTracer(((UPbFraction) myFraction).//
                         getMyLabData().getATracerModel((String) tracerChooser.getSelectedItem()));
             } catch (BadLabDataException ex) {
+                new ETWarningDialog(ex).setVisible(true);
             }
 
             // aug 2010, reset tracer mass to zero if no tracer chosen ... tracer mass is a test for legacy status
@@ -2096,6 +2111,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
                 ((UPbFraction) myFraction).setPbBlank(((UPbFraction) myFraction).//
                         getMyLabData().getAPbBlankModel((String) PbBlankChooser.getSelectedItem()));
             } catch (BadLabDataException ex) {
+                new ETWarningDialog(ex).setVisible(true);
             }
 
             // Initial Pb Model Tab************************************
@@ -2103,6 +2119,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
                 ((UPbFraction) myFraction).setInitialPbModel(((UPbFraction) myFraction).//
                         getMyLabData().getAnInitialPbModel((String) InitialPbModelChooser.getSelectedItem()));
             } catch (BadLabDataException ex) {
+                new ETWarningDialog(ex).setVisible(true);
             }
 
             // set fraction's pbBlankMass
@@ -2194,6 +2211,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
                 save(myFraction);
             } catch (ETException ex) {
                 ex.printStackTrace();
+                new ETWarningDialog(ex).setVisible(true);
             }
         }
 
@@ -4320,7 +4338,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
         try {
             save(myFraction);
         } catch (ETException ex) {
-//            ex.printStackTrace();
+            new ETWarningDialog(ex).setVisible(true);
         }
         ((UPbFraction) myFraction).reduceData(isCompiled());//reduceFraction(isCompiled());
 }//GEN-LAST:event_refreshOutputs_ButtonActionPerformed
@@ -4329,7 +4347,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
         try {
             save(myFraction);
         } catch (ETException ex) {
-//            ex.printStackTrace();
+            new ETWarningDialog(ex).setVisible(true);
         }
         ((UPbFraction) myFraction).reduceData(isCompiled());//reduceFraction(isCompiled());
         PopulateCorrectionsTab(myFraction);
@@ -4367,7 +4385,8 @@ public class UPbFractionEditorDialog extends DialogEditor {
 
         try {
             save(myFraction); // includes a restore as well
-        } catch (ETException eTException) {
+        } catch (ETException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
 
         if (((UPbFraction) myFraction).isInAutoUraniumMode()) {
@@ -4382,7 +4401,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
      *
      */
     @Override
-    protected void close() {
+    public void close() {
 
         super.close();
         restoreAllFractions(myFraction);
@@ -4466,6 +4485,7 @@ private void save_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
         reInitializeKwikiTab(myFraction);
 
     } catch (ETException ex) {
+        new ETWarningDialog(ex).setVisible(true);
     }
 }//GEN-LAST:event_save_buttonActionPerformed
 

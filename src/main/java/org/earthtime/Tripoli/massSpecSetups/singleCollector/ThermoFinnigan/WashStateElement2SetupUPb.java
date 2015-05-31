@@ -67,18 +67,13 @@ public final class WashStateElement2SetupUPb extends AbstractMassSpecSetup imple
         // and uncertainty propagation more robustly
         collectorNameToModelMap = new TreeMap<>();
 
+        useConstantBackgroundFitFunction = false;
+
         this.commonLeadCorrectionHighestLevel = "A2";
 
         AbstractCollectorModel singleCollector = //
                 new IonCounterCollectorModel(//
-                        //
-                        //
-                        //
-                        //
-                        //
-                        //
-                        //
-                        "Single",                        new ValueModel("DeadTime", new BigDecimal(12.0e-9, ReduxConstants.mathContext10), //
+                        "Single", new ValueModel("DeadTime", new BigDecimal(12.0e-9, ReduxConstants.mathContext10), //
                                 "ABS", new BigDecimal(1.0e-9, ReduxConstants.mathContext10), BigDecimal.ZERO), //
                         IonCounterCollectorModel.CollectedDataStyle.COUNTS);
 
@@ -145,7 +140,8 @@ public final class WashStateElement2SetupUPb extends AbstractMassSpecSetup imple
      * @param fractionID the value of fractionID
      * @param usingFullPropagation the value of usingFullPropagation
      * @param tripoliFraction the value of tripoliFraction
-     * @return the java.util.SortedSet<org.earthtime.Tripoli.dataModels.DataModelInterface>
+     * @return the
+     * java.util.SortedSet<org.earthtime.Tripoli.dataModels.DataModelInterface>
      */
     @Override
     public SortedSet<DataModelInterface> rawRatiosFactory(String[][] intensitiesScan, boolean isStandard, String fractionID, boolean usingFullPropagation, TripoliFraction tripoliFraction) {

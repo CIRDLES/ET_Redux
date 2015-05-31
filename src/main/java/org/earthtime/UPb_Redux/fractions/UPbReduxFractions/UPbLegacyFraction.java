@@ -39,6 +39,7 @@ import org.earthtime.UPb_Redux.utilities.comparators.IntuitiveStringComparator;
 import org.earthtime.UPb_Redux.valueModels.MeasuredRatioModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.dataDictionaries.MeasuredRatios;
+import org.earthtime.fractions.FractionInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsModel;
 
@@ -49,6 +50,7 @@ import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsMo
 public class UPbLegacyFraction extends Fraction implements
         FractionI,
         UPbFractionI,
+        FractionInterface,
         ReportRowGUIInterface,
         Serializable {
 //TODO: refactor this class = quick copy and simplification of UPbFraction, but has many common features. a
@@ -73,7 +75,7 @@ public class UPbLegacyFraction extends Fraction implements
     private String fractionNotes;
     // added july 2010 for detrital filtering
     private boolean filtered;
-        private boolean standard;
+    private boolean standard;
 
     /**
      *
@@ -106,7 +108,7 @@ public class UPbLegacyFraction extends Fraction implements
         hasMeasuredLead = false;
 
         hasMeasuredUranium = false;
-        
+
         this.standard = false;
 
     }
@@ -676,7 +678,6 @@ public class UPbLegacyFraction extends Fraction implements
         this.rejected = !this.rejected;
     }
 
-    
     /**
      * @return the standard
      */
@@ -690,7 +691,7 @@ public class UPbLegacyFraction extends Fraction implements
     public void setStandard(boolean standard) {
         this.standard = standard;
     }
-    
+
 ////    /**
 ////     * @return the errorEllipseNode
 ////     */
@@ -704,7 +705,6 @@ public class UPbLegacyFraction extends Fraction implements
 ////    public void setErrorEllipseNode(org.cirdles.isoplot.chart.concordia.ErrorEllipse errorEllipseNode) {
 ////        this.errorEllipseNode = errorEllipseNode;
 ////    }
-
     @Override
     public boolean isCommonLeadLossCorrected() {
         return false; // dec 2014 until we learn that this is the case

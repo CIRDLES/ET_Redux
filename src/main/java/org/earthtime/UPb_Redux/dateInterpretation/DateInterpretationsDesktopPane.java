@@ -26,10 +26,10 @@ import javax.swing.JDesktopPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
-import org.earthtime.UPb_Redux.aliquots.Aliquot;
-import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
+import org.earthtime.aliquots.AliquotInterface;
+import org.earthtime.samples.SampleInterface;
 
 /**
  *
@@ -38,7 +38,7 @@ import org.earthtime.UPb_Redux.valueModels.ValueModel;
 public class DateInterpretationsDesktopPane extends JDesktopPane {
 
     // instance variables
-    private Sample sample;
+    private SampleInterface sample;
 
     /** Creates a new instance of DateInterpretationsDesktopPane */
     public DateInterpretationsDesktopPane() {
@@ -70,7 +70,7 @@ public class DateInterpretationsDesktopPane extends JDesktopPane {
      * @param sample
      * @param width  
      */
-    public void ClearAndShowSample(Sample sample, int width) {
+    public void ClearAndShowSample(SampleInterface sample, int width) {
         this.removeAll();
         
         this.sample = sample;
@@ -83,7 +83,7 @@ public class DateInterpretationsDesktopPane extends JDesktopPane {
      * @param aliquot 
      * @param width 
      */
-    public void ClearAndShowAliquot(Aliquot aliquot, int width) {
+    public void ClearAndShowAliquot(AliquotInterface aliquot, int width) {
         this.removeAll();
         
         ShowTitle();
@@ -97,7 +97,7 @@ public class DateInterpretationsDesktopPane extends JDesktopPane {
      * @param width 
      */
     public void ClearAndShowSampleDate(
-            Aliquot aliquot,
+            AliquotInterface aliquot,
             ValueModel sampleDateInterpretation,
             int width) {
         
@@ -113,14 +113,14 @@ public class DateInterpretationsDesktopPane extends JDesktopPane {
 
     private void ShowSample(int width) {
         int offset = 0;
-        for (Aliquot aliquot : sample.getAliquots()) {
+        for (AliquotInterface aliquot : sample.getAliquots()) {
             ShowAliquotDateModels(aliquot, width, offset);
             offset += aliquot.getSampleDateModels().size();
         }
     }
 
     private void ShowAliquotDateModels(
-            Aliquot aliquot,
+            AliquotInterface aliquot,
             int width,
             int offset) {
         for (int i = 0; i < aliquot.getSampleDateModels().size(); i++) {
@@ -138,7 +138,7 @@ public class DateInterpretationsDesktopPane extends JDesktopPane {
     }
 
     private void ShowDateInterpretationPanel(
-            Aliquot aliquot,
+            AliquotInterface aliquot,
             ValueModel sampleDateModel,
             int width,
             int offset) {

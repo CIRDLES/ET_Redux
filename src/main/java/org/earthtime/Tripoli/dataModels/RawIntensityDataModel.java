@@ -28,6 +28,10 @@ import java.util.TreeMap;
 import org.earthtime.Tripoli.dataModels.collectorModels.AbstractCollectorModel;
 import org.earthtime.Tripoli.fitFunctions.AbstractFunctionOfX;
 import org.earthtime.Tripoli.fitFunctions.ConstantFitFunctionWithCovS;
+import org.earthtime.Tripoli.fitFunctions.LevenbergMarquardGeneralSolverWithCovS;
+import org.earthtime.Tripoli.fitFunctions.LevenbergMarquardGeneralSolverWithVecV;
+import org.earthtime.Tripoli.fitFunctions.MeanFitFunction;
+import org.earthtime.Tripoli.fitFunctions.MeanFitFunctionWithCovS;
 import org.earthtime.UPb_Redux.utilities.comparators.IntuitiveStringComparator;
 import org.earthtime.dataDictionaries.FitFunctionTypeEnum;
 import org.earthtime.dataDictionaries.IsotopeNames;
@@ -321,11 +325,6 @@ public class RawIntensityDataModel //
         diagonalOfMatrixSIntensities = collectorModel.calculateMeasuredCountsAndMatrixSIntensityDiagonal( //
                 baselineIntensities.length, allItensities, integrationTime).clone();
 
-//        if (collectorModel instanceof IonCounterCollectorModel){
-//            measuredIntensityIonCounter = ((IonCounterCollectorModel)collectorModel).getMeasuredIntensityIonCounter().clone();
-//        } else {
-//            measuredIntensityIonCounter = new double[0];
-//        }
     }
 
     /**
@@ -487,99 +486,102 @@ public class RawIntensityDataModel //
 
     }
 
-//    private void generateMEANfitFunction() {
-//        // MEAN *********************************************************
-//        AbstractFunctionOfX fOfX_MEAN = MeanFitFunctionWithCovS.getInstance().getFunctionOfX(//
-//                backgroundVirtualCollector.getDataActiveMap(), //
-//                normalizedBackgroundAquireTimes,//
-//                backgroundVirtualCollector.getIntensities(), //
-//                matrixSibCovarianceBackgroundIntensities, false);
-//
-//        backgroundFitFunctionsWithOD.put("MEAN", fOfX_MEAN);
-//        backgroundFitFunctionsNoOD.put("MEAN", fOfX_MEAN);
-//
-//        selectedFitFunctionType = FitFunctionTypeEnum.MEAN;
-//    }
+    private void generateMEANfitFunction() {
+        // MEAN *********************************************************
+        AbstractFunctionOfX fOfX_MEAN = MeanFitFunctionWithCovS.getInstance().getFunctionOfX(//
+                backgroundVirtualCollector.getDataActiveMap(), //
+                normalizedBackgroundAquireTimes,//
+                backgroundVirtualCollector.getIntensities(), //
+                matrixSibCovarianceBackgroundIntensities, false);
 
-//    private boolean generateMEANfitFunctionUsingLM() {
-//
-//        boolean retVal;
-//
-//        // algorithmForMEAN contains both the non OD and OD versions
-//        AbstractFunctionOfX fOfX_MEAN;
-//        AbstractFunctionOfX fOfX_MEAN_OD;
-//
-//        if (USING_FULL_PROPAGATION) {
-//            LevenbergMarquardGeneralSolverWithCovS.AbstractOverDispersionLMAlgorithm algorithmForMEAN//
-//                    = LevenbergMarquardGeneralSolverWithCovS.getInstance()//
-//                    .getSelectedLMAlgorithm( //
-//                            FitFunctionTypeEnum.MEAN,//
-//                            backgroundVirtualCollector.getDataActiveMap(), //
-//                            normalizedBackgroundAquireTimes,//
-//                            backgroundVirtualCollector.getIntensities(), //
-//                            matrixSibCovarianceBackgroundIntensities, false);
-//
-//            fOfX_MEAN = algorithmForMEAN.getInitialFofX();
-//            fOfX_MEAN_OD = algorithmForMEAN.getFinalFofX();
-//
-//        } else {
-//
-//            LevenbergMarquardGeneralSolverWithVecV.AbstractOverDispersionLMVecAlgorithm algorithmForMEAN//
-//                    = LevenbergMarquardGeneralSolverWithVecV.getInstance()//
-//                    .getSelectedLMAlgorithm( //
-//                            FitFunctionTypeEnum.MEAN,//
-//                            backgroundVirtualCollector.getDataActiveMap(), //
-//                            normalizedBackgroundAquireTimes,//
-//                            backgroundVirtualCollector.getIntensities(), //
-//                            vectorSviVarianceBackgroundIntensities, false);
-//
-//            fOfX_MEAN = algorithmForMEAN.getInitialFofX();
-//            fOfX_MEAN_OD = algorithmForMEAN.getFinalFofX();
-//
-//        }
-//
-//        if ((fOfX_MEAN != null) && fOfX_MEAN.verifyPositiveVariances()) {
-//            if (backgroundFitFunctionsNoOD.containsKey(fOfX_MEAN.getShortNameString())) {
-//                AbstractFunctionOfX fOfXexist = backgroundFitFunctionsNoOD.get(fOfX_MEAN.getShortNameString());
-//                fOfXexist.copyValuesFrom(fOfX_MEAN);
-//            } else {
-//                backgroundFitFunctionsNoOD.put(fOfX_MEAN.getShortNameString(), fOfX_MEAN);
-//            }
-//
-//            if ((fOfX_MEAN_OD != null) && fOfX_MEAN_OD.verifyPositiveVariances()) {
-//                if (backgroundFitFunctionsWithOD.containsKey(fOfX_MEAN_OD.getShortNameString())) {
-//                    AbstractFunctionOfX fOfXexist = backgroundFitFunctionsWithOD.get(fOfX_MEAN_OD.getShortNameString());
-//                    fOfXexist.copyValuesFrom(fOfX_MEAN_OD);
-//                } else {
-//                    backgroundFitFunctionsWithOD.put(fOfX_MEAN_OD.getShortNameString(), fOfX_MEAN_OD);
-//                }
-//            } else {
-//                backgroundFitFunctionsWithOD.put(fOfX_MEAN.getShortNameString(), fOfX_MEAN);
-//            }
-//
-//            retVal = true;
-//
-//        } else {
-//            // to handle really bad data sets, for which LM wont work, do good old fashioned mean
-//            System.out.println("LM would not fit mean , so using arithmetic mean fit");
-//            fOfX_MEAN = MeanFitFunction.getInstance()//
-//                    .getFunctionOfX(//
-//                            backgroundVirtualCollector.getDataActiveMap(), //
-//                            normalizedBackgroundAquireTimes,//
-//                            backgroundVirtualCollector.getIntensities(), //
-//                            null, //
-//                            false);
-//
-//            backgroundFitFunctionsNoOD.put(FitFunctionTypeEnum.MEAN.getName(), fOfX_MEAN);
-//            backgroundFitFunctionsWithOD.put(FitFunctionTypeEnum.MEAN.getName(), fOfX_MEAN);
-//
-//            selectedFitFunctionType = FitFunctionTypeEnum.MEAN;
-//
-//            retVal = false;
-//        }
-//
-//        return retVal;
-//    }
+        backgroundFitFunctionsWithOD.put("MEAN", fOfX_MEAN);
+        backgroundFitFunctionsNoOD.put("MEAN", fOfX_MEAN);
+
+        selectedFitFunctionType = FitFunctionTypeEnum.MEAN;
+    }
+
+    private boolean generateMEANfitFunctionUsingLM() {
+
+        boolean retVal;
+
+        // algorithmForMEAN contains both the non OD and OD versions
+        AbstractFunctionOfX fOfX_MEAN;
+        AbstractFunctionOfX fOfX_MEAN_OD;
+
+        if (USING_FULL_PROPAGATION) {
+            LevenbergMarquardGeneralSolverWithCovS.AbstractOverDispersionLMAlgorithm algorithmForMEAN//
+                    = LevenbergMarquardGeneralSolverWithCovS.getInstance()//
+                    .getSelectedLMAlgorithm( //
+                            FitFunctionTypeEnum.MEAN,//
+                            backgroundVirtualCollector.getDataActiveMap(), //
+                            normalizedBackgroundAquireTimes,//
+                            backgroundVirtualCollector.getIntensities(), //
+                            matrixSibCovarianceBackgroundIntensities, false);
+
+            fOfX_MEAN = algorithmForMEAN.getInitialFofX();
+            fOfX_MEAN_OD = algorithmForMEAN.getFinalFofX();
+
+        } else {
+
+            LevenbergMarquardGeneralSolverWithVecV.AbstractOverDispersionLMVecAlgorithm algorithmForMEAN//
+                    = LevenbergMarquardGeneralSolverWithVecV.getInstance()//
+                    .getSelectedLMAlgorithm( //
+                            FitFunctionTypeEnum.MEAN,//
+                            backgroundVirtualCollector.getDataActiveMap(), //
+                            normalizedBackgroundAquireTimes,//
+                            backgroundVirtualCollector.getIntensities(), //
+                            vectorSviVarianceBackgroundIntensities, false);
+
+            fOfX_MEAN = algorithmForMEAN.getInitialFofX();
+            fOfX_MEAN_OD = algorithmForMEAN.getFinalFofX();
+
+        }
+
+        if ((fOfX_MEAN != null) && fOfX_MEAN.verifyPositiveVariances()) {
+            if (backgroundFitFunctionsNoOD.containsKey(fOfX_MEAN.getShortNameString())) {
+                AbstractFunctionOfX fOfXexist = backgroundFitFunctionsNoOD.get(fOfX_MEAN.getShortNameString());
+                fOfXexist.copyValuesFrom(fOfX_MEAN);
+            } else {
+                backgroundFitFunctionsNoOD.put(fOfX_MEAN.getShortNameString(), fOfX_MEAN);
+            }
+
+            if ((fOfX_MEAN_OD != null) && fOfX_MEAN_OD.verifyPositiveVariances()) {
+                if (backgroundFitFunctionsWithOD.containsKey(fOfX_MEAN_OD.getShortNameString())) {
+                    AbstractFunctionOfX fOfXexist = backgroundFitFunctionsWithOD.get(fOfX_MEAN_OD.getShortNameString());
+                    fOfXexist.copyValuesFrom(fOfX_MEAN_OD);
+                } else {
+                    backgroundFitFunctionsWithOD.put(fOfX_MEAN_OD.getShortNameString(), fOfX_MEAN_OD);
+                }
+            } else {
+                backgroundFitFunctionsWithOD.put(fOfX_MEAN.getShortNameString(), fOfX_MEAN);
+            }
+
+            retVal = true;
+
+        } else {
+            // to handle really bad data sets, for which LM wont work, do good old fashioned mean
+            System.out.println("LM would not fit mean , so using arithmetic mean fit");
+            fOfX_MEAN = MeanFitFunction.getInstance()//
+                    .getFunctionOfX(//
+                            backgroundVirtualCollector.getDataActiveMap(), //
+                            normalizedBackgroundAquireTimes,//
+                            backgroundVirtualCollector.getIntensities(), //
+                            new Matrix(//
+                                    new double[]{//
+                                        getForcedMeanForCommonLeadRatios(), //
+                                        getForcedMeanForCommonLeadRatios()}, 1), //
+                            false);
+
+            backgroundFitFunctionsNoOD.put(FitFunctionTypeEnum.MEAN.getName(), fOfX_MEAN);
+            backgroundFitFunctionsWithOD.put(FitFunctionTypeEnum.MEAN.getName(), fOfX_MEAN);
+
+            selectedFitFunctionType = FitFunctionTypeEnum.MEAN;
+
+            retVal = false;
+        }
+
+        return retVal;
+    }
 //
 //    private void generateLINEfitFunctionUsingLM() {
 //
@@ -769,7 +771,7 @@ public class RawIntensityDataModel //
     public void prepareDataForFitFunctions() {
 
         // nov 2012 calculate the SigmaI matrix for the background fit
-        // first calculate the full matrix, then take upper left quadrant (assuming same number of background and foreground readings)
+        // first calculate the full matrix, then take upper left quadrant
         if (USING_FULL_PROPAGATION) {
 
             matrixSiCovarianceIntensities = collectorModel.buildMatrixSi(diagonalOfMatrixSIntensities, allItensities);
@@ -814,6 +816,8 @@ public class RawIntensityDataModel //
             // do nothing
         } else if (selectedFitFunctionType.equals(FitFunctionTypeEnum.CONSTANT)) {
             generateCONSTANTfitFunction();
+        } else if (selectedFitFunctionType.equals(FitFunctionTypeEnum.MEAN)) {
+            generateMEANfitFunctionUsingLM();
         }
 
         // one last time to restore current choice

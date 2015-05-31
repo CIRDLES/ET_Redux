@@ -548,8 +548,8 @@
                 </Component>
                 <Component class="javax.swing.JSlider" name="yAxisZoomSlider">
                   <Properties>
-                    <Property name="maximum" type="int" value="1024"/>
-                    <Property name="minimum" type="int" value="32"/>
+                    <Property name="maximum" type="int" value="320"/>
+                    <Property name="minimum" type="int" value="64"/>
                     <Property name="orientation" type="int" value="1"/>
                     <Property name="value" type="int" value="128"/>
                   </Properties>
@@ -839,7 +839,7 @@
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                       <Font name="SansSerif" size="12" style="1"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="&lt;html&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Calculate  rhos and Pbc &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Corrected uncertainties&lt;/html&gt;"/>
+                    <Property name="text" type="java.lang.String" value="Update Report Table"/>
                     <Property name="actionCommand" type="java.lang.String" value=""/>
                     <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                       <Insets value="[0, 0, 0, 0]"/>
@@ -1045,7 +1045,7 @@
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="e4" green="e4" red="e6" type="rgb"/>
                 </Property>
-                <Property name="maximum" type="int" value="2048"/>
+                <Property name="maximum" type="int" value="640"/>
                 <Property name="minimum" type="int" value="4"/>
                 <Property name="value" type="int" value="128"/>
               </Properties>

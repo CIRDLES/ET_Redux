@@ -26,9 +26,9 @@ import javax.help.SwingHelpUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
-import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.user.ReduxPersistentState;
 import org.earthtime.UPb_Redux.utilities.JHelpAction;
+import org.earthtime.exceptions.ETWarningDialog;
 
 /**
  *
@@ -39,17 +39,15 @@ public class ETRedux {
     // TODO: Proofread defined value models
     private static ReduxPersistentState myState = null;
 
-    private static ReduxLabData myLabData = null;
-
     /**
      * Version 3.0.0 initiates switch to ET_Redux from U-Pb_Redux
      */
-    public static String VERSION = "3.0.4";
+    public static String VERSION = "3.1.0";
 
     /**
      *
      */
-    public static String RELEASE_DATE = "22 March 2015";
+    public static String RELEASE_DATE = "17 May 2015";
 
     /**
      * Creates a new instance of UPbRedux
@@ -60,9 +58,6 @@ public class ETRedux {
     {
         // get redux persistent state file
         myState = ReduxPersistentState.getExistingPersistentState();
-
-        // get redux labdata file
-        myLabData = ReduxLabData.getInstance();
 
         // set up apple menu bar
         String lcOSName = System.getProperty("os.name").toLowerCase();
@@ -82,8 +77,9 @@ public class ETRedux {
         ETReduxFrame theUPbReduxFrame = null;
 
         try {
-            theUPbReduxFrame = new ETReduxFrame(myState, myLabData, reduxFile);
+            theUPbReduxFrame = new ETReduxFrame(myState, reduxFile);
         } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
         ETReduxFrame.setDefaultLookAndFeelDecorated(true);
 
@@ -93,7 +89,7 @@ public class ETRedux {
             theUPbReduxFrame.setVisible(true);
         }
 
-            // installer etc ref
+        // installer etc ref
         // http://www.centerkey.com/mac/java/
     }
 

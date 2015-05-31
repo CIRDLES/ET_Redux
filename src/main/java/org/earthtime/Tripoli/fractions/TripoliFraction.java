@@ -116,6 +116,8 @@ public class TripoliFraction implements //
     private ValueModel sampleR238_235s;
     private RadDatesForPbCorrSynchEnum radDateForSKSynch;
 
+    private boolean currentlyFitted;
+
     public TripoliFraction( //
             String fractionID, //
             String commonLeadCorrectionHighestLevel, //
@@ -193,6 +195,8 @@ public class TripoliFraction implements //
         this.sampleR238_235s = new ValueModel("r238_235s");
 
         this.radDateForSKSynch = RadDatesForPbCorrSynchEnum.date206_238r;
+
+        this.currentlyFitted = false;
 
     }
 
@@ -284,27 +288,22 @@ public class TripoliFraction implements //
         }
     }
 
-//    /**
-//     *
-//     */
-//    public void updateInterceptFitFunctions() {
-//        Iterator ratiosIterator = getRatiosForFractionFitting().iterator();//        getValidRawRatioAlphas().iterator();
-//        while (ratiosIterator.hasNext()) {
-//            RawRatioDataModel rr = (RawRatioDataModel) ratiosIterator.next();
-//            rr.generateSetOfFitFunctions(true, false);
-//        }
-//    }
     /**
      *
      */
     public void updateInterceptFitFunctionsIncludingCommonLead() {
+
+        // may 2015 needed if user deselects illegal (negative ratios) data
+        reProcessToRejectNegativeRatios();
+
         Iterator ratiosIterator = getRatiosForFractionFitting().iterator();
+        System.out.println("Update Intercept Fit Functions Including Pbc for " + fractionID);
         while (ratiosIterator.hasNext()) {
             RawRatioDataModel rr = (RawRatioDataModel) ratiosIterator.next();
             rr.generateSetOfFitFunctions(true, false);
         }
 
-        // nov 2014
+        // nov 2014 this also sets currentlyFitted = true
         postProcessCommonLeadCorrectionRatios();
     }
 
@@ -537,17 +536,18 @@ public class TripoliFraction implements //
      *
      * @param included
      */
-    public void toggleAllData(boolean included) {
+    public void toggleAllDataExceptShaded(boolean included) {
         this.included = included;
         for (int i = 0; i < dataActiveMap.length; i++) {
             toggleOneDataAquisition(i, included);
         }
-        
+
         // jan 2015
         // force masking array
         if (included) {
             applyMaskingArray();
         }
+        currentlyFitted = false;
     }
 
     /**
@@ -670,34 +670,20 @@ public class TripoliFraction implements //
      * @return
      */
     public SortedSet<DataModelInterface> getRatiosForFractionFitting() {
-        SortedSet<DataModelInterface> ratiosForUnknownFitting = new TreeSet<>(new Comparator<DataModelInterface>() {
+        SortedSet<DataModelInterface> ratiosForFractionFitting = new TreeSet<>((DataModelInterface rrdm1, DataModelInterface rrdm2) -> {
+            RawRatioNames rmName = rrdm1.getRawRatioModelName();
+            RawRatioNames myName = rrdm2.getRawRatioModelName();
 
-            @Override
-            public int compare(DataModelInterface rrdm1, DataModelInterface rrdm2) {
-                RawRatioNames rmName = rrdm1.getRawRatioModelName();
-                RawRatioNames myName = rrdm2.getRawRatioModelName();
-
-                return rmName.compareTo(myName);
-            }
+            return rmName.compareTo(myName);
         });
 
         for (DataModelInterface rr : rawRatios) {
             if (((RawRatioDataModel) rr).isUsedForFractionationCorrections() || ((RawRatioDataModel) rr).isUsedForCommonLeadCorrections()) {
-                ratiosForUnknownFitting.add(rr);
+                ratiosForFractionFitting.add(rr);
             }
         }
 
-        return ratiosForUnknownFitting;
-
-//        SortedSet<DataModelInterface> validRawRatioAlphas = new TreeSet<>();
-//
-//        for (DataModelInterface rr : rawRatios) {
-//            if (((RawRatioDataModel) rr).isUsedForFractionationCorrections() || ((RawRatioDataModel) rr).isUsedForCommonLeadCorrections()) {
-//                validRawRatioAlphas.add(rr);
-//            }
-//        }
-//
-//        return validRawRatioAlphas;
+        return ratiosForFractionFitting;
     }
 
     /**
@@ -1498,8 +1484,20 @@ public class TripoliFraction implements //
         this.rawRatios = rawRatios;
     }
 
+    public void reProcessToRejectNegativeRatios() {
+        // may 2015 per Noah, turn off all negative values - neg in a ratio turns off all in that position for fraction
+        for (DataModelInterface rr : rawRatios) {
+            double[] ratios = ((RawRatioDataModel) rr).getRatios();
+            for (int i = 0; i < ratios.length; i++) {
+                if (ratios[i] < 0.0) {
+                    toggleOneDataAquisition(i, false);
+                }
+            }
+        }
+    }
+
     public void postProcessCommonLeadCorrectionRatios() {
-//        System.out.println("FIXING FRACTION " + fractionID);
+        System.out.println("Post process for Pbc on fraction  " + fractionID + "***************************************************\n");
         for (DataModelInterface rr : rawRatios) {
             boolean rejectedAPoint = false;
             // select only those with pb204 in denom
@@ -1519,6 +1517,7 @@ public class TripoliFraction implements //
 //                System.out.println("NONE");
             }
         }
+        currentlyFitted = true;
     }
 
     /**
@@ -1547,5 +1546,19 @@ public class TripoliFraction implements //
      */
     public void setRadDateForSKSynch(RadDatesForPbCorrSynchEnum radDateForSKSynch) {
         this.radDateForSKSynch = radDateForSKSynch;
+    }
+
+    /**
+     * @return the currentlyFitted
+     */
+    public boolean isCurrentlyFitted() {
+        return currentlyFitted;
+    }
+
+    /**
+     * @param currentlyFitted the currentlyFitted to set
+     */
+    public void setCurrentlyFitted(boolean currentlyFitted) {
+        this.currentlyFitted = currentlyFitted;
     }
 }
