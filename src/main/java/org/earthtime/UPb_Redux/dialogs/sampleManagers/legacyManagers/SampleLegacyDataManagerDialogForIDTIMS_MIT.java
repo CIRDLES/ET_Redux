@@ -20,8 +20,8 @@
 package org.earthtime.UPb_Redux.dialogs.sampleManagers.legacyManagers;
 
 import java.io.File;
-import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.UPb_Redux.samples.sampleImporters.SampleImporterFromIDTIMSLegacyCSVFile_MIT;
+import org.earthtime.samples.SampleInterface;
 
 /**
  *
@@ -39,7 +39,7 @@ public class SampleLegacyDataManagerDialogForIDTIMS_MIT extends AbstractSampleLe
     public SampleLegacyDataManagerDialogForIDTIMS_MIT (
             java.awt.Frame parent,
             boolean modal,
-            Sample sample,
+            SampleInterface sample,
             File importFractionFolderMRU ) {
 
         super( parent,

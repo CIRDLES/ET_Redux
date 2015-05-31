@@ -1380,29 +1380,6 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
         this.countOfDataModels = countOfDataModels;
     }
 
-    /**
-     *
-     * @param width
-     */
-    public void modifyYAxisWidth(int width) {
-
-//        int mywidthModifier = 200;// width nov 2014
-//        int deltaWidthOfYAxis = mywidthModifier - tripoliSessionRawDataViewYAxis.getWidth();
-//
-//        Rectangle yAxisBounds = tripoliSessionRawDataViewYAxis.getBounds();
-//        yAxisBounds.setSize( mywidthModifier, tripoliSessionRawDataViewYAxis.getHeight() );
-//        tripoliSessionRawDataViewYAxis.setBounds( yAxisBounds );
-//
-//        //  this.setBounds( getX() + deltaWidthOfYAxis, getY(), getWidth(), getHeight());
-//        tripoliSessionDataView_scrollPane.setBounds(//
-//                tripoliSessionDataView_scrollPane.getX() + deltaWidthOfYAxis, //
-//                tripoliSessionDataView_scrollPane.getY(), //
-//                tripoliSessionDataView_scrollPane.getWidth() - deltaWidthOfYAxis, //
-//                tripoliSessionDataView_scrollPane.getHeight() );
-//
-//        tripoliSessionDataView_scrollPane.validate();
-    }
-
     public void synchXAxisZoomSliderValue(int value) {
         // synchs slider to selected views value (session vs data)
         if (value != xAxisZoomSlider.getValue()) {

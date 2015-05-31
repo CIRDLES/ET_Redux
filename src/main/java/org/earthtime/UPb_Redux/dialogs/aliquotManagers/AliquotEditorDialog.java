@@ -70,8 +70,6 @@ import javax.xml.transform.TransformerException;
 import org.earthtime.ETReduxFrame;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.ReduxConstants.ANALYSIS_PURPOSE;
-import org.earthtime.UPb_Redux.aliquots.Aliquot;
-import org.earthtime.UPb_Redux.aliquots.AnalysisImage;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.dateInterpretation.DateProbabilityDensityPanel;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.ConcordiaGraphPanel;
@@ -89,11 +87,12 @@ import org.earthtime.UPb_Redux.renderers.EditFractionButton;
 import org.earthtime.UPb_Redux.reports.excelReports.CsvResultsTable;
 import org.earthtime.UPb_Redux.reports.reportViews.ReportAliquotFractionsView;
 import org.earthtime.UPb_Redux.reports.reportViews.TabbedReportViews;
-import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.UPb_Redux.utilities.Thumbnail;
 import org.earthtime.UPb_Redux.utilities.UPbReduxFocusTraversalPolicy;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
+import org.earthtime.aliquots.AliquotInterface;
+import org.earthtime.archivingTools.AnalysisImage;
 import org.earthtime.archivingTools.GeochronUploadImagesHelper;
 import org.earthtime.archivingTools.GeochronUploaderUtility;
 import org.earthtime.archivingTools.IEDACredentialsValidator;
@@ -113,6 +112,7 @@ import org.earthtime.ratioDataModels.initialPbModelsET.InitialPbModelET;
 import org.earthtime.ratioDataModels.initialPbModelsET.StaceyKramersInitialPbModelET;
 import org.earthtime.ratioDataModels.mineralStandardModels.MineralStandardUPbModel;
 import org.earthtime.ratioDataModels.tracers.TracerUPbModel;
+import org.earthtime.samples.SampleInterface;
 import org.earthtime.utilities.FileHelper;
 import org.earthtime.xmlUtilities.SimpleTransform;
 import org.jdesktop.layout.GroupLayout.ParallelGroup;
@@ -154,11 +154,11 @@ public class AliquotEditorDialog extends DialogEditor {
     /**
      *
      */
-    protected Aliquot myAliquot;
+    protected AliquotInterface myAliquot;
     /**
      *
      */
-    protected Sample sample;
+    protected SampleInterface sample;
     /**
      *
      */
@@ -535,8 +535,8 @@ public class AliquotEditorDialog extends DialogEditor {
     public AliquotEditorDialog(
             SampleDateInterpretationSubscribeInterface parent,
             boolean modal,
-            Sample sample,
-            Aliquot aliquot) {
+            SampleInterface sample,
+            AliquotInterface aliquot) {
         super((Frame) parent, modal);
         this.parent = parent;
 
@@ -551,12 +551,12 @@ public class AliquotEditorDialog extends DialogEditor {
 
         // set up arrow keys etc
         // nov 2010 modified to use left and right keys to edit values
-        Set<KeyStroke> forwardKeys = new HashSet<KeyStroke>();
+        Set<KeyStroke> forwardKeys = new HashSet<>();
         forwardKeys.add(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0));
 //        forwardKeys.add( KeyStroke.getKeyStroke( KeyEvent.VK_RIGHT, 0 ) );
         fastEdits_panel.setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, forwardKeys);
 
-        Set<KeyStroke> backwardKeys = new HashSet<KeyStroke>();
+        Set<KeyStroke> backwardKeys = new HashSet<>();
         backwardKeys.add(KeyStroke.getKeyStroke("shift TAB"));//    (KeyEvent.VK_SHIFT & KeyEvent.VK_TAB), 0));
 
 //        backwardKeys.add( KeyStroke.getKeyStroke( KeyEvent.VK_LEFT, 0 ) );
@@ -575,7 +575,7 @@ public class AliquotEditorDialog extends DialogEditor {
         this.setTitle("Aliquot Manager for:  " //
                 + sample.getSampleName()//
                 + "::"//
-                + ((UPbReduxAliquot) aliquot).getAliquotName()//
+                + aliquot.getAliquotName()//
                 + "  Purpose of Analysis is " + aliquot.getAnalysisPurpose());
 
         title_panel.setBackground(ReduxConstants.myAliquotGrayColor);
@@ -612,7 +612,7 @@ public class AliquotEditorDialog extends DialogEditor {
 
         mineralStandardsCheckBoxes = new ArrayList<JComponent>();
         int count = 0;
-        for (AbstractRatiosDataModel msm : sample.getMyReduxLabData().getMineralStandardModels()) {
+        for (AbstractRatiosDataModel msm : ReduxLabData.getInstance().getMineralStandardModels()) {
             if (!(msm.equals(MineralStandardUPbModel.getNoneInstance()))) {
                 count++;
                 JCheckBox msmCheckBox = new JCheckBox(msm.getReduxLabDataElementName());
@@ -1874,7 +1874,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
      *
      * @return
      */
-    public Sample getSample() {
+    public SampleInterface getSample() {
         return sample;
     }
 
@@ -1882,7 +1882,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
      *
      * @param sample
      */
-    public void setSample(Sample sample) {
+    public void setSample(SampleInterface sample) {
         this.sample = sample;
 
     }
@@ -1919,7 +1919,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
                 saveAliquot();
                 saveAliquotFraction(fraction);
                 saveFractionArchivingData(fraction);
-                getSample().editUPbFraction(getFraction(), 8);
+                parent.editFraction(getFraction(), 8);
                 updateFractionRow(
                         fraction, getMyAliquot().getAliquotFractions().indexOf(fraction));
             }
@@ -2178,9 +2178,9 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
 //                    Vector<String> fractionIDs = new Vector<String>();
 //
 //                    for (int f = 0;
-//                            f < getSample().getUPbFractions().size();
+//                            f < getSample().getFractions().size();
 //                            f++) {
-//                        fractionIDs.add(getSample().getUPbFractions().get(f).getFractionID());
+//                        fractionIDs.add(getSample().getFractions().get(f).getFractionID());
 //                    }
 //
 //                    // add pending new fractions
@@ -3743,7 +3743,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
      * @param aliquot
      * @param validUser
      */
-    protected void showArchiveNote(Aliquot aliquot, boolean validUser) {
+    protected void showArchiveNote(AliquotInterface aliquot, boolean validUser) {
         // determine if aliquot in GeochronID
         GeochronValidationResults validateAliquot = GeochronValidationResults.invalidUser;
 
@@ -3826,10 +3826,10 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
                 getMyAliquot().getKeyWordsCSV());
 
         for (JComponent cb : mineralStandardsCheckBoxes) {
-            if (getMyAliquot().getAMineralStandardModelByName(((JCheckBox) cb).getText()) != null) {
-                ((JCheckBox) cb).setSelected(true);
+            if (getMyAliquot().getAMineralStandardModelByName(((AbstractButton) cb).getText()) != null) {
+                ((AbstractButton) cb).setSelected(true);
             } else {
-                ((JCheckBox) cb).setSelected(false);
+                ((AbstractButton) cb).setSelected(false);
             }
         }
 
@@ -4316,7 +4316,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
             if (((JCheckBox) cb).isSelected()) {
                 try {
                     getMyAliquot().getMineralStandardModels().add(//
-                            getSample().getMyReduxLabData().getAMineralStandardModel(((JCheckBox) cb).getText()));
+                            ReduxLabData.getInstance().getAMineralStandardModel(((JCheckBox) cb).getText()));
                 } catch (BadLabDataException ex) {
                     new ETWarningDialog(ex).setVisible(true);
                 }
@@ -4337,13 +4337,13 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
         // handle added fractions
         for (int f = 0; f
                 < addedFractions.size(); f++) {
-            getSample().addUPbFraction((UPbFraction) addedFractions.get(f));
+            getSample().addFraction((UPbFraction) addedFractions.get(f));
             getMyAliquot().getAliquotFractions().add(addedFractions.get(f));
         }
 
         addedFractions.clear();
 
-        if (!sample.isTypeLegacy() && !sample.isAnalysisTypeLAICPMS()) {
+        if (!sample.isSampleTypeLegacy() && !sample.isAnalysisTypeLAICPMS()) {
             // master fields
             getMyAliquot().setDefaultIsZircon(masterZirconCaseCheckBox.isSelected());
             getMyAliquot().setDefaultTracerID((String) masterTracerChooser.getSelectedItem());
@@ -4398,9 +4398,9 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
 //        sample.setSampleIGSN( sampleIGSN_text.getText().trim() );
 //
         // nov 2011 per Doug Walker, need to be sure lab name is correct
-        myAliquot.setLaboratoryName(sample.getMyReduxLabData().getLabName());
+        myAliquot.setLaboratoryName(ReduxLabData.getInstance().getLabName());
 
-        sample.saveTheSampleAsSerializedReduxFile();
+        SampleInterface.saveSampleAsSerializedReduxFile(sample);
 
         System.out.println("**************** PRE-PUBLISH CHECKLIST FOR ALIQUOT");
 
@@ -4486,7 +4486,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
      *
      * @param myAliquot
      */
-    public void setMyAliquot(Aliquot myAliquot) {
+    public void setMyAliquot(AliquotInterface myAliquot) {
         this.myAliquot = myAliquot;
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -4739,7 +4739,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
                     concordiaGraphPanel.setShowExcludedEllipses(true);
                 }
 
-                concordiaGraphPanel.setSelectedFractions(sample.getUPbFractions());
+                concordiaGraphPanel.setSelectedFractions(sample.getFractions());
 
                 concordiaGraphPanel.setBounds(510, 0, 580, 405);
                 concordiaGraphPanel.setCurrentGraphAxesSetup(new GraphAxesSetup("C", 2));
@@ -4799,7 +4799,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
 
                 probabilityPanel.setSelectedHistogramBinCount(5);
 
-                if (sample.isTypeLegacy() & sample.getAnalysisPurpose().equals(ANALYSIS_PURPOSE.DetritalSpectrum)) {
+                if (sample.isSampleTypeLegacy() & sample.getAnalysisPurpose().equals(ANALYSIS_PURPOSE.DetritalSpectrum)) {
                     probabilityPanel.setChosenDateName(RadDates.bestAge.getName());
                 } else {
                     probabilityPanel.setChosenDateName(RadDates.age207_206r.getName());
@@ -4833,7 +4833,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
         if (reportSVGUpload_chkbox.isSelected()) {
             JTabbedPane tabbedReportViews = ((ETReduxFrame) parent).getReportTableTabbedPane();
 
-            String[][] reportFractions = sample.reportActiveAliquotFractionsByNumberStyle(myAliquot, false);
+            String[][] reportFractions = SampleInterface.reportActiveAliquotFractionsByNumberStyle(sample, myAliquot, false);
             ReportAliquotFractionsView.sortReportColumn(//
                     reportFractions, ((TabbedReportViews) ((ETReduxFrame) parent).getReportTableTabbedPane()).getActiveFractionsSortedColumn(), ((TabbedReportViews) ((ETReduxFrame) parent).getReportTableTabbedPane()).getActiveFractionsSortedColumnDirection());
 
@@ -4859,7 +4859,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
             File tempReportCSV = new File("UPLOADED_DATA_TABLE.csv");
             CsvResultsTable.setSampleName(sample.getSampleName());
 
-            String[][] reportFractions = sample.reportActiveAliquotFractionsByNumberStyle(myAliquot, true);
+            String[][] reportFractions = SampleInterface.reportActiveAliquotFractionsByNumberStyle(sample, myAliquot, true);
             ReportAliquotFractionsView.sortReportColumn(//
                     reportFractions, ((TabbedReportViews) ((ETReduxFrame) parent).getReportTableTabbedPane()).getActiveFractionsSortedColumn(), ((TabbedReportViews) ((ETReduxFrame) parent).getReportTableTabbedPane()).getActiveFractionsSortedColumnDirection());
 
@@ -5113,7 +5113,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
     }
 
     // refactor this stuff to reduce coupling
-    private GeochronValidationResults confirmAliquotArchivedInGeochron(Aliquot aliquot) {
+    private GeochronValidationResults confirmAliquotArchivedInGeochron(AliquotInterface aliquot) {
 
         String userName = ((ETReduxFrame) parent).getMyState().getReduxPreferences().getGeochronUserName();
         String password = ((ETReduxFrame) parent).getMyState().getReduxPreferences().getGeochronPassWord();

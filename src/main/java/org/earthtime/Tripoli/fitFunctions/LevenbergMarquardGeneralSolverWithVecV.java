@@ -157,22 +157,22 @@ public class LevenbergMarquardGeneralSolverWithVecV implements FitFunctionInterf
                 // for now dirty
                 System.out.println("FIT FAILED WITH SINGULAR MATRIX DURING h CALCULATIONS " + "\n");
                 FofX = null; // no fit = probably exp-fast
-                iterations = maxIterations;
-                return FofX;
+                // flags result
+                iterations = maxIterations + 1;
             }
 
             if (Double.isNaN(h.get(0, 0))) {
                 System.out.println("FIT FAILED WITH NANs in h " + "\n");
                 FofX = null; // no fit = probably exp-fast
-                iterations = maxIterations;
-                return FofX;
+                // flags result
+                iterations = maxIterations + 1;
             }
 
             double[] savePod = overDispersionLMAlgorithm.getPod().clone();
 
             double[] newPod = savePod.clone();
             for (int i = 0; i < newPod.length; i++) {
-                newPod[i] = newPod[i] + h.get(i, 0);
+                newPod[i] += h.get(i, 0);
             }
 
             overDispersionLMAlgorithm.setPod(newPod);
@@ -185,9 +185,9 @@ public class LevenbergMarquardGeneralSolverWithVecV implements FitFunctionInterf
 
             double LNew = overDispersionLMAlgorithm.calcL(rNew, VodNew);
 
-            if (LNew > L) {
+            if ((LNew > L) && Math.abs(1.0 - LNew / L) >= chiTolerance) {
                 // things got worse, so try again
-                lambda = lambda * 10.0;
+                lambda *= 10.0;
                 overDispersionLMAlgorithm.setPod(savePod);
             } else {
                 // things got better
@@ -211,21 +211,19 @@ public class LevenbergMarquardGeneralSolverWithVecV implements FitFunctionInterf
                             sumRnewSqDivVodNew += rNew.get(i, 0) / rNew.get(i, 0) / VodNew.get(i, 0);
                         }
                         FofX.setMSWD(sumRnewSqDivVodNew//
-                                / (double) (countOfActiveData - overDispersionLMAlgorithm.getM()));
-                        // if solved use this definition of L for expMatNoOD
-///                        L = r.transpose().times( SodNew.solve( rNew ) ).get( 0, 0 ) + overDispersionLMAlgorithm.reduxMatrixLogDeterminant( SodNew );//            Math.log(MeasuredCovMatrixS.det());
+                                / (countOfActiveData - overDispersionLMAlgorithm.getM()));
                         // per Noah chat 30 may 2013
                         double sumRsqDivVod = 0.0;
                         double prodVod = 0.0;
 
                         for (int i = 0; i < r.getRowDimension(); i++) {
                             sumRsqDivVod += r.get(0, 0) * r.get(0, 0) / Vod.get(0, 0);
-                            prodVod = prodVod * Vod.get(0, 0);
+                            prodVod *= Vod.get(0, 0);
                         }
 
                         L = 0.5 * (sumRsqDivVod + Math.log(prodVod));
 
-                        FofX.setBIC(-2.0 * L + ((double) overDispersionLMAlgorithm.getM()) * Math.log(countOfActiveData));
+                        FofX.setBIC(-2.0 * L + overDispersionLMAlgorithm.getM() * Math.log(countOfActiveData));
                         FofX.setNegativeLogLikelihood(L);
                         FofX.setOverDispersionSelected(false);
                         // test for bad parameter covariances
@@ -266,7 +264,7 @@ public class LevenbergMarquardGeneralSolverWithVecV implements FitFunctionInterf
                         }
                     }
                     // let's get out of here
-                    iterations = maxIterations;
+                    iterations = maxIterations - 1;
                 } else {
                     // improved but not solved
                     lambda /= 10.0;
@@ -283,15 +281,10 @@ public class LevenbergMarquardGeneralSolverWithVecV implements FitFunctionInterf
         } // end of while
 
         if (FofX == null) {
-
-            if (FofX != null) {
-                System.out.println("********* FAILED TO FIT WITH OD USING " + FofX.getShortNameString() + "\n");
-            } else {
-                System.out.println("LM did not find a fit at code line 193" + "\n");
+            if (iterations == maxIterations) {
+                System.out.println("LM did not find a fit" + "\n");
             }
-
             FofX = overDispersionLMAlgorithm.getInitialFofX();
-
         }
 
         // part of section 7a

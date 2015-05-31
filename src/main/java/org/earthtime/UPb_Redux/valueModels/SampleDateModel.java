@@ -26,6 +26,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -44,7 +45,6 @@ import java.util.TreeSet;
 import java.util.Vector;
 import org.earthtime.Tripoli.dataModels.sessionModels.SessionCorrectedUnknownsSummary;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.aliquots.Aliquot;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.YorkLineFit;
 import org.earthtime.UPb_Redux.fractions.Fraction;
@@ -53,12 +53,12 @@ import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.ReductionHandler;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.UPbFractionReducer;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
-import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.UPb_Redux.utilities.comparators.IntuitiveStringComparator;
 import org.earthtime.UPb_Redux.valueModels.definedValueModels.Age206_238r;
 import org.earthtime.UPb_Redux.valueModels.definedValueModels.Age207_206r;
 import org.earthtime.UPb_Redux.valueModels.definedValueModels.Age207_235r;
 import org.earthtime.UPb_Redux.valueModels.definedValueModels.Age208_232r;
+import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.dataDictionaries.Lambdas;
 import org.earthtime.dataDictionaries.RadDates;
@@ -71,6 +71,7 @@ import org.earthtime.matrices.matrixModels.AbstractMatrixModel;
 import org.earthtime.matrices.matrixModels.CovarianceMatrixModel;
 import org.earthtime.matrices.matrixModels.JacobianMatrixModel;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
+import org.earthtime.samples.SampleInterface;
 
 /**
  * A
@@ -148,9 +149,9 @@ public class SampleDateModel extends ValueModel implements
     private boolean displayedAsGraph;
     // transient fields
     // sample is used in compilation mode
-    private Sample sample;
+    private SampleInterface sample;
     // aliquot is used in analysis mode
-    private Aliquot aliquot;
+    private AliquotInterface aliquot;
     private transient YorkLineFit yorkLineFit = null;
     // feb 2013
     // allows to differentiate among types so LAICPMS can use log-based analysis until we fully transition
@@ -745,27 +746,32 @@ public class SampleDateModel extends ValueModel implements
      */
     public void CalculateDateInterpretationForAliquot() {
         // http://java.sun.com/developer/technicalArticles/ALT/Reflection/index.html
-        // create vector of fractions based on sample date model fraction list
-        Vector<Fraction> includedFractions = new Vector<Fraction>();
-        for (String fID : getIncludedFractionIDsVector()) {
-            includedFractions.add(((UPbReduxAliquot) aliquot).getAliquotFractionByName(fID));
-        }
 
-        // special case to detect upper/lower intercept
-        if (getMethodName().equalsIgnoreCase("UpperIntercept")) {
-            UpperIntercept(includedFractions, //
-                    //
-                    aliquot.getSampleDateModelByName("lower intercept"));
-        } else {
-            try {
-                Method meth
-                        = this.getClass().getMethod(//
-                                getMethodName(),
-                                new Class[]{Vector.class});
-                meth.invoke(this, new Object[]{includedFractions});
-            } catch (Throwable e) {
-                System.err.println(e);
+        // check to make sure there are fractions with positive dates
+        if (includedFractionIDsVector.size() > 0) {
+            // create vector of fractions based on sample date model fraction list
+            Vector<Fraction> includedFractions = new Vector<>();
+            for (String fID : includedFractionIDsVector) {
+                includedFractions.add(((UPbReduxAliquot) aliquot).getAliquotFractionByName(fID));
             }
+
+            // special case to detect upper/lower intercept
+            if (getMethodName().equalsIgnoreCase("UpperIntercept")) {
+                UpperIntercept(includedFractions, //
+                        aliquot.getASampleDateModelByName("lower intercept"));
+            } else {
+                try {
+                    Method meth
+                            = this.getClass().getMethod(//
+                                    getMethodName(),
+                                    new Class[]{Vector.class});
+                    meth.invoke(this, new Object[]{includedFractions});
+                } catch (Throwable e) {
+                    System.err.println(e + " For: " + getMethodName() + "  in CalculateDateInterpretationForAliquot");
+                }
+            }
+        } else {
+           // new ETWarningDialog("No positive dates found.").setVisible(true);
         }
     }
 
@@ -774,26 +780,32 @@ public class SampleDateModel extends ValueModel implements
      */
     public void CalculateDateInterpretationForSample() {
         // http://java.sun.com/developer/technicalArticles/ALT/Reflection/index.html
-        // create vector of fractions based on sample date model fraction list
-        Vector<Fraction> includedFractions = new Vector<Fraction>();
-        for (String fID : getIncludedFractionIDsVector()) {
-            includedFractions.add(sample.getSampleFractionByName(fID));
-        }
 
-        // special case to detect upper/lower intercept
-        if (getMethodName().equalsIgnoreCase("UpperIntercept")) {
-            UpperIntercept(includedFractions, //
-                    sample.getSampleDateModelByName("lower intercept"));
-        } else {
-            try {
-                Method meth
-                        = this.getClass().getMethod(//
-                                getMethodName(),
-                                new Class[]{Vector.class});
-                meth.invoke(this, new Object[]{includedFractions});
-            } catch (Throwable e) {
-                System.err.println(e);
+        // check to make sure there are fractions with positive dates
+        if (includedFractionIDsVector.size() > 0) {
+            // create vector of fractions based on sample date model fraction list
+            Vector<Fraction> includedFractions = new Vector<>();
+            for (String fID : includedFractionIDsVector) {
+                includedFractions.add(sample.getSampleFractionByName(fID));
             }
+
+            // special case to detect upper/lower intercept
+            if (getMethodName().equalsIgnoreCase("UpperIntercept")) {
+                UpperIntercept(includedFractions, //
+                        sample.getSampleDateModelByName("lower intercept"));
+            } else {
+                try {
+                    Method meth
+                            = this.getClass().getMethod(//
+                                    getMethodName(),
+                                    new Class[]{Vector.class});
+                    meth.invoke(this, new Object[]{includedFractions});
+                } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+                    System.err.println(e + " For: " + getMethodName() + "  in CalculateDateInterpretationForSample");
+                }
+            }
+        }else {
+           // new ETWarningDialog("No positive dates found.").setVisible(true);   
         }
     }
 
@@ -2154,7 +2166,7 @@ public class SampleDateModel extends ValueModel implements
 
             setValue(meanDate.getValue());
             setOneSigma(meanDate.getOneSigmaAbs());
-            
+
         }
     }
 
@@ -2831,7 +2843,7 @@ public class SampleDateModel extends ValueModel implements
      *
      * @return
      */
-    public Aliquot getAliquot() {
+    public AliquotInterface getAliquot() {
         return aliquot;
     }
 
@@ -2839,7 +2851,7 @@ public class SampleDateModel extends ValueModel implements
      *
      * @param aliquot
      */
-    public void setAliquot(Aliquot aliquot) {
+    public void setAliquot(AliquotInterface aliquot) {
         this.aliquot = aliquot;
     }
 
@@ -2881,14 +2893,14 @@ public class SampleDateModel extends ValueModel implements
     /**
      * @return the sample
      */
-    public Sample getSample() {
+    public SampleInterface getSample() {
         return sample;
     }
 
     /**
      * @param sample the sample to set
      */
-    public void setSample(Sample sample) {
+    public void setSample(SampleInterface sample) {
         this.sample = sample;
     }
 

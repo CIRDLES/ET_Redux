@@ -25,12 +25,12 @@ import java.awt.Graphics;
 import javax.swing.JCheckBox;
 import javax.swing.JDesktopPane;
 import javax.swing.JLabel;
-import org.earthtime.UPb_Redux.aliquots.Aliquot;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.fractions.Fraction;
-import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
+import org.earthtime.aliquots.AliquotInterface;
+import org.earthtime.samples.SampleInterface;
 
 /**
  *
@@ -39,7 +39,7 @@ import org.earthtime.UPb_Redux.valueModels.ValueModel;
 public class IncludedFractionsDesktopPane extends JDesktopPane {
 
     // instance variables
-    private Sample sample;
+    private SampleInterface sample;
 
     /** Creates a new instance of IncludedFractionsDesktopPane */
     public IncludedFractionsDesktopPane() {
@@ -72,7 +72,7 @@ public class IncludedFractionsDesktopPane extends JDesktopPane {
      * @param sample
      * @param width
      */
-    public void ClearAndShowSample(Sample sample, int width) {
+    public void ClearAndShowSample(SampleInterface sample, int width) {
         this.removeAll();
 
         this.sample = sample;
@@ -86,7 +86,7 @@ public class IncludedFractionsDesktopPane extends JDesktopPane {
      * @param aliquot
      * @param width
      */
-    public void ClearAndShowAliquot(Aliquot aliquot, int width) {
+    public void ClearAndShowAliquot(AliquotInterface aliquot, int width) {
         this.removeAll();
 
         ShowTitle();
@@ -101,7 +101,7 @@ public class IncludedFractionsDesktopPane extends JDesktopPane {
      * @param width
      */
     public void ClearAndShowSampleDate(
-            Aliquot aliquot,
+            AliquotInterface aliquot,
             ValueModel sampleDateInterpretation,
             int width) {
 
@@ -117,14 +117,14 @@ public class IncludedFractionsDesktopPane extends JDesktopPane {
 
     private void ShowSample(int width) {
         int offset = 0;
-        for (Aliquot aliquot : sample.getAliquots()) {
+        for (AliquotInterface aliquot : sample.getAliquots()) {
             ShowAliquotDateModels(aliquot, width, offset);
             offset += 2 + ((UPbReduxAliquot) aliquot).getAliquotFractions().size();
         }
     }
 
     private void ShowAliquotDateModels(
-            Aliquot aliquot,
+            AliquotInterface aliquot,
             int width,
             int offset) {
 
@@ -147,7 +147,7 @@ public class IncludedFractionsDesktopPane extends JDesktopPane {
     }
 
     private void ShowIncludedFractionCheckBox(
-            Aliquot aliquot,
+            AliquotInterface aliquot,
             ValueModel sampleDateModel,
             int width,
             int offset) {

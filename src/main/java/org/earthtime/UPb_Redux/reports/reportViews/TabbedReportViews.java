@@ -25,8 +25,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.earthtime.ETReduxFrame;
 import org.earthtime.UPb_Redux.reports.ReportSettings;
-import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.exceptions.ETException;
+import org.earthtime.samples.SampleInterface;
 
 /**
  *
@@ -34,7 +34,7 @@ import org.earthtime.exceptions.ETException;
  */
 public class TabbedReportViews extends JTabbedPane {
 
-    private Sample sample;
+    private SampleInterface sample;
     private JLayeredPane viewTabulatedAliquotActiveFractions;
     private JLayeredPane viewTabulatedAliquotRejectedFractions;
     private ETReduxFrame parentFrame;
@@ -53,7 +53,7 @@ public class TabbedReportViews extends JTabbedPane {
      * @param parentFrame
      * @param sample
      */
-    public TabbedReportViews(ETReduxFrame parentFrame, Sample sample) {
+    public TabbedReportViews(ETReduxFrame parentFrame, SampleInterface sample) {
         this(parentFrame);
 
         this.sample = sample;
@@ -97,14 +97,11 @@ public class TabbedReportViews extends JTabbedPane {
     public void prepareTabs() {
 
         // default is active fractions
-////        setSelectedIndex(0);
 
         if (sample != null) {
             ((ReportAliquotFractionsView) viewTabulatedAliquotActiveFractions).setSample(sample);
-//            ((ReportAliquotFractionsView) viewTabulatedAliquotActiveFractions).preparePanel();
 
             ((ReportAliquotFractionsView) viewTabulatedAliquotRejectedFractions).setSample(sample);
-//            ((ReportAliquotFractionsView) viewTabulatedAliquotRejectedFractions).preparePanel();
 
             refreshTabs();
 
@@ -128,7 +125,7 @@ public class TabbedReportViews extends JTabbedPane {
     /**
      * @param sample the sample to set
      */
-    public void setSample(Sample sample) {
+    public void setSample(SampleInterface sample) {
         this.sample = sample;
     }
 

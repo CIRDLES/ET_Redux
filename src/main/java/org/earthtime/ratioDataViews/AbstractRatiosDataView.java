@@ -439,7 +439,6 @@ public abstract class AbstractRatiosDataView extends JLayeredPane implements Dat
                 400, 400, //
                 (int) parentDimension.getWidth(),
                 (int) parentDimension.getHeight());
-        modelDialog.setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
 
         modelDialog.add(this);
         modelDialog.setVisible(true);
@@ -485,6 +484,7 @@ public abstract class AbstractRatiosDataView extends JLayeredPane implements Dat
     /**
      *
      */
+    @Override
     public void dataEntryDetected() {
         try {
             saveAndUpdateModelView(false);

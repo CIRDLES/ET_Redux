@@ -38,7 +38,7 @@ import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.dialogs.fractionManagers.FractionNotesDialog;
 import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.renderers.EditFractionButton;
-import org.earthtime.UPb_Redux.samples.Sample;
+import org.earthtime.samples.SampleInterface;
 
 /**
  *
@@ -51,7 +51,7 @@ public class UPbFractionTableModel extends AbstractTableModel {
 
     private ArrayList<Object[]> data = new ArrayList<Object[]>();
 
-    private Sample sample;
+    private SampleInterface sample;
 
     private ETReduxFrame parentFrame;
 
@@ -68,7 +68,7 @@ public class UPbFractionTableModel extends AbstractTableModel {
      * @param myFrame
      * @param mySample  
      */
-    public UPbFractionTableModel(ETReduxFrame myFrame, Sample mySample) {
+    public UPbFractionTableModel(ETReduxFrame myFrame, SampleInterface mySample) {
         super();
         this.sample = mySample;
         this.parentFrame = myFrame;
@@ -230,12 +230,12 @@ public class UPbFractionTableModel extends AbstractTableModel {
 
     private Vector<Fraction> getFractionsSorted() {
         // here we sort the fractions so that they appear in alphabetical order by aliquot
-        Vector<Fraction> temp = sample.getUPbFractions();
+        Vector<Fraction> temp = sample.getFractions();
         Collections.sort(temp);
         return temp;
     }
 
-    private Sample getSample() {
+    private SampleInterface getSample() {
         return sample;
     }
 
@@ -243,7 +243,7 @@ public class UPbFractionTableModel extends AbstractTableModel {
      * 
      * @param sample
      */
-    public void setSample(Sample sample) {
+    public void setSample(SampleInterface sample) {
         this.sample = sample;
     }
 
@@ -287,10 +287,9 @@ public class UPbFractionTableModel extends AbstractTableModel {
         public void actionPerformed(ActionEvent e) {
             if ((e != null)) {
                 // here we edit the fraction and refresh the table
-                getSample().editUPbFraction(fraction, 8);// kwikitab
-                getParentFrame().updateReportTable(false);
+                parentFrame.editFraction(fraction, 8);// kwikitab
+                parentFrame.updateReportTable(false);
             }
-//            getParentFrame().rebuildFractionDisplays(false);
         }
     }
 
@@ -331,9 +330,9 @@ public class UPbFractionTableModel extends AbstractTableModel {
         public void actionPerformed(ActionEvent e) {
             if ((e != null) && (e.getSource() == this)) {
                 // here we edit the aliquot and refresh the table
-                getSample().editAliquotByNumber(getAliquotNum());
+                parentFrame.editAliquotByNumber(getAliquotNum());
             }
-            getParentFrame().rebuildFractionDisplays(true);//changed to true may 2012false);
+            parentFrame.rebuildFractionDisplays(true);//changed to true may 2012false);
         }
 
         public int getMyRow() {
@@ -385,7 +384,7 @@ public class UPbFractionTableModel extends AbstractTableModel {
         public void actionPerformed(ActionEvent e) {
             if ((e != null) && (e.getSource() == this)) {
                 // here we toggle fraction selection (via isRejected) and refresh table
-                ((UPbFractionI) getSample().getUPbFractions().get(myRow)).//
+                ((UPbFractionI) getSample().getFractions().get(myRow)).//
                         setRejected((Boolean) !this.isSelected());
                 
                 getParentFrame().updateReportTable( false);//.rebuildFractionDisplays(false);

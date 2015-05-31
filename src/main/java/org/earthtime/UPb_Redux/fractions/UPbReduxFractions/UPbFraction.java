@@ -80,6 +80,7 @@ import org.earthtime.dataDictionaries.MeasuredRatios;
 import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.dataDictionaries.TracerUPbRatiosAndConcentrations;
 import org.earthtime.exceptions.ETException;
+import org.earthtime.fractions.FractionInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsModel;
 import org.earthtime.ratioDataModels.tracers.TracerUPbModel;
@@ -94,6 +95,7 @@ import org.earthtime.xmlUtilities.XMLSerializationI;
 public class UPbFraction extends Fraction implements
         FractionI,
         UPbFractionI,
+        FractionInterface,
         ReportRowGUIInterface,
         Serializable,
         XMLSerializationI {
@@ -103,7 +105,6 @@ public class UPbFraction extends Fraction implements
     // **********  serialization customization notes
     // http://www.mactech.com/articles/mactech/Vol.14/14.04/JavaSerialization/index.html
     // ****************
-//    private static transient Validator xmlValidator;
     private static transient String XMLSchemaURL;
 
     // Instance variables
@@ -125,10 +126,6 @@ public class UPbFraction extends Fraction implements
     private transient Path2D errorEllipsePath;
     private transient double ellipseRho;
     private transient boolean selectedInDataTable;
-    // march 2014 for isoplot 
-////    private transient org.cirdles.isoplot.chart.concordia.ErrorEllipse errorEllipseNode;
-    //private transient boolean hasMeasuredLead;
-    //private transient boolean hasMeasuredUranium;
     // these fields are read in from xml UPbRedux files from Tripoli, for example
     // any of U, Pb, or UPb can be read in; 
     private String ratioType;
@@ -163,18 +160,8 @@ public class UPbFraction extends Fraction implements
     private boolean deleted;
     private String sourceFilePb;
     private String sourceFileU;
-    // nov 2009 these will become placeholders for new fractionNotes, but kept for compatibility backwards
-//    private String notesPb;
-//    private String notesU;
     // added nov 2009 as part of live update workflow manager development
     private String fractionNotes;
-    //oct 2010 moved to fraction 
-//    // march 2009 added in these two fields to handle customization of stacey kramers
-//    // basically they live in the UPbRedux fraction as inputs for StaceyKramer math set in  the
-//    // Aliquot fast fraction editor - but not saved in Aliquot for publication
-//    // as Stacey Kramers model will serialize with its current values when published
-//    private BigDecimal staceyKramersOnePctUnct;
-//    private BigDecimal staceyKramersCorrelationCoeffs;
     // added march 2008 to store fraction selections in persistent state
     private boolean rejected;
     // added march 2009 to preserve outputs for kwiki page

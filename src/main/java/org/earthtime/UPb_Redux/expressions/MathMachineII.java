@@ -28,12 +28,13 @@ import java.text.NumberFormat;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-import org.earthtime.UPb_Redux.aliquots.Aliquot;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.filters.FractionXMLFileFilter;
 import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
+import org.earthtime.aliquots.AliquotInterface;
+import org.earthtime.fractions.FractionInterface;
 
 /**
  *
@@ -424,12 +425,12 @@ public final class MathMachineII {
             String rootDirectoryName,
             boolean creatNewMMLIndex,
             UPbFraction myFraction,
-            Aliquot aliquot) throws IOException {
+            AliquotInterface aliquot) throws IOException {
 
         //gets fractions from UPbFractionDialogue
         fractionsTemp.clear();
         for (Fraction f : ((UPbReduxAliquot) aliquot).getAliquotFractions()) {
-            if (!((UPbFraction) f).isRejected()) {
+            if (!((FractionInterface) f).isRejected()) {
                 fractionsTemp.add(f);
             }
         }

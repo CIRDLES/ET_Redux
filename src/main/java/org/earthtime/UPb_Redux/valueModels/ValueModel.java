@@ -54,10 +54,10 @@ import org.earthtime.UPb_Redux.expressions.ExpTreeII;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabDataListElementI;
 import org.earthtime.UPb_Redux.user.UPbReduxConfigurator;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
+import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.dataDictionaries.DataDictionary;
 import org.earthtime.dataDictionaries.RatioNamePrettyPrinter;
 import org.earthtime.exceptions.ETException;
-import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.xmlUtilities.XMLSerializationI;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -1024,69 +1024,10 @@ public class ValueModel implements
             outFile.close();
 
         } catch (IOException e) {
-//            e.printStackTrace();
         }
     }
 
-//    /**
-//     * decodes
-//     * <code>ValueModel</code> from
-//     * <code>file</code> specified by argument
-//     * <code>filename</code>
-//     *
-//     * @param filename location to read data from
-//     * @param doValidate the value of doValidate
-//     * @return
-//     * <code>Object</code> - the
-//     * <code>ValueModel</code> created from the specified XML
-//     * <code>file</code>
-//     * @throws java.io.FileNotFoundException
-//     * @throws org.earthtime.XMLExceptions.ETException
-//     * @throws org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException @pre
-//     * <code>filename</code> references an XML
-//     * <code>file</code> @post
-//     * <code>ValueModel</code> stored in
-//     * <code>filename</code> is returned
-//     */
-//    @Override
-//    public Object readXMLObject ( String filename, boolean doValidate )
-//            throws FileNotFoundException, ETException, FileNotFoundException, BadOrMissingXMLSchemaException {
-//        ValueModel myValueModel = null;
-//
-//        BufferedReader reader = URIHelper.getBufferedReader( filename );
-//
-//        if ( reader != null ) {
-//
-//            XStream xstream = getXStreamReader();
-//
-//            boolean isValidOrAirplaneMode = URIHelper.validateXML( reader, filename, getValueModelXMLSchemaURL() );
-//
-//            if ( isValidOrAirplaneMode ) {
-//                // re-create reader
-//                reader = URIHelper.getBufferedReader( filename );
-//                try {
-//                    myValueModel = (ValueModel) xstream.fromXML( reader );
-//                } catch (ConversionException e) {
-//                    throw new ETException( null, e.getMessage() );
-//                }
-//
-//                System.out.println( "\nThis is your ValueModel that was just read successfully:\n" );
-//
-//                String xml2 = getXStreamWriter().toXML( myValueModel );
-//
-//                System.out.println( xml2 );
-//                System.out.flush();
-//            } else {
-//                throw new ETException( null, "XML data file does not conform to schema." );
-//            }
-//        } else {
-//            throw new FileNotFoundException( "Missing XML data file." );
-//        }
-//
-//
-//
-//        return myValueModel;
-//    }
+    @Override
     public Object readXMLObject(String filename, boolean doValidate)
             throws FileNotFoundException, ETException, FileNotFoundException, BadOrMissingXMLSchemaException {
         ValueModel myValueModel = null;
@@ -1094,7 +1035,7 @@ public class ValueModel implements
         BufferedReader reader = URIHelper.getBufferedReader(filename);
 
         if (reader != null) {
-            boolean isValidOrAirplaneMode = !doValidate;
+            boolean isValidOrAirplaneMode;
 
             XStream xstream = getXStreamReader();
 

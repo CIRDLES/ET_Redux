@@ -27,27 +27,29 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Vector;
+import javax.swing.AbstractButton;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
-import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.ETReduxFrame;
-import org.earthtime.UPb_Redux.aliquots.Aliquot;
+import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
+import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.renderers.EditFractionButton;
-import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
+import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.dataDictionaries.MeasuredRatios;
 import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
+import org.earthtime.samples.SampleInterface;
 import org.earthtime.xmlUtilities.XMLSerializationI;
 import org.jdesktop.layout.GroupLayout.ParallelGroup;
 import org.jdesktop.layout.GroupLayout.SequentialGroup;
@@ -91,8 +93,8 @@ public class AliquotLegacyEditorForLAICPMS extends AliquotEditorDialog {
     public AliquotLegacyEditorForLAICPMS (
             ETReduxFrame parent,
             boolean modal,
-            Sample sample,
-            Aliquot aliquot ) {
+            SampleInterface sample,
+            AliquotInterface aliquot ) {
         super( parent, modal, sample, aliquot );
 
 
@@ -243,9 +245,9 @@ public class AliquotLegacyEditorForLAICPMS extends AliquotEditorDialog {
 //
 //                for (int f = 0;
 //                        f
-//                        < getSample().getUPbFractions().size();
+//                        < getSample().getFractions().size();
 //                        f ++) {
-//                    fractionIDs.add( getSample().getUPbFractions().get( f ).getFractionID() );
+//                    fractionIDs.add( getSample().getFractions().get( f ).getFractionID() );
 //                }
 //
 //                // add pending new fractions
@@ -897,7 +899,7 @@ public class AliquotLegacyEditorForLAICPMS extends AliquotEditorDialog {
             if ( proceed ) {
                 saveAliquot();
                 saveAliquotFraction( fraction );
-                getSample().editUPbFraction( fraction, 8 );
+                parent.editFraction( fraction, 8 );
                 updateFractionRow(
                         fraction,
                         getMyAliquot().getAliquotFractions().indexOf( fraction ) );
@@ -952,10 +954,10 @@ public class AliquotLegacyEditorForLAICPMS extends AliquotEditorDialog {
 
         getMyAliquot().getMineralStandardModels().clear();
         for (JComponent cb : mineralStandardsCheckBoxes) {
-            if ( ((JCheckBox) cb).isSelected() ) {
+            if ( ((AbstractButton) cb).isSelected() ) {
                 try {
                     getMyAliquot().getMineralStandardModels().add(//
-                            getSample().getMyReduxLabData().getAMineralStandardModel( ((JCheckBox) cb).getText() ) );
+                            ReduxLabData.getInstance().getAMineralStandardModel( ((JCheckBox) cb).getText() ) );
                 } catch (BadLabDataException ex) {
                     new ETWarningDialog(ex).setVisible(true);
                 }
@@ -976,7 +978,7 @@ public class AliquotLegacyEditorForLAICPMS extends AliquotEditorDialog {
         // handle added fractions
         for (int f = 0; f
                 < addedFractions.size(); f ++) {
-            getSample().addUPbFraction( (UPbFraction) addedFractions.get( f ) );
+            getSample().addFraction( (UPbFraction) addedFractions.get( f ) );
             getMyAliquot().getAliquotFractions().add( addedFractions.get( f ) );
         }
 
@@ -992,7 +994,7 @@ public class AliquotLegacyEditorForLAICPMS extends AliquotEditorDialog {
         // removed april 2011 as part of registry upgrade
 //        getMyAliquot().setSampleIGSN( sampleIGSN_text.getText().trim() );
 //        sample.setSampleIGSN( sampleIGSN_text.getText().trim() );
-        sample.saveTheSampleAsSerializedReduxFile();
+        SampleInterface.saveSampleAsSerializedReduxFile(sample);
 
         System.out.println( "**************** PRE-PUBLISH CHECKLIST FOR ALIQUOT" );
 

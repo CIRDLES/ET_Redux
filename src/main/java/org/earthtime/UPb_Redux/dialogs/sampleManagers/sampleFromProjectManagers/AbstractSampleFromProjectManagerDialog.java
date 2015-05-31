@@ -26,17 +26,18 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Vector;
 import org.earthtime.UPb_Redux.ReduxConstants.ANALYSIS_PURPOSE;
-import org.earthtime.UPb_Redux.aliquots.Aliquot;
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
-import org.earthtime.UPb_Redux.samples.Sample;
+import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
+import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.dataDictionaries.MineralTypes;
 import org.earthtime.dataDictionaries.SampleRegistries;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
+import org.earthtime.samples.SampleInterface;
 
 /**
  *
@@ -44,7 +45,7 @@ import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
  */
 public abstract class AbstractSampleFromProjectManagerDialog extends DialogEditor {
 
-    private Sample mySample = null;
+    private SampleInterface mySample = null;
     private boolean initialized = false;
     private boolean newSample = false;
 
@@ -56,7 +57,7 @@ public abstract class AbstractSampleFromProjectManagerDialog extends DialogEdito
      * @param sample  
      */
     public AbstractSampleFromProjectManagerDialog (
-            java.awt.Frame parent, boolean modal, String dataTypeTitle, Sample sample) {
+            java.awt.Frame parent, boolean modal, String dataTypeTitle, SampleInterface sample) {
         super( parent, modal );
 
         initComponents();
@@ -130,7 +131,7 @@ public abstract class AbstractSampleFromProjectManagerDialog extends DialogEdito
         sampleReduxFileName_label.setToolTipText( getMySample().getReduxSampleFilePath() );
 
         physicalConstantsModelChooser.removeAllItems();
-        ArrayList<AbstractRatiosDataModel> physicalConstantsModels = getMySample().getMyReduxLabData().getPhysicalConstantsModels();
+        ArrayList<AbstractRatiosDataModel> physicalConstantsModels = ReduxLabData.getInstance().getPhysicalConstantsModels();
         for (int i = (physicalConstantsModels.size() > 1 ? 1 : 0); i < physicalConstantsModels.size(); i ++) {
             physicalConstantsModelChooser.addItem( physicalConstantsModels.get( i ).getReduxLabDataElementName() );
         }
@@ -224,7 +225,7 @@ public abstract class AbstractSampleFromProjectManagerDialog extends DialogEdito
         if (  ! ((String) physicalConstantsModelChooser.getSelectedItem()).equalsIgnoreCase( currentPhysicalConstantsModelName ) ) {
             try {
                 getMySample().setPhysicalConstantsModel(
-                        getMySample().getMyReduxLabData().
+                        ReduxLabData.getInstance().
                         getAPhysicalConstantsModel( ((String) physicalConstantsModelChooser.getSelectedItem()) ) );
 
             } catch (BadLabDataException ex) {
@@ -233,13 +234,13 @@ public abstract class AbstractSampleFromProjectManagerDialog extends DialogEdito
         }
 
         if ( TWZeroRho_radioBut.isSelected() ) {
-            getMySample().setCalculateTWrhoForLegacyData( false );
+            mySample.setCalculateTWrhoForLegacyData( false );
         } else {
-            getMySample().setCalculateTWrhoForLegacyData( true );
+            mySample.setCalculateTWrhoForLegacyData( true );
         }
 
         // moved outside conditional oct 2010 and added MineralName, etc ;;June 2010 add physical constants model
-        for (Fraction f : getMySample().getUPbFractions()) {
+        for (Fraction f : getMySample().getFractions()) {
             try {
                 ((UPbFractionI) f).setPhysicalConstantsModel( getMySample().getPhysicalConstantsModel() );
 
@@ -267,8 +268,8 @@ public abstract class AbstractSampleFromProjectManagerDialog extends DialogEdito
         }
 
         // there should be only one aliquot
-        Vector<Aliquot> aliquots = mySample.getActiveAliquots();
-        for (Aliquot a : aliquots) {
+        Vector<AliquotInterface> aliquots = mySample.getActiveAliquots();
+        for (AliquotInterface a : aliquots) {
             a.setAnalysisPurpose( mySample.getAnalysisPurpose() );
         }
 
@@ -279,7 +280,7 @@ public abstract class AbstractSampleFromProjectManagerDialog extends DialogEdito
      * 
      * @return
      */
-    public Sample getMySample () {
+    public SampleInterface getMySample () {
         return mySample;
     }
 
@@ -287,7 +288,7 @@ public abstract class AbstractSampleFromProjectManagerDialog extends DialogEdito
      * 
      * @param mySample
      */
-    public void setMySample ( Sample mySample ) {
+    public void setMySample ( SampleInterface mySample ) {
         this.mySample = mySample;
     }
 

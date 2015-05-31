@@ -11,14 +11,14 @@ import org.earthtime.Tripoli.dataModels.inputParametersModels.AbstractAcquisitio
 import org.earthtime.Tripoli.rawDataFiles.handlers.AbstractRawDataFileHandler;
 import org.earthtime.Tripoli.sessions.TripoliSessionInterface;
 import org.earthtime.UPb_Redux.ReduxConstants.ANALYSIS_PURPOSE;
-import org.earthtime.UPb_Redux.samples.SampleI;
 import org.earthtime.exceptions.ETException;
+import org.earthtime.samples.SampleInterface;
 
 /**
  *
  * @author samuelbowring
  */
-public interface ProjectI {
+public interface ProjectInterface {
 
     /**
      * @return the locationOfProjectReduxFile
@@ -33,12 +33,12 @@ public interface ProjectI {
     /**
      * @return the projectSamples
      */
-    ArrayList<SampleI> getProjectSamples ();
+    ArrayList<SampleInterface> getProjectSamples ();
 
     /**
      * @return the compiledSuperSample
      */
-    SampleI getSuperSample ();
+    SampleInterface getSuperSample ();
 
     /**
      * @return the tripoliSession
@@ -80,12 +80,12 @@ public interface ProjectI {
     /**
      * @param projectSamples the projectSamples to set
      */
-    void setProjectSamples ( ArrayList<SampleI> projectSamples );
+    void setProjectSamples ( ArrayList<SampleInterface> projectSamples );
 
     /**
      * @param compiledSuperSample the compiledSuperSample to set
      */
-    void setSuperSample ( SampleI superSample );
+    void setSuperSample ( SampleInterface superSample );
 
     /**
      * @param tripoliSession the tripoliSession to set
@@ -132,5 +132,5 @@ public interface ProjectI {
      */
     public Path exportProjectSamples()throws ETException;
     
-    public SampleI getCompiledSuperSample();
+    public SampleInterface getCompiledSuperSample();
 }

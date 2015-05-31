@@ -38,19 +38,18 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.aliquots.Aliquot;
 import org.earthtime.UPb_Redux.dateInterpretation.DateProbabilityDensityPanel;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.ConcordiaGraphPanel;
 import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetup;
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
-import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.samples.Sample;
-import org.earthtime.UPb_Redux.samples.SampleI;
+import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.archivingTools.forSESAR.SesarSample;
 import org.earthtime.archivingTools.forSESAR.SesarSampleManager;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.dataDictionaries.RadDates;
-import org.earthtime.projects.ProjectI;
+import org.earthtime.projects.ProjectInterface;
+import org.earthtime.samples.SampleInterface;
 
 /**
  *
@@ -58,8 +57,8 @@ import org.earthtime.projects.ProjectI;
  */
 public class GeochronAliquotManager extends JPanel {
 
-    private ProjectI project;
-    private SampleI sample;
+    private ProjectInterface project;
+    private SampleInterface sample;
     private final String userName;
     private final String password;
     private String userCode;
@@ -79,7 +78,7 @@ public class GeochronAliquotManager extends JPanel {
     private JLabel checkMarkForValidSampleIGSN;
     private JLabel xMarkForInValidSampleIGSN;
     // aliquot fields
-    private Vector<Aliquot> activeAliquots;
+    private Vector<AliquotInterface> activeAliquots;
     private JTextField[] aliquotName_TextFields;
     private JTextField[] aliquotIGSN_TextFields;
     private JLabel[] checkMarkForValidAliquotIGSNs;
@@ -95,7 +94,7 @@ public class GeochronAliquotManager extends JPanel {
     
     
 
-    public GeochronAliquotManager(ProjectI project, SampleI sample, String userName, String password, String userCode, int x, int y, int width, int height) {
+    public GeochronAliquotManager(ProjectInterface project, SampleInterface sample, String userName, String password, String userCode, int x, int y, int width, int height) {
         this.project = project;
         this.sample = sample;
         this.userName = userName;
@@ -260,7 +259,7 @@ public class GeochronAliquotManager extends JPanel {
 
         for (int i = 0; i < aliquotCount; i++) {
             System.out.println(sample.getSampleName() + "  >  " + activeAliquots.get(i).getAliquotName());
-            Aliquot aliquot = activeAliquots.get(i);
+            AliquotInterface aliquot = activeAliquots.get(i);
             String aliquotName = aliquot.getAliquotName();
             aliquotIGSNs[i] = aliquot.getAliquotIGSN();
             sesarAliquots[i] = new SesarSample(userCode, userName, password, true);
@@ -421,7 +420,8 @@ public class GeochronAliquotManager extends JPanel {
             aliquotUploadButtons[i].addActionListener((ActionEvent e) -> {
                 aliquot.setSampleIGSN("SSR." + sampleIGSN.trim());
                 GeochronUploaderUtility.uploadAliquotToGeochron(//
-                        (Sample) sample, aliquot, //
+                        sample, //
+                        aliquot, //
                         userName, //
                         password, //
                         true, true);
@@ -436,7 +436,7 @@ public class GeochronAliquotManager extends JPanel {
     private void saveSample() {
         sample.setSampleIGSN(sampleIGSN.trim().toUpperCase());
         // rename supersample aliquots with new sample name
-        Vector<Aliquot> aliquots = project.getCompiledSuperSample().getAliquots();
+        Vector<AliquotInterface> aliquots = project.getCompiledSuperSample().getAliquots();
         aliquots.stream().forEach((aliquot) -> {
             String aliquotName = aliquot.getAliquotName();
             String sName = sample.getSampleName().trim();
@@ -448,10 +448,10 @@ public class GeochronAliquotManager extends JPanel {
         sample.setSampleName(sampleNameText.getText().trim());
     }
 
-    private void saveAliquot(Aliquot myAliquot, String aliquotIGSN, JTextField aliquotName_TextField) {
+    private void saveAliquot(AliquotInterface myAliquot, String aliquotIGSN, JTextField aliquotName_TextField) {
         myAliquot.setAliquotIGSN(aliquotIGSN);
         // rename supersample aliquot also
-        Vector<Aliquot> aliquots = project.getCompiledSuperSample().getAliquots();
+        Vector<AliquotInterface> aliquots = project.getCompiledSuperSample().getAliquots();
         aliquots.stream().forEach((aliquot) -> {
             String aliquotName = aliquot.getAliquotName();
             String aName = myAliquot.getAliquotName().trim();
@@ -553,22 +553,14 @@ public class GeochronAliquotManager extends JPanel {
         }
     }
 
-        private void produceConcordiaGraph(SampleI sample) {
+        private void produceConcordiaGraph(SampleInterface sample) {
         // feb 2015 code copied and modified from aliquot manager for user interface prototyping
         // TODO: refactor both locations to smaple and make more robust
         // TODO: use create virtual file system
 
-//        try {
-//            FileSystem virtualFileSystem = Jimfs.newFileSystem(Configuration.unix());
-//            Path virtualPathToSVG = virtualFileSystem.getPath("", sample.getSampleName() + ".svg");
-//
-//        } catch (Exception e) {
-//            System.out.println("JIMFS Worked");
-//        }
         File tempConcordiaSVG = new File(sample.getSampleName() + "_tempConcordia.svg");
-        sample.setMyReduxLabData(ReduxLabData.getInstance());
 
-        ConcordiaGraphPanel concordiaGraphPanel = new ConcordiaGraphPanel((Sample)sample, null);
+        ConcordiaGraphPanel concordiaGraphPanel = new ConcordiaGraphPanel((SampleInterface)sample, null);
 
         sample.getSampleDateInterpretationGUISettings().//
                 setConcordiaOptions(concordiaGraphPanel.getConcordiaOptions());
@@ -584,7 +576,7 @@ public class GeochronAliquotManager extends JPanel {
             concordiaGraphPanel.setShowExcludedEllipses(true);
         }
 
-        concordiaGraphPanel.setSelectedFractions(sample.getUPbFractions());
+        concordiaGraphPanel.setSelectedFractions(sample.getFractions());
 
         concordiaGraphPanel.setBounds(510, 0, 580, 405);
         concordiaGraphPanel.setCurrentGraphAxesSetup(new GraphAxesSetup("C", 2));
@@ -623,7 +615,6 @@ public class GeochronAliquotManager extends JPanel {
 
     private void producePDFImage(Sample sample) {
         File tempProbabilitySVG = new File(sample.getSampleName() + "_tempProbabilityDensity.svg");
-        sample.setMyReduxLabData(ReduxLabData.getInstance());
 
         DateProbabilityDensityPanel probabilityPanel = new DateProbabilityDensityPanel(sample);
 
@@ -639,7 +630,7 @@ public class GeochronAliquotManager extends JPanel {
 
             probabilityPanel.setSelectedHistogramBinCount(5);
 
-            if (sample.isTypeLegacy() & sample.getAnalysisPurpose().equals(ReduxConstants.ANALYSIS_PURPOSE.DetritalSpectrum)) {
+            if (sample.isSampleTypeLegacy() & sample.getAnalysisPurpose().equals(ReduxConstants.ANALYSIS_PURPOSE.DetritalSpectrum)) {
                 probabilityPanel.setChosenDateName(RadDates.bestAge.getName());
             } else {
                 probabilityPanel.setChosenDateName(RadDates.age207_206r.getName());

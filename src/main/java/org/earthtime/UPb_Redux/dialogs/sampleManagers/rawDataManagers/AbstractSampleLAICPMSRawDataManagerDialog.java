@@ -28,7 +28,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Vector;
 import org.earthtime.UPb_Redux.ReduxConstants.ANALYSIS_PURPOSE;
-import org.earthtime.UPb_Redux.aliquots.Aliquot;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.exceptions.BadImportedCSVLegacyFileException;
@@ -36,13 +35,16 @@ import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLegacyFraction;
-import org.earthtime.UPb_Redux.samples.Sample;
+import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
+import org.earthtime.UPb_Redux.samples.UPbSampleInterface;
 import org.earthtime.UPb_Redux.samples.sampleImporters.AbstractSampleImporterFromLegacyCSVFile;
+import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.dataDictionaries.MineralTypes;
 import org.earthtime.dataDictionaries.SampleRegistries;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
+import org.earthtime.samples.SampleInterface;
 
 /**
  *
@@ -50,7 +52,7 @@ import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
  */
 public abstract class AbstractSampleLAICPMSRawDataManagerDialog extends DialogEditor {
 
-    private Sample mySample = null;
+    private SampleInterface mySample = null;
     private File importFractionFolderMRU;
     private boolean initialized = false;
     private boolean newSample = false;
@@ -69,7 +71,7 @@ public abstract class AbstractSampleLAICPMSRawDataManagerDialog extends DialogEd
             java.awt.Frame parent,
             boolean modal,
             String dataTypeTitle,
-            Sample sample,
+            SampleInterface sample,
             AbstractSampleImporterFromLegacyCSVFile converter,
             File importFractionFolderMRU ) {
         super( parent, modal );
@@ -82,7 +84,7 @@ public abstract class AbstractSampleLAICPMSRawDataManagerDialog extends DialogEd
 
         initSampleFields();
 
-        if ( sample.getUPbFractions().size() > 0 ) {
+        if ( sample.getFractions().size() > 0 ) {
             // we are in edit mode 
             fractionDestinationPanel_panel.setVisible( false );
             fractionSourcePanel_panel.setVisible( false );
@@ -164,7 +166,7 @@ public abstract class AbstractSampleLAICPMSRawDataManagerDialog extends DialogEd
         sampleReduxFileName_label.setToolTipText( getMySample().getReduxSampleFilePath() );
 
         physicalConstantsModelChooser.removeAllItems();
-        ArrayList<AbstractRatiosDataModel> physicalConstantsModels = getMySample().getMyReduxLabData().getPhysicalConstantsModels();
+        ArrayList<AbstractRatiosDataModel> physicalConstantsModels = ReduxLabData.getInstance().getPhysicalConstantsModels();
         for (int i = (physicalConstantsModels.size() > 1 ? 1 : 0); i < physicalConstantsModels.size(); i ++) {
             physicalConstantsModelChooser.addItem( physicalConstantsModels.get( i ).getNameAndVersion() );
         }
@@ -258,7 +260,7 @@ public abstract class AbstractSampleLAICPMSRawDataManagerDialog extends DialogEd
         if (  ! ((String) physicalConstantsModelChooser.getSelectedItem()).equalsIgnoreCase( currentPhysicalConstantsModelName ) ) {
             try {
                 getMySample().setPhysicalConstantsModel(
-                        getMySample().getMyReduxLabData().
+                        ReduxLabData.getInstance().
                         getAPhysicalConstantsModel( ((String) physicalConstantsModelChooser.getSelectedItem()) ) );
 
             } catch (BadLabDataException ex) {
@@ -267,8 +269,8 @@ public abstract class AbstractSampleLAICPMSRawDataManagerDialog extends DialogEd
         }
 
         // in legacy mode we only allow one aliquot
-        if ( getMySample().getUPbFractions().isEmpty() ) {
-            Aliquot myAliquot = getMySample().addNewAliquot( aliquotName_text.getText().trim() );
+        if ( getMySample().getFractions().isEmpty() ) {
+            AliquotInterface myAliquot = getMySample().addNewAliquot( aliquotName_text.getText().trim() );
             // May 2010 allows publication of legacy results
             ((UPbReduxAliquot) myAliquot).setCompiled( false );
             int myAliquotNumber = ((UPbReduxAliquot) myAliquot).getAliquotNumber();
@@ -276,7 +278,7 @@ public abstract class AbstractSampleLAICPMSRawDataManagerDialog extends DialogEd
             // test for manual mode or bulk import from CSV file
             if ( manualMode_radioBut.isSelected() ) {
                 try {
-                    getMySample().addDefaultUPbLegacyFractionToAliquot( myAliquotNumber );
+                    ((UPbSampleInterface)mySample).addDefaultUPbLegacyFractionToAliquot( myAliquotNumber );
                     setInitialized( true );
                     getMySample().setChanged( true );
                 } catch (BadLabDataException ex) {
@@ -286,7 +288,7 @@ public abstract class AbstractSampleLAICPMSRawDataManagerDialog extends DialogEd
                 // bulk mode
                 try {
                     converter.setMruFolder( importFractionFolderMRU );
-                    getMySample().addUPbFractionVector( converter.readInFractions(), myAliquotNumber );
+                    getMySample().addFractionsVector( converter.readInFractions(), myAliquotNumber );
                     myAliquot.setAliquotName( converter.getAliquotName() );
                     setInitialized( true );
                     getMySample().setChanged( true );
@@ -308,7 +310,7 @@ public abstract class AbstractSampleLAICPMSRawDataManagerDialog extends DialogEd
         }
 
         // moved outside conditional oct 2010 and added MineralName, etc ;;June 2010 add physical constants model
-        for (Fraction f : getMySample().getUPbFractions()) {
+        for (Fraction f : getMySample().getFractions()) {
             try {
                 ((UPbFractionI) f).setPhysicalConstantsModel( getMySample().getPhysicalConstantsModel() );
 
@@ -336,8 +338,8 @@ public abstract class AbstractSampleLAICPMSRawDataManagerDialog extends DialogEd
         }
 
         // there should be only one aliquot
-        Vector<Aliquot> aliquots = mySample.getActiveAliquots();
-        for (Aliquot a : aliquots) {
+        Vector<AliquotInterface> aliquots = mySample.getActiveAliquots();
+        for (AliquotInterface a : aliquots) {
             a.setAnalysisPurpose( mySample.getAnalysisPurpose() );
         }
 
@@ -348,7 +350,7 @@ public abstract class AbstractSampleLAICPMSRawDataManagerDialog extends DialogEd
      * 
      * @return
      */
-    public Sample getMySample () {
+    public SampleInterface getMySample () {
         return mySample;
     }
 
@@ -356,7 +358,7 @@ public abstract class AbstractSampleLAICPMSRawDataManagerDialog extends DialogEd
      * 
      * @param mySample
      */
-    public void setMySample ( Sample mySample ) {
+    public void setMySample ( SampleInterface mySample ) {
         this.mySample = mySample;
     }
 

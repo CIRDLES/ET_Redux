@@ -26,9 +26,9 @@ import Jama.Matrix;
  * @author James F. Bowring
  */
 public interface FitFunctionInterface {
-    
+
     /**
-     * 
+     *
      *
      * @param dataActiveMap
      * @param xValues
@@ -37,8 +37,18 @@ public interface FitFunctionInterface {
      * @param calculateHatMatrix
      * @return
      */
-    
-    AbstractFunctionOfX getFunctionOfX ( //
+    AbstractFunctionOfX getFunctionOfX( //
             boolean[] dataActiveMap, double[] xValues, double[] yValues, Matrix MeasuredCovMatrixS, boolean calculateHatMatrix);
-    
+
+    default double calculateMeanOfCovarianceMatrixDiagonal(Matrix matrix) {
+        // precondition: square matrix
+        double retVal = 0.0;
+
+        for (int i = 0; i < matrix.getColumnDimension(); i++) {
+            retVal += matrix.get(i, i);
+        }
+
+        return retVal / matrix.getColumnDimension();
+    }
+
 }

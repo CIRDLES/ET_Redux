@@ -71,7 +71,7 @@ import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.dataDictionaries.AcquisitionTypesEnum;
 import org.earthtime.isotopes.IsotopesEnum;
-import org.earthtime.projects.ProjectI;
+import org.earthtime.projects.ProjectInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataViews.AbstractRatiosDataView;
 import org.earthtime.ratioDataViews.MineralStandardUPbRatiosDataViewNotEditable;
@@ -85,7 +85,7 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
     /**
      *
      */
-    protected ProjectI project;
+    protected ProjectInterface project;
 
     /**
      *
@@ -208,7 +208,7 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
      * @param projectManager
      * @param uPbReduxFrame
      */
-    public LAICPMSProjectParametersManager(ProjectI project, ProjectManagerSubscribeInterface projectManager, ETReduxFrame uPbReduxFrame) {
+    public LAICPMSProjectParametersManager(ProjectInterface project, ProjectManagerSubscribeInterface projectManager, ETReduxFrame uPbReduxFrame) {
 
         this.project = project;
         this.massSpecSetup = null;

@@ -36,9 +36,8 @@ import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.dateInterpretation.DateProbabilityDensityPanel;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.GraphPanelModeChangeI;
 import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetup;
-import org.earthtime.UPb_Redux.samples.Sample;
-import org.earthtime.UPb_Redux.samples.SampleI;
 import org.earthtime.beans.ET_JButton;
+import org.earthtime.samples.SampleInterface;
 
 /**
  *
@@ -54,7 +53,7 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
     private JRadioButton date207_206_radioButton;
     private JRadioButton dateBest_radioButton;
     private ButtonGroup dateChooserButtonGroup;
-    private SampleI sample;
+    private SampleInterface sample;
 
     private final JLayeredPane pdfGraphPanel;
 
@@ -68,7 +67,7 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
      * @param sample the value of sample
      */
     public KwikiPDFToolBar(
-            int x, int y, JLayeredPane aPDFGraphPanel, PropertyChangeListener kwikiDateModesSelectorListener, SampleI sample) {
+            int x, int y, JLayeredPane aPDFGraphPanel, PropertyChangeListener kwikiDateModesSelectorListener, SampleInterface sample) {
 
         super();
 
@@ -131,13 +130,10 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
 
                     ((DateProbabilityDensityPanel) pdfGraphPanel).setChosenDateName(chosenDateName);
                     ((DateProbabilityDensityPanel) pdfGraphPanel).//
-                            setSelectedFractions( ((Sample)sample).getUpbFractionsUnknown());
+                            setSelectedFractions( sample.getUpbFractionsUnknown());
                     ((DateProbabilityDensityPanel) pdfGraphPanel).prepareAndPaintPanel();//.refreshPanel();
                 }
             });
-//            if (((DateProbabilityDensityPanel) probabilityPanel).getChosenDateName().replace("r", "").startsWith(jrb.getName().replace("r", ""))) {
-//                jrb.setSelected(true);
-//            }
         }
 
     }

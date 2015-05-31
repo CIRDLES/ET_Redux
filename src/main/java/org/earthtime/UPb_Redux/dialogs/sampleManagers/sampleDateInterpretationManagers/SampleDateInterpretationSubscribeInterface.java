@@ -18,6 +18,8 @@
  */
 package org.earthtime.UPb_Redux.dialogs.sampleManagers.sampleDateInterpretationManagers;
 
+import org.earthtime.UPb_Redux.fractions.Fraction;
+
 /**
  *
  * @author James F. Bowring
@@ -33,5 +35,22 @@ public interface SampleDateInterpretationSubscribeInterface {
      *
      */
     public void updateReportTable();
+    
+        /**
+     * opens a modal editor for the <code>Fraction</code> indicated by argument
+     * <code>fraction</code> and opened to the editing tab indicated by argument
+     * <code>selectedTab</code>. <code>selectedTab</code> is valid only if it
+     * contains a number between zero and seven inclusive.
+     *
+     * @pre     the <code>Fraction</code> corresponding to <code>fraction</code>
+     * exists in this <code>Sample</code> and <code>selectedTab</code>
+     * is a valid tab number
+     * @post    an editor for the specified <code>Fraction</code> is opened to
+     * the specified tab
+     * @param   fraction    the <code>Fraction</code> to be edited
+     * @param   selectedTab the tab to open the editor to
+     */
+    void editFraction(Fraction fraction, int selectedTab);
+
     
 }

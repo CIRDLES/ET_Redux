@@ -69,6 +69,15 @@
                 <Property name="text" type="java.lang.String" value="New Project from Legacy Data Table"/>
               </Properties>
               <SubComponents>
+                <MenuItem class="javax.swing.JMenuItem" name="dibbs_USeries">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="DIBBs U-Series Legacy Data Table from Single Source in .csv format"/>
+                    <Property name="enabled" type="boolean" value="false"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="dibbs_USeriesActionPerformed"/>
+                  </Events>
+                </MenuItem>
                 <MenuItem class="javax.swing.JMenuItem" name="genericUPbDataTableInCSV_menuItem">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Generic UPb Legacy Data Table in .csv format"/>
@@ -920,6 +929,7 @@
             </Property>
           </Properties>
           <Events>
+            <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="loadLastSample_buttonMouseEntered"/>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="loadLastSample_buttonActionPerformed"/>
           </Events>
           <AuxValues>
@@ -1170,6 +1180,7 @@
             </Property>
           </Properties>
           <Events>
+            <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="loadLastProject_buttonMouseEntered"/>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="loadLastProject_buttonActionPerformed"/>
           </Events>
           <AuxValues>

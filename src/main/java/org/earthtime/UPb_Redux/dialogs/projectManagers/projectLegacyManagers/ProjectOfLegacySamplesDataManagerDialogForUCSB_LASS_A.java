@@ -21,8 +21,8 @@ package org.earthtime.UPb_Redux.dialogs.projectManagers.projectLegacyManagers;
 
 import java.awt.Frame;
 import java.io.File;
-import org.earthtime.projects.ProjectI;
-import org.earthtime.projects.projectImporters.ProjectOfLegacySamplesImporterFromCSVFile_UCSB_LASS_A;
+import org.earthtime.projects.ProjectInterface;
+import org.earthtime.projects.projectImporters.UPbProjectImporters.ProjectOfLegacySamplesImporterFromCSVFile_UCSB_LASS_A;
 
 /**
  *
@@ -40,7 +40,7 @@ public class ProjectOfLegacySamplesDataManagerDialogForUCSB_LASS_A extends Abstr
     public ProjectOfLegacySamplesDataManagerDialogForUCSB_LASS_A (
             Frame parent,
             boolean modal,
-            ProjectI project,
+            ProjectInterface project,
             File importFractionFolderMRU ) {
 
         super( parent,

@@ -295,40 +295,26 @@ public interface UPbFractionI {
 
     /**
      *
-     * @param selectedInDataTable
-     */
-    abstract void setSelectedInDataTable(boolean selectedInDataTable);
-
-////    // march 2014 for Isoplot
-////    public org.cirdles.isoplot.chart.concordia.ErrorEllipse getErrorEllipseNode();
-////
-////    /**
-////     * @param errorEllipseNode the errorEllipseNode to set
-////     */
-////    public void setErrorEllipseNode(org.cirdles.isoplot.chart.concordia.ErrorEllipse errorEllipseNode);
-
-    /**
-     *
      * @return
      */
-        public boolean isStandard();
+    public boolean isStandard();
 
     /**
      *
      * @param standard
      */
     public void setStandard(boolean standard);
-    
+
     /**
      *
      */
     public void calculateTeraWasserburgRho();
-    
+
     public boolean isCommonLeadLossCorrected();
-    
-    public boolean hasXMLUSourceFile ();
-    
-    public boolean hasXMLPbSourceFile ();
-    
+
+    public boolean hasXMLUSourceFile();
+
+    public boolean hasXMLPbSourceFile();
+
     public boolean isAnOxide();
 }

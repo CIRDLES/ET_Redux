@@ -21,7 +21,7 @@ package org.earthtime.UPb_Redux.dialogs.projectManagers;
 import java.util.ArrayList;
 import org.earthtime.Tripoli.samples.AbstractTripoliSample;
 import org.earthtime.Tripoli.sessions.TripoliSessionInterface;
-import org.earthtime.projects.ProjectI;
+import org.earthtime.projects.ProjectInterface;
 
 /**
  *
@@ -45,7 +45,7 @@ public interface ProjectManagerSubscribeInterface {
      *
      * @return
      */
-    public ProjectI getProject();// needs to be tripoli's sample not project for commonLeadCorrectionHighestLevel
+    public ProjectInterface getProject();// needs to be tripoli's sample not project for commonLeadCorrectionHighestLevel
 
     /**
      *

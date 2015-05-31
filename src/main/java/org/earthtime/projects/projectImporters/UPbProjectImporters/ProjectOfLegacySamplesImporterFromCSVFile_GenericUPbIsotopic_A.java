@@ -15,7 +15,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.earthtime.projects.projectImporters;
+package org.earthtime.projects.projectImporters.UPbProjectImporters;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -27,23 +27,24 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Vector;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.aliquots.Aliquot;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLegacyFraction;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.samples.Sample;
-import org.earthtime.UPb_Redux.samples.SampleI;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UPb_Redux.valueModels.definedValueModels.PercentDiscordance;
+import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.dataDictionaries.SampleTypesEnum;
 import org.earthtime.dataDictionaries.TemplatesForCsvImport;
 import org.earthtime.exceptions.ETException;
-import org.earthtime.projects.ProjectI;
+import org.earthtime.projects.ProjectInterface;
+import org.earthtime.projects.projectImporters.AbstractProjectImporterFromLegacyCSVFile;
+import org.earthtime.samples.SampleInterface;
 
 /**
  *
@@ -60,13 +61,13 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_GenericUPbIsotopic_A exte
      */
     @Override
     @SuppressWarnings("ValueOfIncrementOrDecrementUsed")
-    protected ProjectI extractProjectFromCSVFile(ProjectI project, File file)
+    protected ProjectInterface extractProjectFromCSVFile(ProjectInterface project, File file)
             throws FileNotFoundException {
 
-        ArrayList<SampleI> projectSamples = new ArrayList<>();
+        ArrayList<SampleInterface> projectSamples = new ArrayList<>();
 
-        SampleI currentSample = null;
-        Aliquot currentAliquot = null;
+        SampleInterface currentSample = null;
+        AliquotInterface currentAliquot = null;
 
         boolean readingSamples = false;
         boolean readingFractions = false;
@@ -94,7 +95,7 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_GenericUPbIsotopic_A exte
                     // process existing if not first;
                     if ((currentSample != null) && (currentAliquot != null)) {
                         // this forces population of aliquot fractions
-                        ((Sample) project.getSuperSample()).importAliquotFromAnotherSample(((Sample) currentSample).getAliquotByName(currentAliquot.getAliquotName()));
+                        SampleInterface.copyAliquotIntoSample(currentSample.getAliquotByName(currentAliquot.getAliquotName()), project.getSuperSample());
                         currentSample = null;
                     }
                 }
@@ -115,15 +116,12 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_GenericUPbIsotopic_A exte
                         // process existing if not first;
                         if ((currentSample != null) && (currentAliquot != null)) {
                             // this forces population of aliquot fractions
-                            ((Sample) project.getSuperSample()).importAliquotFromAnotherSample(((Sample) currentSample).getAliquotByName(currentAliquot.getAliquotName()));
+                            SampleInterface.copyAliquotIntoSample(currentSample.getAliquotByName(currentAliquot.getAliquotName()), project.getSuperSample());
                             currentSample = null;
                         }
 
                         try {
                             currentSample = new Sample(//
-                                    //
-                                    //
-                                    //
                                     myFractionData.get(0), //
                                     SampleTypesEnum.LEGACY.getName(), //
                                     "GENERIC_UPb", //
@@ -132,7 +130,7 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_GenericUPbIsotopic_A exte
 
                             projectSamples.add(currentSample);
 
-                            currentAliquot = ((Sample) currentSample).addNewAliquot(myFractionData.get(0));
+                            currentAliquot = currentSample.addNewAliquot(myFractionData.get(0));
 
                             readingFractions = true;
 
@@ -147,9 +145,6 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_GenericUPbIsotopic_A exte
                 }
 
                 if (readingFractions) {
-                    // process fraction line
-//                    System.out.println( "Reading Fraction " + myFractionData.get( 0 ) );
-
                     Fraction myFraction = new UPbLegacyFraction("NONE");
 
                     ((UPbFractionI) myFraction).setRatioType("UPb");
@@ -269,7 +264,7 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_GenericUPbIsotopic_A exte
                             null);
 
                     myFraction.setSampleName(currentSample.getSampleName());
-                    currentSample.addUPbFraction(myFraction);
+                    currentSample.addFraction(myFraction);
 
                 }
 
@@ -278,7 +273,7 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_GenericUPbIsotopic_A exte
             // process existing if not first;
             if ((currentSample != null) && (currentAliquot != null)) {
                 // this forces population of aliquot fractions
-                ((Sample) project.getSuperSample()).importAliquotFromAnotherSample(currentSample.getAliquotByName(currentAliquot.getAliquotName()));
+                SampleInterface.copyAliquotIntoSample(currentSample.getAliquotByName(currentAliquot.getAliquotName()), project.getSuperSample());
                 // april 2014
                 project.setProjectSamples(projectSamples);
 
