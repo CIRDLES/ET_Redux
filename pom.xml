@@ -228,6 +228,8 @@
                         <include>**/*Test.java</include>
                         <include>**/*IT.java</include>
                     </includes>
+
+                    <argLine>-Djava.awt.headless=true</argLine>
                 </configuration>
             </plugin>
             <plugin>
