@@ -29,7 +29,7 @@ import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
-import org.earthtime.aliquots.AliquotI;
+import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.samples.SampleInterface;
 
 /**
@@ -86,7 +86,7 @@ public class IncludedFractionsDesktopPane extends JDesktopPane {
      * @param aliquot
      * @param width
      */
-    public void ClearAndShowAliquot(AliquotI aliquot, int width) {
+    public void ClearAndShowAliquot(AliquotInterface aliquot, int width) {
         this.removeAll();
 
         ShowTitle();
@@ -101,7 +101,7 @@ public class IncludedFractionsDesktopPane extends JDesktopPane {
      * @param width
      */
     public void ClearAndShowSampleDate(
-            AliquotI aliquot,
+            AliquotInterface aliquot,
             ValueModel sampleDateInterpretation,
             int width) {
 
@@ -117,14 +117,14 @@ public class IncludedFractionsDesktopPane extends JDesktopPane {
 
     private void ShowSample(int width) {
         int offset = 0;
-        for (AliquotI aliquot : sample.getAliquots()) {
+        for (AliquotInterface aliquot : sample.getAliquots()) {
             ShowAliquotDateModels(aliquot, width, offset);
             offset += 2 + ((UPbReduxAliquot) aliquot).getAliquotFractions().size();
         }
     }
 
     private void ShowAliquotDateModels(
-            AliquotI aliquot,
+            AliquotInterface aliquot,
             int width,
             int offset) {
 
@@ -147,7 +147,7 @@ public class IncludedFractionsDesktopPane extends JDesktopPane {
     }
 
     private void ShowIncludedFractionCheckBox(
-            AliquotI aliquot,
+            AliquotInterface aliquot,
             ValueModel sampleDateModel,
             int width,
             int offset) {

@@ -28,7 +28,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
-import org.earthtime.aliquots.AliquotI;
+import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.samples.SampleInterface;
 
 /**
@@ -83,7 +83,7 @@ public class DateInterpretationsDesktopPane extends JDesktopPane {
      * @param aliquot 
      * @param width 
      */
-    public void ClearAndShowAliquot(AliquotI aliquot, int width) {
+    public void ClearAndShowAliquot(AliquotInterface aliquot, int width) {
         this.removeAll();
         
         ShowTitle();
@@ -97,7 +97,7 @@ public class DateInterpretationsDesktopPane extends JDesktopPane {
      * @param width 
      */
     public void ClearAndShowSampleDate(
-            AliquotI aliquot,
+            AliquotInterface aliquot,
             ValueModel sampleDateInterpretation,
             int width) {
         
@@ -113,14 +113,14 @@ public class DateInterpretationsDesktopPane extends JDesktopPane {
 
     private void ShowSample(int width) {
         int offset = 0;
-        for (AliquotI aliquot : sample.getAliquots()) {
+        for (AliquotInterface aliquot : sample.getAliquots()) {
             ShowAliquotDateModels(aliquot, width, offset);
             offset += aliquot.getSampleDateModels().size();
         }
     }
 
     private void ShowAliquotDateModels(
-            AliquotI aliquot,
+            AliquotInterface aliquot,
             int width,
             int offset) {
         for (int i = 0; i < aliquot.getSampleDateModels().size(); i++) {
@@ -138,7 +138,7 @@ public class DateInterpretationsDesktopPane extends JDesktopPane {
     }
 
     private void ShowDateInterpretationPanel(
-            AliquotI aliquot,
+            AliquotInterface aliquot,
             ValueModel sampleDateModel,
             int width,
             int offset) {

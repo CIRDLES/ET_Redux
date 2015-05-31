@@ -33,7 +33,7 @@ import org.earthtime.UPb_Redux.reports.ReportSettings;
 import org.earthtime.UPb_Redux.samples.SESARSampleMetadata;
 import org.earthtime.UPb_Redux.user.SampleDateInterpretationGUIOptions;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
-import org.earthtime.aliquots.AliquotI;
+import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.dataDictionaries.SampleRegistries;
 import org.earthtime.dataDictionaries.SampleTypesEnum;
@@ -56,7 +56,7 @@ public class ProjectSample implements//
     private String sampleAnalysisType;
     private ANALYSIS_PURPOSE analysisPurpose;
     private boolean analyzed;
-    private Vector<AliquotI> aliquots;
+    private Vector<AliquotInterface> aliquots;
     private Vector<Fraction> fractions;
     private ReportSettings reportSettingsModel;
     private AbstractRatiosDataModel physicalConstantsModel;
@@ -317,12 +317,12 @@ public class ProjectSample implements//
     }
 
     @Override
-    public Vector<AliquotI> getAliquots() {
+    public Vector<AliquotInterface> getAliquots() {
         return aliquots;
     }
 
     @Override
-    public void setAliquots(Vector<AliquotI> aliquots) {
+    public void setAliquots(Vector<AliquotInterface> aliquots) {
         this.aliquots = aliquots;
     }
 

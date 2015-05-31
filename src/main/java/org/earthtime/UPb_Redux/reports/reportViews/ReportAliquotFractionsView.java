@@ -77,7 +77,7 @@ import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.reports.ReportRowGUIInterface;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.UPb_Redux.utilities.comparators.IntuitiveStringComparator;
-import org.earthtime.aliquots.AliquotI;
+import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.samples.SampleInterface;
@@ -886,7 +886,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
 
                                     // build map of row to fraction objects and aliquot objects
                                     if ((sample != null) && paintType.equalsIgnoreCase("FRACTION")) {
-                                        AliquotI aliquot = sample.getAliquotByName(getReportFractions()[row][1].trim());
+                                        AliquotInterface aliquot = sample.getAliquotByName(getReportFractions()[row][1].trim());
                                         verticalPixelFractionMap.add( //
                                                 new TableRowObject( //
                                                         drawnHeight + topMargin + lineHeight + 1,//
@@ -1087,12 +1087,12 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                         }
                     }
 
-                    if (fractionOrAliquot instanceof AliquotI) {
+                    if (fractionOrAliquot instanceof AliquotInterface) {
 
                         if (e.getModifiers() == InputEvent.BUTTON1_MASK) {
-                            parentFrame.editAliquot(((AliquotI) verticalPixelFractionMap.get(row).rowObject));
+                            parentFrame.editAliquot(((AliquotInterface) verticalPixelFractionMap.get(row).rowObject));
                         } else {
-                            AliquotI.toggleAliquotFractionsRejectedStatus(((UPbReduxAliquot) verticalPixelFractionMap.get(row).rowObject));
+                            AliquotInterface.toggleAliquotFractionsRejectedStatus(((UPbReduxAliquot) verticalPixelFractionMap.get(row).rowObject));
                             parent.updateReportTable(false);
                         }
 

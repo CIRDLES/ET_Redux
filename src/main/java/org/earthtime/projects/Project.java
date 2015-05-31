@@ -45,7 +45,7 @@ import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.UPb_Redux.user.ReduxPersistentState;
 import org.earthtime.UPb_Redux.utilities.ETSerializer;
-import org.earthtime.aliquots.AliquotI;
+import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.dataDictionaries.DataDictionary;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.dataDictionaries.SampleTypesEnum;
@@ -218,7 +218,7 @@ public class Project implements
 
                     projectSamples.add(sample);
 
-                    AliquotI aliquot = sample.addNewAliquot(tripoliSample.getSampleName());
+                    AliquotInterface aliquot = sample.addNewAliquot(tripoliSample.getSampleName());
                     System.out.println("New Aliquot is # " + ((UPbReduxAliquot) aliquot).getAliquotNumber() + " = " + aliquot.getAliquotName());
 
                     SortedSet<TripoliFraction> tripoliSampleFractions = tripoliSample.getSampleFractions();

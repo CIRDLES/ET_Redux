@@ -36,7 +36,7 @@ import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UPb_Redux.valueModels.definedValueModels.PercentDiscordance;
-import org.earthtime.aliquots.AliquotI;
+import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.dataDictionaries.SampleTypesEnum;
 import org.earthtime.dataDictionaries.TemplatesForCsvImport;
@@ -70,7 +70,7 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_UCSB_LASS_A extends Abstr
         project.setProjectSamples(projectSamples);
 
         SampleInterface currentSample = null;
-        AliquotI currentAliquot = null;
+        AliquotInterface currentAliquot = null;
 
         boolean readingFractions = false;
 

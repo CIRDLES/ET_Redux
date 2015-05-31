@@ -79,7 +79,7 @@ import org.earthtime.UPb_Redux.valueModels.SampleDateInterceptModel;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UPb_Redux.valueModels.definedValueModels.Age207_206r;
-import org.earthtime.aliquots.AliquotI;
+import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.dataDictionaries.Lambdas;
 import org.earthtime.dataDictionaries.RadRatiosPbcCorrected;
 import org.earthtime.exceptions.ETWarningDialog;
@@ -147,7 +147,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
     private JLayeredPane heatMapLegendPanel;
     //oct 2014
     private transient double currentBestDate;
-    private transient AliquotI curAliquot;
+    private transient AliquotInterface curAliquot;
     private transient boolean changingBestDateDivider;
     private transient ReportUpdaterInterface reportUpdater;
 
@@ -999,7 +999,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
     }
 
     private void plotYorkBestFitLineAndUncertainty(
-            AliquotI curAliquot,
+            AliquotInterface curAliquot,
             Graphics2D g2d,
             float interceptLineWeight,
             Color interceptLineColor,
@@ -1028,10 +1028,10 @@ public class ConcordiaGraphPanel extends JLayeredPane
                 if (truncateRegressionCurves) {
                     // determine x value for lower and upper dates
                     lowerYorkDate = //
-                            curAliquot.getSampleDateModelByName("lower intercept").getValue().doubleValue();
+                            curAliquot.getASampleDateModelByName("lower intercept").getValue().doubleValue();
                     lowerYorkX = Math.expm1(lambda235.getValue().doubleValue() * lowerYorkDate);
                     upperYorkDate = //
-                            curAliquot.getSampleDateModelByName("upper intercept").getValue().doubleValue();
+                            curAliquot.getASampleDateModelByName("upper intercept").getValue().doubleValue();
                     upperYorkX = Math.expm1(lambda235.getValue().doubleValue() * upperYorkDate);
                 }
 
@@ -1050,10 +1050,10 @@ public class ConcordiaGraphPanel extends JLayeredPane
                 double endUpperMinusX = maxX_Display + xIncrement;
                 if (truncateRegressionCurves) {
                     double lowerPlus = //
-                            ((SampleDateInterceptModel) curAliquot.getSampleDateModelByName("lower intercept")).getPlusInternalTwoSigmaUnct().doubleValue();
+                            ((SampleDateInterceptModel) curAliquot.getASampleDateModelByName("lower intercept")).getPlusInternalTwoSigmaUnct().doubleValue();
                     startLowerPlusX = Math.expm1(lambda235.getValue().doubleValue() * (lowerYorkDate + lowerPlus));
                     double upperMinus = //
-                            ((SampleDateInterceptModel) curAliquot.getSampleDateModelByName("upper intercept")).getMinusInternalTwoSigmaUnct().doubleValue();
+                            ((SampleDateInterceptModel) curAliquot.getASampleDateModelByName("upper intercept")).getMinusInternalTwoSigmaUnct().doubleValue();
                     endUpperMinusX = Math.expm1(lambda235.getValue().doubleValue() * (upperYorkDate + upperMinus));
                 }
 
@@ -1097,10 +1097,10 @@ public class ConcordiaGraphPanel extends JLayeredPane
 
                 if (truncateRegressionCurves) {
                     double upperPlus = //
-                            ((SampleDateInterceptModel) curAliquot.getSampleDateModelByName("upper intercept")).getPlusInternalTwoSigmaUnct().doubleValue();
+                            ((SampleDateInterceptModel) curAliquot.getASampleDateModelByName("upper intercept")).getPlusInternalTwoSigmaUnct().doubleValue();
                     startUpperPlusX = Math.expm1(lambda235.getValue().doubleValue() * (upperYorkDate + upperPlus));
                     double lowerMinus = //
-                            ((SampleDateInterceptModel) curAliquot.getSampleDateModelByName("lower intercept")).getMinusInternalTwoSigmaUnct().doubleValue();
+                            ((SampleDateInterceptModel) curAliquot.getASampleDateModelByName("lower intercept")).getMinusInternalTwoSigmaUnct().doubleValue();
                     endLowerMinusX = Math.expm1(lambda235.getValue().doubleValue() * (lowerYorkDate + lowerMinus));
                 }
 
@@ -2760,7 +2760,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
     private void setAliquotOptions(Map<String, Map<String, String>> aliquotOptions) {
         // here we scan the sample and make sure there are aliquot options for each aliquot
         SampleDateInterpretationGUIOptions myOptions = sample.getSampleDateInterpretationGUISettings();
-        for (AliquotI a : sample.getActiveAliquots()) {
+        for (AliquotInterface a : sample.getActiveAliquots()) {
             // this finds or creates an aliquotOptions map
             myOptions.getAliquotOptionsMapByName(a.getAliquotName(), ((UPbReduxAliquot) a).getAliquotNumber());
         }

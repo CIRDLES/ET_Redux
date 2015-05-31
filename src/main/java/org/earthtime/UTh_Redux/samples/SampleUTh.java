@@ -28,7 +28,7 @@ import org.earthtime.UPb_Redux.reports.ReportSettings;
 import org.earthtime.UPb_Redux.samples.SESARSampleMetadata;
 import org.earthtime.UPb_Redux.user.SampleDateInterpretationGUIOptions;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
-import org.earthtime.aliquots.AliquotI;
+import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.dataDictionaries.SampleRegistries;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.projects.EarthTimeSerializedFileInterface;
@@ -180,12 +180,12 @@ public class SampleUTh implements
     }
 
     @Override
-    public Vector<AliquotI> getAliquots() {
+    public Vector<AliquotInterface> getAliquots() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void setAliquots(Vector<AliquotI> aliquots) {
+    public void setAliquots(Vector<AliquotInterface> aliquots) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

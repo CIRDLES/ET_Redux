@@ -22,7 +22,7 @@ import org.earthtime.UPb_Redux.aliquots.Aliquot;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
-import org.earthtime.aliquots.AliquotI;
+import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.samples.SampleInterface;
 import org.earthtime.xmlUtilities.XMLSerializationI;
@@ -78,7 +78,7 @@ public class GeochronRetrievalUtility {
     }
 
     public static String retrieveGeochronAliquotFile(SampleInterface sample, String aliquotIGSN, String userName, String password) {
-        AliquotI myDownAliquot = new UPbReduxAliquot();
+        AliquotInterface myDownAliquot = new UPbReduxAliquot();
 
         String downloadURL = //
                 "http://www.geochron.org/getxml.php?igsn="//

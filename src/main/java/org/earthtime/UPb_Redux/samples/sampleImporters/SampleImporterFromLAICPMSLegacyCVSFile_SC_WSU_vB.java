@@ -35,7 +35,6 @@ import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.dataDictionaries.SampleTypesEnum;
 import org.earthtime.dataDictionaries.TemplatesForCsvImport;
 
-
 /**
  *
  * @author James F. Bowring
@@ -43,141 +42,135 @@ import org.earthtime.dataDictionaries.TemplatesForCsvImport;
 public class SampleImporterFromLAICPMSLegacyCVSFile_SC_WSU_vB extends AbstractSampleImporterFromLegacyCSVFile {
 
     /**
-     * Notes:										
-    1.  Built for Vervoort
+     * Notes: 1. Built for Vervoort
+     *
      * @param file
-     * @return 
-     * @throws FileNotFoundException  
+     * @return
+     * @throws FileNotFoundException
      */
     @Override
-    protected Vector<Fraction> extractFractionsFromFile ( File file )
+    protected Vector<Fraction> extractFractionsFromFile(File file)
             throws FileNotFoundException {
-        Vector<Fraction> retFractions = new Vector<Fraction>();
+        Vector<Fraction> retFractions = new Vector<>();
         boolean readingFractions = false;
 
         //first use a Scanner to get each line
-        Scanner scanner = new Scanner( file );
+        Scanner scanner = new Scanner(file);
+        while (scanner.hasNextLine() && !readingFractions) {
+            // pass headers
+            String[] line = scanner.nextLine().split(",");
+            // word "analysis"
+            if (line.length > 0) {
+                readingFractions = (line[0].trim().compareToIgnoreCase(SampleTypesEnum.ANALYSIS.getName()) == 0);
+            }
+        }
+
         try {
             while (scanner.hasNextLine()) {
                 // get content of line
-                Vector<String> myFractionData = processLegacyCSVLine( scanner.nextLine() );
+                Vector<String> myFractionData = processLegacyCSVLine(scanner.nextLine());
 
                 // determine content of line where a zero for fraction name = blank line
-
-                if ( readingFractions &&  ! myFractionData.get( 0 ).equalsIgnoreCase( "0" ) ) {
+                if (!myFractionData.get(0).equalsIgnoreCase("0")) {
                     // process fraction line
-                    System.out.println( "Reading Fraction " + myFractionData.get( 0 ) );
+                    System.out.println("Reading Fraction " + myFractionData.get(0));
 
-                    Fraction myFraction = new UPbLegacyFraction( "NONE" );
+                    Fraction myFraction = new UPbLegacyFraction("NONE");
 
-                    ((UPbFractionI) myFraction).setRatioType( "UPb" );
+                    ((UPbFractionI) myFraction).setRatioType("UPb");
 
                     int index = 0;
 
-                    myFraction.setFractionID( myFractionData.get( index ++ ) );
-                    myFraction.setGrainID( myFraction.getFractionID() );
-
+                    myFraction.setFractionID(myFractionData.get(index++));
+                    myFraction.setGrainID(myFraction.getFractionID());
 
                     //Sets r207_235r ratio and sigma
                     String ratioName = "r207_235r";
-                    myFraction.getRadiogenicIsotopeRatioByName( ratioName ).//
-                            setValue( readCSVCell( myFractionData.get( index ++ ) ) );
-                    ValueModel ratio = myFraction.getRadiogenicIsotopeRatioByName( ratioName );
+                    myFraction.getRadiogenicIsotopeRatioByName(ratioName).//
+                            setValue(readCSVCell(myFractionData.get(index++)));
+                    ValueModel ratio = myFraction.getRadiogenicIsotopeRatioByName(ratioName);
 
                     // 1-sigma
-                    BigDecimal oneSigmaAbs = readCSVCell( myFractionData.get( index ++ ) );
-                    myFraction.getRadiogenicIsotopeRatioByName( ratioName ).//
-                            setOneSigma( oneSigmaAbs );
+                    BigDecimal oneSigmaAbs = readCSVCell(myFractionData.get(index++));
+                    myFraction.getRadiogenicIsotopeRatioByName(ratioName).//
+                            setOneSigma(oneSigmaAbs);
 
                     //Sets r206_238r ratio and sigma
                     ratioName = "r206_238r";
-                    myFraction.getRadiogenicIsotopeRatioByName( ratioName ).//
-                            setValue( readCSVCell( myFractionData.get( index ++ ) ) );
-                    ratio = myFraction.getRadiogenicIsotopeRatioByName( ratioName );
+                    myFraction.getRadiogenicIsotopeRatioByName(ratioName).//
+                            setValue(readCSVCell(myFractionData.get(index++)));
+                    ratio = myFraction.getRadiogenicIsotopeRatioByName(ratioName);
 
                     // 1-sigma
-                    oneSigmaAbs = readCSVCell( myFractionData.get( index ++ ) );
-                    myFraction.getRadiogenicIsotopeRatioByName( ratioName ).//
-                            setOneSigma( oneSigmaAbs );
+                    oneSigmaAbs = readCSVCell(myFractionData.get(index++));
+                    myFraction.getRadiogenicIsotopeRatioByName(ratioName).//
+                            setOneSigma(oneSigmaAbs);
 
                     //Sets r206_238r ratio and sigma
                     ratioName = "r207_206r";
-                    myFraction.getRadiogenicIsotopeRatioByName( ratioName ).//
-                            setValue( readCSVCell( myFractionData.get( index ++ ) ) );
-                    ratio = myFraction.getRadiogenicIsotopeRatioByName( ratioName );
+                    myFraction.getRadiogenicIsotopeRatioByName(ratioName).//
+                            setValue(readCSVCell(myFractionData.get(index++)));
+                    ratio = myFraction.getRadiogenicIsotopeRatioByName(ratioName);
 
                     // 1-sigma
-                    oneSigmaAbs = readCSVCell( myFractionData.get( index ++ ) );
-                    myFraction.getRadiogenicIsotopeRatioByName( ratioName ).//
-                            setOneSigma( oneSigmaAbs );
+                    oneSigmaAbs = readCSVCell(myFractionData.get(index++));
+                    myFraction.getRadiogenicIsotopeRatioByName(ratioName).//
+                            setOneSigma(oneSigmaAbs);
 
                     //Sets Ratio ThU
-                    myFraction.getCompositionalMeasureByName( "rTh_Usample" ).//
-                            setValue( readCSVCell( myFractionData.get( index ++ ) ) );
-
+                    myFraction.getCompositionalMeasureByName("rTh_Usample").//
+                            setValue(readCSVCell(myFractionData.get(index++)));
 
                     //Sets age207_235r
                     ratioName = RadDates.age207_235r.getName();
-                    myFraction.getRadiogenicIsotopeDateByName( ratioName )//
-                            .setValue( readCSVCell( myFractionData.get( index ++ ) ).//
-                            movePointRight( 6 ) );
-                    myFraction.getRadiogenicIsotopeDateByName( ratioName )//
-                            .setOneSigma( readCSVCell( myFractionData.get( index ++ ) ).//
-                            movePointRight( 6 ) );
+                    myFraction.getRadiogenicIsotopeDateByName(ratioName)//
+                            .setValue(readCSVCell(myFractionData.get(index++)).//
+                                    movePointRight(6));
+                    myFraction.getRadiogenicIsotopeDateByName(ratioName)//
+                            .setOneSigma(readCSVCell(myFractionData.get(index++)).//
+                                    movePointRight(6));
 
                     //Sets age206_238r
                     ratioName = RadDates.age206_238r.getName();
-                    myFraction.getRadiogenicIsotopeDateByName( ratioName )//
-                            .setValue( readCSVCell( myFractionData.get( index ++ ) ).//
-                            movePointRight( 6 ) );
-                    myFraction.getRadiogenicIsotopeDateByName( ratioName )//
-                            .setOneSigma( readCSVCell( myFractionData.get( index ++ ) ).//
-                            movePointRight( 6 ) );
+                    myFraction.getRadiogenicIsotopeDateByName(ratioName)//
+                            .setValue(readCSVCell(myFractionData.get(index++)).//
+                                    movePointRight(6));
+                    myFraction.getRadiogenicIsotopeDateByName(ratioName)//
+                            .setOneSigma(readCSVCell(myFractionData.get(index++)).//
+                                    movePointRight(6));
 
 //                    // skip over 6/8 Pbc corrected
 //                    index ++;
 //                    index ++;
-
                     //Sets age207_206r
                     ratioName = RadDates.age207_206r.getName();
-                    myFraction.getRadiogenicIsotopeDateByName( ratioName )//
-                            .setValue( readCSVCell( myFractionData.get( index ++ ) ).//
-                            movePointRight( 6 ) );
-                    myFraction.getRadiogenicIsotopeDateByName( ratioName )//
-                            .setOneSigma( readCSVCell( myFractionData.get( index ++ ) ).//
-                            movePointRight( 6 ) );
+                    myFraction.getRadiogenicIsotopeDateByName(ratioName)//
+                            .setValue(readCSVCell(myFractionData.get(index++)).//
+                                    movePointRight(6));
+                    myFraction.getRadiogenicIsotopeDateByName(ratioName)//
+                            .setOneSigma(readCSVCell(myFractionData.get(index++)).//
+                                    movePointRight(6));
 
                     // calculate percentDiscordance
                     ValueModel percentDiscordance = new PercentDiscordance();
-                    myFraction.setRadiogenicIsotopeDateByName( RadDates.percentDiscordance, percentDiscordance );
+                    myFraction.setRadiogenicIsotopeDateByName(RadDates.percentDiscordance, percentDiscordance);
                     percentDiscordance.calculateValue(
                             new ValueModel[]{
-                                myFraction.getRadiogenicIsotopeDateByName( RadDates.age206_238r ),
-                                myFraction.getRadiogenicIsotopeDateByName( RadDates.age207_206r )},
-                            null );
+                                myFraction.getRadiogenicIsotopeDateByName(RadDates.age206_238r),
+                                myFraction.getRadiogenicIsotopeDateByName(RadDates.age207_206r)},
+                            null);
 
-                    retFractions.add( myFraction );
-
+                    retFractions.add(myFraction);
 
                     // skip columns O,P,Q,R,S,T,U,V,W
                     index += 9;
 
                     //Sets rhoR206_238r__r207_235r (correlation Coeff)
-                    myFraction.getRadiogenicIsotopeRatioByName( "rhoR206_238r__r207_235r" ).//
-                            setValue( readCSVCell( myFractionData.get( index ++ ) ) );
+                    myFraction.getRadiogenicIsotopeRatioByName("rhoR206_238r__r207_235r").//
+                            setValue(readCSVCell(myFractionData.get(index++)));
 
-                    ((UPbLegacyFraction) myFraction).calculateTeraWasserburgRho();
-
-
+                    ((UPbFractionI) myFraction).calculateTeraWasserburgRho();
                 }
-
-                if ( (myFractionData.get( 0 ).compareToIgnoreCase( SampleTypesEnum.ANALYSIS.getName() ) == 0)//
-                        || //
-                        (myFractionData.get( 0 ).compareToIgnoreCase( "0" ) == 0) ) {
-                    // the next line(s) contain fraction data or are blank
-                    readingFractions = true;
-                }
-
             }
         } finally {
             //ensure the underlying stream is always closed
@@ -188,19 +181,19 @@ public class SampleImporterFromLAICPMSLegacyCVSFile_SC_WSU_vB extends AbstractSa
     }
 
     /**
-     * 
+     *
      */
-    public static void writeAndOpenCSVFileOfLegacyDataSampleFieldNames () {
+    public static void writeAndOpenCSVFileOfLegacyDataSampleFieldNames() {
         String fieldNames = TemplatesForCsvImport.LAICPMSLegacyDataSampleFieldNames_SC_WSU_vB;
-        File CSVFile = new File( "LAICPMSLegacySampleFieldNamesTemplateWSU_vB" + ".csv" );
+        File CSVFile = new File("LAICPMSLegacySampleFieldNamesTemplateWSU_vB" + ".csv");
         CSVFile.delete();
         PrintWriter outputWriter = null;
         try {
-            outputWriter = new PrintWriter( new FileWriter( CSVFile ) );
+            outputWriter = new PrintWriter(new FileWriter(CSVFile));
 
-            outputWriter.println( "LEGACY LA-ICP MS Version B (Single Collector from WSU) DATA SAMPLE FIELD NAMES FOR IMPORT INTO U-Pb_Redux\n" );
-            outputWriter.println( "AnalysisName,IsotopicRatios,,,,,,,Dates (Ma)" );
-            outputWriter.println( fieldNames );
+            outputWriter.println("LEGACY LA-ICP MS Version B (Single Collector from WSU) DATA SAMPLE FIELD NAMES FOR IMPORT INTO U-Pb_Redux\n");
+            outputWriter.println("AnalysisName,IsotopicRatios,,,,,,,Dates (Ma)");
+            outputWriter.println(fieldNames);
 
             outputWriter.close();
 
@@ -208,7 +201,7 @@ public class SampleImporterFromLAICPMSLegacyCVSFile_SC_WSU_vB extends AbstractSa
         }
 
         try {
-            BrowserControl.displayURL( CSVFile.getCanonicalPath() );
+            BrowserControl.displayURL(CSVFile.getCanonicalPath());
         } catch (IOException ex) {
 //            ex.printStackTrace();
         }

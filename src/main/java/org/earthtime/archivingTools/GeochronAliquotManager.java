@@ -43,7 +43,7 @@ import org.earthtime.UPb_Redux.dateInterpretation.concordia.ConcordiaGraphPanel;
 import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetup;
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.samples.Sample;
-import org.earthtime.aliquots.AliquotI;
+import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.archivingTools.forSESAR.SesarSample;
 import org.earthtime.archivingTools.forSESAR.SesarSampleManager;
 import org.earthtime.beans.ET_JButton;
@@ -78,7 +78,7 @@ public class GeochronAliquotManager extends JPanel {
     private JLabel checkMarkForValidSampleIGSN;
     private JLabel xMarkForInValidSampleIGSN;
     // aliquot fields
-    private Vector<AliquotI> activeAliquots;
+    private Vector<AliquotInterface> activeAliquots;
     private JTextField[] aliquotName_TextFields;
     private JTextField[] aliquotIGSN_TextFields;
     private JLabel[] checkMarkForValidAliquotIGSNs;
@@ -259,7 +259,7 @@ public class GeochronAliquotManager extends JPanel {
 
         for (int i = 0; i < aliquotCount; i++) {
             System.out.println(sample.getSampleName() + "  >  " + activeAliquots.get(i).getAliquotName());
-            AliquotI aliquot = activeAliquots.get(i);
+            AliquotInterface aliquot = activeAliquots.get(i);
             String aliquotName = aliquot.getAliquotName();
             aliquotIGSNs[i] = aliquot.getAliquotIGSN();
             sesarAliquots[i] = new SesarSample(userCode, userName, password, true);
@@ -436,7 +436,7 @@ public class GeochronAliquotManager extends JPanel {
     private void saveSample() {
         sample.setSampleIGSN(sampleIGSN.trim().toUpperCase());
         // rename supersample aliquots with new sample name
-        Vector<AliquotI> aliquots = project.getCompiledSuperSample().getAliquots();
+        Vector<AliquotInterface> aliquots = project.getCompiledSuperSample().getAliquots();
         aliquots.stream().forEach((aliquot) -> {
             String aliquotName = aliquot.getAliquotName();
             String sName = sample.getSampleName().trim();
@@ -448,10 +448,10 @@ public class GeochronAliquotManager extends JPanel {
         sample.setSampleName(sampleNameText.getText().trim());
     }
 
-    private void saveAliquot(AliquotI myAliquot, String aliquotIGSN, JTextField aliquotName_TextField) {
+    private void saveAliquot(AliquotInterface myAliquot, String aliquotIGSN, JTextField aliquotName_TextField) {
         myAliquot.setAliquotIGSN(aliquotIGSN);
         // rename supersample aliquot also
-        Vector<AliquotI> aliquots = project.getCompiledSuperSample().getAliquots();
+        Vector<AliquotInterface> aliquots = project.getCompiledSuperSample().getAliquots();
         aliquots.stream().forEach((aliquot) -> {
             String aliquotName = aliquot.getAliquotName();
             String aName = myAliquot.getAliquotName().trim();

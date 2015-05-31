@@ -63,7 +63,7 @@ import org.earthtime.UPb_Redux.valueModels.ValueModelReferenced;
 import org.earthtime.UPb_Redux.valueModels.ValueModelReferencedXMLConverter;
 import org.earthtime.UPb_Redux.valueModels.ValueModelXMLConverter;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
-import org.earthtime.aliquots.AliquotI;
+import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.archivingTools.AnalysisImage;
 import org.earthtime.archivingTools.AnalysisImageXMLConverter;
 import org.earthtime.archivingTools.URIHelper;
@@ -92,7 +92,7 @@ import org.earthtime.xmlUtilities.XMLSerializationI;
  * @since 1.0
  */
 public class UPbReduxAliquot extends Aliquot
-        implements AliquotI,
+        implements AliquotInterface,
         ReportRowGUIInterface,
         XMLSerializationI {
 
@@ -542,7 +542,7 @@ public class UPbReduxAliquot extends Aliquot
             FileNotFoundException,
             BadOrMissingXMLSchemaException {
 
-        AliquotI myAliquot = null;
+        AliquotInterface myAliquot = null;
 
         BufferedReader reader = URIHelper.getBufferedReader(filename);
 
@@ -559,7 +559,7 @@ public class UPbReduxAliquot extends Aliquot
                 // re-create reader
                 reader = URIHelper.getBufferedReader(filename);
                 try {
-                    myAliquot = (AliquotI) xstream.fromXML(reader);
+                    myAliquot = (AliquotInterface) xstream.fromXML(reader);
                 } catch (ConversionException e) {
                     throw new ETException(null, e.getMessage());
                 }
@@ -1245,7 +1245,7 @@ public class UPbReduxAliquot extends Aliquot
      * @throws Exception
      */
     public static void main(String[] args) throws Exception {
-        AliquotI aliquot
+        AliquotInterface aliquot
                 = new UPbReduxAliquot(
                         0,
                         "Test Aliquot",

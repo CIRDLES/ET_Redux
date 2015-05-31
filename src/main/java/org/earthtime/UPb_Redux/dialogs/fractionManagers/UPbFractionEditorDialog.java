@@ -79,7 +79,7 @@ import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.utilities.Thumbnail;
 import org.earthtime.UPb_Redux.valueModels.MeasuredRatioModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
-import org.earthtime.aliquots.AliquotI;
+import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.dataDictionaries.DataDictionary;
@@ -128,7 +128,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
     private javax.swing.JButton kwikiResetAll_button;
     private javax.swing.JButton kwikiAutoU_button;
     private static JLayeredPane concordiaGraphPanel;
-    private AliquotI aliquot;
+    private AliquotInterface aliquot;
     private Fraction myFraction;
     private ArrayList<String> fractionIDs;
     private boolean compiled;
@@ -165,7 +165,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
     public UPbFractionEditorDialog(
             java.awt.Frame parent,
             boolean modal,
-            AliquotI aliquot,
+            AliquotInterface aliquot,
             Fraction fraction,
             int selectedTab,
             boolean compiled) {

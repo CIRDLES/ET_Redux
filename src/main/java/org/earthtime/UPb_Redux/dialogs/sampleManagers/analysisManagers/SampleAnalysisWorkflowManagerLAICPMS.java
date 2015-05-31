@@ -70,7 +70,7 @@ import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.renderers.EditFractionButton;
 import org.earthtime.UPb_Redux.samples.UPbSampleInterface;
 import org.earthtime.UPb_Redux.utilities.comparators.IntuitiveStringComparator;
-import org.earthtime.aliquots.AliquotI;
+import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.dataDictionaries.SampleRegistries;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
@@ -91,7 +91,7 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
      */
     protected static Font dropDownFont = new Font("SansSerif", Font.BOLD, 11);
     private SampleInterface mySample = null;
-    private AliquotI myCurrentAliquot;
+    private AliquotInterface myCurrentAliquot;
     private File importedXMLFractionsFolder;
     private File sampleFolder;
     private File sampleMetaDataFolder;
@@ -265,7 +265,7 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
      *
      * @param aliquot
      */
-    public void initAliquot(final AliquotI aliquot) {
+    public void initAliquot(final AliquotInterface aliquot) {
 
         fastEdits_panel.removeAll();
 
@@ -688,7 +688,7 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
         buildFastEditDisplayPanel();
     }
 
-    private void showSavedDataII(AliquotI aliquot) {
+    private void showSavedDataII(AliquotInterface aliquot) {
         // default master fields
 //        masterZirconCaseCheckBox.setSelected( ((UPbReduxAliquot) aliquot).getDefaultIsZircon() );
 //
@@ -721,7 +721,7 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
         }
     }
 
-    private void addNewFractionRow(AliquotI aliquot, Fraction fraction) {
+    private void addNewFractionRow(AliquotInterface aliquot, Fraction fraction) {
         int row = fractionID.size();
 
         addFractionRow(aliquot, fraction, row, row + 1);
@@ -739,7 +739,7 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
         buildFastEditDisplayPanel();
     }
 
-    private void addFractionRow(AliquotI aliquot, Fraction tempFrac, int row, int max) {
+    private void addFractionRow(AliquotInterface aliquot, Fraction tempFrac, int row, int max) {
 
 //        // Buttons to allow deletion of fractions
 //        JButton tempJB = new EditFractionButton( "X", row, true );
@@ -1260,7 +1260,7 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
                 aliquotName_text.setText((String) list.getSelectedValue());
 
                 // decide if empty else process aliquot by name
-                AliquotI aliquot = mySample.getAliquotByName((String) list.getSelectedValue());
+                AliquotInterface aliquot = mySample.getAliquotByName((String) list.getSelectedValue());
                 if (aliquot != null) {
                     if (myCurrentAliquot != null) {
                         saveAliquot(myCurrentAliquot);
@@ -1284,11 +1284,11 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
     class deleteFractionListener implements ActionListener {
 
         private SampleInterface sample;
-        private AliquotI aliquot;
+        private AliquotInterface aliquot;
         private Fraction fraction;
         private int row;
 
-        public deleteFractionListener(SampleInterface sample, AliquotI aliquot, Fraction fraction, int row) {
+        public deleteFractionListener(SampleInterface sample, AliquotInterface aliquot, Fraction fraction, int row) {
             this.sample = sample;
             this.aliquot = aliquot;
             this.fraction = fraction;
@@ -1506,7 +1506,7 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
 
     }
 
-    private void removeFractionRow(AliquotI aliquot, int row) {
+    private void removeFractionRow(AliquotInterface aliquot, int row) {
 //        fractionDeleteButtons.remove( row );
         fractionNoteButtons.remove(row);
         fractionID.remove(row);
@@ -1716,8 +1716,8 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
             }
         }
 
-        Vector<AliquotI> aliquots = mySample.getActiveAliquots();
-        for (AliquotI a : aliquots) {
+        Vector<AliquotInterface> aliquots = mySample.getActiveAliquots();
+        for (AliquotInterface a : aliquots) {
             a.setAnalysisPurpose(mySample.getAnalysisPurpose());
         }
 
@@ -1730,7 +1730,7 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
         }
     }
 
-    private void saveAliquot(AliquotI aliquot) {
+    private void saveAliquot(AliquotInterface aliquot) {
 
         // master fields
         ((UPbReduxAliquot) aliquot).setDefaultIsZircon(masterZirconCaseCheckBox.isSelected());
@@ -1756,7 +1756,7 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
 
     }
 
-    private void saveAliquotFraction(AliquotI aliquot, Fraction tempFrac)
+    private void saveAliquotFraction(AliquotInterface aliquot, Fraction tempFrac)
             throws NumberFormatException {
 
         // set temp variable for fractionation correction both u and Pb to use in locking fields

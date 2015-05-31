@@ -38,7 +38,7 @@ import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLegacyFraction;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.samples.UPbSampleInterface;
 import org.earthtime.UPb_Redux.samples.sampleImporters.AbstractSampleImporterFromLegacyCSVFile;
-import org.earthtime.aliquots.AliquotI;
+import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.dataDictionaries.MineralTypes;
 import org.earthtime.dataDictionaries.SampleRegistries;
 import org.earthtime.exceptions.ETException;
@@ -270,7 +270,7 @@ public abstract class AbstractSampleLAICPMSRawDataManagerDialog extends DialogEd
 
         // in legacy mode we only allow one aliquot
         if ( getMySample().getFractions().isEmpty() ) {
-            AliquotI myAliquot = getMySample().addNewAliquot( aliquotName_text.getText().trim() );
+            AliquotInterface myAliquot = getMySample().addNewAliquot( aliquotName_text.getText().trim() );
             // May 2010 allows publication of legacy results
             ((UPbReduxAliquot) myAliquot).setCompiled( false );
             int myAliquotNumber = ((UPbReduxAliquot) myAliquot).getAliquotNumber();
@@ -338,8 +338,8 @@ public abstract class AbstractSampleLAICPMSRawDataManagerDialog extends DialogEd
         }
 
         // there should be only one aliquot
-        Vector<AliquotI> aliquots = mySample.getActiveAliquots();
-        for (AliquotI a : aliquots) {
+        Vector<AliquotInterface> aliquots = mySample.getActiveAliquots();
+        for (AliquotInterface a : aliquots) {
             a.setAnalysisPurpose( mySample.getAnalysisPurpose() );
         }
 

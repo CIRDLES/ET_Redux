@@ -33,7 +33,7 @@ import org.earthtime.UPb_Redux.filters.FractionXMLFileFilter;
 import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
-import org.earthtime.aliquots.AliquotI;
+import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.fractions.FractionInterface;
 
 /**
@@ -425,7 +425,7 @@ public final class MathMachineII {
             String rootDirectoryName,
             boolean creatNewMMLIndex,
             UPbFraction myFraction,
-            AliquotI aliquot) throws IOException {
+            AliquotInterface aliquot) throws IOException {
 
         //gets fractions from UPbFractionDialogue
         fractionsTemp.clear();

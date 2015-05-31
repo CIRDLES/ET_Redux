@@ -58,7 +58,7 @@ import org.earthtime.UPb_Redux.valueModels.definedValueModels.Age206_238r;
 import org.earthtime.UPb_Redux.valueModels.definedValueModels.Age207_206r;
 import org.earthtime.UPb_Redux.valueModels.definedValueModels.Age207_235r;
 import org.earthtime.UPb_Redux.valueModels.definedValueModels.Age208_232r;
-import org.earthtime.aliquots.AliquotI;
+import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.dataDictionaries.Lambdas;
 import org.earthtime.dataDictionaries.RadDates;
@@ -151,7 +151,7 @@ public class SampleDateModel extends ValueModel implements
     // sample is used in compilation mode
     private SampleInterface sample;
     // aliquot is used in analysis mode
-    private AliquotI aliquot;
+    private AliquotInterface aliquot;
     private transient YorkLineFit yorkLineFit = null;
     // feb 2013
     // allows to differentiate among types so LAICPMS can use log-based analysis until we fully transition
@@ -758,7 +758,7 @@ public class SampleDateModel extends ValueModel implements
             // special case to detect upper/lower intercept
             if (getMethodName().equalsIgnoreCase("UpperIntercept")) {
                 UpperIntercept(includedFractions, //
-                        aliquot.getSampleDateModelByName("lower intercept"));
+                        aliquot.getASampleDateModelByName("lower intercept"));
             } else {
                 try {
                     Method meth
@@ -2843,7 +2843,7 @@ public class SampleDateModel extends ValueModel implements
      *
      * @return
      */
-    public AliquotI getAliquot() {
+    public AliquotInterface getAliquot() {
         return aliquot;
     }
 
@@ -2851,7 +2851,7 @@ public class SampleDateModel extends ValueModel implements
      *
      * @param aliquot
      */
-    public void setAliquot(AliquotI aliquot) {
+    public void setAliquot(AliquotInterface aliquot) {
         this.aliquot = aliquot;
     }
 

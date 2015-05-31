@@ -79,7 +79,7 @@ import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
-import org.earthtime.aliquots.AliquotI;
+import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.beans.ET_JToggleButton;
 import org.earthtime.dataDictionaries.Lambdas;
@@ -789,7 +789,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         Object[][] selectedModels = new Object[1][9];
 
         // this standin aliquot for the whole sample makes weighted means graphs work
-        AliquotI standInAliquot = new UPbReduxAliquot();
+        AliquotInterface standInAliquot = new UPbReduxAliquot();
         standInAliquot.setAliquotName(sample.getSampleName());
 
         ((UPbReduxAliquot) standInAliquot).setAliquotFractions(sample.getFractions());
@@ -823,7 +823,8 @@ public class SampleDateInterpretationsManager extends DialogEditor
         for (int bit = 0; bit
                 < aliquotFlags.length(); bit++) {
             if (aliquotFlags.substring(bit, bit + 1).equalsIgnoreCase("1")) {
-                selectedModels[bit][index] = sample.getActiveAliquots().get(bit).getSampleDateModelByName(wmSampleDateName);
+                selectedModels[bit][index] = //
+                        sample.getActiveAliquots().get(bit).getASampleDateModelByName(wmSampleDateName);
             }
         }
     }
@@ -2437,7 +2438,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                         refreshPanel();
             }
 
-        } else if (nodeInfo instanceof AliquotI) {
+        } else if (nodeInfo instanceof AliquotInterface) {
 
             // oct 2011 removed conditionals here to force all tabs to update
             // if ( graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab( "Concordia" ) ) {
@@ -2710,7 +2711,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
             // setup weighted means
             weightedMeanGraphPanel.repaint();
 
-        } else if (nodeInfo instanceof AliquotI) {
+        } else if (nodeInfo instanceof AliquotInterface) {
         } else if (nodeInfo instanceof ValueModel) {
             // get aliquot and retrieve subset of fractions for this sample date
             Object sampleNodeInfo = //
@@ -3113,7 +3114,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
         // add menu item for each aliquot
         aliquotSpecificOptions_menu.removeAll();
 
-        for (final AliquotI a : sample.getActiveAliquots()) {//Aliquots()) {
+        for (final AliquotInterface a : sample.getActiveAliquots()) {//Aliquots()) {
             // april 2010 refine to leave out empty aliquots = no fractions
             //if ( ((UPbReduxAliquot) a).getAliquotFractions().size() > 0 ) {
             JMenuItem menuItem = aliquotSpecificOptions_menu.add(new JMenuItem(a.getAliquotName()));

@@ -26,7 +26,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
-import org.earthtime.aliquots.AliquotI;
+import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.samples.SampleInterface;
 import org.jdesktop.layout.GroupLayout.ParallelGroup;
 import org.jdesktop.layout.GroupLayout.SequentialGroup;
@@ -171,7 +171,7 @@ public class WeightedMeanOptionsDialog extends DialogEditor {
 
         restoreSavedValues();
 
-        for (AliquotI aliquot : sample.getActiveAliquots()) {
+        for (AliquotInterface aliquot : sample.getActiveAliquots()) {
             JLabel aliquotLabel = new JLabel( aliquot.getAliquotName() );
             aliquotNameLabels.add( aliquotLabel );
 
@@ -366,7 +366,7 @@ public class WeightedMeanOptionsDialog extends DialogEditor {
     }
 
     private void OK () {
-        Vector<AliquotI> activeAliquots = sample.getActiveAliquots();
+        Vector<AliquotInterface> activeAliquots = sample.getActiveAliquots();
         selectedModels = new Object[activeAliquots.size()][10];
 
         // populate array of aliquots with selected wm date interpretations
@@ -374,59 +374,59 @@ public class WeightedMeanOptionsDialog extends DialogEditor {
 
             getSelectedModels()[i][0] = activeAliquots.get( i );
             if ( wm206_238CheckBox.get( i ).isSelected() ) {
-                getSelectedModels()[i][2] = activeAliquots.get( i ).getSampleDateModelByName( "weighted mean 206Pb/238U" );
+                getSelectedModels()[i][2] = activeAliquots.get( i ).getASampleDateModelByName( "weighted mean 206Pb/238U" );
                 wm206_238 = setAliquotFlag( wm206_238, i, "1" );
             } else {
                 wm206_238 = setAliquotFlag( wm206_238, i, "0" );
             }
             if ( wm207_235CheckBox.get( i ).isSelected() ) {
-                getSelectedModels()[i][1] = activeAliquots.get( i ).getSampleDateModelByName( "weighted mean 207Pb/235U" );
+                getSelectedModels()[i][1] = activeAliquots.get( i ).getASampleDateModelByName( "weighted mean 207Pb/235U" );
                 wm207_235 = setAliquotFlag( wm207_235, i, "1" );
             } else {
                 wm207_235 = setAliquotFlag( wm207_235, i, "0" );
             }
 
             if ( wm207_206CheckBox.get( i ).isSelected() ) {
-                getSelectedModels()[i][3] = activeAliquots.get( i ).getSampleDateModelByName( "weighted mean 207Pb/206Pb" );
+                getSelectedModels()[i][3] = activeAliquots.get( i ).getASampleDateModelByName( "weighted mean 207Pb/206Pb" );
                 wm207_206 = setAliquotFlag( wm207_206, i, "1" );
             } else {
                 wm207_206 = setAliquotFlag( wm207_206, i, "0" );
             }
             
             if ( wm208_232CheckBox.get( i ).isSelected() ) {
-                getSelectedModels()[i][3] = activeAliquots.get( i ).getSampleDateModelByName( "weighted mean 208Pb/232Th" );
+                getSelectedModels()[i][3] = activeAliquots.get( i ).getASampleDateModelByName( "weighted mean 208Pb/232Th" );
                 wm208_232 = setAliquotFlag( wm208_232, i, "1" );
             } else {
                 wm208_232 = setAliquotFlag( wm208_232, i, "0" );
             }
 
             if ( wm206_238r_ThCheckBox.get( i ).isSelected() ) {
-                getSelectedModels()[i][4] = activeAliquots.get( i ).getSampleDateModelByName( "weighted mean 206Pb/238U (Th-corrected)" );
+                getSelectedModels()[i][4] = activeAliquots.get( i ).getASampleDateModelByName( "weighted mean 206Pb/238U (Th-corrected)" );
                 wm206_238r_Th = setAliquotFlag( wm206_238r_Th, i, "1" );
             } else {
                 wm206_238r_Th = setAliquotFlag( wm206_238r_Th, i, "0" );
             }
 
             if ( wm207_235r_PaCheckBox.get( i ).isSelected() ) {
-                getSelectedModels()[i][5] = activeAliquots.get( i ).getSampleDateModelByName( "weighted mean 207Pb/235U (Pa-corrected)" );
+                getSelectedModels()[i][5] = activeAliquots.get( i ).getASampleDateModelByName( "weighted mean 207Pb/235U (Pa-corrected)" );
                 wm207_235r_Pa = setAliquotFlag( wm207_235r_Pa, i, "1" );
             } else {
                 wm207_235r_Pa = setAliquotFlag( wm207_235r_Pa, i, "0" );
             }
             if ( wm207_206r_ThCheckBox.get( i ).isSelected() ) {
-                getSelectedModels()[i][6] = activeAliquots.get( i ).getSampleDateModelByName( "weighted mean 207Pb/206Pb (Th-corrected)" );
+                getSelectedModels()[i][6] = activeAliquots.get( i ).getASampleDateModelByName( "weighted mean 207Pb/206Pb (Th-corrected)" );
                 wm207_206r_Th = setAliquotFlag( wm207_206r_Th, i, "1" );
             } else {
                 wm207_206r_Th = setAliquotFlag( wm207_206r_Th, i, "0" );
             }
             if ( wm207_206r_PaCheckBox.get( i ).isSelected() ) {
-                getSelectedModels()[i][7] = activeAliquots.get( i ).getSampleDateModelByName( "weighted mean 207Pb/206Pb (Pa-corrected)" );
+                getSelectedModels()[i][7] = activeAliquots.get( i ).getASampleDateModelByName( "weighted mean 207Pb/206Pb (Pa-corrected)" );
                 wm207_206r_Pa = setAliquotFlag( wm207_206r_Pa, i, "1" );
             } else {
                 wm207_206r_Pa = setAliquotFlag( wm207_206r_Pa, i, "0" );
             }
             if ( wm207_206r_ThPaCheckBox.get( i ).isSelected() ) {
-                getSelectedModels()[i][8] = activeAliquots.get( i ).getSampleDateModelByName( "weighted mean 207Pb/206Pb (Th- and Pa-corrected)" );
+                getSelectedModels()[i][8] = activeAliquots.get( i ).getASampleDateModelByName( "weighted mean 207Pb/206Pb (Th- and Pa-corrected)" );
                 wm207_206r_ThPa = setAliquotFlag( wm207_206r_ThPa, i, "1" );
             } else {
                 wm207_206r_ThPa = setAliquotFlag( wm207_206r_ThPa, i, "0" );

@@ -35,7 +35,7 @@ import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.ReductionHandler;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.UncertaintyZoomLayer;
-import org.earthtime.aliquots.AliquotI;
+import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
@@ -48,7 +48,7 @@ public class UPbLegacyFractionEditorDialog extends DialogEditor {
 
     private static JPanel concordiaGraphPanel;
 
-    private AliquotI aliquot;
+    private AliquotInterface aliquot;
 
     private Fraction myFraction;
 
@@ -82,7 +82,7 @@ public class UPbLegacyFractionEditorDialog extends DialogEditor {
     public UPbLegacyFractionEditorDialog(
             java.awt.Frame parent,
             boolean modal,
-            AliquotI aliquot,
+            AliquotInterface aliquot,
             Fraction fraction,
             int selectedTab,
             boolean analyzed) {

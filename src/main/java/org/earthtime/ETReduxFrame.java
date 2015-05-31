@@ -130,7 +130,7 @@ import org.earthtime.UPb_Redux.utilities.ETSerializer;
 import org.earthtime.UPb_Redux.utilities.JHelpAction;
 import org.earthtime.UPb_Redux.utilities.MacOSAboutHandler;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
-import org.earthtime.aliquots.AliquotI;
+import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
@@ -1485,7 +1485,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                 // this means if sample is automode, then set its path to where found
                 if (deserializedSample.isAutomaticDataUpdateMode()) {
                     deserializedSample.setSampleFolderSaved(selFile.getParentFile());
-                    for (AliquotI a : deserializedSample.getAliquots()) {
+                    for (AliquotInterface a : deserializedSample.getAliquots()) {
                         ((UPbReduxAliquot) a).setContainingSampleDataFolder(selFile.getParentFile());
                     }
                 }
@@ -1716,7 +1716,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                 PrintWriter outputWriter = null;
                 try {
                     outputWriter = new PrintWriter(new FileWriter(pbcCorrReportFile));
-                    for (AliquotI activeAliquot : theProject.getSuperSample().getActiveAliquots()) {
+                    for (AliquotInterface activeAliquot : theProject.getSuperSample().getActiveAliquots()) {
                         outputWriter.println("Fractions from " + activeAliquot.getAliquotName() + "\n");
                         outputWriter.println(PbcCorrectionDetails.headerString() + "\n");
                         Vector<Fraction> fractions = ((UPbReduxAliquot) activeAliquot).getActiveAliquotFractions();
@@ -2186,6 +2186,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         newProjectFromLegacyDataTable_menu.setText("New Project from Legacy Data Table");
 
         dibbs_USeries.setText("DIBBs U-Series Legacy Data Table from Single Source in .csv format");
+        dibbs_USeries.setEnabled(false);
         dibbs_USeries.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 dibbs_USeriesActionPerformed(evt);
@@ -3581,7 +3582,7 @@ private void startStopLiveUpdate_buttonActionPerformed(java.awt.event.ActionEven
         // oct 2014
         forceCloseOfSampleDateInterpretations();
 
-        AliquotI aliquot = theSample.getAliquotByNumber(((UPbFractionI) fraction).getAliquotNumber());
+        AliquotInterface aliquot = theSample.getAliquotByNumber(((UPbFractionI) fraction).getAliquotNumber());
         myFractionEditor = null;
 
         if (theSample.isSampleTypeLegacy()
@@ -3665,7 +3666,7 @@ private void startStopLiveUpdate_buttonActionPerformed(java.awt.event.ActionEven
      *
      * @param aliquot
      */
-    public void editAliquot(AliquotI aliquot) {
+    public void editAliquot(AliquotInterface aliquot) {
         DialogEditor myEditor = null;
 
         String sampleAnalysisType = theSample.getSampleAnalysisType();

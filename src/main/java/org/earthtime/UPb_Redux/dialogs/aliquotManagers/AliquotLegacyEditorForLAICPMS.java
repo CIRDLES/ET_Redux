@@ -44,7 +44,7 @@ import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.renderers.EditFractionButton;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
-import org.earthtime.aliquots.AliquotI;
+import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.dataDictionaries.MeasuredRatios;
 import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.exceptions.ETException;
@@ -94,7 +94,7 @@ public class AliquotLegacyEditorForLAICPMS extends AliquotEditorDialog {
             ETReduxFrame parent,
             boolean modal,
             SampleInterface sample,
-            AliquotI aliquot ) {
+            AliquotInterface aliquot ) {
         super( parent, modal, sample, aliquot );
 
 

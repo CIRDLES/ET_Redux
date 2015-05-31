@@ -91,7 +91,7 @@ import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.UPb_Redux.utilities.Thumbnail;
 import org.earthtime.UPb_Redux.utilities.UPbReduxFocusTraversalPolicy;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
-import org.earthtime.aliquots.AliquotI;
+import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.archivingTools.AnalysisImage;
 import org.earthtime.archivingTools.GeochronUploadImagesHelper;
 import org.earthtime.archivingTools.GeochronUploaderUtility;
@@ -154,7 +154,7 @@ public class AliquotEditorDialog extends DialogEditor {
     /**
      *
      */
-    protected AliquotI myAliquot;
+    protected AliquotInterface myAliquot;
     /**
      *
      */
@@ -536,7 +536,7 @@ public class AliquotEditorDialog extends DialogEditor {
             SampleDateInterpretationSubscribeInterface parent,
             boolean modal,
             SampleInterface sample,
-            AliquotI aliquot) {
+            AliquotInterface aliquot) {
         super((Frame) parent, modal);
         this.parent = parent;
 
@@ -3743,7 +3743,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
      * @param aliquot
      * @param validUser
      */
-    protected void showArchiveNote(AliquotI aliquot, boolean validUser) {
+    protected void showArchiveNote(AliquotInterface aliquot, boolean validUser) {
         // determine if aliquot in GeochronID
         GeochronValidationResults validateAliquot = GeochronValidationResults.invalidUser;
 
@@ -4486,7 +4486,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
      *
      * @param myAliquot
      */
-    public void setMyAliquot(AliquotI myAliquot) {
+    public void setMyAliquot(AliquotInterface myAliquot) {
         this.myAliquot = myAliquot;
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -5113,7 +5113,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
     }
 
     // refactor this stuff to reduce coupling
-    private GeochronValidationResults confirmAliquotArchivedInGeochron(AliquotI aliquot) {
+    private GeochronValidationResults confirmAliquotArchivedInGeochron(AliquotInterface aliquot) {
 
         String userName = ((ETReduxFrame) parent).getMyState().getReduxPreferences().getGeochronUserName();
         String password = ((ETReduxFrame) parent).getMyState().getReduxPreferences().getGeochronPassWord();

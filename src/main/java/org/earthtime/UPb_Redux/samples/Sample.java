@@ -47,7 +47,7 @@ import org.earthtime.UPb_Redux.reports.ReportSettings;
 import org.earthtime.UPb_Redux.user.SampleDateInterpretationGUIOptions;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
-import org.earthtime.aliquots.AliquotI;
+import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.dataDictionaries.MineralTypes;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
@@ -114,7 +114,7 @@ public class Sample implements
      * the collection of aliquots created for this <code>Sample</code>;
      * contained in aliquot vector for thread safety
      */
-    private Vector<AliquotI> aliquots;
+    private Vector<AliquotInterface> aliquots;
     /**
      * collection of individual aliquotFractionFiles within this
      * <code>Sample</code>.
@@ -420,7 +420,7 @@ public class Sample implements
         initializeDefaultUPbFraction(defFraction);
 
         // sept 2010 add Aliquot defaults
-        AliquotI aliquot = getAliquotByNumber(aliquotNumber);
+        AliquotInterface aliquot = getAliquotByNumber(aliquotNumber);
         ReduxLabData labData = ((UPbReduxAliquot) aliquot).getMyReduxLabData();
 
         String tracerID = ((UPbReduxAliquot) aliquot).getDefaultTracerID();
@@ -674,7 +674,7 @@ public class Sample implements
 
         // determine aliquot number
         if (aliquotFractionFiles.length > 0) {
-            AliquotI aliquot = getAliquotByName(aliquotFolder.getName());
+            AliquotInterface aliquot = getAliquotByName(aliquotFolder.getName());
             if (aliquot == null) {
                 // check if last aliquot was empty (i.e. the initial first dummy aliquot)
                 if (((UPbReduxAliquot) aliquots.get(aliquots.size() - 1)).getAliquotFractions().isEmpty()) {
@@ -1201,7 +1201,7 @@ public class Sample implements
      * <code>Sample</code>
      */
     @Override
-    public Vector<AliquotI> getAliquots() {
+    public Vector<AliquotInterface> getAliquots() {
         return aliquots;
     }
 
@@ -1218,7 +1218,7 @@ public class Sample implements
      * <code>Sample</code> will be set
      */
     @Override
-    public void setAliquots(Vector<AliquotI> aliquots) {
+    public void setAliquots(Vector<AliquotInterface> aliquots) {
         this.aliquots = aliquots;
     }
 
@@ -1227,9 +1227,9 @@ public class Sample implements
      */
     public void repairAliquotNumberingDec2011() {
         // walk aliquots and remove empty ones 
-        ArrayList<AliquotI> aliquotsToDelete = new ArrayList<>();
+        ArrayList<AliquotInterface> aliquotsToDelete = new ArrayList<>();
         for (int i = 0; i < aliquots.size(); i++) {
-            AliquotI aliquot = aliquots.get(i);//    Feb 2015 getAliquotByNumber(i + 1);
+            AliquotInterface aliquot = aliquots.get(i);//    Feb 2015 getAliquotByNumber(i + 1);
             if (((UPbReduxAliquot) aliquot).getAliquotFractions().isEmpty()) {
                 // save aliquot for later deletion
                 aliquotsToDelete.add(aliquot);
@@ -1244,7 +1244,7 @@ public class Sample implements
 
         // renumber remaining aliquots
         for (int i = 0; i < aliquots.size(); i++) {
-            AliquotI aliquot = aliquots.get(i);
+            AliquotInterface aliquot = aliquots.get(i);
             ((UPbReduxAliquot) aliquot).setAliquotNumber(i + 1);
 
             Vector<Fraction> aliquotFractions = ((UPbReduxAliquot) aliquot).getAliquotFractions();
@@ -1295,8 +1295,8 @@ public class Sample implements
             this.physicalConstantsModel = physicalConstantsModel;
             this.setChanged(true);
             // all existing UPbAliquots must be updated (they in turn update aliquotFractionFiles)
-            for (AliquotI aliquot : aliquots) {
-                AliquotI nextAliquot = getAliquotByNumber(((UPbReduxAliquot) aliquot).getAliquotNumber());
+            for (AliquotInterface aliquot : aliquots) {
+                AliquotInterface nextAliquot = getAliquotByNumber(((UPbReduxAliquot) aliquot).getAliquotNumber());
                 try {
                     nextAliquot.setPhysicalConstants(getPhysicalConstantsModel());
 

@@ -28,7 +28,7 @@ import org.earthtime.UPb_Redux.dateInterpretation.concordia.YorkLineFit;
 import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.samples.Sample;
-import org.earthtime.aliquots.AliquotI;
+import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.samples.SampleInterface;
 import static org.junit.Assert.assertEquals;
@@ -830,8 +830,8 @@ public class SampleDateModelTest {
     public void test_GetAliquot() {
         System.out.println("Testing SampleDateModel's getAliquot()");
         SampleDateModel instance = new SampleDateModel();
-        AliquotI expResult = new UPbReduxAliquot();
-        AliquotI result = instance.getAliquot();
+        AliquotInterface expResult = new UPbReduxAliquot();
+        AliquotInterface result = instance.getAliquot();
         assertEquals(null, result);
 
         expResult=null;
@@ -848,8 +848,8 @@ public class SampleDateModelTest {
     public void test_SetAliquot() {
         System.out.println("Testing SampleDateModel's setAliquot(Aliquot aliquot)");
         SampleDateModel instance = new SampleDateModel();
-        AliquotI expResult = new UPbReduxAliquot();
-        AliquotI result = instance.getAliquot();
+        AliquotInterface expResult = new UPbReduxAliquot();
+        AliquotInterface result = instance.getAliquot();
         assertEquals(null, result);
 
         expResult=null;
