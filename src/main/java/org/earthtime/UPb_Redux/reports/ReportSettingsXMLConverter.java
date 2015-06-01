@@ -217,10 +217,10 @@ public class ReportSettingsXMLConverter implements Converter {
         reader.moveUp();
 
         reader.moveDown();
-        reportSettings.setLegacyData( (reader.getValue().equalsIgnoreCase( "true" )) ? true : false );
+        reportSettings.setLegacyData((reader.getValue().equalsIgnoreCase( "true" )));
         reader.moveUp();
 
-
+        reportSettings.assembleReportCategories();
         return reportSettings;
     }
 }

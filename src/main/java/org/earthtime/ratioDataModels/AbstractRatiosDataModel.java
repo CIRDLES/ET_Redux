@@ -38,12 +38,12 @@ import org.earthtime.UPb_Redux.reduxLabData.ReduxLabDataListElementI;
 import org.earthtime.UPb_Redux.user.UPbReduxConfigurator;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
+import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.matrices.matrixModels.AbstractMatrixModel;
 import org.earthtime.matrices.matrixModels.CorrelationMatrixModel;
 import org.earthtime.matrices.matrixModels.CovarianceMatrixModel;
 import org.earthtime.utilities.DateHelpers;
-import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.xmlUtilities.XMLSerializationI;
 
 /**
@@ -225,7 +225,7 @@ public abstract class AbstractRatiosDataModel implements
     @Override
     public int compareTo(AbstractRatiosDataModel model) throws ClassCastException {
         String modelID =//
-                ((AbstractRatiosDataModel) model).getNameAndVersion().trim();
+                model.getNameAndVersion().trim();
         return (this.getNameAndVersion().trim() //
                 .compareToIgnoreCase(modelID));
     }

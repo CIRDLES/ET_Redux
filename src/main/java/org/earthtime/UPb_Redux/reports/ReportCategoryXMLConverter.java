@@ -58,6 +58,7 @@ public class ReportCategoryXMLConverter implements Converter {
      * @return  <code>boolean</code> - <code>true</code> if <code>clazz</code> matches
      *          <code>reportSettings</code>'s <code>Class</code>; else <code>false</code>.
      */
+    @Override
     public boolean canConvert ( Class clazz ) {
         return clazz.equals( ReportCategory.class );
     }
@@ -73,6 +74,7 @@ public class ReportCategoryXMLConverter implements Converter {
      * @param   writer  stream to write through
      * @param   context <code>MarshallingContext</code> used to store generic data
      */
+    @Override
     public void marshal ( Object value, HierarchicalStreamWriter writer,
             MarshallingContext context ) {
 
@@ -130,7 +132,7 @@ public class ReportCategoryXMLConverter implements Converter {
 
         reader.moveDown();
         if ( "categoryColumns".equals( reader.getNodeName() ) ) {
-            ArrayList<ReportColumn> columns = new ArrayList<ReportColumn>();
+            ArrayList<ReportColumn> columns = new ArrayList<>();
             while (reader.hasMoreChildren()) {
                 reader.moveDown();
                 ReportColumn item = new ReportColumn();
@@ -153,11 +155,11 @@ public class ReportCategoryXMLConverter implements Converter {
         reader.moveUp();
 
         reader.moveDown();
-        reportCategory.setVisible( (reader.getValue().equalsIgnoreCase( "true" )) ? true : false );
+        reportCategory.setVisible((reader.getValue().equalsIgnoreCase( "true" )));
         reader.moveUp();
 
         reader.moveDown();
-        reportCategory.setLegacyData( (reader.getValue().equalsIgnoreCase( "true" )) ? true : false );
+        reportCategory.setLegacyData((reader.getValue().equalsIgnoreCase( "true" )));
         reader.moveUp();
 
         return reportCategory;

@@ -3356,7 +3356,8 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         if (returnFile != null) {
             ReportSettings reportSettings = new ReportSettings();
             try {
-                theSample.setReportSettingsModel((ReportSettings) reportSettings.readXMLObject(returnFile.getAbsolutePath(), true));
+                ReportSettings reportSettingsModel = (ReportSettings) reportSettings.readXMLObject(returnFile.getAbsolutePath(), true);
+                theSample.setReportSettingsModel(reportSettingsModel);
                 retVal = returnFile.getParent();
             } catch (FileNotFoundException | ETException | BadOrMissingXMLSchemaException fileNotFoundException) {
             }
@@ -3409,14 +3410,14 @@ private void editCurrentReportSettingsModel_menuItemActionPerformed(java.awt.eve
 
     private void EditReportSettings()
             throws BadLabDataException {
-        if (!ReportSettingsManager.amOpen) {
+        //if (!ReportSettingsManager.amOpen) {
             myReportSettingsEditor
                     = new ReportSettingsManager(this, true, theSample.getReportSettingsModel());//Initialized());
             myReportSettingsEditor.setSize(455, 685);
             DialogEditor.setDefaultLookAndFeelDecorated(true);
             myReportSettingsEditor.setVisible(true);
-        } else {
-        }
+//        } else {
+//        }
 
     }
 

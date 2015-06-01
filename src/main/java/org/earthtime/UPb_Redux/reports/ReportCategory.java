@@ -73,7 +73,7 @@ public class ReportCategory implements Serializable, ReportListItemI {
         this.legacyData = false;
 
     }
-
+    
     private ReportColumn SetupReportColumn(int index, String[][] specs) {
         String displayName1 = specs[index][0];
         // for case of category Correlation Coefficients s, pre-pend a rho to column name
@@ -254,6 +254,7 @@ public class ReportCategory implements Serializable, ReportListItemI {
      * 
      * @param visible
      */
+    @Override
     public void setVisible(boolean visible) {
         this.visible = visible;
     }
@@ -261,6 +262,7 @@ public class ReportCategory implements Serializable, ReportListItemI {
     /**
      * 
      */
+    @Override
     public void ToggleIsVisible() {
         this.setVisible(!isVisible());
     }
@@ -277,8 +279,8 @@ public class ReportCategory implements Serializable, ReportListItemI {
      */
     public void setLegacyData(boolean legacyData) {
         this.legacyData = legacyData;
-        for (int i = 0; i < categoryColumns.length; i ++){
-            categoryColumns[i].setLegacyData(legacyData);
+        for (ReportColumn categoryColumn : categoryColumns) {
+            categoryColumn.setLegacyData(legacyData);
         }
     }
 }

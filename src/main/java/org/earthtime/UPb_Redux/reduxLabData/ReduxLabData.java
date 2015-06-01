@@ -1302,7 +1302,7 @@ public final class ReduxLabData implements Serializable {
             String myReportSettingsName = defaultReportSettingsModel.getName();
             defaultReportSettingsModel = new ReportSettings(myReportSettingsName);
         }
-        return defaultReportSettingsModel;
+        return defaultReportSettingsModel.clone();
     }
 
     /**
@@ -1310,7 +1310,7 @@ public final class ReduxLabData implements Serializable {
      * @param model
      */
     public void setDefaultreportSettingsModel(ReportSettings model) {
-        this.defaultReportSettingsModel = model;
+        this.defaultReportSettingsModel = model.clone();
     }
 
     /**
