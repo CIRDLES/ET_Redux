@@ -80,11 +80,11 @@ public class ReportSettingsManager extends DialogEditor {
 
     private void populateCategoryList () {
         // extract category names
-        Map<Integer, ReportCategory> cats = getReportSettings().getReportCategoriesInOrder();
+        Map<Integer, ReportCategory> cats = reportSettings.getReportCategoriesInOrder();
         catList = new Vector<>();
 
         for (int c = 0; c < cats.size(); c ++) {
-            catList.add( (ReportListItemI)cats.get( c ) );
+            catList.add(cats.get( c ));
         }
 
         categories_list.setCellRenderer( new reportListRenderer() );
@@ -96,7 +96,7 @@ public class ReportSettingsManager extends DialogEditor {
     private void populateColumnList ( ReportCategory cat ) {
         // extract column names
         Map<Integer, ReportColumn> cols = cat.getCategoryColumnOrder();
-        colList = new Vector<ReportListItemI>();
+        colList = new Vector<>();
 
         for (int c = 0; c < cols.size(); c ++) {
             colList.add( cols.get( c ) );
@@ -155,6 +155,7 @@ public class ReportSettingsManager extends DialogEditor {
     class ReportListSelectionListener implements ListSelectionListener {
         // This method is called each time the user changes the set of selected items
 
+        @Override
         public void valueChanged ( ListSelectionEvent evt ) {
             // When the user releases the mouse button and completes the selection,
             // getValueIsAdjusting() becomes false
@@ -748,7 +749,7 @@ public class ReportSettingsManager extends DialogEditor {
 }//GEN-LAST:event_close_buttonActionPerformed
 
     private void categoryHideShow_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_categoryHideShow_buttonActionPerformed
-        ((ReportListItemI) categories_list.getSelectedValue()).ToggleIsVisible();
+        categories_list.getSelectedValue().ToggleIsVisible();
         categories_list.repaint();
     }//GEN-LAST:event_categoryHideShow_buttonActionPerformed
 
@@ -830,14 +831,14 @@ private void unctModeArbitrary_rButtonStateChanged(javax.swing.event.ChangeEvent
 
 private void categories_listMouseClicked (java.awt.event.MouseEvent evt) {//GEN-FIRST:event_categories_listMouseClicked
     if ( (evt.getClickCount() == 2) && (categories_list.getSelectedIndex() >= 1) ) {
-        ((ReportCategory) categories_list.getSelectedValue()).ToggleIsVisible();
+        categories_list.getSelectedValue().ToggleIsVisible();
         categories_list.repaint();
     }
 }//GEN-LAST:event_categories_listMouseClicked
 
 private void columns_listMouseClicked (java.awt.event.MouseEvent evt) {//GEN-FIRST:event_columns_listMouseClicked
     if ( evt.getClickCount() == 2 ) {
-        ((ReportColumn) columns_list.getSelectedValue()).ToggleIsVisible();
+        columns_list.getSelectedValue().ToggleIsVisible();
         columns_list.repaint();
     }
 }//GEN-LAST:event_columns_listMouseClicked

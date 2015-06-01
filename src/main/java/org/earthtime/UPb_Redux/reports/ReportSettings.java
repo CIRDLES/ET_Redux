@@ -112,15 +112,12 @@ public class ReportSettings implements
 
         this.reportSettingsComment = "";
 
-        this.reportCategories = new ArrayList<>();
-
         this.fractionCategory
                 = new ReportCategory(//
                         //
                         "Fraction",
                         0,
                         ReportSpecifications.ReportCategory_Fraction, true);
-        reportCategories.add(fractionCategory);
 
         this.datesCategory
                 = new ReportCategory(//
@@ -128,7 +125,6 @@ public class ReportSettings implements
                         "Dates",
                         1,
                         ReportSpecifications.ReportCategory_Dates, true);
-        reportCategories.add(datesCategory);
 
         this.datesPbcCorrCategory
                 = new ReportCategory(//
@@ -136,7 +132,6 @@ public class ReportSettings implements
                         "PbcCorr Dates",
                         2,//7,
                         ReportSpecifications.ReportCategory_PbcCorrDates, false);
-        reportCategories.add(datesPbcCorrCategory);
 
         this.compositionCategory
                 = new ReportCategory(//
@@ -144,7 +139,6 @@ public class ReportSettings implements
                         "Composition",
                         3,//2,
                         ReportSpecifications.ReportCategory_Composition, true);
-        reportCategories.add(compositionCategory);
 
         this.isotopicRatiosCategory
                 = new ReportCategory(//
@@ -152,7 +146,6 @@ public class ReportSettings implements
                         "Isotopic Ratios",
                         4,//3,
                         ReportSpecifications.ReportCategory_IsotopicRatios, true);
-        reportCategories.add(isotopicRatiosCategory);
 
         this.isotopicRatiosPbcCorrCategory
                 = new ReportCategory(//
@@ -160,7 +153,6 @@ public class ReportSettings implements
                         "PbcCorr Isotopic Ratios",
                         5,//6,
                         ReportSpecifications.ReportCategory_PbcCorrIsotopicRatios, false);
-        reportCategories.add(isotopicRatiosPbcCorrCategory);
 
         this.rhosCategory
                 = new ReportCategory(//
@@ -168,7 +160,6 @@ public class ReportSettings implements
                         "Correlation Coefficients",
                         6,//4,
                         ReportSpecifications.ReportCategory_CorrelationCoefficients, true);
-        reportCategories.add(rhosCategory);
 
         this.traceElementsCategory
                 = new ReportCategory(//
@@ -176,7 +167,6 @@ public class ReportSettings implements
                         "Trace Elements",
                         7,//5,
                         ReportSpecifications.ReportCategory_TraceElements, false);
-        reportCategories.add(traceElementsCategory);
 
         this.fractionCategory2
                 = new ReportCategory(//
@@ -184,10 +174,24 @@ public class ReportSettings implements
                         "Fraction",
                         8,
                         ReportSpecifications.ReportCategory_Fraction2, true);
-        reportCategories.add(fractionCategory2);
 
         legacyData = false;
 
+        assembleReportCategories();
+
+    }
+
+    public void assembleReportCategories() {
+        this.reportCategories = new ArrayList<>();
+        reportCategories.add(fractionCategory);
+        reportCategories.add(datesCategory);
+        reportCategories.add(datesPbcCorrCategory);
+        reportCategories.add(compositionCategory);
+        reportCategories.add(isotopicRatiosCategory);
+        reportCategories.add(isotopicRatiosPbcCorrCategory);
+        reportCategories.add(rhosCategory);
+        reportCategories.add(traceElementsCategory);
+        reportCategories.add(fractionCategory2);
     }
 
     /**
@@ -615,17 +619,7 @@ public class ReportSettings implements
 
             retVal[6][i] = determineFootNoteLetter(i) + "&" + footNote;
         }
-        // isValidOrAirplaneMode printing out of first fraction
-////        if (fractions.size() > 0) {
-////            for (int c = 0; c < countOfAllColumns; c++) {
-////                System.out.println(
-////                        "COL " + c + "\t  "//
-////                        + "CAT " + String.format("   %1$-18s", retVal[0][c]) + "\t" + String.format("   %1$-18s", retVal[1][c])//
-////                        + String.format("   %1$-18s", retVal[2][c])//
-////                        + "=\t" + retVal[FRACTION_DATA_START_ROW][c] //
-////                        + String.format("   %1$-6s", retVal[3][c]));
-////            }
-////        }
+
         return retVal;
 
     }
@@ -731,34 +725,9 @@ public class ReportSettings implements
 
             for (int f2 = FRACTION_DATA_START_ROW; f2 < retVal.length; f2++) {
                 if (retVal[f2][columnCount] != null) {
-                    retVal[f2][columnCount] += new String(new char[maxWidth - retVal[f2][columnCount].trim().length()]).replace('\0', ' ') //
-                            // + "                                  ".substring( 0, maxWidth - retVal[f2][columnCount].length() );
-                            ;
+                    retVal[f2][columnCount] += new String(new char[maxWidth - retVal[f2][columnCount].trim().length()]).replace('\0', ' ');
                 }
-
             }
-
-//
-//            int padRight =
-//                    Math.max( maxWidth,//7,//
-//                    Math.max( retVal[1][columnCount].trim().length(), //
-//                    Math.max( retVal[2][columnCount].trim().length(), //
-//                    retVal[3][columnCount].trim().length() ) ) ) //
-//                    - minWidth;//- retVal[FRACTION_DATA_START_ROW][columnCount].length();
-//            if ( padRight <= 0 ) {
-//                padRight = 1;
-//            }
-//
-//            if ( padRight >= 0 ) {
-//                for (int f2 = FRACTION_DATA_START_ROW; f2 < retVal.length; f2 ++) {
-//                    if ( retVal[f2][columnCount] != null ) {
-//                        retVal[f2][columnCount] =
-//                                retVal[f2][columnCount]//
-//                                + "                                  ".substring( 0, padRight );
-//                    }
-//
-//                }
-//            }
         }
 
     }
@@ -766,22 +735,10 @@ public class ReportSettings implements
     private int getCountOfAllColumns() {
         int retVal = 0;
 
-        retVal = reportCategories.stream().filter((rc) -> (rc != null)).map((rc) -> rc.getCountOfCategoryColumns()).reduce(retVal, Integer::sum);
+        retVal = reportCategories.stream().filter((rc) //
+                -> (rc != null)).map((rc)//
+                        -> rc.getCountOfCategoryColumns()).reduce(retVal, Integer::sum);
 
-//        try {
-//            retVal
-//                    +=//
-//                    getFractionCategory().getCountOfCategoryColumns()//
-//                    + getCompositionCategory().getCountOfCategoryColumns()//
-//                    + getIsotopicRatiosCategory().getCountOfCategoryColumns() //
-//                    + getDatesCategory().getCountOfCategoryColumns() //
-//                    + rhosCategory.getCountOfCategoryColumns() //
-//                    + traceElementsCategory.getCountOfCategoryColumns() //
-//                    + isotopicRatiosPbcCorrCategory.getCountOfCategoryColumns() //
-//                    + datesPbcCorrCategory.getCountOfCategoryColumns() //
-//                    + getFractionCategory2().getCountOfCategoryColumns();
-//        } catch (Exception e) {
-//        }
         return retVal;
     }
 
@@ -792,30 +749,11 @@ public class ReportSettings implements
     public Map<Integer, ReportCategory> getReportCategoriesInOrder() {
         Map<Integer, ReportCategory> retVal = new HashMap<>();
 
-        reportCategories.stream().filter((rc) -> (rc != null)).forEach((rc) -> {
+        reportCategories.stream().filter((rc) //
+                -> (rc != null)).forEach((rc) -> {
             retVal.put(rc.getPositionIndex(), rc);
         });
 
-//        retVal.put(fractionCategory.getPositionIndex(), fractionCategory);
-//        retVal.put(compositionCategory.getPositionIndex(), compositionCategory);
-//        retVal.put(isotopicRatiosCategory.getPositionIndex(), isotopicRatiosCategory);
-//        retVal.put(datesCategory.getPositionIndex(), datesCategory);
-//        retVal.put(rhosCategory.getPositionIndex(), rhosCategory);
-//        try {
-//            retVal.put(traceElementsCategory.getPositionIndex(), traceElementsCategory);
-//        } catch (Exception e) {
-//        }
-//        try {
-//            retVal.put(isotopicRatiosPbcCorrCategory.getPositionIndex(), isotopicRatiosPbcCorrCategory);
-//        } catch (Exception e) {
-//        }
-//
-//        try {
-//            retVal.put(datesPbcCorrCategory.getPositionIndex(), datesPbcCorrCategory);
-//        } catch (Exception e) {
-//        }
-//
-//        retVal.put(fractionCategory2.getPositionIndex(), fractionCategory2);
         return retVal;
     }
 
@@ -985,8 +923,20 @@ public class ReportSettings implements
      *
      * @return
      */
-    public ReportSettings copy() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    @Override
+    public ReportSettings clone() {
+        ReportSettings reportSettingsModel = null;
+
+        // write out the settings
+        serializeXMLObject("TEMPreportSettings.xml");
+
+        // read them back in
+        try {
+            reportSettingsModel = (ReportSettings) readXMLObject("TEMPreportSettings.xml", true);
+        } catch (FileNotFoundException | ETException | BadOrMissingXMLSchemaException fileNotFoundException) {
+        }
+
+        return reportSettingsModel;
     }
 
 // XML Serialization

@@ -55,6 +55,7 @@ public class ReportColumnXMLConverter implements Converter {
      * @return  <code>boolean</code> - <code>true</code> if <code>clazz</code> matches
      *          <code>reportSettings</code>'s <code>Class</code>; else <code>false</code>.
      */
+    @Override
     public boolean canConvert(Class clazz) {
         return clazz.equals(ReportColumn.class);
     }
@@ -70,6 +71,7 @@ public class ReportColumnXMLConverter implements Converter {
      * @param   writer  stream to write through
      * @param   context <code>MarshallingContext</code> used to store generic data
      */
+    @Override
     public void marshal(Object value, HierarchicalStreamWriter writer,
             MarshallingContext context) {
 
@@ -166,6 +168,7 @@ public class ReportColumnXMLConverter implements Converter {
      * @return  <code>Object</code> - <code>reportSettings</code> read from file
      *          specified by <code>reader</code>
      */
+    @Override
     public Object unmarshal(HierarchicalStreamReader reader,
             UnmarshallingContext context) {
 
@@ -220,7 +223,7 @@ public class ReportColumnXMLConverter implements Converter {
         reader.moveUp();
 
         reader.moveDown();
-        reportColumn.setDisplayedWithArbitraryDigitCount((reader.getValue().equalsIgnoreCase("true")) ? true : false);
+        reportColumn.setDisplayedWithArbitraryDigitCount((reader.getValue().equalsIgnoreCase("true")));
         reader.moveUp();
 
         reader.moveDown();
@@ -228,7 +231,7 @@ public class ReportColumnXMLConverter implements Converter {
         reader.moveUp();
 
         reader.moveDown();
-        reportColumn.setVisible((reader.getValue().equalsIgnoreCase("true")) ? true : false);
+        reportColumn.setVisible((reader.getValue().equalsIgnoreCase("true")));
         reader.moveUp();
 
         reader.moveDown();
@@ -240,18 +243,16 @@ public class ReportColumnXMLConverter implements Converter {
         reader.moveUp();
 
         reader.moveDown();
-        reportColumn.setNeedsPb((reader.getValue().equalsIgnoreCase("true")) ? true : false);
+        reportColumn.setNeedsPb((reader.getValue().equalsIgnoreCase("true")));
         reader.moveUp();
 
         reader.moveDown();
-        reportColumn.setNeedsU((reader.getValue().equalsIgnoreCase("true")) ? true : false);
+        reportColumn.setNeedsU((reader.getValue().equalsIgnoreCase("true")));
         reader.moveUp();
 
         reader.moveDown();
-        reportColumn.setLegacyData((reader.getValue().equalsIgnoreCase("true")) ? true : false);
+        reportColumn.setLegacyData((reader.getValue().equalsIgnoreCase("true")));
         reader.moveUp();
-
-
 
         return reportColumn;
     }
