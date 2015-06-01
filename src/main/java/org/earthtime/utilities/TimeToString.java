@@ -21,6 +21,7 @@ package org.earthtime.utilities;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * Utility for printing timeStamps.
@@ -52,11 +53,15 @@ public class TimeToString {
      * @return
      */
     public static String timeStampString ( long time ) {
+        
         Date timeStamp = new Date( time );
         
         SimpleDateFormat format =
             new SimpleDateFormat("HH:mm:ss dd.MMM");
         
+        //In case it is needed to change the time zone
+        //format.setTimeZone(TimeZone.getTimeZone("America/New_York"));
+
         return format.format(timeStamp);
     }
     
@@ -74,14 +79,4 @@ public class TimeToString {
         return format.format(timeStamp);
     }
 
-    /**
-     *
-     * @param args
-     */
-    public static void main ( String[] args ) {
-        long time = 1191343282;
-        TimeToString ts = new TimeToString();
-        System.out.println( ts.secondsAsLongToTimeString( time ) );
-        System.out.println( ts.timeStampString( time ) );
-   }
 }

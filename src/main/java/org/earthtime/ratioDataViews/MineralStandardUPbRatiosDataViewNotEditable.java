@@ -77,4 +77,5 @@ public class MineralStandardUPbRatiosDataViewNotEditable extends MineralStandard
         testView.displayModelInFrame();
 
     }
+
 }

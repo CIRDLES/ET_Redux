@@ -26,7 +26,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
  *
  * @author http://www.java2s.com/Tutorial/Java/0240__Swing/CreatinganEditorJustforLeafNodes.htm
  */
-public class CheckBoxNodeTreeSample {
+public class CheckBoxNodeTreeSample 
+{
 
     /**
      * 

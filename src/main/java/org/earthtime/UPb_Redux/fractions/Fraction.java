@@ -1335,16 +1335,6 @@ public abstract class Fraction implements
     }
 
     /**
-     *
-     * @param args
-     * @throws Exception
-     */
-    public static void main(String[] args) throws Exception {
-        AnalysisMeasures am = AnalysisMeasures.alphaPb;
-        System.out.println(am.getName());
-    }
-
-    /**
      * @return the parDerivTerms
      */
     public ConcurrentMap<String, BigDecimal> getParDerivTerms() {

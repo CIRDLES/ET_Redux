@@ -831,98 +831,6 @@ public class MineralStandardUPbModel extends AbstractRatiosDataModel {
     }
 
     /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-
-        ValueModel[] myTestRatios = new ValueModel[3];
-        myTestRatios[0] = new ValueModel(//
-                //
-                "r206_204c", //
-                BigDecimal.ZERO, //
-                "ABS", //
-                new BigDecimal(0.06298816629854530000 / 2.0), BigDecimal.ZERO);
-        myTestRatios[1] = new ValueModel(//
-                //
-                "r207_204c", //
-                BigDecimal.ZERO, //
-                "ABS", //
-                new BigDecimal(0.92376003656586900000 / 2.0), BigDecimal.ZERO);
-        myTestRatios[2] = new ValueModel(//
-                //
-                "r208_204c", //
-                BigDecimal.ZERO, //
-                "ABS", //
-                new BigDecimal(0.00040104065069202200 / 2.0), BigDecimal.ZERO);
-
-        Map<String, BigDecimal> myTestCorrelations = new HashMap<>();
-        myTestCorrelations.put("rhoR206_204c__r207_204c", new BigDecimal(-0.0400671215735759));
-        myTestCorrelations.put("rhoR206_204c__r208_204c", new BigDecimal(-0.0400671215735759));
-        myTestCorrelations.put("rhoR207_204c__r208_204c", new BigDecimal(-0.0400671215735759));
-        AbstractRatiosDataModel initialPbModel1 = //
-                InitialPbModelET.createInstance("initialPbModel1", 1, 0, "Test Lab", "2012-04-01", "NO REF", "NO COMMENT", myTestRatios, myTestCorrelations);
-
-        myTestRatios = new ValueModel[4];
-        myTestRatios[0] = new MineralStandardUPbRatioModel(//
-                MineralStandardUPbRatiosEnum.r206_207r.getName(), //
-                new BigDecimal(16.9432435810912), //
-                "ABS", //
-                new BigDecimal(0.06298816629854530000 / 2.0),//
-                true);
-        myTestRatios[1] = new MineralStandardUPbRatioModel(//
-                MineralStandardUPbRatiosEnum.r206_208r.getName(), //
-                new BigDecimal(27.80), //
-                "ABS", //
-                new BigDecimal(0.92376003656586900000 / 2.0),//
-                true);
-        myTestRatios[2] = new MineralStandardUPbRatioModel(//
-                MineralStandardUPbRatiosEnum.r206_238r.getName(), //
-                new BigDecimal(0.09130), //
-                "ABS", //
-                new BigDecimal(0.00040104065069202200 / 2.0),//
-                true);
-        myTestRatios[3] = new MineralStandardUPbRatioModel(//
-                MineralStandardUPbRatiosEnum.r238_235s.getName(), //
-                new BigDecimal(137.818), //
-                "ABS", //
-                new BigDecimal(0.04500000000000000000 / 2.0),//
-                true);
-
-        myTestCorrelations = new HashMap<String, BigDecimal>();
-        myTestCorrelations.put("rhoR206_207r__r206_238r", new BigDecimal(-0.0400671215735759));
-
-        AbstractRatiosDataModel sriLanka1 = createInstance(//
-                "SriLanka", 1, 0, "Test Lab", "2000-01-01", "NO REF", "NO COMMENT", myTestRatios, myTestCorrelations, myConcentrationsPPM, "Sri Lanka", "zircon", initialPbModel1);
-
-//        System.out.println( sriLanka1.getDataCorrelations().ToStringWithLabels() );
-//        System.out.println( sriLanka1.getDataCovariances().ToStringWithLabels() );
-        try {
-            ETSerializer.SerializeObjectToFile(sriLanka1, "MineralStandardUPbModelTEST.ser");
-        } catch (ETException eTException) {
-        }
-        AbstractRatiosDataModel sriLanka2 = //
-                (AbstractRatiosDataModel) ETSerializer.GetSerializedObjectFromFile("MineralStandardUPbModelTEST.ser");
-
-        System.out.println(sriLanka1.getDataCorrelationsVarUnct().ToStringWithLabels());
-        System.out.println(sriLanka1.getDataCovariancesVarUnct().ToStringWithLabels());
-
-        String testFileName = "MineralStandardUPbModelTEST.xml";
-        sriLanka2.serializeXMLObject(testFileName);
-        try {
-            sriLanka2.readXMLObject(testFileName, false);
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(MineralStandardUPbModel.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ETException ex) {
-            Logger.getLogger(MineralStandardUPbModel.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (BadOrMissingXMLSchemaException ex) {
-            Logger.getLogger(MineralStandardUPbModel.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        System.out.println(sriLanka2.getDataCorrelationsVarUnct().ToStringWithLabels());
-        System.out.println(sriLanka2.getDataCovariancesVarUnct().ToStringWithLabels());
-    }
-
-    /**
      * @return the concentrationsPPM
      */
     public ValueModel[] getConcentrationsPPM() {
@@ -951,4 +859,5 @@ public class MineralStandardUPbModel extends AbstractRatiosDataModel {
 
         return retVal;
     }
+    
 }

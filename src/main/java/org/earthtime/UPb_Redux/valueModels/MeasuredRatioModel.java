@@ -315,24 +315,4 @@ public class MeasuredRatioModel extends ValueModel implements
         return myValueModel;
     }
 
-    /**
-     * 
-     * @param args
-     * @throws Exception
-     */
-    public static void main ( String[] args ) throws Exception {
-
-        ValueModel valueModel =
-                new MeasuredRatioModel(//
-                "r206_204b", new BigDecimal( "1234567890" ), "ABS", new BigDecimal( "123000" ), true, true );
-        System.out.println(
-                "Format Test: " + valueModel.formatValueAndTwoSigmaForPublicationSigDigMode( "ABS", 6, 2 ) );
-
-
-        String testFileName = "MeasuredRatioModelTEST.xml";
-
-        valueModel.serializeXMLObject( testFileName );
-        valueModel.readXMLObject( testFileName, true );
-
-    }
 }

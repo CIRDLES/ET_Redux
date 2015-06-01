@@ -542,8 +542,8 @@ public class InitialPbModel implements
      * @param args
      * @throws Exception
      */
-    public static void main ( String[] args ) throws Exception {
-
+//    public static void main ( String[] args ) throws Exception {
+//
 //        InitialPbModel initialPbModel = new StaceyKramersInitialPbModel().copy();
 //
 //        BigDecimal lambda238 = PhysicalConstants.EARTHTIMEPhysicalConstants().getMeasuredConstantByName( Lambdas.lambda238.getName() ).getValue();
@@ -560,8 +560,8 @@ public class InitialPbModel implements
 //        InitialPbModel initialPbModelR = (InitialPbModel) initialPbModel.readXMLObject( testFileName, true );
 //
 //        System.out.println( initialPbModelR.name );
-
-    }
+//
+//    }
 
 
     /**

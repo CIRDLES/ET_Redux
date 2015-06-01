@@ -302,30 +302,7 @@ public class PbBlankICModel extends AbstractRatiosDataModel {
         return classNameAliasForXML;
     }
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main ( String[] args ) {
-
-        AbstractRatiosDataModel pbBlankModelETs = PbBlankICModel.getEARTHTIMEExamplePbBlankICModel();
-
-        try {
-            ETSerializer.SerializeObjectToFile(pbBlankModelETs, "PbBlankICModelTEST.ser");
-        } catch (ETException eTException) {
-        }
-        AbstractRatiosDataModel pbBlankModelET = (AbstractRatiosDataModel) ETSerializer.GetSerializedObjectFromFile( "PbBlankICModelTEST.ser" );
-
-        String testFileName = "PbBlankICModelTEST.xml";
-
-        pbBlankModelET.serializeXMLObject( testFileName );
-        try {
-            pbBlankModelET.readXMLObject( testFileName, true );
-        } catch (FileNotFoundException fileNotFoundException) {
-        } catch (ETException eTException) {
-        } catch (BadOrMissingXMLSchemaException badOrMissingXMLSchemaException) {
-        }
-
-    }
+ 
 //    private void readObject ( ObjectInputStream stream ) throws IOException,
 //            ClassNotFoundException {
 //        stream.defaultReadObject();

@@ -36,7 +36,7 @@ public class CommonLeadLossCorrectionSchemeA2 extends AbstractCommonLeadLossCorr
     private static final long serialVersionUID = -8578616106632214764L;
     private static CommonLeadLossCorrectionSchemeA2 instance = null;
 
-    private CommonLeadLossCorrectionSchemeA2() {
+    CommonLeadLossCorrectionSchemeA2() {
         super("A2", true);
     }
 
@@ -371,21 +371,5 @@ public class CommonLeadLossCorrectionSchemeA2 extends AbstractCommonLeadLossCorr
 
     }
 
-    /**
-     *
-     * @param args
-     * @throws Exception
-     */
-    public static void main(String[] args) throws Exception {
-        System.out.println("CommonLeadLossCorrectionSchemeA2");
-
-        CommonLeadLossCorrectionSchemeA2 cllcsA = new CommonLeadLossCorrectionSchemeA2();
-
-        double ageA2 = cllcsA.ageForScheme(null, 137.818, 5, 0.2);
-        System.out.println("Scheme A2-a: " + ageA2);
-
-        double ageA3 = cllcsA.ageForScheme(null, 137.818, 1.2, 0.402);
-        System.out.println("Scheme A2-b: " + ageA3);
-    }
 
 }

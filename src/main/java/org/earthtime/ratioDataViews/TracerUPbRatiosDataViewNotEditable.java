@@ -58,7 +58,7 @@ public class TracerUPbRatiosDataViewNotEditable extends TracerUPbRatiosAbstractD
         this.covarianceVarUnctMatrixView = new MatrixGridViewNotEditable(dataModel.getDataCovariancesVarUnct(), showTableOnly);
         this.correlationVarUnctMatrixView = new MatrixGridViewNotEditable(dataModel.getDataCorrelationsVarUnct(), showTableOnly);
     }
-
+    
     /**
      *
      * @param args

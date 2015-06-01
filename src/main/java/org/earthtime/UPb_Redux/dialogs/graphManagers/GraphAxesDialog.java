@@ -1067,24 +1067,7 @@ public class GraphAxesDialog extends javax.swing.JDialog {
 
 
     }
-    /**
-     * @param args the command line arguments
-     */
-//    public static void main ( String args[] ) {
-//        java.awt.EventQueue.invokeLater( new Runnable() {
-//
-//            public void run () {
-//                GraphAxesDialog dialog = new GraphAxesDialog( new javax.swing.JFrame(), true, 1, 1, 10, 1, 1, 10 );
-//                dialog.addWindowListener( new java.awt.event.WindowAdapter() {
-//
-//                    public void windowClosing ( java.awt.event.WindowEvent e ) {
-//                        System.exit( 0 );
-//                    }
-//                } );
-//                dialog.setVisible( true );
-//            }
-//        } );
-//    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton OK_button;
     private javax.swing.JButton apply_button;

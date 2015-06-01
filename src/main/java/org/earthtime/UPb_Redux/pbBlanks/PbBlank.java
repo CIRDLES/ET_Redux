@@ -688,22 +688,7 @@ public class PbBlank implements
         return retPbBlank;
     }
 
-    // testing
-    /**
-     *
-     * @param args
-     * @throws Exception
-     */
-    public static void main ( String[] args ) throws Exception {
-
-        PbBlank pbBlank =
-                new PbBlank( "Test Blank" );
-        String testFileName = "PbBlankTEST.xml";
-
-        pbBlank.serializeXMLObject( testFileName );
-        pbBlank.readXMLObject( testFileName, true );
-
-    }
+    
 
     /**
      *

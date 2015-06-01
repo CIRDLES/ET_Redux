@@ -92,7 +92,7 @@ public class ETRedux {
         // installer etc ref
         // http://www.centerkey.com/mac/java/
     }
-
+    
     // installer etc ref
     // http://www.centerkey.com/mac/java/
     /**
@@ -141,6 +141,6 @@ public class ETRedux {
             //    ex.printStackTrace();
             //}
         }
-
     }
+    
 }

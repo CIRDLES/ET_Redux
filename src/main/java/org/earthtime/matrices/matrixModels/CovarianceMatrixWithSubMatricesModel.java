@@ -264,32 +264,6 @@ public class CovarianceMatrixWithSubMatricesModel extends CovarianceMatrixModel 
 
     }
 
-    /**
-     *
-     * @param args
-     */
-    public static void main ( String[] args ) {
-        CovarianceMatrixWithSubMatricesModel myMatrix = new CovarianceMatrixWithSubMatricesModel();
-
-        String[] rowNames = new String[]{"first", "second", "third", "fourth", "fifth"};
-        myMatrix.setRows( rowNames );
-        myMatrix.setCols( myMatrix.getRows() );
-
-        ConcurrentMap<String, BigDecimal> varianceTerms = new ConcurrentHashMap<String, BigDecimal>();
-        varianceTerms.put( "third", new BigDecimal( 1 ) );
-        varianceTerms.put( "fourth", new BigDecimal( 2 ) );
-        varianceTerms.put( "fifth", new BigDecimal( 3 ) );
-
-        Map<String, BigDecimal> coVariances = new HashMap<String, BigDecimal>();
-        coVariances.put( "covThird__fourth", new BigDecimal( 9 ) );
-
-        if ( myMatrix.initializeMatrixModelWithVariances( varianceTerms ) ) {
-            myMatrix.initializeCoVariances( coVariances );
-            System.out.println( myMatrix.ToStringWithLabels() );
-        }
-
-
-    }
 
     /**
      * @return the lambdasCovarianceMatrix

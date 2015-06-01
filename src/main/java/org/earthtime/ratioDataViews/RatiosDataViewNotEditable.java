@@ -63,7 +63,6 @@ public class RatiosDataViewNotEditable extends AbstractRatiosDataView {
         throw new UnsupportedOperationException( "Not saveable." );
     }
 
-    
     /**
      *
      * @param args
@@ -93,9 +92,9 @@ public class RatiosDataViewNotEditable extends AbstractRatiosDataView {
 
 
         Map<String, BigDecimal> correlations = new HashMap<String, BigDecimal>();
-        correlations.put( "rhoR206_204c__r207_204c", new BigDecimal(  - 0.0400671215735759 ) );
-        correlations.put( "rhoR206_204c__r208_204c", new BigDecimal(  - 0.0400671215735759 ) );
-        correlations.put( "rhoR207_204c__r208_204c", new BigDecimal(  - 0.0400671215735759 ) );
+        correlations.put( "rhoR206_204c__r207_204c", new BigDecimal(   0.0400671215735759 ) );
+        correlations.put( "rhoR206_204c__r208_204c", new BigDecimal(   0.0400671215735759 ) );
+        correlations.put( "rhoR207_204c__r208_204c", new BigDecimal(   0.0400671215735759 ) );
         AbstractRatiosDataModel initialPbModel1 = //
                 InitialPbModelET.createInstance(//
                 "initialPbModel1", 1, 0,"Test Lab", "2012-04-01", "NO REF", "NO COMMENT", myRatios, correlations );
@@ -103,6 +102,5 @@ public class RatiosDataViewNotEditable extends AbstractRatiosDataView {
         AbstractRatiosDataView testView = new RatiosDataViewNotEditable( initialPbModel1, null, false);
         testView.displayModelInFrame();
 
-
-    }
+    }      
 }

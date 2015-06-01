@@ -73,16 +73,16 @@ public class PhysicalConstantsDataViewEditable extends PhysicalConstantsAbstract
         super.saveEdits(checkCovarianceValidity);
         valueModelsPanelView.saveEdits();
         
-    }
-
+    }    
+    
     /**
      *
      * @param args
      * @throws Exception
      */
-    public static void main ( String[] args ) throws Exception {
+    public static void main(String[] args) throws Exception {
 
-        AbstractRatiosDataView testView = new PhysicalConstantsDataViewEditable( PhysicalConstantsModel.getEARTHTIMEPhysicalConstantsModel(), null, false);
+        AbstractRatiosDataView testView = new PhysicalConstantsDataViewEditable(PhysicalConstantsModel.getEARTHTIMEPhysicalConstantsModel(), null, false);
 
         testView.displayModelInFrame();
 

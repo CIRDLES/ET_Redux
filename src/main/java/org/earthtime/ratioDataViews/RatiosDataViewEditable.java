@@ -70,8 +70,8 @@ public class RatiosDataViewEditable extends AbstractRatiosDataView {
      * @param args
      * @throws Exception
      */
-    public static void main ( String[] args ) throws Exception {
-        AbstractRatiosDataView testView = new RatiosDataViewEditable( PbBlankICModel.createNewInstance(), null, false );
+    public static void main(String[] args) throws Exception {
+        AbstractRatiosDataView testView = new RatiosDataViewEditable(PbBlankICModel.createNewInstance(), null, false);
 
         testView.displayModelInFrame();
 
