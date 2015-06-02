@@ -1153,21 +1153,7 @@ public class ReportSettings implements
         });
     }
 
-    /**
-     *
-     * @param args
-     * @throws Exception
-     */
-    public static void main(String[] args) throws Exception {
-
-        ReportSettings reportSettings
-                = new ReportSettings("Test ReportSettings");
-        String testFileName = "ReportSettingsTEST.xml";
-
-        reportSettings.serializeXMLObject(testFileName);
-        reportSettings.readXMLObject(testFileName, true);
-
-    }
+  
 
     /**
      *

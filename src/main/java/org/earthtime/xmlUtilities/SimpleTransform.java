@@ -66,25 +66,25 @@ public class SimpleTransform {
      * @throws FileNotFoundException
      * @throws IOException
      */
-    public static void main(String[] args)
-            throws TransformerException, TransformerConfigurationException,
-            FileNotFoundException, IOException {
-        // Use the static TransformerFactory.newInstance() method to instantiate
-        // a TransformerFactory. The javax.xml.transform.TransformerFactory
-        // system property setting determines the actual class to instantiate --
-        // org.apache.xalan.transformer.TransformerImpl.
-        TransformerFactory tFactory = TransformerFactory.newInstance();
-
-        // Use the TransformerFactory to instantiate a Transformer that will work with
-        // the stylesheet you specify. This method call also processes the stylesheet
-        // into a compiled Templates object.
-        Transformer transformer = tFactory.newTransformer(new StreamSource("EarthTimeTracerHTML.xslt"));
-
-        // Use the Transformer to apply the associated Templates object to an XML document
-        // (foo.xml) and write the output to a file (foo.out).
-        transformer.transform(new StreamSource("Tracer_ET535 v.1.xml"),
-                new StreamResult(new FileOutputStream("Tracer_ET535 v.1.html")));
-
-        System.out.println("************* The result is in Tracer_ET535 v.1.html *************");
-    }
+//    public static void main(String[] args)
+//            throws TransformerException, TransformerConfigurationException,
+//            FileNotFoundException, IOException {
+//        // Use the static TransformerFactory.newInstance() method to instantiate
+//        // a TransformerFactory. The javax.xml.transform.TransformerFactory
+//        // system property setting determines the actual class to instantiate --
+//        // org.apache.xalan.transformer.TransformerImpl.
+//        TransformerFactory tFactory = TransformerFactory.newInstance();
+//
+//        // Use the TransformerFactory to instantiate a Transformer that will work with
+//        // the stylesheet you specify. This method call also processes the stylesheet
+//        // into a compiled Templates object.
+//        Transformer transformer = tFactory.newTransformer(new StreamSource("EarthTimeTracerHTML.xslt"));
+//
+//        // Use the Transformer to apply the associated Templates object to an XML document
+//        // (foo.xml) and write the output to a file (foo.out).
+//        transformer.transform(new StreamSource("Tracer_ET535 v.1.xml"),
+//                new StreamResult(new FileOutputStream("Tracer_ET535 v.1.html")));
+//
+//        System.out.println("************* The result is in Tracer_ET535 v.1.html *************");
+//    }
 }

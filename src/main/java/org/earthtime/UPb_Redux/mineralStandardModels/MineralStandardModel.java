@@ -541,24 +541,7 @@ public class MineralStandardModel implements
         this.comment = comment.trim();
     }
 
-    /**
-     *
-     * @param args
-     * @throws Exception
-     */
-    public static void main ( String[] args ) throws Exception {
 
-        MineralStandardModel mineralStandardModel = new MineralStandardModel().Copy();
-        mineralStandardModel.getTrueAge().setValue( new BigDecimal( "1.1112" ) );
-        mineralStandardModel.getMeasuredAge().setValue( new BigDecimal( "1.444" ) );
-
-        mineralStandardModel.setRadiogenicIsotopeRatios( new ValueModel[]{new ValueModel( "r207_235r", new BigDecimal( 1011 ), "PCT", new BigDecimal( 1 ), BigDecimal.ZERO )} );
-
-        String testFileName = "MineralStandardModelTEST.xml";
-        mineralStandardModel.serializeXMLObject( testFileName );
-        mineralStandardModel.readXMLObject( testFileName, true );
-
-    }
 
     /**
      * @return the radiogenicIsotopeRatios

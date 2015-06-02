@@ -71,7 +71,7 @@ public class PhysicalConstantsDataViewNotEditable extends PhysicalConstantsAbstr
         super.saveEdits(checkCovarianceValidity);
         valueModelsPanelView.saveEdits();
     }
-
+       
     /**
      *
      * @param args

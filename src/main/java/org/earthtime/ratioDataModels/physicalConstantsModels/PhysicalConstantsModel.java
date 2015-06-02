@@ -411,33 +411,6 @@ public class PhysicalConstantsModel extends AbstractRatiosDataModel {
         return classNameAliasForXML;
     }
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main ( String[] args ) {
-
-        AbstractRatiosDataModel physicalConstantsModel = PhysicalConstantsModel.getEARTHTIMEPhysicalConstantsModel();
-
-        try {
-            ETSerializer.SerializeObjectToFile(physicalConstantsModel, "PhysicalConstantsModelTEST.ser");
-        } catch (ETException eTException) {
-        }
-        AbstractRatiosDataModel physicalConstantsModel2 = (AbstractRatiosDataModel) ETSerializer.GetSerializedObjectFromFile( "PhysicalConstantsModelTEST.ser" );
-
-        String testFileName = "PhysicalConstantsModelTEST.xml";
-
-        physicalConstantsModel2.serializeXMLObject( testFileName );
-        try {
-            physicalConstantsModel2.readXMLObject( testFileName, true );
-        } catch (FileNotFoundException fileNotFoundException) {
-        } catch (ETException eTException) {
-        } catch (BadOrMissingXMLSchemaException badOrMissingXMLSchemaException) {
-        }
-
-         AbstractRatiosDataView testView = new PhysicalConstantsDataViewEditable( PhysicalConstantsModel.getEARTHTIMEPhysicalConstantsModel(), null, false);
-
-        testView.displayModelInFrame();
-    }
 
 //    private void readObject ( ObjectInputStream stream ) throws IOException,
 //            ClassNotFoundException {

@@ -44,6 +44,19 @@ public class SampleDateInterpretationAny2AxesChooser extends DialogEditor {
 
         axes_list.setListData( axesList);
     }
+    
+    /**
+     *
+     * @param args
+     */
+    public static void main(String args[]) {
+        java.awt.EventQueue.invokeLater(new Runnable() {
+
+            public void run() {
+                new SampleDateInterpretationAny2AxesChooser(new javax.swing.JFrame(), true, new Vector<String>()).setVisible(true);
+            }
+        });
+    }
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -175,17 +188,6 @@ public class SampleDateInterpretationAny2AxesChooser extends DialogEditor {
     // End of variables declaration//GEN-END:variables
 
 
-    /**
-     * 
-     * @param args
-     */
-    public static void main ( String args[] ) {
-        java.awt.EventQueue.invokeLater( new Runnable() {
 
-            public void run () {
-                new SampleDateInterpretationAny2AxesChooser( new javax.swing.JFrame(), true, new Vector<String>() ).setVisible( true );
-            }
-        } );
-    }
 
 }

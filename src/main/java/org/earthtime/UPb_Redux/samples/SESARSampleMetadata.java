@@ -302,21 +302,6 @@ public class SESARSampleMetadata
         return SESARSampleMetadata;
     }
 
-    /**
-     * 
-     * @param args
-     * @throws Exception
-     */
-    public static void main(String[] args) throws Exception {
-
-        SESARSampleMetadata SESARSampleMetadata =
-                new SESARSampleMetadata();
-        String testFileName = "SESARSampleMetadataTEST.xml";
-
-        SESARSampleMetadata.serializeXMLObject(testFileName);
-        SESARSampleMetadata.readXMLObject(testFileName, true);
-     
-    }
 
 ////    private void readObject (
 ////            ObjectInputStream stream )

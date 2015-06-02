@@ -267,25 +267,5 @@ public class SampleMetaData implements XMLSerializationI {
         return mySampleMetaData;
     }
 
-    /**
-     * 
-     * @param args
-     * @throws Exception
-     */
-    public static void main(String[] args) throws Exception {
-
-        SampleMetaData sampleMetaData =
-                new SampleMetaData("SampleJim", "C:xyz/Sector54Data");
-
-        sampleMetaData.setFractionsMetaData(new FractionMetaData[]//
-                {new FractionMetaData("F-1", "Aliquot1", "F-1_U.xml", "F-1_Pb.xml"),//
-                    new FractionMetaData("F-2", "Aliquot1", "F-2_U.xml", "F-2_Pb.xml")}//
-                );
-
-        String testFileName = "SampleMetaDataTEST.xml";
-
-        sampleMetaData.serializeXMLObject(testFileName);
-        sampleMetaData.readXMLObject(testFileName, true);
-
-    }
+   
 }

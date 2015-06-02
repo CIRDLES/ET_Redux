@@ -165,7 +165,7 @@ public class FFT {
         }
         System.out.println();
     }
-
+              
 
    /*********************************************************************
     *  Test client and sample execution
@@ -212,32 +212,6 @@ public class FFT {
     *
     *********************************************************************/
 
-//    public static void main(String[] args) {
-//        int N = Integer.parseInt(args[0]);
-//        Complex[] x = new Complex[N];
-//
-//        // original data
-//        for (int i = 0; i < N; i++) {
-//            x[i] = new Complex(i, 0);
-//            x[i] = new Complex(-2*Math.random() + 1, 0);
-//        }
-//        show(x, "x");
-//
-//        // FFT of original data
-//        Complex[] y = fft(x);
-//        show(y, "y = fft(x)");
-//
-//        // take inverse FFT
-//        Complex[] z = ifft(y);
-//        show(z, "z = ifft(y)");
-//
-//        // circular convolution of x with itself
-//        Complex[] c = cconvolve(x, x);
-//        show(c, "c = cconvolve(x, x)");
-//
-//        // linear convolution of x with itself
-//        Complex[] d = convolve(x, x);
-//        show(d, "d = convolve(x, x)");
-//    }
+
 
 }

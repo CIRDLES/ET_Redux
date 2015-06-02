@@ -45,6 +45,7 @@ import org.earthtime.ratioDataModels.tracers.TracerUPbModel;
 import org.earthtime.utilities.DateHelpers;
 import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.xmlUtilities.XMLSerializationI;
+import org.junit.Test;
 
 /**
  * Deprecated June 2012.  Needed for compatibility with legacy serializations (archives).
@@ -956,33 +957,6 @@ public class Tracer implements
         return myTracer;
     }
 
-    /**
-     *
-     * @param args
-     * @throws Exception
-     */
-    public static void main ( String[] args ) throws Exception {
-
-        Tracer tracer =
-                new Tracer( "Test Tracer" );
-        String testFileName = "TracerTEST.xml";
-
-        tracer.serializeXMLObject( testFileName );
-        tracer.readXMLObject( testFileName, true );
-
-        String[] test = getListOfEarthTimeTracers();
-
-        for (int i = 0; i < test.length; i ++) {
-            System.out.println( "\n\nChecking " + test[i] + " tracer" );
-            System.out.flush();
-            tracer =
-                    (Tracer) tracer.readXMLObject(
-                    (new UPbReduxConfigurator()).getResourceURI( "URI_EARTHTIME_XMLTracers" )//
-                    + test[i], true );
-            System.out.println( "\n\n" );
-            System.out.flush();
-        }
-    }
 
     /**
      *
@@ -991,4 +965,6 @@ public class Tracer implements
     public void removeSelf () {
 //        throw new UnsupportedOperationException( "Not supported yet." );
     }
+    
+    
 }

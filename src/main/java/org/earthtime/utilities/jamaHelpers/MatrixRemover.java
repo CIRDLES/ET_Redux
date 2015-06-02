@@ -69,16 +69,4 @@ public class MatrixRemover {
         return colRemoved;
     }
 
-    public static void main(String[] args) {
-        double[] test = new double[]{1, 5, 9, 13, 2, 6, 10, 14, 3, 7, 11, 15, 4, 8, 12, 16};
-        Matrix testM = new Matrix(test, 4);
-        testM.print(new DecimalFormat("###0"), 6);
-
-        testM = removeRow(testM, 2);
-        testM.print(new DecimalFormat("###0"), 6);
-
-        testM = removeCol(testM, 2);
-        testM.print(new DecimalFormat("###0"), 6);
-
-    }
 }

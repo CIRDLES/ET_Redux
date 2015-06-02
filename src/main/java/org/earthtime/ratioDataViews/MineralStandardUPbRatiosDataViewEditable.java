@@ -71,7 +71,7 @@ public class MineralStandardUPbRatiosDataViewEditable extends MineralStandardUPb
         apparentDatesLabel.setText(((MineralStandardUPbModel) dataModel)//
                 .listFormattedApparentDatesHTML());
     }
-
+    
     /**
      *
      * @param args
@@ -84,4 +84,5 @@ public class MineralStandardUPbRatiosDataViewEditable extends MineralStandardUPb
         testView.displayModelInFrame();
 
     }
+
 }

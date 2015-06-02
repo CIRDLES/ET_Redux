@@ -87,15 +87,4 @@ public class RatioNamePrettyPrinter {
         return "\u03BB" + "<sub>" + prettyString + "</sub>";
     }
 
-    /**
-     *
-     * @param arg
-     */
-    public static void main(String[] arg) {
-
-        System.out.println(makePrettyHTMLString("r206_204r"));
-        System.out.println(makePrettyHTMLString("r206_238r"));
-        System.out.println(makePrettyHTMLString("r208_232r"));
-        System.out.println(makePrettyHTMLString("r238_235s"));
-    }
 }

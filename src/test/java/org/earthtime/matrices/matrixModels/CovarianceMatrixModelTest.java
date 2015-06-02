@@ -22,6 +22,8 @@ import java.math.BigDecimal;
 import java.util.Map;
 import Jama.Matrix;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import org.junit.Test;
@@ -401,7 +403,33 @@ public class CovarianceMatrixModelTest {
     
     
     
-    
+    /**
+     * Integration Test of class CovarienceMatrixModel
+     * Testing the initializations of Matrices
+     */
+    @Test
+    public void testMatrixInit () {
+        AbstractMatrixModel myMatrix = new CovarianceMatrixModel();
+
+        String[] rowNames = new String[]{"first", "second", "third", "fourth", "fifth"};
+        myMatrix.setRows( rowNames );
+        myMatrix.setCols( myMatrix.getRows() );
+
+        ConcurrentMap<String, BigDecimal> varianceTerms = new ConcurrentHashMap<String, BigDecimal>();
+        varianceTerms.put( "third", new BigDecimal( 1 ) );
+        varianceTerms.put( "fourth", new BigDecimal( 2 ) );
+        varianceTerms.put( "fifth", new BigDecimal( 3 ) );
+
+        Map<String, BigDecimal> coVariances = new HashMap<String, BigDecimal>();
+        coVariances.put( "covThird__fourth", new BigDecimal( 9 ) );
+
+        /*if (myMatrix.initializeMatrixModelWithVariances(varianceTerms)) {
+            ((CovarianceMatrixModel)myMatrix).initializeCoVariances(coVariances);
+            System.out.println(myMatrix.ToStringWithLabels());
+        }*/
+
+
+    }
     
     
     

@@ -1726,20 +1726,7 @@ public class UPbFraction extends Fraction implements
         }
     }
 
-    /**
-     *
-     * @param args
-     * @throws Exception
-     */
-    public static void main(String[] args) throws Exception {
 
-        Fraction myUPbReduxFraction = new UPbFraction("NONE");
-
-        ((XMLSerializationI) myUPbReduxFraction).serializeXMLObject("UPbFractionTEST.xml");
-
-        myUPbReduxFraction = ((UPbFraction) myUPbReduxFraction).readXMLFraction("UPbFractionTEST.xml", 1, true);
-
-    }
 
     /**
      *

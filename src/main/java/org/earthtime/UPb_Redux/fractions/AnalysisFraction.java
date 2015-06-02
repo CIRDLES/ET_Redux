@@ -244,27 +244,5 @@ public class AnalysisFraction extends Fraction implements
         return xstream;
     }
 
-    /**
-     *
-     * @param args
-     * @throws Exception
-     */
-    public static void main ( String[] args ) throws Exception {
-        UPbReduxConfigurator myConfigurator = new UPbReduxConfigurator();
-
-        Fraction analysisFraction = new UPbFraction( "NONE" );
-        // new AnalysisFraction("Test Sample");
-
-        UPbFractionReducer.getInstance().fullFractionReduce( (UPbFraction) analysisFraction, true );
-
-        Fraction myAnalysisFraction = new AnalysisFraction( analysisFraction, false );
-
-        String testFractionName = "AnalysisFractionTEST.xml";
-
-        ((AnalysisFraction) myAnalysisFraction).serializeXMLObject( testFractionName );
-        ((AnalysisFraction) myAnalysisFraction).readXMLObject( testFractionName, true );
-
-
-
-    }
+    
 }

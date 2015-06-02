@@ -72,7 +72,7 @@ public class TracerUPbRatiosDataViewEditable extends TracerUPbRatiosAbstractData
         super.saveEdits( checkCovarianceValidity );
         valueModelsPanelView.saveEdits();
     }
-
+    
     /**
      *
      * @param args

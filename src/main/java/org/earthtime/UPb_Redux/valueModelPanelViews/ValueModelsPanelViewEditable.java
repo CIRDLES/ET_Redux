@@ -17,6 +17,9 @@
  */
 package org.earthtime.UPb_Redux.valueModelPanelViews;
 
+import java.awt.Color;
+import javax.swing.JFrame;
+import javax.swing.border.LineBorder;
 import org.earthtime.UPb_Redux.valueModelViews.ValueModelViewEditable;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.ratioDataViews.DataEntryDetectorInterface;
@@ -63,8 +66,8 @@ public class ValueModelsPanelViewEditable extends AbstractValueModelsPanelView {
      * @param args
      * @throws Exception
      */
-    public static void main ( String[] args ) throws Exception {
-
+//    public static void main ( String[] args ) throws Exception {
+//
 //        JFrame testFrame = new JFrame();
 //        testFrame.setBounds( 400, 400, 500, 300 );
 //
@@ -78,5 +81,5 @@ public class ValueModelsPanelViewEditable extends AbstractValueModelsPanelView {
 //
 //        testFrame.add( testView );
 //        testFrame.setVisible( true );
-    }
+//    }
 }

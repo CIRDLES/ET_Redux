@@ -54,7 +54,24 @@ public class FractionNotesDialog extends javax.swing.JDialog {
         setVisible(false);
         dispose();
     }
-
+    
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                FractionNotesDialog dialog = new FractionNotesDialog(new javax.swing.JFrame(), true, new UPbFraction("NONE"));
+                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                    public void windowClosing(java.awt.event.WindowEvent e) {
+                        System.exit(0);
+                    }
+                });
+                dialog.setVisible(true);
+            }
+        });
+    }
+    
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -133,22 +150,7 @@ public class FractionNotesDialog extends javax.swing.JDialog {
         close();
     }//GEN-LAST:event_close_buttonActionPerformed
 
-    /**
-    * @param args the command line arguments
-    */
-    public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                FractionNotesDialog dialog = new FractionNotesDialog(new javax.swing.JFrame(), true, new UPbFraction("NONE"));
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        });
-    }
+ 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton close_button;
@@ -156,5 +158,5 @@ public class FractionNotesDialog extends javax.swing.JDialog {
     private javax.swing.JTextArea fractionNotes_textArea;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
-
+            
 }
