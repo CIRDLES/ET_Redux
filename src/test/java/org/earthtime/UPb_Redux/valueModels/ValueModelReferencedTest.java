@@ -275,62 +275,66 @@ public class ValueModelReferencedTest {
      * Test of serializeXMLObject method, of class ValueModelReferenced.
      */
     @Test
-    public void test_SerializeXMLObject() {
-        //Test to see if serialization is succesful for default. NOTE THIS PATH MUST BE CHANGED FOR EVERY USER!!
-        //This is done in this way, without using the read operation to ensure a problem with read does not affect the serialization test.
-        System.out.println("Testing ValueModelReferenced's serializeXMLObject(String filename)");
-        String filename= System.getProperty("user.dir");
-        filename=filename.concat(File.separator);
-        filename=filename.concat("test_SerializeXMLObject_Reference");
-        
-        ValueModelReferenced instance = new ValueModelReferenced();
-        ValueModelReferenced myValueModel = null;
-        //Write file to disk
-        instance.serializeXMLObject(filename);
-        //Read back
-        try{
-            XStream xstream = instance.getXStreamReader();
-            boolean isValidOrAirplaneMode = instance.validateXML(filename);
-            if (isValidOrAirplaneMode) {
-               BufferedReader reader = URIHelper.getBufferedReader(filename);
-                try {
-                    myValueModel = (ValueModelReferenced) xstream.fromXML(reader);
-                    } catch (ConversionException e) {
-                    throw new ETException(null, e.getMessage());
-                                                    }
-                                        }
-            }
-      catch(java.io.FileNotFoundException | org.earthtime.exceptions.ETException e){
-          System.out.println(e);
-                        }
-        String expResult=instance.getXStreamWriter().toXML(instance);
-        String result=instance.getXStreamWriter().toXML(myValueModel);
-        assertEquals(expResult,result);
-        
-        //Tests if serialization works for specified ValueModels
-         instance=new ValueModelReferenced("r207_339",new BigDecimal("12.34567890"),"PCT",new BigDecimal(".9876543210"), BigDecimal.ZERO,"CIRDLES");    
-         myValueModel = null;    
-        //Write file to disk
-        instance.serializeXMLObject(filename);
-        //Read back
-        try{
-            XStream xstream = instance.getXStreamReader();
-            boolean isValidOrAirplaneMode = instance.validateXML(filename);
-            if (isValidOrAirplaneMode) {
-               BufferedReader reader = URIHelper.getBufferedReader(filename);
-                try {
-                    myValueModel = (ValueModelReferenced) xstream.fromXML(reader);
-                    } catch (ConversionException e) {
-                    throw new ETException(null, e.getMessage());
-                                                    }
-                                        }
-            }
-      catch(FileNotFoundException | ETException e){
-          System.out.println(e);
-                        }
-         expResult=instance.getXStreamWriter().toXML(instance);
-         result=instance.getXStreamWriter().toXML(myValueModel);
-         assertEquals(expResult,result);
+    public void test_SerializeXMLObject() throws Exception {
+        try {
+            //Test to see if serialization is succesful for default. NOTE THIS PATH MUST BE CHANGED FOR EVERY USER!!
+            //This is done in this way, without using the read operation to ensure a problem with read does not affect the serialization test.
+            System.out.println("Testing ValueModelReferenced's serializeXMLObject(String filename)");
+            String filename= System.getProperty("user.dir");
+            filename=filename.concat(File.separator);
+            filename=filename.concat("test_SerializeXMLObject_Reference");
+
+            ValueModelReferenced instance = new ValueModelReferenced();
+            ValueModelReferenced myValueModel = null;
+            //Write file to disk
+            instance.serializeXMLObject(filename);
+            //Read back
+            try{
+                XStream xstream = instance.getXStreamReader();
+                boolean isValidOrAirplaneMode = instance.validateXML(filename);
+                if (isValidOrAirplaneMode) {
+                   BufferedReader reader = URIHelper.getBufferedReader(filename);
+                    try {
+                        myValueModel = (ValueModelReferenced) xstream.fromXML(reader);
+                        } catch (ConversionException e) {
+                        throw new ETException(null, e.getMessage());
+                                                        }
+                                            }
+                }
+          catch(java.io.FileNotFoundException | org.earthtime.exceptions.ETException e){
+              System.out.println(e);
+                            }
+            String expResult=instance.getXStreamWriter().toXML(instance);
+            String result=instance.getXStreamWriter().toXML(myValueModel);
+            assertEquals(expResult,result);
+
+            //Tests if serialization works for specified ValueModels
+             instance=new ValueModelReferenced("r207_339",new BigDecimal("12.34567890"),"PCT",new BigDecimal(".9876543210"), BigDecimal.ZERO,"CIRDLES");    
+             myValueModel = null;    
+            //Write file to disk
+            instance.serializeXMLObject(filename);
+            //Read back
+            try{
+                XStream xstream = instance.getXStreamReader();
+                boolean isValidOrAirplaneMode = instance.validateXML(filename);
+                if (isValidOrAirplaneMode) {
+                   BufferedReader reader = URIHelper.getBufferedReader(filename);
+                    try {
+                        myValueModel = (ValueModelReferenced) xstream.fromXML(reader);
+                        } catch (ConversionException e) {
+                        throw new ETException(null, e.getMessage());
+                                                        }
+                                            }
+                }
+          catch(FileNotFoundException | ETException e){
+              System.out.println(e);
+                            }
+             expResult=instance.getXStreamWriter().toXML(instance);
+             result=instance.getXStreamWriter().toXML(myValueModel);
+             assertEquals(expResult,result);
+        } finally {
+            cleanFiles("test_SerializeXMLObject_Reference");
+        }
     }
     
     /**
@@ -339,29 +343,48 @@ public class ValueModelReferencedTest {
      */
     @Test
     public void test_ReadXMLObject() throws Exception {
-        //This tests if read is working correctly by writing to a file and reading it back, then comparing the read result.
-        System.out.println("Testing ValueModelReferenced's readXMLObject(String filename, boolean doValidate)");
-        String filename= System.getProperty("user.dir");
-        filename=filename.concat(File.separator);
-        filename=filename.concat("test_ReadXMLObject_Referenced");
-        
-        ValueModelReferenced instance = new ValueModelReferenced();
-        //Write file to disk
-        instance.serializeXMLObject(filename);
-        //Read back
-        Object expResult=instance.readXMLObject(filename, true);
-        Object result=instance;
-        assertEquals(expResult,result);
-    
-        //Tests if reading works for specified ValueModels
-         instance=new ValueModelReferenced("r207_339",new BigDecimal("12.34567890"),"PCT",new BigDecimal(".9876543210"), BigDecimal.ZERO,"CIRDLES");    
-        //Write file to disk
-        instance.serializeXMLObject(filename);
-        //Read back
-        expResult=instance.readXMLObject(filename, true);
-        result=instance;
-        assertEquals(expResult,result);
+        try {
+            //This tests if read is working correctly by writing to a file and reading it back, then comparing the read result.
+            System.out.println("Testing ValueModelReferenced's readXMLObject(String filename, boolean doValidate)");
+            String filename= System.getProperty("user.dir");
+            filename=filename.concat(File.separator);
+            filename=filename.concat("test_ReadXMLObject_Referenced");
+
+            ValueModelReferenced instance = new ValueModelReferenced();
+            //Write file to disk
+            instance.serializeXMLObject(filename);
+            //Read back
+            Object expResult=instance.readXMLObject(filename, true);
+            Object result=instance;
+            assertEquals(expResult,result);
+
+            //Tests if reading works for specified ValueModels
+             instance=new ValueModelReferenced("r207_339",new BigDecimal("12.34567890"),"PCT",new BigDecimal(".9876543210"), BigDecimal.ZERO,"CIRDLES");    
+            //Write file to disk
+            instance.serializeXMLObject(filename);
+            //Read back
+            expResult=instance.readXMLObject(filename, true);
+            result=instance;
+            assertEquals(expResult,result);
+        } finally {
+            cleanFiles("test_ReadXMLObject_Referenced");
+        }
     }
     
-    
+     /**
+     * Delete the files created previously
+     * @throws Exception 
+     */   
+    private void cleanFiles(String name) throws Exception {
+        
+        File file = new File(name); //Get the file
+        if(file.exists())
+        {            
+            if(!(file.delete())) //delete
+            {
+                //throw exception in case of error
+                throw new Exception("Testing File '" + name + "' couldn't be deleted");
+            }
+        }
+    }   
 }
