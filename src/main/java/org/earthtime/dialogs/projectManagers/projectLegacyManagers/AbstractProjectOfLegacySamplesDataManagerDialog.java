@@ -16,7 +16,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.earthtime.UPb_Redux.dialogs.projectManagers.projectLegacyManagers;
+package org.earthtime.dialogs.projectManagers.projectLegacyManagers;
 
 import java.awt.Frame;
 import java.awt.event.KeyEvent;
@@ -136,19 +136,10 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
     }
 
     private void initSampleFields () {
-        // init input fields
-
         sampleName_text.setDocument(
                 new UnDoAbleDocument( sampleName_text,  true));
- //       sampleName_text.setText( getMySample().getSampleName() );
 
         sampleNotes_textArea.setDocument( new UnDoAbleDocument( sampleNotes_textArea, true ) );
- //       sampleNotes_textArea.setText( getMySample().getSampleAnnotations() );
-
-        // init display fields - html allows multi-line
-////        sampleReduxFileName_label.setText(
-////                "<html><p>" + getMySample().getReduxSampleFilePath() + "</p></html>" );
-////        sampleReduxFileName_label.setToolTipText( getMySample().getReduxSampleFilePath() );
 
         physicalConstantsModelChooser.removeAllItems();
         ArrayList<AbstractRatiosDataModel> physicalConstantsModels = ReduxLabData.getInstance().getPhysicalConstantsModels();
@@ -157,10 +148,6 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
         }
 
         physicalConstantsModelChooser.setSelectedIndex( 0 );
-//        try {
-//            physicalConstantsModelChooser.setSelectedItem( getMySample().getPhysicalConstantsModel().getReduxLabDataElementName() );
-//        } catch (BadLabDataException ex) {
-//        }
     }
 
     private void saveSampleData ()
@@ -171,24 +158,6 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
         }
 
         myProject.setProjectName(  sampleName_text.getText().trim() );
-//        mySample.setSampleAnnotations( sampleNotes_textArea.getText() );
-
-//        String currentPhysicalConstantsModelName = "";
-//        try {
-//            currentPhysicalConstantsModelName = myProject.getPhysicalConstantsModel().getNameAndVersion();
-//
-//        } catch (BadLabDataException badLabDataException) {
-//        }
-//        if (  ! ((String) physicalConstantsModelChooser.getSelectedItem()).equalsIgnoreCase( currentPhysicalConstantsModelName ) ) {
-//            try {
-//                mySample.setPhysicalConstantsModel(
-//                        mySample.getMyReduxLabData().
-//                        getAPhysicalConstantsModel( ((String) physicalConstantsModelChooser.getSelectedItem()) ) );
-//
-//            } catch (BadLabDataException badLabDataException) {
-//            }
-//        }
-
 
         try {
             converter.setMruFolder( importFractionFolderMRU );
@@ -398,7 +367,6 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
             saveSampleData();
             close();
         } catch (ETException ex) {
-            ex.printStackTrace();
             new ETWarningDialog(ex).setVisible(true);
         }
 
