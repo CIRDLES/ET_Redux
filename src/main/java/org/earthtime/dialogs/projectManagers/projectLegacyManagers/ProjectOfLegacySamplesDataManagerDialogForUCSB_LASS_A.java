@@ -1,5 +1,5 @@
 /*
- * ProjectOfLegacySamplesDataManagerDialogForGenericUPb_A.java
+ * ProjectOfLegacySamplesDataManagerDialogForUCSB_LASS_A.java
  *
  *
  *
@@ -17,18 +17,18 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.earthtime.UPb_Redux.dialogs.projectManagers.projectLegacyManagers;
+package org.earthtime.dialogs.projectManagers.projectLegacyManagers;
 
 import java.awt.Frame;
 import java.io.File;
-import org.earthtime.projects.projectImporters.UPbProjectImporters.ProjectOfLegacySamplesImporterFromCSVFile_GenericUPbIsotopic_A;
 import org.earthtime.projects.ProjectInterface;
+import org.earthtime.projects.projectImporters.UPbProjectImporters.ProjectOfLegacySamplesImporterFromCSVFile_UCSB_LASS_A;
 
 /**
  *
  * @author James F. Bowring
  */
-public class ProjectOfLegacySamplesDataManagerDialogForGenericUPb_A extends AbstractProjectOfLegacySamplesDataManagerDialog {
+public class ProjectOfLegacySamplesDataManagerDialogForUCSB_LASS_A extends AbstractProjectOfLegacySamplesDataManagerDialog {
 
     /**
      * 
@@ -37,7 +37,7 @@ public class ProjectOfLegacySamplesDataManagerDialogForGenericUPb_A extends Abst
      * @param project
      * @param importFractionFolderMRU
      */
-    public ProjectOfLegacySamplesDataManagerDialogForGenericUPb_A (
+    public ProjectOfLegacySamplesDataManagerDialogForUCSB_LASS_A (
             Frame parent,
             boolean modal,
             ProjectInterface project,
@@ -45,9 +45,9 @@ public class ProjectOfLegacySamplesDataManagerDialogForGenericUPb_A extends Abst
 
         super( parent,
                 modal,
-                "Legacy UPb Data",
+                "Legacy LASS Data",
                 project,
-                new ProjectOfLegacySamplesImporterFromCSVFile_GenericUPbIsotopic_A(),
+                new ProjectOfLegacySamplesImporterFromCSVFile_UCSB_LASS_A(),
                 importFractionFolderMRU);
     }
 }

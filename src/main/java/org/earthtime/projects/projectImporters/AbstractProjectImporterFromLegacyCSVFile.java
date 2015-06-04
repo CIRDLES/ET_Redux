@@ -112,16 +112,16 @@ public abstract class AbstractProjectImporterFromLegacyCSVFile {
 
     /**
      *
-     * @param aLine
+     * @param line
      * @return
      */
-    protected Vector<String> processLegacyCSVLine ( String aLine ) {
-        Vector<String> myLine = new Vector<String>();
+    protected Vector<String> processLegacyCSVLine ( String line ) {
+        Vector<String> myLine = new Vector<>();
 
         //use a second Scanner to parse the content of each line
 
         // remove all quotes
-        aLine = aLine.replaceAll( "\"", "" );
+        String aLine = line.replaceAll( "\"", "" );
         
         // capture empty lines : leading comma : '0' is flag to ignore line
         if ((aLine == null) || (aLine.length() == 0) ||  ( aLine.startsWith( "," ) )) {

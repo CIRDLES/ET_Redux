@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.pbBlanks.PbBlank;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabDataListElementI;
 import org.earthtime.UPb_Redux.user.UPbReduxConfigurator;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
@@ -43,7 +42,6 @@ import org.earthtime.dataDictionaries.DataDictionary;
 import org.earthtime.dataDictionaries.Lambdas;
 import org.earthtime.matrices.matrixModels.CovarianceMatrixModel;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
-import org.earthtime.ratioDataModels.pbBlankICModels.PbBlankICModel;
 import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsModel;
 import org.earthtime.utilities.DateHelpers;
 import org.earthtime.archivingTools.URIHelper;
@@ -92,8 +90,8 @@ public class PhysicalConstants implements
     /**
      * Creates a new instanceOfEARTHTIMEV1 of PhysicalConstants
      */
-    public PhysicalConstants () {
-        this(ReduxConstants.NONE, 0 );
+    public PhysicalConstants() {
+        this(ReduxConstants.NONE, 0);
     }
 
     /**
@@ -102,37 +100,37 @@ public class PhysicalConstants implements
      * @param name
      * @param version
      */
-    public PhysicalConstants ( String name, int version ) {
+    public PhysicalConstants(String name, int version) {
 
         this.name = name;
         this.version = version;
 
-        atomicMolarMasses =
-                new ValueModel[DataDictionary.AtomicMolarMasses.length];
-        for (int i = 0; i < DataDictionary.AtomicMolarMasses.length; i ++) {
-            atomicMolarMasses[i] =
-                    new ValueModel(
-                    DataDictionary.AtomicMolarMasses[i][0],
-                    new BigDecimal( DataDictionary.AtomicMolarMasses[i][1] ),
-                    ValueModel.DEFAULT_UNCERTAINTY_TYPE,
-                    BigDecimal.ZERO, BigDecimal.ZERO );
+        atomicMolarMasses
+                = new ValueModel[DataDictionary.AtomicMolarMasses.length];
+        for (int i = 0; i < DataDictionary.AtomicMolarMasses.length; i++) {
+            atomicMolarMasses[i]
+                    = new ValueModel(
+                            DataDictionary.AtomicMolarMasses[i][0],
+                            new BigDecimal(DataDictionary.AtomicMolarMasses[i][1]),
+                            ValueModel.DEFAULT_UNCERTAINTY_TYPE,
+                            BigDecimal.ZERO, BigDecimal.ZERO);
         }
 
-        Arrays.sort( atomicMolarMasses );
+        Arrays.sort(atomicMolarMasses);
 
-        measuredConstants =
-                new ValueModel[DataDictionary.MeasuredConstants.length];
-        for (int i = 0; i < DataDictionary.MeasuredConstants.length; i ++) {
-            measuredConstants[i] =
-                    new ValueModelReferenced(
-                    DataDictionary.MeasuredConstants[i][0],
-                    BigDecimal.ZERO,
-                    "PCT",
-                    BigDecimal.ZERO, BigDecimal.ZERO,
-                    "NONE" );
+        measuredConstants
+                = new ValueModel[DataDictionary.MeasuredConstants.length];
+        for (int i = 0; i < DataDictionary.MeasuredConstants.length; i++) {
+            measuredConstants[i]
+                    = new ValueModelReferenced(
+                            DataDictionary.MeasuredConstants[i][0],
+                            BigDecimal.ZERO,
+                            "PCT",
+                            BigDecimal.ZERO, BigDecimal.ZERO,
+                            "NONE");
         }
 
-        Arrays.sort( measuredConstants );
+        Arrays.sort(measuredConstants);
 
         physicalConstantsComment = "NONE";
 
@@ -142,47 +140,44 @@ public class PhysicalConstants implements
      *
      * @return
      */
-    public static PhysicalConstants EARTHTIMEPhysicalConstants () {
-      //  if ( instanceOfEARTHTIMEV1 == null ) {
-            instanceOfEARTHTIMEV1 = new PhysicalConstants( "EARTHTIME", 1 );
+    public static PhysicalConstants EARTHTIMEPhysicalConstants() {
+        instanceOfEARTHTIMEV1 = new PhysicalConstants("EARTHTIME", 1);
 
-            // note need to use dummy arrays as this.setter of ValueModels culls them
-            ValueModel[] atomicMM =
-                    new ValueModel[DataDictionary.AtomicMolarMasses.length];
-            for (int i = 0; i < DataDictionary.AtomicMolarMasses.length; i ++) {
-                atomicMM[i] =
-                        new ValueModel(
-                        DataDictionary.AtomicMolarMasses[i][0],
-                        new BigDecimal( DataDictionary.AtomicMolarMasses[i][1] ),
-                        "NONE",
-                        BigDecimal.ZERO, BigDecimal.ZERO );
-            }
-            instanceOfEARTHTIMEV1.setAtomicMolarMasses( atomicMM );
+        // note need to use dummy arrays as this.setter of ValueModels culls them
+        ValueModel[] atomicMM
+                = new ValueModel[DataDictionary.AtomicMolarMasses.length];
+        for (int i = 0; i < DataDictionary.AtomicMolarMasses.length; i++) {
+            atomicMM[i]
+                    = new ValueModel(
+                            DataDictionary.AtomicMolarMasses[i][0],
+                            new BigDecimal(DataDictionary.AtomicMolarMasses[i][1]),
+                            "NONE",
+                            BigDecimal.ZERO, BigDecimal.ZERO);
+        }
+        instanceOfEARTHTIMEV1.setAtomicMolarMasses(atomicMM);
 
-            Arrays.sort( instanceOfEARTHTIMEV1.getAtomicMolarMasses() );
+        Arrays.sort(instanceOfEARTHTIMEV1.getAtomicMolarMasses());
 
-            ValueModel[] measuredC =
-                    new ValueModel[DataDictionary.MeasuredConstants.length];
-            for (int i = 0; i < DataDictionary.MeasuredConstants.length; i ++) {
-                measuredC[i] =
-                        new ValueModelReferenced(
-                        DataDictionary.MeasuredConstants[i][0],
-                        new BigDecimal( DataDictionary.MeasuredConstants[i][1] ),
-                        "PCT",
-                        new BigDecimal( DataDictionary.MeasuredConstants[i][2] ), BigDecimal.ZERO,
-                        DataDictionary.MeasuredConstants[i][3] );
-            }
+        ValueModel[] measuredC
+                = new ValueModel[DataDictionary.MeasuredConstants.length];
+        for (int i = 0; i < DataDictionary.MeasuredConstants.length; i++) {
+            measuredC[i]
+                    = new ValueModelReferenced(
+                            DataDictionary.MeasuredConstants[i][0],
+                            new BigDecimal(DataDictionary.MeasuredConstants[i][1]),
+                            "PCT",
+                            new BigDecimal(DataDictionary.MeasuredConstants[i][2]), BigDecimal.ZERO,
+                            DataDictionary.MeasuredConstants[i][3]);
+        }
 
-            instanceOfEARTHTIMEV1.setMeasuredConstants( measuredC );
+        instanceOfEARTHTIMEV1.setMeasuredConstants(measuredC);
 
-            Arrays.sort( instanceOfEARTHTIMEV1.getMeasuredConstants() );
+        Arrays.sort(instanceOfEARTHTIMEV1.getMeasuredConstants());
 
+        instanceOfEARTHTIMEV1.setPhysicalConstantsComment(
+                "This Physical Constants Model \n" + "is the accepted default as of 2008"
+                + ".");
 
-            instanceOfEARTHTIMEV1.setPhysicalConstantsComment(
-                    "This Physical Constants Model \n" + "is the accepted default as of 2008"
-                    + "." );
-
-     //   }
         return instanceOfEARTHTIMEV1;
     }
 
@@ -191,15 +186,15 @@ public class PhysicalConstants implements
      *
      * @return
      */
-    protected Object readResolve () {
+    protected Object readResolve() {
 
         AbstractRatiosDataModel physicalConstantsModel;
 
-        if ( (this.name.toUpperCase( Locale.US).startsWith( "EARTHTIME" )) ) {
+        if ((this.name.toUpperCase(Locale.US).startsWith("EARTHTIME"))) {
             // catch old Earthtime version 1
             physicalConstantsModel = PhysicalConstantsModel.getEARTHTIMEPhysicalConstantsModel();
         } else {
-            physicalConstantsModel = convertModel( this );
+            physicalConstantsModel = convertModel(this);
         }
 
         return physicalConstantsModel;
@@ -210,22 +205,22 @@ public class PhysicalConstants implements
      * @param model
      * @return
      */
-    public static AbstractRatiosDataModel convertModel ( PhysicalConstants model ) {
+    public static AbstractRatiosDataModel convertModel(PhysicalConstants model) {
 
         // there were no correlations
         Map<String, BigDecimal> correlations = new HashMap<String, BigDecimal>();
-       
+
         return//
                 PhysicalConstantsModel.createInstance( //
-                model.name, //
-                1, 0, //
-                "Unknown Lab",//
-                DateHelpers.defaultEarthTimeDateString(),//
-                "No reference", //
-                model.physicalConstantsComment, //
-                model.measuredConstants, //
-                correlations,//
-                PhysicalConstantsModel.getEARTHTIMEatomicMolarMasses());
+                        model.name, //
+                        1, 0, //
+                        "Unknown Lab",//
+                        DateHelpers.defaultEarthTimeDateString(),//
+                        "No reference", //
+                        model.physicalConstantsComment, //
+                        model.measuredConstants, //
+                        correlations,//
+                        PhysicalConstantsModel.getEARTHTIMEatomicMolarMasses());
 
     }
 
@@ -234,25 +229,25 @@ public class PhysicalConstants implements
      * @return
      */
     @Override
-    public PhysicalConstants Copy () {
-        PhysicalConstants tempModel =
-                new PhysicalConstants( getName(), getVersion() );
+    public PhysicalConstants Copy() {
+        PhysicalConstants tempModel
+                = new PhysicalConstants(getName(), getVersion());
 
-        ValueModel[] tempAtomicMolarMasses =
-                new ValueModel[getAtomicMolarMasses().length];
-        for (int i = 0; i < getAtomicMolarMasses().length; i ++) {
+        ValueModel[] tempAtomicMolarMasses
+                = new ValueModel[getAtomicMolarMasses().length];
+        for (int i = 0; i < getAtomicMolarMasses().length; i++) {
             tempAtomicMolarMasses[i] = getAtomicMolarMasses()[i].copy();
         }
-        tempModel.setAtomicMolarMasses( tempAtomicMolarMasses );
+        tempModel.setAtomicMolarMasses(tempAtomicMolarMasses);
 
-        ValueModel[] tempMeasuredConstants =
-                new ValueModel[getMeasuredConstants().length];
-        for (int i = 0; i < getMeasuredConstants().length; i ++) {
+        ValueModel[] tempMeasuredConstants
+                = new ValueModel[getMeasuredConstants().length];
+        for (int i = 0; i < getMeasuredConstants().length; i++) {
             tempMeasuredConstants[i] = getMeasuredConstants()[i].copy();
         }
-        tempModel.setMeasuredConstants( tempMeasuredConstants );
+        tempModel.setMeasuredConstants(tempMeasuredConstants);
 
-        tempModel.setPhysicalConstantsComment( getPhysicalConstantsComment() );
+        tempModel.setPhysicalConstantsComment(getPhysicalConstantsComment());
 
         return tempModel;
     }
@@ -264,12 +259,12 @@ public class PhysicalConstants implements
      * @throws ClassCastException
      */
     @Override
-    public int compareTo ( PhysicalConstants physicalConstantsModel )
+    public int compareTo(PhysicalConstants physicalConstantsModel)
             throws ClassCastException {
-        String physicalConstantsModelNameAndVersion =
-                ((PhysicalConstants) physicalConstantsModel).getNameAndVersion();
+        String physicalConstantsModelNameAndVersion
+                = ((PhysicalConstants) physicalConstantsModel).getNameAndVersion();
         return this.getNameAndVersion().trim().//
-                compareToIgnoreCase( physicalConstantsModelNameAndVersion.trim() );
+                compareToIgnoreCase(physicalConstantsModelNameAndVersion.trim());
     }
 
     /**
@@ -278,19 +273,19 @@ public class PhysicalConstants implements
      * @return
      */
     @Override
-    public boolean equals ( Object physicalConstantsModel ) {
+    public boolean equals(Object physicalConstantsModel) {
         //check for self-comparison
-        if ( this == physicalConstantsModel ) {
+        if (this == physicalConstantsModel) {
             return true;
         }
-        if (  ! (physicalConstantsModel instanceof PhysicalConstants) ) {
+        if (!(physicalConstantsModel instanceof PhysicalConstants)) {
             return false;
         }
 
         PhysicalConstants myPhysicalConstants = (PhysicalConstants) physicalConstantsModel;
 
         return (this.getNameAndVersion().trim().
-                compareToIgnoreCase( myPhysicalConstants.getNameAndVersion().trim() ) == 0);
+                compareToIgnoreCase(myPhysicalConstants.getNameAndVersion().trim()) == 0);
 
     }
 
@@ -300,7 +295,7 @@ public class PhysicalConstants implements
      * @return
      */
     @Override
-    public int hashCode () {
+    public int hashCode() {
 
         return 0;
     }
@@ -311,7 +306,7 @@ public class PhysicalConstants implements
      * @return
      */
     @Override
-    public String getReduxLabDataElementName () {
+    public String getReduxLabDataElementName() {
         return getNameAndVersion();
     }
 
@@ -319,7 +314,7 @@ public class PhysicalConstants implements
      *
      * @return
      */
-    public String getName () {
+    public String getName() {
         return name;
     }
 
@@ -327,7 +322,7 @@ public class PhysicalConstants implements
      *
      * @param name
      */
-    public void setName ( String name ) {
+    public void setName(String name) {
         this.name = name;
     }
 
@@ -335,7 +330,7 @@ public class PhysicalConstants implements
      *
      * @return
      */
-    public int getVersion () {
+    public int getVersion() {
         return version;
     }
 
@@ -343,7 +338,7 @@ public class PhysicalConstants implements
      *
      * @param version
      */
-    public void setVersion ( int version ) {
+    public void setVersion(int version) {
         this.version = version;
     }
 
@@ -351,7 +346,7 @@ public class PhysicalConstants implements
      *
      * @return
      */
-    public String getNameAndVersion () {
+    public String getNameAndVersion() {
         return getName().trim() + " v." + getVersion();
     }
 
@@ -360,7 +355,7 @@ public class PhysicalConstants implements
      * @return
      */
     @Override
-    public ValueModel[] getAtomicMolarMasses () {
+    public ValueModel[] getAtomicMolarMasses() {
         return atomicMolarMasses;
     }
 
@@ -369,8 +364,8 @@ public class PhysicalConstants implements
      * @param atomicMolarMasses
      */
     @Override
-    public void setAtomicMolarMasses ( ValueModel[] atomicMolarMasses ) {
-        this.atomicMolarMasses = ValueModel.cullNullsFromArray( atomicMolarMasses );
+    public void setAtomicMolarMasses(ValueModel[] atomicMolarMasses) {
+        this.atomicMolarMasses = ValueModel.cullNullsFromArray(atomicMolarMasses);
     }
 
     /**
@@ -378,7 +373,7 @@ public class PhysicalConstants implements
      * @return
      */
     @Override
-    public ValueModel[] getMeasuredConstants () {
+    public ValueModel[] getMeasuredConstants() {
         return measuredConstants;
     }
 
@@ -387,15 +382,15 @@ public class PhysicalConstants implements
      * @param measuredConstants
      */
     @Override
-    public void setMeasuredConstants ( ValueModel[] measuredConstants ) {
-        this.measuredConstants = ValueModel.cullNullsFromArray( measuredConstants );
+    public void setMeasuredConstants(ValueModel[] measuredConstants) {
+        this.measuredConstants = ValueModel.cullNullsFromArray(measuredConstants);
     }
 
     /**
      *
      * @return
      */
-    public String getPhysicalConstantsComment () {
+    public String getPhysicalConstantsComment() {
         return physicalConstantsComment;
     }
 
@@ -403,7 +398,7 @@ public class PhysicalConstants implements
      *
      * @param physicalConstantsComment
      */
-    public void setPhysicalConstantsComment ( String physicalConstantsComment ) {
+    public void setPhysicalConstantsComment(String physicalConstantsComment) {
         this.physicalConstantsComment = physicalConstantsComment;
     }
 
@@ -412,18 +407,18 @@ public class PhysicalConstants implements
      * @param mcName
      * @return
      */
-    public ValueModel getMeasuredConstantByName ( String mcName ) {
+    public ValueModel getMeasuredConstantByName(String mcName) {
 
-        for (int i = 0; i < getMeasuredConstants().length; i ++) {
-            if ( getMeasuredConstants()[i].getName().equals( mcName ) ) {
+        for (int i = 0; i < getMeasuredConstants().length; i++) {
+            if (getMeasuredConstants()[i].getName().equals(mcName)) {
                 // repair for bad lambda231 Dec 2010
-                if ( getName().equalsIgnoreCase( "EARTHTIME" )//
+                if (getName().equalsIgnoreCase("EARTHTIME")//
                         &&//
                         (getVersion() == 1) //
                         && //
-                        mcName.equalsIgnoreCase( Lambdas.lambda231.getName() ) ) {
+                        mcName.equalsIgnoreCase(Lambdas.lambda231.getName())) {
                     //System.out.println( "FIXING Lambda231" );
-                    getMeasuredConstants()[i].setValue( new BigDecimal( "0.0000211887" ) );
+                    getMeasuredConstants()[i].setValue(new BigDecimal("0.0000211887"));
                 }
 
                 return getMeasuredConstants()[i];
@@ -437,9 +432,9 @@ public class PhysicalConstants implements
      * @param ammName
      * @return
      */
-    public ValueModel getAtomicMolarMassByName ( String ammName ) {
-        for (int i = 0; i < getAtomicMolarMasses().length; i ++) {
-            if ( getAtomicMolarMasses()[i].getName().equals( ammName ) ) {
+    public ValueModel getAtomicMolarMassByName(String ammName) {
+        for (int i = 0; i < getAtomicMolarMasses().length; i++) {
+            if (getAtomicMolarMasses()[i].getName().equals(ammName)) {
                 return getAtomicMolarMasses()[i];
             }
         }
@@ -451,10 +446,10 @@ public class PhysicalConstants implements
      *
      * @return
      */
-    private XStream getXStreamWriter () {
+    private XStream getXStreamWriter() {
         XStream xstream = new XStream();
 
-        customizeXstream( xstream );
+        customizeXstream(xstream);
 
         return xstream;
     }
@@ -463,11 +458,11 @@ public class PhysicalConstants implements
      *
      * @return
      */
-    private XStream getXStreamReader () {
+    private XStream getXStreamReader() {
 
-        XStream xstream = new XStream( new DomDriver() );
+        XStream xstream = new XStream(new DomDriver());
 
-        customizeXstream( xstream );
+        customizeXstream(xstream);
 
         return xstream;
     }
@@ -476,16 +471,16 @@ public class PhysicalConstants implements
      *
      * @param xstream
      */
-    private void customizeXstream ( XStream xstream ) {
+    private void customizeXstream(XStream xstream) {
 
-        xstream.registerConverter( new PhysicalConstantsXMLConverter() );
-        xstream.registerConverter( new ValueModelXMLConverter() );
-        xstream.registerConverter( new ValueModelReferencedXMLConverter() );
+        xstream.registerConverter(new PhysicalConstantsXMLConverter());
+        xstream.registerConverter(new ValueModelXMLConverter());
+        xstream.registerConverter(new ValueModelReferencedXMLConverter());
 
-        xstream.alias( "PhysicalConstants", PhysicalConstants.class );
-        xstream.alias( "ValueModel", ValueModel.class );
-        xstream.alias( "ValueModelReferenced", ValueModelReferenced.class );
-        xstream.alias( "CovarianceMatrixModel", CovarianceMatrixModel.class );
+        xstream.alias("PhysicalConstants", PhysicalConstants.class);
+        xstream.alias("ValueModel", ValueModel.class);
+        xstream.alias("ValueModelReferenced", ValueModelReferenced.class);
+        xstream.alias("CovarianceMatrixModel", CovarianceMatrixModel.class);
 
         setClassXMLSchemaURL();
 
@@ -494,11 +489,11 @@ public class PhysicalConstants implements
     /**
      *
      */
-    private void setClassXMLSchemaURL () {
+    private void setClassXMLSchemaURL() {
         UPbReduxConfigurator myConfigurator = new UPbReduxConfigurator();
 
-        physicalConstantsXMLSchemaURL =
-                myConfigurator.getResourceURI( "URI_PhysicalConstantsXMLSchema" );
+        physicalConstantsXMLSchemaURL
+                = myConfigurator.getResourceURI("URI_PhysicalConstantsXMLSchema");
     }
 
     /**
@@ -506,10 +501,10 @@ public class PhysicalConstants implements
      * @param filename
      */
     @Override
-    public void serializeXMLObject ( String filename ) {
+    public void serializeXMLObject(String filename) {
         XStream xstream = getXStreamWriter();
 
-        String xml = xstream.toXML( this );
+        String xml = xstream.toXML(this);
 
         xml = ReduxConstants.XML_Header + xml;
 
@@ -517,15 +512,14 @@ public class PhysicalConstants implements
                 "PhysicalConstants "//
                 + ReduxConstants.XML_ResourceHeader//
                 + physicalConstantsXMLSchemaURL//
-                + "\"" );
-
+                + "\"");
 
         try {
-            FileWriter outFile = new FileWriter( filename );
-            PrintWriter out = new PrintWriter( outFile );
+            FileWriter outFile = new FileWriter(filename);
+            PrintWriter out = new PrintWriter(outFile);
 
             // Write xml to file
-            out.println( xml );
+            out.println(xml);
             out.flush();
             out.close();
             outFile.close();
@@ -545,66 +539,59 @@ public class PhysicalConstants implements
      * @throws ETException
      * @throws BadOrMissingXMLSchemaException
      */
-    public Object readXMLObject ( String filename, boolean doValidate )
+    public Object readXMLObject(String filename, boolean doValidate)
             throws FileNotFoundException, ETException, BadOrMissingXMLSchemaException {
         PhysicalConstants myPhysicalConstants = null;
 
-        BufferedReader reader = URIHelper.getBufferedReader( filename );
+        BufferedReader reader = URIHelper.getBufferedReader(filename);
 
-        if ( reader != null ) {
+        if (reader != null) {
             boolean temp = false;
             XStream xstream = getXStreamReader();
 
-            temp = URIHelper.validateXML( reader, filename, physicalConstantsXMLSchemaURL );
+            temp = URIHelper.validateXML(reader, filename, physicalConstantsXMLSchemaURL);
 
-            if ( temp ) {
+            if (temp) {
                 // re-create reader
-                reader = URIHelper.getBufferedReader( filename );
+                reader = URIHelper.getBufferedReader(filename);
                 try {
-                    myPhysicalConstants = (PhysicalConstants) xstream.fromXML( reader );
+                    myPhysicalConstants = (PhysicalConstants) xstream.fromXML(reader);
                 } catch (ConversionException e) {
-                    throw new ETException( null, e.getMessage() );
+                    throw new ETException(null, e.getMessage());
                 }
 
-                System.out.println( "This is your PhysicalConstants that was just read successfully:\n" );
+                System.out.println("This is your PhysicalConstants that was just read successfully:\n");
 
-                String xml2 = getXStreamWriter().toXML( myPhysicalConstants );
+                String xml2 = getXStreamWriter().toXML(myPhysicalConstants);
 
-                System.out.println( xml2 );
+                System.out.println(xml2);
                 System.out.flush();
             } else {
-                throw new ETException( null, "Badly formed PhysicalConstants XML data file." );
+                throw new ETException(null, "Badly formed PhysicalConstants XML data file.");
             }
         } else {
-            throw new FileNotFoundException( "Missing XML data file." );
+            throw new FileNotFoundException("Missing XML data file.");
         }
-
-
 
         return myPhysicalConstants;
     }
-
 
     /**
      *
      * @param args
      * @throws Exception
      */
-    public static void main ( String[] args ) throws Exception {
+    public static void main(String[] args) throws Exception {
 
         PhysicalConstants physicalConstants = EARTHTIMEPhysicalConstants();
 //                new PhysicalConstants( "testset", 1 );
         String testFileName = "PhysicalConstantsTEST.xml";
 
-        physicalConstants.serializeXMLObject( testFileName );
-
+        physicalConstants.serializeXMLObject(testFileName);
 
 //        PhysicalConstants physicalConstants2 = (PhysicalConstants) physicalConstants.readXMLObject( testFileName, true );
-
-
 //        ETSerializer.SerializeObjectToFile( physicalConstants, "test.ser" );
 //        PhysicalConstants test = (PhysicalConstants) ETSerializer.GetSerializedObjectFromFile( "test.ser" );
-
 //        System.out.println(physicalConstants2.getLambdasCovarianceMatrix().ToStringWithLabels());
     }
 
@@ -612,7 +599,7 @@ public class PhysicalConstants implements
      *
      */
     @Override
-    public void removeSelf () {
+    public void removeSelf() {
 //        throw new UnsupportedOperationException( "Not supported yet." );
     }
 }

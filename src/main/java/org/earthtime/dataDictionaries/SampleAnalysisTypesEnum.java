@@ -43,6 +43,7 @@ public enum SampleAnalysisTypesEnum {
      *
      */
     LASS("LASS"),
+    USERIES("USERIES"),
 
     /**
      *

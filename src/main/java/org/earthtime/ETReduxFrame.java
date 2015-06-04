@@ -78,9 +78,6 @@ import org.earthtime.UPb_Redux.dialogs.fractionManagers.UPbLegacyFractionEditorD
 import org.earthtime.UPb_Redux.dialogs.projectManagers.ProjectManagerFor_LAICPMS_FromRawData;
 import org.earthtime.UPb_Redux.dialogs.projectManagers.ProjectManagerSubscribeInterface;
 import org.earthtime.UPb_Redux.dialogs.projectManagers.exportManagers.GeochronProjectExportManager;
-import org.earthtime.UPb_Redux.dialogs.projectManagers.projectLegacyManagers.AbstractProjectOfLegacySamplesDataManagerDialog;
-import org.earthtime.UPb_Redux.dialogs.projectManagers.projectLegacyManagers.ProjectOfLegacySamplesDataManagerDialogForGenericUPb_A;
-import org.earthtime.UPb_Redux.dialogs.projectManagers.projectLegacyManagers.ProjectOfLegacySamplesDataManagerDialogForUCSB_LASS_A;
 import org.earthtime.UPb_Redux.dialogs.sampleManagers.GeochronSampleCustomMetadataDialog;
 import org.earthtime.UPb_Redux.dialogs.sampleManagers.analysisManagers.SampleAnalysisWorkflowManagerIDTIMS;
 import org.earthtime.UPb_Redux.dialogs.sampleManagers.analysisManagers.SampleAnalysisWorkflowManagerInterface;
@@ -135,6 +132,10 @@ import org.earthtime.beans.ET_JButton;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.dataDictionaries.SampleTypesEnum;
+import org.earthtime.dialogs.projectManagers.projectLegacyManagers.AbstractProjectOfLegacySamplesDataManagerDialog;
+import org.earthtime.dialogs.projectManagers.projectLegacyManagers.ProjectOfLegacySamplesDataManagerDialogForDIBBsUseries_A;
+import org.earthtime.dialogs.projectManagers.projectLegacyManagers.ProjectOfLegacySamplesDataManagerDialogForGenericUPb_A;
+import org.earthtime.dialogs.projectManagers.projectLegacyManagers.ProjectOfLegacySamplesDataManagerDialogForUCSB_LASS_A;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.projects.EarthTimeSerializedFileInterface;
@@ -802,16 +803,6 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
         theProject = new Project(myState);
 
-//        try {
-//            theSample = Sample.initializeNewSample(//
-//                    SampleTypesEnum.PROJECT.getName(), //
-//                    SampleAnalysisTypesEnum.COMPILED.getName(),//
-//                    ReduxLabData.getInstance(),//
-//                    myState.getReduxPreferences().getDefaultSampleAnalysisPurpose());
-//        } catch (BadLabDataException ex) {
-//            new ETWarningDialog(ex).setVisible(true);
-//        }
-
         try {
             theSample = ProjectSample.initializeNewSample(//                  
                     myState.getReduxPreferences().getDefaultSampleAnalysisPurpose());
@@ -838,7 +829,15 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                             true,
                             theProject,
                             myState.getMRUImportFolderCompilationMode());
+        } else if (sampleAnalysisType.equalsIgnoreCase(SampleAnalysisTypesEnum.USERIES.getName())) {
+            myProjectManager
+                    = new ProjectOfLegacySamplesDataManagerDialogForDIBBsUseries_A(
+                            this,
+                            true,
+                            theProject,
+                            myState.getMRUImportFolderCompilationMode());
         }
+
 
         ((AbstractProjectOfLegacySamplesDataManagerDialog) myProjectManager).setSize();
 
@@ -2185,8 +2184,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
         newProjectFromLegacyDataTable_menu.setText("New Project from Legacy Data Table");
 
-        dibbs_USeries.setText("DIBBs U-Series Legacy Data Table from Single Source in .csv format");
-        dibbs_USeries.setEnabled(false);
+        dibbs_USeries.setText("Dibbs U-Series Legacy Data Table from Single Source in .csv format");
         dibbs_USeries.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 dibbs_USeriesActionPerformed(evt);
@@ -4017,7 +4015,7 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     }//GEN-LAST:event_loadLastSample_buttonMouseEntered
 
     private void dibbs_USeriesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dibbs_USeriesActionPerformed
-        // TODO add your handling code here:
+        setUpNewCompiledLegacyProject(SampleAnalysisTypesEnum.USERIES.getName());
     }//GEN-LAST:event_dibbs_USeriesActionPerformed
 
     private void helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
