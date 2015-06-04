@@ -22,13 +22,16 @@
 
 package org.earthtime.ratioDataModels.initialPbModelsET;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import org.earthtime.UPb_Redux.utilities.ETSerializer;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
+import static org.earthtime.ratioDataModels.initialPbModelsET.InitialPbModelET.createInstance;
 import org.earthtime.utilities.DateHelpers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -382,19 +385,114 @@ public class InitialPbModelETTest {
         
         assertEquals(expResult, result);
     }
+    
+         /**
+     * Integration Test of class InitialPbModelET
+     * Testing the writing and reading of a file
+     * @throws Exception
+     */
+    @Test
+    public void testSerialization() throws Exception {
+        try{
+            ValueModel[] myRatios = new ValueModel[3];
+            myRatios[0] = new ValueModel(//
+                    //
+                    "r206_204c", //
+                    BigDecimal.ZERO, //
+                    "ABS", //
+                    new BigDecimal(0.06298816629854530000 / 2.0), BigDecimal.ZERO);
+            myRatios[1] = new ValueModel(//
+                    //
+                    "r207_204c", //
+                    BigDecimal.ZERO, //
+                    "ABS", //
+                    new BigDecimal(0.92376003656586900000 / 2.0), BigDecimal.ZERO);
+            myRatios[2] = new ValueModel(//
+                    //
+                    "r208_204c", //
+                    BigDecimal.ZERO, //
+                    "ABS", //
+                    new BigDecimal(0.00040104065069202200 / 2.0), BigDecimal.ZERO);
 
+            Map<String, BigDecimal> correlations = new HashMap<String, BigDecimal>();
+            correlations.put("rhoR206_204c__r207_204c", new BigDecimal(-0.0400671215735759));
+            correlations.put("rhoR206_204c__r208_204c", new BigDecimal(-0.0400671215735759));
+            correlations.put("rhoR207_204c__r208_204c", new BigDecimal(-0.0400671215735759));
+
+            AbstractRatiosDataModel initialPbModel1 = //
+                    createInstance("initialPbModel1", 1, 0, "Test Lab", "2012-04-01", "NO REF", "NO COMMENT", myRatios, correlations);
+
+           String results = 
+                    "MATRIX#=Correlations   r206_204c              r207_204c              r208_204c              \n" +
+                    "r206_204c              1.000000000E00         -4.006712157E-02       -4.006712157E-02       \n" +
+                    "r207_204c              -4.006712157E-02       1.000000000E00         -4.006712157E-02       \n" +
+                    "r208_204c              -4.006712157E-02       -4.006712157E-02       1.000000000E00         \n" +
+                    "";
+            assertEquals(results, initialPbModel1.getDataCorrelationsVarUnct().ToStringWithLabels());
+
+            results =
+                    "MATRIX#=Covariances    r206_204c              r207_204c              r208_204c              \n" +
+                    "r206_204c              9.918772734E-04        -5.828358912E-04       -2.530320384E-07       \n" +
+                    "r207_204c              -5.828358912E-04       2.133331513E-01        -3.710869815E-06       \n" +
+                    "r208_204c              -2.530320384E-07       -3.710869815E-06       4.020840088E-08        \n" +
+                    "";
+            assertEquals(results, initialPbModel1.getDataCovariancesVarUnct().ToStringWithLabels());
+
+            //Throws Exception
+            ETSerializer.SerializeObjectToFile(initialPbModel1, "InitialPbModelET_TEST.ser");
+
+
+            AbstractRatiosDataModel initialPbModel2 = //
+                    (AbstractRatiosDataModel) ETSerializer.GetSerializedObjectFromFile("InitialPbModelET_TEST.ser");
+
+            String testFileName = "InitialPbModelET_TEST.xml";
+            //Throws Exception
+            initialPbModel2.serializeXMLObject(testFileName);
+            initialPbModel2.readXMLObject(testFileName, true);
+
+
+            results = 
+                    "MATRIX#=Correlations   r206_204c              r207_204c              r208_204c              \n" +
+                    "r206_204c              1.000000000E00         -4.006712157E-02       -4.006712157E-02       \n" +
+                    "r207_204c              -4.006712157E-02       1.000000000E00         -4.006712157E-02       \n" +
+                    "r208_204c              -4.006712157E-02       -4.006712157E-02       1.000000000E00         \n" +
+                    "";
+            assertEquals(results, initialPbModel2.getDataCorrelationsVarUnct().ToStringWithLabels());
+
+            results =
+                    "MATRIX#=Covariances    r206_204c              r207_204c              r208_204c              \n" +
+                    "r206_204c              9.918772734E-04        -5.828358912E-04       -2.530320384E-07       \n" +
+                    "r207_204c              -5.828358912E-04       2.133331513E-01        -3.710869815E-06       \n" +
+                    "r208_204c              -2.530320384E-07       -3.710869815E-06       4.020840088E-08        \n" +
+                    "";
+            assertEquals(results, initialPbModel2.getDataCovariancesVarUnct().ToStringWithLabels());
+        }finally{
+            cleanFiles("InitialPbModelET_TEST.xml");
+            cleanFiles("InitialPbModelET_TEST.ser");
+        }
+    }
+
+    /**
+     * Delete the files created previously
+     * @throws Exception 
+     */   
+    private void cleanFiles(String name) throws Exception {
         
-    
-    
+        File file = new File(name); //Get the file
+        if(file.exists())
+        {            
+            if(!(file.delete())) //delete
+            {
+                //throw exception in case of error
+                throw new Exception("Testing File '" + name + "' couldn't be deleted");
+            }
+        }
+    } 
     
     ////////////////////////
     ////Unfinished Tests////
     //////////////////////// 
-    
-    
-    
-    
-    
+  
     /*
      *
      *
@@ -423,13 +521,5 @@ public class InitialPbModelETTest {
      *
      *
      */    
-    
-    
-
-     
-    
-    
- 
-    
     
 }

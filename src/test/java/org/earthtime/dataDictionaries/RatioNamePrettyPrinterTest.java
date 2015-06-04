@@ -31,14 +31,7 @@ import org.junit.Test;
  * @author patrickbrewer
  */
 public class RatioNamePrettyPrinterTest {
-    
-    
-    
-    
-    
-    
-
-    
+       
     ////////////////////////////////////////////
     ////Constructor Tests///&///Method Tests////
     ////////////////////////////////////////////      
@@ -53,16 +46,19 @@ public class RatioNamePrettyPrinterTest {
         
         String ave=RatioNamePrettyPrinter.makePrettyHTMLString("hello");
         assertEquals("<html>hello</html>",ave);
-
-
-        
-        
+     
     }    
-        
-    
-    
-    
-    
-    
-    
+           
+    /**
+     * Integration Test of class RatioNamePrettyPrinterTest
+     * Assert the correct output of method makePrettyHTMLString
+     */
+    @Test
+    public void testPrettyUrl() {
+        //Asserting correct output
+        assertEquals(RatioNamePrettyPrinter.makePrettyHTMLString("r206_204r"), "<html><sup>206</sup>Pb*/ <sup>204</sup>Pb*</html>");
+        assertEquals(RatioNamePrettyPrinter.makePrettyHTMLString("r206_238r"), "<html><sup>206</sup>Pb*/ <sup>238</sup>U</html>");
+        assertEquals(RatioNamePrettyPrinter.makePrettyHTMLString("r208_232r"), "<html><sup>208</sup>Pb*/ <sup>232</sup>Th</html>");
+        assertEquals(RatioNamePrettyPrinter.makePrettyHTMLString("r238_235s"), "<html><sup>238</sup>U/ <sup>235</sup>U</html>");   
+    }
 }

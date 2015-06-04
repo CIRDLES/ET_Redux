@@ -23,6 +23,8 @@ import Jama.Matrix;
 import java.util.HashMap;
 import java.math.BigDecimal;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import org.junit.Test;
@@ -208,7 +210,38 @@ public class JacobianMatrixModelTest {
             fail("Shouldn't be the same before and after, matrix should be initialized");                
     }
 
-    
+     /**
+     * Integration Test of class JacobianMatrixModel
+     * Testing the initializations of Matrices
+     */
+    @Test
+    public void testInitMatrix () {
+        JacobianMatrixModel myMatrix = new JacobianMatrixModel( "0" );
+
+        String[] rowNames = new String[]{"first", "second", "fourth"};
+        myMatrix.setRows( rowNames );
+        myMatrix.setCols( myMatrix.getRows() );
+
+        rowNames = new String[]{"first", "second", "third", "fourth", "fifth"};
+        myMatrix.setRows( rowNames );
+
+        ConcurrentMap<String, BigDecimal> parDerivTerms = new ConcurrentHashMap<>();
+        parDerivTerms.put( "dThird__dSecond", new BigDecimal( 99.9 ) );
+        parDerivTerms.put( "dThird__dFourth", new BigDecimal( 11.1 ) );
+        parDerivTerms.put( "dFifth__dFirst", new BigDecimal( 22.2 ) );
+
+        if ( myMatrix.initializeMatrixModelWithDerivedTerms( parDerivTerms ) ) {           
+            String results = 
+                "MATRIX#=0              first                  second                 fourth                 \n" +
+                "first                  1.000000000E00         0.000000000E00         0.000000000E00         \n" +
+                "second                 0.000000000E00         1.000000000E00         0.000000000E00         \n" +
+                "third                  0.000000000E00         9.990000000E01         1.110000000E01         \n" +
+                "fourth                 0.000000000E00         0.000000000E00         1.000000000E00         \n" +
+                "fifth                  2.220000000E01         0.000000000E00         0.000000000E00         \n" +
+                "";
+            assertEquals(results, myMatrix.ToStringWithLabels());
+        }
+    }   
     
     
 }
