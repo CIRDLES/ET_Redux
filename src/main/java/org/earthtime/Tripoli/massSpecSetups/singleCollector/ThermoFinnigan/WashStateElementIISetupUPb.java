@@ -1,5 +1,5 @@
 /*
- * UnivKansasElement2SetupUPb
+ * WashStateElementIISetupUPb
  *
  * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
  *
@@ -43,21 +43,23 @@ import org.earthtime.isotopes.IsotopesEnum;
  *
  * @author James F. Bowring
  */
-public final class UnivKansasElement2SetupUPb extends AbstractMassSpecSetup implements //
+public final class WashStateElementIISetupUPb extends AbstractMassSpecSetup implements //
         Comparable<AbstractMassSpecSetup>,
         Serializable {
 
-    private static UnivKansasElement2SetupUPb instance = null;
+    private static WashStateElementIISetupUPb instance = null;
+//    private SortedSet<DataModelInterface> genericIsotopeModels;
 
-    private UnivKansasElement2SetupUPb() {
+    private WashStateElementIISetupUPb() {
         super();
-        NAME = "University of Kansas Element2 Setup";
+        NAME = "Washington State Element II Setup";
         massSpecType = MassSpecTypeEnum.SINGLE;
         VIRTUAL_COLLECTOR_COUNT = 16;
-        COLLECTOR_DATA_FREQUENCY_MILLISECS = 214; //0.214410714 sec
+        COLLECTOR_DATA_FREQUENCY_MILLISECS = 117; //0.117776667 sec
         countOfAcquisitions = 0;
 
-        double INTEGRATION_TIME = 0.012; 
+        double INTEGRATION_TIME = 0.012; // this is what Noah determined would be best from his data March 2013 was
+        // was COLLECTOR_DATA_FREQUENCY_MILLISECS / 1000.0 / 8.0
 
         isotopeMappingModel = new IsotopeMappingModel();
 
@@ -123,9 +125,9 @@ public final class UnivKansasElement2SetupUPb extends AbstractMassSpecSetup impl
      *
      * @return
      */
-    public static UnivKansasElement2SetupUPb getInstance() {
+    public static WashStateElementIISetupUPb getInstance() {
         if (instance == null) {
-            instance = new UnivKansasElement2SetupUPb();
+            instance = new WashStateElementIISetupUPb();
         }
         return instance;
     }

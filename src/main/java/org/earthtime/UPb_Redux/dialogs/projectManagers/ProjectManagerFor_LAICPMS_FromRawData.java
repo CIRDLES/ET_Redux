@@ -53,15 +53,18 @@ import org.earthtime.Tripoli.massSpecSetups.multiCollector.NUPlasma.GehrelsNUPla
 import org.earthtime.Tripoli.massSpecSetups.multiCollector.NUPlasma.GehrelsNUPlasmaSetupUPbFarTRA;
 import org.earthtime.Tripoli.massSpecSetups.multiCollector.NUPlasma.GehrelsNUPlasmaSetupUPbIonCounter;
 import org.earthtime.Tripoli.massSpecSetups.singleCollector.Agilent7700.KoslerAgilent7700SetupUPb;
-import org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan.WashStateElement2SetupUPb;
+import org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan.UnivKansasElementIISetupUPb;
+import org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan.WashStateElementIISetupUPb;
 import org.earthtime.Tripoli.rawDataFiles.handlers.AbstractRawDataFileHandler;
 import org.earthtime.Tripoli.rawDataFiles.handlers.KoslerAgilent7700FileHandler;
 import org.earthtime.Tripoli.rawDataFiles.handlers.NUPlasmaMultiCollFaradayFileHandler;
 import org.earthtime.Tripoli.rawDataFiles.handlers.NUPlasmaMultiCollFaradayTRAFileHandler;
 import org.earthtime.Tripoli.rawDataFiles.handlers.NUPlasmaMultiCollIonCounterFileHandler;
-import org.earthtime.Tripoli.rawDataFiles.handlers.WashStateElement2SingleCollFileHandler;
+import org.earthtime.Tripoli.rawDataFiles.handlers.UnivKansasElementIIFileHandler;
+import org.earthtime.Tripoli.rawDataFiles.handlers.WashStateElementIISingleCollFileHandler;
 import org.earthtime.Tripoli.rawDataFiles.templates.AbstractRawDataFileTemplate;
 import org.earthtime.Tripoli.rawDataFiles.templates.Kosler_Agilent7700_RawDataTemplate;
+import org.earthtime.Tripoli.rawDataFiles.templates.MoellerUnivKansasElementII_RawDataTemplate;
 import org.earthtime.Tripoli.rawDataFiles.templates.NUPlasmaMultiCollFaradayRawDataTemplate;
 import org.earthtime.Tripoli.rawDataFiles.templates.NUPlasmaMultiCollFaradayTRARawDataTemplate;
 import org.earthtime.Tripoli.rawDataFiles.templates.NUPlasmaMultiCollIonCounterRawDataTemplate;
@@ -175,9 +178,9 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
 
         // Element 2 Washington State
         AbstractRawDataFileHandler theThermoFinniganElement2SingleCollFileHandler = //
-                WashStateElement2SingleCollFileHandler.getInstance();
+WashStateElementIISingleCollFileHandler.getInstance();
         theThermoFinniganElement2SingleCollFileHandler.getAvailableMassSpecSetups()//
-                .add(WashStateElement2SetupUPb.getInstance());
+                .add(WashStateElementIISetupUPb.getInstance());
 
         theThermoFinniganElement2SingleCollFileHandler.getAvailableRawDataFileTemplates()//
                 .add(TFElement2SingleColl_Vervoort_RawDataTemplate.getInstance());
@@ -206,6 +209,17 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
                 .add(Kosler_Agilent7700_RawDataTemplate.getInstance());
 
         knownRawDataFileHandlers.add(theKoslerAgilent7700FileHandler);
+
+        // June 2015 Andreas Moeller ElementII at U Kansas
+        AbstractRawDataFileHandler theUnivKansasElementIIFileHandler = //
+                UnivKansasElementIIFileHandler.getInstance();
+        theUnivKansasElementIIFileHandler.getAvailableMassSpecSetups()//
+                .add(UnivKansasElementIISetupUPb.getInstance());
+
+        theUnivKansasElementIIFileHandler.getAvailableRawDataFileTemplates()//
+                .add(MoellerUnivKansasElementII_RawDataTemplate.getInstance());
+
+        knownRawDataFileHandlers.add(theUnivKansasElementIIFileHandler);
 
         // move this section for robust file opening
         fileHandlerComboBox.removeAllItems();
@@ -1040,8 +1054,8 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
 
         if (doSetup || (mySessionManager == null)) {
             // kill existing
-            if (mySessionManager != null){
-                ((DialogEditor)mySessionManager).close();
+            if (mySessionManager != null) {
+                ((DialogEditor) mySessionManager).close();
             }
             mySessionManager
                     = new SessionAnalysisWorkflowManagerLAICPMS(
@@ -1058,7 +1072,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
             // do the math
             tripoliSession.calculateSessionFitFunctionsForPrimaryStandard();
             // April 2105 added condition below jan 2015 moved to calculate sessionfit tripoliSession.applyCorrections();
-            if (!tripoliSession.isFitFunctionsUpToDate()){
+            if (!tripoliSession.isFitFunctionsUpToDate()) {
                 tripoliSession.applyCorrections();
             }
             try {
@@ -1390,7 +1404,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
             updateDataChangeStatus(true);
         }
     }
-    
+
     public void close() {
         setVisible(false);
         dispose();
