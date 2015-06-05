@@ -13,6 +13,7 @@ dependency-reduced-pom.xml
 *.densityplotter
 *.csv
 test_*
+*.ser
 
 # Resources
 !src/main/resources/*
