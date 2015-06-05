@@ -28,7 +28,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -2319,7 +2318,7 @@ public class LabDataEditorDialog extends DialogEditor {
         AbstractRatiosDataModel mineralStandardModel = MineralStandardUPbModel.getNoneInstance();
 
         try {
-            mineralStandardModel = (AbstractRatiosDataModel) mineralStandardModel.readXMLObject(returnFile.getCanonicalPath(), true);/////true );
+            mineralStandardModel = mineralStandardModel.readXMLObject(returnFile.getCanonicalPath(), true);
         } catch (IOException | ETException | BadOrMissingXMLSchemaException ex) {
             if (ex instanceof ETException) {
                 new ETWarningDialog((ETException) ex).setVisible(true);

@@ -13,6 +13,11 @@ dependency-reduced-pom.xml
 *.densityplotter
 *.csv
 test_*
+*.ser
+
+# Resources
+!src/main/resources/*
+!src/main/resources/org/earthtime/parameterModels/mineralStandardModels/*.xml
 
 # MACOS
 .DS_Store

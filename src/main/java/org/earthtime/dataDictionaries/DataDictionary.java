@@ -70,6 +70,7 @@ public final class DataDictionary {
         "FC-1",
         "FC-5",
         "Fish Canyon Tuff",
+        "GJ-1",
         "Manicouagan",
         "North Mountain Basalt",
         "Peixe",

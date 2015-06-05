@@ -1,5 +1,5 @@
 /*
- * Kosler_Agilent7700_RawDataTemplate
+ * MoellerUnivKansasElementII_RawDataTemplate
  *
  * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
  *
@@ -27,25 +27,25 @@ import org.earthtime.dataDictionaries.FileTypeEnum;
  *
  * @author James F. Bowring
  */
-public final class Kosler_Agilent7700_RawDataTemplate extends AbstractRawDataFileTemplate implements //
+public final class MoellerUnivKansasElementII_RawDataTemplate extends AbstractRawDataFileTemplate implements //
         Comparable<AbstractRawDataFileTemplate>,
         Serializable {
 
-    private static Kosler_Agilent7700_RawDataTemplate instance = null;
+    private static MoellerUnivKansasElementII_RawDataTemplate instance = null;
 
-    private Kosler_Agilent7700_RawDataTemplate () {
+    private MoellerUnivKansasElementII_RawDataTemplate () {
         super();
 
-        this.NAME = "Kosler Agilent 7700";
-        this.aboutInfo = "analysis runs setup by Kosler for 2015 round robin";
-        this.fileType = FileTypeEnum.csv;
-        this.startOfFirstLine = "Intensity";
+        this.NAME = "Univ Kansas Element II";
+        this.aboutInfo = "analysis runs setup by Moeller";
+        this.fileType = FileTypeEnum.fin2;
+        this.startOfFirstLine = "Finnigan";
         this.startOfDataSectionFirstLine = "Time";
         this.startOfEachBlockFirstLine = "Time";
-        this.blockStartOffset = 4;
-        this.blockSize = 500;//346;//360;
+        this.blockStartOffset = 8;
+        this.blockSize = 220;
         this.standardIDs = new String[]//
-        {"91500"};
+        {"GJ1"};
         this.timeZone = TimeZone.getTimeZone( "GMT" );
         this.defaultParsingOfFractionsBehavior = 1;
 
@@ -55,9 +55,9 @@ public final class Kosler_Agilent7700_RawDataTemplate extends AbstractRawDataFil
      *
      * @return
      */
-    public static Kosler_Agilent7700_RawDataTemplate getInstance () {
+    public static MoellerUnivKansasElementII_RawDataTemplate getInstance () {
         if ( instance == null ) {
-            instance = new Kosler_Agilent7700_RawDataTemplate();
+            instance = new MoellerUnivKansasElementII_RawDataTemplate();
         }
         return instance;
     }

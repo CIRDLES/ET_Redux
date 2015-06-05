@@ -429,99 +429,99 @@ public class TripoliFraction implements //
             Matrix SlrXY = ((RawRatioDataModel) rr).getSlogRatioX_Y();
             int columnsCount = SlrXY.getColumnDimension();
 
-            // since the */204 ratios may have fewer points, need to remove the rows and cols associated with those missing points
-            if (rr.getRawRatioModelName().compareTo(RawRatioNames.r206_207w) == 0) {
+            // first test if common lead corrections present
+            if (savedCommonLeadDataActiveMap != null) {
+                // since the */204 ratios may have fewer points, need to remove the rows and cols associated with those missing points
+                if (rr.getRawRatioModelName().compareTo(RawRatioNames.r206_207w) == 0) {
                 // walk the 206_207 dataActiveMap and increment matrixIndex for each true entry
-                // if the lead map is false at the same entry, save the matrix index for removal from matrix
-                ArrayList<Integer> matrixIndicesToRemove = new ArrayList<>();
-                int matrixIndex = -1;
-                for (int i = 0; i < rr.getDataActiveMap().length; i++) {
-                    if (rr.getDataActiveMap()[i]) {
-                        matrixIndex++;
-                        if (!savedCommonLeadDataActiveMap[i]) {
-                            matrixIndicesToRemove.add(matrixIndex);
+                    // if the lead map is false at the same entry, save the matrix index for removal from matrix
+                    ArrayList<Integer> matrixIndicesToRemove = new ArrayList<>();
+                    int matrixIndex = -1;
+                    for (int i = 0; i < rr.getDataActiveMap().length; i++) {
+                        if (rr.getDataActiveMap()[i]) {
+                            matrixIndex++;
+                            if (!savedCommonLeadDataActiveMap[i]) {
+                                matrixIndicesToRemove.add(matrixIndex);
+                            }
                         }
                     }
-                }
 
-                Matrix Sopbclr_206CorrectedRows = ((RawRatioDataModel) rr).getTopSopbclr().copy();
-                Matrix Sopbclr_206CorrectedCols = ((RawRatioDataModel) rr).getTopSopbclr().copy();
-                Matrix Sopbclr_207CorrectedRows = ((RawRatioDataModel) rr).getBotSopbclr().copy();
-                Matrix Sopbclr_207CorrectedCols = ((RawRatioDataModel) rr).getBotSopbclr().copy();
+                    Matrix Sopbclr_206CorrectedRows = ((RawRatioDataModel) rr).getTopSopbclr().copy();
+                    Matrix Sopbclr_206CorrectedCols = ((RawRatioDataModel) rr).getTopSopbclr().copy();
+                    Matrix Sopbclr_207CorrectedRows = ((RawRatioDataModel) rr).getBotSopbclr().copy();
+                    Matrix Sopbclr_207CorrectedCols = ((RawRatioDataModel) rr).getBotSopbclr().copy();
 
-                if (matrixIndicesToRemove.size() > 0) {
+                    if (matrixIndicesToRemove.size() > 0) {
 
-                    System.out.println("Matrix row col delete for fraction " + fractionID);
-                    // reverse list of indices to remove to avoid counting errors
-                    Collections.sort(matrixIndicesToRemove, new Comparator<Integer>() {
+                        System.out.println("Matrix row col delete for fraction " + fractionID);
+                        // reverse list of indices to remove to avoid counting errors
+                        Collections.sort(matrixIndicesToRemove, new Comparator<Integer>() {
 
-                        @Override
-                        public int compare(Integer i1, Integer i2) {
-                            return Integer.compare(i2, i1);
+                            @Override
+                            public int compare(Integer i1, Integer i2) {
+                                return Integer.compare(i2, i1);
+                            }
+                        });
+
+                        // walk the list of indices to remove and remove rows and cols before insertion
+                        for (Integer indexToRemove : matrixIndicesToRemove) {
+                            Sopbclr_206CorrectedRows = MatrixRemover.removeRow(Sopbclr_206CorrectedRows, indexToRemove);
+                            Sopbclr_206CorrectedCols = MatrixRemover.removeCol(Sopbclr_206CorrectedCols, indexToRemove);
+
+                            Sopbclr_207CorrectedRows = MatrixRemover.removeRow(Sopbclr_207CorrectedRows, indexToRemove);
+                            Sopbclr_207CorrectedCols = MatrixRemover.removeCol(Sopbclr_207CorrectedCols, indexToRemove);
                         }
-                    });
-
-                    // walk the list of indices to remove and remove rows and cols before insertion
-                    for (Integer indexToRemove : matrixIndicesToRemove) {
-                        Sopbclr_206CorrectedRows = MatrixRemover.removeRow(Sopbclr_206CorrectedRows, indexToRemove);
-                        Sopbclr_206CorrectedCols = MatrixRemover.removeCol(Sopbclr_206CorrectedCols, indexToRemove);
-
-                        Sopbclr_207CorrectedRows = MatrixRemover.removeRow(Sopbclr_207CorrectedRows, indexToRemove);
-                        Sopbclr_207CorrectedCols = MatrixRemover.removeCol(Sopbclr_207CorrectedCols, indexToRemove);
                     }
+                    SlogRatioAll.setMatrix(0 + 3 * columnsCount, matrixIndex + 3 * columnsCount - 1, 0, columnsCount - 1, Sopbclr_206CorrectedRows);
+                    SlogRatioAll.setMatrix(0 + 3 * columnsCount, matrixIndex + 3 * columnsCount - 1, columnsCount, 2 * columnsCount - 1, Sopbclr_206CorrectedRows);
 
+                    SlogRatioAll.setMatrix(matrixIndex + 3 * columnsCount, 2 * matrixIndex + 3 * columnsCount - 1, 0, columnsCount - 1, Sopbclr_207CorrectedRows);
+
+                    SlogRatioAll.setMatrix(0, 0, 0 + 3 * columnsCount, +3 * columnsCount + matrixIndex - 1, Sopbclr_206CorrectedCols);
+                    SlogRatioAll.setMatrix(columnsCount, columnsCount, 0 + 3 * columnsCount, +3 * columnsCount + matrixIndex - 1, Sopbclr_206CorrectedCols);
+
+                    SlogRatioAll.setMatrix(0, 0, matrixIndex + 3 * columnsCount, 2 * matrixIndex + 3 * columnsCount - 1, Sopbclr_207CorrectedCols);
                 }
-                SlogRatioAll.setMatrix(0 + 3 * columnsCount, matrixIndex + 3 * columnsCount - 1, 0, columnsCount - 1, Sopbclr_206CorrectedRows);
-                SlogRatioAll.setMatrix(0 + 3 * columnsCount, matrixIndex + 3 * columnsCount - 1, columnsCount, 2 * columnsCount - 1, Sopbclr_206CorrectedRows);
 
-                SlogRatioAll.setMatrix(matrixIndex + 3 * columnsCount, 2 * matrixIndex + 3 * columnsCount - 1, 0, columnsCount - 1, Sopbclr_207CorrectedRows);
-
-                SlogRatioAll.setMatrix(0, 0, 0 + 3 * columnsCount, +3 * columnsCount + matrixIndex - 1, Sopbclr_206CorrectedCols);
-                SlogRatioAll.setMatrix(columnsCount, columnsCount, 0 + 3 * columnsCount, +3 * columnsCount + matrixIndex - 1, Sopbclr_206CorrectedCols);
-
-                SlogRatioAll.setMatrix(0, 0, matrixIndex + 3 * columnsCount, 2 * matrixIndex + 3 * columnsCount - 1, Sopbclr_207CorrectedCols);
-            }
-
-            if (rr.getRawRatioModelName().compareTo(RawRatioNames.r208_232w) == 0) {
+                if (rr.getRawRatioModelName().compareTo(RawRatioNames.r208_232w) == 0) {
                 // walk the r208_232w dataActiveMap and increment matrixIndex for each true entry
-                // if the lead map is false at the same entry, save the matrix index for removal from matrix
-                ArrayList<Integer> matrixIndicesToRemove = new ArrayList<>();
-                int matrixIndex = -1;
-                for (int i = 0; i < rr.getDataActiveMap().length; i++) {
-                    if (rr.getDataActiveMap()[i]) {
-                        matrixIndex++;
-                        if (!savedCommonLeadDataActiveMap[i]) {
-                            matrixIndicesToRemove.add(matrixIndex);
+                    // if the lead map is false at the same entry, save the matrix index for removal from matrix
+                    ArrayList<Integer> matrixIndicesToRemove = new ArrayList<>();
+                    int matrixIndex = -1;
+                    for (int i = 0; i < rr.getDataActiveMap().length; i++) {
+                        if (rr.getDataActiveMap()[i]) {
+                            matrixIndex++;
+                            if (!savedCommonLeadDataActiveMap[i]) {
+                                matrixIndicesToRemove.add(matrixIndex);
+                            }
                         }
                     }
-                }
 
-                Matrix Sopbclr_208CorrectedRows = ((RawRatioDataModel) rr).getTopSopbclr().copy();
-                Matrix Sopbclr_208CorrectedCols = ((RawRatioDataModel) rr).getTopSopbclr().copy();
+                    Matrix Sopbclr_208CorrectedRows = ((RawRatioDataModel) rr).getTopSopbclr().copy();
+                    Matrix Sopbclr_208CorrectedCols = ((RawRatioDataModel) rr).getTopSopbclr().copy();
 
-                if (matrixIndicesToRemove.size() > 0) {
-                    // reverse list of indices to remove to avoid counting errors
-                    Collections.sort(matrixIndicesToRemove, new Comparator<Integer>() {
+                    if (matrixIndicesToRemove.size() > 0) {
+                        // reverse list of indices to remove to avoid counting errors
+                        Collections.sort(matrixIndicesToRemove, new Comparator<Integer>() {
 
-                        @Override
-                        public int compare(Integer i1, Integer i2) {
-                            return Integer.compare(i2, i1);
+                            @Override
+                            public int compare(Integer i1, Integer i2) {
+                                return Integer.compare(i2, i1);
+                            }
+                        });
+
+                        // walk the list of indices to remove and remove rows and cols before insertion
+                        for (Integer indexToRemove : matrixIndicesToRemove) {
+                            Sopbclr_208CorrectedRows = MatrixRemover.removeRow(Sopbclr_208CorrectedRows, indexToRemove);
+                            Sopbclr_208CorrectedCols = MatrixRemover.removeCol(Sopbclr_208CorrectedCols, indexToRemove);
                         }
-                    });
-
-                    // walk the list of indices to remove and remove rows and cols before insertion
-                    for (Integer indexToRemove : matrixIndicesToRemove) {
-                        Sopbclr_208CorrectedRows = MatrixRemover.removeRow(Sopbclr_208CorrectedRows, indexToRemove);
-                        Sopbclr_208CorrectedCols = MatrixRemover.removeCol(Sopbclr_208CorrectedCols, indexToRemove);
                     }
+                    SlogRatioAll.setMatrix(3 * columnsCount + 2 * matrixIndex, 3 * columnsCount + 3 * matrixIndex - 1, 2 * columnsCount, 3 * columnsCount - 1, Sopbclr_208CorrectedRows);
+
+                    SlogRatioAll.setMatrix(2 * columnsCount, 3 * columnsCount - 1, 3 * columnsCount + 2 * matrixIndex, 3 * columnsCount + 3 * matrixIndex - 1, Sopbclr_208CorrectedCols);
 
                 }
-                SlogRatioAll.setMatrix(3 * columnsCount + 2 * matrixIndex, 3 * columnsCount + 3 * matrixIndex - 1, 2 * columnsCount, 3 * columnsCount - 1, Sopbclr_208CorrectedRows);
-
-                SlogRatioAll.setMatrix(2 * columnsCount, 3 * columnsCount - 1, 3 * columnsCount + 2 * matrixIndex, 3 * columnsCount + 3 * matrixIndex - 1, Sopbclr_208CorrectedCols);
-
             }
-
         }
 
         Matrix Sfci = JacobianYInterceptLogRatioAll.times(SlogRatioAll).times(JacobianYInterceptLogRatioAll.transpose());

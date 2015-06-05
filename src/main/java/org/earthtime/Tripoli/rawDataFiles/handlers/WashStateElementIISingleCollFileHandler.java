@@ -1,5 +1,5 @@
 /*
- * LaserchronElement2SingleCollFileHandler
+ * WashStateElementIISingleCollFileHandler
  *
  * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
  *
@@ -18,14 +18,12 @@
 package org.earthtime.Tripoli.rawDataFiles.handlers;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.Serializable;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
-import org.earthtime.Tripoli.sessions.TripoliSessionInterface;
 import org.earthtime.utilities.FileHelper;
 import org.earthtime.archivingTools.URIHelper;
 
@@ -33,11 +31,11 @@ import org.earthtime.archivingTools.URIHelper;
  *
  * @author James F. Bowring
  */
-public class LaserchronElement2SingleCollFileHandler extends AbstractRawDataFileHandler implements //
+public class WashStateElementIISingleCollFileHandler extends AbstractRawDataFileHandler implements //
         Comparable<AbstractRawDataFileHandler>,
         Serializable {
 
-    private static LaserchronElement2SingleCollFileHandler instance = null;
+    private static WashStateElementIISingleCollFileHandler instance = null;
     private File[] analysisFiles;
 
     /**
@@ -45,26 +43,22 @@ public class LaserchronElement2SingleCollFileHandler extends AbstractRawDataFile
      * @param massSpec
      * @param rawDataFileTemplate
      */
-    private LaserchronElement2SingleCollFileHandler() {
+    private WashStateElementIISingleCollFileHandler() {
 
-        super();//massSpec, rawDataFileTemplate );
+        super();
 
-        NAME = "Thermo Finnigan Element 2 SC File";
+        NAME = "Thermo Finnigan Element II SC File";
 
-        aboutInfo = "Details: This is the default protocol for Washington State University's Thermo Finnigan Element 2.";
+        aboutInfo = "Details: This is the default protocol for Washington State University's Thermo Finnigan Element II.";
     }
 
     /**
      *
      * @return
      */
-    public static LaserchronElement2SingleCollFileHandler getInstance( //
-            /*
-             * AbstractMassSpecSetup massSpec,// AbstractRawDataFileTemplate
-             * rawDataFileTemplate
-             */) {
+    public static WashStateElementIISingleCollFileHandler getInstance() {
         if (instance == null) {
-            instance = new LaserchronElement2SingleCollFileHandler();//massSpec, rawDataFileTemplate );
+            instance = new WashStateElementIISingleCollFileHandler();//massSpec, rawDataFileTemplate );
         }
         return instance;
     }
@@ -76,7 +70,7 @@ public class LaserchronElement2SingleCollFileHandler extends AbstractRawDataFile
      */
     @Override
     public File validateAndGetHeaderDataFromRawIntensityFile(File tripoliRawDataFolder) {
-        String dialogTitle = "Select an Element2 Raw Data Folder:";
+        String dialogTitle = "Select an Element II Raw Data Folder:";
 
         rawDataFile = FileHelper.AllPlatformGetFolder(dialogTitle, tripoliRawDataFolder);
 
@@ -93,19 +87,12 @@ public class LaserchronElement2SingleCollFileHandler extends AbstractRawDataFile
      */
     @Override
     public File getAndLoadRawIntensityDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions) {
-//        String dialogTitle = "Select an Element2 Raw Data Folder:";
-//
-//        rawDataFile = FileHelper.AllPlatformGetFolder( dialogTitle, tripoliRawDataFolder );
 
         // get .txt files from the folder and check the first one
-        analysisFiles = rawDataFile.listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return (name.toLowerCase().endsWith(".txt"))//
-                        && //
-                        (!name.toLowerCase().endsWith("_b.txt"));
-            }
-        });
+        analysisFiles = rawDataFile.listFiles((File dir, String name) //
+                -> (name.toLowerCase().endsWith(".txt"))//
+                && //
+                (!name.toLowerCase().endsWith("_b.txt")));
 
         if (analysisFiles.length > 0) {
             String onPeakFileContents = URIHelper.getTextFromURI(analysisFiles[0].getAbsolutePath());
@@ -149,9 +136,8 @@ public class LaserchronElement2SingleCollFileHandler extends AbstractRawDataFile
     @Override
     public boolean isStandardFractionID(String fractionID) {
         boolean retVal = false;
-
-        for (int i = 0; i < getRawDataFileTemplate().getStandardIDs().length; i++) {
-            retVal = retVal || fractionID.toUpperCase().contains(getRawDataFileTemplate().getStandardIDs()[i].toUpperCase());
+        for (String standardID : getRawDataFileTemplate().getStandardIDs()) {
+            retVal = retVal || fractionID.toUpperCase().contains(standardID.toUpperCase());
         }
 
         return retVal;
@@ -160,7 +146,7 @@ public class LaserchronElement2SingleCollFileHandler extends AbstractRawDataFile
     /**
      *
      *
-     * @param loadDataTask
+     * @param loadDataTask the value of loadDataTask
      * @param usingFullPropagation the value of usingFullPropagation
      * @param leftShadeCount the value of leftShadeCount
      * @param ignoreFirstFractions the value of ignoreFirstFractions
@@ -220,11 +206,11 @@ public class LaserchronElement2SingleCollFileHandler extends AbstractRawDataFile
 
                     // background
                     for (int j = 1; j < 9; j++) {
-                        scanData[i][j - 1] = backgroundCollectorsColumns[j].trim();
+                        scanData[i][j - 1] = backgroundCollectorsColumns[j].trim(); // ignore timestamp
                     }
                     // onpeak
                     for (int j = 1; j < 9; j++) {
-                        scanData[i][8 + j - 1] = onPeakCollectorsColumns[j].trim();
+                        scanData[i][8 + j - 1] = onPeakCollectorsColumns[j].trim(); // ignore timestamp
                     }
                 }
 
@@ -233,26 +219,11 @@ public class LaserchronElement2SingleCollFileHandler extends AbstractRawDataFile
 
                 TripoliFraction tripoliFraction = //                           
                         new TripoliFraction( //
-                                //
-                                //
-                                //
-                                //
-                                //
-                                //
-                                //
-                                //
-                                //
-                                //
-                                //
-                                //
-                                //
-                                //
-                                //
                                 fractionID, //
                                 massSpec.getCommonLeadCorrectionHighestLevel(), //
                                 isStandard,
                                 fractionBackgroundTimeStamp, //
-                                fractionPeakTimeStamp,massSpec.rawRatiosFactory(scanData, isStandard, fractionID, usingFullPropagation, null));
+                                fractionPeakTimeStamp, massSpec.rawRatiosFactory(scanData, isStandard, fractionID, usingFullPropagation, null));
 
                 tripoliFraction.shadeDataActiveMapLeft(leftShadeCount);
                 tripoliFractions.add(tripoliFraction);

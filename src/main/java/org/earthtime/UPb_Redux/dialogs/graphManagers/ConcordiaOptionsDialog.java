@@ -62,7 +62,7 @@ public class ConcordiaOptionsDialog extends DialogEditor {
 
         setConcordiaOptions(concordiaOptions);
 
-        setConcordiaOptionsSaved(new HashMap<String, String>());
+        setConcordiaOptionsSaved(new HashMap<>());
         getConcordiaOptionsSaved().putAll(getConcordiaOptions());
 
         MouseListener myColorChooserListener =

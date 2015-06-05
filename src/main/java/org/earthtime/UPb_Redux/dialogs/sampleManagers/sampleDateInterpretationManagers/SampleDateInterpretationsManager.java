@@ -1927,7 +1927,7 @@ private void sampleConcordiaOptions_menuItemActionPerformed(java.awt.event.Actio
             setConcordiaOptions(//
                     ((ConcordiaOptionsDialog) myConcordiaOptionsDialog).getConcordiaOptions());
 
-    ((ConcordiaGraphPanel) concordiaGraphPanel).repaint();
+    concordiaGraphPanel.repaint();
 }//GEN-LAST:event_sampleConcordiaOptions_menuItemActionPerformed
 private void concordiaOptions_menuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_concordiaOptions_menuMouseClicked
     buildAliquotOptionsMenu();

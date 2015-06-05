@@ -1,5 +1,5 @@
 /*
- * WashStateElement2SetupUPb
+ * WashStateElementIISetupUPb
  *
  * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
  *
@@ -43,16 +43,16 @@ import org.earthtime.isotopes.IsotopesEnum;
  *
  * @author James F. Bowring
  */
-public final class WashStateElement2SetupUPb extends AbstractMassSpecSetup implements //
+public final class WashStateElementIISetupUPb extends AbstractMassSpecSetup implements //
         Comparable<AbstractMassSpecSetup>,
         Serializable {
 
-    private static WashStateElement2SetupUPb instance = null;
+    private static WashStateElementIISetupUPb instance = null;
 //    private SortedSet<DataModelInterface> genericIsotopeModels;
 
-    private WashStateElement2SetupUPb() {
+    private WashStateElementIISetupUPb() {
         super();
-        NAME = "Washington State Element2 Setup";
+        NAME = "Washington State Element II Setup";
         massSpecType = MassSpecTypeEnum.SINGLE;
         VIRTUAL_COLLECTOR_COUNT = 16;
         COLLECTOR_DATA_FREQUENCY_MILLISECS = 117; //0.117776667 sec
@@ -125,9 +125,9 @@ public final class WashStateElement2SetupUPb extends AbstractMassSpecSetup imple
      *
      * @return
      */
-    public static WashStateElement2SetupUPb getInstance() {
+    public static WashStateElementIISetupUPb getInstance() {
         if (instance == null) {
-            instance = new WashStateElement2SetupUPb();
+            instance = new WashStateElementIISetupUPb();
         }
         return instance;
     }

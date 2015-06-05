@@ -21,8 +21,13 @@ package org.earthtime.ratioDataModels.mineralStandardModels;
 
 import Jama.Matrix;
 import com.thoughtworks.xstream.XStream;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -51,6 +56,7 @@ import org.earthtime.dataDictionaries.Lambdas;
 import org.earthtime.dataDictionaries.MineralStandardUPbConcentrationsPPMEnum;
 import org.earthtime.dataDictionaries.MineralStandardUPbRatiosEnum;
 import org.earthtime.exceptions.ETException;
+import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.initialPbModelsET.InitialPbModelET;
 import org.earthtime.ratioDataModels.initialPbModelsET.InitialPbModelETXMLConverter;
@@ -492,6 +498,8 @@ public class MineralStandardUPbModel extends AbstractRatiosDataModel {
         getEARTHTIMESriLankaStandardModelInstance();
         getEARTHTIMEPlesoviceStandardModelInstance();
 
+        loadModelsFromResources();
+
         ArrayList<AbstractRatiosDataModel> arrayListOfModels = new ReduxLabDataList<>("Mineral Standard Model");
         Iterator<String> modelsKeyInterator = modelInstances.keySet().iterator();
         while (modelsKeyInterator.hasNext()) {
@@ -501,6 +509,39 @@ public class MineralStandardUPbModel extends AbstractRatiosDataModel {
         Collections.sort(arrayListOfModels);
 
         return arrayListOfModels;
+    }
+
+    private static void loadModelsFromResources() {
+        URL modelsLoc = MineralStandardUPbModel.class.getClassLoader().getResource("org/earthtime/parameterModels/mineralStandardModels");
+
+        File modelsDir = null;
+        try {
+            modelsDir = new File(modelsLoc.toURI());
+            FilenameFilter textFilter = (File dir, String name) -> {
+                return name.toLowerCase().endsWith(".xml");
+            };
+
+            File[] modelFiles = modelsDir.listFiles(textFilter);
+            for (File modelFile : modelFiles) {
+                System.out.println("MODEL FOUND: " + modelFile.getAbsoluteFile());
+                AbstractRatiosDataModel mineralStandardModel = MineralStandardUPbModel.getNoneInstance();
+
+                try {
+                    mineralStandardModel = mineralStandardModel.readXMLObject(modelFile.getCanonicalPath(), true);
+                    modelInstances.put(mineralStandardModel.getNameAndVersion(), mineralStandardModel);
+                    mineralStandardModel.setImmutable(true);
+                } catch (IOException | ETException | BadOrMissingXMLSchemaException ex) {
+                    if (ex instanceof ETException) {
+                        new ETWarningDialog((ETException) ex).setVisible(true);
+                    }
+                    mineralStandardModel = null;
+                }
+
+            }
+        } catch (URISyntaxException uRISyntaxException) {
+
+        }
+
     }
 
     // used for deserialization
@@ -639,7 +680,7 @@ public class MineralStandardUPbModel extends AbstractRatiosDataModel {
 
                 if (dataCovariancesVarUnct.getRows().get(rowKey).equalsIgnoreCase(//
                         MineralStandardUPbRatiosEnum.r206_207r.getName())) {
-                    v[0][rowKey] =r206_238r.getValue()//
+                    v[0][rowKey] = r206_238r.getValue()//
                             .multiply(r238_235s.getValue())//
                             .divide(r206_207r.getValue().pow(2), ReduxConstants.mathContext15)//
                             .doubleValue();
@@ -652,7 +693,7 @@ public class MineralStandardUPbModel extends AbstractRatiosDataModel {
 
                 if (dataCovariancesVarUnct.getRows().get(rowKey).equalsIgnoreCase(//
                         MineralStandardUPbRatiosEnum.r206_238r.getName())) {
-                    v[0][rowKey] =r238_235s.getValue()//
+                    v[0][rowKey] = r238_235s.getValue()//
                             .divide(r206_207r.getValue(), ReduxConstants.mathContext15).doubleValue();
                 }
 
@@ -663,7 +704,7 @@ public class MineralStandardUPbModel extends AbstractRatiosDataModel {
 
                 if (dataCovariancesVarUnct.getRows().get(rowKey).equalsIgnoreCase(//
                         MineralStandardUPbRatiosEnum.r238_235s.getName())) {
-                    v[0][rowKey] =r206_238r.getValue()//
+                    v[0][rowKey] = r206_238r.getValue()//
                             .divide(r206_207r.getValue(), ReduxConstants.mathContext15).doubleValue();
                 }
             }
