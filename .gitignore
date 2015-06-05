@@ -14,5 +14,8 @@ dependency-reduced-pom.xml
 *.csv
 test_*
 
+# Resources
+!src/main/resources/*
+
 # MACOS
 .DS_Store
