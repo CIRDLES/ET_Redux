@@ -42,7 +42,7 @@ public class ETRedux {
     /**
      * Version 3.0.0 initiates switch to ET_Redux from U-Pb_Redux
      */
-    public static String VERSION = "3.1.1";
+    public static String VERSION = "3.2.0";
 
     /**
      *

@@ -53,6 +53,7 @@ import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import org.earthtime.ETReduxFrame;
 import org.earthtime.Tripoli.dataModels.aquisitionTypeDataModels.IsotopeMappingModel;
 import org.earthtime.Tripoli.dataModels.collectorModels.FaradayCollectorModel;
 import org.earthtime.Tripoli.dataModels.collectorModels.FaradayCollectorModel.ResistorEnum;
@@ -64,7 +65,6 @@ import org.earthtime.Tripoli.dataViews.dataMonitorViews.AbstractDataMonitorView;
 import org.earthtime.Tripoli.massSpecSetups.AbstractMassSpecSetup;
 import org.earthtime.Tripoli.rawDataFiles.handlers.AbstractRawDataFileHandler;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.ETReduxFrame;
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.dialogs.projectManagers.ProjectManagerSubscribeInterface;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
@@ -310,7 +310,7 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
             deadTimeText.setDocument(new DialogEditor.BigDecimalDocument(deadTimeText, editable));
 
             try {
-                deadTimeText.setText(((IonCounterCollectorModel) isotopeMappingModel.getIsotopeToCollectorMap().get(IsotopesEnum.Hg202))//
+                deadTimeText.setText(((IonCounterCollectorModel) isotopeMappingModel.getIsotopeToCollectorMap().get(IsotopesEnum.Pb206))//
                         .getDeadTime().getValue().movePointRight(ReduxConstants.getUnitConversionMoveCount("ns"))//
                         .stripTrailingZeros().toPlainString());
             } catch (Exception e) {
@@ -330,7 +330,7 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
             deadTimeUnctText.setDocument(new DialogEditor.BigDecimalDocument(deadTimeUnctText, editable));
 
             try {
-                deadTimeUnctText.setText(((IonCounterCollectorModel) isotopeMappingModel.getIsotopeToCollectorMap().get(IsotopesEnum.Hg202))//
+                deadTimeUnctText.setText(((IonCounterCollectorModel) isotopeMappingModel.getIsotopeToCollectorMap().get(IsotopesEnum.Pb206))//
                         .getDeadTime().getOneSigmaAbs().movePointRight(ReduxConstants.getUnitConversionMoveCount("ns"))//
                         .stripTrailingZeros().toPlainString());
             } catch (Exception e) {
@@ -350,7 +350,7 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
             JTextField relativeGainText = new JTextField();
             relativeGainText.setDocument(new DialogEditor.BigDecimalDocument(relativeGainText, editable));
             try {
-                relativeGainText.setText(isotopeMappingModel.getIsotopeToCollectorMap().get(IsotopesEnum.Hg202)//
+                relativeGainText.setText(isotopeMappingModel.getIsotopeToCollectorMap().get(IsotopesEnum.Pb206)//
                         .getRelativeGain().getValue().stripTrailingZeros().toPlainString());
 
             } catch (Exception e) {
@@ -370,7 +370,7 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
             relativeGainUnctText.setDocument(new DialogEditor.BigDecimalDocument(relativeGainUnctText, editable));
 
             try {
-                relativeGainUnctText.setText(isotopeMappingModel.getIsotopeToCollectorMap().get(IsotopesEnum.Hg202)//
+                relativeGainUnctText.setText(isotopeMappingModel.getIsotopeToCollectorMap().get(IsotopesEnum.Pb206)//
                         .getRelativeGain().getOneSigmaPct().stripTrailingZeros().toPlainString());
             } catch (Exception e) {
             }

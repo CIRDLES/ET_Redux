@@ -22,7 +22,6 @@
 package org.earthtime.dataDictionaries;
 
 
-import java.util.Map;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -60,19 +59,20 @@ public class DataDictionaryTest {
         assertEquals("MC-ICPMS",ave[5]);
 
         
-        
-        ave=DataDictionary.MineralStandardNames;
-
-        assertEquals("FC-1",ave[0]);
-        assertEquals("FC-5",ave[1]);
-        assertEquals("Fish Canyon Tuff",ave[2]);
-        assertEquals("Manicouagan",ave[3]);
-        assertEquals("North Mountain Basalt",ave[4]);
-        assertEquals("Peixe",ave[5]);
-        assertEquals("Plesovice",ave[6]);
-        assertEquals("Sri Lanka",ave[7]);
-        assertEquals("Temora",ave[8]);
-        
+ 
+        // TODO: use schema as source
+//        ave=DataDictionary.MineralStandardNames;
+//
+//        assertEquals("FC-1",ave[0]);
+//        assertEquals("FC-5",ave[1]);
+//        assertEquals("Fish Canyon Tuff",ave[2]);
+//        assertEquals("Manicouagan",ave[3]);
+//        assertEquals("North Mountain Basalt",ave[4]);
+//        assertEquals("Peixe",ave[5]);
+//        assertEquals("Plesovice",ave[6]);
+//        assertEquals("Sri Lanka",ave[7]);
+//        assertEquals("Temora",ave[8]);
+//        
         
         
         ave=DataDictionary.PbCollectorType;

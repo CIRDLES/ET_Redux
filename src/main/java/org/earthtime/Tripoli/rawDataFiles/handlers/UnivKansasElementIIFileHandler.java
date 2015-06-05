@@ -226,7 +226,7 @@ public class UnivKansasElementIIFileHandler extends AbstractRawDataFileHandler i
                         backgroundIntensities[2] = Double.parseDouble(fractionCollectorsColumns[3]);
                         backgroundIntensities[3] = Double.parseDouble(fractionCollectorsColumns[4]);
                         backgroundIntensities[4] = Double.parseDouble(fractionCollectorsColumns[5]);
-                    } else if (i > hardwiredEndOfBackground) {
+                    } else if (i > (hardwiredEndOfBackground + 5)) {
                         double[] peakIntensities = new double[5];
                         peakAcquisitions.add(peakIntensities);
                         peakIntensities[0] = Double.parseDouble(fractionCollectorsColumns[1]);

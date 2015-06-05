@@ -61,8 +61,6 @@ public final class UnivKansasElementIISetupUPb extends AbstractMassSpecSetup imp
 
         isotopeMappingModel = new IsotopeMappingModel();
 
-        // this section using AbstractCollectorModel is part of a major refactoring from Setp 2012 to handle machine setups
-        // and uncertainty propagation more robustly
         collectorNameToModelMap = new TreeMap<>();
 
         useConstantBackgroundFitFunction = false;
@@ -71,8 +69,13 @@ public final class UnivKansasElementIISetupUPb extends AbstractMassSpecSetup imp
 
         AbstractCollectorModel singleCollector = //
                 new IonCounterCollectorModel(//
-                        "Single", new ValueModel("DeadTime", new BigDecimal(12.0e-9, ReduxConstants.mathContext10), //
-                                "ABS", new BigDecimal(1.0e-9, ReduxConstants.mathContext10), BigDecimal.ZERO), //
+                        "Single", //
+                        new ValueModel("DeadTime", //
+                                new BigDecimal(12.0e-9, //
+                                        ReduxConstants.mathContext10), //
+                                "ABS", //
+                                new BigDecimal(1.0e-9, ReduxConstants.mathContext10), //
+                                BigDecimal.ZERO), //
                         IonCounterCollectorModel.CollectedDataStyle.COUNTS);
 
         isotopeMappingModel.getIsotopeToCollectorMap().put(//
@@ -115,8 +118,7 @@ public final class UnivKansasElementIISetupUPb extends AbstractMassSpecSetup imp
         return instance;
     }
 
-    
-        /**
+    /**
      *
      *
      * @param intensitiesScan
@@ -134,7 +136,10 @@ public final class UnivKansasElementIISetupUPb extends AbstractMassSpecSetup imp
 
         return rawRatiosFactoryRevised();
     }
-    
+
+    /**yRevised();
+    }
+
     /**
      *
      *
@@ -181,7 +186,7 @@ public final class UnivKansasElementIISetupUPb extends AbstractMassSpecSetup imp
         isotopeToRawIntensitiesMap.put(IsotopesEnum.Th232, Th232);
 
         Pb208 = new RawIntensityDataModel( //
-                IsotopeNames.Pb208, virtualCollectors.get(3- 1), virtualCollectors.get(8 - 1), COLLECTOR_DATA_FREQUENCY_MILLISECS,//
+                IsotopeNames.Pb208, virtualCollectors.get(3 - 1), virtualCollectors.get(8 - 1), COLLECTOR_DATA_FREQUENCY_MILLISECS,//
                 isotopeMappingModel.getIsotopeToCollectorMap().get(IsotopesEnum.Pb208));
         genericIsotopeModels.add(Pb208);
         isotopeToRawIntensitiesMap.put(IsotopesEnum.Pb208, Pb208);
