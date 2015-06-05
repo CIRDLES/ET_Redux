@@ -17,6 +17,7 @@ test_*
 
 # Resources
 !src/main/resources/*
+!src/main/resources/org/earthtime/parameterModels/mineralStandardModels/*.xml
 
 # MACOS
 .DS_Store
