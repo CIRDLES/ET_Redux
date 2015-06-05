@@ -23,7 +23,12 @@ package org.earthtime.physicalConstants;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.io.xml.DomDriver;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -37,14 +42,14 @@ import org.earthtime.UPb_Redux.valueModels.ValueModelReferenced;
 import org.earthtime.UPb_Redux.valueModels.ValueModelReferencedXMLConverter;
 import org.earthtime.UPb_Redux.valueModels.ValueModelXMLConverter;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
-import org.earthtime.exceptions.ETException;
+import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.dataDictionaries.DataDictionary;
 import org.earthtime.dataDictionaries.Lambdas;
+import org.earthtime.exceptions.ETException;
 import org.earthtime.matrices.matrixModels.CovarianceMatrixModel;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsModel;
 import org.earthtime.utilities.DateHelpers;
-import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.xmlUtilities.XMLSerializationI;
 
 /**
@@ -560,12 +565,12 @@ public class PhysicalConstants implements
                     throw new ETException(null, e.getMessage());
                 }
 
-                System.out.println("This is your PhysicalConstants that was just read successfully:\n");
+//                System.out.println("This is your PhysicalConstants that was just read successfully:\n");
 
-                String xml2 = getXStreamWriter().toXML(myPhysicalConstants);
-
-                System.out.println(xml2);
-                System.out.flush();
+//                String xml2 = getXStreamWriter().toXML(myPhysicalConstants);
+//
+//                System.out.println(xml2);
+//                System.out.flush();
             } else {
                 throw new ETException(null, "Badly formed PhysicalConstants XML data file.");
             }

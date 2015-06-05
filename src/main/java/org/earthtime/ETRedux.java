@@ -21,12 +21,11 @@
 package org.earthtime;
 
 import java.awt.Font;
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.net.URL;
-import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import javax.help.SwingHelpUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
@@ -34,7 +33,6 @@ import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.user.ReduxPersistentState;
 import org.earthtime.UPb_Redux.utilities.JHelpAction;
 import org.earthtime.exceptions.ETWarningDialog;
-import org.earthtime.ratioDataModels.mineralStandardModels.MineralStandardUPbModel;
 
 /**
  *
@@ -48,12 +46,12 @@ public class ETRedux {
     /**
      * Version 3.0.0 initiates switch to ET_Redux from U-Pb_Redux
      */
-    public static String VERSION;// = "3.x.0";
+    public static String VERSION = "version";
 
     /**
      *
      */
-    public static String RELEASE_DATE;// = "June 2015";
+    public static String RELEASE_DATE = "date";
 
     /**
      * Creates a new instance of UPbRedux
@@ -62,22 +60,19 @@ public class ETRedux {
      */
     public ETRedux(File reduxFile) //throws3 IOException, InvalidPreferencesFormatException 
     {
-        // get version number written by pom.xml
-        URL versionFileURL = MineralStandardUPbModel.class.getClassLoader().getResource("version.txt");
-        File versionFile = new File(versionFileURL.getPath());
-
-        try ( //first use a Scanner to get headers of 4 lines
-                // http://en.wikipedia.org/wiki/Windows-1252
-                Scanner scanner = new Scanner(versionFile, "CP1252")) {
-            String[] versionText = scanner.nextLine().split("=");
+        try {
+            // get version number written by pom.xml
+            InputStream versionFileStreamL = ETRedux.class.getClassLoader().getResourceAsStream("version.txt");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(versionFileStreamL));
+            StringBuilder out = new StringBuilder();
+            String line;
+            
+            String[] versionText = reader.readLine().split("=");
             VERSION = versionText[1];
-
-            String[] versionDate = scanner.nextLine().split("=");
+            
+            String[] versionDate = reader.readLine().split("=");
             RELEASE_DATE = versionDate[1];
-
-            scanner.close();
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(ETRedux.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException iOException) {
         }
 
         // get redux persistent state file
@@ -116,7 +111,7 @@ public class ETRedux {
         // installer etc ref
         // http://www.centerkey.com/mac/java/
     }
-        // installer etc ref
+    // installer etc ref
     // http://www.centerkey.com/mac/java/
 
     /**

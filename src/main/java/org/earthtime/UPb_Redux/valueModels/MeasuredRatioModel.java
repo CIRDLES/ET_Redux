@@ -22,12 +22,17 @@ package org.earthtime.UPb_Redux.valueModels;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.ConversionException;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
-import org.earthtime.exceptions.ETException;
 import org.earthtime.archivingTools.URIHelper;
+import org.earthtime.exceptions.ETException;
 import org.earthtime.xmlUtilities.XMLSerializationI;
 
 /**
@@ -297,12 +302,12 @@ public class MeasuredRatioModel extends ValueModel implements
                     throw new ETException( null, e.getMessage() );
                 }
 
-                System.out.println( "\nThis is your MeasuredRatioModel that was just read successfully:\n" );
+////                System.out.println( "\nThis is your MeasuredRatioModel that was just read successfully:\n" );
 
-                String xml2 = getXStreamWriter().toXML( myValueModel );
-
-                System.out.println( xml2 );
-                System.out.flush();
+//                String xml2 = getXStreamWriter().toXML( myValueModel );
+//
+//                System.out.println( xml2 );
+//                System.out.flush();
             } else {
                 throw new ETException( null, "XML data file does not conform to schema." );
             }

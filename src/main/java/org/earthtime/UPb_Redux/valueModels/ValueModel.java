@@ -1050,12 +1050,12 @@ public class ValueModel implements
                     throw new ETException(null, e.getMessage());
                 }
 
-                System.out.println("\nThis is your ValueModel that was just read successfully:\n");
+//                System.out.println("\nThis is your ValueModel that was just read successfully:\n");
 
-                String xml2 = getXStreamWriter().toXML(myValueModel);
-
-                System.out.println(xml2);
-                System.out.flush();
+//                String xml2 = getXStreamWriter().toXML(myValueModel);
+//
+//                System.out.println(xml2);
+//                System.out.flush();
             } else {
                 throw new ETException(null, "XML data file does not conform to schema.");
             }

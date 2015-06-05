@@ -23,7 +23,12 @@ package org.earthtime.UPb_Redux.pbBlanks;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.io.xml.DomDriver;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -34,12 +39,12 @@ import org.earthtime.UPb_Redux.user.UPbReduxConfigurator;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModelXMLConverter;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
-import org.earthtime.exceptions.ETException;
+import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.dataDictionaries.DataDictionary;
+import org.earthtime.exceptions.ETException;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.pbBlankICModels.PbBlankICModel;
 import org.earthtime.utilities.DateHelpers;
-import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.xmlUtilities.XMLSerializationI;
 
 /**
@@ -671,12 +676,12 @@ public class PbBlank implements
                     throw new ETException( null, e.getMessage() );
                 }
 
-                System.out.println( "This is your PbBlank that was just read successfully:\n" );
+//                System.out.println( "This is your PbBlank that was just read successfully:\n" );
 
-                String xml2 = getXStreamWriter().toXML( retPbBlank );
-
-                System.out.println( xml2 );
-                System.out.flush();
+//                String xml2 = getXStreamWriter().toXML( retPbBlank );
+//
+//                System.out.println( xml2 );
+//                System.out.flush();
             }
 
         } else {
