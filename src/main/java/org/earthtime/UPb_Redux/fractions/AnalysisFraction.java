@@ -23,7 +23,11 @@ package org.earthtime.UPb_Redux.fractions;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.io.xml.DomDriver;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.UPbFractionReducer;
@@ -34,10 +38,10 @@ import org.earthtime.UPb_Redux.valueModels.MeasuredRatioModelXMLConverter;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModelXMLConverter;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
+import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.ratioDataModels.initialPbModelsET.InitialPbModelET;
 import org.earthtime.ratioDataModels.initialPbModelsET.InitialPbModelETXMLConverter;
-import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.xmlUtilities.XMLSerializationI;
 
 /**
@@ -180,12 +184,12 @@ public class AnalysisFraction extends Fraction implements
                     throw new ETException( null, e.getMessage() );
                 }
 
-                System.out.println( "This is your AnalysisFraction that was just read successfully:\n" );
-
-                String xml2 = getXStreamWriter().toXML( myFraction );
-
-                System.out.println( xml2 );
-                System.out.flush();
+//                System.out.println( "This is your AnalysisFraction that was just read successfully:\n" );
+//
+//                String xml2 = getXStreamWriter().toXML( myFraction );
+//
+//                System.out.println( xml2 );
+//                System.out.flush();
             } else {
                 throw new ETException( null, "XML data file does not conform to schema." );
             }

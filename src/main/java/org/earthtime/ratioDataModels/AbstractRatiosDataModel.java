@@ -303,7 +303,7 @@ public abstract class AbstractRatiosDataModel implements
             initializeBothDataCorrelationM();
             generateBothUnctCovarianceMFromEachUnctCorrelationM();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+//            System.out.println(e.getMessage());
         }
     }
 
@@ -1089,15 +1089,15 @@ public abstract class AbstractRatiosDataModel implements
 
                 myModelClassInstance.initializeModel();
 
-                System.out.println( //
-                        "This is your " //
-                        + myModelClassInstance.getClass().getSimpleName()//
-                        + " that was just read successfully:\n");
+//                System.out.println( //
+//                        "This is your " //
+//                        + myModelClassInstance.getClass().getSimpleName()//
+//                        + " that was just read successfully:\n");
 
-                String xml2 = xstream.toXML(myModelClassInstance);
-
-                System.out.println(xml2);
-                System.out.flush();
+//                String xml2 = xstream.toXML(myModelClassInstance);
+//
+//                System.out.println(xml2);
+//                System.out.flush();
 
             } else {
                 throw new ETException(null, "XML data file does not conform to schema.");

@@ -210,12 +210,12 @@ public class SesarSample {
                 throw new ETException(null, e.getMessage());
             }
 
-            System.out.println("\nThis is your SesarSample that was just read successfully:\n");
+//            System.out.println("\nThis is your SesarSample that was just read successfully:\n");
 
-            String xml2 = getXStreamWriter().toXML(sesarSample);
-
-            System.out.println(xml2);
-            System.out.flush();
+//            String xml2 = getXStreamWriter().toXML(sesarSample);
+//
+//            System.out.println(xml2);
+//            System.out.flush();
 
         } else {
             throw new FileNotFoundException("Missing XML data file.");

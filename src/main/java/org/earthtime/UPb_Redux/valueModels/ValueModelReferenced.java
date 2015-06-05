@@ -31,8 +31,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
-import org.earthtime.exceptions.ETException;
 import org.earthtime.archivingTools.URIHelper;
+import org.earthtime.exceptions.ETException;
 import org.earthtime.xmlUtilities.XMLSerializationI;
 
 /**
@@ -287,12 +287,12 @@ public class ValueModelReferenced extends ValueModel implements
                     throw new ETException( null, e.getMessage() );
                 }
 
-                System.out.println( "\nThis is your ValueModelReferenced that was just read successfully:\n" );
+//                System.out.println( "\nThis is your ValueModelReferenced that was just read successfully:\n" );
 
-                String xml2 = getXStreamWriter().toXML( myValueModel );
-
-                System.out.println( xml2 );
-                System.out.flush();
+//                String xml2 = getXStreamWriter().toXML( myValueModel );
+//
+//                System.out.println( xml2 );
+//                System.out.flush();
             } else {
                 throw new ETException( null, "XML data file does not conform to schema." );
             }

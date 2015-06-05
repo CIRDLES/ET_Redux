@@ -72,4 +72,5 @@ public interface XMLSerializationI {
      */
     public Object readXMLObject(String filename, boolean doValidate)
     throws FileNotFoundException, ETException, FileNotFoundException, BadOrMissingXMLSchemaException;
+   
 }

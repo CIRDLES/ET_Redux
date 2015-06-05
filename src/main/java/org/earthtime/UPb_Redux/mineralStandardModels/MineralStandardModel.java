@@ -39,13 +39,13 @@ import org.earthtime.UPb_Redux.valueModels.ValueModelReferenced;
 import org.earthtime.UPb_Redux.valueModels.ValueModelReferencedXMLConverter;
 import org.earthtime.UPb_Redux.valueModels.ValueModelXMLConverter;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
+import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.dataDictionaries.DataDictionary;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.initialPbModelsET.InitialPbModelET;
 import org.earthtime.ratioDataModels.mineralStandardModels.MineralStandardUPbModel;
 import org.earthtime.utilities.DateHelpers;
-import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.xmlUtilities.XMLSerializationI;
 
 /**
@@ -379,6 +379,7 @@ public class MineralStandardModel implements
      * @throws ETException
      * @throws BadOrMissingXMLSchemaException
      */
+    @Override
     public Object readXMLObject ( String filename, boolean doValidate )
             throws FileNotFoundException,
             ETException,
@@ -404,12 +405,6 @@ public class MineralStandardModel implements
                     throw new ETException( null, e.getMessage() );
                 }
 
-                System.out.println( "This is your MineralStandardModel that was just read successfully:\n" );
-
-                String xml2 = getXStreamWriter().toXML( myMineralStandardModel );
-
-                System.out.println( xml2 );
-                System.out.flush();
             } else {
                 throw new FileNotFoundException( "Badly formed or unvalidated XML data file." );
             }
