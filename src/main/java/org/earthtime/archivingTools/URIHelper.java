@@ -324,7 +324,12 @@ public class URIHelper {
                     });
             ex.printStackTrace();
         }
-        return convertXMLTextToDOMdocument(new File(tempSESARFileName));
+        
+        File tempFile = new File(tempSESARFileName);
+        Document convertedDocument = convertXMLTextToDOMdocument(tempFile);
+        tempFile.delete();
+        
+        return convertedDocument;
     }
 
 //    /**
@@ -375,7 +380,7 @@ public class URIHelper {
      * @param XMLfile
      * @return
      */
-    public static org.w3c.dom.Document convertXMLTextToDOMdocument(File XMLfile) {
+    public static Document convertXMLTextToDOMdocument(File XMLfile) {
         org.w3c.dom.Document doc = null;
 
         // Parses an XML file and returns a DOM document.

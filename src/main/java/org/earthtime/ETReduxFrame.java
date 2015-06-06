@@ -446,7 +446,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             ETSerializer.SerializeObjectToFile(ReduxLabData.getInstance(), ReduxLabData.getMySerializedName());
         } catch (ETException ex) {
             new ETWarningDialog(ex).setVisible(true);
-            System.out.println("LabData did not save");
+//            System.out.println("LabData did not save");
         }
     }
 

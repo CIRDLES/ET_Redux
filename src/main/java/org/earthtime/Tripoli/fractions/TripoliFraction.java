@@ -1497,7 +1497,7 @@ public class TripoliFraction implements //
     }
 
     public void postProcessCommonLeadCorrectionRatios() {
-        System.out.println("Post process for Pbc on fraction  " + fractionID + "***************************************************\n");
+//        System.out.println("Post process for Pbc on fraction  " + fractionID + "***************************************************\n");
         for (DataModelInterface rr : rawRatios) {
             boolean rejectedAPoint = false;
             // select only those with pb204 in denom

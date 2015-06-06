@@ -24,6 +24,7 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -927,15 +928,19 @@ public class ReportSettings implements
     public ReportSettings clone() {
         ReportSettings reportSettingsModel = null;
 
+        String tempFileName = "TEMPreportSettings.xml";
         // write out the settings
-        serializeXMLObject("TEMPreportSettings.xml");
+        serializeXMLObject(tempFileName);
 
         // read them back in
         try {
-            reportSettingsModel = (ReportSettings) readXMLObject("TEMPreportSettings.xml", true);
+            reportSettingsModel = (ReportSettings) readXMLObject(tempFileName, true);
         } catch (FileNotFoundException | ETException | BadOrMissingXMLSchemaException fileNotFoundException) {
         }
 
+        File tempFile = new File(tempFileName);
+        tempFile.delete();
+        
         return reportSettingsModel;
     }
 
