@@ -2455,7 +2455,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
 
             // may 2014 show best date line
             ((ConcordiaGraphPanel) concordiaGraphPanel).setShowingSingleAliquot(true);
-            ((ConcordiaGraphPanel) concordiaGraphPanel).determineCurrentALiquot();
+            ((ConcordiaGraphPanel) concordiaGraphPanel).determineCurrentAliquot();
 
 ////////            // march 2014 isoplot experiment
 ////////            ((AliquotDetailsDisplayInterface) ConcordiaGraphPanelIsoplot).//
@@ -2481,10 +2481,13 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
         } else if (nodeInfo instanceof ValueModel) { // sample date model *****************************
             // get aliquot and retrieve subset of fractions for this sample date
             Object aliquotNodeInfo = //
-                    ((DefaultMutableTreeNode) ((DefaultMutableTreeNode) node).getParent()).getUserObject();
+                    ((DefaultMutableTreeNode) ((TreeNode) node).getParent()).getUserObject();
 
             if (graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab("Concordia")) {
 
+                // in case user skipped over choosing aliquot
+                ((ConcordiaGraphPanel) concordiaGraphPanel).determineCurrentAliquot();
+                
                 // check for special case interpretations: lower and upper intercepts
                 ((ConcordiaGraphPanel) concordiaGraphPanel).//
                         setYorkFitLine(((SampleDateModel) nodeInfo).getYorkLineFit());
@@ -2499,7 +2502,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
 
                 // for sample date interpretation, display date title box
                 DateInterpretationBoxPanel dateInterpretationBoxPanel = //
-                        new DateInterpretationBoxPanel(((SampleDateModel) nodeInfo));
+                        new DateInterpretationBoxPanel(((ValueModel) nodeInfo));
 
                 ((ConcordiaGraphPanel) concordiaGraphPanel).//
                         setPreferredDatePanel(dateInterpretationBoxPanel);
