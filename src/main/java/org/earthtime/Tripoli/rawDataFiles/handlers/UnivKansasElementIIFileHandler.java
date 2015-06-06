@@ -208,7 +208,7 @@ public class UnivKansasElementIIFileHandler extends AbstractRawDataFileHandler i
                 ArrayList<double[]> backgroundAcquisitions = new ArrayList<>();
                 ArrayList<double[]> peakAcquisitions = new ArrayList<>();
 
-                int hardwiredEndOfBackground = 107;
+                int hardwiredEndOfBackground = 105;
                 int assumedBackgrounRowCount = hardwiredEndOfBackground - rawDataFileTemplate.getBlockStartOffset();
                 long fractionBackgroundTimeStamp = fractionDateValue.getTime();
                 long fractionPeakTimeStamp = fractionDateValue.getTime() + assumedBackgrounRowCount * massSpec.getCOLLECTOR_DATA_FREQUENCY_MILLISECS();
