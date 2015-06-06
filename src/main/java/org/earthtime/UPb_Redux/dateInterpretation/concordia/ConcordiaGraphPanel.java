@@ -167,8 +167,8 @@ public class ConcordiaGraphPanel extends JLayeredPane
 
         setBackground(Color.white);
 
-        selectedFractions = new Vector<Fraction>();
-        excludedFractions = new Vector<Fraction>();
+        selectedFractions = new Vector<>();
+        excludedFractions = new Vector<>();
 
         this.showConcordiaErrorBars = true;
         this.showEllipseCenters = true;
@@ -1513,7 +1513,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
     /**
      *
      */
-    public void determineCurrentALiquot() {
+    public void determineCurrentAliquot() {
         try {
             curAliquot = //
                     sample.getAliquotByNumber(((UPbFractionI) selectedFractions.get(0))//
