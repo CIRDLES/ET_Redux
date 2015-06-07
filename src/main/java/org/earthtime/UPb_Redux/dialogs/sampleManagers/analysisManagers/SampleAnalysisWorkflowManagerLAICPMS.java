@@ -63,7 +63,7 @@ import org.earthtime.UPb_Redux.dialogs.DialogEditor.BigDecimalDocument;
 import org.earthtime.UPb_Redux.dialogs.DialogEditor.UnDoAbleDocument;
 import org.earthtime.UPb_Redux.dialogs.fractionManagers.FractionNotesDialog;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
-import org.earthtime.UPb_Redux.fractions.Fraction;
+import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
@@ -328,7 +328,7 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
         masterNewFractionNameAdder.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent arg0) {
-                Fraction addedFraction = null;
+                FractionI addedFraction = null;
 
                 // check to see if fractionid is in use
                 Vector<String> fractionIDs = new Vector<String>();
@@ -674,7 +674,7 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
         for (int row = 0; row
                 < ((UPbReduxAliquot) aliquot).getAliquotFractions().size(); row++) {
 
-            Fraction tempFrac = ((UPbReduxAliquot) aliquot).getAliquotFractions().get(row);
+            FractionI tempFrac = ((UPbReduxAliquot) aliquot).getAliquotFractions().get(row);
             int max = ((UPbReduxAliquot) aliquot).getAliquotFractions().size();
             addFractionRow(aliquot, tempFrac, row, max);
 
@@ -721,7 +721,7 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
         }
     }
 
-    private void addNewFractionRow(AliquotInterface aliquot, Fraction fraction) {
+    private void addNewFractionRow(AliquotInterface aliquot, FractionI fraction) {
         int row = fractionID.size();
 
         addFractionRow(aliquot, fraction, row, row + 1);
@@ -739,7 +739,7 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
         buildFastEditDisplayPanel();
     }
 
-    private void addFractionRow(AliquotInterface aliquot, Fraction tempFrac, int row, int max) {
+    private void addFractionRow(AliquotInterface aliquot, FractionI tempFrac, int row, int max) {
 
 //        // Buttons to allow deletion of fractions
 //        JButton tempJB = new EditFractionButton( "X", row, true );
@@ -1285,17 +1285,17 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
 
         private SampleInterface sample;
         private AliquotInterface aliquot;
-        private Fraction fraction;
+        private FractionI fraction;
         private int row;
 
-        public deleteFractionListener(SampleInterface sample, AliquotInterface aliquot, Fraction fraction, int row) {
+        public deleteFractionListener(SampleInterface sample, AliquotInterface aliquot, FractionI fraction, int row) {
             this.sample = sample;
             this.aliquot = aliquot;
             this.fraction = fraction;
             this.row = row;
         }
 
-        public Fraction getFraction() {
+        public FractionI getFraction() {
             return fraction;
         }
 
@@ -1315,9 +1315,9 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
 
     class showFractionNotesListener implements ActionListener {
 
-        private Fraction fraction;
+        private FractionI fraction;
 
-        public showFractionNotesListener(Fraction fraction) {
+        public showFractionNotesListener(FractionI fraction) {
             this.fraction = fraction;
         }
 
@@ -1344,14 +1344,14 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
     class changeIsZirconListener implements ChangeListener {
 
         private int row;
-        private Fraction fraction;
+        private FractionI fraction;
 
-        public changeIsZirconListener(Fraction fraction, int row) {
+        public changeIsZirconListener(FractionI fraction, int row) {
             this.row = row;
             this.fraction = fraction;
         }
 
-        public Fraction getFraction() {
+        public FractionI getFraction() {
             return fraction;
         }
 
@@ -1378,14 +1378,14 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
     private class changeInitialPbModelItemListener implements ItemListener {
 
         private int row;
-        private Fraction fraction;
+        private FractionI fraction;
 
-        public changeInitialPbModelItemListener(Fraction fraction, int row) {
+        public changeInitialPbModelItemListener(FractionI fraction, int row) {
             this.row = row;
             this.fraction = fraction;
         }
 
-        public Fraction getFraction() {
+        public FractionI getFraction() {
             return fraction;
         }
 
@@ -1398,7 +1398,7 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
         }
     }
 
-    private void updateInitialPbModelChooserForRow(Fraction tempFrac, boolean isZircon, int row) {
+    private void updateInitialPbModelChooserForRow(FractionI tempFrac, boolean isZircon, int row) {
         // modified aug 2010 to force backward compatibility, clear out model if not needed
 //
 //        AbstractRatiosDataModel initialPbNoneModel = InitialPbModelET.getNoneInstance();
@@ -1451,7 +1451,7 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
 
     }
 
-    private void updateFractionRow(Fraction tempFrac, int row) {
+    private void updateFractionRow(FractionI tempFrac, int row) {
 
 //        // set temp variable for fractionation correction both u and Pb to use in locking fields
 //        boolean fraCorrU = ((UPbFractionI) tempFrac).isFractionationCorrectedU();//.getMeanAlphaU().compareTo( BigDecimal.ZERO ) != 0);
@@ -1749,14 +1749,14 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
         // TODO
         mySample.getAliquotByName(aliquot.getAliquotName());
 
-        for (Fraction f : ((UPbReduxAliquot) aliquot).getAliquotFractions()) {
+        for (FractionI f : ((UPbReduxAliquot) aliquot).getAliquotFractions()) {
             saveAliquotFraction(aliquot, f);
             f.setTimeStamp(new Date(System.currentTimeMillis()));
         }
 
     }
 
-    private void saveAliquotFraction(AliquotInterface aliquot, Fraction tempFrac)
+    private void saveAliquotFraction(AliquotInterface aliquot, FractionI tempFrac)
             throws NumberFormatException {
 
         // set temp variable for fractionation correction both u and Pb to use in locking fields

@@ -63,7 +63,7 @@ import org.apache.commons.math.special.Gamma;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.PlottingDetailsDisplayInterface;
-import org.earthtime.UPb_Redux.fractions.Fraction;
+import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.UPb_Redux.user.SampleDateInterpretationGUIOptions;
 import org.earthtime.UPb_Redux.utilities.comparators.IntuitiveStringComparator;
@@ -345,7 +345,7 @@ public class WeightedMeanGraphPanel extends JPanel
                             includedFillColor = buildRGBColor(temp);
                         }
 
-                        Fraction f = ((UPbReduxAliquot) selectedSampleDateModels[i][0]).getAliquotFractionByName(fID);
+                        FractionI f = ((UPbReduxAliquot) selectedSampleDateModels[i][0]).getAliquotFractionByName(fID);
 
                         double date = f.//((UPbReduxAliquot) selectedSampleDateModels[i][0]).getAliquotFractionByName(fID).//
                                 getRadiogenicIsotopeDateByName(SAM.getDateName()).getValue().movePointLeft(6).doubleValue();
@@ -503,7 +503,7 @@ public class WeightedMeanGraphPanel extends JPanel
                         // use in coloring fractions, we need to query the fraction itself
                         String aliquotName = sample.getAliquotNameByFractionID(fID);
 
-                        Fraction f = ((UPbReduxAliquot) selectedSampleDateModels[i][0]).getAliquotFractionByName(fID);
+                        FractionI f = ((UPbReduxAliquot) selectedSampleDateModels[i][0]).getAliquotFractionByName(fID);
 
                         Color includedFillColor = new Color(0, 0, 0);
                         if (sample.getSampleDateInterpretationGUISettings().getAliquotOptions().get(aliquotName).containsKey("includedFillColor")) {

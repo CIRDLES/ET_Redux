@@ -23,6 +23,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Vector;
 import org.earthtime.UPb_Redux.fractions.Fraction;
+import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.reports.ReportColumn;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
@@ -77,8 +78,8 @@ public class HeatMapMapper {
         String unctType = selectedReportColumn.getUncertaintyType();
 
         if (meth != null) {
-            Vector<Fraction> fractions = sample.getFractions();
-            for (Fraction fraction : fractions) {
+            Vector<FractionI> fractions = sample.getFractions();
+            for (FractionI fraction : fractions) {
                 try {
                     if (!((UPbFractionI) fraction).isRejected()) {
                         ValueModel vm = (ValueModel) meth.invoke((Object) fraction, new Object[]{selectedReportColumn.getRetrieveVariableName()});
@@ -95,7 +96,7 @@ public class HeatMapMapper {
                 }
             }
 
-            for (Fraction fraction : fractions) {
+            for (FractionI fraction : fractions) {
                 try {
                     if (!((UPbFractionI) fraction).isRejected()) {
                         ValueModel vm = (ValueModel) meth.invoke((Object) fraction, new Object[]{selectedReportColumn.getRetrieveVariableName()});

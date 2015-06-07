@@ -27,7 +27,7 @@ import org.earthtime.UPb_Redux.ReduxConstants.ANALYSIS_PURPOSE;
 import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetup;
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
-import org.earthtime.UPb_Redux.fractions.Fraction;
+import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.reports.ReportSettings;
 import org.earthtime.UPb_Redux.samples.SESARSampleMetadata;
@@ -57,7 +57,7 @@ public class ProjectSample implements//
     private ANALYSIS_PURPOSE analysisPurpose;
     private boolean analyzed;
     private Vector<AliquotInterface> aliquots;
-    private Vector<Fraction> fractions;
+    private Vector<FractionI> fractions;
     private ReportSettings reportSettingsModel;
     private AbstractRatiosDataModel physicalConstantsModel;
     private SampleDateInterpretationGUIOptions sampleAgeInterpretationGUISettings;
@@ -327,12 +327,12 @@ public class ProjectSample implements//
     }
 
     @Override
-    public Vector<Fraction> getFractions() {
+    public Vector<FractionI> getFractions() {
         return fractions;
     }
 
     @Override
-    public void setUPbFractions(Vector<Fraction> UPbFractions) {
+    public void setUPbFractions(Vector<FractionI> UPbFractions) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -482,7 +482,7 @@ public class ProjectSample implements//
     }
 
     @Override
-    public void addFractionsVector(Vector<Fraction> fractions, int aliquotNumber) {
+    public void addFractionsVector(Vector<FractionI> fractions, int aliquotNumber) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

@@ -27,6 +27,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Vector;
+import javax.swing.AbstractButton;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -38,7 +39,7 @@ import org.earthtime.ETReduxFrame;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
-import org.earthtime.UPb_Redux.fractions.Fraction;
+import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
@@ -157,65 +158,44 @@ public class AliquotEditorForLAICPMS extends AliquotEditorDialog {
         fastEdits_panel.removeAll();
 //        showSavedDataI();
 
-        deletedFractions
-                = new Vector<Fraction>();
-        addedFractions
-                = new Vector<Fraction>();
+        deletedFractions = new Vector<>();
+        addedFractions = new Vector<>();
 
         fastEdits_panel.setBackground(ReduxConstants.myFractionGreenColor);
 
-        fractionDeleteButtons
-                = new ArrayList<JComponent>();
+        fractionDeleteButtons = new ArrayList<>();
 
-        fractionEditButtons
-                = new ArrayList<JComponent>();
+        fractionEditButtons = new ArrayList<>();
 
         // composition
-        fractionConcU_Text
-                = new ArrayList<JComponent>();
-        fractionConcUPPM
-                = new ArrayList<JLabel>();
+        fractionConcU_Text = new ArrayList<>();
+        fractionConcUPPM = new ArrayList<>();
 
-        fractionRTh_Usample_Text
-                = new ArrayList<JComponent>();
+        fractionRTh_Usample_Text = new ArrayList<>();
 
         // measured
-        fractionR206_204m_Text
-                = new ArrayList<JComponent>();
+        fractionR206_204m_Text = new ArrayList<>();
 
-        fractionR206_238r_Text
-                = new ArrayList<JComponent>();
-        fractionR206_238r2SigmaPct_Text
-                = new ArrayList<JComponent>();
+        fractionR206_238r_Text = new ArrayList<>();
+        fractionR206_238r2SigmaPct_Text = new ArrayList<>();
 
-        fractionR207_235r_Text
-                = new ArrayList<JComponent>();
-        fractionR207_235r2SigmaPct_Text
-                = new ArrayList<JComponent>();
+        fractionR207_235r_Text = new ArrayList<>();
+        fractionR207_235r2SigmaPct_Text = new ArrayList<>();
 
-        fractionR207_206r_Text
-                = new ArrayList<JComponent>();
-        fractionR207_206r2SigmaPct_Text
-                = new ArrayList<JComponent>();
+        fractionR207_206r_Text = new ArrayList<>();
+        fractionR207_206r2SigmaPct_Text = new ArrayList<>();
 
-        fractionRhoR206_238r__r207_235r_Text
-                = new ArrayList<JComponent>();
+        fractionRhoR206_238r__r207_235r_Text = new ArrayList<>();
 
         // Isotopic Dates
-        fractionDate206_238r_Text
-                = new ArrayList<JComponent>();
-        fractionDate206_238r2SigmaAbs_Text
-                = new ArrayList<JComponent>();
+        fractionDate206_238r_Text = new ArrayList<>();
+        fractionDate206_238r2SigmaAbs_Text = new ArrayList<>();
 
-        fractionDate207_235r_Text
-                = new ArrayList<JComponent>();
-        fractionDate207_235r2SigmaAbs_Text
-                = new ArrayList<JComponent>();
+        fractionDate207_235r_Text = new ArrayList<>();
+        fractionDate207_235r2SigmaAbs_Text = new ArrayList<>();
 
-        fractionDate207_206r_Text
-                = new ArrayList<JComponent>();
-        fractionDate207_206r2SigmaAbs_Text
-                = new ArrayList<JComponent>();
+        fractionDate207_206r_Text = new ArrayList<>();
+        fractionDate207_206r2SigmaAbs_Text = new ArrayList<>();
 
         // create master row for filling others ********************************
         // new fraction namer
@@ -300,7 +280,7 @@ public class AliquotEditorForLAICPMS extends AliquotEditorDialog {
         for (int row = 0; row
                 < getMyAliquot().getAliquotFractions().size(); row++) {
 
-            Fraction tempFrac = getMyAliquot().getAliquotFractions().get(row);
+            FractionI tempFrac = getMyAliquot().getAliquotFractions().get(row);
             int max = getMyAliquot().getAliquotFractions().size();
             addFractionRow(tempFrac, row, max);
 
@@ -319,7 +299,7 @@ public class AliquotEditorForLAICPMS extends AliquotEditorDialog {
      * @param row
      * @param max
      */
-    protected void addFractionRow(Fraction tempFrac, int row, int max) {
+    protected void addFractionRow(FractionI tempFrac, int row, int max) {
 
         // Buttons to allow deletion of fractions
         JButton tempJB = new EditFractionButton("X", row, true);
@@ -676,93 +656,93 @@ public class AliquotEditorForLAICPMS extends AliquotEditorDialog {
      * @param tempFrac
      * @param row
      */
-    protected void updateFractionRow(Fraction tempFrac, int row) {
+    protected void updateFractionRow(FractionI tempFrac, int row) {
 
-        ((JButton) fractionEditButtons.get(row)).setText(tempFrac.getFractionID());
+        ((AbstractButton) fractionEditButtons.get(row)).setText(tempFrac.getFractionID());
 
         // Composition
-        ((JTextField) fractionConcU_Text.get(row)).setText(tempFrac.getCompositionalMeasureByName("concU").getValue().
+        ((JTextComponent) fractionConcU_Text.get(row)).setText(tempFrac.getCompositionalMeasureByName("concU").getValue().
                 movePointRight(6).setScale(ReduxConstants.DEFAULT_CONSTANTS_SCALE,
                         RoundingMode.HALF_UP).toPlainString());
-        ((JTextField) fractionConcU_Text.get(row)).setCaretPosition(0);
+        ((JTextComponent) fractionConcU_Text.get(row)).setCaretPosition(0);
 
-        ((JTextField) fractionRTh_Usample_Text.get(row)).setText(tempFrac.getCompositionalMeasureByName("rTh_Usample").getValue().
+        ((JTextComponent) fractionRTh_Usample_Text.get(row)).setText(tempFrac.getCompositionalMeasureByName("rTh_Usample").getValue().
                 setScale(ReduxConstants.DEFAULT_CONSTANTS_SCALE,
                         RoundingMode.HALF_UP).toPlainString());
-        ((JTextField) fractionRTh_Usample_Text.get(row)).setCaretPosition(0);
+        ((JTextComponent) fractionRTh_Usample_Text.get(row)).setCaretPosition(0);
 
         // measured
-        ((JTextField) fractionR206_204m_Text.get(row)).setText(tempFrac.getMeasuredRatioByName(MeasuredRatios.r206_204m.getName()).getValue().
+        ((JTextComponent) fractionR206_204m_Text.get(row)).setText(tempFrac.getMeasuredRatioByName(MeasuredRatios.r206_204m.getName()).getValue().
                 setScale(ReduxConstants.DEFAULT_CONSTANTS_SCALE,
                         RoundingMode.HALF_UP).toPlainString());
-        ((JTextField) fractionR206_204m_Text.get(row)).setCaretPosition(0);
+        ((JTextComponent) fractionR206_204m_Text.get(row)).setCaretPosition(0);
 
         // radiogenic isotopic ratios
-        ((JTextField) fractionR206_238r_Text.get(row)).setText(tempFrac.getRadiogenicIsotopeRatioByName("r206_238r").getValue().
+        ((JTextComponent) fractionR206_238r_Text.get(row)).setText(tempFrac.getRadiogenicIsotopeRatioByName("r206_238r").getValue().
                 setScale(ReduxConstants.DEFAULT_CONSTANTS_SCALE,
                         RoundingMode.HALF_UP).toPlainString());
-        ((JTextField) fractionR206_238r_Text.get(row)).setCaretPosition(0);
+        ((JTextComponent) fractionR206_238r_Text.get(row)).setCaretPosition(0);
 
-        ((JTextField) fractionR206_238r2SigmaPct_Text.get(row)).setText(tempFrac.getRadiogenicIsotopeRatioByName("r206_238r").getOneSigmaPct().
+        ((JTextComponent) fractionR206_238r2SigmaPct_Text.get(row)).setText(tempFrac.getRadiogenicIsotopeRatioByName("r206_238r").getOneSigmaPct().
                 setScale(ReduxConstants.DEFAULT_CONSTANTS_SCALE,
                         RoundingMode.HALF_UP).toPlainString());
-        ((JTextField) fractionR206_238r2SigmaPct_Text.get(row)).setCaretPosition(0);
+        ((JTextComponent) fractionR206_238r2SigmaPct_Text.get(row)).setCaretPosition(0);
 
-        ((JTextField) fractionR207_235r_Text.get(row)).setText(tempFrac.getRadiogenicIsotopeRatioByName("r207_235r").getValue().
+        ((JTextComponent) fractionR207_235r_Text.get(row)).setText(tempFrac.getRadiogenicIsotopeRatioByName("r207_235r").getValue().
                 setScale(ReduxConstants.DEFAULT_CONSTANTS_SCALE,
                         RoundingMode.HALF_UP).toPlainString());
-        ((JTextField) fractionR207_235r_Text.get(row)).setCaretPosition(0);
+        ((JTextComponent) fractionR207_235r_Text.get(row)).setCaretPosition(0);
 
-        ((JTextField) fractionR207_235r2SigmaPct_Text.get(row)).setText(tempFrac.getRadiogenicIsotopeRatioByName("r207_235r").getOneSigmaPct().
+        ((JTextComponent) fractionR207_235r2SigmaPct_Text.get(row)).setText(tempFrac.getRadiogenicIsotopeRatioByName("r207_235r").getOneSigmaPct().
                 setScale(ReduxConstants.DEFAULT_CONSTANTS_SCALE,
                         RoundingMode.HALF_UP).toPlainString());
-        ((JTextField) fractionR207_235r2SigmaPct_Text.get(row)).setCaretPosition(0);
+        ((JTextComponent) fractionR207_235r2SigmaPct_Text.get(row)).setCaretPosition(0);
 
-        ((JTextField) fractionR207_206r_Text.get(row)).setText(tempFrac.getRadiogenicIsotopeRatioByName("r207_206r").getValue().
+        ((JTextComponent) fractionR207_206r_Text.get(row)).setText(tempFrac.getRadiogenicIsotopeRatioByName("r207_206r").getValue().
                 setScale(ReduxConstants.DEFAULT_CONSTANTS_SCALE,
                         RoundingMode.HALF_UP).toPlainString());
-        ((JTextField) fractionR207_206r_Text.get(row)).setCaretPosition(0);
+        ((JTextComponent) fractionR207_206r_Text.get(row)).setCaretPosition(0);
 
-        ((JTextField) fractionR207_206r2SigmaPct_Text.get(row)).setText(tempFrac.getRadiogenicIsotopeRatioByName("r207_206r").getOneSigmaPct().
+        ((JTextComponent) fractionR207_206r2SigmaPct_Text.get(row)).setText(tempFrac.getRadiogenicIsotopeRatioByName("r207_206r").getOneSigmaPct().
                 setScale(ReduxConstants.DEFAULT_CONSTANTS_SCALE,
                         RoundingMode.HALF_UP).toPlainString());
-        ((JTextField) fractionR207_206r2SigmaPct_Text.get(row)).setCaretPosition(0);
+        ((JTextComponent) fractionR207_206r2SigmaPct_Text.get(row)).setCaretPosition(0);
 
-        ((JTextField) fractionRhoR206_238r__r207_235r_Text.get(row)).setText(tempFrac.getRadiogenicIsotopeRatioByName("rhoR206_238r__r207_235r").getValue().
+        ((JTextComponent) fractionRhoR206_238r__r207_235r_Text.get(row)).setText(tempFrac.getRadiogenicIsotopeRatioByName("rhoR206_238r__r207_235r").getValue().
                 setScale(ReduxConstants.DEFAULT_CONSTANTS_SCALE,
                         RoundingMode.HALF_UP).toPlainString());
-        ((JTextField) fractionRhoR206_238r__r207_235r_Text.get(row)).setCaretPosition(0);
+        ((JTextComponent) fractionRhoR206_238r__r207_235r_Text.get(row)).setCaretPosition(0);
 
         // Isotopic Dates
-        ((JTextField) fractionDate206_238r_Text.get(row)).setText(tempFrac.getRadiogenicIsotopeDateByName(RadDates.age206_238r).getValue().
+        ((JTextComponent) fractionDate206_238r_Text.get(row)).setText(tempFrac.getRadiogenicIsotopeDateByName(RadDates.age206_238r).getValue().
                 movePointLeft(6).setScale(ReduxConstants.DEFAULT_CONSTANTS_SCALE,
                         RoundingMode.HALF_UP).toPlainString());
-        ((JTextField) fractionDate206_238r_Text.get(row)).setCaretPosition(0);
+        ((JTextComponent) fractionDate206_238r_Text.get(row)).setCaretPosition(0);
 
-        ((JTextField) fractionDate206_238r2SigmaAbs_Text.get(row)).setText(tempFrac.getRadiogenicIsotopeDateByName(RadDates.age206_238r).getOneSigmaAbs().
+        ((JTextComponent) fractionDate206_238r2SigmaAbs_Text.get(row)).setText(tempFrac.getRadiogenicIsotopeDateByName(RadDates.age206_238r).getOneSigmaAbs().
                 movePointLeft(6).setScale(ReduxConstants.DEFAULT_CONSTANTS_SCALE,
                         RoundingMode.HALF_UP).toPlainString());
-        ((JTextField) fractionDate206_238r2SigmaAbs_Text.get(row)).setCaretPosition(0);
+        ((JTextComponent) fractionDate206_238r2SigmaAbs_Text.get(row)).setCaretPosition(0);
 
-        ((JTextField) fractionDate207_235r_Text.get(row)).setText(tempFrac.getRadiogenicIsotopeDateByName(RadDates.age207_235r).getValue().
+        ((JTextComponent) fractionDate207_235r_Text.get(row)).setText(tempFrac.getRadiogenicIsotopeDateByName(RadDates.age207_235r).getValue().
                 movePointLeft(6).setScale(ReduxConstants.DEFAULT_CONSTANTS_SCALE,
                         RoundingMode.HALF_UP).toPlainString());
-        ((JTextField) fractionDate207_235r_Text.get(row)).setCaretPosition(0);
+        ((JTextComponent) fractionDate207_235r_Text.get(row)).setCaretPosition(0);
 
-        ((JTextField) fractionDate207_235r2SigmaAbs_Text.get(row)).setText(tempFrac.getRadiogenicIsotopeDateByName(RadDates.age207_235r).getOneSigmaAbs().
+        ((JTextComponent) fractionDate207_235r2SigmaAbs_Text.get(row)).setText(tempFrac.getRadiogenicIsotopeDateByName(RadDates.age207_235r).getOneSigmaAbs().
                 movePointLeft(6).setScale(ReduxConstants.DEFAULT_CONSTANTS_SCALE,
                         RoundingMode.HALF_UP).toPlainString());
-        ((JTextField) fractionDate207_235r2SigmaAbs_Text.get(row)).setCaretPosition(0);
+        ((JTextComponent) fractionDate207_235r2SigmaAbs_Text.get(row)).setCaretPosition(0);
 
-        ((JTextField) fractionDate207_206r_Text.get(row)).setText(tempFrac.getRadiogenicIsotopeDateByName(RadDates.age207_206r).getValue().
+        ((JTextComponent) fractionDate207_206r_Text.get(row)).setText(tempFrac.getRadiogenicIsotopeDateByName(RadDates.age207_206r).getValue().
                 movePointLeft(6).setScale(ReduxConstants.DEFAULT_CONSTANTS_SCALE,
                         RoundingMode.HALF_UP).toPlainString());
-        ((JTextField) fractionDate207_206r_Text.get(row)).setCaretPosition(0);
+        ((JTextComponent) fractionDate207_206r_Text.get(row)).setCaretPosition(0);
 
-        ((JTextField) fractionDate207_206r2SigmaAbs_Text.get(row)).setText(tempFrac.getRadiogenicIsotopeDateByName(RadDates.age207_206r).getOneSigmaAbs().
+        ((JTextComponent) fractionDate207_206r2SigmaAbs_Text.get(row)).setText(tempFrac.getRadiogenicIsotopeDateByName(RadDates.age207_206r).getOneSigmaAbs().
                 movePointLeft(6).setScale(ReduxConstants.DEFAULT_CONSTANTS_SCALE,
                         RoundingMode.HALF_UP).toPlainString());
-        ((JTextField) fractionDate207_206r2SigmaAbs_Text.get(row)).setCaretPosition(0);
+        ((JTextComponent) fractionDate207_206r2SigmaAbs_Text.get(row)).setCaretPosition(0);
 
     }
 
@@ -795,11 +775,11 @@ public class AliquotEditorForLAICPMS extends AliquotEditorDialog {
         // fix row pointers in buttons
         for (int f = 0; f
                 < fractionDeleteButtons.size(); f++) {
-            Fraction myFraction
+            FractionI fraction
                     = ((deleteFractionListener) ((JButton) fractionDeleteButtons.get(f)).getActionListeners()[0]).getFraction();
 
-            ((JButton) fractionDeleteButtons.get(f)).removeActionListener(((JButton) fractionDeleteButtons.get(f)).getActionListeners()[0]);
-            ((JButton) fractionDeleteButtons.get(f)).addActionListener(new deleteFractionListener(myFraction, f));
+            ((AbstractButton) fractionDeleteButtons.get(f)).removeActionListener(((JButton) fractionDeleteButtons.get(f)).getActionListeners()[0]);
+            ((AbstractButton) fractionDeleteButtons.get(f)).addActionListener(new deleteFractionListener(fraction, f));
 
 //            ((JButton) fractionEditButtons.get( f )).removeActionListener( ((JButton) fractionEditButtons.get( f )).getActionListeners()[0] );
 //            ((JButton) fractionEditButtons.get( f )).addActionListener( new editFractionListener( myFraction, f ) );
@@ -807,7 +787,7 @@ public class AliquotEditorForLAICPMS extends AliquotEditorDialog {
 
     }
 
-    private void addNewFractionRow(Fraction fraction) {
+    private void addNewFractionRow(FractionI fraction) {
         int row = fractionDeleteButtons.size();
 
         addFractionRow(fraction, row, row + 1);
@@ -844,9 +824,9 @@ public class AliquotEditorForLAICPMS extends AliquotEditorDialog {
     private class editFractionListener implements ActionListener {
 
         private int row;
-        private Fraction fraction;
+        private FractionI fraction;
 
-        public editFractionListener(Fraction fraction, int row) {
+        public editFractionListener(FractionI fraction, int row) {
             this.row = row;
             this.fraction = fraction;
         }
@@ -884,14 +864,14 @@ public class AliquotEditorForLAICPMS extends AliquotEditorDialog {
     private class deleteFractionListener implements ActionListener {
 
         private int row;
-        private Fraction fraction;
+        private FractionI fraction;
 
-        public deleteFractionListener(Fraction fraction, int row) {
+        public deleteFractionListener(FractionI fraction, int row) {
             this.row = row;
             this.fraction = fraction;
         }
 
-        public Fraction getFraction() {
+        public FractionI getFraction() {
             return fraction;
         }
 
@@ -956,7 +936,7 @@ public class AliquotEditorForLAICPMS extends AliquotEditorDialog {
         addedFractions.clear();
 
         // master fields
-        for (Fraction f : getMyAliquot().getAliquotFractions()) {
+        for (FractionI f : getMyAliquot().getAliquotFractions()) {
             saveAliquotFraction(f);
         }
 
@@ -975,7 +955,7 @@ public class AliquotEditorForLAICPMS extends AliquotEditorDialog {
      * @param tempFrac
      * @throws NumberFormatException
      */
-    protected void saveAliquotFraction(Fraction tempFrac)
+    protected void saveAliquotFraction(FractionI tempFrac)
             throws NumberFormatException {
 
         int row = getMyAliquot().getAliquotFractions().indexOf(tempFrac);
@@ -1117,7 +1097,7 @@ public class AliquotEditorForLAICPMS extends AliquotEditorDialog {
         saveAliquot();
         // save off the Aliquot as a temp file
         String tempAliquotXML = "TempAliquot.xml";
-        ((XMLSerializationI)myAliquot).serializeXMLObject(tempAliquotXML);
+        ((XMLSerializationI) myAliquot).serializeXMLObject(tempAliquotXML);
         viewXMLAliquotAsHTML(tempAliquotXML);
     }
 

@@ -324,7 +324,7 @@ public class UPbFraction extends Fraction implements
      */
     public UPbFraction(
             int aliquotNum,
-            Fraction fraction,
+            FractionI fraction,
             ReduxLabData labData,
             AbstractRatiosDataModel tracer,
             AbstractRatiosDataModel pbBlank) throws BadLabDataException {
@@ -343,7 +343,7 @@ public class UPbFraction extends Fraction implements
         this.setFractionID(fraction.getFractionID());
         this.setGrainID(fraction.getFractionID());
 
-        this.GetValuesFrom(fraction, true);
+        this.getValuesFrom(fraction, true);
 
         this.setMeasuredRatios((MeasuredRatioModel[]) fraction.copyMeasuredRatios());
 
@@ -697,7 +697,7 @@ public class UPbFraction extends Fraction implements
      * @throws BadLabDataException
      * @throws ETException
      */
-    public boolean updateUPbFraction(Fraction fractionFromFile, boolean overrideData)
+    public boolean updateUPbFraction(FractionI fractionFromFile, boolean overrideData)
             throws BadLabDataException, ETException {
         // walk the new fraction being imported into an existing fraction
         // and check whether to override
@@ -1437,7 +1437,7 @@ public class UPbFraction extends Fraction implements
             FileNotFoundException,
             BadOrMissingXMLSchemaException {
 
-        Fraction myUPbReduxFraction = null;
+        FractionI myUPbReduxFraction = null;
 
         BufferedReader reader = URIHelper.getBufferedReader(filename);
 
@@ -1555,10 +1555,10 @@ public class UPbFraction extends Fraction implements
     public UPbFraction readXMLFraction(String filename, int aliquotNumber, boolean doValidate)
             throws BadOrMissingXMLSchemaException {
 
-        Fraction myUPbReduxFraction = null;
+        FractionI myUPbReduxFraction = null;
 
         try {
-            myUPbReduxFraction = (Fraction) readXMLObject(filename, doValidate);
+            myUPbReduxFraction = (FractionI) readXMLObject(filename, doValidate);
 
             // set LabData
             ((UPbFraction) myUPbReduxFraction).setMyLabData(this.getMyLabData());
@@ -1605,7 +1605,7 @@ public class UPbFraction extends Fraction implements
             ((UPbFractionI) myUPbReduxFraction).setPhysicalConstantsModel(this.getPhysicalConstantsModel());
 
             // initialize parent fields
-            myUPbReduxFraction.GetValuesFrom(this, false);
+            myUPbReduxFraction.getValuesFrom(this, false);
 
             // may 2008 discovered that reading u first did not set analysis measures
             populateAnalysisMeasuresFromImportedFraction(myUPbReduxFraction, myUPbReduxFraction);
@@ -1675,8 +1675,8 @@ public class UPbFraction extends Fraction implements
     }
 
     private void populateAnalysisMeasuresFromImportedFraction(
-            Fraction sourceFraction,
-            Fraction sinkFraction) {
+            FractionI sourceFraction,
+            FractionI sinkFraction) {
 
         if (isAnOxide()) {
             sinkFraction.getAnalysisMeasure(AnalysisMeasures.r18O_16O.getName()).setValue(((UPbFraction) sourceFraction).getR18O16O());
@@ -1733,7 +1733,7 @@ public class UPbFraction extends Fraction implements
      */
     public static void main(String[] args) throws Exception {
 
-        Fraction myUPbReduxFraction = new UPbFraction("NONE");
+        FractionI myUPbReduxFraction = new UPbFraction("NONE");
 
         ((XMLSerializationI) myUPbReduxFraction).serializeXMLObject("UPbFractionTEST.xml");
 

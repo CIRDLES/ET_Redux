@@ -36,7 +36,7 @@ import javax.swing.table.AbstractTableModel;
 import org.earthtime.ETReduxFrame;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.dialogs.fractionManagers.FractionNotesDialog;
-import org.earthtime.UPb_Redux.fractions.Fraction;
+import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.renderers.EditFractionButton;
 import org.earthtime.samples.SampleInterface;
 
@@ -175,7 +175,7 @@ public class UPbFractionTableModel extends AbstractTableModel {
         // used to control display of aliquot buttons
         String saveAliquotNum = "0";
 
-        Vector<Fraction> myFractions = getFractionsSorted();
+        Vector<FractionI> myFractions = getFractionsSorted();
 
         for (int row = 0; row < myFractions.size(); row++) {
 
@@ -228,10 +228,10 @@ public class UPbFractionTableModel extends AbstractTableModel {
 
     }
 
-    private Vector<Fraction> getFractionsSorted() {
+    private Vector<FractionI> getFractionsSorted() {
         // here we sort the fractions so that they appear in alphabetical order by aliquot
-        Vector<Fraction> temp = sample.getFractions();
-        Collections.sort(temp);
+        Vector<FractionI> temp = sample.getFractions();
+        Collections.sort(temp, FractionI.FRACTION_ID_ORDER);
         return temp;
     }
 
@@ -249,9 +249,9 @@ public class UPbFractionTableModel extends AbstractTableModel {
 
     class showFractionNotesListener implements ActionListener {
 
-        private Fraction fraction;
+        private FractionI fraction;
 
-        public showFractionNotesListener(Fraction fraction) {
+        public showFractionNotesListener(FractionI fraction) {
             this.fraction = fraction;
         }
 
@@ -278,9 +278,9 @@ public class UPbFractionTableModel extends AbstractTableModel {
 
     class editFractionListener implements ActionListener {
 
-        private Fraction fraction;
+        private FractionI fraction;
 
-        public editFractionListener(Fraction fraction) {
+        public editFractionListener(FractionI fraction) {
             this.fraction = fraction;
         }
 

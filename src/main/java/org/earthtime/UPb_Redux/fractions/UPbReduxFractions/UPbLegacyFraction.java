@@ -135,7 +135,7 @@ public class UPbLegacyFraction extends Fraction implements
      */
     public UPbLegacyFraction(
             int aliquotNum,
-            Fraction fraction) {
+            FractionI fraction) {
 
         this();
 
@@ -148,9 +148,9 @@ public class UPbLegacyFraction extends Fraction implements
         this.setFractionID(fraction.getFractionID());
         this.setGrainID(fraction.getFractionID());
 
-        this.GetValuesFrom(fraction, true);
+        this.getValuesFrom(fraction, true);
 
-        this.setMeasuredRatios((MeasuredRatioModel[]) fraction.copyMeasuredRatios());
+        this.setMeasuredRatios(fraction.copyMeasuredRatios());
 
     }
 

@@ -70,7 +70,7 @@ import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.HeatMapLegend
 import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.TitleBoxPanel;
 import org.earthtime.UPb_Redux.dialogs.graphManagers.GraphAxesDialog;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
-import org.earthtime.UPb_Redux.fractions.Fraction;
+import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.reports.reportViews.ReportUpdaterInterface;
@@ -104,8 +104,8 @@ public class ConcordiaGraphPanel extends JLayeredPane
     private ValueModel lambda235;
     private ValueModel lambda238;
     private ValueModel lambda232;
-    private Vector<Fraction> selectedFractions;
-    private Vector<Fraction> excludedFractions;
+    private Vector<FractionI> selectedFractions;
+    private Vector<FractionI> excludedFractions;
     private double minT;
     private double maxT;
     private boolean showConcordiaErrorBars;
@@ -496,7 +496,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
         // paint de-selected fractions first 
         // paint fills first
         if (showExcludedEllipses) {
-            for (Fraction f : excludedFractions) {
+            for (FractionI f : excludedFractions) {
                 if (!((UPbFractionI) f).isRejected() && !(isDisplay_PbcCorr() && !((UPbFractionI) f).isCommonLeadLossCorrected())) {
                     // determine aliquot for colors etc.
                     String aliquotName = sample.getNameOfAliquotFromSample(((UPbFractionI) f).getAliquotNumber());
@@ -534,7 +534,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
 
         // repeat for excluded fractions the borders etc
         if (showExcludedEllipses) {
-            for (Fraction f : excludedFractions) {
+            for (FractionI f : excludedFractions) {
                 if (!((UPbFractionI) f).isRejected() && !(isDisplay_PbcCorr() && !((UPbFractionI) f).isCommonLeadLossCorrected())) {
                     // determine aliquot for colors etc.
                     String aliquotName = sample.getNameOfAliquotFromSample(((UPbFractionI) f).getAliquotNumber());
@@ -582,7 +582,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
         }// END excluded FRACTIONS *************************************
 
         // selected fractions fill only 
-        for (Fraction f : selectedFractions) {
+        for (FractionI f : selectedFractions) {
             if (!((UPbFractionI) f).isRejected() && !(isDisplay_PbcCorr() && !((UPbFractionI) f).isCommonLeadLossCorrected())) {
                 // determine aliquot for colors etc.
                 String aliquotName = sample.getNameOfAliquotFromSample(((UPbFractionI) f).getAliquotNumber());
@@ -622,7 +622,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
             }
         }
 
-        for (Fraction f : selectedFractions) {
+        for (FractionI f : selectedFractions) {
             if (!((UPbFractionI) f).isRejected() && !(isDisplay_PbcCorr() && !((UPbFractionI) f).isCommonLeadLossCorrected())) {
                 // determine aliquot for colors etc.
                 String aliquotName = sample.getNameOfAliquotFromSample(((UPbFractionI) f).getAliquotNumber());
@@ -1174,7 +1174,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
     private void plotAFraction(
             Graphics2D g2d,
             boolean svgStyle,
-            Fraction f,
+            FractionI f,
             Color borderColor,
             float borderWeight,
             Color centerColor,
@@ -1247,7 +1247,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
     }
 
     private void generateEllipsePathIII(
-            Fraction f,
+            FractionI f,
             double ellipseSize) {
 
         ValueModel xAxisRatio = null;
@@ -1429,7 +1429,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
      */
     private void plotAFractionFillOnly(
             Graphics2D g2d, boolean svgStyle,
-            Fraction f,
+            FractionI f,
             float transparency,
             Color fillColor) {
 
@@ -1624,7 +1624,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
                 rhoTW = "rhoR207_206PbcCorr__r238_206PbcCorr";
             }
 
-            for (Fraction f : selectedFractions) {
+            for (FractionI f : selectedFractions) {
 
                 if (!((UPbFractionI) f).isRejected() && !(isDisplay_PbcCorr() && !((UPbFractionI) f).isCommonLeadLossCorrected())) {
                     if (getConcordiaFlavor().equalsIgnoreCase("T-W")) {
@@ -1694,7 +1694,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
             }
 
             if (showExcludedEllipses) {
-                for (Fraction f : excludedFractions) {
+                for (FractionI f : excludedFractions) {
                     if (!((UPbFractionI) f).isRejected() && !(isDisplay_PbcCorr() && !((UPbFractionI) f).isCommonLeadLossCorrected())) {
                         if (getConcordiaFlavor().equalsIgnoreCase("T-W")) {
                             xAxisRatio = new ValueModel("r238_206r");
@@ -1890,7 +1890,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
      * @return
      */
     @Override
-    public Vector<Fraction> getSelectedFractions() {
+    public Vector<FractionI> getSelectedFractions() {
         return selectedFractions;
     }
 
@@ -1899,7 +1899,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
      * @param fractions
      */
     @Override
-    public void setSelectedFractions(Vector<Fraction> fractions) {
+    public void setSelectedFractions(Vector<FractionI> fractions) {
         this.selectedFractions = fractions;
 
     }
@@ -2253,7 +2253,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
      * @return
      */
     @Override
-    public Vector<Fraction> getDeSelectedFractions() {
+    public Vector<FractionI> getDeSelectedFractions() {
         return excludedFractions;
     }
 
@@ -2261,7 +2261,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
      *
      * @param deSelectedFractions
      */
-    public void setDeSelectedFractions(Vector<Fraction> deSelectedFractions) {
+    public void setDeSelectedFractions(Vector<FractionI> deSelectedFractions) {
         this.excludedFractions = deSelectedFractions;
     }
 

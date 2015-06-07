@@ -177,13 +177,6 @@ public interface UPbFractionI {
 
     /**
      *
-     * @param cmName
-     * @return
-     */
-    abstract ValueModel getCompositionalMeasureByName(String cmName);
-
-    /**
-     *
      * @return
      */
     abstract AbstractRatiosDataModel getPbBlank();

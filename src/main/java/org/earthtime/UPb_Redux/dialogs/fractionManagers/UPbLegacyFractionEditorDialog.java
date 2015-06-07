@@ -30,7 +30,7 @@ import javax.swing.JPanel;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
-import org.earthtime.UPb_Redux.fractions.Fraction;
+import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.ReductionHandler;
@@ -50,7 +50,7 @@ public class UPbLegacyFractionEditorDialog extends DialogEditor {
 
     private AliquotInterface aliquot;
 
-    private Fraction myFraction;
+    private FractionI myFraction;
 
     private ArrayList<String> fractionIDs;
 
@@ -83,7 +83,7 @@ public class UPbLegacyFractionEditorDialog extends DialogEditor {
             java.awt.Frame parent,
             boolean modal,
             AliquotInterface aliquot,
-            Fraction fraction,
+            FractionI fraction,
             int selectedTab,
             boolean analyzed) {
 
@@ -120,7 +120,7 @@ public class UPbLegacyFractionEditorDialog extends DialogEditor {
             fraction_Chooser.addItem(fraction);
         }
         // add the not-rejected fractions
-        for (Fraction f : ((UPbReduxAliquot) aliquot).getAliquotFractions()) {
+        for (FractionI f : ((UPbReduxAliquot) aliquot).getAliquotFractions()) {
             if (!((UPbFractionI) f).isRejected()) {
                 fraction_Chooser.addItem(f);
             }
@@ -132,7 +132,7 @@ public class UPbLegacyFractionEditorDialog extends DialogEditor {
             public void actionPerformed(ActionEvent e) {
                 JComboBox cb = (JComboBox) e.getSource();
 
-                myFraction = (Fraction) cb.getSelectedItem();
+                myFraction = (FractionI) cb.getSelectedItem();
                 InitializeFractionData();
             }
         });
@@ -140,7 +140,7 @@ public class UPbLegacyFractionEditorDialog extends DialogEditor {
         // first create a list of used fractionids so that we
         // can tell user if edited fraction name is already in use
         fractionIDs = new ArrayList<String>();
-        for (Fraction f : ((UPbReduxAliquot) aliquot).getAliquotFractions()) {
+        for (FractionI f : ((UPbReduxAliquot) aliquot).getAliquotFractions()) {
             fractionIDs.add(f.getFractionID());
         }
 
@@ -374,7 +374,7 @@ public class UPbLegacyFractionEditorDialog extends DialogEditor {
      *
      * @return
      */
-    public Fraction getMyFraction() {
+    public FractionI getMyFraction() {
         return myFraction;
     }
 
@@ -382,7 +382,7 @@ public class UPbLegacyFractionEditorDialog extends DialogEditor {
      *
      * @param myFraction
      */
-    public void setMyFraction(Fraction myFraction) {
+    public void setMyFraction(FractionI myFraction) {
         this.myFraction = myFraction;
     }
 
@@ -404,7 +404,7 @@ public class UPbLegacyFractionEditorDialog extends DialogEditor {
         fractionMass_text = new javax.swing.JTextField();
         fractionID_text = new javax.swing.JTextField();
         fractionMassInGrams_label = new javax.swing.JLabel();
-        fraction_Chooser = new javax.swing.JComboBox<Fraction>();
+        fraction_Chooser = new javax.swing.JComboBox<FractionI>();
         fractionID_label1 = new javax.swing.JLabel();
         fractionID_label = new javax.swing.JLabel();
         buttonsPanel = new javax.swing.JPanel();
@@ -704,7 +704,7 @@ private void ChangedTabs(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_Chang
     private javax.swing.JLabel fractionMassInGrams_label;
     private javax.swing.JTextField fractionMass_text;
     private javax.swing.JPanel fractionPanel;
-    private javax.swing.JComboBox<Fraction> fraction_Chooser;
+    private javax.swing.JComboBox<FractionI> fraction_Chooser;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLayeredPane jLayeredPane1;
     private javax.swing.JLayeredPane jLayeredPane2;

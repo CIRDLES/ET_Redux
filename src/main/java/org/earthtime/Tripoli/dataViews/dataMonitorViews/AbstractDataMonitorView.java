@@ -79,7 +79,7 @@ import org.earthtime.UPb_Redux.dateInterpretation.kwiki.KwikiConcordiaToolBar;
 import org.earthtime.UPb_Redux.dateInterpretation.kwiki.KwikiPDFToolBar;
 import org.earthtime.UPb_Redux.dialogs.parameterManagers.LAICPMSProjectParametersManager;
 import org.earthtime.UPb_Redux.dialogs.projectManagers.ProjectManagerSubscribeInterface;
-import org.earthtime.UPb_Redux.fractions.Fraction;
+import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.reports.reportViews.TabbedReportViews;
 import org.earthtime.beans.ET_JButton;
@@ -505,8 +505,8 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
         add(concordiaGraphPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         try {
-            Vector<Fraction> selectedFractions =//
-project.getSuperSample().getFractions();
+            Vector<FractionI> selectedFractions =//
+                    project.getSuperSample().getFractions();
 
             ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
                     setSelectedFractions(selectedFractions);
@@ -564,13 +564,13 @@ project.getSuperSample().getFractions();
 
     }
 
-    private Vector<Fraction> filterActiveUPbFractions(Vector<Fraction> fractions) {
+    private Vector<FractionI> filterActiveUPbFractions(Vector<FractionI> fractions) {
 
-        Vector<Fraction> filteredFractions = new Vector<>();
+        Vector<FractionI> filteredFractions = new Vector<>();
 
         String dateName = ((DateProbabilityDensityPanel) probabilityPanel).getChosenDateName();
 
-        for (Fraction f : fractions) {
+        for (FractionI f : fractions) {
             boolean doAddFraction = true;
 //            double pctDiscordance = f.getRadiogenicIsotopeDateByName(RadDates.percentDiscordance).getValue().doubleValue();
 //

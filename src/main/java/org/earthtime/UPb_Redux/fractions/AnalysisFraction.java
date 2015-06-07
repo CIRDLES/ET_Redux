@@ -78,7 +78,7 @@ public class AnalysisFraction extends Fraction implements
      * @param analyzed
      */
     public AnalysisFraction (
-            Fraction fraction,
+            FractionI fraction,
             boolean analyzed ) {
 
         this( fraction.getSampleName() );
@@ -86,18 +86,18 @@ public class AnalysisFraction extends Fraction implements
         this.setFractionID( fraction.getFractionID() );
         this.setGrainID( fraction.getGrainID() );
 
-        this.GetValuesFrom( fraction, true );
+        this.getValuesFrom( fraction, true );
 
         // april 2010 handle UPbLegacyFraction
         if ( fraction instanceof UPbFraction ) {
             setTracerID( ((UPbFraction) fraction).getTracerID() );
             setAlphaPbModelID( ((UPbFraction) fraction).getAlphaPbModelID() );
             setAlphaUModelID( ((UPbFraction) fraction).getAlphaUModelID() );
-            setPbBlankID( ((UPbFraction) fraction).getPbBlankID() );
-            setPhysicalConstantsModelID( ((UPbFraction) fraction).getPhysicalConstantsModelID() );
+            setPbBlankID( fraction.getPbBlankID() );
+            setPhysicalConstantsModelID( fraction.getPhysicalConstantsModelID() );
         }
 
-        setMeasuredRatios( (MeasuredRatioModel[]) fraction.copyMeasuredRatios() );
+        setMeasuredRatios(fraction.copyMeasuredRatios());
     }
 
     @Override
@@ -165,7 +165,7 @@ public class AnalysisFraction extends Fraction implements
             FileNotFoundException,
             BadOrMissingXMLSchemaException {
 
-        Fraction myFraction = null;
+        FractionI myFraction = null;
 
         BufferedReader reader = URIHelper.getBufferedReader( filename );
 
@@ -179,7 +179,7 @@ public class AnalysisFraction extends Fraction implements
                 // re-create reader
                 reader = URIHelper.getBufferedReader( filename );
                 try {
-                    myFraction = (Fraction) xstream.fromXML( reader );
+                    myFraction = (FractionI) xstream.fromXML( reader );
                 } catch (ConversionException e) {
                     throw new ETException( null, e.getMessage() );
                 }
@@ -256,17 +256,17 @@ public class AnalysisFraction extends Fraction implements
     public static void main ( String[] args ) throws Exception {
         UPbReduxConfigurator myConfigurator = new UPbReduxConfigurator();
 
-        Fraction analysisFraction = new UPbFraction( "NONE" );
+        FractionI analysisFraction = new UPbFraction( "NONE" );
         // new AnalysisFraction("Test Sample");
 
         UPbFractionReducer.getInstance().fullFractionReduce( (UPbFraction) analysisFraction, true );
 
-        Fraction myAnalysisFraction = new AnalysisFraction( analysisFraction, false );
+        FractionI myAnalysisFraction = new AnalysisFraction( analysisFraction, false );
 
         String testFractionName = "AnalysisFractionTEST.xml";
 
-        ((AnalysisFraction) myAnalysisFraction).serializeXMLObject( testFractionName );
-        ((AnalysisFraction) myAnalysisFraction).readXMLObject( testFractionName, true );
+        ((XMLSerializationI) myAnalysisFraction).serializeXMLObject( testFractionName );
+        ((XMLSerializationI) myAnalysisFraction).readXMLObject( testFractionName, true );
 
 
 

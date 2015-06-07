@@ -35,7 +35,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.fractions.Fraction;
+import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
@@ -88,7 +88,7 @@ public class ReductionHandler {
 //        tracerSourceNames.add( TracerUPbRatiosAndConcentrations.concU236t.getName() );
 //
 //    }
-    private Fraction fraction;
+    private FractionI fraction;
     /**
      * matrixSpecs contain the string rowForSpecificDate names for each of the
      * matrices for a given tracer-based reduction. These specs are defined in
@@ -134,7 +134,7 @@ public class ReductionHandler {
      * @param matrixSpecsName
      */
     public ReductionHandler (
-            Fraction fraction,
+            FractionI fraction,
             String matrixSpecsName ) {
 
         this.fraction = fraction;
@@ -152,9 +152,9 @@ public class ReductionHandler {
         matrixModels[0].setCols( matrixModels[0].getRows() );
 
         // extract column names in order from specs for mini covariances
-        Map<Integer, String> lambdaNamesList = new HashMap<Integer, String>();
-        Map<Integer, String> tracerNamesList = new HashMap<Integer, String>();
-        Map<Integer, String> analyticalNamesList = new HashMap<Integer, String>();
+        Map<Integer, String> lambdaNamesList = new HashMap<>();
+        Map<Integer, String> tracerNamesList = new HashMap<>();
+        Map<Integer, String> analyticalNamesList = new HashMap<>();
 
         for (int i = 0; i < matrixSpecs[0].length; i ++) {
             if ( Lambdas.contains( matrixSpecs[0][i] ) ) {//     lambdaSourceNames.contains( matrixSpecs[0][i] ) ) {

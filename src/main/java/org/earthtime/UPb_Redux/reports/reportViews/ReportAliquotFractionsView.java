@@ -71,7 +71,7 @@ import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.dialogs.fractionManagers.FractionNotesDialog;
 import org.earthtime.UPb_Redux.filters.SVGFileFilter;
-import org.earthtime.UPb_Redux.fractions.Fraction;
+import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.reports.ReportRowGUIInterface;
@@ -933,7 +933,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                                     //right shift text in fraction column to allow for fractionButtonMargin
                                     drawnWidth += fractionButtonMargin;
 
-                                    Fraction fraction = null;
+                                    FractionI fraction = null;
                                     try {
                                         fraction = sample.getFractionByID(getReportFractions()[row][2].trim());
                                         verticalPixelFractionMap.add( //
@@ -1066,17 +1066,17 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
 
                     Object fractionOrAliquot = verticalPixelFractionMap.get(row).rowObject;
 
-                    if (fractionOrAliquot instanceof Fraction) {
+                    if (fractionOrAliquot instanceof FractionI) {
 
                         if (e.getModifiers() == InputEvent.BUTTON1_MASK) {
                             // determine if note box or fraction name
                             if (mouseX < lineHeight) {
                                 // show notes
-                                JDialog notesDialog = new FractionNotesDialog(parentFrame, true, (Fraction) fractionOrAliquot);
+                                JDialog notesDialog = new FractionNotesDialog(parentFrame, true, (FractionI) fractionOrAliquot);
                                 notesDialog.setLocation(parentFrame.getX() + 300, parentFrame.getY() + 300);
                                 notesDialog.setVisible(true);
                             } else {
-                                parentFrame.editFraction(((Fraction) verticalPixelFractionMap.get(row).rowObject), 8);// kwikitab
+                                parentFrame.editFraction(((FractionI) verticalPixelFractionMap.get(row).rowObject), 8);// kwikitab
                                 updateReportTable(false);
                             }
                         } else {
@@ -1153,7 +1153,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
 
                     Object fractionOrAliquot = tableRowObject.rowObject;
 
-                    if (fractionOrAliquot instanceof Fraction) {
+                    if (fractionOrAliquot instanceof FractionI) {
                         if (mouseX < lineHeight) {
                             setToolTipText(//
                                     "<html>"

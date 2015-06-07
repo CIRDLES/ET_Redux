@@ -20,17 +20,28 @@
  */
 package org.earthtime.UPb_Redux.expressions;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.filters.FractionXMLFileFilter;
-import org.earthtime.UPb_Redux.fractions.Fraction;
+import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.aliquots.AliquotInterface;
@@ -44,14 +55,14 @@ public final class MathMachineII {
 
     // fields
     // DataDictionary element name, path
-    private static Map<String, String> expFiles = new HashMap<String, String>();
+    private static Map<String, String> expFiles = new HashMap<>();
     private static String rootDirectoryName;
-    private static ArrayList<Fraction> fractionsTemp = new ArrayList<Fraction>();
+    private static ArrayList<FractionI> fractionsTemp = new ArrayList<>();
 
     /**
      *
      */
-    public SortedSet<String> valueModelsSelected = new TreeSet<String>();
+    public SortedSet<String> valueModelsSelected = new TreeSet<>();
 
     /**
      *
@@ -110,7 +121,7 @@ public final class MathMachineII {
         // drive ExpTreeII output from here
 
         if (createNewExpressionFilesXML) {
-            MathMachineII.expFiles = new HashMap<String, String>();
+            MathMachineII.expFiles = new HashMap<>();
             MathMachineII.rootDirectoryName = rootDirectoryName;
         }
 
@@ -147,7 +158,7 @@ public final class MathMachineII {
         // drive ExpTreeII output from here
 
         if (createNewExpressionFilesXML) {
-            MathMachineII.expFiles = new HashMap<String, String>();
+            MathMachineII.expFiles = new HashMap<>();
             MathMachineII.rootDirectoryName = rootDirectoryName;
         }
 
@@ -429,7 +440,7 @@ public final class MathMachineII {
 
         //gets fractions from UPbFractionDialogue
         fractionsTemp.clear();
-        for (Fraction f : ((UPbReduxAliquot) aliquot).getAliquotFractions()) {
+        for (FractionI f : ((UPbReduxAliquot) aliquot).getAliquotFractions()) {
             if (!((FractionInterface) f).isRejected()) {
                 fractionsTemp.add(f);
             }
@@ -442,7 +453,7 @@ public final class MathMachineII {
         String filePath = "Index.html";
 
         if (creatNewMMLIndex) {
-            MathMachineII.expFiles = new HashMap<String, String>();
+            MathMachineII.expFiles = new HashMap<>();
             MathMachineII.rootDirectoryName = rootDirectoryName;
         }
 
@@ -524,7 +535,7 @@ public final class MathMachineII {
                     + "</tr>\n"; //First row with Name and Three separate value names
 
             //Where actual table is created
-            for (Fraction a : fractionsTemp) {
+            for (FractionI a : fractionsTemp) {
                 indexHTML += "<tr>\n"
                         + "<th>\n"
                         + a.getFractionID()

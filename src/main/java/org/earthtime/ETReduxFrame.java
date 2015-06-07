@@ -98,7 +98,7 @@ import org.earthtime.UPb_Redux.dialogs.sampleManagers.sampleFromProjectManagers.
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.filters.ReduxFileFilter;
 import org.earthtime.UPb_Redux.filters.XMLFileFilter;
-import org.earthtime.UPb_Redux.fractions.Fraction;
+import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionTable;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionTableModel;
@@ -1718,9 +1718,9 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                     for (AliquotInterface activeAliquot : theProject.getSuperSample().getActiveAliquots()) {
                         outputWriter.println("Fractions from " + activeAliquot.getAliquotName() + "\n");
                         outputWriter.println(PbcCorrectionDetails.headerString() + "\n");
-                        Vector<Fraction> fractions = ((UPbReduxAliquot) activeAliquot).getActiveAliquotFractions();
+                        Vector<FractionI> fractions = ((UPbReduxAliquot) activeAliquot).getActiveAliquotFractions();
                         for (int i = 0; i < fractions.size(); i++) {
-                            Fraction fraction = fractions.get(i);
+                            FractionI fraction = fractions.get(i);
 
                             // static values available after this run
                             PbcCorrectionDetails.zeroAllValues();
@@ -3576,7 +3576,7 @@ private void startStopLiveUpdate_buttonActionPerformed(java.awt.event.ActionEven
      * @param selectedTab the tab to open the editor to
      */
     @Override
-    public void editFraction(Fraction fraction, int selectedTab) {
+    public void editFraction(FractionI fraction, int selectedTab) {
 
         // oct 2014
         forceCloseOfSampleDateInterpretations();

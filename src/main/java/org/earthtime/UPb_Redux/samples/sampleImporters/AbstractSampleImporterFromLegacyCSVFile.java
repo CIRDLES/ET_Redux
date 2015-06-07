@@ -30,7 +30,7 @@ import javax.swing.filechooser.FileFilter;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.exceptions.BadImportedCSVLegacyFileException;
 import org.earthtime.UPb_Redux.filters.LegacyCSVFileFilter;
-import org.earthtime.UPb_Redux.fractions.Fraction;
+import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.utilities.FileHelper;
 
 /**
@@ -60,10 +60,10 @@ public abstract class AbstractSampleImporterFromLegacyCSVFile {
      * @return @throws FileNotFoundException
      * @throws BadImportedCSVLegacyFileException
      */
-    public Vector<Fraction> readInFractions ()
+    public Vector<FractionI> readInFractions ()
             throws FileNotFoundException, BadImportedCSVLegacyFileException {
 
-        Vector<Fraction> retval = new Vector<Fraction>();
+        Vector<FractionI> retval = new Vector<>();
 
         File csvFile = openCSVFile( mruFolder );
         mruFolder = csvFile.getParentFile();
@@ -97,7 +97,7 @@ public abstract class AbstractSampleImporterFromLegacyCSVFile {
      * @throws FileNotFoundException
      * @throws BadImportedCSVLegacyFileException
      */
-    protected abstract Vector<Fraction> extractFractionsFromFile ( File file )
+    protected abstract Vector<FractionI> extractFractionsFromFile ( File file )
             throws FileNotFoundException, BadImportedCSVLegacyFileException;
 
     /**

@@ -28,7 +28,7 @@ import java.util.Vector;
 import org.earthtime.UPb_Redux.ReduxConstants.ANALYSIS_PURPOSE;
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
-import org.earthtime.UPb_Redux.fractions.Fraction;
+import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.aliquots.AliquotInterface;
@@ -240,7 +240,7 @@ public abstract class AbstractSampleFromProjectManagerDialog extends DialogEdito
         }
 
         // moved outside conditional oct 2010 and added MineralName, etc ;;June 2010 add physical constants model
-        for (Fraction f : getMySample().getFractions()) {
+        for (FractionI f : getMySample().getFractions()) {
             try {
                 ((UPbFractionI) f).setPhysicalConstantsModel( getMySample().getPhysicalConstantsModel() );
 

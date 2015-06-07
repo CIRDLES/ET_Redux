@@ -176,7 +176,7 @@ public class UPbLAICPMSFraction extends Fraction implements
      */
     public UPbLAICPMSFraction(
             int aliquotNum,
-            Fraction fraction,
+            FractionI fraction,
             ReduxLabData labData) throws BadLabDataException {
 
         this();
@@ -191,7 +191,7 @@ public class UPbLAICPMSFraction extends Fraction implements
         this.setFractionID(fraction.getFractionID());
         this.setGrainID(fraction.getFractionID());
 
-        this.GetValuesFrom(fraction, true);
+        this.getValuesFrom(fraction, true);
 
         this.setMeasuredRatios(fraction.copyMeasuredRatios());
     }
@@ -205,7 +205,7 @@ public class UPbLAICPMSFraction extends Fraction implements
      */
     public UPbLAICPMSFraction(
             int aliquotNum,
-            Fraction fraction) {
+            FractionI fraction) {
 
         this();
 
@@ -218,7 +218,7 @@ public class UPbLAICPMSFraction extends Fraction implements
         this.setFractionID(fraction.getFractionID());
         this.setGrainID(fraction.getFractionID());
 
-        this.GetValuesFrom(fraction, true);
+        this.getValuesFrom(fraction, true);
 
         this.setMeasuredRatios(fraction.copyMeasuredRatios());
 

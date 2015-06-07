@@ -39,7 +39,7 @@ import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.filters.ReduxFileFilter;
-import org.earthtime.UPb_Redux.fractions.Fraction;
+import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLAICPMSFraction;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.samples.Sample;
@@ -225,7 +225,7 @@ public class Project implements
                     for (Iterator<TripoliFraction> it = tripoliSampleFractions.iterator(); it.hasNext();) {
                         TripoliFraction tf = it.next();
                         System.out.println("Processing tripoli fraction " + tf.getFractionID());
-                        Fraction uPbLAICPMSFraction = new UPbLAICPMSFraction(tf.getFractionID());
+                        FractionI uPbLAICPMSFraction = new UPbLAICPMSFraction(tf.getFractionID());
                         uPbLAICPMSFraction.setSampleName(tripoliSample.getSampleName());
                         // add to tripoli fraction so its UPbFraction can be contiunously updated
                         tf.setuPbFraction(uPbLAICPMSFraction);

@@ -42,7 +42,7 @@ import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.AnalysisFraction;
 import org.earthtime.UPb_Redux.fractions.AnalysisFractionXMLConverter;
-import org.earthtime.UPb_Redux.fractions.Fraction;
+import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.UPbFractionReducer;
@@ -107,7 +107,7 @@ public class UPbReduxAliquot extends Aliquot
     private transient ReduxLabData myReduxLabData;
     private transient boolean selectedInDataTable;
     private int aliquotNumber;
-    private Vector<Fraction> aliquotFractions;
+    private Vector<FractionI> aliquotFractions;
     private boolean defaultIsZircon;
     private String defaultTracerID;
     private String defaultTracerMassText;
@@ -177,7 +177,7 @@ public class UPbReduxAliquot extends Aliquot
 
         this.compiled = compiled;
 
-        setAliquotFractions(new Vector<Fraction>());
+        setAliquotFractions(new Vector<FractionI>());
 
         setSampleIGSN("NONE");
         setLaboratoryName(getMyReduxLabData().getLabName());
@@ -310,7 +310,7 @@ public class UPbReduxAliquot extends Aliquot
     public void reduceData() {
         // may 2014 modified to determine best date  
         ArrayList<Double> sorted206_238 = new ArrayList<>();
-        for (Fraction f : getAliquotFractions()) {
+        for (FractionI f : getAliquotFractions()) {
             // APRIL 2014 WARNING FOR NOW DO NOT MAKE CALL TO STATIC METHOD DIRECTLY so that parameters can be assembled ... need to refactor
             UPbFractionReducer.getInstance().fullFractionReduce(f, true);
 
@@ -352,7 +352,7 @@ public class UPbReduxAliquot extends Aliquot
      */
     public void updateBestAge() {
         // now set best age
-        for (Fraction f : getAliquotFractions()) {
+        for (FractionI f : getAliquotFractions()) {
             if (f.getRadiogenicIsotopeDateByName(RadDates.age206_238r).getValue().compareTo(bestAgeDivider206_238) < 0) {
                 ValueModel bestDate = f.getRadiogenicIsotopeDateByName(RadDates.age206_238r).copy();
                 bestDate.setName(RadDates.bestAge.getName());
@@ -383,7 +383,7 @@ public class UPbReduxAliquot extends Aliquot
     public String reportFractionMeasuredRatioUncertaintiesValidity() {
         String retval = "";
 
-        for (Fraction f : getActiveAliquotFractions()) {
+        for (FractionI f : getActiveAliquotFractions()) {
             try {
                 retval += ((UPbFraction) f).getReductionHandler().getMeasuredRatioUncertaintiesValidity();
             } catch (Exception e) {
@@ -589,14 +589,14 @@ public class UPbReduxAliquot extends Aliquot
         getAnalysisFractions().clear();
 
         // note fractions and SampleDateModels are already unique
-        Collections.sort(aliquotFractions);
+        Collections.sort(aliquotFractions, FractionI.FRACTION_ID_ORDER);
         if (sampleDateModels != null) {
             Collections.sort(sampleDateModels);
         }
 
         Iterator it = getAliquotFractions().iterator();
         while (it.hasNext()) {
-            Fraction fraction = (Fraction) it.next();
+            FractionI fraction = (FractionI) it.next();
             if (!((UPbFractionI) fraction).isRejected()) {
                 // april 2010 differentiate between UPbFractions and UPbLegacyFractions
                 if (fraction instanceof UPbFraction) {
@@ -647,7 +647,7 @@ public class UPbReduxAliquot extends Aliquot
      *
      */
     public void initializeFractionReductionHandlers() {
-        for (Fraction f : getAliquotFractions()) {
+        for (FractionI f : getAliquotFractions()) {
             //((UPbFraction) f).initializeReductionHandler();
             UPbFractionReducer.getInstance().fullFractionReduce(f, true);
         }
@@ -673,7 +673,7 @@ public class UPbReduxAliquot extends Aliquot
      *
      * @return
      */
-    public Vector<Fraction> getAliquotFractions() {
+    public Vector<FractionI> getAliquotFractions() {
         return aliquotFractions;
     }
 
@@ -681,9 +681,9 @@ public class UPbReduxAliquot extends Aliquot
      *
      * @return
      */
-    public Vector<Fraction> getActiveAliquotFractions() {
-        Vector<Fraction> retVal = new Vector<Fraction>();
-        for (Fraction f : aliquotFractions) {
+    public Vector<FractionI> getActiveAliquotFractions() {
+        Vector<FractionI> retVal = new Vector<>();
+        for (FractionI f : aliquotFractions) {
             if (!((UPbFractionI) f).isRejected()) {
                 retVal.add(f);
             }
@@ -697,7 +697,7 @@ public class UPbReduxAliquot extends Aliquot
      */
     public Vector<String> getAliquotFractionIDs() {
         Vector<String> retVal = new Vector<String>();
-        for (Fraction f : aliquotFractions) {
+        for (FractionI f : aliquotFractions) {
             if (!((UPbFractionI) f).isRejected()) {
                 retVal.add(f.getFractionID());
             }
@@ -710,9 +710,9 @@ public class UPbReduxAliquot extends Aliquot
      * @param name
      * @return
      */
-    public Fraction getAliquotFractionByName(String name) {
-        Fraction retVal = null;
-        for (Fraction f : getAliquotFractions()) {
+    public FractionI getAliquotFractionByName(String name) {
+        FractionI retVal = null;
+        for (FractionI f : getAliquotFractions()) {
             if (f.getFractionID().equalsIgnoreCase(name)) {
                 retVal = f;
             }
@@ -725,8 +725,8 @@ public class UPbReduxAliquot extends Aliquot
      * @param selectedFractionIDs
      * @return
      */
-    public Vector<Fraction> getAliquotSampleDateModelSelectedFractions(Vector<String> selectedFractionIDs) {
-        Vector<Fraction> retVal = new Vector<Fraction>();
+    public Vector<FractionI> getAliquotSampleDateModelSelectedFractions(Vector<String> selectedFractionIDs) {
+        Vector<FractionI> retVal = new Vector<>();
         for (String fID : selectedFractionIDs) {
             retVal.add(getAliquotFractionByName(fID));
         }
@@ -739,8 +739,8 @@ public class UPbReduxAliquot extends Aliquot
      * @param selectedFractionIDs
      * @return
      */
-    public Vector<Fraction> getAliquotSampleDateModelDeSelectedFractions(Vector<String> selectedFractionIDs) {
-        Vector<Fraction> retVal = new Vector<Fraction>();
+    public Vector<FractionI> getAliquotSampleDateModelDeSelectedFractions(Vector<String> selectedFractionIDs) {
+        Vector<FractionI> retVal = new Vector<>();
         for (String fID : getAliquotFractionIDs()) {
             if (!selectedFractionIDs.contains(fID)) {
                 retVal.add(getAliquotFractionByName(fID));
@@ -754,7 +754,7 @@ public class UPbReduxAliquot extends Aliquot
      *
      * @param aliquotFractions
      */
-    public void setAliquotFractions(Vector<Fraction> aliquotFractions) {
+    public void setAliquotFractions(Vector<FractionI> aliquotFractions) {
         this.aliquotFractions = aliquotFractions;
     }
 
@@ -1254,7 +1254,7 @@ public class UPbReduxAliquot extends Aliquot
                         false,
                         new SESARSampleMetadata());
 
-        Fraction uPbfraction = new UPbFraction("NONE");
+        FractionI uPbfraction = new UPbFraction("NONE");
         uPbfraction.setSampleName("TestSample");
         uPbfraction.setFractionID("TestFraction");
         uPbfraction.setGrainID("TestFraction");

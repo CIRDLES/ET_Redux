@@ -37,7 +37,7 @@ import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.dialogs.fractionManagers.UPbFractionEditorDialog;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.filters.FractionXMLFileFilter;
-import org.earthtime.UPb_Redux.fractions.Fraction;
+import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLegacyFraction;
@@ -119,7 +119,7 @@ public class Sample implements
      * collection of individual aliquotFractionFiles within this
      * <code>Sample</code>.
      */
-    private Vector<Fraction> UPbFractions;
+    private Vector<FractionI> UPbFractions;
     /**
      * the file of this <code>Sample</code>.
      */
@@ -345,12 +345,12 @@ public class Sample implements
             // dec 2012
             if (getFractions().size() > 0) {
                 // June 2010 fix for old legacy fractions
-                Vector<Fraction> convertedF = new Vector<Fraction>();
-                for (Fraction f : getFractions()) {
+                Vector<FractionI> convertedF = new Vector<>();
+                for (FractionI f : getFractions()) {
                     if (f instanceof UPbFraction) {
                         // convert to UPbLegacyFraction
                         System.out.println("Converting legacy legacy");
-                        Fraction legacyF = new UPbLegacyFraction(f.getFractionID());
+                        FractionI legacyF = new UPbLegacyFraction(f.getFractionID());
 
                         legacyF.setAnalysisMeasures(f.getAnalysisMeasures());
                         // these two are legacy leftovers and need to be zeroed so report settings does not show columns
@@ -391,7 +391,7 @@ public class Sample implements
                 if ( /*
                          * (twRho == 0) ||
                          */(twRho < -1.0)) {
-                    for (Fraction f : getFractions()) {
+                    for (FractionI f : getFractions()) {
                         f.getRadiogenicIsotopeRatioByName("rhoR207_206r__r238_206r")//
                                 .setValue(BigDecimal.ZERO);
                     }
@@ -414,7 +414,7 @@ public class Sample implements
     @Override
     public void addDefaultUPbFractionToAliquot(int aliquotNumber)
             throws BadLabDataException {
-        Fraction defFraction = new UPbFraction("NONE");
+        FractionI defFraction = new UPbFraction("NONE");
         ((FractionInterface) defFraction).setAliquotNumber(aliquotNumber);
 
         initializeDefaultUPbFraction(defFraction);
@@ -439,13 +439,13 @@ public class Sample implements
     @Override
     public void addDefaultUPbLegacyFractionToAliquot(int aliquotNumber)
             throws BadLabDataException {
-        Fraction defFraction = new UPbLegacyFraction("NONE");
+        FractionI defFraction = new UPbLegacyFraction("NONE");
         ((UPbFractionI) defFraction).setAliquotNumber(aliquotNumber);
 
         initializeDefaultUPbFraction(defFraction);
     }
 
-    private void initializeDefaultUPbFraction(Fraction defFraction)
+    private void initializeDefaultUPbFraction(FractionI defFraction)
             throws BadLabDataException {
         //reset counter if no aliquotFractionFiles
         if (getFractions().isEmpty()) {
@@ -460,7 +460,7 @@ public class Sample implements
         defFraction//
                 .setGrainID(defFraction.getFractionID());
 
-        Fraction existingFraction = getFractionByID(defFraction.getFractionID());
+        FractionI existingFraction = getFractionByID(defFraction.getFractionID());
         // handle repeated default fractionIDs
         if (existingFraction != null) {
             defFraction//
@@ -506,7 +506,7 @@ public class Sample implements
             boolean doValidate)
             throws ETException, BadLabDataException {
 
-        Fraction fractionFromFile = new UPbFraction("NONE");
+        FractionI fractionFromFile = new UPbFraction("NONE");
         boolean badFile = true;
 
         try {
@@ -532,7 +532,7 @@ public class Sample implements
                             "\nPlease correct the discrepancy and try again."
                         });
             }// else {
-            Fraction existingFraction = getFractionByID(fractionFromFile.getFractionID());
+            FractionI existingFraction = getFractionByID(fractionFromFile.getFractionID());
             if (existingFraction == null) {
                 System.out.println("New UPbReduxFraction");
                 // AUG 2011 moved this improved logic here from readXMLFraction
@@ -686,7 +686,7 @@ public class Sample implements
                 aliquotNumber = ((UPbReduxAliquot) aliquot).getAliquotNumber();
             }
 
-            Fraction savedCurrentFraction = null;
+            FractionI savedCurrentFraction = null;
             boolean doRestoreAutoUranium = false;
             try {
                 if (myFractionEditor != null) {
@@ -863,7 +863,7 @@ public class Sample implements
      */
     @Override
     public boolean isChanged() {
-        for (Fraction UPbFraction : UPbFractions) {
+        for (FractionI UPbFraction : UPbFractions) {
             changed = changed || ((UPbFractionI) UPbFraction).isChanged();
         }
 
@@ -1102,7 +1102,7 @@ public class Sample implements
      * the <code>UPbFractions</code> of this <code>Sample</code>
      */
     @Override
-    public Vector<Fraction> getFractions() {
+    public Vector<FractionI> getFractions() {
         return UPbFractions;
     }
 
@@ -1119,7 +1119,7 @@ public class Sample implements
      * <code>Sample</code> will be set
      */
     @Override
-    public void setUPbFractions(Vector<Fraction> UPbFractions) {
+    public void setUPbFractions(Vector<FractionI> UPbFractions) {
         this.UPbFractions = UPbFractions;
     }
 
@@ -1247,7 +1247,7 @@ public class Sample implements
             AliquotInterface aliquot = aliquots.get(i);
             ((UPbReduxAliquot) aliquot).setAliquotNumber(i + 1);
 
-            Vector<Fraction> aliquotFractions = ((UPbReduxAliquot) aliquot).getAliquotFractions();
+            Vector<FractionI> aliquotFractions = ((UPbReduxAliquot) aliquot).getAliquotFractions();
             for (int j = 0; j < aliquotFractions.size(); j++) {
                 ((UPbFractionI) aliquotFractions.get(j)).setAliquotNumber(i + 1);
             }

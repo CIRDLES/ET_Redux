@@ -41,7 +41,7 @@ import org.earthtime.UPb_Redux.customJTrees.CheckBoxNodeEditor;
 import org.earthtime.UPb_Redux.customJTrees.CheckBoxNodeRenderer;
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.dialogs.sampleManagers.sampleDateInterpretationManagers.SampleDateInterpretationChooserDialog;
-import org.earthtime.UPb_Redux.fractions.Fraction;
+import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModelI;
@@ -101,7 +101,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
         // todo: just walk aliquots now that ths mapping is fixed (may 2015)
         int saveAliquotNum = -1;
         for (int i = 0; i < sample.getFractions().size(); i++) {
-            Fraction tempFraction = sample.getFractions().get(i);
+            FractionI tempFraction = sample.getFractions().get(i);
             AliquotInterface tempAliquot;
 
             if (!((FractionInterface) tempFraction).isRejected()) {
@@ -230,6 +230,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
      *
      * @param e
      */
+    @Override
     public void valueChanged(TreeSelectionEvent e) {
         //Returns the last path element of the selection.
         //This method is useful only when the selection model allows a single selection.
@@ -432,9 +433,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
                                     // now need to refresh panel
                                     getSampleTreeChange().sampleTreeChangeAnalysisMode(sampleDateModelNode);
                                 }
-
                             }
-
                         }
 
                         SampleInterface.updateAndSaveSampleDateModelsByAliquot(sample);

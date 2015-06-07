@@ -37,7 +37,7 @@ import java.util.Map;
 import java.util.Vector;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
-import org.earthtime.UPb_Redux.fractions.Fraction;
+import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabDataListElementI;
 import org.earthtime.UPb_Redux.user.UPbReduxConfigurator;
@@ -208,7 +208,7 @@ public class ReportSettings implements
     }
 
     public String[][] reportActiveFractionsByNumberStyle(final SampleInterface sample, boolean numberStyleIsNumeric) {
-        Vector<Fraction> fractions = sample.getFractionsActive();
+        Vector<FractionI> fractions = sample.getFractionsActive();
 
         return reportFractionsByNumberStyle(fractions, sample, numberStyleIsNumeric);
     }
@@ -220,7 +220,7 @@ public class ReportSettings implements
      * @return
      */
     public String[][] reportRejectedFractionsByNumberStyle(final SampleInterface sample, boolean numberStyleIsNumeric) {
-        Vector<Fraction> fractions = sample.getFractionsRejected();
+        Vector<FractionI> fractions = sample.getFractionsRejected();
 
         return reportFractionsByNumberStyle(fractions, sample, numberStyleIsNumeric);
     }
@@ -232,13 +232,13 @@ public class ReportSettings implements
      * @param numberStyleIsNumeric
      * @return
      */
-    public String[][] reportActiveAliquotFractionsByNumberStyle(final SampleInterface sample, Vector<Fraction> fractions, boolean numberStyleIsNumeric) {
+    public String[][] reportActiveAliquotFractionsByNumberStyle(final SampleInterface sample, Vector<FractionI> fractions, boolean numberStyleIsNumeric) {
 
         return reportFractionsByNumberStyle(fractions, sample, numberStyleIsNumeric);
     }
 
     private String[][] reportFractionsByNumberStyle(//
-            Vector<Fraction> fractions,
+            Vector<FractionI> fractions,
             final SampleInterface sample,
             boolean numberStyleIsNumeric) {
 
@@ -278,7 +278,7 @@ public class ReportSettings implements
             // modified april 2010 to account for zircon population
             int zirconCount = 0;
             int fractionCount = 0;
-            for (Fraction f : fractions) {
+            for (FractionI f : fractions) {
                 if (!((UPbFractionI) f).isRejected()) {
 
                     BigDecimal activityValue = f.getAnalysisMeasure(AnalysisMeasures.ar231_235sample.getName()).getValue();
@@ -333,7 +333,7 @@ public class ReportSettings implements
                 if (isAuto) {
                     // let's find out
                     BigDecimal threshold = new BigDecimal(1000000);
-                    for (Fraction f : fractions) {
+                    for (FractionI f : fractions) {
                         if (!((UPbFractionI) f).isRejected()) {
                             BigDecimal date206_238Value = f.getRadiogenicIsotopeDateByName(RadDates.age206_238r).getValue();
                             if (date206_238Value.compareTo(threshold) > 0) {
@@ -373,7 +373,7 @@ public class ReportSettings implements
                 if (isAuto) {
                     // let's find out
                     BigDecimal threshold = new BigDecimal(1000000);
-                    for (Fraction f : fractions) {
+                    for (FractionI f : fractions) {
                         if (!((UPbFractionI) f).isRejected()) {
                             BigDecimal date206_238Value = f.getRadiogenicIsotopeDateByName(RadDates.age206_238_PbcCorr).getValue();
                             if (date206_238Value.compareTo(threshold) > 0) {
@@ -487,7 +487,7 @@ public class ReportSettings implements
 
                             // walk all the fractions for each column
                             int fractionRowCount = FRACTION_DATA_START_ROW;
-                            for (Fraction f : fractions) {
+                            for (FractionI f : fractions) {
 
                                 // test for included fraction on first data pass col=2==>fractionID
                                 if (columnCount == 2) {

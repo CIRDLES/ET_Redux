@@ -28,7 +28,7 @@ import java.util.Scanner;
 import java.util.Vector;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
-import org.earthtime.UPb_Redux.fractions.Fraction;
+import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLegacyFraction;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
@@ -38,6 +38,7 @@ import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UPb_Redux.valueModels.definedValueModels.PercentDiscordance;
 import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.dataDictionaries.RadDates;
+import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.dataDictionaries.SampleTypesEnum;
 import org.earthtime.dataDictionaries.TemplatesForCsvImport;
 import org.earthtime.dataDictionaries.TraceElements;
@@ -101,7 +102,7 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_UCSB_LASS_A extends Abstr
                             currentSample = new Sample(//
                                     myFractionData.get(0), //
                                     SampleTypesEnum.LEGACY.getName(), //
-                                    "LASS", //
+                                    SampleAnalysisTypesEnum.LASS.getName(), //
                                     ReduxLabData.getInstance(), //
                                     ReduxConstants.ANALYSIS_PURPOSE.NONE);
 
@@ -125,7 +126,7 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_UCSB_LASS_A extends Abstr
                             + myFractionData.get(0) + "." + myFractionData.get(1) //
                             + "." + myFractionData.get(2) + "." + myFractionData.get(3));
 
-                    Fraction myFraction = new UPbLegacyFraction("NONE");
+                    FractionI myFraction = new UPbLegacyFraction("NONE");
 
                     ((UPbFractionI) myFraction).setRatioType("UPb");
 
@@ -319,7 +320,7 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_UCSB_LASS_A extends Abstr
         return project;
     }
 
-    private void traceElementProcessor(String datumName, Fraction myFraction, Vector<String> myFractionData, int col) {
+    private void traceElementProcessor(String datumName, FractionI myFraction, Vector<String> myFractionData, int col) {
         // check for missing fields at end of row
         if (col < myFractionData.size()) {
             myFraction.getTraceElementByName(datumName)//

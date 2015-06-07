@@ -34,7 +34,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
-import org.earthtime.UPb_Redux.fractions.Fraction;
+import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 
@@ -76,7 +76,7 @@ public class ValueModelClump extends JLayeredPane
             String[][] clumpSpecs,
             String validityMessage,
             String[][] covaryingTerms,
-            Fraction fraction,
+            FractionI fraction,
             PropertyChangeListener kwikiValueChangeListener ) {
 
 //        this.clumpSpecs = clumpSpecs;

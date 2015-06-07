@@ -22,7 +22,7 @@ package org.earthtime.dialogs.projectManagers.projectLegacyManagers;
 import java.awt.Frame;
 import java.io.File;
 import org.earthtime.projects.ProjectInterface;
-import org.earthtime.projects.projectImporters.UPbProjectImporters.ProjectOfLegacySamplesImporterFromCSVFile_DIBBs_Useries_A;
+import org.earthtime.projects.projectImporters.UThProjectImporters.ProjectOfLegacySamplesImporterFromCSVFile_DIBBs_Useries_A;
 
 /**
  *

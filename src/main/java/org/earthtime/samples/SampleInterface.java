@@ -38,7 +38,7 @@ import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.filters.ReduxFileFilter;
 import org.earthtime.UPb_Redux.filters.XMLFileFilter;
 import org.earthtime.UPb_Redux.fractions.AnalysisFraction;
-import org.earthtime.UPb_Redux.fractions.Fraction;
+import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLAICPMSFraction;
@@ -443,10 +443,10 @@ public interface SampleInterface {
         // aliquots are really aliquot view of the aliquotFractionFiles (MVC architecture)
         AliquotInterface retAliquot = getAliquots().get(aliquotNum - 1);
 
-        Vector<Fraction> retFractions = new Vector<>();
+        Vector<FractionI> retFractions = new Vector<>();
 
         for (Iterator it = getFractions().iterator(); it.hasNext();) {
-            Fraction temp = ((Fraction) it.next());
+            FractionI temp = ((FractionI) it.next());
             if (((UPbFractionI) temp).getAliquotNumber() == aliquotNum) {
                 retFractions.add(temp);
             }
@@ -580,9 +580,9 @@ public interface SampleInterface {
 
         ((UPbReduxAliquot) importedAliquot).setAliquotFractions(new Vector<>());
 
-        Iterator<Fraction> aliquotFractionIterator = ((UPbReduxAliquot) aliquot).getAliquotFractions().iterator();
+        Iterator<FractionI> aliquotFractionIterator = ((UPbReduxAliquot) aliquot).getAliquotFractions().iterator();
         while (aliquotFractionIterator.hasNext()) {
-            Fraction fraction = aliquotFractionIterator.next();
+            FractionI fraction = aliquotFractionIterator.next();
 
             ((FractionInterface) fraction).setAliquotNumber(aliquotNumber);
             ((UPbReduxAliquot) importedAliquot).getAliquotFractions().add(fraction);
@@ -628,7 +628,7 @@ public interface SampleInterface {
                 + "::"//
                 + aliquot.getAliquotName());
 
-        ((UPbReduxAliquot) aliquot).setAliquotFractions(new Vector<Fraction>());
+        ((UPbReduxAliquot) aliquot).setAliquotFractions(new Vector<FractionI>());
 
         // jan 2015 this needs reworking to detect the type of fraction coming in
         // for now we will assume an aliquot has all the same type of fraction
@@ -656,7 +656,7 @@ public interface SampleInterface {
                     fraction.setInitialPbModel(ReduxLabData.getInstance().getNoneInitialPbModel());
                 }
 
-                Fraction nextFraction;
+                FractionI nextFraction;
                 if (fraction.isLegacy()) {
                     nextFraction = new UPbLegacyFraction(
                             aliquotNumber,
@@ -711,7 +711,7 @@ public interface SampleInterface {
                 // convert analysisFraction to UPbReduxFraction
                 AnalysisFraction fraction = (AnalysisFraction) aliquotFractionIterator.next();
 
-                Fraction nextFraction = null;
+                FractionI nextFraction = null;
                 if (fraction.isLegacy()) {
                     nextFraction = new UPbLegacyFraction(
                             aliquotNumber,
@@ -876,8 +876,8 @@ public interface SampleInterface {
      * @param aliquot
      */
     public default void removeAliquot(AliquotInterface aliquot) {
-        Vector<Fraction> aliquotFractions = ((UPbReduxAliquot) aliquot).getAliquotFractions();
-        for (Fraction aliquotFraction : aliquotFractions) {
+        Vector<FractionI> aliquotFractions = ((UPbReduxAliquot) aliquot).getAliquotFractions();
+        for (FractionI aliquotFraction : aliquotFractions) {
             removeUPbReduxFraction(aliquotFraction);
         }
 
@@ -899,18 +899,18 @@ public interface SampleInterface {
         if ((aliquotA != null) && (aliquotB != null)) {
 
             int numberAliquotA = ((UPbReduxAliquot) aliquotA).getAliquotNumber();
-            Vector<Fraction> fractionsAliquotA = ((UPbReduxAliquot) aliquotA).getAliquotFractions();
+            Vector<FractionI> fractionsAliquotA = ((UPbReduxAliquot) aliquotA).getAliquotFractions();
 
             int numberAliquotB = ((UPbReduxAliquot) aliquotB).getAliquotNumber();
-            Vector<Fraction> fractionsAliquotB = ((UPbReduxAliquot) aliquotB).getAliquotFractions();
+            Vector<FractionI> fractionsAliquotB = ((UPbReduxAliquot) aliquotB).getAliquotFractions();
 
             // switch assigned aliquot numbers
             ((UPbReduxAliquot) aliquotA).setAliquotNumber(numberAliquotB);
-            for (Fraction f : fractionsAliquotA) {
+            for (FractionI f : fractionsAliquotA) {
                 ((UPbFractionI) f).setAliquotNumber(numberAliquotB);
             }
             ((UPbReduxAliquot) aliquotB).setAliquotNumber(numberAliquotA);
-            for (Fraction f : fractionsAliquotB) {
+            for (FractionI f : fractionsAliquotB) {
                 ((UPbFractionI) f).setAliquotNumber(numberAliquotA);
             }
             // switch aliquots in sample's aliquot vector which stores them in order
@@ -960,7 +960,7 @@ public interface SampleInterface {
      * @return  <code>Vector</code> - set of <code>Fractions</code> that make up
      * the <code>Fraction</code> of this <code>Sample</code>
      */
-    public abstract Vector<Fraction> getFractions();
+    public abstract Vector<FractionI> getFractions();
 
     /**
      * retrieves the <code>Fraction</code> specified by argument <code>ID</code>
@@ -974,9 +974,9 @@ public interface SampleInterface {
      * @return <code>Fraction</code> - the <code>Fraction</code> in this
      * <code>Sample</code> whose ID corresponds to argument <code>ID</code>
      */
-    public default Fraction getFractionByID(String ID) {
-        Fraction retFraction = null;
-        Vector<Fraction> fractions = getFractions();
+    public default FractionI getFractionByID(String ID) {
+        FractionI retFraction = null;
+        Vector<FractionI> fractions = getFractions();
 
         for (int fractionIndex = 0; fractionIndex < fractions.size(); fractionIndex++) {
             if (fractions.get(fractionIndex).getFractionID().equalsIgnoreCase(ID)) {
@@ -999,14 +999,14 @@ public interface SampleInterface {
      * @param UPbFractions value to which <code>UPbFractions</code> of this
      * <code>Sample</code> will be set
      */
-    public abstract void setUPbFractions(Vector<Fraction> UPbFractions);
+    public abstract void setUPbFractions(Vector<FractionI> UPbFractions);
 
     /**
      *
      * @return
      */
-    public default Vector<Fraction> getFractionsRejected() {
-        Vector<Fraction> retval = new Vector<>();
+    public default Vector<FractionI> getFractionsRejected() {
+        Vector<FractionI> retval = new Vector<>();
 
         getFractions().stream().filter((f) -> (((FractionInterface) f).isRejected())).forEach((f) -> {
             retval.add(f);
@@ -1049,7 +1049,7 @@ public interface SampleInterface {
      *
      * @param fraction
      */
-    public default void removeUPbReduxFraction(Fraction fraction) {
+    public default void removeUPbReduxFraction(FractionI fraction) {
         boolean fracStatus = ((FractionInterface) fraction).isChanged();
         try {
             getFractions().remove(fraction);
@@ -1064,10 +1064,10 @@ public interface SampleInterface {
      * @param name
      * @return
      */
-    public default Fraction getSampleFractionByName(String name) {
-        Fraction retVal = null;
+    public default FractionI getSampleFractionByName(String name) {
+        FractionI retVal = null;
 
-        for (Fraction f : getFractions()) {
+        for (FractionI f : getFractions()) {
             if (f.getFractionID().equalsIgnoreCase(name)) {
                 retVal = f;
             }
@@ -1080,8 +1080,8 @@ public interface SampleInterface {
      *
      * @return
      */
-    public default Vector<Fraction> getFractionsActive() {
-        Vector<Fraction> retval = new Vector<>();
+    public default Vector<FractionI> getFractionsActive() {
+        Vector<FractionI> retval = new Vector<>();
 
         getFractions().stream().filter((f) -> (!((FractionInterface) f).isRejected())).forEach((f) -> {
             retval.add(f);
@@ -1094,8 +1094,8 @@ public interface SampleInterface {
      *
      * @return
      */
-    public default Vector<Fraction> getUpbFractionsUnknown() {
-        Vector<Fraction> retval = new Vector<>();
+    public default Vector<FractionI> getUpbFractionsUnknown() {
+        Vector<FractionI> retval = new Vector<>();
 
         getFractions().stream().filter((f) -> (!((FractionInterface) f).isStandard())).forEach((f) -> {
             retval.add(f);
@@ -1108,7 +1108,7 @@ public interface SampleInterface {
      *
      * @param filteredFractions
      */
-    public default void updateSetOfActiveFractions(Vector<Fraction> filteredFractions) {
+    public default void updateSetOfActiveFractions(Vector<FractionI> filteredFractions) {
         getFractions().stream().forEach((UPbFraction) -> {
             ((FractionInterface) UPbFraction).setRejected(!filteredFractions.contains(UPbFraction));
         });
@@ -1172,8 +1172,8 @@ public interface SampleInterface {
      * @param fractions
      * @param aliquotNumber
      */
-    public default void addFractionsVector(Vector<Fraction> fractions, int aliquotNumber) {
-        for (Fraction f : fractions) {
+    public default void addFractionsVector(Vector<FractionI> fractions, int aliquotNumber) {
+        for (FractionI f : fractions) {
             f.setSampleName(getSampleName());
             ((FractionInterface) f).setAliquotNumber(aliquotNumber);
             addFraction(f);
@@ -1185,9 +1185,9 @@ public interface SampleInterface {
      * @param fractions
      * @param aliquotNumber
      */
-    public default void addUPbFractionArrayList(ArrayList<Fraction> fractions, int aliquotNumber) {
+    public default void addUPbFractionArrayList(ArrayList<FractionI> fractions, int aliquotNumber) {
 
-        for (Fraction f : fractions) {
+        for (FractionI f : fractions) {
             f.setSampleName(getSampleName());
             ((FractionInterface) f).setAliquotNumber(aliquotNumber);
             addFraction(f);
@@ -1205,7 +1205,7 @@ public interface SampleInterface {
      * @param newFraction the <code>Fraction</code> to add to this
      * <code>Sample</code>
      */
-    public default void addFraction(Fraction newFraction) {
+    public default void addFraction(FractionI newFraction) {
         getFractions().add(newFraction);
         setChanged(true);
     }
@@ -1259,8 +1259,8 @@ public interface SampleInterface {
      * @param selectedFractionIDs
      * @return
      */
-    public default Vector<Fraction> getSampleDateModelSelectedFractions(Vector<String> selectedFractionIDs) {
-        Vector<Fraction> retVal = new Vector<>();
+    public default Vector<FractionI> getSampleDateModelSelectedFractions(Vector<String> selectedFractionIDs) {
+        Vector<FractionI> retVal = new Vector<>();
 
         selectedFractionIDs.stream().forEach((fID) -> {
             retVal.add(getSampleFractionByName(fID));
@@ -1274,8 +1274,8 @@ public interface SampleInterface {
      * @param selectedFractionIDs
      * @return
      */
-    public default Vector<Fraction> getSampleDateModelDeSelectedFractions(Vector<String> selectedFractionIDs) {
-        Vector<Fraction> retVal = new Vector<>();
+    public default Vector<FractionI> getSampleDateModelDeSelectedFractions(Vector<String> selectedFractionIDs) {
+        Vector<FractionI> retVal = new Vector<>();
 
         getSampleFractionIDs().stream().filter((fID) -> (!selectedFractionIDs.contains(fID))).forEach((fID) -> {
             retVal.add(getSampleFractionByName(fID));
@@ -1708,7 +1708,7 @@ public interface SampleInterface {
         // TODO verify names and contents align
         for (int UPbFractionsIndex = 0; UPbFractionsIndex
                 < sample.getFractions().size(); UPbFractionsIndex++) {
-            Fraction nextFraction = sample.getFractions().get(UPbFractionsIndex);
+            FractionI nextFraction = sample.getFractions().get(UPbFractionsIndex);
             if (!nextFraction.isLegacy()) {
                 ReduxLabData.getInstance().registerFractionWithLabData(nextFraction);
             }

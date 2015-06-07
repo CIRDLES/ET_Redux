@@ -18,7 +18,7 @@
  */
 package org.earthtime.UPb_Redux.dialogs.sampleManagers.sampleDateInterpretationManagers;
 
-import org.earthtime.UPb_Redux.fractions.Fraction;
+import org.earthtime.UPb_Redux.fractions.FractionI;
 
 /**
  *
@@ -50,7 +50,7 @@ public interface SampleDateInterpretationSubscribeInterface {
      * @param   fraction    the <code>Fraction</code> to be edited
      * @param   selectedTab the tab to open the editor to
      */
-    void editFraction(Fraction fraction, int selectedTab);
+    void editFraction(FractionI fraction, int selectedTab);
 
     
 }

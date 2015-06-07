@@ -30,7 +30,7 @@ import java.util.Collections;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import static org.earthtime.UPb_Redux.ReduxConstants.myUsersUPbReduxDataFolderName;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
-import org.earthtime.UPb_Redux.fractions.Fraction;
+import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.reduxLabData.labEquipmentSettings.LabEquipmentSettings;
 import org.earthtime.UPb_Redux.reports.ReportSettings;
@@ -1554,7 +1554,7 @@ public final class ReduxLabData implements Serializable {
      *
      * @param fraction
      */
-    public void registerFractionWithLabData(Fraction fraction) {
+    public void registerFractionWithLabData(FractionI fraction) {
 
         registerTracer(//
                 ((UPbFractionI) fraction).getTracer(), false);

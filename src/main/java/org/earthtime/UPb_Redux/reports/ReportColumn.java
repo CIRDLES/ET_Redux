@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.fractions.Fraction;
+import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.dataDictionaries.ReportSpecifications;
@@ -165,7 +166,7 @@ public class ReportColumn implements
      * @param isNumeric
      * @return
      */
-    public String[] getReportRecordByColumnSpec(Fraction fraction, boolean isNumeric) {
+    public String[] getReportRecordByColumnSpec(FractionI fraction, boolean isNumeric) {
         // returns an entry for the value and one for the uncertainty if it exists
         // there are two possible modes : sigfig and arbitrary
         // if sigfig, the string contains only the sig digits forced to length

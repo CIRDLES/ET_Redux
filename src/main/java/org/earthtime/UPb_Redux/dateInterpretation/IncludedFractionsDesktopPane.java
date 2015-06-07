@@ -26,7 +26,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JDesktopPane;
 import javax.swing.JLabel;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
-import org.earthtime.UPb_Redux.fractions.Fraction;
+import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.aliquots.AliquotInterface;
@@ -133,7 +133,7 @@ public class IncludedFractionsDesktopPane extends JDesktopPane {
         aliquotLabel.setBounds(0, (offset + (count ++)) * 20 + 25, width, 15);
         add(aliquotLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
         
-        for (Fraction f : ((UPbReduxAliquot) aliquot).getAliquotFractions()) {
+        for (FractionI f : ((UPbReduxAliquot) aliquot).getAliquotFractions()) {
             JCheckBox temp = new JCheckBox();
             temp.setText(f.getFractionID());
             temp.setBounds(0, (offset + (count ++)) * 20 + 25, width, 15);
@@ -153,7 +153,7 @@ public class IncludedFractionsDesktopPane extends JDesktopPane {
             int offset) {
         
         int count = 0;        
-        for (Fraction f : ((UPbReduxAliquot) aliquot).getAliquotFractions()) {
+        for (FractionI f : ((UPbReduxAliquot) aliquot).getAliquotFractions()) {
             JCheckBox temp = new JCheckBox();
             temp.setText(f.getFractionID());
             temp.setBounds(0, (offset + (count ++)) * 20 + 25, width, 15);

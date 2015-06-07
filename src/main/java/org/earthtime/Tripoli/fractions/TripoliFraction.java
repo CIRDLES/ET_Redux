@@ -40,7 +40,7 @@ import org.earthtime.Tripoli.dataModels.DataModelInterface;
 import org.earthtime.Tripoli.dataModels.MaskingSingleton;
 import org.earthtime.Tripoli.dataModels.RawRatioDataModel;
 import org.earthtime.Tripoli.fitFunctions.AbstractFunctionOfX;
-import org.earthtime.UPb_Redux.fractions.Fraction;
+import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.dataDictionaries.RadDatesForPbCorrSynchEnum;
 import org.earthtime.dataDictionaries.RawRatioNames;
@@ -87,7 +87,7 @@ public class TripoliFraction implements //
     private transient ArrayList<Integer> selectedForToggleIndexes;
     private boolean showLocalYAxis;
     private boolean showLocalInterceptFitPanel;
-    private Fraction uPbFraction;
+    private FractionI uPbFraction;
     // jan 2014
     private String commonLeadCorrectionHighestLevel;
     private AbstractCommonLeadLossCorrectionScheme commonLeadLossCorrectionScheme;
@@ -1039,14 +1039,14 @@ public class TripoliFraction implements //
     /**
      * @return the uPbFraction
      */
-    public Fraction getuPbFraction() {
+    public FractionI getuPbFraction() {
         return uPbFraction;
     }
 
     /**
      * @param uPbFraction the uPbFraction to set
      */
-    public void setuPbFraction(Fraction uPbFraction) {
+    public void setuPbFraction(FractionI uPbFraction) {
         this.uPbFraction = uPbFraction;
     }
 

@@ -31,7 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import org.earthtime.Tripoli.dataModels.sessionModels.SessionCorrectedUnknownsSummary;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.fractions.Fraction;
+import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLAICPMSFraction;
@@ -319,7 +319,7 @@ public class UPbFractionReducer {
      * @param calculateCovariances
      */
     public static void fullFractionReduce(
-            Fraction fraction,
+            FractionI fraction,
             boolean calculateCovariances) {
 
         if (fraction instanceof UPbFraction) {
@@ -345,7 +345,7 @@ public class UPbFractionReducer {
     }
 
     private static void fullFractionReduce_LAICPMS(
-            Fraction fraction,
+            FractionI fraction,
             boolean calculateCovariances) {
 //        System.out.println( "LAICPMS REDUCER" );
      /*
@@ -907,11 +907,11 @@ public class UPbFractionReducer {
     }
 
     private static void fullFractionReduce_IDTIMS(
-            Fraction fraction,
+            FractionI fraction,
             boolean calculateCovariances) {
 
         // feb 2010 this statement serves as a filter during compilation to prevent reduction of legacy aliquots 
-        if (!fraction.isLegacy()) {//&& fraction.getAnalysisMeasure( AnalysisMeasures.tracerMassInGrams.getName() ).hasPositiveValue() ) {
+        if (!fraction.isLegacy()) {
 
             // oct 2009 initialize outputs
             ((UPbFraction) fraction).setOutputs(new ValueModel[0]);
@@ -972,10 +972,6 @@ public class UPbFractionReducer {
                             populateCovarianceMatrices(inputVariances, coVariances);
                 } catch (Exception e) {
                 }
-//            }
-//
-//
-//            if ( ((UPbFraction) fraction).getReductionHandler() != null ) {
 
                 try {//TODO Handle throw exception
                     ((UPbFraction) fraction).getReductionHandler().//
@@ -1009,7 +1005,7 @@ public class UPbFractionReducer {
         }
     }
 
-    private static void evaluateVariablesInOrderI(Fraction fraction) {
+    private static void evaluateVariablesInOrderI(FractionI fraction) {
 
         AbstractRatiosDataModel fractionTracer = ((UPbFraction) fraction).getTracer();
 
@@ -1059,7 +1055,7 @@ public class UPbFractionReducer {
 
     }
 
-    private static void evaluateVariablesInOrderII(Fraction fraction) {
+    private static void evaluateVariablesInOrderII(FractionI fraction) {
 
         AbstractRatiosDataModel fractionTracer = ((UPbFractionI) fraction).getTracer();
         String tracerType = ((UPbFraction) fraction).getTracerType().trim();
@@ -1905,7 +1901,7 @@ public class UPbFractionReducer {
 
     } // end evaluateVariablesInOrderII
 
-    private static void initializeAndEvalSpecialInputVariablesInOrder(Fraction fraction) {
+    private static void initializeAndEvalSpecialInputVariablesInOrder(FractionI fraction) {
 
         specialInputVariablesInOrder = new TreeMap<>();
 
@@ -1955,9 +1951,9 @@ public class UPbFractionReducer {
 
     }
 
-    private static void initializeVariablesInOrder(Fraction fraction) {
+    private static void initializeVariablesInOrder(FractionI fraction) {
 
-        variablesInOrder = new TreeMap<Integer, ValueModel>();
+        variablesInOrder = new TreeMap<>();
         int index = 0;
 
 //        // oct 2009 initialize outputs
@@ -2305,8 +2301,8 @@ public class UPbFractionReducer {
 
     }
 
-    private static void initializeInputVariances(Fraction fraction) {
-        inputVariances = new HashMap<String, BigDecimal>();
+    private static void initializeInputVariances(FractionI fraction) {
+        inputVariances = new HashMap<>();
 
         // June 2012 
         // TODO: refactor to one method
@@ -2353,8 +2349,8 @@ public class UPbFractionReducer {
         }
     }
 
-    private static void calculateCovariancesMap(Fraction fraction) {
-        coVariances = new HashMap<String, BigDecimal>();
+    private static void calculateCovariancesMap(FractionI fraction) {
+        coVariances = new HashMap<>();
 
         //***********************************************************************
         //TODO:  may 2012 use tracer's new cov matrix ... needs to be refactored more elegantly, but for now to test is ok
