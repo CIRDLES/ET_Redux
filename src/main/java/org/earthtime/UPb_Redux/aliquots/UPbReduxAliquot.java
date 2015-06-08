@@ -696,7 +696,7 @@ public class UPbReduxAliquot extends Aliquot
      * @return
      */
     public Vector<String> getAliquotFractionIDs() {
-        Vector<String> retVal = new Vector<String>();
+        Vector<String> retVal = new Vector<>();
         for (FractionI f : aliquotFractions) {
             if (!((UPbFractionI) f).isRejected()) {
                 retVal.add(f.getFractionID());

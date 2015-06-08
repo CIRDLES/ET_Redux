@@ -69,21 +69,22 @@ public class ConstantFitFunctionWithCovS implements FitFunctionInterface, Serial
                 countOfActiveData++;
             }
         }
-        // create column vector filled with ones
-        Matrix onesVector = new Matrix(countOfActiveData, 1, 1.0);
-
-        Matrix MeasuredCovMatrixS_solveOnesVector = MeasuredCovMatrixS.solve(onesVector);
-        double meanIntensityVariance = 1.0 / onesVector.transpose().times(MeasuredCovMatrixS_solveOnesVector).get(0, 0);
 
         // usng the first value only
         double meanIntensity = yValues[0];
 
         // create function of x for mean
         AbstractFunctionOfX myFofX = new FofX(meanIntensity);
+        
+        // create column vector filled with ones
+        Matrix onesVector = new Matrix(countOfActiveData, 1, 1.0);
 
+        Matrix MeasuredCovMatrixS_solveOnesVector = MeasuredCovMatrixS.solve(onesVector);
+        double meanIntensityVariance = 1.0 / onesVector.transpose().times(MeasuredCovMatrixS_solveOnesVector).get(0, 0);
+        
         // nov 2014
-        myFofX.setMatrixJacobianYInterceptLogRatioXY(MeasuredCovMatrixS_solveOnesVector.transpose().times(meanIntensityVariance));
-
+        myFofX.setMatrixJacobianYInterceptLogRatioXY(MeasuredCovMatrixS_solveOnesVector.transpose().times(meanIntensityVariance));      
+        
         // set the variance
         myFofX.setFitParameterCovarianceMatrix(new Matrix( //
                 new double[][]{{meanIntensityVariance}}));

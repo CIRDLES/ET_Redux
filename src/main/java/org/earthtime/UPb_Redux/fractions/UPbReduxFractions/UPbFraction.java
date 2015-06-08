@@ -684,7 +684,7 @@ public class UPbFraction extends Fraction implements
         String uPbFractionAliquotNum = String.valueOf(((UPbFractionI) fraction).getAliquotNumber());
         String myID = (uPbFractionAliquotNum + "." + uPbFractionID).toUpperCase();
 
-        Comparator<String> forNoah = new IntuitiveStringComparator<String>();
+        Comparator<String> forNoah = new IntuitiveStringComparator<>();
 
         return forNoah.compare((String.valueOf(this.getAliquotNumber()) + "." + this.getFractionID()).toUpperCase(), myID);
     }

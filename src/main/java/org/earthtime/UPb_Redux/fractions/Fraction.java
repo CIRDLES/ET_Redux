@@ -234,6 +234,7 @@ public abstract class Fraction implements
      * @return
      * @throws ClassCastException
      */
+    @Override
     public int compareTo(Fraction fraction) throws ClassCastException {
         String fractionTwoID = fraction.getFractionID().trim();
         String fractionOneID = this.getFractionID().trim();

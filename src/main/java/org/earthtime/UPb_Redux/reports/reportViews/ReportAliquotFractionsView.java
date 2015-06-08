@@ -388,7 +388,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
         add(reportHeader);
 
         // build sort buttons
-        sortButtons = new ArrayList<JButton>();
+        sortButtons = new ArrayList<>();
         for (int c = 3; c < reportFractions[0].length; c++) {
 
             JButton sortButton = new ET_JButton("\u25B2 \u25BC");
@@ -661,7 +661,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
             this.paintType = paintType;
             this.showFractions = showFractions;
 
-            verticalPixelFractionMap = new ArrayList<TableRowObject>();
+            verticalPixelFractionMap = new ArrayList<>();
             this.lastSelectedTableRowObject = new TableRowObject(0, new UPbFraction());
 
             setOpaque(true);

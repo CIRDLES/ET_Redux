@@ -224,7 +224,7 @@ public class Project implements
                     SortedSet<TripoliFraction> tripoliSampleFractions = tripoliSample.getSampleFractions();
                     for (Iterator<TripoliFraction> it = tripoliSampleFractions.iterator(); it.hasNext();) {
                         TripoliFraction tf = it.next();
-                        System.out.println("Processing tripoli fraction " + tf.getFractionID());
+//                        System.out.println("Processing tripoli fraction " + tf.getFractionID());
                         FractionI uPbLAICPMSFraction = new UPbLAICPMSFraction(tf.getFractionID());
                         uPbLAICPMSFraction.setSampleName(tripoliSample.getSampleName());
                         // add to tripoli fraction so its UPbFraction can be contiunously updated

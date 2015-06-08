@@ -267,7 +267,7 @@ public abstract class AbstractMassSpecSetup implements //
         calculateLogOnPeakCorrectedIntensities();
 
         calculateRawAndLogRatios();
-        
+
         tripoliFraction.reProcessToRejectNegativeRatios();
 
         propagateUnctInBaselineCorrOnPeakIntensities();
@@ -366,7 +366,7 @@ public abstract class AbstractMassSpecSetup implements //
             }
         }
 
-        isotopeMappingModel.calculateAllIntensityMatrixSDiagonals();
+       isotopeMappingModel.calculateAllIntensityMatrixSDiagonals();
 
         if ((Hg202 != null) && (Pb204 != null)) {
             calculateCorrectionForIsobaricInterference(Hg202, Pb204);
@@ -418,7 +418,6 @@ public abstract class AbstractMassSpecSetup implements //
             }
         }
 
-        System.out.println("Processing tripoli fraction " + fractionID);
         if (Pb204 != null) {
             validateOnPeakBaselineCorrectedIsotope(Pb204, fractionID);
         }
@@ -437,7 +436,7 @@ public abstract class AbstractMassSpecSetup implements //
         calculateLogOnPeakCorrectedIntensities();
 
         calculateRawAndLogRatios();
-        
+
         tripoliFraction.reProcessToRejectNegativeRatios();
 
         propagateUnctInBaselineCorrOnPeakIntensities();
@@ -901,7 +900,7 @@ public abstract class AbstractMassSpecSetup implements //
             }
 
             if (im.getDataModelName().equalsIgnoreCase(IsotopesEnum.Hg202.getName())) {
-                Hg202Si = ((RawIntensityDataModel) im).specialBuildMatrixSiForHg202();//   .getCollectorModel().buildMatrixSi(diagonalOfMatrixSIntensities);
+                Hg202Si = ((RawIntensityDataModel) im).specialBuildMatrixSiForHg202();
                 Hg202Si.timesEquals(1.0 / r202Hg_204Hg.getValue().pow(2).doubleValue());
 
                 ((DataModelFitFunctionInterface) im).setSelectedFitFunctionType(FitFunctionTypeEnum.NONE);
@@ -915,8 +914,6 @@ public abstract class AbstractMassSpecSetup implements //
                 ((RawIntensityDataModel) im).setCorrectedHg202Si(null);
             }
 
-            //if ( im.getDataModelName().equalsIgnoreCase( IsotopesEnum.Pb204.getName() ) ) {
-            ((RawIntensityDataModel) im).prepareDataForFitFunctions();
             im.generateSetOfFitFunctions(true, true);
         }
     }

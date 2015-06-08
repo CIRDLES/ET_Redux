@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.concurrent.ConcurrentMap;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
+import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.utilities.comparators.IntuitiveStringComparator;
 import org.earthtime.UPb_Redux.valueModels.MeasuredRatioModel;
@@ -703,11 +704,22 @@ public interface FractionI {
 
     static final Comparator FRACTION_ID_ORDER = (Object f1, Object f2) -> {
         String fractionTwoID = ((FractionI) f2).getFractionID().trim();
+        String fractionTwoAliquotNum = "1";
+        try {
+            fractionTwoAliquotNum = String.valueOf(((UPbFractionI) f2).getAliquotNumber());
+        } catch (Exception e) {
+        }
         String fractionOneID = ((FractionI) f1).getFractionID().trim();
-
+        String fractionOneAliquotNum = "1";
+        try {
+            fractionOneAliquotNum = String.valueOf(((UPbFractionI) f1).getAliquotNumber());
+        } catch (Exception e) {
+        }
         // oct 2010 put here
         Comparator<String> forNoah = new IntuitiveStringComparator<>();
-        return forNoah.compare(fractionOneID, fractionTwoID);
+//        return forNoah.compare(fractionOneID, fractionTwoID);
+        return forNoah.compare((fractionOneAliquotNum + "." + fractionOneID).toUpperCase(), (fractionTwoAliquotNum + "." + fractionTwoID).toUpperCase());
+
     };
 
     /**

@@ -1686,10 +1686,6 @@ public class Sample implements
             sampleAnalysisType = SampleAnalysisTypesEnum.COMPILED.getName();
             analyzed = true;
         }
-
-        System.out.println("Sample backward compatibility readResolve set sampleAnalysisType to: " //
-                + sampleAnalysisType + "  with analyzed = " + analyzed);
-
         return this;
     }
 }

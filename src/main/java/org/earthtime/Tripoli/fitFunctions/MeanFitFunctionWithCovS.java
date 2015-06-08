@@ -122,7 +122,7 @@ public class MeanFitFunctionWithCovS implements FitFunctionInterface, Serializab
 
 
         Matrix matrixJ11 = new Matrix( 1, countOfActiveData, 1.0 / countOfActiveData );
-        ((AbstractFunctionOfX) myFofX).setMatrixJ11( matrixJ11 );
+        myFofX.setMatrixJ11( matrixJ11 );
 
         if ( calculateHatMatrix ) {
             Matrix Arow = MeasuredCovMatrixS.solveTranspose( onesVector.transpose() ).times( meanIntensityVariance );

@@ -254,11 +254,11 @@ public class RawRatioDataModel //
             Arrays.fill(allTrueDataActiveMap, Boolean.TRUE);
 
             boolean[] topDataActiveMap = ((RawIntensityDataModel) topIsotope).getOnPeakVirtualCollector().getDataActiveMap();
-            ((RawIntensityDataModel) topIsotope).getOnPeakVirtualCollector().setDataActiveMap(allTrueDataActiveMap);//dataActiveMap.clone());
+            ((RawIntensityDataModel) topIsotope).getOnPeakVirtualCollector().setDataActiveMap(allTrueDataActiveMap);
 
             ((RawIntensityDataModel) topIsotope).prepareDataForFitFunctions();
             ((RawIntensityDataModel) topIsotope).propagateUnctInBaselineCorrOnPeakIntensities();
-//            }
+
 
             boolean[] botDataActiveMap = ((RawIntensityDataModel) botIsotope).getOnPeakVirtualCollector().getDataActiveMap();
             ((RawIntensityDataModel) botIsotope).getOnPeakVirtualCollector().setDataActiveMap(allTrueDataActiveMap);//dataActiveMap.clone());
