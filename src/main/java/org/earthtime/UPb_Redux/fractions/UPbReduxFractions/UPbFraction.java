@@ -681,7 +681,7 @@ public class UPbFraction extends Fraction implements
     @Override
     public int compareTo(Fraction fraction) throws ClassCastException {
         String uPbFractionID = fraction.getFractionID();
-        String uPbFractionAliquotNum = String.valueOf(((UPbFractionI) fraction).getAliquotNumber());
+        String uPbFractionAliquotNum = String.valueOf(fraction.getAliquotNumber());
         String myID = (uPbFractionAliquotNum + "." + uPbFractionID).toUpperCase();
 
         Comparator<String> forNoah = new IntuitiveStringComparator<>();
@@ -1564,12 +1564,12 @@ public class UPbFraction extends Fraction implements
             ((UPbFraction) myUPbReduxFraction).setMyLabData(this.getMyLabData());
 
             // fill missing fields
-            ((UPbFractionI) myUPbReduxFraction).setAliquotNumber(aliquotNumber);
+            myUPbReduxFraction.setAliquotNumber(aliquotNumber);
 
             ((UPbFraction) myUPbReduxFraction).setPedigreePb("");
             ((UPbFraction) myUPbReduxFraction).setPedigreeU("");
 
-            ((UPbFractionI) myUPbReduxFraction).setChanged(true);
+            myUPbReduxFraction.setChanged(true);
             ((UPbFractionI) myUPbReduxFraction).setDeleted(false);
 
             ((UPbFraction) myUPbReduxFraction).setNotesPb("");
@@ -1602,7 +1602,7 @@ public class UPbFraction extends Fraction implements
             ((UPbFractionI) myUPbReduxFraction).setAlphaUModel(this.getAlphaUModel());
             ((UPbFractionI) myUPbReduxFraction).setPbBlank(this.getPbBlank());
 
-            ((UPbFractionI) myUPbReduxFraction).setPhysicalConstantsModel(this.getPhysicalConstantsModel());
+            myUPbReduxFraction.setPhysicalConstantsModel(this.getPhysicalConstantsModel());
 
             // initialize parent fields
             myUPbReduxFraction.getValuesFrom(this, false);
@@ -1618,21 +1618,21 @@ public class UPbFraction extends Fraction implements
                     ((UPbFraction) myUPbReduxFraction).getMeanAlphaPb().compareTo(BigDecimal.ZERO) == 1);
 
             // check ratio_type and set source file
-            if (!((((UPbFractionI) myUPbReduxFraction).getRatioType().equalsIgnoreCase("U"))//
-                    || (((UPbFractionI) myUPbReduxFraction).getRatioType().equalsIgnoreCase("Pb")) //
-                    || (((UPbFractionI) myUPbReduxFraction).getRatioType().equalsIgnoreCase("UPb")))) {
+            if (!((myUPbReduxFraction.getRatioType().equalsIgnoreCase("U"))//
+                    || (myUPbReduxFraction.getRatioType().equalsIgnoreCase("Pb")) //
+                    || (myUPbReduxFraction.getRatioType().equalsIgnoreCase("UPb")))) {
                 throw new ETException(null, "RatioType is NOT recognized.");
             }
 
-            if (((UPbFractionI) myUPbReduxFraction).getRatioType().equalsIgnoreCase("U")//
-                    || ((UPbFractionI) myUPbReduxFraction).getRatioType().equalsIgnoreCase("UPb")) {
+            if (myUPbReduxFraction.getRatioType().equalsIgnoreCase("U")//
+                    || myUPbReduxFraction.getRatioType().equalsIgnoreCase("UPb")) {
                 ((UPbFraction) myUPbReduxFraction).setSourceFileU(filename);
                 ((UPbFraction) myUPbReduxFraction).setPedigreeU(getPedigree());
 
             }
 
-            if (((UPbFractionI) myUPbReduxFraction).getRatioType().equalsIgnoreCase("Pb") //
-                    || ((UPbFractionI) myUPbReduxFraction).getRatioType().equalsIgnoreCase("UPb")) {
+            if (myUPbReduxFraction.getRatioType().equalsIgnoreCase("Pb") //
+                    || myUPbReduxFraction.getRatioType().equalsIgnoreCase("UPb")) {
                 ((UPbFraction) myUPbReduxFraction).setSourceFilePb(filename);
                 ((UPbFraction) myUPbReduxFraction).setPedigreePb(getPedigree());
             }

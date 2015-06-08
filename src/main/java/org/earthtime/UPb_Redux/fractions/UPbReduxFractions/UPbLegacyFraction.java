@@ -165,10 +165,10 @@ public class UPbLegacyFraction extends Fraction implements
     public int compareTo(Fraction fraction) throws ClassCastException {
         // TODO May 2010 Eventaully consider grainID
         String uPbFractionID = fraction.getFractionID();
-        String uPbFractionAliquotNum = String.valueOf(((UPbFractionI) fraction).getAliquotNumber());
+        String uPbFractionAliquotNum = String.valueOf(((FractionI) fraction).getAliquotNumber());
         String myID = (uPbFractionAliquotNum + "." + uPbFractionID).toUpperCase();
 
-        Comparator<String> forNoah = new IntuitiveStringComparator<String>();
+        Comparator<String> forNoah = new IntuitiveStringComparator<>();
 
         return forNoah.compare((String.valueOf(this.getAliquotNumber()) + "." + this.getFractionID()).toUpperCase(), myID);
     }
@@ -177,6 +177,7 @@ public class UPbLegacyFraction extends Fraction implements
      *
      * @return
      */
+    @Override
     public Object[] getFractionTableRowData() {
         String tracerName = "N/A";
 
@@ -204,7 +205,7 @@ public class UPbLegacyFraction extends Fraction implements
     private String tableEntryForMeasuredRatio(String measuredRatio) {
         String retVal = " ";
 
-        if (((MeasuredRatioModel) getMeasuredRatioByName(measuredRatio)).getValue().compareTo(BigDecimal.ZERO) != 0) {
+        if (getMeasuredRatioByName(measuredRatio).getValue().compareTo(BigDecimal.ZERO) != 0) {
             retVal = ((MeasuredRatioModel) getMeasuredRatioByName(measuredRatio)).toTableFormat();
         }
 
@@ -232,6 +233,7 @@ public class UPbLegacyFraction extends Fraction implements
      *
      * @return
      */
+    @Override
     public int getAliquotNumber() {
         return aliquotNumber;
     }
@@ -240,6 +242,7 @@ public class UPbLegacyFraction extends Fraction implements
      *
      * @param aliquotNumber
      */
+    @Override
     public void setAliquotNumber(int aliquotNumber) {
         this.aliquotNumber = aliquotNumber;
         setChanged(true);
@@ -249,6 +252,7 @@ public class UPbLegacyFraction extends Fraction implements
      *
      * @return
      */
+    @Override
     public String getRatioType() {
         return ratioType;
     }
@@ -257,6 +261,7 @@ public class UPbLegacyFraction extends Fraction implements
      *
      * @param RatioType
      */
+    @Override
     public void setRatioType(String RatioType) {
         this.ratioType = RatioType;
     }
@@ -265,6 +270,7 @@ public class UPbLegacyFraction extends Fraction implements
      *
      * @return
      */
+    @Override
     public boolean isChanged() {
         return changed;
     }
@@ -273,6 +279,7 @@ public class UPbLegacyFraction extends Fraction implements
      *
      * @param changed
      */
+    @Override
     public void setChanged(boolean changed) {
         this.changed = changed;
     }
@@ -281,6 +288,7 @@ public class UPbLegacyFraction extends Fraction implements
      *
      * @return
      */
+    @Override
     public boolean isDeleted() {
         return deleted;
     }
@@ -289,6 +297,7 @@ public class UPbLegacyFraction extends Fraction implements
      *
      * @param deleted
      */
+    @Override
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }

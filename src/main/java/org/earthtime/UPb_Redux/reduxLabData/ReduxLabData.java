@@ -1570,7 +1570,7 @@ public final class ReduxLabData implements Serializable {
         registerInitialPbModel(
                 ((UPbFractionI) fraction).getInitialPbModel(), false);
         registerPhysicalConstantsModel(
-                ((UPbFractionI) fraction).getPhysicalConstantsModel(), false);
+                fraction.getPhysicalConstantsModel(), false);
 
         // TODO register mineral standards, reportsettings
         // but these are not fraction-level

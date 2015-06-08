@@ -1099,10 +1099,8 @@ public class AliquotEditorDialog extends DialogEditor {
             fractionToSave.getAnalysisMeasure(AnalysisMeasures.ar231_235sample.getName())//
                     .setOneSigma(new BigDecimal(((JTextComponent) fractionAr231_235sampleOneSigmaText.get(row)).getText(), ReduxConstants.mathContext15));
 
-////            // added oct 2011 to handle archiving details
-////            saveFractionArchivingData( fractionToSave ); // NOT HERE
             // better safe than sorry for now
-            ((UPbFractionI) fractionToSave).setChanged(true);
+            fractionToSave.setChanged(true);
 
             // reduce fraction
             UPbFractionReducer.getInstance().fullFractionReduce(fractionToSave, true);

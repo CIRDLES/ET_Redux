@@ -26,7 +26,6 @@ import java.util.Date;
 import java.util.concurrent.ConcurrentMap;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
-import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.utilities.comparators.IntuitiveStringComparator;
 import org.earthtime.UPb_Redux.valueModels.MeasuredRatioModel;
@@ -706,13 +705,13 @@ public interface FractionI {
         String fractionTwoID = ((FractionI) f2).getFractionID().trim();
         String fractionTwoAliquotNum = "1";
         try {
-            fractionTwoAliquotNum = String.valueOf(((UPbFractionI) f2).getAliquotNumber());
+            fractionTwoAliquotNum = String.valueOf(((FractionI) f2).getAliquotNumber());
         } catch (Exception e) {
         }
         String fractionOneID = ((FractionI) f1).getFractionID().trim();
         String fractionOneAliquotNum = "1";
         try {
-            fractionOneAliquotNum = String.valueOf(((UPbFractionI) f1).getAliquotNumber());
+            fractionOneAliquotNum = String.valueOf(((FractionI) f1).getAliquotNumber());
         } catch (Exception e) {
         }
         // oct 2010 put here
@@ -873,26 +872,25 @@ public interface FractionI {
      * to set
      */
     public void setStaceyKramersCorrelationCoeffs(BigDecimal staceyKramersCorrelationCoeffs);
-    
+
     /**
      *
      * @param fraction
      * @param copyAnalysisMeasures
      */
-    public void getValuesFrom(FractionI fraction, boolean copyAnalysisMeasures) ;
-    
-    
+    public void getValuesFrom(FractionI fraction, boolean copyAnalysisMeasures);
+
     /**
      *
      * @return
      */
-    public String getAlphaPbModelID() ;
+    public String getAlphaPbModelID();
 
     /**
      *
      * @param alphaPbModelID
      */
-    public void setAlphaPbModelID(String alphaPbModelID) ;
+    public void setAlphaPbModelID(String alphaPbModelID);
 
     /**
      *
@@ -905,5 +903,53 @@ public interface FractionI {
      * @param alphaUModelID
      */
     public void setAlphaUModelID(String alphaUModelID);
+
+    /**
+     *
+     * @return
+     */
+    abstract String getRatioType();
+
+    /**
+     *
+     * @param RatioType
+     */
+    abstract void setRatioType(String RatioType);
+
+    /**
+     *
+     * @return
+     */
+    abstract boolean isChanged();
+
+    /**
+     *
+     * @param changed
+     */
+    abstract void setChanged(boolean changed);
+
+    /**
+     *
+     * @return
+     */
+    abstract int getAliquotNumber();
+
+    /**
+     *
+     * @param aliquotNumber
+     */
+    abstract void setAliquotNumber(int aliquotNumber);
+
+    /**
+     *
+     * @return
+     */
+    abstract AbstractRatiosDataModel getPhysicalConstantsModel();
+
+    /**
+     *
+     * @param physicalConstantsModel
+     */
+    abstract void setPhysicalConstantsModel(AbstractRatiosDataModel physicalConstantsModel);
 
 }

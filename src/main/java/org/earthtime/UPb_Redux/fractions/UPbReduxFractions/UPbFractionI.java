@@ -51,53 +51,53 @@ public interface UPbFractionI {
         "Tracer"
     };
 
-    /**
-     *
-     * @return
-     */
-    abstract String getRatioType();
-
-    /**
-     *
-     * @param RatioType
-     */
-    abstract void setRatioType(String RatioType);
-
-    /**
-     *
-     * @return
-     */
-    abstract boolean isChanged();
-
-    /**
-     *
-     * @param changed
-     */
-    abstract void setChanged(boolean changed);
-
-    /**
-     *
-     * @return
-     */
-    abstract int getAliquotNumber();
-
-    /**
-     *
-     * @param aliquotNumber
-     */
-    abstract void setAliquotNumber(int aliquotNumber);
-
-    /**
-     *
-     * @return
-     */
-    abstract AbstractRatiosDataModel getPhysicalConstantsModel();
-
-    /**
-     *
-     * @param physicalConstantsModel
-     */
-    abstract void setPhysicalConstantsModel(AbstractRatiosDataModel physicalConstantsModel);
+//    /**
+//     *
+//     * @return
+//     */
+//    abstract String getRatioType();
+//
+//    /**
+//     *
+//     * @param RatioType
+//     */
+//    abstract void setRatioType(String RatioType);
+//
+//    /**
+//     *
+//     * @return
+//     */
+//    abstract boolean isChanged();
+//
+//    /**
+//     *
+//     * @param changed
+//     */
+//    abstract void setChanged(boolean changed);
+//
+//    /**
+//     *
+//     * @return
+//     */
+//    abstract int getAliquotNumber();
+//
+//    /**
+//     *
+//     * @param aliquotNumber
+//     */
+//    abstract void setAliquotNumber(int aliquotNumber);
+//
+//    /**
+//     *
+//     * @return
+//     */
+//    abstract AbstractRatiosDataModel getPhysicalConstantsModel();
+//
+//    /**
+//     *
+//     * @param physicalConstantsModel
+//     */
+//    abstract void setPhysicalConstantsModel(AbstractRatiosDataModel physicalConstantsModel);
 
     /**
      *

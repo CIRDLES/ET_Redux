@@ -86,7 +86,7 @@ public class SampleImporterFromLAICPMSLegacyCVSFile_MC_UA //
 
                     FractionI myFraction = new UPbLegacyFraction( "NONE" );
 
-                    ((UPbFractionI) myFraction).setRatioType( "UPb" );
+                    myFraction.setRatioType( "UPb" );
 
                     int index = 0;
 

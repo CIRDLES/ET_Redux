@@ -39,7 +39,6 @@ import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
-import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.renderers.EditFractionButton;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
@@ -1260,7 +1259,7 @@ public class AliquotLegacyEditorForIDTIMS extends AliquotEditorDialog {
                         divide(new BigDecimal(2.0, ReduxConstants.mathContext15)).movePointRight(6));
 
         // better safe than sorry for now
-        ((UPbFractionI) tempFrac).setChanged(true);
+        tempFrac.setChanged(true);
 
     }
 

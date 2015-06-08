@@ -498,7 +498,7 @@ public class ReportSettings implements
                                     }
 
                                     retVal[fractionRowCount][1] = //
-                                            sample.getAliquotByNumber(((UPbFractionI) f).getAliquotNumber()).getAliquotName();
+                                            sample.getAliquotByNumber(f.getAliquotNumber()).getAliquotName();
                                 }
 
                                 // field contains the Value in field[0]

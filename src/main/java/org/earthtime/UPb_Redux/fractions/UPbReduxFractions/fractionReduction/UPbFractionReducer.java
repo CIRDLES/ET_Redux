@@ -387,10 +387,10 @@ public class UPbFractionReducer {
 //            System.out.println( "333" );
 //        }
         initializeAtomicMolarMasses(
-                ((UPbFractionI) fraction).getPhysicalConstantsModel());
+                fraction.getPhysicalConstantsModel());
 
         initializeDecayConstants(
-                ((UPbFractionI) fraction).getPhysicalConstantsModel(),
+                fraction.getPhysicalConstantsModel(),
                 true);
 
         //fraction.getAnalysisMeasure( AnalysisMeasures.r238_235s.getName() ).setValue( new BigDecimal( 137.88 ) );
@@ -557,11 +557,11 @@ public class UPbFractionReducer {
 
             // default values for pbc corrected ratios with below detection 204
             //if (((UPbLAICPMSFraction) fraction).hasCommonLeadLossCorrectionSchemeGreaterThanTypeA()) {
-                // rho Wetherill 
-                fraction.getRadiogenicIsotopeRatioByName("rhoR206_238PbcCorr__r207_235PbcCorr").setValue(rhoR206_238r__r207_235r);
+            // rho Wetherill 
+            fraction.getRadiogenicIsotopeRatioByName("rhoR206_238PbcCorr__r207_235PbcCorr").setValue(rhoR206_238r__r207_235r);
 
-                // rho T-W
-                fraction.getRadiogenicIsotopeRatioByName("rhoR207_206PbcCorr__r238_206PbcCorr").setValue(rhoR207_206r__r238_206r);
+            // rho T-W
+            fraction.getRadiogenicIsotopeRatioByName("rhoR207_206PbcCorr__r238_206PbcCorr").setValue(rhoR207_206r__r238_206r);
             //}
 
 //            System.out.println("JSomeAllRatios for Fraction " + fraction.getFractionID());
@@ -919,10 +919,10 @@ public class UPbFractionReducer {
             //System.out.println( "Reducing Fraction = " + fraction.getFractionID() );
             // Feb 2011 reorganized logic here as treatFractionAsZircon could not be calculated here !!!
             initializeAtomicMolarMasses(
-                    ((UPbFractionI) fraction).getPhysicalConstantsModel());
+                    fraction.getPhysicalConstantsModel());
 
             initializeDecayConstants(
-                    ((UPbFractionI) fraction).getPhysicalConstantsModel(),
+                    fraction.getPhysicalConstantsModel(),
                     true);
 
             // march 2012 correction

@@ -365,11 +365,11 @@ public class Sample implements
                         legacyF.setSampleName(f.getSampleName());
                         legacyF.setZircon(f.isZircon());
 
-                        ((UPbFractionI) legacyF).setAliquotNumber(((UPbFractionI) f).getAliquotNumber());
+                        legacyF.setAliquotNumber(f.getAliquotNumber());
                         ((UPbFractionI) legacyF).setRejected(((UPbFractionI) f).isRejected());
                         ((UPbFractionI) legacyF).setFractionNotes(((UPbFractionI) f).getFractionNotes());
-                        ((UPbFractionI) legacyF).setPhysicalConstantsModel(((UPbFractionI) f).getPhysicalConstantsModel());
-                        ((UPbFractionI) legacyF).setChanged(false);
+                        legacyF.setPhysicalConstantsModel(f.getPhysicalConstantsModel());
+                        legacyF.setChanged(false);
 
                         legacyF.setIsLegacy(true);
 
@@ -440,7 +440,7 @@ public class Sample implements
     public void addDefaultUPbLegacyFractionToAliquot(int aliquotNumber)
             throws BadLabDataException {
         FractionI defFraction = new UPbLegacyFraction("NONE");
-        ((UPbFractionI) defFraction).setAliquotNumber(aliquotNumber);
+        defFraction.setAliquotNumber(aliquotNumber);
 
         initializeDefaultUPbFraction(defFraction);
     }
@@ -470,7 +470,7 @@ public class Sample implements
         }
         // must be saved or is assumed deleted during edit
         ((UPbFractionI) defFraction).setDeleted(false);
-        ((UPbFractionI) defFraction).setChanged(false);
+        defFraction.setChanged(false);
 
         addFraction(defFraction);
     }
@@ -864,7 +864,7 @@ public class Sample implements
     @Override
     public boolean isChanged() {
         for (FractionI UPbFraction : UPbFractions) {
-            changed = changed || ((UPbFractionI) UPbFraction).isChanged();
+            changed = changed || UPbFraction.isChanged();
         }
 
         return changed;
@@ -1249,7 +1249,7 @@ public class Sample implements
 
             Vector<FractionI> aliquotFractions = ((UPbReduxAliquot) aliquot).getAliquotFractions();
             for (int j = 0; j < aliquotFractions.size(); j++) {
-                ((UPbFractionI) aliquotFractions.get(j)).setAliquotNumber(i + 1);
+                aliquotFractions.get(j).setAliquotNumber(i + 1);
             }
         }
     }

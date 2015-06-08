@@ -781,7 +781,7 @@ public class UPbReduxAliquot extends Aliquot
         // all existing fractions must be updated
         if (getAliquotFractions() != null) {
             for (int i = 0; i < getAliquotFractions().size(); i++) {
-                ((UPbFractionI) getAliquotFractions().get(i)).setPhysicalConstantsModel(physicalConstants);
+                getAliquotFractions().get(i).setPhysicalConstantsModel(physicalConstants);
             }
         }
     }

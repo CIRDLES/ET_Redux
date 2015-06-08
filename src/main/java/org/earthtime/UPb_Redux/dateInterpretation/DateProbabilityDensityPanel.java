@@ -67,7 +67,6 @@ import org.earthtime.UPb_Redux.dateInterpretation.vermeeschKDE.KDE;
 import org.earthtime.UPb_Redux.dateInterpretation.vermeeschKDE.OtherData;
 import org.earthtime.UPb_Redux.dateInterpretation.vermeeschKDE.Preferences;
 import org.earthtime.UPb_Redux.fractions.FractionI;
-import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.user.SampleDateInterpretationGUIOptions;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.dataDictionaries.RadDates;
@@ -773,7 +772,7 @@ public class DateProbabilityDensityPanel extends JLayeredPane
             Z.add(Double.NaN);
             // end June 2013 experiment with Vermeesch KDE
 
-            int aliquotNumber = ((UPbFractionI) f).getAliquotNumber();
+            int aliquotNumber = f.getAliquotNumber();
             KernelF myKernel = new KernelF(date);
             for (int i = 0; i < pdfPoints.size(); i++) {
                 double eval = evalKernelAt(myKernel, pdfPoints.get(i));

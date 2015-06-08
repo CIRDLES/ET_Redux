@@ -24,7 +24,6 @@ import java.util.Scanner;
 import java.util.Vector;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.fractions.FractionI;
-import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLegacyFraction;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UPb_Redux.valueModels.definedValueModels.PercentDiscordance;
@@ -66,7 +65,7 @@ public class SampleImporterFromLAICPMSLegacyCVSFile_UH //
 
                     FractionI myFraction = new UPbLegacyFraction( "NONE" );
 
-                    ((UPbFractionI) myFraction).setRatioType( "UPb" );
+                    myFraction.setRatioType( "UPb" );
 
                     int index = 0;
 

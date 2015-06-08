@@ -499,7 +499,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
             for (FractionI f : excludedFractions) {
                 if (!((UPbFractionI) f).isRejected() && !(isDisplay_PbcCorr() && !((UPbFractionI) f).isCommonLeadLossCorrected())) {
                     // determine aliquot for colors etc.
-                    String aliquotName = sample.getNameOfAliquotFromSample(((UPbFractionI) f).getAliquotNumber());
+                    String aliquotName = sample.getNameOfAliquotFromSample(f.getAliquotNumber());
                     Map<String, String> myAliquotOptions = getAliquotOptions().get(aliquotName);
 
                     Color excludedFillColor = new Color(255, 255, 255);
@@ -537,7 +537,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
             for (FractionI f : excludedFractions) {
                 if (!((UPbFractionI) f).isRejected() && !(isDisplay_PbcCorr() && !((UPbFractionI) f).isCommonLeadLossCorrected())) {
                     // determine aliquot for colors etc.
-                    String aliquotName = sample.getNameOfAliquotFromSample(((UPbFractionI) f).getAliquotNumber());
+                    String aliquotName = sample.getNameOfAliquotFromSample(f.getAliquotNumber());
                     Map<String, String> myAliquotOptions = getAliquotOptions().get(aliquotName);
 
                     float excludedBorderWeight = 1.5f;
@@ -585,7 +585,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
         for (FractionI f : selectedFractions) {
             if (!((UPbFractionI) f).isRejected() && !(isDisplay_PbcCorr() && !((UPbFractionI) f).isCommonLeadLossCorrected())) {
                 // determine aliquot for colors etc.
-                String aliquotName = sample.getNameOfAliquotFromSample(((UPbFractionI) f).getAliquotNumber());
+                String aliquotName = sample.getNameOfAliquotFromSample(f.getAliquotNumber());
                 Map<String, String> myAliquotOptions = (Map<String, String>) getAliquotOptions().get(aliquotName);
 
                 Color includedFillColor = new Color(255, 255, 255);
@@ -625,7 +625,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
         for (FractionI f : selectedFractions) {
             if (!((UPbFractionI) f).isRejected() && !(isDisplay_PbcCorr() && !((UPbFractionI) f).isCommonLeadLossCorrected())) {
                 // determine aliquot for colors etc.
-                String aliquotName = sample.getNameOfAliquotFromSample(((UPbFractionI) f).getAliquotNumber());
+                String aliquotName = sample.getNameOfAliquotFromSample(f.getAliquotNumber());
                 Map<String, String> myAliquotOptions = getAliquotOptions().get(aliquotName);
 
                 float includedBorderWeight = 1.5f;
@@ -1515,8 +1515,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
      */
     public void determineCurrentAliquot() {
         try {
-            curAliquot = //
-                    sample.getAliquotByNumber(((UPbFractionI) selectedFractions.get(0))//
+            curAliquot = sample.getAliquotByNumber(selectedFractions.get(0)//
                             .getAliquotNumber());
 
             currentBestDate = curAliquot.getBestAgeDivider206_238().doubleValue();

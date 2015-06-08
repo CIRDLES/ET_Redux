@@ -314,7 +314,7 @@ public abstract class AbstractSampleLegacyManagerDialog extends DialogEditor {
         // moved outside conditional oct 2010 and added MineralName, etc ;;June 2010 add physical constants model
         for (FractionI f : getMySample().getFractions()) {
             try {
-                ((UPbFractionI) f).setPhysicalConstantsModel(getMySample().getPhysicalConstantsModel());
+                f.setPhysicalConstantsModel(getMySample().getPhysicalConstantsModel());
 
                 f.setMineralName(mySample.getMineralName());
                 if (mySample.getMineralName().equalsIgnoreCase("zircon")) {

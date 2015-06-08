@@ -65,10 +65,6 @@ public class UPbLegacyFractionEditorDialog extends DialogEditor {
 
     private String uncertaintyModeForDates;
 
-//    private String correctionModeForDates;
-//
-//    private SampleUpdateAliquotFromFolderI sampleAliquotUpdater;
-//    private boolean inAutoUraniumMode;
     /**
      * Creates new form FractionEditorDialog
      *
@@ -93,7 +89,6 @@ public class UPbLegacyFractionEditorDialog extends DialogEditor {
             return;
         }
 
-//        this.sampleAliquotUpdater = sampleAliquotUpdater;
         setAnalyzed(analyzed);
 
         this.aliquot = aliquot;
@@ -298,69 +293,14 @@ public class UPbLegacyFractionEditorDialog extends DialogEditor {
         ((UPbFraction) myFraction).setDeleted(false);
 
         // enable delete and restore button if off because of new default fraction
-        delete_button.setEnabled(((UPbFractionI) myFraction).isChanged());
-        restore_button.setEnabled(((UPbFractionI) myFraction).isChanged());
+        delete_button.setEnabled(myFraction.isChanged());
+        restore_button.setEnabled(myFraction.isChanged());
 
         ((UPbFraction) myFraction).initializeReductionHandler();
         reduceFraction(isAnalyzed());
 
     }
 
-////    private boolean ExportUPbFractionPerInputSchema() {
-////
-////        boolean retval = true;
-////        File selectedFile = null;
-////
-////        int response = JOptionPane.showConfirmDialog(this,
-////                new String[]{"Save data and continue with export ?"},
-////                "ET Redux Warning",
-////                JOptionPane.YES_NO_OPTION,
-////                JOptionPane.WARNING_MESSAGE);
-////        if (response == JOptionPane.NO_OPTION) {
-////            retval = false;
-////        } else {
-////            try {
-////                Save();
-////            } catch (ETException ex) {
-////                ex.printStackTrace();
-////            }
-////        }
-////
-////        if (retval) {
-////            // proceed with export
-////            // forces dialog to front
-////            setAlwaysOnTop(false);
-////
-////            String dialogTitle = "Save this UPbFraction as xml: *.xml";
-////            final String fileExtension = ".xml";
-////            String fractionFileName =
-////                    ((UPbFraction) getMyFraction()).getSampleName()//
-////                    + "_" + getMyFraction().getFractionID()//
-////                    + "_" + ((UPbFraction) getMyFraction()).getRatioType()//
-////                    + fileExtension;
-////
-////            FileFilter nonMacFileFilter = new XMLFileFilter();
-////
-////
-////            selectedFile = FileHelper.AllPlatformSaveAs(
-////                    new Frame(), dialogTitle, null, fileExtension, fractionFileName, nonMacFileFilter);
-////
-////            setAlwaysOnTop(true);
-////
-////        }
-////
-////        if (selectedFile != null) {
-////            try {
-////                // export
-////                ((UPbFraction) getMyFraction()).serializeXMLObject(selectedFile.getCanonicalPath());
-////            } catch (IOException ex) {
-////                ex.printStackTrace();
-////            }
-////        }
-////
-////        //  setVisible(true);
-////        return (selectedFile != null);
-////    }
     /**
      *
      */
@@ -660,7 +600,7 @@ public class UPbLegacyFractionEditorDialog extends DialogEditor {
                 JOptionPane.WARNING_MESSAGE);
         switch (response) {
             case JOptionPane.YES_OPTION:
-                ((UPbFractionI) myFraction).setChanged(true);
+                myFraction.setChanged(true);
                 ((UPbFractionI) myFraction).setDeleted(true);
             case JOptionPane.CANCEL_OPTION:
                 close();

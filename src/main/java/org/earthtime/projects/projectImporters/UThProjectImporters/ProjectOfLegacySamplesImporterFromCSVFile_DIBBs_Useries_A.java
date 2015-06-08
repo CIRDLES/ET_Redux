@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Vector;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
+import org.earthtime.UPb_Redux.fractions.Fraction;
+import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLegacyFraction;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.aliquots.AliquotInterface;
@@ -110,7 +112,7 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_DIBBs_Useries_A extends A
                         }
 
                         // process fractions
-//                        Fraction myFraction = new UPbLegacyFraction("NONE");
+                        Fraction myFraction = new UPbLegacyFraction("NONE");
 //
 //                        ((UPbFractionI) myFraction).setRatioType("UPb");
 //

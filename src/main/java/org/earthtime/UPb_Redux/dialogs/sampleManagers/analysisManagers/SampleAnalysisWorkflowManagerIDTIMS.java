@@ -712,14 +712,10 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
         });
 
         // populate rows
-        for (int row = 0; row
-                < ((UPbReduxAliquot) aliquot).getAliquotFractions().size(); row++) {
-
+        for (int row = 0; row < ((UPbReduxAliquot) aliquot).getAliquotFractions().size(); row++) {
             FractionI tempFrac = ((UPbReduxAliquot) aliquot).getAliquotFractions().get(row);
             int max = ((UPbReduxAliquot) aliquot).getAliquotFractions().size();
             addFractionRow(aliquot, tempFrac, row, max);
-
-            System.out.println("Aliquot num in fraction = " + ((UPbFractionI) tempFrac).getAliquotNumber());
         }
         System.out.println();
 
@@ -1485,7 +1481,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
         fractionEstDateText.get(row).setEnabled(hasStaceyKramersModel);
 
         ((JTextField) fractionPbBlankMassText.get(row)).setText(tempFrac.getAnalysisMeasure(AnalysisMeasures.pbBlankMassInGrams.getName()).getValue().multiply(ReduxConstants.PicoGramsPerGram).setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE,
-                        RoundingMode.HALF_UP).toPlainString());
+                RoundingMode.HALF_UP).toPlainString());
         ((UnDoAbleDocument) ((JTextField) fractionPbBlankMassText.get(row)).getDocument()).undo.discardAllEdits();
         fractionPbBlankMassText.get(row).setEnabled(!isZircon);
 
@@ -1534,7 +1530,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
         fractionInitialPbChoice.get(row).setEnabled(!isZircon);
 
         ((JTextComponent) fractionPbBlankMassText.get(row)).setText(tempFrac.getAnalysisMeasure(AnalysisMeasures.pbBlankMassInGrams.getName()).getValue().multiply(ReduxConstants.PicoGramsPerGram).setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE,
-                        RoundingMode.HALF_UP).toPlainString());
+                RoundingMode.HALF_UP).toPlainString());
         ((UnDoAbleDocument) ((JTextField) fractionPbBlankMassText.get(row)).getDocument()).undo.discardAllEdits();
         fractionPbBlankMassText.get(row).setEnabled(!isZircon);
 
@@ -2027,7 +2023,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
             for (int i = 0; i < (Integer) insertFractionCount_spinner.getValue(); i++) {
                 try {
                     int aliquotNumber = ((UPbReduxAliquot) myCurrentAliquot).getAliquotNumber();
-                    ((UPbSampleInterface)mySample).addDefaultUPbFractionToAliquot(aliquotNumber);
+                    ((UPbSampleInterface) mySample).addDefaultUPbFractionToAliquot(aliquotNumber);
                 } catch (BadLabDataException ex) {
                     new ETWarningDialog(ex).setVisible(true);
                 }
@@ -2181,7 +2177,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
                 sampleFile = new File(mySample.getReduxSampleFilePath());
             } else {
                 try {
-                    sampleFile = SampleInterface.saveSampleFileAs(mySample, ((ETReduxFrame)parentFrame).getMyState().getMRUSampleFolderPath());
+                    sampleFile = SampleInterface.saveSampleFileAs(mySample, ((ETReduxFrame) parentFrame).getMyState().getMRUSampleFolderPath());
                     setSampleFolder(new File(sampleFile.getParent()));
                 } catch (BadLabDataException ex) {
                     new ETWarningDialog(ex).setVisible(true);
@@ -2220,7 +2216,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
                 sampleFile = new File(mySample.getReduxSampleFilePath());
             } else {
                 try {
-                    sampleFile = SampleInterface.saveSampleFileAs(mySample, ((ETReduxFrame)parentFrame).getMyState().getMRUSampleFolderPath());
+                    sampleFile = SampleInterface.saveSampleFileAs(mySample, ((ETReduxFrame) parentFrame).getMyState().getMRUSampleFolderPath());
                     try {
                         setSampleFolder(new File(sampleFile.getParent()));
                     } catch (Exception e) {

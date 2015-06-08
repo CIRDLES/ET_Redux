@@ -77,7 +77,7 @@ public class SampleImporterFromLAICPMSLegacyCVSFile_SC_WSU_vA extends AbstractSa
 
                     FractionI myFraction = new UPbLegacyFraction("NONE");
 
-                    ((UPbFractionI) myFraction).setRatioType("UPb");
+                    myFraction.setRatioType("UPb");
 
                     int index = 0;
 

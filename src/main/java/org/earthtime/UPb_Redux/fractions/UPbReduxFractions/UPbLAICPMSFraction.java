@@ -235,7 +235,7 @@ public class UPbLAICPMSFraction extends Fraction implements
     public int compareTo(Fraction fraction) throws ClassCastException {
         // TODO May 2010 Eventaully consider grainID
         String uPbFractionID = fraction.getFractionID();
-        String uPbFractionAliquotNum = String.valueOf(((UPbFractionI) fraction).getAliquotNumber());
+        String uPbFractionAliquotNum = String.valueOf(fraction.getAliquotNumber());
         String myID = (uPbFractionAliquotNum + "." + uPbFractionID).toUpperCase();
 
         Comparator<String> forNoah = new IntuitiveStringComparator<>();

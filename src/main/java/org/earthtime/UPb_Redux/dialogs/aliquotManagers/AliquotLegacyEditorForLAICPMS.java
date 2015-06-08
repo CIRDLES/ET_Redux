@@ -40,7 +40,6 @@ import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
-import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.renderers.EditFractionButton;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
@@ -1020,7 +1019,7 @@ public class AliquotLegacyEditorForLAICPMS extends AliquotEditorDialog {
                         movePointRight(6));
 
         // better safe than sorry for now
-        ((UPbFractionI) tempFrac).setChanged(true);
+        tempFrac.setChanged(true);
 
     }
 

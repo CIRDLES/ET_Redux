@@ -2143,12 +2143,12 @@ public class UPbFractionEditorDialog extends DialogEditor {
 
         }
 
-        ((UPbFraction) myFraction).setChanged(true);
+        myFraction.setChanged(true);
         // the next line undoes the default deleted status of a new default fraction
-        ((UPbFraction) myFraction).setDeleted(false);
+        ((UPbFractionI) myFraction).setDeleted(false);
 
         // enable delete and restore button if off because of new default fraction
-        delete_button.setEnabled(((UPbFractionI) myFraction).isChanged());
+        delete_button.setEnabled(myFraction.isChanged());
 
         ((UPbFraction) myFraction).reduceData(isCompiled());
 
