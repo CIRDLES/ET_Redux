@@ -119,7 +119,7 @@ public class Sample implements
      * collection of individual aliquotFractionFiles within this
      * <code>Sample</code>.
      */
-    private Vector<FractionI> UPbFractions;
+    private Vector<ETFractionInterface> UPbFractions;
     /**
      * the file of this <code>Sample</code>.
      */
@@ -345,8 +345,8 @@ public class Sample implements
             // dec 2012
             if (getFractions().size() > 0) {
                 // June 2010 fix for old legacy fractions
-                Vector<FractionI> convertedF = new Vector<>();
-                for (FractionI f : getFractions()) {
+                Vector<ETFractionInterface> convertedF = new Vector<>();
+                for (ETFractionInterface f : getFractions()) {
                     if (f instanceof UPbFraction) {
                         // convert to UPbLegacyFraction
                         System.out.println("Converting legacy legacy");
@@ -363,11 +363,11 @@ public class Sample implements
                         legacyF.setSampleIsochronRatios(f.getSampleIsochronRatios());
 
                         legacyF.setSampleName(f.getSampleName());
-                        legacyF.setZircon(f.isZircon());
+                        legacyF.setZircon(((FractionI)f).isZircon());
 
                         legacyF.setAliquotNumber(f.getAliquotNumber());
-                        ((UPbFractionI) legacyF).setRejected(((UPbFractionI) f).isRejected());
-                        ((UPbFractionI) legacyF).setFractionNotes(((UPbFractionI) f).getFractionNotes());
+                        legacyF.setRejected(f.isRejected());
+                        legacyF.setFractionNotes(f.getFractionNotes());
                         legacyF.setPhysicalConstantsModel(f.getPhysicalConstantsModel());
                         legacyF.setChanged(false);
 
@@ -391,7 +391,7 @@ public class Sample implements
                 if ( /*
                          * (twRho == 0) ||
                          */(twRho < -1.0)) {
-                    for (FractionI f : getFractions()) {
+                    for (ETFractionInterface f : getFractions()) {
                         f.getRadiogenicIsotopeRatioByName("rhoR207_206r__r238_206r")//
                                 .setValue(BigDecimal.ZERO);
                     }
@@ -460,7 +460,7 @@ public class Sample implements
         defFraction//
                 .setGrainID(defFraction.getFractionID());
 
-        FractionI existingFraction = getFractionByID(defFraction.getFractionID());
+        ETFractionInterface existingFraction = getFractionByID(defFraction.getFractionID());
         // handle repeated default fractionIDs
         if (existingFraction != null) {
             defFraction//
@@ -469,7 +469,7 @@ public class Sample implements
                     .setGrainID(defFraction.getGrainID());
         }
         // must be saved or is assumed deleted during edit
-        ((UPbFractionI) defFraction).setDeleted(false);
+        defFraction.setDeleted(false);
         defFraction.setChanged(false);
 
         addFraction(defFraction);
@@ -532,7 +532,7 @@ public class Sample implements
                             "\nPlease correct the discrepancy and try again."
                         });
             }// else {
-            FractionI existingFraction = getFractionByID(fractionFromFile.getFractionID());
+            ETFractionInterface existingFraction = getFractionByID(fractionFromFile.getFractionID());
             if (existingFraction == null) {
                 System.out.println("New UPbReduxFraction");
                 // AUG 2011 moved this improved logic here from readXMLFraction
@@ -686,7 +686,7 @@ public class Sample implements
                 aliquotNumber = ((UPbReduxAliquot) aliquot).getAliquotNumber();
             }
 
-            FractionI savedCurrentFraction = null;
+            ETFractionInterface savedCurrentFraction = null;
             boolean doRestoreAutoUranium = false;
             try {
                 if (myFractionEditor != null) {
@@ -863,7 +863,7 @@ public class Sample implements
      */
     @Override
     public boolean isChanged() {
-        for (FractionI UPbFraction : UPbFractions) {
+        for (ETFractionInterface UPbFraction : UPbFractions) {
             changed = changed || UPbFraction.isChanged();
         }
 
@@ -1102,7 +1102,7 @@ public class Sample implements
      * the <code>UPbFractions</code> of this <code>Sample</code>
      */
     @Override
-    public Vector<FractionI> getFractions() {
+    public Vector<ETFractionInterface> getFractions() {
         return UPbFractions;
     }
 
@@ -1119,7 +1119,7 @@ public class Sample implements
      * <code>Sample</code> will be set
      */
     @Override
-    public void setUPbFractions(Vector<FractionI> UPbFractions) {
+    public void setUPbFractions(Vector<ETFractionInterface> UPbFractions) {
         this.UPbFractions = UPbFractions;
     }
 
@@ -1247,7 +1247,7 @@ public class Sample implements
             AliquotInterface aliquot = aliquots.get(i);
             ((UPbReduxAliquot) aliquot).setAliquotNumber(i + 1);
 
-            Vector<FractionI> aliquotFractions = ((UPbReduxAliquot) aliquot).getAliquotFractions();
+            Vector<ETFractionInterface> aliquotFractions = ((UPbReduxAliquot) aliquot).getAliquotFractions();
             for (int j = 0; j < aliquotFractions.size(); j++) {
                 aliquotFractions.get(j).setAliquotNumber(i + 1);
             }

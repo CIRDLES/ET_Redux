@@ -28,10 +28,10 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import javax.swing.JPanel;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.dataDictionaries.RadDates;
+import org.earthtime.fractions.ETFractionInterface;
 
 /**
  *
@@ -39,14 +39,14 @@ import org.earthtime.dataDictionaries.RadDates;
  */
 public class KwikiSynopticOutputPanel extends JPanel {
 
-    private FractionI fraction;
+    private ETFractionInterface fraction;
 
     /** Creates a new instance of KwikiDateDisplay
      * @param x
      * @param y 
      * @param fraction  
      */
-    public KwikiSynopticOutputPanel ( int x, int y, FractionI fraction ) {
+    public KwikiSynopticOutputPanel ( int x, int y, ETFractionInterface fraction ) {
         super();
 
         this.fraction = fraction;
@@ -257,14 +257,14 @@ public class KwikiSynopticOutputPanel extends JPanel {
     /**
      * @return the fraction
      */
-    public FractionI getFraction () {
+    public ETFractionInterface getFraction () {
         return fraction;
     }
 
     /**
      * @param fraction the fraction to set
      */
-    public void setFraction ( FractionI fraction ) {
+    public void setFraction ( ETFractionInterface fraction ) {
         this.fraction = fraction;
     }
 }

@@ -33,6 +33,7 @@ import org.earthtime.UPb_Redux.valueModels.definedValueModels.PercentDiscordance
 import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.dataDictionaries.TemplatesForCsvImport;
+import org.earthtime.fractions.ETFractionInterface;
 
 
 /**
@@ -48,9 +49,9 @@ public class SampleImporterFromSHRIMPLegacyCSVFile_SIRCOMBE extends AbstractSamp
      * @throws FileNotFoundException
      */
     @Override
-    protected Vector<FractionI> extractFractionsFromFile(File file)
+    protected Vector<ETFractionInterface> extractFractionsFromFile(File file)
             throws FileNotFoundException {
-        Vector<FractionI> retFractions = new Vector<>();
+        Vector<ETFractionInterface> retFractions = new Vector<>();
         boolean readingFractions = false;
 
         //first use a Scanner to get each line

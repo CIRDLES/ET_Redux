@@ -41,7 +41,6 @@ import org.earthtime.UPb_Redux.customJTrees.CheckBoxNodeEditor;
 import org.earthtime.UPb_Redux.customJTrees.CheckBoxNodeRenderer;
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.dialogs.sampleManagers.sampleDateInterpretationManagers.SampleDateInterpretationChooserDialog;
-import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModelI;
@@ -101,12 +100,12 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
         // todo: just walk aliquots now that ths mapping is fixed (may 2015)
         int saveAliquotNum = -1;
         for (int i = 0; i < sample.getFractions().size(); i++) {
-            FractionI tempFraction = sample.getFractions().get(i);
+            ETFractionInterface tempFraction = sample.getFractions().get(i);
             AliquotInterface tempAliquot;
 
-            if (!((ETFractionInterface) tempFraction).isRejected()) {
-                if (saveAliquotNum != ((ETFractionInterface) tempFraction).getAliquotNumber()) {
-                    saveAliquotNum = ((ETFractionInterface) tempFraction).getAliquotNumber();
+            if (!tempFraction.isRejected()) {
+                if (saveAliquotNum != tempFraction.getAliquotNumber()) {
+                    saveAliquotNum = tempFraction.getAliquotNumber();
 
                     tempAliquot = sample.getAliquotByNumber(saveAliquotNum);
                     aliquotNode = new DefaultMutableTreeNode(tempAliquot);
@@ -426,7 +425,10 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
                                 if (((SampleDateModel) selectedSAM).getMethodName().startsWith("WM")) {
                                     String aliquotFlags = sample.getSampleDateInterpretationGUISettings().getWeightedMeanOptions().//
                                             get(selectedSAM.getName());
-                                    aliquotFlags = setAliquotFlag(aliquotFlags, ((UPbReduxAliquot) nodeInfo).getAliquotNumber() - 1, "1");
+                                    try {
+                                        aliquotFlags = setAliquotFlag(aliquotFlags, ((UPbReduxAliquot) nodeInfo).getAliquotNumber() - 1, "1");
+                                    } catch (Exception e_aliquotFlags) {
+                                    }
                                     sample.getSampleDateInterpretationGUISettings().getWeightedMeanOptions().//
                                             put(selectedSAM.getName(), aliquotFlags);
 

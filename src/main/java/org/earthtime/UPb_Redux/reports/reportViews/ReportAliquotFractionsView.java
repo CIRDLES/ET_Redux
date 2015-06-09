@@ -71,15 +71,14 @@ import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.dialogs.fractionManagers.FractionNotesDialog;
 import org.earthtime.UPb_Redux.filters.SVGFileFilter;
-import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
-import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.reports.ReportRowGUIInterface;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.UPb_Redux.utilities.comparators.IntuitiveStringComparator;
 import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.exceptions.ETException;
+import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.samples.SampleInterface;
 import org.earthtime.utilities.FileHelper;
 import org.w3c.dom.DOMImplementation;
@@ -933,7 +932,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                                     //right shift text in fraction column to allow for fractionButtonMargin
                                     drawnWidth += fractionButtonMargin;
 
-                                    FractionI fraction = null;
+                                    ETFractionInterface fraction = null;
                                     try {
                                         fraction = sample.getFractionByID(getReportFractions()[row][2].trim());
                                         verticalPixelFractionMap.add( //
@@ -962,7 +961,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                                         }
 
                                         // add in Notes box
-                                        if (((UPbFractionI) fraction).getFractionNotes().length() > 0) {
+                                        if (fraction.getFractionNotes().length() > 0) {
                                             g2D.setColor(Color.blue);
                                         } else {
                                             g2D.setColor(Color.black);
@@ -1066,23 +1065,23 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
 
                     Object fractionOrAliquot = verticalPixelFractionMap.get(row).rowObject;
 
-                    if (fractionOrAliquot instanceof FractionI) {
+                    if (fractionOrAliquot instanceof ETFractionInterface) {
 
                         if (e.getModifiers() == InputEvent.BUTTON1_MASK) {
                             // determine if note box or fraction name
                             if (mouseX < lineHeight) {
                                 // show notes
-                                JDialog notesDialog = new FractionNotesDialog(parentFrame, true, (FractionI) fractionOrAliquot);
+                                JDialog notesDialog = new FractionNotesDialog(parentFrame, true, (ETFractionInterface) fractionOrAliquot);
                                 notesDialog.setLocation(parentFrame.getX() + 300, parentFrame.getY() + 300);
                                 notesDialog.setVisible(true);
                             } else {
-                                parentFrame.editFraction(((FractionI) verticalPixelFractionMap.get(row).rowObject), 8);// kwikitab
+                                parentFrame.editFraction(((ETFractionInterface) verticalPixelFractionMap.get(row).rowObject), 8);// kwikitab
                                 updateReportTable(false);
                             }
                         } else {
 
-                            ((UPbFractionI) verticalPixelFractionMap.get(row).rowObject).setRejected(//
-                                    !((UPbFractionI) verticalPixelFractionMap.get(row).rowObject).isRejected());
+                            ((ETFractionInterface) verticalPixelFractionMap.get(row).rowObject).setRejected(//
+                                    !((ETFractionInterface) verticalPixelFractionMap.get(row).rowObject).isRejected());
                             parent.updateReportTable(false);
                         }
                     }
@@ -1153,12 +1152,12 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
 
                     Object fractionOrAliquot = tableRowObject.rowObject;
 
-                    if (fractionOrAliquot instanceof FractionI) {
+                    if (fractionOrAliquot instanceof ETFractionInterface) {
                         if (mouseX < lineHeight) {
                             setToolTipText(//
                                     "<html>"
                                     + "Notes:<br>"
-                                    + ((UPbFractionI) fractionOrAliquot).getFractionNotes()
+                                    + ((ETFractionInterface) fractionOrAliquot).getFractionNotes()
                                     + "<br><br>"
                                     + "Left-Click here to edit fraction notes.<br>"
                                     + "Right-Click to toggle fraction inclusion.</html>");

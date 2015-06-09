@@ -23,8 +23,8 @@ import java.util.Vector;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.JFXPanel;
-import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.samples.Sample;
+import org.earthtime.fractions.ETFractionInterface;
 
 /**
  *
@@ -38,8 +38,8 @@ public class ConcordiaGraphPanelIsoplot extends JFXPanel
     private final Sample sample;
     private ObservableList observableList;
     private ObservableList observableSequence;
-    private Vector<FractionI> selectedFractions;
-    private Vector<FractionI> excludedFractions;
+    private Vector<ETFractionInterface> selectedFractions;
+    private Vector<ETFractionInterface> excludedFractions;
 
     /**
      *
@@ -103,7 +103,7 @@ public class ConcordiaGraphPanelIsoplot extends JFXPanel
     }
 
     @Override
-    public Vector<FractionI> getDeSelectedFractions() {
+    public Vector<ETFractionInterface> getDeSelectedFractions() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -117,12 +117,12 @@ public class ConcordiaGraphPanelIsoplot extends JFXPanel
      * @param fractions
      */
     @Override
-    public void setSelectedFractions(Vector<FractionI> fractions) {
+    public void setSelectedFractions(Vector<ETFractionInterface> fractions) {
         this.selectedFractions = fractions;
     }
 
     @Override
-    public Vector<FractionI> getSelectedFractions() {
+    public Vector<ETFractionInterface> getSelectedFractions() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

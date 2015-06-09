@@ -16,23 +16,34 @@
 package org.earthtime.UTh_Redux.fractions;
 
 import java.awt.geom.Path2D;
+import java.io.FileNotFoundException;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.concurrent.ConcurrentMap;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
+import org.earthtime.UPb_Redux.reports.ReportRowGUIInterface;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
+import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.dataDictionaries.DataDictionary;
 import org.earthtime.dataDictionaries.MeasuredRatios;
 import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.dataDictionaries.UncertaintyTypesEnum;
+import org.earthtime.exceptions.ETException;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
+import org.earthtime.xmlUtilities.XMLSerializationI;
 
-public class UThFraction implements UThFractionI {
+public class UThFraction implements
+        UThFractionI,
+        ReportRowGUIInterface,
+        Serializable,
+        XMLSerializationI {
 
     //private static final long serialVersionUID = -6610176652253689201L;
+    private transient boolean selectedInDataTable;
     // Instance variables
     private String fractionID;
     private String grainID;
@@ -49,6 +60,11 @@ public class UThFraction implements UThFractionI {
     private ValueModel[] radiogenicIsotopeDates;
     private ValueModel[] compositionalMeasures;
     private ValueModel[] sampleIsochronRatios;
+
+    private boolean changed;
+    private boolean deleted;
+    private String fractionNotes;
+    private boolean rejected;
 
     public UThFraction() {
         this.fractionID = ReduxConstants.DEFAULT_OBJECT_NAME;
@@ -70,10 +86,13 @@ public class UThFraction implements UThFractionI {
         compositionalMeasures = valueModelArrayFactory(DataDictionary.earthTimeUPbCompositionalMeasuresNames, UncertaintyTypesEnum.ABS.getName());
         sampleIsochronRatios = valueModelArrayFactory(DataDictionary.SampleIsochronRatioNames, UncertaintyTypesEnum.ABS.getName());
 
-        initializeTraceElements();
+        this.changed = false;
+        this.deleted = false;
+        this.fractionNotes = "";
+        this.rejected = false;
 
+//        initializeTraceElements();
     }
-
 
     /**
      * @return the fractionID
@@ -307,29 +326,73 @@ public class UThFraction implements UThFractionI {
         this.sampleIsochronRatios = sampleIsochronRatios;
     }
 
-    @Override
-    public void setSelectedInDataTable(boolean selectedInDataTable) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public boolean isRejected() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void setRejected(boolean rejected) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
+    /**
+     * @return the changed
+     */
     @Override
     public boolean isChanged() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return changed;
+    }
+
+    /**
+     * @param changed the changed to set
+     */
+    @Override
+    public void setChanged(boolean changed) {
+        this.changed = changed;
+    }
+
+    /**
+     * @return the deleted
+     */
+    @Override
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    /**
+     * @param deleted the deleted to set
+     */
+    @Override
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    /**
+     * @return the fractionNotes
+     */
+    @Override
+    public String getFractionNotes() {
+        return fractionNotes;
+    }
+
+    /**
+     * @param fractionNotes the fractionNotes to set
+     */
+    @Override
+    public void setFractionNotes(String fractionNotes) {
+        this.fractionNotes = fractionNotes;
+    }
+
+    /**
+     * @return the rejected
+     */
+    @Override
+    public boolean isRejected() {
+        return rejected;
+    }
+
+    /**
+     * @param rejected the rejected to set
+     */
+    @Override
+    public void setRejected(boolean rejected) {
+        this.rejected = rejected;
     }
 
     @Override
-    public void setChanged(boolean changed) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void toggleRejectedStatus() {
+        this.rejected = !this.rejected;
     }
 
     @Override
@@ -418,31 +481,6 @@ public class UThFraction implements UThFractionI {
     }
 
     @Override
-    public String getFractionNotes() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void setFractionNotes(String fractionNotes) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void toggleRejectedStatus() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public boolean isDeleted() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void setDeleted(boolean deleted) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public Path2D getErrorEllipsePath() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
@@ -484,6 +522,26 @@ public class UThFraction implements UThFractionI {
 
     @Override
     public void getValuesFrom(ETFractionInterface fraction, boolean copyAnalysisMeasures) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean isSelectedInDataTable() {
+        return selectedInDataTable;
+    }
+    @Override
+    public void setSelectedInDataTable(boolean selectedInDataTable) {
+        this.selectedInDataTable = selectedInDataTable;
+    }
+
+
+    @Override
+    public void serializeXMLObject(String filename) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Object readXMLObject(String filename, boolean doValidate) throws FileNotFoundException, ETException, FileNotFoundException, BadOrMissingXMLSchemaException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

@@ -147,7 +147,7 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_GenericUPbIsotopic_A exte
                 if (readingFractions) {
                     FractionI myFraction = new UPbLegacyFraction("NONE");
 
-                    ((UPbFractionI) myFraction).setRatioType("UPb");
+                    myFraction.setRatioType("UPb");
 
                     int index = 0;
 

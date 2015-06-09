@@ -88,6 +88,7 @@ import org.earthtime.dataDictionaries.MineralTypes;
 import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
+import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.matrices.matrixModels.CovarianceMatrixWithSubMatricesModel;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.initialPbModelsET.StaceyKramersInitialPbModelET;
@@ -129,7 +130,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
     private javax.swing.JButton kwikiAutoU_button;
     private static JLayeredPane concordiaGraphPanel;
     private AliquotInterface aliquot;
-    private FractionI myFraction;
+    private ETFractionInterface myFraction;
     private ArrayList<String> fractionIDs;
     private boolean compiled;
     private JLayeredPane uncertaintyGraphPanel;
@@ -166,7 +167,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
             java.awt.Frame parent,
             boolean modal,
             AliquotInterface aliquot,
-            FractionI fraction,
+            ETFractionInterface fraction,
             int selectedTab,
             boolean compiled) {
 
@@ -220,8 +221,8 @@ public class UPbFractionEditorDialog extends DialogEditor {
             fraction_Chooser.addItem(fraction);
         }
         // add the not-rejected fractions
-        for (FractionI f : ((UPbReduxAliquot) aliquot).getAliquotFractions()) {
-            if (!((UPbFractionI) f).isRejected()) {
+        for (ETFractionInterface f : ((UPbReduxAliquot) aliquot).getAliquotFractions()) {
+            if (!f.isRejected()) {
                 fraction_Chooser.addItem(f);
             }
         }
@@ -247,7 +248,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
         // first create a list of used fractionids so that we
         // can tell user if edited fraction name is already in use
         fractionIDs = new ArrayList<String>();
-        for (FractionI f : ((UPbReduxAliquot) aliquot).getAliquotFractions()) {
+        for (ETFractionInterface f : ((UPbReduxAliquot) aliquot).getAliquotFractions()) {
             fractionIDs.add(f.getFractionID());
         }
 
@@ -271,9 +272,9 @@ public class UPbFractionEditorDialog extends DialogEditor {
      *
      * @param myFraction
      */
-    public void InitializeFractionData(final FractionI myFraction) {
+    public void InitializeFractionData(final ETFractionInterface myFraction) {
 
-        savedZirconStateOfFraction = myFraction.isZircon();
+        savedZirconStateOfFraction = ((FractionI)myFraction).isZircon();
 
         // setup buttons
         saveAndClose_button.setEnabled(!isCompiled());
@@ -357,9 +358,9 @@ public class UPbFractionEditorDialog extends DialogEditor {
     // helper class to manage zircon checkbox
     private class actionIsZirconListener implements ActionListener {
 
-        private FractionI myFraction;
+        private ETFractionInterface myFraction;
 
-        public actionIsZirconListener(FractionI fraction) {
+        public actionIsZirconListener(ETFractionInterface fraction) {
             myFraction = fraction;
         }
 
@@ -368,7 +369,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
             try {
                 restoreFractionFromKwikiChanges(myFraction);
 
-                myFraction.setZircon(((AbstractButton) e.getSource()).isSelected());
+                ((FractionI)myFraction).setZircon(((AbstractButton) e.getSource()).isSelected());
 
                 FireDataReducer(myFraction, true);//nov 2009
                 reInitializeKwikiTab(myFraction);
@@ -381,9 +382,9 @@ public class UPbFractionEditorDialog extends DialogEditor {
     // TODO: could /should use myFraction ?
     private class actionAutoUraniumListener implements ActionListener {
 
-        private FractionI fraction;
+        private ETFractionInterface fraction;
 
-        public actionAutoUraniumListener(FractionI fraction) {
+        public actionAutoUraniumListener(ETFractionInterface fraction) {
             this.fraction = fraction;
         }
 
@@ -406,7 +407,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
             restoreFractionFromKwikiChanges(fraction);
             InitializeFractionData(fraction);
             reInitializeKwikiTab(fraction);
-            
+
             // bring into view
             ((PlottingDetailsDisplayInterface) concordiaGraphPanel).resetPanel();
         }
@@ -414,7 +415,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
         /**
          * @param fraction the fraction to set
          */
-        public void setFraction(FractionI fraction) {
+        public void setFraction(ETFractionInterface fraction) {
             this.fraction = fraction;
         }
     }
@@ -422,9 +423,9 @@ public class UPbFractionEditorDialog extends DialogEditor {
     // helper class to manage reset all values
     private class actionResetSlidersListener implements ActionListener {
 
-        private FractionI fraction;
+        private ETFractionInterface fraction;
 
-        public actionResetSlidersListener(FractionI fraction) {
+        public actionResetSlidersListener(ETFractionInterface fraction) {
             this.fraction = fraction;
         }
 
@@ -436,16 +437,16 @@ public class UPbFractionEditorDialog extends DialogEditor {
         /**
          * @param fraction the fraction to set
          */
-        public void setFraction(FractionI fraction) {
+        public void setFraction(ETFractionInterface fraction) {
             this.fraction = fraction;
         }
     }
 
     private class KwikiDateModesSelectorListener implements PropertyChangeListener {
 
-        private FractionI fraction;
+        private ETFractionInterface fraction;
 
-        public KwikiDateModesSelectorListener(FractionI fraction) {
+        public KwikiDateModesSelectorListener(ETFractionInterface fraction) {
             this.fraction = fraction;
         }
 
@@ -478,7 +479,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
         /**
          * @param fraction the fraction to set
          */
-        public void setFraction(FractionI fraction) {
+        public void setFraction(ETFractionInterface fraction) {
             this.fraction = fraction;
         }
     }
@@ -493,7 +494,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
         staceyKramerCalculator_Panel.setVisible(false);
     }
 
-    private UncertaintyZoomLayer GenerateUncertaintyZoomLayer(String dateName, String mode, FractionI fraction) {
+    private UncertaintyZoomLayer GenerateUncertaintyZoomLayer(String dateName, String mode, ETFractionInterface fraction) {
         ReductionHandler rh = ((UPbFraction) fraction).getReductionHandler();
 
 //       File matrixFile = new File( "TESTING_ZOOOOOM_" + dateName + "_" + mode + ".txt" );
@@ -542,7 +543,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
      *
      * @param fraction
      */
-    public void reInitializeKwikiTab(FractionI fraction) {
+    public void reInitializeKwikiTab(ETFractionInterface fraction) {
 
         boolean reducerExists = ((UPbFraction) fraction).getReductionHandler() != null;
 
@@ -593,7 +594,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
      *
      * @param fraction
      */
-    public void InitializeKwikiTab(final FractionI fraction) {
+    public void InitializeKwikiTab(final ETFractionInterface fraction) {
 
         kwikiTab.removeAll();
 
@@ -718,7 +719,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
 
     }
 
-    private void initializeFullFractionKwiki(FractionI fraction) {
+    private void initializeFullFractionKwiki(ETFractionInterface fraction) {
         ValueModel[] listDates = ListDates(fraction, false);
         setShowDates(new boolean[]{listDates[0].hasPositiveValue(), listDates[1].hasPositiveValue(), listDates[2].hasPositiveValue()});
 
@@ -757,13 +758,13 @@ public class UPbFractionEditorDialog extends DialogEditor {
         date207_206rUncertainties.setVisible(showDates[2]);
 
         // if (reducerExists) {
-        Vector<FractionI> selectedFractions = new Vector<>();
+        Vector<ETFractionInterface> selectedFractions = new Vector<>();
         selectedFractions.add(fraction);
         ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
                 setSelectedFractions(selectedFractions);
 
         // now get all the other fractions and make them deselected
-        Vector<FractionI> deSelectedFractions =//
+        Vector<ETFractionInterface> deSelectedFractions =//
                 ((UPbReduxAliquot) aliquot).getActiveAliquotFractions();
         deSelectedFractions.remove(fraction);
         ((ConcordiaGraphPanel) concordiaGraphPanel).//
@@ -813,7 +814,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
 
     }
 
-    private void drawSlidersByClump(final FractionI fraction) {
+    private void drawSlidersByClump(final ETFractionInterface fraction) {
         PropertyChangeListener kwikiValueChangeListener =//
                 new PropertyChangeListener() {
 
@@ -893,7 +894,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
 
     }
 
-    private void resetKwikiTabValues(FractionI fraction) {
+    private void resetKwikiTabValues(ETFractionInterface fraction) {
 
         if (((UPbFraction) fraction).getReductionHandler() != null) {
             restoreFractionFromKwikiChanges(fraction);
@@ -905,9 +906,9 @@ public class UPbFractionEditorDialog extends DialogEditor {
 
     }
 
-    private void restoreFractionFromKwikiChanges(FractionI fraction) {
+    private void restoreFractionFromKwikiChanges(ETFractionInterface fraction) {
 
-        fraction.setZircon(savedZirconStateOfFraction);
+        ((FractionI)fraction).setZircon(savedZirconStateOfFraction);
 
         if (((UPbFraction) fraction).getReductionHandler() != null) {
             // conserve
@@ -926,7 +927,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
 
     }
 
-    private void renewDisplay(FractionI fraction) {
+    private void renewDisplay(ETFractionInterface fraction) {
         if (((UPbFraction) fraction).getReductionHandler() != null) {
 
             try {
@@ -965,7 +966,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
         }
     }
 
-    private ValueModel[] ListDates(FractionI fraction, boolean copyValues) {
+    private ValueModel[] ListDates(ETFractionInterface fraction, boolean copyValues) {
         ValueModel[] retval = new ValueModel[3];
 
         try {
@@ -1000,7 +1001,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
         return retval;
     }
 
-    private void FireDataReducer(FractionI fraction, boolean calculateCovariances) {
+    private void FireDataReducer(ETFractionInterface fraction, boolean calculateCovariances) {
 
         //if (reductionHandlerExists) {
         // currently non-static call on purpose - jfb
@@ -1008,7 +1009,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
         //}
     }
 
-    private void InitializeTextBoxes(final FractionI myFraction) {
+    private void InitializeTextBoxes(final ETFractionInterface myFraction) {
 
         // Determine whether the Pb and U data are editable based on presence of source files
         // April 2009 decided to make this more restrictive
@@ -1159,8 +1160,8 @@ public class UPbFractionEditorDialog extends DialogEditor {
             }
         });
 
-        fractionIsOxide_rb.setEnabled(!((UPbFraction) myFraction).hasXMLUSourceFile());
-        r18O_16OUsed_textOnUTab.setEnabled(!((UPbFraction) myFraction).hasXMLUSourceFile());
+        fractionIsOxide_rb.setEnabled(!((UPbFractionI) myFraction).hasXMLUSourceFile());
+        r18O_16OUsed_textOnUTab.setEnabled(!((UPbFractionI) myFraction).hasXMLUSourceFile());
         fractionIsOxide_rb.addActionListener(new ActionListener() {
 
             @Override
@@ -1226,7 +1227,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
             mineralNameChooser.addItem(MineralTypes.values()[i].getName());
         }
 
-        mineralNameChooser.setSelectedItem(myFraction.getMineralName());
+        mineralNameChooser.setSelectedItem(((FractionI)myFraction).getMineralName());
         mineralNameChooser.setEnabled(!isCompiled());
 
         // setting type
@@ -1235,7 +1236,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
             settingTypeChooser.addItem(DataDictionary.SettingType[i]);
         }
 
-        settingTypeChooser.setSelectedItem(((UPbFractionI)myFraction).getSettingType());
+        settingTypeChooser.setSelectedItem(((FractionI) myFraction).getSettingType());
         settingTypeChooser.setEnabled(!isCompiled());
 
         countOfGrains_text.setDocument(new IntegerDocument(countOfGrains_text, !isCompiled()));
@@ -1427,12 +1428,12 @@ public class UPbFractionEditorDialog extends DialogEditor {
 ////////
 ////////    //*******************************************************************************************************************************************
 
-    private void showSavedData(FractionI myFraction) {
+    private void showSavedData(ETFractionInterface myFraction) {
 
         // header panel
         fractionID_text.setText(myFraction.getFractionID());
 
-        fractionIsZircon_CheckBox.setSelected(myFraction.isZircon());
+        fractionIsZircon_CheckBox.setSelected(((FractionI)myFraction).isZircon());
 
         fractionMass_text.setText(myFraction.getAnalysisMeasure(AnalysisMeasures.fractionMass.getName()).//
                 getValue().setScale(ReduxConstants.DEFAULT_PARAMETERS_SCALE, RoundingMode.HALF_UP).toPlainString());
@@ -1607,17 +1608,17 @@ public class UPbFractionEditorDialog extends DialogEditor {
             new ETWarningDialog(ex).setVisible(true);
         }
 
-        setVisibleInitialPbTabComponents(!myFraction.isZircon());
+        setVisibleInitialPbTabComponents(!((FractionI)myFraction).isZircon());
         //populateInitialPbModelFields( myFraction );
 
         // publication details
-        mineralNameChooser.setSelectedItem(myFraction.getMineralName());
-        settingTypeChooser.setSelectedItem(myFraction.getSettingType());
+        mineralNameChooser.setSelectedItem(((FractionI)myFraction).getMineralName());
+        settingTypeChooser.setSelectedItem(((FractionI)myFraction).getSettingType());
         countOfGrains_text.setText(String.valueOf(myFraction.getNumberOfGrains()));
-        physicallyAbraded_chkBox.setSelected(((UPbFractionI)myFraction).isPhysicallyAbraded());
-        leachedInHFAcid_chkBox.setSelected(((UPbFractionI)myFraction).isLeachedInHFAcid());
-        annealedChemicallyAbraded_chkBox.setSelected(((UPbFractionI)myFraction).isAnnealedAndChemicallyAbraded());
-        chemicallyPurifiedUPb_chkBox.setSelected(((UPbFractionI)myFraction).isChemicallyPurifiedUPb());
+        physicallyAbraded_chkBox.setSelected(((UPbFractionI) myFraction).isPhysicallyAbraded());
+        leachedInHFAcid_chkBox.setSelected(((UPbFractionI) myFraction).isLeachedInHFAcid());
+        annealedChemicallyAbraded_chkBox.setSelected(((UPbFractionI) myFraction).isAnnealedAndChemicallyAbraded());
+        chemicallyPurifiedUPb_chkBox.setSelected(((UPbFractionI) myFraction).isChemicallyPurifiedUPb());
         fractionComment_text.setText(myFraction.getAnalysisFractionComment());
 
         publicationTimeStamp_text.setText(myFraction.getTimeStamp().toString());
@@ -1674,7 +1675,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
         PbBlankChooser.setEnabled(!isCompiled());
     }
 
-    private void PopulateCorrectionsTab(FractionI myFraction) {
+    private void PopulateCorrectionsTab(ETFractionInterface myFraction) {
         // corrections tab
         pbFracCorrTechnique1_label.setBorder(null);
         pbFracCorrTechnique2_label.setBorder(null);
@@ -1703,7 +1704,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
         // handle alpha pb - see logic in UPbFractionReducer ******************
         if (((UPbFractionI) myFraction).hasMeasuredLead()) {
             // perform analysis to determine which of the four techniques applies
-            if (!((UPbFractionI)myFraction).isFractionationCorrectedPb()) {
+            if (!((UPbFractionI) myFraction).isFractionationCorrectedPb()) {
                 if (getMyFraction().getMeasuredRatioByName(MeasuredRatios.r202_205m.getName()).hasPositiveValue()) {
                     // case 2 display calculated values
                     alphaPbCalculatedFromMeans_text.setText(myFraction.getAnalysisMeasure(AnalysisMeasures.alphaPb.getName()).
@@ -1737,7 +1738,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
         // AlphaU - this logic is repeated in UPbFractionReducer, which calculates actual values       
         String tracerType = ((UPbFraction) getMyFraction()).getTracerType().trim();
 
-        if (((UPbFractionI)myFraction).isFractionationCorrectedU()) {
+        if (((UPbFractionI) myFraction).isFractionationCorrectedU()) {
             // case 1 display fractionation corrected mean from Tripoli
             meanAlphaUImported_text.setText(((UPbFraction) myFraction).getMeanAlphaU().movePointRight(2).
                     setScale(ReduxConstants.DEFAULT_CONSTANTS_SCALE, RoundingMode.HALF_UP).toPlainString());
@@ -1793,7 +1794,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
                 getOneSigma().setScale(ReduxConstants.DEFAULT_DEFAULTS_SCALE, RoundingMode.HALF_UP).toPlainString());
     }
 
-    private void populateInitialPbModelFields(FractionI myFraction) {
+    private void populateInitialPbModelFields(ETFractionInterface myFraction) {
 
         PbBlank_Mass_text.setText(myFraction.getAnalysisMeasure(AnalysisMeasures.pbBlankMassInGrams.getName()).getValue().
                 multiply(ReduxConstants.PicoGramsPerGram).//
@@ -1812,7 +1813,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
 
             // update staceykramers here
             if (initialPbModel instanceof StaceyKramersInitialPbModelET) {
-                myFraction.calculateStaceyKramersInitialPbModelValues();
+                ((FractionI)myFraction).calculateStaceyKramersInitialPbModelValues();
             }
 
             initialPbModel.initializeModel();
@@ -1885,9 +1886,9 @@ public class UPbFractionEditorDialog extends DialogEditor {
     class InitialPbModelItemListener implements ItemListener {
         // This method is called only if a new item has been selected.
 
-        private FractionI myFraction;
+        private ETFractionInterface myFraction;
 
-        public InitialPbModelItemListener(FractionI fraction) {
+        public InitialPbModelItemListener(ETFractionInterface fraction) {
             this.myFraction = fraction;
         }
 
@@ -1913,9 +1914,9 @@ public class UPbFractionEditorDialog extends DialogEditor {
     class blankItemListener implements ItemListener {
         // This method is called only if a new item has been selected.
 
-        private FractionI myFraction;
+        private ETFractionInterface myFraction;
 
-        public blankItemListener(FractionI fraction) {
+        public blankItemListener(ETFractionInterface fraction) {
             this.myFraction = fraction;
         }
 
@@ -1942,9 +1943,9 @@ public class UPbFractionEditorDialog extends DialogEditor {
     class tracerItemListener implements ItemListener {
         // This method is called only if a new item has been selected.
 
-        private FractionI myFraction;
+        private ETFractionInterface myFraction;
 
-        public tracerItemListener(FractionI fraction) {
+        public tracerItemListener(ETFractionInterface fraction) {
             this.myFraction = fraction;
         }
 
@@ -1970,7 +1971,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
         }
     }
 
-    private void save(FractionI myFraction)
+    private void save(ETFractionInterface myFraction)
             throws ETException {
         // check to see if fractionid is in use
         if (!myFraction.getFractionID().equals(fractionID_text.getText())) {
@@ -1983,7 +1984,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
         fractionIDs.add(fractionID_text.getText());
         fractionIDs.remove(myFraction.getFractionID());
 
-        savedZirconStateOfFraction = myFraction.isZircon();
+        savedZirconStateOfFraction = ((FractionI)myFraction).isZircon();
 
         try {
             resetKwikiTabValues(myFraction);
@@ -1995,8 +1996,8 @@ public class UPbFractionEditorDialog extends DialogEditor {
 
         // feb 2009
         // test for zircon state change for ReductionHandler
-        if (myFraction.isZircon() != fractionIsZircon_CheckBox.isSelected()) {
-            myFraction.setZircon(fractionIsZircon_CheckBox.isSelected());
+        if (((FractionI)myFraction).isZircon() != fractionIsZircon_CheckBox.isSelected()) {
+            ((FractionI)myFraction).setZircon(fractionIsZircon_CheckBox.isSelected());
             ((UPbFraction) myFraction).initializeReductionHandler();
         }
 
@@ -2126,15 +2127,15 @@ public class UPbFractionEditorDialog extends DialogEditor {
                     setOneSigma(new BigDecimal(pbBlankMassOneSigma_text.getText()).movePointLeft(12));
 
             // publication details
-            myFraction.setMineralName((String) mineralNameChooser.getSelectedItem());
-            ((UPbFractionI)myFraction).setSettingType((String) settingTypeChooser.getSelectedItem());
+            ((FractionI)myFraction).setMineralName((String) mineralNameChooser.getSelectedItem());
+            ((FractionI) myFraction).setSettingType((String) settingTypeChooser.getSelectedItem());
             myFraction.setNumberOfGrains(Integer.parseInt(countOfGrains_text.getText()));
 
-            ((UPbFractionI)myFraction).setPhysicallyAbraded(physicallyAbraded_chkBox.isSelected());
-            ((UPbFractionI)myFraction).setLeachedInHFAcid(leachedInHFAcid_chkBox.isSelected());
-            ((UPbFractionI)myFraction).setAnnealedAndChemicallyAbraded(annealedChemicallyAbraded_chkBox.isSelected());
-            ((UPbFractionI)myFraction).setChemicallyPurifiedUPb(chemicallyPurifiedUPb_chkBox.isSelected());
-            ((UPbFractionI)myFraction).setAnalysisFractionComment(fractionComment_text.getText());
+            ((FractionI) myFraction).setPhysicallyAbraded(physicallyAbraded_chkBox.isSelected());
+            ((FractionI) myFraction).setLeachedInHFAcid(leachedInHFAcid_chkBox.isSelected());
+            ((FractionI) myFraction).setAnnealedAndChemicallyAbraded(annealedChemicallyAbraded_chkBox.isSelected());
+            ((FractionI) myFraction).setChemicallyPurifiedUPb(chemicallyPurifiedUPb_chkBox.isSelected());
+            ((FractionI) myFraction).setAnalysisFractionComment(fractionComment_text.getText());
 
         } catch (NumberFormatException ex) {
             throw new ETException(
@@ -2154,7 +2155,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
 
     }
 
-    private void saveUraniumRatios(FractionI myFraction) {
+    private void saveUraniumRatios(ETFractionInterface myFraction) {
         myFraction.getMeasuredRatioByName(MeasuredRatios.r238_235m.getName()).setValue(new BigDecimal(r238_235_text.getText()));
         myFraction.getMeasuredRatioByName(MeasuredRatios.r238_235m.getName()).setOneSigma(new BigDecimal(e238_235_text.getText()));
 
@@ -2187,7 +2188,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
         }
     }
 
-    private boolean ExportUPbFractionPerInputSchema(FractionI myFraction) {
+    private boolean ExportUPbFractionPerInputSchema(ETFractionInterface myFraction) {
 
         resetKwikiTabValues(myFraction);
 
@@ -2250,7 +2251,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
      *
      * @return
      */
-    public FractionI getMyFraction() {
+    public ETFractionInterface getMyFraction() {
         return myFraction;
     }
 
@@ -2258,7 +2259,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
      *
      * @param myFraction
      */
-    public void setMyFraction(FractionI myFraction) {
+    public void setMyFraction(ETFractionInterface myFraction) {
         this.myFraction = myFraction;
     }
 
@@ -2473,7 +2474,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
         fractionID_text = new javax.swing.JTextField();
         fractionMassInGrams_label = new javax.swing.JLabel();
         fractionIsZircon_CheckBox = new javax.swing.JCheckBox();
-        fraction_Chooser = new javax.swing.JComboBox<FractionI>();
+        fraction_Chooser = new javax.swing.JComboBox<ETFractionInterface>();
         fractionID_label1 = new javax.swing.JLabel();
         toggleStartStopLiveUpdate_button = new javax.swing.JButton();
         fractionID_label = new javax.swing.JLabel();
@@ -4354,7 +4355,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
             Runtime.getRuntime().exec(
                     new String[]{"open", "-e", ((UPbFraction) myFraction).getSourceFilePb()});
         } catch (IOException ex) {
-            ex.printStackTrace();
+//            ex.printStackTrace();
         }
     }//GEN-LAST:event_sourcePbFileOpenActionPerformed
 
@@ -4363,7 +4364,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
             Runtime.getRuntime().exec(
                     new String[]{"open", "-e", ((UPbFraction) myFraction).getSourceFileU()});
         } catch (IOException ex) {
-            ex.printStackTrace();
+//            ex.printStackTrace();
         }
     }//GEN-LAST:event_sourceUFileOpenActionPerformed
 
@@ -4408,7 +4409,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
      * @param myFraction
      * @return
      */
-    public boolean restoreAllFractions(FractionI myFraction) {
+    public boolean restoreAllFractions(ETFractionInterface myFraction) {
         boolean savedAutoUraniumStateOfMyFraction = false;
 
         restoreFractionFromKwikiChanges(myFraction);
@@ -4421,7 +4422,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
         FireDataReducer(myFraction, true);
 
         // for every fraction
-        for (FractionI f : ((UPbReduxAliquot) aliquot).getAliquotFractions()) {
+        for (ETFractionInterface f : ((UPbReduxAliquot) aliquot).getAliquotFractions()) {
             if (((UPbFraction) f).isInAutoUraniumMode()) {
                 ((UPbFraction) f).zeroUraniumRatios();
 
@@ -4443,8 +4444,8 @@ public class UPbFractionEditorDialog extends DialogEditor {
                 JOptionPane.WARNING_MESSAGE);
         switch (response) {
             case JOptionPane.YES_OPTION:
-                ((UPbFraction) myFraction).setChanged(true);
-                ((UPbFraction) myFraction).setDeleted(true);
+                myFraction.setChanged(true);
+                myFraction.setDeleted(true);
             case JOptionPane.CANCEL_OPTION:
                 close();
             case JOptionPane.NO_OPTION:
@@ -4493,7 +4494,7 @@ private void toggleStartStopLiveUpdate_buttonActionPerformed(java.awt.event.Acti
 
 }//GEN-LAST:event_toggleStartStopLiveUpdate_buttonActionPerformed
 
-    private void selectImageFile(FractionI myFraction) throws BadLabDataException {
+    private void selectImageFile(ETFractionInterface myFraction) throws BadLabDataException {
         String dialogTitle = "Select a fraction image: *.gif, *.jpeg";
         final String fileExtension = ".gif | .jpeg | .jpg";
         FileFilter nonMacFileFilter = new FileFilter() {
@@ -4536,7 +4537,7 @@ private void toggleStartStopLiveUpdate_buttonActionPerformed(java.awt.event.Acti
      *
      * @param myFraction
      */
-    public void displayThumbnailForFraction(FractionI myFraction) {
+    public void displayThumbnailForFraction(ETFractionInterface myFraction) {
 
         imageThumbnail_label.setText("No image selected");
         imageThumbnail_label.setIcon(null);
@@ -4606,7 +4607,7 @@ private void r18O_16OUsed_textOnUTabFocusLost (java.awt.event.FocusEvent evt) {/
     }
 }//GEN-LAST:event_r18O_16OUsed_textOnUTabFocusLost
 
-    private void showLabDefaultFractionArchivingData(FractionI myFraction) {
+    private void showLabDefaultFractionArchivingData(ETFractionInterface myFraction) {
 
         ReduxLabData myLabData = ((UPbFraction) myFraction).getMyLabData();
 
@@ -4637,7 +4638,7 @@ private void r18O_16OUsed_textOnUTabFocusLost (java.awt.event.FocusEvent evt) {/
     }//GEN-LAST:event_testSingleDisplayActionPerformed
 
     private void useLabDefaults_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_useLabDefaults_buttonActionPerformed
-        showLabDefaultFractionArchivingData( (FractionI) fraction_Chooser.getSelectedItem() );
+        showLabDefaultFractionArchivingData((FractionI) fraction_Chooser.getSelectedItem());
     }//GEN-LAST:event_useLabDefaults_buttonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -4709,7 +4710,7 @@ private void r18O_16OUsed_textOnUTabFocusLost (java.awt.event.FocusEvent evt) {/
     private javax.swing.JTextField fractionMass_text;
     private javax.swing.ButtonGroup fractionMetalOrOxide_bg;
     private javax.swing.JPanel fractionPanel;
-    private javax.swing.JComboBox<FractionI> fraction_Chooser;
+    private javax.swing.JComboBox<ETFractionInterface> fraction_Chooser;
     private javax.swing.JTabbedPane historyPbPane;
     private javax.swing.JTabbedPane historyUPane;
     private javax.swing.JPanel imageThumbnail_Panel;

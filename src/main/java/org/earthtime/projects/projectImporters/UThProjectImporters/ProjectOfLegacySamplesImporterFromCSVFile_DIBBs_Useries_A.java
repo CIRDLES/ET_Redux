@@ -86,12 +86,16 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_DIBBs_Useries_A extends A
                     if (savedSourceID.equalsIgnoreCase(sourceID)) {
 
                         String sampleID = myFractionData.get(2);
-                        if (sampleID.equalsIgnoreCase("")) {
+                        if (!savedSampleID.equalsIgnoreCase(sampleID)) {
                             savedSampleID = sampleID;
-                        }
-                        if (savedSampleID.equalsIgnoreCase(sampleID)) {
-                            // existing sample
-                        } else {
+
+                            // process existing if not first;
+                            if ((currentSample != null) && (currentAliquot != null)) {
+                                // this forces population of aliquot fractions
+                                SampleInterface.copyAliquotIntoSample(currentSample.getAliquotByName(currentAliquot.getAliquotName()), project.getSuperSample());
+                                currentSample = null;
+                            }
+
                             // new sample
                             try {
                                 currentSample = new Sample(//
@@ -113,21 +117,20 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_DIBBs_Useries_A extends A
 
                         // process fractions
                         ETFractionInterface myFraction = new UThFraction();
-//
-//                        ((UPbFractionI) myFraction).setRatioType("UPb");
-//
-//                        String fractionNamePart1 = myFractionData.get(1);
-//                        String fractionNamePart2 = myFractionData.get(2);
-//                        String fractionNamePart3 = myFractionData.get(3);
-//                        String fractionID = //
-//                                ((fractionNamePart1.length() == 0) ? "" : (fractionNamePart1 + ".")) //
-//                                + fractionNamePart2 //
-//                                + ((fractionNamePart3.length() == 0) ? "" : ("." + fractionNamePart3));
-//
-//                        myFraction.setFractionID(fractionID);
-//                        myFraction.setGrainID(fractionID);
-                    }
+                        myFraction.setFractionID(myFractionData.get(3));
+                        myFraction.setGrainID(myFractionData.get(3));
+
+                        myFraction.setSampleName(currentSample.getSampleName());
+                        currentSample.addFraction(myFraction);
+
+                    }// end of checking if same source
                 }
+            }
+
+            // end of file
+            if ((currentSample != null) && (currentAliquot != null)) {
+                // this forces population of aliquot fractions
+                SampleInterface.copyAliquotIntoSample(currentSample.getAliquotByName(currentAliquot.getAliquotName()), project.getSuperSample());
             }
 
         } catch (IOException iOException) {

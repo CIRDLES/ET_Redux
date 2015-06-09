@@ -36,10 +36,12 @@ import org.earthtime.UPb_Redux.reduxLabData.labEquipmentSettings.LabEquipmentSet
 import org.earthtime.UPb_Redux.reports.ReportSettings;
 import org.earthtime.UPb_Redux.utilities.ETSerializer;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
+import org.earthtime.UTh_Redux.fractions.UThFractionI;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.dataDictionaries.DataDictionary;
 import org.earthtime.dataDictionaries.MineralTypes;
 import org.earthtime.exceptions.ETException;
+import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.initialPbModelsET.InitialPbModelET;
 import org.earthtime.ratioDataModels.mineralStandardModels.MineralStandardUPbModel;
@@ -325,7 +327,7 @@ public final class ReduxLabData implements Serializable {
                 }
                 if (instance == null) {
                     instance = new ReduxLabData();
-                }                
+                }
             }
         }
         return instance;
@@ -1554,23 +1556,27 @@ public final class ReduxLabData implements Serializable {
      *
      * @param fraction
      */
-    public void registerFractionWithLabData(FractionI fraction) {
+    public void registerFractionWithLabData(ETFractionInterface fraction) {
 
-        registerTracer(//
-                ((UPbFractionI) fraction).getTracer(), false);
+        if (fraction instanceof UThFractionI) {
+            // june 2015 do nothing for now
+        } else {
+            registerTracer(//
+                    ((UPbFractionI) fraction).getTracer(), false);
 
-        // may be null if coming from imported aliquot and register will catch it
-        registerAlphaPbModel(((UPbFractionI) fraction).getAlphaPbModel(), false);
+            // may be null if coming from imported aliquot and register will catch it
+            registerAlphaPbModel(((UPbFractionI) fraction).getAlphaPbModel(), false);
 
-        // may be null if coming from imported aliquot and register will catch it
-        registerAlphaUModel(((UPbFractionI) fraction).getAlphaUModel(), false);
+            // may be null if coming from imported aliquot and register will catch it
+            registerAlphaUModel(((UPbFractionI) fraction).getAlphaUModel(), false);
 
-        registerPbBlank(
-                ((UPbFractionI) fraction).getPbBlank(), false);
-        registerInitialPbModel(
-                ((UPbFractionI) fraction).getInitialPbModel(), false);
-        registerPhysicalConstantsModel(
-                fraction.getPhysicalConstantsModel(), false);
+            registerPbBlank(
+                    ((UPbFractionI) fraction).getPbBlank(), false);
+            registerInitialPbModel(
+                    ((FractionI) fraction).getInitialPbModel(), false);
+            registerPhysicalConstantsModel(
+                    fraction.getPhysicalConstantsModel(), false);
+        }
 
         // TODO register mineral standards, reportsettings
         // but these are not fraction-level

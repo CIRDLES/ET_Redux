@@ -124,6 +124,7 @@ public class AnalysisFraction extends Fraction implements
      *
      * @param filename
      */
+    @Override
     public void serializeXMLObject ( String filename ) {
 
         XStream xstream = getXStreamWriter();
@@ -139,17 +140,16 @@ public class AnalysisFraction extends Fraction implements
                 + "\"" );
 
         try {
-            FileWriter outFile = new FileWriter( filename );
-            PrintWriter out = new PrintWriter( outFile );
-
-            // Write xml to file
-            out.println( xml );
-            out.flush();
-            out.close();
-            outFile.close();
+            try (FileWriter outFile = new FileWriter( filename )) {
+                PrintWriter out = new PrintWriter( outFile );
+                
+                // Write xml to file
+                out.println( xml );
+                out.flush();
+                out.close();
+            }
 
         } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
@@ -162,6 +162,7 @@ public class AnalysisFraction extends Fraction implements
      * @throws ETException
      * @throws BadOrMissingXMLSchemaException
      */
+    @Override
     public Object readXMLObject ( String filename, boolean doValidate )
             throws FileNotFoundException,
             ETException,
@@ -367,11 +368,6 @@ public class AnalysisFraction extends Fraction implements
 
     @Override
     public void setEllipseRho(double ellipseRho) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void setSelectedInDataTable(boolean selectedInDataTable) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

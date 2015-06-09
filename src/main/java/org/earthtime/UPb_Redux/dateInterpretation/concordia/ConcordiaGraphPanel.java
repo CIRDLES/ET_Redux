@@ -70,7 +70,6 @@ import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.HeatMapLegend
 import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.TitleBoxPanel;
 import org.earthtime.UPb_Redux.dialogs.graphManagers.GraphAxesDialog;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
-import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.reports.reportViews.ReportUpdaterInterface;
@@ -83,6 +82,7 @@ import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.dataDictionaries.Lambdas;
 import org.earthtime.dataDictionaries.RadRatiosPbcCorrected;
 import org.earthtime.exceptions.ETWarningDialog;
+import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.samples.SampleInterface;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
@@ -104,8 +104,8 @@ public class ConcordiaGraphPanel extends JLayeredPane
     private ValueModel lambda235;
     private ValueModel lambda238;
     private ValueModel lambda232;
-    private Vector<FractionI> selectedFractions;
-    private Vector<FractionI> excludedFractions;
+    private Vector<ETFractionInterface> selectedFractions;
+    private Vector<ETFractionInterface> excludedFractions;
     private double minT;
     private double maxT;
     private boolean showConcordiaErrorBars;
@@ -496,8 +496,8 @@ public class ConcordiaGraphPanel extends JLayeredPane
         // paint de-selected fractions first 
         // paint fills first
         if (showExcludedEllipses) {
-            for (FractionI f : excludedFractions) {
-                if (!((UPbFractionI) f).isRejected() && !(isDisplay_PbcCorr() && !((UPbFractionI) f).isCommonLeadLossCorrected())) {
+            for (ETFractionInterface f : excludedFractions) {
+                if (!f.isRejected() && !(isDisplay_PbcCorr() && !((UPbFractionI) f).isCommonLeadLossCorrected())) {
                     // determine aliquot for colors etc.
                     String aliquotName = sample.getNameOfAliquotFromSample(f.getAliquotNumber());
                     Map<String, String> myAliquotOptions = getAliquotOptions().get(aliquotName);
@@ -519,7 +519,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
                             f,
                             ellipseSize);
 
-                    if (((UPbFractionI) f).getErrorEllipsePath() != null) {
+                    if (f.getErrorEllipsePath() != null) {
                         plotAFractionFillOnly(
                                 g2d,
                                 svgStyle,
@@ -534,7 +534,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
 
         // repeat for excluded fractions the borders etc
         if (showExcludedEllipses) {
-            for (FractionI f : excludedFractions) {
+            for (ETFractionInterface f : excludedFractions) {
                 if (!f.isRejected() && !(isDisplay_PbcCorr() && !((UPbFractionI) f).isCommonLeadLossCorrected())) {
                     // determine aliquot for colors etc.
                     String aliquotName = sample.getNameOfAliquotFromSample(f.getAliquotNumber());
@@ -564,7 +564,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
                         excludedCenterSize = Float.valueOf(myAliquotOptions.get("excludedCenterSize"));
                     }
 
-                    if (((UPbFractionI) f).getErrorEllipsePath() != null) {
+                    if (f.getErrorEllipsePath() != null) {
                         plotAFraction(
                                 g2d,
                                 svgStyle,
@@ -582,7 +582,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
         }// END excluded FRACTIONS *************************************
 
         // selected fractions fill only 
-        for (FractionI f : selectedFractions) {
+        for (ETFractionInterface f : selectedFractions) {
             if (!f.isRejected() && !(isDisplay_PbcCorr() && !((UPbFractionI) f).isCommonLeadLossCorrected())) {
                 // determine aliquot for colors etc.
                 String aliquotName = sample.getNameOfAliquotFromSample(f.getAliquotNumber());
@@ -610,7 +610,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
                         f,
                         ellipseSize);
 
-                if (((UPbFractionI) f).getErrorEllipsePath() != null) {
+                if (f.getErrorEllipsePath() != null) {
                     plotAFractionFillOnly(
                             g2d,
                             svgStyle,
@@ -622,7 +622,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
             }
         }
 
-        for (FractionI f : selectedFractions) {
+        for (ETFractionInterface f : selectedFractions) {
             if (!f.isRejected() && !(isDisplay_PbcCorr() && !((UPbFractionI) f).isCommonLeadLossCorrected())) {
                 // determine aliquot for colors etc.
                 String aliquotName = sample.getNameOfAliquotFromSample(f.getAliquotNumber());
@@ -657,7 +657,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
                     includedBorderColor = new Color(f.getRgbColor());
                 }
 
-                if (((UPbFractionI) f).getErrorEllipsePath() != null) {
+                if (f.getErrorEllipsePath() != null) {
                     plotAFraction(
                             g2d,
                             svgStyle,
@@ -1174,7 +1174,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
     private void plotAFraction(
             Graphics2D g2d,
             boolean svgStyle,
-            FractionI f,
+            ETFractionInterface f,
             Color borderColor,
             float borderWeight,
             Color centerColor,
@@ -1182,7 +1182,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
             String ellipseLabelFont,
             String ellipseLabelFontSize) {
 
-        Path2D ellipse = ((UPbFractionI) f).getErrorEllipsePath();
+        Path2D ellipse = f.getErrorEllipsePath();
         if (svgStyle) {
             // generate file if necessary to handle weakness in Batik
         } else {
@@ -1231,13 +1231,13 @@ public class ConcordiaGraphPanel extends JLayeredPane
             // locate label based on tilt of ellipse as represented by rho
             float labelY;
             float labelX;
-            if (((UPbFractionI) f).getEllipseRho() < 0) {
+            if (f.getEllipseRho() < 0) {
                 labelY = (float) (ellipse.getBounds().getY() //
-                        + ellipse.getBounds().getHeight() - (1.0 + ((UPbFractionI) f).getEllipseRho()) * ellipse.getBounds().getHeight() / 4.0 + 15f);
+                        + ellipse.getBounds().getHeight() - (1.0 + f.getEllipseRho()) * ellipse.getBounds().getHeight() / 4.0 + 15f);
                 labelX = (float) (ellipse.getBounds().getX() + ellipse.getBounds().getWidth() - 6f);
             } else {
                 labelY = (float) (ellipse.getBounds().getY() //
-                        + (1.0 - ((UPbFractionI) f).getEllipseRho()) * ellipse.getBounds().getHeight() / 2.0);
+                        + (1.0 - f.getEllipseRho()) * ellipse.getBounds().getHeight() / 2.0);
                 labelX = (float) (ellipse.getBounds().getX() + ellipse.getBounds().getWidth() + 2f);
             }
 
@@ -1247,7 +1247,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
     }
 
     private void generateEllipsePathIII(
-            FractionI f,
+            ETFractionInterface f,
             double ellipseSize) {
 
         ValueModel xAxisRatio = null;
@@ -1413,12 +1413,12 @@ public class ConcordiaGraphPanel extends JLayeredPane
             if (ellipse.getBounds().intersects(//
                     getLeftMargin() - 1, getTopMargin() - 1, (int) getGraphWidth() + 2, (int) getGraphHeight() + 2)) {
 
-                ((UPbFractionI) f).setErrorEllipsePath(ellipse);
+                f.setErrorEllipsePath(ellipse);
                 // used for placing ellipse label
-                ((UPbFractionI) f).setEllipseRho(correlationCoefficient.getValue().doubleValue());
+                f.setEllipseRho(correlationCoefficient.getValue().doubleValue());
 
             } else {
-                ((UPbFractionI) f).setErrorEllipsePath(null);
+                f.setErrorEllipsePath(null);
             }
         }
     }
@@ -1429,11 +1429,11 @@ public class ConcordiaGraphPanel extends JLayeredPane
      */
     private void plotAFractionFillOnly(
             Graphics2D g2d, boolean svgStyle,
-            FractionI f,
+            ETFractionInterface f,
             float transparency,
             Color fillColor) {
 
-        Path2D ellipse = ((UPbFractionI) f).getErrorEllipsePath();
+        Path2D ellipse = f.getErrorEllipsePath();
         if (svgStyle) {
             // generate file if necessary to handle weakness in Batik
         } else {
@@ -1623,9 +1623,9 @@ public class ConcordiaGraphPanel extends JLayeredPane
                 rhoTW = "rhoR207_206PbcCorr__r238_206PbcCorr";
             }
 
-            for (FractionI f : selectedFractions) {
+            for (ETFractionInterface f : selectedFractions) {
 
-                if (!((UPbFractionI) f).isRejected() && !(isDisplay_PbcCorr() && !((UPbFractionI) f).isCommonLeadLossCorrected())) {
+                if (!f.isRejected() && !(isDisplay_PbcCorr() && !((UPbFractionI) f).isCommonLeadLossCorrected())) {
                     if (getConcordiaFlavor().equalsIgnoreCase("T-W")) {
                         xAxisRatio = new ValueModel("r238_206r");
                         try {
@@ -1693,8 +1693,8 @@ public class ConcordiaGraphPanel extends JLayeredPane
             }
 
             if (showExcludedEllipses) {
-                for (FractionI f : excludedFractions) {
-                    if (!((UPbFractionI) f).isRejected() && !(isDisplay_PbcCorr() && !((UPbFractionI) f).isCommonLeadLossCorrected())) {
+                for (ETFractionInterface f : excludedFractions) {
+                    if (!f.isRejected() && !(isDisplay_PbcCorr() && !((UPbFractionI) f).isCommonLeadLossCorrected())) {
                         if (getConcordiaFlavor().equalsIgnoreCase("T-W")) {
                             xAxisRatio = new ValueModel("r238_206r");
                             try {
@@ -1848,8 +1848,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
         Writer out = null;
         try {
             out = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
-        } catch (FileNotFoundException fileNotFoundException) {
-        } catch (UnsupportedEncodingException unsupportedEncodingException) {
+        } catch (FileNotFoundException | UnsupportedEncodingException fileNotFoundException) {
         }
         try {
             svgGenerator.stream(out, useCSS);
@@ -1889,7 +1888,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
      * @return
      */
     @Override
-    public Vector<FractionI> getSelectedFractions() {
+    public Vector<ETFractionInterface> getSelectedFractions() {
         return selectedFractions;
     }
 
@@ -1898,7 +1897,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
      * @param fractions
      */
     @Override
-    public void setSelectedFractions(Vector<FractionI> fractions) {
+    public void setSelectedFractions(Vector<ETFractionInterface> fractions) {
         this.selectedFractions = fractions;
 
     }
@@ -2252,7 +2251,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
      * @return
      */
     @Override
-    public Vector<FractionI> getDeSelectedFractions() {
+    public Vector<ETFractionInterface> getDeSelectedFractions() {
         return excludedFractions;
     }
 
@@ -2260,7 +2259,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
      *
      * @param deSelectedFractions
      */
-    public void setDeSelectedFractions(Vector<FractionI> deSelectedFractions) {
+    public void setDeSelectedFractions(Vector<ETFractionInterface> deSelectedFractions) {
         this.excludedFractions = deSelectedFractions;
     }
 

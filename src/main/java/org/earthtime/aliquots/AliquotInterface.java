@@ -26,7 +26,6 @@ import java.util.Vector;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.fractions.FractionI;
-import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.valueModels.SampleDateInterceptModel;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
@@ -202,7 +201,7 @@ public interface AliquotInterface {
      */
     public static void toggleAliquotFractionsRejectedStatus(UPbReduxAliquot aliquot) {
         for (int i = 0; i < aliquot.getAliquotFractions().size(); i++) {
-            ((UPbFractionI) aliquot.getAliquotFractions().get(i)).toggleRejectedStatus();
+            aliquot.getAliquotFractions().get(i).toggleRejectedStatus();
         }
     }
 

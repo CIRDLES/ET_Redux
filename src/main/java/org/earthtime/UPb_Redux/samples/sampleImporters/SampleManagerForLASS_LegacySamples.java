@@ -21,7 +21,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Vector;
 import org.earthtime.UPb_Redux.exceptions.BadImportedCSVLegacyFileException;
-import org.earthtime.UPb_Redux.fractions.FractionI;
+import org.earthtime.fractions.ETFractionInterface;
 
 
 /**
@@ -49,7 +49,7 @@ public class SampleManagerForLASS_LegacySamples //
      * @throws BadImportedCSVLegacyFileException  
      */
     @Override
-    protected Vector<FractionI> extractFractionsFromFile ( File file )
+    protected Vector<ETFractionInterface> extractFractionsFromFile ( File file )
             throws FileNotFoundException, BadImportedCSVLegacyFileException {
 
         return null;

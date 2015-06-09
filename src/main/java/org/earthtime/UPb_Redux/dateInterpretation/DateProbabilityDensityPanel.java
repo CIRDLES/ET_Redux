@@ -66,10 +66,10 @@ import org.earthtime.UPb_Redux.dateInterpretation.concordia.GraphPanelModeChange
 import org.earthtime.UPb_Redux.dateInterpretation.vermeeschKDE.KDE;
 import org.earthtime.UPb_Redux.dateInterpretation.vermeeschKDE.OtherData;
 import org.earthtime.UPb_Redux.dateInterpretation.vermeeschKDE.Preferences;
-import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.user.SampleDateInterpretationGUIOptions;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.dataDictionaries.RadDates;
+import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.samples.SampleInterface;
 import org.earthtime.utilities.TicGeneratorForAxes;
 import org.w3c.dom.DOMImplementation;
@@ -94,8 +94,8 @@ public class DateProbabilityDensityPanel extends JLayeredPane
      */
     protected SampleInterface sample;
     private int selectedAliquotNumber;
-    private Vector<FractionI> selectedFractions;
-    private Vector<FractionI> deSelectedFractions;
+    private Vector<ETFractionInterface> selectedFractions;
+    private Vector<ETFractionInterface> deSelectedFractions;
     /**
      *
      */
@@ -170,8 +170,8 @@ public class DateProbabilityDensityPanel extends JLayeredPane
         this.graphWidth = 775;
         this.graphHeight = 585;
 
-        selectedFractions = new Vector<FractionI>();
-        deSelectedFractions = new Vector<FractionI>();
+        selectedFractions = new Vector<>();
+        deSelectedFractions = new Vector<>();
 
         stackedKernels = new double[0];
         activeStackedKernels = new double[0];
@@ -347,7 +347,7 @@ public class DateProbabilityDensityPanel extends JLayeredPane
 
                     // now remove the deselected fractions
                     activeStackedAliquotKernels = stackedAliquotKernels[selectedAliquotNumber].clone();
-                    for (FractionI f : deSelectedFractions) {
+                    for (ETFractionInterface f : deSelectedFractions) {
                         ValueModel date = f.getRadiogenicIsotopeDateByName(getChosenDateName());
                         KernelF myKernel = new KernelF(date);
                         for (int i = 0; i < pdfPoints.size(); i++) {
@@ -741,7 +741,7 @@ public class DateProbabilityDensityPanel extends JLayeredPane
         for (double i = 0; i < 4001; i++) {
             pdfPoints.add(i);
         }
-        for (FractionI f : selectedFractions) {
+        for (ETFractionInterface f : selectedFractions) {
             // nov 2011 add in tiny amount so that grapher can distinguish between annum and dates based on aaaa.0  vs aaaa.0000001
             pdfPoints.add(f.getRadiogenicIsotopeDateByName(getChosenDateName()).getValue().movePointLeft(6).doubleValue() + 0.0000001);
         }
@@ -763,7 +763,7 @@ public class DateProbabilityDensityPanel extends JLayeredPane
         }
         // end June 2013 experiment with Vermeesch KDE
 
-        for (FractionI f : selectedFractions) {
+        for (ETFractionInterface f : selectedFractions) {
             ValueModel date = f.getRadiogenicIsotopeDateByName(chosenDateName);
 
             // June 2013 experiment with Vermeesch KDE
@@ -1080,7 +1080,7 @@ public class DateProbabilityDensityPanel extends JLayeredPane
     /**
      * @return the deSelectedFractions
      */
-    public Vector<FractionI> getDeSelectedFractions() {
+    public Vector<ETFractionInterface> getDeSelectedFractions() {
         return deSelectedFractions;
     }
 
@@ -1114,7 +1114,7 @@ public class DateProbabilityDensityPanel extends JLayeredPane
     /**
      * @return the selectedFractions
      */
-    public Vector<FractionI> getSelectedFractions() {
+    public Vector<ETFractionInterface> getSelectedFractions() {
         return selectedFractions;
     }
 
@@ -1409,14 +1409,14 @@ public class DateProbabilityDensityPanel extends JLayeredPane
     /**
      * @param selectedFractions the selectedFractions to set
      */
-    public void setSelectedFractions(Vector<FractionI> selectedFractions) {
+    public void setSelectedFractions(Vector<ETFractionInterface> selectedFractions) {
         this.selectedFractions = selectedFractions;
     }
 
     /**
      * @param deSelectedFractions the deSelectedFractions to set
      */
-    public void setDeSelectedFractions(Vector<FractionI> deSelectedFractions) {
+    public void setDeSelectedFractions(Vector<ETFractionInterface> deSelectedFractions) {
         this.deSelectedFractions = deSelectedFractions;
     }
 

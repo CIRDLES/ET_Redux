@@ -20,9 +20,8 @@
 
 package org.earthtime.UPb_Redux.dialogs.fractionManagers;
 
-import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
-import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
+import org.earthtime.fractions.ETFractionInterface;
 
 /**
  *
@@ -30,7 +29,7 @@ import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
  */
 public class FractionNotesDialog extends javax.swing.JDialog {
 
-    private FractionI fraction;
+    private ETFractionInterface fraction;
     /** Creates new form FractionNotesDialog
      * @param parent 
      * @param modal
@@ -39,18 +38,18 @@ public class FractionNotesDialog extends javax.swing.JDialog {
     public FractionNotesDialog(//
             java.awt.Frame parent,
             boolean modal,
-            FractionI fraction) {
+            ETFractionInterface fraction) {
         super(parent, modal);
 
         this.fraction = fraction;
         initComponents();
 
         fractionIDInfo_label.setText(fraction.getFractionID() + "  Notes");
-        fractionNotes_textArea.setText(((UPbFractionI)fraction).getFractionNotes());
+        fractionNotes_textArea.setText(fraction.getFractionNotes());
     }
 
     private void close(){
-        ((UPbFractionI)fraction).setFractionNotes(fractionNotes_textArea.getText());
+        fraction.setFractionNotes(fractionNotes_textArea.getText());
         setVisible(false);
         dispose();
     }

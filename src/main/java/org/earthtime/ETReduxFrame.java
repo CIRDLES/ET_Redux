@@ -98,10 +98,7 @@ import org.earthtime.UPb_Redux.dialogs.sampleManagers.sampleFromProjectManagers.
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.filters.ReduxFileFilter;
 import org.earthtime.UPb_Redux.filters.XMLFileFilter;
-import org.earthtime.UPb_Redux.fractions.FractionI;
-import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionTable;
-import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionTableModel;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLAICPMSFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.PbcCorrectionDetails;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.UPbFractionReducer;
@@ -138,6 +135,7 @@ import org.earthtime.dialogs.projectManagers.projectLegacyManagers.ProjectOfLega
 import org.earthtime.dialogs.projectManagers.projectLegacyManagers.ProjectOfLegacySamplesDataManagerDialogForUCSB_LASS_A;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
+import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.projects.EarthTimeSerializedFileInterface;
 import org.earthtime.projects.Project;
 import org.earthtime.projects.ProjectInterface;
@@ -1376,9 +1374,9 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
     @Override
     public void rebuildFractionDisplays(boolean performReduction) {
 
-        ((UPbFractionTable) getTheFractionTable()).setMySample(this, theSample);
-
-        ((UPbFractionTable) getTheFractionTable()).formatTable();
+////        ((UPbFractionTable) getTheFractionTable()).setMySample(this, theSample);
+////
+////        ((UPbFractionTable) getTheFractionTable()).formatTable();
 
         ((TabbedReportViews) getReportTableTabbedPane()).setSample(theSample);
 
@@ -1410,9 +1408,9 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         if (performReduction) {
             theSample.reduceSampleData();
         }
-        // this call is for top table of measured ratios
-        ((UPbFractionTableModel) getTheFractionTable().getModel()).//
-                refreshTableData();
+////////        // this call is for top table of measured ratios
+////////        ((UPbFractionTableModel) getTheFractionTable().getModel()).//
+////////                refreshTableData();
 
         loadAndShowReportTableData();
 
@@ -1718,9 +1716,9 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                     for (AliquotInterface activeAliquot : theProject.getSuperSample().getActiveAliquots()) {
                         outputWriter.println("Fractions from " + activeAliquot.getAliquotName() + "\n");
                         outputWriter.println(PbcCorrectionDetails.headerString() + "\n");
-                        Vector<FractionI> fractions = ((UPbReduxAliquot) activeAliquot).getActiveAliquotFractions();
+                        Vector<ETFractionInterface> fractions = ((UPbReduxAliquot) activeAliquot).getActiveAliquotFractions();
                         for (int i = 0; i < fractions.size(); i++) {
-                            FractionI fraction = fractions.get(i);
+                            ETFractionInterface fraction = fractions.get(i);
 
                             // static values available after this run
                             PbcCorrectionDetails.zeroAllValues();
@@ -3576,12 +3574,12 @@ private void startStopLiveUpdate_buttonActionPerformed(java.awt.event.ActionEven
      * @param selectedTab the tab to open the editor to
      */
     @Override
-    public void editFraction(FractionI fraction, int selectedTab) {
+    public void editFraction(ETFractionInterface fraction, int selectedTab) {
 
         // oct 2014
         forceCloseOfSampleDateInterpretations();
 
-        AliquotInterface aliquot = theSample.getAliquotByNumber(((UPbFractionI) fraction).getAliquotNumber());
+        AliquotInterface aliquot = theSample.getAliquotByNumber(fraction.getAliquotNumber());
         myFractionEditor = null;
 
         if (theSample.isSampleTypeLegacy()
@@ -3624,13 +3622,13 @@ private void startStopLiveUpdate_buttonActionPerformed(java.awt.event.ActionEven
             myFractionEditor.setVisible(true);
 
             // post-process the editor's results
-            theSample.setChanged(theSample.isChanged() || ((UPbFractionI) fraction).isChanged());
+            theSample.setChanged(theSample.isChanged() ||  fraction.isChanged());
             // feb 2010
             if (theSample.isChanged()) {
                 SampleInterface.saveSampleAsSerializedReduxFile(theSample);
             }
 
-            if (((UPbFractionI) fraction).isDeleted()) {
+            if (fraction.isDeleted()) {
                 theSample.removeUPbReduxFraction(fraction);
             }
 

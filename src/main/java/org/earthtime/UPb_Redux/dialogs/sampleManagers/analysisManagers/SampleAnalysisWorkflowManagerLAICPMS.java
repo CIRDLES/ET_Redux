@@ -74,6 +74,7 @@ import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.dataDictionaries.SampleRegistries;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
+import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.samples.SampleInterface;
 import org.earthtime.utilities.FileHelper;
@@ -672,7 +673,7 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
 //        } );
         // populate rows
         for (int row = 0; row < ((UPbReduxAliquot) aliquot).getAliquotFractions().size(); row++) {
-            FractionI tempFrac = ((UPbReduxAliquot) aliquot).getAliquotFractions().get(row);
+            ETFractionInterface tempFrac = ((UPbReduxAliquot) aliquot).getAliquotFractions().get(row);
             int max = ((UPbReduxAliquot) aliquot).getAliquotFractions().size();
             addFractionRow(aliquot, tempFrac, row, max);
         }
@@ -703,11 +704,11 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
         buildFastEditDisplayPanel();
     }
 
-    private void addFractionRow(AliquotInterface aliquot, FractionI tempFrac, int row, int max) {
+    private void addFractionRow(AliquotInterface aliquot, ETFractionInterface tempFrac, int row, int max) {
 
         // nov 2009 Note button for fractions
         JButton tempJB = new EditFractionButton("Note", row, true);
-        tuneNotesButton(tempJB, ((UPbFractionI) tempFrac).getFractionNotes());
+        tuneNotesButton(tempJB, tempFrac.getFractionNotes());
         tempJB.setForeground(Color.red);
         //tempJB.setToolTipText("Click to Annotate Fraction.");
         tempJB.setMargin(new Insets(0, 0, 0, 0));
@@ -1164,9 +1165,9 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
 
     class showFractionNotesListener implements ActionListener {
 
-        private FractionI fraction;
+        private ETFractionInterface fraction;
 
-        public showFractionNotesListener(FractionI fraction) {
+        public showFractionNotesListener(ETFractionInterface fraction) {
             this.fraction = fraction;
         }
 
@@ -1300,14 +1301,14 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
 
     }
 
-    private void updateFractionRow(FractionI tempFrac, int row) {
+    private void updateFractionRow(ETFractionInterface tempFrac, int row) {
 
 //        // set temp variable for fractionation correction both u and Pb to use in locking fields
 //        boolean fraCorrU = ((UPbFractionI) tempFrac).isFractionationCorrectedU();//.getMeanAlphaU().compareTo( BigDecimal.ZERO ) != 0);
 //        boolean fraCorrPb = ((UPbFractionI) tempFrac).isFractionationCorrectedPb();//.getMeanAlphaPb().compareTo( BigDecimal.ZERO ) != 0);
 //        boolean isZircon = ((UPbFractionI) tempFrac).isZircon();
 //
-        ((JTextField) fractionID.get(row)).setText(tempFrac.getFractionID());
+        ((JTextComponent) fractionID.get(row)).setText(tempFrac.getFractionID());
 //
 //        ((JCheckBox) fractionZirconCheckBox.get( row )).setSelected( tempFrac.isZircon() );
 //
@@ -1598,19 +1599,19 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
         // TODO
         mySample.getAliquotByName(aliquot.getAliquotName());
 
-        for (FractionI f : ((UPbReduxAliquot) aliquot).getAliquotFractions()) {
+        for (ETFractionInterface f : ((UPbReduxAliquot) aliquot).getAliquotFractions()) {
             saveAliquotFraction(aliquot, f);
             f.setTimeStamp(new Date(System.currentTimeMillis()));
         }
 
     }
 
-    private void saveAliquotFraction(AliquotInterface aliquot, FractionI tempFrac)
+    private void saveAliquotFraction(AliquotInterface aliquot, ETFractionInterface tempFrac)
             throws NumberFormatException {
 
         // set temp variable for fractionation correction both u and Pb to use in locking fields
-        boolean fraCorrU = ((UPbFractionI)tempFrac).isFractionationCorrectedU();//.getMeanAlphaU().compareTo( BigDecimal.ZERO ) != 0);
-        boolean fraCorrPb = ((UPbFractionI)tempFrac).isFractionationCorrectedPb();//.getMeanAlphaPb().compareTo( BigDecimal.ZERO ) != 0);
+//        boolean fraCorrU = tempFrac.isFractionationCorrectedU();//.getMeanAlphaU().compareTo( BigDecimal.ZERO ) != 0);
+//        boolean fraCorrPb = tempFrac.isFractionationCorrectedPb();//.getMeanAlphaPb().compareTo( BigDecimal.ZERO ) != 0);
 
         int row = ((UPbReduxAliquot) aliquot).getAliquotFractions().indexOf(tempFrac);
 

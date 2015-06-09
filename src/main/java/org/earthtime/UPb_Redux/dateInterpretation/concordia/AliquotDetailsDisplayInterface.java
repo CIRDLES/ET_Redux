@@ -21,7 +21,7 @@ package org.earthtime.UPb_Redux.dateInterpretation.concordia;
 
 import java.util.Map;
 import java.util.Vector;
-import org.earthtime.UPb_Redux.fractions.FractionI;
+import org.earthtime.fractions.ETFractionInterface;
 
 /**
  *
@@ -50,7 +50,7 @@ public interface AliquotDetailsDisplayInterface {
      *
      * @return
      */
-    Vector<FractionI> getDeSelectedFractions();
+    Vector<ETFractionInterface> getDeSelectedFractions();
 
     /**
      *
@@ -62,13 +62,13 @@ public interface AliquotDetailsDisplayInterface {
      *
      * @param fractions
      */
-    public void setSelectedFractions ( Vector<FractionI> fractions );
+    public void setSelectedFractions ( Vector<ETFractionInterface> fractions );
     
     /**
      *
      * @return
      */
-    Vector<FractionI> getSelectedFractions();
+    Vector<ETFractionInterface> getSelectedFractions();
 
     
 }

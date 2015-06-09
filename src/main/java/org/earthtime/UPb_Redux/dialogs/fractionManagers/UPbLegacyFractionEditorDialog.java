@@ -39,6 +39,7 @@ import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
+import org.earthtime.fractions.ETFractionInterface;
 
 /**
  *
@@ -50,7 +51,7 @@ public class UPbLegacyFractionEditorDialog extends DialogEditor {
 
     private AliquotInterface aliquot;
 
-    private FractionI myFraction;
+    private ETFractionInterface myFraction;
 
     private ArrayList<String> fractionIDs;
 
@@ -79,7 +80,7 @@ public class UPbLegacyFractionEditorDialog extends DialogEditor {
             java.awt.Frame parent,
             boolean modal,
             AliquotInterface aliquot,
-            FractionI fraction,
+            ETFractionInterface fraction,
             int selectedTab,
             boolean analyzed) {
 
@@ -115,7 +116,7 @@ public class UPbLegacyFractionEditorDialog extends DialogEditor {
             fraction_Chooser.addItem(fraction);
         }
         // add the not-rejected fractions
-        for (FractionI f : ((UPbReduxAliquot) aliquot).getAliquotFractions()) {
+        for (ETFractionInterface f : ((UPbReduxAliquot) aliquot).getAliquotFractions()) {
             if (!((UPbFractionI) f).isRejected()) {
                 fraction_Chooser.addItem(f);
             }
@@ -135,7 +136,7 @@ public class UPbLegacyFractionEditorDialog extends DialogEditor {
         // first create a list of used fractionids so that we
         // can tell user if edited fraction name is already in use
         fractionIDs = new ArrayList<String>();
-        for (FractionI f : ((UPbReduxAliquot) aliquot).getAliquotFractions()) {
+        for (ETFractionInterface f : ((UPbReduxAliquot) aliquot).getAliquotFractions()) {
             fractionIDs.add(f.getFractionID());
         }
 
@@ -288,9 +289,9 @@ public class UPbLegacyFractionEditorDialog extends DialogEditor {
 
         }
 
-        ((UPbFraction) myFraction).setChanged(true);
+        myFraction.setChanged(true);
         // the next line undoes the default deleted status of a new default fraction
-        ((UPbFraction) myFraction).setDeleted(false);
+        myFraction.setDeleted(false);
 
         // enable delete and restore button if off because of new default fraction
         delete_button.setEnabled(myFraction.isChanged());
@@ -314,7 +315,7 @@ public class UPbLegacyFractionEditorDialog extends DialogEditor {
      *
      * @return
      */
-    public FractionI getMyFraction() {
+    public ETFractionInterface getMyFraction() {
         return myFraction;
     }
 
@@ -344,7 +345,7 @@ public class UPbLegacyFractionEditorDialog extends DialogEditor {
         fractionMass_text = new javax.swing.JTextField();
         fractionID_text = new javax.swing.JTextField();
         fractionMassInGrams_label = new javax.swing.JLabel();
-        fraction_Chooser = new javax.swing.JComboBox<FractionI>();
+        fraction_Chooser = new javax.swing.JComboBox<ETFractionInterface>();
         fractionID_label1 = new javax.swing.JLabel();
         fractionID_label = new javax.swing.JLabel();
         buttonsPanel = new javax.swing.JPanel();
@@ -644,7 +645,7 @@ private void ChangedTabs(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_Chang
     private javax.swing.JLabel fractionMassInGrams_label;
     private javax.swing.JTextField fractionMass_text;
     private javax.swing.JPanel fractionPanel;
-    private javax.swing.JComboBox<FractionI> fraction_Chooser;
+    private javax.swing.JComboBox<ETFractionInterface> fraction_Chooser;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLayeredPane jLayeredPane1;
     private javax.swing.JLayeredPane jLayeredPane2;

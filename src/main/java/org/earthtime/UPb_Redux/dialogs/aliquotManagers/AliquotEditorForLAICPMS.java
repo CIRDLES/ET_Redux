@@ -49,6 +49,7 @@ import org.earthtime.dataDictionaries.MeasuredRatios;
 import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
+import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.samples.SampleInterface;
 import org.earthtime.xmlUtilities.XMLSerializationI;
 import org.jdesktop.layout.GroupLayout.ParallelGroup;
@@ -279,7 +280,7 @@ public class AliquotEditorForLAICPMS extends AliquotEditorDialog {
         for (int row = 0; row
                 < getMyAliquot().getAliquotFractions().size(); row++) {
 
-            FractionI tempFrac = getMyAliquot().getAliquotFractions().get(row);
+            ETFractionInterface tempFrac = getMyAliquot().getAliquotFractions().get(row);
             int max = getMyAliquot().getAliquotFractions().size();
             addFractionRow(tempFrac, row, max);
 
@@ -298,7 +299,7 @@ public class AliquotEditorForLAICPMS extends AliquotEditorDialog {
      * @param row
      * @param max
      */
-    protected void addFractionRow(FractionI tempFrac, int row, int max) {
+    protected void addFractionRow(ETFractionInterface tempFrac, int row, int max) {
 
         // Buttons to allow deletion of fractions
         JButton tempJB = new EditFractionButton("X", row, true);
@@ -774,7 +775,7 @@ public class AliquotEditorForLAICPMS extends AliquotEditorDialog {
         // fix row pointers in buttons
         for (int f = 0; f
                 < fractionDeleteButtons.size(); f++) {
-            FractionI fraction
+            ETFractionInterface fraction
                     = ((deleteFractionListener) ((JButton) fractionDeleteButtons.get(f)).getActionListeners()[0]).getFraction();
 
             ((AbstractButton) fractionDeleteButtons.get(f)).removeActionListener(((JButton) fractionDeleteButtons.get(f)).getActionListeners()[0]);
@@ -863,14 +864,14 @@ public class AliquotEditorForLAICPMS extends AliquotEditorDialog {
     private class deleteFractionListener implements ActionListener {
 
         private int row;
-        private FractionI fraction;
+        private ETFractionInterface fraction;
 
-        public deleteFractionListener(FractionI fraction, int row) {
+        public deleteFractionListener(ETFractionInterface fraction, int row) {
             this.row = row;
             this.fraction = fraction;
         }
 
-        public FractionI getFraction() {
+        public ETFractionInterface getFraction() {
             return fraction;
         }
 
@@ -935,7 +936,7 @@ public class AliquotEditorForLAICPMS extends AliquotEditorDialog {
         addedFractions.clear();
 
         // master fields
-        for (FractionI f : getMyAliquot().getAliquotFractions()) {
+        for (ETFractionInterface f : getMyAliquot().getAliquotFractions()) {
             saveAliquotFraction(f);
         }
 
@@ -954,7 +955,7 @@ public class AliquotEditorForLAICPMS extends AliquotEditorDialog {
      * @param tempFrac
      * @throws NumberFormatException
      */
-    protected void saveAliquotFraction(FractionI tempFrac)
+    protected void saveAliquotFraction(ETFractionInterface tempFrac)
             throws NumberFormatException {
 
         int row = getMyAliquot().getAliquotFractions().indexOf(tempFrac);

@@ -41,8 +41,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.filters.FractionXMLFileFilter;
-import org.earthtime.UPb_Redux.fractions.FractionI;
-import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.fractions.ETFractionInterface;
@@ -57,7 +55,7 @@ public final class MathMachineII {
     // DataDictionary element name, path
     private static Map<String, String> expFiles = new HashMap<>();
     private static String rootDirectoryName;
-    private static ArrayList<FractionI> fractionsTemp = new ArrayList<>();
+    private static ArrayList<ETFractionInterface> fractionsTemp = new ArrayList<>();
 
     /**
      *
@@ -435,12 +433,12 @@ public final class MathMachineII {
             ArrayList<ValueModel> vms,
             String rootDirectoryName,
             boolean creatNewMMLIndex,
-            UPbFraction myFraction,
+            ETFractionInterface myFraction,
             AliquotInterface aliquot) throws IOException {
 
         //gets fractions from UPbFractionDialogue
         fractionsTemp.clear();
-        for (FractionI f : ((UPbReduxAliquot) aliquot).getAliquotFractions()) {
+        for (ETFractionInterface f : ((UPbReduxAliquot) aliquot).getAliquotFractions()) {
             if (!((ETFractionInterface) f).isRejected()) {
                 fractionsTemp.add(f);
             }
@@ -535,7 +533,7 @@ public final class MathMachineII {
                     + "</tr>\n"; //First row with Name and Three separate value names
 
             //Where actual table is created
-            for (FractionI a : fractionsTemp) {
+            for (ETFractionInterface a : fractionsTemp) {
                 indexHTML += "<tr>\n"
                         + "<th>\n"
                         + a.getFractionID()

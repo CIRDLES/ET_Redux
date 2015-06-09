@@ -23,11 +23,10 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Vector;
 import org.earthtime.UPb_Redux.fractions.Fraction;
-import org.earthtime.UPb_Redux.fractions.FractionI;
-import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.reports.ReportColumn;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.colorModels.HeatMap;
+import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.samples.SampleInterface;
 
 /**
@@ -78,10 +77,10 @@ public class HeatMapMapper {
         String unctType = selectedReportColumn.getUncertaintyType();
 
         if (meth != null) {
-            Vector<FractionI> fractions = sample.getFractions();
-            for (FractionI fraction : fractions) {
+            Vector<ETFractionInterface> fractions = sample.getFractions();
+            for (ETFractionInterface fraction : fractions) {
                 try {
-                    if (!((UPbFractionI) fraction).isRejected()) {
+                    if (!fraction.isRejected()) {
                         ValueModel vm = (ValueModel) meth.invoke((Object) fraction, new Object[]{selectedReportColumn.getRetrieveVariableName()});
                         if (amUnctCol) {
                             double unct = 2.0 * (unctType.equalsIgnoreCase("ABS") ? vm.getOneSigmaAbs().doubleValue() : vm.getOneSigmaPct().doubleValue());
@@ -96,9 +95,9 @@ public class HeatMapMapper {
                 }
             }
 
-            for (FractionI fraction : fractions) {
+            for (ETFractionInterface fraction : fractions) {
                 try {
-                    if (!((UPbFractionI) fraction).isRejected()) {
+                    if (!fraction.isRejected()) {
                         ValueModel vm = (ValueModel) meth.invoke((Object) fraction, new Object[]{selectedReportColumn.getRetrieveVariableName()});
 
                         double valueToCompare;

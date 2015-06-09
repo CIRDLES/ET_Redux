@@ -128,7 +128,7 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_UCSB_LASS_A extends Abstr
 
                     FractionI myFraction = new UPbLegacyFraction("NONE");
 
-                    ((UPbFractionI) myFraction).setRatioType("UPb");
+                    myFraction.setRatioType("UPb");
 
                     String fractionNamePart1 = myFractionData.get(1);
                     String fractionNamePart2 = myFractionData.get(2);

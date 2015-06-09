@@ -37,6 +37,7 @@ import org.earthtime.dataDictionaries.MeasuredRatios;
 import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.dataDictionaries.SampleTypesEnum;
 import org.earthtime.dataDictionaries.TemplatesForCsvImport;
+import org.earthtime.fractions.ETFractionInterface;
 
 
 /**
@@ -64,10 +65,10 @@ public class SampleImporterFromLAICPMSLegacyCVSFile_MC_UA //
      * @throws BadImportedCSVLegacyFileException  
      */
     @Override
-    protected Vector<FractionI> extractFractionsFromFile ( File file )
+    protected Vector<ETFractionInterface> extractFractionsFromFile ( File file )
             throws FileNotFoundException, BadImportedCSVLegacyFileException {
 
-        Vector<FractionI> retFractions = new Vector<>();
+        Vector<ETFractionInterface> retFractions = new Vector<>();
 
         boolean readingFractions = false;
 

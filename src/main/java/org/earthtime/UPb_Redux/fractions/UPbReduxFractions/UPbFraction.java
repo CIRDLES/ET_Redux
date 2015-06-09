@@ -1552,7 +1552,7 @@ public class UPbFraction extends Fraction implements
             ((UPbFraction) myUPbReduxFraction).setPedigreeU("");
 
             myUPbReduxFraction.setChanged(true);
-            ((UPbFractionI) myUPbReduxFraction).setDeleted(false);
+            myUPbReduxFraction.setDeleted(false);
 
             ((UPbFraction) myUPbReduxFraction).setNotesPb("");
             ((UPbFraction) myUPbReduxFraction).setNotesU("");

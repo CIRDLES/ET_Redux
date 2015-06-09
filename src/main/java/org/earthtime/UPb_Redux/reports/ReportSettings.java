@@ -38,7 +38,6 @@ import java.util.Vector;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.FractionI;
-import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabDataListElementI;
 import org.earthtime.UPb_Redux.user.UPbReduxConfigurator;
 import org.earthtime.UPb_Redux.valueModels.ValueModelReferenced;
@@ -49,6 +48,7 @@ import org.earthtime.dataDictionaries.Lambdas;
 import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.dataDictionaries.ReportSpecifications;
 import org.earthtime.exceptions.ETException;
+import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.reports.ReportSettingsInterface;
 import org.earthtime.samples.SampleInterface;
 import org.earthtime.xmlUtilities.XMLSerializationI;
@@ -208,7 +208,7 @@ public class ReportSettings implements
     }
 
     public String[][] reportActiveFractionsByNumberStyle(final SampleInterface sample, boolean numberStyleIsNumeric) {
-        Vector<FractionI> fractions = sample.getFractionsActive();
+        Vector<ETFractionInterface> fractions = sample.getFractionsActive();
 
         return reportFractionsByNumberStyle(fractions, sample, numberStyleIsNumeric);
     }
@@ -220,7 +220,7 @@ public class ReportSettings implements
      * @return
      */
     public String[][] reportRejectedFractionsByNumberStyle(final SampleInterface sample, boolean numberStyleIsNumeric) {
-        Vector<FractionI> fractions = sample.getFractionsRejected();
+        Vector<ETFractionInterface> fractions = sample.getFractionsRejected();
 
         return reportFractionsByNumberStyle(fractions, sample, numberStyleIsNumeric);
     }
@@ -232,13 +232,13 @@ public class ReportSettings implements
      * @param numberStyleIsNumeric
      * @return
      */
-    public String[][] reportActiveAliquotFractionsByNumberStyle(final SampleInterface sample, Vector<FractionI> fractions, boolean numberStyleIsNumeric) {
+    public String[][] reportActiveAliquotFractionsByNumberStyle(final SampleInterface sample, Vector<ETFractionInterface> fractions, boolean numberStyleIsNumeric) {
 
         return reportFractionsByNumberStyle(fractions, sample, numberStyleIsNumeric);
     }
 
     private String[][] reportFractionsByNumberStyle(//
-            Vector<FractionI> fractions,
+            Vector<ETFractionInterface> fractions,
             final SampleInterface sample,
             boolean numberStyleIsNumeric) {
 
@@ -278,25 +278,28 @@ public class ReportSettings implements
             // modified april 2010 to account for zircon population
             int zirconCount = 0;
             int fractionCount = 0;
-            for (FractionI f : fractions) {
-                if (!((UPbFractionI) f).isRejected()) {
+            for (ETFractionInterface f : fractions) {
+                if (f instanceof FractionI) {
+                    // we have a UPb fraction with zircon property
+                    if (!f.isRejected()) {
 
-                    BigDecimal activityValue = f.getAnalysisMeasure(AnalysisMeasures.ar231_235sample.getName()).getValue();
-                    if (activityValue.compareTo(savedActivityValue) != 0) {
-                        getCompositionCategory().setVisibleCategoryColumn(AnalysisMeasures.ar231_235sample.getName(), true);
-                        // change footnote
-                        activityFootnoteEntry = "specified";
-                    }
-                    BigDecimal magmaValue = f.getAnalysisMeasure(AnalysisMeasures.rTh_Umagma.getName()).getValue();
-                    if (magmaValue.compareTo(savedMagmaValue) != 0) {
-                        getCompositionCategory().setVisibleCategoryColumn(AnalysisMeasures.rTh_Umagma.getName(), true);
-                        // change footnote
-                        thU_MagmaFootnoteEntry = "specified";
-                    }
+                        BigDecimal activityValue = f.getAnalysisMeasure(AnalysisMeasures.ar231_235sample.getName()).getValue();
+                        if (activityValue.compareTo(savedActivityValue) != 0) {
+                            getCompositionCategory().setVisibleCategoryColumn(AnalysisMeasures.ar231_235sample.getName(), true);
+                            // change footnote
+                            activityFootnoteEntry = "specified";
+                        }
+                        BigDecimal magmaValue = f.getAnalysisMeasure(AnalysisMeasures.rTh_Umagma.getName()).getValue();
+                        if (magmaValue.compareTo(savedMagmaValue) != 0) {
+                            getCompositionCategory().setVisibleCategoryColumn(AnalysisMeasures.rTh_Umagma.getName(), true);
+                            // change footnote
+                            thU_MagmaFootnoteEntry = "specified";
+                        }
 
-                    fractionCount++;
-                    if (f.isZircon()) {
-                        zirconCount++;
+                        fractionCount++;
+                        if (((FractionI) f).isZircon()) {
+                            zirconCount++;
+                        }
                     }
                 }
             }
@@ -333,8 +336,8 @@ public class ReportSettings implements
                 if (isAuto) {
                     // let's find out
                     BigDecimal threshold = new BigDecimal(1000000);
-                    for (FractionI f : fractions) {
-                        if (!((UPbFractionI) f).isRejected()) {
+                    for (ETFractionInterface f : fractions) {
+                        if (!f.isRejected()) {
                             BigDecimal date206_238Value = f.getRadiogenicIsotopeDateByName(RadDates.age206_238r).getValue();
                             if (date206_238Value.compareTo(threshold) > 0) {
                                 // we have Ma when any value is greater than threshold
@@ -373,8 +376,8 @@ public class ReportSettings implements
                 if (isAuto) {
                     // let's find out
                     BigDecimal threshold = new BigDecimal(1000000);
-                    for (FractionI f : fractions) {
-                        if (!((UPbFractionI) f).isRejected()) {
+                    for (ETFractionInterface f : fractions) {
+                        if (!f.isRejected()) {
                             BigDecimal date206_238Value = f.getRadiogenicIsotopeDateByName(RadDates.age206_238_PbcCorr).getValue();
                             if (date206_238Value.compareTo(threshold) > 0) {
                                 // we have Ma when any value is greater than threshold
@@ -487,11 +490,11 @@ public class ReportSettings implements
 
                             // walk all the fractions for each column
                             int fractionRowCount = FRACTION_DATA_START_ROW;
-                            for (FractionI f : fractions) {
+                            for (ETFractionInterface f : fractions) {
 
                                 // test for included fraction on first data pass col=2==>fractionID
                                 if (columnCount == 2) {
-                                    if (((UPbFractionI) f).isRejected()) {
+                                    if (f.isRejected()) {
                                         retVal[fractionRowCount][0] = "false";
                                     } else {
                                         retVal[fractionRowCount][0] = "true";
@@ -752,8 +755,8 @@ public class ReportSettings implements
 
         reportCategories.stream().filter((rc) //
                 -> (rc != null)).forEach((rc) -> {
-            retVal.put(rc.getPositionIndex(), rc);
-        });
+                    retVal.put(rc.getPositionIndex(), rc);
+                });
 
         return retVal;
     }
@@ -940,7 +943,7 @@ public class ReportSettings implements
 
         File tempFile = new File(tempFileName);
         tempFile.delete();
-        
+
         return reportSettingsModel;
     }
 

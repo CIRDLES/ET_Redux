@@ -52,7 +52,6 @@ import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.Tripoli.fractions.TripoliFractionIncludeChangeInterface;
 import org.earthtime.Tripoli.sessions.TripoliSessionFractionationCalculatorInterface;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.dataDictionaries.DataPresentationModeEnum;
 import org.earthtime.dataDictionaries.IncludedTypeEnum;
 
@@ -1102,7 +1101,7 @@ public abstract class AbstractRawDataView extends JLayeredPane implements MouseI
 
         // feb 2013 standards not put to redux anymore
         try {
-            ((UPbFractionI) tripoliFraction.getuPbFraction()).setRejected(!included);
+            tripoliFraction.getuPbFraction().setRejected(!included);
         } catch (Exception e) {
             System.out.println("line 1112 abstractrawdataview problem");
         }

@@ -49,7 +49,6 @@ import org.earthtime.Tripoli.samples.AbstractTripoliSample;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.FractionI;
-import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLAICPMSFraction;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
@@ -1150,7 +1149,7 @@ public class TripoliSession implements
                     }
 
                     // oct 2014
-                    ((UPbFractionI) uPbFraction).setRejected(!tf.isIncluded());
+                    uPbFraction.setRejected(!tf.isIncluded());
                     //testing oct 2014
                     if (rrName.getName().contains("204")) {
                         ((UPbLAICPMSFraction) uPbFraction).getUpperPhiMap().put(nameOfUpperPhi, upperPhi);

@@ -23,11 +23,10 @@ package org.earthtime.UPb_Redux.reports;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.fractions.Fraction;
-import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.dataDictionaries.ReportSpecifications;
+import org.earthtime.fractions.ETFractionInterface;
 
 /**
  * A ReportColumn specifies the information shown in a data table column. Each
@@ -166,7 +165,7 @@ public class ReportColumn implements
      * @param isNumeric
      * @return
      */
-    public String[] getReportRecordByColumnSpec(FractionI fraction, boolean isNumeric) {
+    public String[] getReportRecordByColumnSpec(ETFractionInterface fraction, boolean isNumeric) {
         // returns an entry for the value and one for the uncertainty if it exists
         // there are two possible modes : sigfig and arbitrary
         // if sigfig, the string contains only the sig digits forced to length
@@ -196,7 +195,7 @@ public class ReportColumn implements
                 //String retrieveVariableName = getRetrieveVariableName();
                 try {
                     Class<?> fractionClass =//
-                            Class.forName(Fraction.class.getCanonicalName()); // APRIL 2014 ????Class.forName( UPbFraction.class.getCanonicalName() );
+                            Class.forName(ETFractionInterface.class.getCanonicalName()); // June 2015 Fraction APRIL 2014 ????Class.forName( UPbFraction.class.getCanonicalName() );
 
                     // this is the case of fractionID, the only string returned
                     if (retrieveVariableName.length() == 0) {
