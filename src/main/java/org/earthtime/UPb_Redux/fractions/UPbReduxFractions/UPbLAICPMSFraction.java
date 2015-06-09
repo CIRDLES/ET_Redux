@@ -47,7 +47,7 @@ import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.dataDictionaries.RadDatesForPbCorrSynchEnum;
 import org.earthtime.dataDictionaries.RadRatios;
 import org.earthtime.dataDictionaries.RadRatiosPbcCorrected;
-import org.earthtime.fractions.FractionInterface;
+import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.initialPbModelsET.StaceyKramersInitialPbModelET;
 import org.earthtime.ratioDataModels.initialPbModelsET.commonLeadLossCorrectionSchemes.AbstractCommonLeadLossCorrectionScheme;
@@ -63,7 +63,7 @@ import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsMo
 public class UPbLAICPMSFraction extends Fraction implements
         FractionI,
         UPbFractionI,
-        FractionInterface,
+        ETFractionInterface,
         ReportRowGUIInterface,
         Serializable {
 //TODO: refactor this class = quick copy and simplification of UPbFraction, but has many common features. a

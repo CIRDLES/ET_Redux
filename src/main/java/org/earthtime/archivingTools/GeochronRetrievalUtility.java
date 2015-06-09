@@ -18,7 +18,6 @@ package org.earthtime.archivingTools;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import javax.swing.JOptionPane;
-import org.earthtime.UPb_Redux.aliquots.Aliquot;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
@@ -88,9 +87,10 @@ public class GeochronRetrievalUtility {
                 + "&password="//
                 + password;
 
+        String message  = "Found: " + aliquotIGSN;
         try {
             myDownAliquot
-                    = (Aliquot) ((XMLSerializationI) myDownAliquot).readXMLObject(
+                    = (AliquotInterface) ((XMLSerializationI) myDownAliquot).readXMLObject(
                             downloadURL, true);
             if (myDownAliquot != null) {
                 // xml is added here for consistency and because we test whether aliquot source file is xml ... probably
@@ -99,12 +99,12 @@ public class GeochronRetrievalUtility {
                         sample, myDownAliquot, "GeochronDownloadOfAliquot_" + aliquotIGSN.toUpperCase().trim() + ".xml");
                 System.out.println("got one " + myDownAliquot.getAnalystName());
             } else {
-                return "Missing (or private) aliquot: " + aliquotIGSN;
+                message =  "Missing (or private) aliquot: " + aliquotIGSN;
             }
         } catch (IOException | ETException | BadOrMissingXMLSchemaException ex) {
-            myDownAliquot = null;
+            message = "Missing (or private) aliquot: " + aliquotIGSN;
         }
 
-        return "Found: " + myDownAliquot.getAliquotIGSN();
+        return message;
     }
 }

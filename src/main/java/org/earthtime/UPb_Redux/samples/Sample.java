@@ -54,7 +54,7 @@ import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.dataDictionaries.SampleRegistries;
 import org.earthtime.dataDictionaries.SampleTypesEnum;
 import org.earthtime.exceptions.ETException;
-import org.earthtime.fractions.FractionInterface;
+import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.projects.EarthTimeSerializedFileInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.samples.SampleInterface;
@@ -415,7 +415,7 @@ public class Sample implements
     public void addDefaultUPbFractionToAliquot(int aliquotNumber)
             throws BadLabDataException {
         FractionI defFraction = new UPbFraction("NONE");
-        ((FractionInterface) defFraction).setAliquotNumber(aliquotNumber);
+        ((ETFractionInterface) defFraction).setAliquotNumber(aliquotNumber);
 
         initializeDefaultUPbFraction(defFraction);
 

@@ -47,7 +47,7 @@ import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModelI;
 import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
-import org.earthtime.fractions.FractionInterface;
+import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.samples.SampleInterface;
 
 /**
@@ -104,9 +104,9 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
             FractionI tempFraction = sample.getFractions().get(i);
             AliquotInterface tempAliquot;
 
-            if (!((FractionInterface) tempFraction).isRejected()) {
-                if (saveAliquotNum != ((FractionInterface) tempFraction).getAliquotNumber()) {
-                    saveAliquotNum = ((FractionInterface) tempFraction).getAliquotNumber();
+            if (!((ETFractionInterface) tempFraction).isRejected()) {
+                if (saveAliquotNum != ((ETFractionInterface) tempFraction).getAliquotNumber()) {
+                    saveAliquotNum = ((ETFractionInterface) tempFraction).getAliquotNumber();
 
                     tempAliquot = sample.getAliquotByNumber(saveAliquotNum);
                     aliquotNode = new DefaultMutableTreeNode(tempAliquot);

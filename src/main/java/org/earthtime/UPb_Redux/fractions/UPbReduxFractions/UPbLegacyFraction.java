@@ -39,7 +39,7 @@ import org.earthtime.UPb_Redux.utilities.comparators.IntuitiveStringComparator;
 import org.earthtime.UPb_Redux.valueModels.MeasuredRatioModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.dataDictionaries.MeasuredRatios;
-import org.earthtime.fractions.FractionInterface;
+import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsModel;
 
@@ -50,7 +50,7 @@ import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsMo
 public class UPbLegacyFraction extends Fraction implements
         FractionI,
         UPbFractionI,
-        FractionInterface,
+        ETFractionInterface,
         ReportRowGUIInterface,
         Serializable {
 //TODO: refactor this class = quick copy and simplification of UPbFraction, but has many common features. a
@@ -182,8 +182,7 @@ public class UPbLegacyFraction extends Fraction implements
         String tracerName = "N/A";
 
         Object[] retval = {
-            String.valueOf(getAliquotNumber()), // for aliquot button
-            Boolean.valueOf(!isRejected()), // oct 2009 for fraction selector where SELECTED = NOT rejected
+            String.valueOf(getAliquotNumber()), !isRejected(), // oct 2009 for fraction selector where SELECTED = NOT rejected
             getFractionNotes().length() > 0,// notes column added nov 2009 >0 ==> bold
             getFractionID(), // for fraction edit button
             tableEntryForMeasuredRatio(MeasuredRatios.r206_204m.getName()),
@@ -701,19 +700,6 @@ public class UPbLegacyFraction extends Fraction implements
         this.standard = standard;
     }
 
-////    /**
-////     * @return the errorEllipseNode
-////     */
-////    public org.cirdles.isoplot.chart.concordia.ErrorEllipse getErrorEllipseNode() {
-////        return errorEllipseNode;
-////    }
-////
-////    /**
-////     * @param errorEllipseNode the errorEllipseNode to set
-////     */
-////    public void setErrorEllipseNode(org.cirdles.isoplot.chart.concordia.ErrorEllipse errorEllipseNode) {
-////        this.errorEllipseNode = errorEllipseNode;
-////    }
     @Override
     public boolean isCommonLeadLossCorrected() {
         return false; // dec 2014 until we learn that this is the case

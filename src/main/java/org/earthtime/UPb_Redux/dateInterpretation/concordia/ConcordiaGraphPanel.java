@@ -535,7 +535,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
         // repeat for excluded fractions the borders etc
         if (showExcludedEllipses) {
             for (FractionI f : excludedFractions) {
-                if (!((UPbFractionI) f).isRejected() && !(isDisplay_PbcCorr() && !((UPbFractionI) f).isCommonLeadLossCorrected())) {
+                if (!f.isRejected() && !(isDisplay_PbcCorr() && !((UPbFractionI) f).isCommonLeadLossCorrected())) {
                     // determine aliquot for colors etc.
                     String aliquotName = sample.getNameOfAliquotFromSample(f.getAliquotNumber());
                     Map<String, String> myAliquotOptions = getAliquotOptions().get(aliquotName);
@@ -583,7 +583,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
 
         // selected fractions fill only 
         for (FractionI f : selectedFractions) {
-            if (!((UPbFractionI) f).isRejected() && !(isDisplay_PbcCorr() && !((UPbFractionI) f).isCommonLeadLossCorrected())) {
+            if (!f.isRejected() && !(isDisplay_PbcCorr() && !((UPbFractionI) f).isCommonLeadLossCorrected())) {
                 // determine aliquot for colors etc.
                 String aliquotName = sample.getNameOfAliquotFromSample(f.getAliquotNumber());
                 Map<String, String> myAliquotOptions = (Map<String, String>) getAliquotOptions().get(aliquotName);
@@ -623,7 +623,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
         }
 
         for (FractionI f : selectedFractions) {
-            if (!((UPbFractionI) f).isRejected() && !(isDisplay_PbcCorr() && !((UPbFractionI) f).isCommonLeadLossCorrected())) {
+            if (!f.isRejected() && !(isDisplay_PbcCorr() && !((UPbFractionI) f).isCommonLeadLossCorrected())) {
                 // determine aliquot for colors etc.
                 String aliquotName = sample.getNameOfAliquotFromSample(f.getAliquotNumber());
                 Map<String, String> myAliquotOptions = getAliquotOptions().get(aliquotName);

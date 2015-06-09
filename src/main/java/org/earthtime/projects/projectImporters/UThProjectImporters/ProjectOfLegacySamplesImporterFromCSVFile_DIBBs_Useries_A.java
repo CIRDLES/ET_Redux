@@ -27,14 +27,14 @@ import java.util.List;
 import java.util.Vector;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
-import org.earthtime.UPb_Redux.fractions.Fraction;
-import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLegacyFraction;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.samples.Sample;
+import org.earthtime.UTh_Redux.fractions.UThFraction;
 import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.dataDictionaries.SampleTypesEnum;
 import org.earthtime.exceptions.ETException;
+import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.projects.ProjectInterface;
 import org.earthtime.projects.projectImporters.AbstractProjectImporterFromLegacyCSVFile;
 import org.earthtime.samples.SampleInterface;
@@ -112,7 +112,7 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_DIBBs_Useries_A extends A
                         }
 
                         // process fractions
-                        Fraction myFraction = new UPbLegacyFraction("NONE");
+                        ETFractionInterface myFraction = new UThFraction();
 //
 //                        ((UPbFractionI) myFraction).setRatioType("UPb");
 //

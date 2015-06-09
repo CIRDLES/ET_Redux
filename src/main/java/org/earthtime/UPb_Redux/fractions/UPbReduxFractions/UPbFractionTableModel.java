@@ -38,6 +38,7 @@ import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.dialogs.fractionManagers.FractionNotesDialog;
 import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.renderers.EditFractionButton;
+import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.samples.SampleInterface;
 
 /**
@@ -231,7 +232,7 @@ public class UPbFractionTableModel extends AbstractTableModel {
     private Vector<FractionI> getFractionsSorted() {
         // here we sort the fractions so that they appear in alphabetical order by aliquot
         Vector<FractionI> temp = sample.getFractions();
-        Collections.sort(temp, FractionI.FRACTION_ID_ORDER);
+        Collections.sort(temp, ETFractionInterface.FRACTION_ID_ORDER);
         return temp;
     }
 

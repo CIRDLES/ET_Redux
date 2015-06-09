@@ -929,13 +929,13 @@ public class TripoliSession implements
 
         while (unknownFractionIterator.hasNext()) {
             TripoliFraction tf = unknownFractionIterator.next();
-            ((UPbFractionI) tf.getuPbFraction()).setRejected(false);
+            tf.getuPbFraction().setRejected(false);
             if (!tf.confirmHealthyFraction()) {
-                ((UPbFractionI) tf.getuPbFraction()).setRejected(true);
+                tf.getuPbFraction().setRejected(true);
                 System.out.println("REJECTING " + tf.getFractionID());
             }
             if (!tf.isIncluded()) {
-                ((UPbFractionI) tf.getuPbFraction()).setRejected(true);
+                tf.getuPbFraction().setRejected(true);
                 System.out.println("REJECTING " + tf.getFractionID());
             }
         }
@@ -1161,8 +1161,8 @@ public class TripoliSession implements
             index++;//increased even if no fit function
 
             try {
-                ((UPbFractionI) tf.getuPbFraction()).setRejected(!tf.isIncluded());
-                ((UPbFractionI) tf.getuPbFraction()).setStandard(tf.isStandard());
+                tf.getuPbFraction().setRejected(!tf.isIncluded());
+                tf.getuPbFraction().setStandard(tf.isStandard());
             } catch (Exception e) {
             }
         }

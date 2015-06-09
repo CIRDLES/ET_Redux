@@ -365,10 +365,6 @@ public final class DataDictionary {
         return earthTimeInitialPbModelCorrelationCoeffNames[index];
     }
 
-////    public static String getMeasuredRatioName (
-////            int index ) {
-////        return UPbReduxMeasuredRatioNames[index];
-////    }
     /**
      *
      * @param name
@@ -426,10 +422,6 @@ public final class DataDictionary {
         return SampleIsochronRatioNames[index];
     }
 
-//    public static String getEarthTimeAnalysisMeasuresNames (
-//            int index ) {
-//        return earthTimeAnalysisMeasuresNames[index];
-//    }
     /**
      *
      * @param index

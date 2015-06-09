@@ -23,6 +23,7 @@ package org.earthtime.UPb_Redux.fractions;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.io.xml.DomDriver;
+import java.awt.geom.Path2D;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -30,6 +31,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
+import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.UPbFractionReducer;
 import org.earthtime.UPb_Redux.mineralStandardModels.MineralStandardModelXMLConverter;
 import org.earthtime.UPb_Redux.user.UPbReduxConfigurator;
@@ -91,10 +93,10 @@ public class AnalysisFraction extends Fraction implements
 
         // april 2010 handle UPbLegacyFraction
         if ( fraction instanceof UPbFraction ) {
-            setTracerID( ((UPbFraction) fraction).getTracerID() );
-            setAlphaPbModelID( ((UPbFraction) fraction).getAlphaPbModelID() );
-            setAlphaUModelID( ((UPbFraction) fraction).getAlphaUModelID() );
-            setPbBlankID( fraction.getPbBlankID() );
+            setTracerID( fraction.getTracerID() );
+            setAlphaPbModelID( fraction.getAlphaPbModelID() );
+            setAlphaUModelID( fraction.getAlphaUModelID() );
+            setPbBlankID( ((UPbFractionI)fraction).getPbBlankID() );
             setPhysicalConstantsModelID( fraction.getPhysicalConstantsModelID() );
         }
 
@@ -310,6 +312,76 @@ public class AnalysisFraction extends Fraction implements
 
     @Override
     public void setPhysicalConstantsModel(AbstractRatiosDataModel physicalConstantsModel) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public String getFractionNotes() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setFractionNotes(String fractionNotes) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean isRejected() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setRejected(boolean rejected) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void toggleRejectedStatus() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean isDeleted() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setDeleted(boolean deleted) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Path2D getErrorEllipsePath() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setErrorEllipsePath(Path2D errorEllipsePath) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public double getEllipseRho() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setEllipseRho(double ellipseRho) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setSelectedInDataTable(boolean selectedInDataTable) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean isStandard() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setStandard(boolean standard) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

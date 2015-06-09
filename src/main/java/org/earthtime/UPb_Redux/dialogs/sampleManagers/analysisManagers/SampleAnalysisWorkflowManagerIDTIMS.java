@@ -86,7 +86,6 @@ import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.dataDictionaries.SampleRegistries;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
-import org.earthtime.fractions.FractionInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.initialPbModelsET.InitialPbModelET;
 import org.earthtime.ratioDataModels.initialPbModelsET.StaceyKramersInitialPbModelET;
@@ -1790,8 +1789,8 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
             throws NumberFormatException {
 
         // set temp variable for fractionation correction both u and Pb to use in locking fields
-        boolean fraCorrU = tempFrac.isFractionationCorrectedU();
-        boolean fraCorrPb = tempFrac.isFractionationCorrectedPb();
+        boolean fraCorrU = ((UPbFractionI)tempFrac).isFractionationCorrectedU();
+        boolean fraCorrPb = ((UPbFractionI)tempFrac).isFractionationCorrectedPb();
 
         int row = ((UPbReduxAliquot) aliquot).getAliquotFractions().indexOf(tempFrac);
 
@@ -1892,7 +1891,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
                         movePointLeft(12));
 
         // better safe than sorry for now
-        ((FractionInterface) tempFrac).setChanged(true);
+        tempFrac.setChanged(true);
 
     }
 

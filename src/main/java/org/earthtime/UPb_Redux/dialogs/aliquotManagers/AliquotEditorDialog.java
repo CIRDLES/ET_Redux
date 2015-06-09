@@ -765,10 +765,10 @@ public class AliquotEditorDialog extends DialogEditor {
             mineralNameChooser.setSelectedItem(myFraction.getMineralName());
             settingTypeChooser.setSelectedItem(myFraction.getSettingType());
             countOfGrains_text.setText(String.valueOf(myFraction.getNumberOfGrains()));
-            physicallyAbraded_chkBox.setSelected(myFraction.isPhysicallyAbraded());
-            leachedInHFAcid_chkBox.setSelected(myFraction.isLeachedInHFAcid());
-            annealedChemicallyAbraded_chkBox.setSelected(myFraction.isAnnealedAndChemicallyAbraded());
-            chemicallyPurifiedUPb_chkBox.setSelected(myFraction.isChemicallyPurifiedUPb());
+            physicallyAbraded_chkBox.setSelected(((UPbFractionI)myFraction).isPhysicallyAbraded());
+            leachedInHFAcid_chkBox.setSelected(((UPbFractionI)myFraction).isLeachedInHFAcid());
+            annealedChemicallyAbraded_chkBox.setSelected(((UPbFractionI)myFraction).isAnnealedAndChemicallyAbraded());
+            chemicallyPurifiedUPb_chkBox.setSelected(((UPbFractionI)myFraction).isChemicallyPurifiedUPb());
             fractionComment_text.setText(myFraction.getAnalysisFractionComment());
 
             publicationTimeStamp_text.setText(myFraction.getTimeStamp().toString());
@@ -964,8 +964,8 @@ public class AliquotEditorDialog extends DialogEditor {
                 || (sample.getSampleType().equalsIgnoreCase(SampleTypesEnum.SAMPLEFOLDER.getName()))) {
 
             // set temp variable for fractionation correction both u and Pb to use in locking fields
-            boolean fraCorrU = fractionToSave.isFractionationCorrectedU();//.getMeanAlphaU().compareTo( BigDecimal.ZERO ) != 0);
-            boolean fraCorrPb = fractionToSave.isFractionationCorrectedPb();//.getMeanAlphaPb().compareTo( BigDecimal.ZERO ) != 0);
+            boolean fraCorrU = ((UPbFractionI)fractionToSave).isFractionationCorrectedU();
+            boolean fraCorrPb = ((UPbFractionI)fractionToSave).isFractionationCorrectedPb();
 
             int row = getMyAliquot().getAliquotFractions().indexOf(fractionToSave);
 
@@ -4194,48 +4194,6 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
 
     }
 
-//    private void addNewFractionRow(Fraction fraction) {
-//        int row = fractionDeleteButtons.size();
-//
-//        addFractionRow(fraction, row, row + 1);
-//        updateFractionRow(fraction, row);
-//
-//        // choosers not included here
-//
-//        // update the keystroke actionlisteners for previous row in table
-//        modifyComponentKeyMapForTable(fractionEditButtons.get(row - 1), fractionEditButtons, row + 1);
-//        modifyComponentKeyMapForTable(fractionZirconCheckBox.get(row - 1), fractionZirconCheckBox, row + 1);
-//        modifyComponentKeyMapForTable(fractionTracerMassText.get(row - 1), fractionTracerMassText, row + 1);
-//        modifyComponentKeyMapForTable(fractionMassText.get(row - 1), fractionMassText, row + 1);
-//
-//        modifyComponentKeyMapForTable(fractionEstDateText.get(row - 1), fractionEstDateText, row + 1);
-//        modifyComponentKeyMapForTable(fractionStaceyKramersPctUncertaintyText.get(row - 1), //
-//                fractionStaceyKramersPctUncertaintyText, row + 1);
-//        modifyComponentKeyMapForTable(fractionStaceyKramersCorrelationCoeffsText.get(row - 1),//
-//                fractionStaceyKramersCorrelationCoeffsText, row + 1);
-//
-//        modifyComponentKeyMapForTable(fractionPbBlankMassText.get(row - 1), fractionPbBlankMassText, row + 1);
-//        modifyComponentKeyMapForTable(fractionUBlankMassText.get(row - 1), fractionUBlankMassText, row + 1);
-//
-//        modifyComponentKeyMapForTable(fractionR238_235sText.get(row - 1), fractionR238_235sText, row + 1);
-//        modifyComponentKeyMapForTable(fractionR238_235bText.get(row - 1), fractionR238_235bText, row + 1);
-//        modifyComponentKeyMapForTable(fractionR18O_16OText.get(row - 1), fractionR18O_16OText, row + 1);
-//
-//        modifyComponentKeyMapForTable(fractionRTh_UmagmaText.get(row - 1), fractionRTh_UmagmaText, row + 1);
-//        modifyComponentKeyMapForTable(fractionAR231_235sampleText.get(row - 1), fractionAR231_235sampleText, row + 1);
-//
-//
-//        modifyComponentKeyMapForTable(fractionTracerMassOneSigmaText.get(row - 1), fractionTracerMassOneSigmaText, row + 1);
-//        modifyComponentKeyMapForTable(fractionUBlankMassOneSigmaText.get(row - 1), fractionUBlankMassOneSigmaText, row + 1);
-//        modifyComponentKeyMapForTable(fractionR238_235sOneSigmaText.get(row - 1), fractionR238_235sOneSigmaText, row + 1);
-//        modifyComponentKeyMapForTable(fractionR238_235bOneSigmaText.get(row - 1), fractionR238_235bOneSigmaText, row + 1);
-//        modifyComponentKeyMapForTable(fractionPbBlankMassOneSigmaText.get(row - 1), fractionPbBlankMassOneSigmaText, row + 1);
-//        modifyComponentKeyMapForTable(fractionRTh_UmagmaOneSigmaText.get(row - 1), fractionRTh_UmagmaOneSigmaText, row + 1);
-//        modifyComponentKeyMapForTable(fractionAr231_235sampleOneSigmaText.get(row - 1), fractionAr231_235sampleOneSigmaText, row + 1);
-//        modifyComponentKeyMapForTable(fractionR18O_16OOneSigmaText.get(row - 1), fractionR18O_16OOneSigmaText, row + 1);
-//
-//        buildFastEditDisplayPanel();
-//    }
     private void saveFractionArchivingData(FractionI myFraction) {
 
         // publication details
@@ -4243,10 +4201,10 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
         myFraction.setSettingType((String) settingTypeChooser.getSelectedItem());
         myFraction.setNumberOfGrains(Integer.parseInt(countOfGrains_text.getText()));
 
-        myFraction.setPhysicallyAbraded(physicallyAbraded_chkBox.isSelected());
-        myFraction.setLeachedInHFAcid(leachedInHFAcid_chkBox.isSelected());
-        myFraction.setAnnealedAndChemicallyAbraded(annealedChemicallyAbraded_chkBox.isSelected());
-        myFraction.setChemicallyPurifiedUPb(chemicallyPurifiedUPb_chkBox.isSelected());
+        ((UPbFractionI)myFraction).setPhysicallyAbraded(physicallyAbraded_chkBox.isSelected());
+        ((UPbFractionI)myFraction).setLeachedInHFAcid(leachedInHFAcid_chkBox.isSelected());
+        ((UPbFractionI)myFraction).setAnnealedAndChemicallyAbraded(annealedChemicallyAbraded_chkBox.isSelected());
+        ((UPbFractionI)myFraction).setChemicallyPurifiedUPb(chemicallyPurifiedUPb_chkBox.isSelected());
         myFraction.setAnalysisFractionComment(fractionComment_text.getText());
 
     }

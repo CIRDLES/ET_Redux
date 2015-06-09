@@ -36,6 +36,7 @@ import org.earthtime.dataDictionaries.MeasuredRatios;
 import org.earthtime.dataDictionaries.MineralTypes;
 import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.dataDictionaries.TraceElements;
+import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.initialPbModelsET.InitialPbModelET;
 
@@ -102,7 +103,7 @@ public abstract class Fraction implements
     private ValueModel[] radiogenicIsotopeDates;
     private ValueModel[] compositionalMeasures;
     private ValueModel[] sampleIsochronRatios;
-    // added march 2013 to allow for weighted mean uncertainty cals for laicpms to have access 
+
 
     /**
      *
@@ -264,9 +265,6 @@ public abstract class Fraction implements
         // oct 2010 put here
         Comparator<String> forNoah = new IntuitiveStringComparator<>();
         return forNoah.compare(this.getFractionID().trim(), myFraction.getFractionID().trim()) == 0;
-
-//        return (this.getFractionID().trim().
-//                compareToIgnoreCase( myFraction.getFractionID().trim() ) == 0);
     }
 
     // http://www.javaworld.com/javaworld/jw-01-1999/jw-01-object.html?page=4
@@ -287,38 +285,39 @@ public abstract class Fraction implements
      * @param fraction
      * @param copyAnalysisMeasures
      */
-    public void getValuesFrom(FractionI fraction, boolean copyAnalysisMeasures) {
+    @Override
+    public void getValuesFrom(ETFractionInterface fraction, boolean copyAnalysisMeasures) {
 
         setIsLegacy(fraction.isLegacy());
-        setZircon(fraction.isZircon());
+        setZircon(((FractionI)fraction).isZircon());
 
         setImageURL(fraction.getImageURL());
         setTimeStamp(fraction.getTimeStamp());
 
-        setMineralName(fraction.getMineralName());
-        setSettingType(fraction.getSettingType());
+        setMineralName(((FractionI)fraction).getMineralName());
+        setSettingType(((FractionI)fraction).getSettingType());
 
         setNumberOfGrains(fraction.getNumberOfGrains());
         setEstimatedDate(fraction.getEstimatedDate());
-        setStaceyKramersOnePctUnct(fraction.getStaceyKramersOnePctUnct());
-        setStaceyKramersCorrelationCoeffs(fraction.getStaceyKramersCorrelationCoeffs());
+        setStaceyKramersOnePctUnct(((FractionI)fraction).getStaceyKramersOnePctUnct());
+        setStaceyKramersCorrelationCoeffs(((FractionI)fraction).getStaceyKramersCorrelationCoeffs());
 
-        setPhysicallyAbraded(fraction.isPhysicallyAbraded());
-        setLeachedInHFAcid(fraction.isLeachedInHFAcid());
-        setAnnealedAndChemicallyAbraded(fraction.isAnnealedAndChemicallyAbraded());
-        setChemicallyPurifiedUPb(fraction.isChemicallyPurifiedUPb());
+        setPhysicallyAbraded(((FractionI)fraction).isPhysicallyAbraded());
+        setLeachedInHFAcid(((FractionI)fraction).isLeachedInHFAcid());
+        setAnnealedAndChemicallyAbraded(((FractionI)fraction).isAnnealedAndChemicallyAbraded());
+        setChemicallyPurifiedUPb(((FractionI)fraction).isChemicallyPurifiedUPb());
 
         setAnalysisFractionComment(fraction.getAnalysisFractionComment());
 
         try {
-            setInitialPbModel(fraction.getInitialPbModel());//march 2012 upgrade.copy() );
+            setInitialPbModel(((FractionI)fraction).getInitialPbModel());//march 2012 upgrade.copy() );
         } catch (Exception e) {
             // case of UPbLegacyFraction
             setInitialPbModel(null);
         }
 
-        setPbCollectorType(fraction.getPbCollectorType());
-        setUCollectorType(fraction.getUCollectorType());
+        setPbCollectorType(((FractionI)fraction).getPbCollectorType());
+        setUCollectorType(((FractionI)fraction).getUCollectorType());
 
         if (copyAnalysisMeasures) {
             setAnalysisMeasures(fraction.copyAnalysisMeasures());
@@ -330,8 +329,8 @@ public abstract class Fraction implements
         traceElements = fraction.copyTraceElements();
 
         // aug 2010
-        setFractionationCorrectedPb(fraction.isFractionationCorrectedPb());
-        setFractionationCorrectedU(fraction.isFractionationCorrectedU());
+        setFractionationCorrectedPb(((FractionI)fraction).isFractionationCorrectedPb());
+        setFractionationCorrectedU(((FractionI)fraction).isFractionationCorrectedU());
     }
 
     // accessors
@@ -339,6 +338,7 @@ public abstract class Fraction implements
      *
      * @return
      */
+    @Override
     public String getSampleName() {
         return sampleName;
     }
@@ -347,6 +347,7 @@ public abstract class Fraction implements
      *
      * @param sampleName
      */
+    @Override
     public void setSampleName(String sampleName) {
         this.sampleName = sampleName.trim();
     }
@@ -355,6 +356,7 @@ public abstract class Fraction implements
      *
      * @return
      */
+    @Override
     public String getFractionID() {
         return fractionID;
     }
@@ -363,6 +365,7 @@ public abstract class Fraction implements
      *
      * @param FractionID
      */
+    @Override
     public void setFractionID(String FractionID) {
         this.fractionID = FractionID.trim();
     }
@@ -371,6 +374,7 @@ public abstract class Fraction implements
      *
      * @return
      */
+    @Override
     public String getImageURL() {
         return imageURL;
     }
@@ -379,6 +383,7 @@ public abstract class Fraction implements
      *
      * @param imageURL
      */
+    @Override
     public void setImageURL(String imageURL) {
         this.imageURL = imageURL.trim();
     }
@@ -387,6 +392,7 @@ public abstract class Fraction implements
      *
      * @return
      */
+    @Override
     public Date getTimeStamp() {
         return timeStamp;
     }
@@ -395,6 +401,7 @@ public abstract class Fraction implements
      *
      * @param timeStamp
      */
+    @Override
     public void setTimeStamp(Date timeStamp) {
         this.timeStamp = timeStamp;
     }
@@ -419,6 +426,7 @@ public abstract class Fraction implements
      *
      * @return
      */
+    @Override
     public String getSettingType() {
         return settingType;
     }
@@ -437,6 +445,7 @@ public abstract class Fraction implements
      *
      * @return
      */
+    @Override
     public int getNumberOfGrains() {
         return numberOfGrains;
     }
@@ -445,6 +454,7 @@ public abstract class Fraction implements
      *
      * @param numberOfGrains
      */
+    @Override
     public void setNumberOfGrains(int numberOfGrains) {
         this.numberOfGrains = numberOfGrains;
     }
@@ -453,6 +463,7 @@ public abstract class Fraction implements
      *
      * @return
      */
+    @Override
     public BigDecimal getEstimatedDate() {
         return estimateDate;
     }
@@ -461,6 +472,7 @@ public abstract class Fraction implements
      *
      * @param estimateDate
      */
+    @Override
     public void setEstimatedDate(BigDecimal estimateDate) {
         this.estimateDate = estimateDate;
     }
@@ -469,6 +481,7 @@ public abstract class Fraction implements
      *
      * @return
      */
+    @Override
     public boolean isPhysicallyAbraded() {
         return physicallyAbraded;
     }
@@ -477,6 +490,7 @@ public abstract class Fraction implements
      *
      * @param physicallyAbraded
      */
+    @Override
     public void setPhysicallyAbraded(boolean physicallyAbraded) {
         this.physicallyAbraded = physicallyAbraded;
     }
@@ -485,6 +499,7 @@ public abstract class Fraction implements
      *
      * @return
      */
+    @Override
     public boolean isLeachedInHFAcid() {
         return leachedInHFAcid;
     }
@@ -493,6 +508,7 @@ public abstract class Fraction implements
      *
      * @param leachedInHFAcid
      */
+    @Override
     public void setLeachedInHFAcid(boolean leachedInHFAcid) {
         this.leachedInHFAcid = leachedInHFAcid;
     }
@@ -501,6 +517,7 @@ public abstract class Fraction implements
      *
      * @return
      */
+    @Override
     public boolean isAnnealedAndChemicallyAbraded() {
         return annealedAndChemicallyAbraded;
     }
@@ -509,6 +526,7 @@ public abstract class Fraction implements
      *
      * @param annealedAndChemicallyAbraded
      */
+    @Override
     public void setAnnealedAndChemicallyAbraded(boolean annealedAndChemicallyAbraded) {
         this.annealedAndChemicallyAbraded = annealedAndChemicallyAbraded;
     }
@@ -517,6 +535,7 @@ public abstract class Fraction implements
      *
      * @return
      */
+    @Override
     public boolean isChemicallyPurifiedUPb() {
         return chemicallyPurifiedUPb;
     }
@@ -525,6 +544,7 @@ public abstract class Fraction implements
      *
      * @param chemicallyPurifiedUPb
      */
+    @Override
     public void setChemicallyPurifiedUPb(boolean chemicallyPurifiedUPb) {
         this.chemicallyPurifiedUPb = chemicallyPurifiedUPb;
     }
@@ -533,6 +553,7 @@ public abstract class Fraction implements
      *
      * @return
      */
+    @Override
     public String getAnalysisFractionComment() {
         return analysisFractionComment;
     }
@@ -541,6 +562,7 @@ public abstract class Fraction implements
      *
      * @param analysisFractionComment
      */
+    @Override
     public void setAnalysisFractionComment(String analysisFractionComment) {
         this.analysisFractionComment = analysisFractionComment.trim();
     }
@@ -656,6 +678,7 @@ public abstract class Fraction implements
      *
      * @return
      */
+    @Override
     public ValueModel[] getAnalysisMeasures() {
         return analysisMeasures;
     }
@@ -664,6 +687,7 @@ public abstract class Fraction implements
      *
      * @param analysisMeasures
      */
+    @Override
     public void setAnalysisMeasures(ValueModel[] analysisMeasures) {
         this.analysisMeasures = ValueModel.cullNullsFromArray(analysisMeasures);
     }
@@ -824,6 +848,7 @@ public abstract class Fraction implements
      *
      * @return
      */
+    @Override
     public String getAlphaPbModelID() {
         return alphaPbModelID;
     }
@@ -832,6 +857,7 @@ public abstract class Fraction implements
      *
      * @param alphaPbModelID
      */
+    @Override
     public void setAlphaPbModelID(String alphaPbModelID) {
         this.alphaPbModelID = alphaPbModelID.trim();
     }
@@ -840,6 +866,7 @@ public abstract class Fraction implements
      *
      * @return
      */
+    @Override
     public String getAlphaUModelID() {
         return alphaUModelID;
     }
@@ -848,6 +875,7 @@ public abstract class Fraction implements
      *
      * @param alphaUModelID
      */
+    @Override
     public void setAlphaUModelID(String alphaUModelID) {
         this.alphaUModelID = alphaUModelID.trim();
     }
@@ -912,7 +940,6 @@ public abstract class Fraction implements
     /**
      * @return the fractionationCorrectedPb
      */
-    @Override
     public boolean isFractionationCorrectedPb() {
         return fractionationCorrectedPb;
     }
@@ -920,7 +947,6 @@ public abstract class Fraction implements
     /**
      * @param fractionationCorrectedPb the fractionationCorrectedPb to set
      */
-    @Override
     public void setFractionationCorrectedPb(boolean fractionationCorrectedPb) {
         this.fractionationCorrectedPb = fractionationCorrectedPb;
     }
@@ -935,7 +961,6 @@ public abstract class Fraction implements
     /**
      * @param fractionationCorrectedU the fractionationCorrectedU to set
      */
-    @Override
     public void setFractionationCorrectedU(boolean fractionationCorrectedU) {
         this.fractionationCorrectedU = fractionationCorrectedU;
     }

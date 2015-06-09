@@ -70,6 +70,7 @@ import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.dataDictionaries.AnalysisImageTypes;
 import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.exceptions.ETException;
+import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.physicalConstants.PhysicalConstantsXMLConverter;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.initialPbModelsET.InitialPbModelET;
@@ -589,7 +590,7 @@ public class UPbReduxAliquot extends Aliquot
         getAnalysisFractions().clear();
 
         // note fractions and SampleDateModels are already unique
-        Collections.sort(aliquotFractions, FractionI.FRACTION_ID_ORDER);
+        Collections.sort(aliquotFractions, ETFractionInterface.FRACTION_ID_ORDER);
         if (sampleDateModels != null) {
             Collections.sort(sampleDateModels);
         }
@@ -597,7 +598,7 @@ public class UPbReduxAliquot extends Aliquot
         Iterator it = getAliquotFractions().iterator();
         while (it.hasNext()) {
             FractionI fraction = (FractionI) it.next();
-            if (!((UPbFractionI) fraction).isRejected()) {
+            if (!fraction.isRejected()) {
                 // april 2010 differentiate between UPbFractions and UPbLegacyFractions
                 if (fraction instanceof UPbFraction) {
                     tempBlanks.add(((UPbFractionI) fraction).getPbBlank());

@@ -45,7 +45,7 @@ import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.aliquots.AliquotInterface;
-import org.earthtime.fractions.FractionInterface;
+import org.earthtime.fractions.ETFractionInterface;
 
 /**
  *
@@ -441,7 +441,7 @@ public final class MathMachineII {
         //gets fractions from UPbFractionDialogue
         fractionsTemp.clear();
         for (FractionI f : ((UPbReduxAliquot) aliquot).getAliquotFractions()) {
-            if (!((FractionInterface) f).isRejected()) {
+            if (!((ETFractionInterface) f).isRejected()) {
                 fractionsTemp.add(f);
             }
         }

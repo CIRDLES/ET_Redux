@@ -1235,7 +1235,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
             settingTypeChooser.addItem(DataDictionary.SettingType[i]);
         }
 
-        settingTypeChooser.setSelectedItem(myFraction.getSettingType());
+        settingTypeChooser.setSelectedItem(((UPbFractionI)myFraction).getSettingType());
         settingTypeChooser.setEnabled(!isCompiled());
 
         countOfGrains_text.setDocument(new IntegerDocument(countOfGrains_text, !isCompiled()));
@@ -1614,10 +1614,10 @@ public class UPbFractionEditorDialog extends DialogEditor {
         mineralNameChooser.setSelectedItem(myFraction.getMineralName());
         settingTypeChooser.setSelectedItem(myFraction.getSettingType());
         countOfGrains_text.setText(String.valueOf(myFraction.getNumberOfGrains()));
-        physicallyAbraded_chkBox.setSelected(myFraction.isPhysicallyAbraded());
-        leachedInHFAcid_chkBox.setSelected(myFraction.isLeachedInHFAcid());
-        annealedChemicallyAbraded_chkBox.setSelected(myFraction.isAnnealedAndChemicallyAbraded());
-        chemicallyPurifiedUPb_chkBox.setSelected(myFraction.isChemicallyPurifiedUPb());
+        physicallyAbraded_chkBox.setSelected(((UPbFractionI)myFraction).isPhysicallyAbraded());
+        leachedInHFAcid_chkBox.setSelected(((UPbFractionI)myFraction).isLeachedInHFAcid());
+        annealedChemicallyAbraded_chkBox.setSelected(((UPbFractionI)myFraction).isAnnealedAndChemicallyAbraded());
+        chemicallyPurifiedUPb_chkBox.setSelected(((UPbFractionI)myFraction).isChemicallyPurifiedUPb());
         fractionComment_text.setText(myFraction.getAnalysisFractionComment());
 
         publicationTimeStamp_text.setText(myFraction.getTimeStamp().toString());
@@ -1701,10 +1701,10 @@ public class UPbFractionEditorDialog extends DialogEditor {
         alphaUFromModel_text.setText("");
 
         // handle alpha pb - see logic in UPbFractionReducer ******************
-        if (((UPbFractionI) getMyFraction()).hasMeasuredLead()) {
+        if (((UPbFractionI) myFraction).hasMeasuredLead()) {
             // perform analysis to determine which of the four techniques applies
-            if (!getMyFraction().isFractionationCorrectedPb()) {
-                if (((UPbFraction) getMyFraction()).getMeasuredRatioByName(MeasuredRatios.r202_205m.getName()).hasPositiveValue()) {
+            if (!((UPbFractionI)myFraction).isFractionationCorrectedPb()) {
+                if (getMyFraction().getMeasuredRatioByName(MeasuredRatios.r202_205m.getName()).hasPositiveValue()) {
                     // case 2 display calculated values
                     alphaPbCalculatedFromMeans_text.setText(myFraction.getAnalysisMeasure(AnalysisMeasures.alphaPb.getName()).
                             getValue().movePointRight(2).
@@ -1737,7 +1737,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
         // AlphaU - this logic is repeated in UPbFractionReducer, which calculates actual values       
         String tracerType = ((UPbFraction) getMyFraction()).getTracerType().trim();
 
-        if (getMyFraction().isFractionationCorrectedU()) {//.getMeanAlphaU().compareTo( BigDecimal.ZERO ) == 1 ) {
+        if (((UPbFractionI)myFraction).isFractionationCorrectedU()) {
             // case 1 display fractionation corrected mean from Tripoli
             meanAlphaUImported_text.setText(((UPbFraction) myFraction).getMeanAlphaU().movePointRight(2).
                     setScale(ReduxConstants.DEFAULT_CONSTANTS_SCALE, RoundingMode.HALF_UP).toPlainString());
@@ -1763,7 +1763,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
                 || tracerType.equalsIgnoreCase("mixed 208-235")) {
 
             // case 3 display model value
-            alphaUFromModel_text.setText(((UPbFraction) getMyFraction()).getAlphaUModel().getValue().
+            alphaUFromModel_text.setText(((UPbFractionI) getMyFraction()).getAlphaUModel().getValue().
                     movePointRight(2).
                     setScale(ReduxConstants.DEFAULT_CONSTANTS_SCALE, RoundingMode.HALF_UP).toPlainString());
 
@@ -2127,14 +2127,14 @@ public class UPbFractionEditorDialog extends DialogEditor {
 
             // publication details
             myFraction.setMineralName((String) mineralNameChooser.getSelectedItem());
-            myFraction.setSettingType((String) settingTypeChooser.getSelectedItem());
+            ((UPbFractionI)myFraction).setSettingType((String) settingTypeChooser.getSelectedItem());
             myFraction.setNumberOfGrains(Integer.parseInt(countOfGrains_text.getText()));
 
-            myFraction.setPhysicallyAbraded(physicallyAbraded_chkBox.isSelected());
-            myFraction.setLeachedInHFAcid(leachedInHFAcid_chkBox.isSelected());
-            myFraction.setAnnealedAndChemicallyAbraded(annealedChemicallyAbraded_chkBox.isSelected());
-            myFraction.setChemicallyPurifiedUPb(chemicallyPurifiedUPb_chkBox.isSelected());
-            myFraction.setAnalysisFractionComment(fractionComment_text.getText());
+            ((UPbFractionI)myFraction).setPhysicallyAbraded(physicallyAbraded_chkBox.isSelected());
+            ((UPbFractionI)myFraction).setLeachedInHFAcid(leachedInHFAcid_chkBox.isSelected());
+            ((UPbFractionI)myFraction).setAnnealedAndChemicallyAbraded(annealedChemicallyAbraded_chkBox.isSelected());
+            ((UPbFractionI)myFraction).setChemicallyPurifiedUPb(chemicallyPurifiedUPb_chkBox.isSelected());
+            ((UPbFractionI)myFraction).setAnalysisFractionComment(fractionComment_text.getText());
 
         } catch (NumberFormatException ex) {
             throw new ETException(
@@ -2145,7 +2145,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
 
         myFraction.setChanged(true);
         // the next line undoes the default deleted status of a new default fraction
-        ((UPbFractionI) myFraction).setDeleted(false);
+        myFraction.setDeleted(false);
 
         // enable delete and restore button if off because of new default fraction
         delete_button.setEnabled(myFraction.isChanged());

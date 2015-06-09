@@ -1324,7 +1324,7 @@ public class UPbFractionReducer {
             }
         }
 
-        if (!fraction.isFractionationCorrectedU()) {//.getMeanAlphaU().compareTo( BigDecimal.ZERO ) == 0 ) {
+        if (!((UPbFractionI)fraction).isFractionationCorrectedU()) {//.getMeanAlphaU().compareTo( BigDecimal.ZERO ) == 0 ) {
             if (tracerType.equalsIgnoreCase("mixed 205-233-235")
                     || tracerType.equalsIgnoreCase("mixed 202-205-233-235")
                     || tracerType.equalsIgnoreCase("mixed 205-233-235-230Th")) {
