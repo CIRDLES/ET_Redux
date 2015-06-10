@@ -286,6 +286,45 @@ public interface SampleInterface {
      *
      * @return
      */
+    public default boolean isAnalysisTypeLASS() {
+        boolean retVal = false;
+        try {
+            retVal = SampleAnalysisTypesEnum.LASS.equals(SampleAnalysisTypesEnum.valueOf(getSampleAnalysisType()));
+        } catch (Exception e) {
+        }
+        return retVal;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public default boolean isAnalysisTypeUSERIES() {
+        boolean retVal = false;
+        try {
+            retVal = SampleAnalysisTypesEnum.USERIES.equals(SampleAnalysisTypesEnum.valueOf(getSampleAnalysisType()));
+        } catch (Exception e) {
+        }
+        return retVal;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public default boolean isAnalysisTypeGENERIC_UPB() {
+        boolean retVal = false;
+        try {
+            retVal = SampleAnalysisTypesEnum.GENERIC_UPB.equals(SampleAnalysisTypesEnum.valueOf(getSampleAnalysisType()));
+        } catch (Exception e) {
+        }
+        return retVal;
+    }
+
+    /**
+     *
+     * @return
+     */
     public default boolean isSampleTypeLegacy() {
         return (getSampleType().equalsIgnoreCase(SampleTypesEnum.LEGACY.getName()));
     }
@@ -457,10 +496,10 @@ public interface SampleInterface {
     }
 
     /**
-     * Feb 2015 This method handles the messy situation where aliquot project refers
- to each of its aliquots by index 1...n but to upload project aliquots
- individually to Geochron with concordia etc means there is only one
- aliquot per sample and we ignore its number.
+     * Feb 2015 This method handles the messy situation where aliquot project
+     * refers to each of its aliquots by index 1...n but to upload project
+     * aliquots individually to Geochron with concordia etc means there is only
+     * one aliquot per sample and we ignore its number.
      *
      * @param aliquotnum
      * @return
@@ -1131,7 +1170,7 @@ public interface SampleInterface {
      */
     public default void deSelectAllFractionsInDataTable() {
         getFractions().stream().forEach((fraction) -> {
-            ((ReportRowGUIInterface)fraction).setSelectedInDataTable(false);
+            ((ReportRowGUIInterface) fraction).setSelectedInDataTable(false);
         });
     }
 

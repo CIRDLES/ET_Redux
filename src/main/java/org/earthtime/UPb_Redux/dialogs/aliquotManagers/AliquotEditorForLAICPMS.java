@@ -39,7 +39,6 @@ import org.earthtime.ETReduxFrame;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
-import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.renderers.EditFractionButton;
@@ -656,7 +655,7 @@ public class AliquotEditorForLAICPMS extends AliquotEditorDialog {
      * @param tempFrac
      * @param row
      */
-    protected void updateFractionRow(FractionI tempFrac, int row) {
+    protected void updateFractionRow(ETFractionInterface tempFrac, int row) {
 
         ((AbstractButton) fractionEditButtons.get(row)).setText(tempFrac.getFractionID());
 
@@ -787,7 +786,7 @@ public class AliquotEditorForLAICPMS extends AliquotEditorDialog {
 
     }
 
-    private void addNewFractionRow(FractionI fraction) {
+    private void addNewFractionRow(ETFractionInterface fraction) {
         int row = fractionDeleteButtons.size();
 
         addFractionRow(fraction, row, row + 1);
@@ -824,9 +823,9 @@ public class AliquotEditorForLAICPMS extends AliquotEditorDialog {
     private class editFractionListener implements ActionListener {
 
         private int row;
-        private FractionI fraction;
+        private ETFractionInterface fraction;
 
-        public editFractionListener(FractionI fraction, int row) {
+        public editFractionListener(ETFractionInterface fraction, int row) {
             this.row = row;
             this.fraction = fraction;
         }

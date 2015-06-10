@@ -1089,7 +1089,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                     if (fractionOrAliquot instanceof AliquotInterface) {
 
                         if (e.getModifiers() == InputEvent.BUTTON1_MASK) {
-                            parentFrame.editAliquot(((AliquotInterface) verticalPixelFractionMap.get(row).rowObject));
+                            parentFrame.editAliquotByProjectType(((AliquotInterface) verticalPixelFractionMap.get(row).rowObject));
                         } else {
                             AliquotInterface.toggleAliquotFractionsRejectedStatus(((UPbReduxAliquot) verticalPixelFractionMap.get(row).rowObject));
                             parent.updateReportTable(false);

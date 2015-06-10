@@ -36,7 +36,6 @@ import javax.swing.text.JTextComponent;
 import org.earthtime.ETReduxFrame;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
-import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.renderers.EditFractionButton;
@@ -1023,9 +1022,9 @@ public class AliquotLegacyEditorForIDTIMS extends AliquotEditorDialog {
     private class editFractionListener implements ActionListener {
 
         private int row;
-        private FractionI fraction;
+        private ETFractionInterface fraction;
 
-        public editFractionListener(FractionI fraction, int row) {
+        public editFractionListener(ETFractionInterface fraction, int row) {
             this.row = row;
             this.fraction = fraction;
         }

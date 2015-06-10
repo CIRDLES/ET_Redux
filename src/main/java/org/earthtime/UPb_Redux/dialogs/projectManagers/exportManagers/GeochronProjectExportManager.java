@@ -135,10 +135,7 @@ public class GeochronProjectExportManager extends DialogEditor {
                     if (Desktop.isDesktopSupported()) {
                         try {
                             Desktop.getDesktop().browse(e.getURL().toURI());
-                        } catch (IOException e1) {
-                            // TODO Auto-generated catch block
-                            e1.printStackTrace();
-                        } catch (URISyntaxException e1) {
+                        } catch (IOException | URISyntaxException e1) {
                             // TODO Auto-generated catch block
                             e1.printStackTrace();
                         }

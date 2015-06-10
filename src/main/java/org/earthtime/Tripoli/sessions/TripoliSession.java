@@ -59,6 +59,7 @@ import org.earthtime.dataDictionaries.IncludedTypeEnum;
 import org.earthtime.dataDictionaries.MineralStandardUPbConcentrationsPPMEnum;
 import org.earthtime.dataDictionaries.RadRatios;
 import org.earthtime.dataDictionaries.RawRatioNames;
+import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.initialPbModelsET.StaceyKramersInitialPbModelET;
 import org.earthtime.ratioDataModels.initialPbModelsET.commonLeadLossCorrectionSchemes.CommonLeadLossCorrectionSchemeNONE;
@@ -641,7 +642,7 @@ public class TripoliSession implements
 
         while (allFractionsIterator.hasNext()) {
             TripoliFraction tf = allFractionsIterator.next();
-            FractionI upbFraction = tf.getuPbFraction();
+            ETFractionInterface upbFraction = tf.getuPbFraction();
             if (upbFraction == null) {
                 System.out.println("Missing upbFraction for " + tf.getFractionID());
             } else {

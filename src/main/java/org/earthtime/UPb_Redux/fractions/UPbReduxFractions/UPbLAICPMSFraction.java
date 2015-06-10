@@ -1326,6 +1326,7 @@ public class UPbLAICPMSFraction extends Fraction implements
     /**
      * @return the standard
      */
+    @Override
     public boolean isStandard() {
         return standard;
     }
@@ -1333,6 +1334,7 @@ public class UPbLAICPMSFraction extends Fraction implements
     /**
      * @param standard the standard to set
      */
+    @Override
     public void setStandard(boolean standard) {
         this.standard = standard;
     }
@@ -1352,6 +1354,9 @@ public class UPbLAICPMSFraction extends Fraction implements
     }
 
     public void initializeUpperPhiMap() {
+        if (upperPhiMap == null) {
+            upperPhiMap = new TreeMap<>();
+        }
         upperPhiMap.put("upperPhi_r206_204", 0.0);
         upperPhiMap.put("upperPhi_r207_204", 0.0);
         upperPhiMap.put("upperPhi_r208_204", 0.0);
@@ -1365,7 +1370,7 @@ public class UPbLAICPMSFraction extends Fraction implements
     }
 
     /**
-     * @param Sfci the SfciTotal to set
+     * @param SfciTotal
      */
     public void setSfciTotal(Matrix SfciTotal) {
         this.SfciTotal = SfciTotal;
