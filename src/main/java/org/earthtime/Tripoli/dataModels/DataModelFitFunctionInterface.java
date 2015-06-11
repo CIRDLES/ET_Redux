@@ -47,7 +47,7 @@ public interface DataModelFitFunctionInterface {
      *
      * @return
      */
-    public Map<String, AbstractFunctionOfX> getBackgroundFitFunctions();
+    public Map<String, AbstractFunctionOfX> getFitFunctions();
 
     /**
      *

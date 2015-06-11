@@ -144,9 +144,10 @@ public class LevenbergMarquardGeneralSolverWithCovS implements FitFunctionInterf
         int iterations = 0;
         int maxIterations = 100;
         double lambda = 1000.0;
-        double chiTolerance = 1e-5;  // per noah april 2015 1e-10;
+        double chiTolerance = 1e-6;  // per noah april 2015 1e-10;
 
         AbstractFunctionOfX FofX = null;
+        boolean doContinue = true;
 
         while (iterations < maxIterations) {
 
@@ -156,113 +157,112 @@ public class LevenbergMarquardGeneralSolverWithCovS implements FitFunctionInterf
             } catch (Exception e) {
                 // for now dirty
                 System.out.println("FIT FAILED WITH SINGULAR MATRIX DURING h CALCULATIONS " + "\n");
-                FofX = null; // no fit = probably exp-fast
-                // flags result
-                iterations = maxIterations + 1;
+                iterations = maxIterations;
+                doContinue = false;
             }
 
             if (Double.isNaN(h.get(0, 0))) {
                 System.out.println("FIT FAILED WITH NANs in h " + "\n");
-                FofX = null; // no fit = probably exp-fast
-                // flags result
-                iterations = maxIterations + 1;
+                iterations = maxIterations;
+                doContinue = false;
             }
+            if (doContinue) {
+                double[] savePod = overDispersionLMAlgorithm.getPod().clone();
 
-            double[] savePod = overDispersionLMAlgorithm.getPod().clone();
-
-            double[] newPod = savePod.clone();
-            for (int i = 0; i < newPod.length; i++) {
-                newPod[i] += h.get(i, 0);
-            }
-
-            overDispersionLMAlgorithm.setPod(newPod);
-
-            yHat = overDispersionLMAlgorithm.calcYHat();
-
-            Matrix SodNew = overDispersionLMAlgorithm.calcSod();
-
-            Matrix rNew = yValuesMatrix.minus(yHat);
-
-            double LNew = overDispersionLMAlgorithm.calcL(rNew, SodNew);
-
-            if ((LNew > L) && Math.abs(1.0 - LNew / L) >= chiTolerance) {
-                // things got worse, so try again
-                lambda *= 10.0;
-                overDispersionLMAlgorithm.setPod(savePod);
-            } else {
-                // things got better
-                if (Math.abs(1.0 - LNew / L) < chiTolerance) { // Solved
-                    // put test for exp fast here instead
-                    if (overDispersionLMAlgorithm instanceof ExponentialFastNoOD) {
-                        // we are here because expfast is using this algorithm to get an initial fit for expmat and expod
-                        System.out.println("LM found a fit with EXPFAST after " + iterations + "\n");
-                        FofX = overDispersionLMAlgorithm.produceFinalFitFunction();
-                        FofX.setMatrixJ11(overDispersionLMAlgorithm.getInitialFofX().getMatrixJ11());
-
-                    } else if (overDispersionLMAlgorithm instanceof ExponentialMatNoOD) {
-                        // we are here because expfast is using this algorithm to get an initial fit for expmat and expod
-
-                        FofX = overDispersionLMAlgorithm.produceFinalFitFunction();
-                        FofX.setMatrixJ11(overDispersionLMAlgorithm.getInitialFofX().getMatrixJ11());
-
-                        FofX.setFitParameterCovarianceMatrix(H.inverse());
-                        FofX.setMSWD(rNew.transpose().times(//
-                                SodNew.solve(rNew)).get(0, 0)//
-                                / (double) (countOfActiveData - overDispersionLMAlgorithm.getM()));
-                        // if solved use this definition of L for expMatNoOD
-                        L = r.transpose().times(SodNew.solve(rNew)).get(0, 0) + overDispersionLMAlgorithm.reduxMatrixLogDeterminant(SodNew);
-                        FofX.setBIC(-2.0 * L + ((double) overDispersionLMAlgorithm.getM()) * Math.log(countOfActiveData));
-                        FofX.setNegativeLogLikelihood(L);
-                        FofX.setOverDispersionSelected(false);
-                        // test for bad parameter covariances
-                        if (!FofX.verifyPositiveVariances()) {
-                            FofX = null;
-                        } else {
-                            System.out.println("LM found a fit with EXPMAT after " + iterations + "\n");
-                        }
-
-                    } else if ((overDispersionLMAlgorithm.getOverDispersion() / overDispersionLMAlgorithm.getMeasuredCovMatrixS().get(0, 0)) <= 0.00010) {
-                        // no overdispersion
-                        // revert to original fit function without overdispersion
-                        FofX = overDispersionLMAlgorithm.getInitialFofX();
-                        System.out.println("LM with NO OD for " + FofX.getShortNameString() + "\n");
-
-                    } else {
-                        //  there is overdispersion = this is the normal case a new fit function with overdispersion
-                        FofX = overDispersionLMAlgorithm.produceFinalFitFunction();
-                        FofX.setMatrixJ11(overDispersionLMAlgorithm.getInitialFofX().getMatrixJ11());
-
-                        FofX.setFitParameterCovarianceMatrix(H.inverse());
-                        FofX.setMSWD(rNew.transpose().times(//
-                                SodNew.solve(rNew)).get(0, 0)//
-                                / (double) (countOfActiveData - overDispersionLMAlgorithm.getM()));
-                        FofX.setBIC(-2.0 * L + ((double) overDispersionLMAlgorithm.getM()) * Math.log(countOfActiveData));
-                        FofX.setNegativeLogLikelihood(L);
-                        FofX.setOverDispersionSelected(true);
-                        FofX.setOverDispersion(overDispersionLMAlgorithm.getOverDispersion());
-
-                        // test for bad parameter covariances
-                        if (!FofX.verifyPositiveVariances()) {
-                            FofX = null;
-                        } else {
-                            System.out.println("LM with YES OD for " + FofX.getShortNameString() + " after " + iterations + "\n");
-                        }
-                    }
-                    // let's get out of here
-                    iterations = maxIterations - 1;
-                } else {
-                    // improved but not solved
-                    lambda /= 10.0;
-                    L = LNew;
-                    r = rNew;
-                    Sod = SodNew;
-                    overDispersionLMAlgorithm.calcGH(r, Sod);
-                    G = overDispersionLMAlgorithm.getG();
-                    H = overDispersionLMAlgorithm.getH();
+                double[] newPod = savePod.clone();
+                for (int i = 0; i < newPod.length; i++) {
+                    newPod[i] += h.get(i, 0);
                 }
-            } // end of things got better
 
-            iterations++;
+                overDispersionLMAlgorithm.setPod(newPod);
+
+                yHat = overDispersionLMAlgorithm.calcYHat();
+
+                Matrix SodNew = overDispersionLMAlgorithm.calcSod();
+
+                Matrix rNew = yValuesMatrix.minus(yHat);
+
+                double LNew = overDispersionLMAlgorithm.calcL(rNew, SodNew);
+
+                if ((LNew > L) && Math.abs(1.0 - LNew / L) >= chiTolerance) {
+                    // things got worse, so try again
+                    lambda *= 10.0;
+                    overDispersionLMAlgorithm.setPod(savePod);
+                } else {
+                    // things got better
+                    if (Math.abs(1.0 - LNew / L) < chiTolerance) { // Solved
+                        // put test for exp fast here instead
+                        if (overDispersionLMAlgorithm instanceof ExponentialFastNoOD) {
+                            // we are here because expfast is using this algorithm to get an initial fit for expmat and expod
+                            System.out.println("LM found a fit with EXPFAST after " + iterations + "\n");
+                            FofX = overDispersionLMAlgorithm.produceFinalFitFunction();
+                            FofX.setMatrixJ11(overDispersionLMAlgorithm.getInitialFofX().getMatrixJ11());
+
+                        } else if (overDispersionLMAlgorithm instanceof ExponentialMatNoOD) {
+                            // we are here because expfast is using this algorithm to get an initial fit for expmat and expod
+
+                            FofX = overDispersionLMAlgorithm.produceFinalFitFunction();
+                            FofX.setMatrixJ11(overDispersionLMAlgorithm.getInitialFofX().getMatrixJ11());
+
+                            FofX.setFitParameterCovarianceMatrix(H.inverse());
+                            FofX.setMSWD(rNew.transpose().times(//
+                                    SodNew.solve(rNew)).get(0, 0)//
+                                    / (double) (countOfActiveData - overDispersionLMAlgorithm.getM()));
+                            // if solved use this definition of L for expMatNoOD
+                            L = r.transpose().times(SodNew.solve(rNew)).get(0, 0) + overDispersionLMAlgorithm.reduxMatrixLogDeterminant(SodNew);
+                            FofX.setBIC(-2.0 * L + ((double) overDispersionLMAlgorithm.getM()) * Math.log(countOfActiveData));
+                            FofX.setNegativeLogLikelihood(L);
+                            FofX.setOverDispersionSelected(false);
+                            // test for bad parameter covariances
+                            if (!FofX.verifyPositiveVariances()) {
+                                FofX = null;
+                            } else {
+                                System.out.println("LM found a fit with EXPMAT after " + iterations + "\n");
+                            }
+
+                        } else if ((overDispersionLMAlgorithm.getOverDispersion() / overDispersionLMAlgorithm.getMeasuredCovMatrixS().get(0, 0)) <= 0.00010) {
+                            // no overdispersion
+                            // revert to original fit function without overdispersion
+                            FofX = overDispersionLMAlgorithm.getInitialFofX();
+                            System.out.println("LM with NO OD for " + FofX.getShortNameString() + "\n");
+
+                        } else {
+                            //  there is overdispersion = this is the normal case a new fit function with overdispersion
+                            FofX = overDispersionLMAlgorithm.produceFinalFitFunction();
+                            FofX.setMatrixJ11(overDispersionLMAlgorithm.getInitialFofX().getMatrixJ11());
+
+                            FofX.setFitParameterCovarianceMatrix(H.inverse());
+                            FofX.setMSWD(rNew.transpose().times(//
+                                    SodNew.solve(rNew)).get(0, 0)//
+                                    / (double) (countOfActiveData - overDispersionLMAlgorithm.getM()));
+                            FofX.setBIC(-2.0 * L + ((double) overDispersionLMAlgorithm.getM()) * Math.log(countOfActiveData));
+                            FofX.setNegativeLogLikelihood(L);
+                            FofX.setOverDispersionSelected(true);
+                            FofX.setOverDispersion(overDispersionLMAlgorithm.getOverDispersion());
+
+                            // test for bad parameter covariances
+                            if (!FofX.verifyPositiveVariances()) {
+                                FofX = null;
+                            } else {
+                                System.out.println("LM with YES OD for " + FofX.getShortNameString() + " after " + iterations + "\n");
+                            }
+                        }
+                        // let's get out of here
+                        iterations = maxIterations - 1;
+                    } else {
+                        // improved but not solved
+                        lambda /= 10.0;
+                        L = LNew;
+                        r = rNew;
+                        Sod = SodNew;
+                        overDispersionLMAlgorithm.calcGH(r, Sod);
+                        G = overDispersionLMAlgorithm.getG();
+                        H = overDispersionLMAlgorithm.getH();
+                    }
+                } // end of things got better
+
+                iterations++;
+            }//end of docontinue
         } // end of while
 
         if (FofX == null) {
@@ -273,8 +273,9 @@ public class LevenbergMarquardGeneralSolverWithCovS implements FitFunctionInterf
         }
 
         // part of section 7a
-        overDispersionLMAlgorithm.assignMatrixJypToFitFunctions();
-
+        if (!(overDispersionLMAlgorithm instanceof ExponentialFastNoOD)) {
+            overDispersionLMAlgorithm.assignMatrixJypToFitFunctions();
+        }
         // nov 2014
         if (FofX != null) {
             if (FofX.getMatrixJacobianYInterceptLogRatioXY() == null) {
@@ -386,7 +387,7 @@ public class LevenbergMarquardGeneralSolverWithCovS implements FitFunctionInterf
          * @param dataActiveMap
          * @param xValues
          * @param yValues
-         * @param MeasuredCovMatrixS
+         * @param measuredCovMatrixS
          * @param myInitialFofX
          */
         protected void hotInitializeFunctionAlgorithm(boolean[] dataActiveMap, double[] xValues, double[] yValues, Matrix measuredCovMatrixS, AbstractFunctionOfX myInitialFofX) {
@@ -399,7 +400,7 @@ public class LevenbergMarquardGeneralSolverWithCovS implements FitFunctionInterf
             initialFofX = myInitialFofX;
 
             if (initialFofX != null) {
-                initializeFunctionParameters(avgs2 * (initialFofX.getMSWD() - 1.0));//measuredCovMatrixS.get(0, 0) * 0.1);
+                initializeFunctionParameters(Math.max(avgs2 * (initialFofX.getMSWD() - 1.0), 0));
             }
         }
 
@@ -419,14 +420,14 @@ public class LevenbergMarquardGeneralSolverWithCovS implements FitFunctionInterf
 
             if (this instanceof ExponentialFastNoOD) {
                 // this first call is to prime the pump for internal exp-fast and mat
-                // May 2015 moved after next statement initializeFunctionParameters(avgs2 );//measuredCovMatrixS.get(0, 0) * 0.1);
+                initializeFunctionParameters(0.0); // OD not used here
                 initialFofX = initialFuncFit.getFunctionOfX(dataActiveMap, xValues, yValues, measuredCovMatrixS, false);
-                initializeFunctionParameters(avgs2 * (initialFofX.getMSWD() - 1.0));//measuredCovMatrixS.get(0, 0) * 0.1);
+                
             } else {
 
                 initialFofX = initialFuncFit.getFunctionOfX(dataActiveMap, xValues, yValues, measuredCovMatrixS, false);
                 if (initialFofX != null) {
-                    initializeFunctionParameters(avgs2 * (initialFofX.getMSWD() - 1.0));//measuredCovMatrixS.get(0, 0) * 0.1);
+                    initializeFunctionParameters(Math.max(avgs2 * (initialFofX.getMSWD() - 1.0), 0));
                 }
             }
         }
@@ -472,6 +473,7 @@ public class LevenbergMarquardGeneralSolverWithCovS implements FitFunctionInterf
          *
          * @return
          */
+        @Override
         public AbstractFunctionOfX getInitialFofX() {
             return initialFofX;
         }
@@ -906,9 +908,54 @@ public class LevenbergMarquardGeneralSolverWithCovS implements FitFunctionInterf
 
         @Override
         protected void initializeFunctionParameters(double overDispersionEstimate) {
-            pod[0] = 1.0;
-            pod[1] = -1.0;
-            pod[2] = 0.0;
+            // June 2015 new code from Noah to better prime this puppy
+            int oneFifth = yValues.length / 5;
+            double first20 = 0.0;
+            double mid20 = 0.0;
+            double last20 = 0.0;
+            for (int i = 0; i < oneFifth; i++) {
+                first20 += yValues[i];
+            }
+            for (int i = oneFifth * 2; i < oneFifth * 3; i++) {
+                mid20 += yValues[i];
+            }
+            for (int i = oneFifth * 4; i < yValues.length; i++) {
+                last20 += yValues[i];
+            }
+
+            first20 /= oneFifth;
+            mid20 /= oneFifth;
+            last20 /= (yValues.length - oneFifth *4);
+
+            double fudgec = 0.01; // 1 percent
+            double tstart = xValues[0];
+            double tend = xValues[xValues.length - 1];
+
+            if (first20 <= last20) {// positive average slope
+                if ((mid20 - first20) > (last20 - mid20)) { // if concave down, positive slope
+                    pod[2] = last20 + fudgec;
+                    pod[1] = (Math.log(last20 - first20 + fudgec) - Math.log(fudgec)) / (tstart - tend);
+                    pod[0] = -Math.exp((tstart * Math.log(fudgec) - tend * Math.log(last20 - first20 + fudgec)) / (tstart - tend));
+
+                } else {// if concave up, positive slope
+                    pod[2] = first20 - fudgec;
+                    pod[1] = (Math.log(fudgec) - Math.log(last20 - first20 + fudgec)) / (tstart - tend);
+                    pod[0] = Math.exp((tstart * Math.log(last20 - first20 + fudgec) - tend * Math.log(fudgec)) / (tstart - tend));
+
+                } // if concave up or down
+            } else {// negative average slope
+                if ((first20 - mid20) < (mid20 - last20)) { // if concave down
+                    pod[2] = first20 + fudgec;
+                    pod[1] = (Math.log(fudgec) - Math.log(first20 - last20 + fudgec)) / (tstart - tend);
+                    pod[0] = -Math.exp((tstart * Math.log(first20 - last20 + fudgec) - tend * Math.log(fudgec)) / (tstart - tend));
+
+                } else {// if concave up
+                    pod[2] = last20 - fudgec;
+                    pod[1] = (Math.log(first20 - last20 + fudgec) - Math.log(fudgec)) / (tstart - tend);
+                    pod[0] = Math.exp((tstart * Math.log(fudgec) - tend * Math.log(first20 - last20 + fudgec)) / (tstart - tend));
+                } //if concave up or down
+            } // if positive or negative slope
+
         }
 
         @Override
@@ -968,7 +1015,6 @@ public class LevenbergMarquardGeneralSolverWithCovS implements FitFunctionInterf
 
         @Override
         protected void assignMatrixJypToFitFunctions() {
-//            System.out.println("nothing to do at 754 expfastnood");// do nothing
 
             // nov 2014
             double[] JaValues = xValues.clone();
