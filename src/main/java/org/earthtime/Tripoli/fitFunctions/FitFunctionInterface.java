@@ -40,13 +40,13 @@ public interface FitFunctionInterface {
     AbstractFunctionOfX getFunctionOfX( //
             boolean[] dataActiveMap, double[] xValues, double[] yValues, Matrix MeasuredCovMatrixS, boolean calculateHatMatrix);
 
-    default double calculateMeanOfCovarianceMatrixDiagonal(Matrix matrix) {
+    public static double calculateMeanOfCovarianceMatrixDiagonal(Matrix matrix) {
         // precondition: square matrix
         double retVal = 0.0;
 
         for (int i = 0; i < matrix.getColumnDimension(); i++) {
             retVal += matrix.get(i, i);
-        }
+            }
 
         return retVal / matrix.getColumnDimension();
     }

@@ -47,7 +47,7 @@ import org.earthtime.Tripoli.dataModels.sessionModels.SessionCorrectedUnknownsSu
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.YorkLineFit;
-import org.earthtime.UPb_Redux.fractions.Fraction;
+import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.ReductionHandler;
@@ -67,6 +67,7 @@ import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.dataDictionaries.TracerUPbRatiosAndConcentrations;
 import org.earthtime.dataDictionaries.TracerUPbTypesEnum;
 import org.earthtime.exceptions.ETException;
+import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.matrices.matrixModels.AbstractMatrixModel;
 import org.earthtime.matrices.matrixModels.CovarianceMatrixModel;
 import org.earthtime.matrices.matrixModels.JacobianMatrixModel;
@@ -750,7 +751,7 @@ public class SampleDateModel extends ValueModel implements
         // check to make sure there are fractions with positive dates
         if (includedFractionIDsVector.size() > 0) {
             // create vector of fractions based on sample date model fraction list
-            Vector<Fraction> includedFractions = new Vector<>();
+            Vector<ETFractionInterface> includedFractions = new Vector<>();
             for (String fID : includedFractionIDsVector) {
                 includedFractions.add(((UPbReduxAliquot) aliquot).getAliquotFractionByName(fID));
             }
@@ -784,7 +785,7 @@ public class SampleDateModel extends ValueModel implements
         // check to make sure there are fractions with positive dates
         if (includedFractionIDsVector.size() > 0) {
             // create vector of fractions based on sample date model fraction list
-            Vector<Fraction> includedFractions = new Vector<>();
+            Vector<ETFractionInterface> includedFractions = new Vector<>();
             for (String fID : includedFractionIDsVector) {
                 includedFractions.add(sample.getSampleFractionByName(fID));
             }
@@ -827,7 +828,7 @@ public class SampleDateModel extends ValueModel implements
      * @param myFractions the collection of <code>Fractions</code> that will be
      * used to set this      <code>SampleDateModel</code>'s fields
      */
-    public void SA206_238(Vector<Fraction> myFractions) {
+    public void SA206_238(Vector<FractionI> myFractions) {
         ZeroAllValues();
         String radiogenicIsotopeDateName = RadDates.age206_238r.getName();
 
@@ -854,7 +855,7 @@ public class SampleDateModel extends ValueModel implements
      * @param myFractions the collection of <code>Fractions</code> that will be
      * used to set this      <code>SampleDateModel</code>'s fields
      */
-    public void SA207_235(Vector<Fraction> myFractions) {
+    public void SA207_235(Vector<FractionI> myFractions) {
         ZeroAllValues();
         String radiogenicIsotopeDateName = RadDates.age207_235r.getName();
 
@@ -882,7 +883,7 @@ public class SampleDateModel extends ValueModel implements
      * @param myFractions the collection of <code>Fractions</code> that will be
      * used to set this      <code>SampleDateModel</code>'s fields
      */
-    public void SA207_206(Vector<Fraction> myFractions) {
+    public void SA207_206(Vector<FractionI> myFractions) {
         ZeroAllValues();
         String radiogenicIsotopeDateName = RadDates.age207_206r.getName();
 
@@ -909,7 +910,7 @@ public class SampleDateModel extends ValueModel implements
      * @param myFractions the collection of <code>Fractions</code> that will be
      * used to set this      <code>SampleDateModel</code>'s fields
      */
-    public void SA208_232(Vector<Fraction> myFractions) {
+    public void SA208_232(Vector<FractionI> myFractions) {
         ZeroAllValues();
         String radiogenicIsotopeDateName = RadDates.age208_232r.getName();
 
@@ -935,7 +936,7 @@ public class SampleDateModel extends ValueModel implements
      */
     private void calculateSingleDateInterpretation(
             String radiogenicIsotopeDateName,
-            Fraction fraction) {
+            ETFractionInterface fraction) {
 
         setInternalTwoSigmaUnctWithTracerCalibrationAndDecayConstantUnct(//
                 ((UPbFractionI) fraction).//
@@ -963,7 +964,7 @@ public class SampleDateModel extends ValueModel implements
      * @param partialDerivativeNames the value of partialDerivativeNames
      */
     private LogWMresults calculateWeightedMeansWithMSWD(
-            Vector<Fraction> myFractions, String radiogenicIsotopeDateName, ArrayList<String> partialDerivativeNames) //
+            Vector<ETFractionInterface> myFractions, String radiogenicIsotopeDateName, ArrayList<String> partialDerivativeNames) //
             throws ETException {
 
         // to handle pre-march-2013 cases mainly differentiates from TRIPOLIZED = within Redux
@@ -1101,7 +1102,7 @@ public class SampleDateModel extends ValueModel implements
     }
 
     private LogWMresults calculateWeightedMeansWithMSWDforLogRatioBasedData(
-            Vector<Fraction> myFractions,
+            Vector<ETFractionInterface> myFractions,
             String radiogenicIsotopeDateName,
             ArrayList<String> partialDerivativeNames) //
             throws ETException {
@@ -1127,7 +1128,7 @@ public class SampleDateModel extends ValueModel implements
 
             // we are given a list of fractions to use in weighted mean, so we need to extract them from the matrices
             ArrayList<Integer> activeFractionIndices = new ArrayList<>();
-            ArrayList<Fraction> activeFractions = new ArrayList<>();
+            ArrayList<ETFractionInterface> activeFractions = new ArrayList<>();
 
             for (int i = 0; i < myFractions.size(); i++) {
                 if (unknownFractionIDs.containsKey(myFractions.get(i).getFractionID().trim())) {
@@ -1274,7 +1275,7 @@ public class SampleDateModel extends ValueModel implements
     }
 
     private void calculateWeightedMeansWithMSWDforRatioBasedData(
-            Vector<Fraction> myFractions,
+            Vector<ETFractionInterface> myFractions,
             String radiogenicIsotopeDateName) //
             throws ETException {
 
@@ -1286,7 +1287,7 @@ public class SampleDateModel extends ValueModel implements
         // by seeing if tracermass is zero
         // if so, then only analytical case will proceed
         boolean analyticalOnly = false;
-        Vector<Fraction> zeroFractionDates = new Vector<Fraction>();
+        Vector<ETFractionInterface> zeroFractionDates = new Vector<>();
         for (int i = 0; i < myFractions.size(); i++) {
             if (!fractionDateIsPositive(myFractions.get(i))) {
                 zeroFractionDates.add(myFractions.get(i));
@@ -1379,7 +1380,7 @@ public class SampleDateModel extends ValueModel implements
             //August 2012 **********************************************************************************************
             // pre-process fractions to make sure tracers conform to rules for weighted means
             // for a given tracerName, all instances must have the same major version number
-            Map<String, Integer> tracerSet = new TreeMap<String, Integer>();
+            Map<String, Integer> tracerSet = new TreeMap<>();
             for (int i = 0; i < countOfFractions; i++) {
                 String tracerName = ((UPbFractionI) myFractions.get(i)).getTracer().getModelName();
                 int tracerMajorVersionNumber = ((UPbFractionI) myFractions.get(i)).getTracer().getVersionNumber();
@@ -2039,7 +2040,7 @@ public class SampleDateModel extends ValueModel implements
      * @param myFractions the collection of <code>Fractions</code> that will be
      * used to set this      <code>SampleDateModel</code>'s fields
      */
-    public void WM206_238(Vector<Fraction> myFractions) //
+    public void WM206_238(Vector<ETFractionInterface> myFractions) //
             throws ETException {
         ZeroAllValues();
 
@@ -2111,7 +2112,7 @@ public class SampleDateModel extends ValueModel implements
      * @param myFractions the collection of <code>Fractions</code> that will be
      * used to set this      <code>SampleDateModel</code>'s fields
      */
-    public void WM207_235(Vector<Fraction> myFractions) //
+    public void WM207_235(Vector<ETFractionInterface> myFractions) //
             throws ETException {
         ZeroAllValues();
 
@@ -2148,7 +2149,7 @@ public class SampleDateModel extends ValueModel implements
      * @param myFractions the collection of <code>Fractions</code> that will be
      * used to set this      <code>SampleDateModel</code>'s fields
      */
-    public void WM207_206(Vector<Fraction> myFractions) //
+    public void WM207_206(Vector<ETFractionInterface> myFractions) //
             throws ETException {
         ZeroAllValues();
         LogWMresults logWMresults = calculateWeightedMeansWithMSWD(
@@ -2175,7 +2176,7 @@ public class SampleDateModel extends ValueModel implements
      * @param myFractions
      * @throws org.earthtime.exceptions.ETException
      */
-    public void WM208_232(Vector<Fraction> myFractions) //
+    public void WM208_232(Vector<ETFractionInterface> myFractions) //
             throws ETException {
         ZeroAllValues();
 
@@ -2231,7 +2232,7 @@ public class SampleDateModel extends ValueModel implements
      * @param myFractions
      * @throws org.earthtime.exceptions.ETException
      */
-    public void WM206_238r_Th(Vector<Fraction> myFractions) //
+    public void WM206_238r_Th(Vector<ETFractionInterface> myFractions) //
             throws ETException {
         ZeroAllValues();
         LogWMresults logWMresults = calculateWeightedMeansWithMSWD(
@@ -2245,7 +2246,7 @@ public class SampleDateModel extends ValueModel implements
      * @param myFractions
      * @throws org.earthtime.exceptions.ETException
      */
-    public void WM207_235r_Pa(Vector<Fraction> myFractions) //
+    public void WM207_235r_Pa(Vector<ETFractionInterface> myFractions) //
             throws ETException {
         ZeroAllValues();
         LogWMresults logWMresults = calculateWeightedMeansWithMSWD(
@@ -2259,7 +2260,7 @@ public class SampleDateModel extends ValueModel implements
      * @param myFractions
      * @throws org.earthtime.exceptions.ETException
      */
-    public void WM207_206r_Th(Vector<Fraction> myFractions) //
+    public void WM207_206r_Th(Vector<ETFractionInterface> myFractions) //
             throws ETException {
         ZeroAllValues();
         LogWMresults logWMresults = calculateWeightedMeansWithMSWD(
@@ -2273,7 +2274,7 @@ public class SampleDateModel extends ValueModel implements
      * @param myFractions
      * @throws org.earthtime.exceptions.ETException
      */
-    public void WM207_206r_Pa(Vector<Fraction> myFractions) //
+    public void WM207_206r_Pa(Vector<ETFractionInterface> myFractions) //
             throws ETException {
         ZeroAllValues();
         LogWMresults logWMresults = calculateWeightedMeansWithMSWD(
@@ -2287,7 +2288,7 @@ public class SampleDateModel extends ValueModel implements
      * @param myFractions
      * @throws org.earthtime.exceptions.ETException
      */
-    public void WM207_206r_ThPa(Vector<Fraction> myFractions) //
+    public void WM207_206r_ThPa(Vector<ETFractionInterface> myFractions) //
             throws ETException {
         ZeroAllValues();
         LogWMresults logWMresults = calculateWeightedMeansWithMSWD(
@@ -2303,7 +2304,7 @@ public class SampleDateModel extends ValueModel implements
      * @param lowerInterceptModel
      */
     public void UpperIntercept(
-            Vector<Fraction> myFractions,
+            Vector<ETFractionInterface> myFractions,
             ValueModel lowerInterceptModel) {
         ZeroAllValues();
 
@@ -2326,7 +2327,7 @@ public class SampleDateModel extends ValueModel implements
             double[] rho = new double[pointCount];
 
             for (int i = 0; i < myFractions.size(); i++) {
-                Fraction nextFraction = myFractions.get(i);
+                ETFractionInterface nextFraction = myFractions.get(i);
 
                 X[i] = nextFraction.getRadiogenicIsotopeRatioByName("r207_235r").//
                         getValue().doubleValue();
@@ -2344,7 +2345,7 @@ public class SampleDateModel extends ValueModel implements
 
             setYorkLineFit(new YorkLineFit(X, Y, sigmaX, sigmaY, rho));
 
-            AbstractRatiosDataModel myPhysicalConstants = ((UPbFractionI) myFractions.get(0)).getPhysicalConstantsModel();
+            AbstractRatiosDataModel myPhysicalConstants = myFractions.get(0).getPhysicalConstantsModel();
 
             // calculate upper intercept date
             try {
@@ -2378,11 +2379,11 @@ public class SampleDateModel extends ValueModel implements
 
             // lower intercept
             try {
-                ((SampleDateInterceptModel) lowerInterceptModel).setIncludedFractionIDsVector(getIncludedFractionIDsVector());
+                ((SampleDateModel) lowerInterceptModel).setIncludedFractionIDsVector(getIncludedFractionIDsVector());
             } catch (Exception e) {
             }
             try {
-                ((SampleDateInterceptModel) lowerInterceptModel).setYorkLineFit(getYorkLineFit());
+                ((SampleDateModel) lowerInterceptModel).setYorkLineFit(getYorkLineFit());
             } catch (Exception e) {
             }
             // calculate lower intercept date
@@ -2390,7 +2391,7 @@ public class SampleDateModel extends ValueModel implements
                 lowerInterceptModel.setValue(//
                         new BigDecimal(DiscordiaInterceptNewtonMethod(0.0, myPhysicalConstants)));
 
-                ((SampleDateInterceptModel) lowerInterceptModel).setMeanSquaredWeightedDeviation(//
+                ((SampleDateModel) lowerInterceptModel).setMeanSquaredWeightedDeviation(//
                         new BigDecimal(getYorkLineFit().getMswd()));
 
             } catch (Exception e) {
@@ -2421,7 +2422,7 @@ public class SampleDateModel extends ValueModel implements
      *
      * @param myFractions
      */
-    public void LowerIntercept(Vector<Fraction> myFractions) {
+    public void LowerIntercept(Vector<FractionI> myFractions) {
         // June 2010 ... no action needed here since upper intercept does calcs, this is used in reflection
     }
 
@@ -2496,7 +2497,7 @@ public class SampleDateModel extends ValueModel implements
      *
      * @param myFractions
      */
-    public void ISO238_206(Vector<Fraction> myFractions) {
+    public void ISO238_206(Vector<FractionI> myFractions) {
         System.out.println("Successful call to ISO238_206");
     }
 
@@ -2505,7 +2506,7 @@ public class SampleDateModel extends ValueModel implements
      *
      * @param myFractions
      */
-    public void ISO235_207(Vector<Fraction> myFractions) {
+    public void ISO235_207(Vector<FractionI> myFractions) {
         System.out.println("Successful call to ISO235_207");
     }
 
@@ -2514,7 +2515,7 @@ public class SampleDateModel extends ValueModel implements
      *
      * @param myFractions
      */
-    public void ISO232_208(Vector<Fraction> myFractions) {
+    public void ISO232_208(Vector<FractionI> myFractions) {
         System.out.println("Successful call to ISO232_208");
     }
 
@@ -2523,7 +2524,7 @@ public class SampleDateModel extends ValueModel implements
      *
      * @param myFractions
      */
-    public void ISO_SemiTotalPb(Vector<Fraction> myFractions) {
+    public void ISO_SemiTotalPb(Vector<FractionI> myFractions) {
         System.out.println("Successful call to ISO_SemiTotalPb");
     }
 
@@ -2532,7 +2533,7 @@ public class SampleDateModel extends ValueModel implements
      *
      * @param myFractions
      */
-    public void ISO_TotalPb(Vector<Fraction> myFractions) {
+    public void ISO_TotalPb(Vector<FractionI> myFractions) {
         System.out.println("Successful call to ISO_TotalPb");
     }
 
@@ -2569,11 +2570,11 @@ public class SampleDateModel extends ValueModel implements
      * @param fraction
      * @return
      */
-    public boolean fractionDateIsPositive(Fraction fraction) {
+    public boolean fractionDateIsPositive(ETFractionInterface fraction) {
         return fraction.getRadiogenicIsotopeDateByName(dateName).hasPositiveValue();
     }
 
-    private double fractionVarianceForThisDate(Fraction fraction) {
+    private double fractionVarianceForThisDate(ETFractionInterface fraction) {
         return fraction.getRadiogenicIsotopeDateByName(dateName).getOneSigmaAbs().pow(2).doubleValue();
     }
 
@@ -2591,7 +2592,7 @@ public class SampleDateModel extends ValueModel implements
      * @return <code>String</code> - the name and date ( formatted with two
      * sigma ABS unct ) of argument <code>fraction</code>
      */
-    public String showFractionIdWithDateAndUnct(Fraction fraction, String dateUnit) {
+    public String showFractionIdWithDateAndUnct(ETFractionInterface fraction, String dateUnit) {
 
         String contents = "";
         if (dateName.length() > 0) {
@@ -2802,8 +2803,8 @@ public class SampleDateModel extends ValueModel implements
         double retVal = 0.0;
         // altered july 2008 to use all fractions, so that de-selected ones can be grayed out
 
-        for (Fraction f : ((UPbReduxAliquot) aliquot).getAliquotFractions()) {
-            if (!((UPbFractionI) f).isRejected()
+        for (ETFractionInterface f : ((UPbReduxAliquot) aliquot).getAliquotFractions()) {
+            if (!f.isRejected()
                     && f.getRadiogenicIsotopeDateByName(dateName).hasPositiveValue()) {
                 double date = f.getRadiogenicIsotopeDateByName(getDateName()).getValue().doubleValue();
                 double twoSigma = f.getRadiogenicIsotopeDateByName(getDateName()).getTwoSigmaAbs().doubleValue();
@@ -2824,8 +2825,8 @@ public class SampleDateModel extends ValueModel implements
     public double DetermineMinDateLessTwoSigma() {
         double retVal = ReduxConstants.MAX_DATE_ANNUM;// 4.5E9;
         // altered july 2008 to use all fractions, so that de-selected ones can be grayed out
-        for (Fraction f : ((UPbReduxAliquot) aliquot).getAliquotFractions()) {
-            if (!((UPbFractionI) f).isRejected()
+        for (ETFractionInterface f : ((UPbReduxAliquot) aliquot).getAliquotFractions()) {
+            if (!f.isRejected()
                     && f.getRadiogenicIsotopeDateByName(dateName).hasPositiveValue()) {
                 double date = f.getRadiogenicIsotopeDateByName(getDateName()).getValue().doubleValue();
                 double twoSigma = f.getRadiogenicIsotopeDateByName(getDateName()).getTwoSigmaAbs().doubleValue();

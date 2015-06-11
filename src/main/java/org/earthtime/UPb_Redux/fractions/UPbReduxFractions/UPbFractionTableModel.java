@@ -36,8 +36,8 @@ import javax.swing.table.AbstractTableModel;
 import org.earthtime.ETReduxFrame;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.dialogs.fractionManagers.FractionNotesDialog;
-import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.renderers.EditFractionButton;
+import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.samples.SampleInterface;
 
 /**
@@ -170,12 +170,12 @@ public class UPbFractionTableModel extends AbstractTableModel {
      *
      */
     public final void refreshTableData() {
-        data =new ArrayList<Object[]>();
+        data =new ArrayList<>();
 
         // used to control display of aliquot buttons
         String saveAliquotNum = "0";
 
-        Vector<Fraction> myFractions = getFractionsSorted();
+        Vector<ETFractionInterface> myFractions = getFractionsSorted();
 
         for (int row = 0; row < myFractions.size(); row++) {
 
@@ -219,7 +219,7 @@ public class UPbFractionTableModel extends AbstractTableModel {
             tempJB.addActionListener(new showFractionNotesListener(myFractions.get(row)));
             
             
-            tuneNotesButton(tempJB, ((UPbFractionI) myFractions.get(row)).getFractionNotes());
+            tuneNotesButton(tempJB, myFractions.get(row).getFractionNotes());
             
             getData().get(row)[fractionNotesButtonColumn] = tempJB;
 
@@ -228,10 +228,10 @@ public class UPbFractionTableModel extends AbstractTableModel {
 
     }
 
-    private Vector<Fraction> getFractionsSorted() {
+    private Vector<ETFractionInterface> getFractionsSorted() {
         // here we sort the fractions so that they appear in alphabetical order by aliquot
-        Vector<Fraction> temp = sample.getFractions();
-        Collections.sort(temp);
+        Vector<ETFractionInterface> temp = sample.getFractions();
+        Collections.sort(temp, ETFractionInterface.FRACTION_ID_ORDER);
         return temp;
     }
 
@@ -249,9 +249,9 @@ public class UPbFractionTableModel extends AbstractTableModel {
 
     class showFractionNotesListener implements ActionListener {
 
-        private Fraction fraction;
+        private ETFractionInterface fraction;
 
-        public showFractionNotesListener(Fraction fraction) {
+        public showFractionNotesListener(ETFractionInterface fraction) {
             this.fraction = fraction;
         }
 
@@ -261,7 +261,7 @@ public class UPbFractionTableModel extends AbstractTableModel {
             notesDialog.setLocation(parentFrame.getX() + 350, parentFrame.getY() + 350);
             notesDialog.setVisible(true);
             JButton tempJB = (JButton) e.getSource();
-            tuneNotesButton(tempJB, ((UPbFractionI) fraction).getFractionNotes());
+            tuneNotesButton(tempJB, fraction.getFractionNotes());
             tempJB.repaint();
         }
     }
@@ -278,9 +278,9 @@ public class UPbFractionTableModel extends AbstractTableModel {
 
     class editFractionListener implements ActionListener {
 
-        private Fraction fraction;
+        private ETFractionInterface fraction;
 
-        public editFractionListener(Fraction fraction) {
+        public editFractionListener(ETFractionInterface fraction) {
             this.fraction = fraction;
         }
 
@@ -384,8 +384,8 @@ public class UPbFractionTableModel extends AbstractTableModel {
         public void actionPerformed(ActionEvent e) {
             if ((e != null) && (e.getSource() == this)) {
                 // here we toggle fraction selection (via isRejected) and refresh table
-                ((UPbFractionI) getSample().getFractions().get(myRow)).//
-                        setRejected((Boolean) !this.isSelected());
+                getSample().getFractions().get(myRow).//
+                        setRejected(!this.isSelected());
                 
                 getParentFrame().updateReportTable( false);//.rebuildFractionDisplays(false);
             }

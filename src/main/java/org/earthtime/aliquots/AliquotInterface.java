@@ -25,8 +25,7 @@ import java.util.Collections;
 import java.util.Vector;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
-import org.earthtime.UPb_Redux.fractions.Fraction;
-import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
+import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.valueModels.SampleDateInterceptModel;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
@@ -202,7 +201,7 @@ public interface AliquotInterface {
      */
     public static void toggleAliquotFractionsRejectedStatus(UPbReduxAliquot aliquot) {
         for (int i = 0; i < aliquot.getAliquotFractions().size(); i++) {
-            ((UPbFractionI) aliquot.getAliquotFractions().get(i)).toggleRejectedStatus();
+            aliquot.getAliquotFractions().get(i).toggleRejectedStatus();
         }
     }
 
@@ -301,7 +300,7 @@ public interface AliquotInterface {
      * @return
      */
     public default Vector<ValueModel> determineUnusedSampleDateModels() {
-        Vector<ValueModel> retVal = new Vector<ValueModel>();
+        Vector<ValueModel> retVal = new Vector<>();
         // choose models not already in use by Aliquot
         for (int i = 0; i < SampleDateTypes.getSampleDateModelTypes().length; i++) {
             if (getASampleDateModelByName(SampleDateTypes.getSampleDateType(i)) == null) {
@@ -336,7 +335,7 @@ public interface AliquotInterface {
      *
      * @return
      */
-    public Vector<Fraction> getAnalysisFractions();
+    public Vector<FractionI> getAnalysisFractions();
 
     /**
      *

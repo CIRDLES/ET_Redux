@@ -79,7 +79,6 @@ import org.earthtime.UPb_Redux.dateInterpretation.kwiki.KwikiConcordiaToolBar;
 import org.earthtime.UPb_Redux.dateInterpretation.kwiki.KwikiPDFToolBar;
 import org.earthtime.UPb_Redux.dialogs.parameterManagers.LAICPMSProjectParametersManager;
 import org.earthtime.UPb_Redux.dialogs.projectManagers.ProjectManagerSubscribeInterface;
-import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.reports.reportViews.TabbedReportViews;
 import org.earthtime.beans.ET_JButton;
@@ -87,6 +86,7 @@ import org.earthtime.dataDictionaries.DataPresentationModeEnum;
 import org.earthtime.dataDictionaries.FractionSelectionTypeEnum;
 import org.earthtime.dataDictionaries.FractionationTechniquesEnum;
 import org.earthtime.dataDictionaries.IncludedTypeEnum;
+import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.projects.ProjectInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.utilities.TicGeneratorForAxes;
@@ -110,10 +110,6 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
      */
     protected ProjectInterface project;
 
-//    /**
-//     *
-//     */
-//    protected ETReduxFrame uPbReduxFrame;
     /**
      *
      */
@@ -134,10 +130,6 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
      */
     protected Timer dataMonitorTimer;
 
-//    /**
-//     *
-//     */
-//    protected int leftMargin = 50;
     /**
      *
      */
@@ -158,10 +150,6 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
      */
     protected SortedSet<TripoliFraction> tripoliFractions;
 
-//    /**
-//     *
-//     */
-//    protected SortedMap<RawRatioNames, AbstractSessionForStandardDataModel> sessionForStandardsInterceptFractionation;
     /**
      *
      */
@@ -505,8 +493,8 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
         add(concordiaGraphPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         try {
-            Vector<Fraction> selectedFractions =//
-project.getSuperSample().getFractions();
+            Vector<ETFractionInterface> selectedFractions =//
+                    project.getSuperSample().getFractions();
 
             ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
                     setSelectedFractions(selectedFractions);
@@ -564,13 +552,13 @@ project.getSuperSample().getFractions();
 
     }
 
-    private Vector<Fraction> filterActiveUPbFractions(Vector<Fraction> fractions) {
+    private Vector<ETFractionInterface> filterActiveUPbFractions(Vector<ETFractionInterface> fractions) {
 
-        Vector<Fraction> filteredFractions = new Vector<>();
+        Vector<ETFractionInterface> filteredFractions = new Vector<>();
 
         String dateName = ((DateProbabilityDensityPanel) probabilityPanel).getChosenDateName();
 
-        for (Fraction f : fractions) {
+        for (ETFractionInterface f : fractions) {
             boolean doAddFraction = true;
 //            double pctDiscordance = f.getRadiogenicIsotopeDateByName(RadDates.percentDiscordance).getValue().doubleValue();
 //

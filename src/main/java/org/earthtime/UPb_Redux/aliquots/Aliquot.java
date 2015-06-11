@@ -26,7 +26,7 @@ import java.math.BigDecimal;
 import java.util.Vector;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.ReduxConstants.ANALYSIS_PURPOSE;
-import org.earthtime.UPb_Redux.fractions.Fraction;
+import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.dataDictionaries.DataDictionary;
@@ -69,7 +69,7 @@ public abstract class Aliquot implements AliquotInterface, Serializable {
     private Vector<ValueModel> alphaPbModels;
     private Vector<ValueModel> alphaUModels;
     private Vector<AbstractRatiosDataModel> MineralStandardModels;
-    private Vector<Fraction> analysisFractions;
+    private Vector<FractionI> analysisFractions;
     private ANALYSIS_PURPOSE analysisPurpose;
     private String keyWordsCSV;
 
@@ -428,7 +428,7 @@ public abstract class Aliquot implements AliquotInterface, Serializable {
      *
      * @return
      */
-    public Vector<Fraction> getAnalysisFractions() {
+    public Vector<FractionI> getAnalysisFractions() {
         return analysisFractions;
     }
 
@@ -436,7 +436,7 @@ public abstract class Aliquot implements AliquotInterface, Serializable {
      *
      * @param analysisFractions
      */
-    public void setAnalysisFractions(Vector<Fraction> analysisFractions) {
+    public void setAnalysisFractions(Vector<FractionI> analysisFractions) {
         this.analysisFractions = analysisFractions;
     }
 

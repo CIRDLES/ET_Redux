@@ -23,6 +23,7 @@ package org.earthtime.UPb_Redux.fractions;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.io.xml.DomDriver;
+import java.awt.geom.Path2D;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -30,6 +31,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
+import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.UPbFractionReducer;
 import org.earthtime.UPb_Redux.mineralStandardModels.MineralStandardModelXMLConverter;
 import org.earthtime.UPb_Redux.user.UPbReduxConfigurator;
@@ -40,6 +42,7 @@ import org.earthtime.UPb_Redux.valueModels.ValueModelXMLConverter;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
 import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.exceptions.ETException;
+import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.initialPbModelsET.InitialPbModelET;
 import org.earthtime.ratioDataModels.initialPbModelsET.InitialPbModelETXMLConverter;
 import org.earthtime.xmlUtilities.XMLSerializationI;
@@ -78,7 +81,7 @@ public class AnalysisFraction extends Fraction implements
      * @param analyzed
      */
     public AnalysisFraction (
-            Fraction fraction,
+            FractionI fraction,
             boolean analyzed ) {
 
         this( fraction.getSampleName() );
@@ -86,18 +89,18 @@ public class AnalysisFraction extends Fraction implements
         this.setFractionID( fraction.getFractionID() );
         this.setGrainID( fraction.getGrainID() );
 
-        this.GetValuesFrom( fraction, true );
+        this.getValuesFrom( fraction, true );
 
         // april 2010 handle UPbLegacyFraction
         if ( fraction instanceof UPbFraction ) {
-            setTracerID( ((UPbFraction) fraction).getTracerID() );
-            setAlphaPbModelID( ((UPbFraction) fraction).getAlphaPbModelID() );
-            setAlphaUModelID( ((UPbFraction) fraction).getAlphaUModelID() );
-            setPbBlankID( ((UPbFraction) fraction).getPbBlankID() );
-            setPhysicalConstantsModelID( ((UPbFraction) fraction).getPhysicalConstantsModelID() );
+            setTracerID( fraction.getTracerID() );
+            setAlphaPbModelID( fraction.getAlphaPbModelID() );
+            setAlphaUModelID( fraction.getAlphaUModelID() );
+            setPbBlankID( ((UPbFractionI)fraction).getPbBlankID() );
+            setPhysicalConstantsModelID( fraction.getPhysicalConstantsModelID() );
         }
 
-        setMeasuredRatios( (MeasuredRatioModel[]) fraction.copyMeasuredRatios() );
+        setMeasuredRatios(fraction.copyMeasuredRatios());
     }
 
     @Override
@@ -121,6 +124,7 @@ public class AnalysisFraction extends Fraction implements
      *
      * @param filename
      */
+    @Override
     public void serializeXMLObject ( String filename ) {
 
         XStream xstream = getXStreamWriter();
@@ -136,17 +140,16 @@ public class AnalysisFraction extends Fraction implements
                 + "\"" );
 
         try {
-            FileWriter outFile = new FileWriter( filename );
-            PrintWriter out = new PrintWriter( outFile );
-
-            // Write xml to file
-            out.println( xml );
-            out.flush();
-            out.close();
-            outFile.close();
+            try (FileWriter outFile = new FileWriter( filename )) {
+                PrintWriter out = new PrintWriter( outFile );
+                
+                // Write xml to file
+                out.println( xml );
+                out.flush();
+                out.close();
+            }
 
         } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
@@ -159,13 +162,14 @@ public class AnalysisFraction extends Fraction implements
      * @throws ETException
      * @throws BadOrMissingXMLSchemaException
      */
+    @Override
     public Object readXMLObject ( String filename, boolean doValidate )
             throws FileNotFoundException,
             ETException,
             FileNotFoundException,
             BadOrMissingXMLSchemaException {
 
-        Fraction myFraction = null;
+        FractionI myFraction = null;
 
         BufferedReader reader = URIHelper.getBufferedReader( filename );
 
@@ -179,7 +183,7 @@ public class AnalysisFraction extends Fraction implements
                 // re-create reader
                 reader = URIHelper.getBufferedReader( filename );
                 try {
-                    myFraction = (Fraction) xstream.fromXML( reader );
+                    myFraction = (FractionI) xstream.fromXML( reader );
                 } catch (ConversionException e) {
                     throw new ETException( null, e.getMessage() );
                 }
@@ -256,19 +260,124 @@ public class AnalysisFraction extends Fraction implements
     public static void main ( String[] args ) throws Exception {
         UPbReduxConfigurator myConfigurator = new UPbReduxConfigurator();
 
-        Fraction analysisFraction = new UPbFraction( "NONE" );
+        FractionI analysisFraction = new UPbFraction( "NONE" );
         // new AnalysisFraction("Test Sample");
 
         UPbFractionReducer.getInstance().fullFractionReduce( (UPbFraction) analysisFraction, true );
 
-        Fraction myAnalysisFraction = new AnalysisFraction( analysisFraction, false );
+        FractionI myAnalysisFraction = new AnalysisFraction( analysisFraction, false );
 
         String testFractionName = "AnalysisFractionTEST.xml";
 
-        ((AnalysisFraction) myAnalysisFraction).serializeXMLObject( testFractionName );
-        ((AnalysisFraction) myAnalysisFraction).readXMLObject( testFractionName, true );
+        ((XMLSerializationI) myAnalysisFraction).serializeXMLObject( testFractionName );
+        ((XMLSerializationI) myAnalysisFraction).readXMLObject( testFractionName, true );
 
 
 
+    }
+
+    @Override
+    public String getRatioType() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setRatioType(String RatioType) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean isChanged() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setChanged(boolean changed) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int getAliquotNumber() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setAliquotNumber(int aliquotNumber) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public AbstractRatiosDataModel getPhysicalConstantsModel() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setPhysicalConstantsModel(AbstractRatiosDataModel physicalConstantsModel) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public String getFractionNotes() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setFractionNotes(String fractionNotes) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean isRejected() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setRejected(boolean rejected) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void toggleRejectedStatus() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean isDeleted() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setDeleted(boolean deleted) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Path2D getErrorEllipsePath() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setErrorEllipsePath(Path2D errorEllipsePath) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public double getEllipseRho() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setEllipseRho(double ellipseRho) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean isStandard() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setStandard(boolean standard) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

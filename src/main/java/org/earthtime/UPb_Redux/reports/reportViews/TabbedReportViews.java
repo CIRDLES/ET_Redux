@@ -22,7 +22,6 @@ import java.io.File;
 import javax.swing.JLayeredPane;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import org.earthtime.ETReduxFrame;
 import org.earthtime.UPb_Redux.reports.ReportSettings;
 import org.earthtime.exceptions.ETException;
@@ -75,20 +74,16 @@ public class TabbedReportViews extends JTabbedPane {
 
         prepareTabs();
 
-        addChangeListener(new ChangeListener() {
-            // This method is called whenever the selected tab changes
-
-            public void stateChanged(ChangeEvent evt) {
+        addChangeListener((ChangeEvent evt) -> {
 //                int tab = ((JTabbedPane) evt.getSource()).getSelectedIndex();
 //                if ( tab == 0 ) {
 //                    ((ReportAliquotFractionsView) viewTabulatedAliquotActiveFractions).refreshPanel();
 //                } else if ( tab == 1 ) {
 //                    ((ReportAliquotFractionsView) viewTabulatedAliquotRejectedFractions).refreshPanel();
 //                }
-
 //////                jan 2015 not needed? revalidate();
-            }
-        });
+        } // This method is called whenever the selected tab changes
+        );
     }
 
     /**

@@ -74,7 +74,6 @@ import org.earthtime.UPb_Redux.dialogs.graphManagers.ConcordiaOptionsDialog;
 import org.earthtime.UPb_Redux.dialogs.graphManagers.WeightedMeanOptionsDialog;
 import org.earthtime.UPb_Redux.dialogs.sampleManagers.heatMapManagers.HeatMapManager;
 import org.earthtime.UPb_Redux.filters.PDFFileFilter;
-import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
@@ -88,6 +87,7 @@ import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
+import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.samples.SampleInterface;
 import org.earthtime.utilities.CollectionHelpers;
 import org.earthtime.utilities.FileHelper;
@@ -661,7 +661,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
                 updateSlidersStatus(slider);
 
                 // oct 2014 make choices stick to data table
-                Vector<Fraction> filteredFractions = filterActiveUPbFractions(sample.getUpbFractionsUnknown());// oct 2014 to handle live sliders.getFractionsActive());
+                Vector<ETFractionInterface> filteredFractions = filterActiveUPbFractions(sample.getUpbFractionsUnknown());// oct 2014 to handle live sliders.getFractionsActive());
                 sample.updateSetOfActiveFractions(filteredFractions);
                 // oct 2014 repaint table
                 parentFrame.updateReportTable();
@@ -672,7 +672,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
 
                 // fire off date model to filter its deselected fractions
                 try {
-                    ((SampleTreeI) dateTreeByAliquot).performLastUserSelectionOfSampleDate();
+                    dateTreeByAliquot.performLastUserSelectionOfSampleDate();
                 } catch (Exception selectionError) {
                 }
                 ((DateProbabilityDensityPanel) probabilityPanel).prepareAndPaintPanel();
@@ -838,7 +838,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
 
         // strategy = complete plan to have reduction handler use matrixspecname instead of matrixspecs
         // then here call a method to build set of all names of matrix components across all fractions chosen
-        Fraction firstFraction = sample.getFractions().get(0);
+        ETFractionInterface firstFraction = sample.getFractions().get(0);
         Vector<String> axesListing = new Vector<>();
 
         if (firstFraction instanceof UPbFraction) {
@@ -2525,7 +2525,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                         setSelectedAliquot(((UPbReduxAliquot) aliquotNodeInfo).getAliquotNumber());
                 // july 2010 refine this so that included fractions are filtered on the fly
                 // TODO: implement detrital sample date models that will actually have these removed from model based on filter
-                Vector<Fraction> tempDeselected = //
+                Vector<ETFractionInterface> tempDeselected = //
                         ((UPbReduxAliquot) aliquotNodeInfo).//
                         getAliquotSampleDateModelDeSelectedFractions(((SampleDateModel) nodeInfo).//
                                 getIncludedFractionIDsVector());
@@ -2593,13 +2593,13 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
 //                            getIncludedFractionIDsVector() ) );
                     // july 2010 refine this so that included fractions are filtered on the fly
                     // TODO: implement detrital sample date models that will actually have these removed from model based on filter
-                    Vector<Fraction> tempDeselected = //
+                    Vector<ETFractionInterface> tempDeselected = //
                             ((UPbReduxAliquot) aliquotNodeInfo).//
                             getAliquotSampleDateModelDeSelectedFractions(((SampleDateModel) sampleDateNodeInfo).//
                                     getIncludedFractionIDsVector());
                     ((DateProbabilityDensityPanel) probabilityPanel).//
                             setDeSelectedFractions(filterActiveUPbFractions(tempDeselected));
-                    ((DateProbabilityDensityPanel) probabilityPanel).repaint();
+                    probabilityPanel.repaint();
                 }
             }
 
@@ -2674,13 +2674,13 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
 
                 // july 2010 refine this so that included fractions are filtered on the fly
                 // TODO: implement detrital sample date models that will actually have these removed from model based on filter
-                Vector<Fraction> tempDeselected = //
+                Vector<ETFractionInterface> tempDeselected = //
                         ((UPbReduxAliquot) aliquotNodeInfo).//
                         getAliquotSampleDateModelDeSelectedFractions(((SampleDateModel) sampleDateNodeInfo).//
                                 getIncludedFractionIDsVector());
                 ((DateProbabilityDensityPanel) probabilityPanel).//
                         setDeSelectedFractions(filterActiveUPbFractions(tempDeselected));
-                ((DateProbabilityDensityPanel) probabilityPanel).repaint();
+                probabilityPanel.repaint();
             }
         }
     }
@@ -2846,13 +2846,13 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
         }
     }
 
-    private Vector<Fraction> filterActiveUPbFractions(Vector<Fraction> fractions) {
+    private Vector<ETFractionInterface> filterActiveUPbFractions(Vector<ETFractionInterface> fractions) {
 
-        Vector<Fraction> filteredFractions = new Vector<Fraction>();
+        Vector<ETFractionInterface> filteredFractions = new Vector<>();
 
         String dateName = ((DateProbabilityDensityPanel) probabilityPanel).getChosenDateName();
 
-        for (Fraction f : fractions) {
+        for (ETFractionInterface f : fractions) {
             boolean doAddFraction = true;
             double pctDiscordance = f.getRadiogenicIsotopeDateByName(RadDates.percentDiscordance).getValue().doubleValue();
 

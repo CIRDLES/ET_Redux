@@ -16,7 +16,7 @@
 package org.earthtime.UPb_Redux.fractions.UPbReduxFractions;
 
 import java.io.File;
-import org.earthtime.UPb_Redux.fractions.Fraction;
+import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.xmlUtilities.XMLSerializationI;
 import org.junit.After;
 import org.junit.Test;
@@ -35,7 +35,7 @@ public class UPbFractionTest {
     @Test
     public void testSerialization() throws Exception {
 
-        Fraction myUPbReduxFraction = new UPbFraction("NONE");
+        FractionI myUPbReduxFraction = new UPbFraction("NONE");
 
         ((XMLSerializationI) myUPbReduxFraction).serializeXMLObject("UPbFractionTEST.xml");
 

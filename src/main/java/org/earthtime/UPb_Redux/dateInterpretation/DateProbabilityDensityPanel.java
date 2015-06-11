@@ -66,12 +66,10 @@ import org.earthtime.UPb_Redux.dateInterpretation.concordia.GraphPanelModeChange
 import org.earthtime.UPb_Redux.dateInterpretation.vermeeschKDE.KDE;
 import org.earthtime.UPb_Redux.dateInterpretation.vermeeschKDE.OtherData;
 import org.earthtime.UPb_Redux.dateInterpretation.vermeeschKDE.Preferences;
-import org.earthtime.UPb_Redux.fractions.Fraction;
-import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.user.SampleDateInterpretationGUIOptions;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
-import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.dataDictionaries.RadDates;
+import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.samples.SampleInterface;
 import org.earthtime.utilities.TicGeneratorForAxes;
 import org.w3c.dom.DOMImplementation;
@@ -96,8 +94,8 @@ public class DateProbabilityDensityPanel extends JLayeredPane
      */
     protected SampleInterface sample;
     private int selectedAliquotNumber;
-    private Vector<Fraction> selectedFractions;
-    private Vector<Fraction> deSelectedFractions;
+    private Vector<ETFractionInterface> selectedFractions;
+    private Vector<ETFractionInterface> deSelectedFractions;
     /**
      *
      */
@@ -172,8 +170,8 @@ public class DateProbabilityDensityPanel extends JLayeredPane
         this.graphWidth = 775;
         this.graphHeight = 585;
 
-        selectedFractions = new Vector<Fraction>();
-        deSelectedFractions = new Vector<Fraction>();
+        selectedFractions = new Vector<>();
+        deSelectedFractions = new Vector<>();
 
         stackedKernels = new double[0];
         activeStackedKernels = new double[0];
@@ -349,7 +347,7 @@ public class DateProbabilityDensityPanel extends JLayeredPane
 
                     // now remove the deselected fractions
                     activeStackedAliquotKernels = stackedAliquotKernels[selectedAliquotNumber].clone();
-                    for (Fraction f : deSelectedFractions) {
+                    for (ETFractionInterface f : deSelectedFractions) {
                         ValueModel date = f.getRadiogenicIsotopeDateByName(getChosenDateName());
                         KernelF myKernel = new KernelF(date);
                         for (int i = 0; i < pdfPoints.size(); i++) {
@@ -743,7 +741,7 @@ public class DateProbabilityDensityPanel extends JLayeredPane
         for (double i = 0; i < 4001; i++) {
             pdfPoints.add(i);
         }
-        for (Fraction f : selectedFractions) {
+        for (ETFractionInterface f : selectedFractions) {
             // nov 2011 add in tiny amount so that grapher can distinguish between annum and dates based on aaaa.0  vs aaaa.0000001
             pdfPoints.add(f.getRadiogenicIsotopeDateByName(getChosenDateName()).getValue().movePointLeft(6).doubleValue() + 0.0000001);
         }
@@ -765,7 +763,7 @@ public class DateProbabilityDensityPanel extends JLayeredPane
         }
         // end June 2013 experiment with Vermeesch KDE
 
-        for (Fraction f : selectedFractions) {
+        for (ETFractionInterface f : selectedFractions) {
             ValueModel date = f.getRadiogenicIsotopeDateByName(chosenDateName);
 
             // June 2013 experiment with Vermeesch KDE
@@ -774,7 +772,7 @@ public class DateProbabilityDensityPanel extends JLayeredPane
             Z.add(Double.NaN);
             // end June 2013 experiment with Vermeesch KDE
 
-            int aliquotNumber = ((UPbFractionI) f).getAliquotNumber();
+            int aliquotNumber = f.getAliquotNumber();
             KernelF myKernel = new KernelF(date);
             for (int i = 0; i < pdfPoints.size(); i++) {
                 double eval = evalKernelAt(myKernel, pdfPoints.get(i));
@@ -1082,7 +1080,7 @@ public class DateProbabilityDensityPanel extends JLayeredPane
     /**
      * @return the deSelectedFractions
      */
-    public Vector<Fraction> getDeSelectedFractions() {
+    public Vector<ETFractionInterface> getDeSelectedFractions() {
         return deSelectedFractions;
     }
 
@@ -1106,17 +1104,17 @@ public class DateProbabilityDensityPanel extends JLayeredPane
     public void setAliquotOptions(Map<String, Map<String, String>> aliquotOptions) {
         // here we scan the sample and make sure there are aliquot options for each aliquot
         SampleDateInterpretationGUIOptions myOptions = sample.getSampleDateInterpretationGUISettings();
-        for (AliquotInterface a : sample.getActiveAliquots()) {
+        sample.getActiveAliquots().stream().forEach((a) -> {
             // this finds or creates an aliquotOptions map
             myOptions.getAliquotOptionsMapByName(a.getAliquotName(), ((UPbReduxAliquot) a).getAliquotNumber());
-        }
+        });
         this.aliquotOptions = aliquotOptions;
     }
 
     /**
      * @return the selectedFractions
      */
-    public Vector<Fraction> getSelectedFractions() {
+    public Vector<ETFractionInterface> getSelectedFractions() {
         return selectedFractions;
     }
 
@@ -1411,14 +1409,14 @@ public class DateProbabilityDensityPanel extends JLayeredPane
     /**
      * @param selectedFractions the selectedFractions to set
      */
-    public void setSelectedFractions(Vector<Fraction> selectedFractions) {
+    public void setSelectedFractions(Vector<ETFractionInterface> selectedFractions) {
         this.selectedFractions = selectedFractions;
     }
 
     /**
      * @param deSelectedFractions the deSelectedFractions to set
      */
-    public void setDeSelectedFractions(Vector<Fraction> deSelectedFractions) {
+    public void setDeSelectedFractions(Vector<ETFractionInterface> deSelectedFractions) {
         this.deSelectedFractions = deSelectedFractions;
     }
 

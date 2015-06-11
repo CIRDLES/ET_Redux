@@ -26,21 +26,19 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.concurrent.ConcurrentMap;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.utilities.comparators.IntuitiveStringComparator;
 import org.earthtime.UPb_Redux.valueModels.MeasuredRatioModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.dataDictionaries.DataDictionary;
-import org.earthtime.dataDictionaries.Lambdas;
 import org.earthtime.dataDictionaries.MeasuredRatios;
 import org.earthtime.dataDictionaries.MineralTypes;
 import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.dataDictionaries.TraceElements;
+import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.initialPbModelsET.InitialPbModelET;
-import org.earthtime.ratioDataModels.initialPbModelsET.StaceyKramersInitialPbModelET;
 
 /**
  *
@@ -105,7 +103,7 @@ public abstract class Fraction implements
     private ValueModel[] radiogenicIsotopeDates;
     private ValueModel[] compositionalMeasures;
     private ValueModel[] sampleIsochronRatios;
-    // added march 2013 to allow for weighted mean uncertainty cals for laicpms to have access 
+
 
     /**
      *
@@ -243,9 +241,8 @@ public abstract class Fraction implements
         String fractionOneID = this.getFractionID().trim();
 
         // oct 2010 put here
-        Comparator<String> forNoah = new IntuitiveStringComparator<String>();
+        Comparator<String> forNoah = new IntuitiveStringComparator<>();
         return forNoah.compare(fractionOneID, fractionTwoID);
-
     }
 
     /**
@@ -259,18 +256,15 @@ public abstract class Fraction implements
         if (this == fraction) {
             return true;
         }
-        if (!(fraction instanceof Fraction)) {
+        if (!(fraction instanceof FractionI)) {
             return false;
         }
 
-        Fraction myFraction = (Fraction) fraction;
+        FractionI myFraction = (FractionI) fraction;
 
         // oct 2010 put here
-        Comparator<String> forNoah = new IntuitiveStringComparator<String>();
+        Comparator<String> forNoah = new IntuitiveStringComparator<>();
         return forNoah.compare(this.getFractionID().trim(), myFraction.getFractionID().trim()) == 0;
-
-//        return (this.getFractionID().trim().
-//                compareToIgnoreCase( myFraction.getFractionID().trim() ) == 0);
     }
 
     // http://www.javaworld.com/javaworld/jw-01-1999/jw-01-object.html?page=4
@@ -288,68 +282,42 @@ public abstract class Fraction implements
 
     /**
      *
-     */
-    public void calculateStaceyKramersInitialPbModelValues() {
-        if (initialPbModel instanceof StaceyKramersInitialPbModelET) {
-
-            AbstractRatiosDataModel physicalConstantsModel;
-            try {
-                physicalConstantsModel = //
-                        ReduxLabData.getInstance().getAPhysicalConstantsModel(physicalConstantsModelID);
-
-                ((StaceyKramersInitialPbModelET) initialPbModel).calculateRatios(
-                        estimateDate,
-                        physicalConstantsModel.getDatumByName(Lambdas.lambda238.getName()).getValue(),
-                        physicalConstantsModel.getDatumByName(Lambdas.lambda235.getName()).getValue(),
-                        physicalConstantsModel.getDatumByName(Lambdas.lambda232.getName()).getValue());
-
-                // set ratio uncertainties based on pct uncertainty
-                ((StaceyKramersInitialPbModelET) initialPbModel).calculateUncertaintiesAndRhos(getStaceyKramersOnePctUnct(),
-                        getStaceyKramersCorrelationCoeffs(), BigDecimal.ZERO, BigDecimal.ZERO);
-            } catch (BadLabDataException badLabDataException) {
-            }
-
-            initialPbModel.initializeModel();
-        }
-    }
-
-    /**
-     *
      * @param fraction
      * @param copyAnalysisMeasures
      */
-    public void GetValuesFrom(Fraction fraction, boolean copyAnalysisMeasures) {
+    @Override
+    public void getValuesFrom(ETFractionInterface fraction, boolean copyAnalysisMeasures) {
 
         setIsLegacy(fraction.isLegacy());
-        setZircon(fraction.isZircon());
+        setZircon(((FractionI)fraction).isZircon());
 
         setImageURL(fraction.getImageURL());
         setTimeStamp(fraction.getTimeStamp());
 
-        setMineralName(fraction.getMineralName());
-        setSettingType(fraction.getSettingType());
+        setMineralName(((FractionI)fraction).getMineralName());
+        setSettingType(((FractionI)fraction).getSettingType());
 
         setNumberOfGrains(fraction.getNumberOfGrains());
         setEstimatedDate(fraction.getEstimatedDate());
-        setStaceyKramersOnePctUnct(fraction.getStaceyKramersOnePctUnct());
-        setStaceyKramersCorrelationCoeffs(fraction.getStaceyKramersCorrelationCoeffs());
+        setStaceyKramersOnePctUnct(((FractionI)fraction).getStaceyKramersOnePctUnct());
+        setStaceyKramersCorrelationCoeffs(((FractionI)fraction).getStaceyKramersCorrelationCoeffs());
 
-        setPhysicallyAbraded(fraction.isPhysicallyAbraded());
-        setLeachedInHFAcid(fraction.isLeachedInHFAcid());
-        setAnnealedAndChemicallyAbraded(fraction.isAnnealedAndChemicallyAbraded());
-        setChemicallyPurifiedUPb(fraction.isChemicallyPurifiedUPb());
+        setPhysicallyAbraded(((FractionI)fraction).isPhysicallyAbraded());
+        setLeachedInHFAcid(((FractionI)fraction).isLeachedInHFAcid());
+        setAnnealedAndChemicallyAbraded(((FractionI)fraction).isAnnealedAndChemicallyAbraded());
+        setChemicallyPurifiedUPb(((FractionI)fraction).isChemicallyPurifiedUPb());
 
         setAnalysisFractionComment(fraction.getAnalysisFractionComment());
 
         try {
-            setInitialPbModel(fraction.getInitialPbModel());//march 2012 upgrade.copy() );
+            setInitialPbModel(((FractionI)fraction).getInitialPbModel());//march 2012 upgrade.copy() );
         } catch (Exception e) {
             // case of UPbLegacyFraction
             setInitialPbModel(null);
         }
 
-        setPbCollectorType(fraction.getPbCollectorType());
-        setUCollectorType(fraction.getUCollectorType());
+        setPbCollectorType(((FractionI)fraction).getPbCollectorType());
+        setUCollectorType(((FractionI)fraction).getUCollectorType());
 
         if (copyAnalysisMeasures) {
             setAnalysisMeasures(fraction.copyAnalysisMeasures());
@@ -361,8 +329,8 @@ public abstract class Fraction implements
         traceElements = fraction.copyTraceElements();
 
         // aug 2010
-        setFractionationCorrectedPb(fraction.isFractionationCorrectedPb());
-        setFractionationCorrectedU(fraction.isFractionationCorrectedU());
+        setFractionationCorrectedPb(((FractionI)fraction).isFractionationCorrectedPb());
+        setFractionationCorrectedU(((FractionI)fraction).isFractionationCorrectedU());
     }
 
     // accessors
@@ -370,6 +338,7 @@ public abstract class Fraction implements
      *
      * @return
      */
+    @Override
     public String getSampleName() {
         return sampleName;
     }
@@ -378,6 +347,7 @@ public abstract class Fraction implements
      *
      * @param sampleName
      */
+    @Override
     public void setSampleName(String sampleName) {
         this.sampleName = sampleName.trim();
     }
@@ -386,6 +356,7 @@ public abstract class Fraction implements
      *
      * @return
      */
+    @Override
     public String getFractionID() {
         return fractionID;
     }
@@ -394,6 +365,7 @@ public abstract class Fraction implements
      *
      * @param FractionID
      */
+    @Override
     public void setFractionID(String FractionID) {
         this.fractionID = FractionID.trim();
     }
@@ -402,6 +374,7 @@ public abstract class Fraction implements
      *
      * @return
      */
+    @Override
     public String getImageURL() {
         return imageURL;
     }
@@ -410,6 +383,7 @@ public abstract class Fraction implements
      *
      * @param imageURL
      */
+    @Override
     public void setImageURL(String imageURL) {
         this.imageURL = imageURL.trim();
     }
@@ -418,6 +392,7 @@ public abstract class Fraction implements
      *
      * @return
      */
+    @Override
     public Date getTimeStamp() {
         return timeStamp;
     }
@@ -426,6 +401,7 @@ public abstract class Fraction implements
      *
      * @param timeStamp
      */
+    @Override
     public void setTimeStamp(Date timeStamp) {
         this.timeStamp = timeStamp;
     }
@@ -450,6 +426,7 @@ public abstract class Fraction implements
      *
      * @return
      */
+    @Override
     public String getSettingType() {
         return settingType;
     }
@@ -468,6 +445,7 @@ public abstract class Fraction implements
      *
      * @return
      */
+    @Override
     public int getNumberOfGrains() {
         return numberOfGrains;
     }
@@ -476,6 +454,7 @@ public abstract class Fraction implements
      *
      * @param numberOfGrains
      */
+    @Override
     public void setNumberOfGrains(int numberOfGrains) {
         this.numberOfGrains = numberOfGrains;
     }
@@ -484,6 +463,7 @@ public abstract class Fraction implements
      *
      * @return
      */
+    @Override
     public BigDecimal getEstimatedDate() {
         return estimateDate;
     }
@@ -492,6 +472,7 @@ public abstract class Fraction implements
      *
      * @param estimateDate
      */
+    @Override
     public void setEstimatedDate(BigDecimal estimateDate) {
         this.estimateDate = estimateDate;
     }
@@ -500,6 +481,7 @@ public abstract class Fraction implements
      *
      * @return
      */
+    @Override
     public boolean isPhysicallyAbraded() {
         return physicallyAbraded;
     }
@@ -508,6 +490,7 @@ public abstract class Fraction implements
      *
      * @param physicallyAbraded
      */
+    @Override
     public void setPhysicallyAbraded(boolean physicallyAbraded) {
         this.physicallyAbraded = physicallyAbraded;
     }
@@ -516,6 +499,7 @@ public abstract class Fraction implements
      *
      * @return
      */
+    @Override
     public boolean isLeachedInHFAcid() {
         return leachedInHFAcid;
     }
@@ -524,6 +508,7 @@ public abstract class Fraction implements
      *
      * @param leachedInHFAcid
      */
+    @Override
     public void setLeachedInHFAcid(boolean leachedInHFAcid) {
         this.leachedInHFAcid = leachedInHFAcid;
     }
@@ -532,6 +517,7 @@ public abstract class Fraction implements
      *
      * @return
      */
+    @Override
     public boolean isAnnealedAndChemicallyAbraded() {
         return annealedAndChemicallyAbraded;
     }
@@ -540,6 +526,7 @@ public abstract class Fraction implements
      *
      * @param annealedAndChemicallyAbraded
      */
+    @Override
     public void setAnnealedAndChemicallyAbraded(boolean annealedAndChemicallyAbraded) {
         this.annealedAndChemicallyAbraded = annealedAndChemicallyAbraded;
     }
@@ -548,6 +535,7 @@ public abstract class Fraction implements
      *
      * @return
      */
+    @Override
     public boolean isChemicallyPurifiedUPb() {
         return chemicallyPurifiedUPb;
     }
@@ -556,6 +544,7 @@ public abstract class Fraction implements
      *
      * @param chemicallyPurifiedUPb
      */
+    @Override
     public void setChemicallyPurifiedUPb(boolean chemicallyPurifiedUPb) {
         this.chemicallyPurifiedUPb = chemicallyPurifiedUPb;
     }
@@ -564,6 +553,7 @@ public abstract class Fraction implements
      *
      * @return
      */
+    @Override
     public String getAnalysisFractionComment() {
         return analysisFractionComment;
     }
@@ -572,6 +562,7 @@ public abstract class Fraction implements
      *
      * @param analysisFractionComment
      */
+    @Override
     public void setAnalysisFractionComment(String analysisFractionComment) {
         this.analysisFractionComment = analysisFractionComment.trim();
     }
@@ -687,18 +678,7 @@ public abstract class Fraction implements
      *
      * @return
      */
-    public ValueModel[] copyAnalysisMeasures() {
-        ValueModel[] retval = new ValueModel[analysisMeasures.length];
-        for (int i = 0; i < retval.length; i++) {
-            retval[i] = analysisMeasures[i].copy();
-        }
-        return retval;
-    }
-
-    /**
-     *
-     * @return
-     */
+    @Override
     public ValueModel[] getAnalysisMeasures() {
         return analysisMeasures;
     }
@@ -707,68 +687,9 @@ public abstract class Fraction implements
      *
      * @param analysisMeasures
      */
+    @Override
     public void setAnalysisMeasures(ValueModel[] analysisMeasures) {
         this.analysisMeasures = ValueModel.cullNullsFromArray(analysisMeasures);
-    }
-
-    /**
-     *
-     * @param amName
-     * @return
-     */
-    public ValueModel getAnalysisMeasure(String amName) {
-        ValueModel amModel = null;
-        for (int i = 0; i < getAnalysisMeasures().length; i++) {
-            if (getAnalysisMeasures()[i].getName().equalsIgnoreCase(amName)) {
-                amModel = getAnalysisMeasures()[i];
-            }
-        }
-
-        if (amModel == null) {
-            // return a new model - handles backwards compatible
-            // have to add element to array
-            ValueModel[] temp = new ValueModel[getAnalysisMeasures().length + 1];
-            System.arraycopy(getAnalysisMeasures(), 0, temp, 0, getAnalysisMeasures().length);
-
-            amModel
-                    = new ValueModel(amName,
-                            BigDecimal.ZERO,
-                            "ABS",
-                            BigDecimal.ZERO, BigDecimal.ZERO);
-
-            temp[getAnalysisMeasures().length] = amModel;
-
-            setAnalysisMeasures(temp);
-        }
-
-        return amModel;
-    }
-
-    /**
-     *
-     * @param amName
-     * @param valueModel
-     */
-    public void setAnalysisMeasureByName(String amName, ValueModel valueModel) {
-        // make sure it exists
-        getAnalysisMeasure(amName.trim());
-        for (int i = 0; i < getAnalysisMeasures().length; i++) {
-            if (getAnalysisMeasures()[i].getName().equalsIgnoreCase(amName.trim())) {
-                getAnalysisMeasures()[i] = valueModel;
-            }
-        }
-    }
-
-    /**
-     *
-     * @return
-     */
-    public ValueModel[] copyMeasuredRatios() {
-        ValueModel[] retval = new MeasuredRatioModel[measuredRatios.length];
-        for (int i = 0; i < retval.length; i++) {
-            retval[i] = measuredRatios[i].copy();
-        }
-        return retval;
     }
 
     /**
@@ -856,18 +777,6 @@ public abstract class Fraction implements
      *
      * @return
      */
-    public ValueModel[] copyRadiogenicIsotopeRatios() {
-        ValueModel[] retval = new ValueModel[radiogenicIsotopeRatios.length];
-        for (int i = 0; i < retval.length; i++) {
-            retval[i] = radiogenicIsotopeRatios[i].copy();
-        }
-        return retval;
-    }
-
-    /**
-     *
-     * @return
-     */
     @Override
     public ValueModel[] getRadiogenicIsotopeRatios() {
         return radiogenicIsotopeRatios;
@@ -884,68 +793,9 @@ public abstract class Fraction implements
 
     /**
      *
-     * @param riaName
-     * @param valueModel
-     */
-    public void setRadiogenicIsotopeRatioByName(String riaName, ValueModel valueModel) {
-        // make sure it exists
-        getRadiogenicIsotopeRatioByName(riaName.trim());
-
-        for (int i = 0; i < getRadiogenicIsotopeRatios().length; i++) {
-            if (getRadiogenicIsotopeRatios()[i].getName().equalsIgnoreCase(riaName.trim())) {
-                getRadiogenicIsotopeRatios()[i] = valueModel;
-            }
-        }
-    }
-
-    /**
-     *
-     * @param ratioName
      * @return
      */
-    public ValueModel getRadiogenicIsotopeRatioByName(String ratioName) {
-        for (ValueModel radiogenicIsotopeRatio : getRadiogenicIsotopeRatios()) {
-            if (radiogenicIsotopeRatio.getName().equalsIgnoreCase(ratioName.trim())) {
-                return radiogenicIsotopeRatio;
-            }
-        }
-
-        // return a new model - handles backwards compatible
-        // have to add element to array
-        ValueModel[] temp = new ValueModel[getRadiogenicIsotopeRatios().length + 1];
-        System.arraycopy(getRadiogenicIsotopeRatios(), 0, temp, 0, getRadiogenicIsotopeRatios().length);
-
-        ValueModel rirModel
-                = new ValueModel(ratioName.trim(),
-                        ratioName.startsWith("rho") ?//
-                                new BigDecimal(ReduxConstants.NO_RHO_FLAG, ReduxConstants.mathContext15) //
-                                : BigDecimal.ZERO,// June 2010 to force out of range of legal cov [-1,,,1]0.0;
-                        "ABS",
-                        BigDecimal.ZERO, BigDecimal.ZERO);
-
-        temp[getRadiogenicIsotopeRatios().length] = rirModel;
-
-        setRadiogenicIsotopeRatios(temp);
-
-        return rirModel;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public ValueModel[] copyRadiogenicIsotopeDates() {
-        ValueModel[] retval = new ValueModel[radiogenicIsotopeDates.length];
-        for (int i = 0; i < retval.length; i++) {
-            retval[i] = radiogenicIsotopeDates[i].copy();
-        }
-        return retval;
-    }
-
-    /**
-     *
-     * @return
-     */
+    @Override
     public ValueModel[] getRadiogenicIsotopeDates() {
         return radiogenicIsotopeDates;
     }
@@ -954,95 +804,16 @@ public abstract class Fraction implements
      *
      * @param radiogenicIsotopeDates
      */
+    @Override
     public void setRadiogenicIsotopeDates(ValueModel[] radiogenicIsotopeDates) {
         this.radiogenicIsotopeDates = ValueModel.cullNullsFromArray(radiogenicIsotopeDates);
     }
 
     /**
      *
-     * @param riaName
-     * @param valueModel
-     */
-    public void setRadiogenicIsotopeDateByName(String riaName, ValueModel valueModel) {
-        // make sure it exists
-        getRadiogenicIsotopeDateByName(riaName.trim());
-
-        for (int i = 0; i < getRadiogenicIsotopeDates().length; i++) {
-            if (getRadiogenicIsotopeDates()[i].getName().equalsIgnoreCase(riaName.trim())) {
-                getRadiogenicIsotopeDates()[i] = valueModel;
-            }
-        }
-    }
-
-    /**
-     *
-     * @param riaName
-     * @param valueModel
-     */
-    public void setRadiogenicIsotopeDateByName(RadDates riaName, ValueModel valueModel) {
-        setRadiogenicIsotopeDateByName(riaName.getName(), valueModel);
-    }
-
-    /**
-     *
-     * @param ratioName
      * @return
      */
-    public ValueModel getRadiogenicIsotopeDateByName(String ratioName) {
-//        if (ratioName.equalsIgnoreCase("PbcCorr_UPb_Date")){
-//            System.out.println("HEY");
-//        }
-
-        for (ValueModel radiogenicIsotopeDate : getRadiogenicIsotopeDates()) {
-            if (radiogenicIsotopeDate.getName().equalsIgnoreCase(ratioName.trim())) {
-                return radiogenicIsotopeDate;
-            }
-        }
-
-        // return a new model - handles backwards compatible
-        // have to add element to array
-        ValueModel[] temp = new ValueModel[getRadiogenicIsotopeDates().length + 1];
-        System.arraycopy(getRadiogenicIsotopeDates(), 0, temp, 0, getRadiogenicIsotopeDates().length);
-
-        ValueModel riaModel
-                = new ValueModel(ratioName.trim(),
-                        BigDecimal.ZERO,
-                        "ABS",
-                        BigDecimal.ZERO, BigDecimal.ZERO);
-
-        temp[getRadiogenicIsotopeDates().length] = riaModel;
-
-        setRadiogenicIsotopeDates(temp);
-
-        return riaModel;
-
-    }
-
-    /**
-     *
-     * @param ratioName
-     * @return
-     */
-    public ValueModel getRadiogenicIsotopeDateByName(RadDates ratioName) {
-        return getRadiogenicIsotopeDateByName(ratioName.getName());
-    }
-
-    /**
-     *
-     * @return
-     */
-    public ValueModel[] copyCompositionalMeasures() {
-        ValueModel[] retval = new ValueModel[compositionalMeasures.length];
-        for (int i = 0; i < retval.length; i++) {
-            retval[i] = compositionalMeasures[i].copy();
-        }
-        return retval;
-    }
-
-    /**
-     *
-     * @return
-     */
+    @Override
     public ValueModel[] getCompositionalMeasures() {
         return compositionalMeasures;
     }
@@ -1051,59 +822,16 @@ public abstract class Fraction implements
      *
      * @param compositionalMeasures
      */
+    @Override
     public void setCompositionalMeasures(ValueModel[] compositionalMeasures) {
         this.compositionalMeasures = ValueModel.cullNullsFromArray(compositionalMeasures);
     }
 
     /**
      *
-     * @param cmName
      * @return
      */
-    public ValueModel getCompositionalMeasureByName(String cmName) {
-        for (int i = 0; i < getCompositionalMeasures().length; i++) {
-            if (getCompositionalMeasures()[i].getName().equalsIgnoreCase(cmName.trim())) {
-                return getCompositionalMeasures()[i];
-            }
-        }
-        // return a new model - handles backwards compatible
-        // have to add element to array
-        ValueModel[] temp = new ValueModel[getCompositionalMeasures().length + 1];
-        System.arraycopy(getCompositionalMeasures(), 0, temp, 0, getCompositionalMeasures().length);
-
-        ValueModel crModel
-                = new ValueModel(cmName.trim(),
-                        BigDecimal.ZERO,
-                        "ABS",
-                        BigDecimal.ZERO, BigDecimal.ZERO);
-
-        temp[getCompositionalMeasures().length] = crModel;
-
-        setCompositionalMeasures(temp);
-
-        return crModel;
-    }
-
-    /**
-     *
-     * @param cmName
-     * @param valueModel
-     */
-    public void setCompositionalMeasureByName(String cmName, ValueModel valueModel) {
-        // make sure it exists
-        getCompositionalMeasureByName(cmName.trim());
-        //find it
-        for (int i = 0; i < getCompositionalMeasures().length; i++) {
-            if (getCompositionalMeasures()[i].getName().equalsIgnoreCase(cmName.trim())) {
-                getCompositionalMeasures()[i] = valueModel;
-            }
-        }
-    }
-
-    /**
-     *
-     * @return
-     */
+    @Override
     public String getPhysicalConstantsModelID() {
         return physicalConstantsModelID;
     }
@@ -1120,6 +848,7 @@ public abstract class Fraction implements
      *
      * @return
      */
+    @Override
     public String getAlphaPbModelID() {
         return alphaPbModelID;
     }
@@ -1128,6 +857,7 @@ public abstract class Fraction implements
      *
      * @param alphaPbModelID
      */
+    @Override
     public void setAlphaPbModelID(String alphaPbModelID) {
         this.alphaPbModelID = alphaPbModelID.trim();
     }
@@ -1136,6 +866,7 @@ public abstract class Fraction implements
      *
      * @return
      */
+    @Override
     public String getAlphaUModelID() {
         return alphaUModelID;
     }
@@ -1144,6 +875,7 @@ public abstract class Fraction implements
      *
      * @param alphaUModelID
      */
+    @Override
     public void setAlphaUModelID(String alphaUModelID) {
         this.alphaUModelID = alphaUModelID.trim();
     }
@@ -1152,6 +884,7 @@ public abstract class Fraction implements
      *
      * @return
      */
+    @Override
     public boolean isZircon() {
         return zircon;
     }
@@ -1160,6 +893,7 @@ public abstract class Fraction implements
      *
      * @param zircon
      */
+    @Override
     public void setZircon(boolean zircon) {
         this.zircon = zircon;
     }
@@ -1168,18 +902,7 @@ public abstract class Fraction implements
      *
      * @return
      */
-    public ValueModel[] copySampleIsochronRatios() {
-        ValueModel[] retval = new ValueModel[sampleIsochronRatios.length];
-        for (int i = 0; i < retval.length; i++) {
-            retval[i] = sampleIsochronRatios[i].copy();
-        }
-        return retval;
-    }
-
-    /**
-     *
-     * @return
-     */
+    @Override
     public ValueModel[] getSampleIsochronRatios() {
         return sampleIsochronRatios;
     }
@@ -1188,58 +911,15 @@ public abstract class Fraction implements
      *
      * @param sampleIsochronRatios
      */
+    @Override
     public void setSampleIsochronRatios(ValueModel[] sampleIsochronRatios) {
         this.sampleIsochronRatios = ValueModel.cullNullsFromArray(sampleIsochronRatios);
     }
 
     /**
-     *
-     * @param sirName
-     * @return
-     */
-    public ValueModel getSampleIsochronRatiosByName(String sirName) {
-        for (int i = 0; i < getSampleIsochronRatios().length; i++) {
-            if (getSampleIsochronRatios()[i].getName().equalsIgnoreCase(sirName.trim())) {
-                return getSampleIsochronRatios()[i];
-            }
-        }
-        // return a new model - handles backwards compatible
-        // have to add element to array
-        ValueModel[] temp = new ValueModel[getSampleIsochronRatios().length + 1];
-        System.arraycopy(getSampleIsochronRatios(), 0, temp, 0, getSampleIsochronRatios().length);
-
-        ValueModel sirModel
-                = new ValueModel(sirName.trim(),
-                        BigDecimal.ZERO,
-                        "ABS",
-                        BigDecimal.ZERO, BigDecimal.ZERO);
-
-        temp[getSampleIsochronRatios().length] = sirModel;
-
-        setSampleIsochronRatios(temp);
-
-        return sirModel;
-    }
-
-    /**
-     *
-     * @param sirName
-     * @param valueModel
-     */
-    public void setSampleIsochronRatiosByName(String sirName, ValueModel valueModel) {
-        // make sure it exists
-        getSampleIsochronRatiosByName(sirName.trim());
-        //find it
-        for (int i = 0; i < getSampleIsochronRatios().length; i++) {
-            if (getSampleIsochronRatios()[i].getName().equalsIgnoreCase(sirName.trim())) {
-                getSampleIsochronRatios()[i] = valueModel;
-            }
-        }
-    }
-
-    /**
      * @return the grainID
      */
+    @Override
     public String getGrainID() {
         if (grainID == null) {
             grainID = fractionID;
@@ -1288,6 +968,7 @@ public abstract class Fraction implements
     /**
      * @return the staceyKramersOnePctUnct
      */
+    @Override
     public BigDecimal getStaceyKramersOnePctUnct() {
         if (staceyKramersOnePctUnct == null) {
             staceyKramersOnePctUnct = BigDecimal.ZERO;
@@ -1298,6 +979,7 @@ public abstract class Fraction implements
     /**
      * @param staceyKramersOnePctUnct the staceyKramersOnePctUnct to set
      */
+    @Override
     public void setStaceyKramersOnePctUnct(BigDecimal staceyKramersOnePctUnct) {
         this.staceyKramersOnePctUnct = staceyKramersOnePctUnct;
     }
@@ -1305,6 +987,7 @@ public abstract class Fraction implements
     /**
      * @return the staceyKramersCorrelationCoeffs
      */
+    @Override
     public BigDecimal getStaceyKramersCorrelationCoeffs() {
         if (staceyKramersCorrelationCoeffs == null) {
             staceyKramersCorrelationCoeffs = BigDecimal.ZERO;
@@ -1323,6 +1006,7 @@ public abstract class Fraction implements
     /**
      * @return the isLegacy
      */
+    @Override
     public boolean isLegacy() {
         return isLegacy;
     }
@@ -1330,6 +1014,7 @@ public abstract class Fraction implements
     /**
      * @param isLegacy the isLegacy to set
      */
+    @Override
     public void setIsLegacy(boolean isLegacy) {
         this.isLegacy = isLegacy;
     }
@@ -1347,6 +1032,7 @@ public abstract class Fraction implements
     /**
      * @return the parDerivTerms
      */
+    @Override
     public ConcurrentMap<String, BigDecimal> getParDerivTerms() {
         return parDerivTerms;
     }
@@ -1354,6 +1040,7 @@ public abstract class Fraction implements
     /**
      * @param parDerivTerms the parDerivTerms to set
      */
+    @Override
     public void setParDerivTerms(ConcurrentMap<String, BigDecimal> parDerivTerms) {
         this.parDerivTerms = parDerivTerms;
     }
@@ -1361,6 +1048,7 @@ public abstract class Fraction implements
     /**
      * @return the rgbColor
      */
+    @Override
     public int getRgbColor() {
         return rgbColor;
     }
@@ -1368,84 +1056,28 @@ public abstract class Fraction implements
     /**
      * @param rgbColor the rgbColor to set
      */
+    @Override
     public void setRgbColor(int rgbColor) {
         this.rgbColor = rgbColor;
-    }
-
-    /*
-     needed summer 2014 for backward compatibility
-     */
-    private void initializeTraceElements() {
-        if (traceElements == null) {
-            traceElements = new ValueModel[TraceElements.getNames().length];
-            for (int i = 0; i < TraceElements.getNames().length; i++) {
-                traceElements[i]
-                        = new ValueModel(TraceElements.getNames()[i],
-                                BigDecimal.ZERO,
-                                "PCT",
-                                BigDecimal.ZERO, BigDecimal.ZERO);
-            }
-        }
-
     }
 
     /**
      * @return the traceElements
      */
+    @Override
     public ValueModel[] getTraceElements() {
-        initializeTraceElements();
+        if (traceElements == null) {
+            initializeTraceElements();
+        }
         return traceElements;
     }
 
     /**
      * @param traceElements the traceElements to set
      */
+    @Override
     public void setTraceElements(ValueModel[] traceElements) {
         this.traceElements = traceElements;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public ValueModel[] copyTraceElements() {
-        initializeTraceElements();
-
-        ValueModel[] retval = new ValueModel[traceElements.length];
-        for (int i = 0; i < retval.length; i++) {
-            retval[i] = traceElements[i].copy();
-        }
-        return retval;
-    }
-
-    /**
-     *
-     * @param tmName
-     * @return
-     */
-    public ValueModel getTraceElementByName(String tmName) {
-        initializeTraceElements();
-        for (ValueModel traceElement : traceElements) {
-            if (traceElement.getName().equalsIgnoreCase(tmName.trim())) {
-                return traceElement;
-            }
-        }
-        // return a new model - handles backwards compatible
-        // have to add element to array
-        ValueModel[] temp = new ValueModel[traceElements.length + 1];
-        System.arraycopy(traceElements, 0, temp, 0, traceElements.length);
-
-        ValueModel trModel
-                = new ValueModel(tmName.trim(),
-                        BigDecimal.ZERO,
-                        "ABS",
-                        BigDecimal.ZERO, BigDecimal.ZERO);
-
-        temp[traceElements.length] = trModel;
-
-        traceElements = temp;
-
-        return trModel;
     }
 
     /**
@@ -1460,6 +1092,23 @@ public abstract class Fraction implements
         for (int i = 0; i < traceElements.length; i++) {
             if (traceElements[i].getName().equalsIgnoreCase(tmName.trim())) {
                 traceElements[i] = valueModel;
+            }
+        }
+    }
+
+    /*
+     needed summer 2014 for backward compatibility
+     */
+    @Override
+    public void initializeTraceElements() {
+        if (traceElements == null) {
+            traceElements = new ValueModel[TraceElements.getNames().length];
+            for (int i = 0; i < TraceElements.getNames().length; i++) {
+                traceElements[i]
+                        = new ValueModel(TraceElements.getNames()[i],
+                                BigDecimal.ZERO,
+                                "PCT",
+                                BigDecimal.ZERO, BigDecimal.ZERO);
             }
         }
     }

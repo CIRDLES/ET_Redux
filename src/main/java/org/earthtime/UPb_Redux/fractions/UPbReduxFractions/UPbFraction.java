@@ -80,7 +80,7 @@ import org.earthtime.dataDictionaries.MeasuredRatios;
 import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.dataDictionaries.TracerUPbRatiosAndConcentrations;
 import org.earthtime.exceptions.ETException;
-import org.earthtime.fractions.FractionInterface;
+import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsModel;
 import org.earthtime.ratioDataModels.tracers.TracerUPbModel;
@@ -95,7 +95,7 @@ import org.earthtime.xmlUtilities.XMLSerializationI;
 public class UPbFraction extends Fraction implements
         FractionI,
         UPbFractionI,
-        FractionInterface,
+        ETFractionInterface,
         ReportRowGUIInterface,
         Serializable,
         XMLSerializationI {
@@ -192,8 +192,8 @@ public class UPbFraction extends Fraction implements
         // transient fields
         this.myLabData = ReduxLabData.getInstance();
         this.reductionHandler = null;
-        this.parDerivTerms = new ConcurrentHashMap<String, BigDecimal>();
-        this.coVariances = new HashMap<String, BigDecimal>();
+        this.parDerivTerms = new ConcurrentHashMap<>();
+        this.coVariances = new HashMap<>();
         this.radiogenicIsotopeDatesWithTracerUncertainty = new ValueModel[0];
         this.radiogenicIsotopeDatesWithAllUncertainty = new ValueModel[0];
         this.radiogenicIsotopeRatiosWithTracerUncertainty = new ValueModel[0];
@@ -324,7 +324,7 @@ public class UPbFraction extends Fraction implements
      */
     public UPbFraction(
             int aliquotNum,
-            Fraction fraction,
+            FractionI fraction,
             ReduxLabData labData,
             AbstractRatiosDataModel tracer,
             AbstractRatiosDataModel pbBlank) throws BadLabDataException {
@@ -343,7 +343,7 @@ public class UPbFraction extends Fraction implements
         this.setFractionID(fraction.getFractionID());
         this.setGrainID(fraction.getFractionID());
 
-        this.GetValuesFrom(fraction, true);
+        this.getValuesFrom(fraction, true);
 
         this.setMeasuredRatios((MeasuredRatioModel[]) fraction.copyMeasuredRatios());
 
@@ -681,10 +681,10 @@ public class UPbFraction extends Fraction implements
     @Override
     public int compareTo(Fraction fraction) throws ClassCastException {
         String uPbFractionID = fraction.getFractionID();
-        String uPbFractionAliquotNum = String.valueOf(((UPbFractionI) fraction).getAliquotNumber());
+        String uPbFractionAliquotNum = String.valueOf(fraction.getAliquotNumber());
         String myID = (uPbFractionAliquotNum + "." + uPbFractionID).toUpperCase();
 
-        Comparator<String> forNoah = new IntuitiveStringComparator<String>();
+        Comparator<String> forNoah = new IntuitiveStringComparator<>();
 
         return forNoah.compare((String.valueOf(this.getAliquotNumber()) + "." + this.getFractionID()).toUpperCase(), myID);
     }
@@ -697,7 +697,7 @@ public class UPbFraction extends Fraction implements
      * @throws BadLabDataException
      * @throws ETException
      */
-    public boolean updateUPbFraction(Fraction fractionFromFile, boolean overrideData)
+    public boolean updateUPbFraction(FractionI fractionFromFile, boolean overrideData)
             throws BadLabDataException, ETException {
         // walk the new fraction being imported into an existing fraction
         // and check whether to override
@@ -738,7 +738,7 @@ public class UPbFraction extends Fraction implements
             }
 
             // handle incoming uranium fraction
-            if (((UPbFraction) fractionFromFile).getRatioType().indexOf("U") > -1) {
+            if (((UPbFraction) fractionFromFile).getRatioType().contains("U")) {
                 setSourceFileU(((UPbFraction) fractionFromFile).getSourceFileU());
                 setPedigreeU(((UPbFraction) fractionFromFile).getPedigreeU());
                 setMeanAlphaU(((UPbFraction) fractionFromFile).getMeanAlphaU());
@@ -748,7 +748,7 @@ public class UPbFraction extends Fraction implements
             }
 
             //handle incoming pb fraction
-            if (((UPbFraction) fractionFromFile).getRatioType().indexOf("Pb") > -1) {
+            if (((UPbFraction) fractionFromFile).getRatioType().contains("Pb")) {
                 setSourceFilePb(((UPbFraction) fractionFromFile).getSourceFilePb());
                 setPedigreePb(((UPbFraction) fractionFromFile).getPedigreePb());
                 setMeanAlphaPb(((UPbFraction) fractionFromFile).getMeanAlphaPb()); // future feature
@@ -831,14 +831,6 @@ public class UPbFraction extends Fraction implements
         return getTracer().getDatumByName(trName);
     }
 
-//    /**
-//     *
-//     * @param icName
-//     * @return
-//     */
-//    public ValueModel getTracerIsotopeConcByName ( String icName ) {
-//        return getTracer().getIsotopeConcByName( icName );
-//    }
     /**
      *
      * @param pbrName
@@ -1375,16 +1367,6 @@ public class UPbFraction extends Fraction implements
 
         XMLSchemaURL
                 = myConfigurator.getResourceURI("URI_UPbReduxFractionXMLSchemaURL");
-
-////        // april 2009 - first step refactoring to speed update process
-////        // if validator does not exist, make one
-////        if ( xmlValidator == null ) {
-////            try {
-////                xmlValidator = URIHelper.createSchemaValidator( XMLSchemaURL );
-////            } catch (ETException uPbReduxException) {
-////            } catch (BadOrMissingXMLSchemaException badOrMissingXMLSchemaException) {
-////            }
-////        }
     }
 
     /**
@@ -1437,7 +1419,7 @@ public class UPbFraction extends Fraction implements
             FileNotFoundException,
             BadOrMissingXMLSchemaException {
 
-        Fraction myUPbReduxFraction = null;
+        FractionI myUPbReduxFraction = null;
 
         BufferedReader reader = URIHelper.getBufferedReader(filename);
 
@@ -1555,22 +1537,22 @@ public class UPbFraction extends Fraction implements
     public UPbFraction readXMLFraction(String filename, int aliquotNumber, boolean doValidate)
             throws BadOrMissingXMLSchemaException {
 
-        Fraction myUPbReduxFraction = null;
+        FractionI myUPbReduxFraction = null;
 
         try {
-            myUPbReduxFraction = (Fraction) readXMLObject(filename, doValidate);
+            myUPbReduxFraction = (FractionI) readXMLObject(filename, doValidate);
 
             // set LabData
             ((UPbFraction) myUPbReduxFraction).setMyLabData(this.getMyLabData());
 
             // fill missing fields
-            ((UPbFractionI) myUPbReduxFraction).setAliquotNumber(aliquotNumber);
+            myUPbReduxFraction.setAliquotNumber(aliquotNumber);
 
             ((UPbFraction) myUPbReduxFraction).setPedigreePb("");
             ((UPbFraction) myUPbReduxFraction).setPedigreeU("");
 
-            ((UPbFractionI) myUPbReduxFraction).setChanged(true);
-            ((UPbFractionI) myUPbReduxFraction).setDeleted(false);
+            myUPbReduxFraction.setChanged(true);
+            myUPbReduxFraction.setDeleted(false);
 
             ((UPbFraction) myUPbReduxFraction).setNotesPb("");
             ((UPbFraction) myUPbReduxFraction).setNotesU("");
@@ -1602,37 +1584,37 @@ public class UPbFraction extends Fraction implements
             ((UPbFractionI) myUPbReduxFraction).setAlphaUModel(this.getAlphaUModel());
             ((UPbFractionI) myUPbReduxFraction).setPbBlank(this.getPbBlank());
 
-            ((UPbFractionI) myUPbReduxFraction).setPhysicalConstantsModel(this.getPhysicalConstantsModel());
+            myUPbReduxFraction.setPhysicalConstantsModel(this.getPhysicalConstantsModel());
 
             // initialize parent fields
-            myUPbReduxFraction.GetValuesFrom(this, false);
+            myUPbReduxFraction.getValuesFrom(this, false);
 
             // may 2008 discovered that reading u first did not set analysis measures
             populateAnalysisMeasuresFromImportedFraction(myUPbReduxFraction, myUPbReduxFraction);
 
             // aug 2010
-            myUPbReduxFraction.setFractionationCorrectedU( //
+            ((UPbFractionI)myUPbReduxFraction).setFractionationCorrectedU( //
                     ((UPbFraction) myUPbReduxFraction).getMeanAlphaU().compareTo(BigDecimal.ZERO) == 1);
             // aug 2010
-            myUPbReduxFraction.setFractionationCorrectedPb(//
+            ((UPbFractionI)myUPbReduxFraction).setFractionationCorrectedPb(//
                     ((UPbFraction) myUPbReduxFraction).getMeanAlphaPb().compareTo(BigDecimal.ZERO) == 1);
 
             // check ratio_type and set source file
-            if (!((((UPbFractionI) myUPbReduxFraction).getRatioType().equalsIgnoreCase("U"))//
-                    || (((UPbFractionI) myUPbReduxFraction).getRatioType().equalsIgnoreCase("Pb")) //
-                    || (((UPbFractionI) myUPbReduxFraction).getRatioType().equalsIgnoreCase("UPb")))) {
+            if (!((myUPbReduxFraction.getRatioType().equalsIgnoreCase("U"))//
+                    || (myUPbReduxFraction.getRatioType().equalsIgnoreCase("Pb")) //
+                    || (myUPbReduxFraction.getRatioType().equalsIgnoreCase("UPb")))) {
                 throw new ETException(null, "RatioType is NOT recognized.");
             }
 
-            if (((UPbFractionI) myUPbReduxFraction).getRatioType().equalsIgnoreCase("U")//
-                    || ((UPbFractionI) myUPbReduxFraction).getRatioType().equalsIgnoreCase("UPb")) {
+            if (myUPbReduxFraction.getRatioType().equalsIgnoreCase("U")//
+                    || myUPbReduxFraction.getRatioType().equalsIgnoreCase("UPb")) {
                 ((UPbFraction) myUPbReduxFraction).setSourceFileU(filename);
                 ((UPbFraction) myUPbReduxFraction).setPedigreeU(getPedigree());
 
             }
 
-            if (((UPbFractionI) myUPbReduxFraction).getRatioType().equalsIgnoreCase("Pb") //
-                    || ((UPbFractionI) myUPbReduxFraction).getRatioType().equalsIgnoreCase("UPb")) {
+            if (myUPbReduxFraction.getRatioType().equalsIgnoreCase("Pb") //
+                    || myUPbReduxFraction.getRatioType().equalsIgnoreCase("UPb")) {
                 ((UPbFraction) myUPbReduxFraction).setSourceFilePb(filename);
                 ((UPbFraction) myUPbReduxFraction).setPedigreePb(getPedigree());
             }
@@ -1675,8 +1657,8 @@ public class UPbFraction extends Fraction implements
     }
 
     private void populateAnalysisMeasuresFromImportedFraction(
-            Fraction sourceFraction,
-            Fraction sinkFraction) {
+            FractionI sourceFraction,
+            FractionI sinkFraction) {
 
         if (isAnOxide()) {
             sinkFraction.getAnalysisMeasure(AnalysisMeasures.r18O_16O.getName()).setValue(((UPbFraction) sourceFraction).getR18O16O());
@@ -1733,7 +1715,7 @@ public class UPbFraction extends Fraction implements
      */
     public static void main(String[] args) throws Exception {
 
-        Fraction myUPbReduxFraction = new UPbFraction("NONE");
+        FractionI myUPbReduxFraction = new UPbFraction("NONE");
 
         ((XMLSerializationI) myUPbReduxFraction).serializeXMLObject("UPbFractionTEST.xml");
 
@@ -2336,14 +2318,6 @@ public class UPbFraction extends Fraction implements
                         }
                     }
 
-//                    if ( foundVal == null ) {
-//                        for (int i = 0; i < getTracer().getIsotopeConcentrations().length; i ++) {
-//                            if ( getTracer().getIsotopeConcentrations()[i].getName().equalsIgnoreCase( entry ) ) {
-//                                foundVal = getTracer().getIsotopeConcentrations()[i];
-//                                break;
-//                            }
-//                        }
-//                    }
                     if (foundVal == null) {
                         for (ValueModel data : getPbBlank().getData()) {
                             if (data.getName().equalsIgnoreCase(entry)) {
@@ -2686,12 +2660,6 @@ public class UPbFraction extends Fraction implements
 
     }
 
-//    /**
-//     * @param hasMeasuredLead the hasMeasuredLead to set
-//     */
-//    public void setHasMeasuredLead ( boolean existsMeasuredLead ) {
-//        this.hasMeasuredLead = existsMeasuredLead;
-//    }
     /**
      * @return a boolean if any uranium values > 0
      */
@@ -2705,12 +2673,6 @@ public class UPbFraction extends Fraction implements
 
     }
 
-//    /**
-//     * @param hasMeasuredUranium the hasMeasuredUranium to set
-//     */
-//    public void setHasMeasuredUranium ( boolean existsMeasuredUranium ) {
-//        this.hasMeasuredUranium = existsMeasuredUranium;
-//    }
     /**
      * @return the ellipseTilt
      */
@@ -2806,20 +2768,6 @@ public class UPbFraction extends Fraction implements
     public void setStandard(boolean standard) {
         this.standard = standard;
     }
-//
-//    /**
-//     * @return the errorEllipseNode
-//     */
-//    public org.cirdles.isoplot.chart.concordia.ErrorEllipse getErrorEllipseNode() {
-//        return errorEllipseNode;
-//    }
-//
-//    /**
-//     * @param errorEllipseNode the errorEllipseNode to set
-//     */
-//    public void setErrorEllipseNode(org.cirdles.isoplot.chart.concordia.ErrorEllipse errorEllipseNode) {
-//        this.errorEllipseNode = errorEllipseNode;
-//    }
 
     /**
      *

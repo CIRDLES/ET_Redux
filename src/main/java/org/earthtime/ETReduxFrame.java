@@ -98,10 +98,7 @@ import org.earthtime.UPb_Redux.dialogs.sampleManagers.sampleFromProjectManagers.
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.filters.ReduxFileFilter;
 import org.earthtime.UPb_Redux.filters.XMLFileFilter;
-import org.earthtime.UPb_Redux.fractions.Fraction;
-import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionTable;
-import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionTableModel;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLAICPMSFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.PbcCorrectionDetails;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.UPbFractionReducer;
@@ -138,6 +135,7 @@ import org.earthtime.dialogs.projectManagers.projectLegacyManagers.ProjectOfLega
 import org.earthtime.dialogs.projectManagers.projectLegacyManagers.ProjectOfLegacySamplesDataManagerDialogForUCSB_LASS_A;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
+import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.projects.EarthTimeSerializedFileInterface;
 import org.earthtime.projects.Project;
 import org.earthtime.projects.ProjectInterface;
@@ -446,7 +444,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             ETSerializer.SerializeObjectToFile(ReduxLabData.getInstance(), ReduxLabData.getMySerializedName());
         } catch (ETException ex) {
             new ETWarningDialog(ex).setVisible(true);
-            System.out.println("LabData did not save");
+//            System.out.println("LabData did not save");
         }
     }
 
@@ -721,7 +719,6 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 //        if (reportSettingsModel != null) {
 //            reportSettingsModel.setLegacyData(superSample.isAnalyzed());
 //        }
-        
         try {
             superSample.setLegacyStatusForReportTable();
         } catch (Exception e) {
@@ -809,7 +806,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         } catch (BadLabDataException ex) {
             new ETWarningDialog(ex).setVisible(true);
         }
-        
+
         //set flag for whether analysis was performed elsewhere and we just have legacy results
         theSample.setAnalyzed(true);
 
@@ -837,7 +834,6 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                             theProject,
                             myState.getMRUImportFolderCompilationMode());
         }
-
 
         ((AbstractProjectOfLegacySamplesDataManagerDialog) myProjectManager).setSize();
 
@@ -1013,7 +1009,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
             return ((AbstractProjectOfLegacySamplesDataManagerDialog) mySampleManager).isInitialized();
 
-        } else if (theSample.isSampleTypeCompilation()){//  getSampleType().equalsIgnoreCase(SampleTypesEnum.COMPILATION.getName())) {
+        } else if (theSample.isSampleTypeCompilation()) {//  getSampleType().equalsIgnoreCase(SampleTypesEnum.COMPILATION.getName())) {
 
             mySampleManager
                     = new SampleCompilationManagerDialog(
@@ -1376,10 +1372,9 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
     @Override
     public void rebuildFractionDisplays(boolean performReduction) {
 
-        ((UPbFractionTable) getTheFractionTable()).setMySample(this, theSample);
-
-        ((UPbFractionTable) getTheFractionTable()).formatTable();
-
+////        ((UPbFractionTable) getTheFractionTable()).setMySample(this, theSample);
+////
+////        ((UPbFractionTable) getTheFractionTable()).formatTable();
         ((TabbedReportViews) getReportTableTabbedPane()).setSample(theSample);
 
         updateReportTable(performReduction);
@@ -1410,9 +1405,9 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         if (performReduction) {
             theSample.reduceSampleData();
         }
-        // this call is for top table of measured ratios
-        ((UPbFractionTableModel) getTheFractionTable().getModel()).//
-                refreshTableData();
+////////        // this call is for top table of measured ratios
+////////        ((UPbFractionTableModel) getTheFractionTable().getModel()).//
+////////                refreshTableData();
 
         loadAndShowReportTableData();
 
@@ -1718,9 +1713,9 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                     for (AliquotInterface activeAliquot : theProject.getSuperSample().getActiveAliquots()) {
                         outputWriter.println("Fractions from " + activeAliquot.getAliquotName() + "\n");
                         outputWriter.println(PbcCorrectionDetails.headerString() + "\n");
-                        Vector<Fraction> fractions = ((UPbReduxAliquot) activeAliquot).getActiveAliquotFractions();
+                        Vector<ETFractionInterface> fractions = ((UPbReduxAliquot) activeAliquot).getActiveAliquotFractions();
                         for (int i = 0; i < fractions.size(); i++) {
-                            Fraction fraction = fractions.get(i);
+                            ETFractionInterface fraction = fractions.get(i);
 
                             // static values available after this run
                             PbcCorrectionDetails.zeroAllValues();
@@ -3409,11 +3404,11 @@ private void editCurrentReportSettingsModel_menuItemActionPerformed(java.awt.eve
     private void EditReportSettings()
             throws BadLabDataException {
         //if (!ReportSettingsManager.amOpen) {
-            myReportSettingsEditor
-                    = new ReportSettingsManager(this, true, theSample.getReportSettingsModel());//Initialized());
-            myReportSettingsEditor.setSize(455, 685);
-            DialogEditor.setDefaultLookAndFeelDecorated(true);
-            myReportSettingsEditor.setVisible(true);
+        myReportSettingsEditor
+                = new ReportSettingsManager(this, true, theSample.getReportSettingsModel());//Initialized());
+        myReportSettingsEditor.setSize(455, 685);
+        DialogEditor.setDefaultLookAndFeelDecorated(true);
+        myReportSettingsEditor.setVisible(true);
 //        } else {
 //        }
 
@@ -3576,12 +3571,12 @@ private void startStopLiveUpdate_buttonActionPerformed(java.awt.event.ActionEven
      * @param selectedTab the tab to open the editor to
      */
     @Override
-    public void editFraction(Fraction fraction, int selectedTab) {
+    public void editFraction(ETFractionInterface fraction, int selectedTab) {
 
         // oct 2014
         forceCloseOfSampleDateInterpretations();
 
-        AliquotInterface aliquot = theSample.getAliquotByNumber(((UPbFractionI) fraction).getAliquotNumber());
+        AliquotInterface aliquot = theSample.getAliquotByNumber(fraction.getAliquotNumber());
         myFractionEditor = null;
 
         if (theSample.isSampleTypeLegacy()
@@ -3598,7 +3593,7 @@ private void startStopLiveUpdate_buttonActionPerformed(java.awt.event.ActionEven
                             false);
         } else if (theSample.getSampleAnalysisType().equalsIgnoreCase(SampleAnalysisTypesEnum.IDTIMS.getName())
                 || (theSample.isSampleTypeCompilation())) {
-        // TODO: Need kwiki page for LAICPMS               
+            // TODO: Need kwiki page for LAICPMS               
 
             myFractionEditor
                     = new UPbFractionEditorDialog(
@@ -3624,13 +3619,13 @@ private void startStopLiveUpdate_buttonActionPerformed(java.awt.event.ActionEven
             myFractionEditor.setVisible(true);
 
             // post-process the editor's results
-            theSample.setChanged(theSample.isChanged() || ((UPbFractionI) fraction).isChanged());
+            theSample.setChanged(theSample.isChanged() || fraction.isChanged());
             // feb 2010
             if (theSample.isChanged()) {
                 SampleInterface.saveSampleAsSerializedReduxFile(theSample);
             }
 
-            if (((UPbFractionI) fraction).isDeleted()) {
+            if (fraction.isDeleted()) {
                 theSample.removeUPbReduxFraction(fraction);
             }
 
@@ -3658,53 +3653,94 @@ private void startStopLiveUpdate_buttonActionPerformed(java.awt.event.ActionEven
         // added march 2009 so that changes to fraction tab are saved upon use of aliquot button
         SampleInterface.saveSampleAsSerializedReduxFile(theSample);
 
-        editAliquot(theSample.getAliquotByNumber(aliquotNum));
+        editAliquotByProjectType(theSample.getAliquotByNumber(aliquotNum));
+    }
+
+    private void editAliquot(SampleInterface sample, AliquotInterface aliquot) {
+        DialogEditor myEditor = null;
+
+        // theSample is sampleType: (SAMPLEFOLDER == LIVEWORKFLOW), COMPILATION, ANALYSIS, LEGACY
+        // sampleType COMPILATION is a holdover from compiled SuperSamples created under the Samples menu
+        // the plan is to make these into proper Projects - these were the original Compiled from 
+        // various aliquots that Sam Bowring saw as compilation mode and turned out to be useful and powerful
+        // note also the flag analyzed = true means either compiled legacy or compiled from existing
+        // aliquots and imported into compilation; while false means that analysis will occur within redux
+        // June 2015 assume for now that we decide purely on sampleAnalysisType
+        // flavors: USERIES, IDTIMS, LAICPMS, LASS, GENERICUPB, and for superSamples of Projects: COMPILED, TRIPOLIZED
+        if (sample.isAnalysisTypeIDTIMS()) {
+            if (sample.isSampleTypeAnalysis()) {
+                myEditor = new AliquotEditorDialog(this, true, theSample, aliquot);
+            } else if (sample.isSampleTypeLegacy()) {
+                myEditor = new AliquotLegacyEditorForIDTIMS(this, true, theSample, aliquot);
+            }
+
+        } else if (sample.isAnalysisTypeLAICPMS()) {
+            if (sample.isSampleTypeAnalysis()) {
+                myEditor = new AliquotEditorForLAICPMS(this, true, theSample, aliquot);
+            } else if (sample.isSampleTypeLegacy()) {
+                myEditor = new AliquotLegacyEditorForLAICPMS(this, true, theSample, aliquot);
+            }
+
+        } else if (sample.isAnalysisTypeLASS()) {
+            if (sample.isSampleTypeAnalysis()) {
+
+            } else if (sample.isSampleTypeLegacy()) {
+                myEditor = new AliquotLegacyEditorForLAICPMS(this, true, theSample, aliquot);
+            }
+
+        } else if (sample.isAnalysisTypeUSERIES()) {
+            if (sample.isSampleTypeAnalysis()) {
+
+            } else if (sample.isSampleTypeLegacy()) {
+
+            }
+
+        } else if (sample.isAnalysisTypeGENERIC_UPB()) {
+            if (sample.isSampleTypeAnalysis()) {
+
+            } else if (sample.isSampleTypeLegacy()) {
+
+            }
+
+        }
+
+        if (myEditor != null) {
+            JDialog.setDefaultLookAndFeelDecorated(true);
+
+            myEditor.setVisible(true);
+        }
     }
 
     /**
      *
      * @param aliquot
      */
-    public void editAliquot(AliquotInterface aliquot) {
-        DialogEditor myEditor = null;
-
-        String sampleAnalysisType = theSample.getSampleAnalysisType();
-
+    public void editAliquotByProjectType(AliquotInterface aliquot) {
         if (theSample.isSampleTypeProject()) {
-            // do nothing for now
-            myEditor = new AliquotLegacyEditorForLAICPMS(this, true, theSample, aliquot);
-        } else if (theSample.isSampleTypeLegacy()//
-                && sampleAnalysisType.equalsIgnoreCase(SampleAnalysisTypesEnum.IDTIMS.getName())) {
-            // May 2010 backward compatibility
-            ((UPbReduxAliquot) aliquot).setCompiled(false);
-            myEditor = new AliquotLegacyEditorForIDTIMS(this, true, theSample, aliquot);
-
-        } else if (theSample.isSampleTypeLegacy() //
-                && sampleAnalysisType.toUpperCase().startsWith(SampleAnalysisTypesEnum.LAICPMS.getName())) {
-            // May 2010 backward compatibility
-            ((UPbReduxAliquot) aliquot).setCompiled(false);
-            myEditor = new AliquotLegacyEditorForLAICPMS(this, true, theSample, aliquot);
-
-            // oct 2014 
-        } else if (theSample.isSampleTypeLegacy() //
-                && sampleAnalysisType.toUpperCase().startsWith(SampleAnalysisTypesEnum.LASS.getName())) {
-            // May 2010 backward compatibility
-            ((UPbReduxAliquot) aliquot).setCompiled(false);
-            myEditor = new AliquotLegacyEditorForLAICPMS(this, true, theSample, aliquot);
-
-        } else if (theSample.isSampleTypeAnalysis() //
-                && sampleAnalysisType.toUpperCase().startsWith(SampleAnalysisTypesEnum.LAICPMS.getName())) {
-            // June 2013 temp for project samples from Tripolized LAICPMS
-            ((UPbReduxAliquot) aliquot).setCompiled(false);
-            myEditor = new AliquotEditorForLAICPMS(this, true, theSample, aliquot);
-
+            // Project has a compiledSuperSample made up of actual projectSamples
+            // we need the actual sample associated with this aliquot
+            // this aliquot is a copy for compiled super sample and we need
+            // the aliquot with the name from name1::name and its sample
+            // there are two anaylsisTypes of Project superSample: "COMPILED" and "TRIPOLIZED"
+            // eventually Aliquot Editors may need to differentiate the two
+            String aliquotName = aliquot.getAliquotName().split("::")[1];
+            ArrayList<SampleInterface> samples = theProject.getProjectSamples();
+            for (int i = 0; i < samples.size(); i++) {
+                AliquotInterface sampleAliquot = samples.get(i).getAliquotByName(aliquotName);
+                if (sampleAliquot != null) {
+                    // now choose aliquot manager
+                    // note that for a SuperSample sampleAnalysisType of "COMPILED", there may eventually
+                    // be a variety of sub samples with different origins
+                    editAliquot(samples.get(i), sampleAliquot);
+                    break;
+                }
+            }
         } else {
-            myEditor = new AliquotEditorDialog(this, true, theSample, aliquot);
+            //TODO: confirm this in 2015  May 2010 backward compatibility
+            ((UPbReduxAliquot) aliquot).setCompiled(false);
+            editAliquot(theSample, aliquot);
         }
 
-        JDialog.setDefaultLookAndFeelDecorated(true);
-
-        myEditor.setVisible(true);
     }
 
 private void ID_TIMSLegacyAnalysis_MIT_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ID_TIMSLegacyAnalysis_MIT_menuItemActionPerformed

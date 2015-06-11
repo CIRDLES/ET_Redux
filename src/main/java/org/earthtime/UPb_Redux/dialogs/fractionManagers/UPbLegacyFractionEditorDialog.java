@@ -30,7 +30,7 @@ import javax.swing.JPanel;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
-import org.earthtime.UPb_Redux.fractions.Fraction;
+import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.ReductionHandler;
@@ -39,6 +39,7 @@ import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
+import org.earthtime.fractions.ETFractionInterface;
 
 /**
  *
@@ -50,7 +51,7 @@ public class UPbLegacyFractionEditorDialog extends DialogEditor {
 
     private AliquotInterface aliquot;
 
-    private Fraction myFraction;
+    private ETFractionInterface myFraction;
 
     private ArrayList<String> fractionIDs;
 
@@ -65,10 +66,6 @@ public class UPbLegacyFractionEditorDialog extends DialogEditor {
 
     private String uncertaintyModeForDates;
 
-//    private String correctionModeForDates;
-//
-//    private SampleUpdateAliquotFromFolderI sampleAliquotUpdater;
-//    private boolean inAutoUraniumMode;
     /**
      * Creates new form FractionEditorDialog
      *
@@ -83,7 +80,7 @@ public class UPbLegacyFractionEditorDialog extends DialogEditor {
             java.awt.Frame parent,
             boolean modal,
             AliquotInterface aliquot,
-            Fraction fraction,
+            ETFractionInterface fraction,
             int selectedTab,
             boolean analyzed) {
 
@@ -93,7 +90,6 @@ public class UPbLegacyFractionEditorDialog extends DialogEditor {
             return;
         }
 
-//        this.sampleAliquotUpdater = sampleAliquotUpdater;
         setAnalyzed(analyzed);
 
         this.aliquot = aliquot;
@@ -120,7 +116,7 @@ public class UPbLegacyFractionEditorDialog extends DialogEditor {
             fraction_Chooser.addItem(fraction);
         }
         // add the not-rejected fractions
-        for (Fraction f : ((UPbReduxAliquot) aliquot).getAliquotFractions()) {
+        for (ETFractionInterface f : ((UPbReduxAliquot) aliquot).getAliquotFractions()) {
             if (!((UPbFractionI) f).isRejected()) {
                 fraction_Chooser.addItem(f);
             }
@@ -132,7 +128,7 @@ public class UPbLegacyFractionEditorDialog extends DialogEditor {
             public void actionPerformed(ActionEvent e) {
                 JComboBox cb = (JComboBox) e.getSource();
 
-                myFraction = (Fraction) cb.getSelectedItem();
+                myFraction = (FractionI) cb.getSelectedItem();
                 InitializeFractionData();
             }
         });
@@ -140,7 +136,7 @@ public class UPbLegacyFractionEditorDialog extends DialogEditor {
         // first create a list of used fractionids so that we
         // can tell user if edited fraction name is already in use
         fractionIDs = new ArrayList<String>();
-        for (Fraction f : ((UPbReduxAliquot) aliquot).getAliquotFractions()) {
+        for (ETFractionInterface f : ((UPbReduxAliquot) aliquot).getAliquotFractions()) {
             fractionIDs.add(f.getFractionID());
         }
 
@@ -293,74 +289,19 @@ public class UPbLegacyFractionEditorDialog extends DialogEditor {
 
         }
 
-        ((UPbFraction) myFraction).setChanged(true);
+        myFraction.setChanged(true);
         // the next line undoes the default deleted status of a new default fraction
-        ((UPbFraction) myFraction).setDeleted(false);
+        myFraction.setDeleted(false);
 
         // enable delete and restore button if off because of new default fraction
-        delete_button.setEnabled(((UPbFractionI) myFraction).isChanged());
-        restore_button.setEnabled(((UPbFractionI) myFraction).isChanged());
+        delete_button.setEnabled(myFraction.isChanged());
+        restore_button.setEnabled(myFraction.isChanged());
 
         ((UPbFraction) myFraction).initializeReductionHandler();
         reduceFraction(isAnalyzed());
 
     }
 
-////    private boolean ExportUPbFractionPerInputSchema() {
-////
-////        boolean retval = true;
-////        File selectedFile = null;
-////
-////        int response = JOptionPane.showConfirmDialog(this,
-////                new String[]{"Save data and continue with export ?"},
-////                "ET Redux Warning",
-////                JOptionPane.YES_NO_OPTION,
-////                JOptionPane.WARNING_MESSAGE);
-////        if (response == JOptionPane.NO_OPTION) {
-////            retval = false;
-////        } else {
-////            try {
-////                Save();
-////            } catch (ETException ex) {
-////                ex.printStackTrace();
-////            }
-////        }
-////
-////        if (retval) {
-////            // proceed with export
-////            // forces dialog to front
-////            setAlwaysOnTop(false);
-////
-////            String dialogTitle = "Save this UPbFraction as xml: *.xml";
-////            final String fileExtension = ".xml";
-////            String fractionFileName =
-////                    ((UPbFraction) getMyFraction()).getSampleName()//
-////                    + "_" + getMyFraction().getFractionID()//
-////                    + "_" + ((UPbFraction) getMyFraction()).getRatioType()//
-////                    + fileExtension;
-////
-////            FileFilter nonMacFileFilter = new XMLFileFilter();
-////
-////
-////            selectedFile = FileHelper.AllPlatformSaveAs(
-////                    new Frame(), dialogTitle, null, fileExtension, fractionFileName, nonMacFileFilter);
-////
-////            setAlwaysOnTop(true);
-////
-////        }
-////
-////        if (selectedFile != null) {
-////            try {
-////                // export
-////                ((UPbFraction) getMyFraction()).serializeXMLObject(selectedFile.getCanonicalPath());
-////            } catch (IOException ex) {
-////                ex.printStackTrace();
-////            }
-////        }
-////
-////        //  setVisible(true);
-////        return (selectedFile != null);
-////    }
     /**
      *
      */
@@ -374,7 +315,7 @@ public class UPbLegacyFractionEditorDialog extends DialogEditor {
      *
      * @return
      */
-    public Fraction getMyFraction() {
+    public ETFractionInterface getMyFraction() {
         return myFraction;
     }
 
@@ -382,7 +323,7 @@ public class UPbLegacyFractionEditorDialog extends DialogEditor {
      *
      * @param myFraction
      */
-    public void setMyFraction(Fraction myFraction) {
+    public void setMyFraction(FractionI myFraction) {
         this.myFraction = myFraction;
     }
 
@@ -404,7 +345,7 @@ public class UPbLegacyFractionEditorDialog extends DialogEditor {
         fractionMass_text = new javax.swing.JTextField();
         fractionID_text = new javax.swing.JTextField();
         fractionMassInGrams_label = new javax.swing.JLabel();
-        fraction_Chooser = new javax.swing.JComboBox<Fraction>();
+        fraction_Chooser = new javax.swing.JComboBox<ETFractionInterface>();
         fractionID_label1 = new javax.swing.JLabel();
         fractionID_label = new javax.swing.JLabel();
         buttonsPanel = new javax.swing.JPanel();
@@ -660,7 +601,7 @@ public class UPbLegacyFractionEditorDialog extends DialogEditor {
                 JOptionPane.WARNING_MESSAGE);
         switch (response) {
             case JOptionPane.YES_OPTION:
-                ((UPbFractionI) myFraction).setChanged(true);
+                myFraction.setChanged(true);
                 ((UPbFractionI) myFraction).setDeleted(true);
             case JOptionPane.CANCEL_OPTION:
                 close();
@@ -704,7 +645,7 @@ private void ChangedTabs(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_Chang
     private javax.swing.JLabel fractionMassInGrams_label;
     private javax.swing.JTextField fractionMass_text;
     private javax.swing.JPanel fractionPanel;
-    private javax.swing.JComboBox<Fraction> fraction_Chooser;
+    private javax.swing.JComboBox<ETFractionInterface> fraction_Chooser;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLayeredPane jLayeredPane1;
     private javax.swing.JLayeredPane jLayeredPane2;

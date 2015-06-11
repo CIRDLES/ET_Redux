@@ -39,7 +39,7 @@ import org.earthtime.UPb_Redux.utilities.comparators.IntuitiveStringComparator;
 import org.earthtime.UPb_Redux.valueModels.MeasuredRatioModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.dataDictionaries.MeasuredRatios;
-import org.earthtime.fractions.FractionInterface;
+import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsModel;
 
@@ -50,7 +50,7 @@ import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsMo
 public class UPbLegacyFraction extends Fraction implements
         FractionI,
         UPbFractionI,
-        FractionInterface,
+        ETFractionInterface,
         ReportRowGUIInterface,
         Serializable {
 //TODO: refactor this class = quick copy and simplification of UPbFraction, but has many common features. a
@@ -135,7 +135,7 @@ public class UPbLegacyFraction extends Fraction implements
      */
     public UPbLegacyFraction(
             int aliquotNum,
-            Fraction fraction) {
+            FractionI fraction) {
 
         this();
 
@@ -148,9 +148,9 @@ public class UPbLegacyFraction extends Fraction implements
         this.setFractionID(fraction.getFractionID());
         this.setGrainID(fraction.getFractionID());
 
-        this.GetValuesFrom(fraction, true);
+        this.getValuesFrom(fraction, true);
 
-        this.setMeasuredRatios((MeasuredRatioModel[]) fraction.copyMeasuredRatios());
+        this.setMeasuredRatios(fraction.copyMeasuredRatios());
 
     }
 
@@ -165,10 +165,10 @@ public class UPbLegacyFraction extends Fraction implements
     public int compareTo(Fraction fraction) throws ClassCastException {
         // TODO May 2010 Eventaully consider grainID
         String uPbFractionID = fraction.getFractionID();
-        String uPbFractionAliquotNum = String.valueOf(((UPbFractionI) fraction).getAliquotNumber());
+        String uPbFractionAliquotNum = String.valueOf(((FractionI) fraction).getAliquotNumber());
         String myID = (uPbFractionAliquotNum + "." + uPbFractionID).toUpperCase();
 
-        Comparator<String> forNoah = new IntuitiveStringComparator<String>();
+        Comparator<String> forNoah = new IntuitiveStringComparator<>();
 
         return forNoah.compare((String.valueOf(this.getAliquotNumber()) + "." + this.getFractionID()).toUpperCase(), myID);
     }
@@ -177,12 +177,12 @@ public class UPbLegacyFraction extends Fraction implements
      *
      * @return
      */
+    @Override
     public Object[] getFractionTableRowData() {
         String tracerName = "N/A";
 
         Object[] retval = {
-            String.valueOf(getAliquotNumber()), // for aliquot button
-            Boolean.valueOf(!isRejected()), // oct 2009 for fraction selector where SELECTED = NOT rejected
+            String.valueOf(getAliquotNumber()), !isRejected(), // oct 2009 for fraction selector where SELECTED = NOT rejected
             getFractionNotes().length() > 0,// notes column added nov 2009 >0 ==> bold
             getFractionID(), // for fraction edit button
             tableEntryForMeasuredRatio(MeasuredRatios.r206_204m.getName()),
@@ -204,7 +204,7 @@ public class UPbLegacyFraction extends Fraction implements
     private String tableEntryForMeasuredRatio(String measuredRatio) {
         String retVal = " ";
 
-        if (((MeasuredRatioModel) getMeasuredRatioByName(measuredRatio)).getValue().compareTo(BigDecimal.ZERO) != 0) {
+        if (getMeasuredRatioByName(measuredRatio).getValue().compareTo(BigDecimal.ZERO) != 0) {
             retVal = ((MeasuredRatioModel) getMeasuredRatioByName(measuredRatio)).toTableFormat();
         }
 
@@ -232,6 +232,7 @@ public class UPbLegacyFraction extends Fraction implements
      *
      * @return
      */
+    @Override
     public int getAliquotNumber() {
         return aliquotNumber;
     }
@@ -240,6 +241,7 @@ public class UPbLegacyFraction extends Fraction implements
      *
      * @param aliquotNumber
      */
+    @Override
     public void setAliquotNumber(int aliquotNumber) {
         this.aliquotNumber = aliquotNumber;
         setChanged(true);
@@ -249,6 +251,7 @@ public class UPbLegacyFraction extends Fraction implements
      *
      * @return
      */
+    @Override
     public String getRatioType() {
         return ratioType;
     }
@@ -257,6 +260,7 @@ public class UPbLegacyFraction extends Fraction implements
      *
      * @param RatioType
      */
+    @Override
     public void setRatioType(String RatioType) {
         this.ratioType = RatioType;
     }
@@ -265,6 +269,7 @@ public class UPbLegacyFraction extends Fraction implements
      *
      * @return
      */
+    @Override
     public boolean isChanged() {
         return changed;
     }
@@ -273,6 +278,7 @@ public class UPbLegacyFraction extends Fraction implements
      *
      * @param changed
      */
+    @Override
     public void setChanged(boolean changed) {
         this.changed = changed;
     }
@@ -281,6 +287,7 @@ public class UPbLegacyFraction extends Fraction implements
      *
      * @return
      */
+    @Override
     public boolean isDeleted() {
         return deleted;
     }
@@ -289,6 +296,7 @@ public class UPbLegacyFraction extends Fraction implements
      *
      * @param deleted
      */
+    @Override
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
@@ -692,19 +700,6 @@ public class UPbLegacyFraction extends Fraction implements
         this.standard = standard;
     }
 
-////    /**
-////     * @return the errorEllipseNode
-////     */
-////    public org.cirdles.isoplot.chart.concordia.ErrorEllipse getErrorEllipseNode() {
-////        return errorEllipseNode;
-////    }
-////
-////    /**
-////     * @param errorEllipseNode the errorEllipseNode to set
-////     */
-////    public void setErrorEllipseNode(org.cirdles.isoplot.chart.concordia.ErrorEllipse errorEllipseNode) {
-////        this.errorEllipseNode = errorEllipseNode;
-////    }
     @Override
     public boolean isCommonLeadLossCorrected() {
         return false; // dec 2014 until we learn that this is the case

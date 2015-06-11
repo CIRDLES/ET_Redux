@@ -28,7 +28,7 @@ import java.util.Vector;
 import org.earthtime.UPb_Redux.ReduxConstants.ANALYSIS_PURPOSE;
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
-import org.earthtime.UPb_Redux.fractions.Fraction;
+import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.aliquots.AliquotInterface;
@@ -36,12 +36,13 @@ import org.earthtime.dataDictionaries.MineralTypes;
 import org.earthtime.dataDictionaries.SampleRegistries;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
+import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.samples.SampleInterface;
 
 /**
  *
- * @author  James F. Bowring
+ * @author James F. Bowring
  */
 public abstract class AbstractSampleFromProjectManagerDialog extends DialogEditor {
 
@@ -51,14 +52,15 @@ public abstract class AbstractSampleFromProjectManagerDialog extends DialogEdito
 
     /**
      * Creates new form AbstractSampleLegacyManagerDialog
-     * @param parent 
+     *
+     * @param parent
      * @param modal
      * @param dataTypeTitle
-     * @param sample  
+     * @param sample
      */
-    public AbstractSampleFromProjectManagerDialog (
+    public AbstractSampleFromProjectManagerDialog(
             java.awt.Frame parent, boolean modal, String dataTypeTitle, SampleInterface sample) {
-        super( parent, modal );
+        super(parent, modal);
 
         initComponents();
 
@@ -66,21 +68,21 @@ public abstract class AbstractSampleFromProjectManagerDialog extends DialogEdito
 
         initSampleFields();
 
-        sampleType_label.setText(dataTypeTitle + sampleType_label.getText() );
+        sampleType_label.setText(dataTypeTitle + sampleType_label.getText());
 
     }
 
     /**
-     * 
+     *
      */
-    public void setSize () {
-        setSize( 480, 685 );
+    public void setSize() {
+        setSize(480, 685);
     }
 
-    private void validateSampleID () {
+    private void validateSampleID() {
         try {
             saveSampleData();
-            
+
             if (!mySample.isArchivedInRegistry()) {
                 boolean valid = SampleRegistries.isSampleIdentifierValidAtRegistry(//
                         mySample.getSampleIGSN());
@@ -93,81 +95,78 @@ public abstract class AbstractSampleFromProjectManagerDialog extends DialogEdito
         }
     }
 
-    private void initSampleFields () {
+    private void initSampleFields() {
         // init input fields
 
         sampleName_text.setDocument(
-                new UnDoAbleDocument( sampleName_text,  ! mySample.isArchivedInRegistry() ) );
-        sampleName_text.setText( getMySample().getSampleName() );
+                new UnDoAbleDocument(sampleName_text, !mySample.isArchivedInRegistry()));
+        sampleName_text.setText(getMySample().getSampleName());
 
         sampleIGSN_text.setDocument(
-                new UnDoAbleDocument( sampleIGSN_text,  ! mySample.isArchivedInRegistry() ) );
-        sampleIGSN_text.setText( getMySample().getSampleIGSNnoRegistry() );
-
+                new UnDoAbleDocument(sampleIGSN_text, !mySample.isArchivedInRegistry()));
+        sampleIGSN_text.setText(getMySample().getSampleIGSNnoRegistry());
 
         for (SampleRegistries sr : SampleRegistries.values()) {
-            sampleRegistryChooser.addItem( sr );
+            sampleRegistryChooser.addItem(sr);
         }
-        sampleRegistryChooser.setEnabled(  ! mySample.isArchivedInRegistry() );
-        sampleRegistryChooser.setSelectedItem( mySample.getSampleRegistry() );
-        sampleRegistryChooser.addActionListener( new ActionListener() {
+        sampleRegistryChooser.setEnabled(!mySample.isArchivedInRegistry());
+        sampleRegistryChooser.setSelectedItem(mySample.getSampleRegistry());
+        sampleRegistryChooser.addActionListener(new ActionListener() {
 
             @Override
-            public void actionPerformed ( ActionEvent e ) {
-                mySample.setSampleIGSN( ((SampleRegistries) sampleRegistryChooser.getSelectedItem()).getCode() + "." + sampleIGSN_text.getText() );
+            public void actionPerformed(ActionEvent e) {
+                mySample.setSampleIGSN(((SampleRegistries) sampleRegistryChooser.getSelectedItem()).getCode() + "." + sampleIGSN_text.getText());
                 validateSampleID();
             }
-        } );
+        });
 
         // april 2011
         validateSampleID();
 
-        sampleNotes_textArea.setDocument( new UnDoAbleDocument( sampleNotes_textArea, true ) );
-        sampleNotes_textArea.setText( getMySample().getSampleAnnotations() );
+        sampleNotes_textArea.setDocument(new UnDoAbleDocument(sampleNotes_textArea, true));
+        sampleNotes_textArea.setText(getMySample().getSampleAnnotations());
 
         // init display fields - html allows multi-line
         sampleReduxFileName_label.setText(
-                "<html><p>" + getMySample().getReduxSampleFilePath() + "</p></html>" );
-        sampleReduxFileName_label.setToolTipText( getMySample().getReduxSampleFilePath() );
+                "<html><p>" + getMySample().getReduxSampleFilePath() + "</p></html>");
+        sampleReduxFileName_label.setToolTipText(getMySample().getReduxSampleFilePath());
 
         physicalConstantsModelChooser.removeAllItems();
         ArrayList<AbstractRatiosDataModel> physicalConstantsModels = ReduxLabData.getInstance().getPhysicalConstantsModels();
-        for (int i = (physicalConstantsModels.size() > 1 ? 1 : 0); i < physicalConstantsModels.size(); i ++) {
-            physicalConstantsModelChooser.addItem( physicalConstantsModels.get( i ).getReduxLabDataElementName() );
+        for (int i = (physicalConstantsModels.size() > 1 ? 1 : 0); i < physicalConstantsModels.size(); i++) {
+            physicalConstantsModelChooser.addItem(physicalConstantsModels.get(i).getReduxLabDataElementName());
         }
 
-        physicalConstantsModelChooser.setSelectedIndex( 0 );
+        physicalConstantsModelChooser.setSelectedIndex(0);
         try {
-            physicalConstantsModelChooser.setSelectedItem( getMySample().getPhysicalConstantsModel().getReduxLabDataElementName() );
+            physicalConstantsModelChooser.setSelectedItem(getMySample().getPhysicalConstantsModel().getReduxLabDataElementName());
         } catch (BadLabDataException ex) {
             new ETWarningDialog(ex).setVisible(true);
         }
 
         // set up StandardMineral chooser
         standardMineralNameChooser.removeAllItems();
-        for (int i = 0; i < MineralTypes.values().length; i ++) {
-            standardMineralNameChooser.addItem( MineralTypes.values()[i].getName() );
+        for (int i = 0; i < MineralTypes.values().length; i++) {
+            standardMineralNameChooser.addItem(MineralTypes.values()[i].getName());
         }
 
-        standardMineralNameChooser.setSelectedItem( mySample.getMineralName() );
-        standardMineralNameChooser.addItemListener( new mineralNameItemListener() );
-
+        standardMineralNameChooser.setSelectedItem(mySample.getMineralName());
+        standardMineralNameChooser.addItemListener(new mineralNameItemListener());
 
         // set up analysisPurposeChooser
         analysisPurposeChooser.removeAllItems();
         for (ANALYSIS_PURPOSE ap : ANALYSIS_PURPOSE.values()) {
-            analysisPurposeChooser.addItem( ap.toString() );
+            analysisPurposeChooser.addItem(ap.toString());
         }
 
-        analysisPurposeChooser.setSelectedItem( mySample.getAnalysisPurpose().toString() );
-        analysisPurposeChooser.addItemListener( new analysisPurposeItemListener() );
+        analysisPurposeChooser.setSelectedItem(mySample.getAnalysisPurpose().toString());
+        analysisPurposeChooser.addItemListener(new analysisPurposeItemListener());
 
-        if ( getMySample().isCalculateTWrhoForLegacyData() ) {
-            TWCalculateRho_radioBut.setSelected( true );
+        if (getMySample().isCalculateTWrhoForLegacyData()) {
+            TWCalculateRho_radioBut.setSelected(true);
         } else {
-            TWZeroRho_radioBut.setSelected( true );
+            TWZeroRho_radioBut.setSelected(true);
         }
-
 
     }
 
@@ -175,13 +174,13 @@ public abstract class AbstractSampleFromProjectManagerDialog extends DialogEdito
         // This method is called only if a new item has been selected.
 
         @Override
-        public void itemStateChanged ( ItemEvent evt ) {
+        public void itemStateChanged(ItemEvent evt) {
 
-            if ( evt.getStateChange() == ItemEvent.SELECTED ) {
+            if (evt.getStateChange() == ItemEvent.SELECTED) {
                 // Item was just selected
-                mySample.setMineralName( (String) evt.getItem() );
+                mySample.setMineralName((String) evt.getItem());
 
-            } else if ( evt.getStateChange() == ItemEvent.DESELECTED ) {
+            } else if (evt.getStateChange() == ItemEvent.DESELECTED) {
                 // Item is no longer selected
             }
         }
@@ -190,30 +189,29 @@ public abstract class AbstractSampleFromProjectManagerDialog extends DialogEdito
     class analysisPurposeItemListener implements ItemListener {
         // This method is called only if a new item has been selected.
 
-        public void itemStateChanged ( ItemEvent evt ) {
+        public void itemStateChanged(ItemEvent evt) {
 
-            if ( evt.getStateChange() == ItemEvent.SELECTED ) {
+            if (evt.getStateChange() == ItemEvent.SELECTED) {
                 // Item was just selected
-                mySample.setAnalysisPurpose( ANALYSIS_PURPOSE.valueOf( (String) evt.getItem() ) );
-                
-            } else if ( evt.getStateChange() == ItemEvent.DESELECTED ) {
+                mySample.setAnalysisPurpose(ANALYSIS_PURPOSE.valueOf((String) evt.getItem()));
+
+            } else if (evt.getStateChange() == ItemEvent.DESELECTED) {
                 // Item is no longer selected
             }
         }
     }
 
-    private void saveSampleData ()
+    private void saveSampleData()
             throws ETException {
         // validate sample name
-        if ( (sampleName_text.getText().trim().length() == 0)
-                ) {
+        if ((sampleName_text.getText().trim().length() == 0)) {
             return;
         }
 
-        mySample.setSampleName( sampleName_text.getText().trim() );
-        mySample.setSampleIGSN( ((SampleRegistries) sampleRegistryChooser.getSelectedItem()).getCode() + "." + sampleIGSN_text.getText().trim() );
-        mySample.setSampleRegistry( (SampleRegistries) sampleRegistryChooser.getSelectedItem() );
-        mySample.setSampleAnnotations( sampleNotes_textArea.getText() );
+        mySample.setSampleName(sampleName_text.getText().trim());
+        mySample.setSampleIGSN(((SampleRegistries) sampleRegistryChooser.getSelectedItem()).getCode() + "." + sampleIGSN_text.getText().trim());
+        mySample.setSampleRegistry((SampleRegistries) sampleRegistryChooser.getSelectedItem());
+        mySample.setSampleAnnotations(sampleNotes_textArea.getText());
 
         String currentPhysicalConstantsModelName = "";
         try {
@@ -222,41 +220,41 @@ public abstract class AbstractSampleFromProjectManagerDialog extends DialogEdito
         } catch (BadLabDataException ex) {
             new ETWarningDialog(ex).setVisible(true);
         }
-        if (  ! ((String) physicalConstantsModelChooser.getSelectedItem()).equalsIgnoreCase( currentPhysicalConstantsModelName ) ) {
+        if (!((String) physicalConstantsModelChooser.getSelectedItem()).equalsIgnoreCase(currentPhysicalConstantsModelName)) {
             try {
                 getMySample().setPhysicalConstantsModel(
                         ReduxLabData.getInstance().
-                        getAPhysicalConstantsModel( ((String) physicalConstantsModelChooser.getSelectedItem()) ) );
+                        getAPhysicalConstantsModel(((String) physicalConstantsModelChooser.getSelectedItem())));
 
             } catch (BadLabDataException ex) {
                 new ETWarningDialog(ex).setVisible(true);
             }
         }
 
-        if ( TWZeroRho_radioBut.isSelected() ) {
-            mySample.setCalculateTWrhoForLegacyData( false );
+        if (TWZeroRho_radioBut.isSelected()) {
+            mySample.setCalculateTWrhoForLegacyData(false);
         } else {
-            mySample.setCalculateTWrhoForLegacyData( true );
+            mySample.setCalculateTWrhoForLegacyData(true);
         }
 
         // moved outside conditional oct 2010 and added MineralName, etc ;;June 2010 add physical constants model
-        for (Fraction f : getMySample().getFractions()) {
+        for (ETFractionInterface f : getMySample().getFractions()) {
             try {
-                ((UPbFractionI) f).setPhysicalConstantsModel( getMySample().getPhysicalConstantsModel() );
+                f.setPhysicalConstantsModel(getMySample().getPhysicalConstantsModel());
 
-                f.setMineralName( mySample.getMineralName() );
-                if ( mySample.getMineralName().equalsIgnoreCase( "zircon" ) ) {
-                    f.setZircon( true );
+                ((FractionI) f).setMineralName(mySample.getMineralName());
+                if (mySample.getMineralName().equalsIgnoreCase("zircon")) {
+                    ((FractionI) f).setZircon(true);
                 } else {
-                    f.setZircon( false );
+                    ((FractionI) f).setZircon(false);
                 }
 
-                f.setIsLegacy( true );
+                f.setIsLegacy(true);
 
-                if ( TWZeroRho_radioBut.isSelected() ) {
+                if (TWZeroRho_radioBut.isSelected()) {
                     // set all T-W to zero
-                    f.getRadiogenicIsotopeRatioByName( "rhoR207_206r__r238_206r" )//
-                            .setValue( BigDecimal.ZERO );
+                    f.getRadiogenicIsotopeRatioByName("rhoR207_206r__r238_206r")//
+                            .setValue(BigDecimal.ZERO);
                 } else {
                     // calculate all T-W
                     ((UPbFractionI) f).calculateTeraWasserburgRho();
@@ -270,64 +268,63 @@ public abstract class AbstractSampleFromProjectManagerDialog extends DialogEdito
         // there should be only one aliquot
         Vector<AliquotInterface> aliquots = mySample.getActiveAliquots();
         for (AliquotInterface a : aliquots) {
-            a.setAnalysisPurpose( mySample.getAnalysisPurpose() );
+            a.setAnalysisPurpose(mySample.getAnalysisPurpose());
         }
-
 
     }
 
     /**
-     * 
+     *
      * @return
      */
-    public SampleInterface getMySample () {
+    public SampleInterface getMySample() {
         return mySample;
     }
 
     /**
-     * 
+     *
      * @param mySample
      */
-    public void setMySample ( SampleInterface mySample ) {
+    public void setMySample(SampleInterface mySample) {
         this.mySample = mySample;
     }
 
     /**
-     * 
+     *
      * @return
      */
-    public boolean isInitialized () {
+    public boolean isInitialized() {
         return initialized;
     }
 
     /**
-     * 
+     *
      * @param isSaved
      */
-    public void setInitialized ( boolean isSaved ) {
+    public void setInitialized(boolean isSaved) {
         this.initialized = isSaved;
     }
 
     /**
-     * 
+     *
      * @return
      */
-    public boolean isNewSample () {
+    public boolean isNewSample() {
         return newSample;
     }
 
     /**
-     * 
+     *
      * @param newSample
      */
-    public void setNewSample ( boolean newSample ) {
+    public void setNewSample(boolean newSample) {
         this.newSample = newSample;
     }
 
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
      */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {

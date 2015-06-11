@@ -17,7 +17,7 @@ package org.earthtime.UPb_Redux.aliquots;
 
 import java.io.File;
 import java.math.BigDecimal;
-import org.earthtime.UPb_Redux.fractions.Fraction;
+import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.samples.SESARSampleMetadata;
@@ -49,7 +49,7 @@ public class UPbReduxAliquotTest {
                         false,
                         new SESARSampleMetadata());
 
-        Fraction uPbfraction = new UPbFraction("NONE");
+        FractionI uPbfraction = new UPbFraction("NONE");
         uPbfraction.setSampleName("TestSample");
         uPbfraction.setFractionID("TestFraction");
         uPbfraction.setGrainID("TestFraction");

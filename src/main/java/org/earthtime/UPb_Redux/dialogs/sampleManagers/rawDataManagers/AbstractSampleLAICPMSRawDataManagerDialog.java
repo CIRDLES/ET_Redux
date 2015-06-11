@@ -32,9 +32,8 @@ import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.exceptions.BadImportedCSVLegacyFileException;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
-import org.earthtime.UPb_Redux.fractions.Fraction;
+import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
-import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLegacyFraction;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.samples.UPbSampleInterface;
 import org.earthtime.UPb_Redux.samples.sampleImporters.AbstractSampleImporterFromLegacyCSVFile;
@@ -43,6 +42,7 @@ import org.earthtime.dataDictionaries.MineralTypes;
 import org.earthtime.dataDictionaries.SampleRegistries;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
+import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.samples.SampleInterface;
 
@@ -310,26 +310,26 @@ public abstract class AbstractSampleLAICPMSRawDataManagerDialog extends DialogEd
         }
 
         // moved outside conditional oct 2010 and added MineralName, etc ;;June 2010 add physical constants model
-        for (Fraction f : getMySample().getFractions()) {
+        for (ETFractionInterface f : getMySample().getFractions()) {
             try {
-                ((UPbFractionI) f).setPhysicalConstantsModel( getMySample().getPhysicalConstantsModel() );
+                f.setPhysicalConstantsModel( getMySample().getPhysicalConstantsModel() );
 
-                f.setMineralName( mySample.getMineralName() );
+                ((FractionI)f).setMineralName( mySample.getMineralName() );
                 if ( mySample.getMineralName().equalsIgnoreCase( "zircon" ) ) {
-                    f.setZircon( true );
+                    ((FractionI)f).setZircon( true );
                 } else {
-                    f.setZircon( false );
+                    ((FractionI)f).setZircon( false );
                 }
 
                 f.setIsLegacy( true );
 
                 if ( TWZeroRho_radioBut.isSelected() ) {
                     // set all T-W to zero
-                    ((UPbLegacyFraction) f).getRadiogenicIsotopeRatioByName( "rhoR207_206r__r238_206r" )//
+                    f.getRadiogenicIsotopeRatioByName( "rhoR207_206r__r238_206r" )//
                             .setValue( BigDecimal.ZERO );
                 } else {
                     // calculate all T-W
-                    ((UPbLegacyFraction) f).calculateTeraWasserburgRho();
+                    ((UPbFractionI) f).calculateTeraWasserburgRho();
                 }
 
             } catch (BadLabDataException ex) {

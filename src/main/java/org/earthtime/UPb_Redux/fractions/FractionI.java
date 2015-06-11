@@ -18,269 +18,227 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package org.earthtime.UPb_Redux.fractions;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import org.earthtime.UPb_Redux.valueModels.ValueModel;
-import org.earthtime.dataDictionaries.MeasuredRatios;
+import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
+import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
+import org.earthtime.dataDictionaries.Lambdas;
+import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
+import org.earthtime.ratioDataModels.initialPbModelsET.StaceyKramersInitialPbModelET;
 
 /**
- *
+ * Designed for Uranium Lead
  * @author James F. Bowring
  */
-public interface FractionI {
-    
-    // accessors
-    
+public interface FractionI extends ETFractionInterface {
     /**
-     * 
-     * @return
-     */
-    abstract String getSampleName();
-    /**
-     * 
-     * @param sampleName
-     */
-    abstract void setSampleName(String sampleName);
-    
-    /**
-     * 
-     * @return
-     */
-    abstract String getFractionID();
-    /**
-     * 
-     * @param fractionID
-     */
-    abstract void setFractionID(String fractionID);
-    
-    /**
-     * 
-     * @return
-     */
-    abstract String getImageURL();
-    /**
-     * 
-     * @param imageURL
-     */
-    abstract void setImageURL(String imageURL);
-    
-    /**
-     * 
-     * @return
-     */
-    abstract Date getTimeStamp();
-    /**
-     * 
-     * @param timeStamp
-     */
-    abstract void setTimeStamp(Date timeStamp);
-    
-    /**
-     * 
-     * @return
-     */
-    abstract String getMineralName();
-    /**
-     * 
-     * @param mineralName
-     */
-    abstract void setMineralName(String mineralName);
-    
-    /**
-     * 
-     * @return
-     */
-    abstract String getSettingType();
-    /**
-     * 
-     * @param settingType
-     */
-    abstract void setSettingType(String settingType);
-    
-    /**
-     * 
-     * @return
-     */
-    abstract int getNumberOfGrains();
-    /**
-     * 
-     * @param numberOfGrains
-     */
-    abstract void setNumberOfGrains(int numberOfGrains);
-    
-    /**
-     * 
-     * @return
-     */
-    abstract BigDecimal getEstimatedDate();
-    /**
-     * 
-     * @param estimatedAge
-     */
-    abstract void setEstimatedDate(BigDecimal estimatedAge);
-    
-    /**
-     * 
-     * @return
-     */
-    abstract boolean isPhysicallyAbraded();
-    /**
-     * 
-     * @param physicallyAbraded
-     */
-    abstract void setPhysicallyAbraded(boolean physicallyAbraded);
-    
-    /**
-     * 
-     * @return
-     */
-    abstract boolean isLeachedInHFAcid();
-    /**
-     * 
-     * @param leachedInHFAcid
-     */
-    abstract void setLeachedInHFAcid(boolean leachedInHFAcid);
-    
-    /**
-     * 
-     * @return
-     */
-    abstract boolean isAnnealedAndChemicallyAbraded();
-    /**
-     * 
-     * @param annealedAndChemicallyAbraded
-     */
-    abstract void setAnnealedAndChemicallyAbraded(boolean annealedAndChemicallyAbraded);
-    
-    /**
-     * 
-     * @return
-     */
-    abstract boolean isChemicallyPurifiedUPb();
-    /**
-     * 
-     * @param chemicallyPurifiedUPb
-     */
-    abstract void setChemicallyPurifiedUPb(boolean chemicallyPurifiedUPb);
-    
-    /**
-     * 
-     * @return
-     */
-    abstract String getAnalysisFractionComment();
-    /**
-     * 
-     * @param analysisFractionComment
-     */
-    abstract void setAnalysisFractionComment(String analysisFractionComment);
-    
-    /**
-     * 
-     * @return
-     */
-    abstract String getPbBlankID();
-    /**
-     * 
-     * @param pbBlankID
-     */
-    abstract void setPbBlankID(String pbBlankID);
-    
-    /**
-     * 
-     * @return
-     */
-    abstract String getTracerID();
-    /**
-     * 
-     * @param tracerID
-     */
-    abstract void setTracerID(String tracerID);
-    
-    /**
-     * 
-     * @return
-     */
-    abstract AbstractRatiosDataModel getInitialPbModel();
-    /**
-     * 
-     * @param initialPbModel
-     */
-    abstract void setInitialPbModel(AbstractRatiosDataModel initialPbModel);
-
-    /**
-     * 
+     *
      * @return
      */
     abstract String getPbCollectorType();
+
     /**
-     * 
+     *
      * @param pbCollectorType
      */
     abstract void setPbCollectorType(String pbCollectorType);
 
     /**
-     * 
+     *
      * @return
      */
     abstract String getUCollectorType();
+
     /**
-     * 
+     *
      * @param uCollectorType
      */
     abstract void setUCollectorType(String uCollectorType);
-        
-    /**
-     * 
-     * @return
-     */
-    abstract ValueModel[] getMeasuredRatios();
-    /**
-     * 
-     * @param measuredRatio
-     */
-    abstract void setMeasuredRatios(ValueModel[] measuredRatio);
-    
-    /**
-     * 
-     * @return
-     */
-    abstract ValueModel[] getRadiogenicIsotopeRatios();
-    /**
-     * 
-     * @param radiogenicIsotopeRatios
-     */
-    abstract void setRadiogenicIsotopeRatios(ValueModel[] radiogenicIsotopeRatios);
-    
-    /**
-     * 
-     * @return
-     */
-    abstract ValueModel[] getCompositionalMeasures();
-    /**
-     * 
-     * @param compositionalMeasures
-     */
-    abstract void setCompositionalMeasures(ValueModel[] compositionalMeasures);
-    
-    /**
-     * 
-     * @param ratioName
-     * @return
-     */
-    abstract ValueModel getMeasuredRatioByName(String ratioName);
     
     /**
      *
-     * @param myMeasuredRatio
      * @return
      */
-    abstract ValueModel getMeasuredRatioByName(MeasuredRatios myMeasuredRatio);
-    
+    abstract boolean isPhysicallyAbraded();
 
+    /**
+     *
+     * @param physicallyAbraded
+     */
+    abstract void setPhysicallyAbraded(boolean physicallyAbraded);
+
+    /**
+     *
+     * @return
+     */
+    abstract boolean isLeachedInHFAcid();
+
+    /**
+     *
+     * @param leachedInHFAcid
+     */
+    abstract void setLeachedInHFAcid(boolean leachedInHFAcid);
+
+    /**
+     *
+     * @return
+     */
+    abstract boolean isAnnealedAndChemicallyAbraded();
+
+    /**
+     *
+     * @param annealedAndChemicallyAbraded
+     */
+    abstract void setAnnealedAndChemicallyAbraded(boolean annealedAndChemicallyAbraded);
+
+    /**
+     *
+     * @return
+     */
+    abstract boolean isChemicallyPurifiedUPb();
+
+    /**
+     *
+     * @param chemicallyPurifiedUPb
+     */
+    abstract void setChemicallyPurifiedUPb(boolean chemicallyPurifiedUPb);
+    /**
+     *
+     * @return
+     */
+    abstract String getMineralName();
+
+    /**
+     *
+     * @param mineralName
+     */
+    abstract void setMineralName(String mineralName);
     
     
+    /**
+     *
+     * @return
+     */
+    abstract boolean isFractionationCorrectedU();
+
+    /**
+     * @param fractionationCorrectedU the fractionationCorrectedU to set
+     */
+    public void setFractionationCorrectedU(boolean fractionationCorrectedU);
+
+    /**
+     *
+     * @return
+     */
+    abstract boolean isFractionationCorrectedPb();
+
+    /**
+     *
+     * @return
+     */
+    abstract AbstractRatiosDataModel getInitialPbModel();
+
+    /**
+     *
+     * @param initialPbModel
+     */
+    abstract void setInitialPbModel(AbstractRatiosDataModel initialPbModel);
+
+    /**
+     * @return the staceyKramersCorrelationCoeffs
+     */
+    public BigDecimal getStaceyKramersCorrelationCoeffs();
+
+    /**
+     * @return the staceyKramersOnePctUnct
+     */
+    public BigDecimal getStaceyKramersOnePctUnct();
+
+    /**
+     *
+     * @return
+     */
+    public boolean isZircon();
+
+    /**
+     *
+     * @param zircon
+     */
+    public void setZircon(boolean zircon);
+
+    /**
+     * @param staceyKramersOnePctUnct the staceyKramersOnePctUnct to set
+     */
+    public void setStaceyKramersOnePctUnct(BigDecimal staceyKramersOnePctUnct);
+
+    /**
+     * @param staceyKramersCorrelationCoeffs the staceyKramersCorrelationCoeffs
+     * to set
+     */
+    public void setStaceyKramersCorrelationCoeffs(BigDecimal staceyKramersCorrelationCoeffs);
+
+    /**
+     *
+     * @return
+     */
+    public String getAlphaPbModelID();
+
+    /**
+     *
+     * @param alphaPbModelID
+     */
+    public void setAlphaPbModelID(String alphaPbModelID);
+
+    /**
+     *
+     * @return
+     */
+    public String getAlphaUModelID();
+
+    /**
+     *
+     * @param alphaUModelID
+     */
+    public void setAlphaUModelID(String alphaUModelID);
+        
+        /**
+     *
+     * @return
+     */
+    abstract String getSettingType();
+
+    /**
+     *
+     * @param settingType
+     */
+    abstract void setSettingType(String settingType);
+
+     /**
+     *
+     */
+    public default void calculateStaceyKramersInitialPbModelValues() {
+        if (getInitialPbModel() instanceof StaceyKramersInitialPbModelET) {
+
+            AbstractRatiosDataModel physicalConstantsModel;
+            try {
+                physicalConstantsModel = //
+                        ReduxLabData.getInstance().getAPhysicalConstantsModel(getPhysicalConstantsModelID());
+
+                ((StaceyKramersInitialPbModelET) getInitialPbModel()).calculateRatios(
+                        getEstimatedDate(),
+                        physicalConstantsModel.getDatumByName(Lambdas.lambda238.getName()).getValue(),
+                        physicalConstantsModel.getDatumByName(Lambdas.lambda235.getName()).getValue(),
+                        physicalConstantsModel.getDatumByName(Lambdas.lambda232.getName()).getValue());
+
+                // set ratio uncertainties based on pct uncertainty
+                ((StaceyKramersInitialPbModelET) getInitialPbModel()).calculateUncertaintiesAndRhos(getStaceyKramersOnePctUnct(),
+                        getStaceyKramersCorrelationCoeffs(), BigDecimal.ZERO, BigDecimal.ZERO);
+            } catch (BadLabDataException badLabDataException) {
+            }
+
+            getInitialPbModel().initializeModel();
+        }
+    }
 }

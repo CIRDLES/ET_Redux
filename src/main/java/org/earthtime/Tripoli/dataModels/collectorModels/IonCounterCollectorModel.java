@@ -115,7 +115,7 @@ public class IonCounterCollectorModel extends AbstractCollectorModel {
 
             measuredVarianceFromIonCounts[i] = allItensities[i] / integrationTime; // march 2013 Noah's famous EFFING comment / integrationTime;
         }
-        //diagonalOfMatrixSIntensities = buildDiagonalOfMatrixSi( countOfBaselineIntensities, measuredVarianceFromIonCounts );
+
         return buildDiagonalOfMatrixSi(countOfBaselineIntensities, measuredVarianceFromIonCounts);
     }
 

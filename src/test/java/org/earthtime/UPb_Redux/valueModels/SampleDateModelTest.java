@@ -26,7 +26,7 @@ import java.math.BigDecimal;
 import java.util.Vector;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.YorkLineFit;
-import org.earthtime.UPb_Redux.fractions.Fraction;
+import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.aliquots.AliquotInterface;
@@ -620,7 +620,7 @@ public class SampleDateModelTest {
     @Test
     public void test_ShowFractionIdWithDateAndUnct() {
         System.out.println("Testing SampleDateModel's showFractionIdWithDateAndUnct(Fraction fraction, String dateUnit)");
-        Fraction fraction = new UPbFraction();
+        FractionI fraction = new UPbFraction();
         
         String dateUnit = "";
         SampleDateModel instance = new SampleDateModel();

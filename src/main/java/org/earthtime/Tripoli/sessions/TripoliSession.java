@@ -48,8 +48,7 @@ import org.earthtime.Tripoli.rawDataFiles.handlers.AbstractRawDataFileHandler;
 import org.earthtime.Tripoli.samples.AbstractTripoliSample;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
-import org.earthtime.UPb_Redux.fractions.Fraction;
-import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
+import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLAICPMSFraction;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
@@ -60,6 +59,7 @@ import org.earthtime.dataDictionaries.IncludedTypeEnum;
 import org.earthtime.dataDictionaries.MineralStandardUPbConcentrationsPPMEnum;
 import org.earthtime.dataDictionaries.RadRatios;
 import org.earthtime.dataDictionaries.RawRatioNames;
+import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.initialPbModelsET.StaceyKramersInitialPbModelET;
 import org.earthtime.ratioDataModels.initialPbModelsET.commonLeadLossCorrectionSchemes.CommonLeadLossCorrectionSchemeNONE;
@@ -642,7 +642,7 @@ public class TripoliSession implements
 
         while (allFractionsIterator.hasNext()) {
             TripoliFraction tf = allFractionsIterator.next();
-            Fraction upbFraction = tf.getuPbFraction();
+            ETFractionInterface upbFraction = tf.getuPbFraction();
             if (upbFraction == null) {
                 System.out.println("Missing upbFraction for " + tf.getFractionID());
             } else {
@@ -771,7 +771,7 @@ public class TripoliSession implements
                                 + ((double) (rightStandardTime - unknown.getZeroBasedTimeStamp()) / (double) (rightStandardTime - leftStandardTime)) * (rightStandardIntensityTh - leftStandardIntensityTh));
 
                         // record concentrations into fraction
-                        Fraction uPbFraction = unknown.getuPbFraction();
+                        FractionI uPbFraction = unknown.getuPbFraction();
                         if (uPbFraction == null) {
                             System.out.println("Missing upbFraction for " + unknown.getFractionID());
                         } else {
@@ -851,7 +851,7 @@ public class TripoliSession implements
             SortedMap<String, ValueModel> parameters = tf.assembleCommonLeadCorrectionParameters();
             SortedMap<String, BigDecimal> parametersSK = tf.assembleStaceyKramerCorrectionParameters();
 
-            Fraction uPbFraction = tf.getuPbFraction();
+            FractionI uPbFraction = tf.getuPbFraction();
             ((UPbLAICPMSFraction) uPbFraction).setCommonLeadCorrectionParameters(parameters);
             ((UPbLAICPMSFraction) uPbFraction).setStaceyKramerCorrectionParameters(parametersSK);
             ((UPbLAICPMSFraction) uPbFraction).setUseStaceyKramer(tf.getInitialPbModelET() instanceof StaceyKramersInitialPbModelET);
@@ -929,13 +929,13 @@ public class TripoliSession implements
 
         while (unknownFractionIterator.hasNext()) {
             TripoliFraction tf = unknownFractionIterator.next();
-            ((UPbFractionI) tf.getuPbFraction()).setRejected(false);
+            tf.getuPbFraction().setRejected(false);
             if (!tf.confirmHealthyFraction()) {
-                ((UPbFractionI) tf.getuPbFraction()).setRejected(true);
+                tf.getuPbFraction().setRejected(true);
                 System.out.println("REJECTING " + tf.getFractionID());
             }
             if (!tf.isIncluded()) {
-                ((UPbFractionI) tf.getuPbFraction()).setRejected(true);
+                tf.getuPbFraction().setRejected(true);
                 System.out.println("REJECTING " + tf.getFractionID());
             }
         }
@@ -1136,7 +1136,7 @@ public class TripoliSession implements
 
                 double oneSigmaOfCorrectedRatio = (upperTwoSigmaUncertaintyOfCorrectedRatio - lowerTwoSigmaUncertaintyOfCorrectedRatio) / 4.0;
 
-                Fraction uPbFraction = tf.getuPbFraction();
+                FractionI uPbFraction = tf.getuPbFraction();
                 if (uPbFraction == null) {
                     System.out.println("Missing upbFraction for " + tf.getFractionID());
                 } else {
@@ -1150,7 +1150,7 @@ public class TripoliSession implements
                     }
 
                     // oct 2014
-                    ((UPbFractionI) uPbFraction).setRejected(!tf.isIncluded());
+                    uPbFraction.setRejected(!tf.isIncluded());
                     //testing oct 2014
                     if (rrName.getName().contains("204")) {
                         ((UPbLAICPMSFraction) uPbFraction).getUpperPhiMap().put(nameOfUpperPhi, upperPhi);
@@ -1161,8 +1161,8 @@ public class TripoliSession implements
             index++;//increased even if no fit function
 
             try {
-                ((UPbFractionI) tf.getuPbFraction()).setRejected(!tf.isIncluded());
-                ((UPbFractionI) tf.getuPbFraction()).setStandard(tf.isStandard());
+                tf.getuPbFraction().setRejected(!tf.isIncluded());
+                tf.getuPbFraction().setStandard(tf.isStandard());
             } catch (Exception e) {
             }
         }

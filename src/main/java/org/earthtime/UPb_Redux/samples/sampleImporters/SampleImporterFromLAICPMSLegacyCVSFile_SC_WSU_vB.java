@@ -25,7 +25,7 @@ import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.util.Scanner;
 import java.util.Vector;
-import org.earthtime.UPb_Redux.fractions.Fraction;
+import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLegacyFraction;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
@@ -34,6 +34,7 @@ import org.earthtime.UPb_Redux.valueModels.definedValueModels.PercentDiscordance
 import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.dataDictionaries.SampleTypesEnum;
 import org.earthtime.dataDictionaries.TemplatesForCsvImport;
+import org.earthtime.fractions.ETFractionInterface;
 
 /**
  *
@@ -49,9 +50,9 @@ public class SampleImporterFromLAICPMSLegacyCVSFile_SC_WSU_vB extends AbstractSa
      * @throws FileNotFoundException
      */
     @Override
-    protected Vector<Fraction> extractFractionsFromFile(File file)
+    protected Vector<ETFractionInterface> extractFractionsFromFile(File file)
             throws FileNotFoundException {
-        Vector<Fraction> retFractions = new Vector<>();
+        Vector<ETFractionInterface> retFractions = new Vector<>();
         boolean readingFractions = false;
 
         //first use a Scanner to get each line
@@ -75,9 +76,9 @@ public class SampleImporterFromLAICPMSLegacyCVSFile_SC_WSU_vB extends AbstractSa
                     // process fraction line
                     System.out.println("Reading Fraction " + myFractionData.get(0));
 
-                    Fraction myFraction = new UPbLegacyFraction("NONE");
+                    FractionI myFraction = new UPbLegacyFraction("NONE");
 
-                    ((UPbFractionI) myFraction).setRatioType("UPb");
+                    myFraction.setRatioType("UPb");
 
                     int index = 0;
 

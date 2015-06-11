@@ -72,7 +72,6 @@ public class IsotopeMappingModel implements Serializable {
         while (isotopeToRawIntensitiesMapIterator.hasNext()) {
             IsotopesEnum isotopeKey = isotopeToRawIntensitiesMapIterator.next();
 
-//            System.out.println("Isotope diagonal for" + isotopeKey.getName());
             DataModelInterface rawIntensityDataModel = isotopeToRawIntensitiesMap.get(isotopeKey);
             double integrationTime = isotopeToIntegrationTimeMap.get(isotopeKey);
 

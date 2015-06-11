@@ -47,7 +47,7 @@ import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.dataDictionaries.RadDatesForPbCorrSynchEnum;
 import org.earthtime.dataDictionaries.RadRatios;
 import org.earthtime.dataDictionaries.RadRatiosPbcCorrected;
-import org.earthtime.fractions.FractionInterface;
+import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.initialPbModelsET.StaceyKramersInitialPbModelET;
 import org.earthtime.ratioDataModels.initialPbModelsET.commonLeadLossCorrectionSchemes.AbstractCommonLeadLossCorrectionScheme;
@@ -63,7 +63,7 @@ import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsMo
 public class UPbLAICPMSFraction extends Fraction implements
         FractionI,
         UPbFractionI,
-        FractionInterface,
+        ETFractionInterface,
         ReportRowGUIInterface,
         Serializable {
 //TODO: refactor this class = quick copy and simplification of UPbFraction, but has many common features. a
@@ -176,7 +176,7 @@ public class UPbLAICPMSFraction extends Fraction implements
      */
     public UPbLAICPMSFraction(
             int aliquotNum,
-            Fraction fraction,
+            FractionI fraction,
             ReduxLabData labData) throws BadLabDataException {
 
         this();
@@ -191,7 +191,7 @@ public class UPbLAICPMSFraction extends Fraction implements
         this.setFractionID(fraction.getFractionID());
         this.setGrainID(fraction.getFractionID());
 
-        this.GetValuesFrom(fraction, true);
+        this.getValuesFrom(fraction, true);
 
         this.setMeasuredRatios(fraction.copyMeasuredRatios());
     }
@@ -205,7 +205,7 @@ public class UPbLAICPMSFraction extends Fraction implements
      */
     public UPbLAICPMSFraction(
             int aliquotNum,
-            Fraction fraction) {
+            FractionI fraction) {
 
         this();
 
@@ -218,7 +218,7 @@ public class UPbLAICPMSFraction extends Fraction implements
         this.setFractionID(fraction.getFractionID());
         this.setGrainID(fraction.getFractionID());
 
-        this.GetValuesFrom(fraction, true);
+        this.getValuesFrom(fraction, true);
 
         this.setMeasuredRatios(fraction.copyMeasuredRatios());
 
@@ -235,7 +235,7 @@ public class UPbLAICPMSFraction extends Fraction implements
     public int compareTo(Fraction fraction) throws ClassCastException {
         // TODO May 2010 Eventaully consider grainID
         String uPbFractionID = fraction.getFractionID();
-        String uPbFractionAliquotNum = String.valueOf(((UPbFractionI) fraction).getAliquotNumber());
+        String uPbFractionAliquotNum = String.valueOf(fraction.getAliquotNumber());
         String myID = (uPbFractionAliquotNum + "." + uPbFractionID).toUpperCase();
 
         Comparator<String> forNoah = new IntuitiveStringComparator<>();
@@ -1326,6 +1326,7 @@ public class UPbLAICPMSFraction extends Fraction implements
     /**
      * @return the standard
      */
+    @Override
     public boolean isStandard() {
         return standard;
     }
@@ -1333,6 +1334,7 @@ public class UPbLAICPMSFraction extends Fraction implements
     /**
      * @param standard the standard to set
      */
+    @Override
     public void setStandard(boolean standard) {
         this.standard = standard;
     }
@@ -1352,6 +1354,9 @@ public class UPbLAICPMSFraction extends Fraction implements
     }
 
     public void initializeUpperPhiMap() {
+        if (upperPhiMap == null) {
+            upperPhiMap = new TreeMap<>();
+        }
         upperPhiMap.put("upperPhi_r206_204", 0.0);
         upperPhiMap.put("upperPhi_r207_204", 0.0);
         upperPhiMap.put("upperPhi_r208_204", 0.0);
@@ -1365,7 +1370,7 @@ public class UPbLAICPMSFraction extends Fraction implements
     }
 
     /**
-     * @param Sfci the SfciTotal to set
+     * @param SfciTotal
      */
     public void setSfciTotal(Matrix SfciTotal) {
         this.SfciTotal = SfciTotal;

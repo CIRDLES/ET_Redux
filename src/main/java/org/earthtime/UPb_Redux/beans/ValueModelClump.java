@@ -34,9 +34,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
-import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
+import org.earthtime.fractions.ETFractionInterface;
 
 /**
  * This panel contains value model sliders according to defined clumps from
@@ -76,7 +76,7 @@ public class ValueModelClump extends JLayeredPane
             String[][] clumpSpecs,
             String validityMessage,
             String[][] covaryingTerms,
-            Fraction fraction,
+            ETFractionInterface fraction,
             PropertyChangeListener kwikiValueChangeListener ) {
 
 //        this.clumpSpecs = clumpSpecs;
@@ -111,8 +111,7 @@ public class ValueModelClump extends JLayeredPane
                 try {
                     vm = (ValueModel) meth.//
                             invoke( fraction, new Object[]{clumpSpecs[j][0]} );
-                } catch (IllegalAccessException illegalAccessException) {
-                } catch (IllegalArgumentException illegalArgumentException) {
+                } catch (IllegalAccessException | IllegalArgumentException illegalAccessException) {
                 } catch (InvocationTargetException invocationTargetException) {
                     System.out.println( invocationTargetException.getMessage() + "  AT ValueModelClump constructor" );
                 }

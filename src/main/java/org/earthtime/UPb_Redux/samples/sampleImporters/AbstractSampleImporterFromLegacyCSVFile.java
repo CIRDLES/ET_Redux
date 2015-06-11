@@ -30,7 +30,7 @@ import javax.swing.filechooser.FileFilter;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.exceptions.BadImportedCSVLegacyFileException;
 import org.earthtime.UPb_Redux.filters.LegacyCSVFileFilter;
-import org.earthtime.UPb_Redux.fractions.Fraction;
+import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.utilities.FileHelper;
 
 /**
@@ -60,10 +60,10 @@ public abstract class AbstractSampleImporterFromLegacyCSVFile {
      * @return @throws FileNotFoundException
      * @throws BadImportedCSVLegacyFileException
      */
-    public Vector<Fraction> readInFractions ()
+    public Vector<ETFractionInterface> readInFractions ()
             throws FileNotFoundException, BadImportedCSVLegacyFileException {
 
-        Vector<Fraction> retval = new Vector<Fraction>();
+        Vector<ETFractionInterface> retval = new Vector<>();
 
         File csvFile = openCSVFile( mruFolder );
         mruFolder = csvFile.getParentFile();
@@ -97,7 +97,7 @@ public abstract class AbstractSampleImporterFromLegacyCSVFile {
      * @throws FileNotFoundException
      * @throws BadImportedCSVLegacyFileException
      */
-    protected abstract Vector<Fraction> extractFractionsFromFile ( File file )
+    protected abstract Vector<ETFractionInterface> extractFractionsFromFile ( File file )
             throws FileNotFoundException, BadImportedCSVLegacyFileException;
 
     /**
@@ -122,7 +122,7 @@ public abstract class AbstractSampleImporterFromLegacyCSVFile {
      * @return
      */
     protected Vector<String> processLegacyCSVLine ( String aLine ) {
-        Vector<String> myLine = new Vector<String>();
+        Vector<String> myLine = new Vector<>();
 
         //use a second Scanner to parse the content of each line
 

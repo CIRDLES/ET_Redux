@@ -203,7 +203,11 @@ public class SampleFractionListDisplayPane extends JLayeredPane {
 //            this.add( maxMinButton, DEFAULT_LAYER );
 //        }
         r238_235s_textField = new JLabel();
-        r238_235s_textField.setText(tripoliSample.getSampleR238_235s().formatValueAndOneSigmaQuickLook());
+        try {
+            r238_235s_textField.setText(tripoliSample.getSampleR238_235s().formatValueAndOneSigmaQuickLook());
+        } catch (Exception e) {
+            r238_235s_textField.setText("not found");
+        }
         r238_235s_textField.setFont(ReduxConstants.sansSerif_10_Plain);
         add(r238_235s_textField);
 

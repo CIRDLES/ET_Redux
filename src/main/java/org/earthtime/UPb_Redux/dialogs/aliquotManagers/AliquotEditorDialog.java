@@ -78,7 +78,7 @@ import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.dialogs.sampleManagers.sampleDateInterpretationManagers.SampleDateInterpretationSubscribeInterface;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.filters.XMLFileFilter;
-import org.earthtime.UPb_Redux.fractions.Fraction;
+import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.UPbFractionReducer;
@@ -107,6 +107,7 @@ import org.earthtime.dataDictionaries.SampleRegistries;
 import org.earthtime.dataDictionaries.SampleTypesEnum;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
+import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.initialPbModelsET.InitialPbModelET;
 import org.earthtime.ratioDataModels.initialPbModelsET.StaceyKramersInitialPbModelET;
@@ -162,11 +163,11 @@ public class AliquotEditorDialog extends DialogEditor {
     /**
      *
      */
-    protected Vector<Fraction> deletedFractions;
+    protected Vector<ETFractionInterface> deletedFractions;
     /**
      *
      */
-    protected Vector<Fraction> addedFractions;
+    protected Vector<ETFractionInterface> addedFractions;
     // Instance variables
     /**
      * Default variables for new fractions
@@ -522,7 +523,7 @@ public class AliquotEditorDialog extends DialogEditor {
     /**
      *
      */
-    protected Fraction myFraction;
+    protected ETFractionInterface myFraction;
 
     /**
      * Creates new form AliquotEditorDialog
@@ -668,7 +669,7 @@ public class AliquotEditorDialog extends DialogEditor {
         initAliquot();
 
         // set focus traversal policy for publish tab
-        ArrayList<Component> order = new ArrayList<Component>();
+        ArrayList<Component> order = new ArrayList<>();
         order.add(geochronUserName_text);
         order.add(geochronPassword_passwordField);
         order.add(validateGeochronCredentials_button);
@@ -705,8 +706,8 @@ public class AliquotEditorDialog extends DialogEditor {
         fraction_Chooser.removeAllItems();
 
         // add the not-rejected fractions
-        for (Fraction f : getMyAliquot().getAliquotFractions()) {
-            if (!((UPbFractionI) f).isRejected()) {
+        for (ETFractionInterface f : getMyAliquot().getAliquotFractions()) {
+            if (!f.isRejected()) {
                 fraction_Chooser.addItem(f);
             }
         }
@@ -716,7 +717,7 @@ public class AliquotEditorDialog extends DialogEditor {
             public void actionPerformed(ActionEvent e) {
                 JComboBox cb = (JComboBox) e.getSource();
 
-                myFraction = (Fraction) cb.getSelectedItem();
+                myFraction = (ETFractionInterface) cb.getSelectedItem();
                 showSavedFractionArchivingData(myFraction);
             }
         });
@@ -760,15 +761,15 @@ public class AliquotEditorDialog extends DialogEditor {
         selectImageFile_button.setEnabled(!isCompiled);
     }
 
-    private void showSavedFractionArchivingData(Fraction myFraction) {
+    private void showSavedFractionArchivingData(ETFractionInterface myFraction) {
         if (myFraction != null) {
-            mineralNameChooser.setSelectedItem(myFraction.getMineralName());
-            settingTypeChooser.setSelectedItem(myFraction.getSettingType());
+            mineralNameChooser.setSelectedItem(((FractionI)myFraction).getMineralName());
+            settingTypeChooser.setSelectedItem(((FractionI)myFraction).getSettingType());
             countOfGrains_text.setText(String.valueOf(myFraction.getNumberOfGrains()));
-            physicallyAbraded_chkBox.setSelected(myFraction.isPhysicallyAbraded());
-            leachedInHFAcid_chkBox.setSelected(myFraction.isLeachedInHFAcid());
-            annealedChemicallyAbraded_chkBox.setSelected(myFraction.isAnnealedAndChemicallyAbraded());
-            chemicallyPurifiedUPb_chkBox.setSelected(myFraction.isChemicallyPurifiedUPb());
+            physicallyAbraded_chkBox.setSelected(((FractionI)myFraction).isPhysicallyAbraded());
+            leachedInHFAcid_chkBox.setSelected(((FractionI)myFraction).isLeachedInHFAcid());
+            annealedChemicallyAbraded_chkBox.setSelected(((FractionI)myFraction).isAnnealedAndChemicallyAbraded());
+            chemicallyPurifiedUPb_chkBox.setSelected(((FractionI)myFraction).isChemicallyPurifiedUPb());
             fractionComment_text.setText(myFraction.getAnalysisFractionComment());
 
             publicationTimeStamp_text.setText(myFraction.getTimeStamp().toString());
@@ -778,7 +779,7 @@ public class AliquotEditorDialog extends DialogEditor {
         }
     }
 
-    private void showLabDefaultFractionArchivingData(Fraction myFraction) {
+    private void showLabDefaultFractionArchivingData(ETFractionInterface myFraction) {
 
         if (myFraction != null) {
             ReduxLabData myLabData = ((UPbFraction) myFraction).getMyLabData();
@@ -797,7 +798,7 @@ public class AliquotEditorDialog extends DialogEditor {
      *
      * @param myFraction
      */
-    public void displayThumbnailForFraction(Fraction myFraction) {
+    public void displayThumbnailForFraction(ETFractionInterface myFraction) {
 
         imageThumbnail_label.setText("No image selected");
         imageThumbnail_label.setIcon(null);
@@ -821,8 +822,8 @@ public class AliquotEditorDialog extends DialogEditor {
     }
 
     private void showFractionNotes() {
-        for (Fraction f : getMyAliquot().getAliquotFractions()) {
-            String fractionNote = ((UPbFractionI) f).getFractionNotes();
+        for (ETFractionInterface f : getMyAliquot().getAliquotFractions()) {
+            String fractionNote = f.getFractionNotes();
             fractionNotes_textArea.setText(//
                     fractionNotes_textArea.getText()//
                     + "**********************\n"//
@@ -863,7 +864,7 @@ public class AliquotEditorDialog extends DialogEditor {
         if (selectedFile != null) {
             try {
                 // export
-                ((UPbReduxAliquot) getMyAliquot()).serializeXMLObject(selectedFile.getCanonicalPath());
+                getMyAliquot().serializeXMLObject(selectedFile.getCanonicalPath());
             } catch (IOException ex) {
             }
 
@@ -955,7 +956,7 @@ public class AliquotEditorDialog extends DialogEditor {
         BrowserControl.displayURL(tempHTML);
     }
 
-    private void saveAliquotFraction(Fraction fractionToSave)
+    private void saveAliquotFraction(ETFractionInterface fractionToSave)
             throws NumberFormatException {
 
         // TODO: feb 2010 refactor to remove repeats and switch to SAMPLEFOLDER
@@ -964,16 +965,16 @@ public class AliquotEditorDialog extends DialogEditor {
                 || (sample.getSampleType().equalsIgnoreCase(SampleTypesEnum.SAMPLEFOLDER.getName()))) {
 
             // set temp variable for fractionation correction both u and Pb to use in locking fields
-            boolean fraCorrU = fractionToSave.isFractionationCorrectedU();//.getMeanAlphaU().compareTo( BigDecimal.ZERO ) != 0);
-            boolean fraCorrPb = fractionToSave.isFractionationCorrectedPb();//.getMeanAlphaPb().compareTo( BigDecimal.ZERO ) != 0);
+            boolean fraCorrU = ((FractionI)fractionToSave).isFractionationCorrectedU();
+            boolean fraCorrPb = ((FractionI)fractionToSave).isFractionationCorrectedPb();
 
             int row = getMyAliquot().getAliquotFractions().indexOf(fractionToSave);
 
             // feb 2009
             // test zircon state change for ReductionHandler
             try {
-                if (fractionToSave.isZircon() != ((JCheckBox) fractionZirconCheckBox.get(row)).isSelected()) {
-                    fractionToSave.setZircon(((AbstractButton) fractionZirconCheckBox.get(row)).isSelected());
+                if (((FractionI)fractionToSave).isZircon() != ((JCheckBox) fractionZirconCheckBox.get(row)).isSelected()) {
+                    ((FractionI)fractionToSave).setZircon(((AbstractButton) fractionZirconCheckBox.get(row)).isSelected());
                     ((UPbFraction) fractionToSave).initializeReductionHandler();
                 }
             } catch (Exception e) {
@@ -984,7 +985,7 @@ public class AliquotEditorDialog extends DialogEditor {
                 try {
                     AbstractRatiosDataModel tracer = ((UPbFraction) fractionToSave).getMyLabData().//
                             getATracerModel((String) fractionTracerChoice.get(row).getSelectedItem());
-                    ((UPbFraction) fractionToSave).setTracer(tracer);
+                    ((UPbFractionI) fractionToSave).setTracer(tracer);
                 } catch (BadLabDataException ex) {
                     new ETWarningDialog(ex).setVisible(true);
                 }
@@ -994,7 +995,7 @@ public class AliquotEditorDialog extends DialogEditor {
                     .setValue(new BigDecimal(((JTextComponent) fractionTracerMassText.get(row)).getText(), ReduxConstants.mathContext15));
 
             fractionToSave.getAnalysisMeasure(AnalysisMeasures.fractionMass.getName())//
-                    .setValue(new BigDecimal(((JTextField) fractionMassText.get(row)).getText(), ReduxConstants.mathContext15));
+                    .setValue(new BigDecimal(((JTextComponent) fractionMassText.get(row)).getText(), ReduxConstants.mathContext15));
 
             try {
                 ValueModel alphaPb = ((UPbFraction) fractionToSave).getMyLabData().getNoneAlphaPbModel();
@@ -1021,7 +1022,7 @@ public class AliquotEditorDialog extends DialogEditor {
             try {
                 AbstractRatiosDataModel pbBlank = null;
                 pbBlank = ((UPbFraction) fractionToSave).getMyLabData().getAPbBlankModel((String) fractionPbBlankChoice.get(row).getSelectedItem());
-                ((UPbFraction) fractionToSave).setPbBlank(pbBlank);
+                ((UPbFractionI) fractionToSave).setPbBlank(pbBlank);
             } catch (BadLabDataException ex) {
                 new ETWarningDialog(ex).setVisible(true);
             }
@@ -1029,21 +1030,21 @@ public class AliquotEditorDialog extends DialogEditor {
             try {
                 AbstractRatiosDataModel initialPbModel = ((UPbFraction) fractionToSave).getMyLabData().//
                         getAnInitialPbModel((String) fractionInitialPbChoice.get(row).getSelectedItem());
-                ((UPbFraction) fractionToSave).setInitialPbModel(initialPbModel);
+                ((FractionI)fractionToSave).setInitialPbModel(initialPbModel);
 
                 // march 2009 special condition for stacey kramers
                 if (initialPbModel instanceof StaceyKramersInitialPbModelET) {
 
                     // set special fields for Stacey Kramers
-                    fractionToSave.setEstimatedDate(new BigDecimal(((JTextField) fractionEstDateText.get(row)).getText(), ReduxConstants.mathContext15));
+                    fractionToSave.setEstimatedDate(new BigDecimal(((JTextComponent) fractionEstDateText.get(row)).getText(), ReduxConstants.mathContext15));
 
-                    fractionToSave.setStaceyKramersOnePctUnct(//
-                            new BigDecimal(((JTextField) fractionStaceyKramersPctUncertaintyText.get(row)).getText(), ReduxConstants.mathContext15));
+                    ((FractionI)fractionToSave).setStaceyKramersOnePctUnct(//
+                            new BigDecimal(((JTextComponent) fractionStaceyKramersPctUncertaintyText.get(row)).getText(), ReduxConstants.mathContext15));
 
-                    fractionToSave.setStaceyKramersCorrelationCoeffs(//
-                            new BigDecimal(((JTextField) fractionStaceyKramersCorrelationCoeffsText.get(row)).getText(), ReduxConstants.mathContext15));
+                    ((FractionI)fractionToSave).setStaceyKramersCorrelationCoeffs(//
+                            new BigDecimal(((JTextComponent) fractionStaceyKramersCorrelationCoeffsText.get(row)).getText(), ReduxConstants.mathContext15));
 
-                    ((UPbFraction) fractionToSave).calculateStaceyKramersInitialPbModelValues();
+                    ((FractionI)fractionToSave).calculateStaceyKramersInitialPbModelValues();
                 }
 
             } catch (BadLabDataException ex) {
@@ -1052,19 +1053,19 @@ public class AliquotEditorDialog extends DialogEditor {
 
             // set fraction's pbBlankMass
             fractionToSave.getAnalysisMeasure(AnalysisMeasures.pbBlankMassInGrams.getName()).//
-                    setValue(new BigDecimal(((JTextField) fractionPbBlankMassText.get(row)).getText(), ReduxConstants.mathContext15).//
+                    setValue(new BigDecimal(((JTextComponent) fractionPbBlankMassText.get(row)).getText(), ReduxConstants.mathContext15).//
                             movePointLeft(12));
 
             // set fraction's uBlankMass
             fractionToSave.getAnalysisMeasure(AnalysisMeasures.uBlankMassInGrams.getName()).//
-                    setValue(new BigDecimal(((JTextField) fractionUBlankMassText.get(row)).getText(), ReduxConstants.mathContext15).//
+                    setValue(new BigDecimal(((JTextComponent) fractionUBlankMassText.get(row)).getText(), ReduxConstants.mathContext15).//
                             movePointLeft(12));
 
             fractionToSave.getAnalysisMeasure(AnalysisMeasures.r238_235s.getName())//
-                    .setValue(new BigDecimal(((JTextField) fractionR238_235sText.get(row)).getText(), ReduxConstants.mathContext15));
+                    .setValue(new BigDecimal(((JTextComponent) fractionR238_235sText.get(row)).getText(), ReduxConstants.mathContext15));
 
             fractionToSave.getAnalysisMeasure(AnalysisMeasures.r238_235b.getName())//
-                    .setValue(new BigDecimal(((JTextField) fractionR238_235bText.get(row)).getText(), ReduxConstants.mathContext15));
+                    .setValue(new BigDecimal(((JTextComponent) fractionR238_235bText.get(row)).getText(), ReduxConstants.mathContext15));
 
             fractionToSave.getAnalysisMeasure(AnalysisMeasures.r18O_16O_revised.getName())//
                     .setValue(new BigDecimal(((JTextComponent) fractionR18O_16OText.get(row)).getText(), ReduxConstants.mathContext15));
@@ -1079,30 +1080,28 @@ public class AliquotEditorDialog extends DialogEditor {
                     .setOneSigma(new BigDecimal(((JTextComponent) fractionTracerMassOneSigmaText.get(row)).getText(), ReduxConstants.mathContext15));
 
             fractionToSave.getAnalysisMeasure(AnalysisMeasures.uBlankMassInGrams.getName())//
-                    .setOneSigma(new BigDecimal(((JTextField) fractionUBlankMassOneSigmaText.get(row)).getText(), ReduxConstants.mathContext15).//
+                    .setOneSigma(new BigDecimal(((JTextComponent) fractionUBlankMassOneSigmaText.get(row)).getText(), ReduxConstants.mathContext15).//
                             movePointLeft(12));
 
             fractionToSave.getAnalysisMeasure(AnalysisMeasures.r238_235s.getName())//
-                    .setOneSigma(new BigDecimal(((JTextField) fractionR238_235sOneSigmaText.get(row)).getText(), ReduxConstants.mathContext15));
+                    .setOneSigma(new BigDecimal(((JTextComponent) fractionR238_235sOneSigmaText.get(row)).getText(), ReduxConstants.mathContext15));
 
             fractionToSave.getAnalysisMeasure(AnalysisMeasures.r238_235b.getName())//
-                    .setOneSigma(new BigDecimal(((JTextField) fractionR238_235bOneSigmaText.get(row)).getText(), ReduxConstants.mathContext15));
+                    .setOneSigma(new BigDecimal(((JTextComponent) fractionR238_235bOneSigmaText.get(row)).getText(), ReduxConstants.mathContext15));
 
             fractionToSave.getAnalysisMeasure(AnalysisMeasures.r18O_16O_revised.getName())//
-                    .setOneSigma(new BigDecimal(((JTextField) fractionR18O_16OOneSigmaText.get(row)).getText(), ReduxConstants.mathContext15));
+                    .setOneSigma(new BigDecimal(((JTextComponent) fractionR18O_16OOneSigmaText.get(row)).getText(), ReduxConstants.mathContext15));
 
             fractionToSave.getAnalysisMeasure(AnalysisMeasures.pbBlankMassInGrams.getName())//
-                    .setOneSigma(new BigDecimal(((JTextField) fractionPbBlankMassOneSigmaText.get(row)).getText(), ReduxConstants.mathContext15).//
+                    .setOneSigma(new BigDecimal(((JTextComponent) fractionPbBlankMassOneSigmaText.get(row)).getText(), ReduxConstants.mathContext15).//
                             movePointLeft(12));
             fractionToSave.getAnalysisMeasure(AnalysisMeasures.rTh_Umagma.getName())//
-                    .setOneSigma(new BigDecimal(((JTextField) fractionRTh_UmagmaOneSigmaText.get(row)).getText(), ReduxConstants.mathContext15));
+                    .setOneSigma(new BigDecimal(((JTextComponent) fractionRTh_UmagmaOneSigmaText.get(row)).getText(), ReduxConstants.mathContext15));
             fractionToSave.getAnalysisMeasure(AnalysisMeasures.ar231_235sample.getName())//
-                    .setOneSigma(new BigDecimal(((JTextField) fractionAr231_235sampleOneSigmaText.get(row)).getText(), ReduxConstants.mathContext15));
+                    .setOneSigma(new BigDecimal(((JTextComponent) fractionAr231_235sampleOneSigmaText.get(row)).getText(), ReduxConstants.mathContext15));
 
-////            // added oct 2011 to handle archiving details
-////            saveFractionArchivingData( fractionToSave ); // NOT HERE
             // better safe than sorry for now
-            ((UPbFraction) fractionToSave).setChanged(true);
+            fractionToSave.setChanged(true);
 
             // reduce fraction
             UPbFractionReducer.getInstance().fullFractionReduce(fractionToSave, true);
@@ -1155,7 +1154,7 @@ public class AliquotEditorDialog extends DialogEditor {
         imageThumbnail_label = new javax.swing.JLabel();
         chooseSettingType_label1 = new javax.swing.JLabel();
         fractionID_label1 = new javax.swing.JLabel();
-        fraction_Chooser = new javax.swing.JComboBox<Fraction>();
+        fraction_Chooser = new javax.swing.JComboBox<ETFractionInterface>();
         fractionID_label2 = new javax.swing.JLabel();
         useLabDefaults_button = new javax.swing.JButton();
         refsAndComment_panel = new javax.swing.JPanel();
@@ -1829,10 +1828,10 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
     }//GEN-LAST:event_selectImageFile_buttonActionPerformed
 
     private void useLabDefaults_buttonActionPerformed ( java.awt.event.ActionEvent evt ) {//GEN-FIRST:event_useLabDefaults_buttonActionPerformed
-        showLabDefaultFractionArchivingData((Fraction) fraction_Chooser.getSelectedItem());
+        showLabDefaultFractionArchivingData((FractionI) fraction_Chooser.getSelectedItem());
     }//GEN-LAST:event_useLabDefaults_buttonActionPerformed
 
-    private void selectImageFile(Fraction myFraction) throws BadLabDataException {
+    private void selectImageFile(ETFractionInterface myFraction) throws BadLabDataException {
         String dialogTitle = "Select a fraction image: *.gif, *.jpeg";
         final String fileExtension = ".gif | .jpeg | .jpg";
         FileFilter nonMacFileFilter = new FileFilter() {
@@ -1890,9 +1889,9 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
     private class EditFractionListener implements ActionListener {
 
         private int row;
-        private Fraction fraction;
+        private ETFractionInterface fraction;
 
-        public EditFractionListener(Fraction fraction, int row) {
+        public EditFractionListener(ETFractionInterface fraction, int row) {
             this.row = row;
             this.fraction = fraction;
         }
@@ -1929,7 +1928,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
         /**
          * @return the fraction
          */
-        public Fraction getFraction() {
+        public ETFractionInterface getFraction() {
             return fraction;
         }
     }
@@ -1937,14 +1936,14 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
     private class deleteFractionListener implements ActionListener {
 
         private int row;
-        private Fraction fraction;
+        private FractionI fraction;
 
-        public deleteFractionListener(Fraction fraction, int row) {
+        public deleteFractionListener(FractionI fraction, int row) {
             this.row = row;
             this.fraction = fraction;
         }
 
-        public Fraction getFraction() {
+        public FractionI getFraction() {
             return fraction;
         }
 
@@ -1964,14 +1963,14 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
     private class changeTracerListener implements ActionListener {
 
         private int row;
-        private Fraction fraction;
+        private ETFractionInterface fraction;
 
-        public changeTracerListener(Fraction fraction, int row) {
+        public changeTracerListener(ETFractionInterface fraction, int row) {
             this.row = row;
             this.fraction = fraction;
         }
 
-        public Fraction getFraction() {
+        public ETFractionInterface getFraction() {
             return fraction;
         }
 
@@ -1988,7 +1987,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
                 // aug 2010 zero tracer mass if tracer none is isZircon
                 if (chosenTracerType.equalsIgnoreCase(DataDictionary.TracerType[0])) {
                     // none tracer chosen
-                    ((JTextField) fractionTracerMassText.get(row)).setText("0.0");
+                    ((JTextComponent) fractionTracerMassText.get(row)).setText("0.0");
                 }
             } catch (BadLabDataException ex) {
                 new ETWarningDialog(ex).setVisible(true);
@@ -2000,14 +1999,14 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
     private class changeIsZirconListener implements ChangeListener {
 
         private int row;
-        private Fraction fraction;
+        private ETFractionInterface fraction;
 
-        public changeIsZirconListener(Fraction fraction, int row) {
+        public changeIsZirconListener(ETFractionInterface fraction, int row) {
             this.row = row;
             this.fraction = fraction;
         }
 
-        public Fraction getFraction() {
+        public ETFractionInterface getFraction() {
             return fraction;
         }
 
@@ -2023,14 +2022,14 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
     private class changeInitialPbModelItemListener implements ItemListener {
 
         private int row;
-        private Fraction fraction;
+        private ETFractionInterface fraction;
 
-        public changeInitialPbModelItemListener(Fraction fraction, int row) {
+        public changeInitialPbModelItemListener(ETFractionInterface fraction, int row) {
             this.row = row;
             this.fraction = fraction;
         }
 
-        public Fraction getFraction() {
+        public ETFractionInterface getFraction() {
             return fraction;
         }
 
@@ -2052,11 +2051,9 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
     protected void initAliquot() {
 
         fastEdits_panel.removeAll();
-//        showSavedDataI();
-        deletedFractions
-                = new Vector<Fraction>();
-        addedFractions
-                = new Vector<Fraction>();
+
+        deletedFractions = new Vector<>();
+        addedFractions = new Vector<>();
 
         // in compilation, leave everything blank
         if (((UPbReduxAliquot) myAliquot).isCompiled()) {
@@ -2065,94 +2062,62 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
 
 //        fractionDeleteButtons =
 //                new ArrayList<JComponent>();
-        fractionEditButtons
-                = new ArrayList<JComponent>();
+        fractionEditButtons = new ArrayList<>();
 
-        fractionZirconCheckBox
-                = new ArrayList<JComponent>();
+        fractionZirconCheckBox = new ArrayList<>();
 
-        fractionTracerChoice
-                = new ArrayList<JComboBox>();
+        fractionTracerChoice = new ArrayList<>();
 
-        fractionTracerMassText
-                = new ArrayList<JComponent>();
+        fractionTracerMassText = new ArrayList<>();
 
-        fractionTracerGRAMS
-                = new ArrayList<JLabel>();
+        fractionTracerGRAMS = new ArrayList<>();
 
-        fractionMassText
-                = new ArrayList<JComponent>();
+        fractionMassText = new ArrayList<>();
 
-        fractionMassGRAMS
-                = new ArrayList<JLabel>();
+        fractionMassGRAMS = new ArrayList<>();
 
-        fractionAlphaPbChoice
-                = new ArrayList<JComboBox<String>>();
+        fractionAlphaPbChoice = new ArrayList<>();
 
-        fractionAlphaUChoice
-                = new ArrayList<>();
+        fractionAlphaUChoice = new ArrayList<>();
 
-        fractionPbBlankChoice
-                = new ArrayList<>();
+        fractionPbBlankChoice = new ArrayList<>();
 
-        fractionInitialPbChoice
-                = new ArrayList<>();
+        fractionInitialPbChoice = new ArrayList<>();
 
-        fractionEstDateText
-                = new ArrayList<JComponent>();
+        fractionEstDateText = new ArrayList<>();
 
-        fractionEstDateMEGAANNUM
-                = new ArrayList<JLabel>();
+        fractionEstDateMEGAANNUM = new ArrayList<>();
 
-        fractionStaceyKramersPctUncertaintyText
-                = new ArrayList<JComponent>();
+        fractionStaceyKramersPctUncertaintyText = new ArrayList<>();
 
-        fractionStaceyKramersCorrelationCoeffsText
-                = new ArrayList<JComponent>();
+        fractionStaceyKramersCorrelationCoeffsText = new ArrayList<>();
 
         fractionPbBlankMassText
-                = new ArrayList<JComponent>();
+                = new ArrayList<>();
+        fractionPbBlankPICOGRAMS = new ArrayList<>();
 
-        fractionPbBlankPICOGRAMS
-                = new ArrayList<JLabel>();
+        fractionUBlankMassText = new ArrayList<>();
 
-        fractionUBlankMassText
-                = new ArrayList<JComponent>();
+        fractionUBlankPICOGRAMS = new ArrayList<>();
 
-        fractionUBlankPICOGRAMS
-                = new ArrayList<JLabel>();
+        fractionR238_235sText = new ArrayList<>();
 
-        fractionR238_235sText
-                = new ArrayList<JComponent>();
+        fractionR238_235bText = new ArrayList<>();
 
-        fractionR238_235bText
-                = new ArrayList<JComponent>();
+        fractionR18O_16OText = new ArrayList<>();
 
-        fractionR18O_16OText
-                = new ArrayList<JComponent>();
+        fractionRTh_UmagmaText = new ArrayList<>();
 
-        fractionRTh_UmagmaText
-                = new ArrayList<JComponent>();
+        fractionAR231_235sampleText = new ArrayList<>();
 
-        fractionAR231_235sampleText
-                = new ArrayList<JComponent>();
-
-        fractionTracerMassOneSigmaText
-                = new ArrayList<JComponent>();
-        fractionUBlankMassOneSigmaText
-                = new ArrayList<JComponent>();
-        fractionR238_235sOneSigmaText
-                = new ArrayList<JComponent>();
-        fractionR238_235bOneSigmaText
-                = new ArrayList<JComponent>();
-        fractionR18O_16OOneSigmaText
-                = new ArrayList<JComponent>();
-        fractionPbBlankMassOneSigmaText
-                = new ArrayList<JComponent>();
-        fractionRTh_UmagmaOneSigmaText
-                = new ArrayList<JComponent>();
-        fractionAr231_235sampleOneSigmaText
-                = new ArrayList<JComponent>();
+        fractionTracerMassOneSigmaText = new ArrayList<>();
+        fractionUBlankMassOneSigmaText = new ArrayList<>();
+        fractionR238_235sOneSigmaText = new ArrayList<>();
+        fractionR238_235bOneSigmaText = new ArrayList<>();
+        fractionR18O_16OOneSigmaText = new ArrayList<>();
+        fractionPbBlankMassOneSigmaText = new ArrayList<>();
+        fractionRTh_UmagmaOneSigmaText = new ArrayList<>();
+        fractionAr231_235sampleOneSigmaText = new ArrayList<>();
 
         // create master row for filling others ********************************
         // new fraction namer
@@ -2971,7 +2936,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
         for (int row = 0; row
                 < getMyAliquot().getAliquotFractions().size(); row++) {
 
-            Fraction tempFrac = getMyAliquot().getAliquotFractions().get(row);
+            ETFractionInterface tempFrac = getMyAliquot().getAliquotFractions().get(row);
             int max = getMyAliquot().getAliquotFractions().size();
             addFractionRow(tempFrac, row, max);
 
@@ -2983,7 +2948,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
         buildFastEditDisplayPanel();
     }
 
-    private void addFractionRow(Fraction tempFrac, int row, int max) {
+    private void addFractionRow(ETFractionInterface tempFrac, int row, int max) {
 
 //        // Buttons to allow deletion of fractions
 //        JButton tempJB = new EditFractionButton("X", row, true);
@@ -3922,7 +3887,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
         }
     }
 
-    private void updateAlphaPbModelChooserForRow(Fraction tempFrac, boolean needsAlphaPb, int row) {
+    private void updateAlphaPbModelChooserForRow(ETFractionInterface tempFrac, boolean needsAlphaPb, int row) {
         // aug 2010 control alphaPb Chooser
         // if we don't meet the conditions for using alphaPb model (see also UPbFractionEditor)
         // then we reset model to none model (the first model)
@@ -3958,17 +3923,17 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
             fractionAlphaPbChoice.get(row).setSelectedItem(reasonNoAlphaPbModel);
         } else {
             // if model is "none" use default otherwise proceed
-            if (((UPbFraction) tempFrac).getAlphaPbModel().equals(alphaPbNoneModel)) {
-                ((UPbFraction) tempFrac).setAlphaPbModel(alphaPbDefaultModel);
+            if (((UPbFractionI) tempFrac).getAlphaPbModel().equals(alphaPbNoneModel)) {
+                ((UPbFractionI) tempFrac).setAlphaPbModel(alphaPbDefaultModel);
             }
             fractionAlphaPbChoice.get(row).setEnabled(true);
             fractionAlphaPbChoice.get(row).setSelectedIndex(0);
-            fractionAlphaPbChoice.get(row).setSelectedItem(((UPbFraction) tempFrac).getAlphaPbModel().getName());
+            fractionAlphaPbChoice.get(row).setSelectedItem(((UPbFractionI) tempFrac).getAlphaPbModel().getName());
 
         }
     }
 
-    private void updateAlphaUModelChooserForRow(Fraction tempFrac, boolean needsAlphaU, int row) {
+    private void updateAlphaUModelChooserForRow(ETFractionInterface tempFrac, boolean needsAlphaU, int row) {
         // sept 2010 altered to parallel alphaPb case
         ValueModel alphaUNoneModel = new ValueModel();
         ValueModel alphaUDefaultModel = new ValueModel();
@@ -3987,31 +3952,31 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
         fractionAlphaUChoice.get(row).removeItem(usesRatioMeans);
         fractionAlphaUChoice.get(row).removeItem(missingRatioMeans);
         if (!needsAlphaU) {
-            ((UPbFraction) tempFrac).setAlphaUModel(alphaUNoneModel);
+            ((UPbFractionI) tempFrac).setAlphaUModel(alphaUNoneModel);
             fractionAlphaUChoice.get(row).setEnabled(false);
             // display reason or warning
             String reasonNoAlphaUModel = usesRatioMeans;
-            if (((UPbFraction) tempFrac).isFractionationCorrectedU()) {
+            if (((UPbFractionI) tempFrac).isFractionationCorrectedU()) {
                 reasonNoAlphaUModel = ptWiseTripoliCorrected;
-            } else if (!((UPbFraction) tempFrac).hasMeasuredUranium()) {
+            } else if (!((UPbFractionI) tempFrac).hasMeasuredUranium()) {
                 reasonNoAlphaUModel = missingRatioMeans;
             }
             fractionAlphaUChoice.get(row).addItem(reasonNoAlphaUModel);
             fractionAlphaUChoice.get(row).setSelectedItem(reasonNoAlphaUModel);
         } else {
             // if model is "none" use default otherwise proceed
-            if (((UPbFraction) tempFrac).getAlphaUModel().equals(alphaUNoneModel)) {
-                ((UPbFraction) tempFrac).setAlphaUModel(alphaUDefaultModel);
+            if (((UPbFractionI) tempFrac).getAlphaUModel().equals(alphaUNoneModel)) {
+                ((UPbFractionI) tempFrac).setAlphaUModel(alphaUDefaultModel);
             }
 
             fractionAlphaUChoice.get(row).setEnabled(true);
             fractionAlphaUChoice.get(row).setSelectedIndex(0);
-            fractionAlphaUChoice.get(row).setSelectedItem(((UPbFraction) tempFrac).getAlphaUModel().getName());
+            fractionAlphaUChoice.get(row).setSelectedItem(((UPbFractionI) tempFrac).getAlphaUModel().getName());
 
         }
     }
 
-    private void updateInitialPbModelChooserForRow(Fraction tempFrac, boolean isZircon, int row) {
+    private void updateInitialPbModelChooserForRow(ETFractionInterface tempFrac, boolean isZircon, int row) {
 
         AbstractRatiosDataModel initialPbNoneModel = InitialPbModelET.getNoneInstance();
         AbstractRatiosDataModel initialPbDefaultModel = getMyAliquot().getDefaultInitialPbModel();
@@ -4020,7 +3985,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
         String fractionIsZircon = "fraction is a Zircon";
         fractionInitialPbChoice.get(row).removeItem(fractionIsZircon);
         if (isZircon) {
-            tempFrac.setInitialPbModel(initialPbNoneModel);
+            ((FractionI)tempFrac).setInitialPbModel(initialPbNoneModel);
             fractionInitialPbChoice.get(row).setEnabled(false);
             // display reason or warning
             String reasonNoInitialPb = fractionIsZircon;
@@ -4028,58 +3993,58 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
             fractionInitialPbChoice.get(row).setSelectedItem(reasonNoInitialPb);
         } else {
             // if model is "none" use default otherwise proceed
-            if (tempFrac.getInitialPbModel().equals(initialPbNoneModel)) {
-                tempFrac.setInitialPbModel(initialPbDefaultModel);
+            if (((FractionI)tempFrac).getInitialPbModel().equals(initialPbNoneModel)) {
+                ((FractionI)tempFrac).setInitialPbModel(initialPbDefaultModel);
             }
             fractionInitialPbChoice.get(row).setEnabled(true);
             fractionInitialPbChoice.get(row).setSelectedIndex(0);
-            fractionInitialPbChoice.get(row).setSelectedItem(tempFrac.getInitialPbModel().getReduxLabDataElementName());
+            fractionInitialPbChoice.get(row).setSelectedItem(((FractionI)tempFrac).getInitialPbModel().getReduxLabDataElementName());
         }
 
-        boolean hasStaceyKramersModel = ((UPbFraction) tempFrac).getInitialPbModel() instanceof StaceyKramersInitialPbModelET;
+        boolean hasStaceyKramersModel = ((FractionI)tempFrac).getInitialPbModel() instanceof StaceyKramersInitialPbModelET;
 
-        ((JTextField) fractionEstDateText.get(row)).setText(tempFrac.getEstimatedDate().
+        ((JTextComponent) fractionEstDateText.get(row)).setText(tempFrac.getEstimatedDate().
                 setScale(ReduxConstants.DEFAULT_DATE_MA_SCALE, RoundingMode.HALF_UP).//
                 toPlainString());
         fractionEstDateText.get(row).setEnabled(hasStaceyKramersModel);
 
-        ((JTextField) fractionStaceyKramersPctUncertaintyText.get(row)).//
-                setText(((UPbFraction) tempFrac).getStaceyKramersOnePctUnct().
+        ((JTextComponent) fractionStaceyKramersPctUncertaintyText.get(row)).//
+                setText(((FractionI)tempFrac).getStaceyKramersOnePctUnct().
                         setScale(ReduxConstants.DEFAULT_PARAMETERS_SCALE, RoundingMode.HALF_UP).//
                         toPlainString());
         fractionStaceyKramersPctUncertaintyText.get(row).setEnabled(hasStaceyKramersModel);
 
-        ((JTextField) fractionStaceyKramersCorrelationCoeffsText.get(row)).//
-                setText(((UPbFraction) tempFrac).getStaceyKramersCorrelationCoeffs().
+        ((JTextComponent) fractionStaceyKramersCorrelationCoeffsText.get(row)).//
+                setText(((FractionI)tempFrac).getStaceyKramersCorrelationCoeffs().
                         setScale(ReduxConstants.DEFAULT_PARAMETERS_SCALE, RoundingMode.HALF_UP).//
                         toPlainString());
         fractionStaceyKramersCorrelationCoeffsText.get(row).setEnabled(hasStaceyKramersModel);
 
-        ((JTextField) fractionPbBlankMassText.get(row)).setText(tempFrac.getAnalysisMeasure(AnalysisMeasures.pbBlankMassInGrams.getName()).getValue().multiply(ReduxConstants.PicoGramsPerGram).setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE,
+        ((JTextComponent) fractionPbBlankMassText.get(row)).setText(tempFrac.getAnalysisMeasure(AnalysisMeasures.pbBlankMassInGrams.getName()).getValue().multiply(ReduxConstants.PicoGramsPerGram).setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE,
                 RoundingMode.HALF_UP).toPlainString());
-        ((UnDoAbleDocument) ((JTextField) fractionPbBlankMassText.get(row)).getDocument()).undo.discardAllEdits();
+        ((UnDoAbleDocument) ((JTextComponent) fractionPbBlankMassText.get(row)).getDocument()).undo.discardAllEdits();
         fractionPbBlankMassText.get(row).setEnabled(!isZircon);
 
-        ((JTextField) fractionEstDateText.get(row)).setText(tempFrac.getEstimatedDate().
+        ((JTextComponent) fractionEstDateText.get(row)).setText(tempFrac.getEstimatedDate().
                 setScale(ReduxConstants.DEFAULT_DATE_MA_SCALE, RoundingMode.HALF_UP).//
                 toPlainString());
-        ((UnDoAbleDocument) ((JTextField) fractionEstDateText.get(row)).getDocument()).undo.discardAllEdits();
+        ((UnDoAbleDocument) ((JTextComponent) fractionEstDateText.get(row)).getDocument()).undo.discardAllEdits();
         fractionEstDateText.get(row).setEnabled(!isZircon);
 
     }
 
-    private void updateFractionRow(Fraction tempFrac, int row) {
+    private void updateFractionRow(ETFractionInterface tempFrac, int row) {
 
         // set temp variable for fractionation correction both u and Pb to use in locking fields
-        boolean fraCorrU = ((UPbFractionI) tempFrac).isFractionationCorrectedU();//.getMeanAlphaU().compareTo( BigDecimal.ZERO ) != 0);
-        boolean fraCorrPb = ((UPbFractionI) tempFrac).isFractionationCorrectedPb();//.getMeanAlphaPb().compareTo( BigDecimal.ZERO ) != 0);
-        boolean isZircon = ((UPbFractionI) tempFrac).isZircon();
+        boolean fraCorrU = ((FractionI) tempFrac).isFractionationCorrectedU();//.getMeanAlphaU().compareTo( BigDecimal.ZERO ) != 0);
+        boolean fraCorrPb = ((FractionI) tempFrac).isFractionationCorrectedPb();//.getMeanAlphaPb().compareTo( BigDecimal.ZERO ) != 0);
+        boolean isZircon = ((FractionI) tempFrac).isZircon();
 
         ((AbstractButton) fractionEditButtons.get(row)).setText(tempFrac.getFractionID());
 
         ((AbstractButton) fractionZirconCheckBox.get(row)).setSelected(isZircon);
 
-        fractionTracerChoice.get(row).setSelectedItem(((UPbFraction) tempFrac).getTracerID());
+        fractionTracerChoice.get(row).setSelectedItem(tempFrac.getTracerID());
         fractionTracerChoice.get(row).setEnabled(!(fraCorrU || fraCorrPb));
 
         ((JTextComponent) fractionTracerMassText.get(row)).setText(tempFrac.getAnalysisMeasure(AnalysisMeasures.tracerMassInGrams.getName()).getValue().
@@ -4212,77 +4177,35 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
 //            ((JButton) fractionDeleteButtons.get(f)).removeActionListener(((JButton) fractionDeleteButtons.get(f)).getActionListeners()[0]);
 //            ((JButton) fractionDeleteButtons.get(f)).addActionListener(new deleteFractionListener(myFraction, f));
 
-            Fraction myFraction
+            ETFractionInterface fraction
                     = ((EditFractionListener) ((JButton) fractionEditButtons.get(f)).getActionListeners()[0]).getFraction();
 
-            ((JButton) fractionEditButtons.get(f)).removeActionListener(((JButton) fractionEditButtons.get(f)).getActionListeners()[0]);
-            ((JButton) fractionEditButtons.get(f)).addActionListener(new EditFractionListener(myFraction, f));
+            ((AbstractButton) fractionEditButtons.get(f)).removeActionListener(((JButton) fractionEditButtons.get(f)).getActionListeners()[0]);
+            ((AbstractButton) fractionEditButtons.get(f)).addActionListener(new EditFractionListener(fraction, f));
 
-            ((JCheckBox) fractionZirconCheckBox.get(f)).removeChangeListener(((JCheckBox) fractionZirconCheckBox.get(f)).getChangeListeners()[0]);
-            ((JCheckBox) fractionZirconCheckBox.get(f)).addChangeListener(new changeIsZirconListener(myFraction, f));
+            ((AbstractButton) fractionZirconCheckBox.get(f)).removeChangeListener(((JCheckBox) fractionZirconCheckBox.get(f)).getChangeListeners()[0]);
+            ((AbstractButton) fractionZirconCheckBox.get(f)).addChangeListener(new changeIsZirconListener(fraction, f));
 
             fractionTracerChoice.get(f).removeActionListener(fractionTracerChoice.get(f).getActionListeners()[0]);
-            fractionTracerChoice.get(f).addActionListener(new changeTracerListener(myFraction, f));
+            fractionTracerChoice.get(f).addActionListener(new changeTracerListener(fraction, f));
 
             fractionInitialPbChoice.get(f).removeItemListener(fractionInitialPbChoice.get(f).getItemListeners()[0]);
-            fractionInitialPbChoice.get(f).addItemListener(new changeInitialPbModelItemListener(myFraction, f));
+            fractionInitialPbChoice.get(f).addItemListener(new changeInitialPbModelItemListener(fraction, f));
         }
 
     }
 
-//    private void addNewFractionRow(Fraction fraction) {
-//        int row = fractionDeleteButtons.size();
-//
-//        addFractionRow(fraction, row, row + 1);
-//        updateFractionRow(fraction, row);
-//
-//        // choosers not included here
-//
-//        // update the keystroke actionlisteners for previous row in table
-//        modifyComponentKeyMapForTable(fractionEditButtons.get(row - 1), fractionEditButtons, row + 1);
-//        modifyComponentKeyMapForTable(fractionZirconCheckBox.get(row - 1), fractionZirconCheckBox, row + 1);
-//        modifyComponentKeyMapForTable(fractionTracerMassText.get(row - 1), fractionTracerMassText, row + 1);
-//        modifyComponentKeyMapForTable(fractionMassText.get(row - 1), fractionMassText, row + 1);
-//
-//        modifyComponentKeyMapForTable(fractionEstDateText.get(row - 1), fractionEstDateText, row + 1);
-//        modifyComponentKeyMapForTable(fractionStaceyKramersPctUncertaintyText.get(row - 1), //
-//                fractionStaceyKramersPctUncertaintyText, row + 1);
-//        modifyComponentKeyMapForTable(fractionStaceyKramersCorrelationCoeffsText.get(row - 1),//
-//                fractionStaceyKramersCorrelationCoeffsText, row + 1);
-//
-//        modifyComponentKeyMapForTable(fractionPbBlankMassText.get(row - 1), fractionPbBlankMassText, row + 1);
-//        modifyComponentKeyMapForTable(fractionUBlankMassText.get(row - 1), fractionUBlankMassText, row + 1);
-//
-//        modifyComponentKeyMapForTable(fractionR238_235sText.get(row - 1), fractionR238_235sText, row + 1);
-//        modifyComponentKeyMapForTable(fractionR238_235bText.get(row - 1), fractionR238_235bText, row + 1);
-//        modifyComponentKeyMapForTable(fractionR18O_16OText.get(row - 1), fractionR18O_16OText, row + 1);
-//
-//        modifyComponentKeyMapForTable(fractionRTh_UmagmaText.get(row - 1), fractionRTh_UmagmaText, row + 1);
-//        modifyComponentKeyMapForTable(fractionAR231_235sampleText.get(row - 1), fractionAR231_235sampleText, row + 1);
-//
-//
-//        modifyComponentKeyMapForTable(fractionTracerMassOneSigmaText.get(row - 1), fractionTracerMassOneSigmaText, row + 1);
-//        modifyComponentKeyMapForTable(fractionUBlankMassOneSigmaText.get(row - 1), fractionUBlankMassOneSigmaText, row + 1);
-//        modifyComponentKeyMapForTable(fractionR238_235sOneSigmaText.get(row - 1), fractionR238_235sOneSigmaText, row + 1);
-//        modifyComponentKeyMapForTable(fractionR238_235bOneSigmaText.get(row - 1), fractionR238_235bOneSigmaText, row + 1);
-//        modifyComponentKeyMapForTable(fractionPbBlankMassOneSigmaText.get(row - 1), fractionPbBlankMassOneSigmaText, row + 1);
-//        modifyComponentKeyMapForTable(fractionRTh_UmagmaOneSigmaText.get(row - 1), fractionRTh_UmagmaOneSigmaText, row + 1);
-//        modifyComponentKeyMapForTable(fractionAr231_235sampleOneSigmaText.get(row - 1), fractionAr231_235sampleOneSigmaText, row + 1);
-//        modifyComponentKeyMapForTable(fractionR18O_16OOneSigmaText.get(row - 1), fractionR18O_16OOneSigmaText, row + 1);
-//
-//        buildFastEditDisplayPanel();
-//    }
-    private void saveFractionArchivingData(Fraction myFraction) {
+    private void saveFractionArchivingData(ETFractionInterface myFraction) {
 
         // publication details
-        myFraction.setMineralName((String) mineralNameChooser.getSelectedItem());
-        myFraction.setSettingType((String) settingTypeChooser.getSelectedItem());
+        ((FractionI)myFraction).setMineralName((String) mineralNameChooser.getSelectedItem());
+        ((FractionI)myFraction).setSettingType((String) settingTypeChooser.getSelectedItem());
         myFraction.setNumberOfGrains(Integer.parseInt(countOfGrains_text.getText()));
 
-        myFraction.setPhysicallyAbraded(physicallyAbraded_chkBox.isSelected());
-        myFraction.setLeachedInHFAcid(leachedInHFAcid_chkBox.isSelected());
-        myFraction.setAnnealedAndChemicallyAbraded(annealedChemicallyAbraded_chkBox.isSelected());
-        myFraction.setChemicallyPurifiedUPb(chemicallyPurifiedUPb_chkBox.isSelected());
+        ((FractionI)myFraction).setPhysicallyAbraded(physicallyAbraded_chkBox.isSelected());
+        ((FractionI)myFraction).setLeachedInHFAcid(leachedInHFAcid_chkBox.isSelected());
+        ((FractionI)myFraction).setAnnealedAndChemicallyAbraded(annealedChemicallyAbraded_chkBox.isSelected());
+        ((FractionI)myFraction).setChemicallyPurifiedUPb(chemicallyPurifiedUPb_chkBox.isSelected());
         myFraction.setAnalysisFractionComment(fractionComment_text.getText());
 
     }
@@ -4381,12 +4304,12 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
             getMyAliquot().setDefaultAr231_235sampleOneSigmaText(masterAr231_235sampleOneSigma.getText());
 
             //  }
-            for (Fraction f : getMyAliquot().getAliquotFractions()) {
+            for (ETFractionInterface f : getMyAliquot().getAliquotFractions()) {
                 saveAliquotFraction(f);
             }
         }//march 2014 temp for raw laicpms
 
-        for (Fraction f : getMyAliquot().getAliquotFractions()) {
+        for (ETFractionInterface f : getMyAliquot().getAliquotFractions()) {
             f.setTimeStamp(new Date(System.currentTimeMillis()));
         }
 
@@ -4531,7 +4454,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
     private javax.swing.JLabel fractionID_label2;
     private javax.swing.JScrollPane fractionNotes_scrollPane;
     private javax.swing.JTextArea fractionNotes_textArea;
-    private javax.swing.JComboBox<Fraction> fraction_Chooser;
+    private javax.swing.JComboBox<ETFractionInterface> fraction_Chooser;
     private javax.swing.JLayeredPane geochronArchivePanel_panel;
     private javax.swing.JLabel geochronIcon_label;
     private javax.swing.JCheckBox geochronOverwrite_chkBox;
@@ -4684,7 +4607,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
 
         String data = "";
 
-        for (Fraction f : ((UPbReduxAliquot) myAliquot).getAliquotFractions()) {
+        for (ETFractionInterface f : ((UPbReduxAliquot) myAliquot).getAliquotFractions()) {
             // first we upload the thumbnail of the image if it exists and get back a url
             if (f.getImageURL().startsWith("http://thevaccinator.com/earth-time.org/public-data/images/ZirconCrystal.jpg")) {
                 f.setImageURL("");
@@ -4790,7 +4713,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
             // use default if user has not initialized
             if (probabilityPanel.getSelectedFractions().isEmpty()) {
                 probabilityPanel.//
-                        setSelectedFractions(getSample().getUpbFractionsUnknown());//.getUpbFractionsActive());//  getSample().getUpbFractionsActive() );
+                        setSelectedFractions(getSample().getUpbFractionsUnknown());
                 probabilityPanel.//
                         getDeSelectedFractions().clear();
 
@@ -4976,7 +4899,6 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
 ////                    !error.equalsIgnoreCase("no") ? "Failure!\n" : "Success!\n",
 ////                    message + "   " + myAliquot.getSampleIGSN() + "::" + myAliquot.getAliquotName()
 ////                });
-
     }
 
     private class validationFromRegistry {

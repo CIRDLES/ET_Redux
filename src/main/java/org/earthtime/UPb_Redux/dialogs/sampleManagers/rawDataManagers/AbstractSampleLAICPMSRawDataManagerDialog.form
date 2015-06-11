@@ -134,21 +134,14 @@
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
               <Group type="102" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" attributes="0">
-                                  <EmptySpace min="20" pref="20" max="20" attributes="0"/>
-                                  <Component id="sampleReduxFileName_label" min="-2" pref="407" max="-2" attributes="1"/>
-                              </Group>
-                              <Component id="sampleReduxFile_label" alignment="0" min="-2" max="-2" attributes="0"/>
-                          </Group>
+                      <Group type="102" attributes="0">
+                          <EmptySpace min="20" pref="20" max="20" attributes="0"/>
+                          <Component id="sampleReduxFileName_label" min="-2" pref="407" max="-2" attributes="1"/>
                       </Group>
-                      <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="sampleNotes_label" min="-2" max="-2" attributes="0"/>
-                      </Group>
+                      <Component id="sampleReduxFile_label" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="sampleNotes_label" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>

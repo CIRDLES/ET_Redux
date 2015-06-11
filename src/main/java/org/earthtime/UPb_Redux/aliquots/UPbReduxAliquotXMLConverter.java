@@ -29,7 +29,7 @@ import java.math.BigDecimal;
 import java.util.Vector;
 import org.earthtime.UPb_Redux.ReduxConstants.ANALYSIS_PURPOSE;
 import org.earthtime.UPb_Redux.fractions.AnalysisFraction;
-import org.earthtime.UPb_Redux.fractions.Fraction;
+import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.mineralStandardModels.MineralStandardModel;
 import org.earthtime.UPb_Redux.mineralStandardModels.MineralStandardModelXMLConverter;
 import org.earthtime.UPb_Redux.pbBlanks.PbBlank;
@@ -405,10 +405,10 @@ public class UPbReduxAliquotXMLConverter implements Converter {
 
         reader.moveDown();
         if ( "analysisFractions".equals( reader.getNodeName() ) ) {
-            Vector<Fraction> analysisFractions = new Vector<Fraction>();
+            Vector<FractionI> analysisFractions = new Vector<>();
             while (reader.hasMoreChildren()) {
                 reader.moveDown();
-                Fraction item = new AnalysisFraction();
+                FractionI item = new AnalysisFraction();
                 item = (AnalysisFraction) context.convertAnother( item, AnalysisFraction.class );
                 analysisFractions.add( item );
                 reader.moveUp();

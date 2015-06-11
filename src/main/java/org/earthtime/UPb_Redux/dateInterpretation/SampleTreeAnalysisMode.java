@@ -41,13 +41,12 @@ import org.earthtime.UPb_Redux.customJTrees.CheckBoxNodeEditor;
 import org.earthtime.UPb_Redux.customJTrees.CheckBoxNodeRenderer;
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.dialogs.sampleManagers.sampleDateInterpretationManagers.SampleDateInterpretationChooserDialog;
-import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModelI;
 import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
-import org.earthtime.fractions.FractionInterface;
+import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.samples.SampleInterface;
 
 /**
@@ -101,12 +100,12 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
         // todo: just walk aliquots now that ths mapping is fixed (may 2015)
         int saveAliquotNum = -1;
         for (int i = 0; i < sample.getFractions().size(); i++) {
-            Fraction tempFraction = sample.getFractions().get(i);
+            ETFractionInterface tempFraction = sample.getFractions().get(i);
             AliquotInterface tempAliquot;
 
-            if (!((FractionInterface) tempFraction).isRejected()) {
-                if (saveAliquotNum != ((FractionInterface) tempFraction).getAliquotNumber()) {
-                    saveAliquotNum = ((FractionInterface) tempFraction).getAliquotNumber();
+            if (!tempFraction.isRejected()) {
+                if (saveAliquotNum != tempFraction.getAliquotNumber()) {
+                    saveAliquotNum = tempFraction.getAliquotNumber();
 
                     tempAliquot = sample.getAliquotByNumber(saveAliquotNum);
                     aliquotNode = new DefaultMutableTreeNode(tempAliquot);
@@ -230,6 +229,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
      *
      * @param e
      */
+    @Override
     public void valueChanged(TreeSelectionEvent e) {
         //Returns the last path element of the selection.
         //This method is useful only when the selection model allows a single selection.
@@ -425,16 +425,17 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
                                 if (((SampleDateModel) selectedSAM).getMethodName().startsWith("WM")) {
                                     String aliquotFlags = sample.getSampleDateInterpretationGUISettings().getWeightedMeanOptions().//
                                             get(selectedSAM.getName());
-                                    aliquotFlags = setAliquotFlag(aliquotFlags, ((UPbReduxAliquot) nodeInfo).getAliquotNumber() - 1, "1");
+                                    try {
+                                        aliquotFlags = setAliquotFlag(aliquotFlags, ((UPbReduxAliquot) nodeInfo).getAliquotNumber() - 1, "1");
+                                    } catch (Exception e_aliquotFlags) {
+                                    }
                                     sample.getSampleDateInterpretationGUISettings().getWeightedMeanOptions().//
                                             put(selectedSAM.getName(), aliquotFlags);
 
                                     // now need to refresh panel
                                     getSampleTreeChange().sampleTreeChangeAnalysisMode(sampleDateModelNode);
                                 }
-
                             }
-
                         }
 
                         SampleInterface.updateAndSaveSampleDateModelsByAliquot(sample);

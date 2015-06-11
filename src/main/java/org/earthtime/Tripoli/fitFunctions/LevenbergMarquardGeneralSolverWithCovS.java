@@ -394,7 +394,7 @@ public class LevenbergMarquardGeneralSolverWithCovS implements FitFunctionInterf
             initializeFunctionAlgorithm(dataActiveMap, xValues, yValues, measuredCovMatrixS);
 
             // May 2015 per Noah - improved OD primer
-            double avgs2 = calculateMeanOfCovarianceMatrixDiagonal(measuredCovMatrixS);
+            double avgs2 = FitFunctionInterface.calculateMeanOfCovarianceMatrixDiagonal(measuredCovMatrixS);
 
             initialFofX = myInitialFofX;
 
@@ -415,7 +415,7 @@ public class LevenbergMarquardGeneralSolverWithCovS implements FitFunctionInterf
             initializeFunctionAlgorithm(dataActiveMap, xValues, yValues, measuredCovMatrixS);
 
             // May 2015 per Noah - improved OD primer
-            double avgs2 = calculateMeanOfCovarianceMatrixDiagonal(measuredCovMatrixS);
+            double avgs2 = FitFunctionInterface.calculateMeanOfCovarianceMatrixDiagonal(measuredCovMatrixS);
 
             if (this instanceof ExponentialFastNoOD) {
                 // this first call is to prime the pump for internal exp-fast and mat

@@ -28,6 +28,7 @@ import java.util.TreeMap;
 import org.earthtime.Tripoli.dataModels.collectorModels.AbstractCollectorModel;
 import org.earthtime.Tripoli.fitFunctions.AbstractFunctionOfX;
 import org.earthtime.Tripoli.fitFunctions.ConstantFitFunctionWithCovS;
+import org.earthtime.Tripoli.fitFunctions.FitFunctionInterface;
 import org.earthtime.Tripoli.fitFunctions.LevenbergMarquardGeneralSolverWithCovS;
 import org.earthtime.Tripoli.fitFunctions.LevenbergMarquardGeneralSolverWithVecV;
 import org.earthtime.Tripoli.fitFunctions.MeanFitFunction;
@@ -135,8 +136,8 @@ public class RawIntensityDataModel //
 
         this.calculatedInitialFitFunctions = false;
 
-        this.backgroundFitFunctionsNoOD = new TreeMap<String, AbstractFunctionOfX>();
-        this.backgroundFitFunctionsWithOD = new TreeMap<String, AbstractFunctionOfX>();
+        this.backgroundFitFunctionsNoOD = new TreeMap<>();
+        this.backgroundFitFunctionsWithOD = new TreeMap<>();
 
         this.correctedHg202Si = null;
         this.forceMeanForCommonLeadRatios = false;
@@ -582,180 +583,6 @@ public class RawIntensityDataModel //
 
         return retVal;
     }
-//
-//    private void generateLINEfitFunctionUsingLM() {
-//
-//        // algorithmForLINE contains both the non OD and OD versions
-//        AbstractFunctionOfX fOfX_LINE;
-//        AbstractFunctionOfX fOfX_LINE_OD;
-//
-//        if (USING_FULL_PROPAGATION) {
-//            LevenbergMarquardGeneralSolverWithCovS.AbstractOverDispersionLMAlgorithm algorithmForLINE = LevenbergMarquardGeneralSolverWithCovS.getInstance()//
-//                    .getSelectedLMAlgorithm( //
-//                            FitFunctionTypeEnum.LINE,//
-//                            backgroundVirtualCollector.getDataActiveMap(), //
-//                            normalizedBackgroundAquireTimes,//
-//                            backgroundVirtualCollector.getIntensities(), //
-//                            matrixSibCovarianceBackgroundIntensities, false);
-//
-//            fOfX_LINE = algorithmForLINE.getInitialFofX();
-//            fOfX_LINE_OD = algorithmForLINE.getFinalFofX();
-//
-//        } else {
-//            LevenbergMarquardGeneralSolverWithVecV.AbstractOverDispersionLMVecAlgorithm algorithmForLINE = LevenbergMarquardGeneralSolverWithVecV.getInstance()//
-//                    .getSelectedLMAlgorithm( //
-//                            FitFunctionTypeEnum.LINE,//
-//                            backgroundVirtualCollector.getDataActiveMap(), //
-//                            normalizedBackgroundAquireTimes,//
-//                            backgroundVirtualCollector.getIntensities(), //
-//                            vectorSviVarianceBackgroundIntensities, false);
-//
-//            fOfX_LINE = algorithmForLINE.getInitialFofX();
-//            fOfX_LINE_OD = algorithmForLINE.getFinalFofX();
-//        }
-//
-//        if ((fOfX_LINE != null) && fOfX_LINE.verifyPositiveVariances()) {
-//            if (backgroundFitFunctionsNoOD.containsKey(fOfX_LINE.getShortNameString())) {
-//                AbstractFunctionOfX fOfXexist = backgroundFitFunctionsNoOD.get(fOfX_LINE.getShortNameString());
-//                fOfXexist.copyValuesFrom(fOfX_LINE);
-//            } else {
-//                backgroundFitFunctionsNoOD.put(fOfX_LINE.getShortNameString(), fOfX_LINE);
-//            }
-//
-//            if ((fOfX_LINE_OD != null) && fOfX_LINE_OD.verifyPositiveVariances()) {
-//                if (backgroundFitFunctionsWithOD.containsKey(fOfX_LINE_OD.getShortNameString())) {
-//                    AbstractFunctionOfX fOfXexist = backgroundFitFunctionsWithOD.get(fOfX_LINE_OD.getShortNameString());
-//                    fOfXexist.copyValuesFrom(fOfX_LINE_OD);
-//                } else {
-//                    backgroundFitFunctionsWithOD.put(fOfX_LINE_OD.getShortNameString(), fOfX_LINE_OD);
-//                }
-//            } else {
-//                backgroundFitFunctionsWithOD.put(fOfX_LINE.getShortNameString(), fOfX_LINE);
-//            }
-//        } else {
-//            backgroundFitFunctionsNoOD.remove(FitFunctionTypeEnum.LINE.getName());
-//            backgroundFitFunctionsWithOD.remove(FitFunctionTypeEnum.LINE.getName());
-//            selectedFitFunctionType = FitFunctionTypeEnum.MEAN;
-//        }
-//    }
-//
-//    private void generateEXPONENTIALfitFunctionUsingLM() {
-//
-//        System.out.println("trying expfast");
-//
-//        AbstractFunctionOfX fOfX_ExpFast = null;
-//
-//        if (USING_FULL_PROPAGATION) {
-//            LevenbergMarquardGeneralSolverWithCovS.AbstractOverDispersionLMAlgorithm algorithmForEXPFAST//
-//                    = LevenbergMarquardGeneralSolverWithCovS.getInstance().getSelectedLMAlgorithm(//
-//                            FitFunctionTypeEnum.EXPFAST,//
-//                            backgroundVirtualCollector.getDataActiveMap(), //
-//                            normalizedBackgroundAquireTimes,//
-//                            backgroundVirtualCollector.getIntensities(), //
-//                            matrixSibCovarianceBackgroundIntensities, false);
-//
-//            fOfX_ExpFast = algorithmForEXPFAST.getInitialFofX();
-//
-//        } else {
-//
-//            LevenbergMarquardGeneralSolverWithVecV.AbstractOverDispersionLMVecAlgorithm algorithmForEXPFAST//
-//                    = LevenbergMarquardGeneralSolverWithVecV.getInstance().getSelectedLMAlgorithm(//
-//                            FitFunctionTypeEnum.EXPFAST,//
-//                            backgroundVirtualCollector.getDataActiveMap(), //
-//                            normalizedBackgroundAquireTimes,//
-//                            backgroundVirtualCollector.getIntensities(), //
-//                            vectorSviVarianceBackgroundIntensities, false);
-//
-//            fOfX_ExpFast = algorithmForEXPFAST.getInitialFofX();
-//        }
-//
-//        AbstractOverDispersionLMAlgorithmInterface algorithmForEXPMAT;
-//
-//        if (fOfX_ExpFast != null) //
-//        {
-//            System.out.println("now trying expmat with expfast input");
-//
-//            if (USING_FULL_PROPAGATION) {
-//                algorithmForEXPMAT = LevenbergMarquardGeneralSolverWithCovS.getInstance().getSelectedLMAlgorithmUsingIntialFofX(//
-//                        FitFunctionTypeEnum.EXPMAT,//
-//                        backgroundVirtualCollector.getDataActiveMap(), //
-//                        normalizedBackgroundAquireTimes,//
-//                        backgroundVirtualCollector.getIntensities(), //
-//                        matrixSibCovarianceBackgroundIntensities, false, //
-//                        fOfX_ExpFast);
-//            } else {
-//
-//                algorithmForEXPMAT = LevenbergMarquardGeneralSolverWithVecV.getInstance().getSelectedLMAlgorithmUsingIntialFofX(//
-//                        FitFunctionTypeEnum.EXPMAT,//
-//                        backgroundVirtualCollector.getDataActiveMap(), //
-//                        normalizedBackgroundAquireTimes,//
-//                        backgroundVirtualCollector.getIntensities(), //
-//                        vectorSviVarianceBackgroundIntensities, false, //
-//                        fOfX_ExpFast);
-//            }
-//
-//            AbstractFunctionOfX fOfX_EXPMAT = algorithmForEXPMAT.getFinalFofX();
-//
-//            if ((fOfX_EXPMAT != null) && (fOfX_EXPMAT.verifyPositiveVariances())) {
-//                if (backgroundFitFunctionsNoOD.containsKey(fOfX_EXPMAT.getShortNameString())) {
-//                    AbstractFunctionOfX fOfXexist = backgroundFitFunctionsNoOD.get(fOfX_EXPMAT.getShortNameString());
-//                    fOfXexist.copyValuesFrom(fOfX_EXPMAT);
-//                } else {
-//                    backgroundFitFunctionsNoOD.put(fOfX_EXPMAT.getShortNameString(), fOfX_EXPMAT);
-//                }
-//
-//                if (fOfX_EXPMAT.getMSWD() >= 1.0) {
-//                    System.out.println("now trying expOD with expfast input");
-//
-//                    AbstractFunctionOfX fOfX_EXPOD = null;
-//
-//                    if (USING_FULL_PROPAGATION) {
-//                        LevenbergMarquardGeneralSolverWithCovS.AbstractOverDispersionLMAlgorithm algorithmForEXPOD = LevenbergMarquardGeneralSolverWithCovS.getInstance().getSelectedLMAlgorithmUsingIntialFofX(//
-//                                FitFunctionTypeEnum.EXPONENTIAL,//
-//                                backgroundVirtualCollector.getDataActiveMap(), //
-//                                normalizedBackgroundAquireTimes,//
-//                                backgroundVirtualCollector.getIntensities(), //
-//                                matrixSibCovarianceBackgroundIntensities, false, //
-//                                fOfX_ExpFast);
-//
-//                        fOfX_EXPOD = algorithmForEXPOD.getFinalFofX();
-//
-//                    } else {
-//                        LevenbergMarquardGeneralSolverWithVecV.AbstractOverDispersionLMVecAlgorithm algorithmForEXPOD = LevenbergMarquardGeneralSolverWithVecV.getInstance().getSelectedLMAlgorithmUsingIntialFofX(//
-//                                FitFunctionTypeEnum.EXPONENTIAL,//
-//                                backgroundVirtualCollector.getDataActiveMap(), //
-//                                normalizedBackgroundAquireTimes,//
-//                                backgroundVirtualCollector.getIntensities(), //
-//                                vectorSviVarianceBackgroundIntensities, false, //
-//                                fOfX_ExpFast);//algorithmForEXPFAST.getInitialFofX() );
-//
-//                        fOfX_EXPOD = algorithmForEXPOD.getFinalFofX();
-//                    }
-//
-//                    if ((fOfX_EXPOD != null) && (fOfX_EXPOD.verifyPositiveVariances())) {
-//
-//                        if (backgroundFitFunctionsWithOD.containsKey(fOfX_EXPOD.getShortNameString())) {
-//                            AbstractFunctionOfX fOfXexist = backgroundFitFunctionsWithOD.get(fOfX_EXPOD.getShortNameString());
-//                            fOfXexist.copyValuesFrom(fOfX_EXPOD);
-//                        } else {
-//                            backgroundFitFunctionsWithOD.put(fOfX_EXPOD.getShortNameString(), fOfX_EXPOD);
-//                        }
-//                    }
-//
-//                } else {
-//                    backgroundFitFunctionsWithOD.put(fOfX_EXPMAT.getShortNameString(), fOfX_EXPMAT);
-//                }
-//            } else {
-//                backgroundFitFunctionsNoOD.remove(FitFunctionTypeEnum.EXPONENTIAL.getName());//was expmat??
-//                backgroundFitFunctionsWithOD.remove(FitFunctionTypeEnum.EXPONENTIAL.getName());
-//                selectedFitFunctionType = FitFunctionTypeEnum.LINE;
-//            }
-//        } else {
-//            backgroundFitFunctionsNoOD.remove(FitFunctionTypeEnum.EXPONENTIAL.getName());//was expmat ??
-//            backgroundFitFunctionsWithOD.remove(FitFunctionTypeEnum.EXPONENTIAL.getName());
-//            selectedFitFunctionType = FitFunctionTypeEnum.LINE;
-//        }
-//    }
 
     /**
      *
@@ -812,6 +639,16 @@ public class RawIntensityDataModel //
         System.out.println("\nCalculate Fit Functions for Intensity  " + rawIsotopeModelName.getName() //
                 + "  USING " + (USING_FULL_PROPAGATION ? "FULL PROPAGATION" : "FAST PROPAGATION"));
 
+        // June 2015 test for all zeroes in background
+        double avgVal = FitFunctionInterface.calculateMeanOfCovarianceMatrixDiagonal(matrixSibCovarianceBackgroundIntensities);
+        if (avgVal == 0.0) {
+            selectedFitFunctionType = FitFunctionTypeEnum.CONSTANT;
+            // until noah comes up with constant fit function, do this
+            for (int i = 0; i < matrixSibCovarianceBackgroundIntensities.getColumnDimension(); i++) {
+                matrixSibCovarianceBackgroundIntensities.set(i, i, 0.0000000001);
+            }
+        }
+
         if (selectedFitFunctionType.equals(FitFunctionTypeEnum.NONE)) {
             // do nothing
         } else if (selectedFitFunctionType.equals(FitFunctionTypeEnum.CONSTANT)) {
@@ -846,10 +683,6 @@ public class RawIntensityDataModel //
                 fitBackgroundIntensitiesBackground[i] = backgroundFitFunction.f(normalizedBackgroundAquireTimes[i]);
             }
 
-//            // apply fitfunction to onPeak 
-//            for (int i = 0; i < fitBackgroundIntensitiesBackground.length; i++) {
-//                fitBackgroundIntensitiesOnPeak[i] = backgroundFitFunction.f(normalizedOnPeakAquireTimes[i]);
-//            }
             // apply fitfunction to onPeak - corrected dec 2014
             for (int i = 0; i < fitBackgroundIntensitiesOnPeak.length; i++) {
                 fitBackgroundIntensitiesOnPeak[i] = backgroundFitFunction.f(normalizedOnPeakAquireTimes[i]);
@@ -925,9 +758,6 @@ public class RawIntensityDataModel //
                 Matrix JOnPeak1 = null;
                 try {
                     JOnPeak1 = J21.times(J11);
-//                } catch (Exception e) {
-//                    System.out.println(" JOnPeak1 in RawIntensityDataModel matrix error " + e.getMessage());
-//                }
 
                     // append J22 after JOnPeak1
                     JOnPeak = new Matrix(countOfActiveOnPeakData, JOnPeak1.getColumnDimension() + countOfActiveOnPeakData);
@@ -975,7 +805,6 @@ public class RawIntensityDataModel //
 
                     Sopbclr = Jmat.arrayTimes(Sopbc);
 
-//                System.out.println("CheckPoint Sopbclr uncertainty propagation for " + this.getDataModelName());
                 } catch (Exception e) {
                     System.out.println(" JOnPeak1 in RawIntensityDataModel matrix error " + e.getMessage());
                 }
@@ -983,9 +812,6 @@ public class RawIntensityDataModel //
                 System.out.println("NO J11 for " + this.getDataModelName());
             }
         }
-//        else {
-////            System.out.println("no background fit function for " + this.getDataModelName());
-//        }
     }
 
     /**
@@ -995,7 +821,7 @@ public class RawIntensityDataModel //
     public Matrix getColumnVectorOfCorrectedOnPeakIntensities() {
 
         // account for missing data
-        ArrayList<Double> correctedIntensities = new ArrayList<Double>();
+        ArrayList<Double> correctedIntensities = new ArrayList<>();
         for (int i = 0; i < onPeakVirtualCollector.getCorrectedIntensities().length; i++) {
             if (onPeakVirtualCollector.getDataActiveMap()[i]) {
                 correctedIntensities.add(onPeakVirtualCollector.getCorrectedIntensities()[i]);
@@ -1007,13 +833,6 @@ public class RawIntensityDataModel //
             correctedPeakIntensities[i] = correctedIntensities.get(i);
         }
 
-//        double[][] correctedPeakIntensities = new double[onPeakVirtualCollector.getCorrectedIntensities().length][1];
-//
-//        for (int i = 0; i < correctedPeakIntensities.length; i ++) {
-//            correctedPeakIntensities[i][0] = onPeakVirtualCollector.getCorrectedIntensities()[i];
-//        }
-//
-//        Matrix colVector = new Matrix( correctedPeakIntensities );
         return new Matrix(correctedPeakIntensities, correctedPeakIntensities.length);
     }
 
@@ -1225,8 +1044,6 @@ public class RawIntensityDataModel //
      */
     @Override
     public boolean containsFitFunction(FitFunctionTypeEnum fitFunctionType) {
-//        return logRatioFitFunctionsNoOD.get( fitFunctionType.getName() ) != null;
-
         boolean contains = false;
 
         if (overDispersionSelected) {
@@ -1365,6 +1182,7 @@ public class RawIntensityDataModel //
     /**
      * @return the USING_FULL_PROPAGATION
      */
+    @Override
     public boolean isUSING_FULL_PROPAGATION() {
         return USING_FULL_PROPAGATION;
     }
@@ -1372,6 +1190,7 @@ public class RawIntensityDataModel //
     /**
      * @param USING_FULL_PROPAGATION the USING_FULL_PROPAGATION to set
      */
+    @Override
     public void setUSING_FULL_PROPAGATION(boolean USING_FULL_PROPAGATION) {
         this.USING_FULL_PROPAGATION = USING_FULL_PROPAGATION;
     }

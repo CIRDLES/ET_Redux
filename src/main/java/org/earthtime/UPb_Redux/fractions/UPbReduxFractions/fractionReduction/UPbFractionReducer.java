@@ -31,7 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import org.earthtime.Tripoli.dataModels.sessionModels.SessionCorrectedUnknownsSummary;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.fractions.Fraction;
+import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLAICPMSFraction;
@@ -136,6 +136,7 @@ import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.dataDictionaries.RadRatios;
 import org.earthtime.dataDictionaries.RadRatiosPbcCorrected;
 import org.earthtime.dataDictionaries.TracerUPbRatiosAndConcentrations;
+import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.matrices.matrixModels.AbstractMatrixModel;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsModel;
@@ -319,7 +320,7 @@ public class UPbFractionReducer {
      * @param calculateCovariances
      */
     public static void fullFractionReduce(
-            Fraction fraction,
+            ETFractionInterface fraction,
             boolean calculateCovariances) {
 
         if (fraction instanceof UPbFraction) {
@@ -345,7 +346,7 @@ public class UPbFractionReducer {
     }
 
     private static void fullFractionReduce_LAICPMS(
-            Fraction fraction,
+            ETFractionInterface fraction,
             boolean calculateCovariances) {
 //        System.out.println( "LAICPMS REDUCER" );
      /*
@@ -387,10 +388,10 @@ public class UPbFractionReducer {
 //            System.out.println( "333" );
 //        }
         initializeAtomicMolarMasses(
-                ((UPbFractionI) fraction).getPhysicalConstantsModel());
+                fraction.getPhysicalConstantsModel());
 
         initializeDecayConstants(
-                ((UPbFractionI) fraction).getPhysicalConstantsModel(),
+                fraction.getPhysicalConstantsModel(),
                 true);
 
         //fraction.getAnalysisMeasure( AnalysisMeasures.r238_235s.getName() ).setValue( new BigDecimal( 137.88 ) );
@@ -500,23 +501,19 @@ public class UPbFractionReducer {
         // june 2013 reject bad fractions
         if (fraction.getRadiogenicIsotopeRatioByName(//
                 "r207_235r").amPositiveAndLessThanTolerance()) {
-            ((UPbFractionI) fraction).setRejected(true);
-//            System.out.println( "REJECTING " + fraction.getFractionID() );
+            fraction.setRejected(true);
         }
         if (fraction.getRadiogenicIsotopeRatioByName(//
                 RadRatios.r206_238r.getName()).amPositiveAndLessThanTolerance()) {
-            ((UPbFractionI) fraction).setRejected(true);
-//            System.out.println( "REJECTING " + fraction.getFractionID() );
+            fraction.setRejected(true);
         }
         if (fraction.getRadiogenicIsotopeRatioByName(//
                 RadRatios.r207_206r.getName()).amPositiveAndLessThanTolerance()) {
-            ((UPbFractionI) fraction).setRejected(true);
-//            System.out.println( "REJECTING " + fraction.getFractionID() );
+            fraction.setRejected(true);
         }
         if (fraction.getRadiogenicIsotopeRatioByName(//
                 RadRatios.r208_232r.getName()).amPositiveAndLessThanTolerance()) {
-            ((UPbFractionI) fraction).setRejected(true);
-//            System.out.println( "REJECTING " + fraction.getFractionID() );
+            fraction.setRejected(true);
         }
 
         // nov 2014 new math for rhos and Pbc uncertainty etc. continued from section 11
@@ -557,29 +554,15 @@ public class UPbFractionReducer {
 
             // default values for pbc corrected ratios with below detection 204
             //if (((UPbLAICPMSFraction) fraction).hasCommonLeadLossCorrectionSchemeGreaterThanTypeA()) {
-                // rho Wetherill 
-                fraction.getRadiogenicIsotopeRatioByName("rhoR206_238PbcCorr__r207_235PbcCorr").setValue(rhoR206_238r__r207_235r);
+            // rho Wetherill 
+            fraction.getRadiogenicIsotopeRatioByName("rhoR206_238PbcCorr__r207_235PbcCorr").setValue(rhoR206_238r__r207_235r);
 
-                // rho T-W
-                fraction.getRadiogenicIsotopeRatioByName("rhoR207_206PbcCorr__r238_206PbcCorr").setValue(rhoR207_206r__r238_206r);
+            // rho T-W
+            fraction.getRadiogenicIsotopeRatioByName("rhoR207_206PbcCorr__r238_206PbcCorr").setValue(rhoR207_206r__r238_206r);
             //}
 
-//            System.out.println("JSomeAllRatios for Fraction " + fraction.getFractionID());
-//            JSomeAllRatios.print(new DecimalFormat("0.000000E00"), 14);
-//
-//            System.out.println("SfciTotal for Fraction " + fraction.getFractionID());
-//            ((UPbLAICPMSFraction) fraction).getSfciTotal().print(new DecimalFormat("0.000000E00"), 14);
-//
-//            System.out.println("SfciTotalAll for Fraction " + fraction.getFractionID());
-//            SfciTotalAll.print(new DecimalFormat("0.000000E00"), 14);
-//
-//            System.out.println("Jlrr for Fraction " + fraction.getFractionID());
-//            Jlrr.print(new DecimalFormat("0.000000E00"), 14);
-//
-//            System.out.println("SrAll for Fraction " + fraction.getFractionID());
-//            SrAll.print(new DecimalFormat("0.000000E00"), 14);
             // prepare for common lead loss corrections
-            if (!((UPbFractionI) fraction).isRejected()) {
+            if (!fraction.isRejected()) {
                 ((UPbLAICPMSFraction) fraction).performCommonLeadLossCorrectionsToRatios();
 
                 ValueModel r206_238_PbcCorr = fraction.getRadiogenicIsotopeRatioByName(RadRatiosPbcCorrected.r206_238_PbcCorr.getName());
@@ -907,11 +890,11 @@ public class UPbFractionReducer {
     }
 
     private static void fullFractionReduce_IDTIMS(
-            Fraction fraction,
+            ETFractionInterface fraction,
             boolean calculateCovariances) {
 
         // feb 2010 this statement serves as a filter during compilation to prevent reduction of legacy aliquots 
-        if (!fraction.isLegacy()) {//&& fraction.getAnalysisMeasure( AnalysisMeasures.tracerMassInGrams.getName() ).hasPositiveValue() ) {
+        if (!fraction.isLegacy()) {
 
             // oct 2009 initialize outputs
             ((UPbFraction) fraction).setOutputs(new ValueModel[0]);
@@ -919,15 +902,15 @@ public class UPbFractionReducer {
             //System.out.println( "Reducing Fraction = " + fraction.getFractionID() );
             // Feb 2011 reorganized logic here as treatFractionAsZircon could not be calculated here !!!
             initializeAtomicMolarMasses(
-                    ((UPbFractionI) fraction).getPhysicalConstantsModel());
+                    fraction.getPhysicalConstantsModel());
 
             initializeDecayConstants(
-                    ((UPbFractionI) fraction).getPhysicalConstantsModel(),
+                    fraction.getPhysicalConstantsModel(),
                     true);
 
             // march 2012 correction
             // if initial pb is stacey kramers, values must be calculated each time, as only one copy of this model exists
-            fraction.calculateStaceyKramersInitialPbModelValues();
+            ((FractionI)fraction).calculateStaceyKramersInitialPbModelValues();
 
             parDerivTerms = new ConcurrentHashMap<>();
 
@@ -943,7 +926,7 @@ public class UPbFractionReducer {
             // in truth table, 3 out of four cases evaluate to true
             try {
                 treatFractionAsZircon = //
-                        !(!fraction.isZircon()//
+                        !(!((FractionI)fraction).isZircon()//
                         && (molPb204tc.getValue().compareTo(//
                                 fraction.getAnalysisMeasure(AnalysisMeasures.pbBlankMassInGrams.getName()).getValue().//
                                 divide(blankPbGramsMol.getValue(), mathContext15)) == 1));
@@ -972,10 +955,6 @@ public class UPbFractionReducer {
                             populateCovarianceMatrices(inputVariances, coVariances);
                 } catch (Exception e) {
                 }
-//            }
-//
-//
-//            if ( ((UPbFraction) fraction).getReductionHandler() != null ) {
 
                 try {//TODO Handle throw exception
                     ((UPbFraction) fraction).getReductionHandler().//
@@ -1009,14 +988,14 @@ public class UPbFractionReducer {
         }
     }
 
-    private static void evaluateVariablesInOrderI(Fraction fraction) {
+    private static void evaluateVariablesInOrderI(ETFractionInterface fraction) {
 
-        AbstractRatiosDataModel fractionTracer = ((UPbFraction) fraction).getTracer();
+        AbstractRatiosDataModel fractionTracer = ((UPbFractionI) fraction).getTracer();
 
         // 0b. preparation
         // feb 2009 bring use of model here for sensitivity use
         if ((((AlphaPb) alphaPb).getFractionMeanAlphaPb().compareTo(BigDecimal.ZERO) == 0)
-                && (((UPbFraction) fraction).getMeasuredRatioByName(MeasuredRatios.r202_205m.getName()).//
+                && (fraction.getMeasuredRatioByName(MeasuredRatios.r202_205m.getName()).//
                 getValue().compareTo(BigDecimal.ZERO) == 0)) {
 
             alphaPb = fraction.getAnalysisMeasure(AnalysisMeasures.alphaPb.getName());
@@ -1059,7 +1038,7 @@ public class UPbFractionReducer {
 
     }
 
-    private static void evaluateVariablesInOrderII(Fraction fraction) {
+    private static void evaluateVariablesInOrderII(ETFractionInterface fraction) {
 
         AbstractRatiosDataModel fractionTracer = ((UPbFractionI) fraction).getTracer();
         String tracerType = ((UPbFraction) fraction).getTracerType().trim();
@@ -1114,21 +1093,21 @@ public class UPbFractionReducer {
             ((MolPb206c) molPb206c).setZircon(false);
             molPb206c.calculateValue(
                     new ValueModel[]{
-                        fraction.getInitialPbModel().getDatumByName("r206_204c"),
+                        ((FractionI)fraction).getInitialPbModel().getDatumByName("r206_204c"),
                         molPb204c},
                     parDerivTerms);
 
             ((MolPb207c) molPb207c).setZircon(false);
             molPb207c.calculateValue(
                     new ValueModel[]{
-                        fraction.getInitialPbModel().getDatumByName("r207_204c"),
+                        ((FractionI)fraction).getInitialPbModel().getDatumByName("r207_204c"),
                         molPb204c},
                     parDerivTerms);
 
             ((MolPb208c) molPb208c).setZircon(false);
             molPb208c.calculateValue(
                     new ValueModel[]{
-                        fraction.getInitialPbModel().getDatumByName("r208_204c"),
+                        ((FractionI)fraction).getInitialPbModel().getDatumByName("r208_204c"),
                         molPb204c},
                     parDerivTerms);
 
@@ -1328,7 +1307,7 @@ public class UPbFractionReducer {
             }
         }
 
-        if (!fraction.isFractionationCorrectedU()) {//.getMeanAlphaU().compareTo( BigDecimal.ZERO ) == 0 ) {
+        if (!((UPbFractionI)fraction).isFractionationCorrectedU()) {//.getMeanAlphaU().compareTo( BigDecimal.ZERO ) == 0 ) {
             if (tracerType.equalsIgnoreCase("mixed 205-233-235")
                     || tracerType.equalsIgnoreCase("mixed 202-205-233-235")
                     || tracerType.equalsIgnoreCase("mixed 205-233-235-230Th")) {
@@ -1905,7 +1884,7 @@ public class UPbFractionReducer {
 
     } // end evaluateVariablesInOrderII
 
-    private static void initializeAndEvalSpecialInputVariablesInOrder(Fraction fraction) {
+    private static void initializeAndEvalSpecialInputVariablesInOrder(ETFractionInterface fraction) {
 
         specialInputVariablesInOrder = new TreeMap<>();
 
@@ -1955,9 +1934,9 @@ public class UPbFractionReducer {
 
     }
 
-    private static void initializeVariablesInOrder(Fraction fraction) {
+    private static void initializeVariablesInOrder(ETFractionInterface fraction) {
 
-        variablesInOrder = new TreeMap<Integer, ValueModel>();
+        variablesInOrder = new TreeMap<>();
         int index = 0;
 
 //        // oct 2009 initialize outputs
@@ -2305,12 +2284,12 @@ public class UPbFractionReducer {
 
     }
 
-    private static void initializeInputVariances(Fraction fraction) {
-        inputVariances = new HashMap<String, BigDecimal>();
+    private static void initializeInputVariances(ETFractionInterface fraction) {
+        inputVariances = new HashMap<>();
 
         // June 2012 
         // TODO: refactor to one method
-        ValueModel[] fractionPhysConstantsLambdas = ((UPbFraction) fraction).getPhysicalConstantsModel().getData();
+        ValueModel[] fractionPhysConstantsLambdas = fraction.getPhysicalConstantsModel().getData();
         for (int i = 0; i < fractionPhysConstantsLambdas.length; i++) {
             inputVariances.put(//
                     fractionPhysConstantsLambdas[i].getName(), //
@@ -2353,8 +2332,8 @@ public class UPbFractionReducer {
         }
     }
 
-    private static void calculateCovariancesMap(Fraction fraction) {
-        coVariances = new HashMap<String, BigDecimal>();
+    private static void calculateCovariancesMap(ETFractionInterface fraction) {
+        coVariances = new HashMap<>();
 
         //***********************************************************************
         //TODO:  may 2012 use tracer's new cov matrix ... needs to be refactored more elegantly, but for now to test is ok

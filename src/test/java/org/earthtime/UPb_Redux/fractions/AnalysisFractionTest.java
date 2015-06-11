@@ -18,6 +18,7 @@ import java.io.File;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.UPbFractionReducer;
 import org.earthtime.UPb_Redux.user.UPbReduxConfigurator;
+import org.earthtime.xmlUtilities.XMLSerializationI;
 import org.junit.After;
 import org.junit.Test;
 
@@ -36,17 +37,17 @@ public class AnalysisFractionTest {
     public void testSerialization () throws Exception {
         UPbReduxConfigurator myConfigurator = new UPbReduxConfigurator();
 
-        Fraction analysisFraction = new UPbFraction( "NONE" );
+        FractionI analysisFraction = new UPbFraction( "NONE" );
         // new AnalysisFraction("Test Sample");
 
         UPbFractionReducer.getInstance().fullFractionReduce( (UPbFraction) analysisFraction, true );
 
-        Fraction myAnalysisFraction = new AnalysisFraction( analysisFraction, false );
+        FractionI myAnalysisFraction = new AnalysisFraction( analysisFraction, false );
 
         String testFractionName = "AnalysisFractionTEST.xml";
 
-        ((AnalysisFraction) myAnalysisFraction).serializeXMLObject( testFractionName );
-        ((AnalysisFraction) myAnalysisFraction).readXMLObject( testFractionName, true );
+        ((XMLSerializationI) myAnalysisFraction).serializeXMLObject( testFractionName );
+        ((XMLSerializationI) myAnalysisFraction).readXMLObject( testFractionName, true );
 
     }
     

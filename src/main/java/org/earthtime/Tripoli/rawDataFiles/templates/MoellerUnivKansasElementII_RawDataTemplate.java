@@ -43,7 +43,7 @@ public final class MoellerUnivKansasElementII_RawDataTemplate extends AbstractRa
         this.startOfDataSectionFirstLine = "Time";
         this.startOfEachBlockFirstLine = "Time";
         this.blockStartOffset = 8;
-        this.blockSize = 225;
+        this.blockSize = 222;
         this.standardIDs = new String[]//
         {"GJ1"};
         this.timeZone = TimeZone.getTimeZone( "GMT" );
