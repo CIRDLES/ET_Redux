@@ -1,5 +1,5 @@
 /*
- * LaserchronElement2SetupUPb
+ * LaserchronElementIISetupUPb
  *
  * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
  *
@@ -42,14 +42,14 @@ import org.earthtime.isotopes.IsotopesEnum;
  *
  * @author James F. Bowring
  */
-public final class LaserchronElement2SetupUPb extends AbstractMassSpecSetup implements //
+public final class LaserchronElementIISetupUPb extends AbstractMassSpecSetup implements //
         Comparable<AbstractMassSpecSetup>,
         Serializable {
 
-    private static LaserchronElement2SetupUPb instance = null;
+    private static LaserchronElementIISetupUPb instance = null;
 //    private SortedSet<DataModelInterface> genericIsotopeModels;
 
-    private LaserchronElement2SetupUPb() {
+    private LaserchronElementIISetupUPb() {
         super();
         NAME = "Laserchron Element2 Setup";
         massSpecType = massSpecType.SINGLE;
@@ -134,9 +134,9 @@ public final class LaserchronElement2SetupUPb extends AbstractMassSpecSetup impl
      *
      * @return
      */
-    public static LaserchronElement2SetupUPb getInstance() {
+    public static LaserchronElementIISetupUPb getInstance() {
         if (instance == null) {
-            instance = new LaserchronElement2SetupUPb();
+            instance = new LaserchronElementIISetupUPb();
         }
         return instance;
     }

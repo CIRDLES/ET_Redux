@@ -57,8 +57,6 @@ public final class UnivKansasElementIISetupUPb extends AbstractMassSpecSetup imp
         COLLECTOR_DATA_FREQUENCY_MILLISECS = 214; //0.214410714 sec
         countOfAcquisitions = 0;
 
-        double INTEGRATION_TIME = 0.0428; //COLLECTOR_DATA_FREQUENCY_MILLISECS / 1000.0 / 5.0
-
         isotopeMappingModel = new IsotopeMappingModel();
 
         collectorNameToModelMap = new TreeMap<>();
@@ -78,30 +76,38 @@ public final class UnivKansasElementIISetupUPb extends AbstractMassSpecSetup imp
                                 BigDecimal.ZERO), //
                         IonCounterCollectorModel.CollectedDataStyle.COUNTS);
 
+        // from Noah June 2015
+        //isotope	int. time (s)
+        //206	0.032
+        //207	0.080
+        //208	0.016
+        //232	0.020
+        //238	0.020
+        
         isotopeMappingModel.getIsotopeToCollectorMap().put(//
                 IsotopesEnum.U238, singleCollector);
         isotopeMappingModel.getIsotopeToIntegrationTimeMap().put( //
-                IsotopesEnum.U238, INTEGRATION_TIME);
+                IsotopesEnum.U238, 0.020);
 
         isotopeMappingModel.getIsotopeToCollectorMap().put(//
                 IsotopesEnum.Th232, singleCollector);
         isotopeMappingModel.getIsotopeToIntegrationTimeMap().put( //
-                IsotopesEnum.Th232, INTEGRATION_TIME);
+                IsotopesEnum.Th232, 0.020);
 
         isotopeMappingModel.getIsotopeToCollectorMap().put(//
                 IsotopesEnum.Pb208, singleCollector);
         isotopeMappingModel.getIsotopeToIntegrationTimeMap().put( //
-                IsotopesEnum.Pb208, INTEGRATION_TIME);
+                IsotopesEnum.Pb208, 0.016);
 
         isotopeMappingModel.getIsotopeToCollectorMap().put(//
                 IsotopesEnum.Pb207, singleCollector);
         isotopeMappingModel.getIsotopeToIntegrationTimeMap().put( //
-                IsotopesEnum.Pb207, INTEGRATION_TIME);
+                IsotopesEnum.Pb207, 0.080);
 
         isotopeMappingModel.getIsotopeToCollectorMap().put(//
                 IsotopesEnum.Pb206, singleCollector);
         isotopeMappingModel.getIsotopeToIntegrationTimeMap().put( //
-                IsotopesEnum.Pb206, INTEGRATION_TIME);
+                IsotopesEnum.Pb206, 0.032);
 
         collectorNameToModelMap.put("Single", singleCollector);
 
@@ -137,10 +143,10 @@ public final class UnivKansasElementIISetupUPb extends AbstractMassSpecSetup imp
         return rawRatiosFactoryRevised();
     }
 
-    /**yRevised();
-    }
-
     /**
+     * yRevised(); }
+     *
+     * /**
      *
      *
      * @param intensitiesScan
