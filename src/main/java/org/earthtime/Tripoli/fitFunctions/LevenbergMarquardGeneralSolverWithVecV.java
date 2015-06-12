@@ -435,7 +435,7 @@ public class LevenbergMarquardGeneralSolverWithVecV implements FitFunctionInterf
             if (this instanceof ExponentialFastNoOD) {
                 // this first call is to prime the pump for internal exp-fast and mat
 //                this.xValues = xValues; // needed for data count
-                initializeFunctionParameters(MeasuredCovVectorV.get(0, 0) * 0.1);
+                initializeFunctionParameters(0.0); // OD not used here
                 initialFofX = initialFuncFit.getFunctionOfX(dataActiveMap, xValues, yValues, MeasuredCovVectorV, false);
             } else {
 
@@ -992,9 +992,7 @@ public class LevenbergMarquardGeneralSolverWithVecV implements FitFunctionInterf
 
         @Override
         protected void initializeFunctionParameters(double overDispersionEstimate) {
-            pod[0] = 1.0;
-            pod[1] = -1.0;
-            pod[2] = 0.0;
+            pod = FitFunctionInterface.initializeExpFastParameters(xValues, yValues);
         }
 
         @Override

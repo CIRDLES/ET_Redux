@@ -422,7 +422,7 @@ public class LevenbergMarquardGeneralSolverWithCovS implements FitFunctionInterf
                 // this first call is to prime the pump for internal exp-fast and mat
                 initializeFunctionParameters(0.0); // OD not used here
                 initialFofX = initialFuncFit.getFunctionOfX(dataActiveMap, xValues, yValues, measuredCovMatrixS, false);
-                
+
             } else {
 
                 initialFofX = initialFuncFit.getFunctionOfX(dataActiveMap, xValues, yValues, measuredCovMatrixS, false);
@@ -908,54 +908,7 @@ public class LevenbergMarquardGeneralSolverWithCovS implements FitFunctionInterf
 
         @Override
         protected void initializeFunctionParameters(double overDispersionEstimate) {
-            // June 2015 new code from Noah to better prime this puppy
-            int oneFifth = yValues.length / 5;
-            double first20 = 0.0;
-            double mid20 = 0.0;
-            double last20 = 0.0;
-            for (int i = 0; i < oneFifth; i++) {
-                first20 += yValues[i];
-            }
-            for (int i = oneFifth * 2; i < oneFifth * 3; i++) {
-                mid20 += yValues[i];
-            }
-            for (int i = oneFifth * 4; i < yValues.length; i++) {
-                last20 += yValues[i];
-            }
-
-            first20 /= oneFifth;
-            mid20 /= oneFifth;
-            last20 /= (yValues.length - oneFifth *4);
-
-            double fudgec = 0.01; // 1 percent
-            double tstart = xValues[0];
-            double tend = xValues[xValues.length - 1];
-
-            if (first20 <= last20) {// positive average slope
-                if ((mid20 - first20) > (last20 - mid20)) { // if concave down, positive slope
-                    pod[2] = last20 + fudgec;
-                    pod[1] = (Math.log(last20 - first20 + fudgec) - Math.log(fudgec)) / (tstart - tend);
-                    pod[0] = -Math.exp((tstart * Math.log(fudgec) - tend * Math.log(last20 - first20 + fudgec)) / (tstart - tend));
-
-                } else {// if concave up, positive slope
-                    pod[2] = first20 - fudgec;
-                    pod[1] = (Math.log(fudgec) - Math.log(last20 - first20 + fudgec)) / (tstart - tend);
-                    pod[0] = Math.exp((tstart * Math.log(last20 - first20 + fudgec) - tend * Math.log(fudgec)) / (tstart - tend));
-
-                } // if concave up or down
-            } else {// negative average slope
-                if ((first20 - mid20) < (mid20 - last20)) { // if concave down
-                    pod[2] = first20 + fudgec;
-                    pod[1] = (Math.log(fudgec) - Math.log(first20 - last20 + fudgec)) / (tstart - tend);
-                    pod[0] = -Math.exp((tstart * Math.log(first20 - last20 + fudgec) - tend * Math.log(fudgec)) / (tstart - tend));
-
-                } else {// if concave up
-                    pod[2] = last20 - fudgec;
-                    pod[1] = (Math.log(first20 - last20 + fudgec) - Math.log(fudgec)) / (tstart - tend);
-                    pod[0] = Math.exp((tstart * Math.log(fudgec) - tend * Math.log(first20 - last20 + fudgec)) / (tstart - tend));
-                } //if concave up or down
-            } // if positive or negative slope
-
+            pod = FitFunctionInterface.initializeExpFastParameters(xValues, yValues);
         }
 
         @Override
