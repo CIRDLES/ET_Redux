@@ -245,7 +245,7 @@ public class RawIntensityDataModel //
      */
     public String outputBaseLineFitFunctionParameters() {
         String retval = rawIsotopeModelName.getName() + "\n";
-        AbstractFunctionOfX fOfXcurrent = getBackgroundFitFunctions().get(selectedFitFunctionType.getName());
+        AbstractFunctionOfX fOfXcurrent = getFitFunctions().get(selectedFitFunctionType.getName());
         retval += fOfXcurrent.showParameters() + "\n";
 
         return retval;
@@ -670,7 +670,7 @@ public class RawIntensityDataModel //
     @Override
     public void calculateFittedFunctions(String fitFunctionTypeName) {
 
-        AbstractFunctionOfX backgroundFitFunction = getBackgroundFitFunctions().get(fitFunctionTypeName);
+        AbstractFunctionOfX backgroundFitFunction = getFitFunctions().get(fitFunctionTypeName);
 
         double[] fitBackgroundIntensitiesBackground = new double[backgroundVirtualCollector.getAquireTimes().length];
         double[] normalizedOnPeakAquireTimes = getNormalizedOnPeakAquireTimes();
@@ -716,7 +716,7 @@ public class RawIntensityDataModel //
      */
     public void propagateUnctInBaselineCorrOnPeakIntensities() {
 
-        AbstractFunctionOfX backgroundFitFunction = getBackgroundFitFunctions().get(selectedFitFunctionType.getName());
+        AbstractFunctionOfX backgroundFitFunction = getFitFunctions().get(selectedFitFunctionType.getName());
 
         if (backgroundFitFunction != null) { // not NONE
             // June 2013
@@ -837,7 +837,7 @@ public class RawIntensityDataModel //
     }
 
     @Override
-    public Map<String, AbstractFunctionOfX> getBackgroundFitFunctions() {
+    public Map<String, AbstractFunctionOfX> getFitFunctions() {
         //return logRatioFitFunctionsNoOD;
         Map<String, AbstractFunctionOfX> fitFunctions = null;
 

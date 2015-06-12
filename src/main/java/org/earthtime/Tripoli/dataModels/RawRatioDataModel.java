@@ -52,7 +52,7 @@ public class RawRatioDataModel //
 
     // Class variables
     private static final long serialVersionUID = 3111511502335804607L;
-
+    private static boolean printReport = true;
     /**
      *
      */
@@ -258,7 +258,6 @@ public class RawRatioDataModel //
 
             ((RawIntensityDataModel) topIsotope).prepareDataForFitFunctions();
             ((RawIntensityDataModel) topIsotope).propagateUnctInBaselineCorrOnPeakIntensities();
-
 
             boolean[] botDataActiveMap = ((RawIntensityDataModel) botIsotope).getOnPeakVirtualCollector().getDataActiveMap();
             ((RawIntensityDataModel) botIsotope).getOnPeakVirtualCollector().setDataActiveMap(allTrueDataActiveMap);//dataActiveMap.clone());
@@ -763,8 +762,8 @@ public class RawRatioDataModel //
             if (USING_FULL_PROPAGATION) {
                 algorithmForEXPMAT = LevenbergMarquardGeneralSolverWithCovS.getInstance().getSelectedLMAlgorithmUsingIntialFofX(//
                         FitFunctionTypeEnum.EXPMAT,//
-                        activeData, //dataActiveMap, //
-                        activeXvalues, //topIsotope.getNormalizedOnPeakAquireTimes(), //
+                        activeData, //
+                        activeXvalues, //
                         activeYvalues, //,
                         SlogRatioX_Y, false, //
                         fOfX_ExpFast);
@@ -772,8 +771,8 @@ public class RawRatioDataModel //
 
                 algorithmForEXPMAT = LevenbergMarquardGeneralSolverWithVecV.getInstance().getSelectedLMAlgorithmUsingIntialFofX(//
                         FitFunctionTypeEnum.EXPMAT,//
-                        activeData, //dataActiveMap, //
-                        activeXvalues, //topIsotope.getNormalizedOnPeakAquireTimes(), //
+                        activeData, //d
+                        activeXvalues, 
                         activeYvalues, //,
                         SlogRatioX_Y, false, //
                         fOfX_ExpFast);
@@ -811,7 +810,7 @@ public class RawRatioDataModel //
                                 activeXvalues, //
                                 activeYvalues, //,
                                 SlogRatioX_Y, false,//
-                                fOfX_ExpFast);//algorithmForEXPFAST.getInitialFofX() );
+                                fOfX_ExpFast);//
 
                         fOfX_EXPOD = algorithmForEXPOD.getFinalFofX();
                     }
@@ -852,26 +851,6 @@ public class RawRatioDataModel //
         }
     }
 
-//    @Override
-//    public void generateSelectedFitFunction () {
-//        if ( usedForFractionationCorrections ) {
-//
-//            propagateUnctInRatios();
-//
-//            if ( selectedFitFunctionType.equals( FitFunctionTypeEnum.MEAN ) ) {
-//                generateMEANfitFunction();
-//            } else if ( selectedFitFunctionType.equals( FitFunctionTypeEnum.LINE ) ) {
-//                try {
-//                    generateLINEfitFunction();
-//                } catch (Exception e) {
-//                }
-//            } else if ( selectedFitFunctionType.equals( FitFunctionTypeEnum.EXPONENTIAL ) ) {
-//                generateEXPONENTIALfitFunction();
-//            }
-//
-//
-//        }
-//    }
     /**
      *
      */
@@ -1354,7 +1333,7 @@ public class RawRatioDataModel //
      * @return the logRatioFitFunctionsNoOD
      */
     @Override
-    public Map<String, AbstractFunctionOfX> getBackgroundFitFunctions() {
+    public Map<String, AbstractFunctionOfX> getFitFunctions() {
         //return logRatioFitFunctionsNoOD;
         Map<String, AbstractFunctionOfX> fitFunctions = null;
 

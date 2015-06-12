@@ -108,7 +108,7 @@ public abstract class AbstractFitFunctionPresentationView extends AbstractRawDat
         ValueModelValueSlider[] valueModelSliders;
 
         // set up MEAN function view
-        AbstractFunctionOfX FofX = rawRatioDataModel.getBackgroundFitFunctions().get(FitFunctionTypeEnum.MEAN.getName());
+        AbstractFunctionOfX FofX = rawRatioDataModel.getFitFunctions().get(FitFunctionTypeEnum.MEAN.getName());
 
         if ((FofX != null) && FofX.verifyPositiveVariances()) {
             atleastOneFit = true;
@@ -132,7 +132,7 @@ public abstract class AbstractFitFunctionPresentationView extends AbstractRawDat
         add(meanFitFunctionView, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         // set up LINE function view
-        FofX = rawRatioDataModel.getBackgroundFitFunctions().get(FitFunctionTypeEnum.LINE.getName());
+        FofX = rawRatioDataModel.getFitFunctions().get(FitFunctionTypeEnum.LINE.getName());
 
         if ((FofX != null) && FofX.verifyPositiveVariances()) {
             atleastOneFit = true;
@@ -157,7 +157,7 @@ public abstract class AbstractFitFunctionPresentationView extends AbstractRawDat
         add(lineFitFunctionView, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         // set up EXPONENTIAL function view
-        FofX = rawRatioDataModel.getBackgroundFitFunctions().get(FitFunctionTypeEnum.EXPONENTIAL.getName());
+        FofX = rawRatioDataModel.getFitFunctions().get(FitFunctionTypeEnum.EXPONENTIAL.getName());
 
         if ((FofX != null) && FofX.verifyPositiveVariances()) {
             atleastOneFit = true;
@@ -186,7 +186,7 @@ public abstract class AbstractFitFunctionPresentationView extends AbstractRawDat
         // set up SMOOTHING_SPLINE function view
         if (includeSpline) {
             try {
-                FofX = rawRatioDataModel.getBackgroundFitFunctions().get(FitFunctionTypeEnum.SMOOTHING_SPLINE.getName());
+                FofX = rawRatioDataModel.getFitFunctions().get(FitFunctionTypeEnum.SMOOTHING_SPLINE.getName());
 
                 if ((FofX != null) && FofX.verifyPositiveVariances()) {
                     atleastOneFit = true;
@@ -214,7 +214,7 @@ public abstract class AbstractFitFunctionPresentationView extends AbstractRawDat
         } else {
             // nov 2014 show forced mean of ratios if present
             // set up MEAN function view
-            FofX = rawRatioDataModel.getBackgroundFitFunctions().get(FitFunctionTypeEnum.MEANRATIO.getName());
+            FofX = rawRatioDataModel.getFitFunctions().get(FitFunctionTypeEnum.MEANRATIO.getName());
 
             if ((FofX != null) && FofX.verifyPositiveVariances()) {
                 atleastOneFit = true;

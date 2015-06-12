@@ -698,7 +698,7 @@ public abstract class AbstractSessionForStandardDataModel implements Serializabl
      * @return
      */
     @Override
-    public Map<String, AbstractFunctionOfX> getBackgroundFitFunctions() {
+    public Map<String, AbstractFunctionOfX> getFitFunctions() {
 
         Map<String, AbstractFunctionOfX> fitFunctions;
 

@@ -732,7 +732,7 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
      * @return the alphasFitFunction
      */
     @Override
-    public Map<String, AbstractFunctionOfX> getBackgroundFitFunctions() {
+    public Map<String, AbstractFunctionOfX> getFitFunctions() {
 
         Map<String, AbstractFunctionOfX> fitFunctions;
 
