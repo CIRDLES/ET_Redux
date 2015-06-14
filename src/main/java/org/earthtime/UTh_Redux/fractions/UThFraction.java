@@ -29,6 +29,7 @@ import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.dataDictionaries.DataDictionary;
 import org.earthtime.dataDictionaries.MeasuredRatios;
+import org.earthtime.dataDictionaries.MeasuredUThRatios;
 import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.dataDictionaries.UncertaintyTypesEnum;
 import org.earthtime.exceptions.ETException;
@@ -80,7 +81,7 @@ public class UThFraction implements
 
         analysisMeasures = valueModelArrayFactory(AnalysisMeasures.getNames(), UncertaintyTypesEnum.ABS.getName());
         // note for UPb we use MeasuredRatioModel, but not here at least initially
-        measuredRatios = valueModelArrayFactory(MeasuredRatios.getNames(), UncertaintyTypesEnum.PCT.getName());
+        measuredRatios = valueModelArrayFactory(MeasuredUThRatios.getNames(), UncertaintyTypesEnum.PCT.getName());
         radiogenicIsotopeRatios = valueModelArrayFactory(DataDictionary.RadiogenicIsotopeRatioTypes, UncertaintyTypesEnum.ABS.getName());
         radiogenicIsotopeDates = valueModelArrayFactory(RadDates.getNamesSorted(), UncertaintyTypesEnum.ABS.getName());
         compositionalMeasures = valueModelArrayFactory(DataDictionary.earthTimeUPbCompositionalMeasuresNames, UncertaintyTypesEnum.ABS.getName());

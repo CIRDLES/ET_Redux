@@ -1,7 +1,5 @@
 /*
- * MeasuredRatioModel.java
- *
- * Created on March 26, 2006, 1:13 PM
+ * MeasuredUThRatioModel.java
  *
  *
  * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
@@ -18,7 +16,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.earthtime.UPb_Redux.valueModels;
+package org.earthtime.UTh_Redux.valueModels;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.ConversionException;
@@ -30,6 +28,8 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import org.earthtime.UPb_Redux.ReduxConstants;
+import org.earthtime.UPb_Redux.valueModels.MeasuredRatioModelXMLConverter;
+import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
 import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.exceptions.ETException;
@@ -45,7 +45,7 @@ import org.earthtime.xmlUtilities.XMLSerializationI;
  *
  * @author James F. Bowring, javaDocs by Stan Gasque
  */
-public class MeasuredRatioModel extends ValueModel implements
+public class MeasuredUThRatioModel extends ValueModel implements
         Comparable<ValueModel>,
         Serializable,
         XMLSerializationI {
@@ -54,7 +54,7 @@ public class MeasuredRatioModel extends ValueModel implements
     /**
      * identifies object in binary serialization
      */
-    private static final long serialVersionUID = 8893765636157337961L;
+    //private static final long serialVersionUID = 8893765636157337961L;
     // Instance variables
     /**
      * indicates whether or not the ratio has been fractionation-corrected;
@@ -74,10 +74,9 @@ public class MeasuredRatioModel extends ValueModel implements
      * <code>fracCorr</code> and <code>oxideCorr</code> both initialized to
      * <code>false</code>.
      */
-    public MeasuredRatioModel () {
+    public MeasuredUThRatioModel () {
         super();
         this.fracCorr = false;
-        this.oxideCorr = false;
     }
 
     /**
@@ -92,17 +91,15 @@ public class MeasuredRatioModel extends ValueModel implements
      *                          fractionation-corrected or not
      * @param   oxideCorr       whether the ratio has been oxide-corrected or not
      */
-    public MeasuredRatioModel (
+    public MeasuredUThRatioModel (
             String name,
             BigDecimal value,
             String uncertaintyType,
             BigDecimal oneSigma,
-            boolean fracCorr,
-            boolean oxideCorr ) {
+            boolean fracCorr ) {
 
         super( name, value, uncertaintyType, oneSigma, BigDecimal.ZERO );
         this.fracCorr = fracCorr;
-        this.oxideCorr = oxideCorr;
     }
 
     /**
@@ -115,14 +112,13 @@ public class MeasuredRatioModel extends ValueModel implements
      *          whose fields match those of this <code>MeasuredRatioModel</code>
      */
     @Override
-    public MeasuredRatioModel copy () {
-        return new MeasuredRatioModel(
+    public MeasuredUThRatioModel copy () {
+        return new MeasuredUThRatioModel(
                 getName(),
                 getValue(),
                 getUncertaintyType(),
                 getOneSigma(),
-                isFracCorr(),
-                isOxideCorr() );
+                isFracCorr() );
     }
 
     /**
@@ -141,24 +137,7 @@ public class MeasuredRatioModel extends ValueModel implements
         this.setUncertaintyType( valueModel.getUncertaintyType() );
         this.setOneSigma( valueModel.getOneSigma() );
         this.setValueTree( valueModel.getValueTree() );
-        this.setFracCorr( ((MeasuredRatioModel) valueModel).fracCorr );
-        this.setOxideCorr( ((MeasuredRatioModel) valueModel).oxideCorr );
-    }
-
-    /**
-     * formats <code>value</code> and <code>oneSigma</code> for display as
-     * a table; outputs in the format "(value) : (oneSigma)".
-     * 
-     * @pre     this <code>MeasuredRatioModel</code> exists
-     * @post    returns <code>value</code> and <code>oneSigma</code> of this <code>
-     *          MeasuredRatioModel</code> formatted to be viewed as a table
-     * @return  <code>String</code> - the formatted <code>value</code> and
-     *          <code>oneSigma</code> of this <code>MeasuredRatioModel</code>
-     */
-    public String toTableFormat () {
-        return getValue().toPlainString()//
-                + " : "//
-                + getOneSigma().toPlainString();
+        this.setFracCorr(((MeasuredUThRatioModel) valueModel).fracCorr );
     }
 
     /**
@@ -190,43 +169,12 @@ public class MeasuredRatioModel extends ValueModel implements
         this.fracCorr = fracCorr;
     }
 
-    /**
-     * checks whether or not this <code>MeasuredRatioModel</code> has been
-     * oxide-corrected
-     * 
-     * @pre     this <code>MeasuredRatioModel</code> exists
-     * @post    returns this <code>MeasuredRatioModel</code>'s <code>oxideCorr</code>
-     * @return  <code>boolean</code> - <code>true</code> if this <code>
-     *          MeasuredRatioModel</code> has been oxide-corrected, else
-     *          <code>false</code>
-     */
-    public boolean isOxideCorr () {
-        return oxideCorr;
-    }
-
-    /**
-     * sets whether or not this <code>MeasuredRatioModel</code> has been
-     * oxide-corrected
-     * 
-     * @pre     argument <code>oxideCorr</code> is a valid <code>boolean</code>
-     * @post    this <code>MeasuredRatioModel</code>'s <code>oxideCorr</code> is
-     *          set to argument <code>oxideCorr</code>
-     * @param   oxideCorr   should be <code>true</code> if this <code>
-     *                      MeasuredRatioModel</code> has been oxide-corrected;
-     *                      else should be <code>false</code>
-     */
-    public void setOxideCorr ( boolean oxideCorr ) {
-        this.oxideCorr = oxideCorr;
-    }
-
     @Override
     public void customizeXstream ( XStream xstream ) {
 
-        //xstream.registerConverter(new ValueModelXMLConverter());
         xstream.registerConverter( new MeasuredRatioModelXMLConverter() );
 
-        //xstream.alias("ValueModel", ValueModel.class);
-        xstream.alias( "MeasuredRatioModel", MeasuredRatioModel.class );
+        xstream.alias("MeasuredUThRatioModel", MeasuredUThRatioModel.class );
 
         setClassXMLSchemaURL();
     }
@@ -248,9 +196,8 @@ public class MeasuredRatioModel extends ValueModel implements
 
         xml = ReduxConstants.XML_Header + xml;
 
-        xml = xml.replaceFirst("MeasuredRatioModel",
-                "MeasuredRatioModel " + ReduxConstants.XML_ResourceHeader + getValueModelXMLSchemaURL() + "\"" );
-
+        xml = xml.replaceFirst("MeasuredUThRatioModel",
+                "MeasuredUThRatioModel " + ReduxConstants.XML_ResourceHeader + getValueModelXMLSchemaURL() + "\"" );
 
         try {
             FileWriter outFile = new FileWriter( filename );
@@ -263,7 +210,6 @@ public class MeasuredRatioModel extends ValueModel implements
             outFile.close();
 
         } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
@@ -297,25 +243,17 @@ public class MeasuredRatioModel extends ValueModel implements
                 // re-create reader
                 reader = URIHelper.getBufferedReader( filename );
                 try {
-                    myValueModel = (MeasuredRatioModel) xstream.fromXML( reader );
+                    myValueModel = (MeasuredUThRatioModel) xstream.fromXML( reader );
                 } catch (ConversionException e) {
                     throw new ETException( null, e.getMessage() );
                 }
 
-////                System.out.println( "\nThis is your MeasuredRatioModel that was just read successfully:\n" );
-
-//                String xml2 = getXStreamWriter().toXML( myValueModel );
-//
-//                System.out.println( xml2 );
-//                System.out.flush();
             } else {
                 throw new ETException( null, "XML data file does not conform to schema." );
             }
         } else {
             throw new FileNotFoundException( "Missing XML data file." );
         }
-
-
 
         return myValueModel;
     }
@@ -328,13 +266,12 @@ public class MeasuredRatioModel extends ValueModel implements
     public static void main ( String[] args ) throws Exception {
 
         ValueModel valueModel =
-                new MeasuredRatioModel(//
-                "r206_204b", new BigDecimal( "1234567890" ), "ABS", new BigDecimal( "123000" ), true, true );
+                new MeasuredUThRatioModel(//
+                "r206_204b", new BigDecimal( "1234567890" ), "ABS", new BigDecimal( "123000" ), true);
         System.out.println(
                 "Format Test: " + valueModel.formatValueAndTwoSigmaForPublicationSigDigMode( "ABS", 6, 2 ) );
 
-
-        String testFileName = "MeasuredRatioModelTEST.xml";
+        String testFileName = "MeasuredUThRatioModelTEST.xml";
 
         valueModel.serializeXMLObject( testFileName );
         valueModel.readXMLObject( testFileName, true );

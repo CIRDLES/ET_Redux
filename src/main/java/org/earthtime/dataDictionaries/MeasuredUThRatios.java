@@ -1,5 +1,5 @@
 /*
- * MeasuredRatios.java
+ * MeasuredUThRatios.java
  *
  *
  * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
@@ -22,81 +22,39 @@ package org.earthtime.dataDictionaries;
  *
  * @author James F. Bowring
  */
-/*
- *
- *
- * Created Dec 2010 as part of major refactoring to control magic strings
- */
-public enum MeasuredRatios {
 
-    // measured ratios
-    /**
-     * 
-     */
-    r206_204m( "r206_204m" ),
-    /**
-     * 
-     */
-    r207_204m( "r207_204m" ),
-    /**
-     * 
-     */
-    r208_204m( "r208_204m" ),
-    /**
-     * 
-     */
-    r206_207m( "r206_207m" ),    
-    /**
-     * 
-     */
-    r206_208m( "r206_208m" ),
-    /**
-     * 
-     */
-    r204_205m( "r204_205m" ),
-    /**
-     * 
-     */
-    r206_205m( "r206_205m" ),
-    /**
-     * 
-     */
-    r207_205m( "r207_205m" ),
-    /**
-     * 
-     */
-    r208_205m( "r208_205m" ),
-    /**
-     * 
-     */
-    r202_205m( "r202_205m" ),
-    /**
-     * 
-     */
-    r238_235m( "r238_235m" ),
-    /**
-     * 
-     */
-    r233_235m( "r233_235m" ),
-    /**
-     * 
-     */
-    r238_233m( "r238_233m" ),
-    /**
-     * 
-     */
-    r238_236m( "r238_236m" ),
-    /**
-     * 
-     */
-    r233_236m( "r233_236m" );
- 
+public enum MeasuredUThRatios {
 
+    // measured UTh ratios
+    /**
+     * 
+     */
+    r234U_238U( "r234U_238U" ),
+    /**
+     * 
+     */
+    r230Th_232Th( "r230Th_232Th" ),
+    /**
+     * 
+     */
+    r228Ra_226Ra( "r228Ra_226Ra" ),
+    /**
+     * 
+     */
+    r231Pa_233Pa( "r231Pa_233Pa" ),    
+    /**
+     * 
+     */
+    r238U_206Pb( "r238U_206Pb" ),
+    /**
+     * 
+     */
+    r207Pb_206Pb( "r207Pb_206Pb" );
 
 
     private String name;
 
-    private MeasuredRatios ( String name ) {
+    private MeasuredUThRatios ( String name ) {
         this.name = name;
     }
 
@@ -113,9 +71,9 @@ public enum MeasuredRatios {
      * @return
      */
     public static String[] getNames () {
-        String[] retVal = new String[MeasuredRatios.values().length];
-        for (int i = 0; i < MeasuredRatios.values().length; i ++) {
-            retVal[i] = MeasuredRatios.values()[i].getName();
+        String[] retVal = new String[MeasuredUThRatios.values().length];
+        for (int i = 0; i < MeasuredUThRatios.values().length; i ++) {
+            retVal[i] = MeasuredUThRatios.values()[i].getName();
         }
         return retVal;
     }
@@ -128,7 +86,7 @@ public enum MeasuredRatios {
     public static boolean contains ( String checkString ) {
         boolean retVal = true;
         try {
-            MeasuredRatios.valueOf( checkString );
+            MeasuredUThRatios.valueOf( checkString );
         } catch (IllegalArgumentException e) {
             retVal = false;
         }
