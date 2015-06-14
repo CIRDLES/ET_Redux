@@ -44,6 +44,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import org.earthtime.Tripoli.dataModels.DataModelFitFunctionInterface;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
+import org.earthtime.Tripoli.dataModels.DownholeFractionationDataModel;
 import org.earthtime.Tripoli.dataModels.sessionModels.AbstractSessionForStandardDataModel;
 import org.earthtime.Tripoli.dataViews.AbstractRawDataView;
 import org.earthtime.Tripoli.fitFunctions.AbstractFunctionOfX;
@@ -266,7 +267,13 @@ public class SessionOfStandardView extends AbstractRawDataView implements FitFun
         minX = 0;
         maxX = zeroBasedFractionAquireTimes.get(zeroBasedFractionAquireTimes.size() - 1);
 
-        AbstractFunctionOfX fitFunc = sessionForStandardDataModel.getSelectedFitFunction();
+        AbstractFunctionOfX fitFunc;
+        if (sessionForStandardDataModel instanceof DownholeFractionationDataModel ){
+            // TODO: fix this class hierarchy issue - cast is necessary
+            fitFunc = ((DownholeFractionationDataModel)sessionForStandardDataModel).getSelectedFitFunction();
+        } else {
+            fitFunc = sessionForStandardDataModel.getSelectedFitFunction();
+        }
 
         if (fitFunc != null) {
 
@@ -382,7 +389,7 @@ public class SessionOfStandardView extends AbstractRawDataView implements FitFun
 
         // map fraction means into myOnPeakData and fraction times into myOnPeakNormalizedAquireTimes  
         tripoliFractionArray = new TripoliFraction[tripoliFractions.size()];
-        zeroBasedFractionAquireTimes = new ArrayList<Double>();
+        zeroBasedFractionAquireTimes = new ArrayList<>();
         fractionIncludedMap = new boolean[tripoliFractions.size()];
 
         int index = 0;

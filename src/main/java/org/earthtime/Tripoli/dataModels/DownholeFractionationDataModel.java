@@ -108,9 +108,9 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
         this.fittedAlphas = new double[averageAlphas.length];
         this.fittedAlphasResiduals = new double[averageAlphas.length];
         this.maskingSingleton = maskingSingleton;
-        this.alphasFitFunctions = new TreeMap<String, AbstractFunctionOfX>();
-        this.downholeStandardsFitFunctionsNoOD = new TreeMap<String, AbstractFunctionOfX>();;
-        this.downholeStandardsFitFunctionsWithOD = new TreeMap<String, AbstractFunctionOfX>();
+        this.alphasFitFunctions = new TreeMap<>();
+        this.downholeStandardsFitFunctionsNoOD = new TreeMap<>();
+        this.downholeStandardsFitFunctionsWithOD = new TreeMap<>();
         this.overDispersionSelected = true;
 
         this.selectedFitFunctionType = FitFunctionTypeEnum.EXPONENTIAL;
@@ -509,6 +509,7 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
      * @param doApplyMaskingArray the value of doApplyMaskingArray
      */
     
+    @Override
     public void generateSetOfFitFunctions(boolean propagateUncertainties, boolean doApplyMaskingArray) {
 
 //        System.out.println("\nCalculating Fit Functions for Downhole  " + getRawRatioModelName().getDisplayName());
@@ -597,7 +598,7 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
         //**********  ALL OF THIS IS CURRENTLY DONE INSIDE SPLINE FIT BUT COULD BE DONE OUTSIDE ******
         // build and calculate t and h
 
-        tList = new ArrayList<Double>();
+        tList = new ArrayList<>();
 
         for (int i = 0; i < activeXvalues.length; i++) {
             tList.add(activeXvalues[i]);
@@ -648,7 +649,7 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
      */
     public void prepareMatrixJfMapAquisitionsAquisitions() {
         // build session-wide marixJf for each type of fit function
-        matrixJfMapAquisitionsAquisitions = new EnumMap<FitFunctionTypeEnum, Matrix>(FitFunctionTypeEnum.class);
+        matrixJfMapAquisitionsAquisitions = new EnumMap<>(FitFunctionTypeEnum.class);
 
         // be sure times are prepared for standards AND all the work needed to support smoothing splines
         //if ( Jgammag == null ) {

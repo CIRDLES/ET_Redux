@@ -932,7 +932,6 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
 
                     // build residuals pane LABEL for overviews to be placed in yaxis column
                     AbstractRawDataView residualsYAxisLabel = new ResidualsYAxisLabel(//
-                            //
                             rawDataModelViews[0][0], //
                             new Rectangle(//
                                     //

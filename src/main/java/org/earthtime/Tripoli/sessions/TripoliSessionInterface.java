@@ -75,7 +75,7 @@ public interface TripoliSessionInterface extends TripoliSessionFractionationCalc
      * @param fractionSelectionTypeEnum the value of fractionSelectionTypeEnum
      * @return the boolean
      */
-    public boolean prepareMatrixJfMapUnknowns (FractionSelectionTypeEnum fractionSelectionTypeEnum);
+    public boolean prepareMatrixJfMapFractionsByType (FractionSelectionTypeEnum fractionSelectionTypeEnum);
 
     /**
      *

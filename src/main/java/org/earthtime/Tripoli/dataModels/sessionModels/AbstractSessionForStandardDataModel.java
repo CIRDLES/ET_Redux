@@ -871,7 +871,7 @@ public abstract class AbstractSessionForStandardDataModel implements Serializabl
      * @return
      */
     public SortedSet<TripoliFraction> getActiveStandardFractions() {
-        SortedSet<TripoliFraction> activeStandards = new TreeSet<TripoliFraction>();
+        SortedSet<TripoliFraction> activeStandards = new TreeSet<>();
         Iterator<TripoliFraction> fractionIterator = standardFractions.iterator();
         while (fractionIterator.hasNext()) {
             TripoliFraction tf = fractionIterator.next();
