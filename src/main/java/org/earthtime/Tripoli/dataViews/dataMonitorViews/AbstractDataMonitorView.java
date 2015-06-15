@@ -296,7 +296,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
 
         add(rawDataFilePathTextArea);
 
-        SortedSet<DataModelInterface> dataModels = tripoliFractions.first().getValidRawRatioAlphas();
+        SortedSet<DataModelInterface> dataModels = tripoliFractions.first().getRatiosForFractionFitting();//.getValidRawRatioAlphas();
 
         Iterator<DataModelInterface> dataModelsIterator = dataModels.iterator();
 

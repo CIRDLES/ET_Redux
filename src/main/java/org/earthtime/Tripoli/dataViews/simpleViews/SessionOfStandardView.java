@@ -44,7 +44,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import org.earthtime.Tripoli.dataModels.DataModelFitFunctionInterface;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
-import org.earthtime.Tripoli.dataModels.DownholeFractionationDataModel;
 import org.earthtime.Tripoli.dataModels.sessionModels.AbstractSessionForStandardDataModel;
 import org.earthtime.Tripoli.dataViews.AbstractRawDataView;
 import org.earthtime.Tripoli.fitFunctions.AbstractFunctionOfX;
@@ -268,12 +267,7 @@ public class SessionOfStandardView extends AbstractRawDataView implements FitFun
         maxX = zeroBasedFractionAquireTimes.get(zeroBasedFractionAquireTimes.size() - 1);
 
         AbstractFunctionOfX fitFunc;
-        if (sessionForStandardDataModel instanceof DownholeFractionationDataModel ){
-            // TODO: fix this class hierarchy issue - cast is necessary
-            fitFunc = ((DownholeFractionationDataModel)sessionForStandardDataModel).getSelectedFitFunction();
-        } else {
-            fitFunc = sessionForStandardDataModel.getSelectedFitFunction();
-        }
+        fitFunc = sessionForStandardDataModel.getSelectedFitFunction();
 
         if (fitFunc != null) {
 

@@ -34,53 +34,53 @@ public class DownholeFitFunctionsPresentationView extends AbstractFitFunctionPre
     private DataModelFitFunctionInterface downholeFractionationAlphaDataModel;
 
     /**
-     * 
+     *
      * @param sampleSessionDataView
      * @param downholeFractionationAlphaDataModel
-     * @param targetDataModelView 
+     * @param targetDataModelView
      * @param bounds
      */
-    public DownholeFitFunctionsPresentationView ( //
+    public DownholeFitFunctionsPresentationView( //
             JLayeredPane sampleSessionDataView, //
             DataModelFitFunctionInterface downholeFractionationAlphaDataModel,//
             FitFunctionDataInterface targetDataModelView,
-            Rectangle bounds ) {
+            Rectangle bounds) {
 
-        super( targetDataModelView, bounds );
+        super(targetDataModelView, bounds);
 
-        setCursor( Cursor.getDefaultCursor() );
+        setCursor(Cursor.getDefaultCursor());
 
         this.sampleSessionDataView = sampleSessionDataView;
         this.downholeFractionationAlphaDataModel = downholeFractionationAlphaDataModel;
     }
 
     /**
-     * 
+     *
      * @param g2d
      */
     @Override
-    public void paint ( Graphics2D g2d ) {
-        paintInit( g2d );
+    public void paint(Graphics2D g2d) {
+        paintInit(g2d);
 
     }
 
     /**
-     * 
+     *
      */
     @Override
-    public void preparePanel () {
+    public void preparePanel() {
 
         removeAll();
         // first restore the data
         // recalculate averages and fits
-        if ( downholeFractionationAlphaDataModel != null ) {
+        if (downholeFractionationAlphaDataModel != null) {
             if (!((TripoliSessionRawDataView) sampleSessionDataView).//
-                    getSessionFractionationCalculator().isCalculatedInitialFitFunctions()){
-            ((TripoliSessionRawDataView) sampleSessionDataView).//
-                    getSessionFractionationCalculator().calculateDownholeFitSummariesForPrimaryStandard();
+                    getSessionFractionationCalculator().isCalculatedInitialFitFunctions()) {
+                ((TripoliSessionRawDataView) sampleSessionDataView).//
+                        getSessionFractionationCalculator().calculateDownholeFitSummariesForPrimaryStandard();
             }
-        }
 
-        createFitFunctionPanes( downholeFractionationAlphaDataModel, true );
+            createFitFunctionPanes(downholeFractionationAlphaDataModel, true);
+        }
     }
 }

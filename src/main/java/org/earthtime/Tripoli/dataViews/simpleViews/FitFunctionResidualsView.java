@@ -41,20 +41,19 @@ import org.earthtime.dataDictionaries.DataPresentationModeEnum;
  */
 public class FitFunctionResidualsView extends AbstractRawDataView implements MaskingShadeTargetInterface {
 
-    private DownholeFractionationDataModel fractionationAlphaDataModel;
+    private DownholeFractionationDataModel downholeFractionationDataModel;
     private int countOfMaskedTimeSlotsOnLeft;
     private int countOfMaskedTimeSlotsOnRight;
 
     /**
      * 
      *
-     * @param fractionationAlphaDataModel
+     * @param downholeFractionationDataModel
      * @param dataPresentationMode
      * @param bounds
-     */
-    
+     */   
     public FitFunctionResidualsView ( //
-            DownholeFractionationDataModel fractionationAlphaDataModel, //
+            DownholeFractionationDataModel downholeFractionationDataModel, //
             DataPresentationModeEnum dataPresentationMode,//
             Rectangle bounds) {
 
@@ -62,7 +61,7 @@ public class FitFunctionResidualsView extends AbstractRawDataView implements Mas
 
         setCursor( Cursor.getDefaultCursor() );
 
-        this.fractionationAlphaDataModel = fractionationAlphaDataModel;
+        this.downholeFractionationDataModel = downholeFractionationDataModel;
         this.dataPresentationMode = dataPresentationMode;
     }
 
@@ -117,13 +116,13 @@ public class FitFunctionResidualsView extends AbstractRawDataView implements Mas
 
 
         // walk alphas and get min and max for axes
-        myOnPeakData = fractionationAlphaDataModel.getFittedAlphasResiduals();
+        myOnPeakData = downholeFractionationDataModel.getFittedAlphasResiduals();
 //        for (int i = 0; i < myOnPeakData.length; i ++){
 //            myOnPeakData[i] = convertLogDatumToPresentationMode( myOnPeakData[i]);
 //        }
 
         // normalize aquireTimes
-        myOnPeakNormalizedAquireTimes = fractionationAlphaDataModel.getNormalizedAquireTimes();
+        myOnPeakNormalizedAquireTimes = downholeFractionationDataModel.getNormalizedAquireTimes();
 
 //        // X-axis lays out time evenly spaced
 //        minX = myOnPeakNormalizedAquireTimes[0];
@@ -154,7 +153,7 @@ public class FitFunctionResidualsView extends AbstractRawDataView implements Mas
         // first determine width of mask
         countOfMaskedTimeSlotsOnLeft = -1;
         for (int i = 0; i < DownholeFractionationDataModel.MAX_AQUISITIONS_SHADABLE; i ++) {
-            if (  ! fractionationAlphaDataModel.getMaskingSingleton().getMaskingArray()[i] ) {
+            if (  ! downholeFractionationDataModel.getMaskingSingleton().getMaskingArray()[i] ) {
                 countOfMaskedTimeSlotsOnLeft ++;
             }
         }
@@ -169,9 +168,9 @@ public class FitFunctionResidualsView extends AbstractRawDataView implements Mas
 
         countOfMaskedTimeSlotsOnRight = -1;
         int lowestAquisitionIndex = //
-                fractionationAlphaDataModel.getMaskingSingleton().getMaskingArray().length - DownholeFractionationDataModel.MAX_AQUISITIONS_SHADABLE;
-        for (int i = lowestAquisitionIndex; i < fractionationAlphaDataModel.getMaskingSingleton().getMaskingArray().length; i ++) {
-            if (  ! fractionationAlphaDataModel.getMaskingSingleton().getMaskingArray()[i] ) {
+                downholeFractionationDataModel.getMaskingSingleton().getMaskingArray().length - DownholeFractionationDataModel.MAX_AQUISITIONS_SHADABLE;
+        for (int i = lowestAquisitionIndex; i < downholeFractionationDataModel.getMaskingSingleton().getMaskingArray().length; i ++) {
+            if (  ! downholeFractionationDataModel.getMaskingSingleton().getMaskingArray()[i] ) {
                 countOfMaskedTimeSlotsOnRight ++;
             }
         }

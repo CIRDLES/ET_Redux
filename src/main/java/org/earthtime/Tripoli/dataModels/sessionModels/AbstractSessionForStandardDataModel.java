@@ -581,7 +581,7 @@ public abstract class AbstractSessionForStandardDataModel implements Serializabl
         System.out.println("\nCalculate Fit Functions for Session  " + getRawRatioModelName().getDisplayName() //
                 + "  USING " + (USING_FULL_PROPAGATION ? "FULL PROPAGATION" : "FAST PROPAGATION"));
 
-        FitFunctionTypeEnum saveSelectedFitFunctionType = selectedFitFunctionType;
+//////        FitFunctionTypeEnum saveSelectedFitFunctionType = selectedFitFunctionType;
 
         if (generateMEANfitFunctionUsingLM()) {
             try {
@@ -598,9 +598,9 @@ public abstract class AbstractSessionForStandardDataModel implements Serializabl
             }
         }
 
-        if (saveSelectedFitFunctionType != null) {
-            selectedFitFunctionType = saveSelectedFitFunctionType;
-        }
+////        if (saveSelectedFitFunctionType != null) {
+////            selectedFitFunctionType = saveSelectedFitFunctionType;
+////        }
 
         System.out.println("Session complete\n");
 
@@ -711,13 +711,13 @@ public abstract class AbstractSessionForStandardDataModel implements Serializabl
         return fitFunctions;
     }
 
-    /**
-     *
-     * @param fitFunctionTypeName
-     */
-    @Override
-    public void calculateFittedFunctions(String fitFunctionTypeName) {
-    }
+//    /**
+//     *
+//     * @param fitFunctionTypeName
+//     */
+//    @Override
+//    public void calculateFittedFunctions(String fitFunctionTypeName) {
+//    }
 
     /**
      *

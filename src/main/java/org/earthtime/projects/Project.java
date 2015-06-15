@@ -257,6 +257,8 @@ public class Project implements
 
     /**
      *
+     * @return 
+     * @throws org.earthtime.exceptions.ETException
      */
     @Override
     public Path exportProjectSamples() throws ETException {

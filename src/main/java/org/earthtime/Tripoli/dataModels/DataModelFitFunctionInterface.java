@@ -74,12 +74,12 @@ public interface DataModelFitFunctionInterface {
      */
     public double getXIforFitFunction(FitFunctionTypeEnum fitFunctionType);
 
-    /**
-     *
-     * @param fitFunctionTypeName
-     */
-    public void calculateFittedFunctions(String fitFunctionTypeName);
-
+//    /**
+//     *
+//     * @param fitFunctionTypeName
+//     */
+//    public void calculateFittedFunctions(String fitFunctionTypeName);
+//
     /**
      *
      * @param selectedFitFunctionType

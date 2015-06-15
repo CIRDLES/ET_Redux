@@ -638,7 +638,7 @@ public class TripoliFraction implements //
         for (DataModelInterface rr : rawRatios) {
             if (!((RawRatioDataModel) rr).getTopIsotope().equals(((RawRatioDataModel) rr).getBotIsotope()) //
                     && //
-                    !((RawRatioDataModel) rr).isUsedForCommonLeadCorrections()) {
+                    !rr.isUsedForCommonLeadCorrections()) {
                 validRawRatios.add(rr);
             }
         }
@@ -646,23 +646,23 @@ public class TripoliFraction implements //
         return validRawRatios;
     }
 
-    /**
-     * Returns those RawRAtioDataModels that have been specified for alpha
-     * display and fractionation correction.
-     *
-     * @return
-     */
-    public SortedSet<DataModelInterface> getValidRawRatioAlphas() {
-        SortedSet<DataModelInterface> validRawRatioAlphas = new TreeSet<>();
-
-        for (DataModelInterface rr : rawRatios) {
-            if (((RawRatioDataModel) rr).isUsedForFractionationCorrections()) {
-                validRawRatioAlphas.add(rr);
-            }
-        }
-
-        return validRawRatioAlphas;
-    }
+//    /**
+//     * Returns those RawRatioDataModels that have been specified for alpha
+//     * display and fractionation correction.
+//     *
+//     * @return
+//     */
+//    public SortedSet<DataModelInterface> getValidRawRatioAlphas() {
+//        SortedSet<DataModelInterface> validRawRatioAlphas = new TreeSet<>();
+//
+//        for (DataModelInterface rr : rawRatios) {
+//            if (((RawRatioDataModel) rr).isUsedForFractionationCorrections()) {
+//                validRawRatioAlphas.add(rr);
+//            }
+//        }
+//
+//        return validRawRatioAlphas;
+//    }
 
     /**
      * RawRatioNames enum are in correct display order
@@ -698,7 +698,7 @@ public class TripoliFraction implements //
         }
 
         if (retVal) {
-            SortedSet<DataModelInterface> validFractionationRatios = getValidRawRatioAlphas();
+            SortedSet<DataModelInterface> validFractionationRatios = getRatiosForFractionFitting();//getValidRawRatioAlphas();
             Iterator<DataModelInterface> validFractionIterator = validFractionationRatios.iterator();
             while (validFractionIterator.hasNext()) {
                 DataModelInterface rr = validFractionIterator.next();

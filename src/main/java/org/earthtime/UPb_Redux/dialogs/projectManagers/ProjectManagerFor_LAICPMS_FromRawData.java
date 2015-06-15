@@ -1068,7 +1068,7 @@ WashStateElementIISingleCollFileHandler.getInstance();
 
         // nov 2014 conditional
         if (doCorrections) {
-            // april 2014 to cause comon lead corrections and other changes to propagate
+            // april 2014 to cause common lead corrections and other changes to propagate
             // do the math
             tripoliSession.calculateSessionFitFunctionsForPrimaryStandard();
             // April 2105 added condition below jan 2015 moved to calculate sessionfit tripoliSession.applyCorrections();

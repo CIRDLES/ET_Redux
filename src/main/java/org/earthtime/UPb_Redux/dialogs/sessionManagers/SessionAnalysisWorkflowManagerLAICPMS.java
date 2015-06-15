@@ -31,7 +31,6 @@ import java.lang.reflect.Method;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.SortedSet;
 import javax.swing.Icon;
 import javax.swing.JLayeredPane;
 import javax.swing.JRadioButton;
@@ -41,7 +40,6 @@ import javax.swing.event.ChangeListener;
 import org.earthtime.ETReduxFrame;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
 import org.earthtime.Tripoli.dataModels.DownholeFractionationDataModel;
-import org.earthtime.Tripoli.dataModels.RawRatioDataModel;
 import org.earthtime.Tripoli.dataModels.sessionModels.AbstractSessionForStandardDataModel;
 import org.earthtime.Tripoli.dataViews.AbstractRawDataView;
 import org.earthtime.Tripoli.dataViews.overlayViews.TripoliSessionRawDataView;
@@ -134,6 +132,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
                     downholeFitStandardAlphas_radioButton.doClick();
                 }
 
+                tripoliSession.applyCorrections();
             }
         });
 
@@ -391,7 +390,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         setEnableAllGridGraphOverlayButtons(false);
     }
 
-    private void showStandardDownholeFractionationRawRatioAlphaDataModels() {
+    private void showStandardDownholeFractionationRawRatioDataModels() {
         // assumption is that tripoliSessionRawDataView is initialized
         // only allow standard into this view
         selectStandards_chkBox.setSelected(true);
@@ -405,7 +404,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
                 dataModelViewConstructorFactory(FitFunctionsOnRatioDataView.class.getName()));
 
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).setRawDataSourceMethod(//
-                rawDataSourceMethodFactory("getValidRawRatioAlphas"));
+                rawDataSourceMethodFactory("getRatiosForFractionFitting"));//getValidRawRatioAlphas"));
 
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).setDataModelWidth(FitFunctionsOnRatioDataView.DEFAULT_WIDTH_OF_PANE);
 
@@ -486,7 +485,6 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         // do the math
         if (!tripoliSession.isFitFunctionsUpToDate()) {
             tripoliSession.calculateSessionFitFunctionsForPrimaryStandard();
-            // jan 2015 moved to calculateSessionFit   tripoliSession.applyCorrections();
             try {
                 uPbReduxFrame.updateReportTable(true);
             } catch (Exception e) {
@@ -496,7 +494,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).showSessionViewOfRawDataModels(//
                 interceptStandardSession_radioButton.getBackground(),//
                 dataModelViewConstructorFactory(SessionOfStandardView.class.getName()),//
-                rawDataSourceMethodFactory("getValidRawRatioAlphas"));
+                rawDataSourceMethodFactory("getRatiosForFractionFitting"));//getValidRawRatioAlphas"));"getValidRawRatioAlphas"));
 
         setEnableAllGridGraphOverlayButtons(false);
 
@@ -1446,7 +1444,7 @@ private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.
     }//GEN-LAST:event_downholeStandardSession_radioButtonActionPerformed
 
     private void downholeFitStandardAlphas_radioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downholeFitStandardAlphas_radioButtonActionPerformed
-        showStandardDownholeFractionationRawRatioAlphaDataModels();
+        showStandardDownholeFractionationRawRatioDataModels();
     }//GEN-LAST:event_downholeFitStandardAlphas_radioButtonActionPerformed
 
     private void downholeCorrectedUnknownRatios_radioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downholeCorrectedUnknownRatios_radioButtonActionPerformed
@@ -1546,53 +1544,6 @@ private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.
     private javax.swing.JSlider xAxisZoomSlider;
     private javax.swing.JSlider yAxisZoomSlider;
     // End of variables declaration//GEN-END:variables
-
-    /**
-     *
-     */
-    public void outputAlphasToFile() {
-        File alphaValuesFile = new File("ALL_ALPHAS_" + tripoliSession.getRawDataFileHandler().getRawDataFile().getName() + ".txt");
-        PrintWriter outputWriter = null;
-        try {
-            outputWriter = new PrintWriter(new FileWriter(alphaValuesFile));
-            outputWriter.println("\n\n******   ALPHAS  from " + tripoliSession.getRawDataFileHandler().getRawDataFile().getName() + "   ********************\n\n");
-
-            SortedSet<TripoliFraction> myFractions = tripoliSession.//
-                    getTripoliFractionsFiltered(FractionSelectionTypeEnum.STANDARD, currentFractionView);
-            Iterator fractionIterator = myFractions.iterator();
-            while (fractionIterator.hasNext()) {
-                TripoliFraction myFraction = (TripoliFraction) fractionIterator.next();
-                outputWriter.println("Fraction = " + myFraction.getFractionID());
-
-                SortedSet<DataModelInterface> myRatioAlphas = myFraction.getValidRawRatioAlphas();
-                Iterator ratioIterator = myRatioAlphas.iterator();
-                while (ratioIterator.hasNext()) {
-                    DataModelInterface myRatioAlpha = (DataModelInterface) ratioIterator.next();
-                    outputWriter.println("RatioAlpha = " + myRatioAlpha.getDataModelName());
-
-                    double alphas[] = ((RawRatioDataModel) myRatioAlpha).getAlphas();
-
-                    for (int i = 0; i < alphas.length; i++) {
-                        outputWriter.write(Double.toString(alphas[i]) + ", ");
-                    }
-                    outputWriter.println();
-                }
-                outputWriter.println();
-            }
-            outputWriter.println();
-
-            outputWriter.flush();
-            outputWriter.close();
-
-        } catch (IOException iOException) {
-        }
-
-        try {
-            BrowserControl.displayURL(alphaValuesFile.getCanonicalPath());
-        } catch (IOException ex) {
-        }
-
-    }
 
     /**
      *

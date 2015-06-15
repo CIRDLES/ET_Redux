@@ -44,58 +44,9 @@ public class SessionForStandardDataModelInterceptFractionation extends AbstractS
         sessionTechnique = "INTERCEPT";
     }
 
-//    @Override
-//    public void generateSelectedFitFunction () {
-//        throw new UnsupportedOperationException( "Not supported yet." );
-//    }
-
-//    /**
-//     *
-//     */
-//    @Override
-//    public void generateSetOfFitFunctions () {
-//
-//        
-//
-//        includedStandardsDataActiveMap = new boolean[getStandardFractions().size()];
-//        includedStandardsAquireTimes = new double[includedStandardsDataActiveMap.length];
-//        includedStandardsMeanLogRatios = new double[includedStandardsDataActiveMap.length];
-//        includedStandardsMeanLogRatioStdErrs = new double[includedStandardsDataActiveMap.length];
-//
-//        Iterator fractionIterator = getStandardFractions().iterator();
-//        int index = 0;
-//        boolean atLeastOneFraction = false;
-//        while (fractionIterator.hasNext()) {
-//            TripoliFraction tf = (TripoliFraction) fractionIterator.next();
-//            includedStandardsAquireTimes[index] = tf.getZeroBasedNormalizedTimeStamp();
-//            includedStandardsDataActiveMap[index] = tf.isIncluded();
-//
-//            if ( ((RawRatioDataModel) tf.getRawRatioDataModelByName( rawRatioName )).isBelowDetection() ) {
-//                includedStandardsDataActiveMap[index] = false;
-//            }
-//
-//            if ( includedStandardsDataActiveMap[index] ) {
-//                atLeastOneFraction = true;
-//                includedStandardsMeanLogRatios[index] = //
-//                        ((RawRatioDataModel) tf.getRawRatioDataModelByName( rawRatioName ))//
-//                        .getSelectedFitFunction().getYIntercept();
-//                includedStandardsMeanLogRatioStdErrs[index] = //
-//                      ((RawRatioDataModel) tf.getRawRatioDataModelByName( rawRatioName ))//
-//                        .getSelectedFitFunction().getYInterceptStdErr();
-//            }
-//            index ++;
-//        }
-//
-//        if ( atLeastOneFraction ) {
-//            calculateFitFunctions();
-//        }
-//
-//    }
-
     /**
      *
      */
-    
     @Override
     public void cleanupUnctCalcs () {
         throw new UnsupportedOperationException( "Not supported yet." );

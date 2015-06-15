@@ -190,7 +190,7 @@ public class TripoliSession implements
             long firstFractionTimeStamp = tripoliFractions.first().getPeakTimeStamp();
 
             // create map of primaryStandards values to be used to update each fraction's ratios
-            SortedSet<DataModelInterface> ratiosSortedSet = tripoliFractions.first().getRatiosForFractionFitting();//.getValidRawRatios();
+            SortedSet<DataModelInterface> ratiosSortedSet = tripoliFractions.first().getRatiosForFractionFitting();
             Double[] standardValuesMap = new Double[ratiosSortedSet.size()];
             int count = 0;
 
@@ -236,7 +236,7 @@ public class TripoliSession implements
             // may 2014 - for use with live data, we check to see if these exist and if so, do not recreate
             if ((sessionForStandardsInterceptFractionation.size() == 0) || (sessionForStandardsDownholeFractionation.size() == 0)) {
                 // create sessionForStandards models for both downhole and intercept methods
-                Iterator<DataModelInterface> dataModelIterator = tripoliFractions.first().getValidRawRatioAlphas().iterator();
+                Iterator<DataModelInterface> dataModelIterator = tripoliFractions.first().getRatiosForFractionFitting().iterator();//.getValidRawRatioAlphas().iterator();
                 while (dataModelIterator.hasNext()) {
                     DataModelInterface dm = dataModelIterator.next();
                     AbstractSessionForStandardDataModel ssm = //
@@ -257,7 +257,7 @@ public class TripoliSession implements
                 }
             } else {
                 // may 2014 handling case of live data
-                Iterator<DataModelInterface> dataModelIterator = tripoliFractions.first().getValidRawRatioAlphas().iterator();
+                Iterator<DataModelInterface> dataModelIterator = tripoliFractions.first().getRatiosForFractionFitting().iterator();//.getValidRawRatioAlphas().iterator();
                 while (dataModelIterator.hasNext()) {
                     DataModelInterface dm = dataModelIterator.next();
 
@@ -305,7 +305,6 @@ public class TripoliSession implements
             downholeFractionationDataModel.calculateWeightedMeanOfStandards(fractionIterator);
 
             downholeFractionationDataModel.generateSetOfFitFunctions(true, false);
-            calculatedInitialFitFunctions = true;
 
             // now calculate session statistics based on this selected fit model
             // this means for each standard, calculate the weighted mean of the residuals
@@ -314,6 +313,7 @@ public class TripoliSession implements
 
             downholeFractionationDataModel.calculateWeightedMeanForEachStandard(fractionIterator, rrName, downHoleFofX);
         }
+        calculatedInitialFitFunctions = true;
 
     }
 
@@ -323,25 +323,59 @@ public class TripoliSession implements
     @Override
     public void calculateSessionFitFunctionsForPrimaryStandard() {
 
+        // note: first call here is from ProjectManager initialize
         if (prepareMatrixJfMapFractionsByType(FractionSelectionTypeEnum.UNKNOWN) //
                 && prepareMatrixJfPlotting()) {
 
-            if (fractionationTechnique.compareTo(FractionationTechniquesEnum.INTERCEPT) == 0) {
-                sessionForStandardsInterceptFractionation.keySet().stream().forEach((rrName) -> {
-                    try {
-                        sessionForStandardsInterceptFractionation.get(rrName).generateSetOfFitFunctions(true, false);
-                        // jan 2015
-                        applyCorrections();
-                        fitFunctionsUpToDate = true;
-                    } catch (Exception e) {
-                        System.out.println("Session Standards Intercept Fractionation Failed");
-                    }
-                });
-            } else if (fractionationTechnique.compareTo(FractionationTechniquesEnum.DOWNHOLE) == 0) {
-                for (RawRatioNames rrName : sessionForStandardsDownholeFractionation.keySet()) {
-                    sessionForStandardsDownholeFractionation.get(rrName).generateSetOfFitFunctions(true, false);
+            sessionForStandardsInterceptFractionation.keySet().stream().forEach((rrName) -> {
+                try {
+                    sessionForStandardsInterceptFractionation.get(rrName).generateSetOfFitFunctions(true, false);
+                    fitFunctionsUpToDate = true;
+                } catch (Exception e) {
+                    System.out.println("Session Standards Intercept Fractionation Failed");
                 }
-            }
+            });
+
+            
+            calculateDownholeFitSummariesForPrimaryStandard();
+            sessionForStandardsDownholeFractionation.keySet().stream().forEach((rrName) -> {
+                try {
+                    sessionForStandardsDownholeFractionation.get(rrName).generateSetOfFitFunctions(true, false);
+                    fitFunctionsUpToDate = true;
+                } catch (Exception e) {
+                    System.out.println("Session Standards Downhole Fractionation Failed");
+                }
+            });
+            
+            //fractionationTechnique = FractionationTechniquesEnum.INTERCEPT;
+            applyCorrections();
+            
+////            if (fractionationTechnique.compareTo(FractionationTechniquesEnum.INTERCEPT) == 0) {
+////                sessionForStandardsInterceptFractionation.keySet().stream().forEach((rrName) -> {
+////                    try {
+////                        sessionForStandardsInterceptFractionation.get(rrName).generateSetOfFitFunctions(true, false);
+////                        // jan 2015
+////                        applyCorrections();
+////                        fitFunctionsUpToDate = true;
+////                    } catch (Exception e) {
+////                        System.out.println("Session Standards Intercept Fractionation Failed");
+////                    }
+////                });
+////            } else if (fractionationTechnique.compareTo(FractionationTechniquesEnum.DOWNHOLE) == 0) {
+////
+////                calculateDownholeFitSummariesForPrimaryStandard();
+////
+////                sessionForStandardsDownholeFractionation.keySet().stream().forEach((rrName) -> {
+////                    try {
+////                        sessionForStandardsDownholeFractionation.get(rrName).generateSetOfFitFunctions(true, false);
+////                        // june 2015
+////                        applyCorrections();
+////                        fitFunctionsUpToDate = true;
+////                    } catch (Exception e) {
+////                        System.out.println("Session Standards Downhole Fractionation Failed");
+////                    }
+////                });
+////            }
         }
     }
 
@@ -786,7 +820,7 @@ public class TripoliSession implements
         SortedSet<TripoliFraction> selectedFractions = getTripoliFractionsFiltered(fractionSelectionTypeEnum, IncludedTypeEnum.INCLUDED);
         int countOfSelectedFractions = selectedFractions.size();
         // nov 2014 section 11
-        // walk the sessions and build double[][] of diagonals (3 rows by countof unkowns - one row for each session ratio
+        // walk the sessions and build double[][] of diagonals = 3 rows by countof unkowns - one row for each session ratio
         double[][] sessionRatioDiagonalSu = new double[3][countOfSelectedFractions];
         Iterator<RawRatioNames> sessionForStandardsIterator = sessionForStandardsInterceptFractionation.keySet().iterator();
         while (sessionForStandardsIterator.hasNext()) {
@@ -1188,7 +1222,6 @@ public class TripoliSession implements
         // calculate array of per-aquisition (say 1-15 seconds) fitted downHoleFractionation values 
         // for each ratio to use for every fraction
         // the spline values will be calculated on-th-fly since each is used only once
-        System.out.println("DOWNHOLE Fractionation Correction");
         downholeFractionationDataModels.keySet().stream().forEach((rrName) -> {
             SortedSet<TripoliFraction> allFractions = getTripoliFractionsFiltered(FractionSelectionTypeEnum.STANDARD, IncludedTypeEnum.INCLUDED);
 
@@ -1216,17 +1249,12 @@ public class TripoliSession implements
                     sessionForStandard.getSelectedFitFunction();
 
             if (sessionFofX == null) {
-                // let's do it and thus use the default fitfunction = spline unless spline generated a line when spline failed
-                //FIX THIS FIX THIS - this call calls all          
-//                calculateSessionFitFunctionsForPrimaryStandard();
-//                sessionFofX = sessionForStandardsDownholeFractionation.get(rrName).getSelectedFitFunction();
-
                 try {
                     sessionForStandard.generateSetOfFitFunctions(true, false);
-                    sessionForStandard.setSelectedFitFunctionType(FitFunctionTypeEnum.SMOOTHING_SPLINE);
+//                    sessionForStandard.setSelectedFitFunctionType(FitFunctionTypeEnum.SMOOTHING_SPLINE);
                     sessionFofX = sessionForStandard.getSelectedFitFunction();
                 } catch (Exception e) {
-                    System.out.println("Session for Standard NO fit functions success");
+                    System.out.println("Session for Standard NO fit functions failure");
                 }
 
             }

@@ -366,7 +366,7 @@ public abstract class AbstractMassSpecSetup implements //
             }
         }
 
-       isotopeMappingModel.calculateAllIntensityMatrixSDiagonals();
+        isotopeMappingModel.calculateAllIntensityMatrixSDiagonals();
 
         if ((Hg202 != null) && (Pb204 != null)) {
             calculateCorrectionForIsobaricInterference(Hg202, Pb204);
@@ -1121,10 +1121,8 @@ public abstract class AbstractMassSpecSetup implements //
                 double[] acquireTimes = rawRatios.first().getOnPeakAquireTimesInSeconds();
                 double[] normalizedOnPeakAquireTimes = rawRatios.first().getNormalizedOnPeakAquireTimes();
 
-//        // same masking array keeps masking coordinated
+                // same masking array keeps masking coordinated
                 MaskingSingleton maskingArray = MaskingSingleton.getInstance();
-                // next line now set at TripoliSession
-//        maskingArray.setMaskingArray( AbstractMassSpecSetup.defaultDataActiveMap( countOfAcquisitions ) );
 
                 DownholeFractionationDataModel r206_207w =//
                         new DownholeFractionationDataModel( //

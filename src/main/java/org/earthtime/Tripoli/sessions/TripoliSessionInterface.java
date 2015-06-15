@@ -108,11 +108,11 @@ public interface TripoliSessionInterface extends TripoliSessionFractionationCalc
     @Override
     void calculateDownholeFitSummariesForPrimaryStandard ();
 
-    /**
-     *
-     */
-    @Override
-    void calculateSessionFitFunctionsForPrimaryStandard ();
+//    /**
+//     *
+//     */
+//    @Override
+//    void calculateSessionFitFunctionsForPrimaryStandard ();
 
     /**
      *

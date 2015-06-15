@@ -1273,12 +1273,12 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
      */
     public void includeAllFractions() {
         tripoliSession.includeAllFractions(fractionSelectionType);
-        if (FRACTION_LAYOUT_VIEW_STYLE.equals(FractionLayoutViewStylesEnum.SESSION)) {
-            sessionFractionationCalculator.calculateSessionFitFunctionsForPrimaryStandard();
-            updateReportTable();
-        }
-
-        refreshPanel();
+//////        if (FRACTION_LAYOUT_VIEW_STYLE.equals(FractionLayoutViewStylesEnum.SESSION)) {
+//////            sessionFractionationCalculator.calculateSessionFitFunctionsForPrimaryStandard();
+//////            updateReportTable();
+//////        }
+//////
+//////        refreshPanel();
     }
 
     /**

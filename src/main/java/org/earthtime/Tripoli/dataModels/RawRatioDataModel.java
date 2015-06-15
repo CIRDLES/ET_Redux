@@ -395,34 +395,6 @@ public class RawRatioDataModel //
 
     /**
      *
-     * @param fittedAlphas
-     */
-    public void calculateDownholeFractionWeightedMean(double[] fittedAlphas) {
-//        double[] residuals = new double[ratios.length];
-//
-//        if (!belowDetection) {
-//            for (int i = 0; i < residuals.length; i++) {
-//                residuals[i] = alphas[i] - fittedAlphas[i];
-//            }
-//
-//            NonParametricStats nonParametricStats = NonParametricStats.getInstance();
-//
-//            // here we check if fraction is turned off: if so, we pass in an all-true dataactivemap
-//            // so we can still plot the missing fractions in the session view
-//
-//            if (fractionIncluded) {
-//                nonParametricStats.calculateStats(dataActiveMap, residuals);
-//            } else {
-//                nonParametricStats.calculateStats(//
-//                        AbstractMassSpecSetup.defaultDataActiveMap(dataActiveMap.length), residuals);
-//            }
-//            meanOfResidualsFromFittedFractionation = nonParametricStats.getSampleMean();
-//            stdErrOfmeanOfResidualsFromFittedFractionation = nonParametricStats.getStdErrSampleMean();
-//        }
-    }
-
-    /**
-     *
      * @param matrixSf
      * @param downholeFofX
      */
@@ -451,7 +423,7 @@ public class RawRatioDataModel //
                 .getSelectedLMAlgorithm(//
                         FitFunctionTypeEnum.MEAN,//
                         activeData, //
-                        null, //
+                        null, //this is mean so x does not matter
                         differences,//
                         matrixSf.plus(SlogRatioX_Y),//
                         false);
@@ -1016,14 +988,14 @@ public class RawRatioDataModel //
 
     }
 
-    /**
-     *
-     * @param fitFunctionTypeName
-     */
-    @Override
-    public void calculateFittedFunctions(String fitFunctionTypeName) {
-
-    }
+//    /**
+//     *
+//     * @param fitFunctionTypeName
+//     */
+//    @Override
+//    public void calculateFittedFunctions(String fitFunctionTypeName) {
+//
+//    }
 
     /**
      *
