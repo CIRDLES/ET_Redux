@@ -256,7 +256,7 @@ public class DataViewsOverlay extends AbstractRawDataView implements MaskingShad
         //AbstractFunctionOfX fitFunc = downholeFractionationAlphaDataModel.getSelectedFitFunction();
         myFittedAverageAlphas = downholeFractionationAlphaDataModel.getFitFunctionLogValues().clone();
 
-        myOnPeakData = downholeFractionationAlphaDataModel.getAverageAlphas().clone();
+        myOnPeakData = downholeFractionationAlphaDataModel.getWeightedMeanIntegrations().clone();
 
         fitFunctionNormalizedTimes = new double[MaskingSingleton.getInstance().getCountOfActiveData()];
         boolean[] maskingArray = MaskingSingleton.getInstance().getMaskingArray();
@@ -375,7 +375,7 @@ public class DataViewsOverlay extends AbstractRawDataView implements MaskingShad
     /**
      * @param fractionationAlphaDataModel
      */
-    public void setFractionationAlphaDataModel(DownholeFractionationDataModel fractionationAlphaDataModel) {
+    public void setFractionationDataModel(DownholeFractionationDataModel fractionationAlphaDataModel) {
         this.downholeFractionationAlphaDataModel = fractionationAlphaDataModel;
     }
 

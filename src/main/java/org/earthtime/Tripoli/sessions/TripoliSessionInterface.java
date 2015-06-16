@@ -122,7 +122,7 @@ public interface TripoliSessionInterface extends TripoliSessionFractionationCalc
     /**
      * @return the downholeFractionationAlphaDataModels
      */
-    SortedMap<RawRatioNames, DownholeFractionationDataModel> getDownholeFractionationAlphaDataModels ();
+    SortedMap<RawRatioNames, DownholeFractionationDataModel> getDownholeFractionationDataModels ();
 
     /**
      *

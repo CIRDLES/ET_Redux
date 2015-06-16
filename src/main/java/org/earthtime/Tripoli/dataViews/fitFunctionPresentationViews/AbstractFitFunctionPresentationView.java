@@ -82,7 +82,6 @@ public abstract class AbstractFitFunctionPresentationView extends AbstractRawDat
         this.targetDataModelView = targetDataModelView;
 
         setCursor(Cursor.getDefaultCursor());
-
     }
 
     /**
@@ -245,13 +244,12 @@ public abstract class AbstractFitFunctionPresentationView extends AbstractRawDat
                     rawRatioDataModel.setOverDispersionSelected(((AbstractButton) ae.getSource()).isSelected());
 
                     refreshPanel();
-//                    ((TripoliSessionRawDataView) sampleSessionDataView).refreshPanel();
+
                     updatePlotsWithChanges(targetDataModelView);
 
                     if (targetDataModelView instanceof SessionOfStandardView) {
                         updateReportTable();
                     }
-
                 }
             });
             add(overDispersionCheckBox);

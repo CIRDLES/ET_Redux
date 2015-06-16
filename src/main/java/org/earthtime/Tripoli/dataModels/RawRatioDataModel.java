@@ -65,6 +65,7 @@ public class RawRatioDataModel //
     private double[] alphas;
     private double[] fitFunctionLogValues;
     private double[] correctedRatios;
+    private double[] logDifferencesFromWeightedMean;
     private boolean usedForFractionationCorrections;
     // oct 2014
     private boolean usedForCommonLeadCorrections;
@@ -125,6 +126,7 @@ public class RawRatioDataModel //
         this.logRatios = null;
         this.alphas = null;
         this.fitFunctionLogValues = null;
+        this.logDifferencesFromWeightedMean = null;
 
         this.meanOfResidualsFromFittedFractionation = 0.0;
         this.stdErrOfmeanOfResidualsFromFittedFractionation = 0.0;
@@ -399,7 +401,7 @@ public class RawRatioDataModel //
      * @param downholeFofX
      */
     public void calculateDownholeFractionWeightedMeanAndUnct(Matrix matrixSf, AbstractFunctionOfX downholeFofX) {
-        // calculate the differences between logratios and fit function
+        // calculate the logDifferencesFromWeightedMean between logratios and fit function
 
         int countOfActiveData = 0;
         for (int i = 0; i < dataActiveMap.length; i++) {
@@ -408,12 +410,12 @@ public class RawRatioDataModel //
             }
         }
 
-        double[] differences = new double[countOfActiveData];
+        logDifferencesFromWeightedMean = new double[countOfActiveData];
         double[] normalizedOnPeakAquireTimes = getNormalizedOnPeakAquireTimes();
         int index = 0;
         for (int i = 0; i < dataActiveMap.length; i++) {
             if (dataActiveMap[i]) {
-                differences[index] = logRatios[i] - downholeFofX.f(normalizedOnPeakAquireTimes[i]);
+                logDifferencesFromWeightedMean[index] = logRatios[i] - downholeFofX.f(normalizedOnPeakAquireTimes[i]);
                 index++;
             }
         }
@@ -424,7 +426,7 @@ public class RawRatioDataModel //
                         FitFunctionTypeEnum.MEAN,//
                         activeData, //
                         null, //this is mean so x does not matter
-                        differences,//
+                        logDifferencesFromWeightedMean,//
                         matrixSf.plus(SlogRatioX_Y),//
                         false);
 
@@ -447,7 +449,7 @@ public class RawRatioDataModel //
                     .getFunctionOfX(//
                             activeData, //
                             activeXvalues, //
-                            differences,//
+                            logDifferencesFromWeightedMean,//
                             null, //
                             false);
 
@@ -1141,7 +1143,7 @@ public class RawRatioDataModel //
         double retVal = 0.0;
         if (sessionTechnique.compareToIgnoreCase("DOWNHOLE") == 0) {
             try {
-                retVal = getMeanOfResidualsFromFittedFractionation();
+                retVal = getSelectedFitFunction().getA();//updated june 2015         getMeanOfResidualsFromFittedFractionation();
             } catch (Exception e) {
                 retVal = 0.0;
             }
@@ -1165,7 +1167,7 @@ public class RawRatioDataModel //
         double retVal = 0.0;
         if (sessionTechnique.compareToIgnoreCase("DOWNHOLE") == 0) {
             try {
-                retVal = getStdErrOfmeanOfResidualsFromFittedFractionation();
+                retVal = getSelectedFitFunction().getStdErrOfA();//updated june 2015 getStdErrOfmeanOfResidualsFromFittedFractionation();
             } catch (Exception e) {
                 retVal = 0.0;
             }
@@ -1187,12 +1189,13 @@ public class RawRatioDataModel //
      */
     public double getSessionErrorPlusODBySessionTechnique(String sessionTechnique) {
         double retVal = 0.0;
-//        if (sessionTechnique.compareToIgnoreCase("DOWNHOLE") == 0) {
-////            try {
-////                retVal = getStdErrOfmeanOfResidualsFromFittedFractionation();
-////            } catch (Exception e) {
-////            }
-//        }
+        if (sessionTechnique.compareToIgnoreCase("DOWNHOLE") == 0) {
+            try {
+                AbstractFunctionOfX FofX = getSelectedFitFunction();
+                retVal =  Math.sqrt(Math.pow(FofX.getStdErrOfA(), 2) + FofX.getOverDispersion());//  updated june 2015                                  getStdErrOfmeanOfResidualsFromFittedFractionation();
+            } catch (Exception e) {
+            }
+        }
 
         if (sessionTechnique.compareToIgnoreCase("INTERCEPT") == 0) {
             try {
@@ -1215,7 +1218,7 @@ public class RawRatioDataModel //
         double retVal = 0.0;
         if (sessionTechnique.compareToIgnoreCase("DOWNHOLE") == 0) {
             try {
-                retVal = Math.pow(getStdErrOfmeanOfResidualsFromFittedFractionation(), 2);
+                retVal = Math.pow(getSelectedFitFunction().getStdErrOfA(), 2); // updated june 2015 from getStdErrOfmeanOfResidualsFromFittedFractionation()
             } catch (Exception e) {
                 retVal = 0.0;
             }
@@ -1637,6 +1640,20 @@ public class RawRatioDataModel //
      */
     public void setUSING_FULL_PROPAGATION(boolean USING_FULL_PROPAGATION) {
         this.USING_FULL_PROPAGATION = USING_FULL_PROPAGATION;
+    }
+
+    /**
+     * @return the logDifferencesFromWeightedMean
+     */
+    public double[] getLogDifferencesFromWeightedMean() {
+        return logDifferencesFromWeightedMean;
+    }
+
+    /**
+     * @param logDifferencesFromWeightedMean the logDifferencesFromWeightedMean to set
+     */
+    public void setLogDifferencesFromWeightedMean(double[] logDifferencesFromWeightedMean) {
+        this.logDifferencesFromWeightedMean = logDifferencesFromWeightedMean;
     }
 
 }

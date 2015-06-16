@@ -52,8 +52,9 @@ public class DataPresentationModeChooserPanel extends AbstractRawDataView {
      *
      */
     protected ButtonGroup dataViewModeButtonGroup;
-//    private double maskingMinX;
-//    private double maskingMaxX;
+    private JRadioButton ratiosChooser;
+    private JRadioButton logRatiosChooser;
+    private JRadioButton alphasChooser;
 
     /**
      *
@@ -62,10 +63,10 @@ public class DataPresentationModeChooserPanel extends AbstractRawDataView {
      * @param timeArray
      * @param bounds
      */
-    public DataPresentationModeChooserPanel (//
-            JLayeredPane sampleSessionDataView, DataPresentationModeEnum dataPresentationMode, double[] timeArray, Rectangle bounds ) {
+    public DataPresentationModeChooserPanel(//
+            JLayeredPane sampleSessionDataView, DataPresentationModeEnum dataPresentationMode, double[] timeArray, Rectangle bounds) {
 
-        super( bounds );
+        super(bounds);
 
         this.sampleSessionDataView = sampleSessionDataView;
 
@@ -73,167 +74,172 @@ public class DataPresentationModeChooserPanel extends AbstractRawDataView {
 
         this.myOnPeakNormalizedAquireTimes = timeArray;
 
-        setOpaque( true );
+        setOpaque(true);
         setBackground(new Color(250, 240, 230));
-        setCursor( Cursor.getDefaultCursor() );
+        setCursor(Cursor.getDefaultCursor());
 
         dataViewModeButtonGroup = new ButtonGroup();
     }
 
     @Override
-    public void paint ( Graphics2D g2d ) {
-        paintInit( g2d );
+    public void paint(Graphics2D g2d) {
+        paintInit(g2d);
 
-        setBackground( new Color( 250, 240, 230 ) );
+        setBackground(new Color(250, 240, 230));
 
         String label = "for ALL Ratios";
         TextLayout mLayout = //
                 new TextLayout(
-                label, g2d.getFont(), g2d.getFontRenderContext() );
+                        label, g2d.getFont(), g2d.getFontRenderContext());
 
         Rectangle2D bounds = mLayout.getBounds();
 
-        g2d.drawString( label,//
+        g2d.drawString(label,//
                 10,// (getWidth() - (float) (bounds.getWidth())) / 2f,//
-                10 );
-
+                10);
 
     }
 
+    public void setShowLogRatioButtonOnly(){
+        ratiosChooser.setEnabled(false);
+        alphasChooser.setEnabled(false);
+    }
+    
     @Override
-    public void preparePanel () {
+    public void preparePanel() {
         this.removeAll();
 
         // arbitrary
         minY = 0.0;
         maxY = 80.0;
 
-        add( buttonForFitFunctionFactory( 12, DataPresentationModeEnum.RATIO ), DEFAULT_LAYER );
-        add( buttonForFitFunctionFactory( 30, DataPresentationModeEnum.LOGRATIO ), DEFAULT_LAYER );
-        add( buttonForFitFunctionFactory( 48, DataPresentationModeEnum.ALPHA ), DEFAULT_LAYER );
+        ratiosChooser = buttonForFitFunctionFactory(12, DataPresentationModeEnum.RATIO);
+        logRatiosChooser = buttonForFitFunctionFactory(30, DataPresentationModeEnum.LOGRATIO);
+        alphasChooser = buttonForFitFunctionFactory(48, DataPresentationModeEnum.ALPHA);
+        add(ratiosChooser, DEFAULT_LAYER);
+        add(logRatiosChooser, DEFAULT_LAYER);
+        add(alphasChooser, DEFAULT_LAYER);
         // this means that this view has been primed for masking array use, i.e. standards and unknowns in fractionation corr ratio view
-        if ( myOnPeakNormalizedAquireTimes.length > 0 ) {
-            add( shadeFactory( sampleSessionDataView ), DEFAULT_LAYER );
-            add( applyShadeButtonFactory() );
-            
-            add( buttonForODChoiceFactory( 12, "w/ OD", true ), DEFAULT_LAYER );
-            add( buttonForODChoiceFactory( 32, "w/out OD", false ), DEFAULT_LAYER );
+        if (myOnPeakNormalizedAquireTimes.length > 0) {
+            add(shadeFactory(sampleSessionDataView), DEFAULT_LAYER);
+            add(applyShadeButtonFactory());
+
+            add(buttonForODChoiceFactory(12, "w/ OD", true), DEFAULT_LAYER);
+            add(buttonForODChoiceFactory(32, "w/out OD", false), DEFAULT_LAYER);
         }
     }
 
-    private JRadioButton buttonForFitFunctionFactory (//
+    private JRadioButton buttonForFitFunctionFactory(//
             int pixelsFromTop, //
-            final DataPresentationModeEnum myDataPresentationMode ) {
+            final DataPresentationModeEnum myDataPresentationMode) {
 
-        JRadioButton dataViewModeButton = new JRadioButton( myDataPresentationMode.getName() );
-        dataViewModeButton.setName( myDataPresentationMode.getName() );
-        dataViewModeButton.setFont( new Font( "SansSerif", Font.PLAIN, 10 ) );
-        dataViewModeButton.setBounds( 5, pixelsFromTop, 90, 20 );
-        dataViewModeButton.setSelected( myDataPresentationMode.equals( dataPresentationMode ) );
+        JRadioButton dataViewModeButton = new JRadioButton(myDataPresentationMode.getName());
+        dataViewModeButton.setName(myDataPresentationMode.getName());
+        dataViewModeButton.setFont(new Font("SansSerif", Font.PLAIN, 10));
+        dataViewModeButton.setBounds(5, pixelsFromTop, 90, 20);
+        dataViewModeButton.setSelected(myDataPresentationMode.equals(dataPresentationMode));
         dataViewModeButton.setBackground(this.getBackground());
         dataViewModeButton.setOpaque(true);
 
-        dataViewModeButton.addActionListener( new ActionListener() {
+        dataViewModeButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed ( ActionEvent e ) {
+            public void actionPerformed(ActionEvent e) {
 
-                ((AbstractRawDataView) sampleSessionDataView).setDataPresentationMode( myDataPresentationMode );
+                ((AbstractRawDataView) sampleSessionDataView).setDataPresentationMode(myDataPresentationMode);
                 ((AbstractRawDataView) sampleSessionDataView).refreshPanel();
 
             }
-        } );
+        });
 
-        dataViewModeButtonGroup.add( dataViewModeButton );
+        dataViewModeButtonGroup.add(dataViewModeButton);
         return dataViewModeButton;
     }
 
-    private JLayeredPane shadeFactory ( JLayeredPane sampleSessionDataView ) {
+    private JLayeredPane shadeFactory(JLayeredPane sampleSessionDataView) {
         AbstractRawDataView maskingShadeControl = //
-                new MaskingShadeControl( new Rectangle( 15, 88, 170, 20 ), myOnPeakNormalizedAquireTimes, sampleSessionDataView );
+                new MaskingShadeControl(new Rectangle(15, 88, 170, 20), myOnPeakNormalizedAquireTimes, sampleSessionDataView);
 
         maskingShadeControl.preparePanel();
 
         return maskingShadeControl;
     }
 
-    private JButton applyShadeButtonFactory () {
-        JButton applyShadeButton = new ET_JButton( "Refit all data to shades." );
-        applyShadeButton.setBounds( 15, 68, 170, 20 );
+    private JButton applyShadeButtonFactory() {
+        JButton applyShadeButton = new ET_JButton("Refit all data to shades.");
+        applyShadeButton.setBounds(15, 68, 170, 20);
 
-        applyShadeButton.addActionListener( new ActionListener() {
+        applyShadeButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed ( ActionEvent e ) {
+            public void actionPerformed(ActionEvent e) {
 
                 ((TripoliSessionRawDataView) sampleSessionDataView).getTripoliSession().applyMaskingArray();
                 ((TripoliSessionRawDataView) sampleSessionDataView).getTripoliSession().reFitAllFractions();
-                
+
                 // jan 2015 force refit after applying shade
                 ((TripoliSessionRawDataView) sampleSessionDataView).getTripoliSession().calculateSessionFitFunctionsForPrimaryStandard();
 
                 ((AbstractRawDataView) sampleSessionDataView).refreshPanel();
 
             }
-        } );
-
+        });
 
         return applyShadeButton;
     }
 
-    private JButton buttonForODChoiceFactory ( int pixelsFromTop, final String caption, final boolean setOD ) {
+    private JButton buttonForODChoiceFactory(int pixelsFromTop, final String caption, final boolean setOD) {
 
-        JButton ODChoiceButton = new ET_JButton( caption );
-        ODChoiceButton.setFont( new Font( "SansSerif", Font.PLAIN, 11 ) );
-        ODChoiceButton.setBounds( 125, pixelsFromTop, 60, 20 );
-        ODChoiceButton.addActionListener( new ActionListener() {
+        JButton ODChoiceButton = new ET_JButton(caption);
+        ODChoiceButton.setFont(new Font("SansSerif", Font.PLAIN, 11));
+        ODChoiceButton.setBounds(125, pixelsFromTop, 60, 20);
+        ODChoiceButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed ( ActionEvent ae ) {
-                ((TripoliSessionRawDataView) sampleSessionDataView).getTripoliSession().setODforAllFractionsAllRatios( setOD );
+            public void actionPerformed(ActionEvent ae) {
+                ((TripoliSessionRawDataView) sampleSessionDataView).getTripoliSession().setODforAllFractionsAllRatios(setOD);
 
                 ((AbstractRawDataView) sampleSessionDataView).refreshPanel();
             }
-        } );
-
+        });
 
         return ODChoiceButton;
     }
 
     @Override
-    public DataModelInterface getDataModel () {
-        throw new UnsupportedOperationException( "Not supported yet." );
+    public DataModelInterface getDataModel() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void mouseClicked ( MouseEvent e ) {
+    public void mouseClicked(MouseEvent e) {
 //        super.mouseClicked( e );
     }
 
     @Override
-    public void mouseDragged ( MouseEvent evt ) {
+    public void mouseDragged(MouseEvent evt) {
 //        super.mouseDragged( evt );
     }
 
     @Override
-    public void mouseEntered ( MouseEvent e ) {
+    public void mouseEntered(MouseEvent e) {
 //        super.mouseEntered( e );
     }
 
     @Override
-    public void mouseExited ( MouseEvent e ) {
+    public void mouseExited(MouseEvent e) {
 //        super.mouseExited( e );
     }
 
     @Override
-    public void mouseMoved ( MouseEvent e ) {
+    public void mouseMoved(MouseEvent e) {
 //        super.mouseMoved( e );
     }
 
     @Override
-    public void mousePressed ( MouseEvent evt ) {
+    public void mousePressed(MouseEvent evt) {
 //        super.mousePressed( evt );
     }
 
     @Override
-    public void mouseReleased ( MouseEvent e ) {
+    public void mouseReleased(MouseEvent e) {
 //        super.mouseReleased( e );
     }
 

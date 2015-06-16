@@ -43,12 +43,10 @@ public class RawIntensitiesDataView extends AbstractRawDataView {
      *
      */
     public static int DEFAULT_WIDTH_OF_PANE = 128;
-    //
- //   private DataModelInterface rawRatioDataModel;
+
     private double[] normalizedBackgroundAquireTimes;
     private double[] backgroundIntensities;
     private double[] backgroundFitIntensities;
-//    private double[] onPeakBackgroundFitIntensities;
     private double[] onPeakIntensityUncorrectedForMercury;
     private double[] backgroundIntensityUncorrectedForMercury;
     private double[] onPeakFitBackgroundIntensities;

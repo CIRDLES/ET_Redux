@@ -302,8 +302,10 @@ public class TripoliSession implements
 
             Iterator<TripoliFraction> fractionIterator = getTripoliFractionsFiltered(FractionSelectionTypeEnum.STANDARD, IncludedTypeEnum.INCLUDED).iterator();
 
+            // for thick black line
             downholeFractionationDataModel.calculateWeightedMeanOfStandards(fractionIterator);
 
+            // for thick red line
             downholeFractionationDataModel.generateSetOfFitFunctions(true, false);
 
             // now calculate session statistics based on this selected fit model
@@ -1223,14 +1225,11 @@ public class TripoliSession implements
         // for each ratio to use for every fraction
         // the spline values will be calculated on-th-fly since each is used only once
         downholeFractionationDataModels.keySet().stream().forEach((rrName) -> {
-            SortedSet<TripoliFraction> allFractions = getTripoliFractionsFiltered(FractionSelectionTypeEnum.STANDARD, IncludedTypeEnum.INCLUDED);
+            SortedSet<TripoliFraction> allFractions = getTripoliFractionsFiltered(FractionSelectionTypeEnum.UNKNOWN, IncludedTypeEnum.INCLUDED);
 
             // calculate the down hole fractionation for this ratio all fractions
             DownholeFractionationDataModel downHolefractionationAlpha = downholeFractionationDataModels.get(rrName);
 
-//            // dec 2012 check if masking array is all false - it was modified in previous call
-//            if ( downHolefractionationAlpha.getMaskingSingleton().maskingArrayContainsTruth() ) {
-//
             AbstractFunctionOfX myDownHoleFofX = //
                     downHolefractionationAlpha.getSelectedDownHoleFrationationFitFunction();
 
@@ -1268,9 +1267,9 @@ public class TripoliSession implements
                     double[] onPeakAquireTimesInSeconds = downHolefractionationAlpha.getOnPeakAcquireTimesInSeconds();
 
                     for (int i = 0; i < onPeakAquireTimesInSeconds.length; i++) {
-                        // we use currently the normalized times for alpha fitting, but need actual time for session
-                        double valueOfSpline = sessionFofX.f(fractionStartAquireTime + onPeakAquireTimesInSeconds[i]);
-                        double alpha = downHoleFractionation[i] + valueOfSpline;
+                        // we use currently the normalized times for fitting, but need actual time for session
+                        double valueOfSessionFit = sessionFofX.f(fractionStartAquireTime + onPeakAquireTimesInSeconds[i]);
+                        double alpha = downHoleFractionation[i] + valueOfSessionFit;
 
                         correctedRatios[i] = (1.0 + alpha) * ratios[i];
                     }
@@ -1445,7 +1444,7 @@ public class TripoliSession implements
      * @return the downholeFractionationDataModels
      */
     @Override
-    public SortedMap<RawRatioNames, DownholeFractionationDataModel> getDownholeFractionationAlphaDataModels() {
+    public SortedMap<RawRatioNames, DownholeFractionationDataModel> getDownholeFractionationDataModels() {
         return downholeFractionationDataModels;
     }
 

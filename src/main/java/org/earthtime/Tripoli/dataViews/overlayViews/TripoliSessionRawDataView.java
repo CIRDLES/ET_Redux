@@ -65,6 +65,7 @@ import org.earthtime.dataDictionaries.DataPresentationModeEnum;
 import org.earthtime.dataDictionaries.FitFunctionTypeEnum;
 import org.earthtime.dataDictionaries.FractionLayoutViewStylesEnum;
 import org.earthtime.dataDictionaries.FractionSelectionTypeEnum;
+import org.earthtime.dataDictionaries.FractionationTechniquesEnum;
 import org.earthtime.dataDictionaries.IncludedTypeEnum;
 import org.earthtime.dataDictionaries.RawRatioNames;
 import org.earthtime.utilities.TicGeneratorForAxes;
@@ -89,13 +90,17 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
     private final static int HEIGHT_OF_OVERLAY_XAXIS_PANES = 15;
     private final static int WIDTH_OF_LOCAL_YAXIS_PANES = 65;
     private final static int HEIGHT_OF_FRACTION_INFO_PANELS = 110;
-    //private final static int HEIGHT_OF_FRACTION_INFO_PANELS_FOR_SESSION = 80;
-    //
+    private static int SAVED_InterceptNormalModelWidth;
+    private static int SAVED_InterceptOverlayModelWidth;
+    private static int SAVED_DownholeNormalModelWidth;
+    private static int SAVED_DownholeOverlayModelWidth;
+    private static int SAVED_SessionModelWidth;
+
     private final TripoliSessionInterface tripoliSession;
     private SortedSet<TripoliFraction> tripoliFractions;
     private FractionSelectionTypeEnum fractionSelectionType;
     private IncludedTypeEnum fractionIncludedType;
-    private final SortedMap<RawRatioNames, DownholeFractionationDataModel> downholeFractionationAlphaDataModels;
+    private final SortedMap<RawRatioNames, DownholeFractionationDataModel> downholeFractionationDataModels;
     private Constructor dataModelViewConstructor;
     private Method rawDataSourceMethod;
     private int countOfDataModels;
@@ -155,11 +160,10 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
         this.tripoliSession = tripoliSession;
         this.fractionSelectionType = FractionSelectionTypeEnum.STANDARD;
         this.fractionIncludedType = IncludedTypeEnum.ALL;
-        this.downholeFractionationAlphaDataModels = tripoliSession.getDownholeFractionationAlphaDataModels();
-//        this.sessionForStandards = tripoliSession.getSessionForStandardsDownholeFractionation();  //.getSessionForStandardsInterceptFractionation();//
+        this.downholeFractionationDataModels = tripoliSession.getDownholeFractionationDataModels();
         this.dataModelViewConstructor = dataModelViewConstructor;
         this.rawDataSourceMethod = rawDataSourceMethod;
-        this.FRACTION_LAYOUT_VIEW_STYLE = fractionLayoutViewStyle;
+        FRACTION_LAYOUT_VIEW_STYLE = fractionLayoutViewStyle;
         this.yAxisZoomSlider = yAxisZoomSlider;
         this.xAxisZoomSlider = xAxisZoomSlider;
         this.tripoliSessionRawDataViewYAxis = tripoliSessionRawDataViewYAxis;
@@ -167,6 +171,12 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
         this.tripoliSessionDataControls_pane = tripoliSessionDataControls_pane;
 
         // default values
+        SAVED_InterceptNormalModelWidth = DEFAULT_WIDTH_OF_FRACTION_PANES;
+        SAVED_InterceptOverlayModelWidth = DEFAULT_WIDTH_OF_FRACTION_PANES;
+        SAVED_DownholeNormalModelWidth = DEFAULT_WIDTH_OF_FRACTION_PANES;
+        SAVED_DownholeOverlayModelWidth = DEFAULT_WIDTH_OF_SESSION_PANES;
+        SAVED_SessionModelWidth = DEFAULT_WIDTH_OF_SESSION_PANES;
+
         this.countOfDataModels = 0;
         this.dataModelWidth = DEFAULT_WIDTH_OF_FRACTION_PANES;
         this.sessionModelWidth = DEFAULT_WIDTH_OF_SESSION_PANES;
@@ -381,8 +391,22 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
                 int value = source.getValue();
                 if (FRACTION_LAYOUT_VIEW_STYLE.equals(FractionLayoutViewStylesEnum.SESSION)) {
                     sessionModelWidth = value;
+                    SAVED_SessionModelWidth = value;
                 } else {
                     dataModelWidth = value;
+                    if (tripoliSession.getFractionationTechnique().compareTo(FractionationTechniquesEnum.INTERCEPT) == 0) {
+                        if (FRACTION_LAYOUT_VIEW_STYLE.equals(FractionLayoutViewStylesEnum.OVERLAY)) {
+                            SAVED_InterceptOverlayModelWidth = value;
+                        } else {
+                            SAVED_InterceptNormalModelWidth = value;
+                        }
+                    } else {
+                        if (FRACTION_LAYOUT_VIEW_STYLE.equals(FractionLayoutViewStylesEnum.OVERLAY)) {
+                            SAVED_DownholeOverlayModelWidth = value;
+                        } else {
+                            SAVED_DownholeNormalModelWidth = value;
+                        }
+                    }
                 }
                 if (!isZoomSlidersIndependent()) {
                     theOtherSlider.setValue(value);
@@ -466,6 +490,25 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
         int fractionCountForHorizontalLayout = 0;
         int dataModelCountForVerticalLayout;
 
+        // user friendly memory of x zooms
+        if (FRACTION_LAYOUT_VIEW_STYLE.equals(FractionLayoutViewStylesEnum.SESSION)) {
+            sessionModelWidth = SAVED_SessionModelWidth;
+        } else {
+            if (tripoliSession.getFractionationTechnique().compareTo(FractionationTechniquesEnum.INTERCEPT) == 0) {
+                if (FRACTION_LAYOUT_VIEW_STYLE.equals(FractionLayoutViewStylesEnum.OVERLAY)) {
+                    dataModelWidth = SAVED_InterceptOverlayModelWidth;
+                } else {
+                    dataModelWidth = SAVED_InterceptNormalModelWidth;
+                }
+            } else {
+                if (FRACTION_LAYOUT_VIEW_STYLE.equals(FractionLayoutViewStylesEnum.OVERLAY)) {
+                    dataModelWidth = SAVED_DownholeOverlayModelWidth;
+                } else {
+                    dataModelWidth = SAVED_DownholeNormalModelWidth;
+                }
+            }
+        }
+
         // detect and create FRACTION_LAYOUT_VIEW_STYLE.SESSION view, which differs from all 
         // the others in that it only has one instance
         // that displays the session and spline curves through the fractons
@@ -521,22 +564,9 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
                 }
                 // jan 2013 add in data view chooser panel upper left corner
                 makeDataPresentationModeChooserPanel(new double[0]);
-//                dataPresentationModeChooserPanel = //
-//                        new DataPresentationModeChooserPanel(//
-//                                //
-//                                this,//
-//                                dataPresentationMode,//
-//                                new double[0],//
-//                                new Rectangle( //
-//                                        0, //
-//                                        0, //
-//                                        tripoliSessionRawDataViewYAxis.getWidth(), //
-//                                        topMargin));
-//
-//                dataPresentationModeChooserPanel.preparePanel();
-//
-//                tripoliSessionRawDataViewYAxis.add(dataPresentationModeChooserPanel, javax.swing.JLayeredPane.DRAG_LAYER);
-//
+                if (tripoliSession.getFractionationTechnique().compareTo(FractionationTechniquesEnum.DOWNHOLE) == 0) {
+                    ((DataPresentationModeChooserPanel) dataPresentationModeChooserPanel).setShowLogRatioButtonOnly();
+                }
                 dataModelCountForVerticalLayout++;
             }
 
@@ -592,7 +622,7 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
         }
 
         // make special rawDataModelViewsOverlays for OVERLAY case
-        // adapt to alpha overlay mode which needs residuals pane as well
+        // adapt to overlay mode which needs residuals pane as well
         int residualsHeight = 0;
         AbstractRawDataView[] rawDataModelViewsOverlays = null;
         JLayeredPane[] underlays = null;
@@ -625,23 +655,19 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
         overallMinX -= xMarginStretch;
         overallMaxX += xMarginStretch;
 
-//        if (!(rawDataModelViews[0][0] instanceof SessionOfStandardView)){
         for (int i = 0; i < countOfDataModels; i++) {
             double overallMinY = Double.MAX_VALUE;
             double overallMaxY = -Double.MAX_VALUE;
             boolean atLeastOneStandard = false;
 
-            for (int f = 0; f < (fractionCountForHorizontalLayout); f++) {//        fractionMap.length; f ++) {
+            for (int f = 0; f < (fractionCountForHorizontalLayout); f++) {
                 if (fractionMap[f].isStandard() && fractionMap[f].isIncluded()) {
-//                    atLeastOneStandard = true;
-                    // if (  ! rawDataModelViews[i][f].isNotShownDueToBelowDetectionFlag() ) {
                     atLeastOneStandard = true;
 
                     if (!Double.isInfinite(rawDataModelViews[i][f].getMinY()) && !Double.isInfinite(rawDataModelViews[i][f].getMaxY())) {
                         overallMinY = Math.min(overallMinY, rawDataModelViews[i][f].getMinY());
                         overallMaxY = Math.max(overallMaxY, rawDataModelViews[i][f].getMaxY());
                     }
-                    //  }
                 }
             }
 
@@ -687,13 +713,6 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
                     // these local axis boxes will be placed when their fraction is placed
                     if (fractionMap[f].isShowLocalYAxis()) {
                         AbstractRawDataView localYAxisPane = new YAxisView( //
-                                //
-                                //
-                                //
-                                //
-                                //
-                                //
-                                //
                                 new AbstractRawDataView[]{rawDataModelViews[i][f]},//
                                 this,//
                                 fractionMap[f].isStandard() ? Color.white : ReduxConstants.LightBlueForUnknowns, //
@@ -803,21 +822,6 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
 
                         // jan 2013 add in data view chooser panel upper left corner
                         makeDataPresentationModeChooserPanel(standardsForYAxisArray[0].getMyOnPeakNormalizedAquireTimes());
-//                        dataPresentationModeChooserPanel = //
-//                                new DataPresentationModeChooserPanel(//
-//                                        //
-//                                        this,//
-//                                        dataPresentationMode,//
-//                                        standardsForYAxisArray[0].getMyOnPeakNormalizedAquireTimes(),//
-//                                        new Rectangle( //
-//                                                //
-//                                                0, 0, //
-//                                                tripoliSessionRawDataViewYAxis.getWidth(), //
-//                                                HEIGHT_OF_FRACTION_INFO_PANELS));
-//
-//                        dataPresentationModeChooserPanel.preparePanel();
-//
-//                        tripoliSessionRawDataViewYAxis.add(dataPresentationModeChooserPanel, javax.swing.JLayeredPane.DRAG_LAYER);
                     }
 
                 }
@@ -877,10 +881,8 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
 
                 // build x-axis pane LABEL for overviews to be placed in yaxis column
                 AbstractRawDataView overlayViewXAxisLabel = new XAxisOverlayViewLabel(//
-                        //
                         rawDataModelViews[0][0], //
                         new Rectangle(//
-                                //
                                 1,//
                                 i * (dataModelHeight + HEIGHT_OF_OVERLAY_XAXIS_PANES + residualsHeight + verticalGraphSeparation) + topMargin + dataModelHeight, //
                                 tripoliSessionRawDataViewYAxis.getWidth() - 1, //
@@ -891,18 +893,18 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
                 // place overlayViewXAxisLabel in yaxis column
                 tripoliSessionRawDataViewYAxis.add(overlayViewXAxisLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-                // detect if overlay for downhole fractionation of alphas ***************************************** ALPHAS OVERLAY for downhole fractionation
+                // detect if overlay for downhole fractionation *****************************************  OVERLAY for downhole fractionation
                 // TODO: dec 2012 check for missing ratio due to all belowDetection
                 if (rawDataModelViews[i][0] instanceof FitFunctionsOnRatioDataView) {
                     RawRatioNames rrName = //
                             rawDataModelViews[i][0].getDataModel().getRawRatioModelName();
 
-                    ((DataViewsOverlay) rawDataModelViewsOverlay).setFractionationAlphaDataModel(downholeFractionationAlphaDataModels.get(rrName));
+                    ((DataViewsOverlay) rawDataModelViewsOverlay).setFractionationDataModel(downholeFractionationDataModels.get(rrName));
 
-//                    ((YAxisView) yAxisPane).setDataViewsOverlay( rawDataModelViewsOverlay );
                     // build DownholeFitFunctionsPresentationView panes
                     AbstractRawDataView fitFunctionView = new DownholeFitFunctionsPresentationView(//
-                            this, downholeFractionationAlphaDataModels.get(rrName),//
+                            //
+                            this, downholeFractionationDataModels.get(rrName),//
                             (FitFunctionDataInterface) rawDataModelViewsOverlay, //
                             new Rectangle(//
                                     leftMargin + dataModelWidth + horizontalGraphSeparation, //
@@ -915,8 +917,7 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
 
                     // build fit function residuals panes
                     AbstractRawDataView fitFunctionResidualsView = new FitFunctionResidualsView(//
-                            //
-                            downholeFractionationAlphaDataModels.get(rrName),//
+                            downholeFractionationDataModels.get(rrName),//
                             dataPresentationMode, //
                             new Rectangle(//
                                     leftMargin,//
@@ -947,22 +948,6 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
 
                     // march 2013 add in data view chooser panel upper left corner
                     makeDataPresentationModeChooserPanel(new double[0]);
-//                    dataPresentationModeChooserPanel = //
-//                            new DataPresentationModeChooserPanel(//
-//                                    //
-//                                    this,//
-//                                    dataPresentationMode,//
-//                                    new double[0],//
-//                                    new Rectangle( //
-//                                            //
-//                                            0, 0, //
-//                                            tripoliSessionRawDataViewYAxis.getWidth(), //
-//                                            topMargin));
-//
-//                    dataPresentationModeChooserPanel.preparePanel();
-//
-//                    tripoliSessionRawDataViewYAxis.add(dataPresentationModeChooserPanel, javax.swing.JLayeredPane.DRAG_LAYER);
-
                 }
 
                 rawDataModelViewsOverlay.setMinY(overallMinY);
@@ -973,27 +958,17 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
                 rawDataModelViewsOverlay.setTics(yAxisTics);
                 rawDataModelViewsOverlay.preparePanel();
 
-////                add( rawDataModelViewsOverlay, javax.swing.JLayeredPane.DEFAULT_LAYER );
                 add(underlay, javax.swing.JLayeredPane.DEFAULT_LAYER);
                 underlay.add(rawDataModelViewsOverlay, javax.swing.JLayeredPane.PALETTE_LAYER);
 
-            } else // detect if grid for intercept fractionation of alphas *********************************** Intercept Fractionation of Alphas
+            } else // detect if grid for intercept fractionation of standards *********************************** Intercept Fractionation of standards
             if (FRACTION_LAYOUT_VIEW_STYLE.equals(FractionLayoutViewStylesEnum.GRID_INTERCEPT)) {
-                //System.out.println( "INTERCEPT" );
                 for (int f = 0; f < (fractionCountForHorizontalLayout); f++) {
                     ((FitFunctionsOnRatioDataView) rawDataModelViews[i][f]).setShowFittedFunction(true);
                 }
             }
-//        }
         }
 
-//        // feb 2013 for masking shades
-//        try {
-//            ((DataPresentationModeChooserPanel)dataPresentationModeChooserPanel).setMaskingMinX( overallMinX );
-//            ((DataPresentationModeChooserPanel)dataPresentationModeChooserPanel).setMaskingMaxX( overallMaxX );
-//            dataPresentationModeChooserPanel.preparePanel();
-//        } catch (Exception e) {
-//        }
         // establish graphWidth 
         if (FRACTION_LAYOUT_VIEW_STYLE.equals(FractionLayoutViewStylesEnum.GRAPH)) {
             minX = tripoliFractions.first().getPeakTimeStamp();
@@ -1032,7 +1007,6 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
         }
 
         for (int f = 0; f < (fractionCountForHorizontalLayout); f++) {
-
             if (doIncreaseCountOfInterceptPanels) {
                 countOfInterceptFitFunctionsPresentationPanes++;
                 doIncreaseCountOfInterceptPanels = false;
@@ -1054,12 +1028,11 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
                     for (int i = 0; i < countOfDataModels; i++) {
                         localYAxisViewsArray[i] = localYAxisViews[i][f];
                     }
-
                     countOfLocalYAxisPanes++;
                 }
 
                 // detect if local InterceptFitFunctionsPresentationPane created 
-                // fraction alphas view is current
+                // fraction fits view is current
                 if (fractionMap[f].isShowLocalInterceptFitPanel() //
                         && //
                         (rawDataModelViews[0][0] instanceof FitFunctionsOnRatioDataView)) {
@@ -1067,7 +1040,6 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
                     for (int i = 0; i < countOfDataModels; i++) {
                         interceptFitFunctionsPresentationPanesArray[i] = interceptFitFunctionsPresentationViews[i][f];
                     }
-
                     doIncreaseCountOfInterceptPanels = true;
                 }
             }
@@ -1100,7 +1072,6 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
             if (!FRACTION_LAYOUT_VIEW_STYLE.equals(FractionLayoutViewStylesEnum.OVERLAY)) {
                 tripoliFractionViewsContainer = new JLayeredPane(); //
                 tripoliFractionViewsContainer.setBounds(new Rectangle( //
-                        //
                         (int) mapTimeStamp,//
                         0, //
                         FRACTION_LAYOUT_VIEW_STYLE.equals(FractionLayoutViewStylesEnum.SESSION) ? sessionModelWidth : dataModelWidth, //
@@ -1122,7 +1093,6 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
                             new Rectangle(0, 0, dataModelWidth, HEIGHT_OF_FRACTION_INFO_PANELS), //
                             zoomSlidersIndependent);
 
-//                    tripoliFractionViewsContainer.add(fractionInfoPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
                     tripoliFractionInfoViewsContainer.add(fractionInfoPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
                 }
 
@@ -1209,7 +1179,6 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
     private void makeDataPresentationModeChooserPanel(double[] timeArray) {
         dataPresentationModeChooserPanel = //
                 new DataPresentationModeChooserPanel(//
-                        //
                         this,//
                         dataPresentationMode,//
                         timeArray,//
@@ -1317,7 +1286,6 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
 
         setRawDataSourceMethod(rawDataSourceMethod);
 
-//        setSessionModelWidth(SessionOfStandardView.DEFAULT_WIDTH_OF_PANE);
         dataModelHeight = 180;
 
         refreshPanel();
