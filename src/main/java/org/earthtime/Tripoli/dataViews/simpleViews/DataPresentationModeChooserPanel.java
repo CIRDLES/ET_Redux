@@ -100,11 +100,18 @@ public class DataPresentationModeChooserPanel extends AbstractRawDataView {
 
     }
 
-    public void setShowLogRatioButtonOnly(){
-        ratiosChooser.setEnabled(false);
-        alphasChooser.setEnabled(false);
+    public void setShowLogRatioButtonOnly() {
+        ratiosChooser.setVisible(false);
+        alphasChooser.setVisible(false);
     }
-    
+
+    public void setHideAlphaButton() {
+        alphasChooser.setVisible(false);
+        if (alphasChooser.isSelected()) {
+            ratiosChooser.doClick();
+        }
+    }
+
     @Override
     public void preparePanel() {
         this.removeAll();

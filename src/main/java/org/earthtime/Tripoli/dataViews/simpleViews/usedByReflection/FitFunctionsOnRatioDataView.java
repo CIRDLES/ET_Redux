@@ -244,7 +244,7 @@ public class FitFunctionsOnRatioDataView extends AbstractRawDataView implements 
             } else {
                 myOnPeakData = ((RawRatioDataModel) rawRatioDataModel).getLogRatios().clone();
                 for (int i = 0; i < myOnPeakData.length; i++) {
-                    double convertedOnPeak = convertLogDatumToPresentationMode(myOnPeakData[i]);//convertLogDatumToPresentationMode(myOnPeakData[i], myRatiosOnPeakData[i]);// 
+                    double convertedOnPeak = convertLogDatumToPresentationMode(myOnPeakData[i]);
                     myOnPeakData[i] = convertedOnPeak;
                     double convertedFitFunc = convertLogDatumToPresentationMode(fittedFunctionValues[i]);
                     fittedFunctionValues[i] = convertedFitFunc;

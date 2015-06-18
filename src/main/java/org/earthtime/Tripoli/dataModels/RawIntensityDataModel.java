@@ -862,6 +862,7 @@ public class RawIntensityDataModel //
     /**
      * @return the belowDetection
      */
+    @Override
     public boolean isBelowDetection() {
         return belowDetection;
     }

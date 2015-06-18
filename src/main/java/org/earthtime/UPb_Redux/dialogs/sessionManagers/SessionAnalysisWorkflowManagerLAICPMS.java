@@ -259,7 +259,8 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
 
     private void setDefaultZoom() {
         yAxisZoomSlider.setValue(TripoliSessionRawDataView.DEFAULT_HEIGHT_OF_FRACTION_PANES);
-        xAxisZoomSlider.setValue((TripoliSessionRawDataView.FRACTION_LAYOUT_VIEW_STYLE.equals(FractionLayoutViewStylesEnum.SESSION) ? TripoliSessionRawDataView.DEFAULT_WIDTH_OF_SESSION_PANES : TripoliSessionRawDataView.DEFAULT_WIDTH_OF_FRACTION_PANES));
+        xAxisZoomSlider.setValue((TripoliSessionRawDataView.FRACTION_LAYOUT_VIEW_STYLE.equals(FractionLayoutViewStylesEnum.SESSION)//
+                ? TripoliSessionRawDataView.DEFAULT_WIDTH_OF_SESSION_PANES : TripoliSessionRawDataView.DEFAULT_WIDTH_OF_FRACTION_PANES));
 
     }
 
@@ -343,7 +344,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
     }
 
     private void showRawRatioDataModels() {
-        // assumption is that tripoliSessionRawDataView is initialize
+        // assumption is that tripoliSessionRawDataView is initialized
 
         if (TripoliSessionRawDataView.FRACTION_LAYOUT_VIEW_STYLE.//
                 equals(FractionLayoutViewStylesEnum.SESSION)//
@@ -361,7 +362,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
 
         tripoliSessionRawDataView.refreshPanel();
         //cause slider to synch
-        ((TripoliSessionRawDataView) tripoliSessionRawDataView).synchXAxisZoomSliderValue(((TripoliSessionRawDataView) tripoliSessionRawDataView).getDataModelWidth());
+        //((TripoliSessionRawDataView) tripoliSessionRawDataView).synchXAxisZoomSliderValue(((TripoliSessionRawDataView) tripoliSessionRawDataView).getDataModelWidth());
 
         setEnableAllGridGraphOverlayButtons(true);
     }
@@ -711,13 +712,13 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         yAxisZoomSlider = new javax.swing.JSlider();
         fractionationTechniqueTabbedPane = new javax.swing.JTabbedPane();
         DownholePanel = new javax.swing.JPanel();
-        downholeStandardSession_radioButton = new javax.swing.JRadioButton();
         downholeFitStandards_radioButton = new javax.swing.JRadioButton();
+        downholeFitEachStandard_radioButton = new javax.swing.JRadioButton();
+        downholeStandardSession_radioButton = new javax.swing.JRadioButton();
         downholeCorrectedUnknownRatios_radioButton = new javax.swing.JRadioButton();
-        downholeFitStandards_radioButton1 = new javax.swing.JRadioButton();
         interceptPanel = new javax.swing.JPanel();
-        interceptStandardSession_radioButton = new javax.swing.JRadioButton();
         interceptFitEachStandard_radioButton = new javax.swing.JRadioButton();
+        interceptStandardSession_radioButton = new javax.swing.JRadioButton();
         interceptFitUnknownRatios_radioButton = new javax.swing.JRadioButton();
         restoreAllAquisitions =  new ET_JButton();
         applyCommonLeadCorrections_button =  new ET_JButton();
@@ -1004,22 +1005,6 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         DownholePanel.setFont(new java.awt.Font("Arial", 0, 10)); // NOI18N
         DownholePanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        downholeStandardSession_radioButton.setBackground(new java.awt.Color(204, 204, 204));
-        viewChooser_buttonGroup.add(downholeStandardSession_radioButton);
-        downholeStandardSession_radioButton.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
-        downholeStandardSession_radioButton.setText("Fit Standard Session");
-        downholeStandardSession_radioButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        downholeStandardSession_radioButton.setBorderPainted(true);
-        downholeStandardSession_radioButton.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        downholeStandardSession_radioButton.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        downholeStandardSession_radioButton.setOpaque(true);
-        downholeStandardSession_radioButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                downholeStandardSession_radioButtonActionPerformed(evt);
-            }
-        });
-        DownholePanel.add(downholeStandardSession_radioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 50, 168, 20));
-
         downholeFitStandards_radioButton.setBackground(new java.awt.Color(173, 174, 204));
         viewChooser_buttonGroup.add(downholeFitStandards_radioButton);
         downholeFitStandards_radioButton.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
@@ -1036,11 +1021,43 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         });
         DownholePanel.add(downholeFitStandards_radioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 168, 20));
 
+        downholeFitEachStandard_radioButton.setBackground(new java.awt.Color(173, 174, 204));
+        viewChooser_buttonGroup.add(downholeFitEachStandard_radioButton);
+        downholeFitEachStandard_radioButton.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        downholeFitEachStandard_radioButton.setText("Fit Each Standard");
+        downholeFitEachStandard_radioButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        downholeFitEachStandard_radioButton.setBorderPainted(true);
+        downholeFitEachStandard_radioButton.setEnabled(false);
+        downholeFitEachStandard_radioButton.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        downholeFitEachStandard_radioButton.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        downholeFitEachStandard_radioButton.setOpaque(true);
+        downholeFitEachStandard_radioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                downholeFitEachStandard_radioButtonActionPerformed(evt);
+            }
+        });
+        DownholePanel.add(downholeFitEachStandard_radioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 25, 168, 20));
+
+        downholeStandardSession_radioButton.setBackground(new java.awt.Color(204, 204, 204));
+        viewChooser_buttonGroup.add(downholeStandardSession_radioButton);
+        downholeStandardSession_radioButton.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        downholeStandardSession_radioButton.setText("Fit Standard Session");
+        downholeStandardSession_radioButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        downholeStandardSession_radioButton.setBorderPainted(true);
+        downholeStandardSession_radioButton.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        downholeStandardSession_radioButton.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        downholeStandardSession_radioButton.setOpaque(true);
+        downholeStandardSession_radioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                downholeStandardSession_radioButtonActionPerformed(evt);
+            }
+        });
+        DownholePanel.add(downholeStandardSession_radioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 50, 168, 20));
+
         downholeCorrectedUnknownRatios_radioButton.setBackground(new java.awt.Color(173, 204, 204));
         viewChooser_buttonGroup.add(downholeCorrectedUnknownRatios_radioButton);
         downholeCorrectedUnknownRatios_radioButton.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         downholeCorrectedUnknownRatios_radioButton.setText("Correct Unknowns");
-        downholeCorrectedUnknownRatios_radioButton.setActionCommand("Correct Unknowns");
         downholeCorrectedUnknownRatios_radioButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         downholeCorrectedUnknownRatios_radioButton.setBorderPainted(true);
         downholeCorrectedUnknownRatios_radioButton.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -1053,44 +1070,10 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         });
         DownholePanel.add(downholeCorrectedUnknownRatios_radioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 75, 168, -1));
 
-        downholeFitStandards_radioButton1.setBackground(new java.awt.Color(173, 174, 204));
-        viewChooser_buttonGroup.add(downholeFitStandards_radioButton1);
-        downholeFitStandards_radioButton1.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
-        downholeFitStandards_radioButton1.setText("Fit Each Standard");
-        downholeFitStandards_radioButton1.setActionCommand("Fit Each Standard");
-        downholeFitStandards_radioButton1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        downholeFitStandards_radioButton1.setBorderPainted(true);
-        downholeFitStandards_radioButton1.setEnabled(false);
-        downholeFitStandards_radioButton1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        downholeFitStandards_radioButton1.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        downholeFitStandards_radioButton1.setOpaque(true);
-        downholeFitStandards_radioButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                downholeFitStandards_radioButton1ActionPerformed(evt);
-            }
-        });
-        DownholePanel.add(downholeFitStandards_radioButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 25, 168, 20));
-
         fractionationTechniqueTabbedPane.addTab("Downhole", DownholePanel);
 
         interceptPanel.setBackground(new java.awt.Color(250, 240, 230));
         interceptPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        interceptStandardSession_radioButton.setBackground(new java.awt.Color(204, 204, 204));
-        viewChooser_buttonGroup.add(interceptStandardSession_radioButton);
-        interceptStandardSession_radioButton.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
-        interceptStandardSession_radioButton.setText("Fit Standard Session");
-        interceptStandardSession_radioButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        interceptStandardSession_radioButton.setBorderPainted(true);
-        interceptStandardSession_radioButton.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        interceptStandardSession_radioButton.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        interceptStandardSession_radioButton.setOpaque(true);
-        interceptStandardSession_radioButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                interceptStandardSession_radioButtonActionPerformed(evt);
-            }
-        });
-        interceptPanel.add(interceptStandardSession_radioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 168, 20));
 
         interceptFitEachStandard_radioButton.setBackground(new java.awt.Color(173, 174, 204));
         viewChooser_buttonGroup.add(interceptFitEachStandard_radioButton);
@@ -1107,6 +1090,22 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
             }
         });
         interceptPanel.add(interceptFitEachStandard_radioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 168, 20));
+
+        interceptStandardSession_radioButton.setBackground(new java.awt.Color(204, 204, 204));
+        viewChooser_buttonGroup.add(interceptStandardSession_radioButton);
+        interceptStandardSession_radioButton.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        interceptStandardSession_radioButton.setText("Fit Standard Session");
+        interceptStandardSession_radioButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        interceptStandardSession_radioButton.setBorderPainted(true);
+        interceptStandardSession_radioButton.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        interceptStandardSession_radioButton.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        interceptStandardSession_radioButton.setOpaque(true);
+        interceptStandardSession_radioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                interceptStandardSession_radioButtonActionPerformed(evt);
+            }
+        });
+        interceptPanel.add(interceptStandardSession_radioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 168, 20));
 
         interceptFitUnknownRatios_radioButton.setBackground(new java.awt.Color(173, 204, 204));
         viewChooser_buttonGroup.add(interceptFitUnknownRatios_radioButton);
@@ -1525,9 +1524,9 @@ private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.
         }
     }//GEN-LAST:event_applyCommonLeadCorrections_buttonActionPerformed
 
-    private void downholeFitStandards_radioButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downholeFitStandards_radioButton1ActionPerformed
+    private void downholeFitEachStandard_radioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downholeFitEachStandard_radioButtonActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_downholeFitStandards_radioButton1ActionPerformed
+    }//GEN-LAST:event_downholeFitEachStandard_radioButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel DownholePanel;
@@ -1536,8 +1535,8 @@ private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.
     private javax.swing.JRadioButton correctedIsotopes_radioButton;
     private javax.swing.JButton defaultZoom_button;
     private javax.swing.JRadioButton downholeCorrectedUnknownRatios_radioButton;
+    private javax.swing.JRadioButton downholeFitEachStandard_radioButton;
     private javax.swing.JRadioButton downholeFitStandards_radioButton;
-    private javax.swing.JRadioButton downholeFitStandards_radioButton1;
     private javax.swing.JRadioButton downholeStandardSession_radioButton;
     private javax.swing.JTabbedPane fractionationTechniqueTabbedPane;
     private javax.swing.JRadioButton graphPlot_radioButton;

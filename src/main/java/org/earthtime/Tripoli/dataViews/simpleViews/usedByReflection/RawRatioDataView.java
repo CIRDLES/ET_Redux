@@ -50,13 +50,13 @@ public class RawRatioDataView extends AbstractRawDataView {
      * @param bounds
      * @param invokeMouseListener
      */
-    public RawRatioDataView (//
+    public RawRatioDataView(//
             JLayeredPane sampleSessionDataView,//
             TripoliFraction tripoliFraction,//
             DataModelInterface rawRatioDataModel,//
             Rectangle bounds,//
-            boolean invokeMouseListener ) {
-        super( sampleSessionDataView, tripoliFraction, bounds, invokeMouseListener, true );
+            boolean invokeMouseListener) {
+        super(sampleSessionDataView, tripoliFraction, bounds, invokeMouseListener, true);
 
         this.rawRatioDataModel = rawRatioDataModel;
 
@@ -67,26 +67,26 @@ public class RawRatioDataView extends AbstractRawDataView {
      * @param g2d
      */
     @Override
-    public void paint ( Graphics2D g2d ) {
-        super.paint( g2d );
+    public void paint(Graphics2D g2d) {
+        super.paint(g2d);
 
-        if (isNotShownDueToBelowDetectionFlag()){
+        if (isNotShownDueToBelowDetectionFlag()) {
             setBackground(ReduxConstants.palePinkBelowDetection);
             g2d.drawString("BELOW DETECTION", 25, 25);
         }
-        
-        if (  ! isNotShownDueToBelowDetectionFlag() ) {
-            for (int i = 0; i < myOnPeakData.length; i ++) {
+
+        if (!isNotShownDueToBelowDetectionFlag()) {
+            for (int i = 0; i < myOnPeakData.length; i++) {
                 Shape rawRatioPoint = new java.awt.geom.Ellipse2D.Double( //
-                        mapX( myOnPeakNormalizedAquireTimes[i] ), mapY( myOnPeakData[i] ), 1, 1 );
-                g2d.setPaint( determineDataColor( i, Color.black ) );
-                
-                // dec 2012 for visualization only
-                if (myOnPeakData[i] <= Double.MIN_VALUE){
-                    g2d.setPaint(Color.red );
-                }
-                
-                g2d.draw( rawRatioPoint );
+                        mapX(myOnPeakNormalizedAquireTimes[i]), mapY(myOnPeakData[i]), 1, 1);
+                g2d.setPaint(determineDataColor(i, Color.black));
+
+//                // dec 2012 for visualization only
+//                if (myOnPeakData[i] <= Double.MIN_VALUE) {
+//                    g2d.setPaint(Color.red);
+//                }
+
+                g2d.draw(rawRatioPoint);
             }
         }
     }
@@ -95,13 +95,13 @@ public class RawRatioDataView extends AbstractRawDataView {
      *
      */
     @Override
-    public void preparePanel () {
+    public void preparePanel() {
 //        System.out.println("In RRDView with fraction " + tripoliFraction.getFractionID() + " " + rawRatioDataModel.getDataModelName());
 
         this.removeAll();
 
-        setDisplayOffsetY( 0.0 );
-        setDisplayOffsetX( 0.0 );
+        setDisplayOffsetY(0.0);
+        setDisplayOffsetX(0.0);
 
         // normalize aquireTimes
         myOnPeakNormalizedAquireTimes = rawRatioDataModel.getNormalizedOnPeakAquireTimes();
@@ -109,28 +109,31 @@ public class RawRatioDataView extends AbstractRawDataView {
         minX = myOnPeakNormalizedAquireTimes[0];
         maxX = myOnPeakNormalizedAquireTimes[myOnPeakNormalizedAquireTimes.length - 1];
 
-        notShownDueToBelowDetectionFlag = ((RawRatioDataModel) rawRatioDataModel).isBelowDetection();
+        notShownDueToBelowDetectionFlag = rawRatioDataModel.isBelowDetection();
 
-        if (  ! notShownDueToBelowDetectionFlag ) {
+        if (!notShownDueToBelowDetectionFlag) {
 
             // walk ratios and get min and max for axes
-            myOnPeakData = ((RawRatioDataModel) rawRatioDataModel).getRatios();
-
+            myOnPeakData = ((RawRatioDataModel) rawRatioDataModel).getLogRatios().clone();//.getRatios().clone();
+            for (int i = 0; i < myOnPeakData.length; i++) {
+                double convertedOnPeak = convertLogDatumToPresentationMode(myOnPeakData[i]);
+                myOnPeakData[i] = convertedOnPeak;
+            }
             // Y-axis is ratios
             minY = Double.MAX_VALUE;
-            maxY =  - Double.MAX_VALUE;
+            maxY = -Double.MAX_VALUE;
 
             // find min and max y
-            for (int i = 0; i < myOnPeakData.length; i ++) {
-                minY = Math.min( minY, myOnPeakData[i] );
+            for (int i = 0; i < myOnPeakData.length; i++) {
+                minY = Math.min(minY, myOnPeakData[i]);
             }
-            for (int i = 0; i < myOnPeakData.length; i ++) {
-                maxY = Math.max( maxY, myOnPeakData[i] );
+            for (int i = 0; i < myOnPeakData.length; i++) {
+                maxY = Math.max(maxY, myOnPeakData[i]);
             }
 
             // adjust margins for unknowns
-            if (  ! tripoliFraction.isStandard() ) {
-                double yMarginStretch = TicGeneratorForAxes.generateMarginAdjustment( minY, maxY, 0.05 );
+            if (!tripoliFraction.isStandard()) {
+                double yMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(minY, maxY, 0.05);
                 minY -= yMarginStretch;
                 maxY += yMarginStretch;
             }
@@ -142,7 +145,7 @@ public class RawRatioDataView extends AbstractRawDataView {
      * @return
      */
     @Override
-    public DataModelInterface getDataModel () {
+    public DataModelInterface getDataModel() {
         return rawRatioDataModel;
     }
 

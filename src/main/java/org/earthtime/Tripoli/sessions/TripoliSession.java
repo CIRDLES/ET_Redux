@@ -915,7 +915,6 @@ public class TripoliSession implements
     }
 
     private void applyFractionationCorrectionsForIntercept() {
-        System.out.println("\nINTERCEPT Fractionation Correction");
 
         // walk the sessions
         Iterator<RawRatioNames> sessionForStandardsIterator = sessionForStandardsInterceptFractionation.keySet().iterator();
