@@ -68,10 +68,6 @@ public class FitFunctionTypeEnumTest {
         assertEquals("LINE",ave.getName()); 
         assertEquals("Line",ave.getPrettyName());
         
-        ave=FitFunctionTypeEnum.LMALG;
-        assertEquals("LMALG",ave.getName());
-        assertEquals("LMalg",ave.getPrettyName());
-        
         ave=FitFunctionTypeEnum.MEAN;
         assertEquals("MEAN",ave.getName()); 
         assertEquals("Mean",ave.getPrettyName());

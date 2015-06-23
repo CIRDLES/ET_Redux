@@ -31,6 +31,10 @@ public enum FitFunctionTypeEnum {
      * 
      */
     MEAN("MEAN", "Mean"),
+    /**
+     * MEAN for downhole method
+     */
+    MEAN_DH("MEAN", "Mean"),
     // added nov 2014 to handle Pbc */204 ratios with negative values for which no log exists
     MEANRATIO("MEANRATIO", "Mean of Ratios"),
     /**
@@ -48,10 +52,6 @@ public enum FitFunctionTypeEnum {
      */
     EXPMAT("EXPMAT", "Exponential Cov Mat"),
 
-    /**
-     *
-     */
-    LMALG("LMALG", "LMalg"),
     /**
      * 
      */
