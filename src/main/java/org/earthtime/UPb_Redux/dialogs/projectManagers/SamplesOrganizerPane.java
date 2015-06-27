@@ -86,14 +86,14 @@ public class SamplesOrganizerPane extends JLayeredPane implements ReduxDragAndDr
 
         // walk the samples
         for (int i = 0; i < tripoliSamples.size(); i++) {
-            ActionListener closeButtonActionListener = new closeSampleButtonActionListener();
+            ActionListener closeButtonActionListener = new CloseSampleButtonActionListener();
             SampleFractionListDisplayPane sampleDisplayPane =//
                     new SampleFractionListDisplayPane( //
                             tripoliSamples.get(i), //
                             closeButtonActionListener, //
                             this, //
                             projectManager);
-            ((closeSampleButtonActionListener) closeButtonActionListener).setSampleDisplayPane(sampleDisplayPane);
+            ((CloseSampleButtonActionListener) closeButtonActionListener).setSampleDisplayPane(sampleDisplayPane);
             sampleDisplayPanes.add(sampleDisplayPane);
             sampleFractionLists_pane.add(sampleDisplayPane);
         }
@@ -107,7 +107,7 @@ public class SamplesOrganizerPane extends JLayeredPane implements ReduxDragAndDr
         // button to create additional SampleFractionListDisplayPanels
         addSampleButton = new ET_JButton("+");
         addSampleButton.setBounds(5, myHeight - 50, 15, 15);
-        addSampleButton.addActionListener(new addSampleButtonActionListener(this));
+        addSampleButton.addActionListener(new AddSampleButtonActionListener(this));
         this.add(addSampleButton, DEFAULT_LAYER);
 
         dndClipboardListItems = new DragAndDropListItemInterface[0];
@@ -152,11 +152,11 @@ public class SamplesOrganizerPane extends JLayeredPane implements ReduxDragAndDr
         this.myWidth = myWidth;
     }
 
-    private class addSampleButtonActionListener implements ActionListener {
+    private class AddSampleButtonActionListener implements ActionListener {
 
         private final ReduxDragAndDropClipboardInterface samplesOrgPane;
 
-        public addSampleButtonActionListener(ReduxDragAndDropClipboardInterface samplesOrgPane) {
+        public AddSampleButtonActionListener(ReduxDragAndDropClipboardInterface samplesOrgPane) {
             this.samplesOrgPane = samplesOrgPane;
         }
 
@@ -166,14 +166,14 @@ public class SamplesOrganizerPane extends JLayeredPane implements ReduxDragAndDr
             tripoliSamples.add(addedSample);
             projectManager.updateDataChangeStatus(true);
 
-            ActionListener closeButtonActionListener = new closeSampleButtonActionListener();
+            ActionListener closeButtonActionListener = new CloseSampleButtonActionListener();
             SampleFractionListDisplayPane sampleDisplayPane =//
                     new SampleFractionListDisplayPane( //
                             addedSample,//
                             closeButtonActionListener,//
                             samplesOrgPane, //
                             projectManager);
-            ((closeSampleButtonActionListener) closeButtonActionListener).setSampleDisplayPane(sampleDisplayPane);
+            ((CloseSampleButtonActionListener) closeButtonActionListener).setSampleDisplayPane(sampleDisplayPane);
             sampleDisplayPanes.add(sampleDisplayPane);
             sampleFractionLists_pane.add(sampleDisplayPane);
 
@@ -182,11 +182,11 @@ public class SamplesOrganizerPane extends JLayeredPane implements ReduxDragAndDr
         }
     }
 
-    private class closeSampleButtonActionListener implements ActionListener {
+    private class CloseSampleButtonActionListener implements ActionListener {
 
         private JLayeredPane sampleDisplayPane;
 
-        public closeSampleButtonActionListener() {
+        public CloseSampleButtonActionListener() {
         }
 
         @Override

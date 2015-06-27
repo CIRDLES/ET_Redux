@@ -87,7 +87,7 @@ public class ReportSettingsManager extends DialogEditor {
             catList.add(cats.get( c ));
         }
 
-        categories_list.setCellRenderer( new reportListRenderer() );
+        categories_list.setCellRenderer( new ReportListRenderer() );
         categories_list.setListData( catList );
         categories_list.addListSelectionListener( new ReportListSelectionListener() );
         categories_list.setSelectedIndex( 0 );
@@ -103,7 +103,7 @@ public class ReportSettingsManager extends DialogEditor {
         }
 
         columns_list.setSelectedIndex( -1 );
-        columns_list.setCellRenderer( new reportListRenderer() );
+        columns_list.setCellRenderer( new ReportListRenderer() );
         columns_list.setListData( colList );
         columns_list.addListSelectionListener( new ReportListSelectionListener() );
         columns_list.grabFocus();
@@ -111,10 +111,10 @@ public class ReportSettingsManager extends DialogEditor {
 
     }
 
-    class reportListRenderer extends DefaultListCellRenderer {
+    class ReportListRenderer extends DefaultListCellRenderer {
 
         /** Creates a new instance of LocaleRenderer */
-        public reportListRenderer () {
+        public ReportListRenderer () {
         }
 
         @Override

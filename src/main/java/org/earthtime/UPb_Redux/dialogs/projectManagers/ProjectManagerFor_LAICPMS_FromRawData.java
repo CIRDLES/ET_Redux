@@ -265,7 +265,7 @@ WashStateElementIISingleCollFileHandler.getInstance();
             analysisPurposeChooser.addItem(ap.toString());
         }
 
-        analysisPurposeChooser.addItemListener(new analysisPurposeItemListener());
+        analysisPurposeChooser.addItemListener(new AnalysisPurposeItemListener());
 
         loadProject();
 
@@ -289,7 +289,7 @@ WashStateElementIISingleCollFileHandler.getInstance();
         this.amChanged = amChanged;
     }
 
-    class analysisPurposeItemListener implements ItemListener {
+    class AnalysisPurposeItemListener implements ItemListener {
         // This method is called only if a new item has been selected.
 
         @Override

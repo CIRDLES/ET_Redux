@@ -143,7 +143,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
 
         setBackground(Color.white);
 
-        addComponentListener(new viewListener());
+        addComponentListener(new ViewListener());
     }
 
     /**
@@ -290,7 +290,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
         }
     }
 
-    private class viewListener implements ComponentListener {
+    private class ViewListener implements ComponentListener {
 
         @Override
         public void componentResized(ComponentEvent e) {
@@ -377,7 +377,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
         // start with singleton
         sortFractionsButton = new ET_JButton("Sort");
         sortFractionsButton.setFont(ReduxConstants.sansSerif_10_Bold);
-        sortFractionsButton.addActionListener(new sortButtonActionListener(2));
+        sortFractionsButton.addActionListener(new SortButtonActionListener(2));
         upperLeftCorner.add(sortFractionsButton, JLayeredPane.PALETTE_LAYER);
 
         reportHeader = new ReportPainter(this, "HEADER", false);
@@ -392,7 +392,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
 
             JButton sortButton = new ET_JButton("\u25B2 \u25BC");
             sortButton.setFont(ReduxConstants.sansSerif_10_Bold);
-            sortButton.addActionListener(new sortButtonActionListener(c));
+            sortButton.addActionListener(new SortButtonActionListener(c));
             sortButtons.add(sortButton);
 
             reportHeader.add(sortButton, DEFAULT_LAYER);
@@ -481,11 +481,11 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
 
     } // preparePanel
 
-    private class sortButtonActionListener implements ActionListener {
+    private class SortButtonActionListener implements ActionListener {
 
         int columnNumber;
 
-        public sortButtonActionListener(int columnNumber) {
+        public SortButtonActionListener(int columnNumber) {
             this.columnNumber = columnNumber;
         }
 

@@ -265,7 +265,7 @@ public class AliquotLegacyEditorForIDTIMS extends AliquotEditorDialog {
         tempJB.setForeground(Color.red);
         tempJB.setToolTipText("Click to DELETE Fraction!");
         tempJB.setMargin(new Insets(0, 0, 0, 0));
-        tempJB.addActionListener(new deleteFractionListener(tempFrac, row));
+        tempJB.addActionListener(new DeleteFractionListener(tempFrac, row));
         //tempJB.setFont(new Font("SansSerif", Font.PLAIN, 10));
         fractionDeleteButtons.add(tempJB);
         modifyComponentKeyMapForTable(tempJB, fractionDeleteButtons, max);
@@ -273,7 +273,7 @@ public class AliquotLegacyEditorForIDTIMS extends AliquotEditorDialog {
         // Buttons to open fraction editor
         tempJB
                 = new EditFractionButton("Kwiki", row, true);
-        //     tempJB.addActionListener(new editFractionListener(tempFrac, row));
+        //     tempJB.addActionListener(new EditFractionListener(tempFrac, row));
         fractionEditButtons.add(tempJB);
         modifyComponentKeyMapForTable(tempJB, fractionEditButtons, max);
 
@@ -957,13 +957,13 @@ public class AliquotLegacyEditorForIDTIMS extends AliquotEditorDialog {
         for (int f = 0; f
                 < fractionDeleteButtons.size(); f++) {
             ETFractionInterface fraction
-                    = ((deleteFractionListener) ((JButton) fractionDeleteButtons.get(f)).getActionListeners()[0]).getFraction();
+                    = ((DeleteFractionListener) ((JButton) fractionDeleteButtons.get(f)).getActionListeners()[0]).getFraction();
 
             ((AbstractButton) fractionDeleteButtons.get(f)).removeActionListener(((JButton) fractionDeleteButtons.get(f)).getActionListeners()[0]);
-            ((AbstractButton) fractionDeleteButtons.get(f)).addActionListener(new deleteFractionListener(fraction, f));
+            ((AbstractButton) fractionDeleteButtons.get(f)).addActionListener(new DeleteFractionListener(fraction, f));
 
 //            ((JButton) fractionEditButtons.get(f)).removeActionListener(((JButton) fractionEditButtons.get(f)).getActionListeners()[0]);
-//            ((JButton) fractionEditButtons.get(f)).addActionListener(new editFractionListener(myFraction, f));
+//            ((JButton) fractionEditButtons.get(f)).addActionListener(new EditFractionListener(myFraction, f));
         }
 
     }
@@ -1019,12 +1019,12 @@ public class AliquotLegacyEditorForIDTIMS extends AliquotEditorDialog {
 
     }
 
-    private class editFractionListener implements ActionListener {
+    private class EditFractionListener implements ActionListener {
 
         private int row;
         private ETFractionInterface fraction;
 
-        public editFractionListener(ETFractionInterface fraction, int row) {
+        public EditFractionListener(ETFractionInterface fraction, int row) {
             this.row = row;
             this.fraction = fraction;
         }
@@ -1059,12 +1059,12 @@ public class AliquotLegacyEditorForIDTIMS extends AliquotEditorDialog {
         }
     }
 
-    private class deleteFractionListener implements ActionListener {
+    private class DeleteFractionListener implements ActionListener {
 
         private int row;
         private ETFractionInterface fraction;
 
-        public deleteFractionListener(ETFractionInterface fraction, int row) {
+        public DeleteFractionListener(ETFractionInterface fraction, int row) {
             this.row = row;
             this.fraction = fraction;
         }

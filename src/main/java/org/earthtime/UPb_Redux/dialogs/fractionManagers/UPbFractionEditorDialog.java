@@ -356,11 +356,11 @@ public class UPbFractionEditorDialog extends DialogEditor {
     }
 
     // helper class to manage zircon checkbox
-    private class actionIsZirconListener implements ActionListener {
+    private class ActionIsZirconListener implements ActionListener {
 
         private ETFractionInterface myFraction;
 
-        public actionIsZirconListener(ETFractionInterface fraction) {
+        public ActionIsZirconListener(ETFractionInterface fraction) {
             myFraction = fraction;
         }
 
@@ -380,11 +380,11 @@ public class UPbFractionEditorDialog extends DialogEditor {
 
     // helper class to manage auto uranium toggle
     // TODO: could /should use myFraction ?
-    private class actionAutoUraniumListener implements ActionListener {
+    private class ActionAutoUraniumListener implements ActionListener {
 
         private ETFractionInterface fraction;
 
-        public actionAutoUraniumListener(ETFractionInterface fraction) {
+        public ActionAutoUraniumListener(ETFractionInterface fraction) {
             this.fraction = fraction;
         }
 
@@ -421,11 +421,11 @@ public class UPbFractionEditorDialog extends DialogEditor {
     }
 
     // helper class to manage reset all values
-    private class actionResetSlidersListener implements ActionListener {
+    private class ActionResetSlidersListener implements ActionListener {
 
         private ETFractionInterface fraction;
 
-        public actionResetSlidersListener(ETFractionInterface fraction) {
+        public ActionResetSlidersListener(ETFractionInterface fraction) {
             this.fraction = fraction;
         }
 
@@ -566,7 +566,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
             kwikiAutoU_button.setText("auto-generate U");
         }
 
-        ((actionAutoUraniumListener) kwikiAutoU_button.getActionListeners()[0]).setFraction(fraction);
+        ((ActionAutoUraniumListener) kwikiAutoU_button.getActionListeners()[0]).setFraction(fraction);
         // contrapositive
         kwikiAutoU_button.setEnabled(//
                 (!(((UPbFraction) fraction).hasMeasuredUranium()//
@@ -576,7 +576,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
         autoUSettings_panel.setVisible(!((UPbFraction) fraction).hasMeasuredUranium());
 
         // resetAll button
-        ((actionResetSlidersListener) kwikiResetAll_button.getActionListeners()[0]).setFraction(fraction);
+        ((ActionResetSlidersListener) kwikiResetAll_button.getActionListeners()[0]).setFraction(fraction);
 
         // date modes panel
         try {
@@ -630,7 +630,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
         } else {
             kwikiAutoU_button.setText("auto-generate U");
         }
-        kwikiAutoU_button.addActionListener(new actionAutoUraniumListener(fraction));
+        kwikiAutoU_button.addActionListener(new ActionAutoUraniumListener(fraction));
 
         // contrapositive
         kwikiAutoU_button.setEnabled(
@@ -643,7 +643,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
         kwikiResetAll_button = new javax.swing.JButton();
         kwikiResetAll_button.setForeground(new java.awt.Color(204, 0, 0));
         kwikiResetAll_button.setText("reset all values");
-        kwikiResetAll_button.addActionListener(new actionResetSlidersListener(fraction));
+        kwikiResetAll_button.addActionListener(new ActionResetSlidersListener(fraction));
 
         // oct 2010 initialize all kwiki elements
         kwikiTab.add(kwikiResetAll_button, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -1027,7 +1027,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
         fractionID_text.setDocument(new UnDoAbleDocument(fractionID_text, (editablePb && editableU)));
 
         fractionIsZircon_CheckBox.setEnabled(false);//april 2012 ! isCompiled() );
-        fractionIsZircon_CheckBox.addActionListener(new actionIsZirconListener(myFraction));
+        fractionIsZircon_CheckBox.addActionListener(new ActionIsZirconListener(myFraction));
 
         // feb 2011
         fractionIsZircon_CheckBox.setVisible(true);//april 2012false );
@@ -1563,7 +1563,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
         for (int i = 0; i < tracerActionListeners.length; i++) {
             tracerChooser.removeItemListener(tracerActionListeners[i]);
         }
-        tracerItemListener tracerActionListener = new tracerItemListener(myFraction);
+        TracerItemListener tracerActionListener = new TracerItemListener(myFraction);
         tracerChooser.addItemListener(tracerActionListener);
         try {
             initTracerModelChooser();
@@ -1587,7 +1587,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
         for (int i = 0; i < blankActionListeners.length; i++) {
             PbBlankChooser.removeItemListener(blankActionListeners[i]);
         }
-        ItemListener blankActionListener = new blankItemListener(myFraction);
+        ItemListener blankActionListener = new BlankItemListener(myFraction);
         PbBlankChooser.addItemListener(blankActionListener);
         try {
             initPbBlankModelChooser();
@@ -1905,18 +1905,15 @@ public class UPbFractionEditorDialog extends DialogEditor {
                 // Item was just selected
                 populateInitialPbModelFields(myFraction);
             }
-//            } else if ( evt.getStateChange() == ItemEvent.DESELECTED ) {
-//                // Item is no longer selected
-//            }
         }
     }
 
-    class blankItemListener implements ItemListener {
+    class BlankItemListener implements ItemListener {
         // This method is called only if a new item has been selected.
 
         private ETFractionInterface myFraction;
 
-        public blankItemListener(ETFractionInterface fraction) {
+        public BlankItemListener(ETFractionInterface fraction) {
             this.myFraction = fraction;
         }
 
@@ -1940,12 +1937,12 @@ public class UPbFractionEditorDialog extends DialogEditor {
         }
     }
 
-    class tracerItemListener implements ItemListener {
+    class TracerItemListener implements ItemListener {
         // This method is called only if a new item has been selected.
 
         private ETFractionInterface myFraction;
 
-        public tracerItemListener(ETFractionInterface fraction) {
+        public TracerItemListener(ETFractionInterface fraction) {
             this.myFraction = fraction;
         }
 

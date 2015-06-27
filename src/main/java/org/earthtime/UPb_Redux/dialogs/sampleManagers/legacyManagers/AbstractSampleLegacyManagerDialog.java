@@ -191,7 +191,7 @@ public abstract class AbstractSampleLegacyManagerDialog extends DialogEditor {
         }
 
         standardMineralNameChooser.setSelectedItem(mySample.getMineralName());
-        standardMineralNameChooser.addItemListener(new mineralNameItemListener());
+        standardMineralNameChooser.addItemListener(new MineralNameItemListener());
 
         // set up analysisPurposeChooser
         analysisPurposeChooser.removeAllItems();
@@ -200,7 +200,7 @@ public abstract class AbstractSampleLegacyManagerDialog extends DialogEditor {
         }
 
         analysisPurposeChooser.setSelectedItem(mySample.getAnalysisPurpose().toString());
-        analysisPurposeChooser.addItemListener(new analysisPurposeItemListener());
+        analysisPurposeChooser.addItemListener(new AnalysisPurposeItemListener());
 
         if (getMySample().isCalculateTWrhoForLegacyData()) {
             TWCalculateRho_radioBut.setSelected(true);
@@ -210,7 +210,7 @@ public abstract class AbstractSampleLegacyManagerDialog extends DialogEditor {
 
     }
 
-    class mineralNameItemListener implements ItemListener {
+    class MineralNameItemListener implements ItemListener {
         // This method is called only if a new item has been selected.
 
         @Override
@@ -226,7 +226,7 @@ public abstract class AbstractSampleLegacyManagerDialog extends DialogEditor {
         }
     }
 
-    class analysisPurposeItemListener implements ItemListener {
+    class AnalysisPurposeItemListener implements ItemListener {
         // This method is called only if a new item has been selected.
 
         public void itemStateChanged(ItemEvent evt) {

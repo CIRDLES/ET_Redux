@@ -120,7 +120,7 @@ public class SampleFractionListDisplayPane extends JLayeredPane {
                 tripoliSample.setMineralStandardModel(mineralStandardModels.get(1));
             }
             roleChooser.setSelectedItem(tripoliSample.getMineralStandardModel());
-            roleChooser.addActionListener(new mineralStandardChooserActionListener());
+            roleChooser.addActionListener(new MineralStandardChooserActionListener());
 
             roleChooser.setBounds(0, 27, 195, 25);
             roleChooser.setFont(ReduxConstants.sansSerif_10_Bold);
@@ -228,7 +228,7 @@ public class SampleFractionListDisplayPane extends JLayeredPane {
 //    public void setAmChanged ( boolean amChanged ) {
 //        this.amChanged = amChanged;
 //    }
-    private class mineralStandardChooserActionListener implements ActionListener {
+    private class MineralStandardChooserActionListener implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {

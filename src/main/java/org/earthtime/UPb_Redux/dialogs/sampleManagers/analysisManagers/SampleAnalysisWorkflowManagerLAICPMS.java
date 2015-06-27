@@ -249,7 +249,7 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
         aliquotArray = aliquotList.toArray(aliquotArray);
         aliquotsList_jList.setListData(aliquotArray);
 //        aliquotsList_jList.setListData((String[]) aliquotList.toArray());
-        aliquotsList_jList.addListSelectionListener(new aliquotListSelectionListener());
+        aliquotsList_jList.addListSelectionListener(new AliquotListSelectionListener());
         if (aliquotList.size() > 1) {
             aliquotsList_jList.setSelectedIndex(1);
         } else {
@@ -712,7 +712,7 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
         tempJB.setForeground(Color.red);
         //tempJB.setToolTipText("Click to Annotate Fraction.");
         tempJB.setMargin(new Insets(0, 0, 0, 0));
-        tempJB.addActionListener(new showFractionNotesListener(tempFrac));
+        tempJB.addActionListener(new ShowFractionNotesListener(tempFrac));
         fractionNoteButtons.add(tempJB);
         modifyComponentKeyMapForTable(tempJB, fractionNoteButtons, max);
 
@@ -1098,7 +1098,7 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
         this.tripoliRawDataFolder = tripoliRawDataFolder;
     }
 
-    class aliquotListSelectionListener implements ListSelectionListener {
+    class AliquotListSelectionListener implements ListSelectionListener {
         // This method is called each time the user changes the set of isZircon items
 
         public void valueChanged(ListSelectionEvent evt) {
@@ -1131,14 +1131,14 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
         }
     }
 
-    class deleteFractionListener implements ActionListener {
+    class DeleteFractionListener implements ActionListener {
 
         private SampleInterface sample;
         private AliquotInterface aliquot;
         private FractionI fraction;
         private int row;
 
-        public deleteFractionListener(SampleInterface sample, AliquotInterface aliquot, FractionI fraction, int row) {
+        public DeleteFractionListener(SampleInterface sample, AliquotInterface aliquot, FractionI fraction, int row) {
             this.sample = sample;
             this.aliquot = aliquot;
             this.fraction = fraction;
@@ -1163,11 +1163,11 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
         }
     }
 
-    class showFractionNotesListener implements ActionListener {
+    class ShowFractionNotesListener implements ActionListener {
 
         private ETFractionInterface fraction;
 
-        public showFractionNotesListener(ETFractionInterface fraction) {
+        public ShowFractionNotesListener(ETFractionInterface fraction) {
             this.fraction = fraction;
         }
 
@@ -1191,12 +1191,12 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
         tempJB.setToolTipText(notes);
     }
 
-    class changeIsZirconListener implements ChangeListener {
+    class ChangeIsZirconListener implements ChangeListener {
 
         private int row;
         private FractionI fraction;
 
-        public changeIsZirconListener(FractionI fraction, int row) {
+        public ChangeIsZirconListener(FractionI fraction, int row) {
             this.row = row;
             this.fraction = fraction;
         }
@@ -1225,12 +1225,12 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
     }
 
     // aug 2010
-    private class changeInitialPbModelItemListener implements ItemListener {
+    private class ChangeInitialPbModelItemListener implements ItemListener {
 
         private int row;
         private FractionI fraction;
 
-        public changeInitialPbModelItemListener(FractionI fraction, int row) {
+        public ChangeInitialPbModelItemListener(FractionI fraction, int row) {
             this.row = row;
             this.fraction = fraction;
         }
@@ -1373,16 +1373,16 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
 //        // fix row pointers in buttons
 //        for (int f = 0; f < fractionDeleteButtons.size(); f ++) {
 //            Fraction myFraction =
-//                    ((deleteFractionListener) ((JButton) fractionDeleteButtons.get( f )).getActionListeners()[0]).getFraction();
+//                    ((DeleteFractionListener) ((JButton) fractionDeleteButtons.get( f )).getActionListeners()[0]).getFraction();
 //
 //            ((JButton) fractionDeleteButtons.get( f )).removeActionListener( ((JButton) fractionDeleteButtons.get( f )).getActionListeners()[0] );
-//            ((JButton) fractionDeleteButtons.get( f )).addActionListener( new deleteFractionListener( mySample, aliquot, myFraction, f ) );
+//            ((JButton) fractionDeleteButtons.get( f )).addActionListener( new DeleteFractionListener( mySample, aliquot, myFraction, f ) );
 //
 //            ((JCheckBox) fractionZirconCheckBox.get( f )).removeChangeListener( ((JCheckBox) fractionZirconCheckBox.get( f )).getChangeListeners()[0] );
-//            ((JCheckBox) fractionZirconCheckBox.get( f )).addChangeListener( new changeIsZirconListener( myFraction, f ) );
+//            ((JCheckBox) fractionZirconCheckBox.get( f )).addChangeListener( new ChangeIsZirconListener( myFraction, f ) );
 //
 //            fractionInitialPbChoice.get( f ).removeItemListener( fractionInitialPbChoice.get( f ).getItemListeners()[0] );
-//            fractionInitialPbChoice.get( f ).addItemListener( new changeInitialPbModelItemListener( myFraction, f ) );
+//            fractionInitialPbChoice.get( f ).addItemListener( new ChangeInitialPbModelItemListener( myFraction, f ) );
 //        }
 
     }
@@ -1482,12 +1482,12 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
         }
 
         analysisPurposeChooser.setSelectedItem(mySample.getAnalysisPurpose().toString());
-        analysisPurposeChooser.addItemListener(new analysisPurposeItemListener());
+        analysisPurposeChooser.addItemListener(new AnalysisPurposeItemListener());
 
         processSampleMetaDataFolder();
     }
 
-    class analysisPurposeItemListener implements ItemListener {
+    class AnalysisPurposeItemListener implements ItemListener {
         // This method is called only if a new item has been selected.
 
         public void itemStateChanged(ItemEvent evt) {

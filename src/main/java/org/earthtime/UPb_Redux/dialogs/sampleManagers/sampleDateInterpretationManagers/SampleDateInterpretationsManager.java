@@ -313,11 +313,11 @@ public class SampleDateInterpretationsManager extends DialogEditor
         weightedMeanGraphPanel.repaint();
     }
 
-    class weightedMeanFractionOrderActionListener implements ActionListener {
+    class WeightedMeanFractionOrderActionListener implements ActionListener {
 
         Map<String, String> WMO;
 
-        public weightedMeanFractionOrderActionListener(Map<String, String> WMO) {
+        public WeightedMeanFractionOrderActionListener(Map<String, String> WMO) {
             this.WMO = WMO;
         }
 
@@ -485,15 +485,15 @@ public class SampleDateInterpretationsManager extends DialogEditor
         }
 
         // percent discordance sliders
-        positivePctDiscordance_slider.addChangeListener(new sliderChangeListener());
-        positivePctDiscordance_slider.addKeyListener(new sliderKeyListener());
+        positivePctDiscordance_slider.addChangeListener(new SliderChangeListener());
+        positivePctDiscordance_slider.addKeyListener(new SliderKeyListener());
 
-        negativePctDiscordance_slider.addChangeListener(new sliderChangeListener());
-        negativePctDiscordance_slider.addKeyListener(new sliderKeyListener());
+        negativePctDiscordance_slider.addChangeListener(new SliderChangeListener());
+        negativePctDiscordance_slider.addKeyListener(new SliderKeyListener());
 
         // percent uncertainty slider
-        percentUncertainty_slider.addChangeListener(new sliderChangeListener());
-        percentUncertainty_slider.addKeyListener(new sliderKeyListener());
+        percentUncertainty_slider.addChangeListener(new SliderChangeListener());
+        percentUncertainty_slider.addKeyListener(new SliderKeyListener());
 
         // zoom buttons
         zoomInProbability_button.addActionListener(new ActionListener() {
@@ -594,7 +594,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
 
     } // initNormedProbabilityPanel
 
-    private class sliderKeyListener implements KeyListener {
+    private class SliderKeyListener implements KeyListener {
 
         boolean validKey = false;
 
@@ -644,7 +644,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         }
     }
 
-    private class sliderChangeListener implements ChangeListener {
+    private class SliderChangeListener implements ChangeListener {
 
         // this flag stops spurious keystrokes from firing off preparepanel, which is expensive
         boolean wasChanging = true;

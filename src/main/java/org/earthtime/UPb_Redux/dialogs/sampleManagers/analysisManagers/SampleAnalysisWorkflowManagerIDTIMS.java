@@ -261,7 +261,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
         String[] aliquotArray = new String[aliquotList.size()];
         aliquotArray = aliquotList.toArray(aliquotArray);
         aliquotsList_jList.setListData(aliquotArray);
-        aliquotsList_jList.addListSelectionListener(new aliquotListSelectionListener());
+        aliquotsList_jList.addListSelectionListener(new AliquotListSelectionListener());
         if (aliquotList.size() > 1) {
             aliquotsList_jList.setSelectedIndex(1);
         } else {
@@ -783,7 +783,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
         tempJB.setForeground(Color.red);
         tempJB.setToolTipText("Click to DELETE Fraction!");
         tempJB.setMargin(new Insets(0, 0, 0, 0));
-        tempJB.addActionListener(new deleteFractionListener(mySample, aliquot, tempFrac, row));
+        tempJB.addActionListener(new DeleteFractionListener(mySample, aliquot, tempFrac, row));
         fractionDeleteButtons.add(tempJB);
         modifyComponentKeyMapForTable(tempJB, fractionDeleteButtons, max);
 
@@ -793,7 +793,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
         tempJB.setForeground(Color.red);
         //tempJB.setToolTipText("Click to Annotate Fraction.");
         tempJB.setMargin(new Insets(0, 0, 0, 0));
-        tempJB.addActionListener(new showFractionNotesListener(tempFrac));
+        tempJB.addActionListener(new ShowFractionNotesListener(tempFrac));
         fractionNoteButtons.add(tempJB);
         modifyComponentKeyMapForTable(tempJB, fractionNoteButtons, max);
 
@@ -804,7 +804,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
         JCheckBox tempJChk = new JCheckBox("NO I-Pb", false);
         tempJChk.setFont(new Font("Monospaced", Font.BOLD, 10));
         tempJChk.setOpaque(false);
-        tempJChk.addChangeListener(new changeIsZirconListener(tempFrac, row));
+        tempJChk.addChangeListener(new ChangeIsZirconListener(tempFrac, row));
         fractionZirconCheckBox.add(tempJChk);
         modifyComponentKeyMapForTable(tempJChk, fractionZirconCheckBox, max);
 
@@ -889,7 +889,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
             tempJCB.addItem(initialPbModels.get(i).getReduxLabDataElementName());
         }
         // aug 2010
-        tempJCB.addItemListener(new changeInitialPbModelItemListener(tempFrac, row));
+        tempJCB.addItemListener(new ChangeInitialPbModelItemListener(tempFrac, row));
         fractionInitialPbChoice.add(tempJCB);
 
         // Pb Blank mass
@@ -1292,7 +1292,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
         this.tripoliRawDataFolder = tripoliRawDataFolder;
     }
 
-    class aliquotListSelectionListener implements ListSelectionListener {
+    class AliquotListSelectionListener implements ListSelectionListener {
         // This method is called each time the user changes the set of isZircon items
 
         public void valueChanged(ListSelectionEvent evt) {
@@ -1325,14 +1325,14 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
         }
     }
 
-    class deleteFractionListener implements ActionListener {
+    class DeleteFractionListener implements ActionListener {
 
         private SampleInterface sample;
         private AliquotInterface aliquot;
         private ETFractionInterface fraction;
         private int row;
 
-        public deleteFractionListener(SampleInterface sample, AliquotInterface aliquot, ETFractionInterface fraction, int row) {
+        public DeleteFractionListener(SampleInterface sample, AliquotInterface aliquot, ETFractionInterface fraction, int row) {
             this.sample = sample;
             this.aliquot = aliquot;
             this.fraction = fraction;
@@ -1356,11 +1356,11 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
         }
     }
 
-    class showFractionNotesListener implements ActionListener {
+    class ShowFractionNotesListener implements ActionListener {
 
         private ETFractionInterface fraction;
 
-        public showFractionNotesListener(ETFractionInterface fraction) {
+        public ShowFractionNotesListener(ETFractionInterface fraction) {
             this.fraction = fraction;
         }
 
@@ -1384,12 +1384,12 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
         tempJB.setToolTipText(notes);
     }
 
-    class changeIsZirconListener implements ChangeListener {
+    class ChangeIsZirconListener implements ChangeListener {
 
         private int row;
         private ETFractionInterface fraction;
 
-        public changeIsZirconListener(ETFractionInterface fraction, int row) {
+        public ChangeIsZirconListener(ETFractionInterface fraction, int row) {
             this.row = row;
             this.fraction = fraction;
         }
@@ -1418,12 +1418,12 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
     }
 
     // aug 2010
-    private class changeInitialPbModelItemListener implements ItemListener {
+    private class ChangeInitialPbModelItemListener implements ItemListener {
 
         private int row;
         private ETFractionInterface fraction;
 
-        public changeInitialPbModelItemListener(ETFractionInterface fraction, int row) {
+        public ChangeInitialPbModelItemListener(ETFractionInterface fraction, int row) {
             this.row = row;
             this.fraction = fraction;
         }
@@ -1559,16 +1559,16 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
         // fix row pointers in buttons
         for (int f = 0; f < fractionDeleteButtons.size(); f++) {
             ETFractionInterface myFraction
-                    = ((deleteFractionListener) ((JButton) fractionDeleteButtons.get(f)).getActionListeners()[0]).getFraction();
+                    = ((DeleteFractionListener) ((JButton) fractionDeleteButtons.get(f)).getActionListeners()[0]).getFraction();
 
             ((AbstractButton) fractionDeleteButtons.get(f)).removeActionListener(((JButton) fractionDeleteButtons.get(f)).getActionListeners()[0]);
-            ((AbstractButton) fractionDeleteButtons.get(f)).addActionListener(new deleteFractionListener(mySample, aliquot, myFraction, f));
+            ((AbstractButton) fractionDeleteButtons.get(f)).addActionListener(new DeleteFractionListener(mySample, aliquot, myFraction, f));
 
             ((AbstractButton) fractionZirconCheckBox.get(f)).removeChangeListener(((JCheckBox) fractionZirconCheckBox.get(f)).getChangeListeners()[0]);
-            ((AbstractButton) fractionZirconCheckBox.get(f)).addChangeListener(new changeIsZirconListener(myFraction, f));
+            ((AbstractButton) fractionZirconCheckBox.get(f)).addChangeListener(new ChangeIsZirconListener(myFraction, f));
 
             fractionInitialPbChoice.get(f).removeItemListener(fractionInitialPbChoice.get(f).getItemListeners()[0]);
-            fractionInitialPbChoice.get(f).addItemListener(new changeInitialPbModelItemListener(myFraction, f));
+            fractionInitialPbChoice.get(f).addItemListener(new ChangeInitialPbModelItemListener(myFraction, f));
         }
 
     }
@@ -1669,12 +1669,12 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
         }
 
         analysisPurposeChooser.setSelectedItem(mySample.getAnalysisPurpose().toString());
-        analysisPurposeChooser.addItemListener(new analysisPurposeItemListener());
+        analysisPurposeChooser.addItemListener(new AnalysisPurposeItemListener());
 
         processSampleMetaDataFolder();
     }
 
-    class analysisPurposeItemListener implements ItemListener {
+    class AnalysisPurposeItemListener implements ItemListener {
         // This method is called only if a new item has been selected.
 
         public void itemStateChanged(ItemEvent evt) {

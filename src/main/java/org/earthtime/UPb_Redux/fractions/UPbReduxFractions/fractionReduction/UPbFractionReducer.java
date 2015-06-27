@@ -1297,7 +1297,7 @@ public class UPbFractionReducer {
                 ((UPbFraction) fraction).setOutputByName("molU238s", molU238s);
 
                 // jan 2011 new math for molu235 here
-                ((MolU235s) molU235s).SetTracerIsMixed233_236(true);
+                ((MolU235s) molU235s).setTracerIsMixed233_236(true);
                 molU235s.calculateValue(
                         new ValueModel[]{
                             molU238s,

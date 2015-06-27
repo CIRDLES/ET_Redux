@@ -1195,7 +1195,7 @@ public abstract class AbstractMassSpecSetup implements //
             /**
              * @return the NAME
              */
-            public String getNAME() {
+            public String getName() {
                 return NAME;
             }
 

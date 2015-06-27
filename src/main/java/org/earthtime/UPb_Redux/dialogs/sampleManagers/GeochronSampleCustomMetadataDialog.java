@@ -84,7 +84,7 @@ public class GeochronSampleCustomMetadataDialog extends DialogEditor {
 
         geologicAges_comboBox.setSelectedItem( sampleMetaData.getStratigraphicGeologicAgeMa() );
         // add listener after showing saved data
-        geologicAges_comboBox.addItemListener( new geologicAgesItemListener() );
+        geologicAges_comboBox.addItemListener( new GeologicAgesItemListener() );
 
 
         detritalTypes_comboBox.setSelectedItem( sampleMetaData.getDetritalType() );
@@ -96,14 +96,14 @@ public class GeochronSampleCustomMetadataDialog extends DialogEditor {
         }
 
         analysisPurposeChooser.setSelectedItem( sample.getAnalysisPurpose().toString() );
-        analysisPurposeChooser.addItemListener( new analysisPurposeItemListener() );
+        analysisPurposeChooser.addItemListener( new AnalysisPurposeItemListener() );
         // show detrital choices
         detritalTypePanel.setVisible( sample.getAnalysisPurpose().compareTo( ANALYSIS_PURPOSE.DetritalSpectrum ) == 0 );
 
 
     }
 
-    class analysisPurposeItemListener implements ItemListener {
+    class AnalysisPurposeItemListener implements ItemListener {
         // This method is called only if a new item has been selected.
 
         public void itemStateChanged ( ItemEvent evt ) {
@@ -132,7 +132,7 @@ public class GeochronSampleCustomMetadataDialog extends DialogEditor {
 
     }
 
-    class geologicAgesItemListener implements ItemListener {
+    class GeologicAgesItemListener implements ItemListener {
         // This method is called only if a new item has been selected.
 
         public void itemStateChanged ( ItemEvent evt ) {
