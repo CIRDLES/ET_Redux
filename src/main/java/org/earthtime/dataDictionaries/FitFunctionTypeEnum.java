@@ -34,7 +34,7 @@ public enum FitFunctionTypeEnum {
     /**
      * MEAN for downhole method
      */
-    MEAN_DH("MEAN", "Mean"),
+    MEAN_DH("MEAN_DH", "Mean"),
     // added nov 2014 to handle Pbc */204 ratios with negative values for which no log exists
     MEANRATIO("MEANRATIO", "Mean of Ratios"),
     /**

@@ -104,7 +104,7 @@ public abstract class Aliquot implements AliquotInterface, Serializable {
         this.pbBlanks = new Vector<>();
 
         this.tracers = new Vector<>();
-        this.alphaPbModels = new Vector<ValueModel>();
+        this.alphaPbModels = new Vector<>();
         this.alphaUModels = new Vector<>();
 
         this.MineralStandardModels = new Vector<>();

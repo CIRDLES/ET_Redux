@@ -24,6 +24,8 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectStreamClass;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -276,5 +278,15 @@ public class MeasuredUThRatioModel extends ValueModel implements
         valueModel.serializeXMLObject( testFileName );
         valueModel.readXMLObject( testFileName, true );
 
+    }
+    
+    private void readObject(
+            ObjectInputStream stream)
+            throws IOException, ClassNotFoundException {
+        stream.defaultReadObject();
+        ObjectStreamClass myObject = ObjectStreamClass.lookup(
+                Class.forName(MeasuredUThRatioModel.class.getCanonicalName()));
+        long theSUID = myObject.getSerialVersionUID();
+        System.out.println("Customized De-serialization of MeasuredUThRatioModel " + theSUID);
     }
 }

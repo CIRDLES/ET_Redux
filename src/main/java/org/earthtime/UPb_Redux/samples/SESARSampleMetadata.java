@@ -317,15 +317,5 @@ public class SESARSampleMetadata
         SESARSampleMetadata.readXMLObject(testFileName, true);
      
     }
-
-////    private void readObject (
-////            ObjectInputStream stream )
-////            throws IOException, ClassNotFoundException {
-////        stream.defaultReadObject();
-////        ObjectStreamClass myObject = ObjectStreamClass.lookup(
-////                Class.forName( SESARSampleMetadata.class.getCanonicalName() ) );
-////        long theSUID = myObject.getSerialVersionUID();
-////        System.out.println( "Customized De-serialization of SESARSampleMetadata " + theSUID );
-////    }
 }
 

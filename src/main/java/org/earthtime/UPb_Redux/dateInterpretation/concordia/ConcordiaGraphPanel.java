@@ -1516,7 +1516,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
     public void determineCurrentAliquot() {
         try {
             curAliquot = sample.getAliquotByNumber(selectedFractions.get(0)//
-                            .getAliquotNumber());
+                    .getAliquotNumber());
 
             currentBestDate = curAliquot.getBestAgeDivider206_238().doubleValue();
 
@@ -1773,14 +1773,14 @@ public class ConcordiaGraphPanel extends JLayeredPane
                     setMinY(0.046);
                     setMaxY(0.625);
 
-                } else if (getConcordiaFlavor().equalsIgnoreCase("Th")) {
-                    // X-axis is xAxisRatio with value from 0 to 93
-                    setMinX(0.0);
-                    setMaxX(93.0);
-
-                    // Y-axis is yAxisRatio with value from 0 to 2.05
-                    setMinY(0.0);
-                    setMaxY(2.05);
+//                } else if (getConcordiaFlavor().equalsIgnoreCase("Th")) {
+//                    // X-axis is xAxisRatio with value from 0 to 93
+//                    setMinX(0.0);
+//                    setMaxX(93.0);
+//
+//                    // Y-axis is yAxisRatio with value from 0 to 2.05
+//                    setMinY(0.0);
+//                    setMaxY(2.05);
                 } else {
                     // X-axis is xAxisRatio with value from 0 to 93
                     setMinX(0.0);
@@ -1804,7 +1804,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
             concordiaTitlePanel//
                     .setLocation(//
                             Integer.parseInt(getStringEntryFromConcordiaOptions(//
-                                            "titleBoxX", String.valueOf(concordiaTitlePanel.getX()))), Integer.valueOf(getStringEntryFromConcordiaOptions(//
+                                            "titleBoxX", String.valueOf(concordiaTitlePanel.getX()))), Integer.parseInt(getStringEntryFromConcordiaOptions(//
                                             "titleBoxY", String.valueOf(concordiaTitlePanel.getY()))));
 
             setSavedConcordiaTitlePanelX(concordiaTitlePanel.getX());
@@ -1813,7 +1813,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
             heatMapLegendPanel//
                     .setLocation(//
                             Integer.parseInt(getStringEntryFromConcordiaOptions(//
-                                            "titleBoxX", String.valueOf(concordiaTitlePanel.getX()))), Integer.valueOf(getStringEntryFromConcordiaOptions(//
+                                            "titleBoxX", String.valueOf(concordiaTitlePanel.getX()))), Integer.parseInt(getStringEntryFromConcordiaOptions(//
                                             "titleBoxY", String.valueOf(concordiaTitlePanel.getY()))));
         }
 
@@ -2316,8 +2316,8 @@ public class ConcordiaGraphPanel extends JLayeredPane
                 double y = convertMouseYToValue(evt.getY());
                 DecimalFormat f = new DecimalFormat("0.0000E00");
 
-                JMenuItem menuItemXY = //
-                        new JMenuItem("(" + f.format(x) + ", " + f.format(y) + ")");
+//                JMenuItem menuItemXY = //
+//                        new JMenuItem("(" + f.format(x) + ", " + f.format(y) + ")");
                 //popup.add( menuItemXY );
 
                 JMenuItem menuItem = new JMenuItem("Automatically configure axes");

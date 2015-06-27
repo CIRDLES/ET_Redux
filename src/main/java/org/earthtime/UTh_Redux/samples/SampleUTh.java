@@ -16,6 +16,9 @@
 package org.earthtime.UTh_Redux.samples;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectStreamClass;
 import java.io.Serializable;
 import java.util.Vector;
 import org.earthtime.UPb_Redux.ReduxConstants;
@@ -39,10 +42,10 @@ import org.earthtime.samples.SampleInterface;
  *
  * @author James F. Bowring <bowring at gmail.com>
  */
-public class SampleUTh implements 
+public class SampleUTh implements
         SampleInterface,
         Serializable,
-        EarthTimeSerializedFileInterface  {
+        EarthTimeSerializedFileInterface {
 
     @Override
     public void setUpSample(ReduxLabData myLabData) {
@@ -312,5 +315,15 @@ public class SampleUTh implements
     @Override
     public void addFractionsVector(Vector<ETFractionInterface> fractions, int aliquotNumber) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private void readObject(
+            ObjectInputStream stream)
+            throws IOException, ClassNotFoundException {
+        stream.defaultReadObject();
+        ObjectStreamClass myObject = ObjectStreamClass.lookup(
+                Class.forName(SampleUTh.class.getCanonicalName()));
+        long theSUID = myObject.getSerialVersionUID();
+        System.out.println("Customized De-serialization of SampleUTh " + theSUID);
     }
 }

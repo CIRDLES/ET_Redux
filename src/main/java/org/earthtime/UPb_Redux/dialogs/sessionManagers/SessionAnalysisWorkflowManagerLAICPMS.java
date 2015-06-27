@@ -46,6 +46,7 @@ import org.earthtime.Tripoli.dataViews.overlayViews.TripoliSessionRawDataView;
 import org.earthtime.Tripoli.dataViews.simpleViews.SessionOfStandardView;
 import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.CorrectedIntensitiesDataView;
 import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.CorrectedRatioDataView;
+import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.FitFunctionsOnDownHoleRatioDataView;
 import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.FitFunctionsOnRatioDataView;
 import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.RawIntensitiesDataView;
 import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.RawRatioDataView;
@@ -54,6 +55,7 @@ import org.earthtime.Tripoli.sessions.TripoliSessionInterface;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.dialogs.projectManagers.ProjectManagerFor_LAICPMS_FromRawData;
+import org.earthtime.UPb_Redux.fractions.FractionsFilterInterface;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.dataDictionaries.DataPresentationModeEnum;
@@ -311,7 +313,6 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
 
         //cause slider to synch
 //        ((TripoliSessionRawDataView) tripoliSessionRawDataView).synchXAxisZoomSliderValue(((TripoliSessionRawDataView) tripoliSessionRawDataView).getDataModelWidth());
-
         if (refreshPanel) {
             tripoliSessionRawDataView.refreshPanel();
         }
@@ -454,6 +455,33 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         repaint();
     }
 
+    private void showStandardDownHoleFractionationDataModels() {
+        // assumption is that tripoliSessionRawDataView is initialized
+        // only allow standard into this view
+        selectStandards_chkBox.setSelected(true);
+        selectUnknowns_chkBox.setSelected(false);
+        gridPlot_radioButton.setSelected(true);
+
+        ((TripoliSessionRawDataView) tripoliSessionRawDataView).setFRACTION_LAYOUT_VIEW_STYLE(FractionLayoutViewStylesEnum.GRID_INTERCEPT);
+        tripoliSessionRawDataView.setBackground(interceptFitEachStandard_radioButton.getBackground());
+        ((TripoliSessionRawDataView) tripoliSessionRawDataView).setDataModelViewConstructor(//
+                dataModelViewConstructorFactory(FitFunctionsOnDownHoleRatioDataView.class.getName()));
+
+        ((TripoliSessionRawDataView) tripoliSessionRawDataView).setRawDataSourceMethod(//
+                rawDataSourceMethodFactory("getRatiosForFractionFitting"));
+
+        //cause slider to synch
+        ((TripoliSessionRawDataView) tripoliSessionRawDataView).synchXAxisZoomSliderValue(((TripoliSessionRawDataView) tripoliSessionRawDataView).getDataModelWidth());
+
+        updateFractionSelection();
+
+        tripoliSessionRawDataView.refreshPanel();
+
+        setEnableAllGridGraphOverlayButtons(false);
+
+        repaint();
+    }
+
     private void showUnknownInterceptFractionationDataModels() {
         // assumption is that tripoliSessionRawDataView is initialized
         // feb 2013 modified standard view for unknowns as a test
@@ -500,12 +528,12 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
             }
         }
 
-        if (fractionationTechnique.compareTo(FractionationTechniquesEnum.DOWNHOLE)==0){
+        if (fractionationTechnique.compareTo(FractionationTechniquesEnum.DOWNHOLE) == 0) {
             tripoliSessionRawDataView.setDataPresentationMode(DataPresentationModeEnum.LOGRATIO);
         } else {
             tripoliSessionRawDataView.setDataPresentationMode(DataPresentationModeEnum.RATIO);
         }
-        
+
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).showSessionViewOfRawDataModels(//
                 interceptStandardSession_radioButton.getBackground(),//
                 dataModelViewConstructorFactory(SessionOfStandardView.class.getName()),//
@@ -1027,7 +1055,6 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         downholeFitEachStandard_radioButton.setText("Fit Each Standard");
         downholeFitEachStandard_radioButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         downholeFitEachStandard_radioButton.setBorderPainted(true);
-        downholeFitEachStandard_radioButton.setEnabled(false);
         downholeFitEachStandard_radioButton.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         downholeFitEachStandard_radioButton.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
         downholeFitEachStandard_radioButton.setOpaque(true);
@@ -1501,7 +1528,7 @@ private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.
     private void applyCommonLeadCorrections_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_applyCommonLeadCorrections_buttonActionPerformed
 
         // april 2015 refit any  fractions not currently fitted
-        Set<TripoliFraction> tripoliFractions = tripoliSession.getTripoliFractionsFiltered(FractionSelectionTypeEnum.ALL, IncludedTypeEnum.INCLUDED);
+        Set<TripoliFraction> tripoliFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliSession.getTripoliFractions(), FractionSelectionTypeEnum.ALL, IncludedTypeEnum.INCLUDED);
         for (TripoliFraction tf : tripoliFractions) {
             if (!tf.isCurrentlyFitted()) {
                 tf.updateInterceptFitFunctionsIncludingCommonLead();
@@ -1525,7 +1552,7 @@ private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.
     }//GEN-LAST:event_applyCommonLeadCorrections_buttonActionPerformed
 
     private void downholeFitEachStandard_radioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downholeFitEachStandard_radioButtonActionPerformed
-        // TODO add your handling code here:
+        showStandardDownHoleFractionationDataModels();
     }//GEN-LAST:event_downholeFitEachStandard_radioButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

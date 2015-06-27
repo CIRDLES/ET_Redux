@@ -17,6 +17,9 @@ package org.earthtime.UTh_Redux.fractions;
 
 import java.awt.geom.Path2D;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectStreamClass;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -530,11 +533,11 @@ public class UThFraction implements
     public boolean isSelectedInDataTable() {
         return selectedInDataTable;
     }
+
     @Override
     public void setSelectedInDataTable(boolean selectedInDataTable) {
         this.selectedInDataTable = selectedInDataTable;
     }
-
 
     @Override
     public void serializeXMLObject(String filename) {
@@ -546,4 +549,13 @@ public class UThFraction implements
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    private void readObject(
+            ObjectInputStream stream)
+            throws IOException, ClassNotFoundException {
+        stream.defaultReadObject();
+        ObjectStreamClass myObject = ObjectStreamClass.lookup(
+                Class.forName(UThFraction.class.getCanonicalName()));
+        long theSUID = myObject.getSerialVersionUID();
+        System.out.println("Customized De-serialization of UThFraction " + theSUID);
+    }
 }
