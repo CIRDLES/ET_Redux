@@ -598,7 +598,6 @@ public abstract class AbstractMassSpecSetup implements //
     }
 
     private void performInterceptFittingToRatios() {
-
         // generate fit function so can be done with big matrices
         for (DataModelInterface rr : rawRatios) {
             rr.generateSetOfFitFunctions(false, true);
@@ -1112,11 +1111,11 @@ public abstract class AbstractMassSpecSetup implements //
      * @return
      */
     public SortedMap<RawRatioNames, DownholeFractionationDataModel>//
-            downholeFractionationAlphaDataModelsFactory(//
+            downholeFractionationDataModelsFactory(//
                     SortedSet<TripoliFraction> tripoliFractions) {
 
                 @SuppressWarnings("MapReplaceableByEnumMap")
-                SortedMap<RawRatioNames, DownholeFractionationDataModel> fractionationAlphaDataModels = new TreeMap<>();
+                SortedMap<RawRatioNames, DownholeFractionationDataModel> fractionationDataModels = new TreeMap<>();
 
                 double[] acquireTimes = rawRatios.first().getOnPeakAquireTimesInSeconds();
                 double[] normalizedOnPeakAquireTimes = rawRatios.first().getNormalizedOnPeakAquireTimes();
@@ -1126,22 +1125,22 @@ public abstract class AbstractMassSpecSetup implements //
 
                 DownholeFractionationDataModel r206_207w =//
                         new DownholeFractionationDataModel( //
-                                //
+                                tripoliFractions, //
                                 RawRatioNames.r206_207w, new double[countOfAcquisitions], acquireTimes.clone(), normalizedOnPeakAquireTimes.clone(), maskingArray);
                 DownholeFractionationDataModel r206_238w =//
                         new DownholeFractionationDataModel(//
-                                //
+                                tripoliFractions, //
                                 RawRatioNames.r206_238w, new double[countOfAcquisitions], acquireTimes.clone(), normalizedOnPeakAquireTimes.clone(), maskingArray);
                 DownholeFractionationDataModel r208_232w = //
                         new DownholeFractionationDataModel( //
-                                //
+                                tripoliFractions, //
                                 RawRatioNames.r208_232w, new double[countOfAcquisitions], acquireTimes.clone(), normalizedOnPeakAquireTimes.clone(), maskingArray);
 
-                // oct 2012 update fractionation models based on valid alpha ratios
+                // oct 2012 update fractionation models based on valid ratios
                 // first load assumed models
-                fractionationAlphaDataModels.put(RawRatioNames.r206_207w, r206_207w);
-                fractionationAlphaDataModels.put(RawRatioNames.r206_238w, r206_238w);
-                fractionationAlphaDataModels.put(RawRatioNames.r208_232w, r208_232w);
+                fractionationDataModels.put(RawRatioNames.r206_207w, r206_207w);
+                fractionationDataModels.put(RawRatioNames.r206_238w, r206_238w);
+                fractionationDataModels.put(RawRatioNames.r208_232w, r208_232w);
 
                 // now remove unusable
                 SortedSet<DataModelInterface> ratiosSortedSet = tripoliFractions.first().getRatiosForFractionFitting();//.getValidRawRatios();
@@ -1150,11 +1149,11 @@ public abstract class AbstractMassSpecSetup implements //
                 while (ratiosSortedSetIterator.hasNext()) {
                     DataModelInterface ratio = ratiosSortedSetIterator.next();
                     if (!((RawRatioDataModel) ratio).isUsedForFractionationCorrections()) {
-                        fractionationAlphaDataModels.remove(ratio.getRawRatioModelName());
+                        fractionationDataModels.remove(ratio.getRawRatioModelName());
                     }
                 }
 
-                return fractionationAlphaDataModels;
+                return fractionationDataModels;
             }
 
             /**

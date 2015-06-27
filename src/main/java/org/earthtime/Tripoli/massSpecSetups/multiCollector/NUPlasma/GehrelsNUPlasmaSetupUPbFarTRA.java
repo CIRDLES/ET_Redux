@@ -278,7 +278,7 @@ public final class GehrelsNUPlasmaSetupUPbFarTRA extends AbstractMassSpecSetup i
         isotopeMappingModel.setIsotopeToRawIntensitiesMap(isotopeToRawIntensitiesMap);
 
         // raw ratios
-        // oct 2012 defaults for alpha fractionation corrections are set true but later missing ratio at standard will override 
+        // oct 2012 defaults for fractionation corrections are set true but later missing ratio at standard will override 
         // in TripoliFraction.updateRawRatioDataModelsWithPrimaryStandardValue if necessary
         rawRatios = new TreeSet<>();
         DataModelInterface r206_238w = new RawRatioDataModel(RawRatioNames.r206_238w, Pb206, U238, true, false, COLLECTOR_DATA_FREQUENCY_MILLISECS);
