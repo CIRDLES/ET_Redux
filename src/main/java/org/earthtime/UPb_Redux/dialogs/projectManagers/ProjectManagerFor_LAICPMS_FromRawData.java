@@ -178,7 +178,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
 
         // Element 2 Washington State
         AbstractRawDataFileHandler theThermoFinniganElement2SingleCollFileHandler = //
-WashStateElementIISingleCollFileHandler.getInstance();
+                WashStateElementIISingleCollFileHandler.getInstance();
         theThermoFinniganElement2SingleCollFileHandler.getAvailableMassSpecSetups()//
                 .add(WashStateElementIISetupUPb.getInstance());
 
@@ -415,10 +415,16 @@ WashStateElementIISingleCollFileHandler.getInstance();
             // delete contents
             File[] reportFiles = reportingFolder.listFiles();
             for (File reportFile : reportFiles) {
-                reportFile.delete();
+                boolean success = reportFile.delete();
+                if (!success) {
+                    //TODO: consider message
+                }
             }
         } else {
-            reportingFolder.mkdir();
+            boolean success = reportingFolder.mkdir();
+            if (!success) {
+                //TODO: consider message
+            }
         }
 
         // user-selected handler
