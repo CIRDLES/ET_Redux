@@ -1,5 +1,5 @@
 /*
- * RawRatioAlphasDataView.java
+ * SessionOfStandardView.java
  *
  *
  * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
@@ -543,5 +543,10 @@ public class SessionOfStandardView extends AbstractRawDataView implements FitFun
     @Override
     public boolean amShowingUnknownFraction() {
         return false;
+    }
+
+    @Override
+    public void setShowFittedFunction(boolean showFittedFunction) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

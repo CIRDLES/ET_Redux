@@ -1,5 +1,5 @@
 /*
- * InterceptAllFunctionChoicePanel.java
+ * AllFunctionsChoicePanel.java
  *
  * Created Oct 14, 2012
  * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
@@ -33,6 +33,7 @@ import javax.swing.JButton;
 import javax.swing.JLayeredPane;
 import org.earthtime.Tripoli.dataModels.DataModelFitFunctionInterface;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
+import org.earthtime.Tripoli.dataModels.RawRatioDataModel;
 import org.earthtime.Tripoli.dataViews.AbstractRawDataView;
 import org.earthtime.Tripoli.dataViews.overlayViews.TripoliSessionRawDataView;
 import org.earthtime.Tripoli.dataViews.simpleViews.FitFunctionDataInterface;
@@ -44,7 +45,7 @@ import org.earthtime.dataDictionaries.FitFunctionTypeEnum;
  *
  * @author James F. Bowring
  */
-public class InterceptAllFunctionChoicePanel extends AbstractRawDataView {
+public class AllFunctionsChoicePanel extends AbstractRawDataView {
 
     /**
      *
@@ -56,6 +57,7 @@ public class InterceptAllFunctionChoicePanel extends AbstractRawDataView {
      */
     protected ButtonGroup fitFunctionButtonGroup;
     private final AbstractRawDataView[] rawDataModelViews;
+    private final boolean meanOnly;
 
     /**
      *
@@ -63,17 +65,20 @@ public class InterceptAllFunctionChoicePanel extends AbstractRawDataView {
      * @param rawDataModelViews
      * @param bounds
      * @param forStandards
+     * @param meanOnly the value of meanOnly
      */
-    public InterceptAllFunctionChoicePanel(//
+    public AllFunctionsChoicePanel(//
             JLayeredPane sampleSessionDataView,//
             AbstractRawDataView[] rawDataModelViews, //
-            Rectangle bounds,
-            boolean forStandards) {
+            Rectangle bounds, //
+            boolean forStandards, //
+            boolean meanOnly) {
         super(bounds);
 
         this.sampleSessionDataView = sampleSessionDataView;
         this.rawDataModelViews = rawDataModelViews;
         this.forStandards = forStandards;
+        this.meanOnly = meanOnly;
 
         setOpaque(true);
         setCursor(Cursor.getDefaultCursor());
@@ -106,9 +111,13 @@ public class InterceptAllFunctionChoicePanel extends AbstractRawDataView {
         minY = 0.0;
         maxY = 80.0;
 
-        add(buttonForFitFunctionFactory(15, FitFunctionTypeEnum.MEAN), DEFAULT_LAYER);
-        add(buttonForFitFunctionFactory(35, FitFunctionTypeEnum.LINE), DEFAULT_LAYER);
-        add(buttonForFitFunctionFactory(55, FitFunctionTypeEnum.EXPONENTIAL), DEFAULT_LAYER);
+        if (meanOnly) {
+            add(buttonForFitFunctionFactory(15, FitFunctionTypeEnum.MEAN_DH), DEFAULT_LAYER);
+        } else {
+            add(buttonForFitFunctionFactory(15, FitFunctionTypeEnum.MEAN), DEFAULT_LAYER);
+            add(buttonForFitFunctionFactory(35, FitFunctionTypeEnum.LINE), DEFAULT_LAYER);
+            add(buttonForFitFunctionFactory(55, FitFunctionTypeEnum.EXPONENTIAL), DEFAULT_LAYER);
+        }
         add(buttonForODChoiceFactory(75, "w/ OverDispersion", true), DEFAULT_LAYER);
         add(buttonForODChoiceFactory(95, "w/o OverDispersion", false), DEFAULT_LAYER);
 
@@ -131,15 +140,14 @@ public class InterceptAllFunctionChoicePanel extends AbstractRawDataView {
                         rawRatioDataModel.setSelectedFitFunctionType(fitFunctionType);
                     }
                     try {
-                        rawDataModelView.updatePlotsWithChanges((FitFunctionDataInterface) rawDataModelView); //.updateFittedData();
+                        rawDataModelView.updatePlotsWithChanges((FitFunctionDataInterface) rawDataModelView);
                     } catch (Exception e2) {
                     }
                 }
 
-                ((TripoliSessionRawDataView)sampleSessionDataView).getTripoliSession().setFitFunctionsUpToDate(false);
+                ((TripoliSessionRawDataView) sampleSessionDataView).getTripoliSession().setFitFunctionsUpToDate(false);
                 ((AbstractRawDataView) sampleSessionDataView).refreshPanel();
 
-                
                 // be sure changes to unknowns go to data table
                 if (rawDataModelViews[0] instanceof FitFunctionsOnRatioDataView) {
                     if (((FitFunctionDataInterface) rawDataModelViews[0]).amShowingUnknownFraction()) {
@@ -165,7 +173,11 @@ public class InterceptAllFunctionChoicePanel extends AbstractRawDataView {
             public void actionPerformed(ActionEvent ae) {
                 for (AbstractRawDataView rawDataModelView : rawDataModelViews) {
                     DataModelFitFunctionInterface rawRatioDataModel = (DataModelFitFunctionInterface) rawDataModelView.getDataModel();
-                    rawRatioDataModel.setOverDispersionSelected(setOD);
+                    if (meanOnly) {// case of downhole
+                           ((RawRatioDataModel)rawRatioDataModel).setOverDispersionSelectedDownHole(setOD);
+                    } else {
+                        rawRatioDataModel.setOverDispersionSelected(setOD);
+                    }
                     try {
                         ((FitFunctionDataInterface) rawDataModelView).updateFittedData();
                     } catch (Exception e2) {

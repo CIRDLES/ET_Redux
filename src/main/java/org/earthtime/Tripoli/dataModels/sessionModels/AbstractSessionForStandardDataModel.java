@@ -813,30 +813,6 @@ public abstract class AbstractSessionForStandardDataModel implements Serializabl
         return rawRatioName;
     }
 
-////    /**
-////     * @return the fittedStandardMeanLogRatios
-////     */
-////    public double[] getFittedStandardMeanLogRatios () {
-////        return fittedStandardMeanLogRatios;
-////    }
-////
-////    public double[] getFittedStandardMeanAlphas () {
-////        double[] fittedStandardMeanAlphas = new double[fittedStandardMeanLogRatios.length];
-////
-////        for (int i = 0; i < fittedStandardMeanAlphas.length; i ++) {
-////            fittedStandardMeanAlphas[i] = (standardValue / Math.exp( fittedStandardMeanLogRatios[i] )) - 1.0;
-////        }
-////        return fittedStandardMeanAlphas;
-////    }
-////
-////    public double[] getFittedStandardMeanRatios () {
-////        double[] fittedStandardMeanRatios = new double[fittedStandardMeanLogRatios.length];
-////
-////        for (int i = 0; i < fittedStandardMeanRatios.length; i ++) {
-////            fittedStandardMeanRatios[i] = Math.exp( fittedStandardMeanLogRatios[i] );
-////        }
-////        return fittedStandardMeanRatios;
-////    }
     /**
      * @return the includedStandardsAquireTimes
      */

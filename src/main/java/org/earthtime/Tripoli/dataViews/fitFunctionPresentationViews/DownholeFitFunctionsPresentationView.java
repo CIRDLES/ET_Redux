@@ -31,18 +31,18 @@ import org.earthtime.Tripoli.dataViews.simpleViews.FitFunctionDataInterface;
  */
 public class DownholeFitFunctionsPresentationView extends AbstractFitFunctionPresentationView {
 
-    private DataModelFitFunctionInterface downholeFractionationAlphaDataModel;
+    private DataModelFitFunctionInterface downholeFractionationDataModel;
 
     /**
      *
      * @param sampleSessionDataView
-     * @param downholeFractionationAlphaDataModel
+     * @param downholeFractionationDataModel
      * @param targetDataModelView
      * @param bounds
      */
     public DownholeFitFunctionsPresentationView( //
             JLayeredPane sampleSessionDataView, //
-            DataModelFitFunctionInterface downholeFractionationAlphaDataModel,//
+            DataModelFitFunctionInterface downholeFractionationDataModel,//
             FitFunctionDataInterface targetDataModelView,
             Rectangle bounds) {
 
@@ -51,7 +51,7 @@ public class DownholeFitFunctionsPresentationView extends AbstractFitFunctionPre
         setCursor(Cursor.getDefaultCursor());
 
         this.sampleSessionDataView = sampleSessionDataView;
-        this.downholeFractionationAlphaDataModel = downholeFractionationAlphaDataModel;
+        this.downholeFractionationDataModel = downholeFractionationDataModel;
     }
 
     /**
@@ -73,14 +73,28 @@ public class DownholeFitFunctionsPresentationView extends AbstractFitFunctionPre
         removeAll();
         // first restore the data
         // recalculate averages and fits
-        if (downholeFractionationAlphaDataModel != null) {
+        if (downholeFractionationDataModel != null) {
             if (!((TripoliSessionRawDataView) sampleSessionDataView).//
                     getSessionFractionationCalculator().isCalculatedInitialFitFunctions()) {
                 ((TripoliSessionRawDataView) sampleSessionDataView).//
                         getSessionFractionationCalculator().calculateDownholeFitSummariesForPrimaryStandard();
             }
 
-            createFitFunctionPanes(downholeFractionationAlphaDataModel, true);
+            createFitFunctionPanes(downholeFractionationDataModel, true);
         }
+    }
+
+    /**
+     * @return the downholeFractionationDataModel
+     */
+    public DataModelFitFunctionInterface getDownholeFractionationDataModel() {
+        return downholeFractionationDataModel;
+    }
+
+    /**
+     * @param downholeFractionationDataModel the downholeFractionationDataModel to set
+     */
+    public void setDownholeFractionationDataModel(DataModelFitFunctionInterface downholeFractionationDataModel) {
+        this.downholeFractionationDataModel = downholeFractionationDataModel;
     }
 }

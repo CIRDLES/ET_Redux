@@ -301,6 +301,7 @@ public class TripoliFraction implements //
         while (ratiosIterator.hasNext()) {
             RawRatioDataModel rr = (RawRatioDataModel) ratiosIterator.next();
             rr.generateSetOfFitFunctions(true, false);
+////////            rr.calculateDownholeFractionWeightedMeanAndUnct();
         }
 
         // nov 2014 this also sets currentlyFitted = true
@@ -607,6 +608,12 @@ public class TripoliFraction implements //
         }
     }
 
+    public void setDownHoleODforAllRatios(boolean isOD) {
+        for (DataModelInterface rr : rawRatios) {
+            ((RawRatioDataModel) rr).setOverDispersionSelectedDownHole(isOD);
+        }
+    }
+
     /**
      *
      * @param index
@@ -646,24 +653,6 @@ public class TripoliFraction implements //
         return validRawRatios;
     }
 
-//    /**
-//     * Returns those RawRatioDataModels that have been specified for alpha
-//     * display and fractionation correction.
-//     *
-//     * @return
-//     */
-//    public SortedSet<DataModelInterface> getValidRawRatioAlphas() {
-//        SortedSet<DataModelInterface> validRawRatioAlphas = new TreeSet<>();
-//
-//        for (DataModelInterface rr : rawRatios) {
-//            if (((RawRatioDataModel) rr).isUsedForFractionationCorrections()) {
-//                validRawRatioAlphas.add(rr);
-//            }
-//        }
-//
-//        return validRawRatioAlphas;
-//    }
-
     /**
      * RawRatioNames enum are in correct display order
      *
@@ -698,7 +687,7 @@ public class TripoliFraction implements //
         }
 
         if (retVal) {
-            SortedSet<DataModelInterface> validFractionationRatios = getRatiosForFractionFitting();//getValidRawRatioAlphas();
+            SortedSet<DataModelInterface> validFractionationRatios = getRatiosForFractionFitting();
             Iterator<DataModelInterface> validFractionIterator = validFractionationRatios.iterator();
             while (validFractionIterator.hasNext()) {
                 DataModelInterface rr = validFractionIterator.next();
@@ -1512,6 +1501,7 @@ public class TripoliFraction implements //
                 }
                 if (rejectedAPoint) {
                     rr.generateSetOfFitFunctions(true, false);
+                    ((RawRatioDataModel)rr).calculateDownholeFractionWeightedMeanAndUnct();
                 }
             } else {
 //                System.out.println("NONE");

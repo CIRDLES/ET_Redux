@@ -49,6 +49,7 @@ import org.earthtime.Tripoli.samples.AbstractTripoliSample;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.FractionI;
+import org.earthtime.UPb_Redux.fractions.FractionsFilterInterface;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLAICPMSFraction;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
@@ -231,19 +232,19 @@ public class TripoliSession implements
             // choice based on current fractionation technique
             // create downholeFractionationDataModels
             downholeFractionationDataModels = //
-                    rawDataFileHandler.getMassSpec().downholeFractionationAlphaDataModelsFactory(tripoliFractions);
+                    rawDataFileHandler.getMassSpec().downholeFractionationDataModelsFactory(tripoliFractions);
 
             // may 2014 - for use with live data, we check to see if these exist and if so, do not recreate
             if ((sessionForStandardsInterceptFractionation.size() == 0) || (sessionForStandardsDownholeFractionation.size() == 0)) {
                 // create sessionForStandards models for both downhole and intercept methods
-                Iterator<DataModelInterface> dataModelIterator = tripoliFractions.first().getRatiosForFractionFitting().iterator();//.getValidRawRatioAlphas().iterator();
+                Iterator<DataModelInterface> dataModelIterator = tripoliFractions.first().getRatiosForFractionFitting().iterator();
                 while (dataModelIterator.hasNext()) {
                     DataModelInterface dm = dataModelIterator.next();
                     AbstractSessionForStandardDataModel ssm = //
                             new SessionForStandardDataModelDownholeFractionation( //
                                     this, //
                                     dm.getRawRatioModelName(), dm.getStandardValue(), //
-                                    getTripoliFractionsFiltered(FractionSelectionTypeEnum.STANDARD, IncludedTypeEnum.ALL));
+                                    FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.STANDARD, IncludedTypeEnum.ALL));
 
                     sessionForStandardsDownholeFractionation.put(dm.getRawRatioModelName(), ssm);
 
@@ -251,21 +252,21 @@ public class TripoliSession implements
                             new SessionForStandardDataModelInterceptFractionation( //
                                     this, //
                                     dm.getRawRatioModelName(), dm.getStandardValue(), //
-                                    getTripoliFractionsFiltered(FractionSelectionTypeEnum.STANDARD, IncludedTypeEnum.ALL));
+                                    FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.STANDARD, IncludedTypeEnum.ALL));
 
                     sessionForStandardsInterceptFractionation.put(dm.getRawRatioModelName(), ssm);
                 }
             } else {
                 // may 2014 handling case of live data
-                Iterator<DataModelInterface> dataModelIterator = tripoliFractions.first().getRatiosForFractionFitting().iterator();//.getValidRawRatioAlphas().iterator();
+                Iterator<DataModelInterface> dataModelIterator = tripoliFractions.first().getRatiosForFractionFitting().iterator();
                 while (dataModelIterator.hasNext()) {
                     DataModelInterface dm = dataModelIterator.next();
 
                     AbstractSessionForStandardDataModel ssm = sessionForStandardsInterceptFractionation.get(dm.getRawRatioModelName());
-                    ssm.setStandardFractions(getTripoliFractionsFiltered(FractionSelectionTypeEnum.STANDARD, IncludedTypeEnum.ALL));
+                    ssm.setStandardFractions(FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.STANDARD, IncludedTypeEnum.ALL));
 
                     ssm = sessionForStandardsDownholeFractionation.get(dm.getRawRatioModelName());
-                    ssm.setStandardFractions(getTripoliFractionsFiltered(FractionSelectionTypeEnum.STANDARD, IncludedTypeEnum.ALL));
+                    ssm.setStandardFractions(FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.STANDARD, IncludedTypeEnum.ALL));
 
                 }
             }
@@ -282,7 +283,7 @@ public class TripoliSession implements
     public void postProcessDataForCommonLeadLossPreparation() {
         // nov 2014 post processing of */204 ratios to remove negative value from active data
         // also forces undoing of any re-selection
-        SortedSet<TripoliFraction> allFractions = getTripoliFractionsFiltered(FractionSelectionTypeEnum.ALL, IncludedTypeEnum.INCLUDED);
+        SortedSet<TripoliFraction> allFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.ALL, IncludedTypeEnum.INCLUDED);
         Iterator<TripoliFraction> allFractionsIterator = allFractions.iterator();
         while (allFractionsIterator.hasNext()) {
             TripoliFraction tf = allFractionsIterator.next();
@@ -300,10 +301,8 @@ public class TripoliSession implements
         for (RawRatioNames rrName : downholeFractionationDataModels.keySet()) {
             DownholeFractionationDataModel downholeFractionationDataModel = downholeFractionationDataModels.get(rrName);
 
-            Iterator<TripoliFraction> fractionIterator = getTripoliFractionsFiltered(FractionSelectionTypeEnum.STANDARD, IncludedTypeEnum.INCLUDED).iterator();
-
             // for thick black line
-            downholeFractionationDataModel.calculateWeightedMeanOfStandards(fractionIterator);
+            downholeFractionationDataModel.calculateWeightedMeanOfStandards();
 
             // for thick red line
             downholeFractionationDataModel.generateSetOfFitFunctions(true, false);
@@ -311,9 +310,8 @@ public class TripoliSession implements
             // now calculate session statistics based on this selected fit model
             // this means for each standard, calculate the weighted mean of the residuals
             AbstractFunctionOfX downHoleFofX = downholeFractionationDataModel.getSelectedFitFunction();
-            fractionIterator = getTripoliFractionsFiltered(FractionSelectionTypeEnum.STANDARD, IncludedTypeEnum.INCLUDED).iterator();
 
-            downholeFractionationDataModel.calculateWeightedMeanForEachStandard(fractionIterator, rrName, downHoleFofX);
+            downholeFractionationDataModel.calculateWeightedMeanForEachStandard(rrName, downHoleFofX);
         }
         calculatedInitialFitFunctions = true;
 
@@ -338,7 +336,6 @@ public class TripoliSession implements
                 }
             });
 
-            
             calculateDownholeFitSummariesForPrimaryStandard();
             sessionForStandardsDownholeFractionation.keySet().stream().forEach((rrName) -> {
                 try {
@@ -348,10 +345,10 @@ public class TripoliSession implements
                     System.out.println("Session Standards Downhole Fractionation Failed");
                 }
             });
-            
+
             //fractionationTechnique = FractionationTechniquesEnum.INTERCEPT;
             applyCorrections();
-            
+
 ////            if (fractionationTechnique.compareTo(FractionationTechniquesEnum.INTERCEPT) == 0) {
 ////                sessionForStandardsInterceptFractionation.keySet().stream().forEach((rrName) -> {
 ////                    try {
@@ -386,7 +383,7 @@ public class TripoliSession implements
         boolean retVal;
         //**********  ALL OF THIS IS CURRENTLY DONE INSIDE SPLINE FIT BUT COULD BE DONE OUTSIDE ******
         // build and calculate t and h
-        SortedSet<TripoliFraction> standardFractions = getTripoliFractionsFiltered(FractionSelectionTypeEnum.STANDARD, IncludedTypeEnum.INCLUDED);//.ALL );
+        SortedSet<TripoliFraction> standardFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.STANDARD, IncludedTypeEnum.INCLUDED);//.ALL );
         int countOfStandards = standardFractions.size();
 
         if (countOfStandards > 0) {
@@ -473,7 +470,7 @@ public class TripoliSession implements
             retVal = true;
             //
             // prepare unknowns
-            SortedSet<TripoliFraction> selectedFractions = getTripoliFractionsFiltered(fractionSelectionTypeEnum, IncludedTypeEnum.INCLUDED);
+            SortedSet<TripoliFraction> selectedFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, fractionSelectionTypeEnum, IncludedTypeEnum.INCLUDED);
             int countOfSelectedFractions = selectedFractions.size();
             int countOfStandards = timesForStandards.length;
 
@@ -659,7 +656,7 @@ public class TripoliSession implements
     public void applyCorrections() {
 
         // dec 2014 - initialize fractions for rho calcs and common lead correction
-        SortedSet<TripoliFraction> allFractions = getTripoliFractionsFiltered(FractionSelectionTypeEnum.ALL, IncludedTypeEnum.ALL);
+        SortedSet<TripoliFraction> allFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.ALL, IncludedTypeEnum.ALL);
         Iterator<TripoliFraction> allFractionsIterator = allFractions.iterator();
 
         while (allFractionsIterator.hasNext()) {
@@ -691,7 +688,7 @@ public class TripoliSession implements
     private void calculateUThConcentrationsForUnknowns() {
         // dec 2014 from appendix C
         // each unknown's concentrtations are calculted using time and braketing standards
-        SortedSet<TripoliFraction> includedFractions = getTripoliFractionsFiltered(FractionSelectionTypeEnum.ALL, IncludedTypeEnum.INCLUDED);
+        SortedSet<TripoliFraction> includedFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.ALL, IncludedTypeEnum.INCLUDED);
 
         TripoliFraction leftStandard = null;
         boolean lookingForLeftStandard = true;
@@ -819,7 +816,7 @@ public class TripoliSession implements
 
     private void prepareForReductionAndCommonLeadCorrection(FractionSelectionTypeEnum fractionSelectionTypeEnum) {
 
-        SortedSet<TripoliFraction> selectedFractions = getTripoliFractionsFiltered(fractionSelectionTypeEnum, IncludedTypeEnum.INCLUDED);
+        SortedSet<TripoliFraction> selectedFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, fractionSelectionTypeEnum, IncludedTypeEnum.INCLUDED);
         int countOfSelectedFractions = selectedFractions.size();
         // nov 2014 section 11
         // walk the sessions and build double[][] of diagonals = 3 rows by countof unkowns - one row for each session ratio
@@ -945,7 +942,7 @@ public class TripoliSession implements
         }
 
         // may 2013 - reject bad fractions for user
-        SortedSet<TripoliFraction> unknownFractions = getTripoliFractionsFiltered(FractionSelectionTypeEnum.UNKNOWN, IncludedTypeEnum.ALL);
+        SortedSet<TripoliFraction> unknownFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.UNKNOWN, IncludedTypeEnum.ALL);
         Iterator<TripoliFraction> unknownFractionIterator = unknownFractions.iterator();
 
         while (unknownFractionIterator.hasNext()) {
@@ -978,7 +975,7 @@ public class TripoliSession implements
 //        System.out.println("\n\nPROCESSING RATIO " + rrName.getName());
         if (prepareMatrixJfMapFractionsByType(fractionSelectionTypeEnum)) {
 
-            SortedSet<TripoliFraction> selectedFractions = getTripoliFractionsFiltered(fractionSelectionTypeEnum, IncludedTypeEnum.INCLUDED);
+            SortedSet<TripoliFraction> selectedFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, fractionSelectionTypeEnum, IncludedTypeEnum.INCLUDED);
 
             int countOfSelectedFractions = selectedFractions.size();
             if (countOfSelectedFractions > 0) {
@@ -1096,7 +1093,7 @@ public class TripoliSession implements
 
         Matrix unknownsLogRatioMeans = new Matrix(countOfUnknowns, 1);
 
-        SortedSet<TripoliFraction> unknownFractions = getTripoliFractionsFiltered(fractionSelectionTypeEnum, IncludedTypeEnum.INCLUDED);
+        SortedSet<TripoliFraction> unknownFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, fractionSelectionTypeEnum, IncludedTypeEnum.INCLUDED);
         Iterator<TripoliFraction> unknownFractionIterator = unknownFractions.iterator();
         int index = 0;
 
@@ -1224,19 +1221,19 @@ public class TripoliSession implements
         // for each ratio to use for every fraction
         // the spline values will be calculated on-th-fly since each is used only once
         downholeFractionationDataModels.keySet().stream().forEach((rrName) -> {
-            SortedSet<TripoliFraction> allFractions = getTripoliFractionsFiltered(FractionSelectionTypeEnum.UNKNOWN, IncludedTypeEnum.INCLUDED);
+            SortedSet<TripoliFraction> allFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.UNKNOWN, IncludedTypeEnum.INCLUDED);
 
             // calculate the down hole fractionation for this ratio all fractions
-            DownholeFractionationDataModel downHolefractionationAlpha = downholeFractionationDataModels.get(rrName);
+            DownholeFractionationDataModel downHolefractionationModel = downholeFractionationDataModels.get(rrName);
 
             AbstractFunctionOfX myDownHoleFofX = //
-                    downHolefractionationAlpha.getSelectedDownHoleFrationationFitFunction();
+                    downHolefractionationModel.getSelectedDownHoleFrationationFitFunction();
 
             double[] downHoleFractionation = //
-                    new double[downHolefractionationAlpha.getNormalizedAquireTimes().length];
+                    new double[downHolefractionationModel.getNormalizedAquireTimes().length];
 
             for (int i = 0; i < downHoleFractionation.length; i++) {
-                downHoleFractionation[i] = myDownHoleFofX.f(downHolefractionationAlpha.getNormalizedAquireTimes()[i]);
+                downHoleFractionation[i] = myDownHoleFofX.f(downHolefractionationModel.getNormalizedAquireTimes()[i]);
             }
 
             AbstractSessionForStandardDataModel sessionForStandard = //
@@ -1263,7 +1260,7 @@ public class TripoliSession implements
                     double fractionStartAquireTime = tf.getZeroBasedNormalizedTimeStamp();
                     double[] ratios = ((RawRatioDataModel) tf.getRawRatioDataModelByName(rrName)).getRatios();
                     double[] correctedRatios = new double[ratios.length];
-                    double[] onPeakAquireTimesInSeconds = downHolefractionationAlpha.getOnPeakAcquireTimesInSeconds();
+                    double[] onPeakAquireTimesInSeconds = downHolefractionationModel.getOnPeakAcquireTimesInSeconds();
 
                     for (int i = 0; i < onPeakAquireTimesInSeconds.length; i++) {
                         // we use currently the normalized times for fitting, but need actual time for session
@@ -1314,42 +1311,41 @@ public class TripoliSession implements
         return tripoliFractions;
     }
 
-    /**
-     *
-     * @param selection
-     * @param visibility
-     * @return
-     */
-    @Override
-    public SortedSet<TripoliFraction> getTripoliFractionsFiltered(//
-            FractionSelectionTypeEnum selection,//
-            IncludedTypeEnum visibility) {
-
-        SortedSet<TripoliFraction> filteredFractions = new TreeSet<>();
-
-        Iterator<TripoliFraction> fractionIterator = tripoliFractions.iterator();
-        while (fractionIterator.hasNext()) {
-            TripoliFraction tf = fractionIterator.next();
-            if ((selection.equals(FractionSelectionTypeEnum.ALL) //
-                    || //
-                    (selection.equals(FractionSelectionTypeEnum.STANDARD) && tf.isStandard())//
-                    || //
-                    (selection.equals(FractionSelectionTypeEnum.UNKNOWN) && !tf.isStandard()))//
-                    && //
-                    visibility.isObjectIncluded(tf.isIncluded())) {
-
-                filteredFractions.add(tf);
-                // turn off bad fractions
-                if (!tf.confirmHealthyFraction()) {
-                    tf.toggleAllDataExceptShaded(false);
-                }
-            }
-
-        }
-
-        return filteredFractions;
-    }
-
+//    /**
+//     *
+//     * @param selection
+//     * @param visibility
+//     * @return
+//     */
+//    @Override
+//    public SortedSet<TripoliFraction> getTripoliFractionsFiltered(//
+//            FractionSelectionTypeEnum selection,//
+//            IncludedTypeEnum visibility) {
+//
+//        SortedSet<TripoliFraction> filteredFractions = new TreeSet<>();
+//
+//        Iterator<TripoliFraction> fractionIterator = getTripoliFractions().iterator();
+//        while (fractionIterator.hasNext()) {
+//            TripoliFraction tf = fractionIterator.next();
+//            if ((selection.equals(FractionSelectionTypeEnum.ALL) //
+//                    || //
+//                    (selection.equals(FractionSelectionTypeEnum.STANDARD) && tf.isStandard())//
+//                    || //
+//                    (selection.equals(FractionSelectionTypeEnum.UNKNOWN) && !tf.isStandard()))//
+//                    && //
+//                    visibility.isObjectIncluded(tf.isIncluded())) {
+//
+//                filteredFractions.add(tf);
+//                // turn off bad fractions
+//                if (!tf.confirmHealthyFraction()) {
+//                    tf.toggleAllDataExceptShaded(false);
+//                }
+//            }
+//
+//        }
+//
+//        return filteredFractions;
+//    }
     /**
      *
      * @param selection
@@ -1404,7 +1400,7 @@ public class TripoliSession implements
     @Override
     public void includeAllFractions(FractionSelectionTypeEnum fractionSelectionType) {
         SortedSet<TripoliFraction> excludedTripoliFractions = //
-                getTripoliFractionsFiltered(fractionSelectionType, IncludedTypeEnum.EXCLUDED);
+                FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, fractionSelectionType, IncludedTypeEnum.EXCLUDED);
         excludedTripoliFractions.stream().forEach((f) -> {
             f.toggleAllDataExceptShaded(true);
         });
@@ -1575,6 +1571,15 @@ public class TripoliSession implements
         while (fractionIterator.hasNext()) {
             TripoliFraction tf = fractionIterator.next();
             tf.setODforAllRatios(setOD);
+        }
+    }
+
+    @Override
+    public void setDownHoleODforAllFractionsAllRatios(boolean setOD) {
+        Iterator<TripoliFraction> fractionIterator = tripoliFractions.iterator();
+        while (fractionIterator.hasNext()) {
+            TripoliFraction tf = fractionIterator.next();
+            tf.setDownHoleODforAllRatios(setOD);
         }
     }
 

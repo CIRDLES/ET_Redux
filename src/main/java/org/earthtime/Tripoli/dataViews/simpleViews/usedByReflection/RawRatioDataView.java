@@ -81,11 +81,6 @@ public class RawRatioDataView extends AbstractRawDataView {
                         mapX(myOnPeakNormalizedAquireTimes[i]), mapY(myOnPeakData[i]), 1, 1);
                 g2d.setPaint(determineDataColor(i, Color.black));
 
-//                // dec 2012 for visualization only
-//                if (myOnPeakData[i] <= Double.MIN_VALUE) {
-//                    g2d.setPaint(Color.red);
-//                }
-
                 g2d.draw(rawRatioPoint);
             }
         }

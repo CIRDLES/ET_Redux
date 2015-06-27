@@ -57,6 +57,7 @@ public interface DataModelFitFunctionInterface {
 
     /**
      * @param overDispersionSelected the overDispersionSelected to set
+     * @param isDownHole the value of isDownHole
      */
     public void setOverDispersionSelected(boolean overDispersionSelected);
 

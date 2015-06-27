@@ -55,6 +55,10 @@ public class DataPresentationModeChooserPanel extends AbstractRawDataView {
     private JRadioButton ratiosChooser;
     private JRadioButton logRatiosChooser;
     private JRadioButton alphasChooser;
+    private JButton withODButton;
+    private JButton withNOODButton;
+
+    private boolean meanOnly;
 
     /**
      *
@@ -62,9 +66,14 @@ public class DataPresentationModeChooserPanel extends AbstractRawDataView {
      * @param dataPresentationMode
      * @param timeArray
      * @param bounds
+     * @param meanOnly the value of meanOnly
      */
     public DataPresentationModeChooserPanel(//
-            JLayeredPane sampleSessionDataView, DataPresentationModeEnum dataPresentationMode, double[] timeArray, Rectangle bounds) {
+            JLayeredPane sampleSessionDataView, //
+            DataPresentationModeEnum dataPresentationMode, //
+            double[] timeArray, //
+            Rectangle bounds, //
+            boolean meanOnly) {
 
         super(bounds);
 
@@ -73,6 +82,7 @@ public class DataPresentationModeChooserPanel extends AbstractRawDataView {
         this.dataPresentationMode = dataPresentationMode;
 
         this.myOnPeakNormalizedAquireTimes = timeArray;
+        this.meanOnly = meanOnly;
 
         setOpaque(true);
         setBackground(new Color(250, 240, 230));
@@ -103,6 +113,7 @@ public class DataPresentationModeChooserPanel extends AbstractRawDataView {
     public void setShowLogRatioButtonOnly() {
         ratiosChooser.setVisible(false);
         alphasChooser.setVisible(false);
+        logRatiosChooser.setSelected(true);
     }
 
     public void setHideAlphaButton() {
@@ -110,6 +121,11 @@ public class DataPresentationModeChooserPanel extends AbstractRawDataView {
         if (alphasChooser.isSelected()) {
             ratiosChooser.doClick();
         }
+    }
+
+    public void setHideODButtons() {
+        withODButton.setVisible(false);
+        withNOODButton.setVisible(false);
     }
 
     @Override
@@ -131,8 +147,10 @@ public class DataPresentationModeChooserPanel extends AbstractRawDataView {
             add(shadeFactory(sampleSessionDataView), DEFAULT_LAYER);
             add(applyShadeButtonFactory());
 
-            add(buttonForODChoiceFactory(12, "w/ OD", true), DEFAULT_LAYER);
-            add(buttonForODChoiceFactory(32, "w/out OD", false), DEFAULT_LAYER);
+            withODButton = buttonForODChoiceFactory(12, "w/ OD", true);
+            add(withODButton, DEFAULT_LAYER);
+            withNOODButton = buttonForODChoiceFactory(32, "w/out OD", false);
+            add(withNOODButton, DEFAULT_LAYER);
         }
     }
 
@@ -201,7 +219,11 @@ public class DataPresentationModeChooserPanel extends AbstractRawDataView {
         ODChoiceButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                ((TripoliSessionRawDataView) sampleSessionDataView).getTripoliSession().setODforAllFractionsAllRatios(setOD);
+                if (meanOnly) {
+                    ((TripoliSessionRawDataView) sampleSessionDataView).getTripoliSession().setDownHoleODforAllFractionsAllRatios(setOD);
+                } else {
+                    ((TripoliSessionRawDataView) sampleSessionDataView).getTripoliSession().setODforAllFractionsAllRatios(setOD);
+                }
 
                 ((AbstractRawDataView) sampleSessionDataView).refreshPanel();
             }
@@ -249,18 +271,4 @@ public class DataPresentationModeChooserPanel extends AbstractRawDataView {
     public void mouseReleased(MouseEvent e) {
 //        super.mouseReleased( e );
     }
-
-//    /**
-//     * @param maskingMinX the maskingMinX to set
-//     */
-//    public void setMaskingMinX ( double maskingMinX ) {
-//        this.maskingMinX = maskingMinX;
-//    }
-//
-//    /**
-//     * @param maskingMaxX the maskingMaxX to set
-//     */
-//    public void setMaskingMaxX ( double maskingMaxX ) {
-//        this.maskingMaxX = maskingMaxX;
-//    }
 }

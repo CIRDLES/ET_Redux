@@ -39,5 +39,5 @@ public interface FitFunctionDataInterface {
      */
     public boolean amShowingUnknownFraction();
     
-    
+    public void setShowFittedFunction(boolean showFittedFunction);
 }

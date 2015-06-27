@@ -23,6 +23,7 @@ import Jama.Matrix;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Map;
@@ -42,6 +43,7 @@ import org.earthtime.dataDictionaries.FitFunctionTypeEnum;
 import org.earthtime.dataDictionaries.IsotopeNames;
 import org.earthtime.dataDictionaries.RawRatioNames;
 import org.earthtime.statistics.NonParametricStats;
+import org.earthtime.utilities.jamaHelpers.MatrixRemover;
 
 /**
  *
@@ -52,7 +54,7 @@ public class RawRatioDataModel //
 
     // Class variables
     private static final long serialVersionUID = 3111511502335804607L;
-    private static boolean printReport = true;
+
     /**
      *
      */
@@ -81,12 +83,16 @@ public class RawRatioDataModel //
     // used for individual intercept fractionation
     private Map<String, AbstractFunctionOfX> logRatioFitFunctionsNoOD;
     private Map<String, AbstractFunctionOfX> logRatioFitFunctionsWithOD;
+    private AbstractFunctionOfX downHoleFitFunction;
 
     /**
      *
      */
     protected boolean overDispersionSelected;
     private FitFunctionTypeEnum selectedFitFunctionType;
+
+    private boolean overDispersionSelectedDownHole;
+
     private boolean belowDetection;
     private Matrix SlogRatioX_Yfull;
     private transient Matrix SlogRatioX_Y;
@@ -138,8 +144,10 @@ public class RawRatioDataModel //
         this.logRatioFitFunctionsNoOD = new TreeMap<>();
         this.logRatioFitFunctionsWithOD = new TreeMap<>();
         this.overDispersionSelected = true;
+        this.selectedFitFunctionType = FitFunctionTypeEnum.LINE;
 
-        this.selectedFitFunctionType = FitFunctionTypeEnum.LINE;//.LINE;
+        this.overDispersionSelectedDownHole = true;
+
         this.belowDetection = false;
         this.SlogRatioX_Yfull = null;
         this.SlogRatioX_Y = null;
@@ -319,7 +327,7 @@ public class RawRatioDataModel //
         calculateSlogRatioX_Y();
     }
 
-    private void calculateSlogRatioX_Y() {
+    public void calculateSlogRatioX_Y() {
         // choose rows and columns based on active data
         // nov 2014 need to catch special case where */pb204 ratios have different dataactivemaps
         if (SlogRatioX_Yfull != null) {
@@ -397,10 +405,8 @@ public class RawRatioDataModel //
 
     /**
      *
-     * @param matrixSf
-     * @param downholeFofX
      */
-    public void calculateDownholeFractionWeightedMeanAndUnct(Matrix matrixSf, AbstractFunctionOfX downholeFofX) {
+    public void calculateDownholeFractionWeightedMeanAndUnct() {
         // calculate the logDifferencesFromWeightedMean between logratios and fit function
 
         int countOfActiveData = 0;
@@ -410,24 +416,45 @@ public class RawRatioDataModel //
             }
         }
 
+        activeData = new boolean[countOfActiveData];
         logDifferencesFromWeightedMean = new double[countOfActiveData];
         double[] normalizedOnPeakAquireTimes = getNormalizedOnPeakAquireTimes();
+        ArrayList<Integer> matrixIndicesToRemove = new ArrayList<>();
+        // ignore shades - shades will be false only at left end and right end, already ignored by downhole fit function
+        boolean[] shades = MaskingSingleton.getInstance().getMaskingArray();
         int index = 0;
         for (int i = 0; i < dataActiveMap.length; i++) {
             if (dataActiveMap[i]) {
-                logDifferencesFromWeightedMean[index] = logRatios[i] - downholeFofX.f(normalizedOnPeakAquireTimes[i]);
+                activeData[index] = true;
+                logDifferencesFromWeightedMean[index] = logRatios[i] - downHoleFitFunction.f(normalizedOnPeakAquireTimes[i]);
                 index++;
+            } else {
+                if (shades[i]) {
+                    matrixIndicesToRemove.add(i);
+                }
             }
         }
 
-        // copy and paste hack to refactor
+        // remove row and col of matrix sf corresponding to missing acquisitions
+        Matrix matrixSfCopy = downHoleFitFunction.getMatrixSf().copy();
+        if (matrixIndicesToRemove.size() > 0) {
+            // reverse list of indices to remove to avoid counting errors
+            Collections.sort(matrixIndicesToRemove, (Integer i1, Integer i2) -> Integer.compare(i2, i1));
+
+            // walk the list of indices to remove and remove rows and cols before insertion
+            for (Integer indexToRemove : matrixIndicesToRemove) {
+                matrixSfCopy = MatrixRemover.removeRow(matrixSfCopy, indexToRemove);
+                matrixSfCopy = MatrixRemover.removeCol(matrixSfCopy, indexToRemove);
+            }
+        }
+
         AbstractOverDispersionLMAlgorithm algorithmForMEAN = LevenbergMarquardGeneralSolverWithCovS.getInstance()//
                 .getSelectedLMAlgorithm(//
                         FitFunctionTypeEnum.MEAN,//
                         activeData, //
                         null, //this is mean so x does not matter
                         logDifferencesFromWeightedMean,//
-                        matrixSf.plus(SlogRatioX_Y),//
+                        matrixSfCopy.plus(getSlogRatioX_Y()),//
                         false);
 
         // algorithmForMEAN contains both the non OD and OD versions
@@ -450,7 +477,7 @@ public class RawRatioDataModel //
                             activeData, //
                             activeXvalues, //
                             logDifferencesFromWeightedMean,//
-                            null, //
+                            matrixSfCopy.plus(getSlogRatioX_Y()),//
                             false);
 
             fOfX_MEAN_OD = fOfX_MEAN;
@@ -459,6 +486,9 @@ public class RawRatioDataModel //
         meanOfResidualsFromFittedFractionation = fOfX_MEAN_OD.getA();
         stdErrOfmeanOfResidualsFromFittedFractionation = fOfX_MEAN_OD.getStdErrOfA();
 
+        logRatioFitFunctionsNoOD.put(FitFunctionTypeEnum.MEAN_DH.getName(), fOfX_MEAN);
+        logRatioFitFunctionsWithOD.put(FitFunctionTypeEnum.MEAN_DH.getName(), fOfX_MEAN_OD);
+        overDispersionSelectedDownHole = true;
     }
 
     /**
@@ -573,9 +603,7 @@ public class RawRatioDataModel //
                 fOfX_MEAN = null;
                 fOfX_MEAN_OD = null;
             }
-
         } else {
-
             try {
                 AbstractOverDispersionLMVecAlgorithm algorithmForMEAN = LevenbergMarquardGeneralSolverWithVecV.getInstance()//
                         .getSelectedLMAlgorithm(//
@@ -596,16 +624,19 @@ public class RawRatioDataModel //
         if ((fOfX_MEAN != null) && fOfX_MEAN.verifyPositiveVariances()) {
             if (logRatioFitFunctionsNoOD.containsKey(fOfX_MEAN.getShortNameString())) {
                 AbstractFunctionOfX fOfXexist = logRatioFitFunctionsNoOD.get(fOfX_MEAN.getShortNameString());
-                fOfXexist.copyValuesFrom(fOfX_MEAN);
+                logRatioFitFunctionsNoOD.remove(fOfX_MEAN.getShortNameString());
+                logRatioFitFunctionsNoOD.put(fOfX_MEAN.getShortNameString(), fOfX_MEAN);
+                // fOfXexist.copyValuesFrom(fOfX_MEAN);
             } else {
                 logRatioFitFunctionsNoOD.put(fOfX_MEAN.getShortNameString(), fOfX_MEAN);
             }
 
-//            AbstractFunctionOfX fOfX_MEAN_OD = algorithmForMEAN.getFinalFofX();
             if ((fOfX_MEAN_OD != null) && fOfX_MEAN_OD.verifyPositiveVariances()) {
                 if (logRatioFitFunctionsWithOD.containsKey(fOfX_MEAN_OD.getShortNameString())) {
                     AbstractFunctionOfX fOfXexist = logRatioFitFunctionsWithOD.get(fOfX_MEAN_OD.getShortNameString());
-                    fOfXexist.copyValuesFrom(fOfX_MEAN_OD);
+                    logRatioFitFunctionsWithOD.remove(fOfX_MEAN_OD.getShortNameString());
+                    logRatioFitFunctionsWithOD.put(fOfX_MEAN_OD.getShortNameString(), fOfX_MEAN_OD);
+                    // fOfXexist.copyValuesFrom(fOfX_MEAN_OD);
                 } else {
                     logRatioFitFunctionsWithOD.put(fOfX_MEAN_OD.getShortNameString(), fOfX_MEAN_OD);
                 }
@@ -746,7 +777,7 @@ public class RawRatioDataModel //
                 algorithmForEXPMAT = LevenbergMarquardGeneralSolverWithVecV.getInstance().getSelectedLMAlgorithmUsingIntialFofX(//
                         FitFunctionTypeEnum.EXPMAT,//
                         activeData, //d
-                        activeXvalues, 
+                        activeXvalues,
                         activeYvalues, //,
                         SlogRatioX_Y, false, //
                         fOfX_ExpFast);
@@ -941,39 +972,44 @@ public class RawRatioDataModel //
                         Iterator<String> sessionFitFuncsNoOdIterator = logRatioFitFunctionsNoOD.keySet().iterator();
                         while (sessionFitFuncsNoOdIterator.hasNext()) {
                             String key = sessionFitFuncsNoOdIterator.next();
-                            AbstractFunctionOfX FofX = logRatioFitFunctionsNoOD.get(key);
+                            // skip downhole function
+                            if (key.compareToIgnoreCase(FitFunctionTypeEnum.MEAN_DH.getName()) != 0) {
+                                AbstractFunctionOfX FofX = logRatioFitFunctionsNoOD.get(key);
 
-                            if (FofX != null) {
-                                Matrix JIntp = FofX.assembleMatrixJIntp(SlogRatioX_Y);
+                                if (FofX != null) {
+                                    Matrix JIntp = FofX.assembleMatrixJIntp(SlogRatioX_Y);
 
-                                try {
-                                    FofX.setdLrInt_dDt(JIntp.times(matrixIntDiff).get(0, 0));
-                                } catch (Exception e) {
+                                    try {
+                                        FofX.setdLrInt_dDt(JIntp.times(matrixIntDiff).get(0, 0));
+                                    } catch (Exception e) {
+                                    }
+                                } else {
+                                    logRatioFitFunctionsNoOD.remove(key);
                                 }
-                            } else {
-                                logRatioFitFunctionsNoOD.remove(key);
                             }
                         }
 
                         Iterator<String> sessionFitFuncsWithOdIterator = logRatioFitFunctionsWithOD.keySet().iterator();
                         while (sessionFitFuncsWithOdIterator.hasNext()) {
                             String key = sessionFitFuncsWithOdIterator.next();
-                            AbstractFunctionOfX FofX = logRatioFitFunctionsWithOD.get(key);
+                            // skip downhole function
+                            if (key.compareToIgnoreCase(FitFunctionTypeEnum.MEAN_DH.getName()) != 0) {
+                                AbstractFunctionOfX FofX = logRatioFitFunctionsWithOD.get(key);
 
-                            if (FofX != null) {
-                                double OD = FofX.getOverDispersion();
-                                Matrix ODdiag = Matrix.identity(countOfActiveData, countOfActiveData).times(OD);
+                                if (FofX != null) {
+                                    double OD = FofX.getOverDispersion();
+                                    Matrix ODdiag = Matrix.identity(countOfActiveData, countOfActiveData).times(OD);
 
-                                Matrix JIntp = FofX.assembleMatrixJIntp(SlogRatioX_Y.plus(ODdiag));
+                                    Matrix JIntp = FofX.assembleMatrixJIntp(SlogRatioX_Y.plus(ODdiag));
 
-                                try {
-                                    FofX.setdLrInt_dDt(JIntp.times(matrixIntDiff).get(0, 0));
-                                } catch (Exception e) {
+                                    try {
+                                        FofX.setdLrInt_dDt(JIntp.times(matrixIntDiff).get(0, 0));
+                                    } catch (Exception e) {
+                                    }
+                                } else {
+                                    logRatioFitFunctionsWithOD.remove(key);
                                 }
-                            } else {
-                                logRatioFitFunctionsWithOD.remove(key);
                             }
-
                         }
                     }
                 }
@@ -998,7 +1034,6 @@ public class RawRatioDataModel //
 //    public void calculateFittedFunctions(String fitFunctionTypeName) {
 //
 //    }
-
     /**
      *
      * @return
@@ -1192,7 +1227,7 @@ public class RawRatioDataModel //
         if (sessionTechnique.compareToIgnoreCase("DOWNHOLE") == 0) {
             try {
                 AbstractFunctionOfX FofX = getSelectedFitFunction();
-                retVal =  Math.sqrt(Math.pow(FofX.getStdErrOfA(), 2) + FofX.getOverDispersion());//  updated june 2015                                  getStdErrOfmeanOfResidualsFromFittedFractionation();
+                retVal = Math.sqrt(Math.pow(FofX.getStdErrOfA(), 2) + FofX.getOverDispersion());//  updated june 2015                                  getStdErrOfmeanOfResidualsFromFittedFractionation();
             } catch (Exception e) {
             }
         }
@@ -1342,7 +1377,6 @@ public class RawRatioDataModel //
      */
     @Override
     public AbstractFunctionOfX getSelectedFitFunction() {
-//        return this.logRatioFitFunctionsNoOD.get( selectedFitFunctionType.getName() );
         AbstractFunctionOfX fitFunc;
         if (overDispersionSelected) {
             fitFunc = logRatioFitFunctionsWithOD.get(selectedFitFunctionType.getName());
@@ -1364,6 +1398,16 @@ public class RawRatioDataModel //
         return fitFunc;
     }
 
+    public AbstractFunctionOfX getSelectedDownHoleFitFunction() {
+        AbstractFunctionOfX fitFunc;
+        if (overDispersionSelectedDownHole) {
+            fitFunc = logRatioFitFunctionsWithOD.get(FitFunctionTypeEnum.MEAN_DH.getName());
+        } else {
+            fitFunc = logRatioFitFunctionsNoOD.get(FitFunctionTypeEnum.MEAN_DH.getName());
+        }
+        return fitFunc;
+    }
+
     /**
      * @param selectedFitFunctionType the selectedFitFunctionType to set
      */
@@ -1377,6 +1421,22 @@ public class RawRatioDataModel //
      */
     public double[] getFitFunctionLogValues() {
         AbstractFunctionOfX fitFunc = getSelectedFitFunction();
+
+        for (int i = 0; i < fitFunctionLogValues.length; i++) {
+            try {
+                fitFunctionLogValues[i] = fitFunc.f(topIsotope.getNormalizedOnPeakAquireTimes()[i]);
+            } catch (Exception e) {
+                fitFunctionLogValues[i] = 0.0;
+            }
+        }
+        return fitFunctionLogValues;
+    }
+
+    /**
+     * @return the fitFunctionLogValues
+     */
+    public double[] getDownHoleFitFunctionLogValues() {
+        AbstractFunctionOfX fitFunc = getSelectedDownHoleFitFunction();
 
         for (int i = 0; i < fitFunctionLogValues.length; i++) {
             try {
@@ -1421,6 +1481,7 @@ public class RawRatioDataModel //
     /**
      * @return the belowDetection
      */
+    @Override
     public boolean isBelowDetection() {
         return belowDetection;
     }
@@ -1440,6 +1501,51 @@ public class RawRatioDataModel //
             calculateSlogRatioX_Y();
         }
         return SlogRatioX_Y;
+    }
+
+    /**
+     * To support downhole
+     *
+     * @return
+     */
+    public Matrix getSlogRatioX_Y_withZeroesAtInactive() {
+        // ignore shades - shades will be false only at left end and right end, already ignored by downhole fit function
+        boolean[] shades = MaskingSingleton.getInstance().getMaskingArray();
+
+        // collect shade and inactive indices
+        ArrayList<Integer> shadeIndices = new ArrayList<>();
+        ArrayList<Integer> inactiveIndices = new ArrayList<>();
+        for (int i = 0; i < dataActiveMap.length; i++) {
+            if (!shades[i]) {
+                shadeIndices.add(i);
+            } else if (!dataActiveMap[i]) {
+                inactiveIndices.add(i);
+            }
+        }
+
+        // zero out rowcol for inactive acquisitions
+        Matrix slogRatioX_Y_withZeroesAtInactive = SlogRatioX_Yfull.copy();
+        for (Integer rowCol : inactiveIndices) {
+            for (int i = 0; i < SlogRatioX_Yfull.getRowDimension(); i++) {
+                if (i != rowCol) {
+                    slogRatioX_Y_withZeroesAtInactive.set(rowCol, i, 0.0);
+                    slogRatioX_Y_withZeroesAtInactive.set(i, rowCol, 0.0);
+                }
+            }
+        }
+
+        // remove row and col of matrix sf corresponding to shadeIndices
+        if (shadeIndices.size() > 0) {
+            // reverse list of indices to remove to avoid counting errors
+            Collections.sort(shadeIndices, (Integer i1, Integer i2) -> Integer.compare(i2, i1));
+            // walk the list of indices to remove and remove rows and cols before insertion
+            for (Integer indexToRemove : shadeIndices) {
+                slogRatioX_Y_withZeroesAtInactive = MatrixRemover.removeRow(slogRatioX_Y_withZeroesAtInactive, indexToRemove);
+                slogRatioX_Y_withZeroesAtInactive = MatrixRemover.removeCol(slogRatioX_Y_withZeroesAtInactive, indexToRemove);
+            }
+        }
+
+        return slogRatioX_Y_withZeroesAtInactive;
     }
 
     /**
@@ -1470,23 +1576,57 @@ public class RawRatioDataModel //
         return logRatios;
     }
 
-    /**
-     *
-     * @param activeCount
-     * @return
-     */
-    public double[] getActiveLogRatios(int activeCount) {
-        double[] activeLogatios = new double[activeCount];
-        int index = 0;
+//    /**
+//     *
+//     * @param activeCount
+//     * @return
+//     */
+//    public double[] getActiveLogRatios(int activeCount) {
+//        double[] activeLogatios = new double[activeCount];
+//        int index = 0;
+//        for (int i = 0; i < dataActiveMap.length; i++) {
+//            if (dataActiveMap[i]) {
+//                activeLogatios[index] = logRatios[i];
+//
+//                index++;
+//            }
+//        }
+//
+//        return activeLogatios;
+//    }
+    public Matrix SlogRXYSolveLRWithZeroesAtInactive(boolean[] dataCommonActiveMap) {
+        // take the SLogRatioXYALL and solve it with logRatiosVector
+        /// then remove row for left and right shades
+        // then zero the row for inactive points for this fraction
+        ArrayList<Integer> shadeIndices = new ArrayList<>();
+        ArrayList<Integer> inactiveIndices = new ArrayList<>();
         for (int i = 0; i < dataActiveMap.length; i++) {
-            if (dataActiveMap[i]) {
-                activeLogatios[index] = logRatios[i];
-
-                index++;
+            if (!dataCommonActiveMap[i]) {
+                shadeIndices.add(i);
+            } else if (!dataActiveMap[i]) {
+                inactiveIndices.add(i);
             }
         }
 
-        return activeLogatios;
+        // make a col vector from logratios
+        Matrix logRatioColVector = new Matrix(logRatios, logRatios.length);
+        // solve making another column vector
+        Matrix SlogRXYSolveLRWithZeroesAtInactive = SlogRatioX_Yfull.solve(logRatioColVector);
+        //zero out missing points
+        for (int index = 0; index < inactiveIndices.size(); index++) {
+            SlogRXYSolveLRWithZeroesAtInactive.set(inactiveIndices.get(index), 0, 0.0);
+        }
+        // remove shaded points
+        if (shadeIndices.size() > 0) {
+            // reverse list of indices to remove to avoid counting errors
+            Collections.sort(shadeIndices, (Integer i1, Integer i2) -> Integer.compare(i2, i1));
+            // walk the list of indices to remove and remove rows 
+            for (Integer indexToRemove : shadeIndices) {
+                SlogRXYSolveLRWithZeroesAtInactive = MatrixRemover.removeRow(SlogRXYSolveLRWithZeroesAtInactive, indexToRemove);
+            }
+        }
+
+        return SlogRXYSolveLRWithZeroesAtInactive;
     }
 
     /**
@@ -1494,8 +1634,8 @@ public class RawRatioDataModel //
      * @return
      */
     public boolean hasTwoIdenticalIonCounters() {
-        return (((RawIntensityDataModel) topIsotope).getCollectorModel()//
-                .equals(((RawIntensityDataModel) botIsotope).getCollectorModel()));
+        return (topIsotope.getCollectorModel()//
+                .equals(botIsotope.getCollectorModel()));
     }
 
     /**
@@ -1525,16 +1665,21 @@ public class RawRatioDataModel //
      */
     @Override
     public boolean containsFitFunction(FitFunctionTypeEnum fitFunctionType) {
-//        return logRatioFitFunctionsNoOD.get( fitFunctionType.getName() ) != null;
-
         boolean contains = false;
 
-        if (overDispersionSelected) {
-            contains = logRatioFitFunctionsWithOD.get(fitFunctionType.getName()) != null;
+        if (fitFunctionType.compareTo(FitFunctionTypeEnum.MEAN_DH) == 0) {
+            if (overDispersionSelectedDownHole) {
+                contains = logRatioFitFunctionsWithOD.get(fitFunctionType.getName()) != null;
+            } else {
+                contains = logRatioFitFunctionsNoOD.get(fitFunctionType.getName()) != null;
+            }
         } else {
-            contains = logRatioFitFunctionsNoOD.get(fitFunctionType.getName()) != null;
+            if (overDispersionSelected) {
+                contains = logRatioFitFunctionsWithOD.get(fitFunctionType.getName()) != null;
+            } else {
+                contains = logRatioFitFunctionsNoOD.get(fitFunctionType.getName()) != null;
+            }
         }
-
         return contains;
     }
 
@@ -1589,6 +1734,7 @@ public class RawRatioDataModel //
      *
      * @return
      */
+    @Override
     public AbstractCollectorModel getCollectorModel() {
         return null;
     }
@@ -1604,6 +1750,7 @@ public class RawRatioDataModel //
     /**
      * @return the usedForCommonLeadCorrections
      */
+    @Override
     public boolean isUsedForCommonLeadCorrections() {
         return usedForCommonLeadCorrections;
     }
@@ -1650,10 +1797,40 @@ public class RawRatioDataModel //
     }
 
     /**
-     * @param logDifferencesFromWeightedMean the logDifferencesFromWeightedMean to set
+     * @param logDifferencesFromWeightedMean the logDifferencesFromWeightedMean
+     * to set
      */
     public void setLogDifferencesFromWeightedMean(double[] logDifferencesFromWeightedMean) {
         this.logDifferencesFromWeightedMean = logDifferencesFromWeightedMean;
+    }
+
+    /**
+     * @return the overDispersionSelectedDownHole
+     */
+    public boolean isOverDispersionSelectedDownHole() {
+        return overDispersionSelectedDownHole;
+    }
+
+    /**
+     * @param overDispersionSelectedDownHole the overDispersionSelectedDownHole
+     * to set
+     */
+    public void setOverDispersionSelectedDownHole(boolean overDispersionSelectedDownHole) {
+        this.overDispersionSelectedDownHole = overDispersionSelectedDownHole;
+    }
+
+    /**
+     * @return the downHoleFitFunction
+     */
+    public AbstractFunctionOfX getDownHoleFitFunction() {
+        return downHoleFitFunction;
+    }
+
+    /**
+     * @param downHoleFitFunction the downHoleFitFunction to set
+     */
+    public void setDownHoleFitFunction(AbstractFunctionOfX downHoleFitFunction) {
+        this.downHoleFitFunction = downHoleFitFunction;
     }
 
 }

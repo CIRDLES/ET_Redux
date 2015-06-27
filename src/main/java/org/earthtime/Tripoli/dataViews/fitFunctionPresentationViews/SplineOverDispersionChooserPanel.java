@@ -176,7 +176,7 @@ public class SplineOverDispersionChooserPanel extends AbstractRawDataView {
                         ((SmoothingSplineFitFunctionView) fitFunctionView).refreshXiLabel();
                         ((SmoothingSplineFitFunctionView) fitFunctionView).getPresentationView().repaint();
                     } else if ( sampleSessionDataView instanceof DataViewsOverlay ) {
-                        currentSplineWithOD = ((DataViewsOverlay) sampleSessionDataView).getDownholeFractionationAlphaDataModel().getSelectedFitFunction();
+                        currentSplineWithOD = ((DataViewsOverlay) sampleSessionDataView).getDownholeFractionationDataModel().getSelectedFitFunction();
                         currentSplineWithOD.copyValuesFrom( splineWithOD );
                         ((DataViewsOverlay) sampleSessionDataView).refreshPanel();
                         ((SmoothingSplineFitFunctionView) fitFunctionView).refreshXiLabel();

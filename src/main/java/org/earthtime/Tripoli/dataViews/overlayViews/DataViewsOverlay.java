@@ -47,7 +47,6 @@ import org.earthtime.Tripoli.dataViews.simpleViews.FitFunctionDataInterface;
 import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.FitFunctionsOnRatioDataView;
 import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.RawIntensitiesDataView;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
-import org.earthtime.Tripoli.fractions.TripoliFractionViewInterface;
 import org.earthtime.dataDictionaries.DataPresentationModeEnum;
 import org.earthtime.visualizationUtilities.ColorGradient;
 
@@ -64,8 +63,8 @@ public class DataViewsOverlay extends AbstractRawDataView implements MaskingShad
     /**
      *
      */
-    protected DownholeFractionationDataModel downholeFractionationAlphaDataModel;
-    private double[] myFittedAverageAlphas;
+    protected DownholeFractionationDataModel downholeFractionationDataModel;
+    private double[] myFittedAverages;
     private int countOfMaskedTimeSlotsOnLeft;
     private int countOfMaskedTimeSlotsOnRight;
     private double[] fitFunctionNormalizedTimes;
@@ -87,8 +86,8 @@ public class DataViewsOverlay extends AbstractRawDataView implements MaskingShad
 
         this.tripoliFractionRawDataModelViews = tripoliFractionRawDataModelViews;
         this.sampleSessionDataView = sampleSessionDataView;
-        this.downholeFractionationAlphaDataModel = null;
-        this.myFittedAverageAlphas = null;
+        this.downholeFractionationDataModel = null;
+        this.myFittedAverages = null;
         this.dataPresentationMode = dataPresentationMode;
 
         this.standardValue = tripoliFractionRawDataModelViews[0].getStandardValue();
@@ -125,18 +124,18 @@ public class DataViewsOverlay extends AbstractRawDataView implements MaskingShad
                 double[] tfOnPeakData = tripoliFractionRawDataModelViews[i].getMyOnPeakData();
 
                 tripoliFraction = tripoliFractionRawDataModelViews[i].getTripoliFraction();
-                // draw alpha line
-                Shape alphaLine = new Path2D.Double();
+                // draw onPeak line
+                Shape onPeakLine = new Path2D.Double();
                 g2d.setPaint(tripoliFraction.isIncluded() ? tripoliFractionRawDataModelViews[i].getPaintColor() : EXCLUDED_COLOR);
-                ((Path2D) alphaLine).moveTo(//
+                ((Path2D) onPeakLine).moveTo(//
                         mapX(myOnPeakNormalizedAquireTimes[0]), //
                         mapY(tfOnPeakData[0]));
 
                 for (int j = 1; j < tfOnPeakData.length; j++) {
-                    ((Path2D) alphaLine).lineTo( //
+                    ((Path2D) onPeakLine).lineTo( //
                             mapX(myOnPeakNormalizedAquireTimes[j]), mapY(tfOnPeakData[j]));
                 }
-                g2d.draw(alphaLine);
+                g2d.draw(onPeakLine);
 
                 // now check for excluded points and add redLine coming and going
                 for (int j = 1; j < tfOnPeakData.length; j++) {
@@ -167,7 +166,7 @@ public class DataViewsOverlay extends AbstractRawDataView implements MaskingShad
                     }
 
                     // check for temporary red vertical line from mouse click
-                    int chosenDatumIndex = ((TripoliFractionViewInterface) tripoliFraction).getShowVerticalLineAtThisIndex();
+                    int chosenDatumIndex = tripoliFraction.getShowVerticalLineAtThisIndex();
                     if (chosenDatumIndex > -1) {
                         paintLineOverSelectedDatum(g2d, chosenDatumIndex);
                     }
@@ -188,7 +187,7 @@ public class DataViewsOverlay extends AbstractRawDataView implements MaskingShad
                             mapY(tfOnPeakData[0]));
                 } catch (Exception e) {
                 }
-                
+
                 for (int j = 1; j < tfOnPeakData.length; j++) {
                     try {
                         ((Path2D) dataLine).lineTo( //
@@ -203,46 +202,38 @@ public class DataViewsOverlay extends AbstractRawDataView implements MaskingShad
                 if (chosenDatumIndex > -1) {
                     paintLineOverSelectedDatum(g2d, chosenDatumIndex);
                 }
-
-//                // points too expensive in overlay
-//                for (int j = 0; j < tfOnPeakData.length; j ++) {
-//                    Shape rawRatioPoint = new java.awt.geom.Ellipse2D.Double( //
-//                            mapX( myOnPeakNormalizedAquireTimes[j] ), mapY( tfOnPeakData[j] ), 1, 1 );
-//                    g2d.setPaint( determineDataColor( j, Color.black ) );
-//                    g2d.draw( rawRatioPoint );
-//                }
             }
         }
 
-        if (downholeFractionationAlphaDataModel != null) {
+        if (downholeFractionationDataModel != null) {
 
-            // draw alphaAverageLine
-            Shape alphaAverageLine = new Path2D.Double();
+            // draw averageLine
+            Shape averageLine = new Path2D.Double();
             g2d.setPaint(Color.BLACK);
             g2d.setStroke(new BasicStroke(2.5f));
-            ((Path2D) alphaAverageLine).moveTo(//
+            ((Path2D) averageLine).moveTo(//
                     mapX(myOnPeakNormalizedAquireTimes[0]), //
                     mapY(myOnPeakData[0]));
 
             for (int i = 1; i < myOnPeakData.length; i++) {
-                ((Path2D) alphaAverageLine).lineTo( //
+                ((Path2D) averageLine).lineTo( //
                         mapX(myOnPeakNormalizedAquireTimes[i]), mapY(myOnPeakData[i]));
             }
-            g2d.draw(alphaAverageLine);
+            g2d.draw(averageLine);
 
-            // draw fittedAlphaAverageLine
-            Shape fittedAlphaAverageLine = new Path2D.Double();
+            // draw fittedAverageLine
+            Shape fittedAverageLine = new Path2D.Double();
             g2d.setPaint(Color.RED);
             g2d.setStroke(new BasicStroke(3.0f));
-            ((Path2D) fittedAlphaAverageLine).moveTo(//
+            ((Path2D) fittedAverageLine).moveTo(//
                     mapX(fitFunctionNormalizedTimes[0]), //
-                    mapY(myFittedAverageAlphas[0]));
+                    mapY(myFittedAverages[0]));
 
-            for (int i = 1; i < myFittedAverageAlphas.length; i++) {
-                ((Path2D) fittedAlphaAverageLine).lineTo( //
-                        mapX(fitFunctionNormalizedTimes[i]), mapY(myFittedAverageAlphas[i]));
+            for (int i = 1; i < myFittedAverages.length; i++) {
+                ((Path2D) fittedAverageLine).lineTo(//
+                        mapX(fitFunctionNormalizedTimes[i]), mapY(myFittedAverages[i]));
             }
-            g2d.draw(fittedAlphaAverageLine);
+            g2d.draw(fittedAverageLine);
 
         }
     }
@@ -253,10 +244,9 @@ public class DataViewsOverlay extends AbstractRawDataView implements MaskingShad
     @Override
     public void updateFittedData() {
 
-        //AbstractFunctionOfX fitFunc = downholeFractionationAlphaDataModel.getSelectedFitFunction();
-        myFittedAverageAlphas = downholeFractionationAlphaDataModel.getFitFunctionLogValues().clone();
+        myFittedAverages = downholeFractionationDataModel.getFitFunctionLogValues().clone();
 
-        myOnPeakData = downholeFractionationAlphaDataModel.getWeightedMeanIntegrations().clone();
+        myOnPeakData = downholeFractionationDataModel.getWeightedMeanIntegrations().clone();
 
         fitFunctionNormalizedTimes = new double[MaskingSingleton.getInstance().getCountOfActiveData()];
         boolean[] maskingArray = MaskingSingleton.getInstance().getMaskingArray();
@@ -272,7 +262,7 @@ public class DataViewsOverlay extends AbstractRawDataView implements MaskingShad
         // find min and max y
         for (int i = 0; i < myOnPeakData.length; i++) {
             myOnPeakData[i] = convertLogDatumToPresentationMode(myOnPeakData[i]);
-            myFittedAverageAlphas[i] = convertLogDatumToPresentationMode(myFittedAverageAlphas[i]);
+            myFittedAverages[i] = convertLogDatumToPresentationMode(myFittedAverages[i]);
         }
 
     }
@@ -290,21 +280,19 @@ public class DataViewsOverlay extends AbstractRawDataView implements MaskingShad
         // set colors for overlay view
         // dec 2012 and determine if there is at least one valid == not belowdetection
         boolean allBelowDetection = false;
-        Color[] alphasColorGradient = ColorGradient.generateGradient(Color.green, Color.blue, tripoliFractionRawDataModelViews.length);
+        Color[] standardsColorGradient = ColorGradient.generateGradient(Color.green, Color.blue, tripoliFractionRawDataModelViews.length);
         for (int i = 0; i < tripoliFractionRawDataModelViews.length; i++) {
-            tripoliFractionRawDataModelViews[i].setPaintColor(alphasColorGradient[i]);
-//            allBelowDetection = allBelowDetection //
-//                    || ((RawRatioDataModel) tripoliFractionRawDataModelViews[i].getDataModel()).isBelowDetection();
-             allBelowDetection = allBelowDetection //
+            tripoliFractionRawDataModelViews[i].setPaintColor(standardsColorGradient[i]);
+            allBelowDetection = allBelowDetection //
                     || tripoliFractionRawDataModelViews[i].getDataModel().isBelowDetection();
-       }
+        }
 
         if (!allBelowDetection) {
 
             // sort all data points with associated tripoliFractionRawDataModelViews into timestamp slots
-            sortedValFracs = new ArrayList<SortedSet<ValFrac>>();
+            sortedValFracs = new ArrayList<>();
             for (int i = 0; i < tripoliFractionRawDataModelViews[0].getMyOnPeakData().length; i++) {
-                sortedValFracs.add(new TreeSet<ValFrac>());
+                sortedValFracs.add(new TreeSet<>());
             }
 
             for (int i = 0; i < tripoliFractionRawDataModelViews.length; i++) {
@@ -319,18 +307,16 @@ public class DataViewsOverlay extends AbstractRawDataView implements MaskingShad
             // set up aquire times
             myOnPeakNormalizedAquireTimes = tripoliFractionRawDataModelViews[0].getMyOnPeakNormalizedAquireTimes();
 
-            // handle case of alphas averages
-            if (downholeFractionationAlphaDataModel != null) {
-                // setup data
-                // myOnPeakData = downholeFractionationAlphaDataModel.getAverageAlphas();
+            // handle case of standard averages
+            if (downholeFractionationDataModel != null) {
                 // set up fitted data
                 updateFittedData();
 
-                // masking shade only for alpha now *******************************************
+                // masking shade only for standard now *******************************************
                 // first determine width of mask
                 countOfMaskedTimeSlotsOnLeft = -1;
                 for (int i = 0; i < DownholeFractionationDataModel.MAX_AQUISITIONS_SHADABLE; i++) {
-                    if (!downholeFractionationAlphaDataModel.getMaskingSingleton().getMaskingArray()[i]) {
+                    if (!downholeFractionationDataModel.getMaskingSingleton().getMaskingArray()[i]) {
                         countOfMaskedTimeSlotsOnLeft++;
                     }
                 }
@@ -345,9 +331,9 @@ public class DataViewsOverlay extends AbstractRawDataView implements MaskingShad
 
                 countOfMaskedTimeSlotsOnRight = -1;
                 int lowestAquisitionIndex = //
-                        downholeFractionationAlphaDataModel.getMaskingSingleton().getMaskingArray().length - DownholeFractionationDataModel.MAX_AQUISITIONS_SHADABLE;
-                for (int i = lowestAquisitionIndex; i < downholeFractionationAlphaDataModel.getMaskingSingleton().getMaskingArray().length; i++) {
-                    if (!downholeFractionationAlphaDataModel.getMaskingSingleton().getMaskingArray()[i]) {
+                        downholeFractionationDataModel.getMaskingSingleton().getMaskingArray().length - DownholeFractionationDataModel.MAX_AQUISITIONS_SHADABLE;
+                for (int i = lowestAquisitionIndex; i < downholeFractionationDataModel.getMaskingSingleton().getMaskingArray().length; i++) {
+                    if (!downholeFractionationDataModel.getMaskingSingleton().getMaskingArray()[i]) {
                         countOfMaskedTimeSlotsOnRight++;
                     }
                 }
@@ -373,10 +359,10 @@ public class DataViewsOverlay extends AbstractRawDataView implements MaskingShad
     }
 
     /**
-     * @param fractionationAlphaDataModel
+     * @param fractionationDataModel
      */
-    public void setFractionationDataModel(DownholeFractionationDataModel fractionationAlphaDataModel) {
-        this.downholeFractionationAlphaDataModel = fractionationAlphaDataModel;
+    public void setFractionationDataModel(DownholeFractionationDataModel fractionationDataModel) {
+        this.downholeFractionationDataModel = fractionationDataModel;
     }
 
     /**
@@ -408,7 +394,7 @@ public class DataViewsOverlay extends AbstractRawDataView implements MaskingShad
         }
 
         // recalculate averages and fits
-        if (downholeFractionationAlphaDataModel != null) {
+        if (downholeFractionationDataModel != null) {
             ((TripoliSessionRawDataView) sampleSessionDataView).getTripoliSession().applyMaskingArray();
             ((TripoliSessionRawDataView) sampleSessionDataView).//
                     getSessionFractionationCalculator().calculateDownholeFitSummariesForPrimaryStandard();
@@ -432,24 +418,24 @@ public class DataViewsOverlay extends AbstractRawDataView implements MaskingShad
 
         // calculate nearest data point horizontally limited to MAX_AQUISITIONS_SHADABLE
         int lowestAquisitionIndex = //
-                downholeFractionationAlphaDataModel.getMaskingSingleton().getMaskingArray().length - DownholeFractionationDataModel.MAX_AQUISITIONS_SHADABLE;
+                downholeFractionationDataModel.getMaskingSingleton().getMaskingArray().length - DownholeFractionationDataModel.MAX_AQUISITIONS_SHADABLE;
         int nearest = Math.max( //
                 lowestAquisitionIndex,//
                 convertMouseXToValue(getWidth() + currentShadeX));
 
         // mask up to nearest
-        for (int i = lowestAquisitionIndex; i < downholeFractionationAlphaDataModel.getMaskingSingleton().getMaskingArray().length; i++) {
-            downholeFractionationAlphaDataModel.getMaskingSingleton().getMaskingArray()[i] = true;
+        for (int i = lowestAquisitionIndex; i < downholeFractionationDataModel.getMaskingSingleton().getMaskingArray().length; i++) {
+            downholeFractionationDataModel.getMaskingSingleton().getMaskingArray()[i] = true;
         }
-        for (int i = nearest; i < downholeFractionationAlphaDataModel.getMaskingSingleton().getMaskingArray().length; i++) {
-            downholeFractionationAlphaDataModel.getMaskingSingleton().getMaskingArray()[i] = false;
+        for (int i = nearest; i < downholeFractionationDataModel.getMaskingSingleton().getMaskingArray().length; i++) {
+            downholeFractionationDataModel.getMaskingSingleton().getMaskingArray()[i] = false;
         }
 
         // april 2014
-        MaskingSingleton.getInstance().setRightShadeCount(downholeFractionationAlphaDataModel.getMaskingSingleton().getMaskingArray().length - nearest - 1);
+        MaskingSingleton.getInstance().setRightShadeCount(downholeFractionationDataModel.getMaskingSingleton().getMaskingArray().length - nearest - 1);
 
         // recalculate averages and fits
-        if (downholeFractionationAlphaDataModel != null) {
+        if (downholeFractionationDataModel != null) {
             ((TripoliSessionRawDataView) sampleSessionDataView).getTripoliSession().applyMaskingArray();
             ((TripoliSessionRawDataView) sampleSessionDataView).//
                     getSessionFractionationCalculator().calculateDownholeFitSummariesForPrimaryStandard();
@@ -460,7 +446,7 @@ public class DataViewsOverlay extends AbstractRawDataView implements MaskingShad
 
         //updateReportTable();
         // send tab to right edge at last time slot
-        if (nearest == downholeFractionationAlphaDataModel.getMaskingSingleton().getMaskingArray().length - 1) {
+        if (nearest == downholeFractionationDataModel.getMaskingSingleton().getMaskingArray().length - 1) {
             nearest++;
         }
 
@@ -468,10 +454,10 @@ public class DataViewsOverlay extends AbstractRawDataView implements MaskingShad
     }
 
     /**
-     * @return the downholeFractionationAlphaDataModel
+     * @return the downholeFractionationDataModel
      */
-    public DownholeFractionationDataModel getDownholeFractionationAlphaDataModel() {
-        return downholeFractionationAlphaDataModel;
+    public DownholeFractionationDataModel getDownholeFractionationDataModel() {
+        return downholeFractionationDataModel;
     }
 
     /**
@@ -481,6 +467,11 @@ public class DataViewsOverlay extends AbstractRawDataView implements MaskingShad
     @Override
     public boolean amShowingUnknownFraction() {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void setShowFittedFunction(boolean showFittedFunction) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     /**
@@ -606,7 +597,7 @@ public class DataViewsOverlay extends AbstractRawDataView implements MaskingShad
                                     sampleSessionDataView.repaint();
 
                                     // recalculate averages and fits
-                                    if (downholeFractionationAlphaDataModel != null) {
+                                    if (downholeFractionationDataModel != null) {
                                         ((TripoliSessionRawDataView) sampleSessionDataView).//
                                                 getSessionFractionationCalculator().calculateDownholeFitSummariesForPrimaryStandard();
                                     }
@@ -632,7 +623,7 @@ public class DataViewsOverlay extends AbstractRawDataView implements MaskingShad
                                     sampleSessionDataView.repaint();
 
                                     // recalculate averages and fits
-                                    if (downholeFractionationAlphaDataModel != null) {
+                                    if (downholeFractionationDataModel != null) {
                                         ((TripoliSessionRawDataView) sampleSessionDataView).//
                                                 getSessionFractionationCalculator().calculateDownholeFitSummariesForPrimaryStandard();
                                     }
@@ -658,13 +649,13 @@ public class DataViewsOverlay extends AbstractRawDataView implements MaskingShad
                                     sampleSessionDataView.repaint();
 
                                     // recalculate averages and fits
-                                    if (downholeFractionationAlphaDataModel != null) {
+                                    if (downholeFractionationDataModel != null) {
                                         ((TripoliSessionRawDataView) sampleSessionDataView).//
                                                 getSessionFractionationCalculator().calculateDownholeFitSummariesForPrimaryStandard();
                                     }
 
                                     // refresh all
-                                    ((TripoliSessionRawDataView) sampleSessionDataView).refreshPanel();
+                                    ((AbstractRawDataView) sampleSessionDataView).refreshPanel();
 
                                     updateReportTable();
 
@@ -693,8 +684,8 @@ public class DataViewsOverlay extends AbstractRawDataView implements MaskingShad
     @Override
     public void mouseReleased(MouseEvent e) {
         if (rawDataView != null) {
-            ((TripoliFractionViewInterface) rawDataView.getTripoliFraction()).setColorMeExcluded(false);
-            ((TripoliFractionViewInterface) rawDataView.getTripoliFraction()).setShowVerticalLineAtThisIndex(-1);
+            rawDataView.getTripoliFraction().setColorMeExcluded(false);
+            rawDataView.getTripoliFraction().setShowVerticalLineAtThisIndex(-1);
             sampleSessionDataView.repaint();
 
             updateReportTable();

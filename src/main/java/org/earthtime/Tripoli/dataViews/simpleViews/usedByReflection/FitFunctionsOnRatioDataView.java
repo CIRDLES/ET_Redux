@@ -52,8 +52,7 @@ public class FitFunctionsOnRatioDataView extends AbstractRawDataView implements 
      *
      */
     public static int DEFAULT_WIDTH_OF_PANE = 128;
-    //
-    //private DataModelInterface rawRatioDataModel;
+
     private double[] fittedFunctionValues;
     private boolean showFittedFunction;
 
@@ -310,6 +309,7 @@ public class FitFunctionsOnRatioDataView extends AbstractRawDataView implements 
     /**
      * @param showFittedFunction the showFittedFunction to set
      */
+    @Override
     public void setShowFittedFunction(boolean showFittedFunction) {
         this.showFittedFunction = showFittedFunction;
     }

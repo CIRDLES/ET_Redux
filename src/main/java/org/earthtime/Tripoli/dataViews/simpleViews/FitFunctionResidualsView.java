@@ -115,18 +115,11 @@ public class FitFunctionResidualsView extends AbstractRawDataView implements Mas
         setDisplayOffsetX( 0.0 );
 
 
-        // walk alphas and get min and max for axes
-        myOnPeakData = downholeFractionationDataModel.getFittedAlphasResiduals();
-//        for (int i = 0; i < myOnPeakData.length; i ++){
-//            myOnPeakData[i] = convertLogDatumToPresentationMode( myOnPeakData[i]);
-//        }
+        // walk standards and get min and max for axes
+        myOnPeakData = downholeFractionationDataModel.getFittedStandardsResiduals();
 
         // normalize aquireTimes
         myOnPeakNormalizedAquireTimes = downholeFractionationDataModel.getNormalizedAquireTimes();
-
-//        // X-axis lays out time evenly spaced
-//        minX = myOnPeakNormalizedAquireTimes[0];
-//        maxX = myOnPeakNormalizedAquireTimes[myOnPeakNormalizedAquireTimes.length - 1];
 
         // Y-axis is ratios
         minY = Double.MAX_VALUE;
@@ -149,7 +142,7 @@ public class FitFunctionResidualsView extends AbstractRawDataView implements Mas
         }
 
 
-        // masking shade only for alpha now *******************************************
+        // masking shade only for standards now *******************************************
         // first determine width of mask
         countOfMaskedTimeSlotsOnLeft = -1;
         for (int i = 0; i < DownholeFractionationDataModel.MAX_AQUISITIONS_SHADABLE; i ++) {
