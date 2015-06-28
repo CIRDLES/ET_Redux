@@ -41,7 +41,7 @@ public class MaskingShadeControl extends AbstractRawDataView implements MaskingS
     private int countOfMaskedTimeSlotsOnLeft;
     private int countOfMaskedTimeSlotsOnRight;
     private final MaskingSingleton maskingArray;
-    private static final int MAX_SHADE_COUNT = 4;
+    public static final int MAX_SHADE_COUNT = 4;
 
     /**
      *

@@ -445,12 +445,14 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
         }
 
         if (interceptFitFunctionsPresentationViews != null) {
-            for (AbstractRawDataView[] interceptFitFunctionsPresentationView : interceptFitFunctionsPresentationViews) {
-                for (AbstractRawDataView interceptFitFunctionsPresentationView1 : interceptFitFunctionsPresentationView) {
-                    // contains individual fraction view fit function presentations with sliders
-                    try {
-                        ((AbstractFitFunctionPresentationView) interceptFitFunctionsPresentationView1).resetValueModelSliders();
-                    } catch (Exception e) {
+            if (interceptFitFunctionsPresentationViews[0][0] != null) {
+                for (AbstractRawDataView[] interceptFitFunctionsPresentationView : interceptFitFunctionsPresentationViews) {
+                    for (AbstractRawDataView interceptFitFunctionsPresentationView1 : interceptFitFunctionsPresentationView) {
+                        // contains individual fraction view fit function presentations with sliders
+                        try {
+                            ((AbstractFitFunctionPresentationView) interceptFitFunctionsPresentationView1).resetValueModelSliders();
+                        } catch (Exception e) {
+                        }
                     }
                 }
             }

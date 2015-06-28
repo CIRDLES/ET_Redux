@@ -145,7 +145,7 @@ public class FitFunctionResidualsView extends AbstractRawDataView implements Mas
         // masking shade only for standards now *******************************************
         // first determine width of mask
         countOfMaskedTimeSlotsOnLeft = -1;
-        for (int i = 0; i < DownholeFractionationDataModel.MAX_AQUISITIONS_SHADABLE; i ++) {
+        for (int i = 0; i < MaskingShadeControl.MAX_SHADE_COUNT; i ++) {
             if (  ! downholeFractionationDataModel.getMaskingSingleton().getMaskingArray()[i] ) {
                 countOfMaskedTimeSlotsOnLeft ++;
             }
@@ -161,7 +161,7 @@ public class FitFunctionResidualsView extends AbstractRawDataView implements Mas
 
         countOfMaskedTimeSlotsOnRight = -1;
         int lowestAquisitionIndex = //
-                downholeFractionationDataModel.getMaskingSingleton().getMaskingArray().length - DownholeFractionationDataModel.MAX_AQUISITIONS_SHADABLE;
+                downholeFractionationDataModel.getMaskingSingleton().getMaskingArray().length - MaskingShadeControl.MAX_SHADE_COUNT;
         for (int i = lowestAquisitionIndex; i < downholeFractionationDataModel.getMaskingSingleton().getMaskingArray().length; i ++) {
             if (  ! downholeFractionationDataModel.getMaskingSingleton().getMaskingArray()[i] ) {
                 countOfMaskedTimeSlotsOnRight ++;

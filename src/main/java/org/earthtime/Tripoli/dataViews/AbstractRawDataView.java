@@ -355,31 +355,12 @@ public abstract class AbstractRawDataView extends JLayeredPane implements MouseI
         return retVal;
     }
 
-//    /**
-//     *
-//     * @param datum
-//     * @return
-//     */
-//    protected double unConvertPresentationModeToLogDatum(double datum) {
-//        double retVal = datum;
-//
-//        if (dataPresentationMode.compareTo(DataPresentationModeEnum.ALPHA) == 0) {
-//            retVal = Math.log(standardValue / (1.0 + datum));
-//        }
-//
-//        if (dataPresentationMode.compareTo(DataPresentationModeEnum.RATIO) == 0) {
-//            retVal = Math.log(datum);
-//        }
-//
-//        return retVal;
-//    }
     /**
      *
      * @param x
      * @return
      */
     public double mapX(double x) {
-
         return (((x - getMinX_Display()) / getRangeX_Display()) * graphWidth) + leftMargin;
     }
 
@@ -389,7 +370,6 @@ public abstract class AbstractRawDataView extends JLayeredPane implements MouseI
      * @return
      */
     protected double mapY(double y) {
-
         return (((getMaxY_Display() - y) / getRangeY_Display()) * graphHeight) + topMargin;
     }
 
@@ -419,9 +399,7 @@ public abstract class AbstractRawDataView extends JLayeredPane implements MouseI
 
             // repaint fittedfunction
             sampleSessionDataView.repaint();
-
         }
-
     }
 
     /**

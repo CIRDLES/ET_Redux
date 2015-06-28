@@ -41,9 +41,9 @@ import javax.swing.JPopupMenu;
 import org.earthtime.Tripoli.beans.MaskingShade;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
 import org.earthtime.Tripoli.dataModels.DownholeFractionationDataModel;
-import org.earthtime.Tripoli.dataModels.MaskingSingleton;
 import org.earthtime.Tripoli.dataViews.AbstractRawDataView;
 import org.earthtime.Tripoli.dataViews.simpleViews.FitFunctionDataInterface;
+import org.earthtime.Tripoli.dataViews.simpleViews.MaskingShadeControl;
 import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.FitFunctionsOnRatioDataView;
 import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.RawIntensitiesDataView;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
@@ -207,21 +207,21 @@ public class DataViewsOverlay extends AbstractRawDataView implements MaskingShad
 
         if (downholeFractionationDataModel != null) {
 
-            // draw averageLine
+            // draw averageLine BLACK
             Shape averageLine = new Path2D.Double();
             g2d.setPaint(Color.BLACK);
             g2d.setStroke(new BasicStroke(2.5f));
             ((Path2D) averageLine).moveTo(//
-                    mapX(myOnPeakNormalizedAquireTimes[0]), //
+                    mapX(fitFunctionNormalizedTimes[0]), //
                     mapY(myOnPeakData[0]));
 
             for (int i = 1; i < myOnPeakData.length; i++) {
                 ((Path2D) averageLine).lineTo( //
-                        mapX(myOnPeakNormalizedAquireTimes[i]), mapY(myOnPeakData[i]));
+                        mapX(fitFunctionNormalizedTimes[i]), mapY(myOnPeakData[i]));
             }
             g2d.draw(averageLine);
 
-            // draw fittedAverageLine
+            // draw fittedAverageLine RED
             Shape fittedAverageLine = new Path2D.Double();
             g2d.setPaint(Color.RED);
             g2d.setStroke(new BasicStroke(3.0f));
@@ -229,7 +229,7 @@ public class DataViewsOverlay extends AbstractRawDataView implements MaskingShad
                     mapX(fitFunctionNormalizedTimes[0]), //
                     mapY(myFittedAverages[0]));
 
-            for (int i = 1; i < myFittedAverages.length; i++) {
+            for (int i = 1; i < fitFunctionNormalizedTimes.length; i++) {
                 ((Path2D) fittedAverageLine).lineTo(//
                         mapX(fitFunctionNormalizedTimes[i]), mapY(myFittedAverages[i]));
             }
@@ -248,16 +248,17 @@ public class DataViewsOverlay extends AbstractRawDataView implements MaskingShad
 
         myOnPeakData = downholeFractionationDataModel.getWeightedMeanIntegrations().clone();
 
-        fitFunctionNormalizedTimes = new double[MaskingSingleton.getInstance().getCountOfActiveData()];
-        boolean[] maskingArray = MaskingSingleton.getInstance().getMaskingArray();
-
-        int index = 0;
-        for (int i = 0; i < maskingArray.length; i++) {
-            if (maskingArray[i]) {
-                fitFunctionNormalizedTimes[index] = myOnPeakNormalizedAquireTimes[i];
-                index++;
-            }
-        }
+//        fitFunctionNormalizedTimes = new double[MaskingSingleton.getInstance().getCountOfActiveData()];
+//        boolean[] maskingArray = MaskingSingleton.getInstance().getMaskingArray();
+//
+//        int index = 0;
+//        for (int i = 0; i < maskingArray.length; i++) {
+//            if (maskingArray[i]) {
+//                fitFunctionNormalizedTimes[index] = myOnPeakNormalizedAquireTimes[i];
+//                index++;
+//            }
+//        }
+        fitFunctionNormalizedTimes = downholeFractionationDataModel.getActiveXvalues();
 
         // find min and max y
         for (int i = 0; i < myOnPeakData.length; i++) {
@@ -315,7 +316,7 @@ public class DataViewsOverlay extends AbstractRawDataView implements MaskingShad
                 // masking shade only for standard now *******************************************
                 // first determine width of mask
                 countOfMaskedTimeSlotsOnLeft = -1;
-                for (int i = 0; i < DownholeFractionationDataModel.MAX_AQUISITIONS_SHADABLE; i++) {
+                for (int i = 0; i < MaskingShadeControl.MAX_SHADE_COUNT; i++) {
                     if (!downholeFractionationDataModel.getMaskingSingleton().getMaskingArray()[i]) {
                         countOfMaskedTimeSlotsOnLeft++;
                     }
@@ -323,7 +324,7 @@ public class DataViewsOverlay extends AbstractRawDataView implements MaskingShad
 
                 JLayeredPane myMaskingShadeLeft = new MaskingShade( //
                         this, //
-                        true,//
+                        false,//
                         MaskingShade.PULL_FROM_LEFT,//
                         countOfMaskedTimeSlotsOnLeft);
 
@@ -331,7 +332,7 @@ public class DataViewsOverlay extends AbstractRawDataView implements MaskingShad
 
                 countOfMaskedTimeSlotsOnRight = -1;
                 int lowestAquisitionIndex = //
-                        downholeFractionationDataModel.getMaskingSingleton().getMaskingArray().length - DownholeFractionationDataModel.MAX_AQUISITIONS_SHADABLE;
+                        downholeFractionationDataModel.getMaskingSingleton().getMaskingArray().length - MaskingShadeControl.MAX_SHADE_COUNT;
                 for (int i = lowestAquisitionIndex; i < downholeFractionationDataModel.getMaskingSingleton().getMaskingArray().length; i++) {
                     if (!downholeFractionationDataModel.getMaskingSingleton().getMaskingArray()[i]) {
                         countOfMaskedTimeSlotsOnRight++;
@@ -340,7 +341,7 @@ public class DataViewsOverlay extends AbstractRawDataView implements MaskingShad
 
                 JLayeredPane myMaskingShadeRight = new MaskingShade( //
                         this, //
-                        true,//
+                        false,//
                         MaskingShade.PULL_FROM_RIGHT,//
                         countOfMaskedTimeSlotsOnRight);
 
@@ -373,39 +374,41 @@ public class DataViewsOverlay extends AbstractRawDataView implements MaskingShad
     @Override
     public int provideShadeXFromLeft(int currentShadeX) {
 
-        // calculate nearest data point horizontally limited to MAX_AQUISITIONS_SHADABLE
-        int nearest = Math.min(DownholeFractionationDataModel.MAX_AQUISITIONS_SHADABLE - 1, convertMouseXToValue(currentShadeX));
-
-        // mask up to nearest
-        for (int i = 0; i < nearest + 1; i++) {
-            MaskingSingleton.getInstance().getMaskingArray()[i] = false;
-        }
-        for (int i = nearest + 1; i < DownholeFractionationDataModel.MAX_AQUISITIONS_SHADABLE; i++) {
-            if (i >= 0) {
-                MaskingSingleton.getInstance().getMaskingArray()[i] = true;
-            }
-        }
-
-        // april 2014
-        if (nearest < 0) {
-            MaskingSingleton.getInstance().setLeftShadeCount(-1);
-        } else {
-            MaskingSingleton.getInstance().setLeftShadeCount(nearest);
-        }
-
-        // recalculate averages and fits
-        if (downholeFractionationDataModel != null) {
-            ((TripoliSessionRawDataView) sampleSessionDataView).getTripoliSession().applyMaskingArray();
-            ((TripoliSessionRawDataView) sampleSessionDataView).//
-                    getSessionFractionationCalculator().calculateDownholeFitSummariesForPrimaryStandard();
-        }
-
-        // refresh all
-        ((AbstractRawDataView) sampleSessionDataView).refreshPanel();
-
-        //updateReportTable();
-        // send proposed width back to set shade halfway between points
-        return (int) mapX(nearest);
+//        // calculate nearest data point horizontally limited to MaskingShadeControl.MAX_SHADE_COUNT
+//        int nearest = Math.min(MaskingShadeControl.MAX_SHADE_COUNT - 1, convertMouseXToValue(currentShadeX));
+//
+//        // mask up to nearest
+//        for (int i = 0; i < nearest + 1; i++) {
+//            MaskingSingleton.getInstance().getMaskingArray()[i] = false;
+//        }
+//        for (int i = nearest + 1; i < MaskingShadeControl.MAX_SHADE_COUNT; i++) {
+//            if (i >= 0) {
+//                MaskingSingleton.getInstance().getMaskingArray()[i] = true;
+//            }
+//        }
+//
+//        // april 2014
+//        if (nearest < 0) {
+//            MaskingSingleton.getInstance().setLeftShadeCount(-1);
+//        } else {
+//            MaskingSingleton.getInstance().setLeftShadeCount(nearest);
+//        }
+//
+//        // recalculate averages and fits
+//        if (downholeFractionationDataModel != null) {
+//            ((TripoliSessionRawDataView) sampleSessionDataView).getTripoliSession().applyMaskingArray();
+//
+////            ((TripoliSessionRawDataView) sampleSessionDataView).//
+////                    getSessionFractionationCalculator().calculateDownholeFitSummariesForPrimaryStandard();
+//        }
+//
+//        // refresh all
+//        ((AbstractRawDataView) sampleSessionDataView).refreshPanel();
+//
+//        //updateReportTable();
+//        // send proposed width back to set shade halfway between points
+//        return (int) mapX(nearest);
+        return 0;
     }
 
     /**
@@ -415,42 +418,44 @@ public class DataViewsOverlay extends AbstractRawDataView implements MaskingShad
      */
     @Override
     public int provideShadeXFromRight(int currentShadeX) {
+//
+//        // calculate nearest data point horizontally limited to MaskingShadeControl.MAX_SHADE_COUNT
+//        int lowestAquisitionIndex = //
+//                downholeFractionationDataModel.getMaskingSingleton().getMaskingArray().length - MaskingShadeControl.MAX_SHADE_COUNT;
+//        int nearest = Math.max( //
+//                lowestAquisitionIndex,//
+//                convertMouseXToValue(getWidth() + currentShadeX));
+//
+//        // mask up to nearest
+//        for (int i = lowestAquisitionIndex; i < downholeFractionationDataModel.getMaskingSingleton().getMaskingArray().length; i++) {
+//            downholeFractionationDataModel.getMaskingSingleton().getMaskingArray()[i] = true;
+//        }
+//        for (int i = nearest; i < downholeFractionationDataModel.getMaskingSingleton().getMaskingArray().length; i++) {
+//            downholeFractionationDataModel.getMaskingSingleton().getMaskingArray()[i] = false;
+//        }
+//
+//        // april 2014
+//        MaskingSingleton.getInstance().setRightShadeCount(downholeFractionationDataModel.getMaskingSingleton().getMaskingArray().length - nearest - 1);
+//
+//        // recalculate averages and fits
+//        if (downholeFractionationDataModel != null) {
+//            ((TripoliSessionRawDataView) sampleSessionDataView).getTripoliSession().applyMaskingArray();
+//            ((TripoliSessionRawDataView) sampleSessionDataView).//
+//                    getSessionFractionationCalculator().calculateDownholeFitSummariesForPrimaryStandard();
+//        }
+//
+//        // refresh all
+//        ((AbstractRawDataView) sampleSessionDataView).refreshPanel();
+//
+//        //updateReportTable();
+//        // send tab to right edge at last time slot
+//        if (nearest == downholeFractionationDataModel.getMaskingSingleton().getMaskingArray().length - 1) {
+//            nearest++;
+//        }
+//
+//        return getWidth() - (int) mapX(nearest);
 
-        // calculate nearest data point horizontally limited to MAX_AQUISITIONS_SHADABLE
-        int lowestAquisitionIndex = //
-                downholeFractionationDataModel.getMaskingSingleton().getMaskingArray().length - DownholeFractionationDataModel.MAX_AQUISITIONS_SHADABLE;
-        int nearest = Math.max( //
-                lowestAquisitionIndex,//
-                convertMouseXToValue(getWidth() + currentShadeX));
-
-        // mask up to nearest
-        for (int i = lowestAquisitionIndex; i < downholeFractionationDataModel.getMaskingSingleton().getMaskingArray().length; i++) {
-            downholeFractionationDataModel.getMaskingSingleton().getMaskingArray()[i] = true;
-        }
-        for (int i = nearest; i < downholeFractionationDataModel.getMaskingSingleton().getMaskingArray().length; i++) {
-            downholeFractionationDataModel.getMaskingSingleton().getMaskingArray()[i] = false;
-        }
-
-        // april 2014
-        MaskingSingleton.getInstance().setRightShadeCount(downholeFractionationDataModel.getMaskingSingleton().getMaskingArray().length - nearest - 1);
-
-        // recalculate averages and fits
-        if (downholeFractionationDataModel != null) {
-            ((TripoliSessionRawDataView) sampleSessionDataView).getTripoliSession().applyMaskingArray();
-            ((TripoliSessionRawDataView) sampleSessionDataView).//
-                    getSessionFractionationCalculator().calculateDownholeFitSummariesForPrimaryStandard();
-        }
-
-        // refresh all
-        ((AbstractRawDataView) sampleSessionDataView).refreshPanel();
-
-        //updateReportTable();
-        // send tab to right edge at last time slot
-        if (nearest == downholeFractionationDataModel.getMaskingSingleton().getMaskingArray().length - 1) {
-            nearest++;
-        }
-
-        return getWidth() - (int) mapX(nearest);
+        return 0;
     }
 
     /**
@@ -557,123 +562,125 @@ public class DataViewsOverlay extends AbstractRawDataView implements MaskingShad
             timeSlot = myOnPeakNormalizedAquireTimes.length - 1;
         }
 
-        try {
-            rawDataView = findDataViewOfPoint(timeSlot, convertMouseYToValue(evt.getY()));
-            if (rawDataView != null) {
-                final TripoliFraction myTripoliFraction = rawDataView.getTripoliFraction();
+        if (timeSlot > -1) {
+            try {
+                rawDataView = findDataViewOfPoint(timeSlot, convertMouseYToValue(evt.getY()));
+                if (rawDataView != null) {
+                    final TripoliFraction myTripoliFraction = rawDataView.getTripoliFraction();
 
-                if (timeSlot >= 0) {
-                    final int finalTimeSlot = timeSlot;
+                    if (timeSlot >= 0) {
+                        final int finalTimeSlot = timeSlot;
 
-                    myTripoliFraction.setColorMeExcluded(true);
-                    myTripoliFraction.setShowVerticalLineAtThisIndex(finalTimeSlot);
-                    myTripoliFraction.setShowSecondVerticalLineAtThisIndex(finalTimeSlot);
-                    sampleSessionDataView.repaint();
-                    updateReportTable();
+                        myTripoliFraction.setColorMeExcluded(true);
+                        myTripoliFraction.setShowVerticalLineAtThisIndex(finalTimeSlot);
+                        myTripoliFraction.setShowSecondVerticalLineAtThisIndex(finalTimeSlot);
+                        sampleSessionDataView.repaint();
+                        updateReportTable();
 
-                    // handle right button or control button for mac mouse
-                    if (evt.isPopupTrigger() && ((evt.getButton() == MouseEvent.BUTTON3) || evt.isControlDown())) {
+                        // handle right button or control button for mac mouse
+                        if (evt.isPopupTrigger() && ((evt.getButton() == MouseEvent.BUTTON3) || evt.isControlDown())) {
 
-                        //Create the popup menu.
-                        JPopupMenu popup = new JPopupMenu();
+                            //Create the popup menu.
+                            JPopupMenu popup = new JPopupMenu();
 
-                        //  show coordinates fyi
-                        double onPeakValue = rawDataView.getMyOnPeakData()[finalTimeSlot];
-                        DecimalFormat f = new DecimalFormat("0.0000E00");
+                            //  show coordinates fyi
+                            double onPeakValue = rawDataView.getMyOnPeakData()[finalTimeSlot];
+                            DecimalFormat f = new DecimalFormat("0.0000E00");
 
-                        JMenuItem menuItem = //
-                                new JMenuItem("(" + timeSlot + ", " + f.format(onPeakValue) + ")");
-                        popup.add(menuItem);
-
-                        if (myTripoliFraction.isIncluded()) {
-                            menuItem = new JMenuItem("Toggle aquisition (include / exclude).");
-                            menuItem.addActionListener(new ActionListener() {
-                                @Override
-                                public void actionPerformed(ActionEvent arg0) {
-                                    myTripoliFraction.flipIncludeExcludeOneDataAquisition(finalTimeSlot);
-                                    myTripoliFraction.setColorMeExcluded(false);
-                                    myTripoliFraction.setShowVerticalLineAtThisIndex(-1);
-                                    // repaint fraction
-                                    sampleSessionDataView.repaint();
-
-                                    // recalculate averages and fits
-                                    if (downholeFractionationDataModel != null) {
-                                        ((TripoliSessionRawDataView) sampleSessionDataView).//
-                                                getSessionFractionationCalculator().calculateDownholeFitSummariesForPrimaryStandard();
-                                    }
-
-                                    // refresh all
-                                    ((AbstractRawDataView) sampleSessionDataView).refreshPanel();
-
-                                    updateReportTable();
-                                }
-                            });
+                            JMenuItem menuItem = //
+                                    new JMenuItem("(" + timeSlot + ", " + f.format(onPeakValue) + ")");
                             popup.add(menuItem);
 
-                            menuItem = new JMenuItem("EXCLUDE this fraction (all aquisitions).");
-                            menuItem.addActionListener(new ActionListener() {
-                                @Override
-                                public void actionPerformed(ActionEvent arg0) {
+                            if (myTripoliFraction.isIncluded()) {
+                                menuItem = new JMenuItem("Toggle aquisition (include / exclude).");
+                                menuItem.addActionListener(new ActionListener() {
+                                    @Override
+                                    public void actionPerformed(ActionEvent arg0) {
+                                        myTripoliFraction.flipIncludeExcludeOneDataAquisition(finalTimeSlot);
+                                        myTripoliFraction.setColorMeExcluded(false);
+                                        myTripoliFraction.setShowVerticalLineAtThisIndex(-1);
+                                        // repaint fraction
+                                        sampleSessionDataView.repaint();
 
-                                    myTripoliFraction.toggleAllDataExceptShaded(false);
-                                    myTripoliFraction.setColorMeExcluded(false);
-                                    myTripoliFraction.setShowVerticalLineAtThisIndex(-1);
+                                        // recalculate averages and fits
+                                        if (downholeFractionationDataModel != null) {
+                                            ((TripoliSessionRawDataView) sampleSessionDataView).//
+                                                    getSessionFractionationCalculator().calculateDownholeFitSummariesForPrimaryStandard();
+                                        }
 
-                                    // repaint fraction
-                                    sampleSessionDataView.repaint();
+                                        // refresh all
+                                        ((AbstractRawDataView) sampleSessionDataView).refreshPanel();
 
-                                    // recalculate averages and fits
-                                    if (downholeFractionationDataModel != null) {
-                                        ((TripoliSessionRawDataView) sampleSessionDataView).//
-                                                getSessionFractionationCalculator().calculateDownholeFitSummariesForPrimaryStandard();
+                                        updateReportTable();
                                     }
+                                });
+                                popup.add(menuItem);
 
-                                    // refresh all
-                                    ((AbstractRawDataView) sampleSessionDataView).refreshPanel();
+                                menuItem = new JMenuItem("EXCLUDE this fraction (all aquisitions).");
+                                menuItem.addActionListener(new ActionListener() {
+                                    @Override
+                                    public void actionPerformed(ActionEvent arg0) {
 
-                                    updateReportTable();
-                                }
-                            });
-                            popup.add(menuItem);
-                        } else {
-                            menuItem = new JMenuItem("INCLUDE this fraction (all aquisitions).");
-                            menuItem.addActionListener(new ActionListener() {
-                                @Override
-                                public void actionPerformed(ActionEvent arg0) {
+                                        myTripoliFraction.toggleAllDataExceptShaded(false);
+                                        myTripoliFraction.setColorMeExcluded(false);
+                                        myTripoliFraction.setShowVerticalLineAtThisIndex(-1);
 
-                                    myTripoliFraction.toggleAllDataExceptShaded(true);
-                                    myTripoliFraction.setColorMeExcluded(false);
-                                    myTripoliFraction.setShowVerticalLineAtThisIndex(-1);
+                                        // repaint fraction
+                                        sampleSessionDataView.repaint();
 
-                                    // repaint fraction
-                                    sampleSessionDataView.repaint();
+                                        // recalculate averages and fits
+                                        if (downholeFractionationDataModel != null) {
+                                            ((TripoliSessionRawDataView) sampleSessionDataView).//
+                                                    getSessionFractionationCalculator().calculateDownholeFitSummariesForPrimaryStandard();
+                                        }
 
-                                    // recalculate averages and fits
-                                    if (downholeFractionationDataModel != null) {
-                                        ((TripoliSessionRawDataView) sampleSessionDataView).//
-                                                getSessionFractionationCalculator().calculateDownholeFitSummariesForPrimaryStandard();
+                                        // refresh all
+                                        ((AbstractRawDataView) sampleSessionDataView).refreshPanel();
+
+                                        updateReportTable();
                                     }
+                                });
+                                popup.add(menuItem);
+                            } else {
+                                menuItem = new JMenuItem("INCLUDE this fraction (all aquisitions).");
+                                menuItem.addActionListener(new ActionListener() {
+                                    @Override
+                                    public void actionPerformed(ActionEvent arg0) {
 
-                                    // refresh all
-                                    ((AbstractRawDataView) sampleSessionDataView).refreshPanel();
+                                        myTripoliFraction.toggleAllDataExceptShaded(true);
+                                        myTripoliFraction.setColorMeExcluded(false);
+                                        myTripoliFraction.setShowVerticalLineAtThisIndex(-1);
 
-                                    updateReportTable();
+                                        // repaint fraction
+                                        sampleSessionDataView.repaint();
 
-                                }
-                            });
-                            popup.add(menuItem);
+                                        // recalculate averages and fits
+                                        if (downholeFractionationDataModel != null) {
+                                            ((TripoliSessionRawDataView) sampleSessionDataView).//
+                                                    getSessionFractionationCalculator().calculateDownholeFitSummariesForPrimaryStandard();
+                                        }
+
+                                        // refresh all
+                                        ((AbstractRawDataView) sampleSessionDataView).refreshPanel();
+
+                                        updateReportTable();
+
+                                    }
+                                });
+                                popup.add(menuItem);
+
+                            }
+
+                            // show the menu
+                            popup.show(evt.getComponent(), evt.getX() + 10, evt.getY() - 10);
 
                         }
-
-                        // show the menu
-                        popup.show(evt.getComponent(), evt.getX() + 10, evt.getY() - 10);
-
                     }
-                }
 
+                }
+            } finally {
+                // System.out.println( "MOUSE: " + convertMouseXToValue( evt.getX() ) + ", " + convertMouseYToValue( evt.getY() ) + " from " + evt.getY() );
             }
-        } finally {
-            // System.out.println( "MOUSE: " + convertMouseXToValue( evt.getX() ) + ", " + convertMouseYToValue( evt.getY() ) + " from " + evt.getY() );
         }
     }
 

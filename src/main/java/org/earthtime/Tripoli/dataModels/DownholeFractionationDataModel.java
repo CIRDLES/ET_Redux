@@ -50,7 +50,6 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
     /**
      *
      */
-    public final static int MAX_AQUISITIONS_SHADABLE = 3;
     //
     private SortedSet<TripoliFraction> tripoliFractions;
     private final RawRatioNames rawRatioName;
@@ -879,5 +878,12 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
         }
 
         return retVal;
+    }
+
+    /**
+     * @return the activeXvalues
+     */
+    public double[] getActiveXvalues() {
+        return activeXvalues;
     }
 }
