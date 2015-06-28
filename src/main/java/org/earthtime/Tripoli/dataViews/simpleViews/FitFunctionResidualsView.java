@@ -27,23 +27,18 @@ import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
-import javax.swing.JLayeredPane;
-import org.earthtime.Tripoli.beans.MaskingShade;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
 import org.earthtime.Tripoli.dataModels.DownholeFractionationDataModel;
 import org.earthtime.Tripoli.dataViews.AbstractRawDataView;
-import org.earthtime.Tripoli.dataViews.overlayViews.MaskingShadeTargetInterface;
 import org.earthtime.dataDictionaries.DataPresentationModeEnum;
 
 /**
  *
  * @author James F. Bowring
  */
-public class FitFunctionResidualsView extends AbstractRawDataView implements MaskingShadeTargetInterface {
+public class FitFunctionResidualsView extends AbstractRawDataView {
 
     private DownholeFractionationDataModel downholeFractionationDataModel;
-    private int countOfMaskedTimeSlotsOnLeft;
-    private int countOfMaskedTimeSlotsOnRight;
 
     /**
      * 
@@ -90,8 +85,6 @@ public class FitFunctionResidualsView extends AbstractRawDataView implements Mas
             g2d.fill( box );
 
         }
-
-
         //draw zero
         g2d.setColor( Color.black );
         g2d.setStroke( new BasicStroke( 0.5f ) );
@@ -101,6 +94,8 @@ public class FitFunctionResidualsView extends AbstractRawDataView implements Mas
                 mapX( myOnPeakNormalizedAquireTimes[myOnPeakNormalizedAquireTimes.length - 1] ) + 4.0f,//
                 mapY( 0 ) );
         g2d.draw( zeroLine );
+        
+        drawMaskingShades(g2d);
     }
 
     /**
@@ -140,43 +135,6 @@ public class FitFunctionResidualsView extends AbstractRawDataView implements Mas
         } else {
             maxY =  - minY;
         }
-
-
-        // masking shade only for standards now *******************************************
-        // first determine width of mask
-        countOfMaskedTimeSlotsOnLeft = -1;
-        for (int i = 0; i < MaskingShadeControl.MAX_SHADE_COUNT; i ++) {
-            if (  ! downholeFractionationDataModel.getMaskingSingleton().getMaskingArray()[i] ) {
-                countOfMaskedTimeSlotsOnLeft ++;
-            }
-        }
-
-        JLayeredPane myMaskingShadeLeft = new MaskingShade( //
-                this, //
-                false,//
-                MaskingShade.PULL_FROM_LEFT,//
-                countOfMaskedTimeSlotsOnLeft );
-
-        add( myMaskingShadeLeft, javax.swing.JLayeredPane.DEFAULT_LAYER );
-
-        countOfMaskedTimeSlotsOnRight = -1;
-        int lowestAquisitionIndex = //
-                downholeFractionationDataModel.getMaskingSingleton().getMaskingArray().length - MaskingShadeControl.MAX_SHADE_COUNT;
-        for (int i = lowestAquisitionIndex; i < downholeFractionationDataModel.getMaskingSingleton().getMaskingArray().length; i ++) {
-            if (  ! downholeFractionationDataModel.getMaskingSingleton().getMaskingArray()[i] ) {
-                countOfMaskedTimeSlotsOnRight ++;
-            }
-        }
-
-        JLayeredPane myMaskingShadeRight = new MaskingShade( //
-                this, //
-                false,//
-                MaskingShade.PULL_FROM_RIGHT,//
-                countOfMaskedTimeSlotsOnRight );
-
-        add( myMaskingShadeRight, javax.swing.JLayeredPane.DEFAULT_LAYER );
-
-
     }
 
     /**
@@ -185,26 +143,6 @@ public class FitFunctionResidualsView extends AbstractRawDataView implements Mas
      */
     @Override
     public DataModelInterface getDataModel () {
-        throw new UnsupportedOperationException( "Not supported yet." );
-    }
-
-    /**
-     * 
-     * @param currentShadeX
-     * @return
-     */
-    @Override
-    public int provideShadeXFromLeft ( int currentShadeX ) {
-        return 0;
-    }
-
-    /**
-     * 
-     * @param currentShadeX
-     * @return
-     */
-    @Override
-    public int provideShadeXFromRight ( int currentShadeX ) {
         throw new UnsupportedOperationException( "Not supported yet." );
     }
 }

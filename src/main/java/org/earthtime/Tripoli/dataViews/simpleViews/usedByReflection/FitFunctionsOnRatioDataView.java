@@ -19,21 +19,17 @@
  */
 package org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection;
 
-import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Composite;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.font.GlyphVector;
 import java.awt.geom.Path2D;
-import java.awt.geom.Rectangle2D;
 import javax.swing.JLayeredPane;
 import org.earthtime.Tripoli.dataModels.DataModelFitFunctionInterface;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
-import org.earthtime.Tripoli.dataModels.MaskingSingleton;
 import org.earthtime.Tripoli.dataModels.RawRatioDataModel;
 import org.earthtime.Tripoli.dataViews.AbstractRawDataView;
 import org.earthtime.Tripoli.dataViews.simpleViews.FitFunctionDataInterface;
@@ -102,7 +98,7 @@ public class FitFunctionsOnRatioDataView extends AbstractRawDataView implements 
 
                 // feb 2013 change of approach: instead of red lines, just bypass the point altogether
                 // find first active point
-                boolean[] dataActiveMap = rawRatioDataModel.getDataActiveMap();//nov 2014 changed t ratio to show differences        tripoliFraction.getDataActiveMap();
+                boolean[] dataActiveMap = rawRatioDataModel.getDataActiveMap();
                 int firstActiveIndex = 0;
                 for (int i = 0; i < dataActiveMap.length; i++) {
                     if (dataActiveMap[i]) {
@@ -139,7 +135,7 @@ public class FitFunctionsOnRatioDataView extends AbstractRawDataView implements 
                     // logs cant be nan and ratios or alphas cant be neg
                     if (!rawRatioDataModel.isForceMeanForCommonLeadRatios() //
                             && //
-                            Double.isNaN(myOnPeakData[i])){
+                            Double.isNaN(myOnPeakData[i])) {
                         Font specialFont = new Font("Courier New", Font.PLAIN, 10);
                         GlyphVector vect = specialFont.createGlyphVector(g2d.getFontRenderContext(), "+");
                         dataPoint = vect.getOutline((float) mapX(myOnPeakNormalizedAquireTimes[i]) - 3, (float) mapY(minY));
@@ -168,50 +164,7 @@ public class FitFunctionsOnRatioDataView extends AbstractRawDataView implements 
                     g2d.draw(fittedFunctionAverageLine);
                 }
 
-                // draw masking shades
-                boolean[] maskingArray = MaskingSingleton.getInstance().getMaskingArray();
-                //left
-                int leftEdgeIndex = -1;
-                boolean leftEdgeFound = false;
-                int rightEdgeIndex = maskingArray.length;
-                for (int i = 0; i < maskingArray.length; i++) {
-                    if ((!leftEdgeFound) && (!maskingArray[i])) {
-                        leftEdgeIndex = i;
-                    } else {
-                        leftEdgeFound = true;
-                    }
-
-                    if (leftEdgeFound && !maskingArray[i]) {
-                        rightEdgeIndex = i;
-                        break;
-                    }
-                }
-
-                Composite originalComposite = g2d.getComposite();
-                g2d.setPaint(Color.gray);
-                g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.2f));
-
-                if (leftEdgeIndex > -1) {
-                    Shape leftShade = new Rectangle2D.Double( //
-                            mapX(minX), //
-                            -1,
-                            mapX((double) myOnPeakNormalizedAquireTimes[leftEdgeIndex] + (double) (myOnPeakNormalizedAquireTimes[1] - myOnPeakNormalizedAquireTimes[0]) / 2.0),//
-                            getHeight() + 1);
-
-                    g2d.fill(leftShade);
-                }
-
-                if (rightEdgeIndex < maskingArray.length) {
-                    Shape rightShade = new Rectangle2D.Double( //
-                            mapX((double) myOnPeakNormalizedAquireTimes[rightEdgeIndex] - (double) (myOnPeakNormalizedAquireTimes[1] - myOnPeakNormalizedAquireTimes[0]) / 2.0),//
-                            -1,
-                            mapX(maxX), //
-                            getHeight() + 1);
-
-                    g2d.fill(rightShade);
-                }
-
-                g2d.setComposite(originalComposite);
+                drawMaskingShades(g2d);
             }
         } else {
             g2d.drawString("BELOW DETECTION", 25, 25);

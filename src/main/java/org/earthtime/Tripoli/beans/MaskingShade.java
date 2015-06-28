@@ -116,7 +116,6 @@ public class MaskingShade extends JLayeredPane implements MouseInputListener {
                             (countOfMaskedTimeSlots < 0 ? //
                                     0 //
                                     : countOfMaskedTimeSlots));
-
         }
         int h = maskingShadeTarget.getHeight();
 
