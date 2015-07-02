@@ -1,5 +1,5 @@
 /*
- * MeasuredUThRatios.java
+ * UThRatiosMeasured.java
  *
  *
  * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
@@ -23,38 +23,38 @@ package org.earthtime.dataDictionaries;
  * @author James F. Bowring
  */
 
-public enum MeasuredUThRatios {
+public enum UThRatiosMeasured {
 
     // measured UTh ratios
     /**
      * 
      */
-    r234U_238U( "r234U_238U" ),
+    r234U_238Ufc( "r234U_238Ufc" ),
     /**
      * 
      */
-    r230Th_232Th( "r230Th_232Th" ),
+    r230Th_232Thfc( "r230Th_232Thfc" ),
     /**
      * 
      */
-    r228Ra_226Ra( "r228Ra_226Ra" ),
+    r228Ra_226Rafc( "r228Ra_226Rafc" ),
     /**
      * 
      */
-    r231Pa_233Pa( "r231Pa_233Pa" ),    
+    r231Pa_233Pafc( "r231Pa_233Pafc" ),    
     /**
      * 
      */
-    r238U_206Pb( "r238U_206Pb" ),
+    r238U_206Pbfc( "r238U_206Pbfc" ),
     /**
      * 
      */
-    r207Pb_206Pb( "r207Pb_206Pb" );
+    r207Pb_206Pbfc( "r207Pb_206Pbfc" );
 
 
     private String name;
 
-    private MeasuredUThRatios ( String name ) {
+    private UThRatiosMeasured ( String name ) {
         this.name = name;
     }
 
@@ -71,9 +71,9 @@ public enum MeasuredUThRatios {
      * @return
      */
     public static String[] getNames () {
-        String[] retVal = new String[MeasuredUThRatios.values().length];
-        for (int i = 0; i < MeasuredUThRatios.values().length; i ++) {
-            retVal[i] = MeasuredUThRatios.values()[i].getName();
+        String[] retVal = new String[UThRatiosMeasured.values().length];
+        for (int i = 0; i < UThRatiosMeasured.values().length; i ++) {
+            retVal[i] = UThRatiosMeasured.values()[i].getName();
         }
         return retVal;
     }
@@ -86,7 +86,7 @@ public enum MeasuredUThRatios {
     public static boolean contains ( String checkString ) {
         boolean retVal = true;
         try {
-            MeasuredUThRatios.valueOf( checkString );
+            UThRatiosMeasured.valueOf( checkString );
         } catch (IllegalArgumentException e) {
             retVal = false;
         }

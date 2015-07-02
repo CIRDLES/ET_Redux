@@ -707,8 +707,6 @@ public class DateProbabilityDensityPanel extends JLayeredPane
         setMaxX(DateProbabilityDensityPanel.DEFAULT_DISPLAY_MAXX);
         setDisplayOffsetX(0);
 
-//        setSelectedFractions( sample.getFractionsActive() );
-        //setSelectedHistogramBinCount( 0 );
         preparePanel();
         repaint();
     }

@@ -42,12 +42,12 @@ import org.earthtime.UPb_Redux.dateInterpretation.DateInterpretationUpdateViewI;
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.reports.ReportCategory;
 import org.earthtime.UPb_Redux.reports.ReportColumn;
-import org.earthtime.UPb_Redux.reports.ReportSettings;
 import org.earthtime.UPb_Redux.user.SampleDateInterpretationGUIOptions;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.colorViews.HeatMapMapper;
 import org.earthtime.colorViews.HeatMapView;
+import org.earthtime.reports.ReportSettingsInterface;
 import org.earthtime.samples.SampleInterface;
 
 /**
@@ -69,7 +69,7 @@ public class HeatMapManager extends DialogEditor {
     private JCheckBox toggleHeatActiveCheckBox;
     private boolean heatMapActive;
     private ReportColumn selectedReportColumn;
-    private final ReportSettings reportSettings;
+    private final ReportSettingsInterface reportSettings;
     private Map<String, String> heatMapOptions;
 
     /**

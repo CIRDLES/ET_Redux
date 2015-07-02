@@ -28,7 +28,6 @@ import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetu
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
-import org.earthtime.UPb_Redux.reports.ReportSettings;
 import org.earthtime.UPb_Redux.samples.SESARSampleMetadata;
 import org.earthtime.UPb_Redux.user.SampleDateInterpretationGUIOptions;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
@@ -39,6 +38,7 @@ import org.earthtime.dataDictionaries.SampleTypesEnum;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
+import org.earthtime.reports.ReportSettingsInterface;
 import org.earthtime.samples.SampleInterface;
 
 /**
@@ -58,7 +58,7 @@ public class ProjectSample implements//
     private boolean analyzed;
     private Vector<AliquotInterface> aliquots;
     private Vector<ETFractionInterface> fractions;
-    private ReportSettings reportSettingsModel;
+    private ReportSettingsInterface reportSettingsModel;
     private AbstractRatiosDataModel physicalConstantsModel;
     private SampleDateInterpretationGUIOptions sampleAgeInterpretationGUISettings;
     private boolean changed;
@@ -360,12 +360,12 @@ public class ProjectSample implements//
     }
 
     @Override
-    public void setReportSettingsModel(ReportSettings reportSettingsModel) {
+    public void setReportSettingsModel(ReportSettingsInterface reportSettingsModel) {
         this.reportSettingsModel = reportSettingsModel;
     }
 
     @Override
-    public ReportSettings getReportSettingsModel() {
+    public ReportSettingsInterface getReportSettingsModel() {
         return reportSettingsModel;
     }
 

@@ -714,11 +714,6 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
         updateProjectDisplayTitleBar();
 
-        // oct 2014 reportsettings
-//        ReportSettings reportSettingsModel = superSample.getReportSettingsModel();
-//        if (reportSettingsModel != null) {
-//            reportSettingsModel.setLegacyData(superSample.isAnalyzed());
-//        }
         try {
             superSample.setLegacyStatusForReportTable();
         } catch (Exception e) {

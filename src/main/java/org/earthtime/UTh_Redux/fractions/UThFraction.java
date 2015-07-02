@@ -17,9 +17,6 @@ package org.earthtime.UTh_Redux.fractions;
 
 import java.awt.geom.Path2D;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectStreamClass;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -29,11 +26,12 @@ import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.reports.ReportRowGUIInterface;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
-import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.dataDictionaries.DataDictionary;
 import org.earthtime.dataDictionaries.MeasuredRatios;
-import org.earthtime.dataDictionaries.MeasuredUThRatios;
 import org.earthtime.dataDictionaries.RadDates;
+import org.earthtime.dataDictionaries.UThAnalysisMeasures;
+import org.earthtime.dataDictionaries.UThCompositionalMeasures;
+import org.earthtime.dataDictionaries.UThRatiosMeasured;
 import org.earthtime.dataDictionaries.UncertaintyTypesEnum;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.fractions.ETFractionInterface;
@@ -43,10 +41,11 @@ import org.earthtime.xmlUtilities.XMLSerializationI;
 public class UThFraction implements
         UThFractionI,
         ReportRowGUIInterface,
+        ETFractionInterface,
         Serializable,
         XMLSerializationI {
 
-    //private static final long serialVersionUID = -6610176652253689201L;
+    private static final long serialVersionUID = 2630535302751505090L;
     private transient boolean selectedInDataTable;
     // Instance variables
     private String fractionID;
@@ -82,12 +81,11 @@ public class UThFraction implements
         this.numberOfGrains = ReduxLabData.getInstance().getDefaultNumberOfGrains();
         this.estimatedDate = BigDecimal.ZERO;
 
-        analysisMeasures = valueModelArrayFactory(AnalysisMeasures.getNames(), UncertaintyTypesEnum.ABS.getName());
-        // note for UPb we use MeasuredRatioModel, but not here at least initially
-        measuredRatios = valueModelArrayFactory(MeasuredUThRatios.getNames(), UncertaintyTypesEnum.PCT.getName());
+        analysisMeasures = valueModelArrayFactory(UThAnalysisMeasures.getNames(), UncertaintyTypesEnum.ABS.getName());
+        measuredRatios = valueModelArrayFactory(UThRatiosMeasured.getNames(), UncertaintyTypesEnum.ABS.getName());
         radiogenicIsotopeRatios = valueModelArrayFactory(DataDictionary.RadiogenicIsotopeRatioTypes, UncertaintyTypesEnum.ABS.getName());
         radiogenicIsotopeDates = valueModelArrayFactory(RadDates.getNamesSorted(), UncertaintyTypesEnum.ABS.getName());
-        compositionalMeasures = valueModelArrayFactory(DataDictionary.earthTimeUPbCompositionalMeasuresNames, UncertaintyTypesEnum.ABS.getName());
+        compositionalMeasures = valueModelArrayFactory(UThCompositionalMeasures.getNames(), UncertaintyTypesEnum.ABS.getName());
         sampleIsochronRatios = valueModelArrayFactory(DataDictionary.SampleIsochronRatioNames, UncertaintyTypesEnum.ABS.getName());
 
         this.changed = false;
@@ -95,7 +93,6 @@ public class UThFraction implements
         this.fractionNotes = "";
         this.rejected = false;
 
-//        initializeTraceElements();
     }
 
     /**
@@ -548,14 +545,8 @@ public class UThFraction implements
     public Object readXMLObject(String filename, boolean doValidate) throws FileNotFoundException, ETException, FileNotFoundException, BadOrMissingXMLSchemaException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
-    private void readObject(
-            ObjectInputStream stream)
-            throws IOException, ClassNotFoundException {
-        stream.defaultReadObject();
-        ObjectStreamClass myObject = ObjectStreamClass.lookup(
-                Class.forName(UThFraction.class.getCanonicalName()));
-        long theSUID = myObject.getSerialVersionUID();
-        System.out.println("Customized De-serialization of UThFraction " + theSUID);
-    }
+    
+    //***********************
+    
+    
 }

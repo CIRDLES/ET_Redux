@@ -47,12 +47,12 @@ public abstract class Aliquot implements AliquotInterface, Serializable {
     /**
      * SESAR produces IGSN and eventually we will tie to their database.
      */
-    private String sampleIGSN;
+    protected String sampleIGSN;
     /**
      * Lab's local name for the Aliquot.
      */
     private String aliquotName;
-    private String aliquotIGSN;
+    protected String aliquotIGSN;
     private String laboratoryName;
     private String analystName;
     private String aliquotReference;
@@ -351,7 +351,7 @@ public abstract class Aliquot implements AliquotInterface, Serializable {
         // remove placeholder <none>
         Vector<AbstractRatiosDataModel> temp = new Vector<AbstractRatiosDataModel>();
         for (AbstractRatiosDataModel t : tracers) {
-            if (!(t.equals(TracerUPbModel.getNoneInstance()))) {//         getNameAndVersion().startsWith( "<none>" )|| t.getNameAndVersion().startsWith( ReduxConstants.NONE)) ) {
+            if (!(t.equals(TracerUPbModel.getNoneInstance()))) {
                 temp.add(t);
             }
         }
@@ -408,7 +408,7 @@ public abstract class Aliquot implements AliquotInterface, Serializable {
      */
     public Vector<ValueModel> getAlphaUModelsForXMLSerialization() {
         // remove placeholder <none>
-        Vector<ValueModel> temp = new Vector<ValueModel>();
+        Vector<ValueModel> temp = new Vector<>();
         for (ValueModel a : alphaUModels) {
             if (!(a.getName().startsWith("<none>") || a.getName().startsWith(ReduxConstants.NONE))) {
                 temp.add(a);

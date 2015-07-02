@@ -182,7 +182,7 @@ public class ReportColumn implements
 
         // nov 2009 will use "-" character if lead or uranium required to display
         // feb 2010 oops need to modify if sample is already analyzed as in legacy data
-        if (!legacyData && //
+        if (!legacyData && (fraction instanceof UPbFractionI) &&//
                 ((needsPb && !((UPbFractionI) fraction).hasMeasuredLead())
                 || (needsU && !((UPbFractionI) fraction).hasMeasuredUranium()))) {
             // get default width of column so we can correctly place the "-"

@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
@@ -45,17 +46,18 @@ import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLAICPMSFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLegacyFraction;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.reports.ReportRowGUIInterface;
-import org.earthtime.UPb_Redux.reports.ReportSettings;
 import org.earthtime.UPb_Redux.samples.SESARSampleMetadata;
 import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.UPb_Redux.samples.UPbSampleInterface;
 import org.earthtime.UPb_Redux.user.SampleDateInterpretationGUIOptions;
 import org.earthtime.UPb_Redux.utilities.ETSerializer;
+import org.earthtime.UPb_Redux.utilities.comparators.IntuitiveStringComparator;
 import org.earthtime.UPb_Redux.valueModels.SampleDateInterceptModel;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
 import org.earthtime.aliquots.AliquotInterface;
+import org.earthtime.aliquots.ReduxAliquotInterface;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.dataDictionaries.SampleDateTypes;
@@ -65,6 +67,7 @@ import org.earthtime.exceptions.ETException;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.projects.EarthTimeSerializedFileInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
+import org.earthtime.reports.ReportSettingsInterface;
 import org.earthtime.utilities.FileHelper;
 import org.earthtime.xmlUtilities.XMLSerializationI;
 
@@ -425,6 +428,19 @@ public interface SampleInterface {
         return retAliquot;
     }
 
+    public default AliquotInterface getAliquotByNameForProjectSuperSample(String name) {
+        AliquotInterface retAliquot = null;
+        Vector<AliquotInterface> aliquots = getAliquots();
+        for (int aliquotIndex = 0; aliquotIndex < aliquots.size(); aliquotIndex++) {
+            if (aliquots.get(aliquotIndex).getAliquotName().equalsIgnoreCase(name)) {
+                retAliquot = aliquots.get(aliquotIndex);
+                break;
+            }
+        }
+
+        return retAliquot;
+    }
+
     /**
      *
      * @return
@@ -622,7 +638,7 @@ public interface SampleInterface {
             ETFractionInterface fraction = aliquotFractionIterator.next();
 
             fraction.setAliquotNumber(aliquotNumber);
-            ((UPbReduxAliquot) importedAliquot).getAliquotFractions().add(fraction);
+            ((ReduxAliquotInterface) importedAliquot).getAliquotFractions().add(fraction);
 
             sample.getFractions().add(fraction);
         }
@@ -1025,6 +1041,22 @@ public interface SampleInterface {
         return retFraction;
     }
 
+    public default ETFractionInterface getFractionByIDAndAliquotNumber(String ID, int aliquotNumber) {
+        ETFractionInterface retFraction = null;
+        Vector<ETFractionInterface> fractions = getFractions();
+
+        for (int fractionIndex = 0; fractionIndex < fractions.size(); fractionIndex++) {
+            if ((fractions.get(fractionIndex).getFractionID().equalsIgnoreCase(ID)) //
+                    && //
+                    (fractions.get(fractionIndex).getAliquotNumber() == aliquotNumber)) {
+                retFraction = fractions.get(fractionIndex);
+                break;
+            }
+        }
+
+        return retFraction;
+    }
+
     /**
      * sets the <code>UPbFractions</code> of this <code>Sample</code> to the
      * argument <code>UPbFractions</code>
@@ -1087,7 +1119,7 @@ public interface SampleInterface {
      * @param fraction
      */
     public default void removeUPbReduxFraction(ETFractionInterface fraction) {
-        boolean fracStatus = ((ETFractionInterface) fraction).isChanged();
+        boolean fracStatus = fraction.isChanged();
         try {
             getFractions().remove(fraction);
             fraction.getAliquotNumber();
@@ -1117,14 +1149,28 @@ public interface SampleInterface {
      *
      * @return
      */
-    public default Vector<ETFractionInterface> getFractionsActive() {
-        Vector<ETFractionInterface> retval = new Vector<>();
+    public default Vector<ETFractionInterface> getActiveFractionsSortedByAliquot() {
+        Vector<ETFractionInterface> activeFractionsSortedByAliquot = new Vector<>();
 
-        getFractions().stream().filter((f) -> (!((ETFractionInterface) f).isRejected())).forEach((f) -> {
-            retval.add(f);
+        getFractions().stream().filter((f) -> (!f.isRejected())).forEach((f) -> {
+            activeFractionsSortedByAliquot.add(f);
         });
 
-        return retval;
+        Collections.sort(activeFractionsSortedByAliquot, (ETFractionInterface etFractionOne, ETFractionInterface etFractionTwo) -> {
+            String etFractionOneID = etFractionOne.getFractionID();
+            String etFractionTwoID = etFractionTwo.getFractionID();
+            String etFractionOneAliquotNum = String.valueOf(etFractionOne.getAliquotNumber());
+            String etFractionTwoAliquotNum = String.valueOf(etFractionTwo.getAliquotNumber());
+
+            String fractionOneID = (etFractionOneAliquotNum + "." + etFractionOneID).toUpperCase();
+            String fractionTwoID = (etFractionTwoAliquotNum + "." + etFractionTwoID).toUpperCase();
+
+            Comparator<String> intuitiveStringComparator = new IntuitiveStringComparator<>();
+
+            return intuitiveStringComparator.compare(fractionOneID, fractionTwoID);
+        });
+
+        return activeFractionsSortedByAliquot;
     }
 
     /**
@@ -1460,7 +1506,7 @@ public interface SampleInterface {
      *
      * @param reportSettingsModel
      */
-    public abstract void setReportSettingsModel(ReportSettings reportSettingsModel);
+    public abstract void setReportSettingsModel(ReportSettingsInterface reportSettingsModel);
 
     /**
      *
@@ -1477,7 +1523,7 @@ public interface SampleInterface {
      *
      * @return
      */
-    public abstract ReportSettings getReportSettingsModel();
+    public abstract ReportSettingsInterface getReportSettingsModel();
 
     /**
      *

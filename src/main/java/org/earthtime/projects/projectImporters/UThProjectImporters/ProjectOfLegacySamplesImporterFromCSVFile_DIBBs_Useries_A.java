@@ -31,8 +31,10 @@ import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.UTh_Redux.fractions.UThFraction;
 import org.earthtime.aliquots.AliquotInterface;
+import org.earthtime.aliquots.ReduxAliquotInterface;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.dataDictionaries.SampleTypesEnum;
+import org.earthtime.dataDictionaries.UThCompositionalMeasures;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.projects.ProjectInterface;
@@ -91,37 +93,61 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_DIBBs_Useries_A extends A
 
                             // process existing if not first;
                             if ((currentSample != null) && (currentAliquot != null)) {
-                                // this forces population of aliquot fractions
-                                SampleInterface.copyAliquotIntoSample(currentSample.getAliquotByName(currentAliquot.getAliquotName()), project.getSuperSample());
+                                processSuperSample(project.getSuperSample(), currentSample, currentAliquot);
                                 currentSample = null;
+                                currentAliquot = null;
                             }
 
-                            // new sample
-                            try {
-                                currentSample = new Sample(//
-                                        sampleID, //
-                                        SampleTypesEnum.LEGACY.getName(), //
-                                        SampleAnalysisTypesEnum.USERIES.getName(), //
-                                        ReduxLabData.getInstance(), //
-                                        ReduxConstants.ANALYSIS_PURPOSE.SingleAge);
-
-                                projectSamples.add(currentSample);
-
-                                currentAliquot = currentSample.addNewAliquot(sampleID);
-
-                            } catch (BadLabDataException badLabDataException) {
-                            } catch (ETException eTException) {
+                            // test if sample already exists
+                            for (SampleInterface sample : projectSamples) {
+                                if (sample.getSampleName().equalsIgnoreCase(sampleID)) {
+                                    currentSample = sample;
+                                    // there is only one aliquotin this USeries scenario
+                                    currentAliquot = sample.getAliquots().get(0);
+                                    break;
+                                }
                             }
+                            if ((currentSample == null) && (currentAliquot == null)) {
+                                // new sample
+                                try {
+                                    currentSample = new Sample(//
+                                            sampleID, //
+                                            SampleTypesEnum.LEGACY.getName(), //
+                                            SampleAnalysisTypesEnum.USERIES.getName(), //
+                                            ReduxLabData.getInstance(), //
+                                            ReduxConstants.ANALYSIS_PURPOSE.SingleAge);
 
+                                    projectSamples.add(currentSample);
+
+                                    currentAliquot = currentSample.addNewAliquot(sampleID);
+
+                                } catch (BadLabDataException badLabDataException) {
+                                } catch (ETException eTException) {
+                                }
+                            }
                         }
 
-                        // process fractions
-                        ETFractionInterface myFraction = new UThFraction();
-                        myFraction.setFractionID(myFractionData.get(3));
-                        myFraction.setGrainID(myFractionData.get(3));
+                        if (currentSample != null) {
+                            // process fractions
+                        ETFractionInterface myFraction = new UThFraction();//=================================
+                            myFraction.setFractionID(myFractionData.get(3));
+                            myFraction.setGrainID(myFractionData.get(3));
 
-                        myFraction.setSampleName(currentSample.getSampleName());
-                        currentSample.addFraction(myFraction);
+                            myFraction.setSampleName(currentSample.getSampleName());
+                            // in case a sample occurs out of order
+                            if (currentSample.getFractions().size() > 0) {
+                                myFraction.setAliquotNumber(currentSample.getFractions().get(0).getAliquotNumber());
+                            }
+                            currentSample.addFraction(myFraction);
+                            ((ReduxAliquotInterface) currentAliquot).getAliquotFractions().add(myFraction);
+
+                            // column 43 is conc232Th in ppb
+                            String ratioName = UThCompositionalMeasures.conc232Th.getName();
+                            myFraction.getCompositionalMeasureByName(ratioName)//
+                                    .setValue(readCSVCell(myFractionData.get(43)).//
+                                            movePointLeft(9));
+
+                        }
 
                     }// end of checking if same source
                 }
@@ -129,14 +155,30 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_DIBBs_Useries_A extends A
 
             // end of file
             if ((currentSample != null) && (currentAliquot != null)) {
-                // this forces population of aliquot fractions
-                SampleInterface.copyAliquotIntoSample(currentSample.getAliquotByName(currentAliquot.getAliquotName()), project.getSuperSample());
+                processSuperSample(project.getSuperSample(), currentSample, currentAliquot);
             }
 
         } catch (IOException iOException) {
         }
 
         return project;
+    }
+
+    private void processSuperSample(SampleInterface superSample, SampleInterface currentSample, AliquotInterface currentAliquot) {
+        // this forces population of aliquot fractions
+        // check if supersample already has this aliquot
+        AliquotInterface existingSuperSampleAliquot = //
+                superSample.getAliquotByNameForProjectSuperSample(currentSample.getSampleName() + "::" + currentAliquot.getAliquotName());
+        if (existingSuperSampleAliquot == null) {
+            SampleInterface.copyAliquotIntoSample(currentSample.getAliquotByNameForProjectSuperSample(currentAliquot.getAliquotName()), superSample);
+        } else {
+            for (ETFractionInterface fraction : ((ReduxAliquotInterface) currentAliquot).getAliquotFractions()) {
+                if (!((ReduxAliquotInterface) existingSuperSampleAliquot).getAliquotFractions().contains(fraction)) {
+                    ((ReduxAliquotInterface) existingSuperSampleAliquot).getAliquotFractions().add(fraction);
+                    superSample.getFractions().add(fraction);
+                }
+            }
+        }
     }
 
 }

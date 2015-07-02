@@ -49,6 +49,7 @@ import org.earthtime.ratioDataModels.pbBlankICModels.PbBlankICModel;
 import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsModel;
 import org.earthtime.ratioDataModels.rareEarthElementsModels.RareEarthElementsModel;
 import org.earthtime.ratioDataModels.tracers.TracerUPbModel;
+import org.earthtime.reports.ReportSettingsInterface;
 
 /**
  *
@@ -71,7 +72,7 @@ public final class ReduxLabData implements Serializable {
     private ArrayList<AbstractRatiosDataModel> physicalConstantsModels;
     private ArrayList<AbstractRatiosDataModel> mineralStandardModels;
     private ArrayList<AbstractRatiosDataModel> rareEarthElementModels;
-    private ArrayList<ReportSettings> reportSettingsModels
+    private ArrayList<ReportSettingsInterface> reportSettingsModels
             = new ReduxLabDataList<>("Report Settings");
     private ArrayList<LabEquipmentSettings> labEquipmentSettings = //
             new ReduxLabDataList<>(" Lab Equipment Settings");
@@ -82,7 +83,7 @@ public final class ReduxLabData implements Serializable {
     private AbstractRatiosDataModel defaultLabInitialPbModel;
     private BigDecimal defaultStaceyKramersOnePctUnct;
     private BigDecimal defaultStaceyKramersCorrelationCoeffs;
-    private ReportSettings defaultReportSettingsModel;
+    private ReportSettingsInterface defaultReportSettingsModel;
     private ValueModel defaultPbBlankMassInGrams;
     private ValueModel assumedUBlankMassInGrams;
     private ValueModel defaultR18O_16O;
@@ -1224,7 +1225,7 @@ public final class ReduxLabData implements Serializable {
      *
      * @return
      */
-    public ArrayList<ReportSettings> getReportSettingsModels() {
+    public ArrayList<ReportSettingsInterface> getReportSettingsModels() {
         return reportSettingsModels;
     }
 
@@ -1283,7 +1284,7 @@ public final class ReduxLabData implements Serializable {
      *
      * @param model
      */
-    public void addReportSettingsModel(ReportSettings model) {
+    public void addReportSettingsModel(ReportSettingsInterface model) {
         reportSettingsModels.add(model);
         Collections.sort(reportSettingsModels);
     }
@@ -1311,7 +1312,7 @@ public final class ReduxLabData implements Serializable {
      *
      * @param model
      */
-    public void setDefaultreportSettingsModel(ReportSettings model) {
+    public void setDefaultreportSettingsModel(ReportSettingsInterface model) {
         this.defaultReportSettingsModel = model.clone();
     }
 

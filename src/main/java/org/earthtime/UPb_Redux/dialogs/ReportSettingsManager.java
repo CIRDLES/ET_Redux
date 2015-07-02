@@ -38,8 +38,8 @@ import org.earthtime.UPb_Redux.reports.ReportCategory;
 import org.earthtime.UPb_Redux.reports.ReportColumn;
 import org.earthtime.UPb_Redux.reports.ReportListItemI;
 import org.earthtime.UPb_Redux.reports.ReportPainterI;
-import org.earthtime.UPb_Redux.reports.ReportSettings;
 import org.earthtime.dataDictionaries.ReportSpecifications;
+import org.earthtime.reports.ReportSettingsInterface;
 
 /**
  *
@@ -48,7 +48,7 @@ import org.earthtime.dataDictionaries.ReportSpecifications;
 public class ReportSettingsManager extends DialogEditor {
 
     // Fields
-    private ReportSettings reportSettings;
+    private ReportSettingsInterface reportSettings;
     private final Frame parent;
     @SuppressWarnings("UseOfObsoleteCollectionType")
     private Vector<ReportListItemI> catList;
@@ -63,7 +63,7 @@ public class ReportSettingsManager extends DialogEditor {
     public ReportSettingsManager ( //
             Frame parent,
             boolean modal,
-            ReportSettings reportSettings ) {
+            ReportSettingsInterface reportSettings ) {
         super( parent, modal );
 
         // DialogEditor attribute
@@ -905,7 +905,7 @@ private void apply_buttonActionPerformed (java.awt.event.ActionEvent evt) {//GEN
      * @return
      */
     public // Fields
-            ReportSettings getReportSettings () {
+            ReportSettingsInterface getReportSettings () {
         return reportSettings;
     }
 
@@ -913,7 +913,7 @@ private void apply_buttonActionPerformed (java.awt.event.ActionEvent evt) {//GEN
      * 
      * @param reportSettings
      */
-    public void setReportSettings ( ReportSettings reportSettings ) {
+    public void setReportSettings ( ReportSettingsInterface reportSettings ) {
         this.reportSettings = reportSettings;
     }
 

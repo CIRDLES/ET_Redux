@@ -64,6 +64,7 @@ import org.earthtime.UPb_Redux.valueModels.ValueModelReferencedXMLConverter;
 import org.earthtime.UPb_Redux.valueModels.ValueModelXMLConverter;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
 import org.earthtime.aliquots.AliquotInterface;
+import org.earthtime.aliquots.ReduxAliquotInterface;
 import org.earthtime.archivingTools.AnalysisImage;
 import org.earthtime.archivingTools.AnalysisImageXMLConverter;
 import org.earthtime.archivingTools.URIHelper;
@@ -94,6 +95,7 @@ import org.earthtime.xmlUtilities.XMLSerializationI;
  */
 public class UPbReduxAliquot extends Aliquot
         implements AliquotInterface,
+        ReduxAliquotInterface,
         ReportRowGUIInterface,
         XMLSerializationI {
 
@@ -178,9 +180,9 @@ public class UPbReduxAliquot extends Aliquot
 
         this.compiled = compiled;
 
-        setAliquotFractions(new Vector<>());
+        this.aliquotFractions = new Vector<>();
 
-        setSampleIGSN("NONE");
+        this.sampleIGSN = "NONE";
         setLaboratoryName(getMyReduxLabData().getLabName());
         setAnalystName(getMyReduxLabData().getAnalystName());
 
@@ -658,6 +660,7 @@ public class UPbReduxAliquot extends Aliquot
      *
      * @return
      */
+    @Override
     public int getAliquotNumber() {
         return aliquotNumber;
     }

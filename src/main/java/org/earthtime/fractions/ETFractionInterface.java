@@ -33,7 +33,7 @@ import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
  * @author James F. Bowring <bowring at gmail.com>
  */
 public interface ETFractionInterface {
-
+    
     /**
      *
      * @return
@@ -400,8 +400,8 @@ public interface ETFractionInterface {
      * @return the isLegacy
      */
     public boolean isLegacy();
-    
-        /**
+
+    /**
      *
      * @param amName
      * @param valueModel
@@ -415,6 +415,7 @@ public interface ETFractionInterface {
             }
         }
     }
+
     /**
      *
      * @param sirName
@@ -602,7 +603,8 @@ public interface ETFractionInterface {
      needed summer 2014 for backward compatibility
      */
     public void initializeTraceElements();
-   /**
+
+    /**
      * @param isLegacy the isLegacy to set
      */
     public void setIsLegacy(boolean isLegacy);
@@ -657,6 +659,7 @@ public interface ETFractionInterface {
      * @return
      */
     public String getPhysicalConstantsModelID();
+
     /**
      *
      * @return
@@ -669,7 +672,7 @@ public interface ETFractionInterface {
      */
     abstract void setRatioType(String RatioType);
 
-   /**
+    /**
      *
      * @return
      */
@@ -685,6 +688,7 @@ public interface ETFractionInterface {
      *
      */
     abstract void toggleRejectedStatus();
+
     /**
      *
      * @return
@@ -720,7 +724,7 @@ public interface ETFractionInterface {
      * @param ellipseRho
      */
     abstract void setEllipseRho(double ellipseRho);
-    
+
     static final Comparator FRACTION_ID_ORDER = (Object f1, Object f2) -> {
         String fractionTwoID = ((ETFractionInterface) f2).getFractionID().trim();
         String fractionTwoAliquotNum = "1";
@@ -740,8 +744,7 @@ public interface ETFractionInterface {
         return forNoah.compare((fractionOneAliquotNum + "." + fractionOneID).toUpperCase(), (fractionTwoAliquotNum + "." + fractionTwoID).toUpperCase());
 
     };
-    
-    
+
     /**
      *
      * @return
@@ -765,6 +768,7 @@ public interface ETFractionInterface {
      * @param tracerID
      */
     abstract void setTracerID(String tracerID);
+
     /**
      * @return the rgbColor
      */

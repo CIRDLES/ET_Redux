@@ -43,7 +43,6 @@ import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLegacyFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.UPbFractionReducer;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
-import org.earthtime.UPb_Redux.reports.ReportSettings;
 import org.earthtime.UPb_Redux.user.SampleDateInterpretationGUIOptions;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
@@ -57,6 +56,7 @@ import org.earthtime.exceptions.ETException;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.projects.EarthTimeSerializedFileInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
+import org.earthtime.reports.ReportSettingsInterface;
 import org.earthtime.samples.SampleInterface;
 import org.earthtime.utilities.FileHelper;
 
@@ -166,7 +166,7 @@ public class Sample implements
      * the <code>ReportSettings</code> for use with this <code>Sample</code>,
      * containing information regarding columnar report layout.
      */
-    private ReportSettings reportSettingsModel;
+    private ReportSettingsInterface reportSettingsModel;
     /**
      * the settings for the user interface of the sample age interpretation.
      */
@@ -464,7 +464,7 @@ public class Sample implements
         // handle repeated default fractionIDs
         if (existingFraction != null) {
             defFraction//
-                    .setFractionID(((UPbFraction) defFraction).getFractionID() + "r"); // not robust but does it for now feb 2010
+                    .setFractionID(defFraction.getFractionID() + "r"); // not robust but does it for now feb 2010
             defFraction//
                     .setGrainID(defFraction.getGrainID());
         }
@@ -1659,7 +1659,7 @@ public class Sample implements
      * @param reportSettingsModel the reportSettingsModel to set
      */
     @Override
-    public void setReportSettingsModel(ReportSettings reportSettingsModel) {
+    public void setReportSettingsModel(ReportSettingsInterface reportSettingsModel) {
         this.reportSettingsModel = reportSettingsModel;
     }
 
@@ -1667,7 +1667,7 @@ public class Sample implements
      * @return the reportSettingsModel
      */
     @Override
-    public ReportSettings getReportSettingsModel() {
+    public ReportSettingsInterface getReportSettingsModel() {
         return reportSettingsModel;
     }
 

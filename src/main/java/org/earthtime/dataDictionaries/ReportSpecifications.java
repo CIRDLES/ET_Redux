@@ -100,7 +100,11 @@ public class ReportSpecifications {
         },
         {"", "Th/U", "(magma)", "", "getAnalysisMeasure", AnalysisMeasures.rTh_Umagma.getName(), "",
             "FN-11", "false", "true", "3", "", "Th/U magma", "true", "false"
-        }
+        },
+        {"", "Th", "", "ppb", "getCompositionalMeasureByName", "conc232Th", "",
+            "FN-1", "false", "false", "6", "", "concentration of 232Th", "true", "false"
+        },
+
     };
     // Report column order =
     //  displayName1, displayName2, displayName3, units, retrieveMethodName, retrieveParameterName, uncertaintyType,
