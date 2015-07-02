@@ -21,23 +21,11 @@
 package org.earthtime.UPb_Redux.reports;
 
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.converters.ConversionException;
-import com.thoughtworks.xstream.io.xml.DomDriver;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.user.UPbReduxConfigurator;
-import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
-import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.dataDictionaries.ReportSpecifications;
-import org.earthtime.exceptions.ETException;
+import org.earthtime.reports.ReportCategoryInterface;
 import org.earthtime.reports.ReportSettingsInterface;
 
 /**
@@ -54,25 +42,21 @@ public class ReportSettings implements
      * version number is advanced so that any existing analysis will update its
      * report models upon opening in ET_Redux.
      */
-    private static transient int CURRENT_VERSION_REPORT_SETTINGS = 282;
-//    private static transient String activityFootnoteEntry = "";
-//    private static transient String thU_MagmaFootnoteEntry = "";
-//    // april 2010
-//    // no zircons in report = 0; all zircons = 1; mixture = 2
-//    private static transient int zirconPopulationType;
+    private static transient int CURRENT_VERSION_REPORT_SETTINGS = 283;
+
     // Fields
     private String name;
     private int version;
-    private ReportCategory fractionCategory;
-    private ReportCategory compositionCategory;
-    private ReportCategory isotopicRatiosCategory;
-    private ReportCategory isotopicRatiosPbcCorrCategory;
-    private ReportCategory datesCategory;
-    private ReportCategory datesPbcCorrCategory;
-    private ReportCategory rhosCategory;
-    private ReportCategory traceElementsCategory;
-    private ReportCategory fractionCategory2;
-    protected ArrayList<ReportCategory> reportCategories;
+    private ReportCategoryInterface fractionCategory;
+    private ReportCategoryInterface compositionCategory;
+    private ReportCategoryInterface isotopicRatiosCategory;
+    private ReportCategoryInterface isotopicRatiosPbcCorrCategory;
+    private ReportCategoryInterface datesCategory;
+    private ReportCategoryInterface datesPbcCorrCategory;
+    private ReportCategoryInterface rhosCategory;
+    private ReportCategoryInterface traceElementsCategory;
+    private ReportCategoryInterface fractionCategory2;
+    protected ArrayList<ReportCategoryInterface> reportCategories;
     private String reportSettingsComment;
     private boolean legacyData;
 
@@ -169,44 +153,7 @@ public class ReportSettings implements
         reportCategories.add(fractionCategory2);
     }
 
-    /**
-     *
-     * @return
-     */
-    public static ReportSettingsInterface EARTHTIMEReportSettings() {
-
-        ReportSettingsInterface EARTHTIME
-                = new ReportSettings("EARTHTIME");
-
-        return EARTHTIME;
-    }
-
-    /**
-     *
-     * @return
-     */
-    @Override
-    public Map<Integer, ReportCategory> getReportCategoriesInOrder() {
-        Map<Integer, ReportCategory> retVal = new HashMap<>();
-
-        reportCategories.stream().filter((rc) //
-                -> (rc != null)).forEach((rc) -> {
-                    retVal.put(rc.getPositionIndex(), rc);
-                });
-
-        return retVal;
-    }
-   
 //  accessors
-    /**
-     *
-     * @return
-     */
-    @Override
-    public String getReduxLabDataElementName() {
-        return getNameAndVersion();
-    }
-
     /**
      *
      * @return
@@ -248,16 +195,7 @@ public class ReportSettings implements
      * @return
      */
     @Override
-    public String getNameAndVersion() {
-        return getName().trim() + " v." + getVersion();
-    }
-
-    /**
-     *
-     * @return
-     */
-    @Override
-    public ReportCategory getFractionCategory() {
+    public ReportCategoryInterface getFractionCategory() {
         return fractionCategory;
     }
 
@@ -266,7 +204,7 @@ public class ReportSettings implements
      * @param fractionCategory
      */
     @Override
-    public void setFractionCategory(ReportCategory fractionCategory) {
+    public void setFractionCategory(ReportCategoryInterface fractionCategory) {
         this.fractionCategory = fractionCategory;
     }
 
@@ -275,7 +213,7 @@ public class ReportSettings implements
      * @return
      */
     @Override
-    public ReportCategory getCompositionCategory() {
+    public ReportCategoryInterface getCompositionCategory() {
         return compositionCategory;
     }
 
@@ -284,7 +222,7 @@ public class ReportSettings implements
      * @param compositionCategory
      */
     @Override
-    public void setCompositionCategory(ReportCategory compositionCategory) {
+    public void setCompositionCategory(ReportCategoryInterface compositionCategory) {
         this.compositionCategory = compositionCategory;
     }
 
@@ -293,7 +231,7 @@ public class ReportSettings implements
      * @return
      */
     @Override
-    public ReportCategory getIsotopicRatiosCategory() {
+    public ReportCategoryInterface getIsotopicRatiosCategory() {
         return isotopicRatiosCategory;
     }
 
@@ -302,7 +240,7 @@ public class ReportSettings implements
      * @param isotopicRatiosCategory
      */
     @Override
-    public void setIsotopicRatiosCategory(ReportCategory isotopicRatiosCategory) {
+    public void setIsotopicRatiosCategory(ReportCategoryInterface isotopicRatiosCategory) {
         this.isotopicRatiosCategory = isotopicRatiosCategory;
     }
 
@@ -311,7 +249,7 @@ public class ReportSettings implements
      * @return
      */
     @Override
-    public ReportCategory getDatesCategory() {
+    public ReportCategoryInterface getDatesCategory() {
         return datesCategory;
     }
 
@@ -320,23 +258,8 @@ public class ReportSettings implements
      * @param datesCategory
      */
     @Override
-    public void setDatesCategory(ReportCategory datesCategory) {
+    public void setDatesCategory(ReportCategoryInterface datesCategory) {
         this.datesCategory = datesCategory;
-    }
-
-    /**
-     *
-     * @param reportSettingsModel
-     * @return
-     * @throws ClassCastException
-     */
-    @Override
-    public int compareTo(ReportSettingsInterface reportSettingsModel)
-            throws ClassCastException {
-        String reportSettingsModelNameAndVersion
-                = reportSettingsModel.getNameAndVersion();
-        return this.getNameAndVersion().trim().//
-                compareToIgnoreCase(reportSettingsModelNameAndVersion.trim());
     }
 
     /**
@@ -373,58 +296,7 @@ public class ReportSettings implements
         return 0;
     }
 
-    /**
-     *
-     * @return
-     */
-    @Override
-    public ReportSettings clone() {
-        ReportSettings reportSettingsModel = null;
-
-        String tempFileName = "TEMPreportSettings.xml";
-        // write out the settings
-        serializeXMLObject(tempFileName);
-
-        // read them back in
-        try {
-            reportSettingsModel = (ReportSettings) readXMLObject(tempFileName, true);
-        } catch (FileNotFoundException | ETException | BadOrMissingXMLSchemaException fileNotFoundException) {
-        }
-
-        File tempFile = new File(tempFileName);
-        tempFile.delete();
-
-        return reportSettingsModel;
-    }
-
 // XML Serialization
-    /**
-     *
-     * @return
-     */
-    @Override
-    public XStream getXStreamWriter() {
-        XStream xstream = new XStream();
-
-        customizeXstream(xstream);
-
-        return xstream;
-    }
-
-    /**
-     *
-     * @return
-     */
-    @Override
-    public XStream getXStreamReader() {
-
-        XStream xstream = new XStream(new DomDriver());
-
-        customizeXstream(xstream);
-
-        return xstream;
-    }
-
     /**
      * registers converter for argument <code>xstream</code> and sets aliases to
      * make the XML file more human-readable
@@ -466,82 +338,6 @@ public class ReportSettings implements
 
     /**
      *
-     * @param filename
-     */
-    @Override
-    public void serializeXMLObject(String filename) {
-        XStream xstream = getXStreamWriter();
-
-        String xml = xstream.toXML(this);
-
-        xml = ReduxConstants.XML_Header + xml;
-
-        xml = xml.replaceFirst("ReportSettings",
-                "ReportSettings  "//
-                + ReduxConstants.XML_ResourceHeader//
-                + reportSettingsXMLSchemaURL//
-                + "\"");
-
-        try {
-            FileWriter outFile = new FileWriter(filename);
-            PrintWriter out = new PrintWriter(outFile);
-
-            // Write xml to file
-            out.println(xml);
-            out.flush();
-            out.close();
-            outFile.close();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     *
-     *
-     * @param filename
-     * @param doValidate the value of doValidate
-     * @return
-     * @throws FileNotFoundException
-     * @throws ETException
-     * @throws BadOrMissingXMLSchemaException
-     */
-    @Override
-    public Object readXMLObject(String filename, boolean doValidate)
-            throws FileNotFoundException, ETException, FileNotFoundException, BadOrMissingXMLSchemaException {
-        ReportSettings myReportSettings = null;
-
-        BufferedReader reader = URIHelper.getBufferedReader(filename);
-
-        if (reader != null) {
-            boolean isValidOrAirplaneMode = !doValidate;
-
-            XStream xstream = getXStreamReader();
-
-            isValidOrAirplaneMode = URIHelper.validateXML(reader, filename, reportSettingsXMLSchemaURL);
-
-            if (isValidOrAirplaneMode) {
-                // re-create reader
-                reader = URIHelper.getBufferedReader(filename);
-                try {
-                    myReportSettings = (ReportSettings) xstream.fromXML(reader);
-                } catch (ConversionException e) {
-                    throw new ETException(null, e.getMessage());
-                }
-
-            } else {
-                throw new ETException(null, "XML data file does not conform to schema.");
-            }
-        } else {
-            throw new FileNotFoundException("Missing XML data file.");
-        }
-
-        return myReportSettings;
-    }
-
-    /**
-     *
      * @return
      */
     @Override
@@ -562,7 +358,7 @@ public class ReportSettings implements
      * @return the rhosCategory
      */
     @Override
-    public ReportCategory getRhosCategory() {
+    public ReportCategoryInterface getRhosCategory() {
         return rhosCategory;
     }
 
@@ -570,7 +366,7 @@ public class ReportSettings implements
      * @param rhosCategory the rhosCategory to set
      */
     @Override
-    public void setRhosCategory(ReportCategory rhosCategory) {
+    public void setRhosCategory(ReportCategoryInterface rhosCategory) {
         this.rhosCategory = rhosCategory;
     }
 
@@ -578,7 +374,7 @@ public class ReportSettings implements
      * @return the fractionCategory2
      */
     @Override
-    public ReportCategory getFractionCategory2() {
+    public ReportCategoryInterface getFractionCategory2() {
         return fractionCategory2;
     }
 
@@ -586,7 +382,7 @@ public class ReportSettings implements
      * @param fractionCategory2 the fractionCategory2 to set
      */
     @Override
-    public void setFractionCategory2(ReportCategory fractionCategory2) {
+    public void setFractionCategory2(ReportCategoryInterface fractionCategory2) {
         this.fractionCategory2 = fractionCategory2;
     }
 
@@ -626,7 +422,7 @@ public class ReportSettings implements
      */
     public static void main(String[] args) throws Exception {
 
-        ReportSettings reportSettings
+        ReportSettingsInterface reportSettings
                 = new ReportSettings("Test ReportSettings");
         String testFileName = "ReportSettingsTEST.xml";
 
@@ -647,7 +443,7 @@ public class ReportSettings implements
      * @return the traceElementsCategory
      */
     @Override
-    public ReportCategory getTraceElementsCategory() {
+    public ReportCategoryInterface getTraceElementsCategory() {
         return traceElementsCategory;
     }
 
@@ -655,7 +451,7 @@ public class ReportSettings implements
      * @param traceElementsCategory the traceElementsCategory to set
      */
     @Override
-    public void setTraceElementsCategory(ReportCategory traceElementsCategory) {
+    public void setTraceElementsCategory(ReportCategoryInterface traceElementsCategory) {
         this.traceElementsCategory = traceElementsCategory;
     }
 
@@ -663,7 +459,7 @@ public class ReportSettings implements
      * @return the isotopicRatiosPbcCorrCategory
      */
     @Override
-    public ReportCategory getIsotopicRatiosPbcCorrCategory() {
+    public ReportCategoryInterface getIsotopicRatiosPbcCorrCategory() {
         return isotopicRatiosPbcCorrCategory;
     }
 
@@ -672,7 +468,7 @@ public class ReportSettings implements
      * set
      */
     @Override
-    public void setIsotopicRatiosPbcCorrCategory(ReportCategory isotopicRatiosPbcCorrCategory) {
+    public void setIsotopicRatiosPbcCorrCategory(ReportCategoryInterface isotopicRatiosPbcCorrCategory) {
         this.isotopicRatiosPbcCorrCategory = isotopicRatiosPbcCorrCategory;
     }
 
@@ -680,7 +476,7 @@ public class ReportSettings implements
      * @return the datesPbcCorrCategory
      */
     @Override
-    public ReportCategory getDatesPbcCorrCategory() {
+    public ReportCategoryInterface getDatesPbcCorrCategory() {
         return datesPbcCorrCategory;
     }
 
@@ -688,14 +484,21 @@ public class ReportSettings implements
      * @param datesPbcCorrCategory the datesPbcCorrCategory to set
      */
     @Override
-    public void setDatesPbcCorrCategory(ReportCategory datesPbcCorrCategory) {
+    public void setDatesPbcCorrCategory(ReportCategoryInterface datesPbcCorrCategory) {
         this.datesPbcCorrCategory = datesPbcCorrCategory;
     }
 
     /**
      * @return the reportCategories
      */
-    public ArrayList<ReportCategory> getReportCategories() {
+    public ArrayList<ReportCategoryInterface> getReportCategories() {
         return reportCategories;
+    }
+
+    /**
+     * @return the reportSettingsXMLSchemaURL
+     */
+    public String getReportSettingsXMLSchemaURL() {
+        return reportSettingsXMLSchemaURL;
     }
 }

@@ -176,7 +176,7 @@ public final class ReduxLabData implements Serializable {
         }
 
         // all lab data instances have this as default
-        getReportSettingsModels().add(ReportSettings.EARTHTIMEReportSettings());
+        getReportSettingsModels().add(ReportSettingsInterface.EARTHTIMEReportSettings());
         try {
             setDefaultreportSettingsModel(getFirstReportSettingsModel());
         } catch (BadLabDataException ex) {
@@ -1296,7 +1296,7 @@ public final class ReduxLabData implements Serializable {
     public ReportSettingsInterface getDefaultReportSettingsModel()
             throws BadLabDataException {
         if (defaultReportSettingsModel == null) {
-            defaultReportSettingsModel = ReportSettings.EARTHTIMEReportSettings();
+            defaultReportSettingsModel = ReportSettingsInterface.EARTHTIMEReportSettings();
             addReportSettingsModel(defaultReportSettingsModel);
         }
 
@@ -1305,7 +1305,7 @@ public final class ReduxLabData implements Serializable {
             String myReportSettingsName = defaultReportSettingsModel.getName();
             defaultReportSettingsModel = new ReportSettings(myReportSettingsName);
         }
-        return defaultReportSettingsModel.clone();
+        return defaultReportSettingsModel.deepCopy();
     }
 
     /**
@@ -1313,7 +1313,7 @@ public final class ReduxLabData implements Serializable {
      * @param model
      */
     public void setDefaultreportSettingsModel(ReportSettingsInterface model) {
-        this.defaultReportSettingsModel = model.clone();
+        this.defaultReportSettingsModel = model.deepCopy();
     }
 
     /**

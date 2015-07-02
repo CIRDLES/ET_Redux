@@ -36,9 +36,11 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.earthtime.UPb_Redux.reports.ReportCategory;
 import org.earthtime.UPb_Redux.reports.ReportColumn;
-import org.earthtime.UPb_Redux.reports.ReportListItemI;
-import org.earthtime.UPb_Redux.reports.ReportPainterI;
+import org.earthtime.reportViews.ReportListItemI;
+import org.earthtime.reportViews.ReportPainterI;
 import org.earthtime.dataDictionaries.ReportSpecifications;
+import org.earthtime.reports.ReportCategoryInterface;
+import org.earthtime.reports.ReportColumnInterface;
 import org.earthtime.reports.ReportSettingsInterface;
 
 /**
@@ -80,7 +82,7 @@ public class ReportSettingsManager extends DialogEditor {
 
     private void populateCategoryList () {
         // extract category names
-        Map<Integer, ReportCategory> cats = reportSettings.getReportCategoriesInOrder();
+        Map<Integer, ReportCategoryInterface> cats = reportSettings.getReportCategoriesInOrder();
         catList = new Vector<>();
 
         for (int c = 0; c < cats.size(); c ++) {
@@ -93,9 +95,9 @@ public class ReportSettingsManager extends DialogEditor {
         categories_list.setSelectedIndex( 0 );
     }
 
-    private void populateColumnList ( ReportCategory cat ) {
+    private void populateColumnList ( ReportCategoryInterface cat ) {
         // extract column names
-        Map<Integer, ReportColumn> cols = cat.getCategoryColumnOrder();
+        Map<Integer, ReportColumnInterface> cols = cat.getCategoryColumnOrder();
         colList = new Vector<>();
 
         for (int c = 0; c < cols.size(); c ++) {

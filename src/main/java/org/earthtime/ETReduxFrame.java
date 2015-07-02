@@ -103,13 +103,13 @@ import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLAICPMSFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.PbcCorrectionDetails;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.UPbFractionReducer;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
-import org.earthtime.UPb_Redux.reports.ReportPainterI;
+import org.earthtime.reportViews.ReportPainterI;
 import org.earthtime.UPb_Redux.reports.ReportSettings;
 import org.earthtime.UPb_Redux.reports.excelReports.CsvResultsTable;
 import org.earthtime.UPb_Redux.reports.excelReports.ExcelResultsTable;
-import org.earthtime.UPb_Redux.reports.reportViews.ReportAliquotFractionsView;
-import org.earthtime.UPb_Redux.reports.reportViews.ReportUpdaterInterface;
-import org.earthtime.UPb_Redux.reports.reportViews.TabbedReportViews;
+import org.earthtime.reportViews.ReportAliquotFractionsView;
+import org.earthtime.reportViews.ReportUpdaterInterface;
+import org.earthtime.reportViews.TabbedReportViews;
 import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.UPb_Redux.samples.sampleImporters.SampleImporterFromIDTIMSLegacyCSVFile_MIT;
 import org.earthtime.UPb_Redux.samples.sampleImporters.SampleImporterFromLAICPMSLegacyCVSFile_MC_UA;
@@ -3913,7 +3913,7 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
 
     private void loadEARTHTIMEDefaultReportSettingsModel_menuItemActionPerformed ( java.awt.event.ActionEvent evt ) {//GEN-FIRST:event_loadEARTHTIMEDefaultReportSettingsModel_menuItemActionPerformed
 
-        theSample.setReportSettingsModel(ReportSettings.EARTHTIMEReportSettings());
+        theSample.setReportSettingsModel(ReportSettingsInterface.EARTHTIMEReportSettings());
 
         updateReportTable(false);
     }//GEN-LAST:event_loadEARTHTIMEDefaultReportSettingsModel_menuItemActionPerformed

@@ -20,52 +20,50 @@
  */
 package org.earthtime.UPb_Redux.reports;
 
+import org.earthtime.reports.ReportCategoryInterface;
 import java.awt.Color;
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
+import org.earthtime.reports.ReportColumnInterface;
 
 /**
  *
  * @author James F. Bowring
  */
-public class ReportCategory implements Serializable, ReportListItemI {
+public class ReportCategory implements ReportCategoryInterface {
 
     private static final long serialVersionUID = 5227409808812622714L;
 
     // Fields
     private String displayName;
-
     private int positionIndex;
-
-    private ReportColumn[] categoryColumns;
-
+    private ReportColumnInterface[] categoryColumns;
     private Color categoryColor;
-
     private boolean visible;
-
     private boolean legacyData;
 
-    /** Creates a new instance of ReportCategory */
+    /**
+     * Creates a new instance of ReportCategory
+     */
     public ReportCategory() {
     }
 
-    /** Creates a new instance of ReportCategory
+    /**
+     * Creates a new instance of ReportCategory
+     *
      * @param displayName
-     * @param positionIndex 
-     * @param reportCategorySpecs  
-     * @param isVisible  
+     * @param positionIndex
+     * @param reportCategorySpecs
+     * @param isVisible
      */
     public ReportCategory(
             String displayName, int positionIndex, String[][] reportCategorySpecs, boolean isVisible) {
 
         this.displayName = displayName;
         this.positionIndex = positionIndex;
-        categoryColumns =
-                new ReportColumn[reportCategorySpecs.length];
+        categoryColumns
+                = new ReportColumn[reportCategorySpecs.length];
         for (int i = 0; i < categoryColumns.length; i++) {
-            categoryColumns[i] =
-                    SetupReportColumn(i, reportCategorySpecs);
+            categoryColumns[i]
+                    = SetupReportColumn(i, reportCategorySpecs);
         }
 
         this.categoryColor = Color.white;
@@ -73,126 +71,27 @@ public class ReportCategory implements Serializable, ReportListItemI {
         this.legacyData = false;
 
     }
-    
-    private ReportColumn SetupReportColumn(int index, String[][] specs) {
-        String displayName1 = specs[index][0];
-        // for case of category Correlation Coefficients s, pre-pend a rho to column name
-//        if (displayName.startsWith("Corr")) {
-//            displayName1 = "\u03C1" + displayName1;
-//        }
-        ReportColumn retVal = new ReportColumn(//
-                displayName1, //specs[index][0], // displayname1
-                specs[index][1], // displayname2
-                specs[index][2], // displayname3
-                index, // positionIndex
-                specs[index][3], // units
-                specs[index][4], // retrieveMethodName
-                specs[index][5], // retrieveMethodParameterName
-                specs[index][6], // uncertaintyType
-                specs[index][7], // footnoteSpec
-                Boolean.valueOf(specs[index][8]), // visible
-                false); // amUncertainty
-
-        retVal.setDisplayedWithArbitraryDigitCount(Boolean.valueOf(specs[index][9]));
-        retVal.setCountOfSignificantDigits(Integer.parseInt(specs[index][10]));
-        retVal.setAlternateDisplayName(specs[index][12]);
-        retVal.setNeedsPb(Boolean.valueOf(specs[index][13]));
-        retVal.setNeedsU(Boolean.valueOf(specs[index][14]));
-        retVal.setLegacyData(legacyData);
-
-        // check for need to create uncertainty column
-        ReportColumn uncertaintyCol = null;
-
-        if (!specs[index][6].equals("")) {
-            uncertaintyCol = new ReportColumn(//
-                    "",
-                    specs[index][6].equalsIgnoreCase("PCT") ? "" : "\u00B12\u03C3",
-                    specs[index][6].equalsIgnoreCase("PCT") ? "\u00B12\u03C3 %" : "abs",
-                    //"third",
-                    index,
-                    specs[index][3],
-                    specs[index][4],
-                    specs[index][5],
-                    specs[index][6],
-                    "",
-                    Boolean.valueOf(specs[index][11]),// show uncertainty
-                    true); // amUncertainty
-
-            uncertaintyCol.setAlternateDisplayName("");
-        }
-
-        retVal.setUncertaintyColumn(uncertaintyCol);
-
-        return retVal;
-    }
 
     /**
-     * 
+     *
      * @return
      */
-    public int getCountOfCategoryColumns() {
-        int retVal = 0;
-        if (isVisible()) {
-            for (int i = 0; i < getCategoryColumns().length; i++) {
-                if (getCategoryColumns()[i].isVisible()) {
-                    retVal++;
-                    if (getCategoryColumns()[i].getUncertaintyColumn() != null) {
-                        if (getCategoryColumns()[i].getUncertaintyColumn().isVisible()) {
-                            retVal++;
-                        }
-                    }
-                }
-            }
-        }
-
-        return retVal;
-    }
-
-    /**
-     * 
-     * @param columnName
-     * @param isVisible
-     */
-    public void setVisibleCategoryColumn(String columnName, boolean isVisible) {
-        for (int i = 0; i < getCategoryColumns().length; i++) {
-            if (getCategoryColumns()[i].getRetrieveVariableName().compareToIgnoreCase(columnName) == 0) {
-                getCategoryColumns()[i].setVisible(isVisible);
-            }
-        }
-    }
-
-    /**
-     * 
-     * @return
-     */
-    public Map<Integer, ReportColumn> getCategoryColumnOrder() {
-        Map<Integer, ReportColumn> retVal = new HashMap<Integer, ReportColumn>();
-
-        for (int i = 0; i < getCategoryColumns().length; i++) {
-            retVal.put(getCategoryColumns()[i].getPositionIndex(), getCategoryColumns()[i]);
-        }
-
-        return retVal;
-    }
-
-    /**
-     * 
-     * @return
-     */
-    public ReportColumn[] getCategoryColumns() {
+    @Override
+    public ReportColumnInterface[] getCategoryColumns() {
         return categoryColumns;
     }
 
     /**
-     * 
+     *
      * @param categoryColumns
      */
+    @Override
     public void setCategoryColumns(ReportColumn[] categoryColumns) {
         this.categoryColumns = categoryColumns;
     }
 
     /**
-     * 
+     *
      * @return
      */
     @Override
@@ -201,23 +100,25 @@ public class ReportCategory implements Serializable, ReportListItemI {
     }
 
     /**
-     * 
+     *
      * @param displayName
      */
+    @Override
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
 
     /**
-     * 
+     *
      * @return
      */
+    @Override
     public int getPositionIndex() {
         return positionIndex;
     }
 
     /**
-     * 
+     *
      * @param positionIndex
      */
     @Override
@@ -226,23 +127,25 @@ public class ReportCategory implements Serializable, ReportListItemI {
     }
 
     /**
-     * 
+     *
      * @return
      */
+    @Override
     public Color getCategoryColor() {
         return categoryColor;
     }
 
     /**
-     * 
+     *
      * @param categoryColor
      */
+    @Override
     public void setCategoryColor(Color categoryColor) {
         this.categoryColor = categoryColor;
     }
 
     /**
-     * 
+     *
      * @return
      */
     @Override
@@ -251,7 +154,7 @@ public class ReportCategory implements Serializable, ReportListItemI {
     }
 
     /**
-     * 
+     *
      * @param visible
      */
     @Override
@@ -260,7 +163,7 @@ public class ReportCategory implements Serializable, ReportListItemI {
     }
 
     /**
-     * 
+     *
      */
     @Override
     public void ToggleIsVisible() {
@@ -270,6 +173,7 @@ public class ReportCategory implements Serializable, ReportListItemI {
     /**
      * @return the legacyData
      */
+    @Override
     public boolean isLegacyData() {
         return legacyData;
     }
@@ -277,9 +181,10 @@ public class ReportCategory implements Serializable, ReportListItemI {
     /**
      * @param legacyData the legacyData to set
      */
+    @Override
     public void setLegacyData(boolean legacyData) {
         this.legacyData = legacyData;
-        for (ReportColumn categoryColumn : categoryColumns) {
+        for (ReportColumnInterface categoryColumn : categoryColumns) {
             categoryColumn.setLegacyData(legacyData);
         }
     }

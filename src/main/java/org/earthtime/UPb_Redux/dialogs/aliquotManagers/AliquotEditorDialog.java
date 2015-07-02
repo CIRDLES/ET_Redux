@@ -85,8 +85,8 @@ import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.UPb
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.renderers.EditFractionButton;
 import org.earthtime.UPb_Redux.reports.excelReports.CsvResultsTable;
-import org.earthtime.UPb_Redux.reports.reportViews.ReportAliquotFractionsView;
-import org.earthtime.UPb_Redux.reports.reportViews.TabbedReportViews;
+import org.earthtime.reportViews.ReportAliquotFractionsView;
+import org.earthtime.reportViews.TabbedReportViews;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.UPb_Redux.utilities.Thumbnail;
 import org.earthtime.UPb_Redux.utilities.UPbReduxFocusTraversalPolicy;

@@ -1,6 +1,5 @@
 /*
- * ReportRowGUIInterface.java
- *
+ * ReportUpdaterInterface.java
  *
  *
  * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
@@ -17,25 +16,17 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.earthtime.UPb_Redux.reports;
+package org.earthtime.reportViews;
 
 /**
  *
- * @author James F. Bowring
+ * @author samuelbowring
  */
-public interface ReportRowGUIInterface {
-    
+public interface ReportUpdaterInterface {
     
     /**
-     * 
-     * @return
+     *
+     * @param performReduction
      */
-    abstract boolean isSelectedInDataTable ();
-
-    /**
-     * 
-     * @param selectedInDataTable
-     */
-    abstract void setSelectedInDataTable ( boolean selectedInDataTable );
-    
+    public void updateReportTable( boolean performReduction);
 }

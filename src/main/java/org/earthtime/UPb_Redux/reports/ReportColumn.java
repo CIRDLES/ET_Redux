@@ -20,7 +20,10 @@
  */
 package org.earthtime.UPb_Redux.reports;
 
+import org.earthtime.reports.ReportColumnInterface;
+import org.earthtime.reportViews.ReportListItemI;
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
@@ -36,9 +39,7 @@ import org.earthtime.fractions.ETFractionInterface;
  * @author James F. Bowring
  */
 public class ReportColumn implements
-        Comparable<ReportColumn>,
-        Serializable,
-        ReportListItemI {
+        ReportColumnInterface {
 
     private static final long serialVersionUID = 1474850196549001090L;
     // fields
@@ -80,6 +81,7 @@ public class ReportColumn implements
      * @param retrieveVariableName
      * @param uncertaintyType
      * @param visible
+     * @param amUncertaintyColumn
      */
     public ReportColumn(
             String displayName1,
@@ -106,23 +108,9 @@ public class ReportColumn implements
         this.visible = visible;
         this.amUncertaintyColumn = amUncertaintyColumn;
 
-        this.uncertaintyColumn = null;;
+        this.uncertaintyColumn = null;
         this.displayedWithArbitraryDigitCount = false;
         this.countOfSignificantDigits = 2;
-    }
-
-    /**
-     *
-     * @param reportColumn
-     * @return
-     * @throws ClassCastException
-     */
-    public int compareTo(ReportColumn reportColumn)
-            throws ClassCastException {
-        String reportColumnFullName
-                = ((ReportColumn) reportColumn).getDisplayName();
-        return this.getDisplayName().trim().//
-                compareToIgnoreCase(reportColumnFullName.trim());
     }
 
     /**
@@ -159,202 +147,12 @@ public class ReportColumn implements
         return 0;
     }
 
-    /**
-     *
-     * @param fraction
-     * @param isNumeric
-     * @return
-     */
-    public String[] getReportRecordByColumnSpec(ETFractionInterface fraction, boolean isNumeric) {
-        // returns an entry for the value and one for the uncertainty if it exists
-        // there are two possible modes : sigfig and arbitrary
-        // if sigfig, the string contains only the sig digits forced to length
-        // 20 with the decimal point at position 9 (0-based index) with space fillers
-        // if arbitrary, the string is the bigdecimal number with 15 places after the
-        // decimal
-        // these "raw" strings will be post-processed by the report engine
-        String[] retVal = new String[2];
-
-        // default for value column
-        retVal[0] = "NOT FOUND";
-        // default for uncertainty column
-        retVal[1] = "";
-
-        // nov 2009 will use "-" character if lead or uranium required to display
-        // feb 2010 oops need to modify if sample is already analyzed as in legacy data
-        if (!legacyData && (fraction instanceof UPbFractionI) &&//
-                ((needsPb && !((UPbFractionI) fraction).hasMeasuredLead())
-                || (needsU && !((UPbFractionI) fraction).hasMeasuredUranium()))) {
-            // get default width of column so we can correctly place the "-"
-            String defaultContents = FormatNumericStringAlignDecimalPoint("0");
-            retVal[0] = defaultContents.replace('0', '-');
-            retVal[1] = retVal[0];
-        } else {
-            if (!getRetrieveMethodName().equals("")) {
-                // get fraction field by using reflection
-                //String retrieveVariableName = getRetrieveVariableName();
-                try {
-                    Class<?> fractionClass =//
-                            Class.forName(ETFractionInterface.class.getCanonicalName()); // June 2015 Fraction APRIL 2014 ????Class.forName( UPbFraction.class.getCanonicalName() );
-
-                    // this is the case of fractionID, the only string returned
-                    if (retrieveVariableName.length() == 0) {
-                        try {
-                            Method meth
-                                    = fractionClass.getMethod(//
-                                            getRetrieveMethodName(),
-                                            new Class[0]);
-
-                            Object o = meth.invoke(fraction, new Object[0]);
-
-                            retVal[0] = o.toString();
-                        } catch (Throwable e) {
-                            System.err.println(e);
-                        }
-                    } else {
-                        try {
-                            Method meth
-                                    = fractionClass.getMethod(//
-                                            getRetrieveMethodName(),
-                                            new Class[]{String.class});
-
-                            ValueModel vm = (ValueModel) meth.invoke(fraction, new Object[]{retrieveVariableName});
-
-                            // nov 2014 to show when rhos not calculated
-                            if (retrieveVariableName.startsWith("rhoR") && vm.getValue().doubleValue() == ReduxConstants.NO_RHO_FLAG) {
-                                retVal[0] = "   not calc";
-                            } else if (vm.amPositiveAndLessThanTolerance()) {
-                                // may 2013 for tiny numbers due to below detection
-                                retVal[0] = " bd "; // below detection
-
-                            } else if (vm.hasZeroValue()) {//oct 2014
-                                retVal[0] = " - ";
-
-                            } else if (isNumeric) {
-                                retVal[0]
-                                        = vm.getValueInUnits(getUnits()).toPlainString().trim();
-                            } else if (isDisplayedWithArbitraryDigitCount()) {
-                                retVal[0]
-                                        = ValueModel.formatBigDecimalForPublicationArbitraryMode(//
-                                                vm.getValueInUnits(getUnits()),
-                                                getCountOfSignificantDigits());
-                            } else {
-                                // value is in sigfig mode = two flavors
-                                // if there is no uncertainty column, then show the value with
-                                // normal sigfig formatting
-                                // if there is an uncertainty column and it is in arbitrary mode, then
-                                // also show value with normal sigfig formatting
-
-                                retVal[0] = ValueModel.formatBigDecimalForPublicationSigDigMode(vm.getValue().movePointRight(ReduxConstants.getUnitConversionMoveCount(getUnits())),//
-                                        getCountOfSignificantDigits());
-
-                                // however, if uncertainty column is in sigfig mode, then
-                                // use special algorithm to format value per the digits of
-                                // the formatted uncertainty column
-                                if (getUncertaintyColumn() != null) {
-                                    if (!getUncertaintyColumn().isDisplayedWithArbitraryDigitCount()) {
-                                        // uncertainty column is in sigfig mode
-                                        retVal[0] = vm.formatValueFromTwoSigmaForPublicationSigDigMode(//
-                                                getUncertaintyType(), ReduxConstants.getUnitConversionMoveCount(getUnits()),//
-                                                getUncertaintyColumn().getCountOfSignificantDigits());
-                                    }
-                                }
-//                            // in either case, we have a sigfig mode for the value
-//                            retVal[0] = FormatNumericStringAlignDecimalPoint(retVal[0]);
-                            }
-                            // in nonnumeric case, we need to format string
-                            if (!isNumeric) {
-                                retVal[0] = FormatNumericStringAlignDecimalPoint(retVal[0]);
-                            }
-
-                            // report 2-sigma uncertainty
-                            if (getUncertaintyColumn() != null) {
-                                if (getUncertaintyColumn().isVisible()) {
-                                    // check for reporting mode
-
-                                    if (vm.amPositiveAndLessThanTolerance()) {
-                                        // may 2013 for tiny numbers due to below detection
-                                        retVal[1] = " bd "; // below detection
-
-                                    } else if (vm.hasZeroValue()) {//oct 2014
-                                        retVal[1] = " - ";
-
-                                    } else if (isNumeric) {
-                                        retVal[1]
-                                                = vm.getTwoSigma(getUncertaintyType(), getUnits()).toPlainString().trim();
-                                    } else if (getUncertaintyColumn().isDisplayedWithArbitraryDigitCount()) {
-                                        retVal[1]
-                                                = ValueModel.formatBigDecimalForPublicationArbitraryMode(//
-                                                        vm.getTwoSigma(getUncertaintyType(), getUnits()),
-                                                        getUncertaintyColumn().getCountOfSignificantDigits());
-                                    } else {
-                                        retVal[1] = vm.formatTwoSigmaForPublicationSigDigMode(//
-                                                getUncertaintyType(),
-                                                ReduxConstants.getUnitConversionMoveCount(getUnits()),
-                                                getUncertaintyColumn().getCountOfSignificantDigits());
-                                    }
-                                    retVal[1] = FormatNumericStringAlignDecimalPoint(retVal[1]);
-                                    // }
-                                }
-                            }
-
-                        } catch (Throwable e) {
-                            System.err.println("problem formatting " + retrieveVariableName + " for " + fraction.getFractionID() + " >> " + e);
-                            e.printStackTrace();
-                        }
-                    }
-
-                } catch (ClassNotFoundException classNotFoundException) {
-                }
-            }
-        }
-
-        return retVal;
-    }
-
-    /**
-     *
-     * @param numericString
-     * @return
-     */
-    public String FormatNumericStringAlignDecimalPoint(String numericString) {
-        // precondition: can fit within 123456789.0123456789
-        int countOfLeadingDigits = 9;
-        int totalStringLength = 25;
-        String twentySpaces = "                         ";
-
-        String retVal = "---";
-
-        int indexOfPoint = numericString.indexOf(".");
-        if (indexOfPoint == -1) {
-            indexOfPoint = numericString.length();
-        }
-
-        // nov 2014
-        if (numericString.length() > totalStringLength) {
-            //retVal = "       Too Large";
-            // Jan 2015 refinement
-            retVal = numericString.substring(0, totalStringLength - 1);
-        } else {
-            // pad left
-            retVal = twentySpaces.substring(0, Math.abs(countOfLeadingDigits - indexOfPoint)) + numericString;
-        }
-
-        // pad right
-        try {
-            retVal += twentySpaces.substring(0, totalStringLength - retVal.length());
-        } catch (Exception e) {
-            // Jan 2015 refinement
-            retVal = retVal.substring(0, totalStringLength - 1);
-            //System.out.println("RETVAL " + retVal);
-        }
-        return retVal;
-    }
 
     /**
      *
      * @return
      */
+    @Override
     public String getDisplayName1() {
         return displayName1;
     }
@@ -363,6 +161,7 @@ public class ReportColumn implements
      *
      * @param displayName1
      */
+    @Override
     public void setDisplayName1(String displayName1) {
         this.displayName1 = displayName1;
     }
@@ -371,6 +170,7 @@ public class ReportColumn implements
      *
      * @return
      */
+    @Override
     public String getDisplayName2() {
         return displayName2;
     }
@@ -379,6 +179,7 @@ public class ReportColumn implements
      *
      * @param displayName2
      */
+    @Override
     public void setDisplayName2(String displayName2) {
         this.displayName2 = displayName2;
     }
@@ -387,6 +188,7 @@ public class ReportColumn implements
      *
      * @return
      */
+    @Override
     public int getPositionIndex() {
         return positionIndex;
     }
@@ -395,6 +197,7 @@ public class ReportColumn implements
      *
      * @param positionIndex
      */
+    @Override
     public void setPositionIndex(int positionIndex) {
         this.positionIndex = positionIndex;
     }
@@ -403,26 +206,16 @@ public class ReportColumn implements
      *
      * @return
      */
+    @Override
     public String getUnits() {
         return units;
     }
 
     /**
      *
-     * @return
-     */
-    public String getUnitsFoxXML() {
-        String retVal = ReportSpecifications.unicodeConversionsToXML.get(units);
-        if (retVal == null) {
-            retVal = units;
-        }
-        return retVal;
-    }
-
-    /**
-     *
      * @param units
      */
+    @Override
     public void setUnits(String units) {
         this.units = units;
     }
@@ -431,6 +224,7 @@ public class ReportColumn implements
      *
      * @param xmlCode
      */
+    @Override
     public void setUnitsFromXML(String xmlCode) {
         units = ReportSpecifications.unicodeConversionsFromXML.get(xmlCode);
         if (units == null) {
@@ -442,6 +236,7 @@ public class ReportColumn implements
      *
      * @return
      */
+    @Override
     public String getRetrieveMethodName() {
         return retrieveMethodName;
     }
@@ -450,6 +245,7 @@ public class ReportColumn implements
      *
      * @param retrieveMethodName
      */
+    @Override
     public void setRetrieveMethodName(String retrieveMethodName) {
         this.retrieveMethodName = retrieveMethodName;
     }
@@ -458,6 +254,7 @@ public class ReportColumn implements
      *
      * @return
      */
+    @Override
     public String getRetrieveVariableName() {
         return retrieveVariableName;
     }
@@ -466,6 +263,7 @@ public class ReportColumn implements
      *
      * @param retrieveVariableName
      */
+    @Override
     public void setRetrieveVariableName(String retrieveVariableName) {
         this.retrieveVariableName = retrieveVariableName;
     }
@@ -474,6 +272,7 @@ public class ReportColumn implements
      *
      * @return
      */
+    @Override
     public ReportColumn getUncertaintyColumn() {
         return uncertaintyColumn;
     }
@@ -482,6 +281,7 @@ public class ReportColumn implements
      *
      * @param uncertaintyColumn
      */
+    @Override
     public void setUncertaintyColumn(ReportColumn uncertaintyColumn) {
         this.uncertaintyColumn = uncertaintyColumn;
     }
@@ -490,6 +290,7 @@ public class ReportColumn implements
      *
      * @return
      */
+    @Override
     public String getUncertaintyType() {
         return uncertaintyType;
     }
@@ -498,6 +299,7 @@ public class ReportColumn implements
      *
      * @param uncertaintyType
      */
+    @Override
     public void setUncertaintyType(String uncertaintyType) {
         this.uncertaintyType = uncertaintyType;
     }
@@ -506,6 +308,7 @@ public class ReportColumn implements
      *
      * @return
      */
+    @Override
     public boolean isDisplayedWithArbitraryDigitCount() {
         return displayedWithArbitraryDigitCount;
     }
@@ -514,6 +317,7 @@ public class ReportColumn implements
      *
      * @param displayedWithArbitraryDigitCount
      */
+    @Override
     public void setDisplayedWithArbitraryDigitCount(boolean displayedWithArbitraryDigitCount) {
         this.displayedWithArbitraryDigitCount = displayedWithArbitraryDigitCount;
     }
@@ -522,6 +326,7 @@ public class ReportColumn implements
      *
      * @return
      */
+    @Override
     public int getCountOfSignificantDigits() {
         return countOfSignificantDigits;
     }
@@ -530,6 +335,7 @@ public class ReportColumn implements
      *
      * @param countOfSignificantDigits
      */
+    @Override
     public void setCountOfSignificantDigits(int countOfSignificantDigits) {
         this.countOfSignificantDigits = countOfSignificantDigits;
     }
@@ -538,6 +344,7 @@ public class ReportColumn implements
      *
      * @return
      */
+    @Override
     public boolean isVisible() {
         return visible;
     }
@@ -546,6 +353,7 @@ public class ReportColumn implements
      *
      * @param visible
      */
+    @Override
     public void setVisible(boolean visible) {
         this.visible = visible;
     }
@@ -554,6 +362,7 @@ public class ReportColumn implements
      *
      * @return
      */
+    @Override
     public String getFootnoteSpec() {
         return footnoteSpec;
     }
@@ -562,32 +371,15 @@ public class ReportColumn implements
      *
      * @param footnoteSpec
      */
+    @Override
     public void setFootnoteSpec(String footnoteSpec) {
         this.footnoteSpec = footnoteSpec;
     }
 
     /**
-     *
-     * @return
-     */
-    public String getDisplayName() {
-        if (getAlternateDisplayName().equals("")) {
-            return getDisplayName1() + getDisplayName2() + getDisplayName3();
-        } else {
-            return getAlternateDisplayName();
-        }
-    }
-
-    /**
-     *
-     */
-    public void ToggleIsVisible() {
-        setVisible(!isVisible());
-    }
-
-    /**
      * @return the displayName3
      */
+    @Override
     public String getDisplayName3() {
         return displayName3;
     }
@@ -595,6 +387,7 @@ public class ReportColumn implements
     /**
      * @param displayName3 the displayName3 to set
      */
+    @Override
     public void setDisplayName3(String displayName3) {
         this.displayName3 = displayName3;
     }
@@ -602,6 +395,7 @@ public class ReportColumn implements
     /**
      * @return the alternateDisplayName
      */
+    @Override
     public String getAlternateDisplayName() {
         return alternateDisplayName;
     }
@@ -609,6 +403,7 @@ public class ReportColumn implements
     /**
      * @param alternateDisplayName the alternateDisplayName to set
      */
+    @Override
     public void setAlternateDisplayName(String alternateDisplayName) {
         this.alternateDisplayName = alternateDisplayName;
     }
@@ -616,6 +411,7 @@ public class ReportColumn implements
     /**
      * @return the needsPb
      */
+    @Override
     public boolean isNeedsPb() {
         return needsPb;
     }
@@ -623,6 +419,7 @@ public class ReportColumn implements
     /**
      * @param needsPb the needsPb to set
      */
+    @Override
     public void setNeedsPb(boolean needsPb) {
         this.needsPb = needsPb;
     }
@@ -630,6 +427,7 @@ public class ReportColumn implements
     /**
      * @return the needsU
      */
+    @Override
     public boolean isNeedsU() {
         return needsU;
     }
@@ -637,6 +435,7 @@ public class ReportColumn implements
     /**
      * @param needsU the needsU to set
      */
+    @Override
     public void setNeedsU(boolean needsU) {
         this.needsU = needsU;
     }
@@ -644,6 +443,7 @@ public class ReportColumn implements
     /**
      * @return the legacyData
      */
+    @Override
     public boolean isLegacyData() {
         return legacyData;
     }
@@ -651,10 +451,12 @@ public class ReportColumn implements
     /**
      * @param legacyData the legacyData to set
      */
+    @Override
     public void setLegacyData(boolean legacyData) {
         this.legacyData = legacyData;
     }
 
+    @Override
     public boolean hasUncertaintyColumn() {
         return uncertaintyColumn != null;
     }
@@ -662,6 +464,7 @@ public class ReportColumn implements
     /**
      * @return the amUncertaintyColumn
      */
+    @Override
     public boolean isAmUncertaintyColumn() {
         return amUncertaintyColumn;
     }

@@ -16,13 +16,22 @@
 package org.earthtime.reports;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.converters.ConversionException;
+import com.thoughtworks.xstream.io.xml.DomDriver;
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 import javax.swing.JOptionPane;
+import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
@@ -32,6 +41,7 @@ import org.earthtime.UPb_Redux.reports.ReportColumn;
 import org.earthtime.UPb_Redux.reports.ReportSettings;
 import org.earthtime.UPb_Redux.valueModels.ValueModelReferenced;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
+import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.dataDictionaries.Lambdas;
 import org.earthtime.dataDictionaries.RadDates;
@@ -49,13 +59,158 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
 
     int FRACTION_DATA_START_ROW = 8;
 
+    /**
+     *
+     * @return
+     */
+    public static ReportSettingsInterface EARTHTIMEReportSettings() {
+
+        ReportSettingsInterface EARTHTIME
+                = new ReportSettings("EARTHTIME");
+
+        return EARTHTIME;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public default Map<Integer, ReportCategoryInterface> getReportCategoriesInOrder() {
+        Map<Integer, ReportCategoryInterface> retVal = new HashMap<>();
+
+        getReportCategories().stream().filter((rc) //
+                -> (rc != null)).forEach((rc) -> {
+                    retVal.put(rc.getPositionIndex(), rc);
+                });
+
+        return retVal;
+    }
+
     void assembleReportCategories();
 
     /**
      *
      * @return
      */
-    ReportSettings clone();
+    public default ReportSettingsInterface deepCopy() {
+        ReportSettingsInterface reportSettingsModel = null;
+
+        String tempFileName = "TEMPreportSettings.xml";
+        // write out the settings
+        serializeXMLObject(tempFileName);
+
+        // read them back in
+        try {
+            reportSettingsModel = (ReportSettingsInterface) readXMLObject(tempFileName, true);
+        } catch (FileNotFoundException | ETException | BadOrMissingXMLSchemaException fileNotFoundException) {
+        }
+
+        File tempFile = new File(tempFileName);
+        tempFile.delete();
+
+        return reportSettingsModel;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public default XStream getXStreamWriter() {
+        XStream xstream = new XStream();
+
+        customizeXstream(xstream);
+
+        return xstream;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public default XStream getXStreamReader() {
+
+        XStream xstream = new XStream(new DomDriver());
+
+        customizeXstream(xstream);
+
+        return xstream;
+    }
+
+    /**
+     *
+     * @param filename
+     */
+    @Override
+    public default void serializeXMLObject(String filename) {
+        XStream xstream = getXStreamWriter();
+
+        String xml = xstream.toXML(this);
+
+        xml = ReduxConstants.XML_Header + xml;
+
+        xml = xml.replaceFirst("ReportSettings",
+                "ReportSettings  "//
+                + ReduxConstants.XML_ResourceHeader//
+                + getReportSettingsXMLSchemaURL() //
+
+                + "\"");
+
+        try {
+            FileWriter outFile = new FileWriter(filename);
+            PrintWriter out = new PrintWriter(outFile);
+
+            // Write xml to file
+            out.println(xml);
+            out.flush();
+            out.close();
+            outFile.close();
+
+        } catch (IOException e) {
+        }
+    }
+
+    /**
+     *
+     *
+     * @param filename
+     * @param doValidate the value of doValidate
+     * @return
+     * @throws FileNotFoundException
+     * @throws ETException
+     * @throws BadOrMissingXMLSchemaException
+     */
+    @Override
+    public default Object readXMLObject(String filename, boolean doValidate)
+            throws FileNotFoundException, ETException, FileNotFoundException, BadOrMissingXMLSchemaException {
+        ReportSettingsInterface myReportSettings = null;
+
+        BufferedReader reader = URIHelper.getBufferedReader(filename);
+
+        if (reader != null) {
+            boolean isValidOrAirplaneMode = !doValidate;
+
+            XStream xstream = getXStreamReader();
+
+            isValidOrAirplaneMode = URIHelper.validateXML(reader, filename, getReportSettingsXMLSchemaURL());
+
+            if (isValidOrAirplaneMode) {
+                // re-create reader
+                reader = URIHelper.getBufferedReader(filename);
+                try {
+                    myReportSettings = (ReportSettingsInterface) xstream.fromXML(reader);
+                } catch (ConversionException e) {
+                    throw new ETException(null, e.getMessage());
+                }
+
+            } else {
+                throw new ETException(null, "XML data file does not conform to schema.");
+            }
+        } else {
+            throw new FileNotFoundException("Missing XML data file.");
+        }
+
+        return myReportSettings;
+    }
 
     /**
      *
@@ -63,7 +218,14 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
      * @return
      * @throws ClassCastException
      */
-    int compareTo(ReportSettingsInterface reportSettingsModel) throws ClassCastException;
+    @Override
+    public default int compareTo(ReportSettingsInterface reportSettingsModel)
+            throws ClassCastException {
+        String reportSettingsModelNameAndVersion
+                = reportSettingsModel.getNameAndVersion();
+        return this.getNameAndVersion().trim().//
+                compareToIgnoreCase(reportSettingsModelNameAndVersion.trim());
+    }
 
     /**
      * registers converter for argument <code>xstream</code> and sets aliases to
@@ -89,40 +251,57 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
      *
      * @return
      */
-    ReportCategory getCompositionCategory();
+    @Override
+    public default String getReduxLabDataElementName() {
+        return getNameAndVersion();
+    }
 
     /**
      *
      * @return
      */
-    ReportCategory getDatesCategory();
+    public default String getNameAndVersion() {
+        return getName().trim() + " v." + getVersion();
+    }
+
+    /**
+     *
+     * @return
+     */
+    ReportCategoryInterface getCompositionCategory();
+
+    /**
+     *
+     * @return
+     */
+    ReportCategoryInterface getDatesCategory();
 
     /**
      * @return the datesPbcCorrCategory
      */
-    ReportCategory getDatesPbcCorrCategory();
+    ReportCategoryInterface getDatesPbcCorrCategory();
 
     /**
      *
      * @return
      */
-    ReportCategory getFractionCategory();
+    ReportCategoryInterface getFractionCategory();
 
     /**
      * @return the fractionCategory2
      */
-    ReportCategory getFractionCategory2();
+    ReportCategoryInterface getFractionCategory2();
 
     /**
      *
      * @return
      */
-    ReportCategory getIsotopicRatiosCategory();
+    ReportCategoryInterface getIsotopicRatiosCategory();
 
     /**
      * @return the isotopicRatiosPbcCorrCategory
      */
-    ReportCategory getIsotopicRatiosPbcCorrCategory();
+    ReportCategoryInterface getIsotopicRatiosPbcCorrCategory();
 
     /**
      *
@@ -130,25 +309,7 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
      */
     String getName();
 
-    /**
-     *
-     * @return
-     */
-    String getNameAndVersion();
-
     //  accessors
-    /**
-     *
-     * @return
-     */
-    String getReduxLabDataElementName();
-
-    /**
-     *
-     * @return
-     */
-    Map<Integer, ReportCategory> getReportCategoriesInOrder();
-
     /**
      *
      * @return
@@ -158,38 +319,18 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
     /**
      * @return the rhosCategory
      */
-    ReportCategory getRhosCategory();
+    ReportCategoryInterface getRhosCategory();
 
     /**
      * @return the traceElementsCategory
      */
-    ReportCategory getTraceElementsCategory();
+    ReportCategoryInterface getTraceElementsCategory();
 
     /**
      *
      * @return
      */
     int getVersion();
-
-    /**
-     *
-     * @return
-     */
-    XStream getXStreamReader();
-
-    // XML Serialization
-    /**
-     *
-     * @return
-     */
-    XStream getXStreamWriter();
-
-    // http://www.javaworld.com/javaworld/jw-01-1999/jw-01-object.html?page=4
-    /**
-     *
-     * @return
-     */
-    int hashCode();
 
     /**
      * @return the legacyData
@@ -204,29 +345,9 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
 
     /**
      *
-     *
-     * @param filename
-     * @param doValidate the value of doValidate
-     * @return
-     * @throws FileNotFoundException
-     * @throws ETException
-     * @throws BadOrMissingXMLSchemaException
-     */
-    @Override
-    Object readXMLObject(String filename, boolean doValidate) throws FileNotFoundException, ETException, FileNotFoundException, BadOrMissingXMLSchemaException;
-
-    /**
-     *
      */
     @Override
     void removeSelf();
-
-    /**
-     *
-     * @param filename
-     */
-    @Override
-    void serializeXMLObject(String filename);
 
     /**
      * sets the XML schema. Initializes <code>UPbReduxConfigurator</code> and
@@ -241,41 +362,41 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
      *
      * @param compositionCategory
      */
-    void setCompositionCategory(ReportCategory compositionCategory);
+    void setCompositionCategory(ReportCategoryInterface compositionCategory);
 
     /**
      *
      * @param datesCategory
      */
-    void setDatesCategory(ReportCategory datesCategory);
+    void setDatesCategory(ReportCategoryInterface datesCategory);
 
     /**
      * @param datesPbcCorrCategory the datesPbcCorrCategory to set
      */
-    void setDatesPbcCorrCategory(ReportCategory datesPbcCorrCategory);
+    void setDatesPbcCorrCategory(ReportCategoryInterface datesPbcCorrCategory);
 
     /**
      *
      * @param fractionCategory
      */
-    void setFractionCategory(ReportCategory fractionCategory);
+    void setFractionCategory(ReportCategoryInterface fractionCategory);
 
     /**
      * @param fractionCategory2 the fractionCategory2 to set
      */
-    void setFractionCategory2(ReportCategory fractionCategory2);
+    void setFractionCategory2(ReportCategoryInterface fractionCategory2);
 
     /**
      *
      * @param isotopicRatiosCategory
      */
-    void setIsotopicRatiosCategory(ReportCategory isotopicRatiosCategory);
+    void setIsotopicRatiosCategory(ReportCategoryInterface isotopicRatiosCategory);
 
     /**
      * @param isotopicRatiosPbcCorrCategory the isotopicRatiosPbcCorrCategory to
      * set
      */
-    void setIsotopicRatiosPbcCorrCategory(ReportCategory isotopicRatiosPbcCorrCategory);
+    void setIsotopicRatiosPbcCorrCategory(ReportCategoryInterface isotopicRatiosPbcCorrCategory);
 
     /**
      * @param legacyData the legacyData to set
@@ -297,12 +418,12 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
     /**
      * @param rhosCategory the rhosCategory to set
      */
-    void setRhosCategory(ReportCategory rhosCategory);
+    void setRhosCategory(ReportCategoryInterface rhosCategory);
 
     /**
      * @param traceElementsCategory the traceElementsCategory to set
      */
-    void setTraceElementsCategory(ReportCategory traceElementsCategory);
+    void setTraceElementsCategory(ReportCategoryInterface traceElementsCategory);
 
     /**
      *
@@ -460,7 +581,7 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
                     isAuto = true;
                 }
                 getDatesCategory().setDisplayName("Dates (" + currentDateUnit + ")");
-                for (ReportColumn rc : getDatesCategory().getCategoryColumns()) {
+                for (ReportColumnInterface rc : getDatesCategory().getCategoryColumns()) {
                     if (!rc.getUnits().equalsIgnoreCase("")) {
                         rc.setUnits(currentDateUnit);
                     }
@@ -476,7 +597,7 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
                                 // we have Ma when any value is greater than threshold
                                 getDatesCategory().setDisplayName("Dates (Ma)");
                                 // now set units correctly
-                                for (ReportColumn rc : getDatesCategory().getCategoryColumns()) {
+                                for (ReportColumnInterface rc : getDatesCategory().getCategoryColumns()) {
                                     if (!rc.getUnits().equalsIgnoreCase("")) {
                                         rc.setUnits("Ma");
                                     }
@@ -500,7 +621,7 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
                     isAuto = true;
                 }
                 getDatesPbcCorrCategory().setDisplayName("PbcCorr Dates (" + currentDateUnit + ")");
-                for (ReportColumn rc : getDatesPbcCorrCategory().getCategoryColumns()) {
+                for (ReportColumnInterface rc : getDatesPbcCorrCategory().getCategoryColumns()) {
                     if (!rc.getUnits().equalsIgnoreCase("")) {
                         rc.setUnits(currentDateUnit);
                     }
@@ -516,7 +637,7 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
                                 // we have Ma when any value is greater than threshold
                                 getDatesPbcCorrCategory().setDisplayName("PbcCorr Dates (Ma)");
                                 // now set units correctly
-                                for (ReportColumn rc : getDatesPbcCorrCategory().getCategoryColumns()) {
+                                for (ReportColumnInterface rc : getDatesPbcCorrCategory().getCategoryColumns()) {
                                     if (!rc.getUnits().equalsIgnoreCase("")) {
                                         rc.setUnits("Ma");
                                     }
@@ -561,16 +682,16 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
         int footNoteCounter = 0;
         ArrayList<String> footNotesMap = new ArrayList<>();
 
-        Map<Integer, ReportCategory> categories = getReportCategoriesInOrder();
+        Map<Integer, ReportCategoryInterface> categories = getReportCategoriesInOrder();
 
         for (int c = 0; c < categories.size(); c++) {
             try {
                 if (categories.get(c).isVisible()) {
-                    Map<Integer, ReportColumn> cat = categories.get(c).getCategoryColumnOrder();
+                    Map<Integer, ReportColumnInterface> cat = categories.get(c).getCategoryColumnOrder();
 
                     for (int col = 0; col < cat.size(); col++) {
                         int colIncrement = 1;
-                        ReportColumn myCol = cat.get(col);
+                        ReportColumnInterface myCol = cat.get(col);
 
                         if (myCol.isVisible()) {
                             // record column headings
@@ -879,5 +1000,7 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
         return retVal;
     }
 
-    public ArrayList<ReportCategory> getReportCategories();
+    public ArrayList<ReportCategoryInterface> getReportCategories();
+
+    public String getReportSettingsXMLSchemaURL();
 }

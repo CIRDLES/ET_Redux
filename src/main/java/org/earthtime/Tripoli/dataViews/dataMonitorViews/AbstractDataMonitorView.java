@@ -81,7 +81,7 @@ import org.earthtime.UPb_Redux.dialogs.parameterManagers.LAICPMSProjectParameter
 import org.earthtime.UPb_Redux.dialogs.projectManagers.ProjectManagerSubscribeInterface;
 import org.earthtime.UPb_Redux.fractions.FractionsFilterInterface;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
-import org.earthtime.UPb_Redux.reports.reportViews.TabbedReportViews;
+import org.earthtime.reportViews.TabbedReportViews;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.dataDictionaries.DataPresentationModeEnum;
 import org.earthtime.dataDictionaries.FractionSelectionTypeEnum;

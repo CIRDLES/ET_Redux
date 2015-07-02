@@ -1,7 +1,6 @@
 /*
- * ReportListItemI.java
+ * ReportRowGUIInterface.java
  *
- * Created on September 9, 2008, 3:05 PM
  *
  *
  * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
@@ -18,41 +17,25 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
-package org.earthtime.UPb_Redux.reports;
+package org.earthtime.reportViews;
 
 /**
  *
  * @author James F. Bowring
  */
-public interface ReportListItemI {
+public interface ReportRowGUIInterface {
+    
     
     /**
      * 
      * @return
      */
-    abstract String getDisplayName();
-    
-    /**
-     * 
-     * @return
-     */
-    abstract boolean isVisible();
-    /**
-     * 
-     * @param visible
-     */
-    abstract void setVisible(boolean visible);
-    
-    /**
-     * 
-     */
-    abstract void ToggleIsVisible();
-    
-    /**
-     * 
-     * @param positionIndex
-     */
-    abstract void setPositionIndex(int positionIndex);
+    abstract boolean isSelectedInDataTable ();
 
+    /**
+     * 
+     * @param selectedInDataTable
+     */
+    abstract void setSelectedInDataTable ( boolean selectedInDataTable );
+    
 }
