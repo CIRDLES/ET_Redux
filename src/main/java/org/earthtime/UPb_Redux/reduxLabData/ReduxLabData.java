@@ -1233,18 +1233,18 @@ public final class ReduxLabData implements Serializable {
      *
      * @return @throws BadLabDataException
      */
-    public ReportSettings getNoneReportSettingsModel()
+    public ReportSettingsInterface getNoneReportSettingsModel()
             throws BadLabDataException {
-        return (ReportSettings) ((ReduxLabDataList) reportSettingsModels).getFirstElement();
+        return (ReportSettingsInterface) ((ReduxLabDataList) reportSettingsModels).getFirstElement();
     }
 
     /**
      *
      * @return @throws BadLabDataException
      */
-    public ReportSettings getFirstReportSettingsModel()
+    public ReportSettingsInterface getFirstReportSettingsModel()
             throws BadLabDataException {
-        return (ReportSettings) ((ReduxLabDataList) reportSettingsModels).getSecondElement();
+        return (ReportSettingsInterface) ((ReduxLabDataList) reportSettingsModels).getSecondElement();
     }
 
     /**
@@ -1253,9 +1253,9 @@ public final class ReduxLabData implements Serializable {
      * @return
      * @throws BadLabDataException
      */
-    public ReportSettings getAReportSettingsModel(String modelName)
+    public ReportSettingsInterface getAReportSettingsModel(String modelName)
             throws BadLabDataException {
-        return (ReportSettings) ((ReduxLabDataList) reportSettingsModels).getAnElement(modelName);
+        return (ReportSettingsInterface) ((ReduxLabDataList) reportSettingsModels).getAnElement(modelName);
     }
 
     /**
@@ -1293,7 +1293,7 @@ public final class ReduxLabData implements Serializable {
      *
      * @return @throws BadLabDataException
      */
-    public ReportSettings getDefaultReportSettingsModel()
+    public ReportSettingsInterface getDefaultReportSettingsModel()
             throws BadLabDataException {
         if (defaultReportSettingsModel == null) {
             defaultReportSettingsModel = ReportSettings.EARTHTIMEReportSettings();
@@ -1321,7 +1321,7 @@ public final class ReduxLabData implements Serializable {
      * @param model
      * @param isVerbose
      */
-    public void registerReportSettingsModel(ReportSettings model, boolean isVerbose) {
+    public void registerReportSettingsModel(ReportSettingsInterface model, boolean isVerbose) {
         if (((ReduxLabDataList) reportSettingsModels).registerElement(model, isVerbose)) {
             addReportSettingsModel(model);
         }

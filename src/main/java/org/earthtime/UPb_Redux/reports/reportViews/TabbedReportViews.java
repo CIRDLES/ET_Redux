@@ -23,8 +23,8 @@ import javax.swing.JLayeredPane;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import org.earthtime.ETReduxFrame;
-import org.earthtime.UPb_Redux.reports.ReportSettings;
 import org.earthtime.exceptions.ETException;
+import org.earthtime.reports.ReportSettingsInterface;
 import org.earthtime.samples.SampleInterface;
 
 /**
@@ -110,10 +110,10 @@ public class TabbedReportViews extends JTabbedPane {
     public void refreshTabs() {
         if (sample != null) {
             ((ReportAliquotFractionsView) viewTabulatedAliquotActiveFractions).refreshPanel();
-            this.setTitleAt(0, "Active Fractions (" + Integer.toString(((ReportAliquotFractionsView) viewTabulatedAliquotActiveFractions).getReportFractions().length - ReportSettings.FRACTION_DATA_START_ROW) + ")");
+            this.setTitleAt(0, "Active Fractions (" + Integer.toString(((ReportAliquotFractionsView) viewTabulatedAliquotActiveFractions).getReportFractions().length - ReportSettingsInterface.FRACTION_DATA_START_ROW) + ")");
 
             ((ReportAliquotFractionsView) viewTabulatedAliquotRejectedFractions).refreshPanel();
-            this.setTitleAt(1, "Rejected Fractions (" + Integer.toString(((ReportAliquotFractionsView) viewTabulatedAliquotRejectedFractions).getReportFractions().length - ReportSettings.FRACTION_DATA_START_ROW) + ")");
+            this.setTitleAt(1, "Rejected Fractions (" + Integer.toString(((ReportAliquotFractionsView) viewTabulatedAliquotRejectedFractions).getReportFractions().length - ReportSettingsInterface.FRACTION_DATA_START_ROW) + ")");
         }
     }
 

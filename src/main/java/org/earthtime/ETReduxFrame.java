@@ -3342,9 +3342,9 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                         fileExtension, nonMacFileFilter, false, this)[0];
 
         if (returnFile != null) {
-            ReportSettings reportSettings = new ReportSettings();
+            ReportSettingsInterface reportSettings = new ReportSettings();
             try {
-                ReportSettings reportSettingsModel = (ReportSettings) reportSettings.readXMLObject(returnFile.getAbsolutePath(), true);
+                ReportSettingsInterface reportSettingsModel = (ReportSettingsInterface) reportSettings.readXMLObject(returnFile.getAbsolutePath(), true);
                 theSample.setReportSettingsModel(reportSettingsModel);
                 retVal = returnFile.getParent();
             } catch (FileNotFoundException | ETException | BadOrMissingXMLSchemaException fileNotFoundException) {

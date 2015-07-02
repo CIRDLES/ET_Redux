@@ -22,6 +22,7 @@ import com.google.common.io.Files;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -34,6 +35,7 @@ import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.aliquots.ReduxAliquotInterface;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.dataDictionaries.SampleTypesEnum;
+import org.earthtime.dataDictionaries.UThAnalysisMeasures;
 import org.earthtime.dataDictionaries.UThCompositionalMeasures;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.fractions.ETFractionInterface;
@@ -129,7 +131,7 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_DIBBs_Useries_A extends A
 
                         if (currentSample != null) {
                             // process fractions
-                        ETFractionInterface myFraction = new UThFraction();//=================================
+                            ETFractionInterface myFraction = new UThFraction();//=================================
                             myFraction.setFractionID(myFractionData.get(3));
                             myFraction.setGrainID(myFractionData.get(3));
 
@@ -141,11 +143,69 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_DIBBs_Useries_A extends A
                             currentSample.addFraction(myFraction);
                             ((ReduxAliquotInterface) currentAliquot).getAliquotFractions().add(myFraction);
 
+                            // TODO: add uncertainty columns
                             // column 43 is conc232Th in ppb
                             String ratioName = UThCompositionalMeasures.conc232Th.getName();
                             myFraction.getCompositionalMeasureByName(ratioName)//
                                     .setValue(readCSVCell(myFractionData.get(43)).//
                                             movePointLeft(9));
+
+                            // column 44 is conc232Th uncertainty in ppb
+                            // convert 2-sigma to 1-sigma
+                            BigDecimal oneSigmaAbs = readCSVCell(myFractionData.get(44)).
+                                    divide(new BigDecimal(2.0).//
+                                            movePointLeft(9));
+                            myFraction.getCompositionalMeasureByName(ratioName)//
+                                    .setOneSigma(oneSigmaAbs);
+
+                            // column 45 is ar230Th_232Thfc 
+                            ratioName = UThAnalysisMeasures.ar230Th_232Thfc.getName();
+                            myFraction.getAnalysisMeasure(ratioName)//
+                                    .setValue(readCSVCell(myFractionData.get(45)));
+
+                            // column 46 is ar232Th_238Ufc * 10^5
+                            ratioName = UThAnalysisMeasures.ar232Th_238Ufc.getName();
+                            myFraction.getAnalysisMeasure(ratioName)//
+                                    .setValue(readCSVCell(myFractionData.get(46)).//
+                                            movePointLeft(5));
+
+                            // column 47 is conc238U in ppm
+                            ratioName = UThCompositionalMeasures.conc238U.getName();
+                            myFraction.getCompositionalMeasureByName(ratioName)//
+                                    .setValue(readCSVCell(myFractionData.get(47)).//
+                                            movePointLeft(6));
+
+                            // column 48 is conc238U uncertainty in ppm
+                            // convert 2-sigma to 1-sigma
+                            oneSigmaAbs = readCSVCell(myFractionData.get(48)).
+                                    divide(new BigDecimal(2.0).//
+                                            movePointLeft(6));
+                            myFraction.getCompositionalMeasureByName(ratioName)//
+                                    .setOneSigma(oneSigmaAbs);
+
+                            // column 51 is ar230Th_238Ufc 
+                            ratioName = UThAnalysisMeasures.ar230Th_238Ufc.getName();
+                            myFraction.getAnalysisMeasure(ratioName)//
+                                    .setValue(readCSVCell(myFractionData.get(51)));
+
+                            // column 52 is ar230Th_238Ufc uncertainty 
+                            // convert 2-sigma to 1-sigma
+                            oneSigmaAbs = readCSVCell(myFractionData.get(52)).
+                                    divide(new BigDecimal(2.0));
+                            myFraction.getAnalysisMeasure(ratioName)//
+                                    .setOneSigma(oneSigmaAbs);
+
+                            // column 53 is ar234U_238Ufc 
+                            ratioName = UThAnalysisMeasures.ar234U_238Ufc.getName();
+                            myFraction.getAnalysisMeasure(ratioName)//
+                                    .setValue(readCSVCell(myFractionData.get(53)));
+
+                            // column 54 is ar234U_238Ufc uncertainty 
+                            // convert 2-sigma to 1-sigma
+                            oneSigmaAbs = readCSVCell(myFractionData.get(54)).
+                                    divide(new BigDecimal(2.0));
+                            myFraction.getAnalysisMeasure(ratioName)//
+                                    .setOneSigma(oneSigmaAbs);
 
                         }
 

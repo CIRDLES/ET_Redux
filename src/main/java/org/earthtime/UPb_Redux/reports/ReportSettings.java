@@ -54,7 +54,7 @@ public class ReportSettings implements
      * version number is advanced so that any existing analysis will update its
      * report models upon opening in ET_Redux.
      */
-    private static transient int CURRENT_VERSION_REPORT_SETTINGS = 278;
+    private static transient int CURRENT_VERSION_REPORT_SETTINGS = 282;
 //    private static transient String activityFootnoteEntry = "";
 //    private static transient String thU_MagmaFootnoteEntry = "";
 //    // april 2010
@@ -173,9 +173,9 @@ public class ReportSettings implements
      *
      * @return
      */
-    public static ReportSettings EARTHTIMEReportSettings() {
+    public static ReportSettingsInterface EARTHTIMEReportSettings() {
 
-        ReportSettings EARTHTIME
+        ReportSettingsInterface EARTHTIME
                 = new ReportSettings("EARTHTIME");
 
         return EARTHTIME;
