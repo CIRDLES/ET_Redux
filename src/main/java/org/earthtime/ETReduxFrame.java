@@ -155,6 +155,7 @@ import org.earthtime.utilities.FileHelper;
 public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, ReportUpdaterInterface, SampleDateInterpretationSubscribeInterface {
 
     // user-specific configurations
+    public final static int FRAME_WIDTH = 1180;
     private ReduxPersistentState myState;
     private final ClassLoader cldr;
     private final java.net.URL imageURL;
@@ -276,7 +277,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         /**
          * Set size and Center in user's screen
          */
-        setSizeAndCenterFrame(1180, 750);
+        setSizeAndCenterFrame(FRAME_WIDTH, 750);
 
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
@@ -350,7 +351,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             case WELCOME:
                 JButton visitCIRDLESbutton = new ET_JButton("Welcome!  Please Visit us at GitHub.com");// 3/25/2015 updated CIRDLES.org");
                 visitCIRDLESbutton.setFont(ReduxConstants.sansSerif_12_Bold);
-                visitCIRDLESbutton.setBounds(400, 75, 350, 25);
+                visitCIRDLESbutton.setBounds(FRAME_WIDTH / 2 - 175, 115, 350, 25);
                 visitCIRDLESbutton.addActionListener(new ActionListenerForGotoCirdles());
                 announcementPane.add(visitCIRDLESbutton);
 
@@ -360,7 +361,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                         + "We are moving the project to a GitHub repository in the near future to make collaboration easier and more transparent.  "
                         + "We are seeking a new logo for ET_Redux and invite your submissions.");
                 announce.setFont(ReduxConstants.sansSerif_12_Bold);
-                announce.setBounds(200, 125, 750, 65);
+                announce.setBounds(FRAME_WIDTH / 2 - 400, 150, 800, 65);
                 announce.setLineWrap(true);
                 announce.setWrapStyleWord(true);
                 announce.setAlignmentX(CENTER_ALIGNMENT);
@@ -372,7 +373,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
                 JButton visitTOPSOIL = new ET_JButton("Checkout Topsoil - the Isoplot replacement project that you can join at github.com/CIRDLES/topsoil");
                 visitTOPSOIL.setFont(ReduxConstants.sansSerif_12_Bold);
-                visitTOPSOIL.setBounds(265, 575, 650, 25);//(475, 140, 650, 25);
+                visitTOPSOIL.setBounds(FRAME_WIDTH / 2 - 325, 575, 650, 25);//(475, 140, 650, 25);
                 visitTOPSOIL.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
