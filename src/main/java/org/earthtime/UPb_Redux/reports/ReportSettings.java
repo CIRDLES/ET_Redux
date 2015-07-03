@@ -42,13 +42,14 @@ public class ReportSettings implements
      * version number is advanced so that any existing analysis will update its
      * report models upon opening in ET_Redux.
      */
-    private static transient int CURRENT_VERSION_REPORT_SETTINGS = 287;
+    private static transient int CURRENT_VERSION_REPORT_SETTINGS = 293;
 
     // Fields
     private String name;
     private int version;
     private ReportCategoryInterface fractionCategory;
     private ReportCategoryInterface compositionCategory;
+    private ReportCategoryInterface compositionCategoryUTh;
     private ReportCategoryInterface isotopicRatiosCategory;
     private ReportCategoryInterface isotopicRatiosPbcCorrCategory;
     private ReportCategoryInterface datesCategory;
@@ -82,55 +83,51 @@ public class ReportSettings implements
         this.fractionCategory
                 = new ReportCategory(//
                         "Fraction",
-                        0,
                         ReportSpecifications.ReportCategory_Fraction, true);
 
         this.datesCategory
                 = new ReportCategory(//
                         "Dates",
-                        1,
                         ReportSpecifications.ReportCategory_Dates, true);
 
         this.datesPbcCorrCategory
                 = new ReportCategory(//
-                        "PbcCorr Dates",
-                        2,//7,
+                        "PbcCorr Dates",//7,
                         ReportSpecifications.ReportCategory_PbcCorrDates, false);
 
         this.compositionCategory
                 = new ReportCategory(//
-                        "Composition",
-                        3,//2,
+                        "Composition",//2,
                         ReportSpecifications.ReportCategory_Composition, true);
+
+        this.compositionCategoryUTh
+                = new ReportCategory(//
+                        "Composition UTh",//2,
+                        ReportSpecifications.ReportCategory_CompositionUTh, true);
 
         this.isotopicRatiosCategory
                 = new ReportCategory(//
-                        "Isotopic Ratios",
-                        4,//3,
+                        "Isotopic Ratios",//3,
                         ReportSpecifications.ReportCategory_IsotopicRatios, true);
 
         this.isotopicRatiosPbcCorrCategory
                 = new ReportCategory(//
-                        "PbcCorr Isotopic Ratios",
-                        5,//6,
+                        "PbcCorr Isotopic Ratios",//6,
                         ReportSpecifications.ReportCategory_PbcCorrIsotopicRatios, false);
 
         this.rhosCategory
                 = new ReportCategory(//
-                        "Correlation Coefficients",
-                        6,//4,
+                        "Correlation Coefficients",//4,
                         ReportSpecifications.ReportCategory_CorrelationCoefficients, true);
 
         this.traceElementsCategory
                 = new ReportCategory(//
-                        "Trace Elements",
-                        7,//5,
+                        "Trace Elements",//5,
                         ReportSpecifications.ReportCategory_TraceElements, false);
 
         this.fractionCategory2
                 = new ReportCategory(//
                         "Fraction",
-                        8,
                         ReportSpecifications.ReportCategory_Fraction2, true);
 
         legacyData = false;
@@ -141,16 +138,19 @@ public class ReportSettings implements
 
     @Override
     public void assembleReportCategories() {
-        this.reportCategories = new ArrayList<>();
-        reportCategories.add(fractionCategory);
-        reportCategories.add(datesCategory);
-        reportCategories.add(datesPbcCorrCategory);
-        reportCategories.add(compositionCategory);
-        reportCategories.add(isotopicRatiosCategory);
-        reportCategories.add(isotopicRatiosPbcCorrCategory);
-        reportCategories.add(rhosCategory);
-        reportCategories.add(traceElementsCategory);
-        reportCategories.add(fractionCategory2);
+        setReportCategories(new ArrayList<>());
+        getReportCategories().add(getFractionCategory());
+        getReportCategories().add(getDatesCategory());
+        getReportCategories().add(getDatesPbcCorrCategory());
+        getReportCategories().add(getCompositionCategory());
+        getReportCategories().add(getCompositionCategoryUTh());
+        getReportCategories().add(getIsotopicRatiosCategory());
+        getReportCategories().add(getIsotopicRatiosPbcCorrCategory());
+        getReportCategories().add(getRhosCategory());
+        getReportCategories().add(getTraceElementsCategory());
+        getReportCategories().add(getFractionCategory2());
+
+        normalizeReportCategories();
     }
 
 //  accessors
@@ -410,7 +410,7 @@ public class ReportSettings implements
     public void setLegacyData(boolean legacyData) {
         this.legacyData = legacyData;
 
-        reportCategories.stream().filter((rc) -> (rc != null)).forEach((rc) -> {
+        getReportCategories().stream().filter((rc) -> (rc != null)).forEach((rc) -> {
             rc.setLegacyData(legacyData);
         });
     }
@@ -500,5 +500,26 @@ public class ReportSettings implements
      */
     public String getReportSettingsXMLSchemaURL() {
         return reportSettingsXMLSchemaURL;
+    }
+
+    /**
+     * @param reportCategories the reportCategories to set
+     */
+    public void setReportCategories(ArrayList<ReportCategoryInterface> reportCategories) {
+        this.reportCategories = reportCategories;
+    }
+
+    /**
+     * @return the compositionCategoryUTh
+     */
+    public ReportCategoryInterface getCompositionCategoryUTh() {
+        return compositionCategoryUTh;
+    }
+
+    /**
+     * @param compositionCategoryUTh the compositionCategoryUTh to set
+     */
+    public void setCompositionCategoryUTh(ReportCategoryInterface compositionCategoryUTh) {
+        this.compositionCategoryUTh = compositionCategoryUTh;
     }
 }

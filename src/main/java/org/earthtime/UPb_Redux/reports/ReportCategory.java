@@ -50,15 +50,14 @@ public class ReportCategory implements ReportCategoryInterface {
      * Creates a new instance of ReportCategory
      *
      * @param displayName
-     * @param positionIndex
      * @param reportCategorySpecs
      * @param isVisible
      */
     public ReportCategory(
-            String displayName, int positionIndex, String[][] reportCategorySpecs, boolean isVisible) {
+            String displayName, String[][] reportCategorySpecs, boolean isVisible) {
 
         this.displayName = displayName;
-        this.positionIndex = positionIndex;
+        this.positionIndex = 0;
         categoryColumns
                 = new ReportColumn[reportCategorySpecs.length];
         for (int i = 0; i < categoryColumns.length; i++) {

@@ -57,6 +57,12 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
 
     int FRACTION_DATA_START_ROW = 8;
 
+    public default void normalizeReportCategories() {
+        for (int i = 0; i < getReportCategories().size(); i++) {
+            getReportCategories().get(i).setPositionIndex(i);
+        }
+    }
+
     /**
      *
      * @return
