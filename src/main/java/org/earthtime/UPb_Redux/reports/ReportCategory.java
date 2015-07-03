@@ -20,8 +20,8 @@
  */
 package org.earthtime.UPb_Redux.reports;
 
-import org.earthtime.reports.ReportCategoryInterface;
 import java.awt.Color;
+import org.earthtime.reports.ReportCategoryInterface;
 import org.earthtime.reports.ReportColumnInterface;
 
 /**
@@ -71,6 +71,53 @@ public class ReportCategory implements ReportCategoryInterface {
         this.legacyData = false;
 
     }
+    private ReportColumnInterface SetupReportColumn(int index, String[][] specs) {
+        String displayName1 = specs[index][0];
+        ReportColumnInterface retVal = new ReportColumn(//
+                displayName1, //specs[index][0], // displayname1
+                specs[index][1], // displayname2
+                specs[index][2], // displayname3
+                index, // positionIndex
+                specs[index][3], // units
+                specs[index][4], // retrieveMethodName
+                specs[index][5], // retrieveMethodParameterName
+                specs[index][6], // uncertaintyType
+                specs[index][7], // footnoteSpec
+                Boolean.valueOf(specs[index][8]), // visible
+                false); // amUncertainty
+
+        retVal.setDisplayedWithArbitraryDigitCount(Boolean.valueOf(specs[index][9]));
+        retVal.setCountOfSignificantDigits(Integer.parseInt(specs[index][10]));
+        retVal.setAlternateDisplayName(specs[index][12]);
+        retVal.setNeedsPb(Boolean.valueOf(specs[index][13]));
+        retVal.setNeedsU(Boolean.valueOf(specs[index][14]));
+        retVal.setLegacyData(isLegacyData());
+
+        // check for need to create uncertainty column
+        ReportColumnInterface uncertaintyCol = null;
+
+        if (!specs[index][6].equals("")) {
+            uncertaintyCol = new ReportColumn(//
+                    "",
+                    specs[index][6].equalsIgnoreCase("PCT") ? "" : "\u00B12\u03C3",
+                    specs[index][6].equalsIgnoreCase("PCT") ? "\u00B12\u03C3 %" : "abs",
+                    //"third",
+                    index,
+                    specs[index][3],
+                    specs[index][4],
+                    specs[index][5],
+                    specs[index][6],
+                    "",
+                    Boolean.valueOf(specs[index][11]),// show uncertainty
+                    true); // amUncertainty
+
+            uncertaintyCol.setAlternateDisplayName("");
+        }
+
+        retVal.setUncertaintyColumn(uncertaintyCol);
+
+        return retVal;
+    }
 
     /**
      *
@@ -86,7 +133,7 @@ public class ReportCategory implements ReportCategoryInterface {
      * @param categoryColumns
      */
     @Override
-    public void setCategoryColumns(ReportColumn[] categoryColumns) {
+    public void setCategoryColumns(ReportColumnInterface[] categoryColumns) {
         this.categoryColumns = categoryColumns;
     }
 

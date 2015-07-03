@@ -20,16 +20,8 @@
  */
 package org.earthtime.UPb_Redux.reports;
 
-import org.earthtime.reports.ReportColumnInterface;
-import org.earthtime.reportViews.ReportListItemI;
-import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
-import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.dataDictionaries.ReportSpecifications;
-import org.earthtime.fractions.ETFractionInterface;
+import org.earthtime.reports.ReportColumnInterface;
 
 /**
  * A ReportColumn specifies the information shown in a data table column. Each
@@ -50,7 +42,7 @@ public class ReportColumn implements
     private String units;
     private String retrieveMethodName;
     private String retrieveVariableName;
-    private ReportColumn uncertaintyColumn;
+    private ReportColumnInterface uncertaintyColumn;
     private String uncertaintyType;
     private boolean displayedWithArbitraryDigitCount;
     private int countOfSignificantDigits;
@@ -146,7 +138,6 @@ public class ReportColumn implements
 
         return 0;
     }
-
 
     /**
      *
@@ -273,7 +264,7 @@ public class ReportColumn implements
      * @return
      */
     @Override
-    public ReportColumn getUncertaintyColumn() {
+    public ReportColumnInterface getUncertaintyColumn() {
         return uncertaintyColumn;
     }
 
@@ -282,7 +273,7 @@ public class ReportColumn implements
      * @param uncertaintyColumn
      */
     @Override
-    public void setUncertaintyColumn(ReportColumn uncertaintyColumn) {
+    public void setUncertaintyColumn(ReportColumnInterface uncertaintyColumn) {
         this.uncertaintyColumn = uncertaintyColumn;
     }
 

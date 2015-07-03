@@ -36,8 +36,6 @@ import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabDataListElementI;
-import org.earthtime.UPb_Redux.reports.ReportCategory;
-import org.earthtime.UPb_Redux.reports.ReportColumn;
 import org.earthtime.UPb_Redux.reports.ReportSettings;
 import org.earthtime.UPb_Redux.valueModels.ValueModelReferenced;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
@@ -496,15 +494,6 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
         String activityFootnoteEntry = "";
         String thU_MagmaFootnoteEntry = "";
         int zirconPopulationType = 0;
-
-        // compatibility repair april 2012
-        if (getFractionCategory() == null) {
-            setFractionCategory2(new ReportCategory(//
-                    "Fraction",
-                    8,//oct 2014 was 5 before traceelements and pc corrections
-                    ReportSpecifications.ReportCategory_Fraction2, true));
-
-        }
 
         // the first six (FRACTION_DATA_START_ROW) rows are provided for naming and formats
         String[][] retVal

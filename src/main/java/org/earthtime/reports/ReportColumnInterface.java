@@ -20,7 +20,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
-import org.earthtime.UPb_Redux.reports.ReportColumn;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.dataDictionaries.ReportSpecifications;
 import org.earthtime.fractions.ETFractionInterface;
@@ -132,7 +131,7 @@ public interface ReportColumnInterface extends Comparable<ReportColumnInterface>
      *
      * @return
      */
-    ReportColumn getUncertaintyColumn();
+    ReportColumnInterface getUncertaintyColumn();
 
     /**
      *
@@ -278,7 +277,7 @@ public interface ReportColumnInterface extends Comparable<ReportColumnInterface>
      *
      * @param uncertaintyColumn
      */
-    void setUncertaintyColumn(ReportColumn uncertaintyColumn);
+    void setUncertaintyColumn(ReportColumnInterface uncertaintyColumn);
 
     /**
      *
