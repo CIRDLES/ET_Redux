@@ -38,19 +38,24 @@ import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UPb_Redux.valueModels.definedValueModels.PercentDiscordance;
 import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
+import org.earthtime.dataDictionaries.FileDelimiterTypesEnum;
 import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.dataDictionaries.SampleTypesEnum;
 import org.earthtime.dataDictionaries.TemplatesForCsvImport;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.projects.ProjectInterface;
-import org.earthtime.projects.projectImporters.AbstractProjectImporterFromLegacyCSVFile;
+import org.earthtime.projects.projectImporters.AbstractProjectImporterFromLegacyDelimitedTextFile;
 import org.earthtime.samples.SampleInterface;
 
 /**
  *
  * @author James F. Bowring
  */
-public class ProjectOfLegacySamplesImporterFromCSVFile_GenericUPbIsotopic_A extends AbstractProjectImporterFromLegacyCSVFile {
+public class ProjectOfLegacySamplesImporterFromCSVFile_GenericUPbIsotopic_A extends AbstractProjectImporterFromLegacyDelimitedTextFile {
+
+    public ProjectOfLegacySamplesImporterFromCSVFile_GenericUPbIsotopic_A(FileDelimiterTypesEnum fileDelimiter) {
+        super(fileDelimiter);
+    }
 
     /**
      *
@@ -61,7 +66,7 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_GenericUPbIsotopic_A exte
      */
     @Override
     @SuppressWarnings("ValueOfIncrementOrDecrementUsed")
-    protected ProjectInterface extractProjectFromCSVFile(ProjectInterface project, File file)
+    protected ProjectInterface extractProjectFromDelimitedTextFile(ProjectInterface project, File file)
             throws FileNotFoundException {
 
         ArrayList<SampleInterface> projectSamples = new ArrayList<>();
@@ -111,7 +116,7 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_GenericUPbIsotopic_A exte
 
                 if (readingSamples) {
                     // note readingFractions is false
-                    if (AbstractProjectImporterFromLegacyCSVFile.lineHasOnlyFirstElement(myFractionData)) {
+                    if (AbstractProjectImporterFromLegacyDelimitedTextFile.lineHasOnlyFirstElement(myFractionData)) {
                         // we have a sample
                         // process existing if not first;
                         if ((currentSample != null) && (currentAliquot != null)) {
@@ -156,102 +161,102 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_GenericUPbIsotopic_A exte
 
                     String ratioName = AnalysisMeasures.fractionMass.getName();
                     myFraction.getAnalysisMeasure(ratioName)//
-                            .setValue(readCSVCell(myFractionData.get(index++)));
+                            .setValue(readDelimitedTextCell(myFractionData.get(index++)));
 
-                    myFraction.setNumberOfGrains(readCSVCell(myFractionData.get(index++)).intValue());
+                    myFraction.setNumberOfGrains(readDelimitedTextCell(myFractionData.get(index++)).intValue());
 
                     ratioName = "concPb_rib";
                     myFraction.getCompositionalMeasureByName(ratioName)//
-                            .setValue(readCSVCell(myFractionData.get(index++)).//
+                            .setValue(readDelimitedTextCell(myFractionData.get(index++)).//
                                     movePointLeft(6));
 
                     ratioName = "concU";
                     myFraction.getCompositionalMeasureByName(ratioName)//
-                            .setValue(readCSVCell(myFractionData.get(index++)).//
+                            .setValue(readDelimitedTextCell(myFractionData.get(index++)).//
                                     movePointLeft(6));
 
                     ratioName = "rTh_Usample";
                     myFraction.getCompositionalMeasureByName(ratioName)//
-                            .setValue(readCSVCell(myFractionData.get(index++)));
+                            .setValue(readDelimitedTextCell(myFractionData.get(index++)));
 
                     ratioName = "radToCommonTotal"; // Pb*/Pb
                     myFraction.getCompositionalMeasureByName(ratioName)//
-                            .setValue(readCSVCell(myFractionData.get(index++)));
+                            .setValue(readDelimitedTextCell(myFractionData.get(index++)));
 
                     ratioName = "totCommonPbMass"; //Pbc
                     myFraction.getCompositionalMeasureByName(ratioName)//
-                            .setValue(readCSVCell(myFractionData.get(index++)).//
+                            .setValue(readDelimitedTextCell(myFractionData.get(index++)).//
                                     movePointLeft(12));
 
                     ratioName = "r206_204tfc";
                     myFraction.getSampleIsochronRatiosByName(ratioName)//
-                            .setValue(readCSVCell(myFractionData.get(index++)));
+                            .setValue(readDelimitedTextCell(myFractionData.get(index++)));
                     ratioName = "r208_206r";
                     myFraction.getRadiogenicIsotopeRatioByName(ratioName)//
-                            .setValue(readCSVCell(myFractionData.get(index++)));
+                            .setValue(readDelimitedTextCell(myFractionData.get(index++)));
 
                     ratioName = "r207_206r";
                     myFraction.getRadiogenicIsotopeRatioByName(ratioName)//
-                            .setValue(readCSVCell(myFractionData.get(index++)));
+                            .setValue(readDelimitedTextCell(myFractionData.get(index++)));
                     ValueModel ratio = myFraction.getRadiogenicIsotopeRatioByName(ratioName);
 
                     // convert 2-sigma to 1-sigma
-                    BigDecimal oneSigmaPct = readCSVCell(myFractionData.get(index++)).//
+                    BigDecimal oneSigmaPct = readDelimitedTextCell(myFractionData.get(index++)).//
                             divide(new BigDecimal(2.0));
                     myFraction.getRadiogenicIsotopeRatioByName(ratioName)//
                             .setOneSigma(ValueModel.convertOneSigmaPctToAbsIfRequired(ratio, oneSigmaPct));
 
                     ratioName = "r207_235r";
                     myFraction.getRadiogenicIsotopeRatioByName(ratioName)//
-                            .setValue(readCSVCell(myFractionData.get(index++)));
+                            .setValue(readDelimitedTextCell(myFractionData.get(index++)));
                     ratio = myFraction.getRadiogenicIsotopeRatioByName(ratioName);
 
                     // convert 2-sigma to 1-sigma
-                    oneSigmaPct = readCSVCell(myFractionData.get(index++)).//
+                    oneSigmaPct = readDelimitedTextCell(myFractionData.get(index++)).//
                             divide(new BigDecimal(2.0));
                     myFraction.getRadiogenicIsotopeRatioByName(ratioName)//
                             .setOneSigma(ValueModel.convertOneSigmaPctToAbsIfRequired(ratio, oneSigmaPct));
 
                     ratioName = "r206_238r";
                     myFraction.getRadiogenicIsotopeRatioByName(ratioName)//
-                            .setValue(readCSVCell(myFractionData.get(index++)));
+                            .setValue(readDelimitedTextCell(myFractionData.get(index++)));
                     ratio = myFraction.getRadiogenicIsotopeRatioByName(ratioName);
 
                     // convert 2-sigma to 1-sigma
-                    oneSigmaPct = readCSVCell(myFractionData.get(index++)).//
+                    oneSigmaPct = readDelimitedTextCell(myFractionData.get(index++)).//
                             divide(new BigDecimal(2.0));
                     myFraction.getRadiogenicIsotopeRatioByName(ratioName)//
                             .setOneSigma(ValueModel.convertOneSigmaPctToAbsIfRequired(ratio, oneSigmaPct));
 
                     ratioName = "rhoR206_238r__r207_235r";
                     myFraction.getRadiogenicIsotopeRatioByName(ratioName)//
-                            .setValue(readCSVCell(myFractionData.get(index++)));
+                            .setValue(readDelimitedTextCell(myFractionData.get(index++)));
 
                     ((UPbFractionI) myFraction).calculateTeraWasserburgRho();
 
                     // Isotopic Dates
                     ratioName = RadDates.age207_206r.getName();
                     myFraction.getRadiogenicIsotopeDateByName(ratioName)//
-                            .setValue(readCSVCell(myFractionData.get(index++)).//
+                            .setValue(readDelimitedTextCell(myFractionData.get(index++)).//
                                     movePointRight(6));
                     myFraction.getRadiogenicIsotopeDateByName(ratioName)//
-                            .setOneSigma(readCSVCell(myFractionData.get(index++)).//
+                            .setOneSigma(readDelimitedTextCell(myFractionData.get(index++)).//
                                     divide(new BigDecimal(2.0)).movePointRight(6));
 
                     ratioName = RadDates.age207_235r.getName();
                     myFraction.getRadiogenicIsotopeDateByName(ratioName)//
-                            .setValue(readCSVCell(myFractionData.get(index++)).//
+                            .setValue(readDelimitedTextCell(myFractionData.get(index++)).//
                                     movePointRight(6));
                     myFraction.getRadiogenicIsotopeDateByName(ratioName)//
-                            .setOneSigma(readCSVCell(myFractionData.get(index++)).//
+                            .setOneSigma(readDelimitedTextCell(myFractionData.get(index++)).//
                                     divide(new BigDecimal(2.0)).movePointRight(6));
 
                     ratioName = RadDates.age206_238r.getName();
                     myFraction.getRadiogenicIsotopeDateByName(ratioName)//
-                            .setValue(readCSVCell(myFractionData.get(index++)).//
+                            .setValue(readDelimitedTextCell(myFractionData.get(index++)).//
                                     movePointRight(6));
                     myFraction.getRadiogenicIsotopeDateByName(ratioName)//
-                            .setOneSigma(readCSVCell(myFractionData.get(index++)).//
+                            .setOneSigma(readDelimitedTextCell(myFractionData.get(index++)).//
                                     divide(new BigDecimal(2.0)).movePointRight(6));
 
                     // calculate percentDiscordance

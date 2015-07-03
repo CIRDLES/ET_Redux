@@ -29,7 +29,8 @@ import javax.swing.JFrame;
 import javax.swing.filechooser.FileFilter;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.exceptions.BadImportedCSVLegacyFileException;
-import org.earthtime.UPb_Redux.filters.LegacyCSVFileFilter;
+import org.earthtime.UPb_Redux.filters.LegacyDelimitedFileFilter;
+import org.earthtime.dataDictionaries.FileDelimiterTypesEnum;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.utilities.FileHelper;
 
@@ -78,7 +79,7 @@ public abstract class AbstractSampleImporterFromLegacyCSVFile {
             throws FileNotFoundException {
         String dialogTitle = "Select a LEGACY CSV file to OPEN: *.csv";
         final String fileExtension = ".csv";
-        FileFilter nonMacFileFilter = new LegacyCSVFileFilter();
+        FileFilter nonMacFileFilter = new LegacyDelimitedFileFilter(FileDelimiterTypesEnum.COMMA);
 
         File returnFile =
                 FileHelper.AllPlatformGetFile( dialogTitle, location, fileExtension, nonMacFileFilter, false, new JFrame() )[0];

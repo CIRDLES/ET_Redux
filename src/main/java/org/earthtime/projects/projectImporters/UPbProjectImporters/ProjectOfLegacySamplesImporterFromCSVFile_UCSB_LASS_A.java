@@ -37,6 +37,7 @@ import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UPb_Redux.valueModels.definedValueModels.PercentDiscordance;
 import org.earthtime.aliquots.AliquotInterface;
+import org.earthtime.dataDictionaries.FileDelimiterTypesEnum;
 import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.dataDictionaries.SampleTypesEnum;
@@ -44,7 +45,7 @@ import org.earthtime.dataDictionaries.TemplatesForCsvImport;
 import org.earthtime.dataDictionaries.TraceElements;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.projects.ProjectInterface;
-import org.earthtime.projects.projectImporters.AbstractProjectImporterFromLegacyCSVFile;
+import org.earthtime.projects.projectImporters.AbstractProjectImporterFromLegacyDelimitedTextFile;
 import org.earthtime.samples.SampleInterface;
 
 /**
@@ -52,7 +53,11 @@ import org.earthtime.samples.SampleInterface;
  * @author James F. Bowring This importer services UC Santa Barbara Laser
  * Ablation Split Stream legacy data starting 20 June 2014.
  */
-public class ProjectOfLegacySamplesImporterFromCSVFile_UCSB_LASS_A extends AbstractProjectImporterFromLegacyCSVFile {
+public class ProjectOfLegacySamplesImporterFromCSVFile_UCSB_LASS_A extends AbstractProjectImporterFromLegacyDelimitedTextFile {
+
+    public ProjectOfLegacySamplesImporterFromCSVFile_UCSB_LASS_A(FileDelimiterTypesEnum fileDelimiter) {
+        super(fileDelimiter);
+    }
 
     /**
      *
@@ -63,7 +68,7 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_UCSB_LASS_A extends Abstr
      */
     @Override
     @SuppressWarnings("ValueOfIncrementOrDecrementUsed")
-    protected ProjectInterface extractProjectFromCSVFile(ProjectInterface project, File file)
+    protected ProjectInterface extractProjectFromDelimitedTextFile(ProjectInterface project, File file)
             throws FileNotFoundException {
 
         ArrayList<SampleInterface> projectSamples = new ArrayList<>();
@@ -143,39 +148,39 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_UCSB_LASS_A extends Abstr
 
                     String datumName = "concPb_rib";
                     myFraction.getCompositionalMeasureByName(datumName)//
-                            .setValue(readCSVCell(myFractionData.get(7)).// column H
+                            .setValue(readDelimitedTextCell(myFractionData.get(7)).// column H
                                     movePointLeft(6));
 
                     datumName = "concU";
                     myFraction.getCompositionalMeasureByName(datumName)//
-                            .setValue(readCSVCell(myFractionData.get(8)).// column I
+                            .setValue(readDelimitedTextCell(myFractionData.get(8)).// column I
                                     movePointLeft(6));
 
                     datumName = "concTh";
                     myFraction.getCompositionalMeasureByName(datumName)//
-                            .setValue(readCSVCell(myFractionData.get(9)).// column J
+                            .setValue(readDelimitedTextCell(myFractionData.get(9)).// column J
                                     movePointLeft(6));
 
                     datumName = "rTh_Usample";
                     myFraction.getCompositionalMeasureByName(datumName)//
-                            .setValue(readCSVCell(myFractionData.get(10)));// column K
+                            .setValue(readDelimitedTextCell(myFractionData.get(10)));// column K
 
                     datumName = "r206_204tfc";
                     myFraction.getSampleIsochronRatiosByName(datumName)//
-                            .setValue(readCSVCell(myFractionData.get(11)));// column L
+                            .setValue(readDelimitedTextCell(myFractionData.get(11)));// column L
 
                     // convert 2-sigma to 1-sigma
-                    BigDecimal oneSigmaAbs = readCSVCell(myFractionData.get(12)).// column M
+                    BigDecimal oneSigmaAbs = readDelimitedTextCell(myFractionData.get(12)).// column M
                             divide(new BigDecimal(2.0));
                     myFraction.getSampleIsochronRatiosByName(datumName)//
                             .setOneSigma(oneSigmaAbs);
 
                     datumName = "r207_206r";
                     myFraction.getRadiogenicIsotopeRatioByName(datumName)//
-                            .setValue(readCSVCell(myFractionData.get(13)));// column N
+                            .setValue(readDelimitedTextCell(myFractionData.get(13)));// column N
 
                     // convert 2-sigma to 1-sigma
-                    oneSigmaAbs = readCSVCell(myFractionData.get(14)).// column O
+                    oneSigmaAbs = readDelimitedTextCell(myFractionData.get(14)).// column O
                             divide(new BigDecimal(2.0));
                     myFraction.getRadiogenicIsotopeRatioByName(datumName)//
                             .setOneSigma(oneSigmaAbs);
@@ -183,11 +188,11 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_UCSB_LASS_A extends Abstr
 //                    datumName = "r206_238r";
 //                    // recorded as 238/206, so invert
 //                    myFraction.getRadiogenicIsotopeRatioByName(datumName)//
-//                            .setValue(BigDecimal.ONE.divide(readCSVCell(myFractionData.get(15)), MathContext.DECIMAL64));// column P
+//                            .setValue(BigDecimal.ONE.divide(readDelimitedTextCell(myFractionData.get(15)), MathContext.DECIMAL64));// column P
 //
 //                    // first convert 2-sigma ABS to 1-sigma ABS for inverted value using oneSigmaAbs/value^2 or onesigmaAbs*invVal^2
 //                    ValueModel datum = myFraction.getRadiogenicIsotopeRatioByName(datumName);
-//                    oneSigmaAbs = readCSVCell(myFractionData.get(16)).// column Q
+//                    oneSigmaAbs = readDelimitedTextCell(myFractionData.get(16)).// column Q
 //                            divide(new BigDecimal(2.0));
 //                    BigDecimal oneSigmaAbsOfInverted = oneSigmaAbs.multiply(datum.getValue().pow(2));
 //                    myFraction.getRadiogenicIsotopeRatioByName(datumName)//
@@ -195,36 +200,36 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_UCSB_LASS_A extends Abstr
 //                    
                     datumName = "r207_235r";
                     myFraction.getRadiogenicIsotopeRatioByName(datumName)//
-                            .setValue(readCSVCell(myFractionData.get(17)));// column R
+                            .setValue(readDelimitedTextCell(myFractionData.get(17)));// column R
 
                     // convert 2-sigma to 1-sigma
-                    oneSigmaAbs = readCSVCell(myFractionData.get(18)).// column S
+                    oneSigmaAbs = readDelimitedTextCell(myFractionData.get(18)).// column S
                             divide(new BigDecimal(2.0));
                     myFraction.getRadiogenicIsotopeRatioByName(datumName)//
                             .setOneSigma(oneSigmaAbs);
 
                     datumName = "r206_238r";
                     myFraction.getRadiogenicIsotopeRatioByName(datumName)//
-                            .setValue(readCSVCell(myFractionData.get(19)));// column T
+                            .setValue(readDelimitedTextCell(myFractionData.get(19)));// column T
 
                     // convert 2-sigma to 1-sigma
-                    oneSigmaAbs = readCSVCell(myFractionData.get(20)).// column U
+                    oneSigmaAbs = readDelimitedTextCell(myFractionData.get(20)).// column U
                             divide(new BigDecimal(2.0));
                     myFraction.getRadiogenicIsotopeRatioByName(datumName)//
                             .setOneSigma(oneSigmaAbs);
 
                     datumName = "rhoR206_238r__r207_235r";
                     myFraction.getRadiogenicIsotopeRatioByName(datumName)//
-                            .setValue(readCSVCell(myFractionData.get(21))); // column V
+                            .setValue(readDelimitedTextCell(myFractionData.get(21))); // column V
 
                     ((UPbFractionI) myFraction).calculateTeraWasserburgRho();
 
                     datumName = "r208_232r";
                     myFraction.getRadiogenicIsotopeRatioByName(datumName)//
-                            .setValue(readCSVCell(myFractionData.get(22)));// column W
+                            .setValue(readDelimitedTextCell(myFractionData.get(22)));// column W
 
                     // convert 2-sigma to 1-sigma
-                    oneSigmaAbs = readCSVCell(myFractionData.get(23)).// column X
+                    oneSigmaAbs = readDelimitedTextCell(myFractionData.get(23)).// column X
                             divide(new BigDecimal(2.0));
                     myFraction.getRadiogenicIsotopeRatioByName(datumName)//
                             .setOneSigma(oneSigmaAbs);
@@ -232,43 +237,43 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_UCSB_LASS_A extends Abstr
                     // Isotopic Dates
                     datumName = RadDates.age207_206r.getName();
                     myFraction.getRadiogenicIsotopeDateByName(datumName)//
-                            .setValue(readCSVCell(myFractionData.get(24)).// column Y
+                            .setValue(readDelimitedTextCell(myFractionData.get(24)).// column Y
                                     movePointRight(6));
                     myFraction.getRadiogenicIsotopeDateByName(datumName)//
-                            .setOneSigma(readCSVCell(myFractionData.get(25)).// column Z
+                            .setOneSigma(readDelimitedTextCell(myFractionData.get(25)).// column Z
                                     divide(new BigDecimal(2.0)).movePointRight(6));
 
                     datumName = RadDates.age207_235r.getName();
                     myFraction.getRadiogenicIsotopeDateByName(datumName)//
-                            .setValue(readCSVCell(myFractionData.get(26)).// column AA
+                            .setValue(readDelimitedTextCell(myFractionData.get(26)).// column AA
                                     movePointRight(6));
                     myFraction.getRadiogenicIsotopeDateByName(datumName)//
-                            .setOneSigma(readCSVCell(myFractionData.get(27)).// column AB
+                            .setOneSigma(readDelimitedTextCell(myFractionData.get(27)).// column AB
                                     divide(new BigDecimal(2.0)).movePointRight(6));
 
                     datumName = RadDates.age206_238r.getName();
                     myFraction.getRadiogenicIsotopeDateByName(datumName)//
-                            .setValue(readCSVCell(myFractionData.get(28)).// column AC
+                            .setValue(readDelimitedTextCell(myFractionData.get(28)).// column AC
                                     movePointRight(6));
                     myFraction.getRadiogenicIsotopeDateByName(datumName)//
-                            .setOneSigma(readCSVCell(myFractionData.get(29)).// column AD
+                            .setOneSigma(readDelimitedTextCell(myFractionData.get(29)).// column AD
                                     divide(new BigDecimal(2.0)).movePointRight(6));
 
                     // oct 2014 inserted
                     datumName = RadDates.age206_238r_Th.getName();
                     myFraction.getRadiogenicIsotopeDateByName(datumName)//
-                            .setValue(readCSVCell(myFractionData.get(30)).// column AE
+                            .setValue(readDelimitedTextCell(myFractionData.get(30)).// column AE
                                     movePointRight(6));
                     myFraction.getRadiogenicIsotopeDateByName(datumName)//
-                            .setOneSigma(readCSVCell(myFractionData.get(31)).// column AF
+                            .setOneSigma(readDelimitedTextCell(myFractionData.get(31)).// column AF
                                     divide(new BigDecimal(2.0)).movePointRight(6));
 
                     datumName = RadDates.age208_232r.getName();
                     myFraction.getRadiogenicIsotopeDateByName(datumName)//
-                            .setValue(readCSVCell(myFractionData.get(32)).// column AG
+                            .setValue(readDelimitedTextCell(myFractionData.get(32)).// column AG
                                     movePointRight(6));
                     myFraction.getRadiogenicIsotopeDateByName(datumName)//
-                            .setOneSigma(readCSVCell(myFractionData.get(33)).// column AH
+                            .setOneSigma(readDelimitedTextCell(myFractionData.get(33)).// column AH
                                     divide(new BigDecimal(2.0)).movePointRight(6));
 
                     // calculate percentDiscordance
@@ -324,7 +329,7 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_UCSB_LASS_A extends Abstr
         // check for missing fields at end of row
         if (col < myFractionData.size()) {
             myFraction.getTraceElementByName(datumName)//
-                    .setValue(readCSVCell(myFractionData.get(col)).
+                    .setValue(readDelimitedTextCell(myFractionData.get(col)).
                             movePointLeft(6));
         } else {
             myFraction.getTraceElementByName(datumName)//

@@ -103,13 +103,9 @@ import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLAICPMSFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.PbcCorrectionDetails;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.UPbFractionReducer;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
-import org.earthtime.reportViews.ReportPainterI;
 import org.earthtime.UPb_Redux.reports.ReportSettings;
 import org.earthtime.UPb_Redux.reports.excelReports.CsvResultsTable;
 import org.earthtime.UPb_Redux.reports.excelReports.ExcelResultsTable;
-import org.earthtime.reportViews.ReportAliquotFractionsView;
-import org.earthtime.reportViews.ReportUpdaterInterface;
-import org.earthtime.reportViews.TabbedReportViews;
 import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.UPb_Redux.samples.sampleImporters.SampleImporterFromIDTIMSLegacyCSVFile_MIT;
 import org.earthtime.UPb_Redux.samples.sampleImporters.SampleImporterFromLAICPMSLegacyCVSFile_MC_UA;
@@ -144,6 +140,10 @@ import org.earthtime.projects.projectImporters.UPbProjectImporters.ProjectOfLega
 import org.earthtime.projects.projectImporters.UPbProjectImporters.ProjectOfLegacySamplesImporterFromCSVFile_UCSB_LASS_A;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.mineralStandardModels.MineralStandardUPbModel;
+import org.earthtime.reportViews.ReportAliquotFractionsView;
+import org.earthtime.reportViews.ReportPainterI;
+import org.earthtime.reportViews.ReportUpdaterInterface;
+import org.earthtime.reportViews.TabbedReportViews;
 import org.earthtime.reports.ReportSettingsInterface;
 import org.earthtime.samples.SampleInterface;
 import org.earthtime.utilities.FileHelper;
@@ -2174,7 +2174,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
         newProjectFromLegacyDataTable_menu.setText("New Project from Legacy Data Table");
 
-        dibbs_USeries.setText("Dibbs U-Series Legacy Data Table from Single Source in .csv format");
+        dibbs_USeries.setText("U-Series Legacy Data Table from Single Source in tab-delimited format");
         dibbs_USeries.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 dibbs_USeriesActionPerformed(evt);
