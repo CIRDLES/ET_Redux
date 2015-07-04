@@ -84,6 +84,7 @@ public final class ReduxLabData implements Serializable {
     private BigDecimal defaultStaceyKramersOnePctUnct;
     private BigDecimal defaultStaceyKramersCorrelationCoeffs;
     private ReportSettingsInterface defaultReportSettingsModel;
+    private ReportSettingsInterface defaultReportSettingsModelUTh;
     private ValueModel defaultPbBlankMassInGrams;
     private ValueModel assumedUBlankMassInGrams;
     private ValueModel defaultR18O_16O;
@@ -176,9 +177,9 @@ public final class ReduxLabData implements Serializable {
         }
 
         // all lab data instances have this as default
-        getReportSettingsModels().add(ReportSettingsInterface.EARTHTIMEReportSettings());
+        getReportSettingsModels().add(ReportSettings.EARTHTIMEReportSettingsUPb());
         try {
-            setDefaultreportSettingsModel(getFirstReportSettingsModel());
+            setDefaultReportSettingsModelByIsotopeStyle(getFirstReportSettingsModel());
         } catch (BadLabDataException ex) {
         }
 
@@ -1291,29 +1292,48 @@ public final class ReduxLabData implements Serializable {
 
     /**
      *
-     * @return @throws BadLabDataException
+     * @param isotopeStyle the value of isotopeStyle @throws BadLabDataException
+     * @return the org.earthtime.reports.ReportSettingsInterface
      */
-    public ReportSettingsInterface getDefaultReportSettingsModel()
+    public ReportSettingsInterface getDefaultReportSettingsModelByIsotopeStyle(String isotopeStyle)
             throws BadLabDataException {
         if (defaultReportSettingsModel == null) {
-            defaultReportSettingsModel = ReportSettingsInterface.EARTHTIMEReportSettings();
+            defaultReportSettingsModel = ReportSettings.EARTHTIMEReportSettingsUPb();
             addReportSettingsModel(defaultReportSettingsModel);
+        }
+        if (defaultReportSettingsModelUTh == null) {
+            defaultReportSettingsModelUTh = ReportSettings.EARTHTIMEReportSettingsUTh();
+            addReportSettingsModel(defaultReportSettingsModelUTh);
         }
 
         // new approach oct 2014
         if (defaultReportSettingsModel.isOutOfDate()) {
             String myReportSettingsName = defaultReportSettingsModel.getName();
-            defaultReportSettingsModel = new ReportSettings(myReportSettingsName);
+            defaultReportSettingsModel = new ReportSettings(myReportSettingsName, "UPb");
         }
-        return defaultReportSettingsModel.deepCopy();
+
+        if (defaultReportSettingsModelUTh.isOutOfDate()) {
+            String myReportSettingsName = defaultReportSettingsModelUTh.getName();
+            defaultReportSettingsModelUTh = new ReportSettings(myReportSettingsName, "UTh");
+        }
+
+        if (isotopeStyle.compareToIgnoreCase("UPb") == 0) {
+            return defaultReportSettingsModel.deepCopy();
+        } else {
+            return defaultReportSettingsModelUTh.deepCopy();
+        }
     }
 
     /**
      *
      * @param model
      */
-    public void setDefaultreportSettingsModel(ReportSettingsInterface model) {
-        this.defaultReportSettingsModel = model.deepCopy();
+    public void setDefaultReportSettingsModelByIsotopeStyle(ReportSettingsInterface model) {
+        if (model.getIsotopeStyle().compareToIgnoreCase("UPb") == 0) {
+            this.defaultReportSettingsModel = model.deepCopy();
+        } else {
+            this.defaultReportSettingsModelUTh = model.deepCopy();
+        }
     }
 
     /**
@@ -1409,12 +1429,12 @@ public final class ReduxLabData implements Serializable {
 //     * @return @throws BadLabDataException
 //     * @throws BadLabDataException
 //     */
-//    public ReportSettings getDefaultReportSettingsModel ()
+//    public ReportSettings getDefaultReportSettingsModelByIsotopeStyle ()
 //            throws BadLabDataException {
 //        //if ( defaultReportSettingsModel == null ) {
 //            
-//        addReportSettingsModel( ReportSettings.EARTHTIMEReportSettings() );
-//        setDefaultreportSettingsModel( getFirstReportSettingsModel() );
+//        addReportSettingsModel( ReportSettings.EARTHTIMEReportSettingsUPb() );
+//        setDefaultReportSettingsModelByIsotopeStyle( getFirstReportSettingsModel() );
 //       // }
 //
 //        return defaultReportSettingsModel;
@@ -1423,7 +1443,7 @@ public final class ReduxLabData implements Serializable {
 //     *
 //     * @param defaultReportSettingsModel
 //     */
-//    public void setDefaultreportSettingsModel ( ReportSettings defaultReportSettingsModel ) {
+//    public void setDefaultReportSettingsModelByIsotopeStyle ( ReportSettings defaultReportSettingsModel ) {
 //        
 //        defaultReportSettingsModel.updateToCurrentVersion();
 //        this.defaultReportSettingsModel = defaultReportSettingsModel;

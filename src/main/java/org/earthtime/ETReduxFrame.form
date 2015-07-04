@@ -562,6 +562,14 @@
             </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator4">
             </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="reportResultsTableAsPDF_menuItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Report Results Table as SVG, PDF"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="reportResultsTableAsPDF_menuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="reportResultsTableAsStringsInExcel_menuItem">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Report Results Table as Strings in Excel"/>
@@ -584,14 +592,6 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="reportResultsTableAsNumbersInCSV_menuItemActionPerformed"/>
-              </Events>
-            </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="reportResultsTableAsPDF_menuItem">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Report Results Table as SVG, PDF"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="reportResultsTableAsPDF_menuItemActionPerformed"/>
               </Events>
             </MenuItem>
           </SubComponents>

@@ -47,6 +47,8 @@ public class SampleUTh implements
         Serializable,
         EarthTimeSerializedFileInterface {
 
+    private String isotopeStyle;
+
     @Override
     public void setUpSample(ReduxLabData myLabData) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -315,6 +317,27 @@ public class SampleUTh implements
     @Override
     public void addFractionsVector(Vector<ETFractionInterface> fractions, int aliquotNumber) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    /**
+     *
+     */
+    @Override
+    public void restoreDefaultReportSettingsModel() {
+        try {
+            setReportSettingsModel(ReduxLabData.getInstance().getDefaultReportSettingsModelByIsotopeStyle(getIsotopeStyle()));
+        } catch (BadLabDataException badLabDataException) {
+        }
+    }
+
+    /**
+     * @return the isotopeStyle
+     */
+    public String getIsotopeStyle() {
+        if (isotopeStyle == null) {
+            isotopeStyle = "UTh";
+        }
+        return isotopeStyle;
     }
 
     private void readObject(

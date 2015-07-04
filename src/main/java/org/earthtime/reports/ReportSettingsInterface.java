@@ -30,13 +30,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
-import javax.swing.JOptionPane;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.FractionI;
-import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabDataListElementI;
-import org.earthtime.UPb_Redux.reports.ReportSettings;
 import org.earthtime.UPb_Redux.valueModels.ValueModelReferenced;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
 import org.earthtime.archivingTools.URIHelper;
@@ -61,18 +58,6 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
         for (int i = 0; i < getReportCategories().size(); i++) {
             getReportCategories().get(i).setPositionIndex(i);
         }
-    }
-
-    /**
-     *
-     * @return
-     */
-    public static ReportSettingsInterface EARTHTIMEReportSettings() {
-
-        ReportSettingsInterface EARTHTIME
-                = new ReportSettings("EARTHTIME");
-
-        return EARTHTIME;
     }
 
     /**
@@ -434,33 +419,6 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
      * @param version
      */
     void setVersion(int version);
-
-    public static ReportSettingsInterface getReportSettingsModelUpdatedToLatestVersion(ReportSettingsInterface myReportSettingsModel) {
-        ReportSettingsInterface reportSettingsModel = myReportSettingsModel;
-
-        if (myReportSettingsModel == null) {
-            try {
-                reportSettingsModel = ReduxLabData.getInstance().getDefaultReportSettingsModel();
-            } catch (BadLabDataException badLabDataException) {
-            }
-        } else {
-            // this provides for seamless updates to reportsettings implementation
-            // new approach oct 2014
-            if (myReportSettingsModel.isOutOfDate()) {
-                JOptionPane.showMessageDialog(null,
-                        new String[]{"As part of our ongoing development efforts,",
-                            "the report settings file you are using is being updated.",
-                            "You may lose some report customizations. Thank you for your patience."//,
-                        //"If you need to save aliquot copy, please re-export."
-                        });
-                String myReportSettingsName = myReportSettingsModel.getName();
-                reportSettingsModel = new ReportSettings(myReportSettingsName);
-            }
-        }
-
-        //TODO http://www.javaworld.com/article/2077736/open-source-tools/xml-merging-made-easy.html
-        return reportSettingsModel;
-    }
 
     public default String[][] reportActiveFractionsByNumberStyle(final SampleInterface sample, boolean numberStyleIsNumeric) {
         Vector<ETFractionInterface> fractions = sample.getActiveFractionsSortedByAliquot();
@@ -998,4 +956,14 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
     public ArrayList<ReportCategoryInterface> getReportCategories();
 
     public String getReportSettingsXMLSchemaURL();
+
+    /**
+     * @return the isotopeStyle
+     */
+    public String getIsotopeStyle();
+
+    /**
+     * @param isotopeStyle the isotopeStyle to set
+     */
+    public void setIsotopeStyle(String isotopeStyle);
 }

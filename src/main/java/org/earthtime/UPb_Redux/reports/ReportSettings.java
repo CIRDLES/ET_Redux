@@ -22,7 +22,10 @@ package org.earthtime.UPb_Redux.reports;
 
 import com.thoughtworks.xstream.XStream;
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 import org.earthtime.UPb_Redux.ReduxConstants;
+import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
+import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.user.UPbReduxConfigurator;
 import org.earthtime.dataDictionaries.ReportSpecifications;
 import org.earthtime.reports.ReportCategoryInterface;
@@ -42,14 +45,14 @@ public class ReportSettings implements
      * version number is advanced so that any existing analysis will update its
      * report models upon opening in ET_Redux.
      */
-    private static transient int CURRENT_VERSION_REPORT_SETTINGS = 293;
+    private static transient int CURRENT_VERSION_REPORT_SETTINGS = 298;
 
     // Fields
     private String name;
     private int version;
+    private String isotopeStyle;
     private ReportCategoryInterface fractionCategory;
     private ReportCategoryInterface compositionCategory;
-    private ReportCategoryInterface compositionCategoryUTh;
     private ReportCategoryInterface isotopicRatiosCategory;
     private ReportCategoryInterface isotopicRatiosPbcCorrCategory;
     private ReportCategoryInterface datesCategory;
@@ -65,18 +68,21 @@ public class ReportSettings implements
      * Creates a new instance of ReportSettings
      */
     public ReportSettings() {
-        this(ReduxConstants.NONE);
+        this(ReduxConstants.NONE, "UPb");
     }
 
     /**
      * Creates a new instance of ReportSettings
      *
      * @param name
+     * @param isotopeStyle the value of isotopeStyle
      */
-    public ReportSettings(String name) {
+    public ReportSettings(String name, String isotopeStyle) {
 
         this.name = name;
         this.version = CURRENT_VERSION_REPORT_SETTINGS;
+        this.isotopeStyle = isotopeStyle;
+        boolean isotypeStyleIsUPb = (isotopeStyle.compareToIgnoreCase("UPb") == 0);
 
         this.reportSettingsComment = "";
 
@@ -88,41 +94,42 @@ public class ReportSettings implements
         this.datesCategory
                 = new ReportCategory(//
                         "Dates",
-                        ReportSpecifications.ReportCategory_Dates, true);
+                        isotypeStyleIsUPb
+                                ? ReportSpecifications.ReportCategory_Dates//
+                                : ReportSpecifications.ReportCategory_Dates, isotypeStyleIsUPb);
 
         this.datesPbcCorrCategory
                 = new ReportCategory(//
-                        "PbcCorr Dates",//7,
-                        ReportSpecifications.ReportCategory_PbcCorrDates, false);
+                        "PbcCorr Dates",//
+                        isotypeStyleIsUPb
+                                ? ReportSpecifications.ReportCategory_PbcCorrDates//
+                                : ReportSpecifications.ReportCategory_PbcCorrDates, false);
 
         this.compositionCategory
                 = new ReportCategory(//
-                        "Composition",//2,
-                        ReportSpecifications.ReportCategory_Composition, true);
-
-        this.compositionCategoryUTh
-                = new ReportCategory(//
-                        "Composition UTh",//2,
-                        ReportSpecifications.ReportCategory_CompositionUTh, true);
+                        "Composition",//
+                        isotypeStyleIsUPb
+                                ? ReportSpecifications.ReportCategory_Composition//
+                                : ReportSpecifications.ReportCategory_CompositionUTh, true);
 
         this.isotopicRatiosCategory
                 = new ReportCategory(//
-                        "Isotopic Ratios",//3,
+                        "Isotopic Ratios",//
                         ReportSpecifications.ReportCategory_IsotopicRatios, true);
 
         this.isotopicRatiosPbcCorrCategory
                 = new ReportCategory(//
-                        "PbcCorr Isotopic Ratios",//6,
+                        "PbcCorr Isotopic Ratios",//
                         ReportSpecifications.ReportCategory_PbcCorrIsotopicRatios, false);
 
         this.rhosCategory
                 = new ReportCategory(//
-                        "Correlation Coefficients",//4,
+                        "Correlation Coefficients",//
                         ReportSpecifications.ReportCategory_CorrelationCoefficients, true);
 
         this.traceElementsCategory
                 = new ReportCategory(//
-                        "Trace Elements",//5,
+                        "Trace Elements",//
                         ReportSpecifications.ReportCategory_TraceElements, false);
 
         this.fractionCategory2
@@ -143,7 +150,6 @@ public class ReportSettings implements
         getReportCategories().add(getDatesCategory());
         getReportCategories().add(getDatesPbcCorrCategory());
         getReportCategories().add(getCompositionCategory());
-        getReportCategories().add(getCompositionCategoryUTh());
         getReportCategories().add(getIsotopicRatiosCategory());
         getReportCategories().add(getIsotopicRatiosPbcCorrCategory());
         getReportCategories().add(getRhosCategory());
@@ -151,6 +157,55 @@ public class ReportSettings implements
         getReportCategories().add(getFractionCategory2());
 
         normalizeReportCategories();
+    }
+
+    /**
+     *
+     * @return
+     */
+    public static ReportSettingsInterface EARTHTIMEReportSettingsUPb() {
+        ReportSettingsInterface EARTHTIME
+                = new ReportSettings("EARTHTIME UPb", "UPb");
+
+        return EARTHTIME;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public static ReportSettingsInterface EARTHTIMEReportSettingsUTh() {
+        ReportSettingsInterface EARTHTIME
+                = new ReportSettings("EARTHTIME UPb", "UTh");
+
+        return EARTHTIME;
+    }
+
+    public static ReportSettingsInterface getReportSettingsModelUpdatedToLatestVersion(ReportSettingsInterface myReportSettingsModel) {
+        ReportSettingsInterface reportSettingsModel = myReportSettingsModel;
+
+        if (myReportSettingsModel == null) {
+            try {
+                reportSettingsModel = ReduxLabData.getInstance().getDefaultReportSettingsModelByIsotopeStyle(myReportSettingsModel.getIsotopeStyle());
+            } catch (BadLabDataException badLabDataException) {
+            }
+        } else {
+            // this provides for seamless updates to reportsettings implementation
+            // new approach oct 2014
+            if (myReportSettingsModel.isOutOfDate()) {
+                JOptionPane.showMessageDialog(null,
+                        new String[]{"As part of our ongoing development efforts,",
+                            "the report settings file you are using is being updated.",
+                            "You may lose some report customizations. Thank you for your patience."//,
+                        //"If you need to save aliquot copy, please re-export."
+                        });
+                String myReportSettingsName = myReportSettingsModel.getName();
+                reportSettingsModel = new ReportSettings(myReportSettingsName, myReportSettingsModel.getIsotopeStyle());
+            }
+        }
+
+        //TODO http://www.javaworld.com/article/2077736/open-source-tools/xml-merging-made-easy.html
+        return reportSettingsModel;
     }
 
 //  accessors
@@ -423,7 +478,7 @@ public class ReportSettings implements
     public static void main(String[] args) throws Exception {
 
         ReportSettingsInterface reportSettings
-                = new ReportSettings("Test ReportSettings");
+                = new ReportSettings("Test ReportSettings", "UPb");
         String testFileName = "ReportSettingsTEST.xml";
 
         reportSettings.serializeXMLObject(testFileName);
@@ -510,16 +565,19 @@ public class ReportSettings implements
     }
 
     /**
-     * @return the compositionCategoryUTh
+     * @return the isotopeStyle
      */
-    public ReportCategoryInterface getCompositionCategoryUTh() {
-        return compositionCategoryUTh;
+    public String getIsotopeStyle() {
+        if (isotopeStyle == null) {
+            isotopeStyle = "UPb";
+        }
+        return isotopeStyle;
     }
 
     /**
-     * @param compositionCategoryUTh the compositionCategoryUTh to set
+     * @param isotopeStyle the isotopeStyle to set
      */
-    public void setCompositionCategoryUTh(ReportCategoryInterface compositionCategoryUTh) {
-        this.compositionCategoryUTh = compositionCategoryUTh;
+    public void setIsotopeStyle(String isotopeStyle) {
+        this.isotopeStyle = isotopeStyle;
     }
 }

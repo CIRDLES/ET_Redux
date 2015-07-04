@@ -49,10 +49,10 @@ public class AnnouncementPane extends JLayeredPane {
 
         // setup CIRDLES icon
         ClassLoader cldr = this.getClass().getClassLoader();
-        java.net.URL imageCIRDLESURL = cldr.getResource("org/earthtime/images/cirdles-logo.png");
+        java.net.URL imageCIRDLESURL = cldr.getResource("org/earthtime/images/cirdles-logo-text-512.png");//cirdles-logo.png");
         CIRDLESPanel = new JLabel();
         CIRDLESPanel.setBackground(Color.red);
-        CIRDLESPanel.setBounds(ETReduxFrame.FRAME_WIDTH / 2 - 64, 0, 128, 128);//(50, 50, 128, 128);
+        CIRDLESPanel.setBounds(ETReduxFrame.FRAME_WIDTH / 2 - 80, 0, 160, 160);//(50, 50, 128, 128);
         ImageIcon myCIRDLESIcon = new CustomIcon(imageCIRDLESURL);
         ((CustomIcon) myCIRDLESIcon).setSize(CIRDLESPanel.getHeight(), CIRDLESPanel.getWidth());
         CIRDLESPanel.setIcon(myCIRDLESIcon);

@@ -127,11 +127,12 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_GenericUPbIsotopic_A exte
 
                         try {
                             currentSample = new Sample(//
+                                    //
                                     myFractionData.get(0), //
                                     SampleTypesEnum.LEGACY.getName(), //
                                     "GENERIC_UPb", //
                                     ReduxLabData.getInstance(), //
-                                    ReduxConstants.ANALYSIS_PURPOSE.NONE);
+                                    ReduxConstants.ANALYSIS_PURPOSE.NONE, "UPb");
 
                             projectSamples.add(currentSample);
 

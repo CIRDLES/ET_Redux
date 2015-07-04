@@ -106,6 +106,7 @@ public class Sample implements
      * analyzed and <code>false</code> when it has not.
      */
     private boolean analyzed;
+    private String isotopeStyle;
     /**
      * the path to which this <code>Sample</code> will be saved.
      */
@@ -208,19 +209,16 @@ public class Sample implements
      * @param sampleName
      * @param sampleType the type of this <code>Sample</code> to which
      * <code>sampleType</code> will be set
+     * @param sampleAnalysisType
      * @param labData the data of this <code>Sample</code> to which
      * <code>myReduxLabData</code> will be
-     * @param sampleAnalysisType
      * @param defaultAnalysisPurpose
+     * @param isotopeStyle the value of isotopeStyle
      * @throws org.earthtime.UPb_Redux.exceptions.BadLabDataException
      * BadLabDataException
      */
     public Sample(
-            String sampleName,
-            String sampleType,
-            String sampleAnalysisType,
-            ReduxLabData labData,
-            ANALYSIS_PURPOSE defaultAnalysisPurpose)
+            String sampleName, String sampleType, String sampleAnalysisType, ReduxLabData labData, ANALYSIS_PURPOSE defaultAnalysisPurpose, String isotopeStyle)
             throws BadLabDataException {
         this.sampleName = sampleName;
         this.sampleType = sampleType;
@@ -231,11 +229,12 @@ public class Sample implements
         this.sampleAnnotations = "";
         this.reduxSampleFileName = "";
         this.reduxSampleFilePath = "";
+        this.isotopeStyle = isotopeStyle;
 
         Sample.saving = false;
 
         this.myReduxLabData = labData;
-        this.reportSettingsModel = ReduxLabData.getInstance().getDefaultReportSettingsModel();
+        this.reportSettingsModel = ReduxLabData.getInstance().getDefaultReportSettingsModelByIsotopeStyle(isotopeStyle);
 
         this.sampleAgeInterpretationGUISettings = new SampleDateInterpretationGUIOptions();
 
@@ -274,14 +273,12 @@ public class Sample implements
      * @param sampleAnalysisType
      * @param labData
      * @param analysisPurpose
-     * @return
+     * @param isotopeStyle the value of isotopeStyle
      * @throws BadLabDataException
+     * @return the org.earthtime.samples.SampleInterface
      */
     public static SampleInterface initializeNewSample( //
-            String sampleType, //
-            String sampleAnalysisType,
-            ReduxLabData labData,
-            ANALYSIS_PURPOSE analysisPurpose)
+            String sampleType, String sampleAnalysisType, ReduxLabData labData, ANALYSIS_PURPOSE analysisPurpose, String isotopeStyle)
             throws BadLabDataException {
 
         String sampleName = "NEW SAMPLE";
@@ -305,7 +302,7 @@ public class Sample implements
         }
 
         SampleInterface retVal = //
-                new Sample(sampleName, sampleType, sampleAnalysisType, labData, analysisPurpose);
+                new Sample(sampleName, sampleType, sampleAnalysisType, labData, analysisPurpose, isotopeStyle);
 
         //set flag for whether analysis was performed elsewhere and we just have legacy results
         retVal.setAnalyzed(analyzed);
@@ -363,7 +360,7 @@ public class Sample implements
                         legacyF.setSampleIsochronRatios(f.getSampleIsochronRatios());
 
                         legacyF.setSampleName(f.getSampleName());
-                        legacyF.setZircon(((FractionI)f).isZircon());
+                        legacyF.setZircon(((FractionI) f).isZircon());
 
                         legacyF.setAliquotNumber(f.getAliquotNumber());
                         legacyF.setRejected(f.isRejected());
@@ -1671,6 +1668,17 @@ public class Sample implements
         return reportSettingsModel;
     }
 
+    /**
+     *
+     */
+    @Override
+    public void restoreDefaultReportSettingsModel() {
+        try {
+            setReportSettingsModel(ReduxLabData.getInstance().getDefaultReportSettingsModelByIsotopeStyle((getIsotopeStyle() == null) ? "UPb" : getIsotopeStyle()));
+        } catch (BadLabDataException badLabDataException) {
+        }
+    }
+
     // used for deserialization to enforce backwards compatibility
     /**
      *
@@ -1687,5 +1695,15 @@ public class Sample implements
             analyzed = true;
         }
         return this;
+    }
+
+    /**
+     * @return the isotopeStyle
+     */
+    public String getIsotopeStyle() {
+        if (isotopeStyle == null){
+            isotopeStyle = "UPb";
+        }
+        return isotopeStyle;
     }
 }

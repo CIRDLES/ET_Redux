@@ -48,7 +48,7 @@ import org.earthtime.samples.SampleInterface;
 public class ProjectSample implements//
         SampleInterface,
         Serializable,
-        EarthTimeSerializedFileInterface  {
+        EarthTimeSerializedFileInterface {
 
     private static final long serialVersionUID = -638058212764252304L;
     private String sampleName;
@@ -56,6 +56,7 @@ public class ProjectSample implements//
     private String sampleAnalysisType;
     private ANALYSIS_PURPOSE analysisPurpose;
     private boolean analyzed;
+    private String isotopeStyle;
     private Vector<AliquotInterface> aliquots;
     private Vector<ETFractionInterface> fractions;
     private ReportSettingsInterface reportSettingsModel;
@@ -66,29 +67,40 @@ public class ProjectSample implements//
     private String reduxSampleFilePath;
     private GraphAxesSetup concordiaGraphAxesSetup;
     private GraphAxesSetup terraWasserburgGraphAxesSetup;
-       private Vector<ValueModel> sampleDateModels;
-
+    private Vector<ValueModel> sampleDateModels;
 
     private transient ReduxLabData reduxLabData;
 
-    public ProjectSample(
-            String sampleName,
-            String sampleType,
-            String sampleAnalysisType,
-            ANALYSIS_PURPOSE analysisPurpose,
-            boolean analyzed)
+    /**
+     *
+     * @param sampleName the value of sampleName
+     * @param sampleType the value of sampleType
+     * @param sampleAnalysisType the value of sampleAnalysisType
+     * @param analysisPurpose the value of analysisPurpose
+     * @param analyzed the value of analyzed
+     * @param isotopeStyle the value of isotopeStyle
+     * @throws BadLabDataException
+     */
+    private ProjectSample(
+            String sampleName, //
+            String sampleType, //
+            String sampleAnalysisType,//
+            ANALYSIS_PURPOSE analysisPurpose, //
+            boolean analyzed, //
+            String isotopeStyle)
             throws BadLabDataException {
 
         this.sampleName = sampleName;
         this.sampleType = sampleType;
         this.sampleAnalysisType = sampleAnalysisType;
         this.analysisPurpose = analysisPurpose;
-        this.analyzed = false;
+        this.analyzed = analyzed;
+        this.isotopeStyle = isotopeStyle;
         this.aliquots = new Vector<>();
         this.fractions = new Vector<>();
 
         this.reduxLabData = ReduxLabData.getInstance();
-        this.reportSettingsModel = reduxLabData.getDefaultReportSettingsModel();
+        this.reportSettingsModel = reduxLabData.getDefaultReportSettingsModelByIsotopeStyle(isotopeStyle);
         this.physicalConstantsModel = reduxLabData.getDefaultPhysicalConstantsModel();
         this.sampleAgeInterpretationGUISettings = new SampleDateInterpretationGUIOptions();
         this.changed = false;
@@ -102,15 +114,14 @@ public class ProjectSample implements//
 
     /**
      *
-     * @param sampleType
-     * @param sampleAnalysisType
-     * @param labData
      * @param analysisPurpose
-     * @return
+     * @param isotopeStyle the value of isotopeStyle
      * @throws BadLabDataException
+     * @return the org.earthtime.samples.SampleInterface
      */
     public static SampleInterface initializeNewSample( //
-            ANALYSIS_PURPOSE analysisPurpose)
+            ANALYSIS_PURPOSE analysisPurpose, //
+            String isotopeStyle)
             throws BadLabDataException {
 
         SampleInterface retVal = //
@@ -119,7 +130,8 @@ public class ProjectSample implements//
                         SampleTypesEnum.PROJECT.getName(), //
                         SampleAnalysisTypesEnum.COMPILED.getName(), //
                         analysisPurpose,//
-                        true);
+                        true, //
+                        isotopeStyle);
 
         return retVal;
     }
@@ -354,6 +366,7 @@ public class ProjectSample implements//
     public void setSampleDateModels(Vector<ValueModel> sampleDateModels) {
         this.sampleDateModels = sampleDateModels;
     }
+
     @Override
     public void setFractionDataOverriddenOnImport(boolean fractionDataOverriddenOnImport) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -485,14 +498,26 @@ public class ProjectSample implements//
     public void addFractionsVector(Vector<ETFractionInterface> fractions, int aliquotNumber) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    /**
+     *
+     */
+    @Override
+    public void restoreDefaultReportSettingsModel() {
+        try {
+            setReportSettingsModel(ReduxLabData.getInstance().getDefaultReportSettingsModelByIsotopeStyle(getIsotopeStyle()));
+        } catch (BadLabDataException badLabDataException) {
+        }
+    }
     
-    //    private void readObject(
-//            ObjectInputStream stream)
-//            throws IOException, ClassNotFoundException {
-//        stream.defaultReadObject();
-//        ObjectStreamClass myObject = ObjectStreamClass.lookup(
-//                Class.forName(AbstractTripoliSample.class.getCanonicalName()));
-//        long theSUID = myObject.getSerialVersionUID();
-//        System.out.println("Customized De-serialization of AbstractTripoliSample " + theSUID);
-//    }
+        /**
+     * @return the isotopeStyle
+     */
+    public String getIsotopeStyle() {
+        if (isotopeStyle == null){
+            isotopeStyle = "UPb";
+        }
+        return isotopeStyle;
+    }
+    
 }

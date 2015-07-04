@@ -45,7 +45,7 @@ import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLAICPMSFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLegacyFraction;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
-import org.earthtime.reportViews.ReportRowGUIInterface;
+import org.earthtime.UPb_Redux.reports.ReportSettings;
 import org.earthtime.UPb_Redux.samples.SESARSampleMetadata;
 import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.UPb_Redux.samples.UPbSampleInterface;
@@ -67,6 +67,7 @@ import org.earthtime.exceptions.ETException;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.projects.EarthTimeSerializedFileInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
+import org.earthtime.reportViews.ReportRowGUIInterface;
 import org.earthtime.reports.ReportSettingsInterface;
 import org.earthtime.utilities.FileHelper;
 import org.earthtime.xmlUtilities.XMLSerializationI;
@@ -1507,6 +1508,14 @@ public interface SampleInterface {
      * @param reportSettingsModel
      */
     public abstract void setReportSettingsModel(ReportSettingsInterface reportSettingsModel);
+    
+    public static void loadDefaultEARTHTIMEReportSettingsModel(SampleInterface sample){
+        if (sample.getIsotopeStyle().compareToIgnoreCase("UPb")==0){
+            sample.setReportSettingsModel(ReportSettings.EARTHTIMEReportSettingsUPb());
+        }else {
+            sample.setReportSettingsModel(ReportSettings.EARTHTIMEReportSettingsUTh());            
+        }
+    }
 
     /**
      *
@@ -1560,12 +1569,7 @@ public interface SampleInterface {
     /**
      *
      */
-    public default void restoreDefaultReportSettingsModel() {
-        try {
-            setReportSettingsModel(ReduxLabData.getInstance().getDefaultReportSettingsModel());
-        } catch (BadLabDataException badLabDataException) {
-        }
-    }
+    public void restoreDefaultReportSettingsModel();
 
     /**
      *
@@ -1676,7 +1680,7 @@ public interface SampleInterface {
 
         for (int fractionsIndex = 0; fractionsIndex
                 < sample.getFractions().size(); fractionsIndex++) {
-            ((ETFractionInterface) sample.getFractions().get(fractionsIndex)).setChanged(false);
+            sample.getFractions().get(fractionsIndex).setChanged(false);
         }
 
         if (sample.getReduxSampleFilePath().length() > 0) {
@@ -1895,4 +1899,6 @@ public interface SampleInterface {
             a.setLaboratoryName(ReduxLabData.getInstance().getLabName());
         }
     }
+    
+    public String getIsotopeStyle();
 }

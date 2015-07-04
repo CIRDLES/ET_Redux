@@ -121,6 +121,7 @@ import org.earthtime.UPb_Redux.utilities.JHelpAction;
 import org.earthtime.UPb_Redux.utilities.MacOSAboutHandler;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
 import org.earthtime.aliquots.AliquotInterface;
+import org.earthtime.aliquots.ReduxAliquotInterface;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
@@ -351,17 +352,17 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             case WELCOME:
                 JButton visitCIRDLESbutton = new ET_JButton("Welcome!  Please Visit us at GitHub.com");// 3/25/2015 updated CIRDLES.org");
                 visitCIRDLESbutton.setFont(ReduxConstants.sansSerif_12_Bold);
-                visitCIRDLESbutton.setBounds(FRAME_WIDTH / 2 - 175, 115, 350, 25);
+                visitCIRDLESbutton.setBounds(FRAME_WIDTH / 2 - 175, 130, 350, 25);
                 visitCIRDLESbutton.addActionListener(new ActionListenerForGotoCirdles());
                 announcementPane.add(visitCIRDLESbutton);
 
                 JTextArea announce = new JTextArea(//
-                        "ANNOUNCEMENT:   2015 brings changes to this project. "//
+                        "ANNOUNCEMENT:         2015 brings changes to this project. "//
                         + "We are changing the name to ET_Redux, for EARTHTIME Redux, in preparation for additional isotope systems, such as U-series.  "//
                         + "We are moving the project to a GitHub repository in the near future to make collaboration easier and more transparent.  "
                         + "We are seeking a new logo for ET_Redux and invite your submissions.");
                 announce.setFont(ReduxConstants.sansSerif_12_Bold);
-                announce.setBounds(FRAME_WIDTH / 2 - 400, 150, 800, 65);
+                announce.setBounds(FRAME_WIDTH / 2 - 412, 170, 825, 65);
                 announce.setLineWrap(true);
                 announce.setWrapStyleWord(true);
                 announce.setAlignmentX(CENTER_ALIGNMENT);
@@ -374,23 +375,17 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                 JButton visitTOPSOIL = new ET_JButton("Checkout Topsoil - the Isoplot replacement project that you can join at github.com/CIRDLES/topsoil");
                 visitTOPSOIL.setFont(ReduxConstants.sansSerif_12_Bold);
                 visitTOPSOIL.setBounds(FRAME_WIDTH / 2 - 325, 575, 650, 25);//(475, 140, 650, 25);
-                visitTOPSOIL.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        BrowserControl.displayURL("https://github.com/CIRDLES/topsoil");
-                    }
-                });
+                visitTOPSOIL.addActionListener((ActionEvent e) -> {
+                    BrowserControl.displayURL("https://github.com/CIRDLES/topsoil");
+        });
                 announcementPane.add(visitTOPSOIL);
 
                 JButton releaseNotes = new ET_JButton("Click to see Latest Release Notes.");
                 releaseNotes.setFont(ReduxConstants.sansSerif_10_Bold);
                 releaseNotes.setBounds(475, 500, 210, 20);//(150, 180, 220, 20);
-                releaseNotes.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        BrowserControl.displayURL("https://docs.google.com/document/d/18CDAMmabkGiNTBiVkqSaNlW8OOXSr4CHGa5TFg4gKwg/edit");
-                    }
-                });
+                releaseNotes.addActionListener((ActionEvent e) -> {
+                    BrowserControl.displayURL("https://docs.google.com/document/d/18CDAMmabkGiNTBiVkqSaNlW8OOXSr4CHGa5TFg4gKwg/edit");
+        });
 
                 theFractionTableScrollPane.setViewportView(announcementPane);
                 break;
@@ -576,7 +571,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             if (theProject.getSuperSample() != null) {
                 // oct 2014 first check for updated reportsettings
                 theProject.getSuperSample().setReportSettingsModel(//
-                        ReportSettingsInterface.getReportSettingsModelUpdatedToLatestVersion(theProject.getSuperSample().getReportSettingsModel()));
+                        ReportSettings.getReportSettingsModelUpdatedToLatestVersion(theProject.getSuperSample().getReportSettingsModel()));
                 theProject.getSuperSample().setLegacyStatusForReportTable();
 
                 theProject.saveTheProjectAsSerializedReduxFile();
@@ -740,6 +735,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         for (Component m : reportMenu.getMenuComponents()) {
             m.setEnabled(true);
         }
+        reportMenu.setText(theProject.getSuperSample().getIsotopeStyle() + " Reports");
 
         sampleMenuOnTrueProjectMenuOnFalse(false);
 
@@ -791,14 +787,15 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
     /**
      *
      * @param sampleAnalysisType the value of sampleAnalysisType
+     * @param isotopeStyle the value of isotopeStyle
      */
-    private void setUpNewCompiledLegacyProject(String sampleAnalysisType) {
+    private void setUpNewCompiledLegacyProject(String sampleAnalysisType, String isotopeStyle) {
 
         theProject = new Project(myState);
 
         try {
             theSample = ProjectSample.initializeNewSample(//                  
-                    myState.getReduxPreferences().getDefaultSampleAnalysisPurpose());
+                    myState.getReduxPreferences().getDefaultSampleAnalysisPurpose(), isotopeStyle);
         } catch (BadLabDataException ex) {
             new ETWarningDialog(ex).setVisible(true);
         }
@@ -928,9 +925,11 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
     /**
      *
      * @param sampleType
+     * @param sampleAnalysisType the value of sampleAnalysisType
+     * @param isotopeStyle the value of isotopeStyle
      * @throws BadLabDataException
      */
-    private void setUpNewSample(String sampleType, String sampleAnalysisType)
+    private void setUpNewSample(String sampleType, String sampleAnalysisType, String isotopeStyle)
             throws BadLabDataException, ETException {
         // check to see if existing sample has been saved
         // returns false if user cancels, etc.
@@ -944,7 +943,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
             // set up a new empty sample based on sampleType
             theSample = Sample.initializeNewSample(//
-                    sampleType, sampleAnalysisType, ReduxLabData.getInstance(), myState.getReduxPreferences().getDefaultSampleAnalysisPurpose());
+                    sampleType, sampleAnalysisType, ReduxLabData.getInstance(), myState.getReduxPreferences().getDefaultSampleAnalysisPurpose(), isotopeStyle);
 
             // manageTheSample sets up the correct form and returns whether it was successful
             // meantime, the form is opened modally to process user setting up sample data
@@ -1314,6 +1313,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         for (Component m : reportMenu.getMenuComponents()) {
             m.setEnabled(true);
         }
+        reportMenu.setText(theSample.getIsotopeStyle() + " Reports");
 
         customizeReduxSkin();
     }
@@ -1331,7 +1331,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             menuItem.addActionListener(new java.awt.event.ActionListener() {
                 @Override
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    editAliquotByNumber(((UPbReduxAliquot) a).getAliquotNumber());
+                    editAliquotByNumber(((ReduxAliquotInterface) a).getAliquotNumber());
                 }
             });
             return a;
@@ -1462,7 +1462,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
                 // oct 2014 first check for updated reportsettings
                 theSample.setReportSettingsModel(//
-                        ReportSettingsInterface.getReportSettingsModelUpdatedToLatestVersion(theSample.getReportSettingsModel()));
+                        ReportSettings.getReportSettingsModelUpdatedToLatestVersion(theSample.getReportSettingsModel()));
                 theSample.setLegacyStatusForReportTable();
 
                 // feb 2010 catch case where saved as LIVEWORKFLOW
@@ -1514,7 +1514,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
     private void setUpEmptySample() //
             throws BadLabDataException {
-        setTheSample(Sample.initializeNewSample("NONE", "", ReduxLabData.getInstance(), myState.getReduxPreferences().getDefaultSampleAnalysisPurpose()));
+        setTheSample(Sample.initializeNewSample("NONE", "", ReduxLabData.getInstance(), myState.getReduxPreferences().getDefaultSampleAnalysisPurpose(), "UPb"));
         setUpTheSample(false);
 
         // editSample menu de-activated
@@ -1880,10 +1880,10 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         loadDefaultReportSettingsModel = new javax.swing.JMenuItem();
         loadEARTHTIMEDefaultReportSettingsModel_menuItem = new javax.swing.JMenuItem();
         jSeparator4 = new javax.swing.JPopupMenu.Separator();
+        reportResultsTableAsPDF_menuItem = new javax.swing.JMenuItem();
         reportResultsTableAsStringsInExcel_menuItem = new javax.swing.JMenuItem();
         reportResultsTableAsNumbersInExcel_menuItem = new javax.swing.JMenuItem();
         reportResultsTableAsNumbersInCSV_menuItem = new javax.swing.JMenuItem();
-        reportResultsTableAsPDF_menuItem = new javax.swing.JMenuItem();
         referencesMenu = new javax.swing.JMenu();
         gCubedPaperSoftware_menuItem = new javax.swing.JMenuItem();
         gCubedPaperReductionEquations_menuItem = new javax.swing.JMenuItem();
@@ -2645,6 +2645,14 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         reportMenu.add(loadEARTHTIMEDefaultReportSettingsModel_menuItem);
         reportMenu.add(jSeparator4);
 
+        reportResultsTableAsPDF_menuItem.setText("Report Results Table as SVG, PDF");
+        reportResultsTableAsPDF_menuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                reportResultsTableAsPDF_menuItemActionPerformed(evt);
+            }
+        });
+        reportMenu.add(reportResultsTableAsPDF_menuItem);
+
         reportResultsTableAsStringsInExcel_menuItem.setText("Report Results Table as Strings in Excel");
         reportResultsTableAsStringsInExcel_menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -2668,14 +2676,6 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             }
         });
         reportMenu.add(reportResultsTableAsNumbersInCSV_menuItem);
-
-        reportResultsTableAsPDF_menuItem.setText("Report Results Table as SVG, PDF");
-        reportResultsTableAsPDF_menuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                reportResultsTableAsPDF_menuItemActionPerformed(evt);
-            }
-        });
-        reportMenu.add(reportResultsTableAsPDF_menuItem);
 
         mainMenuBar.add(reportMenu);
 
@@ -3362,7 +3362,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
      */
 private void LAICPMS_LegacyAnalysis_MC_UA_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LAICPMS_LegacyAnalysis_MC_UA_menuItemActionPerformed
     try {
-        setUpNewSample(SampleTypesEnum.LEGACY.getName(), "LAICPMS_MCUA");
+        setUpNewSample(SampleTypesEnum.LEGACY.getName(), "LAICPMS_MCUA", "UPb");
         changeContentOfTopPanel(ReduxConstants.TOP_PANEL_CONTENTS.FRACTIONS);
     } catch (ETException ex) {
         new ETWarningDialog(ex).setVisible(true);
@@ -3426,7 +3426,7 @@ private void visitGeochronActionPerformed(java.awt.event.ActionEvent evt) {//GEN
 
 private void newSampleCompilation_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newSampleCompilation_menuItemActionPerformed
     try {
-        setUpNewSample(SampleTypesEnum.COMPILATION.getName(), SampleAnalysisTypesEnum.COMPILED.getName());
+        setUpNewSample(SampleTypesEnum.COMPILATION.getName(), SampleAnalysisTypesEnum.COMPILED.getName(), "UPb");
     } catch (ETException ex) {
         new ETWarningDialog(ex).setVisible(true);
     }
@@ -3741,7 +3741,7 @@ private void startStopLiveUpdate_buttonActionPerformed(java.awt.event.ActionEven
 
 private void ID_TIMSLegacyAnalysis_MIT_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ID_TIMSLegacyAnalysis_MIT_menuItemActionPerformed
     try {
-        setUpNewSample(SampleTypesEnum.LEGACY.getName(), SampleAnalysisTypesEnum.IDTIMS.getName());
+        setUpNewSample(SampleTypesEnum.LEGACY.getName(), SampleAnalysisTypesEnum.IDTIMS.getName(), "UPb");
         changeContentOfTopPanel(ReduxConstants.TOP_PANEL_CONTENTS.FRACTIONS);
     } catch (ETException ex) {
         new ETWarningDialog(ex).setVisible(true);
@@ -3771,7 +3771,7 @@ private void writeCSVFileOfIDTIMSLegacyDataSampleFieldNames_MITActionPerformed(j
 
 private void newSampleAnalysisForIDTIMS_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newSampleAnalysisForIDTIMS_menuItemActionPerformed
     try {
-        setUpNewSample(SampleTypesEnum.ANALYSIS.getName(), SampleAnalysisTypesEnum.IDTIMS.getName());
+        setUpNewSample(SampleTypesEnum.ANALYSIS.getName(), SampleAnalysisTypesEnum.IDTIMS.getName(), "UPb");
     } catch (ETException ex) {
         new ETWarningDialog(ex).setVisible(true);
     }
@@ -3816,7 +3816,7 @@ private void writeCSVFileOfLAICPMSLegacyDataSampleFieldNames_SC_WSU_vBActionPerf
 
 private void LAICPMS_LegacyAnalysis_SC_WSU_vB_menuItemActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LAICPMS_LegacyAnalysis_SC_WSU_vB_menuItemActionPerformed
     try {
-        setUpNewSample(SampleTypesEnum.LEGACY.getName(), "LAICPMS_SCWSU_vB");
+        setUpNewSample(SampleTypesEnum.LEGACY.getName(), "LAICPMS_SCWSU_vB", "UPb");
         changeContentOfTopPanel(ReduxConstants.TOP_PANEL_CONTENTS.FRACTIONS);
     } catch (ETException ex) {
         if (ex instanceof BadLabDataException) {
@@ -3833,7 +3833,7 @@ private void writeCSVFileOfLAICPMSLegacyDataSampleFieldNames_NIGLActionPerformed
 
 private void LAICPMS_LegacyAnalysis_NIGL_menuItemActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LAICPMS_LegacyAnalysis_NIGL_menuItemActionPerformed
     try {
-        setUpNewSample(SampleTypesEnum.LEGACY.getName(), "LAICPMS_NIGL");
+        setUpNewSample(SampleTypesEnum.LEGACY.getName(), "LAICPMS_NIGL", "UPb");
         changeContentOfTopPanel(ReduxConstants.TOP_PANEL_CONTENTS.FRACTIONS);
     } catch (ETException ex) {
         new ETWarningDialog(ex).setVisible(true);
@@ -3858,7 +3858,7 @@ private void writeCSVFileOfLAICPMSLegacyDataSampleFieldNames_SC_WSU_vAActionPerf
 
 private void LAICPMS_LegacyAnalysis_SC_WSU_vA_menuItemActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LAICPMS_LegacyAnalysis_SC_WSU_vA_menuItemActionPerformed
     try {
-        setUpNewSample(SampleTypesEnum.LEGACY.getName(), "LAICPMS_SCWSU_vA");
+        setUpNewSample(SampleTypesEnum.LEGACY.getName(), "LAICPMS_SCWSU_vA", "UPb");
         changeContentOfTopPanel(ReduxConstants.TOP_PANEL_CONTENTS.FRACTIONS);
     } catch (ETException ex) {
         if (ex instanceof BadLabDataException) {
@@ -3882,7 +3882,7 @@ private void customizeSampleMetadata_menuItemActionPerformed (java.awt.event.Act
 
 private void LAICPMS_LegacyAnalysis_SC_WSU_vV_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LAICPMS_LegacyAnalysis_SC_WSU_vV_menuItemActionPerformed
     try {
-        setUpNewSample(SampleTypesEnum.LEGACY.getName(), "LAICPMS_SCWSU_vV");
+        setUpNewSample(SampleTypesEnum.LEGACY.getName(), "LAICPMS_SCWSU_vV", "UPb");
         changeContentOfTopPanel(ReduxConstants.TOP_PANEL_CONTENTS.FRACTIONS);
     } catch (ETException ex) {
         new ETWarningDialog(ex).setVisible(true);
@@ -3892,7 +3892,7 @@ private void LAICPMS_LegacyAnalysis_SC_WSU_vV_menuItemActionPerformed(java.awt.e
 
 private void newSampleAnalysisForLAICPMS_MC_menuItemActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newSampleAnalysisForLAICPMS_MC_menuItemActionPerformed
     try {
-        setUpNewSample(SampleTypesEnum.ANALYSIS.getName(), "LAICPMSMC");
+        setUpNewSample(SampleTypesEnum.ANALYSIS.getName(), "LAICPMSMC", "UPb");
     } catch (ETException ex) {
         new ETWarningDialog(ex).setVisible(true);
     }
@@ -3900,7 +3900,7 @@ private void newSampleAnalysisForLAICPMS_MC_menuItemActionPerformed (java.awt.ev
 
 private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed
     try {
-        setUpNewSample(SampleTypesEnum.LEGACY.getName(), "LAICPMS_UH");
+        setUpNewSample(SampleTypesEnum.LEGACY.getName(), "LAICPMS_UH", "UPb");
         changeContentOfTopPanel(ReduxConstants.TOP_PANEL_CONTENTS.FRACTIONS);
     } catch (ETException ex) {
         new ETWarningDialog(ex).setVisible(true);
@@ -3909,12 +3909,11 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
 }//GEN-LAST:event_LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed
 
     private void saveCurrentReportSettingsAsDefault_menuItemActionPerformed ( java.awt.event.ActionEvent evt ) {//GEN-FIRST:event_saveCurrentReportSettingsAsDefault_menuItemActionPerformed
-        ReduxLabData.getInstance().setDefaultreportSettingsModel(theSample.getReportSettingsModel());
+        ReduxLabData.getInstance().setDefaultReportSettingsModelByIsotopeStyle(theSample.getReportSettingsModel());
     }//GEN-LAST:event_saveCurrentReportSettingsAsDefault_menuItemActionPerformed
 
     private void loadEARTHTIMEDefaultReportSettingsModel_menuItemActionPerformed ( java.awt.event.ActionEvent evt ) {//GEN-FIRST:event_loadEARTHTIMEDefaultReportSettingsModel_menuItemActionPerformed
-
-        theSample.setReportSettingsModel(ReportSettingsInterface.EARTHTIMEReportSettings());
+        SampleInterface.loadDefaultEARTHTIMEReportSettingsModel(theSample);//           theSample.setReportSettingsModel(ReportSettings.EARTHTIMEReportSettingsUPb());
 
         updateReportTable(false);
     }//GEN-LAST:event_loadEARTHTIMEDefaultReportSettingsModel_menuItemActionPerformed
@@ -3959,7 +3958,7 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     }//GEN-LAST:event_manageRawData_menuItemActionPerformed
 
     private void genericUPbDataTableInCSV_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_genericUPbDataTableInCSV_menuItemActionPerformed
-        setUpNewCompiledLegacyProject(SampleAnalysisTypesEnum.GENERIC_UPB.getName());
+        setUpNewCompiledLegacyProject(SampleAnalysisTypesEnum.GENERIC_UPB.getName(), "UPb");
     }//GEN-LAST:event_genericUPbDataTableInCSV_menuItemActionPerformed
 
     private void closeProjectFile_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeProjectFile_menuItemActionPerformed
@@ -4005,7 +4004,7 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     }//GEN-LAST:event_manageProjectRawData_buttonopenSampleFileActionPerformed
 
     private void ucsb_LASS_A_DataTableInCSV_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ucsb_LASS_A_DataTableInCSV_menuItemActionPerformed
-        setUpNewCompiledLegacyProject(SampleAnalysisTypesEnum.LASS.getName());
+        setUpNewCompiledLegacyProject(SampleAnalysisTypesEnum.LASS.getName(), "UPb");
     }//GEN-LAST:event_ucsb_LASS_A_DataTableInCSV_menuItemActionPerformed
 
     private void producePbCCorrReport_jMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_producePbCCorrReport_jMenuItemActionPerformed
@@ -4047,7 +4046,7 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     }//GEN-LAST:event_loadLastSample_buttonMouseEntered
 
     private void dibbs_USeriesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dibbs_USeriesActionPerformed
-        setUpNewCompiledLegacyProject(SampleAnalysisTypesEnum.USERIES.getName());
+        setUpNewCompiledLegacyProject(SampleAnalysisTypesEnum.USERIES.getName(), "UTh");
     }//GEN-LAST:event_dibbs_USeriesActionPerformed
 
     private void helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {

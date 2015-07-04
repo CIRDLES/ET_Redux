@@ -194,11 +194,12 @@ public class Project implements
         // make a super-sample or projectsample to leverage existing Redux
         try {
             compiledSuperSample = new Sample( //
+                    //
                     projectName, //
                     SampleTypesEnum.PROJECT.getName(), //
                     SampleAnalysisTypesEnum.TRIPOLIZED.getName(), //
                     ReduxLabData.getInstance(), //
-                    ReduxConstants.ANALYSIS_PURPOSE.DetritalSpectrum);
+                    ReduxConstants.ANALYSIS_PURPOSE.DetritalSpectrum, "UPb");
         } catch (BadLabDataException badLabDataException) {
         }
 
@@ -210,11 +211,12 @@ public class Project implements
                 SampleInterface sample;
                 try {
                     sample = new Sample( //
+                            //
                             tripoliSample.getSampleName(), //
                             SampleTypesEnum.ANALYSIS.getName(), //
                             SampleAnalysisTypesEnum.LAICPMS.getName(), //
                             ReduxLabData.getInstance(), //
-                            analysisPurpose);
+                            analysisPurpose, "UPb");
 
                     projectSamples.add(sample);
 

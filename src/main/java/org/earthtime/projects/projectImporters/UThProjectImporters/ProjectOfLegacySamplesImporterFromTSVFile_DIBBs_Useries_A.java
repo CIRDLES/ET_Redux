@@ -118,11 +118,12 @@ public class ProjectOfLegacySamplesImporterFromTSVFile_DIBBs_Useries_A extends A
                                 // new sample
                                 try {
                                     currentSample = new Sample(//
+                                            //
                                             sampleID, //
                                             SampleTypesEnum.LEGACY.getName(), //
                                             SampleAnalysisTypesEnum.USERIES.getName(), //
                                             ReduxLabData.getInstance(), //
-                                            ReduxConstants.ANALYSIS_PURPOSE.SingleAge);
+                                            ReduxConstants.ANALYSIS_PURPOSE.SingleAge, "UPb");
 
                                     projectSamples.add(currentSample);
 

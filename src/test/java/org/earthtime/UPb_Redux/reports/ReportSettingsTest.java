@@ -34,7 +34,7 @@ public class ReportSettingsTest {
     public void testSerialization() throws Exception {
 
         ReportSettings reportSettings
-                = new ReportSettings("Test ReportSettings");
+                = new ReportSettings("Test ReportSettings", "UPb");
         String testFileName = "ReportSettingsTEST.xml";
 
         reportSettings.serializeXMLObject(testFileName);

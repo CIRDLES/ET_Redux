@@ -105,11 +105,12 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_UCSB_LASS_A extends Abstr
                     if (readingFractions) {
                         try {
                             currentSample = new Sample(//
+                                    //
                                     myFractionData.get(0), //
                                     SampleTypesEnum.LEGACY.getName(), //
                                     SampleAnalysisTypesEnum.LASS.getName(), //
                                     ReduxLabData.getInstance(), //
-                                    ReduxConstants.ANALYSIS_PURPOSE.NONE);
+                                    ReduxConstants.ANALYSIS_PURPOSE.NONE, "UPb");
 
                             projectSamples.add(currentSample);
 
