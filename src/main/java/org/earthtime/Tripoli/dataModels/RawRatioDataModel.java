@@ -1523,16 +1523,16 @@ public class RawRatioDataModel //
             }
         }
 
-        // zero out rowcol for inactive acquisitions
+//////        // zero out rowcol for inactive acquisitions
         Matrix slogRatioX_Y_withZeroesAtInactive = SlogRatioX_Yfull.copy();
-        for (Integer rowCol : inactiveIndices) {
-            for (int i = 0; i < SlogRatioX_Yfull.getRowDimension(); i++) {
-                if (i != rowCol) {
-                    slogRatioX_Y_withZeroesAtInactive.set(rowCol, i, 0.0);
-                    slogRatioX_Y_withZeroesAtInactive.set(i, rowCol, 0.0);
-                }
-            }
-        }
+//////        for (Integer rowCol : inactiveIndices) {
+//////            for (int i = 0; i < SlogRatioX_Yfull.getRowDimension(); i++) {
+//////                if (i != rowCol) {
+//////                    slogRatioX_Y_withZeroesAtInactive.set(rowCol, i, 0.0);
+//////                    slogRatioX_Y_withZeroesAtInactive.set(i, rowCol, 0.0);
+//////                }
+//////            }
+//////        }
 
         // remove row and col of matrix sf corresponding to shadeIndices
         if (shadeIndices.size() > 0) {
@@ -1612,10 +1612,10 @@ public class RawRatioDataModel //
         Matrix logRatioColVector = new Matrix(logRatios, logRatios.length);
         // solve making another column vector
         Matrix SlogRXYSolveLRWithZeroesAtInactive = SlogRatioX_Yfull.solve(logRatioColVector);
-        //zero out missing points
-        for (int index = 0; index < inactiveIndices.size(); index++) {
-            SlogRXYSolveLRWithZeroesAtInactive.set(inactiveIndices.get(index), 0, 0.0);
-        }
+//        //zero out missing points
+//        for (int index = 0; index < inactiveIndices.size(); index++) {
+//            SlogRXYSolveLRWithZeroesAtInactive.set(inactiveIndices.get(index), 0, 0.0);
+//        }
         // remove shaded points
         if (shadeIndices.size() > 0) {
             // reverse list of indices to remove to avoid counting errors
