@@ -394,7 +394,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                 theFractionTableScrollPane.setViewportView(announcementPane);
                 break;
             case FRACTIONS:
-                theFractionTableScrollPane.setViewportView(theFractionTable);
+//                theFractionTableScrollPane.setViewportView(theFractionTable);
         }
 
         theFractionTableScrollPane.repaint();
@@ -1354,7 +1354,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         if (theSample.isSampleTypeProject() || theSample.isSampleTypeLegacy() || theSample.isAnalysisTypeLAICPMS() || theSample.isAnalysisTypeCompiled()) {
             jSplitPane1.setDividerLocation(0);
         } else if (theSample.isAnalysisTypeIDTIMS()) {
-            jSplitPane1.setDividerLocation(0.4);
+            jSplitPane1.setDividerLocation(0);//.4);
         } else {
             // show the welcome page
             jSplitPane1.setDividerLocation(1.0);
@@ -1537,18 +1537,18 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         interpretSampleDates_button.setEnabled(false);
 
     }
-
-    private javax.swing.JTable getTheFractionTable() {
-        return theFractionTable;
-    }
-
-    /**
-     *
-     * @param theFractionTable
-     */
-    public void setTheFractionTable(javax.swing.JTable theFractionTable) {
-        this.theFractionTable = theFractionTable;
-    }
+//
+//    private javax.swing.JTable getTheFractionTable() {
+//        return theFractionTable;
+//    }
+//
+//    /**
+//     *
+//     * @param theFractionTable
+//     */
+//    public void setTheFractionTable(javax.swing.JTable theFractionTable) {
+//        this.theFractionTable = theFractionTable;
+//    }
 
     /**
      * @return the myConcordiaGraphPanel
@@ -3244,27 +3244,27 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 }//GEN-LAST:event_editMineralStandardsModelsActionPerformed
 
     private void labDataMenuMenuDeselected(javax.swing.event.MenuEvent evt) {//GEN-FIRST:event_labDataMenuMenuDeselected
-        this.getTheFractionTable().repaint();
+//        this.getTheFractionTable().repaint();
     }//GEN-LAST:event_labDataMenuMenuDeselected
 
     private void sampleFileMenuMenuDeselected(javax.swing.event.MenuEvent evt) {//GEN-FIRST:event_sampleFileMenuMenuDeselected
-        this.getTheFractionTable().repaint();
+//        this.getTheFractionTable().repaint();
     }//GEN-LAST:event_sampleFileMenuMenuDeselected
 
     private void reportMenuMenuDeselected(javax.swing.event.MenuEvent evt) {//GEN-FIRST:event_reportMenuMenuDeselected
-        this.getTheFractionTable().repaint();
+//        this.getTheFractionTable().repaint();
     }//GEN-LAST:event_reportMenuMenuDeselected
 
     private void referencesMenuMenuDeselected(javax.swing.event.MenuEvent evt) {//GEN-FIRST:event_referencesMenuMenuDeselected
-        this.getTheFractionTable().repaint();
+//        this.getTheFractionTable().repaint();
     }//GEN-LAST:event_referencesMenuMenuDeselected
 
     private void earthTimeWebSiteMenuMenuDeselected(javax.swing.event.MenuEvent evt) {//GEN-FIRST:event_earthTimeWebSiteMenuMenuDeselected
-        this.getTheFractionTable().repaint();
+//        this.getTheFractionTable().repaint();
     }//GEN-LAST:event_earthTimeWebSiteMenuMenuDeselected
 
     private void helpMenuMenuDeselected(javax.swing.event.MenuEvent evt) {//GEN-FIRST:event_helpMenuMenuDeselected
-        this.getTheFractionTable().repaint();
+//        this.getTheFractionTable().repaint();
     }//GEN-LAST:event_helpMenuMenuDeselected
 
     private void interpretSampleDates_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_interpretSampleDates_buttonActionPerformed
