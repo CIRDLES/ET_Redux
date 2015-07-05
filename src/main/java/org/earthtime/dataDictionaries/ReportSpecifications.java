@@ -130,16 +130,16 @@ public class ReportSpecifications {
      *
      */
     public static final String[][] ReportCategory_CompositionUTh = new String[][]{
-        {"", "conc", "232Th", "ppb", "getCompositionalMeasureByName", "conc232Th", "ABS",
+        {"conc", "232Th", "", "ppb", "getCompositionalMeasureByName", "conc232Th", "ABS",
             "FN-17", "true", "true", "3", "", "concentration of 232Th", "true", "false"
         },
-        {"", "conc", "238U", "ppm", "getCompositionalMeasureByName", "conc238U", "ABS",
+        {"conc", "238U", "", "ppm", "getCompositionalMeasureByName", "conc238U", "ABS",
             "", "true", "true", "3", "", "concentration of 238U", "false", "true"
         },
         {"", "[230Th/", "232Th]", "", "getAnalysisMeasure", UThAnalysisMeasures.ar230Th_232Thfc.getName(), "",
             "FN-17", "true", "true", "3", "", "[230Th/232Th] activity ratio", "false", "false"
         },
-        {"", "[232Th/", "238U]", "1e5", "getAnalysisMeasure", UThAnalysisMeasures.ar232Th_238Ufc.getName(), "",
+        {"[232Th/", "238U]", "", "*1e5", "getAnalysisMeasure", UThAnalysisMeasures.ar232Th_238Ufc.getName(), "",
             "FN-17", "true", "true", "3", "", "[232Th/238U] activity ratio", "false", "false"
         },
         {"", "[230Th/", "238U]", "", "getAnalysisMeasure", UThAnalysisMeasures.ar230Th_238Ufc.getName(), "ABS",
