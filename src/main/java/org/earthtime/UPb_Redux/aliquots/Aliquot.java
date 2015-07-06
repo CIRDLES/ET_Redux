@@ -28,6 +28,7 @@ import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.ReduxConstants.ANALYSIS_PURPOSE;
 import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
+import org.earthtime.aliquots.AliquotForUPbInterface;
 import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.dataDictionaries.DataDictionary;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
@@ -39,7 +40,7 @@ import org.earthtime.ratioDataModels.tracers.TracerUPbModel;
  *
  * @author James F. Bowring
  */
-public abstract class Aliquot implements AliquotInterface, Serializable {
+public abstract class Aliquot implements AliquotInterface, AliquotForUPbInterface, Serializable {
 
     // Class variables
     private static final long serialVersionUID = 6355007168312036059L;
@@ -292,7 +293,7 @@ public abstract class Aliquot implements AliquotInterface, Serializable {
      *
      * @return
      */
-    public AbstractRatiosDataModel getPhysicalConstants() {
+    public AbstractRatiosDataModel getPhysicalConstantsModel() {
         return physicalConstantsModel;
     }
 
@@ -300,7 +301,7 @@ public abstract class Aliquot implements AliquotInterface, Serializable {
      *
      * @param physicalConstants
      */
-    public void setPhysicalConstants(AbstractRatiosDataModel physicalConstants) {
+    public void setPhysicalConstantsModel(AbstractRatiosDataModel physicalConstants) {
         this.physicalConstantsModel = physicalConstants;
     }
 

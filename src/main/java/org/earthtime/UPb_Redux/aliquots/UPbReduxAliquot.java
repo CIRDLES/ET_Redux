@@ -47,7 +47,6 @@ import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.UPbFractionReducer;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
-import org.earthtime.reportViews.ReportRowGUIInterface;
 import org.earthtime.UPb_Redux.samples.SESARSampleMetadata;
 import org.earthtime.UPb_Redux.user.UPbReduxConfigurator;
 import org.earthtime.UPb_Redux.valueModels.MeasuredRatioModel;
@@ -84,6 +83,7 @@ import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsMo
 import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsModelXMLConverter;
 import org.earthtime.ratioDataModels.tracers.TracerUPbModel;
 import org.earthtime.ratioDataModels.tracers.TracerUPbModelXMLConverter;
+import org.earthtime.reportViews.ReportRowGUIInterface;
 import org.earthtime.xmlUtilities.XMLSerializationI;
 
 /**
@@ -94,14 +94,14 @@ import org.earthtime.xmlUtilities.XMLSerializationI;
  * @since 1.0
  */
 public class UPbReduxAliquot extends Aliquot
-        implements AliquotInterface,
+        implements 
         ReduxAliquotInterface,
         ReportRowGUIInterface,
         XMLSerializationI {
 
     // Class variables
     private static final long serialVersionUID = -1503596071033797228L;
-// Instance variables
+    // Instance variables
     private transient String aliquotXMLSchemaURL;
     private transient Date aliquotFolderTimeStamp;
     /**
@@ -165,7 +165,6 @@ public class UPbReduxAliquot extends Aliquot
     public UPbReduxAliquot(
             int aliquotNumber,
             String aliquotName,
-            ReduxLabData reduxLabData,
             AbstractRatiosDataModel physicalConstants,
             boolean compiled,
             SESARSampleMetadata mySESARSampleMetadata) {
@@ -175,16 +174,16 @@ public class UPbReduxAliquot extends Aliquot
 
         this.aliquotNumber = aliquotNumber;
 
-        this.myReduxLabData = reduxLabData;
-        setPhysicalConstants(physicalConstants);
+        this.myReduxLabData = ReduxLabData.getInstance();
+        setPhysicalConstantsModel(physicalConstants);
 
         this.compiled = compiled;
 
         this.aliquotFractions = new Vector<>();
 
         this.sampleIGSN = "NONE";
-        setLaboratoryName(getMyReduxLabData().getLabName());
-        setAnalystName(getMyReduxLabData().getAnalystName());
+        setLaboratoryName(myReduxLabData.getLabName());
+        setAnalystName(myReduxLabData.getAnalystName());
 
         // setup default text values for editing
         try {
@@ -303,7 +302,7 @@ public class UPbReduxAliquot extends Aliquot
 
         this.mySESARSampleMetadata = mySESARSampleMetadata;
 
-        analysisImages = new ArrayList<AnalysisImage>();
+        analysisImages = new ArrayList<>();
 
     }
 
@@ -669,6 +668,7 @@ public class UPbReduxAliquot extends Aliquot
      *
      * @param aliquotNumber
      */
+    @Override
     public void setAliquotNumber(int aliquotNumber) {
         this.aliquotNumber = aliquotNumber;
     }
@@ -677,75 +677,9 @@ public class UPbReduxAliquot extends Aliquot
      *
      * @return
      */
+    @Override
     public Vector<ETFractionInterface> getAliquotFractions() {
         return aliquotFractions;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public Vector<ETFractionInterface> getActiveAliquotFractions() {
-        Vector<ETFractionInterface> retVal = new Vector<>();
-        aliquotFractions.stream().filter((f) -> (!f.isRejected())).forEach((f) -> {
-            retVal.add(f);
-        });
-        return retVal;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public Vector<String> getAliquotFractionIDs() {
-        Vector<String> retVal = new Vector<>();
-        aliquotFractions.stream().filter((f) -> (!f.isRejected())).forEach((f) -> {
-            retVal.add(f.getFractionID());
-        });
-        return retVal;
-    }
-
-    /**
-     *
-     * @param name
-     * @return
-     */
-    public ETFractionInterface getAliquotFractionByName(String name) {
-        ETFractionInterface retVal = null;
-        for (ETFractionInterface f : getAliquotFractions()) {
-            if (f.getFractionID().equalsIgnoreCase(name)) {
-                retVal = f;
-            }
-        }
-        return retVal;
-    }
-
-    /**
-     *
-     * @param selectedFractionIDs
-     * @return
-     */
-    public Vector<ETFractionInterface> getAliquotSampleDateModelSelectedFractions(Vector<String> selectedFractionIDs) {
-        Vector<ETFractionInterface> retVal = new Vector<>();
-        selectedFractionIDs.stream().forEach((fID) -> {
-            retVal.add(getAliquotFractionByName(fID));
-        });
-
-        return retVal;
-    }
-
-    /**
-     *
-     * @param selectedFractionIDs
-     * @return
-     */
-    public Vector<ETFractionInterface> getAliquotSampleDateModelDeSelectedFractions(Vector<String> selectedFractionIDs) {
-        Vector<ETFractionInterface> retVal = new Vector<>();
-        getAliquotFractionIDs().stream().filter((fID) -> (!selectedFractionIDs.contains(fID))).forEach((fID) -> {
-            retVal.add(getAliquotFractionByName(fID));
-        });
-
-        return retVal;
     }
 
     /**
@@ -768,13 +702,14 @@ public class UPbReduxAliquot extends Aliquot
      *
      * @param myReduxLabData
      */
+    @Override
     public void setMyReduxLabData(ReduxLabData myReduxLabData) {
         this.myReduxLabData = myReduxLabData;
     }
 
     @Override
-    public void setPhysicalConstants(AbstractRatiosDataModel physicalConstants) {
-        super.setPhysicalConstants(physicalConstants);
+    public void setPhysicalConstantsModel(AbstractRatiosDataModel physicalConstants) {
+        super.setPhysicalConstantsModel(physicalConstants);
 
         // all existing fractions must be updated
         if (getAliquotFractions() != null) {
@@ -1089,6 +1024,7 @@ public class UPbReduxAliquot extends Aliquot
      *
      * @return
      */
+    @Override
     public boolean isCompiled() {
         return compiled;
     }
@@ -1097,6 +1033,7 @@ public class UPbReduxAliquot extends Aliquot
      *
      * @param compiled
      */
+    @Override
     public void setCompiled(boolean compiled) {
         this.compiled = compiled;
     }
@@ -1247,7 +1184,6 @@ public class UPbReduxAliquot extends Aliquot
                 = new UPbReduxAliquot(
                         0,
                         "Test Aliquot",
-                        ReduxLabData.getInstance(),
                         PhysicalConstantsModel.getEARTHTIMEPhysicalConstantsModel(),
                         false,
                         new SESARSampleMetadata());
@@ -1270,8 +1206,8 @@ public class UPbReduxAliquot extends Aliquot
         temp1.setPreferred(true);
         aliquot.getSampleDateModels().add(temp1);
 
-        ((UPbReduxAliquot) aliquot).getAliquotFractions().clear();
-        ((UPbReduxAliquot) aliquot).getAliquotFractions().add(uPbfraction);
+        ((ReduxAliquotInterface) aliquot).getAliquotFractions().clear();
+        ((ReduxAliquotInterface) aliquot).getAliquotFractions().add(uPbfraction);
         temp1.setAliquot(aliquot);
         //     temp1.PopulateFractionVector();
 
@@ -1403,7 +1339,7 @@ public class UPbReduxAliquot extends Aliquot
      */
     public ArrayList<AnalysisImage> getAnalysisImages() {
         if (analysisImages == null) {
-            analysisImages = new ArrayList<AnalysisImage>();
+            analysisImages = new ArrayList<>();
         }
         return analysisImages;
     }
@@ -1443,6 +1379,7 @@ public class UPbReduxAliquot extends Aliquot
     /**
      * @return the selectedInDataTable
      */
+    @Override
     public boolean isSelectedInDataTable() {
         return selectedInDataTable;
     }
@@ -1450,15 +1387,10 @@ public class UPbReduxAliquot extends Aliquot
     /**
      * @param selectedInDataTable the selectedInDataTable to set
      */
+    @Override
     public void setSelectedInDataTable(boolean selectedInDataTable) {
         this.selectedInDataTable = selectedInDataTable;
     }
 
-    /**
-     *
-     * @return
-     */
-    public boolean containsActiveFractions() {
-        return (!getActiveAliquotFractions().isEmpty());
-    }
+
 }

@@ -56,6 +56,7 @@ import org.earthtime.UPb_Redux.valueModels.SampleDateInterceptModel;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
+import org.earthtime.aliquots.AliquotForUPbInterface;
 import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.aliquots.ReduxAliquotInterface;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
@@ -80,9 +81,40 @@ public interface SampleInterface {
 
     /**
      *
-     * @param myLabData
+     * @param sample
+     * @param sampleType
      */
-    public abstract void setUpSample(ReduxLabData myLabData);
+    public static void specializeNewSample( //
+            SampleInterface sample) {
+
+        String mySampleName = "NEW SAMPLE";
+        boolean myAnalyzed = false;
+        String sampleType = sample.getSampleType();
+
+        if (sampleType.equalsIgnoreCase(SampleTypesEnum.PROJECT.getName())) {
+            mySampleName = SampleTypesEnum.PROJECT.getName();
+            myAnalyzed = true;
+        } else if (sampleType.equalsIgnoreCase(SampleTypesEnum.LEGACY.getName())) {
+            mySampleName = "LEGACY SAMPLE";
+            myAnalyzed = true;
+        } else if (sampleType.equalsIgnoreCase(SampleTypesEnum.COMPILATION.getName())) {
+            mySampleName = "COMPILED SAMPLE";
+        } else if (sampleType.equalsIgnoreCase("NONE")) {
+            mySampleName = "NONE";
+        } else if (sampleType.equalsIgnoreCase(SampleTypesEnum.LIVEWORKFLOW.getName())) {
+            mySampleName = "LIVE WORKFLOW SAMPLE";
+        }
+
+        sample.setSampleName(mySampleName);
+
+        //set flag for whether analysis was performed elsewhere and we just have legacy results
+        sample.setAnalyzed(myAnalyzed);
+    }
+
+    /**
+     *
+     */
+    public abstract void setUpSample();
 
     /**
      * gets the <code>file</code> of this <code>Sample</code>.
@@ -217,6 +249,8 @@ public interface SampleInterface {
      */
     public abstract String getReduxSampleFileName();
 
+    public void setReduxSampleFileName(String reduxSampleFileName);
+
     /**
      * gets the <code>reduxSampleFilePath</code> of this <code>Sample</code>.
      *
@@ -228,20 +262,48 @@ public interface SampleInterface {
      */
     public abstract String getReduxSampleFilePath();
 
+    public void setReduxSampleFilePath(String reduxSampleFilePath);
+
     /**
      * sets the <code>reduxSampleFilePath</code> and
      * <code>reduxSampleFileName</code> of this <code>Sample</code> to the
      * argument <code>reduxSampleFile</code>
      *
+     * @param sample the value of sample
+     * @param reduxSampleFile value to which <code>reduxSampleFilePath</code>
+     * and <code>reduxSampleFileName</code> of this <code>Sample</code> will be
+     * set
      * @pre argument <code>reduxSampleFile</code> is a valid file
      * @post this <code>Sample</code>'s <code>reduxSampleFilePath</code> and
      * <code>reduxSampleFileName</code> are set to argument
      * <code>reduxSamplefile</code>
-     * @param reduxSampleFile value to which <code>reduxSampleFilePath</code>
-     * and <code>reduxSampleFileName</code> of this <code>Sample</code> will be
-     * set
      */
-    public abstract void setReduxSampleFilePath(File reduxSampleFile);
+    public default void determineReduxSampleFilePath(SampleInterface sample, File reduxSampleFile) {
+        boolean isChanged = false;
+        // set redux extension
+
+        if (!reduxSampleFile.getPath().endsWith(".redux")) {
+            isChanged = isChanged || (sample.getReduxSampleFilePath().compareToIgnoreCase(reduxSampleFile.getPath() + ".redux") != 0);
+
+            sample.setReduxSampleFilePath(reduxSampleFile.getPath() + ".redux");
+            isChanged
+                    = isChanged || (sample.getReduxSampleFilePath().compareToIgnoreCase(reduxSampleFile.getName() + ".redux") != 0);
+
+            sample.setReduxSampleFileName(reduxSampleFile.getName() + ".redux");
+
+        } else {
+            isChanged = isChanged || (sample.getReduxSampleFilePath().compareToIgnoreCase(reduxSampleFile.getPath()) != 0);
+
+            sample.setReduxSampleFilePath(reduxSampleFile.getPath());
+            isChanged
+                    = isChanged || (sample.getReduxSampleFilePath().compareToIgnoreCase(reduxSampleFile.getName()) != 0);
+
+            sample.setReduxSampleFileName(reduxSampleFile.getName());
+
+        }
+
+        sample.setChanged(isChanged);
+    }
 
     /**
      *
@@ -405,6 +467,7 @@ public interface SampleInterface {
      * finds the <code>Aliquot</code> named <code>file</code> in the array
      * <code>aliquots</code>.
      *
+     * @param name
      * @pre an <code>Aliquot</code> exists in <code>aliquots</code> named
      * <code>file</code>
      * @post the <code>Aliquot</code> whose file corresponds to argument
@@ -450,8 +513,8 @@ public interface SampleInterface {
         // May 2010  refresh aliquots to   remove empty ones
         Vector<AliquotInterface> activeAliquots = new Vector<>();
         getAliquots().stream().filter((aliquot)
-                -> (((UPbReduxAliquot) aliquot).getAliquotFractions().size() > 0)).filter((aliquot)
-                        -> (((UPbReduxAliquot) aliquot).containsActiveFractions())).forEach(activeAliquots::add);
+                -> (((ReduxAliquotInterface) aliquot).getAliquotFractions().size() > 0)).filter((aliquot)
+                        -> (((ReduxAliquotInterface) aliquot).containsActiveFractions())).forEach(activeAliquots::add);
         return activeAliquots;
     }
 
@@ -499,15 +562,14 @@ public interface SampleInterface {
 
         Vector<ETFractionInterface> retFractions = new Vector<>();
 
-        for (Iterator<ETFractionInterface> it = getFractions().iterator(); it.hasNext();) {
-            ETFractionInterface temp = it.next();
+        for (ETFractionInterface temp : getFractions()) {
             if (temp.getAliquotNumber() == aliquotNum) {
                 retFractions.add(temp);
             }
         }
 
-        ((UPbReduxAliquot) retAliquot).setAliquotFractions(retFractions);
-        ((UPbReduxAliquot) retAliquot).setMyReduxLabData(ReduxLabData.getInstance());
+        ((ReduxAliquotInterface) retAliquot).setAliquotFractions(retFractions);
+////        retAliquot.setMyReduxLabData(ReduxLabData.getInstance());
 
         return retAliquot;
     }
@@ -572,6 +634,15 @@ public interface SampleInterface {
         }
     }
 
+    public AliquotInterface generateDefaultAliquot(//
+            int aliquotNumber,
+            String aliquotName,
+            AbstractRatiosDataModel physicalConstants,
+            boolean compiled,
+            SESARSampleMetadata mySESARSampleMetadata);
+
+    public AliquotInterface generateDefaultAliquot();
+    
     /**
      * adds an <code>Aliquot</code> to <code>aliquots</code>. It is created with
      * aliquot number relative to its position in the array such that the first
@@ -591,17 +662,23 @@ public interface SampleInterface {
     public default int addNewDefaultAliquot() {
         int retval = -1;
         try {
-            AliquotInterface tempAliquot
-                    = new UPbReduxAliquot(
+            AliquotInterface defaultAliquot
+                    = generateDefaultAliquot(//
                             getAliquots().size() + 1,
                             "Aliquot-" + Integer.toString(getAliquots().size() + 1),
-                            ReduxLabData.getInstance(),
                             getPhysicalConstantsModel(),
                             isAnalyzed(),
                             getMySESARSampleMetadata());
 
-            tempAliquot.setSampleIGSN(getSampleIGSN());
-            getAliquots().add(tempAliquot);
+//                    = new UPbReduxAliquot(
+//                            getAliquots().size() + 1,
+//                            "Aliquot-" + Integer.toString(getAliquots().size() + 1),
+//                            ReduxLabData.getInstance(),
+//                            getPhysicalConstantsModel(),
+//                            isAnalyzed(),
+//                            getMySESARSampleMetadata());
+            defaultAliquot.setSampleIGSN(getSampleIGSN());
+            getAliquots().add(defaultAliquot);
             setChanged(true);
             retval = getAliquots().size();
         } catch (BadLabDataException ex) {
@@ -612,29 +689,33 @@ public interface SampleInterface {
 
     /**
      *
-     * @param aliquot the value of aliquot
      * @param sample the value of sample
+     * @param aliquot the value of aliquot
+     * @param importedAliquot the value of importedAliquot
      */
-    public static void copyAliquotIntoSample(AliquotInterface aliquot, SampleInterface sample) {
-        AliquotInterface importedAliquot = new UPbReduxAliquot();
+    public static void copyAliquotIntoSample(SampleInterface sample, AliquotInterface aliquot, AliquotInterface importedAliquot) {
+//        AliquotInterface importedAliquot = new UPbReduxAliquot();
 
         Vector<AliquotInterface> aliquots = sample.getAliquots();
         // aliquot numbering is 1-based
         int aliquotNumber = aliquots.size() + 1;
 
-        ((UPbReduxAliquot) importedAliquot).setAliquotNumber(aliquotNumber);
-        ((UPbReduxAliquot) importedAliquot).setMyReduxLabData(ReduxLabData.getInstance());
-        ((UPbReduxAliquot) importedAliquot).setCompiled(false);
+        ((ReduxAliquotInterface) importedAliquot).setAliquotNumber(aliquotNumber);
+        importedAliquot.setMyReduxLabData(ReduxLabData.getInstance());
+        ((ReduxAliquotInterface) importedAliquot).setCompiled(false);
+
+        importedAliquot.setMineralStandardModels(aliquot.getMineralStandardModels());
+        importedAliquot.setSampleDateModels(aliquot.getSampleDateModels());
 
         // prepend filename of sample to aliquot
         importedAliquot.setAliquotName(//
-                ((UPbReduxAliquot) aliquot).getAliquotFractions().get(0).getSampleName().trim()//
+                ((ReduxAliquotInterface) aliquot).getAliquotFractions().get(0).getSampleName().trim()//
                 + "::"//
                 + aliquot.getAliquotName());
 
-        ((UPbReduxAliquot) importedAliquot).setAliquotFractions(new Vector<>());
+        ((ReduxAliquotInterface) importedAliquot).setAliquotFractions(new Vector<>());
 
-        Iterator<ETFractionInterface> aliquotFractionIterator = ((UPbReduxAliquot) aliquot).getAliquotFractions().iterator();
+        Iterator<ETFractionInterface> aliquotFractionIterator = ((ReduxAliquotInterface) aliquot).getAliquotFractions().iterator();
         while (aliquotFractionIterator.hasNext()) {
             ETFractionInterface fraction = aliquotFractionIterator.next();
 
@@ -672,9 +753,9 @@ public interface SampleInterface {
         // aliquot numbering is 1-based
         int aliquotNumber = sample.getAliquots().size() + 1;
 
-        ((UPbReduxAliquot) aliquot).setAliquotNumber(aliquotNumber);
-        ((UPbReduxAliquot) aliquot).setMyReduxLabData(ReduxLabData.getInstance());
-        ((UPbReduxAliquot) aliquot).setCompiled(true);
+        ((ReduxAliquotInterface) aliquot).setAliquotNumber(aliquotNumber);
+        aliquot.setMyReduxLabData(ReduxLabData.getInstance());
+        ((ReduxAliquotInterface) aliquot).setCompiled(true);
 
         // prepend filename of sample to aliquot
         aliquot.setAliquotName(//
@@ -682,7 +763,7 @@ public interface SampleInterface {
                 + "::"//
                 + aliquot.getAliquotName());
 
-        ((UPbReduxAliquot) aliquot).setAliquotFractions(new Vector<ETFractionInterface>());
+        ((ReduxAliquotInterface) aliquot).setAliquotFractions(new Vector<>());
 
         // jan 2015 this needs reworking to detect the type of fraction coming in
         // for now we will assume an aliquot has all the same type of fraction
@@ -699,7 +780,7 @@ public interface SampleInterface {
                 if (tracer == null) {
                     tracer = ReduxLabData.getInstance().getNoneTracer();
                 }
-                AbstractRatiosDataModel pbBlank = aliquot.getAPbBlank(fraction.getPbBlankID());
+                AbstractRatiosDataModel pbBlank = ((AliquotForUPbInterface) aliquot).getAPbBlank(fraction.getPbBlankID());
                 if (pbBlank == null) {
                     pbBlank = ReduxLabData.getInstance().getNonePbBlankModel();
                 }
@@ -738,13 +819,13 @@ public interface SampleInterface {
 
                 }
 
-                ValueModel alphaPbModel = aliquot.getAnAlphaPbModel(fraction.getAlphaPbModelID());
+                ValueModel alphaPbModel = ((AliquotForUPbInterface) aliquot).getAnAlphaPbModel(fraction.getAlphaPbModelID());
                 if (alphaPbModel == null) {
                     alphaPbModel = ReduxLabData.getInstance().getNoneAlphaPbModel();
                     nextFraction.setAlphaPbModelID(alphaPbModel.getName());
                 }
 
-                ValueModel alphaUModel = aliquot.getAnAlphaUModel(fraction.getAlphaUModelID());
+                ValueModel alphaUModel = ((AliquotForUPbInterface) aliquot).getAnAlphaUModel(fraction.getAlphaUModelID());
                 if (alphaUModel == null) {
                     alphaUModel = ReduxLabData.getInstance().getFirstAlphaUModel();
                     nextFraction.setAlphaUModelID(alphaUModel.getName());
@@ -753,9 +834,9 @@ public interface SampleInterface {
                 ((UPbFractionI) nextFraction).setAlphaPbModel(alphaPbModel);
                 ((UPbFractionI) nextFraction).setAlphaUModel(alphaUModel);
 
-                ((ETFractionInterface) nextFraction).setPhysicalConstantsModel(aliquot.getPhysicalConstants());// was sample.getphys...
+                nextFraction.setPhysicalConstantsModel(aliquot.getPhysicalConstantsModel());// was sample.getphys...
 
-                ((UPbReduxAliquot) aliquot).getAliquotFractions().add(nextFraction);
+                ((ReduxAliquotInterface) aliquot).getAliquotFractions().add(nextFraction);
 
                 sample.getFractions().add(nextFraction);
             }
@@ -777,9 +858,9 @@ public interface SampleInterface {
                             ReduxLabData.getInstance());
                 }
 
-                ((ETFractionInterface) nextFraction).setPhysicalConstantsModel(aliquot.getPhysicalConstants());
+                nextFraction.setPhysicalConstantsModel(aliquot.getPhysicalConstantsModel());
 
-                ((UPbReduxAliquot) aliquot).getAliquotFractions().add(nextFraction);
+                ((ReduxAliquotInterface) aliquot).getAliquotFractions().add(nextFraction);
 
                 sample.getFractions().add(nextFraction);
             }
@@ -918,7 +999,7 @@ public interface SampleInterface {
         // process all sampleAgeModels' included fraction vectors to remove missing aliquotFractionFiles
         sample.getAliquots().stream().map((nextAliquot) -> {
             // may 2012 next line to force reduction
-            ((UPbReduxAliquot) nextAliquot).reduceData();
+            ((ReduxAliquotInterface) nextAliquot).reduceData();
             return nextAliquot;
         }).forEach((nextAliquot) -> {
             nextAliquot.updateSampleDateModels();
@@ -930,7 +1011,7 @@ public interface SampleInterface {
      * @param aliquot
      */
     public default void removeAliquot(AliquotInterface aliquot) {
-        Vector<ETFractionInterface> aliquotFractions = ((UPbReduxAliquot) aliquot).getAliquotFractions();
+        Vector<ETFractionInterface> aliquotFractions = ((ReduxAliquotInterface) aliquot).getAliquotFractions();
         for (ETFractionInterface aliquotFraction : aliquotFractions) {
             removeUPbReduxFraction(aliquotFraction);
         }
@@ -952,18 +1033,18 @@ public interface SampleInterface {
 
         if ((aliquotA != null) && (aliquotB != null)) {
 
-            int numberAliquotA = ((UPbReduxAliquot) aliquotA).getAliquotNumber();
-            Vector<ETFractionInterface> fractionsAliquotA = ((UPbReduxAliquot) aliquotA).getAliquotFractions();
+            int numberAliquotA = ((ReduxAliquotInterface) aliquotA).getAliquotNumber();
+            Vector<ETFractionInterface> fractionsAliquotA = ((ReduxAliquotInterface) aliquotA).getAliquotFractions();
 
-            int numberAliquotB = ((UPbReduxAliquot) aliquotB).getAliquotNumber();
-            Vector<ETFractionInterface> fractionsAliquotB = ((UPbReduxAliquot) aliquotB).getAliquotFractions();
+            int numberAliquotB = ((ReduxAliquotInterface) aliquotB).getAliquotNumber();
+            Vector<ETFractionInterface> fractionsAliquotB = ((ReduxAliquotInterface) aliquotB).getAliquotFractions();
 
             // switch assigned aliquot numbers
-            ((UPbReduxAliquot) aliquotA).setAliquotNumber(numberAliquotB);
+            ((ReduxAliquotInterface) aliquotA).setAliquotNumber(numberAliquotB);
             fractionsAliquotA.stream().forEach((f) -> {
                 f.setAliquotNumber(numberAliquotB);
             });
-            ((UPbReduxAliquot) aliquotB).setAliquotNumber(numberAliquotA);
+            ((ReduxAliquotInterface) aliquotB).setAliquotNumber(numberAliquotA);
             fractionsAliquotB.stream().forEach((f) -> {
                 f.setAliquotNumber(numberAliquotA);
             });
@@ -1069,7 +1150,7 @@ public interface SampleInterface {
      * @param UPbFractions value to which <code>UPbFractions</code> of this
      * <code>Sample</code> will be set
      */
-    public abstract void setUPbFractions(Vector<ETFractionInterface> UPbFractions);
+    public abstract void setFractions(Vector<ETFractionInterface> UPbFractions);
 
     /**
      *
@@ -1508,12 +1589,12 @@ public interface SampleInterface {
      * @param reportSettingsModel
      */
     public abstract void setReportSettingsModel(ReportSettingsInterface reportSettingsModel);
-    
-    public static void loadDefaultEARTHTIMEReportSettingsModel(SampleInterface sample){
-        if (sample.getIsotopeStyle().compareToIgnoreCase("UPb")==0){
+
+    public static void loadDefaultEARTHTIMEReportSettingsModel(SampleInterface sample) {
+        if (sample.getIsotopeStyle().compareToIgnoreCase("UPb") == 0) {
             sample.setReportSettingsModel(ReportSettings.EARTHTIMEReportSettingsUPb());
-        }else {
-            sample.setReportSettingsModel(ReportSettings.EARTHTIMEReportSettingsUTh());            
+        } else {
+            sample.setReportSettingsModel(ReportSettings.EARTHTIMEReportSettingsUTh());
         }
     }
 
@@ -1563,7 +1644,7 @@ public interface SampleInterface {
      */
     public static String[][] reportActiveAliquotFractionsByNumberStyle(SampleInterface sample, AliquotInterface aliquot, boolean isNumeric) {
 
-        return sample.getReportSettingsModel().reportActiveAliquotFractionsByNumberStyle(sample, ((UPbReduxAliquot) aliquot).getActiveAliquotFractions(), isNumeric);
+        return sample.getReportSettingsModel().reportActiveAliquotFractionsByNumberStyle(sample, ((ReduxAliquotInterface) aliquot).getActiveAliquotFractions(), isNumeric);
     }
 
     /**
@@ -1634,12 +1715,6 @@ public interface SampleInterface {
     public abstract void setSampleRegistry(SampleRegistries sampleRegistry);
 
     /**
-     *
-     * @return
-     */
-    public abstract String getSampleIGSNnoRegistry();
-
-    /**
      * @return the archivedInRegistry
      */
     public abstract boolean isArchivedInRegistry();
@@ -1706,7 +1781,7 @@ public interface SampleInterface {
      */
     public static String saveSampleAsSerializedReduxFile(
             SampleInterface sample, File file) {
-        sample.setReduxSampleFilePath(file);
+        sample.determineReduxSampleFilePath(sample, file);
         saveSampleAsSerializedReduxFile(sample);
 
         return sample.getReduxSampleFilePath();
@@ -1868,10 +1943,13 @@ public interface SampleInterface {
      */
     public default void reduceSampleData() {
         for (AliquotInterface aliquot : getAliquots()) {
-            ((UPbReduxAliquot) aliquot).reduceData();
+            ((ReduxAliquotInterface) aliquot).reduceData();
 
             // oct 2014 
-            ((UPbReduxAliquot) aliquot).updateBestAge();
+            try {
+                ((UPbReduxAliquot) aliquot).updateBestAge();
+            } catch (Exception e) {
+            }
         }
     }
 
@@ -1899,6 +1977,38 @@ public interface SampleInterface {
             a.setLaboratoryName(ReduxLabData.getInstance().getLabName());
         }
     }
-    
+
     public String getIsotopeStyle();
+
+    // april 2011 update to rrr.igsn
+    /**
+     *
+     */
+    public default void updateWithRegistrySampleIGSN() {
+        //if ( isValidatedSampleIGSN() ) {
+        String newID = SampleRegistries.updateSampleID(getSampleIGSN());
+        // check for addition of default registry
+        if (!newID.equalsIgnoreCase(getSampleIGSN())) {
+            // sets and percolates through aliquots
+            setSampleIGSN(newID);
+            // if sampleIGSN is not valid at default registry, invalidate flags
+            //if (SampleRegistries.isSampleIdentifierValidAtRegistry(sampleIGSN)) {
+            setValidatedSampleIGSN(SampleRegistries.isSampleIdentifierValidAtRegistry(getSampleIGSN()));
+        }
+    }
+
+    /**
+     *
+     * @return
+     */
+    public default String getSampleIGSNnoRegistry() {
+        String retVal = "";
+        String parse[] = getSampleIGSN().split("\\.");
+        if (parse.length > 0) {
+            // returns index 0 if no registry, 1 otherwise
+            retVal = parse[parse.length - 1];
+        }
+
+        return retVal;
+    }
 }

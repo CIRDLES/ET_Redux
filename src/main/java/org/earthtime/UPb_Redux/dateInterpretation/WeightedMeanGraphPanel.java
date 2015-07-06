@@ -61,12 +61,12 @@ import org.apache.batik.svggen.SVGGraphics2D;
 import org.apache.batik.svggen.SVGGraphics2DIOException;
 import org.apache.commons.math.special.Gamma;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.PlottingDetailsDisplayInterface;
 import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.UPb_Redux.user.SampleDateInterpretationGUIOptions;
 import org.earthtime.UPb_Redux.utilities.comparators.IntuitiveStringComparator;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
+import org.earthtime.aliquots.ReduxAliquotInterface;
 import org.earthtime.dataDictionaries.MSWDCoordinates;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.samples.SampleInterface;
@@ -211,11 +211,11 @@ public class WeightedMeanGraphPanel extends JPanel
                     // this means a new special list of fractionIDs is created fromall non-rejected fractions
                     // and each instance is tested for being included
                     // should eventually refactor
-                    Vector<String> allFIDs = new Vector<String>();
-                    for (String f : ((UPbReduxAliquot) SAM.getAliquot()).getAliquotFractionIDs()) {
+                    Vector<String> allFIDs = new Vector<>();
+                    for (String f : ((ReduxAliquotInterface) SAM.getAliquot()).getAliquotFractionIDs()) {
                         // test added for Sample-based wm
                         if (SAM.fractionDateIsPositive(//
-                                ((UPbReduxAliquot) SAM.getAliquot()).getAliquotFractionByName(f))) {
+                                ((ReduxAliquotInterface) SAM.getAliquot()).getAliquotFractionByName(f))) {
                             allFIDs.add(f);
                         }
                     }
@@ -227,13 +227,13 @@ public class WeightedMeanGraphPanel extends JPanel
                             public int compare(String fID1, String fID2) {
                                 double invertOneSigmaF1 = //
                                         1.0 //
-                                        / ((UPbReduxAliquot) selectedSampleDateModels[iFinal][0])//
+                                        / ((ReduxAliquotInterface) selectedSampleDateModels[iFinal][0])//
                                         .getAliquotFractionByName(fID1)//
                                         .getRadiogenicIsotopeDateByName(SAM.getDateName())//
                                         .getOneSigmaAbs().movePointLeft(6).doubleValue();
                                 double invertOneSigmaF2 = //
                                         1.0 //
-                                        / ((UPbReduxAliquot) selectedSampleDateModels[iFinal][0])//
+                                        / ((ReduxAliquotInterface) selectedSampleDateModels[iFinal][0])//
                                         .getAliquotFractionByName(fID2)//
                                         .getRadiogenicIsotopeDateByName(SAM.getDateName())//
                                         .getOneSigmaAbs().movePointLeft(6).doubleValue();
@@ -246,12 +246,12 @@ public class WeightedMeanGraphPanel extends JPanel
 
                             public int compare(String fID1, String fID2) {
                                 double dateF1 = //
-                                        ((UPbReduxAliquot) selectedSampleDateModels[iFinal][0])//
+                                        ((ReduxAliquotInterface) selectedSampleDateModels[iFinal][0])//
                                         .getAliquotFractionByName(fID1)//
                                         .getRadiogenicIsotopeDateByName(SAM.getDateName())//
                                         .getValue().doubleValue();
                                 double dateF2 = //
-                                        ((UPbReduxAliquot) selectedSampleDateModels[iFinal][0])//
+                                        ((ReduxAliquotInterface) selectedSampleDateModels[iFinal][0])//
                                         .getAliquotFractionByName(fID2)//
                                         .getRadiogenicIsotopeDateByName(SAM.getDateName())//
                                         .getValue().doubleValue();
@@ -345,11 +345,11 @@ public class WeightedMeanGraphPanel extends JPanel
                             includedFillColor = buildRGBColor(temp);
                         }
 
-                        ETFractionInterface f = ((UPbReduxAliquot) selectedSampleDateModels[i][0]).getAliquotFractionByName(fID);
+                        ETFractionInterface f = ((ReduxAliquotInterface) selectedSampleDateModels[i][0]).getAliquotFractionByName(fID);
 
-                        double date = f.//((UPbReduxAliquot) selectedSampleDateModels[i][0]).getAliquotFractionByName(fID).//
+                        double date = f.
                                 getRadiogenicIsotopeDateByName(SAM.getDateName()).getValue().movePointLeft(6).doubleValue();
-                        double twoSigma = f.//((UPbReduxAliquot) selectedSampleDateModels[i][0]).getAliquotFractionByName(fID).//
+                        double twoSigma = f.
                                 getRadiogenicIsotopeDateByName(SAM.getDateName()).getTwoSigmaAbs().movePointLeft(6).doubleValue();
 
                         if ((date - twoSigma) < minPoint) {
@@ -358,7 +358,7 @@ public class WeightedMeanGraphPanel extends JPanel
 
                         double invertedOneSigma = //
                                 1.0 //
-                                / f.//((UPbReduxAliquot) selectedSampleDateModels[i][0]).getAliquotFractionByName(fID).//
+                                / f.
                                 getRadiogenicIsotopeDateByName(SAM.getDateName()).getOneSigmaAbs().movePointLeft(6).doubleValue();
 
                         if (invertedOneSigma > maxWeight) {
@@ -409,7 +409,7 @@ public class WeightedMeanGraphPanel extends JPanel
                                 (float) mapY(date + twoSigma, getMaxY_Display(), rangeY, graphHeight));
 
                         g2d.drawString(
-                                ((UPbReduxAliquot) selectedSampleDateModels[i][0]).getAliquotFractionByName(fID).getFractionID(),
+                                ((ReduxAliquotInterface) selectedSampleDateModels[i][0]).getAliquotFractionByName(fID).getFractionID(),
                                 (float) mapX(saveStartSamX + ((barGap / 2.0) + barNum * (barWidth + barGap)), getMinX_Display(), rangeX, graphWidth) + 15,
                                 (float) mapY(date + twoSigma, getMaxY_Display(), rangeY, graphHeight));
 
@@ -503,7 +503,7 @@ public class WeightedMeanGraphPanel extends JPanel
                         // use in coloring fractions, we need to query the fraction itself
                         String aliquotName = sample.getAliquotNameByFractionID(fID);
 
-                        ETFractionInterface f = ((UPbReduxAliquot) selectedSampleDateModels[i][0]).getAliquotFractionByName(fID);
+                        ETFractionInterface f = ((ReduxAliquotInterface) selectedSampleDateModels[i][0]).getAliquotFractionByName(fID);
 
                         Color includedFillColor = new Color(0, 0, 0);
                         if (sample.getSampleDateInterpretationGUISettings().getAliquotOptions().get(aliquotName).containsKey("includedFillColor")) {
@@ -514,7 +514,7 @@ public class WeightedMeanGraphPanel extends JPanel
 
                         double invertOneSigma = //
                                 1.0 //
-                                / ((UPbReduxAliquot) selectedSampleDateModels[i][0]).getAliquotFractionByName(fID)//
+                                / ((ReduxAliquotInterface) selectedSampleDateModels[i][0]).getAliquotFractionByName(fID)//
                                 .getRadiogenicIsotopeDateByName(SAM.getDateName()).getOneSigmaAbs().movePointLeft(6).doubleValue();
 
                         Path2D weight = new Path2D.Double(Path2D.WIND_NON_ZERO);

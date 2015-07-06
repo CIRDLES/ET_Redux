@@ -4334,7 +4334,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
         } catch (ETException ex) {
             new ETWarningDialog(ex).setVisible(true);
         }
-        ((UPbFraction) myFraction).reduceData(isCompiled());//reduceFraction(isCompiled());
+        ((UPbFraction) myFraction).reduceData(isCompiled());
 }//GEN-LAST:event_refreshOutputs_ButtonActionPerformed
 
     private void refreshFractionation_ButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_refreshFractionation_ButtonMouseClicked
@@ -4343,7 +4343,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
         } catch (ETException ex) {
             new ETWarningDialog(ex).setVisible(true);
         }
-        ((UPbFraction) myFraction).reduceData(isCompiled());//reduceFraction(isCompiled());
+        ((UPbFraction) myFraction).reduceData(isCompiled());
         PopulateCorrectionsTab(myFraction);
 }//GEN-LAST:event_refreshFractionation_ButtonMouseClicked
 

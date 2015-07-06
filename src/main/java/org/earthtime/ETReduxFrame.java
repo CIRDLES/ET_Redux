@@ -377,7 +377,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                 visitTOPSOIL.setBounds(FRAME_WIDTH / 2 - 325, 575, 650, 25);//(475, 140, 650, 25);
                 visitTOPSOIL.addActionListener((ActionEvent e) -> {
                     BrowserControl.displayURL("https://github.com/CIRDLES/topsoil");
-        });
+                });
                 announcementPane.add(visitTOPSOIL);
 
                 JButton releaseNotes = new ET_JButton("Click to see Latest Release Notes.");
@@ -385,7 +385,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                 releaseNotes.setBounds(475, 500, 210, 20);//(150, 180, 220, 20);
                 releaseNotes.addActionListener((ActionEvent e) -> {
                     BrowserControl.displayURL("https://docs.google.com/document/d/18CDAMmabkGiNTBiVkqSaNlW8OOXSr4CHGa5TFg4gKwg/edit");
-        });
+                });
 
                 theFractionTableScrollPane.setViewportView(announcementPane);
                 break;
@@ -794,8 +794,14 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         theProject = new Project(myState);
 
         try {
-            theSample = ProjectSample.initializeNewSample(//                  
-                    myState.getReduxPreferences().getDefaultSampleAnalysisPurpose(), isotopeStyle);
+            theSample = //
+                    new ProjectSample(//
+                            SampleTypesEnum.PROJECT.getName(),//
+                            SampleTypesEnum.PROJECT.getName(), //
+                            SampleAnalysisTypesEnum.COMPILED.getName(), //
+                            myState.getReduxPreferences().getDefaultSampleAnalysisPurpose(),//
+                            true, //
+                            isotopeStyle);
         } catch (BadLabDataException ex) {
             new ETWarningDialog(ex).setVisible(true);
         }
@@ -892,8 +898,6 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                     case JOptionPane.NO_OPTION:
                         theSample.setChanged(false);
                         break;
-//                    case JOptionPane.CANCEL_OPTION:
-//                        retval = false;
                     case JOptionPane.CLOSED_OPTION:
                         retval = false;
                 }
@@ -942,8 +946,9 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             SampleInterface saveTheSample = theSample;
 
             // set up a new empty sample based on sampleType
-            theSample = Sample.initializeNewSample(//
-                    sampleType, sampleAnalysisType, ReduxLabData.getInstance(), myState.getReduxPreferences().getDefaultSampleAnalysisPurpose(), isotopeStyle);
+            theSample = //
+                    new Sample("NONE", sampleType, sampleAnalysisType, myState.getReduxPreferences().getDefaultSampleAnalysisPurpose(), isotopeStyle);
+            SampleInterface.specializeNewSample(theSample);
 
             // manageTheSample sets up the correct form and returns whether it was successful
             // meantime, the form is opened modally to process user setting up sample data
@@ -1246,7 +1251,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
     public synchronized void setUpTheSample(boolean performReduction)
             throws BadLabDataException {
 
-        theSample.setUpSample(ReduxLabData.getInstance());
+        theSample.setUpSample();
 
         String sampleUpdateType = "Manual Data Entry";
         if (theSample.isSampleTypeLiveWorkflow()) {
@@ -1514,7 +1519,10 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
     private void setUpEmptySample() //
             throws BadLabDataException {
-        setTheSample(Sample.initializeNewSample("NONE", "", ReduxLabData.getInstance(), myState.getReduxPreferences().getDefaultSampleAnalysisPurpose(), "UPb"));
+        theSample = //
+                new Sample("NONE", "NONE", "", myState.getReduxPreferences().getDefaultSampleAnalysisPurpose(), "UPb");
+        SampleInterface.specializeNewSample(theSample);
+
         setUpTheSample(false);
 
         // editSample menu de-activated
@@ -3733,7 +3741,7 @@ private void startStopLiveUpdate_buttonActionPerformed(java.awt.event.ActionEven
             }
         } else {
             //TODO: confirm this in 2015  May 2010 backward compatibility
-            ((UPbReduxAliquot) aliquot).setCompiled(false);
+            ((ReduxAliquotInterface) aliquot).setCompiled(false);
             editAliquot(theSample, aliquot);
         }
 

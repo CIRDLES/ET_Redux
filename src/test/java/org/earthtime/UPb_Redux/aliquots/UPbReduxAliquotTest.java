@@ -19,10 +19,11 @@ import java.io.File;
 import java.math.BigDecimal;
 import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
-import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.samples.SESARSampleMetadata;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
+import org.earthtime.aliquots.ReduxAliquotInterface;
 import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsModel;
+import org.earthtime.xmlUtilities.XMLSerializationI;
 import org.junit.After;
 import org.junit.Test;
 
@@ -44,7 +45,6 @@ public class UPbReduxAliquotTest {
                 = new UPbReduxAliquot(
                         0,
                         "Test Aliquot",
-                        ReduxLabData.getInstance(),
                         PhysicalConstantsModel.getEARTHTIMEPhysicalConstantsModel(),
                         false,
                         new SESARSampleMetadata());
@@ -67,8 +67,8 @@ public class UPbReduxAliquotTest {
         temp1.setPreferred(true);
         aliquot.getSampleDateModels().add(temp1);
 
-        ((UPbReduxAliquot) aliquot).getAliquotFractions().clear();
-        ((UPbReduxAliquot) aliquot).getAliquotFractions().add(uPbfraction);
+        ((ReduxAliquotInterface) aliquot).getAliquotFractions().clear();
+        ((ReduxAliquotInterface) aliquot).getAliquotFractions().add(uPbfraction);
         temp1.setAliquot(aliquot);
         //     temp1.PopulateFractionVector();
 
@@ -77,8 +77,8 @@ public class UPbReduxAliquotTest {
         String testFileName = "UPbReduxAliquotTEST.xml";
 
         //Throws Exception
-        ((UPbReduxAliquot) aliquot).serializeXMLObject(testFileName);
-        ((UPbReduxAliquot) aliquot).readXMLObject(testFileName, true);
+        ((XMLSerializationI) aliquot).serializeXMLObject(testFileName);
+        ((XMLSerializationI) aliquot).readXMLObject(testFileName, true);
     }
     
     /**

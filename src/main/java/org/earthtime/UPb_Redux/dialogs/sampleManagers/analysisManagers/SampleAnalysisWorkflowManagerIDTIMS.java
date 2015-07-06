@@ -82,6 +82,7 @@ import org.earthtime.UPb_Redux.samples.UPbSampleInterface;
 import org.earthtime.UPb_Redux.utilities.comparators.IntuitiveStringComparator;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.aliquots.AliquotInterface;
+import org.earthtime.aliquots.ReduxAliquotInterface;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.dataDictionaries.SampleRegistries;
 import org.earthtime.exceptions.ETException;
@@ -92,6 +93,7 @@ import org.earthtime.ratioDataModels.initialPbModelsET.InitialPbModelET;
 import org.earthtime.ratioDataModels.initialPbModelsET.StaceyKramersInitialPbModelET;
 import org.earthtime.samples.SampleInterface;
 import org.earthtime.utilities.FileHelper;
+import org.earthtime.xmlUtilities.XMLSerializationI;
 import org.jdesktop.layout.GroupLayout.ParallelGroup;
 import org.jdesktop.layout.GroupLayout.SequentialGroup;
 
@@ -1790,8 +1792,8 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
             throws NumberFormatException {
 
         // set temp variable for fractionation correction both u and Pb to use in locking fields
-        boolean fraCorrU = ((UPbFractionI)tempFrac).isFractionationCorrectedU();
-        boolean fraCorrPb = ((UPbFractionI)tempFrac).isFractionationCorrectedPb();
+        boolean fraCorrU = ((FractionI)tempFrac).isFractionationCorrectedU();
+        boolean fraCorrPb = ((FractionI)tempFrac).isFractionationCorrectedPb();
 
         int row = ((UPbReduxAliquot) aliquot).getAliquotFractions().indexOf(tempFrac);
 
@@ -2022,7 +2024,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
             // add fractions per spinner
             for (int i = 0; i < (Integer) insertFractionCount_spinner.getValue(); i++) {
                 try {
-                    int aliquotNumber = ((UPbReduxAliquot) myCurrentAliquot).getAliquotNumber();
+                    int aliquotNumber = ((ReduxAliquotInterface) myCurrentAliquot).getAliquotNumber();
                     ((UPbSampleInterface) mySample).addDefaultUPbFractionToAliquot(aliquotNumber);
                 } catch (BadLabDataException ex) {
                     new ETWarningDialog(ex).setVisible(true);
@@ -2044,7 +2046,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
                 new ETWarningDialog(ex).setVisible(true);
             }
 
-            int aliquotNumber = ((UPbReduxAliquot) myCurrentAliquot).getAliquotNumber();
+            int aliquotNumber = ((ReduxAliquotInterface) myCurrentAliquot).getAliquotNumber();
 
             String importFolder = null;
             try {
@@ -2393,20 +2395,20 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
                         try {
                             // export U
                             fractionFile = new File(aliquotFolder.getCanonicalPath() + File.separator + U_fractionFileName);
-                            ((UPbFraction) fractions.get(f)).setRatioType("U");
-                            ((UPbFraction) fractions.get(f)).serializeXMLObject(fractionFile.getCanonicalPath());
+                            fractions.get(f).setRatioType("U");
+                            ((XMLSerializationI) fractions.get(f)).serializeXMLObject(fractionFile.getCanonicalPath());
                         } catch (IOException iOException) {
                         }
                         try {
                             // export Pb
                             fractionFile = new File(aliquotFolder.getCanonicalPath() + File.separator + Pb_fractionFileName);
-                            ((UPbFraction) fractions.get(f)).setRatioType("Pb");
-                            ((UPbFraction) fractions.get(f)).serializeXMLObject(fractionFile.getCanonicalPath());
+                            fractions.get(f).setRatioType("Pb");
+                            ((XMLSerializationI) fractions.get(f)).serializeXMLObject(fractionFile.getCanonicalPath());
                         } catch (IOException iOException) {
                         }
 
                         // set type back
-                        ((UPbFraction) fractions.get(f)).setRatioType("UPb");
+                        fractions.get(f).setRatioType("UPb");
 
                         // update fractionMetaData
                         fractionsMetaData[fractionMetaDataCount++] = new FractionMetaData(//

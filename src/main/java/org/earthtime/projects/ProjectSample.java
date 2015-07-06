@@ -32,9 +32,7 @@ import org.earthtime.UPb_Redux.samples.SESARSampleMetadata;
 import org.earthtime.UPb_Redux.user.SampleDateInterpretationGUIOptions;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.aliquots.AliquotInterface;
-import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.dataDictionaries.SampleRegistries;
-import org.earthtime.dataDictionaries.SampleTypesEnum;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
@@ -81,7 +79,7 @@ public class ProjectSample implements//
      * @param isotopeStyle the value of isotopeStyle
      * @throws BadLabDataException
      */
-    private ProjectSample(
+    public ProjectSample(
             String sampleName, //
             String sampleType, //
             String sampleAnalysisType,//
@@ -112,32 +110,19 @@ public class ProjectSample implements//
 
     }
 
-    /**
-     *
-     * @param analysisPurpose
-     * @param isotopeStyle the value of isotopeStyle
-     * @throws BadLabDataException
-     * @return the org.earthtime.samples.SampleInterface
-     */
-    public static SampleInterface initializeNewSample( //
-            ANALYSIS_PURPOSE analysisPurpose, //
-            String isotopeStyle)
-            throws BadLabDataException {
-
-        SampleInterface retVal = //
-                new ProjectSample(//
-                        SampleTypesEnum.PROJECT.getName(),//
-                        SampleTypesEnum.PROJECT.getName(), //
-                        SampleAnalysisTypesEnum.COMPILED.getName(), //
-                        analysisPurpose,//
-                        true, //
-                        isotopeStyle);
-
-        return retVal;
+    @Override
+    public AliquotInterface generateDefaultAliquot(//
+            int aliquotNumber, String aliquotName, AbstractRatiosDataModel physicalConstants, boolean compiled, SESARSampleMetadata mySESARSampleMetadata) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void setUpSample(ReduxLabData myLabData) {
+    public AliquotInterface generateDefaultAliquot() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setUpSample() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -216,6 +201,11 @@ public class ProjectSample implements//
         return reduxSampleFileName;
     }
 
+    @Override
+    public void setReduxSampleFileName(String reduxSampleFileName) {
+        this.reduxSampleFileName = reduxSampleFileName;
+    }
+
     /**
      * gets the <code>reduxSampleFilePath</code> of this <code>Sample</code>.
      *
@@ -226,51 +216,14 @@ public class ProjectSample implements//
      * @return <code>String</code> - <code>reduxSampleFilePath</code> of this
      * <code>Sample</code>
      */
+    @Override
     public String getReduxSampleFilePath() {
         return reduxSampleFilePath;
-
     }
 
-    /**
-     * sets the <code>reduxSampleFilePath</code> and
-     * <code>reduxSampleFileName</code> of this <code>Sample</code> to the
-     * argument <code>reduxSampleFile</code>
-     *
-     * @pre argument <code>reduxSampleFile</code> is a valid file
-     * @post this <code>Sample</code>'s <code>reduxSampleFilePath</code> and
-     * <code>reduxSampleFileName</code> are set to argument
-     * <code>reduxSamplefile</code>
-     *
-     * @param reduxSampleFile value to which <code>reduxSampleFilePath</code>
-     * and <code>reduxSampleFileName</code> of this <code>Sample</code> will be
-     * set
-     */
     @Override
-    public void setReduxSampleFilePath(File reduxSampleFile) {
-        boolean isChanged = false;
-        // set redux extension
-
-        if (!reduxSampleFile.getPath().endsWith(".redux")) {
-            isChanged = isChanged || (this.reduxSampleFilePath.compareToIgnoreCase(reduxSampleFile.getPath() + ".redux") != 0);
-
-            this.reduxSampleFilePath = reduxSampleFile.getPath() + ".redux";
-            isChanged
-                    = isChanged || (this.reduxSampleFileName.compareToIgnoreCase(reduxSampleFile.getName() + ".redux") != 0);
-
-            this.reduxSampleFileName = reduxSampleFile.getName() + ".redux";
-
-        } else {
-            isChanged = isChanged || (this.reduxSampleFilePath.compareToIgnoreCase(reduxSampleFile.getPath()) != 0);
-
-            this.reduxSampleFilePath = reduxSampleFile.getPath();
-            isChanged
-                    = isChanged || (this.reduxSampleFileName.compareToIgnoreCase(reduxSampleFile.getName()) != 0);
-
-            this.reduxSampleFileName = reduxSampleFile.getName();
-
-        }
-
-        setChanged(isChanged);
+    public void setReduxSampleFilePath(String reduxSampleFilePath) {
+        this.reduxSampleFilePath = reduxSampleFilePath;
     }
 
     @Override
@@ -344,7 +297,7 @@ public class ProjectSample implements//
     }
 
     @Override
-    public void setUPbFractions(Vector<ETFractionInterface> UPbFractions) {
+    public void setFractions(Vector<ETFractionInterface> UPbFractions) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -509,15 +462,16 @@ public class ProjectSample implements//
         } catch (BadLabDataException badLabDataException) {
         }
     }
-    
-        /**
+
+    /**
      * @return the isotopeStyle
      */
+    @Override
     public String getIsotopeStyle() {
-        if (isotopeStyle == null){
+        if (isotopeStyle == null) {
             isotopeStyle = "UPb";
         }
         return isotopeStyle;
     }
-    
+
 }

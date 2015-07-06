@@ -79,6 +79,7 @@ import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.aliquots.AliquotInterface;
+import org.earthtime.aliquots.ReduxAliquotInterface;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.beans.ET_JToggleButton;
 import org.earthtime.dataDictionaries.Lambdas;
@@ -789,10 +790,10 @@ public class SampleDateInterpretationsManager extends DialogEditor
         Object[][] selectedModels = new Object[1][9];
 
         // this standin aliquot for the whole sample makes weighted means graphs work
-        AliquotInterface standInAliquot = new UPbReduxAliquot();
+        AliquotInterface standInAliquot = sample.generateDefaultAliquot(WIDTH, concordiaFlavor, null, amOpen, null) ;//    new UPbReduxAliquot();
         standInAliquot.setAliquotName(sample.getSampleName());
 
-        ((UPbReduxAliquot) standInAliquot).setAliquotFractions(sample.getFractions());
+        ((ReduxAliquotInterface) standInAliquot).setAliquotFractions(sample.getFractions());
 
         selectedModels[0][0] = standInAliquot;
 

@@ -72,17 +72,19 @@ import org.earthtime.UPb_Redux.dialogs.graphManagers.GraphAxesDialog;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
-import org.earthtime.reportViews.ReportUpdaterInterface;
 import org.earthtime.UPb_Redux.user.SampleDateInterpretationGUIOptions;
 import org.earthtime.UPb_Redux.valueModels.SampleDateInterceptModel;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UPb_Redux.valueModels.definedValueModels.Age207_206r;
+import org.earthtime.aliquots.AliquotForUPbInterface;
 import org.earthtime.aliquots.AliquotInterface;
+import org.earthtime.aliquots.ReduxAliquotInterface;
 import org.earthtime.dataDictionaries.Lambdas;
 import org.earthtime.dataDictionaries.RadRatiosPbcCorrected;
 import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.fractions.ETFractionInterface;
+import org.earthtime.reportViews.ReportUpdaterInterface;
 import org.earthtime.samples.SampleInterface;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
@@ -1518,7 +1520,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
             curAliquot = sample.getAliquotByNumber(selectedFractions.get(0)//
                     .getAliquotNumber());
 
-            currentBestDate = curAliquot.getBestAgeDivider206_238().doubleValue();
+            currentBestDate = ((AliquotForUPbInterface)curAliquot).getBestAgeDivider206_238().doubleValue();
 
         } catch (Exception e) {
         }
@@ -2424,7 +2426,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
         } else {
             // set best age divider
             if (changingBestDateDivider) {
-                curAliquot.setBestAgeDivider206_238(new BigDecimal(currentBestDate));
+                ((AliquotForUPbInterface)curAliquot).setBestAgeDivider206_238(new BigDecimal(currentBestDate));
                 ((UPbReduxAliquot) curAliquot).updateBestAge();
                 reportUpdater.updateReportTable(false);
             }
@@ -2760,7 +2762,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
         SampleDateInterpretationGUIOptions myOptions = sample.getSampleDateInterpretationGUISettings();
         for (AliquotInterface a : sample.getActiveAliquots()) {
             // this finds or creates an aliquotOptions map
-            myOptions.getAliquotOptionsMapByName(a.getAliquotName(), ((UPbReduxAliquot) a).getAliquotNumber());
+            myOptions.getAliquotOptionsMapByName(a.getAliquotName(), ((ReduxAliquotInterface) a).getAliquotNumber());
         }
         this.aliquotOptions = aliquotOptions;
     }

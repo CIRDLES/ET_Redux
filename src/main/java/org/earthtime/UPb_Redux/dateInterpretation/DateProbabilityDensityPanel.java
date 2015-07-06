@@ -60,7 +60,6 @@ import org.apache.batik.apps.rasterizer.SVGConverterException;
 import org.apache.batik.dom.GenericDOMImplementation;
 import org.apache.batik.svggen.SVGGraphics2D;
 import org.apache.batik.svggen.SVGGraphics2DIOException;
-import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.beans.ReduxSuppressComponentEventsI;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.GraphPanelModeChangeI;
 import org.earthtime.UPb_Redux.dateInterpretation.vermeeschKDE.KDE;
@@ -68,6 +67,7 @@ import org.earthtime.UPb_Redux.dateInterpretation.vermeeschKDE.OtherData;
 import org.earthtime.UPb_Redux.dateInterpretation.vermeeschKDE.Preferences;
 import org.earthtime.UPb_Redux.user.SampleDateInterpretationGUIOptions;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
+import org.earthtime.aliquots.ReduxAliquotInterface;
 import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.samples.SampleInterface;
@@ -1104,7 +1104,7 @@ public class DateProbabilityDensityPanel extends JLayeredPane
         SampleDateInterpretationGUIOptions myOptions = sample.getSampleDateInterpretationGUISettings();
         sample.getActiveAliquots().stream().forEach((a) -> {
             // this finds or creates an aliquotOptions map
-            myOptions.getAliquotOptionsMapByName(a.getAliquotName(), ((UPbReduxAliquot) a).getAliquotNumber());
+            myOptions.getAliquotOptionsMapByName(a.getAliquotName(), ((ReduxAliquotInterface) a).getAliquotNumber());
         });
         this.aliquotOptions = aliquotOptions;
     }

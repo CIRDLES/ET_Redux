@@ -28,9 +28,9 @@ import java.util.List;
 import java.util.Vector;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
-import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
-import org.earthtime.UPb_Redux.samples.Sample;
+import org.earthtime.UTh_Redux.aliquots.UThReduxAliquot;
 import org.earthtime.UTh_Redux.fractions.UThFraction;
+import org.earthtime.UTh_Redux.samples.SampleUTh;
 import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.aliquots.ReduxAliquotInterface;
 import org.earthtime.dataDictionaries.FileDelimiterTypesEnum;
@@ -117,12 +117,10 @@ public class ProjectOfLegacySamplesImporterFromTSVFile_DIBBs_Useries_A extends A
                             if ((currentSample == null) && (currentAliquot == null)) {
                                 // new sample
                                 try {
-                                    currentSample = new Sample(//
-                                            //
+                                    currentSample = new SampleUTh(//
                                             sampleID, //
                                             SampleTypesEnum.LEGACY.getName(), //
                                             SampleAnalysisTypesEnum.USERIES.getName(), //
-                                            ReduxLabData.getInstance(), //
                                             ReduxConstants.ANALYSIS_PURPOSE.SingleAge, "UPb");
 
                                     projectSamples.add(currentSample);
@@ -236,7 +234,7 @@ public class ProjectOfLegacySamplesImporterFromTSVFile_DIBBs_Useries_A extends A
         AliquotInterface existingSuperSampleAliquot = //
                 superSample.getAliquotByNameForProjectSuperSample(currentSample.getSampleName() + "::" + currentAliquot.getAliquotName());
         if (existingSuperSampleAliquot == null) {
-            SampleInterface.copyAliquotIntoSample(currentSample.getAliquotByNameForProjectSuperSample(currentAliquot.getAliquotName()), superSample);
+            SampleInterface.copyAliquotIntoSample(superSample, currentSample.getAliquotByNameForProjectSuperSample(currentAliquot.getAliquotName()), new UThReduxAliquot());
         } else {
             for (ETFractionInterface fraction : ((ReduxAliquotInterface) currentAliquot).getAliquotFractions()) {
                 if (!((ReduxAliquotInterface) existingSuperSampleAliquot).getAliquotFractions().contains(fraction)) {

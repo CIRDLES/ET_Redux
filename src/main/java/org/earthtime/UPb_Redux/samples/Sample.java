@@ -210,21 +210,19 @@ public class Sample implements
      * @param sampleType the type of this <code>Sample</code> to which
      * <code>sampleType</code> will be set
      * @param sampleAnalysisType
-     * @param labData the data of this <code>Sample</code> to which
-     * <code>myReduxLabData</code> will be
      * @param defaultAnalysisPurpose
      * @param isotopeStyle the value of isotopeStyle
      * @throws org.earthtime.UPb_Redux.exceptions.BadLabDataException
      * BadLabDataException
      */
     public Sample(
-            String sampleName, String sampleType, String sampleAnalysisType, ReduxLabData labData, ANALYSIS_PURPOSE defaultAnalysisPurpose, String isotopeStyle)
+            String sampleName, String sampleType, String sampleAnalysisType, ANALYSIS_PURPOSE defaultAnalysisPurpose, String isotopeStyle)
             throws BadLabDataException {
         this.sampleName = sampleName;
         this.sampleType = sampleType;
         this.sampleAnalysisType = sampleAnalysisType;
         this.analyzed = false;
-        this.sampleIGSN = ReduxConstants.DEFAULT_IGSN;//"NONE";
+        this.sampleIGSN = ReduxConstants.DEFAULT_IGSN;
         this.validatedSampleIGSN = false;
         this.sampleAnnotations = "";
         this.reduxSampleFileName = "";
@@ -233,8 +231,8 @@ public class Sample implements
 
         Sample.saving = false;
 
-        this.myReduxLabData = labData;
-        this.reportSettingsModel = ReduxLabData.getInstance().getDefaultReportSettingsModelByIsotopeStyle(isotopeStyle);
+        this.myReduxLabData = ReduxLabData.getInstance();
+        this.reportSettingsModel = myReduxLabData.getDefaultReportSettingsModelByIsotopeStyle(isotopeStyle);
 
         this.sampleAgeInterpretationGUISettings = new SampleDateInterpretationGUIOptions();
 
@@ -267,57 +265,28 @@ public class Sample implements
         this.sampleRegistry = SampleRegistries.SESAR;
     }
 
-    /**
-     *
-     * @param sampleType
-     * @param sampleAnalysisType
-     * @param labData
-     * @param analysisPurpose
-     * @param isotopeStyle the value of isotopeStyle
-     * @throws BadLabDataException
-     * @return the org.earthtime.samples.SampleInterface
-     */
-    public static SampleInterface initializeNewSample( //
-            String sampleType, String sampleAnalysisType, ReduxLabData labData, ANALYSIS_PURPOSE analysisPurpose, String isotopeStyle)
-            throws BadLabDataException {
+    @Override
+    public AliquotInterface generateDefaultAliquot(//
+            int aliquotNumber,
+            String aliquotName,
+            AbstractRatiosDataModel physicalConstants,
+            boolean compiled,
+            SESARSampleMetadata mySESARSampleMetadata) {
 
-        String sampleName = "NEW SAMPLE";
-        boolean analyzed = false;
+        return new UPbReduxAliquot(aliquotNumber, aliquotName, physicalConstants, compiled, mySESARSampleMetadata);
+    }
 
-        if (sampleType.equalsIgnoreCase(SampleTypesEnum.PROJECT.getName())) {
-            sampleName = SampleTypesEnum.PROJECT.getName();
-            analyzed = true;
-        } else if (sampleType.equalsIgnoreCase(SampleTypesEnum.LEGACY.getName())) {
-            sampleName = "LEGACY SAMPLE";
-            analyzed = true;
-        } else if (sampleType.equalsIgnoreCase(SampleTypesEnum.COMPILATION.getName())) {
-            sampleName = "COMPILED SAMPLE";
-        } else if (sampleType.equalsIgnoreCase("NONE")) {
-            sampleName = "NONE";
-        } else if (sampleType.equalsIgnoreCase(SampleTypesEnum.LIVEWORKFLOW.getName())) {
-            sampleName = "LIVE WORKFLOW SAMPLE";
-            // feb 2010: the intent is to refactor to just SAMPLEFOLDER and remove auto-detected and liveworkflow
-        } else if (sampleType.equalsIgnoreCase(SampleTypesEnum.SAMPLEFOLDER.getName())) {
-            sampleName = "NEW SAMPLE";
-        }
-
-        SampleInterface retVal = //
-                new Sample(sampleName, sampleType, sampleAnalysisType, labData, analysisPurpose, isotopeStyle);
-
-        //set flag for whether analysis was performed elsewhere and we just have legacy results
-        retVal.setAnalyzed(analyzed);
-
-        return retVal;
+    @Override
+    public AliquotInterface generateDefaultAliquot() {
+        return new UPbReduxAliquot();
     }
 
     /**
      *
-     * @param myLabData
      */
     @Override
-    public void setUpSample(ReduxLabData myLabData) {
-        // refactored to here from UPbReduxFrame Jan 2012
-        // oct 2011
+    public void setUpSample() {
+
         // force aliquot registry onto sample SESAR starting oct 2014
         if (getSampleRegistry() == null) {
             setSampleRegistry(SampleRegistries.SESAR);
@@ -377,7 +346,7 @@ public class Sample implements
                     }
                 }
 
-                setUPbFractions(convertedF);
+                setFractions(convertedF);
 
                 // modified logic oct 2010 ... sample manager allows reset
                 // additional test for missing T-W rho calculation
@@ -924,51 +893,14 @@ public class Sample implements
      * @return <code>String</code> - <code>reduxSampleFilePath</code> of this
      * <code>Sample</code>
      */
+    @Override
     public String getReduxSampleFilePath() {
         return reduxSampleFilePath;
-
     }
 
-    /**
-     * sets the <code>reduxSampleFilePath</code> and
-     * <code>reduxSampleFileName</code> of this <code>Sample</code> to the
-     * argument <code>reduxSampleFile</code>
-     *
-     * @pre argument <code>reduxSampleFile</code> is a valid file
-     * @post this <code>Sample</code>'s <code>reduxSampleFilePath</code> and
-     * <code>reduxSampleFileName</code> are set to argument
-     * <code>reduxSamplefile</code>
-     *
-     * @param reduxSampleFile value to which <code>reduxSampleFilePath</code>
-     * and <code>reduxSampleFileName</code> of this <code>Sample</code> will be
-     * set
-     */
     @Override
-    public void setReduxSampleFilePath(File reduxSampleFile) {
-        boolean isChanged = false;
-        // set redux extension
-
-        if (!reduxSampleFile.getPath().endsWith(".redux")) {
-            isChanged = isChanged || (this.reduxSampleFilePath.compareToIgnoreCase(reduxSampleFile.getPath() + ".redux") != 0);
-
-            this.reduxSampleFilePath = reduxSampleFile.getPath() + ".redux";
-            isChanged
-                    = isChanged || (this.reduxSampleFileName.compareToIgnoreCase(reduxSampleFile.getName() + ".redux") != 0);
-
-            this.reduxSampleFileName = reduxSampleFile.getName() + ".redux";
-
-        } else {
-            isChanged = isChanged || (this.reduxSampleFilePath.compareToIgnoreCase(reduxSampleFile.getPath()) != 0);
-
-            this.reduxSampleFilePath = reduxSampleFile.getPath();
-            isChanged
-                    = isChanged || (this.reduxSampleFileName.compareToIgnoreCase(reduxSampleFile.getName()) != 0);
-
-            this.reduxSampleFileName = reduxSampleFile.getName();
-
-        }
-
-        setChanged(isChanged);
+    public void setReduxSampleFilePath(String reduxSampleFilePath) {
+        this.reduxSampleFilePath = reduxSampleFilePath;
     }
 
     /**
@@ -984,6 +916,10 @@ public class Sample implements
     @Override
     public String getReduxSampleFileName() {
         return reduxSampleFileName;
+    }
+
+    public void setReduxSampleFileName(String reduxSampleFileName) {
+        this.reduxSampleFileName = reduxSampleFileName;
     }
 
     /**
@@ -1116,7 +1052,7 @@ public class Sample implements
      * <code>Sample</code> will be set
      */
     @Override
-    public void setUPbFractions(Vector<ETFractionInterface> UPbFractions) {
+    public void setFractions(Vector<ETFractionInterface> UPbFractions) {
         this.UPbFractions = UPbFractions;
     }
 
@@ -1132,21 +1068,6 @@ public class Sample implements
     @Override
     public String getSampleIGSN() {
         return sampleIGSN;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public String getSampleIGSNnoRegistry() {
-        String retVal = "";
-        String parse[] = sampleIGSN.split("\\.");
-        if (parse.length > 0) {
-            // returns index 0 if no registry, 1 otherwise
-            retVal = parse[parse.length - 1];
-        }
-
-        return retVal;
     }
 
     /**
@@ -1167,24 +1088,6 @@ public class Sample implements
         for (int aliquotIndex = 0; aliquotIndex
                 < aliquots.size(); aliquotIndex++) {
             aliquots.get(aliquotIndex).setSampleIGSN(sampleIGSN);
-        }
-    }
-
-    // april 2011 update to rrr.igsn
-    /**
-     *
-     */
-    public void updateWithRegistrySampleIGSN() {
-        //if ( isValidatedSampleIGSN() ) {
-        String newID = SampleRegistries.updateSampleID(sampleIGSN);
-        // check for addition of default registry
-        if (!newID.equalsIgnoreCase(sampleIGSN)) {
-            // sets and percolates through aliquots
-            setSampleIGSN(newID);
-            // if sampleIGSN is not valid at default registry, invalidate flags
-            //if (SampleRegistries.isSampleIdentifierValidAtRegistry(sampleIGSN)) {
-            setValidatedSampleIGSN(SampleRegistries.isSampleIdentifierValidAtRegistry(sampleIGSN));
-
         }
     }
 
@@ -1295,7 +1198,7 @@ public class Sample implements
             for (AliquotInterface aliquot : aliquots) {
                 AliquotInterface nextAliquot = getAliquotByNumber(((UPbReduxAliquot) aliquot).getAliquotNumber());
                 try {
-                    nextAliquot.setPhysicalConstants(getPhysicalConstantsModel());
+                    nextAliquot.setPhysicalConstantsModel(getPhysicalConstantsModel());
 
                 } catch (BadLabDataException badLabDataException) {
                 }
@@ -1701,7 +1604,7 @@ public class Sample implements
      * @return the isotopeStyle
      */
     public String getIsotopeStyle() {
-        if (isotopeStyle == null){
+        if (isotopeStyle == null) {
             isotopeStyle = "UPb";
         }
         return isotopeStyle;

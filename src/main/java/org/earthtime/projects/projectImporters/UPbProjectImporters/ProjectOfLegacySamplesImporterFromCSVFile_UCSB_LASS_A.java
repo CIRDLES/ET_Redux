@@ -27,11 +27,11 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Vector;
 import org.earthtime.UPb_Redux.ReduxConstants;
+import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLegacyFraction;
-import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
@@ -99,17 +99,15 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_UCSB_LASS_A extends Abstr
                     // process existing if not first;
                     if ((currentSample != null) && (currentAliquot != null)) {
                         // this forces population of aliquot fractions
-                        SampleInterface.copyAliquotIntoSample(currentSample.getAliquotByName(currentAliquot.getAliquotName()), project.getSuperSample());
+                        SampleInterface.copyAliquotIntoSample(project.getSuperSample(), currentSample.getAliquotByName(currentAliquot.getAliquotName()), new UPbReduxAliquot());
                     }
 
                     if (readingFractions) {
                         try {
                             currentSample = new Sample(//
-                                    //
                                     myFractionData.get(0), //
                                     SampleTypesEnum.LEGACY.getName(), //
                                     SampleAnalysisTypesEnum.LASS.getName(), //
-                                    ReduxLabData.getInstance(), //
                                     ReduxConstants.ANALYSIS_PURPOSE.NONE, "UPb");
 
                             projectSamples.add(currentSample);
@@ -319,7 +317,7 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_UCSB_LASS_A extends Abstr
             // end of file
             if ((currentSample != null) && (currentAliquot != null)) {
                 // this forces population of aliquot fractions
-                SampleInterface.copyAliquotIntoSample(currentSample.getAliquotByName(currentAliquot.getAliquotName()), project.getSuperSample());
+                SampleInterface.copyAliquotIntoSample(project.getSuperSample(), currentSample.getAliquotByName(currentAliquot.getAliquotName()), new UPbReduxAliquot());
             }
         }
 
