@@ -268,6 +268,13 @@ public final class ReduxLabData implements Serializable {
      */
     protected Object readResolve() {
 
+        // march 2012 conversion to new models
+        restoreBuiltInModels();
+
+        return this;
+
+    }
+
     /**
      *
      */
