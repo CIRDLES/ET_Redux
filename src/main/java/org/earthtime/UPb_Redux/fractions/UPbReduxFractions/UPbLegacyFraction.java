@@ -33,7 +33,6 @@ import java.util.Comparator;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.fractions.FractionI;
-import org.earthtime.reportViews.ReportRowGUIInterface;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.UPb_Redux.utilities.comparators.IntuitiveStringComparator;
 import org.earthtime.UPb_Redux.valueModels.MeasuredRatioModel;
@@ -42,6 +41,7 @@ import org.earthtime.dataDictionaries.MeasuredRatios;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsModel;
+import org.earthtime.reportViews.ReportRowGUIInterface;
 
 /**
  *
@@ -82,7 +82,7 @@ public class UPbLegacyFraction extends Fraction implements
      */
     public UPbLegacyFraction() {
         super(ReduxConstants.DEFAULT_OBJECT_NAME, ReduxConstants.DEFAULT_OBJECT_NAME);
-        setIsLegacy(true);
+        setLegacy(true);
         this.ratioType = "UPb";
 
         this.physicalConstantsModel = PhysicalConstantsModel.getEARTHTIMEPhysicalConstantsModel();
@@ -165,7 +165,7 @@ public class UPbLegacyFraction extends Fraction implements
     public int compareTo(Fraction fraction) throws ClassCastException {
         // TODO May 2010 Eventaully consider grainID
         String uPbFractionID = fraction.getFractionID();
-        String uPbFractionAliquotNum = String.valueOf(((FractionI) fraction).getAliquotNumber());
+        String uPbFractionAliquotNum = String.valueOf(fraction.getAliquotNumber());
         String myID = (uPbFractionAliquotNum + "." + uPbFractionID).toUpperCase();
 
         Comparator<String> forNoah = new IntuitiveStringComparator<>();
@@ -342,6 +342,7 @@ public class UPbLegacyFraction extends Fraction implements
      *
      * @return
      */
+    @Override
     public boolean isRejected() {
         return rejected;
     }
@@ -350,6 +351,7 @@ public class UPbLegacyFraction extends Fraction implements
      *
      * @param rejected
      */
+    @Override
     public void setRejected(boolean rejected) {
         this.rejected = rejected;
     }
@@ -374,32 +376,32 @@ public class UPbLegacyFraction extends Fraction implements
             // AnalysisMeasures
             outputWriter.println("AnalysisMeasures");
             Arrays.sort(getAnalysisMeasures());
-            for (int i = 0; i < getAnalysisMeasures().length; i++) {
-                outputWriter.println(getAnalysisMeasures()[i].formatValueAndOneSigmaABSForTesting());
+            for (ValueModel analysisMeasure : getAnalysisMeasures()) {
+                outputWriter.println(analysisMeasure.formatValueAndOneSigmaABSForTesting());
             }
             outputWriter.println();
 
             // CompositionalMeasures
             outputWriter.println("CompositionalMeasures");
             Arrays.sort(getCompositionalMeasures());
-            for (int i = 0; i < getCompositionalMeasures().length; i++) {
-                outputWriter.println(getCompositionalMeasures()[i].formatValueAndOneSigmaABSForTesting());
+            for (ValueModel compositionalMeasure : getCompositionalMeasures()) {
+                outputWriter.println(compositionalMeasure.formatValueAndOneSigmaABSForTesting());
             }
             outputWriter.println();
 
             // RadiogenicIsotopeRatios
             outputWriter.println("RadiogenicIsotopeRatios");
             Arrays.sort(getRadiogenicIsotopeRatios());
-            for (int i = 0; i < getRadiogenicIsotopeRatios().length; i++) {
-                outputWriter.println(getRadiogenicIsotopeRatios()[i].formatValueAndOneSigmaABSForTesting());
+            for (ValueModel radiogenicIsotopeRatio : getRadiogenicIsotopeRatios()) {
+                outputWriter.println(radiogenicIsotopeRatio.formatValueAndOneSigmaABSForTesting());
             }
             outputWriter.println();
 
             // RadiogenicIsotopeDates
             outputWriter.println("RadiogenicIsotopeDates");
             Arrays.sort(getRadiogenicIsotopeDates());
-            for (int i = 0; i < getRadiogenicIsotopeDates().length; i++) {
-                outputWriter.println(getRadiogenicIsotopeDates()[i].formatValueAndOneSigmaABSForTesting());
+            for (ValueModel radiogenicIsotopeDate : getRadiogenicIsotopeDates()) {
+                outputWriter.println(radiogenicIsotopeDate.formatValueAndOneSigmaABSForTesting());
             }
             outputWriter.println();
 
@@ -411,7 +413,6 @@ public class UPbLegacyFraction extends Fraction implements
         try {
             BrowserControl.displayURL(dataValuesFile.getCanonicalPath());
         } catch (IOException ex) {
-            ex.printStackTrace();
         }
 
     }
@@ -527,6 +528,7 @@ public class UPbLegacyFraction extends Fraction implements
     /**
      *
      */
+    @Override
     public void setSavedFractionationModels() {
         // do nothing for legacy
     }
@@ -534,6 +536,7 @@ public class UPbLegacyFraction extends Fraction implements
     /**
      * @return the fractionNotes
      */
+    @Override
     public String getFractionNotes() {
         if (fractionNotes == null) {
             fractionNotes = "";
@@ -544,6 +547,7 @@ public class UPbLegacyFraction extends Fraction implements
     /**
      * @param fractionNotes the fractionNotes to set
      */
+    @Override
     public void setFractionNotes(String fractionNotes) {
         this.fractionNotes = fractionNotes;
     }
@@ -552,6 +556,7 @@ public class UPbLegacyFraction extends Fraction implements
      *
      * @return
      */
+    @Override
     public AbstractRatiosDataModel getPbBlank() {
         return null;
     }
@@ -600,6 +605,7 @@ public class UPbLegacyFraction extends Fraction implements
      *
      * @return
      */
+    @Override
     public ValueModel getAlphaUModel() {
         return null;
     }
@@ -608,6 +614,7 @@ public class UPbLegacyFraction extends Fraction implements
      *
      * @param alphaUModel
      */
+    @Override
     public void setAlphaUModel(ValueModel alphaUModel) {
     }
 

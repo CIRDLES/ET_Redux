@@ -135,7 +135,7 @@ public class ProjectOfLegacySamplesImporterFromTSVFile_DIBBs_Useries_A extends A
 
                         if (currentSample != null) {
                             // process fractions
-                            ETFractionInterface myFraction = new UThFraction();//=================================
+                            ETFractionInterface myFraction = new UThFraction(true);
                             myFraction.setFractionID(myFractionData.get(3));
                             myFraction.setGrainID(myFractionData.get(3));
 

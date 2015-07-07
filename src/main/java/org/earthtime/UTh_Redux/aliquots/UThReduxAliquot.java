@@ -67,7 +67,7 @@ public class UThReduxAliquot implements //
     private ArrayList<AnalysisImage> analysisImages;
     private boolean compiled;
     private Vector<ETFractionInterface> aliquotFractions;
-    private ReduxLabData myReduxLabData;
+    private transient ReduxLabData myReduxLabData;
 
     public UThReduxAliquot() {
     }

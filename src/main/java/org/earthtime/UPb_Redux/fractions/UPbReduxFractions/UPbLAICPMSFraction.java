@@ -110,7 +110,7 @@ public class UPbLAICPMSFraction extends Fraction implements
      */
     public UPbLAICPMSFraction() {
         super(ReduxConstants.DEFAULT_OBJECT_NAME, ReduxConstants.DEFAULT_OBJECT_NAME);
-        setIsLegacy(false);
+        setLegacy(false);
         this.ratioType = "UPb";
 
         this.physicalConstantsModel = PhysicalConstantsModel.getEARTHTIMEPhysicalConstantsModel();

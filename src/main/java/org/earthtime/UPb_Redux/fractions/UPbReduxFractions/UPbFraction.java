@@ -199,7 +199,7 @@ public class UPbFraction extends Fraction implements
         this.radiogenicIsotopeRatiosWithTracerUncertainty = new ValueModel[0];
         this.radiogenicIsotopeRatiosWithAllUncertainty = new ValueModel[0];
 
-        setIsLegacy(false);
+        setLegacy(false);
 
         this.ratioType = "UPb";
         this.pedigree = "NONE";

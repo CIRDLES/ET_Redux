@@ -321,7 +321,7 @@ public abstract class AbstractSampleLAICPMSRawDataManagerDialog extends DialogEd
                     ((FractionI)f).setZircon( false );
                 }
 
-                f.setIsLegacy( true );
+                f.setLegacy( true );
 
                 if ( TWZeroRho_radioBut.isSelected() ) {
                     // set all T-W to zero

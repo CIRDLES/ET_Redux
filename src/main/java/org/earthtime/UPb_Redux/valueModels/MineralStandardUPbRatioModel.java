@@ -217,13 +217,5 @@ public class MineralStandardUPbRatioModel extends ValueModel implements
     public void setMeasured ( boolean measured ) {
         this.measured = measured;
     }
-//        private void readObject (
-//            ObjectInputStream stream )
-//            throws IOException, ClassNotFoundException {
-//        stream.defaultReadObject();
-//        ObjectStreamClass myObject = ObjectStreamClass.lookup(
-//                Class.forName( MineralStandardUPbRatioModel.class.getCanonicalName() ) );
-//        long theSUID = myObject.getSerialVersionUID();
-//        System.out.println( "Customized De-serialization of MineralStandardUPbRatioModel " + theSUID );
-//    }
+
 }

@@ -404,17 +404,6 @@ public class ReduxPersistentState implements Serializable {
         this.MRUReportSettingsModelFolder = MRUReportSettingsModelFolder;
     }
 
-    /*
-     * private void readObject( ObjectInputStream stream) throws IOException,
-     * ClassNotFoundException { stream.defaultReadObject();
-     *
-     * ObjectStreamClass myObject = ObjectStreamClass.lookup(
-     * Class.forName("org.earthtime.UPb_Redux.user.ReduxPersistentState")); long
-     * theSUID = myObject.getSerialVersionUID();
-     *
-     * System.out.println("Customized De-serialization of ReduxPersistentState "
-     * + theSUID); }
-     */
     /**
      * @return the MRUTripoliRawDataFolder
      */

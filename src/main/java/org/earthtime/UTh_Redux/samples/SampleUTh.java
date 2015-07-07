@@ -34,13 +34,14 @@ import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.projects.EarthTimeSerializedFileInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.reports.ReportSettingsInterface;
+import org.earthtime.samples.ETSample;
 import org.earthtime.samples.SampleInterface;
 
 /**
  *
  * @author James F. Bowring <bowring at gmail.com>
  */
-public class SampleUTh implements
+public class SampleUTh extends ETSample implements
         SampleInterface,
         Serializable,
         EarthTimeSerializedFileInterface {

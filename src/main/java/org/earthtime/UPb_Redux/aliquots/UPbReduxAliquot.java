@@ -314,7 +314,7 @@ public class UPbReduxAliquot extends Aliquot
         ArrayList<Double> sorted206_238 = new ArrayList<>();
         for (ETFractionInterface f : getAliquotFractions()) {
             // APRIL 2014 WARNING FOR NOW DO NOT MAKE CALL TO STATIC METHOD DIRECTLY so that parameters can be assembled ... need to refactor
-            UPbFractionReducer.getInstance().fullFractionReduce(f, true);
+            UPbFractionReducer.getInstance().fullFractionReduce((FractionI)f, true);
 
             ValueModel date206_238r = f.getRadiogenicIsotopeDateByName(RadDates.age206_238r);
             // pick out the dates in the likely range for spliting 500 - 1100 MA
@@ -651,7 +651,7 @@ public class UPbReduxAliquot extends Aliquot
     public void initializeFractionReductionHandlers() {
         for (ETFractionInterface f : getAliquotFractions()) {
             //((UPbFraction) f).initializeReductionHandler();
-            UPbFractionReducer.getInstance().fullFractionReduce(f, true);
+            UPbFractionReducer.getInstance().fullFractionReduce((FractionI)f, true);
         }
     }
 
@@ -686,6 +686,7 @@ public class UPbReduxAliquot extends Aliquot
      *
      * @param aliquotFractions
      */
+    @Override
     public void setAliquotFractions(Vector<ETFractionInterface> aliquotFractions) {
         this.aliquotFractions = aliquotFractions;
     }

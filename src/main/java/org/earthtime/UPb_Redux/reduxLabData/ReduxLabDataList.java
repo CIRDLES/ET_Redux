@@ -182,13 +182,5 @@ public class ReduxLabDataList<listType> extends ArrayList<listType> {
         }
         return retval;
     }
-////       private void readObject(
-////            ObjectInputStream stream)
-////            throws IOException, ClassNotFoundException {
-////        stream.defaultReadObject();
-////        ObjectStreamClass myObject = ObjectStreamClass.lookup(
-////                Class.forName(ReduxLabDataList.class.getCanonicalName()));
-////        long theSUID = myObject.getSerialVersionUID();
-////        System.out.println("Customized De-serialization of ReduxLabDataList " + theSUID);
-////    }
+
 }

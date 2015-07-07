@@ -21,6 +21,7 @@
 package org.earthtime.UPb_Redux.fractions;
 
 import java.math.BigDecimal;
+import java.util.concurrent.ConcurrentMap;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.dataDictionaries.Lambdas;
@@ -241,4 +242,27 @@ public interface FractionI extends ETFractionInterface {
             getInitialPbModel().initializeModel();
         }
     }
+    
+        /**
+     * @return the parDerivTerms
+     */
+    public ConcurrentMap<String, BigDecimal> getParDerivTerms();
+
+    /**
+     * @param parDerivTerms the parDerivTerms to set
+     */
+    public void setParDerivTerms(ConcurrentMap<String, BigDecimal> parDerivTerms);
+
+    /**
+     *
+     * @return
+     */
+    abstract String getTracerID();
+
+    /**
+     *
+     * @param tracerID
+     */
+    abstract void setTracerID(String tracerID);
+
 }

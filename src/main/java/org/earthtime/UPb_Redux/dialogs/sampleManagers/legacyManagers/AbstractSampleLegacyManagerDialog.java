@@ -324,7 +324,7 @@ public abstract class AbstractSampleLegacyManagerDialog extends DialogEditor {
                     ((FractionI)f).setZircon(false);
                 }
 
-                f.setIsLegacy(true);
+                f.setLegacy(true);
 
                 if (TWZeroRho_radioBut.isSelected()) {
                     // set all T-W to zero

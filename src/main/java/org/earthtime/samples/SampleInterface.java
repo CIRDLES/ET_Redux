@@ -741,7 +741,6 @@ public interface SampleInterface {
      * @post all <code>Aliquots</code> found in the file are added to this
      * <code>Sample</code>
      * @throws java.io.IOException IOException
-     * @throws org.earthtime.XMLExceptions.ETException ETException
      * @throws org.earthtime.UPb_Redux.exceptions.BadLabDataException
      * BadLabDataException
      */

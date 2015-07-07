@@ -20,10 +20,8 @@ import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.concurrent.ConcurrentMap;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
-import org.earthtime.reportViews.ReportRowGUIInterface;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
 import org.earthtime.dataDictionaries.DataDictionary;
@@ -36,6 +34,7 @@ import org.earthtime.dataDictionaries.UncertaintyTypesEnum;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
+import org.earthtime.reportViews.ReportRowGUIInterface;
 import org.earthtime.xmlUtilities.XMLSerializationI;
 
 public class UThFraction implements
@@ -45,14 +44,14 @@ public class UThFraction implements
         Serializable,
         XMLSerializationI {
 
-    private static final long serialVersionUID = 2630535302751505090L;
+    private static final long serialVersionUID = 5481272675891277083L;
     private transient boolean selectedInDataTable;
     // Instance variables
     private String fractionID;
     private String grainID;
     private String sampleName;
     private int aliquotNumber;
-    private boolean isLegacy;
+    private boolean legacy;
     private String imageURL;
     private Date timeStamp;
     private int numberOfGrains;
@@ -63,6 +62,7 @@ public class UThFraction implements
     private ValueModel[] radiogenicIsotopeDates;
     private ValueModel[] compositionalMeasures;
     private ValueModel[] sampleIsochronRatios;
+    private ValueModel[] traceElements;
 
     private boolean changed;
     private boolean deleted;
@@ -74,7 +74,6 @@ public class UThFraction implements
         this.grainID = fractionID;
         this.sampleName = ReduxConstants.DEFAULT_OBJECT_NAME;
         this.aliquotNumber = 1;
-        this.isLegacy = false;
         this.imageURL = "http://";
         this.timeStamp = new Date(System.currentTimeMillis());
 
@@ -93,6 +92,12 @@ public class UThFraction implements
         this.fractionNotes = "";
         this.rejected = false;
 
+        initializeTraceElements();
+    }
+
+    public UThFraction(boolean legacy) {
+        this();
+        this.legacy = legacy;
     }
 
     /**
@@ -114,6 +119,7 @@ public class UThFraction implements
     /**
      * @return the grainID
      */
+    @Override
     public String getGrainID() {
         return grainID;
     }
@@ -121,6 +127,7 @@ public class UThFraction implements
     /**
      * @param grainID the grainID to set
      */
+    @Override
     public void setGrainID(String grainID) {
         this.grainID = grainID;
     }
@@ -157,12 +164,17 @@ public class UThFraction implements
         this.aliquotNumber = aliquotNumber;
     }
 
+    @Override
+    public void setLegacy(boolean legacy) {
+        this.legacy = legacy;
+    }
+
     /**
      * @return the isLegacy
      */
     @Override
     public boolean isLegacy() {
-        return isLegacy;
+        return legacy;
     }
 
     /**
@@ -396,6 +408,35 @@ public class UThFraction implements
         this.rejected = !this.rejected;
     }
 
+    /**
+     * @return the traceElements
+     */
+    @Override
+    public ValueModel[] getTraceElements() {
+        if (traceElements == null) {
+            initializeTraceElements();
+        }
+        return traceElements;
+    }
+
+    /**
+     * @param traceElements the traceElements to set
+     */
+    @Override
+    public void setTraceElements(ValueModel[] traceElements) {
+        this.traceElements = traceElements;
+    }
+
+    @Override
+    public boolean isSelectedInDataTable() {
+        return selectedInDataTable;
+    }
+
+    @Override
+    public void setSelectedInDataTable(boolean selectedInDataTable) {
+        this.selectedInDataTable = selectedInDataTable;
+    }
+
     @Override
     public boolean isStandard() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -437,36 +478,6 @@ public class UThFraction implements
     }
 
     @Override
-    public ConcurrentMap<String, BigDecimal> getParDerivTerms() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void setParDerivTerms(ConcurrentMap<String, BigDecimal> parDerivTerms) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public ValueModel[] getTraceElements() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void setTraceElements(ValueModel[] traceElements) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void initializeTraceElements() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void setIsLegacy(boolean isLegacy) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public String getPhysicalConstantsModelID() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
@@ -502,16 +513,6 @@ public class UThFraction implements
     }
 
     @Override
-    public String getTracerID() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void setTracerID(String tracerID) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public int getRgbColor() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
@@ -527,16 +528,6 @@ public class UThFraction implements
     }
 
     @Override
-    public boolean isSelectedInDataTable() {
-        return selectedInDataTable;
-    }
-
-    @Override
-    public void setSelectedInDataTable(boolean selectedInDataTable) {
-        this.selectedInDataTable = selectedInDataTable;
-    }
-
-    @Override
     public void serializeXMLObject(String filename) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
@@ -545,8 +536,5 @@ public class UThFraction implements
     public Object readXMLObject(String filename, boolean doValidate) throws FileNotFoundException, ETException, FileNotFoundException, BadOrMissingXMLSchemaException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
-    //***********************
-    
-    
+
 }

@@ -230,7 +230,7 @@ public class AnalysisFractionXMLConverter implements Converter {
         // added oct 2010 for backward compat
         reader.moveDown();
         if ( "isLegacy".equals( reader.getNodeName() ) ) {
-            analysisFraction.setIsLegacy( (reader.getValue().equalsIgnoreCase( "true" )) ? true : false );
+            analysisFraction.setLegacy( (reader.getValue().equalsIgnoreCase( "true" )) ? true : false );
             reader.moveUp();
 
             reader.moveDown();
@@ -238,7 +238,7 @@ public class AnalysisFractionXMLConverter implements Converter {
             reader.moveUp();
 
         } else {
-            analysisFraction.setIsLegacy( false );
+            analysisFraction.setLegacy( false );
             analysisFraction.setSampleName( reader.getValue() );
             reader.moveUp();
         }

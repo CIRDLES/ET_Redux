@@ -320,7 +320,7 @@ public class UPbFractionReducer {
      * @param calculateCovariances
      */
     public static void fullFractionReduce(
-            ETFractionInterface fraction,
+            FractionI fraction,
             boolean calculateCovariances) {
 
         if (fraction instanceof UPbFraction) {
@@ -483,8 +483,7 @@ public class UPbFractionReducer {
         age207_206r = new Age207_206r();
         fraction.setRadiogenicIsotopeDateByName(RadDates.age207_206r, age207_206r);
         // mar 2013 a little hack till we get logratios directly
-        calculateDate207_206r( //
-                fraction.getAnalysisMeasure(AnalysisMeasures.r238_235s.getName()),
+        calculateDate207_206r( fraction.getAnalysisMeasure(AnalysisMeasures.r238_235s.getName()),
                 age207_206r, //
                 age206_238r,
                 r207_206r.getValue().doubleValue(), //
@@ -735,8 +734,7 @@ public class UPbFractionReducer {
                             r207_235_PbcCorr.getValue().doubleValue() + r207_235_PbcCorr.getOneSigmaAbs().doubleValue() * 2.0);
 
                     // mar 2013 a little hack till we get logratios directly
-                    calculateDate207_206r( //
-                            fraction.getAnalysisMeasure(AnalysisMeasures.r238_235s.getName()),
+                    calculateDate207_206r( fraction.getAnalysisMeasure(AnalysisMeasures.r238_235s.getName()),
                             age207_206_PbcCorr, //
                             age206_238_PbcCorr,
                             r207_206_PbcCorr.getValue().doubleValue(), //
@@ -890,7 +888,7 @@ public class UPbFractionReducer {
     }
 
     private static void fullFractionReduce_IDTIMS(
-            ETFractionInterface fraction,
+            FractionI fraction,
             boolean calculateCovariances) {
 
         // feb 2010 this statement serves as a filter during compilation to prevent reduction of legacy aliquots 

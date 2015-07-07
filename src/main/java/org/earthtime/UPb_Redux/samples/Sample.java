@@ -47,6 +47,7 @@ import org.earthtime.UPb_Redux.user.SampleDateInterpretationGUIOptions;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
 import org.earthtime.aliquots.AliquotInterface;
+import org.earthtime.aliquots.ReduxAliquotInterface;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.dataDictionaries.MineralTypes;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
@@ -337,11 +338,11 @@ public class Sample implements
                         legacyF.setPhysicalConstantsModel(f.getPhysicalConstantsModel());
                         legacyF.setChanged(false);
 
-                        legacyF.setIsLegacy(true);
+                        legacyF.setLegacy(true);
 
                         convertedF.add(legacyF);
                     } else {
-                        f.setIsLegacy(true);
+                        f.setLegacy(true);
                         convertedF.add(f);
                     }
                 }
@@ -669,7 +670,7 @@ public class Sample implements
                     ((UPbReduxAliquot) getAliquotByNumber(aliquotNumber)).//
                             setAutomaticDataUpdateMode(true);
 
-                    ((UPbReduxAliquot) getAliquotByNumber(aliquotNumber)).//
+                    ((ReduxAliquotInterface) getAliquotByNumber(aliquotNumber)).//
                             reduceData();
 
                     if (myFractionEditor != null) {
@@ -678,8 +679,8 @@ public class Sample implements
                         }
                         ((UPbFractionEditorDialog) myFractionEditor).InitializeFractionData(savedCurrentFraction);
 
-                        // intential static call for now
-                        UPbFractionReducer.getInstance().fullFractionReduce(savedCurrentFraction, true);
+                        // intentional static call for now
+                        UPbFractionReducer.getInstance().fullFractionReduce((FractionI)savedCurrentFraction, true);
 
                         ((UPbFractionEditorDialog) myFractionEditor).reInitializeKwikiTab(savedCurrentFraction);
                     }
@@ -735,7 +736,7 @@ public class Sample implements
             } else {
                 importAliquotFolder(fractions, aliquotNumber, true);
 
-                ((UPbReduxAliquot) getAliquotByNumber(aliquotNumber)).//
+                ((ReduxAliquotInterface) getAliquotByNumber(aliquotNumber)).//
                         reduceData();
             }
 
@@ -918,6 +919,7 @@ public class Sample implements
         return reduxSampleFileName;
     }
 
+    @Override
     public void setReduxSampleFileName(String reduxSampleFileName) {
         this.reduxSampleFileName = reduxSampleFileName;
     }
@@ -1130,7 +1132,7 @@ public class Sample implements
         ArrayList<AliquotInterface> aliquotsToDelete = new ArrayList<>();
         for (int i = 0; i < aliquots.size(); i++) {
             AliquotInterface aliquot = aliquots.get(i);//    Feb 2015 getAliquotByNumber(i + 1);
-            if (((UPbReduxAliquot) aliquot).getAliquotFractions().isEmpty()) {
+            if (((ReduxAliquotInterface) aliquot).getAliquotFractions().isEmpty()) {
                 // save aliquot for later deletion
                 aliquotsToDelete.add(aliquot);
             }
@@ -1145,9 +1147,9 @@ public class Sample implements
         // renumber remaining aliquots
         for (int i = 0; i < aliquots.size(); i++) {
             AliquotInterface aliquot = aliquots.get(i);
-            ((UPbReduxAliquot) aliquot).setAliquotNumber(i + 1);
+            ((ReduxAliquotInterface) aliquot).setAliquotNumber(i + 1);
 
-            Vector<ETFractionInterface> aliquotFractions = ((UPbReduxAliquot) aliquot).getAliquotFractions();
+            Vector<ETFractionInterface> aliquotFractions = ((ReduxAliquotInterface) aliquot).getAliquotFractions();
             for (int j = 0; j < aliquotFractions.size(); j++) {
                 aliquotFractions.get(j).setAliquotNumber(i + 1);
             }
@@ -1196,7 +1198,7 @@ public class Sample implements
             this.setChanged(true);
             // all existing UPbAliquots must be updated (they in turn update aliquotFractionFiles)
             for (AliquotInterface aliquot : aliquots) {
-                AliquotInterface nextAliquot = getAliquotByNumber(((UPbReduxAliquot) aliquot).getAliquotNumber());
+                AliquotInterface nextAliquot = getAliquotByNumber(((ReduxAliquotInterface) aliquot).getAliquotNumber());
                 try {
                     nextAliquot.setPhysicalConstantsModel(getPhysicalConstantsModel());
 
@@ -1323,6 +1325,7 @@ public class Sample implements
     /**
      * @return the automaticDataUpdateMode
      */
+    @Override
     public boolean isAutomaticDataUpdateMode() {
         return automaticDataUpdateMode;
     }
@@ -1330,6 +1333,7 @@ public class Sample implements
     /**
      * @param automaticDataUpdateMode the automaticDataUpdateMode to set
      */
+    @Override
     public void setAutomaticDataUpdateMode(boolean automaticDataUpdateMode) {
         this.automaticDataUpdateMode = automaticDataUpdateMode;
     }
@@ -1337,6 +1341,7 @@ public class Sample implements
     /**
      * @return the sampleFolderSaved
      */
+    @Override
     public File getSampleFolderSaved() {
         return sampleFolderSaved;
     }
@@ -1344,6 +1349,7 @@ public class Sample implements
     /**
      * @param sampleFolderSaved the sampleFolderSaved to set
      */
+    @Override
     public void setSampleFolderSaved(File sampleFolderSaved) {
         this.sampleFolderSaved = sampleFolderSaved;
     }

@@ -978,13 +978,13 @@ public class UPbFractionEditorDialog extends DialogEditor {
                     new Class[]{String.class});
 
             retval[0] = (ValueModel) method.//
-                    invoke(((UPbFraction) fraction), //
+                    invoke(fraction, //
                             new Object[]{dateNamesByCorrection.get(correctionModeForDates)[0]});
             retval[1] = (ValueModel) method.//
-                    invoke(((UPbFraction) fraction), //
+                    invoke(fraction, //
                             new Object[]{dateNamesByCorrection.get(correctionModeForDates)[1]});
             retval[2] = (ValueModel) method.//
-                    invoke(((UPbFraction) fraction), //
+                    invoke(fraction, //
                             new Object[]{dateNamesByCorrection.get(correctionModeForDates)[2]});
 
         } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException classNotFoundException) {
@@ -1005,7 +1005,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
 
         //if (reductionHandlerExists) {
         // currently non-static call on purpose - jfb
-        UPbFractionReducer.getInstance().fullFractionReduce(fraction, calculateCovariances);
+        UPbFractionReducer.getInstance().fullFractionReduce((FractionI)fraction, calculateCovariances);
         //}
     }
 

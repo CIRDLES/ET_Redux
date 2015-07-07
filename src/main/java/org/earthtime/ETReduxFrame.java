@@ -98,6 +98,7 @@ import org.earthtime.UPb_Redux.dialogs.sampleManagers.sampleFromProjectManagers.
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.filters.ReduxFileFilter;
 import org.earthtime.UPb_Redux.filters.XMLFileFilter;
+import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionTable;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLAICPMSFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.PbcCorrectionDetails;
@@ -1725,7 +1726,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                             PbcCorrectionDetails.zeroAllValues();
                             PbcCorrectionDetails.fraction_ID = fraction.getFractionID();
                             PbcCorrectionDetails.pbcCorrScheme = ((UPbLAICPMSFraction) fraction).getCommonLeadLossCorrectionScheme().getName();
-                            UPbFractionReducer.getInstance().fullFractionReduce(fraction, true);
+                            UPbFractionReducer.getInstance().fullFractionReduce((FractionI)fraction, true);
                             outputWriter.println(PbcCorrectionDetails.dataString());
 
                             outputWriter.println();
