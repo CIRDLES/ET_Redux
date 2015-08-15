@@ -119,51 +119,53 @@ public class DataViewsOverlay extends AbstractRawDataView implements FitFunction
             for (int i = 0; i < tripoliFractionRawDataModelViews.length; i++) {
                 double[] tfOnPeakData = tripoliFractionRawDataModelViews[i].getMyOnPeakData();
 
-                tripoliFraction = tripoliFractionRawDataModelViews[i].getTripoliFraction();
-                // draw onPeak line
-                Shape onPeakLine = new Path2D.Double();
-                g2d.setPaint(tripoliFraction.isIncluded() ? tripoliFractionRawDataModelViews[i].getPaintColor() : EXCLUDED_COLOR);
-                ((Path2D) onPeakLine).moveTo(//
-                        mapX(myOnPeakNormalizedAquireTimes[0]), //
-                        mapY(tfOnPeakData[0]));
+                if (tfOnPeakData != null) {
+                    tripoliFraction = tripoliFractionRawDataModelViews[i].getTripoliFraction();
+                    // draw onPeak line
+                    Shape onPeakLine = new Path2D.Double();
+                    g2d.setPaint(tripoliFraction.isIncluded() ? tripoliFractionRawDataModelViews[i].getPaintColor() : EXCLUDED_COLOR);
+                    ((Path2D) onPeakLine).moveTo(//
+                            mapX(myOnPeakNormalizedAquireTimes[0]), //
+                            mapY(tfOnPeakData[0]));
 
-                for (int j = 1; j < tfOnPeakData.length; j++) {
-                    ((Path2D) onPeakLine).lineTo( //
-                            mapX(myOnPeakNormalizedAquireTimes[j]), mapY(tfOnPeakData[j]));
-                }
-                g2d.draw(onPeakLine);
-
-                // now check for excluded points and add redLine coming and going
-                for (int j = 1; j < tfOnPeakData.length; j++) {
-                    if (!tripoliFraction.getDataActiveMap()[j]) {
-                        Path2D excludedLine = new Path2D.Double();
-                        if (j == 0) {
-                            excludedLine.moveTo(//
-                                    mapX(myOnPeakNormalizedAquireTimes[0]), //
-                                    mapY(tfOnPeakData[0]));
-                        } else {
-                            excludedLine.moveTo(//
-                                    mapX(myOnPeakNormalizedAquireTimes[j - 1]), //
-                                    mapY(tfOnPeakData[j - 1]));
-                            excludedLine.lineTo(//
-                                    mapX(myOnPeakNormalizedAquireTimes[j]), //
-                                    mapY(tfOnPeakData[j]));
-                        }
-
-                        if (j < tfOnPeakData.length - 1) {
-                            excludedLine.lineTo(//
-                                    mapX(myOnPeakNormalizedAquireTimes[j + 1]), //
-                                    mapY(tfOnPeakData[j + 1]));
-                        }
-
-                        g2d.setPaint(EXCLUDED_COLOR);
-                        g2d.draw(excludedLine);
+                    for (int j = 1; j < tfOnPeakData.length; j++) {
+                        ((Path2D) onPeakLine).lineTo( //
+                                mapX(myOnPeakNormalizedAquireTimes[j]), mapY(tfOnPeakData[j]));
                     }
+                    g2d.draw(onPeakLine);
 
-                    // check for temporary red vertical line from mouse click
-                    int chosenDatumIndex = tripoliFraction.getShowVerticalLineAtThisIndex();
-                    if (chosenDatumIndex > -1) {
-                        paintLineOverSelectedDatum(g2d, chosenDatumIndex);
+                    // now check for excluded points and add redLine coming and going
+                    for (int j = 1; j < tfOnPeakData.length; j++) {
+                        if (!tripoliFraction.getDataActiveMap()[j]) {
+                            Path2D excludedLine = new Path2D.Double();
+                            if (j == 0) {
+                                excludedLine.moveTo(//
+                                        mapX(myOnPeakNormalizedAquireTimes[0]), //
+                                        mapY(tfOnPeakData[0]));
+                            } else {
+                                excludedLine.moveTo(//
+                                        mapX(myOnPeakNormalizedAquireTimes[j - 1]), //
+                                        mapY(tfOnPeakData[j - 1]));
+                                excludedLine.lineTo(//
+                                        mapX(myOnPeakNormalizedAquireTimes[j]), //
+                                        mapY(tfOnPeakData[j]));
+                            }
+
+                            if (j < tfOnPeakData.length - 1) {
+                                excludedLine.lineTo(//
+                                        mapX(myOnPeakNormalizedAquireTimes[j + 1]), //
+                                        mapY(tfOnPeakData[j + 1]));
+                            }
+
+                            g2d.setPaint(EXCLUDED_COLOR);
+                            g2d.draw(excludedLine);
+                        }
+
+                        // check for temporary red vertical line from mouse click
+                        int chosenDatumIndex = tripoliFraction.getShowVerticalLineAtThisIndex();
+                        if (chosenDatumIndex > -1) {
+                            paintLineOverSelectedDatum(g2d, chosenDatumIndex);
+                        }
                     }
                 }
             }

@@ -696,6 +696,10 @@ public class UPbReduxAliquot extends Aliquot
      * @return
      */
     public ReduxLabData getMyReduxLabData() {
+        // Aug 2015 backward compatible
+        if (myReduxLabData ==  null){
+            myReduxLabData = ReduxLabData.getInstance();
+        }
         return myReduxLabData;
     }
 

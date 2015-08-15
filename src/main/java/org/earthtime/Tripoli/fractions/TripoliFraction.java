@@ -434,7 +434,7 @@ public class TripoliFraction implements //
             if (savedCommonLeadDataActiveMap != null) {
                 // since the */204 ratios may have fewer points, need to remove the rows and cols associated with those missing points
                 if (rr.getRawRatioModelName().compareTo(RawRatioNames.r206_207w) == 0) {
-                // walk the 206_207 dataActiveMap and increment matrixIndex for each true entry
+                    // walk the 206_207 dataActiveMap and increment matrixIndex for each true entry
                     // if the lead map is false at the same entry, save the matrix index for removal from matrix
                     ArrayList<Integer> matrixIndicesToRemove = new ArrayList<>();
                     int matrixIndex = -1;
@@ -485,7 +485,7 @@ public class TripoliFraction implements //
                 }
 
                 if (rr.getRawRatioModelName().compareTo(RawRatioNames.r208_232w) == 0) {
-                // walk the r208_232w dataActiveMap and increment matrixIndex for each true entry
+                    // walk the r208_232w dataActiveMap and increment matrixIndex for each true entry
                     // if the lead map is false at the same entry, save the matrix index for removal from matrix
                     ArrayList<Integer> matrixIndicesToRemove = new ArrayList<>();
                     int matrixIndex = -1;
@@ -675,6 +675,23 @@ public class TripoliFraction implements //
         return ratiosForFractionFitting;
     }
 
+    private SortedSet<DataModelInterface> getNonPbRatiosForFractionFitting() {
+        SortedSet<DataModelInterface> ratiosForFractionFitting = new TreeSet<>((DataModelInterface rrdm1, DataModelInterface rrdm2) -> {
+            RawRatioNames rmName = rrdm1.getRawRatioModelName();
+            RawRatioNames myName = rrdm2.getRawRatioModelName();
+
+            return rmName.compareTo(myName);
+        });
+
+        for (DataModelInterface rr : rawRatios) {
+            if (((RawRatioDataModel) rr).isUsedForFractionationCorrections()) {
+                ratiosForFractionFitting.add(rr);
+            }
+        }
+
+        return ratiosForFractionFitting;
+    }
+
     /**
      *
      * @return
@@ -687,7 +704,7 @@ public class TripoliFraction implements //
         }
 
         if (retVal) {
-            SortedSet<DataModelInterface> validFractionationRatios = getRatiosForFractionFitting();
+            SortedSet<DataModelInterface> validFractionationRatios = getNonPbRatiosForFractionFitting();
             Iterator<DataModelInterface> validFractionIterator = validFractionationRatios.iterator();
             while (validFractionIterator.hasNext()) {
                 DataModelInterface rr = validFractionIterator.next();
@@ -1501,7 +1518,7 @@ public class TripoliFraction implements //
                 }
                 if (rejectedAPoint) {
                     rr.generateSetOfFitFunctions(true, false);
-                    ((RawRatioDataModel)rr).calculateDownholeFractionWeightedMeanAndUnct();
+                    ((RawRatioDataModel) rr).calculateDownholeFractionWeightedMeanAndUnct();
                 }
             } else {
 //                System.out.println("NONE");

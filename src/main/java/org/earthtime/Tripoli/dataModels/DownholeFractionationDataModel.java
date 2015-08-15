@@ -34,10 +34,12 @@ import org.earthtime.Tripoli.fitFunctions.MeanFitFunction;
 import org.earthtime.Tripoli.fitFunctions.SmoothingSplineWithCov;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.UPb_Redux.fractions.FractionsFilterInterface;
+import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.dataDictionaries.FitFunctionTypeEnum;
 import org.earthtime.dataDictionaries.FractionSelectionTypeEnum;
 import org.earthtime.dataDictionaries.IncludedTypeEnum;
 import org.earthtime.dataDictionaries.RawRatioNames;
+import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 
 /**
  *
@@ -58,7 +60,9 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
     private final double[] normalizedAquireTimes;
     private double[] fittedStandards;
     private double[] fittedStandardsResiduals;
+    private double[] fittedStandardsBeta;
     private MaskingSingleton maskingSingleton;
+    private ValueModel standardValueModel;
 
     /**
      *
@@ -92,19 +96,16 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
      *
      * @param tripoliFractions the value of tripoliFractions
      * @param rawRatioName
+     * @param primaryMineralStandard the value of primaryMineralStandard
      * @param weightedMeanIntegrations
      * @param onPeakAcquireTimesBySecond
      * @param normalizedAquireTimes
      * @param maskingSingleton
      */
     public DownholeFractionationDataModel(//
-            //
-            SortedSet<TripoliFraction> tripoliFractions,//
-            RawRatioNames rawRatioName, //
-            double[] weightedMeanIntegrations, //
-            double[] onPeakAcquireTimesBySecond, //
-            double[] normalizedAquireTimes,//
-            MaskingSingleton maskingSingleton) {
+            SortedSet<TripoliFraction> tripoliFractions, //
+            RawRatioNames rawRatioName, AbstractRatiosDataModel primaryMineralStandard, //
+            double[] weightedMeanIntegrations, double[] onPeakAcquireTimesBySecond, double[] normalizedAquireTimes, MaskingSingleton maskingSingleton) {
 
         this.tripoliFractions = tripoliFractions;
         this.rawRatioName = rawRatioName;
@@ -114,6 +115,7 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
 
         this.fittedStandards = new double[weightedMeanIntegrations.length];
         this.fittedStandardsResiduals = new double[weightedMeanIntegrations.length];
+        this.fittedStandardsBeta = new double[weightedMeanIntegrations.length];
         this.maskingSingleton = maskingSingleton;
 
         this.downholeStandardsFitFunctionsNoOD = new TreeMap<>();
@@ -124,6 +126,8 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
 
         this.calculatedInitialFitFunctions = false;
         this.overDispersionSelected = true;
+
+        this.standardValueModel = primaryMineralStandard.getDatumByName(rawRatioName.getName().replace("w", "r"));
 
     }
 
@@ -145,6 +149,7 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
         activeDataMap = new boolean[countOfActiveData];
         weightedMeanIntegrations = new double[countOfActiveData];
         fittedStandards = new double[countOfActiveData];
+        setFittedStandardsBeta(new double[countOfActiveData]);
         fittedStandardsResiduals = new double[countOfActiveData];
         activeXvalues = new double[countOfActiveData];
 
@@ -154,6 +159,7 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
                 activeDataMap[index] = true;
                 weightedMeanIntegrations[index] = 0.0;
                 fittedStandards[index] = 0.0;
+                getFittedStandardsBeta()[index] = 0.0;
                 fittedStandardsResiduals[index] = 0.0;
                 activeXvalues[index] = normalizedAquireTimes[i];
 
@@ -169,26 +175,26 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
         Iterator<TripoliFraction> fractionIterator =//
                 FractionsFilterInterface.getTripoliFractionsFiltered(//
                         tripoliFractions, FractionSelectionTypeEnum.STANDARD, IncludedTypeEnum.INCLUDED).iterator();
-        
+
         while (fractionIterator.hasNext()) {
             TripoliFraction tf = fractionIterator.next();
 
             RawRatioDataModel rawRatio = //
                     ((RawRatioDataModel) tf.getRawRatioDataModelByName(rawRatioName));
 
+            // calc SLogRatioXY
             rawRatio.propagateUnctInRatios();
 
             Matrix SlogRatioX_Y = rawRatio.getSlogRatioX_Y_withZeroesAtInactive();//getSlogRatioX_Y();
 
             // sum of the inverses of all of the Slr_X_Y covariance matrices
             sumInvSlogRatioX_Y.plusEquals(SlogRatioX_Y.inverse());
-                       
+
 ////            // get active logratios from standard
 ////            Matrix logRatiosVector = new Matrix(rawRatio.getActiveLogRatios(countOfActiveData), countOfActiveData);
 ////
 ////            // column vector length count of aquisitions
 ////            sumInvSlogRatioX_YTimeslr.plusEquals(SlogRatioX_Y.solve(logRatiosVector));
-            
             // JUNE 2015 - got to standard faction and calculate SlogRatioX_Y.solve(logratiosVector) for that fraction's active
             // return to here that solution with missing rows added back in with zeores to match the shape of this overall downhole
             Matrix SlogRXYSolveLRWithZeroesAtInactive = rawRatio.SlogRXYSolveLRWithZeroesAtInactive(dataCommonActiveMap);
@@ -201,7 +207,7 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
         // square matrix
         SwtdMeanStdIntegrations = sumInvSlogRatioX_Y.inverse();
 
-        // populate arrays for plotting and fitting
+        // populate arrays for plotting and fitting of thick RED LINE from weightedMeanIntegrations
         for (int i = 0; i < weightedMeanIntegrations.length; i++) {
             weightedMeanIntegrations[i] = wtdMeanStdIntegrations.get(i, 0);
         }
@@ -520,6 +526,21 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
             fittedStandardsResiduals[i] = weightedMeanIntegrations[i] - fittedStandards[i];
         }
         return fittedStandards;
+    }
+
+    public double[] getFitFunctionBetaValues() {
+        AbstractFunctionOfX fitFunc = getSelectedFitFunction();
+
+        for (int i = 0; i < getFittedStandardsBeta().length; i++) {
+            try {
+                getFittedStandardsBeta()[i] = //
+                        Math.log(standardValueModel.getValue().doubleValue()) //
+                        - fitFunc.f(activeXvalues[i]);
+            } catch (Exception e) {
+                getFittedStandardsBeta()[i] = Math.log(standardValueModel.getValue().doubleValue());
+            }
+        }
+        return getFittedStandardsBeta();
     }
 
     /**
@@ -885,5 +906,33 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
      */
     public double[] getActiveXvalues() {
         return activeXvalues;
+    }
+
+    /**
+     * @return the standardValueModel
+     */
+    public ValueModel getStandardValueModel() {
+        return standardValueModel;
+    }
+
+    /**
+     * @param standardValueModel the standardValueModel to set
+     */
+    public void setStandardValueModel(ValueModel standardValueModel) {
+        this.standardValueModel = standardValueModel;
+    }
+
+    /**
+     * @return the fittedStandardsBeta
+     */
+    public double[] getFittedStandardsBeta() {
+        return fittedStandardsBeta;
+    }
+
+    /**
+     * @param fittedStandardsBeta the fittedStandardsBeta to set
+     */
+    public void setFittedStandardsBeta(double[] fittedStandardsBeta) {
+        this.fittedStandardsBeta = fittedStandardsBeta;
     }
 }

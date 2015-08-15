@@ -124,11 +124,12 @@ public enum SampleRegistries {
      * @return
      */
     public static String updateSampleID ( String sampleID ) {
+        String retVal = sampleID;
         if ( !sampleID.contains(".") ) {
-            sampleID = GeochronID.code + "." + sampleID;
+            retVal = GeochronID.code + "." + sampleID;
         }
 
-        return sampleID;
+        return retVal;
     }
 
     /**

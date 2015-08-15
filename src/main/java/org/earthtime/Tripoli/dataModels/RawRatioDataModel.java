@@ -409,86 +409,88 @@ public class RawRatioDataModel //
     public void calculateDownholeFractionWeightedMeanAndUnct() {
         // calculate the logDifferencesFromWeightedMean between logratios and fit function
 
-        int countOfActiveData = 0;
-        for (int i = 0; i < dataActiveMap.length; i++) {
-            if (dataActiveMap[i]) {
-                countOfActiveData++;
-            }
-        }
-
-        activeData = new boolean[countOfActiveData];
-        logDifferencesFromWeightedMean = new double[countOfActiveData];
-        double[] normalizedOnPeakAquireTimes = getNormalizedOnPeakAquireTimes();
-        ArrayList<Integer> matrixIndicesToRemove = new ArrayList<>();
-        // ignore shades - shades will be false only at left end and right end, already ignored by downhole fit function
-        boolean[] shades = MaskingSingleton.getInstance().getMaskingArray();
-        int index = 0;
-        for (int i = 0; i < dataActiveMap.length; i++) {
-            if (dataActiveMap[i]) {
-                activeData[index] = true;
-                logDifferencesFromWeightedMean[index] = logRatios[i] - downHoleFitFunction.f(normalizedOnPeakAquireTimes[i]);
-                index++;
-            } else {
-                if (shades[i]) {
-                    matrixIndicesToRemove.add(i);
+        if (downHoleFitFunction != null) {
+            int countOfActiveData = 0;
+            for (int i = 0; i < dataActiveMap.length; i++) {
+                if (dataActiveMap[i]) {
+                    countOfActiveData++;
                 }
             }
-        }
 
-        // remove row and col of matrix sf corresponding to missing acquisitions
-        Matrix matrixSfCopy = downHoleFitFunction.getMatrixSf().copy();
-        if (matrixIndicesToRemove.size() > 0) {
-            // reverse list of indices to remove to avoid counting errors
-            Collections.sort(matrixIndicesToRemove, (Integer i1, Integer i2) -> Integer.compare(i2, i1));
-
-            // walk the list of indices to remove and remove rows and cols before insertion
-            for (Integer indexToRemove : matrixIndicesToRemove) {
-                matrixSfCopy = MatrixRemover.removeRow(matrixSfCopy, indexToRemove);
-                matrixSfCopy = MatrixRemover.removeCol(matrixSfCopy, indexToRemove);
-            }
-        }
-
-        AbstractOverDispersionLMAlgorithm algorithmForMEAN = LevenbergMarquardGeneralSolverWithCovS.getInstance()//
-                .getSelectedLMAlgorithm(//
-                        FitFunctionTypeEnum.MEAN,//
-                        activeData, //
-                        null, //this is mean so x does not matter
-                        logDifferencesFromWeightedMean,//
-                        matrixSfCopy.plus(getSlogRatioX_Y()),//
-                        false);
-
-        // algorithmForMEAN contains both the non OD and OD versions
-        AbstractFunctionOfX fOfX_MEAN = algorithmForMEAN.getInitialFofX();
-        AbstractFunctionOfX fOfX_MEAN_OD;
-        if ((fOfX_MEAN != null) && fOfX_MEAN.verifyPositiveVariances()) {
-
-            fOfX_MEAN_OD = algorithmForMEAN.getFinalFofX();
-
-            if ((fOfX_MEAN_OD != null) && fOfX_MEAN_OD.verifyPositiveVariances()) {
-            } else {
-                fOfX_MEAN_OD = fOfX_MEAN;
+            activeData = new boolean[countOfActiveData];
+            logDifferencesFromWeightedMean = new double[countOfActiveData];
+            double[] normalizedOnPeakAquireTimes = getNormalizedOnPeakAquireTimes();
+            ArrayList<Integer> matrixIndicesToRemove = new ArrayList<>();
+            // ignore shades - shades will be false only at left end and right end, already ignored by downhole fit function
+            boolean[] shades = MaskingSingleton.getInstance().getMaskingArray();
+            int index = 0;
+            for (int i = 0; i < dataActiveMap.length; i++) {
+                if (dataActiveMap[i]) {
+                    activeData[index] = true;
+                    logDifferencesFromWeightedMean[index] = logRatios[i] - downHoleFitFunction.f(normalizedOnPeakAquireTimes[i]);
+                    index++;
+                } else {
+                    if (shades[i]) {
+                        matrixIndicesToRemove.add(i);
+                    }
+                }
             }
 
-        } else {
-            // to handle really bad data sets, for which LM wont work, do good old fashioned mean
-            System.out.println("LM would not fit mean , so using arithmetic mean fit");
-            fOfX_MEAN = MeanFitFunction.getInstance()//
-                    .getFunctionOfX(//
+            // remove row and col of matrix sf corresponding to missing acquisitions
+            Matrix matrixSfCopy = downHoleFitFunction.getMatrixSf().copy();
+            if (matrixIndicesToRemove.size() > 0) {
+                // reverse list of indices to remove to avoid counting errors
+                Collections.sort(matrixIndicesToRemove, (Integer i1, Integer i2) -> Integer.compare(i2, i1));
+
+                // walk the list of indices to remove and remove rows and cols before insertion
+                for (Integer indexToRemove : matrixIndicesToRemove) {
+                    matrixSfCopy = MatrixRemover.removeRow(matrixSfCopy, indexToRemove);
+                    matrixSfCopy = MatrixRemover.removeCol(matrixSfCopy, indexToRemove);
+                }
+            }
+
+            AbstractOverDispersionLMAlgorithm algorithmForMEAN = LevenbergMarquardGeneralSolverWithCovS.getInstance()//
+                    .getSelectedLMAlgorithm(//
+                            FitFunctionTypeEnum.MEAN,//
                             activeData, //
-                            activeXvalues, //
+                            null, //this is mean so x does not matter
                             logDifferencesFromWeightedMean,//
                             matrixSfCopy.plus(getSlogRatioX_Y()),//
                             false);
 
-            fOfX_MEAN_OD = fOfX_MEAN;
+            // algorithmForMEAN contains both the non OD and OD versions
+            AbstractFunctionOfX fOfX_MEAN = algorithmForMEAN.getInitialFofX();
+            AbstractFunctionOfX fOfX_MEAN_OD;
+            if ((fOfX_MEAN != null) && fOfX_MEAN.verifyPositiveVariances()) {
+
+                fOfX_MEAN_OD = algorithmForMEAN.getFinalFofX();
+
+                if ((fOfX_MEAN_OD != null) && fOfX_MEAN_OD.verifyPositiveVariances()) {
+                } else {
+                    fOfX_MEAN_OD = fOfX_MEAN;
+                }
+
+            } else {
+                // to handle really bad data sets, for which LM wont work, do good old fashioned mean
+                System.out.println("LM would not fit mean , so using arithmetic mean fit");
+                fOfX_MEAN = MeanFitFunction.getInstance()//
+                        .getFunctionOfX(//
+                                activeData, //
+                                activeXvalues, //
+                                logDifferencesFromWeightedMean,//
+                                matrixSfCopy.plus(getSlogRatioX_Y()),//
+                                false);
+
+                fOfX_MEAN_OD = fOfX_MEAN;
+            }
+
+            meanOfResidualsFromFittedFractionation = fOfX_MEAN_OD.getA();
+            stdErrOfmeanOfResidualsFromFittedFractionation = fOfX_MEAN_OD.getStdErrOfA();
+
+            logRatioFitFunctionsNoOD.put(FitFunctionTypeEnum.MEAN_DH.getName(), fOfX_MEAN);
+            logRatioFitFunctionsWithOD.put(FitFunctionTypeEnum.MEAN_DH.getName(), fOfX_MEAN_OD);
+            overDispersionSelectedDownHole = true;
         }
-
-        meanOfResidualsFromFittedFractionation = fOfX_MEAN_OD.getA();
-        stdErrOfmeanOfResidualsFromFittedFractionation = fOfX_MEAN_OD.getStdErrOfA();
-
-        logRatioFitFunctionsNoOD.put(FitFunctionTypeEnum.MEAN_DH.getName(), fOfX_MEAN);
-        logRatioFitFunctionsWithOD.put(FitFunctionTypeEnum.MEAN_DH.getName(), fOfX_MEAN_OD);
-        overDispersionSelectedDownHole = true;
     }
 
     /**

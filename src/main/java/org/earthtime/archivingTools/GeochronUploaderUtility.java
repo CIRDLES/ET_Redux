@@ -44,7 +44,7 @@ public class GeochronUploaderUtility {
 
     
     public static void uploadAliquotToGeochron(SampleInterface sample, AliquotInterface aliquot, String userName, String password, boolean isPublic, boolean overWrite) {
-        // feb 2015 part of refactoring effort ... this code cduplicate code in AliquotManager
+        // feb 2015 part of refactoring effort ... this code duplicates code in AliquotManager
         //TODO: complete refactoring
               
         String content = ((UPbReduxAliquot)aliquot).serializeXMLObject();

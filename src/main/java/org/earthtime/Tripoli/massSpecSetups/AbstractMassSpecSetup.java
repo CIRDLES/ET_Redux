@@ -54,6 +54,7 @@ import org.earthtime.dataDictionaries.IsotopeNames;
 import org.earthtime.dataDictionaries.MassSpecTypeEnum;
 import org.earthtime.dataDictionaries.RawRatioNames;
 import org.earthtime.isotopes.IsotopesEnum;
+import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.statistics.NonParametricStats;
 
 /**
@@ -1108,11 +1109,12 @@ public abstract class AbstractMassSpecSetup implements //
     /**
      *
      * @param tripoliFractions
-     * @return
+     * @param primaryMineralStandard the value of primaryMineralStandard
+     * @return the java.util.SortedMap<org.earthtime.dataDictionaries.RawRatioNames,org.earthtime.Tripoli.dataModels.DownholeFractionationDataModel>
      */
-    public SortedMap<RawRatioNames, DownholeFractionationDataModel>//
+    public SortedMap<RawRatioNames, DownholeFractionationDataModel>
             downholeFractionationDataModelsFactory(//
-                    SortedSet<TripoliFraction> tripoliFractions) {
+                    SortedSet<TripoliFraction> tripoliFractions, AbstractRatiosDataModel primaryMineralStandard) {
 
                 @SuppressWarnings("MapReplaceableByEnumMap")
                 SortedMap<RawRatioNames, DownholeFractionationDataModel> fractionationDataModels = new TreeMap<>();
@@ -1126,15 +1128,21 @@ public abstract class AbstractMassSpecSetup implements //
                 DownholeFractionationDataModel r206_207w =//
                         new DownholeFractionationDataModel( //
                                 tripoliFractions, //
-                                RawRatioNames.r206_207w, new double[countOfAcquisitions], acquireTimes.clone(), normalizedOnPeakAquireTimes.clone(), maskingArray);
+                                RawRatioNames.r206_207w, //
+                                primaryMineralStandard, //
+                                new double[countOfAcquisitions], acquireTimes.clone(), normalizedOnPeakAquireTimes.clone(), maskingArray);
                 DownholeFractionationDataModel r206_238w =//
                         new DownholeFractionationDataModel(//
                                 tripoliFractions, //
-                                RawRatioNames.r206_238w, new double[countOfAcquisitions], acquireTimes.clone(), normalizedOnPeakAquireTimes.clone(), maskingArray);
+                                RawRatioNames.r206_238w, //
+                                primaryMineralStandard, //
+                                new double[countOfAcquisitions], acquireTimes.clone(), normalizedOnPeakAquireTimes.clone(), maskingArray);
                 DownholeFractionationDataModel r208_232w = //
                         new DownholeFractionationDataModel( //
                                 tripoliFractions, //
-                                RawRatioNames.r208_232w, new double[countOfAcquisitions], acquireTimes.clone(), normalizedOnPeakAquireTimes.clone(), maskingArray);
+                                RawRatioNames.r208_232w, //
+                                primaryMineralStandard, //
+                                new double[countOfAcquisitions], acquireTimes.clone(), normalizedOnPeakAquireTimes.clone(), maskingArray);
 
                 // oct 2012 update fractionation models based on valid ratios
                 // first load assumed models
