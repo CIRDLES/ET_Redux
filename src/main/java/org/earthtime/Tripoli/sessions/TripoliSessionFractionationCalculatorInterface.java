@@ -30,8 +30,6 @@ public interface TripoliSessionFractionationCalculatorInterface {
      */
     public void calculateDownholeFitSummariesForPrimaryStandard ();
     
-//    public void calculateAllInterceptAlphaFitSummariesForPrimaryStandard ();
-    
     /**
      * 
      */

@@ -31,56 +31,70 @@ import org.earthtime.Tripoli.dataViews.simpleViews.FitFunctionDataInterface;
  */
 public class DownholeFitFunctionsPresentationView extends AbstractFitFunctionPresentationView {
 
-    private DataModelFitFunctionInterface downholeFractionationAlphaDataModel;
+    private DataModelFitFunctionInterface downholeFractionationDataModel;
 
     /**
-     * 
+     *
      * @param sampleSessionDataView
-     * @param downholeFractionationAlphaDataModel
-     * @param targetDataModelView 
+     * @param downholeFractionationDataModel
+     * @param targetDataModelView
      * @param bounds
      */
-    public DownholeFitFunctionsPresentationView ( //
+    public DownholeFitFunctionsPresentationView( //
             JLayeredPane sampleSessionDataView, //
-            DataModelFitFunctionInterface downholeFractionationAlphaDataModel,//
+            DataModelFitFunctionInterface downholeFractionationDataModel,//
             FitFunctionDataInterface targetDataModelView,
-            Rectangle bounds ) {
+            Rectangle bounds) {
 
-        super( targetDataModelView, bounds );
+        super(targetDataModelView, bounds);
 
-        setCursor( Cursor.getDefaultCursor() );
+        setCursor(Cursor.getDefaultCursor());
 
         this.sampleSessionDataView = sampleSessionDataView;
-        this.downholeFractionationAlphaDataModel = downholeFractionationAlphaDataModel;
+        this.downholeFractionationDataModel = downholeFractionationDataModel;
     }
 
     /**
-     * 
+     *
      * @param g2d
      */
     @Override
-    public void paint ( Graphics2D g2d ) {
-        paintInit( g2d );
+    public void paint(Graphics2D g2d) {
+        paintInit(g2d);
 
     }
 
     /**
-     * 
+     *
      */
     @Override
-    public void preparePanel () {
+    public void preparePanel() {
 
         removeAll();
         // first restore the data
         // recalculate averages and fits
-        if ( downholeFractionationAlphaDataModel != null ) {
+        if (downholeFractionationDataModel != null) {
             if (!((TripoliSessionRawDataView) sampleSessionDataView).//
-                    getSessionFractionationCalculator().isCalculatedInitialFitFunctions()){
-            ((TripoliSessionRawDataView) sampleSessionDataView).//
-                    getSessionFractionationCalculator().calculateDownholeFitSummariesForPrimaryStandard();
+                    getSessionFractionationCalculator().isCalculatedInitialFitFunctions()) {
+                ((TripoliSessionRawDataView) sampleSessionDataView).//
+                        getSessionFractionationCalculator().calculateDownholeFitSummariesForPrimaryStandard();
             }
-        }
 
-        createFitFunctionPanes( downholeFractionationAlphaDataModel, true );
+            createFitFunctionPanes(downholeFractionationDataModel, true);
+        }
+    }
+
+    /**
+     * @return the downholeFractionationDataModel
+     */
+    public DataModelFitFunctionInterface getDownholeFractionationDataModel() {
+        return downholeFractionationDataModel;
+    }
+
+    /**
+     * @param downholeFractionationDataModel the downholeFractionationDataModel to set
+     */
+    public void setDownholeFractionationDataModel(DataModelFitFunctionInterface downholeFractionationDataModel) {
+        this.downholeFractionationDataModel = downholeFractionationDataModel;
     }
 }

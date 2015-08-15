@@ -77,12 +77,12 @@ public class AgeExtents extends AbstractAgeWidget implements MouseInputListener 
     /**
      * 
      */
-    public class geoAgeLabelMouseListener implements MouseListener {
+    public class GeoAgeLabelMouseListener implements MouseListener {
 
         private AgeExtents ageExtents;
         private int locationIndex;
 
-        geoAgeLabelMouseListener(AgeExtents ageExtents, int locationIndex) {
+        GeoAgeLabelMouseListener(AgeExtents ageExtents, int locationIndex) {
             this.ageExtents = ageExtents;
             this.locationIndex = locationIndex;
         }
@@ -210,7 +210,7 @@ public class AgeExtents extends AbstractAgeWidget implements MouseInputListener 
                     15);
             add(label, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-            label.addMouseListener(new geoAgeLabelMouseListener(this, i));
+            label.addMouseListener(new GeoAgeLabelMouseListener(this, i));
 
             previousX = GeoAges.level1.get(i);
 

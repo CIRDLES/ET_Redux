@@ -79,6 +79,7 @@ import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.aliquots.AliquotInterface;
+import org.earthtime.aliquots.ReduxAliquotInterface;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.beans.ET_JToggleButton;
 import org.earthtime.dataDictionaries.Lambdas;
@@ -313,11 +314,11 @@ public class SampleDateInterpretationsManager extends DialogEditor
         weightedMeanGraphPanel.repaint();
     }
 
-    class weightedMeanFractionOrderActionListener implements ActionListener {
+    class WeightedMeanFractionOrderActionListener implements ActionListener {
 
         Map<String, String> WMO;
 
-        public weightedMeanFractionOrderActionListener(Map<String, String> WMO) {
+        public WeightedMeanFractionOrderActionListener(Map<String, String> WMO) {
             this.WMO = WMO;
         }
 
@@ -485,15 +486,15 @@ public class SampleDateInterpretationsManager extends DialogEditor
         }
 
         // percent discordance sliders
-        positivePctDiscordance_slider.addChangeListener(new sliderChangeListener());
-        positivePctDiscordance_slider.addKeyListener(new sliderKeyListener());
+        positivePctDiscordance_slider.addChangeListener(new SliderChangeListener());
+        positivePctDiscordance_slider.addKeyListener(new SliderKeyListener());
 
-        negativePctDiscordance_slider.addChangeListener(new sliderChangeListener());
-        negativePctDiscordance_slider.addKeyListener(new sliderKeyListener());
+        negativePctDiscordance_slider.addChangeListener(new SliderChangeListener());
+        negativePctDiscordance_slider.addKeyListener(new SliderKeyListener());
 
         // percent uncertainty slider
-        percentUncertainty_slider.addChangeListener(new sliderChangeListener());
-        percentUncertainty_slider.addKeyListener(new sliderKeyListener());
+        percentUncertainty_slider.addChangeListener(new SliderChangeListener());
+        percentUncertainty_slider.addKeyListener(new SliderKeyListener());
 
         // zoom buttons
         zoomInProbability_button.addActionListener(new ActionListener() {
@@ -594,7 +595,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
 
     } // initNormedProbabilityPanel
 
-    private class sliderKeyListener implements KeyListener {
+    private class SliderKeyListener implements KeyListener {
 
         boolean validKey = false;
 
@@ -628,7 +629,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
                 updateSlidersStatus(slider);
 
                 ((DateProbabilityDensityPanel) probabilityPanel).//
-                        setSelectedFractions(filterActiveUPbFractions(sample.getUpbFractionsUnknown()));//.getFractionsActive()));
+                        setSelectedFractions(filterActiveUPbFractions(sample.getUpbFractionsUnknown()));
                 // fire off date model to filter its deselected fractions
                 try {
                     ((SampleTreeI) dateTreeByAliquot).performLastUserSelectionOfSampleDate();
@@ -644,7 +645,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         }
     }
 
-    private class sliderChangeListener implements ChangeListener {
+    private class SliderChangeListener implements ChangeListener {
 
         // this flag stops spurious keystrokes from firing off preparepanel, which is expensive
         boolean wasChanging = true;
@@ -661,7 +662,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
                 updateSlidersStatus(slider);
 
                 // oct 2014 make choices stick to data table
-                Vector<ETFractionInterface> filteredFractions = filterActiveUPbFractions(sample.getUpbFractionsUnknown());// oct 2014 to handle live sliders.getFractionsActive());
+                Vector<ETFractionInterface> filteredFractions = filterActiveUPbFractions(sample.getUpbFractionsUnknown());
                 sample.updateSetOfActiveFractions(filteredFractions);
                 // oct 2014 repaint table
                 parentFrame.updateReportTable();
@@ -789,10 +790,10 @@ public class SampleDateInterpretationsManager extends DialogEditor
         Object[][] selectedModels = new Object[1][9];
 
         // this standin aliquot for the whole sample makes weighted means graphs work
-        AliquotInterface standInAliquot = new UPbReduxAliquot();
+        AliquotInterface standInAliquot = sample.generateDefaultAliquot(WIDTH, concordiaFlavor, null, amOpen, null) ;//    new UPbReduxAliquot();
         standInAliquot.setAliquotName(sample.getSampleName());
 
-        ((UPbReduxAliquot) standInAliquot).setAliquotFractions(sample.getFractions());
+        ((ReduxAliquotInterface) standInAliquot).setAliquotFractions(sample.getFractions());
 
         selectedModels[0][0] = standInAliquot;
 
@@ -2125,7 +2126,7 @@ private void resetGraphProbability_buttonActionPerformed (java.awt.event.ActionE
 //    ((DateProbabilityDensityPanel) probabilityPanel).setMaxX( DateProbabilityDensityPanel.DEFAULT_DISPLAY_MAXX );
 //    ((DateProbabilityDensityPanel) probabilityPanel).setDisplayOffsetX( 0 );
     ((DateProbabilityDensityPanel) probabilityPanel).//
-            setSelectedFractions(filterActiveUPbFractions(sample.getUpbFractionsUnknown()));//.getFractionsActive()));
+            setSelectedFractions(filterActiveUPbFractions(sample.getUpbFractionsUnknown()));
 //    ((DateProbabilityDensityPanel) probabilityPanel).setSelectedHistogramBinCount( 0 );
     ((DateProbabilityDensityPanel) probabilityPanel).refreshPanel();
 }//GEN-LAST:event_resetGraphProbability_buttonActionPerformed
@@ -2429,7 +2430,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
             } else {
 
                 ((DateProbabilityDensityPanel) probabilityPanel).//
-                        setSelectedFractions(filterActiveUPbFractions(sample.getUpbFractionsUnknown()));//.getFractionsActive()));
+                        setSelectedFractions(filterActiveUPbFractions(sample.getUpbFractionsUnknown()));
                 ((DateProbabilityDensityPanel) probabilityPanel).//
                         getDeSelectedFractions().clear();
                 ((DateProbabilityDensityPanel) probabilityPanel).//

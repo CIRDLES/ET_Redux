@@ -1,5 +1,5 @@
 /*
- * AbstractProjectImporterFromLegacyCSVFile.java
+ * AbstractProjectImporterFromLegacyDelimitedTextFile.java
  *
  *
  * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
@@ -18,6 +18,7 @@
  */
 package org.earthtime.projects.projectImporters;
 
+import com.google.common.base.Splitter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.math.BigDecimal;
@@ -27,26 +28,31 @@ import javax.swing.JFrame;
 import javax.swing.filechooser.FileFilter;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.exceptions.BadImportedCSVLegacyFileException;
-import org.earthtime.UPb_Redux.filters.LegacyCSVFileFilter;
+import org.earthtime.UPb_Redux.filters.LegacyDelimitedFileFilter;
+import org.earthtime.dataDictionaries.FileDelimiterTypesEnum;
 import org.earthtime.projects.ProjectInterface;
 import org.earthtime.utilities.FileHelper;
 
 /**
- * Converts contents of a CSV file to an aliquot of fractions. The CSV file must
+ * Converts contents of a delimited text file to samples with aliquots of fractions. 
+ * The delimited file (comma, tab) must
  * have the fields in a specific order as specified by the template found at
  * ****************
  *
  * @author James F. Bowring
  */
-public abstract class AbstractProjectImporterFromLegacyCSVFile {
+public abstract class AbstractProjectImporterFromLegacyDelimitedTextFile {
 
     // instance attributes
     private File mruFolder;
+    private FileDelimiterTypesEnum fileDelimiter;
  
     /**
      *
+     * @param fileDelimiter the value of fileDelimiter
      */
-    public AbstractProjectImporterFromLegacyCSVFile () {
+    public AbstractProjectImporterFromLegacyDelimitedTextFile (FileDelimiterTypesEnum fileDelimiter) {
+        this.fileDelimiter = fileDelimiter;
     }
 
     /**
@@ -58,10 +64,10 @@ public abstract class AbstractProjectImporterFromLegacyCSVFile {
     public ProjectInterface readInProjectSamples (ProjectInterface project)
             throws FileNotFoundException, BadImportedCSVLegacyFileException {
 
-        File csvFile = openCSVFile( mruFolder );
-        mruFolder = csvFile.getParentFile();
+        File delimitedFile = openDelimitedTextFile( mruFolder );
+        mruFolder = delimitedFile.getParentFile();
 
-        extractProjectFromCSVFile(project, csvFile );
+        extractProjectFromDelimitedTextFile(project, delimitedFile );
 
         return project;
 
@@ -74,14 +80,14 @@ public abstract class AbstractProjectImporterFromLegacyCSVFile {
      * @return
      * @throws FileNotFoundException
      */
-    protected abstract ProjectInterface extractProjectFromCSVFile (ProjectInterface project, File file )
+    protected abstract ProjectInterface extractProjectFromDelimitedTextFile (ProjectInterface project, File file )
             throws FileNotFoundException;
 
-    private File openCSVFile ( File location )
+    private File openDelimitedTextFile ( File location )
             throws FileNotFoundException {
-        String dialogTitle = "Select a LEGACY CSV file to OPEN: *.csv";
-        final String fileExtension = ".csv";
-        FileFilter nonMacFileFilter = new LegacyCSVFileFilter();
+        String dialogTitle = "Select a LEGACY " + fileDelimiter.getName() +"-delimited file to OPEN: *." + fileDelimiter.getDefaultFileExtension();
+        final String fileExtension = "."+ fileDelimiter.getDefaultFileExtension();
+        FileFilter nonMacFileFilter = new LegacyDelimitedFileFilter(fileDelimiter);
 
         File returnFile =
                 FileHelper.AllPlatformGetFile( dialogTitle, location, fileExtension, nonMacFileFilter, false, new JFrame() )[0];
@@ -98,7 +104,7 @@ public abstract class AbstractProjectImporterFromLegacyCSVFile {
      * @param cellContents
      * @return
      */
-    protected BigDecimal readCSVCell ( String cellContents ) {
+    protected BigDecimal readDelimitedTextCell ( String cellContents ) {
         BigDecimal retVal;
 
         try {
@@ -129,19 +135,41 @@ public abstract class AbstractProjectImporterFromLegacyCSVFile {
         }
         Scanner s = new Scanner( aLine );
         s.useDelimiter( "," );
-
+        
         while (s.hasNext()) {
             myLine.add( s.next().trim() );
         }
-
+        
         s.close();
-
+        
         // add dummy fields to handle possible missing last values
         if ( !myLine.get( 0 ).equalsIgnoreCase( "0" ) ) {
             int size = myLine.size();
             for (int i = size; i < 32; i ++) {
                 myLine.add( "0" );
             }
+        }
+        
+        return myLine;
+    }
+    
+    protected Vector<String> processLegacyTSVLine(String Line){
+               Vector<String> myLine = new Vector<>();
+
+        //use a second Scanner to parse the content of each line
+
+        // remove all quotes
+        String aLine = Line.replaceAll( "\"", "" );
+        
+        // capture empty lines : leading comma : '0' is flag to ignore line
+        if ((aLine == null) || (aLine.length() == 0) ||  ( aLine.startsWith( "," ) )) {
+            myLine.add( "0" );
+        }
+        
+        // July 2015
+        Iterable<String> splitLine = Splitter.on("\t").trimResults().split(aLine);
+        for (String string : splitLine){
+            myLine.add(string);
         }
 
         return myLine;

@@ -96,7 +96,7 @@ public class SmoothingSplineFitFunctionView extends AbstractFitFunctionView {
                     } else if (targetDataModelView instanceof DataViewsOverlay) {
                         sessionOfStandardsSplinesWithOD = //
                                 ((DataViewsOverlay) targetDataModelView)//
-                                .getDownholeFractionationAlphaDataModel().generateSetOfSplineWithODfitFunctions(//
+                                .getDownholeFractionationDataModel().generateSetOfSplineWithODfitFunctions(//
                                         Double.valueOf(startText.getText()),//
                                         Double.valueOf(stepText.getText()),//
                                         Double.valueOf(stopText.getText()));

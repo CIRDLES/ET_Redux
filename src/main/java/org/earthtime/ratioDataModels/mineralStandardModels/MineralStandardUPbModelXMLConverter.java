@@ -172,7 +172,7 @@ public class MineralStandardUPbModelXMLConverter implements Converter {
         reader.moveDown();
         if ("initialPbModelET".equals(reader.getNodeName())) {
             AbstractRatiosDataModel initialPbModelET = InitialPbModelET.createNewInstance();
-            initialPbModelET = (InitialPbModelET) context.convertAnother(//
+            initialPbModelET = (AbstractRatiosDataModel) context.convertAnother(//
                     initialPbModelET, InitialPbModelET.class, new InitialPbModelETXMLConverter());
             ((MineralStandardUPbModel) mineralStandardUPbModel).setInitialPbModelET(initialPbModelET);
 
@@ -181,7 +181,7 @@ public class MineralStandardUPbModelXMLConverter implements Converter {
         }
 
         if ("ratios".equals(reader.getNodeName())) {
-            ArrayList<ValueModel> ratios = new ArrayList<ValueModel>();
+            ArrayList<ValueModel> ratios = new ArrayList<>();
             while (reader.hasMoreChildren()) {
                 reader.moveDown();
                 ValueModel item = new MineralStandardUPbRatioModel();

@@ -35,7 +35,6 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
-import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.customJTrees.CheckBoxNode;
 import org.earthtime.UPb_Redux.customJTrees.CheckBoxNodeEditor;
 import org.earthtime.UPb_Redux.customJTrees.CheckBoxNodeRenderer;
@@ -45,6 +44,7 @@ import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModelI;
 import org.earthtime.aliquots.AliquotInterface;
+import org.earthtime.aliquots.ReduxAliquotInterface;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.samples.SampleInterface;
@@ -114,7 +114,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
 
                     // get a master vector of active fraction names
                     Vector<String> activeFractionIDs =//
-                            ((UPbReduxAliquot) tempAliquot).//
+                            ((ReduxAliquotInterface) tempAliquot).//
                             getAliquotFractionIDs();
 
                     // now load the sample date interpretations
@@ -126,11 +126,11 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
                         aliquotNode.add(sampleDateModelNode);
 
                         // remove from activefractionIDs any fraction with 0 date
-                        Vector<String> zeroFractionDates = new Vector<String>();
+                        Vector<String> zeroFractionDates = new Vector<>();
                         for (int f = 0; f < activeFractionIDs.size(); f++) {
                             try {
                                 if (!((SampleDateModel) tempAliquot.getSampleDateModels().get(index)).//
-                                        fractionDateIsPositive(((UPbReduxAliquot) tempAliquot).getAliquotFractionByName(activeFractionIDs.get(f)))) {
+                                        fractionDateIsPositive(((ReduxAliquotInterface) tempAliquot).getAliquotFractionByName(activeFractionIDs.get(f)))) {
                                     zeroFractionDates.add(activeFractionIDs.get(f));
                                 }
                             } catch (Exception e) {
@@ -217,7 +217,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
 
                 fractionNode.setUserObject( //
                         new CheckBoxNode(
-                                ((SampleDateModel) SAM).showFractionIdWithDateAndUnct(((UPbReduxAliquot) aliquot).getAliquotFractionByName(fracID), "Ma"),
+                                ((SampleDateModel) SAM).showFractionIdWithDateAndUnct(((ReduxAliquotInterface) aliquot).getAliquotFractionByName(fracID), "Ma"),
                                 ((SampleDateModel) SAM).includesFractionByName(fracID),
                                 true));
                 sampleDateFractions.add(fractionNode);
@@ -248,18 +248,18 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
         //  see below setSelectionRow(-1);
 
         if (nodeInfo instanceof SampleInterface) {
-            System.out.println(((SampleInterface) nodeInfo).getSampleName());
+           // System.out.println(((SampleInterface) nodeInfo).getSampleName());
         } else if (nodeInfo instanceof AliquotInterface) {
-            System.out.println(((AliquotInterface) nodeInfo).getAliquotName());
+          //  System.out.println(((AliquotInterface) nodeInfo).getAliquotName());
         } else if (nodeInfo instanceof ValueModel) {
-            System.out.println(((ValueModelI) nodeInfo).getName());
+           // System.out.println(((ValueModelI) nodeInfo).getName());
         } else if (nodeInfo instanceof CheckBoxNode) {
-            System.out.println(((CheckBoxNode) nodeInfo).toString());
+           // System.out.println(nodeInfo.toString());
             // required for toggling because it allows re-focus
             setSelectionRow(-1);
 
         } else {
-            System.out.println(nodeInfo.toString());
+           // System.out.println(nodeInfo.toString());
         }
 
         getSampleTreeChange().sampleTreeChangeAnalysisMode(node);
@@ -375,7 +375,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
                     myEditor.setVisible(true);
 
                     // get a master vector of active fraction names
-                    Vector<String> activeFractionIDs =((UPbReduxAliquot) ((AliquotInterface) nodeInfo)).//
+                    Vector<String> activeFractionIDs =((ReduxAliquotInterface) nodeInfo).//
                             getAliquotFractionIDs();
 
                     if (((SampleDateInterpretationChooserDialog) myEditor).getSelectedModels().size() > 0) {
@@ -426,7 +426,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
                                     String aliquotFlags = sample.getSampleDateInterpretationGUISettings().getWeightedMeanOptions().//
                                             get(selectedSAM.getName());
                                     try {
-                                        aliquotFlags = setAliquotFlag(aliquotFlags, ((UPbReduxAliquot) nodeInfo).getAliquotNumber() - 1, "1");
+                                        aliquotFlags = setAliquotFlag(aliquotFlags, ((ReduxAliquotInterface) nodeInfo).getAliquotNumber() - 1, "1");
                                     } catch (Exception e_aliquotFlags) {
                                     }
                                     sample.getSampleDateInterpretationGUISettings().getWeightedMeanOptions().//
@@ -553,7 +553,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
                             if (((SampleDateModel) nodeInfo).getMethodName().startsWith("WM")) {
                                 String aliquotFlags = sample.getSampleDateInterpretationGUISettings().getWeightedMeanOptions().//
                                         get(((ValueModelI) nodeInfo).getName());
-                                aliquotFlags = setAliquotFlag(aliquotFlags, ((UPbReduxAliquot) aliquotNodeInfo).getAliquotNumber() - 1, "0");
+                                aliquotFlags = setAliquotFlag(aliquotFlags, ((ReduxAliquotInterface) aliquotNodeInfo).getAliquotNumber() - 1, "0");
                                 sample.getSampleDateInterpretationGUISettings().getWeightedMeanOptions().//
                                         put(((ValueModelI) nodeInfo).getName(), aliquotFlags);
                             }
@@ -617,7 +617,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
 
                                 ((SampleDateModel) SampleDateNodeInfo).//
                                         setIncludedFractionIDsVector(//
-                                                ((UPbReduxAliquot) AliquotNodeInfo).getAliquotFractionIDs());
+                                                ((ReduxAliquotInterface) AliquotNodeInfo).getAliquotFractionIDs());
 
                                 SampleInterface.updateAndSaveSampleDateModelsByAliquot(sample);
 

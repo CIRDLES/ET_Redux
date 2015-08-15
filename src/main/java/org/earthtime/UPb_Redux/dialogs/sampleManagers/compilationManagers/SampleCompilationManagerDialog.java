@@ -68,16 +68,16 @@ public class SampleCompilationManagerDialog extends DialogEditor {
         this.newSample = newSample;
     }
 
-    private enum fractionSources {
+    private enum FractionSources {
 
         SINGLE_LOCAL, FOLDER_LOCAL, ONE_OR_MORE_GEOCHRON, MANY_GEOCHRON
     };
 
-    private enum fractionDestinations {
+    private enum FractionDestinations {
 
         ADD, EDIT
     };
-    private fractionSources fractionSource = fractionSources.SINGLE_LOCAL;
+    private FractionSources fractionSource = FractionSources.SINGLE_LOCAL;
     private boolean newSample = false;
 
     /**
@@ -101,7 +101,7 @@ public class SampleCompilationManagerDialog extends DialogEditor {
         initComponents();
 
         //Register listeners for the radio buttons.
-        sourceOfFractionsListener mySourceOfFractionsListener = new sourceOfFractionsListener();
+        SourceOfFractionsListener mySourceOfFractionsListener = new SourceOfFractionsListener();
 
         sourceFolder_jRadioButton.addActionListener(mySourceOfFractionsListener);
         sourceSingle_jRadioButton.addActionListener(mySourceOfFractionsListener);
@@ -115,7 +115,7 @@ public class SampleCompilationManagerDialog extends DialogEditor {
 
     }
 
-    class automaticFractionsListener implements ItemListener {
+    class AutomaticFractionsListener implements ItemListener {
 
         @Override
         public void itemStateChanged(ItemEvent e) {
@@ -127,12 +127,12 @@ public class SampleCompilationManagerDialog extends DialogEditor {
         }
     }
 
-    class sourceOfFractionsListener implements ActionListener {
+    class SourceOfFractionsListener implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent evt) {
             System.out.println(evt.getActionCommand());
-            fractionSource = fractionSources.valueOf(evt.getActionCommand());
+            fractionSource = FractionSources.valueOf(evt.getActionCommand());
         }
     }
 

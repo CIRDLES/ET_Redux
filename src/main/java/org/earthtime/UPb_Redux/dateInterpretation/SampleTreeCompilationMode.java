@@ -218,18 +218,18 @@ public class SampleTreeCompilationMode extends JTree implements SampleTreeI {
         Object nodeInfo = node.getUserObject();
 
         if ( nodeInfo instanceof Sample ) {
-            System.out.println( ((SampleInterface) nodeInfo).getSampleName() );
+          //  System.out.println( ((SampleInterface) nodeInfo).getSampleName() );
         } else if ( nodeInfo instanceof AliquotInterface ) {
-            System.out.println(((AliquotInterface) nodeInfo).getAliquotName() );
+          //  System.out.println(((AliquotInterface) nodeInfo).getAliquotName() );
         } else if ( nodeInfo instanceof ValueModel ) {
-            System.out.println( ((ValueModelI) nodeInfo).getName() );
+          //  System.out.println( ((ValueModelI) nodeInfo).getName() );
         } else if ( nodeInfo instanceof CheckBoxNode ) {
-            System.out.println( nodeInfo.toString() );
+           // System.out.println( nodeInfo.toString() );
             // required for toggling because it allows re-focus
             setSelectionRow( -1 );
 
         } else {
-            System.out.println( nodeInfo.toString() );
+           // System.out.println( nodeInfo.toString() );
         }
 
         getSampleTreeChange().sampleTreeChangeCompilationMode( node );

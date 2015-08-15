@@ -57,6 +57,7 @@ public interface DataModelFitFunctionInterface {
 
     /**
      * @param overDispersionSelected the overDispersionSelected to set
+     * @param isDownHole the value of isDownHole
      */
     public void setOverDispersionSelected(boolean overDispersionSelected);
 
@@ -74,12 +75,12 @@ public interface DataModelFitFunctionInterface {
      */
     public double getXIforFitFunction(FitFunctionTypeEnum fitFunctionType);
 
-    /**
-     *
-     * @param fitFunctionTypeName
-     */
-    public void calculateFittedFunctions(String fitFunctionTypeName);
-
+//    /**
+//     *
+//     * @param fitFunctionTypeName
+//     */
+//    public void calculateFittedFunctions(String fitFunctionTypeName);
+//
     /**
      *
      * @param selectedFitFunctionType

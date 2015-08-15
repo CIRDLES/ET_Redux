@@ -42,6 +42,7 @@ import javax.swing.JLayeredPane;
 import javax.swing.event.MouseInputListener;
 import org.earthtime.ETReduxFrame;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
+import org.earthtime.Tripoli.dataModels.MaskingSingleton;
 import org.earthtime.Tripoli.dataModels.RawRatioDataModel;
 import org.earthtime.Tripoli.dataModels.sessionModels.AbstractSessionForStandardDataModel;
 import org.earthtime.Tripoli.dataViews.dataMonitorViews.AbstractDataMonitorView;
@@ -313,6 +314,53 @@ public abstract class AbstractRawDataView extends JLayeredPane implements MouseI
         }
     }
 
+    protected void drawMaskingShades(Graphics2D g2d) {
+        // draw masking shades
+        boolean[] maskingArray = MaskingSingleton.getInstance().getMaskingArray();
+        //left
+        int leftEdgeIndex = -1;
+        boolean leftEdgeFound = false;
+        int rightEdgeIndex = maskingArray.length;
+        for (int i = 0; i < maskingArray.length; i++) {
+            if ((!leftEdgeFound) && (!maskingArray[i])) {
+                leftEdgeIndex = i;
+            } else {
+                leftEdgeFound = true;
+            }
+
+            if (leftEdgeFound && !maskingArray[i]) {
+                rightEdgeIndex = i;
+                break;
+            }
+        }
+
+        Composite originalComposite = g2d.getComposite();
+        g2d.setPaint(Color.gray);
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.2f));
+
+        if (leftEdgeIndex > -1) {
+            Shape leftShade = new Rectangle2D.Double( //
+                    mapX(minX), //
+                    -1,
+                    mapX((double) myOnPeakNormalizedAquireTimes[leftEdgeIndex] + (double) (myOnPeakNormalizedAquireTimes[1] - myOnPeakNormalizedAquireTimes[0]) / 2.0),//
+                    getHeight() + 1);
+
+            g2d.fill(leftShade);
+        }
+
+        if (rightEdgeIndex < maskingArray.length) {
+            Shape rightShade = new Rectangle2D.Double( //
+                    mapX((double) myOnPeakNormalizedAquireTimes[rightEdgeIndex] - (double) (myOnPeakNormalizedAquireTimes[1] - myOnPeakNormalizedAquireTimes[0]) / 2.0),//
+                    -1,
+                    mapX(maxX), //
+                    getHeight() + 1);
+
+            g2d.fill(rightShade);
+        }
+
+        g2d.setComposite(originalComposite);
+    }
+
     /**
      *
      * @param logRatioDatum
@@ -355,31 +403,12 @@ public abstract class AbstractRawDataView extends JLayeredPane implements MouseI
         return retVal;
     }
 
-//    /**
-//     *
-//     * @param datum
-//     * @return
-//     */
-//    protected double unConvertPresentationModeToLogDatum(double datum) {
-//        double retVal = datum;
-//
-//        if (dataPresentationMode.compareTo(DataPresentationModeEnum.ALPHA) == 0) {
-//            retVal = Math.log(standardValue / (1.0 + datum));
-//        }
-//
-//        if (dataPresentationMode.compareTo(DataPresentationModeEnum.RATIO) == 0) {
-//            retVal = Math.log(datum);
-//        }
-//
-//        return retVal;
-//    }
     /**
      *
      * @param x
      * @return
      */
     public double mapX(double x) {
-
         return (((x - getMinX_Display()) / getRangeX_Display()) * graphWidth) + leftMargin;
     }
 
@@ -389,7 +418,6 @@ public abstract class AbstractRawDataView extends JLayeredPane implements MouseI
      * @return
      */
     protected double mapY(double y) {
-
         return (((getMaxY_Display() - y) / getRangeY_Display()) * graphHeight) + topMargin;
     }
 
@@ -419,9 +447,7 @@ public abstract class AbstractRawDataView extends JLayeredPane implements MouseI
 
             // repaint fittedfunction
             sampleSessionDataView.repaint();
-
         }
-
     }
 
     /**
@@ -1116,14 +1142,8 @@ public abstract class AbstractRawDataView extends JLayeredPane implements MouseI
         // detecting correct object
         if (sampleSessionDataView == null) {
             ((TripoliSessionFractionationCalculatorInterface) this).applyCorrections();
-            // march 2014 changed
-            // ((AbstractSessionForStandardDataModel)((SessionOfStandardView) this).getSessionForStandardDataModel()).getTripoliSession().applyCorrections();
-
-            //this.preparePanel();//.getTripoliSession().applyCorrections();
-            System.out.println("UPDATETABLE ABSTRACTRAWDATA   SELF");
         } else {
             ((TripoliSessionFractionationCalculatorInterface) sampleSessionDataView).applyCorrections();
-            System.out.println("UPDATETABLE ABSTRACTRAWDATA  SESSION");
         }
 
         updateReportTableView();
@@ -1188,5 +1208,12 @@ public abstract class AbstractRawDataView extends JLayeredPane implements MouseI
      */
     public ETReduxFrame getuPbReduxFrame() {
         return uPbReduxFrame;
+    }
+
+    /**
+     * @return the rawRatioDataModel
+     */
+    public DataModelInterface getRawRatioDataModel() {
+        return rawRatioDataModel;
     }
 }

@@ -27,6 +27,7 @@ import org.earthtime.UPb_Redux.reports.ReportColumn;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.colorModels.HeatMap;
 import org.earthtime.fractions.ETFractionInterface;
+import org.earthtime.reports.ReportColumnInterface;
 import org.earthtime.samples.SampleInterface;
 
 /**
@@ -36,7 +37,7 @@ import org.earthtime.samples.SampleInterface;
 public class HeatMapMapper {
 
     private final SampleInterface sample;
-    private ReportColumn selectedReportColumn;
+    private ReportColumnInterface selectedReportColumn;
 
     private double min;
     private double max;
@@ -46,7 +47,7 @@ public class HeatMapMapper {
      * @param sample
      * @param selectedReportColumn
      */
-    public HeatMapMapper(SampleInterface sample, ReportColumn selectedReportColumn) {
+    public HeatMapMapper(SampleInterface sample, ReportColumnInterface selectedReportColumn) {
         this.sample = sample;
         this.selectedReportColumn = selectedReportColumn;
     }

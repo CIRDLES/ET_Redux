@@ -1,5 +1,5 @@
 /*
- * txtFileFilter.java
+ * TxtFileFilter.java
  *
  *
  * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
@@ -24,7 +24,7 @@ import java.io.File;
  *
  * @author James F. Bowring
  */
-public class txtFileFilter extends javax.swing.filechooser.FileFilter {
+public class TxtFileFilter extends javax.swing.filechooser.FileFilter {
 
     /**
      * 

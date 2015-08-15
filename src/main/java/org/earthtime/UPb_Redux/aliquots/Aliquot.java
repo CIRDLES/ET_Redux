@@ -28,6 +28,7 @@ import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.ReduxConstants.ANALYSIS_PURPOSE;
 import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
+import org.earthtime.aliquots.AliquotForUPbInterface;
 import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.dataDictionaries.DataDictionary;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
@@ -39,7 +40,7 @@ import org.earthtime.ratioDataModels.tracers.TracerUPbModel;
  *
  * @author James F. Bowring
  */
-public abstract class Aliquot implements AliquotInterface, Serializable {
+public abstract class Aliquot implements AliquotInterface, AliquotForUPbInterface, Serializable {
 
     // Class variables
     private static final long serialVersionUID = 6355007168312036059L;
@@ -47,12 +48,12 @@ public abstract class Aliquot implements AliquotInterface, Serializable {
     /**
      * SESAR produces IGSN and eventually we will tie to their database.
      */
-    private String sampleIGSN;
+    protected String sampleIGSN;
     /**
      * Lab's local name for the Aliquot.
      */
     private String aliquotName;
-    private String aliquotIGSN;
+    protected String aliquotIGSN;
     private String laboratoryName;
     private String analystName;
     private String aliquotReference;
@@ -104,7 +105,7 @@ public abstract class Aliquot implements AliquotInterface, Serializable {
         this.pbBlanks = new Vector<>();
 
         this.tracers = new Vector<>();
-        this.alphaPbModels = new Vector<ValueModel>();
+        this.alphaPbModels = new Vector<>();
         this.alphaUModels = new Vector<>();
 
         this.MineralStandardModels = new Vector<>();
@@ -292,7 +293,7 @@ public abstract class Aliquot implements AliquotInterface, Serializable {
      *
      * @return
      */
-    public AbstractRatiosDataModel getPhysicalConstants() {
+    public AbstractRatiosDataModel getPhysicalConstantsModel() {
         return physicalConstantsModel;
     }
 
@@ -300,7 +301,7 @@ public abstract class Aliquot implements AliquotInterface, Serializable {
      *
      * @param physicalConstants
      */
-    public void setPhysicalConstants(AbstractRatiosDataModel physicalConstants) {
+    public void setPhysicalConstantsModel(AbstractRatiosDataModel physicalConstants) {
         this.physicalConstantsModel = physicalConstants;
     }
 
@@ -351,7 +352,7 @@ public abstract class Aliquot implements AliquotInterface, Serializable {
         // remove placeholder <none>
         Vector<AbstractRatiosDataModel> temp = new Vector<AbstractRatiosDataModel>();
         for (AbstractRatiosDataModel t : tracers) {
-            if (!(t.equals(TracerUPbModel.getNoneInstance()))) {//         getNameAndVersion().startsWith( "<none>" )|| t.getNameAndVersion().startsWith( ReduxConstants.NONE)) ) {
+            if (!(t.equals(TracerUPbModel.getNoneInstance()))) {
                 temp.add(t);
             }
         }
@@ -408,7 +409,7 @@ public abstract class Aliquot implements AliquotInterface, Serializable {
      */
     public Vector<ValueModel> getAlphaUModelsForXMLSerialization() {
         // remove placeholder <none>
-        Vector<ValueModel> temp = new Vector<ValueModel>();
+        Vector<ValueModel> temp = new Vector<>();
         for (ValueModel a : alphaUModels) {
             if (!(a.getName().startsWith("<none>") || a.getName().startsWith(ReduxConstants.NONE))) {
                 temp.add(a);

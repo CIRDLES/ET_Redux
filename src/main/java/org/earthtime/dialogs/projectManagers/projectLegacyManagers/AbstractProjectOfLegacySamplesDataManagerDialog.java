@@ -30,7 +30,7 @@ import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.projects.ProjectInterface;
-import org.earthtime.projects.projectImporters.AbstractProjectImporterFromLegacyCSVFile;
+import org.earthtime.projects.projectImporters.AbstractProjectImporterFromLegacyDelimitedTextFile;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 
 /**
@@ -43,7 +43,7 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
     private File importFractionFolderMRU;
     private boolean initialized = false;
     private boolean newSample = false;
-    private AbstractProjectImporterFromLegacyCSVFile converter;
+    private AbstractProjectImporterFromLegacyDelimitedTextFile converter;
 
     /**
      *
@@ -74,7 +74,7 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
             boolean modal, //
             String dataTypeTitle, //
             ProjectInterface project, //
-            AbstractProjectImporterFromLegacyCSVFile converter,//
+            AbstractProjectImporterFromLegacyDelimitedTextFile converter,//
             File importFractionFolderMRU) {
         super( parent, modal );
 
@@ -116,7 +116,7 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
      *
      */
     public void setSize () {
-        setSize( 555, 480 );
+        setSize( 645, 480 );
     }
 
     /**
@@ -284,7 +284,7 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
         sampleNotes_textArea.setPreferredSize(new java.awt.Dimension(250, 80));
         sampleNotes_scrollPane.setViewportView(sampleNotes_textArea);
 
-        jPanel1.add(sampleNotes_scrollPane, new org.netbeans.lib.awtextra.AbsoluteConstraints(8, 166, 540, -1));
+        jPanel1.add(sampleNotes_scrollPane, new org.netbeans.lib.awtextra.AbsoluteConstraints(8, 166, 630, -1));
 
         physicalConstantsModelChooser.setBackground(new java.awt.Color(245, 236, 206));
         jPanel1.add(physicalConstantsModelChooser, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 70, 330, -1));
@@ -306,7 +306,7 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
                 closeActionPerformed(evt);
             }
         });
-        jPanel2.add(close, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 2, 168, 32));
+        jPanel2.add(close, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 0, 168, 32));
 
         saveAndClose.setForeground(new java.awt.Color(255, 51, 0));
         saveAndClose.setText("OK");
@@ -324,7 +324,7 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
 
         sampleType_label.setBackground(new java.awt.Color(255, 204, 102));
         sampleType_label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        sampleType_label.setText("   LEGACY MODE: Import a Project of Samples from .csv file");
+        sampleType_label.setText("   LEGACY MODE: Import Project of Samples from delimited file");
         sampleType_label.setOpaque(true);
 
         org.jdesktop.layout.GroupLayout sampleType_panelLayout = new org.jdesktop.layout.GroupLayout(sampleType_panel);
@@ -342,16 +342,16 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .add(jPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 562, Short.MAX_VALUE)
+            .add(jPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 645, Short.MAX_VALUE)
             .add(sampleType_panel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
                 .add(sampleType_panel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(6, 6, 6)
-                .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 351, Short.MAX_VALUE)
                 .add(6, 6, 6)
                 .add(jPanel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
@@ -397,14 +397,14 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
     /**
      * @return the converter
      */
-    public AbstractProjectImporterFromLegacyCSVFile getConverter () {
+    public AbstractProjectImporterFromLegacyDelimitedTextFile getConverter () {
         return converter;
     }
 
     /**
      * @param converter the converter to set
      */
-    public void setConverter ( AbstractProjectImporterFromLegacyCSVFile converter ) {
+    public void setConverter ( AbstractProjectImporterFromLegacyDelimitedTextFile converter ) {
         this.converter = converter;
     }
 }

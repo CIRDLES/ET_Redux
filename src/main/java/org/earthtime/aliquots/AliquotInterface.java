@@ -24,8 +24,8 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Vector;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.fractions.FractionI;
+import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.valueModels.SampleDateInterceptModel;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
@@ -151,25 +151,13 @@ public interface AliquotInterface {
      *
      * @return
      */
-    abstract AbstractRatiosDataModel getPhysicalConstants();
+    abstract AbstractRatiosDataModel getPhysicalConstantsModel();
 
     /**
      *
      * @param physicalConstants
      */
-    abstract void setPhysicalConstants(AbstractRatiosDataModel physicalConstants);
-
-    /**
-     *
-     * @return
-     */
-    abstract Vector<AbstractRatiosDataModel> getPbBlanks();
-
-    /**
-     *
-     * @param pbBlanks
-     */
-    abstract void setPbBlanks(Vector<AbstractRatiosDataModel> pbBlanks);
+    abstract void setPhysicalConstantsModel(AbstractRatiosDataModel physicalConstants);
 
     /**
      *
@@ -199,7 +187,7 @@ public interface AliquotInterface {
      *
      * @param aliquot
      */
-    public static void toggleAliquotFractionsRejectedStatus(UPbReduxAliquot aliquot) {
+    public static void toggleAliquotFractionsRejectedStatus(ReduxAliquotInterface aliquot) {
         for (int i = 0; i < aliquot.getAliquotFractions().size(); i++) {
             aliquot.getAliquotFractions().get(i).toggleRejectedStatus();
         }
@@ -235,16 +223,6 @@ public interface AliquotInterface {
     }
 
     /**
-     * @return the bestAgeDivider206_238
-     */
-    public BigDecimal getBestAgeDivider206_238();
-
-    /**
-     * @param bestAgeDivider206_238 the bestAgeDivider206_238 to set
-     */
-    public void setBestAgeDivider206_238(BigDecimal bestAgeDivider206_238);
-
-    /**
      * @return the analysisPurpose
      */
     public ReduxConstants.ANALYSIS_PURPOSE getAnalysisPurpose();
@@ -259,41 +237,7 @@ public interface AliquotInterface {
      */
     public String getKeyWordsCSV();
 
-    /**
-     *
-     * @return
-     */
-    public BigDecimal getCalibrationUnct206_238();
-
-    /**
-     *
-     * @param calibrationUnct206_238
-     */
-    public void setCalibrationUnct206_238(BigDecimal calibrationUnct206_238);
-
-    /**
-     *
-     * @return
-     */
-    public BigDecimal getCalibrationUnct208_232();
-
-    /**
-     *
-     * @param calibrationUnct208_232
-     */
-    public void setCalibrationUnct208_232(BigDecimal calibrationUnct208_232);
-
-    /**
-     *
-     * @return
-     */
-    public BigDecimal getCalibrationUnct207_206();
-
-    /**
-     *
-     * @param calibrationUnct207_206
-     */
-    public void setCalibrationUnct207_206(BigDecimal calibrationUnct207_206);
+    public void setMyReduxLabData(ReduxLabData myReduxLabData);
 
     /**
      *
@@ -354,21 +298,6 @@ public interface AliquotInterface {
 
     /**
      *
-     * @param pbBlankNameAndVersion
-     * @return
-     */
-    public default AbstractRatiosDataModel getAPbBlank(String pbBlankNameAndVersion) {
-        AbstractRatiosDataModel retVal = null;
-        for (AbstractRatiosDataModel pbb : getPbBlanks()) {
-            if (pbb.getNameAndVersion().equalsIgnoreCase(pbBlankNameAndVersion.trim())) {
-                retVal = pbb;
-            }
-        }
-        return retVal;
-    }
-
-    /**
-     *
      * @param modelName
      * @return
      */
@@ -396,46 +325,6 @@ public interface AliquotInterface {
         }
         return retVal;
     }
-
-    /**
-     *
-     * @param alphaPbModelName
-     * @return
-     */
-    public default ValueModel getAnAlphaPbModel(String alphaPbModelName) {
-        ValueModel retVal = null;
-        for (ValueModel apbm : getAlphaPbModels()) {
-            if (apbm.getName().equalsIgnoreCase(alphaPbModelName.trim())) {
-                retVal = apbm;
-            }
-        }
-        return retVal;
-    }
-
-    /**
-     * @return the alphaPbModels
-     */
-    public Vector<ValueModel> getAlphaPbModels();
-
-    /**
-     *
-     * @param alphaUModelName
-     * @return
-     */
-    public default ValueModel getAnAlphaUModel(String alphaUModelName) {
-        ValueModel retVal = null;
-        for (ValueModel aum : getAlphaUModels()) {
-            if (aum.getName().equalsIgnoreCase(alphaUModelName.trim())) {
-                retVal = aum;
-            }
-        }
-        return retVal;
-    }
-
-    /**
-     * @return the alphaUModels
-     */
-    public Vector<ValueModel> getAlphaUModels();
 
     /**
      *
@@ -470,7 +359,7 @@ public interface AliquotInterface {
     public default void updateSampleDateModels() {
         // Nov 2008
         // process all sampleDateModels' included fraction vectors to remove missing fractions
-        Vector<String> includedFractionIDs = ((UPbReduxAliquot) this).getAliquotFractionIDs();
+        Vector<String> includedFractionIDs = ((ReduxAliquotInterface) this).getAliquotFractionIDs();
         Vector<String> excludedFractionIDs = new Vector<>();
 
         boolean existsPreferredDate = false;
@@ -537,15 +426,14 @@ public interface AliquotInterface {
 
         return tempSampleDateModels;
     }
-    
-        /* "ID-TIMS",
+
+    /* "ID-TIMS",
      "SHRIMP Ion Probe",
      "Cameca Ion Probe",
      "Quad ICPMS",
      "HR-ICPMS",
      "MC-ICPMS"
      */
-
     public default boolean usesIDTIMS() {
         return (getAliquotInstrumentalMethod().equalsIgnoreCase("ID-TIMS"));
     }

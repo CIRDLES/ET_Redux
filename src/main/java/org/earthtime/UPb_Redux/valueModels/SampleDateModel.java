@@ -2353,7 +2353,7 @@ public class SampleDateModel extends ValueModel implements
                          * 4.5E9
                          */ReduxConstants.MAX_DATE_ANNUM, myPhysicalConstants)));
                 setMeanSquaredWeightedDeviation(
-                        new BigDecimal(getYorkLineFit().getMswd()));
+                        new BigDecimal(getYorkLineFit().getMSWD()));
             } catch (Exception e) {
             }
 
@@ -2392,7 +2392,7 @@ public class SampleDateModel extends ValueModel implements
                         new BigDecimal(DiscordiaInterceptNewtonMethod(0.0, myPhysicalConstants)));
 
                 ((SampleDateModel) lowerInterceptModel).setMeanSquaredWeightedDeviation(//
-                        new BigDecimal(getYorkLineFit().getMswd()));
+                        new BigDecimal(getYorkLineFit().getMSWD()));
 
             } catch (Exception e) {
             }

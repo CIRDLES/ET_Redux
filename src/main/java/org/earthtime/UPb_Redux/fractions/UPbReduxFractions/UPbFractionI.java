@@ -166,7 +166,6 @@ public interface UPbFractionI extends FractionI {
 
     public boolean isAnOxide();
 
-
     /**
      *
      * @return
@@ -178,8 +177,4 @@ public interface UPbFractionI extends FractionI {
      * @param pbBlankID
      */
     abstract void setPbBlankID(String pbBlankID);
-
-
-   
-
 }

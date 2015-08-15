@@ -85,7 +85,7 @@ public class YorkLineFit {
         setCovYIntercept__slope(0.0);
         setRhoYIntercept__slope(0.0);
 
-        setMswd(0.0);
+        setMSWD(0.0);
 
         // York et al - Am. J Phys 72 (3) March 2004
         // setup working variables
@@ -223,7 +223,7 @@ public class YorkLineFit {
             setRhoYIntercept__slope(-1.0 * xBar * oneSigmaSlope / oneSigmaYIntercept);
 
             if (pointCount > 2) {
-                setMswd(sumMSWDnumerator / (double) (pointCount - 2));
+                setMSWD(sumMSWDnumerator / (double) (pointCount - 2));
             }
 
         }
@@ -362,7 +362,7 @@ public class YorkLineFit {
      *
      * @return
      */
-    public double getMswd() {
+    public double getMSWD() {
         return mswd;
     }
 
@@ -370,7 +370,7 @@ public class YorkLineFit {
      *
      * @param mswd
      */
-    public void setMswd(double mswd) {
+    public void setMSWD(double mswd) {
         this.mswd = mswd;
     }
 

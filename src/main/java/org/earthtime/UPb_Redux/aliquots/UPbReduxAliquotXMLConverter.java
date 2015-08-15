@@ -170,7 +170,7 @@ public class UPbReduxAliquotXMLConverter implements Converter {
         writer.endNode();
 
         writer.startNode( "physicalConstantsModelII" );
-        context.convertAnother( uPbReduxAliquot.getPhysicalConstants() );
+        context.convertAnother( uPbReduxAliquot.getPhysicalConstantsModel() );
         writer.endNode();
     }
 
@@ -423,7 +423,7 @@ public class UPbReduxAliquotXMLConverter implements Converter {
         if ( "physicalConstantsModelII".equals( reader.getNodeName() ) ) {
             AbstractRatiosDataModel physicalConstantsModel = PhysicalConstantsModel.createNewInstance();
             physicalConstantsModel = (AbstractRatiosDataModel) context.convertAnother( physicalConstantsModel, PhysicalConstantsModel.class );
-            uPbReduxAliquot.setPhysicalConstants( physicalConstantsModel );
+            uPbReduxAliquot.setPhysicalConstantsModel( physicalConstantsModel );
 
             // pre may 2012
         } else if ( "physicalConstantsModel".equals( reader.getNodeName() ) ) {
@@ -431,7 +431,7 @@ public class UPbReduxAliquotXMLConverter implements Converter {
             physicalConstants = (PhysicalConstants) context.convertAnother( physicalConstants, PhysicalConstants.class, new PhysicalConstantsXMLConverter() );
 
             AbstractRatiosDataModel physicalConstantsModel = physicalConstants.convertModel( physicalConstants );
-            uPbReduxAliquot.setPhysicalConstants( physicalConstantsModel );
+            uPbReduxAliquot.setPhysicalConstantsModel( physicalConstantsModel );
         }
         reader.moveUp();
 

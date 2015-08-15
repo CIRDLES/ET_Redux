@@ -178,7 +178,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
 
         // Element 2 Washington State
         AbstractRawDataFileHandler theThermoFinniganElement2SingleCollFileHandler = //
-WashStateElementIISingleCollFileHandler.getInstance();
+                WashStateElementIISingleCollFileHandler.getInstance();
         theThermoFinniganElement2SingleCollFileHandler.getAvailableMassSpecSetups()//
                 .add(WashStateElementIISetupUPb.getInstance());
 
@@ -265,7 +265,7 @@ WashStateElementIISingleCollFileHandler.getInstance();
             analysisPurposeChooser.addItem(ap.toString());
         }
 
-        analysisPurposeChooser.addItemListener(new analysisPurposeItemListener());
+        analysisPurposeChooser.addItemListener(new AnalysisPurposeItemListener());
 
         loadProject();
 
@@ -289,7 +289,7 @@ WashStateElementIISingleCollFileHandler.getInstance();
         this.amChanged = amChanged;
     }
 
-    class analysisPurposeItemListener implements ItemListener {
+    class AnalysisPurposeItemListener implements ItemListener {
         // This method is called only if a new item has been selected.
 
         @Override
@@ -415,10 +415,16 @@ WashStateElementIISingleCollFileHandler.getInstance();
             // delete contents
             File[] reportFiles = reportingFolder.listFiles();
             for (File reportFile : reportFiles) {
-                reportFile.delete();
+                boolean success = reportFile.delete();
+                if (!success) {
+                    //TODO: consider message
+                }
             }
         } else {
-            reportingFolder.mkdir();
+            boolean success = reportingFolder.mkdir();
+            if (!success) {
+                //TODO: consider message
+            }
         }
 
         // user-selected handler
@@ -1068,7 +1074,7 @@ WashStateElementIISingleCollFileHandler.getInstance();
 
         // nov 2014 conditional
         if (doCorrections) {
-            // april 2014 to cause comon lead corrections and other changes to propagate
+            // april 2014 to cause common lead corrections and other changes to propagate
             // do the math
             tripoliSession.calculateSessionFitFunctionsForPrimaryStandard();
             // April 2105 added condition below jan 2015 moved to calculate sessionfit tripoliSession.applyCorrections();

@@ -35,7 +35,6 @@ import org.earthtime.Tripoli.samples.AbstractTripoliSample;
 import org.earthtime.dataDictionaries.FitFunctionTypeEnum;
 import org.earthtime.dataDictionaries.FractionSelectionTypeEnum;
 import org.earthtime.dataDictionaries.FractionationTechniquesEnum;
-import org.earthtime.dataDictionaries.IncludedTypeEnum;
 import org.earthtime.dataDictionaries.RadRatios;
 import org.earthtime.dataDictionaries.RawRatioNames;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
@@ -75,7 +74,7 @@ public interface TripoliSessionInterface extends TripoliSessionFractionationCalc
      * @param fractionSelectionTypeEnum the value of fractionSelectionTypeEnum
      * @return the boolean
      */
-    public boolean prepareMatrixJfMapUnknowns (FractionSelectionTypeEnum fractionSelectionTypeEnum);
+    public boolean prepareMatrixJfMapFractionsByType (FractionSelectionTypeEnum fractionSelectionTypeEnum);
 
     /**
      *
@@ -108,11 +107,11 @@ public interface TripoliSessionInterface extends TripoliSessionFractionationCalc
     @Override
     void calculateDownholeFitSummariesForPrimaryStandard ();
 
-    /**
-     *
-     */
-    @Override
-    void calculateSessionFitFunctionsForPrimaryStandard ();
+//    /**
+//     *
+//     */
+//    @Override
+//    void calculateSessionFitFunctionsForPrimaryStandard ();
 
     /**
      *
@@ -120,9 +119,9 @@ public interface TripoliSessionInterface extends TripoliSessionFractionationCalc
     void clearAllFractionsOfLocalYAxis ();
 
     /**
-     * @return the downholeFractionationAlphaDataModels
+     * @return the getDownholeFractionationDataModels
      */
-    SortedMap<RawRatioNames, DownholeFractionationDataModel> getDownholeFractionationAlphaDataModels ();
+    SortedMap<RawRatioNames, DownholeFractionationDataModel> getDownholeFractionationDataModels ();
 
     /**
      *
@@ -146,13 +145,13 @@ public interface TripoliSessionInterface extends TripoliSessionFractionationCalc
      */
     SortedSet<TripoliFraction> getTripoliFractions ();
 
-    /**
-     *
-     * @param selection
-     * @param visibility
-     * @return
-     */
-    SortedSet<TripoliFraction> getTripoliFractionsFiltered ( FractionSelectionTypeEnum selection, IncludedTypeEnum visibility );
+//    /**
+//     *
+//     * @param selection
+//     * @param visibility
+//     * @return
+//     */
+//    SortedSet<TripoliFraction> getTripoliFractionsFiltered ( FractionSelectionTypeEnum selection, IncludedTypeEnum visibility );
 
     /**
      *
@@ -231,6 +230,7 @@ public interface TripoliSessionInterface extends TripoliSessionFractionationCalc
      * @param setOD
      */
     public void setODforAllFractionsAllRatios ( boolean setOD );
+    public void setDownHoleODforAllFractionsAllRatios ( boolean setOD );
     
     /**
      *

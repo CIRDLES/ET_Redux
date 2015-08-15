@@ -36,7 +36,7 @@ import org.earthtime.Tripoli.dataModels.inputParametersModels.StaticAcquisition;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.Tripoli.massSpecSetups.multiCollector.NUPlasma.GehrelsNUPlasmaSetupUPbIonCounter;
 import static org.earthtime.UPb_Redux.ReduxConstants.getMonthConversions;
-import org.earthtime.UPb_Redux.filters.txtFileFilter;
+import org.earthtime.UPb_Redux.filters.TxtFileFilter;
 import org.earthtime.utilities.FileHelper;
 import org.earthtime.utilities.TimeToString;
 import org.earthtime.archivingTools.URIHelper;
@@ -88,7 +88,7 @@ public class NUPlasmaMultiCollIonCounterFileHandler extends AbstractRawDataFileH
     public File validateAndGetHeaderDataFromRawIntensityFile(File tripoliRawDataFolder) {
         String dialogTitle = "Select a NU Plasma IonCounter Raw Data File: *.txt";
         final String fileExtension = ".txt";
-        FileFilter nonMacFileFilter = new txtFileFilter();
+        FileFilter nonMacFileFilter = new TxtFileFilter();
 
         rawDataFile = null;
         rawDataFile = FileHelper.AllPlatformGetFile( //

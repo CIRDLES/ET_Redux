@@ -667,8 +667,7 @@ public class RawIntensityDataModel //
         System.gc();
     }
 
-    @Override
-    public void calculateFittedFunctions(String fitFunctionTypeName) {
+    private void calculateFittedFunctions(String fitFunctionTypeName) {
 
         AbstractFunctionOfX backgroundFitFunction = getFitFunctions().get(fitFunctionTypeName);
 
@@ -863,6 +862,7 @@ public class RawIntensityDataModel //
     /**
      * @return the belowDetection
      */
+    @Override
     public boolean isBelowDetection() {
         return belowDetection;
     }

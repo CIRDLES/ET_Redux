@@ -18,6 +18,7 @@
  */
 package org.earthtime.UPb_Redux.dialogs.sessionManagers;
 
+import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
@@ -31,23 +32,21 @@ import java.lang.reflect.Method;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.SortedSet;
 import javax.swing.Icon;
 import javax.swing.JLayeredPane;
 import javax.swing.JRadioButton;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import org.earthtime.ETReduxFrame;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
 import org.earthtime.Tripoli.dataModels.DownholeFractionationDataModel;
-import org.earthtime.Tripoli.dataModels.RawRatioDataModel;
 import org.earthtime.Tripoli.dataModels.sessionModels.AbstractSessionForStandardDataModel;
 import org.earthtime.Tripoli.dataViews.AbstractRawDataView;
 import org.earthtime.Tripoli.dataViews.overlayViews.TripoliSessionRawDataView;
 import org.earthtime.Tripoli.dataViews.simpleViews.SessionOfStandardView;
 import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.CorrectedIntensitiesDataView;
 import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.CorrectedRatioDataView;
+import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.FitFunctionsOnDownHoleRatioDataView;
 import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.FitFunctionsOnRatioDataView;
 import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.RawIntensitiesDataView;
 import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.RawRatioDataView;
@@ -56,8 +55,10 @@ import org.earthtime.Tripoli.sessions.TripoliSessionInterface;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.dialogs.projectManagers.ProjectManagerFor_LAICPMS_FromRawData;
+import org.earthtime.UPb_Redux.fractions.FractionsFilterInterface;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.beans.ET_JButton;
+import org.earthtime.dataDictionaries.DataPresentationModeEnum;
 import org.earthtime.dataDictionaries.FractionLayoutViewStylesEnum;
 import org.earthtime.dataDictionaries.FractionSelectionTypeEnum;
 import org.earthtime.dataDictionaries.FractionationTechniquesEnum;
@@ -100,7 +101,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
             final TripoliSessionInterface tripoliSession) {
         // null parent allows focussed frame to be on top
         super(null, modal);
-        
+
         this.projectManager = projectManager;
 
         this.uPbReduxFrame = uPbReduxFrame;
@@ -115,27 +116,31 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         currentFractionView = IncludedTypeEnum.ALL;
 
         // fractionation tab listener
-        fractionationTechniqueTabbedPane.addChangeListener(new ChangeListener() {
-            // This method is called whenever the selected tab changes
-            @Override
-            public void stateChanged(ChangeEvent evt) {
-                JTabbedPane pane = (JTabbedPane) evt.getSource();
+        fractionationTechniqueTabbedPane.addChangeListener((ChangeEvent evt) -> {
+            JTabbedPane pane = (JTabbedPane) evt.getSource();
 
-                // Get current tab
-                int sel = pane.getSelectedIndex();
-                if (pane.getTitleAt(sel).compareToIgnoreCase(FractionationTechniquesEnum.INTERCEPT.getName()) == 0) {
-                    tripoliSession.setFractionationTechnique(FractionationTechniquesEnum.INTERCEPT);
+            // Get current tab
+            int sel = pane.getSelectedIndex();
 
-                    interceptFitEachStandard_radioButton.doClick();
+            if (pane.getTitleAt(sel).compareToIgnoreCase(FractionationTechniquesEnum.INTERCEPT.getName()) == 0) {
+                tripoliSession.setFractionationTechnique(FractionationTechniquesEnum.INTERCEPT);
 
-                } else if (pane.getTitleAt(sel).compareToIgnoreCase(FractionationTechniquesEnum.DOWNHOLE.getName()) == 0) {
-                    tripoliSession.setFractionationTechnique(FractionationTechniquesEnum.DOWNHOLE);
+                interceptFitEachStandard_radioButton.doClick();
 
-                    downholeFitStandardAlphas_radioButton.doClick();
-                }
+            } else if (pane.getTitleAt(sel).compareToIgnoreCase(FractionationTechniquesEnum.DOWNHOLE.getName()) == 0) {
+                tripoliSession.setFractionationTechnique(FractionationTechniquesEnum.DOWNHOLE);
 
+                downholeFitStandards_radioButton.doClick();
             }
-        });
+
+            for (int i = 0; i < pane.getTabCount(); i++) {
+                pane.setForegroundAt(i, Color.black);
+            }
+            pane.setForegroundAt(sel, Color.red);
+
+            tripoliSession.applyCorrections();
+        } // This method is called whenever the selected tab changes
+        );
 
         setSize();
     }
@@ -247,12 +252,17 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
             // now init listeners
             ((TripoliSessionRawDataView) tripoliSessionRawDataView).initializeListeners();
 
+            // flex colors
+            fractionationTechniqueTabbedPane.setSelectedIndex(1);
+            fractionationTechniqueTabbedPane.setSelectedIndex(0);
+
         }
     }
 
     private void setDefaultZoom() {
         yAxisZoomSlider.setValue(TripoliSessionRawDataView.DEFAULT_HEIGHT_OF_FRACTION_PANES);
-        xAxisZoomSlider.setValue((TripoliSessionRawDataView.FRACTION_LAYOUT_VIEW_STYLE.equals(FractionLayoutViewStylesEnum.SESSION) ? TripoliSessionRawDataView.DEFAULT_WIDTH_OF_SESSION_PANES : TripoliSessionRawDataView.DEFAULT_WIDTH_OF_FRACTION_PANES));
+        xAxisZoomSlider.setValue((TripoliSessionRawDataView.FRACTION_LAYOUT_VIEW_STYLE.equals(FractionLayoutViewStylesEnum.SESSION)//
+                ? TripoliSessionRawDataView.DEFAULT_WIDTH_OF_SESSION_PANES : TripoliSessionRawDataView.DEFAULT_WIDTH_OF_FRACTION_PANES));
 
     }
 
@@ -302,8 +312,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
                 rawDataSourceMethodFactory("getIncludedIsotopes"));
 
         //cause slider to synch
-        ((TripoliSessionRawDataView) tripoliSessionRawDataView).synchXAxisZoomSliderValue(((TripoliSessionRawDataView) tripoliSessionRawDataView).getDataModelWidth());
-
+//        ((TripoliSessionRawDataView) tripoliSessionRawDataView).synchXAxisZoomSliderValue(((TripoliSessionRawDataView) tripoliSessionRawDataView).getDataModelWidth());
         if (refreshPanel) {
             tripoliSessionRawDataView.refreshPanel();
         }
@@ -336,7 +345,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
     }
 
     private void showRawRatioDataModels() {
-        // assumption is that tripoliSessionRawDataView is initialize
+        // assumption is that tripoliSessionRawDataView is initialized
 
         if (TripoliSessionRawDataView.FRACTION_LAYOUT_VIEW_STYLE.//
                 equals(FractionLayoutViewStylesEnum.SESSION)//
@@ -354,7 +363,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
 
         tripoliSessionRawDataView.refreshPanel();
         //cause slider to synch
-        ((TripoliSessionRawDataView) tripoliSessionRawDataView).synchXAxisZoomSliderValue(((TripoliSessionRawDataView) tripoliSessionRawDataView).getDataModelWidth());
+        //((TripoliSessionRawDataView) tripoliSessionRawDataView).synchXAxisZoomSliderValue(((TripoliSessionRawDataView) tripoliSessionRawDataView).getDataModelWidth());
 
         setEnableAllGridGraphOverlayButtons(true);
     }
@@ -391,7 +400,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         setEnableAllGridGraphOverlayButtons(false);
     }
 
-    private void showStandardDownholeFractionationRawRatioAlphaDataModels() {
+    private void showStandardDownholeFractionationRawRatioDataModels() {
         // assumption is that tripoliSessionRawDataView is initialized
         // only allow standard into this view
         selectStandards_chkBox.setSelected(true);
@@ -405,18 +414,18 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
                 dataModelViewConstructorFactory(FitFunctionsOnRatioDataView.class.getName()));
 
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).setRawDataSourceMethod(//
-                rawDataSourceMethodFactory("getValidRawRatioAlphas"));
-
-        ((TripoliSessionRawDataView) tripoliSessionRawDataView).setDataModelWidth(FitFunctionsOnRatioDataView.DEFAULT_WIDTH_OF_PANE);
+                rawDataSourceMethodFactory("getRatiosForFractionFitting"));//getValidRawRatioAlphas"));
 
         updateFractionSelection();
         tripoliSessionRawDataView.refreshPanel();
 
         repaint();
 
+        int saveWidth = ((TripoliSessionRawDataView) tripoliSessionRawDataView).getDataModelWidth();
         //cause it to fire
-        xAxisZoomSlider.setValue(576);
-        xAxisZoomSlider.setValue(575);
+        xAxisZoomSlider.setValue(((TripoliSessionRawDataView) tripoliSessionRawDataView).DEFAULT_WIDTH_OF_SESSION_PANES);
+
+        ((TripoliSessionRawDataView) tripoliSessionRawDataView).setDataModelWidth(saveWidth);
     }
 
     private void showStandardInterceptFractionationDataModels() {
@@ -433,6 +442,33 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
 
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).setRawDataSourceMethod(//
                 rawDataSourceMethodFactory("getRatiosForFractionFitting"));//("getRatiosForUnknownFitting"));//  "getValidRawRatioAlphas" ) );
+
+        //cause slider to synch
+        ((TripoliSessionRawDataView) tripoliSessionRawDataView).synchXAxisZoomSliderValue(((TripoliSessionRawDataView) tripoliSessionRawDataView).getDataModelWidth());
+
+        updateFractionSelection();
+
+        tripoliSessionRawDataView.refreshPanel();
+
+        setEnableAllGridGraphOverlayButtons(false);
+
+        repaint();
+    }
+
+    private void showStandardDownHoleFractionationDataModels() {
+        // assumption is that tripoliSessionRawDataView is initialized
+        // only allow standard into this view
+        selectStandards_chkBox.setSelected(true);
+        selectUnknowns_chkBox.setSelected(false);
+        gridPlot_radioButton.setSelected(true);
+
+        ((TripoliSessionRawDataView) tripoliSessionRawDataView).setFRACTION_LAYOUT_VIEW_STYLE(FractionLayoutViewStylesEnum.GRID_INTERCEPT);
+        tripoliSessionRawDataView.setBackground(interceptFitEachStandard_radioButton.getBackground());
+        ((TripoliSessionRawDataView) tripoliSessionRawDataView).setDataModelViewConstructor(//
+                dataModelViewConstructorFactory(FitFunctionsOnDownHoleRatioDataView.class.getName()));
+
+        ((TripoliSessionRawDataView) tripoliSessionRawDataView).setRawDataSourceMethod(//
+                rawDataSourceMethodFactory("getRatiosForFractionFitting"));
 
         //cause slider to synch
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).synchXAxisZoomSliderValue(((TripoliSessionRawDataView) tripoliSessionRawDataView).getDataModelWidth());
@@ -486,17 +522,22 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         // do the math
         if (!tripoliSession.isFitFunctionsUpToDate()) {
             tripoliSession.calculateSessionFitFunctionsForPrimaryStandard();
-            // jan 2015 moved to calculateSessionFit   tripoliSession.applyCorrections();
             try {
                 uPbReduxFrame.updateReportTable(true);
             } catch (Exception e) {
             }
         }
 
+        if (fractionationTechnique.compareTo(FractionationTechniquesEnum.DOWNHOLE) == 0) {
+            tripoliSessionRawDataView.setDataPresentationMode(DataPresentationModeEnum.LOGRATIO);
+        } else {
+            tripoliSessionRawDataView.setDataPresentationMode(DataPresentationModeEnum.RATIO);
+        }
+
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).showSessionViewOfRawDataModels(//
                 interceptStandardSession_radioButton.getBackground(),//
                 dataModelViewConstructorFactory(SessionOfStandardView.class.getName()),//
-                rawDataSourceMethodFactory("getValidRawRatioAlphas"));
+                rawDataSourceMethodFactory("getRatiosForFractionFitting"));//getValidRawRatioAlphas"));"getValidRawRatioAlphas"));
 
         setEnableAllGridGraphOverlayButtons(false);
 
@@ -699,12 +740,13 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         yAxisZoomSlider = new javax.swing.JSlider();
         fractionationTechniqueTabbedPane = new javax.swing.JTabbedPane();
         DownholePanel = new javax.swing.JPanel();
+        downholeFitStandards_radioButton = new javax.swing.JRadioButton();
+        downholeFitEachStandard_radioButton = new javax.swing.JRadioButton();
         downholeStandardSession_radioButton = new javax.swing.JRadioButton();
-        downholeFitStandardAlphas_radioButton = new javax.swing.JRadioButton();
         downholeCorrectedUnknownRatios_radioButton = new javax.swing.JRadioButton();
         interceptPanel = new javax.swing.JPanel();
-        interceptStandardSession_radioButton = new javax.swing.JRadioButton();
         interceptFitEachStandard_radioButton = new javax.swing.JRadioButton();
+        interceptStandardSession_radioButton = new javax.swing.JRadioButton();
         interceptFitUnknownRatios_radioButton = new javax.swing.JRadioButton();
         restoreAllAquisitions =  new ET_JButton();
         applyCommonLeadCorrections_button =  new ET_JButton();
@@ -801,7 +843,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         jLabel1.setFont(new java.awt.Font("SansSerif", 0, 13)); // NOI18N
         jLabel1.setText("Fractions Shown:");
         controlPanel_panel.add(jLabel1);
-        jLabel1.setBounds(0, 340, 110, 16);
+        jLabel1.setBounds(0, 350, 110, 16);
 
         rawIsotopes_radioButton.setBackground(new java.awt.Color(173, 204, 182));
         viewChooser_buttonGroup.add(rawIsotopes_radioButton);
@@ -898,7 +940,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
             }
         });
         controlPanel_panel.add(showExcludedFractions_radioButton);
-        showExcludedFractions_radioButton.setBounds(120, 360, 70, 20);
+        showExcludedFractions_radioButton.setBounds(120, 370, 70, 20);
 
         includedFractions_buttonGroup.add(showAllFractions_radioButton);
         showAllFractions_radioButton.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
@@ -913,7 +955,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
             }
         });
         controlPanel_panel.add(showAllFractions_radioButton);
-        showAllFractions_radioButton.setBounds(0, 360, 50, 20);
+        showAllFractions_radioButton.setBounds(0, 370, 50, 20);
 
         includedFractions_buttonGroup.add(showIncludedFractions_radioButton);
         showIncludedFractions_radioButton.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
@@ -927,7 +969,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
             }
         });
         controlPanel_panel.add(showIncludedFractions_radioButton);
-        showIncludedFractions_radioButton.setBounds(50, 360, 70, 20);
+        showIncludedFractions_radioButton.setBounds(50, 370, 70, 20);
 
         includeAllFractions_button.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         includeAllFractions_button.setText("Restore all Fractions");
@@ -937,7 +979,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
             }
         });
         controlPanel_panel.add(includeAllFractions_button);
-        includeAllFractions_button.setBounds(0, 380, 160, 20);
+        includeAllFractions_button.setBounds(0, 390, 160, 20);
 
         refreshView_button.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         refreshView_button.setText("Refresh View");
@@ -967,12 +1009,12 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
             }
         });
         controlPanel_panel.add(removeAllIndividualYAxisPanes_button);
-        removeAllIndividualYAxisPanes_button.setBounds(0, 420, 160, 20);
+        removeAllIndividualYAxisPanes_button.setBounds(0, 430, 160, 20);
 
         jLabel4.setFont(new java.awt.Font("SansSerif", 3, 10)); // NOI18N
         jLabel4.setText("   Select fractionation technique:");
         controlPanel_panel.add(jLabel4);
-        jLabel4.setBounds(0, 150, 190, 13);
+        jLabel4.setBounds(0, 145, 190, 13);
 
         yAxisZoomSlider.setMaximum(320);
         yAxisZoomSlider.setMinimum(64);
@@ -991,6 +1033,38 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         DownholePanel.setFont(new java.awt.Font("Arial", 0, 10)); // NOI18N
         DownholePanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        downholeFitStandards_radioButton.setBackground(new java.awt.Color(173, 174, 204));
+        viewChooser_buttonGroup.add(downholeFitStandards_radioButton);
+        downholeFitStandards_radioButton.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        downholeFitStandards_radioButton.setText("Fit All Standards");
+        downholeFitStandards_radioButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        downholeFitStandards_radioButton.setBorderPainted(true);
+        downholeFitStandards_radioButton.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        downholeFitStandards_radioButton.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        downholeFitStandards_radioButton.setOpaque(true);
+        downholeFitStandards_radioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                downholeFitStandards_radioButtonActionPerformed(evt);
+            }
+        });
+        DownholePanel.add(downholeFitStandards_radioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 168, 20));
+
+        downholeFitEachStandard_radioButton.setBackground(new java.awt.Color(173, 174, 204));
+        viewChooser_buttonGroup.add(downholeFitEachStandard_radioButton);
+        downholeFitEachStandard_radioButton.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        downholeFitEachStandard_radioButton.setText("Fit Each Standard");
+        downholeFitEachStandard_radioButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        downholeFitEachStandard_radioButton.setBorderPainted(true);
+        downholeFitEachStandard_radioButton.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        downholeFitEachStandard_radioButton.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        downholeFitEachStandard_radioButton.setOpaque(true);
+        downholeFitEachStandard_radioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                downholeFitEachStandard_radioButtonActionPerformed(evt);
+            }
+        });
+        DownholePanel.add(downholeFitEachStandard_radioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 25, 168, 20));
+
         downholeStandardSession_radioButton.setBackground(new java.awt.Color(204, 204, 204));
         viewChooser_buttonGroup.add(downholeStandardSession_radioButton);
         downholeStandardSession_radioButton.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
@@ -1005,28 +1079,12 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
                 downholeStandardSession_radioButtonActionPerformed(evt);
             }
         });
-        DownholePanel.add(downholeStandardSession_radioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 168, 20));
-
-        downholeFitStandardAlphas_radioButton.setBackground(new java.awt.Color(173, 174, 204));
-        viewChooser_buttonGroup.add(downholeFitStandardAlphas_radioButton);
-        downholeFitStandardAlphas_radioButton.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
-        downholeFitStandardAlphas_radioButton.setText("Fit Standards");
-        downholeFitStandardAlphas_radioButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        downholeFitStandardAlphas_radioButton.setBorderPainted(true);
-        downholeFitStandardAlphas_radioButton.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        downholeFitStandardAlphas_radioButton.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        downholeFitStandardAlphas_radioButton.setOpaque(true);
-        downholeFitStandardAlphas_radioButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                downholeFitStandardAlphas_radioButtonActionPerformed(evt);
-            }
-        });
-        DownholePanel.add(downholeFitStandardAlphas_radioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 168, 20));
+        DownholePanel.add(downholeStandardSession_radioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 50, 168, 20));
 
         downholeCorrectedUnknownRatios_radioButton.setBackground(new java.awt.Color(173, 204, 204));
         viewChooser_buttonGroup.add(downholeCorrectedUnknownRatios_radioButton);
         downholeCorrectedUnknownRatios_radioButton.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
-        downholeCorrectedUnknownRatios_radioButton.setText("Corr. Unknown Ratios");
+        downholeCorrectedUnknownRatios_radioButton.setText("Correct Unknowns");
         downholeCorrectedUnknownRatios_radioButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         downholeCorrectedUnknownRatios_radioButton.setBorderPainted(true);
         downholeCorrectedUnknownRatios_radioButton.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -1037,28 +1095,12 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
                 downholeCorrectedUnknownRatios_radioButtonActionPerformed(evt);
             }
         });
-        DownholePanel.add(downholeCorrectedUnknownRatios_radioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 60, 168, -1));
+        DownholePanel.add(downholeCorrectedUnknownRatios_radioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 75, 168, -1));
 
         fractionationTechniqueTabbedPane.addTab("Downhole", DownholePanel);
 
         interceptPanel.setBackground(new java.awt.Color(250, 240, 230));
         interceptPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        interceptStandardSession_radioButton.setBackground(new java.awt.Color(204, 204, 204));
-        viewChooser_buttonGroup.add(interceptStandardSession_radioButton);
-        interceptStandardSession_radioButton.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
-        interceptStandardSession_radioButton.setText("Fit Standard Session");
-        interceptStandardSession_radioButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        interceptStandardSession_radioButton.setBorderPainted(true);
-        interceptStandardSession_radioButton.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        interceptStandardSession_radioButton.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        interceptStandardSession_radioButton.setOpaque(true);
-        interceptStandardSession_radioButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                interceptStandardSession_radioButtonActionPerformed(evt);
-            }
-        });
-        interceptPanel.add(interceptStandardSession_radioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 168, 20));
 
         interceptFitEachStandard_radioButton.setBackground(new java.awt.Color(173, 174, 204));
         viewChooser_buttonGroup.add(interceptFitEachStandard_radioButton);
@@ -1075,6 +1117,22 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
             }
         });
         interceptPanel.add(interceptFitEachStandard_radioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 168, 20));
+
+        interceptStandardSession_radioButton.setBackground(new java.awt.Color(204, 204, 204));
+        viewChooser_buttonGroup.add(interceptStandardSession_radioButton);
+        interceptStandardSession_radioButton.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        interceptStandardSession_radioButton.setText("Fit Standard Session");
+        interceptStandardSession_radioButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        interceptStandardSession_radioButton.setBorderPainted(true);
+        interceptStandardSession_radioButton.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        interceptStandardSession_radioButton.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        interceptStandardSession_radioButton.setOpaque(true);
+        interceptStandardSession_radioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                interceptStandardSession_radioButtonActionPerformed(evt);
+            }
+        });
+        interceptPanel.add(interceptStandardSession_radioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 168, 20));
 
         interceptFitUnknownRatios_radioButton.setBackground(new java.awt.Color(173, 204, 204));
         viewChooser_buttonGroup.add(interceptFitUnknownRatios_radioButton);
@@ -1100,7 +1158,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         fractionationTechniqueTabbedPane.addTab("Intercept", interceptPanel);
 
         controlPanel_panel.add(fractionationTechniqueTabbedPane);
-        fractionationTechniqueTabbedPane.setBounds(0, 170, 190, 125);
+        fractionationTechniqueTabbedPane.setBounds(0, 165, 190, 140);
 
         restoreAllAquisitions.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         restoreAllAquisitions.setText("Restore all Aquisitions");
@@ -1110,7 +1168,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
             }
         });
         controlPanel_panel.add(restoreAllAquisitions);
-        restoreAllAquisitions.setBounds(0, 400, 160, 20);
+        restoreAllAquisitions.setBounds(0, 410, 160, 20);
 
         applyCommonLeadCorrections_button.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         applyCommonLeadCorrections_button.setText("Update Report Table");
@@ -1124,7 +1182,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
             }
         });
         controlPanel_panel.add(applyCommonLeadCorrections_button);
-        applyCommonLeadCorrections_button.setBounds(0, 300, 190, 40);
+        applyCommonLeadCorrections_button.setBounds(0, 310, 190, 40);
 
         jPanel1.setBackground(new java.awt.Color(250, 240, 230));
         jPanel1.setPreferredSize(new java.awt.Dimension(191, 70));
@@ -1445,18 +1503,16 @@ private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.
         showSessionViewOfRawDataModels(FractionationTechniquesEnum.DOWNHOLE);
     }//GEN-LAST:event_downholeStandardSession_radioButtonActionPerformed
 
-    private void downholeFitStandardAlphas_radioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downholeFitStandardAlphas_radioButtonActionPerformed
-        showStandardDownholeFractionationRawRatioAlphaDataModels();
-    }//GEN-LAST:event_downholeFitStandardAlphas_radioButtonActionPerformed
+    private void downholeFitStandards_radioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downholeFitStandards_radioButtonActionPerformed
+        showStandardDownholeFractionationRawRatioDataModels();
+    }//GEN-LAST:event_downholeFitStandards_radioButtonActionPerformed
 
     private void downholeCorrectedUnknownRatios_radioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downholeCorrectedUnknownRatios_radioButtonActionPerformed
         showDownholeFractionationCorrectedRawRatioDataModels(FractionSelectionTypeEnum.UNKNOWN);
     }//GEN-LAST:event_downholeCorrectedUnknownRatios_radioButtonActionPerformed
 
     private void switchToProjectManager_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_switchToProjectManager_buttonActionPerformed
-//        saveProject();
         this.close();
-//        this.setVisible(false);
         projectManager.setVisible(true);
     }//GEN-LAST:event_switchToProjectManager_buttonActionPerformed
 
@@ -1470,16 +1526,16 @@ private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.
     }//GEN-LAST:event_switchToReductionManager_buttonActionPerformed
 
     private void applyCommonLeadCorrections_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_applyCommonLeadCorrections_buttonActionPerformed
-        
+
         // april 2015 refit any  fractions not currently fitted
-        Set <TripoliFraction> tripoliFractions = tripoliSession.getTripoliFractionsFiltered(FractionSelectionTypeEnum.ALL, IncludedTypeEnum.INCLUDED);
-        for (TripoliFraction tf : tripoliFractions){
-            if (!tf.isCurrentlyFitted()){
+        Set<TripoliFraction> tripoliFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliSession.getTripoliFractions(), FractionSelectionTypeEnum.ALL, IncludedTypeEnum.INCLUDED);
+        for (TripoliFraction tf : tripoliFractions) {
+            if (!tf.isCurrentlyFitted()) {
                 tf.updateInterceptFitFunctionsIncludingCommonLead();
                 tripoliSession.setFitFunctionsUpToDate(false);
             }
         }
-        
+
         // jan 2015
         if (!tripoliSession.isFitFunctionsUpToDate()) {
             tripoliSession.calculateSessionFitFunctionsForPrimaryStandard();
@@ -1495,6 +1551,10 @@ private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.
         }
     }//GEN-LAST:event_applyCommonLeadCorrections_buttonActionPerformed
 
+    private void downholeFitEachStandard_radioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downholeFitEachStandard_radioButtonActionPerformed
+        showStandardDownHoleFractionationDataModels();
+    }//GEN-LAST:event_downholeFitEachStandard_radioButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel DownholePanel;
     private javax.swing.JButton applyCommonLeadCorrections_button;
@@ -1502,7 +1562,8 @@ private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.
     private javax.swing.JRadioButton correctedIsotopes_radioButton;
     private javax.swing.JButton defaultZoom_button;
     private javax.swing.JRadioButton downholeCorrectedUnknownRatios_radioButton;
-    private javax.swing.JRadioButton downholeFitStandardAlphas_radioButton;
+    private javax.swing.JRadioButton downholeFitEachStandard_radioButton;
+    private javax.swing.JRadioButton downholeFitStandards_radioButton;
     private javax.swing.JRadioButton downholeStandardSession_radioButton;
     private javax.swing.JTabbedPane fractionationTechniqueTabbedPane;
     private javax.swing.JRadioButton graphPlot_radioButton;
@@ -1550,53 +1611,6 @@ private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.
     /**
      *
      */
-    public void outputAlphasToFile() {
-        File alphaValuesFile = new File("ALL_ALPHAS_" + tripoliSession.getRawDataFileHandler().getRawDataFile().getName() + ".txt");
-        PrintWriter outputWriter = null;
-        try {
-            outputWriter = new PrintWriter(new FileWriter(alphaValuesFile));
-            outputWriter.println("\n\n******   ALPHAS  from " + tripoliSession.getRawDataFileHandler().getRawDataFile().getName() + "   ********************\n\n");
-
-            SortedSet<TripoliFraction> myFractions = tripoliSession.//
-                    getTripoliFractionsFiltered(FractionSelectionTypeEnum.STANDARD, currentFractionView);
-            Iterator fractionIterator = myFractions.iterator();
-            while (fractionIterator.hasNext()) {
-                TripoliFraction myFraction = (TripoliFraction) fractionIterator.next();
-                outputWriter.println("Fraction = " + myFraction.getFractionID());
-
-                SortedSet<DataModelInterface> myRatioAlphas = myFraction.getValidRawRatioAlphas();
-                Iterator ratioIterator = myRatioAlphas.iterator();
-                while (ratioIterator.hasNext()) {
-                    DataModelInterface myRatioAlpha = (DataModelInterface) ratioIterator.next();
-                    outputWriter.println("RatioAlpha = " + myRatioAlpha.getDataModelName());
-
-                    double alphas[] = ((RawRatioDataModel) myRatioAlpha).getAlphas();
-
-                    for (int i = 0; i < alphas.length; i++) {
-                        outputWriter.write(Double.toString(alphas[i]) + ", ");
-                    }
-                    outputWriter.println();
-                }
-                outputWriter.println();
-            }
-            outputWriter.println();
-
-            outputWriter.flush();
-            outputWriter.close();
-
-        } catch (IOException iOException) {
-        }
-
-        try {
-            BrowserControl.displayURL(alphaValuesFile.getCanonicalPath());
-        } catch (IOException ex) {
-        }
-
-    }
-
-    /**
-     *
-     */
     public void outputSessionMeansAndStdErrsToFile() {
         File alphaValuesFile = new File("INCLUDED_STANDARDS_SESSION_MEANS_N_ERRS_" + tripoliSession.getRawDataFileHandler().getRawDataFile().getName() + ".txt");
         PrintWriter outputWriter = null;
@@ -1635,10 +1649,10 @@ private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.
                 }
             }
 
-////            Iterator fractionationAlphaIterator = tripoliSession.getDownholeFractionationAlphaDataModels().keySet().iterator();
+////            Iterator fractionationAlphaIterator = tripoliSession.getDownholeFractionationDataModels().keySet().iterator();
 ////            while (fractionationAlphaIterator.hasNext()) {
 ////                RawRatioNames rrName = (RawRatioNames) fractionationAlphaIterator.next();
-////                DownholeFractionationDataModel fractionationAlpha = tripoliSession.getDownholeFractionationAlphaDataModels().get( rrName );
+////                DownholeFractionationDataModel fractionationAlpha = tripoliSession.getDownholeFractionationDataModels().get( rrName );
 ////
 ////                outputWriter.println( "\n\nRatio = " + rrName + "   listing fractionName, elapsed seconds timeStamp, mean, stderr  \n" );
 ////
@@ -1684,15 +1698,15 @@ private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.
             outputWriter = new PrintWriter(new FileWriter(alphaValuesFile));
             outputWriter.println("\n\n******   ALPHA AVERAGES  from " + tripoliSession.getRawDataFileHandler().getRawDataFile().getName() + "   ********************");
 
-            Iterator fractionationAlphaIterator = tripoliSession.getDownholeFractionationAlphaDataModels().keySet().iterator();
+            Iterator fractionationAlphaIterator = tripoliSession.getDownholeFractionationDataModels().keySet().iterator();
             while (fractionationAlphaIterator.hasNext()) {
                 RawRatioNames rrName = (RawRatioNames) fractionationAlphaIterator.next();
-                DownholeFractionationDataModel fractionationAlpha = tripoliSession.getDownholeFractionationAlphaDataModels().get(rrName);
+                DownholeFractionationDataModel fractionationAlpha = tripoliSession.getDownholeFractionationDataModels().get(rrName);
 
                 outputWriter.println("\n\nRatio = " + rrName + "  x-value, y-value (avg)  \n");
 
-                for (int i = 0; i < fractionationAlpha.getAverageAlphas().length; i++) {
-                    outputWriter.println("       " + (int) fractionationAlpha.getNormalizedAquireTimes()[i] + ", " + fractionationAlpha.getAverageAlphas()[i]);
+                for (int i = 0; i < fractionationAlpha.getWeightedMeanIntegrations().length; i++) {
+                    outputWriter.println("       " + (int) fractionationAlpha.getNormalizedAquireTimes()[i] + ", " + fractionationAlpha.getWeightedMeanIntegrations()[i]);
                 }
 
             }

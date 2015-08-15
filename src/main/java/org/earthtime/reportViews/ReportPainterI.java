@@ -1,5 +1,5 @@
 /*
- * ReportUpdaterInterface.java
+ * ReportPainterI.java
  *
  *
  * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
@@ -16,17 +16,40 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.earthtime.UPb_Redux.reports.reportViews;
+package org.earthtime.reportViews;
+
+import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
+import org.earthtime.samples.SampleInterface;
 
 /**
  *
- * @author samuelbowring
+ * @author James F. Bowring
  */
-public interface ReportUpdaterInterface {
+public interface ReportPainterI {
+
+    /**
+     * 
+     */
+    public void loadAndShowReportTableData ();// String[][] reportFractions );
+    
+    /**
+     * 
+     * @param performReduction
+     */
+    public void rebuildFractionDisplays ( boolean performReduction );
+    
+    /**
+     *
+     * @param theSample
+     */
+    public void setTheSample ( SampleInterface theSample );
     
     /**
      *
      * @param performReduction
+     * @throws BadLabDataException
      */
-    public void updateReportTable( boolean performReduction);
+    public void setUpTheSample ( boolean performReduction )
+            throws BadLabDataException;
+
 }

@@ -1,5 +1,5 @@
 /*
- * RawRatioAlphasDataView.java
+ * SessionOfStandardView.java
  *
  *
  * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
@@ -266,7 +266,8 @@ public class SessionOfStandardView extends AbstractRawDataView implements FitFun
         minX = 0;
         maxX = zeroBasedFractionAquireTimes.get(zeroBasedFractionAquireTimes.size() - 1);
 
-        AbstractFunctionOfX fitFunc = sessionForStandardDataModel.getSelectedFitFunction();
+        AbstractFunctionOfX fitFunc;
+        fitFunc = sessionForStandardDataModel.getSelectedFitFunction();
 
         if (fitFunc != null) {
 
@@ -382,7 +383,7 @@ public class SessionOfStandardView extends AbstractRawDataView implements FitFun
 
         // map fraction means into myOnPeakData and fraction times into myOnPeakNormalizedAquireTimes  
         tripoliFractionArray = new TripoliFraction[tripoliFractions.size()];
-        zeroBasedFractionAquireTimes = new ArrayList<Double>();
+        zeroBasedFractionAquireTimes = new ArrayList<>();
         fractionIncludedMap = new boolean[tripoliFractions.size()];
 
         int index = 0;
@@ -542,5 +543,10 @@ public class SessionOfStandardView extends AbstractRawDataView implements FitFun
     @Override
     public boolean amShowingUnknownFraction() {
         return false;
+    }
+
+    @Override
+    public void setShowFittedFunction(boolean showFittedFunction) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

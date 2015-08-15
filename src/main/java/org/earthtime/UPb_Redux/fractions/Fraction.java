@@ -35,7 +35,6 @@ import org.earthtime.dataDictionaries.DataDictionary;
 import org.earthtime.dataDictionaries.MeasuredRatios;
 import org.earthtime.dataDictionaries.MineralTypes;
 import org.earthtime.dataDictionaries.RadDates;
-import org.earthtime.dataDictionaries.TraceElements;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.initialPbModelsET.InitialPbModelET;
@@ -288,7 +287,7 @@ public abstract class Fraction implements
     @Override
     public void getValuesFrom(ETFractionInterface fraction, boolean copyAnalysisMeasures) {
 
-        setIsLegacy(fraction.isLegacy());
+        setLegacy(fraction.isLegacy());
         setZircon(((FractionI)fraction).isZircon());
 
         setImageURL(fraction.getImageURL());
@@ -1015,7 +1014,7 @@ public abstract class Fraction implements
      * @param isLegacy the isLegacy to set
      */
     @Override
-    public void setIsLegacy(boolean isLegacy) {
+    public void setLegacy(boolean isLegacy) {
         this.isLegacy = isLegacy;
     }
 
@@ -1096,21 +1095,5 @@ public abstract class Fraction implements
         }
     }
 
-    /*
-     needed summer 2014 for backward compatibility
-     */
-    @Override
-    public void initializeTraceElements() {
-        if (traceElements == null) {
-            traceElements = new ValueModel[TraceElements.getNames().length];
-            for (int i = 0; i < TraceElements.getNames().length; i++) {
-                traceElements[i]
-                        = new ValueModel(TraceElements.getNames()[i],
-                                BigDecimal.ZERO,
-                                "PCT",
-                                BigDecimal.ZERO, BigDecimal.ZERO);
-            }
-        }
-    }
 
 }

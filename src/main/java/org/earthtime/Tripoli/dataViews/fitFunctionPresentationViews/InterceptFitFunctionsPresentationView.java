@@ -23,15 +23,15 @@ import java.awt.Rectangle;
 import javax.swing.JLayeredPane;
 import org.earthtime.Tripoli.dataModels.DataModelFitFunctionInterface;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
+import org.earthtime.Tripoli.dataModels.RawRatioDataModel;
 import org.earthtime.Tripoli.dataViews.simpleViews.FitFunctionDataInterface;
+import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.FitFunctionsOnDownHoleRatioDataView;
 
 /**
  *
  * @author James F. Bowring
  */
 public class InterceptFitFunctionsPresentationView extends AbstractFitFunctionPresentationView {
-
-//    private DataModelFitFunctionInterface rawRatioDataModel;
 
     /**
      *
@@ -40,22 +40,24 @@ public class InterceptFitFunctionsPresentationView extends AbstractFitFunctionPr
      * @param targetDataModelView
      * @param bounds
      * @param forStandards
+     * @param meanOnly the value of meanOnly
      */
-    public InterceptFitFunctionsPresentationView ( //
+    public InterceptFitFunctionsPresentationView( //
             JLayeredPane sampleSessionDataView, //
-//            DataModelFitFunctionInterface rawRatioDataModel,//
-            DataModelInterface rawRatioDataModel,//
-            FitFunctionDataInterface targetDataModelView,
-            Rectangle bounds,
-            boolean forStandards) {
+            DataModelInterface rawRatioDataModel, //
+            FitFunctionDataInterface targetDataModelView, //
+            Rectangle bounds, //
+            boolean forStandards, //
+            boolean meanOnly) {
 
-        super( targetDataModelView, bounds );
+        super(targetDataModelView, bounds);
 
-        setCursor( Cursor.getDefaultCursor() );
+        setCursor(Cursor.getDefaultCursor());
 
         this.sampleSessionDataView = sampleSessionDataView;
         this.rawRatioDataModel = rawRatioDataModel;
         this.forStandards = forStandards;
+        this.meanOnly = meanOnly;
     }
 
     /**
@@ -63,8 +65,8 @@ public class InterceptFitFunctionsPresentationView extends AbstractFitFunctionPr
      * @param g2d
      */
     @Override
-    public void paint ( Graphics2D g2d ) {
-        paintInit( g2d );
+    public void paint(Graphics2D g2d) {
+        paintInit(g2d);
 
     }
 
@@ -72,17 +74,21 @@ public class InterceptFitFunctionsPresentationView extends AbstractFitFunctionPr
      *
      */
     @Override
-    public void preparePanel () {
+    public void preparePanel() {
 
         removeAll();
         // first restore the data
         // recalculate averages and fits
-        if ( rawRatioDataModel != null ) {
-            if (  ! ((DataModelFitFunctionInterface)rawRatioDataModel).isCalculatedInitialFitFunctions() ) {
-                ((DataModelFitFunctionInterface)rawRatioDataModel).generateSetOfFitFunctions(true, false);
+        if (rawRatioDataModel != null) {
+            if (!((DataModelFitFunctionInterface) rawRatioDataModel).isCalculatedInitialFitFunctions()) {
+                if (targetDataModelView instanceof FitFunctionsOnDownHoleRatioDataView) {
+                    ((RawRatioDataModel) rawRatioDataModel).calculateDownholeFractionWeightedMeanAndUnct();
+                } else {
+                    ((DataModelFitFunctionInterface) rawRatioDataModel).generateSetOfFitFunctions(true, false);
+                }
             }
         }
 
-        createFitFunctionPanes( ((DataModelFitFunctionInterface)rawRatioDataModel), false );
+        createFitFunctionPanes(((DataModelFitFunctionInterface) rawRatioDataModel), false);
     }
 }

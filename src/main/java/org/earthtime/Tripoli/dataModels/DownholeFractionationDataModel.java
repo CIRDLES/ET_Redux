@@ -25,6 +25,7 @@ import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.SortedMap;
+import java.util.SortedSet;
 import java.util.TreeMap;
 import org.earthtime.Tripoli.fitFunctions.AbstractFunctionOfX;
 import org.earthtime.Tripoli.fitFunctions.LevenbergMarquardGeneralSolverWithCovS;
@@ -32,8 +33,13 @@ import org.earthtime.Tripoli.fitFunctions.LevenbergMarquardGeneralSolverWithCovS
 import org.earthtime.Tripoli.fitFunctions.MeanFitFunction;
 import org.earthtime.Tripoli.fitFunctions.SmoothingSplineWithCov;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
+import org.earthtime.UPb_Redux.fractions.FractionsFilterInterface;
+import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.dataDictionaries.FitFunctionTypeEnum;
+import org.earthtime.dataDictionaries.FractionSelectionTypeEnum;
+import org.earthtime.dataDictionaries.IncludedTypeEnum;
 import org.earthtime.dataDictionaries.RawRatioNames;
+import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 
 /**
  *
@@ -46,16 +52,17 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
     /**
      *
      */
-    public static int MAX_AQUISITIONS_SHADABLE = 3;
     //
+    private SortedSet<TripoliFraction> tripoliFractions;
     private final RawRatioNames rawRatioName;
-    private double[] averageAlphas;
+    private double[] weightedMeanIntegrations;
     private double[] onPeakAcquireTimesBySecond;
     private final double[] normalizedAquireTimes;
-    private double[] fittedAlphas;
-    private double[] fittedAlphasResiduals;
+    private double[] fittedStandards;
+    private double[] fittedStandardsResiduals;
+    private double[] fittedStandardsBeta;
     private MaskingSingleton maskingSingleton;
-    private final Map<String, AbstractFunctionOfX> alphasFitFunctions;
+    private ValueModel standardValueModel;
 
     /**
      *
@@ -87,30 +94,32 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
 
     /**
      *
+     * @param tripoliFractions the value of tripoliFractions
      * @param rawRatioName
-     * @param averageAlphas
+     * @param primaryMineralStandard the value of primaryMineralStandard
+     * @param weightedMeanIntegrations
      * @param onPeakAcquireTimesBySecond
      * @param normalizedAquireTimes
      * @param maskingSingleton
      */
     public DownholeFractionationDataModel(//
-            RawRatioNames rawRatioName,//
-            double[] averageAlphas,//
-            double[] onPeakAcquireTimesBySecond, //
-            double[] normalizedAquireTimes, //
-            MaskingSingleton maskingSingleton) {
+            SortedSet<TripoliFraction> tripoliFractions, //
+            RawRatioNames rawRatioName, AbstractRatiosDataModel primaryMineralStandard, //
+            double[] weightedMeanIntegrations, double[] onPeakAcquireTimesBySecond, double[] normalizedAquireTimes, MaskingSingleton maskingSingleton) {
 
+        this.tripoliFractions = tripoliFractions;
         this.rawRatioName = rawRatioName;
-        this.averageAlphas = averageAlphas;
+        this.weightedMeanIntegrations = weightedMeanIntegrations;
         this.onPeakAcquireTimesBySecond = onPeakAcquireTimesBySecond;
         this.normalizedAquireTimes = normalizedAquireTimes;
 
-        this.fittedAlphas = new double[averageAlphas.length];
-        this.fittedAlphasResiduals = new double[averageAlphas.length];
+        this.fittedStandards = new double[weightedMeanIntegrations.length];
+        this.fittedStandardsResiduals = new double[weightedMeanIntegrations.length];
+        this.fittedStandardsBeta = new double[weightedMeanIntegrations.length];
         this.maskingSingleton = maskingSingleton;
-        this.alphasFitFunctions = new TreeMap<String, AbstractFunctionOfX>();
-        this.downholeStandardsFitFunctionsNoOD = new TreeMap<String, AbstractFunctionOfX>();;
-        this.downholeStandardsFitFunctionsWithOD = new TreeMap<String, AbstractFunctionOfX>();
+
+        this.downholeStandardsFitFunctionsNoOD = new TreeMap<>();
+        this.downholeStandardsFitFunctionsWithOD = new TreeMap<>();
         this.overDispersionSelected = true;
 
         this.selectedFitFunctionType = FitFunctionTypeEnum.EXPONENTIAL;
@@ -118,20 +127,15 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
         this.calculatedInitialFitFunctions = false;
         this.overDispersionSelected = true;
 
+        this.standardValueModel = primaryMineralStandard.getDatumByName(rawRatioName.getName().replace("w", "r"));
+
     }
 
-//    private void initializeAverageAlphas () {
-//        for (int i = 0; i < averageAlphas.length; i ++) {
-//            averageAlphas[i] = 0.0;
-//            fittedAlphas[i] = 0.0;
-//            fittedAlphasResiduals[i] = 0.0;
-//        }
-//    }
     /**
      *
      * @param fractionIterator
      */
-    public void calculateWeightedMeanOfStandards(Iterator<TripoliFraction> fractionIterator) {
+    public void calculateWeightedMeanOfStandards() {
 
         // march 2013
         boolean[] dataCommonActiveMap = MaskingSingleton.getInstance().getMaskingArray();
@@ -143,87 +147,71 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
         }
 
         activeDataMap = new boolean[countOfActiveData];
-        averageAlphas = new double[countOfActiveData];
-        fittedAlphas = new double[countOfActiveData];
-        fittedAlphasResiduals = new double[countOfActiveData];
+        weightedMeanIntegrations = new double[countOfActiveData];
+        fittedStandards = new double[countOfActiveData];
+        setFittedStandardsBeta(new double[countOfActiveData]);
+        fittedStandardsResiduals = new double[countOfActiveData];
         activeXvalues = new double[countOfActiveData];
 
         int index = 0;
         for (int i = 0; i < dataCommonActiveMap.length; i++) {
             if (dataCommonActiveMap[i]) {
                 activeDataMap[index] = true;
-                averageAlphas[index] = 0.0;
-                fittedAlphas[index] = 0.0;
-                fittedAlphasResiduals[index] = 0.0;
+                weightedMeanIntegrations[index] = 0.0;
+                fittedStandards[index] = 0.0;
+                getFittedStandardsBeta()[index] = 0.0;
+                fittedStandardsResiduals[index] = 0.0;
                 activeXvalues[index] = normalizedAquireTimes[i];
 
                 index++;
             }
         }
 
+        // section 7b Calculate offsets and uncertainties for downhole per iolite
         Matrix sumInvSlogRatioX_Y = new Matrix(countOfActiveData, countOfActiveData);
         Matrix sumInvSlogRatioX_YTimeslr = new Matrix(countOfActiveData, 1);
 
         // assume fraction iterator is correct length as it was set on included fractions
+        Iterator<TripoliFraction> fractionIterator =//
+                FractionsFilterInterface.getTripoliFractionsFiltered(//
+                        tripoliFractions, FractionSelectionTypeEnum.STANDARD, IncludedTypeEnum.INCLUDED).iterator();
+
         while (fractionIterator.hasNext()) {
             TripoliFraction tf = fractionIterator.next();
 
-//            System.out.println("Fraction id at downhole = " + tf.getFractionID());
             RawRatioDataModel rawRatio = //
                     ((RawRatioDataModel) tf.getRawRatioDataModelByName(rawRatioName));
 
+            // calc SLogRatioXY
             rawRatio.propagateUnctInRatios();
 
-            Matrix SlogRatioX_Y = rawRatio.getSlogRatioX_Y();
+            Matrix SlogRatioX_Y = rawRatio.getSlogRatioX_Y_withZeroesAtInactive();//getSlogRatioX_Y();
 
+            // sum of the inverses of all of the Slr_X_Y covariance matrices
             sumInvSlogRatioX_Y.plusEquals(SlogRatioX_Y.inverse());
 
-            // get active logratios from standard
-            Matrix logRatiosVector = new Matrix(rawRatio.getActiveLogRatios(countOfActiveData), countOfActiveData);
-
-            sumInvSlogRatioX_YTimeslr.plusEquals(SlogRatioX_Y.solve(logRatiosVector));
+////            // get active logratios from standard
+////            Matrix logRatiosVector = new Matrix(rawRatio.getActiveLogRatios(countOfActiveData), countOfActiveData);
+////
+////            // column vector length count of aquisitions
+////            sumInvSlogRatioX_YTimeslr.plusEquals(SlogRatioX_Y.solve(logRatiosVector));
+            // JUNE 2015 - got to standard faction and calculate SlogRatioX_Y.solve(logratiosVector) for that fraction's active
+            // return to here that solution with missing rows added back in with zeores to match the shape of this overall downhole
+            Matrix SlogRXYSolveLRWithZeroesAtInactive = rawRatio.SlogRXYSolveLRWithZeroesAtInactive(dataCommonActiveMap);
+            sumInvSlogRatioX_YTimeslr.plusEquals(SlogRXYSolveLRWithZeroesAtInactive);
         }
 
+        // column vector for THICK BLACK LINE
         Matrix wtdMeanStdIntegrations = sumInvSlogRatioX_Y.solve(sumInvSlogRatioX_YTimeslr);
 
+        // square matrix
         SwtdMeanStdIntegrations = sumInvSlogRatioX_Y.inverse();
 
-        // populate arrays for plotting and fitting
-        for (int i = 0; i < averageAlphas.length; i++) {
-            averageAlphas[i] = wtdMeanStdIntegrations.get(i, 0);
+        // populate arrays for plotting and fitting of thick RED LINE from weightedMeanIntegrations
+        for (int i = 0; i < weightedMeanIntegrations.length; i++) {
+            weightedMeanIntegrations[i] = wtdMeanStdIntegrations.get(i, 0);
         }
-
-//        if (  ! ((RawRatioDataModel) tf.getRawRatioDataModelByName( rawRatioName )).isBelowDetection() ) {
-//            double[] alphas = ((RawRatioDataModel) tf.getRawRatioDataModelByName( rawRatioName )).calculateAlphas();
-//            boolean[] dataActiveMap = ((RawRatioDataModel) tf.getRawRatioDataModelByName( rawRatioName )).getDataActiveMap();
-//
-//            for (int i = 0; i < alphas.length; i ++) {
-//                // calculate sum of alphas
-//                if ( dataActiveMap[i] ) {
-//                    countOfIncludedPoints[i] ++;
-//                    averageAlphas[i] += alphas[i];
-//                }
-//            }
-//        }
-////        }
-//
-//        // calculate averages; averageAlphas is incoming parameter that gets populated here
-//        for (int i = 0; i < averageAlphas.length; i ++) {
-////            // dec 2012 to handle missing ratios due to belowdetection flag so turn off fraction in masking
-////            if ( countOfIncludedPoints[i] == 0.0 ) {
-////                maskingSingleton.getMaskingArray()[i] = false;
-////            } else {
-//            // dec 2012 if we get here with no data, divide by zero = NaN
-//            averageAlphas[i] = averageAlphas[i] / countOfIncludedPoints[i];
-////            }
-//        }
-
     }
-
-//    @Override
-//    public void generateSelectedFitFunction() {
-//        throw new UnsupportedOperationException("Not supported yet.");
-//    }
 
     private boolean generateMEANfitFunctionUsingLM() {
 
@@ -232,12 +220,12 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
         AbstractOverDispersionLMAlgorithm algorithmForMEAN//
                 = LevenbergMarquardGeneralSolverWithCovS.getInstance()//
                 .getSelectedLMAlgorithm(//
-                FitFunctionTypeEnum.MEAN,//
-                activeDataMap, //
-                activeXvalues, //
-                averageAlphas,//
-                SwtdMeanStdIntegrations, //
-                false);
+                        FitFunctionTypeEnum.MEAN,//
+                        activeDataMap, //
+                        activeXvalues, //
+                        weightedMeanIntegrations,//
+                        SwtdMeanStdIntegrations, //
+                        false);
 
         // algorithmForMEAN contains both the non OD and OD versions
         AbstractFunctionOfX fOfX_MEAN = algorithmForMEAN.getInitialFofX();
@@ -268,19 +256,19 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
             // to handle really bad data sets, for which LM wont work, do good old fashioned mean
             fOfX_MEAN = MeanFitFunction.getInstance()//
                     .getFunctionOfX(//
-                    activeDataMap, //
-                    activeXvalues, //
-                    averageAlphas,//
-                    null, //
-                    false);
+                            activeDataMap, //
+                            activeXvalues, //
+                            weightedMeanIntegrations,//
+                            SwtdMeanStdIntegrations, //
+                            false);
 
             downholeStandardsFitFunctionsNoOD.put(FitFunctionTypeEnum.MEAN.getName(), fOfX_MEAN);
             downholeStandardsFitFunctionsWithOD.put(FitFunctionTypeEnum.MEAN.getName(), fOfX_MEAN);
 
-            selectedFitFunctionType = FitFunctionTypeEnum.MEAN;
-
+            //selectedFitFunctionType = FitFunctionTypeEnum.MEAN;
             retVal = false;
         }
+        selectedFitFunctionType = FitFunctionTypeEnum.MEAN;
 
         return retVal;
     }
@@ -291,7 +279,7 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
                 FitFunctionTypeEnum.LINE,//
                 activeDataMap, //
                 activeXvalues, //
-                averageAlphas,//
+                weightedMeanIntegrations,//
                 SwtdMeanStdIntegrations, //
                 false);
 
@@ -318,6 +306,8 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
             } else {
                 downholeStandardsFitFunctionsWithOD.put(fOfX_LINE.getShortNameString(), fOfX_LINE);
             }
+
+            selectedFitFunctionType = FitFunctionTypeEnum.LINE;
         } else {
             downholeStandardsFitFunctionsNoOD.remove(FitFunctionTypeEnum.LINE.getName());
             downholeStandardsFitFunctionsWithOD.remove(FitFunctionTypeEnum.LINE.getName());
@@ -326,25 +316,22 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
     }
 
     private void generateEXPONENTIALfitFunctionUsingLM() {
-
-//        System.out.println("trying expfast");
         AbstractOverDispersionLMAlgorithm algorithmForEXPFAST = LevenbergMarquardGeneralSolverWithCovS.getInstance().getSelectedLMAlgorithm(//
                 FitFunctionTypeEnum.EXPFAST,//
                 activeDataMap, //
                 activeXvalues, //
-                averageAlphas,//
+                weightedMeanIntegrations,//
                 SwtdMeanStdIntegrations, //
                 false);
         AbstractOverDispersionLMAlgorithm algorithmForEXPMAT;
 
         AbstractFunctionOfX expFastFunc = algorithmForEXPFAST.getInitialFofX();
         if (expFastFunc != null) {
-//            System.out.println("now trying expmat with expfast input");
             algorithmForEXPMAT = LevenbergMarquardGeneralSolverWithCovS.getInstance().getSelectedLMAlgorithmUsingIntialFofX(//
                     FitFunctionTypeEnum.EXPMAT,//
                     activeDataMap, //
                     activeXvalues, //
-                    averageAlphas,//
+                    weightedMeanIntegrations,//
                     SwtdMeanStdIntegrations, //
                     false,//
                     expFastFunc);
@@ -361,12 +348,11 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
                 }
 
                 if (fOfX_EXPMAT.getMSWD() >= 1.0) {
-//                    System.out.println("now trying expOD with expfast input");
                     AbstractOverDispersionLMAlgorithm algorithmForEXPOD = LevenbergMarquardGeneralSolverWithCovS.getInstance().getSelectedLMAlgorithmUsingIntialFofX(//
                             FitFunctionTypeEnum.EXPONENTIAL,//
                             activeDataMap, //
                             activeXvalues, //
-                            averageAlphas,//
+                            weightedMeanIntegrations,//
                             SwtdMeanStdIntegrations, //
                             false,//
                             expFastFunc);
@@ -385,6 +371,7 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
                 } else {
                     downholeStandardsFitFunctionsWithOD.put(fOfX_EXPMAT.getShortNameString(), fOfX_EXPMAT);
                 }
+                selectedFitFunctionType = FitFunctionTypeEnum.EXPONENTIAL;
             } else {
                 downholeStandardsFitFunctionsNoOD.remove(FitFunctionTypeEnum.EXPONENTIAL.getName());//was expmat??
                 downholeStandardsFitFunctionsWithOD.remove(FitFunctionTypeEnum.EXPONENTIAL.getName());
@@ -407,7 +394,7 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
         AbstractFunctionOfX fOfX_SMOOTHING_SPLINE = SmoothingSplineWithCov.getInstance().getFunctionOfX(//
                 activeDataMap, //
                 activeXvalues, //
-                averageAlphas,//
+                weightedMeanIntegrations,//
                 SwtdMeanStdIntegrations, //
                 true);
 
@@ -452,7 +439,7 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
         AbstractFunctionOfX fOfX_SMOOTHING_SPLINE_WITH_OD = SmoothingSplineWithCov.getInstance().getFunctionOfX(//
                 activeDataMap, //
                 activeXvalues, //
-                averageAlphas,//
+                weightedMeanIntegrations,//
                 sessionIncludedStandardsCovarianceCopyWithOD, true);
 
         fOfX_SMOOTHING_SPLINE_WITH_OD.setOverDispersion(overDispersion);
@@ -470,17 +457,12 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
      */
     public SortedMap<Double, AbstractFunctionOfX> generateSetOfSplineWithODfitFunctions(double startValue, double increment, double stopValue) {
 
-        SortedMap<Double, AbstractFunctionOfX> sessionOfStandardsSplinesWithOD = new TreeMap<Double, AbstractFunctionOfX>();
+        SortedMap<Double, AbstractFunctionOfX> sessionOfStandardsSplinesWithOD = new TreeMap<>();
 
         for (double i = startValue; i < stopValue; i += increment) {
             AbstractFunctionOfX fOfX_SMOOTHING_SPLINE = generateSplineWithSpecificOD(Math.pow(i, 2));
 
-//            System.out.println("OD TEST xi = " + i + "  logRoughness = " + fOfX_SMOOTHING_SPLINE.getLogRoughness() + "\n");
-
-            if (Double.isNaN(fOfX_SMOOTHING_SPLINE.getLogRoughness())) {//|| (fOfX_SMOOTHING_SPLINE.getLogRoughness() < -41.0)) {
-
-                //fOfX_SMOOTHING_SPLINE = generateSplineWithSpecificOD(Math.pow(i - increment, 2));
-
+            if (Double.isNaN(fOfX_SMOOTHING_SPLINE.getLogRoughness())) {
                 try {
                     fOfX_SMOOTHING_SPLINE = sessionOfStandardsSplinesWithOD.get(sessionOfStandardsSplinesWithOD.lastKey());
                     AbstractFunctionOfX fOfX_SMOOTHING_SPLINE_EXIST = downholeStandardsFitFunctionsWithOD.get(fOfX_SMOOTHING_SPLINE.getShortNameString());
@@ -499,7 +481,6 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
         }
 
         return sessionOfStandardsSplinesWithOD;
-
     }
 
     /**
@@ -508,18 +489,24 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
      * @param propagateUncertainties the value of propagateUncertainties
      * @param doApplyMaskingArray the value of doApplyMaskingArray
      */
-    
+    @Override
     public void generateSetOfFitFunctions(boolean propagateUncertainties, boolean doApplyMaskingArray) {
 
-//        System.out.println("\nCalculating Fit Functions for Downhole  " + getRawRatioModelName().getDisplayName());
-
         if (generateMEANfitFunctionUsingLM()) {
-            generateLINEfitFunctionUsingLM();
-            generateEXPONENTIALfitFunctionUsingLM();
-            generateSPLINEfitFunction(SwtdMeanStdIntegrations);
+            try {
+                generateLINEfitFunctionUsingLM();
+                generateEXPONENTIALfitFunctionUsingLM();
+            } catch (Exception e) {
+            }
+//            try {
+//                generateEXPONENTIALfitFunctionUsingLM();
+//            } catch (Exception e) {
+//            }
+////            try {
+////                generateSPLINEfitFunction(SwtdMeanStdIntegrations);
+////            } catch (Exception e) {
+////            }
         }
-
-//        System.out.println("Downhole fit complete\n");
     }
 
     /**
@@ -529,38 +516,31 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
     public double[] getFitFunctionLogValues() {
         AbstractFunctionOfX fitFunc = getSelectedFitFunction();
 
-        for (int i = 0; i < fittedAlphas.length; i++) {
+        for (int i = 0; i < fittedStandards.length; i++) {
             try {
-                fittedAlphas[i] = fitFunc.f(activeXvalues[i]);
+                fittedStandards[i] = fitFunc.f(activeXvalues[i]);
             } catch (Exception e) {
-                fittedAlphas[i] = 0.0;
+                fittedStandards[i] = 0.0;
             }
+
+            fittedStandardsResiduals[i] = weightedMeanIntegrations[i] - fittedStandards[i];
         }
-        return fittedAlphas;
+        return fittedStandards;
     }
 
-    /**
-     *
-     * @param fitFunctionTypeName
-     */
-    @Override
-    public void calculateFittedFunctions(String fitFunctionTypeName) {
+    public double[] getFitFunctionBetaValues() {
+        AbstractFunctionOfX fitFunc = getSelectedFitFunction();
 
-        double sumSquaredErrors = 0.0;
-        for (int i = 0; i < fittedAlphas.length; i++) {
-            fittedAlphas[i] = alphasFitFunctions.get(fitFunctionTypeName).f(normalizedAquireTimes[i]);
-
-            fittedAlphasResiduals[i] = 0.0;
-            if (getMaskingSingleton().getMaskingArray()[i]) {
-                fittedAlphasResiduals[i] = averageAlphas[i] - fittedAlphas[i];
-                sumSquaredErrors += fittedAlphasResiduals[i] * fittedAlphasResiduals[i];
+        for (int i = 0; i < getFittedStandardsBeta().length; i++) {
+            try {
+                getFittedStandardsBeta()[i] = //
+                        Math.log(standardValueModel.getValue().doubleValue()) //
+                        - fitFunc.f(activeXvalues[i]);
+            } catch (Exception e) {
+                getFittedStandardsBeta()[i] = Math.log(standardValueModel.getValue().doubleValue());
             }
         }
-
-        alphasFitFunctions.get(fitFunctionTypeName).setChiSquared(sumSquaredErrors);
-//        alphasFitFunctions.get( fitFunctionTypeName ).setGoodnessOfFitType( GoodnessOfFitFunctionTypeEnum.SSE );
-
-        selectedFitFunctionType = FitFunctionTypeEnum.valueOf(fitFunctionTypeName);
+        return getFittedStandardsBeta();
     }
 
     /**
@@ -569,22 +549,30 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
      * @param rawRatioName
      * @param downHoleFitFunction
      */
-    public void calculateWeightedMeanForEachStandard(Iterator<TripoliFraction> fractionIterator, RawRatioNames rawRatioName, AbstractFunctionOfX downHoleFitFunction) {
+    public void calculateWeightedMeanForEachStandard(RawRatioNames rawRatioName, AbstractFunctionOfX downHoleFitFunction) {
 
         prepareMatrixJfMapAquisitionsAquisitions();
 
         Matrix matrixJfStandardsStandards = matrixJfMapAquisitionsAquisitions.get(downHoleFitFunction.getShortName());
-        // this call to interpolated variances is needed ro grt Sf = need to refactor
-        downHoleFitFunction.calculateInterpolatedVariances(matrixJfStandardsStandards, activeXvalues);
+        // this call to interpolated variances is needed to calculate matrixSf = need to refactor
+        // stdVariances is diagonal of matrixSf
+        double[] stdVariances = downHoleFitFunction.calculateInterpolatedVariances(matrixJfStandardsStandards, activeXvalues);
 
-        Matrix matrixSf = downHoleFitFunction.getMatrixSf();
+        Iterator<TripoliFraction> fractionIterator =//
+                FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.STANDARD, IncludedTypeEnum.INCLUDED).iterator();
 
         while (fractionIterator.hasNext()) {
             TripoliFraction tf = fractionIterator.next();
 
             DataModelInterface rawRatio = tf.getRawRatioDataModelByName(rawRatioName);
 
-            ((RawRatioDataModel) rawRatio).calculateDownholeFractionWeightedMeanAndUnct(matrixSf, downHoleFitFunction);
+            // For the fit, calculate the value of the fit at each of the standards and the matrix Sf, 
+            // for each standard, this also calculates 
+            //      logDifferencesFromWeightedMean
+            //      meanOfResidualsFromFittedFractionation = fOfX_MEAN_OD.getA();
+            //      stdErrOfmeanOfResidualsFromFittedFractionation = fOfX_MEAN_OD.getStdErrOfA();
+            ((RawRatioDataModel) rawRatio).setDownHoleFitFunction(downHoleFitFunction);
+            ((RawRatioDataModel) rawRatio).calculateDownholeFractionWeightedMeanAndUnct();
         }
     }
 
@@ -596,8 +584,7 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
 
         //**********  ALL OF THIS IS CURRENTLY DONE INSIDE SPLINE FIT BUT COULD BE DONE OUTSIDE ******
         // build and calculate t and h
-
-        tList = new ArrayList<Double>();
+        tList = new ArrayList<>();
 
         for (int i = 0; i < activeXvalues.length; i++) {
             tList.add(activeXvalues[i]);
@@ -648,7 +635,7 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
      */
     public void prepareMatrixJfMapAquisitionsAquisitions() {
         // build session-wide marixJf for each type of fit function
-        matrixJfMapAquisitionsAquisitions = new EnumMap<FitFunctionTypeEnum, Matrix>(FitFunctionTypeEnum.class);
+        matrixJfMapAquisitionsAquisitions = new EnumMap<>(FitFunctionTypeEnum.class);
 
         // be sure times are prepared for standards AND all the work needed to support smoothing splines
         //if ( Jgammag == null ) {
@@ -701,24 +688,24 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
     }
 
     /**
-     * @return the averageAlphas
+     * @return the weightedMeanIntegrations
      */
-    public double[] getAverageAlphas() {
-        return averageAlphas;
+    public double[] getWeightedMeanIntegrations() {
+        return weightedMeanIntegrations;
     }
 
     /**
-     * @return the fittedAlphas
+     * @return the fittedStandards
      */
-    public double[] getFittedAlphas() {
-        return fittedAlphas;
+    public double[] getFittedStandards() {
+        return fittedStandards;
     }
 
     /**
-     * @param fittedAlphas the fittedAlphas to set
+     * @param fittedStandards the fittedStandards to set
      */
-    public void setFittedAlphas(double[] fittedAlphas) {
-        this.fittedAlphas = fittedAlphas;
+    public void setFittedStandards(double[] fittedStandards) {
+        this.fittedStandards = fittedStandards;
     }
 
     /**
@@ -729,11 +716,10 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
     }
 
     /**
-     * @return the alphasFitFunction
+     * @return the FitFunction
      */
     @Override
     public Map<String, AbstractFunctionOfX> getFitFunctions() {
-
         Map<String, AbstractFunctionOfX> fitFunctions;
 
         if (overDispersionSelected) {
@@ -746,10 +732,10 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
     }
 
     /**
-     * @return the fittedAlphasResiduals
+     * @return the fittedStandardsResiduals
      */
-    public double[] getFittedAlphasResiduals() {
-        return fittedAlphasResiduals;
+    public double[] getFittedStandardsResiduals() {
+        return fittedStandardsResiduals;
     }
 
     /**
@@ -778,12 +764,20 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
      * @return
      */
     public AbstractFunctionOfX getSelectedDownHoleFrationationFitFunction() {
-        return alphasFitFunctions.get(selectedFitFunctionType.toString());
+        AbstractFunctionOfX fitFunc;
+        if (overDispersionSelected) {
+            fitFunc = downholeStandardsFitFunctionsWithOD.get(selectedFitFunctionType.getName());
+        } else {
+            fitFunc = downholeStandardsFitFunctionsNoOD.get(selectedFitFunctionType.getName());
+        }
+
+        return fitFunc;
     }
 
     /**
      * @param selectedFitFunctionType the selectedFitFunctionType to set
      */
+    @Override
     public void setSelectedFitFunctionType(FitFunctionTypeEnum selectedFitFunctionType) {
         this.selectedFitFunctionType = selectedFitFunctionType;
     }
@@ -881,6 +875,7 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
      * @param fitFunctionType
      * @return
      */
+    @Override
     public boolean doesFitFunctionTypeHaveOD(FitFunctionTypeEnum fitFunctionType) {
 
         boolean retVal = false;
@@ -889,7 +884,6 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
             retVal = fitFunc.isOverDispersionSelected();
         }
         return retVal;
-
     }
 
     /**
@@ -905,6 +899,40 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
         }
 
         return retVal;
+    }
 
+    /**
+     * @return the activeXvalues
+     */
+    public double[] getActiveXvalues() {
+        return activeXvalues;
+    }
+
+    /**
+     * @return the standardValueModel
+     */
+    public ValueModel getStandardValueModel() {
+        return standardValueModel;
+    }
+
+    /**
+     * @param standardValueModel the standardValueModel to set
+     */
+    public void setStandardValueModel(ValueModel standardValueModel) {
+        this.standardValueModel = standardValueModel;
+    }
+
+    /**
+     * @return the fittedStandardsBeta
+     */
+    public double[] getFittedStandardsBeta() {
+        return fittedStandardsBeta;
+    }
+
+    /**
+     * @param fittedStandardsBeta the fittedStandardsBeta to set
+     */
+    public void setFittedStandardsBeta(double[] fittedStandardsBeta) {
+        this.fittedStandardsBeta = fittedStandardsBeta;
     }
 }

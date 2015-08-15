@@ -21,8 +21,9 @@ package org.earthtime.dialogs.projectManagers.projectLegacyManagers;
 
 import java.awt.Frame;
 import java.io.File;
+import org.earthtime.dataDictionaries.FileDelimiterTypesEnum;
 import org.earthtime.projects.ProjectInterface;
-import org.earthtime.projects.projectImporters.UThProjectImporters.ProjectOfLegacySamplesImporterFromCSVFile_DIBBs_Useries_A;
+import org.earthtime.projects.projectImporters.UThProjectImporters.ProjectOfLegacySamplesImporterFromTSVFile_DIBBs_Useries_A;
 
 /**
  *
@@ -43,11 +44,11 @@ public class ProjectOfLegacySamplesDataManagerDialogForDIBBsUseries_A extends Ab
             ProjectInterface project,
             File importFractionFolderMRU ) {
 
-        super( parent,
+        super(parent,
                 modal,
-                "Legacy Useries Data",
+                "Legacy Useries Data tab-delimited",
                 project,
-                new ProjectOfLegacySamplesImporterFromCSVFile_DIBBs_Useries_A(),
+                new ProjectOfLegacySamplesImporterFromTSVFile_DIBBs_Useries_A(FileDelimiterTypesEnum.TAB),
                 importFractionFolderMRU);
     }
 }

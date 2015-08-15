@@ -135,14 +135,17 @@ public class GraphAxesDialog extends javax.swing.JDialog {
 
         masterListener = new DocumentListener() {
 
+            @Override
             public void insertUpdate(DocumentEvent e) {
-                updateFields((JTextComponent) ((UnDoAbleDocument) e.getDocument()).getTextComp());
+                updateFields(((UnDoAbleDocument) e.getDocument()).getTextComp());
             }
 
+            @Override
             public void removeUpdate(DocumentEvent e) {
-                updateFields((JTextComponent) ((UnDoAbleDocument) e.getDocument()).getTextComp());
+                updateFields(((UnDoAbleDocument) e.getDocument()).getTextComp());
             }
 
+            @Override
             public void changedUpdate(DocumentEvent e) {
             }
 

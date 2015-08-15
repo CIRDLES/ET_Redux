@@ -581,7 +581,7 @@ public abstract class AbstractSessionForStandardDataModel implements Serializabl
         System.out.println("\nCalculate Fit Functions for Session  " + getRawRatioModelName().getDisplayName() //
                 + "  USING " + (USING_FULL_PROPAGATION ? "FULL PROPAGATION" : "FAST PROPAGATION"));
 
-        FitFunctionTypeEnum saveSelectedFitFunctionType = selectedFitFunctionType;
+//////        FitFunctionTypeEnum saveSelectedFitFunctionType = selectedFitFunctionType;
 
         if (generateMEANfitFunctionUsingLM()) {
             try {
@@ -598,9 +598,9 @@ public abstract class AbstractSessionForStandardDataModel implements Serializabl
             }
         }
 
-        if (saveSelectedFitFunctionType != null) {
-            selectedFitFunctionType = saveSelectedFitFunctionType;
-        }
+////        if (saveSelectedFitFunctionType != null) {
+////            selectedFitFunctionType = saveSelectedFitFunctionType;
+////        }
 
         System.out.println("Session complete\n");
 
@@ -711,13 +711,13 @@ public abstract class AbstractSessionForStandardDataModel implements Serializabl
         return fitFunctions;
     }
 
-    /**
-     *
-     * @param fitFunctionTypeName
-     */
-    @Override
-    public void calculateFittedFunctions(String fitFunctionTypeName) {
-    }
+//    /**
+//     *
+//     * @param fitFunctionTypeName
+//     */
+//    @Override
+//    public void calculateFittedFunctions(String fitFunctionTypeName) {
+//    }
 
     /**
      *
@@ -813,30 +813,6 @@ public abstract class AbstractSessionForStandardDataModel implements Serializabl
         return rawRatioName;
     }
 
-////    /**
-////     * @return the fittedStandardMeanLogRatios
-////     */
-////    public double[] getFittedStandardMeanLogRatios () {
-////        return fittedStandardMeanLogRatios;
-////    }
-////
-////    public double[] getFittedStandardMeanAlphas () {
-////        double[] fittedStandardMeanAlphas = new double[fittedStandardMeanLogRatios.length];
-////
-////        for (int i = 0; i < fittedStandardMeanAlphas.length; i ++) {
-////            fittedStandardMeanAlphas[i] = (standardValue / Math.exp( fittedStandardMeanLogRatios[i] )) - 1.0;
-////        }
-////        return fittedStandardMeanAlphas;
-////    }
-////
-////    public double[] getFittedStandardMeanRatios () {
-////        double[] fittedStandardMeanRatios = new double[fittedStandardMeanLogRatios.length];
-////
-////        for (int i = 0; i < fittedStandardMeanRatios.length; i ++) {
-////            fittedStandardMeanRatios[i] = Math.exp( fittedStandardMeanLogRatios[i] );
-////        }
-////        return fittedStandardMeanRatios;
-////    }
     /**
      * @return the includedStandardsAquireTimes
      */
@@ -871,7 +847,7 @@ public abstract class AbstractSessionForStandardDataModel implements Serializabl
      * @return
      */
     public SortedSet<TripoliFraction> getActiveStandardFractions() {
-        SortedSet<TripoliFraction> activeStandards = new TreeSet<TripoliFraction>();
+        SortedSet<TripoliFraction> activeStandards = new TreeSet<>();
         Iterator<TripoliFraction> fractionIterator = standardFractions.iterator();
         while (fractionIterator.hasNext()) {
             TripoliFraction tf = fractionIterator.next();

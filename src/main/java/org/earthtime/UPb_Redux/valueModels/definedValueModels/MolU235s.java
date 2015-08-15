@@ -479,7 +479,7 @@ public class MolU235s extends ValueModel implements
     /**
      * @param tracerIsMixed233_236 the tracerIsMixed233_236 to set
      */
-    public void SetTracerIsMixed233_236(boolean tracerIsMixed233_236) {
+    public void setTracerIsMixed233_236(boolean tracerIsMixed233_236) {
         this.tracerIsMixed233_236 = tracerIsMixed233_236;
     }
 }

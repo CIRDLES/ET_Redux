@@ -44,7 +44,7 @@ import org.earthtime.Tripoli.dataModels.inputParametersModels.StaticAcquisition;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.Tripoli.massSpecSetups.multiCollector.NUPlasma.NUPlasmaCollectorsEnum;
 import static org.earthtime.UPb_Redux.ReduxConstants.getMonthConversions;
-import org.earthtime.UPb_Redux.filters.txtFileFilter;
+import org.earthtime.UPb_Redux.filters.TxtFileFilter;
 import org.earthtime.utilities.FileHelper;
 import org.earthtime.utilities.TimeToString;
 import org.earthtime.archivingTools.URIHelper;
@@ -97,7 +97,7 @@ public class NUPlasmaMultiCollFaradayFileHandler extends AbstractRawDataFileHand
     public File validateAndGetHeaderDataFromRawIntensityFile(File tripoliRawDataFolder) {
         String dialogTitle = "Select NU Plasma Faraday Raw Data File(s): *.txt";
         final String fileExtension = ".txt";
-        FileFilter nonMacFileFilter = new txtFileFilter();
+        FileFilter nonMacFileFilter = new TxtFileFilter();
 
         // oct 2014 allow for multiselect
         rawDataFile = null;

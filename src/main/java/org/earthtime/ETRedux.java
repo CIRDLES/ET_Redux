@@ -64,14 +64,14 @@ public class ETRedux {
             // get version number written by pom.xml
             InputStream versionFileStreamL = ETRedux.class.getClassLoader().getResourceAsStream("version.txt");
             BufferedReader reader = new BufferedReader(new InputStreamReader(versionFileStreamL));
-            StringBuilder out = new StringBuilder();
-            String line;
             
             String[] versionText = reader.readLine().split("=");
             VERSION = versionText[1];
             
             String[] versionDate = reader.readLine().split("=");
             RELEASE_DATE = versionDate[1];
+            
+            reader.close();
         } catch (IOException iOException) {
         }
 

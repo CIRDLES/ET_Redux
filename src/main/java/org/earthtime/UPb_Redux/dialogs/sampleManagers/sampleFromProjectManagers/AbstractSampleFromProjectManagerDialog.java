@@ -151,7 +151,7 @@ public abstract class AbstractSampleFromProjectManagerDialog extends DialogEdito
         }
 
         standardMineralNameChooser.setSelectedItem(mySample.getMineralName());
-        standardMineralNameChooser.addItemListener(new mineralNameItemListener());
+        standardMineralNameChooser.addItemListener(new MineralNameItemListener());
 
         // set up analysisPurposeChooser
         analysisPurposeChooser.removeAllItems();
@@ -160,7 +160,7 @@ public abstract class AbstractSampleFromProjectManagerDialog extends DialogEdito
         }
 
         analysisPurposeChooser.setSelectedItem(mySample.getAnalysisPurpose().toString());
-        analysisPurposeChooser.addItemListener(new analysisPurposeItemListener());
+        analysisPurposeChooser.addItemListener(new AnalysisPurposeItemListener());
 
         if (getMySample().isCalculateTWrhoForLegacyData()) {
             TWCalculateRho_radioBut.setSelected(true);
@@ -170,7 +170,7 @@ public abstract class AbstractSampleFromProjectManagerDialog extends DialogEdito
 
     }
 
-    class mineralNameItemListener implements ItemListener {
+    class MineralNameItemListener implements ItemListener {
         // This method is called only if a new item has been selected.
 
         @Override
@@ -186,9 +186,10 @@ public abstract class AbstractSampleFromProjectManagerDialog extends DialogEdito
         }
     }
 
-    class analysisPurposeItemListener implements ItemListener {
+    class AnalysisPurposeItemListener implements ItemListener {
         // This method is called only if a new item has been selected.
 
+        @Override
         public void itemStateChanged(ItemEvent evt) {
 
             if (evt.getStateChange() == ItemEvent.SELECTED) {
@@ -249,7 +250,7 @@ public abstract class AbstractSampleFromProjectManagerDialog extends DialogEdito
                     ((FractionI) f).setZircon(false);
                 }
 
-                f.setIsLegacy(true);
+                f.setLegacy(true);
 
                 if (TWZeroRho_radioBut.isSelected()) {
                     // set all T-W to zero

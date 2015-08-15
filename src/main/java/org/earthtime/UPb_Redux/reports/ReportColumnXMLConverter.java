@@ -23,6 +23,7 @@ import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import org.earthtime.reports.ReportColumnInterface;
 
 /**
  * A <code>ReportSettingsXMLConverter</code> is used to marshal and unmarshal data
@@ -75,7 +76,7 @@ public class ReportColumnXMLConverter implements Converter {
     public void marshal(Object value, HierarchicalStreamWriter writer,
             MarshallingContext context) {
 
-        ReportColumn reportColumn = (ReportColumn) value;
+        ReportColumnInterface reportColumn = (ReportColumnInterface) value;
 
         writer.startNode("displayName1");
         writer.setValue(reportColumn.getDisplayName1());
@@ -107,7 +108,7 @@ public class ReportColumnXMLConverter implements Converter {
 
         writer.startNode("uncertaintyColumn");
         if (reportColumn.getUncertaintyColumn() != null) {
-            ReportColumn myReportColumn = reportColumn.getUncertaintyColumn();
+            ReportColumnInterface myReportColumn = reportColumn.getUncertaintyColumn();
             if (myReportColumn.getDisplayName3().contains("%")) {
 //                myReportColumn.setDisplayName3("&plusmn;2&#931; %");
                 myReportColumn.setDisplayName3("PLUSMINUS2SIGMA%");
@@ -172,7 +173,7 @@ public class ReportColumnXMLConverter implements Converter {
     public Object unmarshal(HierarchicalStreamReader reader,
             UnmarshallingContext context) {
 
-        ReportColumn reportColumn = new ReportColumn();
+        ReportColumnInterface reportColumn = new ReportColumn();
 
         reader.moveDown();
         reportColumn.setDisplayName1(reader.getValue());
@@ -204,8 +205,8 @@ public class ReportColumnXMLConverter implements Converter {
 
         reader.moveDown();
         if (reader.hasMoreChildren()) {
-            ReportColumn uncertaintyColumn = new ReportColumn();
-            uncertaintyColumn = (ReportColumn) context.convertAnother(uncertaintyColumn, ReportColumn.class);
+            ReportColumnInterface uncertaintyColumn = new ReportColumn();
+            uncertaintyColumn = (ReportColumnInterface) context.convertAnother(uncertaintyColumn, ReportColumn.class);
             // correct for unicode missing in xml
             if (uncertaintyColumn.getUncertaintyType().equalsIgnoreCase("PCT")) {
                 uncertaintyColumn.setDisplayName3("\u00B12\u03C3 %");

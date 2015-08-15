@@ -35,9 +35,9 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="jPanel1" alignment="0" max="32767" attributes="1"/>
-          <Component id="jPanel2" alignment="0" pref="562" max="32767" attributes="1"/>
+          <Component id="jPanel2" alignment="0" pref="645" max="32767" attributes="1"/>
           <Component id="sampleType_panel" alignment="0" max="32767" attributes="0"/>
+          <Component id="jPanel1" alignment="0" max="32767" attributes="1"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
@@ -45,7 +45,7 @@
           <Group type="102" attributes="0">
               <Component id="sampleType_panel" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
-              <Component id="jPanel1" max="32767" attributes="0"/>
+              <Component id="jPanel1" pref="351" max="32767" attributes="0"/>
               <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
               <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
           </Group>
@@ -140,7 +140,7 @@
         <Container class="javax.swing.JScrollPane" name="sampleNotes_scrollPane">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="8" y="166" width="540" height="-1"/>
+              <AbsoluteConstraints x="8" y="166" width="630" height="-1"/>
             </Constraint>
           </Constraints>
 
@@ -224,7 +224,7 @@
           </Events>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="390" y="2" width="168" height="32"/>
+              <AbsoluteConstraints x="470" y="0" width="168" height="32"/>
             </Constraint>
           </Constraints>
         </Component>
@@ -281,7 +281,7 @@
               <Color blue="66" green="cc" red="ff" type="rgb"/>
             </Property>
             <Property name="horizontalAlignment" type="int" value="0"/>
-            <Property name="text" type="java.lang.String" value="   LEGACY MODE: Import a Project of Samples from .csv file"/>
+            <Property name="text" type="java.lang.String" value="   LEGACY MODE: Import Project of Samples from delimited file"/>
             <Property name="opaque" type="boolean" value="true"/>
           </Properties>
         </Component>

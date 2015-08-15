@@ -41,11 +41,11 @@ import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.filters.ReduxFileFilter;
 import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLAICPMSFraction;
-import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.UPb_Redux.user.ReduxPersistentState;
 import org.earthtime.UPb_Redux.utilities.ETSerializer;
 import org.earthtime.aliquots.AliquotInterface;
+import org.earthtime.aliquots.ReduxAliquotInterface;
 import org.earthtime.dataDictionaries.DataDictionary;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.dataDictionaries.SampleTypesEnum;
@@ -197,8 +197,7 @@ public class Project implements
                     projectName, //
                     SampleTypesEnum.PROJECT.getName(), //
                     SampleAnalysisTypesEnum.TRIPOLIZED.getName(), //
-                    ReduxLabData.getInstance(), //
-                    ReduxConstants.ANALYSIS_PURPOSE.DetritalSpectrum);
+                    ReduxConstants.ANALYSIS_PURPOSE.DetritalSpectrum, "UPb");
         } catch (BadLabDataException badLabDataException) {
         }
 
@@ -213,8 +212,7 @@ public class Project implements
                             tripoliSample.getSampleName(), //
                             SampleTypesEnum.ANALYSIS.getName(), //
                             SampleAnalysisTypesEnum.LAICPMS.getName(), //
-                            ReduxLabData.getInstance(), //
-                            analysisPurpose);
+                            analysisPurpose, "UPb");
 
                     projectSamples.add(sample);
 
@@ -233,11 +231,11 @@ public class Project implements
                         // automatically added to aliquot #1 as we are assuming only one aliquot in this scenario
                         sample.addFraction(uPbLAICPMSFraction);
                         // feb 2015 in prep for export
-                        ((UPbReduxAliquot)aliquot).getAliquotFractions().add(uPbLAICPMSFraction);
+                        ((ReduxAliquotInterface)aliquot).getAliquotFractions().add(uPbLAICPMSFraction);
                     }
 
                     // this forces aliquot fraction population
-                    SampleInterface.copyAliquotIntoSample(sample.getAliquotByName(aliquot.getAliquotName()), compiledSuperSample);
+                    SampleInterface.copyAliquotIntoSample(compiledSuperSample, sample.getAliquotByName(aliquot.getAliquotName()), new UPbReduxAliquot());
 
                     aliquot.setAnalysisPurpose(analysisPurpose);
                     // TODO: Enum of inst methods
@@ -257,6 +255,8 @@ public class Project implements
 
     /**
      *
+     * @return 
+     * @throws org.earthtime.exceptions.ETException
      */
     @Override
     public Path exportProjectSamples() throws ETException {

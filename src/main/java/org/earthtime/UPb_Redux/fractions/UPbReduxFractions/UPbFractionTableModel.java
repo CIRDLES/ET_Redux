@@ -185,7 +185,7 @@ public class UPbFractionTableModel extends AbstractTableModel {
             // place controls in data
             JButton tempJB =
                     new EditFractionButton((String) myFractionData[FractionButtonColumn], row, true);
-            tempJB.addActionListener(new editFractionListener(myFractions.get(row)));
+            tempJB.addActionListener(new EditFractionListener(myFractions.get(row)));
             getData().get(row)[FractionButtonColumn] = tempJB;
 
             if (!((String) getData().get(row)[aliquotButtonColumn]).equalsIgnoreCase(saveAliquotNum)) {
@@ -216,7 +216,7 @@ public class UPbFractionTableModel extends AbstractTableModel {
 
             tempJB =
                     new EditFractionButton("N", row, (Boolean) myFractionData[fractionNotesButtonColumn]);
-            tempJB.addActionListener(new showFractionNotesListener(myFractions.get(row)));
+            tempJB.addActionListener(new ShowFractionNotesListener(myFractions.get(row)));
             
             
             tuneNotesButton(tempJB, myFractions.get(row).getFractionNotes());
@@ -247,11 +247,11 @@ public class UPbFractionTableModel extends AbstractTableModel {
         this.sample = sample;
     }
 
-    class showFractionNotesListener implements ActionListener {
+    class ShowFractionNotesListener implements ActionListener {
 
         private ETFractionInterface fraction;
 
-        public showFractionNotesListener(ETFractionInterface fraction) {
+        public ShowFractionNotesListener(ETFractionInterface fraction) {
             this.fraction = fraction;
         }
 
@@ -276,11 +276,11 @@ public class UPbFractionTableModel extends AbstractTableModel {
         tempJB.setToolTipText(notes);
     }
 
-    class editFractionListener implements ActionListener {
+    class EditFractionListener implements ActionListener {
 
         private ETFractionInterface fraction;
 
-        public editFractionListener(ETFractionInterface fraction) {
+        public EditFractionListener(ETFractionInterface fraction) {
             this.fraction = fraction;
         }
 

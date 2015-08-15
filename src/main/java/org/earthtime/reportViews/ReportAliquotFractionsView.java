@@ -16,7 +16,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.earthtime.UPb_Redux.reports.reportViews;
+package org.earthtime.reportViews;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -72,10 +72,10 @@ import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.dialogs.fractionManagers.FractionNotesDialog;
 import org.earthtime.UPb_Redux.filters.SVGFileFilter;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
-import org.earthtime.UPb_Redux.reports.ReportRowGUIInterface;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.UPb_Redux.utilities.comparators.IntuitiveStringComparator;
 import org.earthtime.aliquots.AliquotInterface;
+import org.earthtime.aliquots.ReduxAliquotInterface;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.fractions.ETFractionInterface;
@@ -143,7 +143,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
 
         setBackground(Color.white);
 
-        addComponentListener(new viewListener());
+        addComponentListener(new ViewListener());
     }
 
     /**
@@ -290,7 +290,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
         }
     }
 
-    private class viewListener implements ComponentListener {
+    private class ViewListener implements ComponentListener {
 
         @Override
         public void componentResized(ComponentEvent e) {
@@ -377,7 +377,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
         // start with singleton
         sortFractionsButton = new ET_JButton("Sort");
         sortFractionsButton.setFont(ReduxConstants.sansSerif_10_Bold);
-        sortFractionsButton.addActionListener(new sortButtonActionListener(2));
+        sortFractionsButton.addActionListener(new SortButtonActionListener(2));
         upperLeftCorner.add(sortFractionsButton, JLayeredPane.PALETTE_LAYER);
 
         reportHeader = new ReportPainter(this, "HEADER", false);
@@ -392,7 +392,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
 
             JButton sortButton = new ET_JButton("\u25B2 \u25BC");
             sortButton.setFont(ReduxConstants.sansSerif_10_Bold);
-            sortButton.addActionListener(new sortButtonActionListener(c));
+            sortButton.addActionListener(new SortButtonActionListener(c));
             sortButtons.add(sortButton);
 
             reportHeader.add(sortButton, DEFAULT_LAYER);
@@ -470,7 +470,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
 
         reportBodyScrollPane.validate();
 
-        // add after alll objects created
+        // add after all objects created
         add(reportFractionIDsScrollPane, DEFAULT_LAYER);
         add(reportBodyScrollPane, DEFAULT_LAYER);
 
@@ -481,11 +481,11 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
 
     } // preparePanel
 
-    private class sortButtonActionListener implements ActionListener {
+    private class SortButtonActionListener implements ActionListener {
 
         int columnNumber;
 
-        public sortButtonActionListener(int columnNumber) {
+        public SortButtonActionListener(int columnNumber) {
             this.columnNumber = columnNumber;
         }
 
@@ -549,7 +549,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                         } catch (Exception e) {
                             field2 = "";
                         }
-                        Comparator<String> forNoah = new IntuitiveStringComparator<String>();
+                        Comparator<String> forNoah = new IntuitiveStringComparator<>();
                         if (sortedColumnDirection == 1) {
                             retVal = forNoah.compare(field1, field2);
                         } else {
@@ -580,7 +580,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                     }
                 } //            }
                 else {
-                    retVal = 0;//Aliquots are already sorted by nymber elsewhere so no sort here 
+                    retVal = 0;//Aliquots are already sorted by number elsewhere so no sort here 
 //                    retVal = entry1[1].trim().compareToIgnoreCase( entry2[1].trim() );
                 }
                 return retVal;
@@ -713,6 +713,8 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
 
             g2D.setFont(numberFont);
             g2D.setColor(Color.BLACK);
+
+            AliquotInterface aliquot = null;
 
             // message to display when sample is missing, etc.
             if (displayMessage.length() > 0) {
@@ -866,7 +868,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
 ////                            boolean showFractions = reportFractions[row][0].equalsIgnoreCase( "TRUE" );
                             if (showFractions) {
                                 grayRow++;
-                                // for each aliquot
+                                // for each aliquot                                
                                 if (!reportFractions[row][1].equalsIgnoreCase(saveAliquotName)) {
                                     saveAliquotName = getReportFractions()[row][1];
 
@@ -885,7 +887,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
 
                                     // build map of row to fraction objects and aliquot objects
                                     if ((sample != null) && paintType.equalsIgnoreCase("FRACTION")) {
-                                        AliquotInterface aliquot = sample.getAliquotByName(getReportFractions()[row][1].trim());
+                                        aliquot = sample.getAliquotByName(getReportFractions()[row][1].trim());
                                         verticalPixelFractionMap.add( //
                                                 new TableRowObject( //
                                                         drawnHeight + topMargin + lineHeight + 1,//
@@ -927,14 +929,14 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                                 }
 
                                 // build map of row to fraction objects and aliquot objects
-                                if ((sample != null) && paintType.equalsIgnoreCase("FRACTION")) {
+                                if ((sample != null) && paintType.equalsIgnoreCase("FRACTION") && (aliquot != null)) {
                                     // april 2012
                                     //right shift text in fraction column to allow for fractionButtonMargin
                                     drawnWidth += fractionButtonMargin;
 
                                     ETFractionInterface fraction = null;
                                     try {
-                                        fraction = sample.getFractionByID(getReportFractions()[row][2].trim());
+                                        fraction = sample.getFractionByIDAndAliquotNumber(getReportFractions()[row][2].trim(), ((ReduxAliquotInterface) aliquot).getAliquotNumber());
                                         verticalPixelFractionMap.add( //
                                                 new TableRowObject( //
                                                         drawnHeight + topMargin + lineHeight + 1,//
@@ -1079,7 +1081,6 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                                 updateReportTable(false);
                             }
                         } else {
-
                             ((ETFractionInterface) verticalPixelFractionMap.get(row).rowObject).setRejected(//
                                     !((ETFractionInterface) verticalPixelFractionMap.get(row).rowObject).isRejected());
                             parent.updateReportTable(false);
@@ -1118,8 +1119,11 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
         @Override
         public void mouseExited(MouseEvent e) {
             if (paintType.equalsIgnoreCase("FRACTION")) {
-                ((ReportRowGUIInterface) lastSelectedTableRowObject.rowObject).setSelectedInDataTable(false);
-                repaintTableRowElementButtonArea(lastSelectedTableRowObject);
+                try {
+                    ((ReportRowGUIInterface) lastSelectedTableRowObject.rowObject).setSelectedInDataTable(false);
+                    repaintTableRowElementButtonArea(lastSelectedTableRowObject);
+                } catch (Exception ex) {
+                }
             }
         }
 
@@ -1171,12 +1175,15 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                     }
 
                     if (tableRowObject.bottomPixelCount != lastSelectedTableRowObject.bottomPixelCount) {
-                        ((ReportRowGUIInterface) lastSelectedTableRowObject.rowObject).setSelectedInDataTable(false);
+                        try {
+                            ((ReportRowGUIInterface) lastSelectedTableRowObject.rowObject).setSelectedInDataTable(false);
 
-                        repaintTableRowElementButtonArea(lastSelectedTableRowObject);
-                        lastSelectedTableRowObject = tableRowObject;
+                            repaintTableRowElementButtonArea(lastSelectedTableRowObject);
+                            lastSelectedTableRowObject = tableRowObject;
 
-                        ((ReportRowGUIInterface) fractionOrAliquot).setSelectedInDataTable(true);
+                            ((ReportRowGUIInterface) fractionOrAliquot).setSelectedInDataTable(true);
+                        } catch (Exception ex) {
+                        }
                         repaintTableRowElementButtonArea(tableRowObject);
                     }
 

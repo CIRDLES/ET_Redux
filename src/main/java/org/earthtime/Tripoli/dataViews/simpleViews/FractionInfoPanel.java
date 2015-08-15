@@ -29,7 +29,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JLayeredPane;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
 import org.earthtime.Tripoli.dataViews.AbstractRawDataView;
-import org.earthtime.Tripoli.dataViews.overlayViews.TripoliSessionRawDataView;
+import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.FitFunctionsOnDownHoleRatioDataView;
 import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.FitFunctionsOnRatioDataView;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.Tripoli.fractions.TripoliFractionIncludeChangeInterface;
@@ -96,7 +96,7 @@ public class FractionInfoPanel extends AbstractRawDataView {
                 new ShowLocalYAxisCheckBoxActionListener(tripoliFraction, sampleSessionDataView));
         add(showLocalYAxisCheckBox, JLayeredPane.DEFAULT_LAYER);
 
-        if (rawDataModelView instanceof FitFunctionsOnRatioDataView) {
+        if ((rawDataModelView instanceof FitFunctionsOnRatioDataView)||(rawDataModelView instanceof FitFunctionsOnDownHoleRatioDataView)) {
             showLocalFitFunctionsCheckBox = new JCheckBox("local Fit Functions", false);
             showLocalFitFunctionsCheckBox.setBounds(2, 52, DEFAULT_WIDTH_OF_PANE - 2, 15);
             showLocalFitFunctionsCheckBox.setFont(checkBoxFont);
@@ -232,7 +232,7 @@ public class FractionInfoPanel extends AbstractRawDataView {
         @Override
         public void actionPerformed(ActionEvent arg0) {
             tripoliFraction.toggleShowLocalInterceptFitFunctionPanel();
-            ((TripoliSessionRawDataView) sampleSessionDataView).refreshPanel();
+            ((AbstractRawDataView) sampleSessionDataView).refreshPanel();
         }
     }
 

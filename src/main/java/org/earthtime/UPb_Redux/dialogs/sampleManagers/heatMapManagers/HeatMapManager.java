@@ -41,13 +41,14 @@ import static org.earthtime.UPb_Redux.ReduxConstants.sansSerif_12_Plain;
 import org.earthtime.UPb_Redux.dateInterpretation.DateInterpretationUpdateViewI;
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.reports.ReportCategory;
-import org.earthtime.UPb_Redux.reports.ReportColumn;
-import org.earthtime.UPb_Redux.reports.ReportSettings;
 import org.earthtime.UPb_Redux.user.SampleDateInterpretationGUIOptions;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.colorViews.HeatMapMapper;
 import org.earthtime.colorViews.HeatMapView;
+import org.earthtime.reports.ReportCategoryInterface;
+import org.earthtime.reports.ReportColumnInterface;
+import org.earthtime.reports.ReportSettingsInterface;
 import org.earthtime.samples.SampleInterface;
 
 /**
@@ -59,7 +60,7 @@ public class HeatMapManager extends DialogEditor {
     private static final int WIDTH_OF_FORM = 765;
     private final HeatMapView heatMapView;
     private final SampleInterface sample;
-    private final Map<String, ReportColumn> mapOfCategoryColumns;
+    private final Map<String, ReportColumnInterface> mapOfCategoryColumns;
     private final Map<String, JRadioButton> mapOfCategoryButtons;
     private final ButtonGroup fieldsButtonGroup;
     private final DateInterpretationUpdateViewI dateInterpretationView;
@@ -68,8 +69,8 @@ public class HeatMapManager extends DialogEditor {
     private JLabel variableLabel;
     private JCheckBox toggleHeatActiveCheckBox;
     private boolean heatMapActive;
-    private ReportColumn selectedReportColumn;
-    private final ReportSettings reportSettings;
+    private ReportColumnInterface selectedReportColumn;
+    private final ReportSettingsInterface reportSettings;
     private Map<String, String> heatMapOptions;
 
     /**
@@ -191,57 +192,57 @@ public class HeatMapManager extends DialogEditor {
     }
 
     private void compositionCategoryChoosersSetUp() {
-        ReportCategory reportCategory = reportSettings.getCompositionCategory();
+        ReportCategoryInterface reportCategory = reportSettings.getCompositionCategory();
 
         fieldChooserFactory(reportCategory, compositionPanel);
     }
 
     private void datesCategoryChoosersSetUp() {
-        ReportCategory reportCategory = reportSettings.getDatesCategory();
+        ReportCategoryInterface reportCategory = reportSettings.getDatesCategory();
 
         fieldChooserFactory(reportCategory, datesPanel);
     }
 
     private void datesPbcCorrCategoryChoosersSetUp() {
-        ReportCategory reportCategory = reportSettings.getDatesPbcCorrCategory();
+        ReportCategoryInterface reportCategory = reportSettings.getDatesPbcCorrCategory();
 
         fieldChooserFactory(reportCategory, datesPbcCorrPanel);
     }
 
     private void ratiosCategoryChoosersSetUp() {
-        ReportCategory reportCategory = reportSettings.getIsotopicRatiosCategory();
+        ReportCategoryInterface reportCategory = reportSettings.getIsotopicRatiosCategory();
 
         fieldChooserFactory(reportCategory, ratiosPanel);
     }
 
     private void ratiosPbcCorrCategoryChoosersSetUp() {
-        ReportCategory reportCategory = reportSettings.getIsotopicRatiosPbcCorrCategory();
+        ReportCategoryInterface reportCategory = reportSettings.getIsotopicRatiosPbcCorrCategory();
 
         fieldChooserFactory(reportCategory, ratiosPbcCorrPanel);
     }
 
     private void rhosCategoryChoosersSetUp() {
-        ReportCategory reportCategory = reportSettings.getRhosCategory();
+        ReportCategoryInterface reportCategory = reportSettings.getRhosCategory();
 
         fieldChooserFactory(reportCategory, rhosPanel);
     }
 
     private void tracerElementChoosersSetUp() {
-        ReportCategory reportCategory = reportSettings.getTraceElementsCategory();
+        ReportCategoryInterface reportCategory = reportSettings.getTraceElementsCategory();
 
         fieldChooserFactory(reportCategory, traceElementsPanel);
     }
 
-    private void fieldChooserFactory(ReportCategory reportCategory, JLayeredPane categoryPanel) {
+    private void fieldChooserFactory(ReportCategoryInterface reportCategory, JLayeredPane categoryPanel) {
 
-        ReportColumn[] reportColumns = reportCategory.getCategoryColumns();
+        ReportColumnInterface[] reportColumns = reportCategory.getCategoryColumns();
 
         JLabel headerLabel = new JLabel(reportCategory.getDisplayName() + " Variables Showing in Report Table");
         headerLabel.setBounds(5, 0, WIDTH_OF_FORM - 10, 25);
         categoryPanel.add(headerLabel);
 
         int layoutRow = 1;
-        for (ReportColumn reportColumn : reportColumns) {
+        for (ReportColumnInterface reportColumn : reportColumns) {
             if (reportColumn.isVisible()) {
                 final String varDisplayName = reportColumn.getDisplayName();
                 final String varName = reportColumn.getRetrieveVariableName();

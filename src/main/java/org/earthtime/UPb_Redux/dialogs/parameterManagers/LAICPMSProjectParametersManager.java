@@ -255,7 +255,7 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
         titleLabel.setBounds(leftMargin, 5, parentDimension.width - 50, 25);
         this.add(titleLabel);
 
-        JLabel massSpecNameLabel = new JLabel("Mass Spec Setup:   " + massSpecSetup.getNAME());
+        JLabel massSpecNameLabel = new JLabel("Mass Spec Setup:   " + massSpecSetup.getName());
         massSpecNameLabel.setHorizontalAlignment(SwingConstants.LEFT);
         massSpecNameLabel.setFont(ReduxConstants.sansSerif_12_Bold);
         massSpecNameLabel.setBounds(leftMargin, 25, parentDimension.width - 50, 25);

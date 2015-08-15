@@ -19,13 +19,13 @@ import java.awt.geom.Path2D;
 import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.concurrent.ConcurrentMap;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.utilities.comparators.IntuitiveStringComparator;
 import org.earthtime.UPb_Redux.valueModels.MeasuredRatioModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.dataDictionaries.MeasuredRatios;
 import org.earthtime.dataDictionaries.RadDates;
+import org.earthtime.dataDictionaries.TraceElements;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 
 /**
@@ -150,9 +150,9 @@ public interface ETFractionInterface {
 
     /**
      *
-     * @param estimatedAge
+     * @param estimatedDate
      */
-    abstract void setEstimatedDate(BigDecimal estimatedAge);
+    abstract void setEstimatedDate(BigDecimal estimatedDate);
 
     /**
      *
@@ -217,16 +217,7 @@ public interface ETFractionInterface {
     abstract ValueModel getMeasuredRatioByName(MeasuredRatios myMeasuredRatio);
 
     /**
-     * @return the parDerivTerms
-     */
-    public ConcurrentMap<String, BigDecimal> getParDerivTerms();
-
-    /**
-     * @param parDerivTerms the parDerivTerms to set
-     */
-    public void setParDerivTerms(ConcurrentMap<String, BigDecimal> parDerivTerms);
-
-    /**
+     * Used by reflection in reports
      *
      * @param amName
      * @return
@@ -400,8 +391,8 @@ public interface ETFractionInterface {
      * @return the isLegacy
      */
     public boolean isLegacy();
-    
-        /**
+
+    /**
      *
      * @param amName
      * @param valueModel
@@ -415,6 +406,7 @@ public interface ETFractionInterface {
             }
         }
     }
+
     /**
      *
      * @param sirName
@@ -549,8 +541,6 @@ public interface ETFractionInterface {
      * @return
      */
     public default ValueModel[] copyTraceElements() {
-        initializeTraceElements();
-
         ValueModel[] retval = new ValueModel[getTraceElements().length];
         for (int i = 0; i < retval.length; i++) {
             retval[i] = getTraceElements()[i].copy();
@@ -574,7 +564,6 @@ public interface ETFractionInterface {
      * @return
      */
     public default ValueModel getTraceElementByName(String tmName) {
-        initializeTraceElements();
         for (ValueModel traceElement : getTraceElements()) {
             if (traceElement.getName().equalsIgnoreCase(tmName.trim())) {
                 return traceElement;
@@ -601,11 +590,21 @@ public interface ETFractionInterface {
     /*
      needed summer 2014 for backward compatibility
      */
-    public void initializeTraceElements();
-   /**
+    public default void initializeTraceElements() {
+        setTraceElements(new ValueModel[TraceElements.getNames().length]);
+        for (int i = 0; i < TraceElements.getNames().length; i++) {
+            getTraceElements()[i]
+                    = new ValueModel(TraceElements.getNames()[i],
+                            BigDecimal.ZERO,
+                            "PCT",
+                            BigDecimal.ZERO, BigDecimal.ZERO);
+        }
+    }
+
+    /**
      * @param isLegacy the isLegacy to set
      */
-    public void setIsLegacy(boolean isLegacy);
+    public void setLegacy(boolean legacy);
 
     /**
      *
@@ -657,6 +656,7 @@ public interface ETFractionInterface {
      * @return
      */
     public String getPhysicalConstantsModelID();
+
     /**
      *
      * @return
@@ -669,7 +669,7 @@ public interface ETFractionInterface {
      */
     abstract void setRatioType(String RatioType);
 
-   /**
+    /**
      *
      * @return
      */
@@ -685,6 +685,7 @@ public interface ETFractionInterface {
      *
      */
     abstract void toggleRejectedStatus();
+
     /**
      *
      * @return
@@ -720,7 +721,7 @@ public interface ETFractionInterface {
      * @param ellipseRho
      */
     abstract void setEllipseRho(double ellipseRho);
-    
+
     static final Comparator FRACTION_ID_ORDER = (Object f1, Object f2) -> {
         String fractionTwoID = ((ETFractionInterface) f2).getFractionID().trim();
         String fractionTwoAliquotNum = "1";
@@ -740,8 +741,7 @@ public interface ETFractionInterface {
         return forNoah.compare((fractionOneAliquotNum + "." + fractionOneID).toUpperCase(), (fractionTwoAliquotNum + "." + fractionTwoID).toUpperCase());
 
     };
-    
-    
+
     /**
      *
      * @return
@@ -754,17 +754,6 @@ public interface ETFractionInterface {
      */
     abstract void setNumberOfGrains(int numberOfGrains);
 
-    /**
-     *
-     * @return
-     */
-    abstract String getTracerID();
-
-    /**
-     *
-     * @param tracerID
-     */
-    abstract void setTracerID(String tracerID);
     /**
      * @return the rgbColor
      */
@@ -805,4 +794,5 @@ public interface ETFractionInterface {
 
         return builtArray;
     }
+
 }

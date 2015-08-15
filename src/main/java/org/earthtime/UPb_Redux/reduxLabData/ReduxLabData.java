@@ -49,6 +49,7 @@ import org.earthtime.ratioDataModels.pbBlankICModels.PbBlankICModel;
 import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsModel;
 import org.earthtime.ratioDataModels.rareEarthElementsModels.RareEarthElementsModel;
 import org.earthtime.ratioDataModels.tracers.TracerUPbModel;
+import org.earthtime.reports.ReportSettingsInterface;
 
 /**
  *
@@ -71,7 +72,7 @@ public final class ReduxLabData implements Serializable {
     private ArrayList<AbstractRatiosDataModel> physicalConstantsModels;
     private ArrayList<AbstractRatiosDataModel> mineralStandardModels;
     private ArrayList<AbstractRatiosDataModel> rareEarthElementModels;
-    private ArrayList<ReportSettings> reportSettingsModels
+    private ArrayList<ReportSettingsInterface> reportSettingsModels
             = new ReduxLabDataList<>("Report Settings");
     private ArrayList<LabEquipmentSettings> labEquipmentSettings = //
             new ReduxLabDataList<>(" Lab Equipment Settings");
@@ -82,7 +83,8 @@ public final class ReduxLabData implements Serializable {
     private AbstractRatiosDataModel defaultLabInitialPbModel;
     private BigDecimal defaultStaceyKramersOnePctUnct;
     private BigDecimal defaultStaceyKramersCorrelationCoeffs;
-    private ReportSettings defaultReportSettingsModel;
+    private ReportSettingsInterface defaultReportSettingsModel;
+    private ReportSettingsInterface defaultReportSettingsModelUTh;
     private ValueModel defaultPbBlankMassInGrams;
     private ValueModel assumedUBlankMassInGrams;
     private ValueModel defaultR18O_16O;
@@ -175,9 +177,9 @@ public final class ReduxLabData implements Serializable {
         }
 
         // all lab data instances have this as default
-        getReportSettingsModels().add(ReportSettings.EARTHTIMEReportSettings());
+        getReportSettingsModels().add(ReportSettings.EARTHTIMEReportSettingsUPb());
         try {
-            setDefaultreportSettingsModel(getFirstReportSettingsModel());
+            setDefaultReportSettingsModelByIsotopeStyle(getFirstReportSettingsModel());
         } catch (BadLabDataException ex) {
         }
 
@@ -1224,7 +1226,7 @@ public final class ReduxLabData implements Serializable {
      *
      * @return
      */
-    public ArrayList<ReportSettings> getReportSettingsModels() {
+    public ArrayList<ReportSettingsInterface> getReportSettingsModels() {
         return reportSettingsModels;
     }
 
@@ -1232,18 +1234,18 @@ public final class ReduxLabData implements Serializable {
      *
      * @return @throws BadLabDataException
      */
-    public ReportSettings getNoneReportSettingsModel()
+    public ReportSettingsInterface getNoneReportSettingsModel()
             throws BadLabDataException {
-        return (ReportSettings) ((ReduxLabDataList) reportSettingsModels).getFirstElement();
+        return (ReportSettingsInterface) ((ReduxLabDataList) reportSettingsModels).getFirstElement();
     }
 
     /**
      *
      * @return @throws BadLabDataException
      */
-    public ReportSettings getFirstReportSettingsModel()
+    public ReportSettingsInterface getFirstReportSettingsModel()
             throws BadLabDataException {
-        return (ReportSettings) ((ReduxLabDataList) reportSettingsModels).getSecondElement();
+        return (ReportSettingsInterface) ((ReduxLabDataList) reportSettingsModels).getSecondElement();
     }
 
     /**
@@ -1252,9 +1254,9 @@ public final class ReduxLabData implements Serializable {
      * @return
      * @throws BadLabDataException
      */
-    public ReportSettings getAReportSettingsModel(String modelName)
+    public ReportSettingsInterface getAReportSettingsModel(String modelName)
             throws BadLabDataException {
-        return (ReportSettings) ((ReduxLabDataList) reportSettingsModels).getAnElement(modelName);
+        return (ReportSettingsInterface) ((ReduxLabDataList) reportSettingsModels).getAnElement(modelName);
     }
 
     /**
@@ -1283,36 +1285,55 @@ public final class ReduxLabData implements Serializable {
      *
      * @param model
      */
-    public void addReportSettingsModel(ReportSettings model) {
+    public void addReportSettingsModel(ReportSettingsInterface model) {
         reportSettingsModels.add(model);
         Collections.sort(reportSettingsModels);
     }
 
     /**
      *
-     * @return @throws BadLabDataException
+     * @param isotopeStyle the value of isotopeStyle @throws BadLabDataException
+     * @return the org.earthtime.reports.ReportSettingsInterface
      */
-    public ReportSettings getDefaultReportSettingsModel()
+    public ReportSettingsInterface getDefaultReportSettingsModelByIsotopeStyle(String isotopeStyle)
             throws BadLabDataException {
         if (defaultReportSettingsModel == null) {
-            defaultReportSettingsModel = ReportSettings.EARTHTIMEReportSettings();
+            defaultReportSettingsModel = ReportSettings.EARTHTIMEReportSettingsUPb();
             addReportSettingsModel(defaultReportSettingsModel);
+        }
+        if (defaultReportSettingsModelUTh == null) {
+            defaultReportSettingsModelUTh = ReportSettings.EARTHTIMEReportSettingsUTh();
+            addReportSettingsModel(defaultReportSettingsModelUTh);
         }
 
         // new approach oct 2014
         if (defaultReportSettingsModel.isOutOfDate()) {
             String myReportSettingsName = defaultReportSettingsModel.getName();
-            defaultReportSettingsModel = new ReportSettings(myReportSettingsName);
+            defaultReportSettingsModel = new ReportSettings(myReportSettingsName, "UPb");
         }
-        return defaultReportSettingsModel.clone();
+
+        if (defaultReportSettingsModelUTh.isOutOfDate()) {
+            String myReportSettingsName = defaultReportSettingsModelUTh.getName();
+            defaultReportSettingsModelUTh = new ReportSettings(myReportSettingsName, "UTh");
+        }
+
+        if (isotopeStyle.compareToIgnoreCase("UPb") == 0) {
+            return defaultReportSettingsModel.deepCopy();
+        } else {
+            return defaultReportSettingsModelUTh.deepCopy();
+        }
     }
 
     /**
      *
      * @param model
      */
-    public void setDefaultreportSettingsModel(ReportSettings model) {
-        this.defaultReportSettingsModel = model.clone();
+    public void setDefaultReportSettingsModelByIsotopeStyle(ReportSettingsInterface model) {
+        if (model.getIsotopeStyle().compareToIgnoreCase("UPb") == 0) {
+            this.defaultReportSettingsModel = model.deepCopy();
+        } else {
+            this.defaultReportSettingsModelUTh = model.deepCopy();
+        }
     }
 
     /**
@@ -1320,7 +1341,7 @@ public final class ReduxLabData implements Serializable {
      * @param model
      * @param isVerbose
      */
-    public void registerReportSettingsModel(ReportSettings model, boolean isVerbose) {
+    public void registerReportSettingsModel(ReportSettingsInterface model, boolean isVerbose) {
         if (((ReduxLabDataList) reportSettingsModels).registerElement(model, isVerbose)) {
             addReportSettingsModel(model);
         }
@@ -1408,12 +1429,12 @@ public final class ReduxLabData implements Serializable {
 //     * @return @throws BadLabDataException
 //     * @throws BadLabDataException
 //     */
-//    public ReportSettings getDefaultReportSettingsModel ()
+//    public ReportSettings getDefaultReportSettingsModelByIsotopeStyle ()
 //            throws BadLabDataException {
 //        //if ( defaultReportSettingsModel == null ) {
 //            
-//        addReportSettingsModel( ReportSettings.EARTHTIMEReportSettings() );
-//        setDefaultreportSettingsModel( getFirstReportSettingsModel() );
+//        addReportSettingsModel( ReportSettings.EARTHTIMEReportSettingsUPb() );
+//        setDefaultReportSettingsModelByIsotopeStyle( getFirstReportSettingsModel() );
 //       // }
 //
 //        return defaultReportSettingsModel;
@@ -1422,7 +1443,7 @@ public final class ReduxLabData implements Serializable {
 //     *
 //     * @param defaultReportSettingsModel
 //     */
-//    public void setDefaultreportSettingsModel ( ReportSettings defaultReportSettingsModel ) {
+//    public void setDefaultReportSettingsModelByIsotopeStyle ( ReportSettings defaultReportSettingsModel ) {
 //        
 //        defaultReportSettingsModel.updateToCurrentVersion();
 //        this.defaultReportSettingsModel = defaultReportSettingsModel;

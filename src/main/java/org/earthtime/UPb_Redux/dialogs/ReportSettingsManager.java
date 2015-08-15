@@ -36,10 +36,12 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.earthtime.UPb_Redux.reports.ReportCategory;
 import org.earthtime.UPb_Redux.reports.ReportColumn;
-import org.earthtime.UPb_Redux.reports.ReportListItemI;
-import org.earthtime.UPb_Redux.reports.ReportPainterI;
-import org.earthtime.UPb_Redux.reports.ReportSettings;
+import org.earthtime.reportViews.ReportListItemI;
+import org.earthtime.reportViews.ReportPainterI;
 import org.earthtime.dataDictionaries.ReportSpecifications;
+import org.earthtime.reports.ReportCategoryInterface;
+import org.earthtime.reports.ReportColumnInterface;
+import org.earthtime.reports.ReportSettingsInterface;
 
 /**
  *
@@ -48,7 +50,7 @@ import org.earthtime.dataDictionaries.ReportSpecifications;
 public class ReportSettingsManager extends DialogEditor {
 
     // Fields
-    private ReportSettings reportSettings;
+    private ReportSettingsInterface reportSettings;
     private final Frame parent;
     @SuppressWarnings("UseOfObsoleteCollectionType")
     private Vector<ReportListItemI> catList;
@@ -63,7 +65,7 @@ public class ReportSettingsManager extends DialogEditor {
     public ReportSettingsManager ( //
             Frame parent,
             boolean modal,
-            ReportSettings reportSettings ) {
+            ReportSettingsInterface reportSettings ) {
         super( parent, modal );
 
         // DialogEditor attribute
@@ -80,22 +82,22 @@ public class ReportSettingsManager extends DialogEditor {
 
     private void populateCategoryList () {
         // extract category names
-        Map<Integer, ReportCategory> cats = reportSettings.getReportCategoriesInOrder();
+        Map<Integer, ReportCategoryInterface> cats = reportSettings.getReportCategoriesInOrder();
         catList = new Vector<>();
 
         for (int c = 0; c < cats.size(); c ++) {
             catList.add(cats.get( c ));
         }
 
-        categories_list.setCellRenderer( new reportListRenderer() );
+        categories_list.setCellRenderer( new ReportListRenderer() );
         categories_list.setListData( catList );
         categories_list.addListSelectionListener( new ReportListSelectionListener() );
         categories_list.setSelectedIndex( 0 );
     }
 
-    private void populateColumnList ( ReportCategory cat ) {
+    private void populateColumnList ( ReportCategoryInterface cat ) {
         // extract column names
-        Map<Integer, ReportColumn> cols = cat.getCategoryColumnOrder();
+        Map<Integer, ReportColumnInterface> cols = cat.getCategoryColumnOrder();
         colList = new Vector<>();
 
         for (int c = 0; c < cols.size(); c ++) {
@@ -103,7 +105,7 @@ public class ReportSettingsManager extends DialogEditor {
         }
 
         columns_list.setSelectedIndex( -1 );
-        columns_list.setCellRenderer( new reportListRenderer() );
+        columns_list.setCellRenderer( new ReportListRenderer() );
         columns_list.setListData( colList );
         columns_list.addListSelectionListener( new ReportListSelectionListener() );
         columns_list.grabFocus();
@@ -111,10 +113,10 @@ public class ReportSettingsManager extends DialogEditor {
 
     }
 
-    class reportListRenderer extends DefaultListCellRenderer {
+    class ReportListRenderer extends DefaultListCellRenderer {
 
         /** Creates a new instance of LocaleRenderer */
-        public reportListRenderer () {
+        public ReportListRenderer () {
         }
 
         @Override
@@ -905,7 +907,7 @@ private void apply_buttonActionPerformed (java.awt.event.ActionEvent evt) {//GEN
      * @return
      */
     public // Fields
-            ReportSettings getReportSettings () {
+            ReportSettingsInterface getReportSettings () {
         return reportSettings;
     }
 
@@ -913,7 +915,7 @@ private void apply_buttonActionPerformed (java.awt.event.ActionEvent evt) {//GEN
      * 
      * @param reportSettings
      */
-    public void setReportSettings ( ReportSettings reportSettings ) {
+    public void setReportSettings ( ReportSettingsInterface reportSettings ) {
         this.reportSettings = reportSettings;
     }
 

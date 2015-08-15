@@ -79,8 +79,9 @@ import org.earthtime.UPb_Redux.dateInterpretation.kwiki.KwikiConcordiaToolBar;
 import org.earthtime.UPb_Redux.dateInterpretation.kwiki.KwikiPDFToolBar;
 import org.earthtime.UPb_Redux.dialogs.parameterManagers.LAICPMSProjectParametersManager;
 import org.earthtime.UPb_Redux.dialogs.projectManagers.ProjectManagerSubscribeInterface;
+import org.earthtime.UPb_Redux.fractions.FractionsFilterInterface;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
-import org.earthtime.UPb_Redux.reports.reportViews.TabbedReportViews;
+import org.earthtime.reportViews.TabbedReportViews;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.dataDictionaries.DataPresentationModeEnum;
 import org.earthtime.dataDictionaries.FractionSelectionTypeEnum;
@@ -296,13 +297,13 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
 
         add(rawDataFilePathTextArea);
 
-        SortedSet<DataModelInterface> dataModels = tripoliFractions.first().getValidRawRatioAlphas();
+        SortedSet<DataModelInterface> dataModels = tripoliFractions.first().getRatiosForFractionFitting();
 
         Iterator<DataModelInterface> dataModelsIterator = dataModels.iterator();
 
         int count = 0;
 
-        SortedSet<TripoliFraction> standardFractions = tripoliSession.getTripoliFractionsFiltered(FractionSelectionTypeEnum.STANDARD, IncludedTypeEnum.ALL);
+        SortedSet<TripoliFraction> standardFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.STANDARD, IncludedTypeEnum.ALL);
 
         while (dataModelsIterator.hasNext()) {
             DataModelInterface dm = dataModelsIterator.next();

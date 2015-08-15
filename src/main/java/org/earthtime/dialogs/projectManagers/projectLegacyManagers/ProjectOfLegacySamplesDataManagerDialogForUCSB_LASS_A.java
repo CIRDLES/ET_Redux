@@ -21,6 +21,7 @@ package org.earthtime.dialogs.projectManagers.projectLegacyManagers;
 
 import java.awt.Frame;
 import java.io.File;
+import org.earthtime.dataDictionaries.FileDelimiterTypesEnum;
 import org.earthtime.projects.ProjectInterface;
 import org.earthtime.projects.projectImporters.UPbProjectImporters.ProjectOfLegacySamplesImporterFromCSVFile_UCSB_LASS_A;
 
@@ -43,11 +44,11 @@ public class ProjectOfLegacySamplesDataManagerDialogForUCSB_LASS_A extends Abstr
             ProjectInterface project,
             File importFractionFolderMRU ) {
 
-        super( parent,
+        super(parent,
                 modal,
-                "Legacy LASS Data",
+                "Legacy LASS Data in CSV format",
                 project,
-                new ProjectOfLegacySamplesImporterFromCSVFile_UCSB_LASS_A(),
+                new ProjectOfLegacySamplesImporterFromCSVFile_UCSB_LASS_A(FileDelimiterTypesEnum.COMMA),
                 importFractionFolderMRU);
     }
 }

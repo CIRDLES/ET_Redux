@@ -54,6 +54,7 @@ import org.earthtime.dataDictionaries.IsotopeNames;
 import org.earthtime.dataDictionaries.MassSpecTypeEnum;
 import org.earthtime.dataDictionaries.RawRatioNames;
 import org.earthtime.isotopes.IsotopesEnum;
+import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.statistics.NonParametricStats;
 
 /**
@@ -366,7 +367,7 @@ public abstract class AbstractMassSpecSetup implements //
             }
         }
 
-       isotopeMappingModel.calculateAllIntensityMatrixSDiagonals();
+        isotopeMappingModel.calculateAllIntensityMatrixSDiagonals();
 
         if ((Hg202 != null) && (Pb204 != null)) {
             calculateCorrectionForIsobaricInterference(Hg202, Pb204);
@@ -598,7 +599,6 @@ public abstract class AbstractMassSpecSetup implements //
     }
 
     private void performInterceptFittingToRatios() {
-
         // generate fit function so can be done with big matrices
         for (DataModelInterface rr : rawRatios) {
             rr.generateSetOfFitFunctions(false, true);
@@ -1109,41 +1109,46 @@ public abstract class AbstractMassSpecSetup implements //
     /**
      *
      * @param tripoliFractions
-     * @return
+     * @param primaryMineralStandard the value of primaryMineralStandard
+     * @return the java.util.SortedMap<org.earthtime.dataDictionaries.RawRatioNames,org.earthtime.Tripoli.dataModels.DownholeFractionationDataModel>
      */
-    public SortedMap<RawRatioNames, DownholeFractionationDataModel>//
-            downholeFractionationAlphaDataModelsFactory(//
-                    SortedSet<TripoliFraction> tripoliFractions) {
+    public SortedMap<RawRatioNames, DownholeFractionationDataModel>
+            downholeFractionationDataModelsFactory(//
+                    SortedSet<TripoliFraction> tripoliFractions, AbstractRatiosDataModel primaryMineralStandard) {
 
                 @SuppressWarnings("MapReplaceableByEnumMap")
-                SortedMap<RawRatioNames, DownholeFractionationDataModel> fractionationAlphaDataModels = new TreeMap<>();
+                SortedMap<RawRatioNames, DownholeFractionationDataModel> fractionationDataModels = new TreeMap<>();
 
                 double[] acquireTimes = rawRatios.first().getOnPeakAquireTimesInSeconds();
                 double[] normalizedOnPeakAquireTimes = rawRatios.first().getNormalizedOnPeakAquireTimes();
 
-//        // same masking array keeps masking coordinated
+                // same masking array keeps masking coordinated
                 MaskingSingleton maskingArray = MaskingSingleton.getInstance();
-                // next line now set at TripoliSession
-//        maskingArray.setMaskingArray( AbstractMassSpecSetup.defaultDataActiveMap( countOfAcquisitions ) );
 
                 DownholeFractionationDataModel r206_207w =//
                         new DownholeFractionationDataModel( //
-                                //
-                                RawRatioNames.r206_207w, new double[countOfAcquisitions], acquireTimes.clone(), normalizedOnPeakAquireTimes.clone(), maskingArray);
+                                tripoliFractions, //
+                                RawRatioNames.r206_207w, //
+                                primaryMineralStandard, //
+                                new double[countOfAcquisitions], acquireTimes.clone(), normalizedOnPeakAquireTimes.clone(), maskingArray);
                 DownholeFractionationDataModel r206_238w =//
                         new DownholeFractionationDataModel(//
-                                //
-                                RawRatioNames.r206_238w, new double[countOfAcquisitions], acquireTimes.clone(), normalizedOnPeakAquireTimes.clone(), maskingArray);
+                                tripoliFractions, //
+                                RawRatioNames.r206_238w, //
+                                primaryMineralStandard, //
+                                new double[countOfAcquisitions], acquireTimes.clone(), normalizedOnPeakAquireTimes.clone(), maskingArray);
                 DownholeFractionationDataModel r208_232w = //
                         new DownholeFractionationDataModel( //
-                                //
-                                RawRatioNames.r208_232w, new double[countOfAcquisitions], acquireTimes.clone(), normalizedOnPeakAquireTimes.clone(), maskingArray);
+                                tripoliFractions, //
+                                RawRatioNames.r208_232w, //
+                                primaryMineralStandard, //
+                                new double[countOfAcquisitions], acquireTimes.clone(), normalizedOnPeakAquireTimes.clone(), maskingArray);
 
-                // oct 2012 update fractionation models based on valid alpha ratios
+                // oct 2012 update fractionation models based on valid ratios
                 // first load assumed models
-                fractionationAlphaDataModels.put(RawRatioNames.r206_207w, r206_207w);
-                fractionationAlphaDataModels.put(RawRatioNames.r206_238w, r206_238w);
-                fractionationAlphaDataModels.put(RawRatioNames.r208_232w, r208_232w);
+                fractionationDataModels.put(RawRatioNames.r206_207w, r206_207w);
+                fractionationDataModels.put(RawRatioNames.r206_238w, r206_238w);
+                fractionationDataModels.put(RawRatioNames.r208_232w, r208_232w);
 
                 // now remove unusable
                 SortedSet<DataModelInterface> ratiosSortedSet = tripoliFractions.first().getRatiosForFractionFitting();//.getValidRawRatios();
@@ -1152,11 +1157,11 @@ public abstract class AbstractMassSpecSetup implements //
                 while (ratiosSortedSetIterator.hasNext()) {
                     DataModelInterface ratio = ratiosSortedSetIterator.next();
                     if (!((RawRatioDataModel) ratio).isUsedForFractionationCorrections()) {
-                        fractionationAlphaDataModels.remove(ratio.getRawRatioModelName());
+                        fractionationDataModels.remove(ratio.getRawRatioModelName());
                     }
                 }
 
-                return fractionationAlphaDataModels;
+                return fractionationDataModels;
             }
 
             /**
@@ -1198,7 +1203,7 @@ public abstract class AbstractMassSpecSetup implements //
             /**
              * @return the NAME
              */
-            public String getNAME() {
+            public String getName() {
                 return NAME;
             }
 

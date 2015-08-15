@@ -27,192 +27,124 @@ import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
-import javax.swing.JLayeredPane;
-import org.earthtime.Tripoli.beans.MaskingShade;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
 import org.earthtime.Tripoli.dataModels.DownholeFractionationDataModel;
 import org.earthtime.Tripoli.dataViews.AbstractRawDataView;
-import org.earthtime.Tripoli.dataViews.overlayViews.MaskingShadeTargetInterface;
 import org.earthtime.dataDictionaries.DataPresentationModeEnum;
 
 /**
  *
  * @author James F. Bowring
  */
-public class FitFunctionResidualsView extends AbstractRawDataView implements MaskingShadeTargetInterface {
+public class FitFunctionResidualsView extends AbstractRawDataView {
 
-    private DownholeFractionationDataModel fractionationAlphaDataModel;
-    private int countOfMaskedTimeSlotsOnLeft;
-    private int countOfMaskedTimeSlotsOnRight;
+    private DownholeFractionationDataModel downholeFractionationDataModel;
 
     /**
-     * 
      *
-     * @param fractionationAlphaDataModel
+     *
+     * @param downholeFractionationDataModel
      * @param dataPresentationMode
      * @param bounds
      */
-    
-    public FitFunctionResidualsView ( //
-            DownholeFractionationDataModel fractionationAlphaDataModel, //
+    public FitFunctionResidualsView( //
+            DownholeFractionationDataModel downholeFractionationDataModel, //
             DataPresentationModeEnum dataPresentationMode,//
             Rectangle bounds) {
 
-        super( bounds );
+        super(bounds);
 
-        setCursor( Cursor.getDefaultCursor() );
+        setCursor(Cursor.getDefaultCursor());
 
-        this.fractionationAlphaDataModel = fractionationAlphaDataModel;
+        this.downholeFractionationDataModel = downholeFractionationDataModel;
         this.dataPresentationMode = dataPresentationMode;
     }
 
     /**
-     * 
+     *
      * @param g2d
      */
     @Override
-    public void paint ( Graphics2D g2d ) {
-        paintInit( g2d );
+    public void paint(Graphics2D g2d) {
+        paintInit(g2d);
 
+        g2d.setStroke(new BasicStroke(1.0f));
+        g2d.drawLine(0, 0, getWidth() - 1, 0);
 
-        g2d.setStroke( new BasicStroke( 1.0f ) );
-        g2d.drawLine( 0, 0, getWidth() - 1, 0 );
+        if (myOnPeakData != null) {
+            // draw residuals as little rectangles
+            g2d.setPaint(Color.RED);
+            for (int i = 0; i < myOnPeakData.length; i++) {
+                Path2D box = new Path2D.Double();
+                box.moveTo(mapX(myOnPeakNormalizedAquireTimes[i]) - 2, mapY(myOnPeakData[i]));
+                box.lineTo(mapX(myOnPeakNormalizedAquireTimes[i]) + 2, mapY(myOnPeakData[i]));
+                box.lineTo(mapX(myOnPeakNormalizedAquireTimes[i]) + 2, mapY(0.0));
+                box.lineTo(mapX(myOnPeakNormalizedAquireTimes[i]) - 2, mapY(0.0));
+                box.closePath();
 
-        // draw residuals as little rectangles
-        g2d.setPaint( Color.RED );
-        for (int i = 0; i < myOnPeakData.length; i ++) {
-            Path2D box = new Path2D.Double();
-            box.moveTo( mapX( myOnPeakNormalizedAquireTimes[i] ) - 2, mapY( myOnPeakData[i] ) );
-            box.lineTo( mapX( myOnPeakNormalizedAquireTimes[i] ) + 2, mapY( myOnPeakData[i] ) );
-            box.lineTo( mapX( myOnPeakNormalizedAquireTimes[i] ) + 2, mapY( 0.0 ) );
-            box.lineTo( mapX( myOnPeakNormalizedAquireTimes[i] ) - 2, mapY( 0.0 ) );
-            box.closePath();
+                g2d.fill(box);
 
-            g2d.fill( box );
+            }
+            //draw zero
+            g2d.setColor(Color.black);
+            g2d.setStroke(new BasicStroke(0.5f));
+            Shape zeroLine = new Line2D.Double(//
+                    mapX(myOnPeakNormalizedAquireTimes[0]) - 4.0f,//
+                    mapY(0), //
+                    mapX(myOnPeakNormalizedAquireTimes[myOnPeakNormalizedAquireTimes.length - 1]) + 4.0f,//
+                    mapY(0));
+            g2d.draw(zeroLine);
 
+            drawMaskingShades(g2d);
         }
-
-
-        //draw zero
-        g2d.setColor( Color.black );
-        g2d.setStroke( new BasicStroke( 0.5f ) );
-        Shape zeroLine = new Line2D.Double(//
-                mapX( myOnPeakNormalizedAquireTimes[0] ) - 4.0f,//
-                mapY( 0 ), //
-                mapX( myOnPeakNormalizedAquireTimes[myOnPeakNormalizedAquireTimes.length - 1] ) + 4.0f,//
-                mapY( 0 ) );
-        g2d.draw( zeroLine );
     }
 
     /**
-     * 
+     *
      */
     @Override
-    public void preparePanel () {
+    public void preparePanel() {
 
         this.removeAll();
 
-        setDisplayOffsetY( 0.0 );
-        setDisplayOffsetX( 0.0 );
+        setDisplayOffsetY(0.0);
+        setDisplayOffsetX(0.0);
 
+        if (downholeFractionationDataModel != null) {
+            // walk standards and get min and max for axes
+            myOnPeakData = downholeFractionationDataModel.getFittedStandardsResiduals();
 
-        // walk alphas and get min and max for axes
-        myOnPeakData = fractionationAlphaDataModel.getFittedAlphasResiduals();
-//        for (int i = 0; i < myOnPeakData.length; i ++){
-//            myOnPeakData[i] = convertLogDatumToPresentationMode( myOnPeakData[i]);
-//        }
+            // normalize aquireTimes
+            myOnPeakNormalizedAquireTimes = downholeFractionationDataModel.getNormalizedAquireTimes();
 
-        // normalize aquireTimes
-        myOnPeakNormalizedAquireTimes = fractionationAlphaDataModel.getNormalizedAquireTimes();
+            // Y-axis is ratios
+            minY = Double.MAX_VALUE;
+            maxY = -Double.MAX_VALUE;
 
-//        // X-axis lays out time evenly spaced
-//        minX = myOnPeakNormalizedAquireTimes[0];
-//        maxX = myOnPeakNormalizedAquireTimes[myOnPeakNormalizedAquireTimes.length - 1];
+            // find min and max y
+            for (int i = 0; i < myOnPeakData.length; i++) {
+                minY = Math.min(minY, myOnPeakData[i]);
+            }
+            for (int i = 0; i < myOnPeakData.length; i++) {
+                maxY = Math.max(maxY, myOnPeakData[i]);
+            }
 
-        // Y-axis is ratios
-        minY = Double.MAX_VALUE;
-        maxY =  - Double.MAX_VALUE;
+            // let's run zero through the center
+            if (maxY > -minY) {
+                minY = -maxY;
 
-        // find min and max y
-        for (int i = 0; i < myOnPeakData.length; i ++) {
-            minY = Math.min( minY, myOnPeakData[i] );
-        }
-        for (int i = 0; i < myOnPeakData.length; i ++) {
-            maxY = Math.max( maxY, myOnPeakData[i] );
-        }
-
-        // let's run zero through the center
-        if ( maxY >  - minY ) {
-            minY =  - maxY;
-
-        } else {
-            maxY =  - minY;
-        }
-
-
-        // masking shade only for alpha now *******************************************
-        // first determine width of mask
-        countOfMaskedTimeSlotsOnLeft = -1;
-        for (int i = 0; i < DownholeFractionationDataModel.MAX_AQUISITIONS_SHADABLE; i ++) {
-            if (  ! fractionationAlphaDataModel.getMaskingSingleton().getMaskingArray()[i] ) {
-                countOfMaskedTimeSlotsOnLeft ++;
+            } else {
+                maxY = -minY;
             }
         }
-
-        JLayeredPane myMaskingShadeLeft = new MaskingShade( //
-                this, //
-                false,//
-                MaskingShade.PULL_FROM_LEFT,//
-                countOfMaskedTimeSlotsOnLeft );
-
-        add( myMaskingShadeLeft, javax.swing.JLayeredPane.DEFAULT_LAYER );
-
-        countOfMaskedTimeSlotsOnRight = -1;
-        int lowestAquisitionIndex = //
-                fractionationAlphaDataModel.getMaskingSingleton().getMaskingArray().length - DownholeFractionationDataModel.MAX_AQUISITIONS_SHADABLE;
-        for (int i = lowestAquisitionIndex; i < fractionationAlphaDataModel.getMaskingSingleton().getMaskingArray().length; i ++) {
-            if (  ! fractionationAlphaDataModel.getMaskingSingleton().getMaskingArray()[i] ) {
-                countOfMaskedTimeSlotsOnRight ++;
-            }
-        }
-
-        JLayeredPane myMaskingShadeRight = new MaskingShade( //
-                this, //
-                false,//
-                MaskingShade.PULL_FROM_RIGHT,//
-                countOfMaskedTimeSlotsOnRight );
-
-        add( myMaskingShadeRight, javax.swing.JLayeredPane.DEFAULT_LAYER );
-
-
     }
 
     /**
-     * 
+     *
      * @return
      */
     @Override
-    public DataModelInterface getDataModel () {
-        throw new UnsupportedOperationException( "Not supported yet." );
-    }
-
-    /**
-     * 
-     * @param currentShadeX
-     * @return
-     */
-    @Override
-    public int provideShadeXFromLeft ( int currentShadeX ) {
-        return 0;
-    }
-
-    /**
-     * 
-     * @param currentShadeX
-     * @return
-     */
-    @Override
-    public int provideShadeXFromRight ( int currentShadeX ) {
-        throw new UnsupportedOperationException( "Not supported yet." );
+    public DataModelInterface getDataModel() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

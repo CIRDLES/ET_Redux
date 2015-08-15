@@ -100,8 +100,35 @@ public class ReportSpecifications {
         },
         {"", "Th/U", "(magma)", "", "getAnalysisMeasure", AnalysisMeasures.rTh_Umagma.getName(), "",
             "FN-11", "false", "true", "3", "", "Th/U magma", "true", "false"
-        }
+        },
     };
+
+    // Report column order =
+    //  displayName1, displayName2, displayName3, units, retrieveMethodName, retrieveParameterName, uncertaintyType,
+    //     footnoteSpec, visible, useArbitrary? for value, digitcount value, unct visible (if required), description where needed,
+    //     needsLead, needsUranium
+    /**
+     *
+     */
+    public static final String[][] ReportCategory_CompositionUTh = new String[][]{
+        {"conc", "232Th", "", "ppb", "getCompositionalMeasureByName", "conc232Th", "ABS",
+            "FN-17", "true", "true", "3", "", "concentration of 232Th", "true", "false"
+        },
+        {"conc", "238U", "", "ppm", "getCompositionalMeasureByName", "conc238U", "ABS",
+            "", "true", "true", "3", "", "concentration of 238U", "false", "true"
+        },
+        {"", "[230Th/", "232Th]", "", "getAnalysisMeasure", UThAnalysisMeasures.ar230Th_232Thfc.getName(), "",
+            "FN-17", "true", "true", "3", "", "[230Th/232Th] activity ratio", "false", "false"
+        },
+        {"[232Th/", "238U]", "", "*1e5", "getAnalysisMeasure", UThAnalysisMeasures.ar232Th_238Ufc.getName(), "",
+            "FN-17", "true", "true", "3", "", "[232Th/238U] activity ratio", "false", "false"
+        },
+        {"", "[230Th/", "238U]", "", "getAnalysisMeasure", UThAnalysisMeasures.ar230Th_238Ufc.getName(), "ABS",
+            "FN-17", "true", "false", "3", "true", "[230Th/238U] activity ratio", "false", "false"
+        },
+        {"", "[234U/", "238U]", "", "getAnalysisMeasure", UThAnalysisMeasures.ar234U_238Ufc.getName(), "ABS",
+            "FN-17", "true", "false", "3", "true", "[234U/238U] activity ratio", "false", "false"
+        },};
     // Report column order =
     //  displayName1, displayName2, displayName3, units, retrieveMethodName, retrieveParameterName, uncertaintyType,
     //     footnoteSpec, visible, useArbitrary? for value, digitcount value, unct visible (if required), description where needed,
@@ -503,6 +530,9 @@ public class ReportSpecifications {
         reportTableFootnotes.put(//
                 "FN-16", //
                 "Best Date threshold between 206Pb/238U and 206Pb/207Pb is <bestDateDivider> MA.");
+        reportTableFootnotes.put(//
+                "FN-17", //
+                "USeries future footnote.");
 
     }
 }

@@ -1,5 +1,7 @@
 /*
- * ReportPainterI.java
+ * ReportListItemI.java
+ *
+ * Created on September 9, 2008, 3:05 PM
  *
  *
  * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
@@ -16,40 +18,41 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.earthtime.UPb_Redux.reports;
 
-import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
-import org.earthtime.samples.SampleInterface;
+package org.earthtime.reportViews;
 
 /**
  *
  * @author James F. Bowring
  */
-public interface ReportPainterI {
-
-    /**
-     * 
-     */
-    public void loadAndShowReportTableData ();// String[][] reportFractions );
+public interface ReportListItemI {
     
     /**
      * 
-     * @param performReduction
+     * @return
      */
-    public void rebuildFractionDisplays ( boolean performReduction );
+    abstract String getDisplayName();
     
     /**
-     *
-     * @param theSample
+     * 
+     * @return
      */
-    public void setTheSample ( SampleInterface theSample );
+    abstract boolean isVisible();
+    /**
+     * 
+     * @param visible
+     */
+    abstract void setVisible(boolean visible);
     
     /**
-     *
-     * @param performReduction
-     * @throws BadLabDataException
+     * 
      */
-    public void setUpTheSample ( boolean performReduction )
-            throws BadLabDataException;
+    abstract void ToggleIsVisible();
+    
+    /**
+     * 
+     * @param positionIndex
+     */
+    abstract void setPositionIndex(int positionIndex);
 
 }

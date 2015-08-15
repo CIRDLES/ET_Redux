@@ -28,17 +28,15 @@ import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetu
 import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
-import org.earthtime.UPb_Redux.reports.ReportSettings;
 import org.earthtime.UPb_Redux.samples.SESARSampleMetadata;
 import org.earthtime.UPb_Redux.user.SampleDateInterpretationGUIOptions;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.aliquots.AliquotInterface;
-import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.dataDictionaries.SampleRegistries;
-import org.earthtime.dataDictionaries.SampleTypesEnum;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
+import org.earthtime.reports.ReportSettingsInterface;
 import org.earthtime.samples.SampleInterface;
 
 /**
@@ -48,7 +46,7 @@ import org.earthtime.samples.SampleInterface;
 public class ProjectSample implements//
         SampleInterface,
         Serializable,
-        EarthTimeSerializedFileInterface  {
+        EarthTimeSerializedFileInterface {
 
     private static final long serialVersionUID = -638058212764252304L;
     private String sampleName;
@@ -56,9 +54,10 @@ public class ProjectSample implements//
     private String sampleAnalysisType;
     private ANALYSIS_PURPOSE analysisPurpose;
     private boolean analyzed;
+    private String isotopeStyle;
     private Vector<AliquotInterface> aliquots;
     private Vector<ETFractionInterface> fractions;
-    private ReportSettings reportSettingsModel;
+    private ReportSettingsInterface reportSettingsModel;
     private AbstractRatiosDataModel physicalConstantsModel;
     private SampleDateInterpretationGUIOptions sampleAgeInterpretationGUISettings;
     private boolean changed;
@@ -66,29 +65,40 @@ public class ProjectSample implements//
     private String reduxSampleFilePath;
     private GraphAxesSetup concordiaGraphAxesSetup;
     private GraphAxesSetup terraWasserburgGraphAxesSetup;
-       private Vector<ValueModel> sampleDateModels;
-
+    private Vector<ValueModel> sampleDateModels;
 
     private transient ReduxLabData reduxLabData;
 
+    /**
+     *
+     * @param sampleName the value of sampleName
+     * @param sampleType the value of sampleType
+     * @param sampleAnalysisType the value of sampleAnalysisType
+     * @param analysisPurpose the value of analysisPurpose
+     * @param analyzed the value of analyzed
+     * @param isotopeStyle the value of isotopeStyle
+     * @throws BadLabDataException
+     */
     public ProjectSample(
-            String sampleName,
-            String sampleType,
-            String sampleAnalysisType,
-            ANALYSIS_PURPOSE analysisPurpose,
-            boolean analyzed)
+            String sampleName, //
+            String sampleType, //
+            String sampleAnalysisType,//
+            ANALYSIS_PURPOSE analysisPurpose, //
+            boolean analyzed, //
+            String isotopeStyle)
             throws BadLabDataException {
 
         this.sampleName = sampleName;
         this.sampleType = sampleType;
         this.sampleAnalysisType = sampleAnalysisType;
         this.analysisPurpose = analysisPurpose;
-        this.analyzed = false;
+        this.analyzed = analyzed;
+        this.isotopeStyle = isotopeStyle;
         this.aliquots = new Vector<>();
         this.fractions = new Vector<>();
 
         this.reduxLabData = ReduxLabData.getInstance();
-        this.reportSettingsModel = reduxLabData.getDefaultReportSettingsModel();
+        this.reportSettingsModel = reduxLabData.getDefaultReportSettingsModelByIsotopeStyle(isotopeStyle);
         this.physicalConstantsModel = reduxLabData.getDefaultPhysicalConstantsModel();
         this.sampleAgeInterpretationGUISettings = new SampleDateInterpretationGUIOptions();
         this.changed = false;
@@ -100,32 +110,19 @@ public class ProjectSample implements//
 
     }
 
-    /**
-     *
-     * @param sampleType
-     * @param sampleAnalysisType
-     * @param labData
-     * @param analysisPurpose
-     * @return
-     * @throws BadLabDataException
-     */
-    public static SampleInterface initializeNewSample( //
-            ANALYSIS_PURPOSE analysisPurpose)
-            throws BadLabDataException {
-
-        SampleInterface retVal = //
-                new ProjectSample(//
-                        SampleTypesEnum.PROJECT.getName(),//
-                        SampleTypesEnum.PROJECT.getName(), //
-                        SampleAnalysisTypesEnum.COMPILED.getName(), //
-                        analysisPurpose,//
-                        true);
-
-        return retVal;
+    @Override
+    public AliquotInterface generateDefaultAliquot(//
+            int aliquotNumber, String aliquotName, AbstractRatiosDataModel physicalConstants, boolean compiled, SESARSampleMetadata mySESARSampleMetadata) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void setUpSample(ReduxLabData myLabData) {
+    public AliquotInterface generateDefaultAliquot() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setUpSample() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -204,6 +201,11 @@ public class ProjectSample implements//
         return reduxSampleFileName;
     }
 
+    @Override
+    public void setReduxSampleFileName(String reduxSampleFileName) {
+        this.reduxSampleFileName = reduxSampleFileName;
+    }
+
     /**
      * gets the <code>reduxSampleFilePath</code> of this <code>Sample</code>.
      *
@@ -214,51 +216,14 @@ public class ProjectSample implements//
      * @return <code>String</code> - <code>reduxSampleFilePath</code> of this
      * <code>Sample</code>
      */
+    @Override
     public String getReduxSampleFilePath() {
         return reduxSampleFilePath;
-
     }
 
-    /**
-     * sets the <code>reduxSampleFilePath</code> and
-     * <code>reduxSampleFileName</code> of this <code>Sample</code> to the
-     * argument <code>reduxSampleFile</code>
-     *
-     * @pre argument <code>reduxSampleFile</code> is a valid file
-     * @post this <code>Sample</code>'s <code>reduxSampleFilePath</code> and
-     * <code>reduxSampleFileName</code> are set to argument
-     * <code>reduxSamplefile</code>
-     *
-     * @param reduxSampleFile value to which <code>reduxSampleFilePath</code>
-     * and <code>reduxSampleFileName</code> of this <code>Sample</code> will be
-     * set
-     */
     @Override
-    public void setReduxSampleFilePath(File reduxSampleFile) {
-        boolean isChanged = false;
-        // set redux extension
-
-        if (!reduxSampleFile.getPath().endsWith(".redux")) {
-            isChanged = isChanged || (this.reduxSampleFilePath.compareToIgnoreCase(reduxSampleFile.getPath() + ".redux") != 0);
-
-            this.reduxSampleFilePath = reduxSampleFile.getPath() + ".redux";
-            isChanged
-                    = isChanged || (this.reduxSampleFileName.compareToIgnoreCase(reduxSampleFile.getName() + ".redux") != 0);
-
-            this.reduxSampleFileName = reduxSampleFile.getName() + ".redux";
-
-        } else {
-            isChanged = isChanged || (this.reduxSampleFilePath.compareToIgnoreCase(reduxSampleFile.getPath()) != 0);
-
-            this.reduxSampleFilePath = reduxSampleFile.getPath();
-            isChanged
-                    = isChanged || (this.reduxSampleFileName.compareToIgnoreCase(reduxSampleFile.getName()) != 0);
-
-            this.reduxSampleFileName = reduxSampleFile.getName();
-
-        }
-
-        setChanged(isChanged);
+    public void setReduxSampleFilePath(String reduxSampleFilePath) {
+        this.reduxSampleFilePath = reduxSampleFilePath;
     }
 
     @Override
@@ -332,7 +297,7 @@ public class ProjectSample implements//
     }
 
     @Override
-    public void setUPbFractions(Vector<ETFractionInterface> UPbFractions) {
+    public void setFractions(Vector<ETFractionInterface> UPbFractions) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -354,18 +319,19 @@ public class ProjectSample implements//
     public void setSampleDateModels(Vector<ValueModel> sampleDateModels) {
         this.sampleDateModels = sampleDateModels;
     }
+
     @Override
     public void setFractionDataOverriddenOnImport(boolean fractionDataOverriddenOnImport) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void setReportSettingsModel(ReportSettings reportSettingsModel) {
+    public void setReportSettingsModel(ReportSettingsInterface reportSettingsModel) {
         this.reportSettingsModel = reportSettingsModel;
     }
 
     @Override
-    public ReportSettings getReportSettingsModel() {
+    public ReportSettingsInterface getReportSettingsModel() {
         return reportSettingsModel;
     }
 
@@ -485,14 +451,27 @@ public class ProjectSample implements//
     public void addFractionsVector(Vector<ETFractionInterface> fractions, int aliquotNumber) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
-    //    private void readObject(
-//            ObjectInputStream stream)
-//            throws IOException, ClassNotFoundException {
-//        stream.defaultReadObject();
-//        ObjectStreamClass myObject = ObjectStreamClass.lookup(
-//                Class.forName(AbstractTripoliSample.class.getCanonicalName()));
-//        long theSUID = myObject.getSerialVersionUID();
-//        System.out.println("Customized De-serialization of AbstractTripoliSample " + theSUID);
-//    }
+
+    /**
+     *
+     */
+    @Override
+    public void restoreDefaultReportSettingsModel() {
+        try {
+            setReportSettingsModel(ReduxLabData.getInstance().getDefaultReportSettingsModelByIsotopeStyle(getIsotopeStyle()));
+        } catch (BadLabDataException badLabDataException) {
+        }
+    }
+
+    /**
+     * @return the isotopeStyle
+     */
+    @Override
+    public String getIsotopeStyle() {
+        if (isotopeStyle == null) {
+            isotopeStyle = "UPb";
+        }
+        return isotopeStyle;
+    }
+
 }

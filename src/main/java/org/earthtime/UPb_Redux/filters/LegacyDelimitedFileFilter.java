@@ -1,5 +1,5 @@
 /*
- * LegacyCSVFileFilter.java
+ * LegacyDelimitedFileFilter.java
  *
  * Created on 4 September 2009
  *
@@ -21,26 +21,33 @@
 package org.earthtime.UPb_Redux.filters;
 
 import java.io.File;
+import org.earthtime.dataDictionaries.FileDelimiterTypesEnum;
 
 /**
  *
  * @author James F. Bowring
  */
-public class LegacyCSVFileFilter extends javax.swing.filechooser.FileFilter {
+public class LegacyDelimitedFileFilter extends javax.swing.filechooser.FileFilter {
+
+    private FileDelimiterTypesEnum fileDelimiter;
+
+    public LegacyDelimitedFileFilter(FileDelimiterTypesEnum fileDelimiter) {
+        this.fileDelimiter = fileDelimiter;
+    }
 
     /**
-     * 
+     *
      * @param f
      * @return
      */
-    public boolean accept ( File f ) {
+    public boolean accept(File f) {
         boolean accept = f.isDirectory();
 
-        if (  ! accept ) {
-            String suffix = getSuffix( f );
+        if (!accept) {
+            String suffix = getSuffix(f);
 
-            if ( suffix != null ) {
-                accept = suffix.equalsIgnoreCase( "csv" );
+            if (suffix != null) {
+                accept = suffix.equalsIgnoreCase(fileDelimiter.getDefaultFileExtension());
             }
         }
 
@@ -48,19 +55,19 @@ public class LegacyCSVFileFilter extends javax.swing.filechooser.FileFilter {
     }
 
     /**
-     * 
+     *
      * @return
      */
-    public String getDescription () {
-        return "Legacy CSV files (*.csv)";
+    public String getDescription() {
+        return "Legacy " + fileDelimiter.getName() + "-delimited files (*." + fileDelimiter.getDefaultFileExtension() + ")";
     }
 
-    private String getSuffix ( File f ) {
+    private String getSuffix(File f) {
         String s = f.getPath(), suffix = null;
-        int i = s.lastIndexOf( '.' );
+        int i = s.lastIndexOf('.');
 
-        if ( i > 0 && i < s.length() - 1 ) {
-            suffix = s.substring( i + 1 ).toLowerCase();
+        if (i > 0 && i < s.length() - 1) {
+            suffix = s.substring(i + 1).toLowerCase();
         }
 
         return suffix;

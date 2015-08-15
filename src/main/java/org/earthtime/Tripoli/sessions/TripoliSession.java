@@ -49,6 +49,7 @@ import org.earthtime.Tripoli.samples.AbstractTripoliSample;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.FractionI;
+import org.earthtime.UPb_Redux.fractions.FractionsFilterInterface;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLAICPMSFraction;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
@@ -190,7 +191,7 @@ public class TripoliSession implements
             long firstFractionTimeStamp = tripoliFractions.first().getPeakTimeStamp();
 
             // create map of primaryStandards values to be used to update each fraction's ratios
-            SortedSet<DataModelInterface> ratiosSortedSet = tripoliFractions.first().getRatiosForFractionFitting();//.getValidRawRatios();
+            SortedSet<DataModelInterface> ratiosSortedSet = tripoliFractions.first().getRatiosForFractionFitting();
             Double[] standardValuesMap = new Double[ratiosSortedSet.size()];
             int count = 0;
 
@@ -231,19 +232,18 @@ public class TripoliSession implements
             // choice based on current fractionation technique
             // create downholeFractionationDataModels
             downholeFractionationDataModels = //
-                    rawDataFileHandler.getMassSpec().downholeFractionationAlphaDataModelsFactory(tripoliFractions);
-
+                    rawDataFileHandler.getMassSpec().downholeFractionationDataModelsFactory(tripoliFractions, primaryMineralStandard);
             // may 2014 - for use with live data, we check to see if these exist and if so, do not recreate
             if ((sessionForStandardsInterceptFractionation.size() == 0) || (sessionForStandardsDownholeFractionation.size() == 0)) {
                 // create sessionForStandards models for both downhole and intercept methods
-                Iterator<DataModelInterface> dataModelIterator = tripoliFractions.first().getValidRawRatioAlphas().iterator();
+                Iterator<DataModelInterface> dataModelIterator = tripoliFractions.first().getRatiosForFractionFitting().iterator();
                 while (dataModelIterator.hasNext()) {
                     DataModelInterface dm = dataModelIterator.next();
                     AbstractSessionForStandardDataModel ssm = //
                             new SessionForStandardDataModelDownholeFractionation( //
                                     this, //
                                     dm.getRawRatioModelName(), dm.getStandardValue(), //
-                                    getTripoliFractionsFiltered(FractionSelectionTypeEnum.STANDARD, IncludedTypeEnum.ALL));
+                                    FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.STANDARD, IncludedTypeEnum.ALL));
 
                     sessionForStandardsDownholeFractionation.put(dm.getRawRatioModelName(), ssm);
 
@@ -251,21 +251,21 @@ public class TripoliSession implements
                             new SessionForStandardDataModelInterceptFractionation( //
                                     this, //
                                     dm.getRawRatioModelName(), dm.getStandardValue(), //
-                                    getTripoliFractionsFiltered(FractionSelectionTypeEnum.STANDARD, IncludedTypeEnum.ALL));
+                                    FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.STANDARD, IncludedTypeEnum.ALL));
 
                     sessionForStandardsInterceptFractionation.put(dm.getRawRatioModelName(), ssm);
                 }
             } else {
                 // may 2014 handling case of live data
-                Iterator<DataModelInterface> dataModelIterator = tripoliFractions.first().getValidRawRatioAlphas().iterator();
+                Iterator<DataModelInterface> dataModelIterator = tripoliFractions.first().getRatiosForFractionFitting().iterator();
                 while (dataModelIterator.hasNext()) {
                     DataModelInterface dm = dataModelIterator.next();
 
                     AbstractSessionForStandardDataModel ssm = sessionForStandardsInterceptFractionation.get(dm.getRawRatioModelName());
-                    ssm.setStandardFractions(getTripoliFractionsFiltered(FractionSelectionTypeEnum.STANDARD, IncludedTypeEnum.ALL));
+                    ssm.setStandardFractions(FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.STANDARD, IncludedTypeEnum.ALL));
 
                     ssm = sessionForStandardsDownholeFractionation.get(dm.getRawRatioModelName());
-                    ssm.setStandardFractions(getTripoliFractionsFiltered(FractionSelectionTypeEnum.STANDARD, IncludedTypeEnum.ALL));
+                    ssm.setStandardFractions(FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.STANDARD, IncludedTypeEnum.ALL));
 
                 }
             }
@@ -282,7 +282,7 @@ public class TripoliSession implements
     public void postProcessDataForCommonLeadLossPreparation() {
         // nov 2014 post processing of */204 ratios to remove negative value from active data
         // also forces undoing of any re-selection
-        SortedSet<TripoliFraction> allFractions = getTripoliFractionsFiltered(FractionSelectionTypeEnum.ALL, IncludedTypeEnum.INCLUDED);
+        SortedSet<TripoliFraction> allFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.ALL, IncludedTypeEnum.INCLUDED);
         Iterator<TripoliFraction> allFractionsIterator = allFractions.iterator();
         while (allFractionsIterator.hasNext()) {
             TripoliFraction tf = allFractionsIterator.next();
@@ -297,36 +297,23 @@ public class TripoliSession implements
     @Override
     public void calculateDownholeFitSummariesForPrimaryStandard() {
 
-        Iterator downholeFractionationDataModelIterator = downholeFractionationDataModels.keySet().iterator();
-        while (downholeFractionationDataModelIterator.hasNext()) {
-            RawRatioNames rrName = (RawRatioNames) downholeFractionationDataModelIterator.next();
+        for (RawRatioNames rrName : downholeFractionationDataModels.keySet()) {
             DownholeFractionationDataModel downholeFractionationDataModel = downholeFractionationDataModels.get(rrName);
 
-            Iterator<TripoliFraction> fractionIterator = getTripoliFractionsFiltered(FractionSelectionTypeEnum.STANDARD, IncludedTypeEnum.INCLUDED).iterator();
+            // for thick black line
+            downholeFractionationDataModel.calculateWeightedMeanOfStandards();
 
-            downholeFractionationDataModel.calculateWeightedMeanOfStandards(fractionIterator);
-
-//            // dec 2012 check if masking array is all false - it was modified in previous call
-//            if ( downholeFractionationDataModel.getMaskingSingleton().maskingArrayContainsTruth() ) {
+            // for thick red line
             downholeFractionationDataModel.generateSetOfFitFunctions(true, false);
-            calculatedInitialFitFunctions = true;
 
             // now calculate session statistics based on this selected fit model
-            // this mean for each standard, calculate the weighted mean of the residuals
+            // this means for each standard, calculate the weighted mean of the residuals
             AbstractFunctionOfX downHoleFofX = downholeFractionationDataModel.getSelectedFitFunction();
-//            ((DownholeFractionationDataModel)downholeFractionationDataModel).prepareMatrixJfMapAquisitionsAquisitions();
-//            
-//            Matrix matrixJfStandardsStandards = getMatrixJfStandardsStandards(downHoleFofX.getShortName());
-//            // this call to interpolated variances is needed ro grt Sf = need to refactor
-//            downHoleFofX.calculateInterpolatedVariances(matrixJfStandardsStandards, timesForStandards);
-//            
-//            Matrix matrixSf = downHoleFofX.getMatrixSf();
 
-            fractionIterator = getTripoliFractionsFiltered(FractionSelectionTypeEnum.STANDARD, IncludedTypeEnum.INCLUDED).iterator();
-
-            downholeFractionationDataModel.calculateWeightedMeanForEachStandard(fractionIterator, rrName, downHoleFofX);
+            downholeFractionationDataModel.calculateWeightedMeanForEachStandard(rrName, downHoleFofX);
         }
-//        }
+        calculatedInitialFitFunctions = true;
+
     }
 
     /**
@@ -335,26 +322,58 @@ public class TripoliSession implements
     @Override
     public void calculateSessionFitFunctionsForPrimaryStandard() {
 
-        if (prepareMatrixJfMapUnknowns(FractionSelectionTypeEnum.UNKNOWN) //
+        // note: first call here is from ProjectManager initialize
+        if (prepareMatrixJfMapFractionsByType(FractionSelectionTypeEnum.UNKNOWN) //
                 && prepareMatrixJfPlotting()) {
 
-            if (fractionationTechnique.compareTo(FractionationTechniquesEnum.INTERCEPT) == 0) {
-                sessionForStandardsInterceptFractionation.keySet().stream().forEach((rrName) -> {
-                    try {
-                        sessionForStandardsInterceptFractionation.get(rrName).generateSetOfFitFunctions(true, false);
-                        // jan 2015
-                        applyCorrections();
-                        fitFunctionsUpToDate = true;
-                    } catch (Exception e) {
-                        System.out.println("Session Standards Intercept Fractionation Failed");
-                    }
-                });
-            }
-//            else if (fractionationTechnique.compareTo(FractionationTechniquesEnum.DOWNHOLE) == 0) {
-//                for (RawRatioNames rrName : sessionForStandardsDownholeFractionation.keySet()) {
-////april 2014                    sessionForStandardsDownholeFractionation.get(rrName).generateSetOfFitFunctions(true, false);
-//                }
-//            }
+            sessionForStandardsInterceptFractionation.keySet().stream().forEach((rrName) -> {
+                try {
+                    sessionForStandardsInterceptFractionation.get(rrName).generateSetOfFitFunctions(true, false);
+                    fitFunctionsUpToDate = true;
+                } catch (Exception e) {
+                    System.out.println("Session Standards Intercept Fractionation Failed");
+                }
+            });
+
+            calculateDownholeFitSummariesForPrimaryStandard();
+            sessionForStandardsDownholeFractionation.keySet().stream().forEach((rrName) -> {
+                try {
+                    sessionForStandardsDownholeFractionation.get(rrName).generateSetOfFitFunctions(true, false);
+                    fitFunctionsUpToDate = true;
+                } catch (Exception e) {
+                    System.out.println("Session Standards Downhole Fractionation Failed");
+                }
+            });
+
+            //fractionationTechnique = FractionationTechniquesEnum.INTERCEPT;
+            applyCorrections();
+
+////            if (fractionationTechnique.compareTo(FractionationTechniquesEnum.INTERCEPT) == 0) {
+////                sessionForStandardsInterceptFractionation.keySet().stream().forEach((rrName) -> {
+////                    try {
+////                        sessionForStandardsInterceptFractionation.get(rrName).generateSetOfFitFunctions(true, false);
+////                        // jan 2015
+////                        applyCorrections();
+////                        fitFunctionsUpToDate = true;
+////                    } catch (Exception e) {
+////                        System.out.println("Session Standards Intercept Fractionation Failed");
+////                    }
+////                });
+////            } else if (fractionationTechnique.compareTo(FractionationTechniquesEnum.DOWNHOLE) == 0) {
+////
+////                calculateDownholeFitSummariesForPrimaryStandard();
+////
+////                sessionForStandardsDownholeFractionation.keySet().stream().forEach((rrName) -> {
+////                    try {
+////                        sessionForStandardsDownholeFractionation.get(rrName).generateSetOfFitFunctions(true, false);
+////                        // june 2015
+////                        applyCorrections();
+////                        fitFunctionsUpToDate = true;
+////                    } catch (Exception e) {
+////                        System.out.println("Session Standards Downhole Fractionation Failed");
+////                    }
+////                });
+////            }
         }
     }
 
@@ -363,7 +382,7 @@ public class TripoliSession implements
         boolean retVal;
         //**********  ALL OF THIS IS CURRENTLY DONE INSIDE SPLINE FIT BUT COULD BE DONE OUTSIDE ******
         // build and calculate t and h
-        SortedSet<TripoliFraction> standardFractions = getTripoliFractionsFiltered(FractionSelectionTypeEnum.STANDARD, IncludedTypeEnum.INCLUDED);//.ALL );
+        SortedSet<TripoliFraction> standardFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.STANDARD, IncludedTypeEnum.INCLUDED);//.ALL );
         int countOfStandards = standardFractions.size();
 
         if (countOfStandards > 0) {
@@ -431,12 +450,12 @@ public class TripoliSession implements
      * @return the boolean
      */
     @Override
-    public boolean prepareMatrixJfMapUnknowns(FractionSelectionTypeEnum fractionSelectionTypeEnum) {
+    public boolean prepareMatrixJfMapFractionsByType(FractionSelectionTypeEnum fractionSelectionTypeEnum) {
         boolean retVal;
         // build session-wide marixJf for each type of fit function
         matrixJfMapUnknowns = new EnumMap<>(FitFunctionTypeEnum.class);
 
-        // be sure times are prepared for standards AD all the work needed to support smoothing splines
+        // be sure times are prepared for standards AND all the work needed to support smoothing splines
         //if ( matrixJgammag == null ) {
         // we are now recalculating Jf each time to accomodate changes in included standards ... could be streamlined to only happen on count
         boolean ableToPrepareSessionWithStandardsTimes;
@@ -450,24 +469,23 @@ public class TripoliSession implements
             retVal = true;
             //
             // prepare unknowns
-            SortedSet<TripoliFraction> unknownFractions = getTripoliFractionsFiltered(fractionSelectionTypeEnum, IncludedTypeEnum.INCLUDED);
-            int countOfUnknowns = unknownFractions.size();
+            SortedSet<TripoliFraction> selectedFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, fractionSelectionTypeEnum, IncludedTypeEnum.INCLUDED);
+            int countOfSelectedFractions = selectedFractions.size();
             int countOfStandards = timesForStandards.length;
 
-            int index = 0;
-            Iterator<TripoliFraction> unknownFractionIterator = unknownFractions.iterator();
+            Iterator<TripoliFraction> unknownFractionIterator = selectedFractions.iterator();
 
             // dec 2014 ... partial refactoring to ensure that global timeForUnknowns persists
             double[] timesForFractions;
             if (fractionSelectionTypeEnum.compareTo(FractionSelectionTypeEnum.UNKNOWN) == 0) {
-                timesForFractions = calculateTimesForUnknowns(countOfUnknowns, unknownFractionIterator);
+                timesForFractions = calculateTimesForUnknowns(countOfSelectedFractions, unknownFractionIterator);
             } else {
                 timesForFractions = timesForStandards;
             }
 
             // prepare spline Jf
-            Matrix Jfg = new Matrix(countOfUnknowns, countOfStandards);
-            Matrix Jfgamma = new Matrix(countOfUnknowns, countOfStandards);
+            Matrix Jfg = new Matrix(countOfSelectedFractions, countOfStandards);
+            Matrix Jfgamma = new Matrix(countOfSelectedFractions, countOfStandards);
 
             for (int k = 0; k < timesForFractions.length; k++) {
                 populateJacobianGAndGamma(k, timesForFractions[k], Jfg, Jfgamma);
@@ -477,13 +495,13 @@ public class TripoliSession implements
             matrixJfMapUnknowns.put(FitFunctionTypeEnum.SMOOTHING_SPLINE, Jf);
 
             // prepare LM exponential Jf
-            Jf = new Matrix(countOfUnknowns, 3);
+            Jf = new Matrix(countOfSelectedFractions, 3);
             // the LM fit function will have to populate Jf on demand as it depends on the fit parameters
             matrixJfMapUnknowns.put(FitFunctionTypeEnum.EXPONENTIAL, Jf);
 
             // prepare line Jf
-            Jf = new Matrix(countOfUnknowns, 2, 1.0);
-            for (int i = 0; i < countOfUnknowns; i++) {
+            Jf = new Matrix(countOfSelectedFractions, 2, 1.0);
+            for (int i = 0; i < countOfSelectedFractions; i++) {
                 Jf.set(i, 1, timesForFractions[i]);
             }
             matrixJfMapUnknowns.put(FitFunctionTypeEnum.LINE, Jf);
@@ -637,7 +655,7 @@ public class TripoliSession implements
     public void applyCorrections() {
 
         // dec 2014 - initialize fractions for rho calcs and common lead correction
-        SortedSet<TripoliFraction> allFractions = getTripoliFractionsFiltered(FractionSelectionTypeEnum.ALL, IncludedTypeEnum.ALL);
+        SortedSet<TripoliFraction> allFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.ALL, IncludedTypeEnum.ALL);
         Iterator<TripoliFraction> allFractionsIterator = allFractions.iterator();
 
         while (allFractionsIterator.hasNext()) {
@@ -661,15 +679,15 @@ public class TripoliSession implements
 
         if (fractionationTechnique.compareTo(FractionationTechniquesEnum.INTERCEPT) == 0) {
             applyFractionationCorrectionsForIntercept();
-        }//        } else if (fractionationTechnique.compareTo(FractionationTechniquesEnum.DOWNHOLE) == 0) {
-//////////            applyFractionationCorrectionsForDownhole();
-        // }
+        } else if (fractionationTechnique.compareTo(FractionationTechniquesEnum.DOWNHOLE) == 0) {
+            applyFractionationCorrectionsForDownhole();
+        }
     }
 
     private void calculateUThConcentrationsForUnknowns() {
         // dec 2014 from appendix C
         // each unknown's concentrtations are calculted using time and braketing standards
-        SortedSet<TripoliFraction> includedFractions = getTripoliFractionsFiltered(FractionSelectionTypeEnum.ALL, IncludedTypeEnum.INCLUDED);
+        SortedSet<TripoliFraction> includedFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.ALL, IncludedTypeEnum.INCLUDED);
 
         TripoliFraction leftStandard = null;
         boolean lookingForLeftStandard = true;
@@ -797,10 +815,10 @@ public class TripoliSession implements
 
     private void prepareForReductionAndCommonLeadCorrection(FractionSelectionTypeEnum fractionSelectionTypeEnum) {
 
-        SortedSet<TripoliFraction> selectedFractions = getTripoliFractionsFiltered(fractionSelectionTypeEnum, IncludedTypeEnum.INCLUDED);
+        SortedSet<TripoliFraction> selectedFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, fractionSelectionTypeEnum, IncludedTypeEnum.INCLUDED);
         int countOfSelectedFractions = selectedFractions.size();
         // nov 2014 section 11
-        // walk the sessions and build double[][] of diagonals (3 rows by countof unkowns - one row for each session ratio
+        // walk the sessions and build double[][] of diagonals = 3 rows by countof unkowns - one row for each session ratio
         double[][] sessionRatioDiagonalSu = new double[3][countOfSelectedFractions];
         Iterator<RawRatioNames> sessionForStandardsIterator = sessionForStandardsInterceptFractionation.keySet().iterator();
         while (sessionForStandardsIterator.hasNext()) {
@@ -813,26 +831,28 @@ public class TripoliSession implements
             AbstractFunctionOfX sessionFofX = //
                     sessionForStandard.getSelectedFitFunction();
 
-            double[] diagonalofSu;
-            if (fractionSelectionTypeEnum.compareTo(FractionSelectionTypeEnum.UNKNOWN) == 0) {
-                diagonalofSu = sessionFofX.getDiagonalOfSessionUnknownsAnalyticalCovarianceSu();
-            } else {
-                diagonalofSu = sessionFofX.getDiagonalOfSessionStandardsAnalyticalCovarianceSu();
-            }
+            if (sessionFofX != null) {
+                double[] diagonalofSu;
+                if (fractionSelectionTypeEnum.compareTo(FractionSelectionTypeEnum.UNKNOWN) == 0) {
+                    diagonalofSu = sessionFofX.getDiagonalOfSessionUnknownsAnalyticalCovarianceSu();
+                } else {
+                    diagonalofSu = sessionFofX.getDiagonalOfSessionStandardsAnalyticalCovarianceSu();
+                }
             // the diagonal of the session Su contains a value for the ratio for each unknown
-            // this value needs to be put into the unknown's Sfci at the appropriate location (see below)
-            // remember ordering is: 6/7, 6/38, 8/32, (6/4, 7/4, 8/4)
-            switch (rrName) {
-                case r206_207w:
-                    sessionRatioDiagonalSu[0] = diagonalofSu;
-                    break;
-                case r206_238w:
-                    sessionRatioDiagonalSu[1] = diagonalofSu;
-                    break;
-                case r208_232w:
-                    sessionRatioDiagonalSu[2] = diagonalofSu;
-                    break;
-                default:
+                // this value needs to be put into the unknown's Sfci at the appropriate location (see below)
+                // remember ordering is: 6/7, 6/38, 8/32, (6/4, 7/4, 8/4)
+                switch (rrName) {
+                    case r206_207w:
+                        sessionRatioDiagonalSu[0] = diagonalofSu;
+                        break;
+                    case r206_238w:
+                        sessionRatioDiagonalSu[1] = diagonalofSu;
+                        break;
+                    case r208_232w:
+                        sessionRatioDiagonalSu[2] = diagonalofSu;
+                        break;
+                    default:
+                }
             }
         }
 
@@ -842,12 +862,12 @@ public class TripoliSession implements
         int fractionCounter = 0;
         while (selectedFractionsIterator.hasNext()) {
             TripoliFraction tf = selectedFractionsIterator.next();
-            
+
             // undo Pbc correction for standard
-            if (tf.isStandard()){
+            if (tf.isStandard()) {
                 tf.setCommonLeadLossCorrectionScheme(CommonLeadLossCorrectionSchemeNONE.getInstance());
             }
-            
+
             SortedMap<String, ValueModel> parameters = tf.assembleCommonLeadCorrectionParameters();
             SortedMap<String, BigDecimal> parametersSK = tf.assembleStaceyKramerCorrectionParameters();
 
@@ -893,7 +913,6 @@ public class TripoliSession implements
     }
 
     private void applyFractionationCorrectionsForIntercept() {
-        System.out.println("\nINTERCEPT Fractionation Correction");
 
         // walk the sessions
         Iterator<RawRatioNames> sessionForStandardsIterator = sessionForStandardsInterceptFractionation.keySet().iterator();
@@ -918,13 +937,15 @@ public class TripoliSession implements
                 }
             }
 
-            // keep in this order
-            fractionationCorrectFractionSetForSessionRatio(FractionSelectionTypeEnum.STANDARD, sessionFofX, sessionForStandard.getStandardValue(), rrName);
-            fractionationCorrectFractionSetForSessionRatio(FractionSelectionTypeEnum.UNKNOWN, sessionFofX, sessionForStandard.getStandardValue(), rrName);
+            if (sessionFofX != null) {
+                // keep in this order
+                fractionationCorrectFractionSetForSessionRatio(FractionSelectionTypeEnum.STANDARD, sessionFofX, sessionForStandard.getStandardValue(), rrName);
+                fractionationCorrectFractionSetForSessionRatio(FractionSelectionTypeEnum.UNKNOWN, sessionFofX, sessionForStandard.getStandardValue(), rrName);
+            }
         }
 
         // may 2013 - reject bad fractions for user
-        SortedSet<TripoliFraction> unknownFractions = getTripoliFractionsFiltered(FractionSelectionTypeEnum.UNKNOWN, IncludedTypeEnum.ALL);
+        SortedSet<TripoliFraction> unknownFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.UNKNOWN, IncludedTypeEnum.ALL);
         Iterator<TripoliFraction> unknownFractionIterator = unknownFractions.iterator();
 
         while (unknownFractionIterator.hasNext()) {
@@ -955,12 +976,12 @@ public class TripoliSession implements
         // section 11 - first pass through unknowns to build covariance matrix
         // update may 2013 **********************************************
 //        System.out.println("\n\nPROCESSING RATIO " + rrName.getName());
-        if (prepareMatrixJfMapUnknowns(fractionSelectionTypeEnum)) {
+        if (prepareMatrixJfMapFractionsByType(fractionSelectionTypeEnum)) {
 
-            SortedSet<TripoliFraction> unknownFractions = getTripoliFractionsFiltered(fractionSelectionTypeEnum, IncludedTypeEnum.INCLUDED);
+            SortedSet<TripoliFraction> selectedFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, fractionSelectionTypeEnum, IncludedTypeEnum.INCLUDED);
 
-            int countOfUnknowns = unknownFractions.size();
-            if (countOfUnknowns > 0) {
+            int countOfSelectedFractions = selectedFractions.size();
+            if (countOfSelectedFractions > 0) {
 
                 Matrix matrixJfUnknownsActiveStandards = getMatrixJfUnknownsActiveStandards(sessionFofX.getShortName());
 
@@ -973,86 +994,89 @@ public class TripoliSession implements
                 }
 
                 Matrix matrixSf = sessionFofX.getMatrixSf();
+                if (matrixSf != null) {
 
-                Matrix unknownsAnalyticalCovarianceSu = new Matrix(countOfUnknowns, countOfUnknowns);
-                double[] dLrInt_dDt_Unknowns = new double[countOfUnknowns];
-                Map<String, Integer> unknownFractionIDs = new HashMap<>();
+                    Matrix selectedFractionsAnalyticalCovarianceSu = new Matrix(countOfSelectedFractions, countOfSelectedFractions);
+                    double[] dLrInt_dDt_SelectedFractions = new double[countOfSelectedFractions];
+                    Map<String, Integer> selectedFractionIDs = new HashMap<>();
 
-                int index = 0;
+                    int index = 0;
 
-                Iterator<TripoliFraction> unknownFractionIterator = unknownFractions.iterator();
-                while (unknownFractionIterator.hasNext()) {
-                    TripoliFraction tf = unknownFractionIterator.next();
+                    Iterator<TripoliFraction> selectedFractionIterator = selectedFractions.iterator();
+                    while (selectedFractionIterator.hasNext()) {
+                        TripoliFraction tf = selectedFractionIterator.next();
 
-                    unknownFractionIDs.put(tf.getFractionID(), index);
+                        selectedFractionIDs.put(tf.getFractionID(), index);
 
-                    AbstractFunctionOfX FofX = ((DataModelFitFunctionInterface) tf.getRawRatioDataModelByName(rrName)).getSelectedFitFunction();
+                        AbstractFunctionOfX FofX = ((DataModelFitFunctionInterface) tf.getRawRatioDataModelByName(rrName)).getSelectedFitFunction();
 
-                    unknownsAnalyticalCovarianceSu.set(index, index, FofX.getYInterceptVariance() + sessionFofX.getOverDispersion());
+                        if (FofX != null) {
+                            selectedFractionsAnalyticalCovarianceSu.set(index, index, FofX.getYInterceptVariance() + sessionFofX.getOverDispersion());
 
-                    dLrInt_dDt_Unknowns[index] = ((DataModelFitFunctionInterface) tf.getRawRatioDataModelByName(rrName)).getSelectedFitFunction().getdLrInt_dDt();
+                            dLrInt_dDt_SelectedFractions[index] = ((DataModelFitFunctionInterface) tf.getRawRatioDataModelByName(rrName)).getSelectedFitFunction().getdLrInt_dDt();
+                        }
 
-                    index++;
-                }
-
-                unknownsAnalyticalCovarianceSu.plusEquals(matrixSf);
-
-                // check for identical ioncounters
-                if (((RawRatioDataModel) unknownFractions.first().getRawRatioDataModelByName(rrName)).hasTwoIdenticalIonCounters()) {
-
-                    double deadTimeOneSigmaAbsSqr = ((IonCounterCollectorModel) ((RawRatioDataModel) unknownFractions.first().getRawRatioDataModelByName(rrName)).getBotIsotope()//
-                            .getCollectorModel()).getDeadTime().getOneSigmaAbs().movePointLeft(0).pow(2).doubleValue();
-
-                    Matrix matrixdLrInt_dDt_Unkowns = new Matrix(dLrInt_dDt_Unknowns, dLrInt_dDt_Unknowns.length);
-
-                    Matrix matrixSuod = matrixdLrInt_dDt_Unkowns.times(matrixdLrInt_dDt_Unkowns.transpose().times(deadTimeOneSigmaAbsSqr));
-
-                    // zero diagonal
-                    for (int i = 0; i < countOfUnknowns; i++) {
-                        matrixSuod.set(i, i, 0.0);
+                        index++;
                     }
 
-                    unknownsAnalyticalCovarianceSu.plusEquals(matrixSuod);
-                }
+                    selectedFractionsAnalyticalCovarianceSu.plusEquals(matrixSf);
 
-                // nov 2014 finally the math to calculate the rhos and Pbc correction uncertainties.
-                // save Matrix unknownsAnalyticalCovarianceSu DIAGONAL for use in common lead corrections etc
-                double[] diagonalOfSessionUnknownsAnalyticalCovarianceSu = new double[countOfUnknowns];
-                for (int i = 0; i < countOfUnknowns; i++) {
-                    diagonalOfSessionUnknownsAnalyticalCovarianceSu[i] = unknownsAnalyticalCovarianceSu.get(i, i);
-                }
+                    // check for identical ioncounters
+                    if (((RawRatioDataModel) selectedFractions.first().getRawRatioDataModelByName(rrName)).hasTwoIdenticalIonCounters()) {
 
-                if (fractionSelectionTypeEnum.compareTo(FractionSelectionTypeEnum.UNKNOWN) == 0) {
-                    sessionFofX.setDiagonalOfSessionUnknownsAnalyticalCovarianceSu(diagonalOfSessionUnknownsAnalyticalCovarianceSu);
-                } else {
-                    sessionFofX.setDiagonalOfSessionStandardsAnalyticalCovarianceSu(diagonalOfSessionUnknownsAnalyticalCovarianceSu);
-                }
+                        double deadTimeOneSigmaAbsSqr = ((IonCounterCollectorModel) ((RawRatioDataModel) selectedFractions.first().getRawRatioDataModelByName(rrName)).getBotIsotope()//
+                                .getCollectorModel()).getDeadTime().getOneSigmaAbs().movePointLeft(0).pow(2).doubleValue();
 
-                // oct 2014 handle common lead scheme B
-                if (rrName.compareTo(RawRatioNames.r206_207w) == 0) {
-                    applyFractionationCorrectionToUnknownRatios(fractionSelectionTypeEnum, //
-                            sessionFofX, unknownFractionIDs, countOfUnknowns, unknownsAnalyticalCovarianceSu, sessionStandardValue, rrName, rrName.getName());
+                        Matrix matrixdLrInt_dDt_Unkowns = new Matrix(dLrInt_dDt_SelectedFractions, dLrInt_dDt_SelectedFractions.length);
 
-                    try {
+                        Matrix matrixSuod = matrixdLrInt_dDt_Unkowns.times(matrixdLrInt_dDt_Unkowns.transpose().times(deadTimeOneSigmaAbsSqr));
+
+                        // zero diagonal
+                        for (int i = 0; i < countOfSelectedFractions; i++) {
+                            matrixSuod.set(i, i, 0.0);
+                        }
+
+                        selectedFractionsAnalyticalCovarianceSu.plusEquals(matrixSuod);
+                    }
+
+                    // nov 2014 finally the math to calculate the rhos and Pbc correction uncertainties.
+                    // save Matrix selectedFractionsAnalyticalCovarianceSu DIAGONAL for use in common lead corrections etc
+                    double[] diagonalOfSessionUnknownsAnalyticalCovarianceSu = new double[countOfSelectedFractions];
+                    for (int i = 0; i < countOfSelectedFractions; i++) {
+                        diagonalOfSessionUnknownsAnalyticalCovarianceSu[i] = selectedFractionsAnalyticalCovarianceSu.get(i, i);
+                    }
+
+                    if (fractionSelectionTypeEnum.compareTo(FractionSelectionTypeEnum.UNKNOWN) == 0) {
+                        sessionFofX.setDiagonalOfSessionUnknownsAnalyticalCovarianceSu(diagonalOfSessionUnknownsAnalyticalCovarianceSu);
+                    } else {
+                        sessionFofX.setDiagonalOfSessionStandardsAnalyticalCovarianceSu(diagonalOfSessionUnknownsAnalyticalCovarianceSu);
+                    }
+
+                    // oct 2014 handle common lead scheme B
+                    if (rrName.compareTo(RawRatioNames.r206_207w) == 0) {
                         applyFractionationCorrectionToUnknownRatios(fractionSelectionTypeEnum, //
-                                sessionFofX, unknownFractionIDs, countOfUnknowns, unknownsAnalyticalCovarianceSu, sessionStandardValue, RawRatioNames.r206_204w, rrName.getName());
-                    } catch (Exception e) {
-                    }
-                    try {
-                        applyFractionationCorrectionToUnknownRatios(fractionSelectionTypeEnum, //
-                                sessionFofX, unknownFractionIDs, countOfUnknowns, unknownsAnalyticalCovarianceSu, sessionStandardValue, RawRatioNames.r207_204w, rrName.getName());
-                    } catch (Exception e) {
-                    }
-                    try {
-                        applyFractionationCorrectionToUnknownRatios(fractionSelectionTypeEnum, //
-                                sessionFofX, unknownFractionIDs, countOfUnknowns, unknownsAnalyticalCovarianceSu, sessionStandardValue, RawRatioNames.r208_204w, rrName.getName());
-                    } catch (Exception e) {
-                    }
-                } else {
-                    applyFractionationCorrectionToUnknownRatios(fractionSelectionTypeEnum, //
-                            sessionFofX, unknownFractionIDs, countOfUnknowns, unknownsAnalyticalCovarianceSu, sessionStandardValue, rrName, rrName.getName());
-                }
+                                sessionFofX, selectedFractionIDs, countOfSelectedFractions, selectedFractionsAnalyticalCovarianceSu, sessionStandardValue, rrName, rrName.getName());
 
+                        try {
+                            applyFractionationCorrectionToUnknownRatios(fractionSelectionTypeEnum, //
+                                    sessionFofX, selectedFractionIDs, countOfSelectedFractions, selectedFractionsAnalyticalCovarianceSu, sessionStandardValue, RawRatioNames.r206_204w, rrName.getName());
+                        } catch (Exception e) {
+                        }
+                        try {
+                            applyFractionationCorrectionToUnknownRatios(fractionSelectionTypeEnum, //
+                                    sessionFofX, selectedFractionIDs, countOfSelectedFractions, selectedFractionsAnalyticalCovarianceSu, sessionStandardValue, RawRatioNames.r207_204w, rrName.getName());
+                        } catch (Exception e) {
+                        }
+                        try {
+                            applyFractionationCorrectionToUnknownRatios(fractionSelectionTypeEnum, //
+                                    sessionFofX, selectedFractionIDs, countOfSelectedFractions, selectedFractionsAnalyticalCovarianceSu, sessionStandardValue, RawRatioNames.r208_204w, rrName.getName());
+                        } catch (Exception e) {
+                        }
+                    } else {
+                        applyFractionationCorrectionToUnknownRatios(fractionSelectionTypeEnum, //
+                                sessionFofX, selectedFractionIDs, countOfSelectedFractions, selectedFractionsAnalyticalCovarianceSu, sessionStandardValue, rrName, rrName.getName());
+                    }
+                }
             } // end test if any unknowns
         }
     }
@@ -1061,10 +1085,10 @@ public class TripoliSession implements
      *
      * @param fractionSelectionTypeEnum the value of fractionSelectionTypeEnum
      * @param sessionFofX the value of sessionFofX
-     * @param unknownFractionIDs the value of unknownFractionIDs
+     * @param unknownFractionIDs the value of selectedFractionIDs
      * @param countOfUnknowns the value of countOfSelectedFractions
      * @param unknownsAnalyticalCovarianceSu the value of
-     * unknownsAnalyticalCovarianceSu
+     * selectedFractionsAnalyticalCovarianceSu
      * @param sessionStandardValue the value of sessionStandardValue
      * @param rrName the value of rrName
      * @param standardRatioName the value of standardRatioName
@@ -1075,7 +1099,7 @@ public class TripoliSession implements
 
         Matrix unknownsLogRatioMeans = new Matrix(countOfUnknowns, 1);
 
-        SortedSet<TripoliFraction> unknownFractions = getTripoliFractionsFiltered(fractionSelectionTypeEnum, IncludedTypeEnum.INCLUDED);
+        SortedSet<TripoliFraction> unknownFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, fractionSelectionTypeEnum, IncludedTypeEnum.INCLUDED);
         Iterator<TripoliFraction> unknownFractionIterator = unknownFractions.iterator();
         int index = 0;
 
@@ -1199,69 +1223,72 @@ public class TripoliSession implements
         // alpha = value of red fit line plus value of spline
         // multiply each data point by (1 + alpha)
 
-        // calculate array of per-aquisition (say 1-15 seconds) fitted downHoleFractionation values 
+        // calculate array of per-aquisition (say 1-15 seconds) fitted betaFunction values 
         // for each ratio to use for every fraction
         // the spline values will be calculated on-th-fly since each is used only once
-        System.out.println("DOWNHOLE Fractionation Correction");
         downholeFractionationDataModels.keySet().stream().forEach((rrName) -> {
-            SortedSet<TripoliFraction> allFractions = getTripoliFractionsFiltered(FractionSelectionTypeEnum.STANDARD, IncludedTypeEnum.INCLUDED);
+            SortedSet<TripoliFraction> allFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.UNKNOWN, IncludedTypeEnum.INCLUDED);
 
             // calculate the down hole fractionation for this ratio all fractions
-            DownholeFractionationDataModel downHolefractionationAlpha = downholeFractionationDataModels.get(rrName);
+            DownholeFractionationDataModel downHolefractionationModel = downholeFractionationDataModels.get(rrName);
 
-//            // dec 2012 check if masking array is all false - it was modified in previous call
-//            if ( downHolefractionationAlpha.getMaskingSingleton().maskingArrayContainsTruth() ) {
+            double[] betaFunction = downHolefractionationModel.getFitFunctionBetaValues();
+
+//            AbstractFunctionOfX myDownHoleFofX = //
+//                    downHolefractionationModel.getSelectedDownHoleFrationationFitFunction();
 //
-            AbstractFunctionOfX myDownHoleFofX = //
-                    downHolefractionationAlpha.getSelectedDownHoleFrationationFitFunction();
-
-            double[] downHoleFractionation = //
-                    new double[downHolefractionationAlpha.getNormalizedAquireTimes().length];
-
-            for (int i = 0; i < downHoleFractionation.length; i++) {
-                downHoleFractionation[i] = myDownHoleFofX.f(downHolefractionationAlpha.getNormalizedAquireTimes()[i]);
-            }
+            AbstractSessionForStandardDataModel sessionForStandard = //
+                    sessionForStandardsDownholeFractionation.get(rrName);
 
             // get the session fit function
             AbstractFunctionOfX sessionFofX = //
-                    sessionForStandardsDownholeFractionation.get(rrName).getSelectedFitFunction();
+                    sessionForStandard.getSelectedFitFunction();
 
             if (sessionFofX == null) {
-                // let's do it and thus use the default fitfunction = spline unless spline generated a line when spline failed
-                //FIX THIS FIX THIS - this call calls all          
-                calculateSessionFitFunctionsForPrimaryStandard();
-                sessionFofX = sessionForStandardsDownholeFractionation.get(rrName).getSelectedFitFunction();
+                try {
+                    sessionForStandard.generateSetOfFitFunctions(true, false);
+//                    sessionForStandard.setSelectedFitFunctionType(FitFunctionTypeEnum.SMOOTHING_SPLINE);
+                    sessionFofX = sessionForStandard.getSelectedFitFunction();
+
+                } catch (Exception e) {
+                    System.out.println("Session for Standard NO fit functions failure");
+                }
+
             }
-            for (TripoliFraction tf : allFractions) {
-                if (!tf.getRawRatioDataModelByName(rrName).isBelowDetection()) {
 
-                    double fractionStartAquireTime = tf.getZeroBasedNormalizedTimeStamp();
-                    double[] ratios = ((RawRatioDataModel) tf.getRawRatioDataModelByName(rrName)).getRatios();
-                    double[] correctedRatios = new double[ratios.length];
-                    double[] onPeakAquireTimesInSeconds = downHolefractionationAlpha.getOnPeakAcquireTimesInSeconds();
+            if (sessionFofX != null) {
 
-                    for (int i = 0; i < onPeakAquireTimesInSeconds.length; i++) {
-                        // we use currently the normalized times for alpha fitting, but need actual time for session
-                        double valueOfSpline = sessionFofX.f(fractionStartAquireTime + onPeakAquireTimesInSeconds[i]);
-                        double alpha = downHoleFractionation[i] + valueOfSpline;
+                for (TripoliFraction tf : allFractions) {
+                    if (!tf.getRawRatioDataModelByName(rrName).isBelowDetection()) {
 
-                        correctedRatios[i] = (1.0 + alpha) * ratios[i];
+                        double fractionStartAquireTime = tf.getZeroBasedNormalizedTimeStamp();
+                        double[] logRatios = ((RawRatioDataModel) tf.getRawRatioDataModelByName(rrName)).getLogRatios();
+                        double[] correctedRatios = new double[logRatios.length];
+                        double[] onPeakAquireTimesInSeconds = downHolefractionationModel.getOnPeakAcquireTimesInSeconds();
+
+                        for (int i = 0; i < onPeakAquireTimesInSeconds.length; i++) {
+                            // we use currently the normalized times for fitting, but need actual time for session
+                            double valueOfSessionFitDelta = sessionFofX.f(fractionStartAquireTime + onPeakAquireTimesInSeconds[i]);
+
+                            correctedRatios[i] = logRatios[i] + betaFunction[i] + valueOfSessionFitDelta;
+                        }
+
+                        ((RawRatioDataModel) tf.getRawRatioDataModelByName(rrName)).setCorrectedRatios(correctedRatios);
+                        // calculate mean, std dev, std err, etc. for plotting
+                        tf.getRawRatioDataModelByName(rrName).calculateCorrectedRatioStatistics();
+
+                        // JULY 2012
+                        // push data to UPbFractions for Redux to display
+                        //TODO: clean up this hack
+                        tf.getuPbFraction().getMeasuredRatioByName(rrName.getName().replace("w", "m"))//
+                                .setValue(((RawRatioDataModel) tf.getRawRatioDataModelByName(rrName)).getMeanOfCorrectedRatios());
+                        tf.getuPbFraction().getMeasuredRatioByName(rrName.getName().replace("w", "m"))//
+                                .setOneSigma(((RawRatioDataModel) tf.getRawRatioDataModelByName(rrName)).getStdErrOfMeanCorrectedRatios());
+
                     }
-
-                    ((RawRatioDataModel) tf.getRawRatioDataModelByName(rrName)).setCorrectedRatios(correctedRatios);
-                    // calculate mean, std dev, std err, etc. for plotting
-                    tf.getRawRatioDataModelByName(rrName).calculateCorrectedRatioStatistics();
-
-                    // JULY 2012
-                    // push data to UPbFractions for Redux to display
-                    //TODO: clean up this hack
-                    tf.getuPbFraction().getMeasuredRatioByName(rrName.getName().replace("w", "m"))//
-                            .setValue(((RawRatioDataModel) tf.getRawRatioDataModelByName(rrName)).getMeanOfCorrectedRatios());
-                    tf.getuPbFraction().getMeasuredRatioByName(rrName.getName().replace("w", "m"))//
-                            .setOneSigma(((RawRatioDataModel) tf.getRawRatioDataModelByName(rrName)).getStdErrOfMeanCorrectedRatios());
-
                 }
             }
+
         });
     }
 
@@ -1289,42 +1316,41 @@ public class TripoliSession implements
         return tripoliFractions;
     }
 
-    /**
-     *
-     * @param selection
-     * @param visibility
-     * @return
-     */
-    @Override
-    public SortedSet<TripoliFraction> getTripoliFractionsFiltered(//
-            FractionSelectionTypeEnum selection,//
-            IncludedTypeEnum visibility) {
-
-        SortedSet<TripoliFraction> filteredFractions = new TreeSet<>();
-
-        Iterator<TripoliFraction> fractionIterator = tripoliFractions.iterator();
-        while (fractionIterator.hasNext()) {
-            TripoliFraction tf = fractionIterator.next();
-            if ((selection.equals(FractionSelectionTypeEnum.ALL) //
-                    || //
-                    (selection.equals(FractionSelectionTypeEnum.STANDARD) && tf.isStandard())//
-                    || //
-                    (selection.equals(FractionSelectionTypeEnum.UNKNOWN) && !tf.isStandard()))//
-                    && //
-                    visibility.isObjectIncluded(tf.isIncluded())) {
-
-                filteredFractions.add(tf);
-                // turn off bad fractions
-                if (!tf.confirmHealthyFraction()) {
-                    tf.toggleAllDataExceptShaded(false);
-                }
-            }
-
-        }
-
-        return filteredFractions;
-    }
-
+//    /**
+//     *
+//     * @param selection
+//     * @param visibility
+//     * @return
+//     */
+//    @Override
+//    public SortedSet<TripoliFraction> getTripoliFractionsFiltered(//
+//            FractionSelectionTypeEnum selection,//
+//            IncludedTypeEnum visibility) {
+//
+//        SortedSet<TripoliFraction> filteredFractions = new TreeSet<>();
+//
+//        Iterator<TripoliFraction> fractionIterator = getTripoliFractions().iterator();
+//        while (fractionIterator.hasNext()) {
+//            TripoliFraction tf = fractionIterator.next();
+//            if ((selection.equals(FractionSelectionTypeEnum.ALL) //
+//                    || //
+//                    (selection.equals(FractionSelectionTypeEnum.STANDARD) && tf.isStandard())//
+//                    || //
+//                    (selection.equals(FractionSelectionTypeEnum.UNKNOWN) && !tf.isStandard()))//
+//                    && //
+//                    visibility.isObjectIncluded(tf.isIncluded())) {
+//
+//                filteredFractions.add(tf);
+//                // turn off bad fractions
+//                if (!tf.confirmHealthyFraction()) {
+//                    tf.toggleAllDataExceptShaded(false);
+//                }
+//            }
+//
+//        }
+//
+//        return filteredFractions;
+//    }
     /**
      *
      * @param selection
@@ -1379,7 +1405,7 @@ public class TripoliSession implements
     @Override
     public void includeAllFractions(FractionSelectionTypeEnum fractionSelectionType) {
         SortedSet<TripoliFraction> excludedTripoliFractions = //
-                getTripoliFractionsFiltered(fractionSelectionType, IncludedTypeEnum.EXCLUDED);
+                FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, fractionSelectionType, IncludedTypeEnum.EXCLUDED);
         excludedTripoliFractions.stream().forEach((f) -> {
             f.toggleAllDataExceptShaded(true);
         });
@@ -1418,7 +1444,7 @@ public class TripoliSession implements
      * @return the downholeFractionationDataModels
      */
     @Override
-    public SortedMap<RawRatioNames, DownholeFractionationDataModel> getDownholeFractionationAlphaDataModels() {
+    public SortedMap<RawRatioNames, DownholeFractionationDataModel> getDownholeFractionationDataModels() {
         return downholeFractionationDataModels;
     }
 
@@ -1550,6 +1576,15 @@ public class TripoliSession implements
         while (fractionIterator.hasNext()) {
             TripoliFraction tf = fractionIterator.next();
             tf.setODforAllRatios(setOD);
+        }
+    }
+
+    @Override
+    public void setDownHoleODforAllFractionsAllRatios(boolean setOD) {
+        Iterator<TripoliFraction> fractionIterator = tripoliFractions.iterator();
+        while (fractionIterator.hasNext()) {
+            TripoliFraction tf = fractionIterator.next();
+            tf.setDownHoleODforAllRatios(setOD);
         }
     }
 

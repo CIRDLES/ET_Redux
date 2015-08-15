@@ -21,8 +21,9 @@ package org.earthtime.dialogs.projectManagers.projectLegacyManagers;
 
 import java.awt.Frame;
 import java.io.File;
-import org.earthtime.projects.projectImporters.UPbProjectImporters.ProjectOfLegacySamplesImporterFromCSVFile_GenericUPbIsotopic_A;
+import org.earthtime.dataDictionaries.FileDelimiterTypesEnum;
 import org.earthtime.projects.ProjectInterface;
+import org.earthtime.projects.projectImporters.UPbProjectImporters.ProjectOfLegacySamplesImporterFromCSVFile_GenericUPbIsotopic_A;
 
 /**
  *
@@ -43,11 +44,11 @@ public class ProjectOfLegacySamplesDataManagerDialogForGenericUPb_A extends Abst
             ProjectInterface project,
             File importFractionFolderMRU ) {
 
-        super( parent,
+        super(parent,
                 modal,
-                "Legacy UPb Data",
+                "Legacy UPb Data in CSV format",
                 project,
-                new ProjectOfLegacySamplesImporterFromCSVFile_GenericUPbIsotopic_A(),
+                new ProjectOfLegacySamplesImporterFromCSVFile_GenericUPbIsotopic_A(FileDelimiterTypesEnum.COMMA),
                 importFractionFolderMRU);
     }
 }
