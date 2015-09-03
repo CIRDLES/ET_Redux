@@ -1537,9 +1537,9 @@ private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.
         }
 
         // jan 2015
-        if (!tripoliSession.isFitFunctionsUpToDate()) {
+ //       if (!tripoliSession.isFitFunctionsUpToDate()) {
             tripoliSession.calculateSessionFitFunctionsForPrimaryStandard();
-        }
+ //       }
 
         // nov 2014
         try {

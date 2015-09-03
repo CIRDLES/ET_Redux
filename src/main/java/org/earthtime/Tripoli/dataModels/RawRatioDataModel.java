@@ -427,7 +427,7 @@ public class RawRatioDataModel //
             for (int i = 0; i < dataActiveMap.length; i++) {
                 if (dataActiveMap[i]) {
                     activeData[index] = true;
-                    logDifferencesFromWeightedMean[index] = logRatios[i] - downHoleFitFunction.f(normalizedOnPeakAquireTimes[i]);
+                    logDifferencesFromWeightedMean[index] = downHoleFitFunction.f(normalizedOnPeakAquireTimes[i]) - logRatios[i] ;
                     index++;
                 } else {
                     if (shades[i]) {
@@ -1796,14 +1796,6 @@ public class RawRatioDataModel //
      */
     public double[] getLogDifferencesFromWeightedMean() {
         return logDifferencesFromWeightedMean;
-    }
-
-    /**
-     * @param logDifferencesFromWeightedMean the logDifferencesFromWeightedMean
-     * to set
-     */
-    public void setLogDifferencesFromWeightedMean(double[] logDifferencesFromWeightedMean) {
-        this.logDifferencesFromWeightedMean = logDifferencesFromWeightedMean;
     }
 
     /**

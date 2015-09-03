@@ -55,7 +55,7 @@
         <Component class="javax.swing.JLabel" name="redux_Icon_label">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="311" y="20" width="102" height="94"/>
+              <AbsoluteConstraints x="253" y="20" width="156" height="100"/>
             </Constraint>
           </Constraints>
         </Component>

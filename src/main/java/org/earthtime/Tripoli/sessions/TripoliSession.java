@@ -1268,7 +1268,7 @@ public class TripoliSession implements
 
                         for (int i = 0; i < onPeakAquireTimesInSeconds.length; i++) {
                             // we use currently the normalized times for fitting, but need actual time for session
-                            double valueOfSessionFitDelta = sessionFofX.f(fractionStartAquireTime + onPeakAquireTimesInSeconds[i]);
+                            double valueOfSessionFitDelta = sessionFofX.f(fractionStartAquireTime);// + onPeakAquireTimesInSeconds[i]);
 
                             correctedRatios[i] = logRatios[i] + betaFunction[i] + valueOfSessionFitDelta;
                         }
