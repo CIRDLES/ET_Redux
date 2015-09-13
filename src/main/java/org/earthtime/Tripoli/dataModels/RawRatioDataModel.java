@@ -1578,24 +1578,25 @@ public class RawRatioDataModel //
         return logRatios;
     }
 
-//    /**
-//     *
-//     * @param activeCount
-//     * @return
-//     */
-//    public double[] getActiveLogRatios(int activeCount) {
-//        double[] activeLogatios = new double[activeCount];
-//        int index = 0;
-//        for (int i = 0; i < dataActiveMap.length; i++) {
-//            if (dataActiveMap[i]) {
-//                activeLogatios[index] = logRatios[i];
-//
-//                index++;
-//            }
-//        }
-//
-//        return activeLogatios;
-//    }
+    /**
+     *
+     * @param activeCount
+     * @return
+     */
+    public double[] getActiveLogRatios(int activeCount) {
+        double[] activeLogatios = new double[activeCount];
+        int index = 0;
+        for (int i = 0; i < dataActiveMap.length; i++) {
+            if (dataActiveMap[i]) {
+                activeLogatios[index] = logRatios[i];
+
+                index++;
+            }
+        }
+
+        return activeLogatios;
+    }
+    
     public Matrix SlogRXYSolveLRWithZeroesAtInactive(boolean[] dataCommonActiveMap) {
         // take the SLogRatioXYALL and solve it with logRatiosVector
         /// then remove row for left and right shades

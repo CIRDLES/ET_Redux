@@ -338,26 +338,27 @@ public abstract class AbstractRawDataView extends JLayeredPane implements MouseI
         g2d.setPaint(Color.gray);
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.2f));
 
-        if (leftEdgeIndex > -1) {
-            Shape leftShade = new Rectangle2D.Double( //
-                    mapX(minX), //
-                    -1,
-                    mapX((double) myOnPeakNormalizedAquireTimes[leftEdgeIndex] + (double) (myOnPeakNormalizedAquireTimes[1] - myOnPeakNormalizedAquireTimes[0]) / 2.0),//
-                    getHeight() + 1);
+        if ((tripoliFraction != null) && (myOnPeakNormalizedAquireTimes != null)) {
+            if (leftEdgeIndex > -1) {
+                Shape leftShade = new Rectangle2D.Double( //
+                        mapX(minX), //
+                        -1,
+                        mapX((double) myOnPeakNormalizedAquireTimes[leftEdgeIndex] + (double) (myOnPeakNormalizedAquireTimes[1] - myOnPeakNormalizedAquireTimes[0]) / 2.0),//
+                        getHeight() + 1);
 
-            g2d.fill(leftShade);
+                g2d.fill(leftShade);
+            }
+
+            if (rightEdgeIndex < maskingArray.length) {
+                Shape rightShade = new Rectangle2D.Double( //
+                        mapX((double) myOnPeakNormalizedAquireTimes[rightEdgeIndex] - (double) (myOnPeakNormalizedAquireTimes[1] - myOnPeakNormalizedAquireTimes[0]) / 2.0),//
+                        -1,
+                        mapX(maxX), //
+                        getHeight() + 1);
+
+                g2d.fill(rightShade);
+            }
         }
-
-        if (rightEdgeIndex < maskingArray.length) {
-            Shape rightShade = new Rectangle2D.Double( //
-                    mapX((double) myOnPeakNormalizedAquireTimes[rightEdgeIndex] - (double) (myOnPeakNormalizedAquireTimes[1] - myOnPeakNormalizedAquireTimes[0]) / 2.0),//
-                    -1,
-                    mapX(maxX), //
-                    getHeight() + 1);
-
-            g2d.fill(rightShade);
-        }
-
         g2d.setComposite(originalComposite);
     }
 

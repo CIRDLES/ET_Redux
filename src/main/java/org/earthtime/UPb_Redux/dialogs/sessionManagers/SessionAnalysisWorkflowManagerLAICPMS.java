@@ -414,7 +414,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
                 dataModelViewConstructorFactory(FitFunctionsOnRatioDataView.class.getName()));
 
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).setRawDataSourceMethod(//
-                rawDataSourceMethodFactory("getRatiosForFractionFitting"));//getValidRawRatioAlphas"));
+                rawDataSourceMethodFactory("getNonPbRatiosForFractionFitting"));//getValidRawRatioAlphas"));
 
         updateFractionSelection();
         tripoliSessionRawDataView.refreshPanel();
@@ -468,7 +468,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
                 dataModelViewConstructorFactory(FitFunctionsOnDownHoleRatioDataView.class.getName()));
 
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).setRawDataSourceMethod(//
-                rawDataSourceMethodFactory("getRatiosForFractionFitting"));
+                rawDataSourceMethodFactory("getNonPbRatiosForFractionFitting"));// sep 2015 keep common lead out of downhole standards ("getRatiosForFractionFitting"));
 
         //cause slider to synch
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).synchXAxisZoomSliderValue(((TripoliSessionRawDataView) tripoliSessionRawDataView).getDataModelWidth());
@@ -530,14 +530,19 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
 
         if (fractionationTechnique.compareTo(FractionationTechniquesEnum.DOWNHOLE) == 0) {
             tripoliSessionRawDataView.setDataPresentationMode(DataPresentationModeEnum.LOGRATIO);
+            ((TripoliSessionRawDataView) tripoliSessionRawDataView).showSessionViewOfRawDataModels(//
+                    interceptStandardSession_radioButton.getBackground(),//
+                    dataModelViewConstructorFactory(SessionOfStandardView.class.getName()),//
+                    rawDataSourceMethodFactory("getNonPbRatiosForFractionFitting"));//getValidRawRatioAlphas"));"getValidRawRatioAlphas"));
+
         } else {
             tripoliSessionRawDataView.setDataPresentationMode(DataPresentationModeEnum.RATIO);
-        }
+            ((TripoliSessionRawDataView) tripoliSessionRawDataView).showSessionViewOfRawDataModels(//
+                    interceptStandardSession_radioButton.getBackground(),//
+                    dataModelViewConstructorFactory(SessionOfStandardView.class.getName()),//
+                    rawDataSourceMethodFactory("getRatiosForFractionFitting"));//getValidRawRatioAlphas"));"getValidRawRatioAlphas"));
 
-        ((TripoliSessionRawDataView) tripoliSessionRawDataView).showSessionViewOfRawDataModels(//
-                interceptStandardSession_radioButton.getBackground(),//
-                dataModelViewConstructorFactory(SessionOfStandardView.class.getName()),//
-                rawDataSourceMethodFactory("getRatiosForFractionFitting"));//getValidRawRatioAlphas"));"getValidRawRatioAlphas"));
+        }
 
         setEnableAllGridGraphOverlayButtons(false);
 
@@ -1537,8 +1542,8 @@ private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.
         }
 
         // jan 2015
- //       if (!tripoliSession.isFitFunctionsUpToDate()) {
-            tripoliSession.calculateSessionFitFunctionsForPrimaryStandard();
+        //       if (!tripoliSession.isFitFunctionsUpToDate()) {
+        tripoliSession.calculateSessionFitFunctionsForPrimaryStandard();
  //       }
 
         // nov 2014

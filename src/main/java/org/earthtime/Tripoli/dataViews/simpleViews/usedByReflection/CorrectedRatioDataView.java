@@ -156,10 +156,11 @@ public class CorrectedRatioDataView extends AbstractRawDataView {
         setDisplayOffsetX(0.0);
 
         // walk ratios and get min and max for axes
-        myOnPeakData = ((RawRatioDataModel) rawRatioDataModel).getCorrectedRatios();
-
-        // normalize aquireTimes
         myOnPeakNormalizedAquireTimes = rawRatioDataModel.getNormalizedOnPeakAquireTimes();
+        myOnPeakData = ((RawRatioDataModel) rawRatioDataModel).getCorrectedRatios();
+        if (myOnPeakData == null) {
+            myOnPeakData = new double[myOnPeakNormalizedAquireTimes.length];
+        }
 
         boolean[] myDataActiveMap = rawRatioDataModel.getDataActiveMap();
 

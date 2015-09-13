@@ -191,11 +191,11 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
             sumInvSlogRatioX_Y.plusEquals(SlogRatioX_Y.inverse());
 
             // get active logratios from standard
-            Matrix logRatiosVector = new Matrix(rawRatio.getLogRatios(), countOfActiveData);
+            Matrix logRatiosVector = new Matrix(rawRatio.getActiveLogRatios(countOfActiveData), countOfActiveData);
 
             // column vector length count of aquisitions
             sumInvSlogRatioX_YTimeslr.plusEquals(SlogRatioX_Y.solve(logRatiosVector));
-            
+
 //////            
 //////            
 //////            // JUNE 2015 - got to standard fraction and calculate SlogRatioX_Y.solve(logratiosVector) for that fraction's active
@@ -794,6 +794,20 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
      */
     public double[] getOnPeakAcquireTimesInSeconds() {
         return onPeakAcquireTimesBySecond;
+    }
+
+    public double[] getActiveOnPeakAcquireTimesInSeconds() {
+        boolean []activeData = MaskingSingleton.getInstance().getMaskingArray();
+        double[] activeOnPeak = new double[MaskingSingleton.getInstance().getCountOfActiveData()];
+        int index = 0;
+        for (int i = 0; i < activeData.length; i ++){
+            if (activeData[i]){
+                activeOnPeak[index] = onPeakAcquireTimesBySecond[i];
+                index ++;
+            }
+        }
+                
+        return activeOnPeak;
     }
 
     /**

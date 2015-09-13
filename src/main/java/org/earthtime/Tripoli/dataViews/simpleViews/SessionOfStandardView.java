@@ -50,6 +50,7 @@ import org.earthtime.Tripoli.fitFunctions.AbstractFunctionOfX;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.Tripoli.sessions.TripoliSessionFractionationCalculatorInterface;
 import org.earthtime.dataDictionaries.DataPresentationModeEnum;
+import org.earthtime.dataDictionaries.IncludedTypeEnum;
 import org.earthtime.utilities.TicGeneratorForAxes;
 
 /**
@@ -341,22 +342,35 @@ public class SessionOfStandardView extends AbstractRawDataView implements FitFun
                 // do last as data is needed in above calcs            
                 myOnPeakData[i] = convertLogDatumToPresentationMode(myOnPeakData[i]);
 
-                // added for no fit func
-                if (fitFunc == null) {
-                    //handling alpha flip too
-                    minY = Math.min(minY, myOnPeakDataPlusUnct[i]);
-                    minY = Math.min(minY, myOnPeakDataLessUnct[i]);
+                // sept 2015 modified to allow rescaling when needed
+                // find min and max y
+                boolean showAll = showIncludedDataPoints.equals(IncludedTypeEnum.ALL);
+                boolean showIncluded = //
+                        showIncludedDataPoints.equals(IncludedTypeEnum.INCLUDED)//
+                        ||//
+                        showIncludedDataPoints.equals(IncludedTypeEnum.ALL);
 
-                    maxY = Math.max(maxY, myOnPeakDataLessUnct[i]);
-                    maxY = Math.max(maxY, myOnPeakDataPlusUnct[i]);
-                } else {
-                    // do both min and max to be sure especially as alphas may flip
-                    // just use the one including plus OD  which will be bigger or equal to err
-                    minY = Math.min(minY, myOnPeakDataPlusUnctPlusOD[i]);
-                    minY = Math.min(minY, myOnPeakDataLessUnctPlusOD[i]);
+                if (showAll //
+                        || //
+                        !((!fractionIncludedMap[i] && showIncluded) || (fractionIncludedMap[i] && !showIncluded))) {
 
-                    maxY = Math.max(maxY, myOnPeakDataPlusUnctPlusOD[i]);
-                    maxY = Math.max(maxY, myOnPeakDataLessUnctPlusOD[i]);
+                    // added for no fit func
+                    if (fitFunc == null) {
+                        //handling alpha flip too
+                        minY = Math.min(minY, myOnPeakDataPlusUnct[i]);
+                        minY = Math.min(minY, myOnPeakDataLessUnct[i]);
+
+                        maxY = Math.max(maxY, myOnPeakDataLessUnct[i]);
+                        maxY = Math.max(maxY, myOnPeakDataPlusUnct[i]);
+                    } else {
+                        // do both min and max to be sure especially as alphas may flip
+                        // just use the one including plus OD  which will be bigger or equal to err
+                        minY = Math.min(minY, myOnPeakDataPlusUnctPlusOD[i]);
+                        minY = Math.min(minY, myOnPeakDataLessUnctPlusOD[i]);
+
+                        maxY = Math.max(maxY, myOnPeakDataPlusUnctPlusOD[i]);
+                        maxY = Math.max(maxY, myOnPeakDataLessUnctPlusOD[i]);
+                    }
                 }
             }
         }
@@ -402,7 +416,8 @@ public class SessionOfStandardView extends AbstractRawDataView implements FitFun
     }
 
     @Override
-    public void mousePressed(MouseEvent evt) {
+    public void mousePressed(MouseEvent evt
+    ) {
         int timeSlot = convertMouseXToValue(evt.getX()) - (int) shiftAquiredTimeIndex;
 
         if (timeSlot < 0) {
@@ -501,7 +516,8 @@ public class SessionOfStandardView extends AbstractRawDataView implements FitFun
     }
 
     @Override
-    public void mouseReleased(MouseEvent e) {
+    public void mouseReleased(MouseEvent e
+    ) {
         tripoliFraction.setShowVerticalLineAtThisIndex(-1);
         if (!(sampleSessionDataView == null)) {
             sampleSessionDataView.repaint();
@@ -512,7 +528,8 @@ public class SessionOfStandardView extends AbstractRawDataView implements FitFun
      * @param paintColor the paintColor to set
      */
     @Override
-    public void setPaintColor(Color paintColor) {
+    public void setPaintColor(Color paintColor
+    ) {
         this.paintColor = paintColor;
     }
 

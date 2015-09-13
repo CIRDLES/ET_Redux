@@ -675,7 +675,7 @@ public class TripoliFraction implements //
         return ratiosForFractionFitting;
     }
 
-    private SortedSet<DataModelInterface> getNonPbRatiosForFractionFitting() {
+    public SortedSet<DataModelInterface> getNonPbRatiosForFractionFitting() {
         SortedSet<DataModelInterface> ratiosForFractionFitting = new TreeSet<>((DataModelInterface rrdm1, DataModelInterface rrdm2) -> {
             RawRatioNames rmName = rrdm1.getRawRatioModelName();
             RawRatioNames myName = rrdm2.getRawRatioModelName();
@@ -684,7 +684,7 @@ public class TripoliFraction implements //
         });
 
         for (DataModelInterface rr : rawRatios) {
-            if (((RawRatioDataModel) rr).isUsedForFractionationCorrections()) {
+            if (((RawRatioDataModel) rr).isUsedForFractionationCorrections() && !((RawRatioDataModel) rr).isUsedForCommonLeadCorrections()) {
                 ratiosForFractionFitting.add(rr);
             }
         }
@@ -1518,7 +1518,7 @@ public class TripoliFraction implements //
                 }
                 if (rejectedAPoint) {
                     rr.generateSetOfFitFunctions(true, false);
-                    ((RawRatioDataModel) rr).calculateDownholeFractionWeightedMeanAndUnct();
+                    // sep 2015 no common lead for standards in downhole ((RawRatioDataModel) rr).calculateDownholeFractionWeightedMeanAndUnct();
                 }
             } else {
 //                System.out.println("NONE");

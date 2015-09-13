@@ -757,14 +757,14 @@ public class SampleDateModel extends ValueModel implements
             }
 
             // special case to detect upper/lower intercept
-            if (getMethodName().equalsIgnoreCase("UpperIntercept")) {
+            if (methodName.equalsIgnoreCase("UpperIntercept")) {
                 UpperIntercept(includedFractions, //
                         aliquot.getASampleDateModelByName("lower intercept"));
             } else {
                 try {
                     Method meth
                             = this.getClass().getMethod(//
-                                    getMethodName(),
+                                    methodName,
                                     new Class[]{Vector.class});
                     meth.invoke(this, new Object[]{includedFractions});
                 } catch (Throwable e) {
@@ -772,7 +772,7 @@ public class SampleDateModel extends ValueModel implements
                 }
             }
         } else {
-           // new ETWarningDialog("No positive dates found.").setVisible(true);
+            // new ETWarningDialog("No positive dates found.").setVisible(true);
         }
     }
 
@@ -805,8 +805,8 @@ public class SampleDateModel extends ValueModel implements
                     System.err.println(e + " For: " + getMethodName() + "  in CalculateDateInterpretationForSample");
                 }
             }
-        }else {
-           // new ETWarningDialog("No positive dates found.").setVisible(true);   
+        } else {
+            // new ETWarningDialog("No positive dates found.").setVisible(true);   
         }
     }
 
@@ -973,7 +973,7 @@ public class SampleDateModel extends ValueModel implements
         }
 
         LogWMresults logWMresults = null;
-        // TRIPOLIZES is the sample type given to compiled super samples fully processed in redux == PROJECT sample
+        // TRIPOLIZED is the sample type given to compiled super samples fully processed in redux == PROJECT sample
         if (sampleAnalysisType.compareTo(SampleAnalysisTypesEnum.TRIPOLIZED) == 0) {
             logWMresults = calculateWeightedMeansWithMSWDforLogRatioBasedData(myFractions, radiogenicIsotopeDateName, partialDerivativeNames);
         } else {
@@ -1114,73 +1114,74 @@ public class SampleDateModel extends ValueModel implements
         SortedMap<RadRatios, SessionCorrectedUnknownsSummary> sessionCorrectedUnknownsSummaries = //
                 UPbFractionReducer.getInstance().getSessionCorrectedUnknownsSummaries();
 
-        try {
-            RadRatios ratioName = RadRatios.valueOf(radiogenicIsotopeDateName.replace("age", "r"));
+        if (sessionCorrectedUnknownsSummaries.size() > 0) {
+            try {
+                RadRatios ratioName = RadRatios.valueOf(radiogenicIsotopeDateName.replace("age", "r"));
 
-            SessionCorrectedUnknownsSummary sessionCorrectedUnknownsSummary =//
-                    sessionCorrectedUnknownsSummaries.get(ratioName);
+                SessionCorrectedUnknownsSummary sessionCorrectedUnknownsSummary =//
+                        sessionCorrectedUnknownsSummaries.get(ratioName);
 
-            Matrix unknownsAnalyticalCovarianceSu = sessionCorrectedUnknownsSummary.getUnknownsAnalyticalCovarianceSu();
-            Map<String, Integer> unknownFractionIDs = sessionCorrectedUnknownsSummary.getUnknownFractionIDs();
-            Matrix unknownsLogRatioMeans = sessionCorrectedUnknownsSummary.getUnknownsLogRatioMeans();
-            //ValueModel standardRatio = sessionCorrectedUnknownsSummary.getStandardRatio();
-            double varianceOfStandardLogRatio = sessionCorrectedUnknownsSummary.getVarianceOfStandardLogRatio();
+                Matrix unknownsAnalyticalCovarianceSu = sessionCorrectedUnknownsSummary.getUnknownsAnalyticalCovarianceSu();
+                Map<String, Integer> unknownFractionIDs = sessionCorrectedUnknownsSummary.getUnknownFractionIDs();
+                Matrix unknownsLogRatioMeans = sessionCorrectedUnknownsSummary.getUnknownsLogRatioMeans();
+                //ValueModel standardRatio = sessionCorrectedUnknownsSummary.getStandardRatio();
+                double varianceOfStandardLogRatio = sessionCorrectedUnknownsSummary.getVarianceOfStandardLogRatio();
 
-            // we are given a list of fractions to use in weighted mean, so we need to extract them from the matrices
-            ArrayList<Integer> activeFractionIndices = new ArrayList<>();
-            ArrayList<ETFractionInterface> activeFractions = new ArrayList<>();
+                // we are given a list of fractions to use in weighted mean, so we need to extract them from the matrices
+                ArrayList<Integer> activeFractionIndices = new ArrayList<>();
+                ArrayList<ETFractionInterface> activeFractions = new ArrayList<>();
 
-            for (int i = 0; i < myFractions.size(); i++) {
-                if (unknownFractionIDs.containsKey(myFractions.get(i).getFractionID().trim())) {
-                    activeFractionIndices.add(unknownFractionIDs.get(myFractions.get(i).getFractionID().trim()));
-                    activeFractions.add(myFractions.get(i));
+                for (int i = 0; i < myFractions.size(); i++) {
+                    if (unknownFractionIDs.containsKey(myFractions.get(i).getFractionID().trim())) {
+                        activeFractionIndices.add(unknownFractionIDs.get(myFractions.get(i).getFractionID().trim()));
+                        activeFractions.add(myFractions.get(i));
+                    }
                 }
-            }
 
-            // need to sort and use toarryay
-            int[] activeIndices = new int[activeFractionIndices.size()];
-            for (int i = 0; i < activeFractionIndices.size(); i++) {
-                activeIndices[i] = activeFractionIndices.get(i);
-            }
+                // need to sort and use toarryay
+                int[] activeIndices = new int[activeFractionIndices.size()];
+                for (int i = 0; i < activeFractionIndices.size(); i++) {
+                    activeIndices[i] = activeFractionIndices.get(i);
+                }
 
-            Matrix logRatios = unknownsLogRatioMeans.getMatrix(activeIndices, 0, 0);
-            Matrix Su = unknownsAnalyticalCovarianceSu.getMatrix(activeIndices, activeIndices);
+                Matrix logRatios = unknownsLogRatioMeans.getMatrix(activeIndices, 0, 0);
+                Matrix Su = unknownsAnalyticalCovarianceSu.getMatrix(activeIndices, activeIndices);
 
 //            System.out.println( "Su" );
 //            Su.print( matF, 15 );
 //
 //            System.out.println( "logRatios" );
 //            logRatios.print( matF, 15 );
-            Matrix onesV = new Matrix(activeIndices.length, 1, 1.0);
+                Matrix onesV = new Matrix(activeIndices.length, 1, 1.0);
 
-            // SECTION A
-            double logRatioMean = onesV.transpose().times(Su.solve(logRatios)).get(0, 0) //
-                    / (onesV.transpose().times(Su.solve(onesV))).get(0, 0);
+                // SECTION A
+                double logRatioMean = onesV.transpose().times(Su.solve(logRatios)).get(0, 0) //
+                        / (onesV.transpose().times(Su.solve(onesV))).get(0, 0);
 
-            logWMresults.setLogRatioMean(logRatioMean);
+                logWMresults.setLogRatioMean(logRatioMean);
 
-            double logRatioMeanOneSigmaAnalytical = Math.sqrt(1.0 / (onesV.transpose().times(Su.solve(onesV)).get(0, 0)));
+                double logRatioMeanOneSigmaAnalytical = Math.sqrt(1.0 / (onesV.transpose().times(Su.solve(onesV)).get(0, 0)));
 
-            logWMresults.setLogRatioMeanOneSigmaAnalytical(logRatioMeanOneSigmaAnalytical);
+                logWMresults.setLogRatioMeanOneSigmaAnalytical(logRatioMeanOneSigmaAnalytical);
 
-            Matrix logRationResiduals = logRatios.copy();
-            for (int i = 0; i < logRatios.getRowDimension(); i++) {
-                logRationResiduals.set(i, 0, logRatios.get(i, 0) - logRatioMean);
-            }
+                Matrix logRationResiduals = logRatios.copy();
+                for (int i = 0; i < logRatios.getRowDimension(); i++) {
+                    logRationResiduals.set(i, 0, logRatios.get(i, 0) - logRatioMean);
+                }
 
-            double logRatioMSWD = 1.0 / (activeIndices.length - 1) * logRationResiduals.transpose().times(Su.solve(logRationResiduals)).get(0, 0);
+                double logRatioMSWD = 1.0 / (activeIndices.length - 1) * logRationResiduals.transpose().times(Su.solve(logRationResiduals)).get(0, 0);
 
-            logWMresults.setMSWD(logRatioMSWD);
+                logWMresults.setMSWD(logRatioMSWD);
             // Section B
-            //TODO: provide lab data with values of ratio variability for each ratio
-            // for now all = 2%
-            Matrix SuInterStd = Su.plus(new Matrix(Su.getRowDimension(), Su.getColumnDimension(), 0.01 * 0.01));
+                //TODO: provide lab data with values of ratio variability for each ratio
+                // for now all = 2%
+                Matrix SuInterStd = Su.plus(new Matrix(Su.getRowDimension(), Su.getColumnDimension(), 0.01 * 0.01));
 
-            double logRatioMeanOneSigmaAnalyticalPlusInterStd = Math.sqrt(1.0 / (onesV.transpose().times(SuInterStd.solve(onesV)).get(0, 0)));
+                double logRatioMeanOneSigmaAnalyticalPlusInterStd = Math.sqrt(1.0 / (onesV.transpose().times(SuInterStd.solve(onesV)).get(0, 0)));
 
-            logWMresults.setLogRatioMeanOneSigmaAnalyticalPlusInterStd(logRatioMeanOneSigmaAnalyticalPlusInterStd);
+                logWMresults.setLogRatioMeanOneSigmaAnalyticalPlusInterStd(logRatioMeanOneSigmaAnalyticalPlusInterStd);
 
-            // section C
+                // section C
 //            double logMeanPlusOneSigma = Math.log( standardRatio.getValue().doubleValue() + standardRatio.getOneSigmaAbs().doubleValue() );
 //            double logMean = Math.log( standardRatio.getValue().doubleValue() );
 //            double logMeanMinusOneSigma = Math.log( standardRatio.getValue().doubleValue() - standardRatio.getOneSigmaAbs().doubleValue() );
@@ -1188,11 +1189,11 @@ public class SampleDateModel extends ValueModel implements
 //            double maxDelta = Math.max( Math.abs( logMeanPlusOneSigma - logMean ), Math.abs( logMean - logMeanMinusOneSigma ) );
 //
 //            
-            Matrix SuInterStdPlusStd = SuInterStd.plus(new Matrix(Su.getRowDimension(), Su.getColumnDimension(), varianceOfStandardLogRatio));
+                Matrix SuInterStdPlusStd = SuInterStd.plus(new Matrix(Su.getRowDimension(), Su.getColumnDimension(), varianceOfStandardLogRatio));
 
-            double logRatioMeanOneSigmaAnalyticalPlusInterStdPlusStd = Math.sqrt(1.0 / (onesV.transpose().times(SuInterStdPlusStd.solve(onesV)).get(0, 0)));
+                double logRatioMeanOneSigmaAnalyticalPlusInterStdPlusStd = Math.sqrt(1.0 / (onesV.transpose().times(SuInterStdPlusStd.solve(onesV)).get(0, 0)));
 
-            logWMresults.setLogRatioMeanOneSigmaAnalyticalPlusInterStdPlusStd(logRatioMeanOneSigmaAnalyticalPlusInterStdPlusStd);
+                logWMresults.setLogRatioMeanOneSigmaAnalyticalPlusInterStdPlusStd(logRatioMeanOneSigmaAnalyticalPlusInterStdPlusStd);
 
 //////            // section D
 //////            //TODO: Encode this in our matrix class structure
@@ -1267,10 +1268,10 @@ public class SampleDateModel extends ValueModel implements
 //
 //            logWMresults.setLogRatioMeanOneSigmaAnalyticalPlusInterStdPlusStdPlusLambda(logRatioMeanOneSigmaAnalyticalPlusInterStdPlusStdPlusLambda);
 //
-            System.out.println("Logratio based WM have ARRIVED !!");
-        } catch (Exception e) {
+                System.out.println("Logratio based WM have ARRIVED !!");
+            } catch (Exception e) {
+            }
         }
-
         return logWMresults;
     }
 
