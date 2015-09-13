@@ -2,7 +2,6 @@ ET_Redux
 ========
 
 [![Build Status](https://travis-ci.org/CIRDLES/ET_Redux.svg?branch=master)](https://travis-ci.org/CIRDLES/ET_Redux)
-
 [![Join the chat at https://gitter.im/CIRDLES/ET_Redux](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/CIRDLES/ET_Redux?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 **ET_Redux** is the flagship cyber infrastructure product of [CIRDLES](http://cirdles.org),
