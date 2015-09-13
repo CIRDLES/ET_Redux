@@ -61,12 +61,13 @@ public class AnnouncementPane extends JLayeredPane {
 
         // setup U-Pb_Redux icon
         cldr = this.getClass().getClassLoader();
-        java.net.URL imageReduxURL = cldr.getResource("org/earthtime/UPb_Redux/images/U-Pb_Redux_Icon.png");
+        //java.net.URL imageReduxURL = cldr.getResource("org/earthtime/UPb_Redux/images/U-Pb_Redux_Icon.png");
+        java.net.URL imageReduxURL = cldr.getResource( "org/earthtime/images/uth-pb-redux-logo.png" );
         iconPanel = new JLabel();
         iconPanel.setBackground(Color.red);
-        iconPanel.setBounds(ETReduxFrame.FRAME_WIDTH / 2 - 128, 225, 256, 256);//(50, 50, 128, 128);
+        iconPanel.setBounds(ETReduxFrame.FRAME_WIDTH / 2 - 200, 225, 400, 256);//(50, 50, 128, 128);
         ImageIcon myReduxIcon = new CustomIcon(imageReduxURL);
-        ((CustomIcon) myReduxIcon).setSize(iconPanel.getHeight(), iconPanel.getWidth());
+        ((CustomIcon) myReduxIcon).setSize(iconPanel.getWidth(), iconPanel.getHeight() );
         iconPanel.setIcon(myReduxIcon);
 
         this.add(iconPanel);

@@ -427,7 +427,7 @@ public class RawRatioDataModel //
             for (int i = 0; i < dataActiveMap.length; i++) {
                 if (dataActiveMap[i]) {
                     activeData[index] = true;
-                    logDifferencesFromWeightedMean[index] = logRatios[i] - downHoleFitFunction.f(normalizedOnPeakAquireTimes[i]);
+                    logDifferencesFromWeightedMean[index] = downHoleFitFunction.f(normalizedOnPeakAquireTimes[i]) - logRatios[i] ;
                     index++;
                 } else {
                     if (shades[i]) {
@@ -1578,24 +1578,25 @@ public class RawRatioDataModel //
         return logRatios;
     }
 
-//    /**
-//     *
-//     * @param activeCount
-//     * @return
-//     */
-//    public double[] getActiveLogRatios(int activeCount) {
-//        double[] activeLogatios = new double[activeCount];
-//        int index = 0;
-//        for (int i = 0; i < dataActiveMap.length; i++) {
-//            if (dataActiveMap[i]) {
-//                activeLogatios[index] = logRatios[i];
-//
-//                index++;
-//            }
-//        }
-//
-//        return activeLogatios;
-//    }
+    /**
+     *
+     * @param activeCount
+     * @return
+     */
+    public double[] getActiveLogRatios(int activeCount) {
+        double[] activeLogatios = new double[activeCount];
+        int index = 0;
+        for (int i = 0; i < dataActiveMap.length; i++) {
+            if (dataActiveMap[i]) {
+                activeLogatios[index] = logRatios[i];
+
+                index++;
+            }
+        }
+
+        return activeLogatios;
+    }
+    
     public Matrix SlogRXYSolveLRWithZeroesAtInactive(boolean[] dataCommonActiveMap) {
         // take the SLogRatioXYALL and solve it with logRatiosVector
         /// then remove row for left and right shades
@@ -1796,14 +1797,6 @@ public class RawRatioDataModel //
      */
     public double[] getLogDifferencesFromWeightedMean() {
         return logDifferencesFromWeightedMean;
-    }
-
-    /**
-     * @param logDifferencesFromWeightedMean the logDifferencesFromWeightedMean
-     * to set
-     */
-    public void setLogDifferencesFromWeightedMean(double[] logDifferencesFromWeightedMean) {
-        this.logDifferencesFromWeightedMean = logDifferencesFromWeightedMean;
     }
 
     /**

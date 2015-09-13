@@ -185,20 +185,23 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
             // calc SLogRatioXY
             rawRatio.propagateUnctInRatios();
 
-            Matrix SlogRatioX_Y = rawRatio.getSlogRatioX_Y_withZeroesAtInactive();//getSlogRatioX_Y();
+            Matrix SlogRatioX_Y = rawRatio.getSlogRatioX_Y();//getSlogRatioX_Y_withZeroesAtInactive();//getSlogRatioX_Y();
 
             // sum of the inverses of all of the Slr_X_Y covariance matrices
             sumInvSlogRatioX_Y.plusEquals(SlogRatioX_Y.inverse());
 
-////            // get active logratios from standard
-////            Matrix logRatiosVector = new Matrix(rawRatio.getActiveLogRatios(countOfActiveData), countOfActiveData);
-////
-////            // column vector length count of aquisitions
-////            sumInvSlogRatioX_YTimeslr.plusEquals(SlogRatioX_Y.solve(logRatiosVector));
-            // JUNE 2015 - got to standard faction and calculate SlogRatioX_Y.solve(logratiosVector) for that fraction's active
-            // return to here that solution with missing rows added back in with zeores to match the shape of this overall downhole
-            Matrix SlogRXYSolveLRWithZeroesAtInactive = rawRatio.SlogRXYSolveLRWithZeroesAtInactive(dataCommonActiveMap);
-            sumInvSlogRatioX_YTimeslr.plusEquals(SlogRXYSolveLRWithZeroesAtInactive);
+            // get active logratios from standard
+            Matrix logRatiosVector = new Matrix(rawRatio.getActiveLogRatios(countOfActiveData), countOfActiveData);
+
+            // column vector length count of aquisitions
+            sumInvSlogRatioX_YTimeslr.plusEquals(SlogRatioX_Y.solve(logRatiosVector));
+
+//////            
+//////            
+//////            // JUNE 2015 - got to standard fraction and calculate SlogRatioX_Y.solve(logratiosVector) for that fraction's active
+//////            // return to here that solution with missing rows added back in with zeores to match the shape of this overall downhole
+//////            Matrix SlogRXYSolveLRWithZeroesAtInactive = rawRatio.SlogRXYSolveLRWithZeroesAtInactive(dataCommonActiveMap);
+//////            sumInvSlogRatioX_YTimeslr.plusEquals(SlogRXYSolveLRWithZeroesAtInactive);
         }
 
         // column vector for THICK BLACK LINE
@@ -531,16 +534,16 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
     public double[] getFitFunctionBetaValues() {
         AbstractFunctionOfX fitFunc = getSelectedFitFunction();
 
-        for (int i = 0; i < getFittedStandardsBeta().length; i++) {
+        for (int i = 0; i < fittedStandardsBeta.length; i++) {
             try {
-                getFittedStandardsBeta()[i] = //
+                fittedStandardsBeta[i] = //
                         Math.log(standardValueModel.getValue().doubleValue()) //
                         - fitFunc.f(activeXvalues[i]);
             } catch (Exception e) {
-                getFittedStandardsBeta()[i] = Math.log(standardValueModel.getValue().doubleValue());
+                fittedStandardsBeta[i] = Math.log(standardValueModel.getValue().doubleValue());
             }
         }
-        return getFittedStandardsBeta();
+        return fittedStandardsBeta;
     }
 
     /**
@@ -571,6 +574,10 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
             //      logDifferencesFromWeightedMean
             //      meanOfResidualsFromFittedFractionation = fOfX_MEAN_OD.getA();
             //      stdErrOfmeanOfResidualsFromFittedFractionation = fOfX_MEAN_OD.getStdErrOfA();
+////            double [] lr = ((RawRatioDataModel) rawRatio).getLogRatios();
+////            for (int i = 0; i < lr.length; i ++){
+////                System.out.println(lr[i] + ", ");
+////            }
             ((RawRatioDataModel) rawRatio).setDownHoleFitFunction(downHoleFitFunction);
             ((RawRatioDataModel) rawRatio).calculateDownholeFractionWeightedMeanAndUnct();
         }
@@ -787,6 +794,20 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
      */
     public double[] getOnPeakAcquireTimesInSeconds() {
         return onPeakAcquireTimesBySecond;
+    }
+
+    public double[] getActiveOnPeakAcquireTimesInSeconds() {
+        boolean []activeData = MaskingSingleton.getInstance().getMaskingArray();
+        double[] activeOnPeak = new double[MaskingSingleton.getInstance().getCountOfActiveData()];
+        int index = 0;
+        for (int i = 0; i < activeData.length; i ++){
+            if (activeData[i]){
+                activeOnPeak[index] = onPeakAcquireTimesBySecond[i];
+                index ++;
+            }
+        }
+                
+        return activeOnPeak;
     }
 
     /**

@@ -475,7 +475,7 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
 
         dataPresentationModeChooserPanel = null;
 
-        tripoliFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliSession.getTripoliFractions(), fractionSelectionType, fractionIncludedType);
+        tripoliFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliSession.getTripoliFractions(), fractionSelectionType, IncludedTypeEnum.ALL); // sept 2015 bettter way to handlefractionIncludedType);
         // test for empty (i.e. no excluded)
         if (tripoliFractions.size() == 0) {
             fractionIncludedType = IncludedTypeEnum.ALL;
@@ -556,6 +556,9 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
                                         sessionModelWidth,//
                                         dataModelHeight));
 
+                // sept 2015
+                rawDataModelView.setShowIncludedDataPoints(fractionIncludedType);
+                
                 rawDataModelView.preparePanel();
 
                 rawDataModelViews[dataModelCountForVerticalLayout][0] = rawDataModelView;

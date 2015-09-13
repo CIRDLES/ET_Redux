@@ -21,11 +21,9 @@ import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Composite;
-import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
-import java.awt.font.GlyphVector;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import javax.swing.JLayeredPane;
@@ -106,12 +104,12 @@ public class FitFunctionsOnDownHoleRatioDataView extends AbstractRawDataView imp
                 g2d.setStroke(new BasicStroke(0.75f));
                 ((Path2D) connectingLine).moveTo(//
                         mapX(myOnPeakNormalizedAquireTimes[firstActiveIndex]), //
-                        mapY(myOnPeakData[firstActiveIndex]));
+                        mapY(myOnPeakData[0]));
 
-                for (int i = firstActiveIndex + 1; i < myOnPeakData.length; i++) {
+                for (int i = firstActiveIndex + 1; i < myOnPeakNormalizedAquireTimes.length; i++) {
                     if (dataActiveMap[i]) {
                         ((Path2D) connectingLine).lineTo( //
-                                mapX(myOnPeakNormalizedAquireTimes[i]), mapY(myOnPeakData[i]));
+                                mapX(myOnPeakNormalizedAquireTimes[i]), mapY(myOnPeakData[i - firstActiveIndex]));
                     }
                 }
                 g2d.draw(connectingLine);
@@ -120,20 +118,21 @@ public class FitFunctionsOnDownHoleRatioDataView extends AbstractRawDataView imp
 
             // data points
             g2d.setStroke(new BasicStroke(1.5f));
-            for (int i = 0; i < myOnPeakData.length; i++) {
+            for (int i = firstActiveIndex; i < myOnPeakNormalizedAquireTimes.length; i++) {
                 // nov 2014 to handle */Pb204
                 Shape dataPoint = null;
-                // logs cant be nan and ratios or alphas cant be neg
-                if (!rawRatioDataModel.isForceMeanForCommonLeadRatios() //
-                        && //
-                        Double.isNaN(myOnPeakData[i])) {
-                    Font specialFont = new Font("Courier New", Font.PLAIN, 10);
-                    GlyphVector vect = specialFont.createGlyphVector(g2d.getFontRenderContext(), "+");
-                    dataPoint = vect.getOutline((float) mapX(myOnPeakNormalizedAquireTimes[i]) - 3, (float) mapY(minY));
-                } else {
+//                // logs cant be nan and ratios or alphas cant be neg
+//                if (!rawRatioDataModel.isForceMeanForCommonLeadRatios() //
+//                        && //
+//                        Double.isNaN(myOnPeakData[i])) {
+//                    Font specialFont = new Font("Courier New", Font.PLAIN, 10);
+//                    GlyphVector vect = specialFont.createGlyphVector(g2d.getFontRenderContext(), "+");
+//                    dataPoint = vect.getOutline((float) mapX(myOnPeakNormalizedAquireTimes[i]) - 3, (float) mapY(minY));
+//                } else {
+                    //downhole standards have no common lead
                     dataPoint = new java.awt.geom.Ellipse2D.Double( //
-                            mapX(myOnPeakNormalizedAquireTimes[i]), mapY(myOnPeakData[i]), 1, 1);
-                }
+                            mapX(myOnPeakNormalizedAquireTimes[i]), mapY(myOnPeakData[i - firstActiveIndex]), 1, 1);
+//                }
                 g2d.setPaint(determineDataColor(i, getPaintColor()));
 
                 g2d.draw(dataPoint);
@@ -148,9 +147,9 @@ public class FitFunctionsOnDownHoleRatioDataView extends AbstractRawDataView imp
                         mapX(myOnPeakNormalizedAquireTimes[0]), //
                         mapY(fittedFunctionValues[0]));
 
-                for (int i = 1; i < myOnPeakData.length; i++) {
+                for (int i = firstActiveIndex; i < myOnPeakNormalizedAquireTimes.length; i++) {
                     ((Path2D) fittedFunctionAverageLine).lineTo( //
-                            mapX(myOnPeakNormalizedAquireTimes[i]), mapY(fittedFunctionValues[i]));
+                            mapX(myOnPeakNormalizedAquireTimes[i]), mapY(fittedFunctionValues[i - firstActiveIndex]));
                 }
                 g2d.draw(fittedFunctionAverageLine);
             }

@@ -119,7 +119,7 @@ public class DataViewsOverlay extends AbstractRawDataView implements FitFunction
             for (int i = 0; i < tripoliFractionRawDataModelViews.length; i++) {
                 double[] tfOnPeakData = tripoliFractionRawDataModelViews[i].getMyOnPeakData();
 
-                if (tfOnPeakData != null) {
+                if ((tfOnPeakData != null) && (myOnPeakNormalizedAquireTimes!= null)){
                     tripoliFraction = tripoliFractionRawDataModelViews[i].getTripoliFraction();
                     // draw onPeak line
                     Shape onPeakLine = new Path2D.Double();

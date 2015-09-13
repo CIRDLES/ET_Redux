@@ -31,7 +31,8 @@ public class AboutBox extends DialogEditor {
 
     private ClassLoader cldr = this.getClass().getClassLoader();
     private java.net.URL imageEarthTimeURL = cldr.getResource( "org/earthtime/images/earth_96.jpg" );
-    private java.net.URL imageReduxURL = cldr.getResource( "org/earthtime/UPb_Redux/images/U-Pb_Redux_Icon.png" );//     U-Pb_ReduxG.JPG");
+   // private java.net.URL imageReduxURL = cldr.getResource( "org/earthtime/UPb_Redux/images/U-Pb_Redux_Icon.png" );//     U-Pb_ReduxG.JPG");
+    private java.net.URL imageReduxURL = cldr.getResource( "org/earthtime/images/uth-pb-redux-logo.png" );
     private ImageIcon myEarthTimeIcon;
     private ImageIcon myReduxIcon;
 
@@ -47,7 +48,7 @@ public class AboutBox extends DialogEditor {
         earthtimeIcon_label.setIcon( myEarthTimeIcon );
 
         myReduxIcon = new CustomIcon( imageReduxURL );
-        ((CustomIcon) myReduxIcon).setSize( redux_Icon_label.getHeight(), redux_Icon_label.getWidth() );
+        ((CustomIcon) myReduxIcon).setSize(redux_Icon_label.getWidth() ,  redux_Icon_label.getHeight() );
         redux_Icon_label.setIcon( myReduxIcon );
 
         version_text.setText("ET_Redux " + ETRedux.VERSION );
@@ -111,7 +112,7 @@ public class AboutBox extends DialogEditor {
         jPanel1.setBackground(new java.awt.Color(0, 0, 0));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
         jPanel1.add(earthtimeIcon_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(12, 20, 102, 94));
-        jPanel1.add(redux_Icon_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(311, 20, 102, 94));
+        jPanel1.add(redux_Icon_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(253, 20, 156, 100));
 
         version_text.setFont(new java.awt.Font("Helvetica", 3, 14)); // NOI18N
         version_text.setForeground(new java.awt.Color(255, 255, 255));
