@@ -1130,19 +1130,19 @@ public abstract class AbstractMassSpecSetup implements //
                                 tripoliFractions, //
                                 RawRatioNames.r206_207w, //
                                 primaryMineralStandard, //
-                                new double[countOfAcquisitions], acquireTimes.clone(), normalizedOnPeakAquireTimes.clone(), maskingArray);
+                                new double[countOfAcquisitions], acquireTimes, normalizedOnPeakAquireTimes, maskingArray);
                 DownholeFractionationDataModel r206_238w =//
                         new DownholeFractionationDataModel(//
                                 tripoliFractions, //
                                 RawRatioNames.r206_238w, //
                                 primaryMineralStandard, //
-                                new double[countOfAcquisitions], acquireTimes.clone(), normalizedOnPeakAquireTimes.clone(), maskingArray);
+                                new double[countOfAcquisitions], acquireTimes, normalizedOnPeakAquireTimes, maskingArray);
                 DownholeFractionationDataModel r208_232w = //
                         new DownholeFractionationDataModel( //
                                 tripoliFractions, //
                                 RawRatioNames.r208_232w, //
                                 primaryMineralStandard, //
-                                new double[countOfAcquisitions], acquireTimes.clone(), normalizedOnPeakAquireTimes.clone(), maskingArray);
+                                new double[countOfAcquisitions], acquireTimes, normalizedOnPeakAquireTimes, maskingArray);
 
                 // oct 2012 update fractionation models based on valid ratios
                 // first load assumed models

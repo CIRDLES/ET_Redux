@@ -29,6 +29,9 @@ import org.earthtime.isotopes.IsotopesEnum;
  */
 public class SingleCollectorAcquisition extends AbstractAcquisitionModel {
 
+    // Class variables
+   // private static final long serialVersionUID = 1l;//-1164757885416000963L;
+
     private Map<IsotopesEnum, Double> isotopeNameToIntegrationTimesMap;
 
     /**
