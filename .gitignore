@@ -15,6 +15,9 @@ dependency-reduced-pom.xml
 test_*
 *.ser
 
+# Misc data files
+*.dat
+
 # Resources
 !src/main/resources/*
 !src/main/resources/org/earthtime/parameterModels/mineralStandardModels/*.xml

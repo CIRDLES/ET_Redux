@@ -53,16 +53,19 @@ import org.earthtime.Tripoli.massSpecSetups.multiCollector.NUPlasma.GehrelsNUPla
 import org.earthtime.Tripoli.massSpecSetups.multiCollector.NUPlasma.GehrelsNUPlasmaSetupUPbFarTRA;
 import org.earthtime.Tripoli.massSpecSetups.multiCollector.NUPlasma.GehrelsNUPlasmaSetupUPbIonCounter;
 import org.earthtime.Tripoli.massSpecSetups.singleCollector.Agilent7700.KoslerAgilent7700SetupUPb;
+import org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan.MemUnivNewfoundlandElementIISetupUPb;
 import org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan.UnivKansasElementIISetupUPb;
 import org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan.WashStateElementIISetupUPb;
 import org.earthtime.Tripoli.rawDataFiles.handlers.AbstractRawDataFileHandler;
 import org.earthtime.Tripoli.rawDataFiles.handlers.KoslerAgilent7700FileHandler;
+import org.earthtime.Tripoli.rawDataFiles.handlers.MemUnivNewfoundlandElementIIFileHandler;
 import org.earthtime.Tripoli.rawDataFiles.handlers.NUPlasmaMultiCollFaradayFileHandler;
 import org.earthtime.Tripoli.rawDataFiles.handlers.NUPlasmaMultiCollFaradayTRAFileHandler;
 import org.earthtime.Tripoli.rawDataFiles.handlers.NUPlasmaMultiCollIonCounterFileHandler;
 import org.earthtime.Tripoli.rawDataFiles.handlers.UnivKansasElementIIFileHandler;
 import org.earthtime.Tripoli.rawDataFiles.handlers.WashStateElementIISingleCollFileHandler;
 import org.earthtime.Tripoli.rawDataFiles.templates.AbstractRawDataFileTemplate;
+import org.earthtime.Tripoli.rawDataFiles.templates.HancharMemUnivNewfoundlandElementII_RawDataTemplate;
 import org.earthtime.Tripoli.rawDataFiles.templates.Kosler_Agilent7700_RawDataTemplate;
 import org.earthtime.Tripoli.rawDataFiles.templates.MoellerUnivKansasElementII_RawDataTemplate;
 import org.earthtime.Tripoli.rawDataFiles.templates.NUPlasmaMultiCollFaradayRawDataTemplate;
@@ -220,6 +223,17 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
                 .add(MoellerUnivKansasElementII_RawDataTemplate.getInstance());
 
         knownRawDataFileHandlers.add(theUnivKansasElementIIFileHandler);
+        
+                // September 2015 John Hanchar ElementII at U Newfoundland
+        AbstractRawDataFileHandler theMemUnivNewfoundlandElementIIFileHandler = //
+                MemUnivNewfoundlandElementIIFileHandler.getInstance();
+        theMemUnivNewfoundlandElementIIFileHandler.getAvailableMassSpecSetups()//
+                .add(MemUnivNewfoundlandElementIISetupUPb.getInstance());
+
+        theMemUnivNewfoundlandElementIIFileHandler.getAvailableRawDataFileTemplates()//
+                .add(HancharMemUnivNewfoundlandElementII_RawDataTemplate.getInstance());
+
+        knownRawDataFileHandlers.add(theMemUnivNewfoundlandElementIIFileHandler);
 
         // move this section for robust file opening
         fileHandlerComboBox.removeAllItems();

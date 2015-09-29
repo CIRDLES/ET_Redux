@@ -75,14 +75,7 @@ public final class LaserchronElementIISetupUPb extends AbstractMassSpecSetup imp
 
         AbstractCollectorModel singleCollector = //
                 new IonCounterCollectorModel(//
-                        //
-                        //
-                        //
-                        //
-                        //
-                        //
-                        //
-                        "Single",                        new ValueModel("DeadTime", new BigDecimal(12.0e-9, ReduxConstants.mathContext10), //
+                        "Single", new ValueModel("DeadTime", new BigDecimal(12.0e-9, ReduxConstants.mathContext10), //
                                 "ABS", new BigDecimal(1.0e-9, ReduxConstants.mathContext10), BigDecimal.ZERO), //
                         IonCounterCollectorModel.CollectedDataStyle.COUNTS);
 
@@ -149,14 +142,15 @@ public final class LaserchronElementIISetupUPb extends AbstractMassSpecSetup imp
      * @param fractionID the value of fractionID
      * @param usingFullPropagation the value of usingFullPropagation
      * @param tripoliFraction the value of tripoliFraction
-     * @return the java.util.SortedSet<org.earthtime.Tripoli.dataModels.DataModelInterface>
+     * @return the
+     * java.util.SortedSet<org.earthtime.Tripoli.dataModels.DataModelInterface>
      */
     @Override
     public SortedSet<DataModelInterface> rawRatiosFactory(String[][] intensitiesScan, boolean isStandard, String fractionID, boolean usingFullPropagation, TripoliFraction tripoliFraction) {
 
         countOfAcquisitions = intensitiesScan.length;
 
-        virtualCollectors = new ArrayList<VirtualCollectorModel>(VIRTUAL_COLLECTOR_COUNT);
+        virtualCollectors = new ArrayList<>(VIRTUAL_COLLECTOR_COUNT);
         for (int i = 0; i < VIRTUAL_COLLECTOR_COUNT; i++) {
             virtualCollectors.add(new VirtualCollectorModel(i + 1));
         }
@@ -315,12 +309,11 @@ public final class LaserchronElementIISetupUPb extends AbstractMassSpecSetup imp
 //        //throw new UnsupportedOperationException( "Not supported yet." );
 //    }
 //
-
     /**
      *
      * @param integrationTime
      */
-        @Override
+    @Override
     public void assignIntegrationTime(double integrationTime) {
         throw new UnsupportedOperationException("Not legal.");
     }
