@@ -33,7 +33,6 @@ import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.UnknownHostException;
 import javax.swing.JOptionPane;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -45,8 +44,7 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
-import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
-import org.earthtime.exceptions.ETException;
+import org.earthtime.exceptions.ETWarningDialog;
 import org.w3c.dom.Document;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
@@ -57,6 +55,8 @@ import org.xml.sax.SAXParseException;
  * @author James F. Bowring
  */
 public class URIHelper {
+
+    private static boolean CONNECTED_TO_INTERNET = true;
 
     /**
      * Creates a new instance of URIHelper
@@ -234,64 +234,74 @@ public class URIHelper {
     private static boolean validateXML(String xmlURI, String schemaURI) {
         boolean retVal = true;
 
-        try {
-            // parse an XML document into a DOM tree
-            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-            dbFactory.setNamespaceAware(true);
-            DocumentBuilder parser = dbFactory.newDocumentBuilder();
-            Document document = parser.parse(xmlURI);
+        if (CONNECTED_TO_INTERNET) {
+            try {
+                URL url = new URL("http://geochron.org");
+                System.out.println(url.getHost());
+                HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                con.connect();
+                if (con.getResponseCode() == 200) {
 
-            // create a SchemaFactory capable of understanding WXS schemas
-            SchemaFactory schemaFactory
-                    = SchemaFactory.newInstance(
-                            XMLConstants.W3C_XML_SCHEMA_NS_URI);
+                    CONNECTED_TO_INTERNET = true;
+                    try {
+                        // parse an XML document into a DOM tree
+                        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+                        dbFactory.setNamespaceAware(true);
+                        DocumentBuilder parser = dbFactory.newDocumentBuilder();
+                        Document document = parser.parse(xmlURI);
 
-            // load a WXS schema, represented by a Schema instance
-            Source schemaFile = new StreamSource(
-                    new URL(schemaURI).openStream());
-            Schema schema = schemaFactory.newSchema(schemaFile);
+                        // create a SchemaFactory capable of understanding WXS schemas
+                        SchemaFactory schemaFactory
+                                = SchemaFactory.newInstance(
+                                        XMLConstants.W3C_XML_SCHEMA_NS_URI);
 
-            // create a Validator instance, which can be used to validate an instance document
-            Validator validator = schema.newValidator();
+                        // load a WXS schema, represented by a Schema instance
+                        Source schemaFile = new StreamSource(
+                                new URL(schemaURI).openStream());
+                        Schema schema = schemaFactory.newSchema(schemaFile);
 
-            // validate the DOM tree
-            validator.validate(new DOMSource(document));
+                        // create a Validator instance, which can be used to validate an instance document
+                        Validator validator = schema.newValidator();
 
-        } catch (ParserConfigurationException | SAXException | IOException ex) {
-            //if (ex instanceof UnknownHostException) {
-            //    retVal= true;
-            //} else {
-            retVal = (ex instanceof UnknownHostException);
-            //}
+                        // validate the DOM tree
+                        validator.validate(new DOMSource(document));
+                    } catch (ParserConfigurationException | SAXException | IOException parserConfigurationException) {
+                    }
+
+                } else {
+                    CONNECTED_TO_INTERNET = false;
+                    new ETWarningDialog("ET_Redux could not find an Internet connection and will not validate XML files until restart.").setVisible(true);
+                }
+            } catch (IOException iOException) {
+            }
         }
 
         return retVal;
     }
 
-    /**
-     *
-     * @param reader
-     * @param validator
-     * @return
-     * @throws ETException
-     * @throws BadOrMissingXMLSchemaException
-     */
-    private static boolean validateXMLwithValidator(BufferedReader reader, Validator validator)
-            throws ETException, BadOrMissingXMLSchemaException {
-        boolean retval = false;
-
-        try {
-            //Validate this instance document against the Instance document supplied
-            validator.validate(new StreamSource(reader));
-            retval = true;
-        } catch (SAXException ex) {
-            throw new BadOrMissingXMLSchemaException(null,
-                    "XML schema file problem:\n" + ex.getMessage());
-        } catch (IOException ex) {
-        }
-        return retval;
-    }
-
+//    /**
+//     *
+//     * @param reader
+//     * @param validator
+//     * @return
+//     * @throws ETException
+//     * @throws BadOrMissingXMLSchemaException
+//     */
+//    private static boolean validateXMLwithValidator(BufferedReader reader, Validator validator)
+//            throws ETException, BadOrMissingXMLSchemaException {
+//        boolean retval = false;
+//
+//        try {
+//            //Validate this instance document against the Instance document supplied
+//            validator.validate(new StreamSource(reader));
+//            retval = true;
+//        } catch (SAXException ex) {
+//            throw new BadOrMissingXMLSchemaException(null,
+//                    "XML schema file problem:\n" + ex.getMessage());
+//        } catch (IOException ex) {
+//        }
+//        return retval;
+//    }
     /**
      *
      * @param connectionString
@@ -324,11 +334,11 @@ public class URIHelper {
                     });
             ex.printStackTrace();
         }
-        
+
         File tempFile = new File(tempSESARFileName);
         Document convertedDocument = convertXMLTextToDOMdocument(tempFile);
         tempFile.delete();
-        
+
         return convertedDocument;
     }
 
@@ -374,7 +384,6 @@ public class URIHelper {
 //
 //        return fileOut;
 //    }
-
     /**
      *
      * @param XMLfile
@@ -410,26 +419,25 @@ public class URIHelper {
         return doc;
     }
 
-    private static boolean isInternetReachable() {
-        try {
-            //make a URL to a known source
-            URL url = new URL("http://www.google.com");
-
-            //open a connection to that source
-            HttpURLConnection urlConnect = (HttpURLConnection) url.openConnection();
-
-            //trying to retrieve data from the source. If there
-            //is no connection, this line will fail
-            Object objData = urlConnect.getContent();
-
-        } catch (UnknownHostException e) {
-            return false;
-        } catch (IOException e) {
-            return false;
-        }
-        return true;
-    }
-
+//    private static boolean isInternetReachable() {
+//        try {
+//            //make a URL to a known source
+//            URL url = new URL("http://www.google.com");
+//
+//            //open a connection to that source
+//            HttpURLConnection urlConnect = (HttpURLConnection) url.openConnection();
+//
+//            //trying to retrieve data from the source. If there
+//            //is no connection, this line will fail
+//            Object objData = urlConnect.getContent();
+//
+//        } catch (UnknownHostException e) {
+//            return false;
+//        } catch (IOException e) {
+//            return false;
+//        }
+//        return true;
+//    }
     static class SAXErrorHandler implements ErrorHandler {
 
         @Override
