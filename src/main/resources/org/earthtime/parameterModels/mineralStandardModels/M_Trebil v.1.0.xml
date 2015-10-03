@@ -50,9 +50,9 @@
     </MineralStandardUPbRatioModel>
     <MineralStandardUPbRatioModel>
       <name>r238_235s</name>
-      <value>0.000000000000000</value>
+      <value>137.818</value>
       <uncertaintyType>ABS</uncertaintyType>
-      <oneSigma>0</oneSigma>
+      <oneSigma>0.0225</oneSigma>
       <measured>false</measured>
     </MineralStandardUPbRatioModel>
   </ratios>
