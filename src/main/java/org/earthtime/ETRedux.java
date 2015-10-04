@@ -26,13 +26,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import javax.help.SwingHelpUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
-import org.earthtime.UPb_Redux.dateInterpretation.TestTopsoil;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.user.ReduxPersistentState;
-import org.earthtime.UPb_Redux.utilities.JHelpAction;
 import org.earthtime.exceptions.ETWarningDialog;
 
 /**
@@ -92,8 +89,8 @@ public class ETRedux {
         //UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         UIManager.getLookAndFeelDefaults().put("defaultFont", new Font("SansSerif", Font.PLAIN, 12));
 
-        SwingHelpUtilities.setContentViewerUI("org.earthtime.UPb_Redux.utilities.ExternalLinkContentViewerUI");
-        JHelpAction.startHelpWorker("U-Pb_Help.hs");
+//        SwingHelpUtilities.setContentViewerUI("org.earthtime.UPb_Redux.utilities.ExternalLinkContentViewerUI");
+//        JHelpAction.startHelpWorker("U-Pb_Help.hs");
         ETReduxFrame theUPbReduxFrame = null;
 
         try {
@@ -109,7 +106,7 @@ public class ETRedux {
             theUPbReduxFrame.setVisible(true);
         }
         
-        TestTopsoil test = new TestTopsoil();
+////        TestTopsoil test = new TestTopsoil();
 
         // installer etc ref
         // http://www.centerkey.com/mac/java/
