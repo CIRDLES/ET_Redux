@@ -1,5 +1,5 @@
 /*
- * LaserchronElementIISetupUPb
+ * UnivKansasElementIISetupUPb
  *
  * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
  *
@@ -35,6 +35,7 @@ import org.earthtime.Tripoli.massSpecSetups.AbstractMassSpecSetup;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.dataDictionaries.IsotopeNames;
+import org.earthtime.dataDictionaries.MassSpecTypeEnum;
 import org.earthtime.dataDictionaries.RawRatioNames;
 import org.earthtime.isotopes.IsotopesEnum;
 
@@ -42,82 +43,71 @@ import org.earthtime.isotopes.IsotopesEnum;
  *
  * @author James F. Bowring
  */
-public final class LaserchronElementIISetupUPb extends AbstractMassSpecSetup implements //
+public final class UnivKansasElementIISetupUPb extends AbstractMassSpecSetup implements //
         Comparable<AbstractMassSpecSetup>,
         Serializable {
 
-    private static LaserchronElementIISetupUPb instance = null;
-//    private SortedSet<DataModelInterface> genericIsotopeModels;
+    private static UnivKansasElementIISetupUPb instance = null;
 
-    private LaserchronElementIISetupUPb() {
+    private UnivKansasElementIISetupUPb() {
         super();
-        NAME = "Laserchron Element2 Setup";
-        massSpecType = massSpecType.SINGLE;
-        VIRTUAL_COLLECTOR_COUNT = 16;
-        COLLECTOR_DATA_FREQUENCY_MILLISECS = 117; //0.117776667 sec
-//        genericIsotopeModels = null;
+        NAME = "University of Kansas Element II Setup";
+        massSpecType = MassSpecTypeEnum.SINGLE;
+        VIRTUAL_COLLECTOR_COUNT = 10;
+        COLLECTOR_DATA_FREQUENCY_MILLISECS = 214; //0.214410714 sec
         countOfAcquisitions = 0;
-
-        double INTEGRATION_TIME = 0.012; // this is what Noah determined would be best from his data March 2013 was
-        // was COLLECTOR_DATA_FREQUENCY_MILLISECS / 1000.0 / 8.0
 
         isotopeMappingModel = new IsotopeMappingModel();
 
-//        virtualCollectors = new ArrayList<VirtualCollectorModel>(VIRTUAL_COLLECTOR_COUNT);
-//        for (int i = 0; i < VIRTUAL_COLLECTOR_COUNT; i++) {
-//            virtualCollectors.add(new VirtualCollectorModel(i + 1));
-//        }
-        // this section using AbstractCollectorModel is part of a major refactoring from Setp 2012 to handle machine setups
-        // and uncertainty propagation more robustly
-        collectorNameToModelMap = new TreeMap<String, AbstractCollectorModel>();
+        collectorNameToModelMap = new TreeMap<>();
 
-        this.commonLeadCorrectionHighestLevel = "A2";
+        useConstantBackgroundFitFunction = false;
+
+        this.commonLeadCorrectionHighestLevel = "NONE";
 
         AbstractCollectorModel singleCollector = //
                 new IonCounterCollectorModel(//
-                        "Single", new ValueModel("DeadTime", new BigDecimal(12.0e-9, ReduxConstants.mathContext10), //
-                                "ABS", new BigDecimal(1.0e-9, ReduxConstants.mathContext10), BigDecimal.ZERO), //
+                        "Single", //
+                        new ValueModel("DeadTime", //
+                                new BigDecimal(12.0e-9, //
+                                        ReduxConstants.mathContext10), //
+                                "ABS", //
+                                new BigDecimal(1.0e-9, ReduxConstants.mathContext10), //
+                                BigDecimal.ZERO), //
                         IonCounterCollectorModel.CollectedDataStyle.COUNTS);
 
+        // from Noah June 2015
+        //isotope	int. time (s)
+        //206	0.032
+        //207	0.080
+        //208	0.016
+        //232	0.020
+        //238	0.020
+        
         isotopeMappingModel.getIsotopeToCollectorMap().put(//
                 IsotopesEnum.U238, singleCollector);
         isotopeMappingModel.getIsotopeToIntegrationTimeMap().put( //
-                IsotopesEnum.U238, INTEGRATION_TIME);
-
-        isotopeMappingModel.getIsotopeToCollectorMap().put(//
-                IsotopesEnum.U235, singleCollector);
-        isotopeMappingModel.getIsotopeToIntegrationTimeMap().put( //
-                IsotopesEnum.U235, INTEGRATION_TIME);
+                IsotopesEnum.U238, 0.020);
 
         isotopeMappingModel.getIsotopeToCollectorMap().put(//
                 IsotopesEnum.Th232, singleCollector);
         isotopeMappingModel.getIsotopeToIntegrationTimeMap().put( //
-                IsotopesEnum.Th232, INTEGRATION_TIME);
+                IsotopesEnum.Th232, 0.020);
 
         isotopeMappingModel.getIsotopeToCollectorMap().put(//
                 IsotopesEnum.Pb208, singleCollector);
         isotopeMappingModel.getIsotopeToIntegrationTimeMap().put( //
-                IsotopesEnum.Pb208, INTEGRATION_TIME);
+                IsotopesEnum.Pb208, 0.016);
 
         isotopeMappingModel.getIsotopeToCollectorMap().put(//
                 IsotopesEnum.Pb207, singleCollector);
         isotopeMappingModel.getIsotopeToIntegrationTimeMap().put( //
-                IsotopesEnum.Pb207, INTEGRATION_TIME);
+                IsotopesEnum.Pb207, 0.080);
 
         isotopeMappingModel.getIsotopeToCollectorMap().put(//
                 IsotopesEnum.Pb206, singleCollector);
         isotopeMappingModel.getIsotopeToIntegrationTimeMap().put( //
-                IsotopesEnum.Pb206, INTEGRATION_TIME);
-
-        isotopeMappingModel.getIsotopeToCollectorMap().put(//
-                IsotopesEnum.Pb204, singleCollector);
-        isotopeMappingModel.getIsotopeToIntegrationTimeMap().put( //
-                IsotopesEnum.Pb204, INTEGRATION_TIME);
-
-        isotopeMappingModel.getIsotopeToCollectorMap().put(//
-                IsotopesEnum.Hg202, singleCollector);
-        isotopeMappingModel.getIsotopeToIntegrationTimeMap().put( //
-                IsotopesEnum.Hg202, INTEGRATION_TIME);
+                IsotopesEnum.Pb206, 0.032);
 
         collectorNameToModelMap.put("Single", singleCollector);
 
@@ -127,9 +117,9 @@ public final class LaserchronElementIISetupUPb extends AbstractMassSpecSetup imp
      *
      * @return
      */
-    public static LaserchronElementIISetupUPb getInstance() {
+    public static UnivKansasElementIISetupUPb getInstance() {
         if (instance == null) {
-            instance = new LaserchronElementIISetupUPb();
+            instance = new UnivKansasElementIISetupUPb();
         }
         return instance;
     }
@@ -150,165 +140,89 @@ public final class LaserchronElementIISetupUPb extends AbstractMassSpecSetup imp
 
         countOfAcquisitions = intensitiesScan.length;
 
+        return rawRatiosFactoryRevised();
+    }
+
+    /**
+     * yRevised(); }
+     *
+     * /**
+     *
+     *
+     * @param intensitiesScan
+     * @param isStandard the value of isStandard
+     * @param fractionID the value of fractionID
+     * @param usingFullPropagation the value of usingFullPropagation
+     * @param tripoliFraction the value of tripoliFraction
+     * @return the
+     * java.util.SortedSet<org.earthtime.Tripoli.dataModels.DataModelInterface>
+     */
+    public SortedSet<DataModelInterface> rawRatiosFactoryRevised() {
+
         virtualCollectors = new ArrayList<>(VIRTUAL_COLLECTOR_COUNT);
         for (int i = 0; i < VIRTUAL_COLLECTOR_COUNT; i++) {
             virtualCollectors.add(new VirtualCollectorModel(i + 1));
         }
 
         // background
-        virtualCollectors.get(8 - 1).updateCollector(true);
-        virtualCollectors.get(7 - 1).updateCollector(true);
-        virtualCollectors.get(6 - 1).updateCollector(true);
         virtualCollectors.get(5 - 1).updateCollector(true);
         virtualCollectors.get(4 - 1).updateCollector(true);
         virtualCollectors.get(3 - 1).updateCollector(true);
         virtualCollectors.get(2 - 1).updateCollector(true);
         virtualCollectors.get(1 - 1).updateCollector(true);
         // on peak
-        virtualCollectors.get(16 - 1).updateCollector(false);
-        virtualCollectors.get(15 - 1).updateCollector(false);
-        virtualCollectors.get(14 - 1).updateCollector(false);
-        virtualCollectors.get(13 - 1).updateCollector(false);
-        virtualCollectors.get(12 - 1).updateCollector(false);
-        virtualCollectors.get(11 - 1).updateCollector(false);
         virtualCollectors.get(10 - 1).updateCollector(false);
         virtualCollectors.get(9 - 1).updateCollector(false);
+        virtualCollectors.get(8 - 1).updateCollector(false);
+        virtualCollectors.get(7 - 1).updateCollector(false);
+        virtualCollectors.get(6 - 1).updateCollector(false);
 
         // isotope models
-        genericIsotopeModels = new TreeSet<DataModelInterface>();
+        genericIsotopeModels = new TreeSet<>();
         U238 = new RawIntensityDataModel( //
-                IsotopeNames.U238, virtualCollectors.get(8 - 1), virtualCollectors.get(16 - 1), COLLECTOR_DATA_FREQUENCY_MILLISECS,//
+                IsotopeNames.U238, virtualCollectors.get(5 - 1), virtualCollectors.get(10 - 1), COLLECTOR_DATA_FREQUENCY_MILLISECS,//
                 isotopeMappingModel.getIsotopeToCollectorMap().get(IsotopesEnum.U238));
         genericIsotopeModels.add(U238);
         isotopeToRawIntensitiesMap.put(IsotopesEnum.U238, U238);
 
-        U235 = new RawIntensityDataModel( //
-                IsotopeNames.U235, virtualCollectors.get(7 - 1), virtualCollectors.get(15 - 1), COLLECTOR_DATA_FREQUENCY_MILLISECS,//
-                isotopeMappingModel.getIsotopeToCollectorMap().get(IsotopesEnum.U235));
-        genericIsotopeModels.add(U235);
-        isotopeToRawIntensitiesMap.put(IsotopesEnum.U235, U235);
-
         Th232 = new RawIntensityDataModel( //
-                IsotopeNames.Th232, virtualCollectors.get(6 - 1), virtualCollectors.get(14 - 1), COLLECTOR_DATA_FREQUENCY_MILLISECS,//
+                IsotopeNames.Th232, virtualCollectors.get(4 - 1), virtualCollectors.get(9 - 1), COLLECTOR_DATA_FREQUENCY_MILLISECS,//
                 isotopeMappingModel.getIsotopeToCollectorMap().get(IsotopesEnum.Th232));
         genericIsotopeModels.add(Th232);
         isotopeToRawIntensitiesMap.put(IsotopesEnum.Th232, Th232);
 
         Pb208 = new RawIntensityDataModel( //
-                IsotopeNames.Pb208, virtualCollectors.get(5 - 1), virtualCollectors.get(13 - 1), COLLECTOR_DATA_FREQUENCY_MILLISECS,//
+                IsotopeNames.Pb208, virtualCollectors.get(3 - 1), virtualCollectors.get(8 - 1), COLLECTOR_DATA_FREQUENCY_MILLISECS,//
                 isotopeMappingModel.getIsotopeToCollectorMap().get(IsotopesEnum.Pb208));
         genericIsotopeModels.add(Pb208);
         isotopeToRawIntensitiesMap.put(IsotopesEnum.Pb208, Pb208);
 
         Pb207 = new RawIntensityDataModel( //
-                IsotopeNames.Pb207, virtualCollectors.get(4 - 1), virtualCollectors.get(12 - 1), COLLECTOR_DATA_FREQUENCY_MILLISECS,//
+                IsotopeNames.Pb207, virtualCollectors.get(2 - 1), virtualCollectors.get(7 - 1), COLLECTOR_DATA_FREQUENCY_MILLISECS,//
                 isotopeMappingModel.getIsotopeToCollectorMap().get(IsotopesEnum.Pb207));
         genericIsotopeModels.add(Pb207);
         isotopeToRawIntensitiesMap.put(IsotopesEnum.Pb207, Pb207);
 
         Pb206 = new RawIntensityDataModel( //
-                IsotopeNames.Pb206, virtualCollectors.get(3 - 1), virtualCollectors.get(11 - 1), COLLECTOR_DATA_FREQUENCY_MILLISECS,//
+                IsotopeNames.Pb206, virtualCollectors.get(1 - 1), virtualCollectors.get(6 - 1), COLLECTOR_DATA_FREQUENCY_MILLISECS,//
                 isotopeMappingModel.getIsotopeToCollectorMap().get(IsotopesEnum.Pb206));
         genericIsotopeModels.add(Pb206);
         isotopeToRawIntensitiesMap.put(IsotopesEnum.Pb206, Pb206);
 
-        Pb204 = new RawIntensityDataModel( //
-                IsotopeNames.Pb204, virtualCollectors.get(2 - 1), virtualCollectors.get(10 - 1), COLLECTOR_DATA_FREQUENCY_MILLISECS,//
-                isotopeMappingModel.getIsotopeToCollectorMap().get(IsotopesEnum.Pb204));
-        genericIsotopeModels.add(Pb204);
-        isotopeToRawIntensitiesMap.put(IsotopesEnum.Pb204, Pb204);
-
-        Hg202 = new RawIntensityDataModel( //
-                IsotopeNames.Hg202, virtualCollectors.get(1 - 1), virtualCollectors.get(9 - 1), COLLECTOR_DATA_FREQUENCY_MILLISECS,//
-                isotopeMappingModel.getIsotopeToCollectorMap().get(IsotopesEnum.Hg202));
-        genericIsotopeModels.add(Hg202);
-        isotopeToRawIntensitiesMap.put(IsotopesEnum.Hg202, Hg202);
-
-        // sept 2012
         isotopeMappingModel.setIsotopeToRawIntensitiesMap(isotopeToRawIntensitiesMap);
 
         // raw ratios
-        // oct 2012 defaults for corrections are set true but lat missing ratio at standard will override 
-        // in TripoliFraction.updateRawRatioDataModelsWithPrimaryStandardValue if necessary
-        rawRatios = new TreeSet<DataModelInterface>();
+        rawRatios = new TreeSet<>();
         DataModelInterface r206_238w = new RawRatioDataModel(RawRatioNames.r206_238w, Pb206, U238, true, false, COLLECTOR_DATA_FREQUENCY_MILLISECS);
         rawRatios.add(r206_238w);
         DataModelInterface r206_207w = new RawRatioDataModel(RawRatioNames.r206_207w, Pb206, Pb207, true, false, COLLECTOR_DATA_FREQUENCY_MILLISECS);
         rawRatios.add(r206_207w);
-        DataModelInterface r206_204w = new RawRatioDataModel(RawRatioNames.r206_204w, Pb206, Pb204, false, false, COLLECTOR_DATA_FREQUENCY_MILLISECS);
-        rawRatios.add(r206_204w);
         DataModelInterface r208_232w = new RawRatioDataModel(RawRatioNames.r208_232w, Pb208, Th232, true, false, COLLECTOR_DATA_FREQUENCY_MILLISECS);
         rawRatios.add(r208_232w);
-        // special case to handle mercury isotope
-        rawRatios.add(new RawRatioDataModel(RawRatioNames.r202_202w, Hg202, Hg202, false, false, COLLECTOR_DATA_FREQUENCY_MILLISECS));
-
-        processFractionRawRatios(intensitiesScan, isStandard, fractionID, usingFullPropagation, null);
 
         return rawRatios;
     }
 
-//    @Override
-//    public void calculateCorrectionForIsobaricInterference(//
-//            DataModelInterface Hg202, DataModelInterface Pb204){
-//        
-//        // update dec 2012
-//        // isobaric correction is across both background and onpeak
-//        // the graph of intensities for Pb204 will show the original data in green and the isobaric corrected in black
-//        // it is the corrected data that will be background fitted
-//        
-//        double[] Hg202BackgroundIntensities = ((RawIntensityDataModel)Hg202).getBackgroundVirtualCollector().getIntensities();
-//        double[] Hg202OnPeakIntensities = ((RawIntensityDataModel)Hg202).getOnPeakVirtualCollector().getIntensities();
-//        
-//        double[] Hg202BackgroundCorrections = new double[Hg202BackgroundIntensities.length];
-//        double[] Hg202OnPeakCorrections = new double[Hg202OnPeakIntensities.length];
-//        
-//        double[] Pb204BackgroundIntensities = ((RawIntensityDataModel)Pb204).getBackgroundVirtualCollector().getIntensities();
-//        double[] Pb204OnPeakIntensities = ((RawIntensityDataModel)Pb204).getOnPeakVirtualCollector().getIntensities();
-//        
-//        // the correction value used is natural 204/202 ratio = 4.346, 
-//        // TODO: which will eventually be a user-parameter
-//        
-//        for (int i = 0; i < Hg202BackgroundCorrections.length; i++) {
-//            Hg202BackgroundCorrections[i] = Hg202BackgroundIntensities[i] / r202Hg_204Hg.getValue().doubleValue();
-//            // now change the intensities by the correction to prepare for function fitting
-//            // the green "old intensities" will be caluted by adding these back together
-//            Pb204BackgroundIntensities[i] = Pb204BackgroundIntensities[i] - Hg202BackgroundCorrections[i];
-//        }
-//        
-//        for (int i = 0; i < Hg202OnPeakCorrections.length; i++) {
-//            Hg202OnPeakCorrections[i] = Hg202OnPeakIntensities[i] / r202Hg_204Hg.getValue().doubleValue();
-//            // now change the intensities by the correction to prepare for function fitting
-//            // the green "old intensities" will be caluted by adding these back together
-//            Pb204OnPeakIntensities[i] = Pb204OnPeakIntensities[i] - Hg202OnPeakCorrections[i];
-//        }
-//        
-//        // Pb204 background
-//        ((RawIntensityDataModel)Pb204).getBackgroundVirtualCollector().setIntensityCorrections(Arrays.copyOf(Hg202BackgroundCorrections, Hg202BackgroundCorrections.length));
-//        ((RawIntensityDataModel)Pb204).getBackgroundVirtualCollector().setIntensities(Arrays.copyOf(Pb204BackgroundIntensities, Pb204BackgroundIntensities.length));
-//        // Pb204 onPeak
-//        ((RawIntensityDataModel)Pb204).getOnPeakVirtualCollector().setIntensityCorrections(Arrays.copyOf(Hg202OnPeakCorrections, Hg202OnPeakCorrections.length));
-//        ((RawIntensityDataModel)Pb204).getOnPeakVirtualCollector().setIntensities(Arrays.copyOf(Pb204OnPeakIntensities, Pb204OnPeakIntensities.length));
-//   }
-//    @Override
-//    public void assignGainsToCollectors ( Map<String, Double> collectorNameToRelativeGainsMap ) {
-//       // throw new UnsupportedOperationException( "Not supported yet." );
-//    }
-//
-//    @Override
-//    public void assignGainsUnctToCollectors ( Map<String, Double> collectorNameToRelativeGainsUnctMap ) {
-//        //throw new UnsupportedOperationException( "Not supported yet." );
-//    }
-//
-//    @Override
-//    public void assignDeadTimesToCollectors ( Map<String, Double> collectorNameToDeadTimesMap ) {
-//        //throw new UnsupportedOperationException( "Not supported yet." );
-//    }
-//
-//    @Override
-//    public void assignDeadTimesUnctToCollectors ( Map<String, Double> collectorNameToDeadTimesMap ) {
-//        //throw new UnsupportedOperationException( "Not supported yet." );
-//    }
-//
     /**
      *
      * @param integrationTime

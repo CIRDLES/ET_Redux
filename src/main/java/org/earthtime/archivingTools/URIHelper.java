@@ -239,6 +239,7 @@ public class URIHelper {
                 URL url = new URL("http://geochron.org");
                 System.out.println(url.getHost());
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                con.setReadTimeout(5000);
                 con.connect();
                 if (con.getResponseCode() == 200) {
 
@@ -273,6 +274,8 @@ public class URIHelper {
                     new ETWarningDialog("ET_Redux could not find an Internet connection and will not validate XML files until restart.").setVisible(true);
                 }
             } catch (IOException iOException) {
+                CONNECTED_TO_INTERNET = false;
+                new ETWarningDialog("ET_Redux could not find an Internet connection and will not validate XML files until restart.").setVisible(true);
             }
         }
 
