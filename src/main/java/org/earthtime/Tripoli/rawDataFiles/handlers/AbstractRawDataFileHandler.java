@@ -328,7 +328,7 @@ public abstract class AbstractRawDataFileHandler implements //
                 primaryStandard.setFractionsSampleFlags();
                 tripoliSamples.add(primaryStandard);
             } else {
-            // walk names and collect part to left of "_" or "-" or "." if present and
+                // walk names and collect part to left of "_" or "-" or "." if present and
                 // add to set, yielding unique sample naming scheme used by analyst
                 Set<String> fractionNames = new HashSet<>();
                 for (TripoliFraction tf : tripoliFractions) {
@@ -352,14 +352,14 @@ public abstract class AbstractRawDataFileHandler implements //
                     tripoliSamplesSorted.add(tripoliSamplesMap.get(samplesMapKeySetIterator.next()));
                 }
 
-            // time for some magic
+                // time for some magic
                 // if there is only one sample so far, we want to see if we can pick out the primary standard
                 // in the case of Hanchar, the solution is to make the first fraction the standard and let the
                 // user drag and drop
                 // for Gehrels, we generally have one standard already picked
-                // identify first sample = primary standar
+                // identify first sample = primary standard
                 AbstractTripoliSample firstSample;
-            //if ( tripoliSamplesSorted.size() == 1 ) {
+                //if ( tripoliSamplesSorted.size() == 1 ) {
                 // move all but the first fraction (must be a standard) and any with a standard flag of false
                 // to a second sample
                 firstSample = tripoliSamplesSorted.first();
@@ -385,7 +385,7 @@ public abstract class AbstractRawDataFileHandler implements //
                     tripoliSamplesSorted.add(unknownSample);
                 }
 
-            //}
+                //}
                 // may 2013 ... now need to gather all standards into the first sample if there were more than one original sample
                 if (tripoliSamplesSorted.size() >= 2) {
                     Iterator<AbstractTripoliSample> tripoliSamplesSortedIterator = tripoliSamplesSorted.iterator();
@@ -414,7 +414,7 @@ public abstract class AbstractRawDataFileHandler implements //
 
                 }
 
-            //replace first unknown sample with a standardSample as this is the default primary standard
+                //replace first unknown sample with a standardSample as this is the default primary standard
                 // until / unless user changes on return      
                 firstSample = tripoliSamplesSorted.first();
                 AbstractTripoliSample primaryStandard = new TripoliPrimaryStandardSample(firstSample.getSampleName());
@@ -444,6 +444,9 @@ public abstract class AbstractRawDataFileHandler implements //
         }
         if (index < 0) {
             index = fractionName.lastIndexOf(".");
+        }
+        if (index < 0) {
+            index = fractionName.indexOf(" ");
         }
         // lets try splitting on first number as in G120
         if (index < 0) {
