@@ -257,7 +257,7 @@ public class RawRatioDataModel //
         // refactor to improve performance
         // Since SLogRatioX_Y is calculated on the first pass, we can merely
         // toggle rows and columns per dagtaactive map instead of recalculating everything
-        // make the current version transient and save only the full
+        // make the current version transient and save only the full        
         if (SlogRatioX_Yfull == null) {
             // create all true dataActiveMap for initial pass
             boolean[] allTrueDataActiveMap = new boolean[dataActiveMap.length];
@@ -455,7 +455,7 @@ public class RawRatioDataModel //
                             activeData, //
                             null, //this is mean so x does not matter
                             logDifferencesFromWeightedMean,//
-                            matrixSfCopy.plus(getSlogRatioX_Y()),//
+matrixSfCopy.plus(getSlogRatioX_Y(false)),//
                             false);
 
             // algorithmForMEAN contains both the non OD and OD versions
@@ -478,7 +478,7 @@ public class RawRatioDataModel //
                                 activeData, //
                                 activeXvalues, //
                                 logDifferencesFromWeightedMean,//
-                                matrixSfCopy.plus(getSlogRatioX_Y()),//
+matrixSfCopy.plus(getSlogRatioX_Y(false)),//
                                 false);
 
                 fOfX_MEAN_OD = fOfX_MEAN;
@@ -1496,10 +1496,11 @@ public class RawRatioDataModel //
     }
 
     /**
-     * @return the SlogRatioX_Y
+     * @param resetMatrix the value of resetMatrix
+     * @return the Jama.Matrix
      */
-    public Matrix getSlogRatioX_Y() {
-        if (SlogRatioX_Y == null) {
+    public Matrix getSlogRatioX_Y(boolean resetMatrix) {
+        if ((resetMatrix) || (SlogRatioX_Y == null)) {
             calculateSlogRatioX_Y();
         }
         return SlogRatioX_Y;

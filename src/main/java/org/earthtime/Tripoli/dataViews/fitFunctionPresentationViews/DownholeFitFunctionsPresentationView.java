@@ -77,7 +77,7 @@ public class DownholeFitFunctionsPresentationView extends AbstractFitFunctionPre
             if (!((TripoliSessionRawDataView) sampleSessionDataView).//
                     getSessionFractionationCalculator().isCalculatedInitialFitFunctions()) {
                 ((TripoliSessionRawDataView) sampleSessionDataView).//
-                        getSessionFractionationCalculator().calculateDownholeFitSummariesForPrimaryStandard();
+                        getSessionFractionationCalculator().calculateDownholeFitSummariesForPrimaryStandard(false);
             }
 
             createFitFunctionPanes(downholeFractionationDataModel, true);

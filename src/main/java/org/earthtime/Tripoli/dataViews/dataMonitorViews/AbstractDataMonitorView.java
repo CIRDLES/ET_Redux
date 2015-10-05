@@ -587,7 +587,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
     }
 
     @Override
-    public void calculateDownholeFitSummariesForPrimaryStandard() {
+    public void calculateDownholeFitSummariesForPrimaryStandard(boolean resetMatrices) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
