@@ -53,11 +53,13 @@ import org.earthtime.Tripoli.massSpecSetups.multiCollector.NUPlasma.GehrelsNUPla
 import org.earthtime.Tripoli.massSpecSetups.multiCollector.NUPlasma.GehrelsNUPlasmaSetupUPbFarTRA;
 import org.earthtime.Tripoli.massSpecSetups.multiCollector.NUPlasma.GehrelsNUPlasmaSetupUPbIonCounter;
 import org.earthtime.Tripoli.massSpecSetups.singleCollector.Agilent7700.KoslerAgilent7700SetupUPb;
+import org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan.LaserchronElementIISetupUPb;
 import org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan.MemUnivNewfoundlandElementIISetupUPb;
 import org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan.UnivKansasElementIISetupUPb;
 import org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan.WashStateElementIISetupUPb;
 import org.earthtime.Tripoli.rawDataFiles.handlers.AbstractRawDataFileHandler;
 import org.earthtime.Tripoli.rawDataFiles.handlers.KoslerAgilent7700FileHandler;
+import org.earthtime.Tripoli.rawDataFiles.handlers.LaserchronElementIIFileHandler;
 import org.earthtime.Tripoli.rawDataFiles.handlers.MemUnivNewfoundlandElementIIFileHandler;
 import org.earthtime.Tripoli.rawDataFiles.handlers.NUPlasmaMultiCollFaradayFileHandler;
 import org.earthtime.Tripoli.rawDataFiles.handlers.NUPlasmaMultiCollFaradayTRAFileHandler;
@@ -67,6 +69,7 @@ import org.earthtime.Tripoli.rawDataFiles.handlers.WashStateElementIISingleCollF
 import org.earthtime.Tripoli.rawDataFiles.templates.AbstractRawDataFileTemplate;
 import org.earthtime.Tripoli.rawDataFiles.templates.HancharMemUnivNewfoundlandElementII_RawDataTemplate;
 import org.earthtime.Tripoli.rawDataFiles.templates.Kosler_Agilent7700_RawDataTemplate;
+import org.earthtime.Tripoli.rawDataFiles.templates.LaserchronElementII_RawDataTemplate;
 import org.earthtime.Tripoli.rawDataFiles.templates.MoellerUnivKansasElementII_RawDataTemplate;
 import org.earthtime.Tripoli.rawDataFiles.templates.NUPlasmaMultiCollFaradayRawDataTemplate;
 import org.earthtime.Tripoli.rawDataFiles.templates.NUPlasmaMultiCollFaradayTRARawDataTemplate;
@@ -179,6 +182,17 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
 
         knownRawDataFileHandlers.add(theNUPlasmaMultiCollIonCounterFileHandler);
 
+        // Element 2 Arizona Laserchron
+        AbstractRawDataFileHandler theLaserchronElementIIFileHandler = //
+                LaserchronElementIIFileHandler.getInstance();
+        theLaserchronElementIIFileHandler.getAvailableMassSpecSetups()//
+                .add(LaserchronElementIISetupUPb.getInstance());
+
+        theLaserchronElementIIFileHandler.getAvailableRawDataFileTemplates()//
+                .add(LaserchronElementII_RawDataTemplate.getInstance());
+ 
+        knownRawDataFileHandlers.add(theLaserchronElementIIFileHandler);
+
         // Element 2 Washington State
         AbstractRawDataFileHandler theThermoFinniganElement2SingleCollFileHandler = //
                 WashStateElementIISingleCollFileHandler.getInstance();
@@ -223,8 +237,8 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
                 .add(MoellerUnivKansasElementII_RawDataTemplate.getInstance());
 
         knownRawDataFileHandlers.add(theUnivKansasElementIIFileHandler);
-        
-                // September 2015 John Hanchar ElementII at U Newfoundland
+
+        // September 2015 John Hanchar ElementII at U Newfoundland
         AbstractRawDataFileHandler theMemUnivNewfoundlandElementIIFileHandler = //
                 MemUnivNewfoundlandElementIIFileHandler.getInstance();
         theMemUnivNewfoundlandElementIIFileHandler.getAvailableMassSpecSetups()//

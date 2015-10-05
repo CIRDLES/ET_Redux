@@ -1,5 +1,5 @@
 /*
- * UnivKansasElementIIFileHandler
+ * LaserchronElementIIFileHandler
  *
  * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
  *
@@ -17,13 +17,16 @@
  */
 package org.earthtime.Tripoli.rawDataFiles.handlers;
 
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -31,40 +34,43 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
-import org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan.UnivKansasElementIISetupUPb;
+import org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan.LaserchronElementIISetupUPb;
+import org.earthtime.UPb_Redux.utilities.comparators.IntuitiveStringComparator;
 import org.earthtime.archivingTools.URIHelper;
+import org.earthtime.pythonUtilities.ElementII_DatFileConverter;
 import org.earthtime.utilities.FileHelper;
 
 /**
  *
  * @author James F. Bowring
  */
-public class UnivKansasElementIIFileHandler extends AbstractRawDataFileHandler implements //
+public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler implements //
         Comparable<AbstractRawDataFileHandler>,
         Serializable {
 
-    private static UnivKansasElementIIFileHandler instance = null;
+    private static LaserchronElementIIFileHandler instance = null;
     private File[] analysisFiles;
+    private String[] fractionNames;
 
     /**
      *
      * @param massSpec
      * @param rawDataFileTemplate
      */
-    private UnivKansasElementIIFileHandler() {
+    private LaserchronElementIIFileHandler() {
 
         super();
-        NAME = "Univ Kansas Element II File";
-        aboutInfo = "Details: This is the Moeller protocol for an ElementII.";
+        NAME = "Laserchron Element II File";
+        aboutInfo = "Details: This is the Laserchron multi-file protocol for an ElementII.";
     }
 
     /**
      *
      * @return
      */
-    public static UnivKansasElementIIFileHandler getInstance() {
+    public static LaserchronElementIIFileHandler getInstance() {
         if (instance == null) {
-            instance = new UnivKansasElementIIFileHandler();//massSpec, rawDataFileTemplate );
+            instance = new LaserchronElementIIFileHandler();//massSpec, rawDataFileTemplate );
         }
         return instance;
     }
@@ -76,10 +82,22 @@ public class UnivKansasElementIIFileHandler extends AbstractRawDataFileHandler i
      */
     @Override
     public File validateAndGetHeaderDataFromRawIntensityFile(File tripoliRawDataFolder) {
-        String dialogTitle = "Select a Univ Kansas Element II Raw Data Folder:";
+        String dialogTitle = "Select a Laserchron Element II Raw Data Folder:";
 
         rawDataFile = FileHelper.AllPlatformGetFolder(dialogTitle, tripoliRawDataFolder);
         return rawDataFile;
+    }
+
+    class FractionFileNameNameComparator implements Comparator<File> {
+
+        public FractionFileNameNameComparator() {
+        }
+
+        @Override
+        public int compare(File f1, File f2) {
+            Comparator<String> intuitiveString = new IntuitiveStringComparator<>();
+            return intuitiveString.compare(f1.getName(), f2.getName());
+        }
     }
 
     /**
@@ -93,17 +111,42 @@ public class UnivKansasElementIIFileHandler extends AbstractRawDataFileHandler i
     @Override
     public File getAndLoadRawIntensityDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions) {
 
-        // ElementII has folder of .FIN2 files plus INF DAT and TXT files for each acquisition
-        // also there is a FIN file containing naming and ordering of samples
+        // ElementII has folder of .dat files 
         analysisFiles = rawDataFile.listFiles((File dir, String name) -> {
-            return name.toLowerCase().endsWith(".fin2");
+            return name.toLowerCase().endsWith(".dat");
         });
 
+        Arrays.sort(analysisFiles, new FractionFileNameNameComparator());
+
         if (analysisFiles.length > 0) {
-            String onPeakFileContents = URIHelper.getTextFromURI(analysisFiles[0].getAbsolutePath());
+            String onPeakFileContents = URIHelper.getTextFromURI(analysisFiles[0].getAbsolutePath()).substring(0, 32);
             if (isValidRawDataFileType(analysisFiles[0]) //
                     && //
                     areKeyWordsPresent(onPeakFileContents)) {
+
+                // open and process ".scancsv" file that has a fraction name for each file
+                File[] scancsvFiles = rawDataFile.listFiles((File dir, String name) -> {
+                    return name.toLowerCase().endsWith(".scancsv");
+                });
+
+                if (scancsvFiles.length == 0) {
+                    fractionNames = new String[0];
+                } else {
+                    // read the first (and assumedly only) scancsv file in the folder
+                    List<String> fractionData = null;
+                    try {
+                        fractionData = Files.readLines(scancsvFiles[0], Charsets.ISO_8859_1);
+                    } catch (IOException iOException) {
+                    }
+
+                    // skip column names in row 0
+                    fractionNames = new String[fractionData.size() - 1];
+                    for (int i = 1; i < fractionData.size(); i++) {
+                        String[] lineContents = fractionData.get(i).replace("\"", "").split(",");
+                        fractionNames[i - 1] = lineContents[1];
+                    }
+                }
+
                 // create fractions from raw data and perform corrections and calculate ratios
                 tripoliFractions = loadRawDataFile(loadDataTask, usingFullPropagation, leftShadeCount, 0);
             }
@@ -125,7 +168,8 @@ public class UnivKansasElementIIFileHandler extends AbstractRawDataFileHandler i
      * @return
      */
     @Override
-    protected boolean areKeyWordsPresent(String fileContents) {
+    protected boolean areKeyWordsPresent(String fileContents
+    ) {
         boolean retVal = true;
 
         retVal = retVal && fileContents.contains(getRawDataFileTemplate().getStartOfFirstLine().trim());
@@ -139,7 +183,8 @@ public class UnivKansasElementIIFileHandler extends AbstractRawDataFileHandler i
      * @return
      */
     @Override
-    public boolean isStandardFractionID(String fractionID) {
+    public boolean isStandardFractionID(String fractionID
+    ) {
         boolean retVal = false;
         for (String standardID : getRawDataFileTemplate().getStandardIDs()) {
             retVal = retVal || fractionID.toUpperCase().contains(standardID.toUpperCase());
@@ -163,120 +208,163 @@ public class UnivKansasElementIIFileHandler extends AbstractRawDataFileHandler i
 
         SortedSet myTripoliFractions = new TreeSet<>();
 
-        // assume we are golden        
+        // assume we are golden   
+        int standardIncrementer = 1;
         for (int f = 0; f < analysisFiles.length; f++) {
 
             if (loadDataTask.isCancelled()) {
                 break;
             }
             loadDataTask.firePropertyChange("progress", 0, ((100 * f) / analysisFiles.length));
-            String fractionID = analysisFiles[f].getName().toUpperCase().replace(".FIN2", "");
 
-            // hard-wired april 2015
-            boolean isStandard = false;
-            if (f < 3) {
-                isStandard = true;
-            } else if ((analysisFiles.length - f) < 4) {
-                isStandard = true;
+            // need to test for empty fractionnames
+            String fractionID = analysisFiles[f].getName().replace(".dat", "");
+            if (fractionNames.length > 0) {
+                fractionID = fractionNames[f];
+            }
+            // needs to be more robust
+            boolean isStandard = (fractionID.compareToIgnoreCase(rawDataFileTemplate.getStandardIDs()[0]) == 0);
+            // number the standards
+            if (rawDataFileTemplate.standardIsKnown(fractionID)) {
+                fractionID = fractionID + "-" + String.valueOf(standardIncrementer);
+                standardIncrementer++;
             }
 
-            // get file contents
-            String fractionFileContents = URIHelper.getTextFromURI(analysisFiles[f].getAbsolutePath());
-            String[] fractionFileRows = fractionFileContents.split("\n");
+            // ************************************************************************************************
+            // Laserchron uses Philip Wenig's Python routine to extract data from
+            // ElementII .dat files and then pre-processes counts before passing to
+            // fraction intake below
+            String[][] extractedData = ElementII_DatFileConverter.readDatFile(analysisFiles[f]);
+            // within each row
+            // index 0 = scannumber; 1 = time stamp; 2 = ACF; followed by order of groups = 202  204  206	Pb207	Pb208	Th232	U238
+            // each acquisition file contains background followed by peak followed by background
+            // initial solution is to hard wire the first background and peak per Gehrels
+            // later we will give user interactive tools to pick them out
+            ArrayList<double[]> backgroundAcquisitions = new ArrayList<>();
+            ArrayList<double[]> peakAcquisitions = new ArrayList<>();
 
-            // first get time stamp for file in row 2
-            // form = Friday, February 06,2015 16:57:54
-            String timeStampFromRow2[] = fractionFileRows[1].split(",");
+            int hardwiredEndOfBackground = 24;
+            int assumedBackgrounRowCount = hardwiredEndOfBackground - rawDataFileTemplate.getBlockStartOffset();
+            // process time stamp from first scan as time stamp of file and background
+            long fractionBackgroundTimeStamp = calculateTimeStamp(extractedData[0][1]);
+            // process time stamp of first peak reading
+            long fractionPeakTimeStamp = calculateTimeStamp(extractedData[hardwiredEndOfBackground + 1][1]);
 
-            String fractionDate = //
-                    timeStampFromRow2[1].trim() + " " // month day,
-                    + timeStampFromRow2[2].trim() // year HH:mm:ss
-                    ;
+            for (int i = rawDataFileTemplate.getBlockStartOffset(); i < rawDataFileTemplate.getBlockSize(); i++) {
+                // 202  204  206	Pb207	Pb208	Th232	U238
+                if (i < hardwiredEndOfBackground) {
+                    double[] backgroundIntensities = new double[7];
+                    backgroundAcquisitions.add(backgroundIntensities);
+                    backgroundIntensities[0] = calcAvgPulseOrAnalog(3, 6, extractedData[i]);
+                    backgroundIntensities[1] = calcAvgPulseOrAnalog(8, 11, extractedData[i]);
+                    backgroundIntensities[2] = calcAvgPulseThenAnalog(13, 16, extractedData[i]);
+                    backgroundIntensities[3] = calcAvgPulseThenAnalog(22, 25, extractedData[i]);
+                    backgroundIntensities[4] = calcAvgPulseThenAnalog(31, 34, extractedData[i]);
+                    backgroundIntensities[5] = calcAvgPulseThenAnalog(40, 43, extractedData[i]);
+                    backgroundIntensities[6] = calcAvgPulseThenAnalog(49, 52, extractedData[i]);
+                } else if (i >= (hardwiredEndOfBackground)) {
+                    double[] peakIntensities = new double[7];
+                    peakAcquisitions.add(peakIntensities);
+                    peakIntensities[0] = calcAvgPulseOrAnalog(3, 6, extractedData[i]);
+                    peakIntensities[1] = calcAvgPulseOrAnalog(8, 11, extractedData[i]);
+                    peakIntensities[2] = calcAvgPulseThenAnalog(13, 16, extractedData[i]);
+                    peakIntensities[3] = calcAvgPulseThenAnalog(22, 25, extractedData[i]);
+                    peakIntensities[4] = calcAvgPulseThenAnalog(31, 34, extractedData[i]);
+                    peakIntensities[5] = calcAvgPulseThenAnalog(40, 43, extractedData[i]);
+                    peakIntensities[6] = calcAvgPulseThenAnalog(49, 52, extractedData[i]);
+                }
+            }  // i loop
 
-            // Get the default MEDIUM/SHORT DateFormat
-            SimpleDateFormat fractionTimeFormat = new SimpleDateFormat();
-            fractionTimeFormat.applyPattern("MMMMM dd yyyy HH:mm:ss");
+            TripoliFraction tripoliFraction = //                           
+                    new TripoliFraction( //
+                            fractionID, //
+                            massSpec.getCommonLeadCorrectionHighestLevel(), //
+                            isStandard,
+                            fractionBackgroundTimeStamp, //
+                            fractionPeakTimeStamp,
+                            peakAcquisitions.size());
 
-            // Parse the fractionDateValue
-            Date fractionDateValue;
-            try {
-                fractionDateValue = fractionTimeFormat.parse(fractionDate);
+            SortedSet<DataModelInterface> rawRatios = ((LaserchronElementIISetupUPb) massSpec).rawRatiosFactoryRevised();
+            tripoliFraction.setRawRatios(rawRatios);
 
-                // each acquisition file contains background followed by peak follwed by background
-                // initial soultion is to hard wire the first background and peak
-                // later we will give user interactive tools to pick them out
-                ArrayList<double[]> backgroundAcquisitions = new ArrayList<>();
-                ArrayList<double[]> peakAcquisitions = new ArrayList<>();
+            massSpec.setCountOfAcquisitions(peakAcquisitions.size());
 
-                int hardwiredEndOfBackground = 105;
-                int assumedBackgrounRowCount = hardwiredEndOfBackground - rawDataFileTemplate.getBlockStartOffset();
-                long fractionBackgroundTimeStamp = fractionDateValue.getTime();
-                long fractionPeakTimeStamp = fractionDateValue.getTime() + assumedBackgrounRowCount * massSpec.getCOLLECTOR_DATA_FREQUENCY_MILLISECS();
+            // establish map of virtual collectors to field indexes
+            Map<DataModelInterface, Integer> virtualCollectorModelMapToFieldIndexes = new HashMap<>();
+            virtualCollectorModelMapToFieldIndexes.put(massSpec.getHg202(), 0);
+            virtualCollectorModelMapToFieldIndexes.put(massSpec.getPb204(), 1);
+            virtualCollectorModelMapToFieldIndexes.put(massSpec.getPb206(), 2);
+            virtualCollectorModelMapToFieldIndexes.put(massSpec.getPb207(), 3);
+            virtualCollectorModelMapToFieldIndexes.put(massSpec.getPb208(), 4);
+            virtualCollectorModelMapToFieldIndexes.put(massSpec.getTh232(), 5);
+            virtualCollectorModelMapToFieldIndexes.put(massSpec.getU238(), 6);
 
-                for (int i = rawDataFileTemplate.getBlockStartOffset(); i < rawDataFileTemplate.getBlockSize(); i++) {
-                    String[] fractionCollectorsColumns = fractionFileRows[i].split(",");
+            massSpec.processFractionRawRatiosII(//
+                    backgroundAcquisitions, peakAcquisitions, isStandard, usingFullPropagation, tripoliFraction, virtualCollectorModelMapToFieldIndexes);
 
-                    // Time [Sec]b206	Pb207	Pb208	Th232	U238
-                    // hard coded for now 2015
-                    if (i <= hardwiredEndOfBackground) {
-                        double[] backgroundIntensities = new double[5];
-                        backgroundAcquisitions.add(backgroundIntensities);
-                        backgroundIntensities[0] = Double.parseDouble(fractionCollectorsColumns[1]);
-                        backgroundIntensities[1] = Double.parseDouble(fractionCollectorsColumns[2]);
-                        backgroundIntensities[2] = Double.parseDouble(fractionCollectorsColumns[3]);
-                        backgroundIntensities[3] = Double.parseDouble(fractionCollectorsColumns[4]);
-                        backgroundIntensities[4] = Double.parseDouble(fractionCollectorsColumns[5]);
-                    } else if (i > (hardwiredEndOfBackground + 5)) {
-                        double[] peakIntensities = new double[5];
-                        peakAcquisitions.add(peakIntensities);
-                        peakIntensities[0] = Double.parseDouble(fractionCollectorsColumns[1]);
-                        peakIntensities[1] = Double.parseDouble(fractionCollectorsColumns[2]);
-                        peakIntensities[2] = Double.parseDouble(fractionCollectorsColumns[3]);
-                        peakIntensities[3] = Double.parseDouble(fractionCollectorsColumns[4]);
-                        peakIntensities[4] = Double.parseDouble(fractionCollectorsColumns[5]);
-                    }
-                }  // i loop
+            tripoliFraction.shadeDataActiveMapLeft(leftShadeCount);
+            System.out.println("\n**** Element II FractionID  " + fractionID);
 
-                TripoliFraction tripoliFraction = //                           
-                        new TripoliFraction( //
-                                fractionID, //
-                                massSpec.getCommonLeadCorrectionHighestLevel(), //
-                                isStandard,
-                                fractionBackgroundTimeStamp, //
-                                fractionPeakTimeStamp,
-                                peakAcquisitions.size());
+            myTripoliFractions.add(tripoliFraction);
 
-                SortedSet<DataModelInterface> rawRatios = ((UnivKansasElementIISetupUPb) massSpec).rawRatiosFactoryRevised();
-                tripoliFraction.setRawRatios(rawRatios);
-
-                massSpec.setCountOfAcquisitions(peakAcquisitions.size());
-
-                // establish map of virtual collectors to field indexes
-                Map<DataModelInterface, Integer> virtualCollectorModelMapToFieldIndexes = new HashMap<>();
-                virtualCollectorModelMapToFieldIndexes.put(massSpec.getPb206(), 0);
-                virtualCollectorModelMapToFieldIndexes.put(massSpec.getPb207(), 1);
-                virtualCollectorModelMapToFieldIndexes.put(massSpec.getPb208(), 2);
-                virtualCollectorModelMapToFieldIndexes.put(massSpec.getTh232(), 3);
-                virtualCollectorModelMapToFieldIndexes.put(massSpec.getU238(), 4);
-
-                massSpec.processFractionRawRatiosII(//
-                        backgroundAcquisitions, peakAcquisitions, isStandard, usingFullPropagation, tripoliFraction, virtualCollectorModelMapToFieldIndexes);
-
-                tripoliFraction.shadeDataActiveMapLeft(leftShadeCount);
-                System.out.println("\n**** Element II FractionID  " + fractionID + "  " + fractionDateValue.toString());
-
-                myTripoliFractions.add(tripoliFraction);
-
-            } catch (ParseException parseException) {
-                // TODO: drop out here
-            }
-        }
+        } // end of files loop
 
         if (myTripoliFractions.isEmpty()) {
             myTripoliFractions = null;
         }
 
         return myTripoliFractions;
+    }
+
+    private double calcAvgPulseOrAnalog(int startIndex, int endIndex, String[] data) {
+        double retVal = 0.0;
+
+        int countOfValues = 0;
+        double sumOfValues = 0.0;
+        for (int i = startIndex; i <= endIndex; i++) {
+            if (data[i].contains("*")) {
+                // do nothing
+            } else {
+                double val = Double.parseDouble(data[i]);
+                sumOfValues += val;
+                countOfValues++;
+            }
+        }
+
+        if (countOfValues > 0) {
+            retVal = sumOfValues / countOfValues;
+        }
+
+        return retVal;
+    }
+
+    private double calcAvgPulseThenAnalog(int startIndex, int endIndex, String[] data) {
+        double retVal = 0.0;
+
+        int countOfValues = 0;
+        double sumOfValues = 0.0;
+        for (int i = startIndex; i <= endIndex; i++) {
+            if (data[i].contains("*")) {
+                retVal = calcAvgPulseOrAnalog(startIndex + 4, endIndex + 4, data);
+            } else {
+                double val = Double.parseDouble(data[i]);
+                sumOfValues += val;
+                countOfValues++;
+            }
+        }
+
+        // retVal > 0 means analogs were used already
+        if ((retVal == 0) && (countOfValues > 0) ){
+            retVal = sumOfValues / countOfValues;
+        }
+
+        return retVal;
+    }
+
+    private long calculateTimeStamp(String timeStamp) {
+        // remove decimal point and take first 3 digits of 6 so timestamp can be converted to long
+        String[] timeStampParts = timeStamp.split("\\.");
+        return Long.parseLong(timeStampParts[0] + timeStampParts[1].substring(0, 3));
     }
 
 }

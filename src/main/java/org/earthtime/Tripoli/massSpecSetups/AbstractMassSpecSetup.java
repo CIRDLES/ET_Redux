@@ -542,7 +542,7 @@ public abstract class AbstractMassSpecSetup implements //
 
                     outputWriter.println("Slr_X_Y:");
                     try {
-                        ((RawRatioDataModel) rr).getSlogRatioX_Y().print(outputWriter, new DecimalFormat("0.000000E00"), 10);
+                        ((RawRatioDataModel) rr).getSlogRatioX_Y(false).print(outputWriter, new DecimalFormat("0.000000E00"), 10);
                     } catch (Exception e) {
                     }
                 }

@@ -137,7 +137,7 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
      *
      * @param fractionIterator
      */
-    public void calculateWeightedMeanOfStandards() {
+    public void calculateWeightedMeanOfStandards(boolean resetMatrix) {
 
         // march 2013
         boolean[] dataCommonActiveMap = MaskingSingleton.getInstance().getMaskingArray();
@@ -186,8 +186,8 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
 
             // calc SLogRatioXY
             rawRatio.propagateUnctInRatios();
-
-            Matrix SlogRatioX_Y = rawRatio.getSlogRatioX_Y();//getSlogRatioX_Y_withZeroesAtInactive();//getSlogRatioX_Y();
+            
+            Matrix SlogRatioX_Y = rawRatio.getSlogRatioX_Y(resetMatrix);//getSlogRatioX_Y_withZeroesAtInactive();//getSlogRatioX_Y();
 
             // sum of the inverses of all of the Slr_X_Y covariance matrices
             sumInvSlogRatioX_Y.plusEquals(SlogRatioX_Y.inverse());

@@ -249,4 +249,15 @@ public abstract class AbstractRawDataFileTemplate implements //
     public String getEndOfEachBlockLastLine() {
         return endOfEachBlockLastLine;
     }
+    
+    public boolean standardIsKnown(String standardName){
+        boolean retval = false;
+        for (int i = 0; i < standardIDs.length; i ++){
+            if (standardName.compareToIgnoreCase(standardIDs[i]) == 0){
+                retval = true;
+                break;
+            }
+        }
+        return retval;
+    }
 }

@@ -32,7 +32,7 @@ public class ElementII_DatFileConverter {
 
     private static PythonInterpreter python;
 
-    public static String[] readDatFile(File file) {
+    public static String[][] readDatFile(File file) {
 
         String fileName = file.getAbsolutePath();
 
@@ -182,9 +182,9 @@ public class ElementII_DatFileConverter {
                 + "\t\tacquisition += 1\n"
                 //
                 + "\tif first == True:\n"
-                + "\t\tdataMatrix[0]=headers\n"
+//                + "\t\tdataMatrix[0]=headers\n"
                 + "\t\tfirst = False\n"
-                + "\tdataMatrix[scanNumber]=result\n"
+                + "\tdataMatrix[scanNumber - 1]=result\n"
         );
 
         python.exec("dat.close");
@@ -194,13 +194,13 @@ public class ElementII_DatFileConverter {
         String[] data = dataMatrix.toString().replace("{", "").replace("}", "").replace("0: ", "").replace("[", "").replace("]", "").split("[0-9]*[L][\\:][\\ ]");
 
         // now split each element into a string array
-        String[][] dataArray = new String[data.length][];
-        for (int i = 0; i < data.length; i ++){
+        String[][] dataArray = new String[data.length-1][];
+        for (int i = 1; i < data.length; i ++){
             // replace single quotes with double quotes
-            dataArray[i]= data[i].replace("'", "\"").split(", ");
+            dataArray[i-1]= data[i].replace("'", "").split(", ");
         }
         
-        return data;
+        return dataArray;
     }
 
     private static PyObject readHeader(PyObject dat) {
@@ -216,11 +216,11 @@ public class ElementII_DatFileConverter {
     }
 
     public static void main(String a[]) {
-        String[] data = readDatFile(new File("untSMPABC001.dat"));
+        String[][] data = readDatFile(new File("untSMPABC001.dat"));
 
-        System.out.println(data[0]);
-        System.out.println(data[1]);
-        System.out.println(data[2]);
+        System.out.println(data[0][0]);
+        System.out.println(data[1][0]);
+        System.out.println(data[2][0]);
     }
 
 }
