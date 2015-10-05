@@ -43,6 +43,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.cirdles.commons.util.ResourceExtractor;
 import org.earthtime.ETRedux;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
@@ -76,6 +77,8 @@ public class MineralStandardUPbModel extends AbstractRatiosDataModel {
 
     // class variables
     private static final long serialVersionUID = -5845209084226246480L;
+    private static final ResourceExtractor RESOURCE_EXTRACTOR
+            = new ResourceExtractor(ETRedux.class);//  MineralStandardUPbModel.class);
     private static Map<String, AbstractRatiosDataModel> modelInstances = //
             new HashMap<>();
     private static final AbstractRatiosDataModel noneModel = //
@@ -519,6 +522,26 @@ public class MineralStandardUPbModel extends AbstractRatiosDataModel {
 
     private static void loadModelsFromResources() {
 
+//        File modelsFolder = RESOURCE_EXTRACTOR.extractResourceAsFile("parameterModels/mineralStandardModels/GJ1 v.0.1.xml");
+//        FilenameFilter xmlFilter = (File dir, String name) -> {
+//            return name.toLowerCase().endsWith(".xml");
+//        };
+//
+//        File[] xmlModelFiles = modelsFolder.listFiles(xmlFilter);
+//////        Charset charset = Charset.forName("US-ASCII");
+//        try (BufferedReader reader = java.nio.file.Files.newBufferedReader(resourcePath, charset)) {
+//
+//            String[] versionText = reader.readLine().split("=");
+//            VERSION = versionText[1];
+//
+//            String[] versionDate = reader.readLine().split("=");
+//            RELEASE_DATE = versionDate[1];
+//
+//            reader.close();
+//        } catch (IOException x) {
+//            System.err.format("IOException: %s%n", x);
+//        }
+
         //TODO:  this is experimental code
         String folderPath = "org/earthtime/parameterModels/mineralStandardModels/";
         URL modelsFolderStream = MineralStandardUPbModel.class.getProtectionDomain().getCodeSource().getLocation();
@@ -545,7 +568,7 @@ public class MineralStandardUPbModel extends AbstractRatiosDataModel {
 
                         File modelFile = new File("tempModel.tmp");
                         Files.write(buffer, modelFile);
-
+                        
                         AbstractRatiosDataModel mineralStandardModel = MineralStandardUPbModel.getNoneInstance();
 
                         try {
@@ -580,7 +603,7 @@ public class MineralStandardUPbModel extends AbstractRatiosDataModel {
                     AbstractRatiosDataModel mineralStandardModel = MineralStandardUPbModel.getNoneInstance();
 
                     try {
-                        mineralStandardModel = mineralStandardModel.readXMLObject(modelFile.getCanonicalPath(), true);
+                        mineralStandardModel = mineralStandardModel.readXMLObject(modelFile.getCanonicalPath(), false);
                         modelInstances.put(mineralStandardModel.getNameAndVersion(), mineralStandardModel);
                         mineralStandardModel.setImmutable(true);
                     } catch (IOException | ETException | BadOrMissingXMLSchemaException ex) {

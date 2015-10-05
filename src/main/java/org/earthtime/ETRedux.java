@@ -24,10 +24,12 @@ import java.awt.Font;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
+import org.cirdles.commons.util.ResourceExtractor;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.user.ReduxPersistentState;
 import org.earthtime.exceptions.ETWarningDialog;
@@ -51,6 +53,9 @@ public class ETRedux {
      */
     public static String RELEASE_DATE = "date";
 
+    private static final ResourceExtractor RESOURCE_EXTRACTOR
+            = new ResourceExtractor(ETRedux.class);
+
     /**
      * Creates a new instance of UPbRedux
      *
@@ -58,19 +63,35 @@ public class ETRedux {
      */
     public ETRedux(File reduxFile) //throws3 IOException, InvalidPreferencesFormatException 
     {
-        try {
-            // get version number written by pom.xml
-            InputStream versionFileStreamL = ETRedux.class.getClassLoader().getResourceAsStream("version.txt");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(versionFileStreamL));
-            
+//        try {
+//            // get version number written by pom.xml
+//            InputStream versionFileStreamL = ETRedux.class.getClassLoader().getResourceAsStream("version.txt");
+//            BufferedReader reader = new BufferedReader(new InputStreamReader(versionFileStreamL));
+//
+//            String[] versionText = reader.readLine().split("=");
+//            VERSION = versionText[1];
+//
+//            String[] versionDate = reader.readLine().split("=");
+//            RELEASE_DATE = versionDate[1];
+//
+//            reader.close();
+//        } catch (IOException iOException) {
+//        }
+
+        // get version number and release date written by pom.xml
+        Path resourcePath = RESOURCE_EXTRACTOR.extractResourceAsPath("version.txt");
+        Charset charset = Charset.forName("US-ASCII");
+        try (BufferedReader reader = Files.newBufferedReader(resourcePath, charset)) {
+
             String[] versionText = reader.readLine().split("=");
             VERSION = versionText[1];
-            
+
             String[] versionDate = reader.readLine().split("=");
             RELEASE_DATE = versionDate[1];
-            
+
             reader.close();
-        } catch (IOException iOException) {
+        } catch (IOException x) {
+            System.err.format("IOException: %s%n", x);
         }
 
         // get redux persistent state file
@@ -105,9 +126,8 @@ public class ETRedux {
         if (theUPbReduxFrame != null) {
             theUPbReduxFrame.setVisible(true);
         }
-        
-////        TestTopsoil test = new TestTopsoil();
 
+////        TestTopsoil test = new TestTopsoil();
         // installer etc ref
         // http://www.centerkey.com/mac/java/
     }
