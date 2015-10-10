@@ -20,25 +20,19 @@
 package org.earthtime.ratioDataModels.mineralStandardModels;
 
 import Jama.Matrix;
-import com.google.common.base.Charsets;
-import com.google.common.io.Files;
 import com.thoughtworks.xstream.XStream;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.cirdles.commons.util.ResourceExtractor;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
@@ -57,7 +51,6 @@ import org.earthtime.dataDictionaries.Lambdas;
 import org.earthtime.dataDictionaries.MineralStandardUPbConcentrationsPPMEnum;
 import org.earthtime.dataDictionaries.MineralStandardUPbRatiosEnum;
 import org.earthtime.exceptions.ETException;
-import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.initialPbModelsET.InitialPbModelET;
 import org.earthtime.ratioDataModels.initialPbModelsET.InitialPbModelETXMLConverter;
@@ -71,8 +64,8 @@ public class MineralStandardUPbModel extends AbstractRatiosDataModel {
 
     // class variables
     private static final long serialVersionUID = -5845209084226246480L;
-    private static final ResourceExtractor RESOURCE_EXTRACTOR
-            = new ResourceExtractor(MineralStandardUPbModel.class);
+//    private static final ResourceExtractor RESOURCE_EXTRACTOR
+//            = new ResourceExtractor(MineralStandardUPbModel.class);
     private static Map<String, AbstractRatiosDataModel> modelInstances = //
             new HashMap<>();
     private static final AbstractRatiosDataModel noneModel = //
@@ -325,7 +318,7 @@ public class MineralStandardUPbModel extends AbstractRatiosDataModel {
      */
     @Override
     public final void initializeNewRatiosAndRhos(boolean updateOnly) {
-        ArrayList<ValueModel> holdRatios = new ArrayList<ValueModel>();
+        ArrayList<ValueModel> holdRatios = new ArrayList<>();
         for (MineralStandardUPbRatiosEnum ratio : MineralStandardUPbRatiosEnum.values()) {
             holdRatios.add( //
                     new MineralStandardUPbRatioModel(ratio.getName(),
@@ -501,7 +494,7 @@ public class MineralStandardUPbModel extends AbstractRatiosDataModel {
         getEARTHTIMESriLankaStandardModelInstance();
         getEARTHTIMEPlesoviceStandardModelInstance();
 
-        loadModelsFromResources();
+        loadModelsFromResources(modelInstances);
 
         ArrayList<AbstractRatiosDataModel> arrayListOfModels = new ReduxLabDataList<>("Mineral Standard Model");
         Iterator<String> modelsKeyInterator = modelInstances.keySet().iterator();
@@ -514,34 +507,34 @@ public class MineralStandardUPbModel extends AbstractRatiosDataModel {
         return arrayListOfModels;
     }
 
-    private static void loadModelsFromResources() {
-
-        File listOfFiles = RESOURCE_EXTRACTOR.extractResourceAsFile("listOfFiles.txt");
-        List<String> fileNames = null;
-
-        try {
-            fileNames = Files.readLines(listOfFiles, Charsets.ISO_8859_1);
-            // process models
-            for (int i = 0; i < fileNames.size(); i++) {
-                if (fileNames.get(i).toLowerCase().contains(".xml")) {
-                    File modelFile = RESOURCE_EXTRACTOR.extractResourceAsFile(fileNames.get(i));
-                    System.out.println("MODEL FOUND: " + fileNames.get(i));
-                    AbstractRatiosDataModel mineralStandardModel = MineralStandardUPbModel.getNoneInstance();
-
-                    try {
-                        mineralStandardModel = mineralStandardModel.readXMLObject(modelFile.getCanonicalPath(), false);
-                        modelInstances.put(mineralStandardModel.getNameAndVersion(), mineralStandardModel);
-                        mineralStandardModel.setImmutable(true);
-                    } catch (IOException | ETException | BadOrMissingXMLSchemaException ex) {
-                        if (ex instanceof ETException) {
-                            new ETWarningDialog((ETException) ex).setVisible(true);
-                        }
-                    }
-                }
-            }
-        } catch (IOException iOException) {
-        }
-    }
+//    private static void loadModelsFromResources() {
+//
+//        File listOfFiles = RESOURCE_EXTRACTOR.extractResourceAsFile("listOfFiles.txt");
+//        List<String> fileNames = null;
+//
+//        try {
+//            fileNames = Files.readLines(listOfFiles, Charsets.ISO_8859_1);
+//            // process models
+//            for (int i = 0; i < fileNames.size(); i++) {
+//                if (fileNames.get(i).toLowerCase().contains(".xml")) {
+//                    File modelFile = RESOURCE_EXTRACTOR.extractResourceAsFile(fileNames.get(i));
+//                    System.out.println("MODEL FOUND: " + fileNames.get(i));
+//                    AbstractRatiosDataModel mineralStandardModel = MineralStandardUPbModel.getNoneInstance();
+//
+//                    try {
+//                        mineralStandardModel = mineralStandardModel.readXMLObject(modelFile.getCanonicalPath(), false);
+//                        modelInstances.put(mineralStandardModel.getNameAndVersion(), mineralStandardModel);
+//                        mineralStandardModel.setImmutable(true);
+//                    } catch (IOException | ETException | BadOrMissingXMLSchemaException ex) {
+//                        if (ex instanceof ETException) {
+//                            new ETWarningDialog((ETException) ex).setVisible(true);
+//                        }
+//                    }
+//                }
+//            }
+//        } catch (IOException iOException) {
+//        }
+//    }
 
     // used for deserialization
     /**

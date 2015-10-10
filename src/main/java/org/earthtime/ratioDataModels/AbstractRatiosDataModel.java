@@ -18,10 +18,13 @@
  */
 package org.earthtime.ratioDataModels;
 
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -32,7 +35,9 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import org.cirdles.commons.util.ResourceExtractor;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabDataListElementI;
 import org.earthtime.UPb_Redux.user.UPbReduxConfigurator;
@@ -40,6 +45,7 @@ import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
 import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.exceptions.ETException;
+import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.matrices.matrixModels.AbstractMatrixModel;
 import org.earthtime.matrices.matrixModels.CorrelationMatrixModel;
 import org.earthtime.matrices.matrixModels.CovarianceMatrixModel;
@@ -228,6 +234,35 @@ public abstract class AbstractRatiosDataModel implements
                 model.getNameAndVersion().trim();
         return (this.getNameAndVersion().trim() //
                 .compareToIgnoreCase(modelID));
+    }
+
+    public static void loadModelsFromResources(Map<String, AbstractRatiosDataModel> modelInstances) {
+
+        AbstractRatiosDataModel anInstance = modelInstances.entrySet().iterator().next().getValue();
+        ResourceExtractor RESOURCE_EXTRACTOR = new ResourceExtractor(anInstance.getClass());
+
+        File listOfFiles = RESOURCE_EXTRACTOR.extractResourceAsFile("listOfModelFiles.txt");
+        List<String> fileNames = null;
+
+        try {
+            fileNames = Files.readLines(listOfFiles, Charsets.ISO_8859_1);
+            // process models as xml files
+            for (int i = 0; i < fileNames.size(); i++) {
+                File modelFile = RESOURCE_EXTRACTOR.extractResourceAsFile(fileNames.get(i));
+                System.out.println("MODEL Added: " + fileNames.get(i));
+
+                try {
+                    AbstractRatiosDataModel model = anInstance.readXMLObject(modelFile.getCanonicalPath(), false);
+                    modelInstances.put(model.getNameAndVersion(), model);
+                    model.setImmutable(true);
+                } catch (IOException | ETException | BadOrMissingXMLSchemaException ex) {
+                    if (ex instanceof ETException) {
+                        new ETWarningDialog((ETException) ex).setVisible(true);
+                    }
+                }
+            }
+        } catch (IOException iOException) {
+        }
     }
 
     /**
@@ -1093,12 +1128,10 @@ public abstract class AbstractRatiosDataModel implements
 //                        "This is your " //
 //                        + myModelClassInstance.getClass().getSimpleName()//
 //                        + " that was just read successfully:\n");
-
 //                String xml2 = xstream.toXML(myModelClassInstance);
 //
 //                System.out.println(xml2);
 //                System.out.flush();
-
             } else {
                 throw new ETException(null, "XML data file does not conform to schema.");
             }

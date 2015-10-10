@@ -20,7 +20,7 @@ test_*
 
 # Resources
 !src/main/resources/**/*.xml
-!src/main/resources/**/listOfFiles.txt
+!src/main/resources/**/listOfModelFiles.txt
 #!src/main/resources/org/earthtime/parameterModels/mineralStandardModels/*.xml
 #!src/main/resources/org/earthtime/ratioDataModels/**/*.txt
 #!src/main/resources/org/earthtime/ratioDataModels/**/*.xml
