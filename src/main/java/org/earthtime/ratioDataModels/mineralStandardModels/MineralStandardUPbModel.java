@@ -507,35 +507,6 @@ public class MineralStandardUPbModel extends AbstractRatiosDataModel {
         return arrayListOfModels;
     }
 
-//    private static void loadModelsFromResources() {
-//
-//        File listOfFiles = RESOURCE_EXTRACTOR.extractResourceAsFile("listOfFiles.txt");
-//        List<String> fileNames = null;
-//
-//        try {
-//            fileNames = Files.readLines(listOfFiles, Charsets.ISO_8859_1);
-//            // process models
-//            for (int i = 0; i < fileNames.size(); i++) {
-//                if (fileNames.get(i).toLowerCase().contains(".xml")) {
-//                    File modelFile = RESOURCE_EXTRACTOR.extractResourceAsFile(fileNames.get(i));
-//                    System.out.println("MODEL FOUND: " + fileNames.get(i));
-//                    AbstractRatiosDataModel mineralStandardModel = MineralStandardUPbModel.getNoneInstance();
-//
-//                    try {
-//                        mineralStandardModel = mineralStandardModel.readXMLObject(modelFile.getCanonicalPath(), false);
-//                        modelInstances.put(mineralStandardModel.getNameAndVersion(), mineralStandardModel);
-//                        mineralStandardModel.setImmutable(true);
-//                    } catch (IOException | ETException | BadOrMissingXMLSchemaException ex) {
-//                        if (ex instanceof ETException) {
-//                            new ETWarningDialog((ETException) ex).setVisible(true);
-//                        }
-//                    }
-//                }
-//            }
-//        } catch (IOException iOException) {
-//        }
-//    }
-
     // used for deserialization
     /**
      *

@@ -63,21 +63,6 @@ public class ETRedux {
      */
     public ETRedux(File reduxFile) //throws3 IOException, InvalidPreferencesFormatException 
     {
-//        try {
-//            // get version number written by pom.xml
-//            InputStream versionFileStreamL = ETRedux.class.getClassLoader().getResourceAsStream("version.txt");
-//            BufferedReader reader = new BufferedReader(new InputStreamReader(versionFileStreamL));
-//
-//            String[] versionText = reader.readLine().split("=");
-//            VERSION = versionText[1];
-//
-//            String[] versionDate = reader.readLine().split("=");
-//            RELEASE_DATE = versionDate[1];
-//
-//            reader.close();
-//        } catch (IOException iOException) {
-//        }
-
         // get version number and release date written by pom.xml
         Path resourcePath = RESOURCE_EXTRACTOR.extractResourceAsPath("version.txt");
         Charset charset = Charset.forName("US-ASCII");
@@ -110,8 +95,6 @@ public class ETRedux {
         //UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         UIManager.getLookAndFeelDefaults().put("defaultFont", new Font("SansSerif", Font.PLAIN, 12));
 
-//        SwingHelpUtilities.setContentViewerUI("org.earthtime.UPb_Redux.utilities.ExternalLinkContentViewerUI");
-//        JHelpAction.startHelpWorker("U-Pb_Help.hs");
         ETReduxFrame theUPbReduxFrame = null;
 
         try {

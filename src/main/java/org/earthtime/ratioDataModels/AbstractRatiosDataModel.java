@@ -241,27 +241,30 @@ public abstract class AbstractRatiosDataModel implements
         AbstractRatiosDataModel anInstance = modelInstances.entrySet().iterator().next().getValue();
         ResourceExtractor RESOURCE_EXTRACTOR = new ResourceExtractor(anInstance.getClass());
 
-        File listOfFiles = RESOURCE_EXTRACTOR.extractResourceAsFile("listOfModelFiles.txt");
-        List<String> fileNames = null;
+        File listOfModelFiles = RESOURCE_EXTRACTOR.extractResourceAsFile("listOfModelFiles.txt");
+        if (listOfModelFiles != null) {
 
-        try {
-            fileNames = Files.readLines(listOfFiles, Charsets.ISO_8859_1);
-            // process models as xml files
-            for (int i = 0; i < fileNames.size(); i++) {
-                File modelFile = RESOURCE_EXTRACTOR.extractResourceAsFile(fileNames.get(i));
-                System.out.println("MODEL Added: " + fileNames.get(i));
+            List<String> fileNames = null;
 
-                try {
-                    AbstractRatiosDataModel model = anInstance.readXMLObject(modelFile.getCanonicalPath(), false);
-                    modelInstances.put(model.getNameAndVersion(), model);
-                    model.setImmutable(true);
-                } catch (IOException | ETException | BadOrMissingXMLSchemaException ex) {
-                    if (ex instanceof ETException) {
-                        new ETWarningDialog((ETException) ex).setVisible(true);
+            try {
+                fileNames = Files.readLines(listOfModelFiles, Charsets.ISO_8859_1);
+                // process models as xml files
+                for (int i = 0; i < fileNames.size(); i++) {
+                    File modelFile = RESOURCE_EXTRACTOR.extractResourceAsFile(fileNames.get(i));
+                    System.out.println("MODEL Added: " + fileNames.get(i));
+
+                    try {
+                        AbstractRatiosDataModel model = anInstance.readXMLObject(modelFile.getCanonicalPath(), false);
+                        modelInstances.put(model.getNameAndVersion(), model);
+                        model.setImmutable(true);
+                    } catch (IOException | ETException | BadOrMissingXMLSchemaException ex) {
+                        if (ex instanceof ETException) {
+                            new ETWarningDialog((ETException) ex).setVisible(true);
+                        }
                     }
                 }
+            } catch (IOException iOException) {
             }
-        } catch (IOException iOException) {
         }
     }
 
