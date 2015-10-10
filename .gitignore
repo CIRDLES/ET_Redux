@@ -19,8 +19,11 @@ test_*
 *.dat
 
 # Resources
-!src/main/resources/*
-!src/main/resources/org/earthtime/parameterModels/mineralStandardModels/*.xml
+!src/main/resources/**/*.xml
+!src/main/resources/**/listOfFiles.txt
+#!src/main/resources/org/earthtime/parameterModels/mineralStandardModels/*.xml
+#!src/main/resources/org/earthtime/ratioDataModels/**/*.txt
+#!src/main/resources/org/earthtime/ratioDataModels/**/*.xml
 
 # MACOS
 .DS_Store

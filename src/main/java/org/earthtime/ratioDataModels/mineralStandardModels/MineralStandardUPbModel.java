@@ -20,31 +20,25 @@
 package org.earthtime.ratioDataModels.mineralStandardModels;
 
 import Jama.Matrix;
+import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import com.thoughtworks.xstream.XStream;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.cirdles.commons.util.ResourceExtractor;
-import org.earthtime.ETRedux;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
@@ -78,7 +72,7 @@ public class MineralStandardUPbModel extends AbstractRatiosDataModel {
     // class variables
     private static final long serialVersionUID = -5845209084226246480L;
     private static final ResourceExtractor RESOURCE_EXTRACTOR
-            = new ResourceExtractor(ETRedux.class);//  MineralStandardUPbModel.class);
+            = new ResourceExtractor(MineralStandardUPbModel.class);
     private static Map<String, AbstractRatiosDataModel> modelInstances = //
             new HashMap<>();
     private static final AbstractRatiosDataModel noneModel = //
@@ -522,84 +516,16 @@ public class MineralStandardUPbModel extends AbstractRatiosDataModel {
 
     private static void loadModelsFromResources() {
 
-//        File modelsFolder = RESOURCE_EXTRACTOR.extractResourceAsFile("parameterModels/mineralStandardModels/GJ1 v.0.1.xml");
-//        FilenameFilter xmlFilter = (File dir, String name) -> {
-//            return name.toLowerCase().endsWith(".xml");
-//        };
-//
-//        File[] xmlModelFiles = modelsFolder.listFiles(xmlFilter);
-//////        Charset charset = Charset.forName("US-ASCII");
-//        try (BufferedReader reader = java.nio.file.Files.newBufferedReader(resourcePath, charset)) {
-//
-//            String[] versionText = reader.readLine().split("=");
-//            VERSION = versionText[1];
-//
-//            String[] versionDate = reader.readLine().split("=");
-//            RELEASE_DATE = versionDate[1];
-//
-//            reader.close();
-//        } catch (IOException x) {
-//            System.err.format("IOException: %s%n", x);
-//        }
-
-        //TODO:  this is experimental code
-        String folderPath = "org/earthtime/parameterModels/mineralStandardModels/";
-        URL modelsFolderStream = MineralStandardUPbModel.class.getProtectionDomain().getCodeSource().getLocation();
-
-        File jarFile = null;
+        File listOfFiles = RESOURCE_EXTRACTOR.extractResourceAsFile("listOfFiles.txt");
+        List<String> fileNames = null;
 
         try {
-            jarFile = new File(modelsFolderStream.toURI());
-        } catch (URISyntaxException uRISyntaxException) {
-        }
-
-        if (jarFile.isFile()) {
-
-            try {
-                JarFile jar = new JarFile(jarFile);
-                Enumeration<JarEntry> entries = jar.entries();
-                while (entries.hasMoreElements()) {
-                    JarEntry entry = entries.nextElement();
-                    String name = entry.getName();
-                    if (name.startsWith(folderPath) && !entry.isDirectory()) {
-                        InputStream versionFileStreamL = ETRedux.class.getClassLoader().getResourceAsStream(name);
-                        byte[] buffer = new byte[versionFileStreamL.available()];
-                        versionFileStreamL.read(buffer);
-
-                        File modelFile = new File("tempModel.tmp");
-                        Files.write(buffer, modelFile);
-                        
-                        AbstractRatiosDataModel mineralStandardModel = MineralStandardUPbModel.getNoneInstance();
-
-                        try {
-                            mineralStandardModel = mineralStandardModel.readXMLObject(modelFile.getCanonicalPath(), true);
-                            modelInstances.put(mineralStandardModel.getNameAndVersion(), mineralStandardModel);
-                            mineralStandardModel.setImmutable(true);
-                        } catch (IOException | ETException | BadOrMissingXMLSchemaException ex) {
-                            if (ex instanceof ETException) {
-                                new ETWarningDialog((ETException) ex).setVisible(true);
-                            }
-                        }
-                        modelFile.delete();
-                    }
-                }
-                jar.close();
-
-            } catch (IOException iOException) {
-            }
-        } else {
-            // running as java file
-            modelsFolderStream = MineralStandardUPbModel.class.getClassLoader().getResource(folderPath);
-            File modelsDir = null;
-            try {
-                modelsDir = new File(modelsFolderStream.toURI());
-                FilenameFilter textFilter = (File dir, String name) -> {
-                    return name.toLowerCase().endsWith(".xml");
-                };
-
-                File[] modelFiles = modelsDir.listFiles(textFilter);
-                for (File modelFile : modelFiles) {
-                    System.out.println("MODEL FOUND: " + modelFile.getAbsoluteFile());
+            fileNames = Files.readLines(listOfFiles, Charsets.ISO_8859_1);
+            // process models
+            for (int i = 0; i < fileNames.size(); i++) {
+                if (fileNames.get(i).toLowerCase().contains(".xml")) {
+                    File modelFile = RESOURCE_EXTRACTOR.extractResourceAsFile(fileNames.get(i));
+                    System.out.println("MODEL FOUND: " + fileNames.get(i));
                     AbstractRatiosDataModel mineralStandardModel = MineralStandardUPbModel.getNoneInstance();
 
                     try {
@@ -612,10 +538,8 @@ public class MineralStandardUPbModel extends AbstractRatiosDataModel {
                         }
                     }
                 }
-
-            } catch (URISyntaxException uRISyntaxException) {
-
             }
+        } catch (IOException iOException) {
         }
     }
 
