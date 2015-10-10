@@ -1,7 +1,5 @@
 /*
- * NUPlasmaMultiCollFaradayTRARawDataTemplate.java
- *
- * Created Jul 1, 2011
+ * LaserChronNUPlasmaMultiCollIonCounterRawDataTemplate.java
  *
  * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
  *
@@ -17,38 +15,38 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.earthtime.Tripoli.rawDataFiles.templates;
+package org.earthtime.Tripoli.rawDataFiles.templates.NuPlasma;
 
 import java.io.Serializable;
 import java.util.TimeZone;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.AbstractAcquisitionModel;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.StaticAcquisition;
+import org.earthtime.Tripoli.rawDataFiles.templates.AbstractRawDataFileTemplate;
 import org.earthtime.dataDictionaries.FileTypeEnum;
 
 /**
  *
  * @author James F. Bowring
  */
-public final class NUPlasmaMultiCollFaradayTRARawDataTemplate extends AbstractRawDataFileTemplate implements //
+public final class LaserChronNUPlasmaMultiCollIonCounterRawDataTemplate extends AbstractRawDataFileTemplate implements //
         Comparable<AbstractRawDataFileTemplate>,
         Serializable {
 
-    private static NUPlasmaMultiCollFaradayTRARawDataTemplate instance = null;
+    private static LaserChronNUPlasmaMultiCollIonCounterRawDataTemplate instance = null;
 
-    private NUPlasmaMultiCollFaradayTRARawDataTemplate () {
+    private LaserChronNUPlasmaMultiCollIonCounterRawDataTemplate () {
         super();
 
-        this.NAME = "Arizona NUPlasma TRA";
-        this.aboutInfo = "U-Th-Pb Faraday TRA analysis runs";
+        this.NAME = "LaserChron NUPlasma";
+        this.aboutInfo = "U-Th-Pb IonCounter analysis runs";
         this.fileType = FileTypeEnum.txt;
-        this.startOfFirstLine = "Version 5";
-        this.startOfDataSectionFirstLine = "Spare text";
-        this.startOfEachBlockFirstLine = "Spare text";
-        this.endOfEachBlockLastLine = "";
-        this.blockStartOffset = 0; // not used
-        this.blockSize = 0;// determined from data values; not constant
+        this.startOfFirstLine = "Run File";
+        this.startOfDataSectionFirstLine = " U-Th-Pb IC Analysis";
+        this.startOfEachBlockFirstLine = "Sample Name is ";
+        this.blockStartOffset = 23;
+        this.blockSize = 15;
         this.standardIDs = new String[]//
-        {"SL","R33"};
+        {"SL"};
         this.timeZone = TimeZone.getTimeZone( "MST" );
         this.defaultParsingOfFractionsBehavior = 1;
 
@@ -58,9 +56,9 @@ public final class NUPlasmaMultiCollFaradayTRARawDataTemplate extends AbstractRa
      *
      * @return
      */
-    public static NUPlasmaMultiCollFaradayTRARawDataTemplate getInstance () {
+    public static LaserChronNUPlasmaMultiCollIonCounterRawDataTemplate getInstance () {
         if ( instance == null ) {
-            instance = new NUPlasmaMultiCollFaradayTRARawDataTemplate();
+            instance = new LaserChronNUPlasmaMultiCollIonCounterRawDataTemplate();
         }
         return instance;
     }

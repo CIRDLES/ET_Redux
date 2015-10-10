@@ -1,5 +1,5 @@
 /*
- * Kosler_Agilent7700_RawDataTemplate
+ * HancharMemUnivNewfoundlandElementII_RawDataTemplate
  *
  * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
  *
@@ -15,37 +15,42 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.earthtime.Tripoli.rawDataFiles.templates;
+package org.earthtime.Tripoli.rawDataFiles.templates.Thermo;
 
 import java.io.Serializable;
 import java.util.TimeZone;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.AbstractAcquisitionModel;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.SingleCollectorAcquisition;
+import org.earthtime.Tripoli.rawDataFiles.templates.AbstractRawDataFileTemplate;
 import org.earthtime.dataDictionaries.FileTypeEnum;
 
 /**
  *
  * @author James F. Bowring
  */
-public final class Kosler_Agilent7700_RawDataTemplate extends AbstractRawDataFileTemplate implements //
+public final class HancharMemUnivNewfoundlandElementII_RawDataTemplate extends AbstractRawDataFileTemplate implements //
         Comparable<AbstractRawDataFileTemplate>,
         Serializable {
 
-    private static Kosler_Agilent7700_RawDataTemplate instance = null;
+    //Class variables
+    
+    private static final long serialVersionUID = 2549874427568944698L;
 
-    private Kosler_Agilent7700_RawDataTemplate () {
+    private static HancharMemUnivNewfoundlandElementII_RawDataTemplate instance = null;
+
+    private HancharMemUnivNewfoundlandElementII_RawDataTemplate () {
         super();
 
-        this.NAME = "Kosler Agilent 7700";
-        this.aboutInfo = "analysis runs setup by Kosler for 2015 round robin";
-        this.fileType = FileTypeEnum.csv;
-        this.startOfFirstLine = "Intensity";
+        this.NAME = "Memorial Univ Newfoundland Element II";
+        this.aboutInfo = "analysis runs setup by Hanchar";
+        this.fileType = FileTypeEnum.fin2;
+        this.startOfFirstLine = "Finnigan";
         this.startOfDataSectionFirstLine = "Time";
         this.startOfEachBlockFirstLine = "Time";
-        this.blockStartOffset = 4;
-        this.blockSize = 500;//346;//360;
+        this.blockStartOffset = 8;
+        this.blockSize = 500;
         this.standardIDs = new String[]//
-        {"91500"};
+        {"GJ1"};
         this.timeZone = TimeZone.getTimeZone( "GMT" );
         this.defaultParsingOfFractionsBehavior = 1;
 
@@ -55,9 +60,9 @@ public final class Kosler_Agilent7700_RawDataTemplate extends AbstractRawDataFil
      *
      * @return
      */
-    public static Kosler_Agilent7700_RawDataTemplate getInstance () {
+    public static HancharMemUnivNewfoundlandElementII_RawDataTemplate getInstance () {
         if ( instance == null ) {
-            instance = new Kosler_Agilent7700_RawDataTemplate();
+            instance = new HancharMemUnivNewfoundlandElementII_RawDataTemplate();
         }
         return instance;
     }
@@ -71,4 +76,14 @@ public final class Kosler_Agilent7700_RawDataTemplate extends AbstractRawDataFil
         this.acquisitionModel = new SingleCollectorAcquisition();
         return acquisitionModel;
     }
+     
+//        private void readObject(
+//            ObjectInputStream stream)
+//            throws IOException, ClassNotFoundException {
+//        stream.defaultReadObject();
+//        ObjectStreamClass myObject = ObjectStreamClass.lookup(
+//                Class.forName(HancharMemUnivNewfoundlandElementII_RawDataTemplate.class.getCanonicalName()));
+//        long theSUID = myObject.getSerialVersionUID();
+//        System.out.println("Customized De-serialization of HancharMemUnivNewfoundlandElementII_RawDataTemplate " + theSUID);
+//    }
 }

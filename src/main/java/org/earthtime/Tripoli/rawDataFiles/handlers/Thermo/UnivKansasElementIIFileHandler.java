@@ -1,5 +1,5 @@
 /*
- * MemUnivNewfoundlandElementIIFileHandler
+ * UnivKansasElementIIFileHandler
  *
  * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
  *
@@ -15,7 +15,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.earthtime.Tripoli.rawDataFiles.handlers;
+package org.earthtime.Tripoli.rawDataFiles.handlers.Thermo;
 
 import java.io.File;
 import java.io.Serializable;
@@ -31,7 +31,8 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
-import org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan.MemUnivNewfoundlandElementIISetupUPb;
+import org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan.UnivKansasElementIISetupUPb;
+import org.earthtime.Tripoli.rawDataFiles.handlers.AbstractRawDataFileHandler;
 import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.utilities.FileHelper;
 
@@ -39,11 +40,11 @@ import org.earthtime.utilities.FileHelper;
  *
  * @author James F. Bowring
  */
-public class MemUnivNewfoundlandElementIIFileHandler extends AbstractRawDataFileHandler implements //
+public class UnivKansasElementIIFileHandler extends AbstractRawDataFileHandler implements //
         Comparable<AbstractRawDataFileHandler>,
         Serializable {
 
-    private static MemUnivNewfoundlandElementIIFileHandler instance = null;
+    private static UnivKansasElementIIFileHandler instance = null;
     private File[] analysisFiles;
 
     /**
@@ -51,20 +52,20 @@ public class MemUnivNewfoundlandElementIIFileHandler extends AbstractRawDataFile
      * @param massSpec
      * @param rawDataFileTemplate
      */
-    private MemUnivNewfoundlandElementIIFileHandler() {
+    private UnivKansasElementIIFileHandler() {
 
         super();
-        NAME = "Mem Univ Newfoundland Element II File";
-        aboutInfo = "Details: This is the Hanchar protocol for an ElementII.";
+        NAME = "Univ Kansas Element II File";
+        aboutInfo = "Details: This is the Moeller protocol for an ElementII.";
     }
 
     /**
      *
      * @return
      */
-    public static MemUnivNewfoundlandElementIIFileHandler getInstance() {
+    public static UnivKansasElementIIFileHandler getInstance() {
         if (instance == null) {
-            instance = new MemUnivNewfoundlandElementIIFileHandler();//massSpec, rawDataFileTemplate );
+            instance = new UnivKansasElementIIFileHandler();//massSpec, rawDataFileTemplate );
         }
         return instance;
     }
@@ -76,7 +77,7 @@ public class MemUnivNewfoundlandElementIIFileHandler extends AbstractRawDataFile
      */
     @Override
     public File validateAndGetHeaderDataFromRawIntensityFile(File tripoliRawDataFolder) {
-        String dialogTitle = "Select a Mem Univ Newfoundland Element II Raw Data Folder:";
+        String dialogTitle = "Select a Univ Kansas Element II Raw Data Folder:";
 
         rawDataFile = FileHelper.AllPlatformGetFolder(dialogTitle, tripoliRawDataFolder);
         return rawDataFile;
@@ -174,12 +175,11 @@ public class MemUnivNewfoundlandElementIIFileHandler extends AbstractRawDataFile
 
             // hard-wired april 2015
             boolean isStandard = false;
-            if (f < 1) {
+            if (f < 3) {
                 isStandard = true;
-            } 
-//            else if ((analysisFiles.length - f) < 4) {
-//                isStandard = true;
-//            }
+            } else if ((analysisFiles.length - f) < 4) {
+                isStandard = true;
+            }
 
             // get file contents
             String fractionFileContents = URIHelper.getTextFromURI(analysisFiles[f].getAbsolutePath());
@@ -209,7 +209,7 @@ public class MemUnivNewfoundlandElementIIFileHandler extends AbstractRawDataFile
                 ArrayList<double[]> backgroundAcquisitions = new ArrayList<>();
                 ArrayList<double[]> peakAcquisitions = new ArrayList<>();
 
-                int hardwiredEndOfBackground = 210; //*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+                int hardwiredEndOfBackground = 105;
                 int assumedBackgrounRowCount = hardwiredEndOfBackground - rawDataFileTemplate.getBlockStartOffset();
                 long fractionBackgroundTimeStamp = fractionDateValue.getTime();
                 long fractionPeakTimeStamp = fractionDateValue.getTime() + assumedBackgrounRowCount * massSpec.getCOLLECTOR_DATA_FREQUENCY_MILLISECS();
@@ -217,26 +217,24 @@ public class MemUnivNewfoundlandElementIIFileHandler extends AbstractRawDataFile
                 for (int i = rawDataFileTemplate.getBlockStartOffset(); i < rawDataFileTemplate.getBlockSize(); i++) {
                     String[] fractionCollectorsColumns = fractionFileRows[i].split(",");
 
-                    // Time [Sec]Pb204 Pb206	Pb207	Pb208	Th232	U238
+                    // Time [Sec]b206	Pb207	Pb208	Th232	U238
                     // hard coded for now 2015
                     if (i <= hardwiredEndOfBackground) {
-                        double[] backgroundIntensities = new double[6];
+                        double[] backgroundIntensities = new double[5];
                         backgroundAcquisitions.add(backgroundIntensities);
                         backgroundIntensities[0] = Double.parseDouble(fractionCollectorsColumns[1]);
                         backgroundIntensities[1] = Double.parseDouble(fractionCollectorsColumns[2]);
                         backgroundIntensities[2] = Double.parseDouble(fractionCollectorsColumns[3]);
                         backgroundIntensities[3] = Double.parseDouble(fractionCollectorsColumns[4]);
                         backgroundIntensities[4] = Double.parseDouble(fractionCollectorsColumns[5]);
-                        backgroundIntensities[5] = Double.parseDouble(fractionCollectorsColumns[6]);
-                    } else if (i > (hardwiredEndOfBackground + 125)) {
-                        double[] peakIntensities = new double[6];
+                    } else if (i > (hardwiredEndOfBackground + 5)) {
+                        double[] peakIntensities = new double[5];
                         peakAcquisitions.add(peakIntensities);
                         peakIntensities[0] = Double.parseDouble(fractionCollectorsColumns[1]);
                         peakIntensities[1] = Double.parseDouble(fractionCollectorsColumns[2]);
                         peakIntensities[2] = Double.parseDouble(fractionCollectorsColumns[3]);
                         peakIntensities[3] = Double.parseDouble(fractionCollectorsColumns[4]);
                         peakIntensities[4] = Double.parseDouble(fractionCollectorsColumns[5]);
-                        peakIntensities[5] = Double.parseDouble(fractionCollectorsColumns[6]);
                     }
                 }  // i loop
 
@@ -249,19 +247,18 @@ public class MemUnivNewfoundlandElementIIFileHandler extends AbstractRawDataFile
                                 fractionPeakTimeStamp,
                                 peakAcquisitions.size());
 
-                SortedSet<DataModelInterface> rawRatios = ((MemUnivNewfoundlandElementIISetupUPb) massSpec).rawRatiosFactoryRevised();
+                SortedSet<DataModelInterface> rawRatios = ((UnivKansasElementIISetupUPb) massSpec).rawRatiosFactoryRevised();
                 tripoliFraction.setRawRatios(rawRatios);
 
                 massSpec.setCountOfAcquisitions(peakAcquisitions.size());
 
                 // establish map of virtual collectors to field indexes
                 Map<DataModelInterface, Integer> virtualCollectorModelMapToFieldIndexes = new HashMap<>();
-                virtualCollectorModelMapToFieldIndexes.put(massSpec.getPb204(), 0);
-                virtualCollectorModelMapToFieldIndexes.put(massSpec.getPb206(), 1);
-                virtualCollectorModelMapToFieldIndexes.put(massSpec.getPb207(), 2);
-                virtualCollectorModelMapToFieldIndexes.put(massSpec.getPb208(), 3);
-                virtualCollectorModelMapToFieldIndexes.put(massSpec.getTh232(), 4);
-                virtualCollectorModelMapToFieldIndexes.put(massSpec.getU238(), 5);
+                virtualCollectorModelMapToFieldIndexes.put(massSpec.getPb206(), 0);
+                virtualCollectorModelMapToFieldIndexes.put(massSpec.getPb207(), 1);
+                virtualCollectorModelMapToFieldIndexes.put(massSpec.getPb208(), 2);
+                virtualCollectorModelMapToFieldIndexes.put(massSpec.getTh232(), 3);
+                virtualCollectorModelMapToFieldIndexes.put(massSpec.getU238(), 4);
 
                 massSpec.processFractionRawRatiosII(//
                         backgroundAcquisitions, peakAcquisitions, isStandard, usingFullPropagation, tripoliFraction, virtualCollectorModelMapToFieldIndexes);

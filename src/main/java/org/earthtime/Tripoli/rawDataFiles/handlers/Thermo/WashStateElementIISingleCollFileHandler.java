@@ -15,17 +15,21 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.earthtime.Tripoli.rawDataFiles.handlers;
+package org.earthtime.Tripoli.rawDataFiles.handlers.Thermo;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectStreamClass;
 import java.io.Serializable;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
-import org.earthtime.utilities.FileHelper;
+import org.earthtime.Tripoli.rawDataFiles.handlers.AbstractRawDataFileHandler;
 import org.earthtime.archivingTools.URIHelper;
+import org.earthtime.utilities.FileHelper;
 
 /**
  *
@@ -34,6 +38,10 @@ import org.earthtime.archivingTools.URIHelper;
 public class WashStateElementIISingleCollFileHandler extends AbstractRawDataFileHandler implements //
         Comparable<AbstractRawDataFileHandler>,
         Serializable {
+
+        // Class variables
+    
+   // private static final long serialVersionUID = 3111511502335804607L;
 
     private static WashStateElementIISingleCollFileHandler instance = null;
     private File[] analysisFiles;
@@ -241,5 +249,15 @@ public class WashStateElementIISingleCollFileHandler extends AbstractRawDataFile
         }
 
         return tripoliFractions;
+    }
+    
+       private void readObject(
+            ObjectInputStream stream)
+            throws IOException, ClassNotFoundException {
+        stream.defaultReadObject();
+        ObjectStreamClass myObject = ObjectStreamClass.lookup(
+                Class.forName(WashStateElementIISingleCollFileHandler.class.getCanonicalName()));
+        long theSUID = myObject.getSerialVersionUID();
+        System.out.println("Customized De-serialization of WashStateElementIISingleCollFileHandler " + theSUID);
     }
 }

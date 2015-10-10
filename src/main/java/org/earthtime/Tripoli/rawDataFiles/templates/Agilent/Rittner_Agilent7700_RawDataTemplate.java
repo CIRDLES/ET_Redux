@@ -1,5 +1,5 @@
 /*
- * HancharMemUnivNewfoundlandElementII_RawDataTemplate
+ * Rittner_Agilent7700_RawDataTemplate
  *
  * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
  *
@@ -15,37 +15,38 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.earthtime.Tripoli.rawDataFiles.templates;
+package org.earthtime.Tripoli.rawDataFiles.templates.Agilent;
 
 import java.io.Serializable;
 import java.util.TimeZone;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.AbstractAcquisitionModel;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.SingleCollectorAcquisition;
+import org.earthtime.Tripoli.rawDataFiles.templates.AbstractRawDataFileTemplate;
 import org.earthtime.dataDictionaries.FileTypeEnum;
 
 /**
  *
  * @author James F. Bowring
  */
-public final class HancharMemUnivNewfoundlandElementII_RawDataTemplate extends AbstractRawDataFileTemplate implements //
+public final class Rittner_Agilent7700_RawDataTemplate extends AbstractRawDataFileTemplate implements //
         Comparable<AbstractRawDataFileTemplate>,
         Serializable {
 
-    private static HancharMemUnivNewfoundlandElementII_RawDataTemplate instance = null;
+    private static Rittner_Agilent7700_RawDataTemplate instance = null;
 
-    private HancharMemUnivNewfoundlandElementII_RawDataTemplate () {
+    private Rittner_Agilent7700_RawDataTemplate () {
         super();
 
-        this.NAME = "Memorial Univ Newfoundland Element II";
-        this.aboutInfo = "analysis runs setup by Hanchar";
-        this.fileType = FileTypeEnum.fin2;
-        this.startOfFirstLine = "Finnigan";
+        this.NAME = "Rittner Agilent 7700";
+        this.aboutInfo = "analysis runs setup by Rittner";
+        this.fileType = FileTypeEnum.csv;
+        this.startOfFirstLine = "Sample";
         this.startOfDataSectionFirstLine = "Time";
         this.startOfEachBlockFirstLine = "Time";
-        this.blockStartOffset = 8;
-        this.blockSize = 500;
+        this.blockStartOffset = 20;//4;
+        this.blockSize = 212;//goes with temp 106 in handler 222;//238;
         this.standardIDs = new String[]//
-        {"GJ1"};
+        {"stdcz"};
         this.timeZone = TimeZone.getTimeZone( "GMT" );
         this.defaultParsingOfFractionsBehavior = 1;
 
@@ -55,9 +56,9 @@ public final class HancharMemUnivNewfoundlandElementII_RawDataTemplate extends A
      *
      * @return
      */
-    public static HancharMemUnivNewfoundlandElementII_RawDataTemplate getInstance () {
+    public static Rittner_Agilent7700_RawDataTemplate getInstance () {
         if ( instance == null ) {
-            instance = new HancharMemUnivNewfoundlandElementII_RawDataTemplate();
+            instance = new Rittner_Agilent7700_RawDataTemplate();
         }
         return instance;
     }

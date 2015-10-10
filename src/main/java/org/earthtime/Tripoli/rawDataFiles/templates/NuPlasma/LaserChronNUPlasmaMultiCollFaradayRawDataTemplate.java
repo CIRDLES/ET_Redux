@@ -1,5 +1,5 @@
 /*
- * NUPlasmaMultiCollFaradayRawDataTemplate.java
+ * LaserChronNUPlasmaMultiCollFaradayRawDataTemplate.java
  *
  * Created Jul 1, 2011
  *
@@ -17,28 +17,29 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.earthtime.Tripoli.rawDataFiles.templates;
+package org.earthtime.Tripoli.rawDataFiles.templates.NuPlasma;
 
 import java.io.Serializable;
 import java.util.TimeZone;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.AbstractAcquisitionModel;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.StaticAcquisition;
+import org.earthtime.Tripoli.rawDataFiles.templates.AbstractRawDataFileTemplate;
 import org.earthtime.dataDictionaries.FileTypeEnum;
 
 /**
  *
  * @author James F. Bowring
  */
-public final class NUPlasmaMultiCollFaradayRawDataTemplate extends AbstractRawDataFileTemplate implements //
+public final class LaserChronNUPlasmaMultiCollFaradayRawDataTemplate extends AbstractRawDataFileTemplate implements //
         Comparable<AbstractRawDataFileTemplate>,
         Serializable {
 
-    private static NUPlasmaMultiCollFaradayRawDataTemplate instance = null;
+    private static LaserChronNUPlasmaMultiCollFaradayRawDataTemplate instance = null;
 
-    private NUPlasmaMultiCollFaradayRawDataTemplate () {
+    private LaserChronNUPlasmaMultiCollFaradayRawDataTemplate () {
         super();
 
-        this.NAME = "Arizona NUPlasma";
+        this.NAME = "LaserChron NUPlasma";
         this.aboutInfo = "U-Th-Pb Faraday analysis runs";
         this.fileType = FileTypeEnum.txt;
         this.startOfFirstLine = "Run File";
@@ -58,9 +59,9 @@ public final class NUPlasmaMultiCollFaradayRawDataTemplate extends AbstractRawDa
      *
      * @return
      */
-    public static NUPlasmaMultiCollFaradayRawDataTemplate getInstance () {
+    public static LaserChronNUPlasmaMultiCollFaradayRawDataTemplate getInstance () {
         if ( instance == null ) {
-            instance = new NUPlasmaMultiCollFaradayRawDataTemplate();
+            instance = new LaserChronNUPlasmaMultiCollFaradayRawDataTemplate();
         }
         return instance;
     }
