@@ -223,11 +223,12 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler i
             }
             loadDataTask.firePropertyChange("progress", 0, ((100 * f) / analysisFiles.length));
 
-            // need to test for empty fractionnames
-            String fractionID = analysisFiles[f].getName().replace(".dat", "");
-            if (fractionNames.length > 0) {
+            // need to test for empty fractionnames or not enough fraction names (= too many dat files)
+            String fractionID = analysisFiles[f].getName().replace(".dat", "") + String.valueOf(f);
+            if ((fractionNames.length > 0) & (fractionNames.length >= analysisFiles.length)) {
                 fractionID = fractionNames[f];
-            }
+            } 
+            
             // needs to be more robust
             boolean isStandard = (fractionID.compareToIgnoreCase(rawDataFileTemplate.getStandardIDs()[0]) == 0);
             // number the standards
@@ -240,7 +241,7 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler i
             // Laserchron uses Philip Wenig's Python routine to extract data from
             // ElementII .dat files and then pre-processes counts before passing to
             // fraction intake below
-            String[][] extractedData = ElementII_DatFileConverter.readDatFile(analysisFiles[f], null);
+            String[][] extractedData = ElementII_DatFileConverter.readDatFile(analysisFiles[f], rawDataFileTemplate.getStringListOfElementsByIsotopicMass());
             // within each row
             // index 0 = scannumber; 1 = time stamp; 2 = ACF; followed by order of groups = 202  204  206	Pb207	Pb208	Th232	U238
             // each acquisition file contains background followed by peak followed by background
