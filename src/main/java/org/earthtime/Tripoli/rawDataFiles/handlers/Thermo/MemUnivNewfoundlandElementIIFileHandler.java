@@ -55,7 +55,7 @@ public class MemUnivNewfoundlandElementIIFileHandler extends AbstractRawDataFile
     private MemUnivNewfoundlandElementIIFileHandler() {
 
         super();
-        NAME = "Mem Univ Newfoundland Element II File";
+        NAME = "Mem Univ Newfoundland Element II Folder";
         aboutInfo = "Details: This is the Hanchar protocol for an ElementII.";
     }
 

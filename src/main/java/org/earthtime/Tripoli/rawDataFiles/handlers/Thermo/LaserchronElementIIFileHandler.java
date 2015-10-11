@@ -66,7 +66,7 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler i
     private LaserchronElementIIFileHandler() {
 
         super();
-        NAME = "Laserchron Element II File";
+        NAME = "Laserchron Element II Folder";
         aboutInfo = "Details: This is the Laserchron multi-file protocol for an ElementII.";
     }
 

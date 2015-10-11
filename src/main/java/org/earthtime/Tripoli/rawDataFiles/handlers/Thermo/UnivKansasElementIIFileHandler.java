@@ -55,7 +55,7 @@ public class UnivKansasElementIIFileHandler extends AbstractRawDataFileHandler i
     private UnivKansasElementIIFileHandler() {
 
         super();
-        NAME = "Univ Kansas Element II File";
+        NAME = "Univ Kansas Element II Folder";
         aboutInfo = "Details: This is the Moeller protocol for an ElementII.";
     }
 

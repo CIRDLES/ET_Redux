@@ -34,9 +34,12 @@ public final class LaserChronNUPlasmaMultiCollFaradayRawDataTemplate extends Abs
         Comparable<AbstractRawDataFileTemplate>,
         Serializable {
 
+    //Class variables
+    private static final long serialVersionUID = -2270593876198978125L;
+
     private static LaserChronNUPlasmaMultiCollFaradayRawDataTemplate instance = null;
 
-    private LaserChronNUPlasmaMultiCollFaradayRawDataTemplate () {
+    private LaserChronNUPlasmaMultiCollFaradayRawDataTemplate() {
         super();
 
         this.NAME = "LaserChron NUPlasma";
@@ -50,7 +53,7 @@ public final class LaserChronNUPlasmaMultiCollFaradayRawDataTemplate extends Abs
         this.blockSize = 15;
         this.standardIDs = new String[]//
         {"SL"};
-        this.timeZone = TimeZone.getTimeZone( "MST" );
+        this.timeZone = TimeZone.getTimeZone("MST");
         this.defaultParsingOfFractionsBehavior = 1;
 
     }
@@ -59,20 +62,30 @@ public final class LaserChronNUPlasmaMultiCollFaradayRawDataTemplate extends Abs
      *
      * @return
      */
-    public static LaserChronNUPlasmaMultiCollFaradayRawDataTemplate getInstance () {
-        if ( instance == null ) {
+    public static LaserChronNUPlasmaMultiCollFaradayRawDataTemplate getInstance() {
+        if (instance == null) {
             instance = new LaserChronNUPlasmaMultiCollFaradayRawDataTemplate();
         }
         return instance;
     }
-    
+
     /**
      *
      * @return
      */
     @Override
-    public AbstractAcquisitionModel makeNewAcquisitionModel(){
+    public AbstractAcquisitionModel makeNewAcquisitionModel() {
         this.acquisitionModel = new StaticAcquisition();
         return acquisitionModel;
     }
+//    
+//    private void readObject(
+//            ObjectInputStream stream)
+//            throws IOException, ClassNotFoundException {
+//        stream.defaultReadObject();
+//        ObjectStreamClass myObject = ObjectStreamClass.lookup(
+//                Class.forName(LaserChronNUPlasmaMultiCollFaradayRawDataTemplate.class.getCanonicalName()));
+//        long theSUID = myObject.getSerialVersionUID();
+//        System.out.println("Customized De-serialization of LaserChronNUPlasmaMultiCollFaradayRawDataTemplate " + theSUID);
+//    }
 }

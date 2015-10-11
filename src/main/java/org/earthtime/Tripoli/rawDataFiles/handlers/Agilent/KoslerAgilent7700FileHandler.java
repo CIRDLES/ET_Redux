@@ -57,7 +57,7 @@ public class KoslerAgilent7700FileHandler extends AbstractRawDataFileHandler imp
     private KoslerAgilent7700FileHandler() {
 
         super();
-        NAME = "Kosler Agilent 7700 File";
+        NAME = "Kosler Agilent 7700 Folder";
         aboutInfo = "Details: This is the Kosler protocol for an Agilent 7700 used in 2015 round robin.";
     }
 

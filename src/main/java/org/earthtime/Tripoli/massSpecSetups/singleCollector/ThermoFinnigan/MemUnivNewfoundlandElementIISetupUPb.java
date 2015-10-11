@@ -76,43 +76,43 @@ public final class MemUnivNewfoundlandElementIISetupUPb extends AbstractMassSpec
                                 BigDecimal.ZERO), //
                         IonCounterCollectorModel.CollectedDataStyle.COUNTS);
 
-        // from Noah June 2015 for Kansas
+        // from Hanchar Oct 2015
         //isotope	int. time (s)
-        //204 needed
-        //206	0.032
-        //207	0.080
-        //208	0.016
-        //232	0.020
-        //238	0.020
+//      Pb204: 0.01 
+//      Pb206: 0.02
+//      Pb207: 0.03
+//      Pb208: 0.01
+//      Th232: 0.01
+//      U238: 0.01
         isotopeMappingModel.getIsotopeToCollectorMap().put(//
                 IsotopesEnum.U238, singleCollector);
         isotopeMappingModel.getIsotopeToIntegrationTimeMap().put( //
-                IsotopesEnum.U238, 0.020);
+                IsotopesEnum.U238, 0.010);
 
         isotopeMappingModel.getIsotopeToCollectorMap().put(//
                 IsotopesEnum.Th232, singleCollector);
         isotopeMappingModel.getIsotopeToIntegrationTimeMap().put( //
-                IsotopesEnum.Th232, 0.020);
+                IsotopesEnum.Th232, 0.010);
 
         isotopeMappingModel.getIsotopeToCollectorMap().put(//
                 IsotopesEnum.Pb208, singleCollector);
         isotopeMappingModel.getIsotopeToIntegrationTimeMap().put( //
-                IsotopesEnum.Pb208, 0.016);
+                IsotopesEnum.Pb208, 0.010);
 
         isotopeMappingModel.getIsotopeToCollectorMap().put(//
                 IsotopesEnum.Pb207, singleCollector);
         isotopeMappingModel.getIsotopeToIntegrationTimeMap().put( //
-                IsotopesEnum.Pb207, 0.080);
+                IsotopesEnum.Pb207, 0.030);
 
         isotopeMappingModel.getIsotopeToCollectorMap().put(//
                 IsotopesEnum.Pb206, singleCollector);
         isotopeMappingModel.getIsotopeToIntegrationTimeMap().put( //
-                IsotopesEnum.Pb206, 0.032);
+                IsotopesEnum.Pb206, 0.020);
 
         isotopeMappingModel.getIsotopeToCollectorMap().put(//
                 IsotopesEnum.Pb204, singleCollector);
         isotopeMappingModel.getIsotopeToIntegrationTimeMap().put( //
-                IsotopesEnum.Pb204, 0.032);
+                IsotopesEnum.Pb204, 0.010);
 
         collectorNameToModelMap.put("Single", singleCollector);
 

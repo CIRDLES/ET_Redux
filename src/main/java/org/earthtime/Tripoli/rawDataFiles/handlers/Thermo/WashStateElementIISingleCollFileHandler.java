@@ -55,7 +55,7 @@ public class WashStateElementIISingleCollFileHandler extends AbstractRawDataFile
 
         super();
 
-        NAME = "Thermo Finnigan Element II SC File";
+        NAME = "Washington State Element II SC Folder";
 
         aboutInfo = "Details: This is the default protocol for Washington State University's Thermo Finnigan Element II.";
     }

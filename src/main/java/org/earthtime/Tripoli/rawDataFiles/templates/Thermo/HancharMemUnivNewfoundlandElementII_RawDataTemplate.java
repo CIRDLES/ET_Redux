@@ -76,14 +76,4 @@ public final class HancharMemUnivNewfoundlandElementII_RawDataTemplate extends A
         this.acquisitionModel = new SingleCollectorAcquisition();
         return acquisitionModel;
     }
-     
-//        private void readObject(
-//            ObjectInputStream stream)
-//            throws IOException, ClassNotFoundException {
-//        stream.defaultReadObject();
-//        ObjectStreamClass myObject = ObjectStreamClass.lookup(
-//                Class.forName(HancharMemUnivNewfoundlandElementII_RawDataTemplate.class.getCanonicalName()));
-//        long theSUID = myObject.getSerialVersionUID();
-//        System.out.println("Customized De-serialization of HancharMemUnivNewfoundlandElementII_RawDataTemplate " + theSUID);
-//    }
 }

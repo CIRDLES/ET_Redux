@@ -56,7 +56,7 @@ public class RittnerAgilent7700FileHandler extends AbstractRawDataFileHandler im
 
         super();//massSpec, rawDataFileTemplate );
 
-        NAME = "Rittner Agilent 7700 File";
+        NAME = "Rittner Agilent 7700 Folder";
 
         aboutInfo = "Details: This is the Rittner protocol for an Agilent 7700.";
     }
