@@ -44,6 +44,8 @@ public class UnivKansasElementIIFileHandler extends AbstractRawDataFileHandler i
         Comparable<AbstractRawDataFileHandler>,
         Serializable {
 
+    // Class variables
+    private static final long serialVersionUID = 1676980296251048119L;
     private static UnivKansasElementIIFileHandler instance = null;
     private File[] analysisFiles;
 
@@ -279,5 +281,4 @@ public class UnivKansasElementIIFileHandler extends AbstractRawDataFileHandler i
 
         return myTripoliFractions;
     }
-
 }

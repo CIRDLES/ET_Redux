@@ -21,8 +21,6 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import java.io.File;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectStreamClass;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,7 +50,7 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler i
         Serializable {
     // Class variables
     
-   // private static final long serialVersionUID = 3111511502335804607L;
+    private static final long serialVersionUID = -2893373523700340452L;
     
     private static LaserchronElementIIFileHandler instance = null;
     private File[] analysisFiles;
@@ -66,8 +64,9 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler i
     private LaserchronElementIIFileHandler() {
 
         super();
-        NAME = "Laserchron Element II Folder";
-        aboutInfo = "Details: This is the Laserchron multi-file protocol for an ElementII.";
+        NAME = "Laserchron Element II Folder of '.dat' files";
+        aboutInfo = "Details: This is the Laserchron multi-file protocol for an ElementII. "
+                + " Please include the '.scancsv' file in the folder containing the '.dat' files.";
     }
 
     /**
@@ -372,15 +371,5 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler i
         // remove decimal point and take first 3 digits of 6 so timestamp can be converted to long
         String[] timeStampParts = timeStamp.split("\\.");
         return Long.parseLong(timeStampParts[0] + timeStampParts[1].substring(0, 3));
-    }
-
-    private void readObject(
-            ObjectInputStream stream)
-            throws IOException, ClassNotFoundException {
-        stream.defaultReadObject();
-        ObjectStreamClass myObject = ObjectStreamClass.lookup(
-                Class.forName(LaserchronElementIIFileHandler.class.getCanonicalName()));
-        long theSUID = myObject.getSerialVersionUID();
-        System.out.println("Customized De-serialization of LaserchronElementIIFileHandler " + theSUID);
     }
 }

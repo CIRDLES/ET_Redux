@@ -43,7 +43,9 @@ import org.earthtime.utilities.FileHelper;
 public class MemUnivNewfoundlandElementIIFileHandler extends AbstractRawDataFileHandler implements //
         Comparable<AbstractRawDataFileHandler>,
         Serializable {
+    // Class variables
 
+    private static final long serialVersionUID = -3261971989596229444L;
     private static MemUnivNewfoundlandElementIIFileHandler instance = null;
     private File[] analysisFiles;
 
@@ -177,7 +179,7 @@ public class MemUnivNewfoundlandElementIIFileHandler extends AbstractRawDataFile
             boolean isStandard = false;
             if (f < 1) {
                 isStandard = true;
-            } 
+            }
 //            else if ((analysisFiles.length - f) < 4) {
 //                isStandard = true;
 //            }
