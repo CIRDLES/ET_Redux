@@ -236,6 +236,16 @@ public abstract class AbstractRatiosDataModel implements
                 .compareToIgnoreCase(modelID));
     }
 
+    /**
+     * This method supports the loading of XML parameter models into the lab data
+     * from the resources folder corresponding to the model class.  The names of
+     * the files are listed line by line in the file listOfModelFiles.txt.  The
+     * rationale is that users can propose via a github.com pull request that models
+     * be included in the distributed jar file and can also see the models easily
+     * on github.  This method also sets the model to be immutable so that the user
+     * cannot accidentally delete it from the lab data.
+     * @param modelInstances 
+     */
     public static void loadModelsFromResources(Map<String, AbstractRatiosDataModel> modelInstances) {
 
         AbstractRatiosDataModel anInstance = modelInstances.entrySet().iterator().next().getValue();
@@ -244,14 +254,12 @@ public abstract class AbstractRatiosDataModel implements
         File listOfModelFiles = RESOURCE_EXTRACTOR.extractResourceAsFile("listOfModelFiles.txt");
         if (listOfModelFiles != null) {
 
-            List<String> fileNames = null;
-
             try {
-                fileNames = Files.readLines(listOfModelFiles, Charsets.ISO_8859_1);
+                List<String> fileNames = Files.readLines(listOfModelFiles, Charsets.ISO_8859_1);
                 // process models as xml files
                 for (int i = 0; i < fileNames.size(); i++) {
                     File modelFile = RESOURCE_EXTRACTOR.extractResourceAsFile(fileNames.get(i));
-                    System.out.println("MODEL Added: " + fileNames.get(i));
+                    System.out.println(anInstance.getClass().getSimpleName() + " added: " + fileNames.get(i));
 
                     try {
                         AbstractRatiosDataModel model = anInstance.readXMLObject(modelFile.getCanonicalPath(), false);
