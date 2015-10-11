@@ -1,5 +1,5 @@
 /*
- * TFElement2SingleColl_Valencia_RawDataTemplate
+ * ValenciaWashStateElementII_RawDataTemplate
  *
  * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
  *
@@ -28,16 +28,16 @@ import org.earthtime.dataDictionaries.FileTypeEnum;
  *
  * @author James F. Bowring
  */
-public final class TFElement2SingleColl_Valencia_RawDataTemplate extends AbstractRawDataFileTemplate implements //
+public final class ValenciaWashStateElementII_RawDataTemplate extends AbstractRawDataFileTemplate implements //
         Comparable<AbstractRawDataFileTemplate>,
         Serializable {
 
-    private static TFElement2SingleColl_Valencia_RawDataTemplate instance = null;
+    private static ValenciaWashStateElementII_RawDataTemplate instance = null;
 
-    private TFElement2SingleColl_Valencia_RawDataTemplate () {
+    private ValenciaWashStateElementII_RawDataTemplate () {
         super();
 
-        this.NAME = "Valencia Element2";
+        this.NAME = "Valencia Wash State Element II";
         this.aboutInfo = "analysis runs setup by Valencia";
         this.fileType = FileTypeEnum.txt;
         this.startOfFirstLine = "Trace for Mass:";
@@ -56,9 +56,9 @@ public final class TFElement2SingleColl_Valencia_RawDataTemplate extends Abstrac
      *
      * @return
      */
-    public static TFElement2SingleColl_Valencia_RawDataTemplate getInstance () {
+    public static ValenciaWashStateElementII_RawDataTemplate getInstance () {
         if ( instance == null ) {
-            instance = new TFElement2SingleColl_Valencia_RawDataTemplate();
+            instance = new ValenciaWashStateElementII_RawDataTemplate();
         }
         return instance;
     }

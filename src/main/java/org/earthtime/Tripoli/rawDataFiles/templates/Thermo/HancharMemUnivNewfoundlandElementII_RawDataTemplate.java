@@ -33,12 +33,11 @@ public final class HancharMemUnivNewfoundlandElementII_RawDataTemplate extends A
         Serializable {
 
     //Class variables
-    
     private static final long serialVersionUID = 2549874427568944698L;
 
     private static HancharMemUnivNewfoundlandElementII_RawDataTemplate instance = null;
 
-    private HancharMemUnivNewfoundlandElementII_RawDataTemplate () {
+    private HancharMemUnivNewfoundlandElementII_RawDataTemplate() {
         super();
 
         this.NAME = "Memorial Univ Newfoundland Element II";
@@ -51,8 +50,9 @@ public final class HancharMemUnivNewfoundlandElementII_RawDataTemplate extends A
         this.blockSize = 500;
         this.standardIDs = new String[]//
         {"GJ1"};
-        this.timeZone = TimeZone.getTimeZone( "GMT" );
+        this.timeZone = TimeZone.getTimeZone("GMT");
         this.defaultParsingOfFractionsBehavior = 1;
+        this.elementsByIsotopicMass = new String[]{"204", "206", "207", "208", "232", "238"};
 
     }
 
@@ -60,19 +60,19 @@ public final class HancharMemUnivNewfoundlandElementII_RawDataTemplate extends A
      *
      * @return
      */
-    public static HancharMemUnivNewfoundlandElementII_RawDataTemplate getInstance () {
-        if ( instance == null ) {
+    public static HancharMemUnivNewfoundlandElementII_RawDataTemplate getInstance() {
+        if (instance == null) {
             instance = new HancharMemUnivNewfoundlandElementII_RawDataTemplate();
         }
         return instance;
     }
-    
+
     /**
      *
      * @return
      */
     @Override
-     public AbstractAcquisitionModel makeNewAcquisitionModel () {
+    public AbstractAcquisitionModel makeNewAcquisitionModel() {
         this.acquisitionModel = new SingleCollectorAcquisition();
         return acquisitionModel;
     }

@@ -89,6 +89,8 @@ public abstract class AbstractRawDataFileTemplate implements //
      *
      */
     protected AbstractAcquisitionModel acquisitionModel;
+    
+    protected String[] elementsByIsotopicMass;
 
     /**
      * 
@@ -259,5 +261,12 @@ public abstract class AbstractRawDataFileTemplate implements //
             }
         }
         return retval;
+    }
+
+    /**
+     * @return the elementsByIsotopicMass
+     */
+    public String[] getElementsByIsotopicMass() {
+        return elementsByIsotopicMass;
     }
 }

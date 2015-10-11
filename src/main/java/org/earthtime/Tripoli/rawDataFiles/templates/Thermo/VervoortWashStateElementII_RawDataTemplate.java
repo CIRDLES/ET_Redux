@@ -1,5 +1,5 @@
 /*
- * TFElement2SingleColl_Vervoort_RawDataTemplate
+ * VervoortWashStateElementII_RawDataTemplate
  *
  * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
  *
@@ -28,16 +28,16 @@ import org.earthtime.dataDictionaries.FileTypeEnum;
  *
  * @author James F. Bowring
  */
-public final class TFElement2SingleColl_Vervoort_RawDataTemplate extends AbstractRawDataFileTemplate implements //
+public final class VervoortWashStateElementII_RawDataTemplate extends AbstractRawDataFileTemplate implements //
         Comparable<AbstractRawDataFileTemplate>,
         Serializable {
 
-    private static TFElement2SingleColl_Vervoort_RawDataTemplate instance = null;
+    private static VervoortWashStateElementII_RawDataTemplate instance = null;
 
-    private TFElement2SingleColl_Vervoort_RawDataTemplate () {
+    private VervoortWashStateElementII_RawDataTemplate () {
         super();
 
-        this.NAME = "Vervoort Element2";
+        this.NAME = "Vervoort Wash State Element II";
         this.aboutInfo = "analysis runs setup by Vervoort";
         this.fileType = FileTypeEnum.txt;
         this.startOfFirstLine = "Trace for Mass:";
@@ -56,9 +56,9 @@ public final class TFElement2SingleColl_Vervoort_RawDataTemplate extends Abstrac
      *
      * @return
      */
-    public static TFElement2SingleColl_Vervoort_RawDataTemplate getInstance () {
+    public static VervoortWashStateElementII_RawDataTemplate getInstance () {
         if ( instance == null ) {
-            instance = new TFElement2SingleColl_Vervoort_RawDataTemplate();
+            instance = new VervoortWashStateElementII_RawDataTemplate();
         }
         return instance;
     }

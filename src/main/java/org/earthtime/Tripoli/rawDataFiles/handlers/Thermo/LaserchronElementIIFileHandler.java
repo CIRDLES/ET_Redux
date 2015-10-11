@@ -240,7 +240,7 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler i
             // Laserchron uses Philip Wenig's Python routine to extract data from
             // ElementII .dat files and then pre-processes counts before passing to
             // fraction intake below
-            String[][] extractedData = ElementII_DatFileConverter.readDatFile(analysisFiles[f]);
+            String[][] extractedData = ElementII_DatFileConverter.readDatFile(analysisFiles[f], null);
             // within each row
             // index 0 = scannumber; 1 = time stamp; 2 = ACF; followed by order of groups = 202  204  206	Pb207	Pb208	Th232	U238
             // each acquisition file contains background followed by peak followed by background
