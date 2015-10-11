@@ -17,6 +17,7 @@ test_*
 
 # Misc data files
 *.dat
+STANDARDS_DATA_CHECK_FILES/
 
 # Resources
 !src/main/resources/**/*.xml

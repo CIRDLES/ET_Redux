@@ -234,7 +234,7 @@ public class TripoliSession implements
             downholeFractionationDataModels = //
                     rawDataFileHandler.getMassSpec().downholeFractionationDataModelsFactory(tripoliFractions, primaryMineralStandard);
             // may 2014 - for use with live data, we check to see if these exist and if so, do not recreate
-            if ((sessionForStandardsInterceptFractionation.size() == 0) || (sessionForStandardsDownholeFractionation.size() == 0)) {
+            if ((sessionForStandardsInterceptFractionation.isEmpty()) || (sessionForStandardsDownholeFractionation.isEmpty())) {
                 // create sessionForStandards models for both downhole and intercept methods
                 Iterator<DataModelInterface> dataModelIterator = tripoliFractions.first().getRatiosForFractionFitting().iterator();
                 while (dataModelIterator.hasNext()) {

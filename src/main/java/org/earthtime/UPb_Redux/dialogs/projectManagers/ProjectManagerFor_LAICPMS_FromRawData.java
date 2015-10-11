@@ -74,8 +74,8 @@ import org.earthtime.Tripoli.rawDataFiles.templates.NuPlasma.LaserChronNUPlasmaM
 import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.HancharMemUnivNewfoundlandElementII_RawDataTemplate;
 import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.LaserchronElementII_RawDataTemplate;
 import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.MoellerUnivKansasElementII_RawDataTemplate;
-import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.TFElement2SingleColl_Valencia_RawDataTemplate;
-import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.TFElement2SingleColl_Vervoort_RawDataTemplate;
+import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.ValenciaWashStateElementII_RawDataTemplate;
+import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.VervoortWashStateElementII_RawDataTemplate;
 import org.earthtime.Tripoli.samples.AbstractTripoliSample;
 import org.earthtime.Tripoli.sessions.TripoliSession;
 import org.earthtime.Tripoli.sessions.TripoliSessionInterface;
@@ -222,9 +222,9 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
                 .add(WashStateElementIISetupUPb.getInstance());
 
         theThermoFinniganElement2SingleCollFileHandler.getAvailableRawDataFileTemplates()//
-                .add(TFElement2SingleColl_Vervoort_RawDataTemplate.getInstance());
+                .add(VervoortWashStateElementII_RawDataTemplate.getInstance());
         theThermoFinniganElement2SingleCollFileHandler.getAvailableRawDataFileTemplates()//
-                .add(TFElement2SingleColl_Valencia_RawDataTemplate.getInstance());
+                .add(ValenciaWashStateElementII_RawDataTemplate.getInstance());
 
         knownRawDataFileHandlers.add(theThermoFinniganElement2SingleCollFileHandler);
 

@@ -32,7 +32,13 @@ public class ElementII_DatFileConverter {
 
     private static PythonInterpreter python;
 
-    public static String[][] readDatFile(File file) {
+    /**
+     *
+     * @param file the value of file
+     * @param elementsList the value of elementsList
+     * @return 
+     */
+    public static String[][] readDatFile(File file, String elementsList) {
 
         String fileName = file.getAbsolutePath();
 
@@ -89,7 +95,7 @@ public class ElementII_DatFileConverter {
                 + "\t\treturn False\n"
         );
 
-        python.exec("elements = [202, 204, 206, 207, 208, 232, 238]");
+        python.exec("elements = " + elementsList);//[202, 204, 206, 207, 208, 232, 238]");
         python.exec("first = True");
 
         python.exec("dat = open('" + fileName + "', 'rb')");
@@ -216,7 +222,7 @@ public class ElementII_DatFileConverter {
     }
 
     public static void main(String a[]) {
-        String[][] data = readDatFile(new File("untSMPABC001.dat"));
+        String[][] data = readDatFile(new File("untSMPABC001.dat"), null);
 
         System.out.println(data[0][0]);
         System.out.println(data[1][0]);

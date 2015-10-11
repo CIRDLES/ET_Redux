@@ -427,12 +427,10 @@ public class RawRatioDataModel //
             for (int i = 0; i < dataActiveMap.length; i++) {
                 if (dataActiveMap[i]) {
                     activeData[index] = true;
-                    logDifferencesFromWeightedMean[index] = downHoleFitFunction.f(normalizedOnPeakAquireTimes[i]) - logRatios[i] ;
+                    logDifferencesFromWeightedMean[index] = downHoleFitFunction.f(normalizedOnPeakAquireTimes[i]) - logRatios[i];
                     index++;
-                } else {
-                    if (shades[i]) {
-                        matrixIndicesToRemove.add(i);
-                    }
+                } else if (shades[i]) {
+                    matrixIndicesToRemove.add(i);
                 }
             }
 
@@ -455,7 +453,7 @@ public class RawRatioDataModel //
                             activeData, //
                             null, //this is mean so x does not matter
                             logDifferencesFromWeightedMean,//
-matrixSfCopy.plus(getSlogRatioX_Y(false)),//
+                            matrixSfCopy.plus(getSlogRatioX_Y(false)),//
                             false);
 
             // algorithmForMEAN contains both the non OD and OD versions
@@ -478,7 +476,7 @@ matrixSfCopy.plus(getSlogRatioX_Y(false)),//
                                 activeData, //
                                 activeXvalues, //
                                 logDifferencesFromWeightedMean,//
-matrixSfCopy.plus(getSlogRatioX_Y(false)),//
+                                matrixSfCopy.plus(getSlogRatioX_Y(false)),//
                                 false);
 
                 fOfX_MEAN_OD = fOfX_MEAN;
@@ -586,8 +584,8 @@ matrixSfCopy.plus(getSlogRatioX_Y(false)),//
         boolean retVal;
 
         // algorithmForMEAN contains both the non OD and OD versions
-        AbstractFunctionOfX fOfX_MEAN = null;
-        AbstractFunctionOfX fOfX_MEAN_OD = null;
+        AbstractFunctionOfX fOfX_MEAN;
+        AbstractFunctionOfX fOfX_MEAN_OD;
 
         if (USING_FULL_PROPAGATION) {
             try {
@@ -1597,7 +1595,7 @@ matrixSfCopy.plus(getSlogRatioX_Y(false)),//
 
         return activeLogatios;
     }
-    
+
     public Matrix SlogRXYSolveLRWithZeroesAtInactive(boolean[] dataCommonActiveMap) {
         // take the SLogRatioXYALL and solve it with logRatiosVector
         /// then remove row for left and right shades
@@ -1677,12 +1675,10 @@ matrixSfCopy.plus(getSlogRatioX_Y(false)),//
             } else {
                 contains = logRatioFitFunctionsNoOD.get(fitFunctionType.getName()) != null;
             }
+        } else if (overDispersionSelected) {
+            contains = logRatioFitFunctionsWithOD.get(fitFunctionType.getName()) != null;
         } else {
-            if (overDispersionSelected) {
-                contains = logRatioFitFunctionsWithOD.get(fitFunctionType.getName()) != null;
-            } else {
-                contains = logRatioFitFunctionsNoOD.get(fitFunctionType.getName()) != null;
-            }
+            contains = logRatioFitFunctionsNoOD.get(fitFunctionType.getName()) != null;
         }
         return contains;
     }
@@ -1759,6 +1755,10 @@ matrixSfCopy.plus(getSlogRatioX_Y(false)),//
         return usedForCommonLeadCorrections;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public boolean isForceMeanForCommonLeadRatios() {
 //        System.out.println("BOTTOM " + botIsotope.getDataModelName());
