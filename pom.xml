@@ -209,9 +209,9 @@
             <version>4.4</version>
         </dependency>
         <dependency>
-            <groupId>com.johnzeringue.topsoil</groupId>
-            <artifactId>app</artifactId>
-            <version>d1b1881</version>
+            <groupId>com.github.cirdles.topsoil</groupId>
+            <artifactId>core</artifactId>
+            <version>a416fb4</version>
         </dependency>
         <dependency>
             <groupId>org.python</groupId>
