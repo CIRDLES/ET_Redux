@@ -223,6 +223,11 @@
             <artifactId>Commons</artifactId>
             <version>0f628cc</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.bowring</groupId>
+            <artifactId>SHRIMP</artifactId>
+            <version>2df21f5</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
