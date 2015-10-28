@@ -1178,7 +1178,7 @@ public class RawRatioDataModel //
         double retVal = 0.0;
         if (sessionTechnique.compareToIgnoreCase("DOWNHOLE") == 0) {
             try {
-                retVal = getSelectedFitFunction().getA();//updated june 2015         getMeanOfResidualsFromFittedFractionation();
+                retVal = getSelectedDownHoleFitFunction().getA();//updated june 2015         getMeanOfResidualsFromFittedFractionation();
             } catch (Exception e) {
                 retVal = 0.0;
             }
@@ -1202,7 +1202,7 @@ public class RawRatioDataModel //
         double retVal = 0.0;
         if (sessionTechnique.compareToIgnoreCase("DOWNHOLE") == 0) {
             try {
-                retVal = getSelectedFitFunction().getStdErrOfA();//updated june 2015 getStdErrOfmeanOfResidualsFromFittedFractionation();
+                retVal = getSelectedDownHoleFitFunction().getStdErrOfA();//updated june 2015 getStdErrOfmeanOfResidualsFromFittedFractionation();
             } catch (Exception e) {
                 retVal = 0.0;
             }
@@ -1226,7 +1226,7 @@ public class RawRatioDataModel //
         double retVal = 0.0;
         if (sessionTechnique.compareToIgnoreCase("DOWNHOLE") == 0) {
             try {
-                AbstractFunctionOfX FofX = getSelectedFitFunction();
+                AbstractFunctionOfX FofX = getSelectedDownHoleFitFunction();
                 retVal = Math.sqrt(Math.pow(FofX.getStdErrOfA(), 2) + FofX.getOverDispersion());//  updated june 2015                                  getStdErrOfmeanOfResidualsFromFittedFractionation();
             } catch (Exception e) {
             }
@@ -1253,7 +1253,7 @@ public class RawRatioDataModel //
         double retVal = 0.0;
         if (sessionTechnique.compareToIgnoreCase("DOWNHOLE") == 0) {
             try {
-                retVal = Math.pow(getSelectedFitFunction().getStdErrOfA(), 2); // updated june 2015 from getStdErrOfmeanOfResidualsFromFittedFractionation()
+                retVal = Math.pow(getSelectedDownHoleFitFunction().getStdErrOfA(), 2); // updated june 2015 from getStdErrOfmeanOfResidualsFromFittedFractionation()
             } catch (Exception e) {
                 retVal = 0.0;
             }
