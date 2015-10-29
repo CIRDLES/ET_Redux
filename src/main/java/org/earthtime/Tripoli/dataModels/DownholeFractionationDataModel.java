@@ -110,8 +110,8 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
         this.tripoliFractions = tripoliFractions;
         this.rawRatioName = rawRatioName;
         this.weightedMeanIntegrations = weightedMeanIntegrations;
-        this.onPeakAcquireTimesBySecond = onPeakAcquireTimesBySecond;
-        this.normalizedAquireTimes = normalizedAquireTimes;
+        this.onPeakAcquireTimesBySecond = onPeakAcquireTimesBySecond.clone();
+        this.normalizedAquireTimes = normalizedAquireTimes.clone();
 
         this.fittedStandards = new double[weightedMeanIntegrations.length];
         this.fittedStandardsResiduals = new double[weightedMeanIntegrations.length];
@@ -129,13 +129,15 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
 
         this.standardValueModel = primaryMineralStandard.getDatumByName(rawRatioName.getName().replace("w", "r"));
 
+        this.SwtdMeanStdIntegrations = new Matrix(0, 0);
+
     }
 
     /**
      *
      * @param fractionIterator
      */
-    public void calculateWeightedMeanOfStandards() {
+    public void calculateWeightedMeanOfStandards(boolean resetMatrix) {
 
         // march 2013
         boolean[] dataCommonActiveMap = MaskingSingleton.getInstance().getMaskingArray();
@@ -184,8 +186,8 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
 
             // calc SLogRatioXY
             rawRatio.propagateUnctInRatios();
-
-            Matrix SlogRatioX_Y = rawRatio.getSlogRatioX_Y();//getSlogRatioX_Y_withZeroesAtInactive();//getSlogRatioX_Y();
+            
+            Matrix SlogRatioX_Y = rawRatio.getSlogRatioX_Y(resetMatrix);//getSlogRatioX_Y_withZeroesAtInactive();//getSlogRatioX_Y();
 
             // sum of the inverses of all of the Slr_X_Y covariance matrices
             sumInvSlogRatioX_Y.plusEquals(SlogRatioX_Y.inverse());
@@ -401,7 +403,7 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
                 SwtdMeanStdIntegrations, //
                 true);
 
-        if ((fOfX_SMOOTHING_SPLINE != null) & fOfX_SMOOTHING_SPLINE.verifyPositiveVariances()) {
+        if ((fOfX_SMOOTHING_SPLINE != null) && fOfX_SMOOTHING_SPLINE.verifyPositiveVariances()) {
             String nameOfFitFunctionReturned = fOfX_SMOOTHING_SPLINE.getShortNameString();
             if (nameOfFitFunctionReturned.compareToIgnoreCase(FitFunctionTypeEnum.SMOOTHING_SPLINE.getName()) != 0) {
                 downholeStandardsFitFunctionsNoOD.remove(FitFunctionTypeEnum.SMOOTHING_SPLINE.getName());
@@ -474,6 +476,8 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
                     } else {
                         downholeStandardsFitFunctionsWithOD.put(fOfX_SMOOTHING_SPLINE.getShortNameString(), fOfX_SMOOTHING_SPLINE);
                     }
+                } catch (RuntimeException e) {
+                    throw e;
                 } catch (Exception e) {
                 }
 
@@ -539,6 +543,8 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
                 fittedStandardsBeta[i] = //
                         Math.log(standardValueModel.getValue().doubleValue()) //
                         - fitFunc.f(activeXvalues[i]);
+            } catch (RuntimeException e) {
+                throw e;
             } catch (Exception e) {
                 fittedStandardsBeta[i] = Math.log(standardValueModel.getValue().doubleValue());
             }
@@ -797,16 +803,16 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
     }
 
     public double[] getActiveOnPeakAcquireTimesInSeconds() {
-        boolean []activeData = MaskingSingleton.getInstance().getMaskingArray();
+        boolean[] activeData = MaskingSingleton.getInstance().getMaskingArray();
         double[] activeOnPeak = new double[MaskingSingleton.getInstance().getCountOfActiveData()];
         int index = 0;
-        for (int i = 0; i < activeData.length; i ++){
-            if (activeData[i]){
+        for (int i = 0; i < activeData.length; i++) {
+            if (activeData[i]) {
                 activeOnPeak[index] = onPeakAcquireTimesBySecond[i];
-                index ++;
+                index++;
             }
         }
-                
+
         return activeOnPeak;
     }
 

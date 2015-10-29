@@ -21,7 +21,7 @@
     <groupId>org.cirdles</groupId>
     <artifactId>ET_Redux</artifactId>
     <name>ET_Redux</name>
-    <version>3.2.3</version>
+    <version>3.3.1</version>
     <description>Successor to U-Pb_Redux</description>
     <url>https://cirdles.org</url>
     <inceptionYear>2006</inceptionYear>
@@ -209,9 +209,24 @@
             <version>4.4</version>
         </dependency>
         <dependency>
+            <groupId>com.github.cirdles.topsoil</groupId>
+            <artifactId>core</artifactId>
+            <version>a416fb4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.python</groupId>
+            <artifactId>jython-standalone</artifactId>
+            <version>2.5.2</version>
+        </dependency>
+        <dependency>
             <groupId>com.github.cirdles</groupId>
-            <artifactId>topsoil</artifactId>
-            <version>cc53d95</version>
+            <artifactId>Commons</artifactId>
+            <version>0f628cc</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.bowring</groupId>
+            <artifactId>SHRIMP</artifactId>
+            <version>2df21f5</version>
         </dependency>
     </dependencies>
     <build>

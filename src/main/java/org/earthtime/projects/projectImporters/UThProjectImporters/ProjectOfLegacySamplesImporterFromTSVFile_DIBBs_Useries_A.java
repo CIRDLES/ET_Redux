@@ -75,7 +75,7 @@ public class ProjectOfLegacySamplesImporterFromTSVFile_DIBBs_Useries_A extends A
         SampleInterface currentSample = null;
         AliquotInterface currentAliquot = null;
 
-        List<String> fractionData = null;
+        List<String> fractionData;
         try {
             fractionData = Files.readLines(file, Charsets.ISO_8859_1);
 
@@ -148,65 +148,77 @@ public class ProjectOfLegacySamplesImporterFromTSVFile_DIBBs_Useries_A extends A
                             ((ReduxAliquotInterface) currentAliquot).getAliquotFractions().add(myFraction);
 
                             // TODO: add uncertainty columns
-                            // column 43 is conc232Th in ppb
+                            // column AP=42 is conc232Th in ppb
                             String ratioName = UThCompositionalMeasures.conc232Th.getName();
                             myFraction.getCompositionalMeasureByName(ratioName)//
-                                    .setValue(readDelimitedTextCell(myFractionData.get(40)).//
+                                    .setValue(readDelimitedTextCell(myFractionData.get(41)).//
                                             movePointLeft(9));
 
-                            // column 44 is conc232Th uncertainty in ppb
+                            // column AQ=43 is conc232Th uncertainty in ppb
                             // convert 2-sigma to 1-sigma
-                            BigDecimal oneSigmaAbs = readDelimitedTextCell(myFractionData.get(41)).
+                            BigDecimal oneSigmaAbs = readDelimitedTextCell(myFractionData.get(42)).
                                     divide(new BigDecimal(2.0).//
                                             movePointLeft(9));
                             myFraction.getCompositionalMeasureByName(ratioName)//
                                     .setOneSigma(oneSigmaAbs);
 
-                            // column 45 is ar230Th_232Thfc 
+                            // column AR=44 is ar230Th_232Thfc 
                             ratioName = UThAnalysisMeasures.ar230Th_232Thfc.getName();
                             myFraction.getAnalysisMeasure(ratioName)//
-                                    .setValue(readDelimitedTextCell(myFractionData.get(44)));
+                                    .setValue(readDelimitedTextCell(myFractionData.get(43)));
 
-                            // column 46 is ar232Th_238Ufc * 10^5
+                            // column AS=45 is ar232Th_238Ufc * 10^5
                             ratioName = UThAnalysisMeasures.ar232Th_238Ufc.getName();
                             myFraction.getAnalysisMeasure(ratioName)//
-                                    .setValue(readDelimitedTextCell(myFractionData.get(43)).//
+                                    .setValue(readDelimitedTextCell(myFractionData.get(44)).//
                                             movePointLeft(5));
 
-                            // column 47 is conc238U in ppm
+                            // column AT=46 is conc238U in ppm
                             ratioName = UThCompositionalMeasures.conc238U.getName();
                             myFraction.getCompositionalMeasureByName(ratioName)//
-                                    .setValue(readDelimitedTextCell(myFractionData.get(44)).//
+                                    .setValue(readDelimitedTextCell(myFractionData.get(45)).//
                                             movePointLeft(6));
 
-                            // column 48 is conc238U uncertainty in ppm
+                            // column AU=47 is conc238U uncertainty in ppm
                             // convert 2-sigma to 1-sigma
-                            oneSigmaAbs = readDelimitedTextCell(myFractionData.get(45)).
+                            oneSigmaAbs = readDelimitedTextCell(myFractionData.get(46)).
                                     divide(new BigDecimal(2.0).//
                                             movePointLeft(6));
                             myFraction.getCompositionalMeasureByName(ratioName)//
                                     .setOneSigma(oneSigmaAbs);
 
-                            // column 51 is ar230Th_238Ufc 
+                            // column AV=48 is ar230Th_234Ufc 
+                            ratioName = UThAnalysisMeasures.ar230Th_234Ufc.getName();
+                            myFraction.getAnalysisMeasure(ratioName)//
+                                    .setValue(readDelimitedTextCell(myFractionData.get(47)));
+
+                            // column AW=49 is ar230Th_234Ufc uncertainty 
+                            // convert 2-sigma to 1-sigma
+                            oneSigmaAbs = readDelimitedTextCell(myFractionData.get(48)).
+                                    divide(new BigDecimal(2.0));
+                            myFraction.getAnalysisMeasure(ratioName)//
+                                    .setOneSigma(oneSigmaAbs);
+           
+                            // column AX=50 is ar230Th_238Ufc 
                             ratioName = UThAnalysisMeasures.ar230Th_238Ufc.getName();
                             myFraction.getAnalysisMeasure(ratioName)//
-                                    .setValue(readDelimitedTextCell(myFractionData.get(48)));
+                                    .setValue(readDelimitedTextCell(myFractionData.get(49)));
 
-                            // column 52 is ar230Th_238Ufc uncertainty 
+                            // column AY=51 is ar230Th_238Ufc uncertainty 
                             // convert 2-sigma to 1-sigma
-                            oneSigmaAbs = readDelimitedTextCell(myFractionData.get(49)).
+                            oneSigmaAbs = readDelimitedTextCell(myFractionData.get(50)).
                                     divide(new BigDecimal(2.0));
                             myFraction.getAnalysisMeasure(ratioName)//
                                     .setOneSigma(oneSigmaAbs);
 
-                            // column 53 is ar234U_238Ufc 
+                            // column AZ=52 is ar234U_238Ufc 
                             ratioName = UThAnalysisMeasures.ar234U_238Ufc.getName();
                             myFraction.getAnalysisMeasure(ratioName)//
-                                    .setValue(readDelimitedTextCell(myFractionData.get(50)));
+                                    .setValue(readDelimitedTextCell(myFractionData.get(51)));
 
-                            // column 54 is ar234U_238Ufc uncertainty 
+                            // column BA=53 is ar234U_238Ufc uncertainty 
                             // convert 2-sigma to 1-sigma
-                            oneSigmaAbs = readDelimitedTextCell(myFractionData.get(51)).
+                            oneSigmaAbs = readDelimitedTextCell(myFractionData.get(52)).
                                     divide(new BigDecimal(2.0));
                             myFraction.getAnalysisMeasure(ratioName)//
                                     .setOneSigma(oneSigmaAbs);

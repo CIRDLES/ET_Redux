@@ -301,7 +301,7 @@ public class TripoliFraction implements //
         while (ratiosIterator.hasNext()) {
             RawRatioDataModel rr = (RawRatioDataModel) ratiosIterator.next();
             rr.generateSetOfFitFunctions(true, false);
-////////            rr.calculateDownholeFractionWeightedMeanAndUnct();
+            rr.calculateDownholeFractionWeightedMeanAndUnct();
         }
 
         // nov 2014 this also sets currentlyFitted = true
@@ -381,7 +381,7 @@ public class TripoliFraction implements //
         int totalColumns = 0;
         SortedSet<DataModelInterface> ratiosSortedSet = getRatiosForFractionFitting();
         for (DataModelInterface rr : ratiosSortedSet) {
-            totalColumns += ((RawRatioDataModel) rr).getSlogRatioX_Y().getColumnDimension();
+            totalColumns += ((RawRatioDataModel) rr).getSlogRatioX_Y(false).getColumnDimension();
         }
 
         Matrix SlogRatioAll = new Matrix(totalColumns, totalColumns, 0.0);
@@ -391,7 +391,7 @@ public class TripoliFraction implements //
         int totalRatiosUsed = 0;
         boolean[] savedCommonLeadDataActiveMap = null;
         for (DataModelInterface rr : ratiosSortedSet) {
-            Matrix SlrXY = ((RawRatioDataModel) rr).getSlogRatioX_Y();
+            Matrix SlrXY = ((RawRatioDataModel) rr).getSlogRatioX_Y(false);
             int columnsCount = SlrXY.getColumnDimension();
             SlogRatioAll.setMatrix(totalColumnsUsed, totalColumnsUsed + columnsCount - 1, totalColumnsUsed, totalColumnsUsed + columnsCount - 1, SlrXY);
 
@@ -427,7 +427,7 @@ public class TripoliFraction implements //
 
         //  second pass to cover the rectangular (possibly) off-diagonal elements
         for (DataModelInterface rr : ratiosSortedSet) {
-            Matrix SlrXY = ((RawRatioDataModel) rr).getSlogRatioX_Y();
+            Matrix SlrXY = ((RawRatioDataModel) rr).getSlogRatioX_Y(false);
             int columnsCount = SlrXY.getColumnDimension();
 
             // first test if common lead corrections present

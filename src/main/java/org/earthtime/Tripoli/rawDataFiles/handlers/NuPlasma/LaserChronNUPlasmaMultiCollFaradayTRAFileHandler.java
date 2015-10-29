@@ -1,5 +1,5 @@
 /*
- * NUPlasmaMultiCollFaradayTRAFileHandler.java
+ * LaserChronNUPlasmaMultiCollFaradayTRAFileHandler.java
  *
  * Created Jul 1, 2011
  *
@@ -17,7 +17,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.earthtime.Tripoli.rawDataFiles.handlers;
+package org.earthtime.Tripoli.rawDataFiles.handlers.NuPlasma;
 
 import java.io.File;
 import java.io.Serializable;
@@ -41,35 +41,36 @@ import org.earthtime.Tripoli.dataModels.inputParametersModels.StaticAcquisition;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.Tripoli.massSpecSetups.multiCollector.NUPlasma.GehrelsNUPlasmaSetupUPbFarTRA;
 import org.earthtime.Tripoli.massSpecSetups.multiCollector.NUPlasma.NUPlasmaCollectorsEnum;
+import org.earthtime.Tripoli.rawDataFiles.handlers.AbstractRawDataFileHandler;
 import org.earthtime.UPb_Redux.filters.TxtFileFilter;
+import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.utilities.FileHelper;
 import org.earthtime.utilities.TimeToString;
-import org.earthtime.archivingTools.URIHelper;
 
 /**
  *
  * @author James F. Bowring
  */
-public class NUPlasmaMultiCollFaradayTRAFileHandler extends AbstractRawDataFileHandler implements //
+public class LaserChronNUPlasmaMultiCollFaradayTRAFileHandler extends AbstractRawDataFileHandler implements //
         Comparable<AbstractRawDataFileHandler>,
         Serializable {
 
     // Class variables
     private static final long serialVersionUID = 4617107661618798359L;
-    private static NUPlasmaMultiCollFaradayTRAFileHandler instance = null;
+    private static LaserChronNUPlasmaMultiCollFaradayTRAFileHandler instance = null;
 //    private static String dataDelimiter;
 
     /**
      *
      */
-    public NUPlasmaMultiCollFaradayTRAFileHandler() {
+    public LaserChronNUPlasmaMultiCollFaradayTRAFileHandler() {
 
         super();
 
-        NAME = "NU Plasma MC Faraday TRA File";
+        NAME = "LaserChron NU Plasma MC Faraday TRA File";
 
         aboutInfo = "Details: This is the default protocol for handling files produced at "//
-                + "the Arizona Laserchron Center "//
+                + "the Arizona LaserChron Center "//
                 + "for Faraday analysis on the NU-Plasma with TRA (time-resolved analysis.) "//
                 + "Pattern of aquisitions dated 21 July 2014.";
 
@@ -79,9 +80,9 @@ public class NUPlasmaMultiCollFaradayTRAFileHandler extends AbstractRawDataFileH
      *
      * @return
      */
-    public static NUPlasmaMultiCollFaradayTRAFileHandler getInstance() {
+    public static LaserChronNUPlasmaMultiCollFaradayTRAFileHandler getInstance() {
         if (instance == null) {
-            instance = new NUPlasmaMultiCollFaradayTRAFileHandler();//massSpec, rawDataFileTemplate );
+            instance = new LaserChronNUPlasmaMultiCollFaradayTRAFileHandler();//massSpec, rawDataFileTemplate );
         }
         return instance;
     }

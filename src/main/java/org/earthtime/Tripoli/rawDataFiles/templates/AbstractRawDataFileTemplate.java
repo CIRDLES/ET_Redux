@@ -35,11 +35,11 @@ public abstract class AbstractRawDataFileTemplate implements //
     // Class variables
     private static final long serialVersionUID = 635520011046860860L;
     /**
-     * 
+     *
      */
     protected String NAME;
     /**
-     * 
+     *
      */
     protected String aboutInfo;
     /**
@@ -63,8 +63,8 @@ public abstract class AbstractRawDataFileTemplate implements //
      *
      */
     protected String endOfEachBlockLastLine;
-   /**
-     * 
+    /**
+     *
      */
     protected int blockStartOffset;
     /**
@@ -81,7 +81,7 @@ public abstract class AbstractRawDataFileTemplate implements //
     protected TimeZone timeZone;
     // 0 = no parse, 1 = auto-parse, 2 = follow a provided pattern (not implemented as of feb 2012)
     /**
-     * 
+     *
      */
     protected int defaultParsingOfFractionsBehavior;
 
@@ -90,10 +90,12 @@ public abstract class AbstractRawDataFileTemplate implements //
      */
     protected AbstractAcquisitionModel acquisitionModel;
 
+    protected String[] elementsByIsotopicMass;
+
     /**
-     * 
+     *
      */
-    public AbstractRawDataFileTemplate () {
+    public AbstractRawDataFileTemplate() {
         this.NAME = "Unnamed";
         this.aboutInfo = "Details:";
 
@@ -111,42 +113,42 @@ public abstract class AbstractRawDataFileTemplate implements //
     }
 
     /**
-     * 
+     *
      * @param abstractRawDataFileTemplate
      * @return
      */
     @Override
-    public int compareTo ( AbstractRawDataFileTemplate abstractRawDataFileTemplate ) {
+    public int compareTo(AbstractRawDataFileTemplate abstractRawDataFileTemplate) {
         String abstractRawDataFileTemplateName =//
                 ((AbstractRawDataFileTemplate) abstractRawDataFileTemplate).NAME.trim();
-        return (this.NAME.trim().compareToIgnoreCase( abstractRawDataFileTemplateName ));
+        return (this.NAME.trim().compareToIgnoreCase(abstractRawDataFileTemplateName));
     }
 
     /**
-     * 
+     *
      * @param abstractRawDataFileTemplate
      * @return
      */
     @Override
-    public boolean equals ( Object abstractRawDataFileTemplate ) {
+    public boolean equals(Object abstractRawDataFileTemplate) {
         //check for self-comparison
-        if ( this == abstractRawDataFileTemplate ) {
+        if (this == abstractRawDataFileTemplate) {
             return true;
         }
-        if (  ! (abstractRawDataFileTemplate instanceof AbstractRawDataFileTemplate) ) {
+        if (!(abstractRawDataFileTemplate instanceof AbstractRawDataFileTemplate)) {
             return false;
         }
 
         AbstractRawDataFileTemplate myAbstractRawDataFileTemplate = (AbstractRawDataFileTemplate) abstractRawDataFileTemplate;
-        return (this.NAME.trim().compareToIgnoreCase( myAbstractRawDataFileTemplate.NAME.trim() ) == 0);
+        return (this.NAME.trim().compareToIgnoreCase(myAbstractRawDataFileTemplate.NAME.trim()) == 0);
     }
 
     /**
-     * 
+     *
      * @return
      */
     @Override
-    public int hashCode () {
+    public int hashCode() {
         return super.hashCode();
     }
 
@@ -156,90 +158,89 @@ public abstract class AbstractRawDataFileTemplate implements //
      */
     public abstract AbstractAcquisitionModel makeNewAcquisitionModel();
 
-
     /**
      * @return the fileType
      */
-    public FileTypeEnum getFileType () {
+    public FileTypeEnum getFileType() {
         return fileType;
     }
 
     /**
      * @return the startOfFirstLine
      */
-    public String getStartOfFirstLine () {
+    public String getStartOfFirstLine() {
         return startOfFirstLine;
     }
 
     /**
      * @return the startOfDataSectionFirstLine
      */
-    public String getStartOfDataSectionFirstLine () {
+    public String getStartOfDataSectionFirstLine() {
         return startOfDataSectionFirstLine;
     }
 
     /**
      * @return the startOfEachBlockFirstLines
      */
-    public String getStartOfEachBlockFirstLine () {
+    public String getStartOfEachBlockFirstLine() {
         return startOfEachBlockFirstLine;
     }
 
     /**
      * @return the blockSize
      */
-    public int getBlockSize () {
+    public int getBlockSize() {
         return blockSize;
     }
 
     /**
      * @return the standardIDs
      */
-    public String[] getStandardIDs () {
+    public String[] getStandardIDs() {
         return standardIDs;
     }
 
     /**
      * @return the timeZone
      */
-    public TimeZone getTimeZone () {
+    public TimeZone getTimeZone() {
         return timeZone;
     }
 
     /**
-     * 
+     *
      * @return
      */
     @Override
-    public String toString () {
+    public String toString() {
         return NAME;
     }
 
     /**
      * @return the aboutInfo
      */
-    public String getAboutInfo () {
+    public String getAboutInfo() {
         return aboutInfo;
     }
 
     /**
      * @return the defaultParsingOfFractionsBehavior
      */
-    public int getDefaultParsingOfFractionsBehavior () {
+    public int getDefaultParsingOfFractionsBehavior() {
         return defaultParsingOfFractionsBehavior;
     }
 
     /**
      * @return the blockStartOffset
      */
-    public int getBlockStartOffset () {
+    public int getBlockStartOffset() {
         return blockStartOffset;
     }
 
     /**
      * @return the acquisitionModel
      */
-    public AbstractAcquisitionModel getAcquisitionModel () {
+    public AbstractAcquisitionModel getAcquisitionModel() {
         return acquisitionModel;
     }
 
@@ -248,5 +249,37 @@ public abstract class AbstractRawDataFileTemplate implements //
      */
     public String getEndOfEachBlockLastLine() {
         return endOfEachBlockLastLine;
+    }
+
+    public boolean standardIsKnown(String standardName) {
+        boolean retval = false;
+        for (int i = 0; i < standardIDs.length; i++) {
+            if (standardName.compareToIgnoreCase(standardIDs[i]) == 0) {
+                retval = true;
+                break;
+            }
+        }
+        return retval;
+    }
+
+    /**
+     * @return the elementsByIsotopicMass
+     */
+    public String[] getElementsByIsotopicMass() {
+        return elementsByIsotopicMass;
+    }
+
+    public String getStringListOfElementsByIsotopicMass() {
+        String retVal = "[";
+        
+        for (int i = 0; i < elementsByIsotopicMass.length; i ++){
+            retVal += elementsByIsotopicMass[i];
+            if (i < (elementsByIsotopicMass.length - 1)){
+                retVal += ", ";
+            }
+        }
+        retVal+= "]";
+        
+        return retVal;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * NUPlasmaMultiCollIonCounterRawDataTemplate.java
+ * Rittner_Agilent7700_RawDataTemplate
  *
  * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
  *
@@ -15,38 +15,39 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.earthtime.Tripoli.rawDataFiles.templates;
+package org.earthtime.Tripoli.rawDataFiles.templates.Agilent;
 
 import java.io.Serializable;
 import java.util.TimeZone;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.AbstractAcquisitionModel;
-import org.earthtime.Tripoli.dataModels.inputParametersModels.StaticAcquisition;
+import org.earthtime.Tripoli.dataModels.inputParametersModels.SingleCollectorAcquisition;
+import org.earthtime.Tripoli.rawDataFiles.templates.AbstractRawDataFileTemplate;
 import org.earthtime.dataDictionaries.FileTypeEnum;
 
 /**
  *
  * @author James F. Bowring
  */
-public final class NUPlasmaMultiCollIonCounterRawDataTemplate extends AbstractRawDataFileTemplate implements //
+public final class Rittner_Agilent7700_RawDataTemplate extends AbstractRawDataFileTemplate implements //
         Comparable<AbstractRawDataFileTemplate>,
         Serializable {
 
-    private static NUPlasmaMultiCollIonCounterRawDataTemplate instance = null;
+    private static Rittner_Agilent7700_RawDataTemplate instance = null;
 
-    private NUPlasmaMultiCollIonCounterRawDataTemplate () {
+    private Rittner_Agilent7700_RawDataTemplate () {
         super();
 
-        this.NAME = "Arizona NUPlasma";
-        this.aboutInfo = "U-Th-Pb IonCounter analysis runs";
-        this.fileType = FileTypeEnum.txt;
-        this.startOfFirstLine = "Run File";
-        this.startOfDataSectionFirstLine = " U-Th-Pb IC Analysis";
-        this.startOfEachBlockFirstLine = "Sample Name is ";
-        this.blockStartOffset = 23;
-        this.blockSize = 15;
+        this.NAME = "Rittner Agilent 7700";
+        this.aboutInfo = "analysis runs setup by Rittner";
+        this.fileType = FileTypeEnum.csv;
+        this.startOfFirstLine = "Sample";
+        this.startOfDataSectionFirstLine = "Time";
+        this.startOfEachBlockFirstLine = "Time";
+        this.blockStartOffset = 20;//4;
+        this.blockSize = 212;//goes with temp 106 in handler 222;//238;
         this.standardIDs = new String[]//
-        {"SL"};
-        this.timeZone = TimeZone.getTimeZone( "MST" );
+        {"stdcz"};
+        this.timeZone = TimeZone.getTimeZone( "GMT" );
         this.defaultParsingOfFractionsBehavior = 1;
 
     }
@@ -55,9 +56,9 @@ public final class NUPlasmaMultiCollIonCounterRawDataTemplate extends AbstractRa
      *
      * @return
      */
-    public static NUPlasmaMultiCollIonCounterRawDataTemplate getInstance () {
+    public static Rittner_Agilent7700_RawDataTemplate getInstance () {
         if ( instance == null ) {
-            instance = new NUPlasmaMultiCollIonCounterRawDataTemplate();
+            instance = new Rittner_Agilent7700_RawDataTemplate();
         }
         return instance;
     }
@@ -67,8 +68,8 @@ public final class NUPlasmaMultiCollIonCounterRawDataTemplate extends AbstractRa
      * @return
      */
     @Override
-    public AbstractAcquisitionModel makeNewAcquisitionModel(){
-        this.acquisitionModel = new StaticAcquisition();
+     public AbstractAcquisitionModel makeNewAcquisitionModel () {
+        this.acquisitionModel = new SingleCollectorAcquisition();
         return acquisitionModel;
     }
 }

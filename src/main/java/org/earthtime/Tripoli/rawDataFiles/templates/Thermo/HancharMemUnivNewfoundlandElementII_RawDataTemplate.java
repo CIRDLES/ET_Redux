@@ -1,5 +1,5 @@
 /*
- * TFElement2SingleColl_Vervoort_RawDataTemplate
+ * HancharMemUnivNewfoundlandElementII_RawDataTemplate
  *
  * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
  *
@@ -15,39 +15,44 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.earthtime.Tripoli.rawDataFiles.templates;
+package org.earthtime.Tripoli.rawDataFiles.templates.Thermo;
 
 import java.io.Serializable;
 import java.util.TimeZone;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.AbstractAcquisitionModel;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.SingleCollectorAcquisition;
+import org.earthtime.Tripoli.rawDataFiles.templates.AbstractRawDataFileTemplate;
 import org.earthtime.dataDictionaries.FileTypeEnum;
 
 /**
  *
  * @author James F. Bowring
  */
-public final class TFElement2SingleColl_Vervoort_RawDataTemplate extends AbstractRawDataFileTemplate implements //
+public final class HancharMemUnivNewfoundlandElementII_RawDataTemplate extends AbstractRawDataFileTemplate implements //
         Comparable<AbstractRawDataFileTemplate>,
         Serializable {
 
-    private static TFElement2SingleColl_Vervoort_RawDataTemplate instance = null;
+    //Class variables
+    private static final long serialVersionUID = 2549874427568944698L;
 
-    private TFElement2SingleColl_Vervoort_RawDataTemplate () {
+    private static HancharMemUnivNewfoundlandElementII_RawDataTemplate instance = null;
+
+    private HancharMemUnivNewfoundlandElementII_RawDataTemplate() {
         super();
 
-        this.NAME = "Vervoort Element2";
-        this.aboutInfo = "analysis runs setup by Vervoort";
-        this.fileType = FileTypeEnum.txt;
-        this.startOfFirstLine = "Trace for Mass:";
+        this.NAME = "Memorial Univ Newfoundland Element II";
+        this.aboutInfo = "analysis runs setup by Hanchar";
+        this.fileType = FileTypeEnum.fin2;
+        this.startOfFirstLine = "Finnigan";
         this.startOfDataSectionFirstLine = "Time";
         this.startOfEachBlockFirstLine = "Time";
-        this.blockStartOffset = 6;
-        this.blockSize = 300;
+        this.blockStartOffset = 8;
+        this.blockSize = 500;
         this.standardIDs = new String[]//
-        {"Peixe"};
-        this.timeZone = TimeZone.getTimeZone( "PST" );
+        {"GJ1"};
+        this.timeZone = TimeZone.getTimeZone("GMT");
         this.defaultParsingOfFractionsBehavior = 1;
+        this.elementsByIsotopicMass = new String[]{"204", "206", "207", "208", "232", "238"};
 
     }
 
@@ -55,19 +60,19 @@ public final class TFElement2SingleColl_Vervoort_RawDataTemplate extends Abstrac
      *
      * @return
      */
-    public static TFElement2SingleColl_Vervoort_RawDataTemplate getInstance () {
-        if ( instance == null ) {
-            instance = new TFElement2SingleColl_Vervoort_RawDataTemplate();
+    public static HancharMemUnivNewfoundlandElementII_RawDataTemplate getInstance() {
+        if (instance == null) {
+            instance = new HancharMemUnivNewfoundlandElementII_RawDataTemplate();
         }
         return instance;
     }
-    
+
     /**
      *
      * @return
      */
     @Override
-     public AbstractAcquisitionModel makeNewAcquisitionModel () {
+    public AbstractAcquisitionModel makeNewAcquisitionModel() {
         this.acquisitionModel = new SingleCollectorAcquisition();
         return acquisitionModel;
     }

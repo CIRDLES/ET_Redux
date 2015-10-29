@@ -53,23 +53,29 @@ import org.earthtime.Tripoli.massSpecSetups.multiCollector.NUPlasma.GehrelsNUPla
 import org.earthtime.Tripoli.massSpecSetups.multiCollector.NUPlasma.GehrelsNUPlasmaSetupUPbFarTRA;
 import org.earthtime.Tripoli.massSpecSetups.multiCollector.NUPlasma.GehrelsNUPlasmaSetupUPbIonCounter;
 import org.earthtime.Tripoli.massSpecSetups.singleCollector.Agilent7700.KoslerAgilent7700SetupUPb;
+import org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan.LaserchronElementIISetupUPb;
+import org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan.MemUnivNewfoundlandElementIISetupUPb;
 import org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan.UnivKansasElementIISetupUPb;
 import org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan.WashStateElementIISetupUPb;
 import org.earthtime.Tripoli.rawDataFiles.handlers.AbstractRawDataFileHandler;
-import org.earthtime.Tripoli.rawDataFiles.handlers.KoslerAgilent7700FileHandler;
-import org.earthtime.Tripoli.rawDataFiles.handlers.NUPlasmaMultiCollFaradayFileHandler;
-import org.earthtime.Tripoli.rawDataFiles.handlers.NUPlasmaMultiCollFaradayTRAFileHandler;
-import org.earthtime.Tripoli.rawDataFiles.handlers.NUPlasmaMultiCollIonCounterFileHandler;
-import org.earthtime.Tripoli.rawDataFiles.handlers.UnivKansasElementIIFileHandler;
-import org.earthtime.Tripoli.rawDataFiles.handlers.WashStateElementIISingleCollFileHandler;
+import org.earthtime.Tripoli.rawDataFiles.handlers.Agilent.KoslerAgilent7700FileHandler;
+import org.earthtime.Tripoli.rawDataFiles.handlers.NuPlasma.LaserChronNUPlasmaMultiCollFaradayFileHandler;
+import org.earthtime.Tripoli.rawDataFiles.handlers.NuPlasma.LaserChronNUPlasmaMultiCollFaradayTRAFileHandler;
+import org.earthtime.Tripoli.rawDataFiles.handlers.NuPlasma.LaserChronNUPlasmaMultiCollIonCounterFileHandler;
+import org.earthtime.Tripoli.rawDataFiles.handlers.Thermo.LaserchronElementIIFileHandler;
+import org.earthtime.Tripoli.rawDataFiles.handlers.Thermo.MemUnivNewfoundlandElementIIFileHandler;
+import org.earthtime.Tripoli.rawDataFiles.handlers.Thermo.UnivKansasElementIIFileHandler;
+import org.earthtime.Tripoli.rawDataFiles.handlers.Thermo.WashStateElementIISingleCollFileHandler;
 import org.earthtime.Tripoli.rawDataFiles.templates.AbstractRawDataFileTemplate;
-import org.earthtime.Tripoli.rawDataFiles.templates.Kosler_Agilent7700_RawDataTemplate;
-import org.earthtime.Tripoli.rawDataFiles.templates.MoellerUnivKansasElementII_RawDataTemplate;
-import org.earthtime.Tripoli.rawDataFiles.templates.NUPlasmaMultiCollFaradayRawDataTemplate;
-import org.earthtime.Tripoli.rawDataFiles.templates.NUPlasmaMultiCollFaradayTRARawDataTemplate;
-import org.earthtime.Tripoli.rawDataFiles.templates.NUPlasmaMultiCollIonCounterRawDataTemplate;
-import org.earthtime.Tripoli.rawDataFiles.templates.TFElement2SingleColl_Valencia_RawDataTemplate;
-import org.earthtime.Tripoli.rawDataFiles.templates.TFElement2SingleColl_Vervoort_RawDataTemplate;
+import org.earthtime.Tripoli.rawDataFiles.templates.Agilent.Kosler_Agilent7700_RawDataTemplate;
+import org.earthtime.Tripoli.rawDataFiles.templates.NuPlasma.LaserChronNUPlasmaMultiCollFaradayRawDataTemplate;
+import org.earthtime.Tripoli.rawDataFiles.templates.NuPlasma.LaserChronNUPlasmaMultiCollFaradayTRARawDataTemplate;
+import org.earthtime.Tripoli.rawDataFiles.templates.NuPlasma.LaserChronNUPlasmaMultiCollIonCounterRawDataTemplate;
+import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.HancharMemUnivNewfoundlandElementII_RawDataTemplate;
+import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.LaserchronElementII_RawDataTemplate;
+import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.MoellerUnivKansasElementII_RawDataTemplate;
+import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.ValenciaWashStateElementII_RawDataTemplate;
+import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.VervoortWashStateElementII_RawDataTemplate;
 import org.earthtime.Tripoli.samples.AbstractTripoliSample;
 import org.earthtime.Tripoli.sessions.TripoliSession;
 import org.earthtime.Tripoli.sessions.TripoliSessionInterface;
@@ -143,49 +149,82 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
         // eventually move to xml external files
         knownRawDataFileHandlers = new ArrayList<>();
 
-        // NU Plasma Arizona FARADAY
+        // LaserChron NU Plasma FARADAY
         AbstractRawDataFileHandler theNUPlasmaMultiCollFaradayFileHandler = //
-                NUPlasmaMultiCollFaradayFileHandler.getInstance();
+                LaserChronNUPlasmaMultiCollFaradayFileHandler.getInstance();
         theNUPlasmaMultiCollFaradayFileHandler.getAvailableMassSpecSetups()//
                 .add(GehrelsNUPlasmaSetupUPbFar.getInstance());
 
         theNUPlasmaMultiCollFaradayFileHandler.getAvailableRawDataFileTemplates()//
-                .add(NUPlasmaMultiCollFaradayRawDataTemplate.getInstance());
+                .add(LaserChronNUPlasmaMultiCollFaradayRawDataTemplate.getInstance());
 
         knownRawDataFileHandlers.add(theNUPlasmaMultiCollFaradayFileHandler);
 
-        // NU Plasma Arizona FARADAY TRA
+        // LaserChron NU Plasma FARADAY TRA
         AbstractRawDataFileHandler theNUPlasmaMultiCollFaradayTRAFileHandler = //
-                NUPlasmaMultiCollFaradayTRAFileHandler.getInstance();
+                LaserChronNUPlasmaMultiCollFaradayTRAFileHandler.getInstance();
         theNUPlasmaMultiCollFaradayTRAFileHandler.getAvailableMassSpecSetups()//
                 .add(GehrelsNUPlasmaSetupUPbFarTRA.getInstance());
 
         theNUPlasmaMultiCollFaradayTRAFileHandler.getAvailableRawDataFileTemplates()//
-                .add(NUPlasmaMultiCollFaradayTRARawDataTemplate.getInstance());
+                .add(LaserChronNUPlasmaMultiCollFaradayTRARawDataTemplate.getInstance());
 
         knownRawDataFileHandlers.add(theNUPlasmaMultiCollFaradayTRAFileHandler);
 
-        // NU Plasma Arizona IONCOUNTER
+        // LaserChron NU Plasma IONCOUNTER
         AbstractRawDataFileHandler theNUPlasmaMultiCollIonCounterFileHandler = //
-                NUPlasmaMultiCollIonCounterFileHandler.getInstance();
+                LaserChronNUPlasmaMultiCollIonCounterFileHandler.getInstance();
         theNUPlasmaMultiCollIonCounterFileHandler.getAvailableMassSpecSetups()//
                 .add(GehrelsNUPlasmaSetupUPbIonCounter.getInstance());
 
         theNUPlasmaMultiCollIonCounterFileHandler.getAvailableRawDataFileTemplates()//
-                .add(NUPlasmaMultiCollIonCounterRawDataTemplate.getInstance());
+                .add(LaserChronNUPlasmaMultiCollIonCounterRawDataTemplate.getInstance());
 
         knownRawDataFileHandlers.add(theNUPlasmaMultiCollIonCounterFileHandler);
 
-        // Element 2 Washington State
+        // LaserChron Element 2 
+        AbstractRawDataFileHandler theLaserchronElementIIFileHandler = //
+                LaserchronElementIIFileHandler.getInstance();
+        theLaserchronElementIIFileHandler.getAvailableMassSpecSetups()//
+                .add(LaserchronElementIISetupUPb.getInstance());
+
+        theLaserchronElementIIFileHandler.getAvailableRawDataFileTemplates()//
+                .add(LaserchronElementII_RawDataTemplate.getInstance());
+
+        knownRawDataFileHandlers.add(theLaserchronElementIIFileHandler);
+
+        // Memorial U Newfoundland John Hanchar ElementII 
+        AbstractRawDataFileHandler theMemUnivNewfoundlandElementIIFileHandler = //
+                MemUnivNewfoundlandElementIIFileHandler.getInstance();
+        theMemUnivNewfoundlandElementIIFileHandler.getAvailableMassSpecSetups()//
+                .add(MemUnivNewfoundlandElementIISetupUPb.getInstance());
+
+        theMemUnivNewfoundlandElementIIFileHandler.getAvailableRawDataFileTemplates()//
+                .add(HancharMemUnivNewfoundlandElementII_RawDataTemplate.getInstance());
+
+        knownRawDataFileHandlers.add(theMemUnivNewfoundlandElementIIFileHandler);
+
+        // U Kansas Andreas Moeller ElementII  
+        AbstractRawDataFileHandler theUnivKansasElementIIFileHandler = //
+                UnivKansasElementIIFileHandler.getInstance();
+        theUnivKansasElementIIFileHandler.getAvailableMassSpecSetups()//
+                .add(UnivKansasElementIISetupUPb.getInstance());
+
+        theUnivKansasElementIIFileHandler.getAvailableRawDataFileTemplates()//
+                .add(MoellerUnivKansasElementII_RawDataTemplate.getInstance());
+
+        knownRawDataFileHandlers.add(theUnivKansasElementIIFileHandler);
+
+        // Washington State Element 2 
         AbstractRawDataFileHandler theThermoFinniganElement2SingleCollFileHandler = //
                 WashStateElementIISingleCollFileHandler.getInstance();
         theThermoFinniganElement2SingleCollFileHandler.getAvailableMassSpecSetups()//
                 .add(WashStateElementIISetupUPb.getInstance());
 
         theThermoFinniganElement2SingleCollFileHandler.getAvailableRawDataFileTemplates()//
-                .add(TFElement2SingleColl_Vervoort_RawDataTemplate.getInstance());
+                .add(VervoortWashStateElementII_RawDataTemplate.getInstance());
         theThermoFinniganElement2SingleCollFileHandler.getAvailableRawDataFileTemplates()//
-                .add(TFElement2SingleColl_Valencia_RawDataTemplate.getInstance());
+                .add(ValenciaWashStateElementII_RawDataTemplate.getInstance());
 
         knownRawDataFileHandlers.add(theThermoFinniganElement2SingleCollFileHandler);
 
@@ -209,17 +248,6 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
                 .add(Kosler_Agilent7700_RawDataTemplate.getInstance());
 
         knownRawDataFileHandlers.add(theKoslerAgilent7700FileHandler);
-
-        // June 2015 Andreas Moeller ElementII at U Kansas
-        AbstractRawDataFileHandler theUnivKansasElementIIFileHandler = //
-                UnivKansasElementIIFileHandler.getInstance();
-        theUnivKansasElementIIFileHandler.getAvailableMassSpecSetups()//
-                .add(UnivKansasElementIISetupUPb.getInstance());
-
-        theUnivKansasElementIIFileHandler.getAvailableRawDataFileTemplates()//
-                .add(MoellerUnivKansasElementII_RawDataTemplate.getInstance());
-
-        knownRawDataFileHandlers.add(theUnivKansasElementIIFileHandler);
 
         // move this section for robust file opening
         fileHandlerComboBox.removeAllItems();

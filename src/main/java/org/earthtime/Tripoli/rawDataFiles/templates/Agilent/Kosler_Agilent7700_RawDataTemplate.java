@@ -1,5 +1,5 @@
 /*
- * MoellerUnivKansasElementII_RawDataTemplate
+ * Kosler_Agilent7700_RawDataTemplate
  *
  * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
  *
@@ -15,37 +15,38 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.earthtime.Tripoli.rawDataFiles.templates;
+package org.earthtime.Tripoli.rawDataFiles.templates.Agilent;
 
 import java.io.Serializable;
 import java.util.TimeZone;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.AbstractAcquisitionModel;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.SingleCollectorAcquisition;
+import org.earthtime.Tripoli.rawDataFiles.templates.AbstractRawDataFileTemplate;
 import org.earthtime.dataDictionaries.FileTypeEnum;
 
 /**
  *
  * @author James F. Bowring
  */
-public final class MoellerUnivKansasElementII_RawDataTemplate extends AbstractRawDataFileTemplate implements //
+public final class Kosler_Agilent7700_RawDataTemplate extends AbstractRawDataFileTemplate implements //
         Comparable<AbstractRawDataFileTemplate>,
         Serializable {
 
-    private static MoellerUnivKansasElementII_RawDataTemplate instance = null;
+    private static Kosler_Agilent7700_RawDataTemplate instance = null;
 
-    private MoellerUnivKansasElementII_RawDataTemplate () {
+    private Kosler_Agilent7700_RawDataTemplate () {
         super();
 
-        this.NAME = "Univ Kansas Element II";
-        this.aboutInfo = "analysis runs setup by Moeller";
-        this.fileType = FileTypeEnum.fin2;
-        this.startOfFirstLine = "Finnigan";
+        this.NAME = "Kosler Agilent 7700";
+        this.aboutInfo = "analysis runs setup by Kosler for 2015 round robin";
+        this.fileType = FileTypeEnum.csv;
+        this.startOfFirstLine = "Intensity";
         this.startOfDataSectionFirstLine = "Time";
         this.startOfEachBlockFirstLine = "Time";
-        this.blockStartOffset = 8;
-        this.blockSize = 222;
+        this.blockStartOffset = 4;
+        this.blockSize = 500;//346;//360;
         this.standardIDs = new String[]//
-        {"GJ1"};
+        {"91500"};
         this.timeZone = TimeZone.getTimeZone( "GMT" );
         this.defaultParsingOfFractionsBehavior = 1;
 
@@ -55,9 +56,9 @@ public final class MoellerUnivKansasElementII_RawDataTemplate extends AbstractRa
      *
      * @return
      */
-    public static MoellerUnivKansasElementII_RawDataTemplate getInstance () {
+    public static Kosler_Agilent7700_RawDataTemplate getInstance () {
         if ( instance == null ) {
-            instance = new MoellerUnivKansasElementII_RawDataTemplate();
+            instance = new Kosler_Agilent7700_RawDataTemplate();
         }
         return instance;
     }

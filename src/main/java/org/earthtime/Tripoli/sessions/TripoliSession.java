@@ -234,7 +234,7 @@ public class TripoliSession implements
             downholeFractionationDataModels = //
                     rawDataFileHandler.getMassSpec().downholeFractionationDataModelsFactory(tripoliFractions, primaryMineralStandard);
             // may 2014 - for use with live data, we check to see if these exist and if so, do not recreate
-            if ((sessionForStandardsInterceptFractionation.size() == 0) || (sessionForStandardsDownholeFractionation.size() == 0)) {
+            if ((sessionForStandardsInterceptFractionation.isEmpty()) || (sessionForStandardsDownholeFractionation.isEmpty())) {
                 // create sessionForStandards models for both downhole and intercept methods
                 Iterator<DataModelInterface> dataModelIterator = tripoliFractions.first().getRatiosForFractionFitting().iterator();
                 while (dataModelIterator.hasNext()) {
@@ -293,15 +293,16 @@ public class TripoliSession implements
 
     /**
      *
+     * @param resetMatrix the value of resetMatrix
      */
     @Override
-    public void calculateDownholeFitSummariesForPrimaryStandard() {
+    public void calculateDownholeFitSummariesForPrimaryStandard(boolean resetMatrix) {
 
         for (RawRatioNames rrName : downholeFractionationDataModels.keySet()) {
             DownholeFractionationDataModel downholeFractionationDataModel = downholeFractionationDataModels.get(rrName);
 
             // for thick black line
-            downholeFractionationDataModel.calculateWeightedMeanOfStandards();
+            downholeFractionationDataModel.calculateWeightedMeanOfStandards(resetMatrix);
 
             // for thick red line
             downholeFractionationDataModel.generateSetOfFitFunctions(true, false);
@@ -337,7 +338,7 @@ public class TripoliSession implements
                 });
             } else {
 
-                calculateDownholeFitSummariesForPrimaryStandard();
+                calculateDownholeFitSummariesForPrimaryStandard(false);
                 sessionForStandardsDownholeFractionation.keySet().stream().forEach((rrName) -> {
                     try {
                         sessionForStandardsDownholeFractionation.get(rrName).generateSetOfFitFunctions(true, false);

@@ -26,6 +26,9 @@ import org.earthtime.dataDictionaries.AcquisitionTypesEnum;
  * @author James F. Bowring
  */
 public class MultiSequenceAcquisition extends AbstractAcquisitionModel {
+    
+    // Class variables
+ //   private static final long serialVersionUID = 1l;//-1164757885416000963L;
 
     /**
      *

@@ -15,7 +15,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.earthtime.Tripoli.rawDataFiles.handlers;
+package org.earthtime.Tripoli.rawDataFiles.handlers.Agilent;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -28,6 +28,7 @@ import java.util.TreeSet;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
+import org.earthtime.Tripoli.rawDataFiles.handlers.AbstractRawDataFileHandler;
 import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.utilities.FileHelper;
 
@@ -55,7 +56,7 @@ public class RittnerAgilent7700FileHandler extends AbstractRawDataFileHandler im
 
         super();//massSpec, rawDataFileTemplate );
 
-        NAME = "Rittner Agilent 7700 File";
+        NAME = "Rittner Agilent 7700 Folder";
 
         aboutInfo = "Details: This is the Rittner protocol for an Agilent 7700.";
     }

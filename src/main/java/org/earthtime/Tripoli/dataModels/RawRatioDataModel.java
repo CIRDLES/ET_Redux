@@ -257,7 +257,7 @@ public class RawRatioDataModel //
         // refactor to improve performance
         // Since SLogRatioX_Y is calculated on the first pass, we can merely
         // toggle rows and columns per dagtaactive map instead of recalculating everything
-        // make the current version transient and save only the full
+        // make the current version transient and save only the full        
         if (SlogRatioX_Yfull == null) {
             // create all true dataActiveMap for initial pass
             boolean[] allTrueDataActiveMap = new boolean[dataActiveMap.length];
@@ -427,12 +427,10 @@ public class RawRatioDataModel //
             for (int i = 0; i < dataActiveMap.length; i++) {
                 if (dataActiveMap[i]) {
                     activeData[index] = true;
-                    logDifferencesFromWeightedMean[index] = downHoleFitFunction.f(normalizedOnPeakAquireTimes[i]) - logRatios[i] ;
+                    logDifferencesFromWeightedMean[index] = downHoleFitFunction.f(normalizedOnPeakAquireTimes[i]) - logRatios[i];
                     index++;
-                } else {
-                    if (shades[i]) {
-                        matrixIndicesToRemove.add(i);
-                    }
+                } else if (shades[i]) {
+                    matrixIndicesToRemove.add(i);
                 }
             }
 
@@ -455,7 +453,7 @@ public class RawRatioDataModel //
                             activeData, //
                             null, //this is mean so x does not matter
                             logDifferencesFromWeightedMean,//
-                            matrixSfCopy.plus(getSlogRatioX_Y()),//
+                            matrixSfCopy.plus(getSlogRatioX_Y(false)),//
                             false);
 
             // algorithmForMEAN contains both the non OD and OD versions
@@ -478,7 +476,7 @@ public class RawRatioDataModel //
                                 activeData, //
                                 activeXvalues, //
                                 logDifferencesFromWeightedMean,//
-                                matrixSfCopy.plus(getSlogRatioX_Y()),//
+                                matrixSfCopy.plus(getSlogRatioX_Y(false)),//
                                 false);
 
                 fOfX_MEAN_OD = fOfX_MEAN;
@@ -586,8 +584,8 @@ public class RawRatioDataModel //
         boolean retVal;
 
         // algorithmForMEAN contains both the non OD and OD versions
-        AbstractFunctionOfX fOfX_MEAN = null;
-        AbstractFunctionOfX fOfX_MEAN_OD = null;
+        AbstractFunctionOfX fOfX_MEAN;
+        AbstractFunctionOfX fOfX_MEAN_OD;
 
         if (USING_FULL_PROPAGATION) {
             try {
@@ -1180,7 +1178,7 @@ public class RawRatioDataModel //
         double retVal = 0.0;
         if (sessionTechnique.compareToIgnoreCase("DOWNHOLE") == 0) {
             try {
-                retVal = getSelectedFitFunction().getA();//updated june 2015         getMeanOfResidualsFromFittedFractionation();
+                retVal = getSelectedDownHoleFitFunction().getA();//updated june 2015         getMeanOfResidualsFromFittedFractionation();
             } catch (Exception e) {
                 retVal = 0.0;
             }
@@ -1204,7 +1202,7 @@ public class RawRatioDataModel //
         double retVal = 0.0;
         if (sessionTechnique.compareToIgnoreCase("DOWNHOLE") == 0) {
             try {
-                retVal = getSelectedFitFunction().getStdErrOfA();//updated june 2015 getStdErrOfmeanOfResidualsFromFittedFractionation();
+                retVal = getSelectedDownHoleFitFunction().getStdErrOfA();//updated june 2015 getStdErrOfmeanOfResidualsFromFittedFractionation();
             } catch (Exception e) {
                 retVal = 0.0;
             }
@@ -1228,7 +1226,7 @@ public class RawRatioDataModel //
         double retVal = 0.0;
         if (sessionTechnique.compareToIgnoreCase("DOWNHOLE") == 0) {
             try {
-                AbstractFunctionOfX FofX = getSelectedFitFunction();
+                AbstractFunctionOfX FofX = getSelectedDownHoleFitFunction();
                 retVal = Math.sqrt(Math.pow(FofX.getStdErrOfA(), 2) + FofX.getOverDispersion());//  updated june 2015                                  getStdErrOfmeanOfResidualsFromFittedFractionation();
             } catch (Exception e) {
             }
@@ -1255,7 +1253,7 @@ public class RawRatioDataModel //
         double retVal = 0.0;
         if (sessionTechnique.compareToIgnoreCase("DOWNHOLE") == 0) {
             try {
-                retVal = Math.pow(getSelectedFitFunction().getStdErrOfA(), 2); // updated june 2015 from getStdErrOfmeanOfResidualsFromFittedFractionation()
+                retVal = Math.pow(getSelectedDownHoleFitFunction().getStdErrOfA(), 2); // updated june 2015 from getStdErrOfmeanOfResidualsFromFittedFractionation()
             } catch (Exception e) {
                 retVal = 0.0;
             }
@@ -1496,10 +1494,11 @@ public class RawRatioDataModel //
     }
 
     /**
-     * @return the SlogRatioX_Y
+     * @param resetMatrix the value of resetMatrix
+     * @return the Jama.Matrix
      */
-    public Matrix getSlogRatioX_Y() {
-        if (SlogRatioX_Y == null) {
+    public Matrix getSlogRatioX_Y(boolean resetMatrix) {
+        if ((resetMatrix) || (SlogRatioX_Y == null)) {
             calculateSlogRatioX_Y();
         }
         return SlogRatioX_Y;
@@ -1596,7 +1595,7 @@ public class RawRatioDataModel //
 
         return activeLogatios;
     }
-    
+
     public Matrix SlogRXYSolveLRWithZeroesAtInactive(boolean[] dataCommonActiveMap) {
         // take the SLogRatioXYALL and solve it with logRatiosVector
         /// then remove row for left and right shades
@@ -1676,12 +1675,10 @@ public class RawRatioDataModel //
             } else {
                 contains = logRatioFitFunctionsNoOD.get(fitFunctionType.getName()) != null;
             }
+        } else if (overDispersionSelected) {
+            contains = logRatioFitFunctionsWithOD.get(fitFunctionType.getName()) != null;
         } else {
-            if (overDispersionSelected) {
-                contains = logRatioFitFunctionsWithOD.get(fitFunctionType.getName()) != null;
-            } else {
-                contains = logRatioFitFunctionsNoOD.get(fitFunctionType.getName()) != null;
-            }
+            contains = logRatioFitFunctionsNoOD.get(fitFunctionType.getName()) != null;
         }
         return contains;
     }
@@ -1758,6 +1755,10 @@ public class RawRatioDataModel //
         return usedForCommonLeadCorrections;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public boolean isForceMeanForCommonLeadRatios() {
 //        System.out.println("BOTTOM " + botIsotope.getDataModelName());

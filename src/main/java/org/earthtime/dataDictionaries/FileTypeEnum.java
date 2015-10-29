@@ -33,7 +33,10 @@ public enum FileTypeEnum {
      */
     csv("csv"),
     
-    fin2("fin2");
+    fin2("fin2"),
+    
+    dat("dat");
+    
     private String name;
 
     private FileTypeEnum(String name) {

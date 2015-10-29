@@ -1,5 +1,5 @@
 /*
- * Rittner_Agilent7700_RawDataTemplate
+ * MoellerUnivKansasElementII_RawDataTemplate
  *
  * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
  *
@@ -15,38 +15,41 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.earthtime.Tripoli.rawDataFiles.templates;
+package org.earthtime.Tripoli.rawDataFiles.templates.Thermo;
 
 import java.io.Serializable;
 import java.util.TimeZone;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.AbstractAcquisitionModel;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.SingleCollectorAcquisition;
+import org.earthtime.Tripoli.rawDataFiles.templates.AbstractRawDataFileTemplate;
 import org.earthtime.dataDictionaries.FileTypeEnum;
 
 /**
  *
  * @author James F. Bowring
  */
-public final class Rittner_Agilent7700_RawDataTemplate extends AbstractRawDataFileTemplate implements //
+public final class MoellerUnivKansasElementII_RawDataTemplate extends AbstractRawDataFileTemplate implements //
         Comparable<AbstractRawDataFileTemplate>,
         Serializable {
 
-    private static Rittner_Agilent7700_RawDataTemplate instance = null;
+     // Class variables
+    private static final long serialVersionUID = -7723699052591631306L;
+    private static MoellerUnivKansasElementII_RawDataTemplate instance = null;
 
-    private Rittner_Agilent7700_RawDataTemplate () {
+    private MoellerUnivKansasElementII_RawDataTemplate() {
         super();
 
-        this.NAME = "Rittner Agilent 7700";
-        this.aboutInfo = "analysis runs setup by Rittner";
-        this.fileType = FileTypeEnum.csv;
-        this.startOfFirstLine = "Sample";
+        this.NAME = "Univ Kansas Element II";
+        this.aboutInfo = "analysis runs setup by Moeller";
+        this.fileType = FileTypeEnum.fin2;
+        this.startOfFirstLine = "Finnigan";
         this.startOfDataSectionFirstLine = "Time";
         this.startOfEachBlockFirstLine = "Time";
-        this.blockStartOffset = 20;//4;
-        this.blockSize = 212;//goes with temp 106 in handler 222;//238;
+        this.blockStartOffset = 8;
+        this.blockSize = 222;
         this.standardIDs = new String[]//
-        {"stdcz"};
-        this.timeZone = TimeZone.getTimeZone( "GMT" );
+        {"GJ1"};
+        this.timeZone = TimeZone.getTimeZone("GMT");
         this.defaultParsingOfFractionsBehavior = 1;
 
     }
@@ -55,19 +58,19 @@ public final class Rittner_Agilent7700_RawDataTemplate extends AbstractRawDataFi
      *
      * @return
      */
-    public static Rittner_Agilent7700_RawDataTemplate getInstance () {
-        if ( instance == null ) {
-            instance = new Rittner_Agilent7700_RawDataTemplate();
+    public static MoellerUnivKansasElementII_RawDataTemplate getInstance() {
+        if (instance == null) {
+            instance = new MoellerUnivKansasElementII_RawDataTemplate();
         }
         return instance;
     }
-    
+
     /**
      *
      * @return
      */
     @Override
-     public AbstractAcquisitionModel makeNewAcquisitionModel () {
+    public AbstractAcquisitionModel makeNewAcquisitionModel() {
         this.acquisitionModel = new SingleCollectorAcquisition();
         return acquisitionModel;
     }

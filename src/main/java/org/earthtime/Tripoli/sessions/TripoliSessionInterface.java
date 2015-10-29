@@ -103,9 +103,10 @@ public interface TripoliSessionInterface extends TripoliSessionFractionationCalc
 
     /**
      *
+     * @param resetMatrices the value of resetMatrices
      */
     @Override
-    void calculateDownholeFitSummariesForPrimaryStandard ();
+    void calculateDownholeFitSummariesForPrimaryStandard (boolean resetMatrix);
 
 //    /**
 //     *

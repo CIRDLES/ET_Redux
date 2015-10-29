@@ -542,7 +542,7 @@ public abstract class AbstractMassSpecSetup implements //
 
                     outputWriter.println("Slr_X_Y:");
                     try {
-                        ((RawRatioDataModel) rr).getSlogRatioX_Y().print(outputWriter, new DecimalFormat("0.000000E00"), 10);
+                        ((RawRatioDataModel) rr).getSlogRatioX_Y(false).print(outputWriter, new DecimalFormat("0.000000E00"), 10);
                     } catch (Exception e) {
                     }
                 }
@@ -1130,19 +1130,19 @@ public abstract class AbstractMassSpecSetup implements //
                                 tripoliFractions, //
                                 RawRatioNames.r206_207w, //
                                 primaryMineralStandard, //
-                                new double[countOfAcquisitions], acquireTimes.clone(), normalizedOnPeakAquireTimes.clone(), maskingArray);
+                                new double[countOfAcquisitions], acquireTimes, normalizedOnPeakAquireTimes, maskingArray);
                 DownholeFractionationDataModel r206_238w =//
                         new DownholeFractionationDataModel(//
                                 tripoliFractions, //
                                 RawRatioNames.r206_238w, //
                                 primaryMineralStandard, //
-                                new double[countOfAcquisitions], acquireTimes.clone(), normalizedOnPeakAquireTimes.clone(), maskingArray);
+                                new double[countOfAcquisitions], acquireTimes, normalizedOnPeakAquireTimes, maskingArray);
                 DownholeFractionationDataModel r208_232w = //
                         new DownholeFractionationDataModel( //
                                 tripoliFractions, //
                                 RawRatioNames.r208_232w, //
                                 primaryMineralStandard, //
-                                new double[countOfAcquisitions], acquireTimes.clone(), normalizedOnPeakAquireTimes.clone(), maskingArray);
+                                new double[countOfAcquisitions], acquireTimes, normalizedOnPeakAquireTimes, maskingArray);
 
                 // oct 2012 update fractionation models based on valid ratios
                 // first load assumed models

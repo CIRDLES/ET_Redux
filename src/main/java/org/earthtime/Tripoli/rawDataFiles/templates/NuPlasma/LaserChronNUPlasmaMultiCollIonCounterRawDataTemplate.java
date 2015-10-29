@@ -1,7 +1,5 @@
 /*
- * NUPlasmaMultiCollFaradayRawDataTemplate.java
- *
- * Created Jul 1, 2011
+ * LaserChronNUPlasmaMultiCollIonCounterRawDataTemplate.java
  *
  * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
  *
@@ -17,34 +15,34 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.earthtime.Tripoli.rawDataFiles.templates;
+package org.earthtime.Tripoli.rawDataFiles.templates.NuPlasma;
 
 import java.io.Serializable;
 import java.util.TimeZone;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.AbstractAcquisitionModel;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.StaticAcquisition;
+import org.earthtime.Tripoli.rawDataFiles.templates.AbstractRawDataFileTemplate;
 import org.earthtime.dataDictionaries.FileTypeEnum;
 
 /**
  *
  * @author James F. Bowring
  */
-public final class NUPlasmaMultiCollFaradayRawDataTemplate extends AbstractRawDataFileTemplate implements //
+public final class LaserChronNUPlasmaMultiCollIonCounterRawDataTemplate extends AbstractRawDataFileTemplate implements //
         Comparable<AbstractRawDataFileTemplate>,
         Serializable {
 
-    private static NUPlasmaMultiCollFaradayRawDataTemplate instance = null;
+    private static LaserChronNUPlasmaMultiCollIonCounterRawDataTemplate instance = null;
 
-    private NUPlasmaMultiCollFaradayRawDataTemplate () {
+    private LaserChronNUPlasmaMultiCollIonCounterRawDataTemplate () {
         super();
 
-        this.NAME = "Arizona NUPlasma";
-        this.aboutInfo = "U-Th-Pb Faraday analysis runs";
+        this.NAME = "LaserChron NUPlasma";
+        this.aboutInfo = "U-Th-Pb IonCounter analysis runs";
         this.fileType = FileTypeEnum.txt;
         this.startOfFirstLine = "Run File";
-        this.startOfDataSectionFirstLine = " U-Th-Pb FAR Analysis";
+        this.startOfDataSectionFirstLine = " U-Th-Pb IC Analysis";
         this.startOfEachBlockFirstLine = "Sample Name is ";
-        this.endOfEachBlockLastLine = "End of Analysis";
         this.blockStartOffset = 23;
         this.blockSize = 15;
         this.standardIDs = new String[]//
@@ -58,9 +56,9 @@ public final class NUPlasmaMultiCollFaradayRawDataTemplate extends AbstractRawDa
      *
      * @return
      */
-    public static NUPlasmaMultiCollFaradayRawDataTemplate getInstance () {
+    public static LaserChronNUPlasmaMultiCollIonCounterRawDataTemplate getInstance () {
         if ( instance == null ) {
-            instance = new NUPlasmaMultiCollFaradayRawDataTemplate();
+            instance = new LaserChronNUPlasmaMultiCollIonCounterRawDataTemplate();
         }
         return instance;
     }

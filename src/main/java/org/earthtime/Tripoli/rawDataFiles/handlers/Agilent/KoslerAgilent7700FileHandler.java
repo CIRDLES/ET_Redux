@@ -15,7 +15,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.earthtime.Tripoli.rawDataFiles.handlers;
+package org.earthtime.Tripoli.rawDataFiles.handlers.Agilent;
 
 import java.io.File;
 import java.io.Serializable;
@@ -33,6 +33,7 @@ import javax.swing.SwingWorker;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.Tripoli.massSpecSetups.singleCollector.Agilent7700.KoslerAgilent7700SetupUPb;
+import org.earthtime.Tripoli.rawDataFiles.handlers.AbstractRawDataFileHandler;
 import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.utilities.FileHelper;
 
@@ -56,7 +57,7 @@ public class KoslerAgilent7700FileHandler extends AbstractRawDataFileHandler imp
     private KoslerAgilent7700FileHandler() {
 
         super();
-        NAME = "Kosler Agilent 7700 File";
+        NAME = "Kosler Agilent 7700 Folder";
         aboutInfo = "Details: This is the Kosler protocol for an Agilent 7700 used in 2015 round robin.";
     }
 

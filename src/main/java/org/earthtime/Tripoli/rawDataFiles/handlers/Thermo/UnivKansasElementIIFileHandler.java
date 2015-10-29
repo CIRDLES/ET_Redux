@@ -15,7 +15,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.earthtime.Tripoli.rawDataFiles.handlers;
+package org.earthtime.Tripoli.rawDataFiles.handlers.Thermo;
 
 import java.io.File;
 import java.io.Serializable;
@@ -32,6 +32,7 @@ import javax.swing.SwingWorker;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan.UnivKansasElementIISetupUPb;
+import org.earthtime.Tripoli.rawDataFiles.handlers.AbstractRawDataFileHandler;
 import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.utilities.FileHelper;
 
@@ -43,6 +44,8 @@ public class UnivKansasElementIIFileHandler extends AbstractRawDataFileHandler i
         Comparable<AbstractRawDataFileHandler>,
         Serializable {
 
+    // Class variables
+    private static final long serialVersionUID = 1676980296251048119L;
     private static UnivKansasElementIIFileHandler instance = null;
     private File[] analysisFiles;
 
@@ -54,7 +57,7 @@ public class UnivKansasElementIIFileHandler extends AbstractRawDataFileHandler i
     private UnivKansasElementIIFileHandler() {
 
         super();
-        NAME = "Univ Kansas Element II File";
+        NAME = "Univ Kansas Element II Folder";
         aboutInfo = "Details: This is the Moeller protocol for an ElementII.";
     }
 
@@ -278,5 +281,4 @@ public class UnivKansasElementIIFileHandler extends AbstractRawDataFileHandler i
 
         return myTripoliFractions;
     }
-
 }

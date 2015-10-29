@@ -29,6 +29,7 @@ public enum UThAnalysisMeasures {
      *
      */
     ar230Th_238Ufc("ar230Th_238Ufc"),
+    ar230Th_234Ufc("ar230Th_234Ufc"),
     /**
      *
      */

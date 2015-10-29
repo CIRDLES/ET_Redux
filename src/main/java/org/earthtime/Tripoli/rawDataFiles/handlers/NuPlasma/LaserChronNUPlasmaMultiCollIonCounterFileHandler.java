@@ -1,7 +1,5 @@
 /*
- * NUPlasmaMultiCollFaradayFileHandler.java
- *
- * Created Jul 1, 2011
+ * LaserChronNUPlasmaMultiCollIonCounterFileHandler.java
  *
  * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
  *
@@ -17,17 +15,11 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.earthtime.Tripoli.rawDataFiles.handlers;
+package org.earthtime.Tripoli.rawDataFiles.handlers.NuPlasma;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,37 +34,37 @@ import org.earthtime.Tripoli.dataModels.DataModelInterface;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.AbstractAcquisitionModel;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.StaticAcquisition;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
-import org.earthtime.Tripoli.massSpecSetups.multiCollector.NUPlasma.NUPlasmaCollectorsEnum;
+import org.earthtime.Tripoli.massSpecSetups.multiCollector.NUPlasma.GehrelsNUPlasmaSetupUPbIonCounter;
+import org.earthtime.Tripoli.rawDataFiles.handlers.AbstractRawDataFileHandler;
 import static org.earthtime.UPb_Redux.ReduxConstants.getMonthConversions;
 import org.earthtime.UPb_Redux.filters.TxtFileFilter;
+import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.utilities.FileHelper;
 import org.earthtime.utilities.TimeToString;
-import org.earthtime.archivingTools.URIHelper;
 
 /**
  *
  * @author James F. Bowring
  */
-public class NUPlasmaMultiCollFaradayFileHandler extends AbstractRawDataFileHandler implements //
+public class LaserChronNUPlasmaMultiCollIonCounterFileHandler extends AbstractRawDataFileHandler implements //
         Comparable<AbstractRawDataFileHandler>,
         Serializable {
 
     // Class variables
-    private static final long serialVersionUID = 4104909666221641003L;
-    private static NUPlasmaMultiCollFaradayFileHandler instance = null;
-    private static String dataDelimiter;
+    // private static final long serialVersionUID = 4104909666221641003L;
+    private static LaserChronNUPlasmaMultiCollIonCounterFileHandler instance = null;
 
     /**
      *
      */
-    public NUPlasmaMultiCollFaradayFileHandler() {
+    public LaserChronNUPlasmaMultiCollIonCounterFileHandler() {
 
         super();
 
-        NAME = "NU Plasma MC Faraday File";
+        NAME = "LaserChron NU Plasma MC IonCounter File";
 
-        aboutInfo = "Details: This is the default protocol for handling files produced at the Arizona Laserchron Center "//
-                + " for Faraday analysis on the NU-Plasma.";
+        aboutInfo = "Details: This is the default protocol for handling files produced at the Arizona LaserChron Center "//
+                + " for IonCounter analysis on the NU-Plasma.";
 
     }
 
@@ -80,9 +72,9 @@ public class NUPlasmaMultiCollFaradayFileHandler extends AbstractRawDataFileHand
      *
      * @return
      */
-    public static NUPlasmaMultiCollFaradayFileHandler getInstance() {
+    public static LaserChronNUPlasmaMultiCollIonCounterFileHandler getInstance() {
         if (instance == null) {
-            instance = new NUPlasmaMultiCollFaradayFileHandler();//massSpec, rawDataFileTemplate );
+            instance = new LaserChronNUPlasmaMultiCollIonCounterFileHandler();//massSpec, rawDataFileTemplate );
         }
         return instance;
     }
@@ -95,88 +87,19 @@ public class NUPlasmaMultiCollFaradayFileHandler extends AbstractRawDataFileHand
      */
     @Override
     public File validateAndGetHeaderDataFromRawIntensityFile(File tripoliRawDataFolder) {
-        String dialogTitle = "Select NU Plasma Faraday Raw Data File(s): *.txt";
+        String dialogTitle = "Select a NU Plasma IonCounter Raw Data File: *.txt";
         final String fileExtension = ".txt";
         FileFilter nonMacFileFilter = new TxtFileFilter();
 
-        // oct 2014 allow for multiselect
         rawDataFile = null;
-        File[] filesToConcatenate = FileHelper.AllPlatformGetFile( //
-                dialogTitle, tripoliRawDataFolder, fileExtension, nonMacFileFilter, true, new JFrame());
-
-        // pre-process to be sure valid files
-        ArrayList<File> validFilesForConcatenation = new ArrayList<>();
-        for (int fileIndex = 0; fileIndex < filesToConcatenate.length; fileIndex++) {
-            if (isValidRawDataFileType(filesToConcatenate[fileIndex])) {
-                validFilesForConcatenation.add(filesToConcatenate[fileIndex]);
-            }
-        }
-
-        if (validFilesForConcatenation.size() > 1) {
-            Collections.sort(validFilesForConcatenation, new Comparator<File>() {
-
-                @Override
-                public int compare(File f1, File f2) {
-                    return Long.compare(f1.lastModified(), f2.lastModified());
-                }
-            });
-
-            String concatenatedFileName = "CONCAT_" + validFilesForConcatenation.get(0).getName().replace("." + rawDataFileTemplate.getFileType().getName(), "");
-
-            // concatenation process assume first file is good until the end then strip off trailing info
-            String firstLineInDataBlock = rawDataFileTemplate.getStartOfEachBlockFirstLine();
-            String lastLineInBlock = rawDataFileTemplate.getEndOfEachBlockLastLine();
-            String fileContents = URIHelper.getTextFromURI(validFilesForConcatenation.get(0).getAbsolutePath());
-
-            // remove all quotes
-            fileContents = fileContents.replaceAll("\"", "");
-
-            // find last good analysis
-            int indexOflastGoodData = fileContents.lastIndexOf(lastLineInBlock) + lastLineInBlock.length() + 1;// crlf
-            //System.out.println(fileContents.substring(indexOflastGoodData));
-            fileContents = fileContents.substring(0, indexOflastGoodData);
-
-            // now loop through remaining files and append their data blocks
-            for (int fileIndex = 1; fileIndex < validFilesForConcatenation.size(); fileIndex++) {
-                String fileContentsConcat = URIHelper.getTextFromURI(validFilesForConcatenation.get(fileIndex).getAbsolutePath());
-
-                // remove all quotes
-                fileContentsConcat = fileContentsConcat.replaceAll("\"", "");
-                int startingIndexOfBlockData = fileContentsConcat.indexOf(firstLineInDataBlock);
-
-                indexOflastGoodData = fileContentsConcat.lastIndexOf(lastLineInBlock) + lastLineInBlock.length() + 1;// crlf
-                fileContentsConcat = fileContentsConcat.substring(//
-                        startingIndexOfBlockData,//
-                        indexOflastGoodData + (fileContentsConcat.length() > indexOflastGoodData ? 1 : 0));
-
-                fileContents += fileContentsConcat;
-//                System.out.println(fileContentsConcat);
-
-                concatenatedFileName += "_" + validFilesForConcatenation.get(fileIndex).getName().replace("." + rawDataFileTemplate.getFileType().getName(), "");
-            }
-            // write out concatenated file and then process it
-            // new java 7 technique
-            try {
-                String concatFilePath = //
-                        validFilesForConcatenation.get(0).getParent() + File.separator + concatenatedFileName + "." + rawDataFileTemplate.getFileType().getName();
-                Files.write(Paths.get(concatFilePath), fileContents.getBytes());
-                rawDataFile = new File(concatFilePath);
-            } catch (IOException iOException) {
-                rawDataFile = null;
-            }
-        } else {
-            try {
-                rawDataFile = validFilesForConcatenation.get(0);
-            } catch (Exception e) {
-                rawDataFile = null;
-            }
-        }
+        rawDataFile = FileHelper.AllPlatformGetFile( //
+                dialogTitle, tripoliRawDataFolder, fileExtension, nonMacFileFilter, false, new JFrame())[0];
 
         if (rawDataFile != null) {
             if (isValidRawDataFileType(rawDataFile)) {
                 // load header data into acquisitionModel instance
                 boolean success = loadDataSetupParametersFromRawDataFileHeader(rawDataFileTemplate.getAcquisitionModel());
-                if (!success) {
+                if (!success){
                     rawDataFile = null;
                 }
             } else {
@@ -264,21 +187,14 @@ public class NUPlasmaMultiCollFaradayFileHandler extends AbstractRawDataFileHand
             // OCT 2012
             // customize massspec setup for this data aquisition
             // extract gains and deadtimes
-            String[] headerDetails = headerData[0].trim().split("\n");
+            String[] headerDetails = headerData[0].split("\n");
 
-            // march 2014 to handle possible tab delimiters such as 20 analysis runs
-            String gainsPass1 = headerDetails[1].split(":")[1];
-            if (gainsPass1.startsWith(" \t")) {
-                dataDelimiter = "\t";
-            } else {
-                dataDelimiter = ",";
-            }
-            // in both cases following, there is a leading dataDelimiter, so n + 1 elements are recovered
-            String[] gains = headerDetails[1].split(":")[1].split(dataDelimiter);
+            // in both cases following, there is a leading comma, so n + 1 elements are recovered
+            String[] gains = headerDetails[1].split(":")[1].split(",");
             // build gains models
             Map<String, Double> collectorNameToRelativeGainsMap = new TreeMap<>();
             // first gain is bogus
-            for (int i = 0; i < NUPlasmaCollectorsEnum.values().length; i++) {
+            for (int i = 0; i < GehrelsNUPlasmaSetupUPbIonCounter.NUPlasmaICCollectors.values().length; i++) {
                 double relGain = 0.0;
                 try {
                     relGain = Double.valueOf(gains[i + 1]);
@@ -286,17 +202,17 @@ public class NUPlasmaMultiCollFaradayFileHandler extends AbstractRawDataFileHand
                 }
                 // in order
                 try {
-                    collectorNameToRelativeGainsMap.put(NUPlasmaCollectorsEnum.values()[i].name(), relGain);
+                    collectorNameToRelativeGainsMap.put(GehrelsNUPlasmaSetupUPbIonCounter.NUPlasmaICCollectors.values()[i].name(), relGain);
                 } catch (Exception e) {
                 }
             }
 
             acquisitionModel.setCollectorNameToRelativeGainsMap(collectorNameToRelativeGainsMap);
 
-            String[] deadTimes = headerDetails[3].split(":")[1].split(dataDelimiter);
+            String[] deadTimes = headerDetails[3].split(":")[1].split(",");
             // build gains models
             Map<String, Double> collectorNameToDeadTimesMap = new TreeMap<>();
-            for (int i = 0; i < NUPlasmaCollectorsEnum.getIonCounterCollectorNames().length; i++) {
+            for (int i = 0; i < GehrelsNUPlasmaSetupUPbIonCounter.NUPlasmaICCollectors.getIonCounterCollectorNames().length; i++) {
                 double deadTime = 0.0;
                 try {
                     deadTime = Double.valueOf(deadTimes[i + 1]);
@@ -304,7 +220,7 @@ public class NUPlasmaMultiCollFaradayFileHandler extends AbstractRawDataFileHand
                 }
                 // in order
                 try {
-                    collectorNameToDeadTimesMap.put(NUPlasmaCollectorsEnum.getIonCounterCollectorNames()[i], deadTime);
+                    collectorNameToDeadTimesMap.put(GehrelsNUPlasmaSetupUPbIonCounter.NUPlasmaICCollectors.getIonCounterCollectorNames()[i], deadTime);
                 } catch (Exception e) {
                 }
             }
@@ -323,10 +239,9 @@ public class NUPlasmaMultiCollFaradayFileHandler extends AbstractRawDataFileHand
                     new String[]{"Selected raw data file was not valid."},
                     "ET Redux Warning",
                     JOptionPane.WARNING_MESSAGE);
-
+            
             retVal = false;
         }
-
         return retVal;
     }
 
@@ -353,7 +268,9 @@ public class NUPlasmaMultiCollFaradayFileHandler extends AbstractRawDataFileHand
 
         tripoliFractions = new TreeSet<>();
 
+        // if ( isValidRawDataFileType( rawDataFile ) ) {
         String fileContents = URIHelper.getTextFromURI(rawDataFile.getAbsolutePath());
+        //if ( areKeyWordsPresent( fileContents ) ) {
 
         // remove all quotes
         fileContents = fileContents.replaceAll("\"", "");
@@ -404,9 +321,7 @@ public class NUPlasmaMultiCollFaradayFileHandler extends AbstractRawDataFileHand
                 break;
             }
 
-            final int limit = ((100 * (i - ignoreFirstFractions)) / (rawFractions.length - ignoreFirstFractions));
-            loadDataTask.firePropertyChange("progress", 0, limit);
-
+            loadDataTask.firePropertyChange("progress", 0, ((100 * i) / rawFractions.length));
             // split fractions into scans
             fractionBlockOfScans = rawFractions[i].split("\n");
 
@@ -442,48 +357,29 @@ public class NUPlasmaMultiCollFaradayFileHandler extends AbstractRawDataFileHand
 
                     String hms = sampleFractionTime[1].substring(20).trim();
                     // check for am or pm or nothing at end
-                    if (hms.endsWith("AM")) {
+                    if (hms.endsWith("AM") || !hms.endsWith("M")) {
                         //hms += " AM";
                         AMPMval = 0;
-                    } else if (!hms.endsWith("M")) {
-                        AMPMval = -1; // 24 hour clock
                     }
 
                     // april 2014 midnight problem
                     String[] hmsAMPM = hms.split(":");
                     String[] AMPM = hmsAMPM[2].split(" ");
 
-                    // jan 2015 another change in output ??
-                    // calendar roll over when no am pm present
-                    if (AMPMval == -1) {
-                        if (calendar.get(Calendar.HOUR_OF_DAY) > Integer.valueOf(hmsAMPM[0])) {
+                    calendar.set(Calendar.HOUR, Integer.valueOf(hmsAMPM[0]) % 12);
+                    calendar.set(Calendar.MINUTE, Integer.valueOf(hmsAMPM[1]));
+                    calendar.set(Calendar.SECOND, Integer.valueOf(AMPM[0]));
+
+                    if (i == (ignoreFirstFractions + 1)) {
+                        calendar.set(Calendar.AM_PM, AMPMval);
+                    } else {
+                        // check for rollover
+                        if (calendar.get(Calendar.AM_PM) > AMPMval) {
                             // we have rolled to new day
                             calendar.add(Calendar.DATE, 1);
                         }
-
-                        calendar.set(Calendar.SECOND, Integer.valueOf(AMPM[0]));
-                        calendar.set(Calendar.MINUTE, Integer.valueOf(hmsAMPM[1]));
-
-                        calendar.set(Calendar.HOUR_OF_DAY, Integer.valueOf(hmsAMPM[0]));
-
-                    } else {
-                        calendar.set(Calendar.SECOND, Integer.valueOf(AMPM[0]));
-                        calendar.set(Calendar.MINUTE, Integer.valueOf(hmsAMPM[1]));
-
-                        calendar.set(Calendar.HOUR, Integer.valueOf(hmsAMPM[0]) % 12);
-
-                        if (i == (ignoreFirstFractions + 1)) {
-                            calendar.set(Calendar.AM_PM, AMPMval);
-                        } else {
-                            // check for rollover
-                            if (calendar.get(Calendar.AM_PM) > AMPMval) {
-                                // we have rolled to new day
-                                calendar.add(Calendar.DATE, 1);
-                            }
-                        }
-                        calendar.set(Calendar.AM_PM, AMPMval);
                     }
-
+                    calendar.set(Calendar.AM_PM, AMPMval);
                     fractionDate = calendar.getTime();//   fractionTimeFormat.parse(fractionDateString);
 
                 }
@@ -492,13 +388,13 @@ public class NUPlasmaMultiCollFaradayFileHandler extends AbstractRawDataFileHand
                 boolean isStandard = isStandardFractionID(fractionID);
 
                 // check number of columns against number of collectors
-                String[] columns = fractionBlockOfScans[1].split(dataDelimiter);
+                String[] columns = fractionBlockOfScans[1].split(",");
                 // last entry is a counter
                 if (columns.length == (getMassSpec().getVIRTUAL_COLLECTOR_COUNT() + 1)) {
                     // prepare block of scans
                     String[][] scanData = new String[myBlockSize][getMassSpec().getVIRTUAL_COLLECTOR_COUNT()];
                     for (int row = 1; row < fractionBlockOfScans.length - 1; row++) {
-                        columns = fractionBlockOfScans[row].split(dataDelimiter);
+                        columns = fractionBlockOfScans[row].split(",");
                         System.arraycopy(columns, 0, scanData[row - 1], 0, getMassSpec().getVIRTUAL_COLLECTOR_COUNT());
                     }
 
@@ -513,6 +409,19 @@ public class NUPlasmaMultiCollFaradayFileHandler extends AbstractRawDataFileHand
 
                     String theFractionID = fullFractionId + ((count == 0) ? "" : "." + String.valueOf(count));
 
+//                    TripoliFraction tripoliFraction = //                           
+//                            new TripoliFraction( //
+//                                    theFractionID, //
+//                                    massSpec.getCommonLeadCorrectionHighestLevel(), //
+//                                    isStandard,
+//                                    fractionDate.getTime(), //
+//                                    fractionDate.getTime(), massSpec.rawRatiosFactory(scanData, isStandard, theFractionID, usingFullPropagation, null));
+//
+//                    tripoliFraction.shadeDataActiveMapLeft(leftShadeCount);
+//                    tripoliFractions.add(tripoliFraction);
+//
+//                    System.out.println(sampleName + "   " + fractionID + " " + isStandard + "  \t" + TimeToString.timeStampString(fractionDate.getTime()));
+
                     // nov 2014 broke into steps to provide cleaner logic
                     TripoliFraction tripoliFraction = //                           
                             new TripoliFraction( //
@@ -522,7 +431,7 @@ public class NUPlasmaMultiCollFaradayFileHandler extends AbstractRawDataFileHand
                                     fractionDate.getTime(), //
                                     fractionDate.getTime(),//
                                     myBlockSize);//, 
-                    
+
                     SortedSet<DataModelInterface> rawRatios = massSpec.rawRatiosFactory(scanData, isStandard, theFractionID, usingFullPropagation, tripoliFraction);
                     tripoliFraction.setRawRatios(rawRatios);
                     massSpec.processFractionRawRatios(scanData, isStandard, fractionID, usingFullPropagation, tripoliFraction);
