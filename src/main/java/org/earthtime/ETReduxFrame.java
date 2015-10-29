@@ -1818,8 +1818,9 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         project_menu = new javax.swing.JMenu();
         jMenuItem2 = new javax.swing.JMenuItem();
         newProjectFromRawData_menu = new javax.swing.JMenu();
-        jMenuItem13 = new javax.swing.JMenuItem();
+        newProjectRawDataIDTIMS = new javax.swing.JMenuItem();
         newProjectRawDataLAICPMS = new javax.swing.JMenuItem();
+        newProjectRawDataSHRIMP = new javax.swing.JMenuItem();
         jMenuItem4 = new javax.swing.JMenuItem();
         jMenuItem5 = new javax.swing.JMenuItem();
         jMenuItem9 = new javax.swing.JMenuItem();
@@ -2157,9 +2158,9 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
         newProjectFromRawData_menu.setText("New Project from Raw Data");
 
-        jMenuItem13.setText("ID TIMS");
-        jMenuItem13.setEnabled(false);
-        newProjectFromRawData_menu.add(jMenuItem13);
+        newProjectRawDataIDTIMS.setText("ID TIMS");
+        newProjectRawDataIDTIMS.setEnabled(false);
+        newProjectFromRawData_menu.add(newProjectRawDataIDTIMS);
 
         newProjectRawDataLAICPMS.setText("LA-ICP MS");
         newProjectRawDataLAICPMS.addActionListener(new java.awt.event.ActionListener() {
@@ -2168,6 +2169,10 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             }
         });
         newProjectFromRawData_menu.add(newProjectRawDataLAICPMS);
+
+        newProjectRawDataSHRIMP.setText("SHRIMP");
+        newProjectRawDataSHRIMP.setEnabled(false);
+        newProjectFromRawData_menu.add(newProjectRawDataSHRIMP);
 
         project_menu.add(newProjectFromRawData_menu);
 
@@ -4109,7 +4114,6 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     private javax.swing.JMenu helpMenu;
     private javax.swing.JMenuItem helpMenuItem;
     private javax.swing.JButton interpretSampleDates_button;
-    private javax.swing.JMenuItem jMenuItem13;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JMenuItem jMenuItem5;
@@ -4143,7 +4147,9 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     private javax.swing.JMenuItem manageTIMSLabDefaults;
     private javax.swing.JMenu newProjectFromLegacyDataTable_menu;
     private javax.swing.JMenu newProjectFromRawData_menu;
+    private javax.swing.JMenuItem newProjectRawDataIDTIMS;
     private javax.swing.JMenuItem newProjectRawDataLAICPMS;
+    private javax.swing.JMenuItem newProjectRawDataSHRIMP;
     private javax.swing.JMenuItem newSampleAnalysisForIDTIMS_menuItem;
     private javax.swing.JMenuItem newSampleAnalysisForLAICPMS_MC_menuItem;
     private javax.swing.JMenuItem newSampleCompilation_menuItem;

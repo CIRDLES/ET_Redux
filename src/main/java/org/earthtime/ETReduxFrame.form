@@ -30,7 +30,7 @@
                 <Property name="text" type="java.lang.String" value="New Project from Raw Data"/>
               </Properties>
               <SubComponents>
-                <MenuItem class="javax.swing.JMenuItem" name="jMenuItem13">
+                <MenuItem class="javax.swing.JMenuItem" name="newProjectRawDataIDTIMS">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="ID TIMS"/>
                     <Property name="enabled" type="boolean" value="false"/>
@@ -43,6 +43,12 @@
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="newProjectRawDataLAICPMSActionPerformed"/>
                   </Events>
+                </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="newProjectRawDataSHRIMP">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="SHRIMP"/>
+                    <Property name="enabled" type="boolean" value="false"/>
+                  </Properties>
                 </MenuItem>
               </SubComponents>
             </Menu>
