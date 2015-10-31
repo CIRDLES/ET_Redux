@@ -477,7 +477,7 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
 
         tripoliFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliSession.getTripoliFractions(), fractionSelectionType, IncludedTypeEnum.ALL); // sept 2015 bettter way to handlefractionIncludedType);
         // test for empty (i.e. no excluded)
-        if (tripoliFractions.size() == 0) {
+        if (tripoliFractions.isEmpty()) {
             fractionIncludedType = IncludedTypeEnum.ALL;
             tripoliFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliSession.getTripoliFractions(), fractionSelectionType, fractionIncludedType);
         }

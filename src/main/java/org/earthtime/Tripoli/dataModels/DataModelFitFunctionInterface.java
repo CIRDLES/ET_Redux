@@ -98,6 +98,7 @@ public interface DataModelFitFunctionInterface {
      * @return
      */
     public AbstractFunctionOfX getSelectedFitFunction();
+    public AbstractFunctionOfX getSelectedDownHoleFitFunction();
 
     /**
      *

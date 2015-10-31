@@ -376,7 +376,7 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
                 } else {
                     downholeStandardsFitFunctionsWithOD.put(fOfX_EXPMAT.getShortNameString(), fOfX_EXPMAT);
                 }
-                selectedFitFunctionType = FitFunctionTypeEnum.EXPONENTIAL;
+                selectedFitFunctionType = FitFunctionTypeEnum.LINE;// default = line EXPONENTIAL;
             } else {
                 downholeStandardsFitFunctionsNoOD.remove(FitFunctionTypeEnum.EXPONENTIAL.getName());//was expmat??
                 downholeStandardsFitFunctionsWithOD.remove(FitFunctionTypeEnum.EXPONENTIAL.getName());
@@ -961,5 +961,10 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
      */
     public void setFittedStandardsBeta(double[] fittedStandardsBeta) {
         this.fittedStandardsBeta = fittedStandardsBeta;
+    }
+
+    @Override
+    public AbstractFunctionOfX getSelectedDownHoleFitFunction() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
