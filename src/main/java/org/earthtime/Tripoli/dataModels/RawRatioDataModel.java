@@ -189,7 +189,7 @@ public class RawRatioDataModel //
     @Override
     public void applyMaskingArray() {
 
-        dataActiveMap = MaskingSingleton.getInstance().applyMask(dataActiveMap);//    .getMaskingArray().clone();
+        dataActiveMap = MaskingSingleton.getInstance().applyMask(dataActiveMap.clone());//    .getMaskingArray().clone();
         topIsotope.applyMaskingArray();
         botIsotope.applyMaskingArray();
     }
@@ -256,7 +256,7 @@ public class RawRatioDataModel //
         // April 2015
         // refactor to improve performance
         // Since SLogRatioX_Y is calculated on the first pass, we can merely
-        // toggle rows and columns per dagtaactive map instead of recalculating everything
+        // toggle rows and columns per dataactive map instead of recalculating everything
         // make the current version transient and save only the full        
         if (SlogRatioX_Yfull == null) {
             // create all true dataActiveMap for initial pass
@@ -429,13 +429,16 @@ public class RawRatioDataModel //
                     activeData[index] = true;
                     logDifferencesFromWeightedMean[index] = downHoleFitFunction.f(normalizedOnPeakAquireTimes[i]) - logRatios[i];
                     index++;
-                } else if (shades[i]) {
+                } else if (!shades[i]) {
                     matrixIndicesToRemove.add(i);
                 }
             }
 
             // remove row and col of matrix sf corresponding to missing acquisitions
             Matrix matrixSfCopy = downHoleFitFunction.getMatrixSf().copy();
+
+            Matrix SfPlusSlogRarioX_Y = matrixSfCopy.plus(getSlogRatioX_Y(false));
+
             if (matrixIndicesToRemove.size() > 0) {
                 // reverse list of indices to remove to avoid counting errors
                 Collections.sort(matrixIndicesToRemove, (Integer i1, Integer i2) -> Integer.compare(i2, i1));
@@ -453,7 +456,7 @@ public class RawRatioDataModel //
                             activeData, //
                             null, //this is mean so x does not matter
                             logDifferencesFromWeightedMean,//
-                            matrixSfCopy.plus(getSlogRatioX_Y(false)),//
+                            SfPlusSlogRarioX_Y,//matrixSfCopy.plus(getSlogRatioX_Y(false)),//
                             false);
 
             // algorithmForMEAN contains both the non OD and OD versions
@@ -476,7 +479,7 @@ public class RawRatioDataModel //
                                 activeData, //
                                 activeXvalues, //
                                 logDifferencesFromWeightedMean,//
-                                matrixSfCopy.plus(getSlogRatioX_Y(false)),//
+                                SfPlusSlogRarioX_Y,//matrixSfCopy.plus(getSlogRatioX_Y(false)),//
                                 false);
 
                 fOfX_MEAN_OD = fOfX_MEAN;
@@ -623,20 +626,16 @@ public class RawRatioDataModel //
 
         if ((fOfX_MEAN != null) && fOfX_MEAN.verifyPositiveVariances()) {
             if (logRatioFitFunctionsNoOD.containsKey(fOfX_MEAN.getShortNameString())) {
-                AbstractFunctionOfX fOfXexist = logRatioFitFunctionsNoOD.get(fOfX_MEAN.getShortNameString());
                 logRatioFitFunctionsNoOD.remove(fOfX_MEAN.getShortNameString());
                 logRatioFitFunctionsNoOD.put(fOfX_MEAN.getShortNameString(), fOfX_MEAN);
-                // fOfXexist.copyValuesFrom(fOfX_MEAN);
             } else {
                 logRatioFitFunctionsNoOD.put(fOfX_MEAN.getShortNameString(), fOfX_MEAN);
             }
 
             if ((fOfX_MEAN_OD != null) && fOfX_MEAN_OD.verifyPositiveVariances()) {
                 if (logRatioFitFunctionsWithOD.containsKey(fOfX_MEAN_OD.getShortNameString())) {
-                    AbstractFunctionOfX fOfXexist = logRatioFitFunctionsWithOD.get(fOfX_MEAN_OD.getShortNameString());
                     logRatioFitFunctionsWithOD.remove(fOfX_MEAN_OD.getShortNameString());
                     logRatioFitFunctionsWithOD.put(fOfX_MEAN_OD.getShortNameString(), fOfX_MEAN_OD);
-                    // fOfXexist.copyValuesFrom(fOfX_MEAN_OD);
                 } else {
                     logRatioFitFunctionsWithOD.put(fOfX_MEAN_OD.getShortNameString(), fOfX_MEAN_OD);
                 }
@@ -707,16 +706,17 @@ public class RawRatioDataModel //
 
         if ((fOfX_LINE != null) && fOfX_LINE.verifyPositiveVariances()) {
             if (logRatioFitFunctionsNoOD.containsKey(fOfX_LINE.getShortNameString())) {
-                AbstractFunctionOfX fOfXexist = logRatioFitFunctionsNoOD.get(fOfX_LINE.getShortNameString());
-                fOfXexist.copyValuesFrom(fOfX_LINE);
+                logRatioFitFunctionsNoOD.remove(fOfX_LINE.getShortNameString());
+                logRatioFitFunctionsNoOD.put(fOfX_LINE.getShortNameString(), fOfX_LINE);
             } else {
                 logRatioFitFunctionsNoOD.put(fOfX_LINE.getShortNameString(), fOfX_LINE);
             }
 
             if ((fOfX_LINE_OD != null) && fOfX_LINE_OD.verifyPositiveVariances()) {
                 if (logRatioFitFunctionsWithOD.containsKey(fOfX_LINE_OD.getShortNameString())) {
-                    AbstractFunctionOfX fOfXexist = logRatioFitFunctionsWithOD.get(fOfX_LINE_OD.getShortNameString());
-                    fOfXexist.copyValuesFrom(fOfX_LINE_OD);
+                    logRatioFitFunctionsWithOD.remove(fOfX_LINE_OD.getShortNameString());
+                    logRatioFitFunctionsWithOD.put(fOfX_LINE_OD.getShortNameString(), fOfX_LINE_OD);
+
                 } else {
                     logRatioFitFunctionsWithOD.put(fOfX_LINE_OD.getShortNameString(), fOfX_LINE_OD);
                 }
@@ -787,8 +787,9 @@ public class RawRatioDataModel //
 
             if ((fOfX_EXPMAT != null) && (fOfX_EXPMAT.verifyPositiveVariances())) {
                 if (logRatioFitFunctionsNoOD.containsKey(fOfX_EXPMAT.getShortNameString())) {
-                    AbstractFunctionOfX fOfXexist = logRatioFitFunctionsNoOD.get(fOfX_EXPMAT.getShortNameString());
-                    fOfXexist.copyValuesFrom(fOfX_EXPMAT);
+                    logRatioFitFunctionsNoOD.remove(fOfX_EXPMAT.getShortNameString());
+                    logRatioFitFunctionsNoOD.put(fOfX_EXPMAT.getShortNameString(), fOfX_EXPMAT);
+
                 } else {
                     logRatioFitFunctionsNoOD.put(fOfX_EXPMAT.getShortNameString(), fOfX_EXPMAT);
                 }
@@ -823,8 +824,8 @@ public class RawRatioDataModel //
                     if ((fOfX_EXPOD != null) && (fOfX_EXPOD.verifyPositiveVariances())) {
 
                         if (logRatioFitFunctionsWithOD.containsKey(fOfX_EXPOD.getShortNameString())) {
-                            AbstractFunctionOfX fOfXexist = logRatioFitFunctionsWithOD.get(fOfX_EXPOD.getShortNameString());
-                            fOfXexist.copyValuesFrom(fOfX_EXPOD);
+                            logRatioFitFunctionsWithOD.remove(fOfX_EXPOD.getShortNameString());
+                            logRatioFitFunctionsWithOD.put(fOfX_EXPOD.getShortNameString(), fOfX_EXPOD);
                         } else {
                             logRatioFitFunctionsWithOD.put(fOfX_EXPOD.getShortNameString(), fOfX_EXPOD);
                         }
@@ -837,12 +838,16 @@ public class RawRatioDataModel //
                     logRatioFitFunctionsWithOD.put(fOfX_EXPMAT.getShortNameString(), fOfX_EXPMAT);
                 }
             } else {
-                logRatioFitFunctionsNoOD.remove(FitFunctionTypeEnum.EXPONENTIAL.getName());//was expmat??
+                logRatioFitFunctionsNoOD.remove(FitFunctionTypeEnum.EXPMAT.getName());
+                logRatioFitFunctionsWithOD.remove(FitFunctionTypeEnum.EXPMAT.getName());
+                logRatioFitFunctionsNoOD.remove(FitFunctionTypeEnum.EXPONENTIAL.getName());
                 logRatioFitFunctionsWithOD.remove(FitFunctionTypeEnum.EXPONENTIAL.getName());
                 selectedFitFunctionType = FitFunctionTypeEnum.LINE;
             }
         } else {
-            logRatioFitFunctionsNoOD.remove(FitFunctionTypeEnum.EXPONENTIAL.getName());//was expmat ??
+            logRatioFitFunctionsNoOD.remove(FitFunctionTypeEnum.EXPMAT.getName());
+            logRatioFitFunctionsWithOD.remove(FitFunctionTypeEnum.EXPMAT.getName());
+            logRatioFitFunctionsNoOD.remove(FitFunctionTypeEnum.EXPONENTIAL.getName());
             logRatioFitFunctionsWithOD.remove(FitFunctionTypeEnum.EXPONENTIAL.getName());
             selectedFitFunctionType = FitFunctionTypeEnum.LINE;
         }
@@ -928,7 +933,7 @@ public class RawRatioDataModel //
             // feb 2013 new strategy to do only once
             // also MEAN returns false if it had to use an arithmentic mean and stops further processing
             System.out.println("\nCalculate Fit Functions for Ratio  " + getRawRatioModelName().getDisplayName() //
-                    + "  USING " + (USING_FULL_PROPAGATION ? "FULL PROPAGATION" : "FAST PROPAGATION"));
+                    + "  USING " + (USING_FULL_PROPAGATION ? "FULL PROPAGATION" : "FAST PROPAGATION") + "  COUNT = " + countOfActiveData);
 
             FitFunctionTypeEnum saveSelection = selectedFitFunctionType;
             // nov 2014
@@ -1398,6 +1403,7 @@ public class RawRatioDataModel //
         return fitFunc;
     }
 
+    @Override
     public AbstractFunctionOfX getSelectedDownHoleFitFunction() {
         AbstractFunctionOfX fitFunc;
         if (overDispersionSelectedDownHole) {

@@ -392,7 +392,7 @@ public class RawIntensityDataModel //
      */
     @Override
     public void applyMaskingArray() {
-        onPeakVirtualCollector.setDataActiveMap(MaskingSingleton.getInstance().applyMask(onPeakVirtualCollector.getDataActiveMap()));//.getMaskingArray().clone());
+        onPeakVirtualCollector.setDataActiveMap(MaskingSingleton.getInstance().applyMask(onPeakVirtualCollector.getDataActiveMap().clone()));//.getMaskingArray().clone());
     }
 
     /**
@@ -1193,5 +1193,10 @@ public class RawIntensityDataModel //
     @Override
     public void setUSING_FULL_PROPAGATION(boolean USING_FULL_PROPAGATION) {
         this.USING_FULL_PROPAGATION = USING_FULL_PROPAGATION;
+    }
+
+    @Override
+    public AbstractFunctionOfX getSelectedDownHoleFitFunction() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
