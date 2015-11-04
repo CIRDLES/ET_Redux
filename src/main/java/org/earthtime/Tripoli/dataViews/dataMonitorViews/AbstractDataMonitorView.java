@@ -587,7 +587,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
     }
 
     @Override
-    public void calculateDownholeFitSummariesForPrimaryStandard(boolean resetMatrices) {
+    public void calculateDownholeFitSummariesForPrimaryStandard() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -669,7 +669,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
 
         tripoliSession.getTripoliSamples().get(0).setMineralStandardModel(primaryMineralStandard);
 
-        tripoliSession.processRawData(0);
+        tripoliSession.processRawData();
 
         tripoliSession.postProcessDataForCommonLeadLossPreparation();
 

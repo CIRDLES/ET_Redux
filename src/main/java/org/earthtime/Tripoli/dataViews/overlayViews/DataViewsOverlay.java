@@ -467,7 +467,7 @@ public class DataViewsOverlay extends AbstractRawDataView implements FitFunction
                                         // recalculate averages and fits
                                         if (downholeFractionationDataModel != null) {
                                             ((TripoliSessionRawDataView) sampleSessionDataView).//
-                                                    getSessionFractionationCalculator().calculateDownholeFitSummariesForPrimaryStandard(false);
+                                                    getSessionFractionationCalculator().calculateDownholeFitSummariesForPrimaryStandard();
                                         }
 
                                         // refresh all
@@ -493,7 +493,7 @@ public class DataViewsOverlay extends AbstractRawDataView implements FitFunction
                                         // recalculate averages and fits
                                         if (downholeFractionationDataModel != null) {
                                             ((TripoliSessionRawDataView) sampleSessionDataView).//
-                                                    getSessionFractionationCalculator().calculateDownholeFitSummariesForPrimaryStandard(false);
+                                                    getSessionFractionationCalculator().calculateDownholeFitSummariesForPrimaryStandard();
                                         }
 
                                         // refresh all
@@ -519,7 +519,7 @@ public class DataViewsOverlay extends AbstractRawDataView implements FitFunction
                                         // recalculate averages and fits
                                         if (downholeFractionationDataModel != null) {
                                             ((TripoliSessionRawDataView) sampleSessionDataView).//
-                                                    getSessionFractionationCalculator().calculateDownholeFitSummariesForPrimaryStandard(false);
+                                                    getSessionFractionationCalculator().calculateDownholeFitSummariesForPrimaryStandard();
                                         }
 
                                         // refresh all

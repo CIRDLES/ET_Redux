@@ -318,7 +318,7 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
     }
 
     @Override
-    public void calculateDownholeFitSummariesForPrimaryStandard(boolean resetMatrices) {
+    public void calculateDownholeFitSummariesForPrimaryStandard() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

@@ -328,12 +328,16 @@ public class RawRatioDataModel //
     }
 
     public void calculateSlogRatioX_Y() {
+        calculateSlogRatioX_Y(dataActiveMap);
+    }
+
+    public void calculateSlogRatioX_Y(boolean[] mapOfActiveData) {
         // choose rows and columns based on active data
         // nov 2014 need to catch special case where */pb204 ratios have different dataactivemaps
         if (SlogRatioX_Yfull != null) {
             ArrayList<Integer> selectedRowsColsList = new ArrayList<>();
-            for (int i = 0; i < dataActiveMap.length; i++) {
-                if (dataActiveMap[i]) {
+            for (int i = 0; i < mapOfActiveData.length; i++) {
+                if (mapOfActiveData[i]) {
                     selectedRowsColsList.add(i);
                 }
             }
@@ -406,13 +410,14 @@ public class RawRatioDataModel //
     /**
      *
      */
-    public void calculateDownholeFractionWeightedMeanAndUnct() {
+    public void generateFitFunctionsForDownhole() {
         // calculate the logDifferencesFromWeightedMean between logratios and fit function
 
         if (downHoleFitFunction != null) {
+            boolean[] dataCommonActiveMap = MaskingSingleton.getInstance().getMaskingArray();
             int countOfActiveData = 0;
-            for (int i = 0; i < dataActiveMap.length; i++) {
-                if (dataActiveMap[i]) {
+            for (int i = 0; i < dataCommonActiveMap.length; i++) {
+                if (dataCommonActiveMap[i]) {
                     countOfActiveData++;
                 }
             }
@@ -421,34 +426,20 @@ public class RawRatioDataModel //
             logDifferencesFromWeightedMean = new double[countOfActiveData];
             double[] normalizedOnPeakAquireTimes = getNormalizedOnPeakAquireTimes();
             ArrayList<Integer> matrixIndicesToRemove = new ArrayList<>();
-            // ignore shades - shades will be false only at left end and right end, already ignored by downhole fit function
-            boolean[] shades = MaskingSingleton.getInstance().getMaskingArray();
+
             int index = 0;
-            for (int i = 0; i < dataActiveMap.length; i++) {
-                if (dataActiveMap[i]) {
+            for (int i = 0; i < dataCommonActiveMap.length; i++) {
+                if (dataCommonActiveMap[i]) {
                     activeData[index] = true;
                     logDifferencesFromWeightedMean[index] = downHoleFitFunction.f(normalizedOnPeakAquireTimes[i]) - logRatios[i];
                     index++;
-                } else if (!shades[i]) {
-                    matrixIndicesToRemove.add(i);
                 }
             }
 
-            // remove row and col of matrix sf corresponding to missing acquisitions
             Matrix matrixSfCopy = downHoleFitFunction.getMatrixSf().copy();
 
+            calculateSlogRatioX_Y(dataCommonActiveMap);
             Matrix SfPlusSlogRarioX_Y = matrixSfCopy.plus(getSlogRatioX_Y(false));
-
-            if (matrixIndicesToRemove.size() > 0) {
-                // reverse list of indices to remove to avoid counting errors
-                Collections.sort(matrixIndicesToRemove, (Integer i1, Integer i2) -> Integer.compare(i2, i1));
-
-                // walk the list of indices to remove and remove rows and cols before insertion
-                for (Integer indexToRemove : matrixIndicesToRemove) {
-                    matrixSfCopy = MatrixRemover.removeRow(matrixSfCopy, indexToRemove);
-                    matrixSfCopy = MatrixRemover.removeCol(matrixSfCopy, indexToRemove);
-                }
-            }
 
             AbstractOverDispersionLMAlgorithm algorithmForMEAN = LevenbergMarquardGeneralSolverWithCovS.getInstance()//
                     .getSelectedLMAlgorithm(//
@@ -896,6 +887,9 @@ public class RawRatioDataModel //
 
             if (propagateUncertainties) {
                 propagateUnctInRatios();
+            } else {
+                //nov 2015
+                calculateSlogRatioX_Y();
             }
 
             // feb 2013 clean up choice of points

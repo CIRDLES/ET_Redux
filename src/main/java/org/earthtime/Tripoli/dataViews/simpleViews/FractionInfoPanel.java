@@ -133,6 +133,7 @@ public class FractionInfoPanel extends AbstractRawDataView {
         refitChoiceButton.addActionListener((ActionEvent ae) -> {
             if (!tripoliFraction.isCurrentlyFitted()) {
                 tripoliFraction.updateInterceptFitFunctionsIncludingCommonLead();
+                tripoliFraction.updateDownholeFitFunctionsExcludingCommonLead();
                 ((AbstractRawDataView) sampleSessionDataView).refreshPanel();
                 updateReportTable();
             }

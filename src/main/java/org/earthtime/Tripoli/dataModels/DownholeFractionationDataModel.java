@@ -137,9 +137,13 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
      *
      * @param fractionIterator
      */
-    public void calculateWeightedMeanOfStandards(boolean resetMatrix) {
+    public void calculateWeightedMeanOfStandards() {
 
         // march 2013
+        // the problem is that we don't yet have math to deal with
+        // un-alighed standard on peak data sets because of the matrix math used
+        // so we proceed by un-rejecteting non-mask aquisitions
+        
         boolean[] dataCommonActiveMap = MaskingSingleton.getInstance().getMaskingArray();
         int countOfActiveData = 0;
         for (int i = 0; i < dataCommonActiveMap.length; i++) {
@@ -185,9 +189,10 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
                     ((RawRatioDataModel) tf.getRawRatioDataModelByName(rawRatioName));
 
             // calc SLogRatioXY
-            rawRatio.propagateUnctInRatios();
+////////            rawRatio.propagateUnctInRatios();
             
-            Matrix SlogRatioX_Y = rawRatio.getSlogRatioX_Y(resetMatrix);//getSlogRatioX_Y_withZeroesAtInactive();//getSlogRatioX_Y();
+            rawRatio.calculateSlogRatioX_Y(dataCommonActiveMap);
+            Matrix SlogRatioX_Y = rawRatio.getSlogRatioX_Y(false);//getSlogRatioX_Y_withZeroesAtInactive();//getSlogRatioX_Y();
 
             // sum of the inverses of all of the Slr_X_Y covariance matrices
             sumInvSlogRatioX_Y.plusEquals(SlogRatioX_Y.inverse());
@@ -585,7 +590,7 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
 ////                System.out.println(lr[i] + ", ");
 ////            }
             ((RawRatioDataModel) rawRatio).setDownHoleFitFunction(downHoleFitFunction);
-            ((RawRatioDataModel) rawRatio).calculateDownholeFractionWeightedMeanAndUnct();
+            ((RawRatioDataModel) rawRatio).generateFitFunctionsForDownhole();
         }
     }
 

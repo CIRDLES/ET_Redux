@@ -103,10 +103,9 @@ public interface TripoliSessionInterface extends TripoliSessionFractionationCalc
 
     /**
      *
-     * @param resetMatrices the value of resetMatrices
      */
     @Override
-    void calculateDownholeFitSummariesForPrimaryStandard (boolean resetMatrix);
+    void calculateDownholeFitSummariesForPrimaryStandard ();
 
 //    /**
 //     *
@@ -167,9 +166,8 @@ public interface TripoliSessionInterface extends TripoliSessionFractionationCalc
 
     /**
      *
-     * @param leftShadeCount the value of leftShadeCount
      */
-    void processRawData (int leftShadeCount);
+    void processRawData ();
     void postProcessDataForCommonLeadLossPreparation();
 
     /**
@@ -258,5 +256,7 @@ public interface TripoliSessionInterface extends TripoliSessionFractionationCalc
     public boolean isFitFunctionsUpToDate();
     
     public void setFitFunctionsUpToDate(boolean fitFunctionsUpToDate);
+    
+    public void refitAllFractionsForDownhole();
 
 }

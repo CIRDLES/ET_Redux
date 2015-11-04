@@ -32,6 +32,7 @@ import javax.swing.JButton;
 import javax.swing.JLayeredPane;
 import javax.swing.JRadioButton;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
+import org.earthtime.Tripoli.dataModels.MaskingSingleton;
 import org.earthtime.Tripoli.dataViews.AbstractRawDataView;
 import org.earthtime.Tripoli.dataViews.overlayViews.TripoliSessionRawDataView;
 import org.earthtime.beans.ET_JButton;
@@ -197,11 +198,13 @@ public class DataPresentationModeChooserPanel extends AbstractRawDataView {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                ((TripoliSessionRawDataView) sampleSessionDataView).getTripoliSession().applyMaskingArray();
+//                ((TripoliSessionRawDataView) sampleSessionDataView).getTripoliSession().applyMaskingArray();
+                // nov 2015 update maskinginstance with shades
+                MaskingSingleton.getInstance().shadeMask();
                 ((TripoliSessionRawDataView) sampleSessionDataView).getTripoliSession().reFitAllFractions();
 
                 // jan 2015 force refit after applying shade
-                ((TripoliSessionRawDataView) sampleSessionDataView).getTripoliSession().calculateSessionFitFunctionsForPrimaryStandard();
+                //see above ((TripoliSessionRawDataView) sampleSessionDataView).getTripoliSession().calculateSessionFitFunctionsForPrimaryStandard();
 
                 ((AbstractRawDataView) sampleSessionDataView).refreshPanel();
 
