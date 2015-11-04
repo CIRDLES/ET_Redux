@@ -753,6 +753,11 @@ public abstract class AbstractSessionForStandardDataModel implements Serializabl
         return fitFunc;
     }
 
+    @Override
+    public AbstractFunctionOfX getSelectedDownHoleFitFunction() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
     /**
      *
      * @param fitFunctionType

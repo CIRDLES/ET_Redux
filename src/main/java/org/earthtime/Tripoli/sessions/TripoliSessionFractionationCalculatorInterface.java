@@ -27,9 +27,8 @@ public interface TripoliSessionFractionationCalculatorInterface {
 
     /**
      * 
-     * @param resetMatrices the value of resetMatrices
      */
-    public void calculateDownholeFitSummariesForPrimaryStandard (boolean resetMatrices);
+    public void calculateDownholeFitSummariesForPrimaryStandard ();
     
     /**
      * 

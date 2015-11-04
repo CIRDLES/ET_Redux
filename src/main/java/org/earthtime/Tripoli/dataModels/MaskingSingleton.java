@@ -88,6 +88,10 @@ public class MaskingSingleton implements Serializable {
 
         return activeDataMap;
     }
+    
+    public void shadeMask(){
+        maskingArray = applyMask(maskingArray.clone());
+    }
 
     /**
      *

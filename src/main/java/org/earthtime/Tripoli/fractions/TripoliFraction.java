@@ -27,7 +27,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -42,6 +41,7 @@ import org.earthtime.Tripoli.dataModels.RawRatioDataModel;
 import org.earthtime.Tripoli.fitFunctions.AbstractFunctionOfX;
 import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
+import org.earthtime.dataDictionaries.FractionationTechniquesEnum;
 import org.earthtime.dataDictionaries.RadDatesForPbCorrSynchEnum;
 import org.earthtime.dataDictionaries.RawRatioNames;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
@@ -300,12 +300,21 @@ public class TripoliFraction implements //
         System.out.println("Update Intercept Fit Functions Including Pbc for " + fractionID);
         while (ratiosIterator.hasNext()) {
             RawRatioDataModel rr = (RawRatioDataModel) ratiosIterator.next();
-            rr.generateSetOfFitFunctions(true, false);
-            rr.calculateDownholeFractionWeightedMeanAndUnct();
+            rr.generateSetOfFitFunctions(false, false);
         }
 
         // nov 2014 this also sets currentlyFitted = true
         postProcessCommonLeadCorrectionRatios();
+    }
+
+    public void updateDownholeFitFunctionsExcludingCommonLead() {
+
+        Iterator ratiosIterator = getRatiosForFractionFitting().iterator();
+        System.out.println("Update Downhole Fit Functions EXCLUDING Pbc for " + fractionID);
+        while (ratiosIterator.hasNext()) {
+            RawRatioDataModel rr = (RawRatioDataModel) ratiosIterator.next();
+            rr.generateFitFunctionsForDownhole();
+        }
     }
 
     /**
@@ -373,15 +382,31 @@ public class TripoliFraction implements //
         skRhoSysUnct = parameters.get("skRhoSysUnct");
     }
 
-    public Matrix calculateUncertaintyPbcCorrections() {
+    /**
+     *
+     * @param fractionationTechnique the value of fractionationTechnique
+     * @return
+     */
+    public Matrix calculateUncertaintyPbcCorrections(FractionationTechniquesEnum fractionationTechnique) {
         // nov 2014 additional work for pbc corrections section 6 of paper
         // build a super matrix of all 6 Slogratioxy matrices
         // first need to sum dimensions
 
         int totalColumns = 0;
-        SortedSet<DataModelInterface> ratiosSortedSet = getRatiosForFractionFitting();
-        for (DataModelInterface rr : ratiosSortedSet) {
-            totalColumns += ((RawRatioDataModel) rr).getSlogRatioX_Y(false).getColumnDimension();
+        SortedSet<DataModelInterface> ratiosSortedSet = new TreeSet<>();
+
+        if (fractionationTechnique.compareTo(FractionationTechniquesEnum.INTERCEPT) == 0) {
+            ratiosSortedSet = getRatiosForFractionFitting();
+            for (DataModelInterface rr : ratiosSortedSet) {
+                ((RawRatioDataModel) rr).calculateSlogRatioX_Y();
+                totalColumns += ((RawRatioDataModel) rr).getSlogRatioX_Y(false).getColumnDimension();
+            }
+        } else if (fractionationTechnique.compareTo(FractionationTechniquesEnum.DOWNHOLE) == 0) {
+            ratiosSortedSet = getNonPbRatiosForFractionFitting();
+            for (DataModelInterface rr : ratiosSortedSet) {
+                ((RawRatioDataModel) rr).calculateSlogRatioX_Y(MaskingSingleton.getInstance().getMaskingArray());
+                totalColumns += ((RawRatioDataModel) rr).getSlogRatioX_Y(false).getColumnDimension();
+            }
         }
 
         Matrix SlogRatioAll = new Matrix(totalColumns, totalColumns, 0.0);
@@ -415,14 +440,23 @@ public class TripoliFraction implements //
             }
 
             AbstractFunctionOfX FofX = null;
+            if (fractionationTechnique.compareTo(FractionationTechniquesEnum.INTERCEPT) == 0) {
+                FofX = ((DataModelFitFunctionInterface) rr).getSelectedFitFunction();
+            } else if (fractionationTechnique.compareTo(FractionationTechniquesEnum.DOWNHOLE) == 0) {
+                FofX = ((DataModelFitFunctionInterface) rr).getSelectedDownHoleFitFunction();
+            }
 
-            FofX = ((DataModelFitFunctionInterface) rr).getSelectedFitFunction();
             if (FofX != null) {
                 Matrix JacobianYInterceptLogRatioXY = FofX.getMatrixJacobianYInterceptLogRatioXY();
-                JacobianYInterceptLogRatioAll.setMatrix(totalRatiosUsed, totalRatiosUsed, totalColumnsUsed, totalColumnsUsed + columnsCount - 1, JacobianYInterceptLogRatioXY);
+                try {
+                    JacobianYInterceptLogRatioAll.setMatrix(totalRatiosUsed, totalRatiosUsed, totalColumnsUsed, totalColumnsUsed + columnsCount - 1, JacobianYInterceptLogRatioXY);
+                } catch (Exception e) {
+                    System.out.println("MISMATCH");
+                } finally {
+                    totalColumnsUsed += columnsCount;
+                    totalRatiosUsed += 1;
+                }
             }
-            totalColumnsUsed += columnsCount;
-            totalRatiosUsed += 1;
         }
 
         //  second pass to cover the rectangular (possibly) off-diagonal elements
@@ -456,13 +490,7 @@ public class TripoliFraction implements //
 
                         System.out.println("Matrix row col delete for fraction " + fractionID);
                         // reverse list of indices to remove to avoid counting errors
-                        Collections.sort(matrixIndicesToRemove, new Comparator<Integer>() {
-
-                            @Override
-                            public int compare(Integer i1, Integer i2) {
-                                return Integer.compare(i2, i1);
-                            }
-                        });
+                        Collections.sort(matrixIndicesToRemove, (Integer i1, Integer i2) -> Integer.compare(i2, i1));
 
                         // walk the list of indices to remove and remove rows and cols before insertion
                         for (Integer indexToRemove : matrixIndicesToRemove) {
@@ -503,13 +531,7 @@ public class TripoliFraction implements //
 
                     if (matrixIndicesToRemove.size() > 0) {
                         // reverse list of indices to remove to avoid counting errors
-                        Collections.sort(matrixIndicesToRemove, new Comparator<Integer>() {
-
-                            @Override
-                            public int compare(Integer i1, Integer i2) {
-                                return Integer.compare(i2, i1);
-                            }
-                        });
+                        Collections.sort(matrixIndicesToRemove, (Integer i1, Integer i2) -> Integer.compare(i2, i1));
 
                         // walk the list of indices to remove and remove rows and cols before insertion
                         for (Integer indexToRemove : matrixIndicesToRemove) {
@@ -592,7 +614,7 @@ public class TripoliFraction implements //
      *
      */
     public void applyMaskingArray() {
-        dataActiveMap = MaskingSingleton.getInstance().applyMask(dataActiveMap);//.getMaskingArray().clone();
+        dataActiveMap = MaskingSingleton.getInstance().applyMask(dataActiveMap.clone());//.getMaskingArray().clone();
         for (DataModelInterface rr : rawRatios) {
             rr.applyMaskingArray();
         }
@@ -1518,7 +1540,7 @@ public class TripoliFraction implements //
                 }
                 if (rejectedAPoint) {
                     rr.generateSetOfFitFunctions(true, false);
-                    // sep 2015 no common lead for standards in downhole ((RawRatioDataModel) rr).calculateDownholeFractionWeightedMeanAndUnct();
+                    // sep 2015 no common lead for standards in downhole ((RawRatioDataModel) rr).generateFitFunctionsForDownhole();
                 }
             } else {
 //                System.out.println("NONE");

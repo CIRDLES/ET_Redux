@@ -82,7 +82,7 @@ public class InterceptFitFunctionsPresentationView extends AbstractFitFunctionPr
         if (rawRatioDataModel != null) {
             if (!((DataModelFitFunctionInterface) rawRatioDataModel).isCalculatedInitialFitFunctions()) {
                 if (targetDataModelView instanceof FitFunctionsOnDownHoleRatioDataView) {
-                    ((RawRatioDataModel) rawRatioDataModel).calculateDownholeFractionWeightedMeanAndUnct();
+                    ((RawRatioDataModel) rawRatioDataModel).generateFitFunctionsForDownhole();
                 } else {
                     ((DataModelFitFunctionInterface) rawRatioDataModel).generateSetOfFitFunctions(true, false);
                 }

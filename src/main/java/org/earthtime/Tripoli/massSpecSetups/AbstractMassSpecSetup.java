@@ -601,7 +601,7 @@ public abstract class AbstractMassSpecSetup implements //
     private void performInterceptFittingToRatios() {
         // generate fit function so can be done with big matrices
         for (DataModelInterface rr : rawRatios) {
-            rr.generateSetOfFitFunctions(false, true);
+            rr.generateSetOfFitFunctions(false, false);//true);
         }
     }
 

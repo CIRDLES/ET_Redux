@@ -139,6 +139,9 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
             pane.setForegroundAt(sel, Color.red);
 
             tripoliSession.applyCorrections();
+
+            // nov 2015 to update data
+            uPbReduxFrame.updateReportTable(true);
         } // This method is called whenever the selected tab changes
         );
 
@@ -522,11 +525,12 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         // do the math
         if (!tripoliSession.isFitFunctionsUpToDate()) {
             tripoliSession.calculateSessionFitFunctionsForPrimaryStandard();
-            try {
-                uPbReduxFrame.updateReportTable(true);
-            } catch (Exception e) {
-            }
         }
+        try {
+            uPbReduxFrame.updateReportTable(true);
+        } catch (Exception e) {
+        }
+        //}
 
         if (fractionationTechnique.compareTo(FractionationTechniquesEnum.DOWNHOLE) == 0) {
             tripoliSessionRawDataView.setDataPresentationMode(DataPresentationModeEnum.LOGRATIO);
@@ -749,12 +753,13 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         downholeFitEachStandard_radioButton = new javax.swing.JRadioButton();
         downholeStandardSession_radioButton = new javax.swing.JRadioButton();
         downholeCorrectedUnknownRatios_radioButton = new javax.swing.JRadioButton();
+        downholeCalculateRhos_button =  new ET_JButton();
         interceptPanel = new javax.swing.JPanel();
         interceptFitEachStandard_radioButton = new javax.swing.JRadioButton();
         interceptStandardSession_radioButton = new javax.swing.JRadioButton();
         interceptFitUnknownRatios_radioButton = new javax.swing.JRadioButton();
+        interceptCalculatePbcCorrAndRhos_button1 =  new ET_JButton();
         restoreAllAquisitions =  new ET_JButton();
-        applyCommonLeadCorrections_button =  new ET_JButton();
         jPanel1 = new javax.swing.JPanel();
         gridPlot_radioButton = new javax.swing.JRadioButton();
         graphPlot_radioButton = new javax.swing.JRadioButton();
@@ -1102,6 +1107,19 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         });
         DownholePanel.add(downholeCorrectedUnknownRatios_radioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 75, 168, -1));
 
+        downholeCalculateRhos_button.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
+        downholeCalculateRhos_button.setText("Update Report Table");
+        downholeCalculateRhos_button.setActionCommand("");
+        downholeCalculateRhos_button.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        downholeCalculateRhos_button.setOpaque(true);
+        downholeCalculateRhos_button.setPreferredSize(new java.awt.Dimension(314, 36));
+        downholeCalculateRhos_button.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                downholeCalculateRhos_buttonActionPerformed(evt);
+            }
+        });
+        DownholePanel.add(downholeCalculateRhos_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 98, 165, -1));
+
         fractionationTechniqueTabbedPane.addTab("Downhole", DownholePanel);
 
         interceptPanel.setBackground(new java.awt.Color(250, 240, 230));
@@ -1160,10 +1178,23 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         });
         interceptPanel.add(interceptFitUnknownRatios_radioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 60, 168, -1));
 
+        interceptCalculatePbcCorrAndRhos_button1.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
+        interceptCalculatePbcCorrAndRhos_button1.setText("Update Report Table");
+        interceptCalculatePbcCorrAndRhos_button1.setActionCommand("");
+        interceptCalculatePbcCorrAndRhos_button1.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        interceptCalculatePbcCorrAndRhos_button1.setOpaque(true);
+        interceptCalculatePbcCorrAndRhos_button1.setPreferredSize(new java.awt.Dimension(314, 36));
+        interceptCalculatePbcCorrAndRhos_button1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                interceptCalculatePbcCorrAndRhos_button1ActionPerformed(evt);
+            }
+        });
+        interceptPanel.add(interceptCalculatePbcCorrAndRhos_button1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 98, 165, -1));
+
         fractionationTechniqueTabbedPane.addTab("Intercept", interceptPanel);
 
         controlPanel_panel.add(fractionationTechniqueTabbedPane);
-        fractionationTechniqueTabbedPane.setBounds(0, 165, 190, 140);
+        fractionationTechniqueTabbedPane.setBounds(0, 165, 190, 180);
 
         restoreAllAquisitions.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         restoreAllAquisitions.setText("Restore all Aquisitions");
@@ -1174,20 +1205,6 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         });
         controlPanel_panel.add(restoreAllAquisitions);
         restoreAllAquisitions.setBounds(0, 410, 160, 20);
-
-        applyCommonLeadCorrections_button.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
-        applyCommonLeadCorrections_button.setText("Update Report Table");
-        applyCommonLeadCorrections_button.setActionCommand("");
-        applyCommonLeadCorrections_button.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        applyCommonLeadCorrections_button.setOpaque(true);
-        applyCommonLeadCorrections_button.setPreferredSize(new java.awt.Dimension(314, 36));
-        applyCommonLeadCorrections_button.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                applyCommonLeadCorrections_buttonActionPerformed(evt);
-            }
-        });
-        controlPanel_panel.add(applyCommonLeadCorrections_button);
-        applyCommonLeadCorrections_button.setBounds(0, 310, 190, 40);
 
         jPanel1.setBackground(new java.awt.Color(250, 240, 230));
         jPanel1.setPreferredSize(new java.awt.Dimension(191, 70));
@@ -1530,42 +1547,46 @@ private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.
         this.setVisible(false);
     }//GEN-LAST:event_switchToReductionManager_buttonActionPerformed
 
-    private void applyCommonLeadCorrections_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_applyCommonLeadCorrections_buttonActionPerformed
+    private void downholeCalculateRhos_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downholeCalculateRhos_buttonActionPerformed
 
-        // april 2015 refit any  fractions not currently fitted
+        // for now we have to undo internal acquisition rejecttions allowed by intercept but not by downhole
+        tripoliSession.refitAllFractionsForDownhole();
+
+        try {
+            tripoliSession.prepareForReductionAndCommonLeadCorrection();
+        } finally {
+            uPbReduxFrame.updateReportTable(true);
+        }
+    }//GEN-LAST:event_downholeCalculateRhos_buttonActionPerformed
+
+    private void downholeFitEachStandard_radioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downholeFitEachStandard_radioButtonActionPerformed
+        showStandardDownHoleFractionationDataModels();
+    }//GEN-LAST:event_downholeFitEachStandard_radioButtonActionPerformed
+
+    private void interceptCalculatePbcCorrAndRhos_button1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_interceptCalculatePbcCorrAndRhos_button1ActionPerformed
+        // refit any  fractions not currently fitted
         Set<TripoliFraction> tripoliFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliSession.getTripoliFractions(), FractionSelectionTypeEnum.ALL, IncludedTypeEnum.INCLUDED);
         for (TripoliFraction tf : tripoliFractions) {
+            tf.reProcessToRejectNegativeRatios();
             if (!tf.isCurrentlyFitted()) {
                 tf.updateInterceptFitFunctionsIncludingCommonLead();
                 tripoliSession.setFitFunctionsUpToDate(false);
             }
         }
 
-        // jan 2015
-        //       if (!tripoliSession.isFitFunctionsUpToDate()) {
-        tripoliSession.calculateSessionFitFunctionsForPrimaryStandard();
- //       }
-
-        // nov 2014
         try {
             tripoliSession.prepareForReductionAndCommonLeadCorrection();
-            uPbReduxFrame.updateReportTable(true);
-
-        } catch (Exception e) {
+        } finally {
             uPbReduxFrame.updateReportTable(true);
         }
-    }//GEN-LAST:event_applyCommonLeadCorrections_buttonActionPerformed
-
-    private void downholeFitEachStandard_radioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downholeFitEachStandard_radioButtonActionPerformed
-        showStandardDownHoleFractionationDataModels();
-    }//GEN-LAST:event_downholeFitEachStandard_radioButtonActionPerformed
+    }//GEN-LAST:event_interceptCalculatePbcCorrAndRhos_button1ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel DownholePanel;
-    private javax.swing.JButton applyCommonLeadCorrections_button;
     private javax.swing.JLayeredPane controlPanel_panel;
     private javax.swing.JRadioButton correctedIsotopes_radioButton;
     private javax.swing.JButton defaultZoom_button;
+    private javax.swing.JButton downholeCalculateRhos_button;
     private javax.swing.JRadioButton downholeCorrectedUnknownRatios_radioButton;
     private javax.swing.JRadioButton downholeFitEachStandard_radioButton;
     private javax.swing.JRadioButton downholeFitStandards_radioButton;
@@ -1575,6 +1596,7 @@ private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.
     private javax.swing.JRadioButton gridPlot_radioButton;
     private javax.swing.JButton includeAllFractions_button;
     private javax.swing.ButtonGroup includedFractions_buttonGroup;
+    private javax.swing.JButton interceptCalculatePbcCorrAndRhos_button1;
     private javax.swing.JRadioButton interceptFitEachStandard_radioButton;
     private javax.swing.JRadioButton interceptFitUnknownRatios_radioButton;
     private javax.swing.JPanel interceptPanel;

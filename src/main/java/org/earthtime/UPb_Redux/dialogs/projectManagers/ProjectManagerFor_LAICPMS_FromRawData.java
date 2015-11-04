@@ -537,7 +537,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
         // april 2014
         MaskingSingleton.getInstance().setLeftShadeCount(leftShadeCount);
         MaskingSingleton.getInstance().setRightShadeCount(-1);
-
+        
         rawDataFileHandler.getAndLoadRawIntensityDataFile(loadDataTask, usingFullPropagation, leftShadeCount, ignoreFirstFractions);
 
 //        loadAndShowRawDataFinishUp();
@@ -750,7 +750,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
 
                 tripoliSession.setPrimaryMineralStandard(primaryMineralStandard);
 
-                tripoliSession.processRawData(0);
+                tripoliSession.processRawData();
 
                 tripoliSession.postProcessDataForCommonLeadLossPreparation();
             }
