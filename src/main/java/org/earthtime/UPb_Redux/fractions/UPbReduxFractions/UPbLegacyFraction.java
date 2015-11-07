@@ -85,7 +85,7 @@ public class UPbLegacyFraction extends Fraction implements
         setLegacy(true);
         this.ratioType = "UPb";
 
-        this.physicalConstantsModel = PhysicalConstantsModel.getEARTHTIMEPhysicalConstantsModel();
+        this.physicalConstantsModel = PhysicalConstantsModel.getMostRecentEARTHTIMEPhysicalConstantsModel();
 
         this.aliquotNumber = 1;
 
@@ -317,7 +317,7 @@ public class UPbLegacyFraction extends Fraction implements
     @Override
     public AbstractRatiosDataModel getPhysicalConstantsModel() {
         if (physicalConstantsModel == null) {
-            physicalConstantsModel = PhysicalConstantsModel.getEARTHTIMEPhysicalConstantsModel();
+            physicalConstantsModel = PhysicalConstantsModel.getMostRecentEARTHTIMEPhysicalConstantsModel();
         }
         return physicalConstantsModel;
     }

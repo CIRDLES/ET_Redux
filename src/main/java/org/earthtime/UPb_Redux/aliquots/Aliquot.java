@@ -100,7 +100,7 @@ public abstract class Aliquot implements AliquotInterface, AliquotForUPbInterfac
 
         this.sampleDateModels = new Vector<>();
 
-        this.physicalConstantsModel = PhysicalConstantsModel.getEARTHTIMEPhysicalConstantsModel();
+        this.physicalConstantsModel = PhysicalConstantsModel.getMostRecentEARTHTIMEPhysicalConstantsModel();
 
         this.pbBlanks = new Vector<>();
 

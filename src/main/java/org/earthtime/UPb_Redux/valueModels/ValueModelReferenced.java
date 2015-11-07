@@ -196,10 +196,8 @@ public class ValueModelReferenced extends ValueModel implements
     @Override
     public void customizeXstream ( XStream xstream ) {
 
-        //xstream.registerConverter(new ValueModelXMLConverter());
         xstream.registerConverter( new ValueModelReferencedXMLConverter() );
 
-        //xstream.alias("ValueModel", ValueModel.class);
         xstream.alias( "ValueModelReferenced", ValueModelReferenced.class );
 
         setClassXMLSchemaURL();

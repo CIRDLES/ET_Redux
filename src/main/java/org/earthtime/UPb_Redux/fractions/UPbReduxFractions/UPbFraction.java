@@ -231,7 +231,7 @@ public class UPbFraction extends Fraction implements
         } catch (BadLabDataException badLabDataException) {
         }
 
-        this.physicalConstantsModel = PhysicalConstantsModel.getEARTHTIMEPhysicalConstantsModel();
+        this.physicalConstantsModel = PhysicalConstantsModel.getMostRecentEARTHTIMEPhysicalConstantsModel();
 
         this.aliquotNumber = 1;
         this.pedigreePb = "";

@@ -17,7 +17,8 @@
  */
 package org.earthtime.UTh_Redux.fractions.fractionReduction;
 
-import org.earthtime.UPb_Redux.valueModels.ValueModel;
+import org.earthtime.fractions.ETFractionInterface;
+import org.earthtime.fractions.fractionReduction.FractionReducer;
 
 /* NOTES from Noah Nov 2015
     So instead, here's a MATLAB file that goes with an Excel worksheet and VBA Add-In I created to calculate U-Th dates.  Here's what's going on in the code.
@@ -102,14 +103,28 @@ import org.earthtime.UPb_Redux.valueModels.ValueModel;
  *
  * @author James F. Bowring <bowring at gmail.com>
  */
-public class UThFractionReducer {
+public class UThFractionReducer extends FractionReducer {
 
-    private static ValueModel lambda230;
-    private static ValueModel lambda231;
-    private static ValueModel lambda232;
-    private static ValueModel lambda234;
-    private static ValueModel lambda235;
-    private static ValueModel lambda238;
+    private static UThFractionReducer instance;
+
+    private UThFractionReducer() {
+    }
+
+    /**
+     *
+     * @return
+     */
+    public static UThFractionReducer getInstance() {
+        if (instance == null) {
+            instance = new UThFractionReducer();
+        }
+        return instance;
+    }
     
-    
+    public void calculateDates(ETFractionInterface fraction){
+        
+        initializeDecayConstants(fraction.getPhysicalConstantsModel());
+        
+    }
+
 }

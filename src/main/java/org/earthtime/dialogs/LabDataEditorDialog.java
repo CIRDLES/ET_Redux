@@ -1488,7 +1488,7 @@ public class LabDataEditorDialog extends DialogEditor {
 //                myLabData.getAPhysicalConstantsModel( (String) physicalConstantsModelForInitialPbModel_Chooser.getSelectedItem() );
         // april 2014 changed to force to ET model that contains original SK values
         AbstractRatiosDataModel physicalConstantsModel
-                = PhysicalConstantsModel.getEARTHTIMEPhysicalConstantsModel();
+                = PhysicalConstantsModel.getMostRecentEARTHTIMEPhysicalConstantsModel();
 
         if (initialPbModel instanceof StaceyKramersInitialPbModelET) {
             BigDecimal lambda238 = physicalConstantsModel.getDatumByName(Lambdas.lambda238.getName()).getValue();

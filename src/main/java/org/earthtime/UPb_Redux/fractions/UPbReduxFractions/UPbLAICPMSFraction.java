@@ -113,7 +113,7 @@ public class UPbLAICPMSFraction extends Fraction implements
         setLegacy(false);
         this.ratioType = "UPb";
 
-        this.physicalConstantsModel = PhysicalConstantsModel.getEARTHTIMEPhysicalConstantsModel();
+        this.physicalConstantsModel = PhysicalConstantsModel.getMostRecentEARTHTIMEPhysicalConstantsModel();
 
         this.aliquotNumber = 1;
 
@@ -871,7 +871,7 @@ public class UPbLAICPMSFraction extends Fraction implements
     @Override
     public AbstractRatiosDataModel getPhysicalConstantsModel() {
         if (physicalConstantsModel == null) {
-            physicalConstantsModel = PhysicalConstantsModel.getEARTHTIMEPhysicalConstantsModel();
+            physicalConstantsModel = PhysicalConstantsModel.getMostRecentEARTHTIMEPhysicalConstantsModel();
         }
         return physicalConstantsModel;
     }

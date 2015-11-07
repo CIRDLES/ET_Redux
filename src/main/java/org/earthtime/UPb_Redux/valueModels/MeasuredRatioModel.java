@@ -222,10 +222,8 @@ public class MeasuredRatioModel extends ValueModel implements
     @Override
     public void customizeXstream ( XStream xstream ) {
 
-        //xstream.registerConverter(new ValueModelXMLConverter());
         xstream.registerConverter( new MeasuredRatioModelXMLConverter() );
 
-        //xstream.alias("ValueModel", ValueModel.class);
         xstream.alias( "MeasuredRatioModel", MeasuredRatioModel.class );
 
         setClassXMLSchemaURL();

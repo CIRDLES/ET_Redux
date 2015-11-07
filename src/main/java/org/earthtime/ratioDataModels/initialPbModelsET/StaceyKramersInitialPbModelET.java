@@ -140,7 +140,7 @@ public final class StaceyKramersInitialPbModelET extends InitialPbModelET {
      */
     public void resetModelFromTripoliFraction() {
         AbstractRatiosDataModel physicalConstantsModel
-                = PhysicalConstantsModel.getEARTHTIMEPhysicalConstantsModel();
+                = PhysicalConstantsModel.getMostRecentEARTHTIMEPhysicalConstantsModel();
 
         BigDecimal lambda238 = physicalConstantsModel.getDatumByName(Lambdas.lambda238.getName()).getValue();
         BigDecimal lambda235 = physicalConstantsModel.getDatumByName(Lambdas.lambda235.getName()).getValue();

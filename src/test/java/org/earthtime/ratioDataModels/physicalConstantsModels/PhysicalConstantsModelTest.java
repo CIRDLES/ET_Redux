@@ -37,7 +37,7 @@ public class PhysicalConstantsModelTest {
     @Test
     public void testSerialization () throws Exception {
 
-        AbstractRatiosDataModel physicalConstantsModel = PhysicalConstantsModel.getEARTHTIMEPhysicalConstantsModel();
+        AbstractRatiosDataModel physicalConstantsModel = PhysicalConstantsModel.getMostRecentEARTHTIMEPhysicalConstantsModel();
 
         //Throws Exception
         ETSerializer.SerializeObjectToFile(physicalConstantsModel, "PhysicalConstantsModelTEST.ser");
@@ -52,7 +52,7 @@ public class PhysicalConstantsModelTest {
         physicalConstantsModel2.readXMLObject(testFileName, true );
 
 
-        AbstractRatiosDataView testView = new PhysicalConstantsDataViewEditable( PhysicalConstantsModel.getEARTHTIMEPhysicalConstantsModel(), null, false);
+        AbstractRatiosDataView testView = new PhysicalConstantsDataViewEditable( PhysicalConstantsModel.getMostRecentEARTHTIMEPhysicalConstantsModel(), null, false);
 
         //Still need to figure out how to close the window
         //testView.displayModelInFrame();

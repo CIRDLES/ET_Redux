@@ -82,7 +82,7 @@ public class PhysicalConstantsDataViewEditable extends PhysicalConstantsAbstract
      */
     public static void main ( String[] args ) throws Exception {
 
-        AbstractRatiosDataView testView = new PhysicalConstantsDataViewEditable( PhysicalConstantsModel.getEARTHTIMEPhysicalConstantsModel(), null, false);
+        AbstractRatiosDataView testView = new PhysicalConstantsDataViewEditable( PhysicalConstantsModel.getMostRecentEARTHTIMEPhysicalConstantsModel(), null, false);
 
         testView.displayModelInFrame();
 
