@@ -390,9 +390,7 @@ public class UPbFractionReducer {
         initializeAtomicMolarMasses(
                 fraction.getPhysicalConstantsModel());
 
-        initializeDecayConstants(
-                fraction.getPhysicalConstantsModel(),
-                true);
+        initializeDecayConstants(fraction.getPhysicalConstantsModel());
 
         //fraction.getAnalysisMeasure( AnalysisMeasures.r238_235s.getName() ).setValue( new BigDecimal( 137.88 ) );
         // updated feb 2014
@@ -902,9 +900,7 @@ public class UPbFractionReducer {
             initializeAtomicMolarMasses(
                     fraction.getPhysicalConstantsModel());
 
-            initializeDecayConstants(
-                    fraction.getPhysicalConstantsModel(),
-                    true);
+            initializeDecayConstants(fraction.getPhysicalConstantsModel());
 
             // march 2012 correction
             // if initial pb is stacey kramers, values must be calculated each time, as only one copy of this model exists
@@ -2568,9 +2564,12 @@ public class UPbFractionReducer {
         gmol238 = ((PhysicalConstantsModel) physicalConstants).getAtomicMolarMassByName("gmol238");
     }
 
+    /**
+     *
+     * @param physicalConstants the value of physicalConstants
+     */
     private static void initializeDecayConstants(
-            AbstractRatiosDataModel physicalConstants,
-            boolean lambdaUncertaintiesOn) {
+            AbstractRatiosDataModel physicalConstants) {
 
         lambda230 = physicalConstants.getDatumByName(Lambdas.lambda230.getName()).copy();
         lambda231 = physicalConstants.getDatumByName(Lambdas.lambda231.getName()).copy();
@@ -2578,15 +2577,6 @@ public class UPbFractionReducer {
         lambda234 = physicalConstants.getDatumByName(Lambdas.lambda234.getName()).copy();
         lambda235 = physicalConstants.getDatumByName(Lambdas.lambda235.getName()).copy();
         lambda238 = physicalConstants.getDatumByName(Lambdas.lambda238.getName()).copy();
-
-        if (!lambdaUncertaintiesOn) {
-            lambda230.setOneSigma(BigDecimal.ZERO);
-            lambda231.setOneSigma(BigDecimal.ZERO);
-            lambda232.setOneSigma(BigDecimal.ZERO);
-            lambda234.setOneSigma(BigDecimal.ZERO);
-            lambda235.setOneSigma(BigDecimal.ZERO);
-            lambda238.setOneSigma(BigDecimal.ZERO);
-        }
 
     }
 }

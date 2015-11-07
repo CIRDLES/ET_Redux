@@ -64,8 +64,6 @@ public class MineralStandardUPbModel extends AbstractRatiosDataModel {
 
     // class variables
     private static final long serialVersionUID = -5845209084226246480L;
-//    private static final ResourceExtractor RESOURCE_EXTRACTOR
-//            = new ResourceExtractor(MineralStandardUPbModel.class);
     private static Map<String, AbstractRatiosDataModel> modelInstances = //
             new HashMap<>();
     private static final AbstractRatiosDataModel noneModel = //

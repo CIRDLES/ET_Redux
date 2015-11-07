@@ -1,5 +1,5 @@
 /*
- * PbBlankICModel.java
+ * DetritalUraniumAndThoriumModel.java
  *
  *
  *
@@ -17,10 +17,9 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.earthtime.ratioDataModels.pbBlankICModels;
+package org.earthtime.ratioDataModels.detritalUraniumAndThoriumModels;
 
 import com.thoughtworks.xstream.XStream;
-import java.io.FileNotFoundException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,71 +29,68 @@ import java.util.Iterator;
 import java.util.Map;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.reduxLabData.ReduxLabDataList;
-import org.earthtime.UPb_Redux.utilities.ETSerializer;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModelXMLConverter;
-import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
-import org.earthtime.dataDictionaries.DataDictionary;
-import org.earthtime.exceptions.ETException;
+import org.earthtime.dataDictionaries.DetritalUraniumAndThoriumRatiosEnum;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
+import org.earthtime.ratioDataModels.pbBlankICModels.PbBlankICModelXMLConverter;
 import org.earthtime.utilities.DateHelpers;
 
 /**
  *
  * @author samuelbowring
  */
-public class PbBlankICModel extends AbstractRatiosDataModel {
+public class DetritalUraniumAndThoriumModel extends AbstractRatiosDataModel {
 
     // class variables
-    private static final long serialVersionUID = -5956272382837024475L;
-    private static final String classNameAliasForXML = "PbBlankICModel";
+    //private static final long serialVersionUID = -5956272382837024475L;
+    private static final String classNameAliasForXML = "DetritalUraniumAndThoriumModel";
     private static Map<String, AbstractRatiosDataModel> modelInstances = //
             new HashMap<>();
     private static final AbstractRatiosDataModel noneModel = //
-            new PbBlankICModel( //
+            new DetritalUraniumAndThoriumModel( //
                     ReduxConstants.NONE, //
                     1, 0, //
                     "No Lab",//
                     "2000-01-01",//
                     "Placeholder model",//
                     "Placeholder model");
-    private static final ValueModel[] myRatios;
-    private static final Map<String, BigDecimal> correlations;
+//    private static final ValueModel[] myRatiosnew =  new ValueModel[3];
+//    private static final Map<String, BigDecimal> correlations = new HashMap<>();
 
-    static {
-        myRatios = new ValueModel[3];
-        myRatios[0] = new ValueModel(//
-                "r206_204b", //
-                new BigDecimal("18.4125383886609"), //
-                "ABS", //
-                new BigDecimal("0.239708852871076"), BigDecimal.ZERO);
-        myRatios[1] = new ValueModel(//
-                "r207_204b", //
-                new BigDecimal("15.4147799644064"), //
-                "ABS", //
-                new BigDecimal("0.145826833918035"), BigDecimal.ZERO);
-        myRatios[2] = new ValueModel(//
-                "r208_204b", //
-                new BigDecimal("37.6140251512604"), //
-                "ABS", //
-                new BigDecimal("0.564703810813301"), BigDecimal.ZERO);
-
-        correlations = new HashMap<>();
-        correlations.put("rhoR206_204b__r207_204b", new BigDecimal("0.754713271298224"));
-        correlations.put("rhoR206_204b__r208_204b", new BigDecimal("0.728547460722919"));
-        correlations.put("rhoR207_204b__r208_204b", new BigDecimal("0.864401000690869"));
-    }
-    private static final AbstractRatiosDataModel EARTHTIMEExamplePbBlankICModel = //
-            createInstance(//
-                    "EARTHTIME Example Pb Blank IC",
-                    3, 0,//
-                    "EARTHTIME",//
-                    "2012-09-01",//
-                    "Noah McLean",//
-                    "EARTHTIME-supplied model",//
-                    myRatios, //
-                    correlations);
-
+//    static {
+//        myRatios = new ValueModel[3];
+//        myRatios[0] = new ValueModel(//
+//                "r206_204b", //
+//                new BigDecimal("18.4125383886609"), //
+//                "ABS", //
+//                new BigDecimal("0.239708852871076"), BigDecimal.ZERO);
+//        myRatios[1] = new ValueModel(//
+//                "r207_204b", //
+//                new BigDecimal("15.4147799644064"), //
+//                "ABS", //
+//                new BigDecimal("0.145826833918035"), BigDecimal.ZERO);
+//        myRatios[2] = new ValueModel(//
+//                "r208_204b", //
+//                new BigDecimal("37.6140251512604"), //
+//                "ABS", //
+//                new BigDecimal("0.564703810813301"), BigDecimal.ZERO);
+//
+//        correlations = new HashMap<>();
+//        correlations.put("rhoR206_204b__r207_204b", new BigDecimal("0.754713271298224"));
+//        correlations.put("rhoR206_204b__r208_204b", new BigDecimal("0.728547460722919"));
+//        correlations.put("rhoR207_204b__r208_204b", new BigDecimal("0.864401000690869"));
+//    }
+//    private static final AbstractRatiosDataModel EARTHTIMEExampleDetritalUraniumAndThoriumModelInitial = //
+//            createInstance(//
+//                    "EARTHTIME Example Detrital Uranium And Thorium Model Initial",
+//                    3, 0,//
+//                    "EARTHTIME",//
+//                    "2015-11-01",//
+//                    "Noah McLean",//
+//                    "EARTHTIME-supplied model",//
+//                    myRatios, //
+//                    correlations);
     /**
      *
      *
@@ -106,7 +102,7 @@ public class PbBlankICModel extends AbstractRatiosDataModel {
      * @param reference
      * @param comment
      */
-    protected PbBlankICModel(//
+    protected DetritalUraniumAndThoriumModel(//
             String modelName, int versionNumber, int minorVersionNumber, String labName, String dateCertified, String reference, String comment) {
 
         super(modelName, versionNumber, minorVersionNumber, labName, dateCertified, reference, comment);
@@ -120,16 +116,18 @@ public class PbBlankICModel extends AbstractRatiosDataModel {
      */
     @Override
     public final void initializeNewRatiosAndRhos(boolean updateOnly) {
-        // PbBlankICModel has a defined set of ratios 
-        this.ratios = new ValueModel[DataDictionary.earthTimePbBlankICRatioNames.length];
-        for (int i = 0; i < DataDictionary.earthTimePbBlankICRatioNames.length; i++) {
-            this.ratios[i]
-                    = new ValueModel(DataDictionary.getEarthTimePbBlankICModelRatioNames(i),
+        // DetritalUraniumAndThoriumModel has a defined set of ratios         
+        ArrayList<ValueModel> holdRatios = new ArrayList<>();
+        for (DetritalUraniumAndThoriumRatiosEnum ratio : DetritalUraniumAndThoriumRatiosEnum.values()) {
+            holdRatios.add( //
+                    new ValueModel(ratio.getName(),
                             BigDecimal.ZERO,
                             "ABS",
                             BigDecimal.ZERO,
-                            BigDecimal.ZERO);
+                            BigDecimal.ZERO));
         }
+
+        ratios = holdRatios.toArray(new ValueModel[holdRatios.size()]);
 
         Arrays.sort(ratios, new DataValueModelNameComparator());
 
@@ -148,17 +146,16 @@ public class PbBlankICModel extends AbstractRatiosDataModel {
         return noneModel;
     }
 
-    /**
-     *
-     * @return
-     */
-    public static AbstractRatiosDataModel getEARTHTIMEExamplePbBlankICModel() {
-        // guarantee final model
-        modelInstances.put(EARTHTIMEExamplePbBlankICModel.getNameAndVersion(), EARTHTIMEExamplePbBlankICModel);
-        EARTHTIMEExamplePbBlankICModel.setImmutable(true);
-        return EARTHTIMEExamplePbBlankICModel;
-    }
-
+//    /**
+//     *
+//     * @return
+//     */
+//    public static AbstractRatiosDataModel getEARTHTIMEExampleDetritalUraniumAndThoriumModelInitial() {
+//        // guarantee final model
+//        modelInstances.put(EARTHTIMEExampleDetritalUraniumAndThoriumModelInitial.getNameAndVersion(), EARTHTIMEExampleDetritalUraniumAndThoriumModelInitial);
+//        EARTHTIMEExampleDetritalUraniumAndThoriumModelInitial.setImmutable(true);
+//        return EARTHTIMEExampleDetritalUraniumAndThoriumModelInitial;
+//    }
     /**
      *
      *
@@ -187,7 +184,7 @@ public class PbBlankICModel extends AbstractRatiosDataModel {
         AbstractRatiosDataModel myModel = modelInstances.get(makeNameAndVersion(modelName, versionNumber, minorVersionNumber));
 
         if (myModel == null) {
-            myModel = new PbBlankICModel(//
+            myModel = new DetritalUraniumAndThoriumModel(//
                     modelName, //
                     versionNumber, minorVersionNumber,//
                     labName, //
@@ -209,8 +206,8 @@ public class PbBlankICModel extends AbstractRatiosDataModel {
      */
     public static AbstractRatiosDataModel createNewInstance() {
 
-        AbstractRatiosDataModel myModel = new PbBlankICModel(//
-                "New Pb Blank IC Model", //
+        AbstractRatiosDataModel myModel = new DetritalUraniumAndThoriumModel(//
+                "New Detrital Uranium And Thorium Model", //
                 1, 0, //
                 "No Lab", //
                 DateHelpers.defaultEarthTimeDateString(), //
@@ -227,7 +224,7 @@ public class PbBlankICModel extends AbstractRatiosDataModel {
     @Override
     public AbstractRatiosDataModel cloneModel() {
 
-        AbstractRatiosDataModel myModel = new PbBlankICModel(//
+        AbstractRatiosDataModel myModel = new DetritalUraniumAndThoriumModel(//
                 this.modelName, //
                 this.versionNumber, this.minorVersionNumber,//
                 this.labName, //
@@ -272,9 +269,11 @@ public class PbBlankICModel extends AbstractRatiosDataModel {
 
         // guarantee final models
         getNoneInstance();
-        getEARTHTIMEExamplePbBlankICModel();;
+//        getEARTHTIMEExampleDetritalUraniumAndThoriumModelInitial();
 
-        ArrayList<AbstractRatiosDataModel> arrayListOfModels = new ReduxLabDataList<>("Pb Blank IC");
+        loadModelsFromResources(modelInstances);
+
+        ArrayList<AbstractRatiosDataModel> arrayListOfModels = new ReduxLabDataList<>("Detrital Uranium And Thorium Model");
         Iterator<String> modelsKeyInterator = modelInstances.keySet().iterator();
         while (modelsKeyInterator.hasNext()) {
             arrayListOfModels.add(modelInstances.get(modelsKeyInterator.next()));
@@ -290,10 +289,10 @@ public class PbBlankICModel extends AbstractRatiosDataModel {
         xstream.registerConverter(new ValueModelXMLConverter());
         xstream.registerConverter(new PbBlankICModelXMLConverter());
 
-        xstream.alias("PbBlankICModel", PbBlankICModel.class);
+        xstream.alias("DetritalUraniumAndThoriumModel", DetritalUraniumAndThoriumModel.class);
         xstream.alias("ValueModel", ValueModel.class);
 
-        setClassXMLSchemaURL("URI_PbBlankICModelXMLSchema");
+        setClassXMLSchemaURL("URI_DetritalUraniumAndThoriumModelXMLSchema");
     }
 
     @Override
@@ -301,28 +300,30 @@ public class PbBlankICModel extends AbstractRatiosDataModel {
         return classNameAliasForXML;
     }
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-
-        AbstractRatiosDataModel pbBlankModelETs = PbBlankICModel.getEARTHTIMEExamplePbBlankICModel();
-
-        try {
-            ETSerializer.SerializeObjectToFile(pbBlankModelETs, "PbBlankICModelTEST.ser");
-        } catch (ETException eTException) {
-        }
-        AbstractRatiosDataModel pbBlankModelET = (AbstractRatiosDataModel) ETSerializer.GetSerializedObjectFromFile("PbBlankICModelTEST.ser");
-
-        String testFileName = "PbBlankICModelTEST.xml";
-
-        pbBlankModelET.serializeXMLObject(testFileName);
-        try {
-            pbBlankModelET.readXMLObject(testFileName, true);
-        } catch (FileNotFoundException | ETException | BadOrMissingXMLSchemaException fileNotFoundException) {
-        }
-
-    }
+//    /**
+//     * @param args the command line arguments
+//     */
+//    public static void main(String[] args) {
+//
+//        AbstractRatiosDataModel pbBlankModelETs = DetritalUraniumAndThoriumModel.getEARTHTIMEExampleDetritalUraniumAndThoriumModelInitial();
+//
+//        try {
+//            ETSerializer.SerializeObjectToFile(pbBlankModelETs, "PbBlankICModelTEST.ser");
+//        } catch (ETException eTException) {
+//        }
+//        AbstractRatiosDataModel pbBlankModelET = (AbstractRatiosDataModel) ETSerializer.GetSerializedObjectFromFile("PbBlankICModelTEST.ser");
+//
+//        String testFileName = "PbBlankICModelTEST.xml";
+//
+//        pbBlankModelET.serializeXMLObject(testFileName);
+//        try {
+//            pbBlankModelET.readXMLObject(testFileName, true);
+//        } catch (FileNotFoundException fileNotFoundException) {
+//        } catch (ETException eTException) {
+//        } catch (BadOrMissingXMLSchemaException badOrMissingXMLSchemaException) {
+//        }
+//
+//    }
 //    private void readObject ( ObjectInputStream stream ) throws IOException,
 //            ClassNotFoundException {
 //        stream.defaultReadObject();
