@@ -21,7 +21,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
+import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
 import org.earthtime.dataDictionaries.DataDictionary;

@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.reduxLabData.ReduxLabDataList;
+import org.earthtime.reduxLabData.ReduxLabDataList;
 import org.earthtime.UPb_Redux.utilities.ETSerializer;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModelXMLConverter;

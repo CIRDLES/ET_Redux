@@ -80,7 +80,7 @@ import org.earthtime.UPb_Redux.dateInterpretation.kwiki.KwikiPDFToolBar;
 import org.earthtime.UPb_Redux.dialogs.parameterManagers.LAICPMSProjectParametersManager;
 import org.earthtime.UPb_Redux.dialogs.projectManagers.ProjectManagerSubscribeInterface;
 import org.earthtime.UPb_Redux.fractions.FractionsFilterInterface;
-import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
+import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.reportViews.TabbedReportViews;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.dataDictionaries.DataPresentationModeEnum;

@@ -16,7 +16,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.earthtime.UPb_Redux.dialogs;
+package org.earthtime.dialogs;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -53,8 +53,8 @@ import javax.swing.filechooser.FileFilter;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.filters.XMLFileFilter;
-import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
-import org.earthtime.UPb_Redux.reduxLabData.ReduxLabDataListElementI;
+import org.earthtime.reduxLabData.ReduxLabData;
+import org.earthtime.reduxLabData.ReduxLabDataListElementI;
 import org.earthtime.UPb_Redux.utilities.JHelpAction;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;

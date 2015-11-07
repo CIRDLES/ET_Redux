@@ -65,7 +65,7 @@ import org.earthtime.UPb_Redux.dateInterpretation.kwiki.KwikiConcordiaToolBar;
 import org.earthtime.UPb_Redux.dateInterpretation.kwiki.KwikiDateDisplayPanel;
 import org.earthtime.UPb_Redux.dateInterpretation.kwiki.KwikiDateModesSelectorPanel;
 import org.earthtime.UPb_Redux.dateInterpretation.kwiki.KwikiSynopticOutputPanel;
-import org.earthtime.UPb_Redux.dialogs.DialogEditor;
+import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.filters.XMLFileFilter;
 import org.earthtime.UPb_Redux.fractions.FractionI;
@@ -75,7 +75,7 @@ import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.Red
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.UPbFractionReducer;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.UncertaintyGraphPanel;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.UncertaintyZoomLayer;
-import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
+import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.utilities.Thumbnail;
 import org.earthtime.UPb_Redux.valueModels.MeasuredRatioModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;

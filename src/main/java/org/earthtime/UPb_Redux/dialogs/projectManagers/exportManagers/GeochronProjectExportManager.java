@@ -29,7 +29,7 @@ import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
-import org.earthtime.UPb_Redux.dialogs.DialogEditor;
+import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.reportViews.ReportPainterI;
 import org.earthtime.UPb_Redux.user.ReduxPersistentState;
 import org.earthtime.archivingTools.GeochronAliquotManager;

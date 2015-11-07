@@ -41,7 +41,7 @@ import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.dialogs.DialogEditor;
+import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.valueModelPanelViews.AbstractValueModelsPanelView;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;

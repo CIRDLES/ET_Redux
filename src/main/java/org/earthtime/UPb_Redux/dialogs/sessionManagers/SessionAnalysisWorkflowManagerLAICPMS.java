@@ -53,7 +53,7 @@ import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.RawRatioData
 import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.Tripoli.sessions.TripoliSessionInterface;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.dialogs.DialogEditor;
+import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.dialogs.projectManagers.ProjectManagerFor_LAICPMS_FromRawData;
 import org.earthtime.UPb_Redux.fractions.FractionsFilterInterface;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;

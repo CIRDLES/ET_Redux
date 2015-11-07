@@ -48,7 +48,7 @@ import static org.earthtime.UPb_Redux.ReduxConstants.biMapOfIndexesToCommonLeadC
 import static org.earthtime.UPb_Redux.ReduxConstants.sansSerif_10_Plain;
 import static org.earthtime.UPb_Redux.ReduxConstants.sansSerif_11_Plain;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
-import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
+import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.dataDictionaries.RadDatesForPbCorrSynchEnum;
 import org.earthtime.exceptions.ETWarningDialog;

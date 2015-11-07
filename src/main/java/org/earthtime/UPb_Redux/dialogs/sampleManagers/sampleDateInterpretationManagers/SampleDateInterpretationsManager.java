@@ -68,7 +68,7 @@ import org.earthtime.UPb_Redux.dateInterpretation.concordia.GraphPanelModeChange
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.PlottingDetailsDisplayInterface;
 import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.DateInterpretationBoxPanel;
 import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetup;
-import org.earthtime.UPb_Redux.dialogs.DialogEditor;
+import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.dialogs.aliquotManagers.AliquotOptionsDialog;
 import org.earthtime.UPb_Redux.dialogs.graphManagers.ConcordiaOptionsDialog;
 import org.earthtime.UPb_Redux.dialogs.graphManagers.WeightedMeanOptionsDialog;

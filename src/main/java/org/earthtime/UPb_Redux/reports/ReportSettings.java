@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
-import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
+import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.user.UPbReduxConfigurator;
 import org.earthtime.dataDictionaries.ReportSpecifications;
 import org.earthtime.reports.ReportCategoryInterface;

@@ -51,7 +51,7 @@ import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.FractionsFilterInterface;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLAICPMSFraction;
-import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
+import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.dataDictionaries.FitFunctionTypeEnum;
 import org.earthtime.dataDictionaries.FractionSelectionTypeEnum;

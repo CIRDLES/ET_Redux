@@ -28,7 +28,7 @@ import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.SwingConstants;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
+import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.valueModelPanelViews.AbstractValueModelsPanelView;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.dataDictionaries.DataDictionary;

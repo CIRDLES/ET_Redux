@@ -52,7 +52,7 @@ import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.ReductionHandler;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.UPbFractionReducer;
-import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
+import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.reportViews.ReportRowGUIInterface;
 import org.earthtime.UPb_Redux.tracers.Tracer;
 import org.earthtime.UPb_Redux.tracers.TracerXMLConverter;

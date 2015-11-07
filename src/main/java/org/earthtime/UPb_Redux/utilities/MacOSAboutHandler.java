@@ -28,8 +28,8 @@ import java.awt.Component;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import org.earthtime.ETReduxFrame;
-import org.earthtime.UPb_Redux.dialogs.AboutBox;
-import org.earthtime.UPb_Redux.dialogs.PreferencesEditorDialog;
+import org.earthtime.dialogs.AboutBox;
+import org.earthtime.dialogs.PreferencesEditorDialog;
 
 //http://www.java2s.com/ExampleCode/Development-Class/MacOSApplicationAdapter.htm
 

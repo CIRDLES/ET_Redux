@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Vector;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
-import org.earthtime.UPb_Redux.dialogs.DialogEditor;
+import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.samples.SampleInterface;

@@ -19,7 +19,7 @@
  *  limitations under the License.
  */
 
-package org.earthtime.UPb_Redux.reduxLabData;
+package org.earthtime.reduxLabData;
 
 import java.util.ArrayList;
 

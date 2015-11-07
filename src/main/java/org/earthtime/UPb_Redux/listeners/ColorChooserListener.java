@@ -25,8 +25,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Map;
 import javax.swing.JLabel;
-import org.earthtime.UPb_Redux.dialogs.DialogEditor;
-import org.earthtime.UPb_Redux.dialogs.UPbReduxColorChooser;
+import org.earthtime.dialogs.DialogEditor;
+import org.earthtime.dialogs.UPbReduxColorChooser;
 
 /**
  *

@@ -18,10 +18,10 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.earthtime.UPb_Redux.reduxLabData.labEquipmentSettings;
+package org.earthtime.reduxLabData.labEquipmentSettings;
 
 import java.io.FileNotFoundException;
-import org.earthtime.UPb_Redux.reduxLabData.ReduxLabDataListElementI;
+import org.earthtime.reduxLabData.ReduxLabDataListElementI;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;

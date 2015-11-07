@@ -33,7 +33,7 @@ import javax.swing.JLayeredPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.dialogs.DialogEditor;
+import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.dataDictionaries.RatioNamePrettyPrinter;
 import org.earthtime.ratioDataViews.DataEntryDetectorInterface;

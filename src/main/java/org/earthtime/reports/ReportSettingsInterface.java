@@ -33,7 +33,7 @@ import java.util.Vector;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.FractionI;
-import org.earthtime.UPb_Redux.reduxLabData.ReduxLabDataListElementI;
+import org.earthtime.reduxLabData.ReduxLabDataListElementI;
 import org.earthtime.UPb_Redux.valueModels.ValueModelReferenced;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
 import org.earthtime.archivingTools.URIHelper;

@@ -34,7 +34,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.reduxLabData.ReduxLabDataListElementI;
+import org.earthtime.reduxLabData.ReduxLabDataListElementI;
 import org.earthtime.UPb_Redux.user.UPbReduxConfigurator;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModelXMLConverter;

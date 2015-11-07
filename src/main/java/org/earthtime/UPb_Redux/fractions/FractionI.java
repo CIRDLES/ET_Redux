@@ -23,7 +23,7 @@ package org.earthtime.UPb_Redux.fractions;
 import java.math.BigDecimal;
 import java.util.concurrent.ConcurrentMap;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
-import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
+import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.dataDictionaries.Lambdas;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;

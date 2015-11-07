@@ -40,7 +40,7 @@ import org.earthtime.UPb_Redux.ReduxConstants;
 import static org.earthtime.UPb_Redux.ReduxConstants.biMapOfIndexesToCommonLeadCorrectionSchemaNames;
 import static org.earthtime.UPb_Redux.ReduxConstants.sansSerif_11_Plain;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
-import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
+import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;

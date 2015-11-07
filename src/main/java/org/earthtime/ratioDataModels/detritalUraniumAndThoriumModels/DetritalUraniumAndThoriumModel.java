@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.reduxLabData.ReduxLabDataList;
+import org.earthtime.reduxLabData.ReduxLabDataList;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModelXMLConverter;
 import org.earthtime.dataDictionaries.DetritalUraniumAndThoriumRatiosEnum;

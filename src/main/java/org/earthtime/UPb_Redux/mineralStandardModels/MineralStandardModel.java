@@ -31,7 +31,7 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.reduxLabData.ReduxLabDataListElementI;
+import org.earthtime.reduxLabData.ReduxLabDataListElementI;
 import org.earthtime.UPb_Redux.user.UPbReduxConfigurator;
 import org.earthtime.UPb_Redux.valueModels.MineralStandardUPbRatioModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;

@@ -26,7 +26,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.concurrent.ConcurrentMap;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
+import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.utilities.comparators.IntuitiveStringComparator;
 import org.earthtime.UPb_Redux.valueModels.MeasuredRatioModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;

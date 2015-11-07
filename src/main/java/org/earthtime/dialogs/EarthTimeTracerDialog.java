@@ -1,5 +1,5 @@
 /*
- * UPbReduxColorChooser.java
+ * EarthTimeTracerDialog.java
  *
  *
  * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
@@ -16,37 +16,42 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.earthtime.UPb_Redux.dialogs;
 
-import java.awt.Color;
+package org.earthtime.dialogs;
+
+import org.earthtime.dialogs.DialogEditor;
 
 /**
  *
  * @author  James F. Bowring
  */
-public class UPbReduxColorChooser extends DialogEditor {
-
+public class EarthTimeTracerDialog extends DialogEditor {
+    
     // Fields
-    private String selectedColorRGBString;
-    private Color selectedColor;
-
-    /** Creates new form UPbReduxColorChooser
-     * @param parent 
-     * @param selectedColor
-     * @param modal  
+    private String[] tracerList;
+    private String selectedTracerName;
+    
+    /** Creates new form EarthTimeTracerDialog
+     * @param parent
+     * @param modal
+     * @param tracerList  
      */
-    public UPbReduxColorChooser(java.awt.Frame parent,
+    public EarthTimeTracerDialog
+            (java.awt.Frame parent, 
             boolean modal,
-            Color selectedColor) {
+            String[] tracerList) {
         super(parent, modal);
-        initComponents();
-
-        setSelectedColor(selectedColor);
+        
         setLocationRelativeTo(parent);
-        setAlwaysOnTop(modal);
+        setTracerList(tracerList);
+        setSelectedTracerName("");
+        
+        initComponents();
+        
+        tracers_list.setListData(tracerList);
 
     }
-
+    
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -55,14 +60,24 @@ public class UPbReduxColorChooser extends DialogEditor {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        tracers_scrollPane = new javax.swing.JScrollPane();
+        tracers_list = new javax.swing.JList<String>();
         buttonsPanel = new javax.swing.JPanel();
         save_button = new javax.swing.JButton();
         close_button = new javax.swing.JButton();
-        colorChooser = new javax.swing.JColorChooser();
+        chooseTracer_label = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Current Tracers from Earth-Time.org");
         setResizable(false);
+
+        tracers_list.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tracers_list.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tracers_listMouseClicked(evt);
+            }
+        });
+        tracers_scrollPane.setViewportView(tracers_list);
 
         buttonsPanel.setBackground(new java.awt.Color(252, 236, 235));
         buttonsPanel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
@@ -91,39 +106,50 @@ public class UPbReduxColorChooser extends DialogEditor {
         buttonsPanel.setLayout(buttonsPanelLayout);
         buttonsPanelLayout.setHorizontalGroup(
             buttonsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, buttonsPanelLayout.createSequentialGroup()
-                .addContainerGap()
+            .add(buttonsPanelLayout.createSequentialGroup()
+                .add(17, 17, 17)
                 .add(save_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 115, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 192, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 80, Short.MAX_VALUE)
                 .add(close_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 115, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         buttonsPanelLayout.setVerticalGroup(
             buttonsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(buttonsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                .add(close_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 28, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(save_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 28, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(save_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 28, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(close_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 28, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
+
+        chooseTracer_label.setText("Choose a tracer to import from Earth-Time.org:");
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(buttonsPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, colorChooser, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 460, Short.MAX_VALUE)
+            .add(layout.createSequentialGroup()
+                .add(55, 55, 55)
+                .add(tracers_scrollPane, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 238, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(55, Short.MAX_VALUE))
+            .add(layout.createSequentialGroup()
+                .add(chooseTracer_label, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 328, Short.MAX_VALUE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                .add(colorChooser, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 370, Short.MAX_VALUE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .addContainerGap()
+                .add(chooseTracer_label)
+                .add(26, 26, 26)
+                .add(tracers_scrollPane, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 73, Short.MAX_VALUE)
                 .add(buttonsPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
     private void close_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_close_buttonActionPerformed
-        OK();
         close();
     }//GEN-LAST:event_close_buttonActionPerformed
 
@@ -132,50 +158,57 @@ public class UPbReduxColorChooser extends DialogEditor {
         close();
     }//GEN-LAST:event_save_buttonActionPerformed
 
-    private void OK() {
-        Color temp = colorChooser.getColor();
-        setSelectedColorRGBString( //
-                 Integer.toString(temp.getRed())
-                + ", " + Integer.toString(temp.getGreen())
-                + ", " + Integer.toString(temp.getBlue()));
+    private void tracers_listMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tracers_listMouseClicked
+        if (evt.getClickCount() == 2){
+            OK();
+            close();
+        }
+    }//GEN-LAST:event_tracers_listMouseClicked
+    
+    private void OK(){
+        if (tracers_list.getSelectedIndex() > -1)
+            setSelectedTracerName((String)tracers_list.getSelectedValue());
     }
+
+    /**
+     * 
+     * @return
+     */
+    public String[] getTracerList() {
+        return tracerList;
+    }
+
+    /**
+     * 
+     * @param tracerList
+     */
+    public void setTracerList(String[] tracerList) {
+        this.tracerList = tracerList;
+    }
+
+    /**
+     * 
+     * @return
+     */
+    public String getSelectedTracerName() {
+        return selectedTracerName;
+    }
+
+    /**
+     * 
+     * @param selectedTracerName
+     */
+    public void setSelectedTracerName(String selectedTracerName) {
+        this.selectedTracerName = selectedTracerName;
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel buttonsPanel;
+    private javax.swing.JLabel chooseTracer_label;
     private javax.swing.JButton close_button;
-    private javax.swing.JColorChooser colorChooser;
     private javax.swing.JButton save_button;
+    private javax.swing.JList<String> tracers_list;
+    private javax.swing.JScrollPane tracers_scrollPane;
     // End of variables declaration//GEN-END:variables
     
-    /**
-     * 
-     * @return
-     */
-    public String getSelectedColorRGBString() {
-        return selectedColorRGBString;
-    }
-
-    /**
-     * 
-     * @param selectedColorRGBString
-     */
-    public void setSelectedColorRGBString(String selectedColorRGBString) {
-        this.selectedColorRGBString = selectedColorRGBString;
-    }
-
-    /**
-     * 
-     * @return
-     */
-    public Color getSelectedColor() {
-        return selectedColor;
-    }
-
-    /**
-     * 
-     * @param selectedColor
-     */
-    public void setSelectedColor(Color selectedColor) {
-        this.selectedColor = selectedColor;
-        colorChooser.setColor(selectedColor);
-    }
 }

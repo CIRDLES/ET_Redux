@@ -28,11 +28,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.reduxLabData.ReduxLabDataList;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModelXMLConverter;
 import org.earthtime.dataDictionaries.TraceElements;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
+import org.earthtime.reduxLabData.ReduxLabDataList;
 import org.earthtime.utilities.DateHelpers;
 
 /**
@@ -53,7 +53,7 @@ public final class RareEarthElementsModel extends AbstractRatiosDataModel {
                     "2000-01-01", //
                     "Placeholder model", "Placeholder model");
     private static final ValueModel[] myRatios = new ValueModel[14];
-    private static final Map<String, BigDecimal> correlations = new HashMap<String, BigDecimal>();
+    private static final Map<String, BigDecimal> correlations = new HashMap<>();
 
     // per Matt Rioux October 2014
     // start EARTHTIMESriLankaStandardModel
