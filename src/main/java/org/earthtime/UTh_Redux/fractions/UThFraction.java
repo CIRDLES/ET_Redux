@@ -26,7 +26,6 @@ import java.util.Date;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
-import org.earthtime.dataDictionaries.DataDictionary;
 import org.earthtime.dataDictionaries.MeasuredRatios;
 import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.dataDictionaries.UThActivityRatios;
@@ -85,9 +84,9 @@ public class UThFraction implements
         this.estimatedDate = BigDecimal.ZERO;
 
         analysisMeasures = new ValueModel[0];
-        measuredRatios = valueModelArrayFactory(UThRatiosMeasured.getNames(), UncertaintyTypesEnum.ABS.getName());
+        measuredRatios = new ValueModel[0];
         activityRatios = valueModelArrayFactory(UThActivityRatios.getNames(), UncertaintyTypesEnum.ABS.getName());
-        fractionationCorrectedIsotopeRatios = valueModelArrayFactory(DataDictionary.RadiogenicIsotopeRatioTypes, UncertaintyTypesEnum.ABS.getName());
+        fractionationCorrectedIsotopeRatios = valueModelArrayFactory(UThRatiosMeasured.getNames(), UncertaintyTypesEnum.ABS.getName());
         isotopeDates = valueModelArrayFactory(RadDates.getNamesSorted(), UncertaintyTypesEnum.ABS.getName());
         compositionalMeasures = valueModelArrayFactory(UThCompositionalMeasures.getNames(), UncertaintyTypesEnum.ABS.getName());
         sampleIsochronRatios = new ValueModel[0]; //valueModelArrayFactory(DataDictionary.SampleIsochronRatioNames, UncertaintyTypesEnum.ABS.getName());
@@ -293,7 +292,7 @@ public class UThFraction implements
      * @return the fractionationCorrectedIsotopeRatios
      */
     @Override
-    public ValueModel[] getFractionationCorrectedIsotopeRatios() {
+    public ValueModel[] getRadiogenicIsotopeRatios() {
         return fractionationCorrectedIsotopeRatios;
     }
 
@@ -301,7 +300,7 @@ public class UThFraction implements
      * @param fractionationCorrectedIsotopeRatios the fractionationCorrectedIsotopeRatios to set
      */
     @Override
-    public void setFractionationCorrectedIsotopeRatios(ValueModel[] fractionationCorrectedIsotopeRatios) {
+    public void setRadiogenicIsotopeRatios(ValueModel[] fractionationCorrectedIsotopeRatios) {
         this.fractionationCorrectedIsotopeRatios = fractionationCorrectedIsotopeRatios;
     }
 

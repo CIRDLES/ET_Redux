@@ -186,7 +186,7 @@ public class ReportSpecifications {
      *
      */
     public static final String[][] ReportCategory_fractionationCorrectedIsotopicRatios = new String[][]{
-        {"", "r230Th/", "232Thfc", "", "getFractionationCorrectedIsotopeRatios", "r230Th_232Thfc", "",
+        {"", "r230Th/", "232Thfc", "", "getRadiogenicIsotopeRatioByName", "r230Th_232Thfc", "",
             "", "true", "true", "0", "false", "", "true", "false"
         },
         

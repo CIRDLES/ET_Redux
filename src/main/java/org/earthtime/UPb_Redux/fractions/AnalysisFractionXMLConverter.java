@@ -195,7 +195,7 @@ public class AnalysisFractionXMLConverter implements Converter {
         writer.endNode();
 
         writer.startNode( "radiogenicIsotopeRatios" );
-        context.convertAnother( ValueModel.compressArrayOfValueModels( analysisFraction.getFractionationCorrectedIsotopeRatios() ) );
+        context.convertAnother( ValueModel.compressArrayOfValueModels( analysisFraction.getRadiogenicIsotopeRatios() ) );
         //context.convertAnother(analysisFraction.getRadiogenicIsotopeRatios());
         writer.endNode();
 
@@ -474,7 +474,7 @@ public class AnalysisFractionXMLConverter implements Converter {
             for (int i = 0; i < ratios.size(); i ++) {
                 radiogenicIsotopeRatios[i] = ratios.get( i );
             }
-            analysisFraction.setFractionationCorrectedIsotopeRatios( radiogenicIsotopeRatios );
+            analysisFraction.setRadiogenicIsotopeRatios( radiogenicIsotopeRatios );
         }
         reader.moveUp();
 

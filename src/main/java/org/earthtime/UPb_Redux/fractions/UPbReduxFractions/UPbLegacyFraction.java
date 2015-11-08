@@ -98,7 +98,7 @@ public class UPbLegacyFraction extends Fraction implements
 
         // trimming our size
         setAnalysisMeasures(new ValueModel[0]);
-        setFractionationCorrectedIsotopeRatios(new ValueModel[0]);
+        setRadiogenicIsotopeRatios(new ValueModel[0]);
         setIsotopeDates(new ValueModel[0]);
         setCompositionalMeasures(new ValueModel[0]);
         setSampleIsochronRatios(new ValueModel[0]);
@@ -391,8 +391,8 @@ public class UPbLegacyFraction extends Fraction implements
 
             // RadiogenicIsotopeRatios
             outputWriter.println("RadiogenicIsotopeRatios");
-            Arrays.sort(getFractionationCorrectedIsotopeRatios());
-            for (ValueModel radiogenicIsotopeRatio : getFractionationCorrectedIsotopeRatios()) {
+            Arrays.sort(getRadiogenicIsotopeRatios());
+            for (ValueModel radiogenicIsotopeRatio : getRadiogenicIsotopeRatios()) {
                 outputWriter.println(radiogenicIsotopeRatio.formatValueAndOneSigmaABSForTesting());
             }
             outputWriter.println();

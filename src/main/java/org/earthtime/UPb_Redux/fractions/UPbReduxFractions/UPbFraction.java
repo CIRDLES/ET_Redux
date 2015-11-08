@@ -2203,9 +2203,9 @@ public class UPbFraction extends Fraction implements
 
             // RadiogenicIsotopeRatios
             outputWriter.println("RadiogenicIsotopeRatios");
-            Arrays.sort(getFractionationCorrectedIsotopeRatios());
-            for (int i = 0; i < getFractionationCorrectedIsotopeRatios().length; i++) {
-                outputWriter.println(getFractionationCorrectedIsotopeRatios()[i].formatValueAndOneSigmaABSForTesting());
+            Arrays.sort(getRadiogenicIsotopeRatios());
+            for (int i = 0; i < getRadiogenicIsotopeRatios().length; i++) {
+                outputWriter.println(getRadiogenicIsotopeRatios()[i].formatValueAndOneSigmaABSForTesting());
             }
             outputWriter.println();
 

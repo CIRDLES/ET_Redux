@@ -182,13 +182,13 @@ public interface ETFractionInterface {
      *
      * @return
      */
-    abstract ValueModel[] getFractionationCorrectedIsotopeRatios();
+    abstract ValueModel[] getRadiogenicIsotopeRatios();
 
     /**
      *
      * @param radiogenicIsotopeRatios
      */
-    abstract void setFractionationCorrectedIsotopeRatios(ValueModel[] radiogenicIsotopeRatios);
+    abstract void setRadiogenicIsotopeRatios(ValueModel[] radiogenicIsotopeRatios);
 
     /**
      *
@@ -348,9 +348,9 @@ public interface ETFractionInterface {
         // make sure it exists
         getRadiogenicIsotopeRatioByName(riaName.trim());
 
-        for (int i = 0; i < getFractionationCorrectedIsotopeRatios().length; i++) {
-            if (getFractionationCorrectedIsotopeRatios()[i].getName().equalsIgnoreCase(riaName.trim())) {
-                getFractionationCorrectedIsotopeRatios()[i] = valueModel;
+        for (int i = 0; i < getRadiogenicIsotopeRatios().length; i++) {
+            if (getRadiogenicIsotopeRatios()[i].getName().equalsIgnoreCase(riaName.trim())) {
+                getRadiogenicIsotopeRatios()[i] = valueModel;
             }
         }
     }
@@ -361,7 +361,7 @@ public interface ETFractionInterface {
      * @return
      */
     public default ValueModel getRadiogenicIsotopeRatioByName(String ratioName) {
-        for (ValueModel radiogenicIsotopeRatio : getFractionationCorrectedIsotopeRatios()) {
+        for (ValueModel radiogenicIsotopeRatio : getRadiogenicIsotopeRatios()) {
             if (radiogenicIsotopeRatio.getName().equalsIgnoreCase(ratioName.trim())) {
                 return radiogenicIsotopeRatio;
             }
@@ -369,8 +369,8 @@ public interface ETFractionInterface {
 
         // return a new model - handles backwards compatible
         // have to add element to array
-        ValueModel[] temp = new ValueModel[getFractionationCorrectedIsotopeRatios().length + 1];
-        System.arraycopy(getFractionationCorrectedIsotopeRatios(), 0, temp, 0, getFractionationCorrectedIsotopeRatios().length);
+        ValueModel[] temp = new ValueModel[getRadiogenicIsotopeRatios().length + 1];
+        System.arraycopy(getRadiogenicIsotopeRatios(), 0, temp, 0, getRadiogenicIsotopeRatios().length);
 
         ValueModel rirModel
                 = new ValueModel(ratioName.trim(),
@@ -380,9 +380,9 @@ public interface ETFractionInterface {
                         "ABS",
                         BigDecimal.ZERO, BigDecimal.ZERO);
 
-        temp[getFractionationCorrectedIsotopeRatios().length] = rirModel;
+        temp[getRadiogenicIsotopeRatios().length] = rirModel;
 
-        setFractionationCorrectedIsotopeRatios(temp);
+        setRadiogenicIsotopeRatios(temp);
 
         return rirModel;
     }
@@ -517,9 +517,9 @@ public interface ETFractionInterface {
      * @return
      */
     public default ValueModel[] copyRadiogenicIsotopeRatios() {
-        ValueModel[] retval = new ValueModel[getFractionationCorrectedIsotopeRatios().length];
+        ValueModel[] retval = new ValueModel[getRadiogenicIsotopeRatios().length];
         for (int i = 0; i < retval.length; i++) {
-            retval[i] = getFractionationCorrectedIsotopeRatios()[i].copy();
+            retval[i] = getRadiogenicIsotopeRatios()[i].copy();
         }
         return retval;
     }
