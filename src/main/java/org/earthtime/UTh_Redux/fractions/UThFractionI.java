@@ -17,6 +17,7 @@
  */
 package org.earthtime.UTh_Redux.fractions;
 
+import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.fractions.ETFractionInterface;
 
 /**
@@ -25,5 +26,7 @@ import org.earthtime.fractions.ETFractionInterface;
  */
 public interface UThFractionI extends ETFractionInterface {
 
+    public ValueModel[] getActivityRatios();
 
+    public void setActivityRatios(ValueModel[] radiogenicActivityRatios);
 }

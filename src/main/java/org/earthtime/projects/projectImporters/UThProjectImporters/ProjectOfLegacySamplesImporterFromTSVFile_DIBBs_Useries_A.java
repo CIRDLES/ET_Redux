@@ -29,14 +29,15 @@ import java.util.Vector;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UTh_Redux.aliquots.UThReduxAliquot;
-import org.earthtime.UTh_Redux.fractions.UThFraction;
+import org.earthtime.UTh_Redux.fractions.UThLegacyFraction;
+import org.earthtime.UTh_Redux.fractions.UThLegacyFractionI;
 import org.earthtime.UTh_Redux.samples.SampleUTh;
 import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.aliquots.ReduxAliquotInterface;
 import org.earthtime.dataDictionaries.FileDelimiterTypesEnum;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.dataDictionaries.SampleTypesEnum;
-import org.earthtime.dataDictionaries.UThAnalysisMeasures;
+import org.earthtime.dataDictionaries.UThActivityRatios;
 import org.earthtime.dataDictionaries.UThCompositionalMeasures;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.fractions.ETFractionInterface;
@@ -135,7 +136,7 @@ public class ProjectOfLegacySamplesImporterFromTSVFile_DIBBs_Useries_A extends A
 
                         if (currentSample != null) {
                             // process fractions
-                            ETFractionInterface myFraction = new UThFraction(true);
+                            UThLegacyFractionI myFraction = new UThLegacyFraction();
                             myFraction.setFractionID(myFractionData.get(3));
                             myFraction.setGrainID(myFractionData.get(3));
 
@@ -163,13 +164,13 @@ public class ProjectOfLegacySamplesImporterFromTSVFile_DIBBs_Useries_A extends A
                                     .setOneSigma(oneSigmaAbs);
 
                             // column AR=44 is ar230Th_232Thfc 
-                            ratioName = UThAnalysisMeasures.ar230Th_232Thfc.getName();
-                            myFraction.getAnalysisMeasure(ratioName)//
+                            ratioName = UThActivityRatios.ar230Th_232Thfc.getName();
+                            myFraction.getLegacyActivityRatioByName(ratioName)//
                                     .setValue(readDelimitedTextCell(myFractionData.get(43)));
 
                             // column AS=45 is ar232Th_238Ufc * 10^5
-                            ratioName = UThAnalysisMeasures.ar232Th_238Ufc.getName();
-                            myFraction.getAnalysisMeasure(ratioName)//
+                            ratioName = UThActivityRatios.ar232Th_238Ufc.getName();
+                            myFraction.getLegacyActivityRatioByName(ratioName)//
                                     .setValue(readDelimitedTextCell(myFractionData.get(44)).//
                                             movePointLeft(5));
 
@@ -188,39 +189,39 @@ public class ProjectOfLegacySamplesImporterFromTSVFile_DIBBs_Useries_A extends A
                                     .setOneSigma(oneSigmaAbs);
 
                             // column AV=48 is ar230Th_234Ufc 
-                            ratioName = UThAnalysisMeasures.ar230Th_234Ufc.getName();
-                            myFraction.getAnalysisMeasure(ratioName)//
+                            ratioName = UThActivityRatios.ar230Th_234Ufc.getName();
+                            myFraction.getLegacyActivityRatioByName(ratioName)//
                                     .setValue(readDelimitedTextCell(myFractionData.get(47)));
 
                             // column AW=49 is ar230Th_234Ufc uncertainty 
                             // convert 2-sigma to 1-sigma
                             oneSigmaAbs = readDelimitedTextCell(myFractionData.get(48)).
                                     divide(new BigDecimal(2.0));
-                            myFraction.getAnalysisMeasure(ratioName)//
+                            myFraction.getLegacyActivityRatioByName(ratioName)//
                                     .setOneSigma(oneSigmaAbs);
            
                             // column AX=50 is ar230Th_238Ufc 
-                            ratioName = UThAnalysisMeasures.ar230Th_238Ufc.getName();
-                            myFraction.getAnalysisMeasure(ratioName)//
+                            ratioName = UThActivityRatios.ar230Th_238Ufc.getName();
+                            myFraction.getLegacyActivityRatioByName(ratioName)//
                                     .setValue(readDelimitedTextCell(myFractionData.get(49)));
 
                             // column AY=51 is ar230Th_238Ufc uncertainty 
                             // convert 2-sigma to 1-sigma
                             oneSigmaAbs = readDelimitedTextCell(myFractionData.get(50)).
                                     divide(new BigDecimal(2.0));
-                            myFraction.getAnalysisMeasure(ratioName)//
+                            myFraction.getLegacyActivityRatioByName(ratioName)//
                                     .setOneSigma(oneSigmaAbs);
 
                             // column AZ=52 is ar234U_238Ufc 
-                            ratioName = UThAnalysisMeasures.ar234U_238Ufc.getName();
-                            myFraction.getAnalysisMeasure(ratioName)//
+                            ratioName = UThActivityRatios.ar234U_238Ufc.getName();
+                            myFraction.getLegacyActivityRatioByName(ratioName)//
                                     .setValue(readDelimitedTextCell(myFractionData.get(51)));
 
                             // column BA=53 is ar234U_238Ufc uncertainty 
                             // convert 2-sigma to 1-sigma
                             oneSigmaAbs = readDelimitedTextCell(myFractionData.get(52)).
                                     divide(new BigDecimal(2.0));
-                            myFraction.getAnalysisMeasure(ratioName)//
+                            myFraction.getLegacyActivityRatioByName(ratioName)//
                                     .setOneSigma(oneSigmaAbs);
 
                         }

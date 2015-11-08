@@ -197,7 +197,7 @@ public class PhysicalConstants implements
 
         if ((this.name.toUpperCase(Locale.US).startsWith("EARTHTIME"))) {
             // catch old Earthtime version 1
-            physicalConstantsModel = PhysicalConstantsModel.getMostRecentEARTHTIMEPhysicalConstantsModel();
+            physicalConstantsModel = PhysicalConstantsModel.getDefaultEARTHTIMEPhysicalConstantsModel();
         } else {
             physicalConstantsModel = convertModel(this);
         }

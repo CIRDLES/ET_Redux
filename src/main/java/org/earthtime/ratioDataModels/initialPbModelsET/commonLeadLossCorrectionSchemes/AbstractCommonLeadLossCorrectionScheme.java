@@ -84,7 +84,7 @@ public abstract class AbstractCommonLeadLossCorrectionScheme implements Serializ
     protected ValueModel determineR207_206cUsingStaceyKramer(SortedMap<String, BigDecimal> staceyKramerCorrectionParameters) {
         AbstractRatiosDataModel skInitialPbModel = new StaceyKramersInitialPbModelET();
         AbstractRatiosDataModel physicalConstantsModel
-                = PhysicalConstantsModel.getMostRecentEARTHTIMEPhysicalConstantsModel();
+                = PhysicalConstantsModel.getDefaultEARTHTIMEPhysicalConstantsModel();
 
         BigDecimal lambda238 = physicalConstantsModel.getDatumByName(Lambdas.lambda238.getName()).getValue();
         BigDecimal lambda235 = physicalConstantsModel.getDatumByName(Lambdas.lambda235.getName()).getValue();

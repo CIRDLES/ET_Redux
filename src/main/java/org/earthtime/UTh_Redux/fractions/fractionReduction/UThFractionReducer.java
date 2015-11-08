@@ -125,6 +125,8 @@ public class UThFractionReducer extends FractionReducer {
         
         initializeDecayConstants(fraction.getPhysicalConstantsModel());
         
+        
+        
     }
 
 }

@@ -192,7 +192,7 @@ public class PhysicalConstantsModel extends AbstractRatiosDataModel {
      *
      * @return
      */
-    public static AbstractRatiosDataModel getMostRecentEARTHTIMEPhysicalConstantsModel() {
+    public static AbstractRatiosDataModel getDefaultEARTHTIMEPhysicalConstantsModel() {
         // guarantee final model
         modelInstances.put(EARTHTIMEPhysicalConstantsModel.getNameAndVersion(), EARTHTIMEPhysicalConstantsModel);
         EARTHTIMEPhysicalConstantsModel.setImmutable(true);
@@ -376,7 +376,7 @@ public class PhysicalConstantsModel extends AbstractRatiosDataModel {
 
         // guarantee final models
         getNoneInstance();
-        getMostRecentEARTHTIMEPhysicalConstantsModel();
+        getDefaultEARTHTIMEPhysicalConstantsModel();
 
         loadModelsFromResources(modelInstances);
 
@@ -414,7 +414,7 @@ public class PhysicalConstantsModel extends AbstractRatiosDataModel {
      */
     public static void main(String[] args) {
 
-        AbstractRatiosDataModel physicalConstantsModel = PhysicalConstantsModel.getMostRecentEARTHTIMEPhysicalConstantsModel();
+        AbstractRatiosDataModel physicalConstantsModel = PhysicalConstantsModel.getDefaultEARTHTIMEPhysicalConstantsModel();
 
         try {
             ETSerializer.SerializeObjectToFile(physicalConstantsModel, "PhysicalConstantsModelTEST.ser");
@@ -432,7 +432,7 @@ public class PhysicalConstantsModel extends AbstractRatiosDataModel {
         } catch (BadOrMissingXMLSchemaException badOrMissingXMLSchemaException) {
         }
 
-        AbstractRatiosDataView testView = new PhysicalConstantsDataViewEditable(PhysicalConstantsModel.getMostRecentEARTHTIMEPhysicalConstantsModel(), null, false);
+        AbstractRatiosDataView testView = new PhysicalConstantsDataViewEditable(PhysicalConstantsModel.getDefaultEARTHTIMEPhysicalConstantsModel(), null, false);
 
         testView.displayModelInFrame();
     }

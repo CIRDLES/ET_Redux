@@ -231,7 +231,7 @@ public class UPbFraction extends Fraction implements
         } catch (BadLabDataException badLabDataException) {
         }
 
-        this.physicalConstantsModel = PhysicalConstantsModel.getMostRecentEARTHTIMEPhysicalConstantsModel();
+        this.physicalConstantsModel = PhysicalConstantsModel.getDefaultEARTHTIMEPhysicalConstantsModel();
 
         this.aliquotNumber = 1;
         this.pedigreePb = "";
@@ -2203,17 +2203,17 @@ public class UPbFraction extends Fraction implements
 
             // RadiogenicIsotopeRatios
             outputWriter.println("RadiogenicIsotopeRatios");
-            Arrays.sort(getRadiogenicIsotopeRatios());
-            for (int i = 0; i < getRadiogenicIsotopeRatios().length; i++) {
-                outputWriter.println(getRadiogenicIsotopeRatios()[i].formatValueAndOneSigmaABSForTesting());
+            Arrays.sort(getFractionationCorrectedIsotopeRatios());
+            for (int i = 0; i < getFractionationCorrectedIsotopeRatios().length; i++) {
+                outputWriter.println(getFractionationCorrectedIsotopeRatios()[i].formatValueAndOneSigmaABSForTesting());
             }
             outputWriter.println();
 
             // RadiogenicIsotopeDates
             outputWriter.println("RadiogenicIsotopeDates");
-            Arrays.sort(getRadiogenicIsotopeDates());
-            for (int i = 0; i < getRadiogenicIsotopeDates().length; i++) {
-                outputWriter.println(getRadiogenicIsotopeDates()[i].formatValueAndOneSigmaABSForTesting());
+            Arrays.sort(getIsotopeDates());
+            for (int i = 0; i < getIsotopeDates().length; i++) {
+                outputWriter.println(getIsotopeDates()[i].formatValueAndOneSigmaABSForTesting());
             }
             outputWriter.println();
 

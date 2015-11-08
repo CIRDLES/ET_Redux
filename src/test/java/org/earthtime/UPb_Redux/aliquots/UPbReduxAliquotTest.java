@@ -45,7 +45,7 @@ public class UPbReduxAliquotTest {
                 = new UPbReduxAliquot(
                         0,
                         "Test Aliquot",
-                        PhysicalConstantsModel.getMostRecentEARTHTIMEPhysicalConstantsModel(),
+                        PhysicalConstantsModel.getDefaultEARTHTIMEPhysicalConstantsModel(),
                         false,
                         new SESARSampleMetadata());
 

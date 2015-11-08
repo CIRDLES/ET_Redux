@@ -195,12 +195,12 @@ public class AnalysisFractionXMLConverter implements Converter {
         writer.endNode();
 
         writer.startNode( "radiogenicIsotopeRatios" );
-        context.convertAnother( ValueModel.compressArrayOfValueModels( analysisFraction.getRadiogenicIsotopeRatios() ) );
+        context.convertAnother( ValueModel.compressArrayOfValueModels( analysisFraction.getFractionationCorrectedIsotopeRatios() ) );
         //context.convertAnother(analysisFraction.getRadiogenicIsotopeRatios());
         writer.endNode();
 
         writer.startNode( "radiogenicIsotopeDates" );
-        context.convertAnother( ValueModel.compressArrayOfValueModels( analysisFraction.getRadiogenicIsotopeDates() ) );
+        context.convertAnother( ValueModel.compressArrayOfValueModels( analysisFraction.getIsotopeDates() ) );
         // context.convertAnother(analysisFraction.getRadiogenicIsotopeDates());
         writer.endNode();
 
@@ -474,7 +474,7 @@ public class AnalysisFractionXMLConverter implements Converter {
             for (int i = 0; i < ratios.size(); i ++) {
                 radiogenicIsotopeRatios[i] = ratios.get( i );
             }
-            analysisFraction.setRadiogenicIsotopeRatios( radiogenicIsotopeRatios );
+            analysisFraction.setFractionationCorrectedIsotopeRatios( radiogenicIsotopeRatios );
         }
         reader.moveUp();
 
@@ -493,7 +493,7 @@ public class AnalysisFractionXMLConverter implements Converter {
             for (int i = 0; i < ages.size(); i ++) {
                 radiogenicIsotopeAges[i] = ages.get( i );
             }
-            analysisFraction.setRadiogenicIsotopeDates( radiogenicIsotopeAges );
+            analysisFraction.setIsotopeDates( radiogenicIsotopeAges );
         }
         reader.moveUp();
 

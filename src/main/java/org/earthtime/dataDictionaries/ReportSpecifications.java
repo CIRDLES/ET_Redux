@@ -117,16 +117,16 @@ public class ReportSpecifications {
         {"conc", "238U", "", "ppm", "getCompositionalMeasureByName", "conc238U", "ABS",
             "", "true", "true", "3", "", "concentration of 238U", "false", "true"
         },
-        {"", "[230Th/", "232Th]", "", "getAnalysisMeasure", UThAnalysisMeasures.ar230Th_232Thfc.getName(), "",
+        {"", "[230Th/", "232Th]", "", "getAnalysisMeasure", UThActivityRatios.ar230Th_232Thfc.getName(), "",
             "FN-17", "true", "true", "3", "", "[230Th/232Th] activity ratio", "false", "false"
         },
-        {"[232Th/", "238U]", "", "*1e5", "getAnalysisMeasure", UThAnalysisMeasures.ar232Th_238Ufc.getName(), "",
+        {"[232Th/", "238U]", "", "*1e5", "getAnalysisMeasure", UThActivityRatios.ar232Th_238Ufc.getName(), "",
             "FN-17", "true", "true", "3", "", "[232Th/238U] activity ratio", "false", "false"
         },
-        {"", "[230Th/", "238U]", "", "getAnalysisMeasure", UThAnalysisMeasures.ar230Th_238Ufc.getName(), "ABS",
+        {"", "[230Th/", "238U]", "", "getAnalysisMeasure", UThActivityRatios.ar230Th_238Ufc.getName(), "ABS",
             "FN-17", "true", "false", "3", "true", "[230Th/238U] activity ratio", "false", "false"
         },
-        {"", "[234U/", "238U]", "", "getAnalysisMeasure", UThAnalysisMeasures.ar234U_238Ufc.getName(), "ABS",
+        {"", "[234U/", "238U]", "", "getAnalysisMeasure", UThActivityRatios.ar234U_238Ufc.getName(), "ABS",
             "FN-17", "true", "false", "3", "true", "[234U/238U] activity ratio", "false", "false"
         },};
     // Report column order =
@@ -175,6 +175,26 @@ public class ReportSpecifications {
             "", "false", "true", "3", "", "Correlation coefficient", "true", "true"
         }
     };
+    
+    
+    
+        // Report column order =
+    //  displayName1, displayName2, displayName3, units, retrieveMethodName, retrieveParameterName, uncertaintyType,
+    //     footnoteSpec, visible, useArbitrary? for value, digitcount value, unct visible (if required), description where needed,
+    //     needsLead, needsUranium
+    /**
+     *
+     */
+    public static final String[][] ReportCategory_fractionationCorrectedIsotopicRatios = new String[][]{
+        {"", "r230Th/", "232Thfc", "", "getFractionationCorrectedIsotopeRatios", "r230Th_232Thfc", "",
+            "", "true", "true", "0", "false", "", "true", "false"
+        },
+        
+    };
+
+    
+    
+    
 
     // Report column order =
     //  displayName1, displayName2, displayName3, units, retrieveMethodName, retrieveParameterName, uncertaintyType,

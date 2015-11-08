@@ -321,8 +321,8 @@ public abstract class Fraction implements
         if (copyAnalysisMeasures) {
             setAnalysisMeasures(fraction.copyAnalysisMeasures());
         }
-        setRadiogenicIsotopeRatios(fraction.copyRadiogenicIsotopeRatios());
-        setRadiogenicIsotopeDates(fraction.copyRadiogenicIsotopeDates());
+        setFractionationCorrectedIsotopeRatios(fraction.copyRadiogenicIsotopeRatios());
+        setIsotopeDates(fraction.copyRadiogenicIsotopeDates());
         setCompositionalMeasures(fraction.copyCompositionalMeasures());
         setSampleIsochronRatios(fraction.copySampleIsochronRatios());
         traceElements = fraction.copyTraceElements();
@@ -777,7 +777,7 @@ public abstract class Fraction implements
      * @return
      */
     @Override
-    public ValueModel[] getRadiogenicIsotopeRatios() {
+    public ValueModel[] getFractionationCorrectedIsotopeRatios() {
         return radiogenicIsotopeRatios;
     }
 
@@ -786,7 +786,7 @@ public abstract class Fraction implements
      * @param radiogenicIsotopeRatios
      */
     @Override
-    public void setRadiogenicIsotopeRatios(ValueModel[] radiogenicIsotopeRatios) {
+    public void setFractionationCorrectedIsotopeRatios(ValueModel[] radiogenicIsotopeRatios) {
         this.radiogenicIsotopeRatios = ValueModel.cullNullsFromArray(radiogenicIsotopeRatios);
     }
 
@@ -795,7 +795,7 @@ public abstract class Fraction implements
      * @return
      */
     @Override
-    public ValueModel[] getRadiogenicIsotopeDates() {
+    public ValueModel[] getIsotopeDates() {
         return radiogenicIsotopeDates;
     }
 
@@ -804,7 +804,7 @@ public abstract class Fraction implements
      * @param radiogenicIsotopeDates
      */
     @Override
-    public void setRadiogenicIsotopeDates(ValueModel[] radiogenicIsotopeDates) {
+    public void setIsotopeDates(ValueModel[] radiogenicIsotopeDates) {
         this.radiogenicIsotopeDates = ValueModel.cullNullsFromArray(radiogenicIsotopeDates);
     }
 

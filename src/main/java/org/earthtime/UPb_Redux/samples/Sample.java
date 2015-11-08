@@ -324,8 +324,8 @@ public class Sample implements
                         legacyF.getAnalysisMeasure(AnalysisMeasures.ar231_235sample.getName()).setValue(BigDecimal.ZERO);
                         legacyF.getAnalysisMeasure(AnalysisMeasures.rTh_Umagma.getName()).setValue(BigDecimal.ZERO);
 
-                        legacyF.setRadiogenicIsotopeRatios(f.getRadiogenicIsotopeRatios());
-                        legacyF.setRadiogenicIsotopeDates(f.getRadiogenicIsotopeDates());
+                        legacyF.setFractionationCorrectedIsotopeRatios(f.getFractionationCorrectedIsotopeRatios());
+                        legacyF.setIsotopeDates(f.getIsotopeDates());
                         legacyF.setCompositionalMeasures(f.getCompositionalMeasures());
                         legacyF.setSampleIsochronRatios(f.getSampleIsochronRatios());
 

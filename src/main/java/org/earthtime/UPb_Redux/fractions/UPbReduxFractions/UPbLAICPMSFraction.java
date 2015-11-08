@@ -113,7 +113,7 @@ public class UPbLAICPMSFraction extends Fraction implements
         setLegacy(false);
         this.ratioType = "UPb";
 
-        this.physicalConstantsModel = PhysicalConstantsModel.getMostRecentEARTHTIMEPhysicalConstantsModel();
+        this.physicalConstantsModel = PhysicalConstantsModel.getDefaultEARTHTIMEPhysicalConstantsModel();
 
         this.aliquotNumber = 1;
 
@@ -126,8 +126,8 @@ public class UPbLAICPMSFraction extends Fraction implements
 
         // trimming our size
         setAnalysisMeasures(new ValueModel[0]);
-        setRadiogenicIsotopeRatios(new ValueModel[0]);
-        setRadiogenicIsotopeDates(new ValueModel[0]);
+        setFractionationCorrectedIsotopeRatios(new ValueModel[0]);
+        setIsotopeDates(new ValueModel[0]);
         setCompositionalMeasures(new ValueModel[0]);
         setSampleIsochronRatios(new ValueModel[0]);
 
@@ -871,7 +871,7 @@ public class UPbLAICPMSFraction extends Fraction implements
     @Override
     public AbstractRatiosDataModel getPhysicalConstantsModel() {
         if (physicalConstantsModel == null) {
-            physicalConstantsModel = PhysicalConstantsModel.getMostRecentEARTHTIMEPhysicalConstantsModel();
+            physicalConstantsModel = PhysicalConstantsModel.getDefaultEARTHTIMEPhysicalConstantsModel();
         }
         return physicalConstantsModel;
     }
@@ -945,16 +945,16 @@ public class UPbLAICPMSFraction extends Fraction implements
 
             // RadiogenicIsotopeRatios
             outputWriter.println("RadiogenicIsotopeRatios");
-            Arrays.sort(getRadiogenicIsotopeRatios());
-            for (ValueModel radiogenicIsotopeRatio : getRadiogenicIsotopeRatios()) {
+            Arrays.sort(getFractionationCorrectedIsotopeRatios());
+            for (ValueModel radiogenicIsotopeRatio : getFractionationCorrectedIsotopeRatios()) {
                 outputWriter.println(radiogenicIsotopeRatio.formatValueAndOneSigmaABSForTesting());
             }
             outputWriter.println();
 
             // RadiogenicIsotopeDates
             outputWriter.println("RadiogenicIsotopeDates");
-            Arrays.sort(getRadiogenicIsotopeDates());
-            for (ValueModel radiogenicIsotopeDate : getRadiogenicIsotopeDates()) {
+            Arrays.sort(getIsotopeDates());
+            for (ValueModel radiogenicIsotopeDate : getIsotopeDates()) {
                 outputWriter.println(radiogenicIsotopeDate.formatValueAndOneSigmaABSForTesting());
             }
             outputWriter.println();
