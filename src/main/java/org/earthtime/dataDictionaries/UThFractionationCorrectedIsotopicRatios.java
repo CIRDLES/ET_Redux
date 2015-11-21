@@ -1,5 +1,5 @@
 /*
- * UThRatiosMeasured.java
+ * UThFractionationCorrectedIsotopicRatios.java
  *
  *
  * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
@@ -23,7 +23,7 @@ package org.earthtime.dataDictionaries;
  * @author James F. Bowring
  */
 
-public enum UThRatiosMeasured {
+public enum UThFractionationCorrectedIsotopicRatios {
 
     // measured UTh ratios
     /**
@@ -54,7 +54,7 @@ public enum UThRatiosMeasured {
 
     private String name;
 
-    private UThRatiosMeasured ( String name ) {
+    private UThFractionationCorrectedIsotopicRatios ( String name ) {
         this.name = name;
     }
 
@@ -71,9 +71,9 @@ public enum UThRatiosMeasured {
      * @return
      */
     public static String[] getNames () {
-        String[] retVal = new String[UThRatiosMeasured.values().length];
-        for (int i = 0; i < UThRatiosMeasured.values().length; i ++) {
-            retVal[i] = UThRatiosMeasured.values()[i].getName();
+        String[] retVal = new String[UThFractionationCorrectedIsotopicRatios.values().length];
+        for (int i = 0; i < UThFractionationCorrectedIsotopicRatios.values().length; i ++) {
+            retVal[i] = UThFractionationCorrectedIsotopicRatios.values()[i].getName();
         }
         return retVal;
     }
@@ -86,7 +86,7 @@ public enum UThRatiosMeasured {
     public static boolean contains ( String checkString ) {
         boolean retVal = true;
         try {
-            UThRatiosMeasured.valueOf( checkString );
+            UThFractionationCorrectedIsotopicRatios.valueOf( checkString );
         } catch (IllegalArgumentException e) {
             retVal = false;
         }

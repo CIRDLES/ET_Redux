@@ -1,5 +1,5 @@
 /*
- * UThActivityRatios.java
+ * UThAnalysisMeasures.java
  *
  *
  * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
@@ -22,9 +22,9 @@ package org.earthtime.dataDictionaries;
  *
  * @author James F. Bowring
  */
-public enum UThActivityRatios {
+public enum UThAnalysisMeasures {
 
-    // UThActivityRatios
+    // UThAnalysisMeasures
     /**
      *
      */
@@ -44,7 +44,7 @@ public enum UThActivityRatios {
 
     private String name;
 
-    private UThActivityRatios(String name) {
+    private UThAnalysisMeasures(String name) {
         this.name = name;
     }
 
@@ -61,9 +61,9 @@ public enum UThActivityRatios {
      * @return
      */
     public static String[] getNames() {
-        String[] retVal = new String[UThActivityRatios.values().length];
-        for (int i = 0; i < UThActivityRatios.values().length; i++) {
-            retVal[i] = UThActivityRatios.values()[i].getName();
+        String[] retVal = new String[UThAnalysisMeasures.values().length];
+        for (int i = 0; i < UThAnalysisMeasures.values().length; i++) {
+            retVal[i] = UThAnalysisMeasures.values()[i].getName();
         }
         return retVal;
     }
@@ -76,7 +76,7 @@ public enum UThActivityRatios {
     public static boolean contains(String checkString) {
         boolean retVal = true;
         try {
-            UThActivityRatios.valueOf(checkString);
+            UThAnalysisMeasures.valueOf(checkString);
         } catch (IllegalArgumentException e) {
             retVal = false;
         }

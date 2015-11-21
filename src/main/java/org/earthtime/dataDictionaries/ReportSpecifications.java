@@ -117,16 +117,16 @@ public class ReportSpecifications {
         {"conc", "238U", "", "ppm", "getCompositionalMeasureByName", "conc238U", "ABS",
             "", "true", "true", "3", "", "concentration of 238U", "false", "true"
         },
-        {"", "[230Th/", "232Th]", "", "getAnalysisMeasure", UThActivityRatios.ar230Th_232Thfc.getName(), "",
-            "FN-17", "true", "true", "3", "", "[230Th/232Th] activity ratio", "false", "false"
+        {"", "[230Th/", "232Th]", "", "getAnalysisMeasure", UThAnalysisMeasures.ar230Th_232Thfc.getName(), "ABS",
+            "FN-17", "true", "true", "3", "true", "[230Th/232Th] activity ratio", "false", "false"
         },
-        {"[232Th/", "238U]", "", "*1e5", "getAnalysisMeasure", UThActivityRatios.ar232Th_238Ufc.getName(), "",
-            "FN-17", "true", "true", "3", "", "[232Th/238U] activity ratio", "false", "false"
+        {"[232Th/", "238U]", "", "*1e5", "getAnalysisMeasure", UThAnalysisMeasures.ar232Th_238Ufc.getName(), "ABS",
+            "FN-17", "true", "true", "3", "true", "[232Th/238U] activity ratio", "false", "false"
         },
-        {"", "[230Th/", "238U]", "", "getAnalysisMeasure", UThActivityRatios.ar230Th_238Ufc.getName(), "ABS",
+        {"", "[230Th/", "238U]", "", "getAnalysisMeasure", UThAnalysisMeasures.ar230Th_238Ufc.getName(), "ABS",
             "FN-17", "true", "false", "3", "true", "[230Th/238U] activity ratio", "false", "false"
         },
-        {"", "[234U/", "238U]", "", "getAnalysisMeasure", UThActivityRatios.ar234U_238Ufc.getName(), "ABS",
+        {"", "[234U/", "238U]", "", "getAnalysisMeasure", UThAnalysisMeasures.ar234U_238Ufc.getName(), "ABS",
             "FN-17", "true", "false", "3", "true", "[234U/238U] activity ratio", "false", "false"
         },};
     // Report column order =
@@ -186,8 +186,23 @@ public class ReportSpecifications {
      *
      */
     public static final String[][] ReportCategory_fractionationCorrectedIsotopicRatios = new String[][]{
-        {"", "r230Th/", "232Thfc", "", "getRadiogenicIsotopeRatioByName", "r230Th_232Thfc", "",
-            "", "true", "true", "0", "false", "", "true", "false"
+        {"", "r234U/", "238Ufc", "", "getRadiogenicIsotopeRatioByName", "r234U_238Ufc", "PCT",
+            "", "true", "true", "2", "true", "", "true", "false"
+        },
+        {"", "r230Th/", "232Thfc", "", "getRadiogenicIsotopeRatioByName", "r230Th_232Thfc", "PCT",
+            "", "true", "true", "2", "true", "", "true", "false"
+        },
+        {"", "r228Ra/", "226Rafc", "", "getRadiogenicIsotopeRatioByName", "r228Ra_226Rafc", "PCT",
+            "", "true", "true", "2", "true", "", "true", "false"
+        },
+        {"", "r231Pa/", "233Pafc", "", "getRadiogenicIsotopeRatioByName", "r231Pa_233Pafc", "PCT",
+            "", "true", "true", "2", "true", "", "true", "false"
+        },
+        {"", "r238U/", "206Pbfc", "", "getRadiogenicIsotopeRatioByName", "r238U_206Pbfc", "PCT",
+            "", "true", "true", "2", "true", "", "true", "false"
+        },
+        {"", "r207Pb/", "206Pbfc", "", "getRadiogenicIsotopeRatioByName", "r207Pb_206Pbfc", "PCT",
+            "", "true", "true", "2", "true", "", "true", "false"
         },
         
     };
