@@ -70,6 +70,8 @@ public class MineralStandardUPbRatiosDataViewEditable extends MineralStandardUPb
 
         apparentDatesLabel.setText(((MineralStandardUPbModel) dataModel)//
                 .listFormattedApparentDatesHTML());
+        
+        concentrationsPPMValueModelsPanelView.saveEdits();
     }
 
     /**

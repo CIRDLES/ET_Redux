@@ -35,8 +35,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
-import org.earthtime.reduxLabData.ReduxLabData;
-import org.earthtime.reduxLabData.ReduxLabDataList;
 import org.earthtime.UPb_Redux.utilities.ETSerializer;
 import org.earthtime.UPb_Redux.valueModels.MineralStandardUPbRatioModel;
 import org.earthtime.UPb_Redux.valueModels.MineralStandardUPbRatioModelXMLConverter;
@@ -54,6 +52,8 @@ import org.earthtime.exceptions.ETException;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.initialPbModelsET.InitialPbModelET;
 import org.earthtime.ratioDataModels.initialPbModelsET.InitialPbModelETXMLConverter;
+import org.earthtime.reduxLabData.ReduxLabData;
+import org.earthtime.reduxLabData.ReduxLabDataList;
 import org.earthtime.utilities.DateHelpers;
 
 /**

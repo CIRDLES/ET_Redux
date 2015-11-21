@@ -178,19 +178,10 @@ public final class StaceyKramersInitialPbModelET extends InitialPbModelET {
 
     @Override
     public void saveEdits(boolean checkCovarianceValidity) throws ETException {
-        super.saveEdits(checkCovarianceValidity); //To change body of generated methods, choose Tools | Templates.
-
+        super.saveEdits(checkCovarianceValidity); 
     }
 
-//    /**
-//     *
-//     * @param value the value of value
-//     * @return
-//     */
-//    @Override
-//    protected BigDecimal calculateR207_206cVarUnctPCT(double value) {
-//        return r207_206cUnctPCT;
-//    }
+
     /**
      *
      * @param estimatedAgeInMA
