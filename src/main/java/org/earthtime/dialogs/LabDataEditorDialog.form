@@ -38,7 +38,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="localTracerImport_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Import Tracer from local file"/>
+                <Property name="text" type="java.lang.String" value="Import Tracer Model from local file"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="localTracerImport_menuItemActionPerformed"/>
@@ -48,7 +48,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="saveTracerAsXML_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Save current Tracer as XML file"/>
+                <Property name="text" type="java.lang.String" value="Save current Tracer Model as local XML file"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="saveTracerAsXML_menuItemActionPerformed"/>
@@ -56,7 +56,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="removeTracer_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Remove current Tracer from Lab Data"/>
+                <Property name="text" type="java.lang.String" value="Remove current Tracer Model (for editable models only)"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="removeTracer_menuItemActionPerformed"/>
@@ -64,9 +64,17 @@
             </MenuItem>
             <MenuItem class="javax.swing.JSeparator" name="jSeparator2">
             </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="editCurrentLocalTracerModel_menuItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Edit Current Tracer Model (for editable models only)"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editCurrentLocalTracerModel_menuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="editCopyOfCurrentTracer_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Edit copy of current Tracer"/>
+                <Property name="text" type="java.lang.String" value="Edit copy of current Tracer Model"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editCopyOfCurrentTracer_menuItemActionPerformed"/>
@@ -74,7 +82,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="newTracerMode_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Edit new empty Tracer"/>
+                <Property name="text" type="java.lang.String" value="Edit new empty Tracer Model"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="newTracerMode_menuItemActionPerformed"/>
@@ -82,10 +90,20 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="cancelNewTracerEdit_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Cancel Edit of Tracer"/>
+                <Property name="text" type="java.lang.String" value="Cancel Edit of Tracer Model"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cancelNewTracerEdit_menuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator19">
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="saveAndRegisterCurrentEditOfTracerModel_menuItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Save and Register Current Edit of Tracer Model"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="saveAndRegisterCurrentEditOfTracerModel_menuItemActionPerformed"/>
               </Events>
             </MenuItem>
           </SubComponents>
@@ -449,13 +467,21 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="removeMineralStdModel_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Remove current Mineral Standard Model from Lab Data"/>
+                <Property name="text" type="java.lang.String" value="Remove current Mineral Standard Model (for editable models only)"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="removeMineralStdModel_menuItemActionPerformed"/>
               </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JSeparator" name="jSeparator17">
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="editCurrentLocalMineralStandardModel_menuItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Edit Current Mineral Standard Model (for editable models only)"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editCurrentLocalMineralStandardModel_menuItemActionPerformed"/>
+              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="editCopyOfCurrentMineralStdModel_menuItem">
               <Properties>
@@ -475,10 +501,20 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="cancelNewEditMineralStdModel_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Cancel edit of Mineral Standard Model"/>
+                <Property name="text" type="java.lang.String" value="Cancel Edit of Mineral Standard Model"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cancelNewEditMineralStdModel_menuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator18">
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="saveAndRegisterCurrentEditOfMineralStandardModel_menuItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Save and Register Current Edit of Mineral Standard Model"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="saveAndRegisterCurrentEditOfMineralStandardModel_menuItemActionPerformed"/>
               </Events>
             </MenuItem>
           </SubComponents>
@@ -1416,9 +1452,6 @@
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JComboBox" name="MineralStandardModelChooser">
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="MineralStandardModelChooserActionPerformed"/>
-                  </Events>
                   <AuxValues>
                     <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
                   </AuxValues>

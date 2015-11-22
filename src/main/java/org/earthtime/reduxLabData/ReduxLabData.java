@@ -76,7 +76,8 @@ public final class ReduxLabData implements Serializable {
     private ArrayList<AbstractRatiosDataModel> detritalUraniumAndThoriumModels;
     private ArrayList<ReportSettingsInterface> reportSettingsModels
             = new ReduxLabDataList<>("Report Settings");
-    private ArrayList<LabEquipmentSettings> labEquipmentSettings = //
+    private ArrayList<LabEquipmentSettings> labEquipmentSettings
+            = //
             new ReduxLabDataList<>(" Lab Equipment Settings");
     private AbstractRatiosDataModel defaultLabTracer;
     private ValueModel defaultLabAlphaUModel;
@@ -426,9 +427,9 @@ public final class ReduxLabData implements Serializable {
             addTracer(TracerUPbModel.getNoneInstance());
             defaultLabTracer = getFirstTracer();
         } else // detect if legacy default is none and change if possible
-        if (defaultLabTracer.equals(getNoneTracer())) {
-            defaultLabTracer = getFirstTracer();
-        }
+         if (defaultLabTracer.equals(getNoneTracer())) {
+                defaultLabTracer = getFirstTracer();
+            }
         return defaultLabTracer;
     }
 
@@ -445,8 +446,17 @@ public final class ReduxLabData implements Serializable {
      * @param tracer
      * @param isVerbose
      */
-    public void registerTracer(AbstractRatiosDataModel tracer, boolean isVerbose) {
-        if (((ReduxLabDataList) tracerModels).registerElement(tracer, isVerbose)) {
+    public void registerTracer(AbstractRatiosDataModel tracer, boolean isVerbose)
+            throws BadLabDataException {
+        boolean myIsVerbose = isVerbose;
+        // Nov 2015 ... this is the case of editing a local model
+        if (!tracer.isImmutable() && !((ReduxLabDataList) tracerModels).registerElement(tracer, false)) {
+            removeATracer(tracer.getNameAndVersion());
+            addTracer(tracer);
+            myIsVerbose = false;
+        }
+
+        if (((ReduxLabDataList) tracerModels).registerElement(tracer, myIsVerbose)) {
             addTracer(tracer);
         }
     }
@@ -531,9 +541,9 @@ public final class ReduxLabData implements Serializable {
             addAlphaUModel(new ValueModel(ReduxConstants.NONE));
             setDefaultLabAlphaUModel(getFirstAlphaUModel());
         } else // detect if legacy default is none and change if possible
-        if (defaultLabAlphaUModel.equals(getNoneAlphaUModel())) {
-            setDefaultLabAlphaUModel(getFirstAlphaUModel());
-        }
+         if (defaultLabAlphaUModel.equals(getNoneAlphaUModel())) {
+                setDefaultLabAlphaUModel(getFirstAlphaUModel());
+            }
         return defaultLabAlphaUModel;
     }
 
@@ -639,9 +649,9 @@ public final class ReduxLabData implements Serializable {
             addAlphaPbModel(new ValueModel(ReduxConstants.NONE));
             setDefaultLabAlphaPbModel(getFirstAlphaPbModel());
         } else // detect if legacy default is none and change if possible
-        if (defaultLabAlphaPbModel.equals(getNoneAlphaPbModel())) {
-            setDefaultLabAlphaPbModel(getFirstAlphaPbModel());
-        }
+         if (defaultLabAlphaPbModel.equals(getNoneAlphaPbModel())) {
+                setDefaultLabAlphaPbModel(getFirstAlphaPbModel());
+            }
         return defaultLabAlphaPbModel;
     }
 
@@ -748,9 +758,9 @@ public final class ReduxLabData implements Serializable {
             addBlank(PbBlankICModel.getNoneInstance());
             setDefaultLabPbBlank(getFirstPbBlank());
         } else // detect if legacy default is none and change if possible
-        if (defaultLabPbBlank.equals(getNonePbBlankModel())) {
-            setDefaultLabPbBlank(getFirstPbBlank());
-        }
+         if (defaultLabPbBlank.equals(getNonePbBlankModel())) {
+                setDefaultLabPbBlank(getFirstPbBlank());
+            }
         return defaultLabPbBlank;
     }
 
@@ -858,9 +868,9 @@ public final class ReduxLabData implements Serializable {
 
             defaultLabInitialPbModel = getFirstInitialPbModel();
         } else // detect if legacy default is none and change if possible
-        if (defaultLabInitialPbModel.equals(getNoneInitialPbModel())) {
-            defaultLabInitialPbModel = getFirstInitialPbModel();
-        }
+         if (defaultLabInitialPbModel.equals(getNoneInitialPbModel())) {
+                defaultLabInitialPbModel = getFirstInitialPbModel();
+            }
         return defaultLabInitialPbModel;
     }
 
@@ -964,9 +974,9 @@ public final class ReduxLabData implements Serializable {
             addPhysicalConstantsModel(PhysicalConstantsModel.getNoneInstance());
             defaultPhysicalConstantsModel = getFirstPhysicalConstantsModel();
         } else // detect if legacy default is none and change if possible
-        if (defaultPhysicalConstantsModel.equals(getNonePhysicalConstantsModel())) {
-            defaultPhysicalConstantsModel = getFirstPhysicalConstantsModel();
-        }
+         if (defaultPhysicalConstantsModel.equals(getNonePhysicalConstantsModel())) {
+                defaultPhysicalConstantsModel = getFirstPhysicalConstantsModel();
+            }
         return defaultPhysicalConstantsModel;
     }
 
@@ -1070,8 +1080,8 @@ public final class ReduxLabData implements Serializable {
         if (defaultMineralStandardModel == null) {
             addMineralStandardModel(MineralStandardUPbModel.getNoneInstance());
             defaultMineralStandardModel = getFirstMineralStandardModel();
-        } else // detect if legacy default is none and change if possible
-        if (defaultMineralStandardModel.equals(getNoneMineralStandardModel())) {
+        } else if (defaultMineralStandardModel.equals(getNoneMineralStandardModel())) {
+            // detect if legacy default is none and change if possible
             defaultMineralStandardModel = getFirstMineralStandardModel();
         }
         return defaultMineralStandardModel;
@@ -1089,9 +1099,19 @@ public final class ReduxLabData implements Serializable {
      *
      * @param model
      * @param isVerbose
+     * @throws org.earthtime.UPb_Redux.exceptions.BadLabDataException
      */
-    public void registerMineralStandardModel(AbstractRatiosDataModel model, boolean isVerbose) {
-        if (((ReduxLabDataList) mineralStandardModels).registerElement(model, isVerbose)) {
+    public void registerMineralStandardModel(AbstractRatiosDataModel model, boolean isVerbose)
+            throws BadLabDataException {
+        boolean myIsVerbose = isVerbose;
+        // Nov 2015 ... this is the case of editing a local model
+        if (!model.isImmutable() && !((ReduxLabDataList) mineralStandardModels).registerElement(model, false)) {
+            removeAMineralStandardModel(model.getNameAndVersion());
+            addMineralStandardModel(model);
+            myIsVerbose = false;
+        }
+
+        if (((ReduxLabDataList) mineralStandardModels).registerElement(model, myIsVerbose)) {
             addMineralStandardModel(model);
         }
     }
@@ -1190,9 +1210,9 @@ public final class ReduxLabData implements Serializable {
             addRareEarthElementModel(RareEarthElementsModel.getNoneInstance());
             defaultRareEarthElementModel = getFirstRareEarthElementModel();
         } else // detect if legacy default is none and change if possible
-        if (defaultRareEarthElementModel.equals(getNoneRareEarthElementModel())) {
-            defaultRareEarthElementModel = getFirstRareEarthElementModel();
-        }
+         if (defaultRareEarthElementModel.equals(getNoneRareEarthElementModel())) {
+                defaultRareEarthElementModel = getFirstRareEarthElementModel();
+            }
         return defaultRareEarthElementModel;
     }
 
@@ -1297,9 +1317,9 @@ public final class ReduxLabData implements Serializable {
             addDetritalUraniumAndThoriumModel(DetritalUraniumAndThoriumModel.getNoneInstance());
             defaultDetritalUraniumAndThoriumModel = getFirstDetritalUraniumAndThoriumModel();
         } else // detect if legacy default is none and change if possible
-        if (defaultDetritalUraniumAndThoriumModel.equals(getNoneDetritalUraniumAndThoriumModel())) {
-            defaultDetritalUraniumAndThoriumModel = getFirstDetritalUraniumAndThoriumModel();
-        }
+         if (defaultDetritalUraniumAndThoriumModel.equals(getNoneDetritalUraniumAndThoriumModel())) {
+                defaultDetritalUraniumAndThoriumModel = getFirstDetritalUraniumAndThoriumModel();
+            }
         return defaultDetritalUraniumAndThoriumModel;
     }
 
@@ -1448,59 +1468,6 @@ public final class ReduxLabData implements Serializable {
         }
     }
 
-    // report settings NOT COMPLETED AS OF OCT 2010 ***************************************************************
-//    /**
-//     *
-//     * @return
-//     */
-//    public ArrayList<ReportSettings> getReportSettingsModels () {
-//        if ( reportSettingsModels == null ) {
-//            reportSettingsModels =
-//                    new ReduxLabDataList<ReportSettings>( "Report Settings" );
-//        }
-//        return reportSettingsModels;
-//    }
-//
-//    /**
-//     *
-//     * @return @throws BadLabDataException
-//     * @throws BadLabDataException
-//     */
-//    public ReportSettings getFirstReportSettingsModel ()
-//            throws BadLabDataException {
-//        
-//        ReportSettings myRS = ((ReportSettings) ((ReduxLabDataList) reportSettingsModels).getFirstElement());
-//        
-//        return myRS;
-//
-//    }
-//
-//    /**
-//     *
-//     * @param reportSettingsModelName
-//     * @return
-//     * @throws BadLabDataException
-//     */
-//    public ReportSettings getAReportSettingsModel ( String reportSettingsModelName )
-//            throws BadLabDataException {
-//        
-//                ReportSettings myRS = ((ReportSettings) ((ReduxLabDataList) reportSettingsModels).getFirstElement());
-//        myRS.updateToCurrentVersion();
-//
-//        return myRS;
-//
-//    }
-//
-//    /**
-//     *
-//     * @param reportSettingsModelName
-//     * @return
-//     * @throws BadLabDataException
-//     */
-//    public boolean removeAReportSettingsModel ( String reportSettingsModelName )
-//            throws BadLabDataException {
-//        return ((ReduxLabDataList) reportSettingsModels).removeAnElement( reportSettingsModelName );
-//    }
     /**
      *
      * @param reportSettingsModelName
@@ -1512,55 +1479,6 @@ public final class ReduxLabData implements Serializable {
         return ((ReduxLabDataList) reportSettingsModels).containsElementName(reportSettingsModelName);
     }
 
-//    /**
-//     *
-//     * @param model
-//     */
-//    public void addReportSettingsModel ( ReportSettings model ) {
-//        
-//        getReportSettingsModels().remove(model);
-//        model.updateToCurrentVersion();
-//
-//
-//        getReportSettingsModels().add( model );
-//        Collections.sort( getReportSettingsModels() );
-//    }
-//    /**
-//     *
-//     * @return @throws BadLabDataException
-//     * @throws BadLabDataException
-//     */
-//    public ReportSettings getDefaultReportSettingsModelByIsotopeStyle ()
-//            throws BadLabDataException {
-//        //if ( defaultReportSettingsModel == null ) {
-//            
-//        addReportSettingsModel( ReportSettings.EARTHTIMEReportSettingsUPb() );
-//        setDefaultReportSettingsModelByIsotopeStyle( getFirstReportSettingsModel() );
-//       // }
-//
-//        return defaultReportSettingsModel;
-//    }
-//    /**
-//     *
-//     * @param defaultReportSettingsModel
-//     */
-//    public void setDefaultReportSettingsModelByIsotopeStyle ( ReportSettings defaultReportSettingsModel ) {
-//        
-//        defaultReportSettingsModel.updateToCurrentVersion();
-//        this.defaultReportSettingsModel = defaultReportSettingsModel;
-//    }
-//
-//    /**
-//     *
-//     * @param reportSettingsModel
-//     * @param isVerbose
-//     */
-//    public void registerReportSettingsModel ( ReportSettings reportSettingsModel, boolean isVerbose ) {
-//        reportSettingsModel.updateToCurrentVersion();
-//        if ( ((ReduxLabDataList) reportSettingsModels).registerElement( reportSettingsModel, isVerbose ) ) {
-//            addReportSettingsModel( reportSettingsModel );
-//        }
-//    }
     // properties
     /**
      *
@@ -1683,9 +1601,11 @@ public final class ReduxLabData implements Serializable {
         if (fraction instanceof UThFractionI) {
             // june 2015 do nothing for now
         } else {
-            registerTracer(//
-                    ((UPbFractionI) fraction).getTracer(), false);
-
+            try {
+                registerTracer(//
+                        ((UPbFractionI) fraction).getTracer(), false);
+            } catch (BadLabDataException badLabDataException) {
+            }
             // may be null if coming from imported aliquot and register will catch it
             registerAlphaPbModel(((UPbFractionI) fraction).getAlphaPbModel(), false);
 
@@ -1910,49 +1830,6 @@ public final class ReduxLabData implements Serializable {
         this.analystName = analystName;
     }
 
-//    public Tracer getATracerModel ( String tracerNameandVersion )
-//            throws BadLabDataException {
-//        return (Tracer) ((ReduxLabDataList) tracerModels).getAnElement( tracerNameandVersion );
-//    }
-//
-//    public boolean removeATracer ( String tracerNameandVersion )
-//            throws BadLabDataException {
-//        return ((ReduxLabDataList) tracerModels).removeAnElement( tracerNameandVersion );
-//    }
-//
-//    public boolean containsTracerNameVersion ( String tracerNameandVersion )
-//            throws BadLabDataException {
-//        return ((ReduxLabDataList) tracerModels).containsElementName( tracerNameandVersion );
-//    }
-//
-//    public void addTracer ( Tracer tracer ) {
-//        getTracers().add( tracer );
-//        Collections.sort( getTracers() );
-//    }
-//
-//    public Tracer getDefaultLabTracer () throws BadLabDataException {
-//        // first populate if necessary
-//        if ( defaultLabTracer == null ) {
-//            addTracer( new Tracer( "<none>" ) );
-//            setDefaultLabTracer( getFirstTracer() );
-//        } else {
-//            // detect if legacy default is none and change if possible
-//            if ( defaultLabTracer.equals( getNoneTracer() ) ) {
-//                setDefaultLabTracer( getFirstTracer() );
-//            }
-//        }
-//        return defaultLabTracer;
-//    }
-//
-//    public void setDefaultLabTracer ( Tracer defaultLabTracer ) {
-//        this.defaultLabTracer = defaultLabTracer;
-//    }
-//
-//    public void registerTracer ( Tracer tracer, boolean isVerbose ) {
-//        if ( ((ReduxLabDataList) tracerModels).registerElement( tracer, isVerbose ) ) {
-//            addTracer( tracer );
-//        }
-//    }
     /**
      * @return the defaultMineralName
      */

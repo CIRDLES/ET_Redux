@@ -110,7 +110,7 @@ public class StaceyKramerInitialPbModelETTest {
         System.out.println("Testing StaceyKramersInitialPbModelET's copyModel()");
         StaceyKramersInitialPbModelET instance = new StaceyKramersInitialPbModelET();
         StaceyKramersInitialPbModelET expResult = instance;
-        AbstractRatiosDataModel result = instance.copyModel();
+        AbstractRatiosDataModel result = instance.copyModel(true);
         result.setModelName("StaceyKramers");
         assertEquals(expResult, result);
     }

@@ -22,7 +22,6 @@ import java.awt.Color;
 import java.math.BigDecimal;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.border.LineBorder;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.valueModels.MineralStandardUPbRatioModel;
@@ -54,16 +53,6 @@ public class MineralStandardUPbRatioViewNotEditable extends ValueModelViewNotEdi
 
         this.add( measuredCheckBox );
 
-
-//        JLabel apparentAgeLabel = new JLabel(//
-//                ((MineralStandardUPbRatioModel) valueModel).getApparentAge()//
-//                .formatValueAndTwoSigmaForPublicationSigDigMode( "ABS", -6, 2 ) );
-//
-//                apparentAgeLabel.setFont( ReduxConstants.sansSerif_12_Bold );
-//        apparentAgeLabel.setSize( 200, AbstractValueModelView.PANEL_HEIGHT);
-//        apparentAgeLabel.setLocation( this.uncertaintyTextBox.getX() + this.uncertaintyTextBox.getWidth() + 100, 1 );
-//
-//        this.add( apparentAgeLabel );
 
         this.setSize( this.getWidth(), this.getHeight() );
 

@@ -41,8 +41,8 @@ import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.valueModelPanelViews.AbstractValueModelsPanelView;
+import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.matrices.matrixViews.AbstractMatrixGridView;
@@ -147,6 +147,13 @@ public abstract class AbstractRatiosDataView extends JLayeredPane implements Dat
         modelTypeLabel.setBounds(5, 5, 250, 25);
         this.add(modelTypeLabel);
 
+        JLabel canEditLabel = new JLabel(dataModel.isImmutable() ? "not editable" : "editable");
+        canEditLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        canEditLabel.setFont(DataFont);
+        canEditLabel.setBounds(485, 5, 75, 25);
+        canEditLabel.setForeground(Color.red);
+        this.add(canEditLabel);
+
         JLabel modelNameLabel = new JLabel("Model Name: ");
         modelNameLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         modelNameLabel.setFont(DataFont);
@@ -157,7 +164,7 @@ public abstract class AbstractRatiosDataView extends JLayeredPane implements Dat
         modelNameTextBox.setDocument(new DialogEditor.UnDoAbleDocument(modelNameTextBox, editable));
         modelNameTextBox.setText(dataModel.getModelName());
         modelNameTextBox.setFont(DataFont);
-        modelNameTextBox.setBounds(105, 35, 315, 25);
+        modelNameTextBox.setBounds(105, 35, 350, 25);
         this.add(modelNameTextBox);
 
         JLabel labNameLabel = new JLabel("Lab Name: ");
@@ -176,7 +183,7 @@ public abstract class AbstractRatiosDataView extends JLayeredPane implements Dat
         JLabel versionLabel = new JLabel("Version: ");
         versionLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         versionLabel.setFont(DataFont);
-        versionLabel.setBounds(375, 35, 90, 25);
+        versionLabel.setBounds(420, 35, 90, 25);
         this.add(versionLabel);
 
         versionTextBox = new JTextField();
@@ -184,14 +191,14 @@ public abstract class AbstractRatiosDataView extends JLayeredPane implements Dat
         versionTextBox.setText(Integer.toString(dataModel.getVersionNumber()));
         versionTextBox.setFont(DataFont);
         versionTextBox.setHorizontalAlignment(JTextField.CENTER);
-        versionTextBox.setBounds(460, 35, 25, 25);
+        versionTextBox.setBounds(505, 35, 25, 25);
         this.add(versionTextBox);
 
         JLabel versionDotLabel = new JLabel(".");
         versionDotLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         versionDotLabel.setFont(DataFont);
         versionDotLabel.setHorizontalAlignment(JTextField.CENTER);
-        versionDotLabel.setBounds(485, 35, 15, 25);
+        versionDotLabel.setBounds(525, 35, 15, 25);
         this.add(versionDotLabel);
 
         minorVersionTextBox = new JTextField();
@@ -199,20 +206,20 @@ public abstract class AbstractRatiosDataView extends JLayeredPane implements Dat
         minorVersionTextBox.setText(Integer.toString(dataModel.getMinorVersionNumber()));
         minorVersionTextBox.setFont(DataFont);
         minorVersionTextBox.setHorizontalAlignment(JTextField.CENTER);
-        minorVersionTextBox.setBounds(495, 35, 25, 25);
+        minorVersionTextBox.setBounds(535, 35, 25, 25);
         this.add(minorVersionTextBox);
 
         JLabel dateCertifiedLabel = new JLabel("Date Certified: ");
         dateCertifiedLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         dateCertifiedLabel.setFont(DataFont);
-        dateCertifiedLabel.setBounds(285, 60, 150, 25);
+        dateCertifiedLabel.setBounds(325, 60, 150, 25);
         this.add(dateCertifiedLabel);
 
         dateCertifiedBox = new JTextField();
         dateCertifiedBox.setDocument(new DialogEditor.UnDoAbleDocument(dateCertifiedBox, editable));
         dateCertifiedBox.setText(dataModel.getDateCertified());
         dateCertifiedBox.setFont(DataFont);
-        dateCertifiedBox.setBounds(435, 60, 85, 25);
+        dateCertifiedBox.setBounds(475, 60, 85, 25);
         this.add(dateCertifiedBox);
 
         dataTabs = new JTabbedPane(JTabbedPane.BOTTOM);
@@ -362,7 +369,7 @@ public abstract class AbstractRatiosDataView extends JLayeredPane implements Dat
         dataModel = currentModel;
         updateModelView();
     }
-    
+
     /**
      *
      */

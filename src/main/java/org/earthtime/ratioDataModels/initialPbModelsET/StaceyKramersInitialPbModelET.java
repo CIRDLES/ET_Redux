@@ -161,10 +161,11 @@ public final class StaceyKramersInitialPbModelET extends InitialPbModelET {
 
     /**
      *
-     * @return
+     * @param doAppendName the value of doAppendName
+     * @return the org.earthtime.ratioDataModels.AbstractRatiosDataModel
      */
     @Override
-    public AbstractRatiosDataModel copyModel() {
+    public AbstractRatiosDataModel copyModel(boolean doAppendName) {
 
         // don't copy stacey kramers, but convert it
         AbstractRatiosDataModel myModel = InitialPbModelET.createNewInstance();

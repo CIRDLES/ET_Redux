@@ -39,7 +39,6 @@ import java.util.List;
 import java.util.Map;
 import org.cirdles.commons.util.ResourceExtractor;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.reduxLabData.ReduxLabDataListElementI;
 import org.earthtime.UPb_Redux.user.UPbReduxConfigurator;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
@@ -49,6 +48,7 @@ import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.matrices.matrixModels.AbstractMatrixModel;
 import org.earthtime.matrices.matrixModels.CorrelationMatrixModel;
 import org.earthtime.matrices.matrixModels.CovarianceMatrixModel;
+import org.earthtime.reduxLabData.ReduxLabDataListElementI;
 import org.earthtime.utilities.DateHelpers;
 import org.earthtime.xmlUtilities.XMLSerializationI;
 
@@ -190,12 +190,13 @@ public abstract class AbstractRatiosDataModel implements
 
     /**
      *
-     * @return
+     * @param doAppendName the value of doAppendName
+     * @return the org.earthtime.ratioDataModels.AbstractRatiosDataModel
      */
-    public AbstractRatiosDataModel copyModel() {
+    public AbstractRatiosDataModel copyModel(boolean doAppendName) {
 
         AbstractRatiosDataModel myModel = cloneModel();
-        myModel.setModelName(myModel.getModelName() + "-COPY");
+        myModel.setModelName(myModel.getModelName() + (doAppendName ? "-COPY" : ""));
 
         myModel.initializeModel();
 

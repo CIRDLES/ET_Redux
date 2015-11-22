@@ -542,9 +542,18 @@ public class MineralStandardUPbModel extends AbstractRatiosDataModel {
 
         myModel.initializeModel(cloneData(), cloneRhosVarUnct(), null);
 
-        ((MineralStandardUPbModel) myModel).setConcentrationsPPM(this.getConcentrationsPPM().clone());
+        ((MineralStandardUPbModel) myModel).setConcentrationsPPM(cloneConcentrationsPPM());
 
         return myModel;
+    }
+
+    private ValueModel[] cloneConcentrationsPPM() {
+        ValueModel[] clonedConcentrationsPPM = new ValueModel[concentrationsPPM.length];
+
+        for (int i = 0; i < concentrationsPPM.length; i++) {
+            clonedConcentrationsPPM[i] = concentrationsPPM[i].copy();
+        }
+        return clonedConcentrationsPPM;
     }
 
     /**

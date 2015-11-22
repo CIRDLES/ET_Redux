@@ -53,8 +53,6 @@ import javax.swing.filechooser.FileFilter;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.filters.XMLFileFilter;
-import org.earthtime.reduxLabData.ReduxLabData;
-import org.earthtime.reduxLabData.ReduxLabDataListElementI;
 import org.earthtime.UPb_Redux.utilities.JHelpAction;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
@@ -80,6 +78,8 @@ import org.earthtime.ratioDataViews.RatiosDataViewEditable;
 import org.earthtime.ratioDataViews.RatiosDataViewNotEditable;
 import org.earthtime.ratioDataViews.TracerUPbRatiosDataViewEditable;
 import org.earthtime.ratioDataViews.TracerUPbRatiosDataViewNotEditable;
+import org.earthtime.reduxLabData.ReduxLabData;
+import org.earthtime.reduxLabData.ReduxLabDataListElementI;
 import org.earthtime.utilities.FileHelper;
 
 /**
@@ -270,7 +270,7 @@ public class LabDataEditorDialog extends DialogEditor {
         this.myLabData = myLabData;
     }
 
-    // Tracers
+    // Tracers *******************************************************************
     /**
      *
      * @return
@@ -295,10 +295,12 @@ public class LabDataEditorDialog extends DialogEditor {
         Dimension tracerViewDimension = new Dimension(//
                 tracersTab_panel.getWidth(), tracersTab_panel.getHeight() - VERTICAL_OFFSET_MODEL_VIEW);
         if (editable) {
-            tracerModelView = //
+            tracerModelView
+                    = //
                     new TracerUPbRatiosDataViewEditable(tracerModel, tracerViewDimension, false);
         } else {
-            tracerModelView = //
+            tracerModelView
+                    = //
                     new TracerUPbRatiosDataViewNotEditable(tracerModel, tracerViewDimension, false);
         }
 
@@ -322,7 +324,7 @@ public class LabDataEditorDialog extends DialogEditor {
         tracerModelChooser.removeAllItems();
         ArrayList<AbstractRatiosDataModel> tracers = myLabData.getTracers();
         for (int i = (tracers.size() > 1 ? 1 : 0); i < tracers.size(); i++) {
-            tracerModelChooser.addItem(((AbstractRatiosDataModel) tracers.get(i)).getReduxLabDataElementName());
+            tracerModelChooser.addItem(tracers.get(i).getReduxLabDataElementName());
         }
 
         tracerModelChooser.setSelectedIndex(0);
@@ -388,20 +390,24 @@ public class LabDataEditorDialog extends DialogEditor {
     private void editNewEmptyTracerModel()
             throws BadLabDataException {
         newEmptyTracerModel = TracerUPbModel.createNewInstance();
-        tracerModelChooser.setSelectedIndex(-1);
         tracerModelChooser.setEnabled(false);
         populateTracerModelFields(newEmptyTracerModel, true);
 
     }
 
-    private void editCopyOfCurrentTracerModel()
+    /**
+     *
+     * @param doAppendName the value of doAppendName
+     * @throws BadLabDataException
+     */
+    private void editCopyOfCurrentTracerModel(boolean doAppendName)
             throws BadLabDataException {
 
         try {
             currentEditableTracerModel = myLabData.getATracerModel(
-                    (String) tracerModelChooser.getSelectedItem()).copyModel();
+                    (String) tracerModelChooser.getSelectedItem()).copyModel(doAppendName);
+            currentEditableTracerModel.setImmutable(false);
 
-            tracerModelChooser.setSelectedIndex(-1);
             tracerModelChooser.setEnabled(false);
 
             newEmptyTracerModel = currentEditableTracerModel;
@@ -410,7 +416,6 @@ public class LabDataEditorDialog extends DialogEditor {
         } catch (BadLabDataException ex) {
             new ETWarningDialog(ex).setVisible(true);
         }
-
     }
 
     private synchronized boolean checkIsSavedStatusOfTracerModelEdit()
@@ -436,13 +441,9 @@ public class LabDataEditorDialog extends DialogEditor {
     private synchronized void cancelNewTracerModelEdit()
             throws BadLabDataException {
         newEmptyTracerModel = null;
+        populateTracerModelFields(myLabData.getATracerModel(
+                (String) tracerModelChooser.getSelectedItem()), false);
         tracerModelChooser.setEnabled(true);
-
-        try {
-            initTracerModelChooser();
-        } catch (BadLabDataException ex) {
-            new ETWarningDialog(ex).setVisible(true);
-        }
     }
 
     private synchronized void registerTracerModel(final AbstractRatiosDataModel tempModel)
@@ -468,22 +469,18 @@ public class LabDataEditorDialog extends DialogEditor {
 
         File selectedFile;
 
-        // identify TracerModel for export
-        if (newEmptyTracerModel == null) {
-            // we are exporting an existing TracerModel
-            newEmptyTracerModel
-                    = myLabData.getATracerModel(
-                            (String) tracerModelChooser.getSelectedItem());
-        } else {
-            tracerModelView.saveAndUpdateModelView(true);
-        }
+        // Nov 2015
+        AbstractRatiosDataModel selectedModel
+                =//
+                myLabData.getATracerModel(
+                        (String) tracerModelChooser.getSelectedItem());
 
         setAlwaysOnTop(false);
 
         String dialogTitle = "Save this Tracer as xml: *.xml";
         final String fileExtension = ".xml";
         String tracerFileName
-                = newEmptyTracerModel.getReduxLabDataElementName() + fileExtension;
+                = selectedModel.getReduxLabDataElementName() + fileExtension;
         FileFilter nonMacFileFilter = new XMLFileFilter();
 
         selectedFile = FileHelper.AllPlatformSaveAs(
@@ -492,13 +489,7 @@ public class LabDataEditorDialog extends DialogEditor {
         if (selectedFile != null) {
             try {
                 // export
-                newEmptyTracerModel.serializeXMLObject(selectedFile.getCanonicalPath());
-
-                if (newEmptyTracerModel != null) {
-                    // Feb 2008 now per Noah automatically import it as well
-                    cancelNewTracerModelEdit();
-                    readAndRegisterTracerModel(selectedFile);
-                }
+                selectedModel.serializeXMLObject(selectedFile.getCanonicalPath());
             } catch (IOException ex) {
             }
         }
@@ -528,19 +519,25 @@ public class LabDataEditorDialog extends DialogEditor {
 
     private synchronized void readAndRegisterTracerModel(File returnFile) {
 
-        AbstractRatiosDataModel tempTracer = TracerUPbModel.createNewInstance();
+        AbstractRatiosDataModel tempTracer = TracerUPbModel.getNoneInstance();
 
         try {
-            tempTracer = tempTracer.readXMLObject(returnFile.getCanonicalPath(), true);//true );
+            tempTracer = tempTracer.readXMLObject(returnFile.getCanonicalPath(), true);
         } catch (IOException | ETException | BadOrMissingXMLSchemaException ex) {
             if (ex instanceof ETException) {
                 new ETWarningDialog((ETException) ex).setVisible(true);
             }
-            
+
             tempTracer = null;
         }
 
-        if (tempTracer != null) {
+        // Nov 2015 type checking
+        boolean proceed = (tempTracer != null);
+        if (proceed) {
+            proceed = proceed && (tempTracer instanceof TracerUPbModel);
+        }
+
+        if (proceed) {
             try {
                 registerTracerModel(tempTracer);
             } catch (BadLabDataException ex) {
@@ -553,6 +550,18 @@ public class LabDataEditorDialog extends DialogEditor {
                     "ET Redux Warning",
                     JOptionPane.WARNING_MESSAGE);
         }
+    }
+
+    private void saveAndRegisterCurrentEditOfTracerModel()
+            throws BadLabDataException, ETException {
+        setAlwaysOnTop(false);
+        tracerModelView.saveAndUpdateModelView(true);
+        myLabData.registerTracer(newEmptyTracerModel, true);
+        savedTracerModelName = newEmptyTracerModel.getNameAndVersion();
+        initTracerModelChooser();
+        tracerModelChooser.setEnabled(true);
+        newEmptyTracerModel = null;
+        setAlwaysOnTop(true);
     }
 
     private synchronized void importEarthTimeTracer() throws BadLabDataException {
@@ -863,7 +872,7 @@ public class LabDataEditorDialog extends DialogEditor {
             if (ex instanceof ETException) {
                 new ETWarningDialog((ETException) ex).setVisible(true);
             }
-            
+
             tempAlphaUModel = null;
         }
 
@@ -1152,7 +1161,7 @@ public class LabDataEditorDialog extends DialogEditor {
             if (ex instanceof ETException) {
                 new ETWarningDialog((ETException) ex).setVisible(true);
             }
-            
+
             ex.printStackTrace();
             returnFile = null;
         }
@@ -1190,10 +1199,12 @@ public class LabDataEditorDialog extends DialogEditor {
         Dimension pbBlankModelViewDimension = new Dimension(//
                 PbBlankICsTab_panel.getWidth(), PbBlankICsTab_panel.getHeight() - VERTICAL_OFFSET_MODEL_VIEW);
         if (editable) {
-            pbBlankModelView = //
+            pbBlankModelView
+                    = //
                     new RatiosDataViewEditable(pbBlankModel, pbBlankModelViewDimension, false);
         } else {
-            pbBlankModelView = //
+            pbBlankModelView
+                    = //
                     new RatiosDataViewNotEditable(pbBlankModel, pbBlankModelViewDimension, false);
         }
 
@@ -1302,7 +1313,7 @@ public class LabDataEditorDialog extends DialogEditor {
 
         try {
             currentEditablePbBlankModel = myLabData.getAPbBlankModel(
-                    (String) PbBlankChooser.getSelectedItem()).copyModel();
+                    (String) PbBlankChooser.getSelectedItem()).copyModel(true);
 
             PbBlankChooser.setSelectedIndex(-1);
             PbBlankChooser.setEnabled(false);
@@ -1439,7 +1450,7 @@ public class LabDataEditorDialog extends DialogEditor {
             if (ex instanceof ETException) {
                 new ETWarningDialog((ETException) ex).setVisible(true);
             }
-            
+
             returnFile = null;
         }
 
@@ -1512,10 +1523,12 @@ public class LabDataEditorDialog extends DialogEditor {
         initialPbModel.initializeModel();
 
         if (editable) {
-            initialPbModelView = //
+            initialPbModelView
+                    = //
                     new RatiosDataViewEditable(initialPbModel, initialPbModelsTab_panel.getSize(), false);
         } else {
-            initialPbModelView = //
+            initialPbModelView
+                    = //
                     new RatiosDataViewNotEditable(initialPbModel, initialPbModelsTab_panel.getSize(), false);
         }
 
@@ -1624,7 +1637,7 @@ public class LabDataEditorDialog extends DialogEditor {
             throws BadLabDataException {
 
         try {
-            currentEditableInitialPbModel = myLabData.getAnInitialPbModel((String) InitialPbModelChooser.getSelectedItem()).copyModel();
+            currentEditableInitialPbModel = myLabData.getAnInitialPbModel((String) InitialPbModelChooser.getSelectedItem()).copyModel(true);
 
             InitialPbModelChooser.setSelectedIndex(-1);
             InitialPbModelChooser.setEnabled(false);
@@ -1698,7 +1711,8 @@ public class LabDataEditorDialog extends DialogEditor {
 
             // convert StaceyKramers to regular
             if (newEmptyInitialPbModel instanceof StaceyKramersInitialPbModelET) {
-                AbstractRatiosDataModel convertedInitialPbModel = //
+                AbstractRatiosDataModel convertedInitialPbModel
+                        = //
                         InitialPbModelET.createInstance(//
                                 newEmptyInitialPbModel.getModelName(),//
                                 newEmptyInitialPbModel.getVersionNumber(),//
@@ -1772,7 +1786,7 @@ public class LabDataEditorDialog extends DialogEditor {
             if (ex instanceof ETException) {
                 new ETWarningDialog((ETException) ex).setVisible(true);
             }
-            
+
             initialPbModel = null;
         }
 
@@ -1815,17 +1829,19 @@ public class LabDataEditorDialog extends DialogEditor {
         Dimension physicalConstantsModelViewDimension = new Dimension(//
                 physicalConstantsModels_panel.getWidth(), physicalConstantsModels_panel.getHeight() - VERTICAL_OFFSET_MODEL_VIEW);
         if (editable) {
-            physicalConstantsModelView = //
+            physicalConstantsModelView
+                    = //
                     new PhysicalConstantsDataViewEditable(physicalConstantsModel, physicalConstantsModelViewDimension, false);
         } else {
-            physicalConstantsModelView = //
+            physicalConstantsModelView
+                    = //
                     new PhysicalConstantsDataViewNotEditable(physicalConstantsModel, physicalConstantsModelViewDimension, false);
         }
 
         physicalConstantsModelView.setBackground(physicalConstantsModels_panel.getBackground());
         physicalConstantsModelView.setBounds(physicalConstantsModels_panel.getBounds());
         physicalConstantsModelView.setLocation(0, VERTICAL_OFFSET_MODEL_VIEW);
-        for (Component c : tracersTab_panel.getComponents()) {
+        for (Component c : physicalConstantsModels_panel.getComponents()) {
             if (c instanceof AbstractRatiosDataView) {
                 physicalConstantsModels_panel.remove(c);
             }
@@ -1917,7 +1933,7 @@ public class LabDataEditorDialog extends DialogEditor {
 
         try {
             currentEditablePhysicalConstantsModel = myLabData.getAPhysicalConstantsModel(
-                    (String) physicalConstantsModel_Chooser.getSelectedItem()).copyModel();
+                    (String) physicalConstantsModel_Chooser.getSelectedItem()).copyModel(true);
 
             physicalConstantsModel_Chooser.setSelectedIndex(-1);
             physicalConstantsModel_Chooser.setEnabled(false);
@@ -2048,17 +2064,18 @@ public class LabDataEditorDialog extends DialogEditor {
     private synchronized void readAndRegisterPhysicalConstantsModel(File returnFile) {
         AbstractRatiosDataModel tempModel = PhysicalConstantsModel.createNewInstance();
 
+        boolean doRegister = true;
         try {
-            tempModel = (AbstractRatiosDataModel) tempModel.readXMLObject(returnFile.getCanonicalPath(), true);
+            tempModel = tempModel.readXMLObject(returnFile.getCanonicalPath(), true);
         } catch (IOException | ETException | BadOrMissingXMLSchemaException ex) {
             if (ex instanceof ETException) {
                 new ETWarningDialog((ETException) ex).setVisible(true);
             }
-            
-            returnFile = null;
+
+            doRegister = false;
         }
 
-        if (returnFile != null) {
+        if (doRegister) {
             try {
                 registerPhysicalConstantsModel(tempModel);
             } catch (BadLabDataException ex) {
@@ -2090,10 +2107,12 @@ public class LabDataEditorDialog extends DialogEditor {
         mineralStandardModel.initializeModel();
 
         if (editable) {
-            mineralStandardModelView = //
+            mineralStandardModelView
+                    = //
                     new MineralStandardUPbRatiosDataViewEditable(mineralStandardModel, mineralStandard_panel.getSize(), false);
         } else {
-            mineralStandardModelView = //
+            mineralStandardModelView
+                    = //
                     new MineralStandardUPbRatiosDataViewNotEditable(mineralStandardModel, mineralStandard_panel.getSize(), false);
         }
 
@@ -2178,19 +2197,22 @@ public class LabDataEditorDialog extends DialogEditor {
     private void editNewEmptyMineralStandardModel()
             throws BadLabDataException {
         newEmptyMineralStandardModel = MineralStandardUPbModel.createNewInstance();
-        MineralStandardModelChooser.setSelectedIndex(-1);
         MineralStandardModelChooser.setEnabled(false);
         populateMineralStandardModelFields(newEmptyMineralStandardModel, true);
     }
 
-    private void editCopyOfCurrentMineralStandardModel()
+    /**
+     *
+     * @param doAppendName the value of doAppendName
+     * @throws BadLabDataException
+     */
+    private void editCopyOfCurrentMineralStandardModel(boolean doAppendName)
             throws BadLabDataException {
-
         try {
             currentEditableMineralStandardModel = myLabData.getAMineralStandardModel(
-                    (String) MineralStandardModelChooser.getSelectedItem()).copyModel();
+                    (String) MineralStandardModelChooser.getSelectedItem()).copyModel(doAppendName);
+            currentEditableMineralStandardModel.setImmutable(false);
 
-            MineralStandardModelChooser.setSelectedIndex(-1);
             MineralStandardModelChooser.setEnabled(false);
 
             newEmptyMineralStandardModel = currentEditableMineralStandardModel;
@@ -2199,7 +2221,6 @@ public class LabDataEditorDialog extends DialogEditor {
         } catch (BadLabDataException ex) {
             new ETWarningDialog(ex).setVisible(true);
         }
-
     }
 
     private synchronized boolean checkIsSavedStatusOfMineralStandardModelEdit()
@@ -2225,12 +2246,9 @@ public class LabDataEditorDialog extends DialogEditor {
     private void cancelNewMineralStandardModelEdit()
             throws BadLabDataException {
         newEmptyMineralStandardModel = null;
+        populateMineralStandardModelFields(myLabData.getAMineralStandardModel(
+                (String) MineralStandardModelChooser.getSelectedItem()), false);
         MineralStandardModelChooser.setEnabled(true);
-        try {
-            initMineralStandardModelChooser();
-        } catch (BadLabDataException ex) {
-            new ETWarningDialog(ex).setVisible(true);
-        }
     }
 
     private synchronized void registerMineralStandardModel(final AbstractRatiosDataModel tempModel)
@@ -2255,22 +2273,18 @@ public class LabDataEditorDialog extends DialogEditor {
             throws BadLabDataException, ETException {
         File selectedFile;
 
-        // identify MineralStandardModel for export
-        if (newEmptyMineralStandardModel == null) {
-            // we are exporting an existing physicalConstantsModel
-            newEmptyMineralStandardModel
-                    = myLabData.getAMineralStandardModel(
-                            (String) MineralStandardModelChooser.getSelectedItem());
-        } else {
-            mineralStandardModelView.saveAndUpdateModelView(true);
-        }
+        // Nov 2015
+        AbstractRatiosDataModel selectedModel
+                =//
+                myLabData.getAMineralStandardModel(
+                        (String) MineralStandardModelChooser.getSelectedItem());
 
         setAlwaysOnTop(false);
 
         String dialogTitle = "Save this MineralStandardModel as xml: *.xml";
         final String fileExtension = ".xml";
         String fileName
-                = newEmptyMineralStandardModel.getReduxLabDataElementName() + fileExtension;
+                = selectedModel.getReduxLabDataElementName() + fileExtension;
         FileFilter nonMacFileFilter = new XMLFileFilter();
 
         selectedFile = FileHelper.AllPlatformSaveAs(
@@ -2279,13 +2293,7 @@ public class LabDataEditorDialog extends DialogEditor {
         if (selectedFile != null) {
             try {
                 // export
-                newEmptyMineralStandardModel.serializeXMLObject(selectedFile.getCanonicalPath());
-
-                if (newEmptyMineralStandardModel != null) {
-                    // Feb 2008 now per Noah automatically import it as well
-                    cancelNewMineralStandardModelEdit();
-                    readAndRegisterMineralStandardModel(selectedFile);
-                }
+                selectedModel.serializeXMLObject(selectedFile.getCanonicalPath());
             } catch (IOException ex) {
             }
         }
@@ -2323,11 +2331,17 @@ public class LabDataEditorDialog extends DialogEditor {
             if (ex instanceof ETException) {
                 new ETWarningDialog((ETException) ex).setVisible(true);
             }
-            
+
             mineralStandardModel = null;
         }
 
-        if (mineralStandardModel != null) {
+        // Nov 2015 type checking
+        boolean proceed = (mineralStandardModel != null);
+        if (proceed) {
+            proceed = proceed && (mineralStandardModel instanceof MineralStandardUPbModel);
+        }
+
+        if (proceed) {
             try {
                 registerMineralStandardModel(mineralStandardModel);
 
@@ -2346,8 +2360,20 @@ public class LabDataEditorDialog extends DialogEditor {
                     JOptionPane.WARNING_MESSAGE);
         }
     }
-    // end Mineral Standards tab *********************************************
 
+    private void saveAndRegisterCurrentEditOfMineralStandardModel()
+            throws BadLabDataException, ETException {
+        setAlwaysOnTop(false);
+        mineralStandardModelView.saveAndUpdateModelView(true);
+        myLabData.registerMineralStandardModel(newEmptyMineralStandardModel, true);
+        savedMineralStandardModelName = newEmptyMineralStandardModel.getNameAndVersion();
+        initMineralStandardModelChooser();
+        MineralStandardModelChooser.setEnabled(true);
+        newEmptyMineralStandardModel = null;
+        setAlwaysOnTop(true);
+    }
+
+    // end Mineral Standards tab *********************************************
     // Lab Defaults ************************************************************
     private void InitializeLabDefaultsTabTextBoxes(boolean editable) {
 
@@ -2597,12 +2623,14 @@ public class LabDataEditorDialog extends DialogEditor {
             public void actionPerformed(ActionEvent e) {
                 AbstractRatiosDataModel selectedModel = null;
                 try {
-                    selectedModel = //
+                    selectedModel
+                            = //
                             myLabData.getAMineralStandardModel((String) defaultLAICPMSPrimaryMineralStandardModel_Chooser.getSelectedItem());
                 } catch (BadLabDataException ex) {
                     new ETWarningDialog(ex).setVisible(true);
                 }
-                AbstractRatiosDataView modelView = //
+                AbstractRatiosDataView modelView
+                        = //
                         new MineralStandardUPbRatiosDataViewNotEditable(selectedModel, null, false);
                 modelView.displayModelInFrame();
             }
@@ -2848,7 +2876,7 @@ public class LabDataEditorDialog extends DialogEditor {
                 break;
             case 5:
                 MineralStdModels_menu.setVisible(true);
-                CSH.setHelpIDString(this, "LabData.U-Pb Blank Models");
+                CSH.setHelpIDString(this, "LabData.Mineral Standard Models");
                 initMineralStandardModelChooser();
                 break;
             case 6:
@@ -2870,13 +2898,13 @@ public class LabDataEditorDialog extends DialogEditor {
         labPane_layered = new javax.swing.JLayeredPane();
         details_pane = new javax.swing.JTabbedPane();
         tracersTab_panel = new javax.swing.JPanel();
-        tracerModelChooser = new javax.swing.JComboBox<String>();
+        tracerModelChooser = new javax.swing.JComboBox<>();
         chooseTracer_label = new javax.swing.JLabel();
         fractionationModelsTab_panel = new javax.swing.JPanel();
         uFractionation_label = new javax.swing.JLabel();
         monoIsotopicU_label = new javax.swing.JLabel();
         chooseAlphaU_label = new javax.swing.JLabel();
-        alphaUChooser = new javax.swing.JComboBox<String>();
+        alphaUChooser = new javax.swing.JComboBox<>();
         alphaUName_label = new javax.swing.JLabel();
         alphaUName_text = new javax.swing.JTextField();
         coefficientU_label = new javax.swing.JLabel();
@@ -2888,7 +2916,7 @@ public class LabDataEditorDialog extends DialogEditor {
         pbFractionation_label = new javax.swing.JLabel();
         monoIsotopicPb_label = new javax.swing.JLabel();
         chooseAlphaPb_label = new javax.swing.JLabel();
-        alphaPbChooser = new javax.swing.JComboBox<String>();
+        alphaPbChooser = new javax.swing.JComboBox<>();
         alphaPbName_label = new javax.swing.JLabel();
         alphaPbName_text = new javax.swing.JTextField();
         coefficientPb_label = new javax.swing.JLabel();
@@ -2898,35 +2926,35 @@ public class LabDataEditorDialog extends DialogEditor {
         alphaPboneSigma_text = new javax.swing.JTextField();
         PbBlankICsTab_panel = new javax.swing.JPanel();
         choosePbBlank_label = new javax.swing.JLabel();
-        PbBlankChooser = new javax.swing.JComboBox<String>();
+        PbBlankChooser = new javax.swing.JComboBox<>();
         initialPbModelsTab_panel = new javax.swing.JPanel();
-        InitialPbModelChooser = new javax.swing.JComboBox<String>();
+        InitialPbModelChooser = new javax.swing.JComboBox<>();
         chooseInitialPbModel_label = new javax.swing.JLabel();
         staceyKramerCalculator_Panel = new javax.swing.JPanel();
         CalculatedModelInstructions_label = new javax.swing.JLabel();
         estimatedAgeInMA_text = new javax.swing.JTextField();
         refreshCalculations_JButton =  new ET_JButton("Update Model");
         CalculatedModelInstructions_label1 = new javax.swing.JLabel();
-        physicalConstantsModelForInitialPbModel_Chooser = new javax.swing.JComboBox<String>();
+        physicalConstantsModelForInitialPbModel_Chooser = new javax.swing.JComboBox<>();
         relativeUncertainty_label = new javax.swing.JLabel();
         relativeUncertainty_text = new javax.swing.JTextField();
         correlationCoefficients_label = new javax.swing.JLabel();
         correlationCoefficients_text = new javax.swing.JTextField();
         physicalConstantsModels_panel = new javax.swing.JPanel();
         choosePhysicalConstants_label = new javax.swing.JLabel();
-        physicalConstantsModel_Chooser = new javax.swing.JComboBox<String>();
+        physicalConstantsModel_Chooser = new javax.swing.JComboBox<>();
         mineralStandard_panel = new javax.swing.JPanel();
         chooseMineralStandardModel_label = new javax.swing.JLabel();
-        MineralStandardModelChooser = new javax.swing.JComboBox<String>();
+        MineralStandardModelChooser = new javax.swing.JComboBox<>();
         rareEarthElementsModels_panel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         labDefaults_panel = new javax.swing.JPanel();
         defaultTracer_label = new javax.swing.JLabel();
-        defaultTracer_Chooser = new javax.swing.JComboBox<String>();
+        defaultTracer_Chooser = new javax.swing.JComboBox<>();
         defaultPbBlankIC_label = new javax.swing.JLabel();
-        defaultPbBlankIC_Chooser = new javax.swing.JComboBox<String>();
+        defaultPbBlankIC_Chooser = new javax.swing.JComboBox<>();
         defaultInitialPbModel_label = new javax.swing.JLabel();
-        defaultInitialPbModel_Chooser = new javax.swing.JComboBox<String>();
+        defaultInitialPbModel_Chooser = new javax.swing.JComboBox<>();
         defaultPbBlankMass_label = new javax.swing.JLabel();
         defaultPbBlankMass_text = new javax.swing.JTextField();
         pbBlankMassOneSigma_label = new javax.swing.JLabel();
@@ -2937,10 +2965,10 @@ public class LabDataEditorDialog extends DialogEditor {
         defaultUBlankMassOneSigma_text = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
         defaultPhsicalConstantsModel_label = new javax.swing.JLabel();
-        defaultPhysicalConstantsModel_Chooser = new javax.swing.JComboBox<String>();
+        defaultPhysicalConstantsModel_Chooser = new javax.swing.JComboBox<>();
         jPanel3 = new javax.swing.JPanel();
         defaultMineralStandardModel_label = new javax.swing.JLabel();
-        defaultTIMSMineralStandardModel_Chooser = new javax.swing.JComboBox<String>();
+        defaultTIMSMineralStandardModel_Chooser = new javax.swing.JComboBox<>();
         jLabel3 = new javax.swing.JLabel();
         default18O_16O_label = new javax.swing.JLabel();
         defaultR238_235s_label = new javax.swing.JLabel();
@@ -2970,16 +2998,16 @@ public class LabDataEditorDialog extends DialogEditor {
         defaultStaceyKramersCorrelationCoeff_label = new javax.swing.JLabel();
         defaultStaceyKramersCorrelationCoeff_text = new javax.swing.JTextField();
         defaultAlphaUModel_label = new javax.swing.JLabel();
-        defaultAlphaUModel_Chooser = new javax.swing.JComboBox<String>();
+        defaultAlphaUModel_Chooser = new javax.swing.JComboBox<>();
         defaultAlphaPbModel_label = new javax.swing.JLabel();
-        defaultAlphaPbModel_Chooser = new javax.swing.JComboBox<String>();
+        defaultAlphaPbModel_Chooser = new javax.swing.JComboBox<>();
         jLabel5 = new javax.swing.JLabel();
         restoreOriginalDefaultValues_button = new javax.swing.JButton();
         labDefaultsCont_panel = new javax.swing.JLayeredPane();
         chooseMineral_label = new javax.swing.JLabel();
-        mineralNameChooser = new javax.swing.JComboBox<String>();
+        mineralNameChooser = new javax.swing.JComboBox<>();
         chooseSettingType_label = new javax.swing.JLabel();
-        settingTypeChooser = new javax.swing.JComboBox<String>();
+        settingTypeChooser = new javax.swing.JComboBox<>();
         countOfGrains_label = new javax.swing.JLabel();
         countOfGrains_text = new javax.swing.JTextField();
         physicallyAbraded_chkBox = new javax.swing.JCheckBox();
@@ -2988,7 +3016,7 @@ public class LabDataEditorDialog extends DialogEditor {
         chemicallyPurifiedUPb_chkBox = new javax.swing.JCheckBox();
         jLabel4 = new javax.swing.JLabel();
         LAICPMSLabDefaultsPane = new javax.swing.JPanel();
-        defaultLAICPMSPrimaryMineralStandardModel_Chooser = new javax.swing.JComboBox<String>();
+        defaultLAICPMSPrimaryMineralStandardModel_Chooser = new javax.swing.JComboBox<>();
         developerNote = new javax.swing.JLabel();
         header_Panel = new javax.swing.JPanel();
         labName_label = new javax.swing.JLabel();
@@ -3005,9 +3033,12 @@ public class LabDataEditorDialog extends DialogEditor {
         saveTracerAsXML_menuItem = new javax.swing.JMenuItem();
         removeTracer_menuItem = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JSeparator();
+        editCurrentLocalTracerModel_menuItem = new javax.swing.JMenuItem();
         editCopyOfCurrentTracer_menuItem = new javax.swing.JMenuItem();
         newTracerMode_menuItem = new javax.swing.JMenuItem();
         cancelNewTracerEdit_menuItem = new javax.swing.JMenuItem();
+        jSeparator19 = new javax.swing.JPopupMenu.Separator();
+        saveAndRegisterCurrentEditOfTracerModel_menuItem = new javax.swing.JMenuItem();
         fractionation_menu = new javax.swing.JMenu();
         localAlphaUImportXML_menuItem = new javax.swing.JMenuItem();
         localAlphaUImportXML_menuItem.setBackground(ReduxConstants.ColorOfUranium);
@@ -3068,9 +3099,12 @@ public class LabDataEditorDialog extends DialogEditor {
         saveMineralStdModelAsXML_menuItem = new javax.swing.JMenuItem();
         removeMineralStdModel_menuItem = new javax.swing.JMenuItem();
         jSeparator17 = new javax.swing.JSeparator();
+        editCurrentLocalMineralStandardModel_menuItem = new javax.swing.JMenuItem();
         editCopyOfCurrentMineralStdModel_menuItem = new javax.swing.JMenuItem();
         newMineralStdModel_menuItem = new javax.swing.JMenuItem();
         cancelNewEditMineralStdModel_menuItem = new javax.swing.JMenuItem();
+        jSeparator18 = new javax.swing.JPopupMenu.Separator();
+        saveAndRegisterCurrentEditOfMineralStandardModel_menuItem = new javax.swing.JMenuItem();
         helpMenu_menu = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
 
@@ -3522,12 +3556,6 @@ public class LabDataEditorDialog extends DialogEditor {
 
         chooseMineralStandardModel_label.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         chooseMineralStandardModel_label.setText("  Choose Mineral Standard Model:");
-
-        MineralStandardModelChooser.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                MineralStandardModelChooserActionPerformed(evt);
-            }
-        });
 
         org.jdesktop.layout.GroupLayout mineralStandard_panelLayout = new org.jdesktop.layout.GroupLayout(mineralStandard_panel);
         mineralStandard_panel.setLayout(mineralStandard_panelLayout);
@@ -4113,6 +4141,18 @@ public class LabDataEditorDialog extends DialogEditor {
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel4.setText("Additional defaults for FRACTION");
 
+        labDefaultsCont_panel.setLayer(chooseMineral_label, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        labDefaultsCont_panel.setLayer(mineralNameChooser, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        labDefaultsCont_panel.setLayer(chooseSettingType_label, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        labDefaultsCont_panel.setLayer(settingTypeChooser, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        labDefaultsCont_panel.setLayer(countOfGrains_label, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        labDefaultsCont_panel.setLayer(countOfGrains_text, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        labDefaultsCont_panel.setLayer(physicallyAbraded_chkBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        labDefaultsCont_panel.setLayer(leachedInHFAcid_chkBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        labDefaultsCont_panel.setLayer(annealedChemicallyAbraded_chkBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        labDefaultsCont_panel.setLayer(chemicallyPurifiedUPb_chkBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        labDefaultsCont_panel.setLayer(jLabel4, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
         org.jdesktop.layout.GroupLayout labDefaultsCont_panelLayout = new org.jdesktop.layout.GroupLayout(labDefaultsCont_panel);
         labDefaultsCont_panel.setLayout(labDefaultsCont_panelLayout);
         labDefaultsCont_panelLayout.setHorizontalGroup(
@@ -4180,17 +4220,6 @@ public class LabDataEditorDialog extends DialogEditor {
                 .add(7, 7, 7)
                 .add(chemicallyPurifiedUPb_chkBox))
         );
-        labDefaultsCont_panel.setLayer(chooseMineral_label, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        labDefaultsCont_panel.setLayer(mineralNameChooser, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        labDefaultsCont_panel.setLayer(chooseSettingType_label, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        labDefaultsCont_panel.setLayer(settingTypeChooser, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        labDefaultsCont_panel.setLayer(countOfGrains_label, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        labDefaultsCont_panel.setLayer(countOfGrains_text, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        labDefaultsCont_panel.setLayer(physicallyAbraded_chkBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        labDefaultsCont_panel.setLayer(leachedInHFAcid_chkBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        labDefaultsCont_panel.setLayer(annealedChemicallyAbraded_chkBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        labDefaultsCont_panel.setLayer(chemicallyPurifiedUPb_chkBox, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        labDefaultsCont_panel.setLayer(jLabel4, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         details_pane.addTab("Lab Defaults II", labDefaultsCont_panel);
 
@@ -4260,6 +4289,10 @@ public class LabDataEditorDialog extends DialogEditor {
             .add(save_button, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 36, Short.MAX_VALUE)
         );
 
+        labPane_layered.setLayer(details_pane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        labPane_layered.setLayer(header_Panel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        labPane_layered.setLayer(buttonsPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
         org.jdesktop.layout.GroupLayout labPane_layeredLayout = new org.jdesktop.layout.GroupLayout(labPane_layered);
         labPane_layered.setLayout(labPane_layeredLayout);
         labPane_layeredLayout.setHorizontalGroup(
@@ -4278,9 +4311,6 @@ public class LabDataEditorDialog extends DialogEditor {
                 .add(24, 24, 24)
                 .add(details_pane, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 660, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
-        labPane_layered.setLayer(details_pane, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        labPane_layered.setLayer(header_Panel, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        labPane_layered.setLayer(buttonsPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         fileMenu_menu.setText("File");
 
@@ -4314,7 +4344,7 @@ public class LabDataEditorDialog extends DialogEditor {
         });
         tracers_menu.add(earthTimeTracerImport_menuItem);
 
-        localTracerImport_menuItem.setText("Import Tracer from local file");
+        localTracerImport_menuItem.setText("Import Tracer Model from local file");
         localTracerImport_menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 localTracerImport_menuItemActionPerformed(evt);
@@ -4323,7 +4353,7 @@ public class LabDataEditorDialog extends DialogEditor {
         tracers_menu.add(localTracerImport_menuItem);
         tracers_menu.add(jSeparator1);
 
-        saveTracerAsXML_menuItem.setText("Save current Tracer as XML file");
+        saveTracerAsXML_menuItem.setText("Save current Tracer Model as local XML file");
         saveTracerAsXML_menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 saveTracerAsXML_menuItemActionPerformed(evt);
@@ -4331,7 +4361,7 @@ public class LabDataEditorDialog extends DialogEditor {
         });
         tracers_menu.add(saveTracerAsXML_menuItem);
 
-        removeTracer_menuItem.setText("Remove current Tracer from Lab Data");
+        removeTracer_menuItem.setText("Remove current Tracer Model (for editable models only)");
         removeTracer_menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 removeTracer_menuItemActionPerformed(evt);
@@ -4340,7 +4370,15 @@ public class LabDataEditorDialog extends DialogEditor {
         tracers_menu.add(removeTracer_menuItem);
         tracers_menu.add(jSeparator2);
 
-        editCopyOfCurrentTracer_menuItem.setText("Edit copy of current Tracer");
+        editCurrentLocalTracerModel_menuItem.setText("Edit Current Tracer Model (for editable models only)");
+        editCurrentLocalTracerModel_menuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editCurrentLocalTracerModel_menuItemActionPerformed(evt);
+            }
+        });
+        tracers_menu.add(editCurrentLocalTracerModel_menuItem);
+
+        editCopyOfCurrentTracer_menuItem.setText("Edit copy of current Tracer Model");
         editCopyOfCurrentTracer_menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 editCopyOfCurrentTracer_menuItemActionPerformed(evt);
@@ -4348,7 +4386,7 @@ public class LabDataEditorDialog extends DialogEditor {
         });
         tracers_menu.add(editCopyOfCurrentTracer_menuItem);
 
-        newTracerMode_menuItem.setText("Edit new empty Tracer");
+        newTracerMode_menuItem.setText("Edit new empty Tracer Model");
         newTracerMode_menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 newTracerMode_menuItemActionPerformed(evt);
@@ -4356,13 +4394,22 @@ public class LabDataEditorDialog extends DialogEditor {
         });
         tracers_menu.add(newTracerMode_menuItem);
 
-        cancelNewTracerEdit_menuItem.setText("Cancel Edit of Tracer");
+        cancelNewTracerEdit_menuItem.setText("Cancel Edit of Tracer Model");
         cancelNewTracerEdit_menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cancelNewTracerEdit_menuItemActionPerformed(evt);
             }
         });
         tracers_menu.add(cancelNewTracerEdit_menuItem);
+        tracers_menu.add(jSeparator19);
+
+        saveAndRegisterCurrentEditOfTracerModel_menuItem.setText("Save and Register Current Edit of Tracer Model");
+        saveAndRegisterCurrentEditOfTracerModel_menuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveAndRegisterCurrentEditOfTracerModel_menuItemActionPerformed(evt);
+            }
+        });
+        tracers_menu.add(saveAndRegisterCurrentEditOfTracerModel_menuItem);
 
         labData_menuBar.add(tracers_menu);
 
@@ -4692,7 +4739,7 @@ public class LabDataEditorDialog extends DialogEditor {
         });
         MineralStdModels_menu.add(saveMineralStdModelAsXML_menuItem);
 
-        removeMineralStdModel_menuItem.setText("Remove current Mineral Standard Model from Lab Data");
+        removeMineralStdModel_menuItem.setText("Remove current Mineral Standard Model (for editable models only)");
         removeMineralStdModel_menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 removeMineralStdModel_menuItemActionPerformed(evt);
@@ -4700,6 +4747,14 @@ public class LabDataEditorDialog extends DialogEditor {
         });
         MineralStdModels_menu.add(removeMineralStdModel_menuItem);
         MineralStdModels_menu.add(jSeparator17);
+
+        editCurrentLocalMineralStandardModel_menuItem.setText("Edit Current Mineral Standard Model (for editable models only)");
+        editCurrentLocalMineralStandardModel_menuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editCurrentLocalMineralStandardModel_menuItemActionPerformed(evt);
+            }
+        });
+        MineralStdModels_menu.add(editCurrentLocalMineralStandardModel_menuItem);
 
         editCopyOfCurrentMineralStdModel_menuItem.setText("Edit Copy of current Mineral Standard Model");
         editCopyOfCurrentMineralStdModel_menuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -4717,13 +4772,22 @@ public class LabDataEditorDialog extends DialogEditor {
         });
         MineralStdModels_menu.add(newMineralStdModel_menuItem);
 
-        cancelNewEditMineralStdModel_menuItem.setText("Cancel edit of Mineral Standard Model");
+        cancelNewEditMineralStdModel_menuItem.setText("Cancel Edit of Mineral Standard Model");
         cancelNewEditMineralStdModel_menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cancelNewEditMineralStdModel_menuItemActionPerformed(evt);
             }
         });
         MineralStdModels_menu.add(cancelNewEditMineralStdModel_menuItem);
+        MineralStdModels_menu.add(jSeparator18);
+
+        saveAndRegisterCurrentEditOfMineralStandardModel_menuItem.setText("Save and Register Current Edit of Mineral Standard Model");
+        saveAndRegisterCurrentEditOfMineralStandardModel_menuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveAndRegisterCurrentEditOfMineralStandardModel_menuItemActionPerformed(evt);
+            }
+        });
+        MineralStdModels_menu.add(saveAndRegisterCurrentEditOfMineralStandardModel_menuItem);
 
         labData_menuBar.add(MineralStdModels_menu);
 
@@ -4775,7 +4839,7 @@ public class LabDataEditorDialog extends DialogEditor {
 
             removeAlphaU_menuItem.setEnabled((getNewEmptyAlphaUModel() == null)
                     && (!(((String) alphaUChooser.getSelectedItem()).equalsIgnoreCase("<none>") || ((String) alphaUChooser.getSelectedItem()).equalsIgnoreCase(ReduxConstants.NONE))) && (myLabData.getDefaultLabAlphaUModel().getName().trim().compareTo(
-                            myLabData.getAnAlphaUModel((String) alphaUChooser.getSelectedItem()).getName().trim()) != 0));
+                    myLabData.getAnAlphaUModel((String) alphaUChooser.getSelectedItem()).getName().trim()) != 0));
         } catch (BadLabDataException ex) {
             new ETWarningDialog(ex).setVisible(true);
         }
@@ -4796,9 +4860,8 @@ public class LabDataEditorDialog extends DialogEditor {
 
             removeAlphaPb_menuItem.setEnabled((getNewEmptyAlphaPbModel() == null)
                     && (!(((String) alphaPbChooser.getSelectedItem()).equalsIgnoreCase("<none>") || ((String) alphaPbChooser.getSelectedItem()).equalsIgnoreCase(ReduxConstants.NONE))) && (myLabData.getDefaultLabAlphaPbModel().getName().trim().compareTo(
-                            myLabData.getAnAlphaPbModel((String) alphaPbChooser.getSelectedItem()).getName().trim()) != 0));
+                    myLabData.getAnAlphaPbModel((String) alphaPbChooser.getSelectedItem()).getName().trim()) != 0));
         } catch (BadLabDataException ex) {
-            ex.printStackTrace();
             new ETWarningDialog(ex).setVisible(true);
         }
     }//GEN-LAST:event_fractionation_menuMenuSelected
@@ -4811,7 +4874,6 @@ public class LabDataEditorDialog extends DialogEditor {
         try {
             CancelNewAlphaUModelEdit();
         } catch (BadLabDataException ex) {
-            ex.printStackTrace();
             new ETWarningDialog(ex).setVisible(true);
         }
     }//GEN-LAST:event_cancelEditAlphaU_menuItemActionPerformed
@@ -4821,7 +4883,6 @@ public class LabDataEditorDialog extends DialogEditor {
         try {
             EditNewEmptyAlphaUModel();
         } catch (BadLabDataException ex) {
-            ex.printStackTrace();
             new ETWarningDialog(ex).setVisible(true);
         }
     }//GEN-LAST:event_editNewAlphaU_menuItemActionPerformed
@@ -4830,7 +4891,6 @@ public class LabDataEditorDialog extends DialogEditor {
         try {
             RemoveCurrentAlphaUModel();
         } catch (BadLabDataException ex) {
-            ex.printStackTrace();
             new ETWarningDialog(ex).setVisible(true);
         }
     }//GEN-LAST:event_removeAlphaU_menuItemActionPerformed
@@ -4839,7 +4899,6 @@ public class LabDataEditorDialog extends DialogEditor {
         try {
             ExportAlphaUModelAsXML();
         } catch (BadLabDataException ex) {
-            ex.printStackTrace();
             new ETWarningDialog(ex).setVisible(true);
         }
     }//GEN-LAST:event_saveAlphaUasLocalXML_menuItemActionPerformed
@@ -4850,12 +4909,10 @@ public class LabDataEditorDialog extends DialogEditor {
                 try {
                     ImportLocalAlphaPbModel();
                 } catch (BadLabDataException ex) {
-                    ex.printStackTrace();
                     new ETWarningDialog(ex).setVisible(true);
                 }
             }
         } catch (BadLabDataException ex) {
-            ex.printStackTrace();
             new ETWarningDialog(ex).setVisible(true);
         }
     }//GEN-LAST:event_localAlphaPbImportXML_menuItemActionPerformed
@@ -4866,7 +4923,6 @@ public class LabDataEditorDialog extends DialogEditor {
                 try {
                     ImportLocalAlphaUModel();
                 } catch (BadLabDataException ex) {
-                    ex.printStackTrace();
                     new ETWarningDialog(ex).setVisible(true);
                 }
             }
@@ -4926,6 +4982,7 @@ public class LabDataEditorDialog extends DialogEditor {
         try {
             editCopyOfCurrentInitialPbModel();
         } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
     }//GEN-LAST:event_editCopyOfCurrentInitialPbModel_menuItemActionPerformed
 
@@ -4933,6 +4990,7 @@ public class LabDataEditorDialog extends DialogEditor {
         try {
             populateInitialPbModelFields(currentEditableInitialPbModel, false);
         } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
     }//GEN-LAST:event_refreshCalculations_JButtonActionPerformed
 
@@ -4979,6 +5037,7 @@ public class LabDataEditorDialog extends DialogEditor {
                     details_pane.setSelectedIndex(getCurrentTabIndex());
                 }
             } catch (BadLabDataException ex) {
+                new ETWarningDialog(ex).setVisible(true);
             }
         }
 
@@ -5007,7 +5066,8 @@ public class LabDataEditorDialog extends DialogEditor {
                     && (!myLabData.getDefaultLabInitialPbModel().equals(
                             selectedInitialPbModel))
                     && (!selectedInitialPbModel.isImmutable()));
-        } catch (BadLabDataException badLabDataException) {
+        } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
 
     }//GEN-LAST:event_initialPbModels_menuMenuSelected
@@ -5025,11 +5085,12 @@ public class LabDataEditorDialog extends DialogEditor {
 
     private void editCopyOfCurrentTracer_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editCopyOfCurrentTracer_menuItemActionPerformed
         try {
-            editCopyOfCurrentTracerModel();
+            editCopyOfCurrentTracerModel(true);
         } catch (BadLabDataException ex) {
             try {
                 cancelNewTracerModelEdit();
             } catch (BadLabDataException ex2) {
+                new ETWarningDialog(ex2).setVisible(true);
             }
         }
     }//GEN-LAST:event_editCopyOfCurrentTracer_menuItemActionPerformed
@@ -5038,6 +5099,7 @@ public class LabDataEditorDialog extends DialogEditor {
         try {
             RemoveCurrentPbBlank();
         } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
     }//GEN-LAST:event_removePbBlank_menuItemActionPerformed
 
@@ -5047,16 +5109,18 @@ public class LabDataEditorDialog extends DialogEditor {
                 try {
                     importLocalPbBlankModel();
                 } catch (BadLabDataException ex) {
+                    new ETWarningDialog(ex).setVisible(true);
                 }
             }
         } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
     }//GEN-LAST:event_localPbBlankImport_menuItemActionPerformed
 
     private void savePbBlankAsXML_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_savePbBlankAsXML_menuItemActionPerformed
         try {
             exportPbBlankModelAsXML();
-        }  catch (ETException ex) {
+        } catch (ETException ex) {
             new ETWarningDialog(ex).setVisible(true);
         }
     }//GEN-LAST:event_savePbBlankAsXML_menuItemActionPerformed
@@ -5086,7 +5150,8 @@ public class LabDataEditorDialog extends DialogEditor {
                     && (!myLabData.getDefaultLabPbBlank().equals(
                             selectedPbBlankModel))
                     && (!selectedPbBlankModel.isImmutable()));
-        } catch (BadLabDataException badLabDataException) {
+        } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
 
     }//GEN-LAST:event_PbBlanks_menuMenuSelected
@@ -5095,6 +5160,7 @@ public class LabDataEditorDialog extends DialogEditor {
         try {
             cancelNewPbBlankEdit();
         } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
     }//GEN-LAST:event_cancelNewEditBlank_menuItemActionPerformed
 
@@ -5102,6 +5168,7 @@ public class LabDataEditorDialog extends DialogEditor {
         try {
             editNewEmptyPbBlankModel();
         } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
     }//GEN-LAST:event_newPbBlankMode_menuItemActionPerformed
 
@@ -5109,6 +5176,7 @@ public class LabDataEditorDialog extends DialogEditor {
         try {
             exitLabData();
         } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
     }//GEN-LAST:event_closeDialog_menuItemActionPerformed
 
@@ -5116,6 +5184,7 @@ public class LabDataEditorDialog extends DialogEditor {
         try {
             exitLabData();
         } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
     }//GEN-LAST:event_formWindowClosing
 
@@ -5131,7 +5200,7 @@ public class LabDataEditorDialog extends DialogEditor {
         try {
             removeCurrentTracerModel();
         } catch (BadLabDataException ex) {
-            ex.printStackTrace();
+            new ETWarningDialog(ex).setVisible(true);
         }
     }//GEN-LAST:event_removeTracer_menuItemActionPerformed
 
@@ -5140,7 +5209,7 @@ public class LabDataEditorDialog extends DialogEditor {
 
             cancelNewTracerModelEdit();
         } catch (BadLabDataException ex) {
-            ex.printStackTrace();
+            new ETWarningDialog(ex).setVisible(true);
         }
 
     }//GEN-LAST:event_cancelNewTracerEdit_menuItemActionPerformed
@@ -5156,7 +5225,8 @@ public class LabDataEditorDialog extends DialogEditor {
         newTracerMode_menuItem.setEnabled(amInEditTracerMode);
         cancelNewTracerEdit_menuItem.setEnabled(!amInEditTracerMode);
 
-        saveTracerAsXML_menuItem.setEnabled(true);
+        saveTracerAsXML_menuItem.setEnabled(amInEditTracerMode);
+        saveAndRegisterCurrentEditOfTracerModel_menuItem.setEnabled(!amInEditTracerMode);
 
         // prevent removal of default tracermodel and built-in models
         AbstractRatiosDataModel selectedTracerModel = null;
@@ -5168,7 +5238,12 @@ public class LabDataEditorDialog extends DialogEditor {
                     && (!myLabData.getDefaultLabTracer().equals(
                             selectedTracerModel))
                     && (!selectedTracerModel.isImmutable()));
-        } catch (BadLabDataException badLabDataException) {
+
+            editCurrentLocalTracerModel_menuItem.setEnabled(amInEditTracerMode
+                    && (!selectedTracerModel.isImmutable()));
+
+        } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
 
     }//GEN-LAST:event_tracers_menuMenuSelected
@@ -5177,6 +5252,7 @@ public class LabDataEditorDialog extends DialogEditor {
         try {
             editNewEmptyTracerModel();
         } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
     }//GEN-LAST:event_newTracerMode_menuItemActionPerformed
 
@@ -5189,6 +5265,7 @@ public class LabDataEditorDialog extends DialogEditor {
                 }
             }
         } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
     }//GEN-LAST:event_earthTimeTracerImport_menuItemActionPerformed
 
@@ -5201,6 +5278,7 @@ public class LabDataEditorDialog extends DialogEditor {
                 }
             }
         } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
     }//GEN-LAST:event_localTracerImport_menuItemActionPerformed
 
@@ -5208,6 +5286,7 @@ public class LabDataEditorDialog extends DialogEditor {
         try {
             exitLabData();
         } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
     }//GEN-LAST:event_save_buttonActionPerformed
 
@@ -5215,6 +5294,7 @@ public class LabDataEditorDialog extends DialogEditor {
         try {
             ExportAlphaPbModelAsXML();
         } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
     }//GEN-LAST:event_saveAlphaPbasLocalXML_menuItemActionPerformed
 
@@ -5248,10 +5328,10 @@ public class LabDataEditorDialog extends DialogEditor {
                 try {
                     importLocalPhysicalConstantsModel();
                 } catch (BadLabDataException ex) {
+                    new ETWarningDialog(ex).setVisible(true);
                 }
             }
         } catch (ETException ex) {
-            ex.printStackTrace();
             new ETWarningDialog(ex).setVisible(true);
         }
 }//GEN-LAST:event_localPhysicalConstantsModelImport_menuItemActionPerformed
@@ -5268,7 +5348,6 @@ public class LabDataEditorDialog extends DialogEditor {
         try {
             removeCurrentPhysicalConstantsModel();
         } catch (BadLabDataException ex) {
-            ex.printStackTrace();
             new ETWarningDialog(ex).setVisible(true);
         }
 }//GEN-LAST:event_removePhysicalConstantsModel_menuItemActionPerformed
@@ -5276,7 +5355,6 @@ public class LabDataEditorDialog extends DialogEditor {
     private void editCopyOfCurrentPhysicalConstantsModel_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editCopyOfCurrentPhysicalConstantsModel_menuItemActionPerformed
         try {
             editCopyOfCurrentPhysicalConstantsModel();
-            cancelNewPhysicalConstantsModelEdit();
         } catch (BadLabDataException ex) {
             new ETWarningDialog(ex).setVisible(true);
         }
@@ -5294,6 +5372,7 @@ public class LabDataEditorDialog extends DialogEditor {
         try {
             cancelNewPhysicalConstantsModelEdit();
         } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
 }//GEN-LAST:event_cancelNewEditPhysicalConstantsModel_menuItemActionPerformed
 
@@ -5358,7 +5437,7 @@ public class LabDataEditorDialog extends DialogEditor {
 
     private void editCopyOfCurrentMineralStdModel_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editCopyOfCurrentMineralStdModel_menuItemActionPerformed
         try {
-            editCopyOfCurrentMineralStandardModel();
+            editCopyOfCurrentMineralStandardModel(true);
         } catch (BadLabDataException ex) {
             try {
                 cancelNewMineralStandardModelEdit();
@@ -5371,7 +5450,7 @@ public class LabDataEditorDialog extends DialogEditor {
         try {
             editNewEmptyMineralStandardModel();
         } catch (BadLabDataException ex) {
-            ex.printStackTrace();
+            new ETWarningDialog(ex).setVisible(true);
         }
 }//GEN-LAST:event_newMineralStdModel_menuItemActionPerformed
 
@@ -5379,7 +5458,7 @@ public class LabDataEditorDialog extends DialogEditor {
         try {
             cancelNewMineralStandardModelEdit();
         } catch (BadLabDataException ex) {
-            ex.printStackTrace();
+            new ETWarningDialog(ex).setVisible(true);
         }
 }//GEN-LAST:event_cancelNewEditMineralStdModel_menuItemActionPerformed
 
@@ -5395,7 +5474,8 @@ public class LabDataEditorDialog extends DialogEditor {
         newMineralStdModel_menuItem.setEnabled(amInEditMode);
         cancelNewEditMineralStdModel_menuItem.setEnabled(!amInEditMode);
 
-        saveMineralStdModelAsXML_menuItem.setEnabled(true);
+        saveMineralStdModelAsXML_menuItem.setEnabled(amInEditMode);
+        saveAndRegisterCurrentEditOfMineralStandardModel_menuItem.setEnabled(!amInEditMode);
 
         // prevent removal of default mineralStandardModel and built-in models
         AbstractRatiosDataModel selectedMineralStandardModel = null;
@@ -5407,7 +5487,12 @@ public class LabDataEditorDialog extends DialogEditor {
                     && (!myLabData.getDefaultTIMSMineralStandardModel().equals(
                             selectedMineralStandardModel))
                     && (!selectedMineralStandardModel.isImmutable()));
-        } catch (BadLabDataException badLabDataException) {
+
+            editCurrentLocalMineralStandardModel_menuItem.setEnabled(amInEditMode
+                    && (!selectedMineralStandardModel.isImmutable()));
+
+        } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
 }//GEN-LAST:event_mineralStdModels_menuMenuSelected
 
@@ -5450,13 +5535,42 @@ public class LabDataEditorDialog extends DialogEditor {
         myLabData.setDefaultMITValues();
         try {
             showSavedLabDefaults();
-        } catch (BadLabDataException badLabDataException) {
+        } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
         }
     }//GEN-LAST:event_restoreOriginalDefaultValues_buttonActionPerformed
 
-    private void MineralStandardModelChooserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MineralStandardModelChooserActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_MineralStandardModelChooserActionPerformed
+    private void editCurrentLocalMineralStandardModel_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editCurrentLocalMineralStandardModel_menuItemActionPerformed
+        try {
+            editCopyOfCurrentMineralStandardModel(false);
+        } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
+        }
+    }//GEN-LAST:event_editCurrentLocalMineralStandardModel_menuItemActionPerformed
+
+    private void saveAndRegisterCurrentEditOfMineralStandardModel_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveAndRegisterCurrentEditOfMineralStandardModel_menuItemActionPerformed
+        try {
+            saveAndRegisterCurrentEditOfMineralStandardModel();
+        } catch (ETException ex) {
+            new ETWarningDialog(ex).setVisible(true);
+        }
+    }//GEN-LAST:event_saveAndRegisterCurrentEditOfMineralStandardModel_menuItemActionPerformed
+
+    private void editCurrentLocalTracerModel_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editCurrentLocalTracerModel_menuItemActionPerformed
+        try {
+            editCopyOfCurrentTracerModel(false);
+        } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
+        }
+    }//GEN-LAST:event_editCurrentLocalTracerModel_menuItemActionPerformed
+
+    private void saveAndRegisterCurrentEditOfTracerModel_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveAndRegisterCurrentEditOfTracerModel_menuItemActionPerformed
+        try {
+            saveAndRegisterCurrentEditOfTracerModel();
+        } catch (ETException ex) {
+            new ETWarningDialog(ex).setVisible(true);
+        }
+    }//GEN-LAST:event_saveAndRegisterCurrentEditOfTracerModel_menuItemActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel CalculatedModelInstructions_label;
@@ -5564,6 +5678,8 @@ public class LabDataEditorDialog extends DialogEditor {
     private javax.swing.JMenuItem editCopyOfCurrentPbBlank_menuItem;
     private javax.swing.JMenuItem editCopyOfCurrentPhysicalConstantsModel_menuItem;
     private javax.swing.JMenuItem editCopyOfCurrentTracer_menuItem;
+    private javax.swing.JMenuItem editCurrentLocalMineralStandardModel_menuItem;
+    private javax.swing.JMenuItem editCurrentLocalTracerModel_menuItem;
     private javax.swing.JMenuItem editNewAlphaPb_menuItem;
     private javax.swing.JMenuItem editNewAlphaU_menuItem;
     private javax.swing.JTextField estimatedAgeInMA_text;
@@ -5590,6 +5706,8 @@ public class LabDataEditorDialog extends DialogEditor {
     private javax.swing.JSeparator jSeparator15;
     private javax.swing.JSeparator jSeparator16;
     private javax.swing.JSeparator jSeparator17;
+    private javax.swing.JPopupMenu.Separator jSeparator18;
+    private javax.swing.JPopupMenu.Separator jSeparator19;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JSeparator jSeparator4;
@@ -5642,6 +5760,8 @@ public class LabDataEditorDialog extends DialogEditor {
     private javax.swing.JButton restoreOriginalDefaultValues_button;
     private javax.swing.JMenuItem saveAlphaPbasLocalXML_menuItem;
     private javax.swing.JMenuItem saveAlphaUasLocalXML_menuItem;
+    private javax.swing.JMenuItem saveAndRegisterCurrentEditOfMineralStandardModel_menuItem;
+    private javax.swing.JMenuItem saveAndRegisterCurrentEditOfTracerModel_menuItem;
     private javax.swing.JMenuItem saveInitialPbModelAsXML_menuItem;
     private javax.swing.JMenuItem saveMineralStdModelAsXML_menuItem;
     private javax.swing.JMenuItem savePbBlankAsXML_menuItem;

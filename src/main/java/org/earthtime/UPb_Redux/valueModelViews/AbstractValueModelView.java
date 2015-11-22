@@ -33,9 +33,9 @@ import javax.swing.JLayeredPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.dataDictionaries.RatioNamePrettyPrinter;
+import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.ratioDataViews.DataEntryDetectorInterface;
 
 /**
@@ -51,7 +51,7 @@ public abstract class AbstractValueModelView extends JLayeredPane {
     /**
      *
      */
-    public static int PANEL_WIDTH = 500;
+    public static int PANEL_WIDTH = 550;
     /**
      *
      */
@@ -92,11 +92,11 @@ public abstract class AbstractValueModelView extends JLayeredPane {
         this.valueModel = valueModel;
 
         valueTextBox = new JTextField();
-        valueTextBox.setBounds( 110, 0, 165, PANEL_HEIGHT );
+        valueTextBox.setBounds( 110, 0, 185, PANEL_HEIGHT );
         this.add( valueTextBox );
 
         uncertaintyTextBox = new JTextField();
-        uncertaintyTextBox.setBounds( 280, 0, 165, PANEL_HEIGHT );
+        uncertaintyTextBox.setBounds( 300, 0, 185, PANEL_HEIGHT );
         this.add( uncertaintyTextBox );
 
         valueModelNameLabel = new JLabel( RatioNamePrettyPrinter.makePrettyHTMLString( valueModel.getName() ) );
@@ -121,7 +121,7 @@ public abstract class AbstractValueModelView extends JLayeredPane {
      */
     protected void initTextBoxes ( boolean editable ) {
         valueTextBox.setDocument( new DialogEditor.BigDecimalDocument( valueTextBox, editable ) );
-        valueTextBox.setText( valueModel.getValue().setScale(15, RoundingMode.HALF_UP).toPlainString() );
+        valueTextBox.setText( valueModel.getValue().setScale(20, RoundingMode.HALF_UP).toPlainString() );
 
         uncertaintyTextBox.setDocument( new DialogEditor.BigDecimalDocument( uncertaintyTextBox, editable ) );
 
@@ -174,9 +174,9 @@ public abstract class AbstractValueModelView extends JLayeredPane {
 
     private void displayOneSigmaPerMode () {
         if ( isShowOneSigmaAsPerCent() ) {
-            uncertaintyTextBox.setText( valueModel.getOneSigmaPct().setScale(15, RoundingMode.HALF_UP).toPlainString() );
+            uncertaintyTextBox.setText( valueModel.getOneSigmaPct().setScale(20, RoundingMode.HALF_UP).toPlainString() );
         } else {
-            uncertaintyTextBox.setText( valueModel.getOneSigmaAbs().setScale(15, RoundingMode.HALF_UP).toPlainString() );
+            uncertaintyTextBox.setText( valueModel.getOneSigmaAbs().setScale(20, RoundingMode.HALF_UP).toPlainString() );
         }
 
     }

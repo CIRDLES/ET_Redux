@@ -79,14 +79,14 @@ public abstract class AbstractValueModelsPanelView extends JLayeredPane {
         absUnctRadioButton.setName( "ABS" );
         absUnctRadioButton.setFont(ReduxConstants.sansSerif_10_Bold );
         absUnctRadioButton.setHorizontalAlignment( SwingConstants.CENTER );
-        absUnctRadioButton.setBounds( 280, 2, 75, AbstractValueModelView.PANEL_HEIGHT );
+        absUnctRadioButton.setBounds( 300, 2, 75, AbstractValueModelView.PANEL_HEIGHT );
         this.add( absUnctRadioButton );
 
         pctUnctRadioButton = new JRadioButton( "<html><u>1\u03C3 PCT</u></html>" );
         pctUnctRadioButton.setName( "PCT" );
         pctUnctRadioButton.setFont(ReduxConstants.sansSerif_10_Bold );
         pctUnctRadioButton.setHorizontalAlignment( SwingConstants.CENTER );
-        pctUnctRadioButton.setBounds( 350, 2, 75, AbstractValueModelView.PANEL_HEIGHT );
+        pctUnctRadioButton.setBounds( 370, 2, 75, AbstractValueModelView.PANEL_HEIGHT );
         this.add( pctUnctRadioButton );
 
         ButtonGroup uncertaintyGroup = new ButtonGroup();
