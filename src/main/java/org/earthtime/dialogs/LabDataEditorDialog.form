@@ -405,13 +405,21 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="removePhysicalConstantsModel_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Remove current Physical Constants Model from Lab Data"/>
+                <Property name="text" type="java.lang.String" value="Remove current Physical Constants Model from Lab Data (for editable models only)"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="removePhysicalConstantsModel_menuItemActionPerformed"/>
               </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JSeparator" name="jSeparator15">
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="editCurrentLocalPhysicalConstantsModel_menuItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Edit Current Physical Constants Model (for editable models only)"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editCurrentLocalPhysicalConstantsModel_menuItemActionPerformed"/>
+              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="editCopyOfCurrentPhysicalConstantsModel_menuItem">
               <Properties>
@@ -435,6 +443,16 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cancelNewEditPhysicalConstantsModel_menuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator20">
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="saveAndRegisterCurrentEditOfPhysicalConstantsModel_menuItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Save and Register Current Edit of Physical Constants Model"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="saveAndRegisterCurrentEditOfPhysicalConstantsModel_menuItemActionPerformed"/>
               </Events>
             </MenuItem>
           </SubComponents>

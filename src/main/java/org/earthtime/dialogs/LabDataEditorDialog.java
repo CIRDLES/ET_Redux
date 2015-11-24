@@ -523,7 +523,7 @@ public class LabDataEditorDialog extends DialogEditor {
 
         try {
             tempTracer = tempTracer.readXMLObject(returnFile.getCanonicalPath(), true);
-        } catch (IOException | ETException | BadOrMissingXMLSchemaException ex) {
+        } catch (IOException | ETException | BadOrMissingXMLSchemaException | com.thoughtworks.xstream.mapper.CannotResolveClassException ex) {
             if (ex instanceof ETException) {
                 new ETWarningDialog((ETException) ex).setVisible(true);
             }
@@ -1445,8 +1445,8 @@ public class LabDataEditorDialog extends DialogEditor {
         AbstractRatiosDataModel tempBlank = PbBlankICModel.createNewInstance();
 
         try {
-            tempBlank = (AbstractRatiosDataModel) tempBlank.readXMLObject(returnFile.getCanonicalPath(), true);
-        } catch (IOException | ETException | BadOrMissingXMLSchemaException ex) {
+            tempBlank = tempBlank.readXMLObject(returnFile.getCanonicalPath(), true);
+        } catch (IOException | ETException | BadOrMissingXMLSchemaException | com.thoughtworks.xstream.mapper.CannotResolveClassException ex) {
             if (ex instanceof ETException) {
                 new ETWarningDialog((ETException) ex).setVisible(true);
             }
@@ -1781,8 +1781,8 @@ public class LabDataEditorDialog extends DialogEditor {
         AbstractRatiosDataModel initialPbModel = InitialPbModelET.getNoneInstance();
 
         try {
-            initialPbModel = (AbstractRatiosDataModel) initialPbModel.readXMLObject(returnFile.getCanonicalPath(), true);
-        } catch (IOException | ETException | BadOrMissingXMLSchemaException ex) {
+            initialPbModel = initialPbModel.readXMLObject(returnFile.getCanonicalPath(), true);
+        } catch (IOException | ETException | BadOrMissingXMLSchemaException | com.thoughtworks.xstream.mapper.CannotResolveClassException ex) {
             if (ex instanceof ETException) {
                 new ETWarningDialog((ETException) ex).setVisible(true);
             }
@@ -1805,7 +1805,7 @@ public class LabDataEditorDialog extends DialogEditor {
         }
     }
 
-    // PhysicalConstantsModel tab
+    // PhysicalConstantsModel tab **********************************************
     /**
      *
      * @return
@@ -1922,20 +1922,23 @@ public class LabDataEditorDialog extends DialogEditor {
     private void editNewEmptyPhysicalConstantsModel()
             throws BadLabDataException {
         newEmptyPhysicalConstantsModel = PhysicalConstantsModel.createNewInstance();
-        physicalConstantsModel_Chooser.setSelectedIndex(-1);
         physicalConstantsModel_Chooser.setEnabled(false);
         populatePhysicalConstantsFields(newEmptyPhysicalConstantsModel, true);
 
     }
 
-    private void editCopyOfCurrentPhysicalConstantsModel()
+    /**
+     *
+     * @param doAppendName the value of doAppendName
+     * @throws BadLabDataException
+     */
+    private void editCopyOfCurrentPhysicalConstantsModel(boolean doAppendName)
             throws BadLabDataException {
-
         try {
             currentEditablePhysicalConstantsModel = myLabData.getAPhysicalConstantsModel(
-                    (String) physicalConstantsModel_Chooser.getSelectedItem()).copyModel(true);
+                    (String) physicalConstantsModel_Chooser.getSelectedItem()).copyModel(doAppendName);
+            currentEditablePhysicalConstantsModel.setImmutable(false);
 
-            physicalConstantsModel_Chooser.setSelectedIndex(-1);
             physicalConstantsModel_Chooser.setEnabled(false);
 
             newEmptyPhysicalConstantsModel = currentEditablePhysicalConstantsModel;
@@ -1944,7 +1947,6 @@ public class LabDataEditorDialog extends DialogEditor {
         } catch (BadLabDataException ex) {
             new ETWarningDialog(ex).setVisible(true);
         }
-
     }
 
     private synchronized boolean checkIsSavedStatusOfPhysicalConstantsModelEdit()
@@ -1971,13 +1973,9 @@ public class LabDataEditorDialog extends DialogEditor {
     private synchronized void cancelNewPhysicalConstantsModelEdit()
             throws BadLabDataException {
         newEmptyPhysicalConstantsModel = null;
+        populatePhysicalConstantsFields(myLabData.getAPhysicalConstantsModel(
+                (String) physicalConstantsModel_Chooser.getSelectedItem()), false);
         physicalConstantsModel_Chooser.setEnabled(true);
-        try {
-            initPhysicalConstantsModelChooser();
-        } catch (BadLabDataException ex) {
-            new ETWarningDialog(ex).setVisible(true);
-        }
-
     }
 
     private synchronized void registerPhysicalConstantsModel(final AbstractRatiosDataModel tempModel)
@@ -2003,20 +2001,18 @@ public class LabDataEditorDialog extends DialogEditor {
             throws BadLabDataException, ETException {
         File selectedFile;
 
-        if (newEmptyPhysicalConstantsModel == null) {
-            // we are exporting an existing PhysicalConstantsModel
-            newEmptyPhysicalConstantsModel
-                    = myLabData.getAPhysicalConstantsModel((String) physicalConstantsModel_Chooser.getSelectedItem());
-        } else {
-            physicalConstantsModelView.saveAndUpdateModelView(true);
-        }
+        // Nov 2015
+        AbstractRatiosDataModel selectedModel
+                =//
+                myLabData.getAPhysicalConstantsModel(
+                        (String) physicalConstantsModel_Chooser.getSelectedItem());
 
         setAlwaysOnTop(false);
 
         String dialogTitle = "Save this Physical Constants Model as xml: *.xml";
         final String fileExtension = ".xml";
         String fractionFileName
-                = newEmptyPhysicalConstantsModel.getReduxLabDataElementName() + fileExtension;
+                = selectedModel.getReduxLabDataElementName() + fileExtension;
         FileFilter nonMacFileFilter = new XMLFileFilter();
 
         selectedFile = FileHelper.AllPlatformSaveAs(
@@ -2025,13 +2021,7 @@ public class LabDataEditorDialog extends DialogEditor {
         if (selectedFile != null) {
             try {
                 // export
-                newEmptyPhysicalConstantsModel.serializeXMLObject(selectedFile.getCanonicalPath());
-
-                if (newEmptyPhysicalConstantsModel != null) {
-                    // Feb 2008 now per Noah automatically import it as well
-                    cancelNewPhysicalConstantsModelEdit();
-                    readAndRegisterPhysicalConstantsModel(selectedFile);
-                }
+                selectedModel.serializeXMLObject(selectedFile.getCanonicalPath());
             } catch (IOException ex) {
             }
         }
@@ -2062,26 +2052,49 @@ public class LabDataEditorDialog extends DialogEditor {
     }
 
     private synchronized void readAndRegisterPhysicalConstantsModel(File returnFile) {
-        AbstractRatiosDataModel tempModel = PhysicalConstantsModel.createNewInstance();
+        AbstractRatiosDataModel physicalConstantsModel = PhysicalConstantsModel.getNoneInstance();
 
-        boolean doRegister = true;
         try {
-            tempModel = tempModel.readXMLObject(returnFile.getCanonicalPath(), true);
-        } catch (IOException | ETException | BadOrMissingXMLSchemaException ex) {
+            physicalConstantsModel = physicalConstantsModel.readXMLObject(returnFile.getCanonicalPath(), true);
+        } catch (IOException | ETException | BadOrMissingXMLSchemaException | com.thoughtworks.xstream.mapper.CannotResolveClassException ex) {
             if (ex instanceof ETException) {
                 new ETWarningDialog((ETException) ex).setVisible(true);
             }
 
-            doRegister = false;
+            physicalConstantsModel = null;
         }
 
-        if (doRegister) {
+        // Nov 2015 type checking
+        boolean proceed = (physicalConstantsModel != null);
+        if (proceed) {
+            proceed = proceed && (physicalConstantsModel instanceof PhysicalConstantsModel);
+        }
+
+        if (proceed) {
             try {
-                registerPhysicalConstantsModel(tempModel);
+                registerPhysicalConstantsModel(physicalConstantsModel);
             } catch (BadLabDataException ex) {
                 new ETWarningDialog(ex).setVisible(true);
             }
+        } else {
+            JOptionPane.showConfirmDialog(
+                    null,
+                    new String[]{"This Physical Constants Model could not be imported...please confirm it conforms to the schema."},
+                    "ET Redux Warning",
+                    JOptionPane.WARNING_MESSAGE);
         }
+    }
+
+    private void saveAndRegisterCurrentEditOfPhysicalConstantsModel()
+            throws BadLabDataException, ETException {
+        setAlwaysOnTop(false);
+        physicalConstantsModelView.saveAndUpdateModelView(true);
+        myLabData.registerPhysicalConstantsModel(newEmptyPhysicalConstantsModel, true);
+        savedPhysicalConstantsModelName = newEmptyPhysicalConstantsModel.getNameAndVersion();
+        initPhysicalConstantsModelChooser();
+        physicalConstantsModel_Chooser.setEnabled(true);
+        newEmptyPhysicalConstantsModel = null;
+        setAlwaysOnTop(true);
     }
 
     // Mineral Standard Models tab *********************************************
@@ -2327,7 +2340,7 @@ public class LabDataEditorDialog extends DialogEditor {
 
         try {
             mineralStandardModel = mineralStandardModel.readXMLObject(returnFile.getCanonicalPath(), true);
-        } catch (IOException | ETException | BadOrMissingXMLSchemaException ex) {
+        } catch (IOException | ETException | BadOrMissingXMLSchemaException | com.thoughtworks.xstream.mapper.CannotResolveClassException ex) {
             if (ex instanceof ETException) {
                 new ETWarningDialog((ETException) ex).setVisible(true);
             }
@@ -3090,9 +3103,12 @@ public class LabDataEditorDialog extends DialogEditor {
         savePhysicalConstantsModelAsXML_menuItem = new javax.swing.JMenuItem();
         removePhysicalConstantsModel_menuItem = new javax.swing.JMenuItem();
         jSeparator15 = new javax.swing.JSeparator();
+        editCurrentLocalPhysicalConstantsModel_menuItem = new javax.swing.JMenuItem();
         editCopyOfCurrentPhysicalConstantsModel_menuItem = new javax.swing.JMenuItem();
         newPhysicalConstantsModel_menuItem = new javax.swing.JMenuItem();
         cancelNewEditPhysicalConstantsModel_menuItem = new javax.swing.JMenuItem();
+        jSeparator20 = new javax.swing.JPopupMenu.Separator();
+        saveAndRegisterCurrentEditOfPhysicalConstantsModel_menuItem = new javax.swing.JMenuItem();
         MineralStdModels_menu = new javax.swing.JMenu();
         localMineralStdModelImport_menuItem = new javax.swing.JMenuItem();
         jSeparator16 = new javax.swing.JSeparator();
@@ -4676,7 +4692,7 @@ public class LabDataEditorDialog extends DialogEditor {
         });
         physicalConstantsModels_menu.add(savePhysicalConstantsModelAsXML_menuItem);
 
-        removePhysicalConstantsModel_menuItem.setText("Remove current Physical Constants Model from Lab Data");
+        removePhysicalConstantsModel_menuItem.setText("Remove current Physical Constants Model from Lab Data (for editable models only)");
         removePhysicalConstantsModel_menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 removePhysicalConstantsModel_menuItemActionPerformed(evt);
@@ -4684,6 +4700,14 @@ public class LabDataEditorDialog extends DialogEditor {
         });
         physicalConstantsModels_menu.add(removePhysicalConstantsModel_menuItem);
         physicalConstantsModels_menu.add(jSeparator15);
+
+        editCurrentLocalPhysicalConstantsModel_menuItem.setText("Edit Current Physical Constants Model (for editable models only)");
+        editCurrentLocalPhysicalConstantsModel_menuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editCurrentLocalPhysicalConstantsModel_menuItemActionPerformed(evt);
+            }
+        });
+        physicalConstantsModels_menu.add(editCurrentLocalPhysicalConstantsModel_menuItem);
 
         editCopyOfCurrentPhysicalConstantsModel_menuItem.setText("Edit Copy of current Physical Constants Model");
         editCopyOfCurrentPhysicalConstantsModel_menuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -4708,6 +4732,15 @@ public class LabDataEditorDialog extends DialogEditor {
             }
         });
         physicalConstantsModels_menu.add(cancelNewEditPhysicalConstantsModel_menuItem);
+        physicalConstantsModels_menu.add(jSeparator20);
+
+        saveAndRegisterCurrentEditOfPhysicalConstantsModel_menuItem.setText("Save and Register Current Edit of Physical Constants Model");
+        saveAndRegisterCurrentEditOfPhysicalConstantsModel_menuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveAndRegisterCurrentEditOfPhysicalConstantsModel_menuItemActionPerformed(evt);
+            }
+        });
+        physicalConstantsModels_menu.add(saveAndRegisterCurrentEditOfPhysicalConstantsModel_menuItem);
 
         labData_menuBar.add(physicalConstantsModels_menu);
 
@@ -5354,7 +5387,7 @@ public class LabDataEditorDialog extends DialogEditor {
 
     private void editCopyOfCurrentPhysicalConstantsModel_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editCopyOfCurrentPhysicalConstantsModel_menuItemActionPerformed
         try {
-            editCopyOfCurrentPhysicalConstantsModel();
+            editCopyOfCurrentPhysicalConstantsModel(true);
         } catch (BadLabDataException ex) {
             new ETWarningDialog(ex).setVisible(true);
         }
@@ -5387,9 +5420,10 @@ public class LabDataEditorDialog extends DialogEditor {
         newPhysicalConstantsModel_menuItem.setEnabled(amInEditPhysicalConstantsModelMode);
         cancelNewEditPhysicalConstantsModel_menuItem.setEnabled(!amInEditPhysicalConstantsModelMode);
 
-        savePhysicalConstantsModelAsXML_menuItem.setEnabled(true);
+        savePhysicalConstantsModelAsXML_menuItem.setEnabled(amInEditPhysicalConstantsModelMode);
+        saveAndRegisterCurrentEditOfPhysicalConstantsModel_menuItem.setEnabled(!amInEditPhysicalConstantsModelMode);
 
-        // prevent removal of default PbBlankModel and built-in models
+        // prevent removal of default PhysicalConstantsModel and built-in models
         AbstractRatiosDataModel selectedPhysicalConstantsModel = null;
 
         try {
@@ -5400,10 +5434,14 @@ public class LabDataEditorDialog extends DialogEditor {
                     && (!myLabData.getDefaultPhysicalConstantsModel().equals(
                             selectedPhysicalConstantsModel))
                     && (!selectedPhysicalConstantsModel.isImmutable()));
+            
+            editCurrentLocalPhysicalConstantsModel_menuItem.setEnabled(amInEditPhysicalConstantsModelMode
+                    && (!selectedPhysicalConstantsModel.isImmutable()));
+
         } catch (BadLabDataException badLabDataException) {
         }
     }//GEN-LAST:event_physicalConstantsModels_menuMenuSelected
-
+      
     private void localMineralStdModelImport_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_localMineralStdModelImport_menuItemActionPerformed
         try {
             if (checkIsSavedStatusOfMineralStandardModelEdit()) {
@@ -5572,6 +5610,22 @@ public class LabDataEditorDialog extends DialogEditor {
         }
     }//GEN-LAST:event_saveAndRegisterCurrentEditOfTracerModel_menuItemActionPerformed
 
+    private void editCurrentLocalPhysicalConstantsModel_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editCurrentLocalPhysicalConstantsModel_menuItemActionPerformed
+        try {
+            editCopyOfCurrentPhysicalConstantsModel(false);
+        } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
+        }
+    }//GEN-LAST:event_editCurrentLocalPhysicalConstantsModel_menuItemActionPerformed
+
+    private void saveAndRegisterCurrentEditOfPhysicalConstantsModel_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveAndRegisterCurrentEditOfPhysicalConstantsModel_menuItemActionPerformed
+        try {
+            saveAndRegisterCurrentEditOfPhysicalConstantsModel();
+        } catch (ETException ex) {
+            new ETWarningDialog(ex).setVisible(true);
+        }
+    }//GEN-LAST:event_saveAndRegisterCurrentEditOfPhysicalConstantsModel_menuItemActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel CalculatedModelInstructions_label;
     private javax.swing.JLabel CalculatedModelInstructions_label1;
@@ -5679,6 +5733,7 @@ public class LabDataEditorDialog extends DialogEditor {
     private javax.swing.JMenuItem editCopyOfCurrentPhysicalConstantsModel_menuItem;
     private javax.swing.JMenuItem editCopyOfCurrentTracer_menuItem;
     private javax.swing.JMenuItem editCurrentLocalMineralStandardModel_menuItem;
+    private javax.swing.JMenuItem editCurrentLocalPhysicalConstantsModel_menuItem;
     private javax.swing.JMenuItem editCurrentLocalTracerModel_menuItem;
     private javax.swing.JMenuItem editNewAlphaPb_menuItem;
     private javax.swing.JMenuItem editNewAlphaU_menuItem;
@@ -5709,6 +5764,7 @@ public class LabDataEditorDialog extends DialogEditor {
     private javax.swing.JPopupMenu.Separator jSeparator18;
     private javax.swing.JPopupMenu.Separator jSeparator19;
     private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JPopupMenu.Separator jSeparator20;
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JSeparator jSeparator4;
     private javax.swing.JSeparator jSeparator5;
@@ -5761,6 +5817,7 @@ public class LabDataEditorDialog extends DialogEditor {
     private javax.swing.JMenuItem saveAlphaPbasLocalXML_menuItem;
     private javax.swing.JMenuItem saveAlphaUasLocalXML_menuItem;
     private javax.swing.JMenuItem saveAndRegisterCurrentEditOfMineralStandardModel_menuItem;
+    private javax.swing.JMenuItem saveAndRegisterCurrentEditOfPhysicalConstantsModel_menuItem;
     private javax.swing.JMenuItem saveAndRegisterCurrentEditOfTracerModel_menuItem;
     private javax.swing.JMenuItem saveInitialPbModelAsXML_menuItem;
     private javax.swing.JMenuItem saveMineralStdModelAsXML_menuItem;
