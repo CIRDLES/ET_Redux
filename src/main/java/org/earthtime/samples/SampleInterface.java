@@ -34,7 +34,6 @@ import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.aliquots.Aliquot;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetup;
-import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.filters.ReduxFileFilter;
 import org.earthtime.UPb_Redux.filters.XMLFileFilter;
@@ -44,7 +43,6 @@ import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLAICPMSFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLegacyFraction;
-import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.reports.ReportSettings;
 import org.earthtime.UPb_Redux.samples.SESARSampleMetadata;
 import org.earthtime.UPb_Redux.samples.Sample;
@@ -64,10 +62,12 @@ import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.dataDictionaries.SampleDateTypes;
 import org.earthtime.dataDictionaries.SampleRegistries;
 import org.earthtime.dataDictionaries.SampleTypesEnum;
+import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.projects.EarthTimeSerializedFileInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
+import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.reportViews.ReportRowGUIInterface;
 import org.earthtime.reports.ReportSettingsInterface;
 import org.earthtime.utilities.FileHelper;
@@ -1885,7 +1885,11 @@ public interface SampleInterface {
 
         for (AliquotInterface aliquot : sample.getActiveAliquots()) {
             aliquot.getMineralStandardModels().stream().forEach((msm) -> {
-                ReduxLabData.getInstance().registerMineralStandardModel(msm, false);
+                try {
+                    ReduxLabData.getInstance().registerMineralStandardModel(msm, false);
+                } catch (BadLabDataException ex) {
+                    Logger.getLogger(SampleInterface.class.getName()).log(Level.SEVERE, null, ex);
+                }
             });
         }
     }

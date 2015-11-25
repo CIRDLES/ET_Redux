@@ -1130,20 +1130,11 @@ public abstract class AbstractRatiosDataModel implements
                 reader = URIHelper.getBufferedReader(filename);
                 try {
                     myModelClassInstance = (AbstractRatiosDataModel) xstream.fromXML(reader);
+                    myModelClassInstance.initializeModel();
                 } catch (ConversionException e) {
                     throw new ETException(null, e.getMessage());
                 }
 
-                myModelClassInstance.initializeModel();
-
-//                System.out.println( //
-//                        "This is your " //
-//                        + myModelClassInstance.getClass().getSimpleName()//
-//                        + " that was just read successfully:\n");
-//                String xml2 = xstream.toXML(myModelClassInstance);
-//
-//                System.out.println(xml2);
-//                System.out.flush();
             } else {
                 throw new ETException(null, "XML data file does not conform to schema.");
             }

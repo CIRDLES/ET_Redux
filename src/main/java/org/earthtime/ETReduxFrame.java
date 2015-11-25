@@ -64,11 +64,6 @@ import org.earthtime.UPb_Redux.dateInterpretation.WeightedMeanGraphPanel;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.AliquotDetailsDisplayInterface;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.ConcordiaGraphPanel;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.PlottingDetailsDisplayInterface;
-import org.earthtime.dialogs.AboutBox;
-import org.earthtime.dialogs.DialogEditor;
-import org.earthtime.dialogs.LabDataEditorDialog;
-import org.earthtime.dialogs.PreferencesEditorDialog;
-import org.earthtime.dialogs.ReportSettingsManager;
 import org.earthtime.UPb_Redux.dialogs.aliquotManagers.AliquotEditorDialog;
 import org.earthtime.UPb_Redux.dialogs.aliquotManagers.AliquotEditorForLAICPMS;
 import org.earthtime.UPb_Redux.dialogs.aliquotManagers.AliquotLegacyEditorForIDTIMS;
@@ -103,7 +98,6 @@ import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionTable;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLAICPMSFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.PbcCorrectionDetails;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.UPbFractionReducer;
-import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.reports.ReportSettings;
 import org.earthtime.UPb_Redux.reports.excelReports.CsvResultsTable;
 import org.earthtime.UPb_Redux.reports.excelReports.ExcelResultsTable;
@@ -127,6 +121,11 @@ import org.earthtime.beans.ET_JButton;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.dataDictionaries.SampleTypesEnum;
+import org.earthtime.dialogs.AboutBox;
+import org.earthtime.dialogs.DialogEditor;
+import org.earthtime.dialogs.LabDataEditorDialog;
+import org.earthtime.dialogs.PreferencesEditorDialog;
+import org.earthtime.dialogs.ReportSettingsManager;
 import org.earthtime.dialogs.projectManagers.projectLegacyManagers.AbstractProjectOfLegacySamplesDataManagerDialog;
 import org.earthtime.dialogs.projectManagers.projectLegacyManagers.ProjectOfLegacySamplesDataManagerDialogForDIBBsUseries_A;
 import org.earthtime.dialogs.projectManagers.projectLegacyManagers.ProjectOfLegacySamplesDataManagerDialogForGenericUPb_A;
@@ -142,6 +141,7 @@ import org.earthtime.projects.projectImporters.UPbProjectImporters.ProjectOfLega
 import org.earthtime.projects.projectImporters.UPbProjectImporters.ProjectOfLegacySamplesImporterFromCSVFile_UCSB_LASS_A;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.mineralStandardModels.MineralStandardUPbModel;
+import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.reportViews.ReportAliquotFractionsView;
 import org.earthtime.reportViews.ReportPainterI;
 import org.earthtime.reportViews.ReportUpdaterInterface;
@@ -702,9 +702,12 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                 // oct 2012 register mineralstandardmodel
                 AbstractRatiosDataModel primaryMineralStandard = theProject.getTripoliSession().getPrimaryMineralStandard();
                 if (primaryMineralStandard != null) {
-                    ReduxLabData.getInstance().registerMineralStandardModel(primaryMineralStandard, false);
-                    if (((MineralStandardUPbModel) primaryMineralStandard).hasInitialPb()) {
-                        ReduxLabData.getInstance().registerInitialPbModel(((MineralStandardUPbModel) primaryMineralStandard).getInitialPbModelET(), false);
+                    try {
+                        ReduxLabData.getInstance().registerMineralStandardModel(primaryMineralStandard, false);
+                        if (((MineralStandardUPbModel) primaryMineralStandard).hasInitialPb()) {
+                            ReduxLabData.getInstance().registerInitialPbModel(((MineralStandardUPbModel) primaryMineralStandard).getInitialPbModelET(), false);
+                        }
+                    } catch (BadLabDataException badLabDataException) {
                     }
                 }
             }
@@ -3764,8 +3767,7 @@ private void ID_TIMSLegacyAnalysis_MIT_menuItemActionPerformed(java.awt.event.Ac
 }//GEN-LAST:event_ID_TIMSLegacyAnalysis_MIT_menuItemActionPerformed
 
 private void visitCIRDLESActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_visitCIRDLESActionPerformed
-    BrowserControl.displayURL("https://cirdles.cs.cofc.edu");
-
+    BrowserControl.displayURL("https://cirdles.org");
 }//GEN-LAST:event_visitCIRDLESActionPerformed
 
 private void reportResultsTableAsNumbersInExcel_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reportResultsTableAsNumbersInExcel_menuItemActionPerformed
