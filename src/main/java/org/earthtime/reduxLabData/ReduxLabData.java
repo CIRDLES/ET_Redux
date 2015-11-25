@@ -785,8 +785,17 @@ public final class ReduxLabData implements Serializable {
      * @param pbBlank
      * @param isVerbose
      */
-    public void registerPbBlank(AbstractRatiosDataModel pbBlank, boolean isVerbose) {
-        if (((ReduxLabDataList) blanks).registerElement(pbBlank, isVerbose)) {
+    public void registerPbBlank(AbstractRatiosDataModel pbBlank, boolean isVerbose) 
+            throws BadLabDataException {
+        boolean myIsVerbose = isVerbose;
+        // Nov 2015 ... this is the case of editing a local model
+        if (!pbBlank.isImmutable() && !((ReduxLabDataList) blanks).registerElement(pbBlank, false)) {
+            removeABlank(pbBlank.getNameAndVersion());
+            addBlank(pbBlank);
+            myIsVerbose = false;
+        }
+        
+        if (((ReduxLabDataList) blanks).registerElement(pbBlank, myIsVerbose)) {
             addBlank(pbBlank);
         }
     }
@@ -897,8 +906,17 @@ public final class ReduxLabData implements Serializable {
      * @param initialPbModel
      * @param isVerbose
      */
-    public void registerInitialPbModel(AbstractRatiosDataModel initialPbModel, boolean isVerbose) {
-        if (((ReduxLabDataList) initialPbModels).registerElement(initialPbModel, isVerbose)) {
+    public void registerInitialPbModel(AbstractRatiosDataModel initialPbModel, boolean isVerbose)
+            throws BadLabDataException {
+        boolean myIsVerbose = isVerbose;
+        // Nov 2015 ... this is the case of editing a local model
+        if (!initialPbModel.isImmutable() && !((ReduxLabDataList) initialPbModels).registerElement(initialPbModel, false)) {
+            removeAnInitialPbModel(initialPbModel.getNameAndVersion());
+            addInitialPbModel(initialPbModel);
+            myIsVerbose = false;
+        }
+        
+        if (((ReduxLabDataList) initialPbModels).registerElement(initialPbModel, myIsVerbose)) {
             addInitialPbModel(initialPbModel);
         }
     }
@@ -1015,7 +1033,7 @@ public final class ReduxLabData implements Serializable {
             addPhysicalConstantsModel(physicalConstantsModel);
             myIsVerbose = false;
         }
-        
+
         if (((ReduxLabDataList) physicalConstantsModels).registerElement(physicalConstantsModel, myIsVerbose)) {
             addPhysicalConstantsModel(physicalConstantsModel);
         }
@@ -1638,10 +1656,16 @@ public final class ReduxLabData implements Serializable {
             // may be null if coming from imported aliquot and register will catch it
             registerAlphaUModel(((UPbFractionI) fraction).getAlphaUModel(), false);
 
-            registerPbBlank(
-                    ((UPbFractionI) fraction).getPbBlank(), false);
-            registerInitialPbModel(
-                    ((FractionI) fraction).getInitialPbModel(), false);
+            try {
+                registerPbBlank(
+                        ((UPbFractionI) fraction).getPbBlank(), false);
+            } catch (BadLabDataException badLabDataException) {
+            }
+            try {
+                registerInitialPbModel(
+                        ((FractionI) fraction).getInitialPbModel(), false);
+            } catch (BadLabDataException badLabDataException) {
+            }
             try {
                 registerPhysicalConstantsModel(
                         fraction.getPhysicalConstantsModel(), false);

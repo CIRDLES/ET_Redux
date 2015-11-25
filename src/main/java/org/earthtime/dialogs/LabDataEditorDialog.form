@@ -36,23 +36,23 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="earthTimeTracerImport_menuItemActionPerformed"/>
               </Events>
             </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="localTracerImport_menuItem">
+            <MenuItem class="javax.swing.JMenuItem" name="importTracerXML_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Import Tracer Model from local file"/>
+                <Property name="text" type="java.lang.String" value="Import Tracer Model from file"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="localTracerImport_menuItemActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="importTracerXML_menuItemActionPerformed"/>
               </Events>
-            </MenuItem>
-            <MenuItem class="javax.swing.JSeparator" name="jSeparator1">
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="saveTracerAsXML_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Save current Tracer Model as local XML file"/>
+                <Property name="text" type="java.lang.String" value="Export current Tracer Model as XML file"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="saveTracerAsXML_menuItemActionPerformed"/>
               </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JSeparator" name="jSeparator1">
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="removeTracer_menuItem">
               <Properties>
@@ -119,7 +119,7 @@
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="localAlphaUImportXML_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Import AlphaU Model from local XML file"/>
+                <Property name="text" type="java.lang.String" value="Import AlphaU Model from XML file"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="localAlphaUImportXML_menuItemActionPerformed"/>
@@ -128,11 +128,9 @@
                 <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="localAlphaUImportXML_menuItem.setBackground(ReduxConstants.ColorOfUranium);"/>
               </AuxValues>
             </MenuItem>
-            <MenuItem class="javax.swing.JSeparator" name="jSeparator8">
-            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="saveAlphaUasLocalXML_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Save AlphaU Model as local XML file"/>
+                <Property name="text" type="java.lang.String" value="Export AlphaU Model as XML file"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="saveAlphaUasLocalXML_menuItemActionPerformed"/>
@@ -140,6 +138,8 @@
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="saveAlphaUasLocalXML_menuItem.setBackground(ReduxConstants.ColorOfUranium);"/>
               </AuxValues>
+            </MenuItem>
+            <MenuItem class="javax.swing.JSeparator" name="jSeparator8">
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="removeAlphaU_menuItem">
               <Properties>
@@ -189,7 +189,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="localAlphaPbImportXML_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Import AlphaPb Model from local XML file"/>
+                <Property name="text" type="java.lang.String" value="Import AlphaPb Model from XML file"/>
                 <Property name="horizontalTextPosition" type="int" value="4"/>
               </Properties>
               <Events>
@@ -199,11 +199,9 @@
                 <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="localAlphaPbImportXML_menuItem.setBackground(ReduxConstants.ColorOfLead);"/>
               </AuxValues>
             </MenuItem>
-            <MenuItem class="javax.swing.JSeparator" name="jSeparator11">
-            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="saveAlphaPbasLocalXML_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Save AlphaPb Model as local XML file"/>
+                <Property name="text" type="java.lang.String" value="Export AlphaPb Model as XML file"/>
                 <Property name="horizontalTextPosition" type="int" value="4"/>
               </Properties>
               <Events>
@@ -212,6 +210,8 @@
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="saveAlphaPbasLocalXML_menuItem.setBackground(ReduxConstants.ColorOfLead);"/>
               </AuxValues>
+            </MenuItem>
+            <MenuItem class="javax.swing.JSeparator" name="jSeparator11">
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="removeAlphaPb_menuItem">
               <Properties>
@@ -261,27 +261,27 @@
             <EventHandler event="menuSelected" listener="javax.swing.event.MenuListener" parameters="javax.swing.event.MenuEvent" handler="PbBlanks_menuMenuSelected"/>
           </Events>
           <SubComponents>
-            <MenuItem class="javax.swing.JMenuItem" name="localPbBlankImport_menuItem">
+            <MenuItem class="javax.swing.JMenuItem" name="importPbBlankXML_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Import Pb Blank from local XML file"/>
+                <Property name="text" type="java.lang.String" value="Import Pb Blank from XML file"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="localPbBlankImport_menuItemActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="importPbBlankXML_menuItemActionPerformed"/>
               </Events>
-            </MenuItem>
-            <MenuItem class="javax.swing.JSeparator" name="jSeparator3">
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="savePbBlankAsXML_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Save current Pb Blank as XML file"/>
+                <Property name="text" type="java.lang.String" value="Export current Pb Blank as XML file"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="savePbBlankAsXML_menuItemActionPerformed"/>
               </Events>
             </MenuItem>
+            <MenuItem class="javax.swing.JSeparator" name="jSeparator3">
+            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="removePbBlank_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Remove current Pb Blank from Lab Data"/>
+                <Property name="text" type="java.lang.String" value="Remove current Pb Blank from Lab Data (for editable models only)"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="removePbBlank_menuItemActionPerformed"/>
@@ -289,9 +289,17 @@
             </MenuItem>
             <MenuItem class="javax.swing.JSeparator" name="jSeparator4">
             </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="editCurrentLocalPbBlankICModel_menuItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Edit current Pb Blank IC Model (for editable models only)"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editCurrentLocalPbBlankICModel_menuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="editCopyOfCurrentPbBlank_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Edit copy of current Pb Blank"/>
+                <Property name="text" type="java.lang.String" value="Edit copy of current Pb Blank IC Model"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editCopyOfCurrentPbBlank_menuItemActionPerformed"/>
@@ -299,7 +307,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="newPbBlankMode_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Edit new empty Pb Blank"/>
+                <Property name="text" type="java.lang.String" value="Edit new empty Pb Blank IC Model"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="newPbBlankMode_menuItemActionPerformed"/>
@@ -307,10 +315,20 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="cancelNewEditBlank_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Cancel Edit of Pb Blank"/>
+                <Property name="text" type="java.lang.String" value="Cancel Edit of Pb Blank IC Model"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cancelNewEditBlank_menuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator22">
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="saveAndRegisterCurrentEditOfPbBlankICModel_menuItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Save and Register Current Edit of Pb Blank IC Model"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="saveAndRegisterCurrentEditOfPbBlankICModel_menuItemActionPerformed"/>
               </Events>
             </MenuItem>
           </SubComponents>
@@ -323,33 +341,41 @@
             <EventHandler event="menuSelected" listener="javax.swing.event.MenuListener" parameters="javax.swing.event.MenuEvent" handler="initialPbModels_menuMenuSelected"/>
           </Events>
           <SubComponents>
-            <MenuItem class="javax.swing.JMenuItem" name="localInitialPbModelImport_menuItem">
+            <MenuItem class="javax.swing.JMenuItem" name="importInitialPbModelXML_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Import Initial Pb Model from local XML file"/>
+                <Property name="text" type="java.lang.String" value="Import Initial Pb Model from XML file"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="localInitialPbModelImport_menuItemActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="importInitialPbModelXML_menuItemActionPerformed"/>
               </Events>
-            </MenuItem>
-            <MenuItem class="javax.swing.JSeparator" name="jSeparator5">
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="saveInitialPbModelAsXML_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Save Initial Pb Model as local XML file"/>
+                <Property name="text" type="java.lang.String" value="Export Initial Pb Model as XML file"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="saveInitialPbModelAsXML_menuItemActionPerformed"/>
               </Events>
             </MenuItem>
+            <MenuItem class="javax.swing.JSeparator" name="jSeparator5">
+            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="removeInitialPbModel_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Remove current Initial Pb Model from Lab Data"/>
+                <Property name="text" type="java.lang.String" value="Remove current Initial Pb Model from Lab Data (for editable models only)"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="removeInitialPbModel_menuItemActionPerformed"/>
               </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JSeparator" name="jSeparator6">
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="editCurrentLocalInitialPbModel_menuItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Edit current Initial Pb Model (for editable models only)"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editCurrentLocalInitialPbModel_menuItemActionPerformed"/>
+              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="editCopyOfCurrentInitialPbModel_menuItem">
               <Properties>
@@ -375,6 +401,16 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cancelNewEditInitialPbModel_menuItemActionPerformed"/>
               </Events>
             </MenuItem>
+            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator21">
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="saveAndRegisterCurrentEditOfInitialPbModel_menuItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Save and Register Current Edit of Initial Pb Model"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="saveAndRegisterCurrentEditOfInitialPbModel_menuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
           </SubComponents>
         </Menu>
         <Menu class="javax.swing.JMenu" name="physicalConstantsModels_menu">
@@ -385,23 +421,23 @@
             <EventHandler event="menuSelected" listener="javax.swing.event.MenuListener" parameters="javax.swing.event.MenuEvent" handler="physicalConstantsModels_menuMenuSelected"/>
           </Events>
           <SubComponents>
-            <MenuItem class="javax.swing.JMenuItem" name="localPhysicalConstantsModelImport_menuItem">
+            <MenuItem class="javax.swing.JMenuItem" name="ImportPhysicalConstantsModelXML_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Import Physical Constants Model from local XML file"/>
+                <Property name="text" type="java.lang.String" value="Import Physical Constants Model from XML file"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="localPhysicalConstantsModelImport_menuItemActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ImportPhysicalConstantsModelXML_menuItemActionPerformed"/>
               </Events>
-            </MenuItem>
-            <MenuItem class="javax.swing.JSeparator" name="jSeparator14">
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="savePhysicalConstantsModelAsXML_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Save Physical Constants Model as local XML file"/>
+                <Property name="text" type="java.lang.String" value="Export Physical Constants Model as XML file"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="savePhysicalConstantsModelAsXML_menuItemActionPerformed"/>
               </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JSeparator" name="jSeparator14">
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="removePhysicalConstantsModel_menuItem">
               <Properties>
@@ -415,7 +451,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="editCurrentLocalPhysicalConstantsModel_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Edit Current Physical Constants Model (for editable models only)"/>
+                <Property name="text" type="java.lang.String" value="Edit current Physical Constants Model (for editable models only)"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editCurrentLocalPhysicalConstantsModel_menuItemActionPerformed"/>
@@ -465,23 +501,23 @@
             <EventHandler event="menuSelected" listener="javax.swing.event.MenuListener" parameters="javax.swing.event.MenuEvent" handler="mineralStdModels_menuMenuSelected"/>
           </Events>
           <SubComponents>
-            <MenuItem class="javax.swing.JMenuItem" name="localMineralStdModelImport_menuItem">
+            <MenuItem class="javax.swing.JMenuItem" name="importLocalMineralStdModelXML_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Import Mineral Standard Model from local XML file"/>
+                <Property name="text" type="java.lang.String" value="Import Mineral Standard Model from XML file"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="localMineralStdModelImport_menuItemActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="importLocalMineralStdModelXML_menuItemActionPerformed"/>
               </Events>
-            </MenuItem>
-            <MenuItem class="javax.swing.JSeparator" name="jSeparator16">
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="saveMineralStdModelAsXML_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Save Mineral Standard Model as local XML file"/>
+                <Property name="text" type="java.lang.String" value="Export Mineral Standard Model as XML file"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="saveMineralStdModelAsXML_menuItemActionPerformed"/>
               </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JSeparator" name="jSeparator16">
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="removeMineralStdModel_menuItem">
               <Properties>
@@ -495,7 +531,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="editCurrentLocalMineralStandardModel_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Edit Current Mineral Standard Model (for editable models only)"/>
+                <Property name="text" type="java.lang.String" value="Edit current Mineral Standard Model (for editable models only)"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editCurrentLocalMineralStandardModel_menuItemActionPerformed"/>
@@ -652,7 +688,7 @@
                           <EmptySpace min="12" pref="12" max="-2" attributes="0"/>
                           <Component id="chooseTracer_label" min="-2" pref="147" max="-2" attributes="0"/>
                           <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
-                          <Component id="tracerModelChooser" min="-2" pref="400" max="-2" attributes="0"/>
+                          <Component id="tracerModelChooser" min="-2" pref="461" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -1128,22 +1164,23 @@
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
-                          <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
-                          <Component id="choosePbBlank_label" min="-2" pref="195" max="-2" attributes="0"/>
-                          <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
-                          <Component id="PbBlankChooser" min="-2" pref="408" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="choosePbBlank_label" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Component id="PbBlankChooser" min="-2" pref="461" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
-                          <EmptySpace min="12" pref="12" max="-2" attributes="0"/>
-                          <Component id="choosePbBlank_label" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <Group type="102" attributes="0">
                           <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
-                          <Component id="PbBlankChooser" min="-2" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="choosePbBlank_label" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="PbBlankChooser" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace min="-2" pref="584" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -1180,9 +1217,9 @@
                           <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
                           <Component id="chooseInitialPbModel_label" min="-2" pref="159" max="-2" attributes="0"/>
                           <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
-                          <Component id="InitialPbModelChooser" min="-2" pref="275" max="-2" attributes="0"/>
+                          <Component id="InitialPbModelChooser" min="-2" pref="461" max="-2" attributes="0"/>
                       </Group>
-                      <Component id="staceyKramerCalculator_Panel" min="-2" max="-2" attributes="0"/>
+                      <Component id="staceyKramerCalculator_Panel" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
                 <DimensionLayout dim="1">
@@ -1196,7 +1233,7 @@
                               </Group>
                               <Component id="InitialPbModelChooser" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace min="454" pref="454" max="-2" attributes="0"/>
+                          <EmptySpace pref="454" max="32767" attributes="0"/>
                           <Component id="staceyKramerCalculator_Panel" min="-2" pref="130" max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -1229,63 +1266,8 @@
                     </Property>
                   </Properties>
 
-                  <Layout>
-                    <DimensionLayout dim="0">
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace min="-2" pref="41" max="-2" attributes="0"/>
-                              <Component id="CalculatedModelInstructions_label1" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="physicalConstantsModelForInitialPbModel_Chooser" min="-2" pref="242" max="-2" attributes="0"/>
-                              <EmptySpace max="32767" attributes="0"/>
-                          </Group>
-                          <Group type="102" alignment="1" attributes="0">
-                              <EmptySpace pref="235" max="32767" attributes="0"/>
-                              <Group type="103" groupAlignment="1" attributes="0">
-                                  <Component id="CalculatedModelInstructions_label" alignment="1" min="-2" max="-2" attributes="0"/>
-                                  <Component id="relativeUncertainty_label" alignment="1" min="-2" max="-2" attributes="0"/>
-                                  <Component id="correlationCoefficients_label" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                                  <Component id="relativeUncertainty_text" alignment="0" max="32767" attributes="1"/>
-                                  <Component id="estimatedAgeInMA_text" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="correlationCoefficients_text" min="-2" pref="103" max="-2" attributes="1"/>
-                              </Group>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="refreshCalculations_JButton" min="-2" pref="298" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" pref="151" max="-2" attributes="0"/>
-                          </Group>
-                      </Group>
-                    </DimensionLayout>
-                    <DimensionLayout dim="1">
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="1" attributes="0">
-                              <EmptySpace max="32767" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="CalculatedModelInstructions_label" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="estimatedAgeInMA_text" alignment="3" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="relativeUncertainty_text" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="relativeUncertainty_label" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="refreshCalculations_JButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="correlationCoefficients_text" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="correlationCoefficients_label" alignment="3" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="CalculatedModelInstructions_label1" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="physicalConstantsModelForInitialPbModel_Chooser" alignment="3" min="-2" pref="27" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
-                          </Group>
-                      </Group>
-                    </DimensionLayout>
+                  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
+                    <Property name="useNullLayout" type="boolean" value="false"/>
                   </Layout>
                   <SubComponents>
                     <Component class="javax.swing.JLabel" name="CalculatedModelInstructions_label">
@@ -1295,6 +1277,11 @@
                         </Property>
                         <Property name="text" type="java.lang.String" value="Enter Stacey-Kramers age in Ma:"/>
                       </Properties>
+                      <Constraints>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                          <AbsoluteConstraints x="341" y="14" width="-1" height="-1"/>
+                        </Constraint>
+                      </Constraints>
                     </Component>
                     <Component class="javax.swing.JTextField" name="estimatedAgeInMA_text">
                       <Properties>
@@ -1310,6 +1297,11 @@
                           <Dimension value="[36, 19]"/>
                         </Property>
                       </Properties>
+                      <Constraints>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                          <AbsoluteConstraints x="533" y="12" width="103" height="-1"/>
+                        </Constraint>
+                      </Constraints>
                     </Component>
                     <Component class="javax.swing.JButton" name="refreshCalculations_JButton">
                       <Properties>
@@ -1327,6 +1319,11 @@
                       <AuxValues>
                         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value=" new ET_JButton(&quot;Update Model&quot;);"/>
                       </AuxValues>
+                      <Constraints>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                          <AbsoluteConstraints x="642" y="10" width="298" height="85"/>
+                        </Constraint>
+                      </Constraints>
                     </Component>
                     <Component class="javax.swing.JLabel" name="CalculatedModelInstructions_label1">
                       <Properties>
@@ -1335,11 +1332,21 @@
                         </Property>
                         <Property name="text" type="java.lang.String" value="Select Physical Constants Model (default is shown):"/>
                       </Properties>
+                      <Constraints>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                          <AbsoluteConstraints x="42" y="108" width="-1" height="-1"/>
+                        </Constraint>
+                      </Constraints>
                     </Component>
                     <Component class="javax.swing.JComboBox" name="physicalConstantsModelForInitialPbModel_Chooser">
                       <AuxValues>
                         <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
                       </AuxValues>
+                      <Constraints>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                          <AbsoluteConstraints x="337" y="102" width="461" height="-1"/>
+                        </Constraint>
+                      </Constraints>
                     </Component>
                     <Component class="javax.swing.JLabel" name="relativeUncertainty_label">
                       <Properties>
@@ -1349,6 +1356,11 @@
                         <Property name="horizontalAlignment" type="int" value="11"/>
                         <Property name="text" type="java.lang.String" value="relative uncertainty for IC (1-sigma pct):"/>
                       </Properties>
+                      <Constraints>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                          <AbsoluteConstraints x="299" y="45" width="-1" height="-1"/>
+                        </Constraint>
+                      </Constraints>
                     </Component>
                     <Component class="javax.swing.JTextField" name="relativeUncertainty_text">
                       <Properties>
@@ -1358,6 +1370,11 @@
                         <Property name="horizontalAlignment" type="int" value="4"/>
                         <Property name="text" type="java.lang.String" value="0"/>
                       </Properties>
+                      <Constraints>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                          <AbsoluteConstraints x="533" y="41" width="103" height="-1"/>
+                        </Constraint>
+                      </Constraints>
                     </Component>
                     <Component class="javax.swing.JLabel" name="correlationCoefficients_label">
                       <Properties>
@@ -1367,6 +1384,11 @@
                         <Property name="horizontalAlignment" type="int" value="11"/>
                         <Property name="text" type="java.lang.String" value="correlation coefficients for IC [-1.0,1.0]:"/>
                       </Properties>
+                      <Constraints>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                          <AbsoluteConstraints x="304" y="76" width="-1" height="-1"/>
+                        </Constraint>
+                      </Constraints>
                     </Component>
                     <Component class="javax.swing.JTextField" name="correlationCoefficients_text">
                       <Properties>
@@ -1376,6 +1398,11 @@
                         <Property name="horizontalAlignment" type="int" value="4"/>
                         <Property name="text" type="java.lang.String" value="0"/>
                       </Properties>
+                      <Constraints>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                          <AbsoluteConstraints x="533" y="72" width="103" height="-1"/>
+                        </Constraint>
+                      </Constraints>
                     </Component>
                   </SubComponents>
                 </Container>
@@ -1397,7 +1424,7 @@
                           <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
                           <Component id="choosePhysicalConstants_label" min="-2" pref="203" max="-2" attributes="0"/>
                           <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
-                          <Component id="physicalConstantsModel_Chooser" min="-2" pref="425" max="-2" attributes="0"/>
+                          <Component id="physicalConstantsModel_Chooser" min="-2" pref="461" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>

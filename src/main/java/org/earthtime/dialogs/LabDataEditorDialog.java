@@ -36,8 +36,6 @@ import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.help.CSH;
-import javax.help.DefaultHelpBroker;
-import javax.help.HelpBroker;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -53,7 +51,7 @@ import javax.swing.filechooser.FileFilter;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.filters.XMLFileFilter;
-import org.earthtime.UPb_Redux.utilities.JHelpAction;
+import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
 import org.earthtime.beans.ET_JButton;
@@ -1302,20 +1300,24 @@ public class LabDataEditorDialog extends DialogEditor {
     private void editNewEmptyPbBlankModel()
             throws BadLabDataException {
         newEmptyPbBlankModel = PbBlankICModel.createNewInstance();
-        PbBlankChooser.setSelectedIndex(-1);
         PbBlankChooser.setEnabled(false);
 
         populatePbBlankModelFields(newEmptyPbBlankModel, true);
     }
 
-    private void editCopyOfCurrentPbBlankModel()
+    /**
+     *
+     * @param doAppendName the value of doAppendName
+     * @throws BadLabDataException
+     */
+    private void editCopyOfCurrentPbBlankModel(boolean doAppendName)
             throws BadLabDataException {
 
         try {
             currentEditablePbBlankModel = myLabData.getAPbBlankModel(
-                    (String) PbBlankChooser.getSelectedItem()).copyModel(true);
+                    (String) PbBlankChooser.getSelectedItem()).copyModel(doAppendName);
+            currentEditablePbBlankModel.setImmutable(false);
 
-            PbBlankChooser.setSelectedIndex(-1);
             PbBlankChooser.setEnabled(false);
 
             newEmptyPbBlankModel = currentEditablePbBlankModel;
@@ -1324,7 +1326,6 @@ public class LabDataEditorDialog extends DialogEditor {
         } catch (BadLabDataException ex) {
             new ETWarningDialog(ex).setVisible(true);
         }
-
     }
 
     private synchronized boolean checkIsSavedStatusOfPbBlankModelEdit()
@@ -1350,13 +1351,9 @@ public class LabDataEditorDialog extends DialogEditor {
     private void cancelNewPbBlankEdit()
             throws BadLabDataException {
         newEmptyPbBlankModel = null;
+        populatePbBlankModelFields(myLabData.getAPbBlankModel(
+                (String) PbBlankChooser.getSelectedItem()), false);
         PbBlankChooser.setEnabled(true);
-
-        try {
-            initPbBlankModelChooser();
-        } catch (BadLabDataException ex) {
-            new ETWarningDialog(ex).setVisible(true);
-        }
     }
 
     private synchronized void registerPbBlankModel(final AbstractRatiosDataModel pbBlankModel)
@@ -1382,20 +1379,18 @@ public class LabDataEditorDialog extends DialogEditor {
             throws BadLabDataException, ETException {
         File selectedFile = null;
 
-        // identify PbBlankModel for export
-        if (newEmptyPbBlankModel == null) {
-            // we are exporting an existing PbBlankModel
-            newEmptyPbBlankModel = myLabData.getAPbBlankModel((String) PbBlankChooser.getSelectedItem());
-        } else {
-            pbBlankModelView.saveAndUpdateModelView(true);
-        }
+        // Nov 2015
+        AbstractRatiosDataModel selectedModel
+                =//
+                myLabData.getAPbBlankModel(
+                        (String) PbBlankChooser.getSelectedItem());
 
         setAlwaysOnTop(false);
 
         String dialogTitle = "Save this Pb Blank as xml: *.xml";
         final String fileExtension = ".xml";
         String pbBlankFileName
-                = newEmptyPbBlankModel.getReduxLabDataElementName() + fileExtension;
+                = selectedModel.getReduxLabDataElementName() + fileExtension;
         FileFilter nonMacFileFilter = new XMLFileFilter();
 
         selectedFile = FileHelper.AllPlatformSaveAs(
@@ -1404,21 +1399,13 @@ public class LabDataEditorDialog extends DialogEditor {
         if (selectedFile != null) {
             try {
                 // export
-                newEmptyPbBlankModel.serializeXMLObject(selectedFile.getCanonicalPath());
-
-                if (newEmptyPbBlankModel != null) {
-                    // Feb 2008 now per Noah automatically import it as well
-                    cancelNewPbBlankEdit();
-                    readAndRegisterPbBlankModel(selectedFile);
-                }
-
+                selectedModel.serializeXMLObject(selectedFile.getCanonicalPath());
             } catch (IOException ex) {
             }
         }
 
         setAlwaysOnTop(true);
         return (selectedFile != null);
-
     }
 
     private synchronized void importLocalPbBlankModel()
@@ -1442,7 +1429,7 @@ public class LabDataEditorDialog extends DialogEditor {
     }
 
     private synchronized void readAndRegisterPbBlankModel(File returnFile) {
-        AbstractRatiosDataModel tempBlank = PbBlankICModel.createNewInstance();
+        AbstractRatiosDataModel tempBlank = PbBlankICModel.getNoneInstance();
 
         try {
             tempBlank = tempBlank.readXMLObject(returnFile.getCanonicalPath(), true);
@@ -1451,10 +1438,16 @@ public class LabDataEditorDialog extends DialogEditor {
                 new ETWarningDialog((ETException) ex).setVisible(true);
             }
 
-            returnFile = null;
+            tempBlank = null;
         }
 
-        if (tempBlank != null) {
+        // Nov 2015 type checking
+        boolean proceed = (tempBlank != null);
+        if (proceed) {
+            proceed = proceed && (tempBlank instanceof PbBlankICModel);
+        }
+
+        if (proceed) {
             try {
                 registerPbBlankModel(tempBlank);
             } catch (BadLabDataException ex) {
@@ -1463,11 +1456,23 @@ public class LabDataEditorDialog extends DialogEditor {
         } else {
             JOptionPane.showConfirmDialog(
                     null,
-                    new String[]{"This PbBlank Model could not be imported...please confirm it conforms to the schema."},
+                    new String[]{"This Pb Blank IC Model could not be imported...please confirm it conforms to the schema."},
                     "ET Redux Warning",
                     JOptionPane.WARNING_MESSAGE);
         }
 
+    }
+
+    private void saveAndRegisterCurrentEditOfPbBlankModel()
+            throws BadLabDataException, ETException {
+        setAlwaysOnTop(false);
+        pbBlankModelView.saveAndUpdateModelView(true);
+        myLabData.registerPbBlank(newEmptyPbBlankModel, true);
+        savedPbBlankModelName = newEmptyPbBlankModel.getNameAndVersion();
+        initPbBlankModelChooser();
+        PbBlankChooser.setEnabled(true);
+        newEmptyPbBlankModel = null;
+        setAlwaysOnTop(true);
     }
 
     // Initial Pb Models tab ***************************************************
@@ -1628,18 +1633,23 @@ public class LabDataEditorDialog extends DialogEditor {
     private void editNewEmptyInitialPbModel()
             throws BadLabDataException {
         newEmptyInitialPbModel = InitialPbModelET.createNewInstance();
-        InitialPbModelChooser.setSelectedIndex(-1);
         InitialPbModelChooser.setEnabled(false);
         populateInitialPbModelFields(newEmptyInitialPbModel, true);
     }
 
-    private void editCopyOfCurrentInitialPbModel()
+    /**
+     *
+     * @param doAppendName the value of doAppendName
+     * @throws BadLabDataException
+     */
+    private void editCopyOfCurrentInitialPbModel(boolean doAppendName)
             throws BadLabDataException {
 
         try {
-            currentEditableInitialPbModel = myLabData.getAnInitialPbModel((String) InitialPbModelChooser.getSelectedItem()).copyModel(true);
+            currentEditableInitialPbModel = myLabData.getAnInitialPbModel(
+                    (String) InitialPbModelChooser.getSelectedItem()).copyModel(doAppendName);
+            currentEditableInitialPbModel.setImmutable(false);
 
-            InitialPbModelChooser.setSelectedIndex(-1);
             InitialPbModelChooser.setEnabled(false);
 
             newEmptyInitialPbModel = currentEditableInitialPbModel;
@@ -1672,12 +1682,9 @@ public class LabDataEditorDialog extends DialogEditor {
     private void cancelNewInitialPbModelEdit()
             throws BadLabDataException {
         newEmptyInitialPbModel = null;
+        populateInitialPbModelFields(myLabData.getAnInitialPbModel(
+                (String) InitialPbModelChooser.getSelectedItem()), false);
         InitialPbModelChooser.setEnabled(true);
-        try {
-            initInitialPbModelChooser();
-        } catch (BadLabDataException ex) {
-            new ETWarningDialog(ex).setVisible(true);
-        }
     }
 
     private synchronized void registerInitialPbModel(final AbstractRatiosDataModel tempInitialPbModel)
@@ -1699,32 +1706,27 @@ public class LabDataEditorDialog extends DialogEditor {
             throws BadLabDataException, ETException {
         File selectedFile;
 
-        // identify InitialPbModel for export
-        if (newEmptyInitialPbModel == null) {
-            // we are exporting an existing InitialPbModel
-            newEmptyInitialPbModel
-                    = myLabData.getAnInitialPbModel((String) InitialPbModelChooser.getSelectedItem());
-        } else {
-            // we are exporting the new InitialPbModel under edit
-            // first save InitialPbModel data from screen
-            initialPbModelView.saveAndUpdateModelView(true);
+        // Nov 2015
+        AbstractRatiosDataModel selectedModel
+                =//
+                myLabData.getAnInitialPbModel(
+                        (String) InitialPbModelChooser.getSelectedItem());
 
-            // convert StaceyKramers to regular
-            if (newEmptyInitialPbModel instanceof StaceyKramersInitialPbModelET) {
-                AbstractRatiosDataModel convertedInitialPbModel
-                        = //
-                        InitialPbModelET.createInstance(//
-                                newEmptyInitialPbModel.getModelName(),//
-                                newEmptyInitialPbModel.getVersionNumber(),//
-                                newEmptyInitialPbModel.getMinorVersionNumber(),//
-                                newEmptyInitialPbModel.getLabName(),//
-                                newEmptyInitialPbModel.getDateCertified(),//
-                                newEmptyInitialPbModel.getReference(),//
-                                newEmptyInitialPbModel.getComment(),//
-                                newEmptyInitialPbModel.getData(), newEmptyInitialPbModel.getRhosVarUnct());
+        // convert StaceyKramers to regular
+        if (newEmptyInitialPbModel instanceof StaceyKramersInitialPbModelET) {
+            AbstractRatiosDataModel convertedInitialPbModel
+                    = //
+                    InitialPbModelET.createInstance(//
+                            newEmptyInitialPbModel.getModelName(),//
+                            newEmptyInitialPbModel.getVersionNumber(),//
+                            newEmptyInitialPbModel.getMinorVersionNumber(),//
+                            newEmptyInitialPbModel.getLabName(),//
+                            newEmptyInitialPbModel.getDateCertified(),//
+                            newEmptyInitialPbModel.getReference(),//
+                            newEmptyInitialPbModel.getComment(),//
+                            newEmptyInitialPbModel.getData(), newEmptyInitialPbModel.getRhosVarUnct());
 
-                newEmptyInitialPbModel = convertedInitialPbModel;
-            }
+            selectedModel = convertedInitialPbModel;
         }
 
         setAlwaysOnTop(false);
@@ -1732,7 +1734,7 @@ public class LabDataEditorDialog extends DialogEditor {
         String dialogTitle = "Save this InitialPbModel as xml: *.xml";
         final String fileExtension = ".xml";
         String initialPbModelFileName
-                = newEmptyInitialPbModel.getReduxLabDataElementName() + fileExtension;
+                = selectedModel.getReduxLabDataElementName() + fileExtension;
         FileFilter nonMacFileFilter = new XMLFileFilter();
 
         selectedFile = FileHelper.AllPlatformSaveAs(
@@ -1741,15 +1743,8 @@ public class LabDataEditorDialog extends DialogEditor {
         if (selectedFile != null) {
             try {
                 // export
-                newEmptyInitialPbModel.serializeXMLObject(selectedFile.getCanonicalPath());
-
-                if (newEmptyInitialPbModel != null) {
-                    // Feb 2008 now per Noah automatically import it as well
-                    cancelNewInitialPbModelEdit();
-                    readAndRegisterInitialPbModel(selectedFile);
-                }
+                selectedModel.serializeXMLObject(selectedFile.getCanonicalPath());
             } catch (IOException ex) {
-                ex.printStackTrace();
             }
         }
 
@@ -1790,7 +1785,13 @@ public class LabDataEditorDialog extends DialogEditor {
             initialPbModel = null;
         }
 
-        if (initialPbModel != null) {
+        // Nov 2015 type checking
+        boolean proceed = (initialPbModel != null);
+        if (proceed) {
+            proceed = proceed && (initialPbModel instanceof InitialPbModelET);
+        }
+
+        if (proceed) {
             try {
                 registerInitialPbModel(initialPbModel);
             } catch (BadLabDataException ex) {
@@ -1803,6 +1804,18 @@ public class LabDataEditorDialog extends DialogEditor {
                     "ET Redux Warning",
                     JOptionPane.WARNING_MESSAGE);
         }
+    }
+
+    private void saveAndRegisterCurrentEditOfInitialPbModel()
+            throws BadLabDataException, ETException {
+        setAlwaysOnTop(false);
+        initialPbModelView.saveAndUpdateModelView(true);
+        myLabData.registerInitialPbModel(newEmptyInitialPbModel, true);
+        savedInitialPbModelName = newEmptyInitialPbModel.getNameAndVersion();
+        initInitialPbModelChooser();
+        InitialPbModelChooser.setEnabled(true);
+        newEmptyInitialPbModel = null;
+        setAlwaysOnTop(true);
     }
 
     // PhysicalConstantsModel tab **********************************************
@@ -3041,9 +3054,9 @@ public class LabDataEditorDialog extends DialogEditor {
         closeDialog_menuItem = new javax.swing.JMenuItem();
         tracers_menu = new javax.swing.JMenu();
         earthTimeTracerImport_menuItem = new javax.swing.JMenuItem();
-        localTracerImport_menuItem = new javax.swing.JMenuItem();
-        jSeparator1 = new javax.swing.JSeparator();
+        importTracerXML_menuItem = new javax.swing.JMenuItem();
         saveTracerAsXML_menuItem = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JSeparator();
         removeTracer_menuItem = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JSeparator();
         editCurrentLocalTracerModel_menuItem = new javax.swing.JMenuItem();
@@ -3055,9 +3068,9 @@ public class LabDataEditorDialog extends DialogEditor {
         fractionation_menu = new javax.swing.JMenu();
         localAlphaUImportXML_menuItem = new javax.swing.JMenuItem();
         localAlphaUImportXML_menuItem.setBackground(ReduxConstants.ColorOfUranium);
-        jSeparator8 = new javax.swing.JSeparator();
         saveAlphaUasLocalXML_menuItem = new javax.swing.JMenuItem();
         saveAlphaUasLocalXML_menuItem.setBackground(ReduxConstants.ColorOfUranium);
+        jSeparator8 = new javax.swing.JSeparator();
         removeAlphaU_menuItem = new javax.swing.JMenuItem();
         removeAlphaU_menuItem.setBackground(ReduxConstants.ColorOfUranium);
         jSeparator9 = new javax.swing.JSeparator();
@@ -3069,9 +3082,9 @@ public class LabDataEditorDialog extends DialogEditor {
         jSeparator13 = new javax.swing.JSeparator();
         localAlphaPbImportXML_menuItem = new javax.swing.JMenuItem();
         localAlphaPbImportXML_menuItem.setBackground(ReduxConstants.ColorOfLead);
-        jSeparator11 = new javax.swing.JSeparator();
         saveAlphaPbasLocalXML_menuItem = new javax.swing.JMenuItem();
         saveAlphaPbasLocalXML_menuItem.setBackground(ReduxConstants.ColorOfLead);
+        jSeparator11 = new javax.swing.JSeparator();
         removeAlphaPb_menuItem = new javax.swing.JMenuItem();
         removeAlphaPb_menuItem.setBackground(ReduxConstants.ColorOfLead);
         jSeparator12 = new javax.swing.JSeparator();
@@ -3080,27 +3093,33 @@ public class LabDataEditorDialog extends DialogEditor {
         cancelEditAlphaPb_menuItem = new javax.swing.JMenuItem();
         cancelEditAlphaPb_menuItem.setBackground(ReduxConstants.ColorOfLead);
         PbBlanks_menu = new javax.swing.JMenu();
-        localPbBlankImport_menuItem = new javax.swing.JMenuItem();
-        jSeparator3 = new javax.swing.JSeparator();
+        importPbBlankXML_menuItem = new javax.swing.JMenuItem();
         savePbBlankAsXML_menuItem = new javax.swing.JMenuItem();
+        jSeparator3 = new javax.swing.JSeparator();
         removePbBlank_menuItem = new javax.swing.JMenuItem();
         jSeparator4 = new javax.swing.JSeparator();
+        editCurrentLocalPbBlankICModel_menuItem = new javax.swing.JMenuItem();
         editCopyOfCurrentPbBlank_menuItem = new javax.swing.JMenuItem();
         newPbBlankMode_menuItem = new javax.swing.JMenuItem();
         cancelNewEditBlank_menuItem = new javax.swing.JMenuItem();
+        jSeparator22 = new javax.swing.JPopupMenu.Separator();
+        saveAndRegisterCurrentEditOfPbBlankICModel_menuItem = new javax.swing.JMenuItem();
         initialPbModels_menu = new javax.swing.JMenu();
-        localInitialPbModelImport_menuItem = new javax.swing.JMenuItem();
-        jSeparator5 = new javax.swing.JSeparator();
+        importInitialPbModelXML_menuItem = new javax.swing.JMenuItem();
         saveInitialPbModelAsXML_menuItem = new javax.swing.JMenuItem();
+        jSeparator5 = new javax.swing.JSeparator();
         removeInitialPbModel_menuItem = new javax.swing.JMenuItem();
         jSeparator6 = new javax.swing.JSeparator();
+        editCurrentLocalInitialPbModel_menuItem = new javax.swing.JMenuItem();
         editCopyOfCurrentInitialPbModel_menuItem = new javax.swing.JMenuItem();
         newInitialPbModelMode_menuItem = new javax.swing.JMenuItem();
         cancelNewEditInitialPbModel_menuItem = new javax.swing.JMenuItem();
+        jSeparator21 = new javax.swing.JPopupMenu.Separator();
+        saveAndRegisterCurrentEditOfInitialPbModel_menuItem = new javax.swing.JMenuItem();
         physicalConstantsModels_menu = new javax.swing.JMenu();
-        localPhysicalConstantsModelImport_menuItem = new javax.swing.JMenuItem();
-        jSeparator14 = new javax.swing.JSeparator();
+        ImportPhysicalConstantsModelXML_menuItem = new javax.swing.JMenuItem();
         savePhysicalConstantsModelAsXML_menuItem = new javax.swing.JMenuItem();
+        jSeparator14 = new javax.swing.JSeparator();
         removePhysicalConstantsModel_menuItem = new javax.swing.JMenuItem();
         jSeparator15 = new javax.swing.JSeparator();
         editCurrentLocalPhysicalConstantsModel_menuItem = new javax.swing.JMenuItem();
@@ -3110,9 +3129,9 @@ public class LabDataEditorDialog extends DialogEditor {
         jSeparator20 = new javax.swing.JPopupMenu.Separator();
         saveAndRegisterCurrentEditOfPhysicalConstantsModel_menuItem = new javax.swing.JMenuItem();
         MineralStdModels_menu = new javax.swing.JMenu();
-        localMineralStdModelImport_menuItem = new javax.swing.JMenuItem();
-        jSeparator16 = new javax.swing.JSeparator();
+        importLocalMineralStdModelXML_menuItem = new javax.swing.JMenuItem();
         saveMineralStdModelAsXML_menuItem = new javax.swing.JMenuItem();
+        jSeparator16 = new javax.swing.JSeparator();
         removeMineralStdModel_menuItem = new javax.swing.JMenuItem();
         jSeparator17 = new javax.swing.JSeparator();
         editCurrentLocalMineralStandardModel_menuItem = new javax.swing.JMenuItem();
@@ -3153,7 +3172,7 @@ public class LabDataEditorDialog extends DialogEditor {
                 .add(12, 12, 12)
                 .add(chooseTracer_label, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 147, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(6, 6, 6)
-                .add(tracerModelChooser, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 400, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(tracerModelChooser, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 461, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
         tracersTab_panelLayout.setVerticalGroup(
             tracersTab_panelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -3412,19 +3431,20 @@ public class LabDataEditorDialog extends DialogEditor {
         PbBlankICsTab_panelLayout.setHorizontalGroup(
             PbBlankICsTab_panelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(PbBlankICsTab_panelLayout.createSequentialGroup()
-                .add(6, 6, 6)
-                .add(choosePbBlank_label, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 195, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(6, 6, 6)
-                .add(PbBlankChooser, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 408, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap()
+                .add(choosePbBlank_label)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(PbBlankChooser, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 461, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         PbBlankICsTab_panelLayout.setVerticalGroup(
             PbBlankICsTab_panelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(PbBlankICsTab_panelLayout.createSequentialGroup()
-                .add(12, 12, 12)
-                .add(choosePbBlank_label))
-            .add(PbBlankICsTab_panelLayout.createSequentialGroup()
                 .add(6, 6, 6)
-                .add(PbBlankChooser, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(PbBlankICsTab_panelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(choosePbBlank_label)
+                    .add(PbBlankChooser, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(584, 584, 584))
         );
 
         details_pane.addTab("Pb Blank IC Models", PbBlankICsTab_panel);
@@ -3435,15 +3455,18 @@ public class LabDataEditorDialog extends DialogEditor {
 
         staceyKramerCalculator_Panel.setBackground(new java.awt.Color(220, 255, 235));
         staceyKramerCalculator_Panel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        staceyKramerCalculator_Panel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         CalculatedModelInstructions_label.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         CalculatedModelInstructions_label.setText("Enter Stacey-Kramers age in Ma:");
+        staceyKramerCalculator_Panel.add(CalculatedModelInstructions_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(341, 14, -1, -1));
 
         estimatedAgeInMA_text.setFont(new java.awt.Font("Courier New", 1, 12)); // NOI18N
         estimatedAgeInMA_text.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         estimatedAgeInMA_text.setText("0");
         estimatedAgeInMA_text.setMinimumSize(new java.awt.Dimension(36, 19));
         estimatedAgeInMA_text.setPreferredSize(new java.awt.Dimension(36, 19));
+        staceyKramerCalculator_Panel.add(estimatedAgeInMA_text, new org.netbeans.lib.awtextra.AbsoluteConstraints(533, 12, 103, -1));
 
         refreshCalculations_JButton.setFont(new java.awt.Font("Tahoma", 3, 14)); // NOI18N
         refreshCalculations_JButton.setForeground(new java.awt.Color(153, 0, 0));
@@ -3453,73 +3476,32 @@ public class LabDataEditorDialog extends DialogEditor {
                 refreshCalculations_JButtonActionPerformed(evt);
             }
         });
+        staceyKramerCalculator_Panel.add(refreshCalculations_JButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(642, 10, 298, 85));
 
         CalculatedModelInstructions_label1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         CalculatedModelInstructions_label1.setText("Select Physical Constants Model (default is shown):");
+        staceyKramerCalculator_Panel.add(CalculatedModelInstructions_label1, new org.netbeans.lib.awtextra.AbsoluteConstraints(42, 108, -1, -1));
+        staceyKramerCalculator_Panel.add(physicalConstantsModelForInitialPbModel_Chooser, new org.netbeans.lib.awtextra.AbsoluteConstraints(337, 102, 461, -1));
 
         relativeUncertainty_label.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         relativeUncertainty_label.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
         relativeUncertainty_label.setText("relative uncertainty for IC (1-sigma pct):");
+        staceyKramerCalculator_Panel.add(relativeUncertainty_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(299, 45, -1, -1));
 
         relativeUncertainty_text.setFont(new java.awt.Font("Courier New", 1, 12)); // NOI18N
         relativeUncertainty_text.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         relativeUncertainty_text.setText("0");
+        staceyKramerCalculator_Panel.add(relativeUncertainty_text, new org.netbeans.lib.awtextra.AbsoluteConstraints(533, 41, 103, -1));
 
         correlationCoefficients_label.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         correlationCoefficients_label.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
         correlationCoefficients_label.setText("correlation coefficients for IC [-1.0,1.0]:");
+        staceyKramerCalculator_Panel.add(correlationCoefficients_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(304, 76, -1, -1));
 
         correlationCoefficients_text.setFont(new java.awt.Font("Courier New", 1, 12)); // NOI18N
         correlationCoefficients_text.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         correlationCoefficients_text.setText("0");
-
-        org.jdesktop.layout.GroupLayout staceyKramerCalculator_PanelLayout = new org.jdesktop.layout.GroupLayout(staceyKramerCalculator_Panel);
-        staceyKramerCalculator_Panel.setLayout(staceyKramerCalculator_PanelLayout);
-        staceyKramerCalculator_PanelLayout.setHorizontalGroup(
-            staceyKramerCalculator_PanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(staceyKramerCalculator_PanelLayout.createSequentialGroup()
-                .add(41, 41, 41)
-                .add(CalculatedModelInstructions_label1)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(physicalConstantsModelForInitialPbModel_Chooser, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 242, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, staceyKramerCalculator_PanelLayout.createSequentialGroup()
-                .addContainerGap(235, Short.MAX_VALUE)
-                .add(staceyKramerCalculator_PanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(CalculatedModelInstructions_label)
-                    .add(relativeUncertainty_label)
-                    .add(correlationCoefficients_label))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(staceyKramerCalculator_PanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, relativeUncertainty_text)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, estimatedAgeInMA_text, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(correlationCoefficients_text, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 103, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(refreshCalculations_JButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 298, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(151, 151, 151))
-        );
-        staceyKramerCalculator_PanelLayout.setVerticalGroup(
-            staceyKramerCalculator_PanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, staceyKramerCalculator_PanelLayout.createSequentialGroup()
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .add(staceyKramerCalculator_PanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(CalculatedModelInstructions_label)
-                    .add(estimatedAgeInMA_text, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(staceyKramerCalculator_PanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(relativeUncertainty_text, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(relativeUncertainty_label)
-                    .add(refreshCalculations_JButton))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(staceyKramerCalculator_PanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(correlationCoefficients_text, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(correlationCoefficients_label))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(staceyKramerCalculator_PanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(CalculatedModelInstructions_label1)
-                    .add(physicalConstantsModelForInitialPbModel_Chooser, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 27, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(20, 20, 20))
-        );
+        staceyKramerCalculator_Panel.add(correlationCoefficients_text, new org.netbeans.lib.awtextra.AbsoluteConstraints(533, 72, 103, -1));
 
         org.jdesktop.layout.GroupLayout initialPbModelsTab_panelLayout = new org.jdesktop.layout.GroupLayout(initialPbModelsTab_panel);
         initialPbModelsTab_panel.setLayout(initialPbModelsTab_panelLayout);
@@ -3529,8 +3511,8 @@ public class LabDataEditorDialog extends DialogEditor {
                 .add(6, 6, 6)
                 .add(chooseInitialPbModel_label, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 159, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(6, 6, 6)
-                .add(InitialPbModelChooser, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 275, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-            .add(staceyKramerCalculator_Panel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(InitialPbModelChooser, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 461, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+            .add(staceyKramerCalculator_Panel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         initialPbModelsTab_panelLayout.setVerticalGroup(
             initialPbModelsTab_panelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -3541,7 +3523,7 @@ public class LabDataEditorDialog extends DialogEditor {
                         .add(6, 6, 6)
                         .add(chooseInitialPbModel_label))
                     .add(InitialPbModelChooser, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(454, 454, 454)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 454, Short.MAX_VALUE)
                 .add(staceyKramerCalculator_Panel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 130, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
 
@@ -3558,7 +3540,7 @@ public class LabDataEditorDialog extends DialogEditor {
                 .add(6, 6, 6)
                 .add(choosePhysicalConstants_label, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 203, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(6, 6, 6)
-                .add(physicalConstantsModel_Chooser, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 425, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(physicalConstantsModel_Chooser, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 461, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
         physicalConstantsModels_panelLayout.setVerticalGroup(
             physicalConstantsModels_panelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -4360,22 +4342,22 @@ public class LabDataEditorDialog extends DialogEditor {
         });
         tracers_menu.add(earthTimeTracerImport_menuItem);
 
-        localTracerImport_menuItem.setText("Import Tracer Model from local file");
-        localTracerImport_menuItem.addActionListener(new java.awt.event.ActionListener() {
+        importTracerXML_menuItem.setText("Import Tracer Model from file");
+        importTracerXML_menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                localTracerImport_menuItemActionPerformed(evt);
+                importTracerXML_menuItemActionPerformed(evt);
             }
         });
-        tracers_menu.add(localTracerImport_menuItem);
-        tracers_menu.add(jSeparator1);
+        tracers_menu.add(importTracerXML_menuItem);
 
-        saveTracerAsXML_menuItem.setText("Save current Tracer Model as local XML file");
+        saveTracerAsXML_menuItem.setText("Export current Tracer Model as XML file");
         saveTracerAsXML_menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 saveTracerAsXML_menuItemActionPerformed(evt);
             }
         });
         tracers_menu.add(saveTracerAsXML_menuItem);
+        tracers_menu.add(jSeparator1);
 
         removeTracer_menuItem.setText("Remove current Tracer Model (for editable models only)");
         removeTracer_menuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -4445,22 +4427,22 @@ public class LabDataEditorDialog extends DialogEditor {
             }
         });
 
-        localAlphaUImportXML_menuItem.setText("Import AlphaU Model from local XML file");
+        localAlphaUImportXML_menuItem.setText("Import AlphaU Model from XML file");
         localAlphaUImportXML_menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 localAlphaUImportXML_menuItemActionPerformed(evt);
             }
         });
         fractionation_menu.add(localAlphaUImportXML_menuItem);
-        fractionation_menu.add(jSeparator8);
 
-        saveAlphaUasLocalXML_menuItem.setText("Save AlphaU Model as local XML file");
+        saveAlphaUasLocalXML_menuItem.setText("Export AlphaU Model as XML file");
         saveAlphaUasLocalXML_menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 saveAlphaUasLocalXML_menuItemActionPerformed(evt);
             }
         });
         fractionation_menu.add(saveAlphaUasLocalXML_menuItem);
+        fractionation_menu.add(jSeparator8);
 
         removeAlphaU_menuItem.setText("Remove Alpha U from Lab Data");
         removeAlphaU_menuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -4491,7 +4473,7 @@ public class LabDataEditorDialog extends DialogEditor {
         fractionation_menu.add(jSeparator10);
         fractionation_menu.add(jSeparator13);
 
-        localAlphaPbImportXML_menuItem.setText("Import AlphaPb Model from local XML file");
+        localAlphaPbImportXML_menuItem.setText("Import AlphaPb Model from XML file");
         localAlphaPbImportXML_menuItem.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
         localAlphaPbImportXML_menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -4499,9 +4481,8 @@ public class LabDataEditorDialog extends DialogEditor {
             }
         });
         fractionation_menu.add(localAlphaPbImportXML_menuItem);
-        fractionation_menu.add(jSeparator11);
 
-        saveAlphaPbasLocalXML_menuItem.setText("Save AlphaPb Model as local XML file");
+        saveAlphaPbasLocalXML_menuItem.setText("Export AlphaPb Model as XML file");
         saveAlphaPbasLocalXML_menuItem.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
         saveAlphaPbasLocalXML_menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -4509,6 +4490,7 @@ public class LabDataEditorDialog extends DialogEditor {
             }
         });
         fractionation_menu.add(saveAlphaPbasLocalXML_menuItem);
+        fractionation_menu.add(jSeparator11);
 
         removeAlphaPb_menuItem.setText("Remove AlphaPb Model from Lab Data");
         removeAlphaPb_menuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -4548,24 +4530,24 @@ public class LabDataEditorDialog extends DialogEditor {
             }
         });
 
-        localPbBlankImport_menuItem.setText("Import Pb Blank from local XML file");
-        localPbBlankImport_menuItem.addActionListener(new java.awt.event.ActionListener() {
+        importPbBlankXML_menuItem.setText("Import Pb Blank from XML file");
+        importPbBlankXML_menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                localPbBlankImport_menuItemActionPerformed(evt);
+                importPbBlankXML_menuItemActionPerformed(evt);
             }
         });
-        PbBlanks_menu.add(localPbBlankImport_menuItem);
-        PbBlanks_menu.add(jSeparator3);
+        PbBlanks_menu.add(importPbBlankXML_menuItem);
 
-        savePbBlankAsXML_menuItem.setText("Save current Pb Blank as XML file");
+        savePbBlankAsXML_menuItem.setText("Export current Pb Blank as XML file");
         savePbBlankAsXML_menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 savePbBlankAsXML_menuItemActionPerformed(evt);
             }
         });
         PbBlanks_menu.add(savePbBlankAsXML_menuItem);
+        PbBlanks_menu.add(jSeparator3);
 
-        removePbBlank_menuItem.setText("Remove current Pb Blank from Lab Data");
+        removePbBlank_menuItem.setText("Remove current Pb Blank from Lab Data (for editable models only)");
         removePbBlank_menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 removePbBlank_menuItemActionPerformed(evt);
@@ -4574,7 +4556,15 @@ public class LabDataEditorDialog extends DialogEditor {
         PbBlanks_menu.add(removePbBlank_menuItem);
         PbBlanks_menu.add(jSeparator4);
 
-        editCopyOfCurrentPbBlank_menuItem.setText("Edit copy of current Pb Blank");
+        editCurrentLocalPbBlankICModel_menuItem.setText("Edit current Pb Blank IC Model (for editable models only)");
+        editCurrentLocalPbBlankICModel_menuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editCurrentLocalPbBlankICModel_menuItemActionPerformed(evt);
+            }
+        });
+        PbBlanks_menu.add(editCurrentLocalPbBlankICModel_menuItem);
+
+        editCopyOfCurrentPbBlank_menuItem.setText("Edit copy of current Pb Blank IC Model");
         editCopyOfCurrentPbBlank_menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 editCopyOfCurrentPbBlank_menuItemActionPerformed(evt);
@@ -4582,7 +4572,7 @@ public class LabDataEditorDialog extends DialogEditor {
         });
         PbBlanks_menu.add(editCopyOfCurrentPbBlank_menuItem);
 
-        newPbBlankMode_menuItem.setText("Edit new empty Pb Blank");
+        newPbBlankMode_menuItem.setText("Edit new empty Pb Blank IC Model");
         newPbBlankMode_menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 newPbBlankMode_menuItemActionPerformed(evt);
@@ -4590,13 +4580,22 @@ public class LabDataEditorDialog extends DialogEditor {
         });
         PbBlanks_menu.add(newPbBlankMode_menuItem);
 
-        cancelNewEditBlank_menuItem.setText("Cancel Edit of Pb Blank");
+        cancelNewEditBlank_menuItem.setText("Cancel Edit of Pb Blank IC Model");
         cancelNewEditBlank_menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cancelNewEditBlank_menuItemActionPerformed(evt);
             }
         });
         PbBlanks_menu.add(cancelNewEditBlank_menuItem);
+        PbBlanks_menu.add(jSeparator22);
+
+        saveAndRegisterCurrentEditOfPbBlankICModel_menuItem.setText("Save and Register Current Edit of Pb Blank IC Model");
+        saveAndRegisterCurrentEditOfPbBlankICModel_menuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveAndRegisterCurrentEditOfPbBlankICModel_menuItemActionPerformed(evt);
+            }
+        });
+        PbBlanks_menu.add(saveAndRegisterCurrentEditOfPbBlankICModel_menuItem);
 
         labData_menuBar.add(PbBlanks_menu);
         PbBlanks_menu.getAccessibleContext().setAccessibleName("");
@@ -4612,24 +4611,24 @@ public class LabDataEditorDialog extends DialogEditor {
             }
         });
 
-        localInitialPbModelImport_menuItem.setText("Import Initial Pb Model from local XML file");
-        localInitialPbModelImport_menuItem.addActionListener(new java.awt.event.ActionListener() {
+        importInitialPbModelXML_menuItem.setText("Import Initial Pb Model from XML file");
+        importInitialPbModelXML_menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                localInitialPbModelImport_menuItemActionPerformed(evt);
+                importInitialPbModelXML_menuItemActionPerformed(evt);
             }
         });
-        initialPbModels_menu.add(localInitialPbModelImport_menuItem);
-        initialPbModels_menu.add(jSeparator5);
+        initialPbModels_menu.add(importInitialPbModelXML_menuItem);
 
-        saveInitialPbModelAsXML_menuItem.setText("Save Initial Pb Model as local XML file");
+        saveInitialPbModelAsXML_menuItem.setText("Export Initial Pb Model as XML file");
         saveInitialPbModelAsXML_menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 saveInitialPbModelAsXML_menuItemActionPerformed(evt);
             }
         });
         initialPbModels_menu.add(saveInitialPbModelAsXML_menuItem);
+        initialPbModels_menu.add(jSeparator5);
 
-        removeInitialPbModel_menuItem.setText("Remove current Initial Pb Model from Lab Data");
+        removeInitialPbModel_menuItem.setText("Remove current Initial Pb Model from Lab Data (for editable models only)");
         removeInitialPbModel_menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 removeInitialPbModel_menuItemActionPerformed(evt);
@@ -4637,6 +4636,14 @@ public class LabDataEditorDialog extends DialogEditor {
         });
         initialPbModels_menu.add(removeInitialPbModel_menuItem);
         initialPbModels_menu.add(jSeparator6);
+
+        editCurrentLocalInitialPbModel_menuItem.setText("Edit current Initial Pb Model (for editable models only)");
+        editCurrentLocalInitialPbModel_menuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editCurrentLocalInitialPbModel_menuItemActionPerformed(evt);
+            }
+        });
+        initialPbModels_menu.add(editCurrentLocalInitialPbModel_menuItem);
 
         editCopyOfCurrentInitialPbModel_menuItem.setText("Edit Copy of current Initial Pb Model");
         editCopyOfCurrentInitialPbModel_menuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -4661,6 +4668,15 @@ public class LabDataEditorDialog extends DialogEditor {
             }
         });
         initialPbModels_menu.add(cancelNewEditInitialPbModel_menuItem);
+        initialPbModels_menu.add(jSeparator21);
+
+        saveAndRegisterCurrentEditOfInitialPbModel_menuItem.setText("Save and Register Current Edit of Initial Pb Model");
+        saveAndRegisterCurrentEditOfInitialPbModel_menuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveAndRegisterCurrentEditOfInitialPbModel_menuItemActionPerformed(evt);
+            }
+        });
+        initialPbModels_menu.add(saveAndRegisterCurrentEditOfInitialPbModel_menuItem);
 
         labData_menuBar.add(initialPbModels_menu);
 
@@ -4675,22 +4691,22 @@ public class LabDataEditorDialog extends DialogEditor {
             }
         });
 
-        localPhysicalConstantsModelImport_menuItem.setText("Import Physical Constants Model from local XML file");
-        localPhysicalConstantsModelImport_menuItem.addActionListener(new java.awt.event.ActionListener() {
+        ImportPhysicalConstantsModelXML_menuItem.setText("Import Physical Constants Model from XML file");
+        ImportPhysicalConstantsModelXML_menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                localPhysicalConstantsModelImport_menuItemActionPerformed(evt);
+                ImportPhysicalConstantsModelXML_menuItemActionPerformed(evt);
             }
         });
-        physicalConstantsModels_menu.add(localPhysicalConstantsModelImport_menuItem);
-        physicalConstantsModels_menu.add(jSeparator14);
+        physicalConstantsModels_menu.add(ImportPhysicalConstantsModelXML_menuItem);
 
-        savePhysicalConstantsModelAsXML_menuItem.setText("Save Physical Constants Model as local XML file");
+        savePhysicalConstantsModelAsXML_menuItem.setText("Export Physical Constants Model as XML file");
         savePhysicalConstantsModelAsXML_menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 savePhysicalConstantsModelAsXML_menuItemActionPerformed(evt);
             }
         });
         physicalConstantsModels_menu.add(savePhysicalConstantsModelAsXML_menuItem);
+        physicalConstantsModels_menu.add(jSeparator14);
 
         removePhysicalConstantsModel_menuItem.setText("Remove current Physical Constants Model from Lab Data (for editable models only)");
         removePhysicalConstantsModel_menuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -4701,7 +4717,7 @@ public class LabDataEditorDialog extends DialogEditor {
         physicalConstantsModels_menu.add(removePhysicalConstantsModel_menuItem);
         physicalConstantsModels_menu.add(jSeparator15);
 
-        editCurrentLocalPhysicalConstantsModel_menuItem.setText("Edit Current Physical Constants Model (for editable models only)");
+        editCurrentLocalPhysicalConstantsModel_menuItem.setText("Edit current Physical Constants Model (for editable models only)");
         editCurrentLocalPhysicalConstantsModel_menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 editCurrentLocalPhysicalConstantsModel_menuItemActionPerformed(evt);
@@ -4755,22 +4771,22 @@ public class LabDataEditorDialog extends DialogEditor {
             }
         });
 
-        localMineralStdModelImport_menuItem.setText("Import Mineral Standard Model from local XML file");
-        localMineralStdModelImport_menuItem.addActionListener(new java.awt.event.ActionListener() {
+        importLocalMineralStdModelXML_menuItem.setText("Import Mineral Standard Model from XML file");
+        importLocalMineralStdModelXML_menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                localMineralStdModelImport_menuItemActionPerformed(evt);
+                importLocalMineralStdModelXML_menuItemActionPerformed(evt);
             }
         });
-        MineralStdModels_menu.add(localMineralStdModelImport_menuItem);
-        MineralStdModels_menu.add(jSeparator16);
+        MineralStdModels_menu.add(importLocalMineralStdModelXML_menuItem);
 
-        saveMineralStdModelAsXML_menuItem.setText("Save Mineral Standard Model as local XML file");
+        saveMineralStdModelAsXML_menuItem.setText("Export Mineral Standard Model as XML file");
         saveMineralStdModelAsXML_menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 saveMineralStdModelAsXML_menuItemActionPerformed(evt);
             }
         });
         MineralStdModels_menu.add(saveMineralStdModelAsXML_menuItem);
+        MineralStdModels_menu.add(jSeparator16);
 
         removeMineralStdModel_menuItem.setText("Remove current Mineral Standard Model (for editable models only)");
         removeMineralStdModel_menuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -4781,7 +4797,7 @@ public class LabDataEditorDialog extends DialogEditor {
         MineralStdModels_menu.add(removeMineralStdModel_menuItem);
         MineralStdModels_menu.add(jSeparator17);
 
-        editCurrentLocalMineralStandardModel_menuItem.setText("Edit Current Mineral Standard Model (for editable models only)");
+        editCurrentLocalMineralStandardModel_menuItem.setText("Edit current Mineral Standard Model (for editable models only)");
         editCurrentLocalMineralStandardModel_menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 editCurrentLocalMineralStandardModel_menuItemActionPerformed(evt);
@@ -4988,7 +5004,7 @@ public class LabDataEditorDialog extends DialogEditor {
         }
     }//GEN-LAST:event_saveInitialPbModelAsXML_menuItemActionPerformed
 
-    private void localInitialPbModelImport_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_localInitialPbModelImport_menuItemActionPerformed
+    private void importInitialPbModelXML_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importInitialPbModelXML_menuItemActionPerformed
         try {
             if (checkIsSavedStatusOfInitialPbModelEdit()) {
                 try {
@@ -5000,7 +5016,7 @@ public class LabDataEditorDialog extends DialogEditor {
         } catch (BadLabDataException ex) {
             new ETWarningDialog(ex).setVisible(true);
         }
-    }//GEN-LAST:event_localInitialPbModelImport_menuItemActionPerformed
+    }//GEN-LAST:event_importInitialPbModelXML_menuItemActionPerformed
 
     private void removeInitialPbModel_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeInitialPbModel_menuItemActionPerformed
         try {
@@ -5013,7 +5029,7 @@ public class LabDataEditorDialog extends DialogEditor {
 
     private void editCopyOfCurrentInitialPbModel_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editCopyOfCurrentInitialPbModel_menuItemActionPerformed
         try {
-            editCopyOfCurrentInitialPbModel();
+            editCopyOfCurrentInitialPbModel(true);
         } catch (BadLabDataException ex) {
             new ETWarningDialog(ex).setVisible(true);
         }
@@ -5082,13 +5098,13 @@ public class LabDataEditorDialog extends DialogEditor {
         boolean amInEditMode = (getNewEmptyInitialPbModel() == null);
 
         editCopyOfCurrentInitialPbModel_menuItem.setEnabled(amInEditMode);
-
-        localInitialPbModelImport_menuItem.setEnabled(InitialPbModelChooser.isEnabled());
+        importInitialPbModelXML_menuItem.setEnabled(InitialPbModelChooser.isEnabled());
 
         newInitialPbModelMode_menuItem.setEnabled(amInEditMode);
         cancelNewEditInitialPbModel_menuItem.setEnabled(!amInEditMode);
 
-        saveInitialPbModelAsXML_menuItem.setEnabled(true);//
+        saveInitialPbModelAsXML_menuItem.setEnabled(amInEditMode);//
+        saveAndRegisterCurrentEditOfInitialPbModel_menuItem.setEnabled(!amInEditMode);
 
         AbstractRatiosDataModel selectedInitialPbModel = null;
         try {
@@ -5099,15 +5115,18 @@ public class LabDataEditorDialog extends DialogEditor {
                     && (!myLabData.getDefaultLabInitialPbModel().equals(
                             selectedInitialPbModel))
                     && (!selectedInitialPbModel.isImmutable()));
+
+            editCurrentLocalInitialPbModel_menuItem.setEnabled(amInEditMode
+                    && (!selectedInitialPbModel.isImmutable()));
+
         } catch (BadLabDataException ex) {
             new ETWarningDialog(ex).setVisible(true);
         }
-
     }//GEN-LAST:event_initialPbModels_menuMenuSelected
 
     private void editCopyOfCurrentPbBlank_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editCopyOfCurrentPbBlank_menuItemActionPerformed
         try {
-            editCopyOfCurrentPbBlankModel();
+            editCopyOfCurrentPbBlankModel(true);
         } catch (BadLabDataException ex) {
             try {
                 cancelNewPbBlankEdit();
@@ -5136,7 +5155,7 @@ public class LabDataEditorDialog extends DialogEditor {
         }
     }//GEN-LAST:event_removePbBlank_menuItemActionPerformed
 
-    private void localPbBlankImport_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_localPbBlankImport_menuItemActionPerformed
+    private void importPbBlankXML_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importPbBlankXML_menuItemActionPerformed
         try {
             if (checkIsSavedStatusOfPbBlankModelEdit()) {
                 try {
@@ -5148,7 +5167,7 @@ public class LabDataEditorDialog extends DialogEditor {
         } catch (BadLabDataException ex) {
             new ETWarningDialog(ex).setVisible(true);
         }
-    }//GEN-LAST:event_localPbBlankImport_menuItemActionPerformed
+    }//GEN-LAST:event_importPbBlankXML_menuItemActionPerformed
 
     private void savePbBlankAsXML_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_savePbBlankAsXML_menuItemActionPerformed
         try {
@@ -5165,12 +5184,13 @@ public class LabDataEditorDialog extends DialogEditor {
         boolean amInEditPbBlankMode = (newEmptyPbBlankModel == null);
 
         editCopyOfCurrentPbBlank_menuItem.setEnabled(amInEditPbBlankMode);
-        localPbBlankImport_menuItem.setEnabled(PbBlankChooser.isEnabled());
+        importPbBlankXML_menuItem.setEnabled(PbBlankChooser.isEnabled());
 
         newPbBlankMode_menuItem.setEnabled(amInEditPbBlankMode);
         cancelNewEditBlank_menuItem.setEnabled(!amInEditPbBlankMode);
 
-        savePbBlankAsXML_menuItem.setEnabled(true);
+        savePbBlankAsXML_menuItem.setEnabled(amInEditPbBlankMode);
+        saveAndRegisterCurrentEditOfPbBlankICModel_menuItem.setEnabled(!amInEditPbBlankMode);
 
         // prevent removal of default PbBlankModel and built-in models
         AbstractRatiosDataModel selectedPbBlankModel = null;
@@ -5183,10 +5203,12 @@ public class LabDataEditorDialog extends DialogEditor {
                     && (!myLabData.getDefaultLabPbBlank().equals(
                             selectedPbBlankModel))
                     && (!selectedPbBlankModel.isImmutable()));
+
+            editCurrentLocalPbBlankICModel_menuItem.setEnabled(amInEditPbBlankMode
+                    && (!selectedPbBlankModel.isImmutable()));
         } catch (BadLabDataException ex) {
             new ETWarningDialog(ex).setVisible(true);
         }
-
     }//GEN-LAST:event_PbBlanks_menuMenuSelected
 
     private void cancelNewEditBlank_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelNewEditBlank_menuItemActionPerformed
@@ -5253,7 +5275,7 @@ public class LabDataEditorDialog extends DialogEditor {
         editCopyOfCurrentTracer_menuItem.setEnabled(amInEditTracerMode);
 
         earthTimeTracerImport_menuItem.setEnabled(false);// oct 2014 since built-in .. this change predates oct 2014  tracerModelChooser.isEnabled());
-        localTracerImport_menuItem.setEnabled(tracerModelChooser.isEnabled());
+        importTracerXML_menuItem.setEnabled(tracerModelChooser.isEnabled());
 
         newTracerMode_menuItem.setEnabled(amInEditTracerMode);
         cancelNewTracerEdit_menuItem.setEnabled(!amInEditTracerMode);
@@ -5302,7 +5324,7 @@ public class LabDataEditorDialog extends DialogEditor {
         }
     }//GEN-LAST:event_earthTimeTracerImport_menuItemActionPerformed
 
-    private void localTracerImport_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_localTracerImport_menuItemActionPerformed
+    private void importTracerXML_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importTracerXML_menuItemActionPerformed
         try {
             if (checkIsSavedStatusOfTracerModelEdit()) {
                 try {
@@ -5313,7 +5335,7 @@ public class LabDataEditorDialog extends DialogEditor {
         } catch (BadLabDataException ex) {
             new ETWarningDialog(ex).setVisible(true);
         }
-    }//GEN-LAST:event_localTracerImport_menuItemActionPerformed
+    }//GEN-LAST:event_importTracerXML_menuItemActionPerformed
 
     private void save_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_save_buttonActionPerformed
         try {
@@ -5355,7 +5377,7 @@ public class LabDataEditorDialog extends DialogEditor {
         }
     }//GEN-LAST:event_cancelEditAlphaPb_menuItemActionPerformed
 
-    private void localPhysicalConstantsModelImport_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_localPhysicalConstantsModelImport_menuItemActionPerformed
+    private void ImportPhysicalConstantsModelXML_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ImportPhysicalConstantsModelXML_menuItemActionPerformed
         try {
             if (checkIsSavedStatusOfPhysicalConstantsModelEdit()) {
                 try {
@@ -5367,7 +5389,7 @@ public class LabDataEditorDialog extends DialogEditor {
         } catch (ETException ex) {
             new ETWarningDialog(ex).setVisible(true);
         }
-}//GEN-LAST:event_localPhysicalConstantsModelImport_menuItemActionPerformed
+}//GEN-LAST:event_ImportPhysicalConstantsModelXML_menuItemActionPerformed
 
     private void savePhysicalConstantsModelAsXML_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_savePhysicalConstantsModelAsXML_menuItemActionPerformed
         try {
@@ -5415,7 +5437,7 @@ public class LabDataEditorDialog extends DialogEditor {
         boolean amInEditPhysicalConstantsModelMode = (newEmptyPhysicalConstantsModel == null);
 
         editCopyOfCurrentPhysicalConstantsModel_menuItem.setEnabled(amInEditPhysicalConstantsModelMode);
-        localPhysicalConstantsModelImport_menuItem.setEnabled(physicalConstantsModel_Chooser.isEnabled());
+        ImportPhysicalConstantsModelXML_menuItem.setEnabled(physicalConstantsModel_Chooser.isEnabled());
 
         newPhysicalConstantsModel_menuItem.setEnabled(amInEditPhysicalConstantsModelMode);
         cancelNewEditPhysicalConstantsModel_menuItem.setEnabled(!amInEditPhysicalConstantsModelMode);
@@ -5434,15 +5456,15 @@ public class LabDataEditorDialog extends DialogEditor {
                     && (!myLabData.getDefaultPhysicalConstantsModel().equals(
                             selectedPhysicalConstantsModel))
                     && (!selectedPhysicalConstantsModel.isImmutable()));
-            
+
             editCurrentLocalPhysicalConstantsModel_menuItem.setEnabled(amInEditPhysicalConstantsModelMode
                     && (!selectedPhysicalConstantsModel.isImmutable()));
 
         } catch (BadLabDataException badLabDataException) {
         }
     }//GEN-LAST:event_physicalConstantsModels_menuMenuSelected
-      
-    private void localMineralStdModelImport_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_localMineralStdModelImport_menuItemActionPerformed
+
+    private void importLocalMineralStdModelXML_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importLocalMineralStdModelXML_menuItemActionPerformed
         try {
             if (checkIsSavedStatusOfMineralStandardModelEdit()) {
                 try {
@@ -5452,7 +5474,7 @@ public class LabDataEditorDialog extends DialogEditor {
             }
         } catch (BadLabDataException ex) {
         }
-}//GEN-LAST:event_localMineralStdModelImport_menuItemActionPerformed
+}//GEN-LAST:event_importLocalMineralStdModelXML_menuItemActionPerformed
 
     private void saveMineralStdModelAsXML_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveMineralStdModelAsXML_menuItemActionPerformed
         try {
@@ -5507,7 +5529,7 @@ public class LabDataEditorDialog extends DialogEditor {
 
         editCopyOfCurrentMineralStdModel_menuItem.setEnabled(amInEditMode);
 
-        localMineralStdModelImport_menuItem.setEnabled(MineralStandardModelChooser.isEnabled());
+        importLocalMineralStdModelXML_menuItem.setEnabled(MineralStandardModelChooser.isEnabled());
 
         newMineralStdModel_menuItem.setEnabled(amInEditMode);
         cancelNewEditMineralStdModel_menuItem.setEnabled(!amInEditMode);
@@ -5535,38 +5557,40 @@ public class LabDataEditorDialog extends DialogEditor {
 }//GEN-LAST:event_mineralStdModels_menuMenuSelected
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-        this.setAlwaysOnTop(false);
-        String id = null;
-        LabDataEditorDialog.setDefaultLookAndFeelDecorated(false);
-        switch (currentTabIndex) {
-            case 0:
-                id = "LabData.Tracers";
-                break;
-            case 1:
-                id = "LabData.Fractionation_Models";
-                break;
-            case 2:
-                id = "LabData.U-Pb_Blank_Models";
-                break;
-            case 3:
-                id = "LabData.Initial_Pb_Model";
-                break;
-            case 4:
-                id = "LabData.Physical_constants_model";
-                break;
-            case 5:
-                id = "LabData.Mineral_Std_Models";
-                break;
-            case 6:
-                id = "LabData.Managing_LabData_Default";
+//        this.setAlwaysOnTop(false);
+//        String id = null;
+//        LabDataEditorDialog.setDefaultLookAndFeelDecorated(false);
+//        switch (currentTabIndex) {
+//            case 0:
+//                id = "LabData.Tracers";
+//                break;
+//            case 1:
+//                id = "LabData.Fractionation_Models";
+//                break;
+//            case 2:
+//                id = "LabData.U-Pb_Blank_Models";
+//                break;
+//            case 3:
+//                id = "LabData.Initial_Pb_Model";
+//                break;
+//            case 4:
+//                id = "LabData.Physical_constants_model";
+//                break;
+//            case 5:
+//                id = "LabData.Mineral_Std_Models";
+//                break;
+//            case 6:
+//                id = "LabData.Managing_LabData_Default";
+//
+//        }
+//        //System.out.println(currentTabIndex);
+//        HelpBroker hb = JHelpAction.getHelpBroker();
+//        ((DefaultHelpBroker) hb).setActivationWindow(this);
+//        JHelpAction.setHelpBroker(hb);
+//        CSH.setHelpIDString(this, "Tracers");
+//        JHelpAction.showHelp(id);
 
-        }
-        //System.out.println(currentTabIndex);
-        HelpBroker hb = JHelpAction.getHelpBroker();
-        ((DefaultHelpBroker) hb).setActivationWindow(this);
-        JHelpAction.setHelpBroker(hb);
-        CSH.setHelpIDString(this, "Tracers");
-        JHelpAction.showHelp(id);
+        BrowserControl.displayURL("http://cirdles.org/projects/et_redux/#welcome");
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void restoreOriginalDefaultValues_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_restoreOriginalDefaultValues_buttonActionPerformed
@@ -5626,9 +5650,42 @@ public class LabDataEditorDialog extends DialogEditor {
         }
     }//GEN-LAST:event_saveAndRegisterCurrentEditOfPhysicalConstantsModel_menuItemActionPerformed
 
+    private void editCurrentLocalInitialPbModel_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editCurrentLocalInitialPbModel_menuItemActionPerformed
+        try {
+            editCopyOfCurrentInitialPbModel(false);
+        } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
+        }
+    }//GEN-LAST:event_editCurrentLocalInitialPbModel_menuItemActionPerformed
+
+    private void saveAndRegisterCurrentEditOfInitialPbModel_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveAndRegisterCurrentEditOfInitialPbModel_menuItemActionPerformed
+        try {
+            saveAndRegisterCurrentEditOfInitialPbModel();
+        } catch (ETException ex) {
+            new ETWarningDialog(ex).setVisible(true);
+        }
+    }//GEN-LAST:event_saveAndRegisterCurrentEditOfInitialPbModel_menuItemActionPerformed
+
+    private void editCurrentLocalPbBlankICModel_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editCurrentLocalPbBlankICModel_menuItemActionPerformed
+        try {
+            editCopyOfCurrentPbBlankModel(false);
+        } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
+        }
+    }//GEN-LAST:event_editCurrentLocalPbBlankICModel_menuItemActionPerformed
+
+    private void saveAndRegisterCurrentEditOfPbBlankICModel_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveAndRegisterCurrentEditOfPbBlankICModel_menuItemActionPerformed
+        try {
+            saveAndRegisterCurrentEditOfPbBlankModel();
+        } catch (ETException ex) {
+            new ETWarningDialog(ex).setVisible(true);
+        }
+    }//GEN-LAST:event_saveAndRegisterCurrentEditOfPbBlankICModel_menuItemActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel CalculatedModelInstructions_label;
     private javax.swing.JLabel CalculatedModelInstructions_label1;
+    private javax.swing.JMenuItem ImportPhysicalConstantsModelXML_menuItem;
     private javax.swing.JComboBox<String> InitialPbModelChooser;
     private javax.swing.JPanel LAICPMSLabDefaultsPane;
     private javax.swing.JComboBox<String> MineralStandardModelChooser;
@@ -5732,7 +5789,9 @@ public class LabDataEditorDialog extends DialogEditor {
     private javax.swing.JMenuItem editCopyOfCurrentPbBlank_menuItem;
     private javax.swing.JMenuItem editCopyOfCurrentPhysicalConstantsModel_menuItem;
     private javax.swing.JMenuItem editCopyOfCurrentTracer_menuItem;
+    private javax.swing.JMenuItem editCurrentLocalInitialPbModel_menuItem;
     private javax.swing.JMenuItem editCurrentLocalMineralStandardModel_menuItem;
+    private javax.swing.JMenuItem editCurrentLocalPbBlankICModel_menuItem;
     private javax.swing.JMenuItem editCurrentLocalPhysicalConstantsModel_menuItem;
     private javax.swing.JMenuItem editCurrentLocalTracerModel_menuItem;
     private javax.swing.JMenuItem editNewAlphaPb_menuItem;
@@ -5743,6 +5802,10 @@ public class LabDataEditorDialog extends DialogEditor {
     private javax.swing.JMenu fractionation_menu;
     private javax.swing.JPanel header_Panel;
     private javax.swing.JMenu helpMenu_menu;
+    private javax.swing.JMenuItem importInitialPbModelXML_menuItem;
+    private javax.swing.JMenuItem importLocalMineralStdModelXML_menuItem;
+    private javax.swing.JMenuItem importPbBlankXML_menuItem;
+    private javax.swing.JMenuItem importTracerXML_menuItem;
     private javax.swing.JPanel initialPbModelsTab_panel;
     private javax.swing.JMenu initialPbModels_menu;
     private javax.swing.JLabel jLabel1;
@@ -5765,6 +5828,8 @@ public class LabDataEditorDialog extends DialogEditor {
     private javax.swing.JPopupMenu.Separator jSeparator19;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator20;
+    private javax.swing.JPopupMenu.Separator jSeparator21;
+    private javax.swing.JPopupMenu.Separator jSeparator22;
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JSeparator jSeparator4;
     private javax.swing.JSeparator jSeparator5;
@@ -5781,11 +5846,6 @@ public class LabDataEditorDialog extends DialogEditor {
     private javax.swing.JCheckBox leachedInHFAcid_chkBox;
     private javax.swing.JMenuItem localAlphaPbImportXML_menuItem;
     private javax.swing.JMenuItem localAlphaUImportXML_menuItem;
-    private javax.swing.JMenuItem localInitialPbModelImport_menuItem;
-    private javax.swing.JMenuItem localMineralStdModelImport_menuItem;
-    private javax.swing.JMenuItem localPbBlankImport_menuItem;
-    private javax.swing.JMenuItem localPhysicalConstantsModelImport_menuItem;
-    private javax.swing.JMenuItem localTracerImport_menuItem;
     private javax.swing.JComboBox<String> mineralNameChooser;
     private javax.swing.JPanel mineralStandard_panel;
     private javax.swing.JLabel monoIsotopicPb_label;
@@ -5816,7 +5876,9 @@ public class LabDataEditorDialog extends DialogEditor {
     private javax.swing.JButton restoreOriginalDefaultValues_button;
     private javax.swing.JMenuItem saveAlphaPbasLocalXML_menuItem;
     private javax.swing.JMenuItem saveAlphaUasLocalXML_menuItem;
+    private javax.swing.JMenuItem saveAndRegisterCurrentEditOfInitialPbModel_menuItem;
     private javax.swing.JMenuItem saveAndRegisterCurrentEditOfMineralStandardModel_menuItem;
+    private javax.swing.JMenuItem saveAndRegisterCurrentEditOfPbBlankICModel_menuItem;
     private javax.swing.JMenuItem saveAndRegisterCurrentEditOfPhysicalConstantsModel_menuItem;
     private javax.swing.JMenuItem saveAndRegisterCurrentEditOfTracerModel_menuItem;
     private javax.swing.JMenuItem saveInitialPbModelAsXML_menuItem;
