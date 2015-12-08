@@ -92,7 +92,9 @@ public class PhysicalConstantsModel extends AbstractRatiosDataModel {
                 Lambdas.lambda234.getName(), //
                 new BigDecimal("0.0000028262"), //
                 "PCT", //
-                new BigDecimal("0.00000000285"), BigDecimal.ZERO,
+                //new BigDecimal("0.00000000285"), BigDecimal.ZERO,
+                // corrected Dec 2015 during DIBBs review
+                new BigDecimal("0.100842120161347"), BigDecimal.ZERO,
                 "Cheng et al. 2000");
         myRatios[4] = new ValueModelReferenced(//
                 Lambdas.lambda235.getName(), //
