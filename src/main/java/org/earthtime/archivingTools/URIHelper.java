@@ -237,7 +237,7 @@ public class URIHelper {
         if (CONNECTED_TO_INTERNET) {
             try {
                 URL url = new URL("http://geochron.org");
-                System.out.println(url.getHost());
+                //System.out.println(url.getHost());
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
                 con.setReadTimeout(5000);
                 con.connect();
