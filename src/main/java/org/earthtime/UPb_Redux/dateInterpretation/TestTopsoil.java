@@ -23,7 +23,7 @@ import javax.swing.WindowConstants;
 import org.cirdles.topsoil.chart.Chart;
 import org.cirdles.topsoil.chart.SimpleVariableContext;
 import org.cirdles.topsoil.chart.VariableContext;
-import org.cirdles.topsoil.chart.standard.ErrorEllipseChart;
+import org.cirdles.topsoil.chart.standard.UncertaintyEllipseChart;
 import org.cirdles.topsoil.dataset.Dataset;
 import org.cirdles.topsoil.dataset.RawData;
 import org.cirdles.topsoil.dataset.SimpleDataset;
@@ -60,7 +60,7 @@ public class TestTopsoil {
 
         Chart myChart = null;
         try {
-            myChart = new ErrorEllipseChart();
+            myChart = new UncertaintyEllipseChart();
         } catch (Exception e) {
         }
         
