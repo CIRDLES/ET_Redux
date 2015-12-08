@@ -65,4 +65,15 @@ public interface UThLegacyFractionI extends UThFractionI {
         }
     }
 
+    public void useLegacyPhysicalConstantsD1();
+
+    public ValueModel getLambda230Legacy();
+
+    public ValueModel getLambda232Legacy();
+
+    public ValueModel getLambda234Legacy();
+
+    public ValueModel getLambda235Legacy();
+
+    public ValueModel getLambda238Legacy();
 }

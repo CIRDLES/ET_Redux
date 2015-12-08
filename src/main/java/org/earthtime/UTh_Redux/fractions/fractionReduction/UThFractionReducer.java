@@ -17,7 +17,11 @@
  */
 package org.earthtime.UTh_Redux.fractions.fractionReduction;
 
-import org.earthtime.fractions.ETFractionInterface;
+import java.math.BigDecimal;
+import org.earthtime.UPb_Redux.ReduxConstants;
+import org.earthtime.UPb_Redux.valueModels.ValueModel;
+import org.earthtime.UTh_Redux.fractions.UThLegacyFractionI;
+import org.earthtime.dataDictionaries.UThAnalysisMeasures;
 import org.earthtime.fractions.fractionReduction.FractionReducer;
 
 /* NOTES from Noah Nov 2015
@@ -120,13 +124,51 @@ public class UThFractionReducer extends FractionReducer {
         }
         return instance;
     }
-    
-    public void calculateDates(ETFractionInterface fraction){
-        
+
+    public void calculateDatesFromLegacyData(UThLegacyFractionI fraction) {
+
         initializeDecayConstants(fraction.getPhysicalConstantsModel());
+
+        //Nov 2015
+        // Note Noah's  matlab code starts with the already reworked activity ratios ... we will not do so.
+//        meas.r28 = inputARs(1) * lambda.U238/lambda.Th232;
+//        meas.r08 = inputARs(3) * lambda.U238/lambda.Th230;
+//        meas.r48 = inputARs(5) * lambda.U238/lambda.U234;
+//        meas.r28s = meas.r28 * inputARs(2)/100/2;
+//        meas.r08s = meas.r08 * inputARs(4)/100/2;
+//        meas.r48s = meas.r48 * inputARs(6)/100/2;
+//        meas.C = diag([meas.r48s meas.r08s meas.r28s].^2);
         
+        BigDecimal measuredValue = //
+                fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.ar232Th_238Ufc.getName()).getValue()//
+                .multiply(fraction.getLambda238Legacy().getValue())//
+                .divide(fraction.getLambda232Legacy().getValue(), ReduxConstants.mathContext15);
         
-        
+        BigDecimal oneSigmaAbs = //
+                measuredValue//
+                .multiply(BigDecimal.ZERO);
+
+        ValueModel r232Th_238Thm = new ValueModel(//
+                "r232Th_238Thm",//
+                measuredValue,//
+                "ABS", //
+                fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.ar232Th_238Ufc.getName()).getOneSigmaAbs(), //
+                BigDecimal.ZERO);
+
+        ValueModel r230Th_238Thm = new ValueModel(//
+                "r230Th_238Thm",//
+                fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.ar230Th_238Ufc.getName()).getValue(),//
+                "ABS", //
+                fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.ar230Th_238Ufc.getName()).getOneSigmaAbs(), //
+                BigDecimal.ZERO);
+
+        ValueModel r234U_238Thm = new ValueModel(//
+                "r234U_238Thm",//
+                fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.ar234U_238Ufc.getName()).getValue(),//
+                "ABS", //
+                fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.ar234U_238Ufc.getName()).getOneSigmaAbs(), //
+                BigDecimal.ZERO);
+
     }
 
 }

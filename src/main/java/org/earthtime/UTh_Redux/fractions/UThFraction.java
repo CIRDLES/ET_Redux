@@ -28,9 +28,9 @@ import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
 import org.earthtime.dataDictionaries.MeasuredRatios;
 import org.earthtime.dataDictionaries.RadDates;
-import org.earthtime.dataDictionaries.UThActivityRatios;
+import org.earthtime.dataDictionaries.UThAnalysisMeasures;
 import org.earthtime.dataDictionaries.UThCompositionalMeasures;
-import org.earthtime.dataDictionaries.UThRatiosMeasured;
+import org.earthtime.dataDictionaries.UThFractionationCorrectedIsotopicRatios;
 import org.earthtime.dataDictionaries.UncertaintyTypesEnum;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.fractions.ETFractionInterface;
@@ -59,7 +59,6 @@ public class UThFraction implements
     protected BigDecimal estimatedDate;
     protected ValueModel[] analysisMeasures;
     protected ValueModel[] measuredRatios;
-    protected ValueModel[] activityRatios;
     protected ValueModel[] fractionationCorrectedIsotopeRatios;
     protected ValueModel[] isotopeDates;
     protected ValueModel[] compositionalMeasures;
@@ -83,10 +82,9 @@ public class UThFraction implements
         this.numberOfGrains = ReduxLabData.getInstance().getDefaultNumberOfGrains();
         this.estimatedDate = BigDecimal.ZERO;
 
-        analysisMeasures = new ValueModel[0];
+        analysisMeasures = valueModelArrayFactory(UThAnalysisMeasures.getNames(), UncertaintyTypesEnum.ABS.getName());
         measuredRatios = new ValueModel[0];
-        activityRatios = valueModelArrayFactory(UThActivityRatios.getNames(), UncertaintyTypesEnum.ABS.getName());
-        fractionationCorrectedIsotopeRatios = valueModelArrayFactory(UThRatiosMeasured.getNames(), UncertaintyTypesEnum.ABS.getName());
+        fractionationCorrectedIsotopeRatios = valueModelArrayFactory(UThFractionationCorrectedIsotopicRatios.getNames(), UncertaintyTypesEnum.ABS.getName());
         isotopeDates = valueModelArrayFactory(RadDates.getNamesSorted(), UncertaintyTypesEnum.ABS.getName());
         compositionalMeasures = valueModelArrayFactory(UThCompositionalMeasures.getNames(), UncertaintyTypesEnum.ABS.getName());
         sampleIsochronRatios = new ValueModel[0]; //valueModelArrayFactory(DataDictionary.SampleIsochronRatioNames, UncertaintyTypesEnum.ABS.getName());
@@ -272,20 +270,6 @@ public class UThFraction implements
     @Override
     public void setMeasuredRatios(ValueModel[] measuredRatios) {
         this.measuredRatios = measuredRatios;
-    }
-
-    /**
-     * @return the activityRatios
-     */
-    public ValueModel[] getActivityRatios() {
-        return activityRatios;
-    }
-
-    /**
-     * @param activityRatios the activityRatios to set
-     */
-    public void setActivityRatios(ValueModel[] activityRatios) {
-        this.activityRatios = activityRatios;
     }
 
     /**
