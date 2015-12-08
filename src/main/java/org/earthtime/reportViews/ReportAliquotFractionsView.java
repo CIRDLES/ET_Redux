@@ -72,6 +72,7 @@ import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.dialogs.fractionManagers.FractionNotesDialog;
 import org.earthtime.UPb_Redux.filters.SVGFileFilter;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
+import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.UPb_Redux.utilities.comparators.IntuitiveStringComparator;
 import org.earthtime.aliquots.AliquotInterface;
@@ -234,10 +235,13 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
      * @param g
      */
     public void paint(Graphics2D g) {
-        upperLeftCorner.repaint();
-        reportHeader.repaint();
-        reportFractionIDs.repaint();
-        reportBody.repaint();
+        try {
+            upperLeftCorner.repaint();
+            reportHeader.repaint();
+            reportFractionIDs.repaint();
+            reportBody.repaint();
+        } catch (Exception e) {
+        }
     }
 
     private float calculateColumnWidth(int col) {
@@ -360,7 +364,8 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
         reportWidth = (int) width + (int) dividerWidth;// + reportFractions[0].length + (int) dividerWidth;
 
         // column #2 is the fractionID column
-        fractionColumnWidth = //
+        fractionColumnWidth
+                = //
                 leftMargin + (int) (calculateColumnWidth(2) * COLUMN_WIDTH_ADJUST_FACTOR) + (int) dividerWidth;
 
         fractionColumnWidth += fractionButtonMargin;
@@ -1032,7 +1037,8 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                             if (!item.equals("")) {
                                 // strip out footnote letter
                                 String[] footNote = item.split("&");
-                                String footNoteLine = //
+                                String footNoteLine
+                                        = //
                                         " " //
                                         + footNote[0] //
                                         + "  " //
@@ -1081,8 +1087,13 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                                 updateReportTable(false);
                             }
                         } else {
-                            ((ETFractionInterface) verticalPixelFractionMap.get(row).rowObject).setRejected(//
-                                    !((ETFractionInterface) verticalPixelFractionMap.get(row).rowObject).isRejected());
+                            boolean isRejected = !((ETFractionInterface) verticalPixelFractionMap.get(row).rowObject).isRejected();
+                            ((ETFractionInterface) verticalPixelFractionMap.get(row).rowObject).setRejected(isRejected);
+                            // dec 2015
+                            try {
+                                ((UPbFractionI) verticalPixelFractionMap.get(row).rowObject).getTripoliFraction().setIncluded(!isRejected);
+                            } catch (Exception noTF) {
+                            }
                             parent.updateReportTable(false);
                         }
                     }

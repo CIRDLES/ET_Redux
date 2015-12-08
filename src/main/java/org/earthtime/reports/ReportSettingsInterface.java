@@ -33,7 +33,6 @@ import java.util.Vector;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.FractionI;
-import org.earthtime.reduxLabData.ReduxLabDataListElementI;
 import org.earthtime.UPb_Redux.valueModels.ValueModelReferenced;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
 import org.earthtime.archivingTools.URIHelper;
@@ -43,6 +42,7 @@ import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.dataDictionaries.ReportSpecifications;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.fractions.ETFractionInterface;
+import org.earthtime.reduxLabData.ReduxLabDataListElementI;
 import org.earthtime.samples.SampleInterface;
 import org.earthtime.xmlUtilities.XMLSerializationI;
 
@@ -90,7 +90,7 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
 
         // read them back in
         try {
-            reportSettingsModel = (ReportSettingsInterface) readXMLObject(tempFileName, true);
+            reportSettingsModel = (ReportSettingsInterface) readXMLObject(tempFileName, false);
         } catch (FileNotFoundException | ETException | BadOrMissingXMLSchemaException fileNotFoundException) {
         }
 
