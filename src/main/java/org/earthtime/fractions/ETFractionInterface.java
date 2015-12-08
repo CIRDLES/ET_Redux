@@ -375,8 +375,8 @@ public interface ETFractionInterface {
         ValueModel rirModel
                 = new ValueModel(ratioName.trim(),
                         ratioName.startsWith("rho") ?//
-                                new BigDecimal(ReduxConstants.NO_RHO_FLAG, ReduxConstants.mathContext15) //
-                                : BigDecimal.ZERO,// June 2010 to force out of range of legal cov [-1,,,1]0.0;
+                        new BigDecimal(ReduxConstants.NO_RHO_FLAG, ReduxConstants.mathContext15) //
+                        : BigDecimal.ZERO,// June 2010 to force out of range of legal cov [-1,,,1]0.0;
                         "ABS",
                         BigDecimal.ZERO, BigDecimal.ZERO);
 

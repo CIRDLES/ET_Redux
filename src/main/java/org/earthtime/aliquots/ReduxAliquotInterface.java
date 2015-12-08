@@ -15,6 +15,7 @@
  */
 package org.earthtime.aliquots;
 
+import java.util.Collections;
 import java.util.Vector;
 import org.earthtime.fractions.ETFractionInterface;
 
@@ -29,6 +30,13 @@ public interface ReduxAliquotInterface {
     public void setAliquotNumber(int aliquotNumber);
 
     public Vector<ETFractionInterface> getAliquotFractions();
+
+    public default Vector<ETFractionInterface> getAliquotFractionsSorted() {
+        if (getAliquotFractions() != null) {
+            Collections.sort(getAliquotFractions(), ETFractionInterface.FRACTION_ID_ORDER);
+        }
+        return getAliquotFractions();
+    }
 
     public void setAliquotFractions(Vector<ETFractionInterface> aliquotFractions);
 
@@ -114,6 +122,6 @@ public interface ReduxAliquotInterface {
 
         return retVal;
     }
-    
+
     public void reduceData();
 }

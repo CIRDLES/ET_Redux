@@ -569,7 +569,6 @@ public interface SampleInterface {
         }
 
         ((ReduxAliquotInterface) retAliquot).setAliquotFractions(retFractions);
-////        retAliquot.setMyReduxLabData(ReduxLabData.getInstance());
 
         return retAliquot;
     }
