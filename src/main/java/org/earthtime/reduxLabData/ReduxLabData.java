@@ -447,19 +447,23 @@ public final class ReduxLabData implements Serializable {
      *
      * @param tracer
      * @param isVerbose
+     * @throws org.earthtime.UPb_Redux.exceptions.BadLabDataException
      */
     public void registerTracer(AbstractRatiosDataModel tracer, boolean isVerbose)
             throws BadLabDataException {
-        boolean myIsVerbose = isVerbose;
-        // Nov 2015 ... this is the case of editing a local model
-        if (!tracer.isImmutable() && !((ReduxLabDataList) tracerModels).registerElement(tracer, false)) {
-            removeATracer(tracer.getNameAndVersion());
-            addTracer(tracer);
-            myIsVerbose = false;
-        }
+        if (tracer != null) {
 
-        if (((ReduxLabDataList) tracerModels).registerElement(tracer, myIsVerbose)) {
-            addTracer(tracer);
+            boolean myIsVerbose = isVerbose;
+            // Nov 2015 ... this is the case of editing a local model
+            if (!tracer.isImmutable() && !((ReduxLabDataList) tracerModels).registerElement(tracer, false)) {
+                removeATracer(tracer.getNameAndVersion());
+                addTracer(tracer);
+                myIsVerbose = false;
+            }
+
+            if (((ReduxLabDataList) tracerModels).registerElement(tracer, myIsVerbose)) {
+                addTracer(tracer);
+            }
         }
     }
 
@@ -584,7 +588,6 @@ public final class ReduxLabData implements Serializable {
     /**
      *
      * @return @throws BadLabDataException
-     * @throws BadLabDataException
      */
     public ValueModel getNoneAlphaPbModel()
             throws BadLabDataException {
@@ -784,19 +787,22 @@ public final class ReduxLabData implements Serializable {
      *
      * @param pbBlank
      * @param isVerbose
+     * @throws org.earthtime.UPb_Redux.exceptions.BadLabDataException
      */
-    public void registerPbBlank(AbstractRatiosDataModel pbBlank, boolean isVerbose) 
+    public void registerPbBlank(AbstractRatiosDataModel pbBlank, boolean isVerbose)
             throws BadLabDataException {
-        boolean myIsVerbose = isVerbose;
-        // Nov 2015 ... this is the case of editing a local model
-        if (!pbBlank.isImmutable() && !((ReduxLabDataList) blanks).registerElement(pbBlank, false)) {
-            removeABlank(pbBlank.getNameAndVersion());
-            addBlank(pbBlank);
-            myIsVerbose = false;
-        }
-        
-        if (((ReduxLabDataList) blanks).registerElement(pbBlank, myIsVerbose)) {
-            addBlank(pbBlank);
+        if (pbBlank != null) {
+            boolean myIsVerbose = isVerbose;
+            // Nov 2015 ... this is the case of editing a local model
+            if (!pbBlank.isImmutable() && !((ReduxLabDataList) blanks).registerElement(pbBlank, false)) {
+                removeABlank(pbBlank.getNameAndVersion());
+                addBlank(pbBlank);
+                myIsVerbose = false;
+            }
+
+            if (((ReduxLabDataList) blanks).registerElement(pbBlank, myIsVerbose)) {
+                addBlank(pbBlank);
+            }
         }
     }
 
@@ -905,19 +911,22 @@ public final class ReduxLabData implements Serializable {
      *
      * @param initialPbModel
      * @param isVerbose
+     * @throws org.earthtime.UPb_Redux.exceptions.BadLabDataException
      */
     public void registerInitialPbModel(AbstractRatiosDataModel initialPbModel, boolean isVerbose)
             throws BadLabDataException {
-        boolean myIsVerbose = isVerbose;
-        // Nov 2015 ... this is the case of editing a local model
-        if (!initialPbModel.isImmutable() && !((ReduxLabDataList) initialPbModels).registerElement(initialPbModel, false)) {
-            removeAnInitialPbModel(initialPbModel.getNameAndVersion());
-            addInitialPbModel(initialPbModel);
-            myIsVerbose = false;
-        }
-        
-        if (((ReduxLabDataList) initialPbModels).registerElement(initialPbModel, myIsVerbose)) {
-            addInitialPbModel(initialPbModel);
+        if (initialPbModel != null) {
+            boolean myIsVerbose = isVerbose;
+            // Nov 2015 ... this is the case of editing a local model
+            if (!initialPbModel.isImmutable() && !((ReduxLabDataList) initialPbModels).registerElement(initialPbModel, false)) {
+                removeAnInitialPbModel(initialPbModel.getNameAndVersion());
+                addInitialPbModel(initialPbModel);
+                myIsVerbose = false;
+            }
+
+            if (((ReduxLabDataList) initialPbModels).registerElement(initialPbModel, myIsVerbose)) {
+                addInitialPbModel(initialPbModel);
+            }
         }
     }
 
@@ -1026,16 +1035,18 @@ public final class ReduxLabData implements Serializable {
      */
     public void registerPhysicalConstantsModel(AbstractRatiosDataModel physicalConstantsModel, boolean isVerbose)
             throws BadLabDataException {
-        boolean myIsVerbose = isVerbose;
-        // Nov 2015 ... this is the case of editing a local model
-        if (!physicalConstantsModel.isImmutable() && !((ReduxLabDataList) physicalConstantsModels).registerElement(physicalConstantsModel, false)) {
-            removeAPhysicalConstantsModel(physicalConstantsModel.getNameAndVersion());
-            addPhysicalConstantsModel(physicalConstantsModel);
-            myIsVerbose = false;
-        }
+        if (physicalConstantsModel != null) {
+            boolean myIsVerbose = isVerbose;
+            // Nov 2015 ... this is the case of editing a local model
+            if (!physicalConstantsModel.isImmutable() && !((ReduxLabDataList) physicalConstantsModels).registerElement(physicalConstantsModel, false)) {
+                removeAPhysicalConstantsModel(physicalConstantsModel.getNameAndVersion());
+                addPhysicalConstantsModel(physicalConstantsModel);
+                myIsVerbose = false;
+            }
 
-        if (((ReduxLabDataList) physicalConstantsModels).registerElement(physicalConstantsModel, myIsVerbose)) {
-            addPhysicalConstantsModel(physicalConstantsModel);
+            if (((ReduxLabDataList) physicalConstantsModels).registerElement(physicalConstantsModel, myIsVerbose)) {
+                addPhysicalConstantsModel(physicalConstantsModel);
+            }
         }
     }
 
@@ -1459,6 +1470,7 @@ public final class ReduxLabData implements Serializable {
      *
      * @param isotopeStyle the value of isotopeStyle @throws BadLabDataException
      * @return the org.earthtime.reports.ReportSettingsInterface
+     * @throws org.earthtime.UPb_Redux.exceptions.BadLabDataException
      */
     public ReportSettingsInterface getDefaultReportSettingsModelByIsotopeStyle(String isotopeStyle)
             throws BadLabDataException {
@@ -1843,7 +1855,7 @@ public final class ReduxLabData implements Serializable {
     public <T> T getModelNone(ArrayList<T> U) {
         T retVal = null;
         try {
-            retVal = (T) ((ReduxLabDataList<T>) U).getFirstElement();
+            retVal = ((ReduxLabDataList<T>) U).getFirstElement();
         } catch (BadLabDataException badLabDataException) {
         }
 
@@ -1859,7 +1871,7 @@ public final class ReduxLabData implements Serializable {
     public <T> T getModelFirst(ArrayList<T> U) {
         T retVal = null;
         try {
-            retVal = (T) ((ReduxLabDataList<T>) U).getSecondElement();
+            retVal = ((ReduxLabDataList<T>) U).getSecondElement();
         } catch (BadLabDataException badLabDataException) {
         }
 
