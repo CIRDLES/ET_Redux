@@ -10,7 +10,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.earth-time.org
                             http://earth-time.org/projects/upb/public_data/XSD/PhysicalConstantsModelXMLSchema.xsd">
-  <modelName>EARTHTIME Physical Constants Model-COPY</modelName>
+  <modelName>EARTHTIME Physical Constants Model</modelName>
   <versionNumber>1</versionNumber>
   <minorVersionNumber>1</minorVersionNumber>
   <labName>EARTHTIME</labName>
@@ -23,7 +23,7 @@
       <value>0.0000091705</value>
       <uncertaintyType>PCT</uncertaintyType>
       <oneSigma>0.075</oneSigma>
-      <reference>Cheng et al. 2000</reference>
+      <reference>Cheng et al. 2013</reference>
     </ValueModelReferenced>
     <ValueModelReferenced>
       <name>lambda231</name>
@@ -37,14 +37,14 @@
       <value>0.0000000000492</value>
       <uncertaintyType>PCT</uncertaintyType>
       <oneSigma>0.04276900000000000000</oneSigma>
-      <reference>Holden 1990</reference>
+      <reference>Schmorak 1991</reference>
     </ValueModelReferenced>
     <ValueModelReferenced>
       <name>lambda234</name>
       <value>0.00000282206</value>
       <uncertaintyType>PCT</uncertaintyType>
       <oneSigma>0.05351</oneSigma>
-      <reference>Cheng et al. 2000</reference>
+      <reference>Cheng et al. 20013</reference>
     </ValueModelReferenced>
     <ValueModelReferenced>
       <name>lambda235</name>
