@@ -211,7 +211,7 @@
         <dependency>
             <groupId>com.github.cirdles.topsoil</groupId>
             <artifactId>core</artifactId>
-            <version>a416fb4</version>
+            <version>-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.python</groupId>
@@ -221,12 +221,12 @@
         <dependency>
             <groupId>com.github.cirdles</groupId>
             <artifactId>Commons</artifactId>
-            <version>0f628cc</version>
+            <version>-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.github.bowring</groupId>
             <artifactId>SHRIMP</artifactId>
-            <version>2df21f5</version>
+            <version>-SNAPSHOT</version>
         </dependency>
     </dependencies>
     <build>
