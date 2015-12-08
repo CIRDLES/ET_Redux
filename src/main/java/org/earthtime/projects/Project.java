@@ -40,6 +40,7 @@ import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.filters.ReduxFileFilter;
 import org.earthtime.UPb_Redux.fractions.FractionI;
+import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLAICPMSFraction;
 import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.UPb_Redux.user.ReduxPersistentState;
@@ -227,6 +228,9 @@ public class Project implements
                         uPbLAICPMSFraction.setSampleName(tripoliSample.getSampleName());
                         // add to tripoli fraction so its UPbFraction can be contiunously updated
                         tf.setuPbFraction(uPbLAICPMSFraction);
+                        // dec 2015
+                        ((UPbFractionI)uPbLAICPMSFraction).setTripoliFraction(tf);
+                        uPbLAICPMSFraction.setRejected(!tf.isIncluded());
 
                         // automatically added to aliquot #1 as we are assuming only one aliquot in this scenario
                         sample.addFraction(uPbLAICPMSFraction);
