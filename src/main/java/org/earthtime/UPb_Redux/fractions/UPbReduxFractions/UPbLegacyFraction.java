@@ -30,6 +30,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Comparator;
+import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.fractions.FractionI;
@@ -725,5 +726,15 @@ public class UPbLegacyFraction extends Fraction implements
     @Override
     public boolean isAnOxide() {
         return false;
+    }
+
+    @Override
+    public TripoliFraction getTripoliFraction() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setTripoliFraction(TripoliFraction tripoliFraction) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

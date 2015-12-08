@@ -30,13 +30,12 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.PbcCorrectionDetails;
-import org.earthtime.reduxLabData.ReduxLabData;
-import org.earthtime.reportViews.ReportRowGUIInterface;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.UPb_Redux.utilities.comparators.IntuitiveStringComparator;
 import org.earthtime.UPb_Redux.valueModels.MeasuredRatioModel;
@@ -55,6 +54,8 @@ import org.earthtime.ratioDataModels.initialPbModelsET.commonLeadLossCorrectionS
 import org.earthtime.ratioDataModels.initialPbModelsET.commonLeadLossCorrectionSchemes.CommonLeadLossCorrectionSchemeA2;
 import org.earthtime.ratioDataModels.initialPbModelsET.commonLeadLossCorrectionSchemes.CommonLeadLossCorrectionSchemeNONE;
 import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsModel;
+import org.earthtime.reduxLabData.ReduxLabData;
+import org.earthtime.reportViews.ReportRowGUIInterface;
 
 /**
  *
@@ -104,6 +105,8 @@ public class UPbLAICPMSFraction extends Fraction implements
     private Matrix SFc204;
     private Matrix JPbccs;
     private boolean correctedForPbc;
+    // dec 2015
+    private TripoliFraction tripoliFraction;
 
     /**
      *
@@ -149,6 +152,8 @@ public class UPbLAICPMSFraction extends Fraction implements
         initializeUpperPhiMap();
 
         this.correctedForPbc = false;
+        
+        this.tripoliFraction = null;
 
     }
 
@@ -1479,5 +1484,19 @@ public class UPbLAICPMSFraction extends Fraction implements
     @Override
     public boolean isAnOxide() {
         return false;
+    }
+
+    /**
+     * @return the tripoliFraction
+     */
+    public TripoliFraction getTripoliFraction() {
+        return tripoliFraction;
+    }
+
+    /**
+     * @param tripoliFraction the tripoliFraction to set
+     */
+    public void setTripoliFraction(TripoliFraction tripoliFraction) {
+        this.tripoliFraction = tripoliFraction;
     }
 }
