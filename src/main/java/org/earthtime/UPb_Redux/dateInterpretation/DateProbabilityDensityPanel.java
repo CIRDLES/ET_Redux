@@ -735,7 +735,7 @@ public class DateProbabilityDensityPanel extends JLayeredPane
 
         // modified to include actual measured data
         // there is one point for each of 0 to 4000 inclusive plus a point for each of the actual data
-        pdfPoints = new ArrayList<Double>();
+        pdfPoints = new ArrayList<>();
         for (double i = 0; i < 4001; i++) {
             pdfPoints.add(i);
         }
