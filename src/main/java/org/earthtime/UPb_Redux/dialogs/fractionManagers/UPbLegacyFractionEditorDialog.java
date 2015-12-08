@@ -28,7 +28,6 @@ import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
@@ -36,6 +35,7 @@ import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.ReductionHandler;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.UncertaintyZoomLayer;
 import org.earthtime.aliquots.AliquotInterface;
+import org.earthtime.aliquots.ReduxAliquotInterface;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
@@ -112,12 +112,12 @@ public class UPbLegacyFractionEditorDialog extends DialogEditor {
         // populate combobox for fractions -- added march 2009 to allow navigation from within this form
         fraction_Chooser.removeAllItems();
         // add selected fraction if it is rejected as the user clicked it
-        if (((UPbFractionI) fraction).isRejected()) {
+        if (fraction.isRejected()) {
             fraction_Chooser.addItem(fraction);
         }
         // add the not-rejected fractions
-        for (ETFractionInterface f : ((UPbReduxAliquot) aliquot).getAliquotFractions()) {
-            if (!((UPbFractionI) f).isRejected()) {
+        for (ETFractionInterface f : ((ReduxAliquotInterface) aliquot).getAliquotFractions()) {
+            if (!f.isRejected()) {
                 fraction_Chooser.addItem(f);
             }
         }
@@ -135,8 +135,8 @@ public class UPbLegacyFractionEditorDialog extends DialogEditor {
 
         // first create a list of used fractionids so that we
         // can tell user if edited fraction name is already in use
-        fractionIDs = new ArrayList<String>();
-        for (ETFractionInterface f : ((UPbReduxAliquot) aliquot).getAliquotFractions()) {
+        fractionIDs = new ArrayList<>();
+        for (ETFractionInterface f : ((ReduxAliquotInterface) aliquot).getAliquotFractions()) {
             fractionIDs.add(f.getFractionID());
         }
 
@@ -154,7 +154,7 @@ public class UPbLegacyFractionEditorDialog extends DialogEditor {
 
         // if this is an added default fraction, the isdeleted field is true and
         // hence we do not need the button active
-        delete_button.setEnabled(!((UPbFractionI) myFraction).isDeleted());
+        delete_button.setEnabled(!myFraction.isDeleted());
         restore_button.setEnabled(false);
 
     }

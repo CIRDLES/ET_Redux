@@ -218,11 +218,11 @@ public class UPbFractionEditorDialog extends DialogEditor {
         // populate combobox for fractions -- added march 2009 to allow navigation from within this form
         fraction_Chooser.removeAllItems();
         // add selected fraction if it is rejected as the user clicked it
-        if (((UPbFractionI) fraction).isRejected()) {
+        if (fraction.isRejected()) {
             fraction_Chooser.addItem(fraction);
         }
         // add the not-rejected fractions
-        for (ETFractionInterface f : ((ReduxAliquotInterface) aliquot).getAliquotFractions()) {
+        for (ETFractionInterface f : ((ReduxAliquotInterface) aliquot).getAliquotFractionsSorted()) {
             if (!f.isRejected()) {
                 fraction_Chooser.addItem(f);
             }
@@ -231,13 +231,14 @@ public class UPbFractionEditorDialog extends DialogEditor {
         fraction_Chooser.setSelectedItem(myFraction);
         fraction_Chooser.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 JComboBox cb = (JComboBox) e.getSource();
                 restoreFractionFromKwikiChanges(myFraction);
 
                 reInitializeKwikiTab(myFraction);
 
-                myFraction = (FractionI) cb.getSelectedItem();
+                myFraction = (ETFractionInterface) cb.getSelectedItem();
 
                 InitializeFractionData(myFraction);
 
@@ -248,8 +249,8 @@ public class UPbFractionEditorDialog extends DialogEditor {
 
         // first create a list of used fractionids so that we
         // can tell user if edited fraction name is already in use
-        fractionIDs = new ArrayList<String>();
-        for (ETFractionInterface f : ((UPbReduxAliquot) aliquot).getAliquotFractions()) {
+        fractionIDs = new ArrayList<>();
+        for (ETFractionInterface f : ((ReduxAliquotInterface) aliquot).getAliquotFractions()) {
             fractionIDs.add(f.getFractionID());
         }
 
