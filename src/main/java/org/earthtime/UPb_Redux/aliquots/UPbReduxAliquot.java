@@ -679,9 +679,6 @@ public class UPbReduxAliquot extends Aliquot
      */
     @Override
     public Vector<ETFractionInterface> getAliquotFractions() {
-        if (aliquotFractions != null) {
-            Collections.sort(aliquotFractions, ETFractionInterface.FRACTION_ID_ORDER);
-        }
         return aliquotFractions;
     }
 
