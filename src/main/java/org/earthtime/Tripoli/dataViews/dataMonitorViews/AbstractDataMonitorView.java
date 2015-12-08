@@ -47,7 +47,9 @@ import java.util.TreeSet;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
@@ -80,8 +82,7 @@ import org.earthtime.UPb_Redux.dateInterpretation.kwiki.KwikiPDFToolBar;
 import org.earthtime.UPb_Redux.dialogs.parameterManagers.LAICPMSProjectParametersManager;
 import org.earthtime.UPb_Redux.dialogs.projectManagers.ProjectManagerSubscribeInterface;
 import org.earthtime.UPb_Redux.fractions.FractionsFilterInterface;
-import org.earthtime.reduxLabData.ReduxLabData;
-import org.earthtime.reportViews.TabbedReportViews;
+import org.earthtime.UPb_Redux.utilities.CustomIcon;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.dataDictionaries.DataPresentationModeEnum;
 import org.earthtime.dataDictionaries.FractionSelectionTypeEnum;
@@ -90,6 +91,8 @@ import org.earthtime.dataDictionaries.IncludedTypeEnum;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.projects.ProjectInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
+import org.earthtime.reduxLabData.ReduxLabData;
+import org.earthtime.reportViews.TabbedReportViews;
 import org.earthtime.utilities.TicGeneratorForAxes;
 
 /**
@@ -106,6 +109,12 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
     }
 
     private transient SwingWorker loadDataTask;
+    private final static Integer LAYER_FIVE = 5;
+    private final ClassLoader cldr = this.getClass().getClassLoader();
+    private final java.net.URL imageReduxURL = cldr.getResource("org/earthtime/images/uth-pb-redux-logo.png");
+    private final ImageIcon myReduxIcon;
+    private JLabel redux_Icon_label;
+
     /**
      *
      */
@@ -181,6 +190,13 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
      */
     public AbstractDataMonitorView() {
         super();
+
+        myReduxIcon = new CustomIcon(imageReduxURL);
+        redux_Icon_label = new JLabel();
+        redux_Icon_label.setBounds(leftMargin + 5, 5, 78, 50);
+        ((CustomIcon) myReduxIcon).setSize(redux_Icon_label.getWidth(), redux_Icon_label.getHeight());
+        redux_Icon_label.setIcon(myReduxIcon);
+
     }
 
     /**
@@ -212,6 +228,9 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
     private void initView() {
 
         try {
+
+            this.add(redux_Icon_label);
+
             rawDataFilePathTextFactory();
 
             buttonFactory();
@@ -294,89 +313,93 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
     public void preparePanel() {
 
         this.removeAll();
+        this.add(redux_Icon_label);
 
-        add(rawDataFilePathTextArea);
-
-        SortedSet<DataModelInterface> dataModels = tripoliFractions.first().getRatiosForFractionFitting();
-
-        Iterator<DataModelInterface> dataModelsIterator = dataModels.iterator();
+        this.add(rawDataFilePathTextArea, JLayeredPane.DEFAULT_LAYER);
 
         int count = 0;
 
         SortedSet<TripoliFraction> standardFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.STANDARD, IncludedTypeEnum.ALL);
 
-        while (dataModelsIterator.hasNext()) {
-            DataModelInterface dm = dataModelsIterator.next();
+        if (tripoliFractions.size() > 0) {
+            SortedSet<DataModelInterface> dataModels = tripoliFractions.first().getNonPbRatiosForFractionFitting();
+            Iterator<DataModelInterface> dataModelsIterator = dataModels.iterator();
 
-            AbstractRawDataView rawDataModelView = //
-                    new SessionOfStandardView( //
-                            this,//
-                            tripoliSession.getCurrentSessionForStandardsFractionation().get(dm.getRawRatioModelName()), //
-                            standardFractions,//
-                            dm, //
-                            DataPresentationModeEnum.RATIO,//
-                            new Rectangle(//
-                                    90, //
-                                    count * (160 + 50) + topMargin + 50, //
-                                    250,//
-                                    160));
+            while (dataModelsIterator.hasNext()) {
+                DataModelInterface dm = dataModelsIterator.next();
 
-            rawDataModelView.preparePanel();
+                AbstractRawDataView rawDataModelView
+                        = //
+                        new SessionOfStandardView( //
+                                this,//
+                                tripoliSession.getCurrentSessionForStandardsFractionation().get(dm.getRawRatioModelName()), //
+                                standardFractions,//
+                                dm, //
+                                DataPresentationModeEnum.RATIO,//
+                                new Rectangle(//
+                                        90, //
+                                        count * (160 + 50) + topMargin + 50, //
+                                        250,//
+                                        160));
 
-            this.add(rawDataModelView);
+                rawDataModelView.preparePanel();
 
-            double overallMinY = rawDataModelView.getMinY();
-            double overallMaxY = rawDataModelView.getMaxY();
+                this.add(rawDataModelView, JLayeredPane.DEFAULT_LAYER);
 
-            // generate tics array for standards all
-            BigDecimal[] yAxisTics = null;
+                double overallMinY = rawDataModelView.getMinY();
+                double overallMaxY = rawDataModelView.getMaxY();
 
-            yAxisTics = TicGeneratorForAxes.generateTics(overallMinY, overallMaxY, (int) (160 / 20.0));
-            if (yAxisTics.length > 15) {
-                yAxisTics = TicGeneratorForAxes.generateTics(overallMinY, overallMaxY, (int) (160 / 32.0));
+                // generate tics array for standards all
+                BigDecimal[] yAxisTics = null;
+
+                yAxisTics = TicGeneratorForAxes.generateTics(overallMinY, overallMaxY, (int) (160 / 20.0));
+                if (yAxisTics.length > 15) {
+                    yAxisTics = TicGeneratorForAxes.generateTics(overallMinY, overallMaxY, (int) (160 / 32.0));
+                }
+
+                // create margins for y-values after axis tics calculated
+                double yMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(overallMinY, overallMaxY, 12.0 / 160);
+                overallMinY -= yMarginStretch;
+                overallMaxY += yMarginStretch;
+
+                AbstractRawDataView yAxisPane = new YAxisView( //
+                        new AbstractRawDataView[]{rawDataModelView},
+                        this,//
+                        Color.white, //
+                        overallMinY,//
+                        overallMaxY,//
+                        new Rectangle( //
+                                5, count * (160 + 50) + topMargin + 50, //
+                                90, //
+                                160),//
+                        false, true);
+                yAxisPane.setTics(yAxisTics);
+
+                this.add(yAxisPane, JLayeredPane.DEFAULT_LAYER);
+
+                AbstractRawDataView sessionFitFunctionsPresentationView
+                        = //
+                        new SessionFitFunctionsPresentationView( //
+                                this,//
+                                tripoliSession.getCurrentSessionForStandardsFractionation().get(dm.getRawRatioModelName()), //
+                                (FitFunctionDataInterface) rawDataModelView,//
+                                DataPresentationModeEnum.RATIO, //
+                                new Rectangle( //
+                                        345, //
+                                        count * (160 + 50) + topMargin + 50, //
+                                        250, //
+                                        180));
+
+                sessionFitFunctionsPresentationView.preparePanel();
+
+                this.add(sessionFitFunctionsPresentationView, JLayeredPane.DEFAULT_LAYER);
+
+                count++;
             }
+            prepareConcordia();
 
-            // create margins for y-values after axis tics calculated
-            double yMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(overallMinY, overallMaxY, 12.0 / 160);
-            overallMinY -= yMarginStretch;
-            overallMaxY += yMarginStretch;
-
-            AbstractRawDataView yAxisPane = new YAxisView( //
-                    new AbstractRawDataView[]{rawDataModelView},
-                    this,//
-                    Color.white, //
-                    overallMinY,//
-                    overallMaxY,//
-                    new Rectangle( //
-                            5, count * (160 + 50) + topMargin + 50, //
-                            90, //
-                            160),//
-                    false, true);
-            yAxisPane.setTics(yAxisTics);
-
-            this.add(yAxisPane);
-
-            AbstractRawDataView sessionFitFunctionsPresentationView = //
-                    new SessionFitFunctionsPresentationView( //
-                            this,//
-                            tripoliSession.getCurrentSessionForStandardsFractionation().get(dm.getRawRatioModelName()), //
-                            (FitFunctionDataInterface) rawDataModelView,//
-                            DataPresentationModeEnum.RATIO, //
-                            new Rectangle( //
-                                    345, //
-                                    count * (160 + 50) + topMargin + 50, //
-                                    250, //
-                                    180));
-
-            sessionFitFunctionsPresentationView.preparePanel();
-
-            this.add(sessionFitFunctionsPresentationView);
-
-            count++;
+            preparePDF();
         }
-        prepareConcordia();
-
-        preparePDF();
 
         buttonFactory();
 
@@ -387,7 +410,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
         ((TabbedReportViews) reportTableTabbedPane).prepareTabs();
 
         reportTableTabbedPane.setBounds(leftMargin, topMargin + 700, 2000, 500);
-        this.add(reportTableTabbedPane, JLayeredPane.DEFAULT_LAYER);
+        this.add(reportTableTabbedPane, new Integer(5));
 
     }
 
@@ -397,46 +420,53 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
                 "Monitoring Raw data location: "
                 + rawDataFileHandler.getAcquisitionModel().getRawDataFile().getCanonicalPath());
 
-        rawDataFilePathTextArea.setBounds(leftMargin, topMargin, parentDimension.width - 100, 40);
+        rawDataFilePathTextArea.setBounds(leftMargin + 50, topMargin, parentDimension.width - 100, 40);
         rawDataFilePathTextArea.setLineWrap(true);
         rawDataFilePathTextArea.setEditable(false);
-        this.add(rawDataFilePathTextArea);
+        this.add(rawDataFilePathTextArea, JLayeredPane.DEFAULT_LAYER);
     }
 
     private void buttonFactory() {
         ET_JButton closeAndReviewButton = new ET_JButton("Halt Processing and Review Samples");
-        closeAndReviewButton.setBounds(leftMargin + 50, topMargin + 665, 540, 25);
-        closeAndReviewButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                try {
-                    loadDataTask.cancel(true);
-                } catch (Exception e) {
-                }
-//                dataMonitorViewDialog.dispose();//.setVisible(false);
-                projectManager.updateDataChangeStatus(false);
-                projectManager.displaySamples(tripoliSession, tripoliSamplesSorted);
-                dataMonitorViewDialog.dispose();//.setVisible(false);
-
+        closeAndReviewButton.setBounds(leftMargin + 50, topMargin + 665, 450, 25);
+        closeAndReviewButton.addActionListener((ActionEvent ae) -> {
+            try {
+                loadDataTask.cancel(true);
+            } catch (Exception e) {
             }
+            projectManager.updateDataChangeStatus(false);
+            projectManager.displaySamples(tripoliSession, tripoliSamplesSorted);
+            dataMonitorViewDialog.dispose();
         });
 
         closeAndReviewButton.setEnabled(true);
-        this.add(closeAndReviewButton);
+        this.add(closeAndReviewButton, LAYER_FIVE);
+
+        ET_JButton recalcButton = new ET_JButton("Re-calculate rhos");
+        recalcButton.setBounds(leftMargin + 500, topMargin + 665, 120, 25);
+        recalcButton.addActionListener((ActionEvent ae) -> {
+            try {
+                tripoliSession.interceptCalculatePbcCorrAndRhos();
+            } catch (Exception e) {
+            }
+            try {
+                getuPbReduxFrame().updateReportTable(true);
+            } catch (Exception e) {
+            }
+            preparePanel();
+        });
+
+        recalcButton.setEnabled(true);
+        this.add(recalcButton, LAYER_FIVE);
 
         ET_JButton refreshButton = new ET_JButton("Refresh Views");
-        refreshButton.setBounds(leftMargin + 600, topMargin + 665, 120, 25);
-        refreshButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                preparePanel();
-            }
+        refreshButton.setBounds(leftMargin + 620, topMargin + 665, 120, 25);
+        refreshButton.addActionListener((ActionEvent ae) -> {
+            preparePanel();
         });
 
         refreshButton.setEnabled(true);
-        this.add(refreshButton);
+        this.add(refreshButton, LAYER_FIVE);
 
     }
 
@@ -447,7 +477,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
         loadDataTaskProgressBar.setMaximum(100);
         loadDataTaskProgressBar.setMinimum(0);
         loadDataTaskProgressBar.setValue(0);
-        loadDataTaskProgressBar.setBounds(leftMargin + 50, 700, 540, 20);
+        loadDataTaskProgressBar.setBounds(leftMargin + 50, 700, 450, 20);
     }
 
     /**
@@ -494,7 +524,8 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
         add(concordiaGraphPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         try {
-            Vector<ETFractionInterface> selectedFractions =//
+            Vector<ETFractionInterface> selectedFractions
+                    =//
                     project.getSuperSample().getFractions();
 
             ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
@@ -560,7 +591,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
         String dateName = ((DateProbabilityDensityPanel) probabilityPanel).getChosenDateName();
 
         for (ETFractionInterface f : fractions) {
-            boolean doAddFraction = true;
+            boolean doAddFraction = !f.isRejected();
 //            double pctDiscordance = f.getRadiogenicIsotopeDateByName(RadDates.percentDiscordance).getValue().doubleValue();
 //
 //            if (pctDiscordance >= 0.0) {  //
@@ -622,13 +653,18 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
 
         if (savedCountOfFractions == 0) {
 
+            if (tripoliFractions == null) {
+                tripoliFractions = new TreeSet<>();
+            }
+
             tripoliSamplesSorted = rawDataFileHandler.parseFractionsIntoSamples();
 
             tripoliFractionsCurrent = rawDataFileHandler.getTripoliFractions();
             tripoliFractions.addAll(tripoliFractionsCurrent);
 
             // create session
-            tripoliSession = //
+            tripoliSession
+                    = //
                     new TripoliSession(//
                             rawDataFileHandler, tripoliSamplesSorted);
 
@@ -654,44 +690,46 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
 
         }
 
-        // first align standard status of all fractions
-        tripoliSession.updateFractionsToSampleMembership();
+        if (tripoliFractions.size() > 0) {
+            // first align standard status of all fractions
+            tripoliSession.updateFractionsToSampleMembership();
 
-        // april 2012
-        // save mineral standard model choice and update all raw ratios with standard value
-        AbstractRatiosDataModel primaryMineralStandard = tripoliSamplesSorted.get(0).getMineralStandardModel();
-        if (primaryMineralStandard == null) {
-            System.out.println("Auto selecting mineral standard model for primary standard.");
-            primaryMineralStandard = ReduxLabData.getInstance().getMineralStandardModels().get(3);//3=sri lanka
-        } //else {
+            // april 2012
+            // save mineral standard model choice and update all raw ratios with standard value
+            AbstractRatiosDataModel primaryMineralStandard = tripoliSamplesSorted.get(0).getMineralStandardModel();
+            if (primaryMineralStandard == null) {
+                System.out.println("Auto selecting mineral standard model for primary standard.");
+                primaryMineralStandard = ReduxLabData.getInstance().getMineralStandardModels().get(3);//3=sri lanka
+            } //else {
 
-        tripoliSession.setPrimaryMineralStandard(primaryMineralStandard);
+            tripoliSession.setPrimaryMineralStandard(primaryMineralStandard);
 
-        tripoliSession.getTripoliSamples().get(0).setMineralStandardModel(primaryMineralStandard);
+            tripoliSession.getTripoliSamples().get(0).setMineralStandardModel(primaryMineralStandard);
 
-        tripoliSession.processRawData();
+            tripoliSession.processRawData();
 
-        tripoliSession.postProcessDataForCommonLeadLossPreparation();
+            tripoliSession.postProcessDataForCommonLeadLossPreparation();
 
-        try {
-            loadDataTaskProgressBar.repaint();
+            try {
+                loadDataTaskProgressBar.repaint();
 
-        } catch (Exception e) {
+            } catch (Exception e) {
+            }
+
+            project.prepareSamplesForRedux();
+
+            getuPbReduxFrame().initializeProject();
+
+            updateDisplays();
         }
-
-        project.prepareSamplesForRedux();
-
-        getuPbReduxFrame().initializeProject();
-
-        updateDisplays();
 
     }
 
     private class LoadDataTask extends SwingWorker<Void, Void> {
+
         /*
          * Main loadDataTask. Executed in background thread.
          */
-
         private final boolean usingFullPropagation;
         private final int ignoreFirstFractions;
         private final int leftShadeCount;

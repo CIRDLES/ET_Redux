@@ -333,13 +333,6 @@ public class LaserChronNUPlasmaMultiCollFaradayFileHandler extends AbstractRawDa
 
     /**
      *
-     *
-     * @param usingFullPropagation the value of usingFullPropagation
-     * @param ignoreFirstFractions the value of ignoreFirstFractions
-     * @return
-     */
-    /**
-     *
      * @param loadDataTask
      * @param usingFullPropagation the value of usingFullPropagation
      * @param leftShadeCount the value of leftShadeCount

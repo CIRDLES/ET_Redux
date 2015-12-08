@@ -312,7 +312,7 @@ public abstract class AbstractRawDataFileHandler implements //
 
         ArrayList<AbstractTripoliSample> tripoliSamples = new ArrayList<>();
 
-        if (tripoliFractions != null) {
+        if (tripoliFractions.size() > 0){// != null) {
             if (rawDataFileTemplate.getDefaultParsingOfFractionsBehavior() == 0) {
                 AbstractTripoliSample primaryStandard = //
                         new TripoliPrimaryStandardSample("Some Standard");
