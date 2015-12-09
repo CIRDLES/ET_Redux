@@ -27,6 +27,7 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -51,7 +52,6 @@ import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.FractionsFilterInterface;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLAICPMSFraction;
-import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.dataDictionaries.FitFunctionTypeEnum;
 import org.earthtime.dataDictionaries.FractionSelectionTypeEnum;
@@ -66,6 +66,7 @@ import org.earthtime.ratioDataModels.initialPbModelsET.StaceyKramersInitialPbMod
 import org.earthtime.ratioDataModels.initialPbModelsET.commonLeadLossCorrectionSchemes.CommonLeadLossCorrectionSchemeNONE;
 import org.earthtime.ratioDataModels.mineralStandardModels.MineralStandardUPbModel;
 import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsModel;
+import org.earthtime.reduxLabData.ReduxLabData;
 
 /**
  *
@@ -186,6 +187,7 @@ public class TripoliSession implements
             if (sessionForStandardsDownholeFractionation == null) {
                 this.sessionForStandardsDownholeFractionation = new TreeMap<>();
             }
+
             //create zero-based time stamp for fractions to use in session view
             long firstFractionTimeStamp = tripoliFractions.first().getPeakTimeStamp();
 
@@ -233,7 +235,8 @@ public class TripoliSession implements
 
             // choice based on current fractionation technique
             // create downholeFractionationDataModels
-            downholeFractionationDataModels = //
+            downholeFractionationDataModels
+                    = //
                     rawDataFileHandler.getMassSpec().downholeFractionationDataModelsFactory(tripoliFractions, primaryMineralStandard);
             // may 2014 - for use with live data, we check to see if these exist and if so, do not recreate
             if ((sessionForStandardsInterceptFractionation.isEmpty()) || (sessionForStandardsDownholeFractionation.isEmpty())) {
@@ -241,7 +244,8 @@ public class TripoliSession implements
                 Iterator<DataModelInterface> dataModelIterator = tripoliFractions.first().getNonPbRatiosForFractionFitting().iterator();
                 while (dataModelIterator.hasNext()) {
                     DataModelInterface dm = dataModelIterator.next();
-                    AbstractSessionForStandardDataModel ssm = //
+                    AbstractSessionForStandardDataModel ssm
+                            = //
                             new SessionForStandardDataModelDownholeFractionation( //
                                     this, //
                                     dm.getRawRatioModelName(), dm.getStandardValue(), //
@@ -253,7 +257,8 @@ public class TripoliSession implements
                 dataModelIterator = tripoliFractions.first().getRatiosForFractionFitting().iterator();
                 while (dataModelIterator.hasNext()) {
                     DataModelInterface dm = dataModelIterator.next();
-                    AbstractSessionForStandardDataModel ssm = //
+                    AbstractSessionForStandardDataModel ssm
+                            = //
                             new SessionForStandardDataModelInterceptFractionation( //
                                     this, //
                                     dm.getRawRatioModelName(), dm.getStandardValue(), //
@@ -270,9 +275,8 @@ public class TripoliSession implements
                     AbstractSessionForStandardDataModel ssm = sessionForStandardsInterceptFractionation.get(dm.getRawRatioModelName());
                     ssm.setStandardFractions(FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.STANDARD, IncludedTypeEnum.ALL));
 
-                    ssm = sessionForStandardsDownholeFractionation.get(dm.getRawRatioModelName());
-                    ssm.setStandardFractions(FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.STANDARD, IncludedTypeEnum.ALL));
-
+////                    ssm = sessionForStandardsDownholeFractionation.get(dm.getRawRatioModelName());
+////                    ssm.setStandardFractions(FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.STANDARD, IncludedTypeEnum.ALL));
                 }
             }
 
@@ -637,7 +641,7 @@ public class TripoliSession implements
     public void applyCorrections() {
 
         // dec 2014 - initialize fractions for rho calcs and common lead correction
-        SortedSet<TripoliFraction> allFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.ALL, IncludedTypeEnum.ALL);
+        SortedSet<TripoliFraction> allFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.ALL, IncludedTypeEnum.INCLUDED);//dec 2015 .ALL);
         Iterator<TripoliFraction> allFractionsIterator = allFractions.iterator();
 
         while (allFractionsIterator.hasNext()) {
@@ -666,6 +670,20 @@ public class TripoliSession implements
         }
     }
 
+    public void interceptCalculatePbcCorrAndRhos() {
+        // refit any  fractions not currently fitted
+        Set<TripoliFraction> includedTripoliFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.ALL, IncludedTypeEnum.INCLUDED);
+        for (TripoliFraction tf : includedTripoliFractions) {
+            tf.reProcessToRejectNegativeRatios();
+            if (!tf.isCurrentlyFitted()) {
+                tf.updateInterceptFitFunctionsIncludingCommonLead();
+                fitFunctionsUpToDate = false;
+            }
+        }
+
+        prepareForReductionAndCommonLeadCorrection();
+    }
+
     private void calculateUThConcentrationsForUnknowns() {
         // dec 2014 from appendix C
         // each unknown's concentrtations are calculted using time and braketing standards
@@ -692,13 +710,15 @@ public class TripoliSession implements
                             // concUnknown = ix * concStandard / i1 
                             // where concUnknown is the concentration of the unknown, concStandard is the U or Th standard from the mineral standard model
                             double primaryStdConcU = ((MineralStandardUPbModel) primaryMineralStandard).getConcentrationByName(MineralStandardUPbConcentrationsPPMEnum.concU238ppm.getName()).getValue().doubleValue();
-                            double concUnknownU = //
+                            double concUnknownU
+                                    = //
                                     primaryStdConcU //
                                     * unkownIntensityU //
                                     / (leftStandardIntensityU);
 
                             double primaryStdConcTh = ((MineralStandardUPbModel) primaryMineralStandard).getConcentrationByName(MineralStandardUPbConcentrationsPPMEnum.concTh232ppm.getName()).getValue().doubleValue();
-                            double concUnknownTh = //
+                            double concUnknownTh
+                                    = //
                                     primaryStdConcTh //
                                     * unkownIntensityTh //
                                     / (leftStandardIntensityTh);
@@ -757,14 +777,16 @@ public class TripoliSession implements
                         }
 
                         double primaryStdConcU = ((MineralStandardUPbModel) primaryMineralStandard).getConcentrationByName(MineralStandardUPbConcentrationsPPMEnum.concU238ppm.getName()).getValue().doubleValue();
-                        double concUnknownU = //
+                        double concUnknownU
+                                = //
                                 primaryStdConcU //
                                 * unkownIntensityU //
                                 / (leftStandardIntensityU //
                                 + ((double) (rightStandardTime - unknown.getZeroBasedTimeStamp()) / (double) (rightStandardTime - leftStandardTime)) * (rightStandardIntensityU - leftStandardIntensityU));
 
                         double primaryStdConcTh = ((MineralStandardUPbModel) primaryMineralStandard).getConcentrationByName(MineralStandardUPbConcentrationsPPMEnum.concTh232ppm.getName()).getValue().doubleValue();
-                        double concUnknownTh = //
+                        double concUnknownTh
+                                = //
                                 primaryStdConcTh //
                                 * unkownIntensityTh //
                                 / (leftStandardIntensityTh //
@@ -815,11 +837,13 @@ public class TripoliSession implements
         while (sessionForStandardsIterator.hasNext()) {
             RawRatioNames rrName = sessionForStandardsIterator.next();
 
-            AbstractSessionForStandardDataModel sessionForStandard = //
+            AbstractSessionForStandardDataModel sessionForStandard
+                    = //
                     sessionForStandardsFractionation.get(rrName);
 
             // get the session fit function
-            AbstractFunctionOfX sessionFofX = //
+            AbstractFunctionOfX sessionFofX
+                    = //
                     sessionForStandard.getSelectedFitFunction();
 
             if (sessionFofX != null) {
@@ -910,11 +934,13 @@ public class TripoliSession implements
         while (sessionForStandardsIterator.hasNext()) {
             RawRatioNames rrName = sessionForStandardsIterator.next();
 
-            AbstractSessionForStandardDataModel sessionForStandard = //
+            AbstractSessionForStandardDataModel sessionForStandard
+                    = //
                     sessionForStandardsInterceptFractionation.get(rrName);
 
             // get the session fit function
-            AbstractFunctionOfX sessionFofX = //
+            AbstractFunctionOfX sessionFofX
+                    = //
                     sessionForStandard.getSelectedFitFunction();
 
             if (sessionFofX == null) {
@@ -941,9 +967,11 @@ public class TripoliSession implements
 
         while (unknownFractionIterator.hasNext()) {
             TripoliFraction tf = unknownFractionIterator.next();
-            tf.getuPbFraction().setRejected(false);
+            tf.setIncluded(!tf.getuPbFraction().isRejected());
+            //tf.getuPbFraction().setRejected(false);
             if (!tf.confirmHealthyFraction()) {
                 tf.getuPbFraction().setRejected(true);
+                tf.setIncluded(false);
                 System.out.println("REJECTING " + tf.getFractionID());
             }
             if (!tf.isIncluded()) {
@@ -1198,7 +1226,8 @@ public class TripoliSession implements
                 unknownsLogRatioMeans.timesEquals(-1.0);
             }
 
-            SessionCorrectedUnknownsSummary sessionCorrectedUnknownsSummary =//
+            SessionCorrectedUnknownsSummary sessionCorrectedUnknownsSummary
+                    =//
                     new SessionCorrectedUnknownsSummary( //
                             unknownsAnalyticalCovarianceSu, unknownFractionIDs, //
                             unknownsLogRatioMeans,//
@@ -1218,11 +1247,13 @@ public class TripoliSession implements
         while (sessionForStandardsIterator.hasNext()) {
             RawRatioNames rrName = sessionForStandardsIterator.next();
 
-            AbstractSessionForStandardDataModel sessionForStandard = //
+            AbstractSessionForStandardDataModel sessionForStandard
+                    = //
                     sessionForStandardsDownholeFractionation.get(rrName);
 
             // get the session fit function
-            AbstractFunctionOfX sessionFofX = //
+            AbstractFunctionOfX sessionFofX
+                    = //
                     sessionForStandard.getSelectedFitFunction();
 
             if (sessionFofX == null) {
@@ -1239,14 +1270,14 @@ public class TripoliSession implements
             if (sessionFofX != null) {
 //                if (prepareMatrixJfMapFractionsByType(FractionSelectionTypeEnum.UNKNOWN)) {
 
-                    SortedSet<TripoliFraction> selectedFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.UNKNOWN, IncludedTypeEnum.INCLUDED);
+                SortedSet<TripoliFraction> selectedFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.UNKNOWN, IncludedTypeEnum.INCLUDED);
 
                 int countOfSelectedFractions = selectedFractions.size();
                 if (countOfSelectedFractions > 0) {
 
                     Matrix matrixJfUnknownsActiveStandards = getMatrixJfUnknownsActiveStandards(sessionFofX.getShortName());
 
-                        // forces update of Sf
+                    // forces update of Sf
                     // TODO: Refactor
                     sessionFofX.calculateInterpolatedVariances(matrixJfUnknownsActiveStandards, timesForUnknowns);
 
@@ -1296,7 +1327,7 @@ public class TripoliSession implements
                             selectedFractionsAnalyticalCovarianceSu.plusEquals(matrixSuod);
                         }
 
-                            // nov 2014 finally the math to calculate the rhos and Pbc correction uncertainties.
+                        // nov 2014 finally the math to calculate the rhos and Pbc correction uncertainties.
                         // save Matrix selectedFractionsAnalyticalCovarianceSu DIAGONAL for use in common lead corrections etc
                         double[] diagonalOfSessionUnknownsAnalyticalCovarianceSu = new double[countOfSelectedFractions];
                         for (int i = 0; i < countOfSelectedFractions; i++) {
@@ -1304,7 +1335,7 @@ public class TripoliSession implements
                         }
 
                         sessionFofX.setDiagonalOfSessionUnknownsAnalyticalCovarianceSu(diagonalOfSessionUnknownsAnalyticalCovarianceSu);
-                        
+
                         if (prepareMatrixJfMapFractionsByType(FractionSelectionTypeEnum.UNKNOWN)) {
                             applyDownholeFractionationCorrectionToUnknownRatios(FractionSelectionTypeEnum.UNKNOWN, //
                                     sessionFofX, selectedFractionIDs, countOfSelectedFractions, selectedFractionsAnalyticalCovarianceSu, sessionForStandard.getStandardValue(), rrName, rrName.getName());
@@ -1393,7 +1424,8 @@ public class TripoliSession implements
                 unknownsLogRatioMeans.timesEquals(-1.0);
             }
 
-            SessionCorrectedUnknownsSummary sessionCorrectedUnknownsSummary =//
+            SessionCorrectedUnknownsSummary sessionCorrectedUnknownsSummary
+                    =//
                     new SessionCorrectedUnknownsSummary( //
                             unknownsAnalyticalCovarianceSu, unknownFractionIDs, //
                             unknownsLogRatioMeans,//
@@ -1481,7 +1513,8 @@ public class TripoliSession implements
      */
     @Override
     public void includeAllFractions(FractionSelectionTypeEnum fractionSelectionType) {
-        SortedSet<TripoliFraction> excludedTripoliFractions = //
+        SortedSet<TripoliFraction> excludedTripoliFractions
+                = //
                 FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, fractionSelectionType, IncludedTypeEnum.EXCLUDED);
         excludedTripoliFractions.stream().forEach((f) -> {
             f.toggleAllDataExceptShaded(true);
@@ -1582,7 +1615,7 @@ public class TripoliSession implements
     public void setPrimaryMineralStandard(AbstractRatiosDataModel primaryMineralStandard) {
         this.primaryMineralStandard = primaryMineralStandard;
         // dec 2014
-        if (tripoliSamples != null) {
+        if (tripoliSamples.size() > 0) {// != null) {
             tripoliSamples.get(0).setMineralStandardModel(primaryMineralStandard);
         }
     }

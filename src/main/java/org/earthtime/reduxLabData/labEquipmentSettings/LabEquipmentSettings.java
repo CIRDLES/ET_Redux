@@ -18,10 +18,10 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.earthtime.UPb_Redux.reduxLabData.labEquipmentSettings;
+package org.earthtime.reduxLabData.labEquipmentSettings;
 
 import java.io.Serializable;
-import org.earthtime.UPb_Redux.reduxLabData.ReduxLabDataListElementI;
+import org.earthtime.reduxLabData.ReduxLabDataListElementI;
 import org.earthtime.xmlUtilities.XMLSerializationI;
 
 /**

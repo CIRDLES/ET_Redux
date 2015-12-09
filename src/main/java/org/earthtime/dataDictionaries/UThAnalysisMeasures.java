@@ -24,7 +24,7 @@ package org.earthtime.dataDictionaries;
  */
 public enum UThAnalysisMeasures {
 
-    // UThCompositionalMeasures
+    // UThAnalysisMeasures
     /**
      *
      */

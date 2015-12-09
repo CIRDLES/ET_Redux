@@ -39,7 +39,7 @@ import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
-import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
+import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.renderers.EditFractionButton;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.aliquots.AliquotInterface;

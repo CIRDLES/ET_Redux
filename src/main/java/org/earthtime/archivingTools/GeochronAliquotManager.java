@@ -41,7 +41,7 @@ import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.dateInterpretation.DateProbabilityDensityPanel;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.ConcordiaGraphPanel;
 import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetup;
-import org.earthtime.UPb_Redux.dialogs.DialogEditor;
+import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.archivingTools.forSESAR.SesarSample;

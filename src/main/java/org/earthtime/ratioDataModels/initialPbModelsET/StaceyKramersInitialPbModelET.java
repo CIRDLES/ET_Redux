@@ -140,7 +140,7 @@ public final class StaceyKramersInitialPbModelET extends InitialPbModelET {
      */
     public void resetModelFromTripoliFraction() {
         AbstractRatiosDataModel physicalConstantsModel
-                = PhysicalConstantsModel.getEARTHTIMEPhysicalConstantsModel();
+                = PhysicalConstantsModel.getDefaultEARTHTIMEPhysicalConstantsModel();
 
         BigDecimal lambda238 = physicalConstantsModel.getDatumByName(Lambdas.lambda238.getName()).getValue();
         BigDecimal lambda235 = physicalConstantsModel.getDatumByName(Lambdas.lambda235.getName()).getValue();
@@ -161,10 +161,11 @@ public final class StaceyKramersInitialPbModelET extends InitialPbModelET {
 
     /**
      *
-     * @return
+     * @param doAppendName the value of doAppendName
+     * @return the org.earthtime.ratioDataModels.AbstractRatiosDataModel
      */
     @Override
-    public AbstractRatiosDataModel copyModel() {
+    public AbstractRatiosDataModel copyModel(boolean doAppendName) {
 
         // don't copy stacey kramers, but convert it
         AbstractRatiosDataModel myModel = InitialPbModelET.createNewInstance();
@@ -178,19 +179,10 @@ public final class StaceyKramersInitialPbModelET extends InitialPbModelET {
 
     @Override
     public void saveEdits(boolean checkCovarianceValidity) throws ETException {
-        super.saveEdits(checkCovarianceValidity); //To change body of generated methods, choose Tools | Templates.
-
+        super.saveEdits(checkCovarianceValidity); 
     }
 
-//    /**
-//     *
-//     * @param value the value of value
-//     * @return
-//     */
-//    @Override
-//    protected BigDecimal calculateR207_206cVarUnctPCT(double value) {
-//        return r207_206cUnctPCT;
-//    }
+
     /**
      *
      * @param estimatedAgeInMA

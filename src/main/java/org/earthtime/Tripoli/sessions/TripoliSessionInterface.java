@@ -62,6 +62,8 @@ public interface TripoliSessionInterface extends TripoliSessionFractionationCalc
      */
     @Override
     void applyCorrections ();
+    
+    public void interceptCalculatePbcCorrAndRhos();
 
     /**
      *

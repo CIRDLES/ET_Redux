@@ -50,7 +50,7 @@ public class MineralStandardUPbRatiosPanelViewEditable extends AbstractValueMode
         JLabel measuredLabel = new JLabel( "<html><u>measured</u></html>" );
         measuredLabel.setFont(ReduxConstants.sansSerif_10_Bold );
         measuredLabel.setHorizontalAlignment( SwingConstants.CENTER );
-        measuredLabel.setBounds( 420, 2, 85, AbstractValueModelView.PANEL_HEIGHT );
+        measuredLabel.setBounds( 470, 2, 85, AbstractValueModelView.PANEL_HEIGHT );
         this.add( measuredLabel );
 
         initValueModelViews();

@@ -17,7 +17,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.earthtime.UPb_Redux.dialogs;
+package org.earthtime.dialogs;
 
 import javax.swing.ImageIcon;
 import org.earthtime.ETRedux;
@@ -29,12 +29,11 @@ import org.earthtime.UPb_Redux.utilities.CustomIcon;
  */
 public class AboutBox extends DialogEditor {
 
-    private ClassLoader cldr = this.getClass().getClassLoader();
-    private java.net.URL imageEarthTimeURL = cldr.getResource( "org/earthtime/images/earth_96.jpg" );
-   // private java.net.URL imageReduxURL = cldr.getResource( "org/earthtime/UPb_Redux/images/U-Pb_Redux_Icon.png" );//     U-Pb_ReduxG.JPG");
-    private java.net.URL imageReduxURL = cldr.getResource( "org/earthtime/images/uth-pb-redux-logo.png" );
-    private ImageIcon myEarthTimeIcon;
-    private ImageIcon myReduxIcon;
+    private final ClassLoader cldr = this.getClass().getClassLoader();
+    private final java.net.URL imageEarthTimeURL = cldr.getResource( "org/earthtime/images/earth_96.jpg" );
+    private final java.net.URL imageReduxURL = cldr.getResource( "org/earthtime/images/uth-pb-redux-logo.png" );
+    private final ImageIcon myEarthTimeIcon;
+    private final ImageIcon myReduxIcon;
 
     /** Creates new form AboutBox
      * @param parent 

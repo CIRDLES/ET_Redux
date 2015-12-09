@@ -24,7 +24,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import javax.swing.DefaultComboBoxModel;
 import org.earthtime.UPb_Redux.ReduxConstants.ANALYSIS_PURPOSE;
-import org.earthtime.UPb_Redux.dialogs.DialogEditor;
+import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.samples.SESARSampleMetadata;
 import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.samples.SampleInterface;

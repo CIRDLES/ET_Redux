@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.reduxLabData.ReduxLabDataList;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModelXMLConverter;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
@@ -36,6 +35,7 @@ import org.earthtime.dataDictionaries.TracerUPbRatiosAndConcentrations;
 import org.earthtime.dataDictionaries.TracerUPbTypesEnum;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
+import org.earthtime.reduxLabData.ReduxLabDataList;
 import org.earthtime.utilities.DateHelpers;
 
 /**
@@ -501,9 +501,7 @@ public class TracerUPbModel extends AbstractRatiosDataModel {
         tracerUPbModel.serializeXMLObject(testFileName);
         try {
             tracerUPbModel.readXMLObject(testFileName, true);
-        } catch (FileNotFoundException fileNotFoundException) {
-        } catch (ETException eTException) {
-        } catch (BadOrMissingXMLSchemaException badOrMissingXMLSchemaException) {
+        } catch (FileNotFoundException | ETException | BadOrMissingXMLSchemaException fileNotFoundException) {
         }
     }
 

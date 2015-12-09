@@ -30,6 +30,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Comparator;
+import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.fractions.FractionI;
@@ -85,7 +86,7 @@ public class UPbLegacyFraction extends Fraction implements
         setLegacy(true);
         this.ratioType = "UPb";
 
-        this.physicalConstantsModel = PhysicalConstantsModel.getEARTHTIMEPhysicalConstantsModel();
+        this.physicalConstantsModel = PhysicalConstantsModel.getDefaultEARTHTIMEPhysicalConstantsModel();
 
         this.aliquotNumber = 1;
 
@@ -99,7 +100,7 @@ public class UPbLegacyFraction extends Fraction implements
         // trimming our size
         setAnalysisMeasures(new ValueModel[0]);
         setRadiogenicIsotopeRatios(new ValueModel[0]);
-        setRadiogenicIsotopeDates(new ValueModel[0]);
+        setIsotopeDates(new ValueModel[0]);
         setCompositionalMeasures(new ValueModel[0]);
         setSampleIsochronRatios(new ValueModel[0]);
 
@@ -317,7 +318,7 @@ public class UPbLegacyFraction extends Fraction implements
     @Override
     public AbstractRatiosDataModel getPhysicalConstantsModel() {
         if (physicalConstantsModel == null) {
-            physicalConstantsModel = PhysicalConstantsModel.getEARTHTIMEPhysicalConstantsModel();
+            physicalConstantsModel = PhysicalConstantsModel.getDefaultEARTHTIMEPhysicalConstantsModel();
         }
         return physicalConstantsModel;
     }
@@ -399,8 +400,8 @@ public class UPbLegacyFraction extends Fraction implements
 
             // RadiogenicIsotopeDates
             outputWriter.println("RadiogenicIsotopeDates");
-            Arrays.sort(getRadiogenicIsotopeDates());
-            for (ValueModel radiogenicIsotopeDate : getRadiogenicIsotopeDates()) {
+            Arrays.sort(getIsotopeDates());
+            for (ValueModel radiogenicIsotopeDate : getIsotopeDates()) {
                 outputWriter.println(radiogenicIsotopeDate.formatValueAndOneSigmaABSForTesting());
             }
             outputWriter.println();
@@ -725,5 +726,15 @@ public class UPbLegacyFraction extends Fraction implements
     @Override
     public boolean isAnOxide() {
         return false;
+    }
+
+    @Override
+    public TripoliFraction getTripoliFraction() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setTripoliFraction(TripoliFraction tripoliFraction) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

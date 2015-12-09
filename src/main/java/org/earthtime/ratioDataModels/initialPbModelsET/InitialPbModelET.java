@@ -32,7 +32,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.reduxLabData.ReduxLabDataList;
 import org.earthtime.UPb_Redux.utilities.ETSerializer;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModelXMLConverter;
@@ -40,6 +39,7 @@ import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
 import org.earthtime.dataDictionaries.DataDictionary;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
+import org.earthtime.reduxLabData.ReduxLabDataList;
 import org.earthtime.utilities.DateHelpers;
 
 /**
@@ -288,7 +288,7 @@ public class InitialPbModelET extends AbstractRatiosDataModel {
      */
     @Override
     public void removeSelf() {
-        modelInstances.remove(this.getNameAndVersion());//((AbstractRatiosDataModel)model).getNameAndVersion() );
+        modelInstances.remove(this.getNameAndVersion());
     }
 
     // used for deserialization
@@ -485,7 +485,7 @@ public class InitialPbModelET extends AbstractRatiosDataModel {
                 "ABS", //
                 new BigDecimal(0.00040104065069202200 / 2.0), BigDecimal.ZERO);
 
-        Map<String, BigDecimal> correlations = new HashMap<String, BigDecimal>();
+        Map<String, BigDecimal> correlations = new HashMap<>();
         correlations.put("rhoR206_204c__r207_204c", new BigDecimal(-0.0400671215735759));
         correlations.put("rhoR206_204c__r208_204c", new BigDecimal(-0.0400671215735759));
         correlations.put("rhoR207_204c__r208_204c", new BigDecimal(-0.0400671215735759));

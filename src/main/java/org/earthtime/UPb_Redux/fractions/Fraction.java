@@ -26,7 +26,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.concurrent.ConcurrentMap;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
+import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.utilities.comparators.IntuitiveStringComparator;
 import org.earthtime.UPb_Redux.valueModels.MeasuredRatioModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
@@ -322,7 +322,7 @@ public abstract class Fraction implements
             setAnalysisMeasures(fraction.copyAnalysisMeasures());
         }
         setRadiogenicIsotopeRatios(fraction.copyRadiogenicIsotopeRatios());
-        setRadiogenicIsotopeDates(fraction.copyRadiogenicIsotopeDates());
+        setIsotopeDates(fraction.copyRadiogenicIsotopeDates());
         setCompositionalMeasures(fraction.copyCompositionalMeasures());
         setSampleIsochronRatios(fraction.copySampleIsochronRatios());
         traceElements = fraction.copyTraceElements();
@@ -795,7 +795,7 @@ public abstract class Fraction implements
      * @return
      */
     @Override
-    public ValueModel[] getRadiogenicIsotopeDates() {
+    public ValueModel[] getIsotopeDates() {
         return radiogenicIsotopeDates;
     }
 
@@ -804,7 +804,7 @@ public abstract class Fraction implements
      * @param radiogenicIsotopeDates
      */
     @Override
-    public void setRadiogenicIsotopeDates(ValueModel[] radiogenicIsotopeDates) {
+    public void setIsotopeDates(ValueModel[] radiogenicIsotopeDates) {
         this.radiogenicIsotopeDates = ValueModel.cullNullsFromArray(radiogenicIsotopeDates);
     }
 

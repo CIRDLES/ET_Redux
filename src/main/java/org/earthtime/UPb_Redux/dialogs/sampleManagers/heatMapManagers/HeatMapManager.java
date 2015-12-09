@@ -39,7 +39,7 @@ import static javax.swing.SwingConstants.RIGHT;
 import static org.earthtime.UPb_Redux.ReduxConstants.sansSerif_11_Plain;
 import static org.earthtime.UPb_Redux.ReduxConstants.sansSerif_12_Plain;
 import org.earthtime.UPb_Redux.dateInterpretation.DateInterpretationUpdateViewI;
-import org.earthtime.UPb_Redux.dialogs.DialogEditor;
+import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.reports.ReportCategory;
 import org.earthtime.UPb_Redux.user.SampleDateInterpretationGUIOptions;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;

@@ -1,17 +1,20 @@
 /*
- * Copyright 2006-2015 CIRDLES.org.
+ * UThFraction.java
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *
+ * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.earthtime.UTh_Redux.fractions;
 
@@ -21,59 +24,58 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
-import org.earthtime.dataDictionaries.DataDictionary;
 import org.earthtime.dataDictionaries.MeasuredRatios;
 import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.dataDictionaries.UThAnalysisMeasures;
 import org.earthtime.dataDictionaries.UThCompositionalMeasures;
-import org.earthtime.dataDictionaries.UThRatiosMeasured;
+import org.earthtime.dataDictionaries.UThFractionationCorrectedIsotopicRatios;
 import org.earthtime.dataDictionaries.UncertaintyTypesEnum;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
+import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.reportViews.ReportRowGUIInterface;
 import org.earthtime.xmlUtilities.XMLSerializationI;
 
 public class UThFraction implements
         UThFractionI,
         ReportRowGUIInterface,
-        ETFractionInterface,
         Serializable,
         XMLSerializationI {
 
     private static final long serialVersionUID = 5481272675891277083L;
-    private transient boolean selectedInDataTable;
+    protected transient boolean selectedInDataTable;
     // Instance variables
-    private String fractionID;
-    private String grainID;
-    private String sampleName;
-    private int aliquotNumber;
-    private boolean legacy;
-    private String imageURL;
-    private Date timeStamp;
-    private int numberOfGrains;
-    private BigDecimal estimatedDate;
-    private ValueModel[] analysisMeasures;
-    private ValueModel[] measuredRatios;
-    private ValueModel[] radiogenicIsotopeRatios;
-    private ValueModel[] radiogenicIsotopeDates;
-    private ValueModel[] compositionalMeasures;
-    private ValueModel[] sampleIsochronRatios;
-    private ValueModel[] traceElements;
+    protected String fractionID;
+    protected String grainID;
+    protected String sampleName;
+    protected int aliquotNumber;
+    protected boolean legacy;
+    protected String imageURL;
+    protected Date timeStamp;
+    protected int numberOfGrains;
+    protected BigDecimal estimatedDate;
+    protected ValueModel[] analysisMeasures;
+    protected ValueModel[] measuredRatios;
+    protected ValueModel[] fractionationCorrectedIsotopeRatios;
+    protected ValueModel[] isotopeDates;
+    protected ValueModel[] compositionalMeasures;
+    protected ValueModel[] sampleIsochronRatios;
+    protected ValueModel[] traceElements;
 
-    private boolean changed;
-    private boolean deleted;
-    private String fractionNotes;
-    private boolean rejected;
+    protected boolean changed;
+    protected boolean deleted;
+    protected String fractionNotes;
+    protected boolean rejected;
 
     public UThFraction() {
         this.fractionID = ReduxConstants.DEFAULT_OBJECT_NAME;
         this.grainID = fractionID;
         this.sampleName = ReduxConstants.DEFAULT_OBJECT_NAME;
         this.aliquotNumber = 1;
+        this.legacy = false;
         this.imageURL = "http://";
         this.timeStamp = new Date(System.currentTimeMillis());
 
@@ -81,11 +83,11 @@ public class UThFraction implements
         this.estimatedDate = BigDecimal.ZERO;
 
         analysisMeasures = valueModelArrayFactory(UThAnalysisMeasures.getNames(), UncertaintyTypesEnum.ABS.getName());
-        measuredRatios = valueModelArrayFactory(UThRatiosMeasured.getNames(), UncertaintyTypesEnum.ABS.getName());
-        radiogenicIsotopeRatios = valueModelArrayFactory(DataDictionary.RadiogenicIsotopeRatioTypes, UncertaintyTypesEnum.ABS.getName());
-        radiogenicIsotopeDates = valueModelArrayFactory(RadDates.getNamesSorted(), UncertaintyTypesEnum.ABS.getName());
+        measuredRatios = new ValueModel[0];
+        fractionationCorrectedIsotopeRatios = valueModelArrayFactory(UThFractionationCorrectedIsotopicRatios.getNames(), UncertaintyTypesEnum.ABS.getName());
+        isotopeDates = valueModelArrayFactory(RadDates.getNamesSorted(), UncertaintyTypesEnum.ABS.getName());
         compositionalMeasures = valueModelArrayFactory(UThCompositionalMeasures.getNames(), UncertaintyTypesEnum.ABS.getName());
-        sampleIsochronRatios = valueModelArrayFactory(DataDictionary.SampleIsochronRatioNames, UncertaintyTypesEnum.ABS.getName());
+        sampleIsochronRatios = new ValueModel[0]; //valueModelArrayFactory(DataDictionary.SampleIsochronRatioNames, UncertaintyTypesEnum.ABS.getName());
 
         this.changed = false;
         this.deleted = false;
@@ -93,11 +95,6 @@ public class UThFraction implements
         this.rejected = false;
 
         initializeTraceElements();
-    }
-
-    public UThFraction(boolean legacy) {
-        this();
-        this.legacy = legacy;
     }
 
     /**
@@ -276,35 +273,35 @@ public class UThFraction implements
     }
 
     /**
-     * @return the radiogenicIsotopeRatios
+     * @return the fractionationCorrectedIsotopeRatios
      */
     @Override
     public ValueModel[] getRadiogenicIsotopeRatios() {
-        return radiogenicIsotopeRatios;
+        return fractionationCorrectedIsotopeRatios;
     }
 
     /**
-     * @param radiogenicIsotopeRatios the radiogenicIsotopeRatios to set
+     * @param fractionationCorrectedIsotopeRatios the fractionationCorrectedIsotopeRatios to set
      */
     @Override
-    public void setRadiogenicIsotopeRatios(ValueModel[] radiogenicIsotopeRatios) {
-        this.radiogenicIsotopeRatios = radiogenicIsotopeRatios;
+    public void setRadiogenicIsotopeRatios(ValueModel[] fractionationCorrectedIsotopeRatios) {
+        this.fractionationCorrectedIsotopeRatios = fractionationCorrectedIsotopeRatios;
     }
 
     /**
-     * @return the radiogenicIsotopeDates
+     * @return the isotopeDates
      */
     @Override
-    public ValueModel[] getRadiogenicIsotopeDates() {
-        return radiogenicIsotopeDates;
+    public ValueModel[] getIsotopeDates() {
+        return isotopeDates;
     }
 
     /**
-     * @param radiogenicIsotopeDates the radiogenicIsotopeDates to set
+     * @param isotopeDates the isotopeDates to set
      */
     @Override
-    public void setRadiogenicIsotopeDates(ValueModel[] radiogenicIsotopeDates) {
-        this.radiogenicIsotopeDates = radiogenicIsotopeDates;
+    public void setIsotopeDates(ValueModel[] isotopeDates) {
+        this.isotopeDates = isotopeDates;
     }
 
     /**

@@ -20,6 +20,7 @@
  */
 package org.earthtime.UPb_Redux.fractions.UPbReduxFractions;
 
+import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
@@ -177,4 +178,7 @@ public interface UPbFractionI extends FractionI {
      * @param pbBlankID
      */
     abstract void setPbBlankID(String pbBlankID);
+    
+    public TripoliFraction getTripoliFraction();
+    public void setTripoliFraction(TripoliFraction tripoliFraction);
 }

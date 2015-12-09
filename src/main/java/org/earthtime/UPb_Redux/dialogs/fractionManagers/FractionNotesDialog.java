@@ -44,6 +44,8 @@ public class FractionNotesDialog extends javax.swing.JDialog {
         this.fraction = fraction;
         initComponents();
 
+        setResizable(true);
+        
         fractionIDInfo_label.setText(fraction.getFractionID() + "  Notes");
         fractionNotes_textArea.setText(fraction.getFractionNotes());
     }
@@ -103,21 +105,21 @@ public class FractionNotesDialog extends javax.swing.JDialog {
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
-                .addContainerGap()
+                .add(6, 6, 6)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(close_button, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 379, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 379, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(fractionIDInfo_label, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 379, Short.MAX_VALUE))
+                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE)
+                    .add(close_button, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(fractionIDInfo_label, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
-                .addContainerGap(20, Short.MAX_VALUE)
+                .add(20, 20, 20)
                 .add(fractionIDInfo_label)
-                .add(18, 18, 18)
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 106, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(6, 6, 6)
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 118, Short.MAX_VALUE)
+                .add(6, 6, 6)
                 .add(close_button))
         );
 
@@ -138,7 +140,9 @@ public class FractionNotesDialog extends javax.swing.JDialog {
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                FractionNotesDialog dialog = new FractionNotesDialog(new javax.swing.JFrame(), true, new UPbFraction("NONE"));
+                ETFractionInterface fraction = new UPbFraction("TestFraction");
+                fraction.setFractionNotes("<html><b>testing</b>eee</html>");
+                FractionNotesDialog dialog = new FractionNotesDialog(new javax.swing.JFrame(), true, fraction);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     public void windowClosing(java.awt.event.WindowEvent e) {
                         System.exit(0);

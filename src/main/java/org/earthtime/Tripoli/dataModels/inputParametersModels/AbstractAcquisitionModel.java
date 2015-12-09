@@ -24,7 +24,7 @@ import java.util.Map;
 import org.earthtime.Tripoli.dataModels.collectorModels.FaradayCollectorModel;
 import org.earthtime.Tripoli.massSpecSetups.AbstractMassSpecSetup;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
-import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
+import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.dataDictionaries.AcquisitionTypesEnum;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 

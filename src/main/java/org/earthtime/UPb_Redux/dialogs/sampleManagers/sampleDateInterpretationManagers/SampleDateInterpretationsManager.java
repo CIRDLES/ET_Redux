@@ -68,7 +68,6 @@ import org.earthtime.UPb_Redux.dateInterpretation.concordia.GraphPanelModeChange
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.PlottingDetailsDisplayInterface;
 import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.DateInterpretationBoxPanel;
 import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetup;
-import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.dialogs.aliquotManagers.AliquotOptionsDialog;
 import org.earthtime.UPb_Redux.dialogs.graphManagers.ConcordiaOptionsDialog;
 import org.earthtime.UPb_Redux.dialogs.graphManagers.WeightedMeanOptionsDialog;
@@ -86,6 +85,7 @@ import org.earthtime.dataDictionaries.Lambdas;
 import org.earthtime.dataDictionaries.MatrixSpecifications;
 import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
+import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.fractions.ETFractionInterface;
@@ -2854,7 +2854,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
         String dateName = ((DateProbabilityDensityPanel) probabilityPanel).getChosenDateName();
 
         for (ETFractionInterface f : fractions) {
-            boolean doAddFraction = true;
+            boolean doAddFraction = !f.isRejected();
             double pctDiscordance = f.getRadiogenicIsotopeDateByName(RadDates.percentDiscordance).getValue().doubleValue();
 
             if (pctDiscordance >= 0.0) {  //

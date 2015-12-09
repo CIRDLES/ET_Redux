@@ -19,7 +19,7 @@
 package org.earthtime.UPb_Redux.dialogs.sampleManagers.sampleDateInterpretationManagers;
 
 import java.util.Vector;
-import org.earthtime.UPb_Redux.dialogs.DialogEditor;
+import org.earthtime.dialogs.DialogEditor;
 
 /**
  *

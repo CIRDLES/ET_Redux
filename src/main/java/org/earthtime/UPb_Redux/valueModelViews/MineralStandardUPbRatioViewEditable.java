@@ -30,7 +30,7 @@ import org.earthtime.ratioDataViews.DataEntryDetectorInterface;
  */
 public class MineralStandardUPbRatioViewEditable extends ValueModelViewEditable {
 
-    private JCheckBox measuredCheckBox;
+    private final JCheckBox measuredCheckBox;
     
     /**
      *

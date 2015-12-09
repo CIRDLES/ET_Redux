@@ -29,7 +29,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
-import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
+import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.tracers.Tracer;
 import org.earthtime.UPb_Redux.tracers.TracerXMLConverter;
 import org.earthtime.UPb_Redux.valueModels.MeasuredRatioModel;

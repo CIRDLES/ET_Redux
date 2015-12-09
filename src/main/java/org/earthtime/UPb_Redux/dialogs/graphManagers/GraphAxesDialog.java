@@ -35,8 +35,8 @@ import javax.swing.text.JTextComponent;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.ConcordiaGraphPanel;
 import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetup;
-import org.earthtime.UPb_Redux.dialogs.DialogEditor.DoubleDocument;
-import org.earthtime.UPb_Redux.dialogs.DialogEditor.UnDoAbleDocument;
+import org.earthtime.dialogs.DialogEditor.DoubleDocument;
+import org.earthtime.dialogs.DialogEditor.UnDoAbleDocument;
 
 /**
  *

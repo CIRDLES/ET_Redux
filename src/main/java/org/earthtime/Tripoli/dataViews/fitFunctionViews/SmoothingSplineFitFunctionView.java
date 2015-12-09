@@ -37,7 +37,7 @@ import org.earthtime.Tripoli.dataViews.overlayViews.DataViewsOverlay;
 import org.earthtime.Tripoli.dataViews.simpleViews.FitFunctionDataInterface;
 import org.earthtime.Tripoli.dataViews.simpleViews.SessionOfStandardView;
 import org.earthtime.Tripoli.fitFunctions.AbstractFunctionOfX;
-import org.earthtime.UPb_Redux.dialogs.DialogEditor;
+import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.dataDictionaries.FitFunctionTypeEnum;
 

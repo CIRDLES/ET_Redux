@@ -29,7 +29,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.reduxLabData.ReduxLabDataList;
+import org.earthtime.reduxLabData.ReduxLabDataList;
 import org.earthtime.UPb_Redux.utilities.ETSerializer;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModelXMLConverter;
@@ -52,12 +52,12 @@ public class PbBlankICModel extends AbstractRatiosDataModel {
             new HashMap<>();
     private static final AbstractRatiosDataModel noneModel = //
             new PbBlankICModel( //
-            ReduxConstants.NONE, //
-            1, 0, //
-            "No Lab",//
-            "2000-01-01",//
-            "Placeholder model",//
-            "Placeholder model" );
+                    ReduxConstants.NONE, //
+                    1, 0, //
+                    "No Lab",//
+                    "2000-01-01",//
+                    "Placeholder model",//
+                    "Placeholder model");
     private static final ValueModel[] myRatios;
     private static final Map<String, BigDecimal> correlations;
 
@@ -65,35 +65,35 @@ public class PbBlankICModel extends AbstractRatiosDataModel {
         myRatios = new ValueModel[3];
         myRatios[0] = new ValueModel(//
                 "r206_204b", //
-                new BigDecimal( "18.4125383886609" ), //
+                new BigDecimal("18.4125383886609"), //
                 "ABS", //
-                new BigDecimal( "0.239708852871076" ), BigDecimal.ZERO );
+                new BigDecimal("0.239708852871076"), BigDecimal.ZERO);
         myRatios[1] = new ValueModel(//
                 "r207_204b", //
-                new BigDecimal( "15.4147799644064" ), //
+                new BigDecimal("15.4147799644064"), //
                 "ABS", //
-                new BigDecimal( "0.145826833918035" ), BigDecimal.ZERO );
+                new BigDecimal("0.145826833918035"), BigDecimal.ZERO);
         myRatios[2] = new ValueModel(//
                 "r208_204b", //
-                new BigDecimal( "37.6140251512604" ), //
+                new BigDecimal("37.6140251512604"), //
                 "ABS", //
-                new BigDecimal( "0.564703810813301" ), BigDecimal.ZERO );
+                new BigDecimal("0.564703810813301"), BigDecimal.ZERO);
 
-        correlations = new HashMap<String, BigDecimal>();
-        correlations.put( "rhoR206_204b__r207_204b", new BigDecimal( "0.754713271298224" ) );
-        correlations.put( "rhoR206_204b__r208_204b", new BigDecimal( "0.728547460722919" ) );
-        correlations.put( "rhoR207_204b__r208_204b", new BigDecimal( "0.864401000690869" ) );
+        correlations = new HashMap<>();
+        correlations.put("rhoR206_204b__r207_204b", new BigDecimal("0.754713271298224"));
+        correlations.put("rhoR206_204b__r208_204b", new BigDecimal("0.728547460722919"));
+        correlations.put("rhoR207_204b__r208_204b", new BigDecimal("0.864401000690869"));
     }
     private static final AbstractRatiosDataModel EARTHTIMEExamplePbBlankICModel = //
             createInstance(//
-            "EARTHTIME Example Pb Blank IC",
-            3, 0,//
-            "EARTHTIME",//
-            "2012-09-01",//
-            "Noah McLean",//
-            "EARTHTIME-supplied model",//
-            myRatios, //
-            correlations );
+                    "EARTHTIME Example Pb Blank IC",
+                    3, 0,//
+                    "EARTHTIME",//
+                    "2012-09-01",//
+                    "Noah McLean",//
+                    "EARTHTIME-supplied model",//
+                    myRatios, //
+                    correlations);
 
     /**
      *
@@ -106,12 +106,12 @@ public class PbBlankICModel extends AbstractRatiosDataModel {
      * @param reference
      * @param comment
      */
-    protected PbBlankICModel (//
+    protected PbBlankICModel(//
             String modelName, int versionNumber, int minorVersionNumber, String labName, String dateCertified, String reference, String comment) {
 
-        super( modelName, versionNumber, minorVersionNumber, labName, dateCertified, reference, comment );
+        super(modelName, versionNumber, minorVersionNumber, labName, dateCertified, reference, comment);
 
-        initializeNewRatiosAndRhos( false );
+        initializeNewRatiosAndRhos(false);
     }
 
     /**
@@ -119,18 +119,19 @@ public class PbBlankICModel extends AbstractRatiosDataModel {
      * @param updateOnly
      */
     @Override
-    public final void initializeNewRatiosAndRhos ( boolean updateOnly ) {
+    public final void initializeNewRatiosAndRhos(boolean updateOnly) {
         // PbBlankICModel has a defined set of ratios 
         this.ratios = new ValueModel[DataDictionary.earthTimePbBlankICRatioNames.length];
-        for (int i = 0; i < DataDictionary.earthTimePbBlankICRatioNames.length; i ++) {
-            this.ratios[i] =
-                    new ValueModel( DataDictionary.getEarthTimePbBlankICModelRatioNames( i ),
-                    BigDecimal.ZERO,
-                    "ABS",
-                    BigDecimal.ZERO, BigDecimal.ZERO );
+        for (int i = 0; i < DataDictionary.earthTimePbBlankICRatioNames.length; i++) {
+            this.ratios[i]
+                    = new ValueModel(DataDictionary.getEarthTimePbBlankICModelRatioNames(i),
+                            BigDecimal.ZERO,
+                            "ABS",
+                            BigDecimal.ZERO,
+                            BigDecimal.ZERO);
         }
 
-        Arrays.sort( ratios, new DataValueModelNameComparator() );
+        Arrays.sort(ratios, new DataValueModelNameComparator());
 
         buildRhosMap();
 
@@ -140,10 +141,10 @@ public class PbBlankICModel extends AbstractRatiosDataModel {
      *
      * @return
      */
-    public static AbstractRatiosDataModel getNoneInstance () {
+    public static AbstractRatiosDataModel getNoneInstance() {
         // guarantee final model
-        modelInstances.put( noneModel.getNameAndVersion(), noneModel );
-        noneModel.setImmutable( true);
+        modelInstances.put(noneModel.getNameAndVersion(), noneModel);
+        noneModel.setImmutable(true);
         return noneModel;
     }
 
@@ -151,10 +152,10 @@ public class PbBlankICModel extends AbstractRatiosDataModel {
      *
      * @return
      */
-    public static AbstractRatiosDataModel getEARTHTIMEExamplePbBlankICModel () {
+    public static AbstractRatiosDataModel getEARTHTIMEExamplePbBlankICModel() {
         // guarantee final model
-        modelInstances.put( EARTHTIMEExamplePbBlankICModel.getNameAndVersion(), EARTHTIMEExamplePbBlankICModel );
-        EARTHTIMEExamplePbBlankICModel.setImmutable( true);
+        modelInstances.put(EARTHTIMEExamplePbBlankICModel.getNameAndVersion(), EARTHTIMEExamplePbBlankICModel);
+        EARTHTIMEExamplePbBlankICModel.setImmutable(true);
         return EARTHTIMEExamplePbBlankICModel;
     }
 
@@ -172,7 +173,7 @@ public class PbBlankICModel extends AbstractRatiosDataModel {
      * @param rhos
      * @return
      */
-    public static AbstractRatiosDataModel createInstance (//
+    public static AbstractRatiosDataModel createInstance(//
             String modelName, //
             int versionNumber, //
             int minorVersionNumber, //
@@ -181,22 +182,22 @@ public class PbBlankICModel extends AbstractRatiosDataModel {
             String reference, //
             String comment, //
             ValueModel[] ratios, //
-            Map<String, BigDecimal> rhos ) {
+            Map<String, BigDecimal> rhos) {
 
-        AbstractRatiosDataModel myModel = modelInstances.get( makeNameAndVersion( modelName, versionNumber, minorVersionNumber ) );
+        AbstractRatiosDataModel myModel = modelInstances.get(makeNameAndVersion(modelName, versionNumber, minorVersionNumber));
 
-        if ( myModel == null ) {
+        if (myModel == null) {
             myModel = new PbBlankICModel(//
                     modelName, //
                     versionNumber, minorVersionNumber,//
                     labName, //
                     dateCertified, //
                     reference, //
-                    comment );
+                    comment);
 
-            myModel.initializeModel(ratios, rhos, null );
+            myModel.initializeModel(ratios, rhos, null);
 
-            modelInstances.put( makeNameAndVersion( modelName, versionNumber, minorVersionNumber ), myModel );
+            modelInstances.put(makeNameAndVersion(modelName, versionNumber, minorVersionNumber), myModel);
         }
 
         return myModel;
@@ -206,7 +207,7 @@ public class PbBlankICModel extends AbstractRatiosDataModel {
      *
      * @return
      */
-    public static AbstractRatiosDataModel createNewInstance () {
+    public static AbstractRatiosDataModel createNewInstance() {
 
         AbstractRatiosDataModel myModel = new PbBlankICModel(//
                 "New Pb Blank IC Model", //
@@ -214,7 +215,7 @@ public class PbBlankICModel extends AbstractRatiosDataModel {
                 "No Lab", //
                 DateHelpers.defaultEarthTimeDateString(), //
                 "No reference", //
-                "No comment" );
+                "No comment");
 
         return myModel;
     }
@@ -224,7 +225,7 @@ public class PbBlankICModel extends AbstractRatiosDataModel {
      * @return
      */
     @Override
-    public AbstractRatiosDataModel cloneModel () {
+    public AbstractRatiosDataModel cloneModel() {
 
         AbstractRatiosDataModel myModel = new PbBlankICModel(//
                 this.modelName, //
@@ -232,9 +233,9 @@ public class PbBlankICModel extends AbstractRatiosDataModel {
                 this.labName, //
                 this.dateCertified, //
                 this.reference, //
-                this.comment );
+                this.comment);
 
-        myModel.initializeModel(cloneData(), cloneRhosVarUnct(), null );
+        myModel.initializeModel(cloneData(), cloneRhosVarUnct(), null);
 
         return myModel;
     }
@@ -243,8 +244,8 @@ public class PbBlankICModel extends AbstractRatiosDataModel {
      *
      */
     @Override
-    public void removeSelf () {
-        modelInstances.remove( this.getReduxLabDataElementName() );
+    public void removeSelf() {
+        modelInstances.remove(this.getReduxLabDataElementName());
     }
 
     // used for deserialization
@@ -252,60 +253,58 @@ public class PbBlankICModel extends AbstractRatiosDataModel {
      *
      * @return
      */
-    protected Object readResolve () {
+    protected Object readResolve() {
 
-        if (  ! modelInstances.containsKey( makeNameAndVersion( modelName, versionNumber, minorVersionNumber ) ) ) {
+        if (!modelInstances.containsKey(makeNameAndVersion(modelName, versionNumber, minorVersionNumber))) {
 
             this.initializeModel();
-            modelInstances.put( makeNameAndVersion( modelName, versionNumber, minorVersionNumber ), this );
+            modelInstances.put(makeNameAndVersion(modelName, versionNumber, minorVersionNumber), this);
         }
 
-        return modelInstances.get( makeNameAndVersion( modelName, versionNumber, minorVersionNumber ) );
+        return modelInstances.get(makeNameAndVersion(modelName, versionNumber, minorVersionNumber));
     }
 
     /**
      *
      * @return
      */
-    public static ArrayList<AbstractRatiosDataModel> getArrayListOfModels () {
+    public static ArrayList<AbstractRatiosDataModel> getArrayListOfModels() {
 
         // guarantee final models
         getNoneInstance();
-        getEARTHTIMEExamplePbBlankICModel();
-//        modelInstances.put( noneModel.getNameAndVersion(), noneModel );
-//        modelInstances.put( EARTHTIMEExamplePbBlankICModel.getNameAndVersion(), EARTHTIMEExamplePbBlankICModel );
+        getEARTHTIMEExamplePbBlankICModel();;
 
-        ArrayList<AbstractRatiosDataModel> arrayListOfModels = new ReduxLabDataList<AbstractRatiosDataModel>( "Pb Blank IC" );
+        ArrayList<AbstractRatiosDataModel> arrayListOfModels = new ReduxLabDataList<>("Pb Blank IC");
         Iterator<String> modelsKeyInterator = modelInstances.keySet().iterator();
         while (modelsKeyInterator.hasNext()) {
-            arrayListOfModels.add( modelInstances.get( modelsKeyInterator.next() ) );
+            arrayListOfModels.add(modelInstances.get(modelsKeyInterator.next()));
         }
 
-        Collections.sort( arrayListOfModels );
+        Collections.sort(arrayListOfModels);
 
         return arrayListOfModels;
     }
 
     @Override
-    protected void customizeXstream ( XStream xstream ) {
-        xstream.registerConverter( new ValueModelXMLConverter() );
-        xstream.registerConverter( new PbBlankICModelXMLConverter() );
+    protected void customizeXstream(XStream xstream) {
+        xstream.registerConverter(new ValueModelXMLConverter());
+        xstream.registerConverter(new PbBlankICModelXMLConverter());
 
-        xstream.alias( "PbBlankICModel", PbBlankICModel.class );
-        xstream.alias( "ValueModel", ValueModel.class );
+        xstream.alias("PbBlankICModel", PbBlankICModel.class);
+        xstream.alias("ValueModel", ValueModel.class);
 
-        setClassXMLSchemaURL( "URI_PbBlankICModelXMLSchema" );
+        setClassXMLSchemaURL("URI_PbBlankICModelXMLSchema");
     }
 
     @Override
-    public String getClassNameAliasForXML () {
+    public String getClassNameAliasForXML() {
         return classNameAliasForXML;
     }
 
     /**
      * @param args the command line arguments
      */
-    public static void main ( String[] args ) {
+    public static void main(String[] args) {
 
         AbstractRatiosDataModel pbBlankModelETs = PbBlankICModel.getEARTHTIMEExamplePbBlankICModel();
 
@@ -313,16 +312,14 @@ public class PbBlankICModel extends AbstractRatiosDataModel {
             ETSerializer.SerializeObjectToFile(pbBlankModelETs, "PbBlankICModelTEST.ser");
         } catch (ETException eTException) {
         }
-        AbstractRatiosDataModel pbBlankModelET = (AbstractRatiosDataModel) ETSerializer.GetSerializedObjectFromFile( "PbBlankICModelTEST.ser" );
+        AbstractRatiosDataModel pbBlankModelET = (AbstractRatiosDataModel) ETSerializer.GetSerializedObjectFromFile("PbBlankICModelTEST.ser");
 
         String testFileName = "PbBlankICModelTEST.xml";
 
-        pbBlankModelET.serializeXMLObject( testFileName );
+        pbBlankModelET.serializeXMLObject(testFileName);
         try {
-            pbBlankModelET.readXMLObject( testFileName, true );
-        } catch (FileNotFoundException fileNotFoundException) {
-        } catch (ETException eTException) {
-        } catch (BadOrMissingXMLSchemaException badOrMissingXMLSchemaException) {
+            pbBlankModelET.readXMLObject(testFileName, true);
+        } catch (FileNotFoundException | ETException | BadOrMissingXMLSchemaException fileNotFoundException) {
         }
 
     }

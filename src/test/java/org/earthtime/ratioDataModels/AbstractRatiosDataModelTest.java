@@ -176,13 +176,13 @@ public class AbstractRatiosDataModelTest {
         System.out.println("Testing AbstractRatiosDataModel's copyModel()");
         //Default
         AbstractRatiosDataModel instance = new AbstractTester();
-        AbstractRatiosDataModel result = instance.copyModel();
+        AbstractRatiosDataModel result = instance.copyModel(true);
         instance.setModelName(instance.getModelName() + "-COPY");
         AbstractRatiosDataModel expResult = instance;
         assertEquals(expResult, result);
         //Specified
         instance = new AbstractTester("testModelName", 2, 3, "testLabName", "TestDateCertified", "Reference Reporting in", "Comment reporting in");
-        result = instance.copyModel();
+        result = instance.copyModel(true);
         instance.setModelName(instance.getModelName() + "-COPY");
         expResult = instance;
         assertEquals(expResult, result);

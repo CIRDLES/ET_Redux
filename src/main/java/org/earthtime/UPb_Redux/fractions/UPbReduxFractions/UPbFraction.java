@@ -46,14 +46,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.Fraction;
 import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.ReductionHandler;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.UPbFractionReducer;
-import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
-import org.earthtime.reportViews.ReportRowGUIInterface;
 import org.earthtime.UPb_Redux.tracers.Tracer;
 import org.earthtime.UPb_Redux.tracers.TracerXMLConverter;
 import org.earthtime.UPb_Redux.user.UPbReduxConfigurator;
@@ -85,6 +84,8 @@ import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsModel;
 import org.earthtime.ratioDataModels.tracers.TracerUPbModel;
 import org.earthtime.ratioDataModels.tracers.TracerUPbModelXMLConverter;
+import org.earthtime.reduxLabData.ReduxLabData;
+import org.earthtime.reportViews.ReportRowGUIInterface;
 import org.earthtime.utilities.CollectionHelpers;
 import org.earthtime.xmlUtilities.XMLSerializationI;
 
@@ -231,7 +232,7 @@ public class UPbFraction extends Fraction implements
         } catch (BadLabDataException badLabDataException) {
         }
 
-        this.physicalConstantsModel = PhysicalConstantsModel.getEARTHTIMEPhysicalConstantsModel();
+        this.physicalConstantsModel = PhysicalConstantsModel.getDefaultEARTHTIMEPhysicalConstantsModel();
 
         this.aliquotNumber = 1;
         this.pedigreePb = "";
@@ -1744,6 +1745,7 @@ public class UPbFraction extends Fraction implements
     /**
      *
      */
+    @Override
     public void toggleRejectedStatus() {
         this.rejected = !this.rejected;
     }
@@ -2211,9 +2213,9 @@ public class UPbFraction extends Fraction implements
 
             // RadiogenicIsotopeDates
             outputWriter.println("RadiogenicIsotopeDates");
-            Arrays.sort(getRadiogenicIsotopeDates());
-            for (int i = 0; i < getRadiogenicIsotopeDates().length; i++) {
-                outputWriter.println(getRadiogenicIsotopeDates()[i].formatValueAndOneSigmaABSForTesting());
+            Arrays.sort(getIsotopeDates());
+            for (int i = 0; i < getIsotopeDates().length; i++) {
+                outputWriter.println(getIsotopeDates()[i].formatValueAndOneSigmaABSForTesting());
             }
             outputWriter.println();
 
@@ -2780,5 +2782,15 @@ public class UPbFraction extends Fraction implements
     @Override
     public boolean isCommonLeadLossCorrected() {
         return false; // dec 2014 only true in redux for laicpms fractions
+    }
+
+    @Override
+    public TripoliFraction getTripoliFraction() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setTripoliFraction(TripoliFraction tripoliFraction) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

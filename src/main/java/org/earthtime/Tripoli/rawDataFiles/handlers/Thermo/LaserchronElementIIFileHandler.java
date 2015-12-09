@@ -49,12 +49,13 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler i
         Comparable<AbstractRawDataFileHandler>,
         Serializable {
     // Class variables
-    
+
     private static final long serialVersionUID = -2893373523700340452L;
-    
+
     private static LaserchronElementIIFileHandler instance = null;
     private File[] analysisFiles;
     private String[] fractionNames;
+    private static int standardIncrementer = 1;
 
     /**
      *
@@ -110,7 +111,7 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler i
      * @param loadDataTask the value of loadRawDataTaskListener
      * @param usingFullPropagation the value of usingFullPropagation
      * @param leftShadeCount the value of leftShadeCount
-     * @param ignoreFirstFractions the value of ignoreFirstFract
+     * @param ignoreFirstFractions the value of ignoreFirstFracts
      * @return ions
      */
     @Override
@@ -153,7 +154,7 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler i
                 }
 
                 // create fractions from raw data and perform corrections and calculate ratios
-                tripoliFractions = loadRawDataFile(loadDataTask, usingFullPropagation, leftShadeCount, 0);
+                tripoliFractions = loadRawDataFile(loadDataTask, usingFullPropagation, leftShadeCount, ignoreFirstFractions);
             }
         } else {
             JOptionPane.showMessageDialog(
@@ -162,7 +163,7 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler i
                     "ET Redux Warning",
                     JOptionPane.WARNING_MESSAGE);
 
-            rawDataFile = null;
+            //rawDataFile = null;
         }
 
         return rawDataFile;
@@ -214,20 +215,20 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler i
         SortedSet myTripoliFractions = new TreeSet<>();
 
         // assume we are golden   
-        int standardIncrementer = 1;
-        for (int f = 0; f < analysisFiles.length; f++) {
+        for (int f = ignoreFirstFractions; f < analysisFiles.length; f++) {
 
             if (loadDataTask.isCancelled()) {
                 break;
             }
             loadDataTask.firePropertyChange("progress", 0, ((100 * f) / analysisFiles.length));
 
-            // need to test for empty fractionnames or not enough fraction names (= too many dat files)
-            String fractionID = analysisFiles[f].getName().replace(".dat", "") + String.valueOf(f);
+            // TODO: need to test for empty fractionnames or not enough fraction names (= too many dat files)
+            // default value
+            String fractionID = analysisFiles[f].getName().replace(".dat", "");// + String.valueOf(f);
             if ((fractionNames.length > 0) & (fractionNames.length >= analysisFiles.length)) {
                 fractionID = fractionNames[f];
-            } 
-            
+            }
+
             // needs to be more robust
             boolean isStandard = (fractionID.compareToIgnoreCase(rawDataFileTemplate.getStandardIDs()[0]) == 0);
             // number the standards
@@ -281,7 +282,8 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler i
                 }
             }  // i loop
 
-            TripoliFraction tripoliFraction = //                           
+            TripoliFraction tripoliFraction
+                    = //                           
                     new TripoliFraction( //
                             fractionID, //
                             massSpec.getCommonLeadCorrectionHighestLevel(), //
@@ -360,7 +362,7 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler i
         }
 
         // retVal > 0 means analogs were used already
-        if ((retVal == 0) && (countOfValues > 0) ){
+        if ((retVal == 0) && (countOfValues > 0)) {
             retVal = sumOfValues / countOfValues;
         }
 

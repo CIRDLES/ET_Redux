@@ -271,9 +271,9 @@ public interface ETFractionInterface {
         // make sure it exists
         getRadiogenicIsotopeDateByName(riaName.trim());
 
-        for (int i = 0; i < getRadiogenicIsotopeDates().length; i++) {
-            if (getRadiogenicIsotopeDates()[i].getName().equalsIgnoreCase(riaName.trim())) {
-                getRadiogenicIsotopeDates()[i] = valueModel;
+        for (int i = 0; i < getIsotopeDates().length; i++) {
+            if (getIsotopeDates()[i].getName().equalsIgnoreCase(riaName.trim())) {
+                getIsotopeDates()[i] = valueModel;
             }
         }
     }
@@ -293,7 +293,7 @@ public interface ETFractionInterface {
      * @return
      */
     public default ValueModel getRadiogenicIsotopeDateByName(String ratioName) {
-        for (ValueModel radiogenicIsotopeDate : getRadiogenicIsotopeDates()) {
+        for (ValueModel radiogenicIsotopeDate : getIsotopeDates()) {
             if (radiogenicIsotopeDate.getName().equalsIgnoreCase(ratioName.trim())) {
                 return radiogenicIsotopeDate;
             }
@@ -301,8 +301,8 @@ public interface ETFractionInterface {
 
         // return a new model - handles backwards compatible
         // have to add element to array
-        ValueModel[] temp = new ValueModel[getRadiogenicIsotopeDates().length + 1];
-        System.arraycopy(getRadiogenicIsotopeDates(), 0, temp, 0, getRadiogenicIsotopeDates().length);
+        ValueModel[] temp = new ValueModel[getIsotopeDates().length + 1];
+        System.arraycopy(getIsotopeDates(), 0, temp, 0, getIsotopeDates().length);
 
         ValueModel riaModel
                 = new ValueModel(ratioName.trim(),
@@ -310,9 +310,9 @@ public interface ETFractionInterface {
                         "ABS",
                         BigDecimal.ZERO, BigDecimal.ZERO);
 
-        temp[getRadiogenicIsotopeDates().length] = riaModel;
+        temp[getIsotopeDates().length] = riaModel;
 
-        setRadiogenicIsotopeDates(temp);
+        setIsotopeDates(temp);
 
         return riaModel;
 
@@ -331,13 +331,13 @@ public interface ETFractionInterface {
      *
      * @return
      */
-    public ValueModel[] getRadiogenicIsotopeDates();
+    public ValueModel[] getIsotopeDates();
 
     /**
      *
      * @param radiogenicIsotopeDates
      */
-    public void setRadiogenicIsotopeDates(ValueModel[] radiogenicIsotopeDates);
+    public void setIsotopeDates(ValueModel[] radiogenicIsotopeDates);
 
     /**
      *
@@ -375,8 +375,8 @@ public interface ETFractionInterface {
         ValueModel rirModel
                 = new ValueModel(ratioName.trim(),
                         ratioName.startsWith("rho") ?//
-                                new BigDecimal(ReduxConstants.NO_RHO_FLAG, ReduxConstants.mathContext15) //
-                                : BigDecimal.ZERO,// June 2010 to force out of range of legal cov [-1,,,1]0.0;
+                        new BigDecimal(ReduxConstants.NO_RHO_FLAG, ReduxConstants.mathContext15) //
+                        : BigDecimal.ZERO,// June 2010 to force out of range of legal cov [-1,,,1]0.0;
                         "ABS",
                         BigDecimal.ZERO, BigDecimal.ZERO);
 
@@ -505,9 +505,9 @@ public interface ETFractionInterface {
      * @return
      */
     public default ValueModel[] copyRadiogenicIsotopeDates() {
-        ValueModel[] retval = new ValueModel[getRadiogenicIsotopeDates().length];
+        ValueModel[] retval = new ValueModel[getIsotopeDates().length];
         for (int i = 0; i < retval.length; i++) {
-            retval[i] = getRadiogenicIsotopeDates()[i].copy();
+            retval[i] = getIsotopeDates()[i].copy();
         }
         return retval;
     }

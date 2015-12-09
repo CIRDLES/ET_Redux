@@ -35,7 +35,6 @@ import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLAICPMSFraction;
-import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UPb_Redux.valueModels.definedValueModels.Age206_238r;
 import org.earthtime.UPb_Redux.valueModels.definedValueModels.Age206_238r_Th;
@@ -130,38 +129,39 @@ import org.earthtime.UPb_Redux.valueModels.definedValueModels.RhoR238_206s__r207
 import org.earthtime.UPb_Redux.valueModels.definedValueModels.TotCommonPbMass;
 import org.earthtime.UPb_Redux.valueModels.definedValueModels.TotRadiogenicPbMass;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
-import org.earthtime.dataDictionaries.Lambdas;
 import org.earthtime.dataDictionaries.MeasuredRatios;
 import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.dataDictionaries.RadRatios;
 import org.earthtime.dataDictionaries.RadRatiosPbcCorrected;
 import org.earthtime.dataDictionaries.TracerUPbRatiosAndConcentrations;
 import org.earthtime.fractions.ETFractionInterface;
+import org.earthtime.fractions.fractionReduction.FractionReducer;
 import org.earthtime.matrices.matrixModels.AbstractMatrixModel;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsModel;
+import org.earthtime.reduxLabData.ReduxLabData;
 
 /**
  *
  * @author James F. Bowring
  */
-public class UPbFractionReducer {
+public class UPbFractionReducer extends FractionReducer {
 
     private static UPbFractionReducer instance;
     // Instance variablesInOrder
-    // 0. lab constants
-    private static ValueModel lambda230;
-    private static ValueModel lambda231;
-    private static ValueModel lambda232;
-    private static ValueModel lambda234;
-    private static ValueModel lambda235;
-    private static ValueModel lambda238;
-    private static ValueModel gmol204;
-    private static ValueModel gmol206;
-    private static ValueModel gmol207;
-    private static ValueModel gmol208;
-    private static ValueModel gmol235;
-    private static ValueModel gmol238;
+//    // 0. lab constants
+//    private static ValueModel lambda230;
+//    private static ValueModel lambda231;
+//    private static ValueModel lambda232;
+//    private static ValueModel lambda234;
+//    private static ValueModel lambda235;
+//    private static ValueModel lambda238;
+//    private static ValueModel gmol204;
+//    private static ValueModel gmol206;
+//    private static ValueModel gmol207;
+//    private static ValueModel gmol208;
+//    private static ValueModel gmol235;
+//    private static ValueModel gmol238;
     // 1. Pb
     // 1a. tracer *****************************************************
     private static ValueModel alphaPb;
@@ -285,6 +285,9 @@ public class UPbFractionReducer {
     // march 2013 modernizing approach to encapsulate what is sent to redux
     private SortedMap<RadRatios, SessionCorrectedUnknownsSummary> sessionCorrectedUnknownsSummaries;
 
+    private UPbFractionReducer() {
+    }
+
     /**
      *
      * @return
@@ -294,24 +297,6 @@ public class UPbFractionReducer {
             instance = new UPbFractionReducer();
         }
         return instance;
-    }
-
-    /**
-     * @return the sessionCorrectedUnknownsSummaries
-     */
-    public SortedMap<RadRatios, SessionCorrectedUnknownsSummary> getSessionCorrectedUnknownsSummaries() {
-        return sessionCorrectedUnknownsSummaries;
-    }
-
-    /**
-     * @param aSessionCorrectedUnknownsSummaries the
-     * sessionCorrectedUnknownsSummaries to set
-     */
-    public void setSessionCorrectedUnknownsSummaries(SortedMap<RadRatios, SessionCorrectedUnknownsSummary> aSessionCorrectedUnknownsSummaries) {
-        sessionCorrectedUnknownsSummaries = aSessionCorrectedUnknownsSummaries;
-    }
-
-    private UPbFractionReducer() {
     }
 
     /**
@@ -390,9 +375,7 @@ public class UPbFractionReducer {
         initializeAtomicMolarMasses(
                 fraction.getPhysicalConstantsModel());
 
-        initializeDecayConstants(
-                fraction.getPhysicalConstantsModel(),
-                true);
+        initializeDecayConstants(fraction.getPhysicalConstantsModel());
 
         //fraction.getAnalysisMeasure( AnalysisMeasures.r238_235s.getName() ).setValue( new BigDecimal( 137.88 ) );
         // updated feb 2014
@@ -443,14 +426,14 @@ public class UPbFractionReducer {
         try {
             r207_235r.setOneSigma( //
                     new BigDecimal(Math.sqrt(
-                                    r206_238r.getValue().pow(2).//
-                                    multiply(fraction.getAnalysisMeasure(AnalysisMeasures.r238_235s.getName()).getValue().pow(2)).//
-                                    multiply(r207_206r.getOneSigmaAbs().pow(2)).//
+                            r206_238r.getValue().pow(2).//
+                            multiply(fraction.getAnalysisMeasure(AnalysisMeasures.r238_235s.getName()).getValue().pow(2)).//
+                            multiply(r207_206r.getOneSigmaAbs().pow(2)).//
 
-                                    add(r207_206r.getValue().pow(2).//
-                                            multiply(fraction.getAnalysisMeasure(AnalysisMeasures.r238_235s.getName()).getValue().pow(2)).//
-                                            multiply(r206_238r.getOneSigmaAbs().pow(2))).//
-                                    doubleValue())));
+                            add(r207_206r.getValue().pow(2).//
+                                    multiply(fraction.getAnalysisMeasure(AnalysisMeasures.r238_235s.getName()).getValue().pow(2)).//
+                                    multiply(r206_238r.getOneSigmaAbs().pow(2))).//
+                            doubleValue())));
         } catch (Exception e) {
             System.out.println("BAD 207235 sigma FractionReducer Line 456");
         }
@@ -483,7 +466,7 @@ public class UPbFractionReducer {
         age207_206r = new Age207_206r();
         fraction.setRadiogenicIsotopeDateByName(RadDates.age207_206r, age207_206r);
         // mar 2013 a little hack till we get logratios directly
-        calculateDate207_206r( fraction.getAnalysisMeasure(AnalysisMeasures.r238_235s.getName()),
+        calculateDate207_206r(fraction.getAnalysisMeasure(AnalysisMeasures.r238_235s.getName()),
                 age207_206r, //
                 age206_238r,
                 r207_206r.getValue().doubleValue(), //
@@ -734,7 +717,7 @@ public class UPbFractionReducer {
                             r207_235_PbcCorr.getValue().doubleValue() + r207_235_PbcCorr.getOneSigmaAbs().doubleValue() * 2.0);
 
                     // mar 2013 a little hack till we get logratios directly
-                    calculateDate207_206r( fraction.getAnalysisMeasure(AnalysisMeasures.r238_235s.getName()),
+                    calculateDate207_206r(fraction.getAnalysisMeasure(AnalysisMeasures.r238_235s.getName()),
                             age207_206_PbcCorr, //
                             age206_238_PbcCorr,
                             r207_206_PbcCorr.getValue().doubleValue(), //
@@ -902,13 +885,11 @@ public class UPbFractionReducer {
             initializeAtomicMolarMasses(
                     fraction.getPhysicalConstantsModel());
 
-            initializeDecayConstants(
-                    fraction.getPhysicalConstantsModel(),
-                    true);
+            initializeDecayConstants(fraction.getPhysicalConstantsModel());
 
             // march 2012 correction
             // if initial pb is stacey kramers, values must be calculated each time, as only one copy of this model exists
-            ((FractionI)fraction).calculateStaceyKramersInitialPbModelValues();
+            fraction.calculateStaceyKramersInitialPbModelValues();
 
             parDerivTerms = new ConcurrentHashMap<>();
 
@@ -924,7 +905,7 @@ public class UPbFractionReducer {
             // in truth table, 3 out of four cases evaluate to true
             try {
                 treatFractionAsZircon = //
-                        !(!((FractionI)fraction).isZircon()//
+                        !(!fraction.isZircon()//
                         && (molPb204tc.getValue().compareTo(//
                                 fraction.getAnalysisMeasure(AnalysisMeasures.pbBlankMassInGrams.getName()).getValue().//
                                 divide(blankPbGramsMol.getValue(), mathContext15)) == 1));
@@ -1091,21 +1072,21 @@ public class UPbFractionReducer {
             ((MolPb206c) molPb206c).setZircon(false);
             molPb206c.calculateValue(
                     new ValueModel[]{
-                        ((FractionI)fraction).getInitialPbModel().getDatumByName("r206_204c"),
+                        ((FractionI) fraction).getInitialPbModel().getDatumByName("r206_204c"),
                         molPb204c},
                     parDerivTerms);
 
             ((MolPb207c) molPb207c).setZircon(false);
             molPb207c.calculateValue(
                     new ValueModel[]{
-                        ((FractionI)fraction).getInitialPbModel().getDatumByName("r207_204c"),
+                        ((FractionI) fraction).getInitialPbModel().getDatumByName("r207_204c"),
                         molPb204c},
                     parDerivTerms);
 
             ((MolPb208c) molPb208c).setZircon(false);
             molPb208c.calculateValue(
                     new ValueModel[]{
-                        ((FractionI)fraction).getInitialPbModel().getDatumByName("r208_204c"),
+                        ((FractionI) fraction).getInitialPbModel().getDatumByName("r208_204c"),
                         molPb204c},
                     parDerivTerms);
 
@@ -1305,7 +1286,7 @@ public class UPbFractionReducer {
             }
         }
 
-        if (!((UPbFractionI)fraction).isFractionationCorrectedU()) {//.getMeanAlphaU().compareTo( BigDecimal.ZERO ) == 0 ) {
+        if (!((UPbFractionI) fraction).isFractionationCorrectedU()) {//.getMeanAlphaU().compareTo( BigDecimal.ZERO ) == 0 ) {
             if (tracerType.equalsIgnoreCase("mixed 205-233-235")
                     || tracerType.equalsIgnoreCase("mixed 202-205-233-235")
                     || tracerType.equalsIgnoreCase("mixed 205-233-235-230Th")) {
@@ -2568,25 +2549,19 @@ public class UPbFractionReducer {
         gmol238 = ((PhysicalConstantsModel) physicalConstants).getAtomicMolarMassByName("gmol238");
     }
 
-    private static void initializeDecayConstants(
-            AbstractRatiosDataModel physicalConstants,
-            boolean lambdaUncertaintiesOn) {
-
-        lambda230 = physicalConstants.getDatumByName(Lambdas.lambda230.getName()).copy();
-        lambda231 = physicalConstants.getDatumByName(Lambdas.lambda231.getName()).copy();
-        lambda232 = physicalConstants.getDatumByName(Lambdas.lambda232.getName()).copy();
-        lambda234 = physicalConstants.getDatumByName(Lambdas.lambda234.getName()).copy();
-        lambda235 = physicalConstants.getDatumByName(Lambdas.lambda235.getName()).copy();
-        lambda238 = physicalConstants.getDatumByName(Lambdas.lambda238.getName()).copy();
-
-        if (!lambdaUncertaintiesOn) {
-            lambda230.setOneSigma(BigDecimal.ZERO);
-            lambda231.setOneSigma(BigDecimal.ZERO);
-            lambda232.setOneSigma(BigDecimal.ZERO);
-            lambda234.setOneSigma(BigDecimal.ZERO);
-            lambda235.setOneSigma(BigDecimal.ZERO);
-            lambda238.setOneSigma(BigDecimal.ZERO);
-        }
-
+    /**
+     * @return the sessionCorrectedUnknownsSummaries
+     */
+    public SortedMap<RadRatios, SessionCorrectedUnknownsSummary> getSessionCorrectedUnknownsSummaries() {
+        return sessionCorrectedUnknownsSummaries;
     }
+
+    /**
+     * @param aSessionCorrectedUnknownsSummaries the
+     * sessionCorrectedUnknownsSummaries to set
+     */
+    public void setSessionCorrectedUnknownsSummaries(SortedMap<RadRatios, SessionCorrectedUnknownsSummary> aSessionCorrectedUnknownsSummaries) {
+        sessionCorrectedUnknownsSummaries = aSessionCorrectedUnknownsSummaries;
+    }
+
 }

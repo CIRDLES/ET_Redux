@@ -46,7 +46,6 @@ import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.UPbFractionReducer;
-import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.samples.SESARSampleMetadata;
 import org.earthtime.UPb_Redux.user.UPbReduxConfigurator;
 import org.earthtime.UPb_Redux.valueModels.MeasuredRatioModel;
@@ -83,6 +82,7 @@ import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsMo
 import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsModelXMLConverter;
 import org.earthtime.ratioDataModels.tracers.TracerUPbModel;
 import org.earthtime.ratioDataModels.tracers.TracerUPbModelXMLConverter;
+import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.reportViews.ReportRowGUIInterface;
 import org.earthtime.xmlUtilities.XMLSerializationI;
 
@@ -94,7 +94,7 @@ import org.earthtime.xmlUtilities.XMLSerializationI;
  * @since 1.0
  */
 public class UPbReduxAliquot extends Aliquot
-        implements 
+        implements
         ReduxAliquotInterface,
         ReportRowGUIInterface,
         XMLSerializationI {
@@ -314,7 +314,7 @@ public class UPbReduxAliquot extends Aliquot
         ArrayList<Double> sorted206_238 = new ArrayList<>();
         for (ETFractionInterface f : getAliquotFractions()) {
             // APRIL 2014 WARNING FOR NOW DO NOT MAKE CALL TO STATIC METHOD DIRECTLY so that parameters can be assembled ... need to refactor
-            UPbFractionReducer.getInstance().fullFractionReduce((FractionI)f, true);
+            UPbFractionReducer.getInstance().fullFractionReduce((FractionI) f, true);
 
             ValueModel date206_238r = f.getRadiogenicIsotopeDateByName(RadDates.age206_238r);
             // pick out the dates in the likely range for spliting 500 - 1100 MA
@@ -651,7 +651,7 @@ public class UPbReduxAliquot extends Aliquot
     public void initializeFractionReductionHandlers() {
         for (ETFractionInterface f : getAliquotFractions()) {
             //((UPbFraction) f).initializeReductionHandler();
-            UPbFractionReducer.getInstance().fullFractionReduce((FractionI)f, true);
+            UPbFractionReducer.getInstance().fullFractionReduce((FractionI) f, true);
         }
     }
 
@@ -697,7 +697,7 @@ public class UPbReduxAliquot extends Aliquot
      */
     public ReduxLabData getMyReduxLabData() {
         // Aug 2015 backward compatible
-        if (myReduxLabData ==  null){
+        if (myReduxLabData == null) {
             myReduxLabData = ReduxLabData.getInstance();
         }
         return myReduxLabData;
@@ -1189,7 +1189,7 @@ public class UPbReduxAliquot extends Aliquot
                 = new UPbReduxAliquot(
                         0,
                         "Test Aliquot",
-                        PhysicalConstantsModel.getEARTHTIMEPhysicalConstantsModel(),
+                        PhysicalConstantsModel.getDefaultEARTHTIMEPhysicalConstantsModel(),
                         false,
                         new SESARSampleMetadata());
 
@@ -1396,6 +1396,5 @@ public class UPbReduxAliquot extends Aliquot
     public void setSelectedInDataTable(boolean selectedInDataTable) {
         this.selectedInDataTable = selectedInDataTable;
     }
-
 
 }

@@ -16,8 +16,9 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.earthtime.UPb_Redux.dialogs;
+package org.earthtime.dialogs;
 
+import org.earthtime.dialogs.DialogEditor;
 import java.awt.Component;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;

@@ -35,8 +35,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
-import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
-import org.earthtime.UPb_Redux.reduxLabData.ReduxLabDataList;
 import org.earthtime.UPb_Redux.utilities.ETSerializer;
 import org.earthtime.UPb_Redux.valueModels.MineralStandardUPbRatioModel;
 import org.earthtime.UPb_Redux.valueModels.MineralStandardUPbRatioModelXMLConverter;
@@ -54,6 +52,8 @@ import org.earthtime.exceptions.ETException;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.initialPbModelsET.InitialPbModelET;
 import org.earthtime.ratioDataModels.initialPbModelsET.InitialPbModelETXMLConverter;
+import org.earthtime.reduxLabData.ReduxLabData;
+import org.earthtime.reduxLabData.ReduxLabDataList;
 import org.earthtime.utilities.DateHelpers;
 
 /**
@@ -64,8 +64,6 @@ public class MineralStandardUPbModel extends AbstractRatiosDataModel {
 
     // class variables
     private static final long serialVersionUID = -5845209084226246480L;
-//    private static final ResourceExtractor RESOURCE_EXTRACTOR
-//            = new ResourceExtractor(MineralStandardUPbModel.class);
     private static Map<String, AbstractRatiosDataModel> modelInstances = //
             new HashMap<>();
     private static final AbstractRatiosDataModel noneModel = //
@@ -544,9 +542,18 @@ public class MineralStandardUPbModel extends AbstractRatiosDataModel {
 
         myModel.initializeModel(cloneData(), cloneRhosVarUnct(), null);
 
-        ((MineralStandardUPbModel) myModel).setConcentrationsPPM(this.getConcentrationsPPM().clone());
+        ((MineralStandardUPbModel) myModel).setConcentrationsPPM(cloneConcentrationsPPM());
 
         return myModel;
+    }
+
+    private ValueModel[] cloneConcentrationsPPM() {
+        ValueModel[] clonedConcentrationsPPM = new ValueModel[concentrationsPPM.length];
+
+        for (int i = 0; i < concentrationsPPM.length; i++) {
+            clonedConcentrationsPPM[i] = concentrationsPPM[i].copy();
+        }
+        return clonedConcentrationsPPM;
     }
 
     /**

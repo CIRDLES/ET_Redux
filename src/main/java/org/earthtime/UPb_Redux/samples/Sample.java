@@ -33,7 +33,7 @@ import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.ReduxConstants.ANALYSIS_PURPOSE;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetup;
-import org.earthtime.UPb_Redux.dialogs.DialogEditor;
+import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.dialogs.fractionManagers.UPbFractionEditorDialog;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.filters.FractionXMLFileFilter;
@@ -42,7 +42,7 @@ import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLegacyFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.UPbFractionReducer;
-import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
+import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.user.SampleDateInterpretationGUIOptions;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
@@ -325,7 +325,7 @@ public class Sample implements
                         legacyF.getAnalysisMeasure(AnalysisMeasures.rTh_Umagma.getName()).setValue(BigDecimal.ZERO);
 
                         legacyF.setRadiogenicIsotopeRatios(f.getRadiogenicIsotopeRatios());
-                        legacyF.setRadiogenicIsotopeDates(f.getRadiogenicIsotopeDates());
+                        legacyF.setIsotopeDates(f.getIsotopeDates());
                         legacyF.setCompositionalMeasures(f.getCompositionalMeasures());
                         legacyF.setSampleIsochronRatios(f.getSampleIsochronRatios());
 

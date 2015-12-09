@@ -37,7 +37,7 @@ import javax.swing.tree.TreeSelectionModel;
 import org.earthtime.UPb_Redux.customJTrees.CheckBoxNode;
 import org.earthtime.UPb_Redux.customJTrees.CheckBoxNodeEditor;
 import org.earthtime.UPb_Redux.customJTrees.CheckBoxNodeRenderer;
-import org.earthtime.UPb_Redux.dialogs.DialogEditor;
+import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.dialogs.sampleManagers.sampleDateInterpretationManagers.SampleDateInterpretationChooserDialog;
 import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;

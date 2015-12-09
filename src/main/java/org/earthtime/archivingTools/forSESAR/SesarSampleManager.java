@@ -33,7 +33,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import static javax.swing.SwingConstants.RIGHT;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.dialogs.DialogEditor;
+import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.dataDictionaries.SESAR_MaterialTypesEnum;

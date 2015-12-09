@@ -35,7 +35,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.dialogs.DialogEditor;
+import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.dialogs.projectManagers.InitialPbModelSynchInterface;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.exceptions.ETException;

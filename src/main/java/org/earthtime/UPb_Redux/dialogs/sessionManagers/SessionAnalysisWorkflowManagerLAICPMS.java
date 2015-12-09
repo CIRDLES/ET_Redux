@@ -31,7 +31,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Enumeration;
 import java.util.Iterator;
-import java.util.Set;
 import javax.swing.Icon;
 import javax.swing.JLayeredPane;
 import javax.swing.JRadioButton;
@@ -53,9 +52,7 @@ import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.RawRatioData
 import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.Tripoli.sessions.TripoliSessionInterface;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.dialogs.projectManagers.ProjectManagerFor_LAICPMS_FromRawData;
-import org.earthtime.UPb_Redux.fractions.FractionsFilterInterface;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.dataDictionaries.DataPresentationModeEnum;
@@ -64,6 +61,7 @@ import org.earthtime.dataDictionaries.FractionSelectionTypeEnum;
 import org.earthtime.dataDictionaries.FractionationTechniquesEnum;
 import org.earthtime.dataDictionaries.IncludedTypeEnum;
 import org.earthtime.dataDictionaries.RawRatioNames;
+import org.earthtime.dialogs.DialogEditor;
 
 /**
  *
@@ -1565,20 +1563,12 @@ private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.
 
     private void interceptCalculatePbcCorrAndRhos_button1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_interceptCalculatePbcCorrAndRhos_button1ActionPerformed
         // refit any  fractions not currently fitted
-        Set<TripoliFraction> tripoliFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliSession.getTripoliFractions(), FractionSelectionTypeEnum.ALL, IncludedTypeEnum.INCLUDED);
-        for (TripoliFraction tf : tripoliFractions) {
-            tf.reProcessToRejectNegativeRatios();
-            if (!tf.isCurrentlyFitted()) {
-                tf.updateInterceptFitFunctionsIncludingCommonLead();
-                tripoliSession.setFitFunctionsUpToDate(false);
-            }
-        }
-
         try {
-            tripoliSession.prepareForReductionAndCommonLeadCorrection();
-        } finally {
-            uPbReduxFrame.updateReportTable(true);
+            tripoliSession.interceptCalculatePbcCorrAndRhos();
+        } catch (Exception e) {
         }
+        
+        uPbReduxFrame.updateReportTable(true);
     }//GEN-LAST:event_interceptCalculatePbcCorrAndRhos_button1ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

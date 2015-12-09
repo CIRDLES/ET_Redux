@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
-import org.earthtime.UPb_Redux.dialogs.DialogEditor;
+import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.listeners.ColorChooserListener;
 import org.earthtime.UPb_Redux.user.SampleDateInterpretationGUIOptions;
 

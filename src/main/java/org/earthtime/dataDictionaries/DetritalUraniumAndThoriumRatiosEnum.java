@@ -1,5 +1,5 @@
 /*
- * UThRatiosMeasured.java
+ * DetritalUraniumAndThoriumRatiosEnum.java
  *
  *
  * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
@@ -23,38 +23,25 @@ package org.earthtime.dataDictionaries;
  * @author James F. Bowring
  */
 
-public enum UThRatiosMeasured {
-
-    // measured UTh ratios
+public enum DetritalUraniumAndThoriumRatiosEnum {
+    /**
+     * 
+     */// DetritalUraniumAndThorium ratios
     /**
      * 
      */
-    r234U_238Ufc( "r234U_238Ufc" ),
+    ar230Th_238Ufc( "ar230Th_238Ufc" ),
     /**
      * 
      */
-    r230Th_232Thfc( "r230Th_232Thfc" ),
+    ar232Th_238Ufc( "ar232Th_238Ufc" ),
     /**
      * 
      */
-    r228Ra_226Rafc( "r228Ra_226Rafc" ),
-    /**
-     * 
-     */
-    r231Pa_233Pafc( "r231Pa_233Pafc" ),    
-    /**
-     * 
-     */
-    r238U_206Pbfc( "r238U_206Pbfc" ),
-    /**
-     * 
-     */
-    r207Pb_206Pbfc( "r207Pb_206Pbfc" );
-
-
+    ar234U_238Ufc( "ar234U_238Ufc" );
     private String name;
 
-    private UThRatiosMeasured ( String name ) {
+    private DetritalUraniumAndThoriumRatiosEnum ( String name ) {
         this.name = name;
     }
 
@@ -71,9 +58,9 @@ public enum UThRatiosMeasured {
      * @return
      */
     public static String[] getNames () {
-        String[] retVal = new String[UThRatiosMeasured.values().length];
-        for (int i = 0; i < UThRatiosMeasured.values().length; i ++) {
-            retVal[i] = UThRatiosMeasured.values()[i].getName();
+        String[] retVal = new String[DetritalUraniumAndThoriumRatiosEnum.values().length];
+        for (int i = 0; i < DetritalUraniumAndThoriumRatiosEnum.values().length; i ++) {
+            retVal[i] = DetritalUraniumAndThoriumRatiosEnum.values()[i].getName();
         }
         return retVal;
     }
@@ -86,7 +73,7 @@ public enum UThRatiosMeasured {
     public static boolean contains ( String checkString ) {
         boolean retVal = true;
         try {
-            UThRatiosMeasured.valueOf( checkString );
+            DetritalUraniumAndThoriumRatiosEnum.valueOf( checkString );
         } catch (IllegalArgumentException e) {
             retVal = false;
         }

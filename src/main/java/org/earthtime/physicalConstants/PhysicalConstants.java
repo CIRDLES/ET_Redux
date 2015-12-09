@@ -35,7 +35,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.reduxLabData.ReduxLabDataListElementI;
+import org.earthtime.reduxLabData.ReduxLabDataListElementI;
 import org.earthtime.UPb_Redux.user.UPbReduxConfigurator;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModelReferenced;
@@ -197,7 +197,7 @@ public class PhysicalConstants implements
 
         if ((this.name.toUpperCase(Locale.US).startsWith("EARTHTIME"))) {
             // catch old Earthtime version 1
-            physicalConstantsModel = PhysicalConstantsModel.getEARTHTIMEPhysicalConstantsModel();
+            physicalConstantsModel = PhysicalConstantsModel.getDefaultEARTHTIMEPhysicalConstantsModel();
         } else {
             physicalConstantsModel = convertModel(this);
         }

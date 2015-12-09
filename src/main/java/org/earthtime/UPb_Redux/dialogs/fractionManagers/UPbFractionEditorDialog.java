@@ -65,7 +65,6 @@ import org.earthtime.UPb_Redux.dateInterpretation.kwiki.KwikiConcordiaToolBar;
 import org.earthtime.UPb_Redux.dateInterpretation.kwiki.KwikiDateDisplayPanel;
 import org.earthtime.UPb_Redux.dateInterpretation.kwiki.KwikiDateModesSelectorPanel;
 import org.earthtime.UPb_Redux.dateInterpretation.kwiki.KwikiSynopticOutputPanel;
-import org.earthtime.UPb_Redux.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.filters.XMLFileFilter;
 import org.earthtime.UPb_Redux.fractions.FractionI;
@@ -75,17 +74,18 @@ import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.Red
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.UPbFractionReducer;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.UncertaintyGraphPanel;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.UncertaintyZoomLayer;
-import org.earthtime.UPb_Redux.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.utilities.Thumbnail;
 import org.earthtime.UPb_Redux.valueModels.MeasuredRatioModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.aliquots.AliquotInterface;
+import org.earthtime.aliquots.ReduxAliquotInterface;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.dataDictionaries.DataDictionary;
 import org.earthtime.dataDictionaries.MeasuredRatios;
 import org.earthtime.dataDictionaries.MineralTypes;
 import org.earthtime.dataDictionaries.RadDates;
+import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.fractions.ETFractionInterface;
@@ -95,6 +95,7 @@ import org.earthtime.ratioDataModels.initialPbModelsET.StaceyKramersInitialPbMod
 import org.earthtime.ratioDataViews.AbstractRatiosDataView;
 import org.earthtime.ratioDataViews.RatiosDataViewNotEditable;
 import org.earthtime.ratioDataViews.TracerUPbRatiosDataViewNotEditable;
+import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.utilities.FileHelper;
 
 /**
@@ -217,11 +218,11 @@ public class UPbFractionEditorDialog extends DialogEditor {
         // populate combobox for fractions -- added march 2009 to allow navigation from within this form
         fraction_Chooser.removeAllItems();
         // add selected fraction if it is rejected as the user clicked it
-        if (((UPbFractionI) fraction).isRejected()) {
+        if (fraction.isRejected()) {
             fraction_Chooser.addItem(fraction);
         }
         // add the not-rejected fractions
-        for (ETFractionInterface f : ((UPbReduxAliquot) aliquot).getAliquotFractions()) {
+        for (ETFractionInterface f : ((ReduxAliquotInterface) aliquot).getAliquotFractionsSorted()) {
             if (!f.isRejected()) {
                 fraction_Chooser.addItem(f);
             }
@@ -230,13 +231,14 @@ public class UPbFractionEditorDialog extends DialogEditor {
         fraction_Chooser.setSelectedItem(myFraction);
         fraction_Chooser.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 JComboBox cb = (JComboBox) e.getSource();
                 restoreFractionFromKwikiChanges(myFraction);
 
                 reInitializeKwikiTab(myFraction);
 
-                myFraction = (FractionI) cb.getSelectedItem();
+                myFraction = (ETFractionInterface) cb.getSelectedItem();
 
                 InitializeFractionData(myFraction);
 
@@ -247,8 +249,8 @@ public class UPbFractionEditorDialog extends DialogEditor {
 
         // first create a list of used fractionids so that we
         // can tell user if edited fraction name is already in use
-        fractionIDs = new ArrayList<String>();
-        for (ETFractionInterface f : ((UPbReduxAliquot) aliquot).getAliquotFractions()) {
+        fractionIDs = new ArrayList<>();
+        for (ETFractionInterface f : ((ReduxAliquotInterface) aliquot).getAliquotFractions()) {
             fractionIDs.add(f.getFractionID());
         }
 

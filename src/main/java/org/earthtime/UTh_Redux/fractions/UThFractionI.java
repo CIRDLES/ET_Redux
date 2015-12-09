@@ -25,5 +25,4 @@ import org.earthtime.fractions.ETFractionInterface;
  */
 public interface UThFractionI extends ETFractionInterface {
 
-
 }
