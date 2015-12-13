@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.user.ReduxPersistentState;
 import org.earthtime.UPb_Redux.user.ReduxPreferences;
@@ -36,6 +35,7 @@ import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
 import org.earthtime.archivingTools.GeochronRetrievalUtility;
 import org.earthtime.archivingTools.IEDACredentialsValidator;
+import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.samples.SampleInterface;
@@ -197,7 +197,10 @@ public class SampleCompilationManagerDialog extends DialogEditor {
             // get aliquots as specified
             switch (fractionSource) {
                 case SINGLE_LOCAL:
-                    success = SampleInterface.importAliquotFromLocalXMLFileIntoSample(getMySample(), importFractionFolderMRU);
+                    try {
+                        success = SampleInterface.importAliquotFromLocalXMLFileIntoSample(getMySample(), importFractionFolderMRU);
+                    } catch (BadLabDataException | IOException | BadOrMissingXMLSchemaException badLabDataException) {
+                    }
                     if (!success.equalsIgnoreCase("")) {
                         getMySample().setSampleName(sampleName_text.getText());
 

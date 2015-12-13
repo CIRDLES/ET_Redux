@@ -76,10 +76,12 @@ public class GeochronRetrievalUtility {
         return retval;
     }
 
-    public static String retrieveGeochronAliquotFile(SampleInterface sample, String aliquotIGSN, String userName, String password) {
+    public static String retrieveGeochronAliquotFile(SampleInterface sample, String aliquotIGSN, String userName, String password)
+    throws ETException{
         AliquotInterface myDownAliquot = new UPbReduxAliquot();
 
-        String downloadURL = //
+        String downloadURL
+                = //
                 "http://www.geochron.org/getxml.php?igsn="//
                 + aliquotIGSN.toUpperCase().trim()//
                 + "&username="//
@@ -87,21 +89,28 @@ public class GeochronRetrievalUtility {
                 + "&password="//
                 + password;
 
-        String message  = "Found: " + aliquotIGSN;
+        String message = "Found: " + aliquotIGSN;
         try {
             myDownAliquot
                     = (AliquotInterface) ((XMLSerializationI) myDownAliquot).readXMLObject(
                             downloadURL, true);
             if (myDownAliquot != null) {
-                // xml is added here for consistency and because we test whether aliquot source file is xml ... probably
-                // should get rid of xml test and just make it aliquot non-zero length string
-                SampleInterface.importAliquotIntoSample(//
-                        sample, myDownAliquot, "GeochronDownloadOfAliquot_" + aliquotIGSN.toUpperCase().trim() + ".xml");
-                System.out.println("got one " + myDownAliquot.getAnalystName());
+                //dec 2015 - check instrument type
+                if (myDownAliquot.usesIDTIMS() || myDownAliquot.usesMCIPMS()) {
+                    // xml is added here for consistency and because we test whether aliquot source file is xml ... probably
+                    // should get rid of xml test and just make it aliquot non-zero length string
+                    SampleInterface.importAliquotIntoSample(//
+                            sample, myDownAliquot, "GeochronDownloadOfAliquot_" + aliquotIGSN.toUpperCase().trim() + ".xml");
+                    System.out.println("got one " + myDownAliquot.getAnalystName());
+                } else {
+                    message = "This sample is not TIMS or LAICPMS but is " +  myDownAliquot.getAliquotInstrumentalMethod();
+                    throw new ETException("This sample is not TIMS or LAICPMS but is " +  myDownAliquot.getAliquotInstrumentalMethod());
+                }
+
             } else {
-                message =  "Missing (or private) aliquot: " + aliquotIGSN;
+                message = "Missing (or private) aliquot: " + aliquotIGSN;
             }
-        } catch (IOException | ETException | BadOrMissingXMLSchemaException ex) {
+        } catch (IOException  | BadOrMissingXMLSchemaException ex) {
             message = "Missing (or private) aliquot: " + aliquotIGSN;
         }
 
