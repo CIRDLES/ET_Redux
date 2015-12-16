@@ -31,6 +31,7 @@ import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UTh_Redux.aliquots.UThReduxAliquot;
 import org.earthtime.UTh_Redux.fractions.UThLegacyFraction;
 import org.earthtime.UTh_Redux.fractions.UThLegacyFractionI;
+import org.earthtime.UTh_Redux.fractions.fractionReduction.UThFractionReducer;
 import org.earthtime.UTh_Redux.samples.SampleUTh;
 import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.aliquots.ReduxAliquotInterface;
@@ -273,6 +274,9 @@ public class ProjectOfLegacySamplesImporterFromTSVFile_DIBBs_Useries_A extends A
                                     divide(new BigDecimal(2.0));
                             myFraction.getLegacyActivityRatioByName(ratioName)//
                                     .setOneSigma(oneSigmaAbs);
+                            
+                            // dec 2015 temp hack for demo
+                            UThFractionReducer.calculateActivityRatios(myFraction);
 
                         }
 

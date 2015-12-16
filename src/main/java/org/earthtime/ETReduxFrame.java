@@ -114,6 +114,7 @@ import org.earthtime.UPb_Redux.utilities.CustomIcon;
 import org.earthtime.UPb_Redux.utilities.ETSerializer;
 import org.earthtime.UPb_Redux.utilities.JHelpAction;
 import org.earthtime.UPb_Redux.utilities.MacOSAboutHandler;
+import org.earthtime.UTh_Redux.dateInterpretation.TopsoilEvolutionChart;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
 import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.aliquots.ReduxAliquotInterface;
@@ -542,7 +543,8 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         theProject = null;
         System.gc();
 
-        EarthTimeSerializedFileInterface deserializedFile =//
+        EarthTimeSerializedFileInterface deserializedFile
+                =//
                 (EarthTimeSerializedFileInterface) ETSerializer.GetSerializedObjectFromFile(projectReduxFile.getPath());
 
         if (deserializedFile instanceof SampleInterface) {
@@ -584,7 +586,8 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
             } else { // instantiate project manager so processing can be initialited
 
-                myProjectManager = //
+                myProjectManager
+                        = //
                         new ProjectManagerFor_LAICPMS_FromRawData(this, true, myState, theProject);
                 myProjectManager.setVisible(true);
             }
@@ -751,7 +754,8 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
     private void manageTheProject() {
         if (myProjectManager == null) {
-            myProjectManager = //
+            myProjectManager
+                    = //
                     new ProjectManagerFor_LAICPMS_FromRawData(this, true, myState, theProject);
         }
 
@@ -761,7 +765,8 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
     private void manageRawDataSession() {
         if ((myProjectManager == null) || !(myProjectManager instanceof ProjectManagerFor_LAICPMS_FromRawData)) {
-            myProjectManager = //
+            myProjectManager
+                    = //
                     new ProjectManagerFor_LAICPMS_FromRawData(this, true, myState, theProject);
         }
         ((ProjectManagerSubscribeInterface) myProjectManager).initializeSessionManager(false, true, false);
@@ -772,7 +777,8 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
         if (sampleAnalysisType.equalsIgnoreCase(SampleAnalysisTypesEnum.LAICPMS.getName())) {
 
-            myProjectManager = //
+            myProjectManager
+                    = //
                     new ProjectManagerFor_LAICPMS_FromRawData(this, true, myState, theProject);
 
             // modal call
@@ -799,7 +805,8 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         theProject = new Project(myState);
 
         try {
-            theSample = //
+            theSample
+                    = //
                     new ProjectSample(//
                             SampleTypesEnum.PROJECT.getName(),//
                             SampleTypesEnum.PROJECT.getName(), //
@@ -878,7 +885,8 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         theProject.prepareSamplesForExport();
 
         // launch manager
-        DialogEditor geochronProjectExportManager = //
+        DialogEditor geochronProjectExportManager
+                = //
                 new GeochronProjectExportManager(this, true, theProject, myState);
 
         geochronProjectExportManager.setVisible(true);
@@ -951,7 +959,8 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             SampleInterface saveTheSample = theSample;
 
             // set up a new empty sample based on sampleType
-            theSample = //
+            theSample
+                    = //
                     new Sample("NONE", sampleType, sampleAnalysisType, myState.getReduxPreferences().getDefaultSampleAnalysisPurpose(), isotopeStyle);
             SampleInterface.specializeNewSample(theSample);
 
@@ -1034,9 +1043,12 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
             return ((SampleCompilationManagerDialog) mySampleManager).isInitialized();
 
-        } else if (((theSample.getSampleType().equalsIgnoreCase(SampleTypesEnum.SAMPLEFOLDER.getName())) ||//
-                (theSample.isSampleTypeLiveWorkflow()) ||//
-                (theSample.isSampleTypeAnalysis())) &&//
+        } else if (((theSample.getSampleType().equalsIgnoreCase(SampleTypesEnum.SAMPLEFOLDER.getName()))
+                ||//
+                (theSample.isSampleTypeLiveWorkflow())
+                ||//
+                (theSample.isSampleTypeAnalysis()))
+                &&//
                 theSample.isAnalysisTypeIDTIMS()) {
 
             mySampleManager
@@ -1085,9 +1097,12 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
             return ((SampleAnalysisWorkflowManagerInterface) mySampleManager).isInitialized();
 
-        } else if (((theSample.getSampleType().equalsIgnoreCase(SampleTypesEnum.SAMPLEFOLDER.getName())) ||//
-                (theSample.isSampleTypeLiveWorkflow()) ||//
-                (theSample.isSampleTypeAnalysis())) &&//
+        } else if (((theSample.getSampleType().equalsIgnoreCase(SampleTypesEnum.SAMPLEFOLDER.getName()))
+                ||//
+                (theSample.isSampleTypeLiveWorkflow())
+                ||//
+                (theSample.isSampleTypeAnalysis()))
+                &&//
                 theSample.isAnalysisTypeLAICPMS()) {
 
             mySampleManager
@@ -1304,11 +1319,13 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         manageProjectRawData_button.setEnabled(false);
 
         startStopLiveUpdate_button.setEnabled(//
-                theSample.isAutomaticDataUpdateMode() && //
+                theSample.isAutomaticDataUpdateMode()
+                && //
                 (theSample.isSampleTypeAnalysis() || theSample.isSampleTypeLiveWorkflow()));
 
         updateData_button.setEnabled(//
-                theSample.isAutomaticDataUpdateMode() && //
+                theSample.isAutomaticDataUpdateMode()
+                && //
                 (theSample.isSampleTypeAnalysis() || theSample.isSampleTypeLiveWorkflow()));
 
         reduceAll_button.setEnabled(theSample.isSampleTypeAnalysis() || theSample.isSampleTypeLiveWorkflow());
@@ -1448,7 +1465,8 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
         setLiveUpdateTimerIsRunning(false);
 
-        EarthTimeSerializedFileInterface deserializedFile = //
+        EarthTimeSerializedFileInterface deserializedFile
+                = //
                 (EarthTimeSerializedFileInterface) ETSerializer.GetSerializedObjectFromFile(selFile.getPath());
 
         // TODO: Oct 2011 check for Project file?? or is it automatically a project file
@@ -1524,7 +1542,8 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
     private void setUpEmptySample() //
             throws BadLabDataException {
-        theSample = //
+        theSample
+                = //
                 new Sample("NONE", "NONE", "", myState.getReduxPreferences().getDefaultSampleAnalysisPurpose(), "UPb");
         SampleInterface.specializeNewSample(theSample);
 
@@ -1730,7 +1749,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                             PbcCorrectionDetails.zeroAllValues();
                             PbcCorrectionDetails.fraction_ID = fraction.getFractionID();
                             PbcCorrectionDetails.pbcCorrScheme = ((UPbLAICPMSFraction) fraction).getCommonLeadLossCorrectionScheme().getName();
-                            UPbFractionReducer.getInstance().fullFractionReduce((FractionI)fraction, true);
+                            UPbFractionReducer.getInstance().fullFractionReduce((FractionI) fraction, true);
                             outputWriter.println(PbcCorrectionDetails.dataString());
 
                             outputWriter.println();
@@ -3286,9 +3305,18 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
     }//GEN-LAST:event_helpMenuMenuDeselected
 
     private void interpretSampleDates_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_interpretSampleDates_buttonActionPerformed
-        manageSampleDateInterpretation(//
-                new SampleTreeAnalysisMode(theSample),
-                new SampleTreeCompilationMode(theSample));
+        // Dec 2015 experiment with customization
+        if (theSample.getIsotopeStyle().compareToIgnoreCase("UTh") == 0) {
+            TopsoilEvolutionChart topsoilEvolutionChart = new TopsoilEvolutionChart();
+            topsoilEvolutionChart.setSelectedFractions(theSample.getFractions());
+            topsoilEvolutionChart.preparePanel();
+            topsoilEvolutionChart.showPanel();
+        } else {
+
+            manageSampleDateInterpretation(//
+                    new SampleTreeAnalysisMode(theSample),
+                    new SampleTreeCompilationMode(theSample));
+        }
 }//GEN-LAST:event_interpretSampleDates_buttonActionPerformed
 
     /**
@@ -3325,7 +3353,8 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             if (sampleDateInterpDialog != null) {
                 sampleDateInterpDialog.dispose();
             }
-            sampleDateInterpDialog = //
+            sampleDateInterpDialog
+                    = //
                     new SampleDateInterpretationsManager(
                             this,
                             false,// try floating as of october 2014 true,

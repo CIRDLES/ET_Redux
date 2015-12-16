@@ -24,7 +24,7 @@ import org.earthtime.UTh_Redux.fractions.UThLegacyFractionI;
 import org.earthtime.dataDictionaries.UThAnalysisMeasures;
 import org.earthtime.fractions.fractionReduction.FractionReducer;
 
-/* NOTES from Noah Nov 2015
+/* NOTES from Noah 28 October 2015
     So instead, here's a MATLAB file that goes with an Excel worksheet and VBA Add-In I created to calculate U-Th dates.  Here's what's going on in the code.
 
    There are three inputs: inputARs, lambdas, detritus.
@@ -63,6 +63,7 @@ import org.earthtime.fractions.fractionReduction.FractionReducer;
    inputARs(5) is column AZ or BI
    inputARs(6) is column BA or BJ, converted to percent
 
+    Note: AX-BA = original and BG-BJ = Andrea's in house conversions that we will redo
 
    The lambdas come from our current physical constants model.
 
@@ -138,13 +139,14 @@ public class UThFractionReducer extends FractionReducer {
 //        meas.r08s = meas.r08 * inputARs(4)/100/2;
 //        meas.r48s = meas.r48 * inputARs(6)/100/2;
 //        meas.C = diag([meas.r48s meas.r08s meas.r28s].^2);
-        
-        BigDecimal measuredValue = //
+        BigDecimal measuredValue
+                = //
                 fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.ar232Th_238Ufc.getName()).getValue()//
                 .multiply(fraction.getLambda238Legacy().getValue())//
                 .divide(fraction.getLambda232Legacy().getValue(), ReduxConstants.mathContext15);
-        
-        BigDecimal oneSigmaAbs = //
+
+        BigDecimal oneSigmaAbs
+                = //
                 measuredValue//
                 .multiply(BigDecimal.ZERO);
 
@@ -168,6 +170,21 @@ public class UThFractionReducer extends FractionReducer {
                 "ABS", //
                 fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.ar234U_238Ufc.getName()).getOneSigmaAbs(), //
                 BigDecimal.ZERO);
+
+    }
+
+    public static void calculateActivityRatios(UThLegacyFractionI fraction) {
+
+        // dec 2015 fake for now
+        fraction.getAnalysisMeasure(UThAnalysisMeasures.ar230Th_238Ufc.getName()).setValue(//
+                fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.ar230Th_238Ufc.getName()).getValue());
+        fraction.getAnalysisMeasure(UThAnalysisMeasures.ar230Th_238Ufc.getName()).setOneSigma(//
+                fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.ar230Th_238Ufc.getName()).getOneSigma());
+
+        fraction.getAnalysisMeasure(UThAnalysisMeasures.ar234U_238Ufc.getName()).setValue(//
+                fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.ar234U_238Ufc.getName()).getValue());
+        fraction.getAnalysisMeasure(UThAnalysisMeasures.ar234U_238Ufc.getName()).setOneSigma(//
+                fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.ar234U_238Ufc.getName()).getOneSigma());
 
     }
 
