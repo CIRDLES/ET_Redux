@@ -51,13 +51,13 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.expressions.ExpTreeII;
-import org.earthtime.reduxLabData.ReduxLabDataListElementI;
 import org.earthtime.UPb_Redux.user.UPbReduxConfigurator;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
 import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.dataDictionaries.DataDictionary;
 import org.earthtime.dataDictionaries.RatioNamePrettyPrinter;
 import org.earthtime.exceptions.ETException;
+import org.earthtime.reduxLabData.ReduxLabDataListElementI;
 import org.earthtime.xmlUtilities.XMLSerializationI;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -1050,12 +1050,6 @@ public class ValueModel implements
                     throw new ETException(null, e.getMessage());
                 }
 
-//                System.out.println("\nThis is your ValueModel that was just read successfully:\n");
-
-//                String xml2 = getXStreamWriter().toXML(myValueModel);
-//
-//                System.out.println(xml2);
-//                System.out.flush();
             } else {
                 throw new ETException(null, "XML data file does not conform to schema.");
             }
@@ -1095,7 +1089,7 @@ public class ValueModel implements
             // validate the DOM tree
             validator.validate(new DOMSource(document));
         } catch (ParserConfigurationException | SAXException | IOException ex) {
-            if (ex instanceof UnknownHostException) {
+            if ((ex instanceof UnknownHostException)|| (ex instanceof FileNotFoundException)) {
                 return true;
             } else {
                 return false;
@@ -1183,17 +1177,17 @@ public class ValueModel implements
     public static void main(String[] args) throws Exception {
 
         ValueModel valueModel
-                = new ValueModel("r206_204b", new BigDecimal("1234567890"), "ABS", new BigDecimal("123000"), BigDecimal.ZERO);
+                = new ValueModel("r206_204b", new BigDecimal("1234567890"), "ABS", new BigDecimal("1230009"), BigDecimal.ZERO);
         System.out.println(
                 "Format Test: " + valueModel.formatValueAndTwoSigmaForPublicationSigDigMode("ABS", 6, 2));
 
         valueModel
-                = new ValueModel("r206_204b", new BigDecimal("1234567890"), "ABS", new BigDecimal("1230000"), BigDecimal.ZERO);
+                = new ValueModel("r206_204b", new BigDecimal("1234567890"), "ABS", new BigDecimal("12300009"), BigDecimal.ZERO);
         System.out.println(
                 "Format Test: " + valueModel.formatValueAndTwoSigmaForPublicationSigDigMode("ABS", 6, 2));
 
         valueModel
-                = new ValueModel("r206_204b", new BigDecimal("1234567890"), "ABS", new BigDecimal("12300000"), BigDecimal.ZERO);
+                = new ValueModel("r206_204b", new BigDecimal("1234567890"), "ABS", new BigDecimal("123000009"), BigDecimal.ZERO);
         System.out.println(
                 "Format Test: " + valueModel.formatValueAndTwoSigmaForPublicationSigDigMode("ABS", 6, 2));
 

@@ -4,7 +4,7 @@
  * Created on April 7, 2006, 7:32 PM
  *
  *
- * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2016 James F. Bowring and www.Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -240,10 +240,10 @@ final public class ReduxConstants {
      *
      */
     static public String XML_ResourceHeader
-            = "xmlns=\"http://www.earth-time.org\"\n" //
+            = "xmlns=\"https://raw.githubusercontent.com/EARTHTIME/Schema\"\n" //
             + "        xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"\n" //
             + "        xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" //
-            + "        xsi:schemaLocation=\"http://www.earth-time.org\n" //
+            + "        xsi:schemaLocation=\"https://raw.githubusercontent.com/EARTHTIME/Schema\n" //
             + "                            ";
     /**
      *

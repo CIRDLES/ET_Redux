@@ -4,7 +4,7 @@
  * Created on April 13, 2007, 6:19 AM
  *
  *
- * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2016 James F. Bowring and www.Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -36,7 +36,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.reduxLabData.ReduxLabDataListElementI;
 import org.earthtime.UPb_Redux.user.UPbReduxConfigurator;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModelXMLConverter;
@@ -48,6 +47,7 @@ import org.earthtime.dataDictionaries.TracerRatiosEnum;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.tracers.TracerUPbModel;
+import org.earthtime.reduxLabData.ReduxLabDataListElementI;
 import org.earthtime.utilities.DateHelpers;
 import org.earthtime.xmlUtilities.XMLSerializationI;
 

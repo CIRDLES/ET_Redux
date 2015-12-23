@@ -157,63 +157,7 @@ public class URIHelper {
         }
         return reader;
     }
-
-//    /**
-//     *
-//     * @param schemaURI
-//     * @return
-//     * @throws ETException
-//     * @throws BadOrMissingXMLSchemaException
-//     */
-//    public static Validator createSchemaValidator(String schemaURI)
-//            throws ETException, BadOrMissingXMLSchemaException {
-//
-//        Validator retval = null;
-//
-//        // create a SchemaFactory capable of understanding WXS schemas
-//        SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-//
-//        // load a WXS schema, represented by a Schema instance
-//        URL url;
-//        URLConnection urlConn = null;
-//        try {
-//            url = new URL(schemaURI);
-//            urlConn = url.openConnection();
-//        } catch (MalformedURLException ex) {
-//        } catch (IOException ex) {
-//        }
-//
-//        urlConn.setDoInput(true);
-//        urlConn.setUseCaches(false);
-//
-//        Source schemaFile = null;
-//        try {
-//            schemaFile = new StreamSource(urlConn.getInputStream());
-//        } catch (IOException ex) {
-//            throw new BadOrMissingXMLSchemaException(null,
-//                    "Cannot locate XML Schema at URI:\n\n"//
-//                    + schemaURI);//+ ex.getMessage());
-//        }
-//
-//        Schema schema = null;
-//        try {
-//            schema = factory.newSchema(schemaFile);
-//        } catch (SAXException ex) {
-//            //          ex.printStackTrace();
-//            throw new ETException(null,
-//                    "The EarthTime XML Schema at URI:\n\n" //
-//                    + schemaURI + "\n\nis unavailable." //
-//                    + "  Please check your network connection.");// ex.getMessage());
-//
-//        }
-//
-//        // https://jaxp.dev.java.net/article/jaxp-1_3-article.html#Compile_Schema(s)
-//        //Create a Validator which can be used to validate instance document against this schema(s)
-//        retval = schema.newValidator();
-//        retval.setErrorHandler(new SAXErrorHandler());
-//
-//        return retval;
-//    }
+ 
     /**
      *
      * @param reader
@@ -222,12 +166,6 @@ public class URIHelper {
      * @return
      */
     public static boolean validateXML(BufferedReader reader, String xmlURI, String schemaURI) {
-
-//        if ( isInternetReachable() ) {
-//            return validateXMLwithValidator( reader, createSchemaValidator( schemaURI ) );
-//        } else {
-//            return true;
-//        }
         return validateXML(xmlURI, schemaURI);
     }
 
@@ -267,6 +205,12 @@ public class URIHelper {
                         // validate the DOM tree
                         validator.validate(new DOMSource(document));
                     } catch (ParserConfigurationException | SAXException | IOException parserConfigurationException) {
+                        if (parserConfigurationException instanceof FileNotFoundException){
+                            CONNECTED_TO_INTERNET = false;
+                        } else {
+                            retVal = false;
+                        }
+                        
                     }
 
                 } else {
