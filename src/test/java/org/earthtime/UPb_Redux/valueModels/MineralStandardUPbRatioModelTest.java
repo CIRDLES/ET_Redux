@@ -275,7 +275,7 @@ public class MineralStandardUPbRatioModelTest {
         String result2;
         if(xstream instanceof XStream){
             result=true;        
-            expResult2="http://earth-time.org/projects/upb/public_data/XSD/ValueModelXMLSchema.xsd";
+            expResult2="https://raw.githubusercontent.com/EARTHTIME/Schema/master/ValueModelXMLSchema.xsd";
             result2=instance.getValueModelXMLSchemaURL();
             assertEquals(expResult2,result2);            
                                      }
