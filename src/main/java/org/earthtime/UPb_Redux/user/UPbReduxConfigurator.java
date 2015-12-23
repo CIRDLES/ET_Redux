@@ -122,7 +122,7 @@ public final class UPbReduxConfigurator {
      *
      */
     public final static String URI_EARTHTIME_XMLTracers =
-            "EARTHTIME_tracers/XML/";
+            "Tracers/master/XML/";
     /**
      *
      */

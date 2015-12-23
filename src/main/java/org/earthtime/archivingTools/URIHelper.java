@@ -142,7 +142,7 @@ public class URIHelper {
         Reader inReader = null;
 
         try {
-            if (filename.startsWith("http://")) {
+            if (filename.startsWith("http")) {
                 inReader = new InputStreamReader(getInputStreamFromURI(filename));
             } else {
                 inReader = new FileReader(filename);
