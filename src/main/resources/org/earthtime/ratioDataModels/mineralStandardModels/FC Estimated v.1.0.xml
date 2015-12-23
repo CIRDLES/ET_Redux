@@ -5,11 +5,11 @@
     * For more info, visit https://CIRDLES.org                                  *
     *****************************************************************************
 -->
-<MineralStandardUPbModel  xmlns="http://www.earth-time.org"
+<MineralStandardUPbModel  xmlns="https://raw.githubusercontent.com/EARTHTIME/Schema"
         xmlns:xs="http://www.w3.org/2001/XMLSchema"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.earth-time.org
-                            http://earth-time.org/projects/upb/public_data/XSD/MineralStandardUPbModelXMLSchema.xsd">
+        xsi:schemaLocation="https://raw.githubusercontent.com/EARTHTIME/Schema
+                            https://raw.githubusercontent.com/EARTHTIME/Schema/master/MineralStandardUPbModelXMLSchema.xsd">
   <modelName>FC Estimated</modelName>
   <versionNumber>1</versionNumber>
   <minorVersionNumber>0</minorVersionNumber>

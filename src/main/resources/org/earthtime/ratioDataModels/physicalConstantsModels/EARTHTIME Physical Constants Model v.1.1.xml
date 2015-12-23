@@ -5,11 +5,11 @@
     * For more info, visit https://CIRDLES.org                                  *
     *****************************************************************************
 -->
-<PhysicalConstantsModel  xmlns="http://www.earth-time.org"
+<PhysicalConstantsModel  xmlns="https://raw.githubusercontent.com/EARTHTIME/Schema"
         xmlns:xs="http://www.w3.org/2001/XMLSchema"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.earth-time.org
-                            http://earth-time.org/projects/upb/public_data/XSD/PhysicalConstantsModelXMLSchema.xsd">
+        xsi:schemaLocation="https://raw.githubusercontent.com/EARTHTIME/Schema
+                            https://raw.githubusercontent.com/EARTHTIME/Schema/master/PhysicalConstantsModelXMLSchema.xsd">
   <modelName>EARTHTIME Physical Constants Model</modelName>
   <versionNumber>1</versionNumber>
   <minorVersionNumber>1</minorVersionNumber>
