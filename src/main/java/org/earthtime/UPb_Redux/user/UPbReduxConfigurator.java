@@ -43,7 +43,6 @@ public final class UPbReduxConfigurator {
      */
     public final static String URL_EARTHTIMEORG = 
             "https://raw.githubusercontent.com/EARTHTIME/";
-            //"http://earth-time.org/";
     /**
      *
      */

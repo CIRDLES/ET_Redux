@@ -88,15 +88,6 @@ public class URIHelper {
                         + iOException.getMessage()});
         }
 
-//        InputStream retval = null;
-//        try {
-//            retval = urlConn.getInputStream();
-//        } catch (IOException ex) {
-//            JOptionPane.showMessageDialog( null,
-//                    new String[]{"Error reaching server: "//
-//                        + ex.getMessage()} );
-//            // ex.printStackTrace();
-//        }
         return retval;
     }
 
@@ -110,8 +101,6 @@ public class URIHelper {
 
         try {
             BufferedReader bufR = getBufferedReader(fileURI);
-//                    new BufferedReader(
-//                    new InputStreamReader( getInputStreamFromURI( fileURI ) ) );
 
             try {
                 String s = null;
@@ -207,10 +196,10 @@ public class URIHelper {
                     } catch (ParserConfigurationException | SAXException | IOException parserConfigurationException) {
                         if (parserConfigurationException instanceof FileNotFoundException){
                             CONNECTED_TO_INTERNET = false;
+                            new ETWarningDialog("ET_Redux could not find the schema file: " + schemaURI + " and will not validate XML files until restart.").setVisible(true);
                         } else {
                             retVal = false;
-                        }
-                        
+                        }                        
                     }
 
                 } else {
