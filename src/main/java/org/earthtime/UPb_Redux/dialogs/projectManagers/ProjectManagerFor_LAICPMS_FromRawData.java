@@ -80,21 +80,21 @@ import org.earthtime.Tripoli.samples.AbstractTripoliSample;
 import org.earthtime.Tripoli.sessions.TripoliSession;
 import org.earthtime.Tripoli.sessions.TripoliSessionInterface;
 import org.earthtime.UPb_Redux.ReduxConstants.ANALYSIS_PURPOSE;
-import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.dialogs.parameterManagers.LAICPMSProjectParametersManager;
 import org.earthtime.UPb_Redux.dialogs.sessionManagers.SessionAnalysisWorkflowManagerInterface;
 import org.earthtime.UPb_Redux.dialogs.sessionManagers.SessionAnalysisWorkflowManagerLAICPMS;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
-import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.user.ReduxPersistentState;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.UPb_Redux.utilities.ETSerializer;
 import org.earthtime.beans.ET_JButton;
+import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.projects.Project;
 import org.earthtime.projects.ProjectInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
+import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.utilities.TimeToString;
 
 /**
@@ -150,7 +150,8 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
         knownRawDataFileHandlers = new ArrayList<>();
 
         // LaserChron NU Plasma FARADAY
-        AbstractRawDataFileHandler theNUPlasmaMultiCollFaradayFileHandler = //
+        AbstractRawDataFileHandler theNUPlasmaMultiCollFaradayFileHandler
+                = 
                 LaserChronNUPlasmaMultiCollFaradayFileHandler.getInstance();
         theNUPlasmaMultiCollFaradayFileHandler.getAvailableMassSpecSetups()//
                 .add(GehrelsNUPlasmaSetupUPbFar.getInstance());
@@ -161,7 +162,8 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
         knownRawDataFileHandlers.add(theNUPlasmaMultiCollFaradayFileHandler);
 
         // LaserChron NU Plasma FARADAY TRA
-        AbstractRawDataFileHandler theNUPlasmaMultiCollFaradayTRAFileHandler = //
+        AbstractRawDataFileHandler theNUPlasmaMultiCollFaradayTRAFileHandler
+                = 
                 LaserChronNUPlasmaMultiCollFaradayTRAFileHandler.getInstance();
         theNUPlasmaMultiCollFaradayTRAFileHandler.getAvailableMassSpecSetups()//
                 .add(GehrelsNUPlasmaSetupUPbFarTRA.getInstance());
@@ -172,7 +174,8 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
         knownRawDataFileHandlers.add(theNUPlasmaMultiCollFaradayTRAFileHandler);
 
         // LaserChron NU Plasma IONCOUNTER
-        AbstractRawDataFileHandler theNUPlasmaMultiCollIonCounterFileHandler = //
+        AbstractRawDataFileHandler theNUPlasmaMultiCollIonCounterFileHandler
+                = 
                 LaserChronNUPlasmaMultiCollIonCounterFileHandler.getInstance();
         theNUPlasmaMultiCollIonCounterFileHandler.getAvailableMassSpecSetups()//
                 .add(GehrelsNUPlasmaSetupUPbIonCounter.getInstance());
@@ -183,7 +186,8 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
         knownRawDataFileHandlers.add(theNUPlasmaMultiCollIonCounterFileHandler);
 
         // LaserChron Element 2 
-        AbstractRawDataFileHandler theLaserchronElementIIFileHandler = //
+        AbstractRawDataFileHandler theLaserchronElementIIFileHandler
+                = 
                 LaserchronElementIIFileHandler.getInstance();
         theLaserchronElementIIFileHandler.getAvailableMassSpecSetups()//
                 .add(LaserchronElementIISetupUPb.getInstance());
@@ -194,7 +198,8 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
         knownRawDataFileHandlers.add(theLaserchronElementIIFileHandler);
 
         // Memorial U Newfoundland John Hanchar ElementII 
-        AbstractRawDataFileHandler theMemUnivNewfoundlandElementIIFileHandler = //
+        AbstractRawDataFileHandler theMemUnivNewfoundlandElementIIFileHandler
+                = 
                 MemUnivNewfoundlandElementIIFileHandler.getInstance();
         theMemUnivNewfoundlandElementIIFileHandler.getAvailableMassSpecSetups()//
                 .add(MemUnivNewfoundlandElementIISetupUPb.getInstance());
@@ -205,8 +210,8 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
         knownRawDataFileHandlers.add(theMemUnivNewfoundlandElementIIFileHandler);
 
         // U Kansas Andreas Moeller ElementII  
-        AbstractRawDataFileHandler theUnivKansasElementIIFileHandler = //
-                UnivKansasElementIIFileHandler.getInstance();
+        AbstractRawDataFileHandler theUnivKansasElementIIFileHandler
+                = UnivKansasElementIIFileHandler.getInstance();
         theUnivKansasElementIIFileHandler.getAvailableMassSpecSetups()//
                 .add(UnivKansasElementIISetupUPb.getInstance());
 
@@ -216,8 +221,8 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
         knownRawDataFileHandlers.add(theUnivKansasElementIIFileHandler);
 
         // Washington State Element 2 
-        AbstractRawDataFileHandler theThermoFinniganElement2SingleCollFileHandler = //
-                WashStateElementIISingleCollFileHandler.getInstance();
+        AbstractRawDataFileHandler theThermoFinniganElement2SingleCollFileHandler
+                = WashStateElementIISingleCollFileHandler.getInstance();
         theThermoFinniganElement2SingleCollFileHandler.getAvailableMassSpecSetups()//
                 .add(WashStateElementIISetupUPb.getInstance());
 
@@ -239,8 +244,8 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
 //
 //        knownRawDataFileHandlers.add(theRittnerAgilent7700FileHandler);
 //
-        AbstractRawDataFileHandler theKoslerAgilent7700FileHandler = //
-                KoslerAgilent7700FileHandler.getInstance();
+        AbstractRawDataFileHandler theKoslerAgilent7700FileHandler
+                = KoslerAgilent7700FileHandler.getInstance();
         theKoslerAgilent7700FileHandler.getAvailableMassSpecSetups()//
                 .add(KoslerAgilent7700SetupUPb.getInstance());
 
@@ -398,8 +403,8 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
 
     private void revertProject() {
         try {
-            project =//
-                    (ProjectInterface) ETSerializer.GetSerializedObjectFromFile(//
+            project
+                    = (ProjectInterface) ETSerializer.GetSerializedObjectFromFile(//
                             project.getLocationOfProjectReduxFile().getAbsolutePath());
 
             loadProject();
@@ -456,8 +461,8 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
         }
 
         // user-selected handler
-        rawDataFileHandler = //
-                (AbstractRawDataFileHandler) fileHandlerComboBox.getSelectedItem();
+        rawDataFileHandler
+                = (AbstractRawDataFileHandler) fileHandlerComboBox.getSelectedItem();
         project.setRawDataFileHandler(rawDataFileHandler);
         rawDataFileHandler.reInitialize();
 
@@ -466,8 +471,8 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
         rawDataFileHandler.setMassSpec(massSpec);
 
         // user selected raw data template
-        AbstractRawDataFileTemplate rawDataFileTemplate = //
-                (AbstractRawDataFileTemplate) rawDataTemplateComboBox.getSelectedItem();
+        AbstractRawDataFileTemplate rawDataFileTemplate
+                = (AbstractRawDataFileTemplate) rawDataTemplateComboBox.getSelectedItem();
         rawDataFileHandler.setRawDataFileTemplate(rawDataFileTemplate);
 
         // may 2013 split task to allow for custom parameters ********************
@@ -537,7 +542,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
         // april 2014
         MaskingSingleton.getInstance().setLeftShadeCount(leftShadeCount);
         MaskingSingleton.getInstance().setRightShadeCount(-1);
-        
+
         rawDataFileHandler.getAndLoadRawIntensityDataFile(loadDataTask, usingFullPropagation, leftShadeCount, ignoreFirstFractions);
 
 //        loadAndShowRawDataFinishUp();
@@ -553,7 +558,8 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
 
         if (tripoliSamplesSorted.size() > 0) {
             // create session
-            tripoliSession = //
+            tripoliSession
+                    = 
                     new TripoliSession(//
                             rawDataFileHandler, tripoliSamplesSorted);
 
@@ -653,10 +659,10 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
      *
      */
     public class LoadDataTask extends SwingWorker<Void, Void> {
+
         /*
          * Main loadDataTask. Executed in background thread.
          */
-
         private final boolean usingFullPropagation;
         private final int ignoreFirstFractions;
         private final int leftShadeCount;
@@ -718,14 +724,14 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
         }
 
         // setup samplesOrganizerPane         
-        samplesOrganizerPane = //
-                new SamplesOrganizerPane(//
+        samplesOrganizerPane
+                = new SamplesOrganizerPane(//
                         "Organize Samples:", 10, 10, this.getWidth() - 25, projectSampleWorkPane.getHeight() - 25, tripoliSamplesSorted, this);
         projectSampleWorkPane.add(samplesOrganizerPane, JLayeredPane.DRAG_LAYER);
 
         // setup samplesCommonLeadPane         
-        samplesCommonLeadPane = //
-                new SamplesCommonLeadPane(//
+        samplesCommonLeadPane
+                = new SamplesCommonLeadPane(//
                         10, 10, this.getWidth() - 25, //
                         projectSampleCommonLeadWorkPane.getHeight() - 25, //
                         tripoliSamplesSorted, //
@@ -1182,17 +1188,17 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
                 while (tripoliSampleFractionsIterator.hasNext()) {
                     TripoliFraction tf = tripoliSampleFractionsIterator.next();
 
-                    String[][] retrievedIntensitiesForFraction =//
-                            new String[tf.getDataActiveMap().length * 2 + 3]//
+                    String[][] retrievedIntensitiesForFraction
+                            = new String[tf.getDataActiveMap().length * 2 + 3]//
                             [tf.getIncludedIsotopes().size() + 1];
 
-                    String fractionBackgroundHeader = //
-                            "TimeStamp-Background FILE " + tf.getFractionID() + "_B.txt  = "//
+                    String fractionBackgroundHeader
+                            = "TimeStamp-Background FILE " + tf.getFractionID() + "_B.txt  = "//
                             + TimeToString.timeStampString(tf.getBackgroundTimeStamp())//
                             + "  = " + tf.getBackgroundTimeStamp() + " milliseconds since January 1, 1970, 00:00:00 GMT";
 
-                    String fractionPeakHeader = //
-                            "TimeStamp-Peak FILE " + tf.getFractionID() + ".txt  = "//
+                    String fractionPeakHeader
+                            = "TimeStamp-Peak FILE " + tf.getFractionID() + ".txt  = "//
                             + TimeToString.timeStampString(tf.getPeakTimeStamp())//
                             + "  = " + tf.getPeakTimeStamp() + " milliseconds since January 1, 1970, 00:00:00 GMT";
 
@@ -1208,23 +1214,23 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
                         double[] backgroundAquireTimes = ((RawIntensityDataModel) isotope).getNormalizedBackgroundAquireTimes();//.getBackgroundVirtualCollector().getAquireTimes();
 
                         // first backgrounds
-                        retrievedIntensitiesForFraction[0][0] = //
-                                fractionBackgroundHeader //
+                        retrievedIntensitiesForFraction[0][0]
+                                = fractionBackgroundHeader //
                                 + "\n\n" + "TimeStamp-Back";
                         retrievedIntensitiesForFraction[0][1 + countOfIsotopes] = isotope.getDataModelName() + "-Back";
 
                         retrievedIntensitiesForFraction[tf.getDataActiveMap().length + 1][0] = "";
                         retrievedIntensitiesForFraction[tf.getDataActiveMap().length + 1][1 + countOfIsotopes] = "";
-                        retrievedIntensitiesForFraction[tf.getDataActiveMap().length + 2][0] = //
-                                fractionPeakHeader //
+                        retrievedIntensitiesForFraction[tf.getDataActiveMap().length + 2][0]
+                                = fractionPeakHeader //
                                 + "\n\n" + "TimeStamp-Peak";
                         retrievedIntensitiesForFraction[tf.getDataActiveMap().length + 2][1 + countOfIsotopes] = isotope.getDataModelName() + "-Peak";
 
                         for (int j = 0; j < backgroundIntensities.length; j++) {
-                            retrievedIntensitiesForFraction[j + 1][1 + countOfIsotopes] = //
-                                    formatter2.format(backgroundIntensities[j]);
-                            retrievedIntensitiesForFraction[tf.getDataActiveMap().length + j + 3][1 + countOfIsotopes] =//
-                                    formatter2.format(peakIntensities[j]);
+                            retrievedIntensitiesForFraction[j + 1][1 + countOfIsotopes]
+                                    = formatter2.format(backgroundIntensities[j]);
+                            retrievedIntensitiesForFraction[tf.getDataActiveMap().length + j + 3][1 + countOfIsotopes]
+                                    = formatter2.format(peakIntensities[j]);
 
 //                            Long backgroundTime = new Long(//
 //                                    (tf.getBackgroundTimeStamp() - firstFractionBackgroundTimeStamp + (int) backgroundAquireTimes[j]) );

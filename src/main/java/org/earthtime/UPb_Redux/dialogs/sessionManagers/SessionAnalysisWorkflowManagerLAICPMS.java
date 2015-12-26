@@ -1550,11 +1550,7 @@ private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.
         // for now we have to undo internal acquisition rejecttions allowed by intercept but not by downhole
         tripoliSession.refitAllFractionsForDownhole();
 
-        try {
-            tripoliSession.prepareForReductionAndCommonLeadCorrection();
-        } finally {
             uPbReduxFrame.updateReportTable(true);
-        }
     }//GEN-LAST:event_downholeCalculateRhos_buttonActionPerformed
 
     private void downholeFitEachStandard_radioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downholeFitEachStandard_radioButtonActionPerformed

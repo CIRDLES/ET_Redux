@@ -18,6 +18,7 @@
  */
 package org.earthtime.UPb_Redux.dialogs.sampleManagers.sampleDateInterpretationManagers;
 
+import java.awt.Component;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -199,21 +200,22 @@ public class SampleDateInterpretationsManager extends DialogEditor
         dateTreeByAliquot = new SampleTreeAnalysisMode(sample);
         dateTreeByAliquot.setSampleTreeChange(this);
         dateTreeByAliquot.buildTree();
-        dateTreeByAliquot_ScrollPane.setViewportView((SampleTreeAnalysisMode) dateTreeByAliquot);
+        dateTreeByAliquot_ScrollPane.setViewportView((Component) dateTreeByAliquot);
 
         dateTreeBySample = new SampleTreeCompilationMode(sample);
         dateTreeBySample.setSampleTreeChange(this);
         dateTreeBySample.buildTree();
-        dateTreeBySample_ScrollPane.setViewportView((SampleTreeCompilationMode) dateTreeBySample);
+        dateTreeBySample_ScrollPane.setViewportView((Component) dateTreeBySample);
 
-        ((PlottingDetailsDisplayInterface) concordiaGraphPanel).refreshPanel();
+        ((PlottingDetailsDisplayInterface) concordiaGraphPanel).resetPanel();//.refreshPanel();
+        
         try {
             // June 2010 ensures backward compatibility with previous versions that used dummy aliquot in this list
             setupWeightedMeansPanelForAliquots();
         } catch (Exception e) {
         }
-        ((PlottingDetailsDisplayInterface) weightedMeanGraphPanel).refreshPanel();
-        ((PlottingDetailsDisplayInterface) probabilityPanel).refreshPanel();
+        ((PlottingDetailsDisplayInterface) weightedMeanGraphPanel).resetPanel();//refreshPanel();
+        ((PlottingDetailsDisplayInterface) probabilityPanel).resetPanel();//refreshPanel();
 
     }
 
