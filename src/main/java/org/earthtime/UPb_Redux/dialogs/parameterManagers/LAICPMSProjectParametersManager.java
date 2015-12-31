@@ -235,6 +235,10 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
 
         removeAll();
 
+        this.setBackground(new Color(255, 222, 173));
+        
+        this.setOpaque(true);
+
         massSpecSetup = rawDataFileHandler.getMassSpec();
 
         collectorNameLabels = new ArrayList<>();
@@ -389,7 +393,8 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
         headerLabel.setBounds(leftMargin, topOfTable, parentDimension.width - 50, 25);
         this.add(headerLabel);
 
-        Iterator<IsotopesEnum> isotopeIterator = //
+        Iterator<IsotopesEnum> isotopeIterator
+                = //
                 isotopeMappingModel.getIsotopeToCollectorMap().keySet().iterator();
 
         int count = 1;
@@ -628,9 +633,11 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
         // view standard model
         JButton viewStandardModelButton = new ET_JButton("View");
         viewStandardModelButton.addActionListener((ActionEvent e) -> {
-            AbstractRatiosDataModel selectedModel = //
+            AbstractRatiosDataModel selectedModel
+                    = //
                     ((AbstractRatiosDataModel) mineralStandardsComboBox.getSelectedItem());
-            AbstractRatiosDataView modelView = //
+            AbstractRatiosDataView modelView
+                    = //
                     new MineralStandardUPbRatiosDataViewNotEditable(selectedModel, null, false);
             modelView.displayModelInFrame();
         });
@@ -823,7 +830,8 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
         acquisitionModel.setCollectorNameToDeadTimesUnctMap(collectorNameToDeadTimesUnctMap);
 
         if (acquisitionModel.getAcquisitionType().equals(AcquisitionTypesEnum.SINGLE_COLLECTOR)) {
-            Map<IsotopesEnum, Double> isotopeNameToIntegrationTimesMap = //
+            Map<IsotopesEnum, Double> isotopeNameToIntegrationTimesMap
+                    = //
                     new EnumMap<>(IsotopesEnum.class);
 
             for (int i = 0; i < isotopeNames.size(); i++) {
@@ -837,7 +845,8 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
 
         // faradays for resistors and amp noise
         if (acquisitionModel.getAcquisitionType().equals(AcquisitionTypesEnum.STATIC)) {
-            Map<String, FaradayCollectorModel.ResistorEnum> collectorNameToResistorMap = //
+            Map<String, FaradayCollectorModel.ResistorEnum> collectorNameToResistorMap
+                    = //
                     new TreeMap<>();
             Map<String, Double> collectorNameToAmpNoiseMap = new TreeMap<>();
 

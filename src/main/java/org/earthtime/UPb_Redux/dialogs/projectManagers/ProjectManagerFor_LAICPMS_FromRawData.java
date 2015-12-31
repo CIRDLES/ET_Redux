@@ -2,7 +2,7 @@
  * ProjectManagerFor_LAICPMS_FromRawData.java
  *
  *
- * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2016 James F. Bowring and www.Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -55,6 +55,7 @@ import org.earthtime.Tripoli.massSpecSetups.multiCollector.NUPlasma.GehrelsNUPla
 import org.earthtime.Tripoli.massSpecSetups.singleCollector.Agilent7700.KoslerAgilent7700SetupUPb;
 import org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan.LaserchronElementIISetupUPb;
 import org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan.MemUnivNewfoundlandElementIISetupUPb;
+import org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan.TexasAMElementIISetupUPb;
 import org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan.UnivKansasElementIISetupUPb;
 import org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan.WashStateElementIISetupUPb;
 import org.earthtime.Tripoli.rawDataFiles.handlers.AbstractRawDataFileHandler;
@@ -64,6 +65,7 @@ import org.earthtime.Tripoli.rawDataFiles.handlers.NuPlasma.LaserChronNUPlasmaMu
 import org.earthtime.Tripoli.rawDataFiles.handlers.NuPlasma.LaserChronNUPlasmaMultiCollIonCounterFileHandler;
 import org.earthtime.Tripoli.rawDataFiles.handlers.Thermo.LaserchronElementIIFileHandler;
 import org.earthtime.Tripoli.rawDataFiles.handlers.Thermo.MemUnivNewfoundlandElementIIFileHandler;
+import org.earthtime.Tripoli.rawDataFiles.handlers.Thermo.TexasAMElementIISingleCollFileHandler;
 import org.earthtime.Tripoli.rawDataFiles.handlers.Thermo.UnivKansasElementIIFileHandler;
 import org.earthtime.Tripoli.rawDataFiles.handlers.Thermo.WashStateElementIISingleCollFileHandler;
 import org.earthtime.Tripoli.rawDataFiles.templates.AbstractRawDataFileTemplate;
@@ -73,6 +75,7 @@ import org.earthtime.Tripoli.rawDataFiles.templates.NuPlasma.LaserChronNUPlasmaM
 import org.earthtime.Tripoli.rawDataFiles.templates.NuPlasma.LaserChronNUPlasmaMultiCollIonCounterRawDataTemplate;
 import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.HancharMemUnivNewfoundlandElementII_RawDataTemplate;
 import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.LaserchronElementII_RawDataTemplate;
+import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.MillerTexasAMElementII_RawDataTemplate;
 import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.MoellerUnivKansasElementII_RawDataTemplate;
 import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.ValenciaWashStateElementII_RawDataTemplate;
 import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.VervoortWashStateElementII_RawDataTemplate;
@@ -151,8 +154,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
 
         // LaserChron NU Plasma FARADAY
         AbstractRawDataFileHandler theNUPlasmaMultiCollFaradayFileHandler
-                = 
-                LaserChronNUPlasmaMultiCollFaradayFileHandler.getInstance();
+                = LaserChronNUPlasmaMultiCollFaradayFileHandler.getInstance();
         theNUPlasmaMultiCollFaradayFileHandler.getAvailableMassSpecSetups()//
                 .add(GehrelsNUPlasmaSetupUPbFar.getInstance());
 
@@ -163,8 +165,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
 
         // LaserChron NU Plasma FARADAY TRA
         AbstractRawDataFileHandler theNUPlasmaMultiCollFaradayTRAFileHandler
-                = 
-                LaserChronNUPlasmaMultiCollFaradayTRAFileHandler.getInstance();
+                = LaserChronNUPlasmaMultiCollFaradayTRAFileHandler.getInstance();
         theNUPlasmaMultiCollFaradayTRAFileHandler.getAvailableMassSpecSetups()//
                 .add(GehrelsNUPlasmaSetupUPbFarTRA.getInstance());
 
@@ -175,8 +176,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
 
         // LaserChron NU Plasma IONCOUNTER
         AbstractRawDataFileHandler theNUPlasmaMultiCollIonCounterFileHandler
-                = 
-                LaserChronNUPlasmaMultiCollIonCounterFileHandler.getInstance();
+                = LaserChronNUPlasmaMultiCollIonCounterFileHandler.getInstance();
         theNUPlasmaMultiCollIonCounterFileHandler.getAvailableMassSpecSetups()//
                 .add(GehrelsNUPlasmaSetupUPbIonCounter.getInstance());
 
@@ -187,8 +187,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
 
         // LaserChron Element 2 
         AbstractRawDataFileHandler theLaserchronElementIIFileHandler
-                = 
-                LaserchronElementIIFileHandler.getInstance();
+                = LaserchronElementIIFileHandler.getInstance();
         theLaserchronElementIIFileHandler.getAvailableMassSpecSetups()//
                 .add(LaserchronElementIISetupUPb.getInstance());
 
@@ -199,8 +198,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
 
         // Memorial U Newfoundland John Hanchar ElementII 
         AbstractRawDataFileHandler theMemUnivNewfoundlandElementIIFileHandler
-                = 
-                MemUnivNewfoundlandElementIIFileHandler.getInstance();
+                = MemUnivNewfoundlandElementIIFileHandler.getInstance();
         theMemUnivNewfoundlandElementIIFileHandler.getAvailableMassSpecSetups()//
                 .add(MemUnivNewfoundlandElementIISetupUPb.getInstance());
 
@@ -254,6 +252,19 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
 
         knownRawDataFileHandlers.add(theKoslerAgilent7700FileHandler);
 
+        // dec 2015 Texas AM for Brent Miller
+        // LaserChron Element 2 
+        AbstractRawDataFileHandler theTexasAMElementIIFileHandler
+                = TexasAMElementIISingleCollFileHandler.getInstance();
+        theTexasAMElementIIFileHandler.getAvailableMassSpecSetups()//
+                .add(TexasAMElementIISetupUPb.getInstance());
+
+        theTexasAMElementIIFileHandler.getAvailableRawDataFileTemplates()//
+                .add(MillerTexasAMElementII_RawDataTemplate.getInstance());
+
+        knownRawDataFileHandlers.add(theTexasAMElementIIFileHandler);
+        
+        
         // move this section for robust file opening
         fileHandlerComboBox.removeAllItems();
         for (int i = 0; i < knownRawDataFileHandlers.size(); i++) {
@@ -559,8 +570,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
         if (tripoliSamplesSorted.size() > 0) {
             // create session
             tripoliSession
-                    = 
-                    new TripoliSession(//
+                    = new TripoliSession(//
                             rawDataFileHandler, tripoliSamplesSorted);
 
             tripoliSession.setPrimaryMineralStandard(project.getAcquisitionModel().getPrimaryMineralStandardModel());
