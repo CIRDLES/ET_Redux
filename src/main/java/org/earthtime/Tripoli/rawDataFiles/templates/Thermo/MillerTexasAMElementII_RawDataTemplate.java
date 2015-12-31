@@ -1,7 +1,7 @@
 /*
- * VervoortWashStateElementII_RawDataTemplate
+ * MillerTexasAMElementII_RawDataTemplate
  *
- * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2016 James F. Bowring and www.Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,18 +28,18 @@ import org.earthtime.dataDictionaries.FileTypeEnum;
  *
  * @author James F. Bowring
  */
-public final class VervoortWashStateElementII_RawDataTemplate extends AbstractRawDataFileTemplate implements //
+public final class MillerTexasAMElementII_RawDataTemplate extends AbstractRawDataFileTemplate implements //
         Comparable<AbstractRawDataFileTemplate>,
         Serializable {
 
-    private static VervoortWashStateElementII_RawDataTemplate instance = null;
+    private static MillerTexasAMElementII_RawDataTemplate instance = null;
 
-    private VervoortWashStateElementII_RawDataTemplate () {
+    private MillerTexasAMElementII_RawDataTemplate () {
         super();
 
-        this.NAME = "Vervoort Wash State Element II";
-        this.aboutInfo = "analysis runs setup by Vervoort";
-        this.fileType = FileTypeEnum.txt;
+        this.NAME = "Miller Texas AM Element II";
+        this.aboutInfo = "analysis runs setup by Miller";
+        this.fileType = FileTypeEnum.dat;
         this.startOfFirstLine = "Trace for Mass:";
         this.startOfDataSectionFirstLine = "Time";
         this.startOfEachBlockFirstLine = "Time";
@@ -49,6 +49,7 @@ public final class VervoortWashStateElementII_RawDataTemplate extends AbstractRa
         {"Peixe"};
         this.timeZone = TimeZone.getTimeZone( "PST" );
         this.defaultParsingOfFractionsBehavior = 1;
+        this.elementsByIsotopicMass = new String[]{"202", "204", "206", "207", "208", "232", "235", "238"};
 
     }
 
@@ -56,9 +57,9 @@ public final class VervoortWashStateElementII_RawDataTemplate extends AbstractRa
      *
      * @return
      */
-    public static VervoortWashStateElementII_RawDataTemplate getInstance () {
+    public static MillerTexasAMElementII_RawDataTemplate getInstance () {
         if ( instance == null ) {
-            instance = new VervoortWashStateElementII_RawDataTemplate();
+            instance = new MillerTexasAMElementII_RawDataTemplate();
         }
         return instance;
     }

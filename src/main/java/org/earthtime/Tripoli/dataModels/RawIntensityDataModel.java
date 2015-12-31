@@ -162,11 +162,13 @@ public class RawIntensityDataModel //
      */
     public void correctIntensitiesForResistor() {
         // added may 2014 to handle a correction noah left out for raw intensities
-        double[] backgroundIntensitiesCorrectedForResistor = //
+        double[] backgroundIntensitiesCorrectedForResistor
+                = //
                 collectorModel.correctRawIntensitiesForResistor(backgroundVirtualCollector.getIntensities());
         backgroundVirtualCollector.setIntensities(backgroundIntensitiesCorrectedForResistor);
 
-        double[] onPeakIntensitiesCorrectedForResistor = //
+        double[] onPeakIntensitiesCorrectedForResistor
+                = //
                 collectorModel.correctRawIntensitiesForResistor(onPeakVirtualCollector.getIntensities());
         onPeakVirtualCollector.setIntensities(onPeakIntensitiesCorrectedForResistor);
 
@@ -178,11 +180,13 @@ public class RawIntensityDataModel //
      */
     public void convertRawIntensitiesToCountsPerSecond() {
         // dec 2012
-        double[] backgroundIntensitiesCountsPerSecond = //
+        double[] backgroundIntensitiesCountsPerSecond
+                = //
                 collectorModel.convertRawIntensitiesToCountsPerSecond(backgroundVirtualCollector.getIntensities());
         backgroundVirtualCollector.setIntensities(backgroundIntensitiesCountsPerSecond);
 
-        double[] onPeakIntensitiesCountsPerSecond = //
+        double[] onPeakIntensitiesCountsPerSecond
+                = //
                 collectorModel.convertRawIntensitiesToCountsPerSecond(onPeakVirtualCollector.getIntensities());
         onPeakVirtualCollector.setIntensities(onPeakIntensitiesCountsPerSecond);
     }
@@ -334,7 +338,8 @@ public class RawIntensityDataModel //
      */
     @Override
     public double[] getNormalizedOnPeakAquireTimes() {
-        double[] normalizedAquire =//
+        double[] normalizedAquire
+                =//
                 onPeakVirtualCollector.getOnPeakAquireTimes().clone();
 
         for (int i = 0; i < normalizedAquire.length; i++) {
@@ -350,7 +355,8 @@ public class RawIntensityDataModel //
      */
     @Override
     public double[] getOnPeakAquireTimesInSeconds() {
-        double[] onPeakAquireTimesInSeconds = //
+        double[] onPeakAquireTimesInSeconds
+                = //
                 onPeakVirtualCollector.getOnPeakAquireTimes().clone();
 
         for (int i = 0; i < onPeakAquireTimesInSeconds.length; i++) {
@@ -365,7 +371,8 @@ public class RawIntensityDataModel //
      * @return
      */
     public double[] getNormalizedBackgroundAquireTimes() {
-        double[] normalizedAquire =//
+        double[] normalizedAquire
+                =//
                 backgroundVirtualCollector.getBackgroundAquireTimes().clone();
 
         double shiftFactor = normalizedAquire[normalizedAquire.length - 1] / COLLECTOR_DATA_FREQUENCY_MILLISECS + 1;
@@ -639,22 +646,40 @@ public class RawIntensityDataModel //
         System.out.println("\nCalculate Fit Functions for Intensity  " + rawIsotopeModelName.getName() //
                 + "  USING " + (USING_FULL_PROPAGATION ? "FULL PROPAGATION" : "FAST PROPAGATION"));
 
-        // June 2015 test for all zeroes in background
-        double avgVal = FitFunctionInterface.calculateMeanOfCovarianceMatrixDiagonal(matrixSibCovarianceBackgroundIntensities);
-        if (avgVal == 0.0) {
-            selectedFitFunctionType = FitFunctionTypeEnum.CONSTANT;
-            // until noah comes up with constant fit function, do this
-            for (int i = 0; i < matrixSibCovarianceBackgroundIntensities.getColumnDimension(); i++) {
-                matrixSibCovarianceBackgroundIntensities.set(i, i, 0.0000000001);
+        // dec 2015 modified to include vector case
+        if (USING_FULL_PROPAGATION) {
+            // June 2015 test for all zeroes in background
+            double avgVal = FitFunctionInterface.calculateMeanOfCovarianceMatrixDiagonal(matrixSibCovarianceBackgroundIntensities);
+            if (avgVal == 0.0) {
+                selectedFitFunctionType = FitFunctionTypeEnum.CONSTANT;
+                // until noah comes up with constant fit function, do this
+                for (int i = 0; i < matrixSibCovarianceBackgroundIntensities.getColumnDimension(); i++) {
+                    matrixSibCovarianceBackgroundIntensities.set(i, i, 0.0000000001);
+                }
+            }
+        } else {
+            double avgVal = FitFunctionInterface.calculateMeanOfCovarianceMatrixDiagonal(vectorSviVarianceBackgroundIntensities);
+            if (avgVal == 0.0) {
+                selectedFitFunctionType = FitFunctionTypeEnum.CONSTANT;
+                // until noah comes up with constant fit function, do this
+                for (int i = 0; i < vectorSviVarianceBackgroundIntensities.getColumnDimension(); i++) {
+                    vectorSviVarianceBackgroundIntensities.set(i, i, 0.0000000001);
+                }
             }
         }
 
-        if (selectedFitFunctionType.equals(FitFunctionTypeEnum.NONE)) {
-            // do nothing
-        } else if (selectedFitFunctionType.equals(FitFunctionTypeEnum.CONSTANT)) {
-            generateCONSTANTfitFunction();
-        } else if (selectedFitFunctionType.equals(FitFunctionTypeEnum.MEAN)) {
-            generateMEANfitFunctionUsingLM();
+        switch (selectedFitFunctionType) {
+            case NONE:
+                // do nothing
+                break;
+            case CONSTANT:
+                generateCONSTANTfitFunction();
+                break;
+            case MEAN:
+                generateMEANfitFunctionUsingLM();
+                break;
+            default:
+                break;
         }
 
         // one last time to restore current choice

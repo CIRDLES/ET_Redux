@@ -1,7 +1,7 @@
 /*
- * WashStateElementIISingleCollFileHandler
+ * TexasAMElementIISingleCollFileHandler
  *
- * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2016 James F. Bowring and www.Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,28 +22,33 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectStreamClass;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
+import org.earthtime.Tripoli.dataModels.DataModelInterface;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
+import org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan.TexasAMElementIISetupUPb;
 import org.earthtime.Tripoli.rawDataFiles.handlers.AbstractRawDataFileHandler;
 import org.earthtime.archivingTools.URIHelper;
+import org.earthtime.pythonUtilities.ElementII_DatFileConverter;
 import org.earthtime.utilities.FileHelper;
 
 /**
  *
  * @author James F. Bowring
  */
-public class WashStateElementIISingleCollFileHandler extends AbstractRawDataFileHandler implements //
+public class TexasAMElementIISingleCollFileHandler extends AbstractRawDataFileHandler implements //
         Comparable<AbstractRawDataFileHandler>,
         Serializable {
 
-        // Class variables
-    
-   // private static final long serialVersionUID = 3111511502335804607L;
-
-    private static WashStateElementIISingleCollFileHandler instance = null;
+    // Class variables
+    // private static final long serialVersionUID = 3111511502335804607L;
+    private static TexasAMElementIISingleCollFileHandler instance = null;
     private File[] analysisFiles;
 
     /**
@@ -51,22 +56,22 @@ public class WashStateElementIISingleCollFileHandler extends AbstractRawDataFile
      * @param massSpec
      * @param rawDataFileTemplate
      */
-    private WashStateElementIISingleCollFileHandler() {
+    private TexasAMElementIISingleCollFileHandler() {
 
         super();
 
-        NAME = "Washington State Element II SC Folder";
+        NAME = "Texas A and M Element II SC Folder";
 
-        aboutInfo = "Details: This is the default protocol for Washington State University's Thermo Finnigan Element II.";
+        aboutInfo = "Details: This is the default protocol for Texas A and M University's Thermo Finnigan Element II.";
     }
 
     /**
      *
      * @return
      */
-    public static WashStateElementIISingleCollFileHandler getInstance() {
+    public static TexasAMElementIISingleCollFileHandler getInstance() {
         if (instance == null) {
-            instance = new WashStateElementIISingleCollFileHandler();//massSpec, rawDataFileTemplate );
+            instance = new TexasAMElementIISingleCollFileHandler();
         }
         return instance;
     }
@@ -96,19 +101,21 @@ public class WashStateElementIISingleCollFileHandler extends AbstractRawDataFile
     @Override
     public File getAndLoadRawIntensityDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions) {
 
-        // get .txt files from the folder and check the first one
+        // ElementII has folder of .dat files        
         analysisFiles = rawDataFile.listFiles((File dir, String name) //
-                -> (name.toLowerCase().endsWith(".txt"))//
+                -> (name.toLowerCase().endsWith(".dat"))//
                 && //
-                (!name.toLowerCase().endsWith("_b.txt")));
+                (!name.toLowerCase().endsWith("_b.dat")));
+
+        Arrays.sort(analysisFiles, new LaserchronElementIIFileHandler.FractionFileNameNameComparator());
 
         if (analysisFiles.length > 0) {
-            String onPeakFileContents = URIHelper.getTextFromURI(analysisFiles[0].getAbsolutePath());
+            String onPeakFileContents = URIHelper.getTextFromURI(new File(analysisFiles[0].getAbsolutePath().toUpperCase().replace(".DAT", ".TXT")).getAbsolutePath());
             if (isValidRawDataFileType(analysisFiles[0]) //
                     && //
                     areKeyWordsPresent(onPeakFileContents)) {
                 // create fractions from raw data and perform corrections and calculate ratios
-                loadRawDataFile(loadDataTask, usingFullPropagation, leftShadeCount, 0);
+                tripoliFractions = loadRawDataFile(loadDataTask, usingFullPropagation, leftShadeCount, 0);
             }
         } else {
             JOptionPane.showMessageDialog(
@@ -164,6 +171,8 @@ public class WashStateElementIISingleCollFileHandler extends AbstractRawDataFile
     protected SortedSet<TripoliFraction> loadRawDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions) {
         tripoliFractions = new TreeSet<>();
 
+        SortedSet myTripoliFractions = new TreeSet<>();
+
         // assume we are golden        
         for (int f = 0; f < analysisFiles.length; f++) {
 
@@ -172,91 +181,102 @@ public class WashStateElementIISingleCollFileHandler extends AbstractRawDataFile
             }
             loadDataTask.firePropertyChange("progress", 0, ((100 * f) / analysisFiles.length));
 
-            String fractionID = analysisFiles[f].getName().toUpperCase().replace(".TXT", "");
-            long fractionPeakTimeStamp = analysisFiles[f].lastModified();
-
-            String onPeakFileContents = URIHelper.getTextFromURI(analysisFiles[f].getAbsolutePath());
-            String[] onPeakFileRows = onPeakFileContents.split("\n");
-
             // check for background file
-            File backgroundFile = new File(analysisFiles[f].getAbsolutePath().replace(".TXT", "_b.TXT"));
+            File backgroundFile = new File(analysisFiles[f].getAbsolutePath().replace(".dat", "_b.dat"));
             System.out.println("Background exists = " + backgroundFile.exists());
             if (backgroundFile.exists()) {
-                String backgroundFileContents = URIHelper.getTextFromURI(backgroundFile.getAbsolutePath());
-                String[] backgroundFileRows = backgroundFileContents.split("\n");
-                long fractionBackgroundTimeStamp = backgroundFile.lastModified();
+                try {
+                    String fractionID = analysisFiles[f].getName().toUpperCase().replace(".DAT", "");
 
-                // note each row has relative time stamp which we are hiding for now by using frequency
-                int expectedRowsOfData = rawDataFileTemplate.getBlockSize();
-                String[][] scanData = //
-                        new String[expectedRowsOfData][massSpec.getVIRTUAL_COLLECTOR_COUNT()];
+                    // needs to be more robust
+                    boolean isStandard = (fractionID.compareToIgnoreCase(rawDataFileTemplate.getStandardIDs()[0]) == 0);
+                    
+                    String[][] backgroundFileContents = ElementII_DatFileConverter.readDatFile5(backgroundFile, rawDataFileTemplate.getStringListOfElementsByIsotopicMass());
+                    String[][] onPeakFileContents = ElementII_DatFileConverter.readDatFile5(analysisFiles[f], rawDataFileTemplate.getStringListOfElementsByIsotopicMass());
+                    
+                    ArrayList<double[]> backgroundAcquisitions = new ArrayList<>();
+                    ArrayList<double[]> peakAcquisitions = new ArrayList<>();
 
-                if (f == 137) {
-                    System.out.println();
+                    // process time stamp from first scan as time stamp of file and background
+                    long fractionBackgroundTimeStamp = calculateTimeStamp(backgroundFileContents[0][1]);
+                    // process time stamp of first peak reading
+                    long fractionPeakTimeStamp = calculateTimeStamp(onPeakFileContents[0][1]);
+                    
+                    for (int i = 0; i < rawDataFileTemplate.getBlockSize(); i++) {
+                        // 202  204  206	Pb207	Pb208	Th232	U235 U238
+                        double[] backgroundIntensities = new double[8];
+                        backgroundAcquisitions.add(backgroundIntensities);
+                        backgroundIntensities[0] = calcAvgPulseOrAnalog(3, 5, backgroundFileContents[i]);
+                        backgroundIntensities[1] = calcAvgPulseOrAnalog(7, 9, backgroundFileContents[i]);
+                        backgroundIntensities[2] = calcAvgPulseOrAnalog(11, 13, backgroundFileContents[i]);
+                        backgroundIntensities[3] = calcAvgPulseOrAnalog(15, 17, backgroundFileContents[i]);
+                        backgroundIntensities[4] = calcAvgPulseOrAnalog(19, 21, backgroundFileContents[i]);
+                        backgroundIntensities[5] = calcAvgPulseOrAnalog(23, 25, backgroundFileContents[i]);
+                        backgroundIntensities[6] = calcAvgPulseOrAnalog(27, 29, backgroundFileContents[i]);
+                        backgroundIntensities[7] = calcAvgPulseOrAnalog(31, 33, backgroundFileContents[i]);
+                        
+                        double[] peakIntensities = new double[8];
+                        peakAcquisitions.add(peakIntensities);
+                        peakIntensities[0] = calcAvgPulseOrAnalog(3, 5, onPeakFileContents[i]);
+                        peakIntensities[1] = calcAvgPulseOrAnalog(7, 9, onPeakFileContents[i]);
+                        peakIntensities[2] = calcAvgPulseOrAnalog(11, 13, onPeakFileContents[i]);
+                        peakIntensities[3] = calcAvgPulseOrAnalog(15, 17, onPeakFileContents[i]);
+                        peakIntensities[4] = calcAvgPulseOrAnalog(19, 21, onPeakFileContents[i]);
+                        peakIntensities[5] = calcAvgPulseOrAnalog(23, 25, onPeakFileContents[i]);
+                        peakIntensities[6] = calcAvgPulseOrAnalog(27, 29, onPeakFileContents[i]);
+                        peakIntensities[7] = calcAvgPulseOrAnalog(31, 33, onPeakFileContents[i]);
+                        
+                    }  // i loop
+
+                    TripoliFraction tripoliFraction
+                            = new TripoliFraction( //
+                                    fractionID, //
+                                    massSpec.getCommonLeadCorrectionHighestLevel(), //
+                                    isStandard,
+                                    fractionBackgroundTimeStamp, //
+                                    fractionPeakTimeStamp,
+                                    peakAcquisitions.size());
+                    
+                    SortedSet<DataModelInterface> rawRatios = ((TexasAMElementIISetupUPb) massSpec).rawRatiosFactoryRevised();
+                    tripoliFraction.setRawRatios(rawRatios);
+                    
+                    massSpec.setCountOfAcquisitions(peakAcquisitions.size());
+
+                    // establish map of virtual collectors to field indexes
+                    Map<DataModelInterface, Integer> virtualCollectorModelMapToFieldIndexes = new HashMap<>();
+                    virtualCollectorModelMapToFieldIndexes.put(massSpec.getHg202(), 0);
+                    virtualCollectorModelMapToFieldIndexes.put(massSpec.getPb204(), 1);
+                    virtualCollectorModelMapToFieldIndexes.put(massSpec.getPb206(), 2);
+                    virtualCollectorModelMapToFieldIndexes.put(massSpec.getPb207(), 3);
+                    virtualCollectorModelMapToFieldIndexes.put(massSpec.getPb208(), 4);
+                    virtualCollectorModelMapToFieldIndexes.put(massSpec.getTh232(), 5);
+                    virtualCollectorModelMapToFieldIndexes.put(massSpec.getU235(), 6);
+                    virtualCollectorModelMapToFieldIndexes.put(massSpec.getU238(), 7);
+                    
+                    massSpec.processFractionRawRatiosII(//
+                            backgroundAcquisitions, peakAcquisitions, isStandard, usingFullPropagation, tripoliFraction, virtualCollectorModelMapToFieldIndexes);
+                    
+                    tripoliFraction.shadeDataActiveMapLeft(leftShadeCount);
+                    System.out.println("\n**** Element II FractionID  " + fractionID + " completed ***************************\n\n");
+                    
+                    myTripoliFractions.add(tripoliFraction);
+                } catch (Exception e) {
+                    System.out.println("bad read of fraction " + analysisFiles[f].getName() + " message = " + e.getMessage());
                 }
-                System.out.println("Fract # " + f + "   named  " + analysisFiles[f].getName() + "  row count = " + onPeakFileRows.length);
-                //TODO possible missing condition here if file lengths vary from template spec and onPeakFileRows is too big
-                for (int i = 0; i < rawDataFileTemplate.getBlockSize(); i++) {
-
-                    String[] onPeakCollectorsColumns = new String[]{"0", "0", "0", "0", "0", "0", "0", "0", "0", "0",};
-                    String[] backgroundCollectorsColumns = new String[]{"0", "0", "0", "0", "0", "0", "0", "0", "0", "0",};
-                    // handle case where there is not as many lines of data as expected
-                    if (onPeakFileRows.length > (i + rawDataFileTemplate.getBlockStartOffset())) {
-                        onPeakCollectorsColumns = //
-                                onPeakFileRows[i + rawDataFileTemplate.getBlockStartOffset()].split("\t");
-                    }
-
-                    // handle case where there is not as many lines of data as expected
-                    if (backgroundFileRows.length > (i + rawDataFileTemplate.getBlockStartOffset())) {
-                        backgroundCollectorsColumns =//
-                                backgroundFileRows[i + rawDataFileTemplate.getBlockStartOffset()].split("\t");
-                    }
-
-                    // background
-                    for (int j = 1; j < 9; j++) {
-                        scanData[i][j - 1] = backgroundCollectorsColumns[j].trim(); // ignore timestamp
-                    }
-                    // onpeak
-                    for (int j = 1; j < 9; j++) {
-                        scanData[i][8 + j - 1] = onPeakCollectorsColumns[j].trim(); // ignore timestamp
-                    }
-                }
-
-                // extract isStandard
-                boolean isStandard = isStandardFractionID(fractionID);
-
-                TripoliFraction tripoliFraction = //                           
-                        new TripoliFraction( //
-                                fractionID, //
-                                massSpec.getCommonLeadCorrectionHighestLevel(), //
-                                isStandard,
-                                fractionBackgroundTimeStamp, //
-                                fractionPeakTimeStamp, massSpec.rawRatiosFactory(scanData, isStandard, fractionID, usingFullPropagation, null));
-
-                tripoliFraction.shadeDataActiveMapLeft(leftShadeCount);
-                tripoliFractions.add(tripoliFraction);
-//                System.out.println( "Successfully added frac " + fractionID + " >>  " + tripoliFractions.add( tripoliFraction ) );
-//
-//                System.out.println( "                                       Count of stored fractions = " + tripoliFractions.size() );
-//                System.out.println( fractionID //
-//                        + " " + isStandard + " time = " + TimeToString.secondsAsLongToTimeString( fractionPeakTimeStamp ) );
-
-            }
+            } // end of files loop
+        }
+        if (myTripoliFractions.isEmpty()) {
+            myTripoliFractions = null;
         }
 
-        if (tripoliFractions.isEmpty()) {
-            tripoliFractions = null;
-        }
-
-        return tripoliFractions;
+        return myTripoliFractions;
     }
-    
-       private void readObject(
+
+    private void readObject(
             ObjectInputStream stream)
             throws IOException, ClassNotFoundException {
         stream.defaultReadObject();
-        ObjectStreamClass myObject = ObjectStreamClass.lookup(
-                Class.forName(WashStateElementIISingleCollFileHandler.class.getCanonicalName()));
+        ObjectStreamClass myObject = ObjectStreamClass.lookup(Class.forName(TexasAMElementIISingleCollFileHandler.class.getCanonicalName()));
         long theSUID = myObject.getSerialVersionUID();
         System.out.println("Customized De-serialization of WashStateElementIISingleCollFileHandler " + theSUID);
     }

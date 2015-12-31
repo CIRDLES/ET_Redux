@@ -1,7 +1,7 @@
 /*
- * WashStateElementIISetupUPb
+ * TexasAMElementIISetupUPb
  *
- * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2016 James F. Bowring and www.Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -43,19 +43,19 @@ import org.earthtime.isotopes.IsotopesEnum;
  *
  * @author James F. Bowring
  */
-public final class WashStateElementIISetupUPb extends AbstractMassSpecSetup implements //
+public final class TexasAMElementIISetupUPb extends AbstractMassSpecSetup implements //
         Comparable<AbstractMassSpecSetup>,
         Serializable {
 
-    private static WashStateElementIISetupUPb instance = null;
+    private static TexasAMElementIISetupUPb instance = null;
 //    private SortedSet<DataModelInterface> genericIsotopeModels;
 
-    private WashStateElementIISetupUPb() {
+    private TexasAMElementIISetupUPb() {
         super();
-        NAME = "Washington State Element II Setup";
+        NAME = "Texas AM Element II Setup";
         massSpecType = MassSpecTypeEnum.SINGLE;
         VIRTUAL_COLLECTOR_COUNT = 16;
-        COLLECTOR_DATA_FREQUENCY_MILLISECS = 117; //0.117776667 sec
+        COLLECTOR_DATA_FREQUENCY_MILLISECS = 128;
         countOfAcquisitions = 0;
 
         double INTEGRATION_TIME = 0.012; // this is what Noah determined would be best from his data March 2013 was
@@ -125,9 +125,9 @@ public final class WashStateElementIISetupUPb extends AbstractMassSpecSetup impl
      *
      * @return
      */
-    public static WashStateElementIISetupUPb getInstance() {
+    public static TexasAMElementIISetupUPb getInstance() {
         if (instance == null) {
-            instance = new WashStateElementIISetupUPb();
+            instance = new TexasAMElementIISetupUPb();
         }
         return instance;
     }
@@ -148,7 +148,26 @@ public final class WashStateElementIISetupUPb extends AbstractMassSpecSetup impl
 
         countOfAcquisitions = intensitiesScan.length;
 
-        virtualCollectors = new ArrayList<VirtualCollectorModel>(VIRTUAL_COLLECTOR_COUNT);
+        return rawRatiosFactoryRevised();
+    }
+
+    /**
+     * yRevised(); }
+     *
+     * /**
+     *
+     *
+     * @param intensitiesScan
+     * @param isStandard the value of isStandard
+     * @param fractionID the value of fractionID
+     * @param usingFullPropagation the value of usingFullPropagation
+     * @param tripoliFraction the value of tripoliFraction
+     * @return the
+     * java.util.SortedSet<org.earthtime.Tripoli.dataModels.DataModelInterface>
+     */
+    public SortedSet<DataModelInterface> rawRatiosFactoryRevised() {
+
+        virtualCollectors = new ArrayList<>(VIRTUAL_COLLECTOR_COUNT);
         for (int i = 0; i < VIRTUAL_COLLECTOR_COUNT; i++) {
             virtualCollectors.add(new VirtualCollectorModel(i + 1));
         }
@@ -239,8 +258,6 @@ public final class WashStateElementIISetupUPb extends AbstractMassSpecSetup impl
         rawRatios.add(r208_232w);
         // special case to handle mercury isotope
         rawRatios.add(new RawRatioDataModel(RawRatioNames.r202_202w, Hg202, Hg202, false, false, COLLECTOR_DATA_FREQUENCY_MILLISECS));
-
-        processFractionRawRatios(intensitiesScan, isStandard, fractionID, usingFullPropagation, null);
 
         return rawRatios;
     }
