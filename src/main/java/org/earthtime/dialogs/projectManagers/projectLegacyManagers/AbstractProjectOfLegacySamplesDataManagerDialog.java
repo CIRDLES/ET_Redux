@@ -24,14 +24,15 @@ import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.exceptions.BadImportedCSVLegacyFileException;
-import org.earthtime.reduxLabData.ReduxLabData;
+import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
+import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.projects.ProjectInterface;
 import org.earthtime.projects.projectImporters.AbstractProjectImporterFromLegacyDelimitedTextFile;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
+import org.earthtime.reduxLabData.ReduxLabData;
 
 /**
  *
@@ -59,9 +60,9 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
      * @param converter
      * @param importFractionFolderMRU
      */
-    
     /**
      * Creates new form AbstractSampleLegacyManagerDialog
+     *
      * @param parent
      * @param modal
      * @param dataTypeTitle
@@ -69,14 +70,14 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
      * @param converter
      * @param importFractionFolderMRU
      */
-    public AbstractProjectOfLegacySamplesDataManagerDialog (
+    public AbstractProjectOfLegacySamplesDataManagerDialog(
             Frame parent, //
             boolean modal, //
             String dataTypeTitle, //
             ProjectInterface project, //
             AbstractProjectImporterFromLegacyDelimitedTextFile converter,//
             File importFractionFolderMRU) {
-        super( parent, modal );
+        super(parent, modal);
 
         this.importFractionFolderMRU = importFractionFolderMRU;
 
@@ -84,29 +85,31 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
 
         this.myProject = project;
 
-        initSampleFields();
+        initProjectFields();
 
-        sampleType_label.setText( dataTypeTitle + sampleType_label.getText() );
+        sampleType_label.setText(dataTypeTitle + sampleType_label.getText());
 
         this.converter = converter;
-        
+
         this.parent = parent;
+
+        saveAndClose.setEnabled(myProject.getProjectName().length() > 0);
         
-        sampleName_text.addKeyListener(new KeyListener() {
+        projectName_text.addKeyListener(new KeyListener() {
 
             @Override
             public void keyTyped(KeyEvent e) {
-                saveAndClose.setEnabled(sampleName_text.getText().trim().length() > 0);
+                saveAndClose.setEnabled(projectName_text.getText().trim().length() > 0);
             }
 
             @Override
             public void keyPressed(KeyEvent e) {
-                saveAndClose.setEnabled(sampleName_text.getText().trim().length() > 0);
+                saveAndClose.setEnabled(projectName_text.getText().trim().length() > 0);
             }
 
             @Override
             public void keyReleased(KeyEvent e) {
-                saveAndClose.setEnabled(sampleName_text.getText().trim().length() > 0);
+                saveAndClose.setEnabled(projectName_text.getText().trim().length() > 0);
             }
         });
 
@@ -115,15 +118,15 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
     /**
      *
      */
-    public void setSize () {
-        setSize( 645, 480 );
+    public void setSize() {
+        setSize(645, 480);
     }
 
     /**
      *
      * @return
      */
-    public File getImportFractionFolderMRU () {
+    public File getImportFractionFolderMRU() {
         return importFractionFolderMRU;
     }
 
@@ -131,51 +134,70 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
      *
      * @param importFractionFolderMRU
      */
-    public void setImportFractionFolderMRU ( File importFractionFolderMRU ) {
+    public void setImportFractionFolderMRU(File importFractionFolderMRU) {
         this.importFractionFolderMRU = importFractionFolderMRU;
     }
 
-    private void initSampleFields () {
-        sampleName_text.setDocument(
-                new UnDoAbleDocument( sampleName_text,  true));
+    private void initProjectFields() {
+        projectName_text.setDocument(
+                new UnDoAbleDocument(projectName_text, true));
+        projectName_text.setText(myProject.getProjectName());
 
-        sampleNotes_textArea.setDocument( new UnDoAbleDocument( sampleNotes_textArea, true ) );
+        sampleNotes_textArea.setDocument(new UnDoAbleDocument(sampleNotes_textArea, true));
 
         physicalConstantsModelChooser.removeAllItems();
         ArrayList<AbstractRatiosDataModel> physicalConstantsModels = ReduxLabData.getInstance().getPhysicalConstantsModels();
-        for (int i = (physicalConstantsModels.size() > 1 ? 1 : 0); i < physicalConstantsModels.size(); i ++) {
-            physicalConstantsModelChooser.addItem( physicalConstantsModels.get( i ).getReduxLabDataElementName() );
+        for (int i = (physicalConstantsModels.size() > 1 ? 1 : 0); i < physicalConstantsModels.size(); i++) {
+            physicalConstantsModelChooser.addItem(physicalConstantsModels.get(i).getReduxLabDataElementName());
         }
 
-        physicalConstantsModelChooser.setSelectedIndex( 0 );
+        physicalConstantsModelChooser.setSelectedIndex(0);
+        try {
+            physicalConstantsModelChooser.setSelectedItem(myProject.getSuperSample().getPhysicalConstantsModel().getReduxLabDataElementName());
+        } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
+        }
     }
 
-    private void saveSampleData ()
+    private void saveProjectData()
             throws ETException {
         // validate sample name
-        if ( sampleName_text.getText().trim().length() == 0 ) {
+        if (projectName_text.getText().trim().length() == 0) {
             return;
         }
 
-        myProject.setProjectName(  sampleName_text.getText().trim() );
+        myProject.setProjectName(projectName_text.getText().trim());
 
         try {
-            converter.setMruFolder( importFractionFolderMRU );
-            converter.readInProjectSamples(myProject);
-            setInitialized( true );
+            myProject.getSuperSample().setPhysicalConstantsModel(
+                    ReduxLabData.getInstance().
+                    getAPhysicalConstantsModel(((String) physicalConstantsModelChooser.getSelectedItem())));
 
-            setImportFractionFolderMRU( converter.getMruFolder() );
-        } catch (FileNotFoundException fileNotFoundException) {
-        } catch (BadImportedCSVLegacyFileException ex) {
+        } catch (BadLabDataException ex) {
             new ETWarningDialog(ex).setVisible(true);
         }
+
+        if (myProject.getProjectSamples().isEmpty()) {
+            try {
+                converter.setMruFolder(importFractionFolderMRU);
+                converter.readInProjectSamples(myProject);
+                setInitialized(true);
+
+                setImportFractionFolderMRU(converter.getMruFolder());
+            } catch (FileNotFoundException fileNotFoundException) {
+            } catch (BadImportedCSVLegacyFileException ex) {
+                new ETWarningDialog(ex).setVisible(true);
+            }
+        }
+        
+        myProject.saveTheProjectAsSerializedReduxFile();
     }
 
     /**
      *
      * @return
      */
-    public ProjectInterface getMyProject () {
+    public ProjectInterface getMyProject() {
         return myProject;
     }
 
@@ -183,7 +205,7 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
      *
      * @param myProject
      */
-    public void setMyProject ( ProjectInterface myProject ) {
+    public void setMyProject(ProjectInterface myProject) {
         this.myProject = myProject;
     }
 
@@ -191,7 +213,7 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
      *
      * @return
      */
-    public boolean isInitialized () {
+    public boolean isInitialized() {
         return initialized;
     }
 
@@ -199,7 +221,7 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
      *
      * @param isSaved
      */
-    public void setInitialized ( boolean isSaved ) {
+    public void setInitialized(boolean isSaved) {
         this.initialized = isSaved;
     }
 
@@ -207,7 +229,7 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
      *
      * @return
      */
-    public boolean isNewSample () {
+    public boolean isNewSample() {
         return newSample;
     }
 
@@ -215,7 +237,7 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
      *
      * @param newSample
      */
-    public void setNewSample ( boolean newSample ) {
+    public void setNewSample(boolean newSample) {
         this.newSample = newSample;
     }
 
@@ -234,13 +256,13 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
         TWsource = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
         sampleName_label = new javax.swing.JLabel();
-        sampleName_text = new javax.swing.JTextField();
+        projectName_text = new javax.swing.JTextField();
         sampleReduxFile_label = new javax.swing.JLabel();
         sampleReduxFileName_label = new javax.swing.JLabel();
         sampleNotes_label = new javax.swing.JLabel();
         sampleNotes_scrollPane = new javax.swing.JScrollPane();
         sampleNotes_textArea = new javax.swing.JTextArea();
-        physicalConstantsModelChooser = new javax.swing.JComboBox<String>();
+        physicalConstantsModelChooser = new javax.swing.JComboBox<>();
         defaultHeader_label = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         close = new javax.swing.JButton();
@@ -260,10 +282,10 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
         sampleName_label.setText("Project Name:");
         jPanel1.add(sampleName_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(62, 9, 88, -1));
 
-        sampleName_text.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        sampleName_text.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        sampleName_text.setText("Project Name");
-        jPanel1.add(sampleName_text, new org.netbeans.lib.awtextra.AbsoluteConstraints(168, 2, 338, -1));
+        projectName_text.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        projectName_text.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        projectName_text.setText("Project Name");
+        jPanel1.add(projectName_text, new org.netbeans.lib.awtextra.AbsoluteConstraints(168, 2, 338, -1));
 
         sampleReduxFile_label.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         sampleReduxFile_label.setText("File path for this Project:");
@@ -287,7 +309,7 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
         jPanel1.add(sampleNotes_scrollPane, new org.netbeans.lib.awtextra.AbsoluteConstraints(8, 166, 630, -1));
 
         physicalConstantsModelChooser.setBackground(new java.awt.Color(245, 236, 206));
-        jPanel1.add(physicalConstantsModelChooser, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 70, 330, -1));
+        jPanel1.add(physicalConstantsModelChooser, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 70, 410, -1));
 
         defaultHeader_label.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         defaultHeader_label.setForeground(new java.awt.Color(204, 51, 0));
@@ -309,7 +331,7 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
         jPanel2.add(close, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 0, 168, 32));
 
         saveAndClose.setForeground(new java.awt.Color(255, 51, 0));
-        saveAndClose.setText("OK");
+        saveAndClose.setText("Save");
         saveAndClose.setEnabled(false);
         saveAndClose.setMargin(new java.awt.Insets(0, 0, 0, 0));
         saveAndClose.setPreferredSize(new java.awt.Dimension(110, 23));
@@ -364,7 +386,7 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
 
     private void saveAndCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveAndCloseActionPerformed
         try {
-            saveSampleData();
+            saveProjectData();
             close();
         } catch (ETException ex) {
             new ETWarningDialog(ex).setVisible(true);
@@ -380,8 +402,8 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
     private javax.swing.JPanel jPanel2;
     private javax.swing.ButtonGroup modeChooser_buttonGroup;
     private javax.swing.JComboBox<String> physicalConstantsModelChooser;
+    private javax.swing.JTextField projectName_text;
     private javax.swing.JLabel sampleName_label;
-    private javax.swing.JTextField sampleName_text;
     private javax.swing.JLabel sampleNotes_label;
     private javax.swing.JScrollPane sampleNotes_scrollPane;
     private javax.swing.JTextArea sampleNotes_textArea;
@@ -397,14 +419,14 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
     /**
      * @return the converter
      */
-    public AbstractProjectImporterFromLegacyDelimitedTextFile getConverter () {
+    public AbstractProjectImporterFromLegacyDelimitedTextFile getConverter() {
         return converter;
     }
 
     /**
      * @param converter the converter to set
      */
-    public void setConverter ( AbstractProjectImporterFromLegacyDelimitedTextFile converter ) {
+    public void setConverter(AbstractProjectImporterFromLegacyDelimitedTextFile converter) {
         this.converter = converter;
     }
 }

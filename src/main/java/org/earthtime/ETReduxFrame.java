@@ -481,7 +481,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         }
 
         // project open
-        manageProject_menuItem.setEnabled(!sampleTrueProjectFalse && isTripolized);
+        manageProject_menuItem.setEnabled(!sampleTrueProjectFalse);// && isTripolized);
         manageRawData_menuItem.setEnabled(!sampleTrueProjectFalse && isTripolized);
         saveProjectFile_menuItem.setEnabled(!sampleTrueProjectFalse);
         saveProjectFileAs_menuItem.setEnabled(!sampleTrueProjectFalse);
@@ -753,10 +753,35 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
     }
 
     private void manageTheProject() {
+        //TODO: polymorphic solution to project manager invocation
         if (myProjectManager == null) {
-            myProjectManager
-                    = //
-                    new ProjectManagerFor_LAICPMS_FromRawData(this, true, myState, theProject);
+            String isotopeStyle = theProject.getSuperSample().getIsotopeStyle();
+            if (isotopeStyle.equalsIgnoreCase("UTh")) {
+                myProjectManager
+                        = new ProjectOfLegacySamplesDataManagerDialogForDIBBsUseries_A(
+                                this,
+                                true,
+                                theProject,
+                                myState.getMRUImportFolderCompilationMode());
+                
+                ((AbstractProjectOfLegacySamplesDataManagerDialog) myProjectManager).setSize();
+
+                // remembers last folder used for import of single or set of fractions
+                myState.setMRUImportFolderCompilationMode(
+                        ((AbstractProjectOfLegacySamplesDataManagerDialog) myProjectManager).getImportFractionFolderMRU().toString());
+
+                if (!theProject.getProjectSamples().isEmpty()) {
+                    setUpTheProject(false);
+                    try {
+                        saveTheProject();
+                    } catch (BadLabDataException ex) {
+                        new ETWarningDialog(ex).setVisible(true);
+                    }
+                }
+            } else {
+                myProjectManager
+                        = new ProjectManagerFor_LAICPMS_FromRawData(this, true, myState, theProject);
+            }
         }
 
         myProjectManager.setVisible(true);
@@ -766,8 +791,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
     private void manageRawDataSession() {
         if ((myProjectManager == null) || !(myProjectManager instanceof ProjectManagerFor_LAICPMS_FromRawData)) {
             myProjectManager
-                    = //
-                    new ProjectManagerFor_LAICPMS_FromRawData(this, true, myState, theProject);
+                    = new ProjectManagerFor_LAICPMS_FromRawData(this, true, myState, theProject);
         }
         ((ProjectManagerSubscribeInterface) myProjectManager).initializeSessionManager(false, true, false);
     }
@@ -806,8 +830,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
         try {
             theSample
-                    = //
-                    new ProjectSample(//
+                    = new ProjectSample(//
                             SampleTypesEnum.PROJECT.getName(),//
                             SampleTypesEnum.PROJECT.getName(), //
                             SampleAnalysisTypesEnum.COMPILED.getName(), //
@@ -3311,6 +3334,12 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             topsoilEvolutionChart.setSelectedFractions(theSample.getFractions());
             topsoilEvolutionChart.preparePanel();
             topsoilEvolutionChart.showPanel();
+
+            TopsoilEvolutionPlot topsoilEvolutionChart2 = new TopsoilEvolutionPlot();
+            topsoilEvolutionChart2.setSelectedFractions(theSample.getFractions());
+            topsoilEvolutionChart2.preparePanel();
+            topsoilEvolutionChart2.showPanel();
+
         } else {
 
             manageSampleDateInterpretation(//
