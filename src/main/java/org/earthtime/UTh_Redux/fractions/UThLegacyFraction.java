@@ -41,17 +41,17 @@ public class UThLegacyFraction extends UThFraction implements UThLegacyFractionI
                 "Meadows et al 1980");
 
         lambda232Legacy = new ValueModelReferenced(//
-                "lambda230", new BigDecimal(4.93343E-11), //
+                "lambda232", new BigDecimal(4.93343E-11), //
                 "PCT", new BigDecimal(0.042769), BigDecimal.ZERO,//
                 "taken from D2");
 
         lambda234Legacy = new ValueModelReferenced(//
-                "lambda230", new BigDecimal(0.000002835), //
+                "lambda234", new BigDecimal(0.000002835), //
                 "PCT", new BigDecimal(0.1998), BigDecimal.ZERO,//
                 "under discussion");
         
         lambda238Legacy = new ValueModelReferenced(//
-                "lambda230", new BigDecimal(0.000000000155125), //
+                "lambda238", new BigDecimal(0.000000000155125), //
                 "PCT", new BigDecimal(0.053505), BigDecimal.ZERO,//
                 "from D2");
     }

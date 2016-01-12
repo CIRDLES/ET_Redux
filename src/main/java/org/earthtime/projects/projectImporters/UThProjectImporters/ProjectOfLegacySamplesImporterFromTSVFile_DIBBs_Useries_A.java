@@ -275,7 +275,9 @@ public class ProjectOfLegacySamplesImporterFromTSVFile_DIBBs_Useries_A extends A
                             myFraction.getLegacyActivityRatioByName(ratioName)//
                                     .setOneSigma(oneSigmaAbs);
                             
-                            // dec 2015 temp hack for demo
+                            
+                            UThFractionReducer.calculateMeasuredAtomRatiosFromLegacyActivityRatios(myFraction);
+                            // should show legacy values
                             UThFractionReducer.calculateActivityRatios(myFraction);
 
                         }

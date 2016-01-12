@@ -186,23 +186,26 @@ public class ReportSpecifications {
      *
      */
     public static final String[][] ReportCategory_fractionationCorrectedIsotopicRatios = new String[][]{
-        {"", "r234U/", "238Ufc", "", "getRadiogenicIsotopeRatioByName", "r234U_238Ufc", "PCT",
-            "", "true", "true", "2", "true", "", "true", "false"
+        {"", "r234U/", "238Ufc", "", "getRadiogenicIsotopeRatioByName", UThFractionationCorrectedIsotopicRatios.r234U_238Ufc.getName(), "PCT",
+            "", "true", "false", "2", "true", "", "false", "false"
         },
-        {"", "r230Th/", "232Thfc", "", "getRadiogenicIsotopeRatioByName", "r230Th_232Thfc", "PCT",
-            "", "true", "true", "2", "true", "", "true", "false"
+        {"", "r230Th/", "238Ufc", "", "getRadiogenicIsotopeRatioByName", UThFractionationCorrectedIsotopicRatios.r230Th_238Ufc.getName(), "PCT",
+            "", "true", "false", "2", "true", "", "false", "false"
         },
-        {"", "r228Ra/", "226Rafc", "", "getRadiogenicIsotopeRatioByName", "r228Ra_226Rafc", "PCT",
-            "", "true", "true", "2", "true", "", "true", "false"
+        {"", "r230Th/", "232Thfc", "", "getRadiogenicIsotopeRatioByName", UThFractionationCorrectedIsotopicRatios.r230Th_232Thfc.getName(), "PCT",
+            "", "true", "false", "2", "true", "", "false", "false"
         },
-        {"", "r231Pa/", "233Pafc", "", "getRadiogenicIsotopeRatioByName", "r231Pa_233Pafc", "PCT",
-            "", "true", "true", "2", "true", "", "true", "false"
+        {"", "r228Ra/", "226Rafc", "", "getRadiogenicIsotopeRatioByName", UThFractionationCorrectedIsotopicRatios.r228Ra_226Rafc.getName(), "PCT",
+            "", "true", "false", "2", "true", "", "false", "false"
         },
-        {"", "r238U/", "206Pbfc", "", "getRadiogenicIsotopeRatioByName", "r238U_206Pbfc", "PCT",
-            "", "true", "true", "2", "true", "", "true", "false"
+        {"", "r231Pa/", "233Pafc", "", "getRadiogenicIsotopeRatioByName", UThFractionationCorrectedIsotopicRatios.r231Pa_233Pafc.getName(), "PCT",
+            "", "true", "false", "2", "true", "", "false", "false"
         },
-        {"", "r207Pb/", "206Pbfc", "", "getRadiogenicIsotopeRatioByName", "r207Pb_206Pbfc", "PCT",
-            "", "true", "true", "2", "true", "", "true", "false"
+        {"", "r238U/", "206Pbfc", "", "getRadiogenicIsotopeRatioByName", UThFractionationCorrectedIsotopicRatios.r238U_206Pbfc.getName(), "PCT",
+            "", "true", "false", "2", "true", "", "false", "false"
+        },
+        {"", "r207Pb/", "206Pbfc", "", "getRadiogenicIsotopeRatioByName", UThFractionationCorrectedIsotopicRatios.r207Pb_206Pbfc.getName(), "PCT",
+            "", "true", "false", "2", "true", "", "false", "false"
         },
         
     };

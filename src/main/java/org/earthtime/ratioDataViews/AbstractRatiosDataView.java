@@ -122,7 +122,7 @@ public abstract class AbstractRatiosDataView extends JLayeredPane implements Dat
         this.dataModel = dataModel;
 
         if (parentDimension == null) {
-            this.parentDimension = new Dimension(600, 600);
+            this.parentDimension = new Dimension(600, 620);
         } else {
             this.parentDimension = parentDimension;
         }

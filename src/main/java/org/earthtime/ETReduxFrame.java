@@ -544,8 +544,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         System.gc();
 
         EarthTimeSerializedFileInterface deserializedFile
-                =//
-                (EarthTimeSerializedFileInterface) ETSerializer.GetSerializedObjectFromFile(projectReduxFile.getPath());
+                = (EarthTimeSerializedFileInterface) ETSerializer.GetSerializedObjectFromFile(projectReduxFile.getPath());
 
         if (deserializedFile instanceof SampleInterface) {
             System.out.println("Trying to open a SAMPLE .redux file as a Project.");
@@ -763,7 +762,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                                 true,
                                 theProject,
                                 myState.getMRUImportFolderCompilationMode());
-                
+
                 ((AbstractProjectOfLegacySamplesDataManagerDialog) myProjectManager).setSize();
 
                 // remembers last folder used for import of single or set of fractions
@@ -1408,6 +1407,13 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         } else {
             // show the welcome page
             jSplitPane1.setDividerLocation(1.0);
+        }
+        
+        // jan 2016
+        if (theSample.isSampleTypeProject() && theSample.isAnalysisTypeCOMPILED()){
+            manageProjectRawData_button.setText("Manage Project");
+        } else {
+            manageProjectRawData_button.setText("Project Raw Data");            
         }
     }
 
@@ -4075,7 +4081,11 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     }//GEN-LAST:event_openProject_buttonopenSampleFileActionPerformed
 
     private void manageProjectRawData_buttonopenSampleFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_manageProjectRawData_buttonopenSampleFileActionPerformed
-        manageRawDataSession();
+        if (theSample.getIsotopeStyle().compareToIgnoreCase("UTh") == 0) {
+            manageTheProject();
+        } else {
+            manageRawDataSession();
+        }
     }//GEN-LAST:event_manageProjectRawData_buttonopenSampleFileActionPerformed
 
     private void ucsb_LASS_A_DataTableInCSV_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ucsb_LASS_A_DataTableInCSV_menuItemActionPerformed

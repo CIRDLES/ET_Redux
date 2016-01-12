@@ -386,6 +386,15 @@ public interface SampleInterface {
         return retVal;
     }
 
+    public default boolean isAnalysisTypeCOMPILED() {
+        boolean retVal = false;
+        try {
+            retVal = SampleAnalysisTypesEnum.COMPILED.equals(SampleAnalysisTypesEnum.valueOf(getSampleAnalysisType()));
+        } catch (Exception e) {
+        }
+        return retVal;
+    }
+
     /**
      *
      * @return
@@ -885,7 +894,7 @@ public interface SampleInterface {
      * @return the java.lang.String
      */
     public static String importAliquotFromLocalXMLFileIntoSample(SampleInterface sample, File folderName)
-            throws FileNotFoundException, BadLabDataException, IOException, BadOrMissingXMLSchemaException ,ETException{
+            throws FileNotFoundException, BadLabDataException, IOException, BadOrMissingXMLSchemaException, ETException {
         String retval = "";
 
         String dialogTitle = "Select a U-Pb Aliquot XML File to Open: *.xml";
@@ -895,14 +904,14 @@ public interface SampleInterface {
                 = FileHelper.AllPlatformGetFile(dialogTitle, folderName, fileExtension, nonMacFileFilter, false, new JFrame())[0];
 
         if (aliquotFile != null) {
-                try {
+            try {
                 AliquotInterface aliquotFromFile = new UPbReduxAliquot();
-                
+
                 aliquotFromFile
                         = (AliquotInterface) ((XMLSerializationI) aliquotFromFile).readXMLObject(
                                 aliquotFile.getCanonicalPath(), true);
                 retval = aliquotFile.getParent();
-                
+
                 //dec 2015 - check instrument type
                 if (aliquotFromFile.usesIDTIMS() || aliquotFromFile.usesMCIPMS()) {
                     importAliquotIntoSample(sample, aliquotFromFile, aliquotFile.getName());
