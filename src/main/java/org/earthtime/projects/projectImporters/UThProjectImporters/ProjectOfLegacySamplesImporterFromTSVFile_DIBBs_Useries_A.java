@@ -40,6 +40,7 @@ import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.dataDictionaries.SampleTypesEnum;
 import org.earthtime.dataDictionaries.UThAnalysisMeasures;
 import org.earthtime.dataDictionaries.UThCompositionalMeasures;
+import org.earthtime.dataDictionaries.UThFractionationCorrectedIsotopicRatios;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.projects.ProjectInterface;
@@ -219,9 +220,9 @@ public class ProjectOfLegacySamplesImporterFromTSVFile_DIBBs_Useries_A extends A
                             myFraction.getLegacyActivityRatioByName(ratioName)//
                                     .setValue(readDelimitedTextCell(myFractionData.get(43)));
 
-                            // column AS=44 is ar232Th_238Ufc * 10^5
-                            ratioName = UThAnalysisMeasures.ar232Th_238Ufc.getName();
-                            myFraction.getLegacyActivityRatioByName(ratioName)//
+                            // column AS=44 is r232Th_238Ufc * 10^5
+                            ratioName = UThFractionationCorrectedIsotopicRatios.r232Th_238Ufc.getName();
+                            myFraction.getRadiogenicIsotopeRatioByName(ratioName)//
                                     .setValue(readDelimitedTextCell(myFractionData.get(44)).//
                                             movePointLeft(5));
 
@@ -278,7 +279,7 @@ public class ProjectOfLegacySamplesImporterFromTSVFile_DIBBs_Useries_A extends A
                             
                             UThFractionReducer.calculateMeasuredAtomRatiosFromLegacyActivityRatios(myFraction);
                             // should show legacy values
-                            UThFractionReducer.calculateActivityRatios(myFraction);
+                            UThFractionReducer.reduceFraction(myFraction);
 
                         }
 

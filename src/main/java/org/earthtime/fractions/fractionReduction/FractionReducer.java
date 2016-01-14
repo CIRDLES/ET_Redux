@@ -1,7 +1,7 @@
 /*
  * FractionReducer.java
  *
- * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2016 James F. Bowring and www.Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 public abstract class FractionReducer {
 
     // 0. lab constants
+    protected static AbstractRatiosDataModel currentPhysicalConstantsModel;
     protected static ValueModel lambda230;
     protected static ValueModel lambda231;
     protected static ValueModel lambda232;
@@ -43,17 +44,21 @@ public abstract class FractionReducer {
 
     /**
      *
-     * @param physicalConstants the value of physicalConstants
+     * @param physicalConstantsModel the value of physicalConstantsModel
      */
     protected static void initializeDecayConstants(
-            AbstractRatiosDataModel physicalConstants) {
+            AbstractRatiosDataModel physicalConstantsModel) {
 
-        lambda230 = physicalConstants.getDatumByName(Lambdas.lambda230.getName()).copy();
-        lambda231 = physicalConstants.getDatumByName(Lambdas.lambda231.getName()).copy();
-        lambda232 = physicalConstants.getDatumByName(Lambdas.lambda232.getName()).copy();
-        lambda234 = physicalConstants.getDatumByName(Lambdas.lambda234.getName()).copy();
-        lambda235 = physicalConstants.getDatumByName(Lambdas.lambda235.getName()).copy();
-        lambda238 = physicalConstants.getDatumByName(Lambdas.lambda238.getName()).copy();
+        if (!physicalConstantsModel.equals(currentPhysicalConstantsModel)) {
+
+            currentPhysicalConstantsModel = physicalConstantsModel;
+            lambda230 = physicalConstantsModel.getDatumByName(Lambdas.lambda230.getName()).copy();
+            lambda231 = physicalConstantsModel.getDatumByName(Lambdas.lambda231.getName()).copy();
+            lambda232 = physicalConstantsModel.getDatumByName(Lambdas.lambda232.getName()).copy();
+            lambda234 = physicalConstantsModel.getDatumByName(Lambdas.lambda234.getName()).copy();
+            lambda235 = physicalConstantsModel.getDatumByName(Lambdas.lambda235.getName()).copy();
+            lambda238 = physicalConstantsModel.getDatumByName(Lambdas.lambda238.getName()).copy();
+        }
 
     }
 }

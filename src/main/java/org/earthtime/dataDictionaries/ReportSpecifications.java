@@ -118,7 +118,7 @@ public class ReportSpecifications {
             "", "true", "true", "3", "", "concentration of 238U", "false", "true"
         },
         {"", "[230Th/", "232Th]", "", "getAnalysisMeasure", UThAnalysisMeasures.ar230Th_232Thfc.getName(), "ABS",
-            "FN-17", "true", "true", "3", "true", "[230Th/232Th] activity ratio", "false", "false"
+            "FN-17", "false", "true", "3", "true", "[230Th/232Th] activity ratio", "false", "false"
         },
         {"[232Th/", "238U]", "", "*1e5", "getAnalysisMeasure", UThAnalysisMeasures.ar232Th_238Ufc.getName(), "ABS",
             "FN-17", "true", "true", "3", "true", "[232Th/238U] activity ratio", "false", "false"
@@ -186,10 +186,13 @@ public class ReportSpecifications {
      *
      */
     public static final String[][] ReportCategory_fractionationCorrectedIsotopicRatios = new String[][]{
-        {"", "r234U/", "238Ufc", "", "getRadiogenicIsotopeRatioByName", UThFractionationCorrectedIsotopicRatios.r234U_238Ufc.getName(), "PCT",
-            "", "true", "false", "2", "true", "", "false", "false"
+        {"r232Th/", "238Ufc", "", "*1e5", "getRadiogenicIsotopeRatioByName", UThFractionationCorrectedIsotopicRatios.r232Th_238Ufc.getName(), "PCT",
+            "", "true", "true", "4", "false", "", "false", "false"
         },
         {"", "r230Th/", "238Ufc", "", "getRadiogenicIsotopeRatioByName", UThFractionationCorrectedIsotopicRatios.r230Th_238Ufc.getName(), "PCT",
+            "", "true", "false", "2", "true", "", "false", "false"
+        },
+        {"", "r234U/", "238Ufc", "", "getRadiogenicIsotopeRatioByName", UThFractionationCorrectedIsotopicRatios.r234U_238Ufc.getName(), "PCT",
             "", "true", "false", "2", "true", "", "false", "false"
         },
         {"", "r230Th/", "232Thfc", "", "getRadiogenicIsotopeRatioByName", UThFractionationCorrectedIsotopicRatios.r230Th_232Thfc.getName(), "PCT",
