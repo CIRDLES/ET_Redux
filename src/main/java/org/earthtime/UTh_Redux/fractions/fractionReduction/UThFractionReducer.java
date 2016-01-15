@@ -137,11 +137,22 @@ public class UThFractionReducer extends FractionReducer {
 
     private static void calculateDatesFromLegacyData(UThLegacyFractionI fraction) {
 
-        // todo: make a model for handling        
-        //   The detritus variable is not at present included in Andrea's worksheet.  
+        // todo: make a model for handling     
+        //           The variable detritus is a matrix (2D array) with six rows and two columns, indexed starting at 1.
+        //   detritus(1,1) is the detrital initial 232Th/238U activity ratio
+        //   detritus(1,2) is its 2-sigma absolute uncertainty
+        //   detritus(2,1) is the detrital initial 230Th/238U activity ratio
+        //   detritus(2,2) is its 2-sigma absolute uncertainty
+        //   detritus(3,1) is the detrital initial 234U/238U activity ratio
+        //   detritus(3,2) is its 2-sigma absolute uncertainty
+        //   detritus(4,1) is the correlation coefficient between the 232Th/238U - 230Th/238U activity ratio uncertainties
+        //   detritus(5,1) is the correlation coefficient between the 232Th/238U - 234U/238U activity ratio uncertainties 
+        //   detritus(6,1) is the correlation coefficient between the 230Th/238U - 234U/238U activity ratio uncertainties
+        //   detritus(6,2) is the number of years between 1950 and the date of the analysis.
+        // The detritus variable is not at present included in Andrea's worksheet.  
         // We'll have to add it, though, when we make UTh_Redux capable of handling more data.  
         // Here are some typical values:
-        Matrix detritus = new Matrix(2, 6);
+        Matrix detritus = new Matrix(6, 2);
         detritus.set(0, 0, 1.2); //detritus(1,1) = 1.2; 
         detritus.set(0, 1, 0.6); //detritus(1,2) = 0.6;
         detritus.set(1, 0, 1.0); //detritus(2,1) = 1;
@@ -158,15 +169,20 @@ public class UThFractionReducer extends FractionReducer {
         double r230Th_238Udi = detritus.get(1, 0) * lambda238.getValue().doubleValue() / lambda230.getValue().doubleValue();
         double r234U_238Udi = detritus.get(2, 0) * lambda238.getValue().doubleValue() / lambda234.getValue().doubleValue();
 
-//di.r28s = detritus(1,2)/detritus(1,1) * di.r28 /2;
-//di.r08s = detritus(2,2)/detritus(2,1) * di.r08 /2;
-//di.r48s = detritus(3,2)/detritus(3,1) * di.r48 /2;
+        double r232Th_238Udi_sigma = detritus.get(0, 1) / detritus.get(0, 0) * r232Th_238Udi;
+        double r230Th_238Udi_sigma = detritus.get(1, 1) / detritus.get(1, 0) * r230Th_238Udi;
+        double r234U_238Udi_sigma = detritus.get(2, 1) / detritus.get(2, 0) * r234U_238Udi;
         Matrix Cov_di = new Matrix(3, 3);
-//di.C = diag([di.r48s di.r08s di.r28s].^2);
-//di.C(1,2) = detritus(6,1)*di.r48s*di.r08s;
-//di.C(1,3) = detritus(5,1)*di.r48s*di.r28s;
-//di.C(2,3) = detritus(4,1)*di.r08s*di.r28s;
-//di.C(2,1) = di.C(1,2); di.C(3,1) = di.C(1,3); di.C(3,2) = di.C(2,3);
+        Cov_di.set(0, 0, r234U_238Udi_sigma * r234U_238Udi_sigma);
+        Cov_di.set(1, 1, r230Th_238Udi_sigma * r230Th_238Udi_sigma);
+        Cov_di.set(2, 2, r232Th_238Udi_sigma * r232Th_238Udi_sigma);
+
+        Cov_di.set(0, 1, detritus.get(5, 0) * r234U_238Udi_sigma * r230Th_238Udi_sigma);
+        Cov_di.set(0, 2, detritus.get(4, 0) * r234U_238Udi_sigma * r232Th_238Udi_sigma);
+        Cov_di.set(1, 2, detritus.get(3, 0) * r230Th_238Udi_sigma);
+        Cov_di.set(1, 0, Cov_di.get(0, 1));
+        Cov_di.set(2, 0, Cov_di.get(0, 2));
+        Cov_di.set(2, 1, Cov_di.get(1, 2));
 
         double yearsSince1950_di = detritus.get(5, 1);
 

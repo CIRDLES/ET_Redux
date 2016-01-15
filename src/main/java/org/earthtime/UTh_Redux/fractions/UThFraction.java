@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import org.earthtime.UPb_Redux.ReduxConstants;
+import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
 import org.earthtime.dataDictionaries.MeasuredRatios;
@@ -64,6 +65,7 @@ public class UThFraction implements
     protected ValueModel[] compositionalMeasures;
     protected ValueModel[] sampleIsochronRatios;
     protected ValueModel[] traceElements;
+    protected AbstractRatiosDataModel physicalConstantsModel; // fraction class has physicalConstantsModelID
 
     protected boolean changed;
     protected boolean deleted;
@@ -444,16 +446,36 @@ public class UThFraction implements
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public AbstractRatiosDataModel getPhysicalConstantsModel() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (physicalConstantsModel == null) {
+            try {
+                physicalConstantsModel = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel();
+            } catch (BadLabDataException badLabDataException) {
+            }
+        }
+        return physicalConstantsModel;
     }
 
+    /**
+     *
+     * @param physicalConstantsModel
+     */
     @Override
     public void setPhysicalConstantsModel(AbstractRatiosDataModel physicalConstantsModel) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if ((this.physicalConstantsModel == null)
+                || (!this.physicalConstantsModel.equals(physicalConstantsModel))) {
+            this.physicalConstantsModel = physicalConstantsModel;
+            this.setChanged(true);
+            System.out.println(this.getFractionID() //
+                    + "  is getting new physical constants model = "//
+                    + physicalConstantsModel.getNameAndVersion());
+        }
     }
-
     @Override
     public String getAnalysisFractionComment() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

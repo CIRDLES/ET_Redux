@@ -1175,7 +1175,7 @@ public class UPbFraction extends Fraction implements
     public AbstractRatiosDataModel getPhysicalConstantsModel() {
         if (physicalConstantsModel == null) {
             try {
-                physicalConstantsModel = getMyLabData().getDefaultPhysicalConstantsModel();
+                physicalConstantsModel = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel();
             } catch (BadLabDataException badLabDataException) {
             }
         }

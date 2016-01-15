@@ -19,10 +19,6 @@ package org.earthtime.ratioDataViews;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.math.BigDecimal;
 import java.util.Iterator;
 import java.util.Map;
@@ -41,7 +37,7 @@ import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsMo
  */
 public abstract class PhysicalConstantsAbstractDataView extends AbstractRatiosDataView {
 
-    private JTextField lambdaReference;
+    protected JTextField[] lambdaReferences;
 
     /**
      *
@@ -65,6 +61,7 @@ public abstract class PhysicalConstantsAbstractDataView extends AbstractRatiosDa
         JLayeredPane lambdaRefsPane = new JLayeredPane();
         lambdaRefsPane.setBackground( Color.white );
 
+        lambdaReferences = new JTextField[dataModel.getData().length];
         int countLines = 0;
         for (int i = 0; i < dataModel.getData().length; i ++) {
             JLabel lambdaLabel = new JLabel( dataModel.getData()[i].getName().trim() + ":" );
@@ -72,11 +69,11 @@ public abstract class PhysicalConstantsAbstractDataView extends AbstractRatiosDa
             lambdaLabel.setFont(ReduxConstants.sansSerif_12_Bold );
             lambdaRefsPane.add( lambdaLabel );
 
-            lambdaReference = new JTextField( ((ValueModelReferenced) dataModel.getData()[i]).getReference().trim() );
-            lambdaReference.setBounds( 95, countLines * 25, 400, 25 );
-            lambdaReference.setFont(ReduxConstants.sansSerif_10_Plain );
-            lambdaReference.setEnabled( editable );  //setEditable( editable );
-            lambdaRefsPane.add( lambdaReference );
+            lambdaReferences[i] = new JTextField( ((ValueModelReferenced) dataModel.getData()[i]).getReference().trim() );
+            lambdaReferences[i].setBounds( 95, countLines * 25, 400, 25 );
+            lambdaReferences[i].setFont(ReduxConstants.sansSerif_10_Plain );
+            lambdaReferences[i].setEnabled( editable );  //setEditable( editable );
+            lambdaRefsPane.add( lambdaReferences[i] );
 
             countLines ++;
         }
