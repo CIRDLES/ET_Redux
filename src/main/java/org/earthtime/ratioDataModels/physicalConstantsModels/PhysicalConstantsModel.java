@@ -30,6 +30,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 import org.earthtime.UPb_Redux.ReduxConstants;
+import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.utilities.ETSerializer;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModelReferenced;
@@ -37,11 +38,11 @@ import org.earthtime.UPb_Redux.valueModels.ValueModelReferencedXMLConverter;
 import org.earthtime.UPb_Redux.valueModels.ValueModelXMLConverter;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
 import org.earthtime.dataDictionaries.DataDictionary;
-import org.earthtime.dataDictionaries.Lambdas;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataViews.AbstractRatiosDataView;
 import org.earthtime.ratioDataViews.PhysicalConstantsDataViewEditable;
+import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.reduxLabData.ReduxLabDataList;
 import org.earthtime.utilities.DateHelpers;
 
@@ -70,44 +71,6 @@ public class PhysicalConstantsModel extends AbstractRatiosDataModel {
 
     static {
         myRatios = new ValueModel[6];
-        myRatios[0] = new ValueModelReferenced(//
-                Lambdas.lambda230.getName(), //
-                new BigDecimal("0.0000091577"), //9.1577 *10^-6
-                "PCT", //
-                new BigDecimal("0.15244"), BigDecimal.ZERO,
-                "Cheng et al. 2000");
-        myRatios[1] = new ValueModelReferenced(//
-                Lambdas.lambda231.getName(), //
-                new BigDecimal("0.0000211887"), //
-                "PCT", //
-                new BigDecimal("0.33578"), BigDecimal.ZERO,
-                "Robert et al. 1969");
-        myRatios[2] = new ValueModelReferenced(//
-                Lambdas.lambda232.getName(), //
-                new BigDecimal("0.0000000000493343"), //
-                "PCT", //
-                new BigDecimal("0.042769"), BigDecimal.ZERO,
-                "Holden 1990");
-        myRatios[3] = new ValueModelReferenced(//
-                Lambdas.lambda234.getName(), //
-                new BigDecimal("0.0000028262"), //
-                "PCT", //
-                //new BigDecimal("0.00000000285"), BigDecimal.ZERO,
-                // corrected Dec 2015 during DIBBs review
-                new BigDecimal("0.100842120161347"), BigDecimal.ZERO,
-                "Cheng et al. 2000");
-        myRatios[4] = new ValueModelReferenced(//
-                Lambdas.lambda235.getName(), //
-                new BigDecimal("0.00000000098485"), //
-                "PCT", //
-                new BigDecimal("0.068031"), BigDecimal.ZERO,
-                "Jaffey et al. 1971");
-        myRatios[5] = new ValueModelReferenced(//
-                Lambdas.lambda238.getName(), //
-                new BigDecimal("0.000000000155125"), //
-                "PCT", //
-                new BigDecimal("0.053505"), BigDecimal.ZERO,
-                "Jaffey et al. 1971");
 
         correlations = new HashMap<>();
 
@@ -120,17 +83,7 @@ public class PhysicalConstantsModel extends AbstractRatiosDataModel {
         EARTHTIMEatomicMolarMasses.put("gmol235", new BigDecimal("235.043922"));
         EARTHTIMEatomicMolarMasses.put("gmol238", new BigDecimal("238.050785"));
     }
-    private static final AbstractRatiosDataModel EARTHTIMEPhysicalConstantsModel = //
-            createInstance(//
-                    "EARTHTIME Physical Constants Model",
-                    1, 0, //
-                    "EARTHTIME",//
-                    "2008-01-01",//
-                    "See individual constants for reference.",//
-                    "This Physical Constants Model is the accepted default as of 2008.",//
-                    myRatios, //
-                    correlations,//
-                    EARTHTIMEatomicMolarMasses);
+
     // instance variables
     private Map<String, BigDecimal> atomicMolarMasses;
 
@@ -196,9 +149,15 @@ public class PhysicalConstantsModel extends AbstractRatiosDataModel {
      */
     public static AbstractRatiosDataModel getDefaultEARTHTIMEPhysicalConstantsModel() {
         // guarantee final model
-        modelInstances.put(EARTHTIMEPhysicalConstantsModel.getNameAndVersion(), EARTHTIMEPhysicalConstantsModel);
-        EARTHTIMEPhysicalConstantsModel.setImmutable(true);
-        return EARTHTIMEPhysicalConstantsModel;
+        AbstractRatiosDataModel defaultModel = null;
+        try {
+            defaultModel = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel();
+        } catch (BadLabDataException badLabDataException) {
+        }
+    
+        modelInstances.put(defaultModel.getNameAndVersion(), defaultModel);
+        defaultModel.setImmutable(true);
+        return defaultModel;
     }
 
     /**
@@ -378,7 +337,6 @@ public class PhysicalConstantsModel extends AbstractRatiosDataModel {
 
         // guarantee final models
         getNoneInstance();
-        getDefaultEARTHTIMEPhysicalConstantsModel();
 
         loadModelsFromResources(modelInstances);
 
@@ -429,9 +387,7 @@ public class PhysicalConstantsModel extends AbstractRatiosDataModel {
         physicalConstantsModel2.serializeXMLObject(testFileName);
         try {
             physicalConstantsModel2.readXMLObject(testFileName, true);
-        } catch (FileNotFoundException fileNotFoundException) {
-        } catch (ETException eTException) {
-        } catch (BadOrMissingXMLSchemaException badOrMissingXMLSchemaException) {
+        } catch (FileNotFoundException | ETException | BadOrMissingXMLSchemaException fileNotFoundException) {
         }
 
         AbstractRatiosDataView testView = new PhysicalConstantsDataViewEditable(PhysicalConstantsModel.getDefaultEARTHTIMEPhysicalConstantsModel(), null, false);
