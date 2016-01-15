@@ -26,7 +26,7 @@ import org.earthtime.dataDictionaries.Lambdas;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.matrices.matrixModels.AbstractMatrixModel;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
-import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsModel;
+import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.utilities.DateHelpers;
 
 /**
@@ -140,7 +140,7 @@ public final class StaceyKramersInitialPbModelET extends InitialPbModelET {
      */
     public void resetModelFromTripoliFraction() {
         AbstractRatiosDataModel physicalConstantsModel
-                = PhysicalConstantsModel.getDefaultEARTHTIMEPhysicalConstantsModel();
+                = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel();
 
         BigDecimal lambda238 = physicalConstantsModel.getDatumByName(Lambdas.lambda238.getName()).getValue();
         BigDecimal lambda235 = physicalConstantsModel.getDatumByName(Lambdas.lambda235.getName()).getValue();

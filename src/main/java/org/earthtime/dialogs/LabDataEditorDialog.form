@@ -2008,8 +2008,8 @@
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="defaultPhsicalConstantsModel_label" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Component id="defaultPhysicalConstantsModel_Chooser" min="-2" pref="311" max="-2" attributes="1"/>
-                              <EmptySpace min="-2" pref="56" max="-2" attributes="0"/>
+                              <Component id="defaultPhysicalConstantsModel_Chooser" min="-2" pref="424" max="-2" attributes="1"/>
+                              <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -2058,8 +2058,8 @@
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="defaultMineralStandardModel_label" min="-2" max="-2" attributes="1"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Component id="defaultTIMSMineralStandardModel_Chooser" min="-2" pref="308" max="-2" attributes="1"/>
-                              <EmptySpace pref="367" max="32767" attributes="0"/>
+                              <Component id="defaultTIMSMineralStandardModel_Chooser" min="-2" pref="422" max="-2" attributes="1"/>
+                              <EmptySpace max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>

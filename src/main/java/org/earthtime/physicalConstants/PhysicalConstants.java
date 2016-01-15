@@ -47,6 +47,7 @@ import org.earthtime.exceptions.ETException;
 import org.earthtime.matrices.matrixModels.CovarianceMatrixModel;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsModel;
+import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.reduxLabData.ReduxLabDataListElementI;
 import org.earthtime.utilities.DateHelpers;
 import org.earthtime.xmlUtilities.XMLSerializationI;
@@ -196,7 +197,7 @@ public class PhysicalConstants implements
 
         if ((this.name.toUpperCase(Locale.US).startsWith("EARTHTIME"))) {
             // catch old Earthtime version 1
-            physicalConstantsModel = PhysicalConstantsModel.getDefaultEARTHTIMEPhysicalConstantsModel();
+            physicalConstantsModel = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel();
         } else {
             physicalConstantsModel = convertModel(this);
         }

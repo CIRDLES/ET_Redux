@@ -26,20 +26,25 @@ import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Vector;
 import javax.swing.JButton;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.exceptions.BadImportedCSVLegacyFileException;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
+import org.earthtime.UTh_Redux.fractions.UThLegacyFraction;
+import org.earthtime.UTh_Redux.fractions.fractionReduction.UThFractionReducer;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
+import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.projects.ProjectInterface;
 import org.earthtime.projects.projectImporters.AbstractProjectImporterFromLegacyDelimitedTextFile;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataViews.AbstractRatiosDataView;
 import org.earthtime.ratioDataViews.PhysicalConstantsDataViewNotEditable;
 import org.earthtime.reduxLabData.ReduxLabData;
+import org.earthtime.samples.SampleInterface;
 
 /**
  *
@@ -192,8 +197,9 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
 
         myProject.setProjectName(projectName_text.getText().trim());
 
-        myProject.getSuperSample().setPhysicalConstantsModel(
-                (AbstractRatiosDataModel)physicalConstantsModelChooser.getSelectedItem());
+        AbstractRatiosDataModel chosenPhysicalConstantsModel
+                = (AbstractRatiosDataModel) physicalConstantsModelChooser.getSelectedItem();
+        myProject.getSuperSample().setPhysicalConstantsModel(chosenPhysicalConstantsModel);
 
         if (myProject.getProjectSamples().isEmpty()) {
             try {
@@ -205,6 +211,17 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
             } catch (FileNotFoundException fileNotFoundException) {
             } catch (BadImportedCSVLegacyFileException ex) {
                 new ETWarningDialog(ex).setVisible(true);
+            }
+        }
+
+        // set physical constant models of each fraction to current
+        ArrayList<SampleInterface> mySamples = myProject.getProjectSamples();
+        for (SampleInterface mySample : mySamples) {
+            mySample.setPhysicalConstantsModel(chosenPhysicalConstantsModel);
+            Vector<ETFractionInterface> myFractions = mySample.getFractions();
+            for (ETFractionInterface myFraction : myFractions) {
+                myFraction.setPhysicalConstantsModel(chosenPhysicalConstantsModel);
+                UThFractionReducer.reduceFraction((UThLegacyFraction)myFraction);
             }
         }
 
@@ -311,13 +328,13 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
         sampleReduxFile_label.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         sampleReduxFile_label.setText("File path for this Project:");
         infoPanel.add(sampleReduxFile_label);
-        sampleReduxFile_label.setBounds(8, 256, 139, 14);
+        sampleReduxFile_label.setBounds(10, 280, 139, 14);
 
         sampleReduxFileName_label.setText("<Not Saved>");
         sampleReduxFileName_label.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         sampleReduxFileName_label.setAutoscrolls(true);
         infoPanel.add(sampleReduxFileName_label);
-        sampleReduxFileName_label.setBounds(28, 276, 407, 64);
+        sampleReduxFileName_label.setBounds(30, 300, 407, 64);
 
         sampleNotes_label.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         sampleNotes_label.setText("Notes about this Project:");
@@ -406,7 +423,7 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
             .add(layout.createSequentialGroup()
                 .add(sampleType_panel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(6, 6, 6)
-                .add(infoPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(infoPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
                 .add(6, 6, 6)
                 .add(jPanel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );

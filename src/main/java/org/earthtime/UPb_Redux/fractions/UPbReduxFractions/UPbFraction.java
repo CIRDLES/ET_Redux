@@ -232,7 +232,7 @@ public class UPbFraction extends Fraction implements
         } catch (BadLabDataException badLabDataException) {
         }
 
-        this.physicalConstantsModel = PhysicalConstantsModel.getDefaultEARTHTIMEPhysicalConstantsModel();
+        this.physicalConstantsModel = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel();
 
         this.aliquotNumber = 1;
         this.pedigreePb = "";
@@ -264,7 +264,8 @@ public class UPbFraction extends Fraction implements
         getAnalysisMeasure(AnalysisMeasures.r238_235s.getName())//
                 .copyValuesFrom(myLabData.getDefaultR238_235s());
 
-        ValueModel r18O_16OZeroWithZeroUnct = //
+        ValueModel r18O_16OZeroWithZeroUnct
+                = //
                 new ValueModel("tempZero", BigDecimal.ZERO, "ABS", BigDecimal.ZERO, BigDecimal.ZERO);
         getAnalysisMeasure(AnalysisMeasures.r18O_16O.getName())//
                 .copyValuesFrom(r18O_16OZeroWithZeroUnct);
@@ -393,12 +394,10 @@ public class UPbFraction extends Fraction implements
                             matrixSpecsName = "mixed_202_205_233_235_Zircon_NotFcU_NotFcPb";
                         } else {
                         }
+                    } else // FcPb
+                    if (treatFractionAsZircon) {//isZircon() ) {
+                        matrixSpecsName = "mixed_202_205_233_235_Zircon_NotFcU_FcPb";
                     } else {
-                        // FcPb
-                        if (treatFractionAsZircon) {//isZircon() ) {
-                            matrixSpecsName = "mixed_202_205_233_235_Zircon_NotFcU_FcPb";
-                        } else {
-                        }
                     }
                 } else {
                     // FcU *****************************************************
@@ -540,11 +539,9 @@ public class UPbFraction extends Fraction implements
             ValueModel alphaU = null;
             if (isInAutoUraniumMode()) {
                 alphaU = getInputAlphaU().copy();
-            } else {
-                // modified march 2011
-                if (needsAlphaUModel()) {
-                    alphaU = getAlphaUModel().copy();
-                }
+            } else // modified march 2011
+            if (needsAlphaUModel()) {
+                alphaU = getAlphaUModel().copy();
             }
             // modified march 2011
             if (alphaU != null) {
@@ -591,7 +588,8 @@ public class UPbFraction extends Fraction implements
         setOutputByName("molU235s", molU235s);
 
         try {
-            BigDecimal calcR238_235m = //
+            BigDecimal calcR238_235m
+                    = //
                     BigDecimal.ONE.//
                     divide(BigDecimal.ONE.//
                             add(new BigDecimal(3.0).//
@@ -615,7 +613,8 @@ public class UPbFraction extends Fraction implements
                 || getTracerType().equalsIgnoreCase("mixed 202-205-233-236")) {
             // calculate r233_236m
             try {
-                BigDecimal calcR233_236m = //
+                BigDecimal calcR233_236m
+                        = //
                         getTracer().getDatumByName(TracerUPbRatiosAndConcentrations.r233_236t.getName()).getValue().//
                         divide(BigDecimal.ONE.//
                                 subtract(new BigDecimal(3.0).//
@@ -631,7 +630,8 @@ public class UPbFraction extends Fraction implements
                 || getTracerType().equalsIgnoreCase("mixed 205-233-235-230Th")) {
 
             try {
-                BigDecimal calcR233_235m = //
+                BigDecimal calcR233_235m
+                        = //
                         getOutputsByName("molU233t").getValue().//
                         divide(BigDecimal.ONE.//
                                 subtract(new BigDecimal(2.0).//
@@ -648,9 +648,8 @@ public class UPbFraction extends Fraction implements
 
         }
 
+        setInAutoUraniumMode(true);
 
-        setInAutoUraniumMode( true );
- 
     }
 
     /**
@@ -1174,10 +1173,7 @@ public class UPbFraction extends Fraction implements
     @Override
     public AbstractRatiosDataModel getPhysicalConstantsModel() {
         if (physicalConstantsModel == null) {
-            try {
-                physicalConstantsModel = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel();
-            } catch (BadLabDataException badLabDataException) {
-            }
+            physicalConstantsModel = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel();
         }
         return physicalConstantsModel;
     }
@@ -1192,9 +1188,9 @@ public class UPbFraction extends Fraction implements
                 || (!this.physicalConstantsModel.equals(physicalConstantsModel))) {
             this.physicalConstantsModel = physicalConstantsModel;
             this.setChanged(true);
-            System.out.println(this.getFractionID() //
-                    + "  is getting new physical constants model = "//
-                    + physicalConstantsModel.getNameAndVersion());
+//            System.out.println(this.getFractionID() //
+//                    + "  is getting new physical constants model = "//
+//                    + physicalConstantsModel.getNameAndVersion());
         }
     }
 
@@ -1218,9 +1214,9 @@ public class UPbFraction extends Fraction implements
             this.alphaPbModel = alphaPbModel;
             this.alphaPbModelSaved = alphaPbModel.copy();
             this.setChanged(true);
-            System.out.println(this.getFractionID() //
-                    + "  is getting new alphaPbModel = "//
-                    + alphaPbModel.getName());
+//            System.out.println(this.getFractionID() //
+//                    + "  is getting new alphaPbModel = "//
+//                    + alphaPbModel.getName());
         }
     }
 
@@ -1246,7 +1242,8 @@ public class UPbFraction extends Fraction implements
      */
     public boolean needsAlphaPbModel(String tracerType) {
 
-        boolean retVal = //
+        boolean retVal
+                = //
                 (!isFractionationCorrectedPb())//
                 &&//
                 (!hasMeasured202_205())//
@@ -1316,7 +1313,8 @@ public class UPbFraction extends Fraction implements
     public boolean needsAlphaUModel() {
 
         // sep 2010 made parallel construct to alphaPb
-        boolean retVal =//
+        boolean retVal
+                =//
                 (!isFractionationCorrectedU())//
                 &&//
                 (!hasDoubleUSpikeTracer());
@@ -1332,7 +1330,8 @@ public class UPbFraction extends Fraction implements
      */
     public boolean needsAlphaUModel(String tracerType) {
 
-        boolean retVal = //
+        boolean retVal
+                = //
                 (!isFractionationCorrectedU())//
                 &&//
                 (!tracerType.contains("233"));
@@ -1594,10 +1593,10 @@ public class UPbFraction extends Fraction implements
             populateAnalysisMeasuresFromImportedFraction(myUPbReduxFraction, myUPbReduxFraction);
 
             // aug 2010
-            ((UPbFractionI)myUPbReduxFraction).setFractionationCorrectedU( //
+            ((UPbFractionI) myUPbReduxFraction).setFractionationCorrectedU( //
                     ((UPbFraction) myUPbReduxFraction).getMeanAlphaU().compareTo(BigDecimal.ZERO) == 1);
             // aug 2010
-            ((UPbFractionI)myUPbReduxFraction).setFractionationCorrectedPb(//
+            ((UPbFractionI) myUPbReduxFraction).setFractionationCorrectedPb(//
                     ((UPbFraction) myUPbReduxFraction).getMeanAlphaPb().compareTo(BigDecimal.ZERO) == 1);
 
             // check ratio_type and set source file
@@ -2270,7 +2269,8 @@ public class UPbFraction extends Fraction implements
                 outputWriter.println("matrix entries for " + getReductionHandler().getMatrixSpecsName() + "\n");
                 Vector<String> matrixEntriesListing = new Vector<String>();
 
-                matrixEntriesListing = //
+                matrixEntriesListing
+                        = //
                         CollectionHelpers.vectorSortedUniqueMembers( //
                                 MatrixSpecifications.getMatrixSpecsByName(//
                                         getReductionHandler().getMatrixSpecsName()));

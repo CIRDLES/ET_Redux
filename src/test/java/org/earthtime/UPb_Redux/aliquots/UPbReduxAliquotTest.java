@@ -22,7 +22,7 @@ import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.samples.SESARSampleMetadata;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.aliquots.ReduxAliquotInterface;
-import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsModel;
+import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.xmlUtilities.XMLSerializationI;
 import org.junit.After;
 import org.junit.Test;
@@ -45,7 +45,7 @@ public class UPbReduxAliquotTest {
                 = new UPbReduxAliquot(
                         0,
                         "Test Aliquot",
-                        PhysicalConstantsModel.getDefaultEARTHTIMEPhysicalConstantsModel(),
+                        ReduxLabData.getInstance().getDefaultPhysicalConstantsModel(),
                         false,
                         new SESARSampleMetadata());
 

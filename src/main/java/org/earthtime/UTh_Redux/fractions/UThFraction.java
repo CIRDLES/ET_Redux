@@ -24,7 +24,6 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
 import org.earthtime.dataDictionaries.MeasuredRatios;
@@ -283,7 +282,8 @@ public class UThFraction implements
     }
 
     /**
-     * @param fractionationCorrectedIsotopeRatios the fractionationCorrectedIsotopeRatios to set
+     * @param fractionationCorrectedIsotopeRatios the
+     * fractionationCorrectedIsotopeRatios to set
      */
     @Override
     public void setRadiogenicIsotopeRatios(ValueModel[] fractionationCorrectedIsotopeRatios) {
@@ -453,10 +453,7 @@ public class UThFraction implements
     @Override
     public AbstractRatiosDataModel getPhysicalConstantsModel() {
         if (physicalConstantsModel == null) {
-            try {
-                physicalConstantsModel = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel();
-            } catch (BadLabDataException badLabDataException) {
-            }
+            physicalConstantsModel = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel();
         }
         return physicalConstantsModel;
     }
@@ -471,11 +468,12 @@ public class UThFraction implements
                 || (!this.physicalConstantsModel.equals(physicalConstantsModel))) {
             this.physicalConstantsModel = physicalConstantsModel;
             this.setChanged(true);
-            System.out.println(this.getFractionID() //
-                    + "  is getting new physical constants model = "//
-                    + physicalConstantsModel.getNameAndVersion());
+//            System.out.println(this.getFractionID() //
+//                    + "  is getting new physical constants model = "//
+//                    + physicalConstantsModel.getNameAndVersion());
         }
     }
+
     @Override
     public String getAnalysisFractionComment() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

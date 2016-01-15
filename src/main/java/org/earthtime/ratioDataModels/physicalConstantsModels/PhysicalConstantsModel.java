@@ -30,7 +30,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.utilities.ETSerializer;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModelReferenced;
@@ -55,12 +54,14 @@ public class PhysicalConstantsModel extends AbstractRatiosDataModel {
     // class variables
     private static final long serialVersionUID = 5345194857641736957L;
     private static final String classNameAliasForXML = "PhysicalConstantsModel";
-    private static final Map<String, AbstractRatiosDataModel> modelInstances = //
+    private static final Map<String, AbstractRatiosDataModel> modelInstances
+            = //
             new HashMap<>();
     private static final ValueModel[] myRatios;
     private static final Map<String, BigDecimal> correlations;
     private static final Map<String, BigDecimal> EARTHTIMEatomicMolarMasses;
-    private static final AbstractRatiosDataModel noneModel = //
+    private static final AbstractRatiosDataModel noneModel
+            = //
             new PhysicalConstantsModel( //
                     ReduxConstants.NONE, //
                     1, 0, //
@@ -141,23 +142,6 @@ public class PhysicalConstantsModel extends AbstractRatiosDataModel {
         modelInstances.put(noneModel.getNameAndVersion(), noneModel);
         noneModel.setImmutable(true);
         return noneModel;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public static AbstractRatiosDataModel getDefaultEARTHTIMEPhysicalConstantsModel() {
-        // guarantee final model
-        AbstractRatiosDataModel defaultModel = null;
-        try {
-            defaultModel = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel();
-        } catch (BadLabDataException badLabDataException) {
-        }
-    
-        modelInstances.put(defaultModel.getNameAndVersion(), defaultModel);
-        defaultModel.setImmutable(true);
-        return defaultModel;
     }
 
     /**
@@ -374,7 +358,7 @@ public class PhysicalConstantsModel extends AbstractRatiosDataModel {
      */
     public static void main(String[] args) {
 
-        AbstractRatiosDataModel physicalConstantsModel = PhysicalConstantsModel.getDefaultEARTHTIMEPhysicalConstantsModel();
+        AbstractRatiosDataModel physicalConstantsModel = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel();
 
         try {
             ETSerializer.SerializeObjectToFile(physicalConstantsModel, "PhysicalConstantsModelTEST.ser");
@@ -390,22 +374,11 @@ public class PhysicalConstantsModel extends AbstractRatiosDataModel {
         } catch (FileNotFoundException | ETException | BadOrMissingXMLSchemaException fileNotFoundException) {
         }
 
-        AbstractRatiosDataView testView = new PhysicalConstantsDataViewEditable(PhysicalConstantsModel.getDefaultEARTHTIMEPhysicalConstantsModel(), null, false);
+        AbstractRatiosDataView testView = new PhysicalConstantsDataViewEditable(ReduxLabData.getInstance().getDefaultPhysicalConstantsModel(), null, false);
 
         testView.displayModelInFrame();
     }
 
-//    private void readObject ( ObjectInputStream stream ) throws IOException,
-//            ClassNotFoundException {
-//        stream.defaultReadObject();
-//
-//        ObjectStreamClass myObject = ObjectStreamClass.lookup(
-//                Class.forName( PhysicalConstantsModel.class.getCanonicalName() ) );
-//        long theSUID = myObject.getSerialVersionUID();
-//
-//        System.out.println( "Customized De-serialization of PhysicalConstantsModel "
-//                + theSUID );
-//    }
     /**
      * @return the atomicMolarMasses
      */

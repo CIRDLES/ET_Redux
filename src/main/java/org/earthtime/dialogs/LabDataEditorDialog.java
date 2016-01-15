@@ -1504,7 +1504,7 @@ public class LabDataEditorDialog extends DialogEditor {
 //                myLabData.getAPhysicalConstantsModel( (String) physicalConstantsModelForInitialPbModel_Chooser.getSelectedItem() );
         // april 2014 changed to force to ET model that contains original SK values
         AbstractRatiosDataModel physicalConstantsModel
-                = PhysicalConstantsModel.getDefaultEARTHTIMEPhysicalConstantsModel();
+                = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel();
 
         if (initialPbModel instanceof StaceyKramersInitialPbModelET) {
             BigDecimal lambda238 = physicalConstantsModel.getDatumByName(Lambdas.lambda238.getName()).getValue();
@@ -1923,11 +1923,7 @@ public class LabDataEditorDialog extends DialogEditor {
         if (physicalConstantsModel_Chooser.getSelectedIndex() >= 0) {
             savedPhysicalConstantsModelName = (String) physicalConstantsModel_Chooser.getSelectedItem();
         } else {
-            try {
-                savedPhysicalConstantsModelName = myLabData.getDefaultPhysicalConstantsModel().getReduxLabDataElementName();
-            } catch (BadLabDataException ex) {
-                new ETWarningDialog(ex).setVisible(true);
-            }
+            savedPhysicalConstantsModelName = myLabData.getDefaultPhysicalConstantsModel().getReduxLabDataElementName();
         }
 
     }
@@ -3661,8 +3657,8 @@ public class LabDataEditorDialog extends DialogEditor {
                 .addContainerGap()
                 .add(defaultPhsicalConstantsModel_label)
                 .add(18, 18, 18)
-                .add(defaultPhysicalConstantsModel_Chooser, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 311, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(56, 56, 56))
+                .add(defaultPhysicalConstantsModel_Chooser, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 424, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -3686,8 +3682,8 @@ public class LabDataEditorDialog extends DialogEditor {
                 .addContainerGap()
                 .add(defaultMineralStandardModel_label)
                 .add(18, 18, 18)
-                .add(defaultTIMSMineralStandardModel_Chooser, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 308, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(367, Short.MAX_VALUE))
+                .add(defaultTIMSMineralStandardModel_Chooser, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 422, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)

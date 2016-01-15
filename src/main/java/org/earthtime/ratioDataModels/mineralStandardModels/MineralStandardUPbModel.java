@@ -34,7 +34,6 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.utilities.ETSerializer;
 import org.earthtime.UPb_Redux.valueModels.MineralStandardUPbRatioModel;
 import org.earthtime.UPb_Redux.valueModels.MineralStandardUPbRatioModelXMLConverter;
@@ -64,9 +63,11 @@ public class MineralStandardUPbModel extends AbstractRatiosDataModel {
 
     // class variables
     private static final long serialVersionUID = -5845209084226246480L;
-    private static Map<String, AbstractRatiosDataModel> modelInstances = //
+    private static Map<String, AbstractRatiosDataModel> modelInstances
+            = //
             new HashMap<>();
-    private static final AbstractRatiosDataModel noneModel = //
+    private static final AbstractRatiosDataModel noneModel
+            = //
             new MineralStandardUPbModel( //
                     ReduxConstants.NONE, //
                     1, 0,//
@@ -131,7 +132,8 @@ public class MineralStandardUPbModel extends AbstractRatiosDataModel {
                 new BigDecimal("10"), BigDecimal.ZERO);
 
     }
-    private static final AbstractRatiosDataModel EARTHTIMESriLankaStandardModel = //
+    private static final AbstractRatiosDataModel EARTHTIMESriLankaStandardModel
+            = //
             createInstance("EARTHTIME SriLanka Standard",
                     1, 0,//
                     "EARTHTIME",//
@@ -194,7 +196,8 @@ public class MineralStandardUPbModel extends AbstractRatiosDataModel {
                 BigDecimal.ZERO, BigDecimal.ZERO);
 
     }
-    private static final AbstractRatiosDataModel EARTHTIMEPeixeStandardModel = //
+    private static final AbstractRatiosDataModel EARTHTIMEPeixeStandardModel
+            = //
             createInstance("EARTHTIME Peixe Standard",
                     1, 0,//
                     "EARTHTIME",//
@@ -257,7 +260,8 @@ public class MineralStandardUPbModel extends AbstractRatiosDataModel {
                 BigDecimal.ZERO, BigDecimal.ZERO);
 
     }
-    private static final AbstractRatiosDataModel EARTHTIMEPlesoviceStandardModel = //
+    private static final AbstractRatiosDataModel EARTHTIMEPlesoviceStandardModel
+            = //
             createInstance("EARTHTIME Plesovice Standard",
                     1, 0,//
                     "EARTHTIME",//
@@ -598,25 +602,15 @@ public class MineralStandardUPbModel extends AbstractRatiosDataModel {
     public void calculateApparentDates() {
 
         ValueModel lambda232 = new ValueModel();
-        try {
-            lambda232 = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel()//
-                    .getDatumByName(Lambdas.lambda232.getName());
-        } catch (BadLabDataException badLabDataException) {
-        }
+        lambda232 = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel()//
+                .getDatumByName(Lambdas.lambda232.getName());
 
         ValueModel lambda235 = new ValueModel();
-        try {
-            lambda235 = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel()//
-                    .getDatumByName(Lambdas.lambda235.getName());
-        } catch (BadLabDataException badLabDataException) {
-        }
-
+        lambda235 = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel()//
+                .getDatumByName(Lambdas.lambda235.getName());
         ValueModel lambda238 = new ValueModel();
-        try {
-            lambda238 = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel()//
-                    .getDatumByName(Lambdas.lambda238.getName());
-        } catch (BadLabDataException badLabDataException) {
-        }
+        lambda238 = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel()//
+                .getDatumByName(Lambdas.lambda238.getName());
 
         ValueModel r206_238r = getDatumByName(MineralStandardUPbRatiosEnum.r206_238r.getName());
 
@@ -870,7 +864,8 @@ public class MineralStandardUPbModel extends AbstractRatiosDataModel {
         myTestCorrelations.put("rhoR206_204c__r207_204c", new BigDecimal(-0.0400671215735759));
         myTestCorrelations.put("rhoR206_204c__r208_204c", new BigDecimal(-0.0400671215735759));
         myTestCorrelations.put("rhoR207_204c__r208_204c", new BigDecimal(-0.0400671215735759));
-        AbstractRatiosDataModel initialPbModel1 = //
+        AbstractRatiosDataModel initialPbModel1
+                = //
                 InitialPbModelET.createInstance("initialPbModel1", 1, 0, "Test Lab", "2012-04-01", "NO REF", "NO COMMENT", myTestRatios, myTestCorrelations);
 
         myTestRatios = new ValueModel[4];
@@ -911,7 +906,8 @@ public class MineralStandardUPbModel extends AbstractRatiosDataModel {
             ETSerializer.SerializeObjectToFile(sriLanka1, "MineralStandardUPbModelTEST.ser");
         } catch (ETException eTException) {
         }
-        AbstractRatiosDataModel sriLanka2 = //
+        AbstractRatiosDataModel sriLanka2
+                = //
                 (AbstractRatiosDataModel) ETSerializer.GetSerializedObjectFromFile("MineralStandardUPbModelTEST.ser");
 
         System.out.println(sriLanka1.getDataCorrelationsVarUnct().ToStringWithLabels());

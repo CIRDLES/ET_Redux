@@ -26,7 +26,7 @@ import org.earthtime.dataDictionaries.Lambdas;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.initialPbModelsET.InitialPbModelET;
 import org.earthtime.ratioDataModels.initialPbModelsET.StaceyKramersInitialPbModelET;
-import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsModel;
+import org.earthtime.reduxLabData.ReduxLabData;
 
 /**
  *
@@ -84,7 +84,7 @@ public abstract class AbstractCommonLeadLossCorrectionScheme implements Serializ
     protected ValueModel determineR207_206cUsingStaceyKramer(SortedMap<String, BigDecimal> staceyKramerCorrectionParameters) {
         AbstractRatiosDataModel skInitialPbModel = new StaceyKramersInitialPbModelET();
         AbstractRatiosDataModel physicalConstantsModel
-                = PhysicalConstantsModel.getDefaultEARTHTIMEPhysicalConstantsModel();
+                = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel();
 
         BigDecimal lambda238 = physicalConstantsModel.getDatumByName(Lambdas.lambda238.getName()).getValue();
         BigDecimal lambda235 = physicalConstantsModel.getDatumByName(Lambdas.lambda235.getName()).getValue();

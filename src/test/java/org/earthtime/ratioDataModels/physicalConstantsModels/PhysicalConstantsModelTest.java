@@ -20,6 +20,7 @@ import org.earthtime.UPb_Redux.utilities.ETSerializer;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataViews.AbstractRatiosDataView;
 import org.earthtime.ratioDataViews.PhysicalConstantsDataViewEditable;
+import org.earthtime.reduxLabData.ReduxLabData;
 import org.junit.After;
 import org.junit.Test;
 
@@ -37,7 +38,7 @@ public class PhysicalConstantsModelTest {
     @Test
     public void testSerialization () throws Exception {
 
-        AbstractRatiosDataModel physicalConstantsModel = PhysicalConstantsModel.getDefaultEARTHTIMEPhysicalConstantsModel();
+        AbstractRatiosDataModel physicalConstantsModel = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel();
 
         //Throws Exception
         ETSerializer.SerializeObjectToFile(physicalConstantsModel, "PhysicalConstantsModelTEST.ser");
@@ -52,7 +53,7 @@ public class PhysicalConstantsModelTest {
         physicalConstantsModel2.readXMLObject(testFileName, true );
 
 
-        AbstractRatiosDataView testView = new PhysicalConstantsDataViewEditable( PhysicalConstantsModel.getDefaultEARTHTIMEPhysicalConstantsModel(), null, false);
+        AbstractRatiosDataView testView = new PhysicalConstantsDataViewEditable( ReduxLabData.getInstance().getDefaultPhysicalConstantsModel(), null, false);
 
         //Still need to figure out how to close the window
         //testView.displayModelInFrame();

@@ -33,7 +33,6 @@ import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.ReduxConstants.ANALYSIS_PURPOSE;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetup;
-import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.dialogs.fractionManagers.UPbFractionEditorDialog;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.filters.FractionXMLFileFilter;
@@ -42,7 +41,6 @@ import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLegacyFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.UPbFractionReducer;
-import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.user.SampleDateInterpretationGUIOptions;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
@@ -53,10 +51,12 @@ import org.earthtime.dataDictionaries.MineralTypes;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.dataDictionaries.SampleRegistries;
 import org.earthtime.dataDictionaries.SampleTypesEnum;
+import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.projects.EarthTimeSerializedFileInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
+import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.reports.ReportSettingsInterface;
 import org.earthtime.samples.SampleInterface;
 import org.earthtime.utilities.FileHelper;
@@ -644,13 +644,13 @@ public class Sample implements
             AliquotInterface aliquot = getAliquotByName(aliquotFolder.getName());
             if (aliquot == null) {
                 // check if last aliquot was empty (i.e. the initial first dummy aliquot)
-                if (((UPbReduxAliquot) aliquots.get(aliquots.size() - 1)).getAliquotFractions().isEmpty()) {
-                    aliquotNumber = ((UPbReduxAliquot) aliquots.get(aliquots.size() - 1)).getAliquotNumber();
+                if (((ReduxAliquotInterface) aliquots.get(aliquots.size() - 1)).getAliquotFractions().isEmpty()) {
+                    aliquotNumber = ((ReduxAliquotInterface) aliquots.get(aliquots.size() - 1)).getAliquotNumber();
                 } else {
                     aliquotNumber = addNewDefaultAliquot();
                 }
             } else {
-                aliquotNumber = ((UPbReduxAliquot) aliquot).getAliquotNumber();
+                aliquotNumber = ((ReduxAliquotInterface) aliquot).getAliquotNumber();
             }
 
             ETFractionInterface savedCurrentFraction = null;
@@ -734,7 +734,7 @@ public class Sample implements
                 throw new ETException(null,
                         "The selected folder does not contain any XML fraction files.");
             } else {
-                importAliquotFolder(fractions, aliquotNumber, true);
+                importAliquotFolder(fractions, aliquotNumber, false); // jan 2016true);
 
                 ((ReduxAliquotInterface) getAliquotByNumber(aliquotNumber)).//
                         reduceData();

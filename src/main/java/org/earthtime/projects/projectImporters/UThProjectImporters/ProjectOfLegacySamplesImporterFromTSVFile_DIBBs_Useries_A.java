@@ -182,8 +182,12 @@ public class ProjectOfLegacySamplesImporterFromTSVFile_DIBBs_Useries_A extends A
                             metaData.append("14C age? = ").append(myFractionData.get(34).trim()).append("\n");
                             metaData.append("Instrument = ").append(myFractionData.get(35).trim()).append("\n");
                             metaData.append("Decay cnsts = ").append(myFractionData.get(36).trim()).append("\n");
-                            if (myFractionData.get(36).trim().compareToIgnoreCase("D1")==0){
+                            if (myFractionData.get(36).trim().compareToIgnoreCase("D1") == 0) {
                                 myFraction.useLegacyPhysicalConstantsD1();
+                            } else if (myFractionData.get(36).trim().compareToIgnoreCase("D2") == 0) {
+                                myFraction.useLegacyPhysicalConstantsD2();
+                            } else if (myFractionData.get(36).trim().compareToIgnoreCase("D3") == 0) {
+                                myFraction.useLegacyPhysicalConstantsD3();
                             }
                             metaData.append("Spike Calib = ").append(myFractionData.get(37).trim()).append("\n");
                             metaData.append("Published % calcite = ").append(myFractionData.get(38).trim()).append("\n");
@@ -275,11 +279,8 @@ public class ProjectOfLegacySamplesImporterFromTSVFile_DIBBs_Useries_A extends A
                                     divide(new BigDecimal(2.0));
                             myFraction.getLegacyActivityRatioByName(ratioName)//
                                     .setOneSigma(oneSigmaAbs);
-                            
-                            
+
                             UThFractionReducer.calculateMeasuredAtomRatiosFromLegacyActivityRatios(myFraction);
-                            // should show legacy values
-                            UThFractionReducer.reduceFraction(myFraction);
 
                         }
 

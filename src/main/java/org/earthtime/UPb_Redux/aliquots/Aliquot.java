@@ -33,8 +33,8 @@ import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.dataDictionaries.DataDictionary;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.pbBlankICModels.PbBlankICModel;
-import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsModel;
 import org.earthtime.ratioDataModels.tracers.TracerUPbModel;
+import org.earthtime.reduxLabData.ReduxLabData;
 
 /**
  *
@@ -100,7 +100,7 @@ public abstract class Aliquot implements AliquotInterface, AliquotForUPbInterfac
 
         this.sampleDateModels = new Vector<>();
 
-        this.physicalConstantsModel = PhysicalConstantsModel.getDefaultEARTHTIMEPhysicalConstantsModel();
+        this.physicalConstantsModel = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel();
 
         this.pbBlanks = new Vector<>();
 

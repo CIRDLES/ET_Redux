@@ -1162,27 +1162,23 @@ public class TripoliSession implements
                         measuredValue = Math.log(measuredValue);//forced mean with more than 10% neg                   ((RawRatioDataModel) tf.getRawRatioDataModelByName(rrName)).getRatios()[0];
                     }
                     AbstractRatiosDataModel physicalConstants;
-                    try {
-                        physicalConstants = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel();
-                        double gmol204 = ((PhysicalConstantsModel) physicalConstants).getAtomicMolarMassByName("gmol204").getValue().doubleValue();
-                        double gmol206 = ((PhysicalConstantsModel) physicalConstants).getAtomicMolarMassByName("gmol206").getValue().doubleValue();
-                        double gmol207 = ((PhysicalConstantsModel) physicalConstants).getAtomicMolarMassByName("gmol207").getValue().doubleValue();
-                        double gmol208 = ((PhysicalConstantsModel) physicalConstants).getAtomicMolarMassByName("gmol208").getValue().doubleValue();
+                    physicalConstants = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel();
+                    double gmol204 = ((PhysicalConstantsModel) physicalConstants).getAtomicMolarMassByName("gmol204").getValue().doubleValue();
+                    double gmol206 = ((PhysicalConstantsModel) physicalConstants).getAtomicMolarMassByName("gmol206").getValue().doubleValue();
+                    double gmol207 = ((PhysicalConstantsModel) physicalConstants).getAtomicMolarMassByName("gmol207").getValue().doubleValue();
+                    double gmol208 = ((PhysicalConstantsModel) physicalConstants).getAtomicMolarMassByName("gmol208").getValue().doubleValue();
 
-                        double logMassRatio_206_207 = Math.log(gmol206 / gmol207);
+                    double logMassRatio_206_207 = Math.log(gmol206 / gmol207);
 
-                        if (rrName.getName().contains("206")) {
-                            upperPhi = tf.getUpperPhi_r206_207() * (Math.log(gmol206 / gmol204) / logMassRatio_206_207);
-                            nameOfUpperPhi = "upperPhi_r206_204";
-                        } else if (rrName.getName().contains("207")) {
-                            upperPhi = tf.getUpperPhi_r206_207() * (Math.log(gmol207 / gmol204) / logMassRatio_206_207);
-                            nameOfUpperPhi = "upperPhi_r207_204";
-                        } else { // 208
-                            upperPhi = tf.getUpperPhi_r206_207() * (Math.log(gmol208 / gmol204) / logMassRatio_206_207);
-                            nameOfUpperPhi = "upperPhi_r208_204";
-                        }
-
-                    } catch (BadLabDataException badLabDataException) {
+                    if (rrName.getName().contains("206")) {
+                        upperPhi = tf.getUpperPhi_r206_207() * (Math.log(gmol206 / gmol204) / logMassRatio_206_207);
+                        nameOfUpperPhi = "upperPhi_r206_204";
+                    } else if (rrName.getName().contains("207")) {
+                        upperPhi = tf.getUpperPhi_r206_207() * (Math.log(gmol207 / gmol204) / logMassRatio_206_207);
+                        nameOfUpperPhi = "upperPhi_r207_204";
+                    } else { // 208
+                        upperPhi = tf.getUpperPhi_r206_207() * (Math.log(gmol208 / gmol204) / logMassRatio_206_207);
+                        nameOfUpperPhi = "upperPhi_r208_204";
                     }
                 }
 
