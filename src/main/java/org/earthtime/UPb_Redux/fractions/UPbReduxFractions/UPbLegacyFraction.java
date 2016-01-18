@@ -41,7 +41,7 @@ import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.dataDictionaries.MeasuredRatios;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
-import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsModel;
+import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.reportViews.ReportRowGUIInterface;
 
 /**
@@ -86,8 +86,8 @@ public class UPbLegacyFraction extends Fraction implements
         setLegacy(true);
         this.ratioType = "UPb";
 
-        this.physicalConstantsModel = PhysicalConstantsModel.getDefaultEARTHTIMEPhysicalConstantsModel();
-
+        this.physicalConstantsModel = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel();
+        
         this.aliquotNumber = 1;
 
         this.changed = true;
@@ -318,7 +318,7 @@ public class UPbLegacyFraction extends Fraction implements
     @Override
     public AbstractRatiosDataModel getPhysicalConstantsModel() {
         if (physicalConstantsModel == null) {
-            physicalConstantsModel = PhysicalConstantsModel.getDefaultEARTHTIMEPhysicalConstantsModel();
+            physicalConstantsModel = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel();
         }
         return physicalConstantsModel;
     }
@@ -333,9 +333,9 @@ public class UPbLegacyFraction extends Fraction implements
                 || (!this.physicalConstantsModel.equals(physicalConstantsModel))) {
             this.physicalConstantsModel = physicalConstantsModel;
             this.setChanged(true);
-            System.out.println(this.getFractionID() //
-                    + "  is getting new physical constants model = "//
-                    + physicalConstantsModel.getNameAndVersion());
+//            System.out.println(this.getFractionID() //
+//                    + "  is getting new physical constants model = "//
+//                    + physicalConstantsModel.getNameAndVersion());
         }
     }
 

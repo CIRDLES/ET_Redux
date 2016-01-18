@@ -5,11 +5,11 @@
     * For more info, visit https://CIRDLES.org                                  *
     *****************************************************************************
 -->
-<MineralStandardUPbModel  xmlns="http://www.earth-time.org"
+<MineralStandardUPbModel  xmlns="https://raw.githubusercontent.com/EARTHTIME/Schema"
         xmlns:xs="http://www.w3.org/2001/XMLSchema"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.earth-time.org
-                            http://earth-time.org/projects/upb/public_data/XSD/MineralStandardUPbModelXMLSchema.xsd">
+        xsi:schemaLocation="https://raw.githubusercontent.com/EARTHTIME/Schema
+                            https://raw.githubusercontent.com/EARTHTIME/Schema/master/MineralStandardUPbModelXMLSchema.xsd">
   <modelName>FC1 - Anorthosite from Forest Center - Paces and Miller</modelName>
   <versionNumber>0</versionNumber>
   <minorVersionNumber>2</minorVersionNumber>

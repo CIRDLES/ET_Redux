@@ -58,24 +58,24 @@ import org.earthtime.ETReduxFrame;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.ReduxConstants.ANALYSIS_PURPOSE;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
-import org.earthtime.dialogs.DialogEditor;
-import org.earthtime.dialogs.DialogEditor.BigDecimalDocument;
-import org.earthtime.dialogs.DialogEditor.UnDoAbleDocument;
 import org.earthtime.UPb_Redux.dialogs.fractionManagers.FractionNotesDialog;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
-import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.renderers.EditFractionButton;
 import org.earthtime.UPb_Redux.samples.UPbSampleInterface;
 import org.earthtime.UPb_Redux.utilities.comparators.IntuitiveStringComparator;
 import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.dataDictionaries.SampleRegistries;
+import org.earthtime.dialogs.DialogEditor;
+import org.earthtime.dialogs.DialogEditor.BigDecimalDocument;
+import org.earthtime.dialogs.DialogEditor.UnDoAbleDocument;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
+import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.samples.SampleInterface;
 import org.earthtime.utilities.FileHelper;
 import org.jdesktop.layout.GroupLayout.ParallelGroup;
@@ -224,6 +224,10 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
         }
 
         sampleToolBar_buttonGroup.clearSelection();
+    }
+
+    @Override
+    public void initDialogContent() {
     }
 
     /**
@@ -774,30 +778,30 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
         tableComponent.getActionMap().put("upArrow",
                 new AbstractAction("upArrow") {
 
-                    public void actionPerformed(ActionEvent evt) {
-                        int nextUp = tableRows.indexOf(tableComponent);
-                        if (nextUp > 0) {
-                            nextUp--;
-                        }
+            public void actionPerformed(ActionEvent evt) {
+                int nextUp = tableRows.indexOf(tableComponent);
+                if (nextUp > 0) {
+                    nextUp--;
+                }
 
-                        tableRows.get(nextUp).grabFocus();
-                    }
-                });
+                tableRows.get(nextUp).grabFocus();
+            }
+        });
 
         tableComponent.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0), "downArrow");
         tableComponent.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "downArrow");
         tableComponent.getActionMap().put("downArrow",
                 new AbstractAction("downArrow") {
 
-                    public void actionPerformed(ActionEvent evt) {
-                        int nextDown = tableRows.indexOf(tableComponent);
-                        if ((nextDown + 1) < max) {
-                            nextDown++;
-                        }
+            public void actionPerformed(ActionEvent evt) {
+                int nextDown = tableRows.indexOf(tableComponent);
+                if ((nextDown + 1) < max) {
+                    nextDown++;
+                }
 
-                        tableRows.get(nextDown).grabFocus();
-                    }
-                });
+                tableRows.get(nextDown).grabFocus();
+            }
+        });
 
     }
 
@@ -1612,7 +1616,6 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
         // set temp variable for fractionation correction both u and Pb to use in locking fields
 //        boolean fraCorrU = tempFrac.isFractionationCorrectedU();//.getMeanAlphaU().compareTo( BigDecimal.ZERO ) != 0);
 //        boolean fraCorrPb = tempFrac.isFractionationCorrectedPb();//.getMeanAlphaPb().compareTo( BigDecimal.ZERO ) != 0);
-
         int row = ((UPbReduxAliquot) aliquot).getAliquotFractions().indexOf(tempFrac);
 
         // fractionID
@@ -1648,7 +1651,8 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
      */
     public boolean canBeInitialized() {
         return //
-                (sampleName_text.getText().trim().length() > 0) && //
+                (sampleName_text.getText().trim().length() > 0)
+                && //
                 (mySample.getFractions().size() > 0);
 
     }
@@ -1981,9 +1985,11 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
     @Override
     public void close() {
         super.close();
-        initialized = //
+        initialized
+                = //
                 initialized
-                && (sampleName_text.getText().trim().length() > 0) && //
+                && (sampleName_text.getText().trim().length() > 0)
+                && //
                 (mySample.getFractions().size() > 0);
 
         setVisible(false);

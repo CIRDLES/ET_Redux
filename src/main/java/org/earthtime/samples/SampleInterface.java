@@ -31,7 +31,6 @@ import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.filechooser.FileFilter;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.aliquots.Aliquot;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetup;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
@@ -387,6 +386,15 @@ public interface SampleInterface {
         return retVal;
     }
 
+    public default boolean isAnalysisTypeCOMPILED() {
+        boolean retVal = false;
+        try {
+            retVal = SampleAnalysisTypesEnum.COMPILED.equals(SampleAnalysisTypesEnum.valueOf(getSampleAnalysisType()));
+        } catch (Exception e) {
+        }
+        return retVal;
+    }
+
     /**
      *
      * @return
@@ -514,7 +522,7 @@ public interface SampleInterface {
         Vector<AliquotInterface> activeAliquots = new Vector<>();
         getAliquots().stream().filter((aliquot)
                 -> (((ReduxAliquotInterface) aliquot).getAliquotFractions().size() > 0)).filter((aliquot)
-                        -> (((ReduxAliquotInterface) aliquot).containsActiveFractions())).forEach(activeAliquots::add);
+                -> (((ReduxAliquotInterface) aliquot).containsActiveFractions())).forEach(activeAliquots::add);
         return activeAliquots;
     }
 
@@ -641,7 +649,7 @@ public interface SampleInterface {
             SESARSampleMetadata mySESARSampleMetadata);
 
     public AliquotInterface generateDefaultAliquot();
-    
+
     /**
      * adds an <code>Aliquot</code> to <code>aliquots</code>. It is created with
      * aliquot number relative to its position in the array such that the first
@@ -886,7 +894,7 @@ public interface SampleInterface {
      * @return the java.lang.String
      */
     public static String importAliquotFromLocalXMLFileIntoSample(SampleInterface sample, File folderName)
-            throws FileNotFoundException, BadLabDataException, IOException, BadOrMissingXMLSchemaException {
+            throws FileNotFoundException, BadLabDataException, IOException, BadOrMissingXMLSchemaException, ETException {
         String retval = "";
 
         String dialogTitle = "Select a U-Pb Aliquot XML File to Open: *.xml";
@@ -897,18 +905,22 @@ public interface SampleInterface {
 
         if (aliquotFile != null) {
             try {
-                Aliquot aliquotFromFile = new UPbReduxAliquot();
+                AliquotInterface aliquotFromFile = new UPbReduxAliquot();
 
                 aliquotFromFile
-                        = (Aliquot) ((XMLSerializationI) aliquotFromFile).readXMLObject(
+                        = (AliquotInterface) ((XMLSerializationI) aliquotFromFile).readXMLObject(
                                 aliquotFile.getCanonicalPath(), true);
-
-                importAliquotIntoSample(sample, aliquotFromFile, aliquotFile.getName());
-            } catch (ETException ex) {
-            } finally {
-                // return folder for persistent state even if fails
                 retval = aliquotFile.getParent();
+
+                //dec 2015 - check instrument type
+                if (aliquotFromFile.usesIDTIMS() || aliquotFromFile.usesMCIPMS()) {
+                    importAliquotIntoSample(sample, aliquotFromFile, aliquotFile.getName());
+                } else {
+                    throw new ETException(null, "This sample is not TIMS or LAICPMS but is " + aliquotFromFile.getAliquotInstrumentalMethod());
+                }
+            } catch (IOException | BadOrMissingXMLSchemaException iOException) {
             }
+
         } else {
             throw new FileNotFoundException();
         }
@@ -1547,35 +1559,35 @@ public interface SampleInterface {
             if (!includeSingleDates
                     && SampleDateTypes.getSampleDateType(i).startsWith("single")) {
                 // do nothing
-            } else {
-                if (getSampleDateModelByName(SampleDateTypes.getSampleDateType(i)) == null) {
-                    ValueModel tempModel = null;
+            } else if (getSampleDateModelByName(SampleDateTypes.getSampleDateType(i)) == null) {
+                ValueModel tempModel = null;
 
-                    if (SampleDateTypes.getSampleDateType(i).endsWith("intercept")) {
-                        tempModel = //
-                                new SampleDateInterceptModel(//
-                                        SampleDateTypes.getSampleDateType(i),
-                                        SampleDateTypes.getSampleDateTypeMethod(i),
-                                        SampleDateTypes.getSampleDateTypeName(i),
-                                        BigDecimal.ZERO,
-                                        "ABS",
-                                        BigDecimal.ZERO);
+                if (SampleDateTypes.getSampleDateType(i).endsWith("intercept")) {
+                    tempModel
+                            = //
+                            new SampleDateInterceptModel(//
+                                    SampleDateTypes.getSampleDateType(i),
+                                    SampleDateTypes.getSampleDateTypeMethod(i),
+                                    SampleDateTypes.getSampleDateTypeName(i),
+                                    BigDecimal.ZERO,
+                                    "ABS",
+                                    BigDecimal.ZERO);
 
-                        ((SampleDateModel) tempModel).setSample(this);
-                    } else {
-                        tempModel = //
-                                new SampleDateModel(//
-                                        SampleDateTypes.getSampleDateType(i),
-                                        SampleDateTypes.getSampleDateTypeMethod(i),
-                                        SampleDateTypes.getSampleDateTypeName(i),
-                                        BigDecimal.ZERO,
-                                        "ABS",
-                                        BigDecimal.ZERO);
+                    ((SampleDateModel) tempModel).setSample(this);
+                } else {
+                    tempModel
+                            = //
+                            new SampleDateModel(//
+                                    SampleDateTypes.getSampleDateType(i),
+                                    SampleDateTypes.getSampleDateTypeMethod(i),
+                                    SampleDateTypes.getSampleDateTypeName(i),
+                                    BigDecimal.ZERO,
+                                    "ABS",
+                                    BigDecimal.ZERO);
 
-                        ((SampleDateModel) tempModel).setSample(this);
-                    }
-                    retVal.add(tempModel);
+                    ((SampleDateModel) tempModel).setSample(this);
                 }
+                retVal.add(tempModel);
             }
         }
         return retVal;

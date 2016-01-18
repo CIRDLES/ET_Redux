@@ -66,16 +66,12 @@ import org.earthtime.ETReduxFrame;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.ReduxConstants.ANALYSIS_PURPOSE;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
-import org.earthtime.dialogs.DialogEditor;
-import org.earthtime.dialogs.DialogEditor.BigDecimalDocument;
-import org.earthtime.dialogs.DialogEditor.UnDoAbleDocument;
 import org.earthtime.UPb_Redux.dialogs.fractionManagers.FractionNotesDialog;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.FractionMetaData;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
-import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.renderers.EditFractionButton;
 import org.earthtime.UPb_Redux.samples.SampleMetaData;
 import org.earthtime.UPb_Redux.samples.UPbSampleInterface;
@@ -85,12 +81,16 @@ import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.aliquots.ReduxAliquotInterface;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.dataDictionaries.SampleRegistries;
+import org.earthtime.dialogs.DialogEditor;
+import org.earthtime.dialogs.DialogEditor.BigDecimalDocument;
+import org.earthtime.dialogs.DialogEditor.UnDoAbleDocument;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.initialPbModelsET.InitialPbModelET;
 import org.earthtime.ratioDataModels.initialPbModelsET.StaceyKramersInitialPbModelET;
+import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.samples.SampleInterface;
 import org.earthtime.utilities.FileHelper;
 import org.earthtime.xmlUtilities.XMLSerializationI;
@@ -274,6 +274,10 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
                 = new SpinnerNumberModel(1, 1, 20, 1);
         insertFractionCount_spinner.setModel(valueDigits_spinnerModel);
 
+    }
+
+    @Override
+    public void initDialogContent() {
     }
 
     /**
@@ -968,30 +972,30 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
         tableComponent.getActionMap().put("upArrow",
                 new AbstractAction("upArrow") {
 
-                    public void actionPerformed(ActionEvent evt) {
-                        int nextUp = tableRows.indexOf(tableComponent);
-                        if (nextUp > 0) {
-                            nextUp--;
-                        }
+            public void actionPerformed(ActionEvent evt) {
+                int nextUp = tableRows.indexOf(tableComponent);
+                if (nextUp > 0) {
+                    nextUp--;
+                }
 
-                        tableRows.get(nextUp).grabFocus();
-                    }
-                });
+                tableRows.get(nextUp).grabFocus();
+            }
+        });
 
         tableComponent.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0), "downArrow");
         tableComponent.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "downArrow");
         tableComponent.getActionMap().put("downArrow",
                 new AbstractAction("downArrow") {
 
-                    public void actionPerformed(ActionEvent evt) {
-                        int nextDown = tableRows.indexOf(tableComponent);
-                        if ((nextDown + 1) < max) {
-                            nextDown++;
-                        }
+            public void actionPerformed(ActionEvent evt) {
+                int nextDown = tableRows.indexOf(tableComponent);
+                if ((nextDown + 1) < max) {
+                    nextDown++;
+                }
 
-                        tableRows.get(nextDown).grabFocus();
-                    }
-                });
+                tableRows.get(nextDown).grabFocus();
+            }
+        });
 
     }
 
@@ -1459,7 +1463,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
         String fractionIsZircon = "fraction is a Zircon";
         fractionInitialPbChoice.get(row).removeItem(fractionIsZircon);
         if (isZircon) {
-            ((FractionI)tempFrac).setInitialPbModel(initialPbNoneModel);
+            ((FractionI) tempFrac).setInitialPbModel(initialPbNoneModel);
             fractionInitialPbChoice.get(row).setEnabled(false);
             // display reason or warning
             String reasonNoInitialPb = fractionIsZircon;
@@ -1467,12 +1471,12 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
             fractionInitialPbChoice.get(row).setSelectedItem(reasonNoInitialPb);
         } else {
             // if model is "none" use default otherwise proceed
-            if ( ((FractionI)tempFrac).getInitialPbModel().equals(initialPbNoneModel)) {
-                 ((FractionI)tempFrac).setInitialPbModel(initialPbDefaultModel);
+            if (((FractionI) tempFrac).getInitialPbModel().equals(initialPbNoneModel)) {
+                ((FractionI) tempFrac).setInitialPbModel(initialPbDefaultModel);
             }
             fractionInitialPbChoice.get(row).setEnabled(true);
             fractionInitialPbChoice.get(row).setSelectedIndex(0);
-            fractionInitialPbChoice.get(row).setSelectedItem( ((FractionI)tempFrac).getInitialPbModel().getReduxLabDataElementName());
+            fractionInitialPbChoice.get(row).setSelectedItem(((FractionI) tempFrac).getInitialPbModel().getReduxLabDataElementName());
         }
 
         boolean hasStaceyKramersModel = ((FractionI) tempFrac).getInitialPbModel() instanceof StaceyKramersInitialPbModelET;
@@ -1792,8 +1796,8 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
             throws NumberFormatException {
 
         // set temp variable for fractionation correction both u and Pb to use in locking fields
-        boolean fraCorrU = ((FractionI)tempFrac).isFractionationCorrectedU();
-        boolean fraCorrPb = ((FractionI)tempFrac).isFractionationCorrectedPb();
+        boolean fraCorrU = ((FractionI) tempFrac).isFractionationCorrectedU();
+        boolean fraCorrPb = ((FractionI) tempFrac).isFractionationCorrectedPb();
 
         int row = ((UPbReduxAliquot) aliquot).getAliquotFractions().indexOf(tempFrac);
 
@@ -1805,8 +1809,8 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
 
         // feb 2009
         // test zircon state change for ReductionHandler
-        if (((FractionI)tempFrac).isZircon() != ((JCheckBox) fractionZirconCheckBox.get(row)).isSelected()) {
-            ((FractionI)tempFrac).setZircon(((AbstractButton) fractionZirconCheckBox.get(row)).isSelected());
+        if (((FractionI) tempFrac).isZircon() != ((JCheckBox) fractionZirconCheckBox.get(row)).isSelected()) {
+            ((FractionI) tempFrac).setZircon(((AbstractButton) fractionZirconCheckBox.get(row)).isSelected());
             ((UPbFraction) tempFrac).initializeReductionHandler();
         }
 
@@ -1828,7 +1832,8 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
             ValueModel noneAlphaPb = ((UPbFraction) tempFrac).getMyLabData().getNoneAlphaPbModel();
             if (((UPbFraction) tempFrac).needsAlphaPbModel()) {
                 if (((UPbFractionI) tempFrac).getAlphaPbModel().equals(noneAlphaPb)) {
-                    ValueModel alphaPb = //
+                    ValueModel alphaPb
+                            = //
                             ((UPbFraction) tempFrac).getMyLabData().getAnAlphaPbModel(((UPbReduxAliquot) aliquot).getDefaultAlphaPbModelID());
                     ((UPbFractionI) tempFrac).setAlphaPbModel(alphaPb);
                 }
@@ -1844,7 +1849,8 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
             ValueModel noneAlphaU = ((UPbFraction) tempFrac).getMyLabData().getNoneAlphaUModel();
             if (((UPbFraction) tempFrac).needsAlphaUModel()) {
                 if (((UPbFractionI) tempFrac).getAlphaUModel().equals(noneAlphaU)) {
-                    ValueModel alphaU = //
+                    ValueModel alphaU
+                            = //
                             ((UPbFraction) tempFrac).getMyLabData().getAnAlphaUModel(((UPbReduxAliquot) aliquot).getDefaultAlphaUModelID());
                     ((UPbFractionI) tempFrac).setAlphaUModel(alphaU);
                 }
@@ -1880,9 +1886,9 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
         try {
             AbstractRatiosDataModel initialPbModel = ((UPbFraction) tempFrac).getMyLabData().//
                     getAnInitialPbModel((String) fractionInitialPbChoice.get(row).getSelectedItem());
-            ((FractionI)tempFrac).setInitialPbModel(initialPbModel);
+            ((FractionI) tempFrac).setInitialPbModel(initialPbModel);
 
-            ((FractionI)tempFrac).calculateStaceyKramersInitialPbModelValues();
+            ((FractionI) tempFrac).calculateStaceyKramersInitialPbModelValues();
 
         } catch (BadLabDataException ex) {
             new ETWarningDialog(ex).setVisible(true);
@@ -1920,7 +1926,8 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
      */
     public boolean canBeInitialized() {
         return //
-                (sampleName_text.getText().trim().length() > 0) && //
+                (sampleName_text.getText().trim().length() > 0)
+                && //
                 (mySample.getFractions().size() > 0);
 
     }
@@ -2050,7 +2057,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
 
             String importFolder = null;
             try {
-                importFolder = SampleInterface.importFractionsFromXMLFilesIntoSample(mySample, getImportedXMLFractionsFolder(), aliquotNumber, true);
+                importFolder = SampleInterface.importFractionsFromXMLFilesIntoSample(mySample, getImportedXMLFractionsFolder(), aliquotNumber, false); // jan 2016 because some older files are missing correct headers  true);
             } catch (FileNotFoundException fileNotFoundException) {
             } catch (BadLabDataException ex) {
                 new ETWarningDialog(ex).setVisible(true);
@@ -2251,9 +2258,11 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
     @Override
     public void close() {
         super.close();
-        initialized = //
+        initialized
+                = //
                 initialized
-                && (sampleName_text.getText().trim().length() > 0) && //
+                && (sampleName_text.getText().trim().length() > 0)
+                && //
                 (mySample.getFractions().size() > 0);
 
         setVisible(false);

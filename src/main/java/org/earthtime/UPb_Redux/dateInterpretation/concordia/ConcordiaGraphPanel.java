@@ -71,7 +71,6 @@ import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.TitleBoxPanel
 import org.earthtime.UPb_Redux.dialogs.graphManagers.GraphAxesDialog;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
-import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.user.SampleDateInterpretationGUIOptions;
 import org.earthtime.UPb_Redux.valueModels.SampleDateInterceptModel;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
@@ -84,6 +83,7 @@ import org.earthtime.dataDictionaries.Lambdas;
 import org.earthtime.dataDictionaries.RadRatiosPbcCorrected;
 import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.fractions.ETFractionInterface;
+import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.reportViews.ReportUpdaterInterface;
 import org.earthtime.samples.SampleInterface;
 import org.w3c.dom.DOMImplementation;
@@ -223,8 +223,8 @@ public class ConcordiaGraphPanel extends JLayeredPane
      *
      */
     public void setViewOptions() {
-        this.concordiaOptions =//
-                sample.getSampleDateInterpretationGUISettings().getConcordiaOptions();
+        this.concordiaOptions
+                = sample.getSampleDateInterpretationGUISettings().getConcordiaOptions();
         setAliquotOptions(//
                 sample.getSampleDateInterpretationGUISettings().getAliquotOptions());
 
@@ -358,8 +358,8 @@ public class ConcordiaGraphPanel extends JLayeredPane
 
         try {
             if (getConcordiaOptions().containsKey("concordiaLineColor")) {
-                String[] temp = //
-                        getConcordiaOptions().get("concordiaLineColor").split(",");
+                String[] temp
+                        = getConcordiaOptions().get("concordiaLineColor").split(",");
                 concordiaLineColor = buildRGBColor(temp);
             }
         } catch (Exception e) {
@@ -389,19 +389,19 @@ public class ConcordiaGraphPanel extends JLayeredPane
         Color interceptLineColor = new Color(0, 0, 0);
         try {
             if (getConcordiaOptions().containsKey("interceptLineColor")) {
-                String[] temp = //
-                        getConcordiaOptions().get("interceptLineColor").split(",");
+                String[] temp
+                        = getConcordiaOptions().get("interceptLineColor").split(",");
                 interceptLineColor = buildRGBColor(temp);
             }
         } catch (Exception e) {
         }
 
-        String interceptErrorLineStyle = //
-                getStringEntryFromAliquotOptions(getConcordiaOptions(), "interceptErrorLineStyle", "solid");
+        String interceptErrorLineStyle
+                = getStringEntryFromAliquotOptions(getConcordiaOptions(), "interceptErrorLineStyle", "solid");
 
-        Boolean truncateRegressionCurves = //
-                Boolean.valueOf(getStringEntryFromAliquotOptions(getConcordiaOptions(), //
-                                "truncateRegressionCurves", "false"));
+        Boolean truncateRegressionCurves
+                = Boolean.valueOf(getStringEntryFromAliquotOptions(getConcordiaOptions(), //
+                        "truncateRegressionCurves", "false"));
 
         axesTicLabelFont = getStringEntryFromConcordiaOptions("axesTicLabelFont", axesTicLabelFont);
         axesTicLabelFontSize = getStringEntryFromConcordiaOptions("axesTicLabelFontSize", axesTicLabelFontSize);
@@ -411,16 +411,16 @@ public class ConcordiaGraphPanel extends JLayeredPane
         if (isShowTitleBox()) {
             ((TitleBoxPanel) concordiaTitlePanel)//
                     .setTitleFont(getStringEntryFromConcordiaOptions(//
-                                    "titleFont", ((TitleBoxPanel) concordiaTitlePanel).getTitleFont()));
+                            "titleFont", ((TitleBoxPanel) concordiaTitlePanel).getTitleFont()));
             ((TitleBoxPanel) concordiaTitlePanel)//
                     .setTitleFontSize(getStringEntryFromConcordiaOptions(//
-                                    "titleFontSize", ((TitleBoxPanel) concordiaTitlePanel).getTitleFontSize()));
+                            "titleFontSize", ((TitleBoxPanel) concordiaTitlePanel).getTitleFontSize()));
             ((TitleBoxPanel) concordiaTitlePanel)//
                     .setSubtitle(getStringEntryFromConcordiaOptions(//
-                                    "subTitleText", ((TitleBoxPanel) concordiaTitlePanel).getSubtitle()));
+                            "subTitleText", ((TitleBoxPanel) concordiaTitlePanel).getSubtitle()));
             ((TitleBoxPanel) concordiaTitlePanel)//
                     .setTitleBoxShow(Boolean.valueOf(getStringEntryFromConcordiaOptions(//
-                                            "titleBoxShow", Boolean.toString(((TitleBoxPanel) concordiaTitlePanel).isTitleBoxShow()))));
+                            "titleBoxShow", Boolean.toString(((TitleBoxPanel) concordiaTitlePanel).isTitleBoxShow()))));
         }
 
         g2d.setClip(getLeftMargin(), getTopMargin(), (int) getGraphWidth(), (int) getGraphHeight());
@@ -506,8 +506,8 @@ public class ConcordiaGraphPanel extends JLayeredPane
 
                     Color excludedFillColor = new Color(255, 255, 255);
                     if (myAliquotOptions.containsKey("excludedFillColor")) {
-                        String[] temp = //
-                                myAliquotOptions.get("excludedFillColor").split(",");
+                        String[] temp
+                                = myAliquotOptions.get("excludedFillColor").split(",");
                         excludedFillColor = buildRGBColor(temp);
                     }
 
@@ -549,15 +549,15 @@ public class ConcordiaGraphPanel extends JLayeredPane
 
                     Color excludedBorderColor = new Color(0, 0, 0);
                     if (myAliquotOptions.containsKey("excludedBorderColor")) {
-                        String[] temp = //
-                                myAliquotOptions.get("excludedBorderColor").split(",");
+                        String[] temp
+                                = myAliquotOptions.get("excludedBorderColor").split(",");
                         excludedBorderColor = buildRGBColor(temp);
                     }
 
                     Color excludedCenterColor = new Color(0, 0, 0);
                     if (myAliquotOptions.containsKey("excludedCenterColor")) {
-                        String[] temp = //
-                                myAliquotOptions.get("excludedCenterColor").split(",");
+                        String[] temp
+                                = myAliquotOptions.get("excludedCenterColor").split(",");
                         excludedCenterColor = buildRGBColor(temp);
                     }
 
@@ -592,8 +592,8 @@ public class ConcordiaGraphPanel extends JLayeredPane
 
                 Color includedFillColor = new Color(255, 255, 255);
                 if (myAliquotOptions.containsKey("includedFillColor")) {
-                    String[] temp = //
-                            myAliquotOptions.get("includedFillColor").split(",");
+                    String[] temp
+                            = myAliquotOptions.get("includedFillColor").split(",");
                     includedFillColor = buildRGBColor(temp);
 
                     // april 2014 experiment
@@ -637,15 +637,15 @@ public class ConcordiaGraphPanel extends JLayeredPane
 
                 Color includedBorderColor = new Color(0, 0, 0);
                 if (myAliquotOptions.containsKey("includedBorderColor")) {
-                    String[] temp = //
-                            myAliquotOptions.get("includedBorderColor").split(",");
+                    String[] temp
+                            = myAliquotOptions.get("includedBorderColor").split(",");
                     includedBorderColor = buildRGBColor(temp);
                 }
 
                 Color includedCenterColor = new Color(0, 0, 0);
                 if (myAliquotOptions.containsKey("includedCenterColor")) {
-                    String[] temp = //
-                            myAliquotOptions.get("includedCenterColor").split(",");
+                    String[] temp
+                            = myAliquotOptions.get("includedCenterColor").split(",");
                     includedCenterColor = buildRGBColor(temp);
                 }
 
@@ -708,26 +708,26 @@ public class ConcordiaGraphPanel extends JLayeredPane
 
             ((DateInterpretationBoxPanel) preferredDatePanel)//
                     .setDateFontName(getStringEntryFromAliquotOptions(myAliquotOptions, //
-                                    "dateFont", ((DateInterpretationBoxPanel) preferredDatePanel).getDateFontName()));
+                            "dateFont", ((DateInterpretationBoxPanel) preferredDatePanel).getDateFontName()));
             ((DateInterpretationBoxPanel) preferredDatePanel)//
                     .setDateFontSize(getStringEntryFromAliquotOptions(myAliquotOptions, //
-                                    "dateFontSize", ((DateInterpretationBoxPanel) preferredDatePanel).getDateFontSize()));
+                            "dateFontSize", ((DateInterpretationBoxPanel) preferredDatePanel).getDateFontSize()));
             ((DateInterpretationBoxPanel) preferredDatePanel)//
                     .setVisibleBoxOutline(Boolean.valueOf(getStringEntryFromAliquotOptions(myAliquotOptions, //
-                                            "visibleDateBoxOutline", Boolean.toString(((DateInterpretationBoxPanel) preferredDatePanel).//
-                                                    isVisibleBoxOutline()))));
+                            "visibleDateBoxOutline", Boolean.toString(((DateInterpretationBoxPanel) preferredDatePanel).//
+                                    isVisibleBoxOutline()))));
             ((DateInterpretationBoxPanel) preferredDatePanel)//
                     .setDateShowDate(Boolean.valueOf(getStringEntryFromAliquotOptions(myAliquotOptions, //
-                                            "dateShowDate", Boolean.toString(((DateInterpretationBoxPanel) preferredDatePanel).//
-                                                    isDateShowDate()))));
+                            "dateShowDate", Boolean.toString(((DateInterpretationBoxPanel) preferredDatePanel).//
+                                    isDateShowDate()))));
             ((DateInterpretationBoxPanel) preferredDatePanel)//
                     .setDateShowMSWD(Boolean.valueOf(getStringEntryFromAliquotOptions(myAliquotOptions, //
-                                            "dateShowMSWD", Boolean.toString(((DateInterpretationBoxPanel) preferredDatePanel).//
-                                                    isDateShowMSWD()))));
+                            "dateShowMSWD", Boolean.toString(((DateInterpretationBoxPanel) preferredDatePanel).//
+                                    isDateShowMSWD()))));
             ((DateInterpretationBoxPanel) preferredDatePanel)//
                     .setDateShowN(Boolean.valueOf(getStringEntryFromAliquotOptions(myAliquotOptions, //
-                                            "dateShowN", Boolean.toString(((DateInterpretationBoxPanel) preferredDatePanel).//
-                                                    isDateShowN()))));
+                            "dateShowN", Boolean.toString(((DateInterpretationBoxPanel) preferredDatePanel).//
+                                    isDateShowN()))));
 
             myAliquotOptions//
                     .put("dateBoxX", String.valueOf(getSavedPreferredDatePanelX()));
@@ -807,8 +807,8 @@ public class ConcordiaGraphPanel extends JLayeredPane
                     14));
 
             String myText = "SAMPLE = " + sample.getSampleName().trim();
-            TextLayout mLayout = //
-                    new TextLayout(
+            TextLayout mLayout
+                    = new TextLayout(
                             myText, g2d.getFont(), g2d.getFontRenderContext());
 
             Rectangle2D bounds = mLayout.getBounds();
@@ -822,8 +822,8 @@ public class ConcordiaGraphPanel extends JLayeredPane
         // note here that min and max refer to the x and y axis values
         // as the corresponding dates for x-axis are high for minx
 
-        double minX_t = //
-                (Math.log1p(getMaxX_Display()) //
+        double minX_t
+                = (Math.log1p(getMaxX_Display()) //
                 - Math.log(getMaxX_Display())) //
                 / lambda238.getValue().doubleValue();
 
@@ -833,8 +833,8 @@ public class ConcordiaGraphPanel extends JLayeredPane
 
         setMinT(Math.max(minX_t, minY_t));// switched min max june 2010
 
-        double maxX_t = //
-                (Math.log1p(getMinX_Display()) //
+        double maxX_t
+                = (Math.log1p(getMinX_Display()) //
                 - Math.log(getMinX_Display())) //
                 / lambda238.getValue().doubleValue();
         double maxY_t = ((Age207_206r) tempDate207_206r).calculateDate(//
@@ -844,7 +844,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
 
         ConcordiaLine myConcordiaLine
                 = new ConcordiaLine(new TeraWasserburgLineSegment(//
-                                lambda235, lambda238, null, minT, maxT), currentGraphAxesSetup);
+                        lambda235, lambda238, null, minT, maxT), currentGraphAxesSetup);
 
         // curve the line
         myConcordiaLine.RefineLineByRecursiveHalving(5);//7 ); //10);
@@ -875,7 +875,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
 
         ConcordiaLine myConcordiaLine
                 = new ConcordiaLine(new ConcordiaLineSegment( //
-                                lambda235, lambda238, minT, maxT), currentGraphAxesSetup);
+                        lambda235, lambda238, minT, maxT), currentGraphAxesSetup);
 
         // curve the line
         // may 2010 bezier curve approach added
@@ -907,7 +907,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
 
         ConcordiaLine myConcordiaLine
                 = new ConcordiaLine(new ConcordiaLineSegment( //
-                                lambda232, lambda238, minT, maxT), currentGraphAxesSetup);
+                        lambda232, lambda238, minT, maxT), currentGraphAxesSetup);
 
         // curve the line
         // may 2010 bezier curve approach added
@@ -1029,11 +1029,11 @@ public class ConcordiaGraphPanel extends JLayeredPane
 
                 if (truncateRegressionCurves) {
                     // determine x value for lower and upper dates
-                    lowerYorkDate = //
-                            curAliquot.getASampleDateModelByName("lower intercept").getValue().doubleValue();
+                    lowerYorkDate
+                            = curAliquot.getASampleDateModelByName("lower intercept").getValue().doubleValue();
                     lowerYorkX = Math.expm1(lambda235.getValue().doubleValue() * lowerYorkDate);
-                    upperYorkDate = //
-                            curAliquot.getASampleDateModelByName("upper intercept").getValue().doubleValue();
+                    upperYorkDate
+                            = curAliquot.getASampleDateModelByName("upper intercept").getValue().doubleValue();
                     upperYorkX = Math.expm1(lambda235.getValue().doubleValue() * upperYorkDate);
                 }
 
@@ -1051,16 +1051,16 @@ public class ConcordiaGraphPanel extends JLayeredPane
                 double startLowerPlusX = minX_Display - xIncrement;
                 double endUpperMinusX = maxX_Display + xIncrement;
                 if (truncateRegressionCurves) {
-                    double lowerPlus = //
-                            ((SampleDateInterceptModel) curAliquot.getASampleDateModelByName("lower intercept")).getPlusInternalTwoSigmaUnct().doubleValue();
+                    double lowerPlus
+                            = ((SampleDateInterceptModel) curAliquot.getASampleDateModelByName("lower intercept")).getPlusInternalTwoSigmaUnct().doubleValue();
                     startLowerPlusX = Math.expm1(lambda235.getValue().doubleValue() * (lowerYorkDate + lowerPlus));
-                    double upperMinus = //
-                            ((SampleDateInterceptModel) curAliquot.getASampleDateModelByName("upper intercept")).getMinusInternalTwoSigmaUnct().doubleValue();
+                    double upperMinus
+                            = ((SampleDateInterceptModel) curAliquot.getASampleDateModelByName("upper intercept")).getMinusInternalTwoSigmaUnct().doubleValue();
                     endUpperMinusX = Math.expm1(lambda235.getValue().doubleValue() * (upperYorkDate + upperMinus));
                 }
 
-                double sigmaYbarStart = //
-                        Math.sqrt(getYorkLineFit().getYInterceptVariance() //
+                double sigmaYbarStart
+                        = Math.sqrt(getYorkLineFit().getYInterceptVariance() //
                                 + 2.0 * startLowerPlusX * getYorkLineFit().getCovYIntercept__slope() //
                                 + getYorkLineFit().getSlopeVariance() * startLowerPlusX * startLowerPlusX);
                 double yUpStart = getYorkLineFit().getYIntercept()//
@@ -1073,8 +1073,8 @@ public class ConcordiaGraphPanel extends JLayeredPane
                         (float) mapY(yUpStart));
 
                 for (double xStep = startLowerPlusX; xStep <= endUpperMinusX; xStep += xIncrement) {
-                    double sigmaYbar = //
-                            Math.sqrt(getYorkLineFit().getYInterceptVariance() //
+                    double sigmaYbar
+                            = Math.sqrt(getYorkLineFit().getYInterceptVariance() //
                                     + 2.0 * xStep * getYorkLineFit().getCovYIntercept__slope() //
                                     + getYorkLineFit().getSlopeVariance() * xStep * xStep);
 
@@ -1098,16 +1098,16 @@ public class ConcordiaGraphPanel extends JLayeredPane
                 double endLowerMinusX = minX_Display - xIncrement;
 
                 if (truncateRegressionCurves) {
-                    double upperPlus = //
-                            ((SampleDateInterceptModel) curAliquot.getASampleDateModelByName("upper intercept")).getPlusInternalTwoSigmaUnct().doubleValue();
+                    double upperPlus
+                            = ((SampleDateInterceptModel) curAliquot.getASampleDateModelByName("upper intercept")).getPlusInternalTwoSigmaUnct().doubleValue();
                     startUpperPlusX = Math.expm1(lambda235.getValue().doubleValue() * (upperYorkDate + upperPlus));
-                    double lowerMinus = //
-                            ((SampleDateInterceptModel) curAliquot.getASampleDateModelByName("lower intercept")).getMinusInternalTwoSigmaUnct().doubleValue();
+                    double lowerMinus
+                            = ((SampleDateInterceptModel) curAliquot.getASampleDateModelByName("lower intercept")).getMinusInternalTwoSigmaUnct().doubleValue();
                     endLowerMinusX = Math.expm1(lambda235.getValue().doubleValue() * (lowerYorkDate + lowerMinus));
                 }
 
-                double sigmaYbarEnd = //
-                        Math.sqrt(getYorkLineFit().getYInterceptVariance() //
+                double sigmaYbarEnd
+                        = Math.sqrt(getYorkLineFit().getYInterceptVariance() //
                                 + 2.0 * startUpperPlusX * getYorkLineFit().getCovYIntercept__slope() //
                                 + getYorkLineFit().getSlopeVariance() * startUpperPlusX * startUpperPlusX);
                 double yDownEnd = getYorkLineFit().getYIntercept() //
@@ -1118,8 +1118,8 @@ public class ConcordiaGraphPanel extends JLayeredPane
                         (float) mapY(yDownEnd));
 
                 for (double xStep = startUpperPlusX; xStep >= endLowerMinusX; xStep -= xIncrement) {
-                    double sigmaYbar = //
-                            Math.sqrt(getYorkLineFit().getYInterceptVariance() //
+                    double sigmaYbar
+                            = Math.sqrt(getYorkLineFit().getYInterceptVariance() //
                                     + 2.0 * xStep * getYorkLineFit().getCovYIntercept__slope() //
                                     + getYorkLineFit().getSlopeVariance() * xStep * xStep);
 
@@ -1142,8 +1142,8 @@ public class ConcordiaGraphPanel extends JLayeredPane
 
                 if (interceptErrorLineStyle.equalsIgnoreCase("dashed")) {
                     float dash1[] = {10.0f};
-                    BasicStroke dashed = //
-                            new BasicStroke(interceptLineWeight,
+                    BasicStroke dashed
+                            = new BasicStroke(interceptLineWeight,
                                     BasicStroke.CAP_BUTT,
                                     BasicStroke.JOIN_MITER,
                                     10.0f, dash1, 0.0f);
@@ -1422,6 +1422,9 @@ public class ConcordiaGraphPanel extends JLayeredPane
             } else {
                 f.setErrorEllipsePath(null);
             }
+        } else {
+            // dec 2015 due to downhole and intercept flavors
+            f.setErrorEllipsePath(null);
         }
     }
 
@@ -1520,7 +1523,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
             curAliquot = sample.getAliquotByNumber(selectedFractions.get(0)//
                     .getAliquotNumber());
 
-            currentBestDate = ((AliquotForUPbInterface)curAliquot).getBestAgeDivider206_238().doubleValue();
+            currentBestDate = ((AliquotForUPbInterface) curAliquot).getBestAgeDivider206_238().doubleValue();
 
         } catch (Exception e) {
         }
@@ -1547,7 +1550,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
 
         this.removeAll();
 
-        // allows for escaspe from a bad plot that is saved
+        // allows for escape from a bad plot that is saved
         if (getMaxX() >= 6500) {
             getCurrentGraphAxesSetup().setDoPlotting(false);
         }
@@ -1806,8 +1809,8 @@ public class ConcordiaGraphPanel extends JLayeredPane
             concordiaTitlePanel//
                     .setLocation(//
                             Integer.parseInt(getStringEntryFromConcordiaOptions(//
-                                            "titleBoxX", String.valueOf(concordiaTitlePanel.getX()))), Integer.parseInt(getStringEntryFromConcordiaOptions(//
-                                            "titleBoxY", String.valueOf(concordiaTitlePanel.getY()))));
+                                    "titleBoxX", String.valueOf(concordiaTitlePanel.getX()))), Integer.parseInt(getStringEntryFromConcordiaOptions(//
+                            "titleBoxY", String.valueOf(concordiaTitlePanel.getY()))));
 
             setSavedConcordiaTitlePanelX(concordiaTitlePanel.getX());
             setSavedConcordiaTitlePanelY(concordiaTitlePanel.getY());
@@ -1815,8 +1818,8 @@ public class ConcordiaGraphPanel extends JLayeredPane
             heatMapLegendPanel//
                     .setLocation(//
                             Integer.parseInt(getStringEntryFromConcordiaOptions(//
-                                            "titleBoxX", String.valueOf(concordiaTitlePanel.getX()))), Integer.parseInt(getStringEntryFromConcordiaOptions(//
-                                            "titleBoxY", String.valueOf(concordiaTitlePanel.getY()))));
+                                    "titleBoxX", String.valueOf(concordiaTitlePanel.getX()))), Integer.parseInt(getStringEntryFromConcordiaOptions(//
+                            "titleBoxY", String.valueOf(concordiaTitlePanel.getY()))));
         }
 
         // oct 2014
@@ -2318,10 +2321,6 @@ public class ConcordiaGraphPanel extends JLayeredPane
                 double y = convertMouseYToValue(evt.getY());
                 DecimalFormat f = new DecimalFormat("0.0000E00");
 
-//                JMenuItem menuItemXY = //
-//                        new JMenuItem("(" + f.format(x) + ", " + f.format(y) + ")");
-                //popup.add( menuItemXY );
-
                 JMenuItem menuItem = new JMenuItem("Automatically configure axes");
                 menuItem.addActionListener(new ActionListener() {
 
@@ -2423,14 +2422,12 @@ public class ConcordiaGraphPanel extends JLayeredPane
                     repaint();
                 }
             }
-        } else {
-            // set best age divider
-            if (changingBestDateDivider) {
-                ((AliquotForUPbInterface)curAliquot).setBestAgeDivider206_238(new BigDecimal(currentBestDate));
+        } else // set best age divider
+         if (changingBestDateDivider) {
+                ((AliquotForUPbInterface) curAliquot).setBestAgeDivider206_238(new BigDecimal(currentBestDate));
                 ((UPbReduxAliquot) curAliquot).updateBestAge();
                 reportUpdater.updateReportTable(false);
             }
-        }
 
         changingBestDateDivider = false;
 
@@ -2517,11 +2514,11 @@ public class ConcordiaGraphPanel extends JLayeredPane
 
             if (getImageMode().equalsIgnoreCase("PAN")) {
 
-                double xOffsetValue = //
-                        getDisplayOffsetX() //
+                double xOffsetValue
+                        = getDisplayOffsetX() //
                         + (convertMouseXToValue(getZoomMinX()) - convertMouseXToValue(getZoomMaxX()));
-                double yOffsetValue = //
-                        getDisplayOffsetY() //
+                double yOffsetValue
+                        = getDisplayOffsetY() //
                         + (convertMouseYToValue(getZoomMinY()) - convertMouseYToValue(getZoomMaxY()));
 
                 // test for out of bounds
@@ -2877,8 +2874,8 @@ public class ConcordiaGraphPanel extends JLayeredPane
                 .put("titleBoxY", String.valueOf(getSavedConcordiaTitlePanelY()));
 
         if (preferredDatePanel != null) {
-            String aliquotName = //
-                    ((SampleDateModel) ((DateInterpretationBoxPanel) preferredDatePanel).//
+            String aliquotName
+                    = ((SampleDateModel) ((DateInterpretationBoxPanel) preferredDatePanel).//
                     getPreferredDateModel()).getAliquot().getAliquotName();
             Map<String, String> myAliquotOptions = getAliquotOptions().get(aliquotName);
 
@@ -2898,9 +2895,9 @@ public class ConcordiaGraphPanel extends JLayeredPane
         preferredDatePanel//
                 .setLocation(//
                         (int) Integer.parseInt(getStringEntryFromAliquotOptions(myAliquotOptions, //
-                                        "dateBoxX", String.valueOf(preferredDatePanel.getX()))),
+                                "dateBoxX", String.valueOf(preferredDatePanel.getX()))),
                         (int) Integer.parseInt(getStringEntryFromAliquotOptions(myAliquotOptions, //
-                                        "dateBoxY", String.valueOf(preferredDatePanel.getY()))));
+                                "dateBoxY", String.valueOf(preferredDatePanel.getY()))));
     }
 
     /**
@@ -2909,8 +2906,8 @@ public class ConcordiaGraphPanel extends JLayeredPane
      */
     @Override
     public Map<String, String> getSelectedAliquotOptions() {
-        String aliquotName = //
-                ((SampleDateModel) ((DateInterpretationBoxPanel) preferredDatePanel).//
+        String aliquotName
+                = ((SampleDateModel) ((DateInterpretationBoxPanel) preferredDatePanel).//
                 getPreferredDateModel()).getAliquot().getAliquotName();
         return getAliquotOptions().get(aliquotName);
     }

@@ -25,9 +25,9 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
-import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.listeners.ColorChooserListener;
 import org.earthtime.UPb_Redux.user.SampleDateInterpretationGUIOptions;
+import org.earthtime.dialogs.DialogEditor;
 
 /**
  *
@@ -77,11 +77,11 @@ public class AliquotOptionsDialog extends DialogEditor {
         excludedCenterColor_label.addMouseListener(myColorChooserListener);
 
 
-        CustomInit();
+        initDialogContent();
 
     }
 
-    private void CustomInit() {
+    public void initDialogContent() {
         // ELLIPSE *********************************************************
         // Included ellipses
         // Ellipse weight
@@ -594,12 +594,12 @@ public class AliquotOptionsDialog extends DialogEditor {
 
     private void restoreDefaults_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_restoreDefaults_buttonActionPerformed
         setAliquotOptions(new SampleDateInterpretationGUIOptions().getAliquotOptionsMapByName(getAliquotName(), 0));
-        CustomInit();
+        initDialogContent();
 }//GEN-LAST:event_restoreDefaults_buttonActionPerformed
 
 private void revert_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_revert_buttonActionPerformed
     getAliquotOptions().putAll(getAliquotOptionsSaved());
-    CustomInit();
+    initDialogContent();
 }//GEN-LAST:event_revert_buttonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel alquotName_label;

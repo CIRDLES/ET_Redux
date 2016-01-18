@@ -287,8 +287,6 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
 
         this.removeAll();
 
-////        //oct 2014
-////        project.getSuperSample().updateAndSaveSampleDateModelsByAliquot();
         tripoliSession.calculateSessionFitFunctionsForPrimaryStandard();
 
         try {
@@ -409,8 +407,8 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
         ((TabbedReportViews) reportTableTabbedPane).initializeTabs();
         ((TabbedReportViews) reportTableTabbedPane).prepareTabs();
 
-        reportTableTabbedPane.setBounds(leftMargin, topMargin + 700, 2000, 500);
-        this.add(reportTableTabbedPane, new Integer(5));
+        reportTableTabbedPane.setBounds(leftMargin, topMargin + 705, 1900, 500);
+        this.add(reportTableTabbedPane, LAYER_FIVE);
 
     }
 
@@ -428,7 +426,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
 
     private void buttonFactory() {
         ET_JButton closeAndReviewButton = new ET_JButton("Halt Processing and Review Samples");
-        closeAndReviewButton.setBounds(leftMargin + 50, topMargin + 665, 450, 25);
+        closeAndReviewButton.setBounds(leftMargin + 50, topMargin + 660, 450, 25);
         closeAndReviewButton.addActionListener((ActionEvent ae) -> {
             try {
                 loadDataTask.cancel(true);
@@ -443,7 +441,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
         this.add(closeAndReviewButton, LAYER_FIVE);
 
         ET_JButton recalcButton = new ET_JButton("Re-calculate rhos");
-        recalcButton.setBounds(leftMargin + 500, topMargin + 665, 120, 25);
+        recalcButton.setBounds(leftMargin + 500, topMargin + 660, 120, 25);
         recalcButton.addActionListener((ActionEvent ae) -> {
             try {
                 tripoliSession.interceptCalculatePbcCorrAndRhos();
@@ -460,7 +458,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
         this.add(recalcButton, LAYER_FIVE);
 
         ET_JButton refreshButton = new ET_JButton("Refresh Views");
-        refreshButton.setBounds(leftMargin + 620, topMargin + 665, 120, 25);
+        refreshButton.setBounds(leftMargin + 620, topMargin + 660, 120, 25);
         refreshButton.addActionListener((ActionEvent ae) -> {
             preparePanel();
         });
@@ -477,7 +475,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
         loadDataTaskProgressBar.setMaximum(100);
         loadDataTaskProgressBar.setMinimum(0);
         loadDataTaskProgressBar.setValue(0);
-        loadDataTaskProgressBar.setBounds(leftMargin + 50, 700, 450, 20);
+        loadDataTaskProgressBar.setBounds(leftMargin + 50, 695, 450, 20);
     }
 
     /**

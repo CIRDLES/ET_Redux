@@ -83,6 +83,7 @@ public interface ProjectInterface {
     void setProjectSamples ( ArrayList<SampleInterface> projectSamples );
 
     /**
+     * @param superSample
      * @param compiledSuperSample the compiledSuperSample to set
      */
     void setSuperSample ( SampleInterface superSample );
@@ -133,4 +134,14 @@ public interface ProjectInterface {
     public Path exportProjectSamples()throws ETException;
     
     public SampleInterface getCompiledSuperSample();
+    
+    /**
+     * @return the locationOfDataImportFile
+     */
+    public File getLocationOfDataImportFile();
+    /**
+     * @param locationOfDataImportFile the locationOfDataImportFile to set
+     */
+    public void setLocationOfDataImportFile(File locationOfDataImportFile);
+
 }

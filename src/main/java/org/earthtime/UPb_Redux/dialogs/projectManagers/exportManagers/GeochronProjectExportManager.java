@@ -29,13 +29,13 @@ import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
-import org.earthtime.dialogs.DialogEditor;
-import org.earthtime.reportViews.ReportPainterI;
 import org.earthtime.UPb_Redux.user.ReduxPersistentState;
 import org.earthtime.archivingTools.GeochronAliquotManager;
 import org.earthtime.archivingTools.IEDACredentialsValidator;
 import org.earthtime.beans.ET_JButton;
+import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.projects.ProjectInterface;
+import org.earthtime.reportViews.ReportPainterI;
 import org.earthtime.samples.SampleInterface;
 
 /**
@@ -79,13 +79,14 @@ public class GeochronProjectExportManager extends DialogEditor {
         initComponents();
         setSize(1200, 750);
 
-        initGeochron();
+        initDialogContent();
 
         processUserValidation();
 
     }
 
-    private void initGeochron() {
+    @Override
+    public void initDialogContent() {
 
         geochronUserName_text.setDocument(new UnDoAbleDocument(geochronUserName_text, true));
         geochronUserName_text.setText(myState.getReduxPreferences().getGeochronUserName());

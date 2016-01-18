@@ -49,6 +49,7 @@ import org.earthtime.Tripoli.dataViews.dataMonitorViews.AbstractDataMonitorView;
 import org.earthtime.Tripoli.dataViews.fitFunctionPresentationViews.AbstractFitFunctionPresentationView;
 import org.earthtime.Tripoli.dataViews.simpleViews.FitFunctionDataInterface;
 import org.earthtime.Tripoli.dataViews.simpleViews.SessionOfStandardView;
+import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.CorrectedRatioDataView;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.Tripoli.fractions.TripoliFractionIncludeChangeInterface;
 import org.earthtime.Tripoli.sessions.TripoliSessionFractionationCalculatorInterface;
@@ -513,8 +514,8 @@ public abstract class AbstractRawDataView extends JLayeredPane implements MouseI
         if (itIsI) {
             // paint transparent rectangle over selected data points
             int leftSide = Math.min(chosenDatumIndex, secondChoiceIndex);
-            double halfDistance = //
-                    (Math.abs(mapX(myOnPeakNormalizedAquireTimes[2])//
+            double halfDistance
+                    = (Math.abs(mapX(myOnPeakNormalizedAquireTimes[2])//
                             - mapX(myOnPeakNormalizedAquireTimes[1])) / 2.0);
 
             double topSide = calcTopSelectionBox();
@@ -542,8 +543,8 @@ public abstract class AbstractRawDataView extends JLayeredPane implements MouseI
             g2d.setStroke(savedStroke);
         } else {
             // need bullseyes on individual points in other views
-            ArrayList<Integer> includedIndexes = //
-                    tripoliFraction.getSelectedForToggleIndexes();
+            ArrayList<Integer> includedIndexes
+                    = tripoliFraction.getSelectedForToggleIndexes();
             try {
                 for (int i = 0; i < includedIndexes.size(); i++) {
                     Shape rawRatioPoint = new java.awt.geom.Ellipse2D.Double( //
@@ -948,8 +949,6 @@ public abstract class AbstractRawDataView extends JLayeredPane implements MouseI
                 // april 2015 flag fraction for refitting instead of doing it on every mouse move
                 // added button to fraction column
                 tripoliFraction.setCurrentlyFitted(false);
-//////                tripoliFraction.updateInterceptFitFunctionsIncludingCommonLead();
-//////                updateReportTable();
 
                 // feb 2013 here we differentiate between session and ratios
                 // for ratios,we want data point toggle to only affect fraction and not disturb layout
@@ -957,8 +956,10 @@ public abstract class AbstractRawDataView extends JLayeredPane implements MouseI
                     ((AbstractRawDataView) sampleSessionDataView).refreshPanel();
                 } else {
                     for (AbstractRawDataView fractionRawDataView : fractionRawDataViews) {
-                        if (fractionRawDataView instanceof AbstractFitFunctionPresentationView) {
+                        // dec 2015 modified to redo math on downhole unknowns
+                        if ((fractionRawDataView instanceof AbstractFitFunctionPresentationView) || (fractionRawDataView instanceof CorrectedRatioDataView)) {
                             fractionRawDataView.refreshPanel();
+                            updateReportTable();
                         } else if (fractionRawDataView != null) {
                             // april 2015 added test
                             if (fractionRawDataView instanceof FitFunctionDataInterface) {
@@ -1152,14 +1153,14 @@ public abstract class AbstractRawDataView extends JLayeredPane implements MouseI
         if (sampleSessionDataView instanceof AbstractDataMonitorView) {
             ((AbstractDataMonitorView) sampleSessionDataView).prepareConcordia();
         }
-
     }
 
     public void updateReportTableView() {
         if (uPbReduxFrame == null) {
             uPbReduxFrame = ((AbstractRawDataView) sampleSessionDataView).getuPbReduxFrame();
-            uPbReduxFrame.updateReportTable(true);
         }
+        uPbReduxFrame.updateReportTable(true);
+
     }
 
     /**

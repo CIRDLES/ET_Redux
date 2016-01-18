@@ -110,7 +110,7 @@ public class ETRedux {
             theUPbReduxFrame.setVisible(true);
         }
 
-////        TestTopsoil test = new TestTopsoil();
+//        TopsoilEvolutionChart test = new TopsoilEvolutionChart();
         // installer etc ref
         // http://www.centerkey.com/mac/java/
     }

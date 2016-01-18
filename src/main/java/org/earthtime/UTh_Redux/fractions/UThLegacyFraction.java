@@ -15,11 +15,14 @@
  */
 package org.earthtime.UTh_Redux.fractions;
 
-import java.math.BigDecimal;
+import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModelReferenced;
+import org.earthtime.dataDictionaries.Lambdas;
 import org.earthtime.dataDictionaries.UThAnalysisMeasures;
 import org.earthtime.dataDictionaries.UncertaintyTypesEnum;
+import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
+import org.earthtime.reduxLabData.ReduxLabData;
 
 /**
  *
@@ -34,26 +37,35 @@ public class UThLegacyFraction extends UThFraction implements UThLegacyFractionI
     protected ValueModel lambda235Legacy;
     protected ValueModel lambda238Legacy;
 
+    @Override
     public void useLegacyPhysicalConstantsD1() {
-        lambda230Legacy = new ValueModelReferenced(//
-                "lambda230", new BigDecimal(0.00000919525053474941), //
-                "PCT", new BigDecimal(0.3039), BigDecimal.ZERO,//
-                "Meadows et al 1980");
+        try {
+            extractLegacyLambdas(ReduxLabData.getInstance().getAPhysicalConstantsModel("EARTHTIME Physical Constants Model v.0.1"));
+        } catch (BadLabDataException badLabDataException) {
+        }
+    }
+    
+    @Override
+    public void useLegacyPhysicalConstantsD2() {
+        try {
+            extractLegacyLambdas(ReduxLabData.getInstance().getAPhysicalConstantsModel("EARTHTIME Physical Constants Model v.1.0"));
+        } catch (BadLabDataException badLabDataException) {
+        }
+    }
+    
+    @Override
+    public void useLegacyPhysicalConstantsD3() {
+        try {
+            extractLegacyLambdas(ReduxLabData.getInstance().getAPhysicalConstantsModel("EARTHTIME Physical Constants Model v.1.1"));
+        } catch (BadLabDataException badLabDataException) {
+        }
+    }
 
-        lambda232Legacy = new ValueModelReferenced(//
-                "lambda230", new BigDecimal(4.93343E-11), //
-                "PCT", new BigDecimal(0.042769), BigDecimal.ZERO,//
-                "taken from D2");
-
-        lambda234Legacy = new ValueModelReferenced(//
-                "lambda230", new BigDecimal(0.000002835), //
-                "PCT", new BigDecimal(0.1998), BigDecimal.ZERO,//
-                "under discussion");
-        
-        lambda238Legacy = new ValueModelReferenced(//
-                "lambda230", new BigDecimal(0.000000000155125), //
-                "PCT", new BigDecimal(0.053505), BigDecimal.ZERO,//
-                "from D2");
+    private void extractLegacyLambdas(AbstractRatiosDataModel physicalConstantsModel) {
+        lambda230Legacy = physicalConstantsModel.getDatumByName(Lambdas.lambda230.getName());
+        lambda232Legacy = physicalConstantsModel.getDatumByName(Lambdas.lambda232.getName());
+        lambda234Legacy = physicalConstantsModel.getDatumByName(Lambdas.lambda234.getName());
+        lambda238Legacy = physicalConstantsModel.getDatumByName(Lambdas.lambda238.getName());
     }
 
     public UThLegacyFraction() {
@@ -61,7 +73,7 @@ public class UThLegacyFraction extends UThFraction implements UThLegacyFractionI
         this.legacy = true;
 
         legacyActivityRatios = valueModelArrayFactory(UThAnalysisMeasures.getNames(), UncertaintyTypesEnum.ABS.getName());
-        
+
         lambda230Legacy = new ValueModelReferenced();
         lambda232Legacy = new ValueModelReferenced();
         lambda234Legacy = new ValueModelReferenced();
@@ -88,6 +100,7 @@ public class UThLegacyFraction extends UThFraction implements UThLegacyFractionI
     /**
      * @return the lambda230Legacy
      */
+    @Override
     public ValueModel getLambda230Legacy() {
         return lambda230Legacy;
     }
@@ -95,6 +108,7 @@ public class UThLegacyFraction extends UThFraction implements UThLegacyFractionI
     /**
      * @return the lambda232Legacy
      */
+    @Override
     public ValueModel getLambda232Legacy() {
         return lambda232Legacy;
     }
@@ -102,6 +116,7 @@ public class UThLegacyFraction extends UThFraction implements UThLegacyFractionI
     /**
      * @return the lambda234Legacy
      */
+    @Override
     public ValueModel getLambda234Legacy() {
         return lambda234Legacy;
     }
@@ -109,6 +124,7 @@ public class UThLegacyFraction extends UThFraction implements UThLegacyFractionI
     /**
      * @return the lambda235Legacy
      */
+    @Override
     public ValueModel getLambda235Legacy() {
         return lambda235Legacy;
     }

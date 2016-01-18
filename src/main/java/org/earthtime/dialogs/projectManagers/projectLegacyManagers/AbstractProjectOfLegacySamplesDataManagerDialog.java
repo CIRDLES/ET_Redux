@@ -19,19 +19,29 @@
 package org.earthtime.dialogs.projectManagers.projectLegacyManagers;
 
 import java.awt.Frame;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import org.earthtime.dialogs.DialogEditor;
+import javax.swing.JButton;
+import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.exceptions.BadImportedCSVLegacyFileException;
-import org.earthtime.reduxLabData.ReduxLabData;
+import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
+import org.earthtime.UTh_Redux.fractions.UThLegacyFractionI;
+import org.earthtime.UTh_Redux.fractions.fractionReduction.UThFractionReducer;
+import org.earthtime.beans.ET_JButton;
+import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.projects.ProjectInterface;
 import org.earthtime.projects.projectImporters.AbstractProjectImporterFromLegacyDelimitedTextFile;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
+import org.earthtime.ratioDataViews.AbstractRatiosDataView;
+import org.earthtime.ratioDataViews.PhysicalConstantsDataViewNotEditable;
+import org.earthtime.reduxLabData.ReduxLabData;
+import org.earthtime.samples.SampleInterface;
 
 /**
  *
@@ -44,6 +54,8 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
     private boolean initialized = false;
     private boolean newSample = false;
     private AbstractProjectImporterFromLegacyDelimitedTextFile converter;
+    private ET_JButton chooseFileButton;
+    private JButton viewPhysicalConstantsModel_button;
 
     /**
      *
@@ -59,9 +71,9 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
      * @param converter
      * @param importFractionFolderMRU
      */
-    
     /**
      * Creates new form AbstractSampleLegacyManagerDialog
+     *
      * @param parent
      * @param modal
      * @param dataTypeTitle
@@ -69,14 +81,14 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
      * @param converter
      * @param importFractionFolderMRU
      */
-    public AbstractProjectOfLegacySamplesDataManagerDialog (
+    public AbstractProjectOfLegacySamplesDataManagerDialog(
             Frame parent, //
             boolean modal, //
             String dataTypeTitle, //
             ProjectInterface project, //
             AbstractProjectImporterFromLegacyDelimitedTextFile converter,//
             File importFractionFolderMRU) {
-        super( parent, modal );
+        super(parent, modal);
 
         this.importFractionFolderMRU = importFractionFolderMRU;
 
@@ -84,46 +96,30 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
 
         this.myProject = project;
 
-        initSampleFields();
+        initDialogContent();
 
-        sampleType_label.setText( dataTypeTitle + sampleType_label.getText() );
+        sampleType_label.setText(dataTypeTitle + sampleType_label.getText());
 
         this.converter = converter;
-        
+
         this.parent = parent;
-        
-        sampleName_text.addKeyListener(new KeyListener() {
 
-            @Override
-            public void keyTyped(KeyEvent e) {
-                saveAndClose.setEnabled(sampleName_text.getText().trim().length() > 0);
-            }
-
-            @Override
-            public void keyPressed(KeyEvent e) {
-                saveAndClose.setEnabled(sampleName_text.getText().trim().length() > 0);
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-                saveAndClose.setEnabled(sampleName_text.getText().trim().length() > 0);
-            }
-        });
+        saveAndClose.setEnabled(!myProject.getProjectSamples().isEmpty());
 
     }
 
     /**
      *
      */
-    public void setSize () {
-        setSize( 645, 480 );
+    public void setSize() {
+        setSize(645, 480);
     }
 
     /**
      *
      * @return
      */
-    public File getImportFractionFolderMRU () {
+    public File getImportFractionFolderMRU() {
         return importFractionFolderMRU;
     }
 
@@ -131,51 +127,128 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
      *
      * @param importFractionFolderMRU
      */
-    public void setImportFractionFolderMRU ( File importFractionFolderMRU ) {
+    public void setImportFractionFolderMRU(File importFractionFolderMRU) {
         this.importFractionFolderMRU = importFractionFolderMRU;
     }
 
-    private void initSampleFields () {
-        sampleName_text.setDocument(
-                new UnDoAbleDocument( sampleName_text,  true));
+    public void initDialogContent() {
+        projectName_text.setDocument(
+                new UnDoAbleDocument(projectName_text, true));
+        projectName_text.setText(myProject.getProjectName());
 
-        sampleNotes_textArea.setDocument( new UnDoAbleDocument( sampleNotes_textArea, true ) );
+        dataSourceNameLabel.setText(": " + myProject.getLocationOfDataImportFile().getName());
+        dataSourceNameLabel.setToolTipText(myProject.getLocationOfDataImportFile().getAbsolutePath());
+        sampleNotes_textArea.setDocument(new UnDoAbleDocument(sampleNotes_textArea, true));
 
+        try {
+            projectReduxFileName_label.setText(myProject.getLocationOfProjectReduxFile().getAbsolutePath());
+        } catch (Exception e) {
+        }
         physicalConstantsModelChooser.removeAllItems();
         ArrayList<AbstractRatiosDataModel> physicalConstantsModels = ReduxLabData.getInstance().getPhysicalConstantsModels();
-        for (int i = (physicalConstantsModels.size() > 1 ? 1 : 0); i < physicalConstantsModels.size(); i ++) {
-            physicalConstantsModelChooser.addItem( physicalConstantsModels.get( i ).getReduxLabDataElementName() );
+        for (int i = (physicalConstantsModels.size() > 1 ? 1 : 0); i < physicalConstantsModels.size(); i++) {
+            physicalConstantsModelChooser.addItem(physicalConstantsModels.get(i));
         }
 
-        physicalConstantsModelChooser.setSelectedIndex( 0 );
+        physicalConstantsModelChooser.setSelectedIndex(0);
+        try {
+            physicalConstantsModelChooser.setSelectedItem(myProject.getSuperSample().getPhysicalConstantsModel());
+        } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
+        }
+
+        // view physical constants model
+        viewPhysicalConstantsModel_button = new ET_JButton("View");
+        viewPhysicalConstantsModel_button.addActionListener((ActionEvent e) -> {
+            AbstractRatiosDataModel selectedModel
+                    = ((AbstractRatiosDataModel) physicalConstantsModelChooser.getSelectedItem());
+            AbstractRatiosDataView modelView
+                    = new PhysicalConstantsDataViewNotEditable(selectedModel, null, false);
+            modelView.displayModelInFrame();
+        });
+        viewPhysicalConstantsModel_button.setFont(ReduxConstants.sansSerif_10_Bold);
+        viewPhysicalConstantsModel_button.setBounds(//
+                physicalConstantsModelChooser.getX() + physicalConstantsModelChooser.getWidth() + 10, physicalConstantsModelChooser.getY(), 30, 23);
+        infoPanel.add(viewPhysicalConstantsModel_button);
+
+        // file choose button
+        chooseFileButton = new ET_JButton("Choose import file");
+        chooseFileButton.setEnabled(myProject.getProjectSamples().isEmpty() && (projectName_text.getText().trim().length() > 0));
+        chooseFileButton.setFont(ReduxConstants.sansSerif_10_Bold);
+        chooseFileButton.setBounds(//
+                dataSourceLabel.getX() + dataSourceLabel.getWidth(), dataSourceLabel.getY() - 2, 100, 23);
+        chooseFileButton.addActionListener((ActionEvent e) -> {
+            try {
+                converter.setMruFolder(importFractionFolderMRU);
+                converter.readInProjectSamples(myProject);
+                setInitialized(true);
+                saveAndClose.setEnabled(true);
+                chooseFileButton.setEnabled(false);
+                dataSourceNameLabel.setText(": " + myProject.getLocationOfDataImportFile().getName());
+                dataSourceNameLabel.setToolTipText(myProject.getLocationOfDataImportFile().getAbsolutePath());
+
+                setImportFractionFolderMRU(converter.getMruFolder());
+            } catch (FileNotFoundException fileNotFoundException) {
+            } catch (BadImportedCSVLegacyFileException ex) {
+                new ETWarningDialog(ex).setVisible(true);
+            }
+        });
+        infoPanel.add(chooseFileButton);
+
+        projectName_text.addKeyListener(new KeyListener() {
+
+            @Override
+            public void keyTyped(KeyEvent e) {
+                chooseFileButton.setEnabled(myProject.getProjectSamples().isEmpty() && (projectName_text.getText().trim().length() > 0));
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                chooseFileButton.setEnabled(myProject.getProjectSamples().isEmpty() && (projectName_text.getText().trim().length() > 0));
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                chooseFileButton.setEnabled(myProject.getProjectSamples().isEmpty() && (projectName_text.getText().trim().length() > 0));
+            }
+        });
     }
 
-    private void saveSampleData ()
+    private void saveProjectData()
             throws ETException {
         // validate sample name
-        if ( sampleName_text.getText().trim().length() == 0 ) {
+        if (projectName_text.getText().trim().length() == 0) {
             return;
         }
 
-        myProject.setProjectName(  sampleName_text.getText().trim() );
+        myProject.setProjectName(projectName_text.getText().trim());
 
-        try {
-            converter.setMruFolder( importFractionFolderMRU );
-            converter.readInProjectSamples(myProject);
-            setInitialized( true );
+        AbstractRatiosDataModel chosenPhysicalConstantsModel
+                = (AbstractRatiosDataModel) physicalConstantsModelChooser.getSelectedItem();
+        myProject.getSuperSample().setPhysicalConstantsModel(chosenPhysicalConstantsModel);
 
-            setImportFractionFolderMRU( converter.getMruFolder() );
-        } catch (FileNotFoundException fileNotFoundException) {
-        } catch (BadImportedCSVLegacyFileException ex) {
-            new ETWarningDialog(ex).setVisible(true);
-        }
+        // set physical constant models of each fraction to current
+        ArrayList<SampleInterface> mySamples = myProject.getProjectSamples();
+        mySamples.stream().map((mySample) -> {
+            mySample.setPhysicalConstantsModel(chosenPhysicalConstantsModel);
+            return mySample;
+        }).map((mySample) -> mySample.getFractions()).forEach((myFractions) -> {
+            myFractions.stream().map((myFraction) -> {
+                myFraction.setPhysicalConstantsModel(chosenPhysicalConstantsModel);
+                return myFraction;
+            }).forEach((myFraction) -> {
+                UThFractionReducer.reduceFraction((UThLegacyFractionI) myFraction);
+            });
+        });
+
+        myProject.saveTheProjectAsSerializedReduxFile();
     }
 
     /**
      *
      * @return
      */
-    public ProjectInterface getMyProject () {
+    public ProjectInterface getMyProject() {
         return myProject;
     }
 
@@ -183,7 +256,7 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
      *
      * @param myProject
      */
-    public void setMyProject ( ProjectInterface myProject ) {
+    public void setMyProject(ProjectInterface myProject) {
         this.myProject = myProject;
     }
 
@@ -191,7 +264,7 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
      *
      * @return
      */
-    public boolean isInitialized () {
+    public boolean isInitialized() {
         return initialized;
     }
 
@@ -199,7 +272,7 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
      *
      * @param isSaved
      */
-    public void setInitialized ( boolean isSaved ) {
+    public void setInitialized(boolean isSaved) {
         this.initialized = isSaved;
     }
 
@@ -207,7 +280,7 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
      *
      * @return
      */
-    public boolean isNewSample () {
+    public boolean isNewSample() {
         return newSample;
     }
 
@@ -215,7 +288,7 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
      *
      * @param newSample
      */
-    public void setNewSample ( boolean newSample ) {
+    public void setNewSample(boolean newSample) {
         this.newSample = newSample;
     }
 
@@ -232,16 +305,19 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
         updateMode_buttonGroup = new javax.swing.ButtonGroup();
         modeChooser_buttonGroup = new javax.swing.ButtonGroup();
         TWsource = new javax.swing.ButtonGroup();
-        jPanel1 = new javax.swing.JPanel();
+        infoPanel = new javax.swing.JPanel();
         sampleName_label = new javax.swing.JLabel();
-        sampleName_text = new javax.swing.JTextField();
+        projectName_text = new javax.swing.JTextField();
         sampleReduxFile_label = new javax.swing.JLabel();
-        sampleReduxFileName_label = new javax.swing.JLabel();
+        projectReduxFileName_label = new javax.swing.JLabel();
         sampleNotes_label = new javax.swing.JLabel();
         sampleNotes_scrollPane = new javax.swing.JScrollPane();
         sampleNotes_textArea = new javax.swing.JTextArea();
-        physicalConstantsModelChooser = new javax.swing.JComboBox<String>();
+        physicalConstantsModelChooser = new javax.swing.JComboBox();
         defaultHeader_label = new javax.swing.JLabel();
+        defaultHeader_label1 = new javax.swing.JLabel();
+        dataSourceLabel = new javax.swing.JLabel();
+        dataSourceNameLabel = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         close = new javax.swing.JButton();
         saveAndClose = new javax.swing.JButton();
@@ -251,32 +327,37 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
 
-        jPanel1.setBackground(new java.awt.Color(245, 236, 206));
-        jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
-        jPanel1.setMaximumSize(new java.awt.Dimension(480, 620));
-        jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        infoPanel.setBackground(new java.awt.Color(245, 236, 206));
+        infoPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
+        infoPanel.setMaximumSize(new java.awt.Dimension(480, 620));
+        infoPanel.setLayout(null);
 
         sampleName_label.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         sampleName_label.setText("Project Name:");
-        jPanel1.add(sampleName_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(62, 9, 88, -1));
+        infoPanel.add(sampleName_label);
+        sampleName_label.setBounds(10, 10, 88, 20);
 
-        sampleName_text.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        sampleName_text.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        sampleName_text.setText("Project Name");
-        jPanel1.add(sampleName_text, new org.netbeans.lib.awtextra.AbsoluteConstraints(168, 2, 338, -1));
+        projectName_text.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        projectName_text.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        projectName_text.setText("Project Name");
+        infoPanel.add(projectName_text);
+        projectName_text.setBounds(100, 10, 410, 20);
 
         sampleReduxFile_label.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         sampleReduxFile_label.setText("File path for this Project:");
-        jPanel1.add(sampleReduxFile_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(8, 256, -1, -1));
+        infoPanel.add(sampleReduxFile_label);
+        sampleReduxFile_label.setBounds(10, 280, 139, 14);
 
-        sampleReduxFileName_label.setText("<Not Saved>");
-        sampleReduxFileName_label.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-        sampleReduxFileName_label.setAutoscrolls(true);
-        jPanel1.add(sampleReduxFileName_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(28, 276, 407, 64));
+        projectReduxFileName_label.setText("<Not Saved>");
+        projectReduxFileName_label.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        projectReduxFileName_label.setAutoscrolls(true);
+        infoPanel.add(projectReduxFileName_label);
+        projectReduxFileName_label.setBounds(30, 300, 407, 64);
 
         sampleNotes_label.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         sampleNotes_label.setText("Notes about this Project:");
-        jPanel1.add(sampleNotes_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(8, 146, -1, -1));
+        infoPanel.add(sampleNotes_label);
+        sampleNotes_label.setBounds(10, 160, 141, 14);
 
         sampleNotes_textArea.setColumns(20);
         sampleNotes_textArea.setRows(5);
@@ -284,15 +365,36 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
         sampleNotes_textArea.setPreferredSize(new java.awt.Dimension(250, 80));
         sampleNotes_scrollPane.setViewportView(sampleNotes_textArea);
 
-        jPanel1.add(sampleNotes_scrollPane, new org.netbeans.lib.awtextra.AbsoluteConstraints(8, 166, 630, -1));
+        infoPanel.add(sampleNotes_scrollPane);
+        sampleNotes_scrollPane.setBounds(10, 180, 630, 99);
 
         physicalConstantsModelChooser.setBackground(new java.awt.Color(245, 236, 206));
-        jPanel1.add(physicalConstantsModelChooser, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 70, 330, -1));
+        infoPanel.add(physicalConstantsModelChooser);
+        physicalConstantsModelChooser.setBounds(60, 130, 410, 27);
 
         defaultHeader_label.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         defaultHeader_label.setForeground(new java.awt.Color(204, 51, 0));
         defaultHeader_label.setText("Set Physical Constants Model for this Project:");
-        jPanel1.add(defaultHeader_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, -1, -1));
+        infoPanel.add(defaultHeader_label);
+        defaultHeader_label.setBounds(20, 110, 255, 20);
+
+        defaultHeader_label1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        defaultHeader_label1.setForeground(new java.awt.Color(204, 51, 0));
+        defaultHeader_label1.setText("Reference source of data for this project:");
+        infoPanel.add(defaultHeader_label1);
+        defaultHeader_label1.setBounds(20, 40, 250, 20);
+
+        dataSourceLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        dataSourceLabel.setForeground(new java.awt.Color(204, 51, 0));
+        dataSourceLabel.setText("Data source file:");
+        infoPanel.add(dataSourceLabel);
+        dataSourceLabel.setBounds(20, 70, 100, 20);
+
+        dataSourceNameLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        dataSourceNameLabel.setForeground(new java.awt.Color(51, 51, 51));
+        dataSourceNameLabel.setText(":");
+        infoPanel.add(dataSourceNameLabel);
+        dataSourceNameLabel.setBounds(230, 70, 410, 20);
 
         jPanel2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -309,7 +411,7 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
         jPanel2.add(close, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 0, 168, 32));
 
         saveAndClose.setForeground(new java.awt.Color(255, 51, 0));
-        saveAndClose.setText("OK");
+        saveAndClose.setText("Save and Close");
         saveAndClose.setEnabled(false);
         saveAndClose.setMargin(new java.awt.Insets(0, 0, 0, 0));
         saveAndClose.setPreferredSize(new java.awt.Dimension(110, 23));
@@ -324,7 +426,7 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
 
         sampleType_label.setBackground(new java.awt.Color(255, 204, 102));
         sampleType_label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        sampleType_label.setText("   LEGACY MODE: Import Project of Samples from delimited file");
+        sampleType_label.setText("   LEGACY MODE: Import Project of Samples from text file");
         sampleType_label.setOpaque(true);
 
         org.jdesktop.layout.GroupLayout sampleType_panelLayout = new org.jdesktop.layout.GroupLayout(sampleType_panel);
@@ -344,14 +446,14 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 645, Short.MAX_VALUE)
             .add(sampleType_panel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .add(infoPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
                 .add(sampleType_panel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(6, 6, 6)
-                .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 351, Short.MAX_VALUE)
+                .add(infoPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
                 .add(6, 6, 6)
                 .add(jPanel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
@@ -364,7 +466,7 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
 
     private void saveAndCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveAndCloseActionPerformed
         try {
-            saveSampleData();
+            saveProjectData();
             close();
         } catch (ETException ex) {
             new ETWarningDialog(ex).setVisible(true);
@@ -374,18 +476,21 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup TWsource;
     private javax.swing.JButton close;
+    private javax.swing.JLabel dataSourceLabel;
+    private javax.swing.JLabel dataSourceNameLabel;
     private javax.swing.JLabel defaultHeader_label;
+    private javax.swing.JLabel defaultHeader_label1;
     private javax.swing.ButtonGroup destinationOfFractionsOptions_buttonGroup;
-    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel infoPanel;
     private javax.swing.JPanel jPanel2;
     private javax.swing.ButtonGroup modeChooser_buttonGroup;
-    private javax.swing.JComboBox<String> physicalConstantsModelChooser;
+    private javax.swing.JComboBox physicalConstantsModelChooser;
+    private javax.swing.JTextField projectName_text;
+    private javax.swing.JLabel projectReduxFileName_label;
     private javax.swing.JLabel sampleName_label;
-    private javax.swing.JTextField sampleName_text;
     private javax.swing.JLabel sampleNotes_label;
     private javax.swing.JScrollPane sampleNotes_scrollPane;
     private javax.swing.JTextArea sampleNotes_textArea;
-    private javax.swing.JLabel sampleReduxFileName_label;
     private javax.swing.JLabel sampleReduxFile_label;
     private javax.swing.JLabel sampleType_label;
     private javax.swing.JPanel sampleType_panel;
@@ -397,14 +502,14 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
     /**
      * @return the converter
      */
-    public AbstractProjectImporterFromLegacyDelimitedTextFile getConverter () {
+    public AbstractProjectImporterFromLegacyDelimitedTextFile getConverter() {
         return converter;
     }
 
     /**
      * @param converter the converter to set
      */
-    public void setConverter ( AbstractProjectImporterFromLegacyDelimitedTextFile converter ) {
+    public void setConverter(AbstractProjectImporterFromLegacyDelimitedTextFile converter) {
         this.converter = converter;
     }
 }

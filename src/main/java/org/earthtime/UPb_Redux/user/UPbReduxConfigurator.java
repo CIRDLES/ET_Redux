@@ -4,7 +4,7 @@
  * Created on August 8, 2007, 8:12 AM
  *
  *
- * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2016 James F. Bowring and www.Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -41,106 +41,108 @@ public final class UPbReduxConfigurator {
     /**
      *
      */
-    public final static String URL_EARTHTIMEORG =
-            "http://earth-time.org/";
+    public final static String URL_EARTHTIMEORG = 
+            "https://raw.githubusercontent.com/EARTHTIME/";
     /**
      *
      */
     public final static String URI_UPB_PUBLIC_DATA =
-            "projects/upb/public_data/";
+            "";
+            //"projects/upb/public_data/";
     /**
      *
      */
     public final static String URI_AliquotXMLSchema =
-            "XSD/AliquotXMLSchema.xsd";
+            "Schema/master/AliquotXMLSchema.xsd";
     /**
      *
      */
     public final static String URI_UPbReduxFractionXMLSchemaURL =
-            "XSD/UPbReduxInputXMLSchema.xsd";
+            "Schema/master/UPbReduxInputXMLSchema.xsd";
     /**
      *
      */
     public final static String URI_AnalysisFractionXMLSchemaURL =
-            "XSD/AnalysisFractionXMLSchema.xsd";
+            "Schema/master/AnalysisFractionXMLSchema.xsd";
     /**
      *
      */
     public final static String URI_InitialPbModelXMLSchema =
-            "XSD/InitialPbModelXMLSchema.xsd";
+            "Schema/master/InitialPbModelXMLSchema.xsd";
     /**
      *
      */
     public final static String URI_InitialPbModelETXMLSchema =
-            "XSD/InitialPbModelETXMLSchema.xsd";
+            "Schema/master/InitialPbModelETXMLSchema.xsd";
     /**
      *
      */
     public final static String URI_PbBlankXMLSchema =
-            "XSD/PbBlankXMLSchema.xsd";
+            "Schema/master/PbBlankXMLSchema.xsd";
 
     /**
      *
      */
     public final static String URI_PbBlankICModelXMLSchema =
-            "XSD/PbBlankICModelXMLSchema.xsd";
+            "Schema/master/PbBlankICModelXMLSchema.xsd";
     /**
      *
      */
     public final static String URI_MineralStandardModelXMLSchemaURL =
-            "XSD/MineralStandardModelXMLSchema.xsd";
+            "Schema/master/MineralStandardModelXMLSchema.xsd";
     /**
      *
      */
     public final static String URI_MineralStandardUPbModelXMLSchemaURL =
-            "XSD/MineralStandardUPbModelXMLSchema.xsd";
+            "Schema/master/MineralStandardUPbModelXMLSchema.xsd";
     /**
      *
      */
     public final static String URI_PhysicalConstantsXMLSchema =
-            "XSD/PhysicalConstantsXMLSchema.xsd";
+            "Schema/master/PhysicalConstantsXMLSchema.xsd";
 
     /**
      *
      */
     public final static String URI_PhysicalConstantsModelXMLSchema =
-            "XSD/PhysicalConstantsModelXMLSchema.xsd";
+            "Schema/master/PhysicalConstantsModelXMLSchema.xsd";
     /**
      *
      */
     public final static String URI_TracerXMLSchema =
-            "XSD/TracerXMLSchema.xsd";
+            "Schema/master/TracerXMLSchema.xsd";
 
     /**
      *
      */
     public final static String URI_TracerUPbModelXMLSchema =
-            "XSD/TracerUPbModelXMLSchema.xsd";
+            "Schema/master/TracerUPbModelXMLSchema.xsd";
     /**
      *
      */
     public final static String URI_EARTHTIME_XMLTracers =
-            "EARTHTIME_tracers/XML/";
+            "Tracers/master/XML/";
     /**
      *
      */
     public final static String URI_ValueModelXMLSchema =
-            "XSD/ValueModelXMLSchema.xsd";
+            "Schema/master/ValueModelXMLSchema.xsd";
+            //"XSD/ValueModelXMLSchema.xsd";
     /**
      *
      */
     public final static String URI_SampleMetaDataXMLSchema =
-            "XSD/SampleMetaDataXMLSchema.xsd";
+            "Schema/master/SampleMetaDataXMLSchema.xsd";
     /**
      *
      */
     public final static String URI_ReportSettingsXMLSchema =
-            "XSD/upbReports/ReportSettingsXMLSchema.xsd";
+            "Schema/master/upbReports/ReportSettingsXMLSchema.xsd";
     /**
      *
      */
     public final static String URI_ReduxMatrixXMLSchemaURL =
-            "XSD/ReduxMatrixXMLSchema.xsd";
+            "Schema/master/ReduxMatrixXMLSchema.xsd";
 
     /**
      * Creates a new instance of UPbReduxConfigurator

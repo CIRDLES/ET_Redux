@@ -21,7 +21,7 @@
     <groupId>org.cirdles</groupId>
     <artifactId>ET_Redux</artifactId>
     <name>ET_Redux</name>
-    <version>3.3.3</version>
+    <version>3.4.0</version>
     <description>Successor to U-Pb_Redux</description>
     <url>https://cirdles.org</url>
     <inceptionYear>2006</inceptionYear>
@@ -309,6 +309,23 @@
                                 </transformer>
                             </transformers>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>sh.tak.appbundler</groupId>
+                <artifactId>appbundle-maven-plugin</artifactId>
+                <version>1.0.4</version>
+                <configuration>
+                    <mainClass>org.earthtime.ETRedux</mainClass>
+                    <iconFile>UThPbReduxLogo.icns</iconFile>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>bundle</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>

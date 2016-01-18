@@ -77,6 +77,38 @@ public interface PhysicalConstantsI {
      */
     abstract void setMeasuredConstants(ValueModel[] measuredConstants);
 
+        /**
+     *
+     * @param mcName
+     * @return
+     */
+    public default ValueModel getMeasuredConstantByName(String mcName) {
+        ValueModel retVal = null;
+        for (int i = 0; i < getMeasuredConstants().length; i++) {
+            if (getMeasuredConstants()[i].getName().equals(mcName)) {
+                retVal = getMeasuredConstants()[i];
+                break;
+            }
+        }
+        return retVal;
+    }
+
+    /**
+     *
+     * @param ammName
+     * @return
+     */
+    public default ValueModel getAtomicMolarMassByName(String ammName) {
+        ValueModel retVal = null;
+        for (int i = 0; i < getAtomicMolarMasses().length; i++) {
+            if (getAtomicMolarMasses()[i].getName().equals(ammName)) {
+                retVal = getAtomicMolarMasses()[i];
+                break;
+            }
+        }
+        return retVal;
+    }
+
     /**
      * 
      * @return

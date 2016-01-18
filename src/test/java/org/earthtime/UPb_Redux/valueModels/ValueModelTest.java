@@ -23,15 +23,12 @@ package org.earthtime.UPb_Redux.valueModels;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.ConversionException;
-import java.math.BigDecimal;
-import java.math.MathContext;
-import org.earthtime.UPb_Redux.expressions.ExpTreeII;
-import org.earthtime.UPb_Redux.ReduxConstants;
-import org.junit.Test;
-import static org.junit.Assert.*;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.net.URL;
 import java.net.UnknownHostException;
 import javax.xml.XMLConstants;
@@ -44,11 +41,14 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
-import org.earthtime.exceptions.ETException;
+import org.earthtime.UPb_Redux.ReduxConstants;
+import org.earthtime.UPb_Redux.expressions.ExpTreeII;
 import org.earthtime.archivingTools.URIHelper;
+import org.earthtime.exceptions.ETException;
+import static org.junit.Assert.*;
+import org.junit.Test;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
-import java.io.File;
 
 /**
  * @author Patrick Brewer
@@ -1913,7 +1913,7 @@ public class ValueModelTest {
         XStream stream = instance.getXStreamReader();
         if(stream instanceof XStream){
             result=true;        
-            expResult2="http://earth-time.org/projects/upb/public_data/XSD/ValueModelXMLSchema.xsd";
+            expResult2="https://raw.githubusercontent.com/EARTHTIME/Schema/master/ValueModelXMLSchema.xsd";
             result2=instance.getValueModelXMLSchemaURL();
             assertEquals(expResult2,result2);            
                                      }
@@ -1936,7 +1936,7 @@ public class ValueModelTest {
         String result2;
         if(xstream instanceof XStream){
             result=true;        
-            expResult2="http://earth-time.org/projects/upb/public_data/XSD/ValueModelXMLSchema.xsd";
+            expResult2="https://raw.githubusercontent.com/EARTHTIME/Schema/master/ValueModelXMLSchema.xsd";
             result2=instance.getValueModelXMLSchemaURL();
             assertEquals(expResult2,result2);            
                                      }
@@ -1952,7 +1952,7 @@ public class ValueModelTest {
         System.out.println("Testing ValueModel's setClassXMLSchemaURL()");
         ValueModel instance = new ValueModel();
         instance.setClassXMLSchemaURL();
-        String expResult="http://earth-time.org/projects/upb/public_data/XSD/ValueModelXMLSchema.xsd";
+        String expResult="https://raw.githubusercontent.com/EARTHTIME/Schema/master/ValueModelXMLSchema.xsd";
         String result=instance.getValueModelXMLSchemaURL();
         assertEquals(expResult,result);
     } 

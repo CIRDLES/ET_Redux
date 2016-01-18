@@ -35,7 +35,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.reduxLabData.ReduxLabDataListElementI;
 import org.earthtime.UPb_Redux.user.UPbReduxConfigurator;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModelReferenced;
@@ -44,11 +43,12 @@ import org.earthtime.UPb_Redux.valueModels.ValueModelXMLConverter;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
 import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.dataDictionaries.DataDictionary;
-import org.earthtime.dataDictionaries.Lambdas;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.matrices.matrixModels.CovarianceMatrixModel;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsModel;
+import org.earthtime.reduxLabData.ReduxLabData;
+import org.earthtime.reduxLabData.ReduxLabDataListElementI;
 import org.earthtime.utilities.DateHelpers;
 import org.earthtime.xmlUtilities.XMLSerializationI;
 
@@ -197,7 +197,7 @@ public class PhysicalConstants implements
 
         if ((this.name.toUpperCase(Locale.US).startsWith("EARTHTIME"))) {
             // catch old Earthtime version 1
-            physicalConstantsModel = PhysicalConstantsModel.getDefaultEARTHTIMEPhysicalConstantsModel();
+            physicalConstantsModel = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel();
         } else {
             physicalConstantsModel = convertModel(this);
         }
@@ -395,6 +395,7 @@ public class PhysicalConstants implements
      *
      * @return
      */
+    @Override
     public String getPhysicalConstantsComment() {
         return physicalConstantsComment;
     }
@@ -403,48 +404,11 @@ public class PhysicalConstants implements
      *
      * @param physicalConstantsComment
      */
+    @Override
     public void setPhysicalConstantsComment(String physicalConstantsComment) {
         this.physicalConstantsComment = physicalConstantsComment;
     }
 
-    /**
-     *
-     * @param mcName
-     * @return
-     */
-    public ValueModel getMeasuredConstantByName(String mcName) {
-
-        for (int i = 0; i < getMeasuredConstants().length; i++) {
-            if (getMeasuredConstants()[i].getName().equals(mcName)) {
-                // repair for bad lambda231 Dec 2010
-                if (getName().equalsIgnoreCase("EARTHTIME")//
-                        &&//
-                        (getVersion() == 1) //
-                        && //
-                        mcName.equalsIgnoreCase(Lambdas.lambda231.getName())) {
-                    //System.out.println( "FIXING Lambda231" );
-                    getMeasuredConstants()[i].setValue(new BigDecimal("0.0000211887"));
-                }
-
-                return getMeasuredConstants()[i];
-            }
-        }
-        return null;
-    }
-
-    /**
-     *
-     * @param ammName
-     * @return
-     */
-    public ValueModel getAtomicMolarMassByName(String ammName) {
-        for (int i = 0; i < getAtomicMolarMasses().length; i++) {
-            if (getAtomicMolarMasses()[i].getName().equals(ammName)) {
-                return getAtomicMolarMasses()[i];
-            }
-        }
-        return null;
-    }
 
     // XML Serialization
     /**

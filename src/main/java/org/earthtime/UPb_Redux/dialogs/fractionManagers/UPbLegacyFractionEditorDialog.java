@@ -28,7 +28,6 @@ import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
@@ -37,6 +36,7 @@ import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.Unc
 import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.aliquots.ReduxAliquotInterface;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
+import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.fractions.ETFractionInterface;
@@ -240,17 +240,6 @@ public class UPbLegacyFractionEditorDialog extends DialogEditor {
                         rh.extractSensitivityVectorForDate(dateName, mode));
     }
 
-    private void InitializeTextBoxes(
-            final boolean editableU,
-            final boolean editablePb,
-            final boolean editableOxide) {
-
-        // set properties of text boxes
-        // top panel
-        fractionID_text.setDocument(new UnDoAbleDocument(fractionID_text, (editablePb && editableU)));
-
-        fractionMass_text.setDocument(new BigDecimalDocument(fractionMass_text, !isAnalyzed()));
-    }
 
     private void ShowSavedData() {
 

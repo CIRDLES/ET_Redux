@@ -28,3 +28,6 @@ STANDARDS_DATA_CHECK_FILES/
 
 # MACOS
 .DS_Store
+
+#Python
+*.py

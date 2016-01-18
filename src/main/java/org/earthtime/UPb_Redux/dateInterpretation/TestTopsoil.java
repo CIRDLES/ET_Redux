@@ -20,10 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.WindowConstants;
-import org.cirdles.topsoil.chart.Chart;
-import org.cirdles.topsoil.chart.SimpleVariableContext;
-import org.cirdles.topsoil.chart.VariableContext;
-import org.cirdles.topsoil.chart.standard.UncertaintyEllipseChart;
 import org.cirdles.topsoil.dataset.Dataset;
 import org.cirdles.topsoil.dataset.RawData;
 import org.cirdles.topsoil.dataset.SimpleDataset;
@@ -31,6 +27,10 @@ import org.cirdles.topsoil.dataset.entry.Entry;
 import org.cirdles.topsoil.dataset.entry.SimpleEntry;
 import org.cirdles.topsoil.dataset.field.Field;
 import org.cirdles.topsoil.dataset.field.NumberField;
+import org.cirdles.topsoil.plot.Plot;
+import org.cirdles.topsoil.plot.SimpleVariableContext;
+import org.cirdles.topsoil.plot.VariableContext;
+import org.cirdles.topsoil.plot.standard.UncertaintyEllipsePlot;
 
 /**
  *
@@ -58,9 +58,9 @@ public class TestTopsoil {
 
     public TestTopsoil() {
 
-        Chart myChart = null;
+        Plot myChart = null;
         try {
-            myChart = new UncertaintyEllipseChart();
+            myChart = new UncertaintyEllipsePlot();
         } catch (Exception e) {
         }
         

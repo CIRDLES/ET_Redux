@@ -53,7 +53,6 @@ import org.earthtime.ratioDataModels.initialPbModelsET.commonLeadLossCorrectionS
 import org.earthtime.ratioDataModels.initialPbModelsET.commonLeadLossCorrectionSchemes.CommonLeadLossCorrectionSchemeA1;
 import org.earthtime.ratioDataModels.initialPbModelsET.commonLeadLossCorrectionSchemes.CommonLeadLossCorrectionSchemeA2;
 import org.earthtime.ratioDataModels.initialPbModelsET.commonLeadLossCorrectionSchemes.CommonLeadLossCorrectionSchemeNONE;
-import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsModel;
 import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.reportViews.ReportRowGUIInterface;
 
@@ -116,7 +115,7 @@ public class UPbLAICPMSFraction extends Fraction implements
         setLegacy(false);
         this.ratioType = "UPb";
 
-        this.physicalConstantsModel = PhysicalConstantsModel.getDefaultEARTHTIMEPhysicalConstantsModel();
+        this.physicalConstantsModel = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel();
 
         this.aliquotNumber = 1;
 
@@ -152,7 +151,7 @@ public class UPbLAICPMSFraction extends Fraction implements
         initializeUpperPhiMap();
 
         this.correctedForPbc = false;
-        
+
         this.tripoliFraction = null;
 
     }
@@ -392,22 +391,13 @@ public class UPbLAICPMSFraction extends Fraction implements
                 double targetDate = 0.0;
                 double estimatedDatePbcCorr = 0.0;
                 BigDecimal lambda238 = BigDecimal.ZERO;
-                try {
-                    lambda238 = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel().getDatumByName(Lambdas.lambda238.getName()).getValue();
-                } catch (BadLabDataException badLabDataException) {
-                }
+                lambda238 = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel().getDatumByName(Lambdas.lambda238.getName()).getValue();
 
                 BigDecimal lambda235 = BigDecimal.ZERO;
-                try {
-                    lambda235 = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel().getDatumByName(Lambdas.lambda235.getName()).getValue();
-                } catch (BadLabDataException badLabDataException) {
-                }
+                lambda235 = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel().getDatumByName(Lambdas.lambda235.getName()).getValue();
 
                 BigDecimal lambda232 = BigDecimal.ZERO;
-                try {
-                    lambda232 = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel().getDatumByName(Lambdas.lambda232.getName()).getValue();
-                } catch (BadLabDataException badLabDataException) {
-                }
+                lambda232 = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel().getDatumByName(Lambdas.lambda232.getName()).getValue();
 
                 switch (radDateForSKSynch) {
                     case date206_238r:
@@ -752,17 +742,14 @@ public class UPbLAICPMSFraction extends Fraction implements
             }
             commonLeadCorrectionParameters.put("r207_206fc", r207_206fc);
 
-            try {
-                PbcCorr_UPb_Date = //
-                        commonLeadLossCorrectionScheme.calculatePbCorrectedAge(//
-                                commonLeadCorrectionParameters, //
-                                staceyKramerCorrectionParameters, //
-                                useStaceyKramer, //
-                                ReduxLabData.getInstance().getDefaultR238_235s(), //
-                                ReduxLabData.getInstance().getDefaultPhysicalConstantsModel().getDatumByName(Lambdas.lambda235.getName()), //
-                                ReduxLabData.getInstance().getDefaultPhysicalConstantsModel().getDatumByName(Lambdas.lambda238.getName()));
-            } catch (BadLabDataException badLabDataException) {
-            }
+            PbcCorr_UPb_Date
+                    = commonLeadLossCorrectionScheme.calculatePbCorrectedAge(//
+                            commonLeadCorrectionParameters, //
+                            staceyKramerCorrectionParameters, //
+                            useStaceyKramer, //
+                            ReduxLabData.getInstance().getDefaultR238_235s(), //
+                            ReduxLabData.getInstance().getDefaultPhysicalConstantsModel().getDatumByName(Lambdas.lambda235.getName()), //
+                            ReduxLabData.getInstance().getDefaultPhysicalConstantsModel().getDatumByName(Lambdas.lambda238.getName()));
 
         }
 
@@ -876,7 +863,7 @@ public class UPbLAICPMSFraction extends Fraction implements
     @Override
     public AbstractRatiosDataModel getPhysicalConstantsModel() {
         if (physicalConstantsModel == null) {
-            physicalConstantsModel = PhysicalConstantsModel.getDefaultEARTHTIMEPhysicalConstantsModel();
+            physicalConstantsModel = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel();
         }
         return physicalConstantsModel;
     }

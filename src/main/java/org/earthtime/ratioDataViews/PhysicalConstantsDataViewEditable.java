@@ -19,11 +19,12 @@ package org.earthtime.ratioDataViews;
 
 import java.awt.Dimension;
 import org.earthtime.UPb_Redux.valueModelPanelViews.ValueModelsPanelViewEditable;
+import org.earthtime.UPb_Redux.valueModels.ValueModelReferenced;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.matrices.matrixViews.MatrixGridViewEditable;
 import org.earthtime.matrices.matrixViews.MatrixGridViewNotEditable;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
-import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsModel;
+import org.earthtime.reduxLabData.ReduxLabData;
 
 /**
  *
@@ -32,6 +33,7 @@ import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsMo
 public class PhysicalConstantsDataViewEditable extends PhysicalConstantsAbstractDataView {
 
     private final boolean showTableOnly;
+
     /**
      *
      *
@@ -39,12 +41,12 @@ public class PhysicalConstantsDataViewEditable extends PhysicalConstantsAbstract
      * @param parentDimension the value of parentDimension
      * @param showTableOnly the value of showTableOnly
      */
-    public PhysicalConstantsDataViewEditable ( //
+    public PhysicalConstantsDataViewEditable( //
             AbstractRatiosDataModel dataModel, Dimension parentDimension, boolean showTableOnly) {
 
-        super( dataModel, parentDimension);
+        super(dataModel, parentDimension);
         this.showTableOnly = showTableOnly;
-        setupViews ();
+        setupViews();
         initView(true);
     }
 
@@ -52,12 +54,12 @@ public class PhysicalConstantsDataViewEditable extends PhysicalConstantsAbstract
      *
      */
     @Override
-    protected final void setupViews () {
+    protected final void setupViews() {
         this.valueModelsPanelView = new ValueModelsPanelViewEditable(//
-                dataModel.getData(), this );
+                dataModel.getData(), this);
 
-        this.covarianceVarUnctMatrixView = new MatrixGridViewNotEditable( dataModel.getDataCovariancesVarUnct(), showTableOnly );
-        this.correlationVarUnctMatrixView = new MatrixGridViewEditable( dataModel.getDataCorrelationsVarUnct(), this, showTableOnly, true);
+        this.covarianceVarUnctMatrixView = new MatrixGridViewNotEditable(dataModel.getDataCovariancesVarUnct(), showTableOnly);
+        this.correlationVarUnctMatrixView = new MatrixGridViewEditable(dataModel.getDataCorrelationsVarUnct(), this, showTableOnly, true);
     }
 
     /**
@@ -66,13 +68,17 @@ public class PhysicalConstantsDataViewEditable extends PhysicalConstantsAbstract
      * @param checkCovarianceValidity the value of checkCovarianceValidity
      * @throws org.earthtime.exceptions.ETException
      */
-    
     @Override
-    protected void saveEdits (boolean checkCovarianceValidity) 
-        throws ETException{
+    protected void saveEdits(boolean checkCovarianceValidity)
+            throws ETException {
         super.saveEdits(checkCovarianceValidity);
         valueModelsPanelView.saveEdits();
-        
+
+        // jan 2016 save references
+        for (int i = 0; i < dataModel.getData().length; i++) {
+            ((ValueModelReferenced) dataModel.getData()[i]).setReference(lambdaReferences[i].getText());
+        }
+
     }
 
     /**
@@ -80,9 +86,9 @@ public class PhysicalConstantsDataViewEditable extends PhysicalConstantsAbstract
      * @param args
      * @throws Exception
      */
-    public static void main ( String[] args ) throws Exception {
+    public static void main(String[] args) throws Exception {
 
-        AbstractRatiosDataView testView = new PhysicalConstantsDataViewEditable( PhysicalConstantsModel.getDefaultEARTHTIMEPhysicalConstantsModel(), null, false);
+        AbstractRatiosDataView testView = new PhysicalConstantsDataViewEditable(ReduxLabData.getInstance().getDefaultPhysicalConstantsModel(), null, false);
 
         testView.displayModelInFrame();
 

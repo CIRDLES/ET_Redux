@@ -112,22 +112,22 @@ public class ReportSpecifications {
      */
     public static final String[][] ReportCategory_CompositionUTh = new String[][]{
         {"conc", "232Th", "", "ppb", "getCompositionalMeasureByName", "conc232Th", "ABS",
-            "FN-17", "true", "true", "3", "", "concentration of 232Th", "true", "false"
+            "", "true", "true", "3", "", "concentration of 232Th", "true", "false"
         },
         {"conc", "238U", "", "ppm", "getCompositionalMeasureByName", "conc238U", "ABS",
             "", "true", "true", "3", "", "concentration of 238U", "false", "true"
         },
         {"", "[230Th/", "232Th]", "", "getAnalysisMeasure", UThAnalysisMeasures.ar230Th_232Thfc.getName(), "ABS",
-            "FN-17", "true", "true", "3", "true", "[230Th/232Th] activity ratio", "false", "false"
+            "FN-18&FN-19", "false", "true", "3", "true", "[230Th/232Th] activity ratio", "false", "false"
         },
         {"[232Th/", "238U]", "", "*1e5", "getAnalysisMeasure", UThAnalysisMeasures.ar232Th_238Ufc.getName(), "ABS",
-            "FN-17", "true", "true", "3", "true", "[232Th/238U] activity ratio", "false", "false"
+            "FN-19&FN-17", "true", "true", "3", "true", "[232Th/238U] activity ratio", "false", "false"
         },
         {"", "[230Th/", "238U]", "", "getAnalysisMeasure", UThAnalysisMeasures.ar230Th_238Ufc.getName(), "ABS",
-            "FN-17", "true", "false", "3", "true", "[230Th/238U] activity ratio", "false", "false"
+            "FN-18&FN-17", "true", "false", "3", "true", "[230Th/238U] activity ratio", "false", "false"
         },
         {"", "[234U/", "238U]", "", "getAnalysisMeasure", UThAnalysisMeasures.ar234U_238Ufc.getName(), "ABS",
-            "FN-17", "true", "false", "3", "true", "[234U/238U] activity ratio", "false", "false"
+            "FN-20&FN-17", "true", "false", "3", "true", "[234U/238U] activity ratio", "false", "false"
         },};
     // Report column order =
     //  displayName1, displayName2, displayName3, units, retrieveMethodName, retrieveParameterName, uncertaintyType,
@@ -186,23 +186,29 @@ public class ReportSpecifications {
      *
      */
     public static final String[][] ReportCategory_fractionationCorrectedIsotopicRatios = new String[][]{
-        {"", "r234U/", "238Ufc", "", "getRadiogenicIsotopeRatioByName", "r234U_238Ufc", "PCT",
-            "", "true", "true", "2", "true", "", "true", "false"
+        {"r232Th/", "238Ufc", "", "*1e5", "getRadiogenicIsotopeRatioByName", UThFractionationCorrectedIsotopicRatios.r232Th_238Ufc.getName(), "PCT",
+            "", "true", "true", "4", "false", "", "false", "false"
         },
-        {"", "r230Th/", "232Thfc", "", "getRadiogenicIsotopeRatioByName", "r230Th_232Thfc", "PCT",
-            "", "true", "true", "2", "true", "", "true", "false"
+        {"", "r230Th/", "238Ufc", "", "getRadiogenicIsotopeRatioByName", UThFractionationCorrectedIsotopicRatios.r230Th_238Ufc.getName(), "PCT",
+            "", "true", "false", "2", "true", "", "false", "false"
         },
-        {"", "r228Ra/", "226Rafc", "", "getRadiogenicIsotopeRatioByName", "r228Ra_226Rafc", "PCT",
-            "", "true", "true", "2", "true", "", "true", "false"
+        {"", "r234U/", "238Ufc", "", "getRadiogenicIsotopeRatioByName", UThFractionationCorrectedIsotopicRatios.r234U_238Ufc.getName(), "PCT",
+            "", "true", "false", "2", "true", "", "false", "false"
         },
-        {"", "r231Pa/", "233Pafc", "", "getRadiogenicIsotopeRatioByName", "r231Pa_233Pafc", "PCT",
-            "", "true", "true", "2", "true", "", "true", "false"
+        {"", "r230Th/", "232Thfc", "", "getRadiogenicIsotopeRatioByName", UThFractionationCorrectedIsotopicRatios.r230Th_232Thfc.getName(), "PCT",
+            "", "true", "false", "2", "true", "", "false", "false"
         },
-        {"", "r238U/", "206Pbfc", "", "getRadiogenicIsotopeRatioByName", "r238U_206Pbfc", "PCT",
-            "", "true", "true", "2", "true", "", "true", "false"
+        {"", "r228Ra/", "226Rafc", "", "getRadiogenicIsotopeRatioByName", UThFractionationCorrectedIsotopicRatios.r228Ra_226Rafc.getName(), "PCT",
+            "", "true", "false", "2", "true", "", "false", "false"
         },
-        {"", "r207Pb/", "206Pbfc", "", "getRadiogenicIsotopeRatioByName", "r207Pb_206Pbfc", "PCT",
-            "", "true", "true", "2", "true", "", "true", "false"
+        {"", "r231Pa/", "233Pafc", "", "getRadiogenicIsotopeRatioByName", UThFractionationCorrectedIsotopicRatios.r231Pa_233Pafc.getName(), "PCT",
+            "", "true", "false", "2", "true", "", "false", "false"
+        },
+        {"", "r238U/", "206Pbfc", "", "getRadiogenicIsotopeRatioByName", UThFractionationCorrectedIsotopicRatios.r238U_206Pbfc.getName(), "PCT",
+            "", "true", "false", "2", "true", "", "false", "false"
+        },
+        {"", "r207Pb/", "206Pbfc", "", "getRadiogenicIsotopeRatioByName", UThFractionationCorrectedIsotopicRatios.r207Pb_206Pbfc.getName(), "PCT",
+            "", "true", "false", "2", "true", "", "false", "false"
         },
         
     };
@@ -533,13 +539,13 @@ public class ReportSpecifications {
                 "Measured ratio corrected for fractionation and spike contribution only.");
         reportTableFootnotes.put(//
                 "FN-7", //
-                "Isotopic dates calculated using the decay constants <lambda238> and <lambda235>.");
+                "Isotopic dates calculated using <lambda238> and <lambda235>.");
         reportTableFootnotes.put(//
                 "FN-8", //
                 "% discordance = 100 - (100 * (206Pb/238U date) / (207Pb/206Pb date))");
         reportTableFootnotes.put(//
                 "FN-9", //
-                "Isotopic date calculated using the decay constant <lambda232>");
+                "Isotopic date calculated using <lambda232>");
         reportTableFootnotes.put(//
                 "FN-10", //
                 "Initial [231Pa]/[235U] activity ratio of mineral.");
@@ -567,7 +573,16 @@ public class ReportSpecifications {
                 "Best Date threshold between 206Pb/238U and 206Pb/207Pb is <bestDateDivider> MA.");
         reportTableFootnotes.put(//
                 "FN-17", //
-                "USeries future footnote.");
+                "Activity Ratios calculated using <lambda238>.");
+        reportTableFootnotes.put(//
+                "FN-18", //
+                "Activity Ratios calculated using <lambda230>.");
+        reportTableFootnotes.put(//
+                "FN-19", //
+                "Activity Ratios calculated using <lambda232>.");
+        reportTableFootnotes.put(//
+                "FN-20", //
+                "Activity Ratios calculated using <lambda234>.");
 
     }
 }

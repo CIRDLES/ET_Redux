@@ -55,6 +55,7 @@ public class ValueModelViewEditable extends AbstractValueModelView {
         } else {
             valueModel.setUncertaintyTypeABS();
         }
+
     }
 
 }

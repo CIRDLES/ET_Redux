@@ -3,7 +3,7 @@
  *
  * Created Jul 1, 2011
  *
- * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2016 James F. Bowring and www.Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ package org.earthtime.Tripoli.rawDataFiles.handlers;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -37,6 +38,7 @@ import org.earthtime.Tripoli.rawDataFiles.templates.AbstractRawDataFileTemplate;
 import org.earthtime.Tripoli.samples.AbstractTripoliSample;
 import org.earthtime.Tripoli.samples.TripoliPrimaryStandardSample;
 import org.earthtime.Tripoli.samples.TripoliUnknownSample;
+import org.earthtime.UPb_Redux.utilities.comparators.IntuitiveStringComparator;
 import org.earthtime.dataDictionaries.AcquisitionTypesEnum;
 import org.earthtime.dataDictionaries.FileTypeEnum;
 
@@ -49,7 +51,7 @@ public abstract class AbstractRawDataFileHandler implements //
         Serializable {
 
     // Class variables
-    //   private static final long serialVersionUID = 8878403593255877087L;
+    private static final long serialVersionUID = 5245372914909443661L;
     /**
      *
      */
@@ -125,7 +127,8 @@ public abstract class AbstractRawDataFileHandler implements //
      */
     @Override
     public int compareTo(AbstractRawDataFileHandler abstractRawDataFileHandler) {
-        String abstractRawDataFileHandlerName =//
+        String abstractRawDataFileHandlerName
+                =//
                 abstractRawDataFileHandler.NAME.trim();
         return (this.NAME.trim().compareToIgnoreCase(abstractRawDataFileHandlerName));
     }
@@ -219,6 +222,18 @@ public abstract class AbstractRawDataFileHandler implements //
         return retVal;
     }
 
+    public class FractionFileNameNameComparator implements Comparator<File> {
+
+        public FractionFileNameNameComparator() {
+        }
+
+        @Override
+        public int compare(File f1, File f2) {
+            Comparator<String> intuitiveString = new IntuitiveStringComparator<>();
+            return intuitiveString.compare(f1.getName(), f2.getName());
+        }
+    }
+
     /**
      *
      * @param fileContents
@@ -241,6 +256,34 @@ public abstract class AbstractRawDataFileHandler implements //
      */
     public AbstractRawDataFileTemplate getRawDataFileTemplate() {
         return rawDataFileTemplate;
+    }
+
+    public double calcAvgPulseOrAnalog(int startIndex, int endIndex, String[] data) {
+        double retVal = 0.0;
+
+        int countOfValues = 0;
+        double sumOfValues = 0.0;
+        for (int i = startIndex; i <= endIndex; i++) {
+            if (data[i].contains("*")) {
+                // do nothing
+            } else {
+                double val = Double.parseDouble(data[i]);
+                sumOfValues += val;
+                countOfValues++;
+            }
+        }
+
+        if (countOfValues > 0) {
+            retVal = sumOfValues / countOfValues;
+        }
+
+        return retVal;
+    }
+
+    public long calculateTimeStamp(String timeStamp) {
+        // remove decimal point and take first 3 digits of 6 so timestamp can be converted to long
+        String[] timeStampParts = timeStamp.split("\\.");
+        return Long.parseLong(timeStampParts[0] + timeStampParts[1].substring(0, 3));
     }
 
     /**
@@ -312,9 +355,10 @@ public abstract class AbstractRawDataFileHandler implements //
 
         ArrayList<AbstractTripoliSample> tripoliSamples = new ArrayList<>();
 
-        if (tripoliFractions.size() > 0){// != null) {
+        if (tripoliFractions.size() > 0) {// != null) {
             if (rawDataFileTemplate.getDefaultParsingOfFractionsBehavior() == 0) {
-                AbstractTripoliSample primaryStandard = //
+                AbstractTripoliSample primaryStandard
+                        = //
                         new TripoliPrimaryStandardSample("Some Standard");
 
                 SortedSet<TripoliFraction> primaryStandardFractions = new TreeSet<>();

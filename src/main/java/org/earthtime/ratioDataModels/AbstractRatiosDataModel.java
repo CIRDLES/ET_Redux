@@ -231,21 +231,24 @@ public abstract class AbstractRatiosDataModel implements
      */
     @Override
     public int compareTo(AbstractRatiosDataModel model) throws ClassCastException {
-        String modelID =//
+        String modelID
+                =//
                 model.getNameAndVersion().trim();
         return (this.getNameAndVersion().trim() //
                 .compareToIgnoreCase(modelID));
     }
 
     /**
-     * This method supports the loading of XML parameter models into the lab data
-     * from the resources folder corresponding to the model class.  The names of
-     * the files are listed line by line in the file listOfModelFiles.txt.  The
-     * rationale is that users can propose via a github.com pull request that models
-     * be included in the distributed jar file and can also see the models easily
-     * on github.  This method also sets the model to be immutable so that the user
-     * cannot accidentally delete it from the lab data.
-     * @param modelInstances 
+     * This method supports the loading of XML parameter models into the lab
+     * data from the resources folder corresponding to the model class. The
+     * names of the files are listed line by line in the file
+     * listOfModelFiles.txt. The rationale is that users can propose via a
+     * github.com pull request that models be included in the distributed jar
+     * file and can also see the models easily on github. This method also sets
+     * the model to be immutable so that the user cannot accidentally delete it
+     * from the lab data.
+     *
+     * @param modelInstances
      */
     public static void loadModelsFromResources(Map<String, AbstractRatiosDataModel> modelInstances) {
 
@@ -259,16 +262,19 @@ public abstract class AbstractRatiosDataModel implements
                 List<String> fileNames = Files.readLines(listOfModelFiles, Charsets.ISO_8859_1);
                 // process models as xml files
                 for (int i = 0; i < fileNames.size(); i++) {
-                    File modelFile = RESOURCE_EXTRACTOR.extractResourceAsFile(fileNames.get(i));
-                    System.out.println(anInstance.getClass().getSimpleName() + " added: " + fileNames.get(i));
+                    // test for empty string
+                    if (fileNames.get(i).trim().length() > 0) {
+                        File modelFile = RESOURCE_EXTRACTOR.extractResourceAsFile(fileNames.get(i));
+                        System.out.println(anInstance.getClass().getSimpleName() + " added: " + fileNames.get(i));
 
-                    try {
-                        AbstractRatiosDataModel model = anInstance.readXMLObject(modelFile.getCanonicalPath(), false);
-                        modelInstances.put(model.getNameAndVersion(), model);
-                        model.setImmutable(true);
-                    } catch (IOException | ETException | BadOrMissingXMLSchemaException ex) {
-                        if (ex instanceof ETException) {
-                            new ETWarningDialog((ETException) ex).setVisible(true);
+                        try {
+                            AbstractRatiosDataModel model = anInstance.readXMLObject(modelFile.getCanonicalPath(), false);
+                            modelInstances.put(model.getNameAndVersion(), model);
+                            model.setImmutable(true);
+                        } catch (IOException | ETException | BadOrMissingXMLSchemaException ex) {
+                            if (ex instanceof ETException) {
+                                new ETWarningDialog((ETException) ex).setVisible(true);
+                            }
                         }
                     }
                 }
@@ -602,7 +608,8 @@ public abstract class AbstractRatiosDataModel implements
                 for (int row = 0; row < rowColDimension; row++) {
                     String rowName = dataCorrelationsVarUnct.getRows().get(row);
                     ValueModel rowData = getDatumByName(rowName);
-                    double correlation = //
+                    double correlation
+                            = //
                             dataCovariancesVarUnct.getMatrix().get(row, col)//
                             / rowData.getOneSigmaAbs().doubleValue() //
                             / colData.getOneSigmaAbs().doubleValue();
@@ -625,7 +632,8 @@ public abstract class AbstractRatiosDataModel implements
                 for (int row = 0; row < rowColDimension; row++) {
                     String rowName = dataCorrelationsSysUnct.getRows().get(row);
                     ValueModel rowData = getDatumByName(rowName);
-                    double correlation = //
+                    double correlation
+                            = //
                             dataCovariancesSysUnct.getMatrix().get(row, col)//
                             / rowData.getOneSigmaSysAbs().doubleValue() //
                             / colData.getOneSigmaSysAbs().doubleValue();
@@ -655,7 +663,8 @@ public abstract class AbstractRatiosDataModel implements
                 for (int row = 0; row < rowColDimension; row++) {
                     String rowName = dataCovariancesVarUnct.getRows().get(row);
                     ValueModel rowData = getDatumByName(rowName);
-                    double covariance = //
+                    double covariance
+                            = //
                             dataCorrelationsVarUnct.getMatrix().get(row, col)//
                             * rowData.getOneSigmaAbs().doubleValue() //
                             * colData.getOneSigmaAbs().doubleValue();
@@ -678,7 +687,8 @@ public abstract class AbstractRatiosDataModel implements
                 for (int row = 0; row < rowColDimension; row++) {
                     String rowName = dataCovariancesSysUnct.getRows().get(row);
                     ValueModel rowData = getDatumByName(rowName);
-                    double covariance = //
+                    double covariance
+                            = //
                             dataCorrelationsSysUnct.getMatrix().get(row, col)//
                             * rowData.getOneSigmaSysAbs().doubleValue() //
                             * colData.getOneSigmaSysAbs().doubleValue();

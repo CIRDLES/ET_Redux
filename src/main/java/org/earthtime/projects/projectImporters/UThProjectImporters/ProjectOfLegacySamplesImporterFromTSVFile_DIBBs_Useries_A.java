@@ -31,6 +31,7 @@ import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UTh_Redux.aliquots.UThReduxAliquot;
 import org.earthtime.UTh_Redux.fractions.UThLegacyFraction;
 import org.earthtime.UTh_Redux.fractions.UThLegacyFractionI;
+import org.earthtime.UTh_Redux.fractions.fractionReduction.UThFractionReducer;
 import org.earthtime.UTh_Redux.samples.SampleUTh;
 import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.aliquots.ReduxAliquotInterface;
@@ -39,6 +40,7 @@ import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.dataDictionaries.SampleTypesEnum;
 import org.earthtime.dataDictionaries.UThAnalysisMeasures;
 import org.earthtime.dataDictionaries.UThCompositionalMeasures;
+import org.earthtime.dataDictionaries.UThFractionationCorrectedIsotopicRatios;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.projects.ProjectInterface;
@@ -180,8 +182,12 @@ public class ProjectOfLegacySamplesImporterFromTSVFile_DIBBs_Useries_A extends A
                             metaData.append("14C age? = ").append(myFractionData.get(34).trim()).append("\n");
                             metaData.append("Instrument = ").append(myFractionData.get(35).trim()).append("\n");
                             metaData.append("Decay cnsts = ").append(myFractionData.get(36).trim()).append("\n");
-                            if (myFractionData.get(36).trim().compareToIgnoreCase("D1")==0){
+                            if (myFractionData.get(36).trim().compareToIgnoreCase("D1") == 0) {
                                 myFraction.useLegacyPhysicalConstantsD1();
+                            } else if (myFractionData.get(36).trim().compareToIgnoreCase("D2") == 0) {
+                                myFraction.useLegacyPhysicalConstantsD2();
+                            } else if (myFractionData.get(36).trim().compareToIgnoreCase("D3") == 0) {
+                                myFraction.useLegacyPhysicalConstantsD3();
                             }
                             metaData.append("Spike Calib = ").append(myFractionData.get(37).trim()).append("\n");
                             metaData.append("Published % calcite = ").append(myFractionData.get(38).trim()).append("\n");
@@ -218,9 +224,9 @@ public class ProjectOfLegacySamplesImporterFromTSVFile_DIBBs_Useries_A extends A
                             myFraction.getLegacyActivityRatioByName(ratioName)//
                                     .setValue(readDelimitedTextCell(myFractionData.get(43)));
 
-                            // column AS=44 is ar232Th_238Ufc * 10^5
-                            ratioName = UThAnalysisMeasures.ar232Th_238Ufc.getName();
-                            myFraction.getLegacyActivityRatioByName(ratioName)//
+                            // column AS=44 is r232Th_238Ufc * 10^5
+                            ratioName = UThFractionationCorrectedIsotopicRatios.r232Th_238Ufc.getName();
+                            myFraction.getRadiogenicIsotopeRatioByName(ratioName)//
                                     .setValue(readDelimitedTextCell(myFractionData.get(44)).//
                                             movePointLeft(5));
 
@@ -273,6 +279,8 @@ public class ProjectOfLegacySamplesImporterFromTSVFile_DIBBs_Useries_A extends A
                                     divide(new BigDecimal(2.0));
                             myFraction.getLegacyActivityRatioByName(ratioName)//
                                     .setOneSigma(oneSigmaAbs);
+
+                            UThFractionReducer.calculateMeasuredAtomRatiosFromLegacyActivityRatios(myFraction);
 
                         }
 

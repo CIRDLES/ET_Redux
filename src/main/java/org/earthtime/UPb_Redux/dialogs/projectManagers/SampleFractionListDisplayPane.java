@@ -51,11 +51,11 @@ import javax.swing.event.DocumentListener;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.Tripoli.samples.AbstractTripoliSample;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataViews.AbstractRatiosDataView;
 import org.earthtime.ratioDataViews.MineralStandardUPbRatiosDataViewNotEditable;
+import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.utilities.DragAndDropListItemInterface;
 
 /**
@@ -130,10 +130,10 @@ public class SampleFractionListDisplayPane extends JLayeredPane {
             viewStandardModelButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    AbstractRatiosDataModel selectedModel = //
-                            ((AbstractRatiosDataModel) roleChooser.getSelectedItem());
-                    AbstractRatiosDataView modelView = //
-                            new MineralStandardUPbRatiosDataViewNotEditable(selectedModel, null, false);
+                    AbstractRatiosDataModel selectedModel
+                            = ((AbstractRatiosDataModel) roleChooser.getSelectedItem());
+                    AbstractRatiosDataView modelView
+                            = new MineralStandardUPbRatiosDataViewNotEditable(selectedModel, null, false);
                     modelView.displayModelInFrame();
                 }
             });

@@ -64,6 +64,7 @@ public class UThFraction implements
     protected ValueModel[] compositionalMeasures;
     protected ValueModel[] sampleIsochronRatios;
     protected ValueModel[] traceElements;
+    protected AbstractRatiosDataModel physicalConstantsModel; // fraction class has physicalConstantsModelID
 
     protected boolean changed;
     protected boolean deleted;
@@ -281,7 +282,8 @@ public class UThFraction implements
     }
 
     /**
-     * @param fractionationCorrectedIsotopeRatios the fractionationCorrectedIsotopeRatios to set
+     * @param fractionationCorrectedIsotopeRatios the
+     * fractionationCorrectedIsotopeRatios to set
      */
     @Override
     public void setRadiogenicIsotopeRatios(ValueModel[] fractionationCorrectedIsotopeRatios) {
@@ -444,14 +446,32 @@ public class UThFraction implements
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public AbstractRatiosDataModel getPhysicalConstantsModel() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (physicalConstantsModel == null) {
+            physicalConstantsModel = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel();
+        }
+        return physicalConstantsModel;
     }
 
+    /**
+     *
+     * @param physicalConstantsModel
+     */
     @Override
     public void setPhysicalConstantsModel(AbstractRatiosDataModel physicalConstantsModel) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if ((this.physicalConstantsModel == null)
+                || (!this.physicalConstantsModel.equals(physicalConstantsModel))) {
+            this.physicalConstantsModel = physicalConstantsModel;
+            this.setChanged(true);
+//            System.out.println(this.getFractionID() //
+//                    + "  is getting new physical constants model = "//
+//                    + physicalConstantsModel.getNameAndVersion());
+        }
     }
 
     @Override

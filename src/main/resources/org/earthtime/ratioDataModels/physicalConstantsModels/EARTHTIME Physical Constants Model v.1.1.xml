@@ -5,18 +5,18 @@
     * For more info, visit https://CIRDLES.org                                  *
     *****************************************************************************
 -->
-<PhysicalConstantsModel  xmlns="http://www.earth-time.org"
+<PhysicalConstantsModel  xmlns="https://raw.githubusercontent.com/EARTHTIME/Schema"
         xmlns:xs="http://www.w3.org/2001/XMLSchema"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.earth-time.org
-                            http://earth-time.org/projects/upb/public_data/XSD/PhysicalConstantsModelXMLSchema.xsd">
+        xsi:schemaLocation="https://raw.githubusercontent.com/EARTHTIME/Schema
+                            https://raw.githubusercontent.com/EARTHTIME/Schema/master/PhysicalConstantsModelXMLSchema.xsd">
   <modelName>EARTHTIME Physical Constants Model</modelName>
   <versionNumber>1</versionNumber>
   <minorVersionNumber>1</minorVersionNumber>
   <labName>EARTHTIME</labName>
   <dateCertified>2015-01-01</dateCertified>
   <reference>See individual constants for reference.</reference>
-  <comment>This Physical Constants Model is the accepted default as of 2015.</comment>
+  <comment>This Physical Constants Model is the accepted default as of 2015. We certify it as D3 for the U-series work.</comment>
   <ratios>
     <ValueModelReferenced>
       <name>lambda230</name>

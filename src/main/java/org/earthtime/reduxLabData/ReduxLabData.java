@@ -40,6 +40,7 @@ import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.dataDictionaries.DataDictionary;
 import org.earthtime.dataDictionaries.MineralTypes;
 import org.earthtime.exceptions.ETException;
+import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.detritalUraniumAndThoriumModels.DetritalUraniumAndThoriumModel;
@@ -165,7 +166,7 @@ public final class ReduxLabData implements Serializable {
         }
 
         try {
-            defaultPhysicalConstantsModel = getFirstPhysicalConstantsModel();
+            defaultPhysicalConstantsModel = getAPhysicalConstantsModel("EARTHTIME Physical Constants Model v.1.1");
         } catch (BadLabDataException ex) {
         }
 
@@ -1005,16 +1006,17 @@ public final class ReduxLabData implements Serializable {
      * @return @throws BadLabDataException
      * @throws BadLabDataException
      */
-    public AbstractRatiosDataModel getDefaultPhysicalConstantsModel()
-            throws BadLabDataException {
-        if (defaultPhysicalConstantsModel == null) {
-            addPhysicalConstantsModel(PhysicalConstantsModel.getNoneInstance());
-            defaultPhysicalConstantsModel = getFirstPhysicalConstantsModel();
-        } else // detect if legacy default is none and change if possible
-        {
-            if (defaultPhysicalConstantsModel.equals(getNonePhysicalConstantsModel())) {
+    public AbstractRatiosDataModel getDefaultPhysicalConstantsModel() {
+        try {
+            if (defaultPhysicalConstantsModel == null) {
+                addPhysicalConstantsModel(PhysicalConstantsModel.getNoneInstance());
                 defaultPhysicalConstantsModel = getFirstPhysicalConstantsModel();
-            }
+            } else // detect if legacy default is none and change if possible
+             if (defaultPhysicalConstantsModel.equals(getNonePhysicalConstantsModel())) {
+                    defaultPhysicalConstantsModel = getFirstPhysicalConstantsModel();
+                }
+        } catch (BadLabDataException badLabDataException) {
+            new ETWarningDialog(badLabDataException).setVisible(true);
         }
         return defaultPhysicalConstantsModel;
     }

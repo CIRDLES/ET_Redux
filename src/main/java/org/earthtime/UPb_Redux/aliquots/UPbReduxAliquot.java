@@ -1189,7 +1189,7 @@ public class UPbReduxAliquot extends Aliquot
                 = new UPbReduxAliquot(
                         0,
                         "Test Aliquot",
-                        PhysicalConstantsModel.getDefaultEARTHTIMEPhysicalConstantsModel(),
+                        ReduxLabData.getInstance().getDefaultPhysicalConstantsModel(),
                         false,
                         new SESARSampleMetadata());
 

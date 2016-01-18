@@ -1,7 +1,7 @@
 /*
  * LaserchronElementIIFileHandler
  *
- * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2016 James F. Bowring and www.Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +35,6 @@ import org.earthtime.Tripoli.dataModels.DataModelInterface;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan.LaserchronElementIISetupUPb;
 import org.earthtime.Tripoli.rawDataFiles.handlers.AbstractRawDataFileHandler;
-import org.earthtime.UPb_Redux.utilities.comparators.IntuitiveStringComparator;
 import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.pythonUtilities.ElementII_DatFileConverter;
 import org.earthtime.utilities.FileHelper;
@@ -92,18 +90,6 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler i
 
         rawDataFile = FileHelper.AllPlatformGetFolder(dialogTitle, tripoliRawDataFolder);
         return rawDataFile;
-    }
-
-    class FractionFileNameNameComparator implements Comparator<File> {
-
-        public FractionFileNameNameComparator() {
-        }
-
-        @Override
-        public int compare(File f1, File f2) {
-            Comparator<String> intuitiveString = new IntuitiveStringComparator<>();
-            return intuitiveString.compare(f1.getName(), f2.getName());
-        }
     }
 
     /**
@@ -222,99 +208,101 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler i
             }
             loadDataTask.firePropertyChange("progress", 0, ((100 * f) / analysisFiles.length));
 
-            // TODO: need to test for empty fractionnames or not enough fraction names (= too many dat files)
-            // default value
-            String fractionID = analysisFiles[f].getName().replace(".dat", "");// + String.valueOf(f);
-            if ((fractionNames.length > 0) & (fractionNames.length >= analysisFiles.length)) {
-                fractionID = fractionNames[f];
-            }
-
-            // needs to be more robust
-            boolean isStandard = (fractionID.compareToIgnoreCase(rawDataFileTemplate.getStandardIDs()[0]) == 0);
-            // number the standards
-            if (rawDataFileTemplate.standardIsKnown(fractionID)) {
-                fractionID = fractionID + "-" + String.valueOf(standardIncrementer);
-                standardIncrementer++;
-            }
-
-            // ************************************************************************************************
-            // Laserchron uses Philip Wenig's Python routine to extract data from
-            // ElementII .dat files and then pre-processes counts before passing to
-            // fraction intake below
-            String[][] extractedData = ElementII_DatFileConverter.readDatFile(analysisFiles[f], rawDataFileTemplate.getStringListOfElementsByIsotopicMass());
-            // within each row
-            // index 0 = scannumber; 1 = time stamp; 2 = ACF; followed by order of groups = 202  204  206	Pb207	Pb208	Th232	U238
-            // each acquisition file contains background followed by peak followed by background
-            // initial solution is to hard wire the first background and peak per Gehrels
-            // later we will give user interactive tools to pick them out
-            ArrayList<double[]> backgroundAcquisitions = new ArrayList<>();
-            ArrayList<double[]> peakAcquisitions = new ArrayList<>();
-
-            int hardwiredEndOfBackground = 24;
-            int assumedBackgrounRowCount = hardwiredEndOfBackground - rawDataFileTemplate.getBlockStartOffset();
-            // process time stamp from first scan as time stamp of file and background
-            long fractionBackgroundTimeStamp = calculateTimeStamp(extractedData[0][1]);
-            // process time stamp of first peak reading
-            long fractionPeakTimeStamp = calculateTimeStamp(extractedData[hardwiredEndOfBackground + 1][1]);
-
-            for (int i = rawDataFileTemplate.getBlockStartOffset(); i < rawDataFileTemplate.getBlockSize(); i++) {
-                // 202  204  206	Pb207	Pb208	Th232	U238
-                if (i < hardwiredEndOfBackground) {
-                    double[] backgroundIntensities = new double[7];
-                    backgroundAcquisitions.add(backgroundIntensities);
-                    backgroundIntensities[0] = calcAvgPulseOrAnalog(3, 6, extractedData[i]);
-                    backgroundIntensities[1] = calcAvgPulseOrAnalog(8, 11, extractedData[i]);
-                    backgroundIntensities[2] = calcAvgPulseThenAnalog(13, 16, extractedData[i]);
-                    backgroundIntensities[3] = calcAvgPulseThenAnalog(22, 25, extractedData[i]);
-                    backgroundIntensities[4] = calcAvgPulseThenAnalog(31, 34, extractedData[i]);
-                    backgroundIntensities[5] = calcAvgPulseThenAnalog(40, 43, extractedData[i]);
-                    backgroundIntensities[6] = calcAvgPulseThenAnalog(49, 52, extractedData[i]);
-                } else if (i >= (hardwiredEndOfBackground)) {
-                    double[] peakIntensities = new double[7];
-                    peakAcquisitions.add(peakIntensities);
-                    peakIntensities[0] = calcAvgPulseOrAnalog(3, 6, extractedData[i]);
-                    peakIntensities[1] = calcAvgPulseOrAnalog(8, 11, extractedData[i]);
-                    peakIntensities[2] = calcAvgPulseThenAnalog(13, 16, extractedData[i]);
-                    peakIntensities[3] = calcAvgPulseThenAnalog(22, 25, extractedData[i]);
-                    peakIntensities[4] = calcAvgPulseThenAnalog(31, 34, extractedData[i]);
-                    peakIntensities[5] = calcAvgPulseThenAnalog(40, 43, extractedData[i]);
-                    peakIntensities[6] = calcAvgPulseThenAnalog(49, 52, extractedData[i]);
+            try {
+                // TODO: need to test for empty fractionnames or not enough fraction names (= too many dat files)
+                // default value
+                String fractionID = analysisFiles[f].getName().replace(".dat", "");// + String.valueOf(f);
+                if ((fractionNames.length > 0) & (fractionNames.length >= analysisFiles.length)) {
+                    fractionID = fractionNames[f];
                 }
-            }  // i loop
 
-            TripoliFraction tripoliFraction
-                    = //                           
-                    new TripoliFraction( //
-                            fractionID, //
-                            massSpec.getCommonLeadCorrectionHighestLevel(), //
-                            isStandard,
-                            fractionBackgroundTimeStamp, //
-                            fractionPeakTimeStamp,
-                            peakAcquisitions.size());
+                // needs to be more robust
+                boolean isStandard = (fractionID.compareToIgnoreCase(rawDataFileTemplate.getStandardIDs()[0]) == 0);
+                // number the standards
+                if (rawDataFileTemplate.standardIsKnown(fractionID)) {
+                    fractionID = fractionID + "-" + String.valueOf(standardIncrementer);
+                    standardIncrementer++;
+                }
 
-            SortedSet<DataModelInterface> rawRatios = ((LaserchronElementIISetupUPb) massSpec).rawRatiosFactoryRevised();
-            tripoliFraction.setRawRatios(rawRatios);
+                // ************************************************************************************************
+                // Laserchron uses Philip Wenig's Python routine to extract data from
+                // ElementII .dat files and then pre-processes counts before passing to
+                // fraction intake below
+                String[][] extractedData = ElementII_DatFileConverter.readDatFile5(analysisFiles[f], rawDataFileTemplate.getStringListOfElementsByIsotopicMass());
+                // within each row
+                // index 0 = scannumber; 1 = time stamp; 2 = ACF; followed by order of groups = 202  204  206	Pb207	Pb208	Th232	U238
+                // each acquisition file contains background followed by peak followed by background
+                // initial solution is to hard wire the first background and peak per Gehrels
+                // later we will give user interactive tools to pick them out
+                ArrayList<double[]> backgroundAcquisitions = new ArrayList<>();
+                ArrayList<double[]> peakAcquisitions = new ArrayList<>();
+                
+                int hardwiredEndOfBackground = 24;
+                int assumedBackgrounRowCount = hardwiredEndOfBackground - rawDataFileTemplate.getBlockStartOffset();
+                // process time stamp from first scan as time stamp of file and background
+                long fractionBackgroundTimeStamp = calculateTimeStamp(extractedData[0][1]);
+                // process time stamp of first peak reading
+                long fractionPeakTimeStamp = calculateTimeStamp(extractedData[hardwiredEndOfBackground + 1][1]);
+                
+                for (int i = rawDataFileTemplate.getBlockStartOffset(); i < rawDataFileTemplate.getBlockSize(); i++) {
+                    // 202  204  206	Pb207	Pb208	Th232	U238
+                    if (i < hardwiredEndOfBackground) {
+                        double[] backgroundIntensities = new double[7];
+                        backgroundAcquisitions.add(backgroundIntensities);
+                        backgroundIntensities[0] = calcAvgPulseOrAnalog(3, 6, extractedData[i]);
+                        backgroundIntensities[1] = calcAvgPulseOrAnalog(8, 11, extractedData[i]);
+                        backgroundIntensities[2] = calcAvgPulseThenAnalog(13, 16, extractedData[i]);
+                        backgroundIntensities[3] = calcAvgPulseThenAnalog(22, 25, extractedData[i]);
+                        backgroundIntensities[4] = calcAvgPulseThenAnalog(31, 34, extractedData[i]);
+                        backgroundIntensities[5] = calcAvgPulseThenAnalog(40, 43, extractedData[i]);
+                        backgroundIntensities[6] = calcAvgPulseThenAnalog(49, 52, extractedData[i]);
+                    } else if (i >= (hardwiredEndOfBackground)) {
+                        double[] peakIntensities = new double[7];
+                        peakAcquisitions.add(peakIntensities);
+                        peakIntensities[0] = calcAvgPulseOrAnalog(3, 6, extractedData[i]);
+                        peakIntensities[1] = calcAvgPulseOrAnalog(8, 11, extractedData[i]);
+                        peakIntensities[2] = calcAvgPulseThenAnalog(13, 16, extractedData[i]);
+                        peakIntensities[3] = calcAvgPulseThenAnalog(22, 25, extractedData[i]);
+                        peakIntensities[4] = calcAvgPulseThenAnalog(31, 34, extractedData[i]);
+                        peakIntensities[5] = calcAvgPulseThenAnalog(40, 43, extractedData[i]);
+                        peakIntensities[6] = calcAvgPulseThenAnalog(49, 52, extractedData[i]);
+                    }
+                }  // i loop
 
-            massSpec.setCountOfAcquisitions(peakAcquisitions.size());
+                TripoliFraction tripoliFraction
+                        = new TripoliFraction( //
+                                fractionID, //
+                                massSpec.getCommonLeadCorrectionHighestLevel(), //
+                                isStandard,
+                                fractionBackgroundTimeStamp, //
+                                fractionPeakTimeStamp,
+                                peakAcquisitions.size());
+                
+                SortedSet<DataModelInterface> rawRatios = ((LaserchronElementIISetupUPb) massSpec).rawRatiosFactoryRevised();
+                tripoliFraction.setRawRatios(rawRatios);
+                
+                massSpec.setCountOfAcquisitions(peakAcquisitions.size());
 
-            // establish map of virtual collectors to field indexes
-            Map<DataModelInterface, Integer> virtualCollectorModelMapToFieldIndexes = new HashMap<>();
-            virtualCollectorModelMapToFieldIndexes.put(massSpec.getHg202(), 0);
-            virtualCollectorModelMapToFieldIndexes.put(massSpec.getPb204(), 1);
-            virtualCollectorModelMapToFieldIndexes.put(massSpec.getPb206(), 2);
-            virtualCollectorModelMapToFieldIndexes.put(massSpec.getPb207(), 3);
-            virtualCollectorModelMapToFieldIndexes.put(massSpec.getPb208(), 4);
-            virtualCollectorModelMapToFieldIndexes.put(massSpec.getTh232(), 5);
-            virtualCollectorModelMapToFieldIndexes.put(massSpec.getU238(), 6);
-
-            massSpec.processFractionRawRatiosII(//
-                    backgroundAcquisitions, peakAcquisitions, isStandard, usingFullPropagation, tripoliFraction, virtualCollectorModelMapToFieldIndexes);
-
-            tripoliFraction.shadeDataActiveMapLeft(leftShadeCount);
-            System.out.println("\n**** Element II FractionID  " + fractionID);
-
-            myTripoliFractions.add(tripoliFraction);
-
+                // establish map of virtual collectors to field indexes
+                Map<DataModelInterface, Integer> virtualCollectorModelMapToFieldIndexes = new HashMap<>();
+                virtualCollectorModelMapToFieldIndexes.put(massSpec.getHg202(), 0);
+                virtualCollectorModelMapToFieldIndexes.put(massSpec.getPb204(), 1);
+                virtualCollectorModelMapToFieldIndexes.put(massSpec.getPb206(), 2);
+                virtualCollectorModelMapToFieldIndexes.put(massSpec.getPb207(), 3);
+                virtualCollectorModelMapToFieldIndexes.put(massSpec.getPb208(), 4);
+                virtualCollectorModelMapToFieldIndexes.put(massSpec.getTh232(), 5);
+                virtualCollectorModelMapToFieldIndexes.put(massSpec.getU238(), 6);
+                
+                massSpec.processFractionRawRatiosII(//
+                        backgroundAcquisitions, peakAcquisitions, isStandard, usingFullPropagation, tripoliFraction, virtualCollectorModelMapToFieldIndexes);
+                
+                tripoliFraction.shadeDataActiveMapLeft(leftShadeCount);
+                System.out.println("\n**** Element II FractionID  " + fractionID);
+                
+                myTripoliFractions.add(tripoliFraction);
+            } catch (Exception e) {
+                   System.out.println("bad read of fraction " + analysisFiles[f].getName() + " message = " + e.getMessage());
+            }
         } // end of files loop
 
         if (myTripoliFractions.isEmpty()) {
@@ -322,28 +310,6 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler i
         }
 
         return myTripoliFractions;
-    }
-
-    private double calcAvgPulseOrAnalog(int startIndex, int endIndex, String[] data) {
-        double retVal = 0.0;
-
-        int countOfValues = 0;
-        double sumOfValues = 0.0;
-        for (int i = startIndex; i <= endIndex; i++) {
-            if (data[i].contains("*")) {
-                // do nothing
-            } else {
-                double val = Double.parseDouble(data[i]);
-                sumOfValues += val;
-                countOfValues++;
-            }
-        }
-
-        if (countOfValues > 0) {
-            retVal = sumOfValues / countOfValues;
-        }
-
-        return retVal;
     }
 
     private double calcAvgPulseThenAnalog(int startIndex, int endIndex, String[] data) {
@@ -367,11 +333,5 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler i
         }
 
         return retVal;
-    }
-
-    private long calculateTimeStamp(String timeStamp) {
-        // remove decimal point and take first 3 digits of 6 so timestamp can be converted to long
-        String[] timeStampParts = timeStamp.split("\\.");
-        return Long.parseLong(timeStampParts[0] + timeStampParts[1].substring(0, 3));
     }
 }

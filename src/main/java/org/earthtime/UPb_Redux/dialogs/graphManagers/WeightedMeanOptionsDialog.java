@@ -24,16 +24,16 @@ import java.util.Map;
 import java.util.Vector;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
-import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.aliquots.AliquotInterface;
+import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.samples.SampleInterface;
 import org.jdesktop.layout.GroupLayout.ParallelGroup;
 import org.jdesktop.layout.GroupLayout.SequentialGroup;
 
 /**
  *
- * @author  James F. Bowring
+ * @author James F. Bowring
  */
 public class WeightedMeanOptionsDialog extends DialogEditor {
 
@@ -61,31 +61,33 @@ public class WeightedMeanOptionsDialog extends DialogEditor {
     private String wm207_206r_Pa;
     private String wm207_206r_ThPa;
 
-    /** Creates new form WeightedMeanOptionsDialog
-     * @param parent 
+    /**
+     * Creates new form WeightedMeanOptionsDialog
+     *
+     * @param parent
      * @param modal
-     * @param sample  
+     * @param sample
      */
-    public WeightedMeanOptionsDialog ( java.awt.Frame parent,
+    public WeightedMeanOptionsDialog(java.awt.Frame parent,
             boolean modal,
-            SampleInterface sample ) {
+            SampleInterface sample) {
 
-        super( parent, modal );
+        super(parent, modal);
         this.sample = sample;
 
         selectedModels = new Object[0][0];
 
-        setLocationRelativeTo( parent );
-        setAlwaysOnTop( modal );
+        setLocationRelativeTo(parent);
+        setAlwaysOnTop(modal);
 
-        setWeightedMeanOptions( sample.getSampleDateInterpretationGUISettings().getWeightedMeanOptions() );
+        setWeightedMeanOptions(sample.getSampleDateInterpretationGUISettings().getWeightedMeanOptions());
 
         initComponents();
 
         // october 2009
         // auto-adjust height to accommodate aliquots up to maxium of 750
-        int maxHeight = Math.min( 750, sample.getAliquots().size() * 30 + 180 );
-        setSize( 1100, maxHeight );
+        int maxHeight = Math.min(750, sample.getAliquots().size() * 30 + 180);
+        setSize(1100, maxHeight);
 
         aliquotNameLabels = new ArrayList<>();
         wm206_238CheckBox = new ArrayList<>();
@@ -99,361 +101,354 @@ public class WeightedMeanOptionsDialog extends DialogEditor {
         wm207_206r_ThPaCheckBox = new ArrayList<JCheckBox>();
 
         // build display
-        org.jdesktop.layout.GroupLayout wmAliquotArrayLayout = new org.jdesktop.layout.GroupLayout( wmAliquotArray_panel );
-        wmAliquotArray_panel.setLayout( wmAliquotArrayLayout );
+        org.jdesktop.layout.GroupLayout wmAliquotArrayLayout = new org.jdesktop.layout.GroupLayout(wmAliquotArray_panel);
+        wmAliquotArray_panel.setLayout(wmAliquotArrayLayout);
 
-        ParallelGroup myHorizAliquot = wmAliquotArrayLayout.createParallelGroup( org.jdesktop.layout.GroupLayout.LEADING, false );
+        ParallelGroup myHorizAliquot = wmAliquotArrayLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false);
         SequentialGroup myVerticalAliquot = wmAliquotArrayLayout.createSequentialGroup();
 
         // vertical offset
-        myVerticalAliquot.add( 60, 60, 60 );
+        myVerticalAliquot.add(60, 60, 60);
 
-        JLabel aliquotLabelH = new JLabel( "Aliquot" );
-        JLabel wm206_238H = new JLabel( "206Pb / 238U" );
-        JLabel wm207_235H = new JLabel( "207Pb / 235U" );
-        JLabel wm207_206H = new JLabel( "207Pb / 206Pb" );
-        JLabel wm208_232H = new JLabel( "208Pb / 232Th" );
+        JLabel aliquotLabelH = new JLabel("Aliquot");
+        JLabel wm206_238H = new JLabel("206Pb / 238U");
+        JLabel wm207_235H = new JLabel("207Pb / 235U");
+        JLabel wm207_206H = new JLabel("207Pb / 206Pb");
+        JLabel wm208_232H = new JLabel("208Pb / 232Th");
 
-        JLabel wm206_238r_ThH = new JLabel( "<html>206Pb/238U <br>(Th-corrected)</html>" );
-        JLabel wm207_235r_PaH = new JLabel( "<html>207Pb/235U <br>(Pa-corrected)</html>" );
-        JLabel wm207_206r_ThH = new JLabel( "<html>207Pb/206Pb <br>(Th-corrected)</html>" );
-        JLabel wm207_206r_PaH = new JLabel( "<html>207Pb/206Pb <br>(Pa-corrected)</html>" );
-        JLabel wm207_206r_ThPaH = new JLabel( "<html>207Pb/206Pb <br>(Th-, Pa-corrected)</html>" );
+        JLabel wm206_238r_ThH = new JLabel("<html>206Pb/238U <br>(Th-corrected)</html>");
+        JLabel wm207_235r_PaH = new JLabel("<html>207Pb/235U <br>(Pa-corrected)</html>");
+        JLabel wm207_206r_ThH = new JLabel("<html>207Pb/206Pb <br>(Th-corrected)</html>");
+        JLabel wm207_206r_PaH = new JLabel("<html>207Pb/206Pb <br>(Pa-corrected)</html>");
+        JLabel wm207_206r_ThPaH = new JLabel("<html>207Pb/206Pb <br>(Th-, Pa-corrected)</html>");
 
-        Font headerFont = new Font( "SansSerif", Font.BOLD, 12 );
-        aliquotLabelH.setFont( headerFont );
-        wm207_235H.setFont( headerFont );
-        wm206_238H.setFont( headerFont );
-        wm207_206H.setFont( headerFont );
-        wm208_232H.setFont( headerFont );
-        wm206_238r_ThH.setFont( headerFont );
-        wm207_235r_PaH.setFont( headerFont );
-        wm207_206r_ThH.setFont( headerFont );
-        wm207_206r_PaH.setFont( headerFont );
-        wm207_206r_ThPaH.setFont( headerFont );
+        Font headerFont = new Font("SansSerif", Font.BOLD, 12);
+        aliquotLabelH.setFont(headerFont);
+        wm207_235H.setFont(headerFont);
+        wm206_238H.setFont(headerFont);
+        wm207_206H.setFont(headerFont);
+        wm208_232H.setFont(headerFont);
+        wm206_238r_ThH.setFont(headerFont);
+        wm207_235r_PaH.setFont(headerFont);
+        wm207_206r_ThH.setFont(headerFont);
+        wm207_206r_PaH.setFont(headerFont);
+        wm207_206r_ThPaH.setFont(headerFont);
 
-        myHorizAliquot.add( wmAliquotArrayLayout.createSequentialGroup()//
-                .add( 10, 10, 10 ) // left-hand margin
-                .add( aliquotLabelH, 130, 130, 130 ) //
-                .add( wm206_238H, 100, 100, 100 )//
-                .add( 13, 13, 13 )//
-                .add( wm207_235H, 100, 100, 100 )//
-                .add( 13, 13, 13 )//
-                .add( wm207_206H, 100, 100, 100 )//
-                .add( 13, 13, 13 )//
-                .add( wm208_232H, 100, 100, 100 )//
-                .add( 13, 13, 13 )//
-                .add( wm206_238r_ThH, 100, 100, 100 )//
-                .add( 13, 13, 13 )//
-                .add( wm207_235r_PaH, 100, 100, 100 )//
-                .add( 13, 13, 13 )//
-                .add( wm207_206r_ThH, 100, 100, 100 )//
-                .add( 13, 13, 13 )//
-                .add( wm207_206r_PaH, 100, 100, 100 )//
-                .add( 13, 13, 13 )//
-                .add( wm207_206r_ThPaH, 130, 130, 130 ) //
-                );
-        myVerticalAliquot.add( wmAliquotArrayLayout.createParallelGroup( org.jdesktop.layout.GroupLayout.TRAILING )//
-                .add( aliquotLabelH, 22, 22, 22 )//
-                .add( wm206_238H, 22, 22, 22 )//
-                .add( wm207_235H, 22, 22, 22 )//
-                .add( wm207_206H, 22, 22, 22 )//
-                .add( wm208_232H, 22, 22, 22 )//
-                .add( wm206_238r_ThH, 35, 35, 35 )//
-                .add( wm207_235r_PaH, 35, 35, 35 )//
-                .add( wm207_206r_ThH, 35, 35, 35 )//
-                .add( wm207_206r_PaH, 35, 35, 35 )//
-                .add( wm207_206r_ThPaH, 35, 35, 35 )//
-                );
-
-
-
+        myHorizAliquot.add(wmAliquotArrayLayout.createSequentialGroup()//
+                .add(10, 10, 10) // left-hand margin
+                .add(aliquotLabelH, 130, 130, 130) //
+                .add(wm206_238H, 100, 100, 100)//
+                .add(13, 13, 13)//
+                .add(wm207_235H, 100, 100, 100)//
+                .add(13, 13, 13)//
+                .add(wm207_206H, 100, 100, 100)//
+                .add(13, 13, 13)//
+                .add(wm208_232H, 100, 100, 100)//
+                .add(13, 13, 13)//
+                .add(wm206_238r_ThH, 100, 100, 100)//
+                .add(13, 13, 13)//
+                .add(wm207_235r_PaH, 100, 100, 100)//
+                .add(13, 13, 13)//
+                .add(wm207_206r_ThH, 100, 100, 100)//
+                .add(13, 13, 13)//
+                .add(wm207_206r_PaH, 100, 100, 100)//
+                .add(13, 13, 13)//
+                .add(wm207_206r_ThPaH, 130, 130, 130) //
+        );
+        myVerticalAliquot.add(wmAliquotArrayLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)//
+                .add(aliquotLabelH, 22, 22, 22)//
+                .add(wm206_238H, 22, 22, 22)//
+                .add(wm207_235H, 22, 22, 22)//
+                .add(wm207_206H, 22, 22, 22)//
+                .add(wm208_232H, 22, 22, 22)//
+                .add(wm206_238r_ThH, 35, 35, 35)//
+                .add(wm207_235r_PaH, 35, 35, 35)//
+                .add(wm207_206r_ThH, 35, 35, 35)//
+                .add(wm207_206r_PaH, 35, 35, 35)//
+                .add(wm207_206r_ThPaH, 35, 35, 35)//
+        );
 
         restoreSavedValues();
 
         for (AliquotInterface aliquot : sample.getActiveAliquots()) {
-            JLabel aliquotLabel = new JLabel( aliquot.getAliquotName() );
-            aliquotNameLabels.add( aliquotLabel );
+            JLabel aliquotLabel = new JLabel(aliquot.getAliquotName());
+            aliquotNameLabels.add(aliquotLabel);
 
             JCheckBox wm207_235CB = new JCheckBox();
-            if ( aliquot.containsSampleDateModelByName( "weighted mean 207Pb/235U" ) ) {
-                wm207_235CB.setEnabled( ((SampleDateModel) aliquot.//
-                        getASampleDateModelByName( "weighted mean 207Pb/235U" )).getIncludedFractionIDsVector().size() > 0 );
+            if (aliquot.containsSampleDateModelByName("weighted mean 207Pb/235U")) {
+                wm207_235CB.setEnabled(((SampleDateModel) aliquot.//
+                        getASampleDateModelByName("weighted mean 207Pb/235U")).getIncludedFractionIDsVector().size() > 0);
             } else {
-                wm207_235CB.setEnabled( false );
+                wm207_235CB.setEnabled(false);
             }
-            wm207_235CheckBox.add( wm207_235CB );
+            wm207_235CheckBox.add(wm207_235CB);
 
             JCheckBox wm206_238CB = new JCheckBox();
-            if ( aliquot.containsSampleDateModelByName( "weighted mean 206Pb/238U" ) ) {
-                wm206_238CB.setEnabled( ((SampleDateModel) aliquot.//
-                        getASampleDateModelByName( "weighted mean 206Pb/238U" )).getIncludedFractionIDsVector().size() > 0 );
+            if (aliquot.containsSampleDateModelByName("weighted mean 206Pb/238U")) {
+                wm206_238CB.setEnabled(((SampleDateModel) aliquot.//
+                        getASampleDateModelByName("weighted mean 206Pb/238U")).getIncludedFractionIDsVector().size() > 0);
             } else {
-                wm206_238CB.setEnabled( false );
+                wm206_238CB.setEnabled(false);
             }
-            wm206_238CheckBox.add( wm206_238CB );
+            wm206_238CheckBox.add(wm206_238CB);
 
             JCheckBox wm207_206CB = new JCheckBox();
-            if ( aliquot.containsSampleDateModelByName( "weighted mean 207Pb/206Pb" ) ) {
-                wm207_206CB.setEnabled( ((SampleDateModel) aliquot.//
-                        getASampleDateModelByName( "weighted mean 207Pb/206Pb" )).getIncludedFractionIDsVector().size() > 0 );
+            if (aliquot.containsSampleDateModelByName("weighted mean 207Pb/206Pb")) {
+                wm207_206CB.setEnabled(((SampleDateModel) aliquot.//
+                        getASampleDateModelByName("weighted mean 207Pb/206Pb")).getIncludedFractionIDsVector().size() > 0);
             } else {
-                wm207_206CB.setEnabled( false );
+                wm207_206CB.setEnabled(false);
             }
-            wm207_206CheckBox.add( wm207_206CB );
-            
-            JCheckBox wm208_232CB = new JCheckBox();
-            if ( aliquot.containsSampleDateModelByName( "weighted mean 208Pb/232Th" ) ) {
-                wm208_232CB.setEnabled( ((SampleDateModel) aliquot.//
-                        getASampleDateModelByName( "weighted mean 208Pb/232Th" )).getIncludedFractionIDsVector().size() > 0 );
-            } else {
-                wm208_232CB.setEnabled( false );
-            }
-            wm208_232CheckBox.add( wm208_232CB );
+            wm207_206CheckBox.add(wm207_206CB);
 
+            JCheckBox wm208_232CB = new JCheckBox();
+            if (aliquot.containsSampleDateModelByName("weighted mean 208Pb/232Th")) {
+                wm208_232CB.setEnabled(((SampleDateModel) aliquot.//
+                        getASampleDateModelByName("weighted mean 208Pb/232Th")).getIncludedFractionIDsVector().size() > 0);
+            } else {
+                wm208_232CB.setEnabled(false);
+            }
+            wm208_232CheckBox.add(wm208_232CB);
 
             JCheckBox wm206_238r_ThCB = new JCheckBox();
-            if ( aliquot.containsSampleDateModelByName( "weighted mean 206Pb/238U (Th-corrected)" ) ) {
-                wm206_238r_ThCB.setEnabled( ((SampleDateModel) aliquot.//
-                        getASampleDateModelByName( "weighted mean 206Pb/238U (Th-corrected)" )).getIncludedFractionIDsVector().size() > 0 );
+            if (aliquot.containsSampleDateModelByName("weighted mean 206Pb/238U (Th-corrected)")) {
+                wm206_238r_ThCB.setEnabled(((SampleDateModel) aliquot.//
+                        getASampleDateModelByName("weighted mean 206Pb/238U (Th-corrected)")).getIncludedFractionIDsVector().size() > 0);
             } else {
-                wm206_238r_ThCB.setEnabled( false );
+                wm206_238r_ThCB.setEnabled(false);
             }
-            wm206_238r_ThCheckBox.add( wm206_238r_ThCB );
+            wm206_238r_ThCheckBox.add(wm206_238r_ThCB);
 
             JCheckBox wm207_235r_PaCB = new JCheckBox();
-            if ( aliquot.containsSampleDateModelByName( "weighted mean 207Pb/235U (Pa-corrected)" ) ) {
-                wm207_235r_PaCB.setEnabled( ((SampleDateModel) aliquot.//
-                        getASampleDateModelByName( "weighted mean 207Pb/235U (Pa-corrected)" )).getIncludedFractionIDsVector().size() > 0 );
+            if (aliquot.containsSampleDateModelByName("weighted mean 207Pb/235U (Pa-corrected)")) {
+                wm207_235r_PaCB.setEnabled(((SampleDateModel) aliquot.//
+                        getASampleDateModelByName("weighted mean 207Pb/235U (Pa-corrected)")).getIncludedFractionIDsVector().size() > 0);
             } else {
-                wm207_235r_PaCB.setEnabled( false );
+                wm207_235r_PaCB.setEnabled(false);
             }
-            wm207_235r_PaCheckBox.add( wm207_235r_PaCB );
+            wm207_235r_PaCheckBox.add(wm207_235r_PaCB);
 
             JCheckBox wm207_206r_ThCB = new JCheckBox();
-            if ( aliquot.containsSampleDateModelByName( "weighted mean 207Pb/206Pb (Th-corrected)" ) ) {
-                wm207_206r_ThCB.setEnabled( ((SampleDateModel) aliquot.//
-                        getASampleDateModelByName( "weighted mean 207Pb/206Pb (Th-corrected)" )).getIncludedFractionIDsVector().size() > 0 );
+            if (aliquot.containsSampleDateModelByName("weighted mean 207Pb/206Pb (Th-corrected)")) {
+                wm207_206r_ThCB.setEnabled(((SampleDateModel) aliquot.//
+                        getASampleDateModelByName("weighted mean 207Pb/206Pb (Th-corrected)")).getIncludedFractionIDsVector().size() > 0);
             } else {
-                wm207_206r_ThCB.setEnabled( false );
+                wm207_206r_ThCB.setEnabled(false);
             }
-            wm207_206r_ThCheckBox.add( wm207_206r_ThCB );
+            wm207_206r_ThCheckBox.add(wm207_206r_ThCB);
 
             JCheckBox wm207_206r_PaCB = new JCheckBox();
-            if ( aliquot.containsSampleDateModelByName( "weighted mean 207Pb/206Pb (Pa-corrected)" ) ) {
-                wm207_206r_PaCB.setEnabled( ((SampleDateModel) aliquot.//
-                        getASampleDateModelByName( "weighted mean 207Pb/206Pb (Pa-corrected)" )).getIncludedFractionIDsVector().size() > 0 );
+            if (aliquot.containsSampleDateModelByName("weighted mean 207Pb/206Pb (Pa-corrected)")) {
+                wm207_206r_PaCB.setEnabled(((SampleDateModel) aliquot.//
+                        getASampleDateModelByName("weighted mean 207Pb/206Pb (Pa-corrected)")).getIncludedFractionIDsVector().size() > 0);
             } else {
-                wm207_206r_PaCB.setEnabled( false );
+                wm207_206r_PaCB.setEnabled(false);
             }
-            wm207_206r_PaCheckBox.add( wm207_206r_PaCB );
+            wm207_206r_PaCheckBox.add(wm207_206r_PaCB);
 
             JCheckBox wm207_206r_ThPaCB = new JCheckBox();
-            if ( aliquot.containsSampleDateModelByName( "weighted mean 207Pb/206Pb (Th- and Pa-corrected)" ) ) {
-                wm207_206r_ThPaCB.setEnabled( ((SampleDateModel) aliquot.//
-                        getASampleDateModelByName( "weighted mean 207Pb/206Pb (Th- and Pa-corrected)" )).getIncludedFractionIDsVector().size() > 0 );
+            if (aliquot.containsSampleDateModelByName("weighted mean 207Pb/206Pb (Th- and Pa-corrected)")) {
+                wm207_206r_ThPaCB.setEnabled(((SampleDateModel) aliquot.//
+                        getASampleDateModelByName("weighted mean 207Pb/206Pb (Th- and Pa-corrected)")).getIncludedFractionIDsVector().size() > 0);
             } else {
-                wm207_206r_ThPaCB.setEnabled( false );
+                wm207_206r_ThPaCB.setEnabled(false);
             }
-            wm207_206r_ThPaCheckBox.add( wm207_206r_ThPaCB );
+            wm207_206r_ThPaCheckBox.add(wm207_206r_ThPaCB);
 
-
-            myHorizAliquot.add( wmAliquotArrayLayout.createSequentialGroup()//
-                    .add( 10, 10, 10 ) // left-hand margin
-                    .add( aliquotLabel, 165, 165, 165 ) //
-                    .add( wm206_238CB, 22, 22, 22 )//
-                    .add( 90, 90, 90 )//
-                    .add( wm207_235CB, 22, 22, 22 )//
-                    .add( 90, 90, 90 )//
-                    .add( wm207_206CB, 22, 22, 22 )//
-                    .add( 90, 90, 90 )//
-                    .add( wm208_232CB, 22, 22, 22 )//
-                    .add( 90, 90, 90 )//
-                    .add( wm206_238r_ThCB, 22, 22, 22 )//
-                    .add( 90, 90, 90 )//
-                    .add( wm207_235r_PaCB, 22, 22, 22 )//
-                    .add( 90, 90, 90 )//
-                    .add( wm207_206r_ThCB, 22, 22, 22 )//
-                    .add( 90, 90, 90 )//
-                    .add( wm207_206r_PaCB, 22, 22, 22 )//
-                    .add( 90, 90, 90 )//
-                    .add( wm207_206r_ThPaCB, 22, 22, 22 )//
-                    );
-            myVerticalAliquot.add( wmAliquotArrayLayout.createParallelGroup( org.jdesktop.layout.GroupLayout.TRAILING )//
-                    .add( aliquotLabel, 22, 22, 22 )//
-                    .add( wm206_238CB, 22, 22, 22 )//
-                    .add( wm207_235CB, 22, 22, 22 )//
-                    .add( wm207_206CB, 22, 22, 22 )//
-                    .add( wm208_232CB, 22, 22, 22 )//
-                    .add( wm206_238r_ThCB, 22, 22, 22 )//
-                    .add( wm207_235r_PaCB, 22, 22, 22 )//
-                    .add( wm207_206r_ThCB, 22, 22, 22 )//
-                    .add( wm207_206r_PaCB, 22, 22, 22 )//
-                    .add( wm207_206r_ThPaCB, 22, 22, 22 )//
-                    );
+            myHorizAliquot.add(wmAliquotArrayLayout.createSequentialGroup()//
+                    .add(10, 10, 10) // left-hand margin
+                    .add(aliquotLabel, 165, 165, 165) //
+                    .add(wm206_238CB, 22, 22, 22)//
+                    .add(90, 90, 90)//
+                    .add(wm207_235CB, 22, 22, 22)//
+                    .add(90, 90, 90)//
+                    .add(wm207_206CB, 22, 22, 22)//
+                    .add(90, 90, 90)//
+                    .add(wm208_232CB, 22, 22, 22)//
+                    .add(90, 90, 90)//
+                    .add(wm206_238r_ThCB, 22, 22, 22)//
+                    .add(90, 90, 90)//
+                    .add(wm207_235r_PaCB, 22, 22, 22)//
+                    .add(90, 90, 90)//
+                    .add(wm207_206r_ThCB, 22, 22, 22)//
+                    .add(90, 90, 90)//
+                    .add(wm207_206r_PaCB, 22, 22, 22)//
+                    .add(90, 90, 90)//
+                    .add(wm207_206r_ThPaCB, 22, 22, 22)//
+            );
+            myVerticalAliquot.add(wmAliquotArrayLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)//
+                    .add(aliquotLabel, 22, 22, 22)//
+                    .add(wm206_238CB, 22, 22, 22)//
+                    .add(wm207_235CB, 22, 22, 22)//
+                    .add(wm207_206CB, 22, 22, 22)//
+                    .add(wm208_232CB, 22, 22, 22)//
+                    .add(wm206_238r_ThCB, 22, 22, 22)//
+                    .add(wm207_235r_PaCB, 22, 22, 22)//
+                    .add(wm207_206r_ThCB, 22, 22, 22)//
+                    .add(wm207_206r_PaCB, 22, 22, 22)//
+                    .add(wm207_206r_ThPaCB, 22, 22, 22)//
+            );
 
         }
 
         selectCheckBoxes();
 
         wmAliquotArrayLayout.setHorizontalGroup(
-                wmAliquotArrayLayout.createParallelGroup( org.jdesktop.layout.GroupLayout.TRAILING ).add( wmAliquotArrayLayout.createSequentialGroup().add( myHorizAliquot ) ) );
+                wmAliquotArrayLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING).add(wmAliquotArrayLayout.createSequentialGroup().add(myHorizAliquot)));
 
         wmAliquotArrayLayout.setVerticalGroup(
-                wmAliquotArrayLayout.createParallelGroup( org.jdesktop.layout.GroupLayout.TRAILING ).add( myVerticalAliquot ) );
-
+                wmAliquotArrayLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING).add(myVerticalAliquot));
 
     }
 
-    private void restoreSavedValues () {
-        wm206_238 = getWeightedMeanOptions().get( "weighted mean 206Pb/238U" );
-        wm207_235 = getWeightedMeanOptions().get( "weighted mean 207Pb/235U" );
-        wm207_206 = getWeightedMeanOptions().get( "weighted mean 207Pb/206Pb" );
-        wm208_232 = getWeightedMeanOptions().get( "weighted mean 208Pb/232Th" );
-        wm206_238r_Th = getWeightedMeanOptions().get( "weighted mean 206Pb/238U (Th-corrected)" );
-        wm207_235r_Pa = getWeightedMeanOptions().get( "weighted mean 207Pb/235U (Pa-corrected)" );
-        wm207_206r_Th = getWeightedMeanOptions().get( "weighted mean 207Pb/206Pb (Th-corrected)" );
-        wm207_206r_Pa = getWeightedMeanOptions().get( "weighted mean 207Pb/206Pb (Pa-corrected)" );
-        wm207_206r_ThPa = getWeightedMeanOptions().get( "weighted mean 207Pb/206Pb (Th- and Pa-corrected)" );
+    private void restoreSavedValues() {
+        wm206_238 = getWeightedMeanOptions().get("weighted mean 206Pb/238U");
+        wm207_235 = getWeightedMeanOptions().get("weighted mean 207Pb/235U");
+        wm207_206 = getWeightedMeanOptions().get("weighted mean 207Pb/206Pb");
+        wm208_232 = getWeightedMeanOptions().get("weighted mean 208Pb/232Th");
+        wm206_238r_Th = getWeightedMeanOptions().get("weighted mean 206Pb/238U (Th-corrected)");
+        wm207_235r_Pa = getWeightedMeanOptions().get("weighted mean 207Pb/235U (Pa-corrected)");
+        wm207_206r_Th = getWeightedMeanOptions().get("weighted mean 207Pb/206Pb (Th-corrected)");
+        wm207_206r_Pa = getWeightedMeanOptions().get("weighted mean 207Pb/206Pb (Pa-corrected)");
+        wm207_206r_ThPa = getWeightedMeanOptions().get("weighted mean 207Pb/206Pb (Th- and Pa-corrected)");
     }
 
-    private void replaceSavedValues () {
-        getWeightedMeanOptions().put( "weighted mean 206Pb/238U", wm206_238 );
-        getWeightedMeanOptions().put( "weighted mean 207Pb/235U", wm207_235 );
-        getWeightedMeanOptions().put( "weighted mean 207Pb/206Pb", wm207_206 );
-        getWeightedMeanOptions().put( "weighted mean 208Pb/232Th" , wm208_232 );
-        getWeightedMeanOptions().put( "weighted mean 206Pb/238U (Th-corrected)", wm206_238r_Th );
-        getWeightedMeanOptions().put( "weighted mean 207Pb/235U (Pa-corrected)", wm207_235r_Pa );
-        getWeightedMeanOptions().put( "weighted mean 207Pb/206Pb (Th-corrected)", wm207_206r_Th );
-        getWeightedMeanOptions().put( "weighted mean 207Pb/206Pb (Pa-corrected)", wm207_206r_Pa );
-        getWeightedMeanOptions().put( "weighted mean 207Pb/206Pb (Th- and Pa-corrected)", wm207_206r_ThPa );
+    private void replaceSavedValues() {
+        getWeightedMeanOptions().put("weighted mean 206Pb/238U", wm206_238);
+        getWeightedMeanOptions().put("weighted mean 207Pb/235U", wm207_235);
+        getWeightedMeanOptions().put("weighted mean 207Pb/206Pb", wm207_206);
+        getWeightedMeanOptions().put("weighted mean 208Pb/232Th", wm208_232);
+        getWeightedMeanOptions().put("weighted mean 206Pb/238U (Th-corrected)", wm206_238r_Th);
+        getWeightedMeanOptions().put("weighted mean 207Pb/235U (Pa-corrected)", wm207_235r_Pa);
+        getWeightedMeanOptions().put("weighted mean 207Pb/206Pb (Th-corrected)", wm207_206r_Th);
+        getWeightedMeanOptions().put("weighted mean 207Pb/206Pb (Pa-corrected)", wm207_206r_Pa);
+        getWeightedMeanOptions().put("weighted mean 207Pb/206Pb (Th- and Pa-corrected)", wm207_206r_ThPa);
     }
 
-    private void selectCheckBoxes () {
-        for (int a = 0; a < wm207_235CheckBox.size(); a ++) {
+    private void selectCheckBoxes() {
+        for (int a = 0; a < wm207_235CheckBox.size(); a++) {
             try {
-                wm206_238CheckBox.get( a ).setSelected(
-                        (wm206_238CheckBox.get( a ).isEnabled()
-                                && wm206_238.substring( a, a + 1 ).equalsIgnoreCase( "1" )));
-                wm207_235CheckBox.get( a ).setSelected(
-                        (wm207_235CheckBox.get( a ).isEnabled()
-                                && wm207_235.substring( a, a + 1 ).equalsIgnoreCase( "1" )));
-                wm207_206CheckBox.get( a ).setSelected(
-                        (wm207_206CheckBox.get( a ).isEnabled()
-                                && wm207_206.substring( a, a + 1 ).equalsIgnoreCase( "1" )));
-                 wm208_232CheckBox.get( a ).setSelected(
-                        wm208_232CheckBox.get( a ).isEnabled()
-                        && wm207_206.substring( a, a + 1 ).equalsIgnoreCase( "1" ) ? true : false );
-                wm206_238r_ThCheckBox.get( a ).setSelected(
-                        wm206_238r_ThCheckBox.get( a ).isEnabled()
-                        && wm206_238r_Th.substring( a, a + 1 ).equalsIgnoreCase( "1" ) ? true : false );
-                wm207_235r_PaCheckBox.get( a ).setSelected(
-                        wm207_235r_PaCheckBox.get( a ).isEnabled()
-                        && wm207_235r_Pa.substring( a, a + 1 ).equalsIgnoreCase( "1" ) ? true : false );
-                wm207_206r_ThCheckBox.get( a ).setSelected(
-                        wm207_206r_ThCheckBox.get( a ).isEnabled()
-                        && wm207_206r_Th.substring( a, a + 1 ).equalsIgnoreCase( "1" ) ? true : false );
-                wm207_206r_PaCheckBox.get( a ).setSelected(
-                        wm207_206r_PaCheckBox.get( a ).isEnabled()
-                        && wm207_206r_Pa.substring( a, a + 1 ).equalsIgnoreCase( "1" ) ? true : false );
-                wm207_206r_ThPaCheckBox.get( a ).setSelected(
-                        wm207_206r_ThPaCheckBox.get( a ).isEnabled()
-                        && wm207_206r_ThPa.substring( a, a + 1 ).equalsIgnoreCase( "1" ) ? true : false );
+                wm206_238CheckBox.get(a).setSelected(
+                        (wm206_238CheckBox.get(a).isEnabled()
+                        && wm206_238.substring(a, a + 1).equalsIgnoreCase("1")));
+                wm207_235CheckBox.get(a).setSelected(
+                        (wm207_235CheckBox.get(a).isEnabled()
+                        && wm207_235.substring(a, a + 1).equalsIgnoreCase("1")));
+                wm207_206CheckBox.get(a).setSelected(
+                        (wm207_206CheckBox.get(a).isEnabled()
+                        && wm207_206.substring(a, a + 1).equalsIgnoreCase("1")));
+                wm208_232CheckBox.get(a).setSelected(
+                        wm208_232CheckBox.get(a).isEnabled()
+                        && wm207_206.substring(a, a + 1).equalsIgnoreCase("1") ? true : false);
+                wm206_238r_ThCheckBox.get(a).setSelected(
+                        wm206_238r_ThCheckBox.get(a).isEnabled()
+                        && wm206_238r_Th.substring(a, a + 1).equalsIgnoreCase("1") ? true : false);
+                wm207_235r_PaCheckBox.get(a).setSelected(
+                        wm207_235r_PaCheckBox.get(a).isEnabled()
+                        && wm207_235r_Pa.substring(a, a + 1).equalsIgnoreCase("1") ? true : false);
+                wm207_206r_ThCheckBox.get(a).setSelected(
+                        wm207_206r_ThCheckBox.get(a).isEnabled()
+                        && wm207_206r_Th.substring(a, a + 1).equalsIgnoreCase("1") ? true : false);
+                wm207_206r_PaCheckBox.get(a).setSelected(
+                        wm207_206r_PaCheckBox.get(a).isEnabled()
+                        && wm207_206r_Pa.substring(a, a + 1).equalsIgnoreCase("1") ? true : false);
+                wm207_206r_ThPaCheckBox.get(a).setSelected(
+                        wm207_206r_ThPaCheckBox.get(a).isEnabled()
+                        && wm207_206r_ThPa.substring(a, a + 1).equalsIgnoreCase("1") ? true : false);
             } catch (Exception e) {
             }
         }
 
     }
 
-    private void OK () {
+    private void OK() {
         Vector<AliquotInterface> activeAliquots = sample.getActiveAliquots();
         selectedModels = new Object[activeAliquots.size()][10];
 
         // populate array of aliquots with selected wm date interpretations
-        for (int i = 0; i < activeAliquots.size(); i ++) {
+        for (int i = 0; i < activeAliquots.size(); i++) {
 
-            getSelectedModels()[i][0] = activeAliquots.get( i );
-            if ( wm206_238CheckBox.get( i ).isSelected() ) {
-                getSelectedModels()[i][2] = activeAliquots.get( i ).getASampleDateModelByName( "weighted mean 206Pb/238U" );
-                wm206_238 = setAliquotFlag( wm206_238, i, "1" );
+            getSelectedModels()[i][0] = activeAliquots.get(i);
+            if (wm206_238CheckBox.get(i).isSelected()) {
+                getSelectedModels()[i][2] = activeAliquots.get(i).getASampleDateModelByName("weighted mean 206Pb/238U");
+                wm206_238 = setAliquotFlag(wm206_238, i, "1");
             } else {
-                wm206_238 = setAliquotFlag( wm206_238, i, "0" );
+                wm206_238 = setAliquotFlag(wm206_238, i, "0");
             }
-            if ( wm207_235CheckBox.get( i ).isSelected() ) {
-                getSelectedModels()[i][1] = activeAliquots.get( i ).getASampleDateModelByName( "weighted mean 207Pb/235U" );
-                wm207_235 = setAliquotFlag( wm207_235, i, "1" );
+            if (wm207_235CheckBox.get(i).isSelected()) {
+                getSelectedModels()[i][1] = activeAliquots.get(i).getASampleDateModelByName("weighted mean 207Pb/235U");
+                wm207_235 = setAliquotFlag(wm207_235, i, "1");
             } else {
-                wm207_235 = setAliquotFlag( wm207_235, i, "0" );
-            }
-
-            if ( wm207_206CheckBox.get( i ).isSelected() ) {
-                getSelectedModels()[i][3] = activeAliquots.get( i ).getASampleDateModelByName( "weighted mean 207Pb/206Pb" );
-                wm207_206 = setAliquotFlag( wm207_206, i, "1" );
-            } else {
-                wm207_206 = setAliquotFlag( wm207_206, i, "0" );
-            }
-            
-            if ( wm208_232CheckBox.get( i ).isSelected() ) {
-                getSelectedModels()[i][3] = activeAliquots.get( i ).getASampleDateModelByName( "weighted mean 208Pb/232Th" );
-                wm208_232 = setAliquotFlag( wm208_232, i, "1" );
-            } else {
-                wm208_232 = setAliquotFlag( wm208_232, i, "0" );
+                wm207_235 = setAliquotFlag(wm207_235, i, "0");
             }
 
-            if ( wm206_238r_ThCheckBox.get( i ).isSelected() ) {
-                getSelectedModels()[i][4] = activeAliquots.get( i ).getASampleDateModelByName( "weighted mean 206Pb/238U (Th-corrected)" );
-                wm206_238r_Th = setAliquotFlag( wm206_238r_Th, i, "1" );
+            if (wm207_206CheckBox.get(i).isSelected()) {
+                getSelectedModels()[i][3] = activeAliquots.get(i).getASampleDateModelByName("weighted mean 207Pb/206Pb");
+                wm207_206 = setAliquotFlag(wm207_206, i, "1");
             } else {
-                wm206_238r_Th = setAliquotFlag( wm206_238r_Th, i, "0" );
+                wm207_206 = setAliquotFlag(wm207_206, i, "0");
             }
 
-            if ( wm207_235r_PaCheckBox.get( i ).isSelected() ) {
-                getSelectedModels()[i][5] = activeAliquots.get( i ).getASampleDateModelByName( "weighted mean 207Pb/235U (Pa-corrected)" );
-                wm207_235r_Pa = setAliquotFlag( wm207_235r_Pa, i, "1" );
+            if (wm208_232CheckBox.get(i).isSelected()) {
+                getSelectedModels()[i][3] = activeAliquots.get(i).getASampleDateModelByName("weighted mean 208Pb/232Th");
+                wm208_232 = setAliquotFlag(wm208_232, i, "1");
             } else {
-                wm207_235r_Pa = setAliquotFlag( wm207_235r_Pa, i, "0" );
+                wm208_232 = setAliquotFlag(wm208_232, i, "0");
             }
-            if ( wm207_206r_ThCheckBox.get( i ).isSelected() ) {
-                getSelectedModels()[i][6] = activeAliquots.get( i ).getASampleDateModelByName( "weighted mean 207Pb/206Pb (Th-corrected)" );
-                wm207_206r_Th = setAliquotFlag( wm207_206r_Th, i, "1" );
+
+            if (wm206_238r_ThCheckBox.get(i).isSelected()) {
+                getSelectedModels()[i][4] = activeAliquots.get(i).getASampleDateModelByName("weighted mean 206Pb/238U (Th-corrected)");
+                wm206_238r_Th = setAliquotFlag(wm206_238r_Th, i, "1");
             } else {
-                wm207_206r_Th = setAliquotFlag( wm207_206r_Th, i, "0" );
+                wm206_238r_Th = setAliquotFlag(wm206_238r_Th, i, "0");
             }
-            if ( wm207_206r_PaCheckBox.get( i ).isSelected() ) {
-                getSelectedModels()[i][7] = activeAliquots.get( i ).getASampleDateModelByName( "weighted mean 207Pb/206Pb (Pa-corrected)" );
-                wm207_206r_Pa = setAliquotFlag( wm207_206r_Pa, i, "1" );
+
+            if (wm207_235r_PaCheckBox.get(i).isSelected()) {
+                getSelectedModels()[i][5] = activeAliquots.get(i).getASampleDateModelByName("weighted mean 207Pb/235U (Pa-corrected)");
+                wm207_235r_Pa = setAliquotFlag(wm207_235r_Pa, i, "1");
             } else {
-                wm207_206r_Pa = setAliquotFlag( wm207_206r_Pa, i, "0" );
+                wm207_235r_Pa = setAliquotFlag(wm207_235r_Pa, i, "0");
             }
-            if ( wm207_206r_ThPaCheckBox.get( i ).isSelected() ) {
-                getSelectedModels()[i][8] = activeAliquots.get( i ).getASampleDateModelByName( "weighted mean 207Pb/206Pb (Th- and Pa-corrected)" );
-                wm207_206r_ThPa = setAliquotFlag( wm207_206r_ThPa, i, "1" );
+            if (wm207_206r_ThCheckBox.get(i).isSelected()) {
+                getSelectedModels()[i][6] = activeAliquots.get(i).getASampleDateModelByName("weighted mean 207Pb/206Pb (Th-corrected)");
+                wm207_206r_Th = setAliquotFlag(wm207_206r_Th, i, "1");
             } else {
-                wm207_206r_ThPa = setAliquotFlag( wm207_206r_ThPa, i, "0" );
+                wm207_206r_Th = setAliquotFlag(wm207_206r_Th, i, "0");
+            }
+            if (wm207_206r_PaCheckBox.get(i).isSelected()) {
+                getSelectedModels()[i][7] = activeAliquots.get(i).getASampleDateModelByName("weighted mean 207Pb/206Pb (Pa-corrected)");
+                wm207_206r_Pa = setAliquotFlag(wm207_206r_Pa, i, "1");
+            } else {
+                wm207_206r_Pa = setAliquotFlag(wm207_206r_Pa, i, "0");
+            }
+            if (wm207_206r_ThPaCheckBox.get(i).isSelected()) {
+                getSelectedModels()[i][8] = activeAliquots.get(i).getASampleDateModelByName("weighted mean 207Pb/206Pb (Th- and Pa-corrected)");
+                wm207_206r_ThPa = setAliquotFlag(wm207_206r_ThPa, i, "1");
+            } else {
+                wm207_206r_ThPa = setAliquotFlag(wm207_206r_ThPa, i, "0");
             }
         }
 
         // save off the choices
         replaceSavedValues();
 
-
     }
 
-    private String setAliquotFlag ( String flags, int position, String value ) {
+    private String setAliquotFlag(String flags, int position, String value) {
         // set position to value or add to end
-        if ( position == 0 ) {
+        if (position == 0) {
             return value;
-        } else if ( position >= (flags.length() - 1) ) {
-            return flags.substring( 0, position ) + value;
+        } else if (position >= (flags.length() - 1)) {
+            return flags.substring(0, position) + value;
         } else {
-            return flags.substring( 0, position ) + value + flags.substring( position + 1 );
+            return flags.substring(0, position) + value + flags.substring(position + 1);
         }
     }
 
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
      */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -579,34 +574,34 @@ public class WeightedMeanOptionsDialog extends DialogEditor {
     // End of variables declaration//GEN-END:variables
 
     /**
-     * 
+     *
      * @return
      */
-    public Object[][] getSelectedModels () {
+    public Object[][] getSelectedModels() {
         return selectedModels;
     }
 
     /**
-     * 
+     *
      * @param selectedModels
      */
-    public void setSelectedModels ( Object[][] selectedModels ) {
+    public void setSelectedModels(Object[][] selectedModels) {
         this.selectedModels = selectedModels;
     }
 
     /**
-     * 
+     *
      * @return
      */
-    public Map<String, String> getWeightedMeanOptions () {
+    public Map<String, String> getWeightedMeanOptions() {
         return weightedMeanOptions;
     }
 
     /**
-     * 
+     *
      * @param weightedMeanOptions
      */
-    public void setWeightedMeanOptions ( Map<String, String> weightedMeanOptions ) {
+    public void setWeightedMeanOptions(Map<String, String> weightedMeanOptions) {
         this.weightedMeanOptions = weightedMeanOptions;
     }
 }

@@ -22,7 +22,7 @@ import org.earthtime.UPb_Redux.valueModelPanelViews.ValueModelsPanelViewNotEdita
 import org.earthtime.exceptions.ETException;
 import org.earthtime.matrices.matrixViews.MatrixGridViewNotEditable;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
-import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsModel;
+import org.earthtime.reduxLabData.ReduxLabData;
 
 /**
  *
@@ -79,7 +79,7 @@ public class PhysicalConstantsDataViewNotEditable extends PhysicalConstantsAbstr
      */
     public static void main(String[] args) throws Exception {
 
-        AbstractRatiosDataView testView = new PhysicalConstantsDataViewNotEditable(PhysicalConstantsModel.getDefaultEARTHTIMEPhysicalConstantsModel(), null, false);
+        AbstractRatiosDataView testView = new PhysicalConstantsDataViewNotEditable(ReduxLabData.getInstance().getDefaultPhysicalConstantsModel(), null, false);
 
         testView.displayModelInFrame();
 

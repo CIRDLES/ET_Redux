@@ -27,8 +27,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.math.BigDecimal;
-import org.earthtime.exceptions.ETException;
 import org.earthtime.archivingTools.URIHelper;
+import org.earthtime.exceptions.ETException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import org.junit.Test;
@@ -264,7 +264,7 @@ public class ValueModelReferencedTest {
         String result2;
         if(xstream instanceof XStream){
             result=true;        
-            expResult2="http://earth-time.org/projects/upb/public_data/XSD/ValueModelXMLSchema.xsd";
+            expResult2="https://raw.githubusercontent.com/EARTHTIME/Schema/master/ValueModelXMLSchema.xsd";
             result2=instance.getValueModelXMLSchemaURL();
             assertEquals(expResult2,result2);            
                                      }

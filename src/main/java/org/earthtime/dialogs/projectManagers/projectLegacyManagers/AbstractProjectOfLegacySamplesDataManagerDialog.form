@@ -37,7 +37,7 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Component id="jPanel2" alignment="0" pref="645" max="32767" attributes="1"/>
           <Component id="sampleType_panel" alignment="0" max="32767" attributes="0"/>
-          <Component id="jPanel1" alignment="0" max="32767" attributes="1"/>
+          <Component id="infoPanel" alignment="0" max="32767" attributes="1"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
@@ -45,7 +45,7 @@
           <Group type="102" attributes="0">
               <Component id="sampleType_panel" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
-              <Component id="jPanel1" pref="351" max="32767" attributes="0"/>
+              <Component id="infoPanel" pref="380" max="32767" attributes="0"/>
               <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
               <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
           </Group>
@@ -53,7 +53,7 @@
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Container class="javax.swing.JPanel" name="jPanel1">
+    <Container class="javax.swing.JPanel" name="infoPanel">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ce" green="ec" red="f5" type="rgb"/>
@@ -69,7 +69,7 @@
       </Properties>
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
-        <Property name="useNullLayout" type="boolean" value="false"/>
+        <Property name="useNullLayout" type="boolean" value="true"/>
       </Layout>
       <SubComponents>
         <Component class="javax.swing.JLabel" name="sampleName_label">
@@ -81,11 +81,11 @@
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="62" y="9" width="88" height="-1"/>
+              <AbsoluteConstraints x="10" y="10" width="88" height="20"/>
             </Constraint>
           </Constraints>
         </Component>
-        <Component class="javax.swing.JTextField" name="sampleName_text">
+        <Component class="javax.swing.JTextField" name="projectName_text">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Tahoma" size="12" style="1"/>
@@ -95,7 +95,7 @@
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="168" y="2" width="338" height="-1"/>
+              <AbsoluteConstraints x="100" y="10" width="410" height="20"/>
             </Constraint>
           </Constraints>
         </Component>
@@ -108,11 +108,11 @@
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="8" y="256" width="-1" height="-1"/>
+              <AbsoluteConstraints x="10" y="280" width="-1" height="-1"/>
             </Constraint>
           </Constraints>
         </Component>
-        <Component class="javax.swing.JLabel" name="sampleReduxFileName_label">
+        <Component class="javax.swing.JLabel" name="projectReduxFileName_label">
           <Properties>
             <Property name="text" type="java.lang.String" value="&lt;Not Saved&gt;"/>
             <Property name="verticalAlignment" type="int" value="1"/>
@@ -120,7 +120,7 @@
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="28" y="276" width="407" height="64"/>
+              <AbsoluteConstraints x="30" y="300" width="407" height="64"/>
             </Constraint>
           </Constraints>
         </Component>
@@ -133,14 +133,14 @@
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="8" y="146" width="-1" height="-1"/>
+              <AbsoluteConstraints x="10" y="160" width="-1" height="-1"/>
             </Constraint>
           </Constraints>
         </Component>
         <Container class="javax.swing.JScrollPane" name="sampleNotes_scrollPane">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="8" y="166" width="630" height="-1"/>
+              <AbsoluteConstraints x="10" y="180" width="630" height="-1"/>
             </Constraint>
           </Constraints>
 
@@ -167,11 +167,11 @@
             </Property>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value=""/>
           </AuxValues>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="130" y="70" width="330" height="-1"/>
+              <AbsoluteConstraints x="60" y="130" width="410" height="-1"/>
             </Constraint>
           </Constraints>
         </Component>
@@ -187,7 +187,55 @@
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="10" y="50" width="-1" height="-1"/>
+              <AbsoluteConstraints x="20" y="110" width="-1" height="20"/>
+            </Constraint>
+          </Constraints>
+        </Component>
+        <Component class="javax.swing.JLabel" name="defaultHeader_label1">
+          <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Tahoma" size="11" style="1"/>
+            </Property>
+            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="0" green="33" red="cc" type="rgb"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Reference source of data for this project:"/>
+          </Properties>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+              <AbsoluteConstraints x="20" y="40" width="250" height="20"/>
+            </Constraint>
+          </Constraints>
+        </Component>
+        <Component class="javax.swing.JLabel" name="dataSourceLabel">
+          <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Tahoma" size="11" style="1"/>
+            </Property>
+            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="0" green="33" red="cc" type="rgb"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Data source file:"/>
+          </Properties>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+              <AbsoluteConstraints x="20" y="70" width="100" height="20"/>
+            </Constraint>
+          </Constraints>
+        </Component>
+        <Component class="javax.swing.JLabel" name="dataSourceNameLabel">
+          <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Tahoma" size="11" style="1"/>
+            </Property>
+            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="33" green="33" red="33" type="rgb"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value=":"/>
+          </Properties>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+              <AbsoluteConstraints x="230" y="70" width="410" height="20"/>
             </Constraint>
           </Constraints>
         </Component>
@@ -233,7 +281,7 @@
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="0" green="33" red="ff" type="rgb"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="OK"/>
+            <Property name="text" type="java.lang.String" value="Save and Close"/>
             <Property name="enabled" type="boolean" value="false"/>
             <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
               <Insets value="[0, 0, 0, 0]"/>
@@ -281,7 +329,7 @@
               <Color blue="66" green="cc" red="ff" type="rgb"/>
             </Property>
             <Property name="horizontalAlignment" type="int" value="0"/>
-            <Property name="text" type="java.lang.String" value="   LEGACY MODE: Import Project of Samples from delimited file"/>
+            <Property name="text" type="java.lang.String" value="   LEGACY MODE: Import Project of Samples from text file"/>
             <Property name="opaque" type="boolean" value="true"/>
           </Properties>
         </Component>

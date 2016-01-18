@@ -20,8 +20,14 @@
 package org.earthtime.Tripoli.sessions;
 
 import Jama.Matrix;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -306,7 +312,8 @@ public class TripoliSession implements
     public void calculateDownholeFitSummariesForPrimaryStandard() {
 
         // nov 2015 needed to handle downhole matrix math - can't have varying counts
-        applyMaskingArray();
+        //applyMaskingArray();
+        applyMaskingArrayToStandardsForDownhole();
 
         for (RawRatioNames rrName : downholeFractionationDataModels.keySet()) {
             DownholeFractionationDataModel downholeFractionationDataModel = downholeFractionationDataModels.get(rrName);
@@ -670,6 +677,7 @@ public class TripoliSession implements
         }
     }
 
+    @Override
     public void interceptCalculatePbcCorrAndRhos() {
         // refit any  fractions not currently fitted
         Set<TripoliFraction> includedTripoliFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.ALL, IncludedTypeEnum.INCLUDED);
@@ -680,6 +688,19 @@ public class TripoliSession implements
                 fitFunctionsUpToDate = false;
             }
         }
+
+        prepareForReductionAndCommonLeadCorrection();
+    }
+
+    @Override
+    public void refitAllFractionsForDownhole() {
+        calculateDownholeFitSummariesForPrimaryStandard();
+//        
+//        Iterator<TripoliFraction> fractionIterator = tripoliFractions.iterator();
+//        while (fractionIterator.hasNext()) {
+//            TripoliFraction tf = fractionIterator.next();
+//            tf.updateDownholeFitFunctionsExcludingCommonLead();
+//        }
 
         prepareForReductionAndCommonLeadCorrection();
     }
@@ -838,13 +859,11 @@ public class TripoliSession implements
             RawRatioNames rrName = sessionForStandardsIterator.next();
 
             AbstractSessionForStandardDataModel sessionForStandard
-                    = //
-                    sessionForStandardsFractionation.get(rrName);
+                    = sessionForStandardsFractionation.get(rrName);
 
             // get the session fit function
             AbstractFunctionOfX sessionFofX
-                    = //
-                    sessionForStandard.getSelectedFitFunction();
+                    = sessionForStandard.getSelectedFitFunction();
 
             if (sessionFofX != null) {
                 double[] diagonalofSu;
@@ -1143,27 +1162,23 @@ public class TripoliSession implements
                         measuredValue = Math.log(measuredValue);//forced mean with more than 10% neg                   ((RawRatioDataModel) tf.getRawRatioDataModelByName(rrName)).getRatios()[0];
                     }
                     AbstractRatiosDataModel physicalConstants;
-                    try {
-                        physicalConstants = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel();
-                        double gmol204 = ((PhysicalConstantsModel) physicalConstants).getAtomicMolarMassByName("gmol204").getValue().doubleValue();
-                        double gmol206 = ((PhysicalConstantsModel) physicalConstants).getAtomicMolarMassByName("gmol206").getValue().doubleValue();
-                        double gmol207 = ((PhysicalConstantsModel) physicalConstants).getAtomicMolarMassByName("gmol207").getValue().doubleValue();
-                        double gmol208 = ((PhysicalConstantsModel) physicalConstants).getAtomicMolarMassByName("gmol208").getValue().doubleValue();
+                    physicalConstants = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel();
+                    double gmol204 = ((PhysicalConstantsModel) physicalConstants).getAtomicMolarMassByName("gmol204").getValue().doubleValue();
+                    double gmol206 = ((PhysicalConstantsModel) physicalConstants).getAtomicMolarMassByName("gmol206").getValue().doubleValue();
+                    double gmol207 = ((PhysicalConstantsModel) physicalConstants).getAtomicMolarMassByName("gmol207").getValue().doubleValue();
+                    double gmol208 = ((PhysicalConstantsModel) physicalConstants).getAtomicMolarMassByName("gmol208").getValue().doubleValue();
 
-                        double logMassRatio_206_207 = Math.log(gmol206 / gmol207);
+                    double logMassRatio_206_207 = Math.log(gmol206 / gmol207);
 
-                        if (rrName.getName().contains("206")) {
-                            upperPhi = tf.getUpperPhi_r206_207() * (Math.log(gmol206 / gmol204) / logMassRatio_206_207);
-                            nameOfUpperPhi = "upperPhi_r206_204";
-                        } else if (rrName.getName().contains("207")) {
-                            upperPhi = tf.getUpperPhi_r206_207() * (Math.log(gmol207 / gmol204) / logMassRatio_206_207);
-                            nameOfUpperPhi = "upperPhi_r207_204";
-                        } else { // 208
-                            upperPhi = tf.getUpperPhi_r206_207() * (Math.log(gmol208 / gmol204) / logMassRatio_206_207);
-                            nameOfUpperPhi = "upperPhi_r208_204";
-                        }
-
-                    } catch (BadLabDataException badLabDataException) {
+                    if (rrName.getName().contains("206")) {
+                        upperPhi = tf.getUpperPhi_r206_207() * (Math.log(gmol206 / gmol204) / logMassRatio_206_207);
+                        nameOfUpperPhi = "upperPhi_r206_204";
+                    } else if (rrName.getName().contains("207")) {
+                        upperPhi = tf.getUpperPhi_r206_207() * (Math.log(gmol207 / gmol204) / logMassRatio_206_207);
+                        nameOfUpperPhi = "upperPhi_r207_204";
+                    } else { // 208
+                        upperPhi = tf.getUpperPhi_r206_207() * (Math.log(gmol208 / gmol204) / logMassRatio_206_207);
+                        nameOfUpperPhi = "upperPhi_r208_204";
                     }
                 }
 
@@ -1384,6 +1399,47 @@ public class TripoliSession implements
                     } else {
                         correctedRatios[i] = logRatios[i];
                     }
+                }
+
+                // dec 2015 for Noah to chase down why we are having trouble with ion counters
+                if ((index == 0) && rrName.getName().compareToIgnoreCase("r206_238w") == 0) {
+                    NumberFormat formatter = new DecimalFormat("00.000");
+                    NumberFormat formatter2 = new DecimalFormat("0.0000000000");
+
+                    File unknownDataOutputFile = new File("RawAndDownholeCorrectedDataForUnknown-" + tf.getFractionID() + "-Ratio-" + rrName.getName() + ".txt");
+
+                    try {
+                        PrintWriter outputWriter = new PrintWriter(new FileWriter(unknownDataOutputFile));
+                        outputWriter.println("\n\n***************   Raw and Downhole Corrected Data from Unknown " //
+                                + tf.getFractionID() + "-Ratio-" + rrName.getDisplayName() + "   ********************\n\n");
+                        outputWriter.println();
+
+                        outputWriter.println("sec       uncorr           beta            corr");
+
+                        timeIndex = 0;
+                        for (int i = 0; i < onPeakAquireTimesInSeconds.length; i++) {
+                            StringBuilder acquisition = new StringBuilder();
+                            acquisition.append(formatter.format(onPeakAquireTimesInSeconds[i])).append("\t");
+                            acquisition.append(formatter2.format(logRatios[i])).append("\t");
+                            acquisition.append(formatter2.format(activeData[i] ? betaFunction[timeIndex] : 0.0)).append("\t");
+                            acquisition.append(formatter2.format(correctedRatios[i]));
+
+                            if (activeData[i]) {
+                                timeIndex++;
+                            }
+                            outputWriter.println(acquisition.toString());
+                        }
+
+                        outputWriter.flush();
+                        outputWriter.close();
+
+                    } catch (IOException iOException) {
+                    }
+
+//                    try {
+//                        BrowserControl.displayURL(unknownDataOutputFile.getCanonicalPath());
+//                    } catch (IOException ex) {
+//                    }
                 }
 
                 ((RawRatioDataModel) tf.getRawRatioDataModelByName(rrName)).setCorrectedRatios(correctedRatios);
@@ -1664,6 +1720,16 @@ public class TripoliSession implements
         }
     }
 
+    public void applyMaskingArrayToStandardsForDownhole() {
+        SortedSet<TripoliFraction> tripoliStandardFractions
+                = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.STANDARD, IncludedTypeEnum.INCLUDED);
+        Iterator<TripoliFraction> fractionIterator = tripoliStandardFractions.iterator();
+        while (fractionIterator.hasNext()) {
+            TripoliFraction tf = fractionIterator.next();
+            tf.applyMaskingArray();
+        }
+    }
+
     /**
      *
      */
@@ -1682,17 +1748,6 @@ public class TripoliSession implements
             TripoliFraction tf = fractionIterator.next();
             tf.updateInterceptFitFunctionsIncludingCommonLead();
         }
-    }
-
-    @Override
-    public void refitAllFractionsForDownhole() {
-        calculateDownholeFitSummariesForPrimaryStandard();
-//        
-//        Iterator<TripoliFraction> fractionIterator = tripoliFractions.iterator();
-//        while (fractionIterator.hasNext()) {
-//            TripoliFraction tf = fractionIterator.next();
-//            tf.updateDownholeFitFunctionsExcludingCommonLead();
-//        }
     }
 
     /**

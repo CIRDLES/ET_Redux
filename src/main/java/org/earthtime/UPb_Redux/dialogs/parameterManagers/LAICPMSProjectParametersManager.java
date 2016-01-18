@@ -65,16 +65,16 @@ import org.earthtime.Tripoli.dataViews.dataMonitorViews.AbstractDataMonitorView;
 import org.earthtime.Tripoli.massSpecSetups.AbstractMassSpecSetup;
 import org.earthtime.Tripoli.rawDataFiles.handlers.AbstractRawDataFileHandler;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.dialogs.projectManagers.ProjectManagerSubscribeInterface;
-import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.dataDictionaries.AcquisitionTypesEnum;
+import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.isotopes.IsotopesEnum;
 import org.earthtime.projects.ProjectInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataViews.AbstractRatiosDataView;
 import org.earthtime.ratioDataViews.MineralStandardUPbRatiosDataViewNotEditable;
+import org.earthtime.reduxLabData.ReduxLabData;
 
 /**
  *
@@ -235,6 +235,10 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
 
         removeAll();
 
+        this.setBackground(new Color(255, 222, 173));
+        
+        this.setOpaque(true);
+
         massSpecSetup = rawDataFileHandler.getMassSpec();
 
         collectorNameLabels = new ArrayList<>();
@@ -389,7 +393,8 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
         headerLabel.setBounds(leftMargin, topOfTable, parentDimension.width - 50, 25);
         this.add(headerLabel);
 
-        Iterator<IsotopesEnum> isotopeIterator = //
+        Iterator<IsotopesEnum> isotopeIterator
+                = //
                 isotopeMappingModel.getIsotopeToCollectorMap().keySet().iterator();
 
         int count = 1;
@@ -627,15 +632,14 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
 
         // view standard model
         JButton viewStandardModelButton = new ET_JButton("View");
-        viewStandardModelButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                AbstractRatiosDataModel selectedModel = //
-                        ((AbstractRatiosDataModel) mineralStandardsComboBox.getSelectedItem());
-                AbstractRatiosDataView modelView = //
-                        new MineralStandardUPbRatiosDataViewNotEditable(selectedModel, null, false);
-                modelView.displayModelInFrame();
-            }
+        viewStandardModelButton.addActionListener((ActionEvent e) -> {
+            AbstractRatiosDataModel selectedModel
+                    = //
+                    ((AbstractRatiosDataModel) mineralStandardsComboBox.getSelectedItem());
+            AbstractRatiosDataView modelView
+                    = //
+                    new MineralStandardUPbRatiosDataViewNotEditable(selectedModel, null, false);
+            modelView.displayModelInFrame();
         });
         viewStandardModelButton.setFont(ReduxConstants.sansSerif_10_Bold);
         viewStandardModelButton.setBounds(775, 475, 30, 23);
@@ -644,15 +648,12 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
         // toolbar
         ET_JButton monitorButton = new ET_JButton("Save and Monitor/Process Raw Data");
         monitorButton.setBounds(leftMargin, 525, 225, 25);
-        monitorButton.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent ae) {
-                saveData_buttonActionPerformed(ae);
-                rawDataFileHandler.getAcquisitionModel().setUsingFullPropagation(fullPropagationRB.isSelected());
-                AbstractDataMonitorView dataMonitorView = new AbstractDataMonitorView(project, projectManager, uPbReduxFrame);
-                projectManager.updateDataChangeStatus(true);
-                dataMonitorView.displayModelInFrame();
-            }
+        monitorButton.addActionListener((ActionEvent ae) -> {
+            saveData_buttonActionPerformed(ae);
+            rawDataFileHandler.getAcquisitionModel().setUsingFullPropagation(fullPropagationRB.isSelected());
+            AbstractDataMonitorView dataMonitorView = new AbstractDataMonitorView(project, projectManager, uPbReduxFrame);
+            projectManager.updateDataChangeStatus(true);
+            dataMonitorView.displayModelInFrame();
         });
         monitorButton.setEnabled(editable);
 
@@ -660,13 +661,10 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
 
         ET_JButton saveAndLoadButton = new ET_JButton("Save and Load/Process Raw Data");
         saveAndLoadButton.setBounds(leftMargin + 225, 525, 225, 25);
-        saveAndLoadButton.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent ae) {
-                saveAndLoadData_buttonActionPerformed(ae);
-                rawDataFileHandler.getAcquisitionModel().setUsingFullPropagation(fullPropagationRB.isSelected());
-                projectManager.updateDataChangeStatus(true);
-            }
+        saveAndLoadButton.addActionListener((ActionEvent ae) -> {
+            saveAndLoadData_buttonActionPerformed(ae);
+            rawDataFileHandler.getAcquisitionModel().setUsingFullPropagation(fullPropagationRB.isSelected());
+            projectManager.updateDataChangeStatus(true);
         });
         saveAndLoadButton.setEnabled(editable);
 
@@ -832,7 +830,8 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
         acquisitionModel.setCollectorNameToDeadTimesUnctMap(collectorNameToDeadTimesUnctMap);
 
         if (acquisitionModel.getAcquisitionType().equals(AcquisitionTypesEnum.SINGLE_COLLECTOR)) {
-            Map<IsotopesEnum, Double> isotopeNameToIntegrationTimesMap = //
+            Map<IsotopesEnum, Double> isotopeNameToIntegrationTimesMap
+                    = //
                     new EnumMap<>(IsotopesEnum.class);
 
             for (int i = 0; i < isotopeNames.size(); i++) {
@@ -846,7 +845,8 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
 
         // faradays for resistors and amp noise
         if (acquisitionModel.getAcquisitionType().equals(AcquisitionTypesEnum.STATIC)) {
-            Map<String, FaradayCollectorModel.ResistorEnum> collectorNameToResistorMap = //
+            Map<String, FaradayCollectorModel.ResistorEnum> collectorNameToResistorMap
+                    = //
                     new TreeMap<>();
             Map<String, Double> collectorNameToAmpNoiseMap = new TreeMap<>();
 
