@@ -783,10 +783,12 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             }
         }
 
+        myProjectManager.initDialogContent();
         myProjectManager.setVisible(true);
         
         updateReportTable();
-
+        
+        saveProject();
     }
 
     private void manageRawDataSession() {

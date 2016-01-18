@@ -263,8 +263,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
                 .add(MillerTexasAMElementII_RawDataTemplate.getInstance());
 
         knownRawDataFileHandlers.add(theTexasAMElementIIFileHandler);
-        
-        
+
         // move this section for robust file opening
         fileHandlerComboBox.removeAllItems();
         for (int i = 0; i < knownRawDataFileHandlers.size(); i++) {
@@ -1090,6 +1089,9 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
             initializeSessionManager(false, true, true);
         }
     }//GEN-LAST:event_openRawDataManager_buttonActionPerformed
+    @Override
+    public void initDialogContent() {
+    }
 
     /**
      *

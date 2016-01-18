@@ -83,6 +83,8 @@ public class Project implements
     private AbstractAcquisitionModel acquisitionModel;
     private AbstractRawDataFileHandler rawDataFileHandler;
     private ReduxPersistentState myState;
+    // for Legacy projects
+    private File locationOfDataImportFile;
 
     /**
      *
@@ -452,6 +454,7 @@ public class Project implements
     /**
      * @param rawDataFileHandler the rawDataFileHandler to set
      */
+    @Override
     public void setRawDataFileHandler(AbstractRawDataFileHandler rawDataFileHandler) {
         this.rawDataFileHandler = rawDataFileHandler;
     }
@@ -459,7 +462,27 @@ public class Project implements
     /**
      * @return the compiledSuperSample
      */
+    @Override
     public SampleInterface getCompiledSuperSample() {
         return compiledSuperSample;
+    }
+
+    /**
+     * @return the locationOfDataImportFile
+     */
+    @Override
+    public File getLocationOfDataImportFile() {
+        if (locationOfDataImportFile == null){
+            locationOfDataImportFile = new File(":");
+        }
+        return locationOfDataImportFile;
+    }
+
+    /**
+     * @param locationOfDataImportFile the locationOfDataImportFile to set
+     */
+    @Override
+    public void setLocationOfDataImportFile(File locationOfDataImportFile) {
+        this.locationOfDataImportFile = locationOfDataImportFile;
     }
 }

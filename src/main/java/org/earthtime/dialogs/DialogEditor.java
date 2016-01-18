@@ -69,6 +69,10 @@ public abstract class DialogEditor extends JDialog {
         initComponents();
     }
 
+    public void initDialogContent(){
+        
+    }
+    
     /**
      *
      * @param preferredWidth

@@ -1011,6 +1011,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
         //}
     }
 
+
     private void InitializeTextBoxes(final ETFractionInterface myFraction) {
 
         // Determine whether the Pb and U data are editable based on presence of source files

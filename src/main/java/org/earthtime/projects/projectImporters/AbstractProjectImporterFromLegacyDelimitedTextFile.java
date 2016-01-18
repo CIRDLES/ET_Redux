@@ -64,10 +64,11 @@ public abstract class AbstractProjectImporterFromLegacyDelimitedTextFile {
     public ProjectInterface readInProjectSamples (ProjectInterface project)
             throws FileNotFoundException, BadImportedCSVLegacyFileException {
 
-        File delimitedFile = openDelimitedTextFile( mruFolder );
-        mruFolder = delimitedFile.getParentFile();
+        File dataFile = openDelimitedTextFile( mruFolder );
+        mruFolder = dataFile.getParentFile();
 
-        extractProjectFromDelimitedTextFile(project, delimitedFile );
+        extractProjectFromDelimitedTextFile(project, dataFile );
+        project.setLocationOfDataImportFile(dataFile);
 
         return project;
 

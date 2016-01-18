@@ -26,6 +26,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -69,8 +71,8 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
 
         getReportCategories().stream().filter((rc) //
                 -> (rc != null)).forEach((rc) -> {
-                    retVal.put(rc.getPositionIndex(), rc);
-                });
+            retVal.put(rc.getPositionIndex(), rc);
+        });
 
         return retVal;
     }
@@ -474,9 +476,11 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
             getCompositionCategory().setVisibleCategoryColumn(AnalysisMeasures.rTh_Umagma.getName(), false);
 
             // get first activityValue and first Th_Umagma value and set standard footnote entries
-            BigDecimal savedActivityValue = //
+            BigDecimal savedActivityValue
+                    = //
                     fractions.get(0).getAnalysisMeasure(AnalysisMeasures.ar231_235sample.getName()).getValue();
-            BigDecimal savedMagmaValue = //
+            BigDecimal savedMagmaValue
+                    = //
                     fractions.get(0).getAnalysisMeasure(AnalysisMeasures.rTh_Umagma.getName()).getValue();
 
             activityFootnoteEntry = "= " + savedActivityValue.toString();
@@ -707,7 +711,8 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
                                         retVal[fractionRowCount][0] = "true";
                                     }
 
-                                    retVal[fractionRowCount][1] = //
+                                    retVal[fractionRowCount][1]
+                                            = //
                                             sample.getAliquotByNumber(f.getAliquotNumber()).getAliquotName();
                                 }
 
@@ -761,60 +766,99 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
 
             // test for known variables in footnote
             // since lambda235 and 238 appear in same footnote, we first check whether the
-            // references are the same so as to aoid repetition
+            // references are the same so as to avoid repetition
             String lambda238Ref = "";
             String lambda235Ref = "";
             try {
-                lambda238Ref = //
+                lambda238Ref
+                        = //
                         " (" + ((ValueModelReferenced) sample.getPhysicalConstantsModel()//
                         .getDatumByName(Lambdas.lambda238.getName())).getReference() + ")";
-                lambda235Ref = //
+                lambda235Ref
+                        = //
                         " (" + ((ValueModelReferenced) sample.getPhysicalConstantsModel()//
                         .getDatumByName(Lambdas.lambda235.getName())).getReference() + ")";
             } catch (BadLabDataException badLabDataException) {
             }
 
-            if ((lambda235Ref.trim().equalsIgnoreCase(lambda238Ref.trim()))) {
-                lambda238Ref = ""; // they appear in order 238, 235
-            }
+//            if ((lambda235Ref.trim().equalsIgnoreCase(lambda238Ref.trim()))) {
+//                lambda238Ref = ""; // they appear in order 238, 235
+//            }
+
+            NumberFormat formatter = new DecimalFormat("0.000#####E0");
 
             String lambda238 = "\u03BB238 = ";
             try {
-                lambda238 += //
-                        sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda238.getName())//
-                        .getValue().toString();
+                lambda238
+                        += //
+                        formatter.format(sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda238.getName())//
+                        .getValue().doubleValue());
                 lambda238 += lambda238Ref;
             } catch (BadLabDataException badLabDataException) {
             }
 
             String lambda235 = "\u03BB235 = ";
             try {
-                lambda235 += //
-                        sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda235.getName())//
-                        .getValue().toString();
+                lambda235
+                        += //
+                        formatter.format(sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda235.getName())//
+                        .getValue().doubleValue());
                 lambda235 += lambda235Ref;
+            } catch (BadLabDataException badLabDataException) {
+            }
+
+            String lambda230 = "\u03BB230 = ";
+            try {
+                lambda230
+                        += //
+                        formatter.format(sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda230.getName())//
+                        .getValue().doubleValue());
+                lambda230
+                        += //
+                        " (" //
+                        + ((ValueModelReferenced) sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda230.getName()))//
+                        .getReference() //
+                        + ")";
             } catch (BadLabDataException badLabDataException) {
             }
 
             String lambda232 = "\u03BB232 = ";
             try {
-                lambda232 += //
-                        sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda232.getName())//
-                        .getValue().toString();
-                lambda232 += //
+                lambda232
+                        += //
+                        formatter.format(sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda232.getName())//
+                        .getValue().doubleValue());
+                lambda232
+                        += //
                         " (" //
                         + ((ValueModelReferenced) sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda232.getName()))//
                         .getReference() //
                         + ")";
             } catch (BadLabDataException badLabDataException) {
             }
-
+            String lambda234 = "\u03BB234 = ";
+            try {
+                lambda234
+                        += //
+                        formatter.format(sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda234.getName())//
+                        .getValue().doubleValue());
+                lambda234
+                        += //
+                        " (" //
+                        + ((ValueModelReferenced) sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda234.getName()))//
+                        .getReference() //
+                        + ")";
+            } catch (BadLabDataException badLabDataException) {
+            }
             // perform replacement of footnote parameters
             footNote = footNote.replaceFirst("<lambda238>", lambda238);
             footNote = footNote.replaceFirst("<lambda235>", lambda235);
+            footNote = footNote.replaceFirst("<lambda230>", lambda230);
             footNote = footNote.replaceFirst("<lambda232>", lambda232);
+            footNote = footNote.replaceFirst("<lambda234>", lambda234);
             footNote = footNote.replaceFirst("<ar231_235sample>", activityFootnoteEntry);
-            footNote = footNote.replaceFirst("<rTh_Umagma>", thU_MagmaFootnoteEntry);
+            footNote = footNote.replaceFirst("<rTh_Umagma>", thU_MagmaFootnoteEntry);          
+            
             //<r207_206c>
             //<bestDateDivider>
 
@@ -885,7 +929,8 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
                 < retVal.length; f++) {
             if (retVal[f][columnCount] != null) {
                 retVal[f][columnCount] = retVal[f][columnCount].substring(minLeading);
-                retVal[f][columnCount] = //
+                retVal[f][columnCount]
+                        = //
                         retVal[f][columnCount].substring(//
                                 0, retVal[f][columnCount].length() - minTrailing);
 
@@ -948,7 +993,7 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
 
         retVal = getReportCategories().stream().filter((rc) //
                 -> (rc != null)).map((rc)//
-                        -> rc.getCountOfCategoryColumns()).reduce(retVal, Integer::sum);
+                -> rc.getCountOfCategoryColumns()).reduce(retVal, Integer::sum);
 
         return retVal;
     }
