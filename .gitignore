@@ -5,6 +5,10 @@ target
 nbactions.xml
 dependency-reduced-pom.xml
 
+# IntelliJ
+.idea/
+*.iml
+
 # Generated
 *.txt
 *.html
