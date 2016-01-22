@@ -19,6 +19,7 @@
 
 package org.earthtime.archivingTools;
 
+import org.earthtime.UPb_Redux.aliquots.AnalysisImage;
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;

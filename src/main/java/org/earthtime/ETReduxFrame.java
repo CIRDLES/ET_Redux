@@ -785,9 +785,9 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
         myProjectManager.initDialogContent();
         myProjectManager.setVisible(true);
-        
+
         updateReportTable();
-        
+
         saveProject();
     }
 
@@ -1412,12 +1412,12 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             // show the welcome page
             jSplitPane1.setDividerLocation(1.0);
         }
-        
+
         // jan 2016
-        if (theSample.isSampleTypeProject() && theSample.isAnalysisTypeCOMPILED()){
+        if (theSample.isSampleTypeProject() && theSample.isAnalysisTypeCOMPILED()) {
             manageProjectRawData_button.setText("Manage Project");
         } else {
-            manageProjectRawData_button.setText("Project Raw Data");            
+            manageProjectRawData_button.setText("Project Raw Data");
         }
     }
 
@@ -1499,8 +1499,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         setLiveUpdateTimerIsRunning(false);
 
         EarthTimeSerializedFileInterface deserializedFile
-                = //
-                (EarthTimeSerializedFileInterface) ETSerializer.GetSerializedObjectFromFile(selFile.getPath());
+                = (EarthTimeSerializedFileInterface) ETSerializer.GetSerializedObjectFromFile(selFile.getPath());
 
         // TODO: Oct 2011 check for Project file?? or is it automatically a project file
         // created here for a single sample??

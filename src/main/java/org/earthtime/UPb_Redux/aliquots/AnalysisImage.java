@@ -18,7 +18,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.earthtime.archivingTools;
+package org.earthtime.UPb_Redux.aliquots;
 
 import java.io.Serializable;
 import org.earthtime.dataDictionaries.AnalysisImageTypes;
@@ -73,13 +73,4 @@ public class AnalysisImage implements Serializable {
         System.out.println("Image URL = " + imageURL);
     }
 
-//    private void readObject (
-//            ObjectInputStream stream )
-//            throws IOException, ClassNotFoundException {
-//        stream.defaultReadObject();
-//        ObjectStreamClass myObject = ObjectStreamClass.lookup(
-//                Class.forName( AnalysisImage.class.getCanonicalName() ) );
-//        long theSUID = myObject.getSerialVersionUID();
-//        System.out.println( "Customized De-serialization of AnalysisImage " + theSUID );
-//    }
 }

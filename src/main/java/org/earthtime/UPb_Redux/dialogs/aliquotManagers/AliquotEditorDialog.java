@@ -89,7 +89,7 @@ import org.earthtime.UPb_Redux.utilities.UPbReduxFocusTraversalPolicy;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.aliquots.ReduxAliquotInterface;
-import org.earthtime.archivingTools.AnalysisImage;
+import org.earthtime.UPb_Redux.aliquots.AnalysisImage;
 import org.earthtime.archivingTools.GeochronUploadImagesHelper;
 import org.earthtime.archivingTools.GeochronUploaderUtility;
 import org.earthtime.archivingTools.IEDACredentialsValidator;
