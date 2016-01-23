@@ -54,7 +54,7 @@ import org.xml.sax.SAXException;
  */
 public class SesarSample {
 
-    private String userCode;
+    private String user_code;
     private String userName;
     private String password;
     private String sampleType;
@@ -79,13 +79,13 @@ public class SesarSample {
 
     /**
      *
-     * @param userCode the value of userCode
+     * @param userCode the value of user_code
      * @param userName the value of userName
      * @param password the value of password
      * @param isParent the value of isParent
      */
     public SesarSample(String userCode, String userName, String password, boolean isChild) {
-        this.userCode = userCode;
+        this.user_code = userCode;
         this.userName = userName;
         this.password = password;
         this.sampleType = SESAR_ObjectTypesEnum.IndividualSample.getName();
@@ -106,7 +106,7 @@ public class SesarSample {
     }
 
     public boolean confirmUserCodeCompliance(String proposedIGSN) {
-        return proposedIGSN.toUpperCase().startsWith(userCode.toUpperCase());
+        return proposedIGSN.toUpperCase().startsWith(user_code.toUpperCase());
     }
 
     public SESAR_ObjectTypesEnum getSesarObjectType() {
@@ -167,31 +167,35 @@ public class SesarSample {
 
     private static File retrieveXMLFileFromSesarForIGSN(String igsn) {
 
-        String tempSESARcontents = //
-                URIHelper.getTextFromURI("http://app.geosamples.org/webservices/display.php?igsn=" + igsn);
+        File retVal = null;
+        String tempSESARcontents
+                = URIHelper.getTextFromURI("http://app.geosamples.org/webservices/display.php?igsn=" + igsn);
 
-        // write this to a file
-        String fileNameForIGSN = "IGSN_" + igsn + "_fromSESAR.xml";
-        FileOutputStream fos = null;
-        try {
-            fos = new FileOutputStream(fileNameForIGSN);
-        } catch (FileNotFoundException ex) {
+        if (tempSESARcontents.length() > 0) {
+            // write this to a file
+            String fileNameForIGSN = "IGSN_" + igsn + "_fromSESAR.xml";
+            FileOutputStream fos = null;
+            try {
+                fos = new FileOutputStream(fileNameForIGSN);
+            } catch (FileNotFoundException ex) {
+            }
+
+            OutputStreamWriter out = new OutputStreamWriter(fos);
+            try {
+                out.write(tempSESARcontents);
+                out.flush();
+                out.close();
+                retVal = new File(fileNameForIGSN);
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(null,
+                        new String[]{
+                            "Error reaching server: "//
+                            + ex.getMessage()
+                        });
+            }
         }
 
-        OutputStreamWriter out = new OutputStreamWriter(fos);
-        try {
-            out.write(tempSESARcontents);
-            out.flush();
-            out.close();
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(null,
-                    new String[]{
-                        "Error reaching server: "//
-                        + ex.getMessage()
-                    });
-//            ex.printStackTrace();
-        }
-        return new File(fileNameForIGSN);
+        return retVal;
     }
 
     public static Object readXMLObject(String filename)
@@ -211,12 +215,10 @@ public class SesarSample {
             }
 
 //            System.out.println("\nThis is your SesarSample that was just read successfully:\n");
-
 //            String xml2 = getXStreamWriter().toXML(sesarSample);
 //
 //            System.out.println(xml2);
 //            System.out.flush();
-
         } else {
             throw new FileNotFoundException("Missing XML data file.");
         }
@@ -234,20 +236,21 @@ public class SesarSample {
         dataToPost.put("content", content);
 
         InputStream response = null;
+        org.w3c.dom.Document doc = null;
         try {
             response = ClientHttpRequest.post(//
                     new URL("http://app.geosamples.org/webservices/uploadservice.php"),//
                     dataToPost);
-        } catch (IOException iOException) {
-        }
 
-        org.w3c.dom.Document doc = null;
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setValidating(false);
-        try {
-            doc = factory.newDocumentBuilder().parse(response);
-        } catch (ParserConfigurationException | SAXException | IOException parserConfigurationException) {
-            System.out.println("PARSE error " + parserConfigurationException.getMessage());
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setValidating(false);
+            try {
+                doc = factory.newDocumentBuilder().parse(response);
+            } catch (ParserConfigurationException | SAXException | IOException parserConfigurationException) {
+                System.out.println("PARSE error " + parserConfigurationException.getMessage());
+            }
+        } catch (IOException iOException) {
+            System.out.println(iOException.getMessage());
         }
 
         String statusMessage = "SESAR registration status: ";
@@ -369,14 +372,17 @@ public class SesarSample {
 
     public static boolean validateSampleIGSNatSESAR(String igsn) {
         File file = retrieveXMLFileFromSesarForIGSN(igsn);
-        Document doc = convertXMLTextToDOMdocument(file);
-        boolean retVal = false;
 
-        if (doc != null) {
-            if (doc.hasChildNodes()) {
-                boolean resultsElementPresent = doc.getFirstChild().getNodeName().equalsIgnoreCase("results");
-                if (resultsElementPresent) {
-                    retVal = doc.getElementsByTagName("error").getLength() == 0;
+        boolean retVal = false;
+        if (file != null) {
+            Document doc = convertXMLTextToDOMdocument(file);
+
+            if (doc != null) {
+                if (doc.hasChildNodes()) {
+                    boolean resultsElementPresent = doc.getFirstChild().getNodeName().equalsIgnoreCase("results");
+                    if (resultsElementPresent) {
+                        retVal = doc.getElementsByTagName("error").getLength() == 0;
+                    }
                 }
             }
         }
@@ -385,18 +391,21 @@ public class SesarSample {
 
     public static boolean validateAliquotIGSNatSESAR(String aliquotIgsn, String parentIgsn) {
         File file = retrieveXMLFileFromSesarForIGSN(aliquotIgsn);
-        Document doc = convertXMLTextToDOMdocument(file);
-        boolean retVal = false;
 
-        if (doc != null) {
-            if (doc.hasChildNodes()) {
-                boolean resultsElementPresent = doc.getFirstChild().getNodeName().equalsIgnoreCase("results");
-                if (resultsElementPresent) {
-                    retVal = doc.getElementsByTagName("error").getLength() == 0;
-                    if (retVal){
-                        // test if parent present
-                        String parentIgsnFromSesar = doc.getElementsByTagName("parent_igsn").item(0).getTextContent();
-                        retVal = parentIgsnFromSesar.compareToIgnoreCase(parentIgsn) == 0;
+        boolean retVal = false;
+        if (file != null) {
+            Document doc = convertXMLTextToDOMdocument(file);
+
+            if (doc != null) {
+                if (doc.hasChildNodes()) {
+                    boolean resultsElementPresent = doc.getFirstChild().getNodeName().equalsIgnoreCase("results");
+                    if (resultsElementPresent) {
+                        retVal = doc.getElementsByTagName("error").getLength() == 0;
+                        if (retVal) {
+                            // test if parent present
+                            String parentIgsnFromSesar = doc.getElementsByTagName("parent_igsn").item(0).getTextContent();
+                            retVal = parentIgsnFromSesar.compareToIgnoreCase(parentIgsn) == 0;
+                        }
                     }
                 }
             }
@@ -420,17 +429,17 @@ public class SesarSample {
     }
 
     /**
-     * @return the userCode
+     * @return the user_code
      */
-    public String getUserCode() {
-        return userCode;
+    public String getUser_code() {
+        return user_code;
     }
 
     /**
-     * @param userCode the userCode to set
+     * @param user_code the user_code to set
      */
-    public void setUserCode(String userCode) {
-        this.userCode = userCode;
+    public void setUser_code(String user_code) {
+        this.user_code = user_code;
     }
 
     /**

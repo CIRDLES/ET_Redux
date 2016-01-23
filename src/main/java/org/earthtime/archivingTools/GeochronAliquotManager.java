@@ -41,13 +41,13 @@ import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.dateInterpretation.DateProbabilityDensityPanel;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.ConcordiaGraphPanel;
 import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetup;
-import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.archivingTools.forSESAR.SesarSample;
 import org.earthtime.archivingTools.forSESAR.SesarSampleManager;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.dataDictionaries.RadDates;
+import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.projects.ProjectInterface;
 import org.earthtime.samples.SampleInterface;
 
@@ -91,7 +91,7 @@ public class GeochronAliquotManager extends JPanel {
     private JButton[] showConcordiaButtons;
     private JButton[] showPDFButtons;
     private JCheckBox []publicOptionCheckBoxes;
-    
+
     
 
     public GeochronAliquotManager(ProjectInterface project, SampleInterface sample, String userName, String password, String userCode, int x, int y, int width, int height) {
@@ -337,6 +337,7 @@ public class GeochronAliquotManager extends JPanel {
                 saveAliquot(aliquot, aliquotIGSN_TextField.getText(), aliquotName_TextField);
                 sesarAliquot.setIGSN(userCode);
                 sesarAliquot.setName(aliquot.getAliquotName());
+                sesarAliquot.setParentIGSN(sample.getSampleIGSN());
                 DialogEditor sesarSampleManager = //
                         new SesarSampleManager(null, true, sesarAliquot, true);
                 sesarSampleManager.setVisible(true);

@@ -205,6 +205,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
     //oct 2014
     private DialogEditor sampleDateInterpDialog;
     private DialogEditor myFractionEditor;
+    private DialogEditor geochronProjectExportManager;
 
     /**
      * Creates new form UPbReduxFrame
@@ -538,7 +539,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
     private void openTheProject(File projectReduxFile) {
 
-        forceCloseOfSampleDateInterpretations();
+        closeProjectAndOrSample();
 
         theProject = null;
         System.gc();
@@ -911,9 +912,8 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         theProject.prepareSamplesForExport();
 
         // launch manager
-        DialogEditor geochronProjectExportManager
-                = //
-                new GeochronProjectExportManager(this, true, theProject, myState);
+        geochronProjectExportManager
+                = GeochronProjectExportManager.getInstance(null, false, theProject, myState);
 
         geochronProjectExportManager.setVisible(true);
     }
@@ -1490,7 +1490,8 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
     private void openTheSample(File selFile, boolean checkSavedStatus) throws BadLabDataException {
 
-        forceCloseOfSampleDateInterpretations();
+//        forceCloseOfSampleDateInterpretations();
+        closeProjectAndOrSample();
 
         if (checkSavedStatus) {
             checkSavedStatusTheSample();
@@ -1548,16 +1549,29 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
     }
 
+    private void closeProjectAndOrSample() {
+
+        try {
+            closeTheSample();
+        } catch (BadLabDataException badLabDataException) {
+        }
+        try {
+            closeTheProject();
+        } catch (BadLabDataException badLabDataException) {
+        }
+
+    }
+
     private boolean closeTheSample() throws BadLabDataException {
 
         boolean retval = checkSavedStatusTheSample();
 
         setLiveUpdateTimerIsRunning(false);
 
-        forceCloseOfSampleDateInterpretations();
+        closeOpenDialogs();
 
         if (retval) {
-            setUpEmptySample();//theSample.getSampleType() );
+            setUpEmptySample();
         }
 
         return retval;
@@ -1566,10 +1580,17 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
     private boolean closeTheProject() throws BadLabDataException {
 
         saveTheProject();
-        forceCloseOfSampleDateInterpretations();
+        closeOpenDialogs();
+
         setUpEmptySample();
 
         return true;
+    }
+
+    private void closeOpenDialogs() {
+        GeochronProjectExportManager.removeInstance();
+
+        forceCloseOfSampleDateInterpretations();
     }
 
     private void setUpEmptySample() //

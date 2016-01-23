@@ -170,7 +170,6 @@ public abstract class AbstractSessionForStandardDataModel implements Serializabl
 
         // dec 2014 ... needs refactoring to be property
         // ?always true for sessions USING_FULL_PROPAGATION =  tripoliSession.getRawDataFileHandler().getAcquisitionModel().isUsingFullPropagation();//  RawRatioDataModel.USING_FULL_PROPAGATION;       
-        
         // for plotting - want to show all even those excluded
         int countOfAllStandards = standardFractions.size();
         allStandardsMeanLogRatios = new double[countOfAllStandards];
@@ -182,13 +181,15 @@ public abstract class AbstractSessionForStandardDataModel implements Serializabl
         while (fractionIterator.hasNext()) {
             TripoliFraction tf = fractionIterator.next();
 
-            RawRatioDataModel rawRatio = //
+            RawRatioDataModel rawRatio
+                    = //
                     ((RawRatioDataModel) tf.getRawRatioDataModelByName(rawRatioName));
 
-            allStandardsMeanLogRatios[index] = //
+            allStandardsMeanLogRatios[index]
+                    = //
                     rawRatio.getSessionValueBySessionTechnique(sessionTechnique);
-            allStandardsMeanLogRatioStdErrs[index] = //
-                    rawRatio.getSessionErrorBySessionTechnique(sessionTechnique);
+            allStandardsMeanLogRatioStdErrs[index]
+                    = rawRatio.getSessionErrorBySessionTechnique(sessionTechnique);
 
             index++;
 
@@ -217,11 +218,14 @@ public abstract class AbstractSessionForStandardDataModel implements Serializabl
             includedStandardsDataActiveMap[index] = true;
             includedStandardsAquireTimes[index] = tf.getZeroBasedNormalizedTimeStamp();
 
-            RawRatioDataModel rawRatio = //
+            RawRatioDataModel rawRatio
+                    = //
                     ((RawRatioDataModel) tf.getRawRatioDataModelByName(rawRatioName));
-            includedStandardsMeanLogRatios[index] = //
+            includedStandardsMeanLogRatios[index]
+                    = //
                     rawRatio.getSessionValueBySessionTechnique(sessionTechnique);
-            includedStandardsMeanLogRatioStdErrs[index] = //
+            includedStandardsMeanLogRatioStdErrs[index]
+                    = //
                     rawRatio.getSessionErrorBySessionTechnique(sessionTechnique);
             sessionIncludedStandardsCovariance.set( //
                     index, index, rawRatio.getSessionVarianceBySessionTechnique(sessionTechnique));
@@ -233,7 +237,8 @@ public abstract class AbstractSessionForStandardDataModel implements Serializabl
         if (countOfIncludedStandards > 0) {
             // begin section 8 of uncertainty propagation paper
 
-            RawRatioDataModel rawRatioFirst = //
+            RawRatioDataModel rawRatioFirst
+                    = //
                     ((RawRatioDataModel) getActiveStandardFractions().first().getRawRatioDataModelByName(rawRatioName));
             if (rawRatioFirst.hasTwoIdenticalIonCounters()) {
                 // calculate the covariance between each pair of standards
@@ -244,7 +249,8 @@ public abstract class AbstractSessionForStandardDataModel implements Serializabl
                 while (fractionIterator.hasNext()) {
                     TripoliFraction tf = fractionIterator.next();
 
-                    RawRatioDataModel rawRatio = //
+                    RawRatioDataModel rawRatio
+                            = //
                             ((RawRatioDataModel) tf.getRawRatioDataModelByName(rawRatioName));
 
                     dLrInt_dDt.set(index2, 0, rawRatio.getSelectedFitFunction().getdLrInt_dDt());
@@ -252,7 +258,8 @@ public abstract class AbstractSessionForStandardDataModel implements Serializabl
                     index2++;
                 }
 
-                double deadtimeUnctSqr = //
+                double deadtimeUnctSqr
+                        = //
                         ((IonCounterCollectorModel) rawRatioFirst.getBotIsotope().getCollectorModel())//
                         .getDeadTime().getOneSigmaAbs().movePointLeft(0).pow(2).doubleValue();
 
@@ -548,7 +555,7 @@ public abstract class AbstractSessionForStandardDataModel implements Serializabl
                     // oct 2014 use overdispersion from LINE function
                     double myOverDispersion = 0.0;//fOfXexist.getOverDispersion();
                     //if (myOverDispersion == 0.0) {
-                    if(sessionOfStandardsFitFunctionsWithOD.containsKey(FitFunctionTypeEnum.LINE.getName())){
+                    if (sessionOfStandardsFitFunctionsWithOD.containsKey(FitFunctionTypeEnum.LINE.getName())) {
                         myOverDispersion = sessionOfStandardsFitFunctionsWithOD.get(FitFunctionTypeEnum.LINE.getName()).getOverDispersion();
                     }
 //                        try {
@@ -582,7 +589,6 @@ public abstract class AbstractSessionForStandardDataModel implements Serializabl
                 + "  USING " + (USING_FULL_PROPAGATION ? "FULL PROPAGATION" : "FAST PROPAGATION"));
 
 //////        FitFunctionTypeEnum saveSelectedFitFunctionType = selectedFitFunctionType;
-
         if (generateMEANfitFunctionUsingLM()) {
             try {
                 generateLINEfitFunctionUsingLM();
@@ -601,7 +607,6 @@ public abstract class AbstractSessionForStandardDataModel implements Serializabl
 ////        if (saveSelectedFitFunctionType != null) {
 ////            selectedFitFunctionType = saveSelectedFitFunctionType;
 ////        }
-
         System.out.println("Session complete\n");
 
     }
@@ -619,7 +624,7 @@ public abstract class AbstractSessionForStandardDataModel implements Serializabl
         sessionSplineRangeOD = new SessionSplineRangeOD();
 
         // safety valve
-        if (increment == 0){
+        if (increment == 0) {
             increment = (stopValue - startValue) / 10.0;
         }
         for (double i = startValue; i < stopValue; i += increment) {
@@ -645,8 +650,6 @@ public abstract class AbstractSessionForStandardDataModel implements Serializabl
 //            } else {
 //                sessionOfStandardsSplinesWithOD.put(Math.sqrt(fOfX_SMOOTHING_SPLINE.getOverDispersion()), fOfX_SMOOTHING_SPLINE);
 //            }
-            
-            
             // oct 2014 new take
             // stop processing if roughness bad
             if (Double.isNaN(fOfX_SMOOTHING_SPLINE.getLogRoughness())) {//|| (fOfX_SMOOTHING_SPLINE.getLogRoughness() < -41.0)) {
@@ -662,7 +665,6 @@ public abstract class AbstractSessionForStandardDataModel implements Serializabl
 //                    }
 //                } catch (Exception e) {
 //                }
-
                 break;
             } else {
                 //sessionOfStandardsSplinesWithOD.put(Math.sqrt(fOfX_SMOOTHING_SPLINE.getOverDispersion()), fOfX_SMOOTHING_SPLINE);
@@ -678,7 +680,8 @@ public abstract class AbstractSessionForStandardDataModel implements Serializabl
     private AbstractFunctionOfX generateSplineWithSpecificOD(double overDispersion) {
         int rowColCount = sessionIncludedStandardsCovariance.getRowDimension();
 
-        Matrix sessionIncludedStandardsCovarianceCopyWithOD = //
+        Matrix sessionIncludedStandardsCovarianceCopyWithOD
+                = //
                 sessionIncludedStandardsCovariance.plus(Matrix.identity(rowColCount, rowColCount).times(overDispersion));
 
         AbstractFunctionOfX fOfX_SMOOTHING_SPLINE_WITH_OD = SmoothingSplineWithCov.getInstance().getFunctionOfX(//
@@ -718,7 +721,6 @@ public abstract class AbstractSessionForStandardDataModel implements Serializabl
 //    @Override
 //    public void calculateFittedFunctions(String fitFunctionTypeName) {
 //    }
-
     /**
      *
      * @param selectedFitFunctionType
@@ -757,7 +759,7 @@ public abstract class AbstractSessionForStandardDataModel implements Serializabl
     public AbstractFunctionOfX getSelectedDownHoleFitFunction() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
     /**
      *
      * @param fitFunctionType
@@ -825,7 +827,6 @@ public abstract class AbstractSessionForStandardDataModel implements Serializabl
         return includedStandardsAquireTimes.clone();
     }
 
-
     /**
      * @return the includedStandardsMeanLogRatios
      */
@@ -870,7 +871,6 @@ public abstract class AbstractSessionForStandardDataModel implements Serializabl
 ////    public boolean[] getDataActiveMap() {
 ////        return includedStandardsDataActiveMap;
 ////    }
-
     /**
      * @return the sessionTechnique
      */

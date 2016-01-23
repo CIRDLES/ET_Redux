@@ -89,12 +89,16 @@ public class SesarSampleXMLConverter implements Converter {
         SesarSample sesarSample = (SesarSample) value;
 
         // this order is for registering at SESAR
-        writer.startNode("userCode");
-        writer.setValue(sesarSample.getUserCode());
+        writer.startNode("user_code");
+        writer.setValue(sesarSample.getUser_code());
         writer.endNode();
 
         writer.startNode("sample_type");
         writer.setValue(sesarSample.getSampleType());
+        writer.endNode();
+
+        writer.startNode("name");
+        writer.setValue(sesarSample.getName());
         writer.endNode();
 
         writer.startNode("material");
@@ -105,13 +109,11 @@ public class SesarSampleXMLConverter implements Converter {
         writer.setValue(sesarSample.getIGSN());
         writer.endNode();
 
-        writer.startNode("name");
-        writer.setValue(sesarSample.getName());
-        writer.endNode();
-
-        writer.startNode("parent_igsn");
-        writer.setValue(sesarSample.getParentIGSN());
-        writer.endNode();
+        if (sesarSample.getParentIGSN().length() > 0) {
+            writer.startNode("parent_igsn");
+            writer.setValue(sesarSample.getParentIGSN());
+            writer.endNode();
+        }
 
         writer.startNode("latitude");
         writer.setValue(CoordinateSystemConversions.getDecimalCoordinateAsString(sesarSample.getLatitude()));
@@ -121,7 +123,6 @@ public class SesarSampleXMLConverter implements Converter {
         writer.setValue(CoordinateSystemConversions.getDecimalCoordinateAsString(sesarSample.getLongitude()));
         writer.endNode();
 
-    
     }
 
     /**
@@ -143,6 +144,10 @@ public class SesarSampleXMLConverter implements Converter {
 
         reader.moveDown();
         // bar code
+        reader.moveUp();
+
+        reader.moveDown();
+        sesarSample.setUser_code(reader.getValue());
         reader.moveUp();
 
         reader.moveDown();
@@ -181,7 +186,7 @@ public class SesarSampleXMLConverter implements Converter {
         sesarSample.setMaterial(material);
         reader.moveUp();
 
-        skipElements(reader, 11);
+        skipElements(reader, 12);
 
         reader.moveDown();
         sesarSample.setLatitude(new BigDecimal(cleanNumberElement(reader.getValue())));
@@ -199,28 +204,88 @@ public class SesarSampleXMLConverter implements Converter {
             reader.moveDown();
             reader.moveUp();
         }
-    } 
-    
-    private String cleanStringElement(String element){
+    }
+
+    private String cleanStringElement(String element) {
         String retval;
-        if (element.trim().startsWith("Not Provided")){
+        if (element.trim().startsWith("Not Provided")) {
             retval = "";
         } else {
             retval = element.trim();
         }
-        
+
         return retval;
     }
-    
-    private String cleanNumberElement(String element){
+
+    private String cleanNumberElement(String element) {
         String retval;
-        if (element.trim().startsWith("Not Provided")){
+        if (element.trim().startsWith("Not Provided")) {
             retval = "0";
         } else {
             retval = element.trim();
         }
-        
+
         return retval;
     }
 
 }
+// Jan 2016 from SESAR service
+//
+//    <barcode_img_src>app.geosamples.org/barcode/image.php?igsn=JFB111111&amp;sample_id=AQUIPE01-STD</barcode_img_src>
+//    <user_code>JFB</user_code>
+//    <igsn>JFB111111</igsn>
+//    <name>AQUIPE01-STD</name>
+//    <sample_other_names></sample_other_names>
+//    <sample_type>Individual Sample</sample_type>
+//    <parent_igsn>Not Provided</parent_igsn>
+//    <material>Mineral</material>
+//    <classification>Not Provided</classification>
+//    <field_name>Not Provide</field_name>
+//    <description>Not Provided</description>
+//    <age_min>Not Provided</age_min>
+//    <age_max>Not Provided</age_max>
+//    <collection_method>Not Provided</collection_method>
+//    <collection_method_description>Not Provided</collection_method_description>
+//    <size>Not Provided</size>
+//    <geological_age>Not Provided</geological_age>
+//    <geological_unit>Not Provided</geological_unit>
+//    <sample_comment>Not Provide</sample_comment>
+//    <purpose>Not Provided</purpose>
+//    <latitude>Not Provided</latitude>
+//    <longitude>Not Provided</longitude>
+//    <easting>Not Provided</easting>
+//    <northing>Not Provided</northing>
+//    <zone>Not Provided</zone>
+//    <vertical_datum>Not Provided</vertical_datum>
+//    <elevation>Not Provided</elevation>
+//    <navigation_type>Not Provided</navigation_type>
+//    <primary_location_type>Not Provided</primary_location_type>
+//    <primary_location_name>Not Provided</primary_location_name>
+//    <location_description>Not Provided</location_description>
+//    <locality>Not Provided</locality>
+//    <locality_description>Not Provided</locality_description>
+//    <country>Not Provided</country>
+//    <province>Not Provided</province>
+//    <county>Not Provided</county>
+//    <city>Not Provided</city>
+//    <cruise_field_prgrm>Not Provided</cruise_field_prgrm>
+//    <platform_type>Not Provided</platform_type>
+//    <platform_name>Not Provided</platform_name>
+//    <platform_descr>Not Provided</platform_descr>
+//    <launch_platform_name>Not Provided</launch_platform_name>
+//    <launch_id>Not Provided</launch_id>
+//    <launch_type_name>Not Provided</launch_type_name>
+//    <collector>Not Provided</collector>
+//    <collector_detail>Not Provided</collector_detail>
+//    <collection_start_date>Not Provided</collection_start_date>
+//    <collection_end_date>Not Provided</collection_end_date>
+//    <collection_date_precision>Not Provided</collection_date_precision>
+//    <current_archive>Not Provide</current_archive>
+//    <current_archive_contact>Not Provide</current_archive_contact>
+//    <original_archive>Not Provide</original_archive>
+//    <original_archive_contact>Not Provide</original_archive_contact>
+//    <depth_min>Not Provided</depth_min>
+//    <depth_max>Not Provided</depth_max>
+//    <parents/>
+//    <siblings/>
+//    <children/>
