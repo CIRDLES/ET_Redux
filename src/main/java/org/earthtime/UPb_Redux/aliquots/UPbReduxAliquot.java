@@ -63,7 +63,6 @@ import org.earthtime.UPb_Redux.valueModels.ValueModelXMLConverter;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
 import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.aliquots.ReduxAliquotInterface;
-import org.earthtime.archivingTools.AnalysisImage;
 import org.earthtime.archivingTools.AnalysisImageXMLConverter;
 import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.dataDictionaries.AnalysisImageTypes;

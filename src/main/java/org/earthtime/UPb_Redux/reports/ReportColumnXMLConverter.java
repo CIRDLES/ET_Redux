@@ -26,35 +26,41 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import org.earthtime.reports.ReportColumnInterface;
 
 /**
- * A <code>ReportSettingsXMLConverter</code> is used to marshal and unmarshal data
- * between <code>reportSettings</code> and XML files.
- * 
- * @imports <a href=http://xstream.codehaus.org/javadoc/com/thoughtworks/xstream/converters/Converter.html>
- *          com.thoughtworks.xstream.converters.Converter</a>
- * @imports <a href=http://xstream.codehaus.org/javadoc/com/thoughtworks/xstream/converters/MarshallingContext.html>
- *          com.thoughtworks.xstream.converters.MarhsallingContext</a>
- * @imports <a href=http://xstream.codehaus.org/javadoc/com/thoughtworks/xstream/converters/UnmarshallingContext.html>
- *          com.thoughtworks.xstream.converters.UnmarshallingContext</a>
- * @imports <a href=http://xstream.codehaus.org/javadoc/com/thoughtworks/xstream/io/HierarchicalStreamReader.html>
- *          com.thoughtworks.xstream.io.HierachicalSreamReader</a>
- * @imports <a href=http://xstream.codehaus.org/javadoc/com/thoughtworks/xstream/io/HierarchicalStreamWriter.html>
- *          com.thoughtworks.xstream.io.HierarchicalStreamWriter</a>
+ * A <code>ReportSettingsXMLConverter</code> is used to marshal and unmarshal
+ * data between <code>reportSettings</code> and XML files.
+ *
+ * @imports
+ * <a href=http://xstream.codehaus.org/javadoc/com/thoughtworks/xstream/converters/Converter.html>
+ * com.thoughtworks.xstream.converters.Converter</a>
+ * @imports
+ * <a href=http://xstream.codehaus.org/javadoc/com/thoughtworks/xstream/converters/MarshallingContext.html>
+ * com.thoughtworks.xstream.converters.MarhsallingContext</a>
+ * @imports
+ * <a href=http://xstream.codehaus.org/javadoc/com/thoughtworks/xstream/converters/UnmarshallingContext.html>
+ * com.thoughtworks.xstream.converters.UnmarshallingContext</a>
+ * @imports
+ * <a href=http://xstream.codehaus.org/javadoc/com/thoughtworks/xstream/io/HierarchicalStreamReader.html>
+ * com.thoughtworks.xstream.io.HierachicalSreamReader</a>
+ * @imports
+ * <a href=http://xstream.codehaus.org/javadoc/com/thoughtworks/xstream/io/HierarchicalStreamWriter.html>
+ * com.thoughtworks.xstream.io.HierarchicalStreamWriter</a>
  * @author James F. Bowring, javaDocs by Stan Gasque
  */
 public class ReportColumnXMLConverter implements Converter {
 
     /**
-     * checks the argument <code>clazz</code> against <code>reportSettings</code>'s
-     * <code>Class</code>. Used to ensure that the object about to be
-     * marshalled/unmarshalled is of the correct type.
-     * 
-     * @pre     argument <code>clazz</code> is a valid <code>Class</code>
+     * checks the argument <code>clazz</code> against
+     * <code>reportSettings</code>'s <code>Class</code>. Used to ensure that the
+     * object about to be marshalled/unmarshalled is of the correct type.
+     *
+     * @pre argument <code>clazz</code> is a valid <code>Class</code>
      * @post    <code>boolean</code> is returned comparing <code>clazz</code>
-     *          against <code>reportSettings.class</code>
-     * @param   clazz   <code>Class</code> of the <code>Object</code> you wish
-     *                  to convert to/from XML
-     * @return  <code>boolean</code> - <code>true</code> if <code>clazz</code> matches
-     *          <code>reportSettings</code>'s <code>Class</code>; else <code>false</code>.
+     * against <code>reportSettings.class</code>
+     * @param clazz   <code>Class</code> of the <code>Object</code> you wish to
+     * convert to/from XML
+     * @return  <code>boolean</code> - <code>true</code> if <code>clazz</code>
+     * matches <code>reportSettings</code>'s <code>Class</code>; else
+     * <code>false</code>.
      */
     @Override
     public boolean canConvert(Class clazz) {
@@ -62,15 +68,17 @@ public class ReportColumnXMLConverter implements Converter {
     }
 
     /**
-     * writes the argument <code>value</code> to the XML file specified through <code>writer</code>
-     * 
+     * writes the argument <code>value</code> to the XML file specified through
+     * <code>writer</code>
+     *
      * @pre     <code>value</code> is a valid <code>reportSettings</code>, <code>
-     *          writer</code> is a valid <code>HierarchicalStreamWriter</code>,
-     *          and <code>context</code> is a valid <code>MarshallingContext</code>
-     * @post    <code>value</code> is written to the XML file specified via <code>writer</code>
-     * @param   value   <code>reportSettings</code> that you wish to write to a file
-     * @param   writer  stream to write through
-     * @param   context <code>MarshallingContext</code> used to store generic data
+     *          writer</code> is a valid <code>HierarchicalStreamWriter</code>, and
+     * <code>context</code> is a valid <code>MarshallingContext</code>
+     * @post    <code>value</code> is written to the XML file specified via
+     * <code>writer</code>
+     * @param value   <code>reportSettings</code> that you wish to write to a file
+     * @param writer stream to write through
+     * @param context <code>MarshallingContext</code> used to store generic data
      */
     @Override
     public void marshal(Object value, HierarchicalStreamWriter writer,
@@ -109,14 +117,20 @@ public class ReportColumnXMLConverter implements Converter {
         writer.startNode("uncertaintyColumn");
         if (reportColumn.getUncertaintyColumn() != null) {
             ReportColumnInterface myReportColumn = reportColumn.getUncertaintyColumn();
-            if (myReportColumn.getDisplayName3().contains("%")) {
-//                myReportColumn.setDisplayName3("&plusmn;2&#931; %");
+            // repaired jan 2016 to restore report columns  after serialization
+            String displayName2 = myReportColumn.getDisplayName2();
+            String displayName3 = myReportColumn.getDisplayName3();
+            
+            if (displayName3.contains("%")) {
                 myReportColumn.setDisplayName3("PLUSMINUS2SIGMA%");
             } else {
-//                myReportColumn.setDisplayName2("&plusmn;2&#931;");
                 myReportColumn.setDisplayName2("PLUSMINUS2SIGMA");
-           }
+            }
             context.convertAnother(reportColumn.getUncertaintyColumn());
+            
+            // restore
+            myReportColumn.setDisplayName2(displayName2);
+            myReportColumn.setDisplayName3(displayName3);
         }
         writer.endNode();
 
@@ -156,18 +170,20 @@ public class ReportColumnXMLConverter implements Converter {
         writer.setValue(Boolean.toString(reportColumn.isLegacyData()));
         writer.endNode();
 
-
     }
 
     /**
-     * reads a <code>reportSettings</code> from the XML file specified through <code>reader</code>
-     * 
+     * reads a <code>reportSettings</code> from the XML file specified through
+     * <code>reader</code>
+     *
      * @pre     <code>reader</code> leads to a valid <code>reportSettings</code>
-     * @post    the <code>reportSettings</code> is read from the XML file and returned
-     * @param   reader  stream to read through
-     * @param   context <code>UnmarshallingContext</code> used to store generic data
+     * @post the <code>reportSettings</code> is read from the XML file and
+     * returned
+     * @param reader stream to read through
+     * @param context <code>UnmarshallingContext</code> used to store generic
+     * data
      * @return  <code>Object</code> - <code>reportSettings</code> read from file
-     *          specified by <code>reader</code>
+     * specified by <code>reader</code>
      */
     @Override
     public Object unmarshal(HierarchicalStreamReader reader,

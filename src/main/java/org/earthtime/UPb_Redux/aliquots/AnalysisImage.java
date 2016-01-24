@@ -1,7 +1,7 @@
 /*
  * AnalysisImage.java
  *
- * Created Nov 10, 2010 Copied here 2015
+ * Created Nov 10, 2010
  *
  *
  * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
@@ -18,7 +18,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.earthtime.archivingTools;
+package org.earthtime.UPb_Redux.aliquots;
 
 import java.io.Serializable;
 import org.earthtime.dataDictionaries.AnalysisImageTypes;

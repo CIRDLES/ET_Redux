@@ -33,11 +33,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import static javax.swing.SwingConstants.RIGHT;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.dataDictionaries.SESAR_MaterialTypesEnum;
 import org.earthtime.dataDictionaries.SESAR_ObjectTypesEnum;
+import org.earthtime.dialogs.DialogEditor;
 
 /**
  *
@@ -87,7 +87,7 @@ public class SesarSampleManager extends DialogEditor {
                 public void actionPerformed(ActionEvent event) {
                     JCheckBox cb = (JCheckBox) event.getSource();
                     if (cb.isSelected()) {
-                        sampleIGSNText.setText(sesarSample.getUserCode() + "------".substring(0, (9 - sesarSample.getUserCode().length())));
+                        sampleIGSNText.setText(sesarSample.getUser_code() + "------".substring(0, (9 - sesarSample.getUser_code().length())));
                         sampleIGSNText.setEditable(false);
                     } else {
                         sampleIGSNText.setText(sesarSample.getIGSN());
@@ -167,6 +167,7 @@ public class SesarSampleManager extends DialogEditor {
             }
         });
         decimalLatitude.addKeyListener(new KeyAdapter() {
+            @Override
             public void keyPressed(KeyEvent e) {
                 int key = e.getKeyCode();
                 if ((key == KeyEvent.VK_ENTER) || (key == KeyEvent.VK_TAB)) {
@@ -199,6 +200,7 @@ public class SesarSampleManager extends DialogEditor {
             }
         });
         decimalLongitude.addKeyListener(new KeyAdapter() {
+            @Override
             public void keyPressed(KeyEvent e) {
                 int key = e.getKeyCode();
                 if ((key == KeyEvent.VK_ENTER) || (key == KeyEvent.VK_TAB)) {
@@ -231,11 +233,11 @@ public class SesarSampleManager extends DialogEditor {
                     if (!autoGenerateCheckBox.isSelected()) {
                         String proposedIGSN = sampleIGSNText.getText();
                         if (!sesarSample.confirmUserCodeCompliance(proposedIGSN)) {
-                            messageText = "User code prefix of IGSN should be: " + sesarSample.getUserCode();
+                            messageText = "User code prefix of IGSN should be: " + sesarSample.getUser_code();
                         } else if (SesarSample.validateSampleIGSNatSESAR(proposedIGSN)) {
                             messageText = "The IGSN: " + proposedIGSN + " is already in use.";
-                        } else if (!SesarSample.isWellFormedIGSN(proposedIGSN, sesarSample.getUserCode())) {
-                            messageText = "The IGSN: " + proposedIGSN + " is not of the form " + sesarSample.getUserCode() + "NNNNNNN\".substring(0, (9 - userCode.length())) + \", where N is any digit or any capital letter.";
+                        } else if (!SesarSample.isWellFormedIGSN(proposedIGSN, sesarSample.getUser_code())) {
+                            messageText = "The IGSN: " + proposedIGSN + " is not of the form " + sesarSample.getUser_code() + "NNNNNNN\".substring(0, (9 - userCode.length())) + \", where N is any digit or any capital letter.";
                         } else {
                             sesarSample.setIGSN(proposedIGSN);
                             doRegister = true;

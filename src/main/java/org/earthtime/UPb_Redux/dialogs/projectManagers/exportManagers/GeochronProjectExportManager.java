@@ -23,6 +23,8 @@ import java.awt.Frame;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLayeredPane;
@@ -42,8 +44,10 @@ import org.earthtime.samples.SampleInterface;
  *
  * @author sbowring
  */
-public class GeochronProjectExportManager extends DialogEditor {
+public final class GeochronProjectExportManager extends DialogEditor {
 
+    private static GeochronProjectExportManager instance = null;
+    
     private ReportPainterI parent;
     private ReduxPersistentState myState;
     private ProjectInterface project;
@@ -57,6 +61,24 @@ public class GeochronProjectExportManager extends DialogEditor {
 
     private ArrayList<JButton> sampleUploadButtons;
 
+    public static GeochronProjectExportManager getInstance(ReportPainterI parent, boolean modal, ProjectInterface project, ReduxPersistentState myState){
+        
+        instance = new GeochronProjectExportManager(parent, modal, project, myState);
+        return instance;
+    }
+    
+    public static void removeInstance(){
+        if (instance != null){
+            try {
+                instance.setVisible(false);
+                instance.dispose();
+                instance.finalize();
+            } catch (Throwable ex) {
+                Logger.getLogger(GeochronProjectExportManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
     /**
      * Creates new form GeochronProjectExportManager
      *
@@ -65,7 +87,7 @@ public class GeochronProjectExportManager extends DialogEditor {
      * @param project the value of project
      * @param myState the value of myState
      */
-    public GeochronProjectExportManager(ReportPainterI parent, boolean modal, ProjectInterface project, ReduxPersistentState myState) {
+    private GeochronProjectExportManager(ReportPainterI parent, boolean modal, ProjectInterface project, ReduxPersistentState myState) {
         super((Frame) parent, modal);
 
         this.parent = parent;

@@ -83,9 +83,9 @@ public class URIHelper {
             retval = urlConn.getInputStream();
 
         } catch (IOException iOException) {
-            JOptionPane.showMessageDialog(null,
-                    new String[]{"Error reaching server: "//
-                        + iOException.getMessage()});
+//            JOptionPane.showMessageDialog(null,
+//                    new String[]{"Error reaching server: "//
+//                        + iOException.getMessage()});
         }
 
         return retval;
@@ -101,15 +101,16 @@ public class URIHelper {
 
         try {
             BufferedReader bufR = getBufferedReader(fileURI);
-
-            try {
-                String s = null;
-                while ((s = bufR.readLine()) != null) {
-                    retval.append(s);
-                    retval.append(System.getProperty("line.separator"));
+            if (bufR != null) {
+                try {
+                    String s = null;
+                    while ((s = bufR.readLine()) != null) {
+                        retval.append(s);
+                        retval.append(System.getProperty("line.separator"));
+                    }
+                } finally {
+                    bufR.close();
                 }
-            } finally {
-                bufR.close();
             }
         } catch (IOException ex) {
             //  ex.printStackTrace();
@@ -132,12 +133,15 @@ public class URIHelper {
 
         try {
             if (filename.startsWith("http")) {
-                inReader = new InputStreamReader(getInputStreamFromURI(filename));
+                try {
+                    inReader = new InputStreamReader(getInputStreamFromURI(filename));
+                    reader = new BufferedReader(inReader);
+                } catch (Exception e) {
+                }
             } else {
                 inReader = new FileReader(filename);
+                reader = new BufferedReader(inReader);
             }
-
-            reader = new BufferedReader(inReader);
 
         } catch (FileNotFoundException eFile) {
             System.out.println(eFile.getMessage());
@@ -146,7 +150,7 @@ public class URIHelper {
         }
         return reader;
     }
- 
+
     /**
      *
      * @param reader
@@ -194,12 +198,12 @@ public class URIHelper {
                         // validate the DOM tree
                         validator.validate(new DOMSource(document));
                     } catch (ParserConfigurationException | SAXException | IOException parserConfigurationException) {
-                        if (parserConfigurationException instanceof FileNotFoundException){
+                        if (parserConfigurationException instanceof FileNotFoundException) {
                             CONNECTED_TO_INTERNET = false;
                             new ETWarningDialog("ET_Redux could not find the schema file: " + schemaURI + " and will not validate XML files until restart.").setVisible(true);
                         } else {
                             retVal = false;
-                        }                        
+                        }
                     }
 
                 } else {

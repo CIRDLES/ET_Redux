@@ -38,8 +38,6 @@ import java.util.ArrayList;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.help.DefaultHelpBroker;
-import javax.help.HelpBroker;
 import javax.swing.AbstractButton;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -112,7 +110,6 @@ import org.earthtime.UPb_Redux.utilities.AnnouncementPane;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.UPb_Redux.utilities.CustomIcon;
 import org.earthtime.UPb_Redux.utilities.ETSerializer;
-import org.earthtime.UPb_Redux.utilities.JHelpAction;
 import org.earthtime.UPb_Redux.utilities.MacOSAboutHandler;
 import org.earthtime.UTh_Redux.dateInterpretation.TopsoilEvolutionPlot;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
@@ -205,6 +202,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
     //oct 2014
     private DialogEditor sampleDateInterpDialog;
     private DialogEditor myFractionEditor;
+    private DialogEditor geochronProjectExportManager;
 
     /**
      * Creates new form UPbReduxFrame
@@ -538,7 +536,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
     private void openTheProject(File projectReduxFile) {
 
-        forceCloseOfSampleDateInterpretations();
+        closeProjectAndOrSample();
 
         theProject = null;
         System.gc();
@@ -785,9 +783,9 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
         myProjectManager.initDialogContent();
         myProjectManager.setVisible(true);
-        
+
         updateReportTable();
-        
+
         saveProject();
     }
 
@@ -911,9 +909,8 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         theProject.prepareSamplesForExport();
 
         // launch manager
-        DialogEditor geochronProjectExportManager
-                = //
-                new GeochronProjectExportManager(this, true, theProject, myState);
+        geochronProjectExportManager
+                = GeochronProjectExportManager.getInstance(null, false, theProject, myState);
 
         geochronProjectExportManager.setVisible(true);
     }
@@ -1412,12 +1409,12 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             // show the welcome page
             jSplitPane1.setDividerLocation(1.0);
         }
-        
+
         // jan 2016
-        if (theSample.isSampleTypeProject() && theSample.isAnalysisTypeCOMPILED()){
+        if (theSample.isSampleTypeProject() && theSample.isAnalysisTypeCOMPILED()) {
             manageProjectRawData_button.setText("Manage Project");
         } else {
-            manageProjectRawData_button.setText("Project Raw Data");            
+            manageProjectRawData_button.setText("Project Raw Data");
         }
     }
 
@@ -1490,7 +1487,8 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
     private void openTheSample(File selFile, boolean checkSavedStatus) throws BadLabDataException {
 
-        forceCloseOfSampleDateInterpretations();
+//        forceCloseOfSampleDateInterpretations();
+        closeProjectAndOrSample();
 
         if (checkSavedStatus) {
             checkSavedStatusTheSample();
@@ -1499,8 +1497,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         setLiveUpdateTimerIsRunning(false);
 
         EarthTimeSerializedFileInterface deserializedFile
-                = //
-                (EarthTimeSerializedFileInterface) ETSerializer.GetSerializedObjectFromFile(selFile.getPath());
+                = (EarthTimeSerializedFileInterface) ETSerializer.GetSerializedObjectFromFile(selFile.getPath());
 
         // TODO: Oct 2011 check for Project file?? or is it automatically a project file
         // created here for a single sample??
@@ -1549,16 +1546,29 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
     }
 
+    private void closeProjectAndOrSample() {
+
+        try {
+            closeTheSample();
+        } catch (BadLabDataException badLabDataException) {
+        }
+        try {
+            closeTheProject();
+        } catch (BadLabDataException badLabDataException) {
+        }
+
+    }
+
     private boolean closeTheSample() throws BadLabDataException {
 
         boolean retval = checkSavedStatusTheSample();
 
         setLiveUpdateTimerIsRunning(false);
 
-        forceCloseOfSampleDateInterpretations();
+        closeOpenDialogs();
 
         if (retval) {
-            setUpEmptySample();//theSample.getSampleType() );
+            setUpEmptySample();
         }
 
         return retval;
@@ -1567,10 +1577,17 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
     private boolean closeTheProject() throws BadLabDataException {
 
         saveTheProject();
-        forceCloseOfSampleDateInterpretations();
+        closeOpenDialogs();
+
         setUpEmptySample();
 
         return true;
+    }
+
+    private void closeOpenDialogs() {
+        GeochronProjectExportManager.removeInstance();
+
+        forceCloseOfSampleDateInterpretations();
     }
 
     private void setUpEmptySample() //
@@ -2933,7 +2950,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         });
 
         helpMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F1, 0));
-        helpMenuItem.setText("Help-currently under construction");
+        helpMenuItem.setText("Help from CIRDLES.org");
         helpMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 helpMenuItemActionPerformed(evt);
@@ -4139,13 +4156,8 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     }//GEN-LAST:event_dibbs_USeriesActionPerformed
 
     private void helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
-        //Needed for having a nice look in windows... weird
-        ETReduxFrame.setDefaultLookAndFeelDecorated(false);
-        HelpBroker heb = JHelpAction.getHelpBroker();
-        //To Bypass the modal parent window issue.
-        ((DefaultHelpBroker) heb).setActivationWindow(this);
-        JHelpAction.setHelpBroker(heb);
-        JHelpAction.showHelp();
+        BrowserControl.displayURL("http://cirdles.org/projects/et_redux/");
+
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem ID_TIMSLegacyAnalysis_MIT_menuItem;

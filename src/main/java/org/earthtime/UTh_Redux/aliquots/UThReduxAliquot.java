@@ -25,7 +25,7 @@ import org.earthtime.UPb_Redux.samples.SESARSampleMetadata;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.aliquots.ReduxAliquotInterface;
-import org.earthtime.archivingTools.AnalysisImage;
+import org.earthtime.UPb_Redux.aliquots.AnalysisImage;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.reportViews.ReportRowGUIInterface;
