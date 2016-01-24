@@ -45,7 +45,7 @@ public class ReportSettings implements
      * version number is advanced so that any existing analysis will update its
      * report models upon opening in ET_Redux.
      */
-    private static transient int CURRENT_VERSION_REPORT_SETTINGS = 322;
+    private static transient int CURRENT_VERSION_REPORT_SETTINGS = 325;
 
     // Fields
     private String name;
@@ -196,17 +196,19 @@ public class ReportSettings implements
                 reportSettingsModel = ReduxLabData.getInstance().getDefaultReportSettingsModelByIsotopeStyle(myReportSettingsModel.getIsotopeStyle());
             } catch (BadLabDataException badLabDataException) {
             }
-        } else // this provides for seamless updates to reportsettings implementation
-        // new approach oct 2014
-        if (myReportSettingsModel.isOutOfDate()) {
-            JOptionPane.showMessageDialog(null,
-                    new String[]{"As part of our ongoing development efforts,",
-                        "the report settings file you are using is being updated.",
-                        "You may lose some report customizations. Thank you for your patience."//,
-                    //"If you need to save aliquot copy, please re-export."
-                    });
+        } else // new approach oct 2014
+        {   // this provides for seamless updates to reportsettings implementation
             String myReportSettingsName = myReportSettingsModel.getName();
-            reportSettingsModel = new ReportSettings(myReportSettingsName, myReportSettingsModel.getIsotopeStyle());
+            if (myReportSettingsModel.isOutOfDate()) {
+                JOptionPane.showMessageDialog(null,
+                        new String[]{"As part of our ongoing development efforts,",
+                            "the report settings file you are using is being updated.",
+                            "You may lose some report customizations. Thank you for your patience."//,
+                        //"If you need to save aliquot copy, please re-export."
+                        });
+
+                reportSettingsModel = new ReportSettings(myReportSettingsName, myReportSettingsModel.getIsotopeStyle());
+            }
         }
 
         //TODO http://www.javaworld.com/article/2077736/open-source-tools/xml-merging-made-easy.html
@@ -551,6 +553,7 @@ public class ReportSettings implements
     /**
      * @return the reportCategories
      */
+    @Override
     public ArrayList<ReportCategoryInterface> getReportCategories() {
         return reportCategories;
     }
@@ -572,6 +575,7 @@ public class ReportSettings implements
     /**
      * @return the isotopeStyle
      */
+    @Override
     public String getIsotopeStyle() {
         if (isotopeStyle == null) {
             isotopeStyle = "UPb";
@@ -582,6 +586,7 @@ public class ReportSettings implements
     /**
      * @param isotopeStyle the isotopeStyle to set
      */
+    @Override
     public void setIsotopeStyle(String isotopeStyle) {
         this.isotopeStyle = isotopeStyle;
     }
