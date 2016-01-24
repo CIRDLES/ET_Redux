@@ -38,8 +38,6 @@ import java.util.ArrayList;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.help.DefaultHelpBroker;
-import javax.help.HelpBroker;
 import javax.swing.AbstractButton;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -112,7 +110,6 @@ import org.earthtime.UPb_Redux.utilities.AnnouncementPane;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.UPb_Redux.utilities.CustomIcon;
 import org.earthtime.UPb_Redux.utilities.ETSerializer;
-import org.earthtime.UPb_Redux.utilities.JHelpAction;
 import org.earthtime.UPb_Redux.utilities.MacOSAboutHandler;
 import org.earthtime.UTh_Redux.dateInterpretation.TopsoilEvolutionPlot;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
@@ -2953,7 +2950,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         });
 
         helpMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F1, 0));
-        helpMenuItem.setText("Help-currently under construction");
+        helpMenuItem.setText("Help from CIRDLES.org");
         helpMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 helpMenuItemActionPerformed(evt);
@@ -4159,13 +4156,8 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     }//GEN-LAST:event_dibbs_USeriesActionPerformed
 
     private void helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
-        //Needed for having a nice look in windows... weird
-        ETReduxFrame.setDefaultLookAndFeelDecorated(false);
-        HelpBroker heb = JHelpAction.getHelpBroker();
-        //To Bypass the modal parent window issue.
-        ((DefaultHelpBroker) heb).setActivationWindow(this);
-        JHelpAction.setHelpBroker(heb);
-        JHelpAction.showHelp();
+        BrowserControl.displayURL("http://cirdles.org/projects/et_redux/");
+
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem ID_TIMSLegacyAnalysis_MIT_menuItem;
