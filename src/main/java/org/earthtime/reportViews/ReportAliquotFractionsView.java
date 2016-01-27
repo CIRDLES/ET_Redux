@@ -350,8 +350,10 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
         sample.deSelectAllFractionsInDataTable();
 
         // first get reportFractions from sample
-        prepareReportFractionsArrayForDisplay();
-
+        try {
+            prepareReportFractionsArrayForDisplay();
+        } catch (Exception e) {
+        }
         // restore leftmargin
         leftMargin = 5;
 

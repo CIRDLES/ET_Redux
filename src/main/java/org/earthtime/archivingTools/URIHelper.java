@@ -198,9 +198,12 @@ public class URIHelper {
                         // validate the DOM tree
                         validator.validate(new DOMSource(document));
                     } catch (ParserConfigurationException | SAXException | IOException parserConfigurationException) {
-                        if (parserConfigurationException instanceof FileNotFoundException) {
+                        if ((parserConfigurationException instanceof FileNotFoundException)//
+                                || //
+                                ((parserConfigurationException instanceof IOException) //
+                                && (parserConfigurationException.getMessage().contains("502")))) {
                             CONNECTED_TO_INTERNET = false;
-                            new ETWarningDialog("ET_Redux could not find the schema file: " + schemaURI + " and will not validate XML files until restart.").setVisible(true);
+                            new ETWarningDialog("ET_Redux could not find the schema file: \n" + schemaURI + "\n and will not validate XML files until ET_Redux restarts.").setVisible(true);
                         } else {
                             retVal = false;
                         }

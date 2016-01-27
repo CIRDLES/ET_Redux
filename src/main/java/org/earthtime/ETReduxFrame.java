@@ -1967,6 +1967,8 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         reportResultsTableAsStringsInExcel_menuItem = new javax.swing.JMenuItem();
         reportResultsTableAsNumbersInExcel_menuItem = new javax.swing.JMenuItem();
         reportResultsTableAsNumbersInCSV_menuItem = new javax.swing.JMenuItem();
+        jSeparator6 = new javax.swing.JPopupMenu.Separator();
+        reportSettingsHelp = new javax.swing.JMenuItem();
         referencesMenu = new javax.swing.JMenu();
         gCubedPaperSoftware_menuItem = new javax.swing.JMenuItem();
         gCubedPaperReductionEquations_menuItem = new javax.swing.JMenuItem();
@@ -2681,7 +2683,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             }
         });
 
-        editCurrentReportSettingsModel_menuItem.setText("Edit Current Report Settings");
+        editCurrentReportSettingsModel_menuItem.setText("Report Settings Manager");
         editCurrentReportSettingsModel_menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 editCurrentReportSettingsModel_menuItemActionPerformed(evt);
@@ -2763,6 +2765,15 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             }
         });
         reportMenu.add(reportResultsTableAsNumbersInCSV_menuItem);
+        reportMenu.add(jSeparator6);
+
+        reportSettingsHelp.setText("Help");
+        reportSettingsHelp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                reportSettingsHelpActionPerformed(evt);
+            }
+        });
+        reportMenu.add(reportSettingsHelp);
 
         mainMenuBar.add(reportMenu);
 
@@ -4155,6 +4166,10 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
         setUpNewCompiledLegacyProject(SampleAnalysisTypesEnum.USERIES.getName(), "UTh");
     }//GEN-LAST:event_dibbs_USeriesActionPerformed
 
+    private void reportSettingsHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reportSettingsHelpActionPerformed
+        BrowserControl.displayURL("http://cirdles.org/projects/et_redux/#reports-overview");
+    }//GEN-LAST:event_reportSettingsHelpActionPerformed
+
     private void helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
         BrowserControl.displayURL("http://cirdles.org/projects/et_redux/");
 
@@ -4212,6 +4227,7 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator4;
     private javax.swing.JPopupMenu.Separator jSeparator5;
+    private javax.swing.JPopupMenu.Separator jSeparator6;
     private javax.swing.JPopupMenu.Separator jSeparator7;
     private javax.swing.JPopupMenu.Separator jSeparator8;
     private javax.swing.JPopupMenu.Separator jSeparator9;
@@ -4255,6 +4271,7 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     private javax.swing.JMenuItem reportResultsTableAsNumbersInExcel_menuItem;
     private javax.swing.JMenuItem reportResultsTableAsPDF_menuItem;
     private javax.swing.JMenuItem reportResultsTableAsStringsInExcel_menuItem;
+    private javax.swing.JMenuItem reportSettingsHelp;
     private javax.swing.JMenu sampleFileMenu;
     private javax.swing.JButton saveAndQuit_button;
     private javax.swing.JMenuItem saveCurrentReportSettingsAsDefault_menuItem;
