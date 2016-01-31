@@ -4,7 +4,7 @@
  * Created on September 3, 2008, 9:18 AM
  *
  *
- * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2016 James F. Bowring and www.Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -204,7 +204,6 @@ public class ReportSettings implements
                         new String[]{"As part of our ongoing development efforts,",
                             "the report settings file you are using is being updated.",
                             "You may lose some report customizations. Thank you for your patience."//,
-                        //"If you need to save aliquot copy, please re-export."
                         });
 
                 reportSettingsModel = new ReportSettings(myReportSettingsName, myReportSettingsModel.getIsotopeStyle());

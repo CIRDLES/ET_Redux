@@ -21,11 +21,11 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -38,22 +38,20 @@ import org.earthtime.Tripoli.rawDataFiles.handlers.AbstractRawDataFileHandler;
 import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.pythonUtilities.ElementII_DatFileConverter;
 import org.earthtime.utilities.FileHelper;
+import org.python.core.PyException;
 
 /**
  *
  * @author James F. Bowring
  */
-public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler implements //
-        Comparable<AbstractRawDataFileHandler>,
-        Serializable {
+public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
+
     // Class variables
-
-    private static final long serialVersionUID = -2893373523700340452L;
-
-    private static LaserchronElementIIFileHandler instance = null;
+    private static final long serialVersionUID = -2860923405769819758L;
+    private static LaserchronElementIIFileHandler instance = new LaserchronElementIIFileHandler();
+    // Instance variables
     private File[] analysisFiles;
     private String[] fractionNames;
-    private static int standardIncrementer = 1;
 
     /**
      *
@@ -66,6 +64,9 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler i
         NAME = "Laserchron Element II Folder of '.dat' files";
         aboutInfo = "Details: This is the Laserchron multi-file protocol for an ElementII. "
                 + " Please include the '.scancsv' file in the folder containing the '.dat' files.";
+
+        analysisFiles = new File[0];
+        fractionNames = new String[0];
     }
 
     /**
@@ -73,9 +74,6 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler i
      * @return
      */
     public static LaserchronElementIIFileHandler getInstance() {
-        if (instance == null) {
-            instance = new LaserchronElementIIFileHandler();//massSpec, rawDataFileTemplate );
-        }
         return instance;
     }
 
@@ -128,14 +126,13 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler i
                     List<String> fractionData = null;
                     try {
                         fractionData = Files.readLines(scancsvFiles[0], Charsets.ISO_8859_1);
+                        // skip column names in row 0
+                        fractionNames = new String[fractionData.size() - 1];
+                        for (int i = 1; i < fractionData.size(); i++) {
+                            String[] lineContents = fractionData.get(i).replace("\"", "").split(",");
+                            fractionNames[i - 1] = lineContents[1];
+                        }
                     } catch (IOException iOException) {
-                    }
-
-                    // skip column names in row 0
-                    fractionNames = new String[fractionData.size() - 1];
-                    for (int i = 1; i < fractionData.size(); i++) {
-                        String[] lineContents = fractionData.get(i).replace("\"", "").split(",");
-                        fractionNames[i - 1] = lineContents[1];
                     }
                 }
 
@@ -148,8 +145,6 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler i
                     new String[]{"Selected raw data folder does not contain valid files."},
                     "ET Redux Warning",
                     JOptionPane.WARNING_MESSAGE);
-
-            //rawDataFile = null;
         }
 
         return rawDataFile;
@@ -179,7 +174,7 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler i
     ) {
         boolean retVal = false;
         for (String standardID : getRawDataFileTemplate().getStandardIDs()) {
-            retVal = retVal || fractionID.toUpperCase().contains(standardID.toUpperCase());
+            retVal = retVal || fractionID.toUpperCase(Locale.US).contains(standardID.toUpperCase(Locale.US));
         }
 
         return retVal;
@@ -199,6 +194,7 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler i
             SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions) {
 
         SortedSet myTripoliFractions = new TreeSet<>();
+        int standardIncrementer = 1;
 
         // assume we are golden   
         for (int f = ignoreFirstFractions; f < analysisFiles.length; f++) {
@@ -208,27 +204,30 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler i
             }
             loadDataTask.firePropertyChange("progress", 0, ((100 * f) / analysisFiles.length));
 
+            // TODO: need to test for empty fractionnames or not enough fraction names (= too many dat files)
+            // default value
+            String fractionID = analysisFiles[f].getName().replace(".dat", "");
+            if ((fractionNames.length > 0) && (fractionNames.length >= analysisFiles.length)) {
+                fractionID = fractionNames[f];
+            }
+
+            // needs to be more robust
+            boolean isStandard = (fractionID.compareToIgnoreCase(rawDataFileTemplate.getStandardIDs()[0]) == 0);
+            // number the standards
+            if (rawDataFileTemplate.standardIsKnown(fractionID)) {
+                fractionID = fractionID + "-" + String.valueOf(standardIncrementer);
+                standardIncrementer++;
+            }
+
+            // ************************************************************************************************
+            // Laserchron uses Philip Wenig's Python routine to extract data from
+            // ElementII .dat files and then pre-processes counts before passing to
+            // fraction intake below
+            String[][] extractedData;
+
             try {
-                // TODO: need to test for empty fractionnames or not enough fraction names (= too many dat files)
-                // default value
-                String fractionID = analysisFiles[f].getName().replace(".dat", "");// + String.valueOf(f);
-                if ((fractionNames.length > 0) & (fractionNames.length >= analysisFiles.length)) {
-                    fractionID = fractionNames[f];
-                }
+                extractedData = ElementII_DatFileConverter.readDatFile5(analysisFiles[f], rawDataFileTemplate.getStringListOfElementsByIsotopicMass());
 
-                // needs to be more robust
-                boolean isStandard = (fractionID.compareToIgnoreCase(rawDataFileTemplate.getStandardIDs()[0]) == 0);
-                // number the standards
-                if (rawDataFileTemplate.standardIsKnown(fractionID)) {
-                    fractionID = fractionID + "-" + String.valueOf(standardIncrementer);
-                    standardIncrementer++;
-                }
-
-                // ************************************************************************************************
-                // Laserchron uses Philip Wenig's Python routine to extract data from
-                // ElementII .dat files and then pre-processes counts before passing to
-                // fraction intake below
-                String[][] extractedData = ElementII_DatFileConverter.readDatFile5(analysisFiles[f], rawDataFileTemplate.getStringListOfElementsByIsotopicMass());
                 // within each row
                 // index 0 = scannumber; 1 = time stamp; 2 = ACF; followed by order of groups = 202  204  206	Pb207	Pb208	Th232	U238
                 // each acquisition file contains background followed by peak followed by background
@@ -236,14 +235,13 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler i
                 // later we will give user interactive tools to pick them out
                 ArrayList<double[]> backgroundAcquisitions = new ArrayList<>();
                 ArrayList<double[]> peakAcquisitions = new ArrayList<>();
-                
+
                 int hardwiredEndOfBackground = 24;
-                int assumedBackgrounRowCount = hardwiredEndOfBackground - rawDataFileTemplate.getBlockStartOffset();
                 // process time stamp from first scan as time stamp of file and background
                 long fractionBackgroundTimeStamp = calculateTimeStamp(extractedData[0][1]);
                 // process time stamp of first peak reading
                 long fractionPeakTimeStamp = calculateTimeStamp(extractedData[hardwiredEndOfBackground + 1][1]);
-                
+
                 for (int i = rawDataFileTemplate.getBlockStartOffset(); i < rawDataFileTemplate.getBlockSize(); i++) {
                     // 202  204  206	Pb207	Pb208	Th232	U238
                     if (i < hardwiredEndOfBackground) {
@@ -277,10 +275,10 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler i
                                 fractionBackgroundTimeStamp, //
                                 fractionPeakTimeStamp,
                                 peakAcquisitions.size());
-                
+
                 SortedSet<DataModelInterface> rawRatios = ((LaserchronElementIISetupUPb) massSpec).rawRatiosFactoryRevised();
                 tripoliFraction.setRawRatios(rawRatios);
-                
+
                 massSpec.setCountOfAcquisitions(peakAcquisitions.size());
 
                 // establish map of virtual collectors to field indexes
@@ -292,16 +290,17 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler i
                 virtualCollectorModelMapToFieldIndexes.put(massSpec.getPb208(), 4);
                 virtualCollectorModelMapToFieldIndexes.put(massSpec.getTh232(), 5);
                 virtualCollectorModelMapToFieldIndexes.put(massSpec.getU238(), 6);
-                
+
                 massSpec.processFractionRawRatiosII(//
                         backgroundAcquisitions, peakAcquisitions, isStandard, usingFullPropagation, tripoliFraction, virtualCollectorModelMapToFieldIndexes);
-                
+
                 tripoliFraction.shadeDataActiveMapLeft(leftShadeCount);
                 System.out.println("\n**** Element II FractionID  " + fractionID);
-                
+
                 myTripoliFractions.add(tripoliFraction);
-            } catch (Exception e) {
-                   System.out.println("bad read of fraction " + analysisFiles[f].getName() + " message = " + e.getMessage());
+                
+            } catch (PyException pyException) {
+                System.out.println("bad read of fraction " + analysisFiles[f].getName() + " message = " + pyException.getMessage());
             }
         } // end of files loop
 

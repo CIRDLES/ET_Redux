@@ -1,7 +1,7 @@
 /*
  * WashStateElementIISetupUPb
  *
- * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2016 James F. Bowring and www.Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
  */
 package org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.SortedSet;
@@ -43,12 +42,9 @@ import org.earthtime.isotopes.IsotopesEnum;
  *
  * @author James F. Bowring
  */
-public final class WashStateElementIISetupUPb extends AbstractMassSpecSetup implements //
-        Comparable<AbstractMassSpecSetup>,
-        Serializable {
+public final class WashStateElementIISetupUPb extends AbstractMassSpecSetup{
 
-    private static WashStateElementIISetupUPb instance = null;
-//    private SortedSet<DataModelInterface> genericIsotopeModels;
+    private static WashStateElementIISetupUPb instance = new WashStateElementIISetupUPb();
 
     private WashStateElementIISetupUPb() {
         super();
@@ -126,9 +122,6 @@ public final class WashStateElementIISetupUPb extends AbstractMassSpecSetup impl
      * @return
      */
     public static WashStateElementIISetupUPb getInstance() {
-        if (instance == null) {
-            instance = new WashStateElementIISetupUPb();
-        }
         return instance;
     }
 

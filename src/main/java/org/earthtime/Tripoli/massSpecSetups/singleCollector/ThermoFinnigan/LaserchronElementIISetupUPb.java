@@ -17,7 +17,6 @@
  */
 package org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.SortedSet;
@@ -43,11 +42,9 @@ import org.earthtime.isotopes.IsotopesEnum;
  *
  * @author James F. Bowring
  */
-public final class LaserchronElementIISetupUPb extends AbstractMassSpecSetup implements //
-        Comparable<AbstractMassSpecSetup>,
-        Serializable {
-
-    private static LaserchronElementIISetupUPb instance = null;
+public final class LaserchronElementIISetupUPb extends AbstractMassSpecSetup{
+    
+    private static LaserchronElementIISetupUPb instance = new LaserchronElementIISetupUPb();
 
     private LaserchronElementIISetupUPb() {
         super();
@@ -127,9 +124,6 @@ public final class LaserchronElementIISetupUPb extends AbstractMassSpecSetup imp
      * @return
      */
     public static LaserchronElementIISetupUPb getInstance() {
-        if (instance == null) {
-            instance = new LaserchronElementIISetupUPb();
-        }
         return instance;
     }
 

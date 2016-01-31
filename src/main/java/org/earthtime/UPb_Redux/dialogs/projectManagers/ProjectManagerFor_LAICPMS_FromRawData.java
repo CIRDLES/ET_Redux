@@ -74,7 +74,9 @@ import org.earthtime.Tripoli.rawDataFiles.templates.NuPlasma.LaserChronNUPlasmaM
 import org.earthtime.Tripoli.rawDataFiles.templates.NuPlasma.LaserChronNUPlasmaMultiCollFaradayTRARawDataTemplate;
 import org.earthtime.Tripoli.rawDataFiles.templates.NuPlasma.LaserChronNUPlasmaMultiCollIonCounterRawDataTemplate;
 import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.HancharMemUnivNewfoundlandElementII_RawDataTemplate;
-import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.LaserchronElementII_RawDataTemplate;
+import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.LaserchronElementII_RawDataTemplate_A;
+import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.LaserchronElementII_RawDataTemplate_B;
+import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.LaserchronElementII_RawDataTemplate_C;
 import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.MillerTexasAMElementII_RawDataTemplate;
 import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.MoellerUnivKansasElementII_RawDataTemplate;
 import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.ValenciaWashStateElementII_RawDataTemplate;
@@ -192,7 +194,11 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
                 .add(LaserchronElementIISetupUPb.getInstance());
 
         theLaserchronElementIIFileHandler.getAvailableRawDataFileTemplates()//
-                .add(LaserchronElementII_RawDataTemplate.getInstance());
+                .add(LaserchronElementII_RawDataTemplate_A.getInstance());
+        theLaserchronElementIIFileHandler.getAvailableRawDataFileTemplates()//
+                .add(LaserchronElementII_RawDataTemplate_B.getInstance());
+        theLaserchronElementIIFileHandler.getAvailableRawDataFileTemplates()//
+                .add(LaserchronElementII_RawDataTemplate_C.getInstance());
 
         knownRawDataFileHandlers.add(theLaserchronElementIIFileHandler);
 

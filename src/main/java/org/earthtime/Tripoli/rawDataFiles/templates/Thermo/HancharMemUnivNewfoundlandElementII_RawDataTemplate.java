@@ -17,7 +17,6 @@
  */
 package org.earthtime.Tripoli.rawDataFiles.templates.Thermo;
 
-import java.io.Serializable;
 import java.util.TimeZone;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.AbstractAcquisitionModel;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.SingleCollectorAcquisition;
@@ -28,9 +27,7 @@ import org.earthtime.dataDictionaries.FileTypeEnum;
  *
  * @author James F. Bowring
  */
-public final class HancharMemUnivNewfoundlandElementII_RawDataTemplate extends AbstractRawDataFileTemplate implements //
-        Comparable<AbstractRawDataFileTemplate>,
-        Serializable {
+public final class HancharMemUnivNewfoundlandElementII_RawDataTemplate extends AbstractRawDataFileTemplate{
 
     //Class variables
     private static final long serialVersionUID = 2549874427568944698L;

@@ -803,8 +803,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         if (sampleAnalysisType.equalsIgnoreCase(SampleAnalysisTypesEnum.LAICPMS.getName())) {
 
             myProjectManager
-                    = //
-                    new ProjectManagerFor_LAICPMS_FromRawData(this, true, myState, theProject);
+                    = new ProjectManagerFor_LAICPMS_FromRawData(this, true, myState, theProject);
 
             // modal call
             myProjectManager.setVisible(true);
@@ -3366,18 +3365,17 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
     }//GEN-LAST:event_helpMenuMenuDeselected
 
     private void interpretSampleDates_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_interpretSampleDates_buttonActionPerformed
-        // Dec 2015 experiment with customization
+        // Dec 2015 experiment with customization of skins
         if (theSample.getIsotopeStyle().compareToIgnoreCase("UTh") == 0) {
             TopsoilEvolutionPlot topsoilEvolutionChart = new TopsoilEvolutionPlot();
             topsoilEvolutionChart.setSelectedFractions(theSample.getFractions());
             topsoilEvolutionChart.preparePanel();
             topsoilEvolutionChart.showPanel();
 
-            TopsoilEvolutionPlot topsoilEvolutionChart2 = new TopsoilEvolutionPlot();
-            topsoilEvolutionChart2.setSelectedFractions(theSample.getFractions());
-            topsoilEvolutionChart2.preparePanel();
-            topsoilEvolutionChart2.showPanel();
-
+//            TopsoilEvolutionPlot topsoilEvolutionChart2 = new TopsoilEvolutionPlot();
+//            topsoilEvolutionChart2.setSelectedFractions(theSample.getFractions());
+//            topsoilEvolutionChart2.preparePanel();
+//            topsoilEvolutionChart2.showPanel();
         } else {
 
             manageSampleDateInterpretation(//

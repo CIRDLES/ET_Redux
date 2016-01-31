@@ -1,7 +1,7 @@
 /*
  * RittnerAgilent7700FileHandler
  *
- * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2016 James F. Bowring and www.Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,6 +19,9 @@ package org.earthtime.Tripoli.rawDataFiles.handlers.Agilent;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectStreamClass;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -37,9 +40,10 @@ import org.earthtime.utilities.FileHelper;
  * @author James F. Bowring
  */
 public class RittnerAgilent7700FileHandler extends AbstractRawDataFileHandler implements //
-        Comparable<AbstractRawDataFileHandler>,
         Serializable {
 
+    // Class variables
+    // private static final long serialVersionUID = 3111511502335804607L;
     private static RittnerAgilent7700FileHandler instance = null;
     private File[] analysisFiles;
 
@@ -204,7 +208,8 @@ public class RittnerAgilent7700FileHandler extends AbstractRawDataFileHandler im
 
                 // first get time stamp for file in row 2
                 String timeStampFromRow2[] = fractionFileRows[2].split(" :")[1].split(" +");
-                String fractionDate = //
+                String fractionDate
+                        = //
                         timeStampFromRow2[1] + " " //month
                         + timeStampFromRow2[2] + ", " //day
                         + timeStampFromRow2[3] + " " // year
@@ -240,7 +245,8 @@ public class RittnerAgilent7700FileHandler extends AbstractRawDataFileHandler im
                         // handle case where there is not as many lines of data as expected
                         String[] fractionCollectorsColumns = new String[]{"0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0",};
                         if (fractionFileRows.length > (i + rawDataFileTemplate.getBlockStartOffset())) {
-                            fractionCollectorsColumns = //
+                            fractionCollectorsColumns
+                                    = //
                                     fractionFileRows[i + rawDataFileTemplate.getBlockStartOffset()].split(",");
                         }
 
@@ -262,7 +268,8 @@ public class RittnerAgilent7700FileHandler extends AbstractRawDataFileHandler im
                     // extract isStandard
                     boolean isStandard = isStandardFractionID(fractionID);
 
-                    TripoliFraction tripoliFraction = //                           
+                    TripoliFraction tripoliFraction
+                            = //                           
                             new TripoliFraction( //                     
                                     //                     
                                     fractionID, //
@@ -291,5 +298,15 @@ public class RittnerAgilent7700FileHandler extends AbstractRawDataFileHandler im
         }
 
         return tripoliFractions;
+    }
+
+    private void readObject(
+            ObjectInputStream stream)
+            throws IOException, ClassNotFoundException {
+        stream.defaultReadObject();
+        ObjectStreamClass myObject = ObjectStreamClass.lookup(
+                Class.forName(RittnerAgilent7700FileHandler.class.getCanonicalName()));
+        long theSUID = myObject.getSerialVersionUID();
+        System.out.println("Customized De-serialization of RittnerAgilent7700FileHandler " + theSUID);
     }
 }
