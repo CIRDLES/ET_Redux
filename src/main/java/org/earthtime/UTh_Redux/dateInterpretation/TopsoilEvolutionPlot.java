@@ -15,15 +15,9 @@
  */
 package org.earthtime.UTh_Redux.dateInterpretation;
 
-import java.awt.Container;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
 import javafx.fxml.FXML;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.HBox;
-import javax.swing.JComponent;
-import javax.swing.WindowConstants;
 import org.cirdles.topsoil.dataset.Dataset;
 import org.cirdles.topsoil.dataset.RawData;
 import org.cirdles.topsoil.dataset.SimpleDataset;
@@ -32,12 +26,19 @@ import org.cirdles.topsoil.dataset.entry.SimpleEntry;
 import org.cirdles.topsoil.dataset.field.Field;
 import org.cirdles.topsoil.dataset.field.NumberField;
 import org.cirdles.topsoil.plot.Plot;
-import org.cirdles.topsoil.plot.SimpleVariableContext;
-import org.cirdles.topsoil.plot.VariableContext;
+import org.cirdles.topsoil.plot.PlotContext;
+import org.cirdles.topsoil.plot.SimplePlotContext;
 import org.cirdles.topsoil.plot.standard.EvolutionPlot;
 import org.earthtime.UTh_Redux.fractions.UThLegacyFractionI;
 import org.earthtime.dataDictionaries.UThAnalysisMeasures;
 import org.earthtime.fractions.ETFractionInterface;
+
+import javax.swing.JComponent;
+import javax.swing.WindowConstants;
+import java.awt.Container;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 
 /**
  *
@@ -156,15 +157,12 @@ public class TopsoilEvolutionPlot{// extends CustomVBox<TopsoilEvolutionChart> {
                 "U-series dataset",
                 rawData);
 
-        VariableContext vc = new SimpleVariableContext(dataset);
+        PlotContext vc = new SimplePlotContext(dataset);
         for (int i = 0; i < myChart.getVariables().size(); i++) {
             vc.addBinding(myChart.getVariables().get(i), myFields.get(i));
         }
 
-        
-        
-        
-        myChart.setData(vc);
+        myChart.setContext(vc);
 
     }
 

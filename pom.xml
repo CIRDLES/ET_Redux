@@ -26,19 +26,19 @@
     <url>https://cirdles.org</url>
     <inceptionYear>2006</inceptionYear>
     <packaging>jar</packaging>
-    
+
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        
+
         <timestamp>${maven.build.timestamp}</timestamp>
         <maven.build.timestamp.format>dd MMMM yyyy</maven.build.timestamp.format>
     </properties>
-    
+
     <!--Need SCM -->
-    
+
     <developers>
         <developer>
             <name>James F. Bowring</name>
@@ -46,14 +46,14 @@
             <email>bowring@gmail.com</email>
             <organization>CIRDLES</organization>
             <organizationUrl>https://www.cirdles.org/</organizationUrl>
-        </developer>            
+        </developer>
     </developers>
-    
+
     <organization>
         <name>CIRDLES</name>
         <url>https://cirdles.org</url>
     </organization>
-    
+
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
@@ -61,7 +61,7 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
-    
+
     <repositories>
         <!--These are needed for Swing/Netbeans -->
         <repository>
@@ -69,7 +69,11 @@
             <name>Netbeans Maven Repository</name>
             <url>http://bits.netbeans.org/maven2/</url>
             <layout>default</layout>
-        </repository> 
+        </repository>
+        <repository>
+            <id>zeringue.io</id>
+            <url>http://zeringue.io/maven2</url>
+        </repository>
         <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
@@ -211,7 +215,7 @@
         <dependency>
             <groupId>com.github.cirdles.topsoil</groupId>
             <artifactId>core</artifactId>
-            <version>-SNAPSHOT</version>
+            <version>v1.0.0-alpha.8</version>
         </dependency>
         <dependency>
             <groupId>org.python</groupId>
