@@ -15,11 +15,6 @@
  */
 package org.earthtime.UPb_Redux.dateInterpretation;
 
-import java.awt.Dialog;
-import java.util.ArrayList;
-import java.util.List;
-import javax.swing.JComponent;
-import javax.swing.WindowConstants;
 import org.cirdles.topsoil.dataset.Dataset;
 import org.cirdles.topsoil.dataset.RawData;
 import org.cirdles.topsoil.dataset.SimpleDataset;
@@ -28,9 +23,14 @@ import org.cirdles.topsoil.dataset.entry.SimpleEntry;
 import org.cirdles.topsoil.dataset.field.Field;
 import org.cirdles.topsoil.dataset.field.NumberField;
 import org.cirdles.topsoil.plot.Plot;
-import org.cirdles.topsoil.plot.SimpleVariableContext;
-import org.cirdles.topsoil.plot.VariableContext;
+import org.cirdles.topsoil.plot.SimplePlotContext;
+import org.cirdles.topsoil.plot.PlotContext;
 import org.cirdles.topsoil.plot.standard.UncertaintyEllipsePlot;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -63,7 +63,7 @@ public class TestTopsoil {
             myChart = new UncertaintyEllipsePlot();
         } catch (Exception e) {
         }
-        
+
         List<Field<?>> myFields = new ArrayList<>();
         myFields.add(new NumberField("Ratio1"));
         myFields.add(new NumberField("Ratio1Unct"));
@@ -84,19 +84,19 @@ public class TestTopsoil {
         }
 
         RawData rawData = new RawData(myFields, myEntries);
-        
+
         Dataset dataset = new SimpleDataset(
                         "Redux dataset",
                         rawData);
 
-        VariableContext vc = new SimpleVariableContext(dataset);
+        PlotContext vc = new SimplePlotContext(dataset);
         for (int i = 0; i < myChart.getVariables().size(); i++) {
             vc.addBinding(myChart.getVariables().get(i), myFields.get(i));
         }
 
-        myChart.setData(vc);
-
         JComponent jc = myChart.displayAsJComponent();
+
+        myChart.setContext(vc);
 
         jc.createToolTip().setTipText("TESTING");
 
