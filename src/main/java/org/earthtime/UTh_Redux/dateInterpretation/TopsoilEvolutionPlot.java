@@ -29,6 +29,8 @@ import org.cirdles.topsoil.dataset.entry.SimpleEntry;
 import org.cirdles.topsoil.dataset.field.Field;
 import org.cirdles.topsoil.dataset.field.NumberField;
 import org.cirdles.topsoil.plot.Plot;
+import org.cirdles.topsoil.plot.PlotContext;
+import org.cirdles.topsoil.plot.SimplePlotContext;
 import org.cirdles.topsoil.plot.standard.EvolutionPlot;
 import org.earthtime.UTh_Redux.fractions.UThLegacyFractionI;
 import org.earthtime.dataDictionaries.UThAnalysisMeasures;
@@ -38,7 +40,7 @@ import org.earthtime.fractions.ETFractionInterface;
  *
  * @author bowring
  */
-public class TopsoilEvolutionPlot{
+public class TopsoilEvolutionPlot {
 
     private Vector<ETFractionInterface> selectedFractions;
     private Plot myChart;
@@ -49,11 +51,10 @@ public class TopsoilEvolutionPlot{
 //    private HBox chartAndConfig;
 //    @FXML
 //    private ToolBar chartToolBar;
-
     public TopsoilEvolutionPlot() {
         selectedFractions = new Vector<>();
         myChart = new EvolutionPlot();
-        
+
         myFields = new ArrayList<>();
         myFields.add(new NumberField(UThAnalysisMeasures.ar230Th_238Ufc.getName()));
         myFields.add(new NumberField(UThAnalysisMeasures.ar230Th_238Ufc.getName() + "-2sigma"));
@@ -86,7 +87,6 @@ public class TopsoilEvolutionPlot{
 //        Stage chartStage = new Stage();
 //        chartStage.setScene(scene);
 //        chartStage.show();
-
         class EvolutionChartDialog extends javax.swing.JFrame {
 
             public EvolutionChartDialog(javax.swing.JFrame owner, boolean modal) {
@@ -118,7 +118,6 @@ public class TopsoilEvolutionPlot{
 //        });
 //
 //        plotAsComponent.add(fitDataButton);
-
         testTopsoilDialogDialog.setVisible(true);
 
     }
@@ -151,15 +150,12 @@ public class TopsoilEvolutionPlot{
                 "U-series dataset",
                 rawData);
 
-//        VariableContext vc = new SimpleVariableContext(dataset);
-//        for (int i = 0; i < myChart.getVariables().size(); i++) {
-//            vc.addBinding(myChart.getVariables().get(i), myFields.get(i));
-//        }
+        PlotContext vc = new SimplePlotContext(dataset);
+        for (int i = 0; i < myChart.getVariables().size(); i++) {
+            vc.addBinding(myChart.getVariables().get(i), myFields.get(i));
+        }
 
-        
-        
-        
-//        myChart.setData(vc);
+        myChart.setContext(vc);
 
     }
 
