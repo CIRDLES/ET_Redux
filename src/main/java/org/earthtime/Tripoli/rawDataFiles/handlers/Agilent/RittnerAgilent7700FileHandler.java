@@ -44,7 +44,7 @@ public class RittnerAgilent7700FileHandler extends AbstractRawDataFileHandler im
 
     // Class variables
     // private static final long serialVersionUID = 3111511502335804607L;
-    private static RittnerAgilent7700FileHandler instance = null;
+    private static RittnerAgilent7700FileHandler instance = new RittnerAgilent7700FileHandler();
     private File[] analysisFiles;
 
     /**
@@ -69,14 +69,7 @@ public class RittnerAgilent7700FileHandler extends AbstractRawDataFileHandler im
      *
      * @return
      */
-    public static RittnerAgilent7700FileHandler getInstance( //
-            /*
-             * AbstractMassSpecSetup massSpec,// AbstractRawDataFileTemplate
-             * rawDataFileTemplate
-             */) {
-        if (instance == null) {
-            instance = new RittnerAgilent7700FileHandler();//massSpec, rawDataFileTemplate );
-        }
+    public static RittnerAgilent7700FileHandler getInstance() {
         return instance;
     }
 

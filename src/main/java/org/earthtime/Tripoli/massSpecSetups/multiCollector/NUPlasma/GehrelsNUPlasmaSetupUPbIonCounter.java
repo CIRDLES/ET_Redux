@@ -1,7 +1,7 @@
 /*
  * GehrelsNUPlasmaSetupUPbIonCounter.java
  *
- * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2016 James F. Bowring and www.Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -50,7 +50,7 @@ public final class GehrelsNUPlasmaSetupUPbIonCounter extends AbstractMassSpecSet
 
     // Class variables
     //private static final long serialVersionUID = -5116574729913272427L;
-    private static GehrelsNUPlasmaSetupUPbIonCounter instance = null;
+    private static GehrelsNUPlasmaSetupUPbIonCounter instance = new GehrelsNUPlasmaSetupUPbIonCounter();
 
     private GehrelsNUPlasmaSetupUPbIonCounter() {
         super();
@@ -124,13 +124,6 @@ public final class GehrelsNUPlasmaSetupUPbIonCounter extends AbstractMassSpecSet
 
         AbstractCollectorModel IC0 = //
                 new IonCounterCollectorModel(//
-                        //
-                        //
-                        //
-                        //
-                        //
-                        //
-                        //
                         NUPlasmaICCollectors.IC0.name(), new ValueModel("DeadTime", new BigDecimal(12.0e-9, ReduxConstants.mathContext10), //
                                 "ABS", new BigDecimal(1.0e-9, ReduxConstants.mathContext10), BigDecimal.ZERO), //
                         IonCounterCollectorModel.CollectedDataStyle.VOLTS);
@@ -142,13 +135,6 @@ public final class GehrelsNUPlasmaSetupUPbIonCounter extends AbstractMassSpecSet
 
         AbstractCollectorModel IC1 = //
                 new IonCounterCollectorModel(//
-                        //
-                        //
-                        //
-                        //
-                        //
-                        //
-                        //
                         NUPlasmaICCollectors.IC1.name(), new ValueModel("DeadTime", new BigDecimal(12.0e-9, ReduxConstants.mathContext10), //
                                 "ABS", new BigDecimal(1.0e-9, ReduxConstants.mathContext10), BigDecimal.ZERO), //
                         IonCounterCollectorModel.CollectedDataStyle.VOLTS);
@@ -160,13 +146,6 @@ public final class GehrelsNUPlasmaSetupUPbIonCounter extends AbstractMassSpecSet
 
         AbstractCollectorModel IC2 = //
                 new IonCounterCollectorModel(//
-                        //
-                        //
-                        //
-                        //
-                        //
-                        //
-                        //
                         NUPlasmaICCollectors.IC2.name(), new ValueModel("DeadTime", new BigDecimal(12.0e-9, ReduxConstants.mathContext10), //
                                 "ABS", new BigDecimal(1.0e-9, ReduxConstants.mathContext10), BigDecimal.ZERO), //
                         IonCounterCollectorModel.CollectedDataStyle.VOLTS);
@@ -178,13 +157,6 @@ public final class GehrelsNUPlasmaSetupUPbIonCounter extends AbstractMassSpecSet
 
         AbstractCollectorModel IC3 = //
                 new IonCounterCollectorModel(//
-                        //
-                        //
-                        //
-                        //
-                        //
-                        //
-                        //
                         NUPlasmaICCollectors.IC2.name(), new ValueModel("DeadTime", new BigDecimal(12.0e-9, ReduxConstants.mathContext10), //
                                 "ABS", new BigDecimal(1.0e-9, ReduxConstants.mathContext10), BigDecimal.ZERO), //
                         IonCounterCollectorModel.CollectedDataStyle.VOLTS);
@@ -203,6 +175,11 @@ public final class GehrelsNUPlasmaSetupUPbIonCounter extends AbstractMassSpecSet
     @Override
     public void assignIntegrationTime(double integrationTime) {
         COLLECTOR_DATA_FREQUENCY_MILLISECS = (long) (integrationTime * 1000.0);
+    }
+
+    @Override
+    public SortedSet<DataModelInterface> rawRatiosFactoryRevised() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     /**
@@ -317,9 +294,6 @@ public final class GehrelsNUPlasmaSetupUPbIonCounter extends AbstractMassSpecSet
      * @return
      */
     public static GehrelsNUPlasmaSetupUPbIonCounter getInstance() {
-        if (instance == null) {
-            instance = new GehrelsNUPlasmaSetupUPbIonCounter();
-        }
         return instance;
     }
 

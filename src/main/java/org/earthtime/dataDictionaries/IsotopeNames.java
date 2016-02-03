@@ -61,7 +61,8 @@ public enum IsotopeNames {
     /**
      * 
      */
-    Hg202( "Hg202");
+    Hg202( "Hg202"),
+    Hf176( "Hf176");
 
     private String name;
 

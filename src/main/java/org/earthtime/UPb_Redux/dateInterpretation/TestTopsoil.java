@@ -15,11 +15,8 @@
  */
 package org.earthtime.UPb_Redux.dateInterpretation;
 
-import java.awt.Dialog;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JComponent;
-import javax.swing.WindowConstants;
 import org.cirdles.topsoil.dataset.Dataset;
 import org.cirdles.topsoil.dataset.RawData;
 import org.cirdles.topsoil.dataset.SimpleDataset;
@@ -28,8 +25,6 @@ import org.cirdles.topsoil.dataset.entry.SimpleEntry;
 import org.cirdles.topsoil.dataset.field.Field;
 import org.cirdles.topsoil.dataset.field.NumberField;
 import org.cirdles.topsoil.plot.Plot;
-import org.cirdles.topsoil.plot.SimpleVariableContext;
-import org.cirdles.topsoil.plot.VariableContext;
 import org.cirdles.topsoil.plot.standard.UncertaintyEllipsePlot;
 
 /**
@@ -89,33 +84,33 @@ public class TestTopsoil {
                         "Redux dataset",
                         rawData);
 
-        VariableContext vc = new SimpleVariableContext(dataset);
-        for (int i = 0; i < myChart.getVariables().size(); i++) {
-            vc.addBinding(myChart.getVariables().get(i), myFields.get(i));
-        }
-
-        myChart.setData(vc);
-
-        JComponent jc = myChart.displayAsJComponent();
-
-        jc.createToolTip().setTipText("TESTING");
-
-        class TestTopsoilDialog extends javax.swing.JDialog {
-
-            public TestTopsoilDialog(Dialog owner, boolean modal) {
-                super(owner, modal);
-            }
-        }
-
-        TestTopsoilDialog testTopsoilDialogDialog = new TestTopsoilDialog(null, true);
-        testTopsoilDialogDialog.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-        testTopsoilDialogDialog.setBounds( //
-                400, 00, //
-                600,
-                600);
-
-        testTopsoilDialogDialog.add(jc);
-        testTopsoilDialogDialog.setVisible(true);
+//        VariableBinding vc = new     SimpleVariableBinding(dataset);
+//        for (int i = 0; i < myChart.getVariables().size(); i++) {
+//            vc.addBinding(myChart.getVariables().get(i), myFields.get(i));
+//        }
+//
+//        myChart.setData(vc);
+//
+//        JComponent jc = myChart.displayAsJComponent();
+//
+//        jc.createToolTip().setTipText("TESTING");
+//
+//        class TestTopsoilDialog extends javax.swing.JDialog {
+//
+//            public TestTopsoilDialog(Dialog owner, boolean modal) {
+//                super(owner, modal);
+//            }
+//        }
+//
+//        TestTopsoilDialog testTopsoilDialogDialog = new TestTopsoilDialog(null, true);
+//        testTopsoilDialogDialog.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+//        testTopsoilDialogDialog.setBounds( //
+//                400, 00, //
+//                600,
+//                600);
+//
+//        testTopsoilDialogDialog.add(jc);
+//        testTopsoilDialogDialog.setVisible(true);
 
     }
 }

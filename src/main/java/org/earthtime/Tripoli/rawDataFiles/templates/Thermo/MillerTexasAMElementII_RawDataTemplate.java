@@ -21,6 +21,7 @@ import java.io.Serializable;
 import java.util.TimeZone;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.AbstractAcquisitionModel;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.SingleCollectorAcquisition;
+import org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan.TexasAMElementIISetupUPb;
 import org.earthtime.Tripoli.rawDataFiles.templates.AbstractRawDataFileTemplate;
 import org.earthtime.dataDictionaries.FileTypeEnum;
 
@@ -32,7 +33,7 @@ public final class MillerTexasAMElementII_RawDataTemplate extends AbstractRawDat
         Comparable<AbstractRawDataFileTemplate>,
         Serializable {
 
-    private static MillerTexasAMElementII_RawDataTemplate instance = null;
+    private static MillerTexasAMElementII_RawDataTemplate instance = new MillerTexasAMElementII_RawDataTemplate();
 
     private MillerTexasAMElementII_RawDataTemplate () {
         super();
@@ -50,7 +51,7 @@ public final class MillerTexasAMElementII_RawDataTemplate extends AbstractRawDat
         this.timeZone = TimeZone.getTimeZone( "PST" );
         this.defaultParsingOfFractionsBehavior = 1;
         this.elementsByIsotopicMass = new String[]{"202", "204", "206", "207", "208", "232", "235", "238"};
-
+        this.massSpecSetup = TexasAMElementIISetupUPb.getInstance();
     }
 
     /**
@@ -58,9 +59,6 @@ public final class MillerTexasAMElementII_RawDataTemplate extends AbstractRawDat
      * @return
      */
     public static MillerTexasAMElementII_RawDataTemplate getInstance () {
-        if ( instance == null ) {
-            instance = new MillerTexasAMElementII_RawDataTemplate();
-        }
         return instance;
     }
     

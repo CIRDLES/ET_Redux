@@ -20,6 +20,7 @@ package org.earthtime.Tripoli.rawDataFiles.templates.Thermo;
 import java.util.TimeZone;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.AbstractAcquisitionModel;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.SingleCollectorAcquisition;
+import org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan.MemUnivNewfoundlandElementIISetupUPb;
 import org.earthtime.Tripoli.rawDataFiles.templates.AbstractRawDataFileTemplate;
 import org.earthtime.dataDictionaries.FileTypeEnum;
 
@@ -32,7 +33,7 @@ public final class HancharMemUnivNewfoundlandElementII_RawDataTemplate extends A
     //Class variables
     private static final long serialVersionUID = 2549874427568944698L;
 
-    private static HancharMemUnivNewfoundlandElementII_RawDataTemplate instance = null;
+    private static HancharMemUnivNewfoundlandElementII_RawDataTemplate instance = new HancharMemUnivNewfoundlandElementII_RawDataTemplate();
 
     private HancharMemUnivNewfoundlandElementII_RawDataTemplate() {
         super();
@@ -50,7 +51,7 @@ public final class HancharMemUnivNewfoundlandElementII_RawDataTemplate extends A
         this.timeZone = TimeZone.getTimeZone("GMT");
         this.defaultParsingOfFractionsBehavior = 1;
         this.elementsByIsotopicMass = new String[]{"204", "206", "207", "208", "232", "238"};
-
+        this.massSpecSetup = MemUnivNewfoundlandElementIISetupUPb.getInstance();
     }
 
     /**
@@ -58,9 +59,6 @@ public final class HancharMemUnivNewfoundlandElementII_RawDataTemplate extends A
      * @return
      */
     public static HancharMemUnivNewfoundlandElementII_RawDataTemplate getInstance() {
-        if (instance == null) {
-            instance = new HancharMemUnivNewfoundlandElementII_RawDataTemplate();
-        }
         return instance;
     }
 

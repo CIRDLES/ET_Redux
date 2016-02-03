@@ -21,6 +21,7 @@ import java.io.Serializable;
 import java.util.TimeZone;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.AbstractAcquisitionModel;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.SingleCollectorAcquisition;
+import org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan.WashStateElementIISetupUPb;
 import org.earthtime.Tripoli.rawDataFiles.templates.AbstractRawDataFileTemplate;
 import org.earthtime.dataDictionaries.FileTypeEnum;
 
@@ -32,7 +33,7 @@ public final class VervoortWashStateElementII_RawDataTemplate extends AbstractRa
         Comparable<AbstractRawDataFileTemplate>,
         Serializable {
 
-    private static VervoortWashStateElementII_RawDataTemplate instance = null;
+    private static VervoortWashStateElementII_RawDataTemplate instance = new VervoortWashStateElementII_RawDataTemplate();
 
     private VervoortWashStateElementII_RawDataTemplate () {
         super();
@@ -49,7 +50,7 @@ public final class VervoortWashStateElementII_RawDataTemplate extends AbstractRa
         {"Peixe"};
         this.timeZone = TimeZone.getTimeZone( "PST" );
         this.defaultParsingOfFractionsBehavior = 1;
-
+        this.massSpecSetup = WashStateElementIISetupUPb.getInstance();
     }
 
     /**
@@ -57,9 +58,6 @@ public final class VervoortWashStateElementII_RawDataTemplate extends AbstractRa
      * @return
      */
     public static VervoortWashStateElementII_RawDataTemplate getInstance () {
-        if ( instance == null ) {
-            instance = new VervoortWashStateElementII_RawDataTemplate();
-        }
         return instance;
     }
     

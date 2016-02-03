@@ -340,7 +340,8 @@ public class ElementII_DatFileConverter {
                 // skip to pulse data
                 + "\t\tindex += skips[scanFormat][1]\n"
                 + "\t\tscale = vals[index+1]\n"
-                + "\t\tpulse = Scale(vals[index], vals[index+1], acf)\n"
+                //+ "\t\tpulse = Scale(vals[index], vals[index+1], acf)\n"
+                + "\t\tpulse = Scale(vals[index], scale, acf)\n"
                 // skip to analog data
                 + "\t\tindex += 2\n"
                 + "\t\ttry:\n"

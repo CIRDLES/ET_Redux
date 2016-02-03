@@ -60,10 +60,10 @@ public abstract class AbstractRawDataFileHandler implements //
      *
      */
     protected String aboutInfo;
-    /**
-     *
-     */
-    protected SortedSet<AbstractMassSpecSetup> availableMassSpecSetups;
+//    /**
+//     *
+//     */
+//    protected SortedSet<AbstractMassSpecSetup> availableMassSpecSetups;
     /**
      *
      */
@@ -91,7 +91,7 @@ public abstract class AbstractRawDataFileHandler implements //
     public AbstractRawDataFileHandler() {
         this.NAME = "Unnamed";
         this.aboutInfo = "Details:";
-        this.availableMassSpecSetups = new TreeSet<>();
+//        this.availableMassSpecSetups = new TreeSet<>();
         this.massSpec = null;
         this.availableRawDataFileTemplates = new TreeSet<>();
         this.rawDataFileTemplate = null;
@@ -258,7 +258,7 @@ public abstract class AbstractRawDataFileHandler implements //
         return rawDataFileTemplate;
     }
 
-    public double calcAvgPulseOrAnalog(int startIndex, int endIndex, String[] data) {
+    protected double calcAvgPulseOrAnalog(int startIndex, int endIndex, String[] data) {
         double retVal = 0.0;
 
         int countOfValues = 0;
@@ -274,6 +274,29 @@ public abstract class AbstractRawDataFileHandler implements //
         }
 
         if (countOfValues > 0) {
+            retVal = sumOfValues / countOfValues;
+        }
+
+        return retVal;
+    }
+
+    protected double calcAvgPulseThenAnalog(int startIndex, int endIndex, String[] data) {
+        double retVal = 0.0;
+
+        int countOfValues = 0;
+        double sumOfValues = 0.0;
+        for (int i = startIndex; i <= endIndex; i++) {
+            if (data[i].contains("*")) {
+                retVal = calcAvgPulseOrAnalog(startIndex + 4, endIndex + 4, data);
+            } else {
+                double val = Double.parseDouble(data[i]);
+                sumOfValues += val;
+                countOfValues++;
+            }
+        }
+
+        // retVal > 0 means analogs were used already
+        if ((retVal == 0) && (countOfValues > 0)) {
             retVal = sumOfValues / countOfValues;
         }
 
@@ -547,12 +570,12 @@ public abstract class AbstractRawDataFileHandler implements //
         return availableRawDataFileTemplates;
     }
 
-    /**
-     * @return the avaindexlableMassSpecSetups
-     */
-    public SortedSet<AbstractMassSpecSetup> getAvailableMassSpecSetups() {
-        return availableMassSpecSetups;
-    }
+//    /**
+//     * @return the avaindexlableMassSpecSetups
+//     */
+//    public SortedSet<AbstractMassSpecSetup> getAvailableMassSpecSetups() {
+//        return availableMassSpecSetups;
+//    }
 
     /**
      * @param tripoliFractions the trindexpolindexFractindexons to set

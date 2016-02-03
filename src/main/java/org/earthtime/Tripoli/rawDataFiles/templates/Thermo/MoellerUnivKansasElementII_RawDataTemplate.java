@@ -21,6 +21,7 @@ import java.io.Serializable;
 import java.util.TimeZone;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.AbstractAcquisitionModel;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.SingleCollectorAcquisition;
+import org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan.UnivKansasElementIISetupUPb;
 import org.earthtime.Tripoli.rawDataFiles.templates.AbstractRawDataFileTemplate;
 import org.earthtime.dataDictionaries.FileTypeEnum;
 
@@ -34,7 +35,7 @@ public final class MoellerUnivKansasElementII_RawDataTemplate extends AbstractRa
 
      // Class variables
     private static final long serialVersionUID = -7723699052591631306L;
-    private static MoellerUnivKansasElementII_RawDataTemplate instance = null;
+    private static MoellerUnivKansasElementII_RawDataTemplate instance = new MoellerUnivKansasElementII_RawDataTemplate();
 
     private MoellerUnivKansasElementII_RawDataTemplate() {
         super();
@@ -51,7 +52,7 @@ public final class MoellerUnivKansasElementII_RawDataTemplate extends AbstractRa
         {"GJ1"};
         this.timeZone = TimeZone.getTimeZone("GMT");
         this.defaultParsingOfFractionsBehavior = 1;
-
+        this.massSpecSetup = UnivKansasElementIISetupUPb.getInstance();
     }
 
     /**
@@ -59,9 +60,6 @@ public final class MoellerUnivKansasElementII_RawDataTemplate extends AbstractRa
      * @return
      */
     public static MoellerUnivKansasElementII_RawDataTemplate getInstance() {
-        if (instance == null) {
-            instance = new MoellerUnivKansasElementII_RawDataTemplate();
-        }
         return instance;
     }
 

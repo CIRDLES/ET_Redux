@@ -3,7 +3,7 @@
  *
  * Created Jul 3, 2011
  *
- * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2016 James F. Bowring and www.Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ public final class GehrelsNUPlasmaSetupUPbFarTRA extends AbstractMassSpecSetup i
 
     // Class variables
     private static final long serialVersionUID = -7764226351504652753L;
-    private static GehrelsNUPlasmaSetupUPbFarTRA instance = null;
+    private static GehrelsNUPlasmaSetupUPbFarTRA instance = new GehrelsNUPlasmaSetupUPbFarTRA();
 
     private GehrelsNUPlasmaSetupUPbFarTRA() {
         super();
@@ -143,9 +143,6 @@ public final class GehrelsNUPlasmaSetupUPbFarTRA extends AbstractMassSpecSetup i
 
         AbstractCollectorModel IC0 = //
                 new IonCounterCollectorModel(//
-                        //
-                        //
-                        //
                         NUPlasmaCollectorsEnum.IC0.name(), new ValueModel("DeadTime", new BigDecimal(12.0e-9, ReduxConstants.mathContext10), //
                                 "ABS", new BigDecimal(1.0e-9, ReduxConstants.mathContext10), BigDecimal.ZERO), //
                         IonCounterCollectorModel.CollectedDataStyle.VOLTS);
@@ -157,9 +154,6 @@ public final class GehrelsNUPlasmaSetupUPbFarTRA extends AbstractMassSpecSetup i
 
         AbstractCollectorModel IC2 = //
                 new IonCounterCollectorModel(//
-                        //
-                        //
-                        //
                         NUPlasmaCollectorsEnum.IC2.name(), new ValueModel("DeadTime", new BigDecimal(12.0e-9, ReduxConstants.mathContext10), //
                                 "ABS", new BigDecimal(1.0e-9, ReduxConstants.mathContext10), BigDecimal.ZERO), //
                         IonCounterCollectorModel.CollectedDataStyle.VOLTS);
@@ -185,9 +179,6 @@ public final class GehrelsNUPlasmaSetupUPbFarTRA extends AbstractMassSpecSetup i
      * @return
      */
     public static GehrelsNUPlasmaSetupUPbFarTRA getInstance() {
-        if (instance == null) {
-            instance = new GehrelsNUPlasmaSetupUPbFarTRA();
-        }
         return instance;
     }
 

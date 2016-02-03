@@ -29,8 +29,6 @@ import org.cirdles.topsoil.dataset.entry.SimpleEntry;
 import org.cirdles.topsoil.dataset.field.Field;
 import org.cirdles.topsoil.dataset.field.NumberField;
 import org.cirdles.topsoil.plot.Plot;
-import org.cirdles.topsoil.plot.SimpleVariableContext;
-import org.cirdles.topsoil.plot.VariableContext;
 import org.cirdles.topsoil.plot.standard.EvolutionPlot;
 import org.earthtime.UTh_Redux.fractions.UThLegacyFractionI;
 import org.earthtime.dataDictionaries.UThAnalysisMeasures;
@@ -153,15 +151,15 @@ public class TopsoilEvolutionPlot{
                 "U-series dataset",
                 rawData);
 
-        VariableContext vc = new SimpleVariableContext(dataset);
-        for (int i = 0; i < myChart.getVariables().size(); i++) {
-            vc.addBinding(myChart.getVariables().get(i), myFields.get(i));
-        }
+//        VariableContext vc = new SimpleVariableContext(dataset);
+//        for (int i = 0; i < myChart.getVariables().size(); i++) {
+//            vc.addBinding(myChart.getVariables().get(i), myFields.get(i));
+//        }
 
         
         
         
-        myChart.setData(vc);
+//        myChart.setData(vc);
 
     }
 

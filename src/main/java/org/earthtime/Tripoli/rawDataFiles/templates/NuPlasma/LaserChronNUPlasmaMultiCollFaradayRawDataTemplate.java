@@ -3,7 +3,7 @@
  *
  * Created Jul 1, 2011
  *
- * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2016 James F. Bowring and www.Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.util.TimeZone;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.AbstractAcquisitionModel;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.StaticAcquisition;
+import org.earthtime.Tripoli.massSpecSetups.multiCollector.NUPlasma.GehrelsNUPlasmaSetupUPbFar;
 import org.earthtime.Tripoli.rawDataFiles.templates.AbstractRawDataFileTemplate;
 import org.earthtime.dataDictionaries.FileTypeEnum;
 
@@ -37,7 +38,7 @@ public final class LaserChronNUPlasmaMultiCollFaradayRawDataTemplate extends Abs
     //Class variables
     private static final long serialVersionUID = -2270593876198978125L;
 
-    private static LaserChronNUPlasmaMultiCollFaradayRawDataTemplate instance = null;
+    private static LaserChronNUPlasmaMultiCollFaradayRawDataTemplate instance = new LaserChronNUPlasmaMultiCollFaradayRawDataTemplate();
 
     private LaserChronNUPlasmaMultiCollFaradayRawDataTemplate() {
         super();
@@ -55,7 +56,7 @@ public final class LaserChronNUPlasmaMultiCollFaradayRawDataTemplate extends Abs
         {"SL"};
         this.timeZone = TimeZone.getTimeZone("MST");
         this.defaultParsingOfFractionsBehavior = 1;
-
+        this.massSpecSetup = GehrelsNUPlasmaSetupUPbFar.getInstance();
     }
 
     /**
@@ -63,9 +64,6 @@ public final class LaserChronNUPlasmaMultiCollFaradayRawDataTemplate extends Abs
      * @return
      */
     public static LaserChronNUPlasmaMultiCollFaradayRawDataTemplate getInstance() {
-        if (instance == null) {
-            instance = new LaserChronNUPlasmaMultiCollFaradayRawDataTemplate();
-        }
         return instance;
     }
 

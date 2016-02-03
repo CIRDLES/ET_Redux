@@ -2245,6 +2245,11 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
         newProjectRawDataSHRIMP.setText("SHRIMP");
         newProjectRawDataSHRIMP.setEnabled(false);
+        newProjectRawDataSHRIMP.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                newProjectRawDataSHRIMPActionPerformed(evt);
+            }
+        });
         newProjectFromRawData_menu.add(newProjectRawDataSHRIMP);
 
         project_menu.add(newProjectFromRawData_menu);
@@ -4167,6 +4172,10 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     private void reportSettingsHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reportSettingsHelpActionPerformed
         BrowserControl.displayURL("http://cirdles.org/projects/et_redux/#reports-overview");
     }//GEN-LAST:event_reportSettingsHelpActionPerformed
+
+    private void newProjectRawDataSHRIMPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newProjectRawDataSHRIMPActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_newProjectRawDataSHRIMPActionPerformed
 
     private void helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
         BrowserControl.displayURL("http://cirdles.org/projects/et_redux/");

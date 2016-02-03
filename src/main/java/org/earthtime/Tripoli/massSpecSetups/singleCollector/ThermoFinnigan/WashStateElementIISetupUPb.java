@@ -42,7 +42,7 @@ import org.earthtime.isotopes.IsotopesEnum;
  *
  * @author James F. Bowring
  */
-public final class WashStateElementIISetupUPb extends AbstractMassSpecSetup{
+public final class WashStateElementIISetupUPb extends AbstractMassSpecSetup {
 
     private static WashStateElementIISetupUPb instance = new WashStateElementIISetupUPb();
 
@@ -67,7 +67,8 @@ public final class WashStateElementIISetupUPb extends AbstractMassSpecSetup{
 
         this.commonLeadCorrectionHighestLevel = "A2";
 
-        AbstractCollectorModel singleCollector = //
+        AbstractCollectorModel singleCollector
+                = //
                 new IonCounterCollectorModel(//
                         "Single", new ValueModel("DeadTime", new BigDecimal(12.0e-9, ReduxConstants.mathContext10), //
                                 "ABS", new BigDecimal(1.0e-9, ReduxConstants.mathContext10), BigDecimal.ZERO), //
@@ -245,6 +246,11 @@ public final class WashStateElementIISetupUPb extends AbstractMassSpecSetup{
     @Override
     public void assignIntegrationTime(double integrationTime) {
         throw new UnsupportedOperationException("Not legal.");
+    }
+
+    @Override
+    public SortedSet<DataModelInterface> rawRatiosFactoryRevised() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

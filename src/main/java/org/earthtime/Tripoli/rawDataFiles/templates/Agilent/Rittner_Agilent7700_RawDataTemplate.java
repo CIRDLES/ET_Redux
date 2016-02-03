@@ -1,7 +1,7 @@
 /*
  * Rittner_Agilent7700_RawDataTemplate
  *
- * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2016 James F. Bowring and www.Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.io.Serializable;
 import java.util.TimeZone;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.AbstractAcquisitionModel;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.SingleCollectorAcquisition;
+import org.earthtime.Tripoli.massSpecSetups.singleCollector.Agilent7700.RittnerAgilent7700SetupUPb;
 import org.earthtime.Tripoli.rawDataFiles.templates.AbstractRawDataFileTemplate;
 import org.earthtime.dataDictionaries.FileTypeEnum;
 
@@ -32,9 +33,9 @@ public final class Rittner_Agilent7700_RawDataTemplate extends AbstractRawDataFi
         Comparable<AbstractRawDataFileTemplate>,
         Serializable {
 
-    private static Rittner_Agilent7700_RawDataTemplate instance = null;
+    private static Rittner_Agilent7700_RawDataTemplate instance = new Rittner_Agilent7700_RawDataTemplate();
 
-    private Rittner_Agilent7700_RawDataTemplate () {
+    private Rittner_Agilent7700_RawDataTemplate() {
         super();
 
         this.NAME = "Rittner Agilent 7700";
@@ -47,28 +48,25 @@ public final class Rittner_Agilent7700_RawDataTemplate extends AbstractRawDataFi
         this.blockSize = 212;//goes with temp 106 in handler 222;//238;
         this.standardIDs = new String[]//
         {"stdcz"};
-        this.timeZone = TimeZone.getTimeZone( "GMT" );
+        this.timeZone = TimeZone.getTimeZone("GMT");
         this.defaultParsingOfFractionsBehavior = 1;
-
+        this.massSpecSetup = RittnerAgilent7700SetupUPb.getInstance();
     }
 
     /**
      *
      * @return
      */
-    public static Rittner_Agilent7700_RawDataTemplate getInstance () {
-        if ( instance == null ) {
-            instance = new Rittner_Agilent7700_RawDataTemplate();
-        }
+    public static Rittner_Agilent7700_RawDataTemplate getInstance() {
         return instance;
     }
-    
+
     /**
      *
      * @return
      */
     @Override
-     public AbstractAcquisitionModel makeNewAcquisitionModel () {
+    public AbstractAcquisitionModel makeNewAcquisitionModel() {
         this.acquisitionModel = new SingleCollectorAcquisition();
         return acquisitionModel;
     }

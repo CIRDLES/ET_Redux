@@ -22,6 +22,7 @@ package org.earthtime.Tripoli.rawDataFiles.templates;
 import java.io.Serializable;
 import java.util.TimeZone;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.AbstractAcquisitionModel;
+import org.earthtime.Tripoli.massSpecSetups.AbstractMassSpecSetup;
 import org.earthtime.dataDictionaries.FileTypeEnum;
 
 /**
@@ -91,6 +92,8 @@ public abstract class AbstractRawDataFileTemplate implements //
     protected AbstractAcquisitionModel acquisitionModel;
 
     protected String[] elementsByIsotopicMass;
+    
+    protected AbstractMassSpecSetup massSpecSetup;
 
     /**
      *
@@ -281,5 +284,19 @@ public abstract class AbstractRawDataFileTemplate implements //
         retVal+= "]";
         
         return retVal;
+    }
+
+    /**
+     * @return the massSpecSetup
+     */
+    public AbstractMassSpecSetup getMassSpecSetup() {
+        return massSpecSetup;
+    }
+
+    /**
+     * @param massSpecSetup the massSpecSetup to set
+     */
+    public void setMassSpecSetup(AbstractMassSpecSetup massSpecSetup) {
+        this.massSpecSetup = massSpecSetup;
     }
 }

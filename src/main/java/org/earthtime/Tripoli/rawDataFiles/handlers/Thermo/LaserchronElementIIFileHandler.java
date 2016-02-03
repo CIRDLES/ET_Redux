@@ -23,18 +23,18 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
-import org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan.LaserchronElementIISetupUPb;
 import org.earthtime.Tripoli.rawDataFiles.handlers.AbstractRawDataFileHandler;
+import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.LaserchronElementII_RawDataTemplate_A;
+import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.LaserchronElementII_RawDataTemplate_B;
+import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.LaserchronElementII_RawDataTemplate_C;
 import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.pythonUtilities.ElementII_DatFileConverter;
 import org.earthtime.utilities.FileHelper;
@@ -243,27 +243,12 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
                 long fractionPeakTimeStamp = calculateTimeStamp(extractedData[hardwiredEndOfBackground + 1][1]);
 
                 for (int i = rawDataFileTemplate.getBlockStartOffset(); i < rawDataFileTemplate.getBlockSize(); i++) {
-                    // 202  204  206	Pb207	Pb208	Th232	U238
-                    if (i < hardwiredEndOfBackground) {
-                        double[] backgroundIntensities = new double[7];
-                        backgroundAcquisitions.add(backgroundIntensities);
-                        backgroundIntensities[0] = calcAvgPulseOrAnalog(3, 6, extractedData[i]);
-                        backgroundIntensities[1] = calcAvgPulseOrAnalog(8, 11, extractedData[i]);
-                        backgroundIntensities[2] = calcAvgPulseThenAnalog(13, 16, extractedData[i]);
-                        backgroundIntensities[3] = calcAvgPulseThenAnalog(22, 25, extractedData[i]);
-                        backgroundIntensities[4] = calcAvgPulseThenAnalog(31, 34, extractedData[i]);
-                        backgroundIntensities[5] = calcAvgPulseThenAnalog(40, 43, extractedData[i]);
-                        backgroundIntensities[6] = calcAvgPulseThenAnalog(49, 52, extractedData[i]);
-                    } else if (i >= (hardwiredEndOfBackground)) {
-                        double[] peakIntensities = new double[7];
-                        peakAcquisitions.add(peakIntensities);
-                        peakIntensities[0] = calcAvgPulseOrAnalog(3, 6, extractedData[i]);
-                        peakIntensities[1] = calcAvgPulseOrAnalog(8, 11, extractedData[i]);
-                        peakIntensities[2] = calcAvgPulseThenAnalog(13, 16, extractedData[i]);
-                        peakIntensities[3] = calcAvgPulseThenAnalog(22, 25, extractedData[i]);
-                        peakIntensities[4] = calcAvgPulseThenAnalog(31, 34, extractedData[i]);
-                        peakIntensities[5] = calcAvgPulseThenAnalog(40, 43, extractedData[i]);
-                        peakIntensities[6] = calcAvgPulseThenAnalog(49, 52, extractedData[i]);
+                    if (rawDataFileTemplate instanceof LaserchronElementII_RawDataTemplate_A) {
+                        processIntensities_A(i, hardwiredEndOfBackground, backgroundAcquisitions, peakAcquisitions, extractedData[i]);
+                    } else if (rawDataFileTemplate instanceof LaserchronElementII_RawDataTemplate_B) {
+                        processIntensities_B(i, hardwiredEndOfBackground, backgroundAcquisitions, peakAcquisitions, extractedData[i]);
+                    } else if (rawDataFileTemplate instanceof LaserchronElementII_RawDataTemplate_C) {
+                        processIntensities_C(i, hardwiredEndOfBackground, backgroundAcquisitions, peakAcquisitions, extractedData[i]);
                     }
                 }  // i loop
 
@@ -276,29 +261,20 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
                                 fractionPeakTimeStamp,
                                 peakAcquisitions.size());
 
-                SortedSet<DataModelInterface> rawRatios = ((LaserchronElementIISetupUPb) massSpec).rawRatiosFactoryRevised();
+                SortedSet<DataModelInterface> rawRatios = massSpec.rawRatiosFactoryRevised();
+
                 tripoliFraction.setRawRatios(rawRatios);
 
                 massSpec.setCountOfAcquisitions(peakAcquisitions.size());
 
-                // establish map of virtual collectors to field indexes
-                Map<DataModelInterface, Integer> virtualCollectorModelMapToFieldIndexes = new HashMap<>();
-                virtualCollectorModelMapToFieldIndexes.put(massSpec.getHg202(), 0);
-                virtualCollectorModelMapToFieldIndexes.put(massSpec.getPb204(), 1);
-                virtualCollectorModelMapToFieldIndexes.put(massSpec.getPb206(), 2);
-                virtualCollectorModelMapToFieldIndexes.put(massSpec.getPb207(), 3);
-                virtualCollectorModelMapToFieldIndexes.put(massSpec.getPb208(), 4);
-                virtualCollectorModelMapToFieldIndexes.put(massSpec.getTh232(), 5);
-                virtualCollectorModelMapToFieldIndexes.put(massSpec.getU238(), 6);
-
                 massSpec.processFractionRawRatiosII(//
-                        backgroundAcquisitions, peakAcquisitions, isStandard, usingFullPropagation, tripoliFraction, virtualCollectorModelMapToFieldIndexes);
+                        backgroundAcquisitions, peakAcquisitions, isStandard, usingFullPropagation, tripoliFraction);
 
                 tripoliFraction.shadeDataActiveMapLeft(leftShadeCount);
                 System.out.println("\n**** Element II FractionID  " + fractionID);
 
                 myTripoliFractions.add(tripoliFraction);
-                
+
             } catch (PyException pyException) {
                 System.out.println("bad read of fraction " + analysisFiles[f].getName() + " message = " + pyException.getMessage());
             }
@@ -311,26 +287,84 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
         return myTripoliFractions;
     }
 
-    private double calcAvgPulseThenAnalog(int startIndex, int endIndex, String[] data) {
-        double retVal = 0.0;
-
-        int countOfValues = 0;
-        double sumOfValues = 0.0;
-        for (int i = startIndex; i <= endIndex; i++) {
-            if (data[i].contains("*")) {
-                retVal = calcAvgPulseOrAnalog(startIndex + 4, endIndex + 4, data);
-            } else {
-                double val = Double.parseDouble(data[i]);
-                sumOfValues += val;
-                countOfValues++;
-            }
+    private void processIntensities_A(int i, int hardwiredEndOfBackground, ArrayList<double[]> backgroundAcquisitions, ArrayList<double[]> peakAcquisitions, String[] extractedData) {
+        // 202  204  206 Pb207	Pb208	Th232 U238
+        if (i < hardwiredEndOfBackground) {
+            double[] backgroundIntensities = new double[7];
+            backgroundAcquisitions.add(backgroundIntensities);
+            backgroundIntensities[0] = calcAvgPulseOrAnalog(3, 6, extractedData);
+            backgroundIntensities[1] = calcAvgPulseOrAnalog(8, 11, extractedData);
+            backgroundIntensities[2] = calcAvgPulseThenAnalog(13, 16, extractedData);
+            backgroundIntensities[3] = calcAvgPulseThenAnalog(22, 25, extractedData);
+            backgroundIntensities[4] = calcAvgPulseThenAnalog(31, 34, extractedData);
+            backgroundIntensities[5] = calcAvgPulseThenAnalog(40, 43, extractedData);
+            backgroundIntensities[6] = calcAvgPulseThenAnalog(49, 52, extractedData);
+        } else if (i >= (hardwiredEndOfBackground)) {
+            double[] peakIntensities = new double[7];
+            peakAcquisitions.add(peakIntensities);
+            peakIntensities[0] = calcAvgPulseOrAnalog(3, 6, extractedData);
+            peakIntensities[1] = calcAvgPulseOrAnalog(8, 11, extractedData);
+            peakIntensities[2] = calcAvgPulseThenAnalog(13, 16, extractedData);
+            peakIntensities[3] = calcAvgPulseThenAnalog(22, 25, extractedData);
+            peakIntensities[4] = calcAvgPulseThenAnalog(31, 34, extractedData);
+            peakIntensities[5] = calcAvgPulseThenAnalog(40, 43, extractedData);
+            peakIntensities[6] = calcAvgPulseThenAnalog(49, 52, extractedData);
         }
+    }
 
-        // retVal > 0 means analogs were used already
-        if ((retVal == 0) && (countOfValues > 0)) {
-            retVal = sumOfValues / countOfValues;
+    private void processIntensities_B(int i, int hardwiredEndOfBackground, ArrayList<double[]> backgroundAcquisitions, ArrayList<double[]> peakAcquisitions, String[] extractedData) {
+        // 202  204  206 Pb207	Pb208 Th232 U235 U238
+        if (i < hardwiredEndOfBackground) {
+            double[] backgroundIntensities = new double[8];
+            backgroundAcquisitions.add(backgroundIntensities);
+            backgroundIntensities[0] = calcAvgPulseOrAnalog(3, 6, extractedData);
+            backgroundIntensities[1] = calcAvgPulseOrAnalog(12, 15, extractedData);
+            backgroundIntensities[2] = calcAvgPulseThenAnalog(21, 24, extractedData);
+            backgroundIntensities[3] = calcAvgPulseThenAnalog(30, 33, extractedData);
+            backgroundIntensities[4] = calcAvgPulseThenAnalog(39, 42, extractedData);
+            backgroundIntensities[5] = calcAvgPulseThenAnalog(48, 51, extractedData);
+            backgroundIntensities[6] = calcAvgPulseThenAnalog(57, 60, extractedData);
+            backgroundIntensities[7] = calcAvgPulseThenAnalog(66, 69, extractedData);
+        } else if (i >= (hardwiredEndOfBackground)) {
+            double[] peakIntensities = new double[8];
+            peakAcquisitions.add(peakIntensities);
+            peakIntensities[0] = calcAvgPulseOrAnalog(3, 6, extractedData);
+            peakIntensities[1] = calcAvgPulseOrAnalog(12, 15, extractedData);
+            peakIntensities[2] = calcAvgPulseThenAnalog(21, 24, extractedData);
+            peakIntensities[3] = calcAvgPulseThenAnalog(30, 33, extractedData);
+            peakIntensities[4] = calcAvgPulseThenAnalog(39, 42, extractedData);
+            peakIntensities[5] = calcAvgPulseThenAnalog(48, 51, extractedData);
+            peakIntensities[6] = calcAvgPulseThenAnalog(57, 60, extractedData);
+            peakIntensities[7] = calcAvgPulseThenAnalog(66, 69, extractedData);
         }
+    }
 
-        return retVal;
+    private void processIntensities_C(int i, int hardwiredEndOfBackground, ArrayList<double[]> backgroundAcquisitions, ArrayList<double[]> peakAcquisitions, String[] extractedData) {
+        // 176 202  204  206 Pb207 Pb208 Th232 U235 U238
+        if (i < hardwiredEndOfBackground) {
+            double[] backgroundIntensities = new double[8];
+            backgroundAcquisitions.add(backgroundIntensities);
+            backgroundIntensities[0] = calcAvgPulseOrAnalog(3, 6, extractedData);
+            backgroundIntensities[1] = calcAvgPulseOrAnalog(12, 15, extractedData);
+            backgroundIntensities[2] = calcAvgPulseOrAnalog(21, 24, extractedData);
+            backgroundIntensities[3] = calcAvgPulseThenAnalog(30, 33, extractedData);
+            backgroundIntensities[4] = calcAvgPulseThenAnalog(39, 42, extractedData);
+            backgroundIntensities[5] = calcAvgPulseThenAnalog(48, 51, extractedData);
+            backgroundIntensities[6] = calcAvgPulseThenAnalog(57, 60, extractedData);
+            backgroundIntensities[7] = calcAvgPulseThenAnalog(66, 69, extractedData);
+            backgroundIntensities[7] = calcAvgPulseThenAnalog(75, 78, extractedData);
+        } else if (i >= (hardwiredEndOfBackground)) {
+            double[] peakIntensities = new double[8];
+            peakAcquisitions.add(peakIntensities);
+            peakIntensities[0] = calcAvgPulseOrAnalog(3, 6, extractedData);
+            peakIntensities[1] = calcAvgPulseOrAnalog(12, 15, extractedData);
+            peakIntensities[2] = calcAvgPulseOrAnalog(21, 24, extractedData);
+            peakIntensities[3] = calcAvgPulseThenAnalog(30, 33, extractedData);
+            peakIntensities[4] = calcAvgPulseThenAnalog(39, 42, extractedData);
+            peakIntensities[5] = calcAvgPulseThenAnalog(48, 51, extractedData);
+            peakIntensities[6] = calcAvgPulseThenAnalog(57, 60, extractedData);
+            peakIntensities[7] = calcAvgPulseThenAnalog(66, 69, extractedData);
+            peakIntensities[7] = calcAvgPulseThenAnalog(75, 78, extractedData);
+        }
     }
 }

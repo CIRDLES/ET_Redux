@@ -1,7 +1,7 @@
 /*
- * LaserchronElementIISetupUPb
+ * LaserchronElementIISetupUPb_A
  *
- * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2016 James F. Bowring and www.Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -42,11 +42,11 @@ import org.earthtime.isotopes.IsotopesEnum;
  *
  * @author James F. Bowring
  */
-public final class LaserchronElementIISetupUPb extends AbstractMassSpecSetup{
-    
-    private static LaserchronElementIISetupUPb instance = new LaserchronElementIISetupUPb();
+public final class LaserchronElementIISetupUPb_A extends AbstractMassSpecSetup {
 
-    private LaserchronElementIISetupUPb() {
+    private static LaserchronElementIISetupUPb_A instance = new LaserchronElementIISetupUPb_A();
+
+    private LaserchronElementIISetupUPb_A() {
         super();
         NAME = "Laserchron Element II Setup";
         massSpecType = MassSpecTypeEnum.SINGLE;
@@ -62,7 +62,8 @@ public final class LaserchronElementIISetupUPb extends AbstractMassSpecSetup{
 
         this.commonLeadCorrectionHighestLevel = "NONE";
 
-        AbstractCollectorModel singleCollector = //
+        AbstractCollectorModel singleCollector
+                = //
                 new IonCounterCollectorModel(//
                         "Single", //
                         new ValueModel("DeadTime", //
@@ -123,7 +124,7 @@ public final class LaserchronElementIISetupUPb extends AbstractMassSpecSetup{
      *
      * @return
      */
-    public static LaserchronElementIISetupUPb getInstance() {
+    public static LaserchronElementIISetupUPb_A getInstance() {
         return instance;
     }
 
@@ -147,19 +148,11 @@ public final class LaserchronElementIISetupUPb extends AbstractMassSpecSetup{
     }
 
     /**
-     * yRevised(); }
      *
-     * /**
-     *
-     *
-     * @param intensitiesScan
-     * @param isStandard the value of isStandard
-     * @param fractionID the value of fractionID
-     * @param usingFullPropagation the value of usingFullPropagation
-     * @param tripoliFraction the value of tripoliFraction
      * @return the
      * java.util.SortedSet<org.earthtime.Tripoli.dataModels.DataModelInterface>
      */
+    @Override
     public SortedSet<DataModelInterface> rawRatiosFactoryRevised() {
 
         virtualCollectors = new ArrayList<>(VIRTUAL_COLLECTOR_COUNT);
@@ -229,6 +222,14 @@ public final class LaserchronElementIISetupUPb extends AbstractMassSpecSetup{
         isotopeToRawIntensitiesMap.put(IsotopesEnum.Hg202, Hg202);
 
         isotopeMappingModel.setIsotopeToRawIntensitiesMap(isotopeToRawIntensitiesMap);
+
+        virtualCollectorModelMapToFieldIndexes.put(Hg202, 0);
+        virtualCollectorModelMapToFieldIndexes.put(Pb204, 1);
+        virtualCollectorModelMapToFieldIndexes.put(Pb206, 2);
+        virtualCollectorModelMapToFieldIndexes.put(Pb207, 3);
+        virtualCollectorModelMapToFieldIndexes.put(Pb208, 4);
+        virtualCollectorModelMapToFieldIndexes.put(Th232, 5);
+        virtualCollectorModelMapToFieldIndexes.put(U238, 6);
 
         // raw ratios
         rawRatios = new TreeSet<>();
