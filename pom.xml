@@ -71,6 +71,10 @@
             <layout>default</layout>
         </repository> 
         <repository>
+            <id>zeringue.io</id>
+            <url>http://zeringue.io/maven2</url>
+        </repository>
+        <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
@@ -211,7 +215,7 @@
         <dependency>
             <groupId>com.github.cirdles.topsoil</groupId>
             <artifactId>core</artifactId>
-            <version>-SNAPSHOT</version>
+            <version>v1.0.0-alpha.8</version>
         </dependency>
         <dependency>
             <groupId>org.python</groupId>
