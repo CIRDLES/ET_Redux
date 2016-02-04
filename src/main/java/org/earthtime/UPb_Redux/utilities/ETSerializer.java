@@ -4,7 +4,7 @@
  * Created on April 11, 2006, 8:09 PM
  *
  *
- * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2016 James F. Bowring and www.Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@
 package org.earthtime.UPb_Redux.utilities;
 
 import java.io.*;
+import javax.swing.JOptionPane;
 import org.earthtime.exceptions.ETException;
 
 /**
@@ -73,10 +74,10 @@ public final class ETSerializer {
             o = s.readObject();
         } catch (FileNotFoundException ex) {
             System.out.println(ex.getMessage());
-        } catch (IOException ex) {
-            System.out.println(ex.getMessage());
-        } catch (ClassNotFoundException ex) {
-            System.out.println(ex.getMessage());
+        } catch (IOException | ClassNotFoundException ex) {
+            JOptionPane.showMessageDialog(null,
+                    new String[]{"The file you are attempting to open is not compatible with this version of ET_Redux."//,
+                    });
         }
 
         return o;

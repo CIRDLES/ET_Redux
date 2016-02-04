@@ -1,9 +1,8 @@
 /*
  * LaserChronNUPlasmaMultiCollFaradayTRAFileHandler.java
  *
- * Created Jul 1, 2011
  *
- * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2016 James F. Bowring and www.Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -52,12 +51,11 @@ import org.earthtime.utilities.TimeToString;
  * @author James F. Bowring
  */
 public class LaserChronNUPlasmaMultiCollFaradayTRAFileHandler extends AbstractRawDataFileHandler implements //
-        Comparable<AbstractRawDataFileHandler>,
         Serializable {
 
     // Class variables
     private static final long serialVersionUID = 4617107661618798359L;
-    private static LaserChronNUPlasmaMultiCollFaradayTRAFileHandler instance = null;
+    private static LaserChronNUPlasmaMultiCollFaradayTRAFileHandler instance = new LaserChronNUPlasmaMultiCollFaradayTRAFileHandler();
 //    private static String dataDelimiter;
 
     /**
@@ -81,9 +79,6 @@ public class LaserChronNUPlasmaMultiCollFaradayTRAFileHandler extends AbstractRa
      * @return
      */
     public static LaserChronNUPlasmaMultiCollFaradayTRAFileHandler getInstance() {
-        if (instance == null) {
-            instance = new LaserChronNUPlasmaMultiCollFaradayTRAFileHandler();//massSpec, rawDataFileTemplate );
-        }
         return instance;
     }
 

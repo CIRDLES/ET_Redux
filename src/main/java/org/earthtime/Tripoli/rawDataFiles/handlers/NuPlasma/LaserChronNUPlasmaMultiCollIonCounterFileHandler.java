@@ -1,7 +1,7 @@
 /*
  * LaserChronNUPlasmaMultiCollIonCounterFileHandler.java
  *
- * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2016 James F. Bowring and www.Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,6 +18,9 @@
 package org.earthtime.Tripoli.rawDataFiles.handlers.NuPlasma;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectStreamClass;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
@@ -47,12 +50,11 @@ import org.earthtime.utilities.TimeToString;
  * @author James F. Bowring
  */
 public class LaserChronNUPlasmaMultiCollIonCounterFileHandler extends AbstractRawDataFileHandler implements //
-        Comparable<AbstractRawDataFileHandler>,
         Serializable {
 
     // Class variables
     // private static final long serialVersionUID = 4104909666221641003L;
-    private static LaserChronNUPlasmaMultiCollIonCounterFileHandler instance = null;
+    private static LaserChronNUPlasmaMultiCollIonCounterFileHandler instance = new LaserChronNUPlasmaMultiCollIonCounterFileHandler();
 
     /**
      *
@@ -73,9 +75,6 @@ public class LaserChronNUPlasmaMultiCollIonCounterFileHandler extends AbstractRa
      * @return
      */
     public static LaserChronNUPlasmaMultiCollIonCounterFileHandler getInstance() {
-        if (instance == null) {
-            instance = new LaserChronNUPlasmaMultiCollIonCounterFileHandler();//massSpec, rawDataFileTemplate );
-        }
         return instance;
     }
 
@@ -99,7 +98,7 @@ public class LaserChronNUPlasmaMultiCollIonCounterFileHandler extends AbstractRa
             if (isValidRawDataFileType(rawDataFile)) {
                 // load header data into acquisitionModel instance
                 boolean success = loadDataSetupParametersFromRawDataFileHeader(rawDataFileTemplate.getAcquisitionModel());
-                if (!success){
+                if (!success) {
                     rawDataFile = null;
                 }
             } else {
@@ -159,7 +158,8 @@ public class LaserChronNUPlasmaMultiCollIonCounterFileHandler extends AbstractRa
         boolean retVal = false;
 
         for (int i = 0; i < getRawDataFileTemplate().getStandardIDs().length; i++) {
-            retVal = //
+            retVal
+                    = //
                     retVal //
                     || fractionID.endsWith(rawDataFileTemplate.getStandardIDs()[i].trim())//
                     || fractionID.contains(rawDataFileTemplate.getStandardIDs()[i].trim());
@@ -239,7 +239,7 @@ public class LaserChronNUPlasmaMultiCollIonCounterFileHandler extends AbstractRa
                     new String[]{"Selected raw data file was not valid."},
                     "ET Redux Warning",
                     JOptionPane.WARNING_MESSAGE);
-            
+
             retVal = false;
         }
         return retVal;
@@ -372,12 +372,10 @@ public class LaserChronNUPlasmaMultiCollIonCounterFileHandler extends AbstractRa
 
                     if (i == (ignoreFirstFractions + 1)) {
                         calendar.set(Calendar.AM_PM, AMPMval);
-                    } else {
-                        // check for rollover
-                        if (calendar.get(Calendar.AM_PM) > AMPMval) {
-                            // we have rolled to new day
-                            calendar.add(Calendar.DATE, 1);
-                        }
+                    } else // check for rollover
+                    if (calendar.get(Calendar.AM_PM) > AMPMval) {
+                        // we have rolled to new day
+                        calendar.add(Calendar.DATE, 1);
                     }
                     calendar.set(Calendar.AM_PM, AMPMval);
                     fractionDate = calendar.getTime();//   fractionTimeFormat.parse(fractionDateString);
@@ -421,9 +419,9 @@ public class LaserChronNUPlasmaMultiCollIonCounterFileHandler extends AbstractRa
 //                    tripoliFractions.add(tripoliFraction);
 //
 //                    System.out.println(sampleName + "   " + fractionID + " " + isStandard + "  \t" + TimeToString.timeStampString(fractionDate.getTime()));
-
                     // nov 2014 broke into steps to provide cleaner logic
-                    TripoliFraction tripoliFraction = //                           
+                    TripoliFraction tripoliFraction
+                            = //                           
                             new TripoliFraction( //
                                     theFractionID, //
                                     massSpec.getCommonLeadCorrectionHighestLevel(), //
@@ -449,5 +447,14 @@ public class LaserChronNUPlasmaMultiCollIonCounterFileHandler extends AbstractRa
         }
 
         return tripoliFractions;
+    }
+
+    private void readObject(
+            ObjectInputStream stream)
+            throws IOException, ClassNotFoundException {
+        stream.defaultReadObject();
+        ObjectStreamClass myObject = ObjectStreamClass.lookup(Class.forName(LaserChronNUPlasmaMultiCollIonCounterFileHandler.class.getCanonicalName()));
+        long theSUID = myObject.getSerialVersionUID();
+        System.out.println("Customized De-serialization of LaserChronNUPlasmaMultiCollIonCounterFileHandler " + theSUID);
     }
 }

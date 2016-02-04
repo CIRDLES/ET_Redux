@@ -30,6 +30,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.SortedMap;
@@ -125,6 +126,7 @@ public abstract class AbstractMassSpecSetup implements //
      */
     protected ValueModel r202Hg_204Hg;
 
+    protected DataModelInterface Hf176;
     /**
      *
      */
@@ -158,6 +160,8 @@ public abstract class AbstractMassSpecSetup implements //
      */
     protected String commonLeadCorrectionHighestLevel;
 
+    protected Map<DataModelInterface, Integer> virtualCollectorModelMapToFieldIndexes;
+
     /**
      *
      */
@@ -179,12 +183,14 @@ public abstract class AbstractMassSpecSetup implements //
         // TODO: make a user-set parameter
         this.r202Hg_204Hg = new ValueModel( //
                 "r202Hg_204Hg", new BigDecimal(4.346), "ABS", BigDecimal.ZERO, BigDecimal.ZERO);
+        this.Hf176 = null;
         this.Hg202 = null;
         this.Pb204 = null;
         this.Pb207 = null;
 
         this.useConstantBackgroundFitFunction = false;
         this.commonLeadCorrectionHighestLevel = "NONE";
+        this.virtualCollectorModelMapToFieldIndexes = new HashMap<>();
     }
 
     /**
@@ -194,7 +200,8 @@ public abstract class AbstractMassSpecSetup implements //
      */
     @Override
     public int compareTo(AbstractMassSpecSetup abstractMassSpecSetup) {
-        String abstractRawDataFileHandlerName =//
+        String abstractRawDataFileHandlerName
+                =//
                 abstractMassSpecSetup.NAME.trim();
         return (this.NAME.trim().compareToIgnoreCase(abstractRawDataFileHandlerName));
     }
@@ -241,6 +248,8 @@ public abstract class AbstractMassSpecSetup implements //
     public abstract SortedSet<DataModelInterface> rawRatiosFactory(//
             String[][] intensitiesScan, boolean isStandard, String fractionID, boolean usingFullPropagation, TripoliFraction tripoliFraction);
 
+    public abstract SortedSet<DataModelInterface> rawRatiosFactoryRevised();
+    
     /**
      *
      * @param usingFullPropagation
@@ -305,6 +314,26 @@ public abstract class AbstractMassSpecSetup implements //
             boolean usingFullPropagation, //
             TripoliFraction tripoliFraction, //
             Map<DataModelInterface, Integer> virtualCollectorModelMapToFieldIndexes) {
+
+        initializeVirtualCollectorsWithData(backgroundAcquisitions, peakAcquisitions, virtualCollectorModelMapToFieldIndexes);
+
+        processFractionRawRatiosStageII(isStandard, usingFullPropagation, tripoliFraction);
+    }
+
+    /**
+     * Intended to be final implementation
+     * @param backgroundAcquisitions
+     * @param peakAcquisitions
+     * @param isStandard
+     * @param usingFullPropagation
+     * @param tripoliFraction
+     */
+    public void processFractionRawRatiosII(//
+            ArrayList<double[]> backgroundAcquisitions, //
+            ArrayList<double[]> peakAcquisitions, //
+            boolean isStandard, //
+            boolean usingFullPropagation, //
+            TripoliFraction tripoliFraction) {
 
         initializeVirtualCollectorsWithData(backgroundAcquisitions, peakAcquisitions, virtualCollectorModelMapToFieldIndexes);
 
@@ -645,9 +674,11 @@ public abstract class AbstractMassSpecSetup implements //
         // per Noah's LA-ICP-MS Uncert Prop paper, we want to determine in particular
         // if 204Pb and 207Pb should be kept or rejected after corrections
 
-        boolean[] dataActiveMap = //
+        boolean[] dataActiveMap
+                = //
                 ((RawIntensityDataModel) isotope).getOnPeakVirtualCollector().getDataActiveMap();
-        double[] isotopeOPBC = //
+        double[] isotopeOPBC
+                = //
                 ((RawIntensityDataModel) isotope).getOnPeakVirtualCollector().getCorrectedIntensities();
 
         NonParametricStats nonParametricStats = NonParametricStats.getInstance();
@@ -977,7 +1008,8 @@ public abstract class AbstractMassSpecSetup implements //
      */
     public void assignGainsToCollectors(Map<String, Double> collectorNameToRelativeGainsMap) {
 
-        Iterator<String> collectorNameIterator = //
+        Iterator<String> collectorNameIterator
+                = //
                 collectorNameToRelativeGainsMap.keySet().iterator();
 
         while (collectorNameIterator.hasNext()) {
@@ -996,7 +1028,8 @@ public abstract class AbstractMassSpecSetup implements //
      * @param collectorNameToRelativeGainsUnctMap
      */
     public void assignGainsUnctToCollectors(Map<String, Double> collectorNameToRelativeGainsUnctMap) {
-        Iterator<String> collectorNameIterator = //
+        Iterator<String> collectorNameIterator
+                = //
                 collectorNameToRelativeGainsUnctMap.keySet().iterator();
 
         while (collectorNameIterator.hasNext()) {
@@ -1015,7 +1048,8 @@ public abstract class AbstractMassSpecSetup implements //
      * @param collectorNameToDeadTimesMap
      */
     public void assignDeadTimesToCollectors(Map<String, Double> collectorNameToDeadTimesMap) {
-        Iterator<String> collectorNameIterator = //
+        Iterator<String> collectorNameIterator
+                = //
                 collectorNameToDeadTimesMap.keySet().iterator();
 
         while (collectorNameIterator.hasNext()) {
@@ -1034,7 +1068,8 @@ public abstract class AbstractMassSpecSetup implements //
      * @param collectorNameToDeadTimesUnctMap
      */
     public void assignDeadTimesUnctToCollectors(Map<String, Double> collectorNameToDeadTimesUnctMap) {
-        Iterator<String> collectorNameIterator = //
+        Iterator<String> collectorNameIterator
+                = //
                 collectorNameToDeadTimesUnctMap.keySet().iterator();
 
         while (collectorNameIterator.hasNext()) {
@@ -1054,7 +1089,8 @@ public abstract class AbstractMassSpecSetup implements //
     public void assignIntegrationTimesToCollectors(Map<IsotopesEnum, Double> isotopeNameToIntegrationTimesMap) {
         Map<IsotopesEnum, Double> isotopeToIntegrationTimeMap = isotopeMappingModel.getIsotopeToIntegrationTimeMap();
 
-        Iterator<IsotopesEnum> isotopeNameIterator = //
+        Iterator<IsotopesEnum> isotopeNameIterator
+                = //
                 isotopeNameToIntegrationTimesMap.keySet().iterator();
 
         while (isotopeNameIterator.hasNext()) {
@@ -1068,7 +1104,8 @@ public abstract class AbstractMassSpecSetup implements //
      * @param collectorNameToResistorMap
      */
     public void assignResistorsCollectors(Map<String, FaradayCollectorModel.ResistorEnum> collectorNameToResistorMap) {
-        Iterator<String> collectorNameIterator = //
+        Iterator<String> collectorNameIterator
+                = //
                 collectorNameToResistorMap.keySet().iterator();
 
         while (collectorNameIterator.hasNext()) {
@@ -1087,7 +1124,8 @@ public abstract class AbstractMassSpecSetup implements //
      * @param collectorNameToAmpNoiseMap
      */
     public void assignAmpNoiseToCollectors(Map<String, Double> collectorNameToAmpNoiseMap) {
-        Iterator<String> collectorNameIterator = //
+        Iterator<String> collectorNameIterator
+                = //
                 collectorNameToAmpNoiseMap.keySet().iterator();
 
         while (collectorNameIterator.hasNext()) {
@@ -1110,191 +1148,202 @@ public abstract class AbstractMassSpecSetup implements //
      *
      * @param tripoliFractions
      * @param primaryMineralStandard the value of primaryMineralStandard
-     * @return the java.util.SortedMap<org.earthtime.dataDictionaries.RawRatioNames,org.earthtime.Tripoli.dataModels.DownholeFractionationDataModel>
+     * @return the
+     * java.util.SortedMap<org.earthtime.dataDictionaries.RawRatioNames,org.earthtime.Tripoli.dataModels.DownholeFractionationDataModel>
      */
     public SortedMap<RawRatioNames, DownholeFractionationDataModel>
             downholeFractionationDataModelsFactory(//
                     SortedSet<TripoliFraction> tripoliFractions, AbstractRatiosDataModel primaryMineralStandard) {
 
-                @SuppressWarnings("MapReplaceableByEnumMap")
-                SortedMap<RawRatioNames, DownholeFractionationDataModel> fractionationDataModels = new TreeMap<>();
+        @SuppressWarnings("MapReplaceableByEnumMap")
+        SortedMap<RawRatioNames, DownholeFractionationDataModel> fractionationDataModels = new TreeMap<>();
 
-                double[] acquireTimes = rawRatios.first().getOnPeakAquireTimesInSeconds();
-                double[] normalizedOnPeakAquireTimes = rawRatios.first().getNormalizedOnPeakAquireTimes();
+        double[] acquireTimes = rawRatios.first().getOnPeakAquireTimesInSeconds();
+        double[] normalizedOnPeakAquireTimes = rawRatios.first().getNormalizedOnPeakAquireTimes();
 
-                // same masking array keeps masking coordinated
-                MaskingSingleton maskingArray = MaskingSingleton.getInstance();
+        // same masking array keeps masking coordinated
+        MaskingSingleton maskingArray = MaskingSingleton.getInstance();
 
-                DownholeFractionationDataModel r206_207w =//
-                        new DownholeFractionationDataModel( //
-                                tripoliFractions, //
-                                RawRatioNames.r206_207w, //
-                                primaryMineralStandard, //
-                                new double[countOfAcquisitions], acquireTimes, normalizedOnPeakAquireTimes, maskingArray);
-                DownholeFractionationDataModel r206_238w =//
-                        new DownholeFractionationDataModel(//
-                                tripoliFractions, //
-                                RawRatioNames.r206_238w, //
-                                primaryMineralStandard, //
-                                new double[countOfAcquisitions], acquireTimes, normalizedOnPeakAquireTimes, maskingArray);
-                DownholeFractionationDataModel r208_232w = //
-                        new DownholeFractionationDataModel( //
-                                tripoliFractions, //
-                                RawRatioNames.r208_232w, //
-                                primaryMineralStandard, //
-                                new double[countOfAcquisitions], acquireTimes, normalizedOnPeakAquireTimes, maskingArray);
+        DownholeFractionationDataModel r206_207w
+                =//
+                new DownholeFractionationDataModel( //
+                        tripoliFractions, //
+                        RawRatioNames.r206_207w, //
+                        primaryMineralStandard, //
+                        new double[countOfAcquisitions], acquireTimes, normalizedOnPeakAquireTimes, maskingArray);
+        DownholeFractionationDataModel r206_238w
+                =//
+                new DownholeFractionationDataModel(//
+                        tripoliFractions, //
+                        RawRatioNames.r206_238w, //
+                        primaryMineralStandard, //
+                        new double[countOfAcquisitions], acquireTimes, normalizedOnPeakAquireTimes, maskingArray);
+        DownholeFractionationDataModel r208_232w
+                = //
+                new DownholeFractionationDataModel( //
+                        tripoliFractions, //
+                        RawRatioNames.r208_232w, //
+                        primaryMineralStandard, //
+                        new double[countOfAcquisitions], acquireTimes, normalizedOnPeakAquireTimes, maskingArray);
 
-                // oct 2012 update fractionation models based on valid ratios
-                // first load assumed models
-                fractionationDataModels.put(RawRatioNames.r206_207w, r206_207w);
-                fractionationDataModels.put(RawRatioNames.r206_238w, r206_238w);
-                fractionationDataModels.put(RawRatioNames.r208_232w, r208_232w);
+        // oct 2012 update fractionation models based on valid ratios
+        // first load assumed models
+        fractionationDataModels.put(RawRatioNames.r206_207w, r206_207w);
+        fractionationDataModels.put(RawRatioNames.r206_238w, r206_238w);
+        fractionationDataModels.put(RawRatioNames.r208_232w, r208_232w);
 
-                // now remove unusable
-                SortedSet<DataModelInterface> ratiosSortedSet = tripoliFractions.first().getRatiosForFractionFitting();//.getValidRawRatios();
+        // now remove unusable
+        SortedSet<DataModelInterface> ratiosSortedSet = tripoliFractions.first().getRatiosForFractionFitting();//.getValidRawRatios();
 
-                Iterator<DataModelInterface> ratiosSortedSetIterator = ratiosSortedSet.iterator();
-                while (ratiosSortedSetIterator.hasNext()) {
-                    DataModelInterface ratio = ratiosSortedSetIterator.next();
-                    if (!((RawRatioDataModel) ratio).isUsedForFractionationCorrections()) {
-                        fractionationDataModels.remove(ratio.getRawRatioModelName());
-                    }
-                }
-
-                return fractionationDataModels;
+        Iterator<DataModelInterface> ratiosSortedSetIterator = ratiosSortedSet.iterator();
+        while (ratiosSortedSetIterator.hasNext()) {
+            DataModelInterface ratio = ratiosSortedSetIterator.next();
+            if (!((RawRatioDataModel) ratio).isUsedForFractionationCorrections()) {
+                fractionationDataModels.remove(ratio.getRawRatioModelName());
             }
+        }
 
-            /**
-             * @return the VIRTUAL_COLLECTOR_COUNT
-             */
-            public int getVIRTUAL_COLLECTOR_COUNT() {
-                return VIRTUAL_COLLECTOR_COUNT;
-            }
+        return fractionationDataModels;
+    }
 
-            /**
-             *
-             * @param size
-             * @return
-             */
-            public static boolean[] defaultDataActiveMap(int size) {
-                boolean[] dataActiveMap = new boolean[size];
+    /**
+     * @return the VIRTUAL_COLLECTOR_COUNT
+     */
+    public int getVIRTUAL_COLLECTOR_COUNT() {
+        return VIRTUAL_COLLECTOR_COUNT;
+    }
 
-                for (int i = 0; i < dataActiveMap.length; i++) {
-                    dataActiveMap[i] = true;
-                }
+    /**
+     *
+     * @param size
+     * @return
+     */
+    public static boolean[] defaultDataActiveMap(int size) {
+        boolean[] dataActiveMap = new boolean[size];
 
-                return dataActiveMap;
-            }
+        for (int i = 0; i < dataActiveMap.length; i++) {
+            dataActiveMap[i] = true;
+        }
 
-            /**
-             * @return the COLLECTOR_DATA_FREQUENCY_MILLISECS
-             */
-            public long getCollectorDataFrequencyMillisecs() {
-                return COLLECTOR_DATA_FREQUENCY_MILLISECS;
-            }
+        return dataActiveMap;
+    }
 
-            /**
-             * @return the isotopeMappingModel
-             */
-            public IsotopeMappingModel getIsotopeMappingModel() {
-                return isotopeMappingModel;
-            }
+    /**
+     * @return the COLLECTOR_DATA_FREQUENCY_MILLISECS
+     */
+    public long getCollectorDataFrequencyMillisecs() {
+        return COLLECTOR_DATA_FREQUENCY_MILLISECS;
+    }
 
-            /**
-             * @return the NAME
-             */
-            public String getName() {
-                return NAME;
-            }
+    /**
+     * @return the isotopeMappingModel
+     */
+    public IsotopeMappingModel getIsotopeMappingModel() {
+        return isotopeMappingModel;
+    }
 
-            /**
-             * @return the massSpecType
-             */
-            public MassSpecTypeEnum getMassSpecType() {
-                return massSpecType;
-            }
+    /**
+     * @return the NAME
+     */
+    public String getName() {
+        return NAME;
+    }
 
-            /**
-             * @return the COLLECTOR_DATA_FREQUENCY_MILLISECS
-             */
-            public long getCOLLECTOR_DATA_FREQUENCY_MILLISECS() {
-                return COLLECTOR_DATA_FREQUENCY_MILLISECS;
-            }
+    /**
+     * @return the massSpecType
+     */
+    public MassSpecTypeEnum getMassSpecType() {
+        return massSpecType;
+    }
 
-            /**
-             * @return the commonLeadCorrectionHighestLevel
-             */
-            public String getCommonLeadCorrectionHighestLevel() {
-                return commonLeadCorrectionHighestLevel;
-            }
+    /**
+     * @return the COLLECTOR_DATA_FREQUENCY_MILLISECS
+     */
+    public long getCOLLECTOR_DATA_FREQUENCY_MILLISECS() {
+        return COLLECTOR_DATA_FREQUENCY_MILLISECS;
+    }
 
-            /**
-             * @param rawRatios the rawRatios to set
-             */
-            public void setRawRatios(SortedSet<DataModelInterface> rawRatios) {
-                this.rawRatios = rawRatios;
-            }
+    /**
+     * @return the commonLeadCorrectionHighestLevel
+     */
+    public String getCommonLeadCorrectionHighestLevel() {
+        return commonLeadCorrectionHighestLevel;
+    }
 
-            /**
-             * @param countOfAcquisitions the countOfAcquisitions to set
-             */
-            public void setCountOfAcquisitions(int countOfAcquisitions) {
-                this.countOfAcquisitions = countOfAcquisitions;
-            }
+    /**
+     * @param rawRatios the rawRatios to set
+     */
+    public void setRawRatios(SortedSet<DataModelInterface> rawRatios) {
+        this.rawRatios = rawRatios;
+    }
 
-            /**
-             * @return the Pb207
-             */
-            public DataModelInterface getPb207() {
-                return Pb207;
-            }
+    /**
+     * @param countOfAcquisitions the countOfAcquisitions to set
+     */
+    public void setCountOfAcquisitions(int countOfAcquisitions) {
+        this.countOfAcquisitions = countOfAcquisitions;
+    }
 
-            /**
-             * @return the Pb208
-             */
-            public DataModelInterface getPb208() {
-                return Pb208;
-            }
+    /**
+     * @return the Pb207
+     */
+    public DataModelInterface getPb207() {
+        return Pb207;
+    }
 
-            /**
-             * @return the Pb206
-             */
-            public DataModelInterface getPb206() {
-                return Pb206;
-            }
+    /**
+     * @return the Pb208
+     */
+    public DataModelInterface getPb208() {
+        return Pb208;
+    }
 
-            /**
-             * @return the U238
-             */
-            public DataModelInterface getU238() {
-                return U238;
-            }
+    /**
+     * @return the Pb206
+     */
+    public DataModelInterface getPb206() {
+        return Pb206;
+    }
 
-            /**
-             * @return the Th232
-             */
-            public DataModelInterface getTh232() {
-                return Th232;
-            }
+    /**
+     * @return the U238
+     */
+    public DataModelInterface getU238() {
+        return U238;
+    }
 
-            /**
-             * @return the U235
-             */
-            public DataModelInterface getU235() {
-                return U235;
-            }
+    /**
+     * @return the Th232
+     */
+    public DataModelInterface getTh232() {
+        return Th232;
+    }
 
-            /**
-             * @return the Hg202
-             */
-            public DataModelInterface getHg202() {
-                return Hg202;
-            }
+    /**
+     * @return the U235
+     */
+    public DataModelInterface getU235() {
+        return U235;
+    }
 
-            /**
-             * @return the Pb204
-             */
-            public DataModelInterface getPb204() {
-                return Pb204;
-            }
+    /**
+     * @return the Hg202
+     */
+    public DataModelInterface getHg202() {
+        return Hg202;
+    }
+
+    /**
+     * @return the Pb204
+     */
+    public DataModelInterface getPb204() {
+        return Pb204;
+    }
+
+    /**
+     * @return the Hf176
+     */
+    public DataModelInterface getHf176() {
+        return Hf176;
+    }
 }

@@ -6,10 +6,12 @@
 package org.earthtime.Tripoli.massSpecSetups.shrimp;
 
 import java.io.File;
+import java.util.List;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import org.cirdles.shrimp.PrawnFile;
+import org.cirdles.shrimp.PrawnFile.Run.Set.Scan.Measurement;
 
 /**
  *
@@ -27,9 +29,15 @@ public class test {
             JAXBContext jaxbContext = JAXBContext.newInstance(PrawnFile.class);
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
             PrawnFile pf = (PrawnFile) jaxbUnmarshaller.unmarshal(file);
-            System.out.println(pf.getRun().get(0).getSet().getScan().get(0).getMeasurement().get(0).getData().get(1).getValue());
+            List<Measurement> measurements = pf.getRun().get(0).getSet().getScan().get(0).getMeasurement();
+            for (int i = 0; i < measurements.size(); i++) {
+                System.out.println(pf.getRun().get(0).getSet().getScan().get(0).getMeasurement().get(i).getData().get(0).getName());
+                System.out.println(pf.getRun().get(0).getSet().getScan().get(0).getMeasurement().get(i).getData().get(0).getValue());
+                System.out.println(pf.getRun().get(0).getSet().getScan().get(0).getMeasurement().get(i).getData().get(1).getValue());
+            }
+
         } catch (JAXBException jAXBException) {
         }
     }
-    
+
 }

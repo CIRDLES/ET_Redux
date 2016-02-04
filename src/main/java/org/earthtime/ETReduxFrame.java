@@ -803,8 +803,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         if (sampleAnalysisType.equalsIgnoreCase(SampleAnalysisTypesEnum.LAICPMS.getName())) {
 
             myProjectManager
-                    = //
-                    new ProjectManagerFor_LAICPMS_FromRawData(this, true, myState, theProject);
+                    = new ProjectManagerFor_LAICPMS_FromRawData(this, true, myState, theProject);
 
             // modal call
             myProjectManager.setVisible(true);
@@ -1967,6 +1966,8 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         reportResultsTableAsStringsInExcel_menuItem = new javax.swing.JMenuItem();
         reportResultsTableAsNumbersInExcel_menuItem = new javax.swing.JMenuItem();
         reportResultsTableAsNumbersInCSV_menuItem = new javax.swing.JMenuItem();
+        jSeparator6 = new javax.swing.JPopupMenu.Separator();
+        reportSettingsHelp = new javax.swing.JMenuItem();
         referencesMenu = new javax.swing.JMenu();
         gCubedPaperSoftware_menuItem = new javax.swing.JMenuItem();
         gCubedPaperReductionEquations_menuItem = new javax.swing.JMenuItem();
@@ -2244,6 +2245,11 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
         newProjectRawDataSHRIMP.setText("SHRIMP");
         newProjectRawDataSHRIMP.setEnabled(false);
+        newProjectRawDataSHRIMP.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                newProjectRawDataSHRIMPActionPerformed(evt);
+            }
+        });
         newProjectFromRawData_menu.add(newProjectRawDataSHRIMP);
 
         project_menu.add(newProjectFromRawData_menu);
@@ -2681,7 +2687,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             }
         });
 
-        editCurrentReportSettingsModel_menuItem.setText("Edit Current Report Settings");
+        editCurrentReportSettingsModel_menuItem.setText("Report Settings Manager");
         editCurrentReportSettingsModel_menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 editCurrentReportSettingsModel_menuItemActionPerformed(evt);
@@ -2763,6 +2769,15 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             }
         });
         reportMenu.add(reportResultsTableAsNumbersInCSV_menuItem);
+        reportMenu.add(jSeparator6);
+
+        reportSettingsHelp.setText("Help");
+        reportSettingsHelp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                reportSettingsHelpActionPerformed(evt);
+            }
+        });
+        reportMenu.add(reportSettingsHelp);
 
         mainMenuBar.add(reportMenu);
 
@@ -3355,18 +3370,17 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
     }//GEN-LAST:event_helpMenuMenuDeselected
 
     private void interpretSampleDates_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_interpretSampleDates_buttonActionPerformed
-        // Dec 2015 experiment with customization
+        // Dec 2015 experiment with customization of skins
         if (theSample.getIsotopeStyle().compareToIgnoreCase("UTh") == 0) {
             TopsoilEvolutionPlot topsoilEvolutionChart = new TopsoilEvolutionPlot();
             topsoilEvolutionChart.setSelectedFractions(theSample.getFractions());
             topsoilEvolutionChart.preparePanel();
             topsoilEvolutionChart.showPanel();
 
-            TopsoilEvolutionPlot topsoilEvolutionChart2 = new TopsoilEvolutionPlot();
-            topsoilEvolutionChart2.setSelectedFractions(theSample.getFractions());
-            topsoilEvolutionChart2.preparePanel();
-            topsoilEvolutionChart2.showPanel();
-
+//            TopsoilEvolutionPlot topsoilEvolutionChart2 = new TopsoilEvolutionPlot();
+//            topsoilEvolutionChart2.setSelectedFractions(theSample.getFractions());
+//            topsoilEvolutionChart2.preparePanel();
+//            topsoilEvolutionChart2.showPanel();
         } else {
 
             manageSampleDateInterpretation(//
@@ -4155,6 +4169,14 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
         setUpNewCompiledLegacyProject(SampleAnalysisTypesEnum.USERIES.getName(), "UTh");
     }//GEN-LAST:event_dibbs_USeriesActionPerformed
 
+    private void reportSettingsHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reportSettingsHelpActionPerformed
+        BrowserControl.displayURL("http://cirdles.org/projects/et_redux/#reports-overview");
+    }//GEN-LAST:event_reportSettingsHelpActionPerformed
+
+    private void newProjectRawDataSHRIMPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newProjectRawDataSHRIMPActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_newProjectRawDataSHRIMPActionPerformed
+
     private void helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
         BrowserControl.displayURL("http://cirdles.org/projects/et_redux/");
 
@@ -4212,6 +4234,7 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator4;
     private javax.swing.JPopupMenu.Separator jSeparator5;
+    private javax.swing.JPopupMenu.Separator jSeparator6;
     private javax.swing.JPopupMenu.Separator jSeparator7;
     private javax.swing.JPopupMenu.Separator jSeparator8;
     private javax.swing.JPopupMenu.Separator jSeparator9;
@@ -4255,6 +4278,7 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     private javax.swing.JMenuItem reportResultsTableAsNumbersInExcel_menuItem;
     private javax.swing.JMenuItem reportResultsTableAsPDF_menuItem;
     private javax.swing.JMenuItem reportResultsTableAsStringsInExcel_menuItem;
+    private javax.swing.JMenuItem reportSettingsHelp;
     private javax.swing.JMenu sampleFileMenu;
     private javax.swing.JButton saveAndQuit_button;
     private javax.swing.JMenuItem saveCurrentReportSettingsAsDefault_menuItem;

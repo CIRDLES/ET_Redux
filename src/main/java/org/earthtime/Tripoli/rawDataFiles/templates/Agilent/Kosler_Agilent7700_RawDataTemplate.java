@@ -1,7 +1,7 @@
 /*
  * Kosler_Agilent7700_RawDataTemplate
  *
- * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2016 James F. Bowring and www.Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.io.Serializable;
 import java.util.TimeZone;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.AbstractAcquisitionModel;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.SingleCollectorAcquisition;
+import org.earthtime.Tripoli.massSpecSetups.singleCollector.Agilent7700.KoslerAgilent7700SetupUPb;
 import org.earthtime.Tripoli.rawDataFiles.templates.AbstractRawDataFileTemplate;
 import org.earthtime.dataDictionaries.FileTypeEnum;
 
@@ -32,7 +33,7 @@ public final class Kosler_Agilent7700_RawDataTemplate extends AbstractRawDataFil
         Comparable<AbstractRawDataFileTemplate>,
         Serializable {
 
-    private static Kosler_Agilent7700_RawDataTemplate instance = null;
+    private static Kosler_Agilent7700_RawDataTemplate instance = new Kosler_Agilent7700_RawDataTemplate();
 
     private Kosler_Agilent7700_RawDataTemplate () {
         super();
@@ -49,7 +50,7 @@ public final class Kosler_Agilent7700_RawDataTemplate extends AbstractRawDataFil
         {"91500"};
         this.timeZone = TimeZone.getTimeZone( "GMT" );
         this.defaultParsingOfFractionsBehavior = 1;
-
+        this.massSpecSetup = KoslerAgilent7700SetupUPb.getInstance();
     }
 
     /**
@@ -57,9 +58,6 @@ public final class Kosler_Agilent7700_RawDataTemplate extends AbstractRawDataFil
      * @return
      */
     public static Kosler_Agilent7700_RawDataTemplate getInstance () {
-        if ( instance == null ) {
-            instance = new Kosler_Agilent7700_RawDataTemplate();
-        }
         return instance;
     }
     

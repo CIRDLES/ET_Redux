@@ -18,6 +18,11 @@ public enum IsotopesEnum {
     /**
      *
      */
+    Hf176( "Hf", 176, "176Hf", "Hf176" ),
+
+    /**
+     *
+     */
     Hg202( "Hg", 202, "202Hg", "Hg202" ),
 
     /**

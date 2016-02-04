@@ -17,7 +17,6 @@
  */
 package org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.SortedSet;
@@ -43,12 +42,9 @@ import org.earthtime.isotopes.IsotopesEnum;
  *
  * @author James F. Bowring
  */
-public final class TexasAMElementIISetupUPb extends AbstractMassSpecSetup implements //
-        Comparable<AbstractMassSpecSetup>,
-        Serializable {
+public final class TexasAMElementIISetupUPb extends AbstractMassSpecSetup {
 
-    private static TexasAMElementIISetupUPb instance = null;
-//    private SortedSet<DataModelInterface> genericIsotopeModels;
+    private static TexasAMElementIISetupUPb instance = new TexasAMElementIISetupUPb();
 
     private TexasAMElementIISetupUPb() {
         super();
@@ -126,9 +122,6 @@ public final class TexasAMElementIISetupUPb extends AbstractMassSpecSetup implem
      * @return
      */
     public static TexasAMElementIISetupUPb getInstance() {
-        if (instance == null) {
-            instance = new TexasAMElementIISetupUPb();
-        }
         return instance;
     }
 

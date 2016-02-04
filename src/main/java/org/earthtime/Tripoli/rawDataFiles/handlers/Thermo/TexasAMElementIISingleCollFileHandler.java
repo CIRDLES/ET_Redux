@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectStreamClass;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -37,18 +36,17 @@ import org.earthtime.Tripoli.rawDataFiles.handlers.AbstractRawDataFileHandler;
 import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.pythonUtilities.ElementII_DatFileConverter;
 import org.earthtime.utilities.FileHelper;
+import org.python.core.PyException;
 
 /**
  *
  * @author James F. Bowring
  */
-public class TexasAMElementIISingleCollFileHandler extends AbstractRawDataFileHandler implements //
-        Comparable<AbstractRawDataFileHandler>,
-        Serializable {
+public class TexasAMElementIISingleCollFileHandler extends AbstractRawDataFileHandler{
 
     // Class variables
     // private static final long serialVersionUID = 3111511502335804607L;
-    private static TexasAMElementIISingleCollFileHandler instance = null;
+    private static TexasAMElementIISingleCollFileHandler instance = new TexasAMElementIISingleCollFileHandler();
     private File[] analysisFiles;
 
     /**
@@ -70,9 +68,6 @@ public class TexasAMElementIISingleCollFileHandler extends AbstractRawDataFileHa
      * @return
      */
     public static TexasAMElementIISingleCollFileHandler getInstance() {
-        if (instance == null) {
-            instance = new TexasAMElementIISingleCollFileHandler();
-        }
         return instance;
     }
 
@@ -190,10 +185,10 @@ public class TexasAMElementIISingleCollFileHandler extends AbstractRawDataFileHa
 
                     // needs to be more robust
                     boolean isStandard = (fractionID.compareToIgnoreCase(rawDataFileTemplate.getStandardIDs()[0]) == 0);
-                    
+
                     String[][] backgroundFileContents = ElementII_DatFileConverter.readDatFile5(backgroundFile, rawDataFileTemplate.getStringListOfElementsByIsotopicMass());
                     String[][] onPeakFileContents = ElementII_DatFileConverter.readDatFile5(analysisFiles[f], rawDataFileTemplate.getStringListOfElementsByIsotopicMass());
-                    
+
                     ArrayList<double[]> backgroundAcquisitions = new ArrayList<>();
                     ArrayList<double[]> peakAcquisitions = new ArrayList<>();
 
@@ -201,7 +196,7 @@ public class TexasAMElementIISingleCollFileHandler extends AbstractRawDataFileHa
                     long fractionBackgroundTimeStamp = calculateTimeStamp(backgroundFileContents[0][1]);
                     // process time stamp of first peak reading
                     long fractionPeakTimeStamp = calculateTimeStamp(onPeakFileContents[0][1]);
-                    
+
                     for (int i = 0; i < rawDataFileTemplate.getBlockSize(); i++) {
                         // 202  204  206	Pb207	Pb208	Th232	U235 U238
                         double[] backgroundIntensities = new double[8];
@@ -214,7 +209,7 @@ public class TexasAMElementIISingleCollFileHandler extends AbstractRawDataFileHa
                         backgroundIntensities[5] = calcAvgPulseOrAnalog(23, 25, backgroundFileContents[i]);
                         backgroundIntensities[6] = calcAvgPulseOrAnalog(27, 29, backgroundFileContents[i]);
                         backgroundIntensities[7] = calcAvgPulseOrAnalog(31, 33, backgroundFileContents[i]);
-                        
+
                         double[] peakIntensities = new double[8];
                         peakAcquisitions.add(peakIntensities);
                         peakIntensities[0] = calcAvgPulseOrAnalog(3, 5, onPeakFileContents[i]);
@@ -225,7 +220,7 @@ public class TexasAMElementIISingleCollFileHandler extends AbstractRawDataFileHa
                         peakIntensities[5] = calcAvgPulseOrAnalog(23, 25, onPeakFileContents[i]);
                         peakIntensities[6] = calcAvgPulseOrAnalog(27, 29, onPeakFileContents[i]);
                         peakIntensities[7] = calcAvgPulseOrAnalog(31, 33, onPeakFileContents[i]);
-                        
+
                     }  // i loop
 
                     TripoliFraction tripoliFraction
@@ -236,10 +231,10 @@ public class TexasAMElementIISingleCollFileHandler extends AbstractRawDataFileHa
                                     fractionBackgroundTimeStamp, //
                                     fractionPeakTimeStamp,
                                     peakAcquisitions.size());
-                    
+
                     SortedSet<DataModelInterface> rawRatios = ((TexasAMElementIISetupUPb) massSpec).rawRatiosFactoryRevised();
                     tripoliFraction.setRawRatios(rawRatios);
-                    
+
                     massSpec.setCountOfAcquisitions(peakAcquisitions.size());
 
                     // establish map of virtual collectors to field indexes
@@ -252,16 +247,16 @@ public class TexasAMElementIISingleCollFileHandler extends AbstractRawDataFileHa
                     virtualCollectorModelMapToFieldIndexes.put(massSpec.getTh232(), 5);
                     virtualCollectorModelMapToFieldIndexes.put(massSpec.getU235(), 6);
                     virtualCollectorModelMapToFieldIndexes.put(massSpec.getU238(), 7);
-                    
+
                     massSpec.processFractionRawRatiosII(//
                             backgroundAcquisitions, peakAcquisitions, isStandard, usingFullPropagation, tripoliFraction, virtualCollectorModelMapToFieldIndexes);
-                    
+
                     tripoliFraction.shadeDataActiveMapLeft(leftShadeCount);
                     System.out.println("\n**** Element II FractionID  " + fractionID + " completed ***************************\n\n");
-                    
+
                     myTripoliFractions.add(tripoliFraction);
-                } catch (Exception e) {
-                    System.out.println("bad read of fraction " + analysisFiles[f].getName() + " message = " + e.getMessage());
+                } catch (PyException pyException) {
+                    System.out.println("bad read of fraction " + analysisFiles[f].getName() + " message = " + pyException.getMessage());
                 }
             } // end of files loop
         }
@@ -278,6 +273,6 @@ public class TexasAMElementIISingleCollFileHandler extends AbstractRawDataFileHa
         stream.defaultReadObject();
         ObjectStreamClass myObject = ObjectStreamClass.lookup(Class.forName(TexasAMElementIISingleCollFileHandler.class.getCanonicalName()));
         long theSUID = myObject.getSerialVersionUID();
-        System.out.println("Customized De-serialization of WashStateElementIISingleCollFileHandler " + theSUID);
+        System.out.println("Customized De-serialization of TexasAMElementIISingleCollFileHandler " + theSUID);
     }
 }

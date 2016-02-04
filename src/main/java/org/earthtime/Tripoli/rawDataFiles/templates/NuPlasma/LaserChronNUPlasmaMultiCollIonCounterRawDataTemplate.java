@@ -1,7 +1,7 @@
 /*
  * LaserChronNUPlasmaMultiCollIonCounterRawDataTemplate.java
  *
- * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2016 James F. Bowring and www.Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.io.Serializable;
 import java.util.TimeZone;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.AbstractAcquisitionModel;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.StaticAcquisition;
+import org.earthtime.Tripoli.massSpecSetups.multiCollector.NUPlasma.GehrelsNUPlasmaSetupUPbIonCounter;
 import org.earthtime.Tripoli.rawDataFiles.templates.AbstractRawDataFileTemplate;
 import org.earthtime.dataDictionaries.FileTypeEnum;
 
@@ -32,7 +33,7 @@ public final class LaserChronNUPlasmaMultiCollIonCounterRawDataTemplate extends 
         Comparable<AbstractRawDataFileTemplate>,
         Serializable {
 
-    private static LaserChronNUPlasmaMultiCollIonCounterRawDataTemplate instance = null;
+    private static LaserChronNUPlasmaMultiCollIonCounterRawDataTemplate instance = new LaserChronNUPlasmaMultiCollIonCounterRawDataTemplate();
 
     private LaserChronNUPlasmaMultiCollIonCounterRawDataTemplate () {
         super();
@@ -49,7 +50,7 @@ public final class LaserChronNUPlasmaMultiCollIonCounterRawDataTemplate extends 
         {"SL"};
         this.timeZone = TimeZone.getTimeZone( "MST" );
         this.defaultParsingOfFractionsBehavior = 1;
-
+        this.massSpecSetup = GehrelsNUPlasmaSetupUPbIonCounter.getInstance();
     }
 
     /**
@@ -57,9 +58,6 @@ public final class LaserChronNUPlasmaMultiCollIonCounterRawDataTemplate extends 
      * @return
      */
     public static LaserChronNUPlasmaMultiCollIonCounterRawDataTemplate getInstance () {
-        if ( instance == null ) {
-            instance = new LaserChronNUPlasmaMultiCollIonCounterRawDataTemplate();
-        }
         return instance;
     }
     

@@ -511,8 +511,8 @@ public class ReportSpecifications {
 
         reportTableFootnotes.put(//
                 "FN-1", //
-                "Th contents calculated from radiogenic 208Pb and the 230Th-corrected 206Pb/238U "// corrected text 25 April 2014 per McLean
-                + "date of the sample, assuming concordance between the U-Pb and Th-Pb systems.");
+                "Th contents calculated from radiogenic 208Pb and 230Th-corrected 206Pb/238U "// corrected text 25 April 2014 per McLean
+                + "date of the sample, assuming concordance between U-Pb Th-Pb systems.");
         reportTableFootnotes.put(//
                 "FN-2", //
                 "Ratio of radiogenic Pb (including 208Pb) to common Pb.");

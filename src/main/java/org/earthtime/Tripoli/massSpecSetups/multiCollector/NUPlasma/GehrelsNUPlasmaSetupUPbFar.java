@@ -3,7 +3,7 @@
  *
  * Created Jul 3, 2011
  *
- * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2016 James F. Bowring and www.Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ public final class GehrelsNUPlasmaSetupUPbFar extends AbstractMassSpecSetup impl
 
     // Class variables
     private static final long serialVersionUID = -5116574729913272427L;
-    private static GehrelsNUPlasmaSetupUPbFar instance = null;
+    private static GehrelsNUPlasmaSetupUPbFar instance = new GehrelsNUPlasmaSetupUPbFar();
 
     private GehrelsNUPlasmaSetupUPbFar() {
         super();
@@ -180,9 +180,6 @@ public final class GehrelsNUPlasmaSetupUPbFar extends AbstractMassSpecSetup impl
      * @return
      */
     public static GehrelsNUPlasmaSetupUPbFar getInstance() {
-        if (instance == null) {
-            instance = new GehrelsNUPlasmaSetupUPbFar();
-        }
         return instance;
     }
 
@@ -297,5 +294,10 @@ public final class GehrelsNUPlasmaSetupUPbFar extends AbstractMassSpecSetup impl
 //        processFractionRawRatios(intensitiesScan, isStandard, fractionID, usingFullPropagation, tripoliFraction);
 
         return rawRatios;
+    }
+
+    @Override
+    public SortedSet<DataModelInterface> rawRatiosFactoryRevised() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

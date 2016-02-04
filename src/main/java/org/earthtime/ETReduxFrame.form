@@ -49,6 +49,9 @@
                     <Property name="text" type="java.lang.String" value="SHRIMP"/>
                     <Property name="enabled" type="boolean" value="false"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="newProjectRawDataSHRIMPActionPerformed"/>
+                  </Events>
                 </MenuItem>
               </SubComponents>
             </Menu>
@@ -516,7 +519,7 @@
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="editCurrentReportSettingsModel_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Edit Current Report Settings"/>
+                <Property name="text" type="java.lang.String" value="Report Settings Manager"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editCurrentReportSettingsModel_menuItemActionPerformed"/>
@@ -598,6 +601,16 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="reportResultsTableAsNumbersInCSV_menuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator6">
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="reportSettingsHelp">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Help"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="reportSettingsHelpActionPerformed"/>
               </Events>
             </MenuItem>
           </SubComponents>

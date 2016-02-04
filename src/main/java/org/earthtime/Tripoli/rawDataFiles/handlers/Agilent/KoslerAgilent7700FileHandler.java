@@ -18,6 +18,9 @@
 package org.earthtime.Tripoli.rawDataFiles.handlers.Agilent;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectStreamClass;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -42,10 +45,11 @@ import org.earthtime.utilities.FileHelper;
  * @author James F. Bowring
  */
 public class KoslerAgilent7700FileHandler extends AbstractRawDataFileHandler implements //
-        Comparable<AbstractRawDataFileHandler>,
         Serializable {
 
-    private static KoslerAgilent7700FileHandler instance = null;
+    // Class variables
+    // private static final long serialVersionUID = 3111511502335804607L;
+    private static KoslerAgilent7700FileHandler instance = new KoslerAgilent7700FileHandler();
     public static ForkJoinPool fjPool = new ForkJoinPool();
     private File[] analysisFiles;
 
@@ -66,9 +70,6 @@ public class KoslerAgilent7700FileHandler extends AbstractRawDataFileHandler imp
      * @return
      */
     public static KoslerAgilent7700FileHandler getInstance() {
-        if (instance == null) {
-            instance = new KoslerAgilent7700FileHandler();//massSpec, rawDataFileTemplate );
-        }
         return instance;
     }
 
@@ -189,7 +190,8 @@ public class KoslerAgilent7700FileHandler extends AbstractRawDataFileHandler imp
             // form = Acquired      : 04/04/2013 1:22:25 PM using AcqMethod SJ_ZRILC.m
             String timeStampFromRow2[] = fractionFileRows[2].split(" :")[1].split(" +");
 
-            String fractionDate = //
+            String fractionDate
+                    = //
                     timeStampFromRow2[1] + " " // day/month/year
                     + timeStampFromRow2[2] + " " // hour:min:sec
                     + timeStampFromRow2[3] + " " // AM/PM
@@ -241,7 +243,8 @@ public class KoslerAgilent7700FileHandler extends AbstractRawDataFileHandler imp
                     }
                 }  // i loop
 
-                TripoliFraction tripoliFraction = //                           
+                TripoliFraction tripoliFraction
+                        = //                           
                         new TripoliFraction( //
                                 fractionID, //
                                 massSpec.getCommonLeadCorrectionHighestLevel(), //
@@ -444,4 +447,13 @@ public class KoslerAgilent7700FileHandler extends AbstractRawDataFileHandler imp
 ////
 ////        return tripoliFraction;
 ////    }
+    private void readObject(
+            ObjectInputStream stream)
+            throws IOException, ClassNotFoundException {
+        stream.defaultReadObject();
+        ObjectStreamClass myObject = ObjectStreamClass.lookup(
+                Class.forName(KoslerAgilent7700FileHandler.class.getCanonicalName()));
+        long theSUID = myObject.getSerialVersionUID();
+        System.out.println("Customized De-serialization of KoslerAgilent7700FileHandler " + theSUID);
+    }
 }

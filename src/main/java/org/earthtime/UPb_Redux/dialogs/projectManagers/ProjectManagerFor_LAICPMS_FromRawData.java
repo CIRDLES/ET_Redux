@@ -49,17 +49,9 @@ import org.earthtime.Tripoli.dataModels.RawIntensityDataModel;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.AbstractAcquisitionModel;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.Tripoli.massSpecSetups.AbstractMassSpecSetup;
-import org.earthtime.Tripoli.massSpecSetups.multiCollector.NUPlasma.GehrelsNUPlasmaSetupUPbFar;
-import org.earthtime.Tripoli.massSpecSetups.multiCollector.NUPlasma.GehrelsNUPlasmaSetupUPbFarTRA;
-import org.earthtime.Tripoli.massSpecSetups.multiCollector.NUPlasma.GehrelsNUPlasmaSetupUPbIonCounter;
-import org.earthtime.Tripoli.massSpecSetups.singleCollector.Agilent7700.KoslerAgilent7700SetupUPb;
-import org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan.LaserchronElementIISetupUPb;
-import org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan.MemUnivNewfoundlandElementIISetupUPb;
-import org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan.TexasAMElementIISetupUPb;
-import org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan.UnivKansasElementIISetupUPb;
-import org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan.WashStateElementIISetupUPb;
 import org.earthtime.Tripoli.rawDataFiles.handlers.AbstractRawDataFileHandler;
 import org.earthtime.Tripoli.rawDataFiles.handlers.Agilent.KoslerAgilent7700FileHandler;
+import org.earthtime.Tripoli.rawDataFiles.handlers.Agilent.RittnerAgilent7700FileHandler;
 import org.earthtime.Tripoli.rawDataFiles.handlers.NuPlasma.LaserChronNUPlasmaMultiCollFaradayFileHandler;
 import org.earthtime.Tripoli.rawDataFiles.handlers.NuPlasma.LaserChronNUPlasmaMultiCollFaradayTRAFileHandler;
 import org.earthtime.Tripoli.rawDataFiles.handlers.NuPlasma.LaserChronNUPlasmaMultiCollIonCounterFileHandler;
@@ -70,11 +62,14 @@ import org.earthtime.Tripoli.rawDataFiles.handlers.Thermo.UnivKansasElementIIFil
 import org.earthtime.Tripoli.rawDataFiles.handlers.Thermo.WashStateElementIISingleCollFileHandler;
 import org.earthtime.Tripoli.rawDataFiles.templates.AbstractRawDataFileTemplate;
 import org.earthtime.Tripoli.rawDataFiles.templates.Agilent.Kosler_Agilent7700_RawDataTemplate;
+import org.earthtime.Tripoli.rawDataFiles.templates.Agilent.Rittner_Agilent7700_RawDataTemplate;
 import org.earthtime.Tripoli.rawDataFiles.templates.NuPlasma.LaserChronNUPlasmaMultiCollFaradayRawDataTemplate;
 import org.earthtime.Tripoli.rawDataFiles.templates.NuPlasma.LaserChronNUPlasmaMultiCollFaradayTRARawDataTemplate;
 import org.earthtime.Tripoli.rawDataFiles.templates.NuPlasma.LaserChronNUPlasmaMultiCollIonCounterRawDataTemplate;
 import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.HancharMemUnivNewfoundlandElementII_RawDataTemplate;
-import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.LaserchronElementII_RawDataTemplate;
+import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.LaserchronElementII_RawDataTemplate_A;
+import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.LaserchronElementII_RawDataTemplate_B;
+import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.LaserchronElementII_RawDataTemplate_C;
 import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.MillerTexasAMElementII_RawDataTemplate;
 import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.MoellerUnivKansasElementII_RawDataTemplate;
 import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.ValenciaWashStateElementII_RawDataTemplate;
@@ -155,113 +150,78 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
         // LaserChron NU Plasma FARADAY
         AbstractRawDataFileHandler theNUPlasmaMultiCollFaradayFileHandler
                 = LaserChronNUPlasmaMultiCollFaradayFileHandler.getInstance();
-        theNUPlasmaMultiCollFaradayFileHandler.getAvailableMassSpecSetups()//
-                .add(GehrelsNUPlasmaSetupUPbFar.getInstance());
-
         theNUPlasmaMultiCollFaradayFileHandler.getAvailableRawDataFileTemplates()//
                 .add(LaserChronNUPlasmaMultiCollFaradayRawDataTemplate.getInstance());
-
         knownRawDataFileHandlers.add(theNUPlasmaMultiCollFaradayFileHandler);
 
         // LaserChron NU Plasma FARADAY TRA
         AbstractRawDataFileHandler theNUPlasmaMultiCollFaradayTRAFileHandler
                 = LaserChronNUPlasmaMultiCollFaradayTRAFileHandler.getInstance();
-        theNUPlasmaMultiCollFaradayTRAFileHandler.getAvailableMassSpecSetups()//
-                .add(GehrelsNUPlasmaSetupUPbFarTRA.getInstance());
-
         theNUPlasmaMultiCollFaradayTRAFileHandler.getAvailableRawDataFileTemplates()//
                 .add(LaserChronNUPlasmaMultiCollFaradayTRARawDataTemplate.getInstance());
-
         knownRawDataFileHandlers.add(theNUPlasmaMultiCollFaradayTRAFileHandler);
 
         // LaserChron NU Plasma IONCOUNTER
         AbstractRawDataFileHandler theNUPlasmaMultiCollIonCounterFileHandler
                 = LaserChronNUPlasmaMultiCollIonCounterFileHandler.getInstance();
-        theNUPlasmaMultiCollIonCounterFileHandler.getAvailableMassSpecSetups()//
-                .add(GehrelsNUPlasmaSetupUPbIonCounter.getInstance());
-
         theNUPlasmaMultiCollIonCounterFileHandler.getAvailableRawDataFileTemplates()//
                 .add(LaserChronNUPlasmaMultiCollIonCounterRawDataTemplate.getInstance());
-
         knownRawDataFileHandlers.add(theNUPlasmaMultiCollIonCounterFileHandler);
 
         // LaserChron Element 2 
         AbstractRawDataFileHandler theLaserchronElementIIFileHandler
                 = LaserchronElementIIFileHandler.getInstance();
-        theLaserchronElementIIFileHandler.getAvailableMassSpecSetups()//
-                .add(LaserchronElementIISetupUPb.getInstance());
-
         theLaserchronElementIIFileHandler.getAvailableRawDataFileTemplates()//
-                .add(LaserchronElementII_RawDataTemplate.getInstance());
-
+                .add(LaserchronElementII_RawDataTemplate_A.getInstance());
+        theLaserchronElementIIFileHandler.getAvailableRawDataFileTemplates()//
+                .add(LaserchronElementII_RawDataTemplate_B.getInstance());
+        theLaserchronElementIIFileHandler.getAvailableRawDataFileTemplates()//
+                .add(LaserchronElementII_RawDataTemplate_C.getInstance());
         knownRawDataFileHandlers.add(theLaserchronElementIIFileHandler);
 
         // Memorial U Newfoundland John Hanchar ElementII 
         AbstractRawDataFileHandler theMemUnivNewfoundlandElementIIFileHandler
                 = MemUnivNewfoundlandElementIIFileHandler.getInstance();
-        theMemUnivNewfoundlandElementIIFileHandler.getAvailableMassSpecSetups()//
-                .add(MemUnivNewfoundlandElementIISetupUPb.getInstance());
-
         theMemUnivNewfoundlandElementIIFileHandler.getAvailableRawDataFileTemplates()//
                 .add(HancharMemUnivNewfoundlandElementII_RawDataTemplate.getInstance());
-
         knownRawDataFileHandlers.add(theMemUnivNewfoundlandElementIIFileHandler);
 
         // U Kansas Andreas Moeller ElementII  
         AbstractRawDataFileHandler theUnivKansasElementIIFileHandler
                 = UnivKansasElementIIFileHandler.getInstance();
-        theUnivKansasElementIIFileHandler.getAvailableMassSpecSetups()//
-                .add(UnivKansasElementIISetupUPb.getInstance());
-
         theUnivKansasElementIIFileHandler.getAvailableRawDataFileTemplates()//
                 .add(MoellerUnivKansasElementII_RawDataTemplate.getInstance());
-
         knownRawDataFileHandlers.add(theUnivKansasElementIIFileHandler);
 
         // Washington State Element 2 
         AbstractRawDataFileHandler theThermoFinniganElement2SingleCollFileHandler
                 = WashStateElementIISingleCollFileHandler.getInstance();
-        theThermoFinniganElement2SingleCollFileHandler.getAvailableMassSpecSetups()//
-                .add(WashStateElementIISetupUPb.getInstance());
-
         theThermoFinniganElement2SingleCollFileHandler.getAvailableRawDataFileTemplates()//
                 .add(VervoortWashStateElementII_RawDataTemplate.getInstance());
         theThermoFinniganElement2SingleCollFileHandler.getAvailableRawDataFileTemplates()//
                 .add(ValenciaWashStateElementII_RawDataTemplate.getInstance());
-
         knownRawDataFileHandlers.add(theThermoFinniganElement2SingleCollFileHandler);
 
         // feb 2014 Agilent 7700
-//        AbstractRawDataFileHandler theRittnerAgilent7700FileHandler = //
-//                RittnerAgilent7700FileHandler.getInstance();
-//        theRittnerAgilent7700FileHandler.getAvailableMassSpecSetups()//
-//                .add(RittnerAgilent7700SetupUPb.getInstance());
-//
-//        theRittnerAgilent7700FileHandler.getAvailableRawDataFileTemplates()//
-//                .add(Rittner_Agilent7700_RawDataTemplate.getInstance());
-//
+        AbstractRawDataFileHandler theRittnerAgilent7700FileHandler
+                = //
+                RittnerAgilent7700FileHandler.getInstance();
+        theRittnerAgilent7700FileHandler.getAvailableRawDataFileTemplates()//
+                .add(Rittner_Agilent7700_RawDataTemplate.getInstance());
 //        knownRawDataFileHandlers.add(theRittnerAgilent7700FileHandler);
-//
+
         AbstractRawDataFileHandler theKoslerAgilent7700FileHandler
                 = KoslerAgilent7700FileHandler.getInstance();
-        theKoslerAgilent7700FileHandler.getAvailableMassSpecSetups()//
-                .add(KoslerAgilent7700SetupUPb.getInstance());
-
         theKoslerAgilent7700FileHandler.getAvailableRawDataFileTemplates()//
                 .add(Kosler_Agilent7700_RawDataTemplate.getInstance());
-
         knownRawDataFileHandlers.add(theKoslerAgilent7700FileHandler);
 
         // dec 2015 Texas AM for Brent Miller
         // LaserChron Element 2 
         AbstractRawDataFileHandler theTexasAMElementIIFileHandler
                 = TexasAMElementIISingleCollFileHandler.getInstance();
-        theTexasAMElementIIFileHandler.getAvailableMassSpecSetups()//
-                .add(TexasAMElementIISetupUPb.getInstance());
-
         theTexasAMElementIIFileHandler.getAvailableRawDataFileTemplates()//
                 .add(MillerTexasAMElementII_RawDataTemplate.getInstance());
-
         knownRawDataFileHandlers.add(theTexasAMElementIIFileHandler);
 
         // move this section for robust file opening
@@ -476,13 +436,12 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
         project.setRawDataFileHandler(rawDataFileHandler);
         rawDataFileHandler.reInitialize();
 
-        // user selected Mass Spec setup (for now only 1 choice so user does not see temporarily)
-        AbstractMassSpecSetup massSpec = rawDataFileHandler.getAvailableMassSpecSetups().first();
-        rawDataFileHandler.setMassSpec(massSpec);
-
         // user selected raw data template
         AbstractRawDataFileTemplate rawDataFileTemplate
                 = (AbstractRawDataFileTemplate) rawDataTemplateComboBox.getSelectedItem();
+        AbstractMassSpecSetup massSpec = rawDataFileTemplate.getMassSpecSetup();
+        rawDataFileHandler.setMassSpec(massSpec);
+
         rawDataFileHandler.setRawDataFileTemplate(rawDataFileTemplate);
 
         // may 2013 split task to allow for custom parameters ********************

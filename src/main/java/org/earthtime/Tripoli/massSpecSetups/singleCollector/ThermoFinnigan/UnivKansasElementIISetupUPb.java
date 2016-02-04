@@ -1,7 +1,7 @@
 /*
  * UnivKansasElementIISetupUPb
  *
- * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2016 James F. Bowring and www.Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
  */
 package org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.SortedSet;
@@ -43,11 +42,9 @@ import org.earthtime.isotopes.IsotopesEnum;
  *
  * @author James F. Bowring
  */
-public final class UnivKansasElementIISetupUPb extends AbstractMassSpecSetup implements //
-        Comparable<AbstractMassSpecSetup>,
-        Serializable {
+public final class UnivKansasElementIISetupUPb extends AbstractMassSpecSetup{
 
-    private static UnivKansasElementIISetupUPb instance = null;
+    private static UnivKansasElementIISetupUPb instance = new UnivKansasElementIISetupUPb();
 
     private UnivKansasElementIISetupUPb() {
         super();
@@ -118,9 +115,6 @@ public final class UnivKansasElementIISetupUPb extends AbstractMassSpecSetup imp
      * @return
      */
     public static UnivKansasElementIISetupUPb getInstance() {
-        if (instance == null) {
-            instance = new UnivKansasElementIISetupUPb();
-        }
         return instance;
     }
 

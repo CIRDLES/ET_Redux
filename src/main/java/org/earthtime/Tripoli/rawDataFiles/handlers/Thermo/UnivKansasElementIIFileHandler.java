@@ -1,7 +1,7 @@
 /*
  * UnivKansasElementIIFileHandler
  *
- * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2016 James F. Bowring and www.Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@
 package org.earthtime.Tripoli.rawDataFiles.handlers.Thermo;
 
 import java.io.File;
-import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -40,13 +39,11 @@ import org.earthtime.utilities.FileHelper;
  *
  * @author James F. Bowring
  */
-public class UnivKansasElementIIFileHandler extends AbstractRawDataFileHandler implements //
-        Comparable<AbstractRawDataFileHandler>,
-        Serializable {
-
+public class UnivKansasElementIIFileHandler extends AbstractRawDataFileHandler{
+    
     // Class variables
     private static final long serialVersionUID = 1676980296251048119L;
-    private static UnivKansasElementIIFileHandler instance = null;
+    private static UnivKansasElementIIFileHandler instance = new UnivKansasElementIIFileHandler();
     private File[] analysisFiles;
 
     /**
@@ -66,9 +63,6 @@ public class UnivKansasElementIIFileHandler extends AbstractRawDataFileHandler i
      * @return
      */
     public static UnivKansasElementIIFileHandler getInstance() {
-        if (instance == null) {
-            instance = new UnivKansasElementIIFileHandler();//massSpec, rawDataFileTemplate );
-        }
         return instance;
     }
 

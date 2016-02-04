@@ -15,6 +15,10 @@
  */
 package org.earthtime.UPb_Redux.dateInterpretation;
 
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.*;
 import org.cirdles.topsoil.dataset.Dataset;
 import org.cirdles.topsoil.dataset.RawData;
 import org.cirdles.topsoil.dataset.SimpleDataset;
@@ -23,14 +27,9 @@ import org.cirdles.topsoil.dataset.entry.SimpleEntry;
 import org.cirdles.topsoil.dataset.field.Field;
 import org.cirdles.topsoil.dataset.field.NumberField;
 import org.cirdles.topsoil.plot.Plot;
-import org.cirdles.topsoil.plot.SimplePlotContext;
 import org.cirdles.topsoil.plot.PlotContext;
+import org.cirdles.topsoil.plot.SimplePlotContext;
 import org.cirdles.topsoil.plot.standard.UncertaintyEllipsePlot;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *

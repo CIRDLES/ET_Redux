@@ -1,7 +1,7 @@
 /*
  * WashStateElementIISingleCollFileHandler
  *
- * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2016 James F. Bowring and www.Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectStreamClass;
-import java.io.Serializable;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import javax.swing.JOptionPane;
@@ -35,15 +34,11 @@ import org.earthtime.utilities.FileHelper;
  *
  * @author James F. Bowring
  */
-public class WashStateElementIISingleCollFileHandler extends AbstractRawDataFileHandler implements //
-        Comparable<AbstractRawDataFileHandler>,
-        Serializable {
-
-        // Class variables
+public class WashStateElementIISingleCollFileHandler extends AbstractRawDataFileHandler{
     
-   // private static final long serialVersionUID = 3111511502335804607L;
-
-    private static WashStateElementIISingleCollFileHandler instance = null;
+    // Class variables
+    // private static final long serialVersionUID = 3111511502335804607L;
+    private static WashStateElementIISingleCollFileHandler instance = new WashStateElementIISingleCollFileHandler();
     private File[] analysisFiles;
 
     /**
@@ -65,9 +60,6 @@ public class WashStateElementIISingleCollFileHandler extends AbstractRawDataFile
      * @return
      */
     public static WashStateElementIISingleCollFileHandler getInstance() {
-        if (instance == null) {
-            instance = new WashStateElementIISingleCollFileHandler();//massSpec, rawDataFileTemplate );
-        }
         return instance;
     }
 
@@ -188,7 +180,8 @@ public class WashStateElementIISingleCollFileHandler extends AbstractRawDataFile
 
                 // note each row has relative time stamp which we are hiding for now by using frequency
                 int expectedRowsOfData = rawDataFileTemplate.getBlockSize();
-                String[][] scanData = //
+                String[][] scanData
+                        = //
                         new String[expectedRowsOfData][massSpec.getVIRTUAL_COLLECTOR_COUNT()];
 
                 if (f == 137) {
@@ -202,13 +195,15 @@ public class WashStateElementIISingleCollFileHandler extends AbstractRawDataFile
                     String[] backgroundCollectorsColumns = new String[]{"0", "0", "0", "0", "0", "0", "0", "0", "0", "0",};
                     // handle case where there is not as many lines of data as expected
                     if (onPeakFileRows.length > (i + rawDataFileTemplate.getBlockStartOffset())) {
-                        onPeakCollectorsColumns = //
+                        onPeakCollectorsColumns
+                                = //
                                 onPeakFileRows[i + rawDataFileTemplate.getBlockStartOffset()].split("\t");
                     }
 
                     // handle case where there is not as many lines of data as expected
                     if (backgroundFileRows.length > (i + rawDataFileTemplate.getBlockStartOffset())) {
-                        backgroundCollectorsColumns =//
+                        backgroundCollectorsColumns
+                                =//
                                 backgroundFileRows[i + rawDataFileTemplate.getBlockStartOffset()].split("\t");
                     }
 
@@ -225,7 +220,8 @@ public class WashStateElementIISingleCollFileHandler extends AbstractRawDataFile
                 // extract isStandard
                 boolean isStandard = isStandardFractionID(fractionID);
 
-                TripoliFraction tripoliFraction = //                           
+                TripoliFraction tripoliFraction
+                        = //                           
                         new TripoliFraction( //
                                 fractionID, //
                                 massSpec.getCommonLeadCorrectionHighestLevel(), //
@@ -250,8 +246,8 @@ public class WashStateElementIISingleCollFileHandler extends AbstractRawDataFile
 
         return tripoliFractions;
     }
-    
-       private void readObject(
+
+    private void readObject(
             ObjectInputStream stream)
             throws IOException, ClassNotFoundException {
         stream.defaultReadObject();

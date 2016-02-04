@@ -37,6 +37,7 @@ import java.util.TreeSet;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
+import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.dataDictionaries.DataDictionary;
@@ -57,37 +58,6 @@ import org.earthtime.matrices.matrixModels.JacobianMatrixModel;
  */
 public class ReductionHandler {
 
-//    private static final ArrayList<String> lambdaSourceNames = new ArrayList<String>();
-//    /**
-//     * lambdaSourceNames define the rows of the lambda mini-matrice.
-//     */
-//    static {
-//        lambdaSourceNames.add( Lambdas.lambda230.getName() );
-//        lambdaSourceNames.add( Lambdas.lambda231.getName());
-//        lambdaSourceNames.add( Lambdas.lambda232.getName() );
-//        lambdaSourceNames.add( Lambdas.lambda235.getName() );
-//        lambdaSourceNames.add( Lambdas.lambda238.getName() );
-//    }
-//    /**
-//     * tracerSourceNames define the rows of the tracer mini-matrix.
-//     */
-//    private static final ArrayList<String> tracerSourceNames = new ArrayList<String>();
-//
-//    static {
-//        tracerSourceNames.add( TracerUPbRatiosAndConcentrations.r202_205t.getName() );
-//        tracerSourceNames.add( TracerUPbRatiosAndConcentrations.r204_205t.getName() );
-//        tracerSourceNames.add( TracerUPbRatiosAndConcentrations.r206_205t.getName() );
-//        tracerSourceNames.add( TracerUPbRatiosAndConcentrations.r207_205t.getName() );
-//        tracerSourceNames.add( TracerUPbRatiosAndConcentrations.r208_205t.getName() );
-//        tracerSourceNames.add( TracerUPbRatiosAndConcentrations.r233_235t.getName() );
-//        tracerSourceNames.add( TracerUPbRatiosAndConcentrations.r238_235t.getName() );
-//        tracerSourceNames.add( TracerUPbRatiosAndConcentrations.r233_236t.getName() );
-//        tracerSourceNames.add( TracerUPbRatiosAndConcentrations.r238_233t.getName() );
-//        tracerSourceNames.add( TracerUPbRatiosAndConcentrations.concPb205t.getName() );
-//        tracerSourceNames.add( TracerUPbRatiosAndConcentrations.concU235t.getName() );
-//        tracerSourceNames.add( TracerUPbRatiosAndConcentrations.concU236t.getName() );
-//
-//    }
     private FractionI fraction;
     /**
      * matrixSpecs contain the string rowForSpecificDate names for each of the
@@ -170,17 +140,14 @@ public class ReductionHandler {
         ((CovarianceMatrixWithSubMatricesModel) matrixModels[0]).setLambdasCovarianceMatrix( new CovarianceMatrixModel() );
         ((CovarianceMatrixWithSubMatricesModel) matrixModels[0]).getLambdasCovarianceMatrix().setRows( lambdaNamesList );
         ((CovarianceMatrixWithSubMatricesModel) matrixModels[0]).getLambdasCovarianceMatrix().setCols( lambdaNamesList );
-//                setCols( ((CovarianceMatrixWithSubMatricesModel) matrixModels[0]).getLambdasCovarianceMatrix().getRows() );
 
         ((CovarianceMatrixWithSubMatricesModel) matrixModels[0]).setTracerCovarianceMatrix( new CovarianceMatrixModel() );
         ((CovarianceMatrixWithSubMatricesModel) matrixModels[0]).getTracerCovarianceMatrix().setRows( tracerNamesList );
         ((CovarianceMatrixWithSubMatricesModel) matrixModels[0]).getTracerCovarianceMatrix().setCols( tracerNamesList );
-//                setCols( ((CovarianceMatrixWithSubMatricesModel) matrixModels[0]).getTracerCovarianceMatrix().getRows() );
 
         ((CovarianceMatrixWithSubMatricesModel) matrixModels[0]).setAnalyticalCovarianceMatrix( new CovarianceMatrixModel() );
         ((CovarianceMatrixWithSubMatricesModel) matrixModels[0]).getAnalyticalCovarianceMatrix().setRows( analyticalNamesList );
         ((CovarianceMatrixWithSubMatricesModel) matrixModels[0]).getAnalyticalCovarianceMatrix().setCols( analyticalNamesList );
-//                setCols( ((CovarianceMatrixWithSubMatricesModel) matrixModels[0]).getAnalyticalCovarianceMatrix().getRows() );
 
         // build remaining Jacobian matrices
         for (int i = 1; i < matrixSpecs.length; i ++) {
@@ -201,11 +168,11 @@ public class ReductionHandler {
             Map<String, BigDecimal> inputVariances,
             Map<String, BigDecimal> coVariances ) {
 
-        ((CovarianceMatrixWithSubMatricesModel) matrixModels[0]).initializeMatrixModelWithVariances( inputVariances );
-        ((CovarianceMatrixWithSubMatricesModel) matrixModels[0]).initializeCoVariances( coVariances );
+        ((CovarianceMatrixModel) matrixModels[0]).initializeMatrixModelWithVariances( inputVariances );
+        ((CovarianceMatrixModel) matrixModels[0]).initializeCoVariances( coVariances );
 
         // March 21 2009: check quality of input
-        setMeasuredRatioUncertaintiesValidity( ((CovarianceMatrixWithSubMatricesModel) matrixModels[0]).//
+        setMeasuredRatioUncertaintiesValidity( ((CovarianceMatrixModel) matrixModels[0]).//
                 checkValidityOfMeasuredRatioUncertainties( fraction.getFractionID() ) );
 
         populateKwikiClumpCovariances();
@@ -382,7 +349,7 @@ public class ReductionHandler {
         // walk the rows of the mini-matrix
         Iterator<Integer> rowKeys = analyticalMiniDateCovMatModel.getRows().keySet().iterator();
         while (rowKeys.hasNext()) {
-            Integer rowKey = (Integer) rowKeys.next();
+            Integer rowKey = rowKeys.next();
             int row = rowKey;
             String rowName = analyticalMiniDateCovMatModel.getRows().get( rowKey );
 
@@ -396,14 +363,14 @@ public class ReductionHandler {
                     fraction.getRadiogenicIsotopeDateByName( rowName ).//
                             setOneSigma( new BigDecimal( Double.toString( Math.sqrt( analyticalUnct ) ) ) );
 
-                    ((UPbFraction) fraction).getRadiogenicIsotopeDateWithTracerUnctByName( rowName ).//
+                    ((UPbFractionI) fraction).getRadiogenicIsotopeDateWithTracerUnctByName( rowName ).//
                             setValue( fraction.getRadiogenicIsotopeDateByName( rowName ).getValue() );
-                    ((UPbFraction) fraction).getRadiogenicIsotopeDateWithTracerUnctByName( rowName ).//
+                    ((UPbFractionI) fraction).getRadiogenicIsotopeDateWithTracerUnctByName( rowName ).//
                             setOneSigma( new BigDecimal( Double.toString( Math.sqrt( analyticalUnct + tracerUnct ) ) ) );
 
-                    ((UPbFraction) fraction).getRadiogenicIsotopeDateWithAllUnctByName( rowName ).//
+                    ((UPbFractionI) fraction).getRadiogenicIsotopeDateWithAllUnctByName( rowName ).//
                             setValue( fraction.getRadiogenicIsotopeDateByName( rowName ).getValue() );
-                    ((UPbFraction) fraction).getRadiogenicIsotopeDateWithAllUnctByName( rowName ).//
+                    ((UPbFractionI) fraction).getRadiogenicIsotopeDateWithAllUnctByName( rowName ).//
                             setOneSigma( new BigDecimal( Double.toString( Math.sqrt( analyticalUnct + tracerUnct + lambdaUnct ) ) ) );
                 }
             } catch (Exception e) {
@@ -532,24 +499,8 @@ public class ReductionHandler {
                 sensitivityMatrix.getMatrix().//
                 getMatrix( rowForSpecificDate, rowForSpecificDate, 0, sensitivityMatrix.getMatrix().getColumnDimension() - 1 );
 
-//        retVector.setCols( matrixModels[0].getRows() ); July 2012 refactored to above lines
         retVector.setRows( new String[]{dateName} );
         retVector.setMatrix( rowSelected );
-
-//
-//
-//        File matrixFile = new File( "retVector_" + fraction.getFractionID() + ".txt" );
-//        PrintWriter matrixWriter = null;
-//
-//        try {
-//            matrixWriter = new PrintWriter( new FileWriter( matrixFile ) );
-//            matrixWriter.println( "\n\n******   retVector " + fraction.getFractionID() + "   ********************\n\n" );
-//
-//            matrixWriter.println( retVector.ToStringWithLabels() );
-//        } catch (IOException io) {
-//        }
-//        matrixWriter.flush();
-//        matrixWriter.close();
 
         return retVector;
     }
