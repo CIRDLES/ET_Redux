@@ -15,15 +15,9 @@
  */
 package org.earthtime.UTh_Redux.dateInterpretation;
 
-import java.awt.Container;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
 import javafx.fxml.FXML;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.HBox;
-import javax.swing.JComponent;
-import javax.swing.WindowConstants;
 import org.cirdles.topsoil.dataset.Dataset;
 import org.cirdles.topsoil.dataset.RawData;
 import org.cirdles.topsoil.dataset.SimpleDataset;
@@ -38,6 +32,13 @@ import org.cirdles.topsoil.plot.standard.EvolutionPlot;
 import org.earthtime.UTh_Redux.fractions.UThLegacyFractionI;
 import org.earthtime.dataDictionaries.UThAnalysisMeasures;
 import org.earthtime.fractions.ETFractionInterface;
+
+import javax.swing.JComponent;
+import javax.swing.WindowConstants;
+import java.awt.Container;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 
 /**
  *
