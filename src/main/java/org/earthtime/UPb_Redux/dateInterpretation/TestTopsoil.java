@@ -15,11 +15,10 @@
  */
 package org.earthtime.UPb_Redux.dateInterpretation;
 
-import java.awt.Dialog;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JComponent;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 import org.cirdles.topsoil.dataset.Dataset;
 import org.cirdles.topsoil.dataset.RawData;
 import org.cirdles.topsoil.dataset.SimpleDataset;
@@ -86,8 +85,8 @@ public class TestTopsoil {
         RawData rawData = new RawData(myFields, myEntries);
 
         Dataset dataset = new SimpleDataset(
-                "Redux dataset",
-                rawData);
+                        "Redux dataset",
+                        rawData);
 
         PlotContext vc = new SimplePlotContext(dataset);
         for (int i = 0; i < myChart.getVariables().size(); i++) {

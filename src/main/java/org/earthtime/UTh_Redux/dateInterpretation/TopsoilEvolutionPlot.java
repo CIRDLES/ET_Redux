@@ -19,6 +19,9 @@ import java.awt.Container;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
+import javafx.fxml.FXML;
+import javafx.scene.control.ToolBar;
+import javafx.scene.layout.HBox;
 import javax.swing.JComponent;
 import javax.swing.WindowConstants;
 import org.cirdles.topsoil.dataset.Dataset;
@@ -40,19 +43,20 @@ import org.earthtime.fractions.ETFractionInterface;
  *
  * @author bowring
  */
-public class TopsoilEvolutionPlot {
+public class TopsoilEvolutionPlot{// extends CustomVBox<TopsoilEvolutionChart> {
 
     private Vector<ETFractionInterface> selectedFractions;
     private Plot myChart;
     private List<Field<?>> myFields;
     private JComponent plotAsComponent;
 
-//    @FXML
-//    private HBox chartAndConfig;
-//    @FXML
-//    private ToolBar chartToolBar;
+    @FXML
+    private HBox chartAndConfig;
+    @FXML
+    private ToolBar chartToolBar;
+
     public TopsoilEvolutionPlot() {
-        selectedFractions = new Vector<>();
+        //super(self -> self.myChart = new EvolutionChart());
         myChart = new EvolutionPlot();
 
         myFields = new ArrayList<>();
@@ -87,6 +91,7 @@ public class TopsoilEvolutionPlot {
 //        Stage chartStage = new Stage();
 //        chartStage.setScene(scene);
 //        chartStage.show();
+
         class EvolutionChartDialog extends javax.swing.JFrame {
 
             public EvolutionChartDialog(javax.swing.JFrame owner, boolean modal) {
@@ -118,6 +123,7 @@ public class TopsoilEvolutionPlot {
 //        });
 //
 //        plotAsComponent.add(fitDataButton);
+
         testTopsoilDialogDialog.setVisible(true);
 
     }
