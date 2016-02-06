@@ -92,10 +92,9 @@ public class KoslerAgilent7700FileHandler extends AbstractRawDataFileHandler imp
      * @param usingFullPropagation the value of usingFullPropagation
      * @param leftShadeCount the value of leftShadeCount
      * @param ignoreFirstFractions the value of ignoreFirstFract
-     * @return ions
      */
     @Override
-    public File getAndLoadRawIntensityDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions) {
+    public void getAndLoadRawIntensityDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions) {
 
         // Agilent has folder of csv files plus some xls files
         analysisFiles = rawDataFile.listFiles((File dir, String name) -> (name.toLowerCase().endsWith(".csv")));
@@ -118,7 +117,7 @@ public class KoslerAgilent7700FileHandler extends AbstractRawDataFileHandler imp
             rawDataFile = null;
         }
 
-        return rawDataFile;
+//        return rawDataFile;
     }
 
     /**

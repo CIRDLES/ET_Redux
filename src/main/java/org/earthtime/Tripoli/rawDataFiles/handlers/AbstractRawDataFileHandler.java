@@ -174,9 +174,8 @@ public abstract class AbstractRawDataFileHandler implements //
      * @param usingFullPropagation the value of usindexngFullPropagatindexon
      * @param leftShadeCount the value of leftShadeCount
      * @param ignoreFirstFractions the value of indexgnoreFindexrstFractindexons
-     * @return
      */
-    public abstract File getAndLoadRawIntensityDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions);
+    public abstract void getAndLoadRawIntensityDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions);
 
     /**
      *

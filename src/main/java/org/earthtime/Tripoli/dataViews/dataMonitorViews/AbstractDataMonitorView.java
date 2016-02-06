@@ -749,8 +749,6 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
             repaint();
 
             loadAndShowRawData(usingFullPropagation, leftShadeCount, ignoreFirstFractions);
-            //rawDataFileHandler.getAndLoadRawIntensityDataFile(loadDataTask, false, savedCountOfFractions);
-            //loadRawDataWorkflow(loadDataTask);
             return null;
         }
 

@@ -497,7 +497,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
         loadDataTask.addPropertyChangeListener(new LoadRawDataPropertyChangeListener());
         loadDataTask.execute();
 
-        //comment out next line for threading
+        //comment out next line to allow for threading
         //loadAndShowRawData(rawDataFileHandler.getAcquisitionModel().isUsingFullPropagation(), 0);
     }
 
@@ -513,8 +513,6 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
         MaskingSingleton.getInstance().setRightShadeCount(-1);
 
         rawDataFileHandler.getAndLoadRawIntensityDataFile(loadDataTask, usingFullPropagation, leftShadeCount, ignoreFirstFractions);
-
-//        loadAndShowRawDataFinishUp();
     }
 
     private void loadAndShowRawDataFinishUp() {

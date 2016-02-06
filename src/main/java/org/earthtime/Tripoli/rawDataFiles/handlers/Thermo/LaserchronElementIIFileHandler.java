@@ -96,10 +96,9 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
      * @param usingFullPropagation the value of usingFullPropagation
      * @param leftShadeCount the value of leftShadeCount
      * @param ignoreFirstFractions the value of ignoreFirstFracts
-     * @return ions
      */
     @Override
-    public File getAndLoadRawIntensityDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions) {
+    public void getAndLoadRawIntensityDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions) {
 
         // ElementII has folder of .dat files 
         analysisFiles = rawDataFile.listFiles((File dir, String name) -> {
@@ -147,7 +146,7 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
                     JOptionPane.WARNING_MESSAGE);
         }
 
-        return rawDataFile;
+//        return rawDataFile;
     }
 
     /**
