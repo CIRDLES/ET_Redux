@@ -21,13 +21,14 @@
 package org.earthtime.UPb_Redux.aliquots;
 
 import java.io.Serializable;
+import org.earthtime.archivingTools.AnalysisImageInterface;
 import org.earthtime.dataDictionaries.AnalysisImageTypes;
 
 /**
  *
  * @author James F. Bowring
  */
-public class AnalysisImage implements Serializable {
+public class AnalysisImage implements AnalysisImageInterface, Serializable {
 
     // Class variables
     private static final long serialVersionUID = -6082771900853607193L;

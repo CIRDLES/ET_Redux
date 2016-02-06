@@ -20,14 +20,14 @@ import java.util.ArrayList;
 import java.util.Vector;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.fractions.FractionI;
-import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.samples.SESARSampleMetadata;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.aliquots.ReduxAliquotInterface;
-import org.earthtime.UPb_Redux.aliquots.AnalysisImage;
+import org.earthtime.archivingTools.AnalysisImageInterface;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
+import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.reportViews.ReportRowGUIInterface;
 
 /**
@@ -64,7 +64,7 @@ public class UThReduxAliquot implements //
     private Vector<FractionI> analysisFractions;
     private ReduxConstants.ANALYSIS_PURPOSE analysisPurpose;
     private String keyWordsCSV;
-    private ArrayList<AnalysisImage> analysisImages;
+    private ArrayList<AnalysisImageInterface> analysisImages;
     private boolean compiled;
     private Vector<ETFractionInterface> aliquotFractions;
     private transient ReduxLabData myReduxLabData;
