@@ -35,3 +35,4 @@ STANDARDS_DATA_CHECK_FILES/
 
 #Python
 *.py
+/nbproject/

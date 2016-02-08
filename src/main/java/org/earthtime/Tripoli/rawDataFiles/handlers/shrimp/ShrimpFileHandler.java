@@ -278,7 +278,7 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
                 for (int i = 0; i < peakCount; i++) {
                     peak[i] = Double.parseDouble(tenPeakMeasurements[i]);
                 }
-                double median = TukeyBiweight.calcluateMedian(peak);
+                double median = TukeyBiweight.calculateMedian(peak);
                 double totalCounts;
                 double totalCountsSigma;
                 if (median > 100.0) {
