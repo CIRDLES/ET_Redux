@@ -54,7 +54,7 @@ public class TukeyBiweightTest {
     public void testCalculateTukeyBiweightMean() {
         System.out.println("calculateTukeyBiweightMean");
         String name = "";
-        int tuningConstant = 6;
+        double tuningConstant = 6.0;
         double[] values = {48866, 48859, 48864, 48908, 48878, 48893, 48873, 48891, 48883, 48873};
         // oracle by ???
         double expResult = 48878.35610118363;
