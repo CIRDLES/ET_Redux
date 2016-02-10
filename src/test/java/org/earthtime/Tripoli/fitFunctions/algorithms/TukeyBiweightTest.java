@@ -15,6 +15,7 @@
  */
 package org.earthtime.Tripoli.fitFunctions.algorithms;
 
+import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.junit.After;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
@@ -54,12 +55,32 @@ public class TukeyBiweightTest {
     public void testCalculateTukeyBiweightMean() {
         System.out.println("calculateTukeyBiweightMean");
         String name = "";
-        double tuningConstant = 6.0;
-        double[] values = {48866, 48859, 48864, 48908, 48878, 48893, 48873, 48891, 48883, 48873};
-        // oracle by ???
-        double expResult = 48878.35610118363;
-        double result = TukeyBiweight.calculateTukeyBiweightMean(name, tuningConstant, values).getValue().doubleValue();
-        assertEquals(expResult, result, 1e-10);
+        double tuningConstant = 9.0;
+        double[] values = {2494, 2524, 2455, 2427, 2396, 2545, 2483, 2436, 2548, 2619};
+        // oracle by Squid
+        double expValue = 24925.1139904333;
+        double expSigma = 206.312497307535;
+        ValueModel result = TukeyBiweight.calculateTukeyBiweightMean(name, tuningConstant, values);
+        double value = result.getValue().doubleValue();
+        double sigma = result.getOneSigmaAbs().doubleValue();
+////        assertEquals(expValue, value, 1e-10);
+////        assertEquals(expSigma, sigma, 1e-10);
+
+        tuningConstant = 9.0;
+        values = new double[]{0.302198828429556,
+            0.300788957475996,
+            0.297713166278977,
+            0.297778760994429,
+            0.297483827242158};
+        // oracle by Simon Bodokos by hand
+        expValue = 0.297659637730707;
+        expSigma = 0.000166784902889577;
+        result = TukeyBiweight.calculateTukeyBiweightMean(name, tuningConstant, values);
+        value = result.getValue().doubleValue();
+        sigma = result.getOneSigmaAbs().doubleValue();
+        assertEquals(expValue, value, 1e-10);
+        assertEquals(expSigma, sigma, 1e-10);
+
     }
 
     /**
