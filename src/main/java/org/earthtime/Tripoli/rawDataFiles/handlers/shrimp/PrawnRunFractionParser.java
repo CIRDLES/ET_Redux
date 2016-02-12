@@ -15,7 +15,6 @@
  */
 package org.earthtime.Tripoli.rawDataFiles.handlers.shrimp;
 
-import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
@@ -138,7 +137,7 @@ public class PrawnRunFractionParser {
     public static void main(String[] args) {
         
         // local copy of file - use prawnFileXML in place of prawnFileURL below
-        File prawnFileXML = new File("/Users/sbowring/Documents/Development_XSD/100142_G6147_10111109.43 10.33.37 AM.xml");
+//        File prawnFileXML = new File("/Users/sbowring/Documents/Development_XSD/100142_G6147_10111109.43 10.33.37 AM.xml");
 
         // remote copy of example file
         java.net.URL prawnFileURL = null;

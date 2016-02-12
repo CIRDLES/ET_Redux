@@ -31,7 +31,6 @@ import javax.xml.bind.Unmarshaller;
 import org.cirdles.shrimp.PrawnFile;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.Tripoli.rawDataFiles.handlers.AbstractRawDataFileHandler;
-import org.earthtime.utilities.FileHelper;
 
 /**
  *
@@ -51,8 +50,8 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
     private ShrimpFileHandler() {
 
         super();
-        NAME = "Shrimp Prawn File '.xml'";
-        aboutInfo = "Details: This is the Prawn xml file form the Shrimp. ";
+        NAME = "Shrimp XML Prawn File '.xml'";
+        aboutInfo = "Details: This is the Prawn xml file from the SHRIMP. ";
     }
 
     /**
@@ -72,7 +71,13 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
     public File validateAndGetHeaderDataFromRawIntensityFile(File tripoliRawDataFolder) {
         String dialogTitle = "Select a Shrimp Prawn '.xml' file:";
 
-        rawDataFile = FileHelper.AllPlatformGetFolder(dialogTitle, tripoliRawDataFolder);
+        
+        // temporary during development
+        JOptionPane.showMessageDialog(null,
+                            new String[]{"We are using a pre-selected Prawn file during intial development, which can be found here:\n\n" 
+                                    + "https://raw.githubusercontent.com/bowring/XSD/master/SHRIMP/EXAMPLE_100142_G6147_10111109.43_10.33.37%20AM.xml"});
+        
+        rawDataFile = new File("temp.xml");//FileHelper.AllPlatformGetFolder(dialogTitle, tripoliRawDataFolder);
         return rawDataFile;
     }
 

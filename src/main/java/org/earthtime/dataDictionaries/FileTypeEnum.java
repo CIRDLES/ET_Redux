@@ -33,6 +33,8 @@ public enum FileTypeEnum {
      */
     csv("csv"),
     
+    xml("xml"),
+    
     fin2("fin2"),
     
     dat("dat");

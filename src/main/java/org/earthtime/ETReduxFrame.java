@@ -69,6 +69,7 @@ import org.earthtime.UPb_Redux.dialogs.aliquotManagers.AliquotLegacyEditorForLAI
 import org.earthtime.UPb_Redux.dialogs.fractionManagers.UPbFractionEditorDialog;
 import org.earthtime.UPb_Redux.dialogs.fractionManagers.UPbLegacyFractionEditorDialog;
 import org.earthtime.UPb_Redux.dialogs.projectManagers.ProjectManagerFor_LAICPMS_FromRawData;
+import org.earthtime.UPb_Redux.dialogs.projectManagers.ProjectManagerFor_SHRIMP_FromRawData;
 import org.earthtime.UPb_Redux.dialogs.projectManagers.ProjectManagerSubscribeInterface;
 import org.earthtime.UPb_Redux.dialogs.projectManagers.exportManagers.GeochronProjectExportManager;
 import org.earthtime.UPb_Redux.dialogs.sampleManagers.GeochronSampleCustomMetadataDialog;
@@ -584,8 +585,8 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             } else { // instantiate project manager so processing can be initialited
 
                 myProjectManager
-                        = //
-                        new ProjectManagerFor_LAICPMS_FromRawData(this, true, myState, theProject);
+                        = new ProjectManagerFor_LAICPMS_FromRawData(this, true, myState, theProject);
+                myProjectManager.initDialogContent();
                 myProjectManager.setVisible(true);
             }
 
@@ -779,9 +780,10 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                 myProjectManager
                         = new ProjectManagerFor_LAICPMS_FromRawData(this, true, myState, theProject);
             }
+
+            myProjectManager.initDialogContent();
         }
 
-        myProjectManager.initDialogContent();
         myProjectManager.setVisible(true);
 
         updateReportTable();
@@ -793,6 +795,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         if ((myProjectManager == null) || !(myProjectManager instanceof ProjectManagerFor_LAICPMS_FromRawData)) {
             myProjectManager
                     = new ProjectManagerFor_LAICPMS_FromRawData(this, true, myState, theProject);
+            myProjectManager.initDialogContent();
         }
         ((ProjectManagerSubscribeInterface) myProjectManager).initializeSessionManager(false, true, false);
     }
@@ -803,12 +806,13 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         if (sampleAnalysisType.equalsIgnoreCase(SampleAnalysisTypesEnum.LAICPMS.getName())) {
             myProjectManager
                     = new ProjectManagerFor_LAICPMS_FromRawData(this, true, myState, theProject);
-        } else if (sampleAnalysisType.equalsIgnoreCase(SampleAnalysisTypesEnum.LAICPMS.getName())) {
+        } else if (sampleAnalysisType.equalsIgnoreCase(SampleAnalysisTypesEnum.SHRIMP.getName())) {
             myProjectManager
-                    = new ProjectManagerFor_LAICPMS_FromRawData(this, true, myState, theProject);
+                    = new ProjectManagerFor_SHRIMP_FromRawData(this, true, myState, theProject);
         }
-        
+
         // modal call
+        myProjectManager.initDialogContent();
         myProjectManager.setVisible(true);
 
         if (!theProject.getProjectSamples().isEmpty()) {
@@ -818,6 +822,8 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             } catch (BadLabDataException ex) {
                 new ETWarningDialog(ex).setVisible(true);
             }
+        } else {
+            theProject = null;
         }
 
     }
@@ -1595,8 +1601,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
     private void setUpEmptySample() //
             throws BadLabDataException {
         theSample
-                = //
-                new Sample("NONE", "NONE", "", myState.getReduxPreferences().getDefaultSampleAnalysisPurpose(), "UPb");
+                = new Sample("NONE", "NONE", "", myState.getReduxPreferences().getDefaultSampleAnalysisPurpose(), "UPb");
         SampleInterface.specializeNewSample(theSample);
 
         setUpTheSample(false);

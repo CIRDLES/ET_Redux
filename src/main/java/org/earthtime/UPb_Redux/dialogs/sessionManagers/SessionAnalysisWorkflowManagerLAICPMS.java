@@ -52,7 +52,7 @@ import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.RawRatioData
 import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.Tripoli.sessions.TripoliSessionInterface;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.dialogs.projectManagers.ProjectManagerFor_LAICPMS_FromRawData;
+import org.earthtime.UPb_Redux.dialogs.projectManagers.ProjectManagerSubscribeInterface;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.dataDictionaries.DataPresentationModeEnum;
@@ -79,7 +79,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
     private AbstractRawDataView tripoliSessionRawDataView;
     private final int HORIZ_SCROLL_BAR_HEIGHT = 14;
     private IncludedTypeEnum currentFractionView;
-    private final ProjectManagerFor_LAICPMS_FromRawData projectManager;
+    private final ProjectManagerSubscribeInterface projectManager;
     // nov 2014
     private final static int OFFSET_TO_TOP_DATA_DISPLAY = 115;//0;
     private final static int WIDTH_OF_YAXIS_PANE = 200;
@@ -93,7 +93,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
      * @param tripoliSession
      */
     public SessionAnalysisWorkflowManagerLAICPMS(
-            ProjectManagerFor_LAICPMS_FromRawData projectManager, //
+            ProjectManagerSubscribeInterface projectManager, //
             ETReduxFrame uPbReduxFrame, //
             boolean modal, //
             final TripoliSessionInterface tripoliSession) {
@@ -706,7 +706,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
     }
 
     private void saveProject() {
-        projectManager.getProject().saveTheProjectAsSerializedReduxFile();
+        ((ProjectManagerSubscribeInterface) projectManager).getProject().saveTheProjectAsSerializedReduxFile();
     }
 
     /**
@@ -1533,7 +1533,7 @@ private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.
 
     private void switchToProjectManager_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_switchToProjectManager_buttonActionPerformed
         this.close();
-        projectManager.setVisible(true);
+        ((DialogEditor)projectManager).setVisible(true);
     }//GEN-LAST:event_switchToProjectManager_buttonActionPerformed
 
     private void restoreAllAquisitionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_restoreAllAquisitionsActionPerformed
@@ -1541,7 +1541,6 @@ private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.
     }//GEN-LAST:event_restoreAllAquisitionsActionPerformed
 
     private void switchToReductionManager_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_switchToReductionManager_buttonActionPerformed
-//        saveProject();
         this.setVisible(false);
     }//GEN-LAST:event_switchToReductionManager_buttonActionPerformed
 
@@ -1550,7 +1549,7 @@ private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.
         // for now we have to undo internal acquisition rejecttions allowed by intercept but not by downhole
         tripoliSession.refitAllFractionsForDownhole();
 
-            uPbReduxFrame.updateReportTable(true);
+        uPbReduxFrame.updateReportTable(true);
     }//GEN-LAST:event_downholeCalculateRhos_buttonActionPerformed
 
     private void downholeFitEachStandard_radioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downholeFitEachStandard_radioButtonActionPerformed
@@ -1563,7 +1562,7 @@ private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.
             tripoliSession.interceptCalculatePbcCorrAndRhos();
         } catch (Exception e) {
         }
-        
+
         uPbReduxFrame.updateReportTable(true);
     }//GEN-LAST:event_interceptCalculatePbcCorrAndRhos_button1ActionPerformed
 

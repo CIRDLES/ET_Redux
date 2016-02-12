@@ -60,10 +60,7 @@ public abstract class AbstractRawDataFileHandler implements //
      *
      */
     protected String aboutInfo;
-//    /**
-//     *
-//     */
-//    protected SortedSet<AbstractMassSpecSetup> availableMassSpecSetups;
+
     /**
      *
      */
@@ -568,13 +565,6 @@ public abstract class AbstractRawDataFileHandler implements //
     public SortedSet<AbstractRawDataFileTemplate> getAvailableRawDataFileTemplates() {
         return availableRawDataFileTemplates;
     }
-
-//    /**
-//     * @return the avaindexlableMassSpecSetups
-//     */
-//    public SortedSet<AbstractMassSpecSetup> getAvailableMassSpecSetups() {
-//        return availableMassSpecSetups;
-//    }
 
     /**
      * @param tripoliFractions the trindexpolindexFractindexons to set

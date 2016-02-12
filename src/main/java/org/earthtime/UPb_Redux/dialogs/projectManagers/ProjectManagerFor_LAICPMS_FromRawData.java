@@ -108,7 +108,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
     private ProjectInterface project;
     private TripoliSessionInterface tripoliSession;
     private AbstractRawDataFileHandler rawDataFileHandler;
-    private final ArrayList<AbstractRawDataFileHandler> knownRawDataFileHandlers;
+    private ArrayList<AbstractRawDataFileHandler> knownRawDataFileHandlers;
     private ArrayList<AbstractTripoliSample> tripoliSamplesSorted;
     private final ETReduxFrame uPbReduxFrame;
     private SessionAnalysisWorkflowManagerInterface mySessionManager;
@@ -141,8 +141,143 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
         loadDataTaskProgressBar.setVisible(false);
         rawDataFileChosen_scrollPane.setVisible(false);
 
-        setSizeAndCenter(1200, 750);
+//        setSizeAndCenter(1200, 750);
+//        // initialize all known machines and protocols etc
+//        // eventually move to xml external files
+//        knownRawDataFileHandlers = new ArrayList<>();
+//
+//        // LaserChron NU Plasma FARADAY
+//        AbstractRawDataFileHandler theNUPlasmaMultiCollFaradayFileHandler
+//                = LaserChronNUPlasmaMultiCollFaradayFileHandler.getInstance();
+//        theNUPlasmaMultiCollFaradayFileHandler.getAvailableRawDataFileTemplates()//
+//                .add(LaserChronNUPlasmaMultiCollFaradayRawDataTemplate.getInstance());
+//        knownRawDataFileHandlers.add(theNUPlasmaMultiCollFaradayFileHandler);
+//
+//        // LaserChron NU Plasma FARADAY TRA
+//        AbstractRawDataFileHandler theNUPlasmaMultiCollFaradayTRAFileHandler
+//                = LaserChronNUPlasmaMultiCollFaradayTRAFileHandler.getInstance();
+//        theNUPlasmaMultiCollFaradayTRAFileHandler.getAvailableRawDataFileTemplates()//
+//                .add(LaserChronNUPlasmaMultiCollFaradayTRARawDataTemplate.getInstance());
+//        knownRawDataFileHandlers.add(theNUPlasmaMultiCollFaradayTRAFileHandler);
+//
+//        // LaserChron NU Plasma IONCOUNTER
+//        AbstractRawDataFileHandler theNUPlasmaMultiCollIonCounterFileHandler
+//                = LaserChronNUPlasmaMultiCollIonCounterFileHandler.getInstance();
+//        theNUPlasmaMultiCollIonCounterFileHandler.getAvailableRawDataFileTemplates()//
+//                .add(LaserChronNUPlasmaMultiCollIonCounterRawDataTemplate.getInstance());
+//        knownRawDataFileHandlers.add(theNUPlasmaMultiCollIonCounterFileHandler);
+//
+//        // LaserChron Element 2 
+//        AbstractRawDataFileHandler theLaserchronElementIIFileHandler
+//                = LaserchronElementIIFileHandler.getInstance();
+//        theLaserchronElementIIFileHandler.getAvailableRawDataFileTemplates()//
+//                .add(LaserchronElementII_RawDataTemplate_A.getInstance());
+//        theLaserchronElementIIFileHandler.getAvailableRawDataFileTemplates()//
+//                .add(LaserchronElementII_RawDataTemplate_B.getInstance());
+//        theLaserchronElementIIFileHandler.getAvailableRawDataFileTemplates()//
+//                .add(LaserchronElementII_RawDataTemplate_C.getInstance());
+//        knownRawDataFileHandlers.add(theLaserchronElementIIFileHandler);
+//
+//        // Memorial U Newfoundland John Hanchar ElementII 
+//        AbstractRawDataFileHandler theMemUnivNewfoundlandElementIIFileHandler
+//                = MemUnivNewfoundlandElementIIFileHandler.getInstance();
+//        theMemUnivNewfoundlandElementIIFileHandler.getAvailableRawDataFileTemplates()//
+//                .add(HancharMemUnivNewfoundlandElementII_RawDataTemplate.getInstance());
+//        knownRawDataFileHandlers.add(theMemUnivNewfoundlandElementIIFileHandler);
+//
+//        // U Kansas Andreas Moeller ElementII  
+//        AbstractRawDataFileHandler theUnivKansasElementIIFileHandler
+//                = UnivKansasElementIIFileHandler.getInstance();
+//        theUnivKansasElementIIFileHandler.getAvailableRawDataFileTemplates()//
+//                .add(MoellerUnivKansasElementII_RawDataTemplate.getInstance());
+//        knownRawDataFileHandlers.add(theUnivKansasElementIIFileHandler);
+//
+//        // Washington State Element 2 
+//        AbstractRawDataFileHandler theThermoFinniganElement2SingleCollFileHandler
+//                = WashStateElementIISingleCollFileHandler.getInstance();
+//        theThermoFinniganElement2SingleCollFileHandler.getAvailableRawDataFileTemplates()//
+//                .add(VervoortWashStateElementII_RawDataTemplate.getInstance());
+//        theThermoFinniganElement2SingleCollFileHandler.getAvailableRawDataFileTemplates()//
+//                .add(ValenciaWashStateElementII_RawDataTemplate.getInstance());
+//        knownRawDataFileHandlers.add(theThermoFinniganElement2SingleCollFileHandler);
+//
+//        // feb 2014 Agilent 7700
+//        AbstractRawDataFileHandler theRittnerAgilent7700FileHandler
+//                = //
+//                RittnerAgilent7700FileHandler.getInstance();
+//        theRittnerAgilent7700FileHandler.getAvailableRawDataFileTemplates()//
+//                .add(Rittner_Agilent7700_RawDataTemplate.getInstance());
+////        knownRawDataFileHandlers.add(theRittnerAgilent7700FileHandler);
+//
+//        AbstractRawDataFileHandler theKoslerAgilent7700FileHandler
+//                = KoslerAgilent7700FileHandler.getInstance();
+//        theKoslerAgilent7700FileHandler.getAvailableRawDataFileTemplates()//
+//                .add(Kosler_Agilent7700_RawDataTemplate.getInstance());
+//        knownRawDataFileHandlers.add(theKoslerAgilent7700FileHandler);
+//
+//        // dec 2015 Texas AM for Brent Miller
+//        // LaserChron Element 2 
+//        AbstractRawDataFileHandler theTexasAMElementIIFileHandler
+//                = TexasAMElementIISingleCollFileHandler.getInstance();
+//        theTexasAMElementIIFileHandler.getAvailableRawDataFileTemplates()//
+//                .add(MillerTexasAMElementII_RawDataTemplate.getInstance());
+//        knownRawDataFileHandlers.add(theTexasAMElementIIFileHandler);
+//
+//        // move this section for robust file opening
+//        fileHandlerComboBox.removeAllItems();
+//        for (int i = 0; i < knownRawDataFileHandlers.size(); i++) {
+//            fileHandlerComboBox.addItem( //
+//                    knownRawDataFileHandlers.get(i));
+//        }
+//
+//        fileHandlerComboBox.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                AbstractRawDataFileHandler fileHandler = ((AbstractRawDataFileHandler) fileHandlerComboBox.getSelectedItem());
+//
+//                rawDataTemplateComboBox.removeAllItems();
+//                SortedSet<AbstractRawDataFileTemplate> templates = fileHandler.getAvailableRawDataFileTemplates();
+//                Iterator<AbstractRawDataFileTemplate> templatesIterator = templates.iterator();
+//                while (templatesIterator.hasNext()) {
+//                    rawDataTemplateComboBox.addItem(templatesIterator.next());
+//                }
+//
+//            }
+//        });
+//
+//        rawDataTemplateComboBox.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                AbstractRawDataFileHandler fileHandler = ((AbstractRawDataFileHandler) fileHandlerComboBox.getSelectedItem());
+//                AbstractRawDataFileTemplate filetemplate = ((AbstractRawDataFileTemplate) rawDataTemplateComboBox.getSelectedItem());
+//                try {
+//                    aboutInfo_textPanel.setText(
+//                            fileHandler.getAboutInfo() //
+//                            + "  This handler will expect raw data files for "//
+//                            + filetemplate.getAboutInfo()//
+//                            + ".");
+//                } catch (Exception badTemplate) {
+//                }
+//            }
+//        });
+//
+//        // set up analysisPurposeChooser
+//        analysisPurposeChooser.removeAllItems();
+//        for (ANALYSIS_PURPOSE ap : ANALYSIS_PURPOSE.values()) {
+//            analysisPurposeChooser.addItem(ap.toString());
+//        }
+//
+//        analysisPurposeChooser.addItemListener(new AnalysisPurposeItemListener());
+//
+//        loadProject();
+//
+//        amChanged = false;//true;
+    }
 
+    @Override
+    public void initDialogContent() {
+
+        setSizeAndCenter(1200, 750);
         // initialize all known machines and protocols etc
         // eventually move to xml external files
         knownRawDataFileHandlers = new ArrayList<>();
@@ -272,7 +407,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
 
         loadProject();
 
-        amChanged = false;//true;
+        amChanged = false;
     }
 
     /**
@@ -285,7 +420,6 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
         saveProject_button.setEnabled(amChanged);
         revertProjectChanges_button.setEnabled(amChanged && (tripoliSession != null));
         openRawDataManager_button.setEnabled(!amChanged);
-//        manageButtons(true, true, false);
 
         project.setProjectName(projectName_text.getText().trim());
 
@@ -567,6 +701,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
         parametersView = null;
 
         parametersView = new LAICPMSProjectParametersManager(project, this, uPbReduxFrame);
+        parametersView.initView();
         parametersView.displayModelInFrame();
 
         return parametersView.isReadyToProcessData();
@@ -1046,9 +1181,6 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
             initializeSessionManager(false, true, true);
         }
     }//GEN-LAST:event_openRawDataManager_buttonActionPerformed
-    @Override
-    public void initDialogContent() {
-    }
 
     /**
      *
@@ -1109,6 +1241,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
                             JOptionPane.YES_NO_OPTION);
                     if (userChoice == JOptionPane.YES_OPTION) {
                         loadDataTask.cancel(true);
+                        project = null;
                         close();
                     }
                 } else {
@@ -1299,56 +1432,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
     private void rawDataTemplateComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rawDataTemplateComboBoxActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_rawDataTemplateComboBoxActionPerformed
-//    /**
-//     * @param args the command line arguments
-//     */
-//    public static void main ( String args[] ) {
-//        /*
-//         * Set the Nimbus look and feel
-//         */
-//        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-//        /*
-//         * If Nimbus (introduced in Java SE 6) is not available, stay with the
-//         * default look and feel. For details see
-//         * http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
-//         */
-//        try {
-//            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-//                if ( "Nimbus".equals( info.getName() ) ) {
-//                    javax.swing.UIManager.setLookAndFeel( info.getClassName() );
-//                    break;
-//                }
-//            }
-//        } catch (ClassNotFoundException ex) {
-//            java.util.logging.Logger.getLogger( ProjectManagerFor_LAICPMS_FromRawData.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
-//        } catch (InstantiationException ex) {
-//            java.util.logging.Logger.getLogger( ProjectManagerFor_LAICPMS_FromRawData.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
-//        } catch (IllegalAccessException ex) {
-//            java.util.logging.Logger.getLogger( ProjectManagerFor_LAICPMS_FromRawData.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
-//        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-//            java.util.logging.Logger.getLogger( ProjectManagerFor_LAICPMS_FromRawData.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
-//        }
-//        //</editor-fold>
-//
-//        /*
-//         * Create and display the dialog
-//         */
-//        java.awt.EventQueue.invokeLater( new Runnable() {
-//
-//            public void run () {
-//                ProjectManagerFor_LAICPMS_FromRawData dialog = new ProjectManagerFor_LAICPMS_FromRawData(//
-//                        new javax.swing.JFrame(), true, null, null );
-//                dialog.addWindowListener( new java.awt.event.WindowAdapter() {
-//
-//                    @Override
-//                    public void windowClosing ( java.awt.event.WindowEvent e ) {
-//                        System.exit( 0 );
-//                    }
-//                } );
-//                dialog.setVisible( true );
-//            }
-//        } );
-//    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextPane aboutInfo_textPanel;
     private javax.swing.JComboBox<String> analysisPurposeChooser;
