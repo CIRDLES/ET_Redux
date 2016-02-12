@@ -801,22 +801,25 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         theProject = new Project(myState);
 
         if (sampleAnalysisType.equalsIgnoreCase(SampleAnalysisTypesEnum.LAICPMS.getName())) {
-
             myProjectManager
                     = new ProjectManagerFor_LAICPMS_FromRawData(this, true, myState, theProject);
+        } else if (sampleAnalysisType.equalsIgnoreCase(SampleAnalysisTypesEnum.LAICPMS.getName())) {
+            myProjectManager
+                    = new ProjectManagerFor_LAICPMS_FromRawData(this, true, myState, theProject);
+        }
+        
+        // modal call
+        myProjectManager.setVisible(true);
 
-            // modal call
-            myProjectManager.setVisible(true);
-
-            if (!theProject.getProjectSamples().isEmpty()) {
-                setUpTheProject(false);
-                try {
-                    saveTheProject();
-                } catch (BadLabDataException ex) {
-                    new ETWarningDialog(ex).setVisible(true);
-                }
+        if (!theProject.getProjectSamples().isEmpty()) {
+            setUpTheProject(false);
+            try {
+                saveTheProject();
+            } catch (BadLabDataException ex) {
+                new ETWarningDialog(ex).setVisible(true);
             }
         }
+
     }
 
     /**
@@ -2243,8 +2246,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         });
         newProjectFromRawData_menu.add(newProjectRawDataLAICPMS);
 
-        newProjectRawDataSHRIMP.setText("SHRIMP");
-        newProjectRawDataSHRIMP.setEnabled(false);
+        newProjectRawDataSHRIMP.setText("SHRIMP - in development");
         newProjectRawDataSHRIMP.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 newProjectRawDataSHRIMPActionPerformed(evt);
@@ -4174,7 +4176,7 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     }//GEN-LAST:event_reportSettingsHelpActionPerformed
 
     private void newProjectRawDataSHRIMPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newProjectRawDataSHRIMPActionPerformed
-        // TODO add your handling code here:
+        setUpNewTripolizedProject(SampleAnalysisTypesEnum.SHRIMP.getName());
     }//GEN-LAST:event_newProjectRawDataSHRIMPActionPerformed
 
     private void helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {

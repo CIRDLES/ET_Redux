@@ -38,6 +38,7 @@ public enum SampleAnalysisTypesEnum {
      * 
      */
     LAICPMS( "LAICPMS" ),
+    SHRIMP("SHRIMP"),
 
     /**
      *
