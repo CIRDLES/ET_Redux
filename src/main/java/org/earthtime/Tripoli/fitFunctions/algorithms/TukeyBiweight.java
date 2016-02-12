@@ -86,13 +86,14 @@ public final class TukeyBiweight {
 
     /**
      * Calculates arithmetic median of array of doubles.
+     *
      * @pre values has one element
      * @param values
-     * @return 
+     * @return
      */
     public static double calculateMedian(double[] values) {
         double median;
-        
+
         // enforce precondition
         if (values.length == 0) {
             median = 0.0;
@@ -100,12 +101,12 @@ public final class TukeyBiweight {
             double[] myValues = values.clone();
 
             Arrays.sort(myValues);
-            double pos1 = Math.floor((myValues.length - 1.0) / 2.0);
-            double pos2 = Math.ceil((myValues.length - 1.0) / 2.0);
+            int pos1 = (int) Math.floor((myValues.length - 1.0) / 2.0);
+            int pos2 = (int) Math.ceil((myValues.length - 1.0) / 2.0);
             if (pos1 == pos2) {
-                median = myValues[(int) pos1];
+                median = myValues[pos1];
             } else {
-                median = (myValues[(int) pos1] + myValues[(int) pos2]) / 2.0;
+                median = (myValues[pos1] + myValues[pos2]) / 2.0;
             }
         }
         return median;
