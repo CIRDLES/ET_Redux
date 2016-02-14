@@ -811,7 +811,6 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
                 // add universal FitFunction chooser
                 AbstractRawDataView universalFitFunctionChooser = //
                         new AllFunctionsChoicePanel(//
-                                //
                                 this,
                                 standardsForYAxisArray,//
                                 new Rectangle( //
@@ -1244,9 +1243,7 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
 
         try {
             rawDataSource = (SortedSet<DataModelInterface>) rawDataSourceMethod.invoke(tf, new Object[]{});//   (Object[]) null );
-        } catch (IllegalAccessException illegalAccessException) {
-        } catch (IllegalArgumentException illegalArgumentException) {
-        } catch (InvocationTargetException invocationTargetException) {
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException illegalAccessException) {
         }
 
         return rawDataSource;

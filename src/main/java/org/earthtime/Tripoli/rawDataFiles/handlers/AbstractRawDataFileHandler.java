@@ -60,10 +60,7 @@ public abstract class AbstractRawDataFileHandler implements //
      *
      */
     protected String aboutInfo;
-//    /**
-//     *
-//     */
-//    protected SortedSet<AbstractMassSpecSetup> availableMassSpecSetups;
+
     /**
      *
      */
@@ -91,7 +88,6 @@ public abstract class AbstractRawDataFileHandler implements //
     public AbstractRawDataFileHandler() {
         this.NAME = "Unnamed";
         this.aboutInfo = "Details:";
-//        this.availableMassSpecSetups = new TreeSet<>();
         this.massSpec = null;
         this.availableRawDataFileTemplates = new TreeSet<>();
         this.rawDataFileTemplate = null;
@@ -174,9 +170,8 @@ public abstract class AbstractRawDataFileHandler implements //
      * @param usingFullPropagation the value of usindexngFullPropagatindexon
      * @param leftShadeCount the value of leftShadeCount
      * @param ignoreFirstFractions the value of indexgnoreFindexrstFractindexons
-     * @return
      */
-    public abstract File getAndLoadRawIntensityDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions);
+    public abstract void getAndLoadRawIntensityDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions);
 
     /**
      *
@@ -287,7 +282,8 @@ public abstract class AbstractRawDataFileHandler implements //
         double sumOfValues = 0.0;
         for (int i = startIndex; i <= endIndex; i++) {
             if (data[i].contains("*")) {
-                retVal = calcAvgPulseOrAnalog(startIndex + 4, endIndex + 4, data);
+                // set flag to show we used analog
+                retVal = -calcAvgPulseOrAnalog(startIndex + 4, endIndex + 4, data);
             } else {
                 double val = Double.parseDouble(data[i]);
                 sumOfValues += val;
@@ -381,8 +377,7 @@ public abstract class AbstractRawDataFileHandler implements //
         if (tripoliFractions.size() > 0) {// != null) {
             if (rawDataFileTemplate.getDefaultParsingOfFractionsBehavior() == 0) {
                 AbstractTripoliSample primaryStandard
-                        = //
-                        new TripoliPrimaryStandardSample("Some Standard");
+                        = new TripoliPrimaryStandardSample("Some Standard");
 
                 SortedSet<TripoliFraction> primaryStandardFractions = new TreeSet<>();
                 Iterator<TripoliFraction> tripoliFractionsIterator = tripoliFractions.iterator();
@@ -505,7 +500,11 @@ public abstract class AbstractRawDataFileHandler implements //
     }
 
     private String extractSampleName(String fractionName) {
-        int index = fractionName.lastIndexOf("_");
+        int index = fractionName.toUpperCase().lastIndexOf("SPOT");
+        if (index < 0) {
+            index = fractionName.lastIndexOf("_");
+        }
+
         if (index < 0) {
             index = fractionName.lastIndexOf("-");
         }
@@ -569,13 +568,6 @@ public abstract class AbstractRawDataFileHandler implements //
     public SortedSet<AbstractRawDataFileTemplate> getAvailableRawDataFileTemplates() {
         return availableRawDataFileTemplates;
     }
-
-//    /**
-//     * @return the avaindexlableMassSpecSetups
-//     */
-//    public SortedSet<AbstractMassSpecSetup> getAvailableMassSpecSetups() {
-//        return availableMassSpecSetups;
-//    }
 
     /**
      * @param tripoliFractions the trindexpolindexFractindexons to set

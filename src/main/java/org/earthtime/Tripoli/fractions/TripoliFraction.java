@@ -706,7 +706,7 @@ public class TripoliFraction implements //
         });
 
         for (DataModelInterface rr : rawRatios) {
-            if (((RawRatioDataModel) rr).isUsedForFractionationCorrections() && !((RawRatioDataModel) rr).isUsedForCommonLeadCorrections()) {
+            if (((RawRatioDataModel) rr).isUsedForFractionationCorrections() && !rr.isUsedForCommonLeadCorrections()) {
                 ratiosForFractionFitting.add(rr);
             }
         }

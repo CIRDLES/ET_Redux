@@ -85,10 +85,9 @@ public class UnivKansasElementIIFileHandler extends AbstractRawDataFileHandler{
      * @param usingFullPropagation the value of usingFullPropagation
      * @param leftShadeCount the value of leftShadeCount
      * @param ignoreFirstFractions the value of ignoreFirstFract
-     * @return ions
      */
     @Override
-    public File getAndLoadRawIntensityDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions) {
+    public void getAndLoadRawIntensityDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions) {
 
         // ElementII has folder of .FIN2 files plus INF DAT and TXT files for each acquisition
         // also there is a FIN file containing naming and ordering of samples
@@ -114,7 +113,7 @@ public class UnivKansasElementIIFileHandler extends AbstractRawDataFileHandler{
             rawDataFile = null;
         }
 
-        return rawDataFile;
+//        return rawDataFile;
     }
 
     /**

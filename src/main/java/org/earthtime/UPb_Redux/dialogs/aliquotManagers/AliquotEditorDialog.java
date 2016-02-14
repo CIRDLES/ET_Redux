@@ -89,7 +89,7 @@ import org.earthtime.UPb_Redux.utilities.UPbReduxFocusTraversalPolicy;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.aliquots.ReduxAliquotInterface;
-import org.earthtime.UPb_Redux.aliquots.AnalysisImage;
+import org.earthtime.archivingTools.AnalysisImageInterface;
 import org.earthtime.archivingTools.GeochronUploadImagesHelper;
 import org.earthtime.archivingTools.GeochronUploaderUtility;
 import org.earthtime.archivingTools.IEDACredentialsValidator;
@@ -4688,7 +4688,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
             concordiaGraphPanel.setUploadToGeochronMode(false);
 
             // april 2011 revise to check if concordia slot is already taken
-            AnalysisImage concordiaImage = getMyAliquot().getAnalysisImageByType(AnalysisImageTypes.CONCORDIA);
+            AnalysisImageInterface concordiaImage = getMyAliquot().getAnalysisImageByType(AnalysisImageTypes.CONCORDIA);
 
             concordiaImage.setImageURL(//
                     GeochronUploadImagesHelper.uploadImage(//
@@ -4735,7 +4735,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
 
             probabilityPanel.setUploadToGeochronMode(false);
 
-            AnalysisImage probabilityImage = getMyAliquot().getAnalysisImageByType(AnalysisImageTypes.PROBABILITY_DENSITY);
+            AnalysisImageInterface probabilityImage = getMyAliquot().getAnalysisImageByType(AnalysisImageTypes.PROBABILITY_DENSITY);
 
             probabilityImage.setImageURL(//
                     GeochronUploadImagesHelper.uploadImage(//
@@ -4759,7 +4759,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
 
             File tempReportSVG = ((TabbedReportViews) tabbedReportViews).createReportSVGandPDF("UPLOADED_DATA_TABLE", false);
 
-            AnalysisImage reportImage = getMyAliquot().getAnalysisImageByType(AnalysisImageTypes.REPORT);
+            AnalysisImageInterface reportImage = getMyAliquot().getAnalysisImageByType(AnalysisImageTypes.REPORT);
 
             reportImage.setImageURL(//
                     GeochronUploadImagesHelper.uploadImage(//
@@ -4784,7 +4784,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
             CsvResultsTable.setReportFractions(reportFractions);
             CsvResultsTable.writeCSVReport(tempReportCSV);
 
-            AnalysisImage reportImage = getMyAliquot().getAnalysisImageByType(AnalysisImageTypes.REPORT_CSV);
+            AnalysisImageInterface reportImage = getMyAliquot().getAnalysisImageByType(AnalysisImageTypes.REPORT_CSV);
 
             reportImage.setImageURL(//
                     GeochronUploadImagesHelper.uploadImage(//

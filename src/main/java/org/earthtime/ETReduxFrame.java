@@ -69,6 +69,7 @@ import org.earthtime.UPb_Redux.dialogs.aliquotManagers.AliquotLegacyEditorForLAI
 import org.earthtime.UPb_Redux.dialogs.fractionManagers.UPbFractionEditorDialog;
 import org.earthtime.UPb_Redux.dialogs.fractionManagers.UPbLegacyFractionEditorDialog;
 import org.earthtime.UPb_Redux.dialogs.projectManagers.ProjectManagerFor_LAICPMS_FromRawData;
+import org.earthtime.UPb_Redux.dialogs.projectManagers.ProjectManagerFor_SHRIMP_FromRawData;
 import org.earthtime.UPb_Redux.dialogs.projectManagers.ProjectManagerSubscribeInterface;
 import org.earthtime.UPb_Redux.dialogs.projectManagers.exportManagers.GeochronProjectExportManager;
 import org.earthtime.UPb_Redux.dialogs.sampleManagers.GeochronSampleCustomMetadataDialog;
@@ -358,8 +359,8 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                 announcementPane.add(visitCIRDLESbutton);
 
                 JTextArea announce = new JTextArea(//
-                        "ANNOUNCEMENT:         2015 brings changes to this project. "//
-                        + "We are changing the name to ET_Redux, for EARTHTIME Redux, in preparation for additional isotope systems, such as U-series.  "//
+                        "ANNOUNCEMENT:         We are looking forward to a productive 2016. "//
+                        + "ET_Redux, for EARTHTIME Redux, will complete LA-CIP MS functionality for Laserchronbin preparation for additional isotope systems, such as U-series.  "//
                         + "We are moving the project to a GitHub repository in the near future to make collaboration easier and more transparent.  "
                         + "We are seeking a new logo for ET_Redux and invite your submissions.");
                 announce.setFont(ReduxConstants.sansSerif_12_Bold);
@@ -371,7 +372,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                 announce.setOpaque(true);
                 //announce.setBorder(new LineBorder(Color.black));
                 announce.setBackground(announcementPane.getBackground());
-                announcementPane.add(announce);
+//                announcementPane.add(announce);
 
                 JButton visitTOPSOIL = new ET_JButton("Checkout Topsoil - the Isoplot replacement project that you can join at github.com/CIRDLES/topsoil");
                 visitTOPSOIL.setFont(ReduxConstants.sansSerif_12_Bold);
@@ -584,8 +585,8 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             } else { // instantiate project manager so processing can be initialited
 
                 myProjectManager
-                        = //
-                        new ProjectManagerFor_LAICPMS_FromRawData(this, true, myState, theProject);
+                        = new ProjectManagerFor_LAICPMS_FromRawData(this, true, myState, theProject);
+                myProjectManager.initDialogContent();
                 myProjectManager.setVisible(true);
             }
 
@@ -779,9 +780,10 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                 myProjectManager
                         = new ProjectManagerFor_LAICPMS_FromRawData(this, true, myState, theProject);
             }
+
+            myProjectManager.initDialogContent();
         }
 
-        myProjectManager.initDialogContent();
         myProjectManager.setVisible(true);
 
         updateReportTable();
@@ -793,6 +795,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         if ((myProjectManager == null) || !(myProjectManager instanceof ProjectManagerFor_LAICPMS_FromRawData)) {
             myProjectManager
                     = new ProjectManagerFor_LAICPMS_FromRawData(this, true, myState, theProject);
+            myProjectManager.initDialogContent();
         }
         ((ProjectManagerSubscribeInterface) myProjectManager).initializeSessionManager(false, true, false);
     }
@@ -801,22 +804,28 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         theProject = new Project(myState);
 
         if (sampleAnalysisType.equalsIgnoreCase(SampleAnalysisTypesEnum.LAICPMS.getName())) {
-
             myProjectManager
                     = new ProjectManagerFor_LAICPMS_FromRawData(this, true, myState, theProject);
-
-            // modal call
-            myProjectManager.setVisible(true);
-
-            if (!theProject.getProjectSamples().isEmpty()) {
-                setUpTheProject(false);
-                try {
-                    saveTheProject();
-                } catch (BadLabDataException ex) {
-                    new ETWarningDialog(ex).setVisible(true);
-                }
-            }
+        } else if (sampleAnalysisType.equalsIgnoreCase(SampleAnalysisTypesEnum.SHRIMP.getName())) {
+            myProjectManager
+                    = new ProjectManagerFor_SHRIMP_FromRawData(this, true, myState, theProject);
         }
+
+        // modal call
+        myProjectManager.initDialogContent();
+        myProjectManager.setVisible(true);
+
+        if (!theProject.getProjectSamples().isEmpty()) {
+            setUpTheProject(false);
+            try {
+                saveTheProject();
+            } catch (BadLabDataException ex) {
+                new ETWarningDialog(ex).setVisible(true);
+            }
+        } else {
+            theProject = null;
+        }
+
     }
 
     /**
@@ -1592,8 +1601,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
     private void setUpEmptySample() //
             throws BadLabDataException {
         theSample
-                = //
-                new Sample("NONE", "NONE", "", myState.getReduxPreferences().getDefaultSampleAnalysisPurpose(), "UPb");
+                = new Sample("NONE", "NONE", "", myState.getReduxPreferences().getDefaultSampleAnalysisPurpose(), "UPb");
         SampleInterface.specializeNewSample(theSample);
 
         setUpTheSample(false);
@@ -2243,8 +2251,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         });
         newProjectFromRawData_menu.add(newProjectRawDataLAICPMS);
 
-        newProjectRawDataSHRIMP.setText("SHRIMP");
-        newProjectRawDataSHRIMP.setEnabled(false);
+        newProjectRawDataSHRIMP.setText("SHRIMP - in development");
         newProjectRawDataSHRIMP.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 newProjectRawDataSHRIMPActionPerformed(evt);
@@ -4174,7 +4181,7 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     }//GEN-LAST:event_reportSettingsHelpActionPerformed
 
     private void newProjectRawDataSHRIMPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newProjectRawDataSHRIMPActionPerformed
-        // TODO add your handling code here:
+        setUpNewTripolizedProject(SampleAnalysisTypesEnum.SHRIMP.getName());
     }//GEN-LAST:event_newProjectRawDataSHRIMPActionPerformed
 
     private void helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {

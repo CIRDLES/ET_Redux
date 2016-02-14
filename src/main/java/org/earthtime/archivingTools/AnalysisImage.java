@@ -27,7 +27,7 @@ import org.earthtime.dataDictionaries.AnalysisImageTypes;
  *
  * @author James F. Bowring
  */
-public class AnalysisImage implements Serializable {
+public class AnalysisImage implements AnalysisImageInterface, Serializable {
 
     // Class variables
     private static final long serialVersionUID = -6082771900853607193L;
@@ -47,6 +47,7 @@ public class AnalysisImage implements Serializable {
     /**
      * @return the imageType
      */
+    @Override
     public AnalysisImageTypes getImageType () {
         return imageType;
     }
@@ -54,6 +55,7 @@ public class AnalysisImage implements Serializable {
     /**
      * @param imageType the imageType to set
      */
+    @Override
     public void setImageType ( AnalysisImageTypes imageType ) {
         this.imageType = imageType;
     }
@@ -61,6 +63,7 @@ public class AnalysisImage implements Serializable {
     /**
      * @return the imageURL
      */
+    @Override
     public String getImageURL () {
         return imageURL;
     }
@@ -68,6 +71,7 @@ public class AnalysisImage implements Serializable {
     /**
      * @param imageURL the imageURL to set
      */
+    @Override
     public void setImageURL ( String imageURL ) {
         this.imageURL = imageURL;
         System.out.println("Image URL = " + imageURL);

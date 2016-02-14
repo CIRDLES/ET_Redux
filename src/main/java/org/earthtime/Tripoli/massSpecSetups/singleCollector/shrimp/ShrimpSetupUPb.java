@@ -1,5 +1,5 @@
 /*
- * LaserchronElementIISetupUPb_A
+ * ShrimpSetupUPb
  *
  * Copyright 2006-2016 James F. Bowring and www.Earth-Time.org
  *
@@ -15,7 +15,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan;
+package org.earthtime.Tripoli.massSpecSetups.singleCollector.shrimp;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -43,13 +43,13 @@ import org.earthtime.isotopes.IsotopesEnum;
  *
  * @author James F. Bowring
  */
-public final class LaserchronElementIISetupUPb_A extends AbstractMassSpecSetup {
+public final class ShrimpSetupUPb extends AbstractMassSpecSetup {
 
-    private static LaserchronElementIISetupUPb_A instance = new LaserchronElementIISetupUPb_A();
+    private static ShrimpSetupUPb instance = new ShrimpSetupUPb();
 
-    private LaserchronElementIISetupUPb_A() {
+    private ShrimpSetupUPb() {
         super();
-        NAME = "Laserchron Element II Setup";
+        NAME = "SHRIMP Setup";
         massSpecType = MassSpecTypeEnum.SINGLE;
         VIRTUAL_COLLECTOR_COUNT = 14;
         COLLECTOR_DATA_FREQUENCY_MILLISECS = 325;
@@ -64,8 +64,7 @@ public final class LaserchronElementIISetupUPb_A extends AbstractMassSpecSetup {
         this.commonLeadCorrectionHighestLevel = "NONE";
 
         AbstractCollectorModel singleCollector
-                = //
-                new IonCounterCollectorModel(//
+                = new IonCounterCollectorModel(//
                         "Single", //
                         new ValueModel("DeadTime", //
                                 new BigDecimal(12.0e-9, //
@@ -75,13 +74,8 @@ public final class LaserchronElementIISetupUPb_A extends AbstractMassSpecSetup {
                                 BigDecimal.ZERO), //
                         IonCounterCollectorModel.CollectedDataStyle.COUNTS);
 
-        // from Noah June 2015 for Kansas
-        //isotope	int. time (s)
-        //206	0.032
-        //207	0.080
-        //208	0.016
-        //232	0.020
-        //238	0.020
+// needs updating = borrowed from elementII
+
         isotopeMappingModel.getIsotopeToCollectorMap().put(//
                 IsotopesEnum.U238, singleCollector);
         isotopeMappingModel.getIsotopeToIntegrationTimeMap().put( //
@@ -125,7 +119,7 @@ public final class LaserchronElementIISetupUPb_A extends AbstractMassSpecSetup {
      *
      * @return
      */
-    public static LaserchronElementIISetupUPb_A getInstance() {
+    public static ShrimpSetupUPb getInstance() {
         return instance;
     }
 

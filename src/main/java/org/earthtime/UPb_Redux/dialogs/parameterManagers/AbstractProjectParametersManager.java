@@ -1,5 +1,5 @@
 /*
- * LAICPMSProjectParametersManager.java
+ * AbstractProjectParametersManager.java
  *
  * Copyright 2006-2016 James F. Bowring and www.Earth-Time.org
  *
@@ -26,7 +26,6 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.IOException;
@@ -80,7 +79,7 @@ import org.earthtime.reduxLabData.ReduxLabData;
  *
  * @author James F. Bowring
  */
-public class LAICPMSProjectParametersManager extends JLayeredPane {
+public abstract class AbstractProjectParametersManager extends JLayeredPane {
 
     /**
      *
@@ -175,7 +174,7 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
     /**
      *
      */
-    protected int topOfTable = 115;
+    protected int topOfTable = 125;
 
     /**
      *
@@ -201,6 +200,8 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
      *
      */
     protected JSpinner leftMaskSpinner;
+    
+    protected JRadioButton fullPropagationRB;
 
     /**
      *
@@ -208,7 +209,7 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
      * @param projectManager
      * @param uPbReduxFrame
      */
-    public LAICPMSProjectParametersManager(ProjectInterface project, ProjectManagerSubscribeInterface projectManager, ETReduxFrame uPbReduxFrame) {
+    public AbstractProjectParametersManager(ProjectInterface project, ProjectManagerSubscribeInterface projectManager, ETReduxFrame uPbReduxFrame) {
 
         this.project = project;
         this.massSpecSetup = null;
@@ -220,8 +221,6 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
 
         this.readyToProcessData = false;
         this.rawDataProcessed = rawDataFileHandler.getAcquisitionModel().isRawDataProcessed();
-
-       // initView();
     }
 
     @Override
@@ -232,7 +231,7 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
     }
 
     public void initView() {
-        
+
         boolean editable = !rawDataProcessed;
 
         removeAll();
@@ -283,7 +282,6 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
 
         JLabel headerLabel = new JLabel(//
                 "Isotope   Collector  Type             ");//
-//                + "deadTime       1-sigma abs      " );
 
         IsotopeMappingModel isotopeMappingModel = massSpecSetup.getIsotopeMappingModel();
 
@@ -396,8 +394,7 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
         this.add(headerLabel);
 
         Iterator<IsotopesEnum> isotopeIterator
-                = //
-                isotopeMappingModel.getIsotopeToCollectorMap().keySet().iterator();
+                = isotopeMappingModel.getIsotopeToCollectorMap().keySet().iterator();
 
         int count = 1;
         while (isotopeIterator.hasNext()) {
@@ -562,13 +559,13 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
                     "Raw data location: "
                     + rawDataFileHandler.getAcquisitionModel().getRawDataFile().getCanonicalPath());
 
-            rawDataFilePathTextArea.setBounds(leftMargin, 370, parentDimension.width - 100, 50);
+            rawDataFilePathTextArea.setBounds(leftMargin, 360, parentDimension.width - 100, 50);
             rawDataFilePathTextArea.setLineWrap(true);
             rawDataFilePathTextArea.setEditable(false);
             this.add(rawDataFilePathTextArea);
 
         } catch (IOException ex) {
-            Logger.getLogger(LAICPMSProjectParametersManager.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AbstractProjectParametersManager.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         JLabel leftShadeLabel = new JLabel("Number of datapoints to ignore at start of each fraction (4 max): ");
@@ -604,7 +601,7 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
         fastPropagationRB.setSelected(!rawDataFileHandler.getAcquisitionModel().isUsingFullPropagation());
         this.add(fastPropagationRB);
 
-        final JRadioButton fullPropagationRB = new JRadioButton("Full uncertainty propagation");
+        fullPropagationRB = new JRadioButton("Full uncertainty propagation");
         propagationSpeedGroup.add(fullPropagationRB);
         fullPropagationRB.setBounds(leftMargin, 475, 300, 25);
         fullPropagationRB.setSelected(rawDataFileHandler.getAcquisitionModel().isUsingFullPropagation());
@@ -647,6 +644,12 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
         viewStandardModelButton.setBounds(775, 475, 30, 23);
         this.add(viewStandardModelButton);
 
+        initToolBar(editable);
+
+    }
+
+    protected void initToolBar(boolean editable) {
+       
         // toolbar
         ET_JButton monitorButton = new ET_JButton("Save and Monitor/Process Raw Data");
         monitorButton.setBounds(leftMargin, 525, 225, 25);
@@ -674,12 +677,9 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
 
         ET_JButton saveButton = new ET_JButton("Save and Close");
         saveButton.setBounds(leftMargin + 225 + 225, 525, 125, 25);
-        saveButton.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent ae) {
-                saveData_buttonActionPerformed(ae);
-                projectManager.updateDataChangeStatus(true);
-            }
+        saveButton.addActionListener((ActionEvent ae) -> {
+            saveData_buttonActionPerformed(ae);
+            projectManager.updateDataChangeStatus(true);
         });
 
         saveButton.setEnabled(editable);
@@ -687,16 +687,13 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
 
         ET_JButton repropagateButton = new ET_JButton("Re-propagate Unct");
         repropagateButton.setBounds(leftMargin + 125 + 225 + 225, 525, 150, 25);
-        repropagateButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                // dec 2014
-                rawDataFileHandler.getAcquisitionModel().setUsingFullPropagation(fullPropagationRB.isSelected());
-                projectManager.reProcessFractionRawRatios(fullPropagationRB.isSelected());
-                projectManager.updateDataChangeStatus(true);
-                readyToProcessData = true;
-                parametersViewDialog.setVisible(false);;
-            }
+        repropagateButton.addActionListener((ActionEvent ae) -> {
+            // dec 2014
+            rawDataFileHandler.getAcquisitionModel().setUsingFullPropagation(fullPropagationRB.isSelected());
+            projectManager.reProcessFractionRawRatios(fullPropagationRB.isSelected());
+            projectManager.updateDataChangeStatus(true);
+            readyToProcessData = true;
+            parametersViewDialog.setVisible(false);;
         });
 
         repropagateButton.setEnabled(!editable);
@@ -704,17 +701,12 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
 
         ET_JButton closeButton = new ET_JButton("Close");
         closeButton.setBounds(leftMargin + 125 + 225 + 200 + 175, 525, 75, 25);
-        closeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                projectManager.updateDataChangeStatus(true);
-                parametersViewDialog.setVisible(false);
-
-            }
+        closeButton.addActionListener((ActionEvent ae) -> {
+            projectManager.updateDataChangeStatus(true);
+            parametersViewDialog.setVisible(false);
         });
 
         this.add(closeButton);
-
     }
 
     /**
@@ -794,7 +786,7 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
         parametersViewDialog.toFront();
     }
 
-    private void saveAndLoadData(boolean loadData) {
+    protected void saveAndLoadData(boolean loadData) {
         AbstractAcquisitionModel acquisitionModel = rawDataFileHandler.getAcquisitionModel();
 
         if (acquisitionModel.getAcquisitionType().equals(AcquisitionTypesEnum.STATIC)) {

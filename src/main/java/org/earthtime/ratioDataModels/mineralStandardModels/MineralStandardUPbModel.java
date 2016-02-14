@@ -3,7 +3,7 @@
  *
  *
  *
- * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2016 James F. Bowring and www.Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -64,11 +64,9 @@ public class MineralStandardUPbModel extends AbstractRatiosDataModel {
     // class variables
     private static final long serialVersionUID = -5845209084226246480L;
     private static Map<String, AbstractRatiosDataModel> modelInstances
-            = //
-            new HashMap<>();
+            = new HashMap<>();
     private static final AbstractRatiosDataModel noneModel
-            = //
-            new MineralStandardUPbModel( //
+            = new MineralStandardUPbModel( //
                     ReduxConstants.NONE, //
                     1, 0,//
                     "No Lab", //

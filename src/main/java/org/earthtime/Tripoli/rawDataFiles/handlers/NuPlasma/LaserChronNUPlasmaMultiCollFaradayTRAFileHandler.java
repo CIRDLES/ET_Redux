@@ -196,17 +196,16 @@ public class LaserChronNUPlasmaMultiCollFaradayTRAFileHandler extends AbstractRa
      * @param usingFullPropagation the value of usingFullPropagation
      * @param leftShadeCount the value of leftShadeCount
      * @param ignoreFirstFractions the value of ignoreFirstFractions
-     * @return
      */
     @Override
-    public File getAndLoadRawIntensityDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions) {
+    public void getAndLoadRawIntensityDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions) {
 
         if (rawDataFile != null) {
             // create fractions from raw data and perform corrections and calculate ratios
             loadRawDataFile(loadDataTask, usingFullPropagation, leftShadeCount, ignoreFirstFractions);
         }
 
-        return rawDataFile;
+//        return rawDataFile;
     }
 
     /**

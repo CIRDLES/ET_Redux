@@ -19,6 +19,7 @@ package org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -234,6 +235,7 @@ public final class LaserchronElementIISetupUPb_B extends AbstractMassSpecSetup {
 
         isotopeMappingModel.setIsotopeToRawIntensitiesMap(isotopeToRawIntensitiesMap);
 
+        virtualCollectorModelMapToFieldIndexes = new HashMap<>();
         virtualCollectorModelMapToFieldIndexes.put(Hg202, 0);
         virtualCollectorModelMapToFieldIndexes.put(Pb204, 1);
         virtualCollectorModelMapToFieldIndexes.put(Pb206, 2);
@@ -262,6 +264,9 @@ public final class LaserchronElementIISetupUPb_B extends AbstractMassSpecSetup {
         rawRatios.add(r207_204w);
         DataModelInterface r208_204w = new RawRatioDataModel(RawRatioNames.r208_204w, Pb208, Pb204, false, true, COLLECTOR_DATA_FREQUENCY_MILLISECS);
         rawRatios.add(r208_204w);
+
+        // special case to handle 235 Uranium isotope
+        rawRatios.add(new RawRatioDataModel(RawRatioNames.r235_235w, U235, U235, false, false, COLLECTOR_DATA_FREQUENCY_MILLISECS));
 
         return rawRatios;
     }

@@ -63,6 +63,7 @@ import org.earthtime.UPb_Redux.valueModels.ValueModelXMLConverter;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
 import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.aliquots.ReduxAliquotInterface;
+import org.earthtime.archivingTools.AnalysisImageInterface;
 import org.earthtime.archivingTools.AnalysisImageXMLConverter;
 import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.dataDictionaries.AnalysisImageTypes;
@@ -144,7 +145,7 @@ public class UPbReduxAliquot extends Aliquot
     private SESARSampleMetadata mySESARSampleMetadata;
 //    private boolean isValidatedSESARChild;
     // list built on demand when archiving to Geochron
-    private ArrayList<AnalysisImage> analysisImages;
+    private ArrayList<AnalysisImageInterface> analysisImages;
 
     /**
      * Creates a new instance of UPbReduxAliquot
@@ -1341,7 +1342,7 @@ public class UPbReduxAliquot extends Aliquot
     /**
      * @return the analysisImages
      */
-    public ArrayList<AnalysisImage> getAnalysisImages() {
+    public ArrayList<AnalysisImageInterface> getAnalysisImages() {
         if (analysisImages == null) {
             analysisImages = new ArrayList<>();
         }
@@ -1353,11 +1354,11 @@ public class UPbReduxAliquot extends Aliquot
      * @param imageType
      * @return
      */
-    public AnalysisImage getAnalysisImageByType(AnalysisImageTypes imageType) {
+    public AnalysisImageInterface getAnalysisImageByType(AnalysisImageTypes imageType) {
         // primethe pump
         getAnalysisImages();
 
-        AnalysisImage retVal = null;
+        AnalysisImageInterface retVal = null;
         for (int i = 0; i < analysisImages.size(); i++) {
             if (analysisImages.get(i).getImageType().getName().equals(imageType.getName())) {
                 retVal = analysisImages.get(i);
@@ -1376,7 +1377,7 @@ public class UPbReduxAliquot extends Aliquot
     /**
      * @param analysisImages the analysisImages to set
      */
-    public void setAnalysisImages(ArrayList<AnalysisImage> analysisImages) {
+    public void setAnalysisImages(ArrayList<AnalysisImageInterface> analysisImages) {
         this.analysisImages = analysisImages;
     }
 

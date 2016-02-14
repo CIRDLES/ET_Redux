@@ -21,7 +21,6 @@ package org.earthtime.UPb_Redux.dialogs.projectManagers;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
@@ -50,37 +49,13 @@ import org.earthtime.Tripoli.dataModels.inputParametersModels.AbstractAcquisitio
 import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.Tripoli.massSpecSetups.AbstractMassSpecSetup;
 import org.earthtime.Tripoli.rawDataFiles.handlers.AbstractRawDataFileHandler;
-import org.earthtime.Tripoli.rawDataFiles.handlers.Agilent.KoslerAgilent7700FileHandler;
-import org.earthtime.Tripoli.rawDataFiles.handlers.Agilent.RittnerAgilent7700FileHandler;
-import org.earthtime.Tripoli.rawDataFiles.handlers.NuPlasma.LaserChronNUPlasmaMultiCollFaradayFileHandler;
-import org.earthtime.Tripoli.rawDataFiles.handlers.NuPlasma.LaserChronNUPlasmaMultiCollFaradayTRAFileHandler;
-import org.earthtime.Tripoli.rawDataFiles.handlers.NuPlasma.LaserChronNUPlasmaMultiCollIonCounterFileHandler;
-import org.earthtime.Tripoli.rawDataFiles.handlers.Thermo.LaserchronElementIIFileHandler;
-import org.earthtime.Tripoli.rawDataFiles.handlers.Thermo.MemUnivNewfoundlandElementIIFileHandler;
-import org.earthtime.Tripoli.rawDataFiles.handlers.Thermo.TexasAMElementIISingleCollFileHandler;
-import org.earthtime.Tripoli.rawDataFiles.handlers.Thermo.UnivKansasElementIIFileHandler;
-import org.earthtime.Tripoli.rawDataFiles.handlers.Thermo.WashStateElementIISingleCollFileHandler;
 import org.earthtime.Tripoli.rawDataFiles.templates.AbstractRawDataFileTemplate;
-import org.earthtime.Tripoli.rawDataFiles.templates.Agilent.Kosler_Agilent7700_RawDataTemplate;
-import org.earthtime.Tripoli.rawDataFiles.templates.Agilent.Rittner_Agilent7700_RawDataTemplate;
-import org.earthtime.Tripoli.rawDataFiles.templates.NuPlasma.LaserChronNUPlasmaMultiCollFaradayRawDataTemplate;
-import org.earthtime.Tripoli.rawDataFiles.templates.NuPlasma.LaserChronNUPlasmaMultiCollFaradayTRARawDataTemplate;
-import org.earthtime.Tripoli.rawDataFiles.templates.NuPlasma.LaserChronNUPlasmaMultiCollIonCounterRawDataTemplate;
-import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.HancharMemUnivNewfoundlandElementII_RawDataTemplate;
-import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.LaserchronElementII_RawDataTemplate_A;
-import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.LaserchronElementII_RawDataTemplate_B;
-import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.LaserchronElementII_RawDataTemplate_C;
-import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.MillerTexasAMElementII_RawDataTemplate;
-import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.MoellerUnivKansasElementII_RawDataTemplate;
-import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.ValenciaWashStateElementII_RawDataTemplate;
-import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.VervoortWashStateElementII_RawDataTemplate;
 import org.earthtime.Tripoli.samples.AbstractTripoliSample;
 import org.earthtime.Tripoli.sessions.TripoliSession;
 import org.earthtime.Tripoli.sessions.TripoliSessionInterface;
+import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.ReduxConstants.ANALYSIS_PURPOSE;
-import org.earthtime.UPb_Redux.dialogs.parameterManagers.LAICPMSProjectParametersManager;
 import org.earthtime.UPb_Redux.dialogs.sessionManagers.SessionAnalysisWorkflowManagerInterface;
-import org.earthtime.UPb_Redux.dialogs.sessionManagers.SessionAnalysisWorkflowManagerLAICPMS;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.user.ReduxPersistentState;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
@@ -100,21 +75,21 @@ import org.earthtime.utilities.TimeToString;
  * @author James F. Bowring
  *
  */
-public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implements ProjectManagerSubscribeInterface {
+public abstract class AbstractProjectManagerForRawData extends DialogEditor implements ProjectManagerSubscribeInterface {
 
-    private SamplesOrganizerPane samplesOrganizerPane;
-    private SamplesCommonLeadPane samplesCommonLeadPane;
-    private final ReduxPersistentState myState;
-    private ProjectInterface project;
-    private TripoliSessionInterface tripoliSession;
-    private AbstractRawDataFileHandler rawDataFileHandler;
-    private ArrayList<AbstractRawDataFileHandler> knownRawDataFileHandlers;
-    private ArrayList<AbstractTripoliSample> tripoliSamplesSorted;
-    private final ETReduxFrame uPbReduxFrame;
-    private SessionAnalysisWorkflowManagerInterface mySessionManager;
-    private transient SwingWorker loadDataTask;
-    private boolean amChanged;
-    private LAICPMSProjectParametersManager parametersView;
+    protected SamplesOrganizerPane samplesOrganizerPane;
+    protected SamplesCommonLeadPane samplesCommonLeadPane;
+    protected final ReduxPersistentState myState;
+    protected ProjectInterface project;
+    protected TripoliSessionInterface tripoliSession;
+    protected AbstractRawDataFileHandler rawDataFileHandler;
+    protected ArrayList<AbstractRawDataFileHandler> knownRawDataFileHandlers;
+    protected ArrayList<AbstractTripoliSample> tripoliSamplesSorted;
+    protected final ETReduxFrame uPbReduxFrame;
+    protected SessionAnalysisWorkflowManagerInterface mySessionManager;
+    protected transient SwingWorker loadDataTask;
+    protected boolean amChanged;
+    protected JLayeredPane parametersView;
 
     /**
      * Creates new form ProjectManagerFor_LAICPMS_FromRawData
@@ -124,7 +99,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
      * @param myState
      * @param project
      */
-    public ProjectManagerFor_LAICPMS_FromRawData(//
+    public AbstractProjectManagerForRawData(//
             ETReduxFrame parent, //
             boolean modal,
             ReduxPersistentState myState, //
@@ -144,130 +119,39 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
 
     @Override
     public void initDialogContent() {
-
-        setSizeAndCenter(1200, 750);
-        // initialize all known machines and protocols etc
-        // eventually move to xml external files
-        knownRawDataFileHandlers = new ArrayList<>();
-
-        // LaserChron NU Plasma FARADAY
-        AbstractRawDataFileHandler theNUPlasmaMultiCollFaradayFileHandler
-                = LaserChronNUPlasmaMultiCollFaradayFileHandler.getInstance();
-        theNUPlasmaMultiCollFaradayFileHandler.getAvailableRawDataFileTemplates()//
-                .add(LaserChronNUPlasmaMultiCollFaradayRawDataTemplate.getInstance());
-        knownRawDataFileHandlers.add(theNUPlasmaMultiCollFaradayFileHandler);
-
-        // LaserChron NU Plasma FARADAY TRA
-        AbstractRawDataFileHandler theNUPlasmaMultiCollFaradayTRAFileHandler
-                = LaserChronNUPlasmaMultiCollFaradayTRAFileHandler.getInstance();
-        theNUPlasmaMultiCollFaradayTRAFileHandler.getAvailableRawDataFileTemplates()//
-                .add(LaserChronNUPlasmaMultiCollFaradayTRARawDataTemplate.getInstance());
-        knownRawDataFileHandlers.add(theNUPlasmaMultiCollFaradayTRAFileHandler);
-
-        // LaserChron NU Plasma IONCOUNTER
-        AbstractRawDataFileHandler theNUPlasmaMultiCollIonCounterFileHandler
-                = LaserChronNUPlasmaMultiCollIonCounterFileHandler.getInstance();
-        theNUPlasmaMultiCollIonCounterFileHandler.getAvailableRawDataFileTemplates()//
-                .add(LaserChronNUPlasmaMultiCollIonCounterRawDataTemplate.getInstance());
-        knownRawDataFileHandlers.add(theNUPlasmaMultiCollIonCounterFileHandler);
-
-        // LaserChron Element 2 
-        AbstractRawDataFileHandler theLaserchronElementIIFileHandler
-                = LaserchronElementIIFileHandler.getInstance();
-        theLaserchronElementIIFileHandler.getAvailableRawDataFileTemplates()//
-                .add(LaserchronElementII_RawDataTemplate_A.getInstance());
-        theLaserchronElementIIFileHandler.getAvailableRawDataFileTemplates()//
-                .add(LaserchronElementII_RawDataTemplate_B.getInstance());
-        theLaserchronElementIIFileHandler.getAvailableRawDataFileTemplates()//
-                .add(LaserchronElementII_RawDataTemplate_C.getInstance());
-        knownRawDataFileHandlers.add(theLaserchronElementIIFileHandler);
-
-        // Memorial U Newfoundland John Hanchar ElementII 
-        AbstractRawDataFileHandler theMemUnivNewfoundlandElementIIFileHandler
-                = MemUnivNewfoundlandElementIIFileHandler.getInstance();
-        theMemUnivNewfoundlandElementIIFileHandler.getAvailableRawDataFileTemplates()//
-                .add(HancharMemUnivNewfoundlandElementII_RawDataTemplate.getInstance());
-        knownRawDataFileHandlers.add(theMemUnivNewfoundlandElementIIFileHandler);
-
-        // U Kansas Andreas Moeller ElementII  
-        AbstractRawDataFileHandler theUnivKansasElementIIFileHandler
-                = UnivKansasElementIIFileHandler.getInstance();
-        theUnivKansasElementIIFileHandler.getAvailableRawDataFileTemplates()//
-                .add(MoellerUnivKansasElementII_RawDataTemplate.getInstance());
-        knownRawDataFileHandlers.add(theUnivKansasElementIIFileHandler);
-
-        // Washington State Element 2 
-        AbstractRawDataFileHandler theThermoFinniganElement2SingleCollFileHandler
-                = WashStateElementIISingleCollFileHandler.getInstance();
-        theThermoFinniganElement2SingleCollFileHandler.getAvailableRawDataFileTemplates()//
-                .add(VervoortWashStateElementII_RawDataTemplate.getInstance());
-        theThermoFinniganElement2SingleCollFileHandler.getAvailableRawDataFileTemplates()//
-                .add(ValenciaWashStateElementII_RawDataTemplate.getInstance());
-        knownRawDataFileHandlers.add(theThermoFinniganElement2SingleCollFileHandler);
-
-        // feb 2014 Agilent 7700
-        AbstractRawDataFileHandler theRittnerAgilent7700FileHandler
-                = //
-                RittnerAgilent7700FileHandler.getInstance();
-        theRittnerAgilent7700FileHandler.getAvailableRawDataFileTemplates()//
-                .add(Rittner_Agilent7700_RawDataTemplate.getInstance());
-//        knownRawDataFileHandlers.add(theRittnerAgilent7700FileHandler);
-
-        AbstractRawDataFileHandler theKoslerAgilent7700FileHandler
-                = KoslerAgilent7700FileHandler.getInstance();
-        theKoslerAgilent7700FileHandler.getAvailableRawDataFileTemplates()//
-                .add(Kosler_Agilent7700_RawDataTemplate.getInstance());
-        knownRawDataFileHandlers.add(theKoslerAgilent7700FileHandler);
-
-        // dec 2015 Texas AM for Brent Miller
-        // LaserChron Element 2 
-        AbstractRawDataFileHandler theTexasAMElementIIFileHandler
-                = TexasAMElementIISingleCollFileHandler.getInstance();
-        theTexasAMElementIIFileHandler.getAvailableRawDataFileTemplates()//
-                .add(MillerTexasAMElementII_RawDataTemplate.getInstance());
-        knownRawDataFileHandlers.add(theTexasAMElementIIFileHandler);
-
-        // move this section for robust file opening
         fileHandlerComboBox.removeAllItems();
         for (int i = 0; i < knownRawDataFileHandlers.size(); i++) {
             fileHandlerComboBox.addItem( //
                     knownRawDataFileHandlers.get(i));
         }
 
-        fileHandlerComboBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                AbstractRawDataFileHandler fileHandler = ((AbstractRawDataFileHandler) fileHandlerComboBox.getSelectedItem());
+        fileHandlerComboBox.addActionListener((ActionEvent e) -> {
+            AbstractRawDataFileHandler fileHandler = ((AbstractRawDataFileHandler) fileHandlerComboBox.getSelectedItem());
 
-                rawDataTemplateComboBox.removeAllItems();
-                SortedSet<AbstractRawDataFileTemplate> templates = fileHandler.getAvailableRawDataFileTemplates();
-                Iterator<AbstractRawDataFileTemplate> templatesIterator = templates.iterator();
-                while (templatesIterator.hasNext()) {
-                    rawDataTemplateComboBox.addItem(templatesIterator.next());
-                }
-
+            rawDataTemplateComboBox.removeAllItems();
+            SortedSet<AbstractRawDataFileTemplate> templates = fileHandler.getAvailableRawDataFileTemplates();
+            Iterator<AbstractRawDataFileTemplate> templatesIterator = templates.iterator();
+            while (templatesIterator.hasNext()) {
+                rawDataTemplateComboBox.addItem(templatesIterator.next());
             }
         });
 
-        rawDataTemplateComboBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                AbstractRawDataFileHandler fileHandler = ((AbstractRawDataFileHandler) fileHandlerComboBox.getSelectedItem());
-                AbstractRawDataFileTemplate filetemplate = ((AbstractRawDataFileTemplate) rawDataTemplateComboBox.getSelectedItem());
-                try {
-                    aboutInfo_textPanel.setText(
-                            fileHandler.getAboutInfo() //
-                            + "  This handler will expect raw data files for "//
-                            + filetemplate.getAboutInfo()//
-                            + ".");
-                } catch (Exception badTemplate) {
-                }
+        rawDataTemplateComboBox.addActionListener((ActionEvent e) -> {
+            AbstractRawDataFileHandler fileHandler = ((AbstractRawDataFileHandler) fileHandlerComboBox.getSelectedItem());
+            AbstractRawDataFileTemplate filetemplate = ((AbstractRawDataFileTemplate) rawDataTemplateComboBox.getSelectedItem());
+            try {
+                aboutInfo_textPanel.setText(
+                        fileHandler.getAboutInfo() //
+                        + "  This handler will expect raw data files for "//
+                        + filetemplate.getAboutInfo()//
+                        + ".");
+            } catch (Exception badTemplate) {
             }
         });
 
         // set up analysisPurposeChooser
         analysisPurposeChooser.removeAllItems();
-        for (ANALYSIS_PURPOSE ap : ANALYSIS_PURPOSE.values()) {
+        for (ReduxConstants.ANALYSIS_PURPOSE ap : ReduxConstants.ANALYSIS_PURPOSE.values()) {
             analysisPurposeChooser.addItem(ap.toString());
         }
 
@@ -310,7 +194,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
         }
     }
 
-    private void loadProject() {
+    protected void loadProject() {
 
         tripoliSession = project.getTripoliSession();
 
@@ -341,21 +225,18 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
 
         if (tripoliSession != null) {
 
-            // rawDataFileHandler = tripoliSession.getRawDataFileHandler();
             // update parameters
             rawDataFileHandler.updateMassSpecFromAcquisitionModel();
 
             tripoliSamplesSorted = tripoliSession.getTripoliSamples();
 
-            //fileHandlerComboBox.setSelectedItem( rawDataFileHandler );
-            //rawDataTemplateComboBox.setSelectedItem( rawDataFileHandler.getRawDataFileTemplate() );
             displayRawDataSamples();
         }
 
         fileHandlerComboBox.setEnabled(!rawDataFileHandlerExists);
         rawDataTemplateComboBox.setEnabled(!rawDataFileHandlerExists);
 
-        manageButtons(project.getRawDataFileHandler() != null, rawDataFileHandlerExists, false);//tripoliSession != null);//project.getSuperSample() != null);
+        manageButtons(project.getRawDataFileHandler() != null, rawDataFileHandlerExists, false);
 
     }
 
@@ -414,24 +295,6 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
 
         System.gc();
 
-        // set up reporting folder for noah
-        File reportingFolder = new File("STANDARDS_DATA_CHECK_FILES");
-        if (reportingFolder.exists()) {
-            // delete contents
-            File[] reportFiles = reportingFolder.listFiles();
-            for (File reportFile : reportFiles) {
-                boolean success = reportFile.delete();
-                if (!success) {
-                    //TODO: consider message
-                }
-            }
-        } else {
-            boolean success = reportingFolder.mkdir();
-            if (!success) {
-                //TODO: consider message
-            }
-        }
-
         // user-selected handler
         rawDataFileHandler
                 = (AbstractRawDataFileHandler) fileHandlerComboBox.getSelectedItem();
@@ -466,7 +329,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
                 rawDataFileChosen_scrollPane.setVisible(true);
                 rawDataFileChosen_textArea.setText("Raw Data File: " + rawDataFile.getCanonicalPath());
             } catch (IOException ex) {
-                Logger.getLogger(ProjectManagerFor_LAICPMS_FromRawData.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(AbstractProjectManagerForRawData.class.getName()).log(Level.SEVERE, null, ex);
             }
             // here we present the data setup frame and re-update massspec with any changes
             rawDataFileHandler.updateAcquisitionModelWithRawDataFile();
@@ -482,9 +345,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
 
                 fireLoadDataTask();
                 manageButtons(true, true, true);
-            } //else {
-            // manageButtons(true, true, false);
-            //}
+            }
         } else {
             manageButtons(false, false, false);
         }
@@ -564,15 +425,8 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
         displaySamples();
     }
 
-    private boolean showParametersView() {
-
-        parametersView = null;
-
-        parametersView = new LAICPMSProjectParametersManager(project, this, uPbReduxFrame);
-        parametersView.initView();
-        parametersView.displayModelInFrame();
-
-        return parametersView.isReadyToProcessData();
+    public boolean showParametersView() {
+        return false;
     }
 
     /**
@@ -744,17 +598,17 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
 
         mainPanel = new javax.swing.JLayeredPane();
         projectName_label = new javax.swing.JLabel();
-        fileHandlerComboBox = new javax.swing.JComboBox<AbstractRawDataFileHandler>();
+        fileHandlerComboBox = new javax.swing.JComboBox<>();
         loadRawData_button =  new ET_JButton();
         fileProtocol_label = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         aboutInfo_textPanel = new javax.swing.JTextPane();
         jLabel6 = new javax.swing.JLabel();
-        rawDataTemplateComboBox = new javax.swing.JComboBox<AbstractRawDataFileTemplate>();
-        projectType_label1 = new javax.swing.JLabel();
+        rawDataTemplateComboBox = new javax.swing.JComboBox<>();
+        projectType_label = new javax.swing.JLabel();
         projectName_text = new javax.swing.JTextField();
-        analysisPurposeChooser = new javax.swing.JComboBox<String>();
+        analysisPurposeChooser = new javax.swing.JComboBox<>();
         title_label = new javax.swing.JLabel();
         projectFinalizationPane = new javax.swing.JLayeredPane();
         openRawDataManager_button =  new ET_JButton("Display Processed Raw Data");
@@ -837,10 +691,10 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
         mainPanel.add(rawDataTemplateComboBox);
         rawDataTemplateComboBox.setBounds(220, 60, 380, 27);
 
-        projectType_label1.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
-        projectType_label1.setText("Project Type: U-Pb LA-ICP MS Data aquisition and reduction");
-        mainPanel.add(projectType_label1);
-        projectType_label1.setBounds(360, 7, 530, 17);
+        projectType_label.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
+        projectType_label.setText("Project Type: ?? Data aquisition and reduction");
+        mainPanel.add(projectType_label);
+        projectType_label.setBounds(360, 7, 530, 17);
 
         projectName_text.setFont(new java.awt.Font("SansSerif", 0, 13)); // NOI18N
         projectName_text.addActionListener(new java.awt.event.ActionListener() {
@@ -849,7 +703,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
             }
         });
         mainPanel.add(projectName_text);
-        projectName_text.setBounds(120, 0, 230, 28);
+        projectName_text.setBounds(120, 0, 230, 26);
 
         analysisPurposeChooser.setFont(new java.awt.Font("SansSerif", 0, 13)); // NOI18N
         mainPanel.add(analysisPurposeChooser);
@@ -963,7 +817,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
         projectSampleWorkPane.add(rawDataFileChosen_scrollPane);
         rawDataFileChosen_scrollPane.setBounds(134, 104, 930, 60);
 
-        manager_JTab.addTab("Organize Standards and Samples", projectSampleWorkPane);
+        manager_JTab.addTab("Organize Reference Materials (Standards) and Samples", projectSampleWorkPane);
 
         projectSampleCommonLeadWorkPane.setBackground(new java.awt.Color(244, 244, 244));
         projectSampleCommonLeadWorkPane.setOpaque(true);
@@ -1003,7 +857,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
 
     private void loadRawData_buttonActionPerformed ( java.awt.event.ActionEvent evt ) {//GEN-FIRST:event_loadRawData_buttonActionPerformed
 
-        loadRawDataWorkflow();//loadDataTask);
+        loadRawDataWorkflow();
     }//GEN-LAST:event_loadRawData_buttonActionPerformed
 
     private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentResized
@@ -1058,40 +912,6 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
      */
     @Override
     public void initializeSessionManager(boolean doSetup, boolean doShow, boolean doCorrections) {
-
-        setVisible(false);
-
-        if (doSetup || (mySessionManager == null)) {
-            // kill existing
-            if (mySessionManager != null) {
-                ((DialogEditor) mySessionManager).close();
-            }
-            mySessionManager
-                    = new SessionAnalysisWorkflowManagerLAICPMS(
-                            this, //
-                            uPbReduxFrame,
-                            false, //
-                            tripoliSession);
-            mySessionManager.setupTripoliSessionRawDataView();
-        }
-
-        // nov 2014 conditional
-        if (doCorrections) {
-            // april 2014 to cause common lead corrections and other changes to propagate
-            // do the math
-            tripoliSession.calculateSessionFitFunctionsForPrimaryStandard();
-            // April 2105 added condition below jan 2015 moved to calculate sessionfit tripoliSession.applyCorrections();
-            if (!tripoliSession.isFitFunctionsUpToDate()) {
-                tripoliSession.applyCorrections();
-            }
-            try {
-                uPbReduxFrame.updateReportTable(true);
-            } catch (Exception e) {
-            }
-        }
-
-        // modal call to manager
-        mySessionManager.setVisible(doShow);
     }
 
     private void closeProjectManager_buttonActionPerformed ( java.awt.event.ActionEvent evt ) {//GEN-FIRST:event_closeProjectManager_buttonActionPerformed
@@ -1109,7 +929,6 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
                             JOptionPane.YES_NO_OPTION);
                     if (userChoice == JOptionPane.YES_OPTION) {
                         loadDataTask.cancel(true);
-                        project = null;
                         close();
                     }
                 } else {
@@ -1300,38 +1119,87 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
     private void rawDataTemplateComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rawDataTemplateComboBoxActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_rawDataTemplateComboBoxActionPerformed
-
+//    /**
+//     * @param args the command line arguments
+//     */
+//    public static void main ( String args[] ) {
+//        /*
+//         * Set the Nimbus look and feel
+//         */
+//        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+//        /*
+//         * If Nimbus (introduced in Java SE 6) is not available, stay with the
+//         * default look and feel. For details see
+//         * http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
+//         */
+//        try {
+//            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+//                if ( "Nimbus".equals( info.getName() ) ) {
+//                    javax.swing.UIManager.setLookAndFeel( info.getClassName() );
+//                    break;
+//                }
+//            }
+//        } catch (ClassNotFoundException ex) {
+//            java.util.logging.Logger.getLogger( ProjectManagerFor_LAICPMS_FromRawData.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+//        } catch (InstantiationException ex) {
+//            java.util.logging.Logger.getLogger( ProjectManagerFor_LAICPMS_FromRawData.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+//        } catch (IllegalAccessException ex) {
+//            java.util.logging.Logger.getLogger( ProjectManagerFor_LAICPMS_FromRawData.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+//        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+//            java.util.logging.Logger.getLogger( ProjectManagerFor_LAICPMS_FromRawData.class.getName() ).log( java.util.logging.Level.SEVERE, null, ex );
+//        }
+//        //</editor-fold>
+//
+//        /*
+//         * Create and display the dialog
+//         */
+//        java.awt.EventQueue.invokeLater( new Runnable() {
+//
+//            public void run () {
+//                ProjectManagerFor_LAICPMS_FromRawData dialog = new ProjectManagerFor_LAICPMS_FromRawData(//
+//                        new javax.swing.JFrame(), true, null, null );
+//                dialog.addWindowListener( new java.awt.event.WindowAdapter() {
+//
+//                    @Override
+//                    public void windowClosing ( java.awt.event.WindowEvent e ) {
+//                        System.exit( 0 );
+//                    }
+//                } );
+//                dialog.setVisible( true );
+//            }
+//        } );
+//    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextPane aboutInfo_textPanel;
-    private javax.swing.JComboBox<String> analysisPurposeChooser;
-    private javax.swing.JButton closeProjectManager_button;
-    private javax.swing.JComboBox<AbstractRawDataFileHandler> fileHandlerComboBox;
+    protected javax.swing.JTextPane aboutInfo_textPanel;
+    protected javax.swing.JComboBox<String> analysisPurposeChooser;
+    protected javax.swing.JButton closeProjectManager_button;
+    protected javax.swing.JComboBox<AbstractRawDataFileHandler> fileHandlerComboBox;
     private javax.swing.JLabel fileProtocol_label;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JProgressBar loadDataTaskProgressBar;
-    private javax.swing.JButton loadRawData_button;
+    protected javax.swing.JProgressBar loadDataTaskProgressBar;
+    protected javax.swing.JButton loadRawData_button;
     private javax.swing.JLayeredPane mainPanel;
-    private javax.swing.JTabbedPane manager_JTab;
-    private javax.swing.JLabel noteToUser_label;
+    protected javax.swing.JTabbedPane manager_JTab;
+    protected javax.swing.JLabel noteToUser_label;
     private javax.swing.JLabel noteToUser_label1;
-    private javax.swing.JButton openRawDataManager_button;
-    private javax.swing.JButton outputDataForNoah_button;
+    protected javax.swing.JButton openRawDataManager_button;
+    protected javax.swing.JButton outputDataForNoah_button;
     private javax.swing.JLayeredPane projectFinalizationPane;
     private javax.swing.JLabel projectName_label;
-    private javax.swing.JTextField projectName_text;
-    private javax.swing.JLayeredPane projectSampleCommonLeadWorkPane;
-    private javax.swing.JLayeredPane projectSampleWorkPane;
-    private javax.swing.JLabel projectType_label1;
+    protected javax.swing.JTextField projectName_text;
+    protected javax.swing.JLayeredPane projectSampleCommonLeadWorkPane;
+    protected javax.swing.JLayeredPane projectSampleWorkPane;
+    protected javax.swing.JLabel projectType_label;
     private javax.swing.JScrollPane rawDataFileChosen_scrollPane;
-    private javax.swing.JTextArea rawDataFileChosen_textArea;
-    private javax.swing.JComboBox<AbstractRawDataFileTemplate> rawDataTemplateComboBox;
-    private javax.swing.JButton revertProjectChanges_button;
-    private javax.swing.JButton saveProjectAs_button;
-    private javax.swing.JButton saveProject_button;
-    private javax.swing.JButton setDataParameters_button;
-    private javax.swing.JLabel title_label;
+    protected javax.swing.JTextArea rawDataFileChosen_textArea;
+    protected javax.swing.JComboBox<AbstractRawDataFileTemplate> rawDataTemplateComboBox;
+    protected javax.swing.JButton revertProjectChanges_button;
+    protected javax.swing.JButton saveProjectAs_button;
+    protected javax.swing.JButton saveProject_button;
+    protected javax.swing.JButton setDataParameters_button;
+    protected javax.swing.JLabel title_label;
     // End of variables declaration//GEN-END:variables
 
     /**

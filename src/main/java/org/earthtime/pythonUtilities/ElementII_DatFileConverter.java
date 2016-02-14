@@ -212,13 +212,19 @@ public class ElementII_DatFileConverter {
     public static String[][] readDatFile5(File file, String elementsList)
             throws org.python.core.PyException {
 
-        String[][] dataArray = new String[0][];
+        String[][] dataArray;
 
         String fileName = file.getAbsolutePath();
 
         python = new PythonInterpreter();
 
         python.exec("import struct");
+        python.exec("from pprint import *");
+        python.exec("import sys");
+        python.exec("import os");
+        python.exec("import optparse");
+        python.exec("import glob");
+        python.exec("import datetime");
         python.exec("import math");
 
         python.exec("HDR_INDEX_OFFSET = 33");
@@ -303,26 +309,24 @@ public class ElementII_DatFileConverter {
                 + "\tvals = struct.unpack('<22I%uH' % count, data)\n"
                 + "\tscanNumber = vals[SCAN_NUMBER]\n"
                 + "\tacf = (vals[SCAN_ACF] * 1.0) / 64.0\n"
-                + "\tbase = 72\n"
-                + "\tkey = vals[base:base+2]\n"
+                + "\ttmp = [str(vals[SCAN_TIME]/ 1000.0)]\n"
                 + "\tt = vals[SCAN_TIME]/ 1000.0 + timeStamp\n"
                 + "\tresult = [str(scanNumber), '%f' % t, '%f' % acf]\n"
                 + "\theaders = [\"Scan\", \"Time\", \"ACF\"]\n"
                 + "\tpulses = []\n"
                 + "\tanalogs = []\n"
-                + "\tmysteries = ['']*5\n"
                 + "\taverages = [str(t)]\n"
-                + "\tindex = base\n"
                 + "\ttotal = 0.0\n"
                 + "\tn = 0\n"
                 + "\tacquisition = 0\n"
                 + "\tmass = 0\n"
                 + "\treading = 0\n"
+                + "\tindex = 72\n"
+                + "\tkey = None\n"
                 + "\twhile index + 4 < len(vals):\n"
                 + "\t\tpulse = None\n"
                 + "\t\tanalog = None\n"
-                // new with v5
-                + "\t\tscanFormat = 'A'\n"
+             //   + "\t\tscanFormat = 'A'\n"  // jim did this
                 + "\t\tif key is None:\n"
                 + "\t\t\tscanFormat = 'A'\n"
                 + "\t\t\ttry:\n"
@@ -350,8 +354,8 @@ public class ElementII_DatFileConverter {
                 + "\t\t\tindex += 2\n"
                 + "\t\texcept Exception, e:\n"
                 + "\t\t\tpass\n"
-                + "\t\tif pulse is None and analog is None:\n"
-                + "\t\t\traise Exception(\"scan %d acquisition %d index %d\"  % (scanNumber, acquisition, index))\n"
+                //+ "\t\tif pulse is None and analog is None:\n"
+                //+ "\t\t\traise Exception(\"scan %d acquisition %d index %d\"  % (scanNumber, acquisition, index))\n"
                 + "\t\tif pulse is not None:\n"
                 + "\t\t\tpulses.append(str(pulse))\n"
                 + "\t\tif analog is not None:\n"
@@ -405,7 +409,7 @@ public class ElementII_DatFileConverter {
         python.exec("dat.seek(0x10)");
         python.exec("fields = 85");
         python.exec("data = dat.read(fields * 4)");
-        python.exec("hdr = struct.unpack('<%dI'% fields, data)");
+        python.exec("hdr = struct.unpack('<%dI' % fields, data)");
 
     }
 
@@ -416,7 +420,7 @@ public class ElementII_DatFileConverter {
         } catch (PyException pyException) {
             System.out.println("bad read of fraction " + " message = " + pyException.getMessage());
         }
-        
+
         System.out.println(data[0][0]);
         System.out.println(data[1][0]);
         System.out.println(data[2][0]);

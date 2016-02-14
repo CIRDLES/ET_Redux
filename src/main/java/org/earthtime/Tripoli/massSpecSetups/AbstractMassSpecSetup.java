@@ -249,7 +249,7 @@ public abstract class AbstractMassSpecSetup implements //
             String[][] intensitiesScan, boolean isStandard, String fractionID, boolean usingFullPropagation, TripoliFraction tripoliFraction);
 
     public abstract SortedSet<DataModelInterface> rawRatiosFactoryRevised();
-    
+
     /**
      *
      * @param usingFullPropagation
@@ -322,6 +322,7 @@ public abstract class AbstractMassSpecSetup implements //
 
     /**
      * Intended to be final implementation
+     *
      * @param backgroundAcquisitions
      * @param peakAcquisitions
      * @param isStandard
@@ -410,7 +411,7 @@ public abstract class AbstractMassSpecSetup implements //
         if (writeReport) {
             outputWriter.println("\n\n3: Si ********************");
             for (DataModelInterface dm : genericIsotopeModels) {
-                if (!dm.equals(Hg202)) {
+                if (!dm.equals(Hg202)&&!dm.equals(Hf176)) {
                     outputWriter.println(dm.getDataModelName());
                     Matrix Si = ((RawIntensityDataModel) dm).getMatrixSiCovarianceIntensities();
                     if (Si != null) {
@@ -433,7 +434,7 @@ public abstract class AbstractMassSpecSetup implements //
         if (writeReport) {
             outputWriter.println("\n\n4: Fit parameters for baseline (a [b, c], fitParameterCovarianceMatrix, X2) ********************");
             for (DataModelInterface dm : genericIsotopeModels) {
-                if (!dm.equals(Hg202)) {
+                if (!dm.equals(Hg202)&&!dm.equals(Hf176)) {
                     outputWriter.println(((RawIntensityDataModel) dm).outputBaseLineFitFunctionParameters());
                 }
             }
@@ -442,7 +443,7 @@ public abstract class AbstractMassSpecSetup implements //
         if (writeReport) {
             outputWriter.println("\n\n5: peakIntensityBLcorr (baseline-corrected on-peak intensities) ********************");
             for (DataModelInterface dm : genericIsotopeModels) {
-                if (!dm.equals(Hg202)) {
+                if (!dm.equals(Hg202)&&!dm.equals(Hf176)) {
                     outputWriter.println(((RawIntensityDataModel) dm).outputCorrectedIntensities());
                 }
             }
@@ -474,7 +475,7 @@ public abstract class AbstractMassSpecSetup implements //
         if (writeReport) {
             outputWriter.println("\n\n6: J11, J21, J22, JOnPeak, Sopbc ********************");
             for (DataModelInterface dm : genericIsotopeModels) {
-                if (!dm.equals(Hg202)) {
+                if (!dm.equals(Hg202)&&!dm.equals(Hf176)) {
                     try {
                         outputWriter.println(dm.getDataModelName());
 
@@ -506,7 +507,7 @@ public abstract class AbstractMassSpecSetup implements //
         if (writeReport) {
             outputWriter.println("\n\n8: log-intensities (on-peak baseline-corrected) ********************");
             for (DataModelInterface dm : genericIsotopeModels) {
-                if (!dm.equals(Hg202)) {
+                if (!dm.equals(Hg202)&&!dm.equals(Hf176)) {
                     try {
                         outputWriter.println(((RawIntensityDataModel) dm).outputCorrectedIntensitiesAsLogs());
                     } catch (Exception e) {
@@ -518,7 +519,7 @@ public abstract class AbstractMassSpecSetup implements //
         if (writeReport) {
             outputWriter.println("\n\n9: Jlogr, Jmat, Sopbclr   ********************");
             for (DataModelInterface dm : genericIsotopeModels) {
-                if (!dm.equals(Hg202)) {
+                if (!dm.equals(Hg202)&&!dm.equals(Hf176)) {
                     try {
                         outputWriter.println(dm.getDataModelName());
 
@@ -675,11 +676,9 @@ public abstract class AbstractMassSpecSetup implements //
         // if 204Pb and 207Pb should be kept or rejected after corrections
 
         boolean[] dataActiveMap
-                = //
-                ((RawIntensityDataModel) isotope).getOnPeakVirtualCollector().getDataActiveMap();
+                = ((RawIntensityDataModel) isotope).getOnPeakVirtualCollector().getDataActiveMap();
         double[] isotopeOPBC
-                = //
-                ((RawIntensityDataModel) isotope).getOnPeakVirtualCollector().getCorrectedIntensities();
+                = ((RawIntensityDataModel) isotope).getOnPeakVirtualCollector().getCorrectedIntensities();
 
         NonParametricStats nonParametricStats = NonParametricStats.getInstance();
 
@@ -1009,8 +1008,7 @@ public abstract class AbstractMassSpecSetup implements //
     public void assignGainsToCollectors(Map<String, Double> collectorNameToRelativeGainsMap) {
 
         Iterator<String> collectorNameIterator
-                = //
-                collectorNameToRelativeGainsMap.keySet().iterator();
+                = collectorNameToRelativeGainsMap.keySet().iterator();
 
         while (collectorNameIterator.hasNext()) {
             String key = collectorNameIterator.next();
@@ -1029,8 +1027,7 @@ public abstract class AbstractMassSpecSetup implements //
      */
     public void assignGainsUnctToCollectors(Map<String, Double> collectorNameToRelativeGainsUnctMap) {
         Iterator<String> collectorNameIterator
-                = //
-                collectorNameToRelativeGainsUnctMap.keySet().iterator();
+                = collectorNameToRelativeGainsUnctMap.keySet().iterator();
 
         while (collectorNameIterator.hasNext()) {
             String key = collectorNameIterator.next();
@@ -1049,8 +1046,7 @@ public abstract class AbstractMassSpecSetup implements //
      */
     public void assignDeadTimesToCollectors(Map<String, Double> collectorNameToDeadTimesMap) {
         Iterator<String> collectorNameIterator
-                = //
-                collectorNameToDeadTimesMap.keySet().iterator();
+                = collectorNameToDeadTimesMap.keySet().iterator();
 
         while (collectorNameIterator.hasNext()) {
             String key = collectorNameIterator.next();
@@ -1069,8 +1065,7 @@ public abstract class AbstractMassSpecSetup implements //
      */
     public void assignDeadTimesUnctToCollectors(Map<String, Double> collectorNameToDeadTimesUnctMap) {
         Iterator<String> collectorNameIterator
-                = //
-                collectorNameToDeadTimesUnctMap.keySet().iterator();
+                = collectorNameToDeadTimesUnctMap.keySet().iterator();
 
         while (collectorNameIterator.hasNext()) {
             String key = collectorNameIterator.next();
@@ -1090,8 +1085,7 @@ public abstract class AbstractMassSpecSetup implements //
         Map<IsotopesEnum, Double> isotopeToIntegrationTimeMap = isotopeMappingModel.getIsotopeToIntegrationTimeMap();
 
         Iterator<IsotopesEnum> isotopeNameIterator
-                = //
-                isotopeNameToIntegrationTimesMap.keySet().iterator();
+                = isotopeNameToIntegrationTimesMap.keySet().iterator();
 
         while (isotopeNameIterator.hasNext()) {
             IsotopesEnum key = isotopeNameIterator.next();
@@ -1105,8 +1099,7 @@ public abstract class AbstractMassSpecSetup implements //
      */
     public void assignResistorsCollectors(Map<String, FaradayCollectorModel.ResistorEnum> collectorNameToResistorMap) {
         Iterator<String> collectorNameIterator
-                = //
-                collectorNameToResistorMap.keySet().iterator();
+                = collectorNameToResistorMap.keySet().iterator();
 
         while (collectorNameIterator.hasNext()) {
             String key = collectorNameIterator.next();
@@ -1125,8 +1118,7 @@ public abstract class AbstractMassSpecSetup implements //
      */
     public void assignAmpNoiseToCollectors(Map<String, Double> collectorNameToAmpNoiseMap) {
         Iterator<String> collectorNameIterator
-                = //
-                collectorNameToAmpNoiseMap.keySet().iterator();
+                = collectorNameToAmpNoiseMap.keySet().iterator();
 
         while (collectorNameIterator.hasNext()) {
             String key = collectorNameIterator.next();
@@ -1165,22 +1157,19 @@ public abstract class AbstractMassSpecSetup implements //
         MaskingSingleton maskingArray = MaskingSingleton.getInstance();
 
         DownholeFractionationDataModel r206_207w
-                =//
-                new DownholeFractionationDataModel( //
+                = new DownholeFractionationDataModel( //
                         tripoliFractions, //
                         RawRatioNames.r206_207w, //
                         primaryMineralStandard, //
                         new double[countOfAcquisitions], acquireTimes, normalizedOnPeakAquireTimes, maskingArray);
         DownholeFractionationDataModel r206_238w
-                =//
-                new DownholeFractionationDataModel(//
+                = new DownholeFractionationDataModel(//
                         tripoliFractions, //
                         RawRatioNames.r206_238w, //
                         primaryMineralStandard, //
                         new double[countOfAcquisitions], acquireTimes, normalizedOnPeakAquireTimes, maskingArray);
         DownholeFractionationDataModel r208_232w
-                = //
-                new DownholeFractionationDataModel( //
+                = new DownholeFractionationDataModel( //
                         tripoliFractions, //
                         RawRatioNames.r208_232w, //
                         primaryMineralStandard, //

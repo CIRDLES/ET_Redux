@@ -91,10 +91,9 @@ public class TexasAMElementIISingleCollFileHandler extends AbstractRawDataFileHa
      * @param usingFullPropagation the value of usingFullPropagation
      * @param leftShadeCount the value of leftShadeCount
      * @param ignoreFirstFractions the value of ignoreFirstFractions
-     * @return
      */
     @Override
-    public File getAndLoadRawIntensityDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions) {
+    public void getAndLoadRawIntensityDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions) {
 
         // ElementII has folder of .dat files        
         analysisFiles = rawDataFile.listFiles((File dir, String name) //
@@ -122,7 +121,7 @@ public class TexasAMElementIISingleCollFileHandler extends AbstractRawDataFileHa
             rawDataFile = null;
         }
 
-        return rawDataFile;
+//        return rawDataFile;
     }
 
     /**

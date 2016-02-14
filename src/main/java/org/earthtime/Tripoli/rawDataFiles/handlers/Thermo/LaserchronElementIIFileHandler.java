@@ -96,10 +96,9 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
      * @param usingFullPropagation the value of usingFullPropagation
      * @param leftShadeCount the value of leftShadeCount
      * @param ignoreFirstFractions the value of ignoreFirstFracts
-     * @return ions
      */
     @Override
-    public File getAndLoadRawIntensityDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions) {
+    public void getAndLoadRawIntensityDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions) {
 
         // ElementII has folder of .dat files 
         analysisFiles = rawDataFile.listFiles((File dir, String name) -> {
@@ -147,7 +146,7 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
                     JOptionPane.WARNING_MESSAGE);
         }
 
-        return rawDataFile;
+//        return rawDataFile;
     }
 
     /**
@@ -197,6 +196,10 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
         int standardIncrementer = 1;
 
         // assume we are golden   
+        // take first entry in fractionNames that came from scancsv file and confirm it is referenceMaterial (standard)
+        String referenceMaterialfractionID = fractionNames[0];
+
+        // todo: need to confirm it is the standard - maybe do this at parameter manager
         for (int f = ignoreFirstFractions; f < analysisFiles.length; f++) {
 
             if (loadDataTask.isCancelled()) {
@@ -212,9 +215,9 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
             }
 
             // needs to be more robust
-            boolean isStandard = (fractionID.compareToIgnoreCase(rawDataFileTemplate.getStandardIDs()[0]) == 0);
+            boolean isStandardReferenceMaterial = (fractionID.substring(0, 2).compareToIgnoreCase(referenceMaterialfractionID.substring(0, 2)) == 0);
             // number the standards
-            if (rawDataFileTemplate.standardIsKnown(fractionID)) {
+            if (isStandardReferenceMaterial) {
                 fractionID = fractionID + "-" + String.valueOf(standardIncrementer);
                 standardIncrementer++;
             }
@@ -256,7 +259,7 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
                         = new TripoliFraction( //
                                 fractionID, //
                                 massSpec.getCommonLeadCorrectionHighestLevel(), //
-                                isStandard,
+                                isStandardReferenceMaterial,
                                 fractionBackgroundTimeStamp, //
                                 fractionPeakTimeStamp,
                                 peakAcquisitions.size());
@@ -268,10 +271,10 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
                 massSpec.setCountOfAcquisitions(peakAcquisitions.size());
 
                 massSpec.processFractionRawRatiosII(//
-                        backgroundAcquisitions, peakAcquisitions, isStandard, usingFullPropagation, tripoliFraction);
+                        backgroundAcquisitions, peakAcquisitions, isStandardReferenceMaterial, usingFullPropagation, tripoliFraction);
 
                 tripoliFraction.shadeDataActiveMapLeft(leftShadeCount);
-                System.out.println("\n**** Element II FractionID  " + fractionID);
+                System.out.println("\n**** Element II FractionID  " + fractionID + " refMat? " + isStandardReferenceMaterial + " <<<<<<<<<<<<<<<<<<\n");
 
                 myTripoliFractions.add(tripoliFraction);
 
@@ -289,8 +292,9 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
 
     private void processIntensities_A(int i, int hardwiredEndOfBackground, ArrayList<double[]> backgroundAcquisitions, ArrayList<double[]> peakAcquisitions, String[] extractedData) {
         // 202  204  206 Pb207	Pb208	Th232 U238
+        double[] backgroundIntensities = new double[7];
+        double[] peakIntensities = new double[7];
         if (i < hardwiredEndOfBackground) {
-            double[] backgroundIntensities = new double[7];
             backgroundAcquisitions.add(backgroundIntensities);
             backgroundIntensities[0] = calcAvgPulseOrAnalog(3, 6, extractedData);
             backgroundIntensities[1] = calcAvgPulseOrAnalog(8, 11, extractedData);
@@ -300,7 +304,6 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
             backgroundIntensities[5] = calcAvgPulseThenAnalog(40, 43, extractedData);
             backgroundIntensities[6] = calcAvgPulseThenAnalog(49, 52, extractedData);
         } else if (i >= (hardwiredEndOfBackground)) {
-            double[] peakIntensities = new double[7];
             peakAcquisitions.add(peakIntensities);
             peakIntensities[0] = calcAvgPulseOrAnalog(3, 6, extractedData);
             peakIntensities[1] = calcAvgPulseOrAnalog(8, 11, extractedData);
@@ -310,12 +313,18 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
             peakIntensities[5] = calcAvgPulseThenAnalog(40, 43, extractedData);
             peakIntensities[6] = calcAvgPulseThenAnalog(49, 52, extractedData);
         }
+        // detect analog and remove negative flag
+        for (int j = 0; j < 7; j++) {
+            backgroundIntensities[j] = Math.abs(backgroundIntensities[j]);
+            peakIntensities[j] = Math.abs(peakIntensities[j]);
+        }
     }
 
     private void processIntensities_B(int i, int hardwiredEndOfBackground, ArrayList<double[]> backgroundAcquisitions, ArrayList<double[]> peakAcquisitions, String[] extractedData) {
         // 202  204  206 Pb207	Pb208 Th232 U235 U238
+        double[] backgroundIntensities = new double[8];
+        double[] peakIntensities = new double[8];
         if (i < hardwiredEndOfBackground) {
-            double[] backgroundIntensities = new double[8];
             backgroundAcquisitions.add(backgroundIntensities);
             backgroundIntensities[0] = calcAvgPulseOrAnalog(3, 6, extractedData);
             backgroundIntensities[1] = calcAvgPulseOrAnalog(12, 15, extractedData);
@@ -326,7 +335,6 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
             backgroundIntensities[6] = calcAvgPulseThenAnalog(57, 60, extractedData);
             backgroundIntensities[7] = calcAvgPulseThenAnalog(66, 69, extractedData);
         } else if (i >= (hardwiredEndOfBackground)) {
-            double[] peakIntensities = new double[8];
             peakAcquisitions.add(peakIntensities);
             peakIntensities[0] = calcAvgPulseOrAnalog(3, 6, extractedData);
             peakIntensities[1] = calcAvgPulseOrAnalog(12, 15, extractedData);
@@ -337,12 +345,30 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
             peakIntensities[6] = calcAvgPulseThenAnalog(57, 60, extractedData);
             peakIntensities[7] = calcAvgPulseThenAnalog(66, 69, extractedData);
         }
+        // detect analog and remove negative flag
+        for (int j = 0; j < 8; j++) {
+            // test for GG's special case per email31 Jan 2016
+            //TODO: use phys constants model
+            if (j == 7) {
+                if (backgroundIntensities[j] < 0.0) {
+                    // U238 is analog so use 235 * 137.82
+                    backgroundIntensities[7] = backgroundIntensities[6] * 137.82;
+                }
+                if (peakIntensities[j] < 0.0) {
+                    // U238 is analog so use 235 * 137.82
+                    peakIntensities[7] = peakIntensities[6] * 137.82;
+                }
+            }
+            backgroundIntensities[j] = Math.abs(backgroundIntensities[j]);
+            peakIntensities[j] = Math.abs(peakIntensities[j]);
+        }
     }
 
     private void processIntensities_C(int i, int hardwiredEndOfBackground, ArrayList<double[]> backgroundAcquisitions, ArrayList<double[]> peakAcquisitions, String[] extractedData) {
         // 176 202  204  206 Pb207 Pb208 Th232 U235 U238
+        double[] backgroundIntensities = new double[9];
+        double[] peakIntensities = new double[9];
         if (i < hardwiredEndOfBackground) {
-            double[] backgroundIntensities = new double[8];
             backgroundAcquisitions.add(backgroundIntensities);
             backgroundIntensities[0] = calcAvgPulseOrAnalog(3, 6, extractedData);
             backgroundIntensities[1] = calcAvgPulseOrAnalog(12, 15, extractedData);
@@ -352,9 +378,8 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
             backgroundIntensities[5] = calcAvgPulseThenAnalog(48, 51, extractedData);
             backgroundIntensities[6] = calcAvgPulseThenAnalog(57, 60, extractedData);
             backgroundIntensities[7] = calcAvgPulseThenAnalog(66, 69, extractedData);
-            backgroundIntensities[7] = calcAvgPulseThenAnalog(75, 78, extractedData);
+            backgroundIntensities[8] = calcAvgPulseThenAnalog(75, 78, extractedData);
         } else if (i >= (hardwiredEndOfBackground)) {
-            double[] peakIntensities = new double[8];
             peakAcquisitions.add(peakIntensities);
             peakIntensities[0] = calcAvgPulseOrAnalog(3, 6, extractedData);
             peakIntensities[1] = calcAvgPulseOrAnalog(12, 15, extractedData);
@@ -364,7 +389,25 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
             peakIntensities[5] = calcAvgPulseThenAnalog(48, 51, extractedData);
             peakIntensities[6] = calcAvgPulseThenAnalog(57, 60, extractedData);
             peakIntensities[7] = calcAvgPulseThenAnalog(66, 69, extractedData);
-            peakIntensities[7] = calcAvgPulseThenAnalog(75, 78, extractedData);
+            peakIntensities[8] = calcAvgPulseThenAnalog(75, 78, extractedData);
+        }
+
+        // detect analog and remove negative flag
+        for (int j = 0; j < 9; j++) {
+            // test for GG's special case per email31 Jan 2016
+            //TODO: use phys constants model
+            if (j == 8) {
+                if (backgroundIntensities[j] < 0.0) {
+                    // U238 is analog so use 235 * 137.82
+                    backgroundIntensities[8] = backgroundIntensities[7] * 137.82;
+                }
+                if (peakIntensities[j] < 0.0) {
+                    // U238 is analog so use 235 * 137.82
+                    peakIntensities[8] = peakIntensities[7] * 137.82;
+                }
+            }
+            backgroundIntensities[j] = Math.abs(backgroundIntensities[j]);
+            peakIntensities[j] = Math.abs(peakIntensities[j]);
         }
     }
 }

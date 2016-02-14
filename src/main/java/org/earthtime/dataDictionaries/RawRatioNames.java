@@ -63,6 +63,8 @@ public enum RawRatioNames {
     /**
      *
      */
+    r176_176w("r176_176w", "176 / 176"),
+    r235_235w("r235_235w", "235 / 235"),
     r202_202w("r202_202w", "202 / 202");
     private String name;
     private String displayName;

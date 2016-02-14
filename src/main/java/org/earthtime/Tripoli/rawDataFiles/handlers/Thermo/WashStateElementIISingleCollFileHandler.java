@@ -83,10 +83,9 @@ public class WashStateElementIISingleCollFileHandler extends AbstractRawDataFile
      * @param usingFullPropagation the value of usingFullPropagation
      * @param leftShadeCount the value of leftShadeCount
      * @param ignoreFirstFractions the value of ignoreFirstFractions
-     * @return
      */
     @Override
-    public File getAndLoadRawIntensityDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions) {
+    public void getAndLoadRawIntensityDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions) {
 
         // get .txt files from the folder and check the first one
         analysisFiles = rawDataFile.listFiles((File dir, String name) //
@@ -112,7 +111,7 @@ public class WashStateElementIISingleCollFileHandler extends AbstractRawDataFile
             rawDataFile = null;
         }
 
-        return rawDataFile;
+//        return rawDataFile;
     }
 
     /**

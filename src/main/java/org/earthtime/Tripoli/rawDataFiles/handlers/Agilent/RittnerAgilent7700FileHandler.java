@@ -93,10 +93,9 @@ public class RittnerAgilent7700FileHandler extends AbstractRawDataFileHandler im
      * @param usingFullPropagation the value of usingFullPropagation
      * @param leftShadeCount the value of leftShadeCount
      * @param ignoreFirstFractions the value of ignoreFirstFract
-     * @return ions
      */
     @Override
-    public File getAndLoadRawIntensityDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions) {
+    public void getAndLoadRawIntensityDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions) {
 
         // Agilent has folder of folders plus one samplelist file
         File[] sampleListFile = rawDataFile.listFiles(new FilenameFilter() {
@@ -131,7 +130,7 @@ public class RittnerAgilent7700FileHandler extends AbstractRawDataFileHandler im
             rawDataFile = null;
         }
 
-        return rawDataFile;
+//        return rawDataFile;
     }
 
     /**
