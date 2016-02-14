@@ -3,7 +3,7 @@
  *
  * Created Jul 5, 2011
  *
- * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2016 James F. Bowring and www.Earth-Time.org
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -163,13 +163,11 @@ public class RawIntensityDataModel //
     public void correctIntensitiesForResistor() {
         // added may 2014 to handle a correction noah left out for raw intensities
         double[] backgroundIntensitiesCorrectedForResistor
-                = //
-                collectorModel.correctRawIntensitiesForResistor(backgroundVirtualCollector.getIntensities());
+                = collectorModel.correctRawIntensitiesForResistor(backgroundVirtualCollector.getIntensities());
         backgroundVirtualCollector.setIntensities(backgroundIntensitiesCorrectedForResistor);
 
         double[] onPeakIntensitiesCorrectedForResistor
-                = //
-                collectorModel.correctRawIntensitiesForResistor(onPeakVirtualCollector.getIntensities());
+                = collectorModel.correctRawIntensitiesForResistor(onPeakVirtualCollector.getIntensities());
         onPeakVirtualCollector.setIntensities(onPeakIntensitiesCorrectedForResistor);
 
     }
@@ -181,13 +179,11 @@ public class RawIntensityDataModel //
     public void convertRawIntensitiesToCountsPerSecond() {
         // dec 2012
         double[] backgroundIntensitiesCountsPerSecond
-                = //
-                collectorModel.convertRawIntensitiesToCountsPerSecond(backgroundVirtualCollector.getIntensities());
+                = collectorModel.convertRawIntensitiesToCountsPerSecond(backgroundVirtualCollector.getIntensities());
         backgroundVirtualCollector.setIntensities(backgroundIntensitiesCountsPerSecond);
 
         double[] onPeakIntensitiesCountsPerSecond
-                = //
-                collectorModel.convertRawIntensitiesToCountsPerSecond(onPeakVirtualCollector.getIntensities());
+                = collectorModel.convertRawIntensitiesToCountsPerSecond(onPeakVirtualCollector.getIntensities());
         onPeakVirtualCollector.setIntensities(onPeakIntensitiesCountsPerSecond);
     }
 
@@ -205,7 +201,7 @@ public class RawIntensityDataModel //
         retval.append("\n");
         retval.append("\tPeak:\t");
         for (int i = 0; i < onPeakVirtualCollector.getIntensities().length; i++) {
-            retval.append(onPeakVirtualCollector.getIntensities()[i] + ", ");
+            retval.append(onPeakVirtualCollector.getIntensities()[i]).append(", ");
         }
 
         return retval.toString();
@@ -221,7 +217,7 @@ public class RawIntensityDataModel //
 
         retval.append("\tBack:\t");
         for (int i = 0; i < onPeakVirtualCollector.getCorrectedIntensities().length; i++) {
-            retval.append(onPeakVirtualCollector.getCorrectedIntensities()[i] + ", ");
+            retval.append(onPeakVirtualCollector.getCorrectedIntensities()[i]).append(", ");
         }
 
         return retval.toString();
@@ -237,7 +233,7 @@ public class RawIntensityDataModel //
 
         retval.append("\tBack:\t");
         for (int i = 0; i < onPeakVirtualCollector.getLogCorrectedIntensities().length; i++) {
-            retval.append(onPeakVirtualCollector.getLogCorrectedIntensities()[i] + ", ");
+            retval.append(onPeakVirtualCollector.getLogCorrectedIntensities()[i]).append(", ");
         }
 
         return retval.toString();

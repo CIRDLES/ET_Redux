@@ -312,8 +312,6 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).setRawDataSourceMethod(//
                 rawDataSourceMethodFactory("getIncludedIsotopes"));
 
-        //cause slider to synch
-//        ((TripoliSessionRawDataView) tripoliSessionRawDataView).synchXAxisZoomSliderValue(((TripoliSessionRawDataView) tripoliSessionRawDataView).getDataModelWidth());
         if (refreshPanel) {
             tripoliSessionRawDataView.refreshPanel();
         }
@@ -706,7 +704,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
     }
 
     private void saveProject() {
-        ((ProjectManagerSubscribeInterface) projectManager).getProject().saveTheProjectAsSerializedReduxFile();
+        projectManager.getProject().saveTheProjectAsSerializedReduxFile();
     }
 
     /**

@@ -92,7 +92,7 @@ public abstract class AbstractRawDataFileTemplate implements //
     protected AbstractAcquisitionModel acquisitionModel;
 
     protected String[] elementsByIsotopicMass;
-    
+
     protected AbstractMassSpecSetup massSpecSetup;
 
     /**
@@ -122,7 +122,8 @@ public abstract class AbstractRawDataFileTemplate implements //
      */
     @Override
     public int compareTo(AbstractRawDataFileTemplate abstractRawDataFileTemplate) {
-        String abstractRawDataFileTemplateName =//
+        String abstractRawDataFileTemplateName
+                =//
                 ((AbstractRawDataFileTemplate) abstractRawDataFileTemplate).NAME.trim();
         return (this.NAME.trim().compareToIgnoreCase(abstractRawDataFileTemplateName));
     }
@@ -257,7 +258,8 @@ public abstract class AbstractRawDataFileTemplate implements //
     public boolean standardIsKnown(String standardName) {
         boolean retval = false;
         for (int i = 0; i < standardIDs.length; i++) {
-            if (standardName.compareToIgnoreCase(standardIDs[i]) == 0) {
+            if (standardIDs[i].startsWith(standardName)) {
+//            if (standardName.compareToIgnoreCase(standardIDs[i]) == 0) {
                 retval = true;
                 break;
             }
@@ -274,15 +276,15 @@ public abstract class AbstractRawDataFileTemplate implements //
 
     public String getStringListOfElementsByIsotopicMass() {
         String retVal = "[";
-        
-        for (int i = 0; i < elementsByIsotopicMass.length; i ++){
+
+        for (int i = 0; i < elementsByIsotopicMass.length; i++) {
             retVal += elementsByIsotopicMass[i];
-            if (i < (elementsByIsotopicMass.length - 1)){
+            if (i < (elementsByIsotopicMass.length - 1)) {
                 retVal += ", ";
             }
         }
-        retVal+= "]";
-        
+        retVal += "]";
+
         return retVal;
     }
 

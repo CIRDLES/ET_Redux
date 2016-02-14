@@ -411,7 +411,7 @@ public abstract class AbstractMassSpecSetup implements //
         if (writeReport) {
             outputWriter.println("\n\n3: Si ********************");
             for (DataModelInterface dm : genericIsotopeModels) {
-                if (!dm.equals(Hg202)) {
+                if (!dm.equals(Hg202)&&!dm.equals(Hf176)) {
                     outputWriter.println(dm.getDataModelName());
                     Matrix Si = ((RawIntensityDataModel) dm).getMatrixSiCovarianceIntensities();
                     if (Si != null) {
@@ -434,7 +434,7 @@ public abstract class AbstractMassSpecSetup implements //
         if (writeReport) {
             outputWriter.println("\n\n4: Fit parameters for baseline (a [b, c], fitParameterCovarianceMatrix, X2) ********************");
             for (DataModelInterface dm : genericIsotopeModels) {
-                if (!dm.equals(Hg202)) {
+                if (!dm.equals(Hg202)&&!dm.equals(Hf176)) {
                     outputWriter.println(((RawIntensityDataModel) dm).outputBaseLineFitFunctionParameters());
                 }
             }
@@ -443,7 +443,7 @@ public abstract class AbstractMassSpecSetup implements //
         if (writeReport) {
             outputWriter.println("\n\n5: peakIntensityBLcorr (baseline-corrected on-peak intensities) ********************");
             for (DataModelInterface dm : genericIsotopeModels) {
-                if (!dm.equals(Hg202)) {
+                if (!dm.equals(Hg202)&&!dm.equals(Hf176)) {
                     outputWriter.println(((RawIntensityDataModel) dm).outputCorrectedIntensities());
                 }
             }
@@ -475,7 +475,7 @@ public abstract class AbstractMassSpecSetup implements //
         if (writeReport) {
             outputWriter.println("\n\n6: J11, J21, J22, JOnPeak, Sopbc ********************");
             for (DataModelInterface dm : genericIsotopeModels) {
-                if (!dm.equals(Hg202)) {
+                if (!dm.equals(Hg202)&&!dm.equals(Hf176)) {
                     try {
                         outputWriter.println(dm.getDataModelName());
 
@@ -507,7 +507,7 @@ public abstract class AbstractMassSpecSetup implements //
         if (writeReport) {
             outputWriter.println("\n\n8: log-intensities (on-peak baseline-corrected) ********************");
             for (DataModelInterface dm : genericIsotopeModels) {
-                if (!dm.equals(Hg202)) {
+                if (!dm.equals(Hg202)&&!dm.equals(Hf176)) {
                     try {
                         outputWriter.println(((RawIntensityDataModel) dm).outputCorrectedIntensitiesAsLogs());
                     } catch (Exception e) {
@@ -519,7 +519,7 @@ public abstract class AbstractMassSpecSetup implements //
         if (writeReport) {
             outputWriter.println("\n\n9: Jlogr, Jmat, Sopbclr   ********************");
             for (DataModelInterface dm : genericIsotopeModels) {
-                if (!dm.equals(Hg202)) {
+                if (!dm.equals(Hg202)&&!dm.equals(Hf176)) {
                     try {
                         outputWriter.println(dm.getDataModelName());
 

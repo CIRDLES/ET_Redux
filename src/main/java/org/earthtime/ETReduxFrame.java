@@ -359,8 +359,8 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                 announcementPane.add(visitCIRDLESbutton);
 
                 JTextArea announce = new JTextArea(//
-                        "ANNOUNCEMENT:         2015 brings changes to this project. "//
-                        + "We are changing the name to ET_Redux, for EARTHTIME Redux, in preparation for additional isotope systems, such as U-series.  "//
+                        "ANNOUNCEMENT:         We are looking forward to a productive 2016. "//
+                        + "ET_Redux, for EARTHTIME Redux, will complete LA-CIP MS functionality for Laserchronbin preparation for additional isotope systems, such as U-series.  "//
                         + "We are moving the project to a GitHub repository in the near future to make collaboration easier and more transparent.  "
                         + "We are seeking a new logo for ET_Redux and invite your submissions.");
                 announce.setFont(ReduxConstants.sansSerif_12_Bold);
@@ -372,7 +372,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                 announce.setOpaque(true);
                 //announce.setBorder(new LineBorder(Color.black));
                 announce.setBackground(announcementPane.getBackground());
-                announcementPane.add(announce);
+//                announcementPane.add(announce);
 
                 JButton visitTOPSOIL = new ET_JButton("Checkout Topsoil - the Isoplot replacement project that you can join at github.com/CIRDLES/topsoil");
                 visitTOPSOIL.setFont(ReduxConstants.sansSerif_12_Bold);

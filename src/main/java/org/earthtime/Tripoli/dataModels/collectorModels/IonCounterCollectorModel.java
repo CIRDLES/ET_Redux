@@ -43,7 +43,7 @@ public class IonCounterCollectorModel extends AbstractCollectorModel {
      *
      */
     public IonCounterCollectorModel() {
-        this(ReduxConstants.DEFAULT_OBJECT_NAME,                 new ValueModel("deadTime", BigDecimal.ZERO, "ABS", BigDecimal.ZERO, BigDecimal.ZERO), CollectedDataStyle.COUNTS);
+        this(ReduxConstants.DEFAULT_OBJECT_NAME, new ValueModel("deadTime", BigDecimal.ZERO, "ABS", BigDecimal.ZERO, BigDecimal.ZERO), CollectedDataStyle.COUNTS);
     }
 
     /**
@@ -143,7 +143,8 @@ public class IonCounterCollectorModel extends AbstractCollectorModel {
 
         double deadUnctSquared = deadTime.getOneSigmaAbs().movePointLeft(0).pow(2).doubleValue();
 
-        Matrix measuredCountsSquaredTimesDeadTime = //
+        Matrix measuredCountsSquaredTimesDeadTime
+                = //
                 columnVectorOfMeasuredCountsIntensityCountsSquared.//
                 times(columnVectorOfMeasuredCountsIntensityCountsSquared.transpose());
 
@@ -207,8 +208,12 @@ public class IonCounterCollectorModel extends AbstractCollectorModel {
      */
     @Override
     public double[] correctRawIntensitiesForResistor(double[] rawIntensities) {
-        // do nothing for io counter
-        return rawIntensities;
+        // do nothing for ion counter
+        double[] rawIntensitiesCorrected = new double[rawIntensities.length];
+
+        System.arraycopy(rawIntensities, 0, rawIntensitiesCorrected, 0, rawIntensities.length);
+
+        return rawIntensitiesCorrected;
     }
 
     /**

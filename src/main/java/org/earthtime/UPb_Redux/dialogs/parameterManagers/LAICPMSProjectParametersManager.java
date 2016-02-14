@@ -175,7 +175,7 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
     /**
      *
      */
-    protected int topOfTable = 125;
+    protected int topOfTable = 115;
 
     /**
      *
@@ -562,7 +562,7 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
                     "Raw data location: "
                     + rawDataFileHandler.getAcquisitionModel().getRawDataFile().getCanonicalPath());
 
-            rawDataFilePathTextArea.setBounds(leftMargin, 360, parentDimension.width - 100, 50);
+            rawDataFilePathTextArea.setBounds(leftMargin, 370, parentDimension.width - 100, 50);
             rawDataFilePathTextArea.setLineWrap(true);
             rawDataFilePathTextArea.setEditable(false);
             this.add(rawDataFilePathTextArea);

@@ -19,6 +19,7 @@ package org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -223,6 +224,7 @@ public final class LaserchronElementIISetupUPb_A extends AbstractMassSpecSetup {
 
         isotopeMappingModel.setIsotopeToRawIntensitiesMap(isotopeToRawIntensitiesMap);
 
+        virtualCollectorModelMapToFieldIndexes = new HashMap<>();
         virtualCollectorModelMapToFieldIndexes.put(Hg202, 0);
         virtualCollectorModelMapToFieldIndexes.put(Pb204, 1);
         virtualCollectorModelMapToFieldIndexes.put(Pb206, 2);

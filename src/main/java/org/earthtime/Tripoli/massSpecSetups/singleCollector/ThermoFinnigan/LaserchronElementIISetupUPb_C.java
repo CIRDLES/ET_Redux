@@ -19,6 +19,7 @@ package org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -171,6 +172,7 @@ public final class LaserchronElementIISetupUPb_C extends AbstractMassSpecSetup {
      * @return the
      * java.util.SortedSet<org.earthtime.Tripoli.dataModels.DataModelInterface>
      */
+    @Override
     public SortedSet<DataModelInterface> rawRatiosFactoryRevised() {
 
         virtualCollectors = new ArrayList<>(VIRTUAL_COLLECTOR_COUNT);
@@ -257,6 +259,7 @@ public final class LaserchronElementIISetupUPb_C extends AbstractMassSpecSetup {
 
         isotopeMappingModel.setIsotopeToRawIntensitiesMap(isotopeToRawIntensitiesMap);
 
+        virtualCollectorModelMapToFieldIndexes = new HashMap<>();
         virtualCollectorModelMapToFieldIndexes.put(Hf176, 0);
         virtualCollectorModelMapToFieldIndexes.put(Hg202, 1);
         virtualCollectorModelMapToFieldIndexes.put(Pb204, 2);
@@ -286,6 +289,11 @@ public final class LaserchronElementIISetupUPb_C extends AbstractMassSpecSetup {
         rawRatios.add(r207_204w);
         DataModelInterface r208_204w = new RawRatioDataModel(RawRatioNames.r208_204w, Pb208, Pb204, false, true, COLLECTOR_DATA_FREQUENCY_MILLISECS);
         rawRatios.add(r208_204w);
+
+        // special case to handle 176 Halfnium isotope
+        rawRatios.add(new RawRatioDataModel(RawRatioNames.r176_176w, Hf176, Hf176, false, false, COLLECTOR_DATA_FREQUENCY_MILLISECS));
+        // special case to handle 235 Uranium isotope
+        rawRatios.add(new RawRatioDataModel(RawRatioNames.r235_235w, U235, U235, false, false, COLLECTOR_DATA_FREQUENCY_MILLISECS));
 
         return rawRatios;
     }

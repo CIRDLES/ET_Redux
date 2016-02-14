@@ -88,7 +88,6 @@ public abstract class AbstractRawDataFileHandler implements //
     public AbstractRawDataFileHandler() {
         this.NAME = "Unnamed";
         this.aboutInfo = "Details:";
-//        this.availableMassSpecSetups = new TreeSet<>();
         this.massSpec = null;
         this.availableRawDataFileTemplates = new TreeSet<>();
         this.rawDataFileTemplate = null;
@@ -283,7 +282,8 @@ public abstract class AbstractRawDataFileHandler implements //
         double sumOfValues = 0.0;
         for (int i = startIndex; i <= endIndex; i++) {
             if (data[i].contains("*")) {
-                retVal = calcAvgPulseOrAnalog(startIndex + 4, endIndex + 4, data);
+                // set flag to show we used analog
+                retVal = -calcAvgPulseOrAnalog(startIndex + 4, endIndex + 4, data);
             } else {
                 double val = Double.parseDouble(data[i]);
                 sumOfValues += val;
@@ -377,8 +377,7 @@ public abstract class AbstractRawDataFileHandler implements //
         if (tripoliFractions.size() > 0) {// != null) {
             if (rawDataFileTemplate.getDefaultParsingOfFractionsBehavior() == 0) {
                 AbstractTripoliSample primaryStandard
-                        = //
-                        new TripoliPrimaryStandardSample("Some Standard");
+                        = new TripoliPrimaryStandardSample("Some Standard");
 
                 SortedSet<TripoliFraction> primaryStandardFractions = new TreeSet<>();
                 Iterator<TripoliFraction> tripoliFractionsIterator = tripoliFractions.iterator();
@@ -501,7 +500,11 @@ public abstract class AbstractRawDataFileHandler implements //
     }
 
     private String extractSampleName(String fractionName) {
-        int index = fractionName.lastIndexOf("_");
+        int index = fractionName.toUpperCase().lastIndexOf("SPOT");
+        if (index < 0) {
+            index = fractionName.lastIndexOf("_");
+        }
+
         if (index < 0) {
             index = fractionName.lastIndexOf("-");
         }
