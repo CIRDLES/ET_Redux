@@ -70,7 +70,7 @@ public class RawRatioNamesTest {
         assertEquals("r207_235w", list[6]);
         assertEquals("r176_176w", list[7]);
         assertEquals("r235_235w", list[8]);
-        assertEquals("r202_202w", list[9]);
+        assertEquals("r202_202w", list[13]);
 
     }
 

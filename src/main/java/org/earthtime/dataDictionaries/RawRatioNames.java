@@ -2,7 +2,7 @@
  * RawRatioNames.java
  *
  *
- * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2016James F. Bowring and www.Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -65,9 +65,13 @@ public enum RawRatioNames {
      */
     r176_176w("r176_176w", "176 / 176"),
     r235_235w("r235_235w", "235 / 235"),
+    r196_196w("r196_196w", "196 / 196"),
+    r248_248w("r248_248w", "248 / 248"),
+    r254_254w("r254_254w", "254 / 254"),
+    r270_270w("r270_270w", "270 / 270"),
     r202_202w("r202_202w", "202 / 202");
-    private String name;
-    private String displayName;
+    private final String name;
+    private final String displayName;
 
     private RawRatioNames(String name, String displayName) {
         this.name = name;
