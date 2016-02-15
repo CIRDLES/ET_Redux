@@ -271,7 +271,7 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
                 massSpec.setCountOfAcquisitions(peakAcquisitions.size());
 
                 massSpec.processFractionRawRatiosII(//
-                        backgroundAcquisitions, peakAcquisitions, isStandardReferenceMaterial, usingFullPropagation, tripoliFraction);
+                        backgroundAcquisitions, peakAcquisitions, usingFullPropagation, tripoliFraction);
 
                 tripoliFraction.shadeDataActiveMapLeft(leftShadeCount);
                 System.out.println("\n**** Element II FractionID  " + fractionID + " refMat? " + isStandardReferenceMaterial + " <<<<<<<<<<<<<<<<<<\n");

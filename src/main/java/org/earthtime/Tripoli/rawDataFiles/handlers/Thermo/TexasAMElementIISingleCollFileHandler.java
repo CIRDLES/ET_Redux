@@ -248,7 +248,7 @@ public class TexasAMElementIISingleCollFileHandler extends AbstractRawDataFileHa
                     virtualCollectorModelMapToFieldIndexes.put(massSpec.getU238(), 7);
 
                     massSpec.processFractionRawRatiosII(//
-                            backgroundAcquisitions, peakAcquisitions, isStandard, usingFullPropagation, tripoliFraction, virtualCollectorModelMapToFieldIndexes);
+                            backgroundAcquisitions, peakAcquisitions, usingFullPropagation, tripoliFraction, virtualCollectorModelMapToFieldIndexes);
 
                     tripoliFraction.shadeDataActiveMapLeft(leftShadeCount);
                     System.out.println("\n**** Element II FractionID  " + fractionID + " completed ***************************\n\n");

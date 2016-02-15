@@ -256,7 +256,7 @@ public class UnivKansasElementIIFileHandler extends AbstractRawDataFileHandler{
                 virtualCollectorModelMapToFieldIndexes.put(massSpec.getU238(), 4);
 
                 massSpec.processFractionRawRatiosII(//
-                        backgroundAcquisitions, peakAcquisitions, isStandard, usingFullPropagation, tripoliFraction, virtualCollectorModelMapToFieldIndexes);
+                        backgroundAcquisitions, peakAcquisitions, usingFullPropagation, tripoliFraction, virtualCollectorModelMapToFieldIndexes);
 
                 tripoliFraction.shadeDataActiveMapLeft(leftShadeCount);
                 System.out.println("\n**** Element II FractionID  " + fractionID + "  " + fractionDateValue.toString());

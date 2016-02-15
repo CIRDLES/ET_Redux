@@ -268,7 +268,7 @@ public class KoslerAgilent7700FileHandler extends AbstractRawDataFileHandler imp
                 virtualCollectorModelMapToFieldIndexes.put(massSpec.getU238(), 6);
 
                 massSpec.processFractionRawRatiosII(//
-                        backgroundAcquisitions, peakAcquisitions, isStandard, usingFullPropagation, tripoliFraction, virtualCollectorModelMapToFieldIndexes);
+                        backgroundAcquisitions, peakAcquisitions, usingFullPropagation, tripoliFraction, virtualCollectorModelMapToFieldIndexes);
 
                 tripoliFraction.shadeDataActiveMapLeft(leftShadeCount);
                 System.out.println("\n**** AGILENT FractionID  " + fractionID + "  " + fractionDateValue.toString());

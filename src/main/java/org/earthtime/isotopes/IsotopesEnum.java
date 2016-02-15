@@ -18,57 +18,54 @@ public enum IsotopesEnum {
     /**
      *
      */
-    Hf176( "Hf", 176, "176Hf", "Hf176" ),
-
+    Hf176("Hf", 176, "176Hf", "Hf176"),
+    Zr2O196("Zr2O", 196, "196Zr2O", "Zr2O196"),
     /**
      *
      */
-    Hg202( "Hg", 202, "202Hg", "Hg202" ),
-
+    Hg202("Hg", 202, "202Hg", "Hg202"),
     /**
      *
      */
-    Pb204( "Pb", 204, "204Pb", "Pb204" ),
-
+    Pb204("Pb", 204, "204Pb", "Pb204"),
     /**
      *
      */
-    Pb206( "Pb", 206, "206Pb", "Pb206" ),
-
+    Pb206("Pb", 206, "206Pb", "Pb206"),
     /**
      *
      */
-    Pb207( "Pb", 207, "207Pb", "Pb207" ),
-
+    Pb207("Pb", 207, "207Pb", "Pb207"),
     /**
      *
      */
-    Pb208( "Pb", 208, "208Pb", "Pb208" ),
-
+    Pb208("Pb", 208, "208Pb", "Pb208"),
     /**
      *
      */
-    Th232( "Th", 232, "232Th", "Th232" ),
-
+    Th232("Th", 232, "232Th", "Th232"),
     /**
      *
      */
-    U235( "U", 235, "235U", "U235"),
-
+    U235("U", 235, "235U", "U235"),
     /**
      *
      */
-    U238( "U", 238, "238U", "U238" );
+    U238("U", 238, "238U", "U238"),
+    ThO248("ThO", 248, "248ThO", "ThO248"),
+    UO254("UO", 254, "254UO", "UO254"),
+    UO270("UO", 270, "270UO", "UO270");
+
     private final String symbol;
     private final int atomicMass;
     private final String prettyName;
     private final String name;
 
-    private IsotopesEnum ( //
+    private IsotopesEnum( //
             final String symbol, //
             final int atomicMass, //
             final String prettyName,//
-            final String name ) {
+            final String name) {
         this.symbol = symbol;
         this.atomicMass = atomicMass;
         this.prettyName = prettyName;
@@ -79,28 +76,28 @@ public enum IsotopesEnum {
      *
      * @return the prettyName
      */
-    public String getPrettyName () {
+    public String getPrettyName() {
         return prettyName;
     }
 
     /**
      * @return the symbol
      */
-    public String getSymbol () {
+    public String getSymbol() {
         return symbol;
     }
 
     /**
      * @return the atomicMass
      */
-    public int getAtomicMass () {
+    public int getAtomicMass() {
         return atomicMass;
     }
 
     /**
      * @return the name
      */
-    public String getName () {
+    public String getName() {
         return name;
     }
 }

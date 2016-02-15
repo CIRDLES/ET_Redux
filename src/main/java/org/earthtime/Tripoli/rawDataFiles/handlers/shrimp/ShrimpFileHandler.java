@@ -20,6 +20,7 @@ package org.earthtime.Tripoli.rawDataFiles.handlers.shrimp;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -29,6 +30,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import org.cirdles.shrimp.PrawnFile;
+import org.earthtime.Tripoli.dataModels.DataModelInterface;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.Tripoli.rawDataFiles.handlers.AbstractRawDataFileHandler;
 
@@ -71,12 +73,11 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
     public File validateAndGetHeaderDataFromRawIntensityFile(File tripoliRawDataFolder) {
         String dialogTitle = "Select a Shrimp Prawn '.xml' file:";
 
-        
         // temporary during development
         JOptionPane.showMessageDialog(null,
-                            new String[]{"We are using a pre-selected Prawn file during intial development, which can be found here:\n\n" 
-                                    + "https://raw.githubusercontent.com/bowring/XSD/master/SHRIMP/EXAMPLE_100142_G6147_10111109.43_10.33.37%20AM.xml"});
-        
+                new String[]{"We are using a pre-selected Prawn file during intial development, which can be found here:\n\n"
+                    + "https://raw.githubusercontent.com/bowring/XSD/master/SHRIMP/EXAMPLE_100142_G6147_10111109.43_10.33.37%20AM.xml"});
+
         rawDataFile = new File("temp.xml");//FileHelper.AllPlatformGetFolder(dialogTitle, tripoliRawDataFolder);
         return rawDataFile;
     }
@@ -161,7 +162,7 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
 
             JAXBContext jaxbContext = JAXBContext.newInstance(PrawnFile.class);
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-            prawnFile = (PrawnFile) jaxbUnmarshaller.unmarshal(rawDataFile);//  url);
+            prawnFile = (PrawnFile) jaxbUnmarshaller.unmarshal(url);//  url);
 
             // assume we are golden   
             // a 'run' is an analysis or fraction
@@ -174,7 +175,10 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
 
                 PrawnFile.Run runFraction = prawnFile.getRun().get(f);
 
-                processRunFraction(runFraction);
+                TripoliFraction tripoliFraction = processRunFraction(runFraction);
+
+                // determine if standard reference material
+                myTripoliFractions.add(tripoliFraction);
 
             } // end of files loop
 
@@ -191,15 +195,67 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
         return myTripoliFractions;
     }
 
-    private void processRunFraction(PrawnFile.Run runFraction) {
+    private TripoliFraction processRunFraction(PrawnFile.Run runFraction) {
         String fractionID = runFraction.getPar().get(0).getValue();
 
-        // needs to be more robust
-        boolean isStandard = (fractionID.compareToIgnoreCase(rawDataFileTemplate.getStandardIDs()[0]) == 0);
+        // format "2010-11-11"
+        String setDate = runFraction.getSet().getPar().get(0).getValue();
+        // format 10:17:34
+        String setTime = runFraction.getSet().getPar().get(1).getValue();
+        // convert to long
+        java.sql.Timestamp peakTimeStamp = java.sql.Timestamp.valueOf(setDate + " " + setTime);
+        long fractionPeakTimeStamp = peakTimeStamp.getTime();
 
         double[][] extractedData = PrawnRunFractionParser.parsedRunFractionData(runFraction);
 
-    }
+        // within each row
+        // index 0 = scannumber; followed by order of groups = 196  204 Backgrnd 206 207 208 238 248 254 270
+        // each acquisition file contains 6 scans (for now)
+        // each group contains totalCounts, 1-sigma, and totalCountsSBM
+        // later we will give user interactive tools to pick them out
+        ArrayList<double[]> backgroundAcquisitions = new ArrayList<>();
+        ArrayList<double[]> peakAcquisitions = new ArrayList<>();
 
+        for (int scan = 0; scan < extractedData.length; scan++) {
+            // use these for now: 196  204  206 Pb207	Pb208	238 248 254 270
+            double[] backgroundCounts = new double[9];
+            double[] peakCounts = new double[9];
+            backgroundAcquisitions.add(backgroundCounts);
+            peakAcquisitions.add(peakCounts);
+            
+            peakCounts[0] = extractedData[scan][1];
+            peakCounts[1] = extractedData[scan][4];
+            peakCounts[2] = extractedData[scan][10];
+            peakCounts[3] = extractedData[scan][13];
+            peakCounts[4] = extractedData[scan][16];
+            peakCounts[5] = extractedData[scan][19];
+            peakCounts[6] = extractedData[scan][22];
+            peakCounts[7] = extractedData[scan][25];
+            peakCounts[8] = extractedData[scan][28];
+        }
+
+        TripoliFraction tripoliFraction
+                = new TripoliFraction( //
+                        fractionID, //
+                        massSpec.getCommonLeadCorrectionHighestLevel(), //
+                        false,
+                        fractionPeakTimeStamp, //
+                        fractionPeakTimeStamp,
+                        peakAcquisitions.size());
+
+        SortedSet<DataModelInterface> rawRatios = massSpec.rawRatiosFactoryRevised();
+
+        tripoliFraction.setRawRatios(rawRatios);
+
+        massSpec.setCountOfAcquisitions(peakAcquisitions.size());
+//
+//        massSpec.processFractionRawRatiosII(//
+//                backgroundAcquisitions, peakAcquisitions, isStandardReferenceMaterial, usingFullPropagation, tripoliFraction);
+//
+//        tripoliFraction.shadeDataActiveMapLeft(leftShadeCount);
+//        System.out.println("\n**** Element II FractionID  " + fractionID + " refMat? " + isStandardReferenceMaterial + " <<<<<<<<<<<<<<<<<<\n");
+
+        return tripoliFraction;
+    }
 
 }

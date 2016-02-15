@@ -260,7 +260,7 @@ public class MemUnivNewfoundlandElementIIFileHandler extends AbstractRawDataFile
                 virtualCollectorModelMapToFieldIndexes.put(massSpec.getU238(), 5);
 
                 massSpec.processFractionRawRatiosII(//
-                        backgroundAcquisitions, peakAcquisitions, isStandard, usingFullPropagation, tripoliFraction, virtualCollectorModelMapToFieldIndexes);
+                        backgroundAcquisitions, peakAcquisitions, usingFullPropagation, tripoliFraction, virtualCollectorModelMapToFieldIndexes);
 
                 tripoliFraction.shadeDataActiveMapLeft(leftShadeCount);
                 System.out.println("\n**** Element II FractionID  " + fractionID + "  " + fractionDateValue.toString());

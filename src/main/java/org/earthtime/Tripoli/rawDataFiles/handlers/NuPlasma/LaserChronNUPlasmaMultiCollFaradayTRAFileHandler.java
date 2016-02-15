@@ -453,7 +453,7 @@ public class LaserChronNUPlasmaMultiCollFaradayTRAFileHandler extends AbstractRa
                     tripoliFraction.setRawRatios(rawRatios);
 
                     massSpec.setCountOfAcquisitions(peakAcquisitions.size());
-                    massSpec.processFractionRawRatiosTRA(backgroundAcquisitions, peakAcquisitions, isStandard, theFractionID, usingFullPropagation, tripoliFraction);
+                    massSpec.processFractionRawRatiosTRA(backgroundAcquisitions, peakAcquisitions, theFractionID, usingFullPropagation, tripoliFraction);
 
                     tripoliFraction.shadeDataActiveMapLeft(leftShadeCount);
                     tripoliFractions.add(tripoliFraction);
