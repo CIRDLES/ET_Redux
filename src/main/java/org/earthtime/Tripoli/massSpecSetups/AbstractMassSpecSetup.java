@@ -147,6 +147,10 @@ public abstract class AbstractMassSpecSetup implements //
     protected DataModelInterface Th232;
     protected DataModelInterface U235;
     // special handling for constant background measure
+    protected DataModelInterface Zr2O196;
+    protected DataModelInterface ThO248;
+    protected DataModelInterface UO254;
+    protected DataModelInterface UO270;
 
     /**
      *
@@ -238,7 +242,6 @@ public abstract class AbstractMassSpecSetup implements //
      *
      *
      * @param intensitiesScan
-     * @param isStandard the value of isStandard
      * @param fractionID the value of fractionID
      * @param usingFullPropagation the value of usingFullPropagation
      * @param tripoliFraction the value of tripoliFraction
@@ -246,7 +249,7 @@ public abstract class AbstractMassSpecSetup implements //
      * java.util.SortedSet<org.earthtime.Tripoli.dataModels.DataModelInterface>
      */
     public abstract SortedSet<DataModelInterface> rawRatiosFactory(//
-            String[][] intensitiesScan, boolean isStandard, String fractionID, boolean usingFullPropagation, TripoliFraction tripoliFraction);
+            String[][] intensitiesScan, String fractionID, boolean usingFullPropagation, TripoliFraction tripoliFraction);
 
     public abstract SortedSet<DataModelInterface> rawRatiosFactoryRevised();
 
@@ -289,35 +292,37 @@ public abstract class AbstractMassSpecSetup implements //
         cleanupUnctCalcs();
     }
 
+    /**
+     *
+     * @param intensitiesScan the value of intensitiesScan
+     * @param fractionID the value of fractionID
+     * @param usingFullPropagation the value of usingFullPropagation
+     * @param tripoliFraction the value of tripoliFraction
+     */
     public void processFractionRawRatios(//
-            String[][] intensitiesScan, boolean isStandard, String fractionID, boolean usingFullPropagation, TripoliFraction tripoliFraction) {
+            String[][] intensitiesScan, String fractionID, boolean usingFullPropagation, TripoliFraction tripoliFraction) {
 
         initializeVirtualCollectorsWithData(intensitiesScan);
 
-        processFractionRawRatiosStageII(isStandard, usingFullPropagation, tripoliFraction);
+        processFractionRawRatiosStageII(usingFullPropagation, tripoliFraction);
     }
+    //
 
     /**
      * Updated version to handle case of background counts diff from peak counts
      *
      * @param backgroundAcquisitions
      * @param peakAcquisitions
-     * @param isStandard
      * @param usingFullPropagation
-     * @param virtualCollectorModelMapToFieldIndexes
      * @param tripoliFraction
+     * @param virtualCollectorModelMapToFieldIndexes
      */
     public void processFractionRawRatiosII(//
-            ArrayList<double[]> backgroundAcquisitions, //
-            ArrayList<double[]> peakAcquisitions, //
-            boolean isStandard, //
-            boolean usingFullPropagation, //
-            TripoliFraction tripoliFraction, //
-            Map<DataModelInterface, Integer> virtualCollectorModelMapToFieldIndexes) {
+            ArrayList<double[]> backgroundAcquisitions, ArrayList<double[]> peakAcquisitions, boolean usingFullPropagation, TripoliFraction tripoliFraction, Map<DataModelInterface, Integer> virtualCollectorModelMapToFieldIndexes) {
 
         initializeVirtualCollectorsWithData(backgroundAcquisitions, peakAcquisitions, virtualCollectorModelMapToFieldIndexes);
 
-        processFractionRawRatiosStageII(isStandard, usingFullPropagation, tripoliFraction);
+        processFractionRawRatiosStageII(usingFullPropagation, tripoliFraction);
     }
 
     /**
@@ -325,40 +330,42 @@ public abstract class AbstractMassSpecSetup implements //
      *
      * @param backgroundAcquisitions
      * @param peakAcquisitions
-     * @param isStandard
      * @param usingFullPropagation
      * @param tripoliFraction
      */
     public void processFractionRawRatiosII(//
-            ArrayList<double[]> backgroundAcquisitions, //
-            ArrayList<double[]> peakAcquisitions, //
-            boolean isStandard, //
-            boolean usingFullPropagation, //
-            TripoliFraction tripoliFraction) {
+            ArrayList<double[]> backgroundAcquisitions, ArrayList<double[]> peakAcquisitions, boolean usingFullPropagation, TripoliFraction tripoliFraction) {
 
         initializeVirtualCollectorsWithData(backgroundAcquisitions, peakAcquisitions, virtualCollectorModelMapToFieldIndexes);
 
-        processFractionRawRatiosStageII(isStandard, usingFullPropagation, tripoliFraction);
-    }
-
-    public void processFractionRawRatiosTRA(//
-            ArrayList<double[]> backgroundAcquisitions, ArrayList<double[]> peakAcquisitions, boolean isStandard, String fractionID, boolean usingFullPropagation, TripoliFraction tripoliFraction) {
-
-        initializeVirtualCollectorsWithDataTRA(backgroundAcquisitions, peakAcquisitions);
-
-        processFractionRawRatiosStageII(isStandard, usingFullPropagation, tripoliFraction);
+        processFractionRawRatiosStageII(usingFullPropagation, tripoliFraction);
     }
 
     /**
      *
-     * @param isStandard the value of isStandard
+     * @param backgroundAcquisitions the value of backgroundAcquisitions
+     * @param peakAcquisitions the value of peakAcquisitions
      * @param fractionID the value of fractionID
      * @param usingFullPropagation the value of usingFullPropagation
      * @param tripoliFraction the value of tripoliFraction
      */
+    public void processFractionRawRatiosTRA(//
+            ArrayList<double[]> backgroundAcquisitions, ArrayList<double[]> peakAcquisitions, String fractionID, boolean usingFullPropagation, TripoliFraction tripoliFraction) {
+
+        initializeVirtualCollectorsWithDataTRA(backgroundAcquisitions, peakAcquisitions);
+
+        processFractionRawRatiosStageII(usingFullPropagation, tripoliFraction);
+    }
+
+    /**
+     *
+     * @param usingFullPropagation the value of usingFullPropagation
+     * @param tripoliFraction the value of tripoliFraction
+     */
     public void processFractionRawRatiosStageII(//
-            boolean isStandard, boolean usingFullPropagation, TripoliFraction tripoliFraction) {
+            boolean usingFullPropagation, TripoliFraction tripoliFraction) {
         // make fresh set of rawratios with map of collector instances
+        boolean isStandard = tripoliFraction.isStandard();
 
         String fractionID = tripoliFraction.getFractionID();
 
@@ -411,7 +418,7 @@ public abstract class AbstractMassSpecSetup implements //
         if (writeReport) {
             outputWriter.println("\n\n3: Si ********************");
             for (DataModelInterface dm : genericIsotopeModels) {
-                if (!dm.equals(Hg202)&&!dm.equals(Hf176)) {
+                if (!dm.equals(Hg202) && !dm.equals(Hf176)) {
                     outputWriter.println(dm.getDataModelName());
                     Matrix Si = ((RawIntensityDataModel) dm).getMatrixSiCovarianceIntensities();
                     if (Si != null) {
@@ -434,7 +441,7 @@ public abstract class AbstractMassSpecSetup implements //
         if (writeReport) {
             outputWriter.println("\n\n4: Fit parameters for baseline (a [b, c], fitParameterCovarianceMatrix, X2) ********************");
             for (DataModelInterface dm : genericIsotopeModels) {
-                if (!dm.equals(Hg202)&&!dm.equals(Hf176)) {
+                if (!dm.equals(Hg202) && !dm.equals(Hf176)) {
                     outputWriter.println(((RawIntensityDataModel) dm).outputBaseLineFitFunctionParameters());
                 }
             }
@@ -443,7 +450,7 @@ public abstract class AbstractMassSpecSetup implements //
         if (writeReport) {
             outputWriter.println("\n\n5: peakIntensityBLcorr (baseline-corrected on-peak intensities) ********************");
             for (DataModelInterface dm : genericIsotopeModels) {
-                if (!dm.equals(Hg202)&&!dm.equals(Hf176)) {
+                if (!dm.equals(Hg202) && !dm.equals(Hf176)) {
                     outputWriter.println(((RawIntensityDataModel) dm).outputCorrectedIntensities());
                 }
             }
@@ -475,7 +482,7 @@ public abstract class AbstractMassSpecSetup implements //
         if (writeReport) {
             outputWriter.println("\n\n6: J11, J21, J22, JOnPeak, Sopbc ********************");
             for (DataModelInterface dm : genericIsotopeModels) {
-                if (!dm.equals(Hg202)&&!dm.equals(Hf176)) {
+                if (!dm.equals(Hg202) && !dm.equals(Hf176)) {
                     try {
                         outputWriter.println(dm.getDataModelName());
 
@@ -507,7 +514,7 @@ public abstract class AbstractMassSpecSetup implements //
         if (writeReport) {
             outputWriter.println("\n\n8: log-intensities (on-peak baseline-corrected) ********************");
             for (DataModelInterface dm : genericIsotopeModels) {
-                if (!dm.equals(Hg202)&&!dm.equals(Hf176)) {
+                if (!dm.equals(Hg202) && !dm.equals(Hf176)) {
                     try {
                         outputWriter.println(((RawIntensityDataModel) dm).outputCorrectedIntensitiesAsLogs());
                     } catch (Exception e) {
@@ -519,7 +526,7 @@ public abstract class AbstractMassSpecSetup implements //
         if (writeReport) {
             outputWriter.println("\n\n9: Jlogr, Jmat, Sopbclr   ********************");
             for (DataModelInterface dm : genericIsotopeModels) {
-                if (!dm.equals(Hg202)&&!dm.equals(Hf176)) {
+                if (!dm.equals(Hg202) && !dm.equals(Hf176)) {
                     try {
                         outputWriter.println(dm.getDataModelName());
 
@@ -1334,5 +1341,33 @@ public abstract class AbstractMassSpecSetup implements //
      */
     public DataModelInterface getHf176() {
         return Hf176;
+    }
+
+    /**
+     * @return the Zr2O196
+     */
+    public DataModelInterface getZr2O196() {
+        return Zr2O196;
+    }
+
+    /**
+     * @return the ThO248
+     */
+    public DataModelInterface getThO248() {
+        return ThO248;
+    }
+
+    /**
+     * @return the UO254
+     */
+    public DataModelInterface getUO254() {
+        return UO254;
+    }
+
+    /**
+     * @return the UO270
+     */
+    public DataModelInterface getUO270() {
+        return UO270;
     }
 }
