@@ -61,7 +61,6 @@ public class RawIntensityDataModel //
     // oct 2012
     private final AbstractCollectorModel collectorModel;
     // used for individual background fitting
-//    private Map<String, AbstractFunctionOfX> backgroundFitFunctions;
     private FitFunctionTypeEnum selectedFitFunctionType;
     private transient double[] normalizedBackgroundAquireTimes;
     // only need for calculations
@@ -119,7 +118,6 @@ public class RawIntensityDataModel //
 
         this.USING_FULL_PROPAGATION = true;
 
-        //this.backgroundFitFunctions = new TreeMap<String, AbstractFunctionOfX>();
         this.selectedFitFunctionType = FitFunctionTypeEnum.MEAN;
         this.overDispersionSelected = true;
 
@@ -335,8 +333,7 @@ public class RawIntensityDataModel //
     @Override
     public double[] getNormalizedOnPeakAquireTimes() {
         double[] normalizedAquire
-                =//
-                onPeakVirtualCollector.getOnPeakAquireTimes().clone();
+                = onPeakVirtualCollector.getOnPeakAquireTimes().clone();
 
         for (int i = 0; i < normalizedAquire.length; i++) {
             normalizedAquire[i] /= COLLECTOR_DATA_FREQUENCY_MILLISECS;
@@ -352,8 +349,7 @@ public class RawIntensityDataModel //
     @Override
     public double[] getOnPeakAquireTimesInSeconds() {
         double[] onPeakAquireTimesInSeconds
-                = //
-                onPeakVirtualCollector.getOnPeakAquireTimes().clone();
+                = onPeakVirtualCollector.getOnPeakAquireTimes().clone();
 
         for (int i = 0; i < onPeakAquireTimesInSeconds.length; i++) {
             onPeakAquireTimesInSeconds[i] = onPeakAquireTimesInSeconds[i] /= 1000.0;
@@ -368,8 +364,7 @@ public class RawIntensityDataModel //
      */
     public double[] getNormalizedBackgroundAquireTimes() {
         double[] normalizedAquire
-                =//
-                backgroundVirtualCollector.getBackgroundAquireTimes().clone();
+                = backgroundVirtualCollector.getBackgroundAquireTimes().clone();
 
         double shiftFactor = normalizedAquire[normalizedAquire.length - 1] / COLLECTOR_DATA_FREQUENCY_MILLISECS + 1;
 
