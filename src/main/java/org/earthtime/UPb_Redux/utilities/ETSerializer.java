@@ -73,7 +73,10 @@ public final class ETSerializer {
             s = new ObjectInputStream(in);
             o = s.readObject();
         } catch (FileNotFoundException ex) {
-            System.out.println(ex.getMessage());
+            JOptionPane.showMessageDialog(null,
+                    new String[]{"The file you are attempting to open does not exist:\n"
+                        + " " + filename //,
+                    });
         } catch (IOException | ClassNotFoundException ex) {
             JOptionPane.showMessageDialog(null,
                     new String[]{"The file you are attempting to open is not compatible with this version of ET_Redux."//,

@@ -1299,8 +1299,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
      * @throws BadLabDataException
      */
     @Override
-    public synchronized void setUpTheSample(boolean performReduction)
-            throws BadLabDataException {
+    public synchronized void setUpTheSample(boolean performReduction) {
 
         theSample.setUpSample();
 
@@ -1493,9 +1492,8 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         ((TabbedReportViews) getReportTableTabbedPane()).prepareTabs();
     }
 
-    private void openTheSample(File selFile, boolean checkSavedStatus) throws BadLabDataException {
+    private void openTheSample(File selFile, boolean checkSavedStatus) {
 
-//        forceCloseOfSampleDateInterpretations();
         closeProjectAndOrSample();
 
         if (checkSavedStatus) {
@@ -3071,12 +3069,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
     private void mruSampleMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
         // open the MRU sample file
         if (checkSavedStatusTheSample()) {
-            try {
-                openTheSample(new File(((AbstractButton) evt.getSource()).getText()), true);
-            } catch (BadLabDataException ex) {
-                new ETWarningDialog(ex).setVisible(true);
-            }
-
+            openTheSample(new File(((AbstractButton) evt.getSource()).getText()), true);
         }
     }
 
@@ -3098,7 +3091,9 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
      */
     public void loadMostRecentProject(boolean checkSavedStatus) {
         ArrayList<String> myMRUs = myState.getMRUProjectList();
-        openTheProject(new File(myMRUs.get(0)));
+        if (!myMRUs.isEmpty()) {
+            openTheProject(new File(myMRUs.get(0)));
+        }
     }
 
     /**
@@ -3107,12 +3102,8 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
      */
     public void loadMostRecentSample(boolean checkSavedStatus) {
         ArrayList<String> myMRUs = myState.getMRUSampleList();
-
-        try {
+        if (!myMRUs.isEmpty()) {
             openTheSample(new File(myMRUs.get(0)), checkSavedStatus);
-        } catch (BadLabDataException ex) {
-            new ETWarningDialog(ex).setVisible(true);
-            System.out.println("No Recent File");
         }
     }
 
@@ -3171,6 +3162,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
     }//GEN-LAST:event_sampleFileMenuMenuSelected
 
     //**************************************PROJECT MENUS **********************
+//    private ArrayList<String>
     /**
      *
      */
@@ -3251,11 +3243,8 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         }
 
         // setup sample and views with no datareduction flag = true
-        try {
-            setUpTheSample(!theSample.isAnalyzed());
-        } catch (BadLabDataException ex) {
-            new ETWarningDialog(ex).setVisible(true);
-        }
+        setUpTheSample(!theSample.isAnalyzed());
+
 }//GEN-LAST:event_manageSampleModel_menuItemActionPerformed
 
     private void saveSampleFileAsActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveSampleFileAsActionPerformed
@@ -3651,11 +3640,9 @@ private void startStopLiveUpdate_buttonActionPerformed(java.awt.event.ActionEven
         }
         theSample.setSampleType(SampleTypesEnum.ANALYSIS.getName());
         liveUpdateSample();
-        try {
-            setUpTheSample(false);
-        } catch (BadLabDataException ex) {
-            new ETWarningDialog(ex).setVisible(true);
-        }
+
+        setUpTheSample(false);
+
     }
 
     /**
@@ -4165,12 +4152,12 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
 
     private void loadLastProject_buttonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_loadLastProject_buttonMouseEntered
         ArrayList<String> myMRUs = myState.getMRUProjectList();
-        loadLastProject_button.setToolTipText(myMRUs.get(0));
+        loadLastProject_button.setToolTipText(myMRUs.isEmpty() ? "No recent projects" : myMRUs.get(0));
     }//GEN-LAST:event_loadLastProject_buttonMouseEntered
 
     private void loadLastSample_buttonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_loadLastSample_buttonMouseEntered
         ArrayList<String> myMRUs = myState.getMRUSampleList();
-        loadLastSample_button.setToolTipText(myMRUs.get(0));
+        loadLastSample_button.setToolTipText(myMRUs.isEmpty() ? "No recent samples" : myMRUs.get(0));
     }//GEN-LAST:event_loadLastSample_buttonMouseEntered
 
     private void dibbs_USeriesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dibbs_USeriesActionPerformed
