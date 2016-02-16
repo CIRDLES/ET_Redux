@@ -242,8 +242,7 @@ public class TripoliSession implements
             // choice based on current fractionation technique
             // create downholeFractionationDataModels
             downholeFractionationDataModels
-                    = //
-                    rawDataFileHandler.getMassSpec().downholeFractionationDataModelsFactory(tripoliFractions, primaryMineralStandard);
+                    = rawDataFileHandler.getMassSpec().downholeFractionationDataModelsFactory(tripoliFractions, primaryMineralStandard);
             // may 2014 - for use with live data, we check to see if these exist and if so, do not recreate
             if ((sessionForStandardsInterceptFractionation.isEmpty()) || (sessionForStandardsDownholeFractionation.isEmpty())) {
                 // create sessionForStandards models for both downhole and intercept methods
@@ -251,8 +250,7 @@ public class TripoliSession implements
                 while (dataModelIterator.hasNext()) {
                     DataModelInterface dm = dataModelIterator.next();
                     AbstractSessionForStandardDataModel ssm
-                            = //
-                            new SessionForStandardDataModelDownholeFractionation( //
+                            = new SessionForStandardDataModelDownholeFractionation( //
                                     this, //
                                     dm.getRawRatioModelName(), dm.getStandardValue(), //
                                     FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.STANDARD, IncludedTypeEnum.ALL));
@@ -266,7 +264,7 @@ public class TripoliSession implements
                     AbstractSessionForStandardDataModel ssm
                             = //
                             new SessionForStandardDataModelInterceptFractionation( //
-                                    this, //
+                                    this,
                                     dm.getRawRatioModelName(), dm.getStandardValue(), //
                                     FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.STANDARD, IncludedTypeEnum.ALL));
 

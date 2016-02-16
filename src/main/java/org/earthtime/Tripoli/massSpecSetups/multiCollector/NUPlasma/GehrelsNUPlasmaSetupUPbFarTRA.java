@@ -184,13 +184,14 @@ public final class GehrelsNUPlasmaSetupUPbFarTRA extends AbstractMassSpecSetup i
 
     @Override
     public SortedSet<DataModelInterface> rawRatiosFactory( //
-            String[][] intensitiesScan, boolean isStandard, String fractionID, boolean usingFullPropagation, TripoliFraction tripoliFraction) {
+            String[][] intensitiesScan, String fractionID, boolean usingFullPropagation, TripoliFraction tripoliFraction) {
 
         countOfAcquisitions = intensitiesScan.length;
 
         return rawRatiosFactoryRevised();
     }
-
+    //
+    
     /**
      *
      *

@@ -64,58 +64,68 @@ public final class LaserchronElementIISetupUPb_A extends AbstractMassSpecSetup {
         this.commonLeadCorrectionHighestLevel = "NONE";
 
         AbstractCollectorModel singleCollector
-                = //
+                = 
                 new IonCounterCollectorModel(//
                         "Single", //
                         new ValueModel("DeadTime", //
-                                new BigDecimal(12.0e-9, //
+                                new BigDecimal(22.0e-9, //
                                         ReduxConstants.mathContext10), //
                                 "ABS", //
                                 new BigDecimal(1.0e-9, ReduxConstants.mathContext10), //
                                 BigDecimal.ZERO), //
                         IonCounterCollectorModel.CollectedDataStyle.COUNTS);
 
-        // from Noah June 2015 for Kansas
-        //isotope	int. time (s)
-        //206	0.032
-        //207	0.080
-        //208	0.016
-        //232	0.020
-        //238	0.020
-        isotopeMappingModel.getIsotopeToCollectorMap().put(//
+        // fro GG Feb 2016
+//        Dead Time should be 22 ns
+//
+//      Not sure how you are counting the integration time. Note that values are measured four times on each peak. Values below are for each one of the four measurements:
+//      176 = 0.0050
+//      202 = 0.0052
+//      204 = 0.0078
+//      206 = 0.0202
+//      207 = 0.0284
+//      208 = 0.0026
+//      232 = 0.0026
+//      235 = 0.0154
+//      238 = 0.0104
+
+// Noah says times 4 each
+
+
+       isotopeMappingModel.getIsotopeToCollectorMap().put(//
                 IsotopesEnum.U238, singleCollector);
         isotopeMappingModel.getIsotopeToIntegrationTimeMap().put( //
-                IsotopesEnum.U238, 0.020);
+                IsotopesEnum.U238, 0.0416);
 
         isotopeMappingModel.getIsotopeToCollectorMap().put(//
                 IsotopesEnum.Th232, singleCollector);
         isotopeMappingModel.getIsotopeToIntegrationTimeMap().put( //
-                IsotopesEnum.Th232, 0.020);
+                IsotopesEnum.Th232, 0.014);
 
         isotopeMappingModel.getIsotopeToCollectorMap().put(//
                 IsotopesEnum.Pb208, singleCollector);
         isotopeMappingModel.getIsotopeToIntegrationTimeMap().put( //
-                IsotopesEnum.Pb208, 0.016);
+                IsotopesEnum.Pb208, 0.014);
 
         isotopeMappingModel.getIsotopeToCollectorMap().put(//
                 IsotopesEnum.Pb207, singleCollector);
         isotopeMappingModel.getIsotopeToIntegrationTimeMap().put( //
-                IsotopesEnum.Pb207, 0.080);
+                IsotopesEnum.Pb207, 0.1136);
 
         isotopeMappingModel.getIsotopeToCollectorMap().put(//
                 IsotopesEnum.Pb206, singleCollector);
         isotopeMappingModel.getIsotopeToIntegrationTimeMap().put( //
-                IsotopesEnum.Pb206, 0.032);
+                IsotopesEnum.Pb206, 0.0808);
 
         isotopeMappingModel.getIsotopeToCollectorMap().put(//
                 IsotopesEnum.Pb204, singleCollector);
         isotopeMappingModel.getIsotopeToIntegrationTimeMap().put( //
-                IsotopesEnum.Pb204, 0.020);
+                IsotopesEnum.Pb204, 0.0312);
 
         isotopeMappingModel.getIsotopeToCollectorMap().put(//
                 IsotopesEnum.Hg202, singleCollector);
         isotopeMappingModel.getIsotopeToIntegrationTimeMap().put( //
-                IsotopesEnum.Hg202, 0.020);
+                IsotopesEnum.Hg202, 0.0208);
 
         collectorNameToModelMap.put("Single", singleCollector);
 
@@ -133,15 +143,13 @@ public final class LaserchronElementIISetupUPb_A extends AbstractMassSpecSetup {
      *
      *
      * @param intensitiesScan
-     * @param isStandard the value of isStandard
      * @param fractionID the value of fractionID
      * @param usingFullPropagation the value of usingFullPropagation
      * @param tripoliFraction the value of tripoliFraction
-     * @return the
-     * java.util.SortedSet<org.earthtime.Tripoli.dataModels.DataModelInterface>
+     * @return the java.util.SortedSet<org.earthtime.Tripoli.dataModels.DataModelInterface>
      */
     @Override
-    public SortedSet<DataModelInterface> rawRatiosFactory(String[][] intensitiesScan, boolean isStandard, String fractionID, boolean usingFullPropagation, TripoliFraction tripoliFraction) {
+    public SortedSet<DataModelInterface> rawRatiosFactory(String[][] intensitiesScan, String fractionID, boolean usingFullPropagation, TripoliFraction tripoliFraction) {
 
         countOfAcquisitions = intensitiesScan.length;
 

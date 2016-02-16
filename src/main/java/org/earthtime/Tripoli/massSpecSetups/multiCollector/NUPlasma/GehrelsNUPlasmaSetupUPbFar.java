@@ -187,7 +187,6 @@ public final class GehrelsNUPlasmaSetupUPbFar extends AbstractMassSpecSetup impl
      *
      *
      * @param intensitiesScan
-     * @param isStandard the value of isStandard
      * @param fractionID the value of fractionID
      * @param usingFullPropagation the value of usingFullPropagation
      * @param tripoliFraction the value of tripoliFraction
@@ -195,7 +194,7 @@ public final class GehrelsNUPlasmaSetupUPbFar extends AbstractMassSpecSetup impl
      */
     @Override
     public SortedSet<DataModelInterface> rawRatiosFactory( //
-            String[][] intensitiesScan, boolean isStandard, String fractionID, boolean usingFullPropagation, TripoliFraction tripoliFraction) {
+            String[][] intensitiesScan, String fractionID, boolean usingFullPropagation, TripoliFraction tripoliFraction) {
 
         countOfAcquisitions = intensitiesScan.length;
 
