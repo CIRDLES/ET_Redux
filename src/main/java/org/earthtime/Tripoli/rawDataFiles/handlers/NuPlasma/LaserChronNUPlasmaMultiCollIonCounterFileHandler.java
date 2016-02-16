@@ -429,9 +429,9 @@ public class LaserChronNUPlasmaMultiCollIonCounterFileHandler extends AbstractRa
                                     fractionDate.getTime(),//
                                     myBlockSize);//, 
 
-                    SortedSet<DataModelInterface> rawRatios = massSpec.rawRatiosFactory(scanData, isStandard, theFractionID, usingFullPropagation, tripoliFraction);
+                    SortedSet<DataModelInterface> rawRatios = massSpec.rawRatiosFactory(scanData, theFractionID, usingFullPropagation, tripoliFraction);
                     tripoliFraction.setRawRatios(rawRatios);
-                    massSpec.processFractionRawRatios(scanData, isStandard, fractionID, usingFullPropagation, tripoliFraction);
+                    massSpec.processFractionRawRatios(scanData, fractionID, usingFullPropagation, tripoliFraction);
 
                     tripoliFraction.shadeDataActiveMapLeft(leftShadeCount);
                     tripoliFractions.add(tripoliFraction);

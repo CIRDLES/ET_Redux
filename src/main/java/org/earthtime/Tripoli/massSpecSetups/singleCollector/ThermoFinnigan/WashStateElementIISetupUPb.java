@@ -130,15 +130,13 @@ public final class WashStateElementIISetupUPb extends AbstractMassSpecSetup {
      *
      *
      * @param intensitiesScan
-     * @param isStandard the value of isStandard
      * @param fractionID the value of fractionID
      * @param usingFullPropagation the value of usingFullPropagation
      * @param tripoliFraction the value of tripoliFraction
-     * @return the
-     * java.util.SortedSet<org.earthtime.Tripoli.dataModels.DataModelInterface>
+     * @return the java.util.SortedSet<org.earthtime.Tripoli.dataModels.DataModelInterface>
      */
     @Override
-    public SortedSet<DataModelInterface> rawRatiosFactory(String[][] intensitiesScan, boolean isStandard, String fractionID, boolean usingFullPropagation, TripoliFraction tripoliFraction) {
+    public SortedSet<DataModelInterface> rawRatiosFactory(String[][] intensitiesScan, String fractionID, boolean usingFullPropagation, TripoliFraction tripoliFraction) {
 
         countOfAcquisitions = intensitiesScan.length;
 
@@ -234,7 +232,7 @@ public final class WashStateElementIISetupUPb extends AbstractMassSpecSetup {
         // special case to handle mercury isotope
         rawRatios.add(new RawRatioDataModel(RawRatioNames.r202_202w, Hg202, Hg202, false, false, COLLECTOR_DATA_FREQUENCY_MILLISECS));
 
-        processFractionRawRatios(intensitiesScan, isStandard, fractionID, usingFullPropagation, null);
+        processFractionRawRatios(intensitiesScan, fractionID, usingFullPropagation, null);
 
         return rawRatios;
     }

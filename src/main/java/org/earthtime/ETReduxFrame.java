@@ -2251,7 +2251,8 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         });
         newProjectFromRawData_menu.add(newProjectRawDataLAICPMS);
 
-        newProjectRawDataSHRIMP.setText("SHRIMP - in development");
+        newProjectRawDataSHRIMP.setText("SHRIMP - in development - DEMO only");
+        newProjectRawDataSHRIMP.setEnabled(false);
         newProjectRawDataSHRIMP.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 newProjectRawDataSHRIMPActionPerformed(evt);

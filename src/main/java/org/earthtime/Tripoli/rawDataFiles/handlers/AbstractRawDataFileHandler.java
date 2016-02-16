@@ -409,7 +409,7 @@ public abstract class AbstractRawDataFileHandler implements //
                 // order the samples by the time stamp of their first fraction
                 SortedSet<AbstractTripoliSample> tripoliSamplesSorted = new TreeSet<>();
                 Set<String> samplesMapKeySet = tripoliSamplesMap.keySet();
-                Iterator samplesMapKeySetIterator = samplesMapKeySet.iterator();
+                Iterator <String>samplesMapKeySetIterator = samplesMapKeySet.iterator();
                 while (samplesMapKeySetIterator.hasNext()) {
                     tripoliSamplesSorted.add(tripoliSamplesMap.get(samplesMapKeySetIterator.next()));
                 }
@@ -509,7 +509,7 @@ public abstract class AbstractRawDataFileHandler implements //
             index = fractionName.lastIndexOf("-");
         }
         if (index < 0) {
-            index = fractionName.lastIndexOf(".");
+            index = fractionName.indexOf(".");
         }
         if (index < 0) {
             index = fractionName.indexOf(" ");

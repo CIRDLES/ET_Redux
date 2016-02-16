@@ -301,16 +301,14 @@ public final class GehrelsNUPlasmaSetupUPbIonCounter extends AbstractMassSpecSet
      *
      *
      * @param intensitiesScan
-     * @param isStandard the value of isStandard
      * @param fractionID the value of fractionID
      * @param usingFullPropagation the value of usingFullPropagation
      * @param tripoliFraction the value of tripoliFraction
-     * @return the
-     * java.util.SortedSet<org.earthtime.Tripoli.dataModels.DataModelInterface>
+     * @return the java.util.SortedSet<org.earthtime.Tripoli.dataModels.DataModelInterface>
      */
     @Override
     public SortedSet<DataModelInterface> rawRatiosFactory( //
-            String[][] intensitiesScan, boolean isStandard, String fractionID, boolean usingFullPropagation, TripoliFraction tripoliFraction) {
+            String[][] intensitiesScan, String fractionID, boolean usingFullPropagation, TripoliFraction tripoliFraction) {
 
         countOfAcquisitions = intensitiesScan.length;
 

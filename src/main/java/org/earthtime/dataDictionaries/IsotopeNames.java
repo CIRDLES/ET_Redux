@@ -30,6 +30,9 @@ package org.earthtime.dataDictionaries;
 public enum IsotopeNames {
 
     // IsotopeNames
+    UO270("UO270"),
+    UO254("UO254"),
+    ThO248("ThO248"),
     /**
      * 
      */
@@ -62,6 +65,7 @@ public enum IsotopeNames {
      * 
      */
     Hg202( "Hg202"),
+    Zr2O196("Zr2O196"),
     Hf176( "Hf176");
 
     private String name;

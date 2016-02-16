@@ -173,7 +173,7 @@ public class TripoliFraction implements //
 
         this.commonLeadCorrectionHighestLevel = commonLeadCorrectionHighestLevel;
         // default behavior
-        if (isStandard()) {
+        if (standard) {
             this.commonLeadLossCorrectionScheme = CommonLeadLossCorrectionSchemeNONE.getInstance();
         } else {
             try {

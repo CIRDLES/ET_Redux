@@ -222,11 +222,12 @@ public class WashStateElementIISingleCollFileHandler extends AbstractRawDataFile
                 TripoliFraction tripoliFraction
                         = //                           
                         new TripoliFraction( //
+                                //
                                 fractionID, //
                                 massSpec.getCommonLeadCorrectionHighestLevel(), //
                                 isStandard,
                                 fractionBackgroundTimeStamp, //
-                                fractionPeakTimeStamp, massSpec.rawRatiosFactory(scanData, isStandard, fractionID, usingFullPropagation, null));
+                                fractionPeakTimeStamp, massSpec.rawRatiosFactory(scanData, fractionID, usingFullPropagation, null));
 
                 tripoliFraction.shadeDataActiveMapLeft(leftShadeCount);
                 tripoliFractions.add(tripoliFraction);
