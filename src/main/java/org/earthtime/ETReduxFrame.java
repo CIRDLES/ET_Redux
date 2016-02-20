@@ -550,7 +550,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         } else if (!(deserializedFile instanceof ProjectInterface)) {
             System.out.println("Trying to open an invalid .redux file.");
         } else {
-
+            // project
             stopLiveUpdate();
 
             myState.setMRUProjectFile(projectReduxFile);
@@ -584,8 +584,13 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
             } else { // instantiate project manager so processing can be initialited
 
-                myProjectManager
-                        = new ProjectManagerFor_LAICPMS_FromRawData(this, true, myState, theProject);
+                if (theProject.getSampleAnalysisType().compareTo(SampleAnalysisTypesEnum.LAICPMS) == 0) {
+                    myProjectManager
+                            = new ProjectManagerFor_LAICPMS_FromRawData(this, true, myState, theProject);
+                } else if (theProject.getSampleAnalysisType().compareTo(SampleAnalysisTypesEnum.SHRIMP) == 0) {
+                    myProjectManager
+                            = new ProjectManagerFor_SHRIMP_FromRawData(this, true, myState, theProject);
+                }
                 myProjectManager.initDialogContent();
                 myProjectManager.setVisible(true);
             }
@@ -776,11 +781,13 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                         new ETWarningDialog(ex).setVisible(true);
                     }
                 }
-            } else {
+            } else if (theProject.getSampleAnalysisType().compareTo(SampleAnalysisTypesEnum.LAICPMS) == 0) {
                 myProjectManager
                         = new ProjectManagerFor_LAICPMS_FromRawData(this, true, myState, theProject);
+            } else if (theProject.getSampleAnalysisType().compareTo(SampleAnalysisTypesEnum.SHRIMP) == 0) {
+                myProjectManager
+                        = new ProjectManagerFor_SHRIMP_FromRawData(this, true, myState, theProject);
             }
-
             myProjectManager.initDialogContent();
         }
 
@@ -792,21 +799,32 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
     }
 
     private void manageRawDataSession() {
-        if ((myProjectManager == null) || !(myProjectManager instanceof ProjectManagerFor_LAICPMS_FromRawData)) {
-            myProjectManager
-                    = new ProjectManagerFor_LAICPMS_FromRawData(this, true, myState, theProject);
-            myProjectManager.initDialogContent();
+        if (theProject.getSampleAnalysisType().compareTo(SampleAnalysisTypesEnum.LAICPMS) == 0) {
+            if ((myProjectManager == null) || !(myProjectManager instanceof ProjectManagerFor_LAICPMS_FromRawData)) {
+                myProjectManager
+                        = new ProjectManagerFor_LAICPMS_FromRawData(this, true, myState, theProject);
+                myProjectManager.initDialogContent();
+            }
         }
+        if (theProject.getSampleAnalysisType().compareTo(SampleAnalysisTypesEnum.SHRIMP) == 0) {
+            if ((myProjectManager == null) || !(myProjectManager instanceof ProjectManagerFor_SHRIMP_FromRawData)) {
+                myProjectManager
+                        = new ProjectManagerFor_SHRIMP_FromRawData(this, true, myState, theProject);
+                myProjectManager.initDialogContent();
+            }
+        }
+
         ((ProjectManagerSubscribeInterface) myProjectManager).initializeSessionManager(false, true, false);
     }
 
-    private void setUpNewTripolizedProject(String sampleAnalysisType) {
+    private void setUpNewTripolizedProject(SampleAnalysisTypesEnum sampleAnalysisType) {
         theProject = new Project(myState);
+        theProject.setSampleAnalysisType(sampleAnalysisType);
 
-        if (sampleAnalysisType.equalsIgnoreCase(SampleAnalysisTypesEnum.LAICPMS.getName())) {
+        if (sampleAnalysisType.compareTo(SampleAnalysisTypesEnum.LAICPMS) == 0) {
             myProjectManager
                     = new ProjectManagerFor_LAICPMS_FromRawData(this, true, myState, theProject);
-        } else if (sampleAnalysisType.equalsIgnoreCase(SampleAnalysisTypesEnum.SHRIMP.getName())) {
+        } else if (sampleAnalysisType.compareTo(SampleAnalysisTypesEnum.SHRIMP) == 0) {
             myProjectManager
                     = new ProjectManagerFor_SHRIMP_FromRawData(this, true, myState, theProject);
         }
@@ -2250,7 +2268,6 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         newProjectFromRawData_menu.add(newProjectRawDataLAICPMS);
 
         newProjectRawDataSHRIMP.setText("SHRIMP - in development - DEMO only");
-        newProjectRawDataSHRIMP.setEnabled(false);
         newProjectRawDataSHRIMP.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 newProjectRawDataSHRIMPActionPerformed(evt);
@@ -4040,7 +4057,7 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     }//GEN-LAST:event_reportResultsTableAsNumbersInCSV_menuItemActionPerformed
 
     private void newProjectRawDataLAICPMSActionPerformed ( java.awt.event.ActionEvent evt ) {//GEN-FIRST:event_newProjectRawDataLAICPMSActionPerformed
-        setUpNewTripolizedProject(SampleAnalysisTypesEnum.LAICPMS.getName());
+        setUpNewTripolizedProject(SampleAnalysisTypesEnum.LAICPMS);
     }//GEN-LAST:event_newProjectRawDataLAICPMSActionPerformed
 
     private void openProjectFile_menuItemActionPerformed ( java.awt.event.ActionEvent evt ) {//GEN-FIRST:event_openProjectFile_menuItemActionPerformed
@@ -4169,7 +4186,7 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     }//GEN-LAST:event_reportSettingsHelpActionPerformed
 
     private void newProjectRawDataSHRIMPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newProjectRawDataSHRIMPActionPerformed
-        setUpNewTripolizedProject(SampleAnalysisTypesEnum.SHRIMP.getName());
+        setUpNewTripolizedProject(SampleAnalysisTypesEnum.SHRIMP);
     }//GEN-LAST:event_newProjectRawDataSHRIMPActionPerformed
 
     private void helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {

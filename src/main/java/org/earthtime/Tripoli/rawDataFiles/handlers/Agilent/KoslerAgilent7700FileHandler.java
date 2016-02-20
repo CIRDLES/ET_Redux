@@ -35,7 +35,6 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
-import org.earthtime.Tripoli.massSpecSetups.singleCollector.Agilent7700.KoslerAgilent7700SetupUPb;
 import org.earthtime.Tripoli.rawDataFiles.handlers.AbstractRawDataFileHandler;
 import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.utilities.FileHelper;
@@ -252,7 +251,7 @@ public class KoslerAgilent7700FileHandler extends AbstractRawDataFileHandler imp
                                 fractionPeakTimeStamp,
                                 peakAcquisitions.size());
 
-                SortedSet<DataModelInterface> rawRatios = ((KoslerAgilent7700SetupUPb) massSpec).rawRatiosFactoryRevised();
+                SortedSet<DataModelInterface> rawRatios = massSpec.rawRatiosFactoryRevised();
                 tripoliFraction.setRawRatios(rawRatios);
 
                 massSpec.setCountOfAcquisitions(peakAcquisitions.size());

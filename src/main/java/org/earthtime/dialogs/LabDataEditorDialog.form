@@ -495,7 +495,7 @@
         </Menu>
         <Menu class="javax.swing.JMenu" name="MineralStdModels_menu">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Mineral Std Models"/>
+            <Property name="text" type="java.lang.String" value="Mineral Ref Material Models"/>
           </Properties>
           <Events>
             <EventHandler event="menuSelected" listener="javax.swing.event.MenuListener" parameters="javax.swing.event.MenuEvent" handler="mineralStdModels_menuMenuSelected"/>
@@ -503,7 +503,7 @@
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="importLocalMineralStdModelXML_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Import Mineral Standard Model from XML file"/>
+                <Property name="text" type="java.lang.String" value="Import Mineral Reference Material Model from XML file"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="importLocalMineralStdModelXML_menuItemActionPerformed"/>
@@ -511,7 +511,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="saveMineralStdModelAsXML_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Export Mineral Standard Model as XML file"/>
+                <Property name="text" type="java.lang.String" value="Export Mineral Reference Material Model as XML file"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="saveMineralStdModelAsXML_menuItemActionPerformed"/>
@@ -521,7 +521,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="removeMineralStdModel_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Remove current Mineral Standard Model (for editable models only)"/>
+                <Property name="text" type="java.lang.String" value="Remove current Mineral Reference Material Model (for editable models only)"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="removeMineralStdModel_menuItemActionPerformed"/>
@@ -531,7 +531,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="editCurrentLocalMineralStandardModel_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Edit current Mineral Standard Model (for editable models only)"/>
+                <Property name="text" type="java.lang.String" value="Edit current Mineral Reference Material Model (for editable models only)"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editCurrentLocalMineralStandardModel_menuItemActionPerformed"/>
@@ -539,7 +539,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="editCopyOfCurrentMineralStdModel_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Edit Copy of current Mineral Standard Model"/>
+                <Property name="text" type="java.lang.String" value="Edit Copy of current Mineral Reference Material Model"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editCopyOfCurrentMineralStdModel_menuItemActionPerformed"/>
@@ -547,7 +547,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="newMineralStdModel_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Edit New empty Mineral Standard Model"/>
+                <Property name="text" type="java.lang.String" value="Edit New empty Mineral Reference Material Model"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="newMineralStdModel_menuItemActionPerformed"/>
@@ -555,7 +555,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="cancelNewEditMineralStdModel_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Cancel Edit of Mineral Standard Model"/>
+                <Property name="text" type="java.lang.String" value="Cancel Edit of Mineral Reference Material Model"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cancelNewEditMineralStdModel_menuItemActionPerformed"/>
@@ -565,7 +565,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="saveAndRegisterCurrentEditOfMineralStandardModel_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Save and Register Current Edit of Mineral Standard Model"/>
+                <Property name="text" type="java.lang.String" value="Save and Register Current Edit of Mineral Reference Material Model"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="saveAndRegisterCurrentEditOfMineralStandardModel_menuItemActionPerformed"/>

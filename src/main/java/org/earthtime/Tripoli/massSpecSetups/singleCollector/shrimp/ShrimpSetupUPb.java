@@ -259,16 +259,14 @@ public final class ShrimpSetupUPb extends AbstractMassSpecSetup {
         rawRatios.add(r206_238w);
         DataModelInterface r206_207w = new RawRatioDataModel(RawRatioNames.r206_207w, Pb206, Pb207, true, false, COLLECTOR_DATA_FREQUENCY_MILLISECS);
         rawRatios.add(r206_207w);
-        DataModelInterface r208_232w = new RawRatioDataModel(RawRatioNames.r208_232w, Pb208, Th232, true, false, COLLECTOR_DATA_FREQUENCY_MILLISECS);
-        rawRatios.add(r208_232w);
 
-        // oct 2014 to handle B schemas for common lead correction
-        DataModelInterface r206_204w = new RawRatioDataModel(RawRatioNames.r206_204w, Pb206, Pb204, false, true, COLLECTOR_DATA_FREQUENCY_MILLISECS);
-        rawRatios.add(r206_204w);
-        DataModelInterface r207_204w = new RawRatioDataModel(RawRatioNames.r207_204w, Pb207, Pb204, false, true, COLLECTOR_DATA_FREQUENCY_MILLISECS);
-        rawRatios.add(r207_204w);
-        DataModelInterface r208_204w = new RawRatioDataModel(RawRatioNames.r208_204w, Pb208, Pb204, false, true, COLLECTOR_DATA_FREQUENCY_MILLISECS);
-        rawRatios.add(r208_204w);
+//        // oct 2014 to handle B schemas for common lead correction
+//        DataModelInterface r206_204w = new RawRatioDataModel(RawRatioNames.r206_204w, Pb206, Pb204, false, true, COLLECTOR_DATA_FREQUENCY_MILLISECS);
+//        rawRatios.add(r206_204w);
+//        DataModelInterface r207_204w = new RawRatioDataModel(RawRatioNames.r207_204w, Pb207, Pb204, false, true, COLLECTOR_DATA_FREQUENCY_MILLISECS);
+//        rawRatios.add(r207_204w);
+//        DataModelInterface r208_204w = new RawRatioDataModel(RawRatioNames.r208_204w, Pb208, Pb204, false, true, COLLECTOR_DATA_FREQUENCY_MILLISECS);
+//        rawRatios.add(r208_204w);
 
         // special case to handle other Shrimp isotopes
         rawRatios.add(new RawRatioDataModel(RawRatioNames.r196_196w, Zr2O196, Zr2O196, false, false, COLLECTOR_DATA_FREQUENCY_MILLISECS));
@@ -286,6 +284,57 @@ public final class ShrimpSetupUPb extends AbstractMassSpecSetup {
     @Override
     public void assignIntegrationTime(double integrationTime) {
         throw new UnsupportedOperationException("Not legal.");
+    }
+    
+    @Override
+    public void processFractionRawRatiosStageII(//
+            boolean usingFullPropagation, TripoliFraction tripoliFraction) {
+        // make fresh set of rawratios with map of collector instances
+        boolean isStandard = tripoliFraction.isStandard();
+
+        String fractionID = tripoliFraction.getFractionID();
+
+//        convertRawIntensitiesToCountsPerSecond();
+
+//        isotopeMappingModel.calculateAllIntensityMatrixSDiagonals();
+//
+//        if ((Hg202 != null) && (Pb204 != null)) {
+//            calculateCorrectionForIsobaricInterference(Hg202, Pb204);
+//        }
+//
+//        // begin fast vs slow **************************************************
+//        performBackgroundFitting(usingFullPropagation);//usingFullPropagation );
+//
+        correctOnPeakIntensitiesWithBackFitFunction();
+//
+//        if (Pb204 != null) {
+//            validateOnPeakBaselineCorrectedIsotope(Pb204, fractionID);
+//        }
+//
+//        // modification march 2014 to handle agilent see Noah email 3 mar 2014
+//        // We should disregard this test if the instrument is a 'single collector ion counter', like the Agilent 7700 and Jeff's Thermo Element2.
+//        if (Pb207 != null) {
+//            AbstractCollectorModel collector = collectorNameToModelMap.get(Pb207.getCollectorModel().getCollectorName());//              getDataModelName());
+//            if (!(massSpecType.compareTo(MassSpecTypeEnum.SINGLE) == 0) || !(collector instanceof IonCounterCollectorModel)) {
+//                validateOnPeakBaselineCorrectedIsotope(Pb207, fractionID);
+//            }
+//        }
+//
+//        adjustNonPositiveCorrectedIntensities();
+
+        calculateLogOnPeakCorrectedIntensities();
+
+        calculateRawAndLogRatios();
+
+//        tripoliFraction.reProcessToRejectNegativeRatios();
+
+//        propagateUnctInBaselineCorrOnPeakIntensities();
+//
+//        propagateUnctInRatios(usingFullPropagation);//usingFullPropagation);// needed for first pass
+//
+//        performInterceptFittingToRatios();
+//
+//        cleanupUnctCalcs();
     }
 
 }

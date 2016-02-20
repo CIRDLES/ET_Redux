@@ -57,6 +57,8 @@ public class ShrimpProjectParamaetersManager extends AbstractProjectParametersMa
         fullPropagationRB = new JRadioButton("Full uncertainty propagation");
         fullPropagationRB.setSelected(true);
         initToolBar(editable);
+        
+        monitorButton.setEnabled(false);
     }
 
     @Override

@@ -4,7 +4,7 @@
  * Created on October 9, 2006, 5:25 PM
  *
  *
- * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2016 James F. Bowring and www.Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,6 +27,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumMap;
+import java.util.Map;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import static org.earthtime.UPb_Redux.ReduxConstants.myUsersUPbReduxDataFolderName;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
@@ -39,6 +41,7 @@ import org.earthtime.UTh_Redux.fractions.UThFractionI;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.dataDictionaries.DataDictionary;
 import org.earthtime.dataDictionaries.MineralTypes;
+import org.earthtime.dataDictionaries.RadRatios;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.fractions.ETFractionInterface;
@@ -78,8 +81,7 @@ public final class ReduxLabData implements Serializable {
     private ArrayList<ReportSettingsInterface> reportSettingsModels
             = new ReduxLabDataList<>("Report Settings");
     private ArrayList<LabEquipmentSettings> labEquipmentSettings
-            = //
-            new ReduxLabDataList<>(" Lab Equipment Settings");
+            = new ReduxLabDataList<>(" Lab Equipment Settings");
     private AbstractRatiosDataModel defaultLabTracer;
     private ValueModel defaultLabAlphaUModel;
     private ValueModel defaultLabAlphaPbModel;
@@ -113,6 +115,8 @@ public final class ReduxLabData implements Serializable {
     private int defaultLeftShadeCountForLAICPMSAquisitions;
     // nov 2015
     private AbstractRatiosDataModel defaultDetritalUraniumAndThoriumModel;
+    // feb 2016
+    private Map<RadRatios, ValueModel> defaultInterReferenceMaterialReproducibilityMap;
 
     /**
      * Creates a new instance of ReduxLabData
@@ -216,6 +220,21 @@ public final class ReduxLabData implements Serializable {
         }
 
         this.defaultLeftShadeCountForLAICPMSAquisitions = 0;
+        
+        initDefaultInterReferenceMaterialReproducibilityMap();
+ 
+    }
+    
+    private void initDefaultInterReferenceMaterialReproducibilityMap(){
+               
+        // set up default defaultInterReferenceMaterialReproducibility
+        ValueModel r206_238irmr = new ValueModel("r206_238irmr", new BigDecimal(0.01), "NONE", BigDecimal.ZERO, BigDecimal.ZERO);
+        ValueModel r206_207irmr = new ValueModel("r206_207irmr", new BigDecimal(0.01), "NONE", BigDecimal.ZERO, BigDecimal.ZERO);
+        ValueModel r208_232irmr = new ValueModel("r208_232irmr", new BigDecimal(0.01), "NONE", BigDecimal.ZERO, BigDecimal.ZERO);
+        defaultInterReferenceMaterialReproducibilityMap = new EnumMap<>(RadRatios.class);
+        defaultInterReferenceMaterialReproducibilityMap.put(RadRatios.r206_238r, r206_238irmr);
+        defaultInterReferenceMaterialReproducibilityMap.put(RadRatios.r206_207r, r206_207irmr);
+        defaultInterReferenceMaterialReproducibilityMap.put(RadRatios.r208_232r, r208_232irmr);
     }
 
     /**
@@ -428,11 +447,9 @@ public final class ReduxLabData implements Serializable {
             addTracer(TracerUPbModel.getNoneInstance());
             defaultLabTracer = getFirstTracer();
         } else // detect if legacy default is none and change if possible
-        {
-            if (defaultLabTracer.equals(getNoneTracer())) {
+         if (defaultLabTracer.equals(getNoneTracer())) {
                 defaultLabTracer = getFirstTracer();
             }
-        }
         return defaultLabTracer;
     }
 
@@ -548,11 +565,9 @@ public final class ReduxLabData implements Serializable {
             addAlphaUModel(new ValueModel(ReduxConstants.NONE));
             setDefaultLabAlphaUModel(getFirstAlphaUModel());
         } else // detect if legacy default is none and change if possible
-        {
-            if (defaultLabAlphaUModel.equals(getNoneAlphaUModel())) {
+         if (defaultLabAlphaUModel.equals(getNoneAlphaUModel())) {
                 setDefaultLabAlphaUModel(getFirstAlphaUModel());
             }
-        }
         return defaultLabAlphaUModel;
     }
 
@@ -657,11 +672,9 @@ public final class ReduxLabData implements Serializable {
             addAlphaPbModel(new ValueModel(ReduxConstants.NONE));
             setDefaultLabAlphaPbModel(getFirstAlphaPbModel());
         } else // detect if legacy default is none and change if possible
-        {
-            if (defaultLabAlphaPbModel.equals(getNoneAlphaPbModel())) {
+         if (defaultLabAlphaPbModel.equals(getNoneAlphaPbModel())) {
                 setDefaultLabAlphaPbModel(getFirstAlphaPbModel());
             }
-        }
         return defaultLabAlphaPbModel;
     }
 
@@ -768,11 +781,9 @@ public final class ReduxLabData implements Serializable {
             addBlank(PbBlankICModel.getNoneInstance());
             setDefaultLabPbBlank(getFirstPbBlank());
         } else // detect if legacy default is none and change if possible
-        {
-            if (defaultLabPbBlank.equals(getNonePbBlankModel())) {
+         if (defaultLabPbBlank.equals(getNonePbBlankModel())) {
                 setDefaultLabPbBlank(getFirstPbBlank());
             }
-        }
         return defaultLabPbBlank;
     }
 
@@ -892,11 +903,9 @@ public final class ReduxLabData implements Serializable {
 
             defaultLabInitialPbModel = getFirstInitialPbModel();
         } else // detect if legacy default is none and change if possible
-        {
-            if (defaultLabInitialPbModel.equals(getNoneInitialPbModel())) {
+         if (defaultLabInitialPbModel.equals(getNoneInitialPbModel())) {
                 defaultLabInitialPbModel = getFirstInitialPbModel();
             }
-        }
         return defaultLabInitialPbModel;
     }
 
@@ -1012,9 +1021,11 @@ public final class ReduxLabData implements Serializable {
                 addPhysicalConstantsModel(PhysicalConstantsModel.getNoneInstance());
                 defaultPhysicalConstantsModel = getFirstPhysicalConstantsModel();
             } else // detect if legacy default is none and change if possible
-             if (defaultPhysicalConstantsModel.equals(getNonePhysicalConstantsModel())) {
+            {
+                if (defaultPhysicalConstantsModel.equals(getNonePhysicalConstantsModel())) {
                     defaultPhysicalConstantsModel = getFirstPhysicalConstantsModel();
                 }
+            }
         } catch (BadLabDataException badLabDataException) {
             new ETWarningDialog(badLabDataException).setVisible(true);
         }
@@ -1263,11 +1274,9 @@ public final class ReduxLabData implements Serializable {
             addRareEarthElementModel(RareEarthElementsModel.getNoneInstance());
             defaultRareEarthElementModel = getFirstRareEarthElementModel();
         } else // detect if legacy default is none and change if possible
-        {
-            if (defaultRareEarthElementModel.equals(getNoneRareEarthElementModel())) {
+         if (defaultRareEarthElementModel.equals(getNoneRareEarthElementModel())) {
                 defaultRareEarthElementModel = getFirstRareEarthElementModel();
             }
-        }
         return defaultRareEarthElementModel;
     }
 
@@ -1372,11 +1381,9 @@ public final class ReduxLabData implements Serializable {
             addDetritalUraniumAndThoriumModel(DetritalUraniumAndThoriumModel.getNoneInstance());
             defaultDetritalUraniumAndThoriumModel = getFirstDetritalUraniumAndThoriumModel();
         } else // detect if legacy default is none and change if possible
-        {
-            if (defaultDetritalUraniumAndThoriumModel.equals(getNoneDetritalUraniumAndThoriumModel())) {
+         if (defaultDetritalUraniumAndThoriumModel.equals(getNoneDetritalUraniumAndThoriumModel())) {
                 defaultDetritalUraniumAndThoriumModel = getFirstDetritalUraniumAndThoriumModel();
             }
-        }
         return defaultDetritalUraniumAndThoriumModel;
     }
 
@@ -2017,4 +2024,22 @@ public final class ReduxLabData implements Serializable {
     public void setDefaultLeftShadeCountForLAICPMSAquisitions(int defaultLeftShadeCountForLAICPMSAquisitions) {
         this.defaultLeftShadeCountForLAICPMSAquisitions = defaultLeftShadeCountForLAICPMSAquisitions;
     }
+
+    /**
+     * @return the defaultInterReferenceMaterialReproducibilityMap
+     */
+    public Map<RadRatios, ValueModel> getDefaultInterReferenceMaterialReproducibilityMap() {
+        if (defaultInterReferenceMaterialReproducibilityMap == null){
+            initDefaultInterReferenceMaterialReproducibilityMap();
+        }
+        return defaultInterReferenceMaterialReproducibilityMap;
+    }
+
+    /**
+     * @param defaultInterReferenceMaterialReproducibilityMap the defaultInterReferenceMaterialReproducibilityMap to set
+     */
+    public void setDefaultInterReferenceMaterialReproducibilityMap(Map<RadRatios, ValueModel> defaultInterReferenceMaterialReproducibilityMap) {
+        this.defaultInterReferenceMaterialReproducibilityMap = defaultInterReferenceMaterialReproducibilityMap;
+    }
+    
 }

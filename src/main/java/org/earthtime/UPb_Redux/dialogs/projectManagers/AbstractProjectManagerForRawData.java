@@ -226,7 +226,7 @@ public abstract class AbstractProjectManagerForRawData extends DialogEditor impl
         if (tripoliSession != null) {
 
             // update parameters
-            rawDataFileHandler.updateMassSpecFromAcquisitionModel();
+//            rawDataFileHandler.updateMassSpecFromAcquisitionModel();
 
             tripoliSamplesSorted = tripoliSession.getTripoliSamples();
 
@@ -648,7 +648,7 @@ public abstract class AbstractProjectManagerForRawData extends DialogEditor impl
         fileHandlerComboBox.setBounds(220, 30, 380, 27);
 
         loadRawData_button.setFont(new java.awt.Font("SansSerif", 0, 13)); // NOI18N
-        loadRawData_button.setText("Prepare to Load/Process Raw Data with chosen Protocol and Raw Data Template");
+        loadRawData_button.setText("Select Raw Data to Load and Process with chosen Protocol and Raw Data Template");
         loadRawData_button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 loadRawData_buttonActionPerformed(evt);
@@ -886,18 +886,18 @@ public abstract class AbstractProjectManagerForRawData extends DialogEditor impl
 
             saveProjectFields();
 
-            try {
+//            try {
 
-                processRawData();
+               // processRawData();
 
                 project.prepareSamplesForRedux();
 
                 uPbReduxFrame.initializeProject();
 
                 initializeSessionManager(true, true, true);
-            } catch (ETException ex) {
-                new ETWarningDialog(ex).setVisible(true);
-            }
+//            } catch (ETException ex) {
+//                new ETWarningDialog(ex).setVisible(true);
+//            }
         } else {
             refreshMaskingArray();
             initializeSessionManager(false, true, true);

@@ -661,7 +661,7 @@ public abstract class AbstractMassSpecSetup implements //
         });
     }
 
-    private void calculateLogOnPeakCorrectedIntensities() {
+    protected void calculateLogOnPeakCorrectedIntensities() {
         virtualCollectors.stream().forEach((c) -> {
             c.calculateLogOnPeakCorrectedIntensities();
         });
@@ -726,7 +726,7 @@ public abstract class AbstractMassSpecSetup implements //
     /**
      *
      */
-    private void calculateRawAndLogRatios() {
+    protected void calculateRawAndLogRatios() {
         // calculate ratios ****************************************************
         for (DataModelInterface rr : rawRatios) {
             ((RawRatioDataModel) rr).calculateRawAndLogRatios();

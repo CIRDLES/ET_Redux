@@ -202,6 +202,8 @@ public abstract class AbstractProjectParametersManager extends JLayeredPane {
     protected JSpinner leftMaskSpinner;
     
     protected JRadioButton fullPropagationRB;
+    
+    protected ET_JButton monitorButton;
 
     /**
      *
@@ -651,7 +653,7 @@ public abstract class AbstractProjectParametersManager extends JLayeredPane {
     protected void initToolBar(boolean editable) {
        
         // toolbar
-        ET_JButton monitorButton = new ET_JButton("Save and Monitor/Process Raw Data");
+        monitorButton = new ET_JButton("Save and Monitor/Process Raw Data");
         monitorButton.setBounds(leftMargin, 525, 225, 25);
         monitorButton.addActionListener((ActionEvent ae) -> {
             saveData_buttonActionPerformed(ae);

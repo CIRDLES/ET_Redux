@@ -476,11 +476,11 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
         dataPresentationModeChooserPanel = null;
 
         tripoliFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliSession.getTripoliFractions(), fractionSelectionType, IncludedTypeEnum.ALL); // sept 2015 bettter way to handlefractionIncludedType);
-        // test for empty (i.e. no excluded)
-        if (tripoliFractions.isEmpty()) {
-            fractionIncludedType = IncludedTypeEnum.ALL;
-            tripoliFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliSession.getTripoliFractions(), fractionSelectionType, fractionIncludedType);
-        }
+////        // test for empty (i.e. no excluded)
+////        if (tripoliFractions.isEmpty()) {
+////            fractionIncludedType = IncludedTypeEnum.ALL;
+////            tripoliFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliSession.getTripoliFractions(), fractionSelectionType, fractionIncludedType);
+////        }
 
         boolean isFitFunctionsOnRatioDataView = false;
         boolean isFitFunctionsOnDownHoleRatioDataView = false;

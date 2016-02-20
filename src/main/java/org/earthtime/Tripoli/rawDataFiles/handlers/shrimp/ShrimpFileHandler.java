@@ -222,7 +222,7 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
             double[] peakCounts = new double[9];
             backgroundAcquisitions.add(backgroundCounts);
             peakAcquisitions.add(peakCounts);
-            
+
             peakCounts[0] = extractedData[scan][1];
             peakCounts[1] = extractedData[scan][4];
             peakCounts[2] = extractedData[scan][10];
@@ -248,14 +248,16 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
         tripoliFraction.setRawRatios(rawRatios);
 
         massSpec.setCountOfAcquisitions(peakAcquisitions.size());
-//
-//        massSpec.processFractionRawRatiosII(//
-//                backgroundAcquisitions, peakAcquisitions, isStandardReferenceMaterial, usingFullPropagation, tripoliFraction);
-//
-//        tripoliFraction.shadeDataActiveMapLeft(leftShadeCount);
-//        System.out.println("\n**** Element II FractionID  " + fractionID + " refMat? " + isStandardReferenceMaterial + " <<<<<<<<<<<<<<<<<<\n");
+
+        massSpec.processFractionRawRatiosII(//
+                backgroundAcquisitions, peakAcquisitions, true, tripoliFraction);
+
+        tripoliFraction.shadeDataActiveMapLeft(0);
+        System.out.println("\n**** Element II FractionID  " + fractionID + " refMat? " + tripoliFraction.isStandard() + " <<<<<<<<<<<<<<<<<<\n");
 
         return tripoliFraction;
     }
+
+    
 
 }

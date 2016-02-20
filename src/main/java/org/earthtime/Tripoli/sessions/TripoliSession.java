@@ -52,6 +52,7 @@ import org.earthtime.Tripoli.fitFunctions.AbstractFunctionOfX;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.Tripoli.massSpecSetups.AbstractMassSpecSetup;
 import org.earthtime.Tripoli.rawDataFiles.handlers.AbstractRawDataFileHandler;
+import org.earthtime.Tripoli.rawDataFiles.handlers.shrimp.ShrimpFileHandler;
 import org.earthtime.Tripoli.samples.AbstractTripoliSample;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
@@ -645,33 +646,38 @@ public class TripoliSession implements
     @Override
     public void applyCorrections() {
 
-        // dec 2014 - initialize fractions for rho calcs and common lead correction
-        SortedSet<TripoliFraction> allFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.ALL, IncludedTypeEnum.INCLUDED);//dec 2015 .ALL);
-        Iterator<TripoliFraction> allFractionsIterator = allFractions.iterator();
+        // feb 2016 temp hack for SHRIMP
+        if (rawDataFileHandler instanceof ShrimpFileHandler) {
+            //do nothing
+        } else {
+            // dec 2014 - initialize fractions for rho calcs and common lead correction
+            SortedSet<TripoliFraction> allFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.ALL, IncludedTypeEnum.INCLUDED);//dec 2015 .ALL);
+            Iterator<TripoliFraction> allFractionsIterator = allFractions.iterator();
 
-        while (allFractionsIterator.hasNext()) {
-            TripoliFraction tf = allFractionsIterator.next();
-            ETFractionInterface upbFraction = tf.getuPbFraction();
-            if (upbFraction == null) {
-                System.out.println("Missing upbFraction for " + tf.getFractionID());
-            } else {
-                ((UPbLAICPMSFraction) upbFraction).setSfciTotal(null);
-                ((UPbLAICPMSFraction) upbFraction).initializeUpperPhiMap();
-                upbFraction.getRadiogenicIsotopeRatioByName("rhoR206_238r__r207_235r").setValue(ReduxConstants.NO_RHO_FLAG);
-                upbFraction.getRadiogenicIsotopeRatioByName("rhoR207_206r__r238_206r").setValue(ReduxConstants.NO_RHO_FLAG);
-                upbFraction.getRadiogenicIsotopeRatioByName("rhoR206_238PbcCorr__r207_235PbcCorr").setValue(ReduxConstants.NO_RHO_FLAG);
-                upbFraction.getRadiogenicIsotopeRatioByName("rhoR207_206PbcCorr__r238_206PbcCorr").setValue(ReduxConstants.NO_RHO_FLAG);
+            while (allFractionsIterator.hasNext()) {
+                TripoliFraction tf = allFractionsIterator.next();
+                ETFractionInterface upbFraction = tf.getuPbFraction();
+                if (upbFraction == null) {
+                    System.out.println("Missing upbFraction for " + tf.getFractionID());
+                } else {
+                    ((UPbLAICPMSFraction) upbFraction).setSfciTotal(null);
+                    ((UPbLAICPMSFraction) upbFraction).initializeUpperPhiMap();
+                    upbFraction.getRadiogenicIsotopeRatioByName("rhoR206_238r__r207_235r").setValue(ReduxConstants.NO_RHO_FLAG);
+                    upbFraction.getRadiogenicIsotopeRatioByName("rhoR207_206r__r238_206r").setValue(ReduxConstants.NO_RHO_FLAG);
+                    upbFraction.getRadiogenicIsotopeRatioByName("rhoR206_238PbcCorr__r207_235PbcCorr").setValue(ReduxConstants.NO_RHO_FLAG);
+                    upbFraction.getRadiogenicIsotopeRatioByName("rhoR207_206PbcCorr__r238_206PbcCorr").setValue(ReduxConstants.NO_RHO_FLAG);
+                }
             }
-        }
 
-        calculateUThConcentrationsForUnknowns();
+            calculateUThConcentrationsForUnknowns();
 
-        sessionCorrectedUnknownsSummaries = new TreeMap<>();
+            sessionCorrectedUnknownsSummaries = new TreeMap<>();
 
-        if (fractionationTechnique.compareTo(FractionationTechniquesEnum.INTERCEPT) == 0) {
-            applyFractionationCorrectionsForIntercept();
-        } else if (fractionationTechnique.compareTo(FractionationTechniquesEnum.DOWNHOLE) == 0) {
-            applyFractionationCorrectionsForDownhole();
+            if (fractionationTechnique.compareTo(FractionationTechniquesEnum.INTERCEPT) == 0) {
+                applyFractionationCorrectionsForIntercept();
+            } else if (fractionationTechnique.compareTo(FractionationTechniquesEnum.DOWNHOLE) == 0) {
+                applyFractionationCorrectionsForDownhole();
+            }
         }
     }
 

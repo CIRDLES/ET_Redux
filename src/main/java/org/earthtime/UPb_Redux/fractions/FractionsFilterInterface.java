@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
+import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLAICPMSFraction;
 import org.earthtime.dataDictionaries.FractionSelectionTypeEnum;
 import org.earthtime.dataDictionaries.IncludedTypeEnum;
 
@@ -54,15 +55,15 @@ public interface FractionsFilterInterface {
                     visibility.isObjectIncluded(tf.isIncluded())) {
 
                 filteredFractions.add(tf);
-                // turn off bad fractions
-                if (!tf.confirmHealthyFraction()) {
-                    tf.toggleAllDataExceptShaded(false);
+
+                if (tf.getuPbFraction() instanceof UPbLAICPMSFraction) {
+                    // turn off bad fractions
+                    if (!tf.confirmHealthyFraction()) {
+                        tf.toggleAllDataExceptShaded(false);
+                    }
                 }
             }
-
         }
-
         return filteredFractions;
     }
-
 }
