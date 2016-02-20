@@ -74,7 +74,6 @@ import org.earthtime.ratioDataModels.initialPbModelsET.commonLeadLossCorrectionS
 import org.earthtime.ratioDataModels.mineralStandardModels.MineralStandardUPbModel;
 import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsModel;
 import org.earthtime.reduxLabData.ReduxLabData;
-import org.earthtime.utilities.TimeToString;
 
 /**
  *
@@ -188,11 +187,8 @@ public class TripoliSession implements
             // feb 2013 temp hack to shift fractions slightly for calculating and plotting --- need to fix underlying 2 second shift issue
             tf.setZeroBasedNormalizedTimeStamp(//
                     (tf.getPeakTimeStamp() - firstFractionTimeStamp) / rawDataFileHandler.getMassSpec().getCollectorDataFrequencyMillisecs());// + 2L);
+            // removed 2L feb 2016
             tf.setZeroBasedTimeStamp((tf.getPeakTimeStamp() - firstFractionTimeStamp));// + 2L * rawDataFileHandler.getMassSpec().getCollectorDataFrequencyMillisecs()));
-
-            System.out.println(tf.getPeakTimeStamp() //
-                    + "\t" + TimeToString.timeStampString(tf.getPeakTimeStamp())
-                    + "\t" + TimeToString.secondsAsLongToTimeString(tf.getZeroBasedTimeStamp()));
         }
 
     }
