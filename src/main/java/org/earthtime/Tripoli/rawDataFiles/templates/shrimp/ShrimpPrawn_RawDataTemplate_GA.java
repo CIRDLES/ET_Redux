@@ -17,6 +17,9 @@
  */
 package org.earthtime.Tripoli.rawDataFiles.templates.shrimp;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectStreamClass;
 import java.util.TimeZone;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.AbstractAcquisitionModel;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.SingleCollectorAcquisition;
@@ -28,13 +31,13 @@ import org.earthtime.dataDictionaries.FileTypeEnum;
  *
  * @author James F. Bowring
  */
-public final class ShrimpPrawn_RawDataTemplate_GA extends AbstractRawDataFileTemplate{
+public final class ShrimpPrawn_RawDataTemplate_GA extends AbstractRawDataFileTemplate {
 
     //Class variables   
     //private static final long serialVersionUID = -5515737439750386077L;
     private static ShrimpPrawn_RawDataTemplate_GA instance = new ShrimpPrawn_RawDataTemplate_GA();
 
-    private ShrimpPrawn_RawDataTemplate_GA () {
+    private ShrimpPrawn_RawDataTemplate_GA() {
         super();
 
         this.NAME = "SHRIMP Prawn";
@@ -47,7 +50,7 @@ public final class ShrimpPrawn_RawDataTemplate_GA extends AbstractRawDataFileTem
         this.blockSize = 0;
         this.standardIDs = new String[]//
         {"T"};
-        this.timeZone = TimeZone.getTimeZone( "GMT" );
+        this.timeZone = TimeZone.getTimeZone("GMT");
         this.defaultParsingOfFractionsBehavior = 1;
         this.elementsByIsotopicMass = new String[]{};
         this.massSpecSetup = ShrimpSetupUPb.getInstance();
@@ -57,17 +60,27 @@ public final class ShrimpPrawn_RawDataTemplate_GA extends AbstractRawDataFileTem
      *
      * @return
      */
-    public static ShrimpPrawn_RawDataTemplate_GA getInstance () {
+    public static ShrimpPrawn_RawDataTemplate_GA getInstance() {
         return instance;
     }
-    
+
     /**
      *
      * @return
      */
     @Override
-     public AbstractAcquisitionModel makeNewAcquisitionModel () {
+    public AbstractAcquisitionModel makeNewAcquisitionModel() {
         this.acquisitionModel = new SingleCollectorAcquisition();
         return acquisitionModel;
+    }
+
+    private void readObject(
+            ObjectInputStream stream)
+            throws IOException, ClassNotFoundException {
+        stream.defaultReadObject();
+        ObjectStreamClass myObject = ObjectStreamClass.lookup(
+                Class.forName(ShrimpPrawn_RawDataTemplate_GA.class.getCanonicalName()));
+        long theSUID = myObject.getSerialVersionUID();
+        System.out.println("Customized De-serialization of ShrimpPrawn_RawDataTemplate_GA " + theSUID);
     }
 }

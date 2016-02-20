@@ -17,6 +17,9 @@
  */
 package org.earthtime.Tripoli.rawDataFiles.templates.Thermo;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectStreamClass;
 import java.io.Serializable;
 import java.util.TimeZone;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.AbstractAcquisitionModel;
@@ -69,5 +72,15 @@ public final class ValenciaWashStateElementII_RawDataTemplate extends AbstractRa
     public AbstractAcquisitionModel makeNewAcquisitionModel () {
         this.acquisitionModel = new SingleCollectorAcquisition();
         return acquisitionModel;
+    }
+    
+     private void readObject(
+            ObjectInputStream stream)
+            throws IOException, ClassNotFoundException {
+        stream.defaultReadObject();
+        ObjectStreamClass myObject = ObjectStreamClass.lookup(
+                Class.forName(ValenciaWashStateElementII_RawDataTemplate.class.getCanonicalName()));
+        long theSUID = myObject.getSerialVersionUID();
+        System.out.println("Customized De-serialization of ValenciaWashStateElementII_RawDataTemplate " + theSUID);
     }
 }

@@ -76,14 +76,5 @@ public final class LaserChronNUPlasmaMultiCollFaradayRawDataTemplate extends Abs
         this.acquisitionModel = new StaticAcquisition();
         return acquisitionModel;
     }
-//    
-//    private void readObject(
-//            ObjectInputStream stream)
-//            throws IOException, ClassNotFoundException {
-//        stream.defaultReadObject();
-//        ObjectStreamClass myObject = ObjectStreamClass.lookup(
-//                Class.forName(LaserChronNUPlasmaMultiCollFaradayRawDataTemplate.class.getCanonicalName()));
-//        long theSUID = myObject.getSerialVersionUID();
-//        System.out.println("Customized De-serialization of LaserChronNUPlasmaMultiCollFaradayRawDataTemplate " + theSUID);
-//    }
+
 }

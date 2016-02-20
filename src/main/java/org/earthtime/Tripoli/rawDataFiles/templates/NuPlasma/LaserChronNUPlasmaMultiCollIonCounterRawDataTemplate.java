@@ -17,6 +17,9 @@
  */
 package org.earthtime.Tripoli.rawDataFiles.templates.NuPlasma;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectStreamClass;
 import java.io.Serializable;
 import java.util.TimeZone;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.AbstractAcquisitionModel;
@@ -35,7 +38,7 @@ public final class LaserChronNUPlasmaMultiCollIonCounterRawDataTemplate extends 
 
     private static LaserChronNUPlasmaMultiCollIonCounterRawDataTemplate instance = new LaserChronNUPlasmaMultiCollIonCounterRawDataTemplate();
 
-    private LaserChronNUPlasmaMultiCollIonCounterRawDataTemplate () {
+    private LaserChronNUPlasmaMultiCollIonCounterRawDataTemplate() {
         super();
 
         this.NAME = "LaserChron NUPlasma";
@@ -48,7 +51,7 @@ public final class LaserChronNUPlasmaMultiCollIonCounterRawDataTemplate extends 
         this.blockSize = 15;
         this.standardIDs = new String[]//
         {"SL"};
-        this.timeZone = TimeZone.getTimeZone( "MST" );
+        this.timeZone = TimeZone.getTimeZone("MST");
         this.defaultParsingOfFractionsBehavior = 1;
         this.massSpecSetup = GehrelsNUPlasmaSetupUPbIonCounter.getInstance();
     }
@@ -57,17 +60,27 @@ public final class LaserChronNUPlasmaMultiCollIonCounterRawDataTemplate extends 
      *
      * @return
      */
-    public static LaserChronNUPlasmaMultiCollIonCounterRawDataTemplate getInstance () {
+    public static LaserChronNUPlasmaMultiCollIonCounterRawDataTemplate getInstance() {
         return instance;
     }
-    
+
     /**
      *
      * @return
      */
     @Override
-    public AbstractAcquisitionModel makeNewAcquisitionModel(){
+    public AbstractAcquisitionModel makeNewAcquisitionModel() {
         this.acquisitionModel = new StaticAcquisition();
         return acquisitionModel;
+    }
+
+    private void readObject(
+            ObjectInputStream stream)
+            throws IOException, ClassNotFoundException {
+        stream.defaultReadObject();
+        ObjectStreamClass myObject = ObjectStreamClass.lookup(
+                Class.forName(LaserChronNUPlasmaMultiCollIonCounterRawDataTemplate.class.getCanonicalName()));
+        long theSUID = myObject.getSerialVersionUID();
+        System.out.println("Customized De-serialization of LaserChronNUPlasmaMultiCollIonCounterRawDataTemplate " + theSUID);
     }
 }

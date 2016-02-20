@@ -3629,10 +3629,10 @@ public class LabDataEditorDialog extends DialogEditor {
             .add(physicalConstantsModel_Chooser, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
         );
 
-        details_pane.addTab("Physical Constants Models", physicalConstantsModels_panel);
+        details_pane.addTab("Physical Const. Models", physicalConstantsModels_panel);
 
         chooseMineralStandardModel_label.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
-        chooseMineralStandardModel_label.setText("  Choose Mineral Standard Model:");
+        chooseMineralStandardModel_label.setText("  Choose Mineral Reference Material Model:");
 
         org.jdesktop.layout.GroupLayout mineralStandard_panelLayout = new org.jdesktop.layout.GroupLayout(mineralStandard_panel);
         mineralStandard_panel.setLayout(mineralStandard_panelLayout);
@@ -3640,21 +3640,22 @@ public class LabDataEditorDialog extends DialogEditor {
             mineralStandard_panelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(mineralStandard_panelLayout.createSequentialGroup()
                 .add(18, 18, 18)
-                .add(chooseMineralStandardModel_label)
-                .add(5, 5, 5)
-                .add(MineralStandardModelChooser, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 461, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(chooseMineralStandardModel_label, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 260, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(MineralStandardModelChooser, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 590, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(212, 212, 212))
         );
         mineralStandard_panelLayout.setVerticalGroup(
             mineralStandard_panelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(mineralStandard_panelLayout.createSequentialGroup()
-                .add(12, 12, 12)
-                .add(chooseMineralStandardModel_label))
-            .add(mineralStandard_panelLayout.createSequentialGroup()
                 .add(6, 6, 6)
-                .add(MineralStandardModelChooser, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(mineralStandard_panelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(chooseMineralStandardModel_label)
+                    .add(MineralStandardModelChooser, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(584, 584, 584))
         );
 
-        details_pane.addTab("Mineral Std Models", mineralStandard_panel);
+        details_pane.addTab("Mineral Ref Mat Models", mineralStandard_panel);
 
         jLabel1.setText("Coming soon ...");
 

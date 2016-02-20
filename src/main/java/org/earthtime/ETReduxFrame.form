@@ -476,7 +476,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="editMineralStandardsModels">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Mineral Standards Models"/>
+                <Property name="text" type="java.lang.String" value="Mineral Reference Material Models"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editMineralStandardsModelsActionPerformed"/>

@@ -2665,7 +2665,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         });
         labDataMenu.add(editPhysicalConstantsModels);
 
-        editMineralStandardsModels.setText("Mineral Standards Models");
+        editMineralStandardsModels.setText("Mineral Reference Material Models");
         editMineralStandardsModels.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 editMineralStandardsModelsActionPerformed(evt);
