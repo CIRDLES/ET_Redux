@@ -15,8 +15,8 @@
  */
 package org.earthtime.utilities;
 
+import static org.junit.Assert.assertEquals;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -31,12 +31,9 @@ public class TimeToStringTest {
      */
     @Test
     public void testOutput (){
-        long time = 1191343282;
-        TimeToString ts = new TimeToString();        
-        assertEquals("16:41:22",ts.secondsAsLongToTimeString( time ) );
-        
-        //Different hour depending on the default time zone
-        //assertEquals("10:55:43 14.Jan",ts.timeStampString( time ) );
+        long time = 0;       
+        assertEquals("00:00:00:00",TimeToString.secondsAsLongToTimeString( time ) );
+
     }
      
 }

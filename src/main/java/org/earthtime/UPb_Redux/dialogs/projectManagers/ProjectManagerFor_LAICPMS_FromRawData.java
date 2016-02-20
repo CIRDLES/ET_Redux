@@ -725,6 +725,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
 
                 tripoliSession.setPrimaryMineralStandard(primaryMineralStandard);
 
+                tripoliSession.prepareFractionTimeStamps();
                 tripoliSession.processRawData();
 
                 tripoliSession.postProcessDataForCommonLeadLossPreparation();

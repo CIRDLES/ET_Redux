@@ -704,6 +704,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
 
             tripoliSession.getTripoliSamples().get(0).setMineralStandardModel(primaryMineralStandard);
 
+            tripoliSession.prepareFractionTimeStamps();
             tripoliSession.processRawData();
 
             tripoliSession.postProcessDataForCommonLeadLossPreparation();

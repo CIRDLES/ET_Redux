@@ -227,7 +227,6 @@ public abstract class AbstractProjectManagerForRawData extends DialogEditor impl
 
             // update parameters
 //            rawDataFileHandler.updateMassSpecFromAcquisitionModel();
-
             tripoliSamplesSorted = tripoliSession.getTripoliSamples();
 
             displayRawDataSamples();
@@ -579,6 +578,7 @@ public abstract class AbstractProjectManagerForRawData extends DialogEditor impl
 
                 tripoliSession.setPrimaryMineralStandard(primaryMineralStandard);
 
+                tripoliSession.prepareFractionTimeStamps();
                 tripoliSession.processRawData();
 
                 tripoliSession.postProcessDataForCommonLeadLossPreparation();
@@ -887,14 +887,14 @@ public abstract class AbstractProjectManagerForRawData extends DialogEditor impl
             saveProjectFields();
 
 //            try {
+            // processRawData();
+// temporarily for shrimp
+            tripoliSession.prepareFractionTimeStamps();
+            project.prepareSamplesForRedux();
 
-               // processRawData();
+            uPbReduxFrame.initializeProject();
 
-                project.prepareSamplesForRedux();
-
-                uPbReduxFrame.initializeProject();
-
-                initializeSessionManager(true, true, true);
+            initializeSessionManager(true, true, true);
 //            } catch (ETException ex) {
 //                new ETWarningDialog(ex).setVisible(true);
 //            }

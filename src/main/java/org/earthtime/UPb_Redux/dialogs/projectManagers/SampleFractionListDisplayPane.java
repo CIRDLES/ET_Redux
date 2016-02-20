@@ -3,7 +3,7 @@
  *
  * Created Dec 30, 2011
  *
- * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2016 James F. Bowring and www.Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -59,7 +59,7 @@ import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.utilities.DragAndDropListItemInterface;
 
 /**
- * JLayeredPane containing JList customized to support drag and drip of
+ * JLayeredPane containing JList customized to support drag and drop of
  * TripoliFractions to other instances
  *
  * @author James F. Bowring
@@ -382,7 +382,7 @@ public class SampleFractionListDisplayPane extends JLayeredPane {
 
                 DragAndDropListItemInterface[] copyOfSelected = new DragAndDropListItemInterface[origLength];
                 for (int i = 0; i < origLength; i++) {
-                    copyOfSelected[i] = (DragAndDropListItemInterface) list.getSelectedValuesList().get(i);
+                    copyOfSelected[i] = list.getSelectedValuesList().get(i);
                 }
                 for (int i = 0; i < origLength; i++) {
                     ((DefaultListModel) ((JList) source).getModel()).removeElement(copyOfSelected[i]);

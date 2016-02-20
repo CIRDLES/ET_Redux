@@ -109,12 +109,6 @@ public interface TripoliSessionInterface extends TripoliSessionFractionationCalc
     @Override
     void calculateDownholeFitSummariesForPrimaryStandard ();
 
-//    /**
-//     *
-//     */
-//    @Override
-//    void calculateSessionFitFunctionsForPrimaryStandard ();
-
     /**
      *
      */
@@ -146,14 +140,6 @@ public interface TripoliSessionInterface extends TripoliSessionFractionationCalc
      * @return the tripoliFractions
      */
     SortedSet<TripoliFraction> getTripoliFractions ();
-
-//    /**
-//     *
-//     * @param selection
-//     * @param visibility
-//     * @return
-//     */
-//    SortedSet<TripoliFraction> getTripoliFractionsFiltered ( FractionSelectionTypeEnum selection, IncludedTypeEnum visibility );
 
     /**
      *
@@ -260,5 +246,7 @@ public interface TripoliSessionInterface extends TripoliSessionFractionationCalc
     public void setFitFunctionsUpToDate(boolean fitFunctionsUpToDate);
     
     public void refitAllFractionsForDownhole();
+    
+    public void prepareFractionTimeStamps();
 
 }

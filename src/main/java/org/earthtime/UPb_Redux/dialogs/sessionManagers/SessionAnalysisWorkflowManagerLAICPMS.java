@@ -239,7 +239,6 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
             });
 
             // show data view
-////            ((TripoliSessionRawDataView) tripoliSessionRawDataView).preparePanel();
             tripoliSessionDataView_scrollPane.setViewportView(tripoliSessionRawDataView);
             adjustViewPanes();
 
@@ -361,8 +360,6 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
                 rawDataSourceMethodFactory("getRatiosForFractionFitting"));//("getRatiosForUnknownFitting"));//    "getValidRawRatios" ) );
 
         tripoliSessionRawDataView.refreshPanel();
-        //cause slider to synch
-        //((TripoliSessionRawDataView) tripoliSessionRawDataView).synchXAxisZoomSliderValue(((TripoliSessionRawDataView) tripoliSessionRawDataView).getDataModelWidth());
 
         setEnableAllGridGraphOverlayButtons(true);
     }

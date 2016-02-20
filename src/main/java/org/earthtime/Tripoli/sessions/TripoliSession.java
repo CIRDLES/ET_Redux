@@ -74,6 +74,7 @@ import org.earthtime.ratioDataModels.initialPbModelsET.commonLeadLossCorrectionS
 import org.earthtime.ratioDataModels.mineralStandardModels.MineralStandardUPbModel;
 import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsModel;
 import org.earthtime.reduxLabData.ReduxLabData;
+import org.earthtime.utilities.TimeToString;
 
 /**
  *
@@ -174,6 +175,28 @@ public class TripoliSession implements
         });
     }
 
+    @Override
+    public void prepareFractionTimeStamps() {
+        //create zero-based time stamp for fractions to use in session view
+        long firstFractionTimeStamp = tripoliFractions.first().getPeakTimeStamp();
+
+        Iterator<TripoliFraction> fractionIterator = tripoliFractions.iterator();
+        while (fractionIterator.hasNext()) {
+
+            TripoliFraction tf = fractionIterator.next();
+            // give each fraction a normalized time stamp from beginning of peak readings of first fraction
+            // feb 2013 temp hack to shift fractions slightly for calculating and plotting --- need to fix underlying 2 second shift issue
+            tf.setZeroBasedNormalizedTimeStamp(//
+                    (tf.getPeakTimeStamp() - firstFractionTimeStamp) / rawDataFileHandler.getMassSpec().getCollectorDataFrequencyMillisecs());// + 2L);
+            tf.setZeroBasedTimeStamp((tf.getPeakTimeStamp() - firstFractionTimeStamp));// + 2L * rawDataFileHandler.getMassSpec().getCollectorDataFrequencyMillisecs()));
+
+            System.out.println(tf.getPeakTimeStamp() //
+                    + "\t" + TimeToString.timeStampString(tf.getPeakTimeStamp())
+                    + "\t" + TimeToString.secondsAsLongToTimeString(tf.getZeroBasedTimeStamp()));
+        }
+
+    }
+
     /**
      *
      */
@@ -195,9 +218,6 @@ public class TripoliSession implements
                 this.sessionForStandardsDownholeFractionation = new TreeMap<>();
             }
 
-            //create zero-based time stamp for fractions to use in session view
-            long firstFractionTimeStamp = tripoliFractions.first().getPeakTimeStamp();
-
             // create map of primaryStandards values to be used to update each fraction's ratios
             SortedSet<DataModelInterface> ratiosSortedSet = tripoliFractions.first().getRatiosForFractionFitting();
             Double[] standardValuesMap = new Double[ratiosSortedSet.size()];
@@ -216,20 +236,12 @@ public class TripoliSession implements
                 count++;
             }
 
+            // give each ratio within each fraction the matching standard value
+            // oct 2012 this call also resets the datamodel as to whether it is a valid fractionation-correcting ratio
             Iterator<TripoliFraction> fractionIterator = tripoliFractions.iterator();
             while (fractionIterator.hasNext()) {
-
                 TripoliFraction tf = fractionIterator.next();
-
-                // give each ratio within each fraction the matching standard value
-                // oct 2012 this call also resets the datamodel as to whether it is a valid fractionation-correcting ratio
                 tf.updateRawRatioDataModelsWithPrimaryStandardValue(standardValuesMap);
-
-                // give each fraction a normalized time stamp from beginning of peak readings of first fraction
-                // feb 2013 temp hack to shift fractions slightly for calculating and plotting --- need to fix underlying 2 second shift issue
-                tf.setZeroBasedNormalizedTimeStamp(//
-                        (tf.getPeakTimeStamp() - firstFractionTimeStamp) / rawDataFileHandler.getMassSpec().getCollectorDataFrequencyMillisecs());// + 2L);
-                tf.setZeroBasedTimeStamp((tf.getPeakTimeStamp() - firstFractionTimeStamp + 2L * rawDataFileHandler.getMassSpec().getCollectorDataFrequencyMillisecs()));
             }
 
             // feb 2013
