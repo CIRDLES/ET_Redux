@@ -2,3 +2,4 @@ GJ1 v.0.1.xml
 M_Trebil v.1.0.xml
 FC1 - Anorthosite from Forest Center - Paces and Miller v.0.2.xml
 Zircon-91500 v.1.0.xml
+Temora Placeholder v.1.0.xml
