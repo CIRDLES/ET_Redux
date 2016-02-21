@@ -2665,7 +2665,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         });
         labDataMenu.add(editPhysicalConstantsModels);
 
-        editMineralStandardsModels.setText("Mineral Reference Material Models");
+        editMineralStandardsModels.setText("Reference Material Models");
         editMineralStandardsModels.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 editMineralStandardsModelsActionPerformed(evt);
@@ -3438,7 +3438,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                 sampleDateInterpDialog.dispose();
             }
             sampleDateInterpDialog
-                    = //
+                    = 
                     new SampleDateInterpretationsManager(
                             this,
                             false,// try floating as of october 2014 true,

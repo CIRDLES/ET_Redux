@@ -210,6 +210,7 @@
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="null"/>
                 </Property>
+                <Property name="autoscrolls" type="boolean" value="true"/>
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
@@ -254,6 +255,7 @@
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                       <Font name="SansSerif" size="13" style="0"/>
                     </Property>
+                    <Property name="text" type="java.lang.String" value="Measured Intensities"/>
                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                       <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
                         <LineBorder/>
@@ -262,7 +264,6 @@
                     <Property name="borderPainted" type="boolean" value="true"/>
                     <Property name="horizontalAlignment" type="int" value="4"/>
                     <Property name="horizontalTextPosition" type="int" value="2"/>
-                    <Property name="label" type="java.lang.String" value="Measured Counts"/>
                     <Property name="opaque" type="boolean" value="true"/>
                   </Properties>
                   <Events>
@@ -292,6 +293,7 @@
                       </Border>
                     </Property>
                     <Property name="borderPainted" type="boolean" value="true"/>
+                    <Property name="enabled" type="boolean" value="false"/>
                     <Property name="horizontalAlignment" type="int" value="4"/>
                     <Property name="horizontalTextPosition" type="int" value="2"/>
                     <Property name="opaque" type="boolean" value="true"/>
@@ -323,6 +325,7 @@
                       </Border>
                     </Property>
                     <Property name="borderPainted" type="boolean" value="true"/>
+                    <Property name="enabled" type="boolean" value="false"/>
                     <Property name="horizontalAlignment" type="int" value="4"/>
                     <Property name="horizontalTextPosition" type="int" value="2"/>
                     <Property name="opaque" type="boolean" value="true"/>
@@ -906,6 +909,7 @@
                       <Font name="SansSerif" size="12" style="0"/>
                     </Property>
                     <Property name="text" type="java.lang.String" value="Restore all Aquisitions"/>
+                    <Property name="enabled" type="boolean" value="false"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="restoreAllAquisitionsActionPerformed"/>
@@ -1053,6 +1057,7 @@
                           </Border>
                         </Property>
                         <Property name="borderPainted" type="boolean" value="true"/>
+                        <Property name="enabled" type="boolean" value="false"/>
                         <Property name="horizontalAlignment" type="int" value="4"/>
                         <Property name="horizontalTextPosition" type="int" value="2"/>
                         <Property name="opaque" type="boolean" value="true"/>

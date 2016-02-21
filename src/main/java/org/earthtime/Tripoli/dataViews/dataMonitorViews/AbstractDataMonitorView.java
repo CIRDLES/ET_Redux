@@ -662,8 +662,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
 
             // create session
             tripoliSession
-                    = //
-                    new TripoliSession(//
+                    = new TripoliSession(//
                             rawDataFileHandler, tripoliSamplesSorted);
 
             project.setTripoliSession(tripoliSession);

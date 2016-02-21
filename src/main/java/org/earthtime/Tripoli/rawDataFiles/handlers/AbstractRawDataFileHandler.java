@@ -406,7 +406,8 @@ public abstract class AbstractRawDataFileHandler implements //
                     tripoliSamplesMap.get(extractSampleName(tf.getFractionID())).addTripoliFraction(tf);
                 }
 
-                // order the samples by the time stamp of their first fraction
+                // order the samples by the time stamp of their first fraction 
+                // feb 2016 (see compare for sample interface) except that having your first frsctiona standard moves you to beginning of list
                 SortedSet<AbstractTripoliSample> tripoliSamplesSorted = new TreeSet<>();
                 Set<String> samplesMapKeySet = tripoliSamplesMap.keySet();
                 Iterator <String>samplesMapKeySetIterator = samplesMapKeySet.iterator();
@@ -414,84 +415,84 @@ public abstract class AbstractRawDataFileHandler implements //
                     tripoliSamplesSorted.add(tripoliSamplesMap.get(samplesMapKeySetIterator.next()));
                 }
 
-                // time for some magic
-                // if there is only one sample so far, we want to see if we can pick out the primary standard
-                // in the case of Hanchar, the solution is to make the first fraction the standard and let the
-                // user drag and drop
-                // for Gehrels, we generally have one standard already picked
-                // identify first sample = primary standard
+//////                // time for some magic
+//////                // if there is only one sample so far, we want to see if we can pick out the primary standard
+//////                // in the case of Hanchar, the solution is to make the first fraction the standard and let the
+//////                // user drag and drop
+//////                // for Gehrels, we generally have one standard already picked
+//////                // identify first sample = primary standard
                 AbstractTripoliSample firstSample;
-                //if ( tripoliSamplesSorted.size() == 1 ) {
-                // move all but the first fraction (must be a standard) and any with a standard flag of false
-                // to a second sample
+//////                //if ( tripoliSamplesSorted.size() == 1 ) {
+//////                // move all but the first fraction (must be a standard) and any with a standard flag of false
+//////                // to a second sample
                 firstSample = tripoliSamplesSorted.first();
-                AbstractTripoliSample unknownSample = new TripoliUnknownSample(firstSample.getSampleName());
+//////                AbstractTripoliSample unknownSample = new TripoliUnknownSample(firstSample.getSampleName());
                 firstSample.setSampleName(firstSample.getSampleName() + "-STD");
-
-                SortedSet<TripoliFraction> firstSampleFractions = firstSample.getSampleFractions();
-                Iterator<TripoliFraction> firstSampleFractionsIterator = firstSampleFractions.iterator();
-                // skip first
-                TripoliFraction tf = firstSampleFractionsIterator.next();
-                while (firstSampleFractionsIterator.hasNext()) {
-                    tf = firstSampleFractionsIterator.next();
-                    if (!tf.isStandard()) {
-                        unknownSample.addTripoliFraction(tf);
-                    }
-                }
-
-                // now remove them from first sample
-                if (unknownSample.getSampleFractions().size() > 0) {
-                    SortedSet<TripoliFraction> secondSampleFractions = unknownSample.getSampleFractions();
-                    firstSample.getSampleFractions().removeAll(secondSampleFractions);
-
-                    tripoliSamplesSorted.add(unknownSample);
-                }
-
-                //}
-                // may 2013 ... now need to gather all standards into the first sample if there were more than one original sample
-                if (tripoliSamplesSorted.size() >= 2) {
-                    Iterator<AbstractTripoliSample> tripoliSamplesSortedIterator = tripoliSamplesSorted.iterator();
-                    // skip first
-                    AbstractTripoliSample ts = tripoliSamplesSortedIterator.next();
-                    while (tripoliSamplesSortedIterator.hasNext()) {
-                        ts = tripoliSamplesSortedIterator.next();
-                        // now walk the fractions and collect the standards for moving
-                        SortedSet<TripoliFraction> sampleFractions = ts.getSampleFractions();
-                        Iterator<TripoliFraction> sampleFractionsIterator = sampleFractions.iterator();
-
-                        // save off the standards
-                        SortedSet<TripoliFraction> standardsToMoveMap = new TreeSet<>();
-
-                        while (sampleFractionsIterator.hasNext()) {
-                            tf = sampleFractionsIterator.next();
-                            if (tf.isStandard()) {
-                                standardsToMoveMap.add(tf);
-                            }
-                        }
-
-                        // now add to first sample and remove from this sample
-                        firstSample.getSampleFractions().addAll(standardsToMoveMap);
-                        ts.getSampleFractions().removeAll(standardsToMoveMap);
-                    }
-
-                }
-
-                //replace first unknown sample with a standardSample as this is the default primary standard
-                // until / unless user changes on return      
-                firstSample = tripoliSamplesSorted.first();
+//////
+//////                SortedSet<TripoliFraction> firstSampleFractions = firstSample.getSampleFractions();
+//////                Iterator<TripoliFraction> firstSampleFractionsIterator = firstSampleFractions.iterator();
+//////                // skip first
+//////                TripoliFraction tf = firstSampleFractionsIterator.next();
+//////                while (firstSampleFractionsIterator.hasNext()) {
+//////                    tf = firstSampleFractionsIterator.next();
+//////                    if (!tf.isStandard()) {
+//////                        unknownSample.addTripoliFraction(tf);
+//////                    }
+//////                }
+//////
+//////                // now remove them from first sample
+//////                if (unknownSample.getSampleFractions().size() > 0) {
+//////                    SortedSet<TripoliFraction> secondSampleFractions = unknownSample.getSampleFractions();
+//////                    firstSample.getSampleFractions().removeAll(secondSampleFractions);
+//////
+//////                    tripoliSamplesSorted.add(unknownSample);
+//////                }
+//////
+//////                //}
+//////                // may 2013 ... now need to gather all standards into the first sample if there were more than one original sample
+//////                if (tripoliSamplesSorted.size() >= 2) {
+//////                    Iterator<AbstractTripoliSample> tripoliSamplesSortedIterator = tripoliSamplesSorted.iterator();
+//////                    // skip first
+//////                    AbstractTripoliSample ts = tripoliSamplesSortedIterator.next();
+//////                    while (tripoliSamplesSortedIterator.hasNext()) {
+//////                        ts = tripoliSamplesSortedIterator.next();
+//////                        // now walk the fractions and collect the standards for moving
+//////                        SortedSet<TripoliFraction> sampleFractions = ts.getSampleFractions();
+//////                        Iterator<TripoliFraction> sampleFractionsIterator = sampleFractions.iterator();
+//////
+//////                        // save off the standards
+//////                        SortedSet<TripoliFraction> standardsToMoveMap = new TreeSet<>();
+//////
+//////                        while (sampleFractionsIterator.hasNext()) {
+//////                            tf = sampleFractionsIterator.next();
+//////                            if (tf.isStandard()) {
+//////                                standardsToMoveMap.add(tf);
+//////                            }
+//////                        }
+//////
+//////                        // now add to first sample and remove from this sample
+//////                        firstSample.getSampleFractions().addAll(standardsToMoveMap);
+//////                        ts.getSampleFractions().removeAll(standardsToMoveMap);
+//////                    }
+//////
+//////                }
+//////
+//////                //replace first unknown sample with a standardSample as this is the default primary standard
+//////                // until / unless user changes on return      
+//////                firstSample = tripoliSamplesSorted.first();
                 AbstractTripoliSample primaryStandard = new TripoliPrimaryStandardSample(firstSample.getSampleName());
                 // use these fractions
                 primaryStandard.setSampleFractions(firstSample.getSampleFractions());
-                tripoliSamplesSorted.remove(firstSample);
                 tripoliSamplesSorted.add(primaryStandard);
 
                 // convert to ArrayList for storage and passing
                 tripoliSamples.addAll(tripoliSamplesSorted);
+                tripoliSamples.remove(firstSample);
 
-                // walk samples and set fraction standard flags 
-                for (int i = 0; i < tripoliSamples.size(); i++) {
-                    tripoliSamples.get(i).setFractionsSampleFlags();
-                }
+//////                // walk samples and set fraction standard flags 
+//////                for (int i = 0; i < tripoliSamples.size(); i++) {
+//////                    tripoliSamples.get(i).setFractionsSampleFlags();
+//////                }
 
             }
         }

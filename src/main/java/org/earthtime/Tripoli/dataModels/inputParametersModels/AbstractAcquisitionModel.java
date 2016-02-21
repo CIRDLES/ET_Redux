@@ -23,8 +23,6 @@ import java.io.Serializable;
 import java.util.Map;
 import org.earthtime.Tripoli.dataModels.collectorModels.FaradayCollectorModel;
 import org.earthtime.Tripoli.massSpecSetups.AbstractMassSpecSetup;
-import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
-import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.dataDictionaries.AcquisitionTypesEnum;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 
@@ -110,10 +108,8 @@ public abstract class AbstractAcquisitionModel implements Serializable {
         this.usingFullPropagation = true;
         this.leftShadeCount = 0;
 
-        try {
-            this.primaryMineralStandardModel = ReduxLabData.getInstance().getDefaultLAICPMSPrimaryMineralStandardModel();
-        } catch (BadLabDataException badLabDataException) {
-        }
+        this.primaryMineralStandardModel = null;
+
     }
 
     /**

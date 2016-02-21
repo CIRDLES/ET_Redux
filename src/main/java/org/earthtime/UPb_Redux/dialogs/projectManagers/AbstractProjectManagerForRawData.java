@@ -311,7 +311,9 @@ public abstract class AbstractProjectManagerForRawData extends DialogEditor impl
         // may 2013 split task to allow for custom parameters ********************
         AbstractAcquisitionModel acquisitionModel = rawDataFileTemplate.makeNewAcquisitionModel();
         try {
-            acquisitionModel.setPrimaryMineralStandardModel(ReduxLabData.getInstance().getDefaultLAICPMSPrimaryMineralStandardModel());
+            if (acquisitionModel.getPrimaryMineralStandardModel() == null) {
+                acquisitionModel.setPrimaryMineralStandardModel(ReduxLabData.getInstance().getDefaultLAICPMSPrimaryMineralStandardModel());
+            }
             acquisitionModel.setLeftShadeCount(ReduxLabData.getInstance().getDefaultLeftShadeCountForLAICPMSAquisitions());
 
         } catch (BadLabDataException ex) {
@@ -473,6 +475,9 @@ public abstract class AbstractProjectManagerForRawData extends DialogEditor impl
                 int progress = (Integer) pce.getNewValue();
                 loadDataTaskProgressBar.setValue(progress);
                 loadDataTaskProgressBar.validate();
+            } else if ("projectName".equalsIgnoreCase(pce.getPropertyName())) {
+                project.setProjectName((String)pce.getNewValue());
+                projectName_text.setText(project.getProjectName());
             }
         }
     }
@@ -888,8 +893,10 @@ public abstract class AbstractProjectManagerForRawData extends DialogEditor impl
 
 //            try {
             // processRawData();
-// temporarily for shrimp
+// feb 2016 temporarily for shrimp (next two calls are in processrawdata
             tripoliSession.prepareFractionTimeStamps();
+            tripoliSession.updateFractionsToSampleMembership();
+
             project.prepareSamplesForRedux();
 
             uPbReduxFrame.initializeProject();

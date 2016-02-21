@@ -17,9 +17,11 @@
  */
 package org.earthtime.Tripoli.massSpecSetups.singleCollector.shrimp;
 
+import Jama.Matrix;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -217,7 +219,7 @@ public final class ShrimpSetupUPb extends AbstractMassSpecSetup {
         isotopeToRawIntensitiesMap.put(IsotopesEnum.Pb208, Pb208);
 
         Pb207 = new RawIntensityDataModel( //
-                IsotopeNames.Pb207, virtualCollectors.get(4 - 1), virtualCollectors.get(13- 1), COLLECTOR_DATA_FREQUENCY_MILLISECS,//
+                IsotopeNames.Pb207, virtualCollectors.get(4 - 1), virtualCollectors.get(13 - 1), COLLECTOR_DATA_FREQUENCY_MILLISECS,//
                 isotopeMappingModel.getIsotopeToCollectorMap().get(IsotopesEnum.Pb207));
         genericIsotopeModels.add(Pb207);
         isotopeToRawIntensitiesMap.put(IsotopesEnum.Pb207, Pb207);
@@ -229,7 +231,7 @@ public final class ShrimpSetupUPb extends AbstractMassSpecSetup {
         isotopeToRawIntensitiesMap.put(IsotopesEnum.Pb206, Pb206);
 
         Pb204 = new RawIntensityDataModel( //
-                IsotopeNames.Pb204, virtualCollectors.get(2 - 1), virtualCollectors.get(11- 1), COLLECTOR_DATA_FREQUENCY_MILLISECS,//
+                IsotopeNames.Pb204, virtualCollectors.get(2 - 1), virtualCollectors.get(11 - 1), COLLECTOR_DATA_FREQUENCY_MILLISECS,//
                 isotopeMappingModel.getIsotopeToCollectorMap().get(IsotopesEnum.Pb204));
         genericIsotopeModels.add(Pb204);
         isotopeToRawIntensitiesMap.put(IsotopesEnum.Pb204, Pb204);
@@ -260,14 +262,14 @@ public final class ShrimpSetupUPb extends AbstractMassSpecSetup {
         DataModelInterface r206_207w = new RawRatioDataModel(RawRatioNames.r206_207w, Pb206, Pb207, true, false, COLLECTOR_DATA_FREQUENCY_MILLISECS);
         rawRatios.add(r206_207w);
 
-//        // oct 2014 to handle B schemas for common lead correction
-//        DataModelInterface r206_204w = new RawRatioDataModel(RawRatioNames.r206_204w, Pb206, Pb204, false, true, COLLECTOR_DATA_FREQUENCY_MILLISECS);
-//        rawRatios.add(r206_204w);
-//        DataModelInterface r207_204w = new RawRatioDataModel(RawRatioNames.r207_204w, Pb207, Pb204, false, true, COLLECTOR_DATA_FREQUENCY_MILLISECS);
-//        rawRatios.add(r207_204w);
-//        DataModelInterface r208_204w = new RawRatioDataModel(RawRatioNames.r208_204w, Pb208, Pb204, false, true, COLLECTOR_DATA_FREQUENCY_MILLISECS);
-//        rawRatios.add(r208_204w);
-
+        // oct 2014 to handle B schemas for common lead correction
+        DataModelInterface r206_204w = new RawRatioDataModel(RawRatioNames.r206_204w, Pb206, Pb204, false, true, COLLECTOR_DATA_FREQUENCY_MILLISECS);
+        rawRatios.add(r206_204w);
+        DataModelInterface r207_204w = new RawRatioDataModel(RawRatioNames.r207_204w, Pb207, Pb204, false, true, COLLECTOR_DATA_FREQUENCY_MILLISECS);
+        rawRatios.add(r207_204w);
+        DataModelInterface r208_204w = new RawRatioDataModel(RawRatioNames.r208_204w, Pb208, Pb204, false, true, COLLECTOR_DATA_FREQUENCY_MILLISECS);
+        rawRatios.add(r208_204w);
+        
         // special case to handle other Shrimp isotopes
         rawRatios.add(new RawRatioDataModel(RawRatioNames.r196_196w, Zr2O196, Zr2O196, false, false, COLLECTOR_DATA_FREQUENCY_MILLISECS));
         rawRatios.add(new RawRatioDataModel(RawRatioNames.r248_248w, ThO248, ThO248, false, false, COLLECTOR_DATA_FREQUENCY_MILLISECS));
@@ -285,7 +287,7 @@ public final class ShrimpSetupUPb extends AbstractMassSpecSetup {
     public void assignIntegrationTime(double integrationTime) {
         throw new UnsupportedOperationException("Not legal.");
     }
-    
+
     @Override
     public void processFractionRawRatiosStageII(//
             boolean usingFullPropagation, TripoliFraction tripoliFraction) {
@@ -295,7 +297,6 @@ public final class ShrimpSetupUPb extends AbstractMassSpecSetup {
         String fractionID = tripoliFraction.getFractionID();
 
 //        convertRawIntensitiesToCountsPerSecond();
-
 //        isotopeMappingModel.calculateAllIntensityMatrixSDiagonals();
 //
 //        if ((Hg202 != null) && (Pb204 != null)) {
@@ -327,7 +328,6 @@ public final class ShrimpSetupUPb extends AbstractMassSpecSetup {
         calculateRawAndLogRatios();
 
 //        tripoliFraction.reProcessToRejectNegativeRatios();
-
 //        propagateUnctInBaselineCorrOnPeakIntensities();
 //
 //        propagateUnctInRatios(usingFullPropagation);//usingFullPropagation);// needed for first pass
@@ -335,6 +335,20 @@ public final class ShrimpSetupUPb extends AbstractMassSpecSetup {
 //        performInterceptFittingToRatios();
 //
 //        cleanupUnctCalcs();
+    }
+
+    public void initializeVariances(ArrayList<double[]> peakVariances) {
+        // convert arraylists to arrays since our data is in columns
+        double[][] peakAcquisitionVariancesArray = peakVariances.toArray(new double[countOfAcquisitions][]);
+
+        Matrix peakAcquisitionVariancesMatrix = new Matrix(peakAcquisitionVariancesArray);
+
+        for (Map.Entry<DataModelInterface, Integer> vcmToIndex : virtualCollectorModelMapToFieldIndexes.entrySet()) {
+            RawIntensityDataModel rawIntensityModel = ((RawIntensityDataModel) vcmToIndex.getKey());
+            int col = vcmToIndex.getValue();
+
+            rawIntensityModel.setDiagonalOfMatrixSIntensities(peakAcquisitionVariancesMatrix.getMatrix(0, countOfAcquisitions - 1, col, col).getColumnPackedCopy());
+        }
     }
 
 }

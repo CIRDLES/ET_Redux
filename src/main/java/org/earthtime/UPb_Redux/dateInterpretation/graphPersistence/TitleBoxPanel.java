@@ -95,7 +95,7 @@ public class TitleBoxPanel extends JPanel {
         // www.hanb.co.kr/web/example/1058/examples/ShowOff.java
         // Find the bounds of the larger string.
         FontRenderContext frc = g2d.getFontRenderContext();
-        String text = (String) (getTitle().length() > getSubtitle().length() ? getTitle() : getSubtitle());
+        String text = (getTitle().length() > getSubtitle().length() ? getTitle() : getSubtitle());
         TextLayout mLayout = //
                 new TextLayout(
                         text.trim().toUpperCase(), new Font(

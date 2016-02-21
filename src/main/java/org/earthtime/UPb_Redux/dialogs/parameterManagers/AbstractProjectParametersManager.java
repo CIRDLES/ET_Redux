@@ -200,10 +200,12 @@ public abstract class AbstractProjectParametersManager extends JLayeredPane {
      *
      */
     protected JSpinner leftMaskSpinner;
-    
+
     protected JRadioButton fullPropagationRB;
-    
+
     protected ET_JButton monitorButton;
+    
+    protected ET_JButton repropagateButton;
 
     /**
      *
@@ -609,8 +611,14 @@ public abstract class AbstractProjectParametersManager extends JLayeredPane {
         fullPropagationRB.setSelected(rawDataFileHandler.getAcquisitionModel().isUsingFullPropagation());
         this.add(fullPropagationRB);
 
+        initReferenceMaterialChooser();
+        initToolBar(editable);
+
+    }
+
+    protected void initReferenceMaterialChooser() {
         // primary mineral standard chooser
-        JLabel defaultPrimaryStandardLabel = new JLabel("Select Primary Mineral Standard Model: ");
+        JLabel defaultPrimaryStandardLabel = new JLabel("Select Primary Reference Material Model: ");
         defaultPrimaryStandardLabel.setHorizontalAlignment(SwingConstants.LEFT);
         defaultPrimaryStandardLabel.setFont(ReduxConstants.sansSerif_12_Bold);
         defaultPrimaryStandardLabel.setBounds(500, 450, 400, 25);
@@ -635,10 +643,10 @@ public abstract class AbstractProjectParametersManager extends JLayeredPane {
         JButton viewStandardModelButton = new ET_JButton("View");
         viewStandardModelButton.addActionListener((ActionEvent e) -> {
             AbstractRatiosDataModel selectedModel
-                    = //
+                    = 
                     ((AbstractRatiosDataModel) mineralStandardsComboBox.getSelectedItem());
             AbstractRatiosDataView modelView
-                    = //
+                    = 
                     new MineralStandardUPbRatiosDataViewNotEditable(selectedModel, null, false);
             modelView.displayModelInFrame();
         });
@@ -646,12 +654,10 @@ public abstract class AbstractProjectParametersManager extends JLayeredPane {
         viewStandardModelButton.setBounds(775, 475, 30, 23);
         this.add(viewStandardModelButton);
 
-        initToolBar(editable);
-
     }
 
     protected void initToolBar(boolean editable) {
-       
+
         // toolbar
         monitorButton = new ET_JButton("Save and Monitor/Process Raw Data");
         monitorButton.setBounds(leftMargin, 525, 225, 25);
@@ -687,7 +693,7 @@ public abstract class AbstractProjectParametersManager extends JLayeredPane {
         saveButton.setEnabled(editable);
         this.add(saveButton);
 
-        ET_JButton repropagateButton = new ET_JButton("Re-propagate Unct");
+        repropagateButton = new ET_JButton("Re-propagate Unct");
         repropagateButton.setBounds(leftMargin + 125 + 225 + 225, 525, 150, 25);
         repropagateButton.addActionListener((ActionEvent ae) -> {
             // dec 2014

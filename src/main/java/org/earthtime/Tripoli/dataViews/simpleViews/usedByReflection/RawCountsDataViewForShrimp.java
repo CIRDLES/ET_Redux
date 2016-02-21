@@ -1,9 +1,7 @@
 /*
- * RawIntensitiesDataView.java
+ * RawCountsDataViewForShrimp.java
  *
- * Created Jul 6, 2011
- *
- * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2016 James F. Bowring and www.Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,37 +17,32 @@
  */
 package org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
+import java.awt.event.MouseEvent;
+import java.awt.geom.Line2D;
+import java.awt.geom.Path2D;
 import javax.swing.JLayeredPane;
-import org.earthtime.Tripoli.dataModels.DataModelFitFunctionInterface;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
 import org.earthtime.Tripoli.dataModels.RawIntensityDataModel;
 import org.earthtime.Tripoli.dataViews.AbstractRawDataView;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
-import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.dataDictionaries.FitFunctionTypeEnum;
 import org.earthtime.utilities.TicGeneratorForAxes;
 
 /**
  *
  * @author James F. Bowring
  */
-public class RawIntensitiesDataView extends AbstractRawDataView {
+public class RawCountsDataViewForShrimp extends AbstractRawDataView {
 
     /**
      *
      */
     public static int DEFAULT_WIDTH_OF_PANE = 128;
-
-    private double[] normalizedBackgroundAquireTimes;
-    private double[] backgroundIntensities;
-    private double[] backgroundFitIntensities;
-    private double[] onPeakIntensityUncorrectedForMercury;
-    private double[] backgroundIntensityUncorrectedForMercury;
-    private double[] onPeakFitBackgroundIntensities;
+    private double[] myOnPeakTwoSigmas;
 
     /**
      *
@@ -59,17 +52,15 @@ public class RawIntensitiesDataView extends AbstractRawDataView {
      * @param bounds
      * @param invokeMouseListener
      */
-    public RawIntensitiesDataView (//
+    public RawCountsDataViewForShrimp(//
             JLayeredPane sampleSessionDataView,//
             TripoliFraction tripoliFraction,//
             DataModelInterface rawIsotopeDataModel,//
             Rectangle bounds,//
-            boolean invokeMouseListener ) {
-        super( sampleSessionDataView, tripoliFraction, bounds, invokeMouseListener, true );
+            boolean invokeMouseListener) {
+        super(sampleSessionDataView, tripoliFraction, bounds, invokeMouseListener, true);
 
         this.rawRatioDataModel = rawIsotopeDataModel;
-        this.normalizedBackgroundAquireTimes = null;
-
     }
 
     /**
@@ -77,62 +68,50 @@ public class RawIntensitiesDataView extends AbstractRawDataView {
      * @param g2d
      */
     @Override
-    public void paint ( Graphics2D g2d ) {
-        super.paint( g2d );
+    public void paint(Graphics2D g2d) {
+        super.paint(g2d);
 
-        if (rawRatioDataModel.isBelowDetection()){
-            setBackground(ReduxConstants.palePinkBelowDetection);
-            g2d.drawString("BELOW DETECTION", 25, 25);
-        }
-        
-        // draw background intensities
-        for (int i = 0; i < backgroundIntensities.length; i ++) {
-            Shape intensity = new java.awt.geom.Ellipse2D.Double(//
-                    mapX( normalizedBackgroundAquireTimes[i] ), mapY( backgroundIntensities[i] ), 1, 1 );
-            g2d.setPaint( Color.BLACK );
-            g2d.draw( intensity );
+        Path2D pointTrace = new Path2D.Double(Path2D.WIND_NON_ZERO);
+        pointTrace.moveTo(mapX(myOnPeakNormalizedAquireTimes[0]), mapY(myOnPeakData[0]));
+        for (int i = 0; i < myOnPeakData.length; i++) {
+            // line tracing through points
+            pointTrace.lineTo(mapX(myOnPeakNormalizedAquireTimes[i]), mapY(myOnPeakData[i]));
+            g2d.setStroke(new BasicStroke(0.5f));
+            g2d.setPaint(determineDataColor(i, Color.GRAY));
+            g2d.draw(pointTrace);
 
-            // test for presence of fitfunction (ie mercury has none)
-            if (  ! ((DataModelFitFunctionInterface) rawRatioDataModel).getSelectedFitFunctionType().equals( FitFunctionTypeEnum.NONE ) ) {
-                Shape background = new java.awt.geom.Ellipse2D.Double( //
-                        mapX( normalizedBackgroundAquireTimes[i] ), mapY( backgroundFitIntensities[i] ), 1, 1 );
-                g2d.setPaint( Color.RED );
-                g2d.draw( background );
-            }
-
-            // check for presence of mercury corrections
-            if ( onPeakIntensityUncorrectedForMercury[0] != 0.0 ) {
-                Shape correction = new java.awt.geom.Ellipse2D.Double( //
-                        mapX( normalizedBackgroundAquireTimes[i] ), mapY( backgroundIntensityUncorrectedForMercury[i] ), 1, 1 );
-                g2d.setPaint( Color.GREEN );
-                g2d.draw( correction );
-            }
-        }
-
-        shiftAquiredTimeIndex = normalizedBackgroundAquireTimes[normalizedBackgroundAquireTimes.length - 1] + 1;
-        for (int i = 0; i < myOnPeakData.length; i ++) {
             Shape intensity = new java.awt.geom.Ellipse2D.Double( //
-                    mapX( shiftAquiredTimeIndex + myOnPeakNormalizedAquireTimes[i] ), mapY( myOnPeakData[i] ), 1, 1 );
-            g2d.setPaint( determineDataColor( i, Color.black ) );
+                    mapX(myOnPeakNormalizedAquireTimes[i]) - 1, mapY(myOnPeakData[i]) - 1, 2, 2);
+            g2d.setStroke(new BasicStroke(1.5f));
+            g2d.setPaint(determineDataColor(i, Color.black));
+            g2d.draw(intensity);
 
-            g2d.draw( intensity );
+            // uncertainty
+            Shape plusMinusTwoSigma = new Line2D.Double(//
+                    mapX(myOnPeakNormalizedAquireTimes[i]),// 
+                    mapY(myOnPeakData[i] - myOnPeakTwoSigmas[i]),//
+                    mapX(myOnPeakNormalizedAquireTimes[i]),// 
+                    mapY(myOnPeakData[i] + myOnPeakTwoSigmas[i]));
+            g2d.setStroke(new BasicStroke(1.0f));
+            g2d.draw(plusMinusTwoSigma);
 
-            // test for presence of fitfunction (ie mercury has none)
-            if (  ! ((DataModelFitFunctionInterface) rawRatioDataModel).getSelectedFitFunctionType().equals( FitFunctionTypeEnum.NONE ) ) {
-                Shape background = new java.awt.geom.Ellipse2D.Double( //
-                        mapX( shiftAquiredTimeIndex + myOnPeakNormalizedAquireTimes[i] ), mapY( onPeakFitBackgroundIntensities[i] ), 1, 1 );
-                g2d.setPaint( Color.BLUE );
-                g2d.draw( background );
-            }
+            // tips of uncertainty
+            Shape plusTwoSigmaTip = new Line2D.Double(//
+                    mapX(myOnPeakNormalizedAquireTimes[i]) - 1,// 
+                    mapY(myOnPeakData[i] + myOnPeakTwoSigmas[i]),//
+                    mapX(myOnPeakNormalizedAquireTimes[i]) + 1,// 
+                    mapY(myOnPeakData[i] + myOnPeakTwoSigmas[i]));
 
-            // check for presence of mercury corrections
-            if ( onPeakIntensityUncorrectedForMercury[0] != 0.0 ) {
-                Shape correction = new java.awt.geom.Ellipse2D.Double( //
-                        mapX( shiftAquiredTimeIndex + myOnPeakNormalizedAquireTimes[i] ), mapY( onPeakIntensityUncorrectedForMercury[i] ), 1, 1 );
-//                g2d.setPaint( Color.GREEN );
-                g2d.setPaint( determineDataColor( i, Color.GREEN ) );
-                g2d.draw( correction );
-            }
+            Shape minusTwoSigmaTip = new Line2D.Double(//
+                    mapX(myOnPeakNormalizedAquireTimes[i]) - 1,// 
+                    mapY(myOnPeakData[i] - myOnPeakTwoSigmas[i]),//
+                    mapX(myOnPeakNormalizedAquireTimes[i]) + 1,// 
+                    mapY(myOnPeakData[i] - myOnPeakTwoSigmas[i]));
+
+            g2d.setStroke(new BasicStroke(1.0f));
+            g2d.draw(plusTwoSigmaTip);
+            g2d.draw(minusTwoSigmaTip);
+
         }
     }
 
@@ -140,94 +119,38 @@ public class RawIntensitiesDataView extends AbstractRawDataView {
      *
      */
     @Override
-    public void preparePanel () {
+    public void preparePanel() {
 
         this.removeAll();
 
-        setDisplayOffsetY( 0.0 );
-        setDisplayOffsetX( 0.0 );
-
-        // walk intensities and get min and max for axes
-        backgroundIntensities = ((RawIntensityDataModel) rawRatioDataModel).getBackgroundCountsPerSecondAsRawIntensities();//     .getBackgroundVirtualCollector().getIntensities();
-        backgroundFitIntensities = ((RawIntensityDataModel) rawRatioDataModel).getBackgroundFitCountsPerSecondAsRawIntensities();//  .getBackgroundVirtualCollector().getFitBackgroundIntensities();
+        setDisplayOffsetY(0.0);
+        setDisplayOffsetX(0.0);
 
         myOnPeakData = ((RawIntensityDataModel) rawRatioDataModel).getOnPeakCountsPerSecondAsRawIntensities();//   .getOnPeakVirtualCollector().getIntensities();
-
-        // recalculate original un-mercury corrected on peak data (only pertains to Pb204)
-        double[] onPeakMercuryCorrections = //
-                ((RawIntensityDataModel) rawRatioDataModel).getOnPeakCountsPerSecondCorrectionsAsRawIntensities();//   .getOnPeakVirtualCollector().getIntensityCorrections();
-        // only if corrected do we uncorrect
-        onPeakIntensityUncorrectedForMercury = new double[onPeakMercuryCorrections.length];
-        if ( onPeakMercuryCorrections[0] != 0.0 ) {
-            for (int i = 0; i < myOnPeakData.length; i ++) {
-                onPeakIntensityUncorrectedForMercury[i] = myOnPeakData[i] + onPeakMercuryCorrections[i];
-            }
-
-            // recalculate original un-mercury corrected background data (only pertains to Pb204)
-            double[] backgroundMercuryCorrections = //
-                    ((RawIntensityDataModel) rawRatioDataModel).getBackgroundCountsPerSecondCorrectionsAsRawIntensities();//   .getBackgroundVirtualCollector().getIntensityCorrections();
-            backgroundIntensityUncorrectedForMercury = new double[backgroundMercuryCorrections.length];
-            for (int i = 0; i < backgroundIntensities.length; i ++) {
-                backgroundIntensityUncorrectedForMercury[i] = backgroundIntensities[i] + backgroundMercuryCorrections[i];
-            }
+        double[] myOnPeakVariances = ((RawIntensityDataModel) rawRatioDataModel).getDiagonalOfMatrixSIntensities();
+        myOnPeakTwoSigmas = new double[myOnPeakVariances.length];
+        for (int i = 0; i < myOnPeakVariances.length; i++) {
+            myOnPeakTwoSigmas[i] = 2.0 * Math.sqrt(myOnPeakVariances[i]);
         }
-
-
-        onPeakFitBackgroundIntensities = ((RawIntensityDataModel) rawRatioDataModel).getOnPeakFitCountsPerSecondAsRawIntensities();// .getOnPeakVirtualCollector().getFitBackgroundIntensities();
-
-
-        // normalize aquireTimes
-        normalizedBackgroundAquireTimes = ((RawIntensityDataModel) rawRatioDataModel).getNormalizedBackgroundAquireTimes();
-
         myOnPeakNormalizedAquireTimes = rawRatioDataModel.getNormalizedOnPeakAquireTimes();
 
-
         // X-axis lays out time evenly spaced
-        minX = normalizedBackgroundAquireTimes[0];
-        maxX = normalizedBackgroundAquireTimes[normalizedBackgroundAquireTimes.length - 1]//
-                + myOnPeakNormalizedAquireTimes[myOnPeakNormalizedAquireTimes.length - 1] + 1;// say 0...14 and 15...29
+        minX = myOnPeakNormalizedAquireTimes[0];
+        maxX = myOnPeakNormalizedAquireTimes[myOnPeakNormalizedAquireTimes.length - 1] + 1;// say 0...14 and 15...29
 
         // Y-axis is intensities as voltages plus or minus
         minY = Double.MAX_VALUE;
-        maxY =  - Double.MAX_VALUE;
+        maxY = -Double.MAX_VALUE;
 
-        // background
-        for (int i = 0; i < backgroundIntensities.length; i ++) {
-            minY = Math.min( minY, backgroundIntensities[i] );
-            maxY = Math.max( maxY, backgroundIntensities[i] );
-            
-            if (  ! ((DataModelFitFunctionInterface) rawRatioDataModel).getSelectedFitFunctionType().equals( FitFunctionTypeEnum.NONE ) ) {
-                minY = Math.min( minY, backgroundFitIntensities[i] );
-                maxY = Math.max( maxY, backgroundFitIntensities[i] );
-            }
-            
-            if ( onPeakMercuryCorrections[0] != 0.0 ) {
-                minY = Math.min( minY, backgroundIntensityUncorrectedForMercury[i] );
-                maxY = Math.max( maxY, backgroundIntensityUncorrectedForMercury[i] );
-            }
-        }
-        
         // on peak
-        for (int i = 0; i < myOnPeakData.length; i ++) {
-            minY = Math.min( minY, myOnPeakData[i] );
-            maxY = Math.max( maxY, myOnPeakData[i] );
-            
-            if (  ! ((DataModelFitFunctionInterface) rawRatioDataModel).getSelectedFitFunctionType().equals( FitFunctionTypeEnum.NONE ) ) {
-                minY = Math.min( minY, onPeakFitBackgroundIntensities[i] );
-                maxY = Math.max( maxY, onPeakFitBackgroundIntensities[i] );
-            }
-            
-            if ( onPeakMercuryCorrections[0] != 0.0 ) {
-                minY = Math.min( minY, onPeakIntensityUncorrectedForMercury[i] );
-                maxY = Math.max( maxY, onPeakIntensityUncorrectedForMercury[i] );
-            }
- 
+        for (int i = 0; i < myOnPeakData.length; i++) {
+            minY = Math.min(minY, myOnPeakData[i] - myOnPeakTwoSigmas[i]);
+            maxY = Math.max(maxY, myOnPeakData[i] + myOnPeakTwoSigmas[i]);
         }
-        
-        
+
         // adjust margins for unknowns
-        if (  ! tripoliFraction.isStandard() ) {
-            double yMarginStretch = TicGeneratorForAxes.generateMarginAdjustment( minY, maxY, 0.05 );
+        if (!tripoliFraction.isStandard()) {
+            double yMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(minY, maxY, 0.05);
             minY -= yMarginStretch;
             maxY += yMarginStretch;
         }
@@ -237,18 +160,23 @@ public class RawIntensitiesDataView extends AbstractRawDataView {
      * @return the rawRatioDataModel
      */
     @Override
-    public DataModelInterface getDataModel () {
+    public DataModelInterface getDataModel() {
         return rawRatioDataModel;
     }
-//    /**
-//     * 
-//     * @param included
-//     */
-//    @Override
-//    public void toggleFractionInclusion ( boolean included ) {
-//        tripoliFraction.toggleAllDataExceptShaded( included );
-//        tripoliFraction.updateCorrectedRatioStatistics();
-//        ((TripoliFractionViewInterface) tripoliFraction).setShowVerticalLineAtThisIndex( -1 );
-//        repaintFraction();
-//    }
+
+    @Override
+    public void mouseDragged(MouseEvent evt) {
+        // prevent point rejection
+    }
+
+    @Override
+    public void mousePressed(MouseEvent evt) {
+        // prevent point rejection
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        // prevent point rejection
+    }
+
 }

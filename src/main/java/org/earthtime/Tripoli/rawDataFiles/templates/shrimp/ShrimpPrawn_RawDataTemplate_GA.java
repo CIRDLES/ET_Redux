@@ -25,7 +25,9 @@ import org.earthtime.Tripoli.dataModels.inputParametersModels.AbstractAcquisitio
 import org.earthtime.Tripoli.dataModels.inputParametersModels.SingleCollectorAcquisition;
 import org.earthtime.Tripoli.massSpecSetups.singleCollector.shrimp.ShrimpSetupUPb;
 import org.earthtime.Tripoli.rawDataFiles.templates.AbstractRawDataFileTemplate;
+import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.dataDictionaries.FileTypeEnum;
+import org.earthtime.reduxLabData.ReduxLabData;
 
 /**
  *
@@ -71,6 +73,10 @@ public final class ShrimpPrawn_RawDataTemplate_GA extends AbstractRawDataFileTem
     @Override
     public AbstractAcquisitionModel makeNewAcquisitionModel() {
         this.acquisitionModel = new SingleCollectorAcquisition();
+        try {
+            acquisitionModel.setPrimaryMineralStandardModel(ReduxLabData.getInstance().getAMineralStandardModel("Temora Placeholder v.1.0"));
+        } catch (BadLabDataException badLabDataException) {
+        }
         return acquisitionModel;
     }
 

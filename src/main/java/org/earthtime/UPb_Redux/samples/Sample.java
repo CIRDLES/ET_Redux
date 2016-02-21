@@ -760,6 +760,9 @@ public class Sample implements
      */
     @Override
     public String getSampleName() {
+        if (sampleName == null){
+            sampleName = "NONE";
+        }
         return sampleName;
     }
 

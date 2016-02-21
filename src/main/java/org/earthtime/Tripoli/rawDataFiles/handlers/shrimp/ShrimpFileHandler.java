@@ -32,6 +32,7 @@ import javax.xml.bind.Unmarshaller;
 import org.cirdles.shrimp.PrawnFile;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
+import org.earthtime.Tripoli.massSpecSetups.singleCollector.shrimp.ShrimpSetupUPb;
 import org.earthtime.Tripoli.rawDataFiles.handlers.AbstractRawDataFileHandler;
 
 /**
@@ -164,6 +165,8 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
             prawnFile = (PrawnFile) jaxbUnmarshaller.unmarshal(url);//  url);
 
+            // send name to project
+            loadDataTask.firePropertyChange("projectName", "", prawnFile.getMount());
             // assume we are golden   
             // a 'run' is an analysis or fraction
             for (int f = ignoreFirstFractions; f < prawnFile.getRuns(); f++) {
@@ -197,6 +200,8 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
 
     private TripoliFraction processRunFraction(PrawnFile.Run runFraction) {
         String fractionID = runFraction.getPar().get(0).getValue();
+        // temp hack
+        boolean isReferenceMaterial = fractionID.startsWith("T.");
 
         // format "2010-11-11"
         String setDate = runFraction.getSet().getPar().get(0).getValue();
@@ -215,13 +220,14 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
         // later we will give user interactive tools to pick them out
         ArrayList<double[]> backgroundAcquisitions = new ArrayList<>();
         ArrayList<double[]> peakAcquisitions = new ArrayList<>();
+        ArrayList<double[]> peakAcquisitionsVariances = new ArrayList<>();
 
         for (int scan = 0; scan < extractedData.length; scan++) {
             // use these for now: 196  204  206 Pb207	Pb208	238 248 254 270
-            double[] backgroundCounts = new double[9];
             double[] peakCounts = new double[9];
-            backgroundAcquisitions.add(backgroundCounts);
+            double[] peakVariances = new double[9];
             peakAcquisitions.add(peakCounts);
+            peakAcquisitionsVariances.add(peakVariances);
 
             peakCounts[0] = extractedData[scan][1];
             peakCounts[1] = extractedData[scan][4];
@@ -232,13 +238,23 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
             peakCounts[6] = extractedData[scan][22];
             peakCounts[7] = extractedData[scan][25];
             peakCounts[8] = extractedData[scan][28];
+
+            peakVariances[0] = Math.pow(extractedData[scan][2], 2);
+            peakVariances[1] = Math.pow(extractedData[scan][5], 2);
+            peakVariances[2] = Math.pow(extractedData[scan][11], 2);
+            peakVariances[3] = Math.pow(extractedData[scan][14], 2);
+            peakVariances[4] = Math.pow(extractedData[scan][17], 2);
+            peakVariances[5] = Math.pow(extractedData[scan][20], 2);
+            peakVariances[6] = Math.pow(extractedData[scan][23], 2);
+            peakVariances[7] = Math.pow(extractedData[scan][26], 2);
+            peakVariances[8] = Math.pow(extractedData[scan][29], 2);
         }
 
         TripoliFraction tripoliFraction
                 = new TripoliFraction( //
                         fractionID, //
                         massSpec.getCommonLeadCorrectionHighestLevel(), //
-                        false,
+                        isReferenceMaterial,
                         fractionPeakTimeStamp, //
                         fractionPeakTimeStamp,
                         peakAcquisitions.size());
@@ -251,13 +267,14 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
 
         massSpec.processFractionRawRatiosII(//
                 backgroundAcquisitions, peakAcquisitions, true, tripoliFraction);
-
+        
+        // supply calculated variances
+        ((ShrimpSetupUPb)massSpec).initializeVariances(peakAcquisitionsVariances);
+        
         tripoliFraction.shadeDataActiveMapLeft(0);
-        System.out.println("\n**** Element II FractionID  " + fractionID + " refMat? " + tripoliFraction.isStandard() + " <<<<<<<<<<<<<<<<<<\n");
+        System.out.println("\n**** SHRIMP FractionID  " + fractionID + " refMat? " + tripoliFraction.isStandard() + " <<<<<<<<<<<<<<<<<<\n");
 
         return tripoliFraction;
     }
-
-    
 
 }

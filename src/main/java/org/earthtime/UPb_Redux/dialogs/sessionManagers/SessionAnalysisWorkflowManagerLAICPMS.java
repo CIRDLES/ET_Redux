@@ -204,7 +204,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
             // setup sliders
             tripoliSessionDataView_scrollPane.getHorizontalScrollBar().setUnitIncrement(xAxisZoomSlider.getValue());
             tripoliSessionDataView_scrollPane.getHorizontalScrollBar().setBlockIncrement(xAxisZoomSlider.getValue());
-
+            
             // setup listener so header panels scroll outside of scrollpane
             tripoliSessionDataView_scrollPane.getHorizontalScrollBar().removeAll();
             tripoliSessionDataView_scrollPane.getHorizontalScrollBar().addAdjustmentListener(new AdjustmentListener() {
@@ -1492,6 +1492,7 @@ private void selectStandards_chkBoxActionPerformed(java.awt.event.ActionEvent ev
 private void selectUnknowns_chkBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectUnknowns_chkBoxActionPerformed
     updateFractionSelection();
     tripoliSessionRawDataView.refreshPanel();
+    tripoliSessionDataView_scrollPane.revalidate();
 }//GEN-LAST:event_selectUnknowns_chkBoxActionPerformed
 
 private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeAllIndividualYAxisPanes_buttonActionPerformed
@@ -1528,7 +1529,7 @@ private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.
 
     private void switchToProjectManager_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_switchToProjectManager_buttonActionPerformed
         this.close();
-        ((DialogEditor)projectManager).setVisible(true);
+        ((DialogEditor) projectManager).setVisible(true);
     }//GEN-LAST:event_switchToProjectManager_buttonActionPerformed
 
     private void restoreAllAquisitionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_restoreAllAquisitionsActionPerformed
