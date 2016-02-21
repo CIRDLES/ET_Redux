@@ -132,7 +132,7 @@ public class MineralStandardUPbModel extends AbstractRatiosDataModel {
     }
     private static final AbstractRatiosDataModel EARTHTIMESriLankaStandardModel
             = //
-            createInstance("EARTHTIME SriLanka Standard",
+            createInstance("EARTHTIME SriLanka Reference Material",
                     1, 0,//
                     "EARTHTIME",//
                     "2012-04-01",
@@ -195,8 +195,7 @@ public class MineralStandardUPbModel extends AbstractRatiosDataModel {
 
     }
     private static final AbstractRatiosDataModel EARTHTIMEPeixeStandardModel
-            = //
-            createInstance("EARTHTIME Peixe Standard",
+            = createInstance("EARTHTIME Peixe Reference Material",
                     1, 0,//
                     "EARTHTIME",//
                     "2012-04-01",
@@ -260,7 +259,7 @@ public class MineralStandardUPbModel extends AbstractRatiosDataModel {
     }
     private static final AbstractRatiosDataModel EARTHTIMEPlesoviceStandardModel
             = //
-            createInstance("EARTHTIME Plesovice Standard",
+            createInstance("EARTHTIME Plesovice Reference Material",
                     1, 0,//
                     "EARTHTIME",//
                     "2012-04-01",
@@ -425,13 +424,13 @@ public class MineralStandardUPbModel extends AbstractRatiosDataModel {
     public static AbstractRatiosDataModel createNewInstance() {
 
         AbstractRatiosDataModel myModel = new MineralStandardUPbModel(//
-                "New Mineral Standard UPb Model", //
+                "New Reference Material UPb Model", //
                 1, 0, //
                 "No Lab", //
                 DateHelpers.defaultEarthTimeDateString(), //
                 "No reference", //
                 "No comment",//
-                "Some Mineral Standard",//
+                "Some Reference Material",//
                 "Some Mineral",
                 InitialPbModelET.getNoneInstance());
 
@@ -915,11 +914,7 @@ public class MineralStandardUPbModel extends AbstractRatiosDataModel {
         sriLanka2.serializeXMLObject(testFileName);
         try {
             sriLanka2.readXMLObject(testFileName, false);
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(MineralStandardUPbModel.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ETException ex) {
-            Logger.getLogger(MineralStandardUPbModel.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (BadOrMissingXMLSchemaException ex) {
+        } catch (FileNotFoundException | ETException | BadOrMissingXMLSchemaException ex) {
             Logger.getLogger(MineralStandardUPbModel.class.getName()).log(Level.SEVERE, null, ex);
         }
 

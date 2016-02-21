@@ -21,7 +21,6 @@
 package org.earthtime.reduxLabData;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -30,7 +29,6 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import static org.earthtime.UPb_Redux.ReduxConstants.myUsersUPbReduxDataFolderName;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
@@ -349,19 +347,19 @@ public final class ReduxLabData implements Serializable {
         if (instance == null) {
             instance = (ReduxLabData) ETSerializer.GetSerializedObjectFromFile(ReduxLabData.getMySerializedName());
             if (instance == null) {
-                // test for transition to ET_Redux from U-Pb_Redux
-                // jan 2015 check if old U-Pb_Redux folder exists and copy file from there
-                File dataFolderUPbRedux = new File(
-                        File.separator + System.getProperty("user.home") + File.separator + myUsersUPbReduxDataFolderName);
-                if (dataFolderUPbRedux.exists()) {
-                    try {
-                        instance = (ReduxLabData) ETSerializer.GetSerializedObjectFromFile(dataFolderUPbRedux.getCanonicalPath() + File.separator + labDataFileName);
-                    } catch (IOException iOException) {
-                    }
-                }
-                if (instance == null) {
+//                // test for transition to ET_Redux from U-Pb_Redux
+//                // jan 2015 check if old U-Pb_Redux folder exists and copy file from there
+//                File dataFolderUPbRedux = new File(
+//                        File.separator + System.getProperty("user.home") + File.separator + myUsersUPbReduxDataFolderName);
+//                if (dataFolderUPbRedux.exists()) {
+//                    try {
+//                        instance = (ReduxLabData) ETSerializer.GetSerializedObjectFromFile(dataFolderUPbRedux.getCanonicalPath() + File.separator + labDataFileName);
+//                    } catch (IOException iOException) {
+//                    }
+//                }
+//                if (instance == null) {
                     instance = new ReduxLabData();
-                }
+//                }
             }
         }
         return instance;

@@ -46,7 +46,6 @@ import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
@@ -2619,17 +2618,13 @@ public class LabDataEditorDialog extends DialogEditor {
         JSpinner leftMaskSpinner = new JSpinner(leftMaskModel);
         leftMaskSpinner.setBounds(475, 25, 40, 25);
         leftMaskSpinner.setValue(myLabData.getDefaultLeftShadeCountForLAICPMSAquisitions());
-        leftMaskSpinner.addChangeListener(new ChangeListener() {
-
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                myLabData.setDefaultLeftShadeCountForLAICPMSAquisitions((int) leftMaskSpinner.getValue());
-            }
+        leftMaskSpinner.addChangeListener((ChangeEvent e) -> {
+            myLabData.setDefaultLeftShadeCountForLAICPMSAquisitions((int) leftMaskSpinner.getValue());
         });
         LAICPMSLabDefaultsPane.add(leftMaskSpinner);
 
         // set up defaultLAICPMSPrimaryMineralStandardModel_Chooser
-        JLabel defaultPrimaryStandardLabel = new JLabel("Select default Primary Mineral Reference Material Model: ");
+        JLabel defaultPrimaryStandardLabel = new JLabel("Select default Primary Reference Material Model: ");
         defaultPrimaryStandardLabel.setHorizontalAlignment(SwingConstants.LEFT);
         defaultPrimaryStandardLabel.setFont(ReduxConstants.sansSerif_12_Bold);
         defaultPrimaryStandardLabel.setBounds(25, 60, 450, 25);
@@ -3632,7 +3627,7 @@ public class LabDataEditorDialog extends DialogEditor {
         details_pane.addTab("Physical Const. Models", physicalConstantsModels_panel);
 
         chooseMineralStandardModel_label.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
-        chooseMineralStandardModel_label.setText("  Choose Mineral Reference Material Model:");
+        chooseMineralStandardModel_label.setText("  Choose Reference Material Model:");
 
         org.jdesktop.layout.GroupLayout mineralStandard_panelLayout = new org.jdesktop.layout.GroupLayout(mineralStandard_panel);
         mineralStandard_panel.setLayout(mineralStandard_panelLayout);
@@ -3640,9 +3635,9 @@ public class LabDataEditorDialog extends DialogEditor {
             mineralStandard_panelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(mineralStandard_panelLayout.createSequentialGroup()
                 .add(18, 18, 18)
-                .add(chooseMineralStandardModel_label, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 260, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(MineralStandardModelChooser, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 590, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(chooseMineralStandardModel_label, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 212, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(18, 18, 18)
+                .add(MineralStandardModelChooser, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 632, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(212, 212, 212))
         );
         mineralStandard_panelLayout.setVerticalGroup(
@@ -3655,7 +3650,7 @@ public class LabDataEditorDialog extends DialogEditor {
                 .add(584, 584, 584))
         );
 
-        details_pane.addTab("Mineral Ref Mat Models", mineralStandard_panel);
+        details_pane.addTab("Ref Material Models", mineralStandard_panel);
 
         jLabel1.setText("Coming soon ...");
 
@@ -4840,7 +4835,7 @@ public class LabDataEditorDialog extends DialogEditor {
 
         labData_menuBar.add(physicalConstantsModels_menu);
 
-        MineralStdModels_menu.setText("Mineral Ref Material Models");
+        MineralStdModels_menu.setText("Reference Material Models");
         MineralStdModels_menu.addMenuListener(new javax.swing.event.MenuListener() {
             public void menuSelected(javax.swing.event.MenuEvent evt) {
                 mineralStdModels_menuMenuSelected(evt);
@@ -4851,7 +4846,7 @@ public class LabDataEditorDialog extends DialogEditor {
             }
         });
 
-        importLocalMineralStdModelXML_menuItem.setText("Import Mineral Reference Material Model from XML file");
+        importLocalMineralStdModelXML_menuItem.setText("Import Reference Material Model from XML file");
         importLocalMineralStdModelXML_menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 importLocalMineralStdModelXML_menuItemActionPerformed(evt);
@@ -4859,7 +4854,7 @@ public class LabDataEditorDialog extends DialogEditor {
         });
         MineralStdModels_menu.add(importLocalMineralStdModelXML_menuItem);
 
-        saveMineralStdModelAsXML_menuItem.setText("Export Mineral Reference Material Model as XML file");
+        saveMineralStdModelAsXML_menuItem.setText("Export Reference Material Model as XML file");
         saveMineralStdModelAsXML_menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 saveMineralStdModelAsXML_menuItemActionPerformed(evt);
@@ -4868,7 +4863,7 @@ public class LabDataEditorDialog extends DialogEditor {
         MineralStdModels_menu.add(saveMineralStdModelAsXML_menuItem);
         MineralStdModels_menu.add(jSeparator16);
 
-        removeMineralStdModel_menuItem.setText("Remove current Mineral Reference Material Model (for editable models only)");
+        removeMineralStdModel_menuItem.setText("Remove current Reference Material Model (for editable models only)");
         removeMineralStdModel_menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 removeMineralStdModel_menuItemActionPerformed(evt);
@@ -4877,7 +4872,7 @@ public class LabDataEditorDialog extends DialogEditor {
         MineralStdModels_menu.add(removeMineralStdModel_menuItem);
         MineralStdModels_menu.add(jSeparator17);
 
-        editCurrentLocalMineralStandardModel_menuItem.setText("Edit current Mineral Reference Material Model (for editable models only)");
+        editCurrentLocalMineralStandardModel_menuItem.setText("Edit current Reference Material Model (for editable models only)");
         editCurrentLocalMineralStandardModel_menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 editCurrentLocalMineralStandardModel_menuItemActionPerformed(evt);
@@ -4885,7 +4880,7 @@ public class LabDataEditorDialog extends DialogEditor {
         });
         MineralStdModels_menu.add(editCurrentLocalMineralStandardModel_menuItem);
 
-        editCopyOfCurrentMineralStdModel_menuItem.setText("Edit Copy of current Mineral Reference Material Model");
+        editCopyOfCurrentMineralStdModel_menuItem.setText("Edit Copy of current Reference Material Model");
         editCopyOfCurrentMineralStdModel_menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 editCopyOfCurrentMineralStdModel_menuItemActionPerformed(evt);
@@ -4893,7 +4888,7 @@ public class LabDataEditorDialog extends DialogEditor {
         });
         MineralStdModels_menu.add(editCopyOfCurrentMineralStdModel_menuItem);
 
-        newMineralStdModel_menuItem.setText("Edit New empty Mineral Reference Material Model");
+        newMineralStdModel_menuItem.setText("Edit New empty Reference Material Model");
         newMineralStdModel_menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 newMineralStdModel_menuItemActionPerformed(evt);
@@ -4901,7 +4896,7 @@ public class LabDataEditorDialog extends DialogEditor {
         });
         MineralStdModels_menu.add(newMineralStdModel_menuItem);
 
-        cancelNewEditMineralStdModel_menuItem.setText("Cancel Edit of Mineral Reference Material Model");
+        cancelNewEditMineralStdModel_menuItem.setText("Cancel Edit of  Reference Material Model");
         cancelNewEditMineralStdModel_menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cancelNewEditMineralStdModel_menuItemActionPerformed(evt);
@@ -4910,7 +4905,7 @@ public class LabDataEditorDialog extends DialogEditor {
         MineralStdModels_menu.add(cancelNewEditMineralStdModel_menuItem);
         MineralStdModels_menu.add(jSeparator18);
 
-        saveAndRegisterCurrentEditOfMineralStandardModel_menuItem.setText("Save and Register Current Edit of Mineral Reference Material Model");
+        saveAndRegisterCurrentEditOfMineralStandardModel_menuItem.setText("Save and Register Current Edit of Reference Material Model");
         saveAndRegisterCurrentEditOfMineralStandardModel_menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 saveAndRegisterCurrentEditOfMineralStandardModel_menuItemActionPerformed(evt);
