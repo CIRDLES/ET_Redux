@@ -169,12 +169,12 @@ public class UnivKansasElementIIFileHandler extends AbstractRawDataFileHandler{
             String fractionID = analysisFiles[f].getName().toUpperCase().replace(".FIN2", "");
 
             // hard-wired april 2015
-            boolean isStandard = false;
-            if (f < 3) {
-                isStandard = true;
-            } else if ((analysisFiles.length - f) < 4) {
-                isStandard = true;
-            }
+            boolean isStandard = fractionID.toUpperCase().startsWith("GJ1");
+//            if (f < 3) {
+//                isStandard = true;
+//            } else if ((analysisFiles.length - f) < 4) {
+//                isStandard = true;
+//            }
 
             // get file contents
             String fractionFileContents = URIHelper.getTextFromURI(analysisFiles[f].getAbsolutePath());
@@ -259,7 +259,7 @@ public class UnivKansasElementIIFileHandler extends AbstractRawDataFileHandler{
                         backgroundAcquisitions, peakAcquisitions, usingFullPropagation, tripoliFraction, virtualCollectorModelMapToFieldIndexes);
 
                 tripoliFraction.shadeDataActiveMapLeft(leftShadeCount);
-                System.out.println("\n**** Element II FractionID  " + fractionID + "  " + fractionDateValue.toString());
+                System.out.println("\n**** Element II FractionID  " + fractionID + "  " + fractionDateValue.toString() + "  is std: " + tripoliFraction.isStandard() + " >>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
 
                 myTripoliFractions.add(tripoliFraction);
 
