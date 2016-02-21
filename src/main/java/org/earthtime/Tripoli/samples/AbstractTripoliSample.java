@@ -91,7 +91,9 @@ public abstract class AbstractTripoliSample implements //
         } catch (Exception e) {
             return -1;
         }
-        return ((Long) myTsTimeStamp).compareTo((Long) tsTimeStamp);
+
+        // force reference material to beginning of list
+        return (ts.getSampleFractions().first().isStandard() || (this.getSampleFractions().first().isStandard())) ? -1 : ((Long) myTsTimeStamp).compareTo((Long) tsTimeStamp);
     }
 
     /**
@@ -146,7 +148,7 @@ public abstract class AbstractTripoliSample implements //
      */
     public void setInitialPbModelForAllFractions(AbstractRatiosDataModel initialPbModelET) {
         for (TripoliFraction tf : sampleFractions) {
-            if (tf.getCommonLeadLossCorrectionScheme().getName().compareToIgnoreCase("A2") != 0){
+            if (tf.getCommonLeadLossCorrectionScheme().getName().compareToIgnoreCase("A2") != 0) {
                 tf.setInitialPbModelET(initialPbModelET);
             } else {
                 tf.setInitialPbModelET(StaceyKramersInitialPbModelET.getStaceyKramersInstance());

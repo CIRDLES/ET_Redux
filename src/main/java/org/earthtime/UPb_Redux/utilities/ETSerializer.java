@@ -22,7 +22,9 @@ package org.earthtime.UPb_Redux.utilities;
 
 import java.io.*;
 import javax.swing.JOptionPane;
+import org.earthtime.UPb_Redux.user.ReduxPersistentState;
 import org.earthtime.exceptions.ETException;
+import org.earthtime.reduxLabData.ReduxLabData;
 
 /**
  *
@@ -73,7 +75,12 @@ public final class ETSerializer {
             s = new ObjectInputStream(in);
             o = s.readObject();
         } catch (FileNotFoundException ex) {
-            System.out.println(ex.getMessage());
+            if ((!filename.endsWith(ReduxLabData.getLabDataFileName()))&& (!filename.endsWith(ReduxPersistentState.getPersistentStateFileName()))) {
+                JOptionPane.showMessageDialog(null,
+                        new String[]{"The file you are attempting to open does not exist:\n"
+                            + " " + filename //,
+                    });
+            }
         } catch (IOException | ClassNotFoundException ex) {
             JOptionPane.showMessageDialog(null,
                     new String[]{"The file you are attempting to open is not compatible with this version of ET_Redux."//,

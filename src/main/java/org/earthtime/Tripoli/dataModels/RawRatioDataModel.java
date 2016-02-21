@@ -238,7 +238,8 @@ public class RawRatioDataModel //
      * @return
      */
     public String outputLogRatios() {
-        String retval = //
+        String retval
+                = //
                 this.getDataModelName() + " \tLogRatios:\t";
 
         for (int i = 0; i < logRatios.length; i++) {
@@ -290,11 +291,13 @@ public class RawRatioDataModel //
                         // v3 jan 2013 check if the SAME ion counter
                         hasTwoIdenticalIonCounters()) {
 
-                    matrixSxyod = //
+                    matrixSxyod
+                            = //
                             ((RawIntensityDataModel) topIsotope).getColumnVectorOfCorrectedOnPeakIntensities()//
                             .times(((RawIntensityDataModel) botIsotope).getColumnVectorOfCorrectedOnPeakIntensities().transpose());
 
-                    double deadtimeOneSigmaAbsSqr = //
+                    double deadtimeOneSigmaAbsSqr
+                            = //
                             ((IonCounterCollectorModel) botIsotope//
                             .getCollectorModel()).getDeadTime().getOneSigmaAbs().movePointLeft(0).pow(2).doubleValue();
 
@@ -1041,7 +1044,8 @@ public class RawRatioDataModel //
     public double[] getNormalizedOnPeakAquireTimes() {
         double[] normalizedAquire = new double[ratios.length];
         for (int i = 0; i < normalizedAquire.length; i++) {
-            normalizedAquire[i] =//
+            normalizedAquire[i]
+                    =//
                     ((RawIntensityDataModel) topIsotope).getOnPeakVirtualCollector().getOnPeakAquireTimes()[i] / COLLECTOR_DATA_FREQUENCY_MILLISECS;
         }
 
@@ -1056,7 +1060,8 @@ public class RawRatioDataModel //
     public double[] getOnPeakAquireTimesInSeconds() {
         double[] onPeakAquireTimesInSeconds = new double[ratios.length];
         for (int i = 0; i < onPeakAquireTimesInSeconds.length; i++) {
-            onPeakAquireTimesInSeconds[i] =//
+            onPeakAquireTimesInSeconds[i]
+                    =//
                     ((RawIntensityDataModel) topIsotope).getOnPeakVirtualCollector().getOnPeakAquireTimes()[i] / 1000.0;
         }
 

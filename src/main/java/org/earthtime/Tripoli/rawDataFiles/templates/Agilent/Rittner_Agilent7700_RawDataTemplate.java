@@ -17,6 +17,9 @@
  */
 package org.earthtime.Tripoli.rawDataFiles.templates.Agilent;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectStreamClass;
 import java.io.Serializable;
 import java.util.TimeZone;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.AbstractAcquisitionModel;
@@ -69,5 +72,15 @@ public final class Rittner_Agilent7700_RawDataTemplate extends AbstractRawDataFi
     public AbstractAcquisitionModel makeNewAcquisitionModel() {
         this.acquisitionModel = new SingleCollectorAcquisition();
         return acquisitionModel;
+    }
+
+    private void readObject(
+            ObjectInputStream stream)
+            throws IOException, ClassNotFoundException {
+        stream.defaultReadObject();
+        ObjectStreamClass myObject = ObjectStreamClass.lookup(
+                Class.forName(Rittner_Agilent7700_RawDataTemplate.class.getCanonicalName()));
+        long theSUID = myObject.getSerialVersionUID();
+        System.out.println("Customized De-serialization of Rittner_Agilent7700_RawDataTemplate " + theSUID);
     }
 }

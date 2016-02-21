@@ -16,7 +16,7 @@
   <labName>EARTHTIME</labName>
   <dateCertified>2016-01-01</dateCertified>
   <reference>See individual constants for reference.</reference>
-  <comment>This Physical Constants Model is the accepted default used before Cheng 2000. We certify it as D1 for the U-series work.</comment>
+  <comment>This Physical Constants Model is the accepted default used before Cheng 2000.</comment>
   <ratios>
     <ValueModelReferenced>
       <name>lambda230</name>

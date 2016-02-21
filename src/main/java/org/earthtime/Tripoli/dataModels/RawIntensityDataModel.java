@@ -323,7 +323,6 @@ public class RawIntensityDataModel //
 
         diagonalOfMatrixSIntensities = collectorModel.calculateMeasuredCountsAndMatrixSIntensityDiagonal( //
                 baselineIntensities.length, allItensities, integrationTime).clone();
-
     }
 
     /**
@@ -1214,5 +1213,19 @@ public class RawIntensityDataModel //
     @Override
     public AbstractFunctionOfX getSelectedDownHoleFitFunction() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    /**
+     * @return the diagonalOfMatrixSIntensities
+     */
+    public double[] getDiagonalOfMatrixSIntensities() {
+        return diagonalOfMatrixSIntensities;
+    }
+
+    /**
+     * @param diagonalOfMatrixSIntensities the diagonalOfMatrixSIntensities to set
+     */
+    public void setDiagonalOfMatrixSIntensities(double[] diagonalOfMatrixSIntensities) {
+        this.diagonalOfMatrixSIntensities = diagonalOfMatrixSIntensities;
     }
 }

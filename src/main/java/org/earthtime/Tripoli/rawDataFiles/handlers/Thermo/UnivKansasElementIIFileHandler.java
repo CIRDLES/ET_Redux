@@ -55,7 +55,7 @@ public class UnivKansasElementIIFileHandler extends AbstractRawDataFileHandler{
 
         super();
         NAME = "Univ Kansas Element II Folder";
-        aboutInfo = "Details: This is the Moeller protocol for an ElementII.";
+        aboutInfo = "Details: This is the Feb 2016 protocol for an ElementII.";
     }
 
     /**
@@ -204,7 +204,7 @@ public class UnivKansasElementIIFileHandler extends AbstractRawDataFileHandler{
                 ArrayList<double[]> backgroundAcquisitions = new ArrayList<>();
                 ArrayList<double[]> peakAcquisitions = new ArrayList<>();
 
-                int hardwiredEndOfBackground = 105;
+                int hardwiredEndOfBackground = 75;//105;
                 int assumedBackgrounRowCount = hardwiredEndOfBackground - rawDataFileTemplate.getBlockStartOffset();
                 long fractionBackgroundTimeStamp = fractionDateValue.getTime();
                 long fractionPeakTimeStamp = fractionDateValue.getTime() + assumedBackgrounRowCount * massSpec.getCOLLECTOR_DATA_FREQUENCY_MILLISECS();

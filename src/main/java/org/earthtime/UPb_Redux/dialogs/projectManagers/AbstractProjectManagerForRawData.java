@@ -226,8 +226,7 @@ public abstract class AbstractProjectManagerForRawData extends DialogEditor impl
         if (tripoliSession != null) {
 
             // update parameters
-            rawDataFileHandler.updateMassSpecFromAcquisitionModel();
-
+//            rawDataFileHandler.updateMassSpecFromAcquisitionModel();
             tripoliSamplesSorted = tripoliSession.getTripoliSamples();
 
             displayRawDataSamples();
@@ -312,7 +311,9 @@ public abstract class AbstractProjectManagerForRawData extends DialogEditor impl
         // may 2013 split task to allow for custom parameters ********************
         AbstractAcquisitionModel acquisitionModel = rawDataFileTemplate.makeNewAcquisitionModel();
         try {
-            acquisitionModel.setPrimaryMineralStandardModel(ReduxLabData.getInstance().getDefaultLAICPMSPrimaryMineralStandardModel());
+            if (acquisitionModel.getPrimaryMineralStandardModel() == null) {
+                acquisitionModel.setPrimaryMineralStandardModel(ReduxLabData.getInstance().getDefaultLAICPMSPrimaryMineralStandardModel());
+            }
             acquisitionModel.setLeftShadeCount(ReduxLabData.getInstance().getDefaultLeftShadeCountForLAICPMSAquisitions());
 
         } catch (BadLabDataException ex) {
@@ -474,6 +475,9 @@ public abstract class AbstractProjectManagerForRawData extends DialogEditor impl
                 int progress = (Integer) pce.getNewValue();
                 loadDataTaskProgressBar.setValue(progress);
                 loadDataTaskProgressBar.validate();
+            } else if ("projectName".equalsIgnoreCase(pce.getPropertyName())) {
+                project.setProjectName((String)pce.getNewValue());
+                projectName_text.setText(project.getProjectName());
             }
         }
     }
@@ -579,6 +583,7 @@ public abstract class AbstractProjectManagerForRawData extends DialogEditor impl
 
                 tripoliSession.setPrimaryMineralStandard(primaryMineralStandard);
 
+                tripoliSession.prepareFractionTimeStamps();
                 tripoliSession.processRawData();
 
                 tripoliSession.postProcessDataForCommonLeadLossPreparation();
@@ -648,7 +653,7 @@ public abstract class AbstractProjectManagerForRawData extends DialogEditor impl
         fileHandlerComboBox.setBounds(220, 30, 380, 27);
 
         loadRawData_button.setFont(new java.awt.Font("SansSerif", 0, 13)); // NOI18N
-        loadRawData_button.setText("Prepare to Load/Process Raw Data with chosen Protocol and Raw Data Template");
+        loadRawData_button.setText("Select Raw Data to Load and Process with chosen Protocol and Raw Data Template");
         loadRawData_button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 loadRawData_buttonActionPerformed(evt);
@@ -886,18 +891,20 @@ public abstract class AbstractProjectManagerForRawData extends DialogEditor impl
 
             saveProjectFields();
 
-            try {
+//            try {
+            // processRawData();
+// feb 2016 temporarily for shrimp (next two calls are in processrawdata
+            tripoliSession.prepareFractionTimeStamps();
+            tripoliSession.updateFractionsToSampleMembership();
 
-                processRawData();
+            project.prepareSamplesForRedux();
 
-                project.prepareSamplesForRedux();
+            uPbReduxFrame.initializeProject();
 
-                uPbReduxFrame.initializeProject();
-
-                initializeSessionManager(true, true, true);
-            } catch (ETException ex) {
-                new ETWarningDialog(ex).setVisible(true);
-            }
+            initializeSessionManager(true, true, true);
+//            } catch (ETException ex) {
+//                new ETWarningDialog(ex).setVisible(true);
+//            }
         } else {
             refreshMaskingArray();
             initializeSessionManager(false, true, true);

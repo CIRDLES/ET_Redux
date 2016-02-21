@@ -1,5 +1,5 @@
 /*
- * SampleAnalysisWorkflowManagerDialog.java
+ * SessionAnalysisWorkflowManagerSHRIMP.java
  *
  *
  * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
@@ -18,7 +18,6 @@
  */
 package org.earthtime.UPb_Redux.dialogs.sessionManagers;
 
-import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
@@ -34,8 +33,6 @@ import java.util.Iterator;
 import javax.swing.Icon;
 import javax.swing.JLayeredPane;
 import javax.swing.JRadioButton;
-import javax.swing.JTabbedPane;
-import javax.swing.event.ChangeEvent;
 import org.earthtime.ETReduxFrame;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
 import org.earthtime.Tripoli.dataModels.DownholeFractionationDataModel;
@@ -47,6 +44,7 @@ import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.CorrectedInt
 import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.CorrectedRatioDataView;
 import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.FitFunctionsOnDownHoleRatioDataView;
 import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.FitFunctionsOnRatioDataView;
+import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.RawCountsDataViewForShrimp;
 import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.RawIntensitiesDataView;
 import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.RawRatioDataView;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
@@ -64,10 +62,11 @@ import org.earthtime.dataDictionaries.RawRatioNames;
 import org.earthtime.dialogs.DialogEditor;
 
 /**
+ * Adapted from LAICPMS version
  *
  * @author James F. Bowring
  */
-public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
+public class SessionAnalysisWorkflowManagerSHRIMP extends DialogEditor //
         implements
         Serializable,
         SessionAnalysisWorkflowManagerInterface {
@@ -92,7 +91,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
      * @param modal
      * @param tripoliSession
      */
-    public SessionAnalysisWorkflowManagerLAICPMS(
+    public SessionAnalysisWorkflowManagerSHRIMP(
             ProjectManagerSubscribeInterface projectManager, //
             ETReduxFrame uPbReduxFrame, //
             boolean modal, //
@@ -114,36 +113,38 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         currentFractionView = IncludedTypeEnum.ALL;
 
         // fractionation tab listener
-        fractionationTechniqueTabbedPane.addChangeListener((ChangeEvent evt) -> {
-            JTabbedPane pane = (JTabbedPane) evt.getSource();
-
-            // Get current tab
-            int sel = pane.getSelectedIndex();
-
-            if (pane.getTitleAt(sel).compareToIgnoreCase(FractionationTechniquesEnum.INTERCEPT.getName()) == 0) {
-                tripoliSession.setFractionationTechnique(FractionationTechniquesEnum.INTERCEPT);
-
-                interceptFitEachStandard_radioButton.doClick();
-
-            } else if (pane.getTitleAt(sel).compareToIgnoreCase(FractionationTechniquesEnum.DOWNHOLE.getName()) == 0) {
-                tripoliSession.setFractionationTechnique(FractionationTechniquesEnum.DOWNHOLE);
-
-                downholeFitStandards_radioButton.doClick();
-            }
-
-            for (int i = 0; i < pane.getTabCount(); i++) {
-                pane.setForegroundAt(i, Color.black);
-            }
-            pane.setForegroundAt(sel, Color.red);
-
-            tripoliSession.applyCorrections();
-
-            // nov 2015 to update data
-            uPbReduxFrame.updateReportTable(true);
-        } // This method is called whenever the selected tab changes
-        );
-
+//        fractionationTechniqueTabbedPane.addChangeListener((ChangeEvent evt) -> {
+//            JTabbedPane pane = (JTabbedPane) evt.getSource();
+//
+//            // Get current tab
+//            int sel = pane.getSelectedIndex();
+//
+//            if (pane.getTitleAt(sel).compareToIgnoreCase(FractionationTechniquesEnum.INTERCEPT.getName()) == 0) {
+//                tripoliSession.setFractionationTechnique(FractionationTechniquesEnum.INTERCEPT);
+//
+//                interceptFitEachStandard_radioButton.doClick();
+//
+//            } else if (pane.getTitleAt(sel).compareToIgnoreCase(FractionationTechniquesEnum.DOWNHOLE.getName()) == 0) {
+//                tripoliSession.setFractionationTechnique(FractionationTechniquesEnum.DOWNHOLE);
+//
+//                downholeFitStandards_radioButton.doClick();
+//            }
+//
+//            for (int i = 0; i < pane.getTabCount(); i++) {
+//                pane.setForegroundAt(i, Color.black);
+//            }
+//            pane.setForegroundAt(sel, Color.red);
+//
+//            tripoliSession.applyCorrections();
+//
+//            // nov 2015 to update data
+//            uPbReduxFrame.updateReportTable(true);
+//        } // This method is called whenever the selected tab changes
+//        );
         setSize();
+
+        fractionationTechniqueTabbedPane.setVisible(false);
+        outputSessionMeansAndStdErrsToFile_button.setVisible(false);
     }
 
     /**
@@ -204,19 +205,16 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
             // setup sliders
             tripoliSessionDataView_scrollPane.getHorizontalScrollBar().setUnitIncrement(xAxisZoomSlider.getValue());
             tripoliSessionDataView_scrollPane.getHorizontalScrollBar().setBlockIncrement(xAxisZoomSlider.getValue());
-            
+
             // setup listener so header panels scroll outside of scrollpane
             tripoliSessionDataView_scrollPane.getHorizontalScrollBar().removeAll();
-            tripoliSessionDataView_scrollPane.getHorizontalScrollBar().addAdjustmentListener(new AdjustmentListener() {
-                @Override
-                public void adjustmentValueChanged(AdjustmentEvent evt) {
-                    // causes header panel to coordinate with data panel
-                    tripoliSessionDataHeader_pane.setBounds(//
-                            controlPanel_panel.getWidth() + WIDTH_OF_YAXIS_PANE - evt.getValue(), //
-                            0, //
-                            tripoliSessionDataHeader_pane.getWidth() + evt.getValue(), //
-                            OFFSET_TO_TOP_DATA_DISPLAY);
-                }
+            tripoliSessionDataView_scrollPane.getHorizontalScrollBar().addAdjustmentListener((AdjustmentEvent evt) -> {
+                // causes header panel to coordinate with data panel
+                tripoliSessionDataHeader_pane.setBounds(//
+                        controlPanel_panel.getWidth() + WIDTH_OF_YAXIS_PANE - evt.getValue(), //
+                        0, //
+                        tripoliSessionDataHeader_pane.getWidth() + evt.getValue(), //
+                        OFFSET_TO_TOP_DATA_DISPLAY);
             });
 
             tripoliSessionDataView_scrollPane.getVerticalScrollBar().setUnitIncrement(yAxisZoomSlider.getValue());
@@ -306,7 +304,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         }
         tripoliSessionRawDataView.setBackground(rawIsotopes_radioButton.getBackground());
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).setDataModelViewConstructor(//
-                dataModelViewConstructorFactory(RawIntensitiesDataView.class.getName()));
+                dataModelViewConstructorFactory(RawCountsDataViewForShrimp.class.getName()));
 
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).setRawDataSourceMethod(//
                 rawDataSourceMethodFactory("getIncludedIsotopes"));
@@ -357,7 +355,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
                 dataModelViewConstructorFactory(RawRatioDataView.class.getName()));
 
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).setRawDataSourceMethod(//
-                rawDataSourceMethodFactory("getRatiosForFractionFitting"));//("getRatiosForUnknownFitting"));//    "getValidRawRatios" ) );
+                rawDataSourceMethodFactory("getRatiosForFractionFitting"));
 
         tripoliSessionRawDataView.refreshPanel();
 
@@ -550,7 +548,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
 
         gridPlot_radioButton.setEnabled(enableRawViewControls);
         graphPlot_radioButton.setEnabled(enableRawViewControls);
-        overlayPlot_radioButton.setEnabled(enableRawViewControls);
+////        overlayPlot_radioButton.setEnabled(enableRawViewControls);
 
         selectStandards_chkBox.setEnabled(enableRawViewControls);
         selectUnknowns_chkBox.setEnabled(enableRawViewControls);
@@ -776,7 +774,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         sampleType_label.setBackground(new java.awt.Color(255, 204, 102));
         sampleType_label.setFont(new java.awt.Font("SansSerif", 0, 13)); // NOI18N
         sampleType_label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        sampleType_label.setText("LA ICP MS Workflow Manager for a Session of Raw Data Preparation");
+        sampleType_label.setText("SHRIMP Workflow Manager for a Session of Raw Data Preparation");
         sampleType_label.setOpaque(true);
 
         org.jdesktop.layout.GroupLayout sampleType_panelLayout = new org.jdesktop.layout.GroupLayout(sampleType_panel);
@@ -840,6 +838,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         tripoliTab_layeredPane.setOpaque(true);
 
         tripoliSessionDataView_scrollPane.setBorder(null);
+        tripoliSessionDataView_scrollPane.setAutoscrolls(true);
         tripoliTab_layeredPane.add(tripoliSessionDataView_scrollPane);
         tripoliSessionDataView_scrollPane.setBounds(275, 70, 820, 530);
 
@@ -852,6 +851,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         viewChooser_buttonGroup.add(rawIsotopes_radioButton);
         rawIsotopes_radioButton.setFont(new java.awt.Font("SansSerif", 0, 13)); // NOI18N
         rawIsotopes_radioButton.setText("Measured Intensities");
+        rawIsotopes_radioButton.setActionCommand("Measured Intensities");
         rawIsotopes_radioButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         rawIsotopes_radioButton.setBorderPainted(true);
         rawIsotopes_radioButton.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -871,6 +871,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         correctedIsotopes_radioButton.setText("Baseline-Corr Intensities");
         correctedIsotopes_radioButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         correctedIsotopes_radioButton.setBorderPainted(true);
+        correctedIsotopes_radioButton.setEnabled(false);
         correctedIsotopes_radioButton.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         correctedIsotopes_radioButton.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
         correctedIsotopes_radioButton.setOpaque(true);
@@ -888,6 +889,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         rawRatios_radioButton.setText("Raw Ratios");
         rawRatios_radioButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         rawRatios_radioButton.setBorderPainted(true);
+        rawRatios_radioButton.setEnabled(false);
         rawRatios_radioButton.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         rawRatios_radioButton.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
         rawRatios_radioButton.setOpaque(true);
@@ -1191,6 +1193,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
 
         restoreAllAquisitions.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         restoreAllAquisitions.setText("Restore all Aquisitions");
+        restoreAllAquisitions.setEnabled(false);
         restoreAllAquisitions.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 restoreAllAquisitionsActionPerformed(evt);
@@ -1238,6 +1241,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         overlayPlot_radioButton.setText("Overlay");
         overlayPlot_radioButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         overlayPlot_radioButton.setBorderPainted(true);
+        overlayPlot_radioButton.setEnabled(false);
         overlayPlot_radioButton.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         overlayPlot_radioButton.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
         overlayPlot_radioButton.setOpaque(true);
@@ -1318,9 +1322,9 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         xAxisZoomSlider.setMaximum(640);
         xAxisZoomSlider.setMinimum(4);
         xAxisZoomSlider.setValue(128);
+        tripoliTab_layeredPane.setLayer(xAxisZoomSlider, javax.swing.JLayeredPane.PALETTE_LAYER);
         tripoliTab_layeredPane.add(xAxisZoomSlider);
         xAxisZoomSlider.setBounds(110, 600, 400, 20);
-        tripoliTab_layeredPane.setLayer(xAxisZoomSlider, javax.swing.JLayeredPane.PALETTE_LAYER);
 
         tripoliSessionRawDataViewYAxis.setBackground(new java.awt.Color(255, 255, 255));
         tripoliSessionRawDataViewYAxis.setOpaque(true);

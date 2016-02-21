@@ -3,7 +3,7 @@
  *
  * Created Jul 6, 2011
  *
- * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2016 James F. Bowring and www.Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -69,7 +69,6 @@ public class RawIntensitiesDataView extends AbstractRawDataView {
 
         this.rawRatioDataModel = rawIsotopeDataModel;
         this.normalizedBackgroundAquireTimes = null;
-
     }
 
     /**
@@ -129,7 +128,6 @@ public class RawIntensitiesDataView extends AbstractRawDataView {
             if ( onPeakIntensityUncorrectedForMercury[0] != 0.0 ) {
                 Shape correction = new java.awt.geom.Ellipse2D.Double( //
                         mapX( shiftAquiredTimeIndex + myOnPeakNormalizedAquireTimes[i] ), mapY( onPeakIntensityUncorrectedForMercury[i] ), 1, 1 );
-//                g2d.setPaint( Color.GREEN );
                 g2d.setPaint( determineDataColor( i, Color.GREEN ) );
                 g2d.draw( correction );
             }
@@ -172,15 +170,12 @@ public class RawIntensitiesDataView extends AbstractRawDataView {
             }
         }
 
-
         onPeakFitBackgroundIntensities = ((RawIntensityDataModel) rawRatioDataModel).getOnPeakFitCountsPerSecondAsRawIntensities();// .getOnPeakVirtualCollector().getFitBackgroundIntensities();
-
 
         // normalize aquireTimes
         normalizedBackgroundAquireTimes = ((RawIntensityDataModel) rawRatioDataModel).getNormalizedBackgroundAquireTimes();
 
         myOnPeakNormalizedAquireTimes = rawRatioDataModel.getNormalizedOnPeakAquireTimes();
-
 
         // X-axis lays out time evenly spaced
         minX = normalizedBackgroundAquireTimes[0];
@@ -240,15 +235,4 @@ public class RawIntensitiesDataView extends AbstractRawDataView {
     public DataModelInterface getDataModel () {
         return rawRatioDataModel;
     }
-//    /**
-//     * 
-//     * @param included
-//     */
-//    @Override
-//    public void toggleFractionInclusion ( boolean included ) {
-//        tripoliFraction.toggleAllDataExceptShaded( included );
-//        tripoliFraction.updateCorrectedRatioStatistics();
-//        ((TripoliFractionViewInterface) tripoliFraction).setShowVerticalLineAtThisIndex( -1 );
-//        repaintFraction();
-//    }
 }

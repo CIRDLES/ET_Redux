@@ -42,6 +42,7 @@ import org.earthtime.UPb_Redux.filters.ReduxFileFilter;
 import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLAICPMSFraction;
+import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbSHRIMPFraction;
 import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.UPb_Redux.user.ReduxPersistentState;
 import org.earthtime.UPb_Redux.utilities.ETSerializer;
@@ -85,6 +86,7 @@ public class Project implements
     private ReduxPersistentState myState;
     // for Legacy projects
     private File locationOfDataImportFile;
+    private SampleAnalysisTypesEnum sampleAnalysisType;
 
     /**
      *
@@ -98,6 +100,7 @@ public class Project implements
 
         this.acquisitionModel = null;
         this.rawDataFileHandler = null;
+        this.sampleAnalysisType = SampleAnalysisTypesEnum.LAICPMS;
 
     }
 
@@ -204,6 +207,7 @@ public class Project implements
         } catch (BadLabDataException badLabDataException) {
         }
 
+        
         ArrayList<AbstractTripoliSample> tripoliSamples = tripoliSession.getTripoliSamples();
         for (AbstractTripoliSample tripoliSample : tripoliSamples) {
             // check for primary standard and leave it out
@@ -214,7 +218,7 @@ public class Project implements
                     sample = new Sample( //
                             tripoliSample.getSampleName(), //
                             SampleTypesEnum.ANALYSIS.getName(), //
-                            SampleAnalysisTypesEnum.LAICPMS.getName(), //
+                            sampleAnalysisType.getName(), //
                             analysisPurpose, "UPb");
 
                     projectSamples.add(sample);
@@ -226,18 +230,26 @@ public class Project implements
                     for (Iterator<TripoliFraction> it = tripoliSampleFractions.iterator(); it.hasNext();) {
                         TripoliFraction tf = it.next();
 //                        System.out.println("Processing tripoli fraction " + tf.getFractionID());
-                        FractionI uPbLAICPMSFraction = new UPbLAICPMSFraction(tf.getFractionID());
-                        uPbLAICPMSFraction.setSampleName(tripoliSample.getSampleName());
+
+                        // feb 2016
+                        FractionI reduxVersionTripolizedFraction = null;
+                        if (sampleAnalysisType.compareTo(SampleAnalysisTypesEnum.LAICPMS) ==0 ) {
+                            reduxVersionTripolizedFraction = new UPbLAICPMSFraction(tf.getFractionID());
+                        }else if (sampleAnalysisType.compareTo(SampleAnalysisTypesEnum.SHRIMP) ==0 ) {
+                            reduxVersionTripolizedFraction = new UPbSHRIMPFraction(tf.getFractionID());
+                        }
+                        
+                        reduxVersionTripolizedFraction.setSampleName(tripoliSample.getSampleName());
                         // add to tripoli fraction so its UPbFraction can be contiunously updated
-                        tf.setuPbFraction(uPbLAICPMSFraction);
+                        tf.setuPbFraction(reduxVersionTripolizedFraction);
                         // dec 2015
-                        ((UPbFractionI)uPbLAICPMSFraction).setTripoliFraction(tf);
-                        uPbLAICPMSFraction.setRejected(!tf.isIncluded());
+                        ((UPbFractionI) reduxVersionTripolizedFraction).setTripoliFraction(tf);
+                        reduxVersionTripolizedFraction.setRejected(!tf.isIncluded());
 
                         // automatically added to aliquot #1 as we are assuming only one aliquot in this scenario
-                        sample.addFraction(uPbLAICPMSFraction);
+                        sample.addFraction(reduxVersionTripolizedFraction);
                         // feb 2015 in prep for export
-                        ((ReduxAliquotInterface)aliquot).getAliquotFractions().add(uPbLAICPMSFraction);
+                        ((ReduxAliquotInterface) aliquot).getAliquotFractions().add(reduxVersionTripolizedFraction);
                     }
 
                     // this forces aliquot fraction population
@@ -249,7 +261,7 @@ public class Project implements
 
                 } catch (BadLabDataException badLabDataException) {
                 } catch (ETException eTException) {
-                    System.out.println("Project.java line 218 " + eTException.getMessage());
+                    System.out.println("Project.java line 254 " + eTException.getMessage());
                 }
             }
         }
@@ -261,8 +273,7 @@ public class Project implements
 
     /**
      *
-     * @return 
-     * @throws org.earthtime.exceptions.ETException
+     * @return @throws org.earthtime.exceptions.ETException
      */
     @Override
     public Path exportProjectSamples() throws ETException {
@@ -472,7 +483,7 @@ public class Project implements
      */
     @Override
     public File getLocationOfDataImportFile() {
-        if (locationOfDataImportFile == null){
+        if (locationOfDataImportFile == null) {
             locationOfDataImportFile = new File(":");
         }
         return locationOfDataImportFile;
@@ -484,5 +495,22 @@ public class Project implements
     @Override
     public void setLocationOfDataImportFile(File locationOfDataImportFile) {
         this.locationOfDataImportFile = locationOfDataImportFile;
+    }
+
+    /**
+     * @return the sampleAnalysisType
+     */
+    public SampleAnalysisTypesEnum getSampleAnalysisType() {
+        if (sampleAnalysisType == null) {
+            sampleAnalysisType = SampleAnalysisTypesEnum.LAICPMS;
+        }
+        return sampleAnalysisType;
+    }
+
+    /**
+     * @param sampleAnalysisType the sampleAnalysisType to set
+     */
+    public void setSampleAnalysisType(SampleAnalysisTypesEnum sampleAnalysisType) {
+        this.sampleAnalysisType = sampleAnalysisType;
     }
 }

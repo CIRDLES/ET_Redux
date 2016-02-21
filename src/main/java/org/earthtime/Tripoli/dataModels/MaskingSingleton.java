@@ -29,7 +29,7 @@ public class MaskingSingleton implements Serializable {
 
     // Class variables
     private static final long serialVersionUID = -2086025499717049075L;
-    private static MaskingSingleton instance = null;
+    private static MaskingSingleton instance = new MaskingSingleton();
     // instance variables 
     private boolean[] maskingArray;
     private int leftShadeCount;
@@ -37,6 +37,7 @@ public class MaskingSingleton implements Serializable {
 
     private MaskingSingleton() {
 
+        maskingArray = new boolean[0];
         leftShadeCount = -1;
         rightShadeCount = -1;
     }
@@ -46,9 +47,6 @@ public class MaskingSingleton implements Serializable {
      * @return
      */
     public static MaskingSingleton getInstance() {
-        if (instance == null) {
-            instance = new MaskingSingleton();
-        }
         return instance;
     }
 

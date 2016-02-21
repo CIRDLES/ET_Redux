@@ -41,13 +41,13 @@ public final class MoellerUnivKansasElementII_RawDataTemplate extends AbstractRa
         super();
 
         this.NAME = "Univ Kansas Element II";
-        this.aboutInfo = "analysis runs setup by Moeller";
+        this.aboutInfo = "analysis runs setup by students";
         this.fileType = FileTypeEnum.fin2;
         this.startOfFirstLine = "Finnigan";
         this.startOfDataSectionFirstLine = "Time";
         this.startOfEachBlockFirstLine = "Time";
         this.blockStartOffset = 8;
-        this.blockSize = 222;
+        this.blockSize = 165;//222;
         this.standardIDs = new String[]//
         {"GJ1"};
         this.timeZone = TimeZone.getTimeZone("GMT");

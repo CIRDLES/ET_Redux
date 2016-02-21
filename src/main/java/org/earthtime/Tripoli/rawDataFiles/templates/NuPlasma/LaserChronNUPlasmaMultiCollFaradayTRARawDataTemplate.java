@@ -19,6 +19,9 @@
  */
 package org.earthtime.Tripoli.rawDataFiles.templates.NuPlasma;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectStreamClass;
 import java.io.Serializable;
 import java.util.TimeZone;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.AbstractAcquisitionModel;
@@ -37,7 +40,7 @@ public final class LaserChronNUPlasmaMultiCollFaradayTRARawDataTemplate extends 
 
     private static LaserChronNUPlasmaMultiCollFaradayTRARawDataTemplate instance = new LaserChronNUPlasmaMultiCollFaradayTRARawDataTemplate();
 
-    private LaserChronNUPlasmaMultiCollFaradayTRARawDataTemplate () {
+    private LaserChronNUPlasmaMultiCollFaradayTRARawDataTemplate() {
         super();
 
         this.NAME = "LaserChron NUPlasma TRA";
@@ -50,8 +53,8 @@ public final class LaserChronNUPlasmaMultiCollFaradayTRARawDataTemplate extends 
         this.blockStartOffset = 0; // not used
         this.blockSize = 0;// determined from data values; not constant
         this.standardIDs = new String[]//
-        {"SL","R33"};
-        this.timeZone = TimeZone.getTimeZone( "MST" );
+        {"SL", "R33"};
+        this.timeZone = TimeZone.getTimeZone("MST");
         this.defaultParsingOfFractionsBehavior = 1;
         this.massSpecSetup = GehrelsNUPlasmaSetupUPbFarTRA.getInstance();
     }
@@ -60,17 +63,27 @@ public final class LaserChronNUPlasmaMultiCollFaradayTRARawDataTemplate extends 
      *
      * @return
      */
-    public static LaserChronNUPlasmaMultiCollFaradayTRARawDataTemplate getInstance () {
+    public static LaserChronNUPlasmaMultiCollFaradayTRARawDataTemplate getInstance() {
         return instance;
     }
-    
+
     /**
      *
      * @return
      */
     @Override
-    public AbstractAcquisitionModel makeNewAcquisitionModel(){
+    public AbstractAcquisitionModel makeNewAcquisitionModel() {
         this.acquisitionModel = new StaticAcquisition();
         return acquisitionModel;
+    }
+
+    private void readObject(
+            ObjectInputStream stream)
+            throws IOException, ClassNotFoundException {
+        stream.defaultReadObject();
+        ObjectStreamClass myObject = ObjectStreamClass.lookup(
+                Class.forName(LaserChronNUPlasmaMultiCollFaradayTRARawDataTemplate.class.getCanonicalName()));
+        long theSUID = myObject.getSerialVersionUID();
+        System.out.println("Customized De-serialization of LaserChronNUPlasmaMultiCollFaradayTRARawDataTemplate " + theSUID);
     }
 }

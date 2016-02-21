@@ -47,7 +47,6 @@
                 <MenuItem class="javax.swing.JMenuItem" name="newProjectRawDataSHRIMP">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="SHRIMP - in development - DEMO only"/>
-                    <Property name="enabled" type="boolean" value="false"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="newProjectRawDataSHRIMPActionPerformed"/>
@@ -477,7 +476,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="editMineralStandardsModels">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Mineral Standards Models"/>
+                <Property name="text" type="java.lang.String" value="Reference Material Models"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editMineralStandardsModelsActionPerformed"/>

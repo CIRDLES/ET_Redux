@@ -495,7 +495,7 @@
         </Menu>
         <Menu class="javax.swing.JMenu" name="MineralStdModels_menu">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Mineral Std Models"/>
+            <Property name="text" type="java.lang.String" value="Reference Material Models"/>
           </Properties>
           <Events>
             <EventHandler event="menuSelected" listener="javax.swing.event.MenuListener" parameters="javax.swing.event.MenuEvent" handler="mineralStdModels_menuMenuSelected"/>
@@ -503,7 +503,7 @@
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="importLocalMineralStdModelXML_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Import Mineral Standard Model from XML file"/>
+                <Property name="text" type="java.lang.String" value="Import Reference Material Model from XML file"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="importLocalMineralStdModelXML_menuItemActionPerformed"/>
@@ -511,7 +511,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="saveMineralStdModelAsXML_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Export Mineral Standard Model as XML file"/>
+                <Property name="text" type="java.lang.String" value="Export Reference Material Model as XML file"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="saveMineralStdModelAsXML_menuItemActionPerformed"/>
@@ -521,7 +521,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="removeMineralStdModel_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Remove current Mineral Standard Model (for editable models only)"/>
+                <Property name="text" type="java.lang.String" value="Remove current Reference Material Model (for editable models only)"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="removeMineralStdModel_menuItemActionPerformed"/>
@@ -531,7 +531,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="editCurrentLocalMineralStandardModel_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Edit current Mineral Standard Model (for editable models only)"/>
+                <Property name="text" type="java.lang.String" value="Edit current Reference Material Model (for editable models only)"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editCurrentLocalMineralStandardModel_menuItemActionPerformed"/>
@@ -539,7 +539,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="editCopyOfCurrentMineralStdModel_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Edit Copy of current Mineral Standard Model"/>
+                <Property name="text" type="java.lang.String" value="Edit Copy of current Reference Material Model"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editCopyOfCurrentMineralStdModel_menuItemActionPerformed"/>
@@ -547,7 +547,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="newMineralStdModel_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Edit New empty Mineral Standard Model"/>
+                <Property name="text" type="java.lang.String" value="Edit New empty Reference Material Model"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="newMineralStdModel_menuItemActionPerformed"/>
@@ -555,7 +555,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="cancelNewEditMineralStdModel_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Cancel Edit of Mineral Standard Model"/>
+                <Property name="text" type="java.lang.String" value="Cancel Edit of  Reference Material Model"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cancelNewEditMineralStdModel_menuItemActionPerformed"/>
@@ -565,7 +565,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="saveAndRegisterCurrentEditOfMineralStandardModel_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Save and Register Current Edit of Mineral Standard Model"/>
+                <Property name="text" type="java.lang.String" value="Save and Register Current Edit of Reference Material Model"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="saveAndRegisterCurrentEditOfMineralStandardModel_menuItemActionPerformed"/>
@@ -1411,8 +1411,8 @@
             <Container class="javax.swing.JPanel" name="physicalConstantsModels_panel">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                  <JTabbedPaneConstraints tabName="Physical Constants Models">
-                    <Property name="tabTitle" type="java.lang.String" value="Physical Constants Models"/>
+                  <JTabbedPaneConstraints tabName="Physical Const. Models">
+                    <Property name="tabTitle" type="java.lang.String" value="Physical Const. Models"/>
                   </JTabbedPaneConstraints>
                 </Constraint>
               </Constraints>
@@ -1457,8 +1457,8 @@
             <Container class="javax.swing.JPanel" name="mineralStandard_panel">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                  <JTabbedPaneConstraints tabName="Mineral Std Models">
-                    <Property name="tabTitle" type="java.lang.String" value="Mineral Std Models"/>
+                  <JTabbedPaneConstraints tabName="Ref Material Models">
+                    <Property name="tabTitle" type="java.lang.String" value="Ref Material Models"/>
                   </JTabbedPaneConstraints>
                 </Constraint>
               </Constraints>
@@ -1467,22 +1467,23 @@
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
-                          <EmptySpace min="18" pref="18" max="-2" attributes="0"/>
-                          <Component id="chooseMineralStandardModel_label" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="5" pref="5" max="-2" attributes="0"/>
-                          <Component id="MineralStandardModelChooser" min="-2" pref="461" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
+                          <Component id="chooseMineralStandardModel_label" min="-2" pref="212" max="-2" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Component id="MineralStandardModelChooser" min="-2" pref="632" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="212" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
-                          <EmptySpace min="12" pref="12" max="-2" attributes="0"/>
-                          <Component id="chooseMineralStandardModel_label" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <Group type="102" attributes="0">
                           <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
-                          <Component id="MineralStandardModelChooser" min="-2" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="chooseMineralStandardModel_label" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="MineralStandardModelChooser" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace min="-2" pref="584" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -1493,7 +1494,7 @@
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                       <Font name="Arial" size="12" style="1"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="  Choose Mineral Standard Model:"/>
+                    <Property name="text" type="java.lang.String" value="  Choose Reference Material Model:"/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JComboBox" name="MineralStandardModelChooser">

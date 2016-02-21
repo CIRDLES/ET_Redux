@@ -52,7 +52,6 @@ import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.ReductionHandler;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.UPbFractionReducer;
-import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.utilities.comparators.IntuitiveStringComparator;
 import org.earthtime.UPb_Redux.valueModels.definedValueModels.Age206_238r;
 import org.earthtime.UPb_Redux.valueModels.definedValueModels.Age207_206r;
@@ -72,6 +71,7 @@ import org.earthtime.matrices.matrixModels.AbstractMatrixModel;
 import org.earthtime.matrices.matrixModels.CovarianceMatrixModel;
 import org.earthtime.matrices.matrixModels.JacobianMatrixModel;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
+import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.samples.SampleInterface;
 
 /**
@@ -1175,7 +1175,13 @@ public class SampleDateModel extends ValueModel implements
             // Section B
                 //TODO: provide lab data with values of ratio variability for each ratio
                 // for now all = 2%
-                Matrix SuInterStd = Su.plus(new Matrix(Su.getRowDimension(), Su.getColumnDimension(), 0.01 * 0.01));
+                // feb 2016 finally!
+                double interReferenceMaterialReproducibility = //
+                        ReduxLabData.getInstance().getDefaultInterReferenceMaterialReproducibilityMap()//
+                                .get(RadRatios.valueOf(radiogenicIsotopeDateName.replace("age", "r"))).getValue().doubleValue();
+                
+                Matrix SuInterStd = Su.plus(new Matrix(Su.getRowDimension(), Su.getColumnDimension(),//
+                        interReferenceMaterialReproducibility * interReferenceMaterialReproducibility));
 
                 double logRatioMeanOneSigmaAnalyticalPlusInterStd = Math.sqrt(1.0 / (onesV.transpose().times(SuInterStd.solve(onesV)).get(0, 0)));
 

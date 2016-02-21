@@ -725,6 +725,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
 
                 tripoliSession.setPrimaryMineralStandard(primaryMineralStandard);
 
+                tripoliSession.prepareFractionTimeStamps();
                 tripoliSession.processRawData();
 
                 tripoliSession.postProcessDataForCommonLeadLossPreparation();
@@ -744,17 +745,17 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
 
         mainPanel = new javax.swing.JLayeredPane();
         projectName_label = new javax.swing.JLabel();
-        fileHandlerComboBox = new javax.swing.JComboBox<AbstractRawDataFileHandler>();
+        fileHandlerComboBox = new javax.swing.JComboBox<>();
         loadRawData_button =  new ET_JButton();
         fileProtocol_label = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         aboutInfo_textPanel = new javax.swing.JTextPane();
         jLabel6 = new javax.swing.JLabel();
-        rawDataTemplateComboBox = new javax.swing.JComboBox<AbstractRawDataFileTemplate>();
+        rawDataTemplateComboBox = new javax.swing.JComboBox<>();
         projectType_label1 = new javax.swing.JLabel();
         projectName_text = new javax.swing.JTextField();
-        analysisPurposeChooser = new javax.swing.JComboBox<String>();
+        analysisPurposeChooser = new javax.swing.JComboBox<>();
         title_label = new javax.swing.JLabel();
         projectFinalizationPane = new javax.swing.JLayeredPane();
         openRawDataManager_button =  new ET_JButton("Display Processed Raw Data");
@@ -795,6 +796,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
 
         loadRawData_button.setFont(new java.awt.Font("SansSerif", 0, 13)); // NOI18N
         loadRawData_button.setText("Prepare to Load/Process Raw Data with chosen Protocol and Raw Data Template");
+        loadRawData_button.setActionCommand("Select Raw Data to Load and Process with chosen Protocol and Raw Data Template");
         loadRawData_button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 loadRawData_buttonActionPerformed(evt);
@@ -849,7 +851,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
             }
         });
         mainPanel.add(projectName_text);
-        projectName_text.setBounds(120, 0, 230, 28);
+        projectName_text.setBounds(120, 0, 230, 26);
 
         analysisPurposeChooser.setFont(new java.awt.Font("SansSerif", 0, 13)); // NOI18N
         mainPanel.add(analysisPurposeChooser);

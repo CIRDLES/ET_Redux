@@ -17,6 +17,9 @@
  */
 package org.earthtime.Tripoli.rawDataFiles.templates.Thermo;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectStreamClass;
 import java.io.Serializable;
 import java.util.TimeZone;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.AbstractAcquisitionModel;
@@ -35,7 +38,7 @@ public final class VervoortWashStateElementII_RawDataTemplate extends AbstractRa
 
     private static VervoortWashStateElementII_RawDataTemplate instance = new VervoortWashStateElementII_RawDataTemplate();
 
-    private VervoortWashStateElementII_RawDataTemplate () {
+    private VervoortWashStateElementII_RawDataTemplate() {
         super();
 
         this.NAME = "Vervoort Wash State Element II";
@@ -48,7 +51,7 @@ public final class VervoortWashStateElementII_RawDataTemplate extends AbstractRa
         this.blockSize = 300;
         this.standardIDs = new String[]//
         {"Peixe"};
-        this.timeZone = TimeZone.getTimeZone( "PST" );
+        this.timeZone = TimeZone.getTimeZone("PST");
         this.defaultParsingOfFractionsBehavior = 1;
         this.massSpecSetup = WashStateElementIISetupUPb.getInstance();
     }
@@ -57,17 +60,27 @@ public final class VervoortWashStateElementII_RawDataTemplate extends AbstractRa
      *
      * @return
      */
-    public static VervoortWashStateElementII_RawDataTemplate getInstance () {
+    public static VervoortWashStateElementII_RawDataTemplate getInstance() {
         return instance;
     }
-    
+
     /**
      *
      * @return
      */
     @Override
-     public AbstractAcquisitionModel makeNewAcquisitionModel () {
+    public AbstractAcquisitionModel makeNewAcquisitionModel() {
         this.acquisitionModel = new SingleCollectorAcquisition();
         return acquisitionModel;
+    }
+
+    private void readObject(
+            ObjectInputStream stream)
+            throws IOException, ClassNotFoundException {
+        stream.defaultReadObject();
+        ObjectStreamClass myObject = ObjectStreamClass.lookup(
+                Class.forName(VervoortWashStateElementII_RawDataTemplate.class.getCanonicalName()));
+        long theSUID = myObject.getSerialVersionUID();
+        System.out.println("Customized De-serialization of VervoortWashStateElementII_RawDataTemplate " + theSUID);
     }
 }

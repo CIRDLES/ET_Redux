@@ -119,11 +119,16 @@ public class RawRatioDataView extends AbstractRawDataView {
             maxY = -Double.MAX_VALUE;
 
             // find min and max y
+            // feb 2016
             for (int i = 0; i < myOnPeakData.length; i++) {
-                minY = Math.min(minY, myOnPeakData[i]);
+                if (Double.isFinite(myOnPeakData[i])) {
+                    minY = Math.min(minY, myOnPeakData[i]);
+                }
             }
             for (int i = 0; i < myOnPeakData.length; i++) {
-                maxY = Math.max(maxY, myOnPeakData[i]);
+                if (Double.isFinite(myOnPeakData[i])) {
+                    maxY = Math.max(maxY, myOnPeakData[i]);
+                }
             }
 
             // adjust margins for unknowns

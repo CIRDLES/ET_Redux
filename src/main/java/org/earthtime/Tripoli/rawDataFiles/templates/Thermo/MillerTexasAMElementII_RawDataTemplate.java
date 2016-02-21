@@ -17,6 +17,9 @@
  */
 package org.earthtime.Tripoli.rawDataFiles.templates.Thermo;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectStreamClass;
 import java.io.Serializable;
 import java.util.TimeZone;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.AbstractAcquisitionModel;
@@ -35,7 +38,7 @@ public final class MillerTexasAMElementII_RawDataTemplate extends AbstractRawDat
 
     private static MillerTexasAMElementII_RawDataTemplate instance = new MillerTexasAMElementII_RawDataTemplate();
 
-    private MillerTexasAMElementII_RawDataTemplate () {
+    private MillerTexasAMElementII_RawDataTemplate() {
         super();
 
         this.NAME = "Miller Texas AM Element II";
@@ -48,7 +51,7 @@ public final class MillerTexasAMElementII_RawDataTemplate extends AbstractRawDat
         this.blockSize = 300;
         this.standardIDs = new String[]//
         {"Peixe"};
-        this.timeZone = TimeZone.getTimeZone( "PST" );
+        this.timeZone = TimeZone.getTimeZone("PST");
         this.defaultParsingOfFractionsBehavior = 1;
         this.elementsByIsotopicMass = new String[]{"202", "204", "206", "207", "208", "232", "235", "238"};
         this.massSpecSetup = TexasAMElementIISetupUPb.getInstance();
@@ -58,17 +61,27 @@ public final class MillerTexasAMElementII_RawDataTemplate extends AbstractRawDat
      *
      * @return
      */
-    public static MillerTexasAMElementII_RawDataTemplate getInstance () {
+    public static MillerTexasAMElementII_RawDataTemplate getInstance() {
         return instance;
     }
-    
+
     /**
      *
      * @return
      */
     @Override
-     public AbstractAcquisitionModel makeNewAcquisitionModel () {
+    public AbstractAcquisitionModel makeNewAcquisitionModel() {
         this.acquisitionModel = new SingleCollectorAcquisition();
         return acquisitionModel;
+    }
+
+    private void readObject(
+            ObjectInputStream stream)
+            throws IOException, ClassNotFoundException {
+        stream.defaultReadObject();
+        ObjectStreamClass myObject = ObjectStreamClass.lookup(
+                Class.forName(MillerTexasAMElementII_RawDataTemplate.class.getCanonicalName()));
+        long theSUID = myObject.getSerialVersionUID();
+        System.out.println("Customized De-serialization of MillerTexasAMElementII_RawDataTemplate " + theSUID);
     }
 }

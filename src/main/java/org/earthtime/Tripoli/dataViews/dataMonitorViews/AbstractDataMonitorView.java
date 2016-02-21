@@ -662,8 +662,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
 
             // create session
             tripoliSession
-                    = //
-                    new TripoliSession(//
+                    = new TripoliSession(//
                             rawDataFileHandler, tripoliSamplesSorted);
 
             project.setTripoliSession(tripoliSession);
@@ -704,6 +703,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
 
             tripoliSession.getTripoliSamples().get(0).setMineralStandardModel(primaryMineralStandard);
 
+            tripoliSession.prepareFractionTimeStamps();
             tripoliSession.processRawData();
 
             tripoliSession.postProcessDataForCommonLeadLossPreparation();

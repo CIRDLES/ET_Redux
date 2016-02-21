@@ -1,5 +1,5 @@
 /*
- * UPbLAICPMSFraction.java
+ * UPbSHRIMPFraction.java
  *
  *
  * Copyright 2006-2016 James F. Bowring and www.Earth-Time.org
@@ -60,13 +60,13 @@ import org.earthtime.reportViews.ReportRowGUIInterface;
  *
  * @author James F. Bowring
  */
-public class UPbLAICPMSFraction extends Fraction implements
+public class UPbSHRIMPFraction extends Fraction implements
         FractionI,
         UPbFractionI,
         ETFractionInterface,
         ReportRowGUIInterface,
         Serializable {
-//TODO: refactor this class = quick copy and simplification of UPbFraction, but has many common features. a
+//TODO: refactor this class = quick copy and simplification of UPbFraction nad UPbLAICPMS Fraction, but has many common features. a
 
     // also has extraneous stuff like top panel 
     // Class variables
@@ -74,15 +74,9 @@ public class UPbLAICPMSFraction extends Fraction implements
     // Instance variables
     private transient Path2D errorEllipsePath;
     private transient double ellipseRho;
-    // march 2014 for isoplot 
-//    private transient org.cirdles.isoplot.chart.concordia.ErrorEllipse errorEllipseNode;
-    private transient boolean hasMeasuredLead;
-    private transient boolean hasMeasuredUranium;
     private transient boolean selectedInDataTable;
-    // the CURRENT ReduxLabData are made available to any active fraction
-    private transient ReduxLabData myLabData;
     private String ratioType;
-    private AbstractRatiosDataModel physicalConstantsModel; // fraction class has physicalConstantsModelID
+    private AbstractRatiosDataModel physicalConstantsModel;
     private int aliquotNumber;
     private boolean changed;
     private boolean deleted;
@@ -110,7 +104,7 @@ public class UPbLAICPMSFraction extends Fraction implements
     /**
      *
      */
-    public UPbLAICPMSFraction() {
+    public UPbSHRIMPFraction() {
         super(ReduxConstants.DEFAULT_OBJECT_NAME, ReduxConstants.DEFAULT_OBJECT_NAME);
         setLegacy(false);
         this.ratioType = "UPb";
@@ -134,10 +128,6 @@ public class UPbLAICPMSFraction extends Fraction implements
         setSampleIsochronRatios(new ValueModel[0]);
 
         setInitialPbModel(null);
-
-        hasMeasuredLead = false;
-
-        hasMeasuredUranium = false;
 
         commonLeadCorrectionParameters = null;
         staceyKramerCorrectionParameters = null;
@@ -164,7 +154,7 @@ public class UPbLAICPMSFraction extends Fraction implements
      *
      * @param fractionID
      */
-    public UPbLAICPMSFraction(String fractionID) {
+    public UPbSHRIMPFraction(String fractionID) {
         this();
         this.setFractionID(fractionID);
     }
@@ -178,7 +168,7 @@ public class UPbLAICPMSFraction extends Fraction implements
      * @param pbBlank
      * @throws BadLabDataException
      */
-    public UPbLAICPMSFraction(
+    public UPbSHRIMPFraction(
             int aliquotNum,
             FractionI fraction,
             ReduxLabData labData) throws BadLabDataException {
@@ -187,7 +177,6 @@ public class UPbLAICPMSFraction extends Fraction implements
 
         // custom settings
         this.aliquotNumber = aliquotNum;
-        this.myLabData = labData;
         this.changed = false;
 
         // Fraction fields
@@ -207,7 +196,7 @@ public class UPbLAICPMSFraction extends Fraction implements
      * @param aliquotNum
      * @param fraction
      */
-    public UPbLAICPMSFraction(
+    public UPbSHRIMPFraction(
             int aliquotNum,
             FractionI fraction) {
 
@@ -966,6 +955,7 @@ public class UPbLAICPMSFraction extends Fraction implements
     /**
      *
      */
+    @Override
     public void calculateTeraWasserburgRho() {
         // created to handle legacy data
 
@@ -1053,13 +1043,6 @@ public class UPbLAICPMSFraction extends Fraction implements
     }
 
     /**
-     * @param existsMeasuredLead
-     */
-    public void setHasMeasuredLead(boolean existsMeasuredLead) {
-        this.hasMeasuredLead = existsMeasuredLead;
-    }
-
-    /**
      * @return the hasMeasuredUranium
      */
     @Override
@@ -1068,13 +1051,6 @@ public class UPbLAICPMSFraction extends Fraction implements
                 getMeasuredRatioByName("r206_238m").hasPositiveValue()
                 || getMeasuredRatioByName("r208_232m").hasPositiveValue();
 
-    }
-
-    /**
-     * @param existsMeasuredUranium
-     */
-    public void setHasMeasuredUranium(boolean existsMeasuredUranium) {
-        this.hasMeasuredUranium = existsMeasuredUranium;
     }
 
     // feb 2010 these methods are placeholders due to use of

@@ -110,7 +110,7 @@ public class IonCounterCollectorModel extends AbstractCollectorModel {
     public double[] calculateMeasuredCountsAndMatrixSIntensityDiagonal(int countOfBaselineIntensities, double[] allItensities, double integrationTime) {
 
         double[] measuredVarianceFromIonCounts = new double[allItensities.length];
-        // measuredIntensityIonCounter = new double[allItensities.length];
+
         for (int i = 0; i < allItensities.length; i++) {
 
             measuredVarianceFromIonCounts[i] = allItensities[i] / integrationTime; // march 2013 Noah's famous EFFING comment / integrationTime;

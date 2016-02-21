@@ -41,6 +41,13 @@ public class ReduxPersistentState implements Serializable {
     private static ReduxPersistentState instance = null;
     private static final String persistentStateFileName = "ReduxPersistentState.ser";
     private static int MRU_COUNT = 10;
+
+    /**
+     * @return the persistentStateFileName
+     */
+    public static String getPersistentStateFileName() {
+        return persistentStateFileName;
+    }
     // instance variables
     private ArrayList<String> MRUSampleList;
     private String MRUSampleFolderPath;
@@ -95,7 +102,6 @@ public class ReduxPersistentState implements Serializable {
         try {
             sampleFolder.mkdir();
         } catch (SecurityException ex) {
-//            ex.printStackTrace();
         }
 
         MRUProjectFile = null;
@@ -112,11 +118,11 @@ public class ReduxPersistentState implements Serializable {
     }
 
     private void initMRUSampleLists() {
-        MRUSampleList = new ArrayList<String>(MRU_COUNT);
+        MRUSampleList = new ArrayList<>(MRU_COUNT);
     }
 
     private void initMRUProjectLists() {
-        MRUProjectList = new ArrayList<String>(MRU_COUNT);
+        MRUProjectList = new ArrayList<>(MRU_COUNT);
     }
 
     /**

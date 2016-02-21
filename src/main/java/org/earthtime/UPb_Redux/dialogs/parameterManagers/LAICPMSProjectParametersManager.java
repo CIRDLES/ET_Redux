@@ -26,10 +26,11 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.Iterator;
@@ -396,7 +397,7 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
         this.add(headerLabel);
 
         Iterator<IsotopesEnum> isotopeIterator
-                = //
+                = 
                 isotopeMappingModel.getIsotopeToCollectorMap().keySet().iterator();
 
         int count = 1;
@@ -451,14 +452,16 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
             }
 
             // dead time for ion counters
+            NumberFormat formatter = new DecimalFormat("###0.00");
             if (collectorTypeLabel.getText().startsWith("I")) {
                 // for case of all collectors are ion counters
                 if (acquisitionType.equals(AcquisitionTypesEnum.SINGLE_COLLECTOR)) {
                     JTextField integrationTimeText = new JTextField();
+                    integrationTimeText.setHorizontalAlignment(JTextField.RIGHT);
                     integrationTimeText.setDocument(new DialogEditor.BigDecimalDocument(integrationTimeText, editable));
 
                     integrationTimeText.setText( //
-                            Double.toString(isotopeMappingModel.getIsotopeToIntegrationTimeMap().get(key) * 1000.0));
+                            formatter.format(isotopeMappingModel.getIsotopeToIntegrationTimeMap().get(key) * 1000.0));
 
                     integrationTimeText.setBounds(leftMargin + 75 + 50 + 75 + 25, topOfTable + 25 * count, 75, 25);
                     this.add(integrationTimeText);
@@ -674,12 +677,9 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
 
         ET_JButton saveButton = new ET_JButton("Save and Close");
         saveButton.setBounds(leftMargin + 225 + 225, 525, 125, 25);
-        saveButton.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent ae) {
-                saveData_buttonActionPerformed(ae);
-                projectManager.updateDataChangeStatus(true);
-            }
+        saveButton.addActionListener((ActionEvent ae) -> {
+            saveData_buttonActionPerformed(ae);
+            projectManager.updateDataChangeStatus(true);
         });
 
         saveButton.setEnabled(editable);
@@ -687,16 +687,13 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
 
         ET_JButton repropagateButton = new ET_JButton("Re-propagate Unct");
         repropagateButton.setBounds(leftMargin + 125 + 225 + 225, 525, 150, 25);
-        repropagateButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                // dec 2014
-                rawDataFileHandler.getAcquisitionModel().setUsingFullPropagation(fullPropagationRB.isSelected());
-                projectManager.reProcessFractionRawRatios(fullPropagationRB.isSelected());
-                projectManager.updateDataChangeStatus(true);
-                readyToProcessData = true;
-                parametersViewDialog.setVisible(false);;
-            }
+        repropagateButton.addActionListener((ActionEvent ae) -> {
+            // dec 2014
+            rawDataFileHandler.getAcquisitionModel().setUsingFullPropagation(fullPropagationRB.isSelected());
+            projectManager.reProcessFractionRawRatios(fullPropagationRB.isSelected());
+            projectManager.updateDataChangeStatus(true);
+            readyToProcessData = true;
+            parametersViewDialog.setVisible(false);;
         });
 
         repropagateButton.setEnabled(!editable);
@@ -704,13 +701,9 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
 
         ET_JButton closeButton = new ET_JButton("Close");
         closeButton.setBounds(leftMargin + 125 + 225 + 200 + 175, 525, 75, 25);
-        closeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                projectManager.updateDataChangeStatus(true);
-                parametersViewDialog.setVisible(false);
-
-            }
+        closeButton.addActionListener((ActionEvent ae) -> {
+            projectManager.updateDataChangeStatus(true);
+            parametersViewDialog.setVisible(false);
         });
 
         this.add(closeButton);

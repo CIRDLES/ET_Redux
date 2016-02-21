@@ -47,7 +47,6 @@ public class YAxisView extends AbstractRawDataView {
     private boolean zoom = false;
     private boolean panning = false;
     private boolean floating = false;
-    
 
     /**
      *
@@ -61,8 +60,7 @@ public class YAxisView extends AbstractRawDataView {
      * @param floating
      * @param forStandards the value of forStandards
      */
-    
-    public YAxisView (//
+    public YAxisView(//
             AbstractRawDataView[] rawDataModelViews, //
             JLayeredPane sampleSessionDataView, //
             Color backgroundColor, //
@@ -71,7 +69,7 @@ public class YAxisView extends AbstractRawDataView {
             Rectangle bounds, //
             boolean floating, //
             boolean forStandards) {
-        super( bounds );
+        super(bounds);
 
         this.rawDataModelViews = rawDataModelViews;
         this.dataViewsOverlay = null;
@@ -87,22 +85,22 @@ public class YAxisView extends AbstractRawDataView {
         this.minX = 0;
         this.maxX = bounds.getWidth();//100;
 
-        setOpaque( true );
-        setBackground( Color.white );
+        setOpaque(true);
+        setBackground(Color.white);
 
-        setBounds( bounds );
+        setBounds(bounds);
         graphWidth = bounds.width - leftMargin;
         graphHeight = bounds.height - topMargin;
 
         addMeAsMouseListener();
         addMeAsMouseMotionListener();
 
-        setCursor( Cursor.getPredefinedCursor( Cursor.HAND_CURSOR ) );
+        setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
 
-    private void addMeAsMouseMotionListener () {
+    private void addMeAsMouseMotionListener() {
 
-        addMouseMotionListener( this );
+        addMouseMotionListener(this);
     }
 
     /**
@@ -110,65 +108,67 @@ public class YAxisView extends AbstractRawDataView {
      * @param g2d
      */
     @Override
-    public void paint ( Graphics2D g2d ) {
+    public void paint(Graphics2D g2d) {
 
-        paintInit( g2d );
+        paintInit(g2d);
 
-        setBackground( backgroundColor );
+        setBackground(backgroundColor);
         // paint axis and tics
         Shape yAxis = new Line2D.Double( //
-                mapX( maxX - 1 ), mapY( minY ), mapX( maxX - 1 ), mapY( maxY ) );
-        g2d.setPaint( Color.black );
-        g2d.draw( yAxis );
+                mapX(maxX - 1), mapY(minY), mapX(maxX - 1), mapY(maxY));
+        g2d.setPaint(Color.black);
+        g2d.draw(yAxis);
 
         Shape zoomingArea = new Rectangle2D.Double(//
-                mapX( maxX - 19 ),//
+                mapX(maxX - 19),//
                 -1,//
-                mapX( maxX - 1 ) - mapX( maxX - 19 ),//
-                getHeight() + 1 );
-        g2d.draw( zoomingArea );
+                mapX(maxX - 1) - mapX(maxX - 19),//
+                getHeight() + 1);
+        g2d.draw(zoomingArea);
 
         // tics
         // tics only appear for standards as unknowns do not have a common axis
-        if ( tics != null ) {
-            g2d.setPaint( Color.BLACK );
-            for (int i = 0; i < tics.length; i ++) {
+        if (tics != null) {
+            g2d.setPaint(Color.BLACK);
+            for (int i = 0; i < tics.length; i++) {
                 try {
                     Shape ticMark = new Line2D.Double( //
-                            mapX( maxX - 19 ), mapY( getTics()[i].doubleValue() ), mapX( maxX - 1 ), mapY( getTics()[i].doubleValue() ) );
-                    g2d.draw( ticMark );
+                            mapX(maxX - 19), mapY(getTics()[i].doubleValue()), mapX(maxX - 1), mapY(getTics()[i].doubleValue()));
+                    g2d.draw(ticMark);
 
-                    TextLayout mLayout = //
+                    TextLayout mLayout
+                            = //
                             new TextLayout(
-                            getTics()[i].toPlainString(), g2d.getFont(), g2d.getFontRenderContext() );
+                                    getTics()[i].toPlainString(), g2d.getFont(), g2d.getFontRenderContext());
 
                     Rectangle2D bounds = mLayout.getBounds();
 
-                    g2d.drawString( getTics()[i].toPlainString(),//
-                            (float) mapX( maxX - 21 ) - (float) bounds.getWidth(),//
-                            (float) mapY( getTics()[i].doubleValue() ) + 2.9f );
+                    g2d.drawString(getTics()[i].toPlainString(),//
+                            (float) mapX(maxX - 21) - (float) bounds.getWidth(),//
+                            (float) mapY(getTics()[i].doubleValue()) + 2.9f);
                 } catch (Exception e) {
                 }
             }
         }
 
-        if (  ! floating ) {
+        if (!floating) {
             // paint display name
-            g2d.setPaint( Color.black );
-            g2d.setFont( new Font( "SansSerif", Font.BOLD, 12 ) );
+            g2d.setPaint(Color.black);
+            g2d.setFont(new Font("SansSerif", Font.BOLD, 12));
 
-            TextLayout mLayout = //
+            TextLayout mLayout
+                    = //
                     new TextLayout(
-                    rawDataModelViews[0].getDataModel().getDataModelName(), g2d.getFont(), g2d.getFontRenderContext() );
+                            rawDataModelViews[0].getDataModel().getDataModelName(), g2d.getFont(), g2d.getFontRenderContext());
 
             Rectangle2D bounds = mLayout.getBounds();
 
             int drawX = 15;
             int drawY = (int) (getHeight() / 2 + bounds.getWidth() / 2);
 
-            g2d.rotate(  - Math.PI / 2.0, drawX, drawY );
-            g2d.drawString( rawDataModelViews[0].getDataModel().getDataModelName(), drawX, drawY );
-            g2d.rotate( Math.PI / 2.0, drawX, drawY );
+            g2d.rotate(-Math.PI / 2.0, drawX, drawY);
+            g2d.drawString(rawDataModelViews[0].getDataModel().getDataModelName(), drawX, drawY);
+            g2d.rotate(Math.PI / 2.0, drawX, drawY);
         }
 
     }
@@ -177,15 +177,14 @@ public class YAxisView extends AbstractRawDataView {
      *
      */
     @Override
-    public void preparePanel () {
+    public void preparePanel() {
 
         this.removeAll();
 
-        setDisplayOffsetY( 0.0 );
-        setDisplayOffsetX( 0.0 );
+        setDisplayOffsetY(0.0);
+        setDisplayOffsetX(0.0);
 
         //prepareAxes();
-
     }
 
     /**
@@ -193,7 +192,7 @@ public class YAxisView extends AbstractRawDataView {
      * @param evt
      */
     @Override
-    public void mousePressed ( MouseEvent evt ) {
+    public void mousePressed(MouseEvent evt) {
         yOnMousePress = evt.getY();
     }
 
@@ -202,7 +201,7 @@ public class YAxisView extends AbstractRawDataView {
      * @param evt
      */
     @Override
-    public void mouseReleased ( MouseEvent evt ) {
+    public void mouseReleased(MouseEvent evt) {
         zoom = false;
         panning = false;
     }
@@ -212,7 +211,7 @@ public class YAxisView extends AbstractRawDataView {
      * @param e
      */
     @Override
-    public void mouseExited ( MouseEvent e ) {
+    public void mouseExited(MouseEvent e) {
         zoom = false;
         panning = false;
     }
@@ -222,25 +221,25 @@ public class YAxisView extends AbstractRawDataView {
      * @param evt
      */
     @Override
-    public void mouseDragged ( MouseEvent evt ) {
+    public void mouseDragged(MouseEvent evt) {
         //  System.out.println( "MOUSE Dragged: " + convertMouseYToValue( evt.getY() ) + " from " + evt.getY() + " X " + evt.getX());
         int yOnMouseDragged = evt.getY();
         int xOnMouseDragged = evt.getX();
 
-        double yDelta = Math.abs( (convertMouseYToValue( yOnMouseDragged ) - convertMouseYToValue( yOnMousePress )) );
+        double yDelta = Math.abs((convertMouseYToValue(yOnMouseDragged) - convertMouseYToValue(yOnMousePress)));
 
-        int currentX = convertMouseXToValue( xOnMouseDragged );
+        int currentX = convertMouseXToValue(xOnMouseDragged);
         zoom = (currentX > maxX - 19) & (currentX < maxX);
         panning = (currentX < maxX - 19) & (currentX > maxX / 3);//oct 2012 minX);
 
-        if ( zoom ) {
-            if ( yOnMouseDragged < yOnMousePress ) {
+        if (zoom) {
+            if (yOnMouseDragged < yOnMousePress) {
                 //System.out.println( "Mouse NORTH" ); zoomin
                 maxY -= yDelta;
                 minY += yDelta;
             }
 
-            if ( yOnMouseDragged > yOnMousePress ) {
+            if (yOnMouseDragged > yOnMousePress) {
 //            System.out.println( "Mouse SOUTH" );zoomout
                 maxY += yDelta;
                 minY -= yDelta;
@@ -249,39 +248,46 @@ public class YAxisView extends AbstractRawDataView {
 //            tics = TicGeneratorForAxes.generateTics( minY, maxY, (int) (rawDataModelViews[0].getHeight() / 20.0) );
         }
 
-        if ( panning ) {
+        if (panning) {
             // panning
-            if ( yOnMouseDragged < yOnMousePress ) {
+            if (yOnMouseDragged < yOnMousePress) {
                 //System.out.println( "Mouse NORTH" );
                 maxY -= yDelta;
                 minY -= yDelta;
             }
 
-            if ( yOnMouseDragged > yOnMousePress ) {
+            if (yOnMouseDragged > yOnMousePress) {
 //            System.out.println( "Mouse SOUTH" );
                 maxY += yDelta;
                 minY += yDelta;
             }
         }
 
-        tics = TicGeneratorForAxes.generateTics( minY, maxY, (int) (rawDataModelViews[0].getHeight() / 20.0) );
-        for (int i = 0; i < rawDataModelViews.length; i ++) {
-            rawDataModelViews[i].setTics( tics );
+        tics = TicGeneratorForAxes.generateTics(minY, maxY, (int) (rawDataModelViews[0].getHeight() / 20.0));
+        for (int i = 0; i < rawDataModelViews.length; i++) {
+            rawDataModelViews[i].setTics(tics);
         }
 
         yOnMousePress = yOnMouseDragged;
         repaint();
 
         // reset all fractions if not in dataViewsOverlay
-        if ( dataViewsOverlay == null ) {
-            for (int i = 0; i < rawDataModelViews.length; i ++) {
-                rawDataModelViews[i].setMaxY( maxY );
-                rawDataModelViews[i].setMinY( minY );
+        if (dataViewsOverlay == null) {
+            for (int i = 0; i < rawDataModelViews.length; i++) {
+                if (!floating) {
+                    if (rawDataModelViews[i].getTripoliFraction().isStandard()) {
+                        rawDataModelViews[i].setMaxY(maxY);
+                        rawDataModelViews[i].setMinY(minY);
+                    }
+                } else {
+                    rawDataModelViews[i].setMaxY(maxY);
+                    rawDataModelViews[i].setMinY(minY);
+                }
             }
         } else //reset DataViewsOverlay 
         {
-            dataViewsOverlay.setMaxY( maxY );
-            dataViewsOverlay.setMinY( minY );
+            dataViewsOverlay.setMaxY(maxY);
+            dataViewsOverlay.setMinY(minY);
         }
         sampleSessionDataView.repaint();
     }
@@ -291,28 +297,28 @@ public class YAxisView extends AbstractRawDataView {
      * @return
      */
     @Override
-    public DataModelInterface getDataModel () {
-        throw new UnsupportedOperationException( "Not a legitimate. call!" );
+    public DataModelInterface getDataModel() {
+        throw new UnsupportedOperationException("Not a legitimate. call!");
     }
 
     /**
      * @param dataViewsOverlay the dataViewsOverlay to set
      */
-    public void setDataViewsOverlay ( AbstractRawDataView dataViewsOverlay ) {
+    public void setDataViewsOverlay(AbstractRawDataView dataViewsOverlay) {
         this.dataViewsOverlay = dataViewsOverlay;
     }
 
     /**
      * @return the floating
      */
-    public boolean isFloating () {
+    public boolean isFloating() {
         return floating;
     }
 
     /**
      * @param floating the floating to set
      */
-    public void setFloating ( boolean floating ) {
+    public void setFloating(boolean floating) {
         this.floating = floating;
     }
 }

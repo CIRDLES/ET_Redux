@@ -23,9 +23,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Utility for printing timeStamps.
- * see http://javatechniques.com/blog/dateformat-and-simpledateformat-examples/
- * 
+ * Utility for printing timeStamps. see
+ * http://javatechniques.com/blog/dateformat-and-simpledateformat-examples/
+ *
  * @author James F. Bowring
  */
 public class TimeToString {
@@ -35,42 +35,45 @@ public class TimeToString {
      * @param time
      * @return
      */
-    public static String secondsAsLongToTimeString ( long time ) {
+    public static String secondsAsLongToTimeString(long myTime) {
+        long time = myTime / 1000l;
         int seconds = (int) (time % 60);
-        int minutes = (int) ((time / 60) % 60);
-        int hours = (int) ((time / 3600) % 24);
+        int minutes = (int) ((time / (60)) % 60);
+        int hours = (int) ((time / (60 * 60)) % 24);
+        int days = (int) ((time / (60 * 60 * 24)));
         String secondsStr = (seconds < 10 ? "0" : "") + seconds;
         String minutesStr = (minutes < 10 ? "0" : "") + minutes;
         String hoursStr = (hours < 10 ? "0" : "") + hours;
+        String daysStr = (days < 10 ? "0" : "") + days;
 
-        return hoursStr + ":" + minutesStr + ":" + secondsStr;
+        return daysStr + ":" + hoursStr + ":" + minutesStr + ":" + secondsStr;
     }
 
     /**
-     * 
+     *
      * @param time
      * @return
      */
-    public static String timeStampString ( long time ) {
-        Date timeStamp = new Date( time );
-        
-        SimpleDateFormat format =
-            new SimpleDateFormat("HH:mm:ss dd.MMM");
-        
+    public static String timeStampString(long time) {
+        Date timeStamp = new Date(time);
+
+        SimpleDateFormat format
+                = new SimpleDateFormat("HH:mm:ss dd.MMM");
+
         return format.format(timeStamp);
     }
-    
+
     /**
-     * 
+     *
      * @param time
      * @return
      */
-    public static String timeStampStringNoDate ( long time ) {
-        Date timeStamp = new Date( time );
-        
-        SimpleDateFormat format =
-            new SimpleDateFormat("HH:mm:ss:S");
-        
+    public static String timeStampStringNoDate(long time) {
+        Date timeStamp = new Date(time);
+
+        SimpleDateFormat format
+                = new SimpleDateFormat("HH:mm:ss:S");
+
         return format.format(timeStamp);
     }
 
@@ -78,10 +81,10 @@ public class TimeToString {
      *
      * @param args
      */
-    public static void main ( String[] args ) {
-        long time = 1191343282;
-        TimeToString ts = new TimeToString();
-        System.out.println( ts.secondsAsLongToTimeString( time ) );
-        System.out.println( ts.timeStampString( time ) );
-   }
+    public static void main(String[] args) {
+        long time = 1289488654000l;
+        System.out.println(TimeToString.secondsAsLongToTimeString(0));
+        System.out.println(TimeToString.timeStampString(time));
+        System.out.println(TimeToString.timeStampString(time - time));
+    }
 }

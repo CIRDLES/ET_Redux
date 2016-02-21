@@ -49,8 +49,8 @@ public class FractionInfoPanel extends AbstractRawDataView {
     public static int DEFAULT_WIDTH_OF_PANE = 128;
     //
     TripoliFractionIncludeChangeInterface rawDataModelView;
-    private final JCheckBox toggleFractionCheckBox;
-    private final JCheckBox showLocalYAxisCheckBox;
+    private JCheckBox toggleFractionCheckBox;
+    private JCheckBox showLocalYAxisCheckBox;
     private JCheckBox showLocalFitFunctionsCheckBox;
 
     /**
@@ -70,7 +70,12 @@ public class FractionInfoPanel extends AbstractRawDataView {
         super(sampleSessionDataView, tripoliFraction, bounds, invokeMouseListener, true);
 
         this.rawDataModelView = rawDataModelView;
+        
+        initView();
 
+    }
+
+    private void initView() {
         this.setCursor(Cursor.getDefaultCursor());
 
         Font checkBoxFont = new Font(
@@ -96,7 +101,7 @@ public class FractionInfoPanel extends AbstractRawDataView {
                 new ShowLocalYAxisCheckBoxActionListener(tripoliFraction, sampleSessionDataView));
         add(showLocalYAxisCheckBox, JLayeredPane.DEFAULT_LAYER);
 
-        if ((rawDataModelView instanceof FitFunctionsOnRatioDataView)||(rawDataModelView instanceof FitFunctionsOnDownHoleRatioDataView)) {
+        if ((rawDataModelView instanceof FitFunctionsOnRatioDataView) || (rawDataModelView instanceof FitFunctionsOnDownHoleRatioDataView)) {
             showLocalFitFunctionsCheckBox = new JCheckBox("local Fit Functions", false);
             showLocalFitFunctionsCheckBox.setBounds(2, 52, DEFAULT_WIDTH_OF_PANE - 2, 15);
             showLocalFitFunctionsCheckBox.setFont(checkBoxFont);
@@ -166,7 +171,8 @@ public class FractionInfoPanel extends AbstractRawDataView {
         if (tripoliFraction != null) {
             g2d.drawString(tripoliFraction.getFractionID(), 10, 10);
 
-            g2d.drawString(TimeToString.secondsAsLongToTimeString(tripoliFraction.getZeroBasedTimeStamp() / 1000), 10, 20);
+//            g2d.drawString(TimeToString.secondsAsLongToTimeString(tripoliFraction.getZeroBasedTimeStamp() / 1000), 10, 20);
+            g2d.drawString(TimeToString.secondsAsLongToTimeString(tripoliFraction.getZeroBasedTimeStamp()), 10, 20);
 
             toggleFractionCheckBox.setSelected(tripoliFraction.isIncluded());
         }
