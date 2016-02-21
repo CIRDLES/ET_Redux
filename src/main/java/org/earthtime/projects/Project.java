@@ -207,6 +207,7 @@ public class Project implements
         } catch (BadLabDataException badLabDataException) {
         }
 
+        
         ArrayList<AbstractTripoliSample> tripoliSamples = tripoliSession.getTripoliSamples();
         for (AbstractTripoliSample tripoliSample : tripoliSamples) {
             // check for primary standard and leave it out

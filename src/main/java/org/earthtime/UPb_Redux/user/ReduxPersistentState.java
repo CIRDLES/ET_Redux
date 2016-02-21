@@ -41,6 +41,13 @@ public class ReduxPersistentState implements Serializable {
     private static ReduxPersistentState instance = null;
     private static final String persistentStateFileName = "ReduxPersistentState.ser";
     private static int MRU_COUNT = 10;
+
+    /**
+     * @return the persistentStateFileName
+     */
+    public static String getPersistentStateFileName() {
+        return persistentStateFileName;
+    }
     // instance variables
     private ArrayList<String> MRUSampleList;
     private String MRUSampleFolderPath;
