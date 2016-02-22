@@ -63,7 +63,7 @@ public final class ReduxLabData implements Serializable {
     // Class variables
     private static final long serialVersionUID = -5567910355173929685L;//16L;
     private static final String labDataFileName = "ReduxLabData.ser";
-    private static ReduxLabData instance = null;
+    private static ReduxLabData instance = (ReduxLabData) ETSerializer.GetSerializedObjectFromFile(ReduxLabData.getMySerializedName());
     // Instance variables
     private String labName;
     private String analystName;
@@ -218,13 +218,13 @@ public final class ReduxLabData implements Serializable {
         }
 
         this.defaultLeftShadeCountForLAICPMSAquisitions = 0;
-        
+
         initDefaultInterReferenceMaterialReproducibilityMap();
- 
+
     }
-    
-    private void initDefaultInterReferenceMaterialReproducibilityMap(){
-               
+
+    private void initDefaultInterReferenceMaterialReproducibilityMap() {
+
         // set up default defaultInterReferenceMaterialReproducibility
         ValueModel r206_238irmr = new ValueModel("r206_238irmr", new BigDecimal(0.01), "NONE", BigDecimal.ZERO, BigDecimal.ZERO);
         ValueModel r206_207irmr = new ValueModel("r206_207irmr", new BigDecimal(0.01), "NONE", BigDecimal.ZERO, BigDecimal.ZERO);
@@ -347,19 +347,7 @@ public final class ReduxLabData implements Serializable {
         if (instance == null) {
             instance = (ReduxLabData) ETSerializer.GetSerializedObjectFromFile(ReduxLabData.getMySerializedName());
             if (instance == null) {
-//                // test for transition to ET_Redux from U-Pb_Redux
-//                // jan 2015 check if old U-Pb_Redux folder exists and copy file from there
-//                File dataFolderUPbRedux = new File(
-//                        File.separator + System.getProperty("user.home") + File.separator + myUsersUPbReduxDataFolderName);
-//                if (dataFolderUPbRedux.exists()) {
-//                    try {
-//                        instance = (ReduxLabData) ETSerializer.GetSerializedObjectFromFile(dataFolderUPbRedux.getCanonicalPath() + File.separator + labDataFileName);
-//                    } catch (IOException iOException) {
-//                    }
-//                }
-//                if (instance == null) {
-                    instance = new ReduxLabData();
-//                }
+                instance = new ReduxLabData();
             }
         }
         return instance;
@@ -445,9 +433,11 @@ public final class ReduxLabData implements Serializable {
             addTracer(TracerUPbModel.getNoneInstance());
             defaultLabTracer = getFirstTracer();
         } else // detect if legacy default is none and change if possible
-         if (defaultLabTracer.equals(getNoneTracer())) {
+        {
+            if (defaultLabTracer.equals(getNoneTracer())) {
                 defaultLabTracer = getFirstTracer();
             }
+        }
         return defaultLabTracer;
     }
 
@@ -563,9 +553,11 @@ public final class ReduxLabData implements Serializable {
             addAlphaUModel(new ValueModel(ReduxConstants.NONE));
             setDefaultLabAlphaUModel(getFirstAlphaUModel());
         } else // detect if legacy default is none and change if possible
-         if (defaultLabAlphaUModel.equals(getNoneAlphaUModel())) {
+        {
+            if (defaultLabAlphaUModel.equals(getNoneAlphaUModel())) {
                 setDefaultLabAlphaUModel(getFirstAlphaUModel());
             }
+        }
         return defaultLabAlphaUModel;
     }
 
@@ -670,9 +662,11 @@ public final class ReduxLabData implements Serializable {
             addAlphaPbModel(new ValueModel(ReduxConstants.NONE));
             setDefaultLabAlphaPbModel(getFirstAlphaPbModel());
         } else // detect if legacy default is none and change if possible
-         if (defaultLabAlphaPbModel.equals(getNoneAlphaPbModel())) {
+        {
+            if (defaultLabAlphaPbModel.equals(getNoneAlphaPbModel())) {
                 setDefaultLabAlphaPbModel(getFirstAlphaPbModel());
             }
+        }
         return defaultLabAlphaPbModel;
     }
 
@@ -779,9 +773,11 @@ public final class ReduxLabData implements Serializable {
             addBlank(PbBlankICModel.getNoneInstance());
             setDefaultLabPbBlank(getFirstPbBlank());
         } else // detect if legacy default is none and change if possible
-         if (defaultLabPbBlank.equals(getNonePbBlankModel())) {
+        {
+            if (defaultLabPbBlank.equals(getNonePbBlankModel())) {
                 setDefaultLabPbBlank(getFirstPbBlank());
             }
+        }
         return defaultLabPbBlank;
     }
 
@@ -901,9 +897,11 @@ public final class ReduxLabData implements Serializable {
 
             defaultLabInitialPbModel = getFirstInitialPbModel();
         } else // detect if legacy default is none and change if possible
-         if (defaultLabInitialPbModel.equals(getNoneInitialPbModel())) {
+        {
+            if (defaultLabInitialPbModel.equals(getNoneInitialPbModel())) {
                 defaultLabInitialPbModel = getFirstInitialPbModel();
             }
+        }
         return defaultLabInitialPbModel;
     }
 
@@ -1019,11 +1017,9 @@ public final class ReduxLabData implements Serializable {
                 addPhysicalConstantsModel(PhysicalConstantsModel.getNoneInstance());
                 defaultPhysicalConstantsModel = getFirstPhysicalConstantsModel();
             } else // detect if legacy default is none and change if possible
-            {
-                if (defaultPhysicalConstantsModel.equals(getNonePhysicalConstantsModel())) {
+             if (defaultPhysicalConstantsModel.equals(getNonePhysicalConstantsModel())) {
                     defaultPhysicalConstantsModel = getFirstPhysicalConstantsModel();
                 }
-            }
         } catch (BadLabDataException badLabDataException) {
             new ETWarningDialog(badLabDataException).setVisible(true);
         }
@@ -1272,9 +1268,11 @@ public final class ReduxLabData implements Serializable {
             addRareEarthElementModel(RareEarthElementsModel.getNoneInstance());
             defaultRareEarthElementModel = getFirstRareEarthElementModel();
         } else // detect if legacy default is none and change if possible
-         if (defaultRareEarthElementModel.equals(getNoneRareEarthElementModel())) {
+        {
+            if (defaultRareEarthElementModel.equals(getNoneRareEarthElementModel())) {
                 defaultRareEarthElementModel = getFirstRareEarthElementModel();
             }
+        }
         return defaultRareEarthElementModel;
     }
 
@@ -1379,9 +1377,11 @@ public final class ReduxLabData implements Serializable {
             addDetritalUraniumAndThoriumModel(DetritalUraniumAndThoriumModel.getNoneInstance());
             defaultDetritalUraniumAndThoriumModel = getFirstDetritalUraniumAndThoriumModel();
         } else // detect if legacy default is none and change if possible
-         if (defaultDetritalUraniumAndThoriumModel.equals(getNoneDetritalUraniumAndThoriumModel())) {
+        {
+            if (defaultDetritalUraniumAndThoriumModel.equals(getNoneDetritalUraniumAndThoriumModel())) {
                 defaultDetritalUraniumAndThoriumModel = getFirstDetritalUraniumAndThoriumModel();
             }
+        }
         return defaultDetritalUraniumAndThoriumModel;
     }
 
@@ -2027,17 +2027,18 @@ public final class ReduxLabData implements Serializable {
      * @return the defaultInterReferenceMaterialReproducibilityMap
      */
     public Map<RadRatios, ValueModel> getDefaultInterReferenceMaterialReproducibilityMap() {
-        if (defaultInterReferenceMaterialReproducibilityMap == null){
+        if (defaultInterReferenceMaterialReproducibilityMap == null) {
             initDefaultInterReferenceMaterialReproducibilityMap();
         }
         return defaultInterReferenceMaterialReproducibilityMap;
     }
 
     /**
-     * @param defaultInterReferenceMaterialReproducibilityMap the defaultInterReferenceMaterialReproducibilityMap to set
+     * @param defaultInterReferenceMaterialReproducibilityMap the
+     * defaultInterReferenceMaterialReproducibilityMap to set
      */
     public void setDefaultInterReferenceMaterialReproducibilityMap(Map<RadRatios, ValueModel> defaultInterReferenceMaterialReproducibilityMap) {
         this.defaultInterReferenceMaterialReproducibilityMap = defaultInterReferenceMaterialReproducibilityMap;
     }
-    
+
 }

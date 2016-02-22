@@ -4,6 +4,7 @@ target
 # Netbeans
 nbactions.xml
 dependency-reduced-pom.xml
+nbproject/
 
 # IntelliJ
 .idea/
