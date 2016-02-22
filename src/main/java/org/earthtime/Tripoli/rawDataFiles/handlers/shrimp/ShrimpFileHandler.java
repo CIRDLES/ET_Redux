@@ -18,7 +18,6 @@
 package org.earthtime.Tripoli.rawDataFiles.handlers.shrimp;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -27,7 +26,6 @@ import java.util.TreeSet;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import org.cirdles.shrimp.PrawnFile;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
@@ -163,7 +161,9 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
 
             JAXBContext jaxbContext = JAXBContext.newInstance(PrawnFile.class);
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-            prawnFile = (PrawnFile) jaxbUnmarshaller.unmarshal(url);//  url);
+            // show some progress
+            loadDataTask.firePropertyChange("progress", 0, 10);
+            prawnFile = (PrawnFile) jaxbUnmarshaller.unmarshal(url);
 
             // send name to project
             loadDataTask.firePropertyChange("projectName", "", prawnFile.getMount());
@@ -174,29 +174,41 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
                 if (loadDataTask.isCancelled()) {
                     break;
                 }
-                loadDataTask.firePropertyChange("progress", 0, ((100 * f) / prawnFile.getRuns()));
+                loadDataTask.firePropertyChange("progress", 0, 10 + ((95 * f) / prawnFile.getRuns()));
+                // assume we are golden   
+                // a 'run' is an analysis or fraction
+                for (int f = ignoreFirstFractions; f < prawnFile.getRuns(); f++) {
 
-                PrawnFile.Run runFraction = prawnFile.getRun().get(f);
+                    if (loadDataTask.isCancelled()) {
+                        break;
+                    }
+                    loadDataTask.firePropertyChange("progress", 0, ((100 * f) / prawnFile.getRuns()));
 
-                TripoliFraction tripoliFraction = processRunFraction(runFraction);
+                    PrawnFile.Run runFraction = prawnFile.getRun().get(f);
 
-                // determine if standard reference material
-                myTripoliFractions.add(tripoliFraction);
+                    TripoliFraction tripoliFraction = processRunFraction(runFraction);
 
-            } // end of files loop
+                    // determine if standard reference material
+                    myTripoliFractions.add(tripoliFraction);
 
-            if (myTripoliFractions.isEmpty()) {
-                myTripoliFractions = null;
-            }
-        } catch (JAXBException | MalformedURLException jAXBException) {
+                } // end of files loop
+
+                if (myTripoliFractions.isEmpty()) {
+                    myTripoliFractions = null;
+                }
+            }catch (JAXBException | MalformedURLException jAXBException) {
             JOptionPane.showMessageDialog(
                     null,
                     new String[]{"Selected Prawn file does not conform to schema."},
                     "ET Redux Warning",
                     JOptionPane.WARNING_MESSAGE);
         }
-        return myTripoliFractions;
-    }
+            return myTripoliFractions;
+        }
+
+    
+
+    
 
     private TripoliFraction processRunFraction(PrawnFile.Run runFraction) {
         String fractionID = runFraction.getPar().get(0).getValue();
@@ -267,10 +279,10 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
 
         massSpec.processFractionRawRatiosII(//
                 backgroundAcquisitions, peakAcquisitions, true, tripoliFraction);
-        
+
         // supply calculated variances
-        ((ShrimpSetupUPb)massSpec).initializeVariances(peakAcquisitionsVariances);
-        
+        ((ShrimpSetupUPb) massSpec).initializeVariances(peakAcquisitionsVariances);
+
         tripoliFraction.shadeDataActiveMapLeft(0);
         System.out.println("\n**** SHRIMP FractionID  " + fractionID + " refMat? " + tripoliFraction.isStandard() + " <<<<<<<<<<<<<<<<<<\n");
 
