@@ -38,7 +38,7 @@ public class ReduxPersistentState implements Serializable {
 
     // class variables
     private static final long serialVersionUID = -2957701651505126654L;
-    private static ReduxPersistentState instance = null;
+    private static ReduxPersistentState instance = (ReduxPersistentState) ETSerializer.GetSerializedObjectFromFile(getMySerializedName());
     private static final String persistentStateFileName = "ReduxPersistentState.ser";
     private static int MRU_COUNT = 10;
 
@@ -196,19 +196,8 @@ public class ReduxPersistentState implements Serializable {
         if (!dataFolder.exists()) {
             dataFolder.mkdir();
         }
-
-        //instance = (ReduxPersistentState) ETSerializer.GetSerializedObjectFromFile(getMySerializedName());
         if (instance == null) {
-            // test for transition to ET_Redux from U-Pb_Redux
-            // jan 2015 check if old U-Pb_Redux folder exists and copy file from there
-            File dataFolderUPbRedux = new File(
-                    File.separator + System.getProperty("user.home") + File.separator + myUsersUPbReduxDataFolderName);
-            if (dataFolderUPbRedux.exists()) {
-                instance = (ReduxPersistentState) ETSerializer.GetSerializedObjectFromFile(getMySerializedName());
-            }
-            if (instance == null) {
-                instance = new ReduxPersistentState();
-            }
+            instance = new ReduxPersistentState();
         }
 
         return instance;
