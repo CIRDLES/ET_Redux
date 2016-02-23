@@ -18,6 +18,7 @@
 package org.earthtime.Tripoli.rawDataFiles.handlers.shrimp;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -26,6 +27,7 @@ import java.util.TreeSet;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import org.cirdles.shrimp.PrawnFile;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
@@ -152,11 +154,12 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
             SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions) {
 
         SortedSet myTripoliFractions = new TreeSet<>();
-        PrawnFile prawnFile = null;
+        PrawnFile prawnFile;
 
+//        try {
+        // remote copy of example file
+        java.net.URL url;
         try {
-            // remote copy of example file
-            java.net.URL url = null;
             url = new URL("https://raw.githubusercontent.com/bowring/XSD/master/SHRIMP/EXAMPLE_100142_G6147_10111109.43_10.33.37%20AM.xml");
 
             JAXBContext jaxbContext = JAXBContext.newInstance(PrawnFile.class);
@@ -174,41 +177,30 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
                 if (loadDataTask.isCancelled()) {
                     break;
                 }
-                loadDataTask.firePropertyChange("progress", 0, 10 + ((95 * f) / prawnFile.getRuns()));
-                // assume we are golden   
-                // a 'run' is an analysis or fraction
-                for (int f = ignoreFirstFractions; f < prawnFile.getRuns(); f++) {
+                loadDataTask.firePropertyChange("progress", 10, ((90 * f) / prawnFile.getRuns()));
 
-                    if (loadDataTask.isCancelled()) {
-                        break;
-                    }
-                    loadDataTask.firePropertyChange("progress", 0, ((100 * f) / prawnFile.getRuns()));
+                PrawnFile.Run runFraction = prawnFile.getRun().get(f);
 
-                    PrawnFile.Run runFraction = prawnFile.getRun().get(f);
+                TripoliFraction tripoliFraction = processRunFraction(runFraction);
 
-                    TripoliFraction tripoliFraction = processRunFraction(runFraction);
+                // determine if standard reference material
+                myTripoliFractions.add(tripoliFraction);
 
-                    // determine if standard reference material
-                    myTripoliFractions.add(tripoliFraction);
+            } // end of files loop
 
-                } // end of files loop
+            if (myTripoliFractions.isEmpty()) {
+                myTripoliFractions = null;
+            }
 
-                if (myTripoliFractions.isEmpty()) {
-                    myTripoliFractions = null;
-                }
-            }catch (JAXBException | MalformedURLException jAXBException) {
+        } catch (JAXBException | MalformedURLException jAXBException) {
             JOptionPane.showMessageDialog(
                     null,
                     new String[]{"Selected Prawn file does not conform to schema."},
                     "ET Redux Warning",
                     JOptionPane.WARNING_MESSAGE);
         }
-            return myTripoliFractions;
-        }
-
-    
-
-    
+        return myTripoliFractions;
+    }
 
     private TripoliFraction processRunFraction(PrawnFile.Run runFraction) {
         String fractionID = runFraction.getPar().get(0).getValue();
