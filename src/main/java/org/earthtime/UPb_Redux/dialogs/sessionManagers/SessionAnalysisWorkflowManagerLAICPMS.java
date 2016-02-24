@@ -183,6 +183,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
 
             // create data viewing pane
             tripoliSessionRawDataView = new TripoliSessionRawDataView( //
+                    //
                     uPbReduxFrame,//
                     tripoliSession,//
                     dataModelViewConstructorFactory(RawIntensitiesDataView.class.getName()),//
@@ -193,7 +194,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
                     tripoliSessionRawDataViewYAxis, //
                     tripoliSessionDataHeader_pane,//
                     tripoliSessionDataControls_pane, //
-                    tripoliSessionDataView_scrollPane.getBounds());
+                    tripoliSessionDataView_scrollPane.getBounds(), this);
 
             // set sampleFractionationCalculator
             ((TripoliSessionRawDataView) tripoliSessionRawDataView).setSessionFractionationCalculator(tripoliSession);
@@ -1746,6 +1747,11 @@ private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.
      */
     public void setTripoliSession(TripoliSessionInterface tripoliSession) {
         this.tripoliSession = tripoliSession;
+    }
+
+    @Override
+    public void revalidateScrollPane() {
+            tripoliSessionDataView_scrollPane.revalidate();
     }
 
 }

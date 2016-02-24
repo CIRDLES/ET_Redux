@@ -62,6 +62,7 @@ import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.Tripoli.sessions.TripoliSessionFractionationCalculatorInterface;
 import org.earthtime.Tripoli.sessions.TripoliSessionInterface;
 import org.earthtime.UPb_Redux.ReduxConstants;
+import org.earthtime.UPb_Redux.dialogs.sessionManagers.SessionAnalysisWorkflowManagerInterface;
 import org.earthtime.UPb_Redux.fractions.FractionsFilterInterface;
 import org.earthtime.dataDictionaries.DataPresentationModeEnum;
 import org.earthtime.dataDictionaries.FractionLayoutViewStylesEnum;
@@ -128,6 +129,7 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
     private final JLayeredPane tripoliSessionDataHeader_pane;
     private final JLayeredPane tripoliSessionDataControls_pane;
     private AbstractRawDataView dataPresentationModeChooserPanel;
+    private SessionAnalysisWorkflowManagerInterface sessionAnalysisWorkflowManager;
 
     /**
      *
@@ -142,19 +144,18 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
      * @param tripoliSessionDataHeader_pane
      * @param tripoliSessionDataControls_pane
      * @param scrollBounds
+     * @param sessionAnalysisWorkflowManager the value of sessionAnalysisWorkflowManager
      */
     public TripoliSessionRawDataView(//
-            ETReduxFrame myUPbReduxFrame,
-            TripoliSessionInterface tripoliSession,//
-            Constructor dataModelViewConstructor,//
-            Method rawDataSourceMethod,//
+            ETReduxFrame myUPbReduxFrame, TripoliSessionInterface tripoliSession, //
+            Constructor dataModelViewConstructor, Method rawDataSourceMethod, //
             FractionLayoutViewStylesEnum fractionLayoutViewStyle, //
-            JSlider yAxisZoomSlider, //
-            JSlider xAxisZoomSlider, //
-            JLayeredPane tripoliSessionRawDataViewYAxis,//
+            JSlider yAxisZoomSlider, JSlider xAxisZoomSlider, //
+            JLayeredPane tripoliSessionRawDataViewYAxis, //
             JLayeredPane tripoliSessionDataHeader_pane, //
             JLayeredPane tripoliSessionDataControls_pane,//
-            Rectangle scrollBounds) {
+            Rectangle scrollBounds, //
+            SessionAnalysisWorkflowManagerInterface sessionAnalysisWorkflowManager) {
         super(scrollBounds);
 
         uPbReduxFrame = myUPbReduxFrame;
@@ -186,6 +187,8 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
         this.zoomSlidersIndependent = true;
 
         this.sessionFractionationCalculator = null;
+        
+        this.sessionAnalysisWorkflowManager = sessionAnalysisWorkflowManager;
 
         setBackground(new Color(204, 204, 204));
 
@@ -371,6 +374,7 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
                     theOtherSlider.setValue(value);
                 }
                 ((AbstractRawDataView) sampleSessionDataView).refreshPanel();
+                sessionAnalysisWorkflowManager.revalidateScrollPane();
             }
         }
     }
@@ -411,6 +415,7 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
                     theOtherSlider.setValue(value);
                 }
                 ((AbstractRawDataView) sampleSessionDataView).refreshPanel();
+                sessionAnalysisWorkflowManager.revalidateScrollPane();
             }
         }
     }
