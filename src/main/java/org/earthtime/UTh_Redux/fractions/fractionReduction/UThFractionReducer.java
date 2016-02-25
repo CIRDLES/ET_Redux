@@ -20,6 +20,7 @@ package org.earthtime.UTh_Redux.fractions.fractionReduction;
 import Jama.Matrix;
 import java.math.BigDecimal;
 import org.earthtime.UPb_Redux.ReduxConstants;
+import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UTh_Redux.fractions.UThLegacyFractionI;
 import org.earthtime.dataDictionaries.UThAnalysisMeasures;
 import org.earthtime.dataDictionaries.UThFractionationCorrectedIsotopicRatios;
@@ -111,7 +112,12 @@ import org.earthtime.fractions.fractionReduction.FractionReducer;
  */
 public class UThFractionReducer extends FractionReducer {
 
-    private static UThFractionReducer instance;
+    private static UThFractionReducer instance = new UThFractionReducer();
+    private static Matrix exponentialA;
+    private static Matrix exponentialQUTh;
+    private static Matrix exponentialQinvUTh;
+    private static Matrix numberAtomsTimeT;
+    private static double r230_238InitialT;
 
     private UThFractionReducer() {
     }
@@ -121,9 +127,6 @@ public class UThFractionReducer extends FractionReducer {
      * @return
      */
     public static UThFractionReducer getInstance() {
-        if (instance == null) {
-            instance = new UThFractionReducer();
-        }
         return instance;
     }
 
@@ -137,18 +140,19 @@ public class UThFractionReducer extends FractionReducer {
 
     private static void calculateDatesFromLegacyData(UThLegacyFractionI fraction) {
 
+        // matlab code meas
+        ValueModel r234U_238Ufc = fraction.getRadiogenicIsotopeRatioByName(UThFractionationCorrectedIsotopicRatios.r234U_238Ufc.getName());
+        ValueModel r230Th_238Ufc = fraction.getRadiogenicIsotopeRatioByName(UThFractionationCorrectedIsotopicRatios.r230Th_238Ufc.getName());
+        ValueModel r232Th_238Ufc = fraction.getRadiogenicIsotopeRatioByName(UThFractionationCorrectedIsotopicRatios.r232Th_238Ufc.getName());
+
+        // matlab code meas.C
+        Matrix covariance_fc = new Matrix(3, 3);
+        covariance_fc.set(0, 0, r234U_238Ufc.getOneSigmaAbs().pow(2).doubleValue());
+        covariance_fc.set(1, 1, r230Th_238Ufc.getOneSigmaAbs().pow(2).doubleValue());
+        covariance_fc.set(2, 2, r232Th_238Ufc.getOneSigmaAbs().pow(2).doubleValue());
+
         // todo: make a model for handling     
-        //           The variable detritus is a matrix (2D array) with six rows and two columns, indexed starting at 1.
-        //   detritus(1,1) is the detrital initial 232Th/238U activity ratio
-        //   detritus(1,2) is its 2-sigma absolute uncertainty
-        //   detritus(2,1) is the detrital initial 230Th/238U activity ratio
-        //   detritus(2,2) is its 2-sigma absolute uncertainty
-        //   detritus(3,1) is the detrital initial 234U/238U activity ratio
-        //   detritus(3,2) is its 2-sigma absolute uncertainty
-        //   detritus(4,1) is the correlation coefficient between the 232Th/238U - 230Th/238U activity ratio uncertainties
-        //   detritus(5,1) is the correlation coefficient between the 232Th/238U - 234U/238U activity ratio uncertainties 
-        //   detritus(6,1) is the correlation coefficient between the 230Th/238U - 234U/238U activity ratio uncertainties
-        //   detritus(6,2) is the number of years between 1950 and the date of the analysis.
+        // TOD Decide why not use one sigma in model as usual ???
         // The detritus variable is not at present included in Andrea's worksheet.  
         // We'll have to add it, though, when we make UTh_Redux capable of handling more data.  
         // Here are some typical values:
@@ -164,36 +168,201 @@ public class UThFractionReducer extends FractionReducer {
         detritus.set(5, 0, 0.5); //detritus(6,1) = 0.5;
         detritus.set(5, 1, 65.0); //detritus(6,2) = 65;
 
-        // di = detrital initial isotoipic ratio
-        double r232Th_238Udi = detritus.get(0, 0) * lambda238.getValue().doubleValue() / lambda232.getValue().doubleValue();
-        double r230Th_238Udi = detritus.get(1, 0) * lambda238.getValue().doubleValue() / lambda230.getValue().doubleValue();
-        double r234U_238Udi = detritus.get(2, 0) * lambda238.getValue().doubleValue() / lambda234.getValue().doubleValue();
+        // di = detrital initial isotopic ratio
+        double r232Th_238Udi = detritus.get(0, 0) * lambda238D / lambda232D;
+        double r230Th_238Udi = detritus.get(1, 0) * lambda238D / lambda230D;
+        double r234U_238Udi = detritus.get(2, 0) * lambda238D / lambda234D;
 
+        // assuming detritus stores 1-sigma abs
         double r232Th_238Udi_sigma = detritus.get(0, 1) / detritus.get(0, 0) * r232Th_238Udi;
         double r230Th_238Udi_sigma = detritus.get(1, 1) / detritus.get(1, 0) * r230Th_238Udi;
         double r234U_238Udi_sigma = detritus.get(2, 1) / detritus.get(2, 0) * r234U_238Udi;
-        Matrix Cov_di = new Matrix(3, 3);
-        Cov_di.set(0, 0, r234U_238Udi_sigma * r234U_238Udi_sigma);
-        Cov_di.set(1, 1, r230Th_238Udi_sigma * r230Th_238Udi_sigma);
-        Cov_di.set(2, 2, r232Th_238Udi_sigma * r232Th_238Udi_sigma);
+        Matrix covariance_di = new Matrix(3, 3);
+        covariance_di.set(0, 0, r234U_238Udi_sigma * r234U_238Udi_sigma);
+        covariance_di.set(1, 1, r230Th_238Udi_sigma * r230Th_238Udi_sigma);
+        covariance_di.set(2, 2, r232Th_238Udi_sigma * r232Th_238Udi_sigma);
 
-        Cov_di.set(0, 1, detritus.get(5, 0) * r234U_238Udi_sigma * r230Th_238Udi_sigma);
-        Cov_di.set(0, 2, detritus.get(4, 0) * r234U_238Udi_sigma * r232Th_238Udi_sigma);
-        Cov_di.set(1, 2, detritus.get(3, 0) * r230Th_238Udi_sigma);
-        Cov_di.set(1, 0, Cov_di.get(0, 1));
-        Cov_di.set(2, 0, Cov_di.get(0, 2));
-        Cov_di.set(2, 1, Cov_di.get(1, 2));
+        covariance_di.set(0, 1, detritus.get(5, 0) * r234U_238Udi_sigma * r230Th_238Udi_sigma);
+        covariance_di.set(0, 2, detritus.get(4, 0) * r234U_238Udi_sigma * r232Th_238Udi_sigma);
+        covariance_di.set(1, 2, detritus.get(3, 0) * r230Th_238Udi_sigma * r232Th_238Udi_sigma);
+        covariance_di.set(1, 0, covariance_di.get(0, 1));
+        covariance_di.set(2, 0, covariance_di.get(0, 2));
+        covariance_di.set(2, 1, covariance_di.get(1, 2));
 
         double yearsSince1950_di = detritus.get(5, 1);
 
-        Matrix measuredCovariance = new Matrix(3, 3);
-        measuredCovariance.set(0, 0, //
-                fraction.getRadiogenicIsotopeRatioByName(UThFractionationCorrectedIsotopicRatios.r234U_238Ufc.getName()).getOneSigmaAbs().pow(2).doubleValue());
-        measuredCovariance.set(1, 1, //
-                fraction.getRadiogenicIsotopeRatioByName(UThFractionationCorrectedIsotopicRatios.r230Th_238Ufc.getName()).getOneSigmaAbs().pow(2).doubleValue());
-        measuredCovariance.set(2, 2, //
-                fraction.getRadiogenicIsotopeRatioByName(UThFractionationCorrectedIsotopicRatios.r232Th_238Ufc.getName()).getOneSigmaAbs().pow(2).doubleValue());
+        Matrix covariance_in = new Matrix(6, 6);
+        covariance_in.setMatrix(0, 2, 0, 2, covariance_fc);
+        covariance_in.setMatrix(3, 5, 3, 5, covariance_di);
 
+        exponentialA = new Matrix(new double[][]{//
+            {-lambda238D, 0., 0.},//
+            {lambda238D, -lambda234D, 0.},//
+            {0., lambda234D, -lambda230D}});
+
+        exponentialQUTh = new Matrix(new double[][]{//
+            {((lambda230D - lambda238D) * (lambda234D - lambda238D)) / (lambda234D * lambda238D), 0., 0.},//
+            {(lambda230D - lambda238D) / lambda234D, (lambda230D - lambda234D) / lambda234D, 0.},//
+            {1., 1., 1.}});
+
+        exponentialQinvUTh = new Matrix(new double[][]{//
+            {(lambda234D * lambda238D) / ((lambda230D - lambda238D) * (lambda234D - lambda238D)), 0., 0.},//
+            {-(lambda234D * lambda238D) / ((lambda230D - lambda234D) * (lambda234D - lambda238D)), lambda234D / (lambda230D - lambda234D), 0.},//
+            {(lambda234D * lambda238D) / ((lambda230D - lambda234D) * (lambda230D - lambda238D)), -lambda234D / (lambda230D - lambda234D), 1.}});
+
+        double tPrecision = 1e-14;
+        int iterationMax = 50;
+
+        r230_238InitialT = r232Th_238Ufc.getValue().doubleValue() * (r230Th_238Udi / r232Th_238Udi);
+
+        numberAtomsTimeT = new Matrix(3, 1);
+        numberAtomsTimeT.set(0, 0, 1.);
+        numberAtomsTimeT.set(1, 0, r234U_238Ufc.getValue().doubleValue());
+        numberAtomsTimeT.set(2, 0, r230Th_238Ufc.getValue().doubleValue());
+
+        Matrix tv = new Matrix(iterationMax, 1, 0.0);
+
+        double slope = 0.0;
+        if (r234U_238Ufc.getValue().doubleValue() < (1.47091e-05 + 2.44231 * r230Th_238Ufc.getValue().doubleValue())) {
+            // t > 400 ka
+            //slope from IC of initial 234U=0 at 400 ka to measured point
+            slope = (r234U_238Ufc.getValue().doubleValue() - 3.71920e-05) / (r230Th_238Ufc.getValue().doubleValue() - 9.20522e-06);
+            // estimated age based on rotation of isochron
+            tv.set(0, 0, (54.0138 - (43.3520 * slope) + (8.762243 * slope * slope)) * 1e6);
+        } else if (r234U_238Ufc.getValue().doubleValue() < (0.0000105036 + 3.128406 * r230Th_238Ufc.getValue().doubleValue())) {
+            // 200 ka < t < 400 ka
+            // slope from IC of initial 234U=0 at 200 ka to measured point
+            slope = (r234U_238Ufc.getValue().doubleValue() - 2.37086e-05) / (r230Th_238Ufc.getValue().doubleValue() - 4.2209e-06);
+            // estimated age based on rotation of isochron
+            tv.set(0, 0, (4.80518 - (2.89959 * slope) + (0.4567031 * slope * slope)) * 1e6);
+        } else {
+            //t < 200 ka
+            tv.set(0, 0, -350194.43 * r230Th_238Ufc.getValue().doubleValue() / (1.559285 * r230Th_238Ufc.getValue().doubleValue() - r234U_238Ufc.getValue().doubleValue()));
+        }
+
+        // solve for 230 Th date
+        int iNR = 1;
+        tv.set(1, 0, tv.get(0, 0) - ft(tv.get(0, 0)) / fpt(tv.get(0, 0)));
+
+        while ((Math.abs(tv.get(iNR, 0) - tv.get(iNR - 1, 0)) / tv.get(iNR, 0) > tPrecision) && (iNR < iterationMax)) {
+            iNR++;
+            tv.set(iNR, 0, tv.get(iNR - 1, 0) - ft(tv.get(iNR - 1, 0)) / fpt(tv.get(iNR - 1, 0))); // Newton - Raphson
+        }
+        double timeUncorrected = tv.get(iNR, 0);
+
+        // Solve for detrital-corrected age
+        iNR = 1;
+        tv.set(0, 0, timeUncorrected);
+        tv.set(1, 0, tv.get(0, 0) - dft(tv.get(0, 0)) / dfpt(tv.get(0, 0)));
+
+        while ((Math.abs(tv.get(iNR, 0) - tv.get(iNR - 1, 0)) / tv.get(iNR, 0) > tPrecision) && (iNR < iterationMax)) {
+            iNR++;
+            tv.set(iNR, 0, tv.get(iNR - 1, 0) - dft(tv.get(iNR - 1, 0)) / dfpt(tv.get(iNR - 1, 0))); // Newton - Raphson
+        }
+        double timeCorrected = tv.get(iNR, 0);
+
+        // detrital - correction calculations and derivatives 
+        Matrix numberOfIntialAtoms = exponentialUTh(-timeCorrected).times(numberAtomsTimeT); //ni
+        Matrix dEatcorr = exponentialUTh(timeCorrected);
+        Matrix dEanegtcorr = exponentialUTh(-timeCorrected);
+        double diN238 = r232Th_238Ufc.getValue().doubleValue() / r232Th_238Udi * Math.exp(lambda232D * timeCorrected);
+        Matrix diN = new Matrix(new double[][]{{1.0}, {r234U_238Udi}, {r230Th_238Udi}}).times(diN238);
+        Matrix nat = numberAtomsTimeT.minus(dEatcorr.times(diN));
+        Matrix nai = dEanegtcorr.times(numberAtomsTimeT).minus(diN);
+
+        //J1
+        double r08it_r28t_d = r230_238InitialT / r232Th_238Udi;
+        double r08it_r08di_d = r230Th_238Ufc.getValue().doubleValue() / r230Th_238Udi;
+        double r08it_r28di_d = -r232Th_238Ufc.getValue().doubleValue() * r230Th_238Udi / (r232Th_238Udi * r232Th_238Udi);
+
+        //J2
+        Matrix dT_nt
+                = dEanegtcorr.getMatrix(2, 2, 0, 2)//
+                .times(1.0 / (exponentialA.getMatrix(2, 2, 0, 2).times(numberOfIntialAtoms).get(0, 0) //
+                        + lambda232D * r230Th_238Udi / r232Th_238Udi * r232Th_238Ufc.getValue().doubleValue() * Math.exp(lambda232D * timeCorrected)));
+        double dT_r08it
+                = -Math.exp(lambda232D * timeCorrected) / (exponentialA.getMatrix(2, 2, 0, 2).times(numberOfIntialAtoms).get(0, 0)//
+                + lambda232D * r230Th_238Udi / r232Th_238Udi * r232Th_238Ufc.getValue().doubleValue() * Math.exp(lambda232D * timeCorrected));
+
+        //J3
+        double dN238di_t = lambda232D * r232Th_238Ufc.getValue().doubleValue() / r232Th_238Udi * Math.exp(lambda232D * timeCorrected);
+        double dN238di_r28t = Math.exp(lambda232D * timeCorrected) / r232Th_238Udi;
+        double dN238di_r28di = -r232Th_238Ufc.getValue().doubleValue() * Math.exp(lambda232D * timeCorrected) / (r232Th_238Udi * r232Th_238Udi);
+
+        //J5
+        Matrix dNat_dt = exponentialA.times(dEatcorr).times(diN).times(-1.0);
+        Matrix dNat_din = dEatcorr.times(-1.0);
+        Matrix dNat_nt = new Matrix(new double[][]{{1., 0., 0.}, {0., 1., 0.}, {0., 0., 1.}});
+        Matrix dNai_dt = exponentialA.times(numberOfIntialAtoms).times(-1.0);
+        Matrix dNai_din = new Matrix(new double[][]{{-1., 0., 0.}, {0., -1., 0.}, {0., 0., -1.}});
+        Matrix dNai_dnt = dEanegtcorr;
+
+        //J6
+        double dAr48tc_n238tauth = -nat.get(1, 0) * lambda234D / (nat.get(0, 0) * nat.get(0, 0) * lambda238D);
+        double dAr48tc_n234tauth = lambda234D / (nat.get(0, 0) * lambda238D);
+        double dAr08tc_n238tauth = -nat.get(2, 0) * lambda230D / (nat.get(0, 0) * nat.get(0, 0) * lambda238D);
+        double dAr08tc_n230tauth = lambda230D / (nat.get(0, 0) * lambda238D);
+        double dAr48ic_n238iauth = -nai.get(1, 0) * lambda234D / (nai.get(0, 0) * nai.get(0, 0) * lambda238D);
+        double dAr48ic_n234iauth = lambda234D / (nai.get(0, 0) * lambda238D);
+
+        // Propagate Uncertainties
+        // 1 Uncorrected date
+        Matrix dT_ntUncorr = exponentialUTh_0(-timeUncorrected).times(1.0 / exponentialA.getMatrix(2, 2, 0, 2).times(numberOfIntialAtoms).get(0, 0));
+        double uncorrectedDateOneSigmaABS = Math.sqrt(dT_ntUncorr.getMatrix(0, 0, 1, 2).times(covariance_fc.getMatrix(0, 1, 0, 1)).times(dT_ntUncorr.getMatrix(0, 0, 1, 2).transpose()).get(0, 0));//    ' )/1000 ; % 2s abs, ka
+
+        Matrix J1 = new Matrix(7, 6, 0.0);
+        // note dNat_nt is eye(3)
+        J1.setMatrix(0, 2, 0, 2, dNat_nt);
+        J1.setMatrix(4, 6, 3, 5, dNat_nt);
+        J1.set(3, 4, r08it_r28t_d);
+        J1.set(3, 4, r08it_r08di_d);
+        J1.set(3, 5, r08it_r28di_d);
+
+    }
+
+    private static Matrix exponentialGUTh(Double t) {
+        //mxp.GUTh = @(t) diag([exp(-lambda.U238*t) exp(-lambda.U234*t) exp(-lambda.Th230*t)]);
+        Matrix exponentialGUTh = new Matrix(3, 3, 0.);
+        exponentialGUTh.set(0, 0, Math.exp(-lambda238D * t));
+        exponentialGUTh.set(1, 1, Math.exp(-lambda234D * t));
+        exponentialGUTh.set(2, 2, Math.exp(-lambda230D * t));
+
+        return exponentialGUTh;
+    }
+
+    private static Matrix exponentialUTh(double t) {
+        // mxp.UTh = @(t) mxp.QUTh*mxp.GUTh(t)*mxp.QinvUTh;
+        return exponentialQUTh.times(exponentialGUTh(t)).times(exponentialQinvUTh);
+    }
+
+    private static Matrix exponentialUTh_0(double t) {
+        // mxp.UTh_0 = @(t) mxp.QUTh(3,:)*mxp.GUTh(t)*mxp.QinvUTh; % For the 230 concentration only (to solve for root)
+        return exponentialQUTh.getMatrix(2, 2, 0, 2).times(exponentialGUTh(t)).times(exponentialQinvUTh);
+    }
+
+    private static Matrix exponentialUTh_4(double t) {
+        // mxp.UTh_4 = @(t) mxp.QUTh(2,:)*mxp.GUTh(t)*mxp.QinvUTh; % For the 234 concentration only (to solve for root)
+        return exponentialQUTh.getMatrix(1, 1, 0, 2).times(exponentialGUTh(t)).times(exponentialQinvUTh);
+    }
+
+    private static double ft(double t) {
+        // ft   = @(t) mxp.UTh_0(-t)*nt;
+        return exponentialUTh_0(-t).times(numberAtomsTimeT).get(0, 0);
+    }
+
+    private static double fpt(double t) {
+        // fpt  = @(t) -mxp.A(3,:)*mxp.UTh(-t)*nt;
+        return -exponentialA.getMatrix(2, 2, 0, 2).times(exponentialUTh(-t)).times(numberAtomsTimeT).get(0, 0);
+    }
+
+    private static double dft(double t) {
+        // dft  = @(t) mxp.UTh_0(-t)*nt - init.r08it*exp(lambda.Th232*t);
+        return ft(t) - r230_238InitialT * Math.exp(lambda232D * t);
+    }
+
+    private static double dfpt(double t) {
+        // dfpt = @(t) -mxp.A(3,:)*mxp.UTh(-t)*nt - lambda.Th232*init.r08it*exp(lambda.Th232*t);
+        return fpt(t) - lambda232D * r230_238InitialT * Math.exp(lambda232D * t);
     }
 
     private static void calculateActivityRatios(UThLegacyFractionI fraction) {
