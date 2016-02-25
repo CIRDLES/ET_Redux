@@ -147,7 +147,8 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
      * @param sessionAnalysisWorkflowManager the value of sessionAnalysisWorkflowManager
      */
     public TripoliSessionRawDataView(//
-            ETReduxFrame myUPbReduxFrame, TripoliSessionInterface tripoliSession, //
+            ETReduxFrame myUPbReduxFrame, //
+            TripoliSessionInterface tripoliSession, //
             Constructor dataModelViewConstructor, Method rawDataSourceMethod, //
             FractionLayoutViewStylesEnum fractionLayoutViewStyle, //
             JSlider yAxisZoomSlider, JSlider xAxisZoomSlider, //
@@ -158,7 +159,7 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
             SessionAnalysisWorkflowManagerInterface sessionAnalysisWorkflowManager) {
         super(scrollBounds);
 
-        uPbReduxFrame = myUPbReduxFrame;
+        this.uPbReduxFrame = myUPbReduxFrame;
         this.tripoliSession = tripoliSession;
         this.fractionSelectionType = FractionSelectionTypeEnum.STANDARD;
         this.fractionIncludedType = IncludedTypeEnum.ALL;
