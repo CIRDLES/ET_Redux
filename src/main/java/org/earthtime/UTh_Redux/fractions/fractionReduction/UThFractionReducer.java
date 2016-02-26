@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UTh_Redux.fractions.UThLegacyFractionI;
+import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.dataDictionaries.UThAnalysisMeasures;
 import org.earthtime.dataDictionaries.UThFractionationCorrectedIsotopicRatios;
 import org.earthtime.fractions.fractionReduction.FractionReducer;
@@ -308,8 +309,7 @@ public class UThFractionReducer extends FractionReducer {
         // Propagate Uncertainties
         // 1 Uncorrected date
         Matrix dT_ntUncorr = exponentialUTh_0(-timeUncorrected).times(1.0 / exponentialA.getMatrix(2, 2, 0, 2).times(numberOfIntialAtoms).get(0, 0));
-        double uncorrectedDateOneSigmaABS = Math.sqrt(dT_ntUncorr.getMatrix(0, 0, 1, 2).times(covariance_fc.getMatrix(0, 1, 0, 1)).times(dT_ntUncorr.getMatrix(0, 0, 1, 2).transpose()).get(0, 0));//    ' )/1000 ; % 2s abs, ka
-
+ 
         Matrix J1 = new Matrix(7, 6, 0.0);
         // note dNat_nt is eye(3)
         J1.setMatrix(0, 2, 0, 2, dNat_nt);
@@ -317,6 +317,83 @@ public class UThFractionReducer extends FractionReducer {
         J1.set(3, 4, r08it_r28t_d);
         J1.set(3, 4, r08it_r08di_d);
         J1.set(3, 5, r08it_r28di_d);
+
+        Matrix J2 = new Matrix(7, 7, 0.0);
+        // note dNat_nt is eye(3)
+        J2.setMatrix(1, 3, 0, 2, dNat_nt);
+        J2.setMatrix(4, 6, 4, 6, dNat_nt);
+        J2.setMatrix(0, 0, 0, 1, dT_nt.getMatrix(0, 0, 1, 2));
+        J2.set(0, 3, dT_r08it);
+
+        Matrix J3 = new Matrix(6, 7, 0.0);
+        J3.set(0, 0, 1.);
+        J3.setMatrix(2, 3, 1, 2, new Matrix(new double[][]{{1., 0}, {0., 1.}}));
+        J3.setMatrix(4, 5, 4, 5, new Matrix(new double[][]{{1., 0}, {0., 1.}}));
+        J3.set(1, 0, dN238di_t);
+        J3.set(1, 3, dN238di_r28t);
+        J3.set(1, 6, dN238di_r28di);
+
+        Matrix J4 = new Matrix(new double[][]{//
+            {1., 0., 0., 0., 0., 0.},
+            {0., 1., 0., 0., 0., 0.},
+            {0., r234U_238Udi, 0., 0., diN238, 0.},
+            {0., r230Th_238Udi, 0., 0., 0., diN238},
+            {0., 0., 1., 0., 0., 0.},
+            {0., 0., 0., 1., 0., 0.}});
+
+        Matrix J5 = new Matrix(6, 6, 0.);
+        J5.set(1, 1, 1.);
+        J5.setMatrix(1, 3, 0, 0, dNat_dt);
+        J5.setMatrix(1, 3, 1, 3, dNat_din);
+        J5.setMatrix(1, 3, 4, 5, dNat_nt.getMatrix(0, 2, 1, 2));
+        J5.setMatrix(4, 5, 0, 0, dNai_dt.getMatrix(0, 1, 0, 0));
+        J5.setMatrix(4, 5, 1, 3, dNai_din.getMatrix(0, 1, 0, 2));
+        J5.setMatrix(4, 5, 4, 5, dNai_dnt.getMatrix(0, 1, 1, 2));
+
+        Matrix J6 = new Matrix(4, 6, 0.);
+        J6.set(0, 0, 1.);
+        J6.set(1, 1, dAr48tc_n238tauth);
+        J6.set(1, 2, dAr48tc_n234tauth);
+        J6.set(2, 1, dAr08tc_n238tauth);
+        J6.set(2, 3, dAr08tc_n230tauth);
+        J6.set(3, 4, dAr48ic_n238iauth);
+        J6.set(3, 5, dAr48ic_n234iauth);
+
+        Matrix Cout
+                = J6.times(J5).times(J4).times(J3).times(J2).times(J1).times(covariance_in)//
+                .times(J1.transpose()).times(J2.transpose()).times(J3.transpose()).times(J4.transpose()).times(J5.transpose()).times(J6.transpose());
+
+//        %% Arrange outputs
+//
+//        outvec(1)  = nat(3)/nat(1) * lambda.Th230/lambda.U238; % detrital-corrected 230Th/238U AR
+        double ar230_238corrected = nat.get(2,0)/nat.get(0,0) * lambda230D/lambda238D;
+//        outvec(3)  = nat(2)/nat(1) * lambda.U234/lambda.U238;  % detrital-corrected 234U/238U AR
+        double ar234_238corrected = nat.get(1,0)/nat.get(0,0) * lambda234D/lambda238D; 
+//        outvec(6)  = tuncorr/1000; % uncorrected date, ka
+//        outvec(7) = 2*sqrt( d.t_ntUncorr(2:3)*meas.C(1:2,1:2)*d.t_ntUncorr(2:3)' )/1000 ; % 2s abs, ka
+        double uncorrectedDateOneSigmaABS = Math.sqrt(dT_ntUncorr.getMatrix(0, 0, 1, 2).times(covariance_fc.getMatrix(0, 1, 0, 1)).times(dT_ntUncorr.getMatrix(0, 0, 1, 2).transpose()).get(0, 0));//    ' )/1000 ; % 2s abs, ka
+//        outvec(8)  = tcorr/1000; % detrital-corrected date, ka
+//        outvec(9)  = (tcorr - di.yearsSince1950)/1000; % detrital-corrected date, ka BP (1950)
+//        outvec(11) = nai(2)/nai(1) * lambda.U234/lambda.U238; % initial corrected 234/238 AR
+//
+//        outvec(2) = 2*sqrt(Cout(3,3))/outvec(1) * 100; % 2s% ar08t corrected
+//        outvec(4) = 2*sqrt(Cout(2,2))/outvec(3) * 100; % 2s% ar48t corrected
+//        outvec(5) = Cout(2,3)/sqrt(Cout(2,2)*Cout(3,3)); % corr coef ar08t-ar48t
+//        outvec(10) = 2*sqrt(Cout(1,1))/1000; % 2s abs detrital-corrected date
+        double correctedDateOneSigmaAbs = Math.sqrt(Cout.get(0,0));
+//        outvec(12) = 2*sqrt(Cout(4,4)); % 2s abs ar48i
+//        outvec(13) = Cout(1,4)/sqrt(Cout(1,1)*Cout(4,4));
+
+        System.out.println("corr date " + timeCorrected);
+        
+        ValueModel dateCorr = new ValueModel(//
+                RadDates.dateCorr.getName(), //
+                new BigDecimal(timeCorrected), ///
+                "ABS", //
+                new BigDecimal(correctedDateOneSigmaAbs), //
+                BigDecimal.ZERO);
+        
+        fraction .setRadiogenicIsotopeDateByName(RadDates.dateCorr, dateCorr);
 
     }
 

@@ -45,7 +45,7 @@ public class ReportSettings implements
      * version number is advanced so that any existing analysis will update its
      * report models upon opening in ET_Redux.
      */
-    private static transient int CURRENT_VERSION_REPORT_SETTINGS = 327;
+    private static transient int CURRENT_VERSION_REPORT_SETTINGS = 332;
 
     // Fields
     private String name;
@@ -96,7 +96,7 @@ public class ReportSettings implements
                         "Dates",
                         isotypeStyleIsUPb
                                 ? ReportSpecifications.ReportCategory_Dates//
-                                : ReportSpecifications.ReportCategory_Dates, isotypeStyleIsUPb);
+                                : ReportSpecifications.ReportCategory_DatesUTh, true);
 
         this.datesPbcCorrCategory
                 = new ReportCategory(//

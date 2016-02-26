@@ -196,19 +196,19 @@ public class ReportSpecifications {
             "", "true", "false", "2", "true", "", "false", "false"
         },
         {"", "r230Th/", "232Thfc", "", "getRadiogenicIsotopeRatioByName", UThFractionationCorrectedIsotopicRatios.r230Th_232Thfc.getName(), "PCT",
-            "", "true", "false", "2", "true", "", "false", "false"
+            "", "false", "false", "2", "true", "", "false", "false"
         },
         {"", "r228Ra/", "226Rafc", "", "getRadiogenicIsotopeRatioByName", UThFractionationCorrectedIsotopicRatios.r228Ra_226Rafc.getName(), "PCT",
-            "", "true", "false", "2", "true", "", "false", "false"
+            "", "false", "false", "2", "true", "", "false", "false"
         },
         {"", "r231Pa/", "233Pafc", "", "getRadiogenicIsotopeRatioByName", UThFractionationCorrectedIsotopicRatios.r231Pa_233Pafc.getName(), "PCT",
-            "", "true", "false", "2", "true", "", "false", "false"
+            "", "false", "false", "2", "true", "", "false", "false"
         },
         {"", "r238U/", "206Pbfc", "", "getRadiogenicIsotopeRatioByName", UThFractionationCorrectedIsotopicRatios.r238U_206Pbfc.getName(), "PCT",
-            "", "true", "false", "2", "true", "", "false", "false"
+            "", "false", "false", "2", "true", "", "false", "false"
         },
         {"", "r207Pb/", "206Pbfc", "", "getRadiogenicIsotopeRatioByName", UThFractionationCorrectedIsotopicRatios.r207Pb_206Pbfc.getName(), "PCT",
-            "", "true", "false", "2", "true", "", "false", "false"
+            "", "false", "false", "2", "true", "", "false", "false"
         },
         
     };
@@ -285,7 +285,20 @@ public class ReportSpecifications {
         },
         {"", "best", "date", "Ma", "getRadiogenicIsotopeDateByName", RadDates.bestAge.getName(), "ABS",
             "", "false", "false", "2", "true", "best date", "true", "true"
-        }
+        },
+    };
+    
+        // Report column order =
+    //  displayName1, displayName2, displayName3, units, retrieveMethodName, retrieveParameterName, uncertaintyType,
+    //     footnoteSpec, visible, useArbitrary? for value, digitcount value, unct visible (if required), description where needed,
+    //     needsLead, needsUranium
+    /**
+     *
+     */
+    public static final String[][] ReportCategory_DatesUTh = new String[][]{
+        {"", "Corr", "Date", "ka", "getRadiogenicIsotopeDateByName", RadDates.dateCorr.getName(), "ABS",
+            "", "true", "false", "2", "true", "", "false", "false"
+        },
     };
 
     // Report column order =
