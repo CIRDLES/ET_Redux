@@ -51,7 +51,9 @@ public enum UThFractionationCorrectedIsotopicRatios {
     /**
      * 
      */
-    r207Pb_206Pbfc( "r207Pb_206Pbfc" );
+    r207Pb_206Pbfc( "r207Pb_206Pbfc" ),
+    delta234U("delta234U")
+    ;
 
 
     private String name;

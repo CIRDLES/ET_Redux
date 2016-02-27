@@ -100,8 +100,7 @@ public class ReportSpecifications {
         },
         {"", "Th/U", "(magma)", "", "getAnalysisMeasure", AnalysisMeasures.rTh_Umagma.getName(), "",
             "FN-11", "false", "true", "3", "", "Th/U magma", "true", "false"
-        },
-    };
+        },};
 
     // Report column order =
     //  displayName1, displayName2, displayName3, units, retrieveMethodName, retrieveParameterName, uncertaintyType,
@@ -175,10 +174,8 @@ public class ReportSpecifications {
             "", "false", "true", "3", "", "Correlation coefficient", "true", "true"
         }
     };
-    
-    
-    
-        // Report column order =
+
+    // Report column order =
     //  displayName1, displayName2, displayName3, units, retrieveMethodName, retrieveParameterName, uncertaintyType,
     //     footnoteSpec, visible, useArbitrary? for value, digitcount value, unct visible (if required), description where needed,
     //     needsLead, needsUranium
@@ -209,13 +206,7 @@ public class ReportSpecifications {
         },
         {"", "r207Pb/", "206Pbfc", "", "getRadiogenicIsotopeRatioByName", UThFractionationCorrectedIsotopicRatios.r207Pb_206Pbfc.getName(), "PCT",
             "", "false", "false", "2", "true", "", "false", "false"
-        },
-        
-    };
-
-    
-    
-    
+        },};
 
     // Report column order =
     //  displayName1, displayName2, displayName3, units, retrieveMethodName, retrieveParameterName, uncertaintyType,
@@ -285,10 +276,9 @@ public class ReportSpecifications {
         },
         {"", "best", "date", "Ma", "getRadiogenicIsotopeDateByName", RadDates.bestAge.getName(), "ABS",
             "", "false", "false", "2", "true", "best date", "true", "true"
-        },
-    };
-    
-        // Report column order =
+        },};
+
+    // Report column order =
     //  displayName1, displayName2, displayName3, units, retrieveMethodName, retrieveParameterName, uncertaintyType,
     //     footnoteSpec, visible, useArbitrary? for value, digitcount value, unct visible (if required), description where needed,
     //     needsLead, needsUranium
@@ -299,6 +289,9 @@ public class ReportSpecifications {
         {"", "Corr", "Date", "ka", "getRadiogenicIsotopeDateByName", RadDates.dateCorr.getName(), "ABS",
             "", "true", "false", "2", "true", "", "false", "false"
         },
+        {"", "delta", "234U", "", "getRadiogenicIsotopeRatioByName", UThFractionationCorrectedIsotopicRatios.delta234U.getName(), "ABS",
+            "", "true", "false", "2", "true", "", "false", "false"
+        }
     };
 
     // Report column order =

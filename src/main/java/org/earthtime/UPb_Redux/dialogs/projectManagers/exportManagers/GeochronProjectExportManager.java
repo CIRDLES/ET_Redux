@@ -30,7 +30,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 import org.earthtime.UPb_Redux.user.ReduxPersistentState;
 import org.earthtime.archivingTools.GeochronAliquotManager;
 import org.earthtime.archivingTools.IEDACredentialsValidator;
@@ -151,17 +150,12 @@ public final class GeochronProjectExportManager extends DialogEditor {
         aliquotsLayeredPane.setPreferredSize(new Dimension(1100, topMarginForSampleDetails + (row + 1) * 100));
         aliquotsLayeredPane.validate();
 
-        instructionsTextPane.addHyperlinkListener(new HyperlinkListener() {
-            @Override
-            public void hyperlinkUpdate(HyperlinkEvent e) {
-                if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                    if (Desktop.isDesktopSupported()) {
-                        try {
-                            Desktop.getDesktop().browse(e.getURL().toURI());
-                        } catch (IOException | URISyntaxException e1) {
-                            // TODO Auto-generated catch block
-                            e1.printStackTrace();
-                        }
+        instructionsTextPane.addHyperlinkListener((HyperlinkEvent e) -> {
+            if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                if (Desktop.isDesktopSupported()) {
+                    try {
+                        Desktop.getDesktop().browse(e.getURL().toURI());
+                    } catch (IOException | URISyntaxException e1) {
                     }
                 }
             }
@@ -322,7 +316,7 @@ public final class GeochronProjectExportManager extends DialogEditor {
     }//GEN-LAST:event_validateGeochronAndSesarCredentials_buttonActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        parent.loadAndShowReportTableData();
+        //parent.loadAndShowReportTableData();
     }//GEN-LAST:event_formWindowClosing
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

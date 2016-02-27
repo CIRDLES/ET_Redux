@@ -410,7 +410,15 @@ public class UThFractionReducer extends FractionReducer {
                 .setValue(ar234_238corrected);
         fraction.getAnalysisMeasure(UThAnalysisMeasures.ar234U_238Ufc.getName())//
                 .setOneSigma(ar234_238correctedOneSigmaABS);
-
+        
+        ValueModel delta234U = new ValueModel(//
+                UThFractionationCorrectedIsotopicRatios.delta234U.getName(), //
+                BigDecimal.ZERO, ///
+                "ABS", //
+                BigDecimal.ZERO, //
+                BigDecimal.ZERO);
+        fraction.setRadiogenicIsotopeRatioByName(UThFractionationCorrectedIsotopicRatios.delta234U.getName(), delta234U);
+        
     }
 
     private static Matrix exponentialGUTh(Double t) {
