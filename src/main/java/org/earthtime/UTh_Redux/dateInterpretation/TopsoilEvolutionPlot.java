@@ -15,9 +15,12 @@
  */
 package org.earthtime.UTh_Redux.dateInterpretation;
 
-import javafx.fxml.FXML;
-import javafx.scene.control.ToolBar;
-import javafx.scene.layout.HBox;
+import java.awt.Container;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
+import javax.swing.JComponent;
+import javax.swing.WindowConstants;
 import org.cirdles.topsoil.dataset.Dataset;
 import org.cirdles.topsoil.dataset.RawData;
 import org.cirdles.topsoil.dataset.SimpleDataset;
@@ -33,31 +36,21 @@ import org.earthtime.UTh_Redux.fractions.UThLegacyFractionI;
 import org.earthtime.dataDictionaries.UThAnalysisMeasures;
 import org.earthtime.fractions.ETFractionInterface;
 
-import javax.swing.JComponent;
-import javax.swing.WindowConstants;
-import java.awt.Container;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
-
 /**
  *
  * @author bowring
  */
-public class TopsoilEvolutionPlot{// extends CustomVBox<TopsoilEvolutionChart> {
+public final class TopsoilEvolutionPlot {
 
+    private static final TopsoilEvolutionPlot instance = new TopsoilEvolutionPlot();
     private Vector<ETFractionInterface> selectedFractions;
-    private Plot myChart;
-    private List<Field<?>> myFields;
+    private final Plot myChart;
+    private final List<Field<?>> myFields;
     private JComponent plotAsComponent;
+    private final EvolutionChartDialog topsoilEvolutionChartDialog;
+    private Container contentPane;
 
-    @FXML
-    private HBox chartAndConfig;
-    @FXML
-    private ToolBar chartToolBar;
-
-    public TopsoilEvolutionPlot() {
-        //super(self -> self.myChart = new EvolutionChart());
+    private TopsoilEvolutionPlot() {
         myChart = new EvolutionPlot();
 
         myFields = new ArrayList<>();
@@ -67,66 +60,33 @@ public class TopsoilEvolutionPlot{// extends CustomVBox<TopsoilEvolutionChart> {
         myFields.add(new NumberField(UThAnalysisMeasures.ar234U_238Ufc.getName() + "-2sigma"));
         myFields.add(new NumberField("rho"));
 
-    }
-
-    public void showPanel() {
-
-//        Button fitData = new Button("Fit data");
-//        fitData.setOnAction(mouseEvent -> {
-//            ((JavaScriptChart) myChart).fitData();
-//        });
-//
-//        chartToolBar.getItems().addAll(fitData);
-//
-//        try {
-//            chartAndConfig.getChildren().setAll(
-//                    myChart.displayAsNode(),
-//                    myChart.getPropertiesPanel().displayAsNode());
-//        } catch (UnsupportedOperationException ex) {
-//            chartAndConfig.getChildren().setAll(
-//                    myChart.displayAsNode());
-//        }
-//
-//        Scene scene = new Scene(this, 1200, 800);
-//
-//        Stage chartStage = new Stage();
-//        chartStage.setScene(scene);
-//        chartStage.show();
-
-        class EvolutionChartDialog extends javax.swing.JFrame {
-
-            public EvolutionChartDialog(javax.swing.JFrame owner, boolean modal) {
-                super();
-            }
-        }
-
-        EvolutionChartDialog testTopsoilDialogDialog = new EvolutionChartDialog(null, true);
-        testTopsoilDialogDialog.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-        testTopsoilDialogDialog.setBounds( //
+        topsoilEvolutionChartDialog = new EvolutionChartDialog(null, true);
+        topsoilEvolutionChartDialog.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+        topsoilEvolutionChartDialog.setBounds( //
                 400,
                 100,
                 820,
                 640);
 
-        Container contentPane = testTopsoilDialogDialog.getContentPane();
-
+        contentPane = topsoilEvolutionChartDialog.getContentPane();
         plotAsComponent = myChart.displayAsJComponent();
-        plotAsComponent.createToolTip().setTipText("TESTING");
         contentPane.add(plotAsComponent);
+    }
 
-//        ET_JButton fitDataButton = new ET_JButton("Fit Data");
-//        fitDataButton.setBounds(10, 10, 50, 25);
-//        fitDataButton.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                ((JavaScriptChart) myChart).fitData();
-//            }
-//        });
-//
-//        plotAsComponent.add(fitDataButton);
+    private class EvolutionChartDialog extends javax.swing.JFrame {
 
-        testTopsoilDialogDialog.setVisible(true);
+        public EvolutionChartDialog(javax.swing.JFrame owner, boolean modal) {
+            super();
+        }
+    }
 
+    public static TopsoilEvolutionPlot getInstance() {
+        return instance;
+    }
+
+    public void showPanel() {
+        plotAsComponent.repaint();
+        topsoilEvolutionChartDialog.setVisible(true);
     }
 
     public void preparePanel() {
@@ -134,22 +94,24 @@ public class TopsoilEvolutionPlot{// extends CustomVBox<TopsoilEvolutionChart> {
         List<Entry> myEntries = new ArrayList<>();
 
         for (int i = 0; i < selectedFractions.size(); i++) {
-            UThLegacyFractionI fraction = (UThLegacyFractionI) selectedFractions.get(i);
-            Entry dataEntry = new SimpleEntry();
-            dataEntry.set((Field<? super Double>) myFields.get(0), //
-                    fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.ar230Th_238Ufc.getName())//
-                    .getValue().doubleValue());
-            dataEntry.set((Field<? super Double>) myFields.get(1), //
-                    fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.ar230Th_238Ufc.getName())//
-                    .getOneSigmaAbs().doubleValue() * 2.0);
-            dataEntry.set((Field<? super Double>) myFields.get(2), //
-                    fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.ar234U_238Ufc.getName())//
-                    .getValue().doubleValue());
-            dataEntry.set((Field<? super Double>) myFields.get(3), //
-                    fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.ar234U_238Ufc.getName())//
-                    .getOneSigmaAbs().doubleValue() * 2.0);
-            dataEntry.set((Field<? super Double>) myFields.get(4), 0.0);
-            myEntries.add(dataEntry);
+            if (!selectedFractions.get(i).isRejected()) {
+                UThLegacyFractionI fraction = (UThLegacyFractionI) selectedFractions.get(i);
+                Entry dataEntry = new SimpleEntry();
+                dataEntry.set((Field<? super Double>) myFields.get(0), //
+                        fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.ar230Th_238Ufc.getName())//
+                        .getValue().doubleValue());
+                dataEntry.set((Field<? super Double>) myFields.get(1), //
+                        fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.ar230Th_238Ufc.getName())//
+                        .getOneSigmaAbs().doubleValue() * 2.0);
+                dataEntry.set((Field<? super Double>) myFields.get(2), //
+                        fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.ar234U_238Ufc.getName())//
+                        .getValue().doubleValue());
+                dataEntry.set((Field<? super Double>) myFields.get(3), //
+                        fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.ar234U_238Ufc.getName())//
+                        .getOneSigmaAbs().doubleValue() * 2.0);
+                dataEntry.set((Field<? super Double>) myFields.get(4), 0.0);
+                myEntries.add(dataEntry);
+            }
         }
         RawData rawData = new RawData(myFields, myEntries);
 

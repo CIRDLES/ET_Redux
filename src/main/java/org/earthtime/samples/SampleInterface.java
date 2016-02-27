@@ -1169,7 +1169,7 @@ public interface SampleInterface {
     public default Vector<ETFractionInterface> getFractionsRejected() {
         Vector<ETFractionInterface> retval = new Vector<>();
 
-        getFractions().stream().filter((f) -> (((ETFractionInterface) f).isRejected())).forEach((f) -> {
+        getFractions().stream().filter((f) -> (f.isRejected())).forEach((f) -> {
             retval.add(f);
         });
 

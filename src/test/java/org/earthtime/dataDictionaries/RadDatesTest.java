@@ -95,8 +95,8 @@ public class RadDatesTest {
         assertEquals("age208_232r",list[13]);
         assertEquals("bestAge",list[14]);
         assertEquals("bestAge_PbcCorr",list[15]);
-        assertEquals("percentDiscordance",list[16]);
-        assertEquals("percentDiscordance_PbcCorr",list[17]);
+        assertEquals("percentDiscordance",list[17]);
+        assertEquals("percentDiscordance_PbcCorr",list[18]);
         
     }    
             

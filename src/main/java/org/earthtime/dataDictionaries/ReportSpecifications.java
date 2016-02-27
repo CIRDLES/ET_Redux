@@ -121,7 +121,7 @@ public class ReportSpecifications {
             "FN-18&FN-19", "false", "true", "3", "true", "[230Th/232Th] activity ratio", "false", "false"
         },
         {"[232Th/", "238U]", "", "*1e5", "getAnalysisMeasure", UThAnalysisMeasures.ar232Th_238Ufc.getName(), "ABS",
-            "FN-19&FN-17", "true", "true", "3", "true", "[232Th/238U] activity ratio", "false", "false"
+            "FN-19&FN-17", "false", "true", "3", "true", "[232Th/238U] activity ratio", "false", "false"
         },
         {"", "[230Th/", "238U]", "", "getAnalysisMeasure", UThAnalysisMeasures.ar230Th_238Ufc.getName(), "ABS",
             "FN-18&FN-17", "true", "false", "3", "true", "[230Th/238U] activity ratio", "false", "false"
