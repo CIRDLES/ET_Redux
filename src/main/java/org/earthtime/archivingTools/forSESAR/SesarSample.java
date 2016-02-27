@@ -167,9 +167,12 @@ public class SesarSample {
 
     private static File retrieveXMLFileFromSesarForIGSN(String igsn) {
 
+        String productionService = "http://app.geosamples.org/webservices/display.php?igsn=";
+        String testService = "http://sesardev.geoinfogeochem.org/webservices/display.php?igsn=";
+
         File retVal = null;
         String tempSESARcontents
-                = URIHelper.getTextFromURI("http://app.geosamples.org/webservices/display.php?igsn=" + igsn);
+                = URIHelper.getTextFromURI(testService + igsn);
 
         if (tempSESARcontents.length() > 0) {
             // write this to a file
@@ -227,6 +230,9 @@ public class SesarSample {
     }
 
     public String uploadAndRegisterSesarSample() {
+        String productionServiceV1 = "http://app.geosamples.org/webservices/uploadservice.php";
+        String productionServiceV2 = "http://app.geosamples.org/webservices/upload.php";
+        String testServiceV2 = "http://sesardev.geoinfogeochem.org/webservices/upload.php";
 
         String content = serializeForUploadToSesar();
 
@@ -239,7 +245,7 @@ public class SesarSample {
         org.w3c.dom.Document doc = null;
         try {
             response = ClientHttpRequest.post(//
-                    new URL("http://app.geosamples.org/webservices/uploadservice.php"),//
+                    new URL(testServiceV2),//
                     dataToPost);
 
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
