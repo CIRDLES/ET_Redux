@@ -35,6 +35,12 @@ public abstract class FractionReducer {
     protected static ValueModel lambda234;
     protected static ValueModel lambda235;
     protected static ValueModel lambda238;
+    protected static double lambda230D;
+    protected static double lambda231D;
+    protected static double lambda232D;
+    protected static double lambda234D;
+    protected static double lambda235D;
+    protected static double lambda238D;
     protected static ValueModel gmol204;
     protected static ValueModel gmol206;
     protected static ValueModel gmol207;
@@ -58,6 +64,14 @@ public abstract class FractionReducer {
             lambda234 = physicalConstantsModel.getDatumByName(Lambdas.lambda234.getName()).copy();
             lambda235 = physicalConstantsModel.getDatumByName(Lambdas.lambda235.getName()).copy();
             lambda238 = physicalConstantsModel.getDatumByName(Lambdas.lambda238.getName()).copy();
+
+            lambda230D = lambda230.getValue().doubleValue();
+            lambda231D = lambda231.getValue().doubleValue();
+            lambda232D = lambda232.getValue().doubleValue();
+            lambda234D = lambda234.getValue().doubleValue();
+            lambda235D = lambda235.getValue().doubleValue();
+            lambda238D = lambda238.getValue().doubleValue();
+
         }
 
     }

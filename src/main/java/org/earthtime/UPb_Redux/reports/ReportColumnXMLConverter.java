@@ -91,7 +91,13 @@ public class ReportColumnXMLConverter implements Converter {
         writer.endNode();
 
         writer.startNode("displayName2");
-        writer.setValue(reportColumn.getDisplayName2());
+        String displayName2 = reportColumn.getDisplayName2();
+        // test for delta
+        if (displayName2.contains("\u03B4")) {
+            writer.setValue("LOWERCASEDELTA");
+        } else {
+            writer.setValue(reportColumn.getDisplayName2());
+        }
         writer.endNode();
 
         writer.startNode("displayName3");
@@ -118,16 +124,16 @@ public class ReportColumnXMLConverter implements Converter {
         if (reportColumn.getUncertaintyColumn() != null) {
             ReportColumnInterface myReportColumn = reportColumn.getUncertaintyColumn();
             // repaired jan 2016 to restore report columns  after serialization
-            String displayName2 = myReportColumn.getDisplayName2();
+            displayName2 = myReportColumn.getDisplayName2();
             String displayName3 = myReportColumn.getDisplayName3();
-            
+
             if (displayName3.contains("%")) {
                 myReportColumn.setDisplayName3("PLUSMINUS2SIGMA%");
             } else {
                 myReportColumn.setDisplayName2("PLUSMINUS2SIGMA");
             }
             context.convertAnother(reportColumn.getUncertaintyColumn());
-            
+
             // restore
             myReportColumn.setDisplayName2(displayName2);
             myReportColumn.setDisplayName3(displayName3);
@@ -196,7 +202,13 @@ public class ReportColumnXMLConverter implements Converter {
         reader.moveUp();
 
         reader.moveDown();
-        reportColumn.setDisplayName2(reader.getValue());
+        String displayName2 = reader.getValue();
+        // test for delta
+        if (displayName2.contains("LOWERCASEDELTA")) {
+            reportColumn.setDisplayName2(" \u03B4");
+        } else {
+            reportColumn.setDisplayName2(displayName2);
+        }
         reader.moveUp();
 
         reader.moveDown();

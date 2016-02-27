@@ -68,7 +68,6 @@ import org.apache.batik.transcoder.TranscodingHints;
 import org.apache.fop.svg.PDFTranscoder;
 import org.earthtime.ETReduxFrame;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.dialogs.fractionManagers.FractionNotesDialog;
 import org.earthtime.UPb_Redux.filters.SVGFileFilter;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
@@ -1091,7 +1090,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                         } else {
                             boolean isRejected = !((ETFractionInterface) verticalPixelFractionMap.get(row).rowObject).isRejected();
                             ((ETFractionInterface) verticalPixelFractionMap.get(row).rowObject).setRejected(isRejected);
-                            // dec 2015
+                            // dec 2015 for tripoli fractions
                             try {
                                 ((UPbFractionI) verticalPixelFractionMap.get(row).rowObject).getTripoliFraction().setIncluded(!isRejected);
                             } catch (Exception noTF) {
@@ -1105,7 +1104,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                         if (e.getModifiers() == InputEvent.BUTTON1_MASK) {
                             parentFrame.editAliquotByProjectType(((AliquotInterface) verticalPixelFractionMap.get(row).rowObject));
                         } else {
-                            AliquotInterface.toggleAliquotFractionsRejectedStatus(((UPbReduxAliquot) verticalPixelFractionMap.get(row).rowObject));
+                            AliquotInterface.toggleAliquotFractionsRejectedStatus(((ReduxAliquotInterface) verticalPixelFractionMap.get(row).rowObject));
                             parent.updateReportTable(false);
                         }
 

@@ -44,4 +44,6 @@ public interface SessionAnalysisWorkflowManagerInterface {
      *
      */
     public void setupTripoliSessionRawDataView();
+    
+    public void revalidateScrollPane();
 }

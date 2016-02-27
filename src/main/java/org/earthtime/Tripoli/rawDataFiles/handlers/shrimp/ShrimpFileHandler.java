@@ -154,16 +154,19 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
             SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions) {
 
         SortedSet myTripoliFractions = new TreeSet<>();
-        PrawnFile prawnFile = null;
+        PrawnFile prawnFile;
 
+//        try {
+        // remote copy of example file
+        java.net.URL url;
         try {
-            // remote copy of example file
-            java.net.URL url = null;
             url = new URL("https://raw.githubusercontent.com/bowring/XSD/master/SHRIMP/EXAMPLE_100142_G6147_10111109.43_10.33.37%20AM.xml");
 
             JAXBContext jaxbContext = JAXBContext.newInstance(PrawnFile.class);
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-            prawnFile = (PrawnFile) jaxbUnmarshaller.unmarshal(url);//  url);
+            // show some progress
+            loadDataTask.firePropertyChange("progress", 0, 10);
+            prawnFile = (PrawnFile) jaxbUnmarshaller.unmarshal(url);
 
             // send name to project
             loadDataTask.firePropertyChange("projectName", "", prawnFile.getMount());
@@ -174,7 +177,7 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
                 if (loadDataTask.isCancelled()) {
                     break;
                 }
-                loadDataTask.firePropertyChange("progress", 0, ((100 * f) / prawnFile.getRuns()));
+                loadDataTask.firePropertyChange("progress", 10, ((90 * f) / prawnFile.getRuns()));
 
                 PrawnFile.Run runFraction = prawnFile.getRun().get(f);
 
@@ -188,6 +191,7 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
             if (myTripoliFractions.isEmpty()) {
                 myTripoliFractions = null;
             }
+
         } catch (JAXBException | MalformedURLException jAXBException) {
             JOptionPane.showMessageDialog(
                     null,
@@ -267,10 +271,10 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
 
         massSpec.processFractionRawRatiosII(//
                 backgroundAcquisitions, peakAcquisitions, true, tripoliFraction);
-        
+
         // supply calculated variances
-        ((ShrimpSetupUPb)massSpec).initializeVariances(peakAcquisitionsVariances);
-        
+        ((ShrimpSetupUPb) massSpec).initializeVariances(peakAcquisitionsVariances);
+
         tripoliFraction.shadeDataActiveMapLeft(0);
         System.out.println("\n**** SHRIMP FractionID  " + fractionID + " refMat? " + tripoliFraction.isStandard() + " <<<<<<<<<<<<<<<<<<\n");
 
