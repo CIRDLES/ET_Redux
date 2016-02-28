@@ -123,8 +123,7 @@ public abstract class AbstractRawDataFileTemplate implements //
     @Override
     public int compareTo(AbstractRawDataFileTemplate abstractRawDataFileTemplate) {
         String abstractRawDataFileTemplateName
-                =//
-                ((AbstractRawDataFileTemplate) abstractRawDataFileTemplate).NAME.trim();
+                = abstractRawDataFileTemplate.NAME.trim();
         return (this.NAME.trim().compareToIgnoreCase(abstractRawDataFileTemplateName));
     }
 

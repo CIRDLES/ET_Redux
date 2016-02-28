@@ -111,6 +111,7 @@ public final class ReduxLabData implements Serializable {
     private AbstractRatiosDataModel defaultLAICPMSPrimaryMineralStandardModel;
     private AbstractRatiosDataModel defaultRareEarthElementModel;
     private int defaultLeftShadeCountForLAICPMSAquisitions;
+    private int defaultLeftShadeCountForSHRIMPAquisitions;
     // nov 2015
     private AbstractRatiosDataModel defaultDetritalUraniumAndThoriumModel;
     // feb 2016
@@ -218,6 +219,7 @@ public final class ReduxLabData implements Serializable {
         }
 
         this.defaultLeftShadeCountForLAICPMSAquisitions = 0;
+        this.defaultLeftShadeCountForSHRIMPAquisitions = 0;
 
         initDefaultInterReferenceMaterialReproducibilityMap();
 
@@ -2024,6 +2026,20 @@ public final class ReduxLabData implements Serializable {
      */
     public void setDefaultInterReferenceMaterialReproducibilityMap(Map<RadRatios, ValueModel> defaultInterReferenceMaterialReproducibilityMap) {
         this.defaultInterReferenceMaterialReproducibilityMap = defaultInterReferenceMaterialReproducibilityMap;
+    }
+
+    /**
+     * @return the defaultLeftShadeCountForSHRIMPAquisitions
+     */
+    public int getDefaultLeftShadeCountForSHRIMPAquisitions() {
+        return defaultLeftShadeCountForSHRIMPAquisitions;
+    }
+
+    /**
+     * @param defaultLeftShadeCountForSHRIMPAquisitions the defaultLeftShadeCountForSHRIMPAquisitions to set
+     */
+    public void setDefaultLeftShadeCountForSHRIMPAquisitions(int defaultLeftShadeCountForSHRIMPAquisitions) {
+        this.defaultLeftShadeCountForSHRIMPAquisitions = defaultLeftShadeCountForSHRIMPAquisitions;
     }
 
 }
