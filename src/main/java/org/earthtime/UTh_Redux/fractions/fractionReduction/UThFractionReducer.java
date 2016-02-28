@@ -411,9 +411,13 @@ public class UThFractionReducer extends FractionReducer {
         fraction.getAnalysisMeasure(UThAnalysisMeasures.ar234U_238Ufc.getName())//
                 .setOneSigma(ar234_238correctedOneSigmaABS);
         
+        BigDecimal secularEquilibrium = lambda238.getValue().divide(lambda234.getValue(),ReduxConstants.mathContext15);
+        BigDecimal deltaValue 
+                = r234U_238Ufc.getValue().subtract(secularEquilibrium).divide(secularEquilibrium,ReduxConstants.mathContext15).movePointRight(3);
+                
         ValueModel delta234U = new ValueModel(//
                 UThFractionationCorrectedIsotopicRatios.delta234U.getName(), //
-                BigDecimal.ZERO, ///
+                deltaValue, ///
                 "ABS", //
                 BigDecimal.ZERO, //
                 BigDecimal.ZERO);

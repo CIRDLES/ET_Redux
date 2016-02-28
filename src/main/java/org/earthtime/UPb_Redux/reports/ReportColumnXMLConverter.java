@@ -2,7 +2,7 @@
  * ReportColumnXMLConverter.java
  *
  *
- * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2016 James F. Bowring and www.Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -93,11 +93,7 @@ public class ReportColumnXMLConverter implements Converter {
         writer.startNode("displayName2");
         String displayName2 = reportColumn.getDisplayName2();
         // test for delta
-        if (displayName2.contains("\u03B4")) {
-            writer.setValue("LOWERCASEDELTA");
-        } else {
-            writer.setValue(reportColumn.getDisplayName2());
-        }
+        writer.setValue(displayName2.replace("\u03B4", "LOWERCASEDELTA"));
         writer.endNode();
 
         writer.startNode("displayName3");
@@ -204,11 +200,7 @@ public class ReportColumnXMLConverter implements Converter {
         reader.moveDown();
         String displayName2 = reader.getValue();
         // test for delta
-        if (displayName2.contains("LOWERCASEDELTA")) {
-            reportColumn.setDisplayName2(" \u03B4");
-        } else {
-            reportColumn.setDisplayName2(displayName2);
-        }
+        reportColumn.setDisplayName2(displayName2.replace("LOWERCASEDELTA", "\u03B4"));
         reader.moveUp();
 
         reader.moveDown();

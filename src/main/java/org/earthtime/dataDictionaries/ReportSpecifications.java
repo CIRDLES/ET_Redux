@@ -289,7 +289,7 @@ public class ReportSpecifications {
         {"", "Corr", "Date", "ka", "getRadiogenicIsotopeDateByName", RadDates.dateCorr.getName(), "ABS",
             "", "true", "false", "2", "true", "", "false", "false"
         },
-        {"", "delta", "234U", "", "getRadiogenicIsotopeRatioByName", UThFractionationCorrectedIsotopicRatios.delta234U.getName(), "ABS",
+        {"", "delta 234U", "initial", "", "getRadiogenicIsotopeRatioByName", UThFractionationCorrectedIsotopicRatios.delta234U.getName(), "ABS",
             "", "true", "false", "2", "true", "", "false", "false"
         }
     };
