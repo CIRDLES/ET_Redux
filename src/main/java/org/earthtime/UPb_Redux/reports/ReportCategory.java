@@ -70,11 +70,12 @@ public class ReportCategory implements ReportCategoryInterface {
         this.legacyData = false;
 
     }
+
     private ReportColumnInterface SetupReportColumn(int index, String[][] specs) {
         String displayName1 = specs[index][0];
         ReportColumnInterface retVal = new ReportColumn(//
                 displayName1, //specs[index][0], // displayname1
-                specs[index][1].equalsIgnoreCase("delta") ? " \u03B4" : specs[index][1], // displayname2
+                specs[index][1].contains("delta") ? specs[index][1].replace("delta", "\u03B4") : specs[index][1], // displayname2
                 specs[index][2], // displayname3
                 index, // positionIndex
                 specs[index][3], // units

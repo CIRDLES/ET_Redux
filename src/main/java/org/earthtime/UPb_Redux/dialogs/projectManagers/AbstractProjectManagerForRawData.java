@@ -50,6 +50,7 @@ import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.Tripoli.massSpecSetups.AbstractMassSpecSetup;
 import org.earthtime.Tripoli.rawDataFiles.handlers.AbstractRawDataFileHandler;
 import org.earthtime.Tripoli.rawDataFiles.templates.AbstractRawDataFileTemplate;
+import org.earthtime.Tripoli.rawDataFiles.templates.shrimp.ShrimpPrawn_RawDataTemplate_GA;
 import org.earthtime.Tripoli.samples.AbstractTripoliSample;
 import org.earthtime.Tripoli.sessions.TripoliSession;
 import org.earthtime.Tripoli.sessions.TripoliSessionInterface;
@@ -310,15 +311,24 @@ public abstract class AbstractProjectManagerForRawData extends DialogEditor impl
 
         // may 2013 split task to allow for custom parameters ********************
         AbstractAcquisitionModel acquisitionModel = rawDataFileTemplate.makeNewAcquisitionModel();
-        try {
-            if (acquisitionModel.getPrimaryMineralStandardModel() == null) {
-                acquisitionModel.setPrimaryMineralStandardModel(ReduxLabData.getInstance().getDefaultLAICPMSPrimaryMineralStandardModel());
-            }
-            acquisitionModel.setLeftShadeCount(ReduxLabData.getInstance().getDefaultLeftShadeCountForLAICPMSAquisitions());
+        if (rawDataFileTemplate instanceof ShrimpPrawn_RawDataTemplate_GA) {
+//                if (acquisitionModel.getPrimaryMineralStandardModel() == null) {
+//                    acquisitionModel.setPrimaryMineralStandardModel(ReduxLabData.getInstance().getDefaultLAICPMSPrimaryMineralStandardModel());
+//                }
+                acquisitionModel.setLeftShadeCount(ReduxLabData.getInstance().getDefaultLeftShadeCountForSHRIMPAquisitions());
 
-        } catch (BadLabDataException ex) {
-            new ETWarningDialog(ex).setVisible(true);
+        } else {
+            try {
+                if (acquisitionModel.getPrimaryMineralStandardModel() == null) {
+                    acquisitionModel.setPrimaryMineralStandardModel(ReduxLabData.getInstance().getDefaultLAICPMSPrimaryMineralStandardModel());
+                }
+                acquisitionModel.setLeftShadeCount(ReduxLabData.getInstance().getDefaultLeftShadeCountForLAICPMSAquisitions());
+
+            } catch (BadLabDataException ex) {
+                new ETWarningDialog(ex).setVisible(true);
+            }
         }
+
         project.setAcquisitionModel(acquisitionModel);
 
         // user selects raw data file(s)
@@ -476,7 +486,7 @@ public abstract class AbstractProjectManagerForRawData extends DialogEditor impl
                 loadDataTaskProgressBar.setValue(progress);
                 loadDataTaskProgressBar.validate();
             } else if ("projectName".equalsIgnoreCase(pce.getPropertyName())) {
-                project.setProjectName((String)pce.getNewValue());
+                project.setProjectName((String) pce.getNewValue());
                 projectName_text.setText(project.getProjectName());
             }
         }
