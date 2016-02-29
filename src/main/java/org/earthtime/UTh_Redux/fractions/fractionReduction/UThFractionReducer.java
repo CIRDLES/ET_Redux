@@ -378,7 +378,8 @@ public class UThFractionReducer extends FractionReducer {
 //        outvec(8)  = tcorr/1000; % detrital-corrected date, ka
 //        outvec(9)  = (tcorr - di.yearsSince1950)/1000; % detrital-corrected date, ka BP (1950)
 //        outvec(11) = nai(2)/nai(1) * lambda.U234/lambda.U238; % initial corrected 234/238 AR
-//
+        double initialCorrected234_238atomTatio = nai.get(1, 0) / nai.get(0, 0);//*lambda234D /lambda238D;
+
 //        outvec(2) = 2*sqrt(Cout(3,3))/outvec(1) * 100; % 2s% ar08t corrected
         double ar230_238correctedOneSigmaABS = Math.sqrt(Cout.get(2, 2) / ar230_238corrected);
 
@@ -390,6 +391,7 @@ public class UThFractionReducer extends FractionReducer {
         double correctedDateOneSigmaAbs = Math.sqrt(Cout.get(0, 0));
 
 //        outvec(12) = 2*sqrt(Cout(4,4)); % 2s abs ar48i
+        double initialCorrected234_238atomTatioOneSigmaAbs = Math.sqrt(Cout.get(3, 3));
 //        outvec(13) = Cout(1,4)/sqrt(Cout(1,1)*Cout(4,4));
 
         ValueModel dateCorr = new ValueModel(//
@@ -410,19 +412,22 @@ public class UThFractionReducer extends FractionReducer {
                 .setValue(ar234_238corrected);
         fraction.getAnalysisMeasure(UThAnalysisMeasures.ar234U_238Ufc.getName())//
                 .setOneSigma(ar234_238correctedOneSigmaABS);
+
+        BigDecimal secularEquilibrium = lambda238.getValue().divide(lambda234.getValue(), ReduxConstants.mathContext15);
+        BigDecimal delta234UInitialValue
+                = new BigDecimal(initialCorrected234_238atomTatio).subtract(secularEquilibrium)//
+                .divide(secularEquilibrium, ReduxConstants.mathContext15).movePointRight(3);
+        BigDecimal delta234UInitialValueOneSigmaAbs
+                = new BigDecimal(initialCorrected234_238atomTatioOneSigmaAbs).movePointRight(3);
         
-        BigDecimal secularEquilibrium = lambda238.getValue().divide(lambda234.getValue(),ReduxConstants.mathContext15);
-        BigDecimal deltaValue 
-                = r234U_238Ufc.getValue().subtract(secularEquilibrium).divide(secularEquilibrium,ReduxConstants.mathContext15).movePointRight(3);
-                
         ValueModel delta234U = new ValueModel(//
                 UThFractionationCorrectedIsotopicRatios.delta234U.getName(), //
-                deltaValue, ///
+                delta234UInitialValue, ///
                 "ABS", //
-                BigDecimal.ZERO, //
+                delta234UInitialValueOneSigmaAbs, //
                 BigDecimal.ZERO);
         fraction.setRadiogenicIsotopeRatioByName(UThFractionationCorrectedIsotopicRatios.delta234U.getName(), delta234U);
-        
+
     }
 
     private static Matrix exponentialGUTh(Double t) {
