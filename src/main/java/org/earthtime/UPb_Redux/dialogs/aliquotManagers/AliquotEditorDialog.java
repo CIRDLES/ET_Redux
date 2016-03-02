@@ -2488,7 +2488,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
         ArrayList<AbstractRatiosDataModel> initialPbModels = getMyAliquot().getMyReduxLabData().getInitialPbModels();
         for (int i = (initialPbModels.size() > 1 ? 1 : 0); i < initialPbModels.size(); i++) {
 //            if (  ! (initialPbModels.get( i ) instanceof StaceyKramersInitialPbModelET) ) {
-            masterInitialPbModelChooser.addItem(((AbstractRatiosDataModel) initialPbModels.get(i)).getReduxLabDataElementName());
+            masterInitialPbModelChooser.addItem(initialPbModels.get(i).getReduxLabDataElementName());
 //            }
         }
 

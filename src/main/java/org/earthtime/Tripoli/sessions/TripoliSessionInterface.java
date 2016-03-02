@@ -140,6 +140,8 @@ public interface TripoliSessionInterface extends TripoliSessionFractionationCalc
      * @return the tripoliFractions
      */
     SortedSet<TripoliFraction> getTripoliFractions ();
+    
+    public SortedSet<TripoliFraction> getTripoliFractionsFromSample(AbstractTripoliSample sample);
 
     /**
      *

@@ -275,7 +275,7 @@ public class YAxisView extends AbstractRawDataView {
         if (dataViewsOverlay == null) {
             for (int i = 0; i < rawDataModelViews.length; i++) {
                 if (!floating) {
-                    if (rawDataModelViews[i].getTripoliFraction().isStandard()) {
+                    if (true || rawDataModelViews[i].getTripoliFraction().isStandard()) {
                         rawDataModelViews[i].setMaxY(maxY);
                         rawDataModelViews[i].setMinY(minY);
                     }

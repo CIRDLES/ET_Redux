@@ -59,6 +59,7 @@ import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.FitFunctions
 import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.RawIntensitiesDataView;
 import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.RawRatioDataView;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
+import org.earthtime.Tripoli.samples.AbstractTripoliSample;
 import org.earthtime.Tripoli.sessions.TripoliSessionFractionationCalculatorInterface;
 import org.earthtime.Tripoli.sessions.TripoliSessionInterface;
 import org.earthtime.UPb_Redux.ReduxConstants;
@@ -130,6 +131,7 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
     private final JLayeredPane tripoliSessionDataControls_pane;
     private AbstractRawDataView dataPresentationModeChooserPanel;
     private SessionAnalysisWorkflowManagerInterface sessionAnalysisWorkflowManager;
+    private transient AbstractTripoliSample selectedSample;
 
     /**
      *
@@ -144,7 +146,8 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
      * @param tripoliSessionDataHeader_pane
      * @param tripoliSessionDataControls_pane
      * @param scrollBounds
-     * @param sessionAnalysisWorkflowManager the value of sessionAnalysisWorkflowManager
+     * @param sessionAnalysisWorkflowManager the value of
+     * sessionAnalysisWorkflowManager
      */
     public TripoliSessionRawDataView(//
             ETReduxFrame myUPbReduxFrame, //
@@ -188,7 +191,7 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
         this.zoomSlidersIndependent = true;
 
         this.sessionFractionationCalculator = null;
-        
+
         this.sessionAnalysisWorkflowManager = sessionAnalysisWorkflowManager;
 
         setBackground(new Color(204, 204, 204));
@@ -199,6 +202,9 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
         // sep 2012 postpone adding them until everything prepared = initializeListeners()
 
         this.topMargin = 5;//HEIGHT_OF_FRACTION_INFO_PANELS + 5;
+
+        // the first one should be reference material
+        this.selectedSample = tripoliSession.getTripoliSamples().get(0);
     }
 
     /**
@@ -295,7 +301,6 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
      */
     public void setFractionSelectionType(FractionSelectionTypeEnum fractionSelectionType) {
         this.fractionSelectionType = fractionSelectionType;
-        //refreshPanel();
     }
 
     /**
@@ -353,6 +358,13 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
      */
     public void setSessionModelWidth(int sessionModelWidth) {
         this.sessionModelWidth = sessionModelWidth;
+    }
+
+    /**
+     * @param selectedSample the selectedSample to set
+     */
+    public void setSelectedSample(AbstractTripoliSample selectedSample) {
+        this.selectedSample = selectedSample;
     }
 
     class YAxisZoomChangeListener implements ChangeListener {
@@ -431,6 +443,12 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
         super.paintInit(g2d);//sept 2012 was paint but not needed here
     }
 
+    public void updateTripoliFractionSelection() {
+        tripoliFractions = FractionsFilterInterface.getTripoliFractionsFiltered(//
+                tripoliSession.getTripoliFractionsFromSample(selectedSample), //
+                fractionSelectionType, IncludedTypeEnum.ALL); 
+    }
+
     /**
      *
      */
@@ -479,13 +497,9 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
 
         dataPresentationModeChooserPanel = null;
 
-        tripoliFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliSession.getTripoliFractions(), fractionSelectionType, IncludedTypeEnum.ALL); // sept 2015 bettter way to handlefractionIncludedType);
-////        // test for empty (i.e. no excluded)
-////        if (tripoliFractions.isEmpty()) {
-////            fractionIncludedType = IncludedTypeEnum.ALL;
-////            tripoliFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliSession.getTripoliFractions(), fractionSelectionType, fractionIncludedType);
-////        }
-
+        //tripoliFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliSession.getTripoliFractionsFromSample(selectedSample), fractionSelectionType, IncludedTypeEnum.ALL); // sept 2015 bettter way to handlefractionIncludedType);
+        updateTripoliFractionSelection();
+        
         boolean isFitFunctionsOnRatioDataView = false;
         boolean isFitFunctionsOnDownHoleRatioDataView = false;
         boolean isRawIntensitiesDataView = false;
@@ -611,8 +625,7 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
                     DataModelInterface dm = dataModelIterator.next();
 
                     AbstractRawDataView rawDataModelView
-                            = //
-                            rawDataViewFactory(//
+                            = rawDataViewFactory(//
                                     this,//
                                     tf, //
                                     dm, //
@@ -684,7 +697,7 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
             boolean atLeastOneStandard = false;
 
             for (int f = 0; f < (fractionCountForHorizontalLayout); f++) {
-                if (fractionMap[f].isStandard() && fractionMap[f].isIncluded()) {
+                if ((true || fractionMap[f].isStandard()) && fractionMap[f].isIncluded()) {
                     atLeastOneStandard = true;
 
                     if (Double.isFinite(rawDataModelViews[i][f].getMinY()) && Double.isFinite(rawDataModelViews[i][f].getMaxY())) {
@@ -713,7 +726,7 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
                 // now apply to all fraction data views by walking across fractions within a dataModel type
                 for (int f = 0; f < (fractionCountForHorizontalLayout); f++) {
                     // if fraction is standard, the yaxis represents the normalized view across all session statndard fractions
-                    if (fractionMap[f].isStandard()) {
+                    if (true || fractionMap[f].isStandard()) {
                         rawDataModelViews[i][f].setMinY(overallMinY);
                         rawDataModelViews[i][f].setMaxY(overallMaxY);
                         rawDataModelViews[i][f].setTics(yAxisTics);
@@ -983,13 +996,11 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
                 underlay.add(rawDataModelViewsOverlay, javax.swing.JLayeredPane.PALETTE_LAYER);
 
             } else // detect if grid for intercept fractionation of standards *********************************** Intercept Fractionation of standards
-            {
-                if (FRACTION_LAYOUT_VIEW_STYLE.equals(FractionLayoutViewStylesEnum.GRID_INTERCEPT)) {
+             if (FRACTION_LAYOUT_VIEW_STYLE.equals(FractionLayoutViewStylesEnum.GRID_INTERCEPT)) {
                     for (int f = 0; f < (fractionCountForHorizontalLayout); f++) {
                         ((FitFunctionDataInterface) rawDataModelViews[i][f]).setShowFittedFunction(true);
                     }
                 }
-            }
         }
 
         // establish graphWidth 
