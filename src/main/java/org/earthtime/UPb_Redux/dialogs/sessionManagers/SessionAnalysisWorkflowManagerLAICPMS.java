@@ -2,7 +2,7 @@
  * SampleAnalysisWorkflowManagerDialog.java
  *
  *
- * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2016 James F. Bowring and www.Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,9 +19,11 @@
 package org.earthtime.UPb_Redux.dialogs.sessionManagers;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Rectangle;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
+import java.awt.event.ItemEvent;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -29,9 +31,11 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
 import javax.swing.Icon;
+import javax.swing.JComboBox;
 import javax.swing.JLayeredPane;
 import javax.swing.JRadioButton;
 import javax.swing.JTabbedPane;
@@ -50,6 +54,7 @@ import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.FitFunctions
 import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.RawIntensitiesDataView;
 import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.RawRatioDataView;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
+import org.earthtime.Tripoli.samples.AbstractTripoliSample;
 import org.earthtime.Tripoli.sessions.TripoliSessionInterface;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.dialogs.projectManagers.ProjectManagerSubscribeInterface;
@@ -83,6 +88,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
     // nov 2014
     private final static int OFFSET_TO_TOP_DATA_DISPLAY = 115;//0;
     private final static int WIDTH_OF_YAXIS_PANE = 200;
+    private transient int lastUsedUnknownSampleIndexForSampleSelector = 1;
 
     /**
      * Creates new form SampleAnalysisWorkflowManagerDialog
@@ -183,7 +189,6 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
 
             // create data viewing pane
             tripoliSessionRawDataView = new TripoliSessionRawDataView( //
-                    //
                     uPbReduxFrame,//
                     tripoliSession,//
                     dataModelViewConstructorFactory(RawIntensitiesDataView.class.getName()),//
@@ -199,13 +204,43 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
             // set sampleFractionationCalculator
             ((TripoliSessionRawDataView) tripoliSessionRawDataView).setSessionFractionationCalculator(tripoliSession);
 
+            // feb 2016
+            // set up sample combo box
+            samplesCompboBox.removeAllItems();
+            ArrayList<AbstractTripoliSample> samples = tripoliSession.getTripoliSamples();
+            samples.stream().forEach((sample) -> {
+                samplesCompboBox.addItem(sample);
+            });
+            samplesCompboBox.setSelectedIndex(-1);
+
+            samplesCompboBox.addItemListener((ItemEvent e) -> {
+                JComboBox comboBox = (JComboBox) e.getSource();
+                AbstractTripoliSample sample = (AbstractTripoliSample) comboBox.getSelectedItem();
+                if (sample != null) {
+                    if (sample.getSampleFractions().first().isStandard()) {
+                        ((TripoliSessionRawDataView) tripoliSessionRawDataView).setFractionSelectionType(FractionSelectionTypeEnum.STANDARD);
+                        amPrimaryRefMaterial_label.setText("primary reference material");
+                    } else {
+                        ((TripoliSessionRawDataView) tripoliSessionRawDataView).setFractionSelectionType(FractionSelectionTypeEnum.UNKNOWN);
+                        lastUsedUnknownSampleIndexForSampleSelector = comboBox.getSelectedIndex();
+                        amPrimaryRefMaterial_label.setText("unknown");
+                    }
+
+                    ((TripoliSessionRawDataView) tripoliSessionRawDataView).setSelectedSample(sample);
+                    tripoliSessionRawDataView.refreshPanel();
+                    tripoliSessionDataView_scrollPane.revalidate();
+                }
+            });
+
+            samplesCompboBox.setSelectedIndex(0);
+
             // set default zoom
             setDefaultZoom();
 
             // setup sliders
             tripoliSessionDataView_scrollPane.getHorizontalScrollBar().setUnitIncrement(xAxisZoomSlider.getValue());
             tripoliSessionDataView_scrollPane.getHorizontalScrollBar().setBlockIncrement(xAxisZoomSlider.getValue());
-            
+
             // setup listener so header panels scroll outside of scrollpane
             tripoliSessionDataView_scrollPane.getHorizontalScrollBar().removeAll();
             tripoliSessionDataView_scrollPane.getHorizontalScrollBar().addAdjustmentListener(new AdjustmentListener() {
@@ -313,7 +348,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
                 rawDataSourceMethodFactory("getIncludedIsotopes"));
 
         if (refreshPanel) {
-            tripoliSessionRawDataView.refreshPanel();
+            updateSamplesSelection(false, false);
         }
 
         setEnableAllGridGraphOverlayButtons(true);
@@ -338,7 +373,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         //cause slider to synch
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).synchXAxisZoomSliderValue(((TripoliSessionRawDataView) tripoliSessionRawDataView).getDataModelWidth());
 
-        tripoliSessionRawDataView.refreshPanel();
+        updateSamplesSelection(false, false);
 
         setEnableAllGridGraphOverlayButtons(true);
     }
@@ -360,12 +395,12 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).setRawDataSourceMethod(//
                 rawDataSourceMethodFactory("getRatiosForFractionFitting"));//("getRatiosForUnknownFitting"));//    "getValidRawRatios" ) );
 
-        tripoliSessionRawDataView.refreshPanel();
+        updateSamplesSelection(false, false);
 
         setEnableAllGridGraphOverlayButtons(true);
     }
 
-    private void showDownholeFractionationCorrectedRawRatioDataModels(FractionSelectionTypeEnum fractionSelectionType) {
+    private void showDownholeFractionationCorrectedUnknownRawRatioDataModels(FractionSelectionTypeEnum fractionSelectionType) {
         // assumption is that tripoliSessionRawDataView is initialized
 
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).setFractionSelectionType(fractionSelectionType);
@@ -386,22 +421,19 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
                 dataModelViewConstructorFactory(CorrectedRatioDataView.class.getName()));
 
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).setRawDataSourceMethod(//
-                rawDataSourceMethodFactory("getRatiosForFractionFitting"));//("getRatiosForUnknownFitting"));//          "getValidRawRatioAlphas" ) );
+                rawDataSourceMethodFactory("getRatiosForFractionFitting"));
 
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).setDataModelWidth( //
                 Math.max(CorrectedRatioDataView.DEFAULT_WIDTH_OF_PANE,//
                         ((TripoliSessionRawDataView) tripoliSessionRawDataView).getDataModelWidth()));
 
-        tripoliSessionRawDataView.refreshPanel();
+        updateSamplesSelection(false, true);
 
         setEnableAllGridGraphOverlayButtons(false);
     }
 
     private void showStandardDownholeFractionationRawRatioDataModels() {
         // assumption is that tripoliSessionRawDataView is initialized
-        // only allow standard into this view
-        selectStandards_chkBox.setSelected(true);
-        selectUnknowns_chkBox.setSelected(false);
         overlayPlot_radioButton.setSelected(true);
         setEnableAllGridGraphOverlayButtons(false);
 
@@ -413,8 +445,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).setRawDataSourceMethod(//
                 rawDataSourceMethodFactory("getNonPbRatiosForFractionFitting"));//getValidRawRatioAlphas"));
 
-        updateFractionSelection();
-        tripoliSessionRawDataView.refreshPanel();
+        updateSamplesSelection(true, false);
 
         repaint();
 
@@ -427,9 +458,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
 
     private void showStandardInterceptFractionationDataModels() {
         // assumption is that tripoliSessionRawDataView is initialized
-        // only allow standard into this view
-        selectStandards_chkBox.setSelected(true);
-        selectUnknowns_chkBox.setSelected(false);
+
         gridPlot_radioButton.setSelected(true);
 
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).setFRACTION_LAYOUT_VIEW_STYLE(FractionLayoutViewStylesEnum.GRID_INTERCEPT);
@@ -443,9 +472,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         //cause slider to synch
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).synchXAxisZoomSliderValue(((TripoliSessionRawDataView) tripoliSessionRawDataView).getDataModelWidth());
 
-        updateFractionSelection();
-
-        tripoliSessionRawDataView.refreshPanel();
+        updateSamplesSelection(true, false);
 
         setEnableAllGridGraphOverlayButtons(false);
 
@@ -454,9 +481,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
 
     private void showStandardDownHoleFractionationDataModels() {
         // assumption is that tripoliSessionRawDataView is initialized
-        // only allow standard into this view
-        selectStandards_chkBox.setSelected(true);
-        selectUnknowns_chkBox.setSelected(false);
+
         gridPlot_radioButton.setSelected(true);
 
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).setFRACTION_LAYOUT_VIEW_STYLE(FractionLayoutViewStylesEnum.GRID_INTERCEPT);
@@ -470,9 +495,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         //cause slider to synch
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).synchXAxisZoomSliderValue(((TripoliSessionRawDataView) tripoliSessionRawDataView).getDataModelWidth());
 
-        updateFractionSelection();
-
-        tripoliSessionRawDataView.refreshPanel();
+        updateSamplesSelection(true, false);
 
         setEnableAllGridGraphOverlayButtons(false);
 
@@ -481,9 +504,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
 
     private void showUnknownInterceptFractionationDataModels() {
         // assumption is that tripoliSessionRawDataView is initialized
-        // feb 2013 modified standard view for unknowns as a test
-        selectStandards_chkBox.setSelected(false);
-        selectUnknowns_chkBox.setSelected(true);
+
         gridPlot_radioButton.setSelected(true);
 
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).setFRACTION_LAYOUT_VIEW_STYLE(FractionLayoutViewStylesEnum.GRID_INTERCEPT);
@@ -492,14 +513,13 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
                 dataModelViewConstructorFactory(FitFunctionsOnRatioDataView.class.getName()));
 
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).setRawDataSourceMethod(//
-                rawDataSourceMethodFactory("getRatiosForFractionFitting"));//("getRatiosForUnknownFitting"));//          "getValidRawRatioAlphas" ) );
+                rawDataSourceMethodFactory("getRatiosForFractionFitting"));
 
         //cause slider to synch
-        ((TripoliSessionRawDataView) tripoliSessionRawDataView).synchXAxisZoomSliderValue(((TripoliSessionRawDataView) tripoliSessionRawDataView).getDataModelWidth());
+        ((TripoliSessionRawDataView) tripoliSessionRawDataView)//
+                .synchXAxisZoomSliderValue(((TripoliSessionRawDataView) tripoliSessionRawDataView).getDataModelWidth());
 
-        updateFractionSelection();
-
-        tripoliSessionRawDataView.refreshPanel();
+        updateSamplesSelection(false, true);
 
         setEnableAllGridGraphOverlayButtons(false);
 
@@ -508,13 +528,8 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
 
     private void showSessionViewOfRawDataModels(FractionationTechniquesEnum fractionationTechnique) {
         // assumption is that tripoliSessionRawDataView is initialized
-        // only allow standard into this view
 
         tripoliSession.setFractionationTechnique(fractionationTechnique);
-
-        selectStandards_chkBox.setSelected(true);
-        selectUnknowns_chkBox.setSelected(false);
-        updateFractionSelection();
 
         // do the math
         if (!tripoliSession.isFitFunctionsUpToDate()) {
@@ -524,7 +539,8 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
             uPbReduxFrame.updateReportTable(true);
         } catch (Exception e) {
         }
-        //}
+
+        updateSamplesSelection(true, false);
 
         if (fractionationTechnique.compareTo(FractionationTechniquesEnum.DOWNHOLE) == 0) {
             tripoliSessionRawDataView.setDataPresentationMode(DataPresentationModeEnum.LOGRATIO);
@@ -552,9 +568,6 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         gridPlot_radioButton.setEnabled(enableRawViewControls);
         graphPlot_radioButton.setEnabled(enableRawViewControls);
         overlayPlot_radioButton.setEnabled(enableRawViewControls);
-
-        selectStandards_chkBox.setEnabled(enableRawViewControls);
-        selectUnknowns_chkBox.setEnabled(enableRawViewControls);
     }
 
     private void gridPlotFractions() {
@@ -682,22 +695,27 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         return initialized;
     }
 
-    private void updateFractionSelection() {
-        // prevent both being unchecked and default to standard
-        if (!selectStandards_chkBox.isSelected() && !selectUnknowns_chkBox.isSelected()) {
-            selectStandards_chkBox.setSelected(true);
-        }
+    /**
+     *
+     * @param referenceMaterialOnly the value of referenceMaterialOnly
+     * @param selectLastUnknown the value of selectLastUnknown
+     */
+    private void updateSamplesSelection(boolean referenceMaterialOnly, boolean selectLastUnknown) {
 
-        // process selections
-        if (selectStandards_chkBox.isSelected() && selectUnknowns_chkBox.isSelected()) {
-            //all
-            ((TripoliSessionRawDataView) tripoliSessionRawDataView).setFractionSelectionType(FractionSelectionTypeEnum.ALL);
-        } else if (selectStandards_chkBox.isSelected()) {
-            //standards
-            ((TripoliSessionRawDataView) tripoliSessionRawDataView).setFractionSelectionType(FractionSelectionTypeEnum.STANDARD);
-        } else {
-            // unknowns
-            ((TripoliSessionRawDataView) tripoliSessionRawDataView).setFractionSelectionType(FractionSelectionTypeEnum.UNKNOWN);
+        int index = samplesCompboBox.getSelectedIndex();
+        samplesCompboBox.setEnabled(true);
+        if (referenceMaterialOnly) {
+            // only allow reference material into this view 
+            samplesCompboBox.setSelectedIndex(-1);
+            samplesCompboBox.setSelectedIndex(0);
+            samplesCompboBox.setEnabled(false);
+        } else if (selectLastUnknown) {
+            // allow any sample discourage ref material at index 0 unless raw data
+            samplesCompboBox.setSelectedIndex(-1);
+            samplesCompboBox.setSelectedIndex(lastUsedUnknownSampleIndexForSampleSelector);
+        }  else {
+            samplesCompboBox.setSelectedIndex(-1);
+            samplesCompboBox.setSelectedIndex(index);
         }
     }
 
@@ -758,8 +776,8 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         gridPlot_radioButton = new javax.swing.JRadioButton();
         graphPlot_radioButton = new javax.swing.JRadioButton();
         overlayPlot_radioButton = new javax.swing.JRadioButton();
-        selectStandards_chkBox = new javax.swing.JCheckBox();
-        selectUnknowns_chkBox = new javax.swing.JCheckBox();
+        samplesCompboBox = new javax.swing.JComboBox<>();
+        amPrimaryRefMaterial_label = new javax.swing.JLabel();
         xAxisZoomSlider = new javax.swing.JSlider();
         tripoliSessionRawDataViewYAxis = new javax.swing.JLayeredPane();
         tripoliSessionDataHeader_pane = new javax.swing.JLayeredPane();
@@ -1202,6 +1220,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
 
         jPanel1.setBackground(new java.awt.Color(250, 240, 230));
         jPanel1.setPreferredSize(new java.awt.Dimension(191, 70));
+        jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         gridPlot_radioButton.setBackground(new java.awt.Color(204, 255, 204));
         plotStyleFractions_buttonGroup.add(gridPlot_radioButton);
@@ -1217,6 +1236,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
                 gridPlot_radioButtonActionPerformed(evt);
             }
         });
+        jPanel1.add(gridPlot_radioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 8, 50, -1));
 
         graphPlot_radioButton.setBackground(new java.awt.Color(204, 255, 204));
         plotStyleFractions_buttonGroup.add(graphPlot_radioButton);
@@ -1232,6 +1252,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
                 graphPlot_radioButtonActionPerformed(evt);
             }
         });
+        jPanel1.add(graphPlot_radioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 8, 65, -1));
 
         overlayPlot_radioButton.setBackground(new java.awt.Color(204, 255, 204));
         plotStyleFractions_buttonGroup.add(overlayPlot_radioButton);
@@ -1247,67 +1268,14 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
                 overlayPlot_radioButtonActionPerformed(evt);
             }
         });
+        jPanel1.add(overlayPlot_radioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(115, 8, 75, -1));
+        jPanel1.add(samplesCompboBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 27, 185, -1));
 
-        selectStandards_chkBox.setBackground(new java.awt.Color(250, 240, 230));
-        selectStandards_chkBox.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
-        selectStandards_chkBox.setSelected(true);
-        selectStandards_chkBox.setText("Standard");
-        selectStandards_chkBox.setActionCommand("STANDARD");
-        selectStandards_chkBox.setOpaque(true);
-        selectStandards_chkBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                selectStandards_chkBoxActionPerformed(evt);
-            }
-        });
-
-        selectUnknowns_chkBox.setBackground(new java.awt.Color(250, 240, 230));
-        selectUnknowns_chkBox.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
-        selectUnknowns_chkBox.setText("Unknowns");
-        selectUnknowns_chkBox.setActionCommand("UNKNOWN");
-        selectUnknowns_chkBox.setOpaque(true);
-        selectUnknowns_chkBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                selectUnknowns_chkBoxActionPerformed(evt);
-            }
-        });
-
-        org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 190, Short.MAX_VALUE)
-            .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                .add(jPanel1Layout.createSequentialGroup()
-                    .add(0, 0, Short.MAX_VALUE)
-                    .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                        .add(jPanel1Layout.createSequentialGroup()
-                            .add(gridPlot_radioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 50, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(0, 0, 0)
-                            .add(graphPlot_radioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 65, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(0, 0, 0)
-                            .add(overlayPlot_radioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 75, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                        .add(jPanel1Layout.createSequentialGroup()
-                            .add(selectStandards_chkBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 90, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(10, 10, 10)
-                            .add(selectUnknowns_chkBox)))
-                    .add(0, 0, Short.MAX_VALUE)))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 70, Short.MAX_VALUE)
-            .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                .add(jPanel1Layout.createSequentialGroup()
-                    .add(0, 0, Short.MAX_VALUE)
-                    .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                        .add(gridPlot_radioButton)
-                        .add(graphPlot_radioButton)
-                        .add(overlayPlot_radioButton))
-                    .add(10, 10, 10)
-                    .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                        .add(selectStandards_chkBox)
-                        .add(selectUnknowns_chkBox))
-                    .add(0, 0, Short.MAX_VALUE)))
-        );
+        amPrimaryRefMaterial_label.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        amPrimaryRefMaterial_label.setForeground(new java.awt.Color(255, 51, 0));
+        amPrimaryRefMaterial_label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        amPrimaryRefMaterial_label.setText("ref mat?");
+        jPanel1.add(amPrimaryRefMaterial_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(15, 50, 150, -1));
 
         controlPanel_panel.add(jPanel1);
         jPanel1.setBounds(0, 0, 191, 70);
@@ -1319,9 +1287,9 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         xAxisZoomSlider.setMaximum(640);
         xAxisZoomSlider.setMinimum(4);
         xAxisZoomSlider.setValue(128);
+        tripoliTab_layeredPane.setLayer(xAxisZoomSlider, javax.swing.JLayeredPane.PALETTE_LAYER);
         tripoliTab_layeredPane.add(xAxisZoomSlider);
         xAxisZoomSlider.setBounds(110, 600, 400, 20);
-        tripoliTab_layeredPane.setLayer(xAxisZoomSlider, javax.swing.JLayeredPane.PALETTE_LAYER);
 
         tripoliSessionRawDataViewYAxis.setBackground(new java.awt.Color(255, 255, 255));
         tripoliSessionRawDataViewYAxis.setOpaque(true);
@@ -1427,14 +1395,12 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
     }//GEN-LAST:event_includeAllFractions_buttonActionPerformed
 
     private void showAllFractions_radioButtonActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showAllFractions_radioButtonActionPerformed
-//        setFractionVisibility( IncludedTypeEnum.ALL );
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).setFractionIncludedType(IncludedTypeEnum.ALL);
         currentFractionView = IncludedTypeEnum.ALL;
         tripoliSessionRawDataView.refreshPanel();
     }//GEN-LAST:event_showAllFractions_radioButtonActionPerformed
 
     private void showIncludedFractions_radioButtonActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showIncludedFractions_radioButtonActionPerformed
-        // setFractionVisibility( IncludedTypeEnum.INCLUDED );
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).setFractionIncludedType(IncludedTypeEnum.INCLUDED);
         currentFractionView = IncludedTypeEnum.INCLUDED;
         tripoliSessionRawDataView.refreshPanel();
@@ -1485,17 +1451,6 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
 //        System.out.println( "Radio Button State Change" );
     }//GEN-LAST:event_rawRatios_radioButtonStateChanged
 
-private void selectStandards_chkBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectStandards_chkBoxActionPerformed
-    updateFractionSelection();
-    tripoliSessionRawDataView.refreshPanel();
-}//GEN-LAST:event_selectStandards_chkBoxActionPerformed
-
-private void selectUnknowns_chkBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectUnknowns_chkBoxActionPerformed
-    updateFractionSelection();
-    tripoliSessionRawDataView.refreshPanel();
-    tripoliSessionDataView_scrollPane.revalidate();
-}//GEN-LAST:event_selectUnknowns_chkBoxActionPerformed
-
 private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeAllIndividualYAxisPanes_buttonActionPerformed
     ((TripoliSessionRawDataView) tripoliSessionRawDataView).removeAllLocalYAxisPanes();
 }//GEN-LAST:event_removeAllIndividualYAxisPanes_buttonActionPerformed
@@ -1525,12 +1480,12 @@ private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.
     }//GEN-LAST:event_downholeFitStandards_radioButtonActionPerformed
 
     private void downholeCorrectedUnknownRatios_radioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downholeCorrectedUnknownRatios_radioButtonActionPerformed
-        showDownholeFractionationCorrectedRawRatioDataModels(FractionSelectionTypeEnum.UNKNOWN);
+        showDownholeFractionationCorrectedUnknownRawRatioDataModels(FractionSelectionTypeEnum.UNKNOWN);
     }//GEN-LAST:event_downholeCorrectedUnknownRatios_radioButtonActionPerformed
 
     private void switchToProjectManager_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_switchToProjectManager_buttonActionPerformed
         this.close();
-        ((DialogEditor) projectManager).setVisible(true);
+        ((Component) projectManager).setVisible(true);
     }//GEN-LAST:event_switchToProjectManager_buttonActionPerformed
 
     private void restoreAllAquisitionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_restoreAllAquisitionsActionPerformed
@@ -1565,6 +1520,7 @@ private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel DownholePanel;
+    private javax.swing.JLabel amPrimaryRefMaterial_label;
     private javax.swing.JLayeredPane controlPanel_panel;
     private javax.swing.JRadioButton correctedIsotopes_radioButton;
     private javax.swing.JButton defaultZoom_button;
@@ -1597,9 +1553,8 @@ private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.
     private javax.swing.JButton restoreAllAquisitions;
     private javax.swing.JLabel sampleType_label;
     private javax.swing.JPanel sampleType_panel;
+    private javax.swing.JComboBox<AbstractTripoliSample> samplesCompboBox;
     private javax.swing.JButton save_button;
-    private javax.swing.JCheckBox selectStandards_chkBox;
-    private javax.swing.JCheckBox selectUnknowns_chkBox;
     private javax.swing.JRadioButton showAllFractions_radioButton;
     private javax.swing.JRadioButton showExcludedFractions_radioButton;
     private javax.swing.JRadioButton showIncludedFractions_radioButton;
@@ -1653,35 +1608,9 @@ private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.
 
                         i++;
                     }
-
-                    // i ++;
                 }
             }
 
-////            Iterator fractionationAlphaIterator = tripoliSession.getDownholeFractionationDataModels().keySet().iterator();
-////            while (fractionationAlphaIterator.hasNext()) {
-////                RawRatioNames rrName = (RawRatioNames) fractionationAlphaIterator.next();
-////                DownholeFractionationDataModel fractionationAlpha = tripoliSession.getDownholeFractionationDataModels().get( rrName );
-////
-////                outputWriter.println( "\n\nRatio = " + rrName + "   listing fractionName, elapsed seconds timeStamp, mean, stderr  \n" );
-////
-////                Iterator fractionIterator = tripoliSession.//
-////                        getTripoliFractionsFiltered( FractionSelectionTypeEnum.ALL, IncludedTypeEnum.INCLUDED ).iterator();
-////                long firstFractionTimeStamp = tripoliSession.//
-////                        getTripoliFractionsFiltered( FractionSelectionTypeEnum.ALL, IncludedTypeEnum.INCLUDED ).first().getPeakTimeStamp();
-////
-////                while (fractionIterator.hasNext()) {
-////                    TripoliFraction tf = (TripoliFraction) fractionIterator.next();
-////                    long timeStamp = tf.getPeakTimeStamp();
-////                    double mean = ((RawRatioDataModel) tf.getRawRatioDataModelByName( rrName )).getMeanOfCorrectedRatios();//.getMeanOfResidualsFromFittedFractionation();
-////                    double stdErr = ((RawRatioDataModel) tf.getRawRatioDataModelByName( rrName )).getStdErrOfMeanCorrectedRatios();//.getStdErrOfmeanOfResidualsFromFittedFractionation();
-////                    
-////                    outputWriter.println( tf.getFractionID() + ",  " + (timeStamp - firstFractionTimeStamp) / 1000 + ",   " + mean + ",   " + stdErr );
-////
-////                }
-////
-////
-////            }
             outputWriter.println();
 
             outputWriter.flush();
@@ -1751,7 +1680,7 @@ private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.
 
     @Override
     public void revalidateScrollPane() {
-            tripoliSessionDataView_scrollPane.revalidate();
+        tripoliSessionDataView_scrollPane.revalidate();
     }
 
 }

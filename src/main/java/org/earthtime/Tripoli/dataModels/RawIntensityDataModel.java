@@ -351,7 +351,7 @@ public class RawIntensityDataModel //
                 = onPeakVirtualCollector.getOnPeakAquireTimes().clone();
 
         for (int i = 0; i < onPeakAquireTimesInSeconds.length; i++) {
-            onPeakAquireTimesInSeconds[i] = onPeakAquireTimesInSeconds[i] /= 1000.0;
+            onPeakAquireTimesInSeconds[i] /= 1000.0;
         }
 
         return onPeakAquireTimesInSeconds;

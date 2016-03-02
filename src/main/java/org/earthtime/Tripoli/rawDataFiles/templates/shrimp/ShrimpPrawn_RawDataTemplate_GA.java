@@ -17,9 +17,6 @@
  */
 package org.earthtime.Tripoli.rawDataFiles.templates.shrimp;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectStreamClass;
 import java.util.TimeZone;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.AbstractAcquisitionModel;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.SingleCollectorAcquisition;
@@ -36,7 +33,7 @@ import org.earthtime.reduxLabData.ReduxLabData;
 public final class ShrimpPrawn_RawDataTemplate_GA extends AbstractRawDataFileTemplate {
 
     //Class variables   
-    //private static final long serialVersionUID = -5515737439750386077L;
+    private static final long serialVersionUID = 7600002374256461569L;
     private static ShrimpPrawn_RawDataTemplate_GA instance = new ShrimpPrawn_RawDataTemplate_GA();
 
     private ShrimpPrawn_RawDataTemplate_GA() {
@@ -78,15 +75,5 @@ public final class ShrimpPrawn_RawDataTemplate_GA extends AbstractRawDataFileTem
         } catch (BadLabDataException badLabDataException) {
         }
         return acquisitionModel;
-    }
-
-    private void readObject(
-            ObjectInputStream stream)
-            throws IOException, ClassNotFoundException {
-        stream.defaultReadObject();
-        ObjectStreamClass myObject = ObjectStreamClass.lookup(
-                Class.forName(ShrimpPrawn_RawDataTemplate_GA.class.getCanonicalName()));
-        long theSUID = myObject.getSerialVersionUID();
-        System.out.println("Customized De-serialization of ShrimpPrawn_RawDataTemplate_GA " + theSUID);
     }
 }

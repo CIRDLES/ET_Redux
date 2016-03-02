@@ -1527,6 +1527,11 @@ public class TripoliSession implements
     public SortedSet<TripoliFraction> getTripoliFractions() {
         return tripoliFractions;
     }
+    
+    @Override
+    public SortedSet<TripoliFraction> getTripoliFractionsFromSample(AbstractTripoliSample sample){
+        return sample.getSampleFractions();
+    }
 
     /**
      *

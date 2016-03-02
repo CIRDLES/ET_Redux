@@ -260,7 +260,7 @@ public abstract class AbstractTripoliSample implements //
     @Override
     // used for list population
     public String toString() {
-        return sampleName;
+        return sampleName;// + (getSampleFractions().first().isStandard() ? " (primary ref mat)" : "");
     }
 
     /**
