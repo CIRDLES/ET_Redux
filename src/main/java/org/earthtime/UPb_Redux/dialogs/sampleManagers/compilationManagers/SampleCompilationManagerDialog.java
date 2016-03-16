@@ -33,8 +33,8 @@ import org.earthtime.UPb_Redux.user.ReduxPersistentState;
 import org.earthtime.UPb_Redux.user.ReduxPreferences;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
+import org.earthtime.archivingTools.GeoPassIDValidator;
 import org.earthtime.archivingTools.GeochronRetrievalUtility;
-import org.earthtime.archivingTools.IEDACredentialsValidator;
 import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
@@ -189,7 +189,7 @@ public class SampleCompilationManagerDialog extends DialogEditor {
             IOException,
             BadOrMissingXMLSchemaException {
         // TODO: validate fields - make this more sophisticated
-        if (sampleName_text.getText().length() > 0) {            
+        if (sampleName_text.getText().length() > 0) {
             setVisible(false);
 
             String success = "";
@@ -323,7 +323,7 @@ public class SampleCompilationManagerDialog extends DialogEditor {
         sampleName_text.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         sampleName_text.setText("Sample Name");
         jPanel1.add(sampleName_text);
-        sampleName_text.setBounds(238, 56, 218, 27);
+        sampleName_text.setBounds(238, 56, 218, 25);
 
         sampleReduxFile_label.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         sampleReduxFile_label.setText("File path for this Sample:");
@@ -391,7 +391,7 @@ public class SampleCompilationManagerDialog extends DialogEditor {
 
         validateGeochronCredentials_button.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         validateGeochronCredentials_button.setForeground(new java.awt.Color(255, 51, 51));
-        validateGeochronCredentials_button.setText("<html><b>Validate</b> Geochron credentials</html>");
+        validateGeochronCredentials_button.setText("<html><b>Validate</b> GeoPass ID</html>");
         validateGeochronCredentials_button.setName("false"); // NOI18N
         validateGeochronCredentials_button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -482,7 +482,7 @@ public class SampleCompilationManagerDialog extends DialogEditor {
         );
 
         jPanel1.add(jPanel3);
-        jPanel3.setBounds(31, 109, 440, 210);
+        jPanel3.setBounds(31, 109, 440, 208);
 
         sampleName_label1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         sampleName_label1.setText("<html>Note: Compilation mode provides a mechanism to load in various <br>  aliquots from the same or different Samples and to view and save them <br>as a single ET_Redux sample\n file.</html>");
@@ -583,17 +583,19 @@ public class SampleCompilationManagerDialog extends DialogEditor {
 
     }//GEN-LAST:event_saveAndCloseAndProceedToAliquotChooser_buttonActionPerformed
 
-    private void validateGeochronCredentials(boolean isVerbose) {
-        String userCode = //
-                IEDACredentialsValidator.validateGeochronCredentials(//
+    private void validateGeoPassID(boolean isVerbose) {
+        String userCode
+                = //
+                GeoPassIDValidator.validateGeoPassID(//
                         geochronUserName_text.getText().trim(),//
-                        new String(geochronPassword_passwordField.getPassword()), isVerbose);
+                        new String(geochronPassword_passwordField.getPassword()),
+                        isVerbose);
 
-        boolean valid = (userCode.trim().length() > 0);
+        boolean valid = (userCode.trim().length() > 0) && (!userCode.equalsIgnoreCase("NONEXXXXX"));
         if (valid) {
-            credentialsValidReport_label.setText("Credentials are VALID.");
+            credentialsValidReport_label.setText("GeoPass ID is VALID.");
         } else {
-            credentialsValidReport_label.setText("Credentials are NOT valid.");
+            credentialsValidReport_label.setText("GeoPass ID is NOT valid.");
         }
 
         saveAndCloseAndProceedToAliquotChooser_button.setEnabled(valid);
@@ -606,7 +608,7 @@ public class SampleCompilationManagerDialog extends DialogEditor {
 }//GEN-LAST:event_sourceSingle_jRadioButtonActionPerformed
 
     private void validateGeochronCredentials_buttonActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_validateGeochronCredentials_buttonActionPerformed
-        validateGeochronCredentials(true);
+        validateGeoPassID(true);
 }//GEN-LAST:event_validateGeochronCredentials_buttonActionPerformed
 
     private void visitGeochron_buttonActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_visitGeochron_buttonActionPerformed
@@ -614,7 +616,7 @@ public class SampleCompilationManagerDialog extends DialogEditor {
 }//GEN-LAST:event_visitGeochron_buttonActionPerformed
 
     private void sourceGeochron_jRadioButtonActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sourceGeochron_jRadioButtonActionPerformed
-        validateGeochronCredentials(false);
+        validateGeoPassID(false);
     }//GEN-LAST:event_sourceGeochron_jRadioButtonActionPerformed
 
     private void sourceFolder_jRadioButtonActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sourceFolder_jRadioButtonActionPerformed

@@ -216,11 +216,11 @@ final public class ReduxConstants {
     /**
      *
      */
-    static public String DEFAULT_IGSN = "NONE";
+    static public String DEFAULT_IGSN = "IGSN";
     /**
      *
      */
-    static public String DEFAULT_ALIQUOT_IGSN = "XYZ000000";
+    static public String DEFAULT_ALIQUOT_IGSN = "IGSN";
     /**
      *
      */

@@ -92,7 +92,7 @@ import org.earthtime.aliquots.ReduxAliquotInterface;
 import org.earthtime.archivingTools.AnalysisImageInterface;
 import org.earthtime.archivingTools.GeochronUploadImagesHelper;
 import org.earthtime.archivingTools.GeochronUploaderUtility;
-import org.earthtime.archivingTools.IEDACredentialsValidator;
+import org.earthtime.archivingTools.GeoPassIDValidator;
 import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.dataDictionaries.AnalysisImageTypes;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
@@ -627,16 +627,19 @@ public class AliquotEditorDialog extends DialogEditor {
             }
         }
 
-        String validityReport = //
+        String validityReport
+                = //
                 ((UPbReduxAliquot) myAliquot).reportFractionMeasuredRatioUncertaintiesValidity();
         if (validityReport.length() > 0) {
-            validityReport = //
+            validityReport
+                    = //
                     "<html> U-Pb_Redux determines that some measured ratios in this aliquot "//
                     + "have correlations outside of [-1.0,,,1.0] and advises against archiving.<br><br>"//
                     + validityReport//
                     + "</html>";
         } else {
-            validityReport = //
+            validityReport
+                    = //
                     "<html>U-Pb_Redux determines that the correlations between your measured ratios"//
                     + " are within the correct range of [-1,,,1].</html>";
         }
@@ -671,30 +674,30 @@ public class AliquotEditorDialog extends DialogEditor {
 
         // set focus traversal policy for publish tab
         ArrayList<Component> order = new ArrayList<>();
-        order.add(geochronUserName_text);
-        order.add(geochronPassword_passwordField);
-        order.add(validateGeochronCredentials_button);
+        order.add(geoPassUserName_text);
+        order.add(geoPassPassword_passwordField);
+        order.add(validateGeoPassID_button);
         order.add(saveAndPreviewXMLAliquotAsHTML_button);
         order.add(saveAndUploadAliquotToGeochron_button);
 
         publishPanelFocusTraversalPolicy = new UPbReduxFocusTraversalPolicy(order);
         publishAliquot_panel.setFocusCycleRoot(true);
         publishAliquot_panel.setFocusTraversalPolicy(publishPanelFocusTraversalPolicy);
-        geochronUserName_text.requestFocusInWindow();
+        geoPassUserName_text.requestFocusInWindow();
 
         showFractionNotes();
 
         // Archive tab
-        checkMarkForValidGeochronCredentials_label.setVisible(false);
-        xMarkForValidGeochronCredentials_label.setVisible(false);
+        checkMarkForValidGeoPassID_label.setVisible(false);
+        xMarkForValidGeoPassID_label.setVisible(false);
 
-        geochronUserName_text.setDocument(new UnDoAbleDocument(geochronUserName_text, true));
-        geochronUserName_text.setText(((ETReduxFrame) parent).getMyState().getReduxPreferences().getGeochronUserName());
-        geochronUserName_text.setCaretPosition(0);
+        geoPassUserName_text.setDocument(new UnDoAbleDocument(geoPassUserName_text, true));
+        geoPassUserName_text.setText(((ETReduxFrame) parent).getMyState().getReduxPreferences().getGeochronUserName());
+        geoPassUserName_text.setCaretPosition(0);
 
-        geochronPassword_passwordField.setDocument(new UnDoAbleDocument(geochronPassword_passwordField, true));
-        geochronPassword_passwordField.setText(((ETReduxFrame) parent).getMyState().getReduxPreferences().getGeochronPassWord());
-        geochronPassword_passwordField.setCaretPosition(0);
+        geoPassPassword_passwordField.setDocument(new UnDoAbleDocument(geoPassPassword_passwordField, true));
+        geoPassPassword_passwordField.setText(((ETReduxFrame) parent).getMyState().getReduxPreferences().getGeochronPassWord());
+        geoPassPassword_passwordField.setCaretPosition(0);
 
     }
 
@@ -925,7 +928,8 @@ public class AliquotEditorDialog extends DialogEditor {
         } catch (FileNotFoundException fileNotFoundException) {
         }
 
-        content = //
+        content
+                = //
                 "<html><head>" + "<link rel=\"stylesheet\" type = \"text/css\" href = \"http://www.geochron.org/geo.css\"/>" + "</head>" //
                 + content//
                 + "</html>";
@@ -1119,7 +1123,7 @@ public class AliquotEditorDialog extends DialogEditor {
         analystName_label = new javax.swing.JLabel();
         analystName_text = new javax.swing.JTextField();
         instrumentalMethod_label = new javax.swing.JLabel();
-        instrumentalMethod_jcombo = new javax.swing.JComboBox<String>();
+        instrumentalMethod_jcombo = new javax.swing.JComboBox<>();
         instrumentalMethod_label1 = new javax.swing.JLabel();
         sampleIGSN_text = new javax.swing.JTextField();
         details_tabbedPane = new javax.swing.JTabbedPane();
@@ -1128,10 +1132,10 @@ public class AliquotEditorDialog extends DialogEditor {
         fractionNotes_scrollPane = new javax.swing.JScrollPane();
         fractionNotes_textArea = new javax.swing.JTextArea();
         archivingDetails_panel = new javax.swing.JPanel();
-        mineralNameChooser = new javax.swing.JComboBox<String>();
+        mineralNameChooser = new javax.swing.JComboBox<>();
         chooseMineral_label = new javax.swing.JLabel();
         chooseSettingType_label = new javax.swing.JLabel();
-        settingTypeChooser = new javax.swing.JComboBox<String>();
+        settingTypeChooser = new javax.swing.JComboBox<>();
         countOfGrains_label = new javax.swing.JLabel();
         physicallyAbraded_chkBox = new javax.swing.JCheckBox();
         leachedInHFAcid_chkBox = new javax.swing.JCheckBox();
@@ -1148,7 +1152,7 @@ public class AliquotEditorDialog extends DialogEditor {
         imageThumbnail_label = new javax.swing.JLabel();
         chooseSettingType_label1 = new javax.swing.JLabel();
         fractionID_label1 = new javax.swing.JLabel();
-        fraction_Chooser = new javax.swing.JComboBox<ETFractionInterface>();
+        fraction_Chooser = new javax.swing.JComboBox<>();
         fractionID_label2 = new javax.swing.JLabel();
         useLabDefaults_button = new javax.swing.JButton();
         refsAndComment_panel = new javax.swing.JPanel();
@@ -1192,14 +1196,14 @@ public class AliquotEditorDialog extends DialogEditor {
         probabilityDensityUpload_chkBox = new javax.swing.JCheckBox();
         reportAsCSV_chkBox = new javax.swing.JCheckBox();
         reportSVGUpload_chkbox = new javax.swing.JCheckBox();
-        geochronPassword_passwordField = new javax.swing.JPasswordField();
+        geoPassPassword_passwordField = new javax.swing.JPasswordField();
         passwordGeochron_label1 = new javax.swing.JLabel();
-        geochronUserName_text = new javax.swing.JTextField();
+        geoPassUserName_text = new javax.swing.JTextField();
         userNameGeochron_label = new javax.swing.JLabel();
-        validateGeochronCredentials_button = new javax.swing.JButton();
+        validateGeoPassID_button = new javax.swing.JButton();
         jLabel8 = new javax.swing.JLabel();
-        checkMarkForValidGeochronCredentials_label = new javax.swing.JLabel();
-        xMarkForValidGeochronCredentials_label = new javax.swing.JLabel();
+        checkMarkForValidGeoPassID_label = new javax.swing.JLabel();
+        xMarkForValidGeoPassID_label = new javax.swing.JLabel();
         archiveNote_label = new javax.swing.JLabel();
         archivePanelTitle_label = new javax.swing.JLabel();
         archivePanelTitle_label1 = new javax.swing.JLabel();
@@ -1623,44 +1627,44 @@ public class AliquotEditorDialog extends DialogEditor {
         reportSVGUpload_chkbox.setText("report image?");
         geochronArchivePanel_panel.add(reportSVGUpload_chkbox, new org.netbeans.lib.awtextra.AbsoluteConstraints(880, 140, 130, -1));
 
-        geochronPassword_passwordField.setText("############");
-        geochronArchivePanel_panel.add(geochronPassword_passwordField, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 100, -1, -1));
+        geoPassPassword_passwordField.setText("############");
+        geochronArchivePanel_panel.add(geoPassPassword_passwordField, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 100, -1, -1));
 
         passwordGeochron_label1.setFont(new java.awt.Font("Lucida Grande", 0, 12)); // NOI18N
         passwordGeochron_label1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         passwordGeochron_label1.setText("password:");
         geochronArchivePanel_panel.add(passwordGeochron_label1, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 100, 70, 30));
 
-        geochronUserName_text.setText("username");
-        geochronArchivePanel_panel.add(geochronUserName_text, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 100, 150, -1));
+        geoPassUserName_text.setText("username");
+        geochronArchivePanel_panel.add(geoPassUserName_text, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 100, 150, -1));
 
         userNameGeochron_label.setFont(new java.awt.Font("Lucida Grande", 0, 12)); // NOI18N
         userNameGeochron_label.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         userNameGeochron_label.setText("user name:");
         geochronArchivePanel_panel.add(userNameGeochron_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 100, 80, 30));
 
-        validateGeochronCredentials_button.setForeground(new java.awt.Color(255, 51, 51));
-        validateGeochronCredentials_button.setText("<html><b>Validate</b> Geochron credentials</html>");
-        validateGeochronCredentials_button.setName("false"); // NOI18N
-        validateGeochronCredentials_button.addActionListener(new java.awt.event.ActionListener() {
+        validateGeoPassID_button.setForeground(new java.awt.Color(255, 51, 51));
+        validateGeoPassID_button.setText("<html><b>Validate</b> GeoPass ID</html>");
+        validateGeoPassID_button.setName("false"); // NOI18N
+        validateGeoPassID_button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                validateGeochronCredentials_buttonActionPerformed(evt);
+                validateGeoPassID_buttonActionPerformed(evt);
             }
         });
-        geochronArchivePanel_panel.add(validateGeochronCredentials_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 100, 250, -1));
+        geochronArchivePanel_panel.add(validateGeoPassID_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 100, 250, -1));
 
         jLabel8.setFont(new java.awt.Font("Arial Black", 0, 14)); // NOI18N
         jLabel8.setText("1.");
         geochronArchivePanel_panel.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 97, 20, 30));
 
-        checkMarkForValidGeochronCredentials_label.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/earthtime/UPb_Redux/images/check_icon.png"))); // NOI18N
-        checkMarkForValidGeochronCredentials_label.setToolTipText("Geochron Credentials are VALID.");
-        checkMarkForValidGeochronCredentials_label.setIconTextGap(0);
-        geochronArchivePanel_panel.add(checkMarkForValidGeochronCredentials_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 90, 40, 40));
+        checkMarkForValidGeoPassID_label.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/earthtime/UPb_Redux/images/check_icon.png"))); // NOI18N
+        checkMarkForValidGeoPassID_label.setToolTipText("Geochron Credentials are VALID.");
+        checkMarkForValidGeoPassID_label.setIconTextGap(0);
+        geochronArchivePanel_panel.add(checkMarkForValidGeoPassID_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 90, 40, 40));
 
-        xMarkForValidGeochronCredentials_label.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/earthtime/UPb_Redux/images/icon_red_x.png"))); // NOI18N
-        xMarkForValidGeochronCredentials_label.setToolTipText("Geochron Credentials are NOT valid.");
-        geochronArchivePanel_panel.add(xMarkForValidGeochronCredentials_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 90, 40, 40));
+        xMarkForValidGeoPassID_label.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/earthtime/UPb_Redux/images/icon_red_x.png"))); // NOI18N
+        xMarkForValidGeoPassID_label.setToolTipText("Geochron Credentials are NOT valid.");
+        geochronArchivePanel_panel.add(xMarkForValidGeoPassID_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 90, 40, 40));
 
         archiveNote_label.setFont(new java.awt.Font("Lucida Grande", 0, 18)); // NOI18N
         archiveNote_label.setText("Note:");
@@ -1779,9 +1783,9 @@ public class AliquotEditorDialog extends DialogEditor {
         saveAliquot();
 }//GEN-LAST:event_save_buttonActionPerformed
 
-    private void validateGeochronCredentials_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_validateGeochronCredentials_buttonActionPerformed
-        validateGeochronCredentials(false);
-}//GEN-LAST:event_validateGeochronCredentials_buttonActionPerformed
+    private void validateGeoPassID_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_validateGeoPassID_buttonActionPerformed
+        validateGeoPassID(false);
+}//GEN-LAST:event_validateGeoPassID_buttonActionPerformed
 
     private void visitGeochron_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_visitGeochron_buttonActionPerformed
         BrowserControl.displayURL("http://www.geochron.org/");
@@ -1801,7 +1805,7 @@ private void details_tabbedPaneMouseClicked(java.awt.event.MouseEvent evt) {//GE
     if (details_tabbedPane.getSelectedIndex() == 3) {
         // we are at publish/archive
         System.out.println("ARCHIVE CHECK");
-        validateGeochronCredentials(false);
+        validateGeoPassID(false);
     } else {
     }
 }//GEN-LAST:event_details_tabbedPaneMouseClicked
@@ -4356,30 +4360,30 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
         tableComponent.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0), "upArrow");
         tableComponent.getActionMap().put("upArrow",
                 new AbstractAction("upArrow") {
-                    public void actionPerformed(ActionEvent evt) {
-                        int nextUp = tableRows.indexOf(tableComponent);
-                        if (nextUp > 0) {
-                            nextUp--;
-                        }
+            public void actionPerformed(ActionEvent evt) {
+                int nextUp = tableRows.indexOf(tableComponent);
+                if (nextUp > 0) {
+                    nextUp--;
+                }
 
-                        tableRows.get(nextUp).grabFocus();
-                    }
-                });
+                tableRows.get(nextUp).grabFocus();
+            }
+        });
 
         tableComponent.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0), "downArrow");
         tableComponent.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "downArrow");
         tableComponent.getActionMap().put("downArrow",
                 new AbstractAction("downArrow") {
-                    public void actionPerformed(ActionEvent evt) {
-                        int nextDown = tableRows.indexOf(tableComponent);
-                        if ((nextDown + 1) < max) {
-                            nextDown++;
-                        }
+            public void actionPerformed(ActionEvent evt) {
+                int nextDown = tableRows.indexOf(tableComponent);
+                if ((nextDown + 1) < max) {
+                    nextDown++;
+                }
 
-                        tableRows.get(nextDown).grabFocus();
+                tableRows.get(nextDown).grabFocus();
 
-                    }
-                });
+            }
+        });
 
     }
 
@@ -4424,7 +4428,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
     private javax.swing.JTextField calibrationUnct207_206_text;
     private javax.swing.JLabel calibrationUnct208_232_label;
     private javax.swing.JTextField calibrationUnct208_232_text;
-    private javax.swing.JLabel checkMarkForValidGeochronCredentials_label;
+    private javax.swing.JLabel checkMarkForValidGeoPassID_label;
     private javax.swing.JLabel checkMarkForValidSampleID_label;
     private javax.swing.JCheckBox chemicallyPurifiedUPb_chkBox;
     private javax.swing.JLabel chooseMineral_label;
@@ -4449,14 +4453,14 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
     private javax.swing.JScrollPane fractionNotes_scrollPane;
     private javax.swing.JTextArea fractionNotes_textArea;
     private javax.swing.JComboBox<ETFractionInterface> fraction_Chooser;
+    private javax.swing.JPasswordField geoPassPassword_passwordField;
+    private javax.swing.JTextField geoPassUserName_text;
     private javax.swing.JLayeredPane geochronArchivePanel_panel;
     private javax.swing.JLabel geochronIcon_label;
     private javax.swing.JCheckBox geochronOverwrite_chkBox;
     private javax.swing.JCheckBox geochronOverwrite_chkBox2;
     private javax.swing.JCheckBox geochronOverwrite_chkBox5;
-    private javax.swing.JPasswordField geochronPassword_passwordField;
     private javax.swing.JCheckBox geochronPublicRecord_chkBox;
-    private javax.swing.JTextField geochronUserName_text;
     private javax.swing.JPanel imageThumbnail_Panel;
     private javax.swing.JLabel imageThumbnail_label;
     private javax.swing.JLabel instMethodRef_label;
@@ -4501,9 +4505,9 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
     protected javax.swing.JPanel title_panel;
     protected javax.swing.JButton useLabDefaults_button;
     private javax.swing.JLabel userNameGeochron_label;
-    private javax.swing.JButton validateGeochronCredentials_button;
+    private javax.swing.JButton validateGeoPassID_button;
     private javax.swing.JButton visitGeochron_button;
-    private javax.swing.JLabel xMarkForValidGeochronCredentials_label;
+    private javax.swing.JLabel xMarkForValidGeoPassID_label;
     private javax.swing.JLabel xMarkForValidSampleID_label;
     // End of variables declaration//GEN-END:variables
 
@@ -4514,6 +4518,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
         // This method is called whenever the value of a scrollbar is changed,
         // either by the user or programmatically.
 
+        @Override
         public void adjustmentValueChanged(AdjustmentEvent evt) {
             Adjustable source = evt.getAdjustable();
 
@@ -4523,16 +4528,9 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
                 // The user is dragging the knob
                 return;
             } else {
-                ((javax.swing.JScrollBar) source).getParent().repaint();
+                ((Component) source).getParent().repaint();
             }
 
-            // Determine which scrollbar fired the event
-//            int orient = source.getOrientation();
-//            if (orient == Adjustable.HORIZONTAL) {
-//                // Event from horizontal scrollbar
-//            } else {
-//                // Event from vertical scrollbar
-//            }
             // Determine the type of event
             int type = evt.getAdjustmentType();
             switch (type) {
@@ -4558,35 +4556,26 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
         }
     }
 
-    /**
-     *
-     * http://www.geochronportal.org/post_to_credentials_service.html
-     */
-    private void validateGeochronCredentials(boolean isVerbose) {
+    private void validateGeoPassID(boolean isVerbose) {
 
-        String userCode = "";
-        boolean valid;
+        String userCode = GeoPassIDValidator.validateGeoPassID(//
+                geoPassUserName_text.getText().trim(),//
+                new String(geoPassPassword_passwordField.getPassword()),
+                isVerbose);
 
-        try {
-            userCode = IEDACredentialsValidator.validateGeochronCredentials(//
-                    geochronUserName_text.getText().trim(),//
-                    new String(geochronPassword_passwordField.getPassword()), isVerbose);
-        } catch (Exception e) {
-            valid = false;
-        }
-
-        valid = (userCode.trim().length() > 0);
+        boolean valid = (userCode.trim().length() > 0) && (!userCode.equalsIgnoreCase("NONEXXXXX"));
+        
         showArchiveNote(getMyAliquot(), valid);
 
         if (valid) {
-            checkMarkForValidGeochronCredentials_label.setVisible(true);
-            xMarkForValidGeochronCredentials_label.setVisible(false);
-            validateGeochronCredentials_button.setName("true");
+            checkMarkForValidGeoPassID_label.setVisible(true);
+            xMarkForValidGeoPassID_label.setVisible(false);
+            validateGeoPassID_button.setName("true");
         } else {
-            checkMarkForValidGeochronCredentials_label.setVisible(false);
-            xMarkForValidGeochronCredentials_label.setVisible(true);
-            validateGeochronCredentials_button.setName("false");
-            saveAndUploadAliquotToGeochron_button.setEnabled(false);// set to true by aliquotNote
+            checkMarkForValidGeoPassID_label.setVisible(false);
+            xMarkForValidGeoPassID_label.setVisible(true);
+            validateGeoPassID_button.setName("false");
+            saveAndUploadAliquotToGeochron_button.setEnabled(false);
         }
     }
 
@@ -5034,7 +5023,8 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
         String userName = ((ETReduxFrame) parent).getMyState().getReduxPreferences().getGeochronUserName();
         String password = ((ETReduxFrame) parent).getMyState().getReduxPreferences().getGeochronPassWord();
 
-        String connectionString = //
+        String connectionString
+                = //
                 "http://www.geochron.org/getxml.php?sampleigsn="//
                 + aliquot.getSampleIGSN() //
                 + "&aliquotname=" //
@@ -5056,7 +5046,8 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
         String userName = ((ETReduxFrame) parent).getMyState().getReduxPreferences().getGeochronUserName();
         String password = ((ETReduxFrame) parent).getMyState().getReduxPreferences().getGeochronPassWord();
 
-        String downloadURL = //
+        String downloadURL
+                = //
                 "http://www.geochron.org/getxml.php?sampleigsn="//
                 + getMyAliquot().getSampleIGSN() //
                 + "&aliquotname=" //

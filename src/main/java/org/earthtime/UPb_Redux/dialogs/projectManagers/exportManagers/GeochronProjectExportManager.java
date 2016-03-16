@@ -31,8 +31,8 @@ import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.event.HyperlinkEvent;
 import org.earthtime.UPb_Redux.user.ReduxPersistentState;
+import org.earthtime.archivingTools.GeoPassIDValidator;
 import org.earthtime.archivingTools.GeochronAliquotManager;
-import org.earthtime.archivingTools.IEDACredentialsValidator;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.projects.ProjectInterface;
@@ -46,12 +46,11 @@ import org.earthtime.samples.SampleInterface;
 public final class GeochronProjectExportManager extends DialogEditor {
 
     private static GeochronProjectExportManager instance = null;
-    
+
     private ReportPainterI parent;
     private ReduxPersistentState myState;
     private ProjectInterface project;
-    private String userCode;
-    private String sesarUserCodeForConfirm;
+    private String geoSamplesUserCode;
     private boolean userIsValidated;
     private boolean samplesAreLoaded;
     private ArrayList<JButton> sampleShowConcordiaButtons;
@@ -60,14 +59,14 @@ public final class GeochronProjectExportManager extends DialogEditor {
 
     private ArrayList<JButton> sampleUploadButtons;
 
-    public static GeochronProjectExportManager getInstance(ReportPainterI parent, boolean modal, ProjectInterface project, ReduxPersistentState myState){
-        
+    public static GeochronProjectExportManager getInstance(ReportPainterI parent, boolean modal, ProjectInterface project, ReduxPersistentState myState) {
+
         instance = new GeochronProjectExportManager(parent, modal, project, myState);
         return instance;
     }
-    
-    public static void removeInstance(){
-        if (instance != null){
+
+    public static void removeInstance() {
+        if (instance != null) {
             try {
                 instance.setVisible(false);
                 instance.dispose();
@@ -77,7 +76,7 @@ public final class GeochronProjectExportManager extends DialogEditor {
             }
         }
     }
-    
+
     /**
      * Creates new form GeochronProjectExportManager
      *
@@ -92,8 +91,7 @@ public final class GeochronProjectExportManager extends DialogEditor {
         this.parent = parent;
         this.myState = myState;
         this.project = project;
-        this.userCode = "";
-        this.sesarUserCodeForConfirm = "";
+        this.geoSamplesUserCode = "";
         this.userIsValidated = false;
         this.samplesAreLoaded = false;
 
@@ -109,19 +107,19 @@ public final class GeochronProjectExportManager extends DialogEditor {
     @Override
     public void initDialogContent() {
 
-        geochronUserName_text.setDocument(new UnDoAbleDocument(geochronUserName_text, true));
-        geochronUserName_text.setText(myState.getReduxPreferences().getGeochronUserName());
+        geoPassUserName_text.setDocument(new UnDoAbleDocument(geoPassUserName_text, true));
+        geoPassUserName_text.setText(myState.getReduxPreferences().getGeochronUserName());
 
-        geochronPassword_passwordField.setDocument(new UnDoAbleDocument(geochronPassword_passwordField, true));
-        geochronPassword_passwordField.setText(myState.getReduxPreferences().getGeochronPassWord());
+        geoPassPassword_passwordField.setDocument(new UnDoAbleDocument(geoPassPassword_passwordField, true));
+        geoPassPassword_passwordField.setText(myState.getReduxPreferences().getGeochronPassWord());
 
-        validateGeochronAndSESARCredentials(false);
+        validateGeoPassID(false);
 
     }
 
     private void initSamplesDisplay() {
         aliquotsLayeredPane.removeAll();
-        
+
         sampleShowConcordiaButtons = new ArrayList<>();
         sampleShowPDFButtons = new ArrayList<>();
         samplePublicCheckBoxes = new ArrayList<>();
@@ -132,13 +130,13 @@ public final class GeochronProjectExportManager extends DialogEditor {
 
         int row = 0;
         for (SampleInterface sample : project.getProjectSamples()) {
-            JPanel geochronAliquotManager = //
-                    new GeochronAliquotManager(//
+            JPanel geochronAliquotManager
+                    = new GeochronAliquotManager(
                             project,// needs to be interfaced
                             sample, //
                             myState.getReduxPreferences().getGeochronUserName(), //
                             myState.getReduxPreferences().getGeochronPassWord(), //
-                            userCode, //
+                            geoSamplesUserCode, //
                             leftMargin, //
                             topMarginForSampleDetails + row * 100, 1100, 100);
             aliquotsLayeredPane.add(geochronAliquotManager, JLayeredPane.DEFAULT_LAYER);
@@ -163,13 +161,42 @@ public final class GeochronProjectExportManager extends DialogEditor {
 
     }
 
-//    private void updateValidSampleDisplay(int row, boolean visible) {
-//        sampleShowConcordiaButtons.get(row).setVisible(visible);
-//        sampleShowPDFButtons.get(row).setVisible(visible);
-//        samplePublicCheckBoxes.get(row).setVisible(visible);
-//
-//        sampleUploadButtons.get(row).setVisible(visible);
-//    }
+    private void validateGeoPassID(boolean isVerbose) {
+        geoSamplesUserCode
+                = GeoPassIDValidator.validateGeoPassID(//
+                        geoPassUserName_text.getText().trim(),//
+                        new String(geoPassPassword_passwordField.getPassword()),
+                        isVerbose);
+
+        boolean valid = (geoSamplesUserCode.trim().length() > 0) && (!geoSamplesUserCode.equalsIgnoreCase("NONEXXXXX"));
+        if (valid) {
+            geoPassIDValidReport_label.setText("GeoPass ID is VALID. User Code = " + geoSamplesUserCode);
+            credentialSummaryLabel.setText(//
+                    "Note: your user code is " + geoSamplesUserCode + " and your IGSNs will be of the form " //
+                    + geoSamplesUserCode + "NNNNNNN".substring(0, (9 - geoSamplesUserCode.length())) + ", where N is any digit or any capital letter." //
+            );
+            userIsValidated = true;
+        } else {
+            geoPassIDValidReport_label.setText("GeoPass ID is NOT valid.");
+            userIsValidated = false;
+        }
+
+        samplesAreLoaded = false;
+
+        processUserValidation();
+    }
+
+    private void processUserValidation() {
+        credentialSummaryLabel.setVisible(userIsValidated);
+        step2_label.setVisible(userIsValidated);
+
+        aliquotsScrollPane.setVisible(userIsValidated);
+        if (userIsValidated && !samplesAreLoaded) {
+            initSamplesDisplay();
+            samplesAreLoaded = true;
+        }
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -180,16 +207,15 @@ public final class GeochronProjectExportManager extends DialogEditor {
     private void initComponents() {
 
         exportManagerLayeredPane = new javax.swing.JLayeredPane();
-        geochronPassword_passwordField = new javax.swing.JPasswordField();
-        geochronUserName_text = new javax.swing.JTextField();
-        geochronCredentialsValidReport_label = new javax.swing.JLabel();
+        geoPassPassword_passwordField = new javax.swing.JPasswordField();
+        geoPassUserName_text = new javax.swing.JTextField();
+        geoPassIDValidReport_label = new javax.swing.JLabel();
         validateGeochronAndSesarCredentials_button = new ET_JButton();
         userNameGeochron_label = new javax.swing.JLabel();
         passwordGeochron_label = new javax.swing.JLabel();
         step1_label = new javax.swing.JLabel();
         credentialSummaryLabel = new javax.swing.JLabel();
         step2_label = new javax.swing.JLabel();
-        sesarCredentialsValidReport_label = new javax.swing.JLabel();
         instructionsScrollPane = new javax.swing.JScrollPane();
         instructionsTextPane = new javax.swing.JTextPane();
         aliquotsScrollPane = new javax.swing.JScrollPane();
@@ -212,30 +238,30 @@ public final class GeochronProjectExportManager extends DialogEditor {
         exportManagerLayeredPane.setOpaque(true);
         exportManagerLayeredPane.setPreferredSize(new java.awt.Dimension(1000, 600));
 
-        geochronPassword_passwordField.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        geochronPassword_passwordField.setText("############");
-        exportManagerLayeredPane.add(geochronPassword_passwordField);
-        geochronPassword_passwordField.setBounds(380, 160, 150, 25);
+        geoPassPassword_passwordField.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        geoPassPassword_passwordField.setText("############");
+        exportManagerLayeredPane.add(geoPassPassword_passwordField);
+        geoPassPassword_passwordField.setBounds(380, 160, 150, 25);
 
-        geochronUserName_text.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        geochronUserName_text.setText("username");
-        exportManagerLayeredPane.add(geochronUserName_text);
-        geochronUserName_text.setBounds(380, 130, 150, 25);
+        geoPassUserName_text.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        geoPassUserName_text.setText("username");
+        exportManagerLayeredPane.add(geoPassUserName_text);
+        geoPassUserName_text.setBounds(380, 130, 150, 25);
 
-        geochronCredentialsValidReport_label.setBackground(new java.awt.Color(255, 255, 255));
-        geochronCredentialsValidReport_label.setFont(new java.awt.Font("Tahoma", 3, 12)); // NOI18N
-        geochronCredentialsValidReport_label.setForeground(new java.awt.Color(102, 204, 0));
-        geochronCredentialsValidReport_label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        geochronCredentialsValidReport_label.setText("GeoChron credentials are NOT valid.");
-        geochronCredentialsValidReport_label.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        geochronCredentialsValidReport_label.setOpaque(true);
-        geochronCredentialsValidReport_label.setPreferredSize(new java.awt.Dimension(255, 25));
-        exportManagerLayeredPane.add(geochronCredentialsValidReport_label);
-        geochronCredentialsValidReport_label.setBounds(710, 130, 360, 25);
+        geoPassIDValidReport_label.setBackground(new java.awt.Color(255, 255, 255));
+        geoPassIDValidReport_label.setFont(new java.awt.Font("Tahoma", 3, 12)); // NOI18N
+        geoPassIDValidReport_label.setForeground(new java.awt.Color(102, 204, 0));
+        geoPassIDValidReport_label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        geoPassIDValidReport_label.setText("GeoChron credentials are NOT valid.");
+        geoPassIDValidReport_label.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        geoPassIDValidReport_label.setOpaque(true);
+        geoPassIDValidReport_label.setPreferredSize(new java.awt.Dimension(255, 25));
+        exportManagerLayeredPane.add(geoPassIDValidReport_label);
+        geoPassIDValidReport_label.setBounds(710, 130, 360, 55);
 
         validateGeochronAndSesarCredentials_button.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         validateGeochronAndSesarCredentials_button.setForeground(new java.awt.Color(255, 51, 51));
-        validateGeochronAndSesarCredentials_button.setText("<html><style>p{margin:10px;text-align:center;}</style>\n<p>Validate credentials at <b>Geochron</b> and <b>SESAR</b></p>\n</html>");
+        validateGeochronAndSesarCredentials_button.setText("<html><style>p{margin:10px;text-align:center;}</style> <p>Validate credentials at <b>GeoPass</b></p> </html>");
         validateGeochronAndSesarCredentials_button.setActionCommand("<html><style>p{margin:1px;text-align:center;}</style>\n<p>Validate credentials at <b>Geochron</b> and <b>SESAR</b></p>\n</html>");
         validateGeochronAndSesarCredentials_button.setName("false"); // NOI18N
         validateGeochronAndSesarCredentials_button.setPreferredSize(new java.awt.Dimension(255, 25));
@@ -272,17 +298,6 @@ public final class GeochronProjectExportManager extends DialogEditor {
         exportManagerLayeredPane.add(step2_label);
         step2_label.setBounds(10, 220, 830, 25);
 
-        sesarCredentialsValidReport_label.setBackground(new java.awt.Color(255, 255, 255));
-        sesarCredentialsValidReport_label.setFont(new java.awt.Font("Tahoma", 3, 12)); // NOI18N
-        sesarCredentialsValidReport_label.setForeground(new java.awt.Color(102, 204, 0));
-        sesarCredentialsValidReport_label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        sesarCredentialsValidReport_label.setText("SESAR credentials are NOT valid.");
-        sesarCredentialsValidReport_label.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        sesarCredentialsValidReport_label.setOpaque(true);
-        sesarCredentialsValidReport_label.setPreferredSize(new java.awt.Dimension(255, 25));
-        exportManagerLayeredPane.add(sesarCredentialsValidReport_label);
-        sesarCredentialsValidReport_label.setBounds(710, 160, 360, 25);
-
         instructionsScrollPane.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         instructionsScrollPane.setFont(new java.awt.Font("Serif", 0, 12)); // NOI18N
 
@@ -312,7 +327,7 @@ public final class GeochronProjectExportManager extends DialogEditor {
     }//GEN-LAST:event_formComponentResized
 
     private void validateGeochronAndSesarCredentials_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_validateGeochronAndSesarCredentials_buttonActionPerformed
-        validateGeochronAndSESARCredentials(false);
+        validateGeoPassID(false);
     }//GEN-LAST:event_validateGeochronAndSesarCredentials_buttonActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
@@ -324,69 +339,16 @@ public final class GeochronProjectExportManager extends DialogEditor {
     private javax.swing.JScrollPane aliquotsScrollPane;
     private javax.swing.JLabel credentialSummaryLabel;
     private javax.swing.JLayeredPane exportManagerLayeredPane;
-    private javax.swing.JLabel geochronCredentialsValidReport_label;
-    private javax.swing.JPasswordField geochronPassword_passwordField;
-    private javax.swing.JTextField geochronUserName_text;
+    private javax.swing.JLabel geoPassIDValidReport_label;
+    private javax.swing.JPasswordField geoPassPassword_passwordField;
+    private javax.swing.JTextField geoPassUserName_text;
     private javax.swing.JScrollPane instructionsScrollPane;
     private javax.swing.JTextPane instructionsTextPane;
     private javax.swing.JLabel passwordGeochron_label;
-    private javax.swing.JLabel sesarCredentialsValidReport_label;
     private javax.swing.JLabel step1_label;
     private javax.swing.JLabel step2_label;
     private javax.swing.JLabel userNameGeochron_label;
     private javax.swing.JButton validateGeochronAndSesarCredentials_button;
     // End of variables declaration//GEN-END:variables
-
-    private void validateGeochronAndSESARCredentials(boolean isVerbose) {
-        userCode = //
-                IEDACredentialsValidator.validateGeochronCredentials(//
-                        geochronUserName_text.getText().trim(),//
-                        new String(geochronPassword_passwordField.getPassword()), isVerbose);
-
-        boolean valid = (userCode.trim().length() > 0);
-        if (valid) {
-            geochronCredentialsValidReport_label.setText("GeoChron credentials are VALID. User Code = " + userCode);
-        } else {
-            geochronCredentialsValidReport_label.setText("GeoChron credentials are NOT valid.");
-        }
-
-        sesarUserCodeForConfirm = //
-                IEDACredentialsValidator.validateSesarCredentials(//
-                        geochronUserName_text.getText().trim(),//
-                        new String(geochronPassword_passwordField.getPassword()), isVerbose);
-
-        boolean validSesar = (sesarUserCodeForConfirm.trim().length() > 0);
-        if (validSesar) {
-            sesarCredentialsValidReport_label.setText("SESAR Credentials are VALID. User Code = " + sesarUserCodeForConfirm);
-        } else {
-            sesarCredentialsValidReport_label.setText("SESAR Credentials are NOT valid.");
-        }
-
-        if ((userCode.length() > 0) && (userCode.compareToIgnoreCase(sesarUserCodeForConfirm) == 0)) {
-            credentialSummaryLabel.setText(//
-                    "Note: your user code is " + userCode + " and your IGSNs will be of the form " //
-                    + userCode + "NNNNNNN".substring(0, (9 - userCode.length())) + ", where N is any digit or any capital letter." //
-            );
-            userIsValidated = true;
-        } else {
-            userIsValidated = false;
-        }
-
-        samplesAreLoaded = false;
-        
-        processUserValidation();
-    }
-
-    private void processUserValidation() {
-        credentialSummaryLabel.setVisible(userIsValidated);
-        step2_label.setVisible(userIsValidated);
-
-        aliquotsScrollPane.setVisible(userIsValidated);
-        if (userIsValidated && !samplesAreLoaded) {
-            initSamplesDisplay();
-            samplesAreLoaded = true;
-        } 
-    }
-
 
 }

@@ -1208,7 +1208,7 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="javax.swing.JPasswordField" name="geochronPassword_passwordField">
+                <Component class="javax.swing.JPasswordField" name="geoPassPassword_passwordField">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="############"/>
                   </Properties>
@@ -1232,7 +1232,7 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="javax.swing.JTextField" name="geochronUserName_text">
+                <Component class="javax.swing.JTextField" name="geoPassUserName_text">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="username"/>
                   </Properties>
@@ -1256,16 +1256,16 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="javax.swing.JButton" name="validateGeochronCredentials_button">
+                <Component class="javax.swing.JButton" name="validateGeoPassID_button">
                   <Properties>
                     <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="33" green="33" red="ff" type="rgb"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;b&gt;Validate&lt;/b&gt; Geochron credentials&lt;/html&gt;"/>
+                    <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;b&gt;Validate&lt;/b&gt; GeoPass ID&lt;/html&gt;"/>
                     <Property name="name" type="java.lang.String" value="false" noResource="true"/>
                   </Properties>
                   <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="validateGeochronCredentials_buttonActionPerformed"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="validateGeoPassID_buttonActionPerformed"/>
                   </Events>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
@@ -1286,7 +1286,7 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="javax.swing.JLabel" name="checkMarkForValidGeochronCredentials_label">
+                <Component class="javax.swing.JLabel" name="checkMarkForValidGeoPassID_label">
                   <Properties>
                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                       <Image iconType="3" name="/org/earthtime/UPb_Redux/images/check_icon.png"/>
@@ -1300,7 +1300,7 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="javax.swing.JLabel" name="xMarkForValidGeochronCredentials_label">
+                <Component class="javax.swing.JLabel" name="xMarkForValidGeoPassID_label">
                   <Properties>
                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                       <Image iconType="3" name="/org/earthtime/UPb_Redux/images/icon_red_x.png"/>
