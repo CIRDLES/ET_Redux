@@ -43,6 +43,8 @@ import org.earthtime.UPb_Redux.dateInterpretation.concordia.ConcordiaGraphPanel;
 import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetup;
 import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.aliquots.AliquotInterface;
+import static org.earthtime.archivingTools.GeoSamplesWebServices.isSampleRegistered;
+import static org.earthtime.archivingTools.GeoSamplesWebServices.isSampleRegisteredToParent;
 import org.earthtime.archivingTools.forSESAR.SesarSample;
 import org.earthtime.archivingTools.forSESAR.SesarSampleManager;
 import org.earthtime.beans.ET_JButton;
@@ -90,9 +92,7 @@ public class GeochronAliquotManager extends JPanel {
     private JLabel[] childStatusLabels;
     private JButton[] showConcordiaButtons;
     private JButton[] showPDFButtons;
-    private JCheckBox []publicOptionCheckBoxes;
-
-    
+    private JCheckBox[] publicOptionCheckBoxes;
 
     public GeochronAliquotManager(ProjectInterface project, SampleInterface sample, String userName, String password, String userCode, int x, int y, int width, int height) {
         this.project = project;
@@ -150,6 +150,7 @@ public class GeochronAliquotManager extends JPanel {
         add(sampleIGSNText);
         sampleIGSNText.setInputVerifier(new SampleIGSNVerifier());
         sampleIGSNText.addKeyListener(new KeyAdapter() {
+            @Override
             public void keyPressed(KeyEvent e) {
                 int key = e.getKeyCode();
                 if ((key == KeyEvent.VK_ENTER) || (key == KeyEvent.VK_TAB)) {
@@ -188,8 +189,8 @@ public class GeochronAliquotManager extends JPanel {
             saveSample();
             sesarSample.setIGSN(userCode);
             sesarSample.setName(sample.getSampleName());
-            DialogEditor sesarSampleManager = //
-                    new SesarSampleManager(null, true, sesarSample, true);
+            DialogEditor sesarSampleManager
+                    = new SesarSampleManager(null, true, sesarSample, true);
             sesarSampleManager.setVisible(true);
             sample.setSampleIGSN(sesarSample.getIGSN());
             sampleIGSNText.setText(sesarSample.getIGSN());
@@ -212,8 +213,8 @@ public class GeochronAliquotManager extends JPanel {
                 if (mySesarSample != null) {
                     sesarSample = mySesarSample;
                     sesarSample.setNameOfLocalSample(sample.getSampleName());
-                    DialogEditor sesarSampleManager = //
-                            new SesarSampleManager(null, true, sesarSample, false);
+                    DialogEditor sesarSampleManager
+                            = new SesarSampleManager(null, true, sesarSample, false);
                     sesarSampleManager.setVisible(true);
                 } else {
                     JOptionPane.showMessageDialog(
@@ -297,6 +298,7 @@ public class GeochronAliquotManager extends JPanel {
             add(aliquotIGSN_TextFields[i]);
             aliquotIGSN_TextFields[i].setInputVerifier(new AliquotIGSNVerifier(i));
             aliquotIGSN_TextFields[i].addKeyListener(new KeyAdapter() {
+                @Override
                 public void keyPressed(KeyEvent e) {
                     JTextField textField = (JTextField) e.getSource();
                     int key = e.getKeyCode();
@@ -338,7 +340,8 @@ public class GeochronAliquotManager extends JPanel {
                 sesarAliquot.setIGSN(userCode);
                 sesarAliquot.setName(aliquot.getAliquotName());
                 sesarAliquot.setParentIGSN(sample.getSampleIGSN());
-                DialogEditor sesarSampleManager = //
+                DialogEditor sesarSampleManager
+                        = 
                         new SesarSampleManager(null, true, sesarAliquot, true);
                 sesarSampleManager.setVisible(true);
                 aliquot.setAliquotIGSN(sesarAliquot.getIGSN());
@@ -359,7 +362,8 @@ public class GeochronAliquotManager extends JPanel {
                 if (mySesarAliquot != null) {
                     //sesarAliquot = mySesarAliquot;
                     mySesarAliquot.setNameOfLocalSample(aliquot.getAliquotName());
-                    DialogEditor sesarSampleManager = //
+                    DialogEditor sesarSampleManager
+                            = //
                             new SesarSampleManager(null, true, mySesarAliquot, false);
                     sesarSampleManager.setVisible(true);
                 } else {
@@ -378,7 +382,7 @@ public class GeochronAliquotManager extends JPanel {
             childStatusLabels[i].setForeground(Color.red);
             add(childStatusLabels[i]);
             //cumulativeWidth += 202;
-           
+
             showConcordiaButtons[i] = new ET_JButton("View Concordia in browser");
             showConcordiaButtons[i].setBounds(cumulativeWidth, TOP_MARGIN + 30 * (i + 1), 150, 25);
             showConcordiaButtons[i].setFont(ReduxConstants.sansSerif_10_Bold);
@@ -480,7 +484,6 @@ public class GeochronAliquotManager extends JPanel {
         viewSampleRecordButton.setVisible(valid);
         registerNewSampleButton.setVisible(!valid);
 
-//        saveButton.setVisible(valid);
     }
 
     private void updateValidAliquotDisplay(int index, boolean valid) {
@@ -492,32 +495,32 @@ public class GeochronAliquotManager extends JPanel {
 
         childStatusLabels[index].setVisible(!valid);
         showConcordiaButtons[index].setVisible(valid);
-
-//
-//        saveButton.setVisible(valid);
-        //uploadButton.setVisible(valid);
     }
 
     private class SampleIGSNVerifier extends InputVerifier {
 
+        @Override
         public boolean verify(JComponent input) {
             JTextField textField = (JTextField) input;
             String proposedIGSN = textField.getText().toUpperCase();
             textField.setText(proposedIGSN);
-            if (SesarSample.validateSampleIGSNatSESAR(proposedIGSN)) {
-                sampleIGSN = proposedIGSN.trim().toUpperCase();
-                saveSample();
-                updateValidSampleDisplay(true);
-            } else {
-                if (userCode.trim().length() == 0) {
-                    xMarkForInValidSampleIGSN.setToolTipText("Please validate credentials above.");
-                } else {
-                    xMarkForInValidSampleIGSN.setToolTipText("SESAR does not have a record of IGSN " + proposedIGSN);
-                }
 
-                sampleIGSN = "IGSN";
-                updateValidSampleDisplay(false);
+            boolean isValid = false;
+            sampleIGSN = "IGSN";
+            if (proposedIGSN.length() == 9) {
+                isValid = isSampleRegistered(proposedIGSN);
+                if (isValid) {
+                    sampleIGSN = proposedIGSN.trim().toUpperCase();
+                } else {
+                    if (userCode.trim().length() == 0) {
+                        xMarkForInValidSampleIGSN.setToolTipText("Please validate credentials above.");
+                    } else {
+                        xMarkForInValidSampleIGSN.setToolTipText("SESAR does not have a record of IGSN " + proposedIGSN);
+                    }
+                }
             }
+            saveSample();
+            updateValidSampleDisplay(isValid);
             return true;
         }
     }
@@ -534,34 +537,36 @@ public class GeochronAliquotManager extends JPanel {
             JTextField textField = (JTextField) input;
             String proposedIGSN = textField.getText().toUpperCase();
             textField.setText(proposedIGSN);
-            if (SesarSample.validateAliquotIGSNatSESAR(proposedIGSN, sample.getSampleIGSN())) {
-                aliquotIGSNs[index] = proposedIGSN.trim().toUpperCase();
-                saveAliquot(activeAliquots.get(index), aliquotIGSN_TextFields[index].getText(), aliquotName_TextFields[index]);
-                updateValidAliquotDisplay(index, true);
-            } else {
-                if (userCode.trim().length() == 0) {
-                    xMarkForInValidAliqutIGSNs[index].setToolTipText("Please validate credentials above.");
-                } else if (!proposedIGSN.toUpperCase().startsWith(userCode.toUpperCase())) {
-                    xMarkForInValidAliqutIGSNs[index].setToolTipText(proposedIGSN + " uses incorrect User Code.  Your User Code is: " + userCode);
+            boolean isValid = false;
+            aliquotIGSNs[index] = "IGSN";
+            if (proposedIGSN.length() == 9) {
+                isValid = isSampleRegisteredToParent(proposedIGSN, sample.getSampleIGSN());
+                if (isValid) {
+                    aliquotIGSNs[index] = proposedIGSN.trim().toUpperCase();
                 } else {
-                    xMarkForInValidAliqutIGSNs[index].setToolTipText("SESAR does not have a record of IGSN " + proposedIGSN);
+                    if (userCode.trim().length() == 0) {
+                        xMarkForInValidAliqutIGSNs[index].setToolTipText("Please validate credentials above.");
+                    } else if (!proposedIGSN.toUpperCase().startsWith(userCode.toUpperCase())) {
+                        xMarkForInValidAliqutIGSNs[index].setToolTipText(proposedIGSN + " uses incorrect User Code.  Your User Code is: " + userCode);
+                    } else {
+                        xMarkForInValidAliqutIGSNs[index].setToolTipText("SESAR does not have a record of IGSN " + proposedIGSN);
+                    }
                 }
-
-                aliquotIGSNs[index] = "IGSN";
-                updateValidAliquotDisplay(index, false);
             }
+            saveAliquot(activeAliquots.get(index), aliquotIGSNs[index], aliquotName_TextFields[index]);
+            updateValidAliquotDisplay(index, isValid);
             return true;
         }
     }
 
-        private void produceConcordiaGraph(SampleInterface sample) {
+    private void produceConcordiaGraph(SampleInterface sample) {
         // feb 2015 code copied and modified from aliquot manager for user interface prototyping
         // TODO: refactor both locations to smaple and make more robust
         // TODO: use create virtual file system
 
         File tempConcordiaSVG = new File(sample.getSampleName() + "_tempConcordia.svg");
 
-        ConcordiaGraphPanel concordiaGraphPanel = new ConcordiaGraphPanel((SampleInterface)sample, null);
+        ConcordiaGraphPanel concordiaGraphPanel = new ConcordiaGraphPanel((SampleInterface) sample, null);
 
         sample.getSampleDateInterpretationGUISettings().//
                 setConcordiaOptions(concordiaGraphPanel.getConcordiaOptions());
@@ -657,6 +662,7 @@ public class GeochronAliquotManager extends JPanel {
         }
 
     }
+
     /**
      *
      * @param g

@@ -446,7 +446,7 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
     public void updateTripoliFractionSelection() {
         tripoliFractions = FractionsFilterInterface.getTripoliFractionsFiltered(//
                 tripoliSession.getTripoliFractionsFromSample(selectedSample), //
-                fractionSelectionType, IncludedTypeEnum.ALL); 
+                fractionSelectionType, IncludedTypeEnum.ALL);
     }
 
     /**
@@ -497,9 +497,8 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
 
         dataPresentationModeChooserPanel = null;
 
-        //tripoliFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliSession.getTripoliFractionsFromSample(selectedSample), fractionSelectionType, IncludedTypeEnum.ALL); // sept 2015 bettter way to handlefractionIncludedType);
         updateTripoliFractionSelection();
-        
+
         boolean isFitFunctionsOnRatioDataView = false;
         boolean isFitFunctionsOnDownHoleRatioDataView = false;
         boolean isRawIntensitiesDataView = false;
@@ -558,8 +557,7 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
             while (dataModelIterator.hasNext()) {
                 DataModelInterface dm = dataModelIterator.next();
                 AbstractRawDataView rawDataModelView
-                        = //
-                        new SessionOfStandardView( //
+                        = new SessionOfStandardView( //
                                 this,//
                                 tripoliSession.getCurrentSessionForStandardsFractionation().get(dm.getRawRatioModelName()), //
                                 tripoliFractions,//
@@ -581,8 +579,7 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
                 // feb 2013 only for standards
                 if ((fractionSelectionType.compareTo(FractionSelectionTypeEnum.STANDARD)) == 0) {
                     AbstractRawDataView sessionFitFunctionsPresentationView
-                            = //
-                            new SessionFitFunctionsPresentationView( //
+                            = new SessionFitFunctionsPresentationView( //
                                     this,//
                                     tripoliSession.getCurrentSessionForStandardsFractionation().get(dm.getRawRatioModelName()), //
                                     (FitFunctionDataInterface) rawDataModelView,//
@@ -694,26 +691,20 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
         for (int i = 0; i < countOfDataModels; i++) {
             double overallMinY = Double.MAX_VALUE;
             double overallMaxY = -Double.MAX_VALUE;
-            boolean atLeastOneStandard = false;
+            boolean atLeastOneStandard = true;
 
             for (int f = 0; f < (fractionCountForHorizontalLayout); f++) {
-                if ((true || fractionMap[f].isStandard()) && fractionMap[f].isIncluded()) {
-                    atLeastOneStandard = true;
-
-                    if (Double.isFinite(rawDataModelViews[i][f].getMinY()) && Double.isFinite(rawDataModelViews[i][f].getMaxY())) {
-                        overallMinY = Math.min(overallMinY, rawDataModelViews[i][f].getMinY());
-                        overallMaxY = Math.max(overallMaxY, rawDataModelViews[i][f].getMaxY());
-                    }
+                if (Double.isFinite(rawDataModelViews[i][f].getMinY()) && Double.isFinite(rawDataModelViews[i][f].getMaxY())) {
+                    overallMinY = Math.min(overallMinY, rawDataModelViews[i][f].getMinY());
+                    overallMaxY = Math.max(overallMaxY, rawDataModelViews[i][f].getMaxY());
                 }
             }
 
-            // generate tics array for standards all
+            // generate tics array for all
             BigDecimal[] yAxisTics = null;
-            if (atLeastOneStandard) {
-                yAxisTics = TicGeneratorForAxes.generateTics(overallMinY, overallMaxY, (int) (dataModelHeight / 20.0));
-                if (yAxisTics.length > 15) {
-                    yAxisTics = TicGeneratorForAxes.generateTics(overallMinY, overallMaxY, (int) (dataModelHeight / 32.0));
-                }
+            yAxisTics = TicGeneratorForAxes.generateTics(overallMinY, overallMaxY, (int) (dataModelHeight / 20.0));
+            if (yAxisTics.length > 15) {
+                yAxisTics = TicGeneratorForAxes.generateTics(overallMinY, overallMaxY, (int) (dataModelHeight / 32.0));
             }
 
             // create margins for y-values after axis tics calculated
@@ -725,23 +716,10 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
 
                 // now apply to all fraction data views by walking across fractions within a dataModel type
                 for (int f = 0; f < (fractionCountForHorizontalLayout); f++) {
-                    // if fraction is standard, the yaxis represents the normalized view across all session statndard fractions
-                    if (true || fractionMap[f].isStandard()) {
-                        rawDataModelViews[i][f].setMinY(overallMinY);
-                        rawDataModelViews[i][f].setMaxY(overallMaxY);
-                        rawDataModelViews[i][f].setTics(yAxisTics);
-                    } else {
-                        // each unknown gets its own tic layout
-                        BigDecimal[] yAxisTicsUnknown = TicGeneratorForAxes.generateTics(//
-                                rawDataModelViews[i][f].getMinY(), rawDataModelViews[i][f].getMaxY(), (int) (dataModelHeight / 20.0));
-                        if (yAxisTicsUnknown.length > 15) {
-                            yAxisTicsUnknown = TicGeneratorForAxes.generateTics(//
-                                    rawDataModelViews[i][f].getMinY(), rawDataModelViews[i][f].getMaxY(), (int) (dataModelHeight / 32.0));
-                        }
-
-                        rawDataModelViews[i][f].setTics(yAxisTicsUnknown);
-                    }
-
+                    // the yaxis represents the normalized view across all sample fractions
+                    rawDataModelViews[i][f].setMinY(overallMinY);
+                    rawDataModelViews[i][f].setMaxY(overallMaxY);
+                    rawDataModelViews[i][f].setTics(yAxisTics);
                     rawDataModelViews[i][f].setMinX(overallMinX);
                     rawDataModelViews[i][f].setMaxX(overallMaxX);
 
@@ -996,11 +974,13 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
                 underlay.add(rawDataModelViewsOverlay, javax.swing.JLayeredPane.PALETTE_LAYER);
 
             } else // detect if grid for intercept fractionation of standards *********************************** Intercept Fractionation of standards
-             if (FRACTION_LAYOUT_VIEW_STYLE.equals(FractionLayoutViewStylesEnum.GRID_INTERCEPT)) {
+            {
+                if (FRACTION_LAYOUT_VIEW_STYLE.equals(FractionLayoutViewStylesEnum.GRID_INTERCEPT)) {
                     for (int f = 0; f < (fractionCountForHorizontalLayout); f++) {
                         ((FitFunctionDataInterface) rawDataModelViews[i][f]).setShowFittedFunction(true);
                     }
                 }
+            }
         }
 
         // establish graphWidth 

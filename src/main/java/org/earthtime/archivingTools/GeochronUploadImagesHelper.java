@@ -65,9 +65,7 @@ public final class GeochronUploadImagesHelper {
         factory.setValidating( false );
         try {
             doc = factory.newDocumentBuilder().parse( response );
-        } catch (ParserConfigurationException parserConfigurationException) {
-        } catch (SAXException sAXException) {
-        } catch (IOException iOException) {
+        } catch (ParserConfigurationException | SAXException | IOException parserConfigurationException) {
         }
 
 

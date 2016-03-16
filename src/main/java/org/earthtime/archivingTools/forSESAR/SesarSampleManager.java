@@ -34,6 +34,7 @@ import javax.swing.JTextField;
 import static javax.swing.SwingConstants.RIGHT;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
+import static org.earthtime.archivingTools.GeoSamplesWebServices.isSampleRegistered;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.dataDictionaries.SESAR_MaterialTypesEnum;
 import org.earthtime.dataDictionaries.SESAR_ObjectTypesEnum;
@@ -224,49 +225,45 @@ public class SesarSampleManager extends DialogEditor {
             registerSampleButton.setBounds(120, 200, 200, 25);
             registerSampleButton.setFont(ReduxConstants.sansSerif_12_Bold);
             sesarSampleDetailsLayeredPane.add(registerSampleButton);
-            registerSampleButton.addActionListener(new ActionListener() {
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    boolean doRegister = false;
-                    String messageText = "";
-                    if (!autoGenerateCheckBox.isSelected()) {
-                        String proposedIGSN = sampleIGSNText.getText();
-                        if (!sesarSample.confirmUserCodeCompliance(proposedIGSN)) {
-                            messageText = "User code prefix of IGSN should be: " + sesarSample.getUser_code();
-                        } else if (SesarSample.validateSampleIGSNatSESAR(proposedIGSN)) {
-                            messageText = "The IGSN: " + proposedIGSN + " is already in use.";
-                        } else if (!SesarSample.isWellFormedIGSN(proposedIGSN, sesarSample.getUser_code())) {
-                            messageText = "The IGSN: " + proposedIGSN + " is not of the form " + sesarSample.getUser_code() + "NNNNNNN\".substring(0, (9 - userCode.length())) + \", where N is any digit or any capital letter.";
-                        } else {
-                            sesarSample.setIGSN(proposedIGSN);
-                            doRegister = true;
-                        }
+            registerSampleButton.addActionListener((ActionEvent e) -> {
+                boolean doRegister = false;
+                String messageText = "";
+                if (!autoGenerateCheckBox.isSelected()) {
+                    String proposedIGSN = sampleIGSNText.getText();
+                    if (!sesarSample.confirmUserCodeCompliance(proposedIGSN)) {
+                        messageText = "User code prefix of IGSN should be: " + sesarSample.getUser_code();
+                    } else if (isSampleRegistered(proposedIGSN)) {
+                        messageText = "The IGSN: " + proposedIGSN + " is already in use.";
+                    } else if (!SesarSample.isWellFormedIGSN(proposedIGSN, sesarSample.getUser_code())) {
+                        messageText = "The IGSN: " + proposedIGSN + " is not of the form " + sesarSample.getUser_code() + "NNNNNNN\".substring(0, (9 - userCode.length())) + \", where N is any digit or any capital letter.";
                     } else {
-                        sesarSample.setIGSN("");
+                        sesarSample.setIGSN(proposedIGSN);
                         doRegister = true;
                     }
-                    if (doRegister) {
-                        sesarSample.setSampleType(((SESAR_ObjectTypesEnum) sesarObjectTypesCombo.getSelectedItem()).getName());
-                        sesarSample.setMaterial(((SESAR_MaterialTypesEnum) sesarMaterialTypesCombo.getSelectedItem()).getName());
-                        sesarSample.setLatitude(new BigDecimal(decimalLatitude.getText()));
-                        sesarSample.setLongitude(new BigDecimal(decimalLongitude.getText()));
-                        // register at SESAR
-                        String igsnValue = sesarSample.uploadAndRegisterSesarSample();
-                        if (igsnValue.length() > 0) {
-                            sesarSample.setIGSN(igsnValue);
-                            close();
-                        } else {
-                            sesarSample.setIGSN("NONE");
-                        }
-
+                } else {
+                    sesarSample.setIGSN("");
+                    doRegister = true;
+                }
+                if (doRegister) {
+                    sesarSample.setSampleType(((SESAR_ObjectTypesEnum) sesarObjectTypesCombo.getSelectedItem()).getName());
+                    sesarSample.setMaterial(((SESAR_MaterialTypesEnum) sesarMaterialTypesCombo.getSelectedItem()).getName());
+                    sesarSample.setLatitude(new BigDecimal(decimalLatitude.getText()));
+                    sesarSample.setLongitude(new BigDecimal(decimalLongitude.getText()));
+                    // register at SESAR
+                    String igsnValue = sesarSample.uploadAndRegisterSesarSample();
+                    if (igsnValue.length() > 0) {
+                        sesarSample.setIGSN(igsnValue);
+                        close();
                     } else {
-                        JOptionPane.showMessageDialog(
-                                null,
-                                new String[]{messageText},
-                                "ET Redux Warning",
-                                JOptionPane.WARNING_MESSAGE);
+                        sesarSample.setIGSN("NONE");
                     }
+                    
+                } else {
+                    JOptionPane.showMessageDialog(
+                            null,
+                            new String[]{messageText},
+                            "ET Redux Warning",
+                            JOptionPane.WARNING_MESSAGE);
                 }
             });
         }

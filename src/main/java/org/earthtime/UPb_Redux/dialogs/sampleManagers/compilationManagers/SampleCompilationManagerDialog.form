@@ -317,7 +317,7 @@
                 <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="33" green="33" red="ff" type="rgb"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;b&gt;Validate&lt;/b&gt; Geochron credentials&lt;/html&gt;"/>
+                <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;b&gt;Validate&lt;/b&gt; GeoPass ID&lt;/html&gt;"/>
                 <Property name="name" type="java.lang.String" value="false" noResource="true"/>
               </Properties>
               <Events>

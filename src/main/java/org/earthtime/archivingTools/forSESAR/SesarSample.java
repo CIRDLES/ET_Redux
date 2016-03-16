@@ -40,11 +40,9 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.earthtime.UPb_Redux.utilities.ClientHttpRequest;
 import org.earthtime.archivingTools.URIHelper;
-import static org.earthtime.archivingTools.URIHelper.convertXMLTextToDOMdocument;
 import org.earthtime.dataDictionaries.SESAR_MaterialTypesEnum;
 import org.earthtime.dataDictionaries.SESAR_ObjectTypesEnum;
 import org.earthtime.exceptions.ETException;
-import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 /**
@@ -167,9 +165,41 @@ public class SesarSample {
 
     private static File retrieveXMLFileFromSesarForIGSN(String igsn) {
 
-        String productionService = "http://app.geosamples.org/webservices/display.php?igsn=";
-        String testService = "http://sesardev.geoinfogeochem.org/webservices/display.php?igsn=";
+        String productionService1 = "http://app.geosamples.org/webservices/display.php?igsn=";
+        String productionService2 = "http://app.geosamples.org/sample/igsn/";
+        String testService = "http://sesardev.geoinfogeochem.org/sample/igsn/";
 
+//        Map<String, String> dataToPost = new HashMap<>();
+//        dataToPost.put("username", userName);
+//        dataToPost.put("password", password);
+//        dataToPost.put("content", content);
+//
+//        InputStream response = null;
+//        org.w3c.dom.Document doc = null;
+//        try {
+//            response = ClientHttpRequest   .post(//
+//                    new URL(testServiceV2),//
+//                    dataToPost);
+//
+//            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+//            factory.setValidating(false);
+//            try {
+//                doc = factory.newDocumentBuilder().parse(response);
+//            } catch (ParserConfigurationException | SAXException | IOException parserConfigurationException) {
+//                System.out.println("PARSE error " + parserConfigurationException.getMessage());
+//            }
+//        } catch (IOException iOException) {
+//            System.out.println(iOException.getMessage());
+//        }
+//        
+//        
+//        
+//        
+//        
+//        
+//        
+//        
+//        
         File retVal = null;
         String tempSESARcontents
                 = URIHelper.getTextFromURI(testService + igsn);
@@ -375,49 +405,51 @@ public class SesarSample {
         } catch (IOException e) {
         }
     }
-
-    public static boolean validateSampleIGSNatSESAR(String igsn) {
-        File file = retrieveXMLFileFromSesarForIGSN(igsn);
-
-        boolean retVal = false;
-        if (file != null) {
-            Document doc = convertXMLTextToDOMdocument(file);
-
-            if (doc != null) {
-                if (doc.hasChildNodes()) {
-                    boolean resultsElementPresent = doc.getFirstChild().getNodeName().equalsIgnoreCase("results");
-                    if (resultsElementPresent) {
-                        retVal = doc.getElementsByTagName("error").getLength() == 0;
-                    }
-                }
-            }
-        }
-        return retVal;
-    }
-
-    public static boolean validateAliquotIGSNatSESAR(String aliquotIgsn, String parentIgsn) {
-        File file = retrieveXMLFileFromSesarForIGSN(aliquotIgsn);
-
-        boolean retVal = false;
-        if (file != null) {
-            Document doc = convertXMLTextToDOMdocument(file);
-
-            if (doc != null) {
-                if (doc.hasChildNodes()) {
-                    boolean resultsElementPresent = doc.getFirstChild().getNodeName().equalsIgnoreCase("results");
-                    if (resultsElementPresent) {
-                        retVal = doc.getElementsByTagName("error").getLength() == 0;
-                        if (retVal) {
-                            // test if parent present
-                            String parentIgsnFromSesar = doc.getElementsByTagName("parent_igsn").item(0).getTextContent();
-                            retVal = parentIgsnFromSesar.compareToIgnoreCase(parentIgsn) == 0;
-                        }
-                    }
-                }
-            }
-        }
-        return retVal;
-    }
+//
+//    public static boolean validateSampleIGSNatSESAR(String igsn) {
+//
+//        boolean retVal = false;
+//        if (!(igsn.startsWith("XYZ")) && !(igsn.equalsIgnoreCase("NONE"))) {
+//            File file = retrieveXMLFileFromSesarForIGSN(igsn);
+//            if (file != null) {
+//                Document doc = convertXMLTextToDOMdocument(file);
+//                if (doc != null) {
+//                    if (doc.hasChildNodes()) {
+//                        boolean resultsElementPresent = doc.getFirstChild().getNodeName().equalsIgnoreCase("results");
+//                        if (resultsElementPresent) {
+//                            retVal = doc.getElementsByTagName("error").getLength() == 0;
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        return retVal;
+//    }
+//
+//    public static boolean validateAliquotIGSNatSESAR(String aliquotIgsn, String parentIgsn) {
+//
+//        boolean retVal = false;
+//        if (!(aliquotIgsn.startsWith("XYZ")) && !(aliquotIgsn.equalsIgnoreCase("NONE"))) {
+//            File file = retrieveXMLFileFromSesarForIGSN(aliquotIgsn);
+//            if (file != null) {
+//                Document doc = convertXMLTextToDOMdocument(file);
+//                if (doc != null) {
+//                    if (doc.hasChildNodes()) {
+//                        boolean resultsElementPresent = doc.getFirstChild().getNodeName().equalsIgnoreCase("results");
+//                        if (resultsElementPresent) {
+//                            retVal = doc.getElementsByTagName("error").getLength() == 0;
+//                            if (retVal) {
+//                                // test if parent present
+//                                String parentIgsnFromSesar = doc.getElementsByTagName("parent_igsn").item(0).getTextContent();
+//                                retVal = parentIgsnFromSesar.compareToIgnoreCase(parentIgsn) == 0;
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        return retVal;
+//    }
 
     public static boolean isWellFormedIGSN(String igsn, String userCode) {
         boolean retval = (igsn.length() == 9);
