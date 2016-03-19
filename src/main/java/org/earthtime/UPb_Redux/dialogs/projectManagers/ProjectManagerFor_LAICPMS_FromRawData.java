@@ -695,7 +695,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
         // setup samplesOrganizerPane         
         samplesOrganizerPane
                 = new SamplesOrganizerPane(//
-                        "Organize Samples:", 10, 10, this.getWidth() - 25, projectSampleWorkPane.getHeight() - 25, tripoliSamplesSorted, this);
+                        "Organize Analyses:", 10, 10, this.getWidth() - 25, projectSampleWorkPane.getHeight() - 25, tripoliSamplesSorted, this);
         projectSampleWorkPane.add(samplesOrganizerPane, JLayeredPane.DRAG_LAYER);
 
         // setup samplesCommonLeadPane         
@@ -939,7 +939,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
         noteToUser_label.setBackground(new java.awt.Color(236, 255, 238));
         noteToUser_label.setFont(new java.awt.Font("SansSerif", 0, 13)); // NOI18N
         noteToUser_label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        noteToUser_label.setText("After your data file is loaded, you can organize and name your samples and standards here.");
+        noteToUser_label.setText("After your data file is loaded, you can organize and name your Unknowns and Reference Materials here.");
         projectSampleWorkPane.add(noteToUser_label);
         noteToUser_label.setBounds(260, 50, 680, 30);
 
@@ -965,7 +965,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
         projectSampleWorkPane.add(rawDataFileChosen_scrollPane);
         rawDataFileChosen_scrollPane.setBounds(134, 104, 930, 60);
 
-        manager_JTab.addTab("Organize Standards and Samples", projectSampleWorkPane);
+        manager_JTab.addTab("Organize Reference Materials and Unknowns", projectSampleWorkPane);
 
         projectSampleCommonLeadWorkPane.setBackground(new java.awt.Color(244, 244, 244));
         projectSampleCommonLeadWorkPane.setOpaque(true);

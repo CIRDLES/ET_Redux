@@ -2080,7 +2080,7 @@
                           <Font name="Tahoma" size="12" style="1"/>
                         </Property>
                         <Property name="horizontalAlignment" type="int" value="2"/>
-                        <Property name="text" type="java.lang.String" value="Set the default Mineral Standard Model for each new ALIQUOT:"/>
+                        <Property name="text" type="java.lang.String" value="Set the default Reference Material Model for each new ALIQUOT:"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JComboBox" name="defaultTIMSMineralStandardModel_Chooser">
@@ -2502,7 +2502,7 @@
                       <Font name="Tahoma" size="11" style="1"/>
                     </Property>
                     <Property name="horizontalAlignment" type="int" value="11"/>
-                    <Property name="text" type="java.lang.String" value="  Set default mineral for fractions:"/>
+                    <Property name="text" type="java.lang.String" value="  Set default material for fractions:"/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JComboBox" name="mineralNameChooser">

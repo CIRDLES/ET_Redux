@@ -1,5 +1,5 @@
 /*
- * MineralStandardUPbRatiosDataViewNotEditable.java
+ * ReferenceMaterialUPbRatiosDataViewNotEditable.java
  *
  * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
  *
@@ -28,7 +28,7 @@ import org.earthtime.ratioDataModels.mineralStandardModels.MineralStandardUPbMod
  *
  * @author James F. Bowring
  */
-public class MineralStandardUPbRatiosDataViewNotEditable extends MineralStandardUPbRatiosAbstractDataView {
+public class ReferenceMaterialUPbRatiosDataViewNotEditable extends ReferenceMaterialUPbRatiosAbstractDataView {
 
     /**
      *
@@ -37,7 +37,7 @@ public class MineralStandardUPbRatiosDataViewNotEditable extends MineralStandard
      * @param parentDimension the value of parentDimension
      * @param showTableOnly the value of showTableOnly
      */
-    public MineralStandardUPbRatiosDataViewNotEditable(AbstractRatiosDataModel ratiosDataModel, Dimension parentDimension, boolean showTableOnly) {
+    public ReferenceMaterialUPbRatiosDataViewNotEditable(AbstractRatiosDataModel ratiosDataModel, Dimension parentDimension, boolean showTableOnly) {
         super(ratiosDataModel, parentDimension);
 
         this.valueModelsPanelView = new MineralStandardUPbRatiosPanelViewNotEditable(//
@@ -71,7 +71,7 @@ public class MineralStandardUPbRatiosDataViewNotEditable extends MineralStandard
     public static void main(String[] args) throws Exception {
 
         AbstractRatiosDataView testView = //
-                new MineralStandardUPbRatiosDataViewNotEditable(MineralStandardUPbModel.getEARTHTIMEPeixeStandardModelInstance(),//
+                new ReferenceMaterialUPbRatiosDataViewNotEditable(MineralStandardUPbModel.getEARTHTIMEPeixeStandardModelInstance(),//
                         null, false);
 
         testView.displayModelInFrame();

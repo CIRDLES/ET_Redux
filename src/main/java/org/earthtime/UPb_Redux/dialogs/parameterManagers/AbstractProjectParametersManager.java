@@ -72,7 +72,7 @@ import org.earthtime.isotopes.IsotopesEnum;
 import org.earthtime.projects.ProjectInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataViews.AbstractRatiosDataView;
-import org.earthtime.ratioDataViews.MineralStandardUPbRatiosDataViewNotEditable;
+import org.earthtime.ratioDataViews.ReferenceMaterialUPbRatiosDataViewNotEditable;
 import org.earthtime.reduxLabData.ReduxLabData;
 
 /**
@@ -647,7 +647,7 @@ public abstract class AbstractProjectParametersManager extends JLayeredPane {
                     ((AbstractRatiosDataModel) mineralStandardsComboBox.getSelectedItem());
             AbstractRatiosDataView modelView
                     = 
-                    new MineralStandardUPbRatiosDataViewNotEditable(selectedModel, null, false);
+                    new ReferenceMaterialUPbRatiosDataViewNotEditable(selectedModel, null, false);
             modelView.displayModelInFrame();
         });
         viewStandardModelButton.setFont(ReduxConstants.sansSerif_10_Bold);

@@ -68,12 +68,12 @@ import org.earthtime.ratioDataModels.pbBlankICModels.PbBlankICModel;
 import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsModel;
 import org.earthtime.ratioDataModels.tracers.TracerUPbModel;
 import org.earthtime.ratioDataViews.AbstractRatiosDataView;
-import org.earthtime.ratioDataViews.MineralStandardUPbRatiosDataViewEditable;
-import org.earthtime.ratioDataViews.MineralStandardUPbRatiosDataViewNotEditable;
 import org.earthtime.ratioDataViews.PhysicalConstantsDataViewEditable;
 import org.earthtime.ratioDataViews.PhysicalConstantsDataViewNotEditable;
 import org.earthtime.ratioDataViews.RatiosDataViewEditable;
 import org.earthtime.ratioDataViews.RatiosDataViewNotEditable;
+import org.earthtime.ratioDataViews.ReferenceMaterialUPbRatiosDataViewEditable;
+import org.earthtime.ratioDataViews.ReferenceMaterialUPbRatiosDataViewNotEditable;
 import org.earthtime.ratioDataViews.TracerUPbRatiosDataViewEditable;
 import org.earthtime.ratioDataViews.TracerUPbRatiosDataViewNotEditable;
 import org.earthtime.reduxLabData.ReduxLabData;
@@ -2135,11 +2135,11 @@ public class LabDataEditorDialog extends DialogEditor {
         if (editable) {
             mineralStandardModelView
                     = //
-                    new MineralStandardUPbRatiosDataViewEditable(mineralStandardModel, mineralStandard_panel.getSize(), false);
+                    new ReferenceMaterialUPbRatiosDataViewEditable(mineralStandardModel, mineralStandard_panel.getSize(), false);
         } else {
             mineralStandardModelView
                     = //
-                    new MineralStandardUPbRatiosDataViewNotEditable(mineralStandardModel, mineralStandard_panel.getSize(), false);
+                    new ReferenceMaterialUPbRatiosDataViewNotEditable(mineralStandardModel, mineralStandard_panel.getSize(), false);
         }
 
         mineralStandardModelView.setBounds(mineralStandard_panel.getBounds());
@@ -2649,7 +2649,7 @@ public class LabDataEditorDialog extends DialogEditor {
                 new ETWarningDialog(ex).setVisible(true);
             }
             AbstractRatiosDataView modelView
-                    = new MineralStandardUPbRatiosDataViewNotEditable(selectedModel, null, false);
+                    = new ReferenceMaterialUPbRatiosDataViewNotEditable(selectedModel, null, false);
             modelView.displayModelInFrame();
         });
         viewStandardModelButton.setFont(ReduxConstants.sansSerif_10_Bold);
@@ -3751,7 +3751,7 @@ public class LabDataEditorDialog extends DialogEditor {
 
         defaultMineralStandardModel_label.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         defaultMineralStandardModel_label.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        defaultMineralStandardModel_label.setText("Set the default Mineral Standard Model for each new ALIQUOT:");
+        defaultMineralStandardModel_label.setText("Set the default Reference Material Model for each new ALIQUOT:");
 
         org.jdesktop.layout.GroupLayout jPanel3Layout = new org.jdesktop.layout.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -4175,7 +4175,7 @@ public class LabDataEditorDialog extends DialogEditor {
 
         chooseMineral_label.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         chooseMineral_label.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
-        chooseMineral_label.setText("  Set default mineral for fractions:");
+        chooseMineral_label.setText("  Set default material for fractions:");
 
         chooseSettingType_label.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         chooseSettingType_label.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
