@@ -48,9 +48,9 @@ public final class VervoortWashStateElementII_RawDataTemplate extends AbstractRa
         this.startOfDataSectionFirstLine = "Time";
         this.startOfEachBlockFirstLine = "Time";
         this.blockStartOffset = 6;
-        this.blockSize = 300;
+        this.blockSize = 250;//300;
         this.standardIDs = new String[]//
-        {"Peixe"};
+        {"Peixe","1","2","3","4"};
         this.timeZone = TimeZone.getTimeZone("PST");
         this.defaultParsingOfFractionsBehavior = 1;
         this.massSpecSetup = WashStateElementIISetupUPb.getInstance();

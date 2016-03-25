@@ -21,10 +21,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectStreamClass;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
+import org.earthtime.Tripoli.dataModels.DataModelInterface;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.Tripoli.rawDataFiles.handlers.AbstractRawDataFileHandler;
 import org.earthtime.archivingTools.URIHelper;
@@ -34,8 +38,8 @@ import org.earthtime.utilities.FileHelper;
  *
  * @author James F. Bowring
  */
-public class WashStateElementIISingleCollFileHandler extends AbstractRawDataFileHandler{
-    
+public class WashStateElementIISingleCollFileHandler extends AbstractRawDataFileHandler {
+
     // Class variables
     // private static final long serialVersionUID = 3111511502335804607L;
     private static WashStateElementIISingleCollFileHandler instance = new WashStateElementIISingleCollFileHandler();
@@ -180,14 +184,17 @@ public class WashStateElementIISingleCollFileHandler extends AbstractRawDataFile
                 // note each row has relative time stamp which we are hiding for now by using frequency
                 int expectedRowsOfData = rawDataFileTemplate.getBlockSize();
                 String[][] scanData
-                        = //
-                        new String[expectedRowsOfData][massSpec.getVIRTUAL_COLLECTOR_COUNT()];
+                        = new String[expectedRowsOfData][massSpec.getVIRTUAL_COLLECTOR_COUNT()];
 
                 if (f == 137) {
                     System.out.println();
                 }
                 System.out.println("Fract # " + f + "   named  " + analysisFiles[f].getName() + "  row count = " + onPeakFileRows.length);
                 //TODO possible missing condition here if file lengths vary from template spec and onPeakFileRows is too big
+
+                ArrayList<double[]> backgroundAcquisitions = new ArrayList<>();
+                ArrayList<double[]> peakAcquisitions = new ArrayList<>();
+
                 for (int i = 0; i < rawDataFileTemplate.getBlockSize(); i++) {
 
                     String[] onPeakCollectorsColumns = new String[]{"0", "0", "0", "0", "0", "0", "0", "0", "0", "0",};
@@ -195,48 +202,67 @@ public class WashStateElementIISingleCollFileHandler extends AbstractRawDataFile
                     // handle case where there is not as many lines of data as expected
                     if (onPeakFileRows.length > (i + rawDataFileTemplate.getBlockStartOffset())) {
                         onPeakCollectorsColumns
-                                = //
-                                onPeakFileRows[i + rawDataFileTemplate.getBlockStartOffset()].split("\t");
+                                = onPeakFileRows[i + rawDataFileTemplate.getBlockStartOffset()].split("\t");
                     }
 
                     // handle case where there is not as many lines of data as expected
                     if (backgroundFileRows.length > (i + rawDataFileTemplate.getBlockStartOffset())) {
                         backgroundCollectorsColumns
-                                =//
-                                backgroundFileRows[i + rawDataFileTemplate.getBlockStartOffset()].split("\t");
+                                = backgroundFileRows[i + rawDataFileTemplate.getBlockStartOffset()].split("\t");
                     }
 
                     // background
+                    double[] backgroundIntensities = new double[8];
+                    backgroundAcquisitions.add(backgroundIntensities);
                     for (int j = 1; j < 9; j++) {
                         scanData[i][j - 1] = backgroundCollectorsColumns[j].trim(); // ignore timestamp
+                        backgroundIntensities[j - 1] = Double.parseDouble(backgroundCollectorsColumns[j].trim());
                     }
                     // onpeak
+                    double[] peakIntensities = new double[8];
+                    peakAcquisitions.add(peakIntensities);
                     for (int j = 1; j < 9; j++) {
                         scanData[i][8 + j - 1] = onPeakCollectorsColumns[j].trim(); // ignore timestamp
+                        peakIntensities[j - 1] = Double.parseDouble(onPeakCollectorsColumns[j].trim());
                     }
                 }
 
                 // extract isStandard
                 boolean isStandard = isStandardFractionID(fractionID);
+                if (isStandard){
+                    fractionID = "PLE-" + fractionID;
+                }
 
                 TripoliFraction tripoliFraction
-                        = //                           
-                        new TripoliFraction( //
-                                //
+                        = new TripoliFraction( //
                                 fractionID, //
                                 massSpec.getCommonLeadCorrectionHighestLevel(), //
                                 isStandard,
                                 fractionBackgroundTimeStamp, //
-                                fractionPeakTimeStamp, massSpec.rawRatiosFactory(scanData, fractionID, usingFullPropagation, null));
+                                fractionPeakTimeStamp,
+                                peakAcquisitions.size());
+
+                SortedSet<DataModelInterface> rawRatios = massSpec.rawRatiosFactoryRevised();
+                tripoliFraction.setRawRatios(rawRatios);
+
+                massSpec.setCountOfAcquisitions(peakAcquisitions.size());
+
+                // establish map of virtual collectors to field indexes
+                Map<DataModelInterface, Integer> virtualCollectorModelMapToFieldIndexes = new HashMap<>();
+                virtualCollectorModelMapToFieldIndexes.put(massSpec.getHg202(), 0);
+                virtualCollectorModelMapToFieldIndexes.put(massSpec.getPb204(), 1);
+                virtualCollectorModelMapToFieldIndexes.put(massSpec.getPb206(), 2);
+                virtualCollectorModelMapToFieldIndexes.put(massSpec.getPb207(), 3);
+                virtualCollectorModelMapToFieldIndexes.put(massSpec.getPb208(), 4);
+                virtualCollectorModelMapToFieldIndexes.put(massSpec.getTh232(), 5);
+                virtualCollectorModelMapToFieldIndexes.put(massSpec.getU235(), 6);
+                virtualCollectorModelMapToFieldIndexes.put(massSpec.getU238(), 7);
+
+                massSpec.processFractionRawRatiosII(//
+                        backgroundAcquisitions, peakAcquisitions, usingFullPropagation, tripoliFraction, virtualCollectorModelMapToFieldIndexes);
 
                 tripoliFraction.shadeDataActiveMapLeft(leftShadeCount);
                 tripoliFractions.add(tripoliFraction);
-//                System.out.println( "Successfully added frac " + fractionID + " >>  " + tripoliFractions.add( tripoliFraction ) );
-//
-//                System.out.println( "                                       Count of stored fractions = " + tripoliFractions.size() );
-//                System.out.println( fractionID //
-//                        + " " + isStandard + " time = " + TimeToString.secondsAsLongToTimeString( fractionPeakTimeStamp ) );
-
             }
         }
 

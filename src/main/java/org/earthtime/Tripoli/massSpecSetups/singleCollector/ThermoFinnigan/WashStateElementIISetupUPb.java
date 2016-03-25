@@ -133,14 +133,25 @@ public final class WashStateElementIISetupUPb extends AbstractMassSpecSetup {
      * @param fractionID the value of fractionID
      * @param usingFullPropagation the value of usingFullPropagation
      * @param tripoliFraction the value of tripoliFraction
-     * @return the java.util.SortedSet<org.earthtime.Tripoli.dataModels.DataModelInterface>
+     * @return the
+     * java.util.SortedSet<org.earthtime.Tripoli.dataModels.DataModelInterface>
      */
     @Override
     public SortedSet<DataModelInterface> rawRatiosFactory(String[][] intensitiesScan, String fractionID, boolean usingFullPropagation, TripoliFraction tripoliFraction) {
 
         countOfAcquisitions = intensitiesScan.length;
 
-        virtualCollectors = new ArrayList<VirtualCollectorModel>(VIRTUAL_COLLECTOR_COUNT);
+        return rawRatiosFactoryRevised();
+    }
+
+    /**
+     *
+     * @return
+     */
+    @Override
+    public SortedSet<DataModelInterface> rawRatiosFactoryRevised() {
+
+        virtualCollectors = new ArrayList<>(VIRTUAL_COLLECTOR_COUNT);
         for (int i = 0; i < VIRTUAL_COLLECTOR_COUNT; i++) {
             virtualCollectors.add(new VirtualCollectorModel(i + 1));
         }
@@ -165,7 +176,7 @@ public final class WashStateElementIISetupUPb extends AbstractMassSpecSetup {
         virtualCollectors.get(9 - 1).updateCollector(false);
 
         // isotope models
-        genericIsotopeModels = new TreeSet<DataModelInterface>();
+        genericIsotopeModels = new TreeSet<>();
         U238 = new RawIntensityDataModel( //
                 IsotopeNames.U238, virtualCollectors.get(8 - 1), virtualCollectors.get(16 - 1), COLLECTOR_DATA_FREQUENCY_MILLISECS,//
                 isotopeMappingModel.getIsotopeToCollectorMap().get(IsotopesEnum.U238));
@@ -232,7 +243,7 @@ public final class WashStateElementIISetupUPb extends AbstractMassSpecSetup {
         // special case to handle mercury isotope
         rawRatios.add(new RawRatioDataModel(RawRatioNames.r202_202w, Hg202, Hg202, false, false, COLLECTOR_DATA_FREQUENCY_MILLISECS));
 
-        processFractionRawRatios(intensitiesScan, fractionID, usingFullPropagation, null);
+//        processFractionRawRatios(intensitiesScan, fractionID, usingFullPropagation, null);
 
         return rawRatios;
     }
@@ -244,11 +255,6 @@ public final class WashStateElementIISetupUPb extends AbstractMassSpecSetup {
     @Override
     public void assignIntegrationTime(double integrationTime) {
         throw new UnsupportedOperationException("Not legal.");
-    }
-
-    @Override
-    public SortedSet<DataModelInterface> rawRatiosFactoryRevised() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

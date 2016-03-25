@@ -30,7 +30,6 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
-import org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan.UnivKansasElementIISetupUPb;
 import org.earthtime.Tripoli.rawDataFiles.handlers.AbstractRawDataFileHandler;
 import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.utilities.FileHelper;
@@ -242,7 +241,7 @@ public class UnivKansasElementIIFileHandler extends AbstractRawDataFileHandler{
                                 fractionPeakTimeStamp,
                                 peakAcquisitions.size());
 
-                SortedSet<DataModelInterface> rawRatios = ((UnivKansasElementIISetupUPb) massSpec).rawRatiosFactoryRevised();
+                SortedSet<DataModelInterface> rawRatios = massSpec.rawRatiosFactoryRevised();
                 tripoliFraction.setRawRatios(rawRatios);
 
                 massSpec.setCountOfAcquisitions(peakAcquisitions.size());

@@ -48,7 +48,7 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
 
     // Class variables
     private static final long serialVersionUID = -2860923405769819758L;
-    private static LaserchronElementIIFileHandler instance = new LaserchronElementIIFileHandler();
+    private static final LaserchronElementIIFileHandler instance = new LaserchronElementIIFileHandler();
     // Instance variables
     private File[] analysisFiles;
     private String[] fractionNames;
