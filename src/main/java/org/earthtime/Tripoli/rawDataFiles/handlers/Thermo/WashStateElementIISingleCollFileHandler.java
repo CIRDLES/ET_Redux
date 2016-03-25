@@ -228,8 +228,9 @@ public class WashStateElementIISingleCollFileHandler extends AbstractRawDataFile
                 }
 
                 // extract isStandard
-                boolean isStandard = isStandardFractionID(fractionID);
-                if (isStandard){
+                boolean isStandard = (Integer.parseInt(fractionID) <= 6);//isStandardFractionID(fractionID);
+
+                if (isStandard) {
                     fractionID = "PLE-" + fractionID;
                 }
 
