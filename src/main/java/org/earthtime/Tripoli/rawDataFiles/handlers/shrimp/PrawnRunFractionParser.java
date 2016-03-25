@@ -22,6 +22,9 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import org.cirdles.shrimp.PrawnFile;
+import org.cirdles.shrimp.PrawnFile.Run.Set;
+import org.cirdles.shrimp.PrawnFile.Run.Set.Scan;
+import org.cirdles.shrimp.PrawnFile.Run.Set.Scan.Measurement;
 import org.earthtime.Tripoli.fitFunctions.algorithms.TukeyBiweight;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.dataDictionaries.PoissonLimitsCountLessThanEqual100;
@@ -47,6 +50,9 @@ public class PrawnRunFractionParser {
         // insert column 0 for scanNum number, then 3 columns per mass = total counts, 1 sig, total counts SBM
         double[][] scannedData = new double[scanCount][speciesMeasurementsPerScan * 3 + 1];
 
+        if (runFraction.getPar().get(0).getValue().compareToIgnoreCase("T.1.1.1") == 0) {
+            System.out.println("PAUSE");
+        }
         for (int scanNum = 0; scanNum < scanCount; scanNum++) {
             scannedData[scanNum][0] = scanNum + 1; // 1-based in xml
             // there is one measurement per mass per scanNum
@@ -79,7 +85,7 @@ public class PrawnRunFractionParser {
 
                 } else if (median >= 0.0) {
 
-                    // remove the one element with largest residual if any.
+                    // remove the one element with first occurrence of largest residual if any.
                     int maxResidualIndex = PoissonLimitsCountLessThanEqual100.determineIndexOfValueWithLargestResidual(median, peakMeasurements);
                     double sumX = 0.0;
                     double sumXsquared = 0.0;
@@ -205,7 +211,7 @@ public class PrawnRunFractionParser {
                     } else {
                         correctedData[scanNum][speciesMeasurementIndex * 3 + 2] = 1.0;
                     }
-                } 
+                }
             }
         }
         double[] totalCps = new double[speciesMeasurementsPerScan];
@@ -226,6 +232,8 @@ public class PrawnRunFractionParser {
      */
     public static void main(String[] args) {
 
+//        reportForSimon();
+        
         // local copy of file - use prawnFileXML in place of prawnFileURL below
 //        File prawnFileXML = new File("/Users/sbowring/Documents/Development_XSD/100142_G6147_10111109.43 10.33.37 AM.xml");
         // remote copy of example file
@@ -244,28 +252,80 @@ public class PrawnRunFractionParser {
             for (int f = 0; f < prawnFile.getRuns(); f++) {
                 PrawnFile.Run runFraction = prawnFile.getRun().get(f);
 
+                if (runFraction.getPar().get(0).getValue().startsWith("097.Z.1.1.1")) {
 //                System.out.println("\n" + runFraction.getPar().get(0).getValue() + "  ***********************\n");
-                double[][] scannedData = parsedRunFractionData(runFraction);
-                double[] totalCps = calculateTotalPerSpeciesCPS(runFraction, scannedData, 2);
+                    double[][] scannedData = parsedRunFractionData(runFraction);
+                    double[] totalCps = calculateTotalPerSpeciesCPS(runFraction, scannedData, 2);
 
-//                for (double[] scannedData1 : scannedData) {
-//                    for (int j = 0; j < scannedData1.length; j++) {
-//                        System.out.print(scannedData1[j]);
-//                        if (j < (scannedData1.length - 1)) {
-//                            System.out.print(",");
-//                        }
-//                    }
-//                    System.out.print("\n");
-//                }
-                System.out.print(runFraction.getPar().get(0).getValue() + ",");
-
-                for (int j = 0; j < totalCps.length; j++) {
-                    System.out.print(totalCps[j]);
-                    if (j < (totalCps.length - 1)) {
-                        System.out.print(",");
+                    for (double[] scannedData1 : scannedData) {
+//                        System.out.print(scannedData1[16] + ",  " + scannedData1[17]);
+                    for (int j = 0; j < scannedData1.length; j++) {
+                        System.out.print(scannedData1[j]);
+                        if (j < (scannedData1.length - 1)) {
+                            System.out.print(",");
+                        }
                     }
+                        System.out.print("\n");
+                    }
+//                    if (runFraction.getPar().get(0).getValue().startsWith("097.Z")) {
+                    System.out.print(runFraction.getPar().get(0).getValue() + ", ");
+//                    System.out.print(totalCps[5]);
+                    for (int j = 0; j < totalCps.length; j++) {
+                        System.out.print(totalCps[j]);
+                        if (j < (totalCps.length - 1)) {
+                            System.out.print(",");
+                        }
+                    }
+                    System.out.print("\n");
+//                    }
                 }
-                System.out.print("\n");
+            } // end of fractions loop
+
+        } catch (JAXBException jAXBException) {
+            System.out.println(jAXBException.getMessage());
+        }
+    }
+
+    public static void reportForSimon() {
+        java.net.URL prawnFileURL = null;
+        try {
+            prawnFileURL = new URL("https://raw.githubusercontent.com/bowring/XSD/master/SHRIMP/EXAMPLE_100142_G6147_10111109.43_10.33.37%20AM.xml");
+        } catch (MalformedURLException malformedURLException) {
+            System.out.println(malformedURLException.getMessage());
+        }
+
+        try {
+            JAXBContext jaxbContext = JAXBContext.newInstance(PrawnFile.class);
+            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+            PrawnFile prawnFile = (PrawnFile) jaxbUnmarshaller.unmarshal(prawnFileURL);
+
+            // print headers
+            System.out.print("Spot, Scan#, Time, ");//196,  204, BKGRND, 206, 207 208 238 248 254 270");
+            PrawnFile.Run firstFraction = prawnFile.getRun().get(0);
+            for (int i = 0; i < 10; i++) {
+                String speciesName = firstFraction.getRunTable().getEntry().get(i).getPar().get(0).getValue();
+                for (int j = 0; j < 10; j++) {
+                    System.out.print(speciesName + "." + (j + 1) + ", ");
+                }
+            }
+            System.out.println();
+
+            for (int f = 0; f < prawnFile.getRuns(); f++) {
+                PrawnFile.Run runFraction = prawnFile.getRun().get(f);
+                Set mySet = runFraction.getSet();
+                for (int scan = 0; scan < 6; scan++) {
+                    Scan myScan = mySet.getScan().get(scan);
+                    System.out.print(runFraction.getPar().get(0).getValue() //
+                            + ", " + (scan + 1) + ", " //
+                            + mySet.getPar().get(0).getValue() + " " + mySet.getPar().get(1).getValue() + ", ");
+                    for (int species = 0; species < 10; species++) {
+                        Measurement mySpecies = myScan.getMeasurement().get(species);
+                        System.out.print(mySpecies.getData().get(0).getValue() + ", ");
+                    }
+
+                    System.out.println();
+                }
+
             } // end of fractions loop
 
         } catch (JAXBException jAXBException) {
