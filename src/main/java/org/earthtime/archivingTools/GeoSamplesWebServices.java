@@ -44,7 +44,7 @@ public class GeoSamplesWebServices {
 
         try {
             samples = Samples.deserializeTestIGSN(igsn);
-        } catch (IOException | JAXBException | ParserConfigurationException | SAXException | NoSuchAlgorithmException | KeyStoreException | KeyManagementException anException) {
+        } catch (  IOException | JAXBException | ParserConfigurationException | SAXException | NoSuchAlgorithmException | KeyStoreException | KeyManagementException anException) {
             if (isVerbose) {
                 new ETWarningDialog(anException.getMessage()).setVisible(true);
             }

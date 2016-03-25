@@ -47,8 +47,9 @@ public class GeoPassIDValidator {
         myState.serializeSelf();
 
         ArrayList<String> userCodes = null;
+        
         try {
-            userCodes = org.geosamples.credentials.CredentialsValidator.validateUserCredentialsDevelopmentService2(username, password);
+            userCodes = org.geosamples.credentials.CredentialsValidator.validateUserCredentialsProductionService(username, password);
         } catch (IOException | ParserConfigurationException | SAXException | NoSuchAlgorithmException | KeyStoreException | KeyManagementException anException) {
             if (isVerbose) {
                 new ETWarningDialog(anException.getMessage()).setVisible(true);
