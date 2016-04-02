@@ -234,10 +234,10 @@
             <version>-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>com.github.cirdles</groupId>
-            <artifactId>GeoSamples</artifactId>
-            <version>v.1.0.5</version>
-        </dependency>
+	    <groupId>com.github.bowring</groupId>
+	    <artifactId>GeoSamples</artifactId>
+	    <version>more-SNAPSHOT</version>
+	</dependency>
     </dependencies>
     <build>
         <plugins>
