@@ -49,9 +49,11 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
     // Class variables
     private static final long serialVersionUID = -2860923405769819758L;
     private static final LaserchronElementIIFileHandler instance = new LaserchronElementIIFileHandler();
+    private static int referenceMaterialIncrementer;
     // Instance variables
     private File[] analysisFiles;
     private String[] fractionNames;
+    
 
     /**
      *
@@ -74,6 +76,7 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
      * @return
      */
     public static LaserchronElementIIFileHandler getInstance() {
+        referenceMaterialIncrementer = 1;
         return instance;
     }
 
@@ -193,7 +196,6 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
             SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions) {
 
         SortedSet myTripoliFractions = new TreeSet<>();
-        int standardIncrementer = 1;
 
         // assume we are golden   
         // take first entry in fractionNames that came from scancsv file and confirm it is referenceMaterial (standard)
@@ -216,10 +218,10 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
 
             // needs to be more robust
             boolean isStandardReferenceMaterial = (fractionID.substring(0, 2).compareToIgnoreCase(referenceMaterialfractionID.substring(0, 2)) == 0);
-            // number the standards
+            // number the reference materials
             if (isStandardReferenceMaterial) {
-                fractionID = fractionID + "-" + String.valueOf(standardIncrementer);
-                standardIncrementer++;
+                fractionID = fractionID + "-" + String.valueOf(referenceMaterialIncrementer);
+                referenceMaterialIncrementer++;
             }
 
             // ************************************************************************************************
