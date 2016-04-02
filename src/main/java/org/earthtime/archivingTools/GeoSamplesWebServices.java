@@ -22,6 +22,7 @@ import java.security.NoSuchAlgorithmException;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import org.earthtime.exceptions.ETWarningDialog;
+import org.geosamples.XMLDocumentInterface;
 import org.geosamples.samples.Samples;
 import org.xml.sax.SAXException;
 
@@ -30,21 +31,40 @@ import org.xml.sax.SAXException;
  * @author James F. Bowring <bowring at gmail.com>
  */
 public class GeoSamplesWebServices {
+    
+    public static String CURRENT_GEOSAMPLES_WEBSERVICE_FOR_DOWNLOAD_IGSN = 
+            org.geosamples.Constants.GEOSAMPLES_TEST_SAMPLES_SERVER + org.geosamples.Constants.GEOSAMPLES_SAMPLE_IGSN_WEBSERVICE_NAME;
 
     /**
      * This class is used to control access to GeoSamples services, since we are
      * experimenting with flavors.
      *
      * @param igsn
+     * @param username
+     * @param password
      * @param isVerbose
      * @return
      */
-    public static Samples getSampleMetaDataFromGeoSamplesIGSN(String igsn, boolean isVerbose) {
-        Samples samples = new Samples();
+    public static XMLDocumentInterface getSampleMetaDataFromGeoSamplesIGSN(String igsn, String username, String password, boolean isVerbose) {
+        XMLDocumentInterface samples = new Samples();
 
         try {
-            samples = Samples.deserializeTestIGSN(igsn);
-        } catch (  IOException | JAXBException | ParserConfigurationException | SAXException | NoSuchAlgorithmException | KeyStoreException | KeyManagementException anException) {
+            samples = Samples.downloadSampleMetadataFromTestSesarIGSN(igsn, username, password);
+        } catch (IOException | JAXBException | ParserConfigurationException | SAXException | NoSuchAlgorithmException | KeyStoreException | KeyManagementException anException) {
+            if (isVerbose) {
+                new ETWarningDialog(anException.getMessage()).setVisible(true);
+            }
+        }
+
+        return samples;
+    }
+
+    public static XMLDocumentInterface getSampleMetaDataFromGeoSamplesIGSN(String igsn, boolean isVerbose) {
+        XMLDocumentInterface samples = new Samples();
+
+        try {
+            samples = Samples.downloadSampleMetadataFromTestSesarIGSN(igsn);
+        } catch (IOException | JAXBException | ParserConfigurationException | SAXException | NoSuchAlgorithmException | KeyStoreException | KeyManagementException anException) {
             if (isVerbose) {
                 new ETWarningDialog(anException.getMessage()).setVisible(true);
             }
@@ -54,8 +74,8 @@ public class GeoSamplesWebServices {
     }
 
     public static boolean isSampleRegistered(String igsn) {
-        Samples downloadedSample = getSampleMetaDataFromGeoSamplesIGSN(igsn, false);
-        
+        XMLDocumentInterface downloadedSample = getSampleMetaDataFromGeoSamplesIGSN(igsn, false);
+
         boolean isRegistered = false;
         try {
             isRegistered = downloadedSample.getSample().get(0).getIgsn() != null;
@@ -65,16 +85,16 @@ public class GeoSamplesWebServices {
     }
 
     public static boolean isSampleRegisteredToParent(String igsn, String parentIgsn) {
-        Samples downloadedSample = getSampleMetaDataFromGeoSamplesIGSN(igsn, false);
+        XMLDocumentInterface downloadedSample = getSampleMetaDataFromGeoSamplesIGSN(igsn, false);
         boolean isRegistered = false;
         try {
             isRegistered = (downloadedSample.getSample().get(0).getIgsn() != null) && (downloadedSample.getSample().get(0).getParentIgsn() != null);
         } catch (Exception e) {
         }
-        if (isRegistered ){
+        if (isRegistered) {
             isRegistered = isRegistered && (downloadedSample.getSample().get(0).getParentIgsn().equalsIgnoreCase(parentIgsn));
         }
-        
+
         return isRegistered;
     }
 }

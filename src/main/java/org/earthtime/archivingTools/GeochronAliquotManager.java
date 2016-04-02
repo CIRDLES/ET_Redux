@@ -52,6 +52,7 @@ import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.projects.ProjectInterface;
 import org.earthtime.samples.SampleInterface;
+import org.geosamples.samples.Samples;
 
 /**
  *
@@ -72,7 +73,7 @@ public class GeochronAliquotManager extends JPanel {
     private final int TOP_MARGIN = 5;
     private JTextField sampleNameText;
     private JTextField sampleIGSNText;
-    private SesarSample sesarSample;
+    private Samples.Sample sesarSample;
     private SesarSample[] sesarAliquots;
     private JButton saveButton;
     private JButton registerNewSampleButton;
@@ -104,7 +105,7 @@ public class GeochronAliquotManager extends JPanel {
         this.width = width;
 
         this.sampleIGSN = "IGSN";
-        this.sesarSample = new SesarSample(userCode, userName, password, false);
+        this.sesarSample = new org.geosamples.samples.Samples.Sample();
 
         setOpaque(true);
         setBackground(Color.white);
@@ -187,13 +188,14 @@ public class GeochronAliquotManager extends JPanel {
         add(registerNewSampleButton);
         registerNewSampleButton.addActionListener((ActionEvent e) -> {
             saveSample();
-            sesarSample.setIGSN(userCode);
+            sesarSample.setIgsn(userCode);
+            sesarSample.setUserCode(userCode);
             sesarSample.setName(sample.getSampleName());
             DialogEditor sesarSampleManager
-                    = new SesarSampleManager(null, true, sesarSample, true);
+                    = new SesarSampleManager(null, true, sesarSample, sample.getSampleName(), true);
             sesarSampleManager.setVisible(true);
-            sample.setSampleIGSN(sesarSample.getIGSN());
-            sampleIGSNText.setText(sesarSample.getIGSN());
+            sample.setSampleIGSN(sesarSample.getIgsn());
+            sampleIGSNText.setText(sesarSample.getIgsn());
             sampleIGSNText.getInputVerifier().verify(sampleIGSNText);
             saveSample();
         });
@@ -209,12 +211,13 @@ public class GeochronAliquotManager extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 saveSample();
                 // get the igsn record and create a SesarSample to view
-                SesarSample mySesarSample = SesarSample.createSesarSampleFromSesarRecord(sample.getSampleIGSN());
-                if (mySesarSample != null) {
-                    sesarSample = mySesarSample;
-                    sesarSample.setNameOfLocalSample(sample.getSampleName());
+                //SesarSample mySesarSample = SesarSample.createSesarSampleFromSesarRecord(sample.getSampleIGSN());
+                sesarSample = GeoSamplesWebServices.getSampleMetaDataFromGeoSamplesIGSN(sampleIGSN, userName, password, false).getSample().get(0);
+                if (sesarSample != null) {
+//                    sesarSample = mySesarSample;
+//                    sesarSample.setNameOfLocalSample(sample.getSampleName());
                     DialogEditor sesarSampleManager
-                            = new SesarSampleManager(null, true, sesarSample, false);
+                            = new SesarSampleManager(null, true, sesarSample, sample.getSampleName(), false);
                     sesarSampleManager.setVisible(true);
                 } else {
                     JOptionPane.showMessageDialog(
@@ -335,45 +338,44 @@ public class GeochronAliquotManager extends JPanel {
             registerNewAliquotButtons[i].setFont(ReduxConstants.sansSerif_12_Bold);
             registerNewAliquotButtons[i].setVisible(false);
             add(registerNewAliquotButtons[i]);
-            registerNewAliquotButtons[i].addActionListener((ActionEvent e) -> {
-                saveAliquot(aliquot, aliquotIGSN_TextField.getText(), aliquotName_TextField);
-                sesarAliquot.setIGSN(userCode);
-                sesarAliquot.setName(aliquot.getAliquotName());
-                sesarAliquot.setParentIGSN(sample.getSampleIGSN());
-                DialogEditor sesarSampleManager
-                        = 
-                        new SesarSampleManager(null, true, sesarAliquot, true);
-                sesarSampleManager.setVisible(true);
-                aliquot.setAliquotIGSN(sesarAliquot.getIGSN());
-                aliquotIGSN_TextField.setText(sesarAliquot.getIGSN());
-                aliquotIGSN_TextField.getInputVerifier().verify(aliquotIGSN_TextField);
-                saveAliquot(aliquot, aliquotIGSN_TextField.getText(), aliquotName_TextField);
-            });
+//            registerNewAliquotButtons[i].addActionListener((ActionEvent e) -> {
+//                saveAliquot(aliquot, aliquotIGSN_TextField.getText(), aliquotName_TextField);
+//                sesarAliquot.setIGSN(userCode);
+//                sesarAliquot.setName(aliquot.getAliquotName());
+//                sesarAliquot.setParentIGSN(sample.getSampleIGSN());
+//                DialogEditor sesarSampleManager
+//                        = new SesarSampleManager(null, true, sesarAliquot, aliquot.getAliquotName(),true);
+//                sesarSampleManager.setVisible(true);
+//                aliquot.setAliquotIGSN(sesarAliquot.getIGSN());
+//                aliquotIGSN_TextField.setText(sesarAliquot.getIGSN());
+//                aliquotIGSN_TextField.getInputVerifier().verify(aliquotIGSN_TextField);
+//                saveAliquot(aliquot, aliquotIGSN_TextField.getText(), aliquotName_TextField);
+//            });
 
             viewAliquotRecordButtons[i] = new ET_JButton("View Existing Record");
             viewAliquotRecordButtons[i].setBounds(cumulativeWidth, TOP_MARGIN + 30 * (i + 1), 135, 25);
             viewAliquotRecordButtons[i].setFont(ReduxConstants.sansSerif_12_Bold);
             viewAliquotRecordButtons[i].setVisible(false);
             add(viewAliquotRecordButtons[i]);
-            viewAliquotRecordButtons[i].addActionListener((ActionEvent e) -> {
-                saveAliquot(aliquot, aliquotIGSN_TextField.getText(), aliquotName_TextField);
-                // get the igsn record and create a SesarSample to view
-                SesarSample mySesarAliquot = SesarSample.createSesarSampleFromSesarRecord(aliquot.getAliquotIGSN());
-                if (mySesarAliquot != null) {
-                    //sesarAliquot = mySesarAliquot;
-                    mySesarAliquot.setNameOfLocalSample(aliquot.getAliquotName());
-                    DialogEditor sesarSampleManager
-                            = //
-                            new SesarSampleManager(null, true, mySesarAliquot, false);
-                    sesarSampleManager.setVisible(true);
-                } else {
-                    JOptionPane.showMessageDialog(
-                            null,
-                            new String[]{"Could not retrieve aliquot details."},
-                            "ET Redux Warning",
-                            JOptionPane.WARNING_MESSAGE);
-                }
-            });
+//            viewAliquotRecordButtons[i].addActionListener((ActionEvent e) -> {
+//                saveAliquot(aliquot, aliquotIGSN_TextField.getText(), aliquotName_TextField);
+//                // get the igsn record and create a SesarSample to view
+//                SesarSample mySesarAliquot = SesarSample.createSesarSampleFromSesarRecord(aliquot.getAliquotIGSN());
+//                if (mySesarAliquot != null) {
+//                    //sesarAliquot = mySesarAliquot;
+//                    mySesarAliquot.setNameOfLocalSample(aliquot.getAliquotName());
+//                    DialogEditor sesarSampleManager
+//                            = 
+//                            new SesarSampleManager(null, true, mySesarAliquot, aliquot.getAliquotName(),false);
+//                    sesarSampleManager.setVisible(true);
+//                } else {
+//                    JOptionPane.showMessageDialog(
+//                            null,
+//                            new String[]{"Could not retrieve aliquot details."},
+//                            "ET Redux Warning",
+//                            JOptionPane.WARNING_MESSAGE);
+//                }
+//            });
             cumulativeWidth += 140;
 
             childStatusLabels[i] = new JLabel("Aliquot IGSN is not a valid child of Sample IGSN.");
@@ -511,12 +513,10 @@ public class GeochronAliquotManager extends JPanel {
                 isValid = isSampleRegistered(proposedIGSN);
                 if (isValid) {
                     sampleIGSN = proposedIGSN.trim().toUpperCase();
+                } else if (userCode.trim().length() == 0) {
+                    xMarkForInValidSampleIGSN.setToolTipText("Please validate credentials above.");
                 } else {
-                    if (userCode.trim().length() == 0) {
-                        xMarkForInValidSampleIGSN.setToolTipText("Please validate credentials above.");
-                    } else {
-                        xMarkForInValidSampleIGSN.setToolTipText("SESAR does not have a record of IGSN " + proposedIGSN);
-                    }
+                    xMarkForInValidSampleIGSN.setToolTipText("SESAR does not have a record of IGSN " + proposedIGSN);
                 }
             }
             saveSample();
@@ -543,14 +543,12 @@ public class GeochronAliquotManager extends JPanel {
                 isValid = isSampleRegisteredToParent(proposedIGSN, sample.getSampleIGSN());
                 if (isValid) {
                     aliquotIGSNs[index] = proposedIGSN.trim().toUpperCase();
+                } else if (userCode.trim().length() == 0) {
+                    xMarkForInValidAliqutIGSNs[index].setToolTipText("Please validate credentials above.");
+                } else if (!proposedIGSN.toUpperCase().startsWith(userCode.toUpperCase())) {
+                    xMarkForInValidAliqutIGSNs[index].setToolTipText(proposedIGSN + " uses incorrect User Code.  Your User Code is: " + userCode);
                 } else {
-                    if (userCode.trim().length() == 0) {
-                        xMarkForInValidAliqutIGSNs[index].setToolTipText("Please validate credentials above.");
-                    } else if (!proposedIGSN.toUpperCase().startsWith(userCode.toUpperCase())) {
-                        xMarkForInValidAliqutIGSNs[index].setToolTipText(proposedIGSN + " uses incorrect User Code.  Your User Code is: " + userCode);
-                    } else {
-                        xMarkForInValidAliqutIGSNs[index].setToolTipText("SESAR does not have a record of IGSN " + proposedIGSN);
-                    }
+                    xMarkForInValidAliqutIGSNs[index].setToolTipText("SESAR does not have a record of IGSN " + proposedIGSN);
                 }
             }
             saveAliquot(activeAliquots.get(index), aliquotIGSNs[index], aliquotName_TextFields[index]);

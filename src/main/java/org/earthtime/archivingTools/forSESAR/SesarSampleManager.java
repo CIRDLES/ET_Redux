@@ -29,16 +29,16 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import static javax.swing.SwingConstants.RIGHT;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
-import static org.earthtime.archivingTools.GeoSamplesWebServices.isSampleRegistered;
+import static org.earthtime.archivingTools.GeoSamplesWebServices.CURRENT_GEOSAMPLES_WEBSERVICE_FOR_DOWNLOAD_IGSN;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.dataDictionaries.SESAR_MaterialTypesEnum;
 import org.earthtime.dataDictionaries.SESAR_ObjectTypesEnum;
 import org.earthtime.dialogs.DialogEditor;
+import org.geosamples.samples.Samples;
 
 /**
  *
@@ -46,18 +46,20 @@ import org.earthtime.dialogs.DialogEditor;
  */
 public class SesarSampleManager extends DialogEditor {
 
-    private SesarSample sesarSample;
+    private Samples.Sample sesarSample;
     private final static int ROW_HEIGHT = 25;
     private JTextField sampleIGSNText;
     private JCheckBox autoGenerateCheckBox;
+    private String localSampleName;
 
     /**
      * Creates new form SesarSampleManager
      */
-    public SesarSampleManager(Frame parent, boolean modal, SesarSample sesarSample, boolean editable) {
+    public SesarSampleManager(Frame parent, boolean modal, Samples.Sample sesarSample, String localSampleName, boolean editable) {
         super(parent, modal);
 
         this.sesarSample = sesarSample;
+        this.localSampleName = localSampleName;
 
         initComponents();
 
@@ -70,7 +72,7 @@ public class SesarSampleManager extends DialogEditor {
 
         sesarSampleDetailsLayeredPane.add(labelFactory("IGSN:", 10, 10, 100));
 
-        sampleIGSNText = new JTextField(sesarSample.getIGSN());
+        sampleIGSNText = new JTextField(sesarSample.getIgsn());
         sampleIGSNText.setEditable(editable);
         sampleIGSNText.setBounds(120, 10, 100, ROW_HEIGHT);
         sampleIGSNText.setFont(ReduxConstants.sansSerif_12_Bold);
@@ -88,10 +90,10 @@ public class SesarSampleManager extends DialogEditor {
                 public void actionPerformed(ActionEvent event) {
                     JCheckBox cb = (JCheckBox) event.getSource();
                     if (cb.isSelected()) {
-                        sampleIGSNText.setText(sesarSample.getUser_code() + "------".substring(0, (9 - sesarSample.getUser_code().length())));
+                        sampleIGSNText.setText(sesarSample.getUserCode() + "------".substring(0, (9 - sesarSample.getUserCode().length())));
                         sampleIGSNText.setEditable(false);
                     } else {
-                        sampleIGSNText.setText(sesarSample.getIGSN());
+                        sampleIGSNText.setText(sesarSample.getIgsn());
                         sampleIGSNText.setEditable(true);
                     }
                 }
@@ -103,7 +105,7 @@ public class SesarSampleManager extends DialogEditor {
             viewSesarRecordButton.setFont(ReduxConstants.sansSerif_12_Bold);
             sesarSampleDetailsLayeredPane.add(viewSesarRecordButton);
             viewSesarRecordButton.addActionListener((ActionEvent e) -> {
-                BrowserControl.displayURL("http://app.geosamples.org/sample/igsn/" + sesarSample.getIGSN());
+                BrowserControl.displayURL(CURRENT_GEOSAMPLES_WEBSERVICE_FOR_DOWNLOAD_IGSN + sesarSample.getIgsn());
             });
         }
 
@@ -117,8 +119,8 @@ public class SesarSampleManager extends DialogEditor {
 
         if (!editable) {
             // check for name inconsistency
-            if (sesarSample.hasNameClashBetweenLocalAndSesar()) {
-                JLabel nameClashWarning = labelFactory("<html>The local sample name <" + sesarSample.getNameOfLocalSample() + "> differs!</html>", 275, 28, 150);
+            if (sesarSample.getName().compareToIgnoreCase(localSampleName) != 0) {
+                JLabel nameClashWarning = labelFactory("<html>The local sample name <" + localSampleName + "> differs!</html>", 275, 28, 150);
                 nameClashWarning.setForeground(Color.red);
                 nameClashWarning.setSize(150, 50);
                 sesarSampleDetailsLayeredPane.add(nameClashWarning);
@@ -133,7 +135,7 @@ public class SesarSampleManager extends DialogEditor {
         sesarObjectTypesCombo.setBounds(120, 70, 200, ROW_HEIGHT);
         sesarObjectTypesCombo.setFont(ReduxConstants.sansSerif_12_Bold);
         sesarSampleDetailsLayeredPane.add(sesarObjectTypesCombo);
-        sesarObjectTypesCombo.setSelectedItem(sesarSample.getSesarObjectType());
+        sesarObjectTypesCombo.setSelectedItem(sesarSample.getSampleType());
 
         sesarSampleDetailsLayeredPane.add(labelFactory("Material Type:", 10, 100, 100));
 
@@ -143,12 +145,12 @@ public class SesarSampleManager extends DialogEditor {
         sesarMaterialTypesCombo.setBounds(120, 100, 200, ROW_HEIGHT);
         sesarMaterialTypesCombo.setFont(ReduxConstants.sansSerif_12_Bold);
         sesarSampleDetailsLayeredPane.add(sesarMaterialTypesCombo);
-        sesarMaterialTypesCombo.setSelectedItem(sesarSample.getSesarMaterialType());
+        sesarMaterialTypesCombo.setSelectedItem(sesarSample.getMaterial());
 
         sesarSampleDetailsLayeredPane.add(labelFactory("decimal Lat:", 10, 130, 100));
         JTextField decimalLatitude = new JTextField();
         decimalLatitude.setDocument(new BigDecimalDocument(decimalLatitude, editable));
-        decimalLatitude.setText(sesarSample.getLatitude().setScale(6).toPlainString());
+        decimalLatitude.setText(sesarSample.getLatitude() == null ? "0" : sesarSample.getLatitude().setScale(6).toPlainString());
         decimalLatitude.setBounds(120, 130, 100, ROW_HEIGHT);
         decimalLatitude.setFont(ReduxConstants.sansSerif_12_Bold);
         sesarSampleDetailsLayeredPane.add(decimalLatitude);
@@ -181,7 +183,7 @@ public class SesarSampleManager extends DialogEditor {
         sesarSampleDetailsLayeredPane.add(labelFactory("decimal Long:", 10, 160, 100));
         JTextField decimalLongitude = new JTextField();
         decimalLongitude.setDocument(new BigDecimalDocument(decimalLongitude, editable));
-        decimalLongitude.setText(sesarSample.getLongitude().setScale(6).toPlainString());
+        decimalLongitude.setText(sesarSample.getLongitude() == null ? "0" : sesarSample.getLongitude().setScale(6).toPlainString());
         decimalLongitude.setBounds(120, 160, 100, ROW_HEIGHT);
         decimalLongitude.setFont(ReduxConstants.sansSerif_12_Bold);
         sesarSampleDetailsLayeredPane.add(decimalLongitude);
@@ -228,43 +230,43 @@ public class SesarSampleManager extends DialogEditor {
             registerSampleButton.addActionListener((ActionEvent e) -> {
                 boolean doRegister = false;
                 String messageText = "";
-                if (!autoGenerateCheckBox.isSelected()) {
-                    String proposedIGSN = sampleIGSNText.getText();
-                    if (!sesarSample.confirmUserCodeCompliance(proposedIGSN)) {
-                        messageText = "User code prefix of IGSN should be: " + sesarSample.getUser_code();
-                    } else if (isSampleRegistered(proposedIGSN)) {
-                        messageText = "The IGSN: " + proposedIGSN + " is already in use.";
-                    } else if (!SesarSample.isWellFormedIGSN(proposedIGSN, sesarSample.getUser_code())) {
-                        messageText = "The IGSN: " + proposedIGSN + " is not of the form " + sesarSample.getUser_code() + "NNNNNNN\".substring(0, (9 - userCode.length())) + \", where N is any digit or any capital letter.";
-                    } else {
-                        sesarSample.setIGSN(proposedIGSN);
-                        doRegister = true;
-                    }
-                } else {
-                    sesarSample.setIGSN("");
-                    doRegister = true;
-                }
-                if (doRegister) {
-                    sesarSample.setSampleType(((SESAR_ObjectTypesEnum) sesarObjectTypesCombo.getSelectedItem()).getName());
-                    sesarSample.setMaterial(((SESAR_MaterialTypesEnum) sesarMaterialTypesCombo.getSelectedItem()).getName());
-                    sesarSample.setLatitude(new BigDecimal(decimalLatitude.getText()));
-                    sesarSample.setLongitude(new BigDecimal(decimalLongitude.getText()));
-                    // register at SESAR
-                    String igsnValue = sesarSample.uploadAndRegisterSesarSample();
-                    if (igsnValue.length() > 0) {
-                        sesarSample.setIGSN(igsnValue);
-                        close();
-                    } else {
-                        sesarSample.setIGSN("NONE");
-                    }
-                    
-                } else {
-                    JOptionPane.showMessageDialog(
-                            null,
-                            new String[]{messageText},
-                            "ET Redux Warning",
-                            JOptionPane.WARNING_MESSAGE);
-                }
+//                if (!autoGenerateCheckBox.isSelected()) {
+//                    String proposedIGSN = sampleIGSNText.getText();
+//                    if (!sesarSample.confirmUserCodeCompliance(proposedIGSN)) {
+//                        messageText = "User code prefix of IGSN should be: " + sesarSample.getUser_code();
+//                    } else if (isSampleRegistered(proposedIGSN)) {
+//                        messageText = "The IGSN: " + proposedIGSN + " is already in use.";
+//                    } else if (!SesarSample.isWellFormedIGSN(proposedIGSN, sesarSample.getUser_code())) {
+//                        messageText = "The IGSN: " + proposedIGSN + " is not of the form " + sesarSample.getUser_code() + "NNNNNNN\".substring(0, (9 - userCode.length())) + \", where N is any digit or any capital letter.";
+//                    } else {
+//                        sesarSample.setIgsn(proposedIGSN);
+//                        doRegister = true;
+//                    }
+//                } else {
+//                    sesarSample.setIgsn("");
+//                    doRegister = true;
+//                }
+//                if (doRegister) {
+//                    sesarSample.setSampleType(((SESAR_ObjectTypesEnum) sesarObjectTypesCombo.getSelectedItem()).getName());
+//                    sesarSample.setMaterial(((SESAR_MaterialTypesEnum) sesarMaterialTypesCombo.getSelectedItem()).getName());
+//                    sesarSample.setLatitude(new BigDecimal(decimalLatitude.getText()));
+//                    sesarSample.setLongitude(new BigDecimal(decimalLongitude.getText()));
+//                    // register at SESAR
+//                    String igsnValue = sesarSample.uploadAndRegisterSesarSample();
+//                    if (igsnValue.length() > 0) {
+//                        sesarSample.setIgsn(igsnValue);
+//                        close();
+//                    } else {
+//                        sesarSample.setIgsn("NONE");
+//                    }
+//                    
+//                } else {
+//                    JOptionPane.showMessageDialog(
+//                            null,
+//                            new String[]{messageText},
+//                            "ET Redux Warning",
+//                            JOptionPane.WARNING_MESSAGE);
+//                }
             });
         }
 

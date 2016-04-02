@@ -49,7 +49,7 @@ public class GeoPassIDValidator {
         ArrayList<String> userCodes = null;
         
         try {
-            userCodes = org.geosamples.credentials.CredentialsValidator.validateUserCredentialsProductionService(username, password);
+            userCodes = org.geosamples.credentials.CredentialsValidator.validateUserCredentialsProductionServiceV2(username, password);
         } catch (IOException | ParserConfigurationException | SAXException | NoSuchAlgorithmException | KeyStoreException | KeyManagementException anException) {
             if (isVerbose) {
                 new ETWarningDialog(anException.getMessage()).setVisible(true);
