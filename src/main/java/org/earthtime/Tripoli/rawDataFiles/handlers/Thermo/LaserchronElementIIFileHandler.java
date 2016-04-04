@@ -48,7 +48,8 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
 
     // Class variables
     private static final long serialVersionUID = -2860923405769819758L;
-    private static LaserchronElementIIFileHandler instance = new LaserchronElementIIFileHandler();
+    private static final LaserchronElementIIFileHandler instance = new LaserchronElementIIFileHandler();
+    private static int referenceMaterialIncrementer;
     // Instance variables
     private File[] analysisFiles;
     private String[] fractionNames;
@@ -74,6 +75,7 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
      * @return
      */
     public static LaserchronElementIIFileHandler getInstance() {
+        referenceMaterialIncrementer = 1;
         return instance;
     }
 
@@ -100,12 +102,13 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
     @Override
     public void getAndLoadRawIntensityDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions) {
 
-        // ElementII has folder of .dat files 
+        // Laserchron ElementII has folder of .dat files 
         analysisFiles = rawDataFile.listFiles((File dir, String name) -> {
             return name.toLowerCase().endsWith(".dat");
         });
 
-        Arrays.sort(analysisFiles, new FractionFileNameNameComparator());
+        // Laserchron produces file with numerical ordering tags
+        Arrays.sort(analysisFiles, new FractionFileNameComparator());
 
         if (analysisFiles.length > 0) {
             String onPeakFileContents = URIHelper.getTextFromURI(analysisFiles[0].getAbsolutePath()).substring(0, 32);
@@ -193,7 +196,6 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
             SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions) {
 
         SortedSet myTripoliFractions = new TreeSet<>();
-        int standardIncrementer = 1;
 
         // assume we are golden   
         // take first entry in fractionNames that came from scancsv file and confirm it is referenceMaterial (standard)
@@ -215,11 +217,11 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
             }
 
             // needs to be more robust
-            boolean isStandardReferenceMaterial = (fractionID.substring(0, 2).compareToIgnoreCase(referenceMaterialfractionID.substring(0, 2)) == 0);
-            // number the standards
-            if (isStandardReferenceMaterial) {
-                fractionID = fractionID + "-" + String.valueOf(standardIncrementer);
-                standardIncrementer++;
+            boolean isReferenceMaterial = (fractionID.substring(0, 2).compareToIgnoreCase(referenceMaterialfractionID.substring(0, 2)) == 0);
+            // number the reference materials
+            if (isReferenceMaterial) {
+                fractionID = fractionID + "-" + String.valueOf(referenceMaterialIncrementer);
+                referenceMaterialIncrementer++;
             }
 
             // ************************************************************************************************
@@ -259,7 +261,7 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
                         = new TripoliFraction( //
                                 fractionID, //
                                 massSpec.getCommonLeadCorrectionHighestLevel(), //
-                                isStandardReferenceMaterial,
+                                isReferenceMaterial,
                                 fractionBackgroundTimeStamp, //
                                 fractionPeakTimeStamp,
                                 peakAcquisitions.size());
@@ -274,7 +276,7 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
                         backgroundAcquisitions, peakAcquisitions, usingFullPropagation, tripoliFraction);
 
                 tripoliFraction.shadeDataActiveMapLeft(leftShadeCount);
-                System.out.println("\n**** Element II FractionID  " + fractionID + " refMat? " + isStandardReferenceMaterial + " <<<<<<<<<<<<<<<<<<\n");
+                System.out.println("\n**** Element II FractionID  " + fractionID + " refMat? " + isReferenceMaterial + " <<<<<<<<<<<<<<<<<<\n");
 
                 myTripoliFractions.add(tripoliFraction);
 

@@ -31,7 +31,6 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
-import org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan.TexasAMElementIISetupUPb;
 import org.earthtime.Tripoli.rawDataFiles.handlers.AbstractRawDataFileHandler;
 import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.pythonUtilities.ElementII_DatFileConverter;
@@ -42,7 +41,7 @@ import org.python.core.PyException;
  *
  * @author James F. Bowring
  */
-public class TexasAMElementIISingleCollFileHandler extends AbstractRawDataFileHandler{
+public class TexasAMElementIISingleCollFileHandler extends AbstractRawDataFileHandler {
 
     // Class variables
     // private static final long serialVersionUID = 3111511502335804607L;
@@ -95,13 +94,12 @@ public class TexasAMElementIISingleCollFileHandler extends AbstractRawDataFileHa
     @Override
     public void getAndLoadRawIntensityDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions) {
 
-        // ElementII has folder of .dat files        
-        analysisFiles = rawDataFile.listFiles((File dir, String name) //
-                -> (name.toLowerCase().endsWith(".dat"))//
-                && //
-                (!name.toLowerCase().endsWith("_b.dat")));
-
-        Arrays.sort(analysisFiles, new LaserchronElementIIFileHandler.FractionFileNameNameComparator());
+        // ElementII has folder of .dat files some of which end with _b_b.dat unfortunately        
+        analysisFiles = rawDataFile.listFiles((File f)
+                -> ((f.getName().toLowerCase().endsWith(".dat"))
+                && (!f.getName().toLowerCase().matches(".+_.+_b\\.dat"))));
+        
+        Arrays.sort(analysisFiles, new LaserchronElementIIFileHandler.FractionFileModifiedComparator());
 
         if (analysisFiles.length > 0) {
             String onPeakFileContents = URIHelper.getTextFromURI(new File(analysisFiles[0].getAbsolutePath().toUpperCase().replace(".DAT", ".TXT")).getAbsolutePath());
@@ -120,8 +118,6 @@ public class TexasAMElementIISingleCollFileHandler extends AbstractRawDataFileHa
 
             rawDataFile = null;
         }
-
-//        return rawDataFile;
     }
 
     /**
@@ -167,7 +163,10 @@ public class TexasAMElementIISingleCollFileHandler extends AbstractRawDataFileHa
 
         SortedSet myTripoliFractions = new TreeSet<>();
 
-        // assume we are golden        
+        // assume we are golden         
+        // take first entry in fractionFileNames that came from .FIN file and ?? confirm it is referenceMaterial (standard)
+        String referenceMaterialfractionIDPrefix = analysisFiles[0].getName().substring(0, 2);
+
         for (int f = 0; f < analysisFiles.length; f++) {
 
             if (loadDataTask.isCancelled()) {
@@ -183,7 +182,7 @@ public class TexasAMElementIISingleCollFileHandler extends AbstractRawDataFileHa
                     String fractionID = analysisFiles[f].getName().toUpperCase().replace(".DAT", "");
 
                     // needs to be more robust
-                    boolean isStandard = (fractionID.compareToIgnoreCase(rawDataFileTemplate.getStandardIDs()[0]) == 0);
+                    boolean isReferenceMaterial = (fractionID.substring(0, 2).compareToIgnoreCase(referenceMaterialfractionIDPrefix) == 0);
 
                     String[][] backgroundFileContents = ElementII_DatFileConverter.readDatFile5(backgroundFile, rawDataFileTemplate.getStringListOfElementsByIsotopicMass());
                     String[][] onPeakFileContents = ElementII_DatFileConverter.readDatFile5(analysisFiles[f], rawDataFileTemplate.getStringListOfElementsByIsotopicMass());
@@ -226,12 +225,12 @@ public class TexasAMElementIISingleCollFileHandler extends AbstractRawDataFileHa
                             = new TripoliFraction( //
                                     fractionID, //
                                     massSpec.getCommonLeadCorrectionHighestLevel(), //
-                                    isStandard,
+                                    isReferenceMaterial,
                                     fractionBackgroundTimeStamp, //
                                     fractionPeakTimeStamp,
                                     peakAcquisitions.size());
 
-                    SortedSet<DataModelInterface> rawRatios = ((TexasAMElementIISetupUPb) massSpec).rawRatiosFactoryRevised();
+                    SortedSet<DataModelInterface> rawRatios = massSpec.rawRatiosFactoryRevised();
                     tripoliFraction.setRawRatios(rawRatios);
 
                     massSpec.setCountOfAcquisitions(peakAcquisitions.size());

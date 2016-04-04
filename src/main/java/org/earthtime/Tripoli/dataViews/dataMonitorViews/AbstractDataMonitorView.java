@@ -30,7 +30,6 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.beans.PropertyChangeEvent;
@@ -237,11 +236,8 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
 
             progressBarFactory();
 
-            dataMonitorTimer = new Timer(5000, new ActionListener() {
-
-                public void actionPerformed(ActionEvent e) {
-                    monitorDataFile();
-                }
+            dataMonitorTimer = new Timer(5000, (ActionEvent e) -> {
+                monitorDataFile();
             });
 
             dataMonitorTimer.start();
@@ -327,8 +323,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
                 DataModelInterface dm = dataModelsIterator.next();
 
                 AbstractRawDataView rawDataModelView
-                        = //
-                        new SessionOfStandardView( //
+                        = new SessionOfStandardView( //
                                 this,//
                                 tripoliSession.getCurrentSessionForStandardsFractionation().get(dm.getRawRatioModelName()), //
                                 standardFractions,//
@@ -376,8 +371,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
                 this.add(yAxisPane, JLayeredPane.DEFAULT_LAYER);
 
                 AbstractRawDataView sessionFitFunctionsPresentationView
-                        = //
-                        new SessionFitFunctionsPresentationView( //
+                        = new SessionFitFunctionsPresentationView( //
                                 this,//
                                 tripoliSession.getCurrentSessionForStandardsFractionation().get(dm.getRawRatioModelName()), //
                                 (FitFunctionDataInterface) rawDataModelView,//

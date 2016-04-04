@@ -141,11 +141,12 @@ public abstract class AbstractRatiosDataView extends JLayeredPane implements Dat
 
         Font DataFont = ReduxConstants.sansSerif_11_Bold;
 
-        JLabel modelTypeLabel = new JLabel("Model Type:   " + dataModel.getClassNameAliasForXML());
-        modelTypeLabel.setHorizontalAlignment(SwingConstants.LEFT);
-        modelTypeLabel.setFont(DataFont);
-        modelTypeLabel.setBounds(5, 5, 250, 25);
-        this.add(modelTypeLabel);
+        // removed March 2016 because our public face needs to show "reference material" instead of "mineral standard"
+//        JLabel modelTypeLabel = new JLabel("Model Type:   " + dataModel.getClassNameAliasForXML());
+//        modelTypeLabel.setHorizontalAlignment(SwingConstants.LEFT);
+//        modelTypeLabel.setFont(DataFont);
+//        modelTypeLabel.setBounds(5, 5, 250, 25);
+//        this.add(modelTypeLabel);
 
         JLabel canEditLabel = new JLabel(dataModel.isImmutable() ? "not editable" : "editable");
         canEditLabel.setHorizontalAlignment(SwingConstants.RIGHT);

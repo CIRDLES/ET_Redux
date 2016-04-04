@@ -17,12 +17,16 @@
  */
 package org.earthtime.Tripoli.rawDataFiles.handlers.Thermo;
 
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
 import java.io.File;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -30,21 +34,23 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
-import org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan.UnivKansasElementIISetupUPb;
 import org.earthtime.Tripoli.rawDataFiles.handlers.AbstractRawDataFileHandler;
 import org.earthtime.archivingTools.URIHelper;
+import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.utilities.FileHelper;
 
 /**
  *
  * @author James F. Bowring
  */
-public class UnivKansasElementIIFileHandler extends AbstractRawDataFileHandler{
-    
+public class UnivKansasElementIIFileHandler extends AbstractRawDataFileHandler {
+
     // Class variables
     private static final long serialVersionUID = 1676980296251048119L;
     private static UnivKansasElementIIFileHandler instance = new UnivKansasElementIIFileHandler();
+    // instance variables
     private File[] analysisFiles;
+    private String[] fractionFileNames;
 
     /**
      *
@@ -100,6 +106,31 @@ public class UnivKansasElementIIFileHandler extends AbstractRawDataFileHandler{
             if (isValidRawDataFileType(analysisFiles[0]) //
                     && //
                     areKeyWordsPresent(onPeakFileContents)) {
+
+                // open and process ".FIN" file that has a fraction name for each file
+                File[] fileWithFractionFileNames = rawDataFile.listFiles((File dir, String name) -> {
+                    return name.toLowerCase().endsWith(".fin");
+                });
+
+                if (fileWithFractionFileNames.length == 0) {
+                    new ETWarningDialog("Missing '.FIN' file listing the files, so quitting load process.").setVisible(true);
+                    loadDataTask.cancel(true);
+                } else {
+                    // read the first (and assumedly only) scancsv file in the folder
+                    int ignoredLineCount = 11;
+                    List<String> fractionData = null;
+                    try {
+                        fractionData = Files.readLines(fileWithFractionFileNames[0], Charsets.ISO_8859_1);
+                        // skip data in rows 0 - 10
+                        fractionFileNames = new String[fractionData.size() - ignoredLineCount];
+                        for (int i = ignoredLineCount; i < fractionData.size(); i++) {
+                            String lineContents = fractionData.get(i);
+                            fractionFileNames[i - ignoredLineCount] = lineContents.trim();
+                        }
+                    } catch (IOException iOException) {
+                    }
+                }
+
                 // create fractions from raw data and perform corrections and calculate ratios
                 tripoliFractions = loadRawDataFile(loadDataTask, usingFullPropagation, leftShadeCount, 0);
             }
@@ -158,8 +189,11 @@ public class UnivKansasElementIIFileHandler extends AbstractRawDataFileHandler{
             SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions) {
 
         SortedSet myTripoliFractions = new TreeSet<>();
+ 
+        // assume we are golden   
+        // take first entry in fractionFileNames that came from .FIN file and ?? confirm it is referenceMaterial (standard)
+        String referenceMaterialfractionIDPrefix = fractionFileNames[0].toUpperCase().substring(0, 2);
 
-        // assume we are golden        
         for (int f = 0; f < analysisFiles.length; f++) {
 
             if (loadDataTask.isCancelled()) {
@@ -168,13 +202,8 @@ public class UnivKansasElementIIFileHandler extends AbstractRawDataFileHandler{
             loadDataTask.firePropertyChange("progress", 0, ((100 * f) / analysisFiles.length));
             String fractionID = analysisFiles[f].getName().toUpperCase().replace(".FIN2", "");
 
-            // hard-wired april 2015
-            boolean isStandard = fractionID.toUpperCase().startsWith("GJ1");
-//            if (f < 3) {
-//                isStandard = true;
-//            } else if ((analysisFiles.length - f) < 4) {
-//                isStandard = true;
-//            }
+            // needs to be more robust
+            boolean isReferenceMaterial = (fractionID.substring(0, 2).compareToIgnoreCase(referenceMaterialfractionIDPrefix) == 0);
 
             // get file contents
             String fractionFileContents = URIHelper.getTextFromURI(analysisFiles[f].getAbsolutePath());
@@ -184,8 +213,8 @@ public class UnivKansasElementIIFileHandler extends AbstractRawDataFileHandler{
             // form = Friday, February 06,2015 16:57:54
             String timeStampFromRow2[] = fractionFileRows[1].split(",");
 
-            String fractionDate = //
-                    timeStampFromRow2[1].trim() + " " // month day,
+            String fractionDate
+                    = timeStampFromRow2[1].trim() + " " // month day,
                     + timeStampFromRow2[2].trim() // year HH:mm:ss
                     ;
 
@@ -233,16 +262,17 @@ public class UnivKansasElementIIFileHandler extends AbstractRawDataFileHandler{
                     }
                 }  // i loop
 
-                TripoliFraction tripoliFraction = //                           
+                TripoliFraction tripoliFraction
+                        = //                           
                         new TripoliFraction( //
                                 fractionID, //
                                 massSpec.getCommonLeadCorrectionHighestLevel(), //
-                                isStandard,
+                                isReferenceMaterial,
                                 fractionBackgroundTimeStamp, //
                                 fractionPeakTimeStamp,
                                 peakAcquisitions.size());
 
-                SortedSet<DataModelInterface> rawRatios = ((UnivKansasElementIISetupUPb) massSpec).rawRatiosFactoryRevised();
+                SortedSet<DataModelInterface> rawRatios = massSpec.rawRatiosFactoryRevised();
                 tripoliFraction.setRawRatios(rawRatios);
 
                 massSpec.setCountOfAcquisitions(peakAcquisitions.size());

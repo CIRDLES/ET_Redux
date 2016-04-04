@@ -822,7 +822,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         toolBar_panel.add(save_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 3, 110, 20));
 
         outputSessionMeansAndStdErrsToFile_button.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
-        outputSessionMeansAndStdErrsToFile_button.setText("Output Session means and errors for standards");
+        outputSessionMeansAndStdErrsToFile_button.setText("Output Session means and errors for ref mats");
         outputSessionMeansAndStdErrsToFile_button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 outputSessionMeansAndStdErrsToFile_buttonActionPerformed(evt);
@@ -1058,7 +1058,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         downholeFitStandards_radioButton.setBackground(new java.awt.Color(173, 174, 204));
         viewChooser_buttonGroup.add(downholeFitStandards_radioButton);
         downholeFitStandards_radioButton.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
-        downholeFitStandards_radioButton.setText("Fit All Standards");
+        downholeFitStandards_radioButton.setText("Fit All Ref Materials");
         downholeFitStandards_radioButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         downholeFitStandards_radioButton.setBorderPainted(true);
         downholeFitStandards_radioButton.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -1074,7 +1074,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         downholeFitEachStandard_radioButton.setBackground(new java.awt.Color(173, 174, 204));
         viewChooser_buttonGroup.add(downholeFitEachStandard_radioButton);
         downholeFitEachStandard_radioButton.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
-        downholeFitEachStandard_radioButton.setText("Fit Each Standard");
+        downholeFitEachStandard_radioButton.setText("Fit Each Ref Material");
         downholeFitEachStandard_radioButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         downholeFitEachStandard_radioButton.setBorderPainted(true);
         downholeFitEachStandard_radioButton.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -1090,7 +1090,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         downholeStandardSession_radioButton.setBackground(new java.awt.Color(204, 204, 204));
         viewChooser_buttonGroup.add(downholeStandardSession_radioButton);
         downholeStandardSession_radioButton.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
-        downholeStandardSession_radioButton.setText("Fit Standard Session");
+        downholeStandardSession_radioButton.setText("Fit Session");
         downholeStandardSession_radioButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         downholeStandardSession_radioButton.setBorderPainted(true);
         downholeStandardSession_radioButton.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);

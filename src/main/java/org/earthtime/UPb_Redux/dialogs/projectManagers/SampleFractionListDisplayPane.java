@@ -54,7 +54,7 @@ import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataViews.AbstractRatiosDataView;
-import org.earthtime.ratioDataViews.MineralStandardUPbRatiosDataViewNotEditable;
+import org.earthtime.ratioDataViews.ReferenceMaterialUPbRatiosDataViewNotEditable;
 import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.utilities.DragAndDropListItemInterface;
 
@@ -127,15 +127,12 @@ public class SampleFractionListDisplayPane extends JLayeredPane {
 
             // view standard model
             JButton viewStandardModelButton = new ET_JButton("View");
-            viewStandardModelButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    AbstractRatiosDataModel selectedModel
-                            = ((AbstractRatiosDataModel) roleChooser.getSelectedItem());
-                    AbstractRatiosDataView modelView
-                            = new MineralStandardUPbRatiosDataViewNotEditable(selectedModel, null, false);
-                    modelView.displayModelInFrame();
-                }
+            viewStandardModelButton.addActionListener((ActionEvent e) -> {
+                AbstractRatiosDataModel selectedModel
+                        = ((AbstractRatiosDataModel) roleChooser.getSelectedItem());
+                AbstractRatiosDataView modelView
+                        = new ReferenceMaterialUPbRatiosDataViewNotEditable(selectedModel, null, false);
+                modelView.displayModelInFrame();
             });
             viewStandardModelButton.setFont(ReduxConstants.sansSerif_10_Bold);
             viewStandardModelButton.setBounds(193, 27, 30, 23);
@@ -147,10 +144,10 @@ public class SampleFractionListDisplayPane extends JLayeredPane {
             this.add(roleLabel, DEFAULT_LAYER);
 
             roleChooser = new JComboBox(
-                    new String[]{"Unknown", "Secondary STD"});
+                    new String[]{"Unknown", "Secondary RM"});
 
             if (tripoliSample.isSecondaryStandard()) {
-                roleChooser.setSelectedItem("Secondary STD");
+                roleChooser.setSelectedItem("Secondary RM");
             }
 
             roleChooser.addActionListener(new ChangeActionListener());

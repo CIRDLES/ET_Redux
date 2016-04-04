@@ -90,9 +90,9 @@ import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.aliquots.ReduxAliquotInterface;
 import org.earthtime.archivingTools.AnalysisImageInterface;
+import org.earthtime.archivingTools.GeoPassIDValidator;
 import org.earthtime.archivingTools.GeochronUploadImagesHelper;
 import org.earthtime.archivingTools.GeochronUploaderUtility;
-import org.earthtime.archivingTools.GeoPassIDValidator;
 import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.dataDictionaries.AnalysisImageTypes;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
@@ -1300,7 +1300,7 @@ public class AliquotEditorDialog extends DialogEditor {
 
         chooseMineral_label.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         chooseMineral_label.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
-        chooseMineral_label.setText("  Choose mineral for fraction:");
+        chooseMineral_label.setText("  Choose material for fraction:");
         archivingDetails_panel.add(chooseMineral_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(78, 133, -1, -1));
 
         chooseSettingType_label.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
@@ -1492,7 +1492,7 @@ public class AliquotEditorDialog extends DialogEditor {
         refsAndComment_panel.add(calibrationUnct206_238_text, new org.netbeans.lib.awtextra.AbsoluteConstraints(368, 153, 100, 20));
 
         mineralStandardsPanel.setBackground(new java.awt.Color(202, 251, 220));
-        mineralStandardsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Mineral Standards Chooser"));
+        mineralStandardsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Reference Materials Chooser"));
         mineralStandardsPanel.setOpaque(true);
 
         jLabel3.setForeground(new java.awt.Color(204, 0, 0));
@@ -1501,7 +1501,7 @@ public class AliquotEditorDialog extends DialogEditor {
         jLabel3.setBounds(60, 40, 260, 16);
 
         jLabel4.setForeground(new java.awt.Color(204, 0, 0));
-        jLabel4.setText("Select the mineral standards to include:");
+        jLabel4.setText("Select the Reference Materials to include:");
         mineralStandardsPanel.add(jLabel4);
         jLabel4.setBounds(20, 20, 310, 16);
 

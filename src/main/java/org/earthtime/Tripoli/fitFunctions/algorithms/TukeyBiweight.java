@@ -16,6 +16,7 @@
 package org.earthtime.Tripoli.fitFunctions.algorithms;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Arrays;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 
@@ -106,8 +107,10 @@ public final class TukeyBiweight {
             if (pos1 == pos2) {
                 median = myValues[pos1];
             } else {
-                median = (myValues[pos1] + myValues[pos2]) / 2.0;
+                median = new BigDecimal((myValues[pos1] + myValues[pos2]) / 2.0).setScale(1, RoundingMode.HALF_EVEN).doubleValue();
+                //median = Math.floor(myValues[pos1]) + (double) (((int)(Math.floor(myValues[pos2]) - (int)(Math.floor(myValues[pos1]))) % 2 == 0) ? 0.0 : 0.5);//(myValues[pos1] + myValues[pos2]) / 2.0;
             }
+            int a = 2 % 3;
         }
         return median;
     }

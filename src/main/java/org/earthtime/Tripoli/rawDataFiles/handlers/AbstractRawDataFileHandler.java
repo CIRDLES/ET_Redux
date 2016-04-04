@@ -217,15 +217,26 @@ public abstract class AbstractRawDataFileHandler implements //
         return retVal;
     }
 
-    public class FractionFileNameNameComparator implements Comparator<File> {
+    public class FractionFileNameComparator implements Comparator<File> {
 
-        public FractionFileNameNameComparator() {
+        public FractionFileNameComparator() {
         }
 
         @Override
         public int compare(File f1, File f2) {
             Comparator<String> intuitiveString = new IntuitiveStringComparator<>();
             return intuitiveString.compare(f1.getName(), f2.getName());
+        }
+    }
+
+    public class FractionFileModifiedComparator implements Comparator<File> {
+
+        public FractionFileModifiedComparator() {
+        }
+
+        @Override
+        public int compare(File f1, File f2) {
+            return Long.compare(f1.lastModified(), f2.lastModified());
         }
     }
 
@@ -410,7 +421,7 @@ public abstract class AbstractRawDataFileHandler implements //
                 // feb 2016 (see compare for sample interface) except that having your first frsctiona standard moves you to beginning of list
                 SortedSet<AbstractTripoliSample> tripoliSamplesSorted = new TreeSet<>();
                 Set<String> samplesMapKeySet = tripoliSamplesMap.keySet();
-                Iterator <String>samplesMapKeySetIterator = samplesMapKeySet.iterator();
+                Iterator<String> samplesMapKeySetIterator = samplesMapKeySet.iterator();
                 while (samplesMapKeySetIterator.hasNext()) {
                     tripoliSamplesSorted.add(tripoliSamplesMap.get(samplesMapKeySetIterator.next()));
                 }
@@ -493,7 +504,6 @@ public abstract class AbstractRawDataFileHandler implements //
 //////                for (int i = 0; i < tripoliSamples.size(); i++) {
 //////                    tripoliSamples.get(i).setFractionsSampleFlags();
 //////                }
-
             }
         }
         return tripoliSamples;

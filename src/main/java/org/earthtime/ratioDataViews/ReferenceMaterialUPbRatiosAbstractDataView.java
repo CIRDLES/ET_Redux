@@ -1,5 +1,5 @@
 /*
- * MineralStandardUPbRatiosAbstractDataView.java
+ * ReferenceMaterialUPbRatiosAbstractDataView.java
  *
  * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
  *
@@ -42,7 +42,7 @@ import org.earthtime.reduxLabData.ReduxLabData;
  *
  * @author James F. Bowring
  */
-public abstract class MineralStandardUPbRatiosAbstractDataView extends AbstractRatiosDataView {
+public abstract class ReferenceMaterialUPbRatiosAbstractDataView extends AbstractRatiosDataView {
 
     private final JComboBox<AbstractRatiosDataModel> initialPbModelChooser;
     private JButton showInitialPbModelButton;
@@ -50,8 +50,8 @@ public abstract class MineralStandardUPbRatiosAbstractDataView extends AbstractR
      *
      */
     protected JLabel apparentDatesLabel;
-    private final JComboBox<String> mineralStandardNameChooser;
-    private final JComboBox<String> mineralNameChooser;
+    private final JComboBox<String> ReferenceMaterialNameChooser;
+    private final JComboBox<String> materialNameChooser;
     private final JCheckBox hasInitialPbCheckBox;
     protected AbstractValueModelsPanelView concentrationsPPMValueModelsPanelView;
 
@@ -62,12 +62,12 @@ public abstract class MineralStandardUPbRatiosAbstractDataView extends AbstractR
      * @param dataModel
      * @param parentDimension the value of parentDimension
      */
-    public MineralStandardUPbRatiosAbstractDataView(AbstractRatiosDataModel ratiosDataModel, Dimension parentDimension) {
+    public ReferenceMaterialUPbRatiosAbstractDataView(AbstractRatiosDataModel ratiosDataModel, Dimension parentDimension) {
         super(ratiosDataModel, parentDimension);
 
         initialPbModelChooser = new JComboBox<>();
-        mineralStandardNameChooser = new JComboBox<>();
-        mineralNameChooser = new JComboBox<>();
+        ReferenceMaterialNameChooser = new JComboBox<>();
+        materialNameChooser = new JComboBox<>();
         hasInitialPbCheckBox = new JCheckBox("");
     }
 
@@ -77,7 +77,7 @@ public abstract class MineralStandardUPbRatiosAbstractDataView extends AbstractR
      */
     @Override
     protected void initView(boolean editable) {
-        // dec 2014 expand for additional tabs in mineral standards models
+        // dec 2014 expand for additional tabs in ReferenceMaterial models
         super.initView(editable);
 
         JLayeredPane apparentDatesPane = new JLayeredPane();
@@ -94,39 +94,39 @@ public abstract class MineralStandardUPbRatiosAbstractDataView extends AbstractR
 
         JLayeredPane specificationsPane = new JLayeredPane();
 
-        // set up MineralStandard chooser
-        JLabel mineralStandardLabel = new JLabel("Mineral Standard:");
+        // set up ReferenceMaterial chooser
+        JLabel mineralStandardLabel = new JLabel("Reference Material:");
         mineralStandardLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         mineralStandardLabel.setBounds(10, 10, 150, 25);
         specificationsPane.add(mineralStandardLabel, DEFAULT_LAYER);
 
-        mineralStandardNameChooser.setBounds(200, 10, 275, 25);
-        mineralStandardNameChooser.setFont(ReduxConstants.sansSerif_12_Bold);
-        mineralStandardNameChooser.removeAllItems();
+        ReferenceMaterialNameChooser.setBounds(200, 10, 275, 25);
+        ReferenceMaterialNameChooser.setFont(ReduxConstants.sansSerif_12_Bold);
+        ReferenceMaterialNameChooser.removeAllItems();
         for (int i = 0; i < DataDictionary.getMineralStandardNames().length; i++) {
-            mineralStandardNameChooser.addItem(DataDictionary.getMineralStandardNames()[i]);
+            ReferenceMaterialNameChooser.addItem(DataDictionary.getMineralStandardNames()[i]);
         }
-        mineralStandardNameChooser.setSelectedItem(((MineralStandardUPbModel) dataModel).getMineralStandardName());
-        mineralStandardNameChooser.setEnabled(editable);
-        setOpaqueWithLightGray(mineralStandardNameChooser);
-        specificationsPane.add(mineralStandardNameChooser, DEFAULT_LAYER);
+        ReferenceMaterialNameChooser.setSelectedItem(((MineralStandardUPbModel) dataModel).getMineralStandardName());
+        ReferenceMaterialNameChooser.setEnabled(editable);
+        setOpaqueWithLightGray(ReferenceMaterialNameChooser);
+        specificationsPane.add(ReferenceMaterialNameChooser, DEFAULT_LAYER);
 
-        // set up Mineral chooser
-        JLabel mineralLabel = new JLabel("Mineral:");
-        mineralLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-        mineralLabel.setBounds(10, 40, 150, 25);
-        specificationsPane.add(mineralLabel, DEFAULT_LAYER);
+        // set up Material chooser
+        JLabel materialLabel = new JLabel("Material:");
+        materialLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        materialLabel.setBounds(10, 40, 150, 25);
+        specificationsPane.add(materialLabel, DEFAULT_LAYER);
 
-        mineralNameChooser.setBounds(200, 40, 275, 25);
-        mineralNameChooser.setFont(ReduxConstants.sansSerif_12_Bold);
-        mineralNameChooser.removeAllItems();
+        materialNameChooser.setBounds(200, 40, 275, 25);
+        materialNameChooser.setFont(ReduxConstants.sansSerif_12_Bold);
+        materialNameChooser.removeAllItems();
         for (int i = 0; i < MineralTypes.getNames().length; i++) {
-            mineralNameChooser.addItem(MineralTypes.getNames()[i]);
+            materialNameChooser.addItem(MineralTypes.getNames()[i]);
         }
-        mineralNameChooser.setSelectedItem(((MineralStandardUPbModel) dataModel).getMineralName());
-        mineralNameChooser.setEnabled(editable);
-        setOpaqueWithLightGray(mineralNameChooser);
-        specificationsPane.add(mineralNameChooser, DEFAULT_LAYER);
+        materialNameChooser.setSelectedItem(((MineralStandardUPbModel) dataModel).getMineralName());
+        materialNameChooser.setEnabled(editable);
+        setOpaqueWithLightGray(materialNameChooser);
+        specificationsPane.add(materialNameChooser, DEFAULT_LAYER);
 
         // initial Pb
         JLabel hasInitialPbLabel = new JLabel("Has Initial Pb:");
@@ -210,9 +210,9 @@ public abstract class MineralStandardUPbRatiosAbstractDataView extends AbstractR
         super.saveEdits(checkCovarianceValidity);
 
         ((MineralStandardUPbModel) dataModel)//
-                .setMineralStandardName((String) mineralStandardNameChooser.getSelectedItem());
+                .setMineralStandardName((String) ReferenceMaterialNameChooser.getSelectedItem());
         ((MineralStandardUPbModel) dataModel)//
-                .setMineralName((String) mineralNameChooser.getSelectedItem());
+                .setMineralName((String) materialNameChooser.getSelectedItem());
 
         if (hasInitialPbCheckBox.isSelected()) {
             ((MineralStandardUPbModel) dataModel)//

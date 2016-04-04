@@ -15,6 +15,9 @@
  */
 package org.earthtime.dataDictionaries;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 /**
  * From Ken Ludwig's Squid VBA code. Poisson distribution limits for count 0
  * through 100
@@ -26,7 +29,7 @@ public final class PoissonLimitsCountLessThanEqual100 {
     /**
      * Contains added 0 at location 0 for case count = 0
      */
-    private static double[] lowerLimits
+    private static int[] lowerLimits
             = {0, 0, 0, 0, 1, 1, 2, 2, 3, 4, 4, 5, 6, 6, 7, 8, 9, 9, 10,
                 11, 12, 13, 13, 14, 15, 16, 17, 17, 18, 19, 20, 21, 21, 22, 23,
                 24, 25, 26, 26, 27, 28, 29, 30, 31, 31, 32, 33, 34, 35, 36, 37,
@@ -36,7 +39,7 @@ public final class PoissonLimitsCountLessThanEqual100 {
     /**
      * Contains added 6 at location 0 for case count = 0
      */
-    private static double[] upperLimits
+    private static int[] upperLimits
             = {6, 2, 4, 6, 7, 9, 10, 12, 13, 14, 16, 17, 18, 20, 21, 22, 23,
                 25, 26, 27, 28, 29, 31, 32, 33, 34, 35, 37, 38, 39, 40, 41, 43, 44,
                 45, 46, 47, 48, 50, 51, 52, 53, 54, 55, 56, 58, 59, 60, 61, 62, 63,
@@ -59,18 +62,21 @@ public final class PoissonLimitsCountLessThanEqual100 {
 
         // enforce precondition
         if ((median >= 0) && (median <= 100) && (measurements.length > 0)) {
-            double lowerLimit = lowerLimits[(int) median];
-            double upperLimit = upperLimits[(int) median];
+            // half even rounding was discovered as Squid's approach by Simon Bodorkis in March 2016
+            // TODO: Update this technique
+            int roundedMedian = new BigDecimal(median).setScale(0, RoundingMode.HALF_EVEN).intValueExact();
+            int lowerLimit = lowerLimits[roundedMedian];
+            int upperLimit = upperLimits[roundedMedian];
 
-            // find the single element most outside the limits
+            // find the single element outside the limits furthest from the median
             double maxResidual = 0;
 
             for (int i = 0; i < measurements.length; i++) {
                 double residual = 0.0;
                 if (measurements[i] < lowerLimit) {
-                    residual = lowerLimit - measurements[i];
+                    residual = median - measurements[i];
                 } else if (measurements[i] > upperLimit) {
-                    residual = measurements[i] - upperLimit;
+                    residual = measurements[i] - median;
                 }
                 if (residual > maxResidual) {
                     maxResidual = residual;
@@ -79,7 +85,7 @@ public final class PoissonLimitsCountLessThanEqual100 {
             }
         }
         
-        return maxResidualIndex;
+        return  maxResidualIndex;
     }
 
 }

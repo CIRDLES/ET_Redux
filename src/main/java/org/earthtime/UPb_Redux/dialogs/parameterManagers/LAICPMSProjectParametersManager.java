@@ -74,7 +74,7 @@ import org.earthtime.isotopes.IsotopesEnum;
 import org.earthtime.projects.ProjectInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataViews.AbstractRatiosDataView;
-import org.earthtime.ratioDataViews.MineralStandardUPbRatiosDataViewNotEditable;
+import org.earthtime.ratioDataViews.ReferenceMaterialUPbRatiosDataViewNotEditable;
 import org.earthtime.reduxLabData.ReduxLabData;
 
 /**
@@ -613,42 +613,42 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
         fullPropagationRB.setSelected(rawDataFileHandler.getAcquisitionModel().isUsingFullPropagation());
         this.add(fullPropagationRB);
 
-        // primary mineral standard chooser
-        JLabel defaultPrimaryStandardLabel = new JLabel("Select Primary Mineral Standard Model: ");
-        defaultPrimaryStandardLabel.setHorizontalAlignment(SwingConstants.LEFT);
-        defaultPrimaryStandardLabel.setFont(ReduxConstants.sansSerif_12_Bold);
-        defaultPrimaryStandardLabel.setBounds(500, 450, 400, 25);
-        this.add(defaultPrimaryStandardLabel);
+        // primary reference material chooser
+        JLabel defaultPrimaryReferenceMaterialLabel = new JLabel("Select Primary Reference Material Model: ");
+        defaultPrimaryReferenceMaterialLabel.setHorizontalAlignment(SwingConstants.LEFT);
+        defaultPrimaryReferenceMaterialLabel.setFont(ReduxConstants.sansSerif_12_Bold);
+        defaultPrimaryReferenceMaterialLabel.setBounds(500, 450, 400, 25);
+        this.add(defaultPrimaryReferenceMaterialLabel);
 
-        JComboBox mineralStandardsComboBox = new JComboBox();
+        JComboBox referenceMagerialsComboBox = new JComboBox();
         ArrayList<AbstractRatiosDataModel> mineralStandardModels = ReduxLabData.getInstance().getMineralStandardModels();
         for (int i = (mineralStandardModels.size() > 1 ? 1 : 0); i < mineralStandardModels.size(); i++) {
-            mineralStandardsComboBox.addItem(mineralStandardModels.get(i));
+            referenceMagerialsComboBox.addItem(mineralStandardModels.get(i));
         }
 
-        mineralStandardsComboBox.setSelectedItem(rawDataFileHandler.getAcquisitionModel().getPrimaryMineralStandardModel());
-        mineralStandardsComboBox.addActionListener((ActionEvent e) -> {
+        referenceMagerialsComboBox.setSelectedItem(rawDataFileHandler.getAcquisitionModel().getPrimaryMineralStandardModel());
+        referenceMagerialsComboBox.addActionListener((ActionEvent e) -> {
             rawDataFileHandler.getAcquisitionModel().setPrimaryMineralStandardModel((AbstractRatiosDataModel) ((JComboBox) e.getSource()).getSelectedItem());
         });
 
-        mineralStandardsComboBox.setBounds(500, 475, 275, 25);
-        mineralStandardsComboBox.setFont(ReduxConstants.sansSerif_10_Bold);
-        this.add(mineralStandardsComboBox);
+        referenceMagerialsComboBox.setBounds(500, 475, 275, 25);
+        referenceMagerialsComboBox.setFont(ReduxConstants.sansSerif_10_Bold);
+        this.add(referenceMagerialsComboBox);
 
-        // view standard model
-        JButton viewStandardModelButton = new ET_JButton("View");
-        viewStandardModelButton.addActionListener((ActionEvent e) -> {
+        // view reference material model
+        JButton viewReferenceMaterialModelButton = new ET_JButton("View");
+        viewReferenceMaterialModelButton.addActionListener((ActionEvent e) -> {
             AbstractRatiosDataModel selectedModel
-                    = //
-                    ((AbstractRatiosDataModel) mineralStandardsComboBox.getSelectedItem());
+                    = 
+                    ((AbstractRatiosDataModel) referenceMagerialsComboBox.getSelectedItem());
             AbstractRatiosDataView modelView
-                    = //
-                    new MineralStandardUPbRatiosDataViewNotEditable(selectedModel, null, false);
+                    = 
+                    new ReferenceMaterialUPbRatiosDataViewNotEditable(selectedModel, null, false);
             modelView.displayModelInFrame();
         });
-        viewStandardModelButton.setFont(ReduxConstants.sansSerif_10_Bold);
-        viewStandardModelButton.setBounds(775, 475, 30, 23);
-        this.add(viewStandardModelButton);
+        viewReferenceMaterialModelButton.setFont(ReduxConstants.sansSerif_10_Bold);
+        viewReferenceMaterialModelButton.setBounds(775, 475, 30, 23);
+        this.add(viewReferenceMaterialModelButton);
 
         // toolbar
         ET_JButton monitorButton = new ET_JButton("Save and Monitor/Process Raw Data");

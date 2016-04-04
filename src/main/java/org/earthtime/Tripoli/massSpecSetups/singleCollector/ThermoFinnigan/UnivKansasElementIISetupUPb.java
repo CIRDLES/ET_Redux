@@ -135,20 +135,11 @@ public final class UnivKansasElementIISetupUPb extends AbstractMassSpecSetup{
         return rawRatiosFactoryRevised();
     }
 
-    /**
-     * yRevised(); }
-     *
-     * /**
-     *
-     *
-     * @param intensitiesScan
-     * @param isStandard the value of isStandard
-     * @param fractionID the value of fractionID
-     * @param usingFullPropagation the value of usingFullPropagation
-     * @param tripoliFraction the value of tripoliFraction
-     * @return the
-     * java.util.SortedSet<org.earthtime.Tripoli.dataModels.DataModelInterface>
-     */
+/**
+ * 
+ * @return 
+ */
+    @Override
     public SortedSet<DataModelInterface> rawRatiosFactoryRevised() {
 
         virtualCollectors = new ArrayList<>(VIRTUAL_COLLECTOR_COUNT);

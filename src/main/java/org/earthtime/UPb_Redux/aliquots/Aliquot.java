@@ -293,6 +293,7 @@ public abstract class Aliquot implements AliquotInterface, AliquotForUPbInterfac
      *
      * @return
      */
+    @Override
     public AbstractRatiosDataModel getPhysicalConstantsModel() {
         return physicalConstantsModel;
     }
@@ -301,6 +302,7 @@ public abstract class Aliquot implements AliquotInterface, AliquotForUPbInterfac
      *
      * @param physicalConstants
      */
+    @Override
     public void setPhysicalConstantsModel(AbstractRatiosDataModel physicalConstants) {
         this.physicalConstantsModel = physicalConstants;
     }
@@ -309,6 +311,7 @@ public abstract class Aliquot implements AliquotInterface, AliquotForUPbInterfac
      *
      * @return
      */
+    @Override
     public Vector<AbstractRatiosDataModel> getPbBlanks() {
         return pbBlanks;
     }
@@ -319,12 +322,10 @@ public abstract class Aliquot implements AliquotInterface, AliquotForUPbInterfac
      */
     public Vector<AbstractRatiosDataModel> getPbBlanksForXMLSerialization() {
         // remove placeholder <none>
-        Vector<AbstractRatiosDataModel> temp = new Vector<AbstractRatiosDataModel>();
-        for (AbstractRatiosDataModel p : pbBlanks) {
-            if (!(p.equals(PbBlankICModel.getNoneInstance()))) {
-                temp.add(p);
-            }
-        }
+        Vector<AbstractRatiosDataModel> temp = new Vector<>();
+        pbBlanks.stream().filter((p) -> (!(p.equals(PbBlankICModel.getNoneInstance())))).forEach((p) -> {
+            temp.add(p);
+        });
         return temp;
     }
 
@@ -332,6 +333,7 @@ public abstract class Aliquot implements AliquotInterface, AliquotForUPbInterfac
      *
      * @param pbBlanks
      */
+    @Override
     public void setPbBlanks(Vector<AbstractRatiosDataModel> pbBlanks) {
         this.pbBlanks = pbBlanks;
     }
@@ -340,6 +342,7 @@ public abstract class Aliquot implements AliquotInterface, AliquotForUPbInterfac
      *
      * @return
      */
+    @Override
     public Vector<AbstractRatiosDataModel> getTracers() {
         return tracers;
     }
@@ -350,12 +353,10 @@ public abstract class Aliquot implements AliquotInterface, AliquotForUPbInterfac
      */
     public Vector<AbstractRatiosDataModel> getTracersForXMLSerialization() {
         // remove placeholder <none>
-        Vector<AbstractRatiosDataModel> temp = new Vector<AbstractRatiosDataModel>();
-        for (AbstractRatiosDataModel t : tracers) {
-            if (!(t.equals(TracerUPbModel.getNoneInstance()))) {
-                temp.add(t);
-            }
-        }
+        Vector<AbstractRatiosDataModel> temp = new Vector<>();
+        tracers.stream().filter((t) -> (!(t.equals(TracerUPbModel.getNoneInstance())))).forEach((t) -> {
+            temp.add(t);
+        });
         return temp;
     }
 
@@ -498,6 +499,7 @@ public abstract class Aliquot implements AliquotInterface, AliquotForUPbInterfac
      *
      * @return
      */
+    @Override
     public BigDecimal getCalibrationUnct206_238() {
         return calibrationUnct206_238;
     }
@@ -506,6 +508,7 @@ public abstract class Aliquot implements AliquotInterface, AliquotForUPbInterfac
      *
      * @param calibrationUnct206_238
      */
+    @Override
     public void setCalibrationUnct206_238(BigDecimal calibrationUnct206_238) {
         this.calibrationUnct206_238 = calibrationUnct206_238;
     }
@@ -514,6 +517,7 @@ public abstract class Aliquot implements AliquotInterface, AliquotForUPbInterfac
      *
      * @return
      */
+    @Override
     public BigDecimal getCalibrationUnct208_232() {
         return calibrationUnct208_232;
     }
@@ -522,6 +526,7 @@ public abstract class Aliquot implements AliquotInterface, AliquotForUPbInterfac
      *
      * @param calibrationUnct208_232
      */
+    @Override
     public void setCalibrationUnct208_232(BigDecimal calibrationUnct208_232) {
         this.calibrationUnct208_232 = calibrationUnct208_232;
     }
@@ -530,6 +535,7 @@ public abstract class Aliquot implements AliquotInterface, AliquotForUPbInterfac
      *
      * @return
      */
+    @Override
     public BigDecimal getCalibrationUnct207_206() {
         return calibrationUnct207_206;
     }
@@ -538,6 +544,7 @@ public abstract class Aliquot implements AliquotInterface, AliquotForUPbInterfac
      *
      * @param calibrationUnct207_206
      */
+    @Override
     public void setCalibrationUnct207_206(BigDecimal calibrationUnct207_206) {
         this.calibrationUnct207_206 = calibrationUnct207_206;
     }
@@ -545,6 +552,7 @@ public abstract class Aliquot implements AliquotInterface, AliquotForUPbInterfac
     /**
      * @return the analysisPurpose
      */
+    @Override
     public ANALYSIS_PURPOSE getAnalysisPurpose() {
         if (analysisPurpose == null) {
             analysisPurpose = ANALYSIS_PURPOSE.NONE;
@@ -555,6 +563,7 @@ public abstract class Aliquot implements AliquotInterface, AliquotForUPbInterfac
     /**
      * @param analysisPurpose the analysisPurpose to set
      */
+    @Override
     public void setAnalysisPurpose(ANALYSIS_PURPOSE analysisPurpose) {
         this.analysisPurpose = analysisPurpose;
     }
@@ -562,6 +571,7 @@ public abstract class Aliquot implements AliquotInterface, AliquotForUPbInterfac
     /**
      * @return the keyWordsCSV
      */
+    @Override
     public String getKeyWordsCSV() {
         if (keyWordsCSV == null) {
             keyWordsCSV = "";
@@ -572,6 +582,7 @@ public abstract class Aliquot implements AliquotInterface, AliquotForUPbInterfac
     /**
      * @param keyWordsCSV the keyWordsCSV to set
      */
+    @Override
     public void setKeyWordsCSV(String keyWordsCSV) {
         this.keyWordsCSV = keyWordsCSV.trim();
     }
@@ -579,6 +590,7 @@ public abstract class Aliquot implements AliquotInterface, AliquotForUPbInterfac
     /**
      * @return the bestAgeDivider206_238
      */
+    @Override
     public BigDecimal getBestAgeDivider206_238() {
         return bestAgeDivider206_238;
     }
@@ -586,6 +598,7 @@ public abstract class Aliquot implements AliquotInterface, AliquotForUPbInterfac
     /**
      * @param bestAgeDivider206_238 the bestAgeDivider206_238 to set
      */
+    @Override
     public void setBestAgeDivider206_238(BigDecimal bestAgeDivider206_238) {
         this.bestAgeDivider206_238 = bestAgeDivider206_238;
     }

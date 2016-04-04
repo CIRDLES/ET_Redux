@@ -267,7 +267,7 @@ public class UPbReduxAliquotXMLConverter implements Converter {
         }
 
         if ( "mineralStandardModels".equals( reader.getNodeName() ) ) {
-            Vector<AbstractRatiosDataModel> mineralStandardModels = new Vector<AbstractRatiosDataModel>();
+            Vector<AbstractRatiosDataModel> mineralStandardModels = new Vector<>();
             while (reader.hasMoreChildren()) {
                 reader.moveDown();
 
@@ -297,7 +297,7 @@ public class UPbReduxAliquotXMLConverter implements Converter {
 
         reader.moveDown();
         if ( "sampleDateModels".equals( reader.getNodeName() ) ) {
-            Vector<ValueModel> sampleDates = new Vector<ValueModel>();
+            Vector<ValueModel> sampleDates = new Vector<>();
             while (reader.hasMoreChildren()) {
                 reader.moveDown();
                 SampleDateModel item = null;

@@ -1323,6 +1323,13 @@ public class ValueModel implements
 
     public double varianceOfLogRatio() {
         // eventually check if this valuemodel is type log or RR2
-        return getOneSigmaAbs().divide(value, ReduxConstants.mathContext15).pow(2).doubleValue();
+        double variance = 0.0;
+       
+        try {
+            variance = getOneSigmaAbs().divide(value, ReduxConstants.mathContext15).pow(2).doubleValue();
+        } catch (Exception e) {
+        }
+        
+        return variance;
     }
 }
