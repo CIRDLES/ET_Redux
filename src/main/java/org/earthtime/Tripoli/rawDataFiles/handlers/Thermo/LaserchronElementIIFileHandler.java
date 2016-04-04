@@ -53,7 +53,6 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
     // Instance variables
     private File[] analysisFiles;
     private String[] fractionNames;
-    
 
     /**
      *
@@ -103,12 +102,13 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
     @Override
     public void getAndLoadRawIntensityDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions) {
 
-        // ElementII has folder of .dat files 
+        // Laserchron ElementII has folder of .dat files 
         analysisFiles = rawDataFile.listFiles((File dir, String name) -> {
             return name.toLowerCase().endsWith(".dat");
         });
 
-        Arrays.sort(analysisFiles, new FractionFileNameNameComparator());
+        // Laserchron produces file with numerical ordering tags
+        Arrays.sort(analysisFiles, new FractionFileNameComparator());
 
         if (analysisFiles.length > 0) {
             String onPeakFileContents = URIHelper.getTextFromURI(analysisFiles[0].getAbsolutePath()).substring(0, 32);
@@ -217,9 +217,9 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
             }
 
             // needs to be more robust
-            boolean isStandardReferenceMaterial = (fractionID.substring(0, 2).compareToIgnoreCase(referenceMaterialfractionID.substring(0, 2)) == 0);
+            boolean isReferenceMaterial = (fractionID.substring(0, 2).compareToIgnoreCase(referenceMaterialfractionID.substring(0, 2)) == 0);
             // number the reference materials
-            if (isStandardReferenceMaterial) {
+            if (isReferenceMaterial) {
                 fractionID = fractionID + "-" + String.valueOf(referenceMaterialIncrementer);
                 referenceMaterialIncrementer++;
             }
@@ -261,7 +261,7 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
                         = new TripoliFraction( //
                                 fractionID, //
                                 massSpec.getCommonLeadCorrectionHighestLevel(), //
-                                isStandardReferenceMaterial,
+                                isReferenceMaterial,
                                 fractionBackgroundTimeStamp, //
                                 fractionPeakTimeStamp,
                                 peakAcquisitions.size());
@@ -276,7 +276,7 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
                         backgroundAcquisitions, peakAcquisitions, usingFullPropagation, tripoliFraction);
 
                 tripoliFraction.shadeDataActiveMapLeft(leftShadeCount);
-                System.out.println("\n**** Element II FractionID  " + fractionID + " refMat? " + isStandardReferenceMaterial + " <<<<<<<<<<<<<<<<<<\n");
+                System.out.println("\n**** Element II FractionID  " + fractionID + " refMat? " + isReferenceMaterial + " <<<<<<<<<<<<<<<<<<\n");
 
                 myTripoliFractions.add(tripoliFraction);
 

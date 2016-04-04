@@ -129,6 +129,7 @@ public final class GeochronProjectExportManager extends DialogEditor {
         int topMarginForSampleDetails = 10;
 
         int row = 0;
+        int initialSampleHeight = 75;
         for (SampleInterface sample : project.getProjectSamples()) {
             JPanel geochronAliquotManager
                     = new GeochronAliquotManager(
@@ -138,7 +139,7 @@ public final class GeochronProjectExportManager extends DialogEditor {
                             myState.getReduxPreferences().getGeochronPassWord(), //
                             geoSamplesUserCode, //
                             leftMargin, //
-                            topMarginForSampleDetails + row * 100, 1100, 100);
+                            topMarginForSampleDetails + row * initialSampleHeight, 1100, initialSampleHeight);
             aliquotsLayeredPane.add(geochronAliquotManager, JLayeredPane.DEFAULT_LAYER);
             geochronAliquotManager.repaint();
 

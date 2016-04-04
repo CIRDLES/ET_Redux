@@ -48,8 +48,15 @@ public final class MoellerUnivKansasElementII_RawDataTemplate extends AbstractRa
         this.startOfEachBlockFirstLine = "Time";
         this.blockStartOffset = 8;
         this.blockSize = 165;//222;
+        // per Noah email 26 March 2016: For each analysis, the sample name will precede the first hyphen in the filename. 
+        // Any one of these could be used as a primary or secondary reference material or any given session. 
+        //
+        //GJ1 or GJ - GJ1 zircon
+        //MT - Mud Tank zircon
+        //PL - Plesovice zircon
+        //FCT - Fish Canyon Tuff zircon
         this.standardIDs = new String[]//
-        {"GJ1"};
+        {"GJ", "GJ1", "MT", "PL", "FCT"};
         this.timeZone = TimeZone.getTimeZone("GMT");
         this.defaultParsingOfFractionsBehavior = 1;
         this.massSpecSetup = UnivKansasElementIISetupUPb.getInstance();

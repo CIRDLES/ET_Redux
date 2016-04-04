@@ -50,9 +50,6 @@ public class PrawnRunFractionParser {
         // insert column 0 for scanNum number, then 3 columns per mass = total counts, 1 sig, total counts SBM
         double[][] scannedData = new double[scanCount][speciesMeasurementsPerScan * 3 + 1];
 
-        if (runFraction.getPar().get(0).getValue().compareToIgnoreCase("T.1.1.1") == 0) {
-            System.out.println("PAUSE");
-        }
         for (int scanNum = 0; scanNum < scanCount; scanNum++) {
             scannedData[scanNum][0] = scanNum + 1; // 1-based in xml
             // there is one measurement per mass per scanNum
@@ -197,7 +194,7 @@ public class PrawnRunFractionParser {
         for (int scanNum = 0; scanNum < correctedData.length; scanNum++) {
             for (int speciesMeasurementIndex = 0; speciesMeasurementIndex < speciesMeasurementsPerScan; speciesMeasurementIndex++) {
                 if (speciesMeasurementIndex != backgroundIndex) {
-                    // correct PeakCps 
+                    // correct PeakCps to NetPkCps inside correctedData (note translation of matrix)
                     correctedData[scanNum][speciesMeasurementIndex * 3 + 1] -= backgroundCps;
                     sumOfCorrectedPeaks[speciesMeasurementIndex] += correctedData[scanNum][speciesMeasurementIndex * 3 + 1];
                     // calculate fractional error
@@ -205,6 +202,7 @@ public class PrawnRunFractionParser {
                     if (absNetPeakCps > 1.0e-6) {
                         double calcVariance
                                 = absNetPeakCps + (Math.abs(backgroundCps) * Math.pow(countTimeSec[speciesMeasurementIndex] / countTimeSec[backgroundIndex], 2));
+                        // save std err in next column
                         correctedData[scanNum][speciesMeasurementIndex * 3 + 2]
                                 = Math.sqrt(calcVariance) / absNetPeakCps / countTimeSec[speciesMeasurementIndex];
 
@@ -214,6 +212,7 @@ public class PrawnRunFractionParser {
                 }
             }
         }
+        
         double[] totalCps = new double[speciesMeasurementsPerScan];
         for (int speciesMeasurementIndex = 0; speciesMeasurementIndex < speciesMeasurementsPerScan; speciesMeasurementIndex++) {
             // calculate total cps
@@ -222,7 +221,6 @@ public class PrawnRunFractionParser {
         }
 
         return totalCps;
-
     }
 
     /**
