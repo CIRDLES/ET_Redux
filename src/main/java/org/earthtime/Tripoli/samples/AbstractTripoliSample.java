@@ -83,17 +83,27 @@ public abstract class AbstractTripoliSample implements //
      */
     @Override
     public int compareTo(AbstractTripoliSample ts) {
-        long myTsTimeStamp;
-        long tsTimeStamp;
+        long tsTimeStamp = 0l;
+        long myTsTimeStamp = 0l;
+
+        int returnValue = 0;
         try {
             tsTimeStamp = ts.getSampleFractions().first().getPeakTimeStamp();
             myTsTimeStamp = this.getSampleFractions().first().getPeakTimeStamp();
         } catch (Exception e) {
-            return -1;
+            returnValue = -1;
         }
 
-        // force reference material to beginning of list
-        return (ts.getSampleFractions().first().isStandard() || (this.getSampleFractions().first().isStandard())) ? -1 : ((Long) myTsTimeStamp).compareTo((Long) tsTimeStamp);
+        // force reference material (standard) to beginning of list
+        if (ts.getSampleFractions().first().isStandard()) {
+            returnValue = 1;
+        } else if (this.getSampleFractions().first().isStandard()) {
+            returnValue = -1;
+        } else {
+            returnValue = ((Long) myTsTimeStamp).compareTo((Long) tsTimeStamp);
+        }
+
+        return returnValue;
     }
 
     /**
