@@ -112,7 +112,6 @@ import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.UPb_Redux.utilities.CustomIcon;
 import org.earthtime.UPb_Redux.utilities.ETSerializer;
 import org.earthtime.UPb_Redux.utilities.MacOSAboutHandler;
-import org.earthtime.UTh_Redux.dateInterpretation.TopsoilEvolutionPlot;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
 import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.aliquots.ReduxAliquotInterface;
@@ -3386,10 +3385,10 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
     private void interpretSampleDates_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_interpretSampleDates_buttonActionPerformed
         // Dec 2015 experiment with customization of skins
         if (theSample.getIsotopeStyle().compareToIgnoreCase("UTh") == 0) {
-            TopsoilEvolutionPlot topsoilEvolutionChart = TopsoilEvolutionPlot.getInstance();
-            topsoilEvolutionChart.setSelectedFractions(theSample.getFractions());
-            topsoilEvolutionChart.preparePanel();
-            topsoilEvolutionChart.showPanel();
+//            TopsoilEvolutionPlot topsoilEvolutionChart = TopsoilEvolutionPlot.getInstance();
+//            topsoilEvolutionChart.setSelectedFractions(theSample.getFractions());
+//            topsoilEvolutionChart.preparePanel();
+//            topsoilEvolutionChart.showPanel();
         } else {
 
             manageSampleDateInterpretation(//

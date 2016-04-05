@@ -99,7 +99,7 @@ public class TexasAMElementIISingleCollFileHandler extends AbstractRawDataFileHa
                 -> ((f.getName().toLowerCase().endsWith(".dat"))
                 && (!f.getName().toLowerCase().matches(".+_.+_b\\.dat"))));
         
-        Arrays.sort(analysisFiles, new LaserchronElementIIFileHandler.FractionFileModifiedComparator());
+        Arrays.sort(analysisFiles, new FractionFileModifiedComparator());
 
         if (analysisFiles.length > 0) {
             String onPeakFileContents = URIHelper.getTextFromURI(new File(analysisFiles[0].getAbsolutePath().toUpperCase().replace(".DAT", ".TXT")).getAbsolutePath());

@@ -15,25 +15,7 @@
  */
 package org.earthtime.UTh_Redux.dateInterpretation;
 
-import java.awt.Container;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Vector;
-import javax.swing.JComponent;
-import javax.swing.WindowConstants;
-import org.cirdles.topsoil.dataset.Dataset;
-import org.cirdles.topsoil.dataset.RawData;
-import org.cirdles.topsoil.dataset.SimpleDataset;
-import org.cirdles.topsoil.dataset.entry.Entry;
-import org.cirdles.topsoil.dataset.entry.SimpleEntry;
-import org.cirdles.topsoil.dataset.field.Field;
-import org.cirdles.topsoil.dataset.field.NumberField;
-import org.cirdles.topsoil.plot.Plot;
-import org.cirdles.topsoil.plot.PlotContext;
-import org.cirdles.topsoil.plot.SimplePlotContext;
-import org.cirdles.topsoil.plot.standard.EvolutionPlot;
-import org.earthtime.UTh_Redux.fractions.UThLegacyFractionI;
-import org.earthtime.dataDictionaries.UThAnalysisMeasures;
 import org.earthtime.fractions.ETFractionInterface;
 
 /**
@@ -44,33 +26,33 @@ public final class TopsoilEvolutionPlot {
 
     private static final TopsoilEvolutionPlot instance = new TopsoilEvolutionPlot();
     private Vector<ETFractionInterface> selectedFractions;
-    private final Plot myChart;
-    private final List<Field<?>> myFields;
-    private JComponent plotAsComponent;
-    private final EvolutionChartDialog topsoilEvolutionChartDialog;
-    private Container contentPane;
+//    private final Plot myChart;
+//    private final List<Field<?>> myFields;
+//    private JComponent plotAsComponent;
+//    private final EvolutionChartDialog topsoilEvolutionChartDialog;
+//    private Container contentPane;
 
     private TopsoilEvolutionPlot() {
-        myChart = new EvolutionPlot();
-
-        myFields = new ArrayList<>();
-        myFields.add(new NumberField(UThAnalysisMeasures.ar230Th_238Ufc.getName()));
-        myFields.add(new NumberField(UThAnalysisMeasures.ar230Th_238Ufc.getName() + "-2sigma"));
-        myFields.add(new NumberField(UThAnalysisMeasures.ar234U_238Ufc.getName()));
-        myFields.add(new NumberField(UThAnalysisMeasures.ar234U_238Ufc.getName() + "-2sigma"));
-        myFields.add(new NumberField("rho"));
-
-        topsoilEvolutionChartDialog = new EvolutionChartDialog(null, true);
-        topsoilEvolutionChartDialog.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-        topsoilEvolutionChartDialog.setBounds( //
-                400,
-                100,
-                820,
-                640);
-
-        contentPane = topsoilEvolutionChartDialog.getContentPane();
-        plotAsComponent = myChart.displayAsJComponent();
-        contentPane.add(plotAsComponent);
+//        myChart = new EvolutionPlot();
+//
+//        myFields = new ArrayList<>();
+//        myFields.add(new NumberField(UThAnalysisMeasures.ar230Th_238Ufc.getName()));
+//        myFields.add(new NumberField(UThAnalysisMeasures.ar230Th_238Ufc.getName() + "-2sigma"));
+//        myFields.add(new NumberField(UThAnalysisMeasures.ar234U_238Ufc.getName()));
+//        myFields.add(new NumberField(UThAnalysisMeasures.ar234U_238Ufc.getName() + "-2sigma"));
+//        myFields.add(new NumberField("rho"));
+//
+//        topsoilEvolutionChartDialog = new EvolutionChartDialog(null, true);
+//        topsoilEvolutionChartDialog.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+//        topsoilEvolutionChartDialog.setBounds( //
+//                400,
+//                100,
+//                820,
+//                640);
+//
+//        contentPane = topsoilEvolutionChartDialog.getContentPane();
+//        plotAsComponent = myChart.displayAsJComponent();
+//        contentPane.add(plotAsComponent);
     }
 
     private class EvolutionChartDialog extends javax.swing.JFrame {
@@ -84,47 +66,47 @@ public final class TopsoilEvolutionPlot {
         return instance;
     }
 
-    public void showPanel() {
-        plotAsComponent.repaint();
-        topsoilEvolutionChartDialog.setVisible(true);
-    }
+//    public void showPanel() {
+//        plotAsComponent.repaint();
+//        topsoilEvolutionChartDialog.setVisible(true);
+//    }
 
     public void preparePanel() {
-
-        List<Entry> myEntries = new ArrayList<>();
-
-        for (int i = 0; i < selectedFractions.size(); i++) {
-            if (!selectedFractions.get(i).isRejected()) {
-                UThLegacyFractionI fraction = (UThLegacyFractionI) selectedFractions.get(i);
-                Entry dataEntry = new SimpleEntry();
-                dataEntry.set((Field<? super Double>) myFields.get(0), //
-                        fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.ar230Th_238Ufc.getName())//
-                        .getValue().doubleValue());
-                dataEntry.set((Field<? super Double>) myFields.get(1), //
-                        fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.ar230Th_238Ufc.getName())//
-                        .getOneSigmaAbs().doubleValue() * 2.0);
-                dataEntry.set((Field<? super Double>) myFields.get(2), //
-                        fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.ar234U_238Ufc.getName())//
-                        .getValue().doubleValue());
-                dataEntry.set((Field<? super Double>) myFields.get(3), //
-                        fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.ar234U_238Ufc.getName())//
-                        .getOneSigmaAbs().doubleValue() * 2.0);
-                dataEntry.set((Field<? super Double>) myFields.get(4), 0.0);
-                myEntries.add(dataEntry);
-            }
-        }
-        RawData rawData = new RawData(myFields, myEntries);
-
-        Dataset dataset = new SimpleDataset(
-                "U-series dataset",
-                rawData);
-
-        PlotContext vc = new SimplePlotContext(dataset);
-        for (int i = 0; i < myChart.getVariables().size(); i++) {
-            vc.addBinding(myChart.getVariables().get(i), myFields.get(i));
-        }
-
-        myChart.setContext(vc);
+//
+//        List<Entry> myEntries = new ArrayList<>();
+//
+//        for (int i = 0; i < selectedFractions.size(); i++) {
+//            if (!selectedFractions.get(i).isRejected()) {
+//                UThLegacyFractionI fraction = (UThLegacyFractionI) selectedFractions.get(i);
+//                Entry dataEntry = new SimpleEntry();
+//                dataEntry.set((Field<? super Double>) myFields.get(0), //
+//                        fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.ar230Th_238Ufc.getName())//
+//                        .getValue().doubleValue());
+//                dataEntry.set((Field<? super Double>) myFields.get(1), //
+//                        fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.ar230Th_238Ufc.getName())//
+//                        .getOneSigmaAbs().doubleValue() * 2.0);
+//                dataEntry.set((Field<? super Double>) myFields.get(2), //
+//                        fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.ar234U_238Ufc.getName())//
+//                        .getValue().doubleValue());
+//                dataEntry.set((Field<? super Double>) myFields.get(3), //
+//                        fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.ar234U_238Ufc.getName())//
+//                        .getOneSigmaAbs().doubleValue() * 2.0);
+//                dataEntry.set((Field<? super Double>) myFields.get(4), 0.0);
+//                myEntries.add(dataEntry);
+//            }
+//        }
+//        RawData rawData = new RawData(myFields, myEntries);
+//
+//        Dataset dataset = new SimpleDataset(
+//                "U-series dataset",
+//                rawData);
+//
+//        PlotContext vc = new SimplePlotContext(dataset);
+//        for (int i = 0; i < myChart.getVariables().size(); i++) {
+//            vc.addBinding(myChart.getVariables().get(i), myFields.get(i));
+//        }
+//
+//        myChart.setContext(vc);
 
     }
 

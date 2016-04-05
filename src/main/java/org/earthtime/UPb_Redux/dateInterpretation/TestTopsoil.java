@@ -17,25 +17,25 @@ package org.earthtime.UPb_Redux.dateInterpretation;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.swing.*;
-import org.cirdles.topsoil.dataset.Dataset;
-import org.cirdles.topsoil.dataset.RawData;
-import org.cirdles.topsoil.dataset.SimpleDataset;
-import org.cirdles.topsoil.dataset.entry.Entry;
-import org.cirdles.topsoil.dataset.entry.SimpleEntry;
-import org.cirdles.topsoil.dataset.field.Field;
-import org.cirdles.topsoil.dataset.field.NumberField;
 import org.cirdles.topsoil.plot.Plot;
-import org.cirdles.topsoil.plot.PlotContext;
-import org.cirdles.topsoil.plot.SimplePlotContext;
-import org.cirdles.topsoil.plot.standard.UncertaintyEllipsePlot;
+import org.cirdles.topsoil.plot.upb.uncertainty.UncertaintyEllipsePlot;
 
 /**
  *
  * @author bowring
  */
 public class TestTopsoil {
+
+
+    private static final String X = "x";
+    private static final String SIGMA_X = "sigma_x";
+    private static final String Y = "y";
+    private static final String SIGMA_Y = "sigma_y";
+    private static final String RHO = "rho";
 
     // x, y, sigma x, sigma y, rho
     private static final double[][] DATA = new double[][]{
@@ -63,39 +63,39 @@ public class TestTopsoil {
         } catch (Exception e) {
         }
 
-        List<Field<?>> myFields = new ArrayList<>();
-        myFields.add(new NumberField("Ratio1"));
-        myFields.add(new NumberField("Ratio1Unct"));
-        myFields.add(new NumberField("Ratio2"));
-        myFields.add(new NumberField("Ratio2Unct"));
-        myFields.add(new NumberField("rho"));
+//        List<Map<String, Object>> myData = Arrays.asList(DATA).stream()
+//                .map(dataVector -> {
+//                    Map<String, Object> datum = new HashMap<>();
+//
+//                    datum.put(X, dataVector[0]);
+//                    datum.put(SIGMA_X, dataVector[2]);
+//                    datum.put(Y, dataVector[1]);
+//                    datum.put(SIGMA_Y, dataVector[3]);
+//                    datum.put(RHO, dataVector[4]);
+//
+//                    return datum;
+//                })
+//                .collect(Collector.of(
+//                        ArrayList::new,
+//                        (list, datum) -> list.add(datum),
+//                        (list1, list2) -> {
+//                            list1.addAll(list2); return list1;
+//                        }));
 
-        List<Entry> myEntries = new ArrayList<>();
-
+        List<Map<String, Object>> myData = new ArrayList<>();
         for (int i = 0; i < DATA.length; i++) {
-            Entry dataEntry = new SimpleEntry();
-            dataEntry.set((Field<? super Double>) myFields.get(0), DATA[i][0]);
-            dataEntry.set((Field<? super Double>) myFields.get(1), DATA[i][2]);
-            dataEntry.set((Field<? super Double>) myFields.get(2), DATA[i][1]);
-            dataEntry.set((Field<? super Double>) myFields.get(3), DATA[i][3]);
-            dataEntry.set((Field<? super Double>) myFields.get(4), DATA[i][4]);
-            myEntries.add(dataEntry);
+            Map<String, Object> datum = new HashMap<>();
+            myData.add(datum);
+            datum.put(X, DATA[i][0]);
+            datum.put(SIGMA_X, DATA[i][2]);
+            datum.put(Y, DATA[i][1]);
+            datum.put(SIGMA_Y, DATA[i][3]);
+            datum.put(RHO, DATA[i][4]);
         }
 
-        RawData rawData = new RawData(myFields, myEntries);
-
-        Dataset dataset = new SimpleDataset(
-                        "Redux dataset",
-                        rawData);
-
-        PlotContext vc = new SimplePlotContext(dataset);
-        for (int i = 0; i < myChart.getVariables().size(); i++) {
-            vc.addBinding(myChart.getVariables().get(i), myFields.get(i));
-        }
+        myChart.setData(myData);
 
         JComponent jc = myChart.displayAsJComponent();
-
-        myChart.setContext(vc);
 
         jc.createToolTip().setTipText("TESTING");
 
