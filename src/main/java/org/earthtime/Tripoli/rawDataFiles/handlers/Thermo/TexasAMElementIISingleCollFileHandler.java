@@ -44,7 +44,7 @@ import org.python.core.PyException;
 public class TexasAMElementIISingleCollFileHandler extends AbstractRawDataFileHandler {
 
     // Class variables
-    // private static final long serialVersionUID = 3111511502335804607L;
+    private static final long serialVersionUID = -4617928716331068063L;
     private static TexasAMElementIISingleCollFileHandler instance = new TexasAMElementIISingleCollFileHandler();
     private File[] analysisFiles;
 
@@ -265,12 +265,12 @@ public class TexasAMElementIISingleCollFileHandler extends AbstractRawDataFileHa
         return myTripoliFractions;
     }
 
-    private void readObject(
-            ObjectInputStream stream)
-            throws IOException, ClassNotFoundException {
-        stream.defaultReadObject();
-        ObjectStreamClass myObject = ObjectStreamClass.lookup(Class.forName(TexasAMElementIISingleCollFileHandler.class.getCanonicalName()));
-        long theSUID = myObject.getSerialVersionUID();
-        System.out.println("Customized De-serialization of TexasAMElementIISingleCollFileHandler " + theSUID);
-    }
+//    private void readObject(
+//            ObjectInputStream stream)
+//            throws IOException, ClassNotFoundException {
+//        stream.defaultReadObject();
+//        ObjectStreamClass myObject = ObjectStreamClass.lookup(Class.forName(TexasAMElementIISingleCollFileHandler.class.getCanonicalName()));
+//        long theSUID = myObject.getSerialVersionUID();
+//        System.out.println("Customized De-serialization of TexasAMElementIISingleCollFileHandler " + theSUID);
+//    }
 }
