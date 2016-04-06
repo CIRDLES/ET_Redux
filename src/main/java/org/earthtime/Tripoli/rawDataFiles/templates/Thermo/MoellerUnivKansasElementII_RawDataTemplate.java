@@ -47,7 +47,7 @@ public final class MoellerUnivKansasElementII_RawDataTemplate extends AbstractRa
         this.startOfDataSectionFirstLine = "Time";
         this.startOfEachBlockFirstLine = "Time";
         this.blockStartOffset = 8;
-        this.blockSize = 165;//222;
+        this.blockSize = 190;//165;//222;
         // per Noah email 26 March 2016: For each analysis, the sample name will precede the first hyphen in the filename. 
         // Any one of these could be used as a primary or secondary reference material or any given session. 
         //
