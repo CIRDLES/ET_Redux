@@ -109,12 +109,12 @@ public class TestTopsoil {
         TestTopsoilDialog testTopsoilDialogDialog = new TestTopsoilDialog(null, true);
         testTopsoilDialogDialog.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         testTopsoilDialogDialog.setBounds( //
-                400, 00, //
+                400,
+                200, //
                 600,
                 600);
 
         testTopsoilDialogDialog.add(jc);
         testTopsoilDialogDialog.setVisible(true);
-
     }
 }

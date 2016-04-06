@@ -20,19 +20,19 @@ import java.io.Serializable;
 import java.util.Vector;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetup;
-import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
-import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.samples.SESARSampleMetadata;
 import org.earthtime.UPb_Redux.user.SampleDateInterpretationGUIOptions;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UTh_Redux.aliquots.UThReduxAliquot;
 import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.dataDictionaries.SampleRegistries;
+import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.projects.EarthTimeSerializedFileInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
+import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.reports.ReportSettingsInterface;
 import org.earthtime.samples.ETSample;
 import org.earthtime.samples.SampleInterface;
@@ -411,6 +411,7 @@ public class SampleUTh extends ETSample implements
      * sets the <code>UPbFractions</code> of this <code>Sample</code> to the
      * argument <code>UPbFractions</code>
      *
+     * @param UThFractions
      * @pre argument <code>UPbFractions</code> is a valid set of
      * <code>UPbFractions</code>
      * @post this <code>Sample</code>'s <code>UPbFractions</code> is set to

@@ -18,9 +18,6 @@
 package org.earthtime.Tripoli.rawDataFiles.handlers.Thermo;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectStreamClass;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -98,7 +95,7 @@ public class TexasAMElementIISingleCollFileHandler extends AbstractRawDataFileHa
         analysisFiles = rawDataFile.listFiles((File f)
                 -> ((f.getName().toLowerCase().endsWith(".dat"))
                 && (!f.getName().toLowerCase().matches(".+_.+_b\\.dat"))));
-        
+
         Arrays.sort(analysisFiles, new FractionFileModifiedComparator());
 
         if (analysisFiles.length > 0) {
@@ -176,7 +173,7 @@ public class TexasAMElementIISingleCollFileHandler extends AbstractRawDataFileHa
 
             // check for background file
             File backgroundFile = new File(analysisFiles[f].getAbsolutePath().replace(".dat", "_b.dat"));
-            System.out.println("Background exists = " + backgroundFile.exists());
+            System.out.println("Background exists = " + backgroundFile.exists() + " = " + backgroundFile.getName());
             if (backgroundFile.exists()) {
                 try {
                     String fractionID = analysisFiles[f].getName().toUpperCase().replace(".DAT", "");
@@ -187,72 +184,76 @@ public class TexasAMElementIISingleCollFileHandler extends AbstractRawDataFileHa
                     String[][] backgroundFileContents = ElementII_DatFileConverter.readDatFile5(backgroundFile, rawDataFileTemplate.getStringListOfElementsByIsotopicMass());
                     String[][] onPeakFileContents = ElementII_DatFileConverter.readDatFile5(analysisFiles[f], rawDataFileTemplate.getStringListOfElementsByIsotopicMass());
 
-                    ArrayList<double[]> backgroundAcquisitions = new ArrayList<>();
-                    ArrayList<double[]> peakAcquisitions = new ArrayList<>();
+                    // test file size
+                    if ((backgroundFileContents.length >= rawDataFileTemplate.getBlockSize())//
+                            && (onPeakFileContents.length >= rawDataFileTemplate.getBlockSize())) {
+                        ArrayList<double[]> backgroundAcquisitions = new ArrayList<>();
+                        ArrayList<double[]> peakAcquisitions = new ArrayList<>();
 
-                    // process time stamp from first scan as time stamp of file and background
-                    long fractionBackgroundTimeStamp = calculateTimeStamp(backgroundFileContents[0][1]);
-                    // process time stamp of first peak reading
-                    long fractionPeakTimeStamp = calculateTimeStamp(onPeakFileContents[0][1]);
+                        // process time stamp from first scan as time stamp of file and background
+                        long fractionBackgroundTimeStamp = calculateTimeStamp(backgroundFileContents[0][1]);
+                        // process time stamp of first peak reading
+                        long fractionPeakTimeStamp = calculateTimeStamp(onPeakFileContents[0][1]);
 
-                    for (int i = 0; i < rawDataFileTemplate.getBlockSize(); i++) {
-                        // 202  204  206	Pb207	Pb208	Th232	U235 U238
-                        double[] backgroundIntensities = new double[8];
-                        backgroundAcquisitions.add(backgroundIntensities);
-                        backgroundIntensities[0] = calcAvgPulseOrAnalog(3, 5, backgroundFileContents[i]);
-                        backgroundIntensities[1] = calcAvgPulseOrAnalog(7, 9, backgroundFileContents[i]);
-                        backgroundIntensities[2] = calcAvgPulseOrAnalog(11, 13, backgroundFileContents[i]);
-                        backgroundIntensities[3] = calcAvgPulseOrAnalog(15, 17, backgroundFileContents[i]);
-                        backgroundIntensities[4] = calcAvgPulseOrAnalog(19, 21, backgroundFileContents[i]);
-                        backgroundIntensities[5] = calcAvgPulseOrAnalog(23, 25, backgroundFileContents[i]);
-                        backgroundIntensities[6] = calcAvgPulseOrAnalog(27, 29, backgroundFileContents[i]);
-                        backgroundIntensities[7] = calcAvgPulseOrAnalog(31, 33, backgroundFileContents[i]);
+                        for (int i = 0; i < rawDataFileTemplate.getBlockSize(); i++) {
+                            // 202  204  206	Pb207	Pb208	Th232	U235 U238
+                            double[] backgroundIntensities = new double[8];
+                            backgroundAcquisitions.add(backgroundIntensities);
+                            backgroundIntensities[0] = calcAvgPulseOrAnalog(3, 5, backgroundFileContents[i]);
+                            backgroundIntensities[1] = calcAvgPulseOrAnalog(7, 9, backgroundFileContents[i]);
+                            backgroundIntensities[2] = calcAvgPulseOrAnalog(11, 13, backgroundFileContents[i]);
+                            backgroundIntensities[3] = calcAvgPulseOrAnalog(15, 17, backgroundFileContents[i]);
+                            backgroundIntensities[4] = calcAvgPulseOrAnalog(19, 21, backgroundFileContents[i]);
+                            backgroundIntensities[5] = calcAvgPulseOrAnalog(23, 25, backgroundFileContents[i]);
+                            backgroundIntensities[6] = calcAvgPulseOrAnalog(27, 29, backgroundFileContents[i]);
+                            backgroundIntensities[7] = calcAvgPulseOrAnalog(31, 33, backgroundFileContents[i]);
 
-                        double[] peakIntensities = new double[8];
-                        peakAcquisitions.add(peakIntensities);
-                        peakIntensities[0] = calcAvgPulseOrAnalog(3, 5, onPeakFileContents[i]);
-                        peakIntensities[1] = calcAvgPulseOrAnalog(7, 9, onPeakFileContents[i]);
-                        peakIntensities[2] = calcAvgPulseOrAnalog(11, 13, onPeakFileContents[i]);
-                        peakIntensities[3] = calcAvgPulseOrAnalog(15, 17, onPeakFileContents[i]);
-                        peakIntensities[4] = calcAvgPulseOrAnalog(19, 21, onPeakFileContents[i]);
-                        peakIntensities[5] = calcAvgPulseOrAnalog(23, 25, onPeakFileContents[i]);
-                        peakIntensities[6] = calcAvgPulseOrAnalog(27, 29, onPeakFileContents[i]);
-                        peakIntensities[7] = calcAvgPulseOrAnalog(31, 33, onPeakFileContents[i]);
+                            double[] peakIntensities = new double[8];
+                            peakAcquisitions.add(peakIntensities);
+                            peakIntensities[0] = calcAvgPulseOrAnalog(3, 5, onPeakFileContents[i]);
+                            peakIntensities[1] = calcAvgPulseOrAnalog(7, 9, onPeakFileContents[i]);
+                            peakIntensities[2] = calcAvgPulseOrAnalog(11, 13, onPeakFileContents[i]);
+                            peakIntensities[3] = calcAvgPulseOrAnalog(15, 17, onPeakFileContents[i]);
+                            peakIntensities[4] = calcAvgPulseOrAnalog(19, 21, onPeakFileContents[i]);
+                            peakIntensities[5] = calcAvgPulseOrAnalog(23, 25, onPeakFileContents[i]);
+                            peakIntensities[6] = calcAvgPulseOrAnalog(27, 29, onPeakFileContents[i]);
+                            peakIntensities[7] = calcAvgPulseOrAnalog(31, 33, onPeakFileContents[i]);
 
-                    }  // i loop
+                        }  // i loop
 
-                    TripoliFraction tripoliFraction
-                            = new TripoliFraction( //
-                                    fractionID, //
-                                    massSpec.getCommonLeadCorrectionHighestLevel(), //
-                                    isReferenceMaterial,
-                                    fractionBackgroundTimeStamp, //
-                                    fractionPeakTimeStamp,
-                                    peakAcquisitions.size());
+                        TripoliFraction tripoliFraction
+                                = new TripoliFraction( //
+                                        fractionID, //
+                                        massSpec.getCommonLeadCorrectionHighestLevel(), //
+                                        isReferenceMaterial,
+                                        fractionBackgroundTimeStamp, //
+                                        fractionPeakTimeStamp,
+                                        peakAcquisitions.size());
 
-                    SortedSet<DataModelInterface> rawRatios = massSpec.rawRatiosFactoryRevised();
-                    tripoliFraction.setRawRatios(rawRatios);
+                        SortedSet<DataModelInterface> rawRatios = massSpec.rawRatiosFactoryRevised();
+                        tripoliFraction.setRawRatios(rawRatios);
 
-                    massSpec.setCountOfAcquisitions(peakAcquisitions.size());
+                        massSpec.setCountOfAcquisitions(peakAcquisitions.size());
 
-                    // establish map of virtual collectors to field indexes
-                    Map<DataModelInterface, Integer> virtualCollectorModelMapToFieldIndexes = new HashMap<>();
-                    virtualCollectorModelMapToFieldIndexes.put(massSpec.getHg202(), 0);
-                    virtualCollectorModelMapToFieldIndexes.put(massSpec.getPb204(), 1);
-                    virtualCollectorModelMapToFieldIndexes.put(massSpec.getPb206(), 2);
-                    virtualCollectorModelMapToFieldIndexes.put(massSpec.getPb207(), 3);
-                    virtualCollectorModelMapToFieldIndexes.put(massSpec.getPb208(), 4);
-                    virtualCollectorModelMapToFieldIndexes.put(massSpec.getTh232(), 5);
-                    virtualCollectorModelMapToFieldIndexes.put(massSpec.getU235(), 6);
-                    virtualCollectorModelMapToFieldIndexes.put(massSpec.getU238(), 7);
+                        // establish map of virtual collectors to field indexes
+                        Map<DataModelInterface, Integer> virtualCollectorModelMapToFieldIndexes = new HashMap<>();
+                        virtualCollectorModelMapToFieldIndexes.put(massSpec.getHg202(), 0);
+                        virtualCollectorModelMapToFieldIndexes.put(massSpec.getPb204(), 1);
+                        virtualCollectorModelMapToFieldIndexes.put(massSpec.getPb206(), 2);
+                        virtualCollectorModelMapToFieldIndexes.put(massSpec.getPb207(), 3);
+                        virtualCollectorModelMapToFieldIndexes.put(massSpec.getPb208(), 4);
+                        virtualCollectorModelMapToFieldIndexes.put(massSpec.getTh232(), 5);
+                        virtualCollectorModelMapToFieldIndexes.put(massSpec.getU235(), 6);
+                        virtualCollectorModelMapToFieldIndexes.put(massSpec.getU238(), 7);
 
-                    massSpec.processFractionRawRatiosII(//
-                            backgroundAcquisitions, peakAcquisitions, usingFullPropagation, tripoliFraction, virtualCollectorModelMapToFieldIndexes);
+                        massSpec.processFractionRawRatiosII(//
+                                backgroundAcquisitions, peakAcquisitions, usingFullPropagation, tripoliFraction, virtualCollectorModelMapToFieldIndexes);
 
-                    tripoliFraction.shadeDataActiveMapLeft(leftShadeCount);
-                    System.out.println("\n**** Element II FractionID  " + fractionID + " completed ***************************\n\n");
+                        tripoliFraction.shadeDataActiveMapLeft(leftShadeCount);
+                        System.out.println("\n**** Element II FractionID  " + fractionID + " completed ***************************\n\n");
 
-                    myTripoliFractions.add(tripoliFraction);
+                        myTripoliFractions.add(tripoliFraction);
+                    }
                 } catch (PyException pyException) {
                     System.out.println("bad read of fraction " + analysisFiles[f].getName() + " message = " + pyException.getMessage());
                 }
