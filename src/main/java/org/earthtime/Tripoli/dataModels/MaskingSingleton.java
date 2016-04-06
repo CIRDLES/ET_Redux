@@ -47,6 +47,9 @@ public class MaskingSingleton implements Serializable {
      * @return
      */
     public static MaskingSingleton getInstance() {
+        if (instance == null){
+            instance = new MaskingSingleton();
+        }
         return instance;
     }
 

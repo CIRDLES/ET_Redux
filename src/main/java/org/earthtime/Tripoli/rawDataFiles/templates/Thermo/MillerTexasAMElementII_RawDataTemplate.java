@@ -36,6 +36,9 @@ public final class MillerTexasAMElementII_RawDataTemplate extends AbstractRawDat
         Comparable<AbstractRawDataFileTemplate>,
         Serializable {
 
+    // Class variables
+    private static final long serialVersionUID = -979990037056568691L;
+
     private static MillerTexasAMElementII_RawDataTemplate instance = new MillerTexasAMElementII_RawDataTemplate();
 
     private MillerTexasAMElementII_RawDataTemplate() {
@@ -75,13 +78,13 @@ public final class MillerTexasAMElementII_RawDataTemplate extends AbstractRawDat
         return acquisitionModel;
     }
 
-    private void readObject(
-            ObjectInputStream stream)
-            throws IOException, ClassNotFoundException {
-        stream.defaultReadObject();
-        ObjectStreamClass myObject = ObjectStreamClass.lookup(
-                Class.forName(MillerTexasAMElementII_RawDataTemplate.class.getCanonicalName()));
-        long theSUID = myObject.getSerialVersionUID();
-        System.out.println("Customized De-serialization of MillerTexasAMElementII_RawDataTemplate " + theSUID);
-    }
+//    private void readObject(
+//            ObjectInputStream stream)
+//            throws IOException, ClassNotFoundException {
+//        stream.defaultReadObject();
+//        ObjectStreamClass myObject = ObjectStreamClass.lookup(
+//                Class.forName(MillerTexasAMElementII_RawDataTemplate.class.getCanonicalName()));
+//        long theSUID = myObject.getSerialVersionUID();
+//        System.out.println("Customized De-serialization of MillerTexasAMElementII_RawDataTemplate " + theSUID);
+//    }
 }
