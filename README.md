@@ -26,7 +26,8 @@ You will always find the latest release
 [here](https://github.com/CIRDLES/ET_Redux/releases/latest) - it consists of one file that can be 
 saved and executed from anywhere on your 64-bit machine - Unix, Linux, Mac, and Windows.
 Be sure you have the latest Java Runtime Environment (JRE), found 
-[here](http://www.oracle.com/technetwork/java/javase/downloads/index.html).
+[here](http://www.oracle.com/technetwork/java/javase/downloads/index.html).  We are building 
+help files for users [here](http://cirdles.org/projects/et_redux/).
 
 Getting Started for Developers:
 ---
