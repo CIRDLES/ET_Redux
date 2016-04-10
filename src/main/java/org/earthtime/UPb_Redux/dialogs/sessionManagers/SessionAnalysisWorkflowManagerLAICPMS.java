@@ -119,36 +119,6 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
 
         currentFractionView = IncludedTypeEnum.ALL;
 
-        // fractionation tab listener
-        fractionationTechniqueTabbedPane.addChangeListener((ChangeEvent evt) -> {
-            JTabbedPane pane = (JTabbedPane) evt.getSource();
-
-            // Get current tab
-            int sel = pane.getSelectedIndex();
-
-            if (pane.getTitleAt(sel).compareToIgnoreCase(FractionationTechniquesEnum.INTERCEPT.getName()) == 0) {
-                tripoliSession.setFractionationTechnique(FractionationTechniquesEnum.INTERCEPT);
-
-                interceptFitEachStandard_radioButton.doClick();
-
-            } else if (pane.getTitleAt(sel).compareToIgnoreCase(FractionationTechniquesEnum.DOWNHOLE.getName()) == 0) {
-                tripoliSession.setFractionationTechnique(FractionationTechniquesEnum.DOWNHOLE);
-
-                downholeFitStandards_radioButton.doClick();
-            }
-
-            for (int i = 0; i < pane.getTabCount(); i++) {
-                pane.setForegroundAt(i, Color.black);
-            }
-            pane.setForegroundAt(sel, Color.red);
-
-            tripoliSession.applyCorrections();
-
-            // nov 2015 to update data
-            uPbReduxFrame.updateReportTable(true);
-        } // This method is called whenever the selected tab changes
-        );
-
         setSize();
     }
 
@@ -288,11 +258,59 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
             // now init listeners
             ((TripoliSessionRawDataView) tripoliSessionRawDataView).initializeListeners();
 
-            // flex colors
-            fractionationTechniqueTabbedPane.setSelectedIndex(1);
-            fractionationTechniqueTabbedPane.setSelectedIndex(0);
+            // fractionation tab listener
+            fractionationTechniqueTabbedPane.addChangeListener((ChangeEvent evt) -> {
+                JTabbedPane pane = (JTabbedPane) evt.getSource();
 
+                // Get current tab
+                int sel = pane.getSelectedIndex();
+
+                if (sel >= 0) {
+                    if (pane.getTitleAt(sel).compareToIgnoreCase(FractionationTechniquesEnum.INTERCEPT.getName()) == 0) {
+                        tripoliSession.setFractionationTechnique(FractionationTechniquesEnum.INTERCEPT);
+
+                        interceptFitEachStandard_radioButton.doClick();
+
+                    } else if (pane.getTitleAt(sel).compareToIgnoreCase(FractionationTechniquesEnum.DOWNHOLE.getName()) == 0) {
+                        tripoliSession.setFractionationTechnique(FractionationTechniquesEnum.DOWNHOLE);
+
+                        downholeFitStandards_radioButton.doClick();
+                    }
+
+                    for (int i = 0; i < pane.getTabCount(); i++) {
+                        pane.setForegroundAt(i, Color.black);
+                    }
+                    pane.setForegroundAt(sel, Color.red);
+
+                    tripoliSession.applyCorrections();
+
+                    // nov 2015 to update data
+                    uPbReduxFrame.updateReportTable(true);
+                }
+            } // This method is called whenever the selected tab changes
+            );
+
+//////            // flex colors
+//////            fractionationTechniqueTabbedPane.setSelectedIndex(1);
+//////            fractionationTechniqueTabbedPane.setSelectedIndex(0);
+//////            invokeSavedFractionationTechnique();
         }
+    }
+
+    public void invokeSavedFractionationTechnique(boolean doCorrections) {
+        tripoliSessionRawDataView.refreshPanel();
+        
+        if (doCorrections) {
+            tripoliSession.calculateSessionFitFunctionsForPrimaryStandard();
+        }
+
+        if (tripoliSession.getFractionationTechnique().compareTo(FractionationTechniquesEnum.DOWNHOLE) == 0) {
+            fractionationTechniqueTabbedPane.setSelectedIndex(0);
+        } else {
+            fractionationTechniqueTabbedPane.setSelectedIndex(1);
+        }
+        
+        tripoliSessionRawDataView.refreshPanel();
     }
 
     private void setDefaultZoom() {
@@ -433,7 +451,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
     }
 
     private void showStandardDownholeFractionationRawRatioDataModels() {
-        // assumption is that tripoliSessionRawDataView is initialized
+        // assumption is that tripoliSessionRawDataView is initialized       
         overlayPlot_radioButton.setSelected(true);
         setEnableAllGridGraphOverlayButtons(false);
 
@@ -713,7 +731,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
             // allow any sample discourage ref material at index 0 unless raw data
             samplesCompboBox.setSelectedIndex(-1);
             samplesCompboBox.setSelectedIndex(lastUsedUnknownSampleIndexForSampleSelector);
-        }  else {
+        } else {
             samplesCompboBox.setSelectedIndex(-1);
             samplesCompboBox.setSelectedIndex(index);
         }
@@ -734,6 +752,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         includedFractions_buttonGroup = new javax.swing.ButtonGroup();
         plotStyleFractions_buttonGroup = new javax.swing.ButtonGroup();
         viewChooser_buttonGroup = new javax.swing.ButtonGroup();
+        yAxisOptions = new javax.swing.ButtonGroup();
         sampleType_panel = new javax.swing.JPanel();
         sampleType_label = new javax.swing.JLabel();
         toolBar_panel = new javax.swing.JPanel();
@@ -745,7 +764,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         tripoliTab_layeredPane = new javax.swing.JLayeredPane();
         tripoliSessionDataView_scrollPane = new javax.swing.JScrollPane();
         controlPanel_panel = new javax.swing.JLayeredPane();
-        jLabel1 = new javax.swing.JLabel();
+        fractionsShownLabel = new javax.swing.JLabel();
         rawIsotopes_radioButton = new javax.swing.JRadioButton();
         correctedIsotopes_radioButton = new javax.swing.JRadioButton();
         rawRatios_radioButton = new javax.swing.JRadioButton();
@@ -778,6 +797,9 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         overlayPlot_radioButton = new javax.swing.JRadioButton();
         samplesCompboBox = new javax.swing.JComboBox<>();
         amPrimaryRefMaterial_label = new javax.swing.JLabel();
+        fractionsShownLabel1 = new javax.swing.JLabel();
+        uniformYaxis = new javax.swing.JRadioButton();
+        independentYaxis = new javax.swing.JRadioButton();
         xAxisZoomSlider = new javax.swing.JSlider();
         tripoliSessionRawDataViewYAxis = new javax.swing.JLayeredPane();
         tripoliSessionDataHeader_pane = new javax.swing.JLayeredPane();
@@ -862,10 +884,10 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         tripoliTab_layeredPane.add(tripoliSessionDataView_scrollPane);
         tripoliSessionDataView_scrollPane.setBounds(275, 70, 820, 530);
 
-        jLabel1.setFont(new java.awt.Font("SansSerif", 0, 13)); // NOI18N
-        jLabel1.setText("Fractions Shown:");
-        controlPanel_panel.add(jLabel1);
-        jLabel1.setBounds(0, 350, 110, 16);
+        fractionsShownLabel.setFont(new java.awt.Font("SansSerif", 0, 13)); // NOI18N
+        fractionsShownLabel.setText("Fractions Shown:");
+        controlPanel_panel.add(fractionsShownLabel);
+        fractionsShownLabel.setBounds(0, 405, 110, 16);
 
         rawIsotopes_radioButton.setBackground(new java.awt.Color(173, 204, 182));
         viewChooser_buttonGroup.add(rawIsotopes_radioButton);
@@ -962,11 +984,10 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
             }
         });
         controlPanel_panel.add(showExcludedFractions_radioButton);
-        showExcludedFractions_radioButton.setBounds(120, 370, 70, 20);
+        showExcludedFractions_radioButton.setBounds(120, 420, 70, 20);
 
         includedFractions_buttonGroup.add(showAllFractions_radioButton);
         showAllFractions_radioButton.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
-        showAllFractions_radioButton.setSelected(true);
         showAllFractions_radioButton.setText("All");
         showAllFractions_radioButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         showAllFractions_radioButton.setBorderPainted(true);
@@ -977,7 +998,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
             }
         });
         controlPanel_panel.add(showAllFractions_radioButton);
-        showAllFractions_radioButton.setBounds(0, 370, 50, 20);
+        showAllFractions_radioButton.setBounds(0, 420, 50, 20);
 
         includedFractions_buttonGroup.add(showIncludedFractions_radioButton);
         showIncludedFractions_radioButton.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
@@ -991,7 +1012,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
             }
         });
         controlPanel_panel.add(showIncludedFractions_radioButton);
-        showIncludedFractions_radioButton.setBounds(50, 370, 70, 20);
+        showIncludedFractions_radioButton.setBounds(50, 420, 70, 20);
 
         includeAllFractions_button.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         includeAllFractions_button.setText("Restore all Fractions");
@@ -1000,8 +1021,9 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
                 includeAllFractions_buttonActionPerformed(evt);
             }
         });
+        controlPanel_panel.setLayer(includeAllFractions_button, javax.swing.JLayeredPane.PALETTE_LAYER);
         controlPanel_panel.add(includeAllFractions_button);
-        includeAllFractions_button.setBounds(0, 390, 160, 20);
+        includeAllFractions_button.setBounds(0, 440, 160, 20);
 
         refreshView_button.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         refreshView_button.setText("Refresh View");
@@ -1030,8 +1052,9 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
                 removeAllIndividualYAxisPanes_buttonActionPerformed(evt);
             }
         });
+        controlPanel_panel.setLayer(removeAllIndividualYAxisPanes_button, javax.swing.JLayeredPane.PALETTE_LAYER);
         controlPanel_panel.add(removeAllIndividualYAxisPanes_button);
-        removeAllIndividualYAxisPanes_button.setBounds(0, 430, 160, 20);
+        removeAllIndividualYAxisPanes_button.setBounds(0, 480, 160, 20);
 
         jLabel4.setFont(new java.awt.Font("SansSerif", 3, 10)); // NOI18N
         jLabel4.setText("   Select fractionation technique:");
@@ -1215,8 +1238,9 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
                 restoreAllAquisitionsActionPerformed(evt);
             }
         });
+        controlPanel_panel.setLayer(restoreAllAquisitions, javax.swing.JLayeredPane.PALETTE_LAYER);
         controlPanel_panel.add(restoreAllAquisitions);
-        restoreAllAquisitions.setBounds(0, 410, 160, 20);
+        restoreAllAquisitions.setBounds(0, 460, 160, 20);
 
         jPanel1.setBackground(new java.awt.Color(250, 240, 230));
         jPanel1.setPreferredSize(new java.awt.Dimension(191, 70));
@@ -1279,6 +1303,40 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
 
         controlPanel_panel.add(jPanel1);
         jPanel1.setBounds(0, 0, 191, 70);
+
+        fractionsShownLabel1.setFont(new java.awt.Font("SansSerif", 0, 13)); // NOI18N
+        fractionsShownLabel1.setText("Y-axis Options:");
+        controlPanel_panel.add(fractionsShownLabel1);
+        fractionsShownLabel1.setBounds(0, 350, 110, 16);
+
+        yAxisOptions.add(uniformYaxis);
+        uniformYaxis.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
+        uniformYaxis.setSelected(true);
+        uniformYaxis.setText("Uniform");
+        uniformYaxis.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        uniformYaxis.setBorderPainted(true);
+        uniformYaxis.setOpaque(true);
+        uniformYaxis.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                uniformYaxisActionPerformed(evt);
+            }
+        });
+        controlPanel_panel.add(uniformYaxis);
+        uniformYaxis.setBounds(0, 365, 90, 20);
+
+        yAxisOptions.add(independentYaxis);
+        independentYaxis.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
+        independentYaxis.setText("Independent");
+        independentYaxis.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        independentYaxis.setBorderPainted(true);
+        independentYaxis.setOpaque(true);
+        independentYaxis.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                independentYaxisActionPerformed(evt);
+            }
+        });
+        controlPanel_panel.add(independentYaxis);
+        independentYaxis.setBounds(90, 365, 100, 20);
 
         tripoliTab_layeredPane.add(controlPanel_panel);
         controlPanel_panel.setBounds(0, 0, 191, 620);
@@ -1518,6 +1576,14 @@ private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.
         uPbReduxFrame.updateReportTable(true);
     }//GEN-LAST:event_interceptCalculatePbcCorrAndRhos_button1ActionPerformed
 
+    private void uniformYaxisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_uniformYaxisActionPerformed
+        ((TripoliSessionRawDataView) tripoliSessionRawDataView).setSAVED_YAXIS_IS_UNIFORM(true);
+    }//GEN-LAST:event_uniformYaxisActionPerformed
+
+    private void independentYaxisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_independentYaxisActionPerformed
+        ((TripoliSessionRawDataView) tripoliSessionRawDataView).setSAVED_YAXIS_IS_UNIFORM(false);
+    }//GEN-LAST:event_independentYaxisActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel DownholePanel;
     private javax.swing.JLabel amPrimaryRefMaterial_label;
@@ -1530,16 +1596,18 @@ private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.
     private javax.swing.JRadioButton downholeFitStandards_radioButton;
     private javax.swing.JRadioButton downholeStandardSession_radioButton;
     private javax.swing.JTabbedPane fractionationTechniqueTabbedPane;
+    private javax.swing.JLabel fractionsShownLabel;
+    private javax.swing.JLabel fractionsShownLabel1;
     private javax.swing.JRadioButton graphPlot_radioButton;
     private javax.swing.JRadioButton gridPlot_radioButton;
     private javax.swing.JButton includeAllFractions_button;
     private javax.swing.ButtonGroup includedFractions_buttonGroup;
+    private javax.swing.JRadioButton independentYaxis;
     private javax.swing.JButton interceptCalculatePbcCorrAndRhos_button1;
     private javax.swing.JRadioButton interceptFitEachStandard_radioButton;
     private javax.swing.JRadioButton interceptFitUnknownRatios_radioButton;
     private javax.swing.JPanel interceptPanel;
     private javax.swing.JRadioButton interceptStandardSession_radioButton;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JButton lockUnlockZoomSliders;
@@ -1567,8 +1635,10 @@ private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.
     private javax.swing.JScrollPane tripoliSessionDataView_scrollPane;
     private javax.swing.JLayeredPane tripoliSessionRawDataViewYAxis;
     private javax.swing.JLayeredPane tripoliTab_layeredPane;
+    private javax.swing.JRadioButton uniformYaxis;
     private javax.swing.ButtonGroup viewChooser_buttonGroup;
     private javax.swing.JSlider xAxisZoomSlider;
+    private javax.swing.ButtonGroup yAxisOptions;
     private javax.swing.JSlider yAxisZoomSlider;
     // End of variables declaration//GEN-END:variables
 
