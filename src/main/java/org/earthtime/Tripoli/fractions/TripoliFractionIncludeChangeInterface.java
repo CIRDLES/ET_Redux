@@ -29,5 +29,6 @@ public interface TripoliFractionIncludeChangeInterface {
      * @param included
      */
     public void toggleFractionInclusion(boolean included);
+    public void repaintFraction();
     
 }

@@ -156,8 +156,9 @@ public interface TripoliSessionInterface extends TripoliSessionFractionationCalc
 
     /**
      *
+     * @param updateOnly the value of updateOnly
      */
-    void processRawData ();
+    void processRawData (boolean updateOnly);
     void postProcessDataForCommonLeadLossPreparation();
 
     /**
