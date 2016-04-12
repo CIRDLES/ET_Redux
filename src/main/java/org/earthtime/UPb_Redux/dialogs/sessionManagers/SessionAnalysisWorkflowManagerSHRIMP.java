@@ -226,7 +226,7 @@ public class SessionAnalysisWorkflowManagerSHRIMP extends DialogEditor //
                     }
 
                     ((TripoliSessionRawDataView) tripoliSessionRawDataView).setSelectedSample(sample);
-                    tripoliSessionRawDataView.refreshPanel();
+                    tripoliSessionRawDataView.refreshPanel(true);
                     tripoliSessionDataView_scrollPane.revalidate();
                 }
             });
@@ -278,7 +278,7 @@ public class SessionAnalysisWorkflowManagerSHRIMP extends DialogEditor //
             rawIsotopes_radioButton.setSelected(true);
             gridPlot_radioButton.setSelected(true);
 
-            tripoliSessionRawDataView.preparePanel();
+            tripoliSessionRawDataView.preparePanel(true);
 
             // now init listeners
             ((TripoliSessionRawDataView) tripoliSessionRawDataView).initializeListeners();
@@ -560,19 +560,19 @@ public class SessionAnalysisWorkflowManagerSHRIMP extends DialogEditor //
 
     private void gridPlotFractions() {
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).setFRACTION_LAYOUT_VIEW_STYLE(FractionLayoutViewStylesEnum.GRID);
-        tripoliSessionRawDataView.preparePanel();
+        tripoliSessionRawDataView.preparePanel(true);
         tripoliSessionDataView_scrollPane.revalidate();
     }
 
     private void graphPlotFractions() {
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).setFRACTION_LAYOUT_VIEW_STYLE(FractionLayoutViewStylesEnum.GRAPH);
-        tripoliSessionRawDataView.preparePanel();
+        tripoliSessionRawDataView.preparePanel(true);
         tripoliSessionDataView_scrollPane.revalidate();
     }
 
     private void overlayPlotFractions() {
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).setFRACTION_LAYOUT_VIEW_STYLE(FractionLayoutViewStylesEnum.OVERLAY);
-        tripoliSessionRawDataView.refreshPanel();
+        tripoliSessionRawDataView.refreshPanel(true);
     }
 
     /**
@@ -1390,20 +1390,20 @@ public class SessionAnalysisWorkflowManagerSHRIMP extends DialogEditor //
     private void showAllFractions_radioButtonActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showAllFractions_radioButtonActionPerformed
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).setFractionIncludedType(IncludedTypeEnum.ALL);
         currentFractionView = IncludedTypeEnum.ALL;
-        tripoliSessionRawDataView.refreshPanel();
+        tripoliSessionRawDataView.refreshPanel(true);
     }//GEN-LAST:event_showAllFractions_radioButtonActionPerformed
 
     private void showIncludedFractions_radioButtonActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showIncludedFractions_radioButtonActionPerformed
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).setFractionIncludedType(IncludedTypeEnum.INCLUDED);
         currentFractionView = IncludedTypeEnum.INCLUDED;
-        tripoliSessionRawDataView.refreshPanel();
+        tripoliSessionRawDataView.refreshPanel(true);
 
     }//GEN-LAST:event_showIncludedFractions_radioButtonActionPerformed
 
     private void showExcludedFractions_radioButtonActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showExcludedFractions_radioButtonActionPerformed
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).setFractionIncludedType(IncludedTypeEnum.EXCLUDED);
         currentFractionView = IncludedTypeEnum.EXCLUDED;
-        tripoliSessionRawDataView.refreshPanel();
+        tripoliSessionRawDataView.refreshPanel(true);
 
         // test for no excluded
         if (((TripoliSessionRawDataView) tripoliSessionRawDataView).getFractionIncludedType().equals(IncludedTypeEnum.ALL)) {
