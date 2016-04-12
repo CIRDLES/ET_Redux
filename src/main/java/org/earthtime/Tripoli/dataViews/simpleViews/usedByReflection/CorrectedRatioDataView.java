@@ -146,13 +146,16 @@ public class CorrectedRatioDataView extends AbstractRawDataView {
 
     /**
      *
+     * @param doReScale the value of doReScale
      */
     @Override
-    public void preparePanel() {
+    public void preparePanel(boolean doReScale) {
 
         this.removeAll();
 
-        setDisplayOffsetY(0.0);
+        if (doReScale) {
+            setDisplayOffsetY(0.0);
+        }
         setDisplayOffsetX(0.0);
 
         // walk ratios and get min and max for axes
@@ -162,33 +165,26 @@ public class CorrectedRatioDataView extends AbstractRawDataView {
             myOnPeakData = new double[myOnPeakNormalizedAquireTimes.length];
         }
 
-        boolean[] myDataActiveMap = rawRatioDataModel.getDataActiveMap();
-
         // X-axis lays out time evenly spaced
         minX = myOnPeakNormalizedAquireTimes[0];
         maxX = myOnPeakNormalizedAquireTimes[myOnPeakNormalizedAquireTimes.length - 1];
 
-        // Y-axis is ratios
-        minY = Double.MAX_VALUE;
-        maxY = -Double.MAX_VALUE;
+        if (doReScale) {
+            // Y-axis is ratios
+            minY = Double.MAX_VALUE;
+            maxY = -Double.MAX_VALUE;
 
-        // find min and max y
-        boolean showAll = showIncludedDataPoints.equals(IncludedTypeEnum.ALL);
-        boolean showIncluded = //
-                showIncludedDataPoints.equals(IncludedTypeEnum.INCLUDED)//
-                ||//
-                showIncludedDataPoints.equals(IncludedTypeEnum.ALL);
-        for (int i = 0; i < myOnPeakData.length; i++) {
-            if (showAll //
-                    || //
-                    !((!myDataActiveMap[i] && showIncluded) || (myDataActiveMap[i] && !showIncluded))) {
-                minY = Math.min(minY, myOnPeakData[i]);
-                maxY = Math.max(maxY, myOnPeakData[i]);
+            // find min and max y
+            boolean[] myDataActiveMap = rawRatioDataModel.getDataActiveMap();
+            boolean showAll = showIncludedDataPoints.equals(IncludedTypeEnum.ALL);
+            // rework logic April 2016 
+            for (int i = 0; i < myOnPeakData.length; i++) {
+                if (showAll || myDataActiveMap[i]) {
+                    minY = Math.min(minY, myOnPeakData[i]);
+                    maxY = Math.max(maxY, myOnPeakData[i]);
+                }
             }
-        }
 
-        // adjust margins for unknowns
-        if (!tripoliFraction.isStandard()) {
             double yMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(minY, maxY, 0.05);
             minY -= yMarginStretch;
             maxY += yMarginStretch;

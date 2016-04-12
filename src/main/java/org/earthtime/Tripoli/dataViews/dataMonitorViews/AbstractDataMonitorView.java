@@ -300,11 +300,11 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
         } catch (Exception e) {
         }
 
-        preparePanel();
+        preparePanel(true);
     }
 
     @Override
-    public void preparePanel() {
+    public void preparePanel(boolean doReScale) {
 
         this.removeAll();
         this.add(redux_Icon_label);
@@ -335,7 +335,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
                                         250,//
                                         160));
 
-                rawDataModelView.preparePanel();
+                rawDataModelView.preparePanel(doReScale);
 
                 this.add(rawDataModelView, JLayeredPane.DEFAULT_LAYER);
 
@@ -382,7 +382,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
                                         250, //
                                         180));
 
-                sessionFitFunctionsPresentationView.preparePanel();
+                sessionFitFunctionsPresentationView.preparePanel(doReScale);
 
                 this.add(sessionFitFunctionsPresentationView, JLayeredPane.DEFAULT_LAYER);
 
@@ -445,7 +445,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
                 getuPbReduxFrame().updateReportTable(true);
             } catch (Exception e) {
             }
-            preparePanel();
+            preparePanel(true);
         });
 
         recalcButton.setEnabled(true);
@@ -454,7 +454,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
         ET_JButton refreshButton = new ET_JButton("Refresh Views");
         refreshButton.setBounds(leftMargin + 620, topMargin + 660, 120, 25);
         refreshButton.addActionListener((ActionEvent ae) -> {
-            preparePanel();
+            preparePanel(true);
         });
 
         refreshButton.setEnabled(true);
@@ -698,7 +698,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
             tripoliSession.getTripoliSamples().get(0).setMineralStandardModel(primaryMineralStandard);
 
             tripoliSession.prepareFractionTimeStamps();
-            tripoliSession.processRawData();
+            tripoliSession.processRawData(true);
 
             tripoliSession.postProcessDataForCommonLeadLossPreparation();
 

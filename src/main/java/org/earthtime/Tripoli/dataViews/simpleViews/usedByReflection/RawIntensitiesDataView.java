@@ -31,6 +31,7 @@ import org.earthtime.Tripoli.dataViews.AbstractRawDataView;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.dataDictionaries.FitFunctionTypeEnum;
+import org.earthtime.dataDictionaries.IncludedTypeEnum;
 import org.earthtime.utilities.TicGeneratorForAxes;
 
 /**
@@ -59,13 +60,13 @@ public class RawIntensitiesDataView extends AbstractRawDataView {
      * @param bounds
      * @param invokeMouseListener
      */
-    public RawIntensitiesDataView (//
+    public RawIntensitiesDataView(//
             JLayeredPane sampleSessionDataView,//
             TripoliFraction tripoliFraction,//
             DataModelInterface rawIsotopeDataModel,//
             Rectangle bounds,//
-            boolean invokeMouseListener ) {
-        super( sampleSessionDataView, tripoliFraction, bounds, invokeMouseListener, true );
+            boolean invokeMouseListener) {
+        super(sampleSessionDataView, tripoliFraction, bounds, invokeMouseListener, true);
 
         this.rawRatioDataModel = rawIsotopeDataModel;
         this.normalizedBackgroundAquireTimes = null;
@@ -76,74 +77,75 @@ public class RawIntensitiesDataView extends AbstractRawDataView {
      * @param g2d
      */
     @Override
-    public void paint ( Graphics2D g2d ) {
-        super.paint( g2d );
+    public void paint(Graphics2D g2d) {
+        super.paint(g2d);
 
-        if (rawRatioDataModel.isBelowDetection()){
+        if (rawRatioDataModel.isBelowDetection()) {
             setBackground(ReduxConstants.palePinkBelowDetection);
             g2d.drawString("BELOW DETECTION", 25, 25);
         }
-        
+
         // draw background intensities
-        for (int i = 0; i < backgroundIntensities.length; i ++) {
+        for (int i = 0; i < backgroundIntensities.length; i++) {
             Shape intensity = new java.awt.geom.Ellipse2D.Double(//
-                    mapX( normalizedBackgroundAquireTimes[i] ), mapY( backgroundIntensities[i] ), 1, 1 );
-            g2d.setPaint( Color.BLACK );
-            g2d.draw( intensity );
+                    mapX(normalizedBackgroundAquireTimes[i]), mapY(backgroundIntensities[i]), 1, 1);
+            g2d.setPaint(Color.BLACK);
+            g2d.draw(intensity);
 
             // test for presence of fitfunction (ie mercury has none)
-            if (  ! ((DataModelFitFunctionInterface) rawRatioDataModel).getSelectedFitFunctionType().equals( FitFunctionTypeEnum.NONE ) ) {
+            if (!((DataModelFitFunctionInterface) rawRatioDataModel).getSelectedFitFunctionType().equals(FitFunctionTypeEnum.NONE)) {
                 Shape background = new java.awt.geom.Ellipse2D.Double( //
-                        mapX( normalizedBackgroundAquireTimes[i] ), mapY( backgroundFitIntensities[i] ), 1, 1 );
-                g2d.setPaint( Color.RED );
-                g2d.draw( background );
+                        mapX(normalizedBackgroundAquireTimes[i]), mapY(backgroundFitIntensities[i]), 1, 1);
+                g2d.setPaint(Color.RED);
+                g2d.draw(background);
             }
 
             // check for presence of mercury corrections
-            if ( onPeakIntensityUncorrectedForMercury[0] != 0.0 ) {
+            if (onPeakIntensityUncorrectedForMercury[0] != 0.0) {
                 Shape correction = new java.awt.geom.Ellipse2D.Double( //
-                        mapX( normalizedBackgroundAquireTimes[i] ), mapY( backgroundIntensityUncorrectedForMercury[i] ), 1, 1 );
-                g2d.setPaint( Color.GREEN );
-                g2d.draw( correction );
+                        mapX(normalizedBackgroundAquireTimes[i]), mapY(backgroundIntensityUncorrectedForMercury[i]), 1, 1);
+                g2d.setPaint(Color.GREEN);
+                g2d.draw(correction);
             }
         }
 
         shiftAquiredTimeIndex = normalizedBackgroundAquireTimes[normalizedBackgroundAquireTimes.length - 1] + 1;
-        for (int i = 0; i < myOnPeakData.length; i ++) {
+        for (int i = 0; i < myOnPeakData.length; i++) {
             Shape intensity = new java.awt.geom.Ellipse2D.Double( //
-                    mapX( shiftAquiredTimeIndex + myOnPeakNormalizedAquireTimes[i] ), mapY( myOnPeakData[i] ), 1, 1 );
-            g2d.setPaint( determineDataColor( i, Color.black ) );
+                    mapX(shiftAquiredTimeIndex + myOnPeakNormalizedAquireTimes[i]), mapY(myOnPeakData[i]), 1, 1);
+            g2d.setPaint(determineDataColor(i, Color.black));
 
-            g2d.draw( intensity );
+            g2d.draw(intensity);
 
             // test for presence of fitfunction (ie mercury has none)
-            if (  ! ((DataModelFitFunctionInterface) rawRatioDataModel).getSelectedFitFunctionType().equals( FitFunctionTypeEnum.NONE ) ) {
+            if (!((DataModelFitFunctionInterface) rawRatioDataModel).getSelectedFitFunctionType().equals(FitFunctionTypeEnum.NONE)) {
                 Shape background = new java.awt.geom.Ellipse2D.Double( //
-                        mapX( shiftAquiredTimeIndex + myOnPeakNormalizedAquireTimes[i] ), mapY( onPeakFitBackgroundIntensities[i] ), 1, 1 );
-                g2d.setPaint( Color.BLUE );
-                g2d.draw( background );
+                        mapX(shiftAquiredTimeIndex + myOnPeakNormalizedAquireTimes[i]), mapY(onPeakFitBackgroundIntensities[i]), 1, 1);
+                g2d.setPaint(Color.BLUE);
+                g2d.draw(background);
             }
 
             // check for presence of mercury corrections
-            if ( onPeakIntensityUncorrectedForMercury[0] != 0.0 ) {
+            if (onPeakIntensityUncorrectedForMercury[0] != 0.0) {
                 Shape correction = new java.awt.geom.Ellipse2D.Double( //
-                        mapX( shiftAquiredTimeIndex + myOnPeakNormalizedAquireTimes[i] ), mapY( onPeakIntensityUncorrectedForMercury[i] ), 1, 1 );
-                g2d.setPaint( determineDataColor( i, Color.GREEN ) );
-                g2d.draw( correction );
+                        mapX(shiftAquiredTimeIndex + myOnPeakNormalizedAquireTimes[i]), mapY(onPeakIntensityUncorrectedForMercury[i]), 1, 1);
+                g2d.setPaint(determineDataColor(i, Color.GREEN));
+                g2d.draw(correction);
             }
         }
     }
 
     /**
      *
+     * @param doReScale the value of doReScale
      */
     @Override
-    public void preparePanel () {
+    public void preparePanel(boolean doReScale) {
 
         this.removeAll();
 
-        setDisplayOffsetY( 0.0 );
-        setDisplayOffsetX( 0.0 );
+        setDisplayOffsetY(0.0);
+        setDisplayOffsetX(0.0);
 
         // walk intensities and get min and max for axes
         backgroundIntensities = ((RawIntensityDataModel) rawRatioDataModel).getBackgroundCountsPerSecondAsRawIntensities();//     .getBackgroundVirtualCollector().getIntensities();
@@ -152,20 +154,22 @@ public class RawIntensitiesDataView extends AbstractRawDataView {
         myOnPeakData = ((RawIntensityDataModel) rawRatioDataModel).getOnPeakCountsPerSecondAsRawIntensities();//   .getOnPeakVirtualCollector().getIntensities();
 
         // recalculate original un-mercury corrected on peak data (only pertains to Pb204)
-        double[] onPeakMercuryCorrections = //
+        double[] onPeakMercuryCorrections
+                = //
                 ((RawIntensityDataModel) rawRatioDataModel).getOnPeakCountsPerSecondCorrectionsAsRawIntensities();//   .getOnPeakVirtualCollector().getIntensityCorrections();
         // only if corrected do we uncorrect
         onPeakIntensityUncorrectedForMercury = new double[onPeakMercuryCorrections.length];
-        if ( onPeakMercuryCorrections[0] != 0.0 ) {
-            for (int i = 0; i < myOnPeakData.length; i ++) {
+        if (onPeakMercuryCorrections[0] != 0.0) {
+            for (int i = 0; i < myOnPeakData.length; i++) {
                 onPeakIntensityUncorrectedForMercury[i] = myOnPeakData[i] + onPeakMercuryCorrections[i];
             }
 
             // recalculate original un-mercury corrected background data (only pertains to Pb204)
-            double[] backgroundMercuryCorrections = //
+            double[] backgroundMercuryCorrections
+                    = //
                     ((RawIntensityDataModel) rawRatioDataModel).getBackgroundCountsPerSecondCorrectionsAsRawIntensities();//   .getBackgroundVirtualCollector().getIntensityCorrections();
             backgroundIntensityUncorrectedForMercury = new double[backgroundMercuryCorrections.length];
-            for (int i = 0; i < backgroundIntensities.length; i ++) {
+            for (int i = 0; i < backgroundIntensities.length; i++) {
                 backgroundIntensityUncorrectedForMercury[i] = backgroundIntensities[i] + backgroundMercuryCorrections[i];
             }
         }
@@ -183,46 +187,60 @@ public class RawIntensitiesDataView extends AbstractRawDataView {
                 + myOnPeakNormalizedAquireTimes[myOnPeakNormalizedAquireTimes.length - 1] + 1;// say 0...14 and 15...29
 
         // Y-axis is intensities as voltages plus or minus
+        // find min and max y
         minY = Double.MAX_VALUE;
-        maxY =  - Double.MAX_VALUE;
+        maxY = -Double.MAX_VALUE;
+
+        boolean[] myDataActiveMap = rawRatioDataModel.getDataActiveMap();
+        boolean showAll = showIncludedDataPoints.equals(IncludedTypeEnum.ALL);
+        // rework logic April 2016 
 
         // background
-        for (int i = 0; i < backgroundIntensities.length; i ++) {
-            minY = Math.min( minY, backgroundIntensities[i] );
-            maxY = Math.max( maxY, backgroundIntensities[i] );
-            
-            if (  ! ((DataModelFitFunctionInterface) rawRatioDataModel).getSelectedFitFunctionType().equals( FitFunctionTypeEnum.NONE ) ) {
-                minY = Math.min( minY, backgroundFitIntensities[i] );
-                maxY = Math.max( maxY, backgroundFitIntensities[i] );
+        for (int i = 0; i < backgroundIntensities.length; i++) {
+            minY = Math.min(minY, backgroundIntensities[i]);
+            maxY = Math.max(maxY, backgroundIntensities[i]);
+
+            if (!((DataModelFitFunctionInterface) rawRatioDataModel).getSelectedFitFunctionType().equals(FitFunctionTypeEnum.NONE)) {
+                minY = Math.min(minY, backgroundFitIntensities[i]);
+                maxY = Math.max(maxY, backgroundFitIntensities[i]);
             }
-            
-            if ( onPeakMercuryCorrections[0] != 0.0 ) {
-                minY = Math.min( minY, backgroundIntensityUncorrectedForMercury[i] );
-                maxY = Math.max( maxY, backgroundIntensityUncorrectedForMercury[i] );
+
+            if (onPeakMercuryCorrections[0] != 0.0) {
+                minY = Math.min(minY, backgroundIntensityUncorrectedForMercury[i]);
+                maxY = Math.max(maxY, backgroundIntensityUncorrectedForMercury[i]);
             }
         }
-        
+
         // on peak
-        for (int i = 0; i < myOnPeakData.length; i ++) {
-            minY = Math.min( minY, myOnPeakData[i] );
-            maxY = Math.max( maxY, myOnPeakData[i] );
-            
-            if (  ! ((DataModelFitFunctionInterface) rawRatioDataModel).getSelectedFitFunctionType().equals( FitFunctionTypeEnum.NONE ) ) {
-                minY = Math.min( minY, onPeakFitBackgroundIntensities[i] );
-                maxY = Math.max( maxY, onPeakFitBackgroundIntensities[i] );
+        for (int i = 0; i < myOnPeakData.length; i++) {
+            if (showAll || myDataActiveMap[i]) {
+                minY = Math.min(minY, myOnPeakData[i]);
+                maxY = Math.max(maxY, myOnPeakData[i]);
+
+                if (!((DataModelFitFunctionInterface) rawRatioDataModel).getSelectedFitFunctionType().equals(FitFunctionTypeEnum.NONE)) {
+                    minY = Math.min(minY, onPeakFitBackgroundIntensities[i]);
+                    maxY = Math.max(maxY, onPeakFitBackgroundIntensities[i]);
+                }
+
+                if (onPeakMercuryCorrections[0] != 0.0) {
+                    minY = Math.min(minY, onPeakIntensityUncorrectedForMercury[i]);
+                    maxY = Math.max(maxY, onPeakIntensityUncorrectedForMercury[i]);
+                }
             }
-            
-            if ( onPeakMercuryCorrections[0] != 0.0 ) {
-                minY = Math.min( minY, onPeakIntensityUncorrectedForMercury[i] );
-                maxY = Math.max( maxY, onPeakIntensityUncorrectedForMercury[i] );
-            }
- 
+
         }
-        
-        
+
+        // rework logic April 2016 
+        for (int i = 0; i < myOnPeakData.length; i++) {
+            if ((Double.isFinite(myOnPeakData[i])) && (showAll || myDataActiveMap[i])) {
+                minY = Math.min(minY, myOnPeakData[i]);
+                maxY = Math.max(maxY, myOnPeakData[i]);
+            }
+        }
+
         // adjust margins for unknowns
-        if (  ! tripoliFraction.isStandard() ) {
-            double yMarginStretch = TicGeneratorForAxes.generateMarginAdjustment( minY, maxY, 0.05 );
+        if (!tripoliFraction.isStandard()) {
+            double yMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(minY, maxY, 0.05);
             minY -= yMarginStretch;
             maxY += yMarginStretch;
         }
@@ -232,7 +250,7 @@ public class RawIntensitiesDataView extends AbstractRawDataView {
      * @return the rawRatioDataModel
      */
     @Override
-    public DataModelInterface getDataModel () {
+    public DataModelInterface getDataModel() {
         return rawRatioDataModel;
     }
 }

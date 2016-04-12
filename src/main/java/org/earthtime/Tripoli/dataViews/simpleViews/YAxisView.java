@@ -175,9 +175,10 @@ public class YAxisView extends AbstractRawDataView {
 
     /**
      *
+     * @param doReScale the value of doReScale
      */
     @Override
-    public void preparePanel() {
+    public void preparePanel(boolean doReScale) {
 
         this.removeAll();
 

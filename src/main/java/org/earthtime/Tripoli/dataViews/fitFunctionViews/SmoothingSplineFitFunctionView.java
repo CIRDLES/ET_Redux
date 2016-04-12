@@ -37,9 +37,9 @@ import org.earthtime.Tripoli.dataViews.overlayViews.DataViewsOverlay;
 import org.earthtime.Tripoli.dataViews.simpleViews.FitFunctionDataInterface;
 import org.earthtime.Tripoli.dataViews.simpleViews.SessionOfStandardView;
 import org.earthtime.Tripoli.fitFunctions.AbstractFunctionOfX;
-import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.dataDictionaries.FitFunctionTypeEnum;
+import org.earthtime.dialogs.DialogEditor;
 
 /**
  *
@@ -107,14 +107,14 @@ public class SmoothingSplineFitFunctionView extends AbstractFitFunctionView {
                     }
 
                     generateSplineOverDispersionChooserPanel(sessionOfStandardsSplinesWithOD);
-                    splineOverDispersionChooserPanel.preparePanel();
+                    splineOverDispersionChooserPanel.preparePanel(true);
 
                     add(splineOverDispersionChooserPanel);
 
                     if (targetDataModelView instanceof SessionOfStandardView) {
-                        ((SessionOfStandardView) targetDataModelView).refreshPanel();
+                        ((AbstractRawDataView) targetDataModelView).refreshPanel(true);
                     } else if (targetDataModelView instanceof SessionOfStandardView) {
-                        ((DataViewsOverlay) targetDataModelView).refreshPanel();
+                        ((AbstractRawDataView) targetDataModelView).refreshPanel(true);
                     }
 
                     functionChoiceRadioButton.doClick();

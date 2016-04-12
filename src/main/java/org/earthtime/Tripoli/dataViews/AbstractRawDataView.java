@@ -22,6 +22,7 @@ package org.earthtime.Tripoli.dataViews;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Composite;
 import java.awt.Cursor;
 import java.awt.Font;
@@ -143,8 +144,8 @@ public abstract class AbstractRawDataView extends JLayeredPane implements MouseI
      *
      */
     protected IncludedTypeEnum showIncludedDataPoints;
-    private Color paintColor;
-    private transient boolean itIsI = false;
+    protected Color paintColor;
+    protected transient boolean itIsI = false;
 
     /**
      *
@@ -429,7 +430,7 @@ public abstract class AbstractRawDataView extends JLayeredPane implements MouseI
      */
     public void updatePlotsWithChanges(FitFunctionDataInterface targetDataModelView) {
         if (targetDataModelView instanceof SessionOfStandardView) {
-            targetDataModelView.updateFittedData();
+            targetDataModelView.updateFittedData(false);
             // repaint fittedfunction
             sampleSessionDataView.repaint();
             updateReportTable();
@@ -440,7 +441,7 @@ public abstract class AbstractRawDataView extends JLayeredPane implements MouseI
             double saveMinX = ((AbstractRawDataView) targetDataModelView).getMinX();
             double saveMaxX = ((AbstractRawDataView) targetDataModelView).getMaxX();
 
-            targetDataModelView.updateFittedData();
+            targetDataModelView.updateFittedData(false);
 
             ((AbstractRawDataView) targetDataModelView).setMinY(saveMinY);
             ((AbstractRawDataView) targetDataModelView).setMaxY(saveMaxY);
@@ -464,8 +465,6 @@ public abstract class AbstractRawDataView extends JLayeredPane implements MouseI
         return (rawRatioDataModel.getDataActiveMap()[index] ? defaultColor : EXCLUDED_COLOR);
     }
 
-//    private void paintBullsEyeOnSelectedPoints () {
-//    }
     /**
      *
      * @param g2d
@@ -598,17 +597,19 @@ public abstract class AbstractRawDataView extends JLayeredPane implements MouseI
 
     /**
      *
+     * @param doReScale the value of doReScale
      */
-    public void refreshPanel() {
-        preparePanel();
+    public void refreshPanel(boolean doReScale) {
+        preparePanel(doReScale);
         validate();
         repaint();
     }
 
     /**
      *
+     * @param doReScale the value of doReScale
      */
-    public abstract void preparePanel();
+    public abstract void preparePanel(boolean doReScale);
 
     /**
      * @return the graphWidth
@@ -856,9 +857,15 @@ public abstract class AbstractRawDataView extends JLayeredPane implements MouseI
     /**
      *
      */
-    protected void repaintFraction() {
+    @Override
+    public void repaintFraction() {
         if (fractionDataViewsContainer != null) {
-            fractionDataViewsContainer.repaint();
+            for (Component component : fractionDataViewsContainer.getComponents()) {
+                if (component instanceof AbstractRawDataView) {
+                    ((AbstractRawDataView) component).refreshPanel(false);
+                }
+            }
+            //fractionDataViewsContainer.repaint();
         }
     }
 
@@ -953,12 +960,12 @@ public abstract class AbstractRawDataView extends JLayeredPane implements MouseI
                 // feb 2013 here we differentiate between session and ratios
                 // for ratios,we want data point toggle to only affect fraction and not disturb layout
                 if (rawRatioDataModel instanceof AbstractSessionForStandardDataModel) {
-                    ((AbstractRawDataView) sampleSessionDataView).refreshPanel();
+                    ((AbstractRawDataView) sampleSessionDataView).refreshPanel(true);
                 } else {
                     for (AbstractRawDataView fractionRawDataView : fractionRawDataViews) {
                         // dec 2015 modified to redo math on downhole unknowns
                         if ((fractionRawDataView instanceof AbstractFitFunctionPresentationView) || (fractionRawDataView instanceof CorrectedRatioDataView)) {
-                            fractionRawDataView.refreshPanel();
+                            fractionRawDataView.refreshPanel(false);
                             updateReportTable();
                         } else if (fractionRawDataView != null) {
                             // april 2015 added test
@@ -1037,29 +1044,31 @@ public abstract class AbstractRawDataView extends JLayeredPane implements MouseI
     @Override
     public void mouseDragged(MouseEvent evt) {
 
-        if (tripoliFraction.getShowVerticalLineAtThisIndex() >= 0) {
-            int timeSlot = convertMouseXToValue(evt.getX()) - (int) shiftAquiredTimeIndex;
+        if (tripoliFraction != null) {
+            if (tripoliFraction.getShowVerticalLineAtThisIndex() >= 0) {
+                int timeSlot = convertMouseXToValue(evt.getX()) - (int) shiftAquiredTimeIndex;
 
-            if (timeSlot >= 0) {
-                // over the right end by one
-                try {
-                    if (timeSlot > myOnPeakNormalizedAquireTimes.length) {
-                        timeSlot = myOnPeakNormalizedAquireTimes.length;
+                if (timeSlot >= 0) {
+                    // over the right end by one
+                    try {
+                        if (timeSlot > myOnPeakNormalizedAquireTimes.length) {
+                            timeSlot = myOnPeakNormalizedAquireTimes.length;
+                        }
+                    } catch (Exception e) {
                     }
-                } catch (Exception e) {
-                }
-                final int finalTimeSlot = timeSlot;
+                    final int finalTimeSlot = timeSlot;
 
-                tripoliFraction.setShowSecondVerticalLineAtThisIndex(finalTimeSlot);
-                // capture the relative position of y as deltaY over range
-                tripoliFraction.//
-                        setSelBoxSecondY( //
-                                (convertMouseYToValue(evt.getY()) - getMinY_Display()) / getRangeY_Display());
-                tripoliFraction.setSelectedForToggleIndexes( //
-                        calcListOfSelectedToToggleIndexes( //
-                                tripoliFraction.getShowVerticalLineAtThisIndex(), //
-                                tripoliFraction.getShowSecondVerticalLineAtThisIndex()));
-                repaintFraction();
+                    tripoliFraction.setShowSecondVerticalLineAtThisIndex(finalTimeSlot);
+                    // capture the relative position of y as deltaY over range
+                    tripoliFraction.//
+                            setSelBoxSecondY( //
+                                    (convertMouseYToValue(evt.getY()) - getMinY_Display()) / getRangeY_Display());
+                    tripoliFraction.setSelectedForToggleIndexes( //
+                            calcListOfSelectedToToggleIndexes( //
+                                    tripoliFraction.getShowVerticalLineAtThisIndex(), //
+                                    tripoliFraction.getShowSecondVerticalLineAtThisIndex()));
+                    repaintFraction();
+                }
             }
         }
     }
@@ -1125,7 +1134,7 @@ public abstract class AbstractRawDataView extends JLayeredPane implements MouseI
 
         tripoliFraction.setShowVerticalLineAtThisIndex(-1);
 
-        ((AbstractRawDataView) sampleSessionDataView).refreshPanel();
+        ((AbstractRawDataView) sampleSessionDataView).refreshPanel(true);
 
         // feb 2013 standards not put to redux anymore
         try {
@@ -1218,4 +1227,5 @@ public abstract class AbstractRawDataView extends JLayeredPane implements MouseI
     public DataModelInterface getRawRatioDataModel() {
         return rawRatioDataModel;
     }
+
 }

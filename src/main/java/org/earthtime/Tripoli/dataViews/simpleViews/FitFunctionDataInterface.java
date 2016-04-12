@@ -25,8 +25,9 @@ public interface FitFunctionDataInterface {
     
     /**
      * 
+     * @param doReScale the value of doReScale
      */
-    public void updateFittedData();
+    public void updateFittedData(boolean doReScale);
     
     /**
      *

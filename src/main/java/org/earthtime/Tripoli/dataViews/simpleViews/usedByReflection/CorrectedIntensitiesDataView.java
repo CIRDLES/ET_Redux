@@ -29,6 +29,7 @@ import org.earthtime.Tripoli.dataModels.RawIntensityDataModel;
 import org.earthtime.Tripoli.dataViews.AbstractRawDataView;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.UPb_Redux.ReduxConstants;
+import org.earthtime.dataDictionaries.IncludedTypeEnum;
 import org.earthtime.utilities.TicGeneratorForAxes;
 
 /**
@@ -52,13 +53,13 @@ public class CorrectedIntensitiesDataView extends AbstractRawDataView {
      * @param bounds
      * @param invokeMouseListener
      */
-    public CorrectedIntensitiesDataView (//
+    public CorrectedIntensitiesDataView(//
             JLayeredPane sampleSessionDataView, //
             TripoliFraction tripoliFraction,//
             DataModelInterface rawIsotopeDataModel,//
             Rectangle bounds,//
-            boolean invokeMouseListener ) {
-        super( sampleSessionDataView, tripoliFraction, bounds, invokeMouseListener, true );
+            boolean invokeMouseListener) {
+        super(sampleSessionDataView, tripoliFraction, bounds, invokeMouseListener, true);
 
         this.rawRatioDataModel = rawIsotopeDataModel;
 
@@ -69,45 +70,46 @@ public class CorrectedIntensitiesDataView extends AbstractRawDataView {
      * @param g2d
      */
     @Override
-    public void paint ( Graphics2D g2d ) {
-        super.paint( g2d );
+    public void paint(Graphics2D g2d) {
+        super.paint(g2d);
 
-        if ( ((RawIntensityDataModel) rawRatioDataModel).isBelowDetection() ) {
-            setBackground(ReduxConstants.palePinkBelowDetection );
+        if (rawRatioDataModel.isBelowDetection()) {
+            setBackground(ReduxConstants.palePinkBelowDetection);
             g2d.drawString("BELOW DETECTION", 25, 25);
         }
 
         // draw corrected onPeak intensities 
-        for (int i = 0; i < myOnPeakData.length; i ++) {
+        for (int i = 0; i < myOnPeakData.length; i++) {
             Shape intensity = new java.awt.geom.Ellipse2D.Double( //
-                    mapX( myOnPeakNormalizedAquireTimes[i] ), mapY( myOnPeakData[i] ), 1, 1 );
-            g2d.setPaint( determineDataColor( i, Color.black ) );
+                    mapX(myOnPeakNormalizedAquireTimes[i]), mapY(myOnPeakData[i]), 1, 1);
+            g2d.setPaint(determineDataColor(i, Color.black));
 
             // dec 2012 for visualization only
-            if ( myOnPeakData[i] <= Double.MIN_VALUE ) {
-                g2d.setPaint( Color.red );
+            if (myOnPeakData[i] <= Double.MIN_VALUE) {
+                g2d.setPaint(Color.red);
             }
 
-            g2d.draw( intensity );
+            g2d.draw(intensity);
         }
     }
 
     /**
      *
+     * @param doReScale the value of doReScale
      */
     @Override
-    public void preparePanel () {
+    public void preparePanel(boolean doReScale) {
 
         this.removeAll();
 
-        setDisplayOffsetY( 0.0 );
-        setDisplayOffsetX( 0.0 );
+        setDisplayOffsetY(0.0);
+        setDisplayOffsetX(0.0);
 
         // walk intensities and get min and max for axes
         myOnPeakData = ((RawIntensityDataModel) rawRatioDataModel).getOnPeakCorrectedCountsPerSecondAsRawIntensities();// .getOnPeakVirtualCollector().getCorrectedIntensities();
 
         // normalize aquireTimes
-        myOnPeakNormalizedAquireTimes = ((RawIntensityDataModel) rawRatioDataModel).getNormalizedOnPeakAquireTimes();
+        myOnPeakNormalizedAquireTimes = rawRatioDataModel.getNormalizedOnPeakAquireTimes();
 
         // X-axis lays out time evenly spaced
         minX = myOnPeakNormalizedAquireTimes[0];
@@ -115,20 +117,24 @@ public class CorrectedIntensitiesDataView extends AbstractRawDataView {
 
         // Y-axis is intensities as voltages plus or minus
         minY = Double.MAX_VALUE;
-        maxY =  - Double.MAX_VALUE;
+        maxY = -Double.MAX_VALUE;
 
-        // assume background is less than onPeak
-        for (int i = 0; i < myOnPeakData.length; i ++) {
-            minY = Math.min( minY, myOnPeakData[i] );
+        // find min and max y
+        boolean[] myDataActiveMap = rawRatioDataModel.getDataActiveMap();
+
+        boolean showAll = showIncludedDataPoints.equals(IncludedTypeEnum.ALL);
+        // rework logic April 2016 
+        for (int i = 0; i < myOnPeakData.length; i++) {
+            if (showAll || myDataActiveMap[i]) {
+                minY = Math.min(minY, myOnPeakData[i]);
+                maxY = Math.max(maxY, myOnPeakData[i]);
+            }
         }
 
-        for (int i = 0; i < myOnPeakData.length; i ++) {
-            maxY = Math.max( maxY, myOnPeakData[i] );
-        }
 
         // adjust margins for unknowns
-        if (  ! tripoliFraction.isStandard() ) {
-            double yMarginStretch = TicGeneratorForAxes.generateMarginAdjustment( minY, maxY, 0.05 );
+        if (!tripoliFraction.isStandard()) {
+            double yMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(minY, maxY, 0.05);
             minY -= yMarginStretch;
             maxY += yMarginStretch;
         }
@@ -139,7 +145,7 @@ public class CorrectedIntensitiesDataView extends AbstractRawDataView {
      * @return the rawRatioDataModel
      */
     @Override
-    public DataModelInterface getDataModel () {
+    public DataModelInterface getDataModel() {
         return rawRatioDataModel;
     }
 //    /**

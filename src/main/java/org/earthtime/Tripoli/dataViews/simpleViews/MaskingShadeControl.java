@@ -103,7 +103,7 @@ public class MaskingShadeControl extends AbstractRawDataView implements MaskingS
     }
 
     @Override
-    public void preparePanel() {
+    public void preparePanel(boolean doReScale) {
 
         this.removeAll();
 
@@ -183,7 +183,7 @@ public class MaskingShadeControl extends AbstractRawDataView implements MaskingS
         }
 
         // refresh all
-        ((AbstractRawDataView) sampleSessionDataView).refreshPanel();
+        ((AbstractRawDataView) sampleSessionDataView).refreshPanel(true);
 
         return (int) mapX(timeIndex);//currentShadeX;//timeIndex;
     }
@@ -205,7 +205,7 @@ public class MaskingShadeControl extends AbstractRawDataView implements MaskingS
         maskingArray.setRightShadeCount(maskingArray.getMaskingArray().length - timeIndex - 1);
 
         // refresh all
-        ((AbstractRawDataView) sampleSessionDataView).refreshPanel();
+        ((AbstractRawDataView) sampleSessionDataView).refreshPanel(true);
 
         return (int) mapX(timeIndex - 1);//currentShadeX;//timeIndex;
     }
