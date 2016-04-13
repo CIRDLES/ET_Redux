@@ -433,7 +433,7 @@ public class LaserChronNUPlasmaMultiCollFaradayTRAFileHandler extends AbstractRa
 
                     String theFractionID;
                     if (isStandard) {
-                        theFractionID = sampleRunName + "-STD." + String.valueOf(fractionCounter);
+                        theFractionID = sampleRunName + "-RM." + String.valueOf(fractionCounter);
                     } else {
                         theFractionID = sampleRunName + "-" + String.valueOf(fractionCounter);
                     }

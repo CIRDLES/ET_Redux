@@ -1485,9 +1485,6 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         if (performReduction) {
             theSample.reduceSampleData();
         }
-////////        // this call is for top table of measured ratios
-////////        ((UPbFractionTableModel) getTheFractionTable().getModel()).//
-////////                refreshTableData();
 
         loadAndShowReportTableData();
 
@@ -1497,8 +1494,9 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             ((SampleDateInterpretationsManager) sampleDateInterpDialog).setSample(theSample);
         }
 
+//      updated with rescaling april 2016
         try {
-            ((SampleDateInterpretationsManager) sampleDateInterpDialog).refreshSampleDateInterpretations();
+            ((SampleDateInterpretationsManager) sampleDateInterpDialog).refreshSampleDateInterpretations(false);
         } catch (Exception e) {
         }
     }
@@ -3435,7 +3433,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             interpretSampleDates_button.setEnabled(false);
 
             ((ConcordiaGraphPanel) myConcordiaGraphPanel).setShowTightToEdges(true);
-            ((PlottingDetailsDisplayInterface) myConcordiaGraphPanel).resetPanel();
+            ((PlottingDetailsDisplayInterface) myConcordiaGraphPanel).resetPanel(true);
 
             if (sampleDateInterpDialog != null) {
                 sampleDateInterpDialog.dispose();

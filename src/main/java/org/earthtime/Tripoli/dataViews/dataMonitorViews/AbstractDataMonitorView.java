@@ -522,7 +522,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
 
             ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
                     setSelectedFractions(selectedFractions);
-            ((PlottingDetailsDisplayInterface) concordiaGraphPanel).resetPanel();
+            ((PlottingDetailsDisplayInterface) concordiaGraphPanel).resetPanel(true);
         } catch (Exception e) {
         }
 

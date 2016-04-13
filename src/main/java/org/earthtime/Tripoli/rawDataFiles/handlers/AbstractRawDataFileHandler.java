@@ -438,7 +438,7 @@ public abstract class AbstractRawDataFileHandler implements //
 //////                // to a second sample
                 firstSample = tripoliSamplesSorted.first();
 //////                AbstractTripoliSample unknownSample = new TripoliUnknownSample(firstSample.getSampleName());
-                firstSample.setSampleName(firstSample.getSampleName() + "-STD");
+                firstSample.setSampleName(firstSample.getSampleName() + "-RM");
 //////
 //////                SortedSet<TripoliFraction> firstSampleFractions = firstSample.getSampleFractions();
 //////                Iterator<TripoliFraction> firstSampleFractionsIterator = firstSampleFractions.iterator();

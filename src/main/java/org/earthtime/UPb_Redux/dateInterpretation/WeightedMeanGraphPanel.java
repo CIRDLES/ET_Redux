@@ -982,16 +982,18 @@ public class WeightedMeanGraphPanel extends JPanel
 
     /**
      *
+     * @param doReScale the value of doReScale
      */
-    public void refreshPanel() {
-        preparePanel();
+    public void refreshPanel(boolean doReScale) {
+        preparePanel(doReScale);
         repaint();
     }
 
     /**
      *
+     * @param doReScale the value of doReScale
      */
-    public void preparePanel() {
+    public void preparePanel(boolean doReScale) {
 
         zoomMaxX = 0;
         zoomMaxY = 0;
@@ -1048,8 +1050,6 @@ public class WeightedMeanGraphPanel extends JPanel
         double yTic = deltay / 100;
         setMinY((minY - 0.25 * rangeY) - 9 * yTic);
 
-//        setInRandomMode( false );
-//        System.out.println("Init " + minX + "  " + minY + "  " + maxX + "   " + maxY);
     }
 
     /**
@@ -1570,7 +1570,7 @@ public class WeightedMeanGraphPanel extends JPanel
     }
 
     @Override
-    public void resetPanel() {
-        refreshPanel();
+    public void resetPanel(boolean doReScale) {
+        refreshPanel(doReScale);
     }
 }

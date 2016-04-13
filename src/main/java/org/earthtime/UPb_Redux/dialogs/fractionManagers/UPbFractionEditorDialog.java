@@ -411,7 +411,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
             reInitializeKwikiTab(fraction);
 
             // bring into view
-            ((PlottingDetailsDisplayInterface) concordiaGraphPanel).resetPanel();
+            ((PlottingDetailsDisplayInterface) concordiaGraphPanel).resetPanel(true);
         }
 
         /**
@@ -778,7 +778,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
                 .setCorrectPaSelected(((ConcordiaGraphPanel) concordiaGraphPanel).isDisplay_r206_238r_Pa());
         ((KwikiDateModesSelectorPanel) kwikiDateModesSelectorPanel).CalculateDateCorrectionMode("None");
 
-        ((PlottingDetailsDisplayInterface) concordiaGraphPanel).refreshPanel();
+        ((PlottingDetailsDisplayInterface) concordiaGraphPanel).refreshPanel(true);
 
         drawSlidersByClump(fraction);
 

@@ -593,7 +593,7 @@ public class GeochronAliquotManager extends JPanel {
 
         concordiaGraphPanel.setShowTightToEdges(true);
 
-        concordiaGraphPanel.refreshPanel();
+        concordiaGraphPanel.refreshPanel(true);
 
         concordiaGraphPanel.setShowTightToEdges(false);
 
