@@ -130,9 +130,10 @@ public class XAxisOverlayView extends AbstractRawDataView implements MaskingShad
 
     /**
      * 
+     * @param doReScale the value of doReScale
      */
     @Override
-    public void preparePanel () {
+    public void preparePanel (boolean doReScale) {
 
         this.removeAll();
 

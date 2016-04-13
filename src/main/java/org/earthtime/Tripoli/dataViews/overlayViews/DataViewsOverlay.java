@@ -202,7 +202,7 @@ public class DataViewsOverlay extends AbstractRawDataView implements FitFunction
             }
         }
 
-        if (downholeFractionationDataModel != null) {
+        if (fitFunctionNormalizedTimes != null){//(downholeFractionationDataModel != null) {
 
             // draw averageLine BLACK
             Shape averageLine = new Path2D.Double();
@@ -241,7 +241,7 @@ public class DataViewsOverlay extends AbstractRawDataView implements FitFunction
      *
      */
     @Override
-    public void updateFittedData() {
+    public void updateFittedData(boolean doReScale) {
 
         myFittedAverages = downholeFractionationDataModel.getFitFunctionLogValues().clone();
 
@@ -259,9 +259,10 @@ public class DataViewsOverlay extends AbstractRawDataView implements FitFunction
 
     /**
      *
+     * @param doReScale the value of doReScale
      */
     @Override
-    public void preparePanel() {
+    public void preparePanel(boolean doReScale) {
         this.removeAll();
 
         setDisplayOffsetY(0.0);
@@ -299,7 +300,7 @@ public class DataViewsOverlay extends AbstractRawDataView implements FitFunction
 
             // handle case of standard averages
             if (downholeFractionationDataModel != null) {
-                updateFittedData();
+                updateFittedData(doReScale);
             }
         }
     }
@@ -471,7 +472,7 @@ public class DataViewsOverlay extends AbstractRawDataView implements FitFunction
                                         }
 
                                         // refresh all
-                                        ((AbstractRawDataView) sampleSessionDataView).refreshPanel();
+                                        ((AbstractRawDataView) sampleSessionDataView).refreshPanel(true);
 
                                         updateReportTable();
                                     }
@@ -497,7 +498,7 @@ public class DataViewsOverlay extends AbstractRawDataView implements FitFunction
                                         }
 
                                         // refresh all
-                                        ((AbstractRawDataView) sampleSessionDataView).refreshPanel();
+                                        ((AbstractRawDataView) sampleSessionDataView).refreshPanel(true);
 
                                         updateReportTable();
                                     }
@@ -523,7 +524,7 @@ public class DataViewsOverlay extends AbstractRawDataView implements FitFunction
                                         }
 
                                         // refresh all
-                                        ((AbstractRawDataView) sampleSessionDataView).refreshPanel();
+                                        ((AbstractRawDataView) sampleSessionDataView).refreshPanel(true);
 
                                         updateReportTable();
 

@@ -4658,7 +4658,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
 
                 concordiaGraphPanel.setShowTightToEdges(true);
 
-                concordiaGraphPanel.refreshPanel();
+                concordiaGraphPanel.refreshPanel(true);
 
                 concordiaGraphPanel.setShowTightToEdges(false);
 
@@ -4711,7 +4711,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
                     probabilityPanel.setChosenDateName(RadDates.age207_206r.getName());
                 }
 
-                probabilityPanel.showTight();//.refreshPanel();
+                probabilityPanel.showTight();
 
             } else {
                 probabilityPanel.setGraphWidth(565);

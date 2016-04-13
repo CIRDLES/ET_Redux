@@ -130,7 +130,7 @@ public class DataPresentationModeChooserPanel extends AbstractRawDataView {
     }
 
     @Override
-    public void preparePanel() {
+    public void preparePanel(boolean doReScale) {
         this.removeAll();
 
         // arbitrary
@@ -172,7 +172,7 @@ public class DataPresentationModeChooserPanel extends AbstractRawDataView {
             public void actionPerformed(ActionEvent e) {
 
                 ((AbstractRawDataView) sampleSessionDataView).setDataPresentationMode(myDataPresentationMode);
-                ((AbstractRawDataView) sampleSessionDataView).refreshPanel();
+                ((AbstractRawDataView) sampleSessionDataView).refreshPanel(true);
 
             }
         });
@@ -185,7 +185,7 @@ public class DataPresentationModeChooserPanel extends AbstractRawDataView {
         AbstractRawDataView maskingShadeControl = //
                 new MaskingShadeControl(new Rectangle(15, 88, 170, 20), myOnPeakNormalizedAquireTimes, sampleSessionDataView);
 
-        maskingShadeControl.preparePanel();
+        maskingShadeControl.preparePanel(true);
 
         return maskingShadeControl;
     }
@@ -206,7 +206,7 @@ public class DataPresentationModeChooserPanel extends AbstractRawDataView {
                 // jan 2015 force refit after applying shade
                 //see above ((TripoliSessionRawDataView) sampleSessionDataView).getTripoliSession().calculateSessionFitFunctionsForPrimaryStandard();
 
-                ((AbstractRawDataView) sampleSessionDataView).refreshPanel();
+                ((AbstractRawDataView) sampleSessionDataView).refreshPanel(true);
 
             }
         });
@@ -228,7 +228,7 @@ public class DataPresentationModeChooserPanel extends AbstractRawDataView {
                     ((TripoliSessionRawDataView) sampleSessionDataView).getTripoliSession().setODforAllFractionsAllRatios(setOD);
                 }
 
-                ((AbstractRawDataView) sampleSessionDataView).refreshPanel();
+                ((AbstractRawDataView) sampleSessionDataView).refreshPanel(true);
             }
         });
 

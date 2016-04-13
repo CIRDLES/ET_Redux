@@ -62,6 +62,7 @@ import org.apache.batik.svggen.SVGGraphics2D;
 import org.apache.batik.svggen.SVGGraphics2DIOException;
 import org.earthtime.UPb_Redux.beans.ReduxSuppressComponentEventsI;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.GraphPanelModeChangeI;
+import org.earthtime.UPb_Redux.dateInterpretation.concordia.PlottingDetailsDisplayInterface;
 import org.earthtime.UPb_Redux.dateInterpretation.vermeeschKDE.KDE;
 import org.earthtime.UPb_Redux.dateInterpretation.vermeeschKDE.OtherData;
 import org.earthtime.UPb_Redux.dateInterpretation.vermeeschKDE.Preferences;
@@ -81,6 +82,7 @@ import org.w3c.dom.Document;
  */
 public class DateProbabilityDensityPanel extends JLayeredPane
         implements
+        PlottingDetailsDisplayInterface,
         MouseListener,
         MouseMotionListener {
 
@@ -188,7 +190,8 @@ public class DateProbabilityDensityPanel extends JLayeredPane
 
         chosenDateName = RadDates.age207_206r.getName();
 
-        this.aliquotOptions =//
+        this.aliquotOptions
+                =//
                 sample.getSampleDateInterpretationGUISettings().getAliquotOptions();
 
         mouseInside = false;
@@ -206,7 +209,7 @@ public class DateProbabilityDensityPanel extends JLayeredPane
 
         maxima = new HashMap<>();
         maximaShown = new TreeMap<>();
-       
+
         addMouseListener(this);
         addMouseMotionListener(this);
     }
@@ -324,7 +327,8 @@ public class DateProbabilityDensityPanel extends JLayeredPane
 
                 Color includedFillColor = new Color(255, 255, 255);
                 if (myAliquotOptions.containsKey("includedFillColor")) {
-                    String[] temp = //
+                    String[] temp
+                            = //
                             myAliquotOptions.get("includedFillColor").split(",");
                     includedFillColor = buildRGBColor(temp);
                 }
@@ -348,11 +352,14 @@ public class DateProbabilityDensityPanel extends JLayeredPane
                     // now remove the deselected fractions
                     activeStackedAliquotKernels = stackedAliquotKernels[selectedAliquotNumber].clone();
                     for (ETFractionInterface f : deSelectedFractions) {
-                        ValueModel date = f.getRadiogenicIsotopeDateByName(getChosenDateName());
-                        KernelF myKernel = new KernelF(date);
-                        for (int i = 0; i < pdfPoints.size(); i++) {
-                            double eval = evalKernelAt(myKernel, pdfPoints.get(i));
-                            activeStackedAliquotKernels[i] -= eval;
+                        // April 2016 remove primary standard
+                        if (!f.isStandard()) {
+                            ValueModel date = f.getRadiogenicIsotopeDateByName(getChosenDateName());
+                            KernelF myKernel = new KernelF(date);
+                            for (int i = 0; i < pdfPoints.size(); i++) {
+                                double eval = evalKernelAt(myKernel, pdfPoints.get(i));
+                                activeStackedAliquotKernels[i] -= eval;
+                            }
                         }
                     }
 
@@ -439,7 +446,8 @@ public class DateProbabilityDensityPanel extends JLayeredPane
                 if (maximaShown.get(dateOfMax)) {
                     double maxProbability = maxima.get(dateOfMax);
 
-                    TextLayout tempLayout = //
+                    TextLayout tempLayout
+                            = //
                             new TextLayout(
                                     Integer.toString(dateOfMax), g2d.getFont(), g2d.getFontRenderContext());
 
@@ -470,7 +478,8 @@ public class DateProbabilityDensityPanel extends JLayeredPane
                     14));
 
             String myText = "SAMPLE = " + sample.getSampleName().trim();
-            TextLayout mLayout = //
+            TextLayout mLayout
+                    = //
                     new TextLayout(
                             myText, g2d.getFont(), g2d.getFontRenderContext());
 
@@ -548,7 +557,8 @@ public class DateProbabilityDensityPanel extends JLayeredPane
         int maxBinPopulation = 0;
 
         for (int i = 0; i < visibleSample.size(); i += 1) {
-            int binNumber = //
+            int binNumber
+                    = //
                     (int) Math.floor( //
                             (visibleSample.get(i) - visibleSample.get(0)) / getAdjustedScottsBinWidth());
 
@@ -557,7 +567,6 @@ public class DateProbabilityDensityPanel extends JLayeredPane
 //            if ((binNumber == countOfBins) && (binNumber > 0)) {
 ////                binNumber --;
 //            }
-
             try {
                 histogram[binNumber]++;
                 if (histogram[binNumber] > maxBinPopulation) {
@@ -604,7 +613,8 @@ public class DateProbabilityDensityPanel extends JLayeredPane
         }
 
         // create a tic for each count number
-        BigDecimal[] yAxisHistogramTics =//
+        BigDecimal[] yAxisHistogramTics
+                =//
                 TicGeneratorForAxes.generateTics(0, maxHistogramCount, 12);//maxHistogramCount + (maxHistogramCount % 2) );
         for (int i = 0; i < yAxisHistogramTics.length; i++) {
 //            System.out.println( "TIC = " + i );
@@ -663,7 +673,8 @@ public class DateProbabilityDensityPanel extends JLayeredPane
 
                 // draw number value, adjusting for font
                 // build the box to fit the value string
-                TextLayout tempLayout = //
+                TextLayout tempLayout
+                        = //
                         new TextLayout(
                                 temp.trim(), g2d.getFont(), g2d.getFontRenderContext());
 
@@ -697,17 +708,21 @@ public class DateProbabilityDensityPanel extends JLayeredPane
                 (int) Integer.parseInt(rgbComponents[2].trim()));
     }
 
-    /**
-     *
-     */
-    public void refreshPanel() {
+    @Override
+    public void resetPanel(boolean doReScale) {
+        refreshPanel(doReScale);
+    }
 
-        // nov 2011
-        setMinX(DateProbabilityDensityPanel.DEFAULT_DISPLAY_MINX);
-        setMaxX(DateProbabilityDensityPanel.DEFAULT_DISPLAY_MAXX);
-        setDisplayOffsetX(0);
+    @Override
+    public void refreshPanel(boolean doReScale) {
+        if (doReScale) {
+            // nov 2011
+            setMinX(DateProbabilityDensityPanel.DEFAULT_DISPLAY_MINX);
+            setMaxX(DateProbabilityDensityPanel.DEFAULT_DISPLAY_MAXX);
+            setDisplayOffsetX(0);
+        }
 
-        preparePanel();
+        preparePanel(doReScale);
         repaint();
     }
 
@@ -715,14 +730,15 @@ public class DateProbabilityDensityPanel extends JLayeredPane
      *
      */
     public void prepareAndPaintPanel() {
-        preparePanel();
+        preparePanel(true);
         repaint();
     }
 
     /**
      *
      */
-    public void preparePanel() {
+    @Override
+    public void preparePanel(boolean doReScale) {
 
         System.out.println("========Probability Prep=======");
         this.removeAll();
@@ -741,7 +757,10 @@ public class DateProbabilityDensityPanel extends JLayeredPane
         }
         for (ETFractionInterface f : selectedFractions) {
             // nov 2011 add in tiny amount so that grapher can distinguish between annum and dates based on aaaa.0  vs aaaa.0000001
-            pdfPoints.add(f.getRadiogenicIsotopeDateByName(getChosenDateName()).getValue().movePointLeft(6).doubleValue() + 0.0000001);
+            // April 2016 remove primary standard
+            if (!f.isStandard()) {
+                pdfPoints.add(f.getRadiogenicIsotopeDateByName(getChosenDateName()).getValue().movePointLeft(6).doubleValue() + 0.0000001);
+            }
         }
         Collections.sort(pdfPoints);
 
@@ -762,20 +781,23 @@ public class DateProbabilityDensityPanel extends JLayeredPane
         // end June 2013 experiment with Vermeesch KDE
 
         for (ETFractionInterface f : selectedFractions) {
-            ValueModel date = f.getRadiogenicIsotopeDateByName(chosenDateName);
+            // April 2016 remove primary standard
+            if (!f.isStandard()) {
+                ValueModel date = f.getRadiogenicIsotopeDateByName(chosenDateName);
 
-            // June 2013 experiment with Vermeesch KDE
-            X.add(date.getValue().movePointLeft(6).doubleValue());
-            Y.add(Math.pow(date.getOneSigmaAbs().movePointLeft(6).doubleValue(), 2));
-            Z.add(Double.NaN);
-            // end June 2013 experiment with Vermeesch KDE
+                // June 2013 experiment with Vermeesch KDE
+                X.add(date.getValue().movePointLeft(6).doubleValue());
+                Y.add(Math.pow(date.getOneSigmaAbs().movePointLeft(6).doubleValue(), 2));
+                Z.add(Double.NaN);
+                // end June 2013 experiment with Vermeesch KDE
 
-            int aliquotNumber = f.getAliquotNumber();
-            KernelF myKernel = new KernelF(date);
-            for (int i = 0; i < pdfPoints.size(); i++) {
-                double eval = evalKernelAt(myKernel, pdfPoints.get(i));
-                stackedAliquotKernels[0][i] += eval;
-                stackedAliquotKernels[aliquotNumber][i] += eval;
+                int aliquotNumber = f.getAliquotNumber();
+                KernelF myKernel = new KernelF(date);
+                for (int i = 0; i < pdfPoints.size(); i++) {
+                    double eval = evalKernelAt(myKernel, pdfPoints.get(i));
+                    stackedAliquotKernels[0][i] += eval;
+                    stackedAliquotKernels[aliquotNumber][i] += eval;
+                }
             }
         }
 
@@ -832,8 +854,8 @@ public class DateProbabilityDensityPanel extends JLayeredPane
                     currentMaxIndex++;
                 }
 
-            } else {
-                // downhill
+            } else // downhill
+            {
                 if (stackedAliquotKernels[0][i] > stackedAliquotKernels[0][currentMinIndex]) {
                     uphill = true;
                     currentMaxIndex = i;
@@ -849,7 +871,7 @@ public class DateProbabilityDensityPanel extends JLayeredPane
      *
      */
     public void showTight() {
-        refreshPanel();
+        refreshPanel(true);
 
         for (int i = 0; i < pdfPoints.size(); i++) {
             if (stackedAliquotKernels[0][i] > 0.01) {
@@ -1155,7 +1177,8 @@ public class DateProbabilityDensityPanel extends JLayeredPane
             // right mouse for zoom
             mouseInside = true;
             // center the date under the mouse
-            double trialDisplayOffsetX = //
+            double trialDisplayOffsetX
+                    = //
                     getDisplayOffsetX() //
                     + (convertMouseXToValue(evt.getX()) - convertMouseXToValue((getGraphWidth()) / 2 + getLeftMargin()));
 //
@@ -1229,7 +1252,8 @@ public class DateProbabilityDensityPanel extends JLayeredPane
         if (mouseInside) {
             zoomMax = evt.getX();
 
-            double trialDisplayOffsetX = //
+            double trialDisplayOffsetX
+                    = //
                     getDisplayOffsetX() //
                     + (convertMouseXToValue(zoomMin) - convertMouseXToValue(zoomMax));
 

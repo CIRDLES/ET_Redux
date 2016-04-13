@@ -37,7 +37,6 @@ import org.earthtime.Tripoli.dataModels.RawRatioDataModel;
 import org.earthtime.Tripoli.dataViews.AbstractRawDataView;
 import org.earthtime.Tripoli.dataViews.overlayViews.TripoliSessionRawDataView;
 import org.earthtime.Tripoli.dataViews.simpleViews.FitFunctionDataInterface;
-import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.FitFunctionsOnRatioDataView;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.dataDictionaries.FitFunctionTypeEnum;
 
@@ -91,7 +90,8 @@ public class AllFunctionsChoicePanel extends AbstractRawDataView {
         paintInit(g2d);
 
         String label = "Apply Fit Function:";
-        TextLayout mLayout = //
+        TextLayout mLayout
+                = //
                 new TextLayout(
                         label, g2d.getFont(), g2d.getFontRenderContext());
 
@@ -104,7 +104,7 @@ public class AllFunctionsChoicePanel extends AbstractRawDataView {
     }
 
     @Override
-    public void preparePanel() {
+    public void preparePanel(boolean doReScale) {
         this.removeAll();
 
         // arbitrary
@@ -131,31 +131,31 @@ public class AllFunctionsChoicePanel extends AbstractRawDataView {
         functionChoiceButton.setMargin(new Insets(0, 0, 0, 0));
         functionChoiceButton.setBounds(5, pixelsFromTop, 110, 20);
 
-        functionChoiceButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                for (AbstractRawDataView rawDataModelView : rawDataModelViews) {
-                    DataModelFitFunctionInterface rawRatioDataModel = (DataModelFitFunctionInterface) rawDataModelView.getDataModel();
-                    if (rawRatioDataModel.containsFitFunction(fitFunctionType)) {
-                        rawRatioDataModel.setSelectedFitFunctionType(fitFunctionType);
-                    }
-                    try {
-                        rawDataModelView.updatePlotsWithChanges((FitFunctionDataInterface) rawDataModelView);
-                    } catch (Exception e2) {
-                    }
+        functionChoiceButton.addActionListener((ActionEvent e) -> {
+            for (AbstractRawDataView rawDataModelView : rawDataModelViews) {
+                DataModelFitFunctionInterface rawRatioDataModel1 = (DataModelFitFunctionInterface) rawDataModelView.getDataModel();
+                if (rawRatioDataModel1.containsFitFunction(fitFunctionType)) {
+                    rawRatioDataModel1.setSelectedFitFunctionType(fitFunctionType);
                 }
-
-                ((TripoliSessionRawDataView) sampleSessionDataView).getTripoliSession().setFitFunctionsUpToDate(false);
-                ((AbstractRawDataView) sampleSessionDataView).refreshPanel();
-
-                // be sure changes to unknowns go to data table
-                if (rawDataModelViews[0] instanceof FitFunctionsOnRatioDataView) {
-                    if (((FitFunctionDataInterface) rawDataModelViews[0]).amShowingUnknownFraction()) {
-                        updateReportTable();
-                    }
+                try {
+                    rawDataModelView.updatePlotsWithChanges((FitFunctionDataInterface) rawDataModelView);
+                } catch (Exception e2) {
                 }
-
             }
+            ((TripoliSessionRawDataView) sampleSessionDataView).getTripoliSession().setFitFunctionsUpToDate(false);
+            // ((AbstractRawDataView) sampleSessionDataView).refreshPanel(true);
+
+            for (int i = 0; i < rawDataModelViews.length; i++) {
+                rawDataModelViews[i].refreshPanel(false);
+            }
+//            // be sure changes to unknowns go to data table
+//            if (rawDataModelViews[0] instanceof FitFunctionsOnRatioDataView) {
+//                if (((FitFunctionDataInterface) rawDataModelViews[0]).amShowingUnknownFraction()) {
+//                    updateReportTable();
+//                }
+//            }
+
+            updateReportTable();
         });
 
         fitFunctionButtonGroup.add(functionChoiceButton);
@@ -174,17 +174,21 @@ public class AllFunctionsChoicePanel extends AbstractRawDataView {
                 for (AbstractRawDataView rawDataModelView : rawDataModelViews) {
                     DataModelFitFunctionInterface rawRatioDataModel = (DataModelFitFunctionInterface) rawDataModelView.getDataModel();
                     if (meanOnly) {// case of downhole
-                           ((RawRatioDataModel)rawRatioDataModel).setOverDispersionSelectedDownHole(setOD);
+                        ((RawRatioDataModel) rawRatioDataModel).setOverDispersionSelectedDownHole(setOD);
                     } else {
                         rawRatioDataModel.setOverDispersionSelected(setOD);
                     }
-                    try {
-                        ((FitFunctionDataInterface) rawDataModelView).updateFittedData();
-                    } catch (Exception e2) {
-                    }
+//                    try {
+//                        ((FitFunctionDataInterface) rawDataModelView).updateFittedData(true);
+//                    } catch (Exception e2) {
+//                    }
                 }
 
-                ((AbstractRawDataView) sampleSessionDataView).refreshPanel();
+//                ((AbstractRawDataView) sampleSessionDataView).refreshPanel(true);
+                for (int i = 0; i < rawDataModelViews.length; i++) {
+                    rawDataModelViews[i].refreshPanel(false);
+                }
+                updateReportTable();
             }
         });
 

@@ -38,7 +38,6 @@ import javax.swing.tree.TreeSelectionModel;
 import org.earthtime.UPb_Redux.customJTrees.CheckBoxNode;
 import org.earthtime.UPb_Redux.customJTrees.CheckBoxNodeEditor;
 import org.earthtime.UPb_Redux.customJTrees.CheckBoxNodeRenderer;
-import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.dialogs.sampleManagers.sampleDateInterpretationManagers.SampleDateInterpretationChooserDialog;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
@@ -46,6 +45,7 @@ import org.earthtime.UPb_Redux.valueModels.ValueModelI;
 import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.aliquots.ReduxAliquotInterface;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
+import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.samples.SampleInterface;
 
@@ -113,15 +113,15 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
                     ((DefaultMutableTreeNode) getModel().getRoot()).add(aliquotNode);
 
                     // get a master vector of active fraction names
-                    Vector<String> activeFractionIDs =//
-                            ((ReduxAliquotInterface) tempAliquot).//
+                    Vector<String> activeFractionIDs
+                            = ((ReduxAliquotInterface) tempAliquot).//
                             getAliquotFractionIDs();
 
                     // now load the sample date interpretations
                     for (int index = 0; index < tempAliquot.getSampleDateModels().size(); index++) {
-                        DefaultMutableTreeNode sampleDateModelNode =//
-                                new DefaultMutableTreeNode(//
-                                        (SampleDateModel) tempAliquot.getSampleDateModels().get(index));
+                        DefaultMutableTreeNode sampleDateModelNode
+                                = new DefaultMutableTreeNode(//
+                                        tempAliquot.getSampleDateModels().get(index));
 
                         aliquotNode.add(sampleDateModelNode);
 
@@ -194,12 +194,14 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
             ValueModel SAM,
             DefaultMutableTreeNode SAMnode) {
 
-        DefaultMutableTreeNode sampleDateValue = //
+        DefaultMutableTreeNode sampleDateValue
+                = //
                 new DefaultMutableTreeNode(//
                         ((SampleDateModel) SAM).ShowCustomDateNode());
         SAMnode.add(sampleDateValue);
 
-        DefaultMutableTreeNode sampleDateMSWD = //
+        DefaultMutableTreeNode sampleDateMSWD
+                = //
                 new DefaultMutableTreeNode(//
                         ((SampleDateModel) SAM).ShowCustomMSWDwithN());
         SAMnode.add(sampleDateMSWD);
@@ -207,7 +209,8 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
         if (((SampleDateModel) SAM).getMethodName().contains("LowerIntercept")) {
             SAMnode.add(new DefaultMutableTreeNode("See Upper Intercept Fractions"));
         } else {
-            DefaultMutableTreeNode sampleDateFractions = //
+            DefaultMutableTreeNode sampleDateFractions
+                    = //
                     new DefaultMutableTreeNode("Fractions");
             SAMnode.add(sampleDateFractions);
 
@@ -248,18 +251,18 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
         //  see below setSelectionRow(-1);
 
         if (nodeInfo instanceof SampleInterface) {
-           // System.out.println(((SampleInterface) nodeInfo).getSampleName());
+            // System.out.println(((SampleInterface) nodeInfo).getSampleName());
         } else if (nodeInfo instanceof AliquotInterface) {
-          //  System.out.println(((AliquotInterface) nodeInfo).getAliquotName());
+            //  System.out.println(((AliquotInterface) nodeInfo).getAliquotName());
         } else if (nodeInfo instanceof ValueModel) {
-           // System.out.println(((ValueModelI) nodeInfo).getName());
+            // System.out.println(((ValueModelI) nodeInfo).getName());
         } else if (nodeInfo instanceof CheckBoxNode) {
-           // System.out.println(nodeInfo.toString());
+            // System.out.println(nodeInfo.toString());
             // required for toggling because it allows re-focus
             setSelectionRow(-1);
 
         } else {
-           // System.out.println(nodeInfo.toString());
+            // System.out.println(nodeInfo.toString());
         }
 
         getSampleTreeChange().sampleTreeChangeAnalysisMode(node);
@@ -375,7 +378,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
                     myEditor.setVisible(true);
 
                     // get a master vector of active fraction names
-                    Vector<String> activeFractionIDs =((ReduxAliquotInterface) nodeInfo).//
+                    Vector<String> activeFractionIDs = ((ReduxAliquotInterface) nodeInfo).//
                             getAliquotFractionIDs();
 
                     if (((SampleDateInterpretationChooserDialog) myEditor).getSelectedModels().size() > 0) {
@@ -607,9 +610,11 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
 
                             @Override
                             public void actionPerformed(ActionEvent arg0) {
-                                DefaultMutableTreeNode sampleDateNode = //
+                                DefaultMutableTreeNode sampleDateNode
+                                        = //
                                         (DefaultMutableTreeNode) node.getParent();
-                                DefaultMutableTreeNode aliquotNode = //
+                                DefaultMutableTreeNode aliquotNode
+                                        = //
                                         (DefaultMutableTreeNode) sampleDateNode.getParent();
 
                                 Object SampleDateNodeInfo = sampleDateNode.getUserObject();

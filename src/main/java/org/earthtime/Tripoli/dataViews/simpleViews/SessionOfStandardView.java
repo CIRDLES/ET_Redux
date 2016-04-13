@@ -257,11 +257,13 @@ public class SessionOfStandardView extends AbstractRawDataView implements FitFun
      *
      */
     @Override
-    public void updateFittedData() {
+    public void updateFittedData(boolean doReScale) {
 
-        // Y-axis is ratios
-        minY = Double.MAX_VALUE;
-        maxY = -Double.MAX_VALUE;
+        if (doReScale) {
+            // Y-axis is ratios
+            minY = Double.MAX_VALUE;
+            maxY = -Double.MAX_VALUE;
+        }
 
         // X-axis lays out time 
         minX = 0;
@@ -284,8 +286,8 @@ public class SessionOfStandardView extends AbstractRawDataView implements FitFun
             fitFunctionMinusUnctDataDisplay[0] = timesOfMatrixJfPlotting;
             fitFunctionPlusUnctDataDisplay[0] = timesOfMatrixJfPlotting;
 
-            Matrix matrixJfPlotting = //
-                    ((AbstractSessionForStandardDataModel) sessionForStandardDataModel).getTripoliSession().getMatrixJfPlottingActiveStandards(fitFunc.getShortName());
+            Matrix matrixJfPlotting
+                    = ((AbstractSessionForStandardDataModel) sessionForStandardDataModel).getTripoliSession().getMatrixJfPlottingActiveStandards(fitFunc.getShortName());
 
             double[] variances = fitFunc.calculateInterpolatedVariances(matrixJfPlotting, timesOfMatrixJfPlotting);
 
@@ -303,10 +305,12 @@ public class SessionOfStandardView extends AbstractRawDataView implements FitFun
                 }
             }
 
-            // prepare fitted data for display as alpha or ratio or log
-            for (int i = 0; i < fitFunctionDataDisplay[1].length; i++) {
-                minY = Math.min(minY, fitFunctionDataDisplay[1][i]);
-                maxY = Math.max(maxY, fitFunctionDataDisplay[1][i]);
+            if (doReScale) {
+                // prepare fitted data for display as alpha or ratio or log
+                for (int i = 0; i < fitFunctionDataDisplay[1].length; i++) {
+                    minY = Math.min(minY, fitFunctionDataDisplay[1][i]);
+                    maxY = Math.max(maxY, fitFunctionDataDisplay[1][i]);
+                }
 
                 // note uncertainty envelopes not to be scaled per Noah Feb 2013
             }
@@ -342,34 +346,30 @@ public class SessionOfStandardView extends AbstractRawDataView implements FitFun
                 // do last as data is needed in above calcs            
                 myOnPeakData[i] = convertLogDatumToPresentationMode(myOnPeakData[i]);
 
-                // sept 2015 modified to allow rescaling when needed
-                // find min and max y
-                boolean showAll = showIncludedDataPoints.equals(IncludedTypeEnum.ALL);
-                boolean showIncluded = //
-                        showIncludedDataPoints.equals(IncludedTypeEnum.INCLUDED)//
-                        ||//
-                        showIncludedDataPoints.equals(IncludedTypeEnum.ALL);
+                if (doReScale) {
+                    // sept 2015 modified to allow rescaling when needed
+                    // find min and max y
+                    boolean showAll = showIncludedDataPoints.equals(IncludedTypeEnum.ALL);
+                    // rework logic April 2016 - we have both included fractions and included data to consider
+                    // here we include or not the data points in the view via minY and maxY 
+                    if (showAll || fractionIncludedMap[i]) {
+                        // added for no fit func
+                        if (fitFunc == null) {
+                            //handling alpha flip too
+                            minY = Math.min(minY, myOnPeakDataPlusUnct[i]);
+                            minY = Math.min(minY, myOnPeakDataLessUnct[i]);
 
-                if (showAll //
-                        || //
-                        !((!fractionIncludedMap[i] && showIncluded) || (fractionIncludedMap[i] && !showIncluded))) {
+                            maxY = Math.max(maxY, myOnPeakDataLessUnct[i]);
+                            maxY = Math.max(maxY, myOnPeakDataPlusUnct[i]);
+                        } else {
+                            // do both min and max to be sure especially as alphas may flip
+                            // just use the one including plus OD  which will be bigger or equal to err
+                            minY = Math.min(minY, myOnPeakDataPlusUnctPlusOD[i]);
+                            minY = Math.min(minY, myOnPeakDataLessUnctPlusOD[i]);
 
-                    // added for no fit func
-                    if (fitFunc == null) {
-                        //handling alpha flip too
-                        minY = Math.min(minY, myOnPeakDataPlusUnct[i]);
-                        minY = Math.min(minY, myOnPeakDataLessUnct[i]);
-
-                        maxY = Math.max(maxY, myOnPeakDataLessUnct[i]);
-                        maxY = Math.max(maxY, myOnPeakDataPlusUnct[i]);
-                    } else {
-                        // do both min and max to be sure especially as alphas may flip
-                        // just use the one including plus OD  which will be bigger or equal to err
-                        minY = Math.min(minY, myOnPeakDataPlusUnctPlusOD[i]);
-                        minY = Math.min(minY, myOnPeakDataLessUnctPlusOD[i]);
-
-                        maxY = Math.max(maxY, myOnPeakDataPlusUnctPlusOD[i]);
-                        maxY = Math.max(maxY, myOnPeakDataLessUnctPlusOD[i]);
+                            maxY = Math.max(maxY, myOnPeakDataPlusUnctPlusOD[i]);
+                            maxY = Math.max(maxY, myOnPeakDataLessUnctPlusOD[i]);
+                        }
                     }
                 }
             }
@@ -379,20 +379,25 @@ public class SessionOfStandardView extends AbstractRawDataView implements FitFun
         minX -= xMarginStretch;
         maxX += xMarginStretch;
 
-        double yMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(minY, maxY, 12.0 / this.getHeight());
-        minY -= yMarginStretch;
-        maxY += yMarginStretch;
+        if (doReScale) {
+            double yMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(minY, maxY, 12.0 / this.getHeight());
+            minY -= yMarginStretch;
+            maxY += yMarginStretch;
+        }
     }
 
     /**
      *
+     * @param doReScale the value of doReScale
      */
     @Override
-    public void preparePanel() {
+    public void preparePanel(boolean doReScale) {
 
         this.removeAll();
 
-        setDisplayOffsetY(0.0);
+        if (doReScale) {
+            setDisplayOffsetY(0.0);
+        }
         setDisplayOffsetX(0.0);
 
         // map fraction means into myOnPeakData and fraction times into myOnPeakNormalizedAquireTimes  
@@ -411,7 +416,7 @@ public class SessionOfStandardView extends AbstractRawDataView implements FitFun
             index++;
         }
 
-        updateFittedData();
+        updateFittedData(doReScale);
 
     }
 
@@ -435,12 +440,13 @@ public class SessionOfStandardView extends AbstractRawDataView implements FitFun
         }
 
         // adjust index to nearest fraction
-        if ((timeSlot - zeroBasedFractionAquireTimes.get(index)) //
+        if ((timeSlot - zeroBasedFractionAquireTimes.get(index == -1 ? 0 : index)) //
                 > (zeroBasedFractionAquireTimes.get(index + 1) - timeSlot)) {
             index++;
         }
 
-        final int finalTimeSlot = index;
+        final int finalTimeSlot = (int)((index == -1) ? 0 : index);
+        
 
         // tripolifraction used as placeholder for mouse click only
         tripoliFraction = tripoliFractionArray[finalTimeSlot];
@@ -460,7 +466,8 @@ public class SessionOfStandardView extends AbstractRawDataView implements FitFun
             double onPeakValue = zeroBasedFractionAquireTimes.get(finalTimeSlot);
             DecimalFormat f = new DecimalFormat("#######0 seconds");
 
-            JMenuItem menuItem = //
+            JMenuItem menuItem
+                    = //
                     new JMenuItem("(" + f.format(onPeakValue) + ")");
             popup.add(menuItem);
 
@@ -481,7 +488,7 @@ public class SessionOfStandardView extends AbstractRawDataView implements FitFun
                             System.out.println(">>>>>>>>>>>>trouble at standard exclude");
                         }
                         updateReportTable();
-                        ((AbstractRawDataView) sampleSessionDataView).refreshPanel();
+                        ((AbstractRawDataView) sampleSessionDataView).refreshPanel(true);
                     }
                 });
                 popup.add(menuItem);
@@ -496,23 +503,20 @@ public class SessionOfStandardView extends AbstractRawDataView implements FitFun
                         tripoliFraction.setShowVerticalLineAtThisIndex(-1);
                         try {
                             ((TripoliSessionFractionationCalculatorInterface) sampleSessionDataView).calculateSessionFitFunctionsForPrimaryStandard();
-                            //((AbstractRawDataView) sampleSessionDataView).refreshPanel();
                         } catch (Exception e) {
                             System.out.println(">>>>>>>>>>>>trouble at standard include");
                         }
                         updateReportTable();
-                        ((AbstractRawDataView) sampleSessionDataView).refreshPanel();
+                        ((AbstractRawDataView) sampleSessionDataView).refreshPanel(true);
                     }
                 });
                 popup.add(menuItem);
-
             }
 
             // show the menu
             popup.show(evt.getComponent(), evt.getX() + 10, evt.getY() - 10);
 
         }
-//        }
     }
 
     @Override

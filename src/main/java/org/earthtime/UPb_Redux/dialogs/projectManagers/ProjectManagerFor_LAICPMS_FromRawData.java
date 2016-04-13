@@ -726,7 +726,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
                 tripoliSession.setPrimaryMineralStandard(primaryMineralStandard);
 
                 tripoliSession.prepareFractionTimeStamps();
-                tripoliSession.processRawData();
+                tripoliSession.processRawData(false);
 
                 tripoliSession.postProcessDataForCommonLeadLossPreparation();
             }
@@ -1081,16 +1081,20 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
         if (doCorrections) {
             // april 2014 to cause common lead corrections and other changes to propagate
             // do the math
-            tripoliSession.calculateSessionFitFunctionsForPrimaryStandard();
-            // April 2105 added condition below jan 2015 moved to calculate sessionfit tripoliSession.applyCorrections();
-            if (!tripoliSession.isFitFunctionsUpToDate()) {
-                tripoliSession.applyCorrections();
-            }
-            try {
-                uPbReduxFrame.updateReportTable(true);
-            } catch (Exception e) {
-            }
+//////////            tripoliSession.calculateSessionFitFunctionsForPrimaryStandard();
+////////            // April 2015 added condition below jan 2015 moved to calculate sessionfit tripoliSession.applyCorrections();
+////////            if (!tripoliSession.isFitFunctionsUpToDate()) {
+////////                tripoliSession.applyCorrections();
+////////            }
+////////            try {
+////////                uPbReduxFrame.updateReportTable(true);
+////////            } catch (Exception e) {
+////////            }
         }
+        
+        // april 2016 replaces above
+        ((SessionAnalysisWorkflowManagerLAICPMS)mySessionManager).invokeSavedFractionationTechnique(doCorrections);
+        
 
         // modal call to manager
         mySessionManager.setVisible(doShow);

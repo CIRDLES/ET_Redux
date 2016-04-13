@@ -34,6 +34,7 @@ import org.earthtime.Tripoli.dataViews.AbstractRawDataView;
 import org.earthtime.Tripoli.dataViews.simpleViews.FitFunctionDataInterface;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.dataDictionaries.DataPresentationModeEnum;
+import org.earthtime.dataDictionaries.IncludedTypeEnum;
 import org.earthtime.utilities.TicGeneratorForAxes;
 
 /**
@@ -71,7 +72,7 @@ public class FitFunctionsOnDownHoleRatioDataView extends AbstractRawDataView imp
         this.showFittedFunction = false;
 
         this.standardValue = rawRatioDataModel.getStandardValue();
-        
+
         this.dataPresentationMode = DataPresentationModeEnum.LOGRATIO;
     }
 
@@ -129,9 +130,9 @@ public class FitFunctionsOnDownHoleRatioDataView extends AbstractRawDataView imp
 //                    GlyphVector vect = specialFont.createGlyphVector(g2d.getFontRenderContext(), "+");
 //                    dataPoint = vect.getOutline((float) mapX(myOnPeakNormalizedAquireTimes[i]) - 3, (float) mapY(minY));
 //                } else {
-                    //downhole standards have no common lead
-                    dataPoint = new java.awt.geom.Ellipse2D.Double( //
-                            mapX(myOnPeakNormalizedAquireTimes[i]), mapY(myOnPeakData[i - firstActiveIndex]), 1, 1);
+                //downhole standards have no common lead
+                dataPoint = new java.awt.geom.Ellipse2D.Double( //
+                        mapX(myOnPeakNormalizedAquireTimes[i]), mapY(myOnPeakData[i - firstActiveIndex]), 1, 1);
 //                }
                 g2d.setPaint(determineDataColor(i, getPaintColor()));
 
@@ -208,7 +209,7 @@ public class FitFunctionsOnDownHoleRatioDataView extends AbstractRawDataView imp
      *
      */
     @Override
-    public void updateFittedData() {
+    public void updateFittedData(boolean doReScale) {
 
         if (!notShownDueToBelowDetectionFlag) {
 
@@ -218,30 +219,34 @@ public class FitFunctionsOnDownHoleRatioDataView extends AbstractRawDataView imp
             minX = myOnPeakNormalizedAquireTimes[0];
             maxX = myOnPeakNormalizedAquireTimes[myOnPeakNormalizedAquireTimes.length - 1];
 
-            // Y-axis is ratios
-            minY = Double.MAX_VALUE;
-            maxY = -Double.MAX_VALUE;
-
             // choose data and walk data and get min and max for axes
             myOnPeakData = ((RawRatioDataModel) rawRatioDataModel).getLogDifferencesFromWeightedMean().clone();
 
-            // find min and max y
-            for (int i = 0; i < myOnPeakData.length; i++) {
+            if (doReScale) {
+                // Y-axis is ratios
+                minY = Double.MAX_VALUE;
+                maxY = -Double.MAX_VALUE;
 
-                if (!Double.isNaN(myOnPeakData[i])) {
-                    minY = Math.min(minY, myOnPeakData[i]);
-                    maxY = Math.max(maxY, myOnPeakData[i]);
+                // find min and max y
+                boolean[] myDataActiveMap = rawRatioDataModel.getDataActiveMap();
+                boolean showAll = showIncludedDataPoints.equals(IncludedTypeEnum.ALL);
+                // rework logic April 2016   
+                for (int i = 0; i < myOnPeakData.length; i++) {
+
+                    if (!Double.isNaN(myOnPeakData[i]) && (showAll || myDataActiveMap[i])) {
+                        minY = Math.min(minY, myOnPeakData[i]);
+                        maxY = Math.max(maxY, myOnPeakData[i]);
+                    }
+                    minY = Math.min(minY, fittedFunctionValues[i]);
+                    maxY = Math.max(maxY, fittedFunctionValues[i]);
                 }
-                minY = Math.min(minY, fittedFunctionValues[i]);
-                maxY = Math.max(maxY, fittedFunctionValues[i]);
             }
-
             // adjust margins for unknowns
-            if (!tripoliFraction.isStandard()) {
-                double xMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(minX, maxX, 0.05);
-                minX -= xMarginStretch;
-                maxX += xMarginStretch;
+            double xMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(minX, maxX, 0.05);
+            minX -= xMarginStretch;
+            maxX += xMarginStretch;
 
+            if (doReScale) {
                 double yMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(minY, maxY, 12.0 / this.getHeight());//    0.05 );
                 minY -= yMarginStretch;
                 maxY += yMarginStretch;
@@ -251,13 +256,16 @@ public class FitFunctionsOnDownHoleRatioDataView extends AbstractRawDataView imp
 
     /**
      *
+     * @param doReScale the value of doReScale
      */
     @Override
-    public void preparePanel() {
+    public void preparePanel(boolean doReScale) {
 
         this.removeAll();
 
-        setDisplayOffsetY(0.0);
+        if (doReScale) {
+            setDisplayOffsetY(0.0);
+        }
         setDisplayOffsetX(0.0);
 
         // normalize aquireTimes
@@ -265,7 +273,7 @@ public class FitFunctionsOnDownHoleRatioDataView extends AbstractRawDataView imp
 
         notShownDueToBelowDetectionFlag = rawRatioDataModel.isBelowDetection();
 
-        updateFittedData();
+        updateFittedData(doReScale);
 
     }
 

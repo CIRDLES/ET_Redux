@@ -29,6 +29,7 @@ import org.earthtime.Tripoli.dataModels.RawRatioDataModel;
 import org.earthtime.Tripoli.dataViews.AbstractRawDataView;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.UPb_Redux.ReduxConstants;
+import org.earthtime.dataDictionaries.IncludedTypeEnum;
 import org.earthtime.utilities.TicGeneratorForAxes;
 
 /**
@@ -88,14 +89,16 @@ public class RawRatioDataView extends AbstractRawDataView {
 
     /**
      *
+     * @param doReScale the value of doReScale
      */
     @Override
-    public void preparePanel() {
-//        System.out.println("In RRDView with fraction " + tripoliFraction.getFractionID() + " " + rawRatioDataModel.getDataModelName());
+    public void preparePanel(boolean doReScale) {
 
         this.removeAll();
 
-        setDisplayOffsetY(0.0);
+        if (doReScale) {
+            setDisplayOffsetY(0.0);
+        }
         setDisplayOffsetX(0.0);
 
         // normalize aquireTimes
@@ -107,36 +110,36 @@ public class RawRatioDataView extends AbstractRawDataView {
         notShownDueToBelowDetectionFlag = rawRatioDataModel.isBelowDetection();
 
         if (!notShownDueToBelowDetectionFlag) {
-
             // walk ratios and get min and max for axes
             myOnPeakData = ((RawRatioDataModel) rawRatioDataModel).getLogRatios().clone();//.getRatios().clone();
             for (int i = 0; i < myOnPeakData.length; i++) {
                 double convertedOnPeak = convertLogDatumToPresentationMode(myOnPeakData[i]);
                 myOnPeakData[i] = convertedOnPeak;
             }
-            // Y-axis is ratios
-            minY = Double.MAX_VALUE;
-            maxY = -Double.MAX_VALUE;
 
-            // find min and max y
-            // feb 2016
-            for (int i = 0; i < myOnPeakData.length; i++) {
-                if (Double.isFinite(myOnPeakData[i])) {
-                    minY = Math.min(minY, myOnPeakData[i]);
-                }
-            }
-            for (int i = 0; i < myOnPeakData.length; i++) {
-                if (Double.isFinite(myOnPeakData[i])) {
-                    maxY = Math.max(maxY, myOnPeakData[i]);
-                }
-            }
+            if (doReScale) {
+                // Y-axis is ratios
+                minY = Double.MAX_VALUE;
+                maxY = -Double.MAX_VALUE;
 
-            // adjust margins for unknowns
-            if (!tripoliFraction.isStandard()) {
+                // find min and max y
+                boolean[] myDataActiveMap = rawRatioDataModel.getDataActiveMap();
+
+                boolean showAll = showIncludedDataPoints.equals(IncludedTypeEnum.ALL);
+                // rework logic April 2016 
+                for (int i = 0; i < myOnPeakData.length; i++) {
+                    if ((Double.isFinite(myOnPeakData[i])) && (showAll || myDataActiveMap[i])) {
+                        minY = Math.min(minY, myOnPeakData[i]);
+                        maxY = Math.max(maxY, myOnPeakData[i]);
+                    }
+                }
+
+                // adjust margins for unknowns
                 double yMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(minY, maxY, 0.05);
                 minY -= yMarginStretch;
                 maxY += yMarginStretch;
             }
+
         }
     }
 

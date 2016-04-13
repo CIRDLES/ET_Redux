@@ -548,9 +548,10 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
                 fittedStandardsBeta[i] = //
                         Math.log(standardValueModel.getValue().doubleValue()) //
                         - fitFunc.f(activeXvalues[i]);
-            } catch (RuntimeException e) {
-                throw e;
+//            } catch (RuntimeException e) {
+//                throw e;
             } catch (Exception e) {
+                // no fit function ... need better treatment
                 fittedStandardsBeta[i] = Math.log(standardValueModel.getValue().doubleValue());
             }
         }

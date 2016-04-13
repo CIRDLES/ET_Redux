@@ -175,9 +175,9 @@ public class SampleDateInterpretationsManager extends DialogEditor
         dateTreeBySample.setSampleTreeChange(this);
         dateTreeBySample.buildTree();
 
-        dateTreeByAliquot_ScrollPane.setViewportView((SampleTreeAnalysisMode) dateTreeByAliquot);
+        dateTreeByAliquot_ScrollPane.setViewportView((Component) dateTreeByAliquot);
 
-        dateTreeBySample_ScrollPane.setViewportView((SampleTreeCompilationMode) dateTreeBySample);
+        dateTreeBySample_ScrollPane.setViewportView((Component) dateTreeBySample);
 
         try {
             // June 2010 ensures backward compatibility with previous versions that used dummy aliquot in this list
@@ -188,14 +188,15 @@ public class SampleDateInterpretationsManager extends DialogEditor
         doLinkDiscordances = true;
 
         // fire off a refresh to get things started
-        ((PlottingDetailsDisplayInterface) concordiaGraphPanel).refreshPanel();
+        ((PlottingDetailsDisplayInterface) concordiaGraphPanel).refreshPanel(true);
 
     }
 
     /**
      *
+     * @param doReScale the value of doReScale
      */
-    public void refreshSampleDateInterpretations() {
+    public void refreshSampleDateInterpretations(boolean doReScale) {
 
         dateTreeByAliquot = new SampleTreeAnalysisMode(sample);
         dateTreeByAliquot.setSampleTreeChange(this);
@@ -207,15 +208,15 @@ public class SampleDateInterpretationsManager extends DialogEditor
         dateTreeBySample.buildTree();
         dateTreeBySample_ScrollPane.setViewportView((Component) dateTreeBySample);
 
-        ((PlottingDetailsDisplayInterface) concordiaGraphPanel).resetPanel();//.refreshPanel();
+        ((PlottingDetailsDisplayInterface) concordiaGraphPanel).resetPanel(doReScale);
         
         try {
             // June 2010 ensures backward compatibility with previous versions that used dummy aliquot in this list
             setupWeightedMeansPanelForAliquots();
         } catch (Exception e) {
         }
-        ((PlottingDetailsDisplayInterface) weightedMeanGraphPanel).resetPanel();//refreshPanel();
-        ((PlottingDetailsDisplayInterface) probabilityPanel).resetPanel();//refreshPanel();
+        ((PlottingDetailsDisplayInterface) weightedMeanGraphPanel).resetPanel(doReScale);
+        ((PlottingDetailsDisplayInterface) probabilityPanel).resetPanel(doReScale);
 
     }
 
@@ -479,7 +480,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
                     probabilityChartOptions.put("chosenDateName", chosenDateName);
                     ((DateProbabilityDensityPanel) probabilityPanel).//
                         setSelectedFractions(filterActiveUPbFractions(sample.getUpbFractionsUnknown()));
-                    ((DateProbabilityDensityPanel) probabilityPanel).prepareAndPaintPanel();//.refreshPanel();
+                    ((DateProbabilityDensityPanel) probabilityPanel).prepareAndPaintPanel();
                 }
             });
             if (((DateProbabilityDensityPanel) probabilityPanel).getChosenDateName().replace("r", "").startsWith(jrb.getName().replace("r", ""))) {
@@ -1873,7 +1874,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
 
     private void resetGraphDisplay_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetGraphDisplay_buttonActionPerformed
         ((ConcordiaGraphPanel) concordiaGraphPanel).setShowTightToEdges(false);
-        ((ConcordiaGraphPanel) concordiaGraphPanel).resetPanel();
+        ((PlottingDetailsDisplayInterface) concordiaGraphPanel).resetPanel(true);
 }//GEN-LAST:event_resetGraphDisplay_buttonActionPerformed
     private void writeConcordiaPDF_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_writeConcordiaPDF_buttonActionPerformed
         try {
@@ -1946,7 +1947,7 @@ private void zoomBox_toggleButtonActionPerformed(java.awt.event.ActionEvent evt)
 }//GEN-LAST:event_zoomBox_toggleButtonActionPerformed
 
 private void restoreGraphDisplay_WeightedMean_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_restoreGraphDisplay_WeightedMean_buttonActionPerformed
-    ((WeightedMeanGraphPanel) weightedMeanGraphPanel).refreshPanel();
+    ((PlottingDetailsDisplayInterface) weightedMeanGraphPanel).refreshPanel(true);
 }//GEN-LAST:event_restoreGraphDisplay_WeightedMean_buttonActionPerformed
 
 private void fractionOrderByDate_radioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fractionOrderByDate_radioButtonActionPerformed
@@ -1998,7 +1999,7 @@ private void graphPanelsTabbedPaneResized(java.awt.event.ComponentEvent evt) {//
     weightedMeanToolPanel.setBounds(
             1, heightCP + 16, widthCP + leftMarginCP, 35);
 
-    ((PlottingDetailsDisplayInterface) weightedMeanGraphPanel).refreshPanel();
+    ((PlottingDetailsDisplayInterface) weightedMeanGraphPanel).refreshPanel(true);
 
     // june 2010 expansion to include additional panels
     any2ToolPanel.setBounds(
@@ -2026,7 +2027,7 @@ private void concordiaFlavor_radioButtonActionPerformed(java.awt.event.ActionEve
 
     ((ConcordiaGraphPanel) concordiaGraphPanel).setConcordiaFlavor("C");
 
-    ((PlottingDetailsDisplayInterface) concordiaGraphPanel).refreshPanel();
+    ((PlottingDetailsDisplayInterface) concordiaGraphPanel).refreshPanel(true);
 }//GEN-LAST:event_concordiaFlavor_radioButtonActionPerformed
 private void terraWasserburgFlavor_radioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_terraWasserburgFlavor_radioButtonActionPerformed
     ((AliquotDetailsDisplayInterface) concordiaGraphPanel).getConcordiaOptions().//
@@ -2034,7 +2035,7 @@ private void terraWasserburgFlavor_radioButtonActionPerformed(java.awt.event.Act
 
     ((ConcordiaGraphPanel) concordiaGraphPanel).setConcordiaFlavor("T-W");
 
-    ((PlottingDetailsDisplayInterface) concordiaGraphPanel).refreshPanel();
+    ((PlottingDetailsDisplayInterface) concordiaGraphPanel).refreshPanel(true);
 
 }//GEN-LAST:event_terraWasserburgFlavor_radioButtonActionPerformed
 private void dateTrees_tabsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_dateTrees_tabsMouseClicked
@@ -2070,7 +2071,7 @@ private void weightedMeansChooser_menuItemActionPerformed (java.awt.event.Action
     ((WeightedMeanGraphPanel) weightedMeanGraphPanel).//
             setSelectedSampleDateModels(((WeightedMeanOptionsDialog) myWMChooser).getSelectedModels());
 
-    ((PlottingDetailsDisplayInterface) weightedMeanGraphPanel).preparePanel();
+    ((PlottingDetailsDisplayInterface) weightedMeanGraphPanel).preparePanel(true);
 }//GEN-LAST:event_weightedMeansChooser_menuItemActionPerformed
 private void zoomInAny2X2_buttonActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zoomInAny2X2_buttonActionPerformed
     // TODO add your handling code here:
@@ -2106,11 +2107,10 @@ private void graphViewTabChanged (java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                     setSelectedFractions(filterActiveUPbFractions(sample.getUpbFractionsUnknown()));
             ((DateProbabilityDensityPanel) probabilityPanel).//
                     getDeSelectedFractions().clear();
-            ((DateProbabilityDensityPanel) probabilityPanel).//
-                    refreshPanel();
+            ((PlottingDetailsDisplayInterface) probabilityPanel).//
+                    refreshPanel(true);
         } else {
-            ((DateProbabilityDensityPanel) probabilityPanel).//
-                    refreshPanel();//repaint();
+            probabilityPanel.repaint();
         }
     }
 }//GEN-LAST:event_graphViewTabChanged
@@ -2124,13 +2124,10 @@ private void resetGraphProbability_buttonActionPerformed (java.awt.event.ActionE
     negativePctDiscordance_slider.setValue(-100);
     percentUncertainty_slider.setValue(100);
 
-//    ((DateProbabilityDensityPanel) probabilityPanel).setMinX( DateProbabilityDensityPanel.DEFAULT_DISPLAY_MINX );
-//    ((DateProbabilityDensityPanel) probabilityPanel).setMaxX( DateProbabilityDensityPanel.DEFAULT_DISPLAY_MAXX );
-//    ((DateProbabilityDensityPanel) probabilityPanel).setDisplayOffsetX( 0 );
     ((DateProbabilityDensityPanel) probabilityPanel).//
             setSelectedFractions(filterActiveUPbFractions(sample.getUpbFractionsUnknown()));
-//    ((DateProbabilityDensityPanel) probabilityPanel).setSelectedHistogramBinCount( 0 );
-    ((DateProbabilityDensityPanel) probabilityPanel).refreshPanel();
+
+    ((PlottingDetailsDisplayInterface) probabilityPanel).refreshPanel(true);
 }//GEN-LAST:event_resetGraphProbability_buttonActionPerformed
 
 private void thoriumCorrectionSelector_checkboxActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_thoriumCorrectionSelector_checkboxActionPerformed
@@ -2219,7 +2216,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
 
     private void showTight_toggleButtonActionPerformed ( java.awt.event.ActionEvent evt ) {//GEN-FIRST:event_showTight_toggleButtonActionPerformed
         ((ConcordiaGraphPanel) concordiaGraphPanel).setShowTightToEdges(true);
-        ((PlottingDetailsDisplayInterface) concordiaGraphPanel).resetPanel();
+        ((PlottingDetailsDisplayInterface) concordiaGraphPanel).resetPanel(true);
     }//GEN-LAST:event_showTight_toggleButtonActionPerformed
 
     private void choosePDFPeaks_menuMenuSelected ( javax.swing.event.MenuEvent evt ) {//GEN-FIRST:event_choosePDFPeaks_menuMenuSelected
@@ -2264,7 +2261,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
 
         ((ConcordiaGraphPanel) concordiaGraphPanel).setConcordiaFlavor("Th");
 
-        ((PlottingDetailsDisplayInterface) concordiaGraphPanel).refreshPanel();
+        ((PlottingDetailsDisplayInterface) concordiaGraphPanel).refreshPanel(true);
     }//GEN-LAST:event_thoriumConcordiaFlavor_radioButtonActionPerformed
 
     private void commonLeadCorrectionSelectorPDF_checkboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_commonLeadCorrectionSelectorPDF_checkboxActionPerformed
@@ -2282,7 +2279,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
         ((ConcordiaGraphPanel) concordiaGraphPanel).toggleDisplay_PbcCorr();
         commonLeadCorrectionSelector_checkbox.setSelected(((ConcordiaGraphPanel) concordiaGraphPanel).isDisplay_PbcCorr());
 
-        ((ConcordiaGraphPanel) concordiaGraphPanel).refreshPanel();//.repaint();
+        ((PlottingDetailsDisplayInterface) concordiaGraphPanel).refreshPanel(true);
     }//GEN-LAST:event_commonLeadCorrectionSelector_checkboxActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -2411,8 +2408,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                         setYorkFitLine(null);
                 ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
                         setSelectedFractions(sample.getFractions());
-                concordiaGraphPanel.//
-                        repaint();//refreshPanel();
+                concordiaGraphPanel.repaint();
                 // zap deselected list as it is meaningless at level of aliquot or sample
                 ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
                         getDeSelectedFractions().clear();
@@ -2437,8 +2433,8 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                         getDeSelectedFractions().clear();
                 ((DateProbabilityDensityPanel) probabilityPanel).//
                         setSelectedAliquot(0);
-                ((DateProbabilityDensityPanel) probabilityPanel).//
-                        refreshPanel();
+                ((PlottingDetailsDisplayInterface) probabilityPanel).//
+                        refreshPanel(true);
             }
 
         } else if (nodeInfo instanceof AliquotInterface) {
@@ -2470,7 +2466,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
             ((WeightedMeanGraphPanel) weightedMeanGraphPanel).setWeightedMeanOptions(weightedMeanOptions);
 
             setupWeightedMeansPanelForAliquots();
-            ((PlottingDetailsDisplayInterface) weightedMeanGraphPanel).refreshPanel();//.repaint();
+            ((PlottingDetailsDisplayInterface) weightedMeanGraphPanel).refreshPanel(true);
 
             // } else {
             // probability density tab ... select and paint aliquot
@@ -2525,11 +2521,11 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
 
                 // probability tab
                 ((DateProbabilityDensityPanel) probabilityPanel).//
-                        setSelectedAliquot(((UPbReduxAliquot) aliquotNodeInfo).getAliquotNumber());
+                        setSelectedAliquot(((ReduxAliquotInterface) aliquotNodeInfo).getAliquotNumber());
                 // july 2010 refine this so that included fractions are filtered on the fly
                 // TODO: implement detrital sample date models that will actually have these removed from model based on filter
                 Vector<ETFractionInterface> tempDeselected = //
-                        ((UPbReduxAliquot) aliquotNodeInfo).//
+                        ((ReduxAliquotInterface) aliquotNodeInfo).//
                         getAliquotSampleDateModelDeSelectedFractions(((SampleDateModel) nodeInfo).//
                                 getIncludedFractionIDsVector());
                 ((DateProbabilityDensityPanel) probabilityPanel).//
@@ -2706,7 +2702,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                     setSelectedFractions(sample.getFractions());
 
             concordiaGraphPanel.//
-                    repaint();//refreshPanel();
+                    repaint();
 
             // zap delselected list as it is meaningless at level of aliquot or sample
             ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//

@@ -72,9 +72,10 @@ public class InterceptFitFunctionsPresentationView extends AbstractFitFunctionPr
 
     /**
      *
+     * @param doReScale the value of doReScale
      */
     @Override
-    public void preparePanel() {
+    public void preparePanel(boolean doReScale) {
 
         removeAll();
         // first restore the data

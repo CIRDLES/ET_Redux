@@ -98,12 +98,9 @@ public class KwikiConcordiaToolBar extends JLayeredPane implements GraphPanelMod
         zoomInX2.setMargin(new Insets(0, 0, 0, 0));
 
 
-        zoomInX2.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent arg0) {
-                ((ConcordiaGraphPanel) concordiaGraphPanel).performZoom(4.0);
-                ((ConcordiaGraphPanel) concordiaGraphPanel).repaint();
-            }
+        zoomInX2.addActionListener((ActionEvent arg0) -> {
+            ((ConcordiaGraphPanel) concordiaGraphPanel).performZoom(4.0);
+            concordiaGraphPanel.repaint();
         });
 
         add(zoomInX2, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -133,11 +130,8 @@ public class KwikiConcordiaToolBar extends JLayeredPane implements GraphPanelMod
         restoreZoom.setBounds(1, 32, 55, 15);
         restoreZoom.setMargin(new Insets(0, 0, 0, 0));
 
-        restoreZoom.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent arg0) {
-                ((PlottingDetailsDisplayInterface) concordiaGraphPanel).resetPanel();
-            }
+        restoreZoom.addActionListener((ActionEvent arg0) -> {
+            ((PlottingDetailsDisplayInterface) concordiaGraphPanel).resetPanel(true);
         });
 
         add(restoreZoom, javax.swing.JLayeredPane.DEFAULT_LAYER);

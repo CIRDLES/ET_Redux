@@ -16,7 +16,6 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package org.earthtime.UPb_Redux.dateInterpretation.concordia;
 
 /**
@@ -27,17 +26,20 @@ public interface PlottingDetailsDisplayInterface {
 
     /**
      *
+     * @param doReScale the value of doReScale
      */
-    void preparePanel();
+    void preparePanel(boolean doReScale);
 
     /**
      *
+     * @param doReScale the value of doReScale
      */
-    void refreshPanel();
+    void refreshPanel(boolean doReScale);
 
     /**
      *
+     * @param doReScale the value of doReScale
      */
-    void resetPanel();
-     
+    void resetPanel(boolean doReScale);
+
 }

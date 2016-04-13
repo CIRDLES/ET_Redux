@@ -35,6 +35,7 @@ import javax.swing.JRadioButton;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.dateInterpretation.DateProbabilityDensityPanel;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.GraphPanelModeChangeI;
+import org.earthtime.UPb_Redux.dateInterpretation.concordia.PlottingDetailsDisplayInterface;
 import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetup;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.samples.SampleInterface;
@@ -131,7 +132,7 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
                     ((DateProbabilityDensityPanel) pdfGraphPanel).setChosenDateName(chosenDateName);
                     ((DateProbabilityDensityPanel) pdfGraphPanel).//
                             setSelectedFractions( sample.getUpbFractionsUnknown());
-                    ((DateProbabilityDensityPanel) pdfGraphPanel).prepareAndPaintPanel();//.refreshPanel();
+                    ((DateProbabilityDensityPanel) pdfGraphPanel).prepareAndPaintPanel();
                 }
             });
         }
@@ -207,11 +208,8 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
         restoreZoom.setBounds(1, 32, 55, 15);
         restoreZoom.setMargin(new Insets(0, 0, 0, 0));
 
-        restoreZoom.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent arg0) {
-                ((DateProbabilityDensityPanel) pdfGraphPanel).refreshPanel();
-            }
+        restoreZoom.addActionListener((ActionEvent arg0) -> {
+            ((PlottingDetailsDisplayInterface) pdfGraphPanel).refreshPanel(true);
         });
         add(restoreZoom, javax.swing.JLayeredPane.DEFAULT_LAYER);
 

@@ -458,7 +458,7 @@ public abstract class AbstractProjectManagerForRawData extends DialogEditor impl
         }
 
         tripoliSession.calculateSessionFitFunctionsForPrimaryStandard();
-        // jan 2015 moved to calcualte sessionfittripoliSession.applyCorrections();
+        // jan 2015 moved to calculate sessionfittripoliSession.applyCorrections();
 
         try {
             uPbReduxFrame.updateReportTable(true);
@@ -594,7 +594,7 @@ public abstract class AbstractProjectManagerForRawData extends DialogEditor impl
                 tripoliSession.setPrimaryMineralStandard(primaryMineralStandard);
 
                 tripoliSession.prepareFractionTimeStamps();
-                tripoliSession.processRawData();
+                tripoliSession.processRawData(false);
 
                 tripoliSession.postProcessDataForCommonLeadLossPreparation();
             }

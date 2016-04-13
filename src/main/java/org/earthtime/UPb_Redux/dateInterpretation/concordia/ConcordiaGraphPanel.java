@@ -775,19 +775,19 @@ public class ConcordiaGraphPanel extends JLayeredPane
 
                 Shape bestRatioHandle = new Ellipse2D.Double(//
                         mapX(getMinX_Display()) - 20,//
-                        mapY(bestRatioDivider) - 5,//
+                        mapY(bestRatioDivider) - 15,//
                         20,//
-                        10);
+                        30);
                 g2d.fill(bestRatioHandle);
 
-                DecimalFormat f = new DecimalFormat("###0");
+                DecimalFormat d = new DecimalFormat("###0");
                 Font savedFont = g2d.getFont();
                 g2d.setFont(new Font(
                         "SansSerif",
                         Font.PLAIN,
                         9));
                 g2d.drawString(//
-                        "Best Date Divider = " + f.format(currentBestDate / 1e6) + " ma",//
+                        "Best Date Divider = " + d.format(currentBestDate / 1e6) + " ma",//
                         (float) mapX(getMaxX_Display()) - 150f, //
                         (float) mapY(bestRatioDivider) - 1f);
                 g2d.setFont(savedFont);
@@ -1481,37 +1481,41 @@ public class ConcordiaGraphPanel extends JLayeredPane
 
     /**
      *
+     * @param doReScale the value of doReScale
      */
     @Override
-    public void resetPanel() {
-        setDisplayOffsetY(0.0);
-        setDisplayOffsetX(0.0);
+    public void resetPanel(boolean doReScale) {
 
-        setMinX(0);
-        setMaxX(0);
-        setMinY(0);
-        setMaxY(0);
+        if (doReScale) {
+            setDisplayOffsetX(0.0);
+            setMinX(0);
+            setMaxX(0);
+            setZoomMaxX(0);
+            setZoomMinX(0);
 
-        setZoomMaxX(0);
-        setZoomMaxY(0);
-        setZoomMinX(0);
-        setZoomMinY(0);
+            setDisplayOffsetY(0.0);
+            setMinY(0);
+            setMaxY(0);
+            setZoomMaxY(0);
+            setZoomMinY(0);
+        }
 
         currentGraphAxesSetup.setUseAutomaticAxisTics(true);
         try {
             graphPanelModeChanger.switchToPanMode();
         } catch (Exception e) {
         } finally {
-            refreshPanel();
+            refreshPanel(doReScale);
         }
     }
 
     /**
      *
+     * @param doReScale the value of doReScale
      */
     @Override
-    public void refreshPanel() {
-        preparePanel();
+    public void refreshPanel(boolean doReScale) {
+        preparePanel(doReScale);
         repaint();
     }
 
@@ -1531,9 +1535,10 @@ public class ConcordiaGraphPanel extends JLayeredPane
 
     /**
      *
+     * @param doReScale the value of doReScale
      */
     @Override
-    public void preparePanel() {
+    public void preparePanel(boolean doReScale) {
 
         try {
             if (getConcordiaFlavor().equalsIgnoreCase("Th")) {
@@ -1562,33 +1567,35 @@ public class ConcordiaGraphPanel extends JLayeredPane
                 getCurrentGraphAxesSetup().setDoPlotting(false);
             }
 
-            // walk selectedFractions and get min and max of both ratios
-            // set min and max at opposing values while searching for min and max
-            // May 2010 don't reset if already saved
-            if (getConcordiaFlavor().equalsIgnoreCase("T-W")) {
-                // X-axis is xAxisRatio with value from 1 to 1E11
-                setMinX(1E11);
-                setMaxX(1.0);
+            if (doReScale) {
+                // walk selectedFractions and get min and max of both ratios
+                // set min and max at opposing values while searching for min and max
+                // May 2010 don't reset if already saved
+                if (getConcordiaFlavor().equalsIgnoreCase("T-W")) {
+                    // X-axis is xAxisRatio with value from 1 to 1E11
+                    setMinX(1E11);
+                    setMaxX(1.0);
 
-                // Y-axis is yAxisRatio with value from 0.0460474 to 0.62525
-                setMinY(0.7);
-                setMaxY(0.04);
-            } else if (getConcordiaFlavor().equalsIgnoreCase("Th")) {
-                // X-axis is xAxisRatio with value from 0 to 93
-                setMinX(100.0);
-                setMaxX(0.0);
+                    // Y-axis is yAxisRatio with value from 0.0460474 to 0.62525
+                    setMinY(0.7);
+                    setMaxY(0.04);
+                } else if (getConcordiaFlavor().equalsIgnoreCase("Th")) {
+                    // X-axis is xAxisRatio with value from 0 to 93
+                    setMinX(100.0);
+                    setMaxX(0.0);
 
-                // Y-axis is yAxisRatio with value from 0 to 2.05
-                setMinY(3.0);
-                setMaxY(0.0);
-            } else {
-                // X-axis is xAxisRatio with value from 0 to 93
-                setMinX(100.0);
-                setMaxX(0.0);
+                    // Y-axis is yAxisRatio with value from 0 to 2.05
+                    setMinY(3.0);
+                    setMaxY(0.0);
+                } else {
+                    // X-axis is xAxisRatio with value from 0 to 93
+                    setMinX(100.0);
+                    setMaxX(0.0);
 
-                // Y-axis is yAxisRatio with value from 0 to 2.05
-                setMinY(3.0);
-                setMaxY(0.0);
+                    // Y-axis is yAxisRatio with value from 0 to 2.05
+                    setMinY(3.0);
+                    setMaxY(0.0);
+                }
             }
 
             ValueModel xAxisRatio = null;
@@ -1674,20 +1681,21 @@ public class ConcordiaGraphPanel extends JLayeredPane
                                 getGraphHeight() / getGraphWidth(),
                                 2.5);
 
-                        if (ee.getbezierMinX() < getMinX()) {
-                            setMinX(ee.getbezierMinX());
-                        }
+                        if (doReScale) {
+                            if (ee.getbezierMinX() < getMinX()) {
+                                setMinX(ee.getbezierMinX());
+                            }
 
-                        if (ee.getbezierMinY() < getMinY()) {
-                            setMinY(ee.getbezierMinY());
-                        }
+                            if (ee.getbezierMaxX() > getMaxX()) {
+                                setMaxX(ee.getbezierMaxX());
+                            }
+                            if (ee.getbezierMinY() < getMinY()) {
+                                setMinY(ee.getbezierMinY());
+                            }
 
-                        if (ee.getbezierMaxX() > getMaxX()) {
-                            setMaxX(ee.getbezierMaxX());
-                        }
-
-                        if (ee.getbezierMaxY() > getMaxY()) {
-                            setMaxY(ee.getbezierMaxY());
+                            if (ee.getbezierMaxY() > getMaxY()) {
+                                setMaxY(ee.getbezierMaxY());
+                            }
                         }
 
                     } else {
@@ -1741,20 +1749,22 @@ public class ConcordiaGraphPanel extends JLayeredPane
                                     getGraphHeight() / getGraphWidth(),
                                     2.5);
 
-                            if (ee.getbezierMinX() < getMinX()) {
-                                setMinX(ee.getbezierMinX());
-                            }
+                            if (doReScale) {
+                                if (ee.getbezierMinX() < getMinX()) {
+                                    setMinX(ee.getbezierMinX());
+                                }
 
-                            if (ee.getbezierMinY() < getMinY()) {
-                                setMinY(ee.getbezierMinY());
-                            }
+                                if (ee.getbezierMinY() < getMinY()) {
+                                    setMinY(ee.getbezierMinY());
+                                }
 
-                            if (ee.getbezierMaxX() > getMaxX()) {
-                                setMaxX(ee.getbezierMaxX());
-                            }
+                                if (ee.getbezierMaxX() > getMaxX()) {
+                                    setMaxX(ee.getbezierMaxX());
+                                }
 
-                            if (ee.getbezierMaxY() > getMaxY()) {
-                                setMaxY(ee.getbezierMaxY());
+                                if (ee.getbezierMaxY() > getMaxY()) {
+                                    setMaxY(ee.getbezierMaxY());
+                                }
                             }
 
                         } else {
@@ -2333,36 +2343,30 @@ public class ConcordiaGraphPanel extends JLayeredPane
 
                 mySelf = this;
                 menuItem = new JMenuItem("Manually configure axes");
-                menuItem.addActionListener(new ActionListener() {
+                menuItem.addActionListener((ActionEvent arg0) -> {
+                    getCurrentGraphAxesSetup().setUseAutomaticAxisTics(false);
 
-                    public void actionPerformed(ActionEvent arg0) {
+                    JDialog myGraphAxisDialog = new GraphAxesDialog( //
+                            null, //
+                            true,
+                            getCurrentGraphAxesSetup(),
+                            mySelf);
+                    myGraphAxisDialog.setVisible(true);
 
-                        getCurrentGraphAxesSetup().setUseAutomaticAxisTics(false);
-
-                        JDialog myGraphAxisDialog = new GraphAxesDialog( //
-                                null, //
-                                true,
-                                getCurrentGraphAxesSetup(),
-                                mySelf);
-                        myGraphAxisDialog.setVisible(true);
-
-                        // dialog closed
-                        repaint();
-                    }
+                    // dialog closed
+                    repaint();
                 });
                 popup.add(menuItem);
 
                 // may 2014
                 // check if aliquot vs sample
                 if (showingSingleAliquot) {
-                    menuItem = new JMenuItem("Toggle Best Date Divider");
-                    menuItem.addActionListener(new ActionListener() {
+                    DecimalFormat d = new DecimalFormat("###0");
+                    menuItem = new JMenuItem("Toggle Best Date Divider (currently = " + d.format(currentBestDate / 1e6) + " ma)");
+                    menuItem.addActionListener((ActionEvent arg0) -> {
+                        showBestDateDivider206_238 = !showBestDateDivider206_238;
 
-                        public void actionPerformed(ActionEvent arg0) {
-                            showBestDateDivider206_238 = !showBestDateDivider206_238;
-
-                            repaint();
-                        }
+                        repaint();
                     });
                     popup.add(menuItem);
                 }
@@ -2382,6 +2386,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
      *
      * @param evt
      */
+    @Override
     public void mouseReleased(MouseEvent evt) {
 
         if ((evt.getX() >= getLeftMargin())
@@ -2423,11 +2428,13 @@ public class ConcordiaGraphPanel extends JLayeredPane
                 }
             }
         } else // set best age divider
-         if (changingBestDateDivider) {
+        {
+            if (changingBestDateDivider) {
                 ((AliquotForUPbInterface) curAliquot).setBestAgeDivider206_238(new BigDecimal(currentBestDate));
                 ((UPbReduxAliquot) curAliquot).updateBestAge();
                 reportUpdater.updateReportTable(false);
             }
+        }
 
         changingBestDateDivider = false;
 
@@ -2641,13 +2648,12 @@ public class ConcordiaGraphPanel extends JLayeredPane
             double bestRatioDivider = Math.expm1(lambda238.getValue().doubleValue() * currentBestDate);
             if ((x >= mapX(getMinX_Display()) - 20)//
                     &&//
-                    (x <= mapX(getMinX_Display()))//
+                    (x <= mapX(getMinX_Display()) + 10)//
                     && //
-                    (y >= mapY(bestRatioDivider) - 5)//
+                    (y >= mapY(bestRatioDivider) - 10)//
                     && //
-                    (y <= mapY(bestRatioDivider) + 6)//
+                    (y <= mapY(bestRatioDivider) + 10)//
                     ) {
-                // System.out.println("mouse in best age handle");
 
                 retval = true;
             }

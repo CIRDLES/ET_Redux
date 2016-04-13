@@ -269,7 +269,7 @@ public abstract class AbstractFitFunctionPresentationView extends AbstractRawDat
                         rawRatioDataModel.setOverDispersionSelected(((AbstractButton) ae.getSource()).isSelected());
                     }
 
-                    refreshPanel();
+                    refreshPanel(true);
 
                     updatePlotsWithChanges(targetDataModelView);
 
@@ -496,29 +496,25 @@ public abstract class AbstractFitFunctionPresentationView extends AbstractRawDat
                     rawRatioDataModel.getSelectedFitFunctionType().compareTo(fitFunctionType) == 0);
         }
 
-        functionChoiceRadioButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // on click, take control
-                // check if fit function exists (could be calculated)
-                if (rawRatioDataModel.containsFitFunction(fitFunctionType)) {
-                    rawRatioDataModel.setSelectedFitFunctionType(fitFunctionType);
-
-                    if (targetDataModelView instanceof DataViewsOverlay) {
-                        ((DataViewsOverlay) targetDataModelView).getDownholeFractionationDataModel()//
-                                .calculateWeightedMeanForEachStandard(rawRatioDataModel.getRawRatioModelName(), rawRatioDataModel.getSelectedFitFunction());
-                    }
-
-                    layoutFitFunctionViews(atleastOneFit, ((AbstractRawDataView) ((Component) e.getSource()).getParent().getParent()));
-
-                    updatePlotsWithChanges(targetDataModelView);
-
-                    updateReportTable();
-
-                } 
-//                do nothing updatePlotsWithChanges(targetDataModelView);
+        functionChoiceRadioButton.addActionListener((ActionEvent e) -> {
+            // on click, take control
+            // check if fit function exists (could be calculated)
+            if (rawRatioDataModel.containsFitFunction(fitFunctionType)) {
+                rawRatioDataModel.setSelectedFitFunctionType(fitFunctionType);
+                
+                if (targetDataModelView instanceof DataViewsOverlay) {
+                    ((DataViewsOverlay) targetDataModelView).getDownholeFractionationDataModel()//
+                            .calculateWeightedMeanForEachStandard(rawRatioDataModel.getRawRatioModelName(), rawRatioDataModel.getSelectedFitFunction());
+                }
+                
+                layoutFitFunctionViews(atleastOneFit, ((AbstractRawDataView) ((Component) e.getSource()).getParent().getParent()));
+                
+                updatePlotsWithChanges(targetDataModelView);
+                
+                updateReportTable();
+                
             }
+//                do nothing updatePlotsWithChanges(targetDataModelView);
         });
 
         fitFunctionButtonGroup.add(functionChoiceRadioButton);

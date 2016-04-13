@@ -144,7 +144,7 @@ public class TripoliSession implements
         this.downholeFractionationDataModels = new TreeMap<>();
         this.sessionForStandardsDownholeFractionation = new TreeMap<>();
         this.sessionForStandardsInterceptFractionation = new TreeMap<>();
-        this.fractionationTechnique = FractionationTechniquesEnum.DOWNHOLE;//.INTERCEPT;
+        this.fractionationTechnique = FractionationTechniquesEnum.INTERCEPT;
         this.sessionCorrectedUnknownsSummaries = new TreeMap<>();
 
         this.calculatedInitialFitFunctions = false;
@@ -195,10 +195,11 @@ public class TripoliSession implements
 
     /**
      *
+     * @param updateOnly the value of updateOnly
      */
     @SuppressWarnings("MapReplaceableByEnumMap")
     @Override
-    public void processRawData() {
+    public void processRawData(boolean updateOnly) {
         // backwards check for existing projects Sept 2012
         if (fractionationTechnique == null) {
             fractionationTechnique = FractionationTechniquesEnum.INTERCEPT;
@@ -207,10 +208,11 @@ public class TripoliSession implements
         if ((tripoliFractions != null) && (primaryMineralStandard != null)) {
 
             // may 2014 for live data
-            if (sessionForStandardsInterceptFractionation == null) {
+            // logic update april 2016
+            if ((sessionForStandardsInterceptFractionation == null) || !updateOnly) {
                 this.sessionForStandardsInterceptFractionation = new TreeMap<>();
             }
-            if (sessionForStandardsDownholeFractionation == null) {
+            if ((sessionForStandardsDownholeFractionation == null) || !updateOnly) {
                 this.sessionForStandardsDownholeFractionation = new TreeMap<>();
             }
 
@@ -346,11 +348,12 @@ public class TripoliSession implements
     @Override
     public void calculateSessionFitFunctionsForPrimaryStandard() {
 
+        // April 2016 recalc for both techniques
         // note: first call here is from ProjectManager initialize
         if (prepareMatrixJfMapFractionsByType(FractionSelectionTypeEnum.UNKNOWN) //
                 && prepareMatrixJfPlotting()) {
 
-            if (fractionationTechnique.compareTo(FractionationTechniquesEnum.INTERCEPT) == 0) {
+//            if (fractionationTechnique.compareTo(FractionationTechniquesEnum.INTERCEPT) == 0) {
                 sessionForStandardsInterceptFractionation.keySet().stream().forEach((rrName) -> {
                     try {
                         sessionForStandardsInterceptFractionation.get(rrName).generateSetOfFitFunctions(true, false);
@@ -359,7 +362,7 @@ public class TripoliSession implements
                         System.out.println("Session Standards Intercept Fractionation Failed");
                     }
                 });
-            } else {
+//            } else {
 
                 calculateDownholeFitSummariesForPrimaryStandard();
                 sessionForStandardsDownholeFractionation.keySet().stream().forEach((rrName) -> {
@@ -371,7 +374,7 @@ public class TripoliSession implements
                     }
                 });
 
-            }
+//            }
             applyCorrections();
         }
     }
@@ -1274,8 +1277,7 @@ public class TripoliSession implements
             RawRatioNames rrName = sessionForStandardsIterator.next();
 
             AbstractSessionForStandardDataModel sessionForStandard
-                    = //
-                    sessionForStandardsDownholeFractionation.get(rrName);
+                    = sessionForStandardsDownholeFractionation.get(rrName);
 
             // get the session fit function
             AbstractFunctionOfX sessionFofX

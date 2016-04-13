@@ -273,7 +273,7 @@ public class SampleFractionListDisplayPane extends JLayeredPane {
         tripoliSample.setSampleName(sampleName);
 
         if (!tripoliSample.isPrimaryStandard()) {
-            if (((String) roleChooser.getSelectedItem()).compareToIgnoreCase("Secondary STD") == 0) {
+            if (((String) roleChooser.getSelectedItem()).compareToIgnoreCase("Secondary RM") == 0) {
                 tripoliSample.setSecondaryStandard(true);
             } else {
                 tripoliSample.setSecondaryStandard(false);
