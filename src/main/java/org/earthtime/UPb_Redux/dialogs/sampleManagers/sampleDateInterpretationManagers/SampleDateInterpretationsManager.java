@@ -2608,11 +2608,11 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
             // change the sample age model
             // toggle value
             DefaultMutableTreeNode parentNode
-                    = (DefaultMutableTreeNode) ((DefaultMutableTreeNode) node).getParent();
+                    = (DefaultMutableTreeNode) ((TreeNode) node).getParent();
             DefaultMutableTreeNode sampleAgeNode
-                    = (DefaultMutableTreeNode) ((DefaultMutableTreeNode) parentNode).getParent();
+                    = (DefaultMutableTreeNode) parentNode.getParent();
             DefaultMutableTreeNode aliquotNode
-                    = (DefaultMutableTreeNode) ((DefaultMutableTreeNode) sampleAgeNode).getParent();
+                    = (DefaultMutableTreeNode) sampleAgeNode.getParent();
             Object sampleDateNodeInfo = sampleAgeNode.getUserObject();
             Object aliquotNodeInfo = aliquotNode.getUserObject();
 
@@ -2634,15 +2634,15 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
             if (graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab("Concordia")) {
                 // now redraw the sample age from the aliquot view
                 ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
-                        setSelectedFractions(((UPbReduxAliquot) aliquotNodeInfo).//
+                        setSelectedFractions(((ReduxAliquotInterface) aliquotNodeInfo).//
                                 getAliquotSampleDateModelSelectedFractions(((SampleDateModel) sampleDateNodeInfo).getIncludedFractionIDsVector()));
                 ((ConcordiaGraphPanel) concordiaGraphPanel).//
-                        setDeSelectedFractions(((UPbReduxAliquot) aliquotNodeInfo).//
+                        setDeSelectedFractions(((ReduxAliquotInterface) aliquotNodeInfo).//
                                 getAliquotSampleDateModelDeSelectedFractions(((SampleDateModel) sampleDateNodeInfo).getIncludedFractionIDsVector()));
 
                 // fix dateTreeByAliquot
-                ((DefaultTreeModel) ((SampleTreeAnalysisMode) dateTreeByAliquot).getModel()).//
-                        nodeChanged(((DefaultMutableTreeNode) node).//
+                ((DefaultTreeModel) ((JTree) dateTreeByAliquot).getModel()).//
+                        nodeChanged(((TreeNode) node).//
                                 getParent().//
                                 getParent().//
                                 getChildAt(0));
@@ -2652,7 +2652,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                         setYorkFitLine(((SampleDateModel) sampleDateNodeInfo).getYorkLineFit());
                 // for sample date interpretation, display date title box
                 DateInterpretationBoxPanel dateInterpretationBoxPanel = //
-                        new DateInterpretationBoxPanel(((SampleDateModel) sampleDateNodeInfo));
+                        new DateInterpretationBoxPanel(((ValueModel) sampleDateNodeInfo));
                 ((ConcordiaGraphPanel) concordiaGraphPanel).//
                         setPreferredDatePanel(dateInterpretationBoxPanel);
                 concordiaGraphPanel.repaint();

@@ -1834,6 +1834,10 @@ public class ConcordiaGraphPanel extends JLayeredPane
 
         // oct 2014
         setImageMode("PAN");
+        
+        // april 2016
+        SampleInterface.updateAndSaveSampleDateModelsByAliquot(sample);
+        
     }
 
     /**
