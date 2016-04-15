@@ -1835,7 +1835,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
         // oct 2014
         setImageMode("PAN");
         
-        // april 2016
+        // april 2016 - this causes update of weighted means when sample is changed
         SampleInterface.updateAndSaveSampleDateModelsByAliquot(sample);
         
     }
