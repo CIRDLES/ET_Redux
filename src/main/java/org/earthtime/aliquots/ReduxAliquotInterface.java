@@ -17,6 +17,7 @@ package org.earthtime.aliquots;
 
 import java.util.Collections;
 import java.util.Vector;
+import org.earthtime.UPb_Redux.utilities.comparators.IntuitiveStringComparator;
 import org.earthtime.fractions.ETFractionInterface;
 
 /**
@@ -77,6 +78,8 @@ public interface ReduxAliquotInterface {
         getAliquotFractions().stream().filter((f) -> (!f.isRejected())).forEach((f) -> {
             retVal.add(f.getFractionID());
         });
+        
+        Collections.sort(retVal, new IntuitiveStringComparator<>());
         return retVal;
     }
 
