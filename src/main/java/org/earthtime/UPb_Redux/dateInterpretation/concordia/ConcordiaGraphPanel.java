@@ -2395,7 +2395,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
 
         if ((evt.getX() >= getLeftMargin())
                 && (evt.getY() >= getTopMargin())
-                && (evt.getY() <= getGraphHeight() + getTopMargin())) {
+                && (evt.getY() <= getGraphHeight() + getTopMargin()) && !changingBestDateDivider) {
 
             setZoomMaxX(evt.getX());
             setZoomMaxY(evt.getY());
@@ -2650,9 +2650,9 @@ public class ConcordiaGraphPanel extends JLayeredPane
         if (currentBestDate > 0.0) {
             // convert to 206_238 ratio
             double bestRatioDivider = Math.expm1(lambda238.getValue().doubleValue() * currentBestDate);
-            if ((x >= mapX(getMinX_Display()) - 30)//
+            if ((x >= mapX(getMinX_Display()) - 20)//
                     &&//
-                    (x <= mapX(getMinX_Display()) + 30)//
+                    (x <= mapX(getMinX_Display()) + 100)//
                     && //
                     (y >= mapY(bestRatioDivider) - 20)//
                     && //
