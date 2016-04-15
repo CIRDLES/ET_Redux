@@ -199,15 +199,17 @@ public class SampleDateInterpretationsManager extends DialogEditor
      */
     public void refreshSampleDateInterpretations(boolean doReScale) {
 
-        dateTreeByAliquot = new SampleTreeAnalysisMode(sample);
-        dateTreeByAliquot.setSampleTreeChange(this);
-        dateTreeByAliquot.buildTree();
-        dateTreeByAliquot_ScrollPane.setViewportView((Component) dateTreeByAliquot);
+        if (doReScale) {
+            dateTreeByAliquot = new SampleTreeAnalysisMode(sample);
+            dateTreeByAliquot.setSampleTreeChange(this);
+            dateTreeByAliquot.buildTree();
+            dateTreeByAliquot_ScrollPane.setViewportView((Component) dateTreeByAliquot);
 
-        dateTreeBySample = new SampleTreeCompilationMode(sample);
-        dateTreeBySample.setSampleTreeChange(this);
-        dateTreeBySample.buildTree();
-        dateTreeBySample_ScrollPane.setViewportView((Component) dateTreeBySample);
+            dateTreeBySample = new SampleTreeCompilationMode(sample);
+            dateTreeBySample.setSampleTreeChange(this);
+            dateTreeBySample.buildTree();
+            dateTreeBySample_ScrollPane.setViewportView((Component) dateTreeBySample);
+        }
 
         ((PlottingDetailsDisplayInterface) concordiaGraphPanel).resetPanel(doReScale);
 
