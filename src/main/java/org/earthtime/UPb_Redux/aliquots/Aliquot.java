@@ -430,6 +430,7 @@ public abstract class Aliquot implements AliquotInterface, AliquotForUPbInterfac
      *
      * @return
      */
+    @Override
     public Vector<FractionI> getAnalysisFractions() {
         return analysisFractions;
     }
@@ -446,6 +447,7 @@ public abstract class Aliquot implements AliquotInterface, AliquotForUPbInterfac
      *
      * @return
      */
+    @Override
     public String getAliquotName() {
         return aliquotName;
     }
@@ -454,6 +456,7 @@ public abstract class Aliquot implements AliquotInterface, AliquotForUPbInterfac
      *
      * @param aliquotName
      */
+    @Override
     public void setAliquotName(String aliquotName) {
         if (aliquotName.trim().length() > 0) {
             this.aliquotName = aliquotName.trim();
@@ -482,6 +485,7 @@ public abstract class Aliquot implements AliquotInterface, AliquotForUPbInterfac
      *
      * @return
      */
+    @Override
     public Vector<ValueModel> getSampleDateModels() {
         return sampleDateModels;
     }

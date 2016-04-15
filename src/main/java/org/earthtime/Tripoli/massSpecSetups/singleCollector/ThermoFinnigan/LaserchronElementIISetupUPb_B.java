@@ -61,7 +61,7 @@ public final class LaserchronElementIISetupUPb_B extends AbstractMassSpecSetup {
 
         useConstantBackgroundFitFunction = false;
 
-        this.commonLeadCorrectionHighestLevel = "NONE";
+        this.commonLeadCorrectionHighestLevel = "B2";
 
         AbstractCollectorModel singleCollector
                 = new IonCounterCollectorModel(//

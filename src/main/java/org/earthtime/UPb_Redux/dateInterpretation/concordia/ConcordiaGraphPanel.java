@@ -1834,6 +1834,10 @@ public class ConcordiaGraphPanel extends JLayeredPane
 
         // oct 2014
         setImageMode("PAN");
+        
+        // april 2016 - this causes update of weighted means when sample is changed
+        SampleInterface.updateAndSaveSampleDateModelsByAliquot(sample);
+        
     }
 
     /**
@@ -2511,7 +2515,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
     public void mouseDragged(MouseEvent evt) {
         if ((evt.getX() >= getLeftMargin())
                 && (evt.getY() >= getTopMargin())
-                && (evt.getY() <= getGraphHeight() + getTopMargin())) {
+                && (evt.getY() <= getGraphHeight() + getTopMargin()) && !changingBestDateDivider) {
 
             setZoomMaxX(evt.getX());
             setZoomMaxY(evt.getY());
@@ -2646,13 +2650,13 @@ public class ConcordiaGraphPanel extends JLayeredPane
         if (currentBestDate > 0.0) {
             // convert to 206_238 ratio
             double bestRatioDivider = Math.expm1(lambda238.getValue().doubleValue() * currentBestDate);
-            if ((x >= mapX(getMinX_Display()) - 20)//
+            if ((x >= mapX(getMinX_Display()) - 30)//
                     &&//
-                    (x <= mapX(getMinX_Display()) + 10)//
+                    (x <= mapX(getMinX_Display()) + 30)//
                     && //
-                    (y >= mapY(bestRatioDivider) - 10)//
+                    (y >= mapY(bestRatioDivider) - 20)//
                     && //
-                    (y <= mapY(bestRatioDivider) + 10)//
+                    (y <= mapY(bestRatioDivider) + 20)//
                     ) {
 
                 retval = true;

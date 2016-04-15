@@ -65,7 +65,7 @@ public final class TexasAMElementIISetupUPb extends AbstractMassSpecSetup {
 
         useConstantBackgroundFitFunction = false;
 
-        this.commonLeadCorrectionHighestLevel = "A2";
+        this.commonLeadCorrectionHighestLevel = "B2";
 
         AbstractCollectorModel singleCollector = //
                 new IonCounterCollectorModel(//
