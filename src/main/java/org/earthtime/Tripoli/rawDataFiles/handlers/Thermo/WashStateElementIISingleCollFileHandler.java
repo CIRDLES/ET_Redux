@@ -267,9 +267,9 @@ public class WashStateElementIISingleCollFileHandler extends AbstractRawDataFile
             }
         }
 
-        if (tripoliFractions.isEmpty()) {
-            tripoliFractions = null;
-        }
+//        if (tripoliFractions.isEmpty()) {
+//            tripoliFractions = null;
+//        }
 
         return tripoliFractions;
     }

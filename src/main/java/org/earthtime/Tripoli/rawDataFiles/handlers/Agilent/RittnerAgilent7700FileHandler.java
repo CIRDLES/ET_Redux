@@ -287,9 +287,9 @@ public class RittnerAgilent7700FileHandler extends AbstractRawDataFileHandler im
             }
         }
 
-        if (tripoliFractions.isEmpty()) {
-            tripoliFractions = null;
-        }
+//        if (tripoliFractions.isEmpty()) {
+//            tripoliFractions = null;
+//        }
 
         return tripoliFractions;
     }

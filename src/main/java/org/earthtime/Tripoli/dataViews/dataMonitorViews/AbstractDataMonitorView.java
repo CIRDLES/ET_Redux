@@ -21,6 +21,7 @@ package org.earthtime.Tripoli.dataViews.dataMonitorViews;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -57,6 +58,7 @@ import javax.swing.JTextArea;
 import javax.swing.SwingWorker;
 import javax.swing.Timer;
 import javax.swing.WindowConstants;
+import javax.swing.tree.DefaultMutableTreeNode;
 import org.earthtime.ETReduxFrame;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
 import org.earthtime.Tripoli.dataModels.MaskingSingleton;
@@ -72,6 +74,9 @@ import org.earthtime.Tripoli.sessions.TripoliSession;
 import org.earthtime.Tripoli.sessions.TripoliSessionFractionationCalculatorInterface;
 import org.earthtime.Tripoli.sessions.TripoliSessionInterface;
 import org.earthtime.UPb_Redux.dateInterpretation.DateProbabilityDensityPanel;
+import org.earthtime.UPb_Redux.dateInterpretation.SampleTreeAnalysisMode;
+import org.earthtime.UPb_Redux.dateInterpretation.SampleTreeChangeI;
+import org.earthtime.UPb_Redux.dateInterpretation.SampleTreeI;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.AliquotDetailsDisplayInterface;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.ConcordiaGraphPanel;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.PlottingDetailsDisplayInterface;
@@ -82,6 +87,8 @@ import org.earthtime.UPb_Redux.dialogs.parameterManagers.LAICPMSProjectParameter
 import org.earthtime.UPb_Redux.dialogs.projectManagers.ProjectManagerSubscribeInterface;
 import org.earthtime.UPb_Redux.fractions.FractionsFilterInterface;
 import org.earthtime.UPb_Redux.utilities.CustomIcon;
+import org.earthtime.aliquots.AliquotInterface;
+import org.earthtime.aliquots.ReduxAliquotInterface;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.dataDictionaries.DataPresentationModeEnum;
 import org.earthtime.dataDictionaries.FractionSelectionTypeEnum;
@@ -92,13 +99,15 @@ import org.earthtime.projects.ProjectInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.reportViews.TabbedReportViews;
+import org.earthtime.samples.SampleInterface;
 import org.earthtime.utilities.TicGeneratorForAxes;
 
 /**
  *
  * @author James F. Bowring
  */
-public class AbstractDataMonitorView extends AbstractRawDataView implements TripoliSessionFractionationCalculatorInterface {
+public class AbstractDataMonitorView extends AbstractRawDataView
+        implements TripoliSessionFractionationCalculatorInterface, SampleTreeChangeI {
 
     /**
      * @return the concordiaGraphPanel
@@ -107,7 +116,67 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
         return concordiaGraphPanel;
     }
 
-    private transient SwingWorker loadDataTask;
+    @Override
+    public void sampleTreeChangeAnalysisMode(Object node) {
+        //  System.out.println("WOW MODE CALL BACK");
+        Object nodeInfo = ((DefaultMutableTreeNode) node).getUserObject();
+        if (nodeInfo instanceof SampleInterface) {
+
+            ((ConcordiaGraphPanel) concordiaGraphPanel).//
+                    setYorkFitLine(null);
+            ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
+                    setSelectedFractions(project.getSuperSample().getFractions());
+            concordiaGraphPanel.repaint();
+            // zap deselected list as it is meaningless at level of aliquot or sample
+            ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
+                    getDeSelectedFractions().clear();
+            ((ConcordiaGraphPanel) concordiaGraphPanel).//
+                    setPreferredDatePanel(null);
+
+            // may 2014 show best date line
+            ((ConcordiaGraphPanel) concordiaGraphPanel).setShowingSingleAliquot(false);
+
+            ((DateProbabilityDensityPanel) probabilityPanel).//
+                    setSelectedFractions(filterActiveUPbFractions(project.getSuperSample().getUpbFractionsUnknown()));
+            ((DateProbabilityDensityPanel) probabilityPanel).//
+                    getDeSelectedFractions().clear();
+            ((DateProbabilityDensityPanel) probabilityPanel).//
+                    setSelectedAliquot(0);
+            ((PlottingDetailsDisplayInterface) probabilityPanel).//
+                    refreshPanel(true);
+
+        } else if (nodeInfo instanceof AliquotInterface) {
+
+            // oct 2011 removed conditionals here to force all tabs to update
+            ((ConcordiaGraphPanel) concordiaGraphPanel).//
+                    setYorkFitLine(null);
+            ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
+                    setSelectedFractions(((ReduxAliquotInterface) nodeInfo).getAliquotFractions());
+            concordiaGraphPanel.repaint();
+
+            // zap deselected list as it is meaningless at level of aliquot or sample
+            ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
+                    getDeSelectedFractions().clear();
+            ((ConcordiaGraphPanel) concordiaGraphPanel).setPreferredDatePanel(null);
+
+            // may 2014 show best date line
+            ((ConcordiaGraphPanel) concordiaGraphPanel).setShowingSingleAliquot(true);
+            ((ConcordiaGraphPanel) concordiaGraphPanel).determineCurrentAliquot();
+
+            ((DateProbabilityDensityPanel) probabilityPanel).//
+                    setSelectedAliquot(((ReduxAliquotInterface) nodeInfo).getAliquotNumber());
+            ((DateProbabilityDensityPanel) probabilityPanel).//
+                    getDeSelectedFractions().clear();
+            probabilityPanel.repaint();
+        }
+    }
+
+    @Override
+    public void sampleTreeChangeCompilationMode(Object node) {
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private static SwingWorker loadDataTask;
     private final static Integer LAYER_FIVE = 5;
     private final ClassLoader cldr = this.getClass().getClassLoader();
     private final java.net.URL imageReduxURL = cldr.getResource("org/earthtime/images/uth-pb-redux-logo.png");
@@ -117,17 +186,17 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
     /**
      *
      */
-    protected ProjectInterface project;
+    protected static ProjectInterface project;
 
     /**
      *
      */
-    protected DataMonitorViewDialog dataMonitorViewDialog;
+    protected static DataMonitorViewDialog dataMonitorViewDialog;
 
     /**
      *
      */
-    protected Dimension parentDimension;
+    protected static Dimension parentDimension;
 
     /**
      *
@@ -137,22 +206,22 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
     /**
      *
      */
-    protected Timer dataMonitorTimer;
+    protected static Timer dataMonitorTimer;
 
     /**
      *
      */
-    protected File monitoredFile;
+    protected static File monitoredFolder;
 
     /**
      *
      */
-    protected long saveTime;
+    protected static long saveMonitoredTime;
 
     /**
      *
      */
-    protected int savedCountOfFractions;
+    protected static int savedCountOfFractions;
 
     /**
      *
@@ -162,7 +231,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
     /**
      *
      */
-    protected TripoliSessionInterface tripoliSession;
+    protected static TripoliSessionInterface tripoliSession;
 
     /**
      *
@@ -173,16 +242,16 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
     private static JLayeredPane probabilityPanel;
     private static JLayeredPane kwikiPDFToolBar;
 
-    private ProjectManagerSubscribeInterface projectManager;
+    private static ProjectManagerSubscribeInterface projectManager;
 
     private ArrayList<AbstractTripoliSample> tripoliSamplesSorted;
 
-    private JProgressBar loadDataTaskProgressBar;
+    private static JProgressBar loadDataTaskProgressBar;
 
-    private JTextArea rawDataFilePathTextArea;
+    private static JTextArea rawDataFilePathTextArea;
 
-    private int pdfWidth = 625;
-    private int pdfHeight = 575;
+    private final static int pdfWidth = 625;
+    private final static int pdfHeight = 575;
 
     /**
      *
@@ -195,37 +264,35 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
         redux_Icon_label.setBounds(leftMargin + 5, 5, 78, 50);
         ((CustomIcon) myReduxIcon).setSize(redux_Icon_label.getWidth(), redux_Icon_label.getHeight());
         redux_Icon_label.setIcon(myReduxIcon);
-
     }
 
     /**
      *
-     * @param project
-     * @param projectManager the value of projectManager
+     * @param myProject
+     * @param myProjectManager
      * @param uPbReduxFrame
      */
-    public AbstractDataMonitorView(ProjectInterface project, ProjectManagerSubscribeInterface projectManager, ETReduxFrame uPbReduxFrame) {
+    public AbstractDataMonitorView(ProjectInterface myProject, ProjectManagerSubscribeInterface myProjectManager, ETReduxFrame uPbReduxFrame) {
         this();
 
-        this.project = project;
-        this.projectManager = projectManager;
+        project = myProject;
+        projectManager = myProjectManager;
         this.uPbReduxFrame = uPbReduxFrame;
-        this.rawDataFileHandler = project.getRawDataFileHandler();
+        rawDataFileHandler = project.getRawDataFileHandler();
         leftMargin = 50;
         topMargin = 10;
-        this.monitoredFile = rawDataFileHandler.getAcquisitionModel().getRawDataFile();
-        this.saveTime = 0L;
-        this.tripoliFractions = new TreeSet<>();
+        monitoredFolder = rawDataFileHandler.getAcquisitionModel().getRawDataFile();
+        saveMonitoredTime = 0L;
+        tripoliFractions = new TreeSet<>();
 
-        parentDimension = new Dimension(2000, 1200);
-        setOpaque(true);
-        setBackground(Color.white);
+        parentDimension = new Dimension(2025, 1225);
 
         initView();
     }
 
     private void initView() {
-
+        setOpaque(true);
+        setBackground(Color.white);
         try {
 
             this.add(redux_Icon_label);
@@ -248,20 +315,27 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
     }
 
     private synchronized void monitorDataFile() {
-        long checkTime = monitoredFile.lastModified();
+        long lastMonitoredTime = monitoredFolder.lastModified();
 
-        if (checkTime > saveTime) {
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Monitored folder = " + monitoredFolder.getName() + "  saveMonitoredTime = " + saveMonitoredTime + "  lastMonitoredTime = " + lastMonitoredTime);
+
+        if (lastMonitoredTime > saveMonitoredTime) {
 
             Calendar cal = Calendar.getInstance();
             cal.clear();
-            cal.setTimeInMillis(checkTime);
+            cal.setTimeInMillis(lastMonitoredTime);
             SimpleDateFormat date_format = new SimpleDateFormat("MMM dd,yyyy HH:mm:ss");
 
             System.out.println("File changed at: " + date_format.format(cal.getTime()));
 
-            saveTime = checkTime;
-
-            fireLoadDataTask();
+            if (loadDataTask != null) {
+                if (loadDataTask.isDone()) {
+                    saveMonitoredTime = lastMonitoredTime;
+                    fireLoadDataTask();
+                }
+            } else {
+                fireLoadDataTask();
+            }
         }
     }
 
@@ -391,6 +465,8 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
             prepareConcordia();
 
             preparePDF();
+            
+            prepareDateTree();
         }
 
         buttonFactory();
@@ -428,6 +504,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
             }
             projectManager.updateDataChangeStatus(false);
             projectManager.displaySamples(tripoliSession, tripoliSamplesSorted);
+            dataMonitorTimer.stop();
             dataMonitorViewDialog.dispose();
         });
 
@@ -489,7 +566,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
 
             ((ConcordiaGraphPanel) concordiaGraphPanel).setCurrentGraphAxesSetup(new GraphAxesSetup("C", 2));
 
-            setConcordiaBounds(605, 625, 625);
+            setConcordiaBounds(705, 625, 625);
 
             ((ConcordiaGraphPanel) concordiaGraphPanel).setShowTitleBox(false);
 
@@ -517,8 +594,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
 
         try {
             Vector<ETFractionInterface> selectedFractions
-                    =//
-                    project.getSuperSample().getFractions();
+                    = project.getSuperSample().getFractions();
 
             ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
                     setSelectedFractions(selectedFractions);
@@ -574,6 +650,18 @@ public class AbstractDataMonitorView extends AbstractRawDataView implements Trip
         kwikiPDFToolBar = new KwikiPDFToolBar(1650, concordiaGraphPanel.getHeight() + topMargin + 60, probabilityPanel, null, project.getSuperSample());
         add(kwikiPDFToolBar, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
+    }
+
+    public void prepareDateTree() {
+        // april 2016 TODO: move to own method
+        JScrollPane dateTreeByAliquot_ScrollPane = new javax.swing.JScrollPane();
+        dateTreeByAliquot_ScrollPane.setBounds(605, topMargin + 50, 100, 575);
+        SampleTreeI dateTreeByAliquot = new SampleTreeAnalysisMode(project.getSuperSample());
+        dateTreeByAliquot.setSampleTreeChange(this);
+        dateTreeByAliquot.buildTree();
+        dateTreeByAliquot_ScrollPane.setViewportView((Component) dateTreeByAliquot);
+
+        add(dateTreeByAliquot_ScrollPane);
     }
 
     private Vector<ETFractionInterface> filterActiveUPbFractions(Vector<ETFractionInterface> fractions) {
