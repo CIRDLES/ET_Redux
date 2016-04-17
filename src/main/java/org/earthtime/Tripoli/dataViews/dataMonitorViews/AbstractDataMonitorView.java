@@ -303,7 +303,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
 
             progressBarFactory();
 
-            dataMonitorTimer = new Timer(5000, (ActionEvent e) -> {
+            dataMonitorTimer = new Timer(2500, (ActionEvent e) -> {
                 monitorDataFile();
             });
 
