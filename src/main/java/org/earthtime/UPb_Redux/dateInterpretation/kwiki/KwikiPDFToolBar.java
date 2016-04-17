@@ -24,7 +24,6 @@ import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.Enumeration;
@@ -76,7 +75,7 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
 
         setBackground(Color.white);
 
-        setBounds(x, y, 57, 48);
+        setBounds(x, y, 152, 56);
 
         this.pdfGraphPanel = aPDFGraphPanel;
 
@@ -100,7 +99,8 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
         date206_238_radioButton.setFont(new java.awt.Font("Arial", 1, 10));
         date206_238_radioButton.setText("206/238");
         date206_238_radioButton.setName("age206_238r");
-        date206_238_radioButton.setBounds(75, 1, 55, 15);
+        date206_238_radioButton.setBounds(75, 1, 75, 17);
+        date206_238_radioButton.setSelected(true);
         add(date206_238_radioButton);
 
         date207_206_radioButton = new JRadioButton("207/206");
@@ -108,32 +108,28 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
         date207_206_radioButton.setFont(new java.awt.Font("Arial", 1, 10));
         date207_206_radioButton.setText("207/206");
         date207_206_radioButton.setName("age207_206r");
-        date207_206_radioButton.setBounds(75, 17, 55, 15);
+        date207_206_radioButton.setBounds(75, 19, 75, 17);
         add(date207_206_radioButton);
 
         dateBest_radioButton = new JRadioButton("best");
         dateChooserButtonGroup.add(dateBest_radioButton);
         dateBest_radioButton.setFont(new java.awt.Font("Arial", 1, 10));
-        dateBest_radioButton.setText("207/206");
+        dateBest_radioButton.setText("best");
         dateBest_radioButton.setName("bestAge");
-        dateBest_radioButton.setBounds(75, 32, 55, 15);
+        dateBest_radioButton.setBounds(75, 37, 75, 17);
         add(dateBest_radioButton);
 
         // choose date
         for (Enumeration e = dateChooserButtonGroup.getElements(); e.hasMoreElements();) {
             final JRadioButton jrb = (JRadioButton) e.nextElement();
-            jrb.addActionListener(new ActionListener() {
-
-                @Override
-                public void actionPerformed(ActionEvent arg0) {
-                    // oct 2014 handle new Pbc corrections
-                    String chosenDateName = jrb.getName();
-
-                    ((DateProbabilityDensityPanel) pdfGraphPanel).setChosenDateName(chosenDateName);
-                    ((DateProbabilityDensityPanel) pdfGraphPanel).//
-                            setSelectedFractions( sample.getUpbFractionsUnknown());
-                    ((DateProbabilityDensityPanel) pdfGraphPanel).prepareAndPaintPanel();
-                }
+            jrb.addActionListener((ActionEvent arg0) -> {
+                // oct 2014 handle new Pbc corrections
+                String chosenDateName = jrb.getName();
+                
+                ((DateProbabilityDensityPanel) pdfGraphPanel).setChosenDateName(chosenDateName);
+                ((DateProbabilityDensityPanel) pdfGraphPanel).//
+                        setSelectedFractions( sample.getUpbFractionsUnknown());
+                ((DateProbabilityDensityPanel) pdfGraphPanel).prepareAndPaintPanel();
             });
         }
 
@@ -144,15 +140,12 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
         zoomInProbability_button.setOpaque(false);
         zoomInProbability_button.setForeground(Color.black);
         zoomInProbability_button.setFont(ReduxConstants.sansSerif_12_Bold);
-        zoomInProbability_button.setBounds(1, 1, 55, 15);
+        zoomInProbability_button.setBounds(1, 1, 55, 17);
         zoomInProbability_button.setMargin(new Insets(0, 0, 0, 0));
 
-        zoomInProbability_button.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent arg0) {
-                // zoom
-                ((DateProbabilityDensityPanel) pdfGraphPanel).zoomIn();
-            }
+        zoomInProbability_button.addActionListener((ActionEvent arg0) -> {
+            // zoom
+            ((DateProbabilityDensityPanel) pdfGraphPanel).zoomIn();
         });
 
         add(zoomInProbability_button, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -161,42 +154,39 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
         zoomOutProbability_button.setOpaque(false);
         zoomOutProbability_button.setForeground(Color.black);
         zoomOutProbability_button.setFont(ReduxConstants.sansSerif_12_Bold);
-        zoomOutProbability_button.setBounds(1, 17, 55, 15);
+        zoomOutProbability_button.setBounds(1, 19, 55, 17);
         zoomOutProbability_button.setMargin(new Insets(0, 0, 0, 0));
 
-        zoomOutProbability_button.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent arg0) {
-                // zoom
-                double rangeX = ((DateProbabilityDensityPanel) pdfGraphPanel).getRangeX_Display();
-                //System.out.println( "RANGE OUT = " + rangeX + "   offset = " + ((DateProbabilityDensityPanel) probabilityPanel).getDisplayOffsetX());
-
-                double saveMinx = ((DateProbabilityDensityPanel) pdfGraphPanel).getMinX();
-                double proposedMinX = saveMinx - rangeX / 2.0;
-
-                ((DateProbabilityDensityPanel) pdfGraphPanel).//
-                        setMinX(//
-                                Math.max(//
-                                        proposedMinX, DateProbabilityDensityPanel.DEFAULT_DISPLAY_MINX));
-
-                // reset offset if hit the left wall
-                double shiftMax = 0;
-                if (proposedMinX <= DateProbabilityDensityPanel.DEFAULT_DISPLAY_MINX) {
-                    ((DateProbabilityDensityPanel) pdfGraphPanel).setDisplayOffsetX(0);
-                    shiftMax = DateProbabilityDensityPanel.DEFAULT_DISPLAY_MINX - proposedMinX;
-                }
-
-                ((DateProbabilityDensityPanel) pdfGraphPanel).//
-                        setMaxX(//
-                                Math.min(//
-                                        (((DateProbabilityDensityPanel) pdfGraphPanel).getMaxX()//
-                                        + rangeX / 2.0 + shiftMax), DateProbabilityDensityPanel.DEFAULT_DISPLAY_MAXX));
-
-                ((DateProbabilityDensityPanel) pdfGraphPanel).//
-                        setSelectedHistogramBinCount(0);
-
-                pdfGraphPanel.repaint();
+        zoomOutProbability_button.addActionListener((ActionEvent arg0) -> {
+            // zoom
+            double rangeX = ((DateProbabilityDensityPanel) pdfGraphPanel).getRangeX_Display();
+            //System.out.println( "RANGE OUT = " + rangeX + "   offset = " + ((DateProbabilityDensityPanel) probabilityPanel).getDisplayOffsetX());
+            
+            double saveMinx = ((DateProbabilityDensityPanel) pdfGraphPanel).getMinX();
+            double proposedMinX = saveMinx - rangeX / 2.0;
+            
+            ((DateProbabilityDensityPanel) pdfGraphPanel).//
+                    setMinX(//
+                            Math.max(//
+                                    proposedMinX, DateProbabilityDensityPanel.DEFAULT_DISPLAY_MINX));
+            
+            // reset offset if hit the left wall
+            double shiftMax = 0;
+            if (proposedMinX <= DateProbabilityDensityPanel.DEFAULT_DISPLAY_MINX) {
+                ((DateProbabilityDensityPanel) pdfGraphPanel).setDisplayOffsetX(0);
+                shiftMax = DateProbabilityDensityPanel.DEFAULT_DISPLAY_MINX - proposedMinX;
             }
+            
+            ((DateProbabilityDensityPanel) pdfGraphPanel).//
+                    setMaxX(//
+                            Math.min(//
+                                    (((DateProbabilityDensityPanel) pdfGraphPanel).getMaxX()//
+                                            + rangeX / 2.0 + shiftMax), DateProbabilityDensityPanel.DEFAULT_DISPLAY_MAXX));
+            
+            ((DateProbabilityDensityPanel) pdfGraphPanel).//
+                    setSelectedHistogramBinCount(0);
+            
+            pdfGraphPanel.repaint();
         });
 
         add(zoomOutProbability_button, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -205,7 +195,7 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
         restoreZoom.setOpaque(false);
         restoreZoom.setForeground(Color.black);
         restoreZoom.setFont(ReduxConstants.sansSerif_12_Bold);
-        restoreZoom.setBounds(1, 32, 55, 15);
+        restoreZoom.setBounds(1, 37, 55, 17);
         restoreZoom.setMargin(new Insets(0, 0, 0, 0));
 
         restoreZoom.addActionListener((ActionEvent arg0) -> {

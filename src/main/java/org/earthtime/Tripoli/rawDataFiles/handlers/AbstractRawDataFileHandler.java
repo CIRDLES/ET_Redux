@@ -528,7 +528,7 @@ public abstract class AbstractRawDataFileHandler implements //
         // lets try splitting on first number as in G120
         if (index < 0) {
             if (fractionName.matches("\\w+\\d+")) {
-                // find index of last letter befor first digit
+                // find index of last letter before first digit
                 for (int j = 0; j < fractionName.length(); j++) {
                     if (fractionName.substring(j, j + 1).matches("\\d")) {
                         index = j;
@@ -541,8 +541,13 @@ public abstract class AbstractRawDataFileHandler implements //
         if (index < 0) {
             index = fractionName.length();
         }
-
-        return fractionName.substring(0, index);
+        
+        String retVal = fractionName.substring(0, index);
+        if (retVal.length() == 0){
+            retVal = "Unknowns";
+        }
+        
+        return retVal;
     }
 
     /**

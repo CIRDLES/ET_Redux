@@ -317,7 +317,8 @@ public class AbstractDataMonitorView extends AbstractRawDataView
     private synchronized void monitorDataFile() {
         long lastMonitoredTime = monitoredFolder.lastModified();
 
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Monitored folder = " + monitoredFolder.getName() + "  saveMonitoredTime = " + saveMonitoredTime + "  lastMonitoredTime = " + lastMonitoredTime);
+        System.out.println(">>>>>>>>>>>>> Monitored folder = "//
+                + monitoredFolder.getName() + "  saveMonitoredTime = " + saveMonitoredTime + "  lastMonitoredTime = " + lastMonitoredTime);
 
         if (lastMonitoredTime > saveMonitoredTime) {
 
@@ -381,6 +382,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
     public void preparePanel(boolean doReScale) {
 
         this.removeAll();
+
         this.add(redux_Icon_label);
 
         this.add(rawDataFilePathTextArea, JLayeredPane.DEFAULT_LAYER);
@@ -465,7 +467,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
             prepareConcordia();
 
             preparePDF();
-            
+
             prepareDateTree();
         }
 
@@ -562,11 +564,11 @@ public class AbstractDataMonitorView extends AbstractRawDataView
         }
 
         if (savedCountOfFractions == 0) {
-            concordiaGraphPanel = new ConcordiaGraphPanel(project.getSuperSample(), null);
+            concordiaGraphPanel = new ConcordiaGraphPanel(project.getSuperSample(), getuPbReduxFrame());
 
             ((ConcordiaGraphPanel) concordiaGraphPanel).setCurrentGraphAxesSetup(new GraphAxesSetup("C", 2));
 
-            setConcordiaBounds(705, 625, 625);
+            setConcordiaBounds(725, 620, 625);
 
             ((ConcordiaGraphPanel) concordiaGraphPanel).setShowTitleBox(false);
 
@@ -583,12 +585,13 @@ public class AbstractDataMonitorView extends AbstractRawDataView
             ((ConcordiaGraphPanel) concordiaGraphPanel).setShowTightToEdges(true);
 
             kwikiConcordiaToolBar = new KwikiConcordiaToolBar(//
-                    800, topMargin + concordiaGraphPanel.getHeight() + topMargin + 50, concordiaGraphPanel, null);
+                    920, topMargin + concordiaGraphPanel.getHeight() + topMargin + 50, concordiaGraphPanel, null);
 
         }
 
         ((ConcordiaGraphPanel) concordiaGraphPanel).setSample(project.getSuperSample());
         ((ConcordiaGraphPanel) concordiaGraphPanel).setViewOptions();
+        ((ConcordiaGraphPanel) concordiaGraphPanel).setShowBestDateDivider206_238(true);
 
         add(concordiaGraphPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
@@ -655,10 +658,11 @@ public class AbstractDataMonitorView extends AbstractRawDataView
     public void prepareDateTree() {
         // april 2016 TODO: move to own method
         JScrollPane dateTreeByAliquot_ScrollPane = new javax.swing.JScrollPane();
-        dateTreeByAliquot_ScrollPane.setBounds(605, topMargin + 50, 100, 575);
+        dateTreeByAliquot_ScrollPane.setBounds(600, topMargin + 50, 125, 580);
         SampleTreeI dateTreeByAliquot = new SampleTreeAnalysisMode(project.getSuperSample());
         dateTreeByAliquot.setSampleTreeChange(this);
         dateTreeByAliquot.buildTree();
+        dateTreeByAliquot.expandAllNodes();
         dateTreeByAliquot_ScrollPane.setViewportView((Component) dateTreeByAliquot);
 
         add(dateTreeByAliquot_ScrollPane);

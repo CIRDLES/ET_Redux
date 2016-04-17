@@ -71,14 +71,13 @@
             <layout>default</layout>
         </repository>
         <repository>
-            <id>zeringue.io</id>
-            <url>http://zeringue.io/maven2</url>
-        </repository>
-        <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
-
+        <repository>
+            <id>zeringue.io</id>
+            <url>http://zeringue.io/maven2</url>
+        </repository>
     </repositories>
     <dependencies>
         <dependency>

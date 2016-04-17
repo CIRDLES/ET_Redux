@@ -1834,10 +1834,10 @@ public class ConcordiaGraphPanel extends JLayeredPane
 
         // oct 2014
         setImageMode("PAN");
-        
+
         // april 2016 - this causes update of weighted means when sample is changed
         SampleInterface.updateAndSaveSampleDateModelsByAliquot(sample);
-        
+
     }
 
     /**
@@ -2432,13 +2432,11 @@ public class ConcordiaGraphPanel extends JLayeredPane
                 }
             }
         } else // set best age divider
-        {
-            if (changingBestDateDivider) {
+         if (changingBestDateDivider) {
                 ((AliquotForUPbInterface) curAliquot).setBestAgeDivider206_238(new BigDecimal(currentBestDate));
                 ((UPbReduxAliquot) curAliquot).updateBestAge();
                 reportUpdater.updateReportTable(false);
             }
-        }
 
         changingBestDateDivider = false;
 
@@ -2604,7 +2602,10 @@ public class ConcordiaGraphPanel extends JLayeredPane
             if (showBestDateDivider206_238) {
                 changingBestDateDivider = true;
                 double nextBestRatio = convertMouseYToValue(evt.getY());
-                currentBestDate = Math.log1p(nextBestRatio) / lambda238.getValue().doubleValue();
+                double testBestDate = Math.log1p(nextBestRatio) / lambda238.getValue().doubleValue();
+                if ((testBestDate > 0) && (testBestDate < ReduxConstants.MAX_DATE_ANNUM)) {
+                    currentBestDate = testBestDate;
+                }
                 // System.out.println("Best Date = " + nextBestRatio + "  " + currentBestDate);
                 setCursor(new Cursor(Cursor.N_RESIZE_CURSOR));//.WAIT_CURSOR));//.MOVE_CURSOR));
             }

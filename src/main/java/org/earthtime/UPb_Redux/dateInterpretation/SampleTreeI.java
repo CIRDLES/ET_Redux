@@ -32,12 +32,12 @@ import javax.swing.event.TreeSelectionListener;
 public interface SampleTreeI extends MouseListener, TreeSelectionListener {
 
     /**
-     * 
+     *
      */
-    void buildTree ();
+    void buildTree();
 
     /**
-     * 
+     *
      * @param value
      * @param selected
      * @param expanded
@@ -46,69 +46,75 @@ public interface SampleTreeI extends MouseListener, TreeSelectionListener {
      * @param hasFocus
      * @return
      */
-    String convertValueToText ( Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus );
+    String convertValueToText(Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus);
 
     /**
-     * 
+     *
      * @return
      */
-    public SampleTreeChangeI getSampleTreeChange ();
+    public SampleTreeChangeI getSampleTreeChange();
 
     /**
-     * 
+     *
      * @param sampleTreeChange
      */
-    public void setSampleTreeChange ( SampleTreeChangeI sampleTreeChange );
+    public void setSampleTreeChange(SampleTreeChangeI sampleTreeChange);
 
     /**
-     * 
+     *
      * @param arg0
      */
     @Override
-    void mouseClicked ( MouseEvent arg0 );
+    void mouseClicked(MouseEvent arg0);
 
     /**
-     * 
+     *
      * @param arg0
      */
     @Override
-    void mouseEntered ( MouseEvent arg0 );
+    void mouseEntered(MouseEvent arg0);
 
     /**
-     * 
+     *
      * @param arg0
      */
     @Override
-    void mouseExited ( MouseEvent arg0 );
+    void mouseExited(MouseEvent arg0);
 
     /**
-     * 
+     *
      * @param e
      */
     @Override
-    void mousePressed ( MouseEvent e );
+    void mousePressed(MouseEvent e);
 
     /**
-     * 
+     *
      * @param arg0
      */
     @Override
-    void mouseReleased ( MouseEvent arg0 );
+    void mouseReleased(MouseEvent arg0);
 
     /**
-     * 
+     *
      * @param e
      */
     @Override
-    void valueChanged ( TreeSelectionEvent e );
+    void valueChanged(TreeSelectionEvent e);
 
     /**
-     * 
+     *
      */
-    public void performLastUserSelection ();
+    public void performLastUserSelection();
 
     /**
-     * 
+     *
      */
-    public void performLastUserSelectionOfSampleDate ();
+    public void performLastUserSelectionOfSampleDate();
+
+    public String collectExpansionHistory();
+
+    public void expandToHistory(String expansionHistory);
+    
+    public void expandAllNodes();
 }

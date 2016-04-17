@@ -37,7 +37,6 @@ import javax.swing.tree.TreeSelectionModel;
 import org.earthtime.UPb_Redux.customJTrees.CheckBoxNode;
 import org.earthtime.UPb_Redux.customJTrees.CheckBoxNodeEditor;
 import org.earthtime.UPb_Redux.customJTrees.CheckBoxNodeRenderer;
-import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.dialogs.sampleManagers.sampleDateInterpretationManagers.SampleDateInterpretationChooserDialog;
 import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
@@ -45,6 +44,7 @@ import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModelI;
 import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
+import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.samples.SampleInterface;
 
 /**
@@ -61,7 +61,7 @@ public class SampleTreeCompilationMode extends JTree implements SampleTreeI {
     /**
      * Creates a new instance of SampleTreeCompilationMode
      */
-    public SampleTreeCompilationMode () {
+    public SampleTreeCompilationMode() {
         super();
         sample = null;
     }
@@ -70,129 +70,165 @@ public class SampleTreeCompilationMode extends JTree implements SampleTreeI {
      *
      * @param mySample
      */
-    public SampleTreeCompilationMode ( SampleInterface mySample ) {
-        super( new DefaultMutableTreeNode( mySample ) );
+    public SampleTreeCompilationMode(SampleInterface mySample) {
+        super(new DefaultMutableTreeNode(mySample));
         sample = mySample;
 
         CheckBoxNodeRenderer renderer = new CheckBoxNodeRenderer();
-        setCellRenderer( renderer );
+        setCellRenderer(renderer);
 
-        setCellEditor( new CheckBoxNodeEditor( this ) );
-        setEditable( true );
+        setCellEditor(new CheckBoxNodeEditor(this));
+        setEditable(true);
 
-        setLastNodeSelected( null );
+        setLastNodeSelected(null);
     }
 
     /**
      *
      */
     @Override
-    public void buildTree () {
+    public void buildTree() {
         this.removeAll();
 
         // populate tree
         // get a master vector of active fraction names
-        Vector<String> activeFractionIDs =//
+        Vector<String> activeFractionIDs
+                =//
                 sample.getSampleFractionIDs();
 
         // load the sample date interpretations
-        for (int index = 0; index < sample.getSampleDateModels().size(); index ++) {
-            DefaultMutableTreeNode sampleDateModelNode =//
+        for (int index = 0; index < sample.getSampleDateModels().size(); index++) {
+            DefaultMutableTreeNode sampleDateModelNode
+                    =//
                     new DefaultMutableTreeNode(//
-                    (SampleDateModel) sample.getSampleDateModels().get( index ) );
+                            (SampleDateModel) sample.getSampleDateModels().get(index));
 
-            ((DefaultMutableTreeNode) getModel().getRoot()).add( sampleDateModelNode );
+            ((DefaultMutableTreeNode) getModel().getRoot()).add(sampleDateModelNode);
 
             // remove from activefractionIDs any fraction with 0 date
             Vector<String> zeroFractionDates = new Vector<>();
-            for (int i = 0; i < activeFractionIDs.size(); i ++) {
-                if (  ! ((SampleDateModel) sample.getSampleDateModels().get( index )).//
-                        fractionDateIsPositive( sample.getSampleFractionByName( activeFractionIDs.get( i ) ) ) ) {
-                    zeroFractionDates.add( activeFractionIDs.get( i ) );
+            for (int i = 0; i < activeFractionIDs.size(); i++) {
+                if (!((SampleDateModel) sample.getSampleDateModels().get(index)).//
+                        fractionDateIsPositive(sample.getSampleFractionByName(activeFractionIDs.get(i)))) {
+                    zeroFractionDates.add(activeFractionIDs.get(i));
                 }
             }
-            for (int i = 0; i < zeroFractionDates.size(); i ++) {
-                activeFractionIDs.remove( zeroFractionDates.get( i ) );
+            for (int i = 0; i < zeroFractionDates.size(); i++) {
+                activeFractionIDs.remove(zeroFractionDates.get(i));
             }
 
-            PopulateSampleDateModel(
+            populateSampleDateModel(
                     activeFractionIDs,
                     sample,
-                    sample.getSampleDateModels().get( index ),
-                    sampleDateModelNode );
+                    sample.getSampleDateModels().get(index),
+                    sampleDateModelNode);
         }
-
 
         int row = getRowCount() - 1;
         while (row >= 1) {
-            collapseRow( row );
-            row --;
+            collapseRow(row);
+            row--;
         }
 
         DefaultMutableTreeNode rootNode = ((DefaultMutableTreeNode) getModel().getRoot());
-        for (int i = 0; i < rootNode.getChildCount(); i ++) {
+        for (int i = 0; i < rootNode.getChildCount(); i++) {
             try {
-                DefaultMutableTreeNode sampleDateNode = (DefaultMutableTreeNode) rootNode.getChildAt( i );
-                expandPath( new TreePath( sampleDateNode.getPath() ) );
+                DefaultMutableTreeNode sampleDateNode = (DefaultMutableTreeNode) rootNode.getChildAt(i);
+                expandPath(new TreePath(sampleDateNode.getPath()));
             } catch (Exception e) {
             }
         }
 
-        getSelectionModel().setSelectionMode( TreeSelectionModel.SINGLE_TREE_SELECTION );
+        getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
         //Listen for when the selection changes.
-        addTreeSelectionListener( this );
-        addMouseListener( this );
+        addTreeSelectionListener(this);
+        addMouseListener(this);
 
         // set sample as default selection
-        setSelectionRow( 0 );
+        setSelectionRow(0);
     }
 
-    private void PopulateSampleDateModel (
+    @Override
+    public void expandAllNodes() {
+        int row = 0;
+        while (row < getRowCount()) {
+            expandRow(row);
+            row++;
+        }
+    }
+
+    @Override
+    public String collectExpansionHistory() {
+        StringBuilder savedExpansion = new StringBuilder();
+        for (int i = 0; i < getRowCount(); i++) {
+            if (isExpanded(i)) {
+                savedExpansion.append(i).append(",");
+            }
+        }
+        return savedExpansion.toString();
+    }
+
+    @Override
+    public void expandToHistory(String expansionHistory) {
+        String[] indexes = expansionHistory.split(",");
+        for (String st : indexes) {
+            try {
+                int row = Integer.parseInt(st);
+                expandRow(row);
+            } catch (NumberFormatException numberFormatException) {
+            }
+        }
+    }
+
+    private void populateSampleDateModel(
             Vector<String> activeFractionIDs,
             SampleInterface sample,
             ValueModel SAM,
-            DefaultMutableTreeNode SAMnode ) {
+            DefaultMutableTreeNode SAMnode) {
 
-        DefaultMutableTreeNode sampleDateValue = //
+        DefaultMutableTreeNode sampleDateValue
+                = //
                 new DefaultMutableTreeNode(//
-                ((SampleDateModel) SAM).ShowCustomDateNode() );
-        SAMnode.add( sampleDateValue );
+                        ((SampleDateModel) SAM).ShowCustomDateNode());
+        SAMnode.add(sampleDateValue);
 
-        DefaultMutableTreeNode sampleDateMSWD = //
+        DefaultMutableTreeNode sampleDateMSWD
+                = //
                 new DefaultMutableTreeNode(//
-                ((SampleDateModel) SAM).ShowCustomMSWDwithN() );
-        SAMnode.add( sampleDateMSWD );
+                        ((SampleDateModel) SAM).ShowCustomMSWDwithN());
+        SAMnode.add(sampleDateMSWD);
 
-        if ( ((SampleDateModel) SAM).getMethodName().contains( "LowerIntercept" ) ) {
-            SAMnode.add( new DefaultMutableTreeNode( "See Upper Intercept Fractions" ) );
+        if (((SampleDateModel) SAM).getMethodName().contains("LowerIntercept")) {
+            SAMnode.add(new DefaultMutableTreeNode("See Upper Intercept Fractions"));
         } else {
-            DefaultMutableTreeNode sampleDateFractions = //
-                    new DefaultMutableTreeNode( "Aliquot Fractions" );
-            SAMnode.add( sampleDateFractions );
+            DefaultMutableTreeNode sampleDateFractions
+                    = //
+                    new DefaultMutableTreeNode("Aliquot Fractions");
+            SAMnode.add(sampleDateFractions);
 
             // organize fractions by aliquot for the user
             // fractions are in order, just need to extract aliquot
             // create checkbox for each fraction set to whether it is in list
             String saveAliquotName = "";
-            DefaultMutableTreeNode aliquotNameNode = new DefaultMutableTreeNode( "NONE" );
+            DefaultMutableTreeNode aliquotNameNode = new DefaultMutableTreeNode("NONE");
             for (String fracID : activeFractionIDs) {
-                String aliquotName = sample.getAliquotNameByFractionID( fracID );
-                if (  ! aliquotName.equalsIgnoreCase( saveAliquotName ) ) {
+                String aliquotName = sample.getAliquotNameByFractionID(fracID);
+                if (!aliquotName.equalsIgnoreCase(saveAliquotName)) {
                     saveAliquotName = aliquotName;
-                    aliquotNameNode = new DefaultMutableTreeNode( aliquotName );
-                    sampleDateFractions.add( aliquotNameNode );
+                    aliquotNameNode = new DefaultMutableTreeNode(aliquotName);
+                    sampleDateFractions.add(aliquotNameNode);
                 }
 
-                DefaultMutableTreeNode fractionNode = new DefaultMutableTreeNode( fracID );
+                DefaultMutableTreeNode fractionNode = new DefaultMutableTreeNode(fracID);
 
                 fractionNode.setUserObject( //
                         new CheckBoxNode(
-                        ((SampleDateModel) SAM).showFractionIdWithDateAndUnct(//
-                        sample.getSampleFractionByName( fracID ), "Ma" ),
-                        ((SampleDateModel) SAM).includesFractionByName( fracID ),
-                        true ) );
-                aliquotNameNode.add( fractionNode );
+                                ((SampleDateModel) SAM).showFractionIdWithDateAndUnct(//
+                                        sample.getSampleFractionByName(fracID), "Ma"),
+                                ((SampleDateModel) SAM).includesFractionByName(fracID),
+                                true));
+                aliquotNameNode.add(fractionNode);
             }
         }
     }
@@ -202,38 +238,37 @@ public class SampleTreeCompilationMode extends JTree implements SampleTreeI {
      * @param e
      */
     @Override
-    public void valueChanged ( TreeSelectionEvent e ) {
+    public void valueChanged(TreeSelectionEvent e) {
         //Returns the last path element of the selection.
         //This method is useful only when the selection model allows a single selection.
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) getLastSelectedPathComponent();
 
-        if ( node == null ) //Nothing is selected.	
+        if (node == null) //Nothing is selected.	
         {
             return;
         }
 
-        setLastNodeSelected( node );
+        setLastNodeSelected(node);
 
         //System.out.println(e.getSource());
         Object nodeInfo = node.getUserObject();
 
-        if ( nodeInfo instanceof Sample ) {
-          //  System.out.println( ((SampleInterface) nodeInfo).getSampleName() );
-        } else if ( nodeInfo instanceof AliquotInterface ) {
-          //  System.out.println(((AliquotInterface) nodeInfo).getAliquotName() );
-        } else if ( nodeInfo instanceof ValueModel ) {
-          //  System.out.println( ((ValueModelI) nodeInfo).getName() );
-        } else if ( nodeInfo instanceof CheckBoxNode ) {
-           // System.out.println( nodeInfo.toString() );
+        if (nodeInfo instanceof Sample) {
+            //  System.out.println( ((SampleInterface) nodeInfo).getSampleName() );
+        } else if (nodeInfo instanceof AliquotInterface) {
+            //  System.out.println(((AliquotInterface) nodeInfo).getAliquotName() );
+        } else if (nodeInfo instanceof ValueModel) {
+            //  System.out.println( ((ValueModelI) nodeInfo).getName() );
+        } else if (nodeInfo instanceof CheckBoxNode) {
+            // System.out.println( nodeInfo.toString() );
             // required for toggling because it allows re-focus
-            setSelectionRow( -1 );
+            setSelectionRow(-1);
 
         } else {
-           // System.out.println( nodeInfo.toString() );
+            // System.out.println( nodeInfo.toString() );
         }
 
-        getSampleTreeChange().sampleTreeChangeCompilationMode( node );
-
+        getSampleTreeChange().sampleTreeChangeCompilationMode(node);
 
     }
 
@@ -248,35 +283,35 @@ public class SampleTreeCompilationMode extends JTree implements SampleTreeI {
      * @return
      */
     @Override
-    public String convertValueToText ( Object value,
+    public String convertValueToText(Object value,
             boolean selected,
             boolean expanded,
             boolean leaf,
             int row,
-            boolean hasFocus ) {
+            boolean hasFocus) {
 
         Object o = ((DefaultMutableTreeNode) value).getUserObject();
 
-        if ( o instanceof Sample ) {
+        if (o instanceof Sample) {
             return ((SampleInterface) o).getSampleName();
-        } else if ( o instanceof AliquotInterface ) {
+        } else if (o instanceof AliquotInterface) {
             return ((AliquotInterface) o).getAliquotName();
-        } else if ( o instanceof ValueModel ) {
+        } else if (o instanceof ValueModel) {
             String displayName = ((ValueModelI) o).getName();
-            if ( ((SampleDateModel) o).isPreferred() ) {
+            if (((SampleDateModel) o).isPreferred()) {
                 displayName = "PREFERRED: " + displayName;
             }
-            if ( ((SampleDateModel) o).isDisplayedAsGraph() ) {
+            if (((SampleDateModel) o).isDisplayedAsGraph()) {
                 displayName = "\u25CF " + displayName;
             }
             return displayName + "        ";
 
-        } else if ( (o instanceof String) && (((String) o).startsWith( "date" )) ) {
+        } else if ((o instanceof String) && (((String) o).startsWith("date"))) {
             return //                
                     ((SampleDateModel) ((DefaultMutableTreeNode) ((TreeNode) value).//
                     getParent()).getUserObject()).ShowCustomDateNode();
 
-        } else if ( (o instanceof String) && (((String) o).startsWith( "MSWD" )) ) {
+        } else if ((o instanceof String) && (((String) o).startsWith("MSWD"))) {
             return //                
                     ((SampleDateModel) ((DefaultMutableTreeNode) ((TreeNode) value).//
                     getParent()).getUserObject()).ShowCustomMSWDwithN() + "              ";
@@ -288,7 +323,7 @@ public class SampleTreeCompilationMode extends JTree implements SampleTreeI {
                     expanded,
                     leaf,
                     row,
-                    hasFocus );
+                    hasFocus);
         }
     }
 
@@ -296,8 +331,8 @@ public class SampleTreeCompilationMode extends JTree implements SampleTreeI {
      *
      */
     @Override
-    public void performLastUserSelection () {
-        getSampleTreeChange().sampleTreeChangeCompilationMode( getLastNodeSelected() );//
+    public void performLastUserSelection() {
+        getSampleTreeChange().sampleTreeChangeCompilationMode(getLastNodeSelected());//
     }
     // Provide for adding sample age interpretations
 
@@ -306,45 +341,45 @@ public class SampleTreeCompilationMode extends JTree implements SampleTreeI {
      * @param e
      */
     @Override
-    public void mousePressed ( MouseEvent e ) {
-        int selRow = getRowForLocation( e.getX(), e.getY() );
-        TreePath selPath = getPathForLocation( e.getX(), e.getY() );
+    public void mousePressed(MouseEvent e) {
+        int selRow = getRowForLocation(e.getX(), e.getY());
+        TreePath selPath = getPathForLocation(e.getX(), e.getY());
 
-        if ( selRow != -1 ) {
+        if (selRow != -1) {
             final DefaultMutableTreeNode node = (DefaultMutableTreeNode) selPath.getLastPathComponent();
             final Object nodeInfo = node.getUserObject();
-            if (  ! e.isPopupTrigger() && (e.getButton() == MouseEvent.BUTTON1) ) {
-            } else if ( (e.isPopupTrigger()) || (e.getButton() == MouseEvent.BUTTON3) ) {
-                setSelectionPath( selPath );
-                if ( nodeInfo instanceof Sample ) {
-                    DialogEditor myEditor =
-                            new SampleDateInterpretationChooserDialog(
-                            null,
-                            true,
-                            ((SampleInterface) nodeInfo).determineUnusedSampleDateModels( false ) );
+            if (!e.isPopupTrigger() && (e.getButton() == MouseEvent.BUTTON1)) {
+            } else if ((e.isPopupTrigger()) || (e.getButton() == MouseEvent.BUTTON3)) {
+                setSelectionPath(selPath);
+                if (nodeInfo instanceof Sample) {
+                    DialogEditor myEditor
+                            = new SampleDateInterpretationChooserDialog(
+                                    null,
+                                    true,
+                                    ((SampleInterface) nodeInfo).determineUnusedSampleDateModels(false));
 
-                    myEditor.setSize( 340, 395 );
-                    DialogEditor.setDefaultLookAndFeelDecorated( true );
+                    myEditor.setSize(340, 395);
+                    DialogEditor.setDefaultLookAndFeelDecorated(true);
 
-                    myEditor.setVisible( true );
+                    myEditor.setVisible(true);
 
                     // get a master vector of active fraction names
-                    Vector<String> activeFractionIDs =//
+                    Vector<String> activeFractionIDs
+                            =//
                             ((SampleInterface) nodeInfo).getSampleFractionIDs();
 
-                    if ( ((SampleDateInterpretationChooserDialog) myEditor).getSelectedModels().size() > 0 ) {
+                    if (((SampleDateInterpretationChooserDialog) myEditor).getSelectedModels().size() > 0) {
                         DefaultMutableTreeNode sampleDateModelNode = null;
 
                         ArrayList<Integer> tempNewNodes = new ArrayList<Integer>();
                         for (ValueModel selectedSAM : ((SampleDateInterpretationChooserDialog) myEditor).getSelectedModels()) {
 
-                            ((SampleInterface) nodeInfo).getSampleDateModels().add( selectedSAM );
+                            ((SampleInterface) nodeInfo).getSampleDateModels().add(selectedSAM);
                             // feb 2013 add in SampleAnalysisTypesEnum  for transition to logbased calcs starting with LAICPMS from raw
-                            ((SampleDateModel) selectedSAM).setSampleAnalysisType( SampleAnalysisTypesEnum.valueOf( sample.getSampleAnalysisType().trim() ) );
-
+                            ((SampleDateModel) selectedSAM).setSampleAnalysisType(SampleAnalysisTypesEnum.valueOf(sample.getSampleAnalysisType().trim()));
 
                             // fix up tree
-                            sampleDateModelNode = new DefaultMutableTreeNode( selectedSAM );
+                            sampleDateModelNode = new DefaultMutableTreeNode(selectedSAM);
 
                             // remove from activefractionIDs any fraction with 0 date
                             Vector<String> zeroFractionDates = new Vector<>();
@@ -358,72 +393,70 @@ public class SampleTreeCompilationMode extends JTree implements SampleTreeI {
                                 activeFractionIDs.remove(zeroFractionDate);
                             }
 
-                            PopulateSampleDateModel(
+                            populateSampleDateModel(
                                     activeFractionIDs,
                                     ((SampleInterface) nodeInfo),
                                     selectedSAM,
-                                    sampleDateModelNode );
+                                    sampleDateModelNode);
 
-                            node.add( sampleDateModelNode );
+                            node.add(sampleDateModelNode);
 
                             // save node indexes of inserted nodes
-                            tempNewNodes.add( node.getChildCount() - 1 );
+                            tempNewNodes.add(node.getChildCount() - 1);
                         }
 
                         sample.updateSampleDateModels();
 
                         int[] newNodes = new int[tempNewNodes.size()];
-                        for (int i = 0; i < tempNewNodes.size(); i ++) {
-                            newNodes[i] = tempNewNodes.get( i );
+                        for (int i = 0; i < tempNewNodes.size(); i++) {
+                            newNodes[i] = tempNewNodes.get(i);
                         }
 
                         ((DefaultTreeModel) getModel()).nodesWereInserted(
-                                node, newNodes );//new int[]{node.getChildCount() - 1});
+                                node, newNodes);//new int[]{node.getChildCount() - 1});
 
                         // collapse all and expand new date
                         int row = getRowCount() - 1;
                         while (row >= 1) {
-                            collapseRow( row );
-                            row --;
+                            collapseRow(row);
+                            row--;
                         }
-                        expandPath( new TreePath(//
-                                ((DefaultMutableTreeNode) sampleDateModelNode.getChildAt( 2 )).getPath() ) );
+                        expandPath(new TreePath(//
+                                ((DefaultMutableTreeNode) sampleDateModelNode.getChildAt(2)).getPath()));
 
-                        getSampleTreeChange().sampleTreeChangeCompilationMode( node );
-
+                        getSampleTreeChange().sampleTreeChangeCompilationMode(node);
 
                     }
 
-
-                } else if ( nodeInfo instanceof AliquotInterface ) {
-                } else if ( nodeInfo instanceof ValueModel ) {
+                } else if (nodeInfo instanceof AliquotInterface) {
+                } else if (nodeInfo instanceof ValueModel) {
                     //Create the popup menu.
                     JPopupMenu popup = new JPopupMenu();
 
-                    JMenuItem menuItem = new JMenuItem( "Set as Preferred Sample Date Interpretation" );
-                    menuItem.addActionListener( new ActionListener() {
+                    JMenuItem menuItem = new JMenuItem("Set as Preferred Sample Date Interpretation");
+                    menuItem.addActionListener(new ActionListener() {
                         @Override
-                        public void actionPerformed ( ActionEvent arg0 ) {
-                            DefaultMutableTreeNode sampleNode =
-                                    (DefaultMutableTreeNode) node.getParent();
+                        public void actionPerformed(ActionEvent arg0) {
+                            DefaultMutableTreeNode sampleNode
+                                    = (DefaultMutableTreeNode) node.getParent();
                             Object sampleNodeInfo = sampleNode.getUserObject();
-                            ((SampleInterface) sampleNodeInfo).setPreferredSampleDateModel( (ValueModel) nodeInfo );
+                            ((SampleInterface) sampleNodeInfo).setPreferredSampleDateModel((ValueModel) nodeInfo);
                             sample.updateSampleDateModels();
 
                             // fix tree
-                            ((DefaultTreeModel) getModel()).nodeChanged( node );
-                            getSampleTreeChange().sampleTreeChangeCompilationMode( node );
+                            ((DefaultTreeModel) getModel()).nodeChanged(node);
+                            getSampleTreeChange().sampleTreeChangeCompilationMode(node);
                         }
-                    } );
-                    popup.add( menuItem );
+                    });
+                    popup.add(menuItem);
 
-                    menuItem = new JMenuItem( "Delete Sample Date Interpretation" );
-                    menuItem.addActionListener( new ActionListener() {
+                    menuItem = new JMenuItem("Delete Sample Date Interpretation");
+                    menuItem.addActionListener(new ActionListener() {
                         @Override
-                        public void actionPerformed ( ActionEvent arg0 ) {
+                        public void actionPerformed(ActionEvent arg0) {
                             // delete sample age from aliquot
-                            DefaultMutableTreeNode sampleNode =
-                                    (DefaultMutableTreeNode) node.getParent();
+                            DefaultMutableTreeNode sampleNode
+                                    = (DefaultMutableTreeNode) node.getParent();
                             Object sampleNodeInfo = sampleNode.getUserObject();
 
                             // remove and save sample
@@ -433,133 +466,136 @@ public class SampleTreeCompilationMode extends JTree implements SampleTreeI {
                             int[] indicesOfIntercepts = new int[2];
                             DefaultMutableTreeNode[] nodesOfIntercepts = new DefaultMutableTreeNode[2];
 
-                            if ( ((SampleDateModel) nodeInfo).getMethodName().equalsIgnoreCase( "LowerIntercept" ) ) {
+                            if (((SampleDateModel) nodeInfo).getMethodName().equalsIgnoreCase("LowerIntercept")) {
                                 // also remove the next node == upper intercept
                                 otherInterceptNode = node.getNextSibling();
                                 otherInterceptNodeInfo = otherInterceptNode.getUserObject();
-                                indicesOfIntercepts[0] = sampleNode.getIndex( node );
+                                indicesOfIntercepts[0] = sampleNode.getIndex(node);
                                 nodesOfIntercepts[0] = node;
                                 indicesOfIntercepts[1] = indicesOfIntercepts[0] + 1;
                                 nodesOfIntercepts[1] = node.getNextSibling();
                             }
-                            if ( ((SampleDateModel) nodeInfo).getMethodName().equalsIgnoreCase( "UpperIntercept" ) ) {
+                            if (((SampleDateModel) nodeInfo).getMethodName().equalsIgnoreCase("UpperIntercept")) {
                                 // also remove the previous node == lower intercept
                                 otherInterceptNode = node.getPreviousSibling();
                                 otherInterceptNodeInfo = otherInterceptNode.getUserObject();
-                                indicesOfIntercepts[1] = sampleNode.getIndex( node );
+                                indicesOfIntercepts[1] = sampleNode.getIndex(node);
                                 nodesOfIntercepts[1] = node;
                                 indicesOfIntercepts[0] = indicesOfIntercepts[1] - 1;
                                 nodesOfIntercepts[0] = node.getPreviousSibling();
                             }
-                            if ( otherInterceptNodeInfo != null ) {
+                            if (otherInterceptNodeInfo != null) {
                                 // this is the special case where the two intercpt nodes were removed
-                                ((SampleInterface) sampleNodeInfo).getSampleDateModels().remove( (ValueModel) nodeInfo );
-                                ((SampleInterface) sampleNodeInfo).getSampleDateModels().remove( (ValueModel) otherInterceptNodeInfo );
+                                ((SampleInterface) sampleNodeInfo).getSampleDateModels().remove((ValueModel) nodeInfo);
+                                ((SampleInterface) sampleNodeInfo).getSampleDateModels().remove((ValueModel) otherInterceptNodeInfo);
                                 sample.updateSampleDateModels();
 
                                 // fix up tree
-                                sampleNode.remove( nodesOfIntercepts[0] );
-                                sampleNode.remove( nodesOfIntercepts[1] );
+                                sampleNode.remove(nodesOfIntercepts[0]);
+                                sampleNode.remove(nodesOfIntercepts[1]);
                                 ((DefaultTreeModel) getModel()).nodesWereRemoved(
                                         sampleNode,
                                         indicesOfIntercepts,
-                                        nodesOfIntercepts );
+                                        nodesOfIntercepts);
                             } else {
 
-                                ((SampleInterface) sampleNodeInfo).getSampleDateModels().remove( (ValueModel) nodeInfo );
+                                ((SampleInterface) sampleNodeInfo).getSampleDateModels().remove((ValueModel) nodeInfo);
                                 sample.updateSampleDateModels();
 
                                 // fix up tree
-                                int indexOfNode = sampleNode.getIndex( node );
-                                sampleNode.remove( node );
+                                int indexOfNode = sampleNode.getIndex(node);
+                                sampleNode.remove(node);
                                 ((DefaultTreeModel) getModel()).nodesWereRemoved(
                                         sampleNode,
                                         new int[]{indexOfNode},
-                                        new Object[]{node} );
+                                        new Object[]{node});
                             }
 
-                            getSampleTreeChange().sampleTreeChangeCompilationMode( sampleNode );
+                            getSampleTreeChange().sampleTreeChangeCompilationMode(sampleNode);
                         }
-                    } );
-                    popup.add( menuItem );
+                    });
+                    popup.add(menuItem);
 
                     // added to speed choice of graph for weighted means
-                    if ( ((ValueModel) nodeInfo).getName().startsWith( "weighted" ) ) {
-                        if ( ((SampleDateModel) nodeInfo).isDisplayedAsGraph() ) {
-                            menuItem = new JMenuItem( "Hide Graph" );
-                            menuItem.addActionListener( new ActionListener() {
-                                public void actionPerformed ( ActionEvent arg0 ) {
-                                    ((SampleDateModel) nodeInfo).setDisplayedAsGraph( false );
+                    if (((ValueModel) nodeInfo).getName().startsWith("weighted")) {
+                        if (((SampleDateModel) nodeInfo).isDisplayedAsGraph()) {
+                            menuItem = new JMenuItem("Hide Graph");
+                            menuItem.addActionListener(new ActionListener() {
+                                public void actionPerformed(ActionEvent arg0) {
+                                    ((SampleDateModel) nodeInfo).setDisplayedAsGraph(false);
 
-                                    getSampleTreeChange().sampleTreeChangeCompilationMode( node );
+                                    getSampleTreeChange().sampleTreeChangeCompilationMode(node);
                                 }
-                            } );
-                            popup.add( menuItem );
+                            });
+                            popup.add(menuItem);
 
                         } else {
-                            menuItem = new JMenuItem( "Show Graph" );
-                            menuItem.addActionListener( new ActionListener() {
-                                public void actionPerformed ( ActionEvent arg0 ) {
-                                    ((SampleDateModel) nodeInfo).setDisplayedAsGraph( true );
+                            menuItem = new JMenuItem("Show Graph");
+                            menuItem.addActionListener(new ActionListener() {
+                                public void actionPerformed(ActionEvent arg0) {
+                                    ((SampleDateModel) nodeInfo).setDisplayedAsGraph(true);
 
-                                    getSampleTreeChange().sampleTreeChangeCompilationMode( node );
+                                    getSampleTreeChange().sampleTreeChangeCompilationMode(node);
                                 }
-                            } );
-                            popup.add( menuItem );
+                            });
+                            popup.add(menuItem);
                         }
                     }
 
-                    popup.show( e.getComponent(),
-                            e.getX(), e.getY() );
+                    popup.show(e.getComponent(),
+                            e.getX(), e.getY());
 
-                } else if ( nodeInfo instanceof String ) {
-                    System.out.println( "STRING HIT" );
-                    if ( ((String) nodeInfo).equalsIgnoreCase( "Aliquot Fractions" ) ) {
+                } else if (nodeInfo instanceof String) {
+                    System.out.println("STRING HIT");
+                    if (((String) nodeInfo).equalsIgnoreCase("Aliquot Fractions")) {
 
                         //Create the popup menu.
                         JPopupMenu popup = new JPopupMenu();
-                        JMenuItem menuItem = new JMenuItem( "Select None" );
-                        menuItem.addActionListener( new ActionListener() {
-                            public void actionPerformed ( ActionEvent arg0 ) {
-                                DefaultMutableTreeNode sampleDateNode =
-                                        (DefaultMutableTreeNode) ((DefaultMutableTreeNode) node).getParent();
+                        JMenuItem menuItem = new JMenuItem("Select None");
+                        menuItem.addActionListener(new ActionListener() {
+                            public void actionPerformed(ActionEvent arg0) {
+                                DefaultMutableTreeNode sampleDateNode
+                                        = (DefaultMutableTreeNode) ((DefaultMutableTreeNode) node).getParent();
                                 Object SampleDateNodeInfo = sampleDateNode.getUserObject();
                                 ((SampleDateModel) SampleDateNodeInfo).//
-                                        setIncludedFractionIDsVector( new Vector<String>() );
+                                        setIncludedFractionIDsVector(new Vector<String>());
 
                                 sample.updateSampleDateModels();
 
                                 // fix tree
-                                for (int a = 0; a < node.getChildCount(); a ++) {
-                                    DefaultMutableTreeNode aliquotNameNode = //
-                                            (DefaultMutableTreeNode) ((DefaultMutableTreeNode) node).getChildAt( a );
+                                for (int a = 0; a < node.getChildCount(); a++) {
+                                    DefaultMutableTreeNode aliquotNameNode
+                                            = //
+                                            (DefaultMutableTreeNode) ((DefaultMutableTreeNode) node).getChildAt(a);
 
-                                    for (int c = 0; c < aliquotNameNode.getChildCount(); c ++) {
+                                    for (int c = 0; c < aliquotNameNode.getChildCount(); c++) {
                                         ((CheckBoxNode) ((DefaultMutableTreeNode) aliquotNameNode.//
-                                                getChildAt( c )).getUserObject()).setSelected( false );
-                                        ((DefaultTreeModel) getModel()).nodeChanged( aliquotNameNode.getChildAt( c ) );
+                                                getChildAt(c)).getUserObject()).setSelected(false);
+                                        ((DefaultTreeModel) getModel()).nodeChanged(aliquotNameNode.getChildAt(c));
                                     }
-                                    ((DefaultTreeModel) getModel()).nodeChanged( aliquotNameNode );
+                                    ((DefaultTreeModel) getModel()).nodeChanged(aliquotNameNode);
 
                                 }
-                                ((DefaultTreeModel) getModel()).nodeChanged( node );
+                                ((DefaultTreeModel) getModel()).nodeChanged(node);
 
                                 ((SampleDateModel) SampleDateNodeInfo).//
                                         CalculateDateInterpretationForSample();
 
-                                getSampleTreeChange().sampleTreeChangeCompilationMode( sampleDateNode );
+                                getSampleTreeChange().sampleTreeChangeCompilationMode(sampleDateNode);
                             }
-                        } );
+                        });
 
-                        popup.add( menuItem );
+                        popup.add(menuItem);
 
-                        menuItem = new JMenuItem( "Select All" );
-                        menuItem.addActionListener( new ActionListener() {
+                        menuItem = new JMenuItem("Select All");
+                        menuItem.addActionListener(new ActionListener() {
                             @Override
-                            public void actionPerformed ( ActionEvent arg0 ) {
-                                DefaultMutableTreeNode sampleDateNode = //
+                            public void actionPerformed(ActionEvent arg0) {
+                                DefaultMutableTreeNode sampleDateNode
+                                        = //
                                         (DefaultMutableTreeNode) node.getParent();
-                                DefaultMutableTreeNode sampleNode = //
+                                DefaultMutableTreeNode sampleNode
+                                        = //
                                         (DefaultMutableTreeNode) sampleDateNode.getParent();
 
                                 Object SampleDateNodeInfo = sampleDateNode.getUserObject();
@@ -567,37 +603,38 @@ public class SampleTreeCompilationMode extends JTree implements SampleTreeI {
 
                                 ((SampleDateModel) SampleDateNodeInfo).//
                                         setIncludedFractionIDsVector(//
-                                        ((SampleInterface) SampleNodeInfo).getSampleFractionIDs() );
+                                                ((SampleInterface) SampleNodeInfo).getSampleFractionIDs());
 
                                 sample.updateSampleDateModels();
 
                                 // fix tree
-                                for (int a = 0; a < node.getChildCount(); a ++) {
-                                    DefaultMutableTreeNode aliquotNameNode = //
-                                            (DefaultMutableTreeNode) ((DefaultMutableTreeNode) node).getChildAt( a );
+                                for (int a = 0; a < node.getChildCount(); a++) {
+                                    DefaultMutableTreeNode aliquotNameNode
+                                            = //
+                                            (DefaultMutableTreeNode) ((DefaultMutableTreeNode) node).getChildAt(a);
 
-                                    for (int c = 0; c < aliquotNameNode.getChildCount(); c ++) {
+                                    for (int c = 0; c < aliquotNameNode.getChildCount(); c++) {
                                         ((CheckBoxNode) ((DefaultMutableTreeNode) aliquotNameNode.//
-                                                getChildAt( c )).getUserObject()).setSelected( true );
-                                        ((DefaultTreeModel) getModel()).nodeChanged( aliquotNameNode.getChildAt( c ) );
+                                                getChildAt(c)).getUserObject()).setSelected(true);
+                                        ((DefaultTreeModel) getModel()).nodeChanged(aliquotNameNode.getChildAt(c));
                                     }
-                                    ((DefaultTreeModel) getModel()).nodeChanged( aliquotNameNode );
+                                    ((DefaultTreeModel) getModel()).nodeChanged(aliquotNameNode);
 
                                 }
-                                ((DefaultTreeModel) getModel()).nodeChanged( node );
+                                ((DefaultTreeModel) getModel()).nodeChanged(node);
 
                                 ((SampleDateModel) SampleDateNodeInfo).//
                                         CalculateDateInterpretationForSample();
 
-                                getSampleTreeChange().sampleTreeChangeCompilationMode( sampleDateNode );
+                                getSampleTreeChange().sampleTreeChangeCompilationMode(sampleDateNode);
 
                             }
-                        } );
+                        });
 
-                        popup.add( menuItem );
+                        popup.add(menuItem);
 
-                        popup.show( e.getComponent(),
-                                e.getX(), e.getY() );
+                        popup.show(e.getComponent(),
+                                e.getX(), e.getY());
                     }
                 }
 
@@ -612,7 +649,7 @@ public class SampleTreeCompilationMode extends JTree implements SampleTreeI {
      * @param arg0
      */
     @Override
-    public void mouseReleased ( MouseEvent arg0 ) {
+    public void mouseReleased(MouseEvent arg0) {
         //throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -621,7 +658,7 @@ public class SampleTreeCompilationMode extends JTree implements SampleTreeI {
      * @param arg0
      */
     @Override
-    public void mouseEntered ( MouseEvent arg0 ) {
+    public void mouseEntered(MouseEvent arg0) {
         //throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -630,7 +667,7 @@ public class SampleTreeCompilationMode extends JTree implements SampleTreeI {
      * @param arg0
      */
     @Override
-    public void mouseExited ( MouseEvent arg0 ) {
+    public void mouseExited(MouseEvent arg0) {
         //throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -639,7 +676,7 @@ public class SampleTreeCompilationMode extends JTree implements SampleTreeI {
      * @param arg0
      */
     @Override
-    public void mouseClicked ( MouseEvent arg0 ) {
+    public void mouseClicked(MouseEvent arg0) {
         //throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -647,7 +684,7 @@ public class SampleTreeCompilationMode extends JTree implements SampleTreeI {
      * @return the sampleTreeChange
      */
     @Override
-    public SampleTreeChangeI getSampleTreeChange () {
+    public SampleTreeChangeI getSampleTreeChange() {
         return sampleTreeChange;
     }
 
@@ -655,21 +692,21 @@ public class SampleTreeCompilationMode extends JTree implements SampleTreeI {
      * @param sampleTreeChange the sampleTreeChange to set
      */
     @Override
-    public void setSampleTreeChange ( SampleTreeChangeI sampleTreeChange ) {
+    public void setSampleTreeChange(SampleTreeChangeI sampleTreeChange) {
         this.sampleTreeChange = sampleTreeChange;
     }
 
     /**
      * @return the lastNodeSelected
      */
-    public Object getLastNodeSelected () {
+    public Object getLastNodeSelected() {
         return lastNodeSelected;
     }
 
     /**
      * @param lastNodeSelected the lastNodeSelected to set
      */
-    public void setLastNodeSelected ( Object lastNodeSelected ) {
+    public void setLastNodeSelected(Object lastNodeSelected) {
         this.lastNodeSelected = lastNodeSelected;
     }
 
@@ -677,7 +714,7 @@ public class SampleTreeCompilationMode extends JTree implements SampleTreeI {
      *
      */
     @Override
-    public void performLastUserSelectionOfSampleDate () {
-        throw new UnsupportedOperationException( "Not supported yet." );
+    public void performLastUserSelectionOfSampleDate() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
