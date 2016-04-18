@@ -199,17 +199,23 @@ public class SampleDateInterpretationsManager extends DialogEditor
      */
     public void refreshSampleDateInterpretations(boolean doReScale) {
 
-        if (doReScale) {
+        String expansionHistory = "";
+        if (!doReScale) {
+            expansionHistory = dateTreeByAliquot.collectExpansionHistory();
+        }
             dateTreeByAliquot = new SampleTreeAnalysisMode(sample);
             dateTreeByAliquot.setSampleTreeChange(this);
             dateTreeByAliquot.buildTree();
             dateTreeByAliquot_ScrollPane.setViewportView((Component) dateTreeByAliquot);
+        if (!doReScale) {
+            dateTreeByAliquot.expandToHistory(expansionHistory);
+        }
 
             dateTreeBySample = new SampleTreeCompilationMode(sample);
             dateTreeBySample.setSampleTreeChange(this);
             dateTreeBySample.buildTree();
             dateTreeBySample_ScrollPane.setViewportView((Component) dateTreeBySample);
-        }
+
 
         ((PlottingDetailsDisplayInterface) concordiaGraphPanel).resetPanel(doReScale);
 
@@ -420,7 +426,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
                                 ((WeightedMeanGraphPanel) weightedMeanGraphPanel).getMaxY()//
                                 + rangeY / 2.0);
 
-                ((WeightedMeanGraphPanel) weightedMeanGraphPanel).repaint();
+                weightedMeanGraphPanel.repaint();
 
             }
         });

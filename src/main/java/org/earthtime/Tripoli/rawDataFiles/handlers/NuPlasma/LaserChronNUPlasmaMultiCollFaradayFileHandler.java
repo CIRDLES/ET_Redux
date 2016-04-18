@@ -523,9 +523,9 @@ public class LaserChronNUPlasmaMultiCollFaradayFileHandler extends AbstractRawDa
             }
         }
 
-        if (tripoliFractions.isEmpty()) {
-            tripoliFractions = null;
-        }
+//        if (tripoliFractions.isEmpty()) {
+//            tripoliFractions = null;
+//        }
 
         return tripoliFractions;
     }

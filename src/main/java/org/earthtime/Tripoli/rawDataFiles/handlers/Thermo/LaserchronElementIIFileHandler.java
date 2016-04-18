@@ -25,8 +25,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
@@ -50,6 +52,7 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
     private static final long serialVersionUID = -2860923405769819758L;
     private static final LaserchronElementIIFileHandler instance = new LaserchronElementIIFileHandler();
     private static int referenceMaterialIncrementer;
+    private static Map<String, Integer> referenceMaterialIncrementerMap = null;
     // Instance variables
     private File[] analysisFiles;
     private String[] fractionNames;
@@ -76,6 +79,7 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
      */
     public static LaserchronElementIIFileHandler getInstance() {
         referenceMaterialIncrementer = 1;
+
         return instance;
     }
 
@@ -101,6 +105,13 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
      */
     @Override
     public void getAndLoadRawIntensityDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions) {
+
+        if (referenceMaterialIncrementerMap == null) {
+            referenceMaterialIncrementerMap = new ConcurrentHashMap<>();
+            for (int i = 0; i < rawDataFileTemplate.getStandardIDs().length; i++) {
+                referenceMaterialIncrementerMap.put(rawDataFileTemplate.getStandardIDs()[i], 1);
+            }
+        }
 
         // Laserchron ElementII has folder of .dat files 
         analysisFiles = rawDataFile.listFiles((File dir, String name) -> {
@@ -219,9 +230,14 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
             // needs to be more robust
             boolean isReferenceMaterial = (fractionID.substring(0, 2).compareToIgnoreCase(referenceMaterialfractionID.substring(0, 2)) == 0);
             // number the reference materials
-            if (isReferenceMaterial) {
-                fractionID = fractionID + "-" + String.valueOf(referenceMaterialIncrementer);
-                referenceMaterialIncrementer++;
+//            if (isReferenceMaterial) {
+//                fractionID = fractionID + "-" + String.valueOf(referenceMaterialIncrementer);
+//                referenceMaterialIncrementer++;
+//            }
+            if (referenceMaterialIncrementerMap.containsKey(fractionID)) {
+                int refMatIndex = referenceMaterialIncrementerMap.get(fractionID);
+                referenceMaterialIncrementerMap.put(fractionID, refMatIndex + 1);
+                fractionID = fractionID + "-" + String.valueOf(refMatIndex);
             }
 
             // ************************************************************************************************
@@ -285,9 +301,9 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
             }
         } // end of files loop
 
-        if (myTripoliFractions.isEmpty()) {
-            myTripoliFractions = null;
-        }
+//        if (myTripoliFractions.isEmpty()) {
+//            myTripoliFractions = null;
+//        }
 
         return myTripoliFractions;
     }

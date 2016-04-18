@@ -150,7 +150,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
                             ((SampleDateModel) tempAliquot.getSampleDateModels().get(index)).//
                                     CalculateDateInterpretationForAliquot();
 
-                            PopulateSampleDateModel(
+                            populateSampleDateModel(
                                     activeFractionIDs,
                                     tempAliquot,
                                     tempAliquot.getSampleDateModels().get(index),
@@ -189,7 +189,39 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
 
     }
 
-    private void PopulateSampleDateModel(
+    @Override
+    public void expandAllNodes() {
+        int row = 0;
+        while (row < getRowCount()) {
+            expandRow(row);
+            row++;
+        }
+    }
+
+    @Override
+    public String collectExpansionHistory() {
+        StringBuilder savedExpansion = new StringBuilder();
+        for (int i = 0; i < getRowCount(); i++) {
+            if (isExpanded(i)) {
+                savedExpansion.append(i).append(",");
+            }
+        }
+        return savedExpansion.toString();
+    }
+
+    @Override
+    public void expandToHistory(String expansionHistory) {
+        String[] indexes = expansionHistory.split(",");
+        for (String st : indexes) {
+            try {
+                int row = Integer.parseInt(st);
+                expandRow(row);
+            } catch (NumberFormatException numberFormatException) {
+            }
+        }
+    }
+
+    private void populateSampleDateModel(
             Vector<String> activeFractionIDs,
             AliquotInterface aliquot,
             ValueModel SAM,
@@ -235,45 +267,44 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
         //Returns the last path element of the selection.
         //This method is useful only when the selection model allows a single selection.
 //        if (!suppressSelectionEvent) {
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode) getLastSelectedPathComponent();
-            // april 2016
-            TreePath lastSelected = getSelectionPath();//e.getOldLeadSelectionPath();//   
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode) getLastSelectedPathComponent();
+        // april 2016
+        TreePath lastSelected = getSelectionPath();//e.getOldLeadSelectionPath();//   
 
-            if (node == null) //Nothing is selected.
-            {
-                return;
-            }
+        if (node == null) //Nothing is selected.
+        {
+            return;
+        }
 
-            setLastNodeSelected(node);
+        setLastNodeSelected(node);
 
-            //System.out.println(e.getSource());
-            Object nodeInfo = node.getUserObject();
-            //sampleTreeChange.sampleTreeChangeAnalysisMode(node);
-            //  see below setSelectionRow(-1);
+        //System.out.println(e.getSource());
+        Object nodeInfo = node.getUserObject();
+        //sampleTreeChange.sampleTreeChangeAnalysisMode(node);
+        //  see below setSelectionRow(-1);
 
-            if (nodeInfo instanceof SampleInterface) {
-                // System.out.println(((SampleInterface) nodeInfo).getSampleName());
-            } else if (nodeInfo instanceof AliquotInterface) {
-                //  System.out.println(((AliquotInterface) nodeInfo).getAliquotName());
-            } else if (nodeInfo instanceof ValueModel) {
-                // System.out.println(((ValueModelI) nodeInfo).getName());
-            } else if (nodeInfo instanceof CheckBoxNode) {
-                // System.out.println(nodeInfo.toString());
-                // required for toggling because it allows re-focus
-                setSelectionRow(-1);
+        if (nodeInfo instanceof SampleInterface) {
+            // System.out.println(((SampleInterface) nodeInfo).getSampleName());
+        } else if (nodeInfo instanceof AliquotInterface) {
+            //  System.out.println(((AliquotInterface) nodeInfo).getAliquotName());
+        } else if (nodeInfo instanceof ValueModel) {
+            // System.out.println(((ValueModelI) nodeInfo).getName());
+        } else if (nodeInfo instanceof CheckBoxNode) {
+            // System.out.println(nodeInfo.toString());
+            // required for toggling because it allows re-focus
+            setSelectionRow(-1);
 
-            } else {
-                // System.out.println(nodeInfo.toString());
-            }
+        } else {
+            // System.out.println(nodeInfo.toString());
+        }
 
-            getSampleTreeChange().sampleTreeChangeAnalysisMode(node);
+        getSampleTreeChange().sampleTreeChangeAnalysisMode(node);
 
 //            // april 2016
 //            suppressSelectionEvent = true;
 //            setSelectionPath((nodeInfo instanceof CheckBoxNode) ? lastSelected.getParentPath() : e.getNewLeadSelectionPath());
 //            suppressSelectionEvent = false;
 //        }
-
     }
 
     /**
@@ -421,7 +452,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
                                 // fix up tree
                                 sampleDateModelNode = new DefaultMutableTreeNode(selectedSAM);
 
-                                PopulateSampleDateModel(activeFractionIDs,
+                                populateSampleDateModel(activeFractionIDs,
                                         ((AliquotInterface) nodeInfo),
                                         selectedSAM,
                                         sampleDateModelNode);

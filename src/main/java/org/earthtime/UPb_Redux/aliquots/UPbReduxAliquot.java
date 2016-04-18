@@ -327,7 +327,7 @@ public class UPbReduxAliquot extends Aliquot
 
         if (bestAgeDivider206_238 == null) {
             // backwards compatible
-            bestAgeDivider206_238 = BigDecimal.ZERO;
+            bestAgeDivider206_238 = new BigDecimal(ReduxConstants.MAX_DATE_ANNUM);
         }
         if (bestAgeDivider206_238.compareTo(BigDecimal.ZERO) == 0) {
             // if not done previously
@@ -354,7 +354,11 @@ public class UPbReduxAliquot extends Aliquot
      */
     public void updateBestAge() {
         // now set best age
-        for (ETFractionInterface f : getAliquotFractions()) {
+        // april 2016 trumped if fractions are from primary standard
+        if (aliquotFractions.get(0).isStandard()){
+            bestAgeDivider206_238 = new BigDecimal(ReduxConstants.MAX_DATE_ANNUM);
+        }
+        for (ETFractionInterface f : aliquotFractions) {
             if (f.getRadiogenicIsotopeDateByName(RadDates.age206_238r).getValue().compareTo(bestAgeDivider206_238) < 0) {
                 ValueModel bestDate = f.getRadiogenicIsotopeDateByName(RadDates.age206_238r).copy();
                 bestDate.setName(RadDates.bestAge.getName());
