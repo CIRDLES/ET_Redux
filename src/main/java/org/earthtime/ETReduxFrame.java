@@ -124,7 +124,6 @@ import org.earthtime.dialogs.AboutBox;
 import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.dialogs.LabDataEditorDialog;
 import org.earthtime.dialogs.PreferencesEditorDialog;
-import org.earthtime.dialogs.ReportSettingsManager;
 import org.earthtime.dialogs.projectManagers.projectLegacyManagers.AbstractProjectOfLegacySamplesDataManagerDialog;
 import org.earthtime.dialogs.projectManagers.projectLegacyManagers.ProjectOfLegacySamplesDataManagerDialogForDIBBsUseries_A;
 import org.earthtime.dialogs.projectManagers.projectLegacyManagers.ProjectOfLegacySamplesDataManagerDialogForGenericUPb_A;
@@ -1451,14 +1450,9 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
      */
     @Override
     public void rebuildFractionDisplays(boolean performReduction) {
-
-////        ((UPbFractionTable) getTheFractionTable()).setMySample(this, theSample);
-////
-////        ((UPbFractionTable) getTheFractionTable()).formatTable();
         ((TabbedReportViews) getReportTableTabbedPane()).setSample(theSample);
 
         updateReportTable(performReduction);
-
     }
 
     /**
@@ -3519,27 +3513,9 @@ private void loadReportSettingsModelFromLocalXMLFileActionPerformed(java.awt.eve
 
 private void editCurrentReportSettingsModel_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editCurrentReportSettingsModel_menuItemActionPerformed
 
-    try {
-        EditReportSettings();
-    } catch (BadLabDataException ex) {
-        new ETWarningDialog(ex).setVisible(true);
-    }
-
+    ReportSettingsInterface.EditReportSettings(theSample.getReportSettingsModel(), this);
     updateReportTable(false);
 }//GEN-LAST:event_editCurrentReportSettingsModel_menuItemActionPerformed
-
-    private void EditReportSettings()
-            throws BadLabDataException {
-        //if (!ReportSettingsManager.amOpen) {
-        myReportSettingsEditor
-                = new ReportSettingsManager(this, true, theSample.getReportSettingsModel());//Initialized());
-        myReportSettingsEditor.setSize(455, 685);
-        DialogEditor.setDefaultLookAndFeelDecorated(true);
-        myReportSettingsEditor.setVisible(true);
-//        } else {
-//        }
-
-    }
 
 private void reportResultsTableAsPDF_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reportResultsTableAsPDF_menuItemActionPerformed
 
@@ -3934,7 +3910,7 @@ private void saveCurrentReportSettingsModelAsLocalXMLFileActionPerformed(java.aw
 
 private void loadDefaultReportSettingsModelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadDefaultReportSettingsModelActionPerformed
     theSample.restoreDefaultReportSettingsModel();
-
+    theSample.setLegacyStatusForReportTable();
     updateReportTable(false);
 }//GEN-LAST:event_loadDefaultReportSettingsModelActionPerformed
 
@@ -3948,7 +3924,6 @@ private void LAICPMS_LegacyAnalysis_SC_WSU_vB_menuItemActionPerformed (java.awt.
         changeContentOfTopPanel(ReduxConstants.TOP_PANEL_CONTENTS.FRACTIONS);
     } catch (ETException ex) {
         if (ex instanceof BadLabDataException) {
-            ex.printStackTrace();
         }
 
         new ETWarningDialog(ex).setVisible(true);
@@ -4041,8 +4016,8 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     }//GEN-LAST:event_saveCurrentReportSettingsAsDefault_menuItemActionPerformed
 
     private void loadEARTHTIMEDefaultReportSettingsModel_menuItemActionPerformed ( java.awt.event.ActionEvent evt ) {//GEN-FIRST:event_loadEARTHTIMEDefaultReportSettingsModel_menuItemActionPerformed
-        SampleInterface.loadDefaultEARTHTIMEReportSettingsModel(theSample);//           theSample.setReportSettingsModel(ReportSettings.EARTHTIMEReportSettingsUPb());
-
+        SampleInterface.loadDefaultEARTHTIMEReportSettingsModel(theSample);
+        theSample.setLegacyStatusForReportTable();
         updateReportTable(false);
     }//GEN-LAST:event_loadEARTHTIMEDefaultReportSettingsModel_menuItemActionPerformed
 

@@ -21,12 +21,19 @@
 package org.earthtime.UPb_Redux.reports;
 
 import com.thoughtworks.xstream.XStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.user.UPbReduxConfigurator;
+import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
 import org.earthtime.dataDictionaries.ReportSpecifications;
+import org.earthtime.exceptions.ETException;
 import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.reports.ReportCategoryInterface;
 import org.earthtime.reports.ReportSettingsInterface;
@@ -45,7 +52,7 @@ public class ReportSettings implements
      * version number is advanced so that any existing analysis will update its
      * report models upon opening in ET_Redux.
      */
-    private static transient int CURRENT_VERSION_REPORT_SETTINGS = 341;
+    private static transient int CURRENT_VERSION_REPORT_SETTINGS = 343;
 
     // Fields
     private String name;
@@ -147,6 +154,7 @@ public class ReportSettings implements
         legacyData = false;
 
         assembleReportCategories();
+        normalizeReportCategories();
 
     }
 
@@ -162,8 +170,6 @@ public class ReportSettings implements
         getReportCategories().add(getRhosCategory());
         getReportCategories().add(getTraceElementsCategory());
         getReportCategories().add(getFractionCategory2());
-
-        normalizeReportCategories();
     }
 
     /**
@@ -212,6 +218,77 @@ public class ReportSettings implements
 
         //TODO http://www.javaworld.com/article/2077736/open-source-tools/xml-merging-made-easy.html
         return reportSettingsModel;
+    }
+
+    /**
+     *
+     * @param filename
+     */
+    @Override
+    public void serializeXMLObject(String filename) {
+        XStream xstream = getXStreamWriter();
+
+        String xml = xstream.toXML(this);
+
+        xml = ReduxConstants.XML_Header + xml;
+
+        xml = xml.replaceFirst("ReportSettings",
+                "ReportSettings  "//
+                + ReduxConstants.XML_ResourceHeader//
+                + getReportSettingsXMLSchemaURL() //
+
+                + "\"");
+
+        try {
+            FileWriter outFile = new FileWriter(filename);
+            PrintWriter out = new PrintWriter(outFile);
+
+            // Write xml to file
+            out.println(xml);
+            out.flush();
+            out.close();
+            outFile.close();
+
+        } catch (IOException e) {
+        }
+    }
+
+    /**
+     *
+     * @return
+     */
+    public ReportSettingsInterface deepCopy() {
+        ReportSettingsInterface reportSettingsModel = null;
+
+        String tempFileName = "TEMPreportSettings.xml";
+        // write out the settings
+        serializeXMLObject(tempFileName);
+
+        // read them back in
+        try {
+            reportSettingsModel = (ReportSettingsInterface) readXMLObject(tempFileName, false);
+        } catch (FileNotFoundException | ETException | BadOrMissingXMLSchemaException fileNotFoundException) {
+        }
+
+        File tempFile = new File(tempFileName);
+        tempFile.delete();
+
+        return reportSettingsModel;
+    }
+
+    /**
+     *
+     * @param reportSettingsModel
+     * @return
+     * @throws ClassCastException
+     */
+    @Override
+    public int compareTo(ReportSettingsInterface reportSettingsModel)
+            throws ClassCastException {
+        String reportSettingsModelNameAndVersion
+                = reportSettingsModel.getNameAndVersion();
+        return this.getNameAndVersion().trim().//
+                compareToIgnoreCase(reportSettingsModelNameAndVersion.trim());
     }
 
 //  accessors

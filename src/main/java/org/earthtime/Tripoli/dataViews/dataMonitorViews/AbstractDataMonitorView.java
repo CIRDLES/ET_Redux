@@ -99,6 +99,7 @@ import org.earthtime.projects.ProjectInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.reportViews.TabbedReportViews;
+import org.earthtime.reports.ReportSettingsInterface;
 import org.earthtime.samples.SampleInterface;
 import org.earthtime.utilities.TicGeneratorForAxes;
 
@@ -175,6 +176,8 @@ public class AbstractDataMonitorView extends AbstractRawDataView
     public void sampleTreeChangeCompilationMode(Object node) {
 //        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+    
+    
 
     private static SwingWorker loadDataTask;
     private final static Integer LAYER_FIVE = 5;
@@ -252,6 +255,8 @@ public class AbstractDataMonitorView extends AbstractRawDataView
 
     private final static int pdfWidth = 625;
     private final static int pdfHeight = 575;
+
+    private JTabbedPane reportTableTabbedPane;
 
     /**
      *
@@ -475,7 +480,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
 
         savedCountOfFractions = tripoliFractions.size();
 
-        JTabbedPane reportTableTabbedPane = new TabbedReportViews(getuPbReduxFrame(), project.getSuperSample());
+        reportTableTabbedPane = new TabbedReportViews(uPbReduxFrame, project.getSuperSample());
         ((TabbedReportViews) reportTableTabbedPane).initializeTabs();
         ((TabbedReportViews) reportTableTabbedPane).prepareTabs();
 
@@ -538,6 +543,17 @@ public class AbstractDataMonitorView extends AbstractRawDataView
 
         refreshButton.setEnabled(true);
         this.add(refreshButton, LAYER_FIVE);
+
+        ET_JButton editReportSettingsButton = new ET_JButton("Edit Report Settings");
+        editReportSettingsButton.setBounds(leftMargin + 740, topMargin + 660, 120, 25);
+        editReportSettingsButton.addActionListener((ActionEvent ae) -> {
+            ReportSettingsInterface.EditReportSettings(project.getSuperSample().getReportSettingsModel(), uPbReduxFrame);
+            uPbReduxFrame.updateReportTable(false);
+            ((TabbedReportViews) reportTableTabbedPane).prepareTabs();
+        });
+
+        editReportSettingsButton.setEnabled(true);
+        this.add(editReportSettingsButton, LAYER_FIVE);
 
     }
 
@@ -947,7 +963,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
                 400, 400, //
                 (int) parentDimension.getWidth(),
                 (int) parentDimension.getHeight());
-        dataMonitorViewDialog.setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
+        dataMonitorViewDialog.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);//.HIDE_ON_CLOSE);
 
         //Get the screen size
         Toolkit toolkit = Toolkit.getDefaultToolkit();

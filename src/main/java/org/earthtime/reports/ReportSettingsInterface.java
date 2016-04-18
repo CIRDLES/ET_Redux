@@ -18,12 +18,9 @@ package org.earthtime.reports;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.io.xml.DomDriver;
+import java.awt.Frame;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -32,7 +29,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
-import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.valueModels.ValueModelReferenced;
@@ -42,6 +38,8 @@ import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.dataDictionaries.Lambdas;
 import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.dataDictionaries.ReportSpecifications;
+import org.earthtime.dialogs.DialogEditor;
+import org.earthtime.dialogs.ReportSettingsManager;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.reduxLabData.ReduxLabDataListElementI;
@@ -77,31 +75,10 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
         return retVal;
     }
 
-    void assembleReportCategories();
+    public void assembleReportCategories();
 
-    /**
-     *
-     * @return
-     */
-    public default ReportSettingsInterface deepCopy() {
-        ReportSettingsInterface reportSettingsModel = null;
-
-        String tempFileName = "TEMPreportSettings.xml";
-        // write out the settings
-        serializeXMLObject(tempFileName);
-
-        // read them back in
-        try {
-            reportSettingsModel = (ReportSettingsInterface) readXMLObject(tempFileName, false);
-        } catch (FileNotFoundException | ETException | BadOrMissingXMLSchemaException fileNotFoundException) {
-        }
-
-        File tempFile = new File(tempFileName);
-        tempFile.delete();
-
-        return reportSettingsModel;
-    }
-
+    public ReportSettingsInterface deepCopy();
+    
     /**
      *
      * @return
@@ -125,39 +102,6 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
         customizeXstream(xstream);
 
         return xstream;
-    }
-
-    /**
-     *
-     * @param filename
-     */
-    @Override
-    public default void serializeXMLObject(String filename) {
-        XStream xstream = getXStreamWriter();
-
-        String xml = xstream.toXML(this);
-
-        xml = ReduxConstants.XML_Header + xml;
-
-        xml = xml.replaceFirst("ReportSettings",
-                "ReportSettings  "//
-                + ReduxConstants.XML_ResourceHeader//
-                + getReportSettingsXMLSchemaURL() //
-
-                + "\"");
-
-        try {
-            FileWriter outFile = new FileWriter(filename);
-            PrintWriter out = new PrintWriter(outFile);
-
-            // Write xml to file
-            out.println(xml);
-            out.flush();
-            out.close();
-            outFile.close();
-
-        } catch (IOException e) {
-        }
     }
 
     /**
@@ -201,21 +145,6 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
         }
 
         return myReportSettings;
-    }
-
-    /**
-     *
-     * @param reportSettingsModel
-     * @return
-     * @throws ClassCastException
-     */
-    @Override
-    public default int compareTo(ReportSettingsInterface reportSettingsModel)
-            throws ClassCastException {
-        String reportSettingsModelNameAndVersion
-                = reportSettingsModel.getNameAndVersion();
-        return this.getNameAndVersion().trim().//
-                compareToIgnoreCase(reportSettingsModelNameAndVersion.trim());
     }
 
     /**
@@ -570,7 +499,7 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
 
             if (getDatesPbcCorrCategory().getCategoryColumns().length > 0) {
                 // first get the unittype of the first date (all will be set the same so this is a flag)
-                String currentDateUnit = getDatesPbcCorrCategory().getCategoryColumns()[0].getUnits();
+                String currentDateUnit = getDatesPbcCorrCategory().getCategoryColumns()[1].getUnits();
                 boolean isAuto = false;
                 // the default is ka, though it will usually be overwritten by Ma
                 if (currentDateUnit.equalsIgnoreCase("Auto")) {
@@ -784,7 +713,6 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
 //            if ((lambda235Ref.trim().equalsIgnoreCase(lambda238Ref.trim()))) {
 //                lambda238Ref = ""; // they appear in order 238, 235
 //            }
-
             NumberFormat formatter = new DecimalFormat("0.000#####E0");
 
             String lambda238 = "\u03BB238 = ";
@@ -792,7 +720,7 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
                 lambda238
                         += //
                         formatter.format(sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda238.getName())//
-                        .getValue().doubleValue());
+                                .getValue().doubleValue());
                 lambda238 += lambda238Ref;
             } catch (BadLabDataException badLabDataException) {
             }
@@ -802,7 +730,7 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
                 lambda235
                         += //
                         formatter.format(sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda235.getName())//
-                        .getValue().doubleValue());
+                                .getValue().doubleValue());
                 lambda235 += lambda235Ref;
             } catch (BadLabDataException badLabDataException) {
             }
@@ -812,7 +740,7 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
                 lambda230
                         += //
                         formatter.format(sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda230.getName())//
-                        .getValue().doubleValue());
+                                .getValue().doubleValue());
                 lambda230
                         += //
                         " (" //
@@ -827,7 +755,7 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
                 lambda232
                         += //
                         formatter.format(sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda232.getName())//
-                        .getValue().doubleValue());
+                                .getValue().doubleValue());
                 lambda232
                         += //
                         " (" //
@@ -841,7 +769,7 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
                 lambda234
                         += //
                         formatter.format(sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda234.getName())//
-                        .getValue().doubleValue());
+                                .getValue().doubleValue());
                 lambda234
                         += //
                         " (" //
@@ -857,11 +785,10 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
             footNote = footNote.replaceFirst("<lambda232>", lambda232);
             footNote = footNote.replaceFirst("<lambda234>", lambda234);
             footNote = footNote.replaceFirst("<ar231_235sample>", activityFootnoteEntry);
-            footNote = footNote.replaceFirst("<rTh_Umagma>", thU_MagmaFootnoteEntry);          
-            
+            footNote = footNote.replaceFirst("<rTh_Umagma>", thU_MagmaFootnoteEntry);
+
             //<r207_206c>
             //<bestDateDivider>
-
             // april 2010 specialize footnote for zircons
             switch (zirconPopulationType) {
                 case 1:
@@ -1011,4 +938,18 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
      * @param isotopeStyle the isotopeStyle to set
      */
     public void setIsotopeStyle(String isotopeStyle);
+
+    /**
+     *
+     * @param reportSettingsModel the value of reportSettingsModel
+     * @param parent the value of parent
+     */
+    public static void EditReportSettings(ReportSettingsInterface reportSettingsModel, Frame parent) {
+
+        DialogEditor myReportSettingsManager
+                = new ReportSettingsManager(parent, true, reportSettingsModel);
+        myReportSettingsManager.setSize(455, 685);
+        DialogEditor.setDefaultLookAndFeelDecorated(true);
+        myReportSettingsManager.setVisible(true);
+    }
 }
