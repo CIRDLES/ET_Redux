@@ -18,6 +18,7 @@ package org.earthtime.Tripoli.rawDataFiles.handlers.shrimp;
 import com.google.common.collect.HashBiMap;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -50,7 +51,7 @@ public class PrawnRunFractionParser {
     private static double[][] timeStampSec;
     private static double[][] netPkCps;
     private static double[][] sbmCps;
-    private static double[][] pkFCps;
+    private static double[][] pkFerr;
     private static double[] totalCps;
     private static com.google.common.collect.BiMap<Integer, IsotopeNames> speciesToIndexBiMap;
     private static List<IsotopeRatioModelSHRIMP> isotopicRatios;
@@ -79,7 +80,7 @@ public class PrawnRunFractionParser {
         timeStampSec = new double[nScans][nSpecies];
         netPkCps = new double[nScans][nSpecies];
         sbmCps = new double[nScans][nSpecies];
-        pkFCps = new double[nScans][nSpecies];
+        pkFerr = new double[nScans][nSpecies];
 
         // april 2016 hard-wired for prototype **********************************
         speciesToIndexBiMap = HashBiMap.create();
@@ -94,6 +95,7 @@ public class PrawnRunFractionParser {
         speciesToIndexBiMap.put(8, IsotopeNames.UO254);
         speciesToIndexBiMap.put(9, IsotopeNames.UO270);
 
+        isotopicRatios = new ArrayList<>();
         isotopicRatios.add(new IsotopeRatioModelSHRIMP(IsotopeNames.Pb204, IsotopeNames.Pb206));
         isotopicRatios.add(new IsotopeRatioModelSHRIMP(IsotopeNames.Pb207, IsotopeNames.Pb206));
         isotopicRatios.add(new IsotopeRatioModelSHRIMP(IsotopeNames.Pb208, IsotopeNames.Pb206));
@@ -247,10 +249,10 @@ public class PrawnRunFractionParser {
                     if (absNetPeakCps > 1.0e-6) {
                         double calcVariance
                                 = absNetPeakCps + (Math.abs(backgroundCps) * Math.pow(countTimeSec[speciesMeasurementIndex] / countTimeSec[HARD_WIRED_INDEX_OF_BACKGROUND], 2));
-                        pkFCps[scanNum][speciesMeasurementIndex]
+                        pkFerr[scanNum][speciesMeasurementIndex]
                                 = Math.sqrt(calcVariance) / absNetPeakCps / countTimeSec[speciesMeasurementIndex];
                     } else {
-                        pkFCps[scanNum][speciesMeasurementIndex] = 1.0;
+                        pkFerr[scanNum][speciesMeasurementIndex] = 1.0;
                     }
                 }
             }
@@ -284,14 +286,18 @@ public class PrawnRunFractionParser {
                 totCtsDEN += netPkCps[j][DEN] * countTimeSec[DEN];
             }
 
+            double ratioVal;
+            double ratioFractErr;
             double[] ratioInterpTime;
             double[] interpRatVal;
-            double[] ratValErr;
+            double[] ratValFerr;
+            double[] ratValSig;
+            double[][] sigRho;
             boolean[] zerPkCt;
 
             if ((totCtsNUM < 32) || (totCtsDEN < 32) || (nDod == 0)) {
-                double ratioVal = 0.0;
-                double ratioFractErr = 1.0;
+                ratioVal = 0.0;
+                ratioFractErr = 1.0;
                 if (totCtsNUM == 0.0) {
                     ratioVal = 1e-32;
                 } else if (totCtsDEN == 0.0) {
@@ -302,12 +308,13 @@ public class PrawnRunFractionParser {
                 }
 
                 ratioInterpTime = new double[]{//
-                    0.5 * (Math.min(timeStampSec[0][NUM], timeStampSec[0][DEN]) + Math.max(timeStampSec[nScans - 1][NUM], timeStampSec[nScans][DEN]))
+                    0.5 * (Math.min(timeStampSec[0][NUM], timeStampSec[0][DEN]) + Math.max(timeStampSec[nScans - 1][NUM], timeStampSec[nScans - 1][DEN]))
                 };
                 interpRatVal = new double[]{ratioVal};
-                ratValErr = new double[]{ratioFractErr};
+                ratValFerr = new double[]{ratioFractErr};
 
             } else {
+                // main treatment using double interpolation following Dodson (1978): http://dx.doi.org/10.1088/0022-3735/11/4/004)
                 double errorValue = 0.0;
                 double[] pkF = new double[nDod];
                 double sumPkF = 0.0;
@@ -323,10 +330,12 @@ public class PrawnRunFractionParser {
 
                 ratioInterpTime = new double[nDod];
                 interpRatVal = new double[nDod];
-                ratValErr = new double[nDod];
-                zerPkCt = new boolean[nDod];
+                ratValFerr = new double[nDod];
+                ratValSig = new double[nDod];
+                sigRho = new double[nDod][nDod];
+                zerPkCt = new boolean[nScans];
 
-                double rct = 0.0;
+                int rct = -1;
 
                 for (int sNum = 0; sNum < nDod; sNum++) {
                     boolean continueWithScanProcessing = true;
@@ -388,19 +397,106 @@ public class PrawnRunFractionParser {
 
                         // test whether to continue
                         if (!zerPkCt[sNum] && !zerPkCt[sn1]) {
-                          double aPk1 = netPkCps[sNum][aOrd];
-                          double bPk1 = netPkCps[sNum][bOrd]; 
-                          double aPk2 = netPkCps[sn1][aOrd]; 
-                          double bPk2 = netPkCps[sn1][bOrd]; 
+                            double aPk1 = netPkCps[sNum][aOrd];
+                            double bPk1 = netPkCps[sNum][bOrd];
+                            double aPk2 = netPkCps[sn1][aOrd];
+                            double bPk2 = netPkCps[sn1][bOrd];
 
-                        }
+                            if (useSBM) {
+                                aPk1 = aPk1 / sbmCps[sNum][aOrd];
+                                bPk1 = bPk1 / sbmCps[sNum][bOrd];
+                                aPk2 = aPk2 / sbmCps[sn1][aOrd];
+                                bPk2 = bPk2 / sbmCps[sn1][bOrd];
+                            }
+
+                            double scanDeltaT = timeStampSec[sn1][aOrd] - timeStampSec[sNum][aOrd];
+                            double bTfract = timeStampSec[sNum][bOrd] - timeStampSec[sNum][aOrd];
+                            pkF[sNum] = bTfract / scanDeltaT;
+                            double ff1 = (1.0 - pkF[sNum]) / 2.0;
+                            double ff2 = (1.0 + pkF[sNum]) / 2.0;
+                            double aInterp = (ff1 * aPk1) + (ff2 * aPk2);
+                            double bInterp = (ff2 * bPk1) + (ff1 * bPk2);
+
+                            double rNum = (NUM < DEN) ? aInterp : bInterp;
+                            double rDen = (NUM < DEN) ? bInterp : aInterp;
+
+                            double[] a1Pk = new double[nDod];
+                            double[] b1Pk = new double[nDod];
+                            double[] a2Pk = new double[nDod];
+                            double[] b2Pk = new double[nDod];
+
+                            if (rDen != 0.0) {
+                                rct++;
+                                interpRatVal[rct] = rNum / rDen;
+                                a1Pk[sNum] = aPk1;
+                                b1Pk[sNum] = bPk1;
+                                a2Pk[sNum] = aPk2;
+                                b2Pk[sNum] = bPk2;
+                                double a1PkSig = pkFerr[sNum][aOrd] * aPk1;
+                                double a2PkSig = pkFerr[sn1][aOrd] * aPk2;
+                                double b1PkSig = pkFerr[sNum][bOrd] * bPk1;
+                                double b2PkSig = pkFerr[sn1][bOrd] * bPk2;
+
+                                if (useSBM) {
+                                    a1PkSig = Math.sqrt(a1PkSig * a1PkSig
+                                            + (aPk1 * aPk1 / sbmCps[sNum][aOrd] / countTimeSec[aOrd]));
+                                    a2PkSig = Math.sqrt(a2PkSig * a2PkSig
+                                            + (aPk2 * aPk2 / sbmCps[sn1][aOrd] / countTimeSec[aOrd]));
+                                    b1PkSig = Math.sqrt(b1PkSig * b1PkSig
+                                            + (bPk1 * bPk1 / sbmCps[sNum][bOrd] / countTimeSec[bOrd]));
+                                    b2PkSig = Math.sqrt(b2PkSig * b2PkSig
+                                            + (bPk2 * bPk2 / sbmCps[sn1][bOrd] / countTimeSec[bOrd]));
+                                }
+
+                                if ((aInterp == 0.0) || (bInterp == 0.0)) {
+                                    ratValFerr[rct] = 1.0;
+                                    ratValSig[rct] = 1E-32;
+                                    sigRho[rct][rct] = 1E-32;
+                                } else {
+                                    double term1 = ((f1 * a1PkSig) * (f1 * a1PkSig) + (f2 * a2PkSig) * (f2 * a2PkSig));
+                                    double term2 = ((f2 * b1PkSig) * (f2 * b1PkSig) + (f1 * b2PkSig) * (f1 * b2PkSig));
+                                    double ratValFvar = (term1 / (aInterp * aInterp)) + (term2 / (bInterp * bInterp));
+                                    double ratValVar = ratValFvar * (interpRatVal[rct] * interpRatVal[rct]);
+                                    ratValFerr[rct] = Math.sqrt(ratValFvar);
+                                    ratValSig[rct] = Math.max(1E-10, Math.sqrt(ratValVar));
+                                    sigRho[rct][rct] = ratValSig[rct];
+
+                                    if (rct > 1) {
+                                        rhoIJ = (zerPkCt[sNum - 1]) ? 0.0 : (1 - pkF[sNum] * pkF[sNum]) / (1 + pkF[sNum] * pkF[sNum]) / 2.0;
+
+                                        sigRho[rct][rct - 1] = rhoIJ;
+                                        sigRho[rct - 1][rct] = rhoIJ;
+                                    }
+                                } // test aInterp andbInterp  
+                            } // test rDen
+
+                        } // test !zerPkCt[sNum] && !zerPkCt[sn1]
 
                     } // continueWithScanProcessing is true
 
                 } // iteration through nDod using sNum (see "NextScanNum" in pseudocode)
 
-            } // end decision on which ratio procedure to use
+                if (rct == -1) {
+                    ratioVal = errorValue;
+                    ratioFractErr = errorValue;
+                } else {
+                    if (rct == 0) {
+                        ratioVal = interpRatVal[0];
 
+                        if (ratioVal == 0.0) {
+                            ratioVal = 1E-32;
+                            ratioFractErr = 1.0;
+                        } else {
+                            ratioFractErr = ratValFerr[0];
+                        }
+                    }
+                }
+
+            } // end decision on which ratio procedure to use
+            
+            // sanity check for this ratio
+            
+System.out.println("STOP);");
         } // end iteration through isotopicRatios
 
     }
@@ -433,7 +529,7 @@ public class PrawnRunFractionParser {
             for (int f = 0; f < prawnFile.getRuns(); f++) {
                 PrawnFile.Run runFraction = prawnFile.getRun().get(f);
 
-                if (runFraction.getPar().get(0).getValue().startsWith("097.Z.1.1.1")) {
+                if (runFraction.getPar().get(0).getValue().startsWith("T.1.1.1")) {
 //                System.out.println("\n" + runFraction.getPar().get(0).getValue() + "  ***********************\n");
                     processRunFraction(runFraction);
 
