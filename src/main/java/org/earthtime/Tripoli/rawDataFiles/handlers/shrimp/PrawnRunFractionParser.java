@@ -304,7 +304,7 @@ public class PrawnRunFractionParser {
                     ratioVal = 1e16;
                 } else {
                     ratioVal = (totCtsNUM / countTimeSec[NUM]) / (totCtsDEN / countTimeSec[DEN]);
-                    ratioFractErr = Math.sqrt(1.0 / Math.abs(totCtsNUM + 1.0 / Math.abs(totCtsDEN)));
+                    ratioFractErr = Math.sqrt((1.0 / Math.abs(totCtsNUM)) + (1.0 / Math.abs(totCtsDEN)));
                 }
 
                 ratioInterpTime = new double[]{//
@@ -479,24 +479,21 @@ public class PrawnRunFractionParser {
                 if (rct == -1) {
                     ratioVal = errorValue;
                     ratioFractErr = errorValue;
-                } else {
-                    if (rct == 0) {
-                        ratioVal = interpRatVal[0];
+                } else if (rct == 0) {
+                    ratioVal = interpRatVal[0];
 
-                        if (ratioVal == 0.0) {
-                            ratioVal = 1E-32;
-                            ratioFractErr = 1.0;
-                        } else {
-                            ratioFractErr = ratValFerr[0];
-                        }
+                    if (ratioVal == 0.0) {
+                        ratioVal = 1E-32;
+                        ratioFractErr = 1.0;
+                    } else {
+                        ratioFractErr = ratValFerr[0];
                     }
                 }
 
             } // end decision on which ratio procedure to use
-            
+
             // sanity check for this ratio
-            
-System.out.println("STOP);");
+            System.out.println("STOP);");
         } // end iteration through isotopicRatios
 
     }
