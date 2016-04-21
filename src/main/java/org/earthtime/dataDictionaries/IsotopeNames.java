@@ -30,47 +30,49 @@ package org.earthtime.dataDictionaries;
 public enum IsotopeNames {
 
     // IsotopeNames
-    UO270("UO270"),
-    UO254("UO254"),
-    ThO248("ThO248"),
+    UO270("UO270", 270),
+    UO254("UO254", 254),
+    ThO248("ThO248", 248),
     /**
      * 
      */
-    U238( "U238"),
+    U238( "U238", 238),
     /**
      * 
      */
-    U235("U235"),
+    U235("U235", 235),
     /**
      * 
      */
-    Th232( "Th232"),
+    Th232( "Th232", 232),
     /**
      * 
      */
-    Pb206( "Pb206"),
+    Pb206( "Pb206", 206),
     /**
      * 
      */
-    Pb208( "Pb208"),
+    Pb208( "Pb208", 208),
     /**
      * 
      */
-    Pb207( "Pb207"),
+    Pb207( "Pb207", 207),
     /**
      * 
      */
-    Pb204( "Pb204"),
+    Pb204( "Pb204", 204),
     /**
      * 
      */
-    Hg202( "Hg202"),
-    Zr2O196("Zr2O196"),
-    Hf176( "Hf176");
+    Hg202( "Hg202", 202),
+    Zr2O196("Zr2O196", 196),
+    Hf176( "Hf176", 176),
+    BKGND("BKGND", 0);
 
     private String name;
+    private int atomicMass;
 
-    private IsotopeNames ( String name ) {
+    private IsotopeNames ( String name, int atomicMass ) {
         this.name = name;
     }
 
@@ -80,6 +82,13 @@ public enum IsotopeNames {
      */
     public String getName () {
         return name;
+    }
+
+    /**
+     * @return the atomicMass
+     */
+    public int getAtomicMass() {
+        return atomicMass;
     }
 
   

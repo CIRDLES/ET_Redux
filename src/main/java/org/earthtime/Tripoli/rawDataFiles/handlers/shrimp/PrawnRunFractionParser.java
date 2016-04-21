@@ -15,6 +15,7 @@
  */
 package org.earthtime.Tripoli.rawDataFiles.handlers.shrimp;
 
+import com.google.common.collect.HashBiMap;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
@@ -27,6 +28,7 @@ import org.cirdles.shrimp.PrawnFile.Run.Set.Scan;
 import org.cirdles.shrimp.PrawnFile.Run.Set.Scan.Measurement;
 import org.earthtime.Tripoli.fitFunctions.algorithms.TukeyBiweight;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
+import org.earthtime.dataDictionaries.IsotopeNames;
 import org.earthtime.dataDictionaries.PoissonLimitsCountLessThanEqual100;
 
 /**
@@ -49,11 +51,16 @@ public class PrawnRunFractionParser {
     private static double[][] netPkCps;
     private static double[][] sbmCps;
     private static double[][] pkFCps;
+    private static double[] totalCps;
+    private static com.google.common.collect.BiMap<Integer, IsotopeNames> speciesToIndexBiMap;
+    private static List<IsotopeRatioModelSHRIMP> isotopicRatios;
 
     public static void processRunFraction(PrawnFile.Run runFraction) {
 
         prepareRunFractionMetaData(runFraction);
         parseRunFractionData();
+        calculateTotalPerSpeciesCPS();
+        calculateIsotopicRatios(true);
     }
 
     private static void prepareRunFractionMetaData(PrawnFile.Run runFraction) {
@@ -73,6 +80,30 @@ public class PrawnRunFractionParser {
         netPkCps = new double[nScans][nSpecies];
         sbmCps = new double[nScans][nSpecies];
         pkFCps = new double[nScans][nSpecies];
+
+        // april 2016 hard-wired for prototype **********************************
+        speciesToIndexBiMap = HashBiMap.create();
+        speciesToIndexBiMap.put(0, IsotopeNames.Zr2O196);
+        speciesToIndexBiMap.put(1, IsotopeNames.Pb204);
+        speciesToIndexBiMap.put(2, IsotopeNames.BKGND);
+        speciesToIndexBiMap.put(3, IsotopeNames.Pb206);
+        speciesToIndexBiMap.put(4, IsotopeNames.Pb207);
+        speciesToIndexBiMap.put(5, IsotopeNames.Pb208);
+        speciesToIndexBiMap.put(6, IsotopeNames.U238);
+        speciesToIndexBiMap.put(7, IsotopeNames.ThO248);
+        speciesToIndexBiMap.put(8, IsotopeNames.UO254);
+        speciesToIndexBiMap.put(9, IsotopeNames.UO270);
+
+        isotopicRatios.add(new IsotopeRatioModelSHRIMP(IsotopeNames.Pb204, IsotopeNames.Pb206));
+        isotopicRatios.add(new IsotopeRatioModelSHRIMP(IsotopeNames.Pb207, IsotopeNames.Pb206));
+        isotopicRatios.add(new IsotopeRatioModelSHRIMP(IsotopeNames.Pb208, IsotopeNames.Pb206));
+        isotopicRatios.add(new IsotopeRatioModelSHRIMP(IsotopeNames.U238, IsotopeNames.Zr2O196));
+        isotopicRatios.add(new IsotopeRatioModelSHRIMP(IsotopeNames.Pb206, IsotopeNames.U238));
+        isotopicRatios.add(new IsotopeRatioModelSHRIMP(IsotopeNames.UO254, IsotopeNames.U238));
+        isotopicRatios.add(new IsotopeRatioModelSHRIMP(IsotopeNames.ThO248, IsotopeNames.UO254));
+        isotopicRatios.add(new IsotopeRatioModelSHRIMP(IsotopeNames.Pb206, IsotopeNames.UO270));
+        isotopicRatios.add(new IsotopeRatioModelSHRIMP(IsotopeNames.UO270, IsotopeNames.UO254));
+        isotopicRatios.add(new IsotopeRatioModelSHRIMP(IsotopeNames.Pb206, IsotopeNames.UO254));
 
     }
 
@@ -170,7 +201,7 @@ public class PrawnRunFractionParser {
         }
     }
 
-    public static double[] calculateTotalPerSpeciesCPS() {
+    private static void calculateTotalPerSpeciesCPS() {
         // Calculate Total CPS per Species = Step 2 of Development for SHRIMP 
         // (see wiki: https://github.com/CIRDLES/ET_Redux/wiki/Development-for-SHRIMP:-Step-2)
 
@@ -209,7 +240,7 @@ public class PrawnRunFractionParser {
             for (int speciesMeasurementIndex = 0; speciesMeasurementIndex < nSpecies; speciesMeasurementIndex++) {
                 if (speciesMeasurementIndex != HARD_WIRED_INDEX_OF_BACKGROUND) {
                     // correct PeakCps to NetPkCps inside correctedData (note translation of matrix)
-                    netPkCps[scanNum][speciesMeasurementIndex] =  pkCps[scanNum][speciesMeasurementIndex]- backgroundCps;
+                    netPkCps[scanNum][speciesMeasurementIndex] = pkCps[scanNum][speciesMeasurementIndex] - backgroundCps;
                     sumOfCorrectedPeaks[speciesMeasurementIndex] += netPkCps[scanNum][speciesMeasurementIndex];
                     // calculate fractional error
                     double absNetPeakCps = netPkCps[scanNum][speciesMeasurementIndex];
@@ -225,14 +256,153 @@ public class PrawnRunFractionParser {
             }
         }
 
-        double[] totalCps = new double[nSpecies];
+        totalCps = new double[nSpecies];
         for (int speciesMeasurementIndex = 0; speciesMeasurementIndex < nSpecies; speciesMeasurementIndex++) {
             // calculate total cps
             // this has the effect of setting totalCps[backgroundIndex] to backgroundCps
             totalCps[speciesMeasurementIndex] = (sumOfCorrectedPeaks[speciesMeasurementIndex] / nScans) + backgroundCps;
         }
+    }
 
-        return totalCps;
+    private static void calculateIsotopicRatios(boolean useSBM) {
+        // Step 3 of Development for SHRIMP 
+        // (see wiki: https://github.com/CIRDLES/ET_Redux/wiki/Development-for-SHRIMP:-Step-3)
+        // walk the ratios
+        for (IsotopeRatioModelSHRIMP isotopicRatio : isotopicRatios) {
+            int nDod = nScans - 1;
+            int NUM = speciesToIndexBiMap.inverse().get(isotopicRatio.getNumerator());
+            int DEN = speciesToIndexBiMap.inverse().get(isotopicRatio.getDenominator());
+
+            int aOrd = (DEN > NUM) ? NUM : DEN;
+            int bOrd = (DEN > NUM) ? DEN : NUM;
+
+            double totCtsNUM = 0.0;
+            double totCtsDEN = 0.0;
+
+            for (int j = 0; j < nScans; j++) {
+                totCtsNUM += netPkCps[j][NUM] * countTimeSec[NUM];
+                totCtsDEN += netPkCps[j][DEN] * countTimeSec[DEN];
+            }
+
+            double[] ratioInterpTime;
+            double[] interpRatVal;
+            double[] ratValErr;
+            boolean[] zerPkCt;
+
+            if ((totCtsNUM < 32) || (totCtsDEN < 32) || (nDod == 0)) {
+                double ratioVal = 0.0;
+                double ratioFractErr = 1.0;
+                if (totCtsNUM == 0.0) {
+                    ratioVal = 1e-32;
+                } else if (totCtsDEN == 0.0) {
+                    ratioVal = 1e16;
+                } else {
+                    ratioVal = (totCtsNUM / countTimeSec[NUM]) / (totCtsDEN / countTimeSec[DEN]);
+                    ratioFractErr = Math.sqrt(1.0 / Math.abs(totCtsNUM + 1.0 / Math.abs(totCtsDEN)));
+                }
+
+                ratioInterpTime = new double[]{//
+                    0.5 * (Math.min(timeStampSec[0][NUM], timeStampSec[0][DEN]) + Math.max(timeStampSec[nScans - 1][NUM], timeStampSec[nScans][DEN]))
+                };
+                interpRatVal = new double[]{ratioVal};
+                ratValErr = new double[]{ratioFractErr};
+
+            } else {
+                double errorValue = 0.0;
+                double[] pkF = new double[nDod];
+                double sumPkF = 0.0;
+                for (int j = 0; j < nDod; j++) {
+                    pkF[j] = (timeStampSec[j][bOrd] - timeStampSec[j][aOrd]) / (timeStampSec[j + 1][aOrd] - timeStampSec[j][aOrd]);
+                    sumPkF += pkF[j];
+                }
+
+                double avPkF = sumPkF / nDod;
+                double f1 = (1.0 - avPkF) / 2.0;
+                double f2 = (1.0 + avPkF) / 2.0;
+                double rhoIJ = (1.0 - avPkF * avPkF) / (1.0 + avPkF * avPkF) / 2.0;
+
+                ratioInterpTime = new double[nDod];
+                interpRatVal = new double[nDod];
+                ratValErr = new double[nDod];
+                zerPkCt = new boolean[nDod];
+
+                double rct = 0.0;
+
+                for (int sNum = 0; sNum < nDod; sNum++) {
+                    boolean continueWithScanProcessing = true;
+                    int sn1 = sNum + 1;
+                    double totT = timeStampSec[sNum][aOrd] + timeStampSec[sNum][bOrd]
+                            + timeStampSec[sn1][aOrd] + timeStampSec[sn1][bOrd];
+                    double meanT = totT / 4.0;
+                    ratioInterpTime[sNum] = meanT;
+
+                    zerPkCt[sNum] = false;
+                    zerPkCt[sn1] = false;
+                    boolean hasZerPk = false;
+
+                    double[] aPkCts = new double[2];
+                    double[] bPkCts = new double[2];
+                    for (int numDenom = 0; numDenom < 2; numDenom++) {
+                        if (continueWithScanProcessing) {
+                            int k = sNum + numDenom;
+                            double aNetCPS = netPkCps[k][aOrd];
+                            double bNetCPS = netPkCps[k][bOrd];
+
+                            if ((aNetCPS == errorValue) || (bNetCPS == errorValue)) {
+                                hasZerPk = true;
+                                zerPkCt[k] = true;
+                                continueWithScanProcessing = false;
+                            }
+
+                            if (continueWithScanProcessing) {
+                                aPkCts[numDenom] = aNetCPS * countTimeSec[aOrd];
+                                bPkCts[numDenom] = bNetCPS * countTimeSec[bOrd];
+
+                                if (useSBM) {
+                                    if ((sbmCps[k][aOrd] <= 0.0) || (sbmCps[k][aOrd] == errorValue)
+                                            || (sbmCps[k][bOrd] <= 0.0) || (sbmCps[k][aOrd] == errorValue)) {
+                                        zerPkCt[k] = true;
+                                        continueWithScanProcessing = false;
+                                    }
+                                }
+                            }
+                        } // test continueWithScanProcessing
+                    } // iteration through numDenom
+
+                    if (continueWithScanProcessing) {
+                        for (int k = 0; k < 2; k++) {
+                            int numDenom = (k == 0) ? 1 : 0;
+
+                            double a = aPkCts[k];
+                            double b = aPkCts[numDenom];
+                            if ((a <= 0) && (b > 16)) {
+                                zerPkCt[sNum + k - 1] = true;
+                            }
+
+                            a = bPkCts[k];
+                            b = bPkCts[numDenom];
+                            if ((a <= 0) && (b > 16)) {
+                                zerPkCt[sNum + k - 1] = true;
+                            }
+                        } // k iteration 
+
+                        // test whether to continue
+                        if (!zerPkCt[sNum] && !zerPkCt[sn1]) {
+                          double aPk1 = netPkCps[sNum][aOrd];
+                          double bPk1 = netPkCps[sNum][bOrd]; 
+                          double aPk2 = netPkCps[sn1][aOrd]; 
+                          double bPk2 = netPkCps[sn1][bOrd]; 
+
+                        }
+
+                    } // continueWithScanProcessing is true
+
+                } // iteration through nDod using sNum (see "NextScanNum" in pseudocode)
+
+            } // end decision on which ratio procedure to use
+
+        } // end iteration through isotopicRatios
+
     }
 
     /**
@@ -251,10 +421,12 @@ public class PrawnRunFractionParser {
             prawnFileURL = new URL("https://raw.githubusercontent.com/bowring/XSD/master/SHRIMP/EXAMPLE_100142_G6147_10111109.43_10.33.37%20AM.xml");
         } catch (MalformedURLException malformedURLException) {
             System.out.println(malformedURLException.getMessage());
+
         }
 
         try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(PrawnFile.class);
+            JAXBContext jaxbContext = JAXBContext.newInstance(PrawnFile.class
+            );
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
             PrawnFile prawnFile = (PrawnFile) jaxbUnmarshaller.unmarshal(prawnFileURL);
 
@@ -264,14 +436,12 @@ public class PrawnRunFractionParser {
                 if (runFraction.getPar().get(0).getValue().startsWith("097.Z.1.1.1")) {
 //                System.out.println("\n" + runFraction.getPar().get(0).getValue() + "  ***********************\n");
                     processRunFraction(runFraction);
-                    double[][] scannedData = extractedRunData;
-                    double[] totalCps = calculateTotalPerSpeciesCPS();
 
-                    for (double[] scannedData1 : scannedData) {
+                    for (double[] scannedData : extractedRunData) {
 //                        System.out.print(scannedData1[16] + ",  " + scannedData1[17]);
-                        for (int j = 0; j < scannedData1.length; j++) {
-                            System.out.print(scannedData1[j]);
-                            if (j < (scannedData1.length - 1)) {
+                        for (int j = 0; j < scannedData.length; j++) {
+                            System.out.print(scannedData[j]);
+                            if (j < (scannedData.length - 1)) {
                                 System.out.print(",");
                             }
                         }
@@ -302,10 +472,12 @@ public class PrawnRunFractionParser {
             prawnFileURL = new URL("https://raw.githubusercontent.com/bowring/XSD/master/SHRIMP/EXAMPLE_100142_G6147_10111109.43_10.33.37%20AM.xml");
         } catch (MalformedURLException malformedURLException) {
             System.out.println(malformedURLException.getMessage());
+
         }
 
         try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(PrawnFile.class);
+            JAXBContext jaxbContext = JAXBContext.newInstance(PrawnFile.class
+            );
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
             PrawnFile prawnFile = (PrawnFile) jaxbUnmarshaller.unmarshal(prawnFileURL);
 
