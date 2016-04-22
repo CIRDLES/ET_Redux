@@ -295,6 +295,10 @@ public class PrawnRunFractionParser {
             double[][] sigRho;
             boolean[] zerPkCt;
 
+            List<Double> ratEqTime = new ArrayList<>();
+            List<Double> ratEqVal = new ArrayList<>();
+            List<Double> ratEqErr = new ArrayList<>();
+
             if ((totCtsNUM < 32) || (totCtsDEN < 32) || (nDod == 0)) {
                 ratioVal = 0.0;
                 ratioFractErr = 1.0;
@@ -312,6 +316,10 @@ public class PrawnRunFractionParser {
                 };
                 interpRatVal = new double[]{ratioVal};
                 ratValFerr = new double[]{ratioFractErr};
+
+                ratEqTime.add(ratioInterpTime[0]);
+                ratEqVal.add(interpRatVal[0]);
+                ratEqErr.add(Math.abs(ratValFerr[0] * interpRatVal[0]));
 
             } else {
                 // main treatment using double interpolation following Dodson (1978): http://dx.doi.org/10.1088/0022-3735/11/4/004)
@@ -461,7 +469,7 @@ public class PrawnRunFractionParser {
                                     ratValSig[rct] = Math.max(1E-10, Math.sqrt(ratValVar));
                                     sigRho[rct][rct] = ratValSig[rct];
 
-                                    if (rct > 1) {
+                                    if (rct > 0) {
                                         rhoIJ = (zerPkCt[sNum - 1]) ? 0.0 : (1 - pkF[sNum] * pkF[sNum]) / (1 + pkF[sNum] * pkF[sNum]) / 2.0;
 
                                         sigRho[rct][rct - 1] = rhoIJ;
@@ -475,7 +483,7 @@ public class PrawnRunFractionParser {
                     } // continueWithScanProcessing is true
 
                 } // iteration through nDod using sNum (see "NextScanNum" in pseudocode)
-
+      
                 if (rct == -1) {
                     ratioVal = errorValue;
                     ratioFractErr = errorValue;
@@ -487,6 +495,12 @@ public class PrawnRunFractionParser {
                         ratioFractErr = 1.0;
                     } else {
                         ratioFractErr = ratValFerr[0];
+                    }
+                } else {
+                    for (int j = 0; j < (rct + 1); j++) {
+                        ratEqTime.add(ratioInterpTime[j]);
+                        ratEqVal.add(interpRatVal[j]);
+                        ratEqErr.add(Math.abs(ratValFerr[j] * interpRatVal[j]));
                     }
                 }
 
