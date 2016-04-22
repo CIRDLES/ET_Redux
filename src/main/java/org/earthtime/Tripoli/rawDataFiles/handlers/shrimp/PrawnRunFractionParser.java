@@ -411,10 +411,10 @@ public class PrawnRunFractionParser {
                             double bPk2 = netPkCps[sn1][bOrd];
 
                             if (useSBM) {
-                                aPk1 = aPk1 / sbmCps[sNum][aOrd];
-                                bPk1 = bPk1 / sbmCps[sNum][bOrd];
-                                aPk2 = aPk2 / sbmCps[sn1][aOrd];
-                                bPk2 = bPk2 / sbmCps[sn1][bOrd];
+                                aPk1 /= sbmCps[sNum][aOrd];
+                                bPk1 /= sbmCps[sNum][bOrd];
+                                aPk2 /= sbmCps[sn1][aOrd];
+                                bPk2 /= sbmCps[sn1][bOrd];
                             }
 
                             double scanDeltaT = timeStampSec[sn1][aOrd] - timeStampSec[sNum][aOrd];
@@ -483,25 +483,25 @@ public class PrawnRunFractionParser {
                     } // continueWithScanProcessing is true
 
                 } // iteration through nDod using sNum (see "NextScanNum" in pseudocode)
-      
-                if (rct == -1) {
-                    ratioVal = errorValue;
-                    ratioFractErr = errorValue;
-                } else if (rct == 0) {
-                    ratioVal = interpRatVal[0];
-
-                    if (ratioVal == 0.0) {
-                        ratioVal = 1E-32;
-                        ratioFractErr = 1.0;
-                    } else {
-                        ratioFractErr = ratValFerr[0];
-                    }
-                } else {
-                    for (int j = 0; j < (rct + 1); j++) {
-                        ratEqTime.add(ratioInterpTime[j]);
-                        ratEqVal.add(interpRatVal[j]);
-                        ratEqErr.add(Math.abs(ratValFerr[j] * interpRatVal[j]));
-                    }
+                switch (rct) {
+                    case -1:
+                        ratioVal = errorValue;
+                        ratioFractErr = errorValue;
+                        break;
+                    case 0:
+                        ratioVal = interpRatVal[0];
+                        if (ratioVal == 0.0) {
+                            ratioVal = 1E-32;
+                            ratioFractErr = 1.0;
+                        } else {
+                            ratioFractErr = ratValFerr[0];
+                        }   break;
+                    default:
+                        for (int j = 0; j < (rct + 1); j++) {
+                            ratEqTime.add(ratioInterpTime[j]);
+                            ratEqVal.add(interpRatVal[j]);
+                            ratEqErr.add(Math.abs(ratValFerr[j] * interpRatVal[j]));
+                        }   break;
                 }
 
             } // end decision on which ratio procedure to use
