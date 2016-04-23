@@ -74,7 +74,9 @@ public enum IsotopeNames {
 
     private IsotopeNames ( String name, int atomicMass ) {
         this.name = name;
+        this.atomicMass = atomicMass;
     }
+    
 
     /**
      * 

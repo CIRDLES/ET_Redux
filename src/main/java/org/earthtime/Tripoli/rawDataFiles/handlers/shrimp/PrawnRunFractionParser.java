@@ -16,17 +16,11 @@
 package org.earthtime.Tripoli.rawDataFiles.handlers.shrimp;
 
 import com.google.common.collect.HashBiMap;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 import org.cirdles.shrimp.PrawnFile;
-import org.cirdles.shrimp.PrawnFile.Run.Set;
-import org.cirdles.shrimp.PrawnFile.Run.Set.Scan;
-import org.cirdles.shrimp.PrawnFile.Run.Set.Scan.Measurement;
 import org.earthtime.Tripoli.fitFunctions.algorithms.TukeyBiweight;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.dataDictionaries.IsotopeNames;
@@ -40,6 +34,8 @@ public class PrawnRunFractionParser {
 
     private static final int HARD_WIRED_INDEX_OF_BACKGROUND = 2;
 
+    private static String fractionName;
+    private static long dateTimeMilliseconds = 0l;
     private static double[][] extractedRunData;
     private static int nSpecies;
     private static int nScans;
@@ -56,21 +52,37 @@ public class PrawnRunFractionParser {
     private static com.google.common.collect.BiMap<Integer, IsotopeNames> speciesToIndexBiMap;
     private static List<IsotopeRatioModelSHRIMP> isotopicRatios;
 
-    public static void processRunFraction(PrawnFile.Run runFraction) {
+    public static ShrimpFraction processRunFraction(PrawnFile.Run runFraction) {
 
         prepareRunFractionMetaData(runFraction);
         parseRunFractionData();
         calculateTotalPerSpeciesCPS();
         calculateIsotopicRatios(true);
+
+        ShrimpFraction shrimpFraction = new ShrimpFraction(isotopicRatios);
+        shrimpFraction.setName(fractionName);
+        shrimpFraction.setDateTimeMilliseconds(dateTimeMilliseconds);
+        shrimpFraction.setExtractedRunData(extractedRunData);
+        shrimpFraction.setTotalCps(totalCps);
+
+        return shrimpFraction;
     }
 
     private static void prepareRunFractionMetaData(PrawnFile.Run runFraction) {
+        fractionName = runFraction.getPar().get(0).getValue();
         nSpecies = Integer.parseInt(runFraction.getPar().get(2).getValue());
         nScans = Integer.parseInt(runFraction.getPar().get(3).getValue());
         deadTimeNanoseconds = Integer.parseInt(runFraction.getPar().get(4).getValue());
         sbmZeroCps = Double.parseDouble(runFraction.getPar().get(5).getValue());
         runTableEntries = runFraction.getRunTable().getEntry();
         scans = runFraction.getSet().getScan();
+
+        String dateTime = runFraction.getSet().getPar().get(0).getValue() + " " + runFraction.getSet().getPar().get(1).getValue();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        try {
+            dateTimeMilliseconds = dateFormat.parse(dateTime).getTime();
+        } catch (ParseException parseException) {
+        }
 
         countTimeSec = new double[nSpecies];
         for (int i = 0; i < runTableEntries.size(); i++) {
@@ -248,7 +260,8 @@ public class PrawnRunFractionParser {
                     double absNetPeakCps = netPkCps[scanNum][speciesMeasurementIndex];
                     if (absNetPeakCps > 1.0e-6) {
                         double calcVariance
-                                = absNetPeakCps + (Math.abs(backgroundCps) * Math.pow(countTimeSec[speciesMeasurementIndex] / countTimeSec[HARD_WIRED_INDEX_OF_BACKGROUND], 2));
+                                = extractedRunData[scanNum][speciesMeasurementIndex * 3 + 1]//
+                                + (Math.abs(backgroundCps) * Math.pow(countTimeSec[speciesMeasurementIndex] / countTimeSec[HARD_WIRED_INDEX_OF_BACKGROUND], 2));
                         pkFerr[scanNum][speciesMeasurementIndex]
                                 = Math.sqrt(calcVariance) / absNetPeakCps / countTimeSec[speciesMeasurementIndex];
                     } else {
@@ -320,6 +333,13 @@ public class PrawnRunFractionParser {
                 ratEqTime.add(ratioInterpTime[0]);
                 ratEqVal.add(interpRatVal[0]);
                 ratEqErr.add(Math.abs(ratValFerr[0] * interpRatVal[0]));
+
+                // flush out
+                for (int i = 0; i < 4; i++) {
+                    ratEqTime.add(0.0);
+                    ratEqVal.add(0.0);
+                    ratEqErr.add(0.0);
+                }
 
             } else {
                 // main treatment using double interpolation following Dodson (1978): http://dx.doi.org/10.1088/0022-3735/11/4/004)
@@ -428,18 +448,9 @@ public class PrawnRunFractionParser {
                             double rNum = (NUM < DEN) ? aInterp : bInterp;
                             double rDen = (NUM < DEN) ? bInterp : aInterp;
 
-                            double[] a1Pk = new double[nDod];
-                            double[] b1Pk = new double[nDod];
-                            double[] a2Pk = new double[nDod];
-                            double[] b2Pk = new double[nDod];
-
                             if (rDen != 0.0) {
                                 rct++;
                                 interpRatVal[rct] = rNum / rDen;
-                                a1Pk[sNum] = aPk1;
-                                b1Pk[sNum] = bPk1;
-                                a2Pk[sNum] = aPk2;
-                                b2Pk[sNum] = bPk2;
                                 double a1PkSig = pkFerr[sNum][aOrd] * aPk1;
                                 double a2PkSig = pkFerr[sn1][aOrd] * aPk2;
                                 double b1PkSig = pkFerr[sNum][bOrd] * bPk1;
@@ -495,131 +506,25 @@ public class PrawnRunFractionParser {
                             ratioFractErr = 1.0;
                         } else {
                             ratioFractErr = ratValFerr[0];
-                        }   break;
+                        }
+                        break;
                     default:
                         for (int j = 0; j < (rct + 1); j++) {
                             ratEqTime.add(ratioInterpTime[j]);
                             ratEqVal.add(interpRatVal[j]);
                             ratEqErr.add(Math.abs(ratValFerr[j] * interpRatVal[j]));
-                        }   break;
+                        }
+                        break;
                 }
 
             } // end decision on which ratio procedure to use
 
-            // sanity check for this ratio
-            System.out.println("STOP);");
+            isotopicRatio.setRatEqTime(ratEqTime);
+            isotopicRatio.setRatEqVal(ratEqVal);
+            isotopicRatio.setRatEqErr(ratEqErr);
+
         } // end iteration through isotopicRatios
 
-    }
-
-    /**
-     * Driver to test results
-     *
-     * @param args
-     */
-    public static void main(String[] args) {
-
-//        reportForSimon();
-        // local copy of file - use prawnFileXML in place of prawnFileURL below
-//        File prawnFileXML = new File("/Users/sbowring/Documents/Development_XSD/100142_G6147_10111109.43 10.33.37 AM.xml");
-        // remote copy of example file
-        java.net.URL prawnFileURL = null;
-        try {
-            prawnFileURL = new URL("https://raw.githubusercontent.com/bowring/XSD/master/SHRIMP/EXAMPLE_100142_G6147_10111109.43_10.33.37%20AM.xml");
-        } catch (MalformedURLException malformedURLException) {
-            System.out.println(malformedURLException.getMessage());
-
-        }
-
-        try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(PrawnFile.class
-            );
-            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-            PrawnFile prawnFile = (PrawnFile) jaxbUnmarshaller.unmarshal(prawnFileURL);
-
-            for (int f = 0; f < prawnFile.getRuns(); f++) {
-                PrawnFile.Run runFraction = prawnFile.getRun().get(f);
-
-                if (runFraction.getPar().get(0).getValue().startsWith("T.1.1.1")) {
-//                System.out.println("\n" + runFraction.getPar().get(0).getValue() + "  ***********************\n");
-                    processRunFraction(runFraction);
-
-                    for (double[] scannedData : extractedRunData) {
-//                        System.out.print(scannedData1[16] + ",  " + scannedData1[17]);
-                        for (int j = 0; j < scannedData.length; j++) {
-                            System.out.print(scannedData[j]);
-                            if (j < (scannedData.length - 1)) {
-                                System.out.print(",");
-                            }
-                        }
-                        System.out.print("\n");
-                    }
-//                    if (runFraction.getPar().get(0).getValue().startsWith("097.Z")) {
-                    System.out.print(runFraction.getPar().get(0).getValue() + ", ");
-//                    System.out.print(totalCps[5]);
-                    for (int j = 0; j < totalCps.length; j++) {
-                        System.out.print(totalCps[j]);
-                        if (j < (totalCps.length - 1)) {
-                            System.out.print(",");
-                        }
-                    }
-                    System.out.print("\n");
-//                    }
-                }
-            } // end of fractions loop
-
-        } catch (JAXBException jAXBException) {
-            System.out.println(jAXBException.getMessage());
-        }
-    }
-
-    public static void reportForSimon() {
-        java.net.URL prawnFileURL = null;
-        try {
-            prawnFileURL = new URL("https://raw.githubusercontent.com/bowring/XSD/master/SHRIMP/EXAMPLE_100142_G6147_10111109.43_10.33.37%20AM.xml");
-        } catch (MalformedURLException malformedURLException) {
-            System.out.println(malformedURLException.getMessage());
-
-        }
-
-        try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(PrawnFile.class
-            );
-            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-            PrawnFile prawnFile = (PrawnFile) jaxbUnmarshaller.unmarshal(prawnFileURL);
-
-            // print headers
-            System.out.print("Spot, Scan#, Time, ");//196,  204, BKGRND, 206, 207 208 238 248 254 270");
-            PrawnFile.Run firstFraction = prawnFile.getRun().get(0);
-            for (int i = 0; i < 10; i++) {
-                String speciesName = firstFraction.getRunTable().getEntry().get(i).getPar().get(0).getValue();
-                for (int j = 0; j < 10; j++) {
-                    System.out.print(speciesName + "." + (j + 1) + ", ");
-                }
-            }
-            System.out.println();
-
-            for (int f = 0; f < prawnFile.getRuns(); f++) {
-                PrawnFile.Run runFraction = prawnFile.getRun().get(f);
-                Set mySet = runFraction.getSet();
-                for (int scan = 0; scan < 6; scan++) {
-                    Scan myScan = mySet.getScan().get(scan);
-                    System.out.print(runFraction.getPar().get(0).getValue() //
-                            + ", " + (scan + 1) + ", " //
-                            + mySet.getPar().get(0).getValue() + " " + mySet.getPar().get(1).getValue() + ", ");
-                    for (int species = 0; species < 10; species++) {
-                        Measurement mySpecies = myScan.getMeasurement().get(species);
-                        System.out.print(mySpecies.getData().get(0).getValue() + ", ");
-                    }
-
-                    System.out.println();
-                }
-
-            } // end of fractions loop
-
-        } catch (JAXBException jAXBException) {
-            System.out.println(jAXBException.getMessage());
-        }
     }
 
     /**

@@ -16,6 +16,7 @@
 package org.earthtime.Tripoli.rawDataFiles.handlers.shrimp;
 
 import java.io.Serializable;
+import java.util.List;
 import org.earthtime.dataDictionaries.IsotopeNames;
 
 /**
@@ -27,17 +28,23 @@ public class IsotopeRatioModelSHRIMP //
 
     // Class variables
 //    private static final long serialVersionUID = 3111511502335804607L;
-
     private IsotopeNames numerator;
     private IsotopeNames denominator;
+    private List<Double> ratEqTime;
+    private List<Double> ratEqVal;
+    private List<Double> ratEqErr;
 
     public IsotopeRatioModelSHRIMP(IsotopeNames numerator, IsotopeNames denominator) {
         this.numerator = numerator;
         this.denominator = denominator;
     }
-    
-    public boolean numeratorAtomicRatioLessThanDenominator(){
+
+    public boolean numeratorAtomicRatioLessThanDenominator() {
         return (numerator.getAtomicMass() < denominator.getAtomicMass());
+    }
+    
+    public String prettyPrintSimpleName(){
+        return Integer.toString(numerator.getAtomicMass()) + "/" + Integer.toString(denominator.getAtomicMass());
     }
 
     /**
@@ -67,7 +74,47 @@ public class IsotopeRatioModelSHRIMP //
     public void setDenominator(IsotopeNames denominator) {
         this.denominator = denominator;
     }
-    
-    
+
+    /**
+     * @return the ratEqTime
+     */
+    public List<Double> getRatEqTime() {
+        return ratEqTime;
+    }
+
+    /**
+     * @param ratEqTime the ratEqTime to set
+     */
+    public void setRatEqTime(List<Double> ratEqTime) {
+        this.ratEqTime = ratEqTime;
+    }
+
+    /**
+     * @return the ratEqVal
+     */
+    public List<Double> getRatEqVal() {
+        return ratEqVal;
+    }
+
+    /**
+     * @param ratEqVal the ratEqVal to set
+     */
+    public void setRatEqVal(List<Double> ratEqVal) {
+        this.ratEqVal = ratEqVal;
+    }
+
+    /**
+     * @return the ratEqErr
+     */
+    public List<Double> getRatEqErr() {
+        return ratEqErr;
+    }
+
+    /**
+     * @param ratEqErr the ratEqErr to set
+     */
+    public void setRatEqErr(List<Double> ratEqErr) {
+        this.ratEqErr = ratEqErr;
+    }
 
 }
