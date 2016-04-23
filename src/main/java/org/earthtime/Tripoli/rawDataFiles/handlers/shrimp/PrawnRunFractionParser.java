@@ -335,7 +335,7 @@ public class PrawnRunFractionParser {
                 ratEqErr.add(Math.abs(ratValFerr[0] * interpRatVal[0]));
 
                 // flush out
-                for (int i = 0; i < 4; i++) {
+                for (int i = 0; i < nDod; i++) {
                     ratEqTime.add(0.0);
                     ratEqVal.add(0.0);
                     ratEqErr.add(0.0);
