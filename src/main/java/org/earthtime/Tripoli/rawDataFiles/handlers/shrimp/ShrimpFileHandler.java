@@ -215,7 +215,8 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
         java.sql.Timestamp peakTimeStamp = java.sql.Timestamp.valueOf(setDate + " " + setTime);
         long fractionPeakTimeStamp = peakTimeStamp.getTime();
 
-        double[][] extractedData = PrawnRunFractionParser.parsedRunFractionData(runFraction);
+        PrawnRunFractionParser.processRunFraction(runFraction);
+        double[][] extractedData = PrawnRunFractionParser.getExtractedRunData();
 
         // within each row
         // index 0 = scannumber; followed by order of groups = 196  204 Backgrnd 206 207 208 238 248 254 270

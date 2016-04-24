@@ -310,7 +310,7 @@ public abstract class AbstractRawDataFileHandler implements //
         return retVal;
     }
 
-    public long calculateTimeStamp(String timeStamp) {
+    public static long calculateTimeStamp(String timeStamp) {
         // remove decimal point and take first 3 digits of 6 so timestamp can be converted to long
         String[] timeStampParts = timeStamp.split("\\.");
         return Long.parseLong(timeStampParts[0] + timeStampParts[1].substring(0, 3));
