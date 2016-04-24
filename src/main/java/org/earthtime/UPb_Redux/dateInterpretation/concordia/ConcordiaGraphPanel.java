@@ -2298,6 +2298,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
      *
      * @param concordiaOptions
      */
+    @Override
     public void setConcordiaOptions(Map<String, String> concordiaOptions) {
         this.concordiaOptions = concordiaOptions;
     }

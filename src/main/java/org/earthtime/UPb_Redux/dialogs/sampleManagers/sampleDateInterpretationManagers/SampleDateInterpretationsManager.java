@@ -70,7 +70,6 @@ import org.earthtime.UPb_Redux.dateInterpretation.concordia.PlottingDetailsDispl
 import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.DateInterpretationBoxPanel;
 import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetup;
 import org.earthtime.UPb_Redux.dialogs.aliquotManagers.AliquotOptionsDialog;
-import org.earthtime.UPb_Redux.dialogs.graphManagers.ConcordiaOptionsDialog;
 import org.earthtime.UPb_Redux.dialogs.graphManagers.WeightedMeanOptionsDialog;
 import org.earthtime.UPb_Redux.dialogs.sampleManagers.heatMapManagers.HeatMapManager;
 import org.earthtime.UPb_Redux.filters.PDFFileFilter;
@@ -203,19 +202,18 @@ public class SampleDateInterpretationsManager extends DialogEditor
         if (!doReScale) {
             expansionHistory = dateTreeByAliquot.collectExpansionHistory();
         }
-            dateTreeByAliquot = new SampleTreeAnalysisMode(sample);
-            dateTreeByAliquot.setSampleTreeChange(this);
-            dateTreeByAliquot.buildTree();
-            dateTreeByAliquot_ScrollPane.setViewportView((Component) dateTreeByAliquot);
+        dateTreeByAliquot = new SampleTreeAnalysisMode(sample);
+        dateTreeByAliquot.setSampleTreeChange(this);
+        dateTreeByAliquot.buildTree();
+        dateTreeByAliquot_ScrollPane.setViewportView((Component) dateTreeByAliquot);
         if (!doReScale) {
             dateTreeByAliquot.expandToHistory(expansionHistory);
         }
 
-            dateTreeBySample = new SampleTreeCompilationMode(sample);
-            dateTreeBySample.setSampleTreeChange(this);
-            dateTreeBySample.buildTree();
-            dateTreeBySample_ScrollPane.setViewportView((Component) dateTreeBySample);
-
+        dateTreeBySample = new SampleTreeCompilationMode(sample);
+        dateTreeBySample.setSampleTreeChange(this);
+        dateTreeBySample.buildTree();
+        dateTreeBySample_ScrollPane.setViewportView((Component) dateTreeBySample);
 
         ((PlottingDetailsDisplayInterface) concordiaGraphPanel).resetPanel(doReScale);
 
@@ -1933,20 +1931,7 @@ private void close_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
 }//GEN-LAST:event_close_buttonActionPerformed
 
 private void sampleConcordiaOptions_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sampleConcordiaOptions_menuItemActionPerformed
-    DialogEditor myConcordiaOptionsDialog
-            = //
-            new ConcordiaOptionsDialog(
-                    null, true,
-                    ((AliquotDetailsDisplayInterface) concordiaGraphPanel).getConcordiaOptions());
-
-    myConcordiaOptionsDialog.setLocation(getLocation());
-    myConcordiaOptionsDialog.setVisible(true);
-
-    ((ConcordiaGraphPanel) concordiaGraphPanel).//
-            setConcordiaOptions(//
-                    ((ConcordiaOptionsDialog) myConcordiaOptionsDialog).getConcordiaOptions());
-
-    concordiaGraphPanel.repaint();
+    ((AliquotDetailsDisplayInterface) concordiaGraphPanel).showConcordiaDisplayOptionsDialog();
 }//GEN-LAST:event_sampleConcordiaOptions_menuItemActionPerformed
 private void concordiaOptions_menuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_concordiaOptions_menuMouseClicked
     buildAliquotOptionsMenu();

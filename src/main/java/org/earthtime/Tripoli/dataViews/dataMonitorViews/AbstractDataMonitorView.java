@@ -176,8 +176,6 @@ public class AbstractDataMonitorView extends AbstractRawDataView
     public void sampleTreeChangeCompilationMode(Object node) {
 //        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
-    
 
     private static SwingWorker loadDataTask;
     private final static Integer LAYER_FIVE = 5;
@@ -322,9 +320,6 @@ public class AbstractDataMonitorView extends AbstractRawDataView
     private synchronized void monitorDataFile() {
         long lastMonitoredTime = monitoredFolder.lastModified();
 
-        System.out.println(">>>>>>>>>>>>> Monitored folder = "//
-                + monitoredFolder.getName() + "  saveMonitoredTime = " + saveMonitoredTime + "  lastMonitoredTime = " + lastMonitoredTime);
-
         if (lastMonitoredTime > saveMonitoredTime) {
 
             Calendar cal = Calendar.getInstance();
@@ -332,7 +327,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
             cal.setTimeInMillis(lastMonitoredTime);
             SimpleDateFormat date_format = new SimpleDateFormat("MMM dd,yyyy HH:mm:ss");
 
-            System.out.println("File changed at: " + date_format.format(cal.getTime()));
+//            System.out.println("File changed at: " + date_format.format(cal.getTime()));
 
             if (loadDataTask != null) {
                 if (loadDataTask.isDone()) {
@@ -555,6 +550,15 @@ public class AbstractDataMonitorView extends AbstractRawDataView
         editReportSettingsButton.setEnabled(true);
         this.add(editReportSettingsButton, LAYER_FIVE);
 
+        ET_JButton concordiaSettingsButton = new ET_JButton("Concordia Settings");
+        concordiaSettingsButton.setBounds(leftMargin + 1100, topMargin + 660, 120, 25);
+        concordiaSettingsButton.addActionListener((ActionEvent ae) -> {
+            ((AliquotDetailsDisplayInterface) concordiaGraphPanel).showConcordiaDisplayOptionsDialog();
+        });
+
+        concordiaSettingsButton.setEnabled(true);
+        this.add(concordiaSettingsButton, LAYER_FIVE);
+
     }
 
     private void progressBarFactory() {
@@ -601,7 +605,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
             ((ConcordiaGraphPanel) concordiaGraphPanel).setShowTightToEdges(true);
 
             kwikiConcordiaToolBar = new KwikiConcordiaToolBar(//
-                    920, topMargin + concordiaGraphPanel.getHeight() + topMargin + 50, concordiaGraphPanel, null);
+                    950, topMargin + concordiaGraphPanel.getHeight() + topMargin + 50, concordiaGraphPanel, null);
 
         }
 

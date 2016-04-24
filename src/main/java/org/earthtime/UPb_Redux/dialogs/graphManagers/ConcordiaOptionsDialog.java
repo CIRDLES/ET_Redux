@@ -60,10 +60,10 @@ public class ConcordiaOptionsDialog extends DialogEditor {
 
         initComponents();
 
-        setConcordiaOptions(concordiaOptions);
+        this.concordiaOptions = concordiaOptions;
 
-        setConcordiaOptionsSaved(new HashMap<>());
-        getConcordiaOptionsSaved().putAll(getConcordiaOptions());
+        concordiaOptionsSaved = new HashMap<>();
+        concordiaOptionsSaved.putAll(concordiaOptions);
 
         MouseListener myColorChooserListener =
                 new ColorChooserListener(concordiaOptions);

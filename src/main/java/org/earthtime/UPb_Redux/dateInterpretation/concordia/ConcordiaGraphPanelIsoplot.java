@@ -102,6 +102,15 @@ public class ConcordiaGraphPanelIsoplot extends JFXPanel
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    /**
+     *
+     * @param concordiaOptions
+     */
+    @Override
+    public void setConcordiaOptions(Map<String, String> concordiaOptions) {
+        //this.concordiaOptions = concordiaOptions;
+    }
+
     @Override
     public Vector<ETFractionInterface> getDeSelectedFractions() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
