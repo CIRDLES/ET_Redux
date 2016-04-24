@@ -78,9 +78,10 @@ public final class TukeyBiweight {
             mean = previousMean + tee * sc / sb;
 
         } // both tests against epsilon must pass OR iterations top out
+        // april 2016 Simon B discovered we need 101 iterations possible, hence the "<=" below
         while (((Math.abs(sigma - previousSigma) / sigma > epsilon)//
                 || (Math.abs(mean - previousMean) / mean > epsilon))//
-                && (iterationCounter < iterationMax));
+                && (iterationCounter <= iterationMax));
 
         return new ValueModel(name, new BigDecimal(mean), "ABS", new BigDecimal(sigma), BigDecimal.ZERO);
     }
