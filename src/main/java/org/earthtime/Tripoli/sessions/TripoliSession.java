@@ -170,6 +170,8 @@ public class TripoliSession implements
                 tf.setStandard(tripoliSample.isPrimaryStandard());
                 // nov 2014
                 tf.setSampleR238_235s(tripoliSample.getSampleR238_235s());
+                // april 2016
+                tf.setSecondaryReferenceMaterial(tripoliSample.isSecondaryStandard());
             }
         });
     }
@@ -354,25 +356,25 @@ public class TripoliSession implements
                 && prepareMatrixJfPlotting()) {
 
 //            if (fractionationTechnique.compareTo(FractionationTechniquesEnum.INTERCEPT) == 0) {
-                sessionForStandardsInterceptFractionation.keySet().stream().forEach((rrName) -> {
-                    try {
-                        sessionForStandardsInterceptFractionation.get(rrName).generateSetOfFitFunctions(true, false);
-                        fitFunctionsUpToDate = true;
-                    } catch (Exception e) {
-                        System.out.println("Session Standards Intercept Fractionation Failed");
-                    }
-                });
+            sessionForStandardsInterceptFractionation.keySet().stream().forEach((rrName) -> {
+                try {
+                    sessionForStandardsInterceptFractionation.get(rrName).generateSetOfFitFunctions(true, false);
+                    fitFunctionsUpToDate = true;
+                } catch (Exception e) {
+                    System.out.println("Session Standards Intercept Fractionation Failed");
+                }
+            });
 //            } else {
 
-                calculateDownholeFitSummariesForPrimaryStandard();
-                sessionForStandardsDownholeFractionation.keySet().stream().forEach((rrName) -> {
-                    try {
-                        sessionForStandardsDownholeFractionation.get(rrName).generateSetOfFitFunctions(true, false);
-                        fitFunctionsUpToDate = true;
-                    } catch (Exception e) {
-                        System.out.println("Session Standards Downhole Fractionation Failed");
-                    }
-                });
+            calculateDownholeFitSummariesForPrimaryStandard();
+            sessionForStandardsDownholeFractionation.keySet().stream().forEach((rrName) -> {
+                try {
+                    sessionForStandardsDownholeFractionation.get(rrName).generateSetOfFitFunctions(true, false);
+                    fitFunctionsUpToDate = true;
+                } catch (Exception e) {
+                    System.out.println("Session Standards Downhole Fractionation Failed");
+                }
+            });
 
 //            }
             applyCorrections();
@@ -1235,6 +1237,7 @@ public class TripoliSession implements
             try {
                 tf.getuPbFraction().setRejected(!tf.isIncluded());
                 tf.getuPbFraction().setStandard(tf.isStandard());
+                tf.getuPbFraction().setSecondaryStandard(tf.isSecondaryReferenceMaterial());
             } catch (Exception e) {
             }
         }
@@ -1472,6 +1475,7 @@ public class TripoliSession implements
                 // sep 2015
                 tf.getuPbFraction().setRejected(!tf.isIncluded());
                 tf.getuPbFraction().setStandard(tf.isStandard());
+                tf.getuPbFraction().setSecondaryStandard(tf.isSecondaryReferenceMaterial());
             }
             index++;
         }
@@ -1612,6 +1616,13 @@ public class TripoliSession implements
     public void clearAllFractionsOfLocalYAxis() {
         tripoliFractions.stream().forEach((f) -> {
             f.setShowLocalYAxis(false);
+        });
+    }
+
+    @Override
+    public void setAllFractionsOfLocalYAxis() {
+        tripoliFractions.stream().forEach((f) -> {
+            f.setShowLocalYAxis(true);
         });
     }
 

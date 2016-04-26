@@ -111,7 +111,7 @@ public class DateInterpretationBoxPanel extends JLayeredPane{//JPanel {
         Rectangle2D bounds = mLayout.getBounds();
         setBoxWidth((int) bounds.getWidth() + 15);
         setBoxHeight((int) bounds.getHeight() * 6 //
-                + (Integer)(isDateShowDate() ? 2 : 0) * (int)Integer.valueOf(getDateFontSize()));
+                + (isDateShowDate() ? 2 : 0) * (int)Integer.valueOf(getDateFontSize()));
         
         if (isVisibleBoxOutline()) {
             DrawBounds(g2d);

@@ -531,66 +531,63 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
             }
         }
 
-        Arrays.sort(reportFractionsSorted, new Comparator<String[]>() {
-            @Override
-            public int compare(final String[] entry1, final String[] entry2) {
-                int retVal = 0;
-
-                // aliquots have been ordered in manager by number regardless of name
-                // so these sorts are within each aliquot
-                // compare aliquot name
-                // entry1[1] is aliquot name and entry1[2] is fraction name or columnNumber is for secondary Fraction column
-                if (entry1[1].trim().equalsIgnoreCase(entry2[1].trim())) {
-                    if ((columnNumber == 2) || reportFractions[0][columnNumber].trim().equalsIgnoreCase("Fraction")) {
-
-                        String field1;
-                        try {
-                            field1 = entry1[columnNumber].trim();
-                        } catch (Exception e) {
-                            field1 = "";
-                        }
-                        String field2;
-                        try {
-                            field2 = entry2[columnNumber].trim();
-                        } catch (Exception e) {
-                            field2 = "";
-                        }
-                        Comparator<String> forNoah = new IntuitiveStringComparator<>();
-                        if (sortedColumnDirection == 1) {
-                            retVal = forNoah.compare(field1, field2);
-                        } else {
-                            retVal = forNoah.compare(field2, field1);
-                        }
-
-                    } else {
-
-                        BigDecimal field1;
-                        try {
-                            field1 = new BigDecimal(entry1[columnNumber].trim());
-                        } catch (Exception e) {
-                            field1 = BigDecimal.ZERO;
-                        }
-
-                        BigDecimal field2;
-                        try {
-                            field2 = new BigDecimal(entry2[columnNumber].trim());
-                        } catch (Exception e) {
-                            field2 = BigDecimal.ZERO;
-                        }
-
-                        if (sortedColumnDirection == 1) {
-                            retVal = field1.compareTo(field2);
-                        } else {
-                            retVal = field2.compareTo(field1);
-                        }
+        Arrays.sort(reportFractionsSorted, (final String[] entry1, final String[] entry2) -> {
+            int retVal = 0;
+            
+            // aliquots have been ordered in manager by number regardless of name
+            // so these sorts are within each aliquot
+            // compare aliquot name
+            // entry1[1] is aliquot name and entry1[2] is fraction name or columnNumber is for secondary Fraction column
+            if (entry1[1].trim().equalsIgnoreCase(entry2[1].trim())) {
+                if ((columnNumber == 2) || reportFractions[0][columnNumber].trim().equalsIgnoreCase("Fraction")) {
+                    
+                    String field1;
+                    try {
+                        field1 = entry1[columnNumber].trim();
+                    } catch (Exception e) {
+                        field1 = "";
                     }
-                } //            }
-                else {
-                    retVal = 0;//Aliquots are already sorted by number elsewhere so no sort here 
-//                    retVal = entry1[1].trim().compareToIgnoreCase( entry2[1].trim() );
+                    String field2;
+                    try {
+                        field2 = entry2[columnNumber].trim();
+                    } catch (Exception e) {
+                        field2 = "";
+                    }
+                    Comparator<String> forNoah = new IntuitiveStringComparator<>();
+                    if (sortedColumnDirection == 1) {
+                        retVal = forNoah.compare(field1, field2);
+                    } else {
+                        retVal = forNoah.compare(field2, field1);
+                    }
+                    
+                } else {
+                    
+                    BigDecimal field1;
+                    try {
+                        field1 = new BigDecimal(entry1[columnNumber].trim());
+                    } catch (Exception e) {
+                        field1 = BigDecimal.ZERO;
+                    }
+                    
+                    BigDecimal field2;
+                    try {
+                        field2 = new BigDecimal(entry2[columnNumber].trim());
+                    } catch (Exception e) {
+                        field2 = BigDecimal.ZERO;
+                    }
+                    
+                    if (sortedColumnDirection == 1) {
+                        retVal = field1.compareTo(field2);
+                    } else {
+                        retVal = field2.compareTo(field1);
+                    }
                 }
-                return retVal;
+            } //            }
+            else {
+                retVal = 0;//Aliquots are already sorted by number elsewhere so no sort here
+//                    retVal = entry1[1].trim().compareToIgnoreCase( entry2[1].trim() );
             }
+            return retVal;
         });
 
         System.arraycopy(reportFractionsSorted, 0, reportFractions, fractionDataStartRow, reportFractionsSorted.length);

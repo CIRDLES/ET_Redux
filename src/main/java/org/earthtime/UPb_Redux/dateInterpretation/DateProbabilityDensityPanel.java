@@ -51,6 +51,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.Vector;
@@ -296,8 +297,6 @@ public class DateProbabilityDensityPanel extends JLayeredPane
             sampleProbabilities.lineTo(mapX(pdfPoints.get(endX)), mapY(0.01));
             // sampleProbabilities.moveTo( mapX( 4000.0 ), mapY( 0.01 ) );
 
-            ArrayList<Double> visibleSample = new ArrayList<Double>();
-
             if (selectedAliquotNumber > 0) {
                 // paint sample semi-transparent
                 Composite originalComposite = g2d.getComposite();
@@ -328,8 +327,7 @@ public class DateProbabilityDensityPanel extends JLayeredPane
                 Color includedFillColor = new Color(255, 255, 255);
                 if (myAliquotOptions.containsKey("includedFillColor")) {
                     String[] temp
-                            = //
-                            myAliquotOptions.get("includedFillColor").split(",");
+                            = myAliquotOptions.get("includedFillColor").split(",");
                     includedFillColor = buildRGBColor(temp);
                 }
 
@@ -352,8 +350,8 @@ public class DateProbabilityDensityPanel extends JLayeredPane
                     // now remove the deselected fractions
                     activeStackedAliquotKernels = stackedAliquotKernels[selectedAliquotNumber].clone();
                     for (ETFractionInterface f : deSelectedFractions) {
-                        // April 2016 remove primary standard
-                        if (!f.isStandard()) {
+                        // April 2016 remove primary and secondary reference materials
+                        if (!f.isStandard() && !f.isSecondaryStandard()) {
                             ValueModel date = f.getRadiogenicIsotopeDateByName(getChosenDateName());
                             KernelF myKernel = new KernelF(date);
                             for (int i = 0; i < pdfPoints.size(); i++) {
@@ -396,29 +394,28 @@ public class DateProbabilityDensityPanel extends JLayeredPane
 
                 g2d.setPaint(Color.red);
 // May 2014 turn off                g2d.draw(sampleKDE);
+            }
+            // mark data points and collect them for histogram in visibleSample
+            List visibleSample = new ArrayList<>();
 
-                // mark data points and collect them for histogram in visualSample
-                visibleSample = new ArrayList<Double>();
+            g2d.setPaint(Color.red);
+            for (int i = startX; i <= endX; i++) {
+                // test for actual data point
+                if (((pdfPoints.get(i) - Math.floor(pdfPoints.get(i))) > 0.0)//
+                        &&//
+                        (mapX(pdfPoints.get(i)) >= leftMargin)) {
+                    Ellipse2D selectedPoint = new Ellipse2D.Double( //
+                            mapX(pdfPoints.get(i)), mapY(stackedAliquotKernels[0][i] * scale + .01), 2, 2);
 
-                g2d.setPaint(Color.red);
-                for (int i = startX; i <= endX; i++) {
-                    // test for actual data point
-                    if (((pdfPoints.get(i) - Math.floor(pdfPoints.get(i))) > 0.0)//
-                            &&//
-                            (mapX(pdfPoints.get(i)) >= leftMargin)) {
-                        Ellipse2D selectedPoint = new Ellipse2D.Double( //
-                                mapX(pdfPoints.get(i)), mapY(stackedAliquotKernels[0][i] * scale + .01), 2, 2);
-
-                        visibleSample.add(pdfPoints.get(i));
-                        g2d.fill(selectedPoint);
-                    }
+                    visibleSample.add(pdfPoints.get(i));
+                    g2d.fill(selectedPoint);
                 }
-
             }
 
+//            }
             // draw tics
             drawTics(g2d);
-            if (showHistogram) {
+            if (showHistogram && visibleSample.size() > 0) {
                 drawHistograms(g2d, visibleSample);
             }
 
@@ -494,7 +491,7 @@ public class DateProbabilityDensityPanel extends JLayeredPane
 
     }
 
-    private void drawHistograms(Graphics2D g2d, ArrayList<Double> visibleSample) {
+    private void drawHistograms(Graphics2D g2d, List<Double> visibleSample) {
 
         int countOfBins = selectedHistogramBinCount;  // incoming from spinner
 
@@ -757,8 +754,8 @@ public class DateProbabilityDensityPanel extends JLayeredPane
         }
         for (ETFractionInterface f : selectedFractions) {
             // nov 2011 add in tiny amount so that grapher can distinguish between annum and dates based on aaaa.0  vs aaaa.0000001
-            // April 2016 remove primary standard
-            if (!f.isStandard()) {
+            // April 2016 remove primary and secondary reference materials
+            if (!f.isStandard() && !f.isSecondaryStandard()) {
                 pdfPoints.add(f.getRadiogenicIsotopeDateByName(getChosenDateName()).getValue().movePointLeft(6).doubleValue() + 0.0000001);
             }
         }
@@ -782,7 +779,7 @@ public class DateProbabilityDensityPanel extends JLayeredPane
 
         for (ETFractionInterface f : selectedFractions) {
             // April 2016 remove primary standard
-            if (!f.isStandard()) {
+            if (!f.isStandard() && !f.isSecondaryStandard()) {
                 ValueModel date = f.getRadiogenicIsotopeDateByName(chosenDateName);
 
                 // June 2013 experiment with Vermeesch KDE

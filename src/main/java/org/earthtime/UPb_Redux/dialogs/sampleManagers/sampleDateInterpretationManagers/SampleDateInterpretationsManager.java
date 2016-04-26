@@ -258,9 +258,13 @@ public class SampleDateInterpretationsManager extends DialogEditor
             ((ConcordiaGraphPanel) concordiaGraphPanel).setShowExcludedEllipses(showExcludedFractions_checkbox.isSelected());
         }
 
+        if (CGO.containsKey("showFilteredEllipses")) {
+            showFilteredFractions_checkbox.setSelected(Boolean.valueOf(CGO.get("showFilteredEllipses")));
+            ((AliquotDetailsDisplayInterface) concordiaGraphPanel).setShowFilteredEllipses(showFilteredFractions_checkbox.isSelected());
+        }
+
         if (CGO.containsKey("useUncertaintyCrosses")) {
-            useUncertaintyCrosses_checkbox.setSelected(Boolean.valueOf(CGO.get("useUncertaintyCrosses")));
-            ((ConcordiaGraphPanel) concordiaGraphPanel).setUseUncertaintyCrosses(useUncertaintyCrosses_checkbox.isSelected());
+            ((ConcordiaGraphPanel) concordiaGraphPanel).setUseUncertaintyCrosses(Boolean.valueOf(CGO.get("useUncertaintyCrosses")));
         }
 
         if (CGO.containsKey("showConcordiaErrors")) {
@@ -293,23 +297,16 @@ public class SampleDateInterpretationsManager extends DialogEditor
         concordiaLayeredPane.add(concordiaGraphPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         // zoom buttons
-        zoomInX2_button.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent arg0) {
-                ((ConcordiaGraphPanel) concordiaGraphPanel).performZoom(4.0);
-                ((ConcordiaGraphPanel) concordiaGraphPanel).getCurrentGraphAxesSetup().setUseAutomaticAxisTics(true);
-                ((ConcordiaGraphPanel) concordiaGraphPanel).repaint();
-            }
+        zoomInX2_button.addActionListener((ActionEvent arg0) -> {
+            ((ConcordiaGraphPanel) concordiaGraphPanel).performZoom(4.0);
+            ((ConcordiaGraphPanel) concordiaGraphPanel).getCurrentGraphAxesSetup().setUseAutomaticAxisTics(true);
+            concordiaGraphPanel.repaint();
         });
 
-        zoomOutX2_button.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                ((ConcordiaGraphPanel) concordiaGraphPanel).performZoom(-2.0);
-                ((ConcordiaGraphPanel) concordiaGraphPanel).getCurrentGraphAxesSetup().setUseAutomaticAxisTics(true);
-                concordiaGraphPanel.repaint();
-            }
+        zoomOutX2_button.addActionListener((ActionEvent arg0) -> {
+            ((ConcordiaGraphPanel) concordiaGraphPanel).performZoom(-2.0);
+            ((ConcordiaGraphPanel) concordiaGraphPanel).getCurrentGraphAxesSetup().setUseAutomaticAxisTics(true);
+            concordiaGraphPanel.repaint();
         });
 
     }
@@ -642,7 +639,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
                         setSelectedFractions(filterActiveUPbFractions(sample.getUpbFractionsUnknown()));
                 // fire off date model to filter its deselected fractions
                 try {
-                    ((SampleTreeI) dateTreeByAliquot).performLastUserSelectionOfSampleDate();
+                    dateTreeByAliquot.performLastUserSelectionOfSampleDate();
                 } catch (Exception selectionError) {
                 }
                 ((DateProbabilityDensityPanel) probabilityPanel).prepareAndPaintPanel();
@@ -673,9 +670,15 @@ public class SampleDateInterpretationsManager extends DialogEditor
 
                 // oct 2014 make choices stick to data table
                 Vector<ETFractionInterface> filteredFractions = filterActiveUPbFractions(sample.getUpbFractionsUnknown());
-                sample.updateSetOfActiveFractions(filteredFractions);
-                // oct 2014 repaint table
-                parentFrame.updateReportTable();
+                // April 2016 do not reject fractions, merely disappear them from plots
+                // TODO: button that allows filtering to be on
+//                sample.updateSetOfActiveFractions(filteredFractions);
+//                // oct 2014 repaint table
+//                parentFrame.updateReportTable();
+//                Vector<ETFractionInterface> filteredFractions = filterActiveUPbFractions(((DateProbabilityDensityPanel) probabilityPanel).getSelectedFractions());
+                
+                ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
+                        setFilteredFractions(filteredFractions);
 
                 ((DateProbabilityDensityPanel) probabilityPanel).//
                         setSelectedFractions(filteredFractions);
@@ -939,7 +942,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         showTight_toggleButton =  new ET_JToggleButton();
         showExcludedFractions_checkbox = new javax.swing.JCheckBox();
         thoriumConcordiaFlavor_radioButton = new javax.swing.JRadioButton();
-        useUncertaintyCrosses_checkbox = new javax.swing.JCheckBox();
+        showFilteredFractions_checkbox = new javax.swing.JCheckBox();
         commonLeadCorrectionSelector_checkbox = new javax.swing.JCheckBox();
         weightedMeanLayeredPane = new javax.swing.JLayeredPane();
         weightedMeanToolPanel = new javax.swing.JPanel();
@@ -1241,14 +1244,14 @@ public class SampleDateInterpretationsManager extends DialogEditor
         });
         concordiaToolPanel.add(thoriumConcordiaFlavor_radioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 1, -1, 28));
 
-        useUncertaintyCrosses_checkbox.setFont(new java.awt.Font("SansSerif", 1, 10)); // NOI18N
-        useUncertaintyCrosses_checkbox.setText("<html>use<br> Crosses</html>");
-        useUncertaintyCrosses_checkbox.addActionListener(new java.awt.event.ActionListener() {
+        showFilteredFractions_checkbox.setFont(new java.awt.Font("SansSerif", 1, 10)); // NOI18N
+        showFilteredFractions_checkbox.setText("<html>Filtered Fractions\n<br>\n</html>");
+        showFilteredFractions_checkbox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                useUncertaintyCrosses_checkboxActionPerformed(evt);
+                showFilteredFractions_checkboxActionPerformed(evt);
             }
         });
-        concordiaToolPanel.add(useUncertaintyCrosses_checkbox, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 2, 70, 25));
+        concordiaToolPanel.add(showFilteredFractions_checkbox, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 2, 80, 25));
 
         commonLeadCorrectionSelector_checkbox.setFont(new java.awt.Font("SansSerif", 1, 9)); // NOI18N
         commonLeadCorrectionSelector_checkbox.setText("Pbc");
@@ -1901,10 +1904,10 @@ private void ellipseCenters_checkboxActionPerformed(java.awt.event.ActionEvent e
     ((ConcordiaGraphPanel) concordiaGraphPanel).setShowEllipseCenters(!state);
     ellipseCenters_checkbox.setSelected(!state);
 
-    ((ConcordiaGraphPanel) concordiaGraphPanel).getConcordiaOptions()//
+    ((AliquotDetailsDisplayInterface) concordiaGraphPanel).getConcordiaOptions()//
             .put("showEllipseCenters", Boolean.toString(!state));
 
-    ((ConcordiaGraphPanel) concordiaGraphPanel).repaint();
+    concordiaGraphPanel.repaint();
 }//GEN-LAST:event_ellipseCenters_checkboxActionPerformed
 
 private void ellipseLabels_checkboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ellipseLabels_checkboxActionPerformed
@@ -2134,7 +2137,7 @@ private void thoriumCorrectionSelector_checkboxActionPerformed (java.awt.event.A
     ((ConcordiaGraphPanel) concordiaGraphPanel).toggleDisplay_r206_238r_Th();
     thoriumCorrectionSelector_checkbox.setSelected(((ConcordiaGraphPanel) concordiaGraphPanel).isDisplay_r206_238r_Th());
 
-    ((ConcordiaGraphPanel) concordiaGraphPanel).repaint();
+    concordiaGraphPanel.repaint();
 }//GEN-LAST:event_thoriumCorrectionSelector_checkboxActionPerformed
 
 private void protactiniumCorrectionSelector_checkboxActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_protactiniumCorrectionSelector_checkboxActionPerformed
@@ -2196,14 +2199,13 @@ private void lockUnlockHistogramBinsActionPerformed (java.awt.event.ActionEvent 
     ((DateProbabilityDensityPanel) probabilityPanel).setFreezeHistogramBinWidth(//
             !((DateProbabilityDensityPanel) probabilityPanel).isFreezeHistogramBinWidth());
 
-    ((DateProbabilityDensityPanel) probabilityPanel).repaint();
+    probabilityPanel.repaint();
 }//GEN-LAST:event_lockUnlockHistogramBinsActionPerformed
 
 private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lockUnlockHistogramBinsMouseEntered
 
     String currentBinWidth
-            = //
-            (new DecimalFormat("###0").//
+            = (new DecimalFormat("###0").//
             format(((DateProbabilityDensityPanel) probabilityPanel).getAdjustedScottsBinWidth()))//
             + " Ma";
     if (((DateProbabilityDensityPanel) probabilityPanel).isFreezeHistogramBinWidth()) {
@@ -2246,15 +2248,17 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
         // TODO add your handling code here:
     }//GEN-LAST:event_zoomOutProbability_buttonActionPerformed
 
-    private void useUncertaintyCrosses_checkboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_useUncertaintyCrosses_checkboxActionPerformed
-        ((ConcordiaGraphPanel) concordiaGraphPanel).setUseUncertaintyCrosses(!((ConcordiaGraphPanel) concordiaGraphPanel).isUseUncertaintyCrosses());
-        useUncertaintyCrosses_checkbox.setSelected(((ConcordiaGraphPanel) concordiaGraphPanel).isUseUncertaintyCrosses());
+    private void showFilteredFractions_checkboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showFilteredFractions_checkboxActionPerformed
+
+        boolean state = ((AliquotDetailsDisplayInterface) concordiaGraphPanel).isShowFilteredEllipses();
+        ((AliquotDetailsDisplayInterface) concordiaGraphPanel).setShowFilteredEllipses(!state);
+        showFilteredFractions_checkbox.setSelected(!state);
 
         ((AliquotDetailsDisplayInterface) concordiaGraphPanel).getConcordiaOptions()//
-                .put("useUncertaintyCrosses", Boolean.toString(((ConcordiaGraphPanel) concordiaGraphPanel).isUseUncertaintyCrosses()));
+                .put("showFilteredEllipses", Boolean.toString(!state));
 
         concordiaGraphPanel.repaint();
-    }//GEN-LAST:event_useUncertaintyCrosses_checkboxActionPerformed
+    }//GEN-LAST:event_showFilteredFractions_checkboxActionPerformed
 
     private void thoriumConcordiaFlavor_radioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_thoriumConcordiaFlavor_radioButtonActionPerformed
         ((AliquotDetailsDisplayInterface) concordiaGraphPanel).getConcordiaOptions().//
@@ -2347,13 +2351,13 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
     private javax.swing.JMenuItem sampleConcordiaOptions_menuItem;
     private javax.swing.JToggleButton selectAny2Axes_toggleButton;
     private javax.swing.JCheckBox showExcludedFractions_checkbox;
+    private javax.swing.JCheckBox showFilteredFractions_checkbox;
     private javax.swing.JButton showHistogram_button;
     private javax.swing.JButton showTightGraphProbability_button;
     private javax.swing.JToggleButton showTight_toggleButton;
     private javax.swing.JRadioButton terraWasserburgFlavor_radioButton;
     private javax.swing.JRadioButton thoriumConcordiaFlavor_radioButton;
     private javax.swing.JCheckBox thoriumCorrectionSelector_checkbox;
-    private javax.swing.JCheckBox useUncertaintyCrosses_checkbox;
     private javax.swing.ButtonGroup weightedMeanFractionOrderButtonGroup;
     private javax.swing.JLayeredPane weightedMeanLayeredPane;
     private javax.swing.ButtonGroup weightedMeanPanZoom_buttonGroup;

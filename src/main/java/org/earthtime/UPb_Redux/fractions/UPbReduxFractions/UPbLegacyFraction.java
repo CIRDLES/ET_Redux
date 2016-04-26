@@ -77,6 +77,7 @@ public class UPbLegacyFraction extends Fraction implements
     // added july 2010 for detrital filtering
     private boolean filtered;
     private boolean standard;
+    private boolean secondaryStandard;
 
     /**
      *
@@ -683,6 +684,7 @@ public class UPbLegacyFraction extends Fraction implements
     /**
      * @param selectedInDataTable the selectedInDataTable to set
      */
+    @Override
     public void setSelectedInDataTable(boolean selectedInDataTable) {
         this.selectedInDataTable = selectedInDataTable;
     }
@@ -690,6 +692,7 @@ public class UPbLegacyFraction extends Fraction implements
     /**
      *
      */
+    @Override
     public void toggleRejectedStatus() {
         this.rejected = !this.rejected;
     }
@@ -697,6 +700,7 @@ public class UPbLegacyFraction extends Fraction implements
     /**
      * @return the standard
      */
+    @Override
     public boolean isStandard() {
         return standard;
     }
@@ -704,9 +708,28 @@ public class UPbLegacyFraction extends Fraction implements
     /**
      * @param standard the standard to set
      */
+    @Override
     public void setStandard(boolean standard) {
         this.standard = standard;
     }
+    
+       /**
+     * @return the secondaryStandard
+     */
+    @Override
+    public boolean isSecondaryStandard() {
+        return secondaryStandard;
+    }
+
+    /**
+     * @param secondaryStandard the secondaryStandard to set
+     */
+    @Override
+    public void setSecondaryStandard(boolean secondaryStandard) {
+        this.secondaryStandard = secondaryStandard;
+    }
+
+
 
     @Override
     public boolean isCommonLeadLossCorrected() {

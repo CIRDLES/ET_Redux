@@ -67,6 +67,8 @@ public interface AliquotDetailsDisplayInterface {
      */
     public void setSelectedFractions(Vector<ETFractionInterface> fractions);
 
+    public void setFilteredFractions(Vector<ETFractionInterface> filteredFractions);
+
     /**
      *
      * @return
@@ -89,4 +91,7 @@ public interface AliquotDetailsDisplayInterface {
         repaint();
     }
 
+    public boolean isShowFilteredEllipses();
+
+    public void setShowFilteredEllipses(boolean showFilteredEllipses);
 }

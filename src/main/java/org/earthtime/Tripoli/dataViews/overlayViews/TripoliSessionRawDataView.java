@@ -988,13 +988,11 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
                 underlay.add(rawDataModelViewsOverlay, javax.swing.JLayeredPane.PALETTE_LAYER);
 
             } else // detect if grid for intercept fractionation of standards *********************************** Intercept Fractionation of standards
-            {
-                if (FRACTION_LAYOUT_VIEW_STYLE.equals(FractionLayoutViewStylesEnum.GRID_INTERCEPT)) {
+             if (FRACTION_LAYOUT_VIEW_STYLE.equals(FractionLayoutViewStylesEnum.GRID_INTERCEPT)) {
                     for (int f = 0; f < (fractionCountForHorizontalLayout); f++) {
                         ((FitFunctionDataInterface) rawDataModelViews[i][f]).setShowFittedFunction(true);
                     }
                 }
-            }
         }
 
         // establish graphWidth 
@@ -1295,6 +1293,12 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
         refreshPanel(true);
     }
 
+    public void setAllLocalYAxisPanes() {
+        getTripoliSession().setAllFractionsOfLocalYAxis();
+
+        refreshPanel(true);
+    }
+
     /**
      *
      * @param backgroundColor
@@ -1383,7 +1387,7 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
             xAxisZoomSlider.addChangeListener(changeListeners[0]);
         }
     }
-    
+
     /**
      * @return the SAVED_YAXIS_IS_UNIFORM
      */
@@ -1406,7 +1410,8 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
     }
 
     /**
-     * @param aSAVED_DATA_USED_FOR_SCALING the SAVED_DATA_USED_FOR_SCALING to set
+     * @param aSAVED_DATA_USED_FOR_SCALING the SAVED_DATA_USED_FOR_SCALING to
+     * set
      */
     public void setSAVED_DATA_USED_FOR_SCALING(IncludedTypeEnum aSAVED_DATA_USED_FOR_SCALING) {
         SAVED_DATA_USED_FOR_SCALING = aSAVED_DATA_USED_FOR_SCALING;

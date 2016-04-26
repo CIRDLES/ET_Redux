@@ -54,6 +54,7 @@ public class SampleDateInterpretationGUIOptions
         concordiaOptions.put("showEllipseLabels", "false");
         concordiaOptions.put("showConcordiaErrors", "true");
         concordiaOptions.put("showExcludedEllipses", "true");
+        concordiaOptions.put("showFilteredEllipses", "false");
         // suffix can be _Th, _Pa, _Th_Pa, or ""
         concordiaOptions.put("display_r206_238r_Th", "false");
         concordiaOptions.put("display_r206_238r_Pa", "false");

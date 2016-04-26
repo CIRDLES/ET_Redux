@@ -79,6 +79,10 @@ public class ConcordiaOptionsDialog extends DialogEditor {
         try {
 
             // Ellipses
+            // april 2016 use crosses option
+            boolean useUncertaintyCrosses = Boolean.valueOf(RetrieveOptionField("useUncertaintyCrosses"));
+            useUncertaintyCrosses_checkbox.setSelected(useUncertaintyCrosses);
+            
             // Ellipse size
             oneSigmaEllipse_rButton.setText("1\u03C3");
             twoSigmaEllipse_rButton.setText("2\u03C3");
@@ -286,6 +290,9 @@ public class ConcordiaOptionsDialog extends DialogEditor {
             }
         }
 
+        getConcordiaOptions()//
+                .put("useUncertaintyCrosses", Boolean.toString(useUncertaintyCrosses_checkbox.isSelected()));
+
         getConcordiaOptions().put("ellipseLabelFont", (String) ellipseFonts_comboBox.getSelectedItem());
 
         getConcordiaOptions().put("ellipseLabelFontSize", //
@@ -400,13 +407,13 @@ public class ConcordiaOptionsDialog extends DialogEditor {
         jLabel21 = new javax.swing.JLabel();
         jLabel22 = new javax.swing.JLabel();
         titleFontSize_spinner = new javax.swing.JSpinner();
-        titleFonts_comboBox = new javax.swing.JComboBox<String>();
+        titleFonts_comboBox = new javax.swing.JComboBox<>();
         axesLabelFontSize_spinner = new javax.swing.JSpinner();
-        axesLabelFonts_comboBox = new javax.swing.JComboBox<String>();
+        axesLabelFonts_comboBox = new javax.swing.JComboBox<>();
         axesTicLabelFontSize_spinner = new javax.swing.JSpinner();
-        axesTicLabelFonts_comboBox = new javax.swing.JComboBox<String>();
+        axesTicLabelFonts_comboBox = new javax.swing.JComboBox<>();
         concordiaLabelFontSize_spinner = new javax.swing.JSpinner();
-        concordiaLabelFonts_comboBox = new javax.swing.JComboBox<String>();
+        concordiaLabelFonts_comboBox = new javax.swing.JComboBox<>();
         concordiaTicWeight_spinner = new javax.swing.JSpinner();
         concordiaTicAsLine_rButton = new javax.swing.JRadioButton();
         concordiaTicAsSquare_rButton = new javax.swing.JRadioButton();
@@ -418,7 +425,7 @@ public class ConcordiaOptionsDialog extends DialogEditor {
         oneSigmaEllipse_rButton = new javax.swing.JRadioButton();
         twoSigmaEllipse_rButton = new javax.swing.JRadioButton();
         ninetyFivePCTEllipse_rButton = new javax.swing.JRadioButton();
-        ellipseFonts_comboBox = new javax.swing.JComboBox<String>();
+        ellipseFonts_comboBox = new javax.swing.JComboBox<>();
         concordiaLineColor_label = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
         jLabel23 = new javax.swing.JLabel();
@@ -434,6 +441,7 @@ public class ConcordiaOptionsDialog extends DialogEditor {
         truncateRegressionCurves_chkBox = new javax.swing.JCheckBox();
         jLabel27 = new javax.swing.JLabel();
         concordiaLabelContents_comboBox = new javax.swing.JComboBox();
+        useUncertaintyCrosses_checkbox = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Concordia Plot Display Settings");
@@ -654,6 +662,9 @@ public class ConcordiaOptionsDialog extends DialogEditor {
 
         concordiaLabelContents_comboBox.setEnabled(false);
 
+        useUncertaintyCrosses_checkbox.setFont(new java.awt.Font("SansSerif", 1, 13)); // NOI18N
+        useUncertaintyCrosses_checkbox.setText("use Crosses");
+
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -669,12 +680,9 @@ public class ConcordiaOptionsDialog extends DialogEditor {
                     .add(layout.createSequentialGroup()
                         .add(47, 47, 47)
                         .add(jLabel27, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE))
-                    .add(layout.createSequentialGroup()
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                            .add(jLabel24)
-                            .add(jLabel26, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 205, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(jLabel25, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 160, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
+                    .add(jLabel24)
+                    .add(jLabel26, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 205, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jLabel25, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 160, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
@@ -692,9 +700,9 @@ public class ConcordiaOptionsDialog extends DialogEditor {
                     .add(concordiaLabelContents_comboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 216, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
             .add(layout.createSequentialGroup()
-                .add(10, 10, 10)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(layout.createSequentialGroup()
+                        .add(10, 10, 10)
                         .add(jLabel14)
                         .add(84, 84, 84)
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -709,18 +717,24 @@ public class ConcordiaOptionsDialog extends DialogEditor {
                             .add(axesTicLabelFontSize_spinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 77, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                             .add(axesLabelFonts_comboBox, 0, 207, Short.MAX_VALUE)))
                     .add(layout.createSequentialGroup()
-                        .add(jLabel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 91, Short.MAX_VALUE)
+                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(layout.createSequentialGroup()
+                                .add(10, 10, 10)
+                                .add(jLabel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .add(layout.createSequentialGroup()
+                                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .add(useUncertaintyCrosses_checkbox)))
                         .add(18, 18, 18)
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel6, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE)
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE)
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE)
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel6, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE)
                             .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel7, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 109, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel8, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel9, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel10, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel11, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel13, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE)
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel8, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE)
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel9, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE)
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel10, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE)
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel11, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE)
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel13, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE)
                             .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel12, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 102, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -730,25 +744,25 @@ public class ConcordiaOptionsDialog extends DialogEditor {
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                                 .add(concordiaTicAsSquare_rButton)
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(concordiaTicAsCircle_rButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 85, Short.MAX_VALUE))
+                                .add(concordiaTicAsCircle_rButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 78, Short.MAX_VALUE))
                             .add(layout.createSequentialGroup()
-                                .add(errorStyleDottedConcordia_rButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE)
+                                .add(errorStyleDottedConcordia_rButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 109, Short.MAX_VALUE)
                                 .add(24, 24, 24)
-                                .add(errorStyleShadedConcordia_rButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 84, Short.MAX_VALUE))
+                                .add(errorStyleShadedConcordia_rButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE))
                             .add(layout.createSequentialGroup()
                                 .add(oneSigmaEllipse_rButton)
                                 .add(7, 7, 7)
                                 .add(twoSigmaEllipse_rButton)
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(ninetyFivePCTEllipse_rButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 59, Short.MAX_VALUE))
+                                .add(ninetyFivePCTEllipse_rButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 58, Short.MAX_VALUE))
                             .add(concordiaLineColor_label, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 207, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                             .add(ellipseFonts_comboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 202, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                             .add(layout.createSequentialGroup()
                                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                    .add(concordiaLabelFontSize_spinner, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 97, Short.MAX_VALUE)
-                                    .add(concordiaTicWeight_spinner, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 97, Short.MAX_VALUE)
-                                    .add(concordiaLineWeight_spinner, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 97, Short.MAX_VALUE)
-                                    .add(ellipseLabelFontSize_spinner, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 97, Short.MAX_VALUE))
+                                    .add(concordiaLabelFontSize_spinner, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 102, Short.MAX_VALUE)
+                                    .add(concordiaTicWeight_spinner, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 102, Short.MAX_VALUE)
+                                    .add(concordiaLineWeight_spinner, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 102, Short.MAX_VALUE)
+                                    .add(ellipseLabelFontSize_spinner, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 102, Short.MAX_VALUE))
                                 .add(117, 117, 117)))))
                 .addContainerGap())
             .add(layout.createSequentialGroup()
@@ -823,7 +837,9 @@ public class ConcordiaOptionsDialog extends DialogEditor {
                                 .add(3, 3, 3)
                                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                                     .add(jLabel4)
-                                    .add(jLabel2))))
+                                    .add(jLabel2))
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                .add(useUncertaintyCrosses_checkbox)))
                         .add(162, 162, 162)))
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(jLabel13)
@@ -985,6 +1001,7 @@ private void revert_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN
     private javax.swing.JComboBox<String> titleFonts_comboBox;
     private javax.swing.JCheckBox truncateRegressionCurves_chkBox;
     private javax.swing.JRadioButton twoSigmaEllipse_rButton;
+    private javax.swing.JCheckBox useUncertaintyCrosses_checkbox;
     // End of variables declaration//GEN-END:variables
 
     /**
