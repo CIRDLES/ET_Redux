@@ -670,7 +670,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
 
         add(probabilityPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        kwikiPDFToolBar = new KwikiPDFToolBar(1650, concordiaGraphPanel.getHeight() + topMargin + 60, probabilityPanel, null, project.getSuperSample());
+        kwikiPDFToolBar = new KwikiPDFToolBar(1350, concordiaGraphPanel.getHeight() + topMargin + 60, probabilityPanel, null, project.getSuperSample());
         add(kwikiPDFToolBar, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
     }
