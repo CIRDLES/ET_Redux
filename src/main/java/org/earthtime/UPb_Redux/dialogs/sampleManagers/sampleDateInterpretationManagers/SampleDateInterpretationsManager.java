@@ -506,6 +506,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         // zoom buttons
         zoomInProbability_button.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent arg0) {
                 // zoom
                 ((DateProbabilityDensityPanel) probabilityPanel).zoomIn();
@@ -514,6 +515,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
 
         zoomOutProbability_button.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent arg0) {
                 // zoom
                 double rangeX = ((DateProbabilityDensityPanel) probabilityPanel).getRangeX_Display();
@@ -599,6 +601,8 @@ public class SampleDateInterpretationsManager extends DialogEditor
         ((DateProbabilityDensityPanel) probabilityPanel).setExternalBinWidthTextField((ReduxSuppressComponentEventsI) binWidth_text);
 
         normedProbabilityLayeredPane.add(probabilityPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        
+        performFilteringPerSliders();
 
     } // initNormedProbabilityPanel
 
@@ -634,15 +638,17 @@ public class SampleDateInterpretationsManager extends DialogEditor
             if (validKey) {
                 // test for linkage
                 updateSlidersStatus(slider);
+                
+                performFilteringPerSliders();
 
-                ((DateProbabilityDensityPanel) probabilityPanel).//
-                        setSelectedFractions(filterActiveUPbFractions(sample.getUpbFractionsUnknown()));
-                // fire off date model to filter its deselected fractions
-                try {
-                    dateTreeByAliquot.performLastUserSelectionOfSampleDate();
-                } catch (Exception selectionError) {
-                }
-                ((DateProbabilityDensityPanel) probabilityPanel).prepareAndPaintPanel();
+////                ((DateProbabilityDensityPanel) probabilityPanel).//
+////                        setSelectedFractions(filterActiveUPbFractions(sample.getUpbFractionsUnknown()));
+////                // fire off date model to filter its deselected fractions
+////                try {
+////                    dateTreeByAliquot.performLastUserSelectionOfSampleDate();
+////                } catch (Exception selectionError) {
+////                }
+////                ((DateProbabilityDensityPanel) probabilityPanel).prepareAndPaintPanel();
                 validKey = false;
             }
         }
@@ -668,21 +674,45 @@ public class SampleDateInterpretationsManager extends DialogEditor
             if (!slider.getValueIsAdjusting() && wasChanging) {
                 updateSlidersStatus(slider);
 
-                // oct 2014 make choices stick to data table
-                Vector<ETFractionInterface> filteredFractions = filterActiveUPbFractions(sample.getUpbFractionsUnknown());
-                // April 2016 do not reject fractions, merely disappear them from plots
-                // TODO: button that allows filtering to be on
-//                sample.updateSetOfActiveFractions(filteredFractions);
-//                // oct 2014 repaint table
-//                parentFrame.updateReportTable();
-//                Vector<ETFractionInterface> filteredFractions = filterActiveUPbFractions(((DateProbabilityDensityPanel) probabilityPanel).getSelectedFractions());
+                probabilityChartOptions.put(slider.getName(), Integer.toString(slider.getValue()));
                 
-                ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
+                performFilteringPerSliders();
+////                // oct 2014 make choices stick to data table
+////                Vector<ETFractionInterface> filteredFractions = filterActiveUPbFractions(sample.getUpbFractionsUnknown());
+////                // April 2016 do not reject fractions, merely disappear them from plots
+////                // TODO: button that allows filtering to be on
+//////                sample.updateSetOfActiveFractions(filteredFractions);
+//////                // oct 2014 repaint table
+//////                parentFrame.updateReportTable();
+//////                Vector<ETFractionInterface> filteredFractions = filterActiveUPbFractions(((DateProbabilityDensityPanel) probabilityPanel).getSelectedFractions());
+////                
+////                ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
+////                        setFilteredFractions(filteredFractions);
+////
+////                ((DateProbabilityDensityPanel) probabilityPanel).//
+////                        setSelectedFractions(filteredFractions);
+////                probabilityChartOptions.put(slider.getName(), Integer.toString(slider.getValue()));
+////
+////                // fire off date model to filter its deselected fractions
+////                try {
+////                    dateTreeByAliquot.performLastUserSelectionOfSampleDate();
+////                } catch (Exception selectionError) {
+////                }
+////                ((DateProbabilityDensityPanel) probabilityPanel).prepareAndPaintPanel();
+                wasChanging = false;
+            }
+        }
+    }
+    
+    public void performFilteringPerSliders(){
+        Vector<ETFractionInterface> filteredFractions = filterActiveUPbFractions(sample.getUpbFractionsUnknown());
+        
+        ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
                         setFilteredFractions(filteredFractions);
 
                 ((DateProbabilityDensityPanel) probabilityPanel).//
                         setSelectedFractions(filteredFractions);
-                probabilityChartOptions.put(slider.getName(), Integer.toString(slider.getValue()));
+//                probabilityChartOptions.put(slider.getName(), Integer.toString(slider.getValue()));
 
                 // fire off date model to filter its deselected fractions
                 try {
@@ -690,9 +720,6 @@ public class SampleDateInterpretationsManager extends DialogEditor
                 } catch (Exception selectionError) {
                 }
                 ((DateProbabilityDensityPanel) probabilityPanel).prepareAndPaintPanel();
-                wasChanging = false;
-            }
-        }
     }
 
     private void updateSlidersStatus(JSlider slider) {
@@ -1245,7 +1272,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         concordiaToolPanel.add(thoriumConcordiaFlavor_radioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 1, -1, 28));
 
         showFilteredFractions_checkbox.setFont(new java.awt.Font("SansSerif", 1, 10)); // NOI18N
-        showFilteredFractions_checkbox.setText("<html>Filtered Fractions\n<br>\n</html>");
+        showFilteredFractions_checkbox.setText("<html>Filtering ON<br> </html>");
         showFilteredFractions_checkbox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 showFilteredFractions_checkboxActionPerformed(evt);

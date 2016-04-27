@@ -631,7 +631,7 @@
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                           <Font name="SansSerif" size="10" style="1"/>
                         </Property>
-                        <Property name="text" type="java.lang.String" value="&lt;html&gt;Filtered Fractions&#xa;&lt;br&gt;&#xa;&lt;/html&gt;"/>
+                        <Property name="text" type="java.lang.String" value="&lt;html&gt;Filtering ON&lt;br&gt; &lt;/html&gt;"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="showFilteredFractions_checkboxActionPerformed"/>
