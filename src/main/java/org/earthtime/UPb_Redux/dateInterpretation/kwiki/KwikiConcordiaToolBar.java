@@ -113,12 +113,9 @@ public class KwikiConcordiaToolBar extends JLayeredPane implements GraphPanelMod
         zoomOutX2.setMargin(new Insets(0, 0, 0, 0));
 
 
-        zoomOutX2.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent arg0) {
-                ((ConcordiaGraphPanel) concordiaGraphPanel).performZoom(-2.0);
-                concordiaGraphPanel.repaint();
-            }
+        zoomOutX2.addActionListener((ActionEvent arg0) -> {
+            ((ConcordiaGraphPanel) concordiaGraphPanel).performZoom(-2.0);
+            concordiaGraphPanel.repaint();
         });
 
         add(zoomOutX2, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -145,12 +142,9 @@ public class KwikiConcordiaToolBar extends JLayeredPane implements GraphPanelMod
         panToggle.setMargin(new Insets(0, 0, 0, 0));
 
 
-        panToggle.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent arg0) {
-                ((ConcordiaGraphPanel) concordiaGraphPanel).setImageMode("PAN");
-                panToggle.requestFocusInWindow();
-            }
+        panToggle.addActionListener((ActionEvent arg0) -> {
+            ((ConcordiaGraphPanel) concordiaGraphPanel).setImageMode("PAN");
+            panToggle.requestFocusInWindow();
         });
 
         add(panToggle, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -163,11 +157,8 @@ public class KwikiConcordiaToolBar extends JLayeredPane implements GraphPanelMod
         zoomBoxToggle.setMargin(new Insets(0, 0, 0, 0));
 
 
-        zoomBoxToggle.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent arg0) {
-                ((ConcordiaGraphPanel) concordiaGraphPanel).setImageMode("ZOOM");
-            }
+        zoomBoxToggle.addActionListener((ActionEvent arg0) -> {
+            ((ConcordiaGraphPanel) concordiaGraphPanel).setImageMode("ZOOM");
         });
 
         add(zoomBoxToggle, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -182,12 +173,9 @@ public class KwikiConcordiaToolBar extends JLayeredPane implements GraphPanelMod
         ellipseCentersToggle.setBounds(119, 2, 60, 15);
         ellipseCentersToggle.setMargin(new Insets(0, 0, 0, 0));
 
-        ellipseCentersToggle.addChangeListener(new ChangeListener() {
-
-            public void stateChanged(ChangeEvent e) {
-                ((ConcordiaGraphPanel) concordiaGraphPanel).setShowEllipseCenters(((AbstractButton) e.getSource()).isSelected());
-                concordiaGraphPanel.repaint();
-            }
+        ellipseCentersToggle.addChangeListener((ChangeEvent e) -> {
+            ((ConcordiaGraphPanel) concordiaGraphPanel).setShowEllipseCenters(((AbstractButton) e.getSource()).isSelected());
+            concordiaGraphPanel.repaint();
         });
         // set it true
         ellipseCentersToggle.doClick();
@@ -201,12 +189,9 @@ public class KwikiConcordiaToolBar extends JLayeredPane implements GraphPanelMod
         ellipseLabelsToggle.setBounds(119, 17, 60, 15);
         ellipseLabelsToggle.setMargin(new Insets(0, 0, 0, 0));
 
-        ellipseLabelsToggle.addChangeListener(new ChangeListener() {
-
-            public void stateChanged(ChangeEvent e) {
-                ((ConcordiaGraphPanel) concordiaGraphPanel).setShowEllipseLabels(((AbstractButton) e.getSource()).isSelected());
-                concordiaGraphPanel.repaint();
-            }
+        ellipseLabelsToggle.addChangeListener((ChangeEvent e) -> {
+            ((ConcordiaGraphPanel) concordiaGraphPanel).setShowEllipseLabels(((AbstractButton) e.getSource()).isSelected());
+            concordiaGraphPanel.repaint();
         });
 
         // set it false
@@ -221,12 +206,9 @@ public class KwikiConcordiaToolBar extends JLayeredPane implements GraphPanelMod
         concordiaErrorsToggle.setBounds(119, 32, 60, 15);
         concordiaErrorsToggle.setMargin(new Insets(0, 0, 0, 0));
 
-        concordiaErrorsToggle.addChangeListener(new ChangeListener() {
-
-            public void stateChanged(ChangeEvent e) {
-                ((ConcordiaGraphPanel) concordiaGraphPanel).setShowConcordiaErrorBars(((AbstractButton) e.getSource()).isSelected());
-                concordiaGraphPanel.repaint();
-            }
+        concordiaErrorsToggle.addChangeListener((ChangeEvent e) -> {
+            ((ConcordiaGraphPanel) concordiaGraphPanel).setShowConcordiaErrorBars(((AbstractButton) e.getSource()).isSelected());
+            concordiaGraphPanel.repaint();
         });
 
         // set it true

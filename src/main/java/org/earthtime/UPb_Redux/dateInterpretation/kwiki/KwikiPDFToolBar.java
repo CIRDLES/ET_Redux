@@ -36,6 +36,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.dateInterpretation.DateProbabilityDensityPanel;
+import org.earthtime.UPb_Redux.dateInterpretation.SampleTreeI;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.AliquotDetailsDisplayInterface;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.GraphPanelModeChangeI;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.PlottingDetailsDisplayInterface;
@@ -65,6 +66,7 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
     private Map<String, String> probabilityChartOptions;
     private javax.swing.JSlider negativePctDiscordance_slider;
     private javax.swing.JSlider positivePctDiscordance_slider;
+    private SampleTreeI dateTreeByAliquot;
 
     /**
      * Creates a new instance of KwikiConcordiaToolBar
@@ -74,9 +76,10 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
      * @param aPDFGraphPanel
      * @param aConcordiaGraphPanel
      * @param sample the value of sample
+     * @param dateTreeByAliquot
      */
     public KwikiPDFToolBar(
-            int x, int y, JLayeredPane aPDFGraphPanel, JLayeredPane aConcordiaGraphPanel, SampleInterface sample) {
+            int x, int y, JLayeredPane aPDFGraphPanel, JLayeredPane aConcordiaGraphPanel, SampleInterface sample, SampleTreeI dateTreeByAliquot) {
 
         super();
 
@@ -84,12 +87,14 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
 
         setBackground(Color.white);
 
-        setBounds(x, y, 552, 56);
+        setBounds(x, y, aPDFGraphPanel.getWidth(), 56);
 
         this.probabilityPanel = aPDFGraphPanel;
         this.concordiaGraphPanel = aConcordiaGraphPanel;
 
         this.sample = sample;
+        
+        this.dateTreeByAliquot = dateTreeByAliquot;
         probabilityChartOptions = sample.getSampleDateInterpretationGUISettings().getProbabilityChartOptions();
 
         SetupZoomToggleButtons();
@@ -123,7 +128,7 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
         positivePctDiscordance_slider.setAutoscrolls(true);
         positivePctDiscordance_slider.setValue(Integer.parseInt(probabilityChartOptions.get("positivePerCentDiscordanceSliderValue")));
         positivePctDiscordance_slider.setName("positivePerCentDiscordanceSliderValue");
-        positivePctDiscordance_slider.setBounds(325, 1, 185, 38);
+        positivePctDiscordance_slider.setBounds(315, 1, 185, 38);
         positivePctDiscordance_slider.addChangeListener(new SliderChangeListener());
         add(positivePctDiscordance_slider);
 
@@ -188,8 +193,14 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
 
         ((DateProbabilityDensityPanel) probabilityPanel).//
                 setSelectedFractions(filteredFractions);
+        
+        try {
+            dateTreeByAliquot.performLastUserSelectionOfSampleDate();
+        } catch (Exception selectionError) {
+        }
 
         ((DateProbabilityDensityPanel) probabilityPanel).prepareAndPaintPanel();
+        concordiaGraphPanel.repaint();
     }
 
     private void SetupDateChooserButtons() {

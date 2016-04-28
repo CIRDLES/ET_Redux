@@ -258,6 +258,8 @@ public class AbstractDataMonitorView extends AbstractRawDataView
 
     private JTabbedPane reportTableTabbedPane;
     private Map<String, String> probabilityChartOptions;
+    
+    private SampleTreeI dateTreeByAliquot;
 
     /**
      *
@@ -291,7 +293,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
         saveMonitoredTime = 0L;
         tripoliFractions = new TreeSet<>();
 
-        parentDimension = new Dimension(2025, 1225);
+        parentDimension = new Dimension(2050, 1250);
 
         initView();
     }
@@ -553,7 +555,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
         this.add(editReportSettingsButton, LAYER_FIVE);
 
         ET_JButton concordiaSettingsButton = new ET_JButton("Concordia Settings");
-        concordiaSettingsButton.setBounds(leftMargin + 1085, topMargin + 660, 120, 25);
+        concordiaSettingsButton.setBounds(leftMargin + 1080, topMargin + 660, 120, 25);
         concordiaSettingsButton.addActionListener((ActionEvent ae) -> {
             ((AliquotDetailsDisplayInterface) concordiaGraphPanel).showConcordiaDisplayOptionsDialog();
         });
@@ -608,7 +610,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
             ((ConcordiaGraphPanel) concordiaGraphPanel).setShowTightToEdges(true);
 
             kwikiConcordiaToolBar = new KwikiConcordiaToolBar(//
-                    950, topMargin + concordiaGraphPanel.getHeight() + topMargin + 50, concordiaGraphPanel, null);
+                    940, topMargin + concordiaGraphPanel.getHeight() + topMargin + 50, concordiaGraphPanel, null);
 
         }
 
@@ -639,7 +641,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
             ((AliquotDetailsDisplayInterface) concordiaGraphPanel).setShowFilteredEllipses(!state);
             showFilteredFractions_checkbox.setSelected(!state);
             probabilityChartOptions.put("showFilteredEllipses", Boolean.toString(!state));
-            //concordiaGraphPanel.repaint();
+            concordiaGraphPanel.repaint();
         });
 
         if (probabilityChartOptions.containsKey("showFilteredEllipses")) {
@@ -692,7 +694,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
 
         add(probabilityPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        kwikiPDFToolBar = new KwikiPDFToolBar(1350, concordiaGraphPanel.getHeight() + topMargin + 60, probabilityPanel, concordiaGraphPanel, project.getSuperSample());
+        kwikiPDFToolBar = new KwikiPDFToolBar(1350, concordiaGraphPanel.getHeight() + topMargin + 60, probabilityPanel, concordiaGraphPanel, project.getSuperSample(), dateTreeByAliquot);
         add(kwikiPDFToolBar, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
     }
@@ -701,7 +703,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
         // april 2016 TODO: move to own method
         JScrollPane dateTreeByAliquot_ScrollPane = new javax.swing.JScrollPane();
         dateTreeByAliquot_ScrollPane.setBounds(600, topMargin + 50, 125, 580);
-        SampleTreeI dateTreeByAliquot = new SampleTreeAnalysisMode(project.getSuperSample());
+        dateTreeByAliquot = new SampleTreeAnalysisMode(project.getSuperSample());
         dateTreeByAliquot.setSampleTreeChange(this);
         dateTreeByAliquot.buildTree();
         dateTreeByAliquot.expandAllNodes();
