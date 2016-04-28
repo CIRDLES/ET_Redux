@@ -42,12 +42,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
@@ -255,6 +257,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
     private final static int pdfHeight = 575;
 
     private JTabbedPane reportTableTabbedPane;
+    private Map<String, String> probabilityChartOptions;
 
     /**
      *
@@ -328,7 +331,6 @@ public class AbstractDataMonitorView extends AbstractRawDataView
             SimpleDateFormat date_format = new SimpleDateFormat("MMM dd,yyyy HH:mm:ss");
 
 //            System.out.println("File changed at: " + date_format.format(cal.getTime()));
-
             if (loadDataTask != null) {
                 if (loadDataTask.isDone()) {
                     saveMonitoredTime = lastMonitoredTime;
@@ -551,14 +553,13 @@ public class AbstractDataMonitorView extends AbstractRawDataView
         this.add(editReportSettingsButton, LAYER_FIVE);
 
         ET_JButton concordiaSettingsButton = new ET_JButton("Concordia Settings");
-        concordiaSettingsButton.setBounds(leftMargin + 1100, topMargin + 660, 120, 25);
+        concordiaSettingsButton.setBounds(leftMargin + 1085, topMargin + 660, 120, 25);
         concordiaSettingsButton.addActionListener((ActionEvent ae) -> {
             ((AliquotDetailsDisplayInterface) concordiaGraphPanel).showConcordiaDisplayOptionsDialog();
         });
 
         concordiaSettingsButton.setEnabled(true);
         this.add(concordiaSettingsButton, LAYER_FIVE);
-
     }
 
     private void progressBarFactory() {
@@ -599,6 +600,8 @@ public class AbstractDataMonitorView extends AbstractRawDataView
 
             project.getSuperSample().getSampleDateInterpretationGUISettings().//
                     setConcordiaOptions(((AliquotDetailsDisplayInterface) concordiaGraphPanel).getConcordiaOptions());
+            probabilityChartOptions = project.getSuperSample().getSampleDateInterpretationGUISettings().getProbabilityChartOptions();
+
             ((ConcordiaGraphPanel) concordiaGraphPanel).//
                     setFadedDeselectedFractions(false);
 
@@ -626,6 +629,25 @@ public class AbstractDataMonitorView extends AbstractRawDataView
         }
 
         add(kwikiConcordiaToolBar, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        JCheckBox showFilteredFractions_checkbox = new JCheckBox();
+        showFilteredFractions_checkbox.setFont(new java.awt.Font("SansSerif", 1, 10));
+        showFilteredFractions_checkbox.setText("<html>Filtering ON<br> </html>");
+        showFilteredFractions_checkbox.setBounds(leftMargin + 1200, topMargin + 660, 120, 25);
+        showFilteredFractions_checkbox.addActionListener((java.awt.event.ActionEvent evt) -> {
+            boolean state = ((AliquotDetailsDisplayInterface) concordiaGraphPanel).isShowFilteredEllipses();
+            ((AliquotDetailsDisplayInterface) concordiaGraphPanel).setShowFilteredEllipses(!state);
+            showFilteredFractions_checkbox.setSelected(!state);
+            probabilityChartOptions.put("showFilteredEllipses", Boolean.toString(!state));
+            //concordiaGraphPanel.repaint();
+        });
+
+        if (probabilityChartOptions.containsKey("showFilteredEllipses")) {
+            showFilteredFractions_checkbox.setSelected(Boolean.valueOf(probabilityChartOptions.get("showFilteredEllipses")));
+            ((AliquotDetailsDisplayInterface) concordiaGraphPanel).setShowFilteredEllipses(showFilteredFractions_checkbox.isSelected());
+        }
+
+        this.add(showFilteredFractions_checkbox, LAYER_FIVE);
 
     }
 
@@ -670,7 +692,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
 
         add(probabilityPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        kwikiPDFToolBar = new KwikiPDFToolBar(1350, concordiaGraphPanel.getHeight() + topMargin + 60, probabilityPanel, null, project.getSuperSample());
+        kwikiPDFToolBar = new KwikiPDFToolBar(1350, concordiaGraphPanel.getHeight() + topMargin + 60, probabilityPanel, concordiaGraphPanel, project.getSuperSample());
         add(kwikiPDFToolBar, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
     }

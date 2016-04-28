@@ -83,7 +83,6 @@ import org.earthtime.beans.ET_JButton;
 import org.earthtime.beans.ET_JToggleButton;
 import org.earthtime.dataDictionaries.Lambdas;
 import org.earthtime.dataDictionaries.MatrixSpecifications;
-import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.exceptions.ETException;
@@ -386,6 +385,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         // zoom buttons
         zoomInX2_WeightedMean_button.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent arg0) {
                 // zoom
                 double rangeY = ((WeightedMeanGraphPanel) weightedMeanGraphPanel).getRangeY();
@@ -470,22 +470,18 @@ public class SampleDateInterpretationsManager extends DialogEditor
         // choose date
         for (Enumeration e = probabilityDateButtonGroup.getElements(); e.hasMoreElements();) {
             final JRadioButton jrb = (JRadioButton) e.nextElement();
-            jrb.addActionListener(new ActionListener() {
-
-                @Override
-                public void actionPerformed(ActionEvent arg0) {
-                    // oct 2014 handle new Pbc corrections
-                    String chosenDateName = jrb.getName();
-                    if (commonLeadCorrectionSelectorPDF_checkbox.isSelected()) {
-                        chosenDateName = chosenDateName.replace("r", "") + "_PbcCorr";
-                    }
-
-                    ((DateProbabilityDensityPanel) probabilityPanel).setChosenDateName(chosenDateName);
-                    probabilityChartOptions.put("chosenDateName", chosenDateName);
-                    ((DateProbabilityDensityPanel) probabilityPanel).//
-                            setSelectedFractions(filterActiveUPbFractions(sample.getUpbFractionsUnknown()));
-                    ((DateProbabilityDensityPanel) probabilityPanel).prepareAndPaintPanel();
+            jrb.addActionListener((ActionEvent arg0) -> {
+                // oct 2014 handle new Pbc corrections
+                String chosenDateName = jrb.getName();
+                if (commonLeadCorrectionSelectorPDF_checkbox.isSelected()) {
+                    chosenDateName = chosenDateName.replace("r", "") + "_PbcCorr";
                 }
+
+                ((DateProbabilityDensityPanel) probabilityPanel).setChosenDateName(chosenDateName);
+                probabilityChartOptions.put("chosenDateName", chosenDateName);
+                ((DateProbabilityDensityPanel) probabilityPanel).//
+                        setSelectedFractions(filterActiveUPbFractions(sample.getUpbFractionsUnknown()));
+                ((DateProbabilityDensityPanel) probabilityPanel).prepareAndPaintPanel();
             });
             if (((DateProbabilityDensityPanel) probabilityPanel).getChosenDateName().replace("r", "").startsWith(jrb.getName().replace("r", ""))) {
                 jrb.setSelected(true);
@@ -513,40 +509,36 @@ public class SampleDateInterpretationsManager extends DialogEditor
             }
         });
 
-        zoomOutProbability_button.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                // zoom
-                double rangeX = ((DateProbabilityDensityPanel) probabilityPanel).getRangeX_Display();
-                //System.out.println( "RANGE OUT = " + rangeX + "   offset = " + ((DateProbabilityDensityPanel) probabilityPanel).getDisplayOffsetX());
-
-                double saveMinx = ((DateProbabilityDensityPanel) probabilityPanel).getMinX();
-                double proposedMinX = saveMinx - rangeX / 2.0;
-
-                ((DateProbabilityDensityPanel) probabilityPanel).//
-                        setMinX(//
-                                Math.max(//
-                                        proposedMinX, DateProbabilityDensityPanel.DEFAULT_DISPLAY_MINX));
-
-                // reset offset if hit the left wall
-                double shiftMax = 0;
-                if (proposedMinX <= DateProbabilityDensityPanel.DEFAULT_DISPLAY_MINX) {
-                    ((DateProbabilityDensityPanel) probabilityPanel).setDisplayOffsetX(0);
-                    shiftMax = DateProbabilityDensityPanel.DEFAULT_DISPLAY_MINX - proposedMinX;
-                }
-
-                ((DateProbabilityDensityPanel) probabilityPanel).//
-                        setMaxX(//
-                                Math.min(//
-                                        (((DateProbabilityDensityPanel) probabilityPanel).getMaxX()//
-                                        + rangeX / 2.0 + shiftMax), DateProbabilityDensityPanel.DEFAULT_DISPLAY_MAXX));
-
-                ((DateProbabilityDensityPanel) probabilityPanel).//
-                        setSelectedHistogramBinCount(0);
-
-                probabilityPanel.repaint();
+        zoomOutProbability_button.addActionListener((ActionEvent arg0) -> {
+            // zoom
+            double rangeX = ((DateProbabilityDensityPanel) probabilityPanel).getRangeX_Display();
+            //System.out.println( "RANGE OUT = " + rangeX + "   offset = " + ((DateProbabilityDensityPanel) probabilityPanel).getDisplayOffsetX());
+            
+            double saveMinx = ((DateProbabilityDensityPanel) probabilityPanel).getMinX();
+            double proposedMinX = saveMinx - rangeX / 2.0;
+            
+            ((DateProbabilityDensityPanel) probabilityPanel).//
+                    setMinX(//
+                            Math.max(//
+                                    proposedMinX, DateProbabilityDensityPanel.DEFAULT_DISPLAY_MINX));
+            
+            // reset offset if hit the left wall
+            double shiftMax = 0;
+            if (proposedMinX <= DateProbabilityDensityPanel.DEFAULT_DISPLAY_MINX) {
+                ((DateProbabilityDensityPanel) probabilityPanel).setDisplayOffsetX(0);
+                shiftMax = DateProbabilityDensityPanel.DEFAULT_DISPLAY_MINX - proposedMinX;
             }
+            
+            ((DateProbabilityDensityPanel) probabilityPanel).//
+                    setMaxX(//
+                            Math.min(//
+                                    (((DateProbabilityDensityPanel) probabilityPanel).getMaxX()//
+                                            + rangeX / 2.0 + shiftMax), DateProbabilityDensityPanel.DEFAULT_DISPLAY_MAXX));
+            
+            ((DateProbabilityDensityPanel) probabilityPanel).//
+                    setSelectedHistogramBinCount(0);
+            
+            probabilityPanel.repaint();
         });
 
         showTightGraphProbability_button.addActionListener(new ActionListener() {
@@ -601,7 +593,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         ((DateProbabilityDensityPanel) probabilityPanel).setExternalBinWidthTextField((ReduxSuppressComponentEventsI) binWidth_text);
 
         normedProbabilityLayeredPane.add(probabilityPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        
+
         performFilteringPerSliders();
 
     } // initNormedProbabilityPanel
@@ -638,7 +630,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
             if (validKey) {
                 // test for linkage
                 updateSlidersStatus(slider);
-                
+
                 performFilteringPerSliders();
 
 ////                ((DateProbabilityDensityPanel) probabilityPanel).//
@@ -675,7 +667,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
                 updateSlidersStatus(slider);
 
                 probabilityChartOptions.put(slider.getName(), Integer.toString(slider.getValue()));
-                
+
                 performFilteringPerSliders();
 ////                // oct 2014 make choices stick to data table
 ////                Vector<ETFractionInterface> filteredFractions = filterActiveUPbFractions(sample.getUpbFractionsUnknown());
@@ -703,23 +695,23 @@ public class SampleDateInterpretationsManager extends DialogEditor
             }
         }
     }
-    
-    public void performFilteringPerSliders(){
-        Vector<ETFractionInterface> filteredFractions = filterActiveUPbFractions(sample.getUpbFractionsUnknown());
-        
-        ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
-                        setFilteredFractions(filteredFractions);
 
-                ((DateProbabilityDensityPanel) probabilityPanel).//
-                        setSelectedFractions(filteredFractions);
+    public void performFilteringPerSliders() {
+        Vector<ETFractionInterface> filteredFractions = filterActiveUPbFractions(sample.getUpbFractionsUnknown());
+
+        ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
+                setFilteredFractions(filteredFractions);
+
+        ((DateProbabilityDensityPanel) probabilityPanel).//
+                setSelectedFractions(filteredFractions);
 //                probabilityChartOptions.put(slider.getName(), Integer.toString(slider.getValue()));
 
-                // fire off date model to filter its deselected fractions
-                try {
-                    dateTreeByAliquot.performLastUserSelectionOfSampleDate();
-                } catch (Exception selectionError) {
-                }
-                ((DateProbabilityDensityPanel) probabilityPanel).prepareAndPaintPanel();
+        // fire off date model to filter its deselected fractions
+        try {
+            dateTreeByAliquot.performLastUserSelectionOfSampleDate();
+        } catch (Exception selectionError) {
+        }
+        ((DateProbabilityDensityPanel) probabilityPanel).prepareAndPaintPanel();
     }
 
     private void updateSlidersStatus(JSlider slider) {
@@ -2171,7 +2163,7 @@ private void protactiniumCorrectionSelector_checkboxActionPerformed (java.awt.ev
     ((ConcordiaGraphPanel) concordiaGraphPanel).toggleDisplay_r206_238r_Pa();
     protactiniumCorrectionSelector_checkbox.setSelected(((ConcordiaGraphPanel) concordiaGraphPanel).isDisplay_r206_238r_Pa());
 
-    ((ConcordiaGraphPanel) concordiaGraphPanel).repaint();
+    concordiaGraphPanel.repaint();
 }//GEN-LAST:event_protactiniumCorrectionSelector_checkboxActionPerformed
 
 private void linkedUnlinkedDiscordanceActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_linkedUnlinkedDiscordanceActionPerformed
@@ -2891,37 +2883,41 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
     }
 
     private Vector<ETFractionInterface> filterActiveUPbFractions(Vector<ETFractionInterface> fractions) {
-
-        Vector<ETFractionInterface> filteredFractions = new Vector<>();
-
-        String dateName = ((DateProbabilityDensityPanel) probabilityPanel).getChosenDateName();
-
-        for (ETFractionInterface f : fractions) {
-            boolean doAddFraction = !f.isRejected();
-            double pctDiscordance = f.getRadiogenicIsotopeDateByName(RadDates.percentDiscordance).getValue().doubleValue();
-
-            if (pctDiscordance >= 0.0) {  //
-                // positive percent discordance
-                doAddFraction = doAddFraction && (pctDiscordance <= positivePctDiscordance_slider.getValue());
-            } else {
-                // negative percent discordance
-                doAddFraction = doAddFraction && (pctDiscordance >= negativePctDiscordance_slider.getValue());
-            }
-
-//            System.out.println("1 pct unct " + f.getFractionID() + "  " + f.getRadiogenicIsotopeDateByName(chosenDateName).getOneSigmaPct().doubleValue());
-            doAddFraction = doAddFraction //
-                    && f.getRadiogenicIsotopeDateByName(dateName).getOneSigmaPct().doubleValue() //
-                    <= percentUncertainty_slider.getValue();
-
-            //oct 2014
-            doAddFraction = doAddFraction //
-                    && f.getRadiogenicIsotopeDateByName(dateName).getOneSigmaPct().doubleValue() != 0.0;
-
-            if (doAddFraction) {
-                filteredFractions.add(f);
-            }
-        }
-        return filteredFractions;
+//
+//        Vector<ETFractionInterface> filteredFractions = new Vector<>();
+//
+//        String dateName = ((DateProbabilityDensityPanel) probabilityPanel).getChosenDateName();
+//
+//        for (ETFractionInterface f : fractions) {
+//            boolean doAddFraction = !f.isRejected();
+//            double pctDiscordance = f.getRadiogenicIsotopeDateByName(RadDates.percentDiscordance).getValue().doubleValue();
+//
+//            if (pctDiscordance >= 0.0) {  //
+//                // positive percent discordance
+//                doAddFraction = doAddFraction && (pctDiscordance <= positivePctDiscordance_slider.getValue());
+//            } else {
+//                // negative percent discordance
+//                doAddFraction = doAddFraction && (pctDiscordance >= negativePctDiscordance_slider.getValue());
+//            }
+//
+//            doAddFraction = doAddFraction //
+//                    && f.getRadiogenicIsotopeDateByName(dateName).getOneSigmaPct().doubleValue() //
+//                    <= percentUncertainty_slider.getValue();
+//
+//            //oct 2014
+//            doAddFraction = doAddFraction //
+//                    && f.getRadiogenicIsotopeDateByName(dateName).getOneSigmaPct().doubleValue() != 0.0;
+//
+//            if (doAddFraction) {
+//                filteredFractions.add(f);
+//            }
+//        }
+        return SampleDateInterpretationsUtilities.filterActiveUPbFractions(//
+                fractions,//
+                ((DateProbabilityDensityPanel) probabilityPanel).getChosenDateName(),//
+                positivePctDiscordance_slider.getValue(), //
+                negativePctDiscordance_slider.getValue(), //
+                percentUncertainty_slider.getValue());
     }
 
     /**
@@ -2985,7 +2981,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
 
             try {
                 selectedFileSVG
-                        = //
+                        = 
                         new File(selectedFile.getCanonicalPath().replaceFirst(".pdf", ".svg"));
 
             } catch (IOException iOException) {

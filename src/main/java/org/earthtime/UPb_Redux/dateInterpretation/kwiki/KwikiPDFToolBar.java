@@ -24,19 +24,25 @@ import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.Enumeration;
+import java.util.Map;
+import java.util.Vector;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JLayeredPane;
 import javax.swing.JRadioButton;
+import javax.swing.JSlider;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.dateInterpretation.DateProbabilityDensityPanel;
+import org.earthtime.UPb_Redux.dateInterpretation.concordia.AliquotDetailsDisplayInterface;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.GraphPanelModeChangeI;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.PlottingDetailsDisplayInterface;
 import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetup;
+import org.earthtime.UPb_Redux.dialogs.sampleManagers.sampleDateInterpretationManagers.SampleDateInterpretationsUtilities;
 import org.earthtime.beans.ET_JButton;
+import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.samples.SampleInterface;
 
 /**
@@ -45,7 +51,6 @@ import org.earthtime.samples.SampleInterface;
  */
 public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChangeI {
 
-    private final PropertyChangeSupport propertySupport;
     private JButton zoomInProbability_button;
     private JButton zoomOutProbability_button;
     private JButton restoreZoom;
@@ -55,7 +60,11 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
     private ButtonGroup dateChooserButtonGroup;
     private SampleInterface sample;
 
-    private final JLayeredPane pdfGraphPanel;
+    private final JLayeredPane probabilityPanel;
+    private final JLayeredPane concordiaGraphPanel;
+    private Map<String, String> probabilityChartOptions;
+    private javax.swing.JSlider negativePctDiscordance_slider;
+    private javax.swing.JSlider positivePctDiscordance_slider;
 
     /**
      * Creates a new instance of KwikiConcordiaToolBar
@@ -63,11 +72,11 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
      * @param x
      * @param y
      * @param aPDFGraphPanel
-     * @param kwikiDateModesSelectorListener
+     * @param aConcordiaGraphPanel
      * @param sample the value of sample
      */
     public KwikiPDFToolBar(
-            int x, int y, JLayeredPane aPDFGraphPanel, PropertyChangeListener kwikiDateModesSelectorListener, SampleInterface sample) {
+            int x, int y, JLayeredPane aPDFGraphPanel, JLayeredPane aConcordiaGraphPanel, SampleInterface sample) {
 
         super();
 
@@ -77,32 +86,110 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
 
         setBounds(x, y, 552, 56);
 
-        this.pdfGraphPanel = aPDFGraphPanel;
+        this.probabilityPanel = aPDFGraphPanel;
+        this.concordiaGraphPanel = aConcordiaGraphPanel;
 
-        propertySupport = new PropertyChangeSupport(this);
-        //   addPropertyChangeListener(kwikiDateModesSelectorListener);
+        this.sample = sample;
+        probabilityChartOptions = sample.getSampleDateInterpretationGUISettings().getProbabilityChartOptions();
 
         SetupZoomToggleButtons();
         SetupDateChooserButtons();
 
-        javax.swing.JSlider negativePctDiscordance_slider = new javax.swing.JSlider();
-        negativePctDiscordance_slider.setFont(new java.awt.Font("Arial", 1, 10)); // NOI18N
-        negativePctDiscordance_slider.setMajorTickSpacing(10);
+        negativePctDiscordance_slider = new javax.swing.JSlider();
+        negativePctDiscordance_slider.setFont(new java.awt.Font("Arial", 1, 10));
         negativePctDiscordance_slider.setMaximum(0);
         negativePctDiscordance_slider.setMinimum(-100);
+        negativePctDiscordance_slider.setMajorTickSpacing(10);
         negativePctDiscordance_slider.setMinorTickSpacing(2);
         negativePctDiscordance_slider.setPaintLabels(true);
         negativePctDiscordance_slider.setPaintTicks(true);
         negativePctDiscordance_slider.setSnapToTicks(true);
-        negativePctDiscordance_slider.setValue(-50);
-        negativePctDiscordance_slider.setName("negativePerCentDiscordanceSliderValue"); // NOI18N
-        negativePctDiscordance_slider.setBounds(175, 1, 200, 38);
+        negativePctDiscordance_slider.setAutoscrolls(true);
+        negativePctDiscordance_slider.setValue(Integer.parseInt(probabilityChartOptions.get("negativePerCentDiscordanceSliderValue")));
+        negativePctDiscordance_slider.setName("negativePerCentDiscordanceSliderValue");
+        negativePctDiscordance_slider.setBounds(125, 1, 185, 38);
+        negativePctDiscordance_slider.addChangeListener(new SliderChangeListener());
         add(negativePctDiscordance_slider);
 
-        ((DateProbabilityDensityPanel) pdfGraphPanel).setGraphPanelModeChanger(this);
+        positivePctDiscordance_slider = new javax.swing.JSlider();
+        positivePctDiscordance_slider.setFont(new java.awt.Font("Arial", 1, 10));
+        positivePctDiscordance_slider.setMaximum(100);
+        positivePctDiscordance_slider.setMinimum(0);
+        positivePctDiscordance_slider.setMajorTickSpacing(10);
+        positivePctDiscordance_slider.setMinorTickSpacing(2);
+        positivePctDiscordance_slider.setPaintLabels(true);
+        positivePctDiscordance_slider.setPaintTicks(true);
+        positivePctDiscordance_slider.setSnapToTicks(true);
+        positivePctDiscordance_slider.setAutoscrolls(true);
+        positivePctDiscordance_slider.setValue(Integer.parseInt(probabilityChartOptions.get("positivePerCentDiscordanceSliderValue")));
+        positivePctDiscordance_slider.setName("positivePerCentDiscordanceSliderValue");
+        positivePctDiscordance_slider.setBounds(325, 1, 185, 38);
+        positivePctDiscordance_slider.addChangeListener(new SliderChangeListener());
+        add(positivePctDiscordance_slider);
 
-        this.sample = sample;
+        ((DateProbabilityDensityPanel) probabilityPanel).setGraphPanelModeChanger(this);
 
+    }
+
+    private class SliderChangeListener implements ChangeListener {
+
+        // this flag stops spurious keystrokes from firing off preparepanel, which is expensive
+        boolean wasChanging = true;
+
+        @Override
+        public void stateChanged(ChangeEvent e) {
+            JSlider slider = ((JSlider) e.getSource());
+
+            if (slider.getValueIsAdjusting()) {
+                wasChanging = true;
+            }
+
+            if (!slider.getValueIsAdjusting() && wasChanging) {
+                updateSlidersStatus(slider);
+                
+                probabilityChartOptions.put(slider.getName(), Integer.toString(slider.getValue()));
+
+                performFilteringPerSliders();
+
+                wasChanging = false;
+            }
+        }
+    }
+
+    private void updateSlidersStatus(JSlider slider) {
+        if (true) {
+            if (slider.equals(positivePctDiscordance_slider)) {
+                ChangeListener[] changeListeners = negativePctDiscordance_slider.getChangeListeners();
+                negativePctDiscordance_slider.removeChangeListener(changeListeners[0]);
+                negativePctDiscordance_slider.setValue(-1 * positivePctDiscordance_slider.getValue());
+                probabilityChartOptions.put(negativePctDiscordance_slider.getName(), Integer.toString(negativePctDiscordance_slider.getValue()));
+                negativePctDiscordance_slider.addChangeListener(changeListeners[0]);
+            } else if (slider.equals(negativePctDiscordance_slider)) {
+                ChangeListener[] changeListeners = positivePctDiscordance_slider.getChangeListeners();
+                positivePctDiscordance_slider.removeChangeListener(changeListeners[0]);
+                positivePctDiscordance_slider.setValue(-1 * negativePctDiscordance_slider.getValue());
+                probabilityChartOptions.put(positivePctDiscordance_slider.getName(), Integer.toString(positivePctDiscordance_slider.getValue()));
+                positivePctDiscordance_slider.addChangeListener(changeListeners[0]);
+            }
+        }
+    }
+
+    public void performFilteringPerSliders() {
+
+        Vector<ETFractionInterface> filteredFractions = SampleDateInterpretationsUtilities.filterActiveUPbFractions(//
+                sample.getUpbFractionsUnknown(),//
+                ((DateProbabilityDensityPanel) probabilityPanel).getChosenDateName(),//
+                positivePctDiscordance_slider.getValue(), //
+                negativePctDiscordance_slider.getValue(), //
+                100);//percentUncertainty_slider.getValue());
+
+        ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
+                setFilteredFractions(filteredFractions);
+
+        ((DateProbabilityDensityPanel) probabilityPanel).//
+                setSelectedFractions(filteredFractions);
+
+        ((DateProbabilityDensityPanel) probabilityPanel).prepareAndPaintPanel();
     }
 
     private void SetupDateChooserButtons() {
@@ -113,7 +200,7 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
         date206_238_radioButton.setFont(new java.awt.Font("Arial", 1, 10));
         date206_238_radioButton.setText("206/238");
         date206_238_radioButton.setName("age206_238r");
-        date206_238_radioButton.setBounds(75, 1, 75, 17);
+        date206_238_radioButton.setBounds(60, 1, 75, 17);
         date206_238_radioButton.setSelected(true);
         add(date206_238_radioButton);
 
@@ -122,7 +209,7 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
         date207_206_radioButton.setFont(new java.awt.Font("Arial", 1, 10));
         date207_206_radioButton.setText("207/206");
         date207_206_radioButton.setName("age207_206r");
-        date207_206_radioButton.setBounds(75, 19, 75, 17);
+        date207_206_radioButton.setBounds(60, 19, 75, 17);
         add(date207_206_radioButton);
 
         dateBest_radioButton = new JRadioButton("best");
@@ -130,7 +217,7 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
         dateBest_radioButton.setFont(new java.awt.Font("Arial", 1, 10));
         dateBest_radioButton.setText("best");
         dateBest_radioButton.setName("bestAge");
-        dateBest_radioButton.setBounds(75, 37, 75, 17);
+        dateBest_radioButton.setBounds(60, 37, 75, 17);
         add(dateBest_radioButton);
 
         // choose date
@@ -140,10 +227,10 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
                 // oct 2014 handle new Pbc corrections
                 String chosenDateName = jrb.getName();
 
-                ((DateProbabilityDensityPanel) pdfGraphPanel).setChosenDateName(chosenDateName);
-                ((DateProbabilityDensityPanel) pdfGraphPanel).//
+                ((DateProbabilityDensityPanel) probabilityPanel).setChosenDateName(chosenDateName);
+                ((DateProbabilityDensityPanel) probabilityPanel).//
                         setSelectedFractions(sample.getUpbFractionsUnknown());
-                ((DateProbabilityDensityPanel) pdfGraphPanel).prepareAndPaintPanel();
+                ((DateProbabilityDensityPanel) probabilityPanel).prepareAndPaintPanel();
             });
         }
 
@@ -159,7 +246,7 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
 
         zoomInProbability_button.addActionListener((ActionEvent arg0) -> {
             // zoom
-            ((DateProbabilityDensityPanel) pdfGraphPanel).zoomIn();
+            ((DateProbabilityDensityPanel) probabilityPanel).zoomIn();
         });
 
         add(zoomInProbability_button, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -173,13 +260,13 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
 
         zoomOutProbability_button.addActionListener((ActionEvent arg0) -> {
             // zoom
-            double rangeX = ((DateProbabilityDensityPanel) pdfGraphPanel).getRangeX_Display();
+            double rangeX = ((DateProbabilityDensityPanel) probabilityPanel).getRangeX_Display();
             //System.out.println( "RANGE OUT = " + rangeX + "   offset = " + ((DateProbabilityDensityPanel) probabilityPanel).getDisplayOffsetX());
 
-            double saveMinx = ((DateProbabilityDensityPanel) pdfGraphPanel).getMinX();
+            double saveMinx = ((DateProbabilityDensityPanel) probabilityPanel).getMinX();
             double proposedMinX = saveMinx - rangeX / 2.0;
 
-            ((DateProbabilityDensityPanel) pdfGraphPanel).//
+            ((DateProbabilityDensityPanel) probabilityPanel).//
                     setMinX(//
                             Math.max(//
                                     proposedMinX, DateProbabilityDensityPanel.DEFAULT_DISPLAY_MINX));
@@ -187,20 +274,20 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
             // reset offset if hit the left wall
             double shiftMax = 0;
             if (proposedMinX <= DateProbabilityDensityPanel.DEFAULT_DISPLAY_MINX) {
-                ((DateProbabilityDensityPanel) pdfGraphPanel).setDisplayOffsetX(0);
+                ((DateProbabilityDensityPanel) probabilityPanel).setDisplayOffsetX(0);
                 shiftMax = DateProbabilityDensityPanel.DEFAULT_DISPLAY_MINX - proposedMinX;
             }
 
-            ((DateProbabilityDensityPanel) pdfGraphPanel).//
+            ((DateProbabilityDensityPanel) probabilityPanel).//
                     setMaxX(//
                             Math.min(//
-                                    (((DateProbabilityDensityPanel) pdfGraphPanel).getMaxX()//
+                                    (((DateProbabilityDensityPanel) probabilityPanel).getMaxX()//
                                     + rangeX / 2.0 + shiftMax), DateProbabilityDensityPanel.DEFAULT_DISPLAY_MAXX));
 
-            ((DateProbabilityDensityPanel) pdfGraphPanel).//
+            ((DateProbabilityDensityPanel) probabilityPanel).//
                     setSelectedHistogramBinCount(0);
 
-            pdfGraphPanel.repaint();
+            probabilityPanel.repaint();
         });
 
         add(zoomOutProbability_button, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -213,7 +300,7 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
         restoreZoom.setMargin(new Insets(0, 0, 0, 0));
 
         restoreZoom.addActionListener((ActionEvent arg0) -> {
-            ((PlottingDetailsDisplayInterface) pdfGraphPanel).refreshPanel(true);
+            ((PlottingDetailsDisplayInterface) probabilityPanel).refreshPanel(true);
         });
         add(restoreZoom, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
@@ -250,24 +337,6 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
 
         g2d.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
 
-    }
-
-    /**
-     *
-     * @param listener
-     */
-    @Override
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        propertySupport.addPropertyChangeListener(listener);
-    }
-
-    /**
-     *
-     * @param listener
-     */
-    @Override
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        propertySupport.removePropertyChangeListener(listener);
     }
 
     /**
