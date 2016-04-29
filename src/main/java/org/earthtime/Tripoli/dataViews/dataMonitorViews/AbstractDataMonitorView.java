@@ -112,73 +112,6 @@ import org.earthtime.utilities.TicGeneratorForAxes;
 public class AbstractDataMonitorView extends AbstractRawDataView
         implements TripoliSessionFractionationCalculatorInterface, SampleTreeChangeI {
 
-    /**
-     * @return the concordiaGraphPanel
-     */
-    public JLayeredPane getConcordiaGraphPanel() {
-        return concordiaGraphPanel;
-    }
-
-    @Override
-    public void sampleTreeChangeAnalysisMode(Object node) {
-        //  System.out.println("WOW MODE CALL BACK");
-        Object nodeInfo = ((DefaultMutableTreeNode) node).getUserObject();
-        if (nodeInfo instanceof SampleInterface) {
-
-            ((ConcordiaGraphPanel) concordiaGraphPanel).//
-                    setYorkFitLine(null);
-            ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
-                    setSelectedFractions(project.getSuperSample().getFractions());
-            concordiaGraphPanel.repaint();
-            // zap deselected list as it is meaningless at level of aliquot or sample
-            ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
-                    getDeSelectedFractions().clear();
-            ((ConcordiaGraphPanel) concordiaGraphPanel).//
-                    setPreferredDatePanel(null);
-
-            // may 2014 show best date line
-            ((ConcordiaGraphPanel) concordiaGraphPanel).setShowingSingleAliquot(false);
-
-            ((DateProbabilityDensityPanel) probabilityPanel).//
-                    setSelectedFractions(filterActiveUPbFractions(project.getSuperSample().getUpbFractionsUnknown()));
-            ((DateProbabilityDensityPanel) probabilityPanel).//
-                    getDeSelectedFractions().clear();
-            ((DateProbabilityDensityPanel) probabilityPanel).//
-                    setSelectedAliquot(0);
-            ((PlottingDetailsDisplayInterface) probabilityPanel).//
-                    refreshPanel(true);
-
-        } else if (nodeInfo instanceof AliquotInterface) {
-
-            // oct 2011 removed conditionals here to force all tabs to update
-            ((ConcordiaGraphPanel) concordiaGraphPanel).//
-                    setYorkFitLine(null);
-            ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
-                    setSelectedFractions(((ReduxAliquotInterface) nodeInfo).getAliquotFractions());
-            concordiaGraphPanel.repaint();
-
-            // zap deselected list as it is meaningless at level of aliquot or sample
-            ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
-                    getDeSelectedFractions().clear();
-            ((ConcordiaGraphPanel) concordiaGraphPanel).setPreferredDatePanel(null);
-
-            // may 2014 show best date line
-            ((ConcordiaGraphPanel) concordiaGraphPanel).setShowingSingleAliquot(true);
-            ((ConcordiaGraphPanel) concordiaGraphPanel).determineCurrentAliquot();
-
-            ((DateProbabilityDensityPanel) probabilityPanel).//
-                    setSelectedAliquot(((ReduxAliquotInterface) nodeInfo).getAliquotNumber());
-            ((DateProbabilityDensityPanel) probabilityPanel).//
-                    getDeSelectedFractions().clear();
-            probabilityPanel.repaint();
-        }
-    }
-
-    @Override
-    public void sampleTreeChangeCompilationMode(Object node) {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
     private static SwingWorker loadDataTask;
     private final static Integer LAYER_FIVE = 5;
     private final ClassLoader cldr = this.getClass().getClassLoader();
@@ -258,7 +191,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
 
     private JTabbedPane reportTableTabbedPane;
     private Map<String, String> probabilityChartOptions;
-    
+
     private SampleTreeI dateTreeByAliquot;
 
     /**
@@ -332,7 +265,6 @@ public class AbstractDataMonitorView extends AbstractRawDataView
             cal.setTimeInMillis(lastMonitoredTime);
             SimpleDateFormat date_format = new SimpleDateFormat("MMM dd,yyyy HH:mm:ss");
 
-//            System.out.println("File changed at: " + date_format.format(cal.getTime()));
             if (loadDataTask != null) {
                 if (loadDataTask.isDone()) {
                     saveMonitoredTime = lastMonitoredTime;
@@ -497,12 +429,13 @@ public class AbstractDataMonitorView extends AbstractRawDataView
         rawDataFilePathTextArea.setBounds(leftMargin + 50, topMargin, parentDimension.width - 100, 40);
         rawDataFilePathTextArea.setLineWrap(true);
         rawDataFilePathTextArea.setEditable(false);
+        rawDataFilePathTextArea.setForeground(Color.RED);
         this.add(rawDataFilePathTextArea, JLayeredPane.DEFAULT_LAYER);
     }
 
     private void buttonFactory() {
         ET_JButton closeAndReviewButton = new ET_JButton("Halt Processing and Review Samples");
-        closeAndReviewButton.setBounds(leftMargin + 50, topMargin + 660, 450, 25);
+        closeAndReviewButton.setBounds(leftMargin + 0, topMargin + 660, 450, 25);
         closeAndReviewButton.addActionListener((ActionEvent ae) -> {
             try {
                 loadDataTask.cancel(true);
@@ -518,7 +451,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
         this.add(closeAndReviewButton, LAYER_FIVE);
 
         ET_JButton recalcButton = new ET_JButton("Re-calculate rhos");
-        recalcButton.setBounds(leftMargin + 500, topMargin + 660, 120, 25);
+        recalcButton.setBounds(leftMargin + 450, topMargin + 660, 120, 25);
         recalcButton.addActionListener((ActionEvent ae) -> {
             try {
                 tripoliSession.interceptCalculatePbcCorrAndRhos();
@@ -535,7 +468,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
         this.add(recalcButton, LAYER_FIVE);
 
         ET_JButton refreshButton = new ET_JButton("Refresh Views");
-        refreshButton.setBounds(leftMargin + 620, topMargin + 660, 120, 25);
+        refreshButton.setBounds(leftMargin + 570, topMargin + 660, 120, 25);
         refreshButton.addActionListener((ActionEvent ae) -> {
             preparePanel(true);
         });
@@ -544,7 +477,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
         this.add(refreshButton, LAYER_FIVE);
 
         ET_JButton editReportSettingsButton = new ET_JButton("Edit Report Settings");
-        editReportSettingsButton.setBounds(leftMargin + 740, topMargin + 660, 120, 25);
+        editReportSettingsButton.setBounds(602, topMargin + 600, 120, 25);
         editReportSettingsButton.addActionListener((ActionEvent ae) -> {
             ReportSettingsInterface.EditReportSettings(project.getSuperSample().getReportSettingsModel(), uPbReduxFrame);
             uPbReduxFrame.updateReportTable(false);
@@ -555,7 +488,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
         this.add(editReportSettingsButton, LAYER_FIVE);
 
         ET_JButton concordiaSettingsButton = new ET_JButton("Concordia Settings");
-        concordiaSettingsButton.setBounds(leftMargin + 1080, topMargin + 660, 120, 25);
+        concordiaSettingsButton.setBounds(602, topMargin + 550, 120, 25);
         concordiaSettingsButton.addActionListener((ActionEvent ae) -> {
             ((AliquotDetailsDisplayInterface) concordiaGraphPanel).showConcordiaDisplayOptionsDialog();
         });
@@ -571,7 +504,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
         loadDataTaskProgressBar.setMaximum(100);
         loadDataTaskProgressBar.setMinimum(0);
         loadDataTaskProgressBar.setValue(0);
-        loadDataTaskProgressBar.setBounds(leftMargin + 50, 695, 450, 20);
+        loadDataTaskProgressBar.setBounds(leftMargin + 0, 695, 450, 20);
     }
 
     /**
@@ -635,7 +568,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
         JCheckBox showFilteredFractions_checkbox = new JCheckBox();
         showFilteredFractions_checkbox.setFont(new java.awt.Font("SansSerif", 1, 10));
         showFilteredFractions_checkbox.setText("<html>Filtering ON<br> </html>");
-        showFilteredFractions_checkbox.setBounds(leftMargin + 1200, topMargin + 660, 120, 25);
+        showFilteredFractions_checkbox.setBounds(leftMargin + 1075, topMargin + 660, 120, 25);
         showFilteredFractions_checkbox.addActionListener((java.awt.event.ActionEvent evt) -> {
             boolean state = ((AliquotDetailsDisplayInterface) concordiaGraphPanel).isShowFilteredEllipses();
             ((AliquotDetailsDisplayInterface) concordiaGraphPanel).setShowFilteredEllipses(!state);
@@ -702,7 +635,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
     public void prepareDateTree() {
         // april 2016 TODO: move to own method
         JScrollPane dateTreeByAliquot_ScrollPane = new javax.swing.JScrollPane();
-        dateTreeByAliquot_ScrollPane.setBounds(600, topMargin + 50, 125, 580);
+        dateTreeByAliquot_ScrollPane.setBounds(600, topMargin + 50, 125, 500);
         dateTreeByAliquot = new SampleTreeAnalysisMode(project.getSuperSample());
         dateTreeByAliquot.setSampleTreeChange(this);
         dateTreeByAliquot.buildTree();
@@ -1063,5 +996,72 @@ public class AbstractDataMonitorView extends AbstractRawDataView
 //        } catch (Exception e) {
 //        }
         return dataMonitorViewDialog;
+    }
+
+    /**
+     * @return the concordiaGraphPanel
+     */
+    public JLayeredPane getConcordiaGraphPanel() {
+        return concordiaGraphPanel;
+    }
+
+    @Override
+    public void sampleTreeChangeCompilationMode(Object node) {
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void sampleTreeChangeAnalysisMode(Object node) {
+        //  System.out.println("WOW MODE CALL BACK");
+        Object nodeInfo = ((DefaultMutableTreeNode) node).getUserObject();
+        if (nodeInfo instanceof SampleInterface) {
+
+            ((ConcordiaGraphPanel) concordiaGraphPanel).//
+                    setYorkFitLine(null);
+            ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
+                    setSelectedFractions(project.getSuperSample().getFractions());
+            concordiaGraphPanel.repaint();
+            // zap deselected list as it is meaningless at level of aliquot or sample
+            ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
+                    getDeSelectedFractions().clear();
+            ((ConcordiaGraphPanel) concordiaGraphPanel).//
+                    setPreferredDatePanel(null);
+
+            // may 2014 show best date line
+            ((ConcordiaGraphPanel) concordiaGraphPanel).setShowingSingleAliquot(false);
+
+            ((DateProbabilityDensityPanel) probabilityPanel).//
+                    setSelectedFractions(filterActiveUPbFractions(project.getSuperSample().getUpbFractionsUnknown()));
+            ((DateProbabilityDensityPanel) probabilityPanel).//
+                    getDeSelectedFractions().clear();
+            ((DateProbabilityDensityPanel) probabilityPanel).//
+                    setSelectedAliquot(0);
+            ((PlottingDetailsDisplayInterface) probabilityPanel).//
+                    refreshPanel(true);
+
+        } else if (nodeInfo instanceof AliquotInterface) {
+
+            // oct 2011 removed conditionals here to force all tabs to update
+            ((ConcordiaGraphPanel) concordiaGraphPanel).//
+                    setYorkFitLine(null);
+            ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
+                    setSelectedFractions(((ReduxAliquotInterface) nodeInfo).getAliquotFractions());
+            concordiaGraphPanel.repaint();
+
+            // zap deselected list as it is meaningless at level of aliquot or sample
+            ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
+                    getDeSelectedFractions().clear();
+            ((ConcordiaGraphPanel) concordiaGraphPanel).setPreferredDatePanel(null);
+
+            // may 2014 show best date line
+            ((ConcordiaGraphPanel) concordiaGraphPanel).setShowingSingleAliquot(true);
+            ((ConcordiaGraphPanel) concordiaGraphPanel).determineCurrentAliquot();
+
+            ((DateProbabilityDensityPanel) probabilityPanel).//
+                    setSelectedAliquot(((ReduxAliquotInterface) nodeInfo).getAliquotNumber());
+            ((DateProbabilityDensityPanel) probabilityPanel).//
+                    getDeSelectedFractions().clear();
+            probabilityPanel.repaint();
+        }
     }
 }
