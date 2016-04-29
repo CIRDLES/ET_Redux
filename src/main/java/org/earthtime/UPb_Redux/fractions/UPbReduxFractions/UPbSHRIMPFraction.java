@@ -91,6 +91,7 @@ public class UPbSHRIMPFraction extends Fraction implements
     private AbstractCommonLeadLossCorrectionScheme commonLeadLossCorrectionScheme;
     private RadDatesForPbCorrSynchEnum radDateForSKSynch;
     private boolean standard;
+    private boolean secondaryStandard;
     private SortedMap<String, Double> upperPhiMap;
     //nov 2014 section 7a for common lead correction iuncertainties
     private Matrix SfciTotal;
@@ -1305,6 +1306,22 @@ public class UPbSHRIMPFraction extends Fraction implements
     @Override
     public void setStandard(boolean standard) {
         this.standard = standard;
+    }
+
+    /**
+     * @return the secondaryStandard
+     */
+    @Override
+    public boolean isSecondaryStandard() {
+        return secondaryStandard;
+    }
+
+    /**
+     * @param secondaryStandard the secondaryStandard to set
+     */
+    @Override
+    public void setSecondaryStandard(boolean secondaryStandard) {
+        this.secondaryStandard = secondaryStandard;
     }
 
     /**

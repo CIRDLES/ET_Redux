@@ -193,12 +193,6 @@ public class SampleFractionListDisplayPane extends JLayeredPane {
             this.add(closeButton, DEFAULT_LAYER);
         }
 
-//        // minimize/maximize button
-//        maxMinButton = new JButton("-");
-//        maxMinButton.addActionListener( closeButtonActionListener );
-//        if (  ! tripoliSample.isPrimaryStandard() ) {
-//            this.add( maxMinButton, DEFAULT_LAYER );
-//        }
         r238_235s_textField = new JLabel();
         try {
             r238_235s_textField.setText(tripoliSample.getSampleR238_235s().formatValueAndOneSigmaQuickLook());

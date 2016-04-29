@@ -70,7 +70,6 @@ import org.earthtime.UPb_Redux.dateInterpretation.concordia.PlottingDetailsDispl
 import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.DateInterpretationBoxPanel;
 import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetup;
 import org.earthtime.UPb_Redux.dialogs.aliquotManagers.AliquotOptionsDialog;
-import org.earthtime.UPb_Redux.dialogs.graphManagers.ConcordiaOptionsDialog;
 import org.earthtime.UPb_Redux.dialogs.graphManagers.WeightedMeanOptionsDialog;
 import org.earthtime.UPb_Redux.dialogs.sampleManagers.heatMapManagers.HeatMapManager;
 import org.earthtime.UPb_Redux.filters.PDFFileFilter;
@@ -84,7 +83,6 @@ import org.earthtime.beans.ET_JButton;
 import org.earthtime.beans.ET_JToggleButton;
 import org.earthtime.dataDictionaries.Lambdas;
 import org.earthtime.dataDictionaries.MatrixSpecifications;
-import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.exceptions.ETException;
@@ -203,19 +201,18 @@ public class SampleDateInterpretationsManager extends DialogEditor
         if (!doReScale) {
             expansionHistory = dateTreeByAliquot.collectExpansionHistory();
         }
-            dateTreeByAliquot = new SampleTreeAnalysisMode(sample);
-            dateTreeByAliquot.setSampleTreeChange(this);
-            dateTreeByAliquot.buildTree();
-            dateTreeByAliquot_ScrollPane.setViewportView((Component) dateTreeByAliquot);
+        dateTreeByAliquot = new SampleTreeAnalysisMode(sample);
+        dateTreeByAliquot.setSampleTreeChange(this);
+        dateTreeByAliquot.buildTree();
+        dateTreeByAliquot_ScrollPane.setViewportView((Component) dateTreeByAliquot);
         if (!doReScale) {
             dateTreeByAliquot.expandToHistory(expansionHistory);
         }
 
-            dateTreeBySample = new SampleTreeCompilationMode(sample);
-            dateTreeBySample.setSampleTreeChange(this);
-            dateTreeBySample.buildTree();
-            dateTreeBySample_ScrollPane.setViewportView((Component) dateTreeBySample);
-
+        dateTreeBySample = new SampleTreeCompilationMode(sample);
+        dateTreeBySample.setSampleTreeChange(this);
+        dateTreeBySample.buildTree();
+        dateTreeBySample_ScrollPane.setViewportView((Component) dateTreeBySample);
 
         ((PlottingDetailsDisplayInterface) concordiaGraphPanel).resetPanel(doReScale);
 
@@ -260,9 +257,13 @@ public class SampleDateInterpretationsManager extends DialogEditor
             ((ConcordiaGraphPanel) concordiaGraphPanel).setShowExcludedEllipses(showExcludedFractions_checkbox.isSelected());
         }
 
+        if (CGO.containsKey("showFilteredEllipses")) {
+            showFilteredFractions_checkbox.setSelected(Boolean.valueOf(CGO.get("showFilteredEllipses")));
+            ((AliquotDetailsDisplayInterface) concordiaGraphPanel).setShowFilteredEllipses(showFilteredFractions_checkbox.isSelected());
+        }
+
         if (CGO.containsKey("useUncertaintyCrosses")) {
-            useUncertaintyCrosses_checkbox.setSelected(Boolean.valueOf(CGO.get("useUncertaintyCrosses")));
-            ((ConcordiaGraphPanel) concordiaGraphPanel).setUseUncertaintyCrosses(useUncertaintyCrosses_checkbox.isSelected());
+            ((ConcordiaGraphPanel) concordiaGraphPanel).setUseUncertaintyCrosses(Boolean.valueOf(CGO.get("useUncertaintyCrosses")));
         }
 
         if (CGO.containsKey("showConcordiaErrors")) {
@@ -295,23 +296,16 @@ public class SampleDateInterpretationsManager extends DialogEditor
         concordiaLayeredPane.add(concordiaGraphPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         // zoom buttons
-        zoomInX2_button.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent arg0) {
-                ((ConcordiaGraphPanel) concordiaGraphPanel).performZoom(4.0);
-                ((ConcordiaGraphPanel) concordiaGraphPanel).getCurrentGraphAxesSetup().setUseAutomaticAxisTics(true);
-                ((ConcordiaGraphPanel) concordiaGraphPanel).repaint();
-            }
+        zoomInX2_button.addActionListener((ActionEvent arg0) -> {
+            ((ConcordiaGraphPanel) concordiaGraphPanel).performZoom(4.0);
+            ((ConcordiaGraphPanel) concordiaGraphPanel).getCurrentGraphAxesSetup().setUseAutomaticAxisTics(true);
+            concordiaGraphPanel.repaint();
         });
 
-        zoomOutX2_button.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                ((ConcordiaGraphPanel) concordiaGraphPanel).performZoom(-2.0);
-                ((ConcordiaGraphPanel) concordiaGraphPanel).getCurrentGraphAxesSetup().setUseAutomaticAxisTics(true);
-                concordiaGraphPanel.repaint();
-            }
+        zoomOutX2_button.addActionListener((ActionEvent arg0) -> {
+            ((ConcordiaGraphPanel) concordiaGraphPanel).performZoom(-2.0);
+            ((ConcordiaGraphPanel) concordiaGraphPanel).getCurrentGraphAxesSetup().setUseAutomaticAxisTics(true);
+            concordiaGraphPanel.repaint();
         });
 
     }
@@ -391,6 +385,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         // zoom buttons
         zoomInX2_WeightedMean_button.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent arg0) {
                 // zoom
                 double rangeY = ((WeightedMeanGraphPanel) weightedMeanGraphPanel).getRangeY();
@@ -475,22 +470,18 @@ public class SampleDateInterpretationsManager extends DialogEditor
         // choose date
         for (Enumeration e = probabilityDateButtonGroup.getElements(); e.hasMoreElements();) {
             final JRadioButton jrb = (JRadioButton) e.nextElement();
-            jrb.addActionListener(new ActionListener() {
-
-                @Override
-                public void actionPerformed(ActionEvent arg0) {
-                    // oct 2014 handle new Pbc corrections
-                    String chosenDateName = jrb.getName();
-                    if (commonLeadCorrectionSelectorPDF_checkbox.isSelected()) {
-                        chosenDateName = chosenDateName.replace("r", "") + "_PbcCorr";
-                    }
-
-                    ((DateProbabilityDensityPanel) probabilityPanel).setChosenDateName(chosenDateName);
-                    probabilityChartOptions.put("chosenDateName", chosenDateName);
-                    ((DateProbabilityDensityPanel) probabilityPanel).//
-                            setSelectedFractions(filterActiveUPbFractions(sample.getUpbFractionsUnknown()));
-                    ((DateProbabilityDensityPanel) probabilityPanel).prepareAndPaintPanel();
+            jrb.addActionListener((ActionEvent arg0) -> {
+                // oct 2014 handle new Pbc corrections
+                String chosenDateName = jrb.getName();
+                if (commonLeadCorrectionSelectorPDF_checkbox.isSelected()) {
+                    chosenDateName = chosenDateName.replace("r", "") + "_PbcCorr";
                 }
+
+                ((DateProbabilityDensityPanel) probabilityPanel).setChosenDateName(chosenDateName);
+                probabilityChartOptions.put("chosenDateName", chosenDateName);
+                ((DateProbabilityDensityPanel) probabilityPanel).//
+                        setSelectedFractions(filterActiveUPbFractions(sample.getUpbFractionsUnknown()));
+                ((DateProbabilityDensityPanel) probabilityPanel).prepareAndPaintPanel();
             });
             if (((DateProbabilityDensityPanel) probabilityPanel).getChosenDateName().replace("r", "").startsWith(jrb.getName().replace("r", ""))) {
                 jrb.setSelected(true);
@@ -511,45 +502,43 @@ public class SampleDateInterpretationsManager extends DialogEditor
         // zoom buttons
         zoomInProbability_button.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent arg0) {
                 // zoom
                 ((DateProbabilityDensityPanel) probabilityPanel).zoomIn();
             }
         });
 
-        zoomOutProbability_button.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent arg0) {
-                // zoom
-                double rangeX = ((DateProbabilityDensityPanel) probabilityPanel).getRangeX_Display();
-                //System.out.println( "RANGE OUT = " + rangeX + "   offset = " + ((DateProbabilityDensityPanel) probabilityPanel).getDisplayOffsetX());
-
-                double saveMinx = ((DateProbabilityDensityPanel) probabilityPanel).getMinX();
-                double proposedMinX = saveMinx - rangeX / 2.0;
-
-                ((DateProbabilityDensityPanel) probabilityPanel).//
-                        setMinX(//
-                                Math.max(//
-                                        proposedMinX, DateProbabilityDensityPanel.DEFAULT_DISPLAY_MINX));
-
-                // reset offset if hit the left wall
-                double shiftMax = 0;
-                if (proposedMinX <= DateProbabilityDensityPanel.DEFAULT_DISPLAY_MINX) {
-                    ((DateProbabilityDensityPanel) probabilityPanel).setDisplayOffsetX(0);
-                    shiftMax = DateProbabilityDensityPanel.DEFAULT_DISPLAY_MINX - proposedMinX;
-                }
-
-                ((DateProbabilityDensityPanel) probabilityPanel).//
-                        setMaxX(//
-                                Math.min(//
-                                        (((DateProbabilityDensityPanel) probabilityPanel).getMaxX()//
-                                        + rangeX / 2.0 + shiftMax), DateProbabilityDensityPanel.DEFAULT_DISPLAY_MAXX));
-
-                ((DateProbabilityDensityPanel) probabilityPanel).//
-                        setSelectedHistogramBinCount(0);
-
-                probabilityPanel.repaint();
+        zoomOutProbability_button.addActionListener((ActionEvent arg0) -> {
+            // zoom
+            double rangeX = ((DateProbabilityDensityPanel) probabilityPanel).getRangeX_Display();
+            //System.out.println( "RANGE OUT = " + rangeX + "   offset = " + ((DateProbabilityDensityPanel) probabilityPanel).getDisplayOffsetX());
+            
+            double saveMinx = ((DateProbabilityDensityPanel) probabilityPanel).getMinX();
+            double proposedMinX = saveMinx - rangeX / 2.0;
+            
+            ((DateProbabilityDensityPanel) probabilityPanel).//
+                    setMinX(//
+                            Math.max(//
+                                    proposedMinX, DateProbabilityDensityPanel.DEFAULT_DISPLAY_MINX));
+            
+            // reset offset if hit the left wall
+            double shiftMax = 0;
+            if (proposedMinX <= DateProbabilityDensityPanel.DEFAULT_DISPLAY_MINX) {
+                ((DateProbabilityDensityPanel) probabilityPanel).setDisplayOffsetX(0);
+                shiftMax = DateProbabilityDensityPanel.DEFAULT_DISPLAY_MINX - proposedMinX;
             }
+            
+            ((DateProbabilityDensityPanel) probabilityPanel).//
+                    setMaxX(//
+                            Math.min(//
+                                    (((DateProbabilityDensityPanel) probabilityPanel).getMaxX()//
+                                            + rangeX / 2.0 + shiftMax), DateProbabilityDensityPanel.DEFAULT_DISPLAY_MAXX));
+            
+            ((DateProbabilityDensityPanel) probabilityPanel).//
+                    setSelectedHistogramBinCount(0);
+            
+            probabilityPanel.repaint();
         });
 
         showTightGraphProbability_button.addActionListener(new ActionListener() {
@@ -605,6 +594,8 @@ public class SampleDateInterpretationsManager extends DialogEditor
 
         normedProbabilityLayeredPane.add(probabilityPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
+        performFilteringPerSliders();
+
     } // initNormedProbabilityPanel
 
     private class SliderKeyListener implements KeyListener {
@@ -640,14 +631,16 @@ public class SampleDateInterpretationsManager extends DialogEditor
                 // test for linkage
                 updateSlidersStatus(slider);
 
-                ((DateProbabilityDensityPanel) probabilityPanel).//
-                        setSelectedFractions(filterActiveUPbFractions(sample.getUpbFractionsUnknown()));
-                // fire off date model to filter its deselected fractions
-                try {
-                    ((SampleTreeI) dateTreeByAliquot).performLastUserSelectionOfSampleDate();
-                } catch (Exception selectionError) {
-                }
-                ((DateProbabilityDensityPanel) probabilityPanel).prepareAndPaintPanel();
+                performFilteringPerSliders();
+
+////                ((DateProbabilityDensityPanel) probabilityPanel).//
+////                        setSelectedFractions(filterActiveUPbFractions(sample.getUpbFractionsUnknown()));
+////                // fire off date model to filter its deselected fractions
+////                try {
+////                    dateTreeByAliquot.performLastUserSelectionOfSampleDate();
+////                } catch (Exception selectionError) {
+////                }
+////                ((DateProbabilityDensityPanel) probabilityPanel).prepareAndPaintPanel();
                 validKey = false;
             }
         }
@@ -673,25 +666,52 @@ public class SampleDateInterpretationsManager extends DialogEditor
             if (!slider.getValueIsAdjusting() && wasChanging) {
                 updateSlidersStatus(slider);
 
-                // oct 2014 make choices stick to data table
-                Vector<ETFractionInterface> filteredFractions = filterActiveUPbFractions(sample.getUpbFractionsUnknown());
-                sample.updateSetOfActiveFractions(filteredFractions);
-                // oct 2014 repaint table
-                parentFrame.updateReportTable();
-
-                ((DateProbabilityDensityPanel) probabilityPanel).//
-                        setSelectedFractions(filteredFractions);
                 probabilityChartOptions.put(slider.getName(), Integer.toString(slider.getValue()));
 
-                // fire off date model to filter its deselected fractions
-                try {
-                    dateTreeByAliquot.performLastUserSelectionOfSampleDate();
-                } catch (Exception selectionError) {
-                }
-                ((DateProbabilityDensityPanel) probabilityPanel).prepareAndPaintPanel();
+                performFilteringPerSliders();
+////                // oct 2014 make choices stick to data table
+////                Vector<ETFractionInterface> filteredFractions = filterActiveUPbFractions(sample.getUpbFractionsUnknown());
+////                // April 2016 do not reject fractions, merely disappear them from plots
+////                // TODO: button that allows filtering to be on
+//////                sample.updateSetOfActiveFractions(filteredFractions);
+//////                // oct 2014 repaint table
+//////                parentFrame.updateReportTable();
+//////                Vector<ETFractionInterface> filteredFractions = filterActiveUPbFractions(((DateProbabilityDensityPanel) probabilityPanel).getSelectedFractions());
+////                
+////                ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
+////                        setFilteredFractions(filteredFractions);
+////
+////                ((DateProbabilityDensityPanel) probabilityPanel).//
+////                        setSelectedFractions(filteredFractions);
+////                probabilityChartOptions.put(slider.getName(), Integer.toString(slider.getValue()));
+////
+////                // fire off date model to filter its deselected fractions
+////                try {
+////                    dateTreeByAliquot.performLastUserSelectionOfSampleDate();
+////                } catch (Exception selectionError) {
+////                }
+////                ((DateProbabilityDensityPanel) probabilityPanel).prepareAndPaintPanel();
                 wasChanging = false;
             }
         }
+    }
+
+    public void performFilteringPerSliders() {
+        Vector<ETFractionInterface> filteredFractions = filterActiveUPbFractions(sample.getUpbFractionsUnknown());
+
+        ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
+                setFilteredFractions(filteredFractions);
+
+        ((DateProbabilityDensityPanel) probabilityPanel).//
+                setSelectedFractions(filteredFractions);
+//                probabilityChartOptions.put(slider.getName(), Integer.toString(slider.getValue()));
+
+        // fire off date model to filter its deselected fractions
+        try {
+            dateTreeByAliquot.performLastUserSelectionOfSampleDate();
+        } catch (Exception selectionError) {
+        }
+        ((DateProbabilityDensityPanel) probabilityPanel).prepareAndPaintPanel();
     }
 
     private void updateSlidersStatus(JSlider slider) {
@@ -941,7 +961,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         showTight_toggleButton =  new ET_JToggleButton();
         showExcludedFractions_checkbox = new javax.swing.JCheckBox();
         thoriumConcordiaFlavor_radioButton = new javax.swing.JRadioButton();
-        useUncertaintyCrosses_checkbox = new javax.swing.JCheckBox();
+        showFilteredFractions_checkbox = new javax.swing.JCheckBox();
         commonLeadCorrectionSelector_checkbox = new javax.swing.JCheckBox();
         weightedMeanLayeredPane = new javax.swing.JLayeredPane();
         weightedMeanToolPanel = new javax.swing.JPanel();
@@ -1243,14 +1263,14 @@ public class SampleDateInterpretationsManager extends DialogEditor
         });
         concordiaToolPanel.add(thoriumConcordiaFlavor_radioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 1, -1, 28));
 
-        useUncertaintyCrosses_checkbox.setFont(new java.awt.Font("SansSerif", 1, 10)); // NOI18N
-        useUncertaintyCrosses_checkbox.setText("<html>use<br> Crosses</html>");
-        useUncertaintyCrosses_checkbox.addActionListener(new java.awt.event.ActionListener() {
+        showFilteredFractions_checkbox.setFont(new java.awt.Font("SansSerif", 1, 10)); // NOI18N
+        showFilteredFractions_checkbox.setText("<html>Filtering ON<br> </html>");
+        showFilteredFractions_checkbox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                useUncertaintyCrosses_checkboxActionPerformed(evt);
+                showFilteredFractions_checkboxActionPerformed(evt);
             }
         });
-        concordiaToolPanel.add(useUncertaintyCrosses_checkbox, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 2, 70, 25));
+        concordiaToolPanel.add(showFilteredFractions_checkbox, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 2, 80, 25));
 
         commonLeadCorrectionSelector_checkbox.setFont(new java.awt.Font("SansSerif", 1, 9)); // NOI18N
         commonLeadCorrectionSelector_checkbox.setText("Pbc");
@@ -1903,10 +1923,10 @@ private void ellipseCenters_checkboxActionPerformed(java.awt.event.ActionEvent e
     ((ConcordiaGraphPanel) concordiaGraphPanel).setShowEllipseCenters(!state);
     ellipseCenters_checkbox.setSelected(!state);
 
-    ((ConcordiaGraphPanel) concordiaGraphPanel).getConcordiaOptions()//
+    ((AliquotDetailsDisplayInterface) concordiaGraphPanel).getConcordiaOptions()//
             .put("showEllipseCenters", Boolean.toString(!state));
 
-    ((ConcordiaGraphPanel) concordiaGraphPanel).repaint();
+    concordiaGraphPanel.repaint();
 }//GEN-LAST:event_ellipseCenters_checkboxActionPerformed
 
 private void ellipseLabels_checkboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ellipseLabels_checkboxActionPerformed
@@ -1933,20 +1953,7 @@ private void close_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
 }//GEN-LAST:event_close_buttonActionPerformed
 
 private void sampleConcordiaOptions_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sampleConcordiaOptions_menuItemActionPerformed
-    DialogEditor myConcordiaOptionsDialog
-            = //
-            new ConcordiaOptionsDialog(
-                    null, true,
-                    ((AliquotDetailsDisplayInterface) concordiaGraphPanel).getConcordiaOptions());
-
-    myConcordiaOptionsDialog.setLocation(getLocation());
-    myConcordiaOptionsDialog.setVisible(true);
-
-    ((ConcordiaGraphPanel) concordiaGraphPanel).//
-            setConcordiaOptions(//
-                    ((ConcordiaOptionsDialog) myConcordiaOptionsDialog).getConcordiaOptions());
-
-    concordiaGraphPanel.repaint();
+    ((AliquotDetailsDisplayInterface) concordiaGraphPanel).showConcordiaDisplayOptionsDialog();
 }//GEN-LAST:event_sampleConcordiaOptions_menuItemActionPerformed
 private void concordiaOptions_menuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_concordiaOptions_menuMouseClicked
     buildAliquotOptionsMenu();
@@ -2149,14 +2156,14 @@ private void thoriumCorrectionSelector_checkboxActionPerformed (java.awt.event.A
     ((ConcordiaGraphPanel) concordiaGraphPanel).toggleDisplay_r206_238r_Th();
     thoriumCorrectionSelector_checkbox.setSelected(((ConcordiaGraphPanel) concordiaGraphPanel).isDisplay_r206_238r_Th());
 
-    ((ConcordiaGraphPanel) concordiaGraphPanel).repaint();
+    concordiaGraphPanel.repaint();
 }//GEN-LAST:event_thoriumCorrectionSelector_checkboxActionPerformed
 
 private void protactiniumCorrectionSelector_checkboxActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_protactiniumCorrectionSelector_checkboxActionPerformed
     ((ConcordiaGraphPanel) concordiaGraphPanel).toggleDisplay_r206_238r_Pa();
     protactiniumCorrectionSelector_checkbox.setSelected(((ConcordiaGraphPanel) concordiaGraphPanel).isDisplay_r206_238r_Pa());
 
-    ((ConcordiaGraphPanel) concordiaGraphPanel).repaint();
+    concordiaGraphPanel.repaint();
 }//GEN-LAST:event_protactiniumCorrectionSelector_checkboxActionPerformed
 
 private void linkedUnlinkedDiscordanceActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_linkedUnlinkedDiscordanceActionPerformed
@@ -2211,14 +2218,13 @@ private void lockUnlockHistogramBinsActionPerformed (java.awt.event.ActionEvent 
     ((DateProbabilityDensityPanel) probabilityPanel).setFreezeHistogramBinWidth(//
             !((DateProbabilityDensityPanel) probabilityPanel).isFreezeHistogramBinWidth());
 
-    ((DateProbabilityDensityPanel) probabilityPanel).repaint();
+    probabilityPanel.repaint();
 }//GEN-LAST:event_lockUnlockHistogramBinsActionPerformed
 
 private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lockUnlockHistogramBinsMouseEntered
 
     String currentBinWidth
-            = //
-            (new DecimalFormat("###0").//
+            = (new DecimalFormat("###0").//
             format(((DateProbabilityDensityPanel) probabilityPanel).getAdjustedScottsBinWidth()))//
             + " Ma";
     if (((DateProbabilityDensityPanel) probabilityPanel).isFreezeHistogramBinWidth()) {
@@ -2261,15 +2267,17 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
         // TODO add your handling code here:
     }//GEN-LAST:event_zoomOutProbability_buttonActionPerformed
 
-    private void useUncertaintyCrosses_checkboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_useUncertaintyCrosses_checkboxActionPerformed
-        ((ConcordiaGraphPanel) concordiaGraphPanel).setUseUncertaintyCrosses(!((ConcordiaGraphPanel) concordiaGraphPanel).isUseUncertaintyCrosses());
-        useUncertaintyCrosses_checkbox.setSelected(((ConcordiaGraphPanel) concordiaGraphPanel).isUseUncertaintyCrosses());
+    private void showFilteredFractions_checkboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showFilteredFractions_checkboxActionPerformed
+
+        boolean state = ((AliquotDetailsDisplayInterface) concordiaGraphPanel).isShowFilteredEllipses();
+        ((AliquotDetailsDisplayInterface) concordiaGraphPanel).setShowFilteredEllipses(!state);
+        showFilteredFractions_checkbox.setSelected(!state);
 
         ((AliquotDetailsDisplayInterface) concordiaGraphPanel).getConcordiaOptions()//
-                .put("useUncertaintyCrosses", Boolean.toString(((ConcordiaGraphPanel) concordiaGraphPanel).isUseUncertaintyCrosses()));
+                .put("showFilteredEllipses", Boolean.toString(!state));
 
         concordiaGraphPanel.repaint();
-    }//GEN-LAST:event_useUncertaintyCrosses_checkboxActionPerformed
+    }//GEN-LAST:event_showFilteredFractions_checkboxActionPerformed
 
     private void thoriumConcordiaFlavor_radioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_thoriumConcordiaFlavor_radioButtonActionPerformed
         ((AliquotDetailsDisplayInterface) concordiaGraphPanel).getConcordiaOptions().//
@@ -2362,13 +2370,13 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
     private javax.swing.JMenuItem sampleConcordiaOptions_menuItem;
     private javax.swing.JToggleButton selectAny2Axes_toggleButton;
     private javax.swing.JCheckBox showExcludedFractions_checkbox;
+    private javax.swing.JCheckBox showFilteredFractions_checkbox;
     private javax.swing.JButton showHistogram_button;
     private javax.swing.JButton showTightGraphProbability_button;
     private javax.swing.JToggleButton showTight_toggleButton;
     private javax.swing.JRadioButton terraWasserburgFlavor_radioButton;
     private javax.swing.JRadioButton thoriumConcordiaFlavor_radioButton;
     private javax.swing.JCheckBox thoriumCorrectionSelector_checkbox;
-    private javax.swing.JCheckBox useUncertaintyCrosses_checkbox;
     private javax.swing.ButtonGroup weightedMeanFractionOrderButtonGroup;
     private javax.swing.JLayeredPane weightedMeanLayeredPane;
     private javax.swing.ButtonGroup weightedMeanPanZoom_buttonGroup;
@@ -2875,37 +2883,41 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
     }
 
     private Vector<ETFractionInterface> filterActiveUPbFractions(Vector<ETFractionInterface> fractions) {
-
-        Vector<ETFractionInterface> filteredFractions = new Vector<>();
-
-        String dateName = ((DateProbabilityDensityPanel) probabilityPanel).getChosenDateName();
-
-        for (ETFractionInterface f : fractions) {
-            boolean doAddFraction = !f.isRejected();
-            double pctDiscordance = f.getRadiogenicIsotopeDateByName(RadDates.percentDiscordance).getValue().doubleValue();
-
-            if (pctDiscordance >= 0.0) {  //
-                // positive percent discordance
-                doAddFraction = doAddFraction && (pctDiscordance <= positivePctDiscordance_slider.getValue());
-            } else {
-                // negative percent discordance
-                doAddFraction = doAddFraction && (pctDiscordance >= negativePctDiscordance_slider.getValue());
-            }
-
-//            System.out.println("1 pct unct " + f.getFractionID() + "  " + f.getRadiogenicIsotopeDateByName(chosenDateName).getOneSigmaPct().doubleValue());
-            doAddFraction = doAddFraction //
-                    && f.getRadiogenicIsotopeDateByName(dateName).getOneSigmaPct().doubleValue() //
-                    <= percentUncertainty_slider.getValue();
-
-            //oct 2014
-            doAddFraction = doAddFraction //
-                    && f.getRadiogenicIsotopeDateByName(dateName).getOneSigmaPct().doubleValue() != 0.0;
-
-            if (doAddFraction) {
-                filteredFractions.add(f);
-            }
-        }
-        return filteredFractions;
+//
+//        Vector<ETFractionInterface> filteredFractions = new Vector<>();
+//
+//        String dateName = ((DateProbabilityDensityPanel) probabilityPanel).getChosenDateName();
+//
+//        for (ETFractionInterface f : fractions) {
+//            boolean doAddFraction = !f.isRejected();
+//            double pctDiscordance = f.getRadiogenicIsotopeDateByName(RadDates.percentDiscordance).getValue().doubleValue();
+//
+//            if (pctDiscordance >= 0.0) {  //
+//                // positive percent discordance
+//                doAddFraction = doAddFraction && (pctDiscordance <= positivePctDiscordance_slider.getValue());
+//            } else {
+//                // negative percent discordance
+//                doAddFraction = doAddFraction && (pctDiscordance >= negativePctDiscordance_slider.getValue());
+//            }
+//
+//            doAddFraction = doAddFraction //
+//                    && f.getRadiogenicIsotopeDateByName(dateName).getOneSigmaPct().doubleValue() //
+//                    <= percentUncertainty_slider.getValue();
+//
+//            //oct 2014
+//            doAddFraction = doAddFraction //
+//                    && f.getRadiogenicIsotopeDateByName(dateName).getOneSigmaPct().doubleValue() != 0.0;
+//
+//            if (doAddFraction) {
+//                filteredFractions.add(f);
+//            }
+//        }
+        return SampleDateInterpretationsUtilities.filterActiveUPbFractions(//
+                fractions,//
+                ((DateProbabilityDensityPanel) probabilityPanel).getChosenDateName(),//
+                positivePctDiscordance_slider.getValue(), //
+                negativePctDiscordance_slider.getValue(), //
+                percentUncertainty_slider.getValue());
     }
 
     /**
@@ -2969,7 +2981,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
 
             try {
                 selectedFileSVG
-                        = //
+                        = 
                         new File(selectedFile.getCanonicalPath().replaceFirst(".pdf", ".svg"));
 
             } catch (IOException iOException) {

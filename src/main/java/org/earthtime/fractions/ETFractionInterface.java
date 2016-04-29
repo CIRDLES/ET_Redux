@@ -69,6 +69,10 @@ public interface ETFractionInterface {
      * @param standard
      */
     public void setStandard(boolean standard);
+    
+    public boolean isSecondaryStandard();
+    
+    public void setSecondaryStandard(boolean secondaryStandard);
 
     /**
      *

@@ -68,6 +68,7 @@ public class TripoliFraction implements //
 
     private String fractionID;
     private boolean standard;
+    private boolean secondaryReferenceMaterial;
     private long peakTimeStamp;
     private long backgroundTimeStamp;
     private long zeroBasedTimeStamp;
@@ -128,6 +129,7 @@ public class TripoliFraction implements //
 
         this.fractionID = fractionID;
         this.standard = standard;
+        this.secondaryReferenceMaterial = false;
         this.backgroundTimeStamp = backgroundTimeStamp;
         this.peakTimeStamp = peakTimeStamp;
         this.zeroBasedTimeStamp = 0;
@@ -790,6 +792,20 @@ public class TripoliFraction implements //
      */
     public void setStandard(boolean standard) {
         this.standard = standard;
+    }
+
+    /**
+     * @return the secondaryReferenceMaterial
+     */
+    public boolean isSecondaryReferenceMaterial() {
+        return secondaryReferenceMaterial;
+    }
+
+    /**
+     * @param secondaryReferenceMaterial the secondaryReferenceMaterial to set
+     */
+    public void setSecondaryReferenceMaterial(boolean secondaryReferenceMaterial) {
+        this.secondaryReferenceMaterial = secondaryReferenceMaterial;
     }
 
     /**

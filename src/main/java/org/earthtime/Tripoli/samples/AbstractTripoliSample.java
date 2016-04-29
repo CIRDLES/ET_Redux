@@ -112,6 +112,7 @@ public abstract class AbstractTripoliSample implements //
     public void setFractionsSampleFlags() {
         for (TripoliFraction tf : sampleFractions) {
             tf.setStandard(primaryStandard);
+            tf.setSecondaryReferenceMaterial(secondaryStandard);
         }
     }
 

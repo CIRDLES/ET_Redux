@@ -107,6 +107,8 @@ public class ConcordiaGraphPanel extends JLayeredPane
     private ValueModel lambda238;
     private ValueModel lambda232;
     private Vector<ETFractionInterface> selectedFractions;
+    // april 2016
+    private Vector<ETFractionInterface> filteredFractions;
     private Vector<ETFractionInterface> excludedFractions;
     private double minT;
     private double maxT;
@@ -114,6 +116,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
     private boolean showEllipseCenters;
     private boolean showEllipseLabels;
     private boolean showExcludedEllipses;
+    private boolean showFilteredEllipses;
     private Map<String, String> concordiaOptions;
     private Map<String, Map<String, String>> aliquotOptions;
     private Cursor concordiaCursor;    // PAN, ZOOM, EDIT
@@ -176,6 +179,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
         this.showEllipseCenters = true;
         this.showEllipseLabels = true;
         this.showExcludedEllipses = true;
+        this.showFilteredEllipses = false;
         this.display_r206_238r_Th = false;
         this.display_r206_238r_Pa = false;
         this.display_PbcCorr = false;
@@ -334,6 +338,10 @@ public class ConcordiaGraphPanel extends JLayeredPane
         String axesTicLabelFontSize = "12";
         String axesLabelFont = "Monospaced";
         String axesLabelFontSize = "20";
+
+        if (getConcordiaOptions().containsKey("useUncertaintyCrosses")) {
+            setUseUncertaintyCrosses(Boolean.valueOf(getConcordiaOptions().get("useUncertaintyCrosses")));
+        }
 
         try {
             if (getConcordiaOptions().containsKey("ellipseSize")) {
@@ -584,7 +592,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
         }// END excluded FRACTIONS *************************************
 
         // selected fractions fill only 
-        for (ETFractionInterface f : selectedFractions) {
+        for (ETFractionInterface f : showFilteredEllipses ? getFilteredFractions() : selectedFractions) {
             if (!f.isRejected() && !(isDisplay_PbcCorr() && !((UPbFractionI) f).isCommonLeadLossCorrected())) {
                 // determine aliquot for colors etc.
                 String aliquotName = sample.getNameOfAliquotFromSample(f.getAliquotNumber());
@@ -624,7 +632,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
             }
         }
 
-        for (ETFractionInterface f : selectedFractions) {
+        for (ETFractionInterface f : showFilteredEllipses ? getFilteredFractions() : selectedFractions) {
             if (!f.isRejected() && !(isDisplay_PbcCorr() && !((UPbFractionI) f).isCommonLeadLossCorrected())) {
                 // determine aliquot for colors etc.
                 String aliquotName = sample.getNameOfAliquotFromSample(f.getAliquotNumber());
@@ -1635,7 +1643,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
                 rhoTW = "rhoR207_206PbcCorr__r238_206PbcCorr";
             }
 
-            for (ETFractionInterface f : selectedFractions) {
+            for (ETFractionInterface f : showFilteredEllipses ? getFilteredFractions() : selectedFractions) {
 
                 if (!f.isRejected() && !(isDisplay_PbcCorr() && !((UPbFractionI) f).isCommonLeadLossCorrected())) {
                     if (getConcordiaFlavor().equalsIgnoreCase("T-W")) {
@@ -1918,6 +1926,9 @@ public class ConcordiaGraphPanel extends JLayeredPane
     @Override
     public void setSelectedFractions(Vector<ETFractionInterface> fractions) {
         this.selectedFractions = fractions;
+        if (filteredFractions == null) {
+            filteredFractions = fractions;
+        }
 
     }
 
@@ -2298,6 +2309,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
      *
      * @param concordiaOptions
      */
+    @Override
     public void setConcordiaOptions(Map<String, String> concordiaOptions) {
         this.concordiaOptions = concordiaOptions;
     }
@@ -3225,6 +3237,44 @@ public class ConcordiaGraphPanel extends JLayeredPane
      */
     public void setUseUncertaintyCrosses(boolean useUncertaintyCrosses) {
         this.useUncertaintyCrosses = useUncertaintyCrosses;
+    }
+
+    /**
+     * @return the showFilteredEllipses
+     */
+    @Override
+    public boolean isShowFilteredEllipses() {
+        return showFilteredEllipses;
+    }
+
+    /**
+     * @param showFilteredEllipses the showFilteredEllipses to set
+     */
+    @Override
+    public void setShowFilteredEllipses(boolean showFilteredEllipses) {
+        this.showFilteredEllipses = showFilteredEllipses;
+    }
+
+    /**
+     * @return the filteredFractions
+     */
+    public Vector<ETFractionInterface> getFilteredFractions() {
+        Vector<ETFractionInterface> filtered = new Vector<>();
+        for (ETFractionInterface filteredF : filteredFractions) {
+            if (selectedFractions.contains(filteredF)) {
+                filtered.add(filteredF);
+            }
+        }
+        return filtered;
+    }
+
+    /**
+     * @param proposedFilteredFractions the proposedFilteredFractions to set
+     * from
+     */
+    @Override
+    public void setFilteredFractions(Vector<ETFractionInterface> proposedFilteredFractions) {
+        this.filteredFractions = proposedFilteredFractions;
     }
 
 }

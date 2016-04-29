@@ -175,6 +175,7 @@ public class UPbFraction extends Fraction implements
     private boolean filtered;
     // isValidOrAirplaneMode add on for noah sept 2010
     private boolean standard;
+    private boolean secondaryStandard;
     /**
      *
      */
@@ -2752,8 +2753,25 @@ public class UPbFraction extends Fraction implements
     /**
      * @param standard the standard to set
      */
+    @Override
     public void setStandard(boolean standard) {
         this.standard = standard;
+    }
+
+    /**
+     * @return the secondaryStandard
+     */
+    @Override
+    public boolean isSecondaryStandard() {
+        return secondaryStandard;
+    }
+
+    /**
+     * @param secondaryStandard the secondaryStandard to set
+     */
+    @Override
+    public void setSecondaryStandard(boolean secondaryStandard) {
+        this.secondaryStandard = secondaryStandard;
     }
 
     /**

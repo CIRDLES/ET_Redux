@@ -112,7 +112,8 @@ public interface TripoliSessionInterface extends TripoliSessionFractionationCalc
     /**
      *
      */
-    void clearAllFractionsOfLocalYAxis ();
+    public void clearAllFractionsOfLocalYAxis ();
+    public void setAllFractionsOfLocalYAxis();
 
     /**
      * @return the getDownholeFractionationDataModels

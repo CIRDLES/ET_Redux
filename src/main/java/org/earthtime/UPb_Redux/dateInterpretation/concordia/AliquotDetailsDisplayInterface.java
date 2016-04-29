@@ -16,11 +16,12 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package org.earthtime.UPb_Redux.dateInterpretation.concordia;
 
 import java.util.Map;
 import java.util.Vector;
+import org.earthtime.UPb_Redux.dialogs.graphManagers.ConcordiaOptionsDialog;
+import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.fractions.ETFractionInterface;
 
 /**
@@ -46,6 +47,8 @@ public interface AliquotDetailsDisplayInterface {
      */
     Map<String, String> getConcordiaOptions();
 
+    public void setConcordiaOptions(Map<String, String> concordiaOptions);
+
     /**
      *
      * @return
@@ -62,13 +65,33 @@ public interface AliquotDetailsDisplayInterface {
      *
      * @param fractions
      */
-    public void setSelectedFractions ( Vector<ETFractionInterface> fractions );
-    
+    public void setSelectedFractions(Vector<ETFractionInterface> fractions);
+
+    public void setFilteredFractions(Vector<ETFractionInterface> filteredFractions);
+
     /**
      *
      * @return
      */
     Vector<ETFractionInterface> getSelectedFractions();
 
-    
+    public void repaint();
+
+    public default void showConcordiaDisplayOptionsDialog() {
+        DialogEditor myConcordiaOptionsDialog
+                = new ConcordiaOptionsDialog(
+                        null, true,
+                        getConcordiaOptions());
+
+        myConcordiaOptionsDialog.setVisible(true);
+
+        setConcordiaOptions(//
+                ((ConcordiaOptionsDialog) myConcordiaOptionsDialog).getConcordiaOptions());
+
+        repaint();
+    }
+
+    public boolean isShowFilteredEllipses();
+
+    public void setShowFilteredEllipses(boolean showFilteredEllipses);
 }

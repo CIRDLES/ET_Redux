@@ -823,6 +823,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         allDataUsedForScaling = new javax.swing.JRadioButton();
         dataScalingOptionsLabel = new javax.swing.JLabel();
         includedDataUsedForScaling = new javax.swing.JRadioButton();
+        setAllIndividualYAxisPanes_button =  new ET_JButton();
         xAxisZoomSlider = new javax.swing.JSlider();
         tripoliSessionRawDataViewYAxis = new javax.swing.JLayeredPane();
         tripoliSessionDataHeader_pane = new javax.swing.JLayeredPane();
@@ -1034,7 +1035,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         });
         controlPanel_panel.setLayer(includeAllFractions_button, javax.swing.JLayeredPane.PALETTE_LAYER);
         controlPanel_panel.add(includeAllFractions_button);
-        includeAllFractions_button.setBounds(0, 490, 150, 20);
+        includeAllFractions_button.setBounds(0, 480, 150, 20);
 
         refreshView_button.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         refreshView_button.setText("Refresh View");
@@ -1065,7 +1066,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         });
         controlPanel_panel.setLayer(removeAllIndividualYAxisPanes_button, javax.swing.JLayeredPane.PALETTE_LAYER);
         controlPanel_panel.add(removeAllIndividualYAxisPanes_button);
-        removeAllIndividualYAxisPanes_button.setBounds(0, 530, 150, 20);
+        removeAllIndividualYAxisPanes_button.setBounds(0, 540, 150, 20);
 
         jLabel4.setFont(new java.awt.Font("SansSerif", 3, 10)); // NOI18N
         jLabel4.setText("   Select fractionation technique:");
@@ -1251,7 +1252,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         });
         controlPanel_panel.setLayer(restoreAllAquisitions, javax.swing.JLayeredPane.PALETTE_LAYER);
         controlPanel_panel.add(restoreAllAquisitions);
-        restoreAllAquisitions.setBounds(0, 510, 150, 20);
+        restoreAllAquisitions.setBounds(0, 500, 150, 20);
 
         jPanel1.setBackground(new java.awt.Color(250, 240, 230));
         jPanel1.setPreferredSize(new java.awt.Dimension(191, 70));
@@ -1382,6 +1383,17 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         });
         controlPanel_panel.add(includedDataUsedForScaling);
         includedDataUsedForScaling.setBounds(75, 405, 115, 20);
+
+        setAllIndividualYAxisPanes_button.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
+        setAllIndividualYAxisPanes_button.setText("Show all Local Y-Axis");
+        setAllIndividualYAxisPanes_button.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                setAllIndividualYAxisPanes_buttonActionPerformed(evt);
+            }
+        });
+        controlPanel_panel.setLayer(setAllIndividualYAxisPanes_button, javax.swing.JLayeredPane.PALETTE_LAYER);
+        controlPanel_panel.add(setAllIndividualYAxisPanes_button);
+        setAllIndividualYAxisPanes_button.setBounds(0, 520, 150, 20);
 
         tripoliTab_layeredPane.add(controlPanel_panel);
         controlPanel_panel.setBounds(0, 0, 191, 620);
@@ -1629,6 +1641,10 @@ private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.
         tripoliSessionRawDataView.refreshPanel(true);
     }//GEN-LAST:event_includedDataUsedForScalingActionPerformed
 
+    private void setAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setAllIndividualYAxisPanes_buttonActionPerformed
+        ((TripoliSessionRawDataView) tripoliSessionRawDataView).setAllLocalYAxisPanes(); 
+    }//GEN-LAST:event_setAllIndividualYAxisPanes_buttonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel DownholePanel;
     private javax.swing.JRadioButton allDataUsedForScaling;
@@ -1671,6 +1687,7 @@ private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.
     private javax.swing.JPanel sampleType_panel;
     private javax.swing.JComboBox<AbstractTripoliSample> samplesCompboBox;
     private javax.swing.JButton save_button;
+    private javax.swing.JButton setAllIndividualYAxisPanes_button;
     private javax.swing.JRadioButton showAllFractions_radioButton;
     private javax.swing.JRadioButton showIncludedFractions_radioButton;
     private javax.swing.JButton switchToProjectManager_button;
