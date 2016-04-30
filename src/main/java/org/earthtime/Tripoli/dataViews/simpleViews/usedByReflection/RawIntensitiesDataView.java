@@ -155,8 +155,7 @@ public class RawIntensitiesDataView extends AbstractRawDataView {
 
         // recalculate original un-mercury corrected on peak data (only pertains to Pb204)
         double[] onPeakMercuryCorrections
-                = //
-                ((RawIntensityDataModel) rawRatioDataModel).getOnPeakCountsPerSecondCorrectionsAsRawIntensities();//   .getOnPeakVirtualCollector().getIntensityCorrections();
+                = ((RawIntensityDataModel) rawRatioDataModel).getOnPeakCountsPerSecondCorrectionsAsRawIntensities();//   .getOnPeakVirtualCollector().getIntensityCorrections();
         // only if corrected do we uncorrect
         onPeakIntensityUncorrectedForMercury = new double[onPeakMercuryCorrections.length];
         if (onPeakMercuryCorrections[0] != 0.0) {
@@ -166,8 +165,7 @@ public class RawIntensitiesDataView extends AbstractRawDataView {
 
             // recalculate original un-mercury corrected background data (only pertains to Pb204)
             double[] backgroundMercuryCorrections
-                    = //
-                    ((RawIntensityDataModel) rawRatioDataModel).getBackgroundCountsPerSecondCorrectionsAsRawIntensities();//   .getBackgroundVirtualCollector().getIntensityCorrections();
+                    = ((RawIntensityDataModel) rawRatioDataModel).getBackgroundCountsPerSecondCorrectionsAsRawIntensities();//   .getBackgroundVirtualCollector().getIntensityCorrections();
             backgroundIntensityUncorrectedForMercury = new double[backgroundMercuryCorrections.length];
             for (int i = 0; i < backgroundIntensities.length; i++) {
                 backgroundIntensityUncorrectedForMercury[i] = backgroundIntensities[i] + backgroundMercuryCorrections[i];
@@ -214,8 +212,10 @@ public class RawIntensitiesDataView extends AbstractRawDataView {
         // on peak
         for (int i = 0; i < myOnPeakData.length; i++) {
             if (showAll || myDataActiveMap[i]) {
-                minY = Math.min(minY, myOnPeakData[i]);
-                maxY = Math.max(maxY, myOnPeakData[i]);
+                if (Double.isFinite(myOnPeakData[i])) {
+                    minY = Math.min(minY, myOnPeakData[i]);
+                    maxY = Math.max(maxY, myOnPeakData[i]);
+                }
 
                 if (!((DataModelFitFunctionInterface) rawRatioDataModel).getSelectedFitFunctionType().equals(FitFunctionTypeEnum.NONE)) {
                     minY = Math.min(minY, onPeakFitBackgroundIntensities[i]);
@@ -230,14 +230,13 @@ public class RawIntensitiesDataView extends AbstractRawDataView {
 
         }
 
-        // rework logic April 2016 
-        for (int i = 0; i < myOnPeakData.length; i++) {
-            if ((Double.isFinite(myOnPeakData[i])) && (showAll || myDataActiveMap[i])) {
-                minY = Math.min(minY, myOnPeakData[i]);
-                maxY = Math.max(maxY, myOnPeakData[i]);
-            }
-        }
-
+//        // rework logic April 2016 
+//        for (int i = 0; i < myOnPeakData.length; i++) {
+//            if ((Double.isFinite(myOnPeakData[i])) && (showAll || myDataActiveMap[i])) {
+//                minY = Math.min(minY, myOnPeakData[i]);
+//                maxY = Math.max(maxY, myOnPeakData[i]);
+//            }
+//        }
         // adjust margins for unknowns
         if (!tripoliFraction.isStandard()) {
             double yMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(minY, maxY, 0.05);

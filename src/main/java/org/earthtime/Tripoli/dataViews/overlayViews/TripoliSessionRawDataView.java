@@ -687,9 +687,9 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
         // handle x-axis which is uniform across time
         double overallMinX = rawDataModelViews[0][0].getMinX();
         double overallMaxX = rawDataModelViews[0][0].getMaxX();
-//        double xMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(overallMinX, overallMaxX, 0.05);
-//        overallMinX -= xMarginStretch;
-//        overallMaxX += xMarginStretch;
+        double xMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(overallMinX, overallMaxX, 0.05);
+        overallMinX -= xMarginStretch;
+        overallMaxX += xMarginStretch;
 
         for (int i = 0; i < countOfDataModels; i++) {
             double overallMinY = Double.MAX_VALUE;
@@ -719,13 +719,13 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
 
                 // now apply to all fraction data views by walking across fractions within a dataModel type
                 for (int f = 0; f < (fractionCountForHorizontalLayout); f++) {
+                    rawDataModelViews[i][f].setMinX(overallMinX);
+                    rawDataModelViews[i][f].setMaxX(overallMaxX);
                     if (SAVED_YAXIS_IS_UNIFORM) {
                         // the yaxis represents the normalized view across all sample fractions
                         rawDataModelViews[i][f].setMinY(overallMinY);
                         rawDataModelViews[i][f].setMaxY(overallMaxY);
                         rawDataModelViews[i][f].setTics(yAxisTics);
-                        rawDataModelViews[i][f].setMinX(overallMinX);
-                        rawDataModelViews[i][f].setMaxX(overallMaxX);
                     } else {
                         // each graph gets its own tic layout
                         BigDecimal[] yAxisTicsUnknown = TicGeneratorForAxes.generateTics(//
@@ -988,11 +988,13 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
                 underlay.add(rawDataModelViewsOverlay, javax.swing.JLayeredPane.PALETTE_LAYER);
 
             } else // detect if grid for intercept fractionation of standards *********************************** Intercept Fractionation of standards
-             if (FRACTION_LAYOUT_VIEW_STYLE.equals(FractionLayoutViewStylesEnum.GRID_INTERCEPT)) {
+            {
+                if (FRACTION_LAYOUT_VIEW_STYLE.equals(FractionLayoutViewStylesEnum.GRID_INTERCEPT)) {
                     for (int f = 0; f < (fractionCountForHorizontalLayout); f++) {
                         ((FitFunctionDataInterface) rawDataModelViews[i][f]).setShowFittedFunction(true);
                     }
                 }
+            }
         }
 
         // establish graphWidth 

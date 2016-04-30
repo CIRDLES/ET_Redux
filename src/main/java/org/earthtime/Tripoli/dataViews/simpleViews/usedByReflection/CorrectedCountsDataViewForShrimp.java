@@ -37,7 +37,7 @@ import org.earthtime.utilities.TicGeneratorForAxes;
  *
  * @author James F. Bowring
  */
-public class RawCountsDataViewForShrimp extends AbstractRawDataView {
+public class CorrectedCountsDataViewForShrimp extends AbstractRawDataView {
 
     /**
      *
@@ -53,7 +53,7 @@ public class RawCountsDataViewForShrimp extends AbstractRawDataView {
      * @param bounds
      * @param invokeMouseListener
      */
-    public RawCountsDataViewForShrimp(//
+    public CorrectedCountsDataViewForShrimp(//
             JLayeredPane sampleSessionDataView,//
             TripoliFraction tripoliFraction,//
             DataModelInterface rawIsotopeDataModel,//
@@ -128,8 +128,8 @@ public class RawCountsDataViewForShrimp extends AbstractRawDataView {
         setDisplayOffsetY(0.0);
         setDisplayOffsetX(0.0);
 
-        myOnPeakData = ((RawIntensityDataModel) rawRatioDataModel).getOnPeakCountsPerSecondAsRawIntensities();
-        double[] myOnPeakVariances = ((RawIntensityDataModel) rawRatioDataModel).getDiagonalOfMatrixSIntensities();
+        myOnPeakData = ((RawIntensityDataModel) rawRatioDataModel).getOnPeakCorrectedCountsPerSecondAsRawIntensities();
+        double[] myOnPeakVariances = ((RawIntensityDataModel) rawRatioDataModel).getDiagonalOfMatrixSCorrectedIntensities();
         myOnPeakOneSigmas = new double[myOnPeakVariances.length];
         for (int i = 0; i < myOnPeakVariances.length; i++) {
             myOnPeakOneSigmas[i] = Math.sqrt(myOnPeakVariances[i]);

@@ -89,7 +89,11 @@ public class RawIntensityDataModel //
     private boolean calculatedInitialFitFunctions;
     // june 2013 - only not null for Pb204
     private Matrix correctedHg202Si;
+    // march 2016 for SHRIMP this diagonal is forced to the variances produced for SHRIMP
     private double[] diagonalOfMatrixSIntensities;
+    // april 2016 this new array is corrected variances from SHRIMP
+    private double[] diagonalOfMatrixSCorrectedIntensities;
+
     private double[] allItensities;
     // nov 2014 - see validateOnPeakBaselineCorrectedIsotope inn abstractMassSpecSetup
     private boolean forceMeanForCommonLeadRatios;
@@ -1223,9 +1227,24 @@ public class RawIntensityDataModel //
     }
 
     /**
-     * @param diagonalOfMatrixSIntensities the diagonalOfMatrixSIntensities to set
+     * @param diagonalOfMatrixSIntensities the diagonalOfMatrixSIntensities to
+     * set
      */
     public void setDiagonalOfMatrixSIntensities(double[] diagonalOfMatrixSIntensities) {
         this.diagonalOfMatrixSIntensities = diagonalOfMatrixSIntensities;
+    }
+
+    /**
+     * @return the diagonalOfMatrixSCorrectedIntensities
+     */
+    public double[] getDiagonalOfMatrixSCorrectedIntensities() {
+        return diagonalOfMatrixSCorrectedIntensities;
+    }
+
+    /**
+     * @param diagonalOfMatrixSCorrectedIntensities the diagonalOfMatrixSCorrectedIntensities to set
+     */
+    public void setDiagonalOfMatrixSCorrectedIntensities(double[] diagonalOfMatrixSCorrectedIntensities) {
+        this.diagonalOfMatrixSCorrectedIntensities = diagonalOfMatrixSCorrectedIntensities;
     }
 }

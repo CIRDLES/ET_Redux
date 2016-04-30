@@ -156,7 +156,6 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
         SortedSet myTripoliFractions = new TreeSet<>();
         PrawnFile prawnFile;
 
-//        try {
         // remote copy of example file
         java.net.URL url;
         try {
@@ -203,20 +202,24 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
     }
 
     private TripoliFraction processRunFraction(PrawnFile.Run runFraction) {
-        String fractionID = runFraction.getPar().get(0).getValue();
+//        String fractionID = runFraction.getPar().get(0).getValue();
+//        // temp hack
+//        boolean isReferenceMaterial = fractionID.startsWith("T.");
+
+//        // format "2010-11-11"
+//        String setDate = runFraction.getSet().getPar().get(0).getValue();
+//        // format 10:17:34
+//        String setTime = runFraction.getSet().getPar().get(1).getValue();
+//        // convert to long
+//        java.sql.Timestamp peakTimeStamp = java.sql.Timestamp.valueOf(setDate + " " + setTime);
+//        long fractionPeakTimeStamp = peakTimeStamp.getTime();
+        ShrimpFraction shrimpFraction = PrawnRunFractionParser.processRunFraction(runFraction);
+        String fractionID = shrimpFraction.getFractionID();
         // temp hack
         boolean isReferenceMaterial = fractionID.startsWith("T.");
+        long fractionPeakTimeStamp = shrimpFraction.getDateTimeMilliseconds();
 
-        // format "2010-11-11"
-        String setDate = runFraction.getSet().getPar().get(0).getValue();
-        // format 10:17:34
-        String setTime = runFraction.getSet().getPar().get(1).getValue();
-        // convert to long
-        java.sql.Timestamp peakTimeStamp = java.sql.Timestamp.valueOf(setDate + " " + setTime);
-        long fractionPeakTimeStamp = peakTimeStamp.getTime();
-
-        PrawnRunFractionParser.processRunFraction(runFraction);
-        double[][] extractedData = PrawnRunFractionParser.getExtractedRunData();
+        double[][] extractedData = shrimpFraction.getExtractedRunData();
 
         // within each row
         // index 0 = scannumber; followed by order of groups = 196  204 Backgrnd 206 207 208 238 248 254 270
@@ -270,11 +273,17 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
 
         massSpec.setCountOfAcquisitions(peakAcquisitions.size());
 
-        massSpec.processFractionRawRatiosII(//
-                backgroundAcquisitions, peakAcquisitions, true, tripoliFraction);
-
         // supply calculated variances
         ((ShrimpSetupUPb) massSpec).initializeVariances(peakAcquisitionsVariances);
+
+        // supply corrected counts
+        ((ShrimpSetupUPb) massSpec).correctOnPeakIntensities(stripOutBackgroundHack(2, shrimpFraction.getNetPkCps()));
+
+        // supply calculated variances of CORRECTED counts
+        ((ShrimpSetupUPb) massSpec).initializeCorrectedVariances(stripOutBackgroundHack(2, shrimpFraction.getPkFerr()));
+
+        massSpec.processFractionRawRatiosII(//
+                backgroundAcquisitions, peakAcquisitions, true, tripoliFraction);
 
         tripoliFraction.shadeDataActiveMapLeft(0);
         System.out.println("\n**** SHRIMP FractionID  " + fractionID + " refMat? " + tripoliFraction.isStandard() + " <<<<<<<<<<<<<<<<<<\n");
@@ -282,4 +291,19 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
         return tripoliFraction;
     }
 
+    private double[][] stripOutBackgroundHack(int backgroundIndex, double[][] original) {
+
+        double[][] stripped = new double[original.length][original[0].length - 1];
+        int strippedCol = 0;
+        for (int col = 0; col < original[0].length; col++) {
+            if (col != backgroundIndex) {
+                for (int row = 0; row < original.length; row++) {
+                    stripped[row][strippedCol] = original[row][col];
+                }
+                strippedCol++;
+            }
+        }
+
+        return stripped;
+    }
 }

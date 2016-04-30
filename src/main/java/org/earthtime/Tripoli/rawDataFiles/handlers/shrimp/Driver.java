@@ -62,7 +62,7 @@ public class Driver {
     }
 
     public static void reportInterpolatedRatios(ShrimpFraction shrimpFraction) {
-        System.out.print("\n" + shrimpFraction.getName() + ", ");
+        System.out.print("\n" + shrimpFraction.getFractionID() + ", ");
         shrimpFraction.getIsotopicRatios().stream().forEach((isotopeRatioModel) -> {
             System.out.print("Time, '" + isotopeRatioModel.prettyPrintSimpleName() + ", " + "'+/-1sig abs, ");
         });
@@ -114,7 +114,7 @@ public class Driver {
     }
 
     public static void reportSummaryRawData(ShrimpFraction shrimpFraction) {
-        System.out.println("\n" + shrimpFraction.getName() + "  ***********************\n");
+        System.out.println("\n" + shrimpFraction.getFractionID() + "  ***********************\n");
 
         for (double[] scannedData : shrimpFraction.getExtractedRunData()) {
             for (int j = 0; j < scannedData.length; j++) {
@@ -131,7 +131,7 @@ public class Driver {
 
     public static void reportTotalCps(ShrimpFraction shrimpFraction) {
 
-        System.out.print(shrimpFraction.getName() + ", ");
+        System.out.print(shrimpFraction.getFractionID() + ", ");
 
         double[] totalCps = shrimpFraction.getTotalCps();
         for (int j = 0; j < totalCps.length; j++) {

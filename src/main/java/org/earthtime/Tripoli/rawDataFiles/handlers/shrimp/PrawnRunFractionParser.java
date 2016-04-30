@@ -60,10 +60,12 @@ public class PrawnRunFractionParser {
         calculateIsotopicRatios(true);
 
         ShrimpFraction shrimpFraction = new ShrimpFraction(isotopicRatios);
-        shrimpFraction.setName(fractionName);
+        shrimpFraction.setFractionID(fractionName);
         shrimpFraction.setDateTimeMilliseconds(dateTimeMilliseconds);
         shrimpFraction.setExtractedRunData(extractedRunData);
         shrimpFraction.setTotalCps(totalCps);
+        shrimpFraction.setNetPkCps(netPkCps);
+        shrimpFraction.setPkFerr(pkFerr);
 
         return shrimpFraction;
     }
@@ -253,7 +255,7 @@ public class PrawnRunFractionParser {
         for (int scanNum = 0; scanNum < nScans; scanNum++) {
             for (int speciesMeasurementIndex = 0; speciesMeasurementIndex < nSpecies; speciesMeasurementIndex++) {
                 if (speciesMeasurementIndex != HARD_WIRED_INDEX_OF_BACKGROUND) {
-                    // correct PeakCps to NetPkCps inside correctedData (note translation of matrix)
+                    // correct PeakCps to NetPkCps
                     netPkCps[scanNum][speciesMeasurementIndex] = pkCps[scanNum][speciesMeasurementIndex] - backgroundCps;
                     sumOfCorrectedPeaks[speciesMeasurementIndex] += netPkCps[scanNum][speciesMeasurementIndex];
                     // calculate fractional error

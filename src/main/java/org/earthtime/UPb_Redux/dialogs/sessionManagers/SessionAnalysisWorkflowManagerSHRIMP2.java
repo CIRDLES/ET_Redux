@@ -47,11 +47,11 @@ import org.earthtime.Tripoli.dataModels.sessionModels.AbstractSessionForStandard
 import org.earthtime.Tripoli.dataViews.AbstractRawDataView;
 import org.earthtime.Tripoli.dataViews.overlayViews.TripoliSessionRawDataView;
 import org.earthtime.Tripoli.dataViews.simpleViews.SessionOfStandardView;
-import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.CorrectedIntensitiesDataView;
+import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.CorrectedCountsDataViewForShrimp;
 import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.CorrectedRatioDataView;
 import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.FitFunctionsOnDownHoleRatioDataView;
 import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.FitFunctionsOnRatioDataView;
-import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.RawIntensitiesDataView;
+import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.RawCountsDataViewForShrimp;
 import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.RawRatioDataView;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.Tripoli.samples.AbstractTripoliSample;
@@ -69,10 +69,10 @@ import org.earthtime.dataDictionaries.RawRatioNames;
 import org.earthtime.dialogs.DialogEditor;
 
 /**
- *
+ * Adapted from LAICPMS version using RawCountsDataViewForShrimp
  * @author James F. Bowring
  */
-public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
+public class SessionAnalysisWorkflowManagerSHRIMP2 extends DialogEditor //
         implements
         Serializable,
         SessionAnalysisWorkflowManagerInterface {
@@ -98,7 +98,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
      * @param modal
      * @param tripoliSession
      */
-    public SessionAnalysisWorkflowManagerLAICPMS(
+    public SessionAnalysisWorkflowManagerSHRIMP2(
             ProjectManagerSubscribeInterface projectManager, //
             ETReduxFrame uPbReduxFrame, //
             boolean modal, //
@@ -112,6 +112,9 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         this.tripoliSession = tripoliSession;
 
         initComponents();
+        
+        // SHRIMP temp
+        fractionationTechniqueTabbedPane.setVisible(false);
 
         // color coding
         rawIsotopes_radioButton.setBackground(ReduxConstants.ColorOfRawIsotopeGreen);
@@ -164,7 +167,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
             tripoliSessionRawDataView = new TripoliSessionRawDataView( //
                     uPbReduxFrame,//
                     tripoliSession,//
-                    dataModelViewConstructorFactory(RawIntensitiesDataView.class.getName()),//
+                    dataModelViewConstructorFactory(RawCountsDataViewForShrimp.class.getName()),//
                     rawDataSourceMethodFactory("getIncludedIsotopes"), //
                     FractionLayoutViewStylesEnum.GRID,//
                     yAxisZoomSlider,//
@@ -362,7 +365,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         }
         tripoliSessionRawDataView.setBackground(rawIsotopes_radioButton.getBackground());
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).setDataModelViewConstructor(//
-                dataModelViewConstructorFactory(RawIntensitiesDataView.class.getName()));
+                dataModelViewConstructorFactory(RawCountsDataViewForShrimp.class.getName()));
 
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).setRawDataSourceMethod(//
                 rawDataSourceMethodFactory("getIncludedIsotopes"));
@@ -385,7 +388,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         }
         tripoliSessionRawDataView.setBackground(correctedIsotopes_radioButton.getBackground());
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).setDataModelViewConstructor(//
-                dataModelViewConstructorFactory(CorrectedIntensitiesDataView.class.getName()));
+                dataModelViewConstructorFactory(CorrectedCountsDataViewForShrimp.class.getName()));
 
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).setRawDataSourceMethod(//
                 rawDataSourceMethodFactory("getIncludedIsotopes"));
@@ -836,7 +839,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         sampleType_label.setBackground(new java.awt.Color(255, 204, 102));
         sampleType_label.setFont(new java.awt.Font("SansSerif", 0, 13)); // NOI18N
         sampleType_label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        sampleType_label.setText("LA ICP MS Workflow Manager for a Session of Raw Data Preparation");
+        sampleType_label.setText("SHRIMP MS Workflow Manager for a Session of Raw Data Preparation");
         sampleType_label.setOpaque(true);
 
         org.jdesktop.layout.GroupLayout sampleType_panelLayout = new org.jdesktop.layout.GroupLayout(sampleType_panel);

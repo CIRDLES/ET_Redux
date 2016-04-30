@@ -600,7 +600,10 @@ public abstract class AbstractRawDataView extends JLayeredPane implements MouseI
      * @param doReScale the value of doReScale
      */
     public void refreshPanel(boolean doReScale) {
-        preparePanel(doReScale);
+        try {
+            preparePanel(doReScale);
+        } catch (Exception e) {
+        }
         validate();
         repaint();
     }
