@@ -63,6 +63,8 @@ public class RawRatioDataModel //
     private final DataModelInterface topIsotope;
     private final DataModelInterface botIsotope;
     private double[] ratios;
+    // may 2016 to accomodate shrimp prototype
+    private double[] uncertaintyOneSigmaAbsRatios;
     private double[] logRatios;
     private double[] alphas;
     private double[] fitFunctionLogValues;
@@ -1112,6 +1114,13 @@ public class RawRatioDataModel //
     }
 
     /**
+     * @param ratios the ratios to set
+     */
+    public void setRatios(double[] ratios) {
+        this.ratios = ratios;
+    }
+
+    /**
      * @return the alphas
      */
     public double[] getAlphas() {
@@ -1583,6 +1592,13 @@ public class RawRatioDataModel //
     }
 
     /**
+     * @param logRatios the logRatios to set
+     */
+    public void setLogRatios(double[] logRatios) {
+        this.logRatios = logRatios;
+    }
+
+    /**
      *
      * @param activeCount
      * @return
@@ -1832,6 +1848,20 @@ public class RawRatioDataModel //
      */
     public void setDownHoleFitFunction(AbstractFunctionOfX downHoleFitFunction) {
         this.downHoleFitFunction = downHoleFitFunction;
+    }
+
+    /**
+     * @return the uncertaintyOneSigmaAbsRatios
+     */
+    public double[] getUncertaintyOneSigmaAbsRatios() {
+        return uncertaintyOneSigmaAbsRatios;
+    }
+
+    /**
+     * @param uncertaintyOneSigmaAbsRatios the uncertaintyOneSigmaAbsRatios to set
+     */
+    public void setUncertaintyOneSigmaAbsRatios(double[] uncertaintyOneSigmaAbsRatios) {
+        this.uncertaintyOneSigmaAbsRatios = uncertaintyOneSigmaAbsRatios;
     }
 
 }

@@ -1,7 +1,9 @@
 /*
- * RawCountsDataViewForShrimp.java
+ * RawRatioDataView.java
  *
- * Copyright 2006-2016 James F. Bowring and www.Earth-Time.org
+ * Created Jul 6, 2011
+ *
+ * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,7 +29,7 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import javax.swing.JLayeredPane;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
-import org.earthtime.Tripoli.dataModels.RawIntensityDataModel;
+import org.earthtime.Tripoli.dataModels.RawRatioDataModel;
 import org.earthtime.Tripoli.dataViews.AbstractRawDataView;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.dataDictionaries.IncludedTypeEnum;
@@ -37,7 +39,7 @@ import org.earthtime.utilities.TicGeneratorForAxes;
  *
  * @author James F. Bowring
  */
-public class RawCountsDataViewForShrimp extends AbstractRawDataView {
+public class RawRatioDataViewForShrimp extends AbstractRawDataView {
 
     /**
      *
@@ -49,19 +51,20 @@ public class RawCountsDataViewForShrimp extends AbstractRawDataView {
      *
      * @param sampleSessionDataView
      * @param tripoliFraction
-     * @param rawIsotopeDataModel
+     * @param rawRatioDataModel
      * @param bounds
      * @param invokeMouseListener
      */
-    public RawCountsDataViewForShrimp(//
+    public RawRatioDataViewForShrimp(//
             JLayeredPane sampleSessionDataView,//
             TripoliFraction tripoliFraction,//
-            DataModelInterface rawIsotopeDataModel,//
+            DataModelInterface rawRatioDataModel,//
             Rectangle bounds,//
             boolean invokeMouseListener) {
         super(sampleSessionDataView, tripoliFraction, bounds, invokeMouseListener, true);
 
-        this.rawRatioDataModel = rawIsotopeDataModel;
+        this.rawRatioDataModel = rawRatioDataModel;
+
     }
 
     /**
@@ -72,6 +75,20 @@ public class RawCountsDataViewForShrimp extends AbstractRawDataView {
     public void paint(Graphics2D g2d) {
         super.paint(g2d);
 
+//        if (isNotShownDueToBelowDetectionFlag()) {
+//            setBackground(ReduxConstants.palePinkBelowDetection);
+//            g2d.drawString("BELOW DETECTION", 25, 25);
+//        }
+//
+//        if (!isNotShownDueToBelowDetectionFlag()) {
+//            for (int i = 0; i < myOnPeakData.length; i++) {
+//                Shape rawRatioPoint = new java.awt.geom.Ellipse2D.Double( //
+//                        mapX(myOnPeakNormalizedAquireTimes[i]), mapY(myOnPeakData[i]), 1, 1);
+//                g2d.setPaint(determineDataColor(i, Color.black));
+//
+//                g2d.draw(rawRatioPoint);
+//            }
+//        }
         Path2D pointTrace = new Path2D.Double(Path2D.WIND_NON_ZERO);
         pointTrace.moveTo(mapX(myOnPeakNormalizedAquireTimes[0]), mapY(myOnPeakData[0]));
         for (int i = 0; i < myOnPeakData.length; i++) {
@@ -125,16 +142,8 @@ public class RawCountsDataViewForShrimp extends AbstractRawDataView {
 
         this.removeAll();
 
-        myOnPeakData = ((RawIntensityDataModel) rawRatioDataModel).getOnPeakCountsPerSecondAsRawIntensities();
-        double[] myOnPeakVariances = ((RawIntensityDataModel) rawRatioDataModel).getDiagonalOfMatrixSIntensities();
-        myOnPeakOneSigmas = new double[myOnPeakVariances.length];
-        for (int i = 0; i < myOnPeakVariances.length; i++) {
-            myOnPeakOneSigmas[i] = Math.sqrt(myOnPeakVariances[i]);
-        }
+        // normalize aquireTimes
         myOnPeakNormalizedAquireTimes = rawRatioDataModel.getNormalizedOnPeakAquireTimes();
-
-        boolean[] myDataActiveMap = rawRatioDataModel.getDataActiveMap();
-        boolean showAll = showIncludedDataPoints.equals(IncludedTypeEnum.ALL);
 
         if (doReScale) {
             setDisplayOffsetY(0.0);
@@ -143,34 +152,52 @@ public class RawCountsDataViewForShrimp extends AbstractRawDataView {
 
             // X-axis lays out time evenly spaced
             minX = myOnPeakNormalizedAquireTimes[0];
-            maxX = myOnPeakNormalizedAquireTimes[myOnPeakNormalizedAquireTimes.length - 1] + 1;// say 0...14 and 15...29
+            maxX = myOnPeakNormalizedAquireTimes[myOnPeakNormalizedAquireTimes.length - 1];
             double xMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(minX, maxX, 0.05);
             minX -= xMarginStretch;
             maxX += xMarginStretch;
+        }
 
-            // Y-axis is intensities as voltages plus or minus
-            minY = Double.MAX_VALUE;
-            maxY = -Double.MAX_VALUE;
+        notShownDueToBelowDetectionFlag = rawRatioDataModel.isBelowDetection();
 
-            // on peak
-            for (int i = 0; i < myOnPeakData.length; i++) {
-                if ((Double.isFinite(myOnPeakData[i])) && (showAll || myDataActiveMap[i])) {
-                    minY = Math.min(minY, myOnPeakData[i] - myOnPeakOneSigmas[i]);
-                    maxY = Math.max(maxY, myOnPeakData[i] + myOnPeakOneSigmas[i]);
+        if (!notShownDueToBelowDetectionFlag) {
+            // walk ratios and get min and max for axes
+            myOnPeakData = ((RawRatioDataModel) rawRatioDataModel).getRatios().clone(); //.getLogRatios().clone();//            
+//            for (int i = 0; i < myOnPeakData.length; i++) {
+//                double convertedOnPeak = convertLogDatumToPresentationMode(myOnPeakData[i]);
+//                myOnPeakData[i] = convertedOnPeak;
+//            }
+            myOnPeakOneSigmas = ((RawRatioDataModel) rawRatioDataModel).getUncertaintyOneSigmaAbsRatios().clone();
+
+            if (doReScale) {
+                // Y-axis is ratios
+                minY = Double.MAX_VALUE;
+                maxY = -Double.MAX_VALUE;
+
+                // find min and max y
+                boolean[] myDataActiveMap = rawRatioDataModel.getDataActiveMap();
+
+                boolean showAll = showIncludedDataPoints.equals(IncludedTypeEnum.ALL);
+                // rework logic April 2016 
+                for (int i = 0; i < myOnPeakData.length; i++) {
+                    if ((Double.isFinite(myOnPeakData[i])) && (showAll || myDataActiveMap[i])) {
+                        minY = Math.min(minY, myOnPeakData[i]);
+                        maxY = Math.max(maxY, myOnPeakData[i]);
+                    }
                 }
+
+                // adjust margins for unknowns
+                double yMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(minY, maxY, 0.05);
+                minY -= yMarginStretch;
+                maxY += yMarginStretch;
             }
 
-            // adjust margins for unknowns
-            //if (!tripoliFraction.isStandard()) {
-            double yMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(minY, maxY, 0.05);
-            minY -= yMarginStretch;
-            maxY += yMarginStretch;
-            //}
         }
     }
 
     /**
-     * @return the rawRatioDataModel
+     *
+     * @return
      */
     @Override
     public DataModelInterface getDataModel() {
@@ -179,17 +206,12 @@ public class RawCountsDataViewForShrimp extends AbstractRawDataView {
 
     @Override
     public void mouseDragged(MouseEvent evt) {
-        // prevent point rejection
-    }
-
-    @Override
-    public void mousePressed(MouseEvent evt) {
-        // prevent point rejection
+        //super.mouseDragged(evt); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        // prevent point rejection
+        //super.mouseReleased(e); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

@@ -509,9 +509,15 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
         if (!FRACTION_LAYOUT_VIEW_STYLE.equals(FractionLayoutViewStylesEnum.SESSION)) {
             try {
                 isFitFunctionsOnRatioDataView = (dataModelViewConstructor.getDeclaringClass() == Class.forName(FitFunctionsOnRatioDataView.class.getCanonicalName()));
+//                isFitFunctionsOnRatioDataView = isFitFunctionsOnRatioDataView || (dataModelViewConstructor.getDeclaringClass() == Class.forName(RawRatioDataViewForShrimp.class.getCanonicalName()));
+                
                 isFitFunctionsOnDownHoleRatioDataView = (dataModelViewConstructor.getDeclaringClass() == Class.forName(FitFunctionsOnDownHoleRatioDataView.class.getCanonicalName()));
+                
                 isRawIntensitiesDataView = (dataModelViewConstructor.getDeclaringClass() == Class.forName(RawIntensitiesDataView.class.getCanonicalName()));
+//                isRawIntensitiesDataView = isRawIntensitiesDataView || (dataModelViewConstructor.getDeclaringClass() == Class.forName(RawCountsDataViewForShrimp.class.getCanonicalName()));
+                
                 isRawRatioDataView = (dataModelViewConstructor.getDeclaringClass() == Class.forName(RawRatioDataView.class.getCanonicalName()));
+//                isRawRatioDataView = isRawRatioDataView || (dataModelViewConstructor.getDeclaringClass() == Class.forName(RawRatioDataViewForShrimp.class.getCanonicalName()));
             } catch (ClassNotFoundException classNotFoundException) {
             }
         }
@@ -687,9 +693,9 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
         // handle x-axis which is uniform across time
         double overallMinX = rawDataModelViews[0][0].getMinX();
         double overallMaxX = rawDataModelViews[0][0].getMaxX();
-//        double xMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(overallMinX, overallMaxX, 0.05);
-//        overallMinX -= xMarginStretch;
-//        overallMaxX += xMarginStretch;
+        double xMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(overallMinX, overallMaxX, 0.05);
+        overallMinX -= xMarginStretch;
+        overallMaxX += xMarginStretch;
 
         for (int i = 0; i < countOfDataModels; i++) {
             double overallMinY = Double.MAX_VALUE;
@@ -719,13 +725,13 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
 
                 // now apply to all fraction data views by walking across fractions within a dataModel type
                 for (int f = 0; f < (fractionCountForHorizontalLayout); f++) {
+                    rawDataModelViews[i][f].setMinX(overallMinX);
+                    rawDataModelViews[i][f].setMaxX(overallMaxX);
                     if (SAVED_YAXIS_IS_UNIFORM) {
                         // the yaxis represents the normalized view across all sample fractions
                         rawDataModelViews[i][f].setMinY(overallMinY);
                         rawDataModelViews[i][f].setMaxY(overallMaxY);
                         rawDataModelViews[i][f].setTics(yAxisTics);
-                        rawDataModelViews[i][f].setMinX(overallMinX);
-                        rawDataModelViews[i][f].setMaxX(overallMaxX);
                     } else {
                         // each graph gets its own tic layout
                         BigDecimal[] yAxisTicsUnknown = TicGeneratorForAxes.generateTics(//
@@ -819,8 +825,7 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
             if ((!FRACTION_LAYOUT_VIEW_STYLE.equals(FractionLayoutViewStylesEnum.OVERLAY)) && (isFitFunctionsOnRatioDataView || isFitFunctionsOnDownHoleRatioDataView || isRawIntensitiesDataView)) {
                 // add universal FitFunction chooser
                 AbstractRawDataView universalFitFunctionChooser
-                        = //
-                        new AllFunctionsChoicePanel(//
+                        = new AllFunctionsChoicePanel(//
                                 this,
                                 standardsForYAxisArray,//
                                 new Rectangle( //

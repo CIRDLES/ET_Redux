@@ -1,9 +1,7 @@
 /*
- * CorrectedIntensitiesDataView.java
+ * RawCountsDataViewForShrimp.java
  *
- * Created Jul 6, 2011
- *
- * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2016 James F. Bowring and www.Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,16 +17,19 @@
  */
 package org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
+import java.awt.event.MouseEvent;
+import java.awt.geom.Line2D;
+import java.awt.geom.Path2D;
 import javax.swing.JLayeredPane;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
 import org.earthtime.Tripoli.dataModels.RawIntensityDataModel;
 import org.earthtime.Tripoli.dataViews.AbstractRawDataView;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
-import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.dataDictionaries.IncludedTypeEnum;
 import org.earthtime.utilities.TicGeneratorForAxes;
 
@@ -36,14 +37,13 @@ import org.earthtime.utilities.TicGeneratorForAxes;
  *
  * @author James F. Bowring
  */
-public class CorrectedIntensitiesDataView extends AbstractRawDataView {
+public class CorrectedCountsDataViewForShrimp extends AbstractRawDataView {
 
     /**
      *
      */
     public static int DEFAULT_WIDTH_OF_PANE = 128;
-    //
-    //private DataModelInterface rawRatioDataModel;
+    private double[] myOnPeakOneSigmas;
 
     /**
      *
@@ -53,8 +53,8 @@ public class CorrectedIntensitiesDataView extends AbstractRawDataView {
      * @param bounds
      * @param invokeMouseListener
      */
-    public CorrectedIntensitiesDataView(//
-            JLayeredPane sampleSessionDataView, //
+    public CorrectedCountsDataViewForShrimp(//
+            JLayeredPane sampleSessionDataView,//
             TripoliFraction tripoliFraction,//
             DataModelInterface rawIsotopeDataModel,//
             Rectangle bounds,//
@@ -62,7 +62,6 @@ public class CorrectedIntensitiesDataView extends AbstractRawDataView {
         super(sampleSessionDataView, tripoliFraction, bounds, invokeMouseListener, true);
 
         this.rawRatioDataModel = rawIsotopeDataModel;
-
     }
 
     /**
@@ -73,23 +72,47 @@ public class CorrectedIntensitiesDataView extends AbstractRawDataView {
     public void paint(Graphics2D g2d) {
         super.paint(g2d);
 
-        if (rawRatioDataModel.isBelowDetection()) {
-            setBackground(ReduxConstants.palePinkBelowDetection);
-            g2d.drawString("BELOW DETECTION", 25, 25);
-        }
-
-        // draw corrected onPeak intensities 
+        Path2D pointTrace = new Path2D.Double(Path2D.WIND_NON_ZERO);
+        pointTrace.moveTo(mapX(myOnPeakNormalizedAquireTimes[0]), mapY(myOnPeakData[0]));
         for (int i = 0; i < myOnPeakData.length; i++) {
+            // line tracing through points
+            pointTrace.lineTo(mapX(myOnPeakNormalizedAquireTimes[i]), mapY(myOnPeakData[i]));
+            g2d.setStroke(new BasicStroke(0.5f));
+            g2d.setPaint(determineDataColor(i, Color.GRAY));
+            g2d.draw(pointTrace);
+
             Shape intensity = new java.awt.geom.Ellipse2D.Double( //
-                    mapX(myOnPeakNormalizedAquireTimes[i]), mapY(myOnPeakData[i]), 1, 1);
+                    mapX(myOnPeakNormalizedAquireTimes[i]) - 1, mapY(myOnPeakData[i]) - 1, 2, 2);
+            g2d.setStroke(new BasicStroke(1.5f));
             g2d.setPaint(determineDataColor(i, Color.black));
-
-            // dec 2012 for visualization only
-            if (myOnPeakData[i] <= Double.MIN_VALUE) {
-                g2d.setPaint(Color.red);
-            }
-
             g2d.draw(intensity);
+
+            // uncertainty
+            Shape plusMinusOneSigma = new Line2D.Double(//
+                    mapX(myOnPeakNormalizedAquireTimes[i]),// 
+                    mapY(myOnPeakData[i] - myOnPeakOneSigmas[i]),//
+                    mapX(myOnPeakNormalizedAquireTimes[i]),// 
+                    mapY(myOnPeakData[i] + myOnPeakOneSigmas[i]));
+            g2d.setStroke(new BasicStroke(1.0f));
+            g2d.draw(plusMinusOneSigma);
+
+            // tips of uncertainty
+            Shape plusOneSigmaTip = new Line2D.Double(//
+                    mapX(myOnPeakNormalizedAquireTimes[i]) - 1,// 
+                    mapY(myOnPeakData[i] + myOnPeakOneSigmas[i]),//
+                    mapX(myOnPeakNormalizedAquireTimes[i]) + 1,// 
+                    mapY(myOnPeakData[i] + myOnPeakOneSigmas[i]));
+
+            Shape minusOneSigmaTip = new Line2D.Double(//
+                    mapX(myOnPeakNormalizedAquireTimes[i]) - 1,// 
+                    mapY(myOnPeakData[i] - myOnPeakOneSigmas[i]),//
+                    mapX(myOnPeakNormalizedAquireTimes[i]) + 1,// 
+                    mapY(myOnPeakData[i] - myOnPeakOneSigmas[i]));
+
+            g2d.setStroke(new BasicStroke(1.0f));
+            g2d.draw(plusOneSigmaTip);
+            g2d.draw(minusOneSigmaTip);
+
         }
     }
 
@@ -102,10 +125,12 @@ public class CorrectedIntensitiesDataView extends AbstractRawDataView {
 
         this.removeAll();
 
-        // walk intensities and get min and max for axes
-        myOnPeakData = ((RawIntensityDataModel) rawRatioDataModel).getOnPeakCorrectedCountsPerSecondAsRawIntensities();// .getOnPeakVirtualCollector().getCorrectedIntensities();
-
-        // normalize aquireTimes
+        myOnPeakData = ((RawIntensityDataModel) rawRatioDataModel).getOnPeakCorrectedCountsPerSecondAsRawIntensities();
+        double[] myOnPeakVariances = ((RawIntensityDataModel) rawRatioDataModel).getDiagonalOfMatrixSCorrectedIntensities();
+        myOnPeakOneSigmas = new double[myOnPeakVariances.length];
+        for (int i = 0; i < myOnPeakVariances.length; i++) {
+            myOnPeakOneSigmas[i] = Math.sqrt(myOnPeakVariances[i]);
+        }
         myOnPeakNormalizedAquireTimes = rawRatioDataModel.getNormalizedOnPeakAquireTimes();
 
         if (doReScale) {
@@ -114,7 +139,7 @@ public class CorrectedIntensitiesDataView extends AbstractRawDataView {
 
             // X-axis lays out time evenly spaced
             minX = myOnPeakNormalizedAquireTimes[0];
-            maxX = myOnPeakNormalizedAquireTimes[myOnPeakNormalizedAquireTimes.length - 1];
+            maxX = myOnPeakNormalizedAquireTimes[myOnPeakNormalizedAquireTimes.length - 1] + 1;// say 0...14 and 15...29
             // adjust margins for unknowns
             double xMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(minX, maxX, 0.05);
             minX -= xMarginStretch;
@@ -124,15 +149,14 @@ public class CorrectedIntensitiesDataView extends AbstractRawDataView {
             minY = Double.MAX_VALUE;
             maxY = -Double.MAX_VALUE;
 
-            // find min and max y
             boolean[] myDataActiveMap = rawRatioDataModel.getDataActiveMap();
-
             boolean showAll = showIncludedDataPoints.equals(IncludedTypeEnum.ALL);
-            // rework logic April 2016 
+
+            // on peak
             for (int i = 0; i < myOnPeakData.length; i++) {
-                if (showAll || myDataActiveMap[i]) {
-                    minY = Math.min(minY, myOnPeakData[i]);
-                    maxY = Math.max(maxY, myOnPeakData[i]);
+                if ((Double.isFinite(myOnPeakData[i])) && (showAll || myDataActiveMap[i])) {
+                    minY = Math.min(minY, myOnPeakData[i] - myOnPeakOneSigmas[i]);
+                    maxY = Math.max(maxY, myOnPeakData[i] + myOnPeakOneSigmas[i]);
                 }
             }
 
@@ -152,15 +176,20 @@ public class CorrectedIntensitiesDataView extends AbstractRawDataView {
     public DataModelInterface getDataModel() {
         return rawRatioDataModel;
     }
-//    /**
-//     * 
-//     * @param included
-//     */
-//    @Override
-//    public void toggleFractionInclusion ( boolean included ) {
-//        tripoliFraction.toggleAllDataExceptShaded( included );
-//        tripoliFraction.updateCorrectedRatioStatistics();
-//        ((TripoliFractionViewInterface) tripoliFraction).setShowVerticalLineAtThisIndex( -1 );
-//        repaintFraction();
-//    }
+
+    @Override
+    public void mouseDragged(MouseEvent evt) {
+        // prevent point rejection
+    }
+
+    @Override
+    public void mousePressed(MouseEvent evt) {
+        // prevent point rejection
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        // prevent point rejection
+    }
+
 }

@@ -183,10 +183,6 @@ public class FitFunctionsOnRatioDataView extends AbstractRawDataView implements 
 
             fittedFunctionValues = ((RawRatioDataModel) rawRatioDataModel).getFitFunctionLogValues().clone();
 
-            // X-axis lays out time evenly spaced
-            minX = myOnPeakNormalizedAquireTimes[0];
-            maxX = myOnPeakNormalizedAquireTimes[myOnPeakNormalizedAquireTimes.length - 1];
-
             // choose data and walk data and get min and max for axes
             // nov 2014
             if (((DataModelFitFunctionInterface) rawRatioDataModel).getSelectedFitFunctionType().compareTo(FitFunctionTypeEnum.MEANRATIO) == 0) {
@@ -202,6 +198,15 @@ public class FitFunctionsOnRatioDataView extends AbstractRawDataView implements 
             }
 
             if (doReScale) {
+
+                // X-axis lays out time evenly spaced
+                minX = myOnPeakNormalizedAquireTimes[0];
+                maxX = myOnPeakNormalizedAquireTimes[myOnPeakNormalizedAquireTimes.length - 1];
+                // adjust margins for unknowns
+                double xMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(minX, maxX, 0.05);
+                minX -= xMarginStretch;
+                maxX += xMarginStretch;
+
                 // Y-axis is ratios
                 minY = Double.MAX_VALUE;
                 maxY = -Double.MAX_VALUE;
@@ -220,13 +225,6 @@ public class FitFunctionsOnRatioDataView extends AbstractRawDataView implements 
                     maxY = Math.max(maxY, fittedFunctionValues[i]);
                 }
 
-            }
-            // adjust margins for unknowns
-            double xMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(minX, maxX, 0.05);
-            minX -= xMarginStretch;
-            maxX += xMarginStretch;
-
-            if (doReScale) {
                 double yMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(minY, maxY, 12.0 / this.getHeight());//    0.05 );
                 minY -= yMarginStretch;
                 maxY += yMarginStretch;
@@ -245,8 +243,8 @@ public class FitFunctionsOnRatioDataView extends AbstractRawDataView implements 
 
         if (doReScale) {
             setDisplayOffsetY(0.0);
+            setDisplayOffsetX(0.0);
         }
-        setDisplayOffsetX(0.0);
 
         // normalize aquireTimes
         myOnPeakNormalizedAquireTimes = rawRatioDataModel.getNormalizedOnPeakAquireTimes();

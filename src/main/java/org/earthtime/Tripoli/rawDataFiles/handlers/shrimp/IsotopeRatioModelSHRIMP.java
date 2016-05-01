@@ -16,8 +16,10 @@
 package org.earthtime.Tripoli.rawDataFiles.handlers.shrimp;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import org.earthtime.dataDictionaries.IsotopeNames;
+import org.earthtime.dataDictionaries.RawRatioNames;
 
 /**
  *
@@ -28,15 +30,20 @@ public class IsotopeRatioModelSHRIMP //
 
     // Class variables
 //    private static final long serialVersionUID = 3111511502335804607L;
+    private RawRatioNames rawRatioName;
     private IsotopeNames numerator;
     private IsotopeNames denominator;
     private List<Double> ratEqTime;
     private List<Double> ratEqVal;
     private List<Double> ratEqErr;
 
-    public IsotopeRatioModelSHRIMP(IsotopeNames numerator, IsotopeNames denominator) {
+    public IsotopeRatioModelSHRIMP(RawRatioNames rawRatioName, IsotopeNames numerator, IsotopeNames denominator) {
+        this.rawRatioName = rawRatioName;
         this.numerator = numerator;
         this.denominator = denominator;
+        this.ratEqTime = new ArrayList<>();
+        this.ratEqVal = new ArrayList<>();
+        this.ratEqErr = new ArrayList<>();
     }
 
     public boolean numeratorAtomicRatioLessThanDenominator() {

@@ -16,7 +16,8 @@
 package org.earthtime.Tripoli.rawDataFiles.handlers.shrimp;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Map;
+import org.earthtime.dataDictionaries.RawRatioNames;
 
 /**
  *
@@ -24,32 +25,34 @@ import java.util.List;
  */
 public class ShrimpFraction implements Serializable {
 
-    private String name;
+    private String fractionID;
     private int spotNumber;
     private long dateTimeMilliseconds;
-    private List<IsotopeRatioModelSHRIMP> isotopicRatios;
+    private Map<RawRatioNames, IsotopeRatioModelSHRIMP> isotopicRatios;
     private double[][] extractedRunData;
     private double[] totalCps;
+    private double[][] netPkCps;
+    private double[][] pkFerr;
 
     public ShrimpFraction() {
     }
 
-    public ShrimpFraction(List<IsotopeRatioModelSHRIMP> isotopicRatios) {
+    public ShrimpFraction(Map<RawRatioNames, IsotopeRatioModelSHRIMP> isotopicRatios) {
         this.isotopicRatios = isotopicRatios;
     }
 
     /**
-     * @return the name
+     * @return the fractionID
      */
-    public String getName() {
-        return name;
+    public String getFractionID() {
+        return fractionID;
     }
 
     /**
-     * @param name the name to set
+     * @param fractionID the fractionID to set
      */
-    public void setName(String name) {
-        this.name = name;
+    public void setFractionID(String fractionID) {
+        this.fractionID = fractionID;
     }
 
     /**
@@ -83,14 +86,14 @@ public class ShrimpFraction implements Serializable {
     /**
      * @return the isotopicRatios
      */
-    public List<IsotopeRatioModelSHRIMP> getIsotopicRatios() {
+    public Map<RawRatioNames, IsotopeRatioModelSHRIMP> getIsotopicRatios() {
         return isotopicRatios;
     }
 
     /**
      * @param isotopicRatios the isotopicRatios to set
      */
-    public void setIsotopicRatios(List<IsotopeRatioModelSHRIMP> isotopicRatios) {
+    public void setIsotopicRatios(Map<RawRatioNames, IsotopeRatioModelSHRIMP> isotopicRatios) {
         this.isotopicRatios = isotopicRatios;
     }
 
@@ -120,6 +123,34 @@ public class ShrimpFraction implements Serializable {
      */
     public void setTotalCps(double[] totalCps) {
         this.totalCps = totalCps;
+    }
+
+    /**
+     * @return the netPkCps
+     */
+    public double[][] getNetPkCps() {
+        return netPkCps;
+    }
+
+    /**
+     * @param aNetPkCps the netPkCps to set
+     */
+    public void setNetPkCps(double[][] aNetPkCps) {
+        netPkCps = aNetPkCps;
+    }
+
+    /**
+     * @return the pkFerr
+     */
+    public double[][] getPkFerr() {
+        return pkFerr;
+    }
+
+    /**
+     * @param aPkFerr the pkFerr to set
+     */
+    public void setPkFerr(double[][] aPkFerr) {
+        pkFerr = aPkFerr;
     }
 
 }

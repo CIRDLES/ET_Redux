@@ -62,15 +62,15 @@ public class RawRatioNamesTest {
         assertEquals("r208_232w", ave.getName());
 
         String[] list = RawRatioNames.getNames();
-        assertEquals("r206_238w", list[1]);
+        assertEquals("r206_238w", list[3]);
         assertEquals("r206_207w", list[0]);
-        assertEquals("r206_204w", list[3]);
-        assertEquals("r208_232w", list[2]);
-        assertEquals("r208_204w", list[5]);
-        assertEquals("r207_235w", list[6]);
-        assertEquals("r176_176w", list[7]);
-        assertEquals("r235_235w", list[8]);
-        assertEquals("r202_202w", list[13]);
+        assertEquals("r206_204w", list[5]);
+        assertEquals("r208_232w", list[4]);
+        assertEquals("r208_204w", list[8]);
+        assertEquals("r207_235w", list[9]);
+        assertEquals("r176_176w", list[10]);
+        assertEquals("r235_235w", list[11]);
+        assertEquals("r202_202w", list[22]);
 
     }
 

@@ -296,11 +296,6 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
                 }
             } // This method is called whenever the selected tab changes
             );
-
-//////            // flex colors
-//////            fractionationTechniqueTabbedPane.setSelectedIndex(1);
-//////            fractionationTechniqueTabbedPane.setSelectedIndex(0);
-//////            invokeSavedFractionationTechnique();
         }
     }
 
