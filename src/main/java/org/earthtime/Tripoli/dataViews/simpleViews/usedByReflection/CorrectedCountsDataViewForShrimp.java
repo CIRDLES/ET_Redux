@@ -125,9 +125,6 @@ public class CorrectedCountsDataViewForShrimp extends AbstractRawDataView {
 
         this.removeAll();
 
-        setDisplayOffsetY(0.0);
-        setDisplayOffsetX(0.0);
-
         myOnPeakData = ((RawIntensityDataModel) rawRatioDataModel).getOnPeakCorrectedCountsPerSecondAsRawIntensities();
         double[] myOnPeakVariances = ((RawIntensityDataModel) rawRatioDataModel).getDiagonalOfMatrixSCorrectedIntensities();
         myOnPeakOneSigmas = new double[myOnPeakVariances.length];
@@ -136,30 +133,39 @@ public class CorrectedCountsDataViewForShrimp extends AbstractRawDataView {
         }
         myOnPeakNormalizedAquireTimes = rawRatioDataModel.getNormalizedOnPeakAquireTimes();
 
-        // X-axis lays out time evenly spaced
-        minX = myOnPeakNormalizedAquireTimes[0];
-        maxX = myOnPeakNormalizedAquireTimes[myOnPeakNormalizedAquireTimes.length - 1] + 1;// say 0...14 and 15...29
+        if (doReScale) {
+            setDisplayOffsetY(0.0);
+            setDisplayOffsetX(0.0);
 
-        // Y-axis is intensities as voltages plus or minus
-        minY = Double.MAX_VALUE;
-        maxY = -Double.MAX_VALUE;
+            // X-axis lays out time evenly spaced
+            minX = myOnPeakNormalizedAquireTimes[0];
+            maxX = myOnPeakNormalizedAquireTimes[myOnPeakNormalizedAquireTimes.length - 1] + 1;// say 0...14 and 15...29
+            // adjust margins for unknowns
+            double xMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(minX, maxX, 0.05);
+            minX -= xMarginStretch;
+            maxX += xMarginStretch;
 
-        boolean[] myDataActiveMap = rawRatioDataModel.getDataActiveMap();
-        boolean showAll = showIncludedDataPoints.equals(IncludedTypeEnum.ALL);
+            // Y-axis is intensities as voltages plus or minus
+            minY = Double.MAX_VALUE;
+            maxY = -Double.MAX_VALUE;
 
-        // on peak
-        for (int i = 0; i < myOnPeakData.length; i++) {
-            if ((Double.isFinite(myOnPeakData[i])) && (showAll || myDataActiveMap[i])) {
-                minY = Math.min(minY, myOnPeakData[i] - myOnPeakOneSigmas[i]);
-                maxY = Math.max(maxY, myOnPeakData[i] + myOnPeakOneSigmas[i]);
+            boolean[] myDataActiveMap = rawRatioDataModel.getDataActiveMap();
+            boolean showAll = showIncludedDataPoints.equals(IncludedTypeEnum.ALL);
+
+            // on peak
+            for (int i = 0; i < myOnPeakData.length; i++) {
+                if ((Double.isFinite(myOnPeakData[i])) && (showAll || myDataActiveMap[i])) {
+                    minY = Math.min(minY, myOnPeakData[i] - myOnPeakOneSigmas[i]);
+                    maxY = Math.max(maxY, myOnPeakData[i] + myOnPeakOneSigmas[i]);
+                }
             }
-        }
 
-        // adjust margins for unknowns
-        if (!tripoliFraction.isStandard()) {
+            // adjust margins for unknowns
+//        if (!tripoliFraction.isStandard()) {
             double yMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(minY, maxY, 0.05);
             minY -= yMarginStretch;
             maxY += yMarginStretch;
+//        }
         }
     }
 

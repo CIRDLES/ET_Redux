@@ -155,8 +155,8 @@ public class CorrectedRatioDataView extends AbstractRawDataView {
 
         if (doReScale) {
             setDisplayOffsetY(0.0);
+            setDisplayOffsetX(0.0);
         }
-        setDisplayOffsetX(0.0);
 
         // walk ratios and get min and max for axes
         myOnPeakNormalizedAquireTimes = rawRatioDataModel.getNormalizedOnPeakAquireTimes();
@@ -165,11 +165,14 @@ public class CorrectedRatioDataView extends AbstractRawDataView {
             myOnPeakData = new double[myOnPeakNormalizedAquireTimes.length];
         }
 
-        // X-axis lays out time evenly spaced
-        minX = myOnPeakNormalizedAquireTimes[0];
-        maxX = myOnPeakNormalizedAquireTimes[myOnPeakNormalizedAquireTimes.length - 1];
-
         if (doReScale) {
+            // X-axis lays out time evenly spaced
+            minX = myOnPeakNormalizedAquireTimes[0];
+            maxX = myOnPeakNormalizedAquireTimes[myOnPeakNormalizedAquireTimes.length - 1];
+            // adjust margins for unknowns
+            double xMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(minX, maxX, 0.05);
+            minX -= xMarginStretch;
+            maxX += xMarginStretch;
             // Y-axis is ratios
             minY = Double.MAX_VALUE;
             maxY = -Double.MAX_VALUE;

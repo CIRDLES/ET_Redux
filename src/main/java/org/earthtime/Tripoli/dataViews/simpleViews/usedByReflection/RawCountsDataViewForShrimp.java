@@ -125,9 +125,6 @@ public class RawCountsDataViewForShrimp extends AbstractRawDataView {
 
         this.removeAll();
 
-        setDisplayOffsetY(0.0);
-        setDisplayOffsetX(0.0);
-
         myOnPeakData = ((RawIntensityDataModel) rawRatioDataModel).getOnPeakCountsPerSecondAsRawIntensities();
         double[] myOnPeakVariances = ((RawIntensityDataModel) rawRatioDataModel).getDiagonalOfMatrixSIntensities();
         myOnPeakOneSigmas = new double[myOnPeakVariances.length];
@@ -136,30 +133,39 @@ public class RawCountsDataViewForShrimp extends AbstractRawDataView {
         }
         myOnPeakNormalizedAquireTimes = rawRatioDataModel.getNormalizedOnPeakAquireTimes();
 
-        // X-axis lays out time evenly spaced
-        minX = myOnPeakNormalizedAquireTimes[0];
-        maxX = myOnPeakNormalizedAquireTimes[myOnPeakNormalizedAquireTimes.length - 1] + 1;// say 0...14 and 15...29
-
-        // Y-axis is intensities as voltages plus or minus
-        minY = Double.MAX_VALUE;
-        maxY = -Double.MAX_VALUE;
-
         boolean[] myDataActiveMap = rawRatioDataModel.getDataActiveMap();
         boolean showAll = showIncludedDataPoints.equals(IncludedTypeEnum.ALL);
 
-        // on peak
-        for (int i = 0; i < myOnPeakData.length; i++) {
-            if ((Double.isFinite(myOnPeakData[i])) && (showAll || myDataActiveMap[i])) {
-                minY = Math.min(minY, myOnPeakData[i] - myOnPeakOneSigmas[i]);
-                maxY = Math.max(maxY, myOnPeakData[i] + myOnPeakOneSigmas[i]);
-            }
-        }
+        if (doReScale) {
+            setDisplayOffsetY(0.0);
 
-        // adjust margins for unknowns
-        if (!tripoliFraction.isStandard()) {
+            setDisplayOffsetX(0.0);
+
+            // X-axis lays out time evenly spaced
+            minX = myOnPeakNormalizedAquireTimes[0];
+            maxX = myOnPeakNormalizedAquireTimes[myOnPeakNormalizedAquireTimes.length - 1] + 1;// say 0...14 and 15...29
+            double xMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(minX, maxX, 0.05);
+            minX -= xMarginStretch;
+            maxX += xMarginStretch;
+
+            // Y-axis is intensities as voltages plus or minus
+            minY = Double.MAX_VALUE;
+            maxY = -Double.MAX_VALUE;
+
+            // on peak
+            for (int i = 0; i < myOnPeakData.length; i++) {
+                if ((Double.isFinite(myOnPeakData[i])) && (showAll || myDataActiveMap[i])) {
+                    minY = Math.min(minY, myOnPeakData[i] - myOnPeakOneSigmas[i]);
+                    maxY = Math.max(maxY, myOnPeakData[i] + myOnPeakOneSigmas[i]);
+                }
+            }
+
+            // adjust margins for unknowns
+            //if (!tripoliFraction.isStandard()) {
             double yMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(minY, maxY, 0.05);
             minY -= yMarginStretch;
             maxY += yMarginStretch;
+            //}
         }
     }
 

@@ -24,6 +24,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import javax.swing.JLayeredPane;
@@ -141,27 +142,32 @@ public class RawRatioDataViewForShrimp extends AbstractRawDataView {
 
         this.removeAll();
 
-        if (doReScale) {
-            setDisplayOffsetY(0.0);
-        }
-        setDisplayOffsetX(0.0);
-
         // normalize aquireTimes
         myOnPeakNormalizedAquireTimes = rawRatioDataModel.getNormalizedOnPeakAquireTimes();
-        // X-axis lays out time evenly spaced
-        minX = myOnPeakNormalizedAquireTimes[0];
-        maxX = myOnPeakNormalizedAquireTimes[myOnPeakNormalizedAquireTimes.length - 1];
+
+        if (doReScale) {
+            setDisplayOffsetY(0.0);
+
+            setDisplayOffsetX(0.0);
+
+            // X-axis lays out time evenly spaced
+            minX = myOnPeakNormalizedAquireTimes[0];
+            maxX = myOnPeakNormalizedAquireTimes[myOnPeakNormalizedAquireTimes.length - 1];
+            double xMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(minX, maxX, 0.05);
+            minX -= xMarginStretch;
+            maxX += xMarginStretch;
+        }
 
         notShownDueToBelowDetectionFlag = rawRatioDataModel.isBelowDetection();
 
         if (!notShownDueToBelowDetectionFlag) {
             // walk ratios and get min and max for axes
-            myOnPeakData = ((RawRatioDataModel) rawRatioDataModel).getRatios().clone(); //.getLogRatios().clone();//
-            myOnPeakOneSigmas = ((RawRatioDataModel) rawRatioDataModel).getUncertaintyOneSigmaAbsRatios().clone();
+            myOnPeakData = ((RawRatioDataModel) rawRatioDataModel).getRatios().clone(); //.getLogRatios().clone();//            
 //            for (int i = 0; i < myOnPeakData.length; i++) {
 //                double convertedOnPeak = convertLogDatumToPresentationMode(myOnPeakData[i]);
 //                myOnPeakData[i] = convertedOnPeak;
 //            }
+            myOnPeakOneSigmas = ((RawRatioDataModel) rawRatioDataModel).getUncertaintyOneSigmaAbsRatios().clone();
 
             if (doReScale) {
                 // Y-axis is ratios
@@ -196,6 +202,16 @@ public class RawRatioDataViewForShrimp extends AbstractRawDataView {
     @Override
     public DataModelInterface getDataModel() {
         return rawRatioDataModel;
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent evt) {
+        //super.mouseDragged(evt); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        //super.mouseReleased(e); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

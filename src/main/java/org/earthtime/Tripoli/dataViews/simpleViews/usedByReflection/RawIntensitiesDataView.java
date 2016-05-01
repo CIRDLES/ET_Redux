@@ -144,9 +144,6 @@ public class RawIntensitiesDataView extends AbstractRawDataView {
 
         this.removeAll();
 
-        setDisplayOffsetY(0.0);
-        setDisplayOffsetX(0.0);
-
         // walk intensities and get min and max for axes
         backgroundIntensities = ((RawIntensityDataModel) rawRatioDataModel).getBackgroundCountsPerSecondAsRawIntensities();//     .getBackgroundVirtualCollector().getIntensities();
         backgroundFitIntensities = ((RawIntensityDataModel) rawRatioDataModel).getBackgroundFitCountsPerSecondAsRawIntensities();//  .getBackgroundVirtualCollector().getFitBackgroundIntensities();
@@ -178,57 +175,64 @@ public class RawIntensitiesDataView extends AbstractRawDataView {
         normalizedBackgroundAquireTimes = ((RawIntensityDataModel) rawRatioDataModel).getNormalizedBackgroundAquireTimes();
 
         myOnPeakNormalizedAquireTimes = rawRatioDataModel.getNormalizedOnPeakAquireTimes();
-
-        // X-axis lays out time evenly spaced
-        minX = normalizedBackgroundAquireTimes[0];
-        maxX = normalizedBackgroundAquireTimes[normalizedBackgroundAquireTimes.length - 1]//
-                + myOnPeakNormalizedAquireTimes[myOnPeakNormalizedAquireTimes.length - 1] + 1;// say 0...14 and 15...29
-
-        // Y-axis is intensities as voltages plus or minus
-        // find min and max y
-        minY = Double.MAX_VALUE;
-        maxY = -Double.MAX_VALUE;
-
         boolean[] myDataActiveMap = rawRatioDataModel.getDataActiveMap();
         boolean showAll = showIncludedDataPoints.equals(IncludedTypeEnum.ALL);
         // rework logic April 2016 
 
-        // background
-        for (int i = 0; i < backgroundIntensities.length; i++) {
-            minY = Math.min(minY, backgroundIntensities[i]);
-            maxY = Math.max(maxY, backgroundIntensities[i]);
+        if (doReScale) {
+            setDisplayOffsetY(0.0);
 
-            if (!((DataModelFitFunctionInterface) rawRatioDataModel).getSelectedFitFunctionType().equals(FitFunctionTypeEnum.NONE)) {
-                minY = Math.min(minY, backgroundFitIntensities[i]);
-                maxY = Math.max(maxY, backgroundFitIntensities[i]);
-            }
+            setDisplayOffsetX(0.0);
 
-            if (onPeakMercuryCorrections[0] != 0.0) {
-                minY = Math.min(minY, backgroundIntensityUncorrectedForMercury[i]);
-                maxY = Math.max(maxY, backgroundIntensityUncorrectedForMercury[i]);
-            }
-        }
+            // X-axis lays out time evenly spaced
+            minX = normalizedBackgroundAquireTimes[0];
+            maxX = normalizedBackgroundAquireTimes[normalizedBackgroundAquireTimes.length - 1]//
+                    + myOnPeakNormalizedAquireTimes[myOnPeakNormalizedAquireTimes.length - 1] + 1;// say 0...14 and 15...29
+            double xMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(minX, maxX, 0.05);
+            minX -= xMarginStretch;
+            maxX += xMarginStretch;
 
-        // on peak
-        for (int i = 0; i < myOnPeakData.length; i++) {
-            if (showAll || myDataActiveMap[i]) {
-                if (Double.isFinite(myOnPeakData[i])) {
-                    minY = Math.min(minY, myOnPeakData[i]);
-                    maxY = Math.max(maxY, myOnPeakData[i]);
-                }
+            // Y-axis is intensities as voltages plus or minus
+            // find min and max y
+            minY = Double.MAX_VALUE;
+            maxY = -Double.MAX_VALUE;
+
+            // background
+            for (int i = 0; i < backgroundIntensities.length; i++) {
+                minY = Math.min(minY, backgroundIntensities[i]);
+                maxY = Math.max(maxY, backgroundIntensities[i]);
 
                 if (!((DataModelFitFunctionInterface) rawRatioDataModel).getSelectedFitFunctionType().equals(FitFunctionTypeEnum.NONE)) {
-                    minY = Math.min(minY, onPeakFitBackgroundIntensities[i]);
-                    maxY = Math.max(maxY, onPeakFitBackgroundIntensities[i]);
+                    minY = Math.min(minY, backgroundFitIntensities[i]);
+                    maxY = Math.max(maxY, backgroundFitIntensities[i]);
                 }
 
                 if (onPeakMercuryCorrections[0] != 0.0) {
-                    minY = Math.min(minY, onPeakIntensityUncorrectedForMercury[i]);
-                    maxY = Math.max(maxY, onPeakIntensityUncorrectedForMercury[i]);
+                    minY = Math.min(minY, backgroundIntensityUncorrectedForMercury[i]);
+                    maxY = Math.max(maxY, backgroundIntensityUncorrectedForMercury[i]);
                 }
             }
 
-        }
+            // on peak
+            for (int i = 0; i < myOnPeakData.length; i++) {
+                if (showAll || myDataActiveMap[i]) {
+                    if (Double.isFinite(myOnPeakData[i])) {
+                        minY = Math.min(minY, myOnPeakData[i]);
+                        maxY = Math.max(maxY, myOnPeakData[i]);
+                    }
+
+                    if (!((DataModelFitFunctionInterface) rawRatioDataModel).getSelectedFitFunctionType().equals(FitFunctionTypeEnum.NONE)) {
+                        minY = Math.min(minY, onPeakFitBackgroundIntensities[i]);
+                        maxY = Math.max(maxY, onPeakFitBackgroundIntensities[i]);
+                    }
+
+                    if (onPeakMercuryCorrections[0] != 0.0) {
+                        minY = Math.min(minY, onPeakIntensityUncorrectedForMercury[i]);
+                        maxY = Math.max(maxY, onPeakIntensityUncorrectedForMercury[i]);
+                    }
+                }
+
+            }
 
 //        // rework logic April 2016 
 //        for (int i = 0; i < myOnPeakData.length; i++) {
@@ -237,11 +241,12 @@ public class RawIntensitiesDataView extends AbstractRawDataView {
 //                maxY = Math.max(maxY, myOnPeakData[i]);
 //            }
 //        }
-        // adjust margins for unknowns
-        if (!tripoliFraction.isStandard()) {
+            // adjust margins for unknowns
+//        if (!tripoliFraction.isStandard()) {
             double yMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(minY, maxY, 0.05);
             minY -= yMarginStretch;
             maxY += yMarginStretch;
+//        }
         }
     }
 

@@ -102,43 +102,47 @@ public class CorrectedIntensitiesDataView extends AbstractRawDataView {
 
         this.removeAll();
 
-        setDisplayOffsetY(0.0);
-        setDisplayOffsetX(0.0);
-
         // walk intensities and get min and max for axes
         myOnPeakData = ((RawIntensityDataModel) rawRatioDataModel).getOnPeakCorrectedCountsPerSecondAsRawIntensities();// .getOnPeakVirtualCollector().getCorrectedIntensities();
 
         // normalize aquireTimes
         myOnPeakNormalizedAquireTimes = rawRatioDataModel.getNormalizedOnPeakAquireTimes();
 
-        // X-axis lays out time evenly spaced
-        minX = myOnPeakNormalizedAquireTimes[0];
-        maxX = myOnPeakNormalizedAquireTimes[myOnPeakNormalizedAquireTimes.length - 1];
+        if (doReScale) {
+            setDisplayOffsetY(0.0);
+            setDisplayOffsetX(0.0);
 
-        // Y-axis is intensities as voltages plus or minus
-        minY = Double.MAX_VALUE;
-        maxY = -Double.MAX_VALUE;
+            // X-axis lays out time evenly spaced
+            minX = myOnPeakNormalizedAquireTimes[0];
+            maxX = myOnPeakNormalizedAquireTimes[myOnPeakNormalizedAquireTimes.length - 1];
+            // adjust margins for unknowns
+            double xMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(minX, maxX, 0.05);
+            minX -= xMarginStretch;
+            maxX += xMarginStretch;
 
-        // find min and max y
-        boolean[] myDataActiveMap = rawRatioDataModel.getDataActiveMap();
+            // Y-axis is intensities as voltages plus or minus
+            minY = Double.MAX_VALUE;
+            maxY = -Double.MAX_VALUE;
 
-        boolean showAll = showIncludedDataPoints.equals(IncludedTypeEnum.ALL);
-        // rework logic April 2016 
-        for (int i = 0; i < myOnPeakData.length; i++) {
-            if (showAll || myDataActiveMap[i]) {
-                minY = Math.min(minY, myOnPeakData[i]);
-                maxY = Math.max(maxY, myOnPeakData[i]);
+            // find min and max y
+            boolean[] myDataActiveMap = rawRatioDataModel.getDataActiveMap();
+
+            boolean showAll = showIncludedDataPoints.equals(IncludedTypeEnum.ALL);
+            // rework logic April 2016 
+            for (int i = 0; i < myOnPeakData.length; i++) {
+                if (showAll || myDataActiveMap[i]) {
+                    minY = Math.min(minY, myOnPeakData[i]);
+                    maxY = Math.max(maxY, myOnPeakData[i]);
+                }
             }
-        }
 
-
-        // adjust margins for unknowns
-        if (!tripoliFraction.isStandard()) {
+            // adjust margins for unknowns
+//        if (!tripoliFraction.isStandard()) {
             double yMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(minY, maxY, 0.05);
             minY -= yMarginStretch;
             maxY += yMarginStretch;
+//        }
         }
-
     }
 
     /**

@@ -96,19 +96,20 @@ public class RawRatioDataView extends AbstractRawDataView {
 
         this.removeAll();
 
-        if (doReScale) {
-            setDisplayOffsetY(0.0);
-        }
-        setDisplayOffsetX(0.0);
-
         // normalize aquireTimes
         myOnPeakNormalizedAquireTimes = rawRatioDataModel.getNormalizedOnPeakAquireTimes();
-        // X-axis lays out time evenly spaced
-        minX = myOnPeakNormalizedAquireTimes[0];
-        maxX = myOnPeakNormalizedAquireTimes[myOnPeakNormalizedAquireTimes.length - 1];
-        double xMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(minX, maxX, 0.05);
-        minX -= xMarginStretch;
-        maxX += xMarginStretch;
+        if (doReScale) {
+            setDisplayOffsetY(0.0);
+
+            setDisplayOffsetX(0.0);
+
+            // X-axis lays out time evenly spaced
+            minX = myOnPeakNormalizedAquireTimes[0];
+            maxX = myOnPeakNormalizedAquireTimes[myOnPeakNormalizedAquireTimes.length - 1];
+            double xMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(minX, maxX, 0.05);
+            minX -= xMarginStretch;
+            maxX += xMarginStretch;
+        }
 
         notShownDueToBelowDetectionFlag = rawRatioDataModel.isBelowDetection();
 
