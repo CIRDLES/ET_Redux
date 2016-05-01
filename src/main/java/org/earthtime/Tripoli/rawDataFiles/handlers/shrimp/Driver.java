@@ -63,7 +63,7 @@ public class Driver {
 
     public static void reportInterpolatedRatios(ShrimpFraction shrimpFraction) {
         System.out.print("\n" + shrimpFraction.getFractionID() + ", ");
-        shrimpFraction.getIsotopicRatios().stream().forEach((isotopeRatioModel) -> {
+        shrimpFraction.getIsotopicRatios().forEach((rawRatioName, isotopeRatioModel) -> {
             System.out.print("Time, '" + isotopeRatioModel.prettyPrintSimpleName() + ", " + "'+/-1sig abs, ");
         });
 
@@ -74,7 +74,7 @@ public class Driver {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         System.out.print(dateFormat.format(calendar.getTime()) + ", ");
 
-        shrimpFraction.getIsotopicRatios().stream().forEach((isotopeRatioModel) -> {
+        shrimpFraction.getIsotopicRatios().forEach((rawRatioName, isotopeRatioModel) -> {
             System.out.print(isotopeRatioModel.getRatEqTime().get(0) + ", " + isotopeRatioModel.getRatEqVal().get(0) + ", " + isotopeRatioModel.getRatEqErr().get(0) + ", ");
         });
 
@@ -82,7 +82,7 @@ public class Driver {
 
         System.out.print("Spot# " + shrimpFraction.getSpotNumber() + ", ");
 
-        shrimpFraction.getIsotopicRatios().stream().forEach((isotopeRatioModel) -> {
+        shrimpFraction.getIsotopicRatios().forEach((rawRatioName, isotopeRatioModel) -> {
             System.out.print(isotopeRatioModel.getRatEqTime().get(1) == 0.0 ? ", , , " : isotopeRatioModel.getRatEqTime().get(1) + ", " + isotopeRatioModel.getRatEqVal().get(1) + ", " + isotopeRatioModel.getRatEqErr().get(1) + ", ");
         });
 
@@ -90,7 +90,7 @@ public class Driver {
 
         System.out.print(", ");
 
-        shrimpFraction.getIsotopicRatios().stream().forEach((isotopeRatioModel) -> {
+        shrimpFraction.getIsotopicRatios().forEach((rawRatioName, isotopeRatioModel) -> {
             System.out.print(isotopeRatioModel.getRatEqTime().get(2) == 0.0 ? ", , , " : isotopeRatioModel.getRatEqTime().get(2) + ", " + isotopeRatioModel.getRatEqVal().get(2) + ", " + isotopeRatioModel.getRatEqErr().get(2) + ", ");
         });
 
@@ -98,7 +98,7 @@ public class Driver {
 
         System.out.print(", ");
 
-        shrimpFraction.getIsotopicRatios().stream().forEach((isotopeRatioModel) -> {
+        shrimpFraction.getIsotopicRatios().forEach((rawRatioName, isotopeRatioModel) -> {
             System.out.print(isotopeRatioModel.getRatEqTime().get(3) == 0.0 ? ", , , " : isotopeRatioModel.getRatEqTime().get(3) + ", " + isotopeRatioModel.getRatEqVal().get(3) + ", " + isotopeRatioModel.getRatEqErr().get(3) + ", ");
         });
 
@@ -106,7 +106,7 @@ public class Driver {
 
         System.out.print(", ");
 
-        shrimpFraction.getIsotopicRatios().stream().forEach((isotopeRatioModel) -> {
+        shrimpFraction.getIsotopicRatios().forEach((rawRatioName, isotopeRatioModel) -> {
             System.out.print(isotopeRatioModel.getRatEqTime().get(4) == 0.0 ? ", , , " : isotopeRatioModel.getRatEqTime().get(4) + ", " + isotopeRatioModel.getRatEqVal().get(4) + ", " + isotopeRatioModel.getRatEqErr().get(4) + ", ");
         });
 

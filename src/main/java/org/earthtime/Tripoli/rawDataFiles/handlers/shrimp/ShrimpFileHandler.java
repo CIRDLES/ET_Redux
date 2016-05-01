@@ -281,6 +281,9 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
 
         // supply calculated variances of CORRECTED counts
         ((ShrimpSetupUPb) massSpec).initializeCorrectedVariances(stripOutBackgroundHack(2, shrimpFraction.getPkFerr()));
+        
+        // supply calculated ratios and uncertainties
+        ((ShrimpSetupUPb) massSpec).populateRawAndLogRatios(shrimpFraction.getIsotopicRatios());
 
         massSpec.processFractionRawRatiosII(//
                 backgroundAcquisitions, peakAcquisitions, true, tripoliFraction);

@@ -19,16 +19,18 @@
  */
 package org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
+import java.awt.geom.Line2D;
+import java.awt.geom.Path2D;
 import javax.swing.JLayeredPane;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
 import org.earthtime.Tripoli.dataModels.RawRatioDataModel;
 import org.earthtime.Tripoli.dataViews.AbstractRawDataView;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
-import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.dataDictionaries.IncludedTypeEnum;
 import org.earthtime.utilities.TicGeneratorForAxes;
 
@@ -36,12 +38,13 @@ import org.earthtime.utilities.TicGeneratorForAxes;
  *
  * @author James F. Bowring
  */
-public class RawRatioDataView extends AbstractRawDataView {
+public class RawRatioDataViewForShrimp extends AbstractRawDataView {
 
     /**
      *
      */
     public static int DEFAULT_WIDTH_OF_PANE = 128;
+    private double[] myOnPeakOneSigmas;
 
     /**
      *
@@ -51,7 +54,7 @@ public class RawRatioDataView extends AbstractRawDataView {
      * @param bounds
      * @param invokeMouseListener
      */
-    public RawRatioDataView(//
+    public RawRatioDataViewForShrimp(//
             JLayeredPane sampleSessionDataView,//
             TripoliFraction tripoliFraction,//
             DataModelInterface rawRatioDataModel,//
@@ -71,19 +74,61 @@ public class RawRatioDataView extends AbstractRawDataView {
     public void paint(Graphics2D g2d) {
         super.paint(g2d);
 
-        if (isNotShownDueToBelowDetectionFlag()) {
-            setBackground(ReduxConstants.palePinkBelowDetection);
-            g2d.drawString("BELOW DETECTION", 25, 25);
-        }
+//        if (isNotShownDueToBelowDetectionFlag()) {
+//            setBackground(ReduxConstants.palePinkBelowDetection);
+//            g2d.drawString("BELOW DETECTION", 25, 25);
+//        }
+//
+//        if (!isNotShownDueToBelowDetectionFlag()) {
+//            for (int i = 0; i < myOnPeakData.length; i++) {
+//                Shape rawRatioPoint = new java.awt.geom.Ellipse2D.Double( //
+//                        mapX(myOnPeakNormalizedAquireTimes[i]), mapY(myOnPeakData[i]), 1, 1);
+//                g2d.setPaint(determineDataColor(i, Color.black));
+//
+//                g2d.draw(rawRatioPoint);
+//            }
+//        }
+        Path2D pointTrace = new Path2D.Double(Path2D.WIND_NON_ZERO);
+        pointTrace.moveTo(mapX(myOnPeakNormalizedAquireTimes[0]), mapY(myOnPeakData[0]));
+        for (int i = 0; i < myOnPeakData.length; i++) {
+            // line tracing through points
+            pointTrace.lineTo(mapX(myOnPeakNormalizedAquireTimes[i]), mapY(myOnPeakData[i]));
+            g2d.setStroke(new BasicStroke(0.5f));
+            g2d.setPaint(determineDataColor(i, Color.GRAY));
+            g2d.draw(pointTrace);
 
-        if (!isNotShownDueToBelowDetectionFlag()) {
-            for (int i = 0; i < myOnPeakData.length; i++) {
-                Shape rawRatioPoint = new java.awt.geom.Ellipse2D.Double( //
-                        mapX(myOnPeakNormalizedAquireTimes[i]), mapY(myOnPeakData[i]), 1, 1);
-                g2d.setPaint(determineDataColor(i, Color.black));
+            Shape intensity = new java.awt.geom.Ellipse2D.Double( //
+                    mapX(myOnPeakNormalizedAquireTimes[i]) - 1, mapY(myOnPeakData[i]) - 1, 2, 2);
+            g2d.setStroke(new BasicStroke(1.5f));
+            g2d.setPaint(determineDataColor(i, Color.black));
+            g2d.draw(intensity);
 
-                g2d.draw(rawRatioPoint);
-            }
+            // uncertainty
+            Shape plusMinusOneSigma = new Line2D.Double(//
+                    mapX(myOnPeakNormalizedAquireTimes[i]),// 
+                    mapY(myOnPeakData[i] - myOnPeakOneSigmas[i]),//
+                    mapX(myOnPeakNormalizedAquireTimes[i]),// 
+                    mapY(myOnPeakData[i] + myOnPeakOneSigmas[i]));
+            g2d.setStroke(new BasicStroke(1.0f));
+            g2d.draw(plusMinusOneSigma);
+
+            // tips of uncertainty
+            Shape plusOneSigmaTip = new Line2D.Double(//
+                    mapX(myOnPeakNormalizedAquireTimes[i]) - 1,// 
+                    mapY(myOnPeakData[i] + myOnPeakOneSigmas[i]),//
+                    mapX(myOnPeakNormalizedAquireTimes[i]) + 1,// 
+                    mapY(myOnPeakData[i] + myOnPeakOneSigmas[i]));
+
+            Shape minusOneSigmaTip = new Line2D.Double(//
+                    mapX(myOnPeakNormalizedAquireTimes[i]) - 1,// 
+                    mapY(myOnPeakData[i] - myOnPeakOneSigmas[i]),//
+                    mapX(myOnPeakNormalizedAquireTimes[i]) + 1,// 
+                    mapY(myOnPeakData[i] - myOnPeakOneSigmas[i]));
+
+            g2d.setStroke(new BasicStroke(1.0f));
+            g2d.draw(plusOneSigmaTip);
+            g2d.draw(minusOneSigmaTip);
+
         }
     }
 
@@ -106,19 +151,17 @@ public class RawRatioDataView extends AbstractRawDataView {
         // X-axis lays out time evenly spaced
         minX = myOnPeakNormalizedAquireTimes[0];
         maxX = myOnPeakNormalizedAquireTimes[myOnPeakNormalizedAquireTimes.length - 1];
-        double xMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(minX, maxX, 0.05);
-        minX -= xMarginStretch;
-        maxX += xMarginStretch;
 
         notShownDueToBelowDetectionFlag = rawRatioDataModel.isBelowDetection();
 
         if (!notShownDueToBelowDetectionFlag) {
             // walk ratios and get min and max for axes
-            myOnPeakData = ((RawRatioDataModel) rawRatioDataModel).getLogRatios().clone();//.getRatios().clone();
-            for (int i = 0; i < myOnPeakData.length; i++) {
-                double convertedOnPeak = convertLogDatumToPresentationMode(myOnPeakData[i]);
-                myOnPeakData[i] = convertedOnPeak;
-            }
+            myOnPeakData = ((RawRatioDataModel) rawRatioDataModel).getRatios().clone(); //.getLogRatios().clone();//
+            myOnPeakOneSigmas = ((RawRatioDataModel) rawRatioDataModel).getUncertaintyOneSigmaAbsRatios().clone();
+//            for (int i = 0; i < myOnPeakData.length; i++) {
+//                double convertedOnPeak = convertLogDatumToPresentationMode(myOnPeakData[i]);
+//                myOnPeakData[i] = convertedOnPeak;
+//            }
 
             if (doReScale) {
                 // Y-axis is ratios

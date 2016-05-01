@@ -18,9 +18,11 @@
 package org.earthtime.Tripoli.massSpecSetups.singleCollector.shrimp;
 
 import Jama.Matrix;
+import static com.google.common.primitives.Doubles.toArray;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -34,6 +36,7 @@ import org.earthtime.Tripoli.dataModels.collectorModels.AbstractCollectorModel;
 import org.earthtime.Tripoli.dataModels.collectorModels.IonCounterCollectorModel;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.Tripoli.massSpecSetups.AbstractMassSpecSetup;
+import org.earthtime.Tripoli.rawDataFiles.handlers.shrimp.IsotopeRatioModelSHRIMP;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.dataDictionaries.IsotopeNames;
@@ -304,7 +307,32 @@ public final class ShrimpSetupUPb extends AbstractMassSpecSetup {
     public void processFractionRawRatiosStageII(//
             boolean usingFullPropagation, TripoliFraction tripoliFraction) {
 
-//        calculateRawAndLogRatios();
+        // SHRIMP software does the math for now
+    }
+
+    public void populateRawAndLogRatios(Map<RawRatioNames, IsotopeRatioModelSHRIMP> isotopeRatioModels) {
+        // calculate ratios ****************************************************
+        for (DataModelInterface rr : rawRatios) {
+            IsotopeRatioModelSHRIMP isotopeRatioModelSHRIMP = isotopeRatioModels.get(rr.getRawRatioModelName());
+
+            List<Double> ratiosList = isotopeRatioModelSHRIMP.getRatEqVal();
+            double[] ratiosArray = toArray(ratiosList);
+            ((RawRatioDataModel) rr).setRatios(ratiosArray);
+
+            List<Double> oneSigmaRatiosList = isotopeRatioModelSHRIMP.getRatEqErr();
+            double[] oneSigmaRatiosArray = toArray(oneSigmaRatiosList);
+            ((RawRatioDataModel) rr).setUncertaintyOneSigmaAbsRatios(oneSigmaRatiosArray);
+
+            double[] logRatiosArray = new double[ratiosArray.length];
+            for (int i = 0; i < ratiosArray.length; i++) {
+                logRatiosArray[i] = Math.log(ratiosArray[i]);
+            }
+            ((RawRatioDataModel) rr).setLogRatios(logRatiosArray);
+
+            ((RawRatioDataModel) rr).setDataActiveMap(AbstractMassSpecSetup.defaultDataActiveMap(countOfAcquisitions));
+            // april 2014
+            rr.applyMaskingArray();
+        }
     }
 
     public void correctOnPeakIntensities(double[][] correctedIntensities) {
@@ -317,7 +345,7 @@ public final class ShrimpSetupUPb extends AbstractMassSpecSetup {
             // extract column for species and convert to double array
             rawIntensityModel.getOnPeakVirtualCollector().setCorrectedIntensities(peakCorrectedIntensities.getMatrix(0, countOfAcquisitions - 1, col, col).getColumnPackedCopy());
         }
-        
+
         calculateLogOnPeakCorrectedIntensities();
     }
 
@@ -345,7 +373,7 @@ public final class ShrimpSetupUPb extends AbstractMassSpecSetup {
                 correctedPeakVariances[i][j] = correctedPeakSigmas[i][j] * correctedPeakSigmas[i][j];
             }
         }
-        
+
         Matrix peakAcquisitionCorrectedVariancesMatrix = new Matrix(correctedPeakVariances);
 
         for (Map.Entry<DataModelInterface, Integer> vcmToIndex : virtualCollectorModelMapToFieldIndexes.entrySet()) {

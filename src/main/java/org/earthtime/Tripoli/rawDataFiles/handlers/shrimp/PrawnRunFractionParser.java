@@ -19,12 +19,15 @@ import com.google.common.collect.HashBiMap;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.cirdles.shrimp.PrawnFile;
 import org.earthtime.Tripoli.fitFunctions.algorithms.TukeyBiweight;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.dataDictionaries.IsotopeNames;
 import org.earthtime.dataDictionaries.PoissonLimitsCountLessThanEqual100;
+import org.earthtime.dataDictionaries.RawRatioNames;
 
 /**
  *
@@ -50,7 +53,7 @@ public class PrawnRunFractionParser {
     private static double[][] pkFerr;
     private static double[] totalCps;
     private static com.google.common.collect.BiMap<Integer, IsotopeNames> speciesToIndexBiMap;
-    private static List<IsotopeRatioModelSHRIMP> isotopicRatios;
+    private static Map<RawRatioNames, IsotopeRatioModelSHRIMP> isotopicRatios;
 
     public static ShrimpFraction processRunFraction(PrawnFile.Run runFraction) {
 
@@ -109,17 +112,17 @@ public class PrawnRunFractionParser {
         speciesToIndexBiMap.put(8, IsotopeNames.UO254);
         speciesToIndexBiMap.put(9, IsotopeNames.UO270);
 
-        isotopicRatios = new ArrayList<>();
-        isotopicRatios.add(new IsotopeRatioModelSHRIMP(IsotopeNames.Pb204, IsotopeNames.Pb206));
-        isotopicRatios.add(new IsotopeRatioModelSHRIMP(IsotopeNames.Pb207, IsotopeNames.Pb206));
-        isotopicRatios.add(new IsotopeRatioModelSHRIMP(IsotopeNames.Pb208, IsotopeNames.Pb206));
-        isotopicRatios.add(new IsotopeRatioModelSHRIMP(IsotopeNames.U238, IsotopeNames.Zr2O196));
-        isotopicRatios.add(new IsotopeRatioModelSHRIMP(IsotopeNames.Pb206, IsotopeNames.U238));
-        isotopicRatios.add(new IsotopeRatioModelSHRIMP(IsotopeNames.UO254, IsotopeNames.U238));
-        isotopicRatios.add(new IsotopeRatioModelSHRIMP(IsotopeNames.ThO248, IsotopeNames.UO254));
-        isotopicRatios.add(new IsotopeRatioModelSHRIMP(IsotopeNames.Pb206, IsotopeNames.UO270));
-        isotopicRatios.add(new IsotopeRatioModelSHRIMP(IsotopeNames.UO270, IsotopeNames.UO254));
-        isotopicRatios.add(new IsotopeRatioModelSHRIMP(IsotopeNames.Pb206, IsotopeNames.UO254));
+        isotopicRatios = new HashMap<>();
+        isotopicRatios.put(RawRatioNames.r204_206w, new IsotopeRatioModelSHRIMP(RawRatioNames.r204_206w, IsotopeNames.Pb204, IsotopeNames.Pb206));
+        isotopicRatios.put(RawRatioNames.r207_206w, new IsotopeRatioModelSHRIMP(RawRatioNames.r207_206w, IsotopeNames.Pb207, IsotopeNames.Pb206));
+        isotopicRatios.put(RawRatioNames.r208_206w, new IsotopeRatioModelSHRIMP(RawRatioNames.r208_206w, IsotopeNames.Pb208, IsotopeNames.Pb206));
+        isotopicRatios.put(RawRatioNames.r238_196w, new IsotopeRatioModelSHRIMP(RawRatioNames.r238_196w, IsotopeNames.U238, IsotopeNames.Zr2O196));
+        isotopicRatios.put(RawRatioNames.r206_238w, new IsotopeRatioModelSHRIMP(RawRatioNames.r206_238w, IsotopeNames.Pb206, IsotopeNames.U238));
+        isotopicRatios.put(RawRatioNames.r254_238w, new IsotopeRatioModelSHRIMP(RawRatioNames.r254_238w, IsotopeNames.UO254, IsotopeNames.U238));
+        isotopicRatios.put(RawRatioNames.r248_254w, new IsotopeRatioModelSHRIMP(RawRatioNames.r248_254w, IsotopeNames.ThO248, IsotopeNames.UO254));
+        isotopicRatios.put(RawRatioNames.r206_270w, new IsotopeRatioModelSHRIMP(RawRatioNames.r206_270w, IsotopeNames.Pb206, IsotopeNames.UO270));
+        isotopicRatios.put(RawRatioNames.r270_254w, new IsotopeRatioModelSHRIMP(RawRatioNames.r270_254w, IsotopeNames.UO270, IsotopeNames.UO254));
+        isotopicRatios.put(RawRatioNames.r206_254w, new IsotopeRatioModelSHRIMP(RawRatioNames.r206_254w, IsotopeNames.Pb206, IsotopeNames.UO254));
 
     }
 
@@ -285,7 +288,8 @@ public class PrawnRunFractionParser {
         // Step 3 of Development for SHRIMP 
         // (see wiki: https://github.com/CIRDLES/ET_Redux/wiki/Development-for-SHRIMP:-Step-3)
         // walk the ratios
-        for (IsotopeRatioModelSHRIMP isotopicRatio : isotopicRatios) {
+        isotopicRatios.forEach((rawRatioName, isotopicRatio) -> {
+//        for (IsotopeRatioModelSHRIMP isotopicRatio : isotopicRatios) {
             int nDod = nScans - 1;
             int NUM = speciesToIndexBiMap.inverse().get(isotopicRatio.getNumerator());
             int DEN = speciesToIndexBiMap.inverse().get(isotopicRatio.getDenominator());
@@ -525,7 +529,7 @@ public class PrawnRunFractionParser {
             isotopicRatio.setRatEqVal(ratEqVal);
             isotopicRatio.setRatEqErr(ratEqErr);
 
-        } // end iteration through isotopicRatios
+        }); // end iteration through isotopicRatios
 
     }
 

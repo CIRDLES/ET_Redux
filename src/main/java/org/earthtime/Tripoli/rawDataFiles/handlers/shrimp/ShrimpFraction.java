@@ -16,7 +16,8 @@
 package org.earthtime.Tripoli.rawDataFiles.handlers.shrimp;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Map;
+import org.earthtime.dataDictionaries.RawRatioNames;
 
 /**
  *
@@ -27,7 +28,7 @@ public class ShrimpFraction implements Serializable {
     private String fractionID;
     private int spotNumber;
     private long dateTimeMilliseconds;
-    private List<IsotopeRatioModelSHRIMP> isotopicRatios;
+    private Map<RawRatioNames, IsotopeRatioModelSHRIMP> isotopicRatios;
     private double[][] extractedRunData;
     private double[] totalCps;
     private double[][] netPkCps;
@@ -36,7 +37,7 @@ public class ShrimpFraction implements Serializable {
     public ShrimpFraction() {
     }
 
-    public ShrimpFraction(List<IsotopeRatioModelSHRIMP> isotopicRatios) {
+    public ShrimpFraction(Map<RawRatioNames, IsotopeRatioModelSHRIMP> isotopicRatios) {
         this.isotopicRatios = isotopicRatios;
     }
 
@@ -85,14 +86,14 @@ public class ShrimpFraction implements Serializable {
     /**
      * @return the isotopicRatios
      */
-    public List<IsotopeRatioModelSHRIMP> getIsotopicRatios() {
+    public Map<RawRatioNames, IsotopeRatioModelSHRIMP> getIsotopicRatios() {
         return isotopicRatios;
     }
 
     /**
      * @param isotopicRatios the isotopicRatios to set
      */
-    public void setIsotopicRatios(List<IsotopeRatioModelSHRIMP> isotopicRatios) {
+    public void setIsotopicRatios(Map<RawRatioNames, IsotopeRatioModelSHRIMP> isotopicRatios) {
         this.isotopicRatios = isotopicRatios;
     }
 

@@ -509,9 +509,15 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
         if (!FRACTION_LAYOUT_VIEW_STYLE.equals(FractionLayoutViewStylesEnum.SESSION)) {
             try {
                 isFitFunctionsOnRatioDataView = (dataModelViewConstructor.getDeclaringClass() == Class.forName(FitFunctionsOnRatioDataView.class.getCanonicalName()));
+//                isFitFunctionsOnRatioDataView = isFitFunctionsOnRatioDataView || (dataModelViewConstructor.getDeclaringClass() == Class.forName(RawRatioDataViewForShrimp.class.getCanonicalName()));
+                
                 isFitFunctionsOnDownHoleRatioDataView = (dataModelViewConstructor.getDeclaringClass() == Class.forName(FitFunctionsOnDownHoleRatioDataView.class.getCanonicalName()));
+                
                 isRawIntensitiesDataView = (dataModelViewConstructor.getDeclaringClass() == Class.forName(RawIntensitiesDataView.class.getCanonicalName()));
+//                isRawIntensitiesDataView = isRawIntensitiesDataView || (dataModelViewConstructor.getDeclaringClass() == Class.forName(RawCountsDataViewForShrimp.class.getCanonicalName()));
+                
                 isRawRatioDataView = (dataModelViewConstructor.getDeclaringClass() == Class.forName(RawRatioDataView.class.getCanonicalName()));
+//                isRawRatioDataView = isRawRatioDataView || (dataModelViewConstructor.getDeclaringClass() == Class.forName(RawRatioDataViewForShrimp.class.getCanonicalName()));
             } catch (ClassNotFoundException classNotFoundException) {
             }
         }
@@ -819,8 +825,7 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
             if ((!FRACTION_LAYOUT_VIEW_STYLE.equals(FractionLayoutViewStylesEnum.OVERLAY)) && (isFitFunctionsOnRatioDataView || isFitFunctionsOnDownHoleRatioDataView || isRawIntensitiesDataView)) {
                 // add universal FitFunction chooser
                 AbstractRawDataView universalFitFunctionChooser
-                        = //
-                        new AllFunctionsChoicePanel(//
+                        = new AllFunctionsChoicePanel(//
                                 this,
                                 standardsForYAxisArray,//
                                 new Rectangle( //
@@ -988,13 +993,11 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
                 underlay.add(rawDataModelViewsOverlay, javax.swing.JLayeredPane.PALETTE_LAYER);
 
             } else // detect if grid for intercept fractionation of standards *********************************** Intercept Fractionation of standards
-            {
-                if (FRACTION_LAYOUT_VIEW_STYLE.equals(FractionLayoutViewStylesEnum.GRID_INTERCEPT)) {
+             if (FRACTION_LAYOUT_VIEW_STYLE.equals(FractionLayoutViewStylesEnum.GRID_INTERCEPT)) {
                     for (int f = 0; f < (fractionCountForHorizontalLayout); f++) {
                         ((FitFunctionDataInterface) rawDataModelViews[i][f]).setShowFittedFunction(true);
                     }
                 }
-            }
         }
 
         // establish graphWidth 

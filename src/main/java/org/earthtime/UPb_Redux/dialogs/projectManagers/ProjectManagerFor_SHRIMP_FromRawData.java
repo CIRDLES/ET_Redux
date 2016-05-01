@@ -22,7 +22,7 @@ import org.earthtime.Tripoli.rawDataFiles.handlers.shrimp.ShrimpFileHandler;
 import org.earthtime.Tripoli.rawDataFiles.templates.shrimp.ShrimpPrawn_RawDataTemplate_GA;
 import org.earthtime.UPb_Redux.dialogs.parameterManagers.AbstractProjectParametersManager;
 import org.earthtime.UPb_Redux.dialogs.parameterManagers.ShrimpProjectParamaetersManager;
-import org.earthtime.UPb_Redux.dialogs.sessionManagers.SessionAnalysisWorkflowManagerSHRIMP2;
+import org.earthtime.UPb_Redux.dialogs.sessionManagers.SessionAnalysisWorkflowManagerSHRIMP;
 import org.earthtime.UPb_Redux.user.ReduxPersistentState;
 import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.projects.Project;
@@ -79,7 +79,7 @@ public class ProjectManagerFor_SHRIMP_FromRawData extends AbstractProjectManager
                 ((DialogEditor) mySessionManager).close();
             }
             mySessionManager
-                    = new SessionAnalysisWorkflowManagerSHRIMP2(
+                    = new SessionAnalysisWorkflowManagerSHRIMP(
                             this, //
                             uPbReduxFrame,
                             false, //
