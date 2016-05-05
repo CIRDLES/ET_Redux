@@ -15,6 +15,10 @@
  */
 package org.earthtime.Tripoli.rawDataFiles.handlers.shrimp;
 
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
+import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -29,6 +33,8 @@ import org.cirdles.shrimp.PrawnFile;
  * @author James F. Bowring <bowring at gmail.com>
  */
 public class Driver {
+
+    private static File totalIonCounts;
 
     /**
      * Driver to test results
@@ -46,19 +52,101 @@ public class Driver {
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
             PrawnFile prawnFile = (PrawnFile) jaxbUnmarshaller.unmarshal(prawnFileURL);
 
+            // gather general info for all runs  from first fraction
+            String[] firstFractionIntegrations = prawnFile.getRun().get(0).getSet().getScan().get(0).getMeasurement().get(0).getData().get(0).getValue().split(",");
+            int countOfIntegrations = firstFractionIntegrations.length;
+            int countOfSpecies = prawnFile.getRun().get(0).getRunTable().getEntries();
+            String[] namesOfSpecies = new String[countOfSpecies];
+            for (int s = 0; s < countOfSpecies; s++) {
+                namesOfSpecies[s] = prawnFile.getRun().get(0).getRunTable().getEntry().get(s).getPar().get(0).getValue();
+            }
+
+            prepReportFiles(namesOfSpecies, countOfIntegrations);
+
             for (int f = 0; f < prawnFile.getRuns(); f++) {
                 PrawnFile.Run runFraction = prawnFile.getRun().get(f);
 
                 if (!runFraction.getPar().get(0).getValue().startsWith("T.")) {
                     ShrimpFraction shrimpFraction = PrawnRunFractionParser.processRunFraction(runFraction);
                     shrimpFraction.setSpotNumber(f + 1);
-                    reportInterpolatedRatios(shrimpFraction);
+                    reportTotalIonCountsAtMass(shrimpFraction);
                 }
             } // end of fractions loop
 
         } catch (JAXBException | MalformedURLException exception) {
             System.out.println(exception.getMessage());
         }
+    }
+
+    /**
+     * 2016.May.3 email from Simon Bodorkos to Jim Bowring Step “0a” – Total ion
+     * counts at mass We’ve touched on this one once before, informally. It is a
+     * direct extract from the XML, with one row per scan, and one column per
+     * ‘integration-value’. For the demo XML, the array will have 684 rows of
+     * data (114 analyses x 6 scans), and 115 columns (5 for row identifiers,
+     * then for each of the 10 measured species, 11 columns comprising
+     * count_time_sec and the integer values of the 10 integrations).
+     *
+     * It needs five ‘left-hand’ columns to allow the rows to be identified and
+     * sorted: Title = analysis-specific text-string read from XML Date =
+     * analysis-specific date read from XML, to be expressed as YYYY-MM-DD
+     * HH24:MI:SS Scan = integer, starting at 1 within each analysis Type =
+     * “standard” or “unknown”; analyses with prefix “T.” to be labelled
+     * “standard”, all others “unknown” Dead_time_ns = analysis-specific integer
+     * read from XML
+     *
+     * These are to be followed by 11 columns for each species (i.e. 110 columns
+     * for the demo XML): [entry-label].count_time_sec = analysis-specific
+     * integer read from XML [entry-label].1 = integer value corresponding to
+     * the first of 10 ‘integrations’ within tags “<data name = [entry-label]>
+     * </data>” for the specified combination of analysis, scan and species
+     * [entry-label].2 = integer value corresponding to the second of 10
+     * ‘integrations’ within tags “<data name = [entry-label]> </data>” for the
+     * specified combination of analysis, scan and species … [entry-label].10 =
+     * integer value corresponding to the tenth of 10 ‘integrations’ within tags
+     * “<data name = [entry-label]> </data>” for the specified combination of
+     * analysis, scan and species
+     *
+     * Sorting: Primary criterion = Date, secondary criterion = Scan
+     *
+     * @param shrimpFraction
+     */
+    public static void reportTotalIonCountsAtMass(ShrimpFraction shrimpFraction) {
+       
+
+        StringBuilder dataLine = new StringBuilder();
+        
+        try {
+            Files.append(shrimpFraction.getFractionID() + ", " + getFormattedDate(shrimpFraction.getDateTimeMilliseconds()) + "\n", totalIonCounts, Charsets.UTF_8);
+        } catch (IOException iOException) {
+        }
+    }
+
+    public static void prepReportFiles(String[] namesOfSpecies, int countOfIntegrations) {
+        totalIonCounts = new File("TotalIonCounts.txt");
+        StringBuilder header = new StringBuilder();
+        header.append("Title, Date, Scan, Type, Dead_time_ns");
+
+        for (int s = 0; s < namesOfSpecies.length; s++) {
+            header.append(namesOfSpecies[s]).append(", .count_time_sec");
+            for (int i = 0; i < countOfIntegrations; i++) {
+                header.append(namesOfSpecies[s]).append(", .").append(String.valueOf(i + 1));
+            }
+        }
+        header.append("\n");
+
+        try {
+            Files.write(header, totalIonCounts, Charsets.UTF_8);
+        } catch (IOException iOException) {
+        }
+    }
+
+    private static String getFormattedDate(long milliseconds) {
+        GregorianCalendar calendar = new GregorianCalendar();
+        calendar.setTimeInMillis(milliseconds);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        return dateFormat.format(calendar.getTime());
     }
 
     public static void reportInterpolatedRatios(ShrimpFraction shrimpFraction) {
