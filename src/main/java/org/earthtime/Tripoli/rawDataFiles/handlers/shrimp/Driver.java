@@ -51,26 +51,27 @@ public class Driver {
             JAXBContext jaxbContext = JAXBContext.newInstance(PrawnFile.class);
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
             PrawnFile prawnFile = (PrawnFile) jaxbUnmarshaller.unmarshal(prawnFileURL);
+            String nameOfMount = prawnFile.getMount();
 
             // gather general info for all runs  from first fraction
             String[] firstFractionIntegrations = prawnFile.getRun().get(0).getSet().getScan().get(0).getMeasurement().get(0).getData().get(0).getValue().split(",");
-            int countOfIntegrations = firstFractionIntegrations.length;
+            int peakMeasurementsCount = firstFractionIntegrations.length;
             int countOfSpecies = prawnFile.getRun().get(0).getRunTable().getEntries();
             String[] namesOfSpecies = new String[countOfSpecies];
             for (int s = 0; s < countOfSpecies; s++) {
                 namesOfSpecies[s] = prawnFile.getRun().get(0).getRunTable().getEntry().get(s).getPar().get(0).getValue();
             }
 
-            prepReportFiles(namesOfSpecies, countOfIntegrations);
+            prepReportFiles(nameOfMount, namesOfSpecies, peakMeasurementsCount);
 
             for (int f = 0; f < prawnFile.getRuns(); f++) {
                 PrawnFile.Run runFraction = prawnFile.getRun().get(f);
 
-                if (!runFraction.getPar().get(0).getValue().startsWith("T.")) {
-                    ShrimpFraction shrimpFraction = PrawnRunFractionParser.processRunFraction(runFraction);
-                    shrimpFraction.setSpotNumber(f + 1);
-                    reportTotalIonCountsAtMass(shrimpFraction);
-                }
+                //if (runFraction.getPar().get(0).getValue().startsWith("T.1.1.1")) {
+                ShrimpFraction shrimpFraction = PrawnRunFractionParser.processRunFraction(runFraction);
+                shrimpFraction.setSpotNumber(f + 1);
+                reportTotalIonCountsAtMass(shrimpFraction);
+                // }
             } // end of fractions loop
 
         } catch (JAXBException | MalformedURLException exception) {
@@ -112,25 +113,38 @@ public class Driver {
      * @param shrimpFraction
      */
     public static void reportTotalIonCountsAtMass(ShrimpFraction shrimpFraction) {
-       
 
-        StringBuilder dataLine = new StringBuilder();
-        
-        try {
-            Files.append(shrimpFraction.getFractionID() + ", " + getFormattedDate(shrimpFraction.getDateTimeMilliseconds()) + "\n", totalIonCounts, Charsets.UTF_8);
-        } catch (IOException iOException) {
+        for (int scanNum = 0; scanNum < shrimpFraction.getRawPeakData().length; scanNum++) {
+            StringBuilder dataLine = new StringBuilder();
+            dataLine.append(shrimpFraction.getFractionID()).append(", ");
+            dataLine.append(getFormattedDate(shrimpFraction.getDateTimeMilliseconds())).append(", ");
+            dataLine.append(String.valueOf(scanNum + 1)).append(", ");
+            dataLine.append(shrimpFraction.isReferenceMaterial() ? "ref mat" : "unknown").append(", ");
+            dataLine.append(String.valueOf(shrimpFraction.getDeadTimeNanoseconds()));
+
+            for (int i = 0; i < shrimpFraction.getRawPeakData()[scanNum].length; i++) {
+                if ((i % 10) == 0) {
+                    dataLine.append(", ").append(String.valueOf(shrimpFraction.getCountTimeSec()[i / 10]));
+                }
+                dataLine.append(", ").append(shrimpFraction.getRawPeakData()[scanNum][i]);
+            }
+
+            try {
+                Files.append(dataLine + "\n", totalIonCounts, Charsets.UTF_8);
+            } catch (IOException iOException) {
+            }
         }
     }
 
-    public static void prepReportFiles(String[] namesOfSpecies, int countOfIntegrations) {
-        totalIonCounts = new File("TotalIonCounts.txt");
+    public static void prepReportFiles(String nameOfMount, String[] namesOfSpecies, int countOfIntegrations) {
+        totalIonCounts = new File("Calimari_TotalIonCounts_for_" + nameOfMount + ".txt");
         StringBuilder header = new StringBuilder();
         header.append("Title, Date, Scan, Type, Dead_time_ns");
 
         for (int s = 0; s < namesOfSpecies.length; s++) {
-            header.append(namesOfSpecies[s]).append(", .count_time_sec");
+            header.append(", ").append(namesOfSpecies[s]).append(".count_time_sec");
             for (int i = 0; i < countOfIntegrations; i++) {
-                header.append(namesOfSpecies[s]).append(", .").append(String.valueOf(i + 1));
+                header.append(", ").append(namesOfSpecies[s]).append(".").append(String.valueOf(i + 1));
             }
         }
         header.append("\n");
@@ -144,7 +158,7 @@ public class Driver {
     private static String getFormattedDate(long milliseconds) {
         GregorianCalendar calendar = new GregorianCalendar();
         calendar.setTimeInMillis(milliseconds);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
 
         return dateFormat.format(calendar.getTime());
     }

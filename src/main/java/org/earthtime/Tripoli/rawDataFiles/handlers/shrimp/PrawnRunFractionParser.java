@@ -37,12 +37,14 @@ public class PrawnRunFractionParser {
 
     private static final int HARD_WIRED_INDEX_OF_BACKGROUND = 2;
 
-    private static String fractionName;
+    private static String fractionID;
     private static long dateTimeMilliseconds = 0l;
     private static double[][] extractedRunData;
+    private static int[][] rawPeakData;
     private static int nSpecies;
     private static int nScans;
-    private static double deadTimeNanoseconds;
+    private static int peakMeasurementsCount;
+    private static int deadTimeNanoseconds;
     private static double sbmZeroCps;
     private static List<PrawnFile.Run.RunTable.Entry> runTableEntries;
     private static List<PrawnFile.Run.Set.Scan> scans;
@@ -62,25 +64,35 @@ public class PrawnRunFractionParser {
         calculateTotalPerSpeciesCPS();
         calculateIsotopicRatios(true);
 
-        ShrimpFraction shrimpFraction = new ShrimpFraction(isotopicRatios);
-        shrimpFraction.setFractionID(fractionName);
+        ShrimpFraction shrimpFraction = new ShrimpFraction(fractionID, isotopicRatios);
         shrimpFraction.setDateTimeMilliseconds(dateTimeMilliseconds);
+        shrimpFraction.setDeadTimeNanoseconds(deadTimeNanoseconds);
+        shrimpFraction.setCountTimeSec(countTimeSec);
         shrimpFraction.setExtractedRunData(extractedRunData);
+        shrimpFraction.setRawPeakData(rawPeakData);
         shrimpFraction.setTotalCps(totalCps);
         shrimpFraction.setNetPkCps(netPkCps);
         shrimpFraction.setPkFerr(pkFerr);
+        
+        // determine reference material status
+        // hard coded for now
+        if (fractionID.startsWith("T")){
+            shrimpFraction.setReferenceMaterial(true);
+        }
 
         return shrimpFraction;
     }
 
     private static void prepareRunFractionMetaData(PrawnFile.Run runFraction) {
-        fractionName = runFraction.getPar().get(0).getValue();
+        fractionID = runFraction.getPar().get(0).getValue();
         nSpecies = Integer.parseInt(runFraction.getPar().get(2).getValue());
         nScans = Integer.parseInt(runFraction.getPar().get(3).getValue());
         deadTimeNanoseconds = Integer.parseInt(runFraction.getPar().get(4).getValue());
         sbmZeroCps = Double.parseDouble(runFraction.getPar().get(5).getValue());
         runTableEntries = runFraction.getRunTable().getEntry();
         scans = runFraction.getSet().getScan();
+        String[] firstIntegrations = runFraction.getSet().getScan().get(0).getMeasurement().get(0).getData().get(0).getValue().split(",");
+        peakMeasurementsCount = firstIntegrations.length;
 
         String dateTime = runFraction.getSet().getPar().get(0).getValue() + " " + runFraction.getSet().getPar().get(1).getValue();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
@@ -90,7 +102,7 @@ public class PrawnRunFractionParser {
         }
 
         countTimeSec = new double[nSpecies];
-        for (int i = 0; i < runTableEntries.size(); i++) {
+        for (int i = 0; i < nSpecies; i++) {
             countTimeSec[i] = Double.parseDouble(runTableEntries.get(i).getPar().get(4).getValue());
         }
 
@@ -137,6 +149,7 @@ public class PrawnRunFractionParser {
     private static void parseRunFractionData() {
         // insert column 0 for scanNum number, then 3 columns per mass = total counts, 1 sig, total counts SBM
         extractedRunData = new double[nScans][nSpecies * 3 + 1];
+        rawPeakData = new int[nScans][nSpecies * peakMeasurementsCount];
 
         for (int scanNum = 0; scanNum < nScans; scanNum++) {
             extractedRunData[scanNum][0] = scanNum + 1; // 1-based in xml
@@ -148,10 +161,10 @@ public class PrawnRunFractionParser {
                         = Double.parseDouble(measurements.get(speciesMeasurementIndex).getPar().get(2).getValue());
                 // handle peakMeasurements measurements
                 String[] peakMeasurementsRaw = measurements.get(speciesMeasurementIndex).getData().get(0).getValue().split(",");
-                int peakMeasurementsCount = peakMeasurementsRaw.length;
                 double[] peakMeasurements = new double[peakMeasurementsCount];
                 for (int i = 0; i < peakMeasurementsCount; i++) {
                     peakMeasurements[i] = Double.parseDouble(peakMeasurementsRaw[i]);
+                    rawPeakData[scanNum][speciesMeasurementIndex + speciesMeasurementIndex * (peakMeasurementsCount - 1) + i] = (int)peakMeasurements[i];
                 }
 
                 double median = TukeyBiweight.calculateMedian(peakMeasurements);

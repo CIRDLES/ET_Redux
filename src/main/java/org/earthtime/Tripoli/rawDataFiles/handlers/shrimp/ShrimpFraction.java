@@ -16,6 +16,7 @@
 package org.earthtime.Tripoli.rawDataFiles.handlers.shrimp;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 import org.earthtime.dataDictionaries.RawRatioNames;
 
@@ -28,16 +29,34 @@ public class ShrimpFraction implements Serializable {
     private String fractionID;
     private int spotNumber;
     private long dateTimeMilliseconds;
+    private int deadTimeNanoseconds;
+    private double[] countTimeSec;
     private Map<RawRatioNames, IsotopeRatioModelSHRIMP> isotopicRatios;
+    private int[][] rawPeakData;
     private double[][] extractedRunData;
     private double[] totalCps;
     private double[][] netPkCps;
     private double[][] pkFerr;
+    private boolean referenceMaterial;
 
     public ShrimpFraction() {
+        fractionID = "NONE";
+        spotNumber = -1;
+        dateTimeMilliseconds = 0l;
+        countTimeSec = new double[0];
+        isotopicRatios = new HashMap<>();
+        rawPeakData = new int [0][0];
+        extractedRunData = new double [0][0];
+        totalCps = new double [0];
+        netPkCps = new double [0][0];
+        pkFerr = new double [0][0];
+        referenceMaterial = false;
+        
     }
 
-    public ShrimpFraction(Map<RawRatioNames, IsotopeRatioModelSHRIMP> isotopicRatios) {
+    public ShrimpFraction(String fractionID, Map<RawRatioNames, IsotopeRatioModelSHRIMP> isotopicRatios) {
+        this();
+        this.fractionID = fractionID;
         this.isotopicRatios = isotopicRatios;
     }
 
@@ -84,6 +103,34 @@ public class ShrimpFraction implements Serializable {
     }
 
     /**
+     * @return the deadTimeNanoseconds
+     */
+    public int getDeadTimeNanoseconds() {
+        return deadTimeNanoseconds;
+    }
+
+    /**
+     * @param aDeadTimeNanoseconds the deadTimeNanoseconds to set
+     */
+    public void setDeadTimeNanoseconds(int aDeadTimeNanoseconds) {
+        deadTimeNanoseconds = aDeadTimeNanoseconds;
+    }
+
+    /**
+     * @return the countTimeSec
+     */
+    public double[] getCountTimeSec() {
+        return countTimeSec;
+    }
+
+    /**
+     * @param countTimeSec the countTimeSec to set
+     */
+    public void setCountTimeSec(double[] countTimeSec) {
+        this.countTimeSec = countTimeSec;
+    }
+
+    /**
      * @return the isotopicRatios
      */
     public Map<RawRatioNames, IsotopeRatioModelSHRIMP> getIsotopicRatios() {
@@ -95,6 +142,20 @@ public class ShrimpFraction implements Serializable {
      */
     public void setIsotopicRatios(Map<RawRatioNames, IsotopeRatioModelSHRIMP> isotopicRatios) {
         this.isotopicRatios = isotopicRatios;
+    }
+
+    /**
+     * @return the rawPeakData
+     */
+    public int[][] getRawPeakData() {
+        return rawPeakData;
+    }
+
+    /**
+     * @param rawPeakData the rawPeakData to set
+     */
+    public void setRawPeakData(int[][] rawPeakData) {
+        this.rawPeakData = rawPeakData;
     }
 
     /**
@@ -151,6 +212,20 @@ public class ShrimpFraction implements Serializable {
      */
     public void setPkFerr(double[][] aPkFerr) {
         pkFerr = aPkFerr;
+    }
+
+    /**
+     * @return the referenceMaterial
+     */
+    public boolean isReferenceMaterial() {
+        return referenceMaterial;
+    }
+
+    /**
+     * @param referenceMaterial the referenceMaterial to set
+     */
+    public void setReferenceMaterial(boolean referenceMaterial) {
+        this.referenceMaterial = referenceMaterial;
     }
 
 }
