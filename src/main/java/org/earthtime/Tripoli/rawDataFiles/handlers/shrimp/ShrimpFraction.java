@@ -30,9 +30,11 @@ public class ShrimpFraction implements Serializable {
     private int spotNumber;
     private long dateTimeMilliseconds;
     private int deadTimeNanoseconds;
+    private int sbmZeroCps;
     private double[] countTimeSec;
     private Map<RawRatioNames, IsotopeRatioModelSHRIMP> isotopicRatios;
     private int[][] rawPeakData;
+    private int[][] rawSBMData;
     private double[][] extractedRunData;
     private double[] totalCps;
     private double[][] netPkCps;
@@ -45,13 +47,13 @@ public class ShrimpFraction implements Serializable {
         dateTimeMilliseconds = 0l;
         countTimeSec = new double[0];
         isotopicRatios = new HashMap<>();
-        rawPeakData = new int [0][0];
-        extractedRunData = new double [0][0];
-        totalCps = new double [0];
-        netPkCps = new double [0][0];
-        pkFerr = new double [0][0];
+        rawPeakData = new int[0][0];
+        extractedRunData = new double[0][0];
+        totalCps = new double[0];
+        netPkCps = new double[0][0];
+        pkFerr = new double[0][0];
         referenceMaterial = false;
-        
+
     }
 
     public ShrimpFraction(String fractionID, Map<RawRatioNames, IsotopeRatioModelSHRIMP> isotopicRatios) {
@@ -117,6 +119,20 @@ public class ShrimpFraction implements Serializable {
     }
 
     /**
+     * @return the sbmZeroCps
+     */
+    public int getSbmZeroCps() {
+        return sbmZeroCps;
+    }
+
+    /**
+     * @param sbmZeroCps the sbmZeroCps to set
+     */
+    public void setSbmZeroCps(int sbmZeroCps) {
+        this.sbmZeroCps = sbmZeroCps;
+    }
+
+    /**
      * @return the countTimeSec
      */
     public double[] getCountTimeSec() {
@@ -156,6 +172,20 @@ public class ShrimpFraction implements Serializable {
      */
     public void setRawPeakData(int[][] rawPeakData) {
         this.rawPeakData = rawPeakData;
+    }
+
+    /**
+     * @return the rawSBMData
+     */
+    public int[][] getRawSBMData() {
+        return rawSBMData;
+    }
+
+    /**
+     * @param rawSBMData the rawSBMData to set
+     */
+    public void setRawSBMData(int[][] rawSBMData) {
+        this.rawSBMData = rawSBMData;
     }
 
     /**

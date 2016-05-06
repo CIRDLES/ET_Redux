@@ -34,7 +34,8 @@ import org.cirdles.shrimp.PrawnFile;
  */
 public class Driver {
 
-    private static File totalIonCounts;
+    private static File totalIonCountsAtMassFile;
+    private static File totalSBMCountsAtMassFile;
 
     /**
      * Driver to test results
@@ -70,7 +71,8 @@ public class Driver {
                 //if (runFraction.getPar().get(0).getValue().startsWith("T.1.1.1")) {
                 ShrimpFraction shrimpFraction = PrawnRunFractionParser.processRunFraction(runFraction);
                 shrimpFraction.setSpotNumber(f + 1);
-                reportTotalIonCountsAtMass(shrimpFraction);
+                reportTotalIonCountsAtMass(shrimpFraction, namesOfSpecies.length);
+                reportTotalSBMCountsAtMass(shrimpFraction, namesOfSpecies.length);
                 // }
             } // end of fractions loop
 
@@ -111,8 +113,9 @@ public class Driver {
      * Sorting: Primary criterion = Date, secondary criterion = Scan
      *
      * @param shrimpFraction
+     * @param countOfSpecies
      */
-    public static void reportTotalIonCountsAtMass(ShrimpFraction shrimpFraction) {
+    public static void reportTotalIonCountsAtMass(ShrimpFraction shrimpFraction, int countOfSpecies) {
 
         for (int scanNum = 0; scanNum < shrimpFraction.getRawPeakData().length; scanNum++) {
             StringBuilder dataLine = new StringBuilder();
@@ -123,21 +126,69 @@ public class Driver {
             dataLine.append(String.valueOf(shrimpFraction.getDeadTimeNanoseconds()));
 
             for (int i = 0; i < shrimpFraction.getRawPeakData()[scanNum].length; i++) {
-                if ((i % 10) == 0) {
-                    dataLine.append(", ").append(String.valueOf(shrimpFraction.getCountTimeSec()[i / 10]));
+                if ((i % countOfSpecies) == 0) {
+                    dataLine.append(", ").append(String.valueOf(shrimpFraction.getCountTimeSec()[i / countOfSpecies]));
                 }
                 dataLine.append(", ").append(shrimpFraction.getRawPeakData()[scanNum][i]);
             }
 
             try {
-                Files.append(dataLine + "\n", totalIonCounts, Charsets.UTF_8);
+                Files.append(dataLine + "\n", totalIonCountsAtMassFile, Charsets.UTF_8);
+            } catch (IOException iOException) {
+            }
+        }
+    }
+
+    /**
+     *
+     * Step “0b” – Total SBM counts at mass As for step “0a” in all respects ,
+     * except that in the fifth ‘left-hand’ column, dead_time_ns should be
+     * discarded and replaced by SBM_zero_cps = analysis-specific integer read
+     * from XML
+     *
+     * And the 11 columns for each species are: [entry-label].count_time_sec =
+     * analysis-specific integer read from XML [entry-label].SBM.1 = integer
+     * value corresponding to the first of 10 ‘integrations’ within tags “<data name = SBM
+     * > </data>” for the specified combination of analysis, scan and species
+     * [entry-label].SBM.2 = integer value corresponding to the second of 10
+     * ‘integrations’ within tags “<data name = SBM > </data>” for the specified
+     * combination of analysis, scan and species … [entry-label].SBM.10 =
+     * integer value corresponding to the tenth of 10 ‘integrations’ within tags
+     * “<data name = SBM> </data>” for the specified combination of analysis,
+     * scan and species
+     *
+     * Sorting: Primary criterion = Date (ascending), secondary criterion = Scan
+     * (ascending)
+     *
+     * @param shrimpFraction
+     * @param countOfSpecies
+     */
+    public static void reportTotalSBMCountsAtMass(ShrimpFraction shrimpFraction, int countOfSpecies) {
+
+        for (int scanNum = 0; scanNum < shrimpFraction.getRawSBMData().length; scanNum++) {
+            StringBuilder dataLine = new StringBuilder();
+            dataLine.append(shrimpFraction.getFractionID()).append(", ");
+            dataLine.append(getFormattedDate(shrimpFraction.getDateTimeMilliseconds())).append(", ");
+            dataLine.append(String.valueOf(scanNum + 1)).append(", ");
+            dataLine.append(shrimpFraction.isReferenceMaterial() ? "ref mat" : "unknown").append(", ");
+            dataLine.append(String.valueOf(shrimpFraction.getSbmZeroCps()));
+
+            for (int i = 0; i < shrimpFraction.getRawSBMData()[scanNum].length; i++) {
+                if ((i % countOfSpecies) == 0) {
+                    dataLine.append(", ").append(String.valueOf(shrimpFraction.getCountTimeSec()[i / countOfSpecies]));
+                }
+                dataLine.append(", ").append(shrimpFraction.getRawSBMData()[scanNum][i]);
+            }
+
+            try {
+                Files.append(dataLine + "\n", totalSBMCountsAtMassFile, Charsets.UTF_8);
             } catch (IOException iOException) {
             }
         }
     }
 
     public static void prepReportFiles(String nameOfMount, String[] namesOfSpecies, int countOfIntegrations) {
-        totalIonCounts = new File("Calimari_TotalIonCounts_for_" + nameOfMount + ".txt");
+        totalIonCountsAtMassFile = new File("Calamari_TotalIonCountsAtMass_for_" + nameOfMount + ".txt");
         StringBuilder header = new StringBuilder();
         header.append("Title, Date, Scan, Type, Dead_time_ns");
 
@@ -150,9 +201,27 @@ public class Driver {
         header.append("\n");
 
         try {
-            Files.write(header, totalIonCounts, Charsets.UTF_8);
+            Files.write(header, totalIonCountsAtMassFile, Charsets.UTF_8);
         } catch (IOException iOException) {
         }
+
+        totalSBMCountsAtMassFile = new File("Calamari_TotalSBMCountsAtMass_for_" + nameOfMount + ".txt");
+        header = new StringBuilder();
+        header.append("Title, Date, Scan, Type, SBM_zero_cps");
+
+        for (int s = 0; s < namesOfSpecies.length; s++) {
+            header.append(", ").append(namesOfSpecies[s]).append(".count_time_sec");
+            for (int i = 0; i < countOfIntegrations; i++) {
+                header.append(", ").append(namesOfSpecies[s]).append(".SBM.").append(String.valueOf(i + 1));
+            }
+        }
+        header.append("\n");
+
+        try {
+            Files.write(header, totalSBMCountsAtMassFile, Charsets.UTF_8);
+        } catch (IOException iOException) {
+        }
+
     }
 
     private static String getFormattedDate(long milliseconds) {

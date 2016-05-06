@@ -41,11 +41,12 @@ public class PrawnRunFractionParser {
     private static long dateTimeMilliseconds = 0l;
     private static double[][] extractedRunData;
     private static int[][] rawPeakData;
+    private static int[][] rawSBMData;
     private static int nSpecies;
     private static int nScans;
     private static int peakMeasurementsCount;
     private static int deadTimeNanoseconds;
-    private static double sbmZeroCps;
+    private static int sbmZeroCps;
     private static List<PrawnFile.Run.RunTable.Entry> runTableEntries;
     private static List<PrawnFile.Run.Set.Scan> scans;
     private static double[] countTimeSec;
@@ -67,16 +68,18 @@ public class PrawnRunFractionParser {
         ShrimpFraction shrimpFraction = new ShrimpFraction(fractionID, isotopicRatios);
         shrimpFraction.setDateTimeMilliseconds(dateTimeMilliseconds);
         shrimpFraction.setDeadTimeNanoseconds(deadTimeNanoseconds);
+        shrimpFraction.setSbmZeroCps(sbmZeroCps);
         shrimpFraction.setCountTimeSec(countTimeSec);
         shrimpFraction.setExtractedRunData(extractedRunData);
         shrimpFraction.setRawPeakData(rawPeakData);
+        shrimpFraction.setRawSBMData(rawSBMData);
         shrimpFraction.setTotalCps(totalCps);
         shrimpFraction.setNetPkCps(netPkCps);
         shrimpFraction.setPkFerr(pkFerr);
-        
+
         // determine reference material status
         // hard coded for now
-        if (fractionID.startsWith("T")){
+        if (fractionID.startsWith("T")) {
             shrimpFraction.setReferenceMaterial(true);
         }
 
@@ -88,7 +91,7 @@ public class PrawnRunFractionParser {
         nSpecies = Integer.parseInt(runFraction.getPar().get(2).getValue());
         nScans = Integer.parseInt(runFraction.getPar().get(3).getValue());
         deadTimeNanoseconds = Integer.parseInt(runFraction.getPar().get(4).getValue());
-        sbmZeroCps = Double.parseDouble(runFraction.getPar().get(5).getValue());
+        sbmZeroCps = Integer.parseInt(runFraction.getPar().get(5).getValue());
         runTableEntries = runFraction.getRunTable().getEntry();
         scans = runFraction.getSet().getScan();
         String[] firstIntegrations = runFraction.getSet().getScan().get(0).getMeasurement().get(0).getData().get(0).getValue().split(",");
@@ -150,6 +153,7 @@ public class PrawnRunFractionParser {
         // insert column 0 for scanNum number, then 3 columns per mass = total counts, 1 sig, total counts SBM
         extractedRunData = new double[nScans][nSpecies * 3 + 1];
         rawPeakData = new int[nScans][nSpecies * peakMeasurementsCount];
+        rawSBMData = new int[nScans][nSpecies * peakMeasurementsCount];
 
         for (int scanNum = 0; scanNum < nScans; scanNum++) {
             extractedRunData[scanNum][0] = scanNum + 1; // 1-based in xml
@@ -164,7 +168,7 @@ public class PrawnRunFractionParser {
                 double[] peakMeasurements = new double[peakMeasurementsCount];
                 for (int i = 0; i < peakMeasurementsCount; i++) {
                     peakMeasurements[i] = Double.parseDouble(peakMeasurementsRaw[i]);
-                    rawPeakData[scanNum][speciesMeasurementIndex + speciesMeasurementIndex * (peakMeasurementsCount - 1) + i] = (int)peakMeasurements[i];
+                    rawPeakData[scanNum][speciesMeasurementIndex + speciesMeasurementIndex * (peakMeasurementsCount - 1) + i] = (int) peakMeasurements[i];
                 }
 
                 double median = TukeyBiweight.calculateMedian(peakMeasurements);
@@ -225,6 +229,7 @@ public class PrawnRunFractionParser {
                 double[] sbm = new double[sbmMeasurementsCount];
                 for (int i = 0; i < sbmMeasurementsCount; i++) {
                     sbm[i] = Double.parseDouble(sbmMeasurementsRaw[i]);
+                    rawSBMData[scanNum][speciesMeasurementIndex + speciesMeasurementIndex * (sbmMeasurementsCount - 1) + i] = (int) sbm[i];
                 }
                 ValueModel sbmTukeyMean = TukeyBiweight.calculateTukeyBiweightMean("SBM", 6.0, sbm);
                 double totalCountsSBM = sbmMeasurementsCount * sbmTukeyMean.getValue().doubleValue();
