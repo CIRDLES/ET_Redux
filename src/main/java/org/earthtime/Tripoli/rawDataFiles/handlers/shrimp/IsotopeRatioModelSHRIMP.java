@@ -19,7 +19,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import org.earthtime.dataDictionaries.IsotopeNames;
-import org.earthtime.dataDictionaries.RawRatioNames;
 
 /**
  *
@@ -30,14 +29,14 @@ public class IsotopeRatioModelSHRIMP //
 
     // Class variables
 //    private static final long serialVersionUID = 3111511502335804607L;
-    private RawRatioNames rawRatioName;
+    private RawRatioNamesSHRIMP rawRatioName;
     private IsotopeNames numerator;
     private IsotopeNames denominator;
     private List<Double> ratEqTime;
     private List<Double> ratEqVal;
     private List<Double> ratEqErr;
 
-    public IsotopeRatioModelSHRIMP(RawRatioNames rawRatioName, IsotopeNames numerator, IsotopeNames denominator) {
+    public IsotopeRatioModelSHRIMP(RawRatioNamesSHRIMP rawRatioName, IsotopeNames numerator, IsotopeNames denominator) {
         this.rawRatioName = rawRatioName;
         this.numerator = numerator;
         this.denominator = denominator;

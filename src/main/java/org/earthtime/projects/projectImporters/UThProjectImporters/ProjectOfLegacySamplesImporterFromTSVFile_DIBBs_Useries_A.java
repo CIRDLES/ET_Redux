@@ -82,12 +82,12 @@ public class ProjectOfLegacySamplesImporterFromTSVFile_DIBBs_Useries_A extends A
         try {
             fractionData = Files.readLines(file, Charsets.ISO_8859_1);
 
-            // ignore first 4 lines
+            // ignore first line
             // we only allow one source ID for now
             // we allow multiple sampleIDs
             String savedSourceID = "";
             String savedSampleID = "";
-            for (int i = 4; i < fractionData.size(); i++) {
+            for (int i = 1; i < fractionData.size(); i++) {
                 @SuppressWarnings("UseOfObsoleteCollectionType")
                 Vector<String> myFractionData = processLegacyTSVLine(fractionData.get(i));
                 if (!myFractionData.get(0).equals("0")) {

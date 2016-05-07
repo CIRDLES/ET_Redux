@@ -37,6 +37,7 @@ import org.earthtime.Tripoli.dataModels.collectorModels.IonCounterCollectorModel
 import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.Tripoli.massSpecSetups.AbstractMassSpecSetup;
 import org.earthtime.Tripoli.rawDataFiles.handlers.shrimp.IsotopeRatioModelSHRIMP;
+import org.earthtime.Tripoli.rawDataFiles.handlers.shrimp.RawRatioNamesSHRIMP;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.dataDictionaries.IsotopeNames;
@@ -310,10 +311,11 @@ public final class ShrimpSetupUPb extends AbstractMassSpecSetup {
         // SHRIMP software does the math for now
     }
 
-    public void populateRawAndLogRatios(Map<RawRatioNames, IsotopeRatioModelSHRIMP> isotopeRatioModels) {
+    public void populateRawAndLogRatios(Map<RawRatioNamesSHRIMP, IsotopeRatioModelSHRIMP> isotopeRatioModels) {
         // calculate ratios ****************************************************
         for (DataModelInterface rr : rawRatios) {
-            IsotopeRatioModelSHRIMP isotopeRatioModelSHRIMP = isotopeRatioModels.get(rr.getRawRatioModelName());
+            RawRatioNamesSHRIMP shrimpVersion = RawRatioNamesSHRIMP.valueOf(rr.getRawRatioModelName().getName());
+            IsotopeRatioModelSHRIMP isotopeRatioModelSHRIMP = isotopeRatioModels.get(shrimpVersion);
 
             List<Double> ratiosList = isotopeRatioModelSHRIMP.getRatEqVal();
             double[] ratiosArray = toArray(ratiosList);

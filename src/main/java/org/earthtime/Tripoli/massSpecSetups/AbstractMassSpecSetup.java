@@ -373,6 +373,8 @@ public abstract class AbstractMassSpecSetup implements //
                 getInputArguments().toString().indexOf("-Xdebug") > 0;
 
         boolean writeReport = isStandard && isFirstReport & (!isDebug);
+//        boolean writeReport = isStandard && isFirstReport && (!isDebug) && tripoliFraction.getFractionID().equals("FC-5");
+
         PrintWriter outputWriter = null;
 
         if (writeReport) {

@@ -16,8 +16,8 @@
 package org.earthtime.Tripoli.rawDataFiles.handlers.shrimp;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
-import org.earthtime.dataDictionaries.RawRatioNames;
 
 /**
  *
@@ -28,16 +28,41 @@ public class ShrimpFraction implements Serializable {
     private String fractionID;
     private int spotNumber;
     private long dateTimeMilliseconds;
-    private Map<RawRatioNames, IsotopeRatioModelSHRIMP> isotopicRatios;
+    private int deadTimeNanoseconds;
+    private int sbmZeroCps;
+    private double[] countTimeSec;
+    private Map<RawRatioNamesSHRIMP, IsotopeRatioModelSHRIMP> isotopicRatios;
+    private int[][] rawPeakData;
+    private int[][] rawSBMData;
     private double[][] extractedRunData;
+    private double[][] totalCounts;
+    private  double[][] totalCountsOneSigmaAbs;
+    private  double[][] totalCountsSBM;
+    private double[][] timeStampSec;
+    private  double [][] trimMass;
     private double[] totalCps;
     private double[][] netPkCps;
     private double[][] pkFerr;
+    private boolean referenceMaterial;
 
     public ShrimpFraction() {
+        fractionID = "NONE";
+        spotNumber = -1;
+        dateTimeMilliseconds = 0l;
+        countTimeSec = new double[0];
+        isotopicRatios = new HashMap<>();
+        rawPeakData = new int[0][0];
+        extractedRunData = new double[0][0];
+        totalCps = new double[0];
+        netPkCps = new double[0][0];
+        pkFerr = new double[0][0];
+        referenceMaterial = false;
+
     }
 
-    public ShrimpFraction(Map<RawRatioNames, IsotopeRatioModelSHRIMP> isotopicRatios) {
+    public ShrimpFraction(String fractionID, Map<RawRatioNamesSHRIMP, IsotopeRatioModelSHRIMP> isotopicRatios) {
+        this();
+        this.fractionID = fractionID;
         this.isotopicRatios = isotopicRatios;
     }
 
@@ -84,17 +109,87 @@ public class ShrimpFraction implements Serializable {
     }
 
     /**
+     * @return the deadTimeNanoseconds
+     */
+    public int getDeadTimeNanoseconds() {
+        return deadTimeNanoseconds;
+    }
+
+    /**
+     * @param aDeadTimeNanoseconds the deadTimeNanoseconds to set
+     */
+    public void setDeadTimeNanoseconds(int aDeadTimeNanoseconds) {
+        deadTimeNanoseconds = aDeadTimeNanoseconds;
+    }
+
+    /**
+     * @return the sbmZeroCps
+     */
+    public int getSbmZeroCps() {
+        return sbmZeroCps;
+    }
+
+    /**
+     * @param sbmZeroCps the sbmZeroCps to set
+     */
+    public void setSbmZeroCps(int sbmZeroCps) {
+        this.sbmZeroCps = sbmZeroCps;
+    }
+
+    /**
+     * @return the countTimeSec
+     */
+    public double[] getCountTimeSec() {
+        return countTimeSec;
+    }
+
+    /**
+     * @param countTimeSec the countTimeSec to set
+     */
+    public void setCountTimeSec(double[] countTimeSec) {
+        this.countTimeSec = countTimeSec;
+    }
+
+    /**
      * @return the isotopicRatios
      */
-    public Map<RawRatioNames, IsotopeRatioModelSHRIMP> getIsotopicRatios() {
+    public Map<RawRatioNamesSHRIMP, IsotopeRatioModelSHRIMP> getIsotopicRatios() {
         return isotopicRatios;
     }
 
     /**
      * @param isotopicRatios the isotopicRatios to set
      */
-    public void setIsotopicRatios(Map<RawRatioNames, IsotopeRatioModelSHRIMP> isotopicRatios) {
+    public void setIsotopicRatios(Map<RawRatioNamesSHRIMP, IsotopeRatioModelSHRIMP> isotopicRatios) {
         this.isotopicRatios = isotopicRatios;
+    }
+
+    /**
+     * @return the rawPeakData
+     */
+    public int[][] getRawPeakData() {
+        return rawPeakData;
+    }
+
+    /**
+     * @param rawPeakData the rawPeakData to set
+     */
+    public void setRawPeakData(int[][] rawPeakData) {
+        this.rawPeakData = rawPeakData;
+    }
+
+    /**
+     * @return the rawSBMData
+     */
+    public int[][] getRawSBMData() {
+        return rawSBMData;
+    }
+
+    /**
+     * @param rawSBMData the rawSBMData to set
+     */
+    public void setRawSBMData(int[][] rawSBMData) {
+        this.rawSBMData = rawSBMData;
     }
 
     /**
@@ -109,6 +204,76 @@ public class ShrimpFraction implements Serializable {
      */
     public void setExtractedRunData(double[][] extractedRunData) {
         this.extractedRunData = extractedRunData;
+    }
+
+    /**
+     * @return the totalCounts
+     */
+    public double[][] getTotalCounts() {
+        return totalCounts;
+    }
+
+    /**
+     * @param totalCounts the totalCounts to set
+     */
+    public void setTotalCounts(double[][] totalCounts) {
+        this.totalCounts = totalCounts;
+    }
+
+    /**
+     * @return the totalCountsOneSigmaAbs
+     */
+    public double[][] getTotalCountsOneSigmaAbs() {
+        return totalCountsOneSigmaAbs;
+    }
+
+    /**
+     * @param totalCountsOneSigmaAbs the totalCountsOneSigmaAbs to set
+     */
+    public void setTotalCountsOneSigmaAbs(double[][] totalCountsOneSigmaAbs) {
+        this.totalCountsOneSigmaAbs = totalCountsOneSigmaAbs;
+    }
+
+    /**
+     * @return the totalCountsSBM
+     */
+    public double[][] getTotalCountsSBM() {
+        return totalCountsSBM;
+    }
+
+    /**
+     * @param totalCountsSBM the totalCountsSBM to set
+     */
+    public void setTotalCountsSBM(double[][] totalCountsSBM) {
+        this.totalCountsSBM = totalCountsSBM;
+    }
+
+    /**
+     * @return the timeStampSec
+     */
+    public double[][] getTimeStampSec() {
+        return timeStampSec;
+    }
+
+    /**
+     * @param timeStampSec the timeStampSec to set
+     */
+    public void setTimeStampSec(double[][] timeStampSec) {
+        this.timeStampSec = timeStampSec;
+    }
+
+    /**
+     * @return the trimMass
+     */
+    public double[][] getTrimMass() {
+        return trimMass;
+    }
+
+    /**
+     * @param trimMass the trimMass to set
+     */
+    public void setTrimMass(double[][] trimMass) {
+        this.trimMass = trimMass;
     }
 
     /**
@@ -151,6 +316,20 @@ public class ShrimpFraction implements Serializable {
      */
     public void setPkFerr(double[][] aPkFerr) {
         pkFerr = aPkFerr;
+    }
+
+    /**
+     * @return the referenceMaterial
+     */
+    public boolean isReferenceMaterial() {
+        return referenceMaterial;
+    }
+
+    /**
+     * @param referenceMaterial the referenceMaterial to set
+     */
+    public void setReferenceMaterial(boolean referenceMaterial) {
+        this.referenceMaterial = referenceMaterial;
     }
 
 }
