@@ -19,6 +19,8 @@ nbproject/
 *.csv
 test_*
 *.ser
+*.zip
+
 
 # Misc data files
 *.dat
