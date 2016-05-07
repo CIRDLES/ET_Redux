@@ -19,15 +19,14 @@ import com.google.common.collect.HashBiMap;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import org.cirdles.shrimp.PrawnFile;
 import org.earthtime.Tripoli.fitFunctions.algorithms.TukeyBiweight;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.dataDictionaries.IsotopeNames;
 import org.earthtime.dataDictionaries.PoissonLimitsCountLessThanEqual100;
-import org.earthtime.dataDictionaries.RawRatioNames;
 
 /**
  *
@@ -40,6 +39,9 @@ public class PrawnRunFractionParser {
     private static String fractionID;
     private static long dateTimeMilliseconds = 0l;
     private static double[][] extractedRunData;
+    private static double[][] totalCounts;
+    private static double[][] totalCountsOneSigmaAbs;
+    private static double[][] totalCountsSBM;
     private static int[][] rawPeakData;
     private static int[][] rawSBMData;
     private static int nSpecies;
@@ -51,12 +53,13 @@ public class PrawnRunFractionParser {
     private static List<PrawnFile.Run.Set.Scan> scans;
     private static double[] countTimeSec;
     private static double[][] timeStampSec;
+    private static double [][] trimMass;
     private static double[][] netPkCps;
     private static double[][] sbmCps;
     private static double[][] pkFerr;
     private static double[] totalCps;
     private static com.google.common.collect.BiMap<Integer, IsotopeNames> speciesToIndexBiMap;
-    private static Map<RawRatioNames, IsotopeRatioModelSHRIMP> isotopicRatios;
+    private static Map<RawRatioNamesSHRIMP, IsotopeRatioModelSHRIMP> isotopicRatios;
 
     public static ShrimpFraction processRunFraction(PrawnFile.Run runFraction) {
 
@@ -71,6 +74,11 @@ public class PrawnRunFractionParser {
         shrimpFraction.setSbmZeroCps(sbmZeroCps);
         shrimpFraction.setCountTimeSec(countTimeSec);
         shrimpFraction.setExtractedRunData(extractedRunData);
+        shrimpFraction.setTotalCounts(totalCounts);
+        shrimpFraction.setTotalCountsOneSigmaAbs(totalCountsOneSigmaAbs);
+        shrimpFraction.setTotalCountsSBM(totalCountsSBM);
+        shrimpFraction.setTimeStampSec(timeStampSec);
+        shrimpFraction.setTrimMass(trimMass);
         shrimpFraction.setRawPeakData(rawPeakData);
         shrimpFraction.setRawSBMData(rawSBMData);
         shrimpFraction.setTotalCps(totalCps);
@@ -110,6 +118,7 @@ public class PrawnRunFractionParser {
         }
 
         timeStampSec = new double[nScans][nSpecies];
+        trimMass = new double[nScans][nSpecies];
         netPkCps = new double[nScans][nSpecies];
         sbmCps = new double[nScans][nSpecies];
         pkFerr = new double[nScans][nSpecies];
@@ -127,17 +136,17 @@ public class PrawnRunFractionParser {
         speciesToIndexBiMap.put(8, IsotopeNames.UO254);
         speciesToIndexBiMap.put(9, IsotopeNames.UO270);
 
-        isotopicRatios = new HashMap<>();
-        isotopicRatios.put(RawRatioNames.r204_206w, new IsotopeRatioModelSHRIMP(RawRatioNames.r204_206w, IsotopeNames.Pb204, IsotopeNames.Pb206));
-        isotopicRatios.put(RawRatioNames.r207_206w, new IsotopeRatioModelSHRIMP(RawRatioNames.r207_206w, IsotopeNames.Pb207, IsotopeNames.Pb206));
-        isotopicRatios.put(RawRatioNames.r208_206w, new IsotopeRatioModelSHRIMP(RawRatioNames.r208_206w, IsotopeNames.Pb208, IsotopeNames.Pb206));
-        isotopicRatios.put(RawRatioNames.r238_196w, new IsotopeRatioModelSHRIMP(RawRatioNames.r238_196w, IsotopeNames.U238, IsotopeNames.Zr2O196));
-        isotopicRatios.put(RawRatioNames.r206_238w, new IsotopeRatioModelSHRIMP(RawRatioNames.r206_238w, IsotopeNames.Pb206, IsotopeNames.U238));
-        isotopicRatios.put(RawRatioNames.r254_238w, new IsotopeRatioModelSHRIMP(RawRatioNames.r254_238w, IsotopeNames.UO254, IsotopeNames.U238));
-        isotopicRatios.put(RawRatioNames.r248_254w, new IsotopeRatioModelSHRIMP(RawRatioNames.r248_254w, IsotopeNames.ThO248, IsotopeNames.UO254));
-        isotopicRatios.put(RawRatioNames.r206_270w, new IsotopeRatioModelSHRIMP(RawRatioNames.r206_270w, IsotopeNames.Pb206, IsotopeNames.UO270));
-        isotopicRatios.put(RawRatioNames.r270_254w, new IsotopeRatioModelSHRIMP(RawRatioNames.r270_254w, IsotopeNames.UO270, IsotopeNames.UO254));
-        isotopicRatios.put(RawRatioNames.r206_254w, new IsotopeRatioModelSHRIMP(RawRatioNames.r206_254w, IsotopeNames.Pb206, IsotopeNames.UO254));
+        isotopicRatios = new TreeMap<>();
+        isotopicRatios.put(RawRatioNamesSHRIMP.r204_206w, new IsotopeRatioModelSHRIMP(RawRatioNamesSHRIMP.r204_206w, IsotopeNames.Pb204, IsotopeNames.Pb206));
+        isotopicRatios.put(RawRatioNamesSHRIMP.r207_206w, new IsotopeRatioModelSHRIMP(RawRatioNamesSHRIMP.r207_206w, IsotopeNames.Pb207, IsotopeNames.Pb206));
+        isotopicRatios.put(RawRatioNamesSHRIMP.r208_206w, new IsotopeRatioModelSHRIMP(RawRatioNamesSHRIMP.r208_206w, IsotopeNames.Pb208, IsotopeNames.Pb206));
+        isotopicRatios.put(RawRatioNamesSHRIMP.r238_196w, new IsotopeRatioModelSHRIMP(RawRatioNamesSHRIMP.r238_196w, IsotopeNames.U238, IsotopeNames.Zr2O196));
+        isotopicRatios.put(RawRatioNamesSHRIMP.r206_238w, new IsotopeRatioModelSHRIMP(RawRatioNamesSHRIMP.r206_238w, IsotopeNames.Pb206, IsotopeNames.U238));
+        isotopicRatios.put(RawRatioNamesSHRIMP.r254_238w, new IsotopeRatioModelSHRIMP(RawRatioNamesSHRIMP.r254_238w, IsotopeNames.UO254, IsotopeNames.U238));
+        isotopicRatios.put(RawRatioNamesSHRIMP.r248_254w, new IsotopeRatioModelSHRIMP(RawRatioNamesSHRIMP.r248_254w, IsotopeNames.ThO248, IsotopeNames.UO254));
+        isotopicRatios.put(RawRatioNamesSHRIMP.r206_270w, new IsotopeRatioModelSHRIMP(RawRatioNamesSHRIMP.r206_270w, IsotopeNames.Pb206, IsotopeNames.UO270));
+        isotopicRatios.put(RawRatioNamesSHRIMP.r270_254w, new IsotopeRatioModelSHRIMP(RawRatioNamesSHRIMP.r270_254w, IsotopeNames.UO270, IsotopeNames.UO254));
+        isotopicRatios.put(RawRatioNamesSHRIMP.r206_254w, new IsotopeRatioModelSHRIMP(RawRatioNamesSHRIMP.r206_254w, IsotopeNames.Pb206, IsotopeNames.UO254));
 
     }
 
@@ -152,6 +161,9 @@ public class PrawnRunFractionParser {
     private static void parseRunFractionData() {
         // insert column 0 for scanNum number, then 3 columns per mass = total counts, 1 sig, total counts SBM
         extractedRunData = new double[nScans][nSpecies * 3 + 1];
+        totalCounts = new double [nScans][nSpecies];
+        totalCountsOneSigmaAbs = new double [nScans][nSpecies];
+        totalCountsSBM= new double [nScans][nSpecies];
         rawPeakData = new int[nScans][nSpecies * peakMeasurementsCount];
         rawSBMData = new int[nScans][nSpecies * peakMeasurementsCount];
 
@@ -163,6 +175,10 @@ public class PrawnRunFractionParser {
                 // record the time_stamp_sec
                 timeStampSec[scanNum][speciesMeasurementIndex]
                         = Double.parseDouble(measurements.get(speciesMeasurementIndex).getPar().get(2).getValue());
+                // record the trim_mass
+                trimMass[scanNum][speciesMeasurementIndex]
+                        = Double.parseDouble(measurements.get(speciesMeasurementIndex).getPar().get(1).getValue());
+                
                 // handle peakMeasurements measurements
                 String[] peakMeasurementsRaw = measurements.get(speciesMeasurementIndex).getData().get(0).getValue().split(",");
                 double[] peakMeasurements = new double[peakMeasurementsCount];
@@ -172,7 +188,7 @@ public class PrawnRunFractionParser {
                 }
 
                 double median = TukeyBiweight.calculateMedian(peakMeasurements);
-                double totalCounts;
+                double totalCountsPeak;
                 double totalCountsSigma;
 
                 if (median > 100.0) {
@@ -182,7 +198,7 @@ public class PrawnRunFractionParser {
                     double bVcps = bV * peakMeasurementsCount / countTimeSec[speciesMeasurementIndex];
                     double bVcpsDeadTime = bVcps / (1.0 - bVcps * deadTimeNanoseconds / 1E9);
 
-                    totalCounts = bVcpsDeadTime * countTimeSec[speciesMeasurementIndex];
+                    totalCountsPeak = bVcpsDeadTime * countTimeSec[speciesMeasurementIndex];
                     double countsSigmaCandidate = Math.max(peakTukeyMean.getOneSigmaAbs().doubleValue(), Math.sqrt(bV));
                     totalCountsSigma = countsSigmaCandidate / Math.sqrt(peakMeasurementsCount) * bVcps * countTimeSec[speciesMeasurementIndex] / bV;
 
@@ -207,7 +223,7 @@ public class PrawnRunFractionParser {
                     double peakCountsPerSecond = peakMeanCounts * peakMeasurementsCount / countTimeSec[speciesMeasurementIndex];
                     double peakCountsPerSecondDeadTime = peakCountsPerSecond / (1.0 - peakCountsPerSecond * deadTimeNanoseconds / 1E9);
 
-                    totalCounts = peakCountsPerSecondDeadTime * countTimeSec[speciesMeasurementIndex];
+                    totalCountsPeak = peakCountsPerSecondDeadTime * countTimeSec[speciesMeasurementIndex];
 
                     totalCountsSigma = 0.0;
                     if (peakMeanCounts > 0.0) {
@@ -216,12 +232,14 @@ public class PrawnRunFractionParser {
                     }
                 } else {
                     // set flag as this should be impossible for count data
-                    totalCounts = -1.0;
+                    totalCountsPeak = -1.0;
                     totalCountsSigma = -1.0;
                 }
 
-                extractedRunData[scanNum][speciesMeasurementIndex * 3 + 1] = totalCounts;
+                extractedRunData[scanNum][speciesMeasurementIndex * 3 + 1] = totalCountsPeak;
+                totalCounts[scanNum][speciesMeasurementIndex] = totalCountsPeak;
                 extractedRunData[scanNum][speciesMeasurementIndex * 3 + 2] = totalCountsSigma;
+                totalCountsOneSigmaAbs[scanNum][speciesMeasurementIndex] = totalCountsSigma;
 
                 // handle SBM measurements
                 String[] sbmMeasurementsRaw = measurements.get(speciesMeasurementIndex).getData().get(1).getValue().split(",");
@@ -232,8 +250,9 @@ public class PrawnRunFractionParser {
                     rawSBMData[scanNum][speciesMeasurementIndex + speciesMeasurementIndex * (sbmMeasurementsCount - 1) + i] = (int) sbm[i];
                 }
                 ValueModel sbmTukeyMean = TukeyBiweight.calculateTukeyBiweightMean("SBM", 6.0, sbm);
-                double totalCountsSBM = sbmMeasurementsCount * sbmTukeyMean.getValue().doubleValue();
-                extractedRunData[scanNum][speciesMeasurementIndex * 3 + 3] = totalCountsSBM;
+                double totalCountsSpeciesSBM = sbmMeasurementsCount * sbmTukeyMean.getValue().doubleValue();
+                extractedRunData[scanNum][speciesMeasurementIndex * 3 + 3] = totalCountsSpeciesSBM;
+                totalCountsSBM[scanNum][speciesMeasurementIndex] = totalCountsSpeciesSBM;
             }
         }
     }
@@ -359,7 +378,7 @@ public class PrawnRunFractionParser {
                 ratEqErr.add(Math.abs(ratValFerr[0] * interpRatVal[0]));
 
                 // flush out
-                for (int i = 0; i < nDod; i++) {
+                for (int i = 0; i < (nDod - 1); i++) {
                     ratEqTime.add(0.0);
                     ratEqVal.add(0.0);
                     ratEqErr.add(0.0);
