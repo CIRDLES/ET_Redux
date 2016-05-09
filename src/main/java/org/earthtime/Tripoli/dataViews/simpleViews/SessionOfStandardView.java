@@ -48,7 +48,6 @@ import org.earthtime.Tripoli.dataModels.sessionModels.AbstractSessionForStandard
 import org.earthtime.Tripoli.dataViews.AbstractRawDataView;
 import org.earthtime.Tripoli.fitFunctions.AbstractFunctionOfX;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
-import org.earthtime.Tripoli.sessions.TripoliSessionFractionationCalculatorInterface;
 import org.earthtime.dataDictionaries.DataPresentationModeEnum;
 import org.earthtime.dataDictionaries.IncludedTypeEnum;
 import org.earthtime.utilities.TicGeneratorForAxes;
@@ -482,12 +481,12 @@ public class SessionOfStandardView extends AbstractRawDataView implements FitFun
                         fractionIncludedMap[finalTimeSlot] = false;
                         tripoliFraction.setShowVerticalLineAtThisIndex(-1);
                         try {
-                            ((TripoliSessionFractionationCalculatorInterface) sampleSessionDataView).calculateSessionFitFunctionsForPrimaryStandard();
+                            //moved to button may 2016 ((TripoliSessionFractionationCalculatorInterface) sampleSessionDataView).calculateSessionFitFunctionsForPrimaryStandard();
                             //((AbstractRawDataView) sampleSessionDataView).refreshPanel();
                         } catch (Exception e) {
                             System.out.println(">>>>>>>>>>>>trouble at standard exclude");
                         }
-                        updateReportTable();
+                        // removed may 2016 updateReportTable();
                         ((AbstractRawDataView) sampleSessionDataView).refreshPanel(true);
                     }
                 });
@@ -502,11 +501,11 @@ public class SessionOfStandardView extends AbstractRawDataView implements FitFun
                         fractionIncludedMap[finalTimeSlot] = true;
                         tripoliFraction.setShowVerticalLineAtThisIndex(-1);
                         try {
-                            ((TripoliSessionFractionationCalculatorInterface) sampleSessionDataView).calculateSessionFitFunctionsForPrimaryStandard();
+                            // moved to button may 2016 ((TripoliSessionFractionationCalculatorInterface) sampleSessionDataView).calculateSessionFitFunctionsForPrimaryStandard();
                         } catch (Exception e) {
                             System.out.println(">>>>>>>>>>>>trouble at standard include");
                         }
-                        updateReportTable();
+                        // removed may 2016 updateReportTable();
                         ((AbstractRawDataView) sampleSessionDataView).refreshPanel(true);
                     }
                 });

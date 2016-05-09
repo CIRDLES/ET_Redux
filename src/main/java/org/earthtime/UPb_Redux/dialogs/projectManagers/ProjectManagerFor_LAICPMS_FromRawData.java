@@ -73,7 +73,8 @@ import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.LaserchronElementII_R
 import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.MillerTexasAMElementII_RawDataTemplate;
 import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.MoellerUnivKansasElementII_RawDataTemplate;
 import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.ValenciaWashStateElementII_RawDataTemplate;
-import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.VervoortWashStateElementII_RawDataTemplate;
+import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.VervoortWashStateElementII_RawDataTemplate_Meth1;
+import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.VervoortWashStateElementII_RawDataTemplate_Meth2;
 import org.earthtime.Tripoli.samples.AbstractTripoliSample;
 import org.earthtime.Tripoli.sessions.TripoliSession;
 import org.earthtime.Tripoli.sessions.TripoliSessionInterface;
@@ -197,13 +198,15 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
         knownRawDataFileHandlers.add(theUnivKansasElementIIFileHandler);
 
         // Washington State Element 2 
-        AbstractRawDataFileHandler theThermoFinniganElement2SingleCollFileHandler
+        AbstractRawDataFileHandler theWashStateElement2SingleCollFileHandler
                 = WashStateElementIISingleCollFileHandler.getInstance();
-        theThermoFinniganElement2SingleCollFileHandler.getAvailableRawDataFileTemplates()//
-                .add(VervoortWashStateElementII_RawDataTemplate.getInstance());
-        theThermoFinniganElement2SingleCollFileHandler.getAvailableRawDataFileTemplates()//
+        theWashStateElement2SingleCollFileHandler.getAvailableRawDataFileTemplates()//
+                .add(VervoortWashStateElementII_RawDataTemplate_Meth1.getInstance());
+        theWashStateElement2SingleCollFileHandler.getAvailableRawDataFileTemplates()//
+                .add(VervoortWashStateElementII_RawDataTemplate_Meth2.getInstance());
+        theWashStateElement2SingleCollFileHandler.getAvailableRawDataFileTemplates()//
                 .add(ValenciaWashStateElementII_RawDataTemplate.getInstance());
-        knownRawDataFileHandlers.add(theThermoFinniganElement2SingleCollFileHandler);
+        knownRawDataFileHandlers.add(theWashStateElement2SingleCollFileHandler);
 
         // feb 2014 Agilent 7700
         AbstractRawDataFileHandler theRittnerAgilent7700FileHandler
@@ -1091,10 +1094,9 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
 ////////            } catch (Exception e) {
 ////////            }
         }
-        
+
         // april 2016 replaces above
-        ((SessionAnalysisWorkflowManagerLAICPMS)mySessionManager).invokeSavedFractionationTechnique(doCorrections);
-        
+        ((SessionAnalysisWorkflowManagerLAICPMS) mySessionManager).invokeSavedFractionationTechnique(doCorrections);
 
         // modal call to manager
         mySessionManager.setVisible(doShow);

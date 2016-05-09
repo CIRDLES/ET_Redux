@@ -1,5 +1,5 @@
 /*
- * ValenciaWashStateElementII_RawDataTemplate
+ * VervoortWashStateElementII_RawDataTemplate_Meth1
  *
  * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
  *
@@ -29,28 +29,29 @@ import org.earthtime.dataDictionaries.FileTypeEnum;
  *
  * @author James F. Bowring
  */
-public final class ValenciaWashStateElementII_RawDataTemplate extends AbstractRawDataFileTemplate implements //
+public final class VervoortWashStateElementII_RawDataTemplate_Meth1 extends AbstractRawDataFileTemplate implements //
         Comparable<AbstractRawDataFileTemplate>,
         Serializable {
 
-    private static final long serialVersionUID = 81527961461216203l;
-    private static ValenciaWashStateElementII_RawDataTemplate instance = new ValenciaWashStateElementII_RawDataTemplate();
+    private static final long serialVersionUID = -8145804446090022397l;
+    
+    private static VervoortWashStateElementII_RawDataTemplate_Meth1 instance = new VervoortWashStateElementII_RawDataTemplate_Meth1();
 
-    private ValenciaWashStateElementII_RawDataTemplate() {
+    private VervoortWashStateElementII_RawDataTemplate_Meth1() {
         super();
 
-        this.NAME = "Valencia Wash State Element II";
-        this.aboutInfo = "analysis runs setup by Valencia";
+        this.NAME = "Vervoort Wash State Element II Method 1";
+        this.aboutInfo = "analysis runs setup by Vervoort for Method 1";
         this.fileType = FileTypeEnum.txt;
         this.startOfFirstLine = "Trace for Mass:";
         this.startOfDataSectionFirstLine = "Time";
         this.startOfEachBlockFirstLine = "Time";
         this.blockStartOffset = 6;
-        this.blockSize = 300;
+        this.blockSize = 250;//300;
         this.standardIDs = new String[]//
         {"Plesovice", "Peixe", "91500", "FC1"};
         this.timeZone = TimeZone.getTimeZone("PST");
-        this.defaultParsingOfFractionsBehavior = 0;
+        this.defaultParsingOfFractionsBehavior = 1;
         this.massSpecSetup = WashStateElementIISetupUPbMeth1.getInstance();
     }
 
@@ -58,7 +59,7 @@ public final class ValenciaWashStateElementII_RawDataTemplate extends AbstractRa
      *
      * @return
      */
-    public static ValenciaWashStateElementII_RawDataTemplate getInstance() {
+    public static VervoortWashStateElementII_RawDataTemplate_Meth1 getInstance() {
         return instance;
     }
 
@@ -72,12 +73,4 @@ public final class ValenciaWashStateElementII_RawDataTemplate extends AbstractRa
         return acquisitionModel;
     }
 
-//    private void readObject(
-//            ObjectInputStream stream)
-//            throws IOException, ClassNotFoundException {
-//        stream.defaultReadObject();
-//        ObjectStreamClass myObject = ObjectStreamClass.lookup(Class.forName(ValenciaWashStateElementII_RawDataTemplate.class.getCanonicalName()));
-//        long theSUID = myObject.getSerialVersionUID();
-//        System.out.println("Customized De-serialization of ValenciaWashStateElementII_RawDataTemplate " + theSUID);
-//    }
 }

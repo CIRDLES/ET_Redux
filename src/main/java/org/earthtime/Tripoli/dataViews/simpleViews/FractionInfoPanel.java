@@ -33,7 +33,6 @@ import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.FitFunctions
 import org.earthtime.Tripoli.dataViews.simpleViews.usedByReflection.FitFunctionsOnRatioDataView;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.Tripoli.fractions.TripoliFractionIncludeChangeInterface;
-import org.earthtime.Tripoli.sessions.TripoliSessionFractionationCalculatorInterface;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.utilities.TimeToString;
 
@@ -201,7 +200,7 @@ public class FractionInfoPanel extends AbstractRawDataView {
 
             // jan 2015
             if (tripoliFraction.isStandard()) {
-                ((TripoliSessionFractionationCalculatorInterface) sampleSessionDataView).calculateSessionFitFunctionsForPrimaryStandard();
+                // removed to button may 2016 ((TripoliSessionFractionationCalculatorInterface) sampleSessionDataView).calculateSessionFitFunctionsForPrimaryStandard();
                 updateReportTable();
             } else {
                 updateReportTableView();

@@ -122,6 +122,8 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
         Arrays.sort(analysisFiles, new FractionFileNameComparator());
 
         if (analysisFiles.length > 0) {
+            Arrays.sort(analysisFiles, new FractionFileModifiedComparator());
+            
             String onPeakFileContents = URIHelper.getTextFromURI(analysisFiles[0].getAbsolutePath()).substring(0, 32);
             if (isValidRawDataFileType(analysisFiles[0]) //
                     && //

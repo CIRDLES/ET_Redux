@@ -1,5 +1,5 @@
 /*
- * VervoortWashStateElementII_RawDataTemplate
+ * VervoortWashStateElementII_RawDataTemplate_Meth1
  *
  * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
  *
@@ -17,14 +17,11 @@
  */
 package org.earthtime.Tripoli.rawDataFiles.templates.Thermo;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectStreamClass;
 import java.io.Serializable;
 import java.util.TimeZone;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.AbstractAcquisitionModel;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.SingleCollectorAcquisition;
-import org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan.WashStateElementIISetupUPb;
+import org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan.WashStateElementIISetupUPbMeth2;
 import org.earthtime.Tripoli.rawDataFiles.templates.AbstractRawDataFileTemplate;
 import org.earthtime.dataDictionaries.FileTypeEnum;
 
@@ -32,17 +29,19 @@ import org.earthtime.dataDictionaries.FileTypeEnum;
  *
  * @author James F. Bowring
  */
-public final class VervoortWashStateElementII_RawDataTemplate extends AbstractRawDataFileTemplate implements //
+public final class VervoortWashStateElementII_RawDataTemplate_Meth2 extends AbstractRawDataFileTemplate implements //
         Comparable<AbstractRawDataFileTemplate>,
         Serializable {
 
-    private static VervoortWashStateElementII_RawDataTemplate instance = new VervoortWashStateElementII_RawDataTemplate();
+//    private static final long serialVersionUID = -8145804446090022397l;
+    
+    private static VervoortWashStateElementII_RawDataTemplate_Meth2 instance = new VervoortWashStateElementII_RawDataTemplate_Meth2();
 
-    private VervoortWashStateElementII_RawDataTemplate() {
+    private VervoortWashStateElementII_RawDataTemplate_Meth2() {
         super();
 
-        this.NAME = "Vervoort Wash State Element II";
-        this.aboutInfo = "analysis runs setup by Vervoort";
+        this.NAME = "Vervoort Wash State Element II Method 2";
+        this.aboutInfo = "analysis runs setup by Vervoort for Method 2";
         this.fileType = FileTypeEnum.txt;
         this.startOfFirstLine = "Trace for Mass:";
         this.startOfDataSectionFirstLine = "Time";
@@ -50,17 +49,17 @@ public final class VervoortWashStateElementII_RawDataTemplate extends AbstractRa
         this.blockStartOffset = 6;
         this.blockSize = 250;//300;
         this.standardIDs = new String[]//
-        {"Peixe","1","2","3","4"};
+        {"Plesovice", "Peixe", "91500", "FC1"};
         this.timeZone = TimeZone.getTimeZone("PST");
         this.defaultParsingOfFractionsBehavior = 1;
-        this.massSpecSetup = WashStateElementIISetupUPb.getInstance();
+        this.massSpecSetup = WashStateElementIISetupUPbMeth2.getInstance();
     }
 
     /**
      *
      * @return
      */
-    public static VervoortWashStateElementII_RawDataTemplate getInstance() {
+    public static VervoortWashStateElementII_RawDataTemplate_Meth2 getInstance() {
         return instance;
     }
 
@@ -74,13 +73,4 @@ public final class VervoortWashStateElementII_RawDataTemplate extends AbstractRa
         return acquisitionModel;
     }
 
-    private void readObject(
-            ObjectInputStream stream)
-            throws IOException, ClassNotFoundException {
-        stream.defaultReadObject();
-        ObjectStreamClass myObject = ObjectStreamClass.lookup(
-                Class.forName(VervoortWashStateElementII_RawDataTemplate.class.getCanonicalName()));
-        long theSUID = myObject.getSerialVersionUID();
-        System.out.println("Customized De-serialization of VervoortWashStateElementII_RawDataTemplate " + theSUID);
-    }
 }

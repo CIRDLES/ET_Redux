@@ -25,6 +25,7 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -99,6 +100,8 @@ public class KoslerAgilent7700FileHandler extends AbstractRawDataFileHandler imp
         analysisFiles = rawDataFile.listFiles((File dir, String name) -> (name.toLowerCase().endsWith(".csv")));
 
         if (analysisFiles.length > 0) {
+            Arrays.sort(analysisFiles, new FractionFileModifiedComparator());
+            
             String onPeakFileContents = URIHelper.getTextFromURI(analysisFiles[0].getAbsolutePath());
             if (isValidRawDataFileType(analysisFiles[0]) //
                     && //

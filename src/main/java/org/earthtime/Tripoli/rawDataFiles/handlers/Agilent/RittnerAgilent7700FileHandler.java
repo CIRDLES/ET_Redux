@@ -25,6 +25,7 @@ import java.io.ObjectStreamClass;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -113,6 +114,8 @@ public class RittnerAgilent7700FileHandler extends AbstractRawDataFileHandler im
         });
 
         if ((sampleListFile.length > 0) && (analysisFiles.length > 0)) {
+            Arrays.sort(analysisFiles, new FractionFileModifiedComparator());
+            
             String onPeakFileContents = URIHelper.getTextFromURI(sampleListFile[0].getAbsolutePath());
             if (isValidRawDataFileType(sampleListFile[0]) //
                     && //

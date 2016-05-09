@@ -21,6 +21,7 @@ import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -96,6 +97,9 @@ public class MemUnivNewfoundlandElementIIFileHandler extends AbstractRawDataFile
         });
 
         if (analysisFiles.length > 0) {
+            
+            Arrays.sort(analysisFiles, new FractionFileModifiedComparator());
+            
             String onPeakFileContents = URIHelper.getTextFromURI(analysisFiles[0].getAbsolutePath());
             if (isValidRawDataFileType(analysisFiles[0]) //
                     && //
