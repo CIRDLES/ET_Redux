@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -97,31 +98,33 @@ public class UnivKansasElementIIFileHandler extends AbstractRawDataFileHandler {
 
         // ElementII has folder of .FIN2 files plus INF DAT and TXT files for each acquisition
         // also there is a FIN file containing naming and ordering of samples
-        analysisFiles = rawDataFile.listFiles((File dir, String name) -> {
-            return name.toLowerCase().endsWith(".fin2");
+        analysisFiles = rawDataFile.listFiles((File f) -> {
+            return f.getName().toLowerCase().endsWith(".fin2");
         });
 
         if (analysisFiles.length > 0) {
+            Arrays.sort(analysisFiles, new FractionFileModifiedComparator());
+            
             String onPeakFileContents = URIHelper.getTextFromURI(analysisFiles[0].getAbsolutePath());
             if (isValidRawDataFileType(analysisFiles[0]) //
                     && //
                     areKeyWordsPresent(onPeakFileContents)) {
 
                 // open and process ".FIN" file that has a fraction name for each file
-                File[] fileWithFractionFileNames = rawDataFile.listFiles((File dir, String name) -> {
-                    return name.toLowerCase().endsWith(".fin");
+                File[] fileWithFractionFileNames = rawDataFile.listFiles((File f) -> {
+                    return f.getName().toLowerCase().endsWith(".fin");
                 });
 
                 if (fileWithFractionFileNames.length == 0) {
                     new ETWarningDialog("Missing '.FIN' file listing the files, so quitting load process.").setVisible(true);
                     loadDataTask.cancel(true);
                 } else {
-                    // read the first (and assumedly only) scancsv file in the folder
+                    // read the first (and assumedly only) .FIN file in the folder
                     int ignoredLineCount = 11;
                     List<String> fractionData = null;
                     try {
                         fractionData = Files.readLines(fileWithFractionFileNames[0], Charsets.ISO_8859_1);
-                        // skip data in rows 0 - 10
+                        // skip data in rows 0 to ignoredLineCount - 1
                         fractionFileNames = new String[fractionData.size() - ignoredLineCount];
                         for (int i = ignoredLineCount; i < fractionData.size(); i++) {
                             String lineContents = fractionData.get(i);

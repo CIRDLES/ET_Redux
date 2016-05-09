@@ -1,5 +1,5 @@
 /*
- * WashStateElementIISetupUPb
+ * WashStateElementIISetupUPbMeth1
  *
  * Copyright 2006-2016 James F. Bowring and www.Earth-Time.org
  *
@@ -42,20 +42,34 @@ import org.earthtime.isotopes.IsotopesEnum;
  *
  * @author James F. Bowring
  */
-public final class WashStateElementIISetupUPb extends AbstractMassSpecSetup {
+public final class WashStateElementIISetupUPbMeth1 extends AbstractMassSpecSetup {
 
-    private static WashStateElementIISetupUPb instance = new WashStateElementIISetupUPb();
+    private static WashStateElementIISetupUPbMeth1 instance = new WashStateElementIISetupUPbMeth1();
 
-    private WashStateElementIISetupUPb() {
+    private WashStateElementIISetupUPbMeth1() {
         super();
-        NAME = "Washington State Element II Setup";
+        NAME = "Washington State Element II Setup 1";
         massSpecType = MassSpecTypeEnum.SINGLE;
         VIRTUAL_COLLECTOR_COUNT = 16;
         COLLECTOR_DATA_FREQUENCY_MILLISECS = 117; //0.117776667 sec
         countOfAcquisitions = 0;
 
-        double INTEGRATION_TIME = 0.012; // this is what Noah determined would be best from his data March 2013 was
-        // was COLLECTOR_DATA_FREQUENCY_MILLISECS / 1000.0 / 8.0
+        double INTEGRATION_TIME = 0.012;
+        // see email from Vervoort 31 March ++ to Jim Bowring
+        /**
+         * Here are the parameters of zircon U-Pb
+         *
+         * 250 runs method 1 Hg202 - 12ms Pb204 - 12ms Pb206 - 12ms Pb207 - 12ms
+         * Pb208 - 12ms Th232 - 12ms U235 - 12ms U238 - 12ms
+         *
+         * 250 runs method 2 Hg202 - 12ms Pb204 - 12ms Pb206 - 24ms Pb207 - 24ms
+         * Pb208 - 12ms Th232 - 12ms U235 - 12ms U238 - 12ms
+         *
+         * the deadtime is automatically adjusted by the software, maybe around
+         * 9ms
+         *
+         *
+         */
 
         isotopeMappingModel = new IsotopeMappingModel();
 
@@ -68,9 +82,8 @@ public final class WashStateElementIISetupUPb extends AbstractMassSpecSetup {
         this.commonLeadCorrectionHighestLevel = "B2";
 
         AbstractCollectorModel singleCollector
-                = //
-                new IonCounterCollectorModel(//
-                        "Single", new ValueModel("DeadTime", new BigDecimal(12.0e-9, ReduxConstants.mathContext10), //
+                = new IonCounterCollectorModel(//
+                        "Single", new ValueModel("DeadTime", new BigDecimal(9.0e-9, ReduxConstants.mathContext10), //
                                 "ABS", new BigDecimal(1.0e-9, ReduxConstants.mathContext10), BigDecimal.ZERO), //
                         IonCounterCollectorModel.CollectedDataStyle.COUNTS);
 
@@ -122,7 +135,7 @@ public final class WashStateElementIISetupUPb extends AbstractMassSpecSetup {
      *
      * @return
      */
-    public static WashStateElementIISetupUPb getInstance() {
+    public static WashStateElementIISetupUPbMeth1 getInstance() {
         return instance;
     }
 
@@ -238,7 +251,7 @@ public final class WashStateElementIISetupUPb extends AbstractMassSpecSetup {
         rawRatios.add(r206_207w);
         DataModelInterface r208_232w = new RawRatioDataModel(RawRatioNames.r208_232w, Pb208, Th232, true, false, COLLECTOR_DATA_FREQUENCY_MILLISECS);
         rawRatios.add(r208_232w);
-        
+
         // special case to handle mercury isotope
         rawRatios.add(new RawRatioDataModel(RawRatioNames.r202_202w, Hg202, Hg202, false, false, COLLECTOR_DATA_FREQUENCY_MILLISECS));
 
@@ -250,8 +263,8 @@ public final class WashStateElementIISetupUPb extends AbstractMassSpecSetup {
         DataModelInterface r208_204w = new RawRatioDataModel(RawRatioNames.r208_204w, Pb208, Pb204, false, true, COLLECTOR_DATA_FREQUENCY_MILLISECS);
         rawRatios.add(r208_204w);
 
-        // special case to handle 235 Uranium isotope
-        rawRatios.add(new RawRatioDataModel(RawRatioNames.r235_235w, U235, U235, false, false, COLLECTOR_DATA_FREQUENCY_MILLISECS));
+//        // special case to handle 235 Uranium isotope
+//        rawRatios.add(new RawRatioDataModel(RawRatioNames.r235_235w, U235, U235, false, false, COLLECTOR_DATA_FREQUENCY_MILLISECS));
 
         return rawRatios;
     }

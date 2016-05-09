@@ -617,7 +617,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         showAllFractions_radioButton.setSelected(true);
 
         // jan 2015
-        tripoliSession.calculateSessionFitFunctionsForPrimaryStandard();
+       // moved to button may 2016 tripoliSession.calculateSessionFitFunctionsForPrimaryStandard();
         try {
             uPbReduxFrame.updateReportTable(true);
         } catch (Exception e) {
@@ -631,7 +631,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).includeAllAquisitions();
 
         // jan 2015
-        tripoliSession.calculateSessionFitFunctionsForPrimaryStandard();
+        // moved to button may 2016 tripoliSession.calculateSessionFitFunctionsForPrimaryStandard();
         try {
             uPbReduxFrame.updateReportTable(true);
         } catch (Exception e) {
@@ -800,11 +800,13 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         downholeStandardSession_radioButton = new javax.swing.JRadioButton();
         downholeCorrectedUnknownRatios_radioButton = new javax.swing.JRadioButton();
         downholeCalculateRhos_button =  new ET_JButton();
+        refitDownholeSession =  new ET_JButton();
         interceptPanel = new javax.swing.JPanel();
         interceptFitEachRefMaterial_radioButton = new javax.swing.JRadioButton();
         interceptRefMaterialSession_radioButton = new javax.swing.JRadioButton();
         interceptFitUnknownRatios_radioButton = new javax.swing.JRadioButton();
         interceptCalculatePbcCorrAndRhos_button1 =  new ET_JButton();
+        refitInterceptSession =  new ET_JButton();
         restoreAllAquisitions =  new ET_JButton();
         jPanel1 = new javax.swing.JPanel();
         gridPlot_radioButton = new javax.swing.JRadioButton();
@@ -1120,7 +1122,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         downholeStandardSession_radioButton.setBackground(new java.awt.Color(204, 204, 204));
         viewChooser_buttonGroup.add(downholeStandardSession_radioButton);
         downholeStandardSession_radioButton.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
-        downholeStandardSession_radioButton.setText("Fit Session");
+        downholeStandardSession_radioButton.setText("Show Session");
         downholeStandardSession_radioButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         downholeStandardSession_radioButton.setBorderPainted(true);
         downholeStandardSession_radioButton.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -1131,7 +1133,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
                 downholeStandardSession_radioButtonActionPerformed(evt);
             }
         });
-        DownholePanel.add(downholeStandardSession_radioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 50, 168, 20));
+        DownholePanel.add(downholeStandardSession_radioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(58, 50, 110, 20));
 
         downholeCorrectedUnknownRatios_radioButton.setBackground(new java.awt.Color(173, 204, 204));
         viewChooser_buttonGroup.add(downholeCorrectedUnknownRatios_radioButton);
@@ -1162,6 +1164,15 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         });
         DownholePanel.add(downholeCalculateRhos_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 98, 165, -1));
 
+        refitDownholeSession.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        refitDownholeSession.setText("Refit");
+        refitDownholeSession.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refitDownholeSessionActionPerformed(evt);
+            }
+        });
+        DownholePanel.add(refitDownholeSession, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 50, 55, 20));
+
         fractionationTechniqueTabbedPane.addTab("Downhole", DownholePanel);
 
         interceptPanel.setBackground(new java.awt.Color(250, 240, 230));
@@ -1186,7 +1197,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         interceptRefMaterialSession_radioButton.setBackground(new java.awt.Color(204, 204, 204));
         viewChooser_buttonGroup.add(interceptRefMaterialSession_radioButton);
         interceptRefMaterialSession_radioButton.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
-        interceptRefMaterialSession_radioButton.setText("Fit Session");
+        interceptRefMaterialSession_radioButton.setText("Show Session");
         interceptRefMaterialSession_radioButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         interceptRefMaterialSession_radioButton.setBorderPainted(true);
         interceptRefMaterialSession_radioButton.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -1197,7 +1208,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
                 interceptRefMaterialSession_radioButtonActionPerformed(evt);
             }
         });
-        interceptPanel.add(interceptRefMaterialSession_radioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 168, 20));
+        interceptPanel.add(interceptRefMaterialSession_radioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(58, 30, 110, 20));
 
         interceptFitUnknownRatios_radioButton.setBackground(new java.awt.Color(173, 204, 204));
         viewChooser_buttonGroup.add(interceptFitUnknownRatios_radioButton);
@@ -1232,6 +1243,15 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
             }
         });
         interceptPanel.add(interceptCalculatePbcCorrAndRhos_button1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 98, 165, -1));
+
+        refitInterceptSession.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        refitInterceptSession.setText("Refit");
+        refitInterceptSession.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refitInterceptSessionActionPerformed(evt);
+            }
+        });
+        interceptPanel.add(refitInterceptSession, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 55, 20));
 
         fractionationTechniqueTabbedPane.addTab("Intercept", interceptPanel);
 
@@ -1640,6 +1660,18 @@ private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).setAllLocalYAxisPanes(); 
     }//GEN-LAST:event_setAllIndividualYAxisPanes_buttonActionPerformed
 
+    private void refitInterceptSessionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refitInterceptSessionActionPerformed
+        tripoliSession.calculateSessionFitFunctionsForPrimaryStandard();
+        uPbReduxFrame.updateReportTable(true);
+        tripoliSessionRawDataView.refreshPanel(true);
+    }//GEN-LAST:event_refitInterceptSessionActionPerformed
+
+    private void refitDownholeSessionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refitDownholeSessionActionPerformed
+        tripoliSession.calculateSessionFitFunctionsForPrimaryStandard();
+        uPbReduxFrame.updateReportTable(true);
+        tripoliSessionRawDataView.refreshPanel(true);
+    }//GEN-LAST:event_refitDownholeSessionActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel DownholePanel;
     private javax.swing.JRadioButton allDataUsedForScaling;
@@ -1675,6 +1707,8 @@ private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.
     private javax.swing.ButtonGroup plotStyleFractions_buttonGroup;
     private javax.swing.JRadioButton rawIsotopes_radioButton;
     private javax.swing.JRadioButton rawRatios_radioButton;
+    private javax.swing.JButton refitDownholeSession;
+    private javax.swing.JButton refitInterceptSession;
     private javax.swing.JButton refreshView_button;
     private javax.swing.JButton removeAllIndividualYAxisPanes_button;
     private javax.swing.JButton restoreAllAquisitions;

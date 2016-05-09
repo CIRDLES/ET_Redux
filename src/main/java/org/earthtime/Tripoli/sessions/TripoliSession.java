@@ -975,7 +975,7 @@ public class TripoliSession implements
 
             // get the session fit function
             AbstractFunctionOfX sessionFofX
-                    = //
+                    = 
                     sessionForStandard.getSelectedFitFunction();
 
             if (sessionFofX == null) {

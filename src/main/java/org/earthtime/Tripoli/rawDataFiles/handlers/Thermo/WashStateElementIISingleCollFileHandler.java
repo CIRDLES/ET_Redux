@@ -17,12 +17,14 @@
  */
 package org.earthtime.Tripoli.rawDataFiles.handlers.Thermo;
 
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
 import java.io.File;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectStreamClass;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -32,6 +34,7 @@ import org.earthtime.Tripoli.dataModels.DataModelInterface;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.Tripoli.rawDataFiles.handlers.AbstractRawDataFileHandler;
 import org.earthtime.archivingTools.URIHelper;
+import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.utilities.FileHelper;
 
 /**
@@ -41,9 +44,10 @@ import org.earthtime.utilities.FileHelper;
 public class WashStateElementIISingleCollFileHandler extends AbstractRawDataFileHandler {
 
     // Class variables
-    // private static final long serialVersionUID = 3111511502335804607L;
+    private static final long serialVersionUID = 1472900943557830775L;
     private static WashStateElementIISingleCollFileHandler instance = new WashStateElementIISingleCollFileHandler();
     private File[] analysisFiles;
+    private String[] fractionFileNames;
 
     /**
      *
@@ -91,17 +95,43 @@ public class WashStateElementIISingleCollFileHandler extends AbstractRawDataFile
     @Override
     public void getAndLoadRawIntensityDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions) {
 
-        // get .txt files from the folder and check the first one
-        analysisFiles = rawDataFile.listFiles((File dir, String name) //
-                -> (name.toLowerCase().endsWith(".txt"))//
-                && //
-                (!name.toLowerCase().endsWith("_b.txt")));
+        // get .txt files from the folder and check the first one        
+        analysisFiles = rawDataFile.listFiles((File f)
+                -> ((f.getName().toLowerCase().endsWith(".txt"))
+                && (!f.getName().toLowerCase().endsWith("_b.txt"))));
 
         if (analysisFiles.length > 0) {
+
+            Arrays.sort(analysisFiles, new FractionFileModifiedComparator());
+
             String onPeakFileContents = URIHelper.getTextFromURI(analysisFiles[0].getAbsolutePath());
             if (isValidRawDataFileType(analysisFiles[0]) //
                     && //
                     areKeyWordsPresent(onPeakFileContents)) {
+
+                // open and process "samplelist.txt" file that has a fraction name for each file in order
+                File[] fileWithFractionFileNames = rawDataFile.listFiles((File f) -> {
+                    return f.getName().toLowerCase().equalsIgnoreCase("samplelist.txt");
+                });
+
+                if (fileWithFractionFileNames.length == 0) {
+                    new ETWarningDialog("Missing 'samplelist.txt' file listing the files, so quitting load process.").setVisible(true);
+                    loadDataTask.cancel(true);
+                } else {
+                    // read the first (and assumedly only) samplelist file in the folder
+                    int ignoredLineCount = 0;
+                    List<String> fractionData = null;
+                    try {
+                        fractionData = Files.readLines(fileWithFractionFileNames[0], Charsets.ISO_8859_1);
+                        // skip data in rows 0 to ignoredLineCount - 1
+                        fractionFileNames = new String[fractionData.size() - ignoredLineCount];
+                        for (int i = ignoredLineCount; i < fractionData.size(); i++) {
+                            String lineContents = fractionData.get(i);
+                            fractionFileNames[i - ignoredLineCount] = lineContents.trim();
+                        }
+                    } catch (IOException iOException) {
+                    }
+                }
                 // create fractions from raw data and perform corrections and calculate ratios
                 loadRawDataFile(loadDataTask, usingFullPropagation, leftShadeCount, 0);
             }
@@ -114,8 +144,6 @@ public class WashStateElementIISingleCollFileHandler extends AbstractRawDataFile
 
             rawDataFile = null;
         }
-
-//        return rawDataFile;
     }
 
     /**
@@ -167,7 +195,8 @@ public class WashStateElementIISingleCollFileHandler extends AbstractRawDataFile
             }
             loadDataTask.firePropertyChange("progress", 0, ((100 * f) / analysisFiles.length));
 
-            String fractionID = analysisFiles[f].getName().toUpperCase().replace(".TXT", "");
+            // assume files are written in numerical name order
+            String fractionID = fractionFileNames[f];
             long fractionPeakTimeStamp = analysisFiles[f].lastModified();
 
             String onPeakFileContents = URIHelper.getTextFromURI(analysisFiles[f].getAbsolutePath());
@@ -186,9 +215,6 @@ public class WashStateElementIISingleCollFileHandler extends AbstractRawDataFile
                 String[][] scanData
                         = new String[expectedRowsOfData][massSpec.getVIRTUAL_COLLECTOR_COUNT()];
 
-                if (f == 137) {
-                    System.out.println();
-                }
                 System.out.println("Fract # " + f + "   named  " + analysisFiles[f].getName() + "  row count = " + onPeakFileRows.length);
                 //TODO possible missing condition here if file lengths vary from template spec and onPeakFileRows is too big
 
@@ -228,10 +254,13 @@ public class WashStateElementIISingleCollFileHandler extends AbstractRawDataFile
                 }
 
                 // extract isStandard
-                boolean isStandard = (Integer.parseInt(fractionID) <= 6);//isStandardFractionID(fractionID);
+                boolean isStandard = fractionID.equalsIgnoreCase(fractionFileNames[0]);
 
-                if (isStandard) {
-                    fractionID = "PLE-" + fractionID;
+                // massage file name
+                if (fractionID.toLowerCase().startsWith("unknown")) {
+                    fractionID = fractionID.toLowerCase().replace("unknown", "unknown-");
+                } else {
+                    fractionID = fractionID + "-" + analysisFiles[f].getName().replace(".TXT", "").replace(".txt", "");
                 }
 
                 TripoliFraction tripoliFraction
@@ -267,20 +296,16 @@ public class WashStateElementIISingleCollFileHandler extends AbstractRawDataFile
             }
         }
 
-//        if (tripoliFractions.isEmpty()) {
-//            tripoliFractions = null;
-//        }
-
         return tripoliFractions;
     }
 
-    private void readObject(
-            ObjectInputStream stream)
-            throws IOException, ClassNotFoundException {
-        stream.defaultReadObject();
-        ObjectStreamClass myObject = ObjectStreamClass.lookup(
-                Class.forName(WashStateElementIISingleCollFileHandler.class.getCanonicalName()));
-        long theSUID = myObject.getSerialVersionUID();
-        System.out.println("Customized De-serialization of WashStateElementIISingleCollFileHandler " + theSUID);
-    }
+//    private void readObject(
+//            ObjectInputStream stream)
+//            throws IOException, ClassNotFoundException {
+//        stream.defaultReadObject();
+//        ObjectStreamClass myObject = ObjectStreamClass.lookup(
+//                Class.forName(WashStateElementIISingleCollFileHandler.class.getCanonicalName()));
+//        long theSUID = myObject.getSerialVersionUID();
+//        System.out.println("Customized De-serialization of WashStateElementIISingleCollFileHandler " + theSUID);
+//    }
 }

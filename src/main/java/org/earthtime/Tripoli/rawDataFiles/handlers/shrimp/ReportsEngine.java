@@ -313,7 +313,7 @@ public class ReportsEngine {
             StringBuilder dataLine = new StringBuilder();
             dataLine.append(shrimpFraction.getFractionID()).append(", ");
             dataLine.append(getFormattedDate(shrimpFraction.getDateTimeMilliseconds())).append(", ");
-            dataLine.append(String.valueOf(nDodNum)).append(", ");
+            dataLine.append(String.valueOf(nDodNum + 1)).append(", ");
             dataLine.append(shrimpFraction.isReferenceMaterial() ? "ref mat" : "unknown");
 
             for (Map.Entry<RawRatioNamesSHRIMP, IsotopeRatioModelSHRIMP> entry : shrimpFraction.getIsotopicRatios().entrySet()) {
