@@ -182,14 +182,39 @@ public class ProjectOfLegacySamplesImporterFromTSVFile_DIBBs_Useries_A extends A
                             metaData.append("14C age? = ").append(myFractionData.get(34).trim()).append("\n");
                             metaData.append("Instrument = ").append(myFractionData.get(35).trim()).append("\n");
                             metaData.append("Decay cnsts = ").append(myFractionData.get(36).trim()).append("\n");
-                            if (myFractionData.get(36).trim().compareToIgnoreCase("D1") == 0) {
-                                myFraction.useLegacyPhysicalConstantsD1();
-                            } else if (myFractionData.get(36).trim().compareToIgnoreCase("D2") == 0) {
-                                myFraction.useLegacyPhysicalConstantsD2();
-                            } else if (myFractionData.get(36).trim().compareToIgnoreCase("D3") == 0) {
+
+                            // June 2016 per Noah email 29 March 2016
+                            /*
+                            Yesterday, Andrea, Ken, and I agreed to go with the following approach to re-calculating legacy data 
+                            reported with a secular equilibrium tracer.  A more permanent algorithm might be a bit more complicated 
+                            -- we will ask around and see if there are two different methods used in the community for reporting the
+                            [234/238] activity ratio.  If that's true, we'll need two methods for treating SE data and we'll have to
+                            subdivide the SE column into say SE1 and SE2.  
+
+                            Until then, though, you should do this for data reported with an SE tracer:
+
+                            You are given a set of input (reported) and output decay constants and the reported [234/238] and 
+                            [230/238] activity ratios.  No matter what set of decay constants were used for the reported data, 
+                            use the output (e.g. D3) decay constants to calculate isotope ratios from the reported [234/238] and 
+                            [230/238] activity ratios.  For instance, multiply the reported [234/238] activity ratio by 
+                            (lambda238_D3 / lambda234_D3).  Use these (234/238) and (230/238) isotope ratios and the output (e.g. D3) 
+                            decay constants to calculate the output date and del234Ui.  Note that you never have to use the input
+                            (e.g. D1) set of decay constants in this calculation.  
+                             */
+                            String spikeCalibration = myFractionData.get(37).trim();
+                            if (spikeCalibration.equalsIgnoreCase("G")) {
+                                if (myFractionData.get(36).trim().compareToIgnoreCase("D1") == 0) {
+                                    myFraction.useLegacyPhysicalConstantsD1();
+                                } else if (myFractionData.get(36).trim().compareToIgnoreCase("D2") == 0) {
+                                    myFraction.useLegacyPhysicalConstantsD2();
+                                } else if (myFractionData.get(36).trim().compareToIgnoreCase("D3") == 0) {
+                                    myFraction.useLegacyPhysicalConstantsD3();
+                                }
+                            } else /* assume Secular Equilibrium*/ {
                                 myFraction.useLegacyPhysicalConstantsD3();
                             }
-                            metaData.append("Spike Calib = ").append(myFractionData.get(37).trim()).append("\n");
+                                
+                            metaData.append("Spike Calib = ").append(spikeCalibration).append("\n");
                             metaData.append("Published % calcite = ").append(myFractionData.get(38).trim()).append("\n");
                             metaData.append("Interpreted % calcite = ").append(myFractionData.get(39).trim()).append("\n");
                             metaData.append("Method of mineralogy assessment = ").append(myFractionData.get(40).trim()).append("\n");
