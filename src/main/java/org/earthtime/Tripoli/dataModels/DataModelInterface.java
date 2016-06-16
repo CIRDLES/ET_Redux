@@ -67,8 +67,9 @@ public interface DataModelInterface {
      *
      * @param propagateUncertainties
      * @param doApplyMaskingArray the value of doApplyMaskingArray
+     * @param inLiveMode the value of inLiveMode
      */
-    public void generateSetOfFitFunctions(boolean propagateUncertainties, boolean doApplyMaskingArray);
+    public void generateSetOfFitFunctions(boolean propagateUncertainties, boolean doApplyMaskingArray, boolean inLiveMode);
 
     /**
      *

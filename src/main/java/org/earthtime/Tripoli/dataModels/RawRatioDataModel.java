@@ -871,9 +871,10 @@ public class RawRatioDataModel //
      *
      * @param propagateUncertainties the value of propagateUncertainties
      * @param doApplyMaskingArray the value of doApplyMaskingArray
+     * @param inLiveMode the value of inLiveMode
      */
     @Override
-    public void generateSetOfFitFunctions(boolean propagateUncertainties, boolean doApplyMaskingArray) {
+    public void generateSetOfFitFunctions(boolean propagateUncertainties, boolean doApplyMaskingArray, boolean inLiveMode) {
         if (!belowDetection && (usedForFractionationCorrections || usedForCommonLeadCorrections)) {
 
             // april 2014
@@ -954,12 +955,16 @@ public class RawRatioDataModel //
                         logRatioFitFunctionsWithOD.remove(FitFunctionTypeEnum.LINE.getName());
 
                     }
-                    try {
-                        generateEXPONENTIALfitFunctionUsingLM();
-                    } catch (Exception e) {
-                        System.out.println("Exception generating EXPONENTIAL");
-                        logRatioFitFunctionsNoOD.remove(FitFunctionTypeEnum.EXPONENTIAL.getName());
-                        logRatioFitFunctionsWithOD.remove(FitFunctionTypeEnum.EXPONENTIAL.getName());
+
+                    // June 2016 - simplify math in live mode
+                    if (!inLiveMode) {
+                        try {
+                            generateEXPONENTIALfitFunctionUsingLM();
+                        } catch (Exception e) {
+                            System.out.println("Exception generating EXPONENTIAL");
+                            logRatioFitFunctionsNoOD.remove(FitFunctionTypeEnum.EXPONENTIAL.getName());
+                            logRatioFitFunctionsWithOD.remove(FitFunctionTypeEnum.EXPONENTIAL.getName());
+                        }
                     }
                     calculatedInitialFitFunctions = true;
 
@@ -1858,7 +1863,8 @@ public class RawRatioDataModel //
     }
 
     /**
-     * @param uncertaintyOneSigmaAbsRatios the uncertaintyOneSigmaAbsRatios to set
+     * @param uncertaintyOneSigmaAbsRatios the uncertaintyOneSigmaAbsRatios to
+     * set
      */
     public void setUncertaintyOneSigmaAbsRatios(double[] uncertaintyOneSigmaAbsRatios) {
         this.uncertaintyOneSigmaAbsRatios = uncertaintyOneSigmaAbsRatios;

@@ -145,7 +145,7 @@ public abstract class AbstractSessionForStandardDataModel implements Serializabl
         this.sessionOfStandardsFitFunctionsNoOD = new TreeMap<>();
         this.sessionOfStandardsFitFunctionsWithOD = new TreeMap<>();
         this.overDispersionSelected = true;
-        this.selectedFitFunctionType = FitFunctionTypeEnum.SMOOTHING_SPLINE;
+        this.selectedFitFunctionType = FitFunctionTypeEnum.LINE;//.SMOOTHING_SPLINE;
         this.fittedStandardMeanLogRatios = null;
         this.allStandardsMeanLogRatios = null;
         this.allStandardsMeanLogRatioStdErrs = null;
@@ -164,9 +164,10 @@ public abstract class AbstractSessionForStandardDataModel implements Serializabl
      *
      * @param propagateUncertainties the value of propagateUncertainties
      * @param doApplyMaskingArray the value of doApplyMaskingArray
+     * @param inLiveMode
      */
     @Override
-    public void generateSetOfFitFunctions(boolean propagateUncertainties, boolean doApplyMaskingArray) {
+    public void generateSetOfFitFunctions(boolean propagateUncertainties, boolean doApplyMaskingArray, boolean inLiveMode) {
 
         // dec 2014 ... needs refactoring to be property
         // ?always true for sessions USING_FULL_PROPAGATION =  tripoliSession.getRawDataFileHandler().getAcquisitionModel().isUsingFullPropagation();//  RawRatioDataModel.USING_FULL_PROPAGATION;       
@@ -182,12 +183,10 @@ public abstract class AbstractSessionForStandardDataModel implements Serializabl
             TripoliFraction tf = fractionIterator.next();
 
             RawRatioDataModel rawRatio
-                    = //
-                    ((RawRatioDataModel) tf.getRawRatioDataModelByName(rawRatioName));
+                    = ((RawRatioDataModel) tf.getRawRatioDataModelByName(rawRatioName));
 
             allStandardsMeanLogRatios[index]
-                    = //
-                    rawRatio.getSessionValueBySessionTechnique(sessionTechnique);
+                    = rawRatio.getSessionValueBySessionTechnique(sessionTechnique);
             allStandardsMeanLogRatioStdErrs[index]
                     = rawRatio.getSessionErrorBySessionTechnique(sessionTechnique);
 
@@ -219,14 +218,11 @@ public abstract class AbstractSessionForStandardDataModel implements Serializabl
             includedStandardsAquireTimes[index] = tf.getZeroBasedNormalizedTimeStamp();
 
             RawRatioDataModel rawRatio
-                    = //
-                    ((RawRatioDataModel) tf.getRawRatioDataModelByName(rawRatioName));
+                    = ((RawRatioDataModel) tf.getRawRatioDataModelByName(rawRatioName));
             includedStandardsMeanLogRatios[index]
-                    = //
-                    rawRatio.getSessionValueBySessionTechnique(sessionTechnique);
+                    = rawRatio.getSessionValueBySessionTechnique(sessionTechnique);
             includedStandardsMeanLogRatioStdErrs[index]
-                    = //
-                    rawRatio.getSessionErrorBySessionTechnique(sessionTechnique);
+                    = rawRatio.getSessionErrorBySessionTechnique(sessionTechnique);
             sessionIncludedStandardsCovariance.set( //
                     index, index, rawRatio.getSessionVarianceBySessionTechnique(sessionTechnique));
 
@@ -238,8 +234,7 @@ public abstract class AbstractSessionForStandardDataModel implements Serializabl
             // begin section 8 of uncertainty propagation paper
 
             RawRatioDataModel rawRatioFirst
-                    = //
-                    ((RawRatioDataModel) getActiveStandardFractions().first().getRawRatioDataModelByName(rawRatioName));
+                    = ((RawRatioDataModel) getActiveStandardFractions().first().getRawRatioDataModelByName(rawRatioName));
             if (rawRatioFirst.hasTwoIdenticalIonCounters()) {
                 // calculate the covariance between each pair of standards
                 Matrix dLrInt_dDt = new Matrix(countOfIncludedStandards, 1);
@@ -250,8 +245,7 @@ public abstract class AbstractSessionForStandardDataModel implements Serializabl
                     TripoliFraction tf = fractionIterator.next();
 
                     RawRatioDataModel rawRatio
-                            = //
-                            ((RawRatioDataModel) tf.getRawRatioDataModelByName(rawRatioName));
+                            = ((RawRatioDataModel) tf.getRawRatioDataModelByName(rawRatioName));
 
                     dLrInt_dDt.set(index2, 0, rawRatio.getSelectedFitFunction().getdLrInt_dDt());
 
@@ -259,8 +253,7 @@ public abstract class AbstractSessionForStandardDataModel implements Serializabl
                 }
 
                 double deadtimeUnctSqr
-                        = //
-                        ((IonCounterCollectorModel) rawRatioFirst.getBotIsotope().getCollectorModel())//
+                        = ((IonCounterCollectorModel) rawRatioFirst.getBotIsotope().getCollectorModel())//
                         .getDeadTime().getOneSigmaAbs().movePointLeft(0).pow(2).doubleValue();
 
                 Matrix Ssod = dLrInt_dDt.times(dLrInt_dDt.transpose()).times(deadtimeUnctSqr);
@@ -273,7 +266,7 @@ public abstract class AbstractSessionForStandardDataModel implements Serializabl
                 sessionIncludedStandardsCovariance.plusEquals(Ssod);
             }
 
-            calculateFitFunctions();
+            calculateFitFunctions(inLiveMode);
             calculatedInitialFitFunctions = true;
         }
     }
@@ -583,8 +576,9 @@ public abstract class AbstractSessionForStandardDataModel implements Serializabl
 
     /**
      *
+     * @param inLiveMode the value of inLiveMode
      */
-    private void calculateFitFunctions() {
+    private void calculateFitFunctions(boolean inLiveMode) {
         System.out.println("\nCalculate Fit Functions for Session  " + getRawRatioModelName().getDisplayName() //
                 + "  USING " + (USING_FULL_PROPAGATION ? "FULL PROPAGATION" : "FAST PROPAGATION"));
 
@@ -594,13 +588,17 @@ public abstract class AbstractSessionForStandardDataModel implements Serializabl
                 generateLINEfitFunctionUsingLM();
             } catch (Exception e) {
             }
-            try {
-                generateEXPONENTIALfitFunctionUsingLM();
-            } catch (Exception e) {
-            }
-            try {
-                generateSPLINEfitFunction(sessionIncludedStandardsCovariance);
-            } catch (Exception e) {
+
+            // June 2016 - speed up fpor live mode
+            if (!inLiveMode) {
+                try {
+                    generateEXPONENTIALfitFunctionUsingLM();
+                } catch (Exception e) {
+                }
+                try {
+                    generateSPLINEfitFunction(sessionIncludedStandardsCovariance);
+                } catch (Exception e) {
+                }
             }
         }
 
