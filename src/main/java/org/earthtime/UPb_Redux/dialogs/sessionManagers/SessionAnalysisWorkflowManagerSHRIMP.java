@@ -292,7 +292,7 @@ public class SessionAnalysisWorkflowManagerSHRIMP extends DialogEditor //
                     }
                     pane.setForegroundAt(sel, Color.red);
 
-                    tripoliSession.applyCorrections();
+                    tripoliSession.applyCorrections(false);
 
                     // nov 2015 to update data
                     uPbReduxFrame.updateReportTable(true);
@@ -306,7 +306,7 @@ public class SessionAnalysisWorkflowManagerSHRIMP extends DialogEditor //
         tripoliSessionRawDataView.refreshPanel(true);
 
         if (doCorrections) {
-            tripoliSession.calculateSessionFitFunctionsForPrimaryStandard();
+            tripoliSession.calculateSessionFitFunctionsForPrimaryStandard(false);
         }
 
         if (tripoliSession.getFractionationTechnique().compareTo(FractionationTechniquesEnum.DOWNHOLE) == 0) {
@@ -556,7 +556,7 @@ public class SessionAnalysisWorkflowManagerSHRIMP extends DialogEditor //
 
         // do the math
         if (!tripoliSession.isFitFunctionsUpToDate()) {
-            tripoliSession.calculateSessionFitFunctionsForPrimaryStandard();
+            tripoliSession.calculateSessionFitFunctionsForPrimaryStandard(false);
         }
         try {
             uPbReduxFrame.updateReportTable(true);
@@ -620,7 +620,7 @@ public class SessionAnalysisWorkflowManagerSHRIMP extends DialogEditor //
         showAllFractions_radioButton.setSelected(true);
 
         // jan 2015
-        tripoliSession.calculateSessionFitFunctionsForPrimaryStandard();
+        tripoliSession.calculateSessionFitFunctionsForPrimaryStandard(false);
         try {
             uPbReduxFrame.updateReportTable(true);
         } catch (Exception e) {
@@ -634,7 +634,7 @@ public class SessionAnalysisWorkflowManagerSHRIMP extends DialogEditor //
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).includeAllAquisitions();
 
         // jan 2015
-        tripoliSession.calculateSessionFitFunctionsForPrimaryStandard();
+        tripoliSession.calculateSessionFitFunctionsForPrimaryStandard(false);
         try {
             uPbReduxFrame.updateReportTable(true);
         } catch (Exception e) {

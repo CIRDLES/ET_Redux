@@ -289,7 +289,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
                     }
                     pane.setForegroundAt(sel, Color.red);
 
-                    tripoliSession.applyCorrections();
+                    tripoliSession.applyCorrections(false);
 
                     // nov 2015 to update data
                     uPbReduxFrame.updateReportTable(true);
@@ -303,7 +303,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         tripoliSessionRawDataView.refreshPanel(true);
 
         if (doCorrections) {
-            tripoliSession.calculateSessionFitFunctionsForPrimaryStandard();
+            tripoliSession.calculateSessionFitFunctionsForPrimaryStandard(false);
         }
 
         if (tripoliSession.getFractionationTechnique().compareTo(FractionationTechniquesEnum.DOWNHOLE) == 0) {
@@ -553,7 +553,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
 
         // do the math
         if (!tripoliSession.isFitFunctionsUpToDate()) {
-            tripoliSession.calculateSessionFitFunctionsForPrimaryStandard();
+            tripoliSession.calculateSessionFitFunctionsForPrimaryStandard(false);
         }
         try {
             uPbReduxFrame.updateReportTable(true);
@@ -1661,13 +1661,13 @@ private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.
     }//GEN-LAST:event_setAllIndividualYAxisPanes_buttonActionPerformed
 
     private void refitInterceptSessionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refitInterceptSessionActionPerformed
-        tripoliSession.calculateSessionFitFunctionsForPrimaryStandard();
+        tripoliSession.calculateSessionFitFunctionsForPrimaryStandard(false);
         uPbReduxFrame.updateReportTable(true);
         tripoliSessionRawDataView.refreshPanel(true);
     }//GEN-LAST:event_refitInterceptSessionActionPerformed
 
     private void refitDownholeSessionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refitDownholeSessionActionPerformed
-        tripoliSession.calculateSessionFitFunctionsForPrimaryStandard();
+        tripoliSession.calculateSessionFitFunctionsForPrimaryStandard(false);
         uPbReduxFrame.updateReportTable(true);
         tripoliSessionRawDataView.refreshPanel(true);
     }//GEN-LAST:event_refitDownholeSessionActionPerformed

@@ -517,7 +517,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
         MaskingSingleton.getInstance().setLeftShadeCount(leftShadeCount);
         MaskingSingleton.getInstance().setRightShadeCount(-1);
 
-        rawDataFileHandler.getAndLoadRawIntensityDataFile(loadDataTask, usingFullPropagation, leftShadeCount, ignoreFirstFractions);
+        rawDataFileHandler.getAndLoadRawIntensityDataFile(loadDataTask, usingFullPropagation, leftShadeCount, ignoreFirstFractions, false);
     }
 
     private void loadAndShowRawDataFinishUp() {
@@ -595,7 +595,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
             myMassSpec.reProcessFractionRawRatios(usingFullPropagation, tf.getFractionID(), tf);
         }
 
-        tripoliSession.calculateSessionFitFunctionsForPrimaryStandard();
+        tripoliSession.calculateSessionFitFunctionsForPrimaryStandard(false);
         // jan 2015 moved to calcualte sessionfittripoliSession.applyCorrections();
 
         try {
