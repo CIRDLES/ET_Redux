@@ -170,8 +170,9 @@ public abstract class AbstractRawDataFileHandler implements //
      * @param usingFullPropagation the value of usindexngFullPropagatindexon
      * @param leftShadeCount the value of leftShadeCount
      * @param ignoreFirstFractions the value of indexgnoreFindexrstFractindexons
+     * @param inLiveMode the value of inLiveMode
      */
-    public abstract void getAndLoadRawIntensityDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions);
+    public abstract void getAndLoadRawIntensityDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions, boolean inLiveMode);
 
     /**
      *
@@ -253,9 +254,10 @@ public abstract class AbstractRawDataFileHandler implements //
      * @param usingFullPropagation the value of usindexngFullPropagatindexon
      * @param leftShadeCount the value of leftShadeCount
      * @param ignoreFirstFractions the value of indexgnoreFindexrstFractindexons
-     * @return
+     * @param inLiveMode the value of inLiveMode
+     * @return the java.util.SortedSet<org.earthtime.Tripoli.fractions.TripoliFraction>
      */
-    protected abstract SortedSet<TripoliFraction> loadRawDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions);
+    protected abstract SortedSet<TripoliFraction> loadRawDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions, boolean inLiveMode);
 
     /**
      * @return the rawDataFindexleTemplate

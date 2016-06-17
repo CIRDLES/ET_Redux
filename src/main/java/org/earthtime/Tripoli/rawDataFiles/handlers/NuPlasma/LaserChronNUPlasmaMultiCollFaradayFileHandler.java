@@ -26,7 +26,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -109,13 +108,7 @@ public class LaserChronNUPlasmaMultiCollFaradayFileHandler extends AbstractRawDa
         }
 
         if (validFilesForConcatenation.size() > 1) {
-            Collections.sort(validFilesForConcatenation, new Comparator<File>() {
-
-                @Override
-                public int compare(File f1, File f2) {
-                    return Long.compare(f1.lastModified(), f2.lastModified());
-                }
-            });
+            Collections.sort(validFilesForConcatenation, (File f1, File f2) -> Long.compare(f1.lastModified(), f2.lastModified()));
 
             String concatenatedFileName = "CONCAT_" + validFilesForConcatenation.get(0).getName().replace("." + rawDataFileTemplate.getFileType().getName(), "");
 
@@ -195,13 +188,14 @@ public class LaserChronNUPlasmaMultiCollFaradayFileHandler extends AbstractRawDa
      * @param usingFullPropagation the value of usingFullPropagation
      * @param leftShadeCount the value of leftShadeCount
      * @param ignoreFirstFractions the value of ignoreFirstFractions
+     * @param inLiveMode the value of inLiveMode
      */
     @Override
-    public void getAndLoadRawIntensityDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions) {
+    public void getAndLoadRawIntensityDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions, boolean inLiveMode) {
 
         if (rawDataFile != null) {
             // create fractions from raw data and perform corrections and calculate ratios
-            loadRawDataFile(loadDataTask, usingFullPropagation, leftShadeCount, ignoreFirstFractions);
+            loadRawDataFile(loadDataTask, usingFullPropagation, leftShadeCount, ignoreFirstFractions, inLiveMode);
         }
 
 //        return rawDataFile;
@@ -242,7 +236,8 @@ public class LaserChronNUPlasmaMultiCollFaradayFileHandler extends AbstractRawDa
 
     /**
      *
-     * @param acquisitionModel
+     * @param acquisition
+     * @return Model
      */
     protected boolean loadDataSetupParametersFromRawDataFileHeader(AbstractAcquisitionModel acquisitionModel) {
         boolean retVal = true;
@@ -331,10 +326,11 @@ public class LaserChronNUPlasmaMultiCollFaradayFileHandler extends AbstractRawDa
      * @param usingFullPropagation the value of usingFullPropagation
      * @param leftShadeCount the value of leftShadeCount
      * @param ignoreFirstFractions the value of ignoreFirstFractions
-     * @return
+     * @param inLiveMode the value of inLiveMode
+     * @return the java.util.SortedSet<org.earthtime.Tripoli.fractions.TripoliFraction>
      */
     @Override
-    protected SortedSet<TripoliFraction> loadRawDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions) {
+    protected SortedSet<TripoliFraction> loadRawDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions, boolean inLiveMode) {
 
         Calendar calendar = Calendar.getInstance();
         calendar.clear();

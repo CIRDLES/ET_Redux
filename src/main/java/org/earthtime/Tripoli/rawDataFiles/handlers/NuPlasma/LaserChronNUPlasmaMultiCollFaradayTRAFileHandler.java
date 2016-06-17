@@ -196,13 +196,14 @@ public class LaserChronNUPlasmaMultiCollFaradayTRAFileHandler extends AbstractRa
      * @param usingFullPropagation the value of usingFullPropagation
      * @param leftShadeCount the value of leftShadeCount
      * @param ignoreFirstFractions the value of ignoreFirstFractions
+     * @param inLiveMode the value of inLiveMode
      */
     @Override
-    public void getAndLoadRawIntensityDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions) {
+    public void getAndLoadRawIntensityDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions, boolean inLiveMode) {
 
         if (rawDataFile != null) {
             // create fractions from raw data and perform corrections and calculate ratios
-            loadRawDataFile(loadDataTask, usingFullPropagation, leftShadeCount, ignoreFirstFractions);
+            loadRawDataFile(loadDataTask, usingFullPropagation, leftShadeCount, ignoreFirstFractions, inLiveMode);
         }
 
 //        return rawDataFile;
@@ -340,10 +341,11 @@ public class LaserChronNUPlasmaMultiCollFaradayTRAFileHandler extends AbstractRa
      * @param usingFullPropagation the value of usingFullPropagation
      * @param leftShadeCount the value of leftShadeCount
      * @param ignoreFirstFractions the value of ignoreFirstFractions
-     * @return
+     * @param inLiveMode the value of inLiveMode
+     * @return the java.util.SortedSet<org.earthtime.Tripoli.fractions.TripoliFraction>
      */
     @Override
-    protected SortedSet<TripoliFraction> loadRawDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions) {
+    protected SortedSet<TripoliFraction> loadRawDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions, boolean inLiveMode) {
 
         Calendar calendar = Calendar.getInstance();
         calendar.clear();

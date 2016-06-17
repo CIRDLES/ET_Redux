@@ -89,9 +89,10 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
      * @param usingFullPropagation the value of usingFullPropagation
      * @param leftShadeCount the value of leftShadeCount
      * @param ignoreFirstFractions the value of ignoreFirstFracts
+     * @param inLiveMode the value of inLiveMode
      */
     @Override
-    public void getAndLoadRawIntensityDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions) {
+    public void getAndLoadRawIntensityDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions, boolean inLiveMode) {
 
         // temp       
         rawDataFile = new File("/Users/sbowring/Documents/Development_XSD/100142_G6147_10111109.43 10.33.37 AM.xml");
@@ -99,7 +100,7 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
         if (rawDataFile != null) {
 
             // create fractions from raw data and perform corrections and calculate ratios
-            tripoliFractions = loadRawDataFile(loadDataTask, usingFullPropagation, leftShadeCount, ignoreFirstFractions);
+            tripoliFractions = loadRawDataFile(loadDataTask, usingFullPropagation, leftShadeCount, ignoreFirstFractions, inLiveMode);
         } else {
             JOptionPane.showMessageDialog(
                     null,
@@ -147,11 +148,12 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
      * @param usingFullPropagation the value of usingFullPropagation
      * @param leftShadeCount the value of leftShadeCount
      * @param ignoreFirstFractions the value of ignoreFirstFractions
-     * @return
+     * @param inLiveMode the value of inLiveMode
+     * @return the java.util.SortedSet<org.earthtime.Tripoli.fractions.TripoliFraction>
      */
     @Override
     protected SortedSet<TripoliFraction> loadRawDataFile(//
-            SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions) {
+            SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions, boolean inLiveMode) {
 
         SortedSet myTripoliFractions = new TreeSet<>();
         PrawnFile prawnFile;
@@ -286,7 +288,7 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
         ((ShrimpSetupUPb) massSpec).populateRawAndLogRatios(shrimpFraction.getIsotopicRatios());
 
         massSpec.processFractionRawRatiosII(//
-                backgroundAcquisitions, peakAcquisitions, true, tripoliFraction);
+                backgroundAcquisitions, peakAcquisitions, true, tripoliFraction, false);
 
         tripoliFraction.shadeDataActiveMapLeft(0);
         System.out.println("\n**** SHRIMP FractionID  " + fractionID + " refMat? " + tripoliFraction.isStandard() + " <<<<<<<<<<<<<<<<<<\n");

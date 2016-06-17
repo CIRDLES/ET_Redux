@@ -91,9 +91,10 @@ public class WashStateElementIISingleCollFileHandler extends AbstractRawDataFile
      * @param usingFullPropagation the value of usingFullPropagation
      * @param leftShadeCount the value of leftShadeCount
      * @param ignoreFirstFractions the value of ignoreFirstFractions
+     * @param inLiveMode the value of inLiveMode
      */
     @Override
-    public void getAndLoadRawIntensityDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions) {
+    public void getAndLoadRawIntensityDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions, boolean inLiveMode) {
 
         // get .txt files from the folder and check the first one        
         analysisFiles = rawDataFile.listFiles((File f)
@@ -133,7 +134,7 @@ public class WashStateElementIISingleCollFileHandler extends AbstractRawDataFile
                     }
                 }
                 // create fractions from raw data and perform corrections and calculate ratios
-                loadRawDataFile(loadDataTask, usingFullPropagation, leftShadeCount, 0);
+                loadRawDataFile(loadDataTask, usingFullPropagation, leftShadeCount, 0, inLiveMode);
             }
         } else {
             JOptionPane.showMessageDialog(
@@ -181,10 +182,11 @@ public class WashStateElementIISingleCollFileHandler extends AbstractRawDataFile
      * @param usingFullPropagation the value of usingFullPropagation
      * @param leftShadeCount the value of leftShadeCount
      * @param ignoreFirstFractions the value of ignoreFirstFractions
-     * @return
+     * @param inLiveMode the value of inLiveMode
+     * @return the java.util.SortedSet<org.earthtime.Tripoli.fractions.TripoliFraction>
      */
     @Override
-    protected SortedSet<TripoliFraction> loadRawDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions) {
+    protected SortedSet<TripoliFraction> loadRawDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions, boolean inLiveMode) {
         tripoliFractions = new TreeSet<>();
 
         // assume we are golden        
