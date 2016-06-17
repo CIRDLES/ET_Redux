@@ -1155,9 +1155,9 @@ public abstract class AbstractRawDataView extends JLayeredPane implements MouseI
 
         // detecting correct object
         if (sampleSessionDataView == null) {
-            ((TripoliSessionFractionationCalculatorInterface) this).applyCorrections();
+            ((TripoliSessionFractionationCalculatorInterface) this).applyCorrections(false);
         } else {
-            ((TripoliSessionFractionationCalculatorInterface) sampleSessionDataView).applyCorrections();
+            ((TripoliSessionFractionationCalculatorInterface) sampleSessionDataView).applyCorrections(false);
         }
 
         updateReportTableView();

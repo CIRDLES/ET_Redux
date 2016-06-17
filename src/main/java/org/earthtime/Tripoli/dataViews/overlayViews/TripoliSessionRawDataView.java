@@ -334,13 +334,13 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
     }
 
     @Override
-    public void calculateSessionFitFunctionsForPrimaryStandard() {
-        tripoliSession.calculateSessionFitFunctionsForPrimaryStandard();
+    public void calculateSessionFitFunctionsForPrimaryStandard(boolean inLiveMode) {
+        tripoliSession.calculateSessionFitFunctionsForPrimaryStandard(inLiveMode);
     }
 
     @Override
-    public void applyCorrections() {
-        tripoliSession.applyCorrections();
+    public void applyCorrections(boolean inLiveMode) {
+        tripoliSession.applyCorrections(inLiveMode);
     }
 
     @Override

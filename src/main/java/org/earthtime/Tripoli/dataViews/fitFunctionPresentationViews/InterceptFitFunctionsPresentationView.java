@@ -85,7 +85,7 @@ public class InterceptFitFunctionsPresentationView extends AbstractFitFunctionPr
                 if (targetDataModelView instanceof FitFunctionsOnDownHoleRatioDataView) {
                     ((RawRatioDataModel) rawRatioDataModel).generateFitFunctionsForDownhole();
                 } else {
-                    ((DataModelFitFunctionInterface) rawRatioDataModel).generateSetOfFitFunctions(true, false);
+                    ((DataModelFitFunctionInterface) rawRatioDataModel).generateSetOfFitFunctions(true, false, false);
                 }
             }
         }

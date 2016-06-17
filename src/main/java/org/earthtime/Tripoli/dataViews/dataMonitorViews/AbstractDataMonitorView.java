@@ -294,18 +294,22 @@ public class AbstractDataMonitorView extends AbstractRawDataView
 
         this.removeAll();
 
-        tripoliSession.calculateSessionFitFunctionsForPrimaryStandard();
+        // june 2016 check for ref material
+        if (!tripoliSession.isRefMaterialSessionFittedForLiveMode() || tripoliSession.getTripoliFractions().last().isStandard()) {
+            tripoliSession.calculateSessionFitFunctionsForPrimaryStandard(true);
+            tripoliSession.setRefMaterialSessionFittedForLiveMode(true);
+        }
 
         try {
-            tripoliSession.applyCorrections();
+            tripoliSession.applyCorrections(true);
         } catch (Exception e) {
         }
 
         try {
-            tripoliSession.prepareForReductionAndCommonLeadCorrection();
+            tripoliSession.prepareForReductionAndCommonLeadCorrection(true);
         } catch (Exception e) {
         }
-
+        
         try {
             getuPbReduxFrame().updateReportTable(true);
         } catch (Exception e) {
@@ -684,13 +688,13 @@ public class AbstractDataMonitorView extends AbstractRawDataView
     }
 
     @Override
-    public void calculateSessionFitFunctionsForPrimaryStandard() {
-        tripoliSession.calculateSessionFitFunctionsForPrimaryStandard();
+    public void calculateSessionFitFunctionsForPrimaryStandard(boolean inLiveMode) {
+        tripoliSession.calculateSessionFitFunctionsForPrimaryStandard(inLiveMode);
     }
 
     @Override
-    public void applyCorrections() {
-        tripoliSession.applyCorrections();
+    public void applyCorrections(boolean inLiveMode) {
+        tripoliSession.applyCorrections(inLiveMode);
     }
 
     @Override
@@ -705,7 +709,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
         MaskingSingleton.getInstance().setRightShadeCount(-1);
 
         rawDataFileHandler.getAndLoadRawIntensityDataFile(//
-                loadDataTask, usingFullPropagation, leftShadeCount, ignoreFirstFractions);
+                loadDataTask, usingFullPropagation, leftShadeCount, ignoreFirstFractions, true);
 
     }
 
@@ -769,8 +773,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
             tripoliSession.prepareFractionTimeStamps();
             tripoliSession.processRawData(true);
 
-            tripoliSession.postProcessDataForCommonLeadLossPreparation();
-
+//            tripoliSession.postProcessDataForCommonLeadLossPreparation();
             try {
                 loadDataTaskProgressBar.repaint();
 
