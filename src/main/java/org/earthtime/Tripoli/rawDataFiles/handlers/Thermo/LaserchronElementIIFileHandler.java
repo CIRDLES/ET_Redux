@@ -299,6 +299,10 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
                 System.out.println("\n**** Element II FractionID  " + fractionID + " refMat? " + isReferenceMaterial + "  livemode = " + inLiveMode + " <<<<<<<<<<<<<<<<<<\n");
 
                 myTripoliFractions.add(tripoliFraction);
+                
+                if (isReferenceMaterial){
+                    loadDataTask.firePropertyChange("refMaterialLoaded", 0, 1);
+                }
 
             } catch (PyException pyException) {
                 System.out.println("bad read of fraction " + analysisFiles[f].getName() + " message = " + pyException.getMessage());

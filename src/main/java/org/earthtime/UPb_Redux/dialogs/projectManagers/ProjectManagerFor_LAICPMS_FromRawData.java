@@ -623,6 +623,12 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
                 int progress = (Integer) pce.getNewValue();
                 loadDataTaskProgressBar.setValue(progress);
                 loadDataTaskProgressBar.validate();
+            } else if ("projectName".equalsIgnoreCase(pce.getPropertyName())) {
+                project.setProjectName((String) pce.getNewValue());
+                projectName_text.setText(project.getProjectName());
+            } else if ("refMaterialLoaded".equalsIgnoreCase(pce.getPropertyName())) {
+                tripoliSession.setRefMaterialSessionFittedForLiveMode(false);
+                System.out.println("ref material loaded <<<<");
             }
         }
     }

@@ -295,7 +295,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
         this.removeAll();
 
         // june 2016 check for ref material
-        if (!tripoliSession.isRefMaterialSessionFittedForLiveMode() || tripoliSession.getTripoliFractions().last().isStandard()) {
+        if (!tripoliSession.isRefMaterialSessionFittedForLiveMode()) {// || tripoliSession.getTripoliFractions().last().isStandard()) {
             tripoliSession.calculateSessionFitFunctionsForPrimaryStandard(true);
             tripoliSession.setRefMaterialSessionFittedForLiveMode(true);
         }
@@ -309,7 +309,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
             tripoliSession.prepareForReductionAndCommonLeadCorrection(true);
         } catch (Exception e) {
         }
-        
+
         try {
             getuPbReduxFrame().updateReportTable(true);
         } catch (Exception e) {
@@ -852,6 +852,12 @@ public class AbstractDataMonitorView extends AbstractRawDataView
                 int progress = (Integer) pce.getNewValue();
                 loadDataTaskProgressBar.setValue(progress);
                 loadDataTaskProgressBar.repaint();//.validate();
+            } else if ("refMaterialLoaded".equalsIgnoreCase(pce.getPropertyName())) {
+                try {
+                    tripoliSession.setRefMaterialSessionFittedForLiveMode(false);
+                    System.out.println("ref material loaded <<<<");
+                } catch (Exception e) {
+                }
             }
         }
     }
