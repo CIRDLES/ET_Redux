@@ -302,7 +302,7 @@ public class TripoliFraction implements //
         System.out.println("Update Intercept Fit Functions Including Pbc for " + fractionID);
         while (ratiosIterator.hasNext()) {
             RawRatioDataModel rr = (RawRatioDataModel) ratiosIterator.next();
-            rr.generateSetOfFitFunctions(false, false);
+            rr.generateSetOfFitFunctions(false, false, false);
         }
 
         // nov 2014 this also sets currentlyFitted = true
@@ -1555,7 +1555,7 @@ public class TripoliFraction implements //
                     }
                 }
                 if (rejectedAPoint) {
-                    rr.generateSetOfFitFunctions(true, false);
+                    rr.generateSetOfFitFunctions(true, false, false);
                     // sep 2015 no common lead for standards in downhole ((RawRatioDataModel) rr).generateFitFunctionsForDownhole();
                 }
             } else {
