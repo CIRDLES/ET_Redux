@@ -306,11 +306,12 @@ public final class ShrimpSetupUPb extends AbstractMassSpecSetup {
 
     @Override
     public void processFractionRawRatiosStageII(//
-            boolean usingFullPropagation, TripoliFraction tripoliFraction) {
+            boolean usingFullPropagation, TripoliFraction tripoliFraction, boolean inLiveMode) {
 
         // SHRIMP software does the math for now
     }
-
+    //
+    
     public void populateRawAndLogRatios(Map<RawRatioNamesSHRIMP, IsotopeRatioModelSHRIMP> isotopeRatioModels) {
         // calculate ratios ****************************************************
         for (DataModelInterface rr : rawRatios) {

@@ -287,7 +287,7 @@ public abstract class AbstractMassSpecSetup implements //
 
         propagateUnctInRatios(usingFullPropagation);
 
-        performInterceptFittingToRatios();
+        performInterceptFittingToRatios(false);
 
         cleanupUnctCalcs();
     }
@@ -304,7 +304,7 @@ public abstract class AbstractMassSpecSetup implements //
 
         initializeVirtualCollectorsWithData(intensitiesScan);
 
-        processFractionRawRatiosStageII(usingFullPropagation, tripoliFraction);
+        processFractionRawRatiosStageII(usingFullPropagation, tripoliFraction, false);
     }
     //
 
@@ -322,7 +322,7 @@ public abstract class AbstractMassSpecSetup implements //
 
         initializeVirtualCollectorsWithData(backgroundAcquisitions, peakAcquisitions, virtualCollectorModelMapToFieldIndexes);
 
-        processFractionRawRatiosStageII(usingFullPropagation, tripoliFraction);
+        processFractionRawRatiosStageII(usingFullPropagation, tripoliFraction, false);
     }
 
     /**
@@ -332,13 +332,14 @@ public abstract class AbstractMassSpecSetup implements //
      * @param peakAcquisitions
      * @param usingFullPropagation
      * @param tripoliFraction
+     * @param inLiveMode the value of inLiveMode
      */
     public void processFractionRawRatiosII(//
-            ArrayList<double[]> backgroundAcquisitions, ArrayList<double[]> peakAcquisitions, boolean usingFullPropagation, TripoliFraction tripoliFraction) {
+            ArrayList<double[]> backgroundAcquisitions, ArrayList<double[]> peakAcquisitions, boolean usingFullPropagation, TripoliFraction tripoliFraction, boolean inLiveMode) {
 
         initializeVirtualCollectorsWithData(backgroundAcquisitions, peakAcquisitions, virtualCollectorModelMapToFieldIndexes);
 
-        processFractionRawRatiosStageII(usingFullPropagation, tripoliFraction);
+        processFractionRawRatiosStageII(usingFullPropagation, tripoliFraction, inLiveMode);
     }
 
     /**
@@ -354,16 +355,17 @@ public abstract class AbstractMassSpecSetup implements //
 
         initializeVirtualCollectorsWithDataTRA(backgroundAcquisitions, peakAcquisitions);
 
-        processFractionRawRatiosStageII(usingFullPropagation, tripoliFraction);
+        processFractionRawRatiosStageII(usingFullPropagation, tripoliFraction, false);
     }
 
     /**
      *
      * @param usingFullPropagation the value of usingFullPropagation
      * @param tripoliFraction the value of tripoliFraction
+     * @param inLiveMode the value of inLiveMode
      */
     public void processFractionRawRatiosStageII(//
-            boolean usingFullPropagation, TripoliFraction tripoliFraction) {
+            boolean usingFullPropagation, TripoliFraction tripoliFraction, boolean inLiveMode) {
         // make fresh set of rawratios with map of collector instances
         boolean isStandard = tripoliFraction.isStandard();
 
@@ -560,7 +562,7 @@ public abstract class AbstractMassSpecSetup implements //
 
         propagateUnctInRatios(usingFullPropagation);//usingFullPropagation);// needed for first pass
 
-        performInterceptFittingToRatios();
+        performInterceptFittingToRatios(inLiveMode);
 
         if (writeReport) {
             outputWriter.println("\n\n11: Sxyod, Slr_X_Y for the three log-ratios   ********************");
@@ -637,10 +639,14 @@ public abstract class AbstractMassSpecSetup implements //
         });
     }
 
-    private void performInterceptFittingToRatios() {
+    /**
+     *
+     * @param inLiveMode the value of inLiveMode
+     */
+    private void performInterceptFittingToRatios(boolean inLiveMode) {
         // generate fit function so can be done with big matrices
         for (DataModelInterface rr : rawRatios) {
-            rr.generateSetOfFitFunctions(false, false);//true);
+            rr.generateSetOfFitFunctions(false, false, inLiveMode);//true);
         }
     }
 
@@ -958,7 +964,7 @@ public abstract class AbstractMassSpecSetup implements //
                 ((RawIntensityDataModel) im).setCorrectedHg202Si(null);
             }
 
-            im.generateSetOfFitFunctions(true, true);
+            im.generateSetOfFitFunctions(true, true, false);
         }
     }
 
