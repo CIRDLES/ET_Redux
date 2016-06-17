@@ -64,7 +64,11 @@ public interface TripoliSessionInterface extends TripoliSessionFractionationCalc
     @Override
     void applyCorrections(boolean inLiveMode);
 
-    public void interceptCalculatePbcCorrAndRhos();
+    /**
+     *
+     * @param inLiveMode the value of inLiveMode
+     */
+    public void interceptCalculatePbcCorrAndRhos(boolean inLiveMode);
 
     /**
      *

@@ -1629,7 +1629,7 @@ private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.
     private void interceptCalculatePbcCorrAndRhos_button1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_interceptCalculatePbcCorrAndRhos_button1ActionPerformed
         // refit any  fractions not currently fitted
         try {
-            tripoliSession.interceptCalculatePbcCorrAndRhos();
+            tripoliSession.interceptCalculatePbcCorrAndRhos(false);
         } catch (Exception e) {
         }
 

@@ -702,8 +702,12 @@ public class TripoliSession implements
         }
     }
 
+    /**
+     *
+     * @param inLiveMode the value of inLiveMode
+     */
     @Override
-    public void interceptCalculatePbcCorrAndRhos() {
+    public void interceptCalculatePbcCorrAndRhos(boolean inLiveMode) {
         // refit any  fractions not currently fitted
         Set<TripoliFraction> includedTripoliFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.ALL, IncludedTypeEnum.INCLUDED);
         for (TripoliFraction tf : includedTripoliFractions) {
@@ -714,7 +718,7 @@ public class TripoliSession implements
             }
         }
 
-        prepareForReductionAndCommonLeadCorrection(false);
+        prepareForReductionAndCommonLeadCorrection(inLiveMode);
     }
 
     @Override

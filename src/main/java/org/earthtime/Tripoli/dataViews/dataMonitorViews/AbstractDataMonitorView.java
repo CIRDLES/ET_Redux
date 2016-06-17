@@ -458,7 +458,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
         recalcButton.setBounds(leftMargin + 450, topMargin + 660, 120, 25);
         recalcButton.addActionListener((ActionEvent ae) -> {
             try {
-                tripoliSession.interceptCalculatePbcCorrAndRhos();
+                tripoliSession.interceptCalculatePbcCorrAndRhos(true);
             } catch (Exception e) {
             }
             try {
