@@ -32,13 +32,15 @@ public interface TripoliSessionFractionationCalculatorInterface {
     
     /**
      * 
+     * @param inLiveMode the value of inLiveMode
      */
-    public void calculateSessionFitFunctionsForPrimaryStandard ();
+    public void calculateSessionFitFunctionsForPrimaryStandard (boolean inLiveMode);
     
     /**
      * 
+     * @param inLiveMode the value of inLiveMode
      */
-    public void applyCorrections ();
+    public void applyCorrections (boolean inLiveMode);
     
     /**
      *

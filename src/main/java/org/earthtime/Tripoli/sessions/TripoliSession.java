@@ -114,6 +114,8 @@ public class TripoliSession implements
     // dec 2014
     private int leftShadeCount;
     private boolean fitFunctionsUpToDate;
+    // June 2016
+    private boolean refMaterialSessionFittedForLiveMode;
 
     /**
      *
@@ -157,6 +159,8 @@ public class TripoliSession implements
         this.leftShadeCount = 0;
 
         this.fitFunctionsUpToDate = false;
+
+        this.refMaterialSessionFittedForLiveMode = false;
     }
 
     /**
@@ -332,7 +336,7 @@ public class TripoliSession implements
             downholeFractionationDataModel.calculateWeightedMeanOfStandards();
 
             // for thick red line
-            downholeFractionationDataModel.generateSetOfFitFunctions(false, false);
+            downholeFractionationDataModel.generateSetOfFitFunctions(false, false, false);
 
             // now calculate session statistics based on this selected fit model
             // this means for each standard, calculate the weighted mean of the residuals
@@ -346,38 +350,40 @@ public class TripoliSession implements
 
     /**
      *
+     * @param inLiveMode the value of inLiveMode
      */
     @Override
-    public void calculateSessionFitFunctionsForPrimaryStandard() {
+    public void calculateSessionFitFunctionsForPrimaryStandard(boolean inLiveMode) {
 
         // April 2016 recalc for both techniques
         // note: first call here is from ProjectManager initialize
         if (prepareMatrixJfMapFractionsByType(FractionSelectionTypeEnum.UNKNOWN) //
                 && prepareMatrixJfPlotting()) {
 
-//            if (fractionationTechnique.compareTo(FractionationTechniquesEnum.INTERCEPT) == 0) {
             sessionForStandardsInterceptFractionation.keySet().stream().forEach((rrName) -> {
                 try {
-                    sessionForStandardsInterceptFractionation.get(rrName).generateSetOfFitFunctions(true, false);
+                    sessionForStandardsInterceptFractionation.get(rrName).generateSetOfFitFunctions(true, false, inLiveMode);
                     fitFunctionsUpToDate = true;
                 } catch (Exception e) {
                     System.out.println("Session Standards Intercept Fractionation Failed");
                 }
             });
-//            } else {
 
-            calculateDownholeFitSummariesForPrimaryStandard();
-            sessionForStandardsDownholeFractionation.keySet().stream().forEach((rrName) -> {
-                try {
-                    sessionForStandardsDownholeFractionation.get(rrName).generateSetOfFitFunctions(true, false);
-                    fitFunctionsUpToDate = true;
-                } catch (Exception e) {
-                    System.out.println("Session Standards Downhole Fractionation Failed");
-                }
-            });
+            // june 2016 speedup for live
+            if (!inLiveMode) {
+                calculateDownholeFitSummariesForPrimaryStandard();
+                sessionForStandardsDownholeFractionation.keySet().stream().forEach((rrName) -> {
+                    try {
+                        sessionForStandardsDownholeFractionation.get(rrName).generateSetOfFitFunctions(true, false, inLiveMode);
+                        fitFunctionsUpToDate = true;
+                    } catch (Exception e) {
+                        System.out.println("Session Standards Downhole Fractionation Failed");
+                    }
+                });
 
-//            }
-            applyCorrections();
+            }
+
+            applyCorrections(inLiveMode);
         }
     }
 
@@ -654,9 +660,10 @@ public class TripoliSession implements
 
     /**
      *
+     * @param inLiveMode the value of inLiveMode
      */
     @Override
-    public void applyCorrections() {
+    public void applyCorrections(boolean inLiveMode) {
 
         // feb 2016 temp hack for SHRIMP
         if (rawDataFileHandler instanceof ShrimpFileHandler) {
@@ -686,9 +693,11 @@ public class TripoliSession implements
             sessionCorrectedUnknownsSummaries = new TreeMap<>();
 
             if (fractionationTechnique.compareTo(FractionationTechniquesEnum.INTERCEPT) == 0) {
-                applyFractionationCorrectionsForIntercept();
+                applyFractionationCorrectionsForIntercept(inLiveMode);
             } else if (fractionationTechnique.compareTo(FractionationTechniquesEnum.DOWNHOLE) == 0) {
-                applyFractionationCorrectionsForDownhole();
+                if (!inLiveMode) {
+                    applyFractionationCorrectionsForDownhole();
+                }
             }
         }
     }
@@ -705,7 +714,7 @@ public class TripoliSession implements
             }
         }
 
-        prepareForReductionAndCommonLeadCorrection();
+        prepareForReductionAndCommonLeadCorrection(false);
     }
 
     @Override
@@ -718,7 +727,7 @@ public class TripoliSession implements
 //            tf.updateDownholeFitFunctionsExcludingCommonLead();
 //        }
 
-        prepareForReductionAndCommonLeadCorrection();
+        prepareForReductionAndCommonLeadCorrection(false);
     }
 
     private void calculateUThConcentrationsForUnknowns() {
@@ -854,7 +863,12 @@ public class TripoliSession implements
         }
     }
 
-    private void prepareForReductionAndCommonLeadCorrection(FractionSelectionTypeEnum fractionSelectionTypeEnum) {
+    /**
+     *
+     * @param fractionSelectionTypeEnum the value of fractionSelectionTypeEnum
+     * @param inLiveMode the value of isLiveMode
+     */
+    private void prepareForReductionAndCommonLeadCorrection(FractionSelectionTypeEnum fractionSelectionTypeEnum, boolean inLiveMode) {
 
         SortedSet<TripoliFraction> selectedFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, fractionSelectionTypeEnum, IncludedTypeEnum.INCLUDED);
         int countOfSelectedFractions = selectedFractions.size();
@@ -867,7 +881,9 @@ public class TripoliSession implements
         if (fractionationTechnique.compareTo(FractionationTechniquesEnum.INTERCEPT) == 0) {
             sessionForStandardsFractionation = sessionForStandardsInterceptFractionation;
         } else if (fractionationTechnique.compareTo(FractionationTechniquesEnum.DOWNHOLE) == 0) {
-            sessionForStandardsFractionation = sessionForStandardsDownholeFractionation;
+            if (!inLiveMode) {
+                sessionForStandardsFractionation = sessionForStandardsDownholeFractionation;
+            }
         }
 
         sessionForStandardsIterator = sessionForStandardsFractionation.keySet().iterator();
@@ -956,13 +972,21 @@ public class TripoliSession implements
         }
     }
 
+    /**
+     *
+     * @param inLiveMode the value of isLiveMode
+     */
     @Override
-    public void prepareForReductionAndCommonLeadCorrection() {
-        prepareForReductionAndCommonLeadCorrection(FractionSelectionTypeEnum.STANDARD);
-        prepareForReductionAndCommonLeadCorrection(FractionSelectionTypeEnum.UNKNOWN);
+    public void prepareForReductionAndCommonLeadCorrection(boolean inLiveMode) {
+        prepareForReductionAndCommonLeadCorrection(FractionSelectionTypeEnum.STANDARD, inLiveMode);
+        prepareForReductionAndCommonLeadCorrection(FractionSelectionTypeEnum.UNKNOWN, inLiveMode);
     }
 
-    private void applyFractionationCorrectionsForIntercept() {
+    /**
+     *
+     * @param inLiveMode the value of inLiveMode
+     */
+    private void applyFractionationCorrectionsForIntercept(boolean inLiveMode) {
 
         // walk the sessions
         Iterator<RawRatioNames> sessionForStandardsIterator = sessionForStandardsInterceptFractionation.keySet().iterator();
@@ -970,22 +994,20 @@ public class TripoliSession implements
             RawRatioNames rrName = sessionForStandardsIterator.next();
 
             AbstractSessionForStandardDataModel sessionForStandard
-                    = //
-                    sessionForStandardsInterceptFractionation.get(rrName);
+                    = sessionForStandardsInterceptFractionation.get(rrName);
 
             // get the session fit function
             AbstractFunctionOfX sessionFofX
-                    = 
-                    sessionForStandard.getSelectedFitFunction();
+                    = sessionForStandard.getSelectedFitFunction();
 
             if (sessionFofX == null) {
-                // let's do it and thus use the default fitfunction = spline unless spline generated a line when spline failed
+                // let's do it and thus use the default fitfunction = line
                 try {
-                    sessionForStandard.generateSetOfFitFunctions(true, false);
-                    sessionForStandard.setSelectedFitFunctionType(FitFunctionTypeEnum.SMOOTHING_SPLINE);
+                    sessionForStandard.generateSetOfFitFunctions(true, false, inLiveMode);
+                    sessionForStandard.setSelectedFitFunctionType(FitFunctionTypeEnum.LINE);
                     sessionFofX = sessionForStandard.getSelectedFitFunction();
                 } catch (Exception e) {
-                    System.out.println("Session for Intercept Standard NO fit functions success");
+                    System.out.println("Session for Intercept Standard NO fit functions success for session of " + rrName);
                 }
             }
 
@@ -1290,7 +1312,7 @@ public class TripoliSession implements
             if (sessionFofX == null) {
                 // let's do it and thus use the default fitfunction = spline unless spline generated a line when spline failed
                 try {
-                    sessionForStandard.generateSetOfFitFunctions(true, false);
+                    sessionForStandard.generateSetOfFitFunctions(true, false, false);
                     sessionForStandard.setSelectedFitFunctionType(FitFunctionTypeEnum.SMOOTHING_SPLINE);
                     sessionFofX = sessionForStandard.getSelectedFitFunction();
                 } catch (Exception e) {
@@ -1895,5 +1917,22 @@ public class TripoliSession implements
     @Override
     public void setFitFunctionsUpToDate(boolean fitFunctionsUpToDate) {
         this.fitFunctionsUpToDate = fitFunctionsUpToDate;
+    }
+
+    /**
+     * @return the refMaterialSessionFittedForLiveMode
+     */
+    @Override
+    public boolean isRefMaterialSessionFittedForLiveMode() {
+        return refMaterialSessionFittedForLiveMode;
+    }
+
+    /**
+     * @param refMaterialSessionFittedForLiveMode the
+     * refMaterialSessionFittedForLiveMode to set
+     */
+    @Override
+    public void setRefMaterialSessionFittedForLiveMode(boolean refMaterialSessionFittedForLiveMode) {
+        this.refMaterialSessionFittedForLiveMode = refMaterialSessionFittedForLiveMode;
     }
 }

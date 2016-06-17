@@ -49,54 +49,55 @@ public interface TripoliSessionInterface extends TripoliSessionFractionationCalc
      *
      * @return
      */
-    FractionationTechniquesEnum getFractionationTechnique ();
+    FractionationTechniquesEnum getFractionationTechnique();
 
     /**
      *
      * @param fractionationTechnique
      */
-    void setFractionationTechnique ( FractionationTechniquesEnum fractionationTechnique );
+    void setFractionationTechnique(FractionationTechniquesEnum fractionationTechnique);
 
     /**
      *
+     * @param inLiveMode the value of inLiveMode
      */
     @Override
-    void applyCorrections ();
-    
+    void applyCorrections(boolean inLiveMode);
+
     public void interceptCalculatePbcCorrAndRhos();
 
     /**
      *
-     * @return  
+     * @return
      */
-    public boolean prepareMatrixJfPlotting (  );
+    public boolean prepareMatrixJfPlotting();
 
     /**
      *
      * @param fractionSelectionTypeEnum the value of fractionSelectionTypeEnum
      * @return the boolean
      */
-    public boolean prepareMatrixJfMapFractionsByType (FractionSelectionTypeEnum fractionSelectionTypeEnum);
+    public boolean prepareMatrixJfMapFractionsByType(FractionSelectionTypeEnum fractionSelectionTypeEnum);
 
     /**
      *
      * @param fitFunctionType
      * @return
      */
-    public Matrix getMatrixJfPlottingActiveStandards ( FitFunctionTypeEnum fitFunctionType );
+    public Matrix getMatrixJfPlottingActiveStandards(FitFunctionTypeEnum fitFunctionType);
 
     /**
      *
      * @param estimatedPlottingPointsCount
      */
-    public void setEstimatedPlottingPointsCount ( int estimatedPlottingPointsCount );
+    public void setEstimatedPlottingPointsCount(int estimatedPlottingPointsCount);
 
     /**
      *
      * @return
      */
-    public double[] getTimesForPlotting ();
-    
+    public double[] getTimesForPlotting();
+
     /**
      *
      * @return
@@ -107,150 +108,161 @@ public interface TripoliSessionInterface extends TripoliSessionFractionationCalc
      *
      */
     @Override
-    void calculateDownholeFitSummariesForPrimaryStandard ();
+    void calculateDownholeFitSummariesForPrimaryStandard();
 
     /**
      *
      */
-    public void clearAllFractionsOfLocalYAxis ();
+    public void clearAllFractionsOfLocalYAxis();
+
     public void setAllFractionsOfLocalYAxis();
 
     /**
      * @return the getDownholeFractionationDataModels
      */
-    SortedMap<RawRatioNames, DownholeFractionationDataModel> getDownholeFractionationDataModels ();
+    SortedMap<RawRatioNames, DownholeFractionationDataModel> getDownholeFractionationDataModels();
 
     /**
      *
      * @return
      */
-    AbstractMassSpecSetup getMassSpec ();
+    AbstractMassSpecSetup getMassSpec();
 
     /**
      * @return the rawDataFileHandler
      */
-    AbstractRawDataFileHandler getRawDataFileHandler ();
+    AbstractRawDataFileHandler getRawDataFileHandler();
 
     /**
      *
      * @return
      */
-    SortedMap<RawRatioNames, AbstractSessionForStandardDataModel> getCurrentSessionForStandardsFractionation ();
+    SortedMap<RawRatioNames, AbstractSessionForStandardDataModel> getCurrentSessionForStandardsFractionation();
 
     /**
      * @return the tripoliFractions
      */
-    SortedSet<TripoliFraction> getTripoliFractions ();
-    
+    SortedSet<TripoliFraction> getTripoliFractions();
+
     public SortedSet<TripoliFraction> getTripoliFractionsFromSample(AbstractTripoliSample sample);
 
     /**
      *
      * @param fractionSelectionType
      */
-    void includeAllFractions ( FractionSelectionTypeEnum fractionSelectionType );
+    void includeAllFractions(FractionSelectionTypeEnum fractionSelectionType);
 
     /**
      *
      */
-    void includeAllAquisitions ();
+    void includeAllAquisitions();
 
     /**
      *
      * @param updateOnly the value of updateOnly
      */
-    void processRawData (boolean updateOnly);
+    void processRawData(boolean updateOnly);
+
     void postProcessDataForCommonLeadLossPreparation();
 
     /**
      * @param rawDataFileHandler the rawDataFileHandler to set
      */
-    void setRawDataFileHandler ( AbstractRawDataFileHandler rawDataFileHandler );
+    void setRawDataFileHandler(AbstractRawDataFileHandler rawDataFileHandler);
 
     /**
      * @param tripoliFractions the tripoliFractions to set
      */
-    void setTripoliFractions ( SortedSet<TripoliFraction> tripoliFractions );
+    void setTripoliFractions(SortedSet<TripoliFraction> tripoliFractions);
 
     /**
      *
      * @return
      */
-    public ArrayList<AbstractTripoliSample> getTripoliSamples ();
+    public ArrayList<AbstractTripoliSample> getTripoliSamples();
 
     /**
      *
      * @param tripoliSamples
      */
-    public void setTripoliSamples ( ArrayList<AbstractTripoliSample> tripoliSamples );
+    public void setTripoliSamples(ArrayList<AbstractTripoliSample> tripoliSamples);
 
     /**
      *
      */
-    public void updateFractionsToSampleMembership ();
+    public void updateFractionsToSampleMembership();
 
     /**
      *
      * @return
      */
-    public AbstractRatiosDataModel getPrimaryMineralStandard ();
+    public AbstractRatiosDataModel getPrimaryMineralStandard();
 
     /**
      *
      * @param primaryMineralStandard
      */
-    public void setPrimaryMineralStandard ( AbstractRatiosDataModel primaryMineralStandard );
+    public void setPrimaryMineralStandard(AbstractRatiosDataModel primaryMineralStandard);
 
     /**
      *
      */
-    public void refreshMaskingArray ();
+    public void refreshMaskingArray();
 
     /**
      *
      */
-    public void applyMaskingArray ();
+    public void applyMaskingArray();
 
     /**
      *
      */
-    public void reFitAllFractions ();
+    public void reFitAllFractions();
 
     /**
      *
      * @param setOD
      */
-    public void setODforAllFractionsAllRatios ( boolean setOD );
-    public void setDownHoleODforAllFractionsAllRatios ( boolean setOD );
-    
+    public void setODforAllFractionsAllRatios(boolean setOD);
+
+    public void setDownHoleODforAllFractionsAllRatios(boolean setOD);
+
     /**
      *
      * @return
      */
-    public SortedMap<RadRatios, SessionCorrectedUnknownsSummary> getSessionCorrectedUnknownsSummaries ();
-    
+    public SortedMap<RadRatios, SessionCorrectedUnknownsSummary> getSessionCorrectedUnknownsSummaries();
+
     /**
      *
      * @return
      */
     public MaskingSingleton getMaskingSingleton();
-    
+
     /**
      *
      * @return
      */
     public boolean isDataProcessed();
-    
-    public void prepareForReductionAndCommonLeadCorrection();
-    
+
+    /**
+     *
+     * @param isLiveMode the value of isLiveMode
+     */
+    public void prepareForReductionAndCommonLeadCorrection(boolean isLiveMode);
+
     public void setLeftShadeCount(int leftShadeCount);
-    
+
     public boolean isFitFunctionsUpToDate();
-    
+
     public void setFitFunctionsUpToDate(boolean fitFunctionsUpToDate);
-    
+
     public void refitAllFractionsForDownhole();
-    
+
     public void prepareFractionTimeStamps();
+
+    public boolean isRefMaterialSessionFittedForLiveMode();
+
+    public void setRefMaterialSessionFittedForLiveMode(boolean refMaterialSessionFittedForLiveMode);
 
 }
