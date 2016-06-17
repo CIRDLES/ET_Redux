@@ -708,13 +708,15 @@ public class TripoliSession implements
      */
     @Override
     public void interceptCalculatePbcCorrAndRhos(boolean inLiveMode) {
-        // refit any  fractions not currently fitted
-        Set<TripoliFraction> includedTripoliFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.ALL, IncludedTypeEnum.INCLUDED);
-        for (TripoliFraction tf : includedTripoliFractions) {
-            tf.reProcessToRejectNegativeRatios();
-            if (!tf.isCurrentlyFitted()) {
-                tf.updateInterceptFitFunctionsIncludingCommonLead();
-                fitFunctionsUpToDate = false;
+        if (!inLiveMode) {
+            // refit any  fractions not currently fitted
+            Set<TripoliFraction> includedTripoliFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.ALL, IncludedTypeEnum.INCLUDED);
+            for (TripoliFraction tf : includedTripoliFractions) {
+                tf.reProcessToRejectNegativeRatios();
+                if (!tf.isCurrentlyFitted()) {
+                    tf.updateInterceptFitFunctionsIncludingCommonLead();
+                    fitFunctionsUpToDate = false;
+                }
             }
         }
 
