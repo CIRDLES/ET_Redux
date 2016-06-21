@@ -310,11 +310,7 @@ public class UPbFractionReducer extends FractionReducer {
         if (fraction instanceof UPbFraction) {
             fullFractionReduce_IDTIMS(fraction, calculateCovariances);
         } else if (fraction instanceof UPbLAICPMSFraction) {
-            // June 2016
-            // for live mode, we only update new fractions which have rhos set to -9
-            if (fraction.getRadiogenicIsotopeRatioByName("rhoR206_238r__r207_235r").getValue().doubleValue() == ReduxConstants.NO_RHO_FLAG) {
-                fullFractionReduce_LAICPMS(fraction, calculateCovariances);
-            }
+            fullFractionReduce_LAICPMS(fraction, calculateCovariances);
         }
 
         // copy map - no map if legacy
@@ -2263,43 +2259,43 @@ public class UPbFractionReducer extends FractionReducer {
         ValueModel[] fractionPhysConstantsLambdas = fraction.getPhysicalConstantsModel().getData();
         for (ValueModel fractionPhysConstantsLambda : fractionPhysConstantsLambdas) {
             inputVariances.put( //
-            fractionPhysConstantsLambda.getName(), //
-            fractionPhysConstantsLambda.getOneSigmaAbs().pow(2));
+                    fractionPhysConstantsLambda.getName(), //
+                    fractionPhysConstantsLambda.getOneSigmaAbs().pow(2));
         }
 
         ValueModel[] fractionTracerRatios = ((UPbFractionI) fraction).getTracer().getData();
         for (ValueModel fractionTracerRatio : fractionTracerRatios) {
             inputVariances.put( //
-            fractionTracerRatio.getName(), //
-            fractionTracerRatio.getOneSigmaAbs().pow(2));
+                    fractionTracerRatio.getName(), //
+                    fractionTracerRatio.getOneSigmaAbs().pow(2));
         }
 
         ValueModel[] fractionMeasuredRatios = fraction.getMeasuredRatios();
         for (ValueModel fractionMeasuredRatio : fractionMeasuredRatios) {
             inputVariances.put( //
-            fractionMeasuredRatio.getName(), //
-            fractionMeasuredRatio.getOneSigmaAbs().pow(2));
+                    fractionMeasuredRatio.getName(), //
+                    fractionMeasuredRatio.getOneSigmaAbs().pow(2));
         }
 
         ValueModel[] fractionAnalysisMeasures = fraction.getAnalysisMeasures();
         for (ValueModel fractionAnalysisMeasure : fractionAnalysisMeasures) {
             inputVariances.put( //
-            fractionAnalysisMeasure.getName(), //
-            fractionAnalysisMeasure.getOneSigmaAbs().pow(2));
+                    fractionAnalysisMeasure.getName(), //
+                    fractionAnalysisMeasure.getOneSigmaAbs().pow(2));
         }
 
         ValueModel[] fractionPbBlankRatios = ((UPbFractionI) fraction).getPbBlank().getData();
         for (ValueModel fractionPbBlankRatio : fractionPbBlankRatios) {
             inputVariances.put( //
-            fractionPbBlankRatio.getName(), //
-            fractionPbBlankRatio.getOneSigmaAbs().pow(2));
+                    fractionPbBlankRatio.getName(), //
+                    fractionPbBlankRatio.getOneSigmaAbs().pow(2));
         }
 
         ValueModel[] fractionInitialPbRatios = ((FractionI) fraction).getInitialPbModel().getData();
         for (ValueModel fractionInitialPbRatio : fractionInitialPbRatios) {
             inputVariances.put( //
-            fractionInitialPbRatio.getName(), //
-            fractionInitialPbRatio.getOneSigmaAbs().pow(2));
+                    fractionInitialPbRatio.getName(), //
+                    fractionInitialPbRatio.getOneSigmaAbs().pow(2));
         }
     }
 
@@ -2344,8 +2340,7 @@ public class UPbFractionReducer extends FractionReducer {
             for (int i = row + 1; i < lambdaCovariances.getRows().keySet().size(); i++) {
                 String colName = lambdaCovariances.getRows().get(i);
                 String covName
-                        =
-                        "cov" //
+                        = "cov" //
                         + rowName.substring(0, 1).toUpperCase()//
                         + rowName.substring(1)//
                         + "__"
@@ -2358,8 +2353,7 @@ public class UPbFractionReducer extends FractionReducer {
 
         try {
             BigDecimal covR204_205m__r206_205m
-                    = 
-                    fraction.getMeasuredRatioByName(MeasuredRatios.r206_205m.getName()).getValue().//
+                    = fraction.getMeasuredRatioByName(MeasuredRatios.r206_205m.getName()).getValue().//
                     multiply(fraction.getMeasuredRatioByName(MeasuredRatios.r204_205m.getName()).getValue()).//
                     multiply(new BigDecimal("0.5")).movePointLeft(4).//
                     multiply(fraction.getMeasuredRatioByName(MeasuredRatios.r206_205m.getName()).getOneSigmaPct().pow(2).//
@@ -2372,8 +2366,7 @@ public class UPbFractionReducer extends FractionReducer {
 
         try {
             BigDecimal covR204_205m__r207_205m
-                    = 
-                    fraction.getMeasuredRatioByName(MeasuredRatios.r207_205m.getName()).getValue().//
+                    = fraction.getMeasuredRatioByName(MeasuredRatios.r207_205m.getName()).getValue().//
                     multiply(fraction.getMeasuredRatioByName(MeasuredRatios.r204_205m.getName()).getValue()).//
                     multiply(new BigDecimal("0.5")).movePointLeft(4).//
                     multiply(fraction.getMeasuredRatioByName(MeasuredRatios.r207_205m.getName()).getOneSigmaPct().pow(2).//
@@ -2386,8 +2379,7 @@ public class UPbFractionReducer extends FractionReducer {
 
         try {
             BigDecimal covR204_205m__r208_205m
-                    = 
-                    fraction.getMeasuredRatioByName(MeasuredRatios.r208_205m.getName()).getValue().//
+                    = fraction.getMeasuredRatioByName(MeasuredRatios.r208_205m.getName()).getValue().//
                     multiply(fraction.getMeasuredRatioByName(MeasuredRatios.r204_205m.getName()).getValue()).//
                     multiply(new BigDecimal("0.5")).movePointLeft(4).//
                     multiply(fraction.getMeasuredRatioByName(MeasuredRatios.r208_205m.getName()).getOneSigmaPct().pow(2).//
@@ -2414,8 +2406,7 @@ public class UPbFractionReducer extends FractionReducer {
 
         try {
             BigDecimal covR206_205m__r207_205m
-                    = 
-                    fraction.getMeasuredRatioByName(MeasuredRatios.r206_205m.getName()).getValue().//
+                    = fraction.getMeasuredRatioByName(MeasuredRatios.r206_205m.getName()).getValue().//
                     multiply(fraction.getMeasuredRatioByName(MeasuredRatios.r207_205m.getName()).getValue()).//
                     multiply(new BigDecimal("0.5")).//
                     movePointLeft(4).//
@@ -2430,8 +2421,7 @@ public class UPbFractionReducer extends FractionReducer {
 
         try {
             BigDecimal covR206_205m__r208_205m
-                    = 
-                    fraction.getMeasuredRatioByName(MeasuredRatios.r206_205m.getName()).getValue().//
+                    = fraction.getMeasuredRatioByName(MeasuredRatios.r206_205m.getName()).getValue().//
                     multiply(fraction.getMeasuredRatioByName(MeasuredRatios.r208_205m.getName()).getValue()).//
                     multiply(new BigDecimal("0.5")).//
                     movePointLeft(4).//
@@ -2446,8 +2436,7 @@ public class UPbFractionReducer extends FractionReducer {
 
         try {
             BigDecimal covR206_204b__r207_204b
-                    = 
-                    ((UPbFractionI) fraction).getPbBlank().getRhoVarUnctByName("rhoR206_204b__r207_204b").getValue().//
+                    = ((UPbFractionI) fraction).getPbBlank().getRhoVarUnctByName("rhoR206_204b__r207_204b").getValue().//
                     multiply(((UPbFractionI) fraction).getPbBlank().getDatumByName("r206_204b").getOneSigmaAbs()).//
                     multiply(((UPbFractionI) fraction).getPbBlank().getDatumByName("r207_204b").getOneSigmaAbs());
             coVariances.put("covR206_204b__r207_204b", covR206_204b__r207_204b);
@@ -2457,8 +2446,7 @@ public class UPbFractionReducer extends FractionReducer {
 
         try {
             BigDecimal covR207_204b__r208_204b
-                    = 
-                    ((UPbFractionI) fraction).getPbBlank().getRhoVarUnctByName("rhoR207_204b__r208_204b").getValue().//
+                    = ((UPbFractionI) fraction).getPbBlank().getRhoVarUnctByName("rhoR207_204b__r208_204b").getValue().//
                     multiply(((UPbFractionI) fraction).getPbBlank().getDatumByName("r207_204b").getOneSigmaAbs()).//
                     multiply(((UPbFractionI) fraction).getPbBlank().getDatumByName("r208_204b").getOneSigmaAbs());
             coVariances.put("covR207_204b__r208_204b", covR207_204b__r208_204b);
@@ -2468,8 +2456,7 @@ public class UPbFractionReducer extends FractionReducer {
 
         try {
             BigDecimal covR206_204b__r208_204b
-                    = 
-                    ((UPbFractionI) fraction).getPbBlank().getRhoVarUnctByName("rhoR206_204b__r208_204b").getValue().//
+                    = ((UPbFractionI) fraction).getPbBlank().getRhoVarUnctByName("rhoR206_204b__r208_204b").getValue().//
                     multiply(((UPbFractionI) fraction).getPbBlank().getDatumByName("r206_204b").getOneSigmaAbs()).//
                     multiply(((UPbFractionI) fraction).getPbBlank().getDatumByName("r208_204b").getOneSigmaAbs());
             coVariances.put("covR206_204b__r208_204b", covR206_204b__r208_204b);
@@ -2479,8 +2466,7 @@ public class UPbFractionReducer extends FractionReducer {
 
         try {
             BigDecimal covR206_204c__r207_204c
-                    = 
-                    ((FractionI) fraction).getInitialPbModel().getRhoVarUnctByName("rhoR206_204c__r207_204c").getValue().//
+                    = ((FractionI) fraction).getInitialPbModel().getRhoVarUnctByName("rhoR206_204c__r207_204c").getValue().//
                     multiply(((FractionI) fraction).getInitialPbModel().getDatumByName("r206_204c").getOneSigmaAbs()).//
                     multiply(((FractionI) fraction).getInitialPbModel().getDatumByName("r207_204c").getOneSigmaAbs());
             coVariances.put("covR206_204c__r207_204c", covR206_204c__r207_204c);
@@ -2490,8 +2476,7 @@ public class UPbFractionReducer extends FractionReducer {
 
         try {
             BigDecimal covR207_204c__r208_204c
-                    = 
-                    ((FractionI) fraction).getInitialPbModel().getRhoVarUnctByName("rhoR207_204c__r208_204c").getValue().//
+                    = ((FractionI) fraction).getInitialPbModel().getRhoVarUnctByName("rhoR207_204c__r208_204c").getValue().//
                     multiply(((FractionI) fraction).getInitialPbModel().getDatumByName("r207_204c").getOneSigmaAbs()).//
                     multiply(((FractionI) fraction).getInitialPbModel().getDatumByName("r208_204c").getOneSigmaAbs());
             coVariances.put("covR207_204c__r208_204c", covR207_204c__r208_204c);
@@ -2501,8 +2486,7 @@ public class UPbFractionReducer extends FractionReducer {
 
         try {
             BigDecimal covR206_204c__r208_204c
-                    = 
-                    ((FractionI) fraction).getInitialPbModel().getRhoVarUnctByName("rhoR206_204c__r208_204c").getValue().//
+                    = ((FractionI) fraction).getInitialPbModel().getRhoVarUnctByName("rhoR206_204c__r208_204c").getValue().//
                     multiply(((FractionI) fraction).getInitialPbModel().getDatumByName("r206_204c").getOneSigmaAbs()).//
                     multiply(((FractionI) fraction).getInitialPbModel().getDatumByName("r208_204c").getOneSigmaAbs());
             coVariances.put("covR206_204c__r208_204c", covR206_204c__r208_204c);

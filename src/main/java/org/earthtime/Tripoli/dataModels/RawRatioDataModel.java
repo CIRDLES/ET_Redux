@@ -935,6 +935,11 @@ public class RawRatioDataModel //
             System.out.println("\nCalculate Fit Functions for Ratio  " + getRawRatioModelName().getDisplayName() //
                     + "  USING " + (USING_FULL_PROPAGATION ? "FULL PROPAGATION" : "FAST PROPAGATION") + "  COUNT = " + countOfActiveData);
 
+            // June 2016 in support of live mode
+            if (inLiveMode &&  rawRatioName.compareTo(RawRatioNames.r206_207w) == 0){
+                selectedFitFunctionType= FitFunctionTypeEnum.MEAN;
+            }
+            
             FitFunctionTypeEnum saveSelection = selectedFitFunctionType;
             // nov 2014
             if (isForceMeanForCommonLeadRatios()) {
@@ -953,19 +958,16 @@ public class RawRatioDataModel //
                         System.out.println("Exception generating LINE");
                         logRatioFitFunctionsNoOD.remove(FitFunctionTypeEnum.LINE.getName());
                         logRatioFitFunctionsWithOD.remove(FitFunctionTypeEnum.LINE.getName());
-
                     }
 
-                    // June 2016 - simplify math in live mode
-                    if (!inLiveMode) {
-                        try {
-                            generateEXPONENTIALfitFunctionUsingLM();
-                        } catch (Exception e) {
-                            System.out.println("Exception generating EXPONENTIAL");
-                            logRatioFitFunctionsNoOD.remove(FitFunctionTypeEnum.EXPONENTIAL.getName());
-                            logRatioFitFunctionsWithOD.remove(FitFunctionTypeEnum.EXPONENTIAL.getName());
-                        }
+                    try {
+                        generateEXPONENTIALfitFunctionUsingLM();
+                    } catch (Exception e) {
+                        System.out.println("Exception generating EXPONENTIAL");
+                        logRatioFitFunctionsNoOD.remove(FitFunctionTypeEnum.EXPONENTIAL.getName());
+                        logRatioFitFunctionsWithOD.remove(FitFunctionTypeEnum.EXPONENTIAL.getName());
                     }
+
                     calculatedInitialFitFunctions = true;
 
                     if (hasTwoIdenticalIonCounters()) {
