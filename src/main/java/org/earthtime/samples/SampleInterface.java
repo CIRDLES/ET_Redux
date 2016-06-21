@@ -701,38 +701,64 @@ public interface SampleInterface {
      * @param importedAliquot the value of importedAliquot
      */
     public static void copyAliquotIntoSample(SampleInterface sample, AliquotInterface aliquot, AliquotInterface importedAliquot) {
-//        AliquotInterface importedAliquot = new UPbReduxAliquot();
 
         Vector<AliquotInterface> aliquots = sample.getAliquots();
-        // aliquot numbering is 1-based
-        int aliquotNumber = aliquots.size() + 1;
 
-        ((ReduxAliquotInterface) importedAliquot).setAliquotNumber(aliquotNumber);
-        importedAliquot.setMyReduxLabData(ReduxLabData.getInstance());
-        ((ReduxAliquotInterface) importedAliquot).setCompiled(false);
-
-        importedAliquot.setMineralStandardModels(aliquot.getMineralStandardModels());
-        importedAliquot.setSampleDateModels(aliquot.getSampleDateModels());
-
-        // prepend filename of sample to aliquot
-        importedAliquot.setAliquotName(//
-                ((ReduxAliquotInterface) aliquot).getAliquotFractions().get(0).getSampleName().trim()//
-                + "::"//
-                + aliquot.getAliquotName());
-
-        ((ReduxAliquotInterface) importedAliquot).setAliquotFractions(new Vector<>());
-
-        Iterator<ETFractionInterface> aliquotFractionIterator = ((ReduxAliquotInterface) aliquot).getAliquotFractions().iterator();
-        while (aliquotFractionIterator.hasNext()) {
-            ETFractionInterface fraction = aliquotFractionIterator.next();
-
-            fraction.setAliquotNumber(aliquotNumber);
-            ((ReduxAliquotInterface) importedAliquot).getAliquotFractions().add(fraction);
-
-            sample.getFractions().add(fraction);
+        AliquotInterface existingAliquot = null;
+        // June 2016
+        // determine if aliquot exists
+        for (int i = 0; i < aliquots.size(); i++) {
+            if (aliquots.get(i).getAliquotName().contains(aliquot.getAliquotName())) {
+                existingAliquot = aliquots.get(i);
+                break;
+            }
         }
 
-        aliquots.add(importedAliquot);
+        if (existingAliquot == null) {
+
+            // aliquot numbering is 1-based
+            int aliquotNumber = aliquots.size() + 1;
+
+            ((ReduxAliquotInterface) importedAliquot).setAliquotNumber(aliquotNumber);
+            importedAliquot.setMyReduxLabData(ReduxLabData.getInstance());
+            ((ReduxAliquotInterface) importedAliquot).setCompiled(false);
+
+            importedAliquot.setMineralStandardModels(aliquot.getMineralStandardModels());
+            importedAliquot.setSampleDateModels(aliquot.getSampleDateModels());
+
+            // prepend filename of sample to aliquot
+            importedAliquot.setAliquotName(//
+                    ((ReduxAliquotInterface) aliquot).getAliquotFractions().get(0).getSampleName().trim()//
+                    + "::"//
+                    + aliquot.getAliquotName());
+
+            ((ReduxAliquotInterface) importedAliquot).setAliquotFractions(new Vector<>());
+
+            Iterator<ETFractionInterface> aliquotFractionIterator = ((ReduxAliquotInterface) aliquot).getAliquotFractions().iterator();
+            while (aliquotFractionIterator.hasNext()) {
+                ETFractionInterface fraction = aliquotFractionIterator.next();
+
+                fraction.setAliquotNumber(aliquotNumber);
+                ((ReduxAliquotInterface) importedAliquot).getAliquotFractions().add(fraction);
+
+                sample.getFractions().add(fraction);
+            }
+
+            aliquots.add(importedAliquot);
+
+        } else {
+            Iterator<ETFractionInterface> aliquotFractionIterator = ((ReduxAliquotInterface) aliquot).getAliquotFractions().iterator();
+            while (aliquotFractionIterator.hasNext()) {
+                ETFractionInterface fraction = aliquotFractionIterator.next();
+                // determine if fraction present
+                if (!sample.getFractions().contains(fraction)) {
+                    fraction.setAliquotNumber(((ReduxAliquotInterface) existingAliquot).getAliquotNumber());
+                    ((ReduxAliquotInterface) existingAliquot).getAliquotFractions().add(fraction);
+
+                    sample.getFractions().add(fraction);
+                }
+            }
+        }
     }
 
     /**
@@ -1008,8 +1034,8 @@ public interface SampleInterface {
         // May 2008
         // process all sampleAgeModels' included fraction vectors to remove missing aliquotFractionFiles
         sample.getAliquots().stream().map((nextAliquot) -> {
-            // may 2012 next line to force reduction
-            ((ReduxAliquotInterface) nextAliquot).reduceData();
+            // may 2012 next line to force reduction - not called in live mode
+            ((ReduxAliquotInterface) nextAliquot).reduceData(false);
             return nextAliquot;
         }).forEach((nextAliquot) -> {
             nextAliquot.updateSampleDateModels();
@@ -1391,6 +1417,19 @@ public interface SampleInterface {
     public default void addFraction(ETFractionInterface newFraction) {
         getFractions().add(newFraction);
         setChanged(true);
+    }
+
+    public default boolean containsFractionByName(String fractionID) {
+        Vector<ETFractionInterface> myFractions = getFractions();
+        boolean result = false;
+        for (int i = 0; i < myFractions.size(); i++) {
+            if (myFractions.get(i).getFractionID().equalsIgnoreCase(fractionID)) {
+                result = true;
+                break;
+            }
+        }
+
+        return result;
     }
 
     // Sample Date Models ***************************************************************** Sample Date Models *****************************************************************
@@ -1954,10 +1993,11 @@ public interface SampleInterface {
 
     /**
      *
+     * @param inLiveMode the value of inLiveMode
      */
-    public default void reduceSampleData() {
+    public default void reduceSampleData(boolean inLiveMode) {
         for (AliquotInterface aliquot : getAliquots()) {
-            ((ReduxAliquotInterface) aliquot).reduceData();
+            ((ReduxAliquotInterface) aliquot).reduceData(inLiveMode);
 
             // oct 2014 
             try {
