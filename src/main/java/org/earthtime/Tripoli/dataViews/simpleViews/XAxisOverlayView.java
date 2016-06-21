@@ -131,9 +131,10 @@ public class XAxisOverlayView extends AbstractRawDataView implements MaskingShad
     /**
      * 
      * @param doReScale the value of doReScale
+     * @param inLiveMode the value of inLiveMode
      */
     @Override
-    public void preparePanel (boolean doReScale) {
+    public void preparePanel (boolean doReScale, boolean inLiveMode) {
 
         this.removeAll();
 

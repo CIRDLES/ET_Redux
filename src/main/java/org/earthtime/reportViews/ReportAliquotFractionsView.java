@@ -2,7 +2,7 @@
  * ReportAliquotFractionsView.java
  *
  *
- * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2016 James F. Bowring and www.Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -179,10 +179,11 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
     /**
      *
      * @param performReduction
+     * @param inLiveMode the value of inLiveMode
      */
     @Override
-    public void updateReportTable(boolean performReduction) {
-        parentFrame.updateReportTable(performReduction);
+    public void updateReportTable(boolean performReduction, boolean inLiveMode) {
+        parentFrame.updateReportTable(performReduction, inLiveMode);
         prepareReportFractionsArrayForDisplay();
         reSizeSortButtons();
         repaint();
@@ -1082,7 +1083,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                                 notesDialog.setVisible(true);
                             } else {
                                 parentFrame.editFraction(((ETFractionInterface) verticalPixelFractionMap.get(row).rowObject), 8);// kwikitab
-                                updateReportTable(false);
+                                updateReportTable(false, false);
                             }
                         } else {
                             boolean isRejected = !((ETFractionInterface) verticalPixelFractionMap.get(row).rowObject).isRejected();
@@ -1092,7 +1093,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                                 ((UPbFractionI) verticalPixelFractionMap.get(row).rowObject).getTripoliFraction().setIncluded(!isRejected);
                             } catch (Exception noTF) {
                             }
-                            parent.updateReportTable(false);
+                            parent.updateReportTable(false, false);
                         }
                     }
 
@@ -1102,7 +1103,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                             parentFrame.editAliquotByProjectType(((AliquotInterface) verticalPixelFractionMap.get(row).rowObject));
                         } else {
                             AliquotInterface.toggleAliquotFractionsRejectedStatus(((ReduxAliquotInterface) verticalPixelFractionMap.get(row).rowObject));
-                            parent.updateReportTable(false);
+                            parent.updateReportTable(false, false);
                         }
 
                     }

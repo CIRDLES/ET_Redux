@@ -104,7 +104,7 @@ public class AllFunctionsChoicePanel extends AbstractRawDataView {
     }
 
     @Override
-    public void preparePanel(boolean doReScale) {
+    public void preparePanel(boolean doReScale, boolean inLiveMode) {
         this.removeAll();
 
         // arbitrary
@@ -146,7 +146,7 @@ public class AllFunctionsChoicePanel extends AbstractRawDataView {
             // ((AbstractRawDataView) sampleSessionDataView).refreshPanel(true);
 
             for (int i = 0; i < rawDataModelViews.length; i++) {
-                rawDataModelViews[i].refreshPanel(false);
+                rawDataModelViews[i].refreshPanel(false, false);
             }
 //            // be sure changes to unknowns go to data table
 //            if (rawDataModelViews[0] instanceof FitFunctionsOnRatioDataView) {
@@ -186,7 +186,7 @@ public class AllFunctionsChoicePanel extends AbstractRawDataView {
 
 //                ((AbstractRawDataView) sampleSessionDataView).refreshPanel(true);
                 for (int i = 0; i < rawDataModelViews.length; i++) {
-                    rawDataModelViews[i].refreshPanel(false);
+                    rawDataModelViews[i].refreshPanel(false, false);
                 }
                 updateReportTable();
             }

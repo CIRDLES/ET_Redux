@@ -598,10 +598,11 @@ public abstract class AbstractRawDataView extends JLayeredPane implements MouseI
     /**
      *
      * @param doReScale the value of doReScale
+     * @param inLiveMode the value of inLiveMode
      */
-    public void refreshPanel(boolean doReScale) {
+    public void refreshPanel(boolean doReScale, boolean inLiveMode) {
         try {
-            preparePanel(doReScale);
+            preparePanel(doReScale, inLiveMode);
         } catch (Exception e) {
         }
         validate();
@@ -611,8 +612,9 @@ public abstract class AbstractRawDataView extends JLayeredPane implements MouseI
     /**
      *
      * @param doReScale the value of doReScale
+     * @param inLiveMode the value of inLiveMode
      */
-    public abstract void preparePanel(boolean doReScale);
+    public abstract void preparePanel(boolean doReScale, boolean inLiveMode);
 
     /**
      * @return the graphWidth
@@ -865,7 +867,7 @@ public abstract class AbstractRawDataView extends JLayeredPane implements MouseI
         if (fractionDataViewsContainer != null) {
             for (Component component : fractionDataViewsContainer.getComponents()) {
                 if (component instanceof AbstractRawDataView) {
-                    ((AbstractRawDataView) component).refreshPanel(false);
+                    ((AbstractRawDataView) component).refreshPanel(false, false);
                 }
             }
             //fractionDataViewsContainer.repaint();
@@ -963,12 +965,12 @@ public abstract class AbstractRawDataView extends JLayeredPane implements MouseI
                 // feb 2013 here we differentiate between session and ratios
                 // for ratios,we want data point toggle to only affect fraction and not disturb layout
                 if (rawRatioDataModel instanceof AbstractSessionForStandardDataModel) {
-                    ((AbstractRawDataView) sampleSessionDataView).refreshPanel(true);
+                    ((AbstractRawDataView) sampleSessionDataView).refreshPanel(true, false);
                 } else {
                     for (AbstractRawDataView fractionRawDataView : fractionRawDataViews) {
                         // dec 2015 modified to redo math on downhole unknowns
                         if ((fractionRawDataView instanceof AbstractFitFunctionPresentationView) || (fractionRawDataView instanceof CorrectedRatioDataView)) {
-                            fractionRawDataView.refreshPanel(false);
+                            fractionRawDataView.refreshPanel(false, false);
                             updateReportTable();
                         } else if (fractionRawDataView != null) {
                             // april 2015 added test
@@ -1137,7 +1139,7 @@ public abstract class AbstractRawDataView extends JLayeredPane implements MouseI
 
         tripoliFraction.setShowVerticalLineAtThisIndex(-1);
 
-        ((AbstractRawDataView) sampleSessionDataView).refreshPanel(true);
+        ((AbstractRawDataView) sampleSessionDataView).refreshPanel(true, false);
 
         // feb 2013 standards not put to redux anymore
         try {
@@ -1155,15 +1157,15 @@ public abstract class AbstractRawDataView extends JLayeredPane implements MouseI
 
         // detecting correct object
         if (sampleSessionDataView == null) {
-            ((TripoliSessionFractionationCalculatorInterface) this).applyCorrections();
+            ((TripoliSessionFractionationCalculatorInterface) this).applyCorrections(false);
         } else {
-            ((TripoliSessionFractionationCalculatorInterface) sampleSessionDataView).applyCorrections();
+            ((TripoliSessionFractionationCalculatorInterface) sampleSessionDataView).applyCorrections(false);
         }
 
         updateReportTableView();
 
         if (sampleSessionDataView instanceof AbstractDataMonitorView) {
-            ((AbstractDataMonitorView) sampleSessionDataView).prepareConcordia();
+            ((AbstractDataMonitorView) sampleSessionDataView).prepareConcordia(false);
         }
     }
 
@@ -1171,7 +1173,7 @@ public abstract class AbstractRawDataView extends JLayeredPane implements MouseI
         if (uPbReduxFrame == null) {
             uPbReduxFrame = ((AbstractRawDataView) sampleSessionDataView).getuPbReduxFrame();
         }
-        uPbReduxFrame.updateReportTable(true);
+        uPbReduxFrame.updateReportTable(true, false);
 
     }
 

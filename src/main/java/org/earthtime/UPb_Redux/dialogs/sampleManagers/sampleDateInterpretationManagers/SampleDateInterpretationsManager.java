@@ -187,15 +187,16 @@ public class SampleDateInterpretationsManager extends DialogEditor
         doLinkDiscordances = true;
 
         // fire off a refresh to get things started
-        ((PlottingDetailsDisplayInterface) concordiaGraphPanel).refreshPanel(true);
+        ((PlottingDetailsDisplayInterface) concordiaGraphPanel).refreshPanel(true, false);
 
     }
 
     /**
      *
      * @param doReScale the value of doReScale
+     * @param inLiveMode the value of inLiveMode
      */
-    public void refreshSampleDateInterpretations(boolean doReScale) {
+    public void refreshSampleDateInterpretations(boolean doReScale, boolean inLiveMode) {
 
         String expansionHistory = "";
         if (!doReScale) {
@@ -214,15 +215,15 @@ public class SampleDateInterpretationsManager extends DialogEditor
         dateTreeBySample.buildTree();
         dateTreeBySample_ScrollPane.setViewportView((Component) dateTreeBySample);
 
-        ((PlottingDetailsDisplayInterface) concordiaGraphPanel).resetPanel(doReScale);
+        ((PlottingDetailsDisplayInterface) concordiaGraphPanel).resetPanel(doReScale, inLiveMode);
 
         try {
             // June 2010 ensures backward compatibility with previous versions that used dummy aliquot in this list
             setupWeightedMeansPanelForAliquots();
         } catch (Exception e) {
         }
-        ((PlottingDetailsDisplayInterface) weightedMeanGraphPanel).resetPanel(doReScale);
-        ((PlottingDetailsDisplayInterface) probabilityPanel).resetPanel(doReScale);
+        ((PlottingDetailsDisplayInterface) weightedMeanGraphPanel).resetPanel(doReScale, inLiveMode);
+        ((PlottingDetailsDisplayInterface) probabilityPanel).resetPanel(doReScale, inLiveMode);
 
     }
 
@@ -1908,7 +1909,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
 
     private void resetGraphDisplay_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetGraphDisplay_buttonActionPerformed
         ((ConcordiaGraphPanel) concordiaGraphPanel).setShowTightToEdges(false);
-        ((PlottingDetailsDisplayInterface) concordiaGraphPanel).resetPanel(true);
+        ((PlottingDetailsDisplayInterface) concordiaGraphPanel).resetPanel(true, false);
 }//GEN-LAST:event_resetGraphDisplay_buttonActionPerformed
     private void writeConcordiaPDF_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_writeConcordiaPDF_buttonActionPerformed
         try {
@@ -1969,7 +1970,7 @@ private void zoomBox_toggleButtonActionPerformed(java.awt.event.ActionEvent evt)
 }//GEN-LAST:event_zoomBox_toggleButtonActionPerformed
 
 private void restoreGraphDisplay_WeightedMean_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_restoreGraphDisplay_WeightedMean_buttonActionPerformed
-    ((PlottingDetailsDisplayInterface) weightedMeanGraphPanel).refreshPanel(true);
+    ((PlottingDetailsDisplayInterface) weightedMeanGraphPanel).refreshPanel(true, false);
 }//GEN-LAST:event_restoreGraphDisplay_WeightedMean_buttonActionPerformed
 
 private void fractionOrderByDate_radioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fractionOrderByDate_radioButtonActionPerformed
@@ -2021,7 +2022,7 @@ private void graphPanelsTabbedPaneResized(java.awt.event.ComponentEvent evt) {//
     weightedMeanToolPanel.setBounds(
             1, heightCP + 16, widthCP + leftMarginCP, 35);
 
-    ((PlottingDetailsDisplayInterface) weightedMeanGraphPanel).refreshPanel(true);
+    ((PlottingDetailsDisplayInterface) weightedMeanGraphPanel).refreshPanel(true, false);
 
     // june 2010 expansion to include additional panels
     any2ToolPanel.setBounds(
@@ -2049,7 +2050,7 @@ private void concordiaFlavor_radioButtonActionPerformed(java.awt.event.ActionEve
 
     ((ConcordiaGraphPanel) concordiaGraphPanel).setConcordiaFlavor("C");
 
-    ((PlottingDetailsDisplayInterface) concordiaGraphPanel).refreshPanel(true);
+    ((PlottingDetailsDisplayInterface) concordiaGraphPanel).refreshPanel(true, false);
 }//GEN-LAST:event_concordiaFlavor_radioButtonActionPerformed
 private void terraWasserburgFlavor_radioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_terraWasserburgFlavor_radioButtonActionPerformed
     ((AliquotDetailsDisplayInterface) concordiaGraphPanel).getConcordiaOptions().//
@@ -2057,7 +2058,7 @@ private void terraWasserburgFlavor_radioButtonActionPerformed(java.awt.event.Act
 
     ((ConcordiaGraphPanel) concordiaGraphPanel).setConcordiaFlavor("T-W");
 
-    ((PlottingDetailsDisplayInterface) concordiaGraphPanel).refreshPanel(true);
+    ((PlottingDetailsDisplayInterface) concordiaGraphPanel).refreshPanel(true, false);
 
 }//GEN-LAST:event_terraWasserburgFlavor_radioButtonActionPerformed
 private void dateTrees_tabsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_dateTrees_tabsMouseClicked
@@ -2093,7 +2094,7 @@ private void weightedMeansChooser_menuItemActionPerformed (java.awt.event.Action
     ((WeightedMeanGraphPanel) weightedMeanGraphPanel).//
             setSelectedSampleDateModels(((WeightedMeanOptionsDialog) myWMChooser).getSelectedModels());
 
-    ((PlottingDetailsDisplayInterface) weightedMeanGraphPanel).preparePanel(true);
+    ((PlottingDetailsDisplayInterface) weightedMeanGraphPanel).preparePanel(true, false);
 }//GEN-LAST:event_weightedMeansChooser_menuItemActionPerformed
 private void zoomInAny2X2_buttonActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zoomInAny2X2_buttonActionPerformed
     // TODO add your handling code here:
@@ -2130,7 +2131,7 @@ private void graphViewTabChanged (java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
             ((DateProbabilityDensityPanel) probabilityPanel).//
                     getDeSelectedFractions().clear();
             ((PlottingDetailsDisplayInterface) probabilityPanel).//
-                    refreshPanel(true);
+                    refreshPanel(true, false);
         } else {
             probabilityPanel.repaint();
         }
@@ -2149,7 +2150,7 @@ private void resetGraphProbability_buttonActionPerformed (java.awt.event.ActionE
     ((DateProbabilityDensityPanel) probabilityPanel).//
             setSelectedFractions(filterActiveUPbFractions(sample.getUpbFractionsUnknown()));
 
-    ((PlottingDetailsDisplayInterface) probabilityPanel).refreshPanel(true);
+    ((PlottingDetailsDisplayInterface) probabilityPanel).refreshPanel(true, false);
 }//GEN-LAST:event_resetGraphProbability_buttonActionPerformed
 
 private void thoriumCorrectionSelector_checkboxActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_thoriumCorrectionSelector_checkboxActionPerformed
@@ -2238,7 +2239,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
 
     private void showTight_toggleButtonActionPerformed ( java.awt.event.ActionEvent evt ) {//GEN-FIRST:event_showTight_toggleButtonActionPerformed
         ((ConcordiaGraphPanel) concordiaGraphPanel).setShowTightToEdges(true);
-        ((PlottingDetailsDisplayInterface) concordiaGraphPanel).resetPanel(true);
+        ((PlottingDetailsDisplayInterface) concordiaGraphPanel).resetPanel(true, false);
     }//GEN-LAST:event_showTight_toggleButtonActionPerformed
 
     private void choosePDFPeaks_menuMenuSelected ( javax.swing.event.MenuEvent evt ) {//GEN-FIRST:event_choosePDFPeaks_menuMenuSelected
@@ -2285,7 +2286,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
 
         ((ConcordiaGraphPanel) concordiaGraphPanel).setConcordiaFlavor("Th");
 
-        ((PlottingDetailsDisplayInterface) concordiaGraphPanel).refreshPanel(true);
+        ((PlottingDetailsDisplayInterface) concordiaGraphPanel).refreshPanel(true, false);
     }//GEN-LAST:event_thoriumConcordiaFlavor_radioButtonActionPerformed
 
     private void commonLeadCorrectionSelectorPDF_checkboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_commonLeadCorrectionSelectorPDF_checkboxActionPerformed
@@ -2303,7 +2304,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
         ((ConcordiaGraphPanel) concordiaGraphPanel).toggleDisplay_PbcCorr();
         commonLeadCorrectionSelector_checkbox.setSelected(((ConcordiaGraphPanel) concordiaGraphPanel).isDisplay_PbcCorr());
 
-        ((PlottingDetailsDisplayInterface) concordiaGraphPanel).refreshPanel(true);
+        ((PlottingDetailsDisplayInterface) concordiaGraphPanel).refreshPanel(true, false);
     }//GEN-LAST:event_commonLeadCorrectionSelector_checkboxActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -2458,7 +2459,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                 ((DateProbabilityDensityPanel) probabilityPanel).//
                         setSelectedAliquot(0);
                 ((PlottingDetailsDisplayInterface) probabilityPanel).//
-                        refreshPanel(true);
+                        refreshPanel(true, false);
             }
 
         } else if (nodeInfo instanceof AliquotInterface) {
@@ -2490,7 +2491,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
             ((WeightedMeanGraphPanel) weightedMeanGraphPanel).setWeightedMeanOptions(weightedMeanOptions);
 
             setupWeightedMeansPanelForAliquots();
-            ((PlottingDetailsDisplayInterface) weightedMeanGraphPanel).refreshPanel(true);
+            ((PlottingDetailsDisplayInterface) weightedMeanGraphPanel).refreshPanel(true, false);
 
             // } else {
             // probability density tab ... select and paint aliquot

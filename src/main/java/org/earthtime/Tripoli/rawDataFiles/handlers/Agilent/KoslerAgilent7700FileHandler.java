@@ -92,22 +92,23 @@ public class KoslerAgilent7700FileHandler extends AbstractRawDataFileHandler imp
      * @param usingFullPropagation the value of usingFullPropagation
      * @param leftShadeCount the value of leftShadeCount
      * @param ignoreFirstFractions the value of ignoreFirstFract
+     * @param inLiveMode the value of inLiveMode
      */
     @Override
-    public void getAndLoadRawIntensityDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions) {
+    public void getAndLoadRawIntensityDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions, boolean inLiveMode) {
 
         // Agilent has folder of csv files plus some xls files
         analysisFiles = rawDataFile.listFiles((File dir, String name) -> (name.toLowerCase().endsWith(".csv")));
 
         if (analysisFiles.length > 0) {
             Arrays.sort(analysisFiles, new FractionFileModifiedComparator());
-            
+
             String onPeakFileContents = URIHelper.getTextFromURI(analysisFiles[0].getAbsolutePath());
             if (isValidRawDataFileType(analysisFiles[0]) //
                     && //
                     areKeyWordsPresent(onPeakFileContents)) {
                 // create fractions from raw data and perform corrections and calculate ratios
-                tripoliFractions = loadRawDataFile(loadDataTask, usingFullPropagation, leftShadeCount, 0);
+                tripoliFractions = loadRawDataFile(loadDataTask, usingFullPropagation, leftShadeCount, 0, inLiveMode);
             }
         } else {
             JOptionPane.showMessageDialog(
@@ -157,11 +158,13 @@ public class KoslerAgilent7700FileHandler extends AbstractRawDataFileHandler imp
      * @param usingFullPropagation the value of usingFullPropagation
      * @param leftShadeCount the value of leftShadeCount
      * @param ignoreFirstFractions the value of ignoreFirstFractions
-     * @return
+     * @param inLiveMode the value of inLiveMode
+     * @return the
+     * java.util.SortedSet<org.earthtime.Tripoli.fractions.TripoliFraction>
      */
     @Override
     protected SortedSet<TripoliFraction> loadRawDataFile(//
-            SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions) {
+            SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions, boolean inLiveMode) {
 
         SortedSet myTripoliFractions = new TreeSet<>();
 
@@ -245,8 +248,7 @@ public class KoslerAgilent7700FileHandler extends AbstractRawDataFileHandler imp
                 }  // i loop
 
                 TripoliFraction tripoliFraction
-                        = //                           
-                        new TripoliFraction( //
+                        = new TripoliFraction( //
                                 fractionID, //
                                 massSpec.getCommonLeadCorrectionHighestLevel(), //
                                 isStandard,

@@ -3,7 +3,7 @@
  *
  *
  *
- * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2016 James F. Bowring and www.Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -37,7 +37,6 @@ import org.earthtime.Tripoli.samples.AbstractTripoliSample;
 import org.earthtime.Tripoli.sessions.TripoliSessionInterface;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
-import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.filters.ReduxFileFilter;
 import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
@@ -195,26 +194,33 @@ public class Project implements
         // walk the tripolisamples and convert to samples
         // Redux will end up with a set of aliquots (aka compiled sample) each named for the sample (1-to-1)
         // and a set of fractions each associated with an aliquot
-        projectSamples = new ArrayList<>();
 
         // make a super-sample or projectsample to leverage existing Redux
-        try {
-            compiledSuperSample = new Sample( //
-                    projectName, //
-                    SampleTypesEnum.PROJECT.getName(), //
-                    SampleAnalysisTypesEnum.TRIPOLIZED.getName(), //
-                    ReduxConstants.ANALYSIS_PURPOSE.DetritalSpectrum, "UPb");
-        } catch (BadLabDataException badLabDataException) {
+        if (compiledSuperSample == null) {
+                compiledSuperSample = new Sample( //
+                        projectName, //
+                        SampleTypesEnum.PROJECT.getName(), //
+                        SampleAnalysisTypesEnum.TRIPOLIZED.getName(), //
+                        ReduxConstants.ANALYSIS_PURPOSE.DetritalSpectrum, "UPb");
         }
 
-        
         ArrayList<AbstractTripoliSample> tripoliSamples = tripoliSession.getTripoliSamples();
         for (AbstractTripoliSample tripoliSample : tripoliSamples) {
             // check for primary standard and leave it out
             if (true) {//oct 2014 want to include standards now (!tripoliSample.isPrimaryStandard()) {
-//            if (!tripoliSample.isPrimaryStandard()) {
-                SampleInterface sample;
-                try {
+
+                // june 2016
+                // determine if sample already processed
+                SampleInterface sample = null;
+                AliquotInterface aliquot = null;
+                for (int i = 0; i < projectSamples.size(); i++) {
+                    if (projectSamples.get(i).getSampleName().equalsIgnoreCase(tripoliSample.getSampleName())) {
+                        sample = projectSamples.get(i);
+                        aliquot = sample.getAliquots().get(0);
+                        break;
+                    }
+                }
+                if (sample == null) {
                     sample = new Sample( //
                             tripoliSample.getSampleName(), //
                             SampleTypesEnum.ANALYSIS.getName(), //
@@ -223,22 +229,33 @@ public class Project implements
 
                     projectSamples.add(sample);
 
-                    AliquotInterface aliquot = sample.addNewAliquot(tripoliSample.getSampleName());
-                    System.out.println("New Aliquot is # " + ((UPbReduxAliquot) aliquot).getAliquotNumber() + " = " + aliquot.getAliquotName());
+                    try {
+                        aliquot = sample.addNewAliquot(tripoliSample.getSampleName());
+                        aliquot.setAnalysisPurpose(analysisPurpose);
+                        // TODO: Enum of inst methods
+                        aliquot.setAliquotInstrumentalMethod(DataDictionary.AliquotInstrumentalMethod[5]);
+                    } catch (ETException eTException) {
+                    }
 
-                    SortedSet<TripoliFraction> tripoliSampleFractions = tripoliSample.getSampleFractions();
-                    for (Iterator<TripoliFraction> it = tripoliSampleFractions.iterator(); it.hasNext();) {
-                        TripoliFraction tf = it.next();
-//                        System.out.println("Processing tripoli fraction " + tf.getFractionID());
+                    System.out.println("New Aliquot is # " + ((UPbReduxAliquot) aliquot).getAliquotNumber() + " = " + aliquot.getAliquotName());
+                }
+
+                SortedSet<TripoliFraction> tripoliSampleFractions = tripoliSample.getSampleFractions();
+                for (Iterator<TripoliFraction> it = tripoliSampleFractions.iterator(); it.hasNext();) {
+                    TripoliFraction tf = it.next();
+
+                    // june 2016
+                    // determine if fraction already exists
+                    if (!sample.containsFractionByName(tf.getFractionID())) {
 
                         // feb 2016
                         FractionI reduxVersionTripolizedFraction = null;
-                        if (sampleAnalysisType.compareTo(SampleAnalysisTypesEnum.LAICPMS) ==0 ) {
+                        if (sampleAnalysisType.compareTo(SampleAnalysisTypesEnum.LAICPMS) == 0) {
                             reduxVersionTripolizedFraction = new UPbLAICPMSFraction(tf.getFractionID());
-                        }else if (sampleAnalysisType.compareTo(SampleAnalysisTypesEnum.SHRIMP) ==0 ) {
+                        } else if (sampleAnalysisType.compareTo(SampleAnalysisTypesEnum.SHRIMP) == 0) {
                             reduxVersionTripolizedFraction = new UPbSHRIMPFraction(tf.getFractionID());
                         }
-                        
+
                         reduxVersionTripolizedFraction.setSampleName(tripoliSample.getSampleName());
                         // add to tripoli fraction so its UPbFraction can be contiunously updated
                         tf.setuPbFraction(reduxVersionTripolizedFraction);
@@ -251,19 +268,12 @@ public class Project implements
                         // feb 2015 in prep for export
                         ((ReduxAliquotInterface) aliquot).getAliquotFractions().add(reduxVersionTripolizedFraction);
                     }
-
-                    // this forces aliquot fraction population
-                    SampleInterface.copyAliquotIntoSample(compiledSuperSample, sample.getAliquotByName(aliquot.getAliquotName()), new UPbReduxAliquot());
-
-                    aliquot.setAnalysisPurpose(analysisPurpose);
-                    // TODO: Enum of inst methods
-                    aliquot.setAliquotInstrumentalMethod(DataDictionary.AliquotInstrumentalMethod[5]);
-
-                } catch (BadLabDataException badLabDataException) {
-                } catch (ETException eTException) {
-                    System.out.println("Project.java line 254 " + eTException.getMessage());
                 }
-            }
+
+                // this forces aliquot fraction population
+                SampleInterface.copyAliquotIntoSample(compiledSuperSample, sample.getAliquotByName(aliquot.getAliquotName()), new UPbReduxAliquot());
+
+            }// if true
         }
 
         // first pass without any user interaction

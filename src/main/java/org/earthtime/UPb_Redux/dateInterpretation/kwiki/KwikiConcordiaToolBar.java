@@ -128,7 +128,7 @@ public class KwikiConcordiaToolBar extends JLayeredPane implements GraphPanelMod
         restoreZoom.setMargin(new Insets(0, 0, 0, 0));
 
         restoreZoom.addActionListener((ActionEvent arg0) -> {
-            ((PlottingDetailsDisplayInterface) concordiaGraphPanel).resetPanel(true);
+            ((PlottingDetailsDisplayInterface) concordiaGraphPanel).resetPanel(true, false);
         });
 
         add(restoreZoom, javax.swing.JLayeredPane.DEFAULT_LAYER);

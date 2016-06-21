@@ -502,7 +502,7 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
      * @param doApplyMaskingArray the value of doApplyMaskingArray
      */
     @Override
-    public void generateSetOfFitFunctions(boolean propagateUncertainties, boolean doApplyMaskingArray) {
+    public void generateSetOfFitFunctions(boolean propagateUncertainties, boolean doApplyMaskingArray, boolean inLiveMode) {
 
         if (generateMEANfitFunctionUsingLM()) {
             try {
@@ -510,6 +510,8 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
                 generateEXPONENTIALfitFunctionUsingLM();
             } catch (Exception e) {
             }
+            
+            // turned off for now
 //            try {
 //                generateEXPONENTIALfitFunctionUsingLM();
 //            } catch (Exception e) {

@@ -126,5 +126,9 @@ public interface ReduxAliquotInterface {
         return retVal;
     }
 
-    public void reduceData();
+    /**
+     *
+     * @param inLiveMode the value of inLiveMode
+     */
+    public void reduceData(boolean inLiveMode);
 }

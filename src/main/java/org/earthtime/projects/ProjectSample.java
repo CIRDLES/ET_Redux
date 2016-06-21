@@ -457,10 +457,7 @@ public class ProjectSample implements//
      */
     @Override
     public void restoreDefaultReportSettingsModel() {
-        try {
-            setReportSettingsModel(ReduxLabData.getInstance().getDefaultReportSettingsModelByIsotopeStyle(getIsotopeStyle()));
-        } catch (BadLabDataException badLabDataException) {
-        }
+        setReportSettingsModel(ReduxLabData.getInstance().getDefaultReportSettingsModelByIsotopeStyle(getIsotopeStyle()));
     }
 
     /**

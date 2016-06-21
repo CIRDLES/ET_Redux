@@ -121,7 +121,7 @@ public class SplineOverDispersionChooserPanel extends AbstractRawDataView {
     }
 
     @Override
-    public void preparePanel (boolean doReScale) {
+    public void preparePanel (boolean doReScale, boolean inLiveMode) {
         this.removeAll();
 
         minY = Double.MAX_VALUE;
@@ -172,13 +172,13 @@ public class SplineOverDispersionChooserPanel extends AbstractRawDataView {
                     if ( sampleSessionDataView instanceof SessionOfStandardView ) {
                         currentSplineWithOD = ((SessionOfStandardView) sampleSessionDataView).getSessionForStandardDataModel().getSelectedFitFunction();
                         currentSplineWithOD.copyValuesFrom( splineWithOD );
-                        ((SessionOfStandardView) sampleSessionDataView).refreshPanel(true);
+                        ((SessionOfStandardView) sampleSessionDataView).refreshPanel(true, false);
                         ((SmoothingSplineFitFunctionView) fitFunctionView).refreshXiLabel();
                         ((SmoothingSplineFitFunctionView) fitFunctionView).getPresentationView().repaint();
                     } else if ( sampleSessionDataView instanceof DataViewsOverlay ) {
                         currentSplineWithOD = ((DataViewsOverlay) sampleSessionDataView).getDownholeFractionationDataModel().getSelectedFitFunction();
                         currentSplineWithOD.copyValuesFrom( splineWithOD );
-                        ((DataViewsOverlay) sampleSessionDataView).refreshPanel(true);
+                        ((DataViewsOverlay) sampleSessionDataView).refreshPanel(true, false);
                         ((SmoothingSplineFitFunctionView) fitFunctionView).refreshXiLabel();
                         ((SmoothingSplineFitFunctionView) fitFunctionView).getPresentationView().repaint();
                     }

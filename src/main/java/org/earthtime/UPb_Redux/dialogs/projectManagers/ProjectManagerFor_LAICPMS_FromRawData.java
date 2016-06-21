@@ -517,7 +517,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
         MaskingSingleton.getInstance().setLeftShadeCount(leftShadeCount);
         MaskingSingleton.getInstance().setRightShadeCount(-1);
 
-        rawDataFileHandler.getAndLoadRawIntensityDataFile(loadDataTask, usingFullPropagation, leftShadeCount, ignoreFirstFractions);
+        rawDataFileHandler.getAndLoadRawIntensityDataFile(loadDataTask, usingFullPropagation, leftShadeCount, ignoreFirstFractions, false);
     }
 
     private void loadAndShowRawDataFinishUp() {
@@ -595,11 +595,11 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
             myMassSpec.reProcessFractionRawRatios(usingFullPropagation, tf.getFractionID(), tf);
         }
 
-        tripoliSession.calculateSessionFitFunctionsForPrimaryStandard();
+        tripoliSession.calculateSessionFitFunctionsForPrimaryStandard(false);
         // jan 2015 moved to calcualte sessionfittripoliSession.applyCorrections();
 
         try {
-            uPbReduxFrame.updateReportTable(true);
+            uPbReduxFrame.updateReportTable(true, false);
         } catch (Exception e) {
         }
 
@@ -623,6 +623,15 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
                 int progress = (Integer) pce.getNewValue();
                 loadDataTaskProgressBar.setValue(progress);
                 loadDataTaskProgressBar.validate();
+            } else if ("projectName".equalsIgnoreCase(pce.getPropertyName())) {
+                project.setProjectName((String) pce.getNewValue());
+                projectName_text.setText(project.getProjectName());
+            } else if ("refMaterialLoaded".equalsIgnoreCase(pce.getPropertyName())) {
+                try {
+                    tripoliSession.setRefMaterialSessionFittedForLiveMode(false);
+                    System.out.println("ref material loaded <<<<");
+                } catch (Exception e) {
+                }
             }
         }
     }
@@ -1043,7 +1052,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
 
                 project.prepareSamplesForRedux();
 
-                uPbReduxFrame.initializeProject();
+                uPbReduxFrame.initializeProject(false);
 
                 initializeSessionManager(true, true, true);
             } catch (ETException ex) {

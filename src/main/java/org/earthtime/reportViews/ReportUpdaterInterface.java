@@ -2,7 +2,7 @@
  * ReportUpdaterInterface.java
  *
  *
- * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2016 James F. Bowring and www.Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ public interface ReportUpdaterInterface {
     /**
      *
      * @param performReduction
+     * @param inLiveMode the value of inLiveMode
      */
-    public void updateReportTable( boolean performReduction);
+    public void updateReportTable( boolean performReduction, boolean inLiveMode);
 }

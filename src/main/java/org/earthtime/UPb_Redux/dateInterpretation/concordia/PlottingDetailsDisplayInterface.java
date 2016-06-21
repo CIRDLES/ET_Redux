@@ -27,19 +27,22 @@ public interface PlottingDetailsDisplayInterface {
     /**
      *
      * @param doReScale the value of doReScale
+     * @param inLiveMode the value of inLiveMode
      */
-    void preparePanel(boolean doReScale);
+    void preparePanel(boolean doReScale, boolean inLiveMode);
 
     /**
      *
      * @param doReScale the value of doReScale
+     * @param inLiveMode the value of inLiveMode
      */
-    void refreshPanel(boolean doReScale);
+    void refreshPanel(boolean doReScale, boolean inLiveMode);
 
     /**
      *
      * @param doReScale the value of doReScale
+     * @param inLiveMode the value of inLiveMode
      */
-    void resetPanel(boolean doReScale);
+    void resetPanel(boolean doReScale, boolean inLiveMode);
 
 }

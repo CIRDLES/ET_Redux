@@ -114,6 +114,8 @@ public class TripoliSession implements
     // dec 2014
     private int leftShadeCount;
     private boolean fitFunctionsUpToDate;
+    // June 2016
+    private boolean refMaterialSessionFittedForLiveMode;
 
     /**
      *
@@ -157,6 +159,8 @@ public class TripoliSession implements
         this.leftShadeCount = 0;
 
         this.fitFunctionsUpToDate = false;
+
+        this.refMaterialSessionFittedForLiveMode = false;
     }
 
     /**
@@ -332,7 +336,7 @@ public class TripoliSession implements
             downholeFractionationDataModel.calculateWeightedMeanOfStandards();
 
             // for thick red line
-            downholeFractionationDataModel.generateSetOfFitFunctions(false, false);
+            downholeFractionationDataModel.generateSetOfFitFunctions(false, false, false);
 
             // now calculate session statistics based on this selected fit model
             // this means for each standard, calculate the weighted mean of the residuals
@@ -346,38 +350,42 @@ public class TripoliSession implements
 
     /**
      *
+     * @param inLiveMode the value of inLiveMode
      */
     @Override
-    public void calculateSessionFitFunctionsForPrimaryStandard() {
+    public void calculateSessionFitFunctionsForPrimaryStandard(boolean inLiveMode) {
 
         // April 2016 recalc for both techniques
         // note: first call here is from ProjectManager initialize
         if (prepareMatrixJfMapFractionsByType(FractionSelectionTypeEnum.UNKNOWN) //
                 && prepareMatrixJfPlotting()) {
 
-//            if (fractionationTechnique.compareTo(FractionationTechniquesEnum.INTERCEPT) == 0) {
             sessionForStandardsInterceptFractionation.keySet().stream().forEach((rrName) -> {
                 try {
-                    sessionForStandardsInterceptFractionation.get(rrName).generateSetOfFitFunctions(true, false);
+                    sessionForStandardsInterceptFractionation.get(rrName).generateSetOfFitFunctions(true, false, inLiveMode);
                     fitFunctionsUpToDate = true;
                 } catch (Exception e) {
                     System.out.println("Session Standards Intercept Fractionation Failed");
                 }
             });
-//            } else {
 
-            calculateDownholeFitSummariesForPrimaryStandard();
-            sessionForStandardsDownholeFractionation.keySet().stream().forEach((rrName) -> {
-                try {
-                    sessionForStandardsDownholeFractionation.get(rrName).generateSetOfFitFunctions(true, false);
-                    fitFunctionsUpToDate = true;
-                } catch (Exception e) {
-                    System.out.println("Session Standards Downhole Fractionation Failed");
-                }
-            });
+            // june 2016 speedup for live
+            if (!inLiveMode) {
+                calculateDownholeFitSummariesForPrimaryStandard();
+                sessionForStandardsDownholeFractionation.keySet().stream().forEach((rrName) -> {
+                    try {
+                        sessionForStandardsDownholeFractionation.get(rrName).generateSetOfFitFunctions(true, false, inLiveMode);
+                        fitFunctionsUpToDate = true;
+                    } catch (Exception e) {
+                        System.out.println("Session Standards Downhole Fractionation Failed");
+                    }
+                });
 
-//            }
-            applyCorrections();
+            }
+
+            if (!inLiveMode) {
+                applyCorrections(inLiveMode);
+            }
         }
     }
 
@@ -652,16 +660,44 @@ public class TripoliSession implements
         return Jf;
     }
 
+    private void resetUPbFractionReduction(ETFractionInterface upbFraction) {
+        if (upbFraction != null) {
+            ((UPbLAICPMSFraction) upbFraction).setSfciTotal(null);
+            ((UPbLAICPMSFraction) upbFraction).initializeUpperPhiMap();
+            upbFraction.getRadiogenicIsotopeRatioByName("rhoR206_238r__r207_235r").setValue(ReduxConstants.NO_RHO_FLAG);
+            upbFraction.getRadiogenicIsotopeRatioByName("rhoR207_206r__r238_206r").setValue(ReduxConstants.NO_RHO_FLAG);
+            upbFraction.getRadiogenicIsotopeRatioByName("rhoR206_238PbcCorr__r207_235PbcCorr").setValue(ReduxConstants.NO_RHO_FLAG);
+            upbFraction.getRadiogenicIsotopeRatioByName("rhoR207_206PbcCorr__r238_206PbcCorr").setValue(ReduxConstants.NO_RHO_FLAG);
+        }
+    }
+
+    @Override
+    public void resetAllUPbFractionReduction() {
+        SortedSet<TripoliFraction> allFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.ALL, IncludedTypeEnum.INCLUDED);//dec 2015 .ALL);
+        Iterator<TripoliFraction> allFractionsIterator = allFractions.iterator();
+
+        while (allFractionsIterator.hasNext()) {
+            TripoliFraction tf = allFractionsIterator.next();
+            ETFractionInterface upbFraction = tf.getuPbFraction();
+            try {
+                resetUPbFractionReduction(upbFraction);
+            } catch (Exception e) {
+            }
+        }
+    }
+
     /**
      *
+     * @param inLiveMode the value of inLiveMode
      */
     @Override
-    public void applyCorrections() {
+    public void applyCorrections(boolean inLiveMode) {
 
         // feb 2016 temp hack for SHRIMP
         if (rawDataFileHandler instanceof ShrimpFileHandler) {
             //do nothing
         } else {
+
             // dec 2014 - initialize fractions for rho calcs and common lead correction
             SortedSet<TripoliFraction> allFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.ALL, IncludedTypeEnum.INCLUDED);//dec 2015 .ALL);
             Iterator<TripoliFraction> allFractionsIterator = allFractions.iterator();
@@ -669,43 +705,49 @@ public class TripoliSession implements
             while (allFractionsIterator.hasNext()) {
                 TripoliFraction tf = allFractionsIterator.next();
                 ETFractionInterface upbFraction = tf.getuPbFraction();
-                if (upbFraction == null) {
-                    System.out.println("Missing upbFraction for " + tf.getFractionID());
-                } else {
-                    ((UPbLAICPMSFraction) upbFraction).setSfciTotal(null);
-                    ((UPbLAICPMSFraction) upbFraction).initializeUpperPhiMap();
-                    upbFraction.getRadiogenicIsotopeRatioByName("rhoR206_238r__r207_235r").setValue(ReduxConstants.NO_RHO_FLAG);
-                    upbFraction.getRadiogenicIsotopeRatioByName("rhoR207_206r__r238_206r").setValue(ReduxConstants.NO_RHO_FLAG);
-                    upbFraction.getRadiogenicIsotopeRatioByName("rhoR206_238PbcCorr__r207_235PbcCorr").setValue(ReduxConstants.NO_RHO_FLAG);
-                    upbFraction.getRadiogenicIsotopeRatioByName("rhoR207_206PbcCorr__r238_206PbcCorr").setValue(ReduxConstants.NO_RHO_FLAG);
+                try {
+                    if (!inLiveMode || ((UPbLAICPMSFraction) upbFraction).getSfciTotal() == null) {
+                        resetUPbFractionReduction(upbFraction);
+                    }
+                } catch (Exception e) {
                 }
             }
 
-            calculateUThConcentrationsForUnknowns();
+            if (!inLiveMode) {
+                calculateUThConcentrationsForUnknowns();
+            }
 
             sessionCorrectedUnknownsSummaries = new TreeMap<>();
 
             if (fractionationTechnique.compareTo(FractionationTechniquesEnum.INTERCEPT) == 0) {
-                applyFractionationCorrectionsForIntercept();
+                applyFractionationCorrectionsForIntercept(inLiveMode);
             } else if (fractionationTechnique.compareTo(FractionationTechniquesEnum.DOWNHOLE) == 0) {
-                applyFractionationCorrectionsForDownhole();
+                if (!inLiveMode) {
+                    applyFractionationCorrectionsForDownhole();
+                }
             }
         }
     }
 
+    /**
+     *
+     * @param inLiveMode the value of inLiveMode
+     */
     @Override
-    public void interceptCalculatePbcCorrAndRhos() {
-        // refit any  fractions not currently fitted
-        Set<TripoliFraction> includedTripoliFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.ALL, IncludedTypeEnum.INCLUDED);
-        for (TripoliFraction tf : includedTripoliFractions) {
-            tf.reProcessToRejectNegativeRatios();
-            if (!tf.isCurrentlyFitted()) {
-                tf.updateInterceptFitFunctionsIncludingCommonLead();
-                fitFunctionsUpToDate = false;
+    public void interceptCalculatePbcCorrAndRhos(boolean inLiveMode) {
+        if (!inLiveMode) {
+            // refit any  fractions not currently fitted
+            Set<TripoliFraction> includedTripoliFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.ALL, IncludedTypeEnum.INCLUDED);
+            for (TripoliFraction tf : includedTripoliFractions) {
+                tf.reProcessToRejectNegativeRatios();
+                if (!tf.isCurrentlyFitted()) {
+                    tf.updateInterceptFitFunctionsIncludingCommonLead();
+                    fitFunctionsUpToDate = false;
+                }
             }
         }
 
-        prepareForReductionAndCommonLeadCorrection();
+        prepareForReductionAndCommonLeadCorrection(inLiveMode);
     }
 
     @Override
@@ -718,7 +760,7 @@ public class TripoliSession implements
 //            tf.updateDownholeFitFunctionsExcludingCommonLead();
 //        }
 
-        prepareForReductionAndCommonLeadCorrection();
+        prepareForReductionAndCommonLeadCorrection(false);
     }
 
     private void calculateUThConcentrationsForUnknowns() {
@@ -854,7 +896,12 @@ public class TripoliSession implements
         }
     }
 
-    private void prepareForReductionAndCommonLeadCorrection(FractionSelectionTypeEnum fractionSelectionTypeEnum) {
+    /**
+     *
+     * @param fractionSelectionTypeEnum the value of fractionSelectionTypeEnum
+     * @param inLiveMode the value of isLiveMode
+     */
+    private void prepareForReductionAndCommonLeadCorrection(FractionSelectionTypeEnum fractionSelectionTypeEnum, boolean inLiveMode) {
 
         SortedSet<TripoliFraction> selectedFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, fractionSelectionTypeEnum, IncludedTypeEnum.INCLUDED);
         int countOfSelectedFractions = selectedFractions.size();
@@ -913,56 +960,68 @@ public class TripoliSession implements
         while (selectedFractionsIterator.hasNext()) {
             TripoliFraction tf = selectedFractionsIterator.next();
 
-            // undo Pbc correction for standard
-            if (tf.isStandard()) {
-                tf.setCommonLeadLossCorrectionScheme(CommonLeadLossCorrectionSchemeNONE.getInstance());
-            }
-
-            SortedMap<String, ValueModel> parameters = tf.assembleCommonLeadCorrectionParameters();
-            SortedMap<String, BigDecimal> parametersSK = tf.assembleStaceyKramerCorrectionParameters();
-
+            // June 2016 - only do new fractions
             FractionI uPbFraction = tf.getuPbFraction();
-            ((UPbLAICPMSFraction) uPbFraction).setCommonLeadCorrectionParameters(parameters);
-            ((UPbLAICPMSFraction) uPbFraction).setStaceyKramerCorrectionParameters(parametersSK);
-            ((UPbLAICPMSFraction) uPbFraction).setUseStaceyKramer(tf.getInitialPbModelET() instanceof StaceyKramersInitialPbModelET);
-            ((UPbLAICPMSFraction) uPbFraction).setCommonLeadLossCorrectionScheme(tf.getCommonLeadLossCorrectionScheme());
-            ((UPbLAICPMSFraction) uPbFraction).setRadDateForSKSynch(tf.getRadDateForSKSynch());
+            if (((UPbLAICPMSFraction) uPbFraction).getSfciTotal() == null) {
 
-            try {
-                Matrix SfciTotal = tf.calculateUncertaintyPbcCorrections(fractionationTechnique);
-
-                // add row and column for r238_235s of tripoli sample
-                Matrix SfciTotalPlus = new Matrix(SfciTotal.getRowDimension() + 1, SfciTotal.getColumnDimension() + 1, 0.0);
-                SfciTotalPlus.setMatrix(0, SfciTotal.getRowDimension() - 1, 0, SfciTotal.getColumnDimension() - 1, SfciTotal);
-
-                // now modify Sfci for fraction
-                SfciTotalPlus.set(0, 0, sessionRatioDiagonalSu[0][fractionCounter]);
-                SfciTotalPlus.set(1, 1, sessionRatioDiagonalSu[1][fractionCounter]);
-                SfciTotalPlus.set(2, 2, sessionRatioDiagonalSu[2][fractionCounter]);
-
-                double sampleR238_235s = tf.getSampleR238_235s().getValue().doubleValue();
-                if (sampleR238_235s != 0.0) {
-                    SfciTotalPlus.set(6, 6, Math.pow(tf.getSampleR238_235s().getOneSigmaAbs().doubleValue() / sampleR238_235s, 2));
-                } else {
-                    SfciTotalPlus.set(6, 6, 0.0);
+                // undo Pbc correction for standard
+                if (tf.isStandard()) {
+                    tf.setCommonLeadLossCorrectionScheme(CommonLeadLossCorrectionSchemeNONE.getInstance());
                 }
 
-                ((UPbLAICPMSFraction) uPbFraction).setSfciTotal(SfciTotalPlus);
-            } catch (Exception e) {
-                // problem with matrix math
+                SortedMap<String, ValueModel> parameters = tf.assembleCommonLeadCorrectionParameters();
+                SortedMap<String, BigDecimal> parametersSK = tf.assembleStaceyKramerCorrectionParameters();
+
+                ((UPbLAICPMSFraction) uPbFraction).setCommonLeadCorrectionParameters(parameters);
+                ((UPbLAICPMSFraction) uPbFraction).setStaceyKramerCorrectionParameters(parametersSK);
+                ((UPbLAICPMSFraction) uPbFraction).setUseStaceyKramer(tf.getInitialPbModelET() instanceof StaceyKramersInitialPbModelET);
+                ((UPbLAICPMSFraction) uPbFraction).setCommonLeadLossCorrectionScheme(tf.getCommonLeadLossCorrectionScheme());
+                ((UPbLAICPMSFraction) uPbFraction).setRadDateForSKSynch(tf.getRadDateForSKSynch());
+
+                try {
+                    Matrix SfciTotal = tf.calculateUncertaintyPbcCorrections(fractionationTechnique, inLiveMode);
+
+                    // add row and column for r238_235s of tripoli sample
+                    Matrix SfciTotalPlus = new Matrix(SfciTotal.getRowDimension() + 1, SfciTotal.getColumnDimension() + 1, 0.0);
+                    SfciTotalPlus.setMatrix(0, SfciTotal.getRowDimension() - 1, 0, SfciTotal.getColumnDimension() - 1, SfciTotal);
+
+                    // now modify Sfci for fraction
+                    SfciTotalPlus.set(0, 0, sessionRatioDiagonalSu[0][fractionCounter]);
+                    SfciTotalPlus.set(1, 1, sessionRatioDiagonalSu[1][fractionCounter]);
+                    SfciTotalPlus.set(2, 2, sessionRatioDiagonalSu[2][fractionCounter]);
+
+                    double sampleR238_235s = tf.getSampleR238_235s().getValue().doubleValue();
+                    if (sampleR238_235s != 0.0) {
+                        SfciTotalPlus.set(6, 6, Math.pow(tf.getSampleR238_235s().getOneSigmaAbs().doubleValue() / sampleR238_235s, 2));
+                    } else {
+                        SfciTotalPlus.set(6, 6, 0.0);
+                    }
+
+                    ((UPbLAICPMSFraction) uPbFraction).setSfciTotal(SfciTotalPlus);
+                } catch (Exception e) {
+                    // problem with matrix math
+                }
             }
             // the rest of this math occurs in fraction reduction once we are in Redux part
             fractionCounter++;
         }
     }
 
+    /**
+     *
+     * @param inLiveMode the value of isLiveMode
+     */
     @Override
-    public void prepareForReductionAndCommonLeadCorrection() {
-        prepareForReductionAndCommonLeadCorrection(FractionSelectionTypeEnum.STANDARD);
-        prepareForReductionAndCommonLeadCorrection(FractionSelectionTypeEnum.UNKNOWN);
+    public void prepareForReductionAndCommonLeadCorrection(boolean inLiveMode) {
+        prepareForReductionAndCommonLeadCorrection(FractionSelectionTypeEnum.STANDARD, inLiveMode);
+        prepareForReductionAndCommonLeadCorrection(FractionSelectionTypeEnum.UNKNOWN, inLiveMode);
     }
 
-    private void applyFractionationCorrectionsForIntercept() {
+    /**
+     *
+     * @param inLiveMode the value of inLiveMode
+     */
+    private void applyFractionationCorrectionsForIntercept(boolean inLiveMode) {
 
         // walk the sessions
         Iterator<RawRatioNames> sessionForStandardsIterator = sessionForStandardsInterceptFractionation.keySet().iterator();
@@ -970,22 +1029,20 @@ public class TripoliSession implements
             RawRatioNames rrName = sessionForStandardsIterator.next();
 
             AbstractSessionForStandardDataModel sessionForStandard
-                    = //
-                    sessionForStandardsInterceptFractionation.get(rrName);
+                    = sessionForStandardsInterceptFractionation.get(rrName);
 
             // get the session fit function
             AbstractFunctionOfX sessionFofX
-                    = 
-                    sessionForStandard.getSelectedFitFunction();
+                    = sessionForStandard.getSelectedFitFunction();
 
             if (sessionFofX == null) {
-                // let's do it and thus use the default fitfunction = spline unless spline generated a line when spline failed
+                // let's do it and thus use the default fitfunction = line
                 try {
-                    sessionForStandard.generateSetOfFitFunctions(true, false);
-                    sessionForStandard.setSelectedFitFunctionType(FitFunctionTypeEnum.SMOOTHING_SPLINE);
+                    sessionForStandard.generateSetOfFitFunctions(true, false, inLiveMode);
+                    sessionForStandard.setSelectedFitFunctionType(FitFunctionTypeEnum.LINE);
                     sessionFofX = sessionForStandard.getSelectedFitFunction();
                 } catch (Exception e) {
-                    System.out.println("Session for Intercept Standard NO fit functions success");
+                    System.out.println("Session for Intercept Standard NO fit functions success for session of " + rrName);
                 }
             }
 
@@ -1290,7 +1347,7 @@ public class TripoliSession implements
             if (sessionFofX == null) {
                 // let's do it and thus use the default fitfunction = spline unless spline generated a line when spline failed
                 try {
-                    sessionForStandard.generateSetOfFitFunctions(true, false);
+                    sessionForStandard.generateSetOfFitFunctions(true, false, false);
                     sessionForStandard.setSelectedFitFunctionType(FitFunctionTypeEnum.SMOOTHING_SPLINE);
                     sessionFofX = sessionForStandard.getSelectedFitFunction();
                 } catch (Exception e) {
@@ -1895,5 +1952,22 @@ public class TripoliSession implements
     @Override
     public void setFitFunctionsUpToDate(boolean fitFunctionsUpToDate) {
         this.fitFunctionsUpToDate = fitFunctionsUpToDate;
+    }
+
+    /**
+     * @return the refMaterialSessionFittedForLiveMode
+     */
+    @Override
+    public boolean isRefMaterialSessionFittedForLiveMode() {
+        return refMaterialSessionFittedForLiveMode;
+    }
+
+    /**
+     * @param refMaterialSessionFittedForLiveMode the
+     * refMaterialSessionFittedForLiveMode to set
+     */
+    @Override
+    public void setRefMaterialSessionFittedForLiveMode(boolean refMaterialSessionFittedForLiveMode) {
+        this.refMaterialSessionFittedForLiveMode = refMaterialSessionFittedForLiveMode;
     }
 }

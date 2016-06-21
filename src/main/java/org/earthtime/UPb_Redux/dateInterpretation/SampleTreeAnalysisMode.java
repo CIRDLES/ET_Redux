@@ -46,7 +46,6 @@ import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.aliquots.ReduxAliquotInterface;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.dialogs.DialogEditor;
-import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.samples.SampleInterface;
 
 /**
@@ -99,66 +98,66 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
 
         // populate tree
         // todo: just walk aliquots now that ths mapping is fixed (may 2015)
-        int saveAliquotNum = -1;
-        for (int i = 0; i < sample.getFractions().size(); i++) {
-            ETFractionInterface tempFraction = sample.getFractions().get(i);
-            AliquotInterface tempAliquot;
+//        int saveAliquotNum = -1;
+//        for (int i = 0; i < sample.getFractions().size(); i++) {
+        for (int i = 0; i < sample.getActiveAliquots().size(); i++) {
+//            ETFractionInterface tempFraction = sample.getFractions().get(i);
+            AliquotInterface tempAliquot = sample.getActiveAliquots().get(i);
 
-            if (!tempFraction.isRejected()) {
-                if (saveAliquotNum != tempFraction.getAliquotNumber()) {
-                    saveAliquotNum = tempFraction.getAliquotNumber();
+//            if (!tempFraction.isRejected()) {
+//                if (saveAliquotNum != tempFraction.getAliquotNumber()) {
+//                    saveAliquotNum = tempFraction.getAliquotNumber();
+            //tempAliquot = sample.getAliquotByNumber(saveAliquotNum);
+            aliquotNode = new DefaultMutableTreeNode(tempAliquot);
 
-                    tempAliquot = sample.getAliquotByNumber(saveAliquotNum);
-                    aliquotNode = new DefaultMutableTreeNode(tempAliquot);
+            ((DefaultMutableTreeNode) getModel().getRoot()).add(aliquotNode);
 
-                    ((DefaultMutableTreeNode) getModel().getRoot()).add(aliquotNode);
+            // get a master vector of active fraction names
+            Vector<String> activeFractionIDs
+                    = ((ReduxAliquotInterface) tempAliquot).//
+                    getAliquotFractionIDs();
 
-                    // get a master vector of active fraction names
-                    Vector<String> activeFractionIDs
-                            = ((ReduxAliquotInterface) tempAliquot).//
-                            getAliquotFractionIDs();
+            // now load the sample date interpretations
+            for (int index = 0; index < tempAliquot.getSampleDateModels().size(); index++) {
+                DefaultMutableTreeNode sampleDateModelNode
+                        = new DefaultMutableTreeNode(//
+                                tempAliquot.getSampleDateModels().get(index));
 
-                    // now load the sample date interpretations
-                    for (int index = 0; index < tempAliquot.getSampleDateModels().size(); index++) {
-                        DefaultMutableTreeNode sampleDateModelNode
-                                = new DefaultMutableTreeNode(//
-                                        tempAliquot.getSampleDateModels().get(index));
+                aliquotNode.add(sampleDateModelNode);
 
-                        aliquotNode.add(sampleDateModelNode);
-
-                        // remove from activefractionIDs any fraction with 0 date
-                        Vector<String> zeroFractionDates = new Vector<>();
-                        for (int f = 0; f < activeFractionIDs.size(); f++) {
-                            try {
-                                if (!((SampleDateModel) tempAliquot.getSampleDateModels().get(index)).//
-                                        fractionDateIsPositive(((ReduxAliquotInterface) tempAliquot).getAliquotFractionByName(activeFractionIDs.get(f)))) {
-                                    zeroFractionDates.add(activeFractionIDs.get(f));
-                                }
-                            } catch (Exception e) {
-                            }
+                // remove from activefractionIDs any fraction with 0 date
+                Vector<String> zeroFractionDates = new Vector<>();
+                for (int f = 0; f < activeFractionIDs.size(); f++) {
+                    try {
+                        if (!((SampleDateModel) tempAliquot.getSampleDateModels().get(index)).//
+                                fractionDateIsPositive(((ReduxAliquotInterface) tempAliquot).getAliquotFractionByName(activeFractionIDs.get(f)))) {
+                            zeroFractionDates.add(activeFractionIDs.get(f));
                         }
-                        for (int f = 0; f < zeroFractionDates.size(); f++) {
-                            activeFractionIDs.remove(zeroFractionDates.get(f));
-                        }
-
-                        // only show sample dates with non-zero data
-                        if (activeFractionIDs.size() > 0) {
-                            // give sample Date interpretation a value for aliquot
-                            ((SampleDateModel) tempAliquot.getSampleDateModels().get(index)).//
-                                    setAliquot(tempAliquot);
-                            // calculate sample age
-                            ((SampleDateModel) tempAliquot.getSampleDateModels().get(index)).//
-                                    CalculateDateInterpretationForAliquot();
-
-                            populateSampleDateModel(
-                                    activeFractionIDs,
-                                    tempAliquot,
-                                    tempAliquot.getSampleDateModels().get(index),
-                                    sampleDateModelNode);
-                        }
-
+                    } catch (Exception e) {
                     }
                 }
+                for (int f = 0; f < zeroFractionDates.size(); f++) {
+                    activeFractionIDs.remove(zeroFractionDates.get(f));
+                }
+
+                // only show sample dates with non-zero data
+                if (activeFractionIDs.size() > 0) {
+                    // give sample Date interpretation a value for aliquot
+                    ((SampleDateModel) tempAliquot.getSampleDateModels().get(index)).//
+                            setAliquot(tempAliquot);
+                    // calculate sample age
+                    ((SampleDateModel) tempAliquot.getSampleDateModels().get(index)).//
+                            CalculateDateInterpretationForAliquot();
+
+                    populateSampleDateModel(
+                            activeFractionIDs,
+                            tempAliquot,
+                            tempAliquot.getSampleDateModels().get(index),
+                            sampleDateModelNode);
+                }
+
+//                    }
+//                }
             }
         }
 

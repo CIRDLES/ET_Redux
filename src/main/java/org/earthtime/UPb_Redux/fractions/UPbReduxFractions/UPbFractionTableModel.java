@@ -288,7 +288,7 @@ public class UPbFractionTableModel extends AbstractTableModel {
             if ((e != null)) {
                 // here we edit the fraction and refresh the table
                 parentFrame.editFraction(fraction, 8);// kwikitab
-                parentFrame.updateReportTable(false);
+                parentFrame.updateReportTable(false, false);
             }
         }
     }
@@ -332,7 +332,7 @@ public class UPbFractionTableModel extends AbstractTableModel {
                 // here we edit the aliquot and refresh the table
                 parentFrame.editAliquotByNumber(getAliquotNum());
             }
-            parentFrame.rebuildFractionDisplays(true);//changed to true may 2012false);
+            parentFrame.rebuildFractionDisplays(true, false);//changed to true may 2012false);
         }
 
         public int getMyRow() {
@@ -387,7 +387,7 @@ public class UPbFractionTableModel extends AbstractTableModel {
                 getSample().getFractions().get(myRow).//
                         setRejected(!this.isSelected());
                 
-                getParentFrame().updateReportTable( false);//.rebuildFractionDisplays(false);
+                getParentFrame().updateReportTable(false, false);//.rebuildFractionDisplays(false);
             }
 //            getParentFrame().updateReportTable( false);//.rebuildFractionDisplays(false);
 

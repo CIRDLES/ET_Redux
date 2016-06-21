@@ -260,9 +260,10 @@ public class DataViewsOverlay extends AbstractRawDataView implements FitFunction
     /**
      *
      * @param doReScale the value of doReScale
+     * @param inLiveMode the value of inLiveMode
      */
     @Override
-    public void preparePanel(boolean doReScale) {
+    public void preparePanel(boolean doReScale, boolean inLiveMode) {
         this.removeAll();
 
         setDisplayOffsetY(0.0);
@@ -472,7 +473,7 @@ public class DataViewsOverlay extends AbstractRawDataView implements FitFunction
                                         }
 
                                         // refresh all
-                                        ((AbstractRawDataView) sampleSessionDataView).refreshPanel(true);
+                                        ((AbstractRawDataView) sampleSessionDataView).refreshPanel(true, false);
 
                                         updateReportTable();
                                     }
@@ -498,7 +499,7 @@ public class DataViewsOverlay extends AbstractRawDataView implements FitFunction
                                         }
 
                                         // refresh all
-                                        ((AbstractRawDataView) sampleSessionDataView).refreshPanel(true);
+                                        ((AbstractRawDataView) sampleSessionDataView).refreshPanel(true, false);
 
                                         updateReportTable();
                                     }
@@ -524,7 +525,7 @@ public class DataViewsOverlay extends AbstractRawDataView implements FitFunction
                                         }
 
                                         // refresh all
-                                        ((AbstractRawDataView) sampleSessionDataView).refreshPanel(true);
+                                        ((AbstractRawDataView) sampleSessionDataView).refreshPanel(true, false);
 
                                         updateReportTable();
 

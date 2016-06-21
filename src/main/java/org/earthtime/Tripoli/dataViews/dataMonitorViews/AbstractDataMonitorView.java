@@ -38,9 +38,7 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.SortedSet;
@@ -260,17 +258,13 @@ public class AbstractDataMonitorView extends AbstractRawDataView
 
         if (lastMonitoredTime > saveMonitoredTime) {
 
-            Calendar cal = Calendar.getInstance();
-            cal.clear();
-            cal.setTimeInMillis(lastMonitoredTime);
-            SimpleDateFormat date_format = new SimpleDateFormat("MMM dd,yyyy HH:mm:ss");
-
             if (loadDataTask != null) {
                 if (loadDataTask.isDone()) {
                     saveMonitoredTime = lastMonitoredTime;
                     fireLoadDataTask();
                 }
             } else {
+                saveMonitoredTime = lastMonitoredTime;
                 fireLoadDataTask();
             }
         }
@@ -294,28 +288,32 @@ public class AbstractDataMonitorView extends AbstractRawDataView
 
         this.removeAll();
 
-        tripoliSession.calculateSessionFitFunctionsForPrimaryStandard();
+        // june 2016 check for ref material
+        if (!tripoliSession.isRefMaterialSessionFittedForLiveMode()) {// || tripoliSession.getTripoliFractions().last().isStandard()) {
+            tripoliSession.calculateSessionFitFunctionsForPrimaryStandard(true);
+            tripoliSession.setRefMaterialSessionFittedForLiveMode(true);
+        }
 
         try {
-            tripoliSession.applyCorrections();
+            tripoliSession.applyCorrections(true);
         } catch (Exception e) {
         }
 
         try {
-            tripoliSession.prepareForReductionAndCommonLeadCorrection();
+            tripoliSession.prepareForReductionAndCommonLeadCorrection(true);
         } catch (Exception e) {
         }
 
         try {
-            getuPbReduxFrame().updateReportTable(true);
+            getuPbReduxFrame().updateReportTable(true, true);
         } catch (Exception e) {
         }
 
-        preparePanel(true);
+        preparePanel(true, true);
     }
 
     @Override
-    public void preparePanel(boolean doReScale) {
+    public void preparePanel(boolean doReScale, boolean inLiveMode) {
 
         this.removeAll();
 
@@ -347,7 +345,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
                                         250,//
                                         160));
 
-                rawDataModelView.preparePanel(doReScale);
+                rawDataModelView.preparePanel(doReScale, inLiveMode);
 
                 this.add(rawDataModelView, JLayeredPane.DEFAULT_LAYER);
 
@@ -394,13 +392,13 @@ public class AbstractDataMonitorView extends AbstractRawDataView
                                         250, //
                                         180));
 
-                sessionFitFunctionsPresentationView.preparePanel(doReScale);
+                sessionFitFunctionsPresentationView.preparePanel(doReScale, inLiveMode);
 
                 this.add(sessionFitFunctionsPresentationView, JLayeredPane.DEFAULT_LAYER);
 
                 count++;
             }
-            prepareConcordia();
+            prepareConcordia(inLiveMode);
 
             preparePDF();
 
@@ -450,18 +448,20 @@ public class AbstractDataMonitorView extends AbstractRawDataView
         closeAndReviewButton.setEnabled(true);
         this.add(closeAndReviewButton, LAYER_FIVE);
 
-        ET_JButton recalcButton = new ET_JButton("Re-calculate rhos");
+        ET_JButton recalcButton = new ET_JButton("Update Sessions");
         recalcButton.setBounds(leftMargin + 450, topMargin + 660, 120, 25);
         recalcButton.addActionListener((ActionEvent ae) -> {
             try {
-                tripoliSession.interceptCalculatePbcCorrAndRhos();
+                tripoliSession.resetAllUPbFractionReduction();
+                tripoliSession.applyCorrections(true);
+                tripoliSession.interceptCalculatePbcCorrAndRhos(true);
             } catch (Exception e) {
             }
             try {
-                getuPbReduxFrame().updateReportTable(true);
+                getuPbReduxFrame().updateReportTable(true, true);
             } catch (Exception e) {
             }
-            preparePanel(true);
+            preparePanel(true, true);
         });
 
         recalcButton.setEnabled(true);
@@ -470,7 +470,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
         ET_JButton refreshButton = new ET_JButton("Refresh Views");
         refreshButton.setBounds(leftMargin + 570, topMargin + 660, 120, 25);
         refreshButton.addActionListener((ActionEvent ae) -> {
-            preparePanel(true);
+            preparePanel(true, false);
         });
 
         refreshButton.setEnabled(true);
@@ -480,7 +480,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
         editReportSettingsButton.setBounds(602, topMargin + 600, 120, 25);
         editReportSettingsButton.addActionListener((ActionEvent ae) -> {
             ReportSettingsInterface.EditReportSettings(project.getSuperSample().getReportSettingsModel(), uPbReduxFrame);
-            uPbReduxFrame.updateReportTable(false);
+            uPbReduxFrame.updateReportTable(false, true);
             ((TabbedReportViews) reportTableTabbedPane).prepareTabs();
         });
 
@@ -509,8 +509,9 @@ public class AbstractDataMonitorView extends AbstractRawDataView
 
     /**
      *
+     * @param inLiveMode the value of inLiveMode
      */
-    public void prepareConcordia() {
+    public void prepareConcordia(boolean inLiveMode) {
 
         if (concordiaGraphPanel != null) {
             this.remove(concordiaGraphPanel);
@@ -559,7 +560,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
 
             ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
                     setSelectedFractions(selectedFractions);
-            ((PlottingDetailsDisplayInterface) concordiaGraphPanel).resetPanel(true);
+            ((PlottingDetailsDisplayInterface) concordiaGraphPanel).resetPanel(true, inLiveMode);
         } catch (Exception e) {
         }
 
@@ -684,13 +685,13 @@ public class AbstractDataMonitorView extends AbstractRawDataView
     }
 
     @Override
-    public void calculateSessionFitFunctionsForPrimaryStandard() {
-        tripoliSession.calculateSessionFitFunctionsForPrimaryStandard();
+    public void calculateSessionFitFunctionsForPrimaryStandard(boolean inLiveMode) {
+        tripoliSession.calculateSessionFitFunctionsForPrimaryStandard(inLiveMode);
     }
 
     @Override
-    public void applyCorrections() {
-        tripoliSession.applyCorrections();
+    public void applyCorrections(boolean inLiveMode) {
+        tripoliSession.applyCorrections(inLiveMode);
     }
 
     @Override
@@ -705,11 +706,11 @@ public class AbstractDataMonitorView extends AbstractRawDataView
         MaskingSingleton.getInstance().setRightShadeCount(-1);
 
         rawDataFileHandler.getAndLoadRawIntensityDataFile(//
-                loadDataTask, usingFullPropagation, leftShadeCount, ignoreFirstFractions);
+                loadDataTask, usingFullPropagation, leftShadeCount, ignoreFirstFractions, true);
 
     }
 
-    private void loadAndShowRawDataFinishUp() {
+    private synchronized void  loadAndShowRawDataFinishUp() {
         SortedSet<TripoliFraction> tripoliFractionsCurrent;
 
         if (savedCountOfFractions == 0) {
@@ -769,8 +770,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
             tripoliSession.prepareFractionTimeStamps();
             tripoliSession.processRawData(true);
 
-            tripoliSession.postProcessDataForCommonLeadLossPreparation();
-
+//            tripoliSession.postProcessDataForCommonLeadLossPreparation();
             try {
                 loadDataTaskProgressBar.repaint();
 
@@ -779,11 +779,16 @@ public class AbstractDataMonitorView extends AbstractRawDataView
 
             project.prepareSamplesForRedux();
 
-            getuPbReduxFrame().initializeProject();
+            getuPbReduxFrame().initializeProject(true);
 
             updateDisplays();
         }
 
+    }
+
+    @Override
+    public void resetAllUPbFractionReduction() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     private class LoadDataTask extends SwingWorker<Void, Void> {
@@ -805,10 +810,8 @@ public class AbstractDataMonitorView extends AbstractRawDataView
         public Void doInBackground() {
             //Initialize progress property.
             add(loadDataTaskProgressBar);
-            //loadDataTaskProgressBar.setVisible(true);
             loadDataTaskProgressBar.setValue(0);
             loadDataTaskProgressBar.repaint();
-            //setProgress(0);
             repaint();
 
             loadAndShowRawData(usingFullPropagation, leftShadeCount, ignoreFirstFractions);
@@ -820,13 +823,12 @@ public class AbstractDataMonitorView extends AbstractRawDataView
          */
         @Override
         public void done() {
-//            Toolkit.getDefaultToolkit().beep();
+
             remove(loadDataTaskProgressBar);
-            //loadDataTaskProgressBar.setVisible(false);
             loadDataTaskProgressBar.setValue(0);
             loadDataTaskProgressBar.repaint();
-            //setProgress(0);
             repaint();
+
             System.out.println("LOADING TASK DONE !!");
             loadAndShowRawDataFinishUp();
         }
@@ -849,6 +851,12 @@ public class AbstractDataMonitorView extends AbstractRawDataView
                 int progress = (Integer) pce.getNewValue();
                 loadDataTaskProgressBar.setValue(progress);
                 loadDataTaskProgressBar.repaint();//.validate();
+            } else if ("refMaterialLoaded".equalsIgnoreCase(pce.getPropertyName())) {
+                try {
+                    tripoliSession.setRefMaterialSessionFittedForLiveMode(false);
+                    System.out.println("ref material loaded <<<<");
+                } catch (Exception e) {
+                }
             }
         }
     }
@@ -908,7 +916,6 @@ public class AbstractDataMonitorView extends AbstractRawDataView
         paintInit(g2d);
 
         // draw box around possibly missing pdf
-//        g2d.drawRect(1145, topMargin - 2, 510, 500);
         g2d.drawRect(1350, topMargin + 50, pdfWidth + 5, pdfHeight + 5);
     }
 
@@ -954,16 +961,6 @@ public class AbstractDataMonitorView extends AbstractRawDataView
 
         liveDataScrollPane.setViewportView(this);
 
-        //        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(dataMonitorViewDialog.getContentPane());
-        //        dataMonitorViewDialog.getContentPane().setLayout(layout);
-        //        layout.setHorizontalGroup(
-        //            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-        //            .addComponent(liveDataScrollPane)
-        //        );
-        //        layout.setVerticalGroup(
-        //            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-        //            .addComponent(liveDataScrollPane)
-        //        );
         dataMonitorViewDialog.add(liveDataScrollPane);
         dataMonitorViewDialog.pack();
 
@@ -991,10 +988,8 @@ public class AbstractDataMonitorView extends AbstractRawDataView
             }
         });
 
-//        try {
         dataMonitorViewDialog.setVisible(true);
-//        } catch (Exception e) {
-//        }
+
         return dataMonitorViewDialog;
     }
 
@@ -1037,7 +1032,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
             ((DateProbabilityDensityPanel) probabilityPanel).//
                     setSelectedAliquot(0);
             ((PlottingDetailsDisplayInterface) probabilityPanel).//
-                    refreshPanel(true);
+                    refreshPanel(true, true);
 
         } else if (nodeInfo instanceof AliquotInterface) {
 

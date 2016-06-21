@@ -29,7 +29,6 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.user.UPbReduxConfigurator;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
 import org.earthtime.dataDictionaries.ReportSpecifications;
@@ -198,10 +197,7 @@ public class ReportSettings implements
         ReportSettingsInterface reportSettingsModel = myReportSettingsModel;
 
         if (myReportSettingsModel == null) {
-            try {
-                reportSettingsModel = ReduxLabData.getInstance().getDefaultReportSettingsModelByIsotopeStyle(myReportSettingsModel.getIsotopeStyle());
-            } catch (BadLabDataException badLabDataException) {
-            }
+            reportSettingsModel = ReduxLabData.getInstance().getDefaultReportSettingsModelByIsotopeStyle(myReportSettingsModel.getIsotopeStyle());
         } else // new approach oct 2014
         {   // this provides for seamless updates to reportsettings implementation
             String myReportSettingsName = myReportSettingsModel.getName();

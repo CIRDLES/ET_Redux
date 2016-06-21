@@ -581,7 +581,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
                 // go straight to data table display
                 myProjectManager = null;
-                initializeProject();
+                initializeProject(false);
 
             } else { // instantiate project manager so processing can be initialited
 
@@ -639,7 +639,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         if (theProject != null) {
             myState.getReduxPreferences().setDefaultSampleAnalysisPurpose(theProject.getAnalysisPurpose());
             theProject.saveTheProjectAsSerializedReduxFile();
-            setUpTheProject(false);
+            setUpTheProject(false, false);
         }
     }
 
@@ -653,7 +653,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
         if (selectedFile != null) {
             myState.updateMRUProjectList(selectedFile);
-            setUpTheProject(false);
+            setUpTheProject(false, false);
 
             saveProjectFile_menuItem.setEnabled(false);
 
@@ -672,12 +672,13 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
     /**
      *
+     * @param inLiveMode the value of inLiveMode
      */
-    public void initializeProject() {
+    public void initializeProject(boolean inLiveMode) {
         theSample = theProject.getSuperSample();
         theSample.setChanged(false);
 
-        setUpTheProject(false);
+        setUpTheProject(false, inLiveMode);
     }
 
     /**
@@ -698,8 +699,9 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
     /**
      *
      * @param performReduction
+     * @param inLiveMode the value of inLiveMode
      */
-    public void setUpTheProject(boolean performReduction) {
+    public void setUpTheProject(boolean performReduction, boolean inLiveMode) {
         SampleInterface.registerSampleWithLabData(theSample);
 
         SampleInterface superSample = theProject.getSuperSample();
@@ -726,7 +728,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             superSample.setLegacyStatusForReportTable();
         } catch (Exception e) {
         }
-        rebuildFractionDisplays(performReduction);
+        rebuildFractionDisplays(performReduction, inLiveMode);
 
         // set up concordia for use on fraction details window
         //as well as interpret date window and archiving
@@ -775,7 +777,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                         ((AbstractProjectOfLegacySamplesDataManagerDialog) myProjectManager).getImportFractionFolderMRU().toString());
 
                 if (!theProject.getProjectSamples().isEmpty()) {
-                    setUpTheProject(false);
+                    setUpTheProject(false, false);
                     try {
                         saveTheProject();
                     } catch (BadLabDataException ex) {
@@ -835,7 +837,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         myProjectManager.setVisible(true);
 
         if (!theProject.getProjectSamples().isEmpty()) {
-            setUpTheProject(false);
+            setUpTheProject(false, false);
             try {
                 saveTheProject();
             } catch (BadLabDataException ex) {
@@ -907,7 +909,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                 ((AbstractProjectOfLegacySamplesDataManagerDialog) myProjectManager).getImportFractionFolderMRU().toString());
 
         if (!theProject.getProjectSamples().isEmpty()) {
-            setUpTheProject(false);
+            setUpTheProject(false, false);
             try {
                 saveTheProject();
             } catch (BadLabDataException ex) {
@@ -1347,13 +1349,13 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         // this true causes data reduction
         // may 2012 first pass reduction
         if (performReduction) {
-            theSample.reduceSampleData();
+            theSample.reduceSampleData(false);
         }
 
         // feb 2010 added legacyData field to force display when no reduction happening
         theSample.setLegacyStatusForReportTable();
 
-        rebuildFractionDisplays(performReduction);
+        rebuildFractionDisplays(performReduction, false);
 
         // set up concordia for use on fraction details window
         //as well as interpret date window and archiving
@@ -1447,12 +1449,13 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
     /**
      *
      * @param performReduction
+     * @param inLiveMode the value of inLiveMode
      */
     @Override
-    public void rebuildFractionDisplays(boolean performReduction) {
+    public void rebuildFractionDisplays(boolean performReduction, boolean inLiveMode) {
         ((TabbedReportViews) getReportTableTabbedPane()).setSample(theSample);
 
-        updateReportTable(performReduction);
+        updateReportTable(performReduction, inLiveMode);
     }
 
     /**
@@ -1460,15 +1463,16 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
      */
     @Override
     public void updateReportTable() {
-        updateReportTable(false);
+        updateReportTable(false, false);
     }
 
     /**
      *
      * @param performReduction
+     * @param inLiveMode the value of inLiveMode
      */
     @Override
-    public void updateReportTable(boolean performReduction) {
+    public void updateReportTable(boolean performReduction, boolean inLiveMode) {
         // march 2013
         try {
             UPbFractionReducer.getInstance().setSessionCorrectedUnknownsSummaries(//
@@ -1477,7 +1481,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         }
 
         if (performReduction) {
-            theSample.reduceSampleData();
+            theSample.reduceSampleData(inLiveMode);
         }
 
         loadAndShowReportTableData();
@@ -1490,7 +1494,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
 //      updated with rescaling april 2016
         try {
-            ((SampleDateInterpretationsManager) sampleDateInterpDialog).refreshSampleDateInterpretations(false);
+            ((SampleDateInterpretationsManager) sampleDateInterpDialog).refreshSampleDateInterpretations(false, inLiveMode);
         } catch (Exception e) {
         }
     }
@@ -3427,7 +3431,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             interpretSampleDates_button.setEnabled(false);
 
             ((ConcordiaGraphPanel) myConcordiaGraphPanel).setShowTightToEdges(true);
-            ((PlottingDetailsDisplayInterface) myConcordiaGraphPanel).resetPanel(true);
+            ((PlottingDetailsDisplayInterface) myConcordiaGraphPanel).resetPanel(true, false);
 
             if (sampleDateInterpDialog != null) {
                 sampleDateInterpDialog.dispose();
@@ -3496,7 +3500,7 @@ private void LAICPMS_LegacyAnalysis_MC_UA_menuItemActionPerformed(java.awt.event
 }//GEN-LAST:event_LAICPMS_LegacyAnalysis_MC_UA_menuItemActionPerformed
 
 private void reduceAll_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reduceAll_buttonActionPerformed
-    updateReportTable(true);
+    updateReportTable(true, false);
 }//GEN-LAST:event_reduceAll_buttonActionPerformed
 
 private void reportResultsTableAsStringsInExcel_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reportResultsTableAsStringsInExcel_menuItemActionPerformed
@@ -3507,14 +3511,14 @@ private void loadReportSettingsModelFromLocalXMLFileActionPerformed(java.awt.eve
     myState.setMRUReportSettingsModelFolder(//
             setReportSettingsModelFromXMLFile(myState.getMRUReportSettingsModelFolder()));
 
-    updateReportTable(false);
+    updateReportTable(false, false);
 
 }//GEN-LAST:event_loadReportSettingsModelFromLocalXMLFileActionPerformed
 
 private void editCurrentReportSettingsModel_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editCurrentReportSettingsModel_menuItemActionPerformed
 
     ReportSettingsInterface.EditReportSettings(theSample.getReportSettingsModel(), this);
-    updateReportTable(false);
+    updateReportTable(false, false);
 }//GEN-LAST:event_editCurrentReportSettingsModel_menuItemActionPerformed
 
 private void reportResultsTableAsPDF_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reportResultsTableAsPDF_menuItemActionPerformed
@@ -3653,7 +3657,7 @@ private void startStopLiveUpdate_buttonActionPerformed(java.awt.event.ActionEven
             new ETWarningDialog(ex).setVisible(true);
         }
 
-        rebuildFractionDisplays(false);
+        rebuildFractionDisplays(false, false);
     }
 
     /**
@@ -3887,12 +3891,12 @@ private void updateData_buttonActionPerformed(java.awt.event.ActionEvent evt) {/
 
 private void selectAllFractions_menuItemActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectAllFractions_menuItemActionPerformed
     theSample.selectAllFractions();
-    updateReportTable(false);
+    updateReportTable(false, false);
 }//GEN-LAST:event_selectAllFractions_menuItemActionPerformed
 
 private void deSelectAllFractions_menuItemActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deSelectAllFractions_menuItemActionPerformed
     theSample.deSelectAllFractions();
-    updateReportTable(false);
+    updateReportTable(false, false);
 }//GEN-LAST:event_deSelectAllFractions_menuItemActionPerformed
 
 private void credits_menuItemActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_credits_menuItemActionPerformed
@@ -3911,7 +3915,7 @@ private void saveCurrentReportSettingsModelAsLocalXMLFileActionPerformed(java.aw
 private void loadDefaultReportSettingsModelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadDefaultReportSettingsModelActionPerformed
     theSample.restoreDefaultReportSettingsModel();
     theSample.setLegacyStatusForReportTable();
-    updateReportTable(false);
+    updateReportTable(false, false);
 }//GEN-LAST:event_loadDefaultReportSettingsModelActionPerformed
 
 private void writeCSVFileOfLAICPMSLegacyDataSampleFieldNames_SC_WSU_vBActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_writeCSVFileOfLAICPMSLegacyDataSampleFieldNames_SC_WSU_vBActionPerformed
@@ -4018,7 +4022,7 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     private void loadEARTHTIMEDefaultReportSettingsModel_menuItemActionPerformed ( java.awt.event.ActionEvent evt ) {//GEN-FIRST:event_loadEARTHTIMEDefaultReportSettingsModel_menuItemActionPerformed
         SampleInterface.loadDefaultEARTHTIMEReportSettingsModel(theSample);
         theSample.setLegacyStatusForReportTable();
-        updateReportTable(false);
+        updateReportTable(false, false);
     }//GEN-LAST:event_loadEARTHTIMEDefaultReportSettingsModel_menuItemActionPerformed
 
     private void exit_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exit_menuItemActionPerformed

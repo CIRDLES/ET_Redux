@@ -102,9 +102,10 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
      * @param usingFullPropagation the value of usingFullPropagation
      * @param leftShadeCount the value of leftShadeCount
      * @param ignoreFirstFractions the value of ignoreFirstFracts
+     * @param inLiveMode the value of inLiveMode
      */
     @Override
-    public void getAndLoadRawIntensityDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions) {
+    public void getAndLoadRawIntensityDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions, boolean inLiveMode) {
 
         if (referenceMaterialIncrementerMap == null) {
             referenceMaterialIncrementerMap = new ConcurrentHashMap<>();
@@ -152,7 +153,7 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
                 }
 
                 // create fractions from raw data and perform corrections and calculate ratios
-                tripoliFractions = loadRawDataFile(loadDataTask, usingFullPropagation, leftShadeCount, ignoreFirstFractions);
+                tripoliFractions = loadRawDataFile(loadDataTask, usingFullPropagation, leftShadeCount, ignoreFirstFractions, inLiveMode);
             }
         } else {
             JOptionPane.showMessageDialog(
@@ -202,11 +203,12 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
      * @param usingFullPropagation the value of usingFullPropagation
      * @param leftShadeCount the value of leftShadeCount
      * @param ignoreFirstFractions the value of ignoreFirstFractions
-     * @return
+     * @param inLiveMode the value of inLiveMode
+     * @return the java.util.SortedSet<org.earthtime.Tripoli.fractions.TripoliFraction>
      */
     @Override
     protected SortedSet<TripoliFraction> loadRawDataFile(//
-            SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions) {
+            SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions, boolean inLiveMode) {
 
         SortedSet myTripoliFractions = new TreeSet<>();
 
@@ -291,12 +293,16 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
                 massSpec.setCountOfAcquisitions(peakAcquisitions.size());
 
                 massSpec.processFractionRawRatiosII(//
-                        backgroundAcquisitions, peakAcquisitions, usingFullPropagation, tripoliFraction);
+                        backgroundAcquisitions, peakAcquisitions, usingFullPropagation, tripoliFraction, inLiveMode);
 
                 tripoliFraction.shadeDataActiveMapLeft(leftShadeCount);
-                System.out.println("\n**** Element II FractionID  " + fractionID + " refMat? " + isReferenceMaterial + " <<<<<<<<<<<<<<<<<<\n");
+                System.out.println("\n**** Element II FractionID  " + fractionID + " refMat? " + isReferenceMaterial + "  livemode = " + inLiveMode + " <<<<<<<<<<<<<<<<<<\n");
 
                 myTripoliFractions.add(tripoliFraction);
+                
+                if (isReferenceMaterial){
+                    loadDataTask.firePropertyChange("refMaterialLoaded", 0, 1);
+                }
 
             } catch (PyException pyException) {
                 System.out.println("bad read of fraction " + analysisFiles[f].getName() + " message = " + pyException.getMessage());

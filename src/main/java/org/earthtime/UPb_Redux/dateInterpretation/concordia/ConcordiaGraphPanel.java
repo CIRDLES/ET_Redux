@@ -1490,9 +1490,10 @@ public class ConcordiaGraphPanel extends JLayeredPane
     /**
      *
      * @param doReScale the value of doReScale
+     * @param inLiveMode the value of inLiveMode
      */
     @Override
-    public void resetPanel(boolean doReScale) {
+    public void resetPanel(boolean doReScale, boolean inLiveMode) {
 
         if (doReScale) {
             setDisplayOffsetX(0.0);
@@ -1513,17 +1514,18 @@ public class ConcordiaGraphPanel extends JLayeredPane
             graphPanelModeChanger.switchToPanMode();
         } catch (Exception e) {
         } finally {
-            refreshPanel(doReScale);
+            refreshPanel(doReScale, inLiveMode);
         }
     }
 
     /**
      *
      * @param doReScale the value of doReScale
+     * @param inLiveMode the value of inLiveMode
      */
     @Override
-    public void refreshPanel(boolean doReScale) {
-        preparePanel(doReScale);
+    public void refreshPanel(boolean doReScale, boolean inLiveMode) {
+        preparePanel(doReScale, inLiveMode);
         repaint();
     }
 
@@ -1544,9 +1546,10 @@ public class ConcordiaGraphPanel extends JLayeredPane
     /**
      *
      * @param doReScale the value of doReScale
+     * @param inLiveMode the value of inLiveMode
      */
     @Override
-    public void preparePanel(boolean doReScale) {
+    public void preparePanel(boolean doReScale, boolean inLiveMode) {
 
         try {
             if (getConcordiaFlavor().equalsIgnoreCase("Th")) {
@@ -1844,7 +1847,10 @@ public class ConcordiaGraphPanel extends JLayeredPane
         setImageMode("PAN");
 
         // april 2016 - this causes update of weighted means when sample is changed
-        SampleInterface.updateAndSaveSampleDateModelsByAliquot(sample);
+        // June 2016 not to be called in live mode
+        if (!inLiveMode) {
+            SampleInterface.updateAndSaveSampleDateModelsByAliquot(sample);
+        }
 
     }
 
@@ -2444,11 +2450,13 @@ public class ConcordiaGraphPanel extends JLayeredPane
                 }
             }
         } else // set best age divider
-         if (changingBestDateDivider) {
+        {
+            if (changingBestDateDivider) {
                 ((AliquotForUPbInterface) curAliquot).setBestAgeDivider206_238(new BigDecimal(currentBestDate));
                 ((UPbReduxAliquot) curAliquot).updateBestAge();
-                reportUpdater.updateReportTable(false);
+                reportUpdater.updateReportTable(false, false);
             }
+        }
 
         changingBestDateDivider = false;
 

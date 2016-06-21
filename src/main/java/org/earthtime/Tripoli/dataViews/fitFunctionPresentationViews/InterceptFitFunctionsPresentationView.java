@@ -73,9 +73,10 @@ public class InterceptFitFunctionsPresentationView extends AbstractFitFunctionPr
     /**
      *
      * @param doReScale the value of doReScale
+     * @param inLiveMode the value of inLiveMode
      */
     @Override
-    public void preparePanel(boolean doReScale) {
+    public void preparePanel(boolean doReScale, boolean inLiveMode) {
 
         removeAll();
         // first restore the data
@@ -85,7 +86,7 @@ public class InterceptFitFunctionsPresentationView extends AbstractFitFunctionPr
                 if (targetDataModelView instanceof FitFunctionsOnDownHoleRatioDataView) {
                     ((RawRatioDataModel) rawRatioDataModel).generateFitFunctionsForDownhole();
                 } else {
-                    ((DataModelFitFunctionInterface) rawRatioDataModel).generateSetOfFitFunctions(true, false);
+                    ((DataModelFitFunctionInterface) rawRatioDataModel).generateSetOfFitFunctions(true, false, false);
                 }
             }
         }

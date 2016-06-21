@@ -631,7 +631,7 @@ public class RawIntensityDataModel //
     }
 
     @Override
-    public void generateSetOfFitFunctions(boolean propagateUncertainties, boolean doApplyMaskingArray) {
+    public void generateSetOfFitFunctions(boolean propagateUncertainties, boolean doApplyMaskingArray, boolean inLiveMode) {
 
         // June 2013 copied from RawRatioDataModel feb 2013 new strategy to do only once
         // also MEAN returns false if it had to use an arithmentic mean and stops further processing

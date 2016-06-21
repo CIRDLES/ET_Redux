@@ -136,7 +136,7 @@ public class ConcordiaGraphPanelIsoplot extends JFXPanel
     }
 
     @Override
-    public void preparePanel(boolean doReScale) {
+    public void preparePanel(boolean doReScale, boolean inLiveMode) {
 
 ////        String r206_238r_corrected = "r206_238r";
 ////        String r207_235r_corrected = "r207_235r";
@@ -173,20 +173,20 @@ public class ConcordiaGraphPanelIsoplot extends JFXPanel
     }
 
     @Override
-    public void refreshPanel(boolean doReScale) {
+    public void refreshPanel(boolean doReScale, boolean inLiveMode) {
 
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
                 observableSequence.clear();//.remove(0);
-                preparePanel(doReScale);
+                preparePanel(doReScale, false);
             }
         });
 
     }
 
     @Override
-    public void resetPanel(boolean doReScale) {
+    public void resetPanel(boolean doReScale, boolean inLiveMode) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

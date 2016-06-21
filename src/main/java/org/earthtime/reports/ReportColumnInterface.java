@@ -411,7 +411,7 @@ public interface ReportColumnInterface extends Comparable<ReportColumnInterface>
                                 // may 2013 for tiny numbers due to below detection
                                 retVal[0] = " bd "; // below detection
 
-                            } else if (vm.hasZeroValue()) {//oct 2014
+                            } else if (vm.hasZeroValue()  && !getRetrieveVariableName().startsWith("rhoR")) {//oct 2014 // added rho June 2016
                                 retVal[0] = " - ";
 
                             } else if (isNumeric) {
