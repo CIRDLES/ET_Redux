@@ -271,9 +271,8 @@ public class SessionOfStandardView extends AbstractRawDataView implements FitFun
         AbstractFunctionOfX fitFunc;
         fitFunc = sessionForStandardDataModel.getSelectedFitFunction();
 
-        if (fitFunc != null) {
-
-            double[] timesOfMatrixJfPlotting = ((AbstractSessionForStandardDataModel) sessionForStandardDataModel).getTripoliSession().getTimesForPlotting();
+        double[] timesOfMatrixJfPlotting = ((AbstractSessionForStandardDataModel) sessionForStandardDataModel).getTripoliSession().getTimesForPlotting();
+        if ((fitFunc != null) &&(timesOfMatrixJfPlotting != null)) {
 
             int countOfPlottedPoints = timesOfMatrixJfPlotting.length;
 
@@ -316,7 +315,6 @@ public class SessionOfStandardView extends AbstractRawDataView implements FitFun
 
         } else {
             fitFunctionDataDisplay = null;
-
         }
 
         // show data anyway
@@ -445,8 +443,7 @@ public class SessionOfStandardView extends AbstractRawDataView implements FitFun
             index++;
         }
 
-        final int finalTimeSlot = (int)((index == -1) ? 0 : index);
-        
+        final int finalTimeSlot = (int) ((index == -1) ? 0 : index);
 
         // tripolifraction used as placeholder for mouse click only
         tripoliFraction = tripoliFractionArray[finalTimeSlot];

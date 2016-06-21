@@ -582,14 +582,18 @@ public abstract class AbstractSessionForStandardDataModel implements Serializabl
         System.out.println("\nCalculate Fit Functions for Session  " + getRawRatioModelName().getDisplayName() //
                 + "  USING " + (USING_FULL_PROPAGATION ? "FULL PROPAGATION" : "FAST PROPAGATION"));
 
-//////        FitFunctionTypeEnum saveSelectedFitFunctionType = selectedFitFunctionType;
         if (generateMEANfitFunctionUsingLM()) {
             try {
                 generateLINEfitFunctionUsingLM();
             } catch (Exception e) {
             }
 
-            // June 2016 - speed up fpor live mode
+            // June 2016 in support of live mode
+            if (inLiveMode && rawRatioName.compareTo(RawRatioNames.r206_207w) == 0) {
+                selectedFitFunctionType = FitFunctionTypeEnum.MEAN;
+            }
+
+            // June 2016 - speed up for live mode
             if (!inLiveMode) {
                 try {
                     generateEXPONENTIALfitFunctionUsingLM();

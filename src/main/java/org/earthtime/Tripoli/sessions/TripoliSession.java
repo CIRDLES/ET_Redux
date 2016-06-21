@@ -294,9 +294,6 @@ public class TripoliSession implements
 
                     AbstractSessionForStandardDataModel ssm = sessionForStandardsInterceptFractionation.get(dm.getRawRatioModelName());
                     ssm.setStandardFractions(FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.STANDARD, IncludedTypeEnum.ALL));
-
-////                    ssm = sessionForStandardsDownholeFractionation.get(dm.getRawRatioModelName());
-////                    ssm.setStandardFractions(FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.STANDARD, IncludedTypeEnum.ALL));
                 }
             }
 
@@ -369,19 +366,15 @@ public class TripoliSession implements
                 }
             });
 
-            // june 2016 speedup for live
-            if (!inLiveMode) {
-                calculateDownholeFitSummariesForPrimaryStandard();
-                sessionForStandardsDownholeFractionation.keySet().stream().forEach((rrName) -> {
-                    try {
-                        sessionForStandardsDownholeFractionation.get(rrName).generateSetOfFitFunctions(true, false, inLiveMode);
-                        fitFunctionsUpToDate = true;
-                    } catch (Exception e) {
-                        System.out.println("Session Standards Downhole Fractionation Failed");
-                    }
-                });
-
-            }
+            calculateDownholeFitSummariesForPrimaryStandard();
+            sessionForStandardsDownholeFractionation.keySet().stream().forEach((rrName) -> {
+                try {
+                    sessionForStandardsDownholeFractionation.get(rrName).generateSetOfFitFunctions(true, false, inLiveMode);
+                    fitFunctionsUpToDate = true;
+                } catch (Exception e) {
+                    System.out.println("Session Standards Downhole Fractionation Failed");
+                }
+            });
 
             if (!inLiveMode) {
                 applyCorrections(inLiveMode);
@@ -713,9 +706,7 @@ public class TripoliSession implements
                 }
             }
 
-            if (!inLiveMode) {
-                calculateUThConcentrationsForUnknowns();
-            }
+            calculateUThConcentrationsForUnknowns();
 
             sessionCorrectedUnknownsSummaries = new TreeMap<>();
 
