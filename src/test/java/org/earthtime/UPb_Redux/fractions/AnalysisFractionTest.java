@@ -40,7 +40,7 @@ public class AnalysisFractionTest {
         FractionI analysisFraction = new UPbFraction( "NONE" );
         // new AnalysisFraction("Test Sample");
 
-        UPbFractionReducer.getInstance().fullFractionReduce( (UPbFraction) analysisFraction, true );
+        UPbFractionReducer.getInstance().fullFractionReduce((UPbFraction) analysisFraction, true);
 
         FractionI myAnalysisFraction = new AnalysisFraction( analysisFraction, false );
 

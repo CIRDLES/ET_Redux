@@ -217,8 +217,7 @@ public class Sample implements
      * BadLabDataException
      */
     public Sample(
-            String sampleName, String sampleType, String sampleAnalysisType, ANALYSIS_PURPOSE defaultAnalysisPurpose, String isotopeStyle)
-            throws BadLabDataException {
+            String sampleName, String sampleType, String sampleAnalysisType, ANALYSIS_PURPOSE defaultAnalysisPurpose, String isotopeStyle) {
         this.sampleName = sampleName;
         this.sampleType = sampleType;
         this.sampleAnalysisType = sampleAnalysisType;
@@ -307,10 +306,8 @@ public class Sample implements
 
         if (!isSampleTypeLegacy()) {
             SampleInterface.registerSampleWithLabData(this);
-        } else {
-
-            // dec 2012
-            if (getFractions().size() > 0) {
+        } else // dec 2012
+         if (getFractions().size() > 0) {
                 // June 2010 fix for old legacy fractions
                 Vector<ETFractionInterface> convertedF = new Vector<>();
                 for (ETFractionInterface f : getFractions()) {
@@ -352,19 +349,16 @@ public class Sample implements
                 // modified logic oct 2010 ... sample manager allows reset
                 // additional test for missing T-W rho calculation
                 // use first fraction to test for rho < -1 or 0  (both used as default for non-existent rho)
-                double twRho = //
-                        getFractions().get(0).//
+                double twRho
+                        = getFractions().get(0).//
                         getRadiogenicIsotopeRatioByName("rhoR207_206r__r238_206r").getValue().doubleValue();
-                if ( /*
-                         * (twRho == 0) ||
-                         */(twRho < -1.0)) {
+                if ((twRho < -1.0)) {
                     for (ETFractionInterface f : getFractions()) {
                         f.getRadiogenicIsotopeRatioByName("rhoR207_206r__r238_206r")//
                                 .setValue(BigDecimal.ZERO);
                     }
                 }
             }
-        }
 
         // June 2010 be sure lab name is updated to labdata labname when used in reduction
         if (isSampleTypeAnalysis() || isSampleTypeLiveWorkflow() || isSampleTypeLegacy()) {
@@ -382,7 +376,7 @@ public class Sample implements
     public void addDefaultUPbFractionToAliquot(int aliquotNumber)
             throws BadLabDataException {
         FractionI defFraction = new UPbFraction("NONE");
-        ((ETFractionInterface) defFraction).setAliquotNumber(aliquotNumber);
+        defFraction.setAliquotNumber(aliquotNumber);
 
         initializeDefaultUPbFraction(defFraction);
 
@@ -509,7 +503,7 @@ public class Sample implements
                 }
                 addFraction(fractionFromFile);
             } else {
-                System.out.println("Existing Fraction = " + existingFraction.getFractionID() + " updating type = " + ((UPbFraction) fractionFromFile).getRatioType());
+                System.out.println("Existing Fraction = " + existingFraction.getFractionID() + " updating type = " + fractionFromFile.getRatioType());
                 boolean didUpdate
                         = ((UPbFraction) existingFraction).updateUPbFraction(fractionFromFile, isFractionDataOverriddenOnImport());
 
@@ -591,14 +585,9 @@ public class Sample implements
 
         File sampleFolder = new File(sample.getReduxSampleFilePath()).getParentFile();
 
-        File[] aliquotFolders = sampleFolder.listFiles(new java.io.FileFilter() {
-            @Override
-            public boolean accept(File pathname) {
-                return (pathname.isDirectory()
-                        && !pathname.isHidden()//
-                        && !pathname.getName().equalsIgnoreCase(ReduxConstants.NAME_OF_SAMPLEMETADATA_FOLDER));
-            }
-        });
+        File[] aliquotFolders = sampleFolder.listFiles((File pathname) -> (pathname.isDirectory()
+                && !pathname.isHidden()//
+                && !pathname.getName().equalsIgnoreCase(ReduxConstants.NAME_OF_SAMPLEMETADATA_FOLDER)));
 
         if (aliquotFolders.length == 0) {
             throw new ETException(null,
@@ -611,21 +600,18 @@ public class Sample implements
             for (final File aliquotFolder : aliquotFolders) {
 
                 // take the first prisoner
-                aliquotFractionFiles = aliquotFolder.listFiles(new java.io.FileFilter() {
-                    // 20 second cushion
-                    @Override
-                    public boolean accept(File file) {
-                        // want .xml files and only freshones in live-update, but all of them in auto-update
-                        boolean isXML = file.getName().toLowerCase().endsWith(".xml");
-
-                        if (getSampleType().equalsIgnoreCase(SampleTypesEnum.LIVEWORKFLOW.getName())) {
-                            return ((file.lastModified() >= (aliquotFolder.lastModified() - 20000l))
-                                    && isXML);
-                        } else {
-                            return isXML;
-                        }
+                aliquotFractionFiles = aliquotFolder.listFiles((File file) -> {
+                    // want .xml files and only freshones in live-update, but all of them in auto-update
+                    boolean isXML = file.getName().toLowerCase().endsWith(".xml");
+                    
+                    if (getSampleType().equalsIgnoreCase(SampleTypesEnum.LIVEWORKFLOW.getName())) {
+                        return ((file.lastModified() >= (aliquotFolder.lastModified() - 20000l))
+                                && isXML);
+                    } else {
+                        return isXML;
                     }
-                });
+                } // 20 second cushion
+                );
 
                 // assume xml files are in good shape with doValidate = false
                 updateSampleAliquot(aliquotFolder, aliquotFractionFiles, false, myFractionEditor);
@@ -671,7 +657,7 @@ public class Sample implements
                             setAutomaticDataUpdateMode(true);
 
                     ((ReduxAliquotInterface) getAliquotByNumber(aliquotNumber)).//
-                            reduceData();
+                            reduceData(false);
 
                     if (myFractionEditor != null) {
                         if (doRestoreAutoUranium) {
@@ -680,7 +666,7 @@ public class Sample implements
                         ((UPbFractionEditorDialog) myFractionEditor).InitializeFractionData(savedCurrentFraction);
 
                         // intentional static call for now
-                        UPbFractionReducer.getInstance().fullFractionReduce((FractionI)savedCurrentFraction, true);
+                        UPbFractionReducer.getInstance().fullFractionReduce((FractionI) savedCurrentFraction, true);
 
                         ((UPbFractionEditorDialog) myFractionEditor).reInitializeKwikiTab(savedCurrentFraction);
                     }
@@ -737,7 +723,7 @@ public class Sample implements
                 importAliquotFolder(fractions, aliquotNumber, false); // jan 2016true);
 
                 ((ReduxAliquotInterface) getAliquotByNumber(aliquotNumber)).//
-                        reduceData();
+                        reduceData(false);
             }
 
         }
@@ -760,7 +746,7 @@ public class Sample implements
      */
     @Override
     public String getSampleName() {
-        if (sampleName == null){
+        if (sampleName == null) {
             sampleName = "NONE";
         }
         return sampleName;
@@ -1585,10 +1571,7 @@ public class Sample implements
      */
     @Override
     public void restoreDefaultReportSettingsModel() {
-        try {
-            setReportSettingsModel(ReduxLabData.getInstance().getDefaultReportSettingsModelByIsotopeStyle((getIsotopeStyle() == null) ? "UPb" : getIsotopeStyle()));
-        } catch (BadLabDataException badLabDataException) {
-        }
+        setReportSettingsModel(ReduxLabData.getInstance().getDefaultReportSettingsModelByIsotopeStyle((getIsotopeStyle() == null) ? "UPb" : getIsotopeStyle()));
     }
 
     // used for deserialization to enforce backwards compatibility

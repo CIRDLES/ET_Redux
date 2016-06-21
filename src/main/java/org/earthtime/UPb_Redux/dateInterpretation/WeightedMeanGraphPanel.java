@@ -983,17 +983,19 @@ public class WeightedMeanGraphPanel extends JPanel
     /**
      *
      * @param doReScale the value of doReScale
+     * @param inLiveMode the value of inLiveMode
      */
-    public void refreshPanel(boolean doReScale) {
-        preparePanel(doReScale);
+    public void refreshPanel(boolean doReScale, boolean inLiveMode) {
+        preparePanel(doReScale, false);
         repaint();
     }
 
     /**
      *
      * @param doReScale the value of doReScale
+     * @param inLiveMode the value of inLiveMode
      */
-    public void preparePanel(boolean doReScale) {
+    public void preparePanel(boolean doReScale, boolean inLiveMode) {
 
         zoomMaxX = 0;
         zoomMaxY = 0;
@@ -1570,7 +1572,7 @@ public class WeightedMeanGraphPanel extends JPanel
     }
 
     @Override
-    public void resetPanel(boolean doReScale) {
-        refreshPanel(doReScale);
+    public void resetPanel(boolean doReScale, boolean inLiveMode) {
+        refreshPanel(doReScale, inLiveMode);
     }
 }

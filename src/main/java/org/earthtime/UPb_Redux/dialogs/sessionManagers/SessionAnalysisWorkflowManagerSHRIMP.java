@@ -207,7 +207,7 @@ public class SessionAnalysisWorkflowManagerSHRIMP extends DialogEditor //
                     }
 
                     ((TripoliSessionRawDataView) tripoliSessionRawDataView).setSelectedSample(sample);
-                    tripoliSessionRawDataView.refreshPanel(true);
+                    tripoliSessionRawDataView.refreshPanel(true, false);
                     tripoliSessionDataView_scrollPane.revalidate();
                 }
             });
@@ -263,7 +263,7 @@ public class SessionAnalysisWorkflowManagerSHRIMP extends DialogEditor //
             rawIsotopes_radioButton.setSelected(true);
             gridPlot_radioButton.setSelected(true);
 
-            tripoliSessionRawDataView.preparePanel(true);
+            tripoliSessionRawDataView.preparePanel(true, false);
 
             // now init listeners
             ((TripoliSessionRawDataView) tripoliSessionRawDataView).initializeListeners();
@@ -295,7 +295,7 @@ public class SessionAnalysisWorkflowManagerSHRIMP extends DialogEditor //
                     tripoliSession.applyCorrections(false);
 
                     // nov 2015 to update data
-                    uPbReduxFrame.updateReportTable(true);
+                    uPbReduxFrame.updateReportTable(true, false);
                 }
             } // This method is called whenever the selected tab changes
             );
@@ -303,7 +303,7 @@ public class SessionAnalysisWorkflowManagerSHRIMP extends DialogEditor //
     }
 
     public void invokeSavedFractionationTechnique(boolean doCorrections) {
-        tripoliSessionRawDataView.refreshPanel(true);
+        tripoliSessionRawDataView.refreshPanel(true, false);
 
         if (doCorrections) {
             tripoliSession.calculateSessionFitFunctionsForPrimaryStandard(false);
@@ -315,7 +315,7 @@ public class SessionAnalysisWorkflowManagerSHRIMP extends DialogEditor //
             fractionationTechniqueTabbedPane.setSelectedIndex(1);
         }
 
-        tripoliSessionRawDataView.refreshPanel(true);
+        tripoliSessionRawDataView.refreshPanel(true, false);
     }
 
     private void setDefaultZoom() {
@@ -559,7 +559,7 @@ public class SessionAnalysisWorkflowManagerSHRIMP extends DialogEditor //
             tripoliSession.calculateSessionFitFunctionsForPrimaryStandard(false);
         }
         try {
-            uPbReduxFrame.updateReportTable(true);
+            uPbReduxFrame.updateReportTable(true, false);
         } catch (Exception e) {
         }
 
@@ -595,19 +595,19 @@ public class SessionAnalysisWorkflowManagerSHRIMP extends DialogEditor //
 
     private void gridPlotFractions() {
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).setFRACTION_LAYOUT_VIEW_STYLE(FractionLayoutViewStylesEnum.GRID);
-        tripoliSessionRawDataView.preparePanel(true);
+        tripoliSessionRawDataView.preparePanel(true, false);
         tripoliSessionDataView_scrollPane.revalidate();
     }
 
     private void graphPlotFractions() {
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).setFRACTION_LAYOUT_VIEW_STYLE(FractionLayoutViewStylesEnum.GRAPH);
-        tripoliSessionRawDataView.preparePanel(true);
+        tripoliSessionRawDataView.preparePanel(true, false);
         tripoliSessionDataView_scrollPane.revalidate();
     }
 
     private void overlayPlotFractions() {
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).setFRACTION_LAYOUT_VIEW_STYLE(FractionLayoutViewStylesEnum.OVERLAY);
-        tripoliSessionRawDataView.refreshPanel(true);
+        tripoliSessionRawDataView.refreshPanel(true, false);
     }
 
     /**
@@ -622,7 +622,7 @@ public class SessionAnalysisWorkflowManagerSHRIMP extends DialogEditor //
         // jan 2015
         tripoliSession.calculateSessionFitFunctionsForPrimaryStandard(false);
         try {
-            uPbReduxFrame.updateReportTable(true);
+            uPbReduxFrame.updateReportTable(true, false);
         } catch (Exception e) {
         }
     }
@@ -636,7 +636,7 @@ public class SessionAnalysisWorkflowManagerSHRIMP extends DialogEditor //
         // jan 2015
         tripoliSession.calculateSessionFitFunctionsForPrimaryStandard(false);
         try {
-            uPbReduxFrame.updateReportTable(true);
+            uPbReduxFrame.updateReportTable(true, false);
         } catch (Exception e) {
         }
     }
@@ -1510,13 +1510,13 @@ public class SessionAnalysisWorkflowManagerSHRIMP extends DialogEditor //
     private void showAllFractions_radioButtonActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showAllFractions_radioButtonActionPerformed
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).setFractionIncludedType(IncludedTypeEnum.ALL);
 //        currentFractionView = IncludedTypeEnum.ALL;
-        tripoliSessionRawDataView.refreshPanel(true);
+        tripoliSessionRawDataView.refreshPanel(true, false);
     }//GEN-LAST:event_showAllFractions_radioButtonActionPerformed
 
     private void showIncludedFractions_radioButtonActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showIncludedFractions_radioButtonActionPerformed
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).setFractionIncludedType(IncludedTypeEnum.INCLUDED);
 //        currentFractionView = IncludedTypeEnum.INCLUDED;
-        tripoliSessionRawDataView.refreshPanel(true);
+        tripoliSessionRawDataView.refreshPanel(true, false);
 
     }//GEN-LAST:event_showIncludedFractions_radioButtonActionPerformed
 
@@ -1602,7 +1602,7 @@ private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.
         // for now we have to undo internal acquisition rejecttions allowed by intercept but not by downhole
         tripoliSession.refitAllFractionsForDownhole();
 
-        uPbReduxFrame.updateReportTable(true);
+        uPbReduxFrame.updateReportTable(true, false);
     }//GEN-LAST:event_downholeCalculateRhos_buttonActionPerformed
 
     private void downholeFitEachStandard_radioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downholeFitEachStandard_radioButtonActionPerformed
@@ -1616,27 +1616,27 @@ private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.
         } catch (Exception e) {
         }
 
-        uPbReduxFrame.updateReportTable(true);
+        uPbReduxFrame.updateReportTable(true, false);
     }//GEN-LAST:event_interceptCalculatePbcCorrAndRhos_button1ActionPerformed
 
     private void uniformYaxisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_uniformYaxisActionPerformed
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).setSAVED_YAXIS_IS_UNIFORM(true);
-        tripoliSessionRawDataView.refreshPanel(true);
+        tripoliSessionRawDataView.refreshPanel(true, false);
     }//GEN-LAST:event_uniformYaxisActionPerformed
 
     private void independentYaxisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_independentYaxisActionPerformed
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).setSAVED_YAXIS_IS_UNIFORM(false);
-        tripoliSessionRawDataView.refreshPanel(true);
+        tripoliSessionRawDataView.refreshPanel(true, false);
     }//GEN-LAST:event_independentYaxisActionPerformed
 
     private void allDataUsedForScalingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_allDataUsedForScalingActionPerformed
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).setSAVED_DATA_USED_FOR_SCALING(IncludedTypeEnum.ALL);
-        tripoliSessionRawDataView.refreshPanel(true);
+        tripoliSessionRawDataView.refreshPanel(true, false);
     }//GEN-LAST:event_allDataUsedForScalingActionPerformed
 
     private void includedDataUsedForScalingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_includedDataUsedForScalingActionPerformed
         ((TripoliSessionRawDataView) tripoliSessionRawDataView).setSAVED_DATA_USED_FOR_SCALING(IncludedTypeEnum.INCLUDED);
-        tripoliSessionRawDataView.refreshPanel(true);
+        tripoliSessionRawDataView.refreshPanel(true, false);
     }//GEN-LAST:event_includedDataUsedForScalingActionPerformed
 
     private void setAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setAllIndividualYAxisPanes_buttonActionPerformed

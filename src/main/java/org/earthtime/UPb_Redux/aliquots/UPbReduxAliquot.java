@@ -308,8 +308,10 @@ public class UPbReduxAliquot extends Aliquot
 
     /**
      *
+     * @param inLiveMode the value of inLiveMode
      */
-    public void reduceData() {
+    @Override
+    public void reduceData(boolean inLiveMode) {
         // may 2014 modified to determine best date  
         ArrayList<Double> sorted206_238 = new ArrayList<>();
         for (ETFractionInterface f : getAliquotFractions()) {
@@ -646,16 +648,6 @@ public class UPbReduxAliquot extends Aliquot
         it = tempAlphaUModels.iterator();
         while (it.hasNext()) {
             getAlphaUModels().add((ValueModel) it.next());
-        }
-    }
-
-    /**
-     *
-     */
-    public void initializeFractionReductionHandlers() {
-        for (ETFractionInterface f : getAliquotFractions()) {
-            //((UPbFraction) f).initializeReductionHandler();
-            UPbFractionReducer.getInstance().fullFractionReduce((FractionI) f, true);
         }
     }
 

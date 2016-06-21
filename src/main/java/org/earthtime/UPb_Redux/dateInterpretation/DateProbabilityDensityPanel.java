@@ -706,12 +706,12 @@ public class DateProbabilityDensityPanel extends JLayeredPane
     }
 
     @Override
-    public void resetPanel(boolean doReScale) {
-        refreshPanel(doReScale);
+    public void resetPanel(boolean doReScale, boolean inLiveMode) {
+        refreshPanel(doReScale, inLiveMode);
     }
 
     @Override
-    public void refreshPanel(boolean doReScale) {
+    public void refreshPanel(boolean doReScale, boolean inLiveMode) {
         if (doReScale) {
             // nov 2011
             setMinX(DateProbabilityDensityPanel.DEFAULT_DISPLAY_MINX);
@@ -719,7 +719,7 @@ public class DateProbabilityDensityPanel extends JLayeredPane
             setDisplayOffsetX(0);
         }
 
-        preparePanel(doReScale);
+        preparePanel(doReScale, inLiveMode);
         repaint();
     }
 
@@ -727,15 +727,17 @@ public class DateProbabilityDensityPanel extends JLayeredPane
      *
      */
     public void prepareAndPaintPanel() {
-        preparePanel(true);
+        preparePanel(true, false);
         repaint();
     }
 
     /**
      *
+     * @param doReScale the value of doReScale
+     * @param inLiveMode the value of inLiveMode
      */
     @Override
-    public void preparePanel(boolean doReScale) {
+    public void preparePanel(boolean doReScale, boolean inLiveMode) {
 
         System.out.println("========Probability Prep=======");
         this.removeAll();
@@ -868,7 +870,7 @@ public class DateProbabilityDensityPanel extends JLayeredPane
      *
      */
     public void showTight() {
-        refreshPanel(true);
+        refreshPanel(true, false);
 
         for (int i = 0; i < pdfPoints.size(); i++) {
             if (stackedAliquotKernels[0][i] > 0.01) {

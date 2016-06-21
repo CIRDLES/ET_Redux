@@ -461,7 +461,7 @@ public abstract class AbstractProjectManagerForRawData extends DialogEditor impl
         // jan 2015 moved to calculate sessionfittripoliSession.applyCorrections();
 
         try {
-            uPbReduxFrame.updateReportTable(true);
+            uPbReduxFrame.updateReportTable(true, false);
         } catch (Exception e) {
         }
 
@@ -909,7 +909,7 @@ public abstract class AbstractProjectManagerForRawData extends DialogEditor impl
 
             project.prepareSamplesForRedux();
 
-            uPbReduxFrame.initializeProject();
+            uPbReduxFrame.initializeProject(false);
 
             initializeSessionManager(true, true, true);
 //            } catch (ETException ex) {

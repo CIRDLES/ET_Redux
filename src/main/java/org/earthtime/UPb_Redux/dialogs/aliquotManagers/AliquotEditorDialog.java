@@ -4658,7 +4658,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
 
                 concordiaGraphPanel.setShowTightToEdges(true);
 
-                concordiaGraphPanel.refreshPanel(true);
+                concordiaGraphPanel.refreshPanel(true, false);
 
                 concordiaGraphPanel.setShowTightToEdges(false);
 

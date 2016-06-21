@@ -1820,7 +1820,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                             PbcCorrectionDetails.zeroAllValues();
                             PbcCorrectionDetails.fraction_ID = fraction.getFractionID();
                             PbcCorrectionDetails.pbcCorrScheme = ((UPbLAICPMSFraction) fraction).getCommonLeadLossCorrectionScheme().getName();
-                            UPbFractionReducer.getInstance().fullFractionReduce((FractionI) fraction, true, false);
+                            UPbFractionReducer.getInstance().fullFractionReduce((FractionI) fraction, true);
                             outputWriter.println(PbcCorrectionDetails.dataString());
 
                             outputWriter.println();

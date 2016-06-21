@@ -1467,7 +1467,7 @@ public final class ReduxLabData implements Serializable {
      * @throws org.earthtime.UPb_Redux.exceptions.BadLabDataException
      */
     public ReportSettingsInterface getDefaultReportSettingsModelByIsotopeStyle(String isotopeStyle)
-            throws BadLabDataException {
+             {
         if (defaultReportSettingsModel == null) {
             defaultReportSettingsModel = ReportSettings.EARTHTIMEReportSettingsUPb();
             addReportSettingsModel(defaultReportSettingsModel);

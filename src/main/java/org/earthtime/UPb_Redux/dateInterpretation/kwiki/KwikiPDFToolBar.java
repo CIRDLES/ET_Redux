@@ -464,7 +464,7 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
         restoreZoom.setMargin(new Insets(0, 0, 0, 0));
 
         restoreZoom.addActionListener((ActionEvent arg0) -> {
-            ((PlottingDetailsDisplayInterface) probabilityPanel).refreshPanel(true);
+            ((PlottingDetailsDisplayInterface) probabilityPanel).refreshPanel(true, false);
         });
         add(restoreZoom, javax.swing.JLayeredPane.DEFAULT_LAYER);
 

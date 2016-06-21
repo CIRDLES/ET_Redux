@@ -599,7 +599,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
         // jan 2015 moved to calcualte sessionfittripoliSession.applyCorrections();
 
         try {
-            uPbReduxFrame.updateReportTable(true);
+            uPbReduxFrame.updateReportTable(true, false);
         } catch (Exception e) {
         }
 
@@ -627,8 +627,11 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
                 project.setProjectName((String) pce.getNewValue());
                 projectName_text.setText(project.getProjectName());
             } else if ("refMaterialLoaded".equalsIgnoreCase(pce.getPropertyName())) {
-                tripoliSession.setRefMaterialSessionFittedForLiveMode(false);
-                System.out.println("ref material loaded <<<<");
+                try {
+                    tripoliSession.setRefMaterialSessionFittedForLiveMode(false);
+                    System.out.println("ref material loaded <<<<");
+                } catch (Exception e) {
+                }
             }
         }
     }
@@ -1049,7 +1052,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
 
                 project.prepareSamplesForRedux();
 
-                uPbReduxFrame.initializeProject();
+                uPbReduxFrame.initializeProject(false);
 
                 initializeSessionManager(true, true, true);
             } catch (ETException ex) {

@@ -1365,10 +1365,11 @@ public class UPbLAICPMSFraction extends Fraction implements
     public void initializeUpperPhiMap() {
         if (upperPhiMap == null) {
             upperPhiMap = new TreeMap<>();
+
+            upperPhiMap.put("upperPhi_r206_204", 0.0);
+            upperPhiMap.put("upperPhi_r207_204", 0.0);
+            upperPhiMap.put("upperPhi_r208_204", 0.0);
         }
-        upperPhiMap.put("upperPhi_r206_204", 0.0);
-        upperPhiMap.put("upperPhi_r207_204", 0.0);
-        upperPhiMap.put("upperPhi_r208_204", 0.0);
     }
 
     /**
