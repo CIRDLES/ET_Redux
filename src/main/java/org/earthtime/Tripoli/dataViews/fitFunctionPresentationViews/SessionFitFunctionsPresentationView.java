@@ -78,9 +78,10 @@ public class SessionFitFunctionsPresentationView extends AbstractFitFunctionPres
     /**
      * 
      * @param doReScale the value of doReScale
+     * @param inLiveMode the value of inLiveMode
      */
     @Override
-    public void preparePanel(boolean doReScale) {
+    public void preparePanel(boolean doReScale, boolean inLiveMode) {
         removeAll();
 
         createFitFunctionPanes(sessionForStandardDataModel, true);      

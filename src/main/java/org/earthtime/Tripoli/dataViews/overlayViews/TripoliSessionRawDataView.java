@@ -369,6 +369,11 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
         this.selectedSample = selectedSample;
     }
 
+    @Override
+    public void resetAllUPbFractionReduction() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
     class YAxisZoomChangeListener implements ChangeListener {
 
         JLayeredPane sampleSessionDataView;
@@ -388,7 +393,7 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
                 if (!isZoomSlidersIndependent()) {
                     theOtherSlider.setValue(value);
                 }
-                ((AbstractRawDataView) sampleSessionDataView).refreshPanel(true);
+                ((AbstractRawDataView) sampleSessionDataView).refreshPanel(true, false);
                 sessionAnalysisWorkflowManager.revalidateScrollPane();
             }
         }
@@ -429,7 +434,7 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
                 if (!isZoomSlidersIndependent()) {
                     theOtherSlider.setValue(value);
                 }
-                ((AbstractRawDataView) sampleSessionDataView).refreshPanel(true);
+                ((AbstractRawDataView) sampleSessionDataView).refreshPanel(true, false);
                 sessionAnalysisWorkflowManager.revalidateScrollPane();
             }
         }
@@ -454,9 +459,10 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
     /**
      *
      * @param doReScale the value of doReScale
+     * @param inLiveMode the value of inLiveMode
      */
     @Override
-    public void preparePanel(boolean doReScale) {
+    public void preparePanel(boolean doReScale, boolean inLiveMode) {
 
         // jan 2013 clean up before switching modes log / ratio / alpha
         if (rawDataModelViews != null) {
@@ -581,7 +587,7 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
                 // sept 2015
                 rawDataModelView.setShowIncludedDataPoints(SAVED_DATA_USED_FOR_SCALING);
 
-                rawDataModelView.preparePanel(doReScale);
+                rawDataModelView.preparePanel(doReScale, inLiveMode);
 
                 rawDataModelViews[dataModelCountForVerticalLayout][0] = rawDataModelView;
 
@@ -599,7 +605,7 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
                                             WIDTH_OF_FIT_FUNCTION_PANES, //
                                             dataModelHeight));
 
-                    sessionFitFunctionsPresentationView.preparePanel(doReScale);
+                    sessionFitFunctionsPresentationView.preparePanel(doReScale, inLiveMode);
 
                     rawDataModelViews[dataModelCountForVerticalLayout][1] = sessionFitFunctionsPresentationView;
 
@@ -642,7 +648,7 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
 
                     rawDataModelView.setDataPresentationMode(dataPresentationMode);
 
-                    rawDataModelView.preparePanel(doReScale);
+                    rawDataModelView.preparePanel(doReScale, inLiveMode);
 
                     rawDataModelViews[dataModelCountForVerticalLayout][fractionCountForHorizontalLayout] = rawDataModelView;
 
@@ -836,7 +842,7 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
                                 atLeastOneStandard,
                                 isFitFunctionsOnDownHoleRatioDataView);
 
-                universalFitFunctionChooser.preparePanel(doReScale);
+                universalFitFunctionChooser.preparePanel(doReScale,inLiveMode);
                 yAxisPane.add(universalFitFunctionChooser, javax.swing.JLayeredPane.DRAG_LAYER);
             }
             tripoliSessionRawDataViewYAxis.add(yAxisPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -905,7 +911,7 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
 
                 OverlayViewXAxis.setMinX(overallMinX);
                 OverlayViewXAxis.setMaxX(overallMaxX);
-                OverlayViewXAxis.preparePanel(doReScale);
+                OverlayViewXAxis.preparePanel(doReScale, inLiveMode);
 
                 add(OverlayViewXAxis, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
@@ -918,7 +924,7 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
                                 tripoliSessionRawDataViewYAxis.getWidth() - 1, //
                                 HEIGHT_OF_OVERLAY_XAXIS_PANES));
 
-                overlayViewXAxisLabel.preparePanel(doReScale);
+                overlayViewXAxisLabel.preparePanel(doReScale, inLiveMode);
 
                 // place overlayViewXAxisLabel in yaxis column
                 tripoliSessionRawDataViewYAxis.add(overlayViewXAxisLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -943,7 +949,7 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
                                     WIDTH_OF_FIT_FUNCTION_PANES, //
                                     dataModelHeight + HEIGHT_OF_OVERLAY_XAXIS_PANES + residualsHeight - 1));
 
-                    fitFunctionView.preparePanel(doReScale);
+                    fitFunctionView.preparePanel(doReScale, inLiveMode);
                     add(fitFunctionView, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
                     // build fit function residuals panes
@@ -958,7 +964,7 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
 
                     fitFunctionResidualsView.setMinX(overallMinX);
                     fitFunctionResidualsView.setMaxX(overallMaxX);
-                    fitFunctionResidualsView.preparePanel(doReScale);
+                    fitFunctionResidualsView.preparePanel(doReScale, inLiveMode);
 
                     add(fitFunctionResidualsView, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
@@ -972,7 +978,7 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
                                     tripoliSessionRawDataViewYAxis.getWidth() - 1, //
                                     HEIGHT_OF_FIT_FUNCTION_RESIDUALS_PANES));
 
-                    residualsYAxisLabel.preparePanel(doReScale);
+                    residualsYAxisLabel.preparePanel(doReScale, inLiveMode);
 
                     // place in yaxis column
                     tripoliSessionRawDataViewYAxis.add(residualsYAxisLabel, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -987,7 +993,7 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
                 rawDataModelViewsOverlay.setMaxX(overallMaxX);
 
                 rawDataModelViewsOverlay.setTics(yAxisTics);
-                rawDataModelViewsOverlay.preparePanel(doReScale);
+                rawDataModelViewsOverlay.preparePanel(doReScale, inLiveMode);
 
                 add(underlay, javax.swing.JLayeredPane.DEFAULT_LAYER);
                 underlay.add(rawDataModelViewsOverlay, javax.swing.JLayeredPane.PALETTE_LAYER);
@@ -1180,7 +1186,7 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
                     if ((layeredLocalInterceptFitFunctionsContainer != null)//
                             &&//
                             FRACTION_LAYOUT_VIEW_STYLE.equals(FractionLayoutViewStylesEnum.GRID_INTERCEPT)) {
-                        interceptFitFunctionsPresentationPanesArray[i].preparePanel(doReScale);
+                        interceptFitFunctionsPresentationPanesArray[i].preparePanel(doReScale, inLiveMode);
                         layeredLocalInterceptFitFunctionsContainer.add(interceptFitFunctionsPresentationPanesArray[i], javax.swing.JLayeredPane.DEFAULT_LAYER);
                         interceptFitFunctionsPresentationPanesArray[i].setFractionDataViewsContainer(layeredLocalInterceptFitFunctionsContainer);
                     }
@@ -1224,7 +1230,7 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
                                 HEIGHT_OF_FRACTION_INFO_PANELS), //
                         meanOnly);
 
-        dataPresentationModeChooserPanel.preparePanel(true);
+        dataPresentationModeChooserPanel.preparePanel(true, false);
 
         tripoliSessionDataControls_pane.add(dataPresentationModeChooserPanel, javax.swing.JLayeredPane.DRAG_LAYER);
 
@@ -1286,7 +1292,7 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
     public void includeAllAquisitions() {
         tripoliSession.includeAllAquisitions();
 
-        refreshPanel(true);
+        refreshPanel(true, false);
     }
 
     /**
@@ -1295,13 +1301,13 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
     public void removeAllLocalYAxisPanes() {
         getTripoliSession().clearAllFractionsOfLocalYAxis();
 
-        refreshPanel(true);
+        refreshPanel(true, false);
     }
 
     public void setAllLocalYAxisPanes() {
         getTripoliSession().setAllFractionsOfLocalYAxis();
 
-        refreshPanel(true);
+        refreshPanel(true, false);
     }
 
     /**
@@ -1324,7 +1330,7 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
 
         dataModelHeight = 180;
 
-        refreshPanel(true);
+        refreshPanel(true, false);
 
         //cause slider to synch
         synchXAxisZoomSliderValue(sessionModelWidth);

@@ -107,14 +107,14 @@ public class SmoothingSplineFitFunctionView extends AbstractFitFunctionView {
                     }
 
                     generateSplineOverDispersionChooserPanel(sessionOfStandardsSplinesWithOD);
-                    splineOverDispersionChooserPanel.preparePanel(true);
+                    splineOverDispersionChooserPanel.preparePanel(true, false);
 
                     add(splineOverDispersionChooserPanel);
 
                     if (targetDataModelView instanceof SessionOfStandardView) {
-                        ((AbstractRawDataView) targetDataModelView).refreshPanel(true);
+                        ((AbstractRawDataView) targetDataModelView).refreshPanel(true, false);
                     } else if (targetDataModelView instanceof SessionOfStandardView) {
-                        ((AbstractRawDataView) targetDataModelView).refreshPanel(true);
+                        ((AbstractRawDataView) targetDataModelView).refreshPanel(true, false);
                     }
 
                     functionChoiceRadioButton.doClick();

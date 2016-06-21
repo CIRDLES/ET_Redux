@@ -251,9 +251,10 @@ public interface TripoliSessionInterface extends TripoliSessionFractionationCalc
 
     /**
      *
+     * @param inLiveMode
      * @param isLiveMode the value of isLiveMode
      */
-    public void prepareForReductionAndCommonLeadCorrection(boolean isLiveMode);
+    public void prepareForReductionAndCommonLeadCorrection(boolean inLiveMode);
 
     public void setLeftShadeCount(int leftShadeCount);
 

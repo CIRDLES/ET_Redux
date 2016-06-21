@@ -130,7 +130,7 @@ public class DataPresentationModeChooserPanel extends AbstractRawDataView {
     }
 
     @Override
-    public void preparePanel(boolean doReScale) {
+    public void preparePanel(boolean doReScale, boolean inLiveMode) {
         this.removeAll();
 
         // arbitrary
@@ -172,7 +172,7 @@ public class DataPresentationModeChooserPanel extends AbstractRawDataView {
             public void actionPerformed(ActionEvent e) {
 
                 ((AbstractRawDataView) sampleSessionDataView).setDataPresentationMode(myDataPresentationMode);
-                ((AbstractRawDataView) sampleSessionDataView).refreshPanel(true);
+                ((AbstractRawDataView) sampleSessionDataView).refreshPanel(true, false);
 
             }
         });
@@ -185,7 +185,7 @@ public class DataPresentationModeChooserPanel extends AbstractRawDataView {
         AbstractRawDataView maskingShadeControl = //
                 new MaskingShadeControl(new Rectangle(15, 88, 170, 20), myOnPeakNormalizedAquireTimes, sampleSessionDataView);
 
-        maskingShadeControl.preparePanel(true);
+        maskingShadeControl.preparePanel(true, false);
 
         return maskingShadeControl;
     }
@@ -206,7 +206,7 @@ public class DataPresentationModeChooserPanel extends AbstractRawDataView {
                 // jan 2015 force refit after applying shade
                 //see above ((TripoliSessionRawDataView) sampleSessionDataView).getTripoliSession().calculateSessionFitFunctionsForPrimaryStandard();
 
-                ((AbstractRawDataView) sampleSessionDataView).refreshPanel(true);
+                ((AbstractRawDataView) sampleSessionDataView).refreshPanel(true, false);
 
             }
         });
@@ -228,7 +228,7 @@ public class DataPresentationModeChooserPanel extends AbstractRawDataView {
                     ((TripoliSessionRawDataView) sampleSessionDataView).getTripoliSession().setODforAllFractionsAllRatios(setOD);
                 }
 
-                ((AbstractRawDataView) sampleSessionDataView).refreshPanel(true);
+                ((AbstractRawDataView) sampleSessionDataView).refreshPanel(true, false);
             }
         });
 

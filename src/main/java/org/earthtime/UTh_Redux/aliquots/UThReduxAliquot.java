@@ -341,9 +341,10 @@ public class UThReduxAliquot implements //
 
     /**
      *
+     * @param inLiveMode the value of inLiveMode
      */
     @Override
-    public void reduceData() {
+    public void reduceData(boolean inLiveMode) {
         //TODO: Reduce Useries
     }
 }

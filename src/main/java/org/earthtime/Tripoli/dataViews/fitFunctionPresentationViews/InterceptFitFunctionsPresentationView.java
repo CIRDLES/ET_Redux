@@ -73,9 +73,10 @@ public class InterceptFitFunctionsPresentationView extends AbstractFitFunctionPr
     /**
      *
      * @param doReScale the value of doReScale
+     * @param inLiveMode the value of inLiveMode
      */
     @Override
-    public void preparePanel(boolean doReScale) {
+    public void preparePanel(boolean doReScale, boolean inLiveMode) {
 
         removeAll();
         // first restore the data

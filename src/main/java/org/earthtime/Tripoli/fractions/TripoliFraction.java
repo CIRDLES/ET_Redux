@@ -3,7 +3,7 @@
  *
  * Created Jul 3, 2011
  *
- * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2016 James F. Bowring and www.Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -387,9 +387,10 @@ public class TripoliFraction implements //
     /**
      *
      * @param fractionationTechnique the value of fractionationTechnique
-     * @return
+     * @param inLiveMode the value of inLiveMode
+     * @return the Jama.Matrix
      */
-    public Matrix calculateUncertaintyPbcCorrections(FractionationTechniquesEnum fractionationTechnique) {
+    public Matrix calculateUncertaintyPbcCorrections(FractionationTechniquesEnum fractionationTechnique, boolean inLiveMode) {
         // nov 2014 additional work for pbc corrections section 6 of paper
         // build a super matrix of all 6 Slogratioxy matrices
         // first need to sum dimensions
@@ -398,7 +399,11 @@ public class TripoliFraction implements //
         SortedSet<DataModelInterface> ratiosSortedSet = new TreeSet<>();
 
         if (fractionationTechnique.compareTo(FractionationTechniquesEnum.INTERCEPT) == 0) {
-            ratiosSortedSet = getRatiosForFractionFitting();
+            if (inLiveMode) {
+                ratiosSortedSet = getNonPbRatiosForFractionFitting();
+            } else {
+                ratiosSortedSet = getRatiosForFractionFitting();
+            }
             for (DataModelInterface rr : ratiosSortedSet) {
                 ((RawRatioDataModel) rr).calculateSlogRatioX_Y();
                 totalColumns += ((RawRatioDataModel) rr).getSlogRatioX_Y(false).getColumnDimension();

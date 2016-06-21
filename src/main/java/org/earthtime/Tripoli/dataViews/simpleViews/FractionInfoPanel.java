@@ -155,7 +155,7 @@ public class FractionInfoPanel extends AbstractRawDataView {
         ODChoiceButton.setBounds(6, pixelsFromTop, 60, 20);
         ODChoiceButton.addActionListener((ActionEvent ae) -> {
             tripoliFraction.setODforAllRatios(setOD);
-            ((AbstractRawDataView) sampleSessionDataView).refreshPanel(true);
+            ((AbstractRawDataView) sampleSessionDataView).refreshPanel(true, false);
         });
 
         return ODChoiceButton;
@@ -223,7 +223,7 @@ public class FractionInfoPanel extends AbstractRawDataView {
         @Override
         public void actionPerformed(ActionEvent arg0) {
             tripoliFraction.toggleShowLocalYAxis();
-            ((AbstractRawDataView) sampleSessionDataView).refreshPanel(true);
+            ((AbstractRawDataView) sampleSessionDataView).refreshPanel(true, false);
         }
     }
 
@@ -240,16 +240,17 @@ public class FractionInfoPanel extends AbstractRawDataView {
         @Override
         public void actionPerformed(ActionEvent arg0) {
             tripoliFraction.toggleShowLocalInterceptFitFunctionPanel();
-            ((AbstractRawDataView) sampleSessionDataView).refreshPanel(true);
+            ((AbstractRawDataView) sampleSessionDataView).refreshPanel(true, false);
         }
     }
 
     /**
      *
      * @param doReScale the value of doReScale
+     * @param inLiveMode the value of inLiveMode
      */
     @Override
-    public void preparePanel(boolean doReScale) {
+    public void preparePanel(boolean doReScale, boolean inLiveMode) {
 
         this.removeAll();
 

@@ -269,7 +269,7 @@ public abstract class AbstractFitFunctionPresentationView extends AbstractRawDat
                         rawRatioDataModel.setOverDispersionSelected(((AbstractButton) ae.getSource()).isSelected());
                     }
 
-                    refreshPanel(true);
+                    refreshPanel(true, false);
 
                     updatePlotsWithChanges(targetDataModelView);
 

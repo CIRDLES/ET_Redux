@@ -388,9 +388,10 @@ public class SessionOfStandardView extends AbstractRawDataView implements FitFun
     /**
      *
      * @param doReScale the value of doReScale
+     * @param inLiveMode the value of inLiveMode
      */
     @Override
-    public void preparePanel(boolean doReScale) {
+    public void preparePanel(boolean doReScale, boolean inLiveMode) {
 
         this.removeAll();
 
@@ -487,7 +488,7 @@ public class SessionOfStandardView extends AbstractRawDataView implements FitFun
                             System.out.println(">>>>>>>>>>>>trouble at standard exclude");
                         }
                         // removed may 2016 updateReportTable();
-                        ((AbstractRawDataView) sampleSessionDataView).refreshPanel(true);
+                        ((AbstractRawDataView) sampleSessionDataView).refreshPanel(true, false);
                     }
                 });
                 popup.add(menuItem);
@@ -506,7 +507,7 @@ public class SessionOfStandardView extends AbstractRawDataView implements FitFun
                             System.out.println(">>>>>>>>>>>>trouble at standard include");
                         }
                         // removed may 2016 updateReportTable();
-                        ((AbstractRawDataView) sampleSessionDataView).refreshPanel(true);
+                        ((AbstractRawDataView) sampleSessionDataView).refreshPanel(true, false);
                     }
                 });
                 popup.add(menuItem);

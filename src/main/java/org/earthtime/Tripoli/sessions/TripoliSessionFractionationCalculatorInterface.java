@@ -42,6 +42,8 @@ public interface TripoliSessionFractionationCalculatorInterface {
      */
     public void applyCorrections (boolean inLiveMode);
     
+    public void resetAllUPbFractionReduction();
+    
     /**
      *
      * @return
