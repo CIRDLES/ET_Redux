@@ -109,6 +109,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
     private int lineHeight = 17;
     private String displayMessage = "";
     private JButton sortFractionsButton;
+    private JButton toggleMeasButton;
     private ArrayList<JButton> sortButtons;
 
     /**
@@ -284,6 +285,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
 
     private void reSizeSortButtons() {
         sortFractionsButton.setBounds(1, DATATABLE_TOP_HEIGHT - lineHeight - 1, fractionColumnWidth - 3, lineHeight - 3);
+        toggleMeasButton.setBounds(1, 2, fractionColumnWidth - 3, lineHeight - 3);
 
         int drawnWidth = 3;
         for (int c = 3; c < reportFractions[0].length; c++) {
@@ -404,6 +406,21 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
 
             reportHeader.add(sortButton, DEFAULT_LAYER);
 
+        }
+
+        // June 2016 add button upper left to toggle meansure ratios inside compostion for Dan Condon et al issue
+        toggleMeasButton = new ET_JButton("Toggle Measured");
+        toggleMeasButton.setFont(ReduxConstants.sansSerif_10_Bold);
+        toggleMeasButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                sample.getReportSettingsModel().toggleMeasuredRatiosInCompositionCategory();
+                parentFrame.loadAndShowReportTableData();
+            }
+        });
+        if (sample.isAnalysisTypeIDTIMS()) {
+            upperLeftCorner.add(toggleMeasButton, JLayeredPane.PALETTE_LAYER);
         }
 
         reSizeSortButtons();
@@ -534,14 +551,14 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
 
         Arrays.sort(reportFractionsSorted, (final String[] entry1, final String[] entry2) -> {
             int retVal = 0;
-            
+
             // aliquots have been ordered in manager by number regardless of name
             // so these sorts are within each aliquot
             // compare aliquot name
             // entry1[1] is aliquot name and entry1[2] is fraction name or columnNumber is for secondary Fraction column
             if (entry1[1].trim().equalsIgnoreCase(entry2[1].trim())) {
                 if ((columnNumber == 2) || reportFractions[0][columnNumber].trim().equalsIgnoreCase("Fraction")) {
-                    
+
                     String field1;
                     try {
                         field1 = entry1[columnNumber].trim();
@@ -560,23 +577,23 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                     } else {
                         retVal = forNoah.compare(field2, field1);
                     }
-                    
+
                 } else {
-                    
+
                     BigDecimal field1;
                     try {
                         field1 = new BigDecimal(entry1[columnNumber].trim());
                     } catch (Exception e) {
                         field1 = BigDecimal.ZERO;
                     }
-                    
+
                     BigDecimal field2;
                     try {
                         field2 = new BigDecimal(entry2[columnNumber].trim());
                     } catch (Exception e) {
                         field2 = BigDecimal.ZERO;
                     }
-                    
+
                     if (sortedColumnDirection == 1) {
                         retVal = field1.compareTo(field2);
                     } else {
