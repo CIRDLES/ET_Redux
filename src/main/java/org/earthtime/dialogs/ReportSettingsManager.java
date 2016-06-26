@@ -26,9 +26,9 @@ import java.awt.event.ActionListener;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Vector;
+import javax.swing.AbstractButton;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JList;
 import javax.swing.SpinnerModel;
@@ -333,7 +333,7 @@ public class ReportSettingsManager extends DialogEditor {
 
     private void setVisibleAllColumnsInCategory ( boolean visible ) {
         for (int i = 0; i < columns_list.getModel().getSize(); i ++) {
-            ((ReportListItemI) columns_list.getModel().getElementAt( i )).setVisible( visible );
+            columns_list.getModel().getElementAt( i ).setVisible( visible );
         }
         columns_list.repaint();
     }
@@ -777,7 +777,7 @@ public class ReportSettingsManager extends DialogEditor {
     }//GEN-LAST:event_CloseDialog
 
     private void columnHideShow_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_columnHideShow_buttonActionPerformed
-        ((ReportListItemI) columns_list.getSelectedValue()).ToggleIsVisible();
+        columns_list.getSelectedValue().ToggleIsVisible();
         columns_list.repaint();
 }//GEN-LAST:event_columnHideShow_buttonActionPerformed
 
@@ -798,22 +798,22 @@ public class ReportSettingsManager extends DialogEditor {
 }//GEN-LAST:event_columnMoveUp_buttonActionPerformed
 
     private void uncertaintyVisible_chkBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_uncertaintyVisible_chkBoxActionPerformed
-        ((ReportColumn) columns_list.getSelectedValue())//
-                .getUncertaintyColumn().setVisible( ((JCheckBox) evt.getSource()).isSelected() );
+        ((ReportColumnInterface) columns_list.getSelectedValue())//
+                .getUncertaintyColumn().setVisible( ((AbstractButton) evt.getSource()).isSelected() );
     }//GEN-LAST:event_uncertaintyVisible_chkBoxActionPerformed
 
     private void uncertaintyDigits_spinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_uncertaintyDigits_spinnerStateChanged
-        ((ReportColumn) columns_list.getSelectedValue())//
+        ((ReportColumnInterface) columns_list.getSelectedValue())//
                 .getUncertaintyColumn().setCountOfSignificantDigits( (Integer) uncertaintyDigits_spinner.getValue() );
     }//GEN-LAST:event_uncertaintyDigits_spinnerStateChanged
 
     private void valueDigits_spinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_valueDigits_spinnerStateChanged
-        ((ReportColumn) columns_list.getSelectedValue())//
+        ((ReportColumnInterface) columns_list.getSelectedValue())//
                 .setCountOfSignificantDigits( (Integer) valueDigits_spinner.getValue() );
 }//GEN-LAST:event_valueDigits_spinnerStateChanged
 
 private void valueModeArbitrary_rButtonunctModeArbitraryRButton_State_Changed(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_valueModeArbitrary_rButtonunctModeArbitraryRButton_State_Changed
-    ((ReportColumn) columns_list.getSelectedValue())//
+    ((ReportColumnInterface) columns_list.getSelectedValue())//
             .setDisplayedWithArbitraryDigitCount( valueModeArbitrary_rButton.isSelected() );
     populateColumnsDetails( (ReportColumn) columns_list.getSelectedValue() );
 }//GEN-LAST:event_valueModeArbitrary_rButtonunctModeArbitraryRButton_State_Changed
@@ -827,7 +827,7 @@ private void categoryHideAllColumns_buttonActionPerformed(java.awt.event.ActionE
 }//GEN-LAST:event_categoryHideAllColumns_buttonActionPerformed
 
 private void unctModeArbitrary_rButtonStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_unctModeArbitrary_rButtonStateChanged
-    ((ReportColumn) columns_list.getSelectedValue())//
+    ((ReportColumnInterface) columns_list.getSelectedValue())//
             .getUncertaintyColumn().setDisplayedWithArbitraryDigitCount( unctModeArbitrary_rButton.isSelected() );
     populateColumnsDetails( (ReportColumn) columns_list.getSelectedValue() );
 }//GEN-LAST:event_unctModeArbitrary_rButtonStateChanged

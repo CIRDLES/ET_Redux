@@ -167,6 +167,15 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
     @Override
     boolean equals(Object reportSettingsModel);
 
+    public default void toggleMeasuredRatiosInCompositionCategory(){
+        ReportCategoryInterface composition = getCompositionCategory();
+        for (ReportColumnInterface column : composition.getCategoryColumns()){
+            if (column.getDisplayName1().contains("meas")){
+                column.ToggleIsVisible();
+            }
+        }      
+    }
+    
     /**
      *
      * @return

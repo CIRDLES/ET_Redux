@@ -22,7 +22,6 @@ package org.earthtime.Tripoli.fitFunctions;
 import Jama.Matrix;
 import java.io.Serializable;
 import org.earthtime.dataDictionaries.FitFunctionTypeEnum;
-import org.earthtime.dataDictionaries.GoodnessOfFitFunctionTypeEnum;
 import org.earthtime.statistics.NonParametricStats;
 
 /**
@@ -178,7 +177,7 @@ public class LineFitFunction implements FitFunctionInterface, Serializable {
         @Override
         public double getYInterceptVariance () {
             double retVal = fitParameterCovarianceMatrix.get( 0, 0 );
-            if ( Double.isNaN( retVal ) ) {
+            if ( !Double.isFinite( retVal ) ) {
                 retVal = 0.0;
             }
             return retVal;
@@ -192,7 +191,7 @@ public class LineFitFunction implements FitFunctionInterface, Serializable {
         @Override
         public double getStdErrOfB () {
             double retVal = Math.sqrt( fitParameterCovarianceMatrix.get( 0, 0 ) );
-            if ( Double.isNaN( retVal ) ) {
+            if ( !Double.isFinite( retVal ) ) {
                 retVal = 0.0;
             }
             return retVal;

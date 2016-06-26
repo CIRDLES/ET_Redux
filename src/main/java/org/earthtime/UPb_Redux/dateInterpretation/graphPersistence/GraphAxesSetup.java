@@ -282,7 +282,7 @@ public class GraphAxesSetup implements
                     (float) Math.abs(slope / aspectRatio);//
 
             double rotateAngle = Math.atan(ticSlope);
-            if (Double.isNaN(rotateAngle)) {
+            if (!Double.isFinite(rotateAngle)) {
                 rotateAngle = 0.0;
             }
 
@@ -330,7 +330,7 @@ public class GraphAxesSetup implements
                     (float) Math.abs(slope / aspectRatio);//
 
             double rotateAngle = Math.atan(ticSlope);
-            if (Double.isNaN(rotateAngle)) {
+            if (!Double.isFinite(rotateAngle)) {
                 rotateAngle = 0.0;
             }
 

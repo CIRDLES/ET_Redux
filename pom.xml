@@ -21,7 +21,7 @@
     <groupId>org.cirdles</groupId>
     <artifactId>ET_Redux</artifactId>
     <name>ET_Redux</name>
-    <version>3.5.7</version>
+    <version>3.5.8</version>
     <description>Successor to U-Pb_Redux</description>
     <url>https://cirdles.org</url>
     <inceptionYear>2006</inceptionYear>
@@ -243,7 +243,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.18.1</version>
+                <version>2.19.1</version>
 
                 <configuration>
                     <includes>
@@ -302,7 +302,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>2.3</version>
+                <version>2.4.3</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -319,24 +319,7 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>sh.tak.appbundler</groupId>
-                <artifactId>appbundle-maven-plugin</artifactId>
-                <version>1.0.4</version>
-                <configuration>
-                    <mainClass>org.earthtime.ETRedux</mainClass>
-                    <iconFile>UThPbReduxLogo.icns</iconFile>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>bundle</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+            </plugin>        
         </plugins>
         <resources>
             <resource>

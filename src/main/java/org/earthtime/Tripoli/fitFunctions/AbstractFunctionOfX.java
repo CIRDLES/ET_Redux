@@ -155,17 +155,17 @@ public abstract class AbstractFunctionOfX implements Serializable {
             double b, //
             double c) {
 
-        if (Double.isNaN(a)) {
+        if (!Double.isFinite(a)) {
             this.a = 0.0;
         } else {
             this.a = a;
         }
-        if (Double.isNaN(b)) {
+        if (!Double.isFinite(b)) {
             this.b = 0.0;
         } else {
             this.b = b;
         }
-        if (Double.isNaN(c)) {
+        if (!Double.isFinite(c)) {
             this.c = 0.0;
         } else {
             this.c = c;
@@ -382,7 +382,7 @@ public abstract class AbstractFunctionOfX implements Serializable {
     public boolean verifyPositiveVariances() {
         boolean retVal = true;
         for (int i = 0; i < fitParameterCovarianceMatrix.getRowDimension(); i++) {
-            if ((Double.isNaN(fitParameterCovarianceMatrix.get(i, i))) || (fitParameterCovarianceMatrix.get(i, i) < 0.0)) {
+            if ((!Double.isFinite(fitParameterCovarianceMatrix.get(i, i))) || (fitParameterCovarianceMatrix.get(i, i) < 0.0)) {
                 retVal = false;
             }
         }

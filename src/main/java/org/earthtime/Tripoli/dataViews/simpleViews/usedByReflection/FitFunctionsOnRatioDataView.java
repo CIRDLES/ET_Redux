@@ -136,7 +136,7 @@ public class FitFunctionsOnRatioDataView extends AbstractRawDataView implements 
                     // logs cant be nan and ratios or alphas cant be neg
                     if (!rawRatioDataModel.isForceMeanForCommonLeadRatios() //
                             && //
-                            Double.isNaN(myOnPeakData[i])) {
+                            !Double.isFinite(myOnPeakData[i])) {
                         Font specialFont = new Font("Courier New", Font.PLAIN, 10);
                         GlyphVector vect = specialFont.createGlyphVector(g2d.getFontRenderContext(), "+");
                         dataPoint = vect.getOutline((float) mapX(myOnPeakNormalizedAquireTimes[i]) - 3, (float) mapY(minY));
@@ -217,7 +217,7 @@ public class FitFunctionsOnRatioDataView extends AbstractRawDataView implements 
                 // rework logic April 2016   
                 for (int i = 0; i < myOnPeakData.length; i++) {
 
-                    if (!Double.isNaN(myOnPeakData[i]) && (showAll || myDataActiveMap[i])) {
+                    if (Double.isFinite(myOnPeakData[i]) && (showAll || myDataActiveMap[i])) {
                         minY = Math.min(minY, myOnPeakData[i]);
                         maxY = Math.max(maxY, myOnPeakData[i]);
                     }

@@ -52,7 +52,7 @@ public class ToolBox {
      */
     static public double log(double num) throws Exception {
         double result = Math.log(num);
-        if (Double.isNaN(result)){
+        if (!Double.isFinite(result)){
             throw new ArithmeticException("Error: log of negative number.");
         }
         return result;
@@ -66,7 +66,7 @@ public class ToolBox {
      */
     static public double log10(double num) throws Exception {
         double result = Math.log10(num);
-        if (Double.isNaN(result)){
+        if (!Double.isFinite(result)){
             throw new ArithmeticException("log of negative number");
         }
         return result;

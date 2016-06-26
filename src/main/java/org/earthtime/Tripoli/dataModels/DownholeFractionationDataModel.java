@@ -472,7 +472,7 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
         for (double i = startValue; i < stopValue; i += increment) {
             AbstractFunctionOfX fOfX_SMOOTHING_SPLINE = generateSplineWithSpecificOD(Math.pow(i, 2));
 
-            if (Double.isNaN(fOfX_SMOOTHING_SPLINE.getLogRoughness())) {
+            if (!Double.isFinite(fOfX_SMOOTHING_SPLINE.getLogRoughness())) {
                 try {
                     fOfX_SMOOTHING_SPLINE = sessionOfStandardsSplinesWithOD.get(sessionOfStandardsSplinesWithOD.lastKey());
                     AbstractFunctionOfX fOfX_SMOOTHING_SPLINE_EXIST = downholeStandardsFitFunctionsWithOD.get(fOfX_SMOOTHING_SPLINE.getShortNameString());

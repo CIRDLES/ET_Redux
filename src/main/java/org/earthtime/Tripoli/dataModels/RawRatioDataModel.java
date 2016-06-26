@@ -1336,7 +1336,7 @@ public class RawRatioDataModel //
      * @return the meanOfCorrectedRatios
      */
     public double getMeanOfCorrectedRatios() {
-        if (Double.isNaN(meanOfCorrectedRatios)) {
+        if (!Double.isFinite(meanOfCorrectedRatios)) {
             meanOfCorrectedRatios = 0.0;
         }
         return meanOfCorrectedRatios;
@@ -1353,7 +1353,7 @@ public class RawRatioDataModel //
      * @return the stdErrOfMeanCorrectedRatios
      */
     public double getStdErrOfMeanCorrectedRatios() {
-        if (Double.isNaN(stdErrOfMeanCorrectedRatios)) {
+        if (!Double.isFinite(stdErrOfMeanCorrectedRatios)) {
             stdErrOfMeanCorrectedRatios = 0.0;
         }
         return stdErrOfMeanCorrectedRatios;

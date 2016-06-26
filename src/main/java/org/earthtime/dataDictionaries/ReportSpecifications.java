@@ -100,7 +100,41 @@ public class ReportSpecifications {
         },
         {"", "Th/U", "(magma)", "", "getAnalysisMeasure", AnalysisMeasures.rTh_Umagma.getName(), "",
             "FN-11", "false", "true", "3", "", "Th/U magma", "true", "false"
-        },};
+        },
+        
+        {"meas.", "206Pb/", "204Pb", "", "getMeasuredRatioByName", "r206_204m", "PCT",
+            "", "false", "false", "3", "true", "206/204 measured ratio", "true", "false"
+        },
+        {"meas.", "206Pb/", "207Pb", "", "getMeasuredRatioByName", "r206_207m", "PCT",
+            "", "false", "false", "3", "true", "206/207 measured ratio", "true", "false"
+        },
+        {"meas.", "206Pb/", "208Pb", "", "getMeasuredRatioByName", "r206_208m", "PCT",
+            "", "false", "false", "3", "true", "206/208 measured ratio", "true", "false"
+        },
+        {"meas.", "206Pb/", "205Pb", "", "getMeasuredRatioByName", "r206_205m", "PCT",
+            "", "false", "false", "3", "true", "206/205 measured ratio", "true", "false"
+        },
+        {"meas.", "207Pb/", "205Pb", "", "getMeasuredRatioByName", "r207_205m", "PCT",
+            "", "false", "false", "3", "true", "207/205 measured ratio", "true", "false"
+        },
+        {"meas.", "208Pb/", "205Pb", "", "getMeasuredRatioByName", "r208_205m", "PCT",
+            "", "false", "false", "3", "true", "208/205 measured ratio", "true", "false"
+        },
+        {"meas.", "202Pb/", "205Pb", "", "getMeasuredRatioByName", "r2026_205m", "PCT",
+            "", "false", "false", "3", "true", "202/205 measured ratio", "true", "false"
+        },
+        {"meas.", "238U/", "235U", "", "getMeasuredRatioByName", "r238_235m", "PCT",
+            "", "false", "false", "3", "true", "238/235 measured ratio", "true", "false"
+        },
+        {"meas.", "233U/", "235U", "", "getMeasuredRatioByName", "r233_235m", "PCT",
+            "", "false", "false", "3", "true", "233/235 measured ratio", "true", "false"
+        },
+        {"meas.", "233U/", "236U", "", "getMeasuredRatioByName", "r233_236m", "PCT",
+            "", "false", "false", "3", "true", "233/236 measured ratio", "true", "false"
+        },
+    
+    
+    };
 
     // Report column order =
     //  displayName1, displayName2, displayName3, units, retrieveMethodName, retrieveParameterName, uncertaintyType,

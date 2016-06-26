@@ -566,7 +566,7 @@ public class ReductionHandler {
                 pow( 2 ).doubleValue();
 
         double rho = ReduxConstants.NO_RHO_FLAG;// June 2010 to force out of range of legal cov [-1,,,1]0.0;
-        if (  ! Double.isInfinite( oneSigma2 ) &&  ! Double.isNaN( oneSigma2 ) && (var1 * oneSigma2) >= 0.0 ) {
+        if (  ! Double.isInfinite( oneSigma2 ) &&  Double.isFinite( oneSigma2 ) && (var1 * oneSigma2) >= 0.0 ) {
             //if ( (var1 * oneSigma2) != 0.0 ) {
             rho = cov / Math.sqrt( var1 ) / oneSigma2;
         }
