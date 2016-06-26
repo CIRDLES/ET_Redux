@@ -261,7 +261,7 @@ public class ExponentialFitFunction implements FitFunctionInterface, Serializabl
         @Override
         public double getYInterceptStdErr () {
             double retVal = Math.sqrt( fitParameterCovarianceMatrix.get( 0, 0 ) + fitParameterCovarianceMatrix.get( 2, 2 ) );
-            if ( Double.isNaN( retVal ) ) {
+            if ( !Double.isFinite( retVal ) ) {
                 retVal = 0.0;
             }
             return retVal;
@@ -271,7 +271,7 @@ public class ExponentialFitFunction implements FitFunctionInterface, Serializabl
         @Override
         public double getYInterceptVariance () {
             double retVal = fitParameterCovarianceMatrix.get( 0, 0 ) + fitParameterCovarianceMatrix.get( 2, 2 );
-            if ( Double.isNaN( retVal ) ) {
+            if ( !Double.isFinite( retVal ) ) {
                 retVal = 0.0;
             }
             return retVal;
@@ -285,7 +285,7 @@ public class ExponentialFitFunction implements FitFunctionInterface, Serializabl
         @Override
         public double getStdErrOfB () {
             double retVal = Math.sqrt( fitParameterCovarianceMatrix.get( 1, 1 ) );
-            if ( Double.isNaN( retVal ) ) {
+            if ( !Double.isFinite( retVal ) ) {
                 retVal = 0.0;
             }
             return Math.sqrt( retVal );

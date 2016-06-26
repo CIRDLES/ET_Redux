@@ -161,7 +161,7 @@ public class LevenbergMarquardGeneralSolverWithCovS implements FitFunctionInterf
                 doContinue = false;
             }
 
-            if (Double.isNaN(h.get(0, 0))) {
+            if (!Double.isFinite(h.get(0, 0))) {
                 System.out.println("FIT FAILED WITH NANs in h " + "\n");
                 iterations = maxIterations;
                 doContinue = false;

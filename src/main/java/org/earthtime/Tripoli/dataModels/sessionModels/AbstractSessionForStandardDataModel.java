@@ -654,7 +654,7 @@ public abstract class AbstractSessionForStandardDataModel implements Serializabl
 //            }
             // oct 2014 new take
             // stop processing if roughness bad
-            if (Double.isNaN(fOfX_SMOOTHING_SPLINE.getLogRoughness())) {//|| (fOfX_SMOOTHING_SPLINE.getLogRoughness() < -41.0)) {
+            if (!Double.isFinite(fOfX_SMOOTHING_SPLINE.getLogRoughness())) {//|| (fOfX_SMOOTHING_SPLINE.getLogRoughness() < -41.0)) {
 
 //                try {
 //                    // get last good one if exists
