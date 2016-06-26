@@ -511,7 +511,7 @@ public class ExpTreeII {
         double myPow = //
                 Math.pow(this.getNodeValue().doubleValue(), rightChild.getNodeValue().doubleValue());
 
-        if (Double.isNaN(myPow)) {
+        if (!Double.isFinite(myPow)) {
             myPow = 0;
         }
 
@@ -527,7 +527,7 @@ public class ExpTreeII {
         double myExpm1 = //
                 Math.expm1(this.getNodeValue().doubleValue());
 
-        if (Double.isNaN(myExpm1)) {
+        if (!Double.isFinite(myExpm1)) {
             myExpm1 = 0;
         }
 
@@ -547,7 +547,7 @@ public class ExpTreeII {
         double myLog1p = //
                 Math.log1p(this.getNodeValue().doubleValue());
 
-        if (Double.isNaN(myLog1p)) {
+        if (!Double.isFinite(myLog1p)) {
             myLog1p = 0;
         }
 
