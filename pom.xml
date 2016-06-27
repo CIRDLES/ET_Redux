@@ -228,11 +228,6 @@
             <version>-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>com.github.bowring</groupId>
-            <artifactId>SHRIMP</artifactId>
-            <version>-SNAPSHOT</version>
-        </dependency>
-        <dependency>
             <groupId>com.github.cirdles</groupId>
             <artifactId>GeoSamples</artifactId>
             <version>v.2.0.0</version>
