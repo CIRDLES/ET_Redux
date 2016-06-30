@@ -19,17 +19,14 @@ package org.earthtime.Tripoli.rawDataFiles.handlers.shrimp;
 
 import java.io.File;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import org.cirdles.shrimp.PrawnFile;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.Tripoli.massSpecSetups.singleCollector.shrimp.ShrimpSetupUPb;
@@ -149,40 +146,35 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
      * @param leftShadeCount the value of leftShadeCount
      * @param ignoreFirstFractions the value of ignoreFirstFractions
      * @param inLiveMode the value of inLiveMode
-     * @return the java.util.SortedSet<org.earthtime.Tripoli.fractions.TripoliFraction>
+     * @return the
+     * java.util.SortedSet<org.earthtime.Tripoli.fractions.TripoliFraction>
      */
     @Override
     protected SortedSet<TripoliFraction> loadRawDataFile(//
             SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions, boolean inLiveMode) {
 
         SortedSet myTripoliFractions = new TreeSet<>();
-        PrawnFile prawnFile;
+        loadDataTask.firePropertyChange("progress", 10, 33);
 
-        // remote copy of example file
-        java.net.URL url;
         try {
-            url = new URL("https://raw.githubusercontent.com/bowring/XSD/master/SHRIMP/EXAMPLE_100142_G6147_10111109.43_10.33.37%20AM.xml");
-
-            JAXBContext jaxbContext = JAXBContext.newInstance(PrawnFile.class);
-            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-            // show some progress
-            loadDataTask.firePropertyChange("progress", 0, 10);
-            prawnFile = (PrawnFile) jaxbUnmarshaller.unmarshal(url);
+            List<org.cirdles.calamari.shrimp.ShrimpFraction> myShrimpFractions = null;
+//            myShrimpFractions = org.cirdles.calamari.core.RawDataFileHandler.extractShrimpFractionsFromPrawnFile("/Users/sbowring/Google Drive/_ETRedux_ProjectData/SHRIMP/100142_G6147_10111109.43.xml");
+            myShrimpFractions = org.cirdles.calamari.core.RawDataFileHandler.extractShrimpFractionsFromPrawnFile(//
+                    "https://raw.githubusercontent.com/bowring/XSD/master/SHRIMP/EXAMPLE_100142_G6147_10111109.43_10.33.37%20AM.xml", true, false);
 
             // send name to project
-            loadDataTask.firePropertyChange("projectName", "", prawnFile.getMount());
+            loadDataTask.firePropertyChange("projectName", "", myShrimpFractions.get(0).getNameOfMount());
+
             // assume we are golden   
-            // a 'run' is an analysis or fraction
-            for (int f = ignoreFirstFractions; f < prawnFile.getRuns(); f++) {
+            for (int f = ignoreFirstFractions; f < myShrimpFractions.size(); f++) {
 
                 if (loadDataTask.isCancelled()) {
                     break;
                 }
-                loadDataTask.firePropertyChange("progress", 10, ((90 * f) / prawnFile.getRuns()));
+                
+                loadDataTask.firePropertyChange("progress", 33, 33 + ((67 * f) / myShrimpFractions.size()));
 
-                PrawnFile.Run runFraction = prawnFile.getRun().get(f);
-
-                TripoliFraction tripoliFraction = processRunFraction(runFraction);
+                TripoliFraction tripoliFraction = processRunFraction(myShrimpFractions.get(f));
 
                 // determine if standard reference material
                 myTripoliFractions.add(tripoliFraction);
@@ -203,25 +195,15 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
         return myTripoliFractions;
     }
 
-    private TripoliFraction processRunFraction(PrawnFile.Run runFraction) {
-//        String fractionID = runFraction.getPar().get(0).getValue();
-//        // temp hack
-//        boolean isReferenceMaterial = fractionID.startsWith("T.");
+    private TripoliFraction processRunFraction(org.cirdles.calamari.shrimp.ShrimpFraction shrimpFraction) {
 
-//        // format "2010-11-11"
-//        String setDate = runFraction.getSet().getPar().get(0).getValue();
-//        // format 10:17:34
-//        String setTime = runFraction.getSet().getPar().get(1).getValue();
-//        // convert to long
-//        java.sql.Timestamp peakTimeStamp = java.sql.Timestamp.valueOf(setDate + " " + setTime);
-//        long fractionPeakTimeStamp = peakTimeStamp.getTime();
-        ShrimpFraction shrimpFraction = PrawnRunFractionParser.processRunFraction(runFraction);
         String fractionID = shrimpFraction.getFractionID();
         // temp hack
         boolean isReferenceMaterial = fractionID.startsWith("T.");
         long fractionPeakTimeStamp = shrimpFraction.getDateTimeMilliseconds();
 
-        double[][] extractedData = shrimpFraction.getExtractedRunData();
+        double[][] totalCounts = shrimpFraction.getTotalCounts();
+        double[][] totalCountsOneSigmaAbs = shrimpFraction.getTotalCountsOneSigmaAbs();
 
         // within each row
         // index 0 = scannumber; followed by order of groups = 196  204 Backgrnd 206 207 208 238 248 254 270
@@ -232,32 +214,32 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
         ArrayList<double[]> peakAcquisitions = new ArrayList<>();
         ArrayList<double[]> peakAcquisitionsVariances = new ArrayList<>();
 
-        for (int scan = 0; scan < extractedData.length; scan++) {
+        for (int scan = 0; scan < totalCounts.length; scan++) {
             // use these for now: 196  204  206 Pb207	Pb208	238 248 254 270
             double[] peakCounts = new double[9];
             double[] peakVariances = new double[9];
             peakAcquisitions.add(peakCounts);
             peakAcquisitionsVariances.add(peakVariances);
 
-            peakCounts[0] = extractedData[scan][1];
-            peakCounts[1] = extractedData[scan][4];
-            peakCounts[2] = extractedData[scan][10];
-            peakCounts[3] = extractedData[scan][13];
-            peakCounts[4] = extractedData[scan][16];
-            peakCounts[5] = extractedData[scan][19];
-            peakCounts[6] = extractedData[scan][22];
-            peakCounts[7] = extractedData[scan][25];
-            peakCounts[8] = extractedData[scan][28];
+            peakCounts[0] = totalCounts[scan][0];
+            peakCounts[1] = totalCounts[scan][1];  
+            peakCounts[2] = totalCounts[scan][3]; 
+            peakCounts[3] = totalCounts[scan][4]; 
+            peakCounts[4] = totalCounts[scan][5];
+            peakCounts[5] = totalCounts[scan][6];
+            peakCounts[6] = totalCounts[scan][7];
+            peakCounts[7] = totalCounts[scan][8]; 
+            peakCounts[8] = totalCounts[scan][9];
 
-            peakVariances[0] = Math.pow(extractedData[scan][2], 2);
-            peakVariances[1] = Math.pow(extractedData[scan][5], 2);
-            peakVariances[2] = Math.pow(extractedData[scan][11], 2);
-            peakVariances[3] = Math.pow(extractedData[scan][14], 2);
-            peakVariances[4] = Math.pow(extractedData[scan][17], 2);
-            peakVariances[5] = Math.pow(extractedData[scan][20], 2);
-            peakVariances[6] = Math.pow(extractedData[scan][23], 2);
-            peakVariances[7] = Math.pow(extractedData[scan][26], 2);
-            peakVariances[8] = Math.pow(extractedData[scan][29], 2);
+            peakVariances[0] = Math.pow(totalCountsOneSigmaAbs[scan][0], 2);
+            peakVariances[1] = Math.pow(totalCountsOneSigmaAbs[scan][1], 2);
+            peakVariances[2] = Math.pow(totalCountsOneSigmaAbs[scan][3], 2);
+            peakVariances[3] = Math.pow(totalCountsOneSigmaAbs[scan][4], 2);
+            peakVariances[4] = Math.pow(totalCountsOneSigmaAbs[scan][5], 2);
+            peakVariances[5] = Math.pow(totalCountsOneSigmaAbs[scan][6], 2);
+            peakVariances[6] = Math.pow(totalCountsOneSigmaAbs[scan][7], 2);
+            peakVariances[7] = Math.pow(totalCountsOneSigmaAbs[scan][8], 2);
+            peakVariances[8] = Math.pow(totalCountsOneSigmaAbs[scan][9], 2);
         }
 
         TripoliFraction tripoliFraction
@@ -283,7 +265,7 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
 
         // supply calculated variances of CORRECTED counts
         ((ShrimpSetupUPb) massSpec).initializeCorrectedVariances(stripOutBackgroundHack(2, shrimpFraction.getPkFerr()));
-        
+
         // supply calculated ratios and uncertainties
         ((ShrimpSetupUPb) massSpec).populateRawAndLogRatios(shrimpFraction.getIsotopicRatios());
 

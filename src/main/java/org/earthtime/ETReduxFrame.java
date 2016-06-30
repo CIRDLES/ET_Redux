@@ -307,7 +307,6 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         MAC_OS_X = lcOSName.startsWith("mac os x");
 
         if (MAC_OS_X) {
-
             new MacOSAboutHandler(this);
         }
 
