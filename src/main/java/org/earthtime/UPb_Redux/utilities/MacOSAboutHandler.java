@@ -25,8 +25,8 @@ import com.apple.eawt.Application;
 import com.apple.eawt.ApplicationAdapter;
 import com.apple.eawt.ApplicationEvent;
 import java.awt.Component;
+import javax.swing.AbstractButton;
 import javax.swing.JFrame;
-import javax.swing.JMenuItem;
 import org.earthtime.ETReduxFrame;
 import org.earthtime.dialogs.AboutBox;
 import org.earthtime.dialogs.PreferencesEditorDialog;
@@ -91,12 +91,11 @@ public class MacOSAboutHandler extends Application {
         public void handleQuit(ApplicationEvent event) {
             // TODO this should not be hardcoded --> look up by menuitem name
             
-            Component[] sampleFile = ((ETReduxFrame)parent).getJMenuBar().getMenu(0).getMenuComponents();
-            for (int i = 0; i < sampleFile.length; i ++){
-                if (sampleFile[i].getClass().getName().equalsIgnoreCase("javax.swing.JMenuItem")   ){
-                    
-                    if (((JMenuItem)sampleFile[i]).getText().equalsIgnoreCase("Exit")){
-                        ((JMenuItem)sampleFile[i]).doClick();
+            Component[] sampleFile = parent.getJMenuBar().getMenu(0).getMenuComponents();
+            for (Component sampleFile1 : sampleFile) {
+                if (sampleFile1.getClass().getName().equalsIgnoreCase("javax.swing.JMenuItem")) {
+                    if (((AbstractButton) sampleFile1).getText().equalsIgnoreCase("Exit")) {
+                        ((AbstractButton) sampleFile1).doClick();
                         event.setHandled(true);
                     }
                 }

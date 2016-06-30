@@ -159,7 +159,8 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
         try {
             List<org.cirdles.calamari.shrimp.ShrimpFraction> myShrimpFractions = null;
 //            myShrimpFractions = org.cirdles.calamari.core.RawDataFileHandler.extractShrimpFractionsFromPrawnFile("/Users/sbowring/Google Drive/_ETRedux_ProjectData/SHRIMP/100142_G6147_10111109.43.xml");
-            myShrimpFractions = org.cirdles.calamari.core.RawDataFileHandler.extractShrimpFractionsFromPrawnFile("https://raw.githubusercontent.com/bowring/XSD/master/SHRIMP/EXAMPLE_100142_G6147_10111109.43_10.33.37%20AM.xml");
+            myShrimpFractions = org.cirdles.calamari.core.RawDataFileHandler.extractShrimpFractionsFromPrawnFile(//
+                    "https://raw.githubusercontent.com/bowring/XSD/master/SHRIMP/EXAMPLE_100142_G6147_10111109.43_10.33.37%20AM.xml", true, false);
 
             // send name to project
             loadDataTask.firePropertyChange("projectName", "", myShrimpFractions.get(0).getNameOfMount());
@@ -201,7 +202,8 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
         boolean isReferenceMaterial = fractionID.startsWith("T.");
         long fractionPeakTimeStamp = shrimpFraction.getDateTimeMilliseconds();
 
-        double[][] extractedData = shrimpFraction.getExtractedRunData();
+        double[][] totalCounts = shrimpFraction.getTotalCounts();
+        double[][] totalCountsOneSigmaAbs = shrimpFraction.getTotalCountsOneSigmaAbs();
 
         // within each row
         // index 0 = scannumber; followed by order of groups = 196  204 Backgrnd 206 207 208 238 248 254 270
@@ -212,32 +214,32 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
         ArrayList<double[]> peakAcquisitions = new ArrayList<>();
         ArrayList<double[]> peakAcquisitionsVariances = new ArrayList<>();
 
-        for (int scan = 0; scan < extractedData.length; scan++) {
+        for (int scan = 0; scan < totalCounts.length; scan++) {
             // use these for now: 196  204  206 Pb207	Pb208	238 248 254 270
             double[] peakCounts = new double[9];
             double[] peakVariances = new double[9];
             peakAcquisitions.add(peakCounts);
             peakAcquisitionsVariances.add(peakVariances);
 
-            peakCounts[0] = extractedData[scan][1];
-            peakCounts[1] = extractedData[scan][4];
-            peakCounts[2] = extractedData[scan][10];
-            peakCounts[3] = extractedData[scan][13];
-            peakCounts[4] = extractedData[scan][16];
-            peakCounts[5] = extractedData[scan][19];
-            peakCounts[6] = extractedData[scan][22];
-            peakCounts[7] = extractedData[scan][25];
-            peakCounts[8] = extractedData[scan][28];
+            peakCounts[0] = totalCounts[scan][0];
+            peakCounts[1] = totalCounts[scan][1];  
+            peakCounts[2] = totalCounts[scan][3]; 
+            peakCounts[3] = totalCounts[scan][4]; 
+            peakCounts[4] = totalCounts[scan][5];
+            peakCounts[5] = totalCounts[scan][6];
+            peakCounts[6] = totalCounts[scan][7];
+            peakCounts[7] = totalCounts[scan][8]; 
+            peakCounts[8] = totalCounts[scan][9];
 
-            peakVariances[0] = Math.pow(extractedData[scan][2], 2);
-            peakVariances[1] = Math.pow(extractedData[scan][5], 2);
-            peakVariances[2] = Math.pow(extractedData[scan][11], 2);
-            peakVariances[3] = Math.pow(extractedData[scan][14], 2);
-            peakVariances[4] = Math.pow(extractedData[scan][17], 2);
-            peakVariances[5] = Math.pow(extractedData[scan][20], 2);
-            peakVariances[6] = Math.pow(extractedData[scan][23], 2);
-            peakVariances[7] = Math.pow(extractedData[scan][26], 2);
-            peakVariances[8] = Math.pow(extractedData[scan][29], 2);
+            peakVariances[0] = Math.pow(totalCountsOneSigmaAbs[scan][0], 2);
+            peakVariances[1] = Math.pow(totalCountsOneSigmaAbs[scan][1], 2);
+            peakVariances[2] = Math.pow(totalCountsOneSigmaAbs[scan][3], 2);
+            peakVariances[3] = Math.pow(totalCountsOneSigmaAbs[scan][4], 2);
+            peakVariances[4] = Math.pow(totalCountsOneSigmaAbs[scan][5], 2);
+            peakVariances[5] = Math.pow(totalCountsOneSigmaAbs[scan][6], 2);
+            peakVariances[6] = Math.pow(totalCountsOneSigmaAbs[scan][7], 2);
+            peakVariances[7] = Math.pow(totalCountsOneSigmaAbs[scan][8], 2);
+            peakVariances[8] = Math.pow(totalCountsOneSigmaAbs[scan][9], 2);
         }
 
         TripoliFraction tripoliFraction
