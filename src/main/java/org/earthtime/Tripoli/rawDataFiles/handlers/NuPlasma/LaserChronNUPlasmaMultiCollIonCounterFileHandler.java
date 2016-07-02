@@ -259,7 +259,8 @@ public class LaserChronNUPlasmaMultiCollIonCounterFileHandler extends AbstractRa
      * @param leftShadeCount the value of leftShadeCount
      * @param ignoreFirstFractions the value of ignoreFirstFractions
      * @param inLiveMode the value of inLiveMode
-     * @return the java.util.SortedSet<org.earthtime.Tripoli.fractions.TripoliFraction>
+     * @return the
+     * java.util.SortedSet<org.earthtime.Tripoli.fractions.TripoliFraction>
      */
     @Override
     protected SortedSet<TripoliFraction> loadRawDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions, boolean inLiveMode) {
@@ -374,9 +375,11 @@ public class LaserChronNUPlasmaMultiCollIonCounterFileHandler extends AbstractRa
                     if (i == (ignoreFirstFractions + 1)) {
                         calendar.set(Calendar.AM_PM, AMPMval);
                     } else // check for rollover
-                    if (calendar.get(Calendar.AM_PM) > AMPMval) {
-                        // we have rolled to new day
-                        calendar.add(Calendar.DATE, 1);
+                    {
+                        if (calendar.get(Calendar.AM_PM) > AMPMval) {
+                            // we have rolled to new day
+                            calendar.add(Calendar.DATE, 1);
+                        }
                     }
                     calendar.set(Calendar.AM_PM, AMPMval);
                     fractionDate = calendar.getTime();//   fractionTimeFormat.parse(fractionDateString);
@@ -443,10 +446,6 @@ public class LaserChronNUPlasmaMultiCollIonCounterFileHandler extends AbstractRa
             }
         }
 
-//        if (tripoliFractions.isEmpty()) {
-//            tripoliFractions = null;
-//        }
-
         return tripoliFractions;
     }
 
@@ -457,5 +456,14 @@ public class LaserChronNUPlasmaMultiCollIonCounterFileHandler extends AbstractRa
         ObjectStreamClass myObject = ObjectStreamClass.lookup(Class.forName(LaserChronNUPlasmaMultiCollIonCounterFileHandler.class.getCanonicalName()));
         long theSUID = myObject.getSerialVersionUID();
         System.out.println("Customized De-serialization of LaserChronNUPlasmaMultiCollIonCounterFileHandler " + theSUID);
+    }
+
+    /**
+     *
+     * @return the boolean
+     */
+    @Override
+    public boolean getAndLoadRawIntensityDataFilePhaseI() {
+        return false;
     }
 }

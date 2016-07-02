@@ -162,8 +162,6 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
                     "ET Redux Warning",
                     JOptionPane.WARNING_MESSAGE);
         }
-
-//        return rawDataFile;
     }
 
     /**
@@ -309,10 +307,6 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
             }
         } // end of files loop
 
-//        if (myTripoliFractions.isEmpty()) {
-//            myTripoliFractions = null;
-//        }
-
         return myTripoliFractions;
     }
 
@@ -435,5 +429,14 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
             backgroundIntensities[j] = Math.abs(backgroundIntensities[j]);
             peakIntensities[j] = Math.abs(peakIntensities[j]);
         }
+    }
+
+    /**
+     *
+     * @return the boolean
+     */
+    @Override
+    public boolean getAndLoadRawIntensityDataFilePhaseI() {
+        return false;
     }
 }

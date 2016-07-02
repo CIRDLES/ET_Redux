@@ -64,8 +64,7 @@ public final class LaserchronElementIISetupUPb_A extends AbstractMassSpecSetup {
         this.commonLeadCorrectionHighestLevel = "B2";
 
         AbstractCollectorModel singleCollector
-                = 
-                new IonCounterCollectorModel(//
+                = new IonCounterCollectorModel(//
                         "Single", //
                         new ValueModel("DeadTime", //
                                 new BigDecimal(22.0e-9, //
@@ -88,11 +87,8 @@ public final class LaserchronElementIISetupUPb_A extends AbstractMassSpecSetup {
 //      232 = 0.0026
 //      235 = 0.0154
 //      238 = 0.0104
-
 // Noah says times 4 each
-
-
-       isotopeMappingModel.getIsotopeToCollectorMap().put(//
+        isotopeMappingModel.getIsotopeToCollectorMap().put(//
                 IsotopesEnum.U238, singleCollector);
         isotopeMappingModel.getIsotopeToIntegrationTimeMap().put( //
                 IsotopesEnum.U238, 0.0416);
@@ -146,7 +142,8 @@ public final class LaserchronElementIISetupUPb_A extends AbstractMassSpecSetup {
      * @param fractionID the value of fractionID
      * @param usingFullPropagation the value of usingFullPropagation
      * @param tripoliFraction the value of tripoliFraction
-     * @return the java.util.SortedSet<org.earthtime.Tripoli.dataModels.DataModelInterface>
+     * @return the
+     * java.util.SortedSet<org.earthtime.Tripoli.dataModels.DataModelInterface>
      */
     @Override
     public SortedSet<DataModelInterface> rawRatiosFactory(String[][] intensitiesScan, String fractionID, boolean usingFullPropagation, TripoliFraction tripoliFraction) {

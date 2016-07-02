@@ -1,0 +1,121 @@
+/*
+ * Copyright 2006-2016 CIRDLES.org.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.earthtime.Tripoli.dataViews.rawDataReviews;
+
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.Shape;
+import org.earthtime.Tripoli.dataModels.DataModelInterface;
+import org.earthtime.Tripoli.dataModels.RawIntensityDataModel;
+import org.earthtime.Tripoli.dataViews.AbstractRawDataView;
+import org.earthtime.utilities.TicGeneratorForAxes;
+
+/**
+ *
+ * @author James F. Bowring <bowring at gmail.com>
+ */
+public class RawDataSessionPlot extends AbstractRawDataView {
+
+    public RawDataSessionPlot(DataModelInterface rawIsotopeDataModel, Rectangle bounds) {
+        super(bounds);
+        this.rawRatioDataModel = rawIsotopeDataModel;
+
+        initSession();
+    }
+
+    private void initSession() {
+        setBackground(new Color(204, 204, 204));
+        setOpaque(true);
+
+    }
+
+    /**
+     *
+     * @param g2d
+     */
+    @Override
+    public void paint(Graphics2D g2d) {
+        super.paint(g2d);
+        g2d.drawString("TESTING", 25, 25);
+
+        for (int i = 0; i < myOnPeakData.length; i++) {
+            Shape intensity = new java.awt.geom.Ellipse2D.Double( //
+                    mapX(myOnPeakNormalizedAquireTimes[i]), mapY(myOnPeakData[i]), 1, 1);
+            g2d.setPaint(determineDataColor(i, Color.black));
+
+            g2d.draw(intensity);
+
+        }
+    }
+
+    /**
+     *
+     * @param doReScale the value of doReScale
+     * @param inLiveMode the value of inLiveMode
+     */
+    @Override
+    public void preparePanel(boolean doReScale, boolean inLiveMode) {
+
+        this.removeAll();
+
+        // walk intensities and get min and max for axes
+        myOnPeakData = ((RawIntensityDataModel) rawRatioDataModel).getOnPeakCountsPerSecondAsRawIntensities();
+
+        // normalize aquireTimes
+        myOnPeakNormalizedAquireTimes = rawRatioDataModel.getNormalizedOnPeakAquireTimes();
+        boolean[] myDataActiveMap = rawRatioDataModel.getDataActiveMap();
+
+        if (doReScale) {
+            setDisplayOffsetY(0.0);
+
+            setDisplayOffsetX(0.0);
+
+            // X-axis lays out time evenly spaced
+            minX = myOnPeakNormalizedAquireTimes[0];
+            maxX = myOnPeakNormalizedAquireTimes[myOnPeakNormalizedAquireTimes.length - 1];
+
+            double xMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(minX, maxX, 0.05);
+            minX -= xMarginStretch;
+            maxX += xMarginStretch;
+
+            // Y-axis is intensities as voltages plus or minus
+            // find min and max y
+            minY = Double.MAX_VALUE;
+            maxY = -Double.MAX_VALUE;
+
+            // on peak
+            for (int i = 0; i < myOnPeakData.length; i++) {
+                if (myDataActiveMap[i]) {
+                    if (Double.isFinite(myOnPeakData[i])) {
+                        minY = Math.min(minY, myOnPeakData[i]);
+                        maxY = Math.max(maxY, myOnPeakData[i]);
+                    }
+                }
+            }
+
+            // adjust margins for unknowns
+            double yMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(minY, maxY, 0.05);
+            minY -= yMarginStretch;
+            maxY += yMarginStretch;
+        }
+    }
+
+    @Override
+    public DataModelInterface getDataModel() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+}

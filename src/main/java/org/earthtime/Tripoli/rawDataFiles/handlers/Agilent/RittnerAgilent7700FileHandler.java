@@ -300,4 +300,13 @@ public class RittnerAgilent7700FileHandler extends AbstractRawDataFileHandler im
         long theSUID = myObject.getSerialVersionUID();
         System.out.println("Customized De-serialization of RittnerAgilent7700FileHandler " + theSUID);
     }
+
+    /**
+     *
+     * @return the boolean
+     */
+    @Override
+    public boolean getAndLoadRawIntensityDataFilePhaseI() {
+        return false;
+    }
 }

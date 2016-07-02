@@ -154,7 +154,8 @@ public class TexasAMElementIISingleCollFileHandler extends AbstractRawDataFileHa
      * @param leftShadeCount the value of leftShadeCount
      * @param ignoreFirstFractions the value of ignoreFirstFractions
      * @param inLiveMode the value of inLiveMode
-     * @return the java.util.SortedSet<org.earthtime.Tripoli.fractions.TripoliFraction>
+     * @return the
+     * java.util.SortedSet<org.earthtime.Tripoli.fractions.TripoliFraction>
      */
     @Override
     protected SortedSet<TripoliFraction> loadRawDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions, boolean inLiveMode) {
@@ -268,12 +269,12 @@ public class TexasAMElementIISingleCollFileHandler extends AbstractRawDataFileHa
         return myTripoliFractions;
     }
 
-//    private void readObject(
-//            ObjectInputStream stream)
-//            throws IOException, ClassNotFoundException {
-//        stream.defaultReadObject();
-//        ObjectStreamClass myObject = ObjectStreamClass.lookup(Class.forName(TexasAMElementIISingleCollFileHandler.class.getCanonicalName()));
-//        long theSUID = myObject.getSerialVersionUID();
-//        System.out.println("Customized De-serialization of TexasAMElementIISingleCollFileHandler " + theSUID);
-//    }
+    /**
+     *
+     * @return the boolean
+     */
+    @Override
+    public boolean getAndLoadRawIntensityDataFilePhaseI() {
+        return false;
+    }
 }

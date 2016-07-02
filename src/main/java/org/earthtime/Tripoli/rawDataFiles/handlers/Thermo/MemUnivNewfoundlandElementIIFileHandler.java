@@ -40,7 +40,7 @@ import org.earthtime.utilities.FileHelper;
  *
  * @author James F. Bowring
  */
-public class MemUnivNewfoundlandElementIIFileHandler extends AbstractRawDataFileHandler{
+public class MemUnivNewfoundlandElementIIFileHandler extends AbstractRawDataFileHandler {
     // Class variables
 
     private static final long serialVersionUID = -3261971989596229444L;
@@ -98,9 +98,9 @@ public class MemUnivNewfoundlandElementIIFileHandler extends AbstractRawDataFile
         });
 
         if (analysisFiles.length > 0) {
-            
+
             Arrays.sort(analysisFiles, new FractionFileModifiedComparator());
-            
+
             String onPeakFileContents = URIHelper.getTextFromURI(analysisFiles[0].getAbsolutePath());
             if (isValidRawDataFileType(analysisFiles[0]) //
                     && //
@@ -157,7 +157,8 @@ public class MemUnivNewfoundlandElementIIFileHandler extends AbstractRawDataFile
      * @param leftShadeCount the value of leftShadeCount
      * @param ignoreFirstFractions the value of ignoreFirstFractions
      * @param inLiveMode the value of inLiveMode
-     * @return the java.util.SortedSet<org.earthtime.Tripoli.fractions.TripoliFraction>
+     * @return the
+     * java.util.SortedSet<org.earthtime.Tripoli.fractions.TripoliFraction>
      */
     @Override
     protected SortedSet<TripoliFraction> loadRawDataFile(//
@@ -191,7 +192,8 @@ public class MemUnivNewfoundlandElementIIFileHandler extends AbstractRawDataFile
             // form = Friday, February 06,2015 16:57:54
             String timeStampFromRow2[] = fractionFileRows[1].split(",");
 
-            String fractionDate = //
+            String fractionDate
+                    = //
                     timeStampFromRow2[1].trim() + " " // month day,
                     + timeStampFromRow2[2].trim() // year HH:mm:ss
                     ;
@@ -242,7 +244,8 @@ public class MemUnivNewfoundlandElementIIFileHandler extends AbstractRawDataFile
                     }
                 }  // i loop
 
-                TripoliFraction tripoliFraction = //                           
+                TripoliFraction tripoliFraction
+                        = //                           
                         new TripoliFraction( //
                                 fractionID, //
                                 massSpec.getCommonLeadCorrectionHighestLevel(), //
@@ -285,4 +288,12 @@ public class MemUnivNewfoundlandElementIIFileHandler extends AbstractRawDataFile
         return myTripoliFractions;
     }
 
+    /**
+     *
+     * @return the boolean
+     */
+    @Override
+    public boolean getAndLoadRawIntensityDataFilePhaseI() {
+        return false;
+    }
 }

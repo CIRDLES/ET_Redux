@@ -146,7 +146,8 @@ public class LaserChronNUPlasmaMultiCollFaradayFileHandler extends AbstractRawDa
             // write out concatenated file and then process it
             // new java 7 technique
             try {
-                String concatFilePath = //
+                String concatFilePath
+                        = //
                         validFilesForConcatenation.get(0).getParent() + File.separator + concatenatedFileName + "." + rawDataFileTemplate.getFileType().getName();
                 Files.write(Paths.get(concatFilePath), fileContents.getBytes());
                 rawDataFile = new File(concatFilePath);
@@ -225,7 +226,8 @@ public class LaserChronNUPlasmaMultiCollFaradayFileHandler extends AbstractRawDa
         boolean retVal = false;
 
         for (int i = 0; i < getRawDataFileTemplate().getStandardIDs().length; i++) {
-            retVal = //
+            retVal
+                    = //
                     retVal //
                     || fractionID.endsWith(rawDataFileTemplate.getStandardIDs()[i].trim())//
                     || fractionID.contains(rawDataFileTemplate.getStandardIDs()[i].trim());
@@ -327,7 +329,8 @@ public class LaserChronNUPlasmaMultiCollFaradayFileHandler extends AbstractRawDa
      * @param leftShadeCount the value of leftShadeCount
      * @param ignoreFirstFractions the value of ignoreFirstFractions
      * @param inLiveMode the value of inLiveMode
-     * @return the java.util.SortedSet<org.earthtime.Tripoli.fractions.TripoliFraction>
+     * @return the
+     * java.util.SortedSet<org.earthtime.Tripoli.fractions.TripoliFraction>
      */
     @Override
     protected SortedSet<TripoliFraction> loadRawDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions, boolean inLiveMode) {
@@ -458,12 +461,10 @@ public class LaserChronNUPlasmaMultiCollFaradayFileHandler extends AbstractRawDa
 
                         if (i == (ignoreFirstFractions + 1)) {
                             calendar.set(Calendar.AM_PM, AMPMval);
-                        } else {
-                            // check for rollover
-                            if (calendar.get(Calendar.AM_PM) > AMPMval) {
-                                // we have rolled to new day
-                                calendar.add(Calendar.DATE, 1);
-                            }
+                        } else // check for rollover
+                        if (calendar.get(Calendar.AM_PM) > AMPMval) {
+                            // we have rolled to new day
+                            calendar.add(Calendar.DATE, 1);
                         }
                         calendar.set(Calendar.AM_PM, AMPMval);
                     }
@@ -498,7 +499,8 @@ public class LaserChronNUPlasmaMultiCollFaradayFileHandler extends AbstractRawDa
                     String theFractionID = fullFractionId + ((count == 0) ? "" : "." + String.valueOf(count));
 
                     // nov 2014 broke into steps to provide cleaner logic
-                    TripoliFraction tripoliFraction = //                           
+                    TripoliFraction tripoliFraction
+                            = //                           
                             new TripoliFraction( //
                                     theFractionID, //
                                     massSpec.getCommonLeadCorrectionHighestLevel(), //
@@ -506,7 +508,7 @@ public class LaserChronNUPlasmaMultiCollFaradayFileHandler extends AbstractRawDa
                                     fractionDate.getTime(), //
                                     fractionDate.getTime(),//
                                     myBlockSize);//, 
-                    
+
                     SortedSet<DataModelInterface> rawRatios = massSpec.rawRatiosFactory(scanData, theFractionID, usingFullPropagation, tripoliFraction);
                     tripoliFraction.setRawRatios(rawRatios);
                     massSpec.processFractionRawRatios(scanData, fractionID, usingFullPropagation, tripoliFraction);
@@ -519,10 +521,15 @@ public class LaserChronNUPlasmaMultiCollFaradayFileHandler extends AbstractRawDa
             }
         }
 
-//        if (tripoliFractions.isEmpty()) {
-//            tripoliFractions = null;
-//        }
-
         return tripoliFractions;
+    }
+
+    /**
+     *
+     * @return the boolean
+     */
+    @Override
+    public boolean getAndLoadRawIntensityDataFilePhaseI() {
+        return false;
     }
 }

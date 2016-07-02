@@ -459,4 +459,13 @@ public class KoslerAgilent7700FileHandler extends AbstractRawDataFileHandler imp
         long theSUID = myObject.getSerialVersionUID();
         System.out.println("Customized De-serialization of KoslerAgilent7700FileHandler " + theSUID);
     }
+
+    /**
+     *
+     * @return the boolean
+     */
+    @Override
+    public boolean getAndLoadRawIntensityDataFilePhaseI() {
+        return false;
+    }
 }

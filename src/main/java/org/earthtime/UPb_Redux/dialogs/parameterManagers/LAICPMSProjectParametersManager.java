@@ -202,7 +202,7 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
      *
      */
     protected JSpinner leftMaskSpinner;
-
+    
     /**
      *
      * @param project
@@ -221,8 +221,6 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
 
         this.readyToProcessData = false;
         this.rawDataProcessed = rawDataFileHandler.getAcquisitionModel().isRawDataProcessed();
-
-       // initView();
     }
 
     @Override
@@ -233,7 +231,7 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
     }
 
     public void initView() {
-        
+
         boolean editable = !rawDataProcessed;
 
         removeAll();
@@ -397,8 +395,7 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
         this.add(headerLabel);
 
         Iterator<IsotopesEnum> isotopeIterator
-                = 
-                isotopeMappingModel.getIsotopeToCollectorMap().keySet().iterator();
+                = isotopeMappingModel.getIsotopeToCollectorMap().keySet().iterator();
 
         int count = 1;
         while (isotopeIterator.hasNext()) {
@@ -639,11 +636,9 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
         JButton viewReferenceMaterialModelButton = new ET_JButton("View");
         viewReferenceMaterialModelButton.addActionListener((ActionEvent e) -> {
             AbstractRatiosDataModel selectedModel
-                    = 
-                    ((AbstractRatiosDataModel) referenceMagerialsComboBox.getSelectedItem());
+                    = ((AbstractRatiosDataModel) referenceMagerialsComboBox.getSelectedItem());
             AbstractRatiosDataView modelView
-                    = 
-                    new ReferenceMaterialUPbRatiosDataViewNotEditable(selectedModel, null, false);
+                    = new ReferenceMaterialUPbRatiosDataViewNotEditable(selectedModel, null, false);
             modelView.displayModelInFrame();
         });
         viewReferenceMaterialModelButton.setFont(ReduxConstants.sansSerif_10_Bold);

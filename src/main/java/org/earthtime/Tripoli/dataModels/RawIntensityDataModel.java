@@ -198,7 +198,7 @@ public class RawIntensityDataModel //
                 rawIsotopeModelName.getName() + " [" + collectorModel.getCollectorType() + "]\n");
         retval.append("\tBack:\t");
         for (int i = 0; i < backgroundVirtualCollector.getIntensities().length; i++) {
-            retval.append(backgroundVirtualCollector.getIntensities()[i] + ", ");
+            retval.append(backgroundVirtualCollector.getIntensities()[i]).append(", ");
         }
         retval.append("\n");
         retval.append("\tPeak:\t");

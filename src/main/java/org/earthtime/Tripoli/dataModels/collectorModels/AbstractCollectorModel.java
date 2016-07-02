@@ -34,7 +34,6 @@ public abstract class AbstractCollectorModel implements Serializable {
      *
      */
     protected ValueModel relativeGain;
-//    protected double[] diagonalOfMatrixSIntensities;
 
     /**
      *
@@ -52,8 +51,6 @@ public abstract class AbstractCollectorModel implements Serializable {
         this.collectorType = collectorType;
         this.collectorName = collectorName;
         this.relativeGain = null;
-        //   this.allIntensitiesConvertedToMeasuredCounts = new double[0];
-        //       this.diagonalOfMatrixSIntensities = new double[0];
     }
 
     /**

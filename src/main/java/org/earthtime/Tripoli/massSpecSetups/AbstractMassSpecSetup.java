@@ -633,7 +633,7 @@ public abstract class AbstractMassSpecSetup implements //
         System.gc();
     }
 
-    private void convertRawIntensitiesToCountsPerSecond() {
+    public void convertRawIntensitiesToCountsPerSecond() {
         genericIsotopeModels.stream().forEach((dm) -> {
             ((RawIntensityDataModel) dm).convertRawIntensitiesToCountsPerSecond();
         });
@@ -791,6 +791,13 @@ public abstract class AbstractMassSpecSetup implements //
 
     }
 
+    public void initializeVirtualCollectorsWithData(//
+            ArrayList<double[]> backgroundAcquisitions,//
+            ArrayList<double[]> peakAcquisitions) {
+
+        initializeVirtualCollectorsWithData(backgroundAcquisitions, peakAcquisitions, virtualCollectorModelMapToFieldIndexes);
+    }
+
     /**
      * Designed to handle background and peak acquisitions in the general case
      *
@@ -823,7 +830,10 @@ public abstract class AbstractMassSpecSetup implements //
         if (countOfBackgroundAcquisitions > 0) {
             backgroundAcquisitionsMatrix = new Matrix(backgroundAcquisitionsArray);
         }
-        Matrix peakAcquisitionsMatrix = new Matrix(peakAcquisitionsArray);
+        Matrix peakAcquisitionsMatrix = null;
+        if (countOfPeakAcquisitions > 0) {
+            peakAcquisitionsMatrix = new Matrix(peakAcquisitionsArray);
+        }
 
         for (Map.Entry<DataModelInterface, Integer> vcmToIndex : virtualCollectorModelMapToFieldIndexes.entrySet()) {
             VirtualCollectorModel backgroundVCM = prepareVirtualCollector(((RawIntensityDataModel) vcmToIndex.getKey()).getBackgroundVirtualCollector(), countOfBackgroundAcquisitions);
@@ -834,7 +844,9 @@ public abstract class AbstractMassSpecSetup implements //
             if (backgroundAcquisitionsMatrix != null) {
                 backgroundVCM.setIntensities(backgroundAcquisitionsMatrix.getMatrix(0, countOfBackgroundAcquisitions - 1, col, col).getColumnPackedCopy());
             }
-            peakVCM.setIntensities(peakAcquisitionsMatrix.getMatrix(0, countOfPeakAcquisitions - 1, col, col).getColumnPackedCopy());
+            if (peakAcquisitionsMatrix != null) {
+                peakVCM.setIntensities(peakAcquisitionsMatrix.getMatrix(0, countOfPeakAcquisitions - 1, col, col).getColumnPackedCopy());
+            }
 
             backgroundVCM.setAquireTimes(backgroundAquireTimes);
             peakVCM.setAquireTimes(peakAquireTimes);
