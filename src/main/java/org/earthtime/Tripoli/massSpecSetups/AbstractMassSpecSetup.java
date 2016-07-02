@@ -1395,4 +1395,11 @@ public abstract class AbstractMassSpecSetup implements //
     public DataModelInterface getUO270() {
         return UO270;
     }
+
+    /**
+     * @return the virtualCollectorModelMapToFieldIndexes
+     */
+    public Map<DataModelInterface, Integer> getVirtualCollectorModelMapToFieldIndexes() {
+        return virtualCollectorModelMapToFieldIndexes;
+    }
 }

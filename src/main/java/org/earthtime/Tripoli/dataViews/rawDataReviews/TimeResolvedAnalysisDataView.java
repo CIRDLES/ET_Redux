@@ -15,22 +15,30 @@
  */
 package org.earthtime.Tripoli.dataViews.rawDataReviews;
 
+import java.awt.Color;
 import java.awt.Rectangle;
+import java.util.Map;
+import javax.swing.JLayeredPane;
+import org.earthtime.Tripoli.dataModels.DataModelInterface;
 import org.earthtime.Tripoli.dataViews.AbstractRawDataView;
 import org.earthtime.Tripoli.massSpecSetups.AbstractMassSpecSetup;
 import org.earthtime.dialogs.DialogEditor;
+import org.earthtime.isotopes.IsotopesEnum;
 
 /**
  *
  * @author James F. Bowring <bowring at gmail.com>
  */
 public class TimeResolvedAnalysisDataView extends DialogEditor {
-    
-    private AbstractRawDataView rawDataSessionPlot;
+
+    private static int SESSION_VIEW_WIDTH = 12000;
+    private JLayeredPane rawDataSession;
+    private AbstractRawDataView[] rawDataSessionPlots;
     private AbstractMassSpecSetup massSpec;
 
     /**
      * Creates new form TimeResolvedAnalysisDataView
+     *
      * @param parent
      * @param modal
      * @param massSpec
@@ -39,16 +47,36 @@ public class TimeResolvedAnalysisDataView extends DialogEditor {
         super(parent, modal);
         this.massSpec = massSpec;
         initComponents();
+        rawDataSessionPlotScrollPane.getHorizontalScrollBar().setUnitIncrement(100);
+
+//        rawDataSessionPlotScrollPane.getViewport().setScrollMode(JViewport.BLIT_SCROLL_MODE);
+
+        rawDataSessionPlotScrollPane.getViewport().putClientProperty("EnableWindowBlit", Boolean.TRUE);
+
         initSession();
     }
-    
-    private void initSession(){
+
+    private void initSession() {
         setSize(1200, 750);
-        rawDataSessionPlot = new RawDataSessionPlot(massSpec.getU238(), new Rectangle(0, 0, 3000, rawDataSessionPlotScrollPane.getHeight()));
-        rawDataSessionPlot.preparePanel(true, false);
-        rawDataSessionPlot.repaint();
-        rawDataSessionPlotScrollPane.setViewportView(rawDataSessionPlot);
-        rawDataSessionPlotScrollPane.validate();
+        rawDataSession = new JLayeredPane();
+        rawDataSession.setBounds(0, 0, SESSION_VIEW_WIDTH, rawDataSessionPlotScrollPane.getHeight() - 25);
+        // this forces scroll bar
+        rawDataSession.setPreferredSize(rawDataSession.getSize());
+        rawDataSession.setOpaque(true);
+        rawDataSession.setBackground(Color.white);
+        rawDataSessionPlotScrollPane.setViewportView(rawDataSession);
+        rawDataSessionPlotScrollPane.revalidate();
+
+        Map<IsotopesEnum, DataModelInterface> isotopeToRawIntensitiesMap = massSpec.getIsotopeMappingModel().getIsotopeToRawIntensitiesMap();
+        rawDataSessionPlots = new AbstractRawDataView[isotopeToRawIntensitiesMap.size()];
+        isotopeToRawIntensitiesMap.forEach((isotope, dataModel) -> {
+            int index = massSpec.getVirtualCollectorModelMapToFieldIndexes().get(dataModel);
+            rawDataSessionPlots[index] = new RawDataSessionPlot(dataModel, new Rectangle(0, index * 100 + 10, 12000, 100));
+            rawDataSession.add(rawDataSessionPlots[index], JLayeredPane.DEFAULT_LAYER);
+            rawDataSessionPlots[index].preparePanel(true, false);
+            rawDataSessionPlots[index].repaint();
+        });
+
     }
 
     /**
@@ -69,6 +97,8 @@ public class TimeResolvedAnalysisDataView extends DialogEditor {
         jLayeredPane2.setBackground(new java.awt.Color(255, 255, 255));
         jLayeredPane2.setOpaque(true);
 
+        rawDataSessionPlotScrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+
         jLayeredPane2.setLayer(rawDataSessionPlotScrollPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout jLayeredPane2Layout = new javax.swing.GroupLayout(jLayeredPane2);
@@ -76,16 +106,16 @@ public class TimeResolvedAnalysisDataView extends DialogEditor {
         jLayeredPane2Layout.setHorizontalGroup(
             jLayeredPane2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jLayeredPane2Layout.createSequentialGroup()
-                .addContainerGap(250, Short.MAX_VALUE)
-                .addComponent(rawDataSessionPlotScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 959, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(22, 22, 22))
+                .addContainerGap(191, Short.MAX_VALUE)
+                .addComponent(rawDataSessionPlotScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 1034, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         jLayeredPane2Layout.setVerticalGroup(
             jLayeredPane2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jLayeredPane2Layout.createSequentialGroup()
                 .addGap(30, 30, 30)
-                .addComponent(rawDataSessionPlotScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 290, Short.MAX_VALUE)
-                .addGap(450, 450, 450))
+                .addComponent(rawDataSessionPlotScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 677, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(63, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());

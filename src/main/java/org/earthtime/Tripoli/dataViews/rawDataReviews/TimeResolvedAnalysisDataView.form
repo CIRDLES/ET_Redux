@@ -48,24 +48,27 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
-                  <EmptySpace pref="250" max="32767" attributes="0"/>
-                  <Component id="rawDataSessionPlotScrollPane" min="-2" pref="959" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
+                  <EmptySpace pref="191" max="32767" attributes="0"/>
+                  <Component id="rawDataSessionPlotScrollPane" min="-2" pref="1034" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
-                  <Component id="rawDataSessionPlotScrollPane" pref="290" max="32767" attributes="0"/>
-                  <EmptySpace min="-2" pref="450" max="-2" attributes="0"/>
+                  <Component id="rawDataSessionPlotScrollPane" min="-2" pref="677" max="-2" attributes="0"/>
+                  <EmptySpace pref="63" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
       </Layout>
       <SubComponents>
         <Container class="javax.swing.JScrollPane" name="rawDataSessionPlotScrollPane">
+          <Properties>
+            <Property name="horizontalScrollBarPolicy" type="int" value="32"/>
+          </Properties>
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
         </Container>

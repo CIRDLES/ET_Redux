@@ -254,12 +254,12 @@ public final class CottlesNUPlasmaSetupUPbFarTRA extends AbstractMassSpecSetup i
 
         
         virtualCollectorModelMapToFieldIndexes = new HashMap<>();
-        virtualCollectorModelMapToFieldIndexes.put(U238, 0);
-        virtualCollectorModelMapToFieldIndexes.put(Th232, 1);
-        virtualCollectorModelMapToFieldIndexes.put(Pb208, 2);
-        virtualCollectorModelMapToFieldIndexes.put(Pb207, 3);
-        virtualCollectorModelMapToFieldIndexes.put(Pb206, 4);
-        virtualCollectorModelMapToFieldIndexes.put(Pb204, 5);
+        getVirtualCollectorModelMapToFieldIndexes().put(U238, 0);
+        getVirtualCollectorModelMapToFieldIndexes().put(Th232, 1);
+        getVirtualCollectorModelMapToFieldIndexes().put(Pb208, 2);
+        getVirtualCollectorModelMapToFieldIndexes().put(Pb207, 3);
+        getVirtualCollectorModelMapToFieldIndexes().put(Pb206, 4);
+        getVirtualCollectorModelMapToFieldIndexes().put(Pb204, 5);
 
         // raw ratios
         // oct 2012 defaults for fractionation corrections are set true but later missing ratio at standard will override 

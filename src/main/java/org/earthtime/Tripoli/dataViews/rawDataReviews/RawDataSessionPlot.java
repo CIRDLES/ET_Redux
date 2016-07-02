@@ -15,10 +15,12 @@
  */
 package org.earthtime.Tripoli.dataViews.rawDataReviews;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
+import java.awt.geom.Path2D;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
 import org.earthtime.Tripoli.dataModels.RawIntensityDataModel;
 import org.earthtime.Tripoli.dataViews.AbstractRawDataView;
@@ -38,9 +40,9 @@ public class RawDataSessionPlot extends AbstractRawDataView {
     }
 
     private void initSession() {
-        setBackground(new Color(204, 204, 204));
+        setBackground(new Color(255, 255, 255));
         setOpaque(true);
-
+        setPreferredSize(getSize());
     }
 
     /**
@@ -50,16 +52,25 @@ public class RawDataSessionPlot extends AbstractRawDataView {
     @Override
     public void paint(Graphics2D g2d) {
         super.paint(g2d);
-        g2d.drawString("TESTING", 25, 25);
+        g2d.drawString(rawRatioDataModel.getDataModelName(), 25, 25);
 
-        for (int i = 0; i < myOnPeakData.length; i++) {
-            Shape intensity = new java.awt.geom.Ellipse2D.Double( //
-                    mapX(myOnPeakNormalizedAquireTimes[i]), mapY(myOnPeakData[i]), 1, 1);
-            g2d.setPaint(determineDataColor(i, Color.black));
+        Shape connectingLine = new Path2D.Double();
+        ((Path2D) connectingLine).moveTo(//
+                    mapX(myOnPeakNormalizedAquireTimes[0]), mapY(myOnPeakData[0]));
+        for (int i = 1; i < myOnPeakData.length; i ++) {
+            ((Path2D) connectingLine).lineTo(//
+                    mapX(myOnPeakNormalizedAquireTimes[i]), mapY(myOnPeakData[i]));
 
-            g2d.draw(intensity);
-
+            // shapes are too inefficient
+//            Shape intensity = new java.awt.geom.Ellipse2D.Double( //
+//                    mapX(myOnPeakNormalizedAquireTimes[i]), mapY(myOnPeakData[i]), 1, 1);
+//            g2d.setPaint(determineDataColor(i, Color.black));
+//
+//            g2d.draw(intensity);
         }
+        g2d.setPaint(Color.black);
+        g2d.setStroke(new BasicStroke(0.75f));
+        g2d.draw(connectingLine);
     }
 
     /**
@@ -88,10 +99,9 @@ public class RawDataSessionPlot extends AbstractRawDataView {
             minX = myOnPeakNormalizedAquireTimes[0];
             maxX = myOnPeakNormalizedAquireTimes[myOnPeakNormalizedAquireTimes.length - 1];
 
-            double xMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(minX, maxX, 0.05);
-            minX -= xMarginStretch;
-            maxX += xMarginStretch;
-
+//            double xMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(minX, maxX, 0.05);
+//            minX -= xMarginStretch;
+//            maxX += xMarginStretch;
             // Y-axis is intensities as voltages plus or minus
             // find min and max y
             minY = Double.MAX_VALUE;
