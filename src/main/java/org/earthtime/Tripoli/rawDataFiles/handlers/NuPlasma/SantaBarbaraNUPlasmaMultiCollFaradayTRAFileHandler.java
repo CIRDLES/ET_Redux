@@ -24,23 +24,28 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import javax.swing.JFrame;
 import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileFilter;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
+import org.earthtime.Tripoli.dataModels.RawIntensityDataModel;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
-import org.earthtime.Tripoli.massSpecSetups.multiCollector.NUPlasma.GehrelsNUPlasmaSetupUPbFarTRA;
 import org.earthtime.Tripoli.rawDataFiles.handlers.AbstractRawDataFileHandler;
 import org.earthtime.UPb_Redux.filters.RunFileFilter;
 import org.earthtime.archivingTools.URIHelper;
+import org.earthtime.isotopes.IsotopesEnum;
 import org.earthtime.utilities.FileHelper;
 import org.earthtime.utilities.TimeToString;
 
@@ -122,7 +127,7 @@ public class SantaBarbaraNUPlasmaMultiCollFaradayTRAFileHandler extends Abstract
                 }
             }
 
-            //populate background with all data (could be peak instead)
+            //populate peak with all data 
             ArrayList<double[]> backgroundAcquisitions = new ArrayList<>();
             ArrayList<double[]> peakAcquisitions = new ArrayList<>();
             if (dataFoundIndex > 0) {
@@ -137,9 +142,45 @@ public class SantaBarbaraNUPlasmaMultiCollFaradayTRAFileHandler extends Abstract
                     }
                 }
                 massSpec.initializeVirtualCollectorsWithData(backgroundAcquisitions, peakAcquisitions);
-                massSpec.convertRawIntensitiesToCountsPerSecond();
+                massSpec.setCountOfAcquisitions(peakAcquisitions.size());
 
+                // detect starts of onpeak
+                NumberFormat format = new DecimalFormat("+#0.00;-#0.00");
+                List<Integer> sessionTimeZeroIndices = new ArrayList<>();
+                double[] onPeak = ((RawIntensityDataModel) massSpec.getU238()).getOnPeakVirtualCollector().getIntensities();
+                boolean withinPeak = false;
+                int lastNegativeIndex = 0;
+                for (int i = 0; i < onPeak.length; i++) {
+                    if (onPeak[i] > 0.0) {
+                        // use a sliding window of 10
+                        int windowSize = 10;
+                        if (!withinPeak) {
+                            DescriptiveStatistics window = new DescriptiveStatistics();
+                            for (int j = i; j < i + windowSize; j++) {
+                                window.addValue(onPeak[j]);
+                            }
+                            // test
+                            if ((window.getElement(0) >= window.getElement(1))//
+                                    && (window.getElement(0) >= window.getPercentile(50))//
+                                    && (window.getElement(windowSize - 1) >= 0)) {
+                                // we have local maxima of downward-sloping
+                                withinPeak = true;
+                                sessionTimeZeroIndices.add(lastNegativeIndex + 1);
+                            }
+                        }
+
+                    } else {
+                        withinPeak = false;
+                        lastNegativeIndex = i;
+                    }
+                }
                 retVal = true;
+                Map<IsotopesEnum, DataModelInterface> isotopeToRawIntensitiesMap = massSpec.getIsotopeMappingModel().getIsotopeToRawIntensitiesMap();
+                isotopeToRawIntensitiesMap.forEach((isotope, dataModel) -> {
+                    ((RawIntensityDataModel) dataModel).setSessionTimeZeroIndices(sessionTimeZeroIndices);
+                });
+
+                massSpec.setCountOfFractions(sessionTimeZeroIndices.size());
             } else {
                 retVal = false;
             }
@@ -324,7 +365,7 @@ public class SantaBarbaraNUPlasmaMultiCollFaradayTRAFileHandler extends Abstract
                                     fractionBackgroundStartTime + readCountBackgroundAcquisitions * massSpec.getCOLLECTOR_DATA_FREQUENCY_MILLISECS(),
                                     peakAcquisitions.size());
 
-                    SortedSet<DataModelInterface> rawRatios = ((GehrelsNUPlasmaSetupUPbFarTRA) massSpec).rawRatiosFactoryRevised();
+                    SortedSet<DataModelInterface> rawRatios = massSpec.rawRatiosFactoryRevised();
                     tripoliFraction.setRawRatios(rawRatios);
 
                     massSpec.setCountOfAcquisitions(peakAcquisitions.size());

@@ -20,7 +20,7 @@
 package org.earthtime.statistics;
 
 import java.util.ArrayList;
-import org.apache.commons.math.stat.StatUtils;
+import org.apache.commons.math3.stat.StatUtils;
 
 /**
  *

@@ -20,7 +20,10 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
+import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
+import java.awt.geom.Rectangle2D;
+import java.util.List;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
 import org.earthtime.Tripoli.dataModels.RawIntensityDataModel;
 import org.earthtime.Tripoli.dataViews.AbstractRawDataView;
@@ -32,9 +35,19 @@ import org.earthtime.utilities.TicGeneratorForAxes;
  */
 public class RawDataSessionPlot extends AbstractRawDataView {
 
-    public RawDataSessionPlot(DataModelInterface rawIsotopeDataModel, Rectangle bounds) {
+    private List<Integer> sessionTimeZeroIndices;
+    private boolean overlayMode;
+
+    /**
+     *
+     * @param rawIsotopeDataModel the value of rawIsotopeDataModel
+     * @param bounds the value of bounds
+     * @param overlayMode the value of overlayMode
+     */
+    public RawDataSessionPlot(DataModelInterface rawIsotopeDataModel, Rectangle bounds, boolean overlayMode) {
         super(bounds);
         this.rawRatioDataModel = rawIsotopeDataModel;
+        this.overlayMode = overlayMode;
 
         initSession();
     }
@@ -54,23 +67,96 @@ public class RawDataSessionPlot extends AbstractRawDataView {
         super.paint(g2d);
         g2d.drawString(rawRatioDataModel.getDataModelName(), 25, 25);
 
-        Shape connectingLine = new Path2D.Double();
-        ((Path2D) connectingLine).moveTo(//
-                    mapX(myOnPeakNormalizedAquireTimes[0]), mapY(myOnPeakData[0]));
-        for (int i = 1; i < myOnPeakData.length; i ++) {
-            ((Path2D) connectingLine).lineTo(//
-                    mapX(myOnPeakNormalizedAquireTimes[i]), mapY(myOnPeakData[i]));
+        if (overlayMode) {
+            for (int i = 0; i < sessionTimeZeroIndices.size(); i++) {
+                int timeZeroStartIndex = sessionTimeZeroIndices.get(i);
+                int timeToNextTimeZero = 0;
+                if (i < sessionTimeZeroIndices.size() - 1) {
+                    timeToNextTimeZero = sessionTimeZeroIndices.get(i + 1) - timeZeroStartIndex;
+                } else {
+                    timeToNextTimeZero = timeZeroStartIndex - sessionTimeZeroIndices.get(i - 1);
+                }
 
-            // shapes are too inefficient
-//            Shape intensity = new java.awt.geom.Ellipse2D.Double( //
-//                    mapX(myOnPeakNormalizedAquireTimes[i]), mapY(myOnPeakData[i]), 1, 1);
-//            g2d.setPaint(determineDataColor(i, Color.black));
-//
-//            g2d.draw(intensity);
+                Shape fractionPlot = new Path2D.Double();
+                ((Path2D) fractionPlot).moveTo(//
+                        mapX(0), mapY(myOnPeakData[timeZeroStartIndex - 75]));
+                int t = 1;
+                for (int j = timeZeroStartIndex - 74; j < timeZeroStartIndex + timeToNextTimeZero - 75; j++) {
+                    ((Path2D) fractionPlot).lineTo(//
+                            mapX(t), mapY(myOnPeakData[j]));
+                    // mark time zero
+                    if (j == timeZeroStartIndex) {
+                        g2d.setPaint(Color.red);
+                        g2d.setStroke(new BasicStroke(1.0f));
+                        g2d.draw(new Line2D.Double(//
+                                mapX(t), //
+                                mapY(minY),//
+                                mapX(t),//
+                                mapY(maxY)));
+                        g2d.setPaint(Color.black);
+                    }
+                    t++;
+
+                }
+                g2d.setPaint(Color.black);
+                g2d.setStroke(new BasicStroke(0.75f));
+                g2d.draw(fractionPlot);
+
+            }
+
+        } else {
+            int peakLeftShade = 5;
+            int peakWidth = 140;
+            // mark onpeak
+            for (int i = 0; i < sessionTimeZeroIndices.size(); i++) {
+                g2d.setPaint(new Color(241, 255, 240)); //pale green
+
+                int peakStartIndex = sessionTimeZeroIndices.get(i) + peakLeftShade;
+                g2d.fill(new Rectangle2D.Double(//
+                        mapX(myOnPeakNormalizedAquireTimes[peakStartIndex]), //
+                        mapY(maxY),//
+                        mapX(peakWidth),//
+                        Math.abs(mapY(maxY) - mapY(minY))));
+
+                g2d.setPaint(Color.black);
+
+                g2d.draw(new Line2D.Double(//
+                        mapX(myOnPeakNormalizedAquireTimes[peakStartIndex]), //
+                        mapY(minY),//
+                        mapX(myOnPeakNormalizedAquireTimes[peakStartIndex]),//
+                        mapY(maxY)));
+
+                g2d.draw(new Line2D.Double(//
+                        mapX(myOnPeakNormalizedAquireTimes[peakStartIndex + peakWidth]), //
+                        mapY(minY),//
+                        mapX(myOnPeakNormalizedAquireTimes[peakStartIndex + peakWidth]),//
+                        mapY(maxY)));
+
+                // mark time zero
+                g2d.setPaint(Color.red);
+                int timeZeroIndex = sessionTimeZeroIndices.get(i);
+                g2d.draw(new Line2D.Double(//
+                        mapX(myOnPeakNormalizedAquireTimes[timeZeroIndex]), //
+                        mapY(minY),//
+                        mapX(myOnPeakNormalizedAquireTimes[timeZeroIndex]),//
+                        mapY(maxY)));
+                g2d.setPaint(Color.black);
+            }
+
+            // draw data over selection zone
+            Shape connectingLine = new Path2D.Double();
+            ((Path2D) connectingLine).moveTo(//
+                    mapX(myOnPeakNormalizedAquireTimes[0]), mapY(myOnPeakData[0]));
+            for (int i = 1; i < myOnPeakData.length; i++) {
+                ((Path2D) connectingLine).lineTo(//
+                        mapX(myOnPeakNormalizedAquireTimes[i]), mapY(myOnPeakData[i]));
+            }
+            g2d.setPaint(Color.black);
+            g2d.setStroke(new BasicStroke(0.75f));
+            g2d.draw(connectingLine);
+
         }
-        g2d.setPaint(Color.black);
-        g2d.setStroke(new BasicStroke(0.75f));
-        g2d.draw(connectingLine);
+
     }
 
     /**
@@ -84,11 +170,14 @@ public class RawDataSessionPlot extends AbstractRawDataView {
         this.removeAll();
 
         // walk intensities and get min and max for axes
-        myOnPeakData = ((RawIntensityDataModel) rawRatioDataModel).getOnPeakCountsPerSecondAsRawIntensities();
+        myOnPeakData = ((RawIntensityDataModel) rawRatioDataModel).getOnPeakVirtualCollector().getIntensities();//        getOnPeakCountsPerSecondAsRawIntensities();
 
         // normalize aquireTimes
         myOnPeakNormalizedAquireTimes = rawRatioDataModel.getNormalizedOnPeakAquireTimes();
         boolean[] myDataActiveMap = rawRatioDataModel.getDataActiveMap();
+
+        // get TRA estimate start of time zero
+        sessionTimeZeroIndices = ((RawIntensityDataModel) rawRatioDataModel).getSessionTimeZeroIndices();
 
         if (doReScale) {
             setDisplayOffsetY(0.0);
@@ -98,6 +187,9 @@ public class RawDataSessionPlot extends AbstractRawDataView {
             // X-axis lays out time evenly spaced
             minX = myOnPeakNormalizedAquireTimes[0];
             maxX = myOnPeakNormalizedAquireTimes[myOnPeakNormalizedAquireTimes.length - 1];
+            if (overlayMode){
+                maxX /= sessionTimeZeroIndices.size();
+            }
 
 //            double xMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(minX, maxX, 0.05);
 //            minX -= xMarginStretch;

@@ -23,6 +23,7 @@ import Jama.Matrix;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import org.earthtime.Tripoli.dataModels.collectorModels.AbstractCollectorModel;
@@ -76,7 +77,7 @@ public class RawIntensityDataModel //
     /**
      *
      */
-    protected boolean overDispersionSelected;
+    private boolean overDispersionSelected;
     private boolean belowDetection;
     private transient Matrix J11;
     private transient Matrix J21;
@@ -97,7 +98,9 @@ public class RawIntensityDataModel //
     private double[] allItensities;
     // nov 2014 - see validateOnPeakBaselineCorrectedIsotope inn abstractMassSpecSetup
     private boolean forceMeanForCommonLeadRatios;
-    protected double forcedMeanForCommonLeadRatios;
+    private double forcedMeanForCommonLeadRatios;
+    // july 2016 introduced for TRA
+    private List<Integer> sessionTimeZeroIndices;
 
     /**
      *
@@ -143,6 +146,8 @@ public class RawIntensityDataModel //
 
         this.correctedHg202Si = null;
         this.forceMeanForCommonLeadRatios = false;
+        
+        this.sessionTimeZeroIndices = new ArrayList<>();
     }
 
     /**
@@ -1246,5 +1251,19 @@ public class RawIntensityDataModel //
      */
     public void setDiagonalOfMatrixSCorrectedIntensities(double[] diagonalOfMatrixSCorrectedIntensities) {
         this.diagonalOfMatrixSCorrectedIntensities = diagonalOfMatrixSCorrectedIntensities;
+    }
+
+    /**
+     * @return the sessionTimeZeroIndices
+     */
+    public List<Integer> getSessionTimeZeroIndices() {
+        return sessionTimeZeroIndices;
+    }
+
+    /**
+     * @param sessionTimeZeroIndices the sessionTimeZeroIndices to set
+     */
+    public void setSessionTimeZeroIndices(List<Integer> sessionTimeZeroIndices) {
+        this.sessionTimeZeroIndices = sessionTimeZeroIndices;
     }
 }

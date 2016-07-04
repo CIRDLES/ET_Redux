@@ -200,6 +200,13 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
                 .add(MoellerUnivKansasElementII_RawDataTemplate.getInstance());
         knownRawDataFileHandlers.add(theUnivKansasElementIIFileHandler);
 
+        // SantaBarbara NU Plasma FARADAY TRA
+        AbstractRawDataFileHandler theSantaBarbaraNUPlasmaMultiCollFaradayTRAFileHandler
+                = SantaBarbaraNUPlasmaMultiCollFaradayTRAFileHandler.getInstance();
+        theSantaBarbaraNUPlasmaMultiCollFaradayTRAFileHandler.getAvailableRawDataFileTemplates()//
+                .add(SantaBarbaraNUPlasmaMultiCollFaradayTRARawDataTemplate.getInstance());
+        knownRawDataFileHandlers.add(theSantaBarbaraNUPlasmaMultiCollFaradayTRAFileHandler);
+
         // Washington State Element 2 
         AbstractRawDataFileHandler theWashStateElement2SingleCollFileHandler
                 = WashStateElementIISingleCollFileHandler.getInstance();
@@ -213,8 +220,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
 
         // feb 2014 Agilent 7700
         AbstractRawDataFileHandler theRittnerAgilent7700FileHandler
-                = //
-                RittnerAgilent7700FileHandler.getInstance();
+                = RittnerAgilent7700FileHandler.getInstance();
         theRittnerAgilent7700FileHandler.getAvailableRawDataFileTemplates()//
                 .add(Rittner_Agilent7700_RawDataTemplate.getInstance());
 //        knownRawDataFileHandlers.add(theRittnerAgilent7700FileHandler);
@@ -232,13 +238,6 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
         theTexasAMElementIIFileHandler.getAvailableRawDataFileTemplates()//
                 .add(MillerTexasAMElementII_RawDataTemplate.getInstance());
         knownRawDataFileHandlers.add(theTexasAMElementIIFileHandler);
-
-        // SantaBarbara NU Plasma FARADAY TRA
-        AbstractRawDataFileHandler theSantaBarbaraNUPlasmaMultiCollFaradayTRAFileHandler
-                = SantaBarbaraNUPlasmaMultiCollFaradayTRAFileHandler.getInstance();
-        theSantaBarbaraNUPlasmaMultiCollFaradayTRAFileHandler.getAvailableRawDataFileTemplates()//
-                .add(SantaBarbaraNUPlasmaMultiCollFaradayTRARawDataTemplate.getInstance());
-        knownRawDataFileHandlers.add(theSantaBarbaraNUPlasmaMultiCollFaradayTRAFileHandler);
 
         // move this section for robust file opening
         fileHandlerComboBox.removeAllItems();

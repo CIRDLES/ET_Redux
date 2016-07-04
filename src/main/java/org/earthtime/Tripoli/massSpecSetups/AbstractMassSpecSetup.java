@@ -165,6 +165,9 @@ public abstract class AbstractMassSpecSetup implements //
     protected String commonLeadCorrectionHighestLevel;
 
     protected Map<DataModelInterface, Integer> virtualCollectorModelMapToFieldIndexes;
+    
+    // july 2016 tra
+    protected int countOfFractions;
 
     /**
      *
@@ -195,6 +198,8 @@ public abstract class AbstractMassSpecSetup implements //
         this.useConstantBackgroundFitFunction = false;
         this.commonLeadCorrectionHighestLevel = "NONE";
         this.virtualCollectorModelMapToFieldIndexes = new HashMap<>();
+        
+        this.countOfFractions = 0;
     }
 
     /**
@@ -1306,6 +1311,13 @@ public abstract class AbstractMassSpecSetup implements //
     }
 
     /**
+     * @return the countOfAcquisitions
+     */
+    public int getCountOfAcquisitions() {
+        return countOfAcquisitions;
+    }
+
+    /**
      * @return the Pb207
      */
     public DataModelInterface getPb207() {
@@ -1401,5 +1413,19 @@ public abstract class AbstractMassSpecSetup implements //
      */
     public Map<DataModelInterface, Integer> getVirtualCollectorModelMapToFieldIndexes() {
         return virtualCollectorModelMapToFieldIndexes;
+    }
+
+    /**
+     * @return the countOfFractions
+     */
+    public int getCountOfFractions() {
+        return countOfFractions;
+    }
+
+    /**
+     * @param countOfFractions the countOfFractions to set
+     */
+    public void setCountOfFractions(int countOfFractions) {
+        this.countOfFractions = countOfFractions;
     }
 }
