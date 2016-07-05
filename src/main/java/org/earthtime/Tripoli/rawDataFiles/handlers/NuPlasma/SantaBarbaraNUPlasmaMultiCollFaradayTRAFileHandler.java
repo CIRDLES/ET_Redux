@@ -44,6 +44,7 @@ import org.earthtime.Tripoli.dataModels.RawIntensityDataModel;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.Tripoli.rawDataFiles.handlers.AbstractRawDataFileHandler;
 import org.earthtime.UPb_Redux.filters.RunFileFilter;
+import org.earthtime.UPb_Redux.filters.TxtFileFilter;
 import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.isotopes.IsotopesEnum;
 import org.earthtime.utilities.FileHelper;
@@ -59,6 +60,7 @@ public class SantaBarbaraNUPlasmaMultiCollFaradayTRAFileHandler extends Abstract
     // Class variables
 //    private static final long serialVersionUID = 4617107661618798359L;
     private static SantaBarbaraNUPlasmaMultiCollFaradayTRAFileHandler instance = new SantaBarbaraNUPlasmaMultiCollFaradayTRAFileHandler();
+    private String[] fractionNames;
 
     /**
      *
@@ -73,6 +75,8 @@ public class SantaBarbaraNUPlasmaMultiCollFaradayTRAFileHandler extends Abstract
                 + "UC Santa Barbara "//
                 + "for Faraday analysis on the NU-Plasma with TRA (time-resolved analysis.) "//
                 + "Pattern of aquisitions dated July 2016.";
+
+        fractionNames = new String[0];
     }
 
     /**
@@ -92,11 +96,34 @@ public class SantaBarbaraNUPlasmaMultiCollFaradayTRAFileHandler extends Abstract
     @Override
     public File validateAndGetHeaderDataFromRawIntensityFile(File tripoliRawDataFolder) {
         String dialogTitle = "Select NU Plasma Faraday TRA Raw Data File(s): *.run";
-        final String fileExtension = ".run";
+        String fileExtension = ".run";
         FileFilter nonMacFileFilter = new RunFileFilter();
 
         rawDataFile = FileHelper.AllPlatformGetFile( //
                 dialogTitle, tripoliRawDataFolder, fileExtension, nonMacFileFilter, false, new JFrame())[0];
+
+        // ask for list of fraction names
+        dialogTitle = "Select tab-delimited file of sample names exported from log file: *.txt";
+        fileExtension = ".txt";
+        nonMacFileFilter = new TxtFileFilter();
+
+        File fractionNamesLogFile = FileHelper.AllPlatformGetFile( //
+                dialogTitle, tripoliRawDataFolder, fileExtension, nonMacFileFilter, false, new JFrame())[0];
+
+        try {
+            List<String> fractionNamesData = Files.readLines(fractionNamesLogFile, Charsets.ISO_8859_1);
+            // skip column names in row 0
+            fractionNames = new String[fractionNamesData.size() - 1];
+            for (int i = 1; i < fractionNamesData.size(); i++) {
+                String[] lineContents = fractionNamesData.get(i).split("\t");
+                fractionNames[i - 1] = lineContents[1];
+            }
+            
+            massSpec.setFractionNames(fractionNames);
+
+        } catch (IOException iOException) {
+        }
+
         return rawDataFile;
     }
 
@@ -358,9 +385,7 @@ public class SantaBarbaraNUPlasmaMultiCollFaradayTRAFileHandler extends Abstract
 
                     // nov 2014 broke into steps to provide cleaner logic
                     TripoliFraction tripoliFraction
-                            = //                           
-                            new TripoliFraction( //
-                                    //
+                            = new TripoliFraction( //
                                     theFractionID, //
                                     massSpec.getCommonLeadCorrectionHighestLevel(), //
                                     isStandard,

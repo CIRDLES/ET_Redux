@@ -154,10 +154,11 @@ public class RawIntensityDataModel //
         this.forceMeanForCommonLeadRatios = false;
 
         this.sessionTimeZeroIndices = new ArrayList<>();
-
+        this.timeZeroRelativeIndex = 75;
         this.peakLeftShade = 5;
         this.peakWidth = 100;
-        this.timeZeroRelativeIndex = 75;
+        this.backgroundRightShade = 5;
+        this.backgroundWidth = 50;
     }
 
     /**

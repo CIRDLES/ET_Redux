@@ -167,6 +167,7 @@ public abstract class AbstractMassSpecSetup implements //
     protected Map<DataModelInterface, Integer> virtualCollectorModelMapToFieldIndexes;
     
     // july 2016 tra
+    protected String[] fractionNames;
 
     /**
      *
@@ -1410,6 +1411,20 @@ public abstract class AbstractMassSpecSetup implements //
      */
     public Map<DataModelInterface, Integer> getVirtualCollectorModelMapToFieldIndexes() {
         return virtualCollectorModelMapToFieldIndexes;
+    }
+
+    /**
+     * @return the fractionNames
+     */
+    public String[] getFractionNames() {
+        return fractionNames;
+    }
+
+    /**
+     * @param fractionNames the fractionNames to set
+     */
+    public void setFractionNames(String[] fractionNames) {
+        this.fractionNames = fractionNames;
     }
 
 }
