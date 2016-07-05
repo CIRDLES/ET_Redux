@@ -37,6 +37,9 @@ public class RawDataSessionPlot extends AbstractRawDataView {
 
     private List<Integer> sessionTimeZeroIndices;
     private boolean overlayMode;
+    private int peakLeftShade;
+    private int peakWidth;
+    private int timeZeroRelativeIndex;
 
     /**
      *
@@ -68,6 +71,30 @@ public class RawDataSessionPlot extends AbstractRawDataView {
         g2d.drawString(rawRatioDataModel.getDataModelName(), 25, 25);
 
         if (overlayMode) {
+            g2d.setPaint(new Color(241, 255, 240)); //pale green
+            g2d.setStroke(new BasicStroke(1.0f));
+
+            g2d.fill(new Rectangle2D.Double(//
+                    mapX(myOnPeakNormalizedAquireTimes[timeZeroRelativeIndex + peakLeftShade]), //
+                    mapY(maxY),//
+                    mapX(peakWidth),//
+                    Math.abs(mapY(maxY) - mapY(minY))));
+            g2d.setPaint(Color.black);
+
+            g2d.setStroke(new BasicStroke(0.75f));
+
+            g2d.draw(new Line2D.Double(//
+                    mapX(myOnPeakNormalizedAquireTimes[timeZeroRelativeIndex + peakLeftShade]), //
+                    mapY(minY),//
+                    mapX(myOnPeakNormalizedAquireTimes[timeZeroRelativeIndex + peakLeftShade]),//
+                    mapY(maxY)));
+
+            g2d.draw(new Line2D.Double(//
+                    mapX(myOnPeakNormalizedAquireTimes[timeZeroRelativeIndex + peakLeftShade + peakWidth]), //
+                    mapY(minY),//
+                    mapX(myOnPeakNormalizedAquireTimes[timeZeroRelativeIndex + peakLeftShade + peakWidth]),//
+                    mapY(maxY)));
+
             for (int i = 0; i < sessionTimeZeroIndices.size(); i++) {
                 int timeZeroStartIndex = sessionTimeZeroIndices.get(i);
                 int timeToNextTimeZero = 0;
@@ -77,24 +104,23 @@ public class RawDataSessionPlot extends AbstractRawDataView {
                     timeToNextTimeZero = timeZeroStartIndex - sessionTimeZeroIndices.get(i - 1);
                 }
 
+                // mark time zero
+                g2d.setPaint(Color.red);
+                g2d.setStroke(new BasicStroke(1.0f));
+                g2d.draw(new Line2D.Double(//
+                        mapX(timeZeroRelativeIndex), //
+                        mapY(minY),//
+                        mapX(timeZeroRelativeIndex),//
+                        mapY(maxY)));
+                g2d.setPaint(Color.black);
+
                 Shape fractionPlot = new Path2D.Double();
                 ((Path2D) fractionPlot).moveTo(//
-                        mapX(0), mapY(myOnPeakData[timeZeroStartIndex - 75]));
+                        mapX(0), mapY(myOnPeakData[timeZeroStartIndex - timeZeroRelativeIndex]));
                 int t = 1;
-                for (int j = timeZeroStartIndex - 74; j < timeZeroStartIndex + timeToNextTimeZero - 75; j++) {
+                for (int j = timeZeroStartIndex - timeZeroRelativeIndex - 1; j < timeZeroStartIndex + timeToNextTimeZero - timeZeroRelativeIndex; j++) {
                     ((Path2D) fractionPlot).lineTo(//
                             mapX(t), mapY(myOnPeakData[j]));
-                    // mark time zero
-                    if (j == timeZeroStartIndex) {
-                        g2d.setPaint(Color.red);
-                        g2d.setStroke(new BasicStroke(1.0f));
-                        g2d.draw(new Line2D.Double(//
-                                mapX(t), //
-                                mapY(minY),//
-                                mapX(t),//
-                                mapY(maxY)));
-                        g2d.setPaint(Color.black);
-                    }
                     t++;
 
                 }
@@ -105,8 +131,6 @@ public class RawDataSessionPlot extends AbstractRawDataView {
             }
 
         } else {
-            int peakLeftShade = 5;
-            int peakWidth = 140;
             // mark onpeak
             for (int i = 0; i < sessionTimeZeroIndices.size(); i++) {
                 g2d.setPaint(new Color(241, 255, 240)); //pale green
@@ -119,6 +143,7 @@ public class RawDataSessionPlot extends AbstractRawDataView {
                         Math.abs(mapY(maxY) - mapY(minY))));
 
                 g2d.setPaint(Color.black);
+                g2d.setStroke(new BasicStroke(0.75f));
 
                 g2d.draw(new Line2D.Double(//
                         mapX(myOnPeakNormalizedAquireTimes[peakStartIndex]), //
@@ -151,8 +176,7 @@ public class RawDataSessionPlot extends AbstractRawDataView {
                 ((Path2D) connectingLine).lineTo(//
                         mapX(myOnPeakNormalizedAquireTimes[i]), mapY(myOnPeakData[i]));
             }
-            g2d.setPaint(Color.black);
-            g2d.setStroke(new BasicStroke(0.75f));
+
             g2d.draw(connectingLine);
 
         }
@@ -178,6 +202,9 @@ public class RawDataSessionPlot extends AbstractRawDataView {
 
         // get TRA estimate start of time zero
         sessionTimeZeroIndices = ((RawIntensityDataModel) rawRatioDataModel).getSessionTimeZeroIndices();
+        peakLeftShade = ((RawIntensityDataModel) rawRatioDataModel).getPeakLeftShade();
+        peakWidth = ((RawIntensityDataModel) rawRatioDataModel).getPeakWidth();
+        timeZeroRelativeIndex = ((RawIntensityDataModel) rawRatioDataModel).getTimeZeroRelativeIndex();
 
         if (doReScale) {
             setDisplayOffsetY(0.0);
@@ -187,7 +214,7 @@ public class RawDataSessionPlot extends AbstractRawDataView {
             // X-axis lays out time evenly spaced
             minX = myOnPeakNormalizedAquireTimes[0];
             maxX = myOnPeakNormalizedAquireTimes[myOnPeakNormalizedAquireTimes.length - 1];
-            if (overlayMode){
+            if (overlayMode) {
                 maxX /= sessionTimeZeroIndices.size();
             }
 
@@ -218,6 +245,6 @@ public class RawDataSessionPlot extends AbstractRawDataView {
 
     @Override
     public DataModelInterface getDataModel() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return rawRatioDataModel;
     }
 }

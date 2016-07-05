@@ -35,9 +35,10 @@ public class TimeResolvedAnalysisDataView extends DialogEditor {
     private static int SESSION_VIEW_WIDTH = 25000;
     private JLayeredPane rawDataSession;
     private AbstractRawDataView[] rawDataSessionPlots;
-    private JLayeredPane rawDataSessionOverlay;
+    private AbstractRawDataView rawDataSessionOverlay;
     private AbstractRawDataView[] rawDataSessionOverlayPlots;
     private AbstractMassSpecSetup massSpec;
+    
 
     /**
      * Creates new form TimeResolvedAnalysisDataView
@@ -51,7 +52,7 @@ public class TimeResolvedAnalysisDataView extends DialogEditor {
         this.massSpec = massSpec;
         rawDataSessionPlots = new AbstractRawDataView[0];
         rawDataSessionOverlayPlots = new AbstractRawDataView[0];
-        
+
         initComponents();
 
         rawDataSessionPlotScrollPane.getViewport().putClientProperty("EnableWindowBlit", Boolean.TRUE);
@@ -64,7 +65,6 @@ public class TimeResolvedAnalysisDataView extends DialogEditor {
     private void initSession() {
         setSize(1200, 750);
         SESSION_VIEW_WIDTH = massSpec.getCountOfAcquisitions();
-        int fractionCount = massSpec.getCountOfFractions();
 
         rawDataSession = new JLayeredPane();
         rawDataSession.setBounds(0, 0, SESSION_VIEW_WIDTH, rawDataSessionPlotScrollPane.getHeight() - 25);
@@ -72,17 +72,16 @@ public class TimeResolvedAnalysisDataView extends DialogEditor {
         rawDataSession.setPreferredSize(rawDataSession.getSize());
         rawDataSession.setOpaque(true);
         rawDataSession.setBackground(Color.white);
+
         rawDataSessionPlotScrollPane.setViewportView(rawDataSession);
         rawDataSessionPlotScrollPane.getHorizontalScrollBar().setUnitIncrement(1000);
         rawDataSessionPlotScrollPane.revalidate();
 
         // overlay of plots
-        rawDataSessionOverlay = new JLayeredPane();
-        rawDataSessionOverlay.setBounds(0, 0, rawDataSessionOverlayPlotScrollPane.getWidth() - 25, rawDataSessionOverlayPlotScrollPane.getHeight() - 25);
-        // this forces scroll bar
-        rawDataSessionOverlay.setPreferredSize(rawDataSessionOverlay.getSize());
-        rawDataSessionOverlay.setOpaque(true);
-        rawDataSessionOverlay.setBackground(Color.white);
+        rawDataSessionOverlay = new RawDataSessionOverlayContainer(//
+                new Rectangle(0, 0, rawDataSessionOverlayPlotScrollPane.getWidth() - 25, rawDataSessionOverlayPlotScrollPane.getHeight() - 25),//
+                rawDataSession);
+
         rawDataSessionOverlayPlotScrollPane.setViewportView(rawDataSessionOverlay);
         rawDataSessionOverlayPlotScrollPane.getHorizontalScrollBar().setUnitIncrement(1000);
         rawDataSessionOverlayPlotScrollPane.revalidate();
@@ -102,8 +101,9 @@ public class TimeResolvedAnalysisDataView extends DialogEditor {
             rawDataSessionOverlay.add(rawDataSessionOverlayPlots[index], JLayeredPane.DEFAULT_LAYER);
             rawDataSessionOverlayPlots[index].preparePanel(true, false);
             rawDataSessionOverlayPlots[index].repaint();
-
         });
+
+        rawDataSessionOverlay.preparePanel(true, false);
 
     }
 
@@ -123,6 +123,7 @@ public class TimeResolvedAnalysisDataView extends DialogEditor {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setPreferredSize(new java.awt.Dimension(1200, 750));
 
+        jSplitPane1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jSplitPane1.setDividerLocation(300);
 
         rawDataSessionOverlayPlotScrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
@@ -151,21 +152,22 @@ public class TimeResolvedAnalysisDataView extends DialogEditor {
     }// </editor-fold>//GEN-END:initComponents
 
     private void rawDataSessionOverlayPlotScrollPaneComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_rawDataSessionOverlayPlotScrollPaneComponentResized
-        System.out.println("LEFT PANEL ON THE MOVE");
-        if (rawDataSessionOverlayPlots.length > 0){
+        if (rawDataSessionOverlayPlots.length > 0) {
             int revisedWidth = rawDataSessionOverlayPlotScrollPane.getWidth() - 25;
             rawDataSessionOverlay.setSize(new Dimension(revisedWidth, rawDataSessionOverlay.getHeight()));
             rawDataSessionOverlay.setPreferredSize(new Dimension(revisedWidth, rawDataSessionOverlay.getHeight()));
+            rawDataSessionOverlay.setGraphWidth(revisedWidth);
+            rawDataSessionOverlay.repaint();
 
-            for (int i = 0; i < rawDataSessionOverlayPlots.length; i ++){
+            for (int i = 0; i < rawDataSessionOverlayPlots.length; i++) {
                 rawDataSessionOverlayPlots[i].setSize(new Dimension(revisedWidth, rawDataSessionOverlayPlots[i].getHeight()));
                 rawDataSessionOverlayPlots[i].setPreferredSize(new Dimension(revisedWidth, rawDataSessionOverlayPlots[i].getHeight()));
                 rawDataSessionOverlayPlots[i].setGraphWidth(revisedWidth);
                 rawDataSessionOverlayPlots[i].repaint();
             }
-            
+
             rawDataSessionOverlay.revalidate();
-            
+
         }
     }//GEN-LAST:event_rawDataSessionOverlayPlotScrollPaneComponentResized
 

@@ -178,9 +178,12 @@ public class SantaBarbaraNUPlasmaMultiCollFaradayTRAFileHandler extends Abstract
                 Map<IsotopesEnum, DataModelInterface> isotopeToRawIntensitiesMap = massSpec.getIsotopeMappingModel().getIsotopeToRawIntensitiesMap();
                 isotopeToRawIntensitiesMap.forEach((isotope, dataModel) -> {
                     ((RawIntensityDataModel) dataModel).setSessionTimeZeroIndices(sessionTimeZeroIndices);
+                    // educated guesses
+                    ((RawIntensityDataModel) dataModel).setPeakLeftShade(5);
+                    ((RawIntensityDataModel) dataModel).setPeakWidth(140);
+                    ((RawIntensityDataModel) dataModel).setTimeZeroRelativeIndex(75);
                 });
 
-                massSpec.setCountOfFractions(sessionTimeZeroIndices.size());
             } else {
                 retVal = false;
             }

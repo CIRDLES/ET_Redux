@@ -99,8 +99,14 @@ public class RawIntensityDataModel //
     // nov 2014 - see validateOnPeakBaselineCorrectedIsotope inn abstractMassSpecSetup
     private boolean forceMeanForCommonLeadRatios;
     private double forcedMeanForCommonLeadRatios;
+
     // july 2016 introduced for TRA
     private List<Integer> sessionTimeZeroIndices;
+    private int timeZeroRelativeIndex;
+    private int peakLeftShade;
+    private int peakWidth;
+    private int backgroundRightShade;
+    private int backgroundWidth;
 
     /**
      *
@@ -146,8 +152,12 @@ public class RawIntensityDataModel //
 
         this.correctedHg202Si = null;
         this.forceMeanForCommonLeadRatios = false;
-        
+
         this.sessionTimeZeroIndices = new ArrayList<>();
+
+        this.peakLeftShade = 5;
+        this.peakWidth = 100;
+        this.timeZeroRelativeIndex = 75;
     }
 
     /**
@@ -1247,7 +1257,8 @@ public class RawIntensityDataModel //
     }
 
     /**
-     * @param diagonalOfMatrixSCorrectedIntensities the diagonalOfMatrixSCorrectedIntensities to set
+     * @param diagonalOfMatrixSCorrectedIntensities the
+     * diagonalOfMatrixSCorrectedIntensities to set
      */
     public void setDiagonalOfMatrixSCorrectedIntensities(double[] diagonalOfMatrixSCorrectedIntensities) {
         this.diagonalOfMatrixSCorrectedIntensities = diagonalOfMatrixSCorrectedIntensities;
@@ -1265,5 +1276,75 @@ public class RawIntensityDataModel //
      */
     public void setSessionTimeZeroIndices(List<Integer> sessionTimeZeroIndices) {
         this.sessionTimeZeroIndices = sessionTimeZeroIndices;
+    }
+
+    /**
+     * @return the peakLeftShade
+     */
+    public int getPeakLeftShade() {
+        return peakLeftShade;
+    }
+
+    /**
+     * @param peakLeftShade the peakLeftShade to set
+     */
+    public void setPeakLeftShade(int peakLeftShade) {
+        this.peakLeftShade = peakLeftShade;
+    }
+
+    /**
+     * @return the peakWidth
+     */
+    public int getPeakWidth() {
+        return peakWidth;
+    }
+
+    /**
+     * @param peakWidth the peakWidth to set
+     */
+    public void setPeakWidth(int peakWidth) {
+        this.peakWidth = peakWidth;
+    }
+
+    /**
+     * @return the timeZeroRelativeIndex
+     */
+    public int getTimeZeroRelativeIndex() {
+        return timeZeroRelativeIndex;
+    }
+
+    /**
+     * @param timeZeroRelativeIndex the timeZeroRelativeIndex to set
+     */
+    public void setTimeZeroRelativeIndex(int timeZeroRelativeIndex) {
+        this.timeZeroRelativeIndex = timeZeroRelativeIndex;
+    }
+
+    /**
+     * @return the backgroundRightShade
+     */
+    public int getBackgroundRightShade() {
+        return backgroundRightShade;
+    }
+
+    /**
+     * @param backgroundRightShade the backgroundRightShade to set
+     */
+    public void setBackgroundRightShade(int backgroundRightShade) {
+        this.backgroundRightShade = backgroundRightShade;
+    }
+
+    /**
+     * @return the backgroundWidth
+     */
+    public int getBackgroundWidth() {
+        return backgroundWidth;
+    }
+
+    /**
+     * @param backgroundWidth the backgroundWidth to set
+     */
+    public void setBackgroundWidth(int backgroundWidth) {
+        this.backgroundWidth = backgroundWidth;
     }
 }
