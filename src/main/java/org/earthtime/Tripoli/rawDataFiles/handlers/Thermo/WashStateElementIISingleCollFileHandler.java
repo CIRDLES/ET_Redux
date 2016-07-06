@@ -134,7 +134,7 @@ public class WashStateElementIISingleCollFileHandler extends AbstractRawDataFile
                     }
                 }
                 // create fractions from raw data and perform corrections and calculate ratios
-                loadRawDataFile(loadDataTask, usingFullPropagation, leftShadeCount, 0, inLiveMode);
+                 tripoliFractions = loadRawDataFile(loadDataTask, usingFullPropagation, leftShadeCount, 0, inLiveMode);
             }
         } else {
             JOptionPane.showMessageDialog(

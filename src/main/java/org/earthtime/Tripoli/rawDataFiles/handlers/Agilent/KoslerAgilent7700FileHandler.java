@@ -119,8 +119,6 @@ public class KoslerAgilent7700FileHandler extends AbstractRawDataFileHandler imp
 
             rawDataFile = null;
         }
-
-//        return rawDataFile;
     }
 
     /**

@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.earthtime.Tripoli.dataViews.rawDataReviews;
 
+import java.awt.Graphics2D;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
 import org.earthtime.Tripoli.dataViews.AbstractRawDataView;
 
@@ -24,6 +24,15 @@ import org.earthtime.Tripoli.dataViews.AbstractRawDataView;
  * @author James F. Bowring <bowring at gmail.com>
  */
 public class RawDataSessionSerialContainer extends AbstractRawDataView {
+
+    /**
+     *
+     * @param g2d
+     */
+    @Override
+    public void paint(Graphics2D g2d) {
+        super.paint(g2d);
+    }
 
     @Override
     public void preparePanel(boolean doReScale, boolean inLiveMode) {

@@ -128,10 +128,8 @@ public class LaserChronNUPlasmaMultiCollIonCounterFileHandler extends AbstractRa
 
         if (rawDataFile != null) {
             // create fractions from raw data and perform corrections and calculate ratios
-            loadRawDataFile(loadDataTask, usingFullPropagation, leftShadeCount, ignoreFirstFractions, inLiveMode);
+             tripoliFractions = loadRawDataFile(loadDataTask, usingFullPropagation, leftShadeCount, ignoreFirstFractions, inLiveMode);
         }
-
-//        return rawDataFile;
     }
 
     /**

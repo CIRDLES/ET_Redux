@@ -28,7 +28,6 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JLayeredPane;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
 import org.earthtime.Tripoli.dataModels.RawIntensityDataModel;
 import org.earthtime.Tripoli.dataViews.AbstractRawDataView;
@@ -54,11 +53,11 @@ public class RawDataSessionOverlayContainer extends AbstractRawDataView {
     private boolean insideBackground;
     private boolean onLeftOfBackground;
     private boolean onRightOfBackground;
-    private final JLayeredPane rawDataSerialSession;
+    private final AbstractRawDataView rawDataSessionSerialContainer;
     
-    public RawDataSessionOverlayContainer(Rectangle bounds, JLayeredPane rawDataSerialSession) {
+    public RawDataSessionOverlayContainer(Rectangle bounds, AbstractRawDataView rawDataSessionSerialContainer) {
         super(bounds);
-        this.rawDataSerialSession = rawDataSerialSession;
+        this.rawDataSessionSerialContainer = rawDataSessionSerialContainer;
         initSession();
     }
     
@@ -186,7 +185,7 @@ public class RawDataSessionOverlayContainer extends AbstractRawDataView {
 
         //get a handle on serial view models
         rawIntensitiesDataSerialViews = new ArrayList<>();
-        components = rawDataSerialSession.getComponents();
+        components = rawDataSessionSerialContainer.getComponents();
         for (int i = 0; i < components.length; i++) {
             if (components[i] instanceof RawDataSessionPlot) {
                 rawIntensitiesDataSerialViews.add(((AbstractRawDataView) components[i]));
@@ -333,8 +332,7 @@ public class RawDataSessionOverlayContainer extends AbstractRawDataView {
             updateModels();
             
             repaint();
-        }
-        
+        }       
     }
     
     private void updateModels() {
@@ -343,17 +341,13 @@ public class RawDataSessionOverlayContainer extends AbstractRawDataView {
             ((RawIntensityDataModel) rawIntensitiesDataOverlayViews.get(i).getDataModel()).setPeakWidth(peakWidth);
             ((RawIntensityDataModel) rawIntensitiesDataOverlayViews.get(i).getDataModel()).setBackgroundRightShade(backgroundRightShade);
             ((RawIntensityDataModel) rawIntensitiesDataOverlayViews.get(i).getDataModel()).setBackgroundWidth(backgroundWidth);
+            
             rawIntensitiesDataOverlayViews.get(i).preparePanel(true, false);
-        }
-        
-        for (int i = 0; i < rawIntensitiesDataSerialViews.size(); i++) {
-            ((RawIntensityDataModel) rawIntensitiesDataSerialViews.get(i).getDataModel()).setPeakLeftShade(peakLeftShade);
-            ((RawIntensityDataModel) rawIntensitiesDataSerialViews.get(i).getDataModel()).setPeakWidth(peakWidth);
             rawIntensitiesDataSerialViews.get(i).preparePanel(true, false);
             rawIntensitiesDataSerialViews.get(i).repaint();
         }
         
-        rawDataSerialSession.revalidate();
+        rawDataSessionSerialContainer.revalidate();
         
     }
     

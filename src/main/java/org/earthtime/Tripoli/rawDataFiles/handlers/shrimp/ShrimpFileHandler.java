@@ -105,7 +105,6 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
                     "ET Redux Warning",
                     JOptionPane.WARNING_MESSAGE);
         }
-
     }
 
     /**

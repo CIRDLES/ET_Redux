@@ -494,9 +494,11 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
             boolean doRawDataReview = rawDataFileHandler.getAndLoadRawIntensityDataFilePhaseI();
             if (doRawDataReview) {
                 TimeResolvedAnalysisDataView timeResolvedAnalysisDataView = new TimeResolvedAnalysisDataView(null, true, rawDataFileHandler.getMassSpec());
+                timeResolvedAnalysisDataView.getComponent(0).transferFocus();
                 timeResolvedAnalysisDataView.setVisible(true);
 
-            } else if (showParametersView()) {
+            } 
+            if (showParametersView()) {
                 fireLoadDataTask();
                 manageButtons(true, true, true);
             }

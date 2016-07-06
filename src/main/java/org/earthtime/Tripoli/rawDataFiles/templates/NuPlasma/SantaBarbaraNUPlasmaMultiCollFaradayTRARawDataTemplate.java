@@ -53,7 +53,7 @@ public final class SantaBarbaraNUPlasmaMultiCollFaradayTRARawDataTemplate extend
         this.blockStartOffset = 0; // not used
         this.blockSize = 0;// determined from data values; not constant
         this.standardIDs = new String[]//
-        {"SL", "R33"};
+        {"MZ_44069", "44069", "stern", "manangotry"};
         this.timeZone = TimeZone.getTimeZone("PST");
         this.defaultParsingOfFractionsBehavior = 1;
         this.massSpecSetup = CottlesNUPlasmaSetupUPbFarTRA.getInstance();

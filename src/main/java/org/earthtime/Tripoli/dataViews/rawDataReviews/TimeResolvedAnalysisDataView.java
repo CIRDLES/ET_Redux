@@ -23,6 +23,7 @@ import javax.swing.JLayeredPane;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
 import org.earthtime.Tripoli.dataViews.AbstractRawDataView;
 import org.earthtime.Tripoli.massSpecSetups.AbstractMassSpecSetup;
+import org.earthtime.beans.ET_JButton;
 import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.isotopes.IsotopesEnum;
 
@@ -79,7 +80,6 @@ public class TimeResolvedAnalysisDataView extends DialogEditor {
 
         // overlay of plots
         rawDataSessionOverlayContainer = new RawDataSessionOverlayContainer(//
-                //
                 new Rectangle(0, 0, rawDataSessionOverlayPlotScrollPane.getWidth(), rawDataSessionOverlayPlotScrollPane.getHeight() - 25),//
                 rawDataSessionSerialContainer);
 
@@ -120,10 +120,12 @@ public class TimeResolvedAnalysisDataView extends DialogEditor {
         jSplitPane1 = new javax.swing.JSplitPane();
         rawDataSessionOverlayPlotScrollPane = new javax.swing.JScrollPane();
         rawDataSessionPlotScrollPane = new javax.swing.JScrollPane();
-        jLayeredPane1 = new javax.swing.JLayeredPane();
+        buttonPanel = new javax.swing.JLayeredPane();
+        loadData_button = new ET_JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setPreferredSize(new java.awt.Dimension(1200, 800));
+        setSize(new java.awt.Dimension(1200, 800));
 
         jSplitPane1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jSplitPane1.setDividerLocation(300);
@@ -139,34 +141,42 @@ public class TimeResolvedAnalysisDataView extends DialogEditor {
         rawDataSessionPlotScrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         jSplitPane1.setRightComponent(rawDataSessionPlotScrollPane);
 
-        jLayeredPane1.setBackground(new java.awt.Color(231, 255, 251));
-        jLayeredPane1.setOpaque(true);
+        buttonPanel.setBackground(new java.awt.Color(235, 255, 255));
+        buttonPanel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        buttonPanel.setOpaque(true);
+        buttonPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        javax.swing.GroupLayout jLayeredPane1Layout = new javax.swing.GroupLayout(jLayeredPane1);
-        jLayeredPane1.setLayout(jLayeredPane1Layout);
-        jLayeredPane1Layout.setHorizontalGroup(
-            jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-        jLayeredPane1Layout.setVerticalGroup(
-            jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 22, Short.MAX_VALUE)
-        );
+        loadData_button.setBackground(new java.awt.Color(204, 204, 204));
+        loadData_button.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        loadData_button.setForeground(new java.awt.Color(255, 51, 0));
+        loadData_button.setText("Load Data");
+        loadData_button.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        loadData_button.setPreferredSize(new java.awt.Dimension(140, 23));
+        loadData_button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                loadData_buttonMouseEntered(evt);
+            }
+        });
+        loadData_button.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loadData_buttonActionPerformed(evt);
+            }
+        });
+        buttonPanel.add(loadData_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 6, 95, 25));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1233, Short.MAX_VALUE)
-            .addComponent(jLayeredPane1)
+            .addComponent(buttonPanel)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 703, Short.MAX_VALUE)
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 759, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLayeredPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addComponent(buttonPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
@@ -192,10 +202,20 @@ public class TimeResolvedAnalysisDataView extends DialogEditor {
         }
     }//GEN-LAST:event_rawDataSessionOverlayPlotScrollPaneComponentResized
 
+    private void loadData_buttonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_loadData_buttonMouseEntered
+//        ArrayList<String> myMRUs = myState.getMRUProjectList();
+//        loadData_button.setToolTipText(myMRUs.isEmpty() ? "No recent projects" : myMRUs.get(0));
+    }//GEN-LAST:event_loadData_buttonMouseEntered
+
+    private void loadData_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadData_buttonActionPerformed
+       // loadMostRecentProject(true);
+    }//GEN-LAST:event_loadData_buttonActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLayeredPane jLayeredPane1;
+    private javax.swing.JLayeredPane buttonPanel;
     private javax.swing.JSplitPane jSplitPane1;
+    private javax.swing.JButton loadData_button;
     private javax.swing.JScrollPane rawDataSessionOverlayPlotScrollPane;
     private javax.swing.JScrollPane rawDataSessionPlotScrollPane;
     // End of variables declaration//GEN-END:variables

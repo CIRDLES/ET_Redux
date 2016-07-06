@@ -122,7 +122,7 @@ public class RittnerAgilent7700FileHandler extends AbstractRawDataFileHandler im
                     && //
                     areKeyWordsPresent(onPeakFileContents)) {
                 // create fractions from raw data and perform corrections and calculate ratios
-                loadRawDataFile(loadDataTask, usingFullPropagation, leftShadeCount, 0, inLiveMode);
+                 tripoliFractions = loadRawDataFile(loadDataTask, usingFullPropagation, leftShadeCount, 0, inLiveMode);
             }
         } else {
             JOptionPane.showMessageDialog(
@@ -133,8 +133,6 @@ public class RittnerAgilent7700FileHandler extends AbstractRawDataFileHandler im
 
             rawDataFile = null;
         }
-
-//        return rawDataFile;
     }
 
     /**

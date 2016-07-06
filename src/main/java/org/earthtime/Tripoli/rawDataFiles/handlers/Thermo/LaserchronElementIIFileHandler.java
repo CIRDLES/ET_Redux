@@ -256,8 +256,8 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
                 // each acquisition file contains background followed by peak followed by background
                 // initial solution is to hard wire the first background and peak per Gehrels
                 // later we will give user interactive tools to pick them out
-                ArrayList<double[]> backgroundAcquisitions = new ArrayList<>();
-                ArrayList<double[]> peakAcquisitions = new ArrayList<>();
+                List<double[]> backgroundAcquisitions = new ArrayList<>();
+                List<double[]> peakAcquisitions = new ArrayList<>();
 
                 int hardwiredEndOfBackground = 24;
                 // process time stamp from first scan as time stamp of file and background
@@ -310,7 +310,7 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
         return myTripoliFractions;
     }
 
-    private void processIntensities_A(int i, int hardwiredEndOfBackground, ArrayList<double[]> backgroundAcquisitions, ArrayList<double[]> peakAcquisitions, String[] extractedData) {
+    private void processIntensities_A(int i, int hardwiredEndOfBackground, List<double[]> backgroundAcquisitions, List<double[]> peakAcquisitions, String[] extractedData) {
         // 202  204  206 Pb207	Pb208	Th232 U238
         double[] backgroundIntensities = new double[7];
         double[] peakIntensities = new double[7];
@@ -340,7 +340,7 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
         }
     }
 
-    private void processIntensities_B(int i, int hardwiredEndOfBackground, ArrayList<double[]> backgroundAcquisitions, ArrayList<double[]> peakAcquisitions, String[] extractedData) {
+    private void processIntensities_B(int i, int hardwiredEndOfBackground, List<double[]> backgroundAcquisitions, List<double[]> peakAcquisitions, String[] extractedData) {
         // 202  204  206 Pb207	Pb208 Th232 U235 U238
         double[] backgroundIntensities = new double[8];
         double[] peakIntensities = new double[8];
@@ -384,7 +384,7 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
         }
     }
 
-    private void processIntensities_C(int i, int hardwiredEndOfBackground, ArrayList<double[]> backgroundAcquisitions, ArrayList<double[]> peakAcquisitions, String[] extractedData) {
+    private void processIntensities_C(int i, int hardwiredEndOfBackground, List<double[]> backgroundAcquisitions, List<double[]> peakAcquisitions, String[] extractedData) {
         // 176 202  204  206 Pb207 Pb208 Th232 U235 U238
         double[] backgroundIntensities = new double[9];
         double[] peakIntensities = new double[9];
