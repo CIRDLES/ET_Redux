@@ -56,7 +56,7 @@ public class SantaBarbaraNUPlasmaMultiCollFaradayTRAFileHandler extends Abstract
         Serializable {
 
     // Class variables
-//    private static final long serialVersionUID = 4617107661618798359L;
+    private static final long serialVersionUID = 2903132020030712554L;
     private static SantaBarbaraNUPlasmaMultiCollFaradayTRAFileHandler instance = new SantaBarbaraNUPlasmaMultiCollFaradayTRAFileHandler();
     private String[] fractionNames;
     private List<String> fractionData;
@@ -402,7 +402,7 @@ public class SantaBarbaraNUPlasmaMultiCollFaradayTRAFileHandler extends Abstract
                 tripoliFraction.toggleOneDataAquisition(offDataIndex, false);
             }
             // don't have system for background yet
-            
+
             System.out.println("\n**** Element II FractionID  " + fractionID + " refMat? " + isReferenceMaterial + "  livemode = " + inLiveMode + " <<<<<<<<<<<<<<<<<<\n");
 
             myTripoliFractions.add(tripoliFraction);
@@ -415,4 +415,5 @@ public class SantaBarbaraNUPlasmaMultiCollFaradayTRAFileHandler extends Abstract
 
         return myTripoliFractions;
     }
+
 }

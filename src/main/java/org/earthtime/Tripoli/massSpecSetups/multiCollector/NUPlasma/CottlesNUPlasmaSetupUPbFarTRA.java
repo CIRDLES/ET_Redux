@@ -51,7 +51,7 @@ public final class CottlesNUPlasmaSetupUPbFarTRA extends AbstractMassSpecSetup i
         Serializable {
 
     // Class variables
-    // private static final long serialVersionUID = -7764226351504652753L;
+    private static final long serialVersionUID = 3425085745353656230L;
     private static CottlesNUPlasmaSetupUPbFarTRA instance = new CottlesNUPlasmaSetupUPbFarTRA();
 
     private CottlesNUPlasmaSetupUPbFarTRA() {
@@ -211,7 +211,7 @@ public final class CottlesNUPlasmaSetupUPbFarTRA extends AbstractMassSpecSetup i
         virtualCollectors.get(9 - 1).updateCollector(false);
         virtualCollectors.get(8 - 1).updateCollector(false);
         virtualCollectors.get(7 - 1).updateCollector(false);
- 
+
         // new set of isotope models for this fraction
         genericIsotopeModels = new TreeSet<>();
         U238 = new RawIntensityDataModel( //
@@ -252,7 +252,6 @@ public final class CottlesNUPlasmaSetupUPbFarTRA extends AbstractMassSpecSetup i
 
         isotopeMappingModel.setIsotopeToRawIntensitiesMap(isotopeToRawIntensitiesMap);
 
-        
         virtualCollectorModelMapToFieldIndexes = new HashMap<>();
         getVirtualCollectorModelMapToFieldIndexes().put(U238, 0);
         getVirtualCollectorModelMapToFieldIndexes().put(Th232, 1);
@@ -282,4 +281,6 @@ public final class CottlesNUPlasmaSetupUPbFarTRA extends AbstractMassSpecSetup i
 
         return rawRatios;
     }
+
+ 
 }

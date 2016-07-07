@@ -19,9 +19,6 @@
  */
 package org.earthtime.Tripoli.rawDataFiles.templates.NuPlasma;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectStreamClass;
 import java.io.Serializable;
 import java.util.TimeZone;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.AbstractAcquisitionModel;
@@ -77,12 +74,12 @@ public final class SantaBarbaraNUPlasmaMultiCollFaradayTRARawDataTemplate extend
         return acquisitionModel;
     }
 
-    private void readObject(
-            ObjectInputStream stream)
-            throws IOException, ClassNotFoundException {
-        stream.defaultReadObject();
-        ObjectStreamClass myObject = ObjectStreamClass.lookup(Class.forName(SantaBarbaraNUPlasmaMultiCollFaradayTRARawDataTemplate.class.getCanonicalName()));
-        long theSUID = myObject.getSerialVersionUID();
-        System.out.println("Customized De-serialization of SantaBarbaraNUPlasmaMultiCollFaradayTRARawDataTemplate " + theSUID);
-    }
+//    private void readObject(
+//            ObjectInputStream stream)
+//            throws IOException, ClassNotFoundException {
+//        stream.defaultReadObject();
+//        ObjectStreamClass myObject = ObjectStreamClass.lookup(Class.forName(SantaBarbaraNUPlasmaMultiCollFaradayTRARawDataTemplate.class.getCanonicalName()));
+//        long theSUID = myObject.getSerialVersionUID();
+//        System.out.println("Customized De-serialization of SantaBarbaraNUPlasmaMultiCollFaradayTRARawDataTemplate " + theSUID);
+//    }
 }
