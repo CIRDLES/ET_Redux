@@ -399,7 +399,7 @@ public class SantaBarbaraNUPlasmaMultiCollFaradayTRAFileHandler extends Abstract
 
             // turn off data point between time-zero and end background, start peak
             for (int offDataIndex = 0; offDataIndex < peakLeftShade; offDataIndex++) {
-                tripoliFraction.getDataActiveMap()[offDataIndex] = false;
+                tripoliFraction.toggleOneDataAquisition(offDataIndex, false);
             }
             // don't have system for background yet
             

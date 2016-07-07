@@ -409,7 +409,7 @@ public class RawIntensityDataModel //
      */
     @Override
     public void applyMaskingArray() {
-        onPeakVirtualCollector.setDataActiveMap(MaskingSingleton.getInstance().applyMask(onPeakVirtualCollector.getDataActiveMap().clone()));//.getMaskingArray().clone());
+        onPeakVirtualCollector.setDataActiveMap(MaskingSingleton.getInstance().applyMask(onPeakVirtualCollector.getDataActiveMap().clone()));
     }
 
     /**

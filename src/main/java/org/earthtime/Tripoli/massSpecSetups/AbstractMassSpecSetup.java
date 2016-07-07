@@ -953,7 +953,6 @@ public abstract class AbstractMassSpecSetup implements //
      */
     private void performBackgroundFitting(boolean usingFullPropagation) {
 
-//        RawIntensityDataModel.setUSING_FULL_PROPAGATION(usingFullPropagation);
         // generates the fit function for the background
         Iterator<DataModelInterface> genericIsotopeModelsIterator = genericIsotopeModels.iterator();
         Matrix Hg202Si = null;

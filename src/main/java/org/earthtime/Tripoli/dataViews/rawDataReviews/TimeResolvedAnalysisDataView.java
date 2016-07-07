@@ -106,6 +106,7 @@ public class TimeResolvedAnalysisDataView extends DialogEditor {
 
         rawDataSessionOverlayContainer.preparePanel(true, false);
 
+        loadData_button.grabFocus();
     }
 
     /**

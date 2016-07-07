@@ -75,9 +75,10 @@ public class MaskingSingleton implements Serializable {
      */
     public boolean[] applyMask(boolean[] activeDataMap) {
         // from left
-        for (int i = 0; i < activeDataMap.length; i++) {
-            activeDataMap[i] = true;
-        }
+        // july 2016 removed this to preserve tossed data
+//        for (int i = 0; i < activeDataMap.length; i++) {
+//            activeDataMap[i] = true;
+//        }
 
         for (int i = 0; i < leftShadeCount; i++) {
             activeDataMap[i] = false;
