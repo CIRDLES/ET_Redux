@@ -202,7 +202,7 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
      *
      */
     protected JSpinner leftMaskSpinner;
-    
+
     /**
      *
      * @param project
@@ -555,20 +555,21 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
             collectorNameIonCounterLabels.add(new JLabel("Single"));
 
         }
+        if (rawDataFileHandler.getAcquisitionModel().getRawDataFile() != null) {
+            try {
+                // show rawdatafile path            
+                JTextArea rawDataFilePathTextArea = new JTextArea(//
+                        "Raw data location: "
+                        + rawDataFileHandler.getAcquisitionModel().getRawDataFile().getCanonicalPath());
 
-        try {
-            // show rawdatafile path
-            JTextArea rawDataFilePathTextArea = new JTextArea(//
-                    "Raw data location: "
-                    + rawDataFileHandler.getAcquisitionModel().getRawDataFile().getCanonicalPath());
+                rawDataFilePathTextArea.setBounds(leftMargin, 370, parentDimension.width - 100, 50);
+                rawDataFilePathTextArea.setLineWrap(true);
+                rawDataFilePathTextArea.setEditable(false);
+                this.add(rawDataFilePathTextArea);
 
-            rawDataFilePathTextArea.setBounds(leftMargin, 370, parentDimension.width - 100, 50);
-            rawDataFilePathTextArea.setLineWrap(true);
-            rawDataFilePathTextArea.setEditable(false);
-            this.add(rawDataFilePathTextArea);
-
-        } catch (IOException ex) {
-            Logger.getLogger(LAICPMSProjectParametersManager.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(LAICPMSProjectParametersManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
 
         JLabel leftShadeLabel = new JLabel("Number of datapoints to ignore at start of each fraction (4 max): ");
