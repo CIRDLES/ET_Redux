@@ -274,7 +274,7 @@ public class TexasAMElementIISingleCollFileHandler extends AbstractRawDataFileHa
      * @return the boolean
      */
     @Override
-    public boolean getAndLoadRawIntensityDataFilePhaseI() {
+    public boolean getAndLoadRawIntensityDataForReview() {
         return false;
     }
 }

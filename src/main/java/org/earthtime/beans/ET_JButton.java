@@ -34,59 +34,60 @@ public class ET_JButton extends JButton {
     /**
      *
      */
-    public ET_JButton () {
+    public ET_JButton() {
         super();
-        setBackground( Color.white );
-        setForeground( new java.awt.Color( 255, 51, 0 ) );
-        setBorder( javax.swing.BorderFactory.createLineBorder( new java.awt.Color( 0, 0, 0 ) ) );
-        setContentAreaFilled( false );
-        setFocusPainted( false );
-        setOpaque( true );
-        setPreferredSize( new java.awt.Dimension( 110, 23 ) );
-        setSize( new java.awt.Dimension( 110, 23 ) );
-        
+        setBackground(Color.white);
+        setForeground(new java.awt.Color(255, 51, 0));
+        setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        setContentAreaFilled(false);
+        setFocusPainted(false);
+        setOpaque(true);
+        setPreferredSize(new java.awt.Dimension(110, 23));
+        setSize(new java.awt.Dimension(110, 23));
+
         // feb 2014 for all platforms
         setFont(new Font("SanSerif", Font.PLAIN, 12));
-        
-        addMouseListener( new java.awt.event.MouseAdapter() {
+
+        addMouseListener(new java.awt.event.MouseAdapter() {
 
             @Override
-            public void mouseExited ( java.awt.event.MouseEvent evt ) {
-                ((Component) evt.getSource()).setBackground( Color.white );
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                ((Component) evt.getSource()).setBackground(Color.white);
             }
 
             @Override
-            public void mouseEntered ( java.awt.event.MouseEvent evt ) {
-                if ( ((Component) evt.getSource()).isEnabled() ) {
-                    ((Component) evt.getSource()).setBackground( new Color( 225, 225, 225 ) );
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                if (((Component) evt.getSource()).isEnabled()) {
+                    ((Component) evt.getSource()).setBackground(new Color(225, 225, 225));
                 }
             }
 
             @Override
-            public void mousePressed ( MouseEvent evt ) {
-                super.mousePressed( evt );
-                if ( ((Component) evt.getSource()).isEnabled() ) {
-                    ((Component) evt.getSource()).setBackground( new Color( 200, 200, 200 ) );
+            public void mousePressed(MouseEvent evt) {
+                super.mousePressed(evt);
+                if (((Component) evt.getSource()).isEnabled()) {
+                    ((Component) evt.getSource()).setBackground(new Color(200, 200, 200));
                     System.out.println("User clicked: " + getText());
                 }
             }
 
             @Override
-            public void mouseReleased ( MouseEvent evt ) {
-                super.mouseReleased( evt );
-                ((Component) evt.getSource()).setBackground( Color.white );
+            public void mouseReleased(MouseEvent evt) {
+                super.mouseReleased(evt);
+                ((Component) evt.getSource()).setBackground(Color.white);
             }
-        } );
-        
-        setSelected( false);
+        });
+
+        setSelected(false);
     }
 
     /**
      *
      * @param text
      */
-    public ET_JButton ( String text ) {
+    public ET_JButton(String text) {
         this();
-        setText( text );
+        setText(text);
+        setSelected(false);
     }
 }

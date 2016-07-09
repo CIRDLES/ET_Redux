@@ -298,7 +298,7 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
      * @return the boolean
      */
     @Override
-    public boolean getAndLoadRawIntensityDataFilePhaseI() {
+    public boolean getAndLoadRawIntensityDataForReview() {
         return false;
     }
 }

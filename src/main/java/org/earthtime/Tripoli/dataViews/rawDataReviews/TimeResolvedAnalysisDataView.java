@@ -61,6 +61,9 @@ public class TimeResolvedAnalysisDataView extends DialogEditor {
         rawDataSessionOverlayPlotScrollPane.getViewport().putClientProperty("EnableWindowBlit", Boolean.TRUE);
 
         initSession();
+        
+        // temp hack to remove focus
+        loadData_button.setBackground(Color.white);
     }
 
     private void initSession() {
@@ -106,7 +109,6 @@ public class TimeResolvedAnalysisDataView extends DialogEditor {
 
         rawDataSessionOverlayContainer.preparePanel(true, false);
 
-        loadData_button.grabFocus();
     }
 
     /**
@@ -118,7 +120,7 @@ public class TimeResolvedAnalysisDataView extends DialogEditor {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jSplitPane1 = new javax.swing.JSplitPane();
+        rawDataSplitPane = new javax.swing.JSplitPane();
         rawDataSessionOverlayPlotScrollPane = new javax.swing.JScrollPane();
         rawDataSessionPlotScrollPane = new javax.swing.JScrollPane();
         buttonPanel = new javax.swing.JLayeredPane();
@@ -128,8 +130,8 @@ public class TimeResolvedAnalysisDataView extends DialogEditor {
         setPreferredSize(new java.awt.Dimension(1200, 800));
         setSize(new java.awt.Dimension(1200, 800));
 
-        jSplitPane1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jSplitPane1.setDividerLocation(300);
+        rawDataSplitPane.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        rawDataSplitPane.setDividerLocation(300);
 
         rawDataSessionOverlayPlotScrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         rawDataSessionOverlayPlotScrollPane.addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -137,10 +139,10 @@ public class TimeResolvedAnalysisDataView extends DialogEditor {
                 rawDataSessionOverlayPlotScrollPaneComponentResized(evt);
             }
         });
-        jSplitPane1.setLeftComponent(rawDataSessionOverlayPlotScrollPane);
+        rawDataSplitPane.setLeftComponent(rawDataSessionOverlayPlotScrollPane);
 
         rawDataSessionPlotScrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-        jSplitPane1.setRightComponent(rawDataSessionPlotScrollPane);
+        rawDataSplitPane.setRightComponent(rawDataSessionPlotScrollPane);
 
         buttonPanel.setBackground(new java.awt.Color(235, 255, 255));
         buttonPanel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -150,32 +152,27 @@ public class TimeResolvedAnalysisDataView extends DialogEditor {
         loadData_button.setBackground(new java.awt.Color(204, 204, 204));
         loadData_button.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         loadData_button.setForeground(new java.awt.Color(255, 51, 0));
-        loadData_button.setText("Load Data");
+        loadData_button.setText("Proceed to Load Data");
         loadData_button.setMargin(new java.awt.Insets(0, 0, 0, 0));
         loadData_button.setPreferredSize(new java.awt.Dimension(140, 23));
-        loadData_button.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                loadData_buttonMouseEntered(evt);
-            }
-        });
         loadData_button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 loadData_buttonActionPerformed(evt);
             }
         });
-        buttonPanel.add(loadData_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 6, 95, 25));
+        buttonPanel.add(loadData_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 5, 220, 25));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1233, Short.MAX_VALUE)
+            .addComponent(rawDataSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1200, Short.MAX_VALUE)
             .addComponent(buttonPanel)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 759, Short.MAX_VALUE)
+                .addComponent(rawDataSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 759, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(buttonPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -203,21 +200,16 @@ public class TimeResolvedAnalysisDataView extends DialogEditor {
         }
     }//GEN-LAST:event_rawDataSessionOverlayPlotScrollPaneComponentResized
 
-    private void loadData_buttonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_loadData_buttonMouseEntered
-//        ArrayList<String> myMRUs = myState.getMRUProjectList();
-//        loadData_button.setToolTipText(myMRUs.isEmpty() ? "No recent projects" : myMRUs.get(0));
-    }//GEN-LAST:event_loadData_buttonMouseEntered
-
     private void loadData_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadData_buttonActionPerformed
-       // loadMostRecentProject(true);
+       close();
     }//GEN-LAST:event_loadData_buttonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLayeredPane buttonPanel;
-    private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JButton loadData_button;
     private javax.swing.JScrollPane rawDataSessionOverlayPlotScrollPane;
     private javax.swing.JScrollPane rawDataSessionPlotScrollPane;
+    private javax.swing.JSplitPane rawDataSplitPane;
     // End of variables declaration//GEN-END:variables
 }

@@ -463,7 +463,7 @@ public class KoslerAgilent7700FileHandler extends AbstractRawDataFileHandler imp
      * @return the boolean
      */
     @Override
-    public boolean getAndLoadRawIntensityDataFilePhaseI() {
+    public boolean getAndLoadRawIntensityDataForReview() {
         return false;
     }
 }

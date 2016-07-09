@@ -133,7 +133,7 @@ public class SantaBarbaraNUPlasmaMultiCollFaradayTRAFileHandler extends Abstract
      * @return the boolean
      */
     @Override
-    public boolean getAndLoadRawIntensityDataFilePhaseI() {
+    public boolean getAndLoadRawIntensityDataForReview() {
         // July 2016 for TRA and review of raw data before processing
         boolean retVal = false;
         fractionData = null;

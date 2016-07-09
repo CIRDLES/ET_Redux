@@ -307,7 +307,7 @@ public class WashStateElementIISingleCollFileHandler extends AbstractRawDataFile
      * @return the boolean
      */
     @Override
-    public boolean getAndLoadRawIntensityDataFilePhaseI() {
+    public boolean getAndLoadRawIntensityDataForReview() {
         return false;
     }
 }

@@ -168,7 +168,7 @@ public abstract class AbstractRawDataFileHandler implements //
      *
      * @return the boolean
      */
-    public abstract boolean getAndLoadRawIntensityDataFilePhaseI();
+    public abstract boolean getAndLoadRawIntensityDataForReview();
     
     /**
      *

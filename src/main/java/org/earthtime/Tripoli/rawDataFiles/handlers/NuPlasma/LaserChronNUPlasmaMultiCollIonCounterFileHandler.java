@@ -461,7 +461,7 @@ public class LaserChronNUPlasmaMultiCollIonCounterFileHandler extends AbstractRa
      * @return the boolean
      */
     @Override
-    public boolean getAndLoadRawIntensityDataFilePhaseI() {
+    public boolean getAndLoadRawIntensityDataForReview() {
         return false;
     }
 }

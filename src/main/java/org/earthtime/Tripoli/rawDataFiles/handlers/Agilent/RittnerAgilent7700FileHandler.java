@@ -304,7 +304,7 @@ public class RittnerAgilent7700FileHandler extends AbstractRawDataFileHandler im
      * @return the boolean
      */
     @Override
-    public boolean getAndLoadRawIntensityDataFilePhaseI() {
+    public boolean getAndLoadRawIntensityDataForReview() {
         return false;
     }
 }

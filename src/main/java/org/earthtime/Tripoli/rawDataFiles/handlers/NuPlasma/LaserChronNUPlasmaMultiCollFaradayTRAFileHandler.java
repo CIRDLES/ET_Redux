@@ -502,7 +502,7 @@ public class LaserChronNUPlasmaMultiCollFaradayTRAFileHandler extends AbstractRa
      * @return the boolean
      */
     @Override
-    public boolean getAndLoadRawIntensityDataFilePhaseI() {
+    public boolean getAndLoadRawIntensityDataForReview() {
         return false;
     }
 }
