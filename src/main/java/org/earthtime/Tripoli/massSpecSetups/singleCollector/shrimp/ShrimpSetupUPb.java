@@ -247,15 +247,15 @@ public final class ShrimpSetupUPb extends AbstractMassSpecSetup {
         isotopeMappingModel.setIsotopeToRawIntensitiesMap(isotopeToRawIntensitiesMap);
 
         virtualCollectorModelMapToFieldIndexes = new HashMap<>();
-        virtualCollectorModelMapToFieldIndexes.put(Zr2O196, 0);
-        virtualCollectorModelMapToFieldIndexes.put(Pb204, 1);
-        virtualCollectorModelMapToFieldIndexes.put(Pb206, 2);
-        virtualCollectorModelMapToFieldIndexes.put(Pb207, 3);
-        virtualCollectorModelMapToFieldIndexes.put(Pb208, 4);
-        virtualCollectorModelMapToFieldIndexes.put(U238, 5);
-        virtualCollectorModelMapToFieldIndexes.put(ThO248, 6);
-        virtualCollectorModelMapToFieldIndexes.put(UO254, 7);
-        virtualCollectorModelMapToFieldIndexes.put(UO270, 8);
+        getVirtualCollectorModelMapToFieldIndexes().put(Zr2O196, 0);
+        getVirtualCollectorModelMapToFieldIndexes().put(Pb204, 1);
+        getVirtualCollectorModelMapToFieldIndexes().put(Pb206, 2);
+        getVirtualCollectorModelMapToFieldIndexes().put(Pb207, 3);
+        getVirtualCollectorModelMapToFieldIndexes().put(Pb208, 4);
+        getVirtualCollectorModelMapToFieldIndexes().put(U238, 5);
+        getVirtualCollectorModelMapToFieldIndexes().put(ThO248, 6);
+        getVirtualCollectorModelMapToFieldIndexes().put(UO254, 7);
+        getVirtualCollectorModelMapToFieldIndexes().put(UO270, 8);
 
         // raw ratios
         rawRatios = new TreeSet<>();
@@ -339,7 +339,7 @@ public final class ShrimpSetupUPb extends AbstractMassSpecSetup {
     public void correctOnPeakIntensities(double[][] correctedIntensities) {
         Matrix peakCorrectedIntensities = new Matrix(correctedIntensities);
 
-        for (Map.Entry<DataModelInterface, Integer> vcmToIndex : virtualCollectorModelMapToFieldIndexes.entrySet()) {
+        for (Map.Entry<DataModelInterface, Integer> vcmToIndex : getVirtualCollectorModelMapToFieldIndexes().entrySet()) {
             RawIntensityDataModel rawIntensityModel = ((RawIntensityDataModel) vcmToIndex.getKey());
             int col = vcmToIndex.getValue();
 
@@ -356,7 +356,7 @@ public final class ShrimpSetupUPb extends AbstractMassSpecSetup {
 
         Matrix peakAcquisitionVariancesMatrix = new Matrix(peakAcquisitionVariancesArray);
 
-        for (Map.Entry<DataModelInterface, Integer> vcmToIndex : virtualCollectorModelMapToFieldIndexes.entrySet()) {
+        for (Map.Entry<DataModelInterface, Integer> vcmToIndex : getVirtualCollectorModelMapToFieldIndexes().entrySet()) {
             RawIntensityDataModel rawIntensityModel = ((RawIntensityDataModel) vcmToIndex.getKey());
             int col = vcmToIndex.getValue();
 
@@ -377,7 +377,7 @@ public final class ShrimpSetupUPb extends AbstractMassSpecSetup {
 
         Matrix peakAcquisitionCorrectedVariancesMatrix = new Matrix(correctedPeakVariances);
 
-        for (Map.Entry<DataModelInterface, Integer> vcmToIndex : virtualCollectorModelMapToFieldIndexes.entrySet()) {
+        for (Map.Entry<DataModelInterface, Integer> vcmToIndex : getVirtualCollectorModelMapToFieldIndexes().entrySet()) {
             RawIntensityDataModel rawIntensityModel = ((RawIntensityDataModel) vcmToIndex.getKey());
             int col = vcmToIndex.getValue();
 

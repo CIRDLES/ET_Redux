@@ -119,8 +119,6 @@ public class KoslerAgilent7700FileHandler extends AbstractRawDataFileHandler imp
 
             rawDataFile = null;
         }
-
-//        return rawDataFile;
     }
 
     /**
@@ -458,5 +456,14 @@ public class KoslerAgilent7700FileHandler extends AbstractRawDataFileHandler imp
                 Class.forName(KoslerAgilent7700FileHandler.class.getCanonicalName()));
         long theSUID = myObject.getSerialVersionUID();
         System.out.println("Customized De-serialization of KoslerAgilent7700FileHandler " + theSUID);
+    }
+
+    /**
+     *
+     * @return the boolean
+     */
+    @Override
+    public boolean getAndLoadRawIntensityDataForReview() {
+        return false;
     }
 }

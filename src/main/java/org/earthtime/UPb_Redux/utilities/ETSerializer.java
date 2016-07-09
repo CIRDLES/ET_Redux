@@ -81,10 +81,13 @@ public final class ETSerializer {
                             + " " + filename //,
                     });
             }
-        } catch (IOException | ClassNotFoundException ex) {
+        } 
+        catch (IOException | ClassNotFoundException ex) {
             JOptionPane.showMessageDialog(null,
                     new String[]{"The file you are attempting to open is not compatible with this version of ET_Redux."//,
                     });
+            
+            System.out.println( ex.getMessage());
         }
 
         return o;

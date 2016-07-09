@@ -47,6 +47,7 @@ import org.earthtime.Tripoli.dataModels.DataModelInterface;
 import org.earthtime.Tripoli.dataModels.MaskingSingleton;
 import org.earthtime.Tripoli.dataModels.RawIntensityDataModel;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.AbstractAcquisitionModel;
+import org.earthtime.Tripoli.dataViews.rawDataReviews.TimeResolvedAnalysisDataView;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.Tripoli.massSpecSetups.AbstractMassSpecSetup;
 import org.earthtime.Tripoli.rawDataFiles.handlers.AbstractRawDataFileHandler;
@@ -55,6 +56,7 @@ import org.earthtime.Tripoli.rawDataFiles.handlers.Agilent.RittnerAgilent7700Fil
 import org.earthtime.Tripoli.rawDataFiles.handlers.NuPlasma.LaserChronNUPlasmaMultiCollFaradayFileHandler;
 import org.earthtime.Tripoli.rawDataFiles.handlers.NuPlasma.LaserChronNUPlasmaMultiCollFaradayTRAFileHandler;
 import org.earthtime.Tripoli.rawDataFiles.handlers.NuPlasma.LaserChronNUPlasmaMultiCollIonCounterFileHandler;
+import org.earthtime.Tripoli.rawDataFiles.handlers.NuPlasma.SantaBarbaraNUPlasmaMultiCollFaradayTRAFileHandler;
 import org.earthtime.Tripoli.rawDataFiles.handlers.Thermo.LaserchronElementIIFileHandler;
 import org.earthtime.Tripoli.rawDataFiles.handlers.Thermo.MemUnivNewfoundlandElementIIFileHandler;
 import org.earthtime.Tripoli.rawDataFiles.handlers.Thermo.TexasAMElementIISingleCollFileHandler;
@@ -66,6 +68,7 @@ import org.earthtime.Tripoli.rawDataFiles.templates.Agilent.Rittner_Agilent7700_
 import org.earthtime.Tripoli.rawDataFiles.templates.NuPlasma.LaserChronNUPlasmaMultiCollFaradayRawDataTemplate;
 import org.earthtime.Tripoli.rawDataFiles.templates.NuPlasma.LaserChronNUPlasmaMultiCollFaradayTRARawDataTemplate;
 import org.earthtime.Tripoli.rawDataFiles.templates.NuPlasma.LaserChronNUPlasmaMultiCollIonCounterRawDataTemplate;
+import org.earthtime.Tripoli.rawDataFiles.templates.NuPlasma.SantaBarbaraNUPlasmaMultiCollFaradayTRARawDataTemplate;
 import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.HancharMemUnivNewfoundlandElementII_RawDataTemplate;
 import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.LaserchronElementII_RawDataTemplate_A;
 import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.LaserchronElementII_RawDataTemplate_B;
@@ -197,6 +200,13 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
                 .add(MoellerUnivKansasElementII_RawDataTemplate.getInstance());
         knownRawDataFileHandlers.add(theUnivKansasElementIIFileHandler);
 
+        // SantaBarbara NU Plasma FARADAY TRA
+        AbstractRawDataFileHandler theSantaBarbaraNUPlasmaMultiCollFaradayTRAFileHandler
+                = SantaBarbaraNUPlasmaMultiCollFaradayTRAFileHandler.getInstance();
+        theSantaBarbaraNUPlasmaMultiCollFaradayTRAFileHandler.getAvailableRawDataFileTemplates()//
+                .add(SantaBarbaraNUPlasmaMultiCollFaradayTRARawDataTemplate.getInstance());
+        knownRawDataFileHandlers.add(theSantaBarbaraNUPlasmaMultiCollFaradayTRAFileHandler);
+
         // Washington State Element 2 
         AbstractRawDataFileHandler theWashStateElement2SingleCollFileHandler
                 = WashStateElementIISingleCollFileHandler.getInstance();
@@ -210,8 +220,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
 
         // feb 2014 Agilent 7700
         AbstractRawDataFileHandler theRittnerAgilent7700FileHandler
-                = //
-                RittnerAgilent7700FileHandler.getInstance();
+                = RittnerAgilent7700FileHandler.getInstance();
         theRittnerAgilent7700FileHandler.getAvailableRawDataFileTemplates()//
                 .add(Rittner_Agilent7700_RawDataTemplate.getInstance());
 //        knownRawDataFileHandlers.add(theRittnerAgilent7700FileHandler);
@@ -481,13 +490,18 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
 
             manageButtons(true, true, true);
 
-            if (showParametersView()) {
+            // july 2016
+            boolean doRawDataReview = rawDataFileHandler.getAndLoadRawIntensityDataForReview();
+            if (doRawDataReview) {
+                TimeResolvedAnalysisDataView timeResolvedAnalysisDataView = new TimeResolvedAnalysisDataView(null, true, rawDataFileHandler.getMassSpec());
+                timeResolvedAnalysisDataView.getComponent(0).transferFocus();
+                timeResolvedAnalysisDataView.setVisible(true);
 
+            } 
+            if (showParametersView()) {
                 fireLoadDataTask();
                 manageButtons(true, true, true);
-            } //else {
-            // manageButtons(true, true, false);
-            //}
+            }
         } else {
             manageButtons(false, false, false);
         }
@@ -1017,7 +1031,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
 
     private void loadRawData_buttonActionPerformed ( java.awt.event.ActionEvent evt ) {//GEN-FIRST:event_loadRawData_buttonActionPerformed
 
-        loadRawDataWorkflow();//loadDataTask);
+        loadRawDataWorkflow();
     }//GEN-LAST:event_loadRawData_buttonActionPerformed
 
     private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentResized

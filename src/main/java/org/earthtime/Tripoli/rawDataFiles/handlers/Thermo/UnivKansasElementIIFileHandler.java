@@ -105,7 +105,7 @@ public class UnivKansasElementIIFileHandler extends AbstractRawDataFileHandler {
 
         if (analysisFiles.length > 0) {
             Arrays.sort(analysisFiles, new FractionFileModifiedComparator());
-            
+
             String onPeakFileContents = URIHelper.getTextFromURI(analysisFiles[0].getAbsolutePath());
             if (isValidRawDataFileType(analysisFiles[0]) //
                     && //
@@ -187,14 +187,15 @@ public class UnivKansasElementIIFileHandler extends AbstractRawDataFileHandler {
      * @param leftShadeCount the value of leftShadeCount
      * @param ignoreFirstFractions the value of ignoreFirstFractions
      * @param inLiveMode the value of inLiveMode
-     * @return the java.util.SortedSet<org.earthtime.Tripoli.fractions.TripoliFraction>
+     * @return the
+     * java.util.SortedSet<org.earthtime.Tripoli.fractions.TripoliFraction>
      */
     @Override
     protected SortedSet<TripoliFraction> loadRawDataFile(//
             SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions, boolean inLiveMode) {
 
         SortedSet myTripoliFractions = new TreeSet<>();
- 
+
         // assume we are golden   
         // take first entry in fractionFileNames that came from .FIN file and ?? confirm it is referenceMaterial (standard)
         String referenceMaterialfractionIDPrefix = fractionFileNames[0].toUpperCase().substring(0, 2);
@@ -308,5 +309,14 @@ public class UnivKansasElementIIFileHandler extends AbstractRawDataFileHandler {
         }
 
         return myTripoliFractions;
+    }
+
+    /**
+     *
+     * @return the boolean
+     */
+    @Override
+    public boolean getAndLoadRawIntensityDataForReview() {
+        return false;
     }
 }

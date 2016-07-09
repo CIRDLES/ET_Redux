@@ -221,8 +221,6 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
 
         this.readyToProcessData = false;
         this.rawDataProcessed = rawDataFileHandler.getAcquisitionModel().isRawDataProcessed();
-
-       // initView();
     }
 
     @Override
@@ -233,7 +231,7 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
     }
 
     public void initView() {
-        
+
         boolean editable = !rawDataProcessed;
 
         removeAll();
@@ -397,8 +395,7 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
         this.add(headerLabel);
 
         Iterator<IsotopesEnum> isotopeIterator
-                = 
-                isotopeMappingModel.getIsotopeToCollectorMap().keySet().iterator();
+                = isotopeMappingModel.getIsotopeToCollectorMap().keySet().iterator();
 
         int count = 1;
         while (isotopeIterator.hasNext()) {
@@ -558,20 +555,21 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
             collectorNameIonCounterLabels.add(new JLabel("Single"));
 
         }
+        if (rawDataFileHandler.getAcquisitionModel().getRawDataFile() != null) {
+            try {
+                // show rawdatafile path            
+                JTextArea rawDataFilePathTextArea = new JTextArea(//
+                        "Raw data location: "
+                        + rawDataFileHandler.getAcquisitionModel().getRawDataFile().getCanonicalPath());
 
-        try {
-            // show rawdatafile path
-            JTextArea rawDataFilePathTextArea = new JTextArea(//
-                    "Raw data location: "
-                    + rawDataFileHandler.getAcquisitionModel().getRawDataFile().getCanonicalPath());
+                rawDataFilePathTextArea.setBounds(leftMargin, 370, parentDimension.width - 100, 50);
+                rawDataFilePathTextArea.setLineWrap(true);
+                rawDataFilePathTextArea.setEditable(false);
+                this.add(rawDataFilePathTextArea);
 
-            rawDataFilePathTextArea.setBounds(leftMargin, 370, parentDimension.width - 100, 50);
-            rawDataFilePathTextArea.setLineWrap(true);
-            rawDataFilePathTextArea.setEditable(false);
-            this.add(rawDataFilePathTextArea);
-
-        } catch (IOException ex) {
-            Logger.getLogger(LAICPMSProjectParametersManager.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(LAICPMSProjectParametersManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
 
         JLabel leftShadeLabel = new JLabel("Number of datapoints to ignore at start of each fraction (4 max): ");
@@ -639,11 +637,9 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
         JButton viewReferenceMaterialModelButton = new ET_JButton("View");
         viewReferenceMaterialModelButton.addActionListener((ActionEvent e) -> {
             AbstractRatiosDataModel selectedModel
-                    = 
-                    ((AbstractRatiosDataModel) referenceMagerialsComboBox.getSelectedItem());
+                    = ((AbstractRatiosDataModel) referenceMagerialsComboBox.getSelectedItem());
             AbstractRatiosDataView modelView
-                    = 
-                    new ReferenceMaterialUPbRatiosDataViewNotEditable(selectedModel, null, false);
+                    = new ReferenceMaterialUPbRatiosDataViewNotEditable(selectedModel, null, false);
             modelView.displayModelInFrame();
         });
         viewReferenceMaterialModelButton.setFont(ReduxConstants.sansSerif_10_Bold);

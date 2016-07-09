@@ -234,20 +234,10 @@ public class RawIntensitiesDataView extends AbstractRawDataView {
                 }
 
             }
-
-//        // rework logic April 2016 
-//        for (int i = 0; i < myOnPeakData.length; i++) {
-//            if ((Double.isFinite(myOnPeakData[i])) && (showAll || myDataActiveMap[i])) {
-//                minY = Math.min(minY, myOnPeakData[i]);
-//                maxY = Math.max(maxY, myOnPeakData[i]);
-//            }
-//        }
             // adjust margins for unknowns
-//        if (!tripoliFraction.isStandard()) {
             double yMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(minY, maxY, 0.05);
             minY -= yMarginStretch;
             maxY += yMarginStretch;
-//        }
         }
     }
 

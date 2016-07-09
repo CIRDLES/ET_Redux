@@ -32,6 +32,7 @@ import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.SortedSet;
@@ -165,6 +166,9 @@ public abstract class AbstractMassSpecSetup implements //
     protected String commonLeadCorrectionHighestLevel;
 
     protected Map<DataModelInterface, Integer> virtualCollectorModelMapToFieldIndexes;
+    
+    // july 2016 tra
+    protected String[] fractionNames;
 
     /**
      *
@@ -318,7 +322,7 @@ public abstract class AbstractMassSpecSetup implements //
      * @param virtualCollectorModelMapToFieldIndexes
      */
     public void processFractionRawRatiosII(//
-            ArrayList<double[]> backgroundAcquisitions, ArrayList<double[]> peakAcquisitions, boolean usingFullPropagation, TripoliFraction tripoliFraction, Map<DataModelInterface, Integer> virtualCollectorModelMapToFieldIndexes) {
+            List<double[]> backgroundAcquisitions, List<double[]> peakAcquisitions, boolean usingFullPropagation, TripoliFraction tripoliFraction, Map<DataModelInterface, Integer> virtualCollectorModelMapToFieldIndexes) {
 
         initializeVirtualCollectorsWithData(backgroundAcquisitions, peakAcquisitions, virtualCollectorModelMapToFieldIndexes);
 
@@ -335,7 +339,7 @@ public abstract class AbstractMassSpecSetup implements //
      * @param inLiveMode the value of inLiveMode
      */
     public void processFractionRawRatiosII(//
-            ArrayList<double[]> backgroundAcquisitions, ArrayList<double[]> peakAcquisitions, boolean usingFullPropagation, TripoliFraction tripoliFraction, boolean inLiveMode) {
+            List<double[]> backgroundAcquisitions, List<double[]> peakAcquisitions, boolean usingFullPropagation, TripoliFraction tripoliFraction, boolean inLiveMode) {
 
         initializeVirtualCollectorsWithData(backgroundAcquisitions, peakAcquisitions, virtualCollectorModelMapToFieldIndexes);
 
@@ -351,7 +355,7 @@ public abstract class AbstractMassSpecSetup implements //
      * @param tripoliFraction the value of tripoliFraction
      */
     public void processFractionRawRatiosTRA(//
-            ArrayList<double[]> backgroundAcquisitions, ArrayList<double[]> peakAcquisitions, String fractionID, boolean usingFullPropagation, TripoliFraction tripoliFraction) {
+            List<double[]> backgroundAcquisitions, List<double[]> peakAcquisitions, String fractionID, boolean usingFullPropagation, TripoliFraction tripoliFraction) {
 
         initializeVirtualCollectorsWithDataTRA(backgroundAcquisitions, peakAcquisitions);
 
@@ -633,7 +637,7 @@ public abstract class AbstractMassSpecSetup implements //
         System.gc();
     }
 
-    private void convertRawIntensitiesToCountsPerSecond() {
+    public void convertRawIntensitiesToCountsPerSecond() {
         genericIsotopeModels.stream().forEach((dm) -> {
             ((RawIntensityDataModel) dm).convertRawIntensitiesToCountsPerSecond();
         });
@@ -791,14 +795,21 @@ public abstract class AbstractMassSpecSetup implements //
 
     }
 
+    public void initializeVirtualCollectorsWithData(//
+            List<double[]> backgroundAcquisitions,//
+            List<double[]> peakAcquisitions) {
+
+        initializeVirtualCollectorsWithData(backgroundAcquisitions, peakAcquisitions, virtualCollectorModelMapToFieldIndexes);
+    }
+
     /**
      * Designed to handle background and peak acquisitions in the general case
      *
      * @param acquisitions
      */
     private void initializeVirtualCollectorsWithData(//
-            ArrayList<double[]> backgroundAcquisitions,//
-            ArrayList<double[]> peakAcquisitions,//
+            List<double[]> backgroundAcquisitions,//
+            List<double[]> peakAcquisitions,//
             Map<DataModelInterface, Integer> virtualCollectorModelMapToFieldIndexes) {
 
         int countOfBackgroundAcquisitions = backgroundAcquisitions.size();
@@ -823,7 +834,10 @@ public abstract class AbstractMassSpecSetup implements //
         if (countOfBackgroundAcquisitions > 0) {
             backgroundAcquisitionsMatrix = new Matrix(backgroundAcquisitionsArray);
         }
-        Matrix peakAcquisitionsMatrix = new Matrix(peakAcquisitionsArray);
+        Matrix peakAcquisitionsMatrix = null;
+        if (countOfPeakAcquisitions > 0) {
+            peakAcquisitionsMatrix = new Matrix(peakAcquisitionsArray);
+        }
 
         for (Map.Entry<DataModelInterface, Integer> vcmToIndex : virtualCollectorModelMapToFieldIndexes.entrySet()) {
             VirtualCollectorModel backgroundVCM = prepareVirtualCollector(((RawIntensityDataModel) vcmToIndex.getKey()).getBackgroundVirtualCollector(), countOfBackgroundAcquisitions);
@@ -834,7 +848,9 @@ public abstract class AbstractMassSpecSetup implements //
             if (backgroundAcquisitionsMatrix != null) {
                 backgroundVCM.setIntensities(backgroundAcquisitionsMatrix.getMatrix(0, countOfBackgroundAcquisitions - 1, col, col).getColumnPackedCopy());
             }
-            peakVCM.setIntensities(peakAcquisitionsMatrix.getMatrix(0, countOfPeakAcquisitions - 1, col, col).getColumnPackedCopy());
+            if (peakAcquisitionsMatrix != null) {
+                peakVCM.setIntensities(peakAcquisitionsMatrix.getMatrix(0, countOfPeakAcquisitions - 1, col, col).getColumnPackedCopy());
+            }
 
             backgroundVCM.setAquireTimes(backgroundAquireTimes);
             peakVCM.setAquireTimes(peakAquireTimes);
@@ -851,7 +867,7 @@ public abstract class AbstractMassSpecSetup implements //
      * @param backgroundAcquisitions
      * @param peakAcquisitions
      */
-    private void initializeVirtualCollectorsWithDataTRA(ArrayList<double[]> backgroundAcquisitions, ArrayList<double[]> peakAcquisitions) {
+    private void initializeVirtualCollectorsWithDataTRA(List<double[]> backgroundAcquisitions, List<double[]> peakAcquisitions) {
         // dec 2014 TRA version where scan data contains background then peak in columns
         // background collectors
         int countOfBackgroundAcquisitions = backgroundAcquisitions.size();
@@ -937,7 +953,6 @@ public abstract class AbstractMassSpecSetup implements //
      */
     private void performBackgroundFitting(boolean usingFullPropagation) {
 
-//        RawIntensityDataModel.setUSING_FULL_PROPAGATION(usingFullPropagation);
         // generates the fit function for the background
         Iterator<DataModelInterface> genericIsotopeModelsIterator = genericIsotopeModels.iterator();
         Matrix Hg202Si = null;
@@ -1294,6 +1309,13 @@ public abstract class AbstractMassSpecSetup implements //
     }
 
     /**
+     * @return the countOfAcquisitions
+     */
+    public int getCountOfAcquisitions() {
+        return countOfAcquisitions;
+    }
+
+    /**
      * @return the Pb207
      */
     public DataModelInterface getPb207() {
@@ -1383,4 +1405,26 @@ public abstract class AbstractMassSpecSetup implements //
     public DataModelInterface getUO270() {
         return UO270;
     }
+
+    /**
+     * @return the virtualCollectorModelMapToFieldIndexes
+     */
+    public Map<DataModelInterface, Integer> getVirtualCollectorModelMapToFieldIndexes() {
+        return virtualCollectorModelMapToFieldIndexes;
+    }
+
+    /**
+     * @return the fractionNames
+     */
+    public String[] getFractionNames() {
+        return fractionNames;
+    }
+
+    /**
+     * @param fractionNames the fractionNames to set
+     */
+    public void setFractionNames(String[] fractionNames) {
+        this.fractionNames = fractionNames;
+    }
+
 }

@@ -105,7 +105,6 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
                     "ET Redux Warning",
                     JOptionPane.WARNING_MESSAGE);
         }
-
     }
 
     /**
@@ -171,7 +170,7 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
                 if (loadDataTask.isCancelled()) {
                     break;
                 }
-                
+
                 loadDataTask.firePropertyChange("progress", 33, 33 + ((67 * f) / myShrimpFractions.size()));
 
                 TripoliFraction tripoliFraction = processRunFraction(myShrimpFractions.get(f));
@@ -222,13 +221,13 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
             peakAcquisitionsVariances.add(peakVariances);
 
             peakCounts[0] = totalCounts[scan][0];
-            peakCounts[1] = totalCounts[scan][1];  
-            peakCounts[2] = totalCounts[scan][3]; 
-            peakCounts[3] = totalCounts[scan][4]; 
+            peakCounts[1] = totalCounts[scan][1];
+            peakCounts[2] = totalCounts[scan][3];
+            peakCounts[3] = totalCounts[scan][4];
             peakCounts[4] = totalCounts[scan][5];
             peakCounts[5] = totalCounts[scan][6];
             peakCounts[6] = totalCounts[scan][7];
-            peakCounts[7] = totalCounts[scan][8]; 
+            peakCounts[7] = totalCounts[scan][8];
             peakCounts[8] = totalCounts[scan][9];
 
             peakVariances[0] = Math.pow(totalCountsOneSigmaAbs[scan][0], 2);
@@ -292,5 +291,14 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
         }
 
         return stripped;
+    }
+
+    /**
+     *
+     * @return the boolean
+     */
+    @Override
+    public boolean getAndLoadRawIntensityDataForReview() {
+        return false;
     }
 }

@@ -38,7 +38,6 @@ import org.earthtime.Tripoli.dataModels.DataModelInterface;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.AbstractAcquisitionModel;
 import org.earthtime.Tripoli.dataModels.inputParametersModels.StaticAcquisition;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
-import org.earthtime.Tripoli.massSpecSetups.multiCollector.NUPlasma.GehrelsNUPlasmaSetupUPbFarTRA;
 import org.earthtime.Tripoli.massSpecSetups.multiCollector.NUPlasma.NUPlasmaCollectorsEnum;
 import org.earthtime.Tripoli.rawDataFiles.handlers.AbstractRawDataFileHandler;
 import org.earthtime.UPb_Redux.filters.TxtFileFilter;
@@ -203,10 +202,8 @@ public class LaserChronNUPlasmaMultiCollFaradayTRAFileHandler extends AbstractRa
 
         if (rawDataFile != null) {
             // create fractions from raw data and perform corrections and calculate ratios
-            loadRawDataFile(loadDataTask, usingFullPropagation, leftShadeCount, ignoreFirstFractions, inLiveMode);
-        }
-
-//        return rawDataFile;
+             tripoliFractions = loadRawDataFile(loadDataTask, usingFullPropagation, leftShadeCount, ignoreFirstFractions, inLiveMode);
+        };
     }
 
     /**
@@ -233,7 +230,8 @@ public class LaserChronNUPlasmaMultiCollFaradayTRAFileHandler extends AbstractRa
         boolean retVal = false;
 
         for (int i = 0; i < getRawDataFileTemplate().getStandardIDs().length; i++) {
-            retVal = //
+            retVal
+                    = //
                     retVal //
                     || fractionID.endsWith(rawDataFileTemplate.getStandardIDs()[i].trim())//
                     || fractionID.contains(rawDataFileTemplate.getStandardIDs()[i].trim());
@@ -245,7 +243,7 @@ public class LaserChronNUPlasmaMultiCollFaradayTRAFileHandler extends AbstractRa
     /**
      *
      * @param acquisitionModel
-     * @return 
+     * @return
      */
     protected boolean loadDataSetupParametersFromRawDataFileHeader(AbstractAcquisitionModel acquisitionModel) {
         boolean retVal = true;
@@ -263,7 +261,6 @@ public class LaserChronNUPlasmaMultiCollFaradayTRAFileHandler extends AbstractRa
             // customize massspec setup for this data aquisition
             // extract gains and deadtimes
 //            String[] headerDetails = headerData[0].trim().split("\n");
-
 //            // march 2014 to handle possible tab delimiters such as 20 analysis runs
 //            String gainsPass1 = headerDetails[1].split(":")[1];
 //            if (gainsPass1.startsWith(" \t")) {
@@ -303,7 +300,7 @@ public class LaserChronNUPlasmaMultiCollFaradayTRAFileHandler extends AbstractRa
                 // in order
                 try {
                     collectorNameToDeadTimesMap.put(ionCounterCollectorName, deadTime);
-                }catch (Exception e) {
+                } catch (Exception e) {
                 }
             }
 
@@ -342,7 +339,8 @@ public class LaserChronNUPlasmaMultiCollFaradayTRAFileHandler extends AbstractRa
      * @param leftShadeCount the value of leftShadeCount
      * @param ignoreFirstFractions the value of ignoreFirstFractions
      * @param inLiveMode the value of inLiveMode
-     * @return the java.util.SortedSet<org.earthtime.Tripoli.fractions.TripoliFraction>
+     * @return the
+     * java.util.SortedSet<org.earthtime.Tripoli.fractions.TripoliFraction>
      */
     @Override
     protected SortedSet<TripoliFraction> loadRawDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions, boolean inLiveMode) {
@@ -407,13 +405,12 @@ public class LaserChronNUPlasmaMultiCollFaradayTRAFileHandler extends AbstractRa
                 boolean isStandard = false;
                 if (fractionCounter < 5) {
                     isStandard = true;
-                } else if (((fractionCounter - 4) % 6) == 0){//          (fractionCounter == 124) {
+                } else if (((fractionCounter - 4) % 6) == 0) {//          (fractionCounter == 124) {
                     isStandard = true;
                 } else if (fractionCounter >= 130) {
                     isStandard = true;
                 }
 
-                
                 // test if have  pair of background and peak = completed fraction
                 if (readingPeaks && (i238 <= 0.001)) {
                     // process new fraction and reset data collectors *************
@@ -426,7 +423,7 @@ public class LaserChronNUPlasmaMultiCollFaradayTRAFileHandler extends AbstractRa
                         backgroundAcquisitions.remove(0);
                         peakAcquisitions.remove(0);
                     }
-                    int trimCountBack =15;
+                    int trimCountBack = 15;
                     for (int c = 0; c < trimCountBack; c++) {
                         backgroundAcquisitions.remove(backgroundAcquisitions.size() - 1);
                         peakAcquisitions.remove(peakAcquisitions.size() - 1);
@@ -441,9 +438,8 @@ public class LaserChronNUPlasmaMultiCollFaradayTRAFileHandler extends AbstractRa
                     }
 
                     // nov 2014 broke into steps to provide cleaner logic
-                    TripoliFraction tripoliFraction = //                           
-                            new TripoliFraction( //
-                                    //
+                    TripoliFraction tripoliFraction
+                            = new TripoliFraction( //
                                     theFractionID, //
                                     massSpec.getCommonLeadCorrectionHighestLevel(), //
                                     isStandard,
@@ -451,7 +447,7 @@ public class LaserChronNUPlasmaMultiCollFaradayTRAFileHandler extends AbstractRa
                                     fractionBackgroundStartTime + readCountBackgroundAcquisitions * massSpec.getCOLLECTOR_DATA_FREQUENCY_MILLISECS(),
                                     peakAcquisitions.size());
 
-                    SortedSet<DataModelInterface> rawRatios = ((GehrelsNUPlasmaSetupUPbFarTRA) massSpec).rawRatiosFactoryRevised();
+                    SortedSet<DataModelInterface> rawRatios = massSpec.rawRatiosFactoryRevised();
                     tripoliFraction.setRawRatios(rawRatios);
 
                     massSpec.setCountOfAcquisitions(peakAcquisitions.size());
@@ -498,10 +494,15 @@ public class LaserChronNUPlasmaMultiCollFaradayTRAFileHandler extends AbstractRa
             }
         }
 
-//        if (tripoliFractions.isEmpty()) {
-//            tripoliFractions = null;
-//        }
-
         return tripoliFractions;
+    }
+
+    /**
+     *
+     * @return the boolean
+     */
+    @Override
+    public boolean getAndLoadRawIntensityDataForReview() {
+        return false;
     }
 }

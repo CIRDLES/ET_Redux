@@ -23,6 +23,7 @@ import Jama.Matrix;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import org.earthtime.Tripoli.dataModels.collectorModels.AbstractCollectorModel;
@@ -76,7 +77,7 @@ public class RawIntensityDataModel //
     /**
      *
      */
-    protected boolean overDispersionSelected;
+    private boolean overDispersionSelected;
     private boolean belowDetection;
     private transient Matrix J11;
     private transient Matrix J21;
@@ -97,7 +98,15 @@ public class RawIntensityDataModel //
     private double[] allItensities;
     // nov 2014 - see validateOnPeakBaselineCorrectedIsotope inn abstractMassSpecSetup
     private boolean forceMeanForCommonLeadRatios;
-    protected double forcedMeanForCommonLeadRatios;
+    private double forcedMeanForCommonLeadRatios;
+
+    // july 2016 introduced for TRA
+    private List<Integer> sessionTimeZeroIndices;
+    private int timeZeroRelativeIndex;
+    private int peakLeftShade;
+    private int peakWidth;
+    private int backgroundRightShade;
+    private int backgroundWidth;
 
     /**
      *
@@ -143,6 +152,13 @@ public class RawIntensityDataModel //
 
         this.correctedHg202Si = null;
         this.forceMeanForCommonLeadRatios = false;
+
+        this.sessionTimeZeroIndices = new ArrayList<>();
+        this.timeZeroRelativeIndex = 75;
+        this.peakLeftShade = 5;
+        this.peakWidth = 100;
+        this.backgroundRightShade = 5;
+        this.backgroundWidth = 50;
     }
 
     /**
@@ -198,7 +214,7 @@ public class RawIntensityDataModel //
                 rawIsotopeModelName.getName() + " [" + collectorModel.getCollectorType() + "]\n");
         retval.append("\tBack:\t");
         for (int i = 0; i < backgroundVirtualCollector.getIntensities().length; i++) {
-            retval.append(backgroundVirtualCollector.getIntensities()[i] + ", ");
+            retval.append(backgroundVirtualCollector.getIntensities()[i]).append(", ");
         }
         retval.append("\n");
         retval.append("\tPeak:\t");
@@ -393,7 +409,7 @@ public class RawIntensityDataModel //
      */
     @Override
     public void applyMaskingArray() {
-        onPeakVirtualCollector.setDataActiveMap(MaskingSingleton.getInstance().applyMask(onPeakVirtualCollector.getDataActiveMap().clone()));//.getMaskingArray().clone());
+        onPeakVirtualCollector.setDataActiveMap(MaskingSingleton.getInstance().applyMask(onPeakVirtualCollector.getDataActiveMap().clone()));
     }
 
     /**
@@ -1242,9 +1258,94 @@ public class RawIntensityDataModel //
     }
 
     /**
-     * @param diagonalOfMatrixSCorrectedIntensities the diagonalOfMatrixSCorrectedIntensities to set
+     * @param diagonalOfMatrixSCorrectedIntensities the
+     * diagonalOfMatrixSCorrectedIntensities to set
      */
     public void setDiagonalOfMatrixSCorrectedIntensities(double[] diagonalOfMatrixSCorrectedIntensities) {
         this.diagonalOfMatrixSCorrectedIntensities = diagonalOfMatrixSCorrectedIntensities;
+    }
+
+    /**
+     * @return the sessionTimeZeroIndices
+     */
+    public List<Integer> getSessionTimeZeroIndices() {
+        return sessionTimeZeroIndices;
+    }
+
+    /**
+     * @param sessionTimeZeroIndices the sessionTimeZeroIndices to set
+     */
+    public void setSessionTimeZeroIndices(List<Integer> sessionTimeZeroIndices) {
+        this.sessionTimeZeroIndices = sessionTimeZeroIndices;
+    }
+
+    /**
+     * @return the peakLeftShade
+     */
+    public int getPeakLeftShade() {
+        return peakLeftShade;
+    }
+
+    /**
+     * @param peakLeftShade the peakLeftShade to set
+     */
+    public void setPeakLeftShade(int peakLeftShade) {
+        this.peakLeftShade = peakLeftShade;
+    }
+
+    /**
+     * @return the peakWidth
+     */
+    public int getPeakWidth() {
+        return peakWidth;
+    }
+
+    /**
+     * @param peakWidth the peakWidth to set
+     */
+    public void setPeakWidth(int peakWidth) {
+        this.peakWidth = peakWidth;
+    }
+
+    /**
+     * @return the timeZeroRelativeIndex
+     */
+    public int getTimeZeroRelativeIndex() {
+        return timeZeroRelativeIndex;
+    }
+
+    /**
+     * @param timeZeroRelativeIndex the timeZeroRelativeIndex to set
+     */
+    public void setTimeZeroRelativeIndex(int timeZeroRelativeIndex) {
+        this.timeZeroRelativeIndex = timeZeroRelativeIndex;
+    }
+
+    /**
+     * @return the backgroundRightShade
+     */
+    public int getBackgroundRightShade() {
+        return backgroundRightShade;
+    }
+
+    /**
+     * @param backgroundRightShade the backgroundRightShade to set
+     */
+    public void setBackgroundRightShade(int backgroundRightShade) {
+        this.backgroundRightShade = backgroundRightShade;
+    }
+
+    /**
+     * @return the backgroundWidth
+     */
+    public int getBackgroundWidth() {
+        return backgroundWidth;
+    }
+
+    /**
+     * @param backgroundWidth the backgroundWidth to set
+     */
+    public void setBackgroundWidth(int backgroundWidth) {
+        this.backgroundWidth = backgroundWidth;
     }
 }

@@ -166,6 +166,12 @@ public abstract class AbstractRawDataFileHandler implements //
 
     /**
      *
+     * @return the boolean
+     */
+    public abstract boolean getAndLoadRawIntensityDataForReview();
+    
+    /**
+     *
      * @param loadDataTask the value of loadDataTask
      * @param usingFullPropagation the value of usindexngFullPropagatindexon
      * @param leftShadeCount the value of leftShadeCount

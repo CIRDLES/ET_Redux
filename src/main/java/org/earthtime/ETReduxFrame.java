@@ -719,14 +719,22 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                     }
                 }
             }
+
+            try {
+                superSample.setLegacyStatusForReportTable();
+            } catch (Exception e) {
+            }
+
+            // reports menu activated
+            for (Component m : reportMenu.getMenuComponents()) {
+                m.setEnabled(true);
+            }
+            reportMenu.setText(superSample.getIsotopeStyle() + " Reports");
+
         }
 
         updateProjectDisplayTitleBar();
 
-        try {
-            superSample.setLegacyStatusForReportTable();
-        } catch (Exception e) {
-        }
         rebuildFractionDisplays(performReduction, inLiveMode);
 
         // set up concordia for use on fraction details window
@@ -743,12 +751,6 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         updateData_button.setEnabled(false);
 
         changeContentOfTopPanel(ReduxConstants.TOP_PANEL_CONTENTS.FRACTIONS);
-
-        // reports menu activated
-        for (Component m : reportMenu.getMenuComponents()) {
-            m.setEnabled(true);
-        }
-        reportMenu.setText(theProject.getSuperSample().getIsotopeStyle() + " Reports");
 
         sampleMenuOnTrueProjectMenuOnFalse(false);
 

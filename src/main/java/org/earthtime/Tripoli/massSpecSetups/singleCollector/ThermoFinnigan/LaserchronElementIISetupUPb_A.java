@@ -64,8 +64,7 @@ public final class LaserchronElementIISetupUPb_A extends AbstractMassSpecSetup {
         this.commonLeadCorrectionHighestLevel = "B2";
 
         AbstractCollectorModel singleCollector
-                = 
-                new IonCounterCollectorModel(//
+                = new IonCounterCollectorModel(//
                         "Single", //
                         new ValueModel("DeadTime", //
                                 new BigDecimal(22.0e-9, //
@@ -88,11 +87,8 @@ public final class LaserchronElementIISetupUPb_A extends AbstractMassSpecSetup {
 //      232 = 0.0026
 //      235 = 0.0154
 //      238 = 0.0104
-
 // Noah says times 4 each
-
-
-       isotopeMappingModel.getIsotopeToCollectorMap().put(//
+        isotopeMappingModel.getIsotopeToCollectorMap().put(//
                 IsotopesEnum.U238, singleCollector);
         isotopeMappingModel.getIsotopeToIntegrationTimeMap().put( //
                 IsotopesEnum.U238, 0.0416);
@@ -146,7 +142,8 @@ public final class LaserchronElementIISetupUPb_A extends AbstractMassSpecSetup {
      * @param fractionID the value of fractionID
      * @param usingFullPropagation the value of usingFullPropagation
      * @param tripoliFraction the value of tripoliFraction
-     * @return the java.util.SortedSet<org.earthtime.Tripoli.dataModels.DataModelInterface>
+     * @return the
+     * java.util.SortedSet<org.earthtime.Tripoli.dataModels.DataModelInterface>
      */
     @Override
     public SortedSet<DataModelInterface> rawRatiosFactory(String[][] intensitiesScan, String fractionID, boolean usingFullPropagation, TripoliFraction tripoliFraction) {
@@ -233,13 +230,13 @@ public final class LaserchronElementIISetupUPb_A extends AbstractMassSpecSetup {
         isotopeMappingModel.setIsotopeToRawIntensitiesMap(isotopeToRawIntensitiesMap);
 
         virtualCollectorModelMapToFieldIndexes = new HashMap<>();
-        virtualCollectorModelMapToFieldIndexes.put(Hg202, 0);
-        virtualCollectorModelMapToFieldIndexes.put(Pb204, 1);
-        virtualCollectorModelMapToFieldIndexes.put(Pb206, 2);
-        virtualCollectorModelMapToFieldIndexes.put(Pb207, 3);
-        virtualCollectorModelMapToFieldIndexes.put(Pb208, 4);
-        virtualCollectorModelMapToFieldIndexes.put(Th232, 5);
-        virtualCollectorModelMapToFieldIndexes.put(U238, 6);
+        getVirtualCollectorModelMapToFieldIndexes().put(Hg202, 0);
+        getVirtualCollectorModelMapToFieldIndexes().put(Pb204, 1);
+        getVirtualCollectorModelMapToFieldIndexes().put(Pb206, 2);
+        getVirtualCollectorModelMapToFieldIndexes().put(Pb207, 3);
+        getVirtualCollectorModelMapToFieldIndexes().put(Pb208, 4);
+        getVirtualCollectorModelMapToFieldIndexes().put(Th232, 5);
+        getVirtualCollectorModelMapToFieldIndexes().put(U238, 6);
 
         // raw ratios
         rawRatios = new TreeSet<>();

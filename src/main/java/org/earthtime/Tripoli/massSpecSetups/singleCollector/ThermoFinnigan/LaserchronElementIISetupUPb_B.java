@@ -243,14 +243,14 @@ public final class LaserchronElementIISetupUPb_B extends AbstractMassSpecSetup {
         isotopeMappingModel.setIsotopeToRawIntensitiesMap(isotopeToRawIntensitiesMap);
 
         virtualCollectorModelMapToFieldIndexes = new HashMap<>();
-        virtualCollectorModelMapToFieldIndexes.put(Hg202, 0);
-        virtualCollectorModelMapToFieldIndexes.put(Pb204, 1);
-        virtualCollectorModelMapToFieldIndexes.put(Pb206, 2);
-        virtualCollectorModelMapToFieldIndexes.put(Pb207, 3);
-        virtualCollectorModelMapToFieldIndexes.put(Pb208, 4);
-        virtualCollectorModelMapToFieldIndexes.put(Th232, 5);
-        virtualCollectorModelMapToFieldIndexes.put(U235, 6);
-        virtualCollectorModelMapToFieldIndexes.put(U238, 7);
+        getVirtualCollectorModelMapToFieldIndexes().put(Hg202, 0);
+        getVirtualCollectorModelMapToFieldIndexes().put(Pb204, 1);
+        getVirtualCollectorModelMapToFieldIndexes().put(Pb206, 2);
+        getVirtualCollectorModelMapToFieldIndexes().put(Pb207, 3);
+        getVirtualCollectorModelMapToFieldIndexes().put(Pb208, 4);
+        getVirtualCollectorModelMapToFieldIndexes().put(Th232, 5);
+        getVirtualCollectorModelMapToFieldIndexes().put(U235, 6);
+        getVirtualCollectorModelMapToFieldIndexes().put(U238, 7);
 
         // raw ratios
         rawRatios = new TreeSet<>();
