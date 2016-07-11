@@ -132,85 +132,89 @@ public class RawDataSessionPlot extends AbstractRawDataView {
             g2d.setPaint(Color.black);
 
             for (int i = 0; i < sessionTimeZeroIndices.size(); i++) {
-                int timeZeroStartIndex = sessionTimeZeroIndices.get(i);
+                if (sessionTimeZeroIndices.get(i) > 0) {
+                    int timeZeroStartIndex = sessionTimeZeroIndices.get(i);
 
-                Shape fractionPlot = new Path2D.Double();
-                ((Path2D) fractionPlot).moveTo(//
-                        mapX(0), mapY(myOnPeakData[timeZeroStartIndex - timeZeroRelativeIndex]));
-                int t = 1;
-                for (int j = timeZeroStartIndex - timeZeroRelativeIndex - 1; j < timeZeroStartIndex + timeToNextTimeZero - timeZeroRelativeIndex; j++) {
-                    ((Path2D) fractionPlot).lineTo(//
-                            mapX(t), mapY(myOnPeakData[j]));
-                    t++;
+                    Shape fractionPlot = new Path2D.Double();
+                    ((Path2D) fractionPlot).moveTo(//
+                            mapX(0), mapY(myOnPeakData[timeZeroStartIndex - timeZeroRelativeIndex]));
+                    int t = 1;
+                    for (int j = timeZeroStartIndex - timeZeroRelativeIndex - 1; j < timeZeroStartIndex + timeToNextTimeZero - timeZeroRelativeIndex; j++) {
+                        ((Path2D) fractionPlot).lineTo(//
+                                mapX(t), mapY(myOnPeakData[j]));
+                        t++;
 
+                    }
+
+                    g2d.setPaint(Color.black);
+                    g2d.setStroke(new BasicStroke(0.75f));
+                    g2d.draw(fractionPlot);
                 }
-                
-                g2d.setPaint(Color.black);
-                g2d.setStroke(new BasicStroke(0.75f));
-                g2d.draw(fractionPlot);
             }
 
         } else { //serial mode            
             for (int i = 0; i < sessionTimeZeroIndices.size(); i++) {
-                // mark onpeak
-                g2d.setPaint(new Color(241, 255, 240)); //pale green
-                int peakStartIndex = sessionTimeZeroIndices.get(i) + peakLeftShade;
-                g2d.fill(new Rectangle2D.Double(//
-                        mapX(myOnPeakNormalizedAquireTimes[peakStartIndex]), //
-                        mapY(maxY),//
-                        mapX(peakWidth),//
-                        Math.abs(mapY(maxY) - mapY(minY))));
+                // test if ignored
+                if (sessionTimeZeroIndices.get(i) > 0) {
+                    // mark onpeak
+                    g2d.setPaint(new Color(241, 255, 240)); //pale green
+                    int peakStartIndex = sessionTimeZeroIndices.get(i) + peakLeftShade;
+                    g2d.fill(new Rectangle2D.Double(//
+                            mapX(myOnPeakNormalizedAquireTimes[peakStartIndex]), //
+                            mapY(maxY),//
+                            mapX(peakWidth),//
+                            Math.abs(mapY(maxY) - mapY(minY))));
 
-                g2d.setPaint(Color.black);
-                g2d.setStroke(new BasicStroke(0.75f));
+                    g2d.setPaint(Color.black);
+                    g2d.setStroke(new BasicStroke(0.75f));
 
-                g2d.draw(new Line2D.Double(//
-                        mapX(myOnPeakNormalizedAquireTimes[peakStartIndex]), //
-                        mapY(minY),//
-                        mapX(myOnPeakNormalizedAquireTimes[peakStartIndex]),//
-                        mapY(maxY)));
+                    g2d.draw(new Line2D.Double(//
+                            mapX(myOnPeakNormalizedAquireTimes[peakStartIndex]), //
+                            mapY(minY),//
+                            mapX(myOnPeakNormalizedAquireTimes[peakStartIndex]),//
+                            mapY(maxY)));
 
-                g2d.draw(new Line2D.Double(//
-                        mapX(myOnPeakNormalizedAquireTimes[peakStartIndex + peakWidth]), //
-                        mapY(minY),//
-                        mapX(myOnPeakNormalizedAquireTimes[peakStartIndex + peakWidth]),//
-                        mapY(maxY)));
+                    g2d.draw(new Line2D.Double(//
+                            mapX(myOnPeakNormalizedAquireTimes[peakStartIndex + peakWidth]), //
+                            mapY(minY),//
+                            mapX(myOnPeakNormalizedAquireTimes[peakStartIndex + peakWidth]),//
+                            mapY(maxY)));
 
-                // mark background
-                g2d.setPaint(new Color(253, 253, 233)); //pale yellow
-                int backgroundStartIndex = sessionTimeZeroIndices.get(i) - backgroundRightShade - backgroundWidth;
-                g2d.fill(new Rectangle2D.Double(//
-                        mapX(myOnPeakNormalizedAquireTimes[backgroundStartIndex]), //
-                        mapY(maxY),//
-                        mapX(backgroundWidth),//
-                        Math.abs(mapY(maxY) - mapY(minY))));
+                    // mark background
+                    g2d.setPaint(new Color(253, 253, 233)); //pale yellow
+                    int backgroundStartIndex = sessionTimeZeroIndices.get(i) - backgroundRightShade - backgroundWidth;
+                    g2d.fill(new Rectangle2D.Double(//
+                            mapX(myOnPeakNormalizedAquireTimes[backgroundStartIndex]), //
+                            mapY(maxY),//
+                            mapX(backgroundWidth),//
+                            Math.abs(mapY(maxY) - mapY(minY))));
 
-                g2d.setPaint(Color.black);
-                g2d.setStroke(new BasicStroke(0.75f));
+                    g2d.setPaint(Color.black);
+                    g2d.setStroke(new BasicStroke(0.75f));
 
-                g2d.draw(new Line2D.Double(//
-                        mapX(myOnPeakNormalizedAquireTimes[backgroundStartIndex]), //
-                        mapY(minY),//
-                        mapX(myOnPeakNormalizedAquireTimes[backgroundStartIndex]),//
-                        mapY(maxY)));
+                    g2d.draw(new Line2D.Double(//
+                            mapX(myOnPeakNormalizedAquireTimes[backgroundStartIndex]), //
+                            mapY(minY),//
+                            mapX(myOnPeakNormalizedAquireTimes[backgroundStartIndex]),//
+                            mapY(maxY)));
 
-                g2d.draw(new Line2D.Double(//
-                        mapX(myOnPeakNormalizedAquireTimes[backgroundStartIndex + backgroundWidth]), //
-                        mapY(minY),//
-                        mapX(myOnPeakNormalizedAquireTimes[backgroundStartIndex + backgroundWidth]),//
-                        mapY(maxY)));
+                    g2d.draw(new Line2D.Double(//
+                            mapX(myOnPeakNormalizedAquireTimes[backgroundStartIndex + backgroundWidth]), //
+                            mapY(minY),//
+                            mapX(myOnPeakNormalizedAquireTimes[backgroundStartIndex + backgroundWidth]),//
+                            mapY(maxY)));
 
-                // mark time zero
-                g2d.setPaint(Color.red);
-                int timeZeroIndex = sessionTimeZeroIndices.get(i);
-                g2d.draw(new Line2D.Double(//
-                        mapX(myOnPeakNormalizedAquireTimes[timeZeroIndex]), //
-                        mapY(minY),//
-                        mapX(myOnPeakNormalizedAquireTimes[timeZeroIndex]),//
-                        mapY(maxY)));
-                g2d.setPaint(Color.black);
+                    // mark time zero
+                    g2d.setPaint(Color.red);
+                    int timeZeroIndex = sessionTimeZeroIndices.get(i);
+                    g2d.draw(new Line2D.Double(//
+                            mapX(myOnPeakNormalizedAquireTimes[timeZeroIndex]), //
+                            mapY(minY),//
+                            mapX(myOnPeakNormalizedAquireTimes[timeZeroIndex]),//
+                            mapY(maxY)));
+                    g2d.setPaint(Color.black);
+                }
             }
-
             // draw data over selection zone
             Shape connectingLine = new Path2D.Double();
             ((Path2D) connectingLine).moveTo(//
