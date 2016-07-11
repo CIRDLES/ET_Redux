@@ -349,7 +349,8 @@ public class RawDataSessionOverlayContainer extends AbstractRawDataView {
             rawIntensitiesDataSerialViews.get(i).repaint();
         }
 
-        rawDataSessionSerialContainer.revalidate();
+//        rawDataSessionSerialContainer.revalidate();
+        rawDataSessionSerialContainer.refreshPanel(true, false);
 
     }
 

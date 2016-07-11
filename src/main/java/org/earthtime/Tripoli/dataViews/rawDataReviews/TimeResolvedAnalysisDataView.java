@@ -33,7 +33,7 @@ import org.earthtime.isotopes.IsotopesEnum;
  */
 public class TimeResolvedAnalysisDataView extends DialogEditor {
 
-    private static int SESSION_VIEW_WIDTH = 25000;
+    private static int SESSION_VIEW_WIDTH;
     private AbstractRawDataView rawDataSessionSerialContainer;
     private AbstractRawDataView[] rawDataSessionPlots;
     private JLayeredPane placeHolderPane;
@@ -68,9 +68,10 @@ public class TimeResolvedAnalysisDataView extends DialogEditor {
 
     private void initSession() {
         setSize(1200, 850);
-        SESSION_VIEW_WIDTH = massSpec.getCountOfAcquisitions();
+        SESSION_VIEW_WIDTH = massSpec.getCountOfAcquisitions() * 2;
 
-        rawDataSessionSerialContainer = new RawDataSessionSerialContainer(new Rectangle(0, 0, SESSION_VIEW_WIDTH, rawDataSessionPlotScrollPane.getHeight() - 25));
+        rawDataSessionSerialContainer = new RawDataSessionSerialContainer(//
+                new Rectangle(0, 0, SESSION_VIEW_WIDTH, rawDataSessionPlotScrollPane.getHeight() - 25), massSpec.getFractionNames());
         // this forces scroll bar
         rawDataSessionSerialContainer.setPreferredSize(rawDataSessionSerialContainer.getSize());
         rawDataSessionSerialContainer.setOpaque(true);
@@ -111,6 +112,7 @@ public class TimeResolvedAnalysisDataView extends DialogEditor {
             rawDataSessionOverlayPlots[index].repaint();
         });
 
+        rawDataSessionSerialContainer.refreshPanel(true, false);
         rawDataSessionOverlayContainer.refreshPanel(true, false);
 
     }
@@ -131,6 +133,7 @@ public class TimeResolvedAnalysisDataView extends DialogEditor {
         loadData_button = new ET_JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("TRA Raw Data Manager");
         setPreferredSize(new java.awt.Dimension(1200, 850));
         setSize(new java.awt.Dimension(1200, 850));
 
