@@ -16,6 +16,7 @@
 package org.earthtime.Tripoli.dataViews.rawDataReviews;
 
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
 import org.earthtime.Tripoli.dataViews.AbstractRawDataView;
 
@@ -25,6 +26,10 @@ import org.earthtime.Tripoli.dataViews.AbstractRawDataView;
  */
 public class RawDataSessionSerialContainer extends AbstractRawDataView {
 
+    public RawDataSessionSerialContainer(Rectangle bounds) {
+        super(bounds);
+    }
+    
     /**
      *
      * @param g2d

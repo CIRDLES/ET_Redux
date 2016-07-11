@@ -183,7 +183,7 @@ public class SantaBarbaraNUPlasmaMultiCollFaradayTRAFileHandler extends Abstract
                 // detect starts of onpeak
                 NumberFormat format = new DecimalFormat("+#0.00;-#0.00");
                 List<Integer> sessionTimeZeroIndices = new ArrayList<>();
-                double[] onPeak = ((RawIntensityDataModel) massSpec.getU238()).getOnPeakVirtualCollector().getIntensities();
+                double[] onPeak = getSumOfIntensities();//((RawIntensityDataModel) massSpec.getU238()).getOnPeakVirtualCollector().getIntensities();
                 boolean withinPeak = false;
                 int lastNegativeIndex = 0;
                 for (int i = 0; i < onPeak.length; i++) {
@@ -211,13 +211,24 @@ public class SantaBarbaraNUPlasmaMultiCollFaradayTRAFileHandler extends Abstract
                     }
                 }
                 retVal = true;
+
+                // calculate good right to graph
+                DescriptiveStatistics timeZeroDeltas = new DescriptiveStatistics();
+                for (int i = 0; i < sessionTimeZeroIndices.size() - 1; i++) {
+                    timeZeroDeltas.addValue(Math.abs(sessionTimeZeroIndices.get(i + 1) - sessionTimeZeroIndices.get(i)));
+                }
+                int timeToNextTimeZero = (int) timeZeroDeltas.getPercentile(95);
+
                 Map<IsotopesEnum, DataModelInterface> isotopeToRawIntensitiesMap = massSpec.getIsotopeMappingModel().getIsotopeToRawIntensitiesMap();
                 isotopeToRawIntensitiesMap.forEach((isotope, dataModel) -> {
                     ((RawIntensityDataModel) dataModel).setSessionTimeZeroIndices(sessionTimeZeroIndices);
+                    ((RawIntensityDataModel) dataModel).setTimeToNextTimeZero(timeToNextTimeZero);
                     // educated guesses
                     ((RawIntensityDataModel) dataModel).setPeakLeftShade(5);
-                    ((RawIntensityDataModel) dataModel).setPeakWidth(140);
-                    ((RawIntensityDataModel) dataModel).setTimeZeroRelativeIndex(75);
+                    ((RawIntensityDataModel) dataModel).setPeakWidth(timeToNextTimeZero/2);//140
+                    ((RawIntensityDataModel) dataModel).setBackgroundRightShade(5);
+                    ((RawIntensityDataModel) dataModel).setBackgroundWidth(timeToNextTimeZero/8);//25
+                    ((RawIntensityDataModel) dataModel).setTimeZeroRelativeIndex(timeToNextTimeZero/4);//75
                 });
 
             } else {
@@ -228,6 +239,19 @@ public class SantaBarbaraNUPlasmaMultiCollFaradayTRAFileHandler extends Abstract
         }
 
         return retVal;
+    }
+
+    private double[] getSumOfIntensities() {
+        double[] sumOfIntensities = new double[((RawIntensityDataModel) massSpec.getU238()).getOnPeakVirtualCollector().getIntensities().length];
+        Map<IsotopesEnum, DataModelInterface> isotopeToRawIntensitiesMap = massSpec.getIsotopeMappingModel().getIsotopeToRawIntensitiesMap();
+        isotopeToRawIntensitiesMap.forEach((isotope, dataModel) -> {
+            double[] onPeak = ((RawIntensityDataModel) dataModel).getOnPeakVirtualCollector().getIntensities();
+            for (int i = 0; i < sumOfIntensities.length; i++) {
+                sumOfIntensities[i] += onPeak[i];
+            }
+        });
+
+        return sumOfIntensities;
     }
 
     /**

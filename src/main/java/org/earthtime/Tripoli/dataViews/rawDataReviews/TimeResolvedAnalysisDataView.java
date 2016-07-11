@@ -36,10 +36,10 @@ public class TimeResolvedAnalysisDataView extends DialogEditor {
     private static int SESSION_VIEW_WIDTH = 25000;
     private AbstractRawDataView rawDataSessionSerialContainer;
     private AbstractRawDataView[] rawDataSessionPlots;
+    private JLayeredPane placeHolderPane;
     private AbstractRawDataView rawDataSessionOverlayContainer;
     private AbstractRawDataView[] rawDataSessionOverlayPlots;
     private AbstractMassSpecSetup massSpec;
-    
 
     /**
      * Creates new form TimeResolvedAnalysisDataView
@@ -61,17 +61,16 @@ public class TimeResolvedAnalysisDataView extends DialogEditor {
         rawDataSessionOverlayPlotScrollPane.getViewport().putClientProperty("EnableWindowBlit", Boolean.TRUE);
 
         initSession();
-        
+
         // temp hack to remove focus
         loadData_button.setBackground(Color.white);
     }
 
     private void initSession() {
-        setSize(1200, 800);
+        setSize(1200, 850);
         SESSION_VIEW_WIDTH = massSpec.getCountOfAcquisitions();
 
-        rawDataSessionSerialContainer = new RawDataSessionSerialContainer();
-        rawDataSessionSerialContainer.setBounds(0, 0, SESSION_VIEW_WIDTH, rawDataSessionPlotScrollPane.getHeight() - 25);
+        rawDataSessionSerialContainer = new RawDataSessionSerialContainer(new Rectangle(0, 0, SESSION_VIEW_WIDTH, rawDataSessionPlotScrollPane.getHeight() - 25));
         // this forces scroll bar
         rawDataSessionSerialContainer.setPreferredSize(rawDataSessionSerialContainer.getSize());
         rawDataSessionSerialContainer.setOpaque(true);
@@ -82,32 +81,37 @@ public class TimeResolvedAnalysisDataView extends DialogEditor {
         rawDataSessionPlotScrollPane.revalidate();
 
         // overlay of plots
-        rawDataSessionOverlayContainer = new RawDataSessionOverlayContainer(//
-                new Rectangle(0, 0, rawDataSessionOverlayPlotScrollPane.getWidth(), rawDataSessionOverlayPlotScrollPane.getHeight() - 25),//
-                rawDataSessionSerialContainer);
+        // need a placeHolderPane
+        placeHolderPane = new JLayeredPane();
+        placeHolderPane.setBounds(0, 0, rawDataSessionOverlayPlotScrollPane.getWidth() - 5, rawDataSessionOverlayPlotScrollPane.getHeight() - 25);
+        placeHolderPane.setPreferredSize(placeHolderPane.getSize());
+        rawDataSessionOverlayPlotScrollPane.setViewportView(placeHolderPane);
 
-        rawDataSessionOverlayPlotScrollPane.setViewportView(rawDataSessionOverlayContainer);
-        rawDataSessionOverlayPlotScrollPane.getHorizontalScrollBar().setUnitIncrement(1000);
-        rawDataSessionOverlayPlotScrollPane.revalidate();
+        rawDataSessionOverlayContainer = new RawDataSessionOverlayContainer(//
+                new Rectangle(0, 0, placeHolderPane.getWidth() - 25, placeHolderPane.getHeight() - 25),//
+                rawDataSessionSerialContainer);
+        rawDataSessionOverlayContainer.setOpaque(true);
+        rawDataSessionOverlayContainer.setBackground(Color.white);
+        placeHolderPane.add(rawDataSessionOverlayContainer);
 
         Map<IsotopesEnum, DataModelInterface> isotopeToRawIntensitiesMap = massSpec.getIsotopeMappingModel().getIsotopeToRawIntensitiesMap();
         rawDataSessionPlots = new AbstractRawDataView[isotopeToRawIntensitiesMap.size()];
         rawDataSessionOverlayPlots = new AbstractRawDataView[isotopeToRawIntensitiesMap.size()];
         isotopeToRawIntensitiesMap.forEach((isotope, dataModel) -> {
             int index = massSpec.getVirtualCollectorModelMapToFieldIndexes().get(dataModel);
-            rawDataSessionPlots[index] = new RawDataSessionPlot(dataModel, new Rectangle(0, index * 110+ 25, SESSION_VIEW_WIDTH, 100), false);
+            rawDataSessionPlots[index] = new RawDataSessionPlot(dataModel, new Rectangle(0, index * 110 + 25, SESSION_VIEW_WIDTH, 100), false);
             rawDataSessionSerialContainer.add(rawDataSessionPlots[index], JLayeredPane.DEFAULT_LAYER);
             rawDataSessionPlots[index].preparePanel(true, false);
             rawDataSessionPlots[index].repaint();
 
             //overlays
-            rawDataSessionOverlayPlots[index] = new RawDataSessionPlot(dataModel, new Rectangle(0, index * 110 + 25, rawDataSessionOverlayPlotScrollPane.getWidth(), 100), true);
+            rawDataSessionOverlayPlots[index] = new RawDataSessionPlot(dataModel, new Rectangle(0, index * 110 + 25, placeHolderPane.getWidth() - 25, 100), true);
             rawDataSessionOverlayContainer.add(rawDataSessionOverlayPlots[index], JLayeredPane.DEFAULT_LAYER);
             rawDataSessionOverlayPlots[index].preparePanel(true, false);
             rawDataSessionOverlayPlots[index].repaint();
         });
 
-        rawDataSessionOverlayContainer.preparePanel(true, false);
+        rawDataSessionOverlayContainer.refreshPanel(true, false);
 
     }
 
@@ -127,8 +131,8 @@ public class TimeResolvedAnalysisDataView extends DialogEditor {
         loadData_button = new ET_JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(1200, 800));
-        setSize(new java.awt.Dimension(1200, 800));
+        setPreferredSize(new java.awt.Dimension(1200, 850));
+        setSize(new java.awt.Dimension(1200, 850));
 
         rawDataSplitPane.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         rawDataSplitPane.setDividerLocation(300);
@@ -182,26 +186,28 @@ public class TimeResolvedAnalysisDataView extends DialogEditor {
 
     private void rawDataSessionOverlayPlotScrollPaneComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_rawDataSessionOverlayPlotScrollPaneComponentResized
         if (rawDataSessionOverlayPlots.length > 0) {
-            int revisedWidth = rawDataSessionOverlayPlotScrollPane.getWidth() - 25;
-            rawDataSessionOverlayContainer.setSize(new Dimension(revisedWidth, rawDataSessionOverlayContainer.getHeight()));
-            rawDataSessionOverlayContainer.setPreferredSize(new Dimension(revisedWidth, rawDataSessionOverlayContainer.getHeight()));
-            rawDataSessionOverlayContainer.setGraphWidth(revisedWidth);
-            rawDataSessionOverlayContainer.repaint();
+            placeHolderPane.setBounds(0, 0, rawDataSessionOverlayPlotScrollPane.getWidth() - 5, rawDataSessionOverlayPlotScrollPane.getHeight() - 25);
+            placeHolderPane.setPreferredSize(placeHolderPane.getSize());
 
+            int revisedWidth = placeHolderPane.getWidth() - 25;
             for (int i = 0; i < rawDataSessionOverlayPlots.length; i++) {
                 rawDataSessionOverlayPlots[i].setSize(new Dimension(revisedWidth, rawDataSessionOverlayPlots[i].getHeight()));
-                rawDataSessionOverlayPlots[i].setPreferredSize(new Dimension(revisedWidth, rawDataSessionOverlayPlots[i].getHeight()));
+                rawDataSessionOverlayPlots[i].setPreferredSize(rawDataSessionOverlayPlots[i].getSize());
                 rawDataSessionOverlayPlots[i].setGraphWidth(revisedWidth);
                 rawDataSessionOverlayPlots[i].repaint();
             }
 
-            rawDataSessionOverlayContainer.revalidate();
+            rawDataSessionOverlayContainer.setSize(new Dimension(revisedWidth, placeHolderPane.getHeight()));
+            rawDataSessionOverlayContainer.setPreferredSize(rawDataSessionOverlayContainer.getSize());
+            rawDataSessionOverlayContainer.setGraphWidth(revisedWidth);
+            rawDataSessionOverlayContainer.repaint();
 
+            placeHolderPane.revalidate();
         }
     }//GEN-LAST:event_rawDataSessionOverlayPlotScrollPaneComponentResized
 
     private void loadData_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadData_buttonActionPerformed
-       close();
+        close();
     }//GEN-LAST:event_loadData_buttonActionPerformed
 
 

@@ -107,6 +107,7 @@ public class RawIntensityDataModel //
     private int peakWidth;
     private int backgroundRightShade;
     private int backgroundWidth;
+    private int timeToNextTimeZero;
 
     /**
      *
@@ -1347,5 +1348,19 @@ public class RawIntensityDataModel //
      */
     public void setBackgroundWidth(int backgroundWidth) {
         this.backgroundWidth = backgroundWidth;
+    }
+
+    /**
+     * @return the timeToNextTimeZero
+     */
+    public int getTimeToNextTimeZero() {
+        return timeToNextTimeZero;
+    }
+
+    /**
+     * @param timeToNextTimeZero the timeToNextTimeZero to set
+     */
+    public void setTimeToNextTimeZero(int timeToNextTimeZero) {
+        this.timeToNextTimeZero = timeToNextTimeZero;
     }
 }

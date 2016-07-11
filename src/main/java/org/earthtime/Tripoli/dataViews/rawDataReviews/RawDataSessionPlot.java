@@ -24,7 +24,6 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
 import org.earthtime.Tripoli.dataModels.RawIntensityDataModel;
 import org.earthtime.Tripoli.dataViews.AbstractRawDataView;
@@ -43,6 +42,7 @@ public class RawDataSessionPlot extends AbstractRawDataView {
     private int backgroundRightShade;
     private int backgroundWidth;
     private int timeZeroRelativeIndex;
+    private int timeToNextTimeZero;
 
     /**
      *
@@ -121,31 +121,18 @@ public class RawDataSessionPlot extends AbstractRawDataView {
                     mapX(myOnPeakNormalizedAquireTimes[timeZeroRelativeIndex - backgroundRightShade]),//
                     mapY(maxY)));
 
-            // calculate good right to graph
-            DescriptiveStatistics timeZeroDeltas = new DescriptiveStatistics();
-            for (int i = 0; i < sessionTimeZeroIndices.size() - 1; i++) {
-                timeZeroDeltas.addValue(Math.abs(sessionTimeZeroIndices.get(i + 1) - sessionTimeZeroIndices.get(i)));
-            }
-            int timeToNextTimeZero = (int) timeZeroDeltas.getMax();
+            // mark time zero
+            g2d.setPaint(Color.red);
+            g2d.setStroke(new BasicStroke(1.0f));
+            g2d.draw(new Line2D.Double(//
+                    mapX(timeZeroRelativeIndex), //
+                    mapY(minY),//
+                    mapX(timeZeroRelativeIndex),//
+                    mapY(maxY)));
+            g2d.setPaint(Color.black);
 
             for (int i = 0; i < sessionTimeZeroIndices.size(); i++) {
                 int timeZeroStartIndex = sessionTimeZeroIndices.get(i);
-
-//                int timeToNextTimeZero = 300;
-//                if (i < sessionTimeZeroIndices.size() - 1) {
-//                    timeToNextTimeZero = sessionTimeZeroIndices.get(i + 1) - timeZeroStartIndex;
-//                } else {
-//                    timeToNextTimeZero = timeZeroStartIndex - sessionTimeZeroIndices.get(i - 1);
-//                }
-                // mark time zero
-                g2d.setPaint(Color.red);
-                g2d.setStroke(new BasicStroke(1.0f));
-                g2d.draw(new Line2D.Double(//
-                        mapX(timeZeroRelativeIndex), //
-                        mapY(minY),//
-                        mapX(timeZeroRelativeIndex),//
-                        mapY(maxY)));
-                g2d.setPaint(Color.black);
 
                 Shape fractionPlot = new Path2D.Double();
                 ((Path2D) fractionPlot).moveTo(//
@@ -157,10 +144,10 @@ public class RawDataSessionPlot extends AbstractRawDataView {
                     t++;
 
                 }
+                
                 g2d.setPaint(Color.black);
                 g2d.setStroke(new BasicStroke(0.75f));
                 g2d.draw(fractionPlot);
-
             }
 
         } else { //serial mode            
@@ -266,6 +253,7 @@ public class RawDataSessionPlot extends AbstractRawDataView {
         backgroundRightShade = ((RawIntensityDataModel) rawRatioDataModel).getBackgroundRightShade();
         backgroundWidth = ((RawIntensityDataModel) rawRatioDataModel).getBackgroundWidth();
         timeZeroRelativeIndex = ((RawIntensityDataModel) rawRatioDataModel).getTimeZeroRelativeIndex();
+        timeToNextTimeZero = ((RawIntensityDataModel) rawRatioDataModel).getTimeToNextTimeZero();
 
         if (doReScale) {
             setDisplayOffsetY(0.0);
@@ -276,7 +264,7 @@ public class RawDataSessionPlot extends AbstractRawDataView {
             minX = myOnPeakNormalizedAquireTimes[0];
             maxX = myOnPeakNormalizedAquireTimes[myOnPeakNormalizedAquireTimes.length - 1];
             if (overlayMode) {
-                maxX /= sessionTimeZeroIndices.size();
+                maxX = timeToNextTimeZero;// + 20;//(maxX / sessionTimeZeroIndices.size()) + timeZeroRelativeIndex * 2.0;
             }
 
 //            double xMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(minX, maxX, 0.05);
