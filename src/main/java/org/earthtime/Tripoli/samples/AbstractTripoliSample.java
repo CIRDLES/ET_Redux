@@ -214,14 +214,14 @@ public abstract class AbstractTripoliSample implements //
     /**
      * @return the primaryStandard
      */
-    public boolean isPrimaryStandard() {
+    public boolean isPrimaryReferenceMaterial() {
         return primaryStandard;
     }
 
     /**
      * @param primaryStandard the primaryStandard to set
      */
-    public void setPrimaryStandard(boolean primaryStandard) {
+    public void setPrimaryReferenceMaterial(boolean primaryStandard) {
         this.primaryStandard = primaryStandard;
     }
 
@@ -243,14 +243,14 @@ public abstract class AbstractTripoliSample implements //
     /**
      * @return the secondaryStandard
      */
-    public boolean isSecondaryStandard() {
+    public boolean isSecondaryReferenceMaterial() {
         return secondaryStandard;
     }
 
     /**
      * @param secondaryStandard the secondaryStandard to set
      */
-    public void setSecondaryStandard(boolean secondaryStandard) {
+    public void setSecondaryReferenceMaterial(boolean secondaryStandard) {
         this.secondaryStandard = secondaryStandard;
     }
 

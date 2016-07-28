@@ -245,9 +245,10 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
 
         TripoliFraction tripoliFraction
                 = new TripoliFraction( //
+                        //
                         fractionID, //
                         massSpec.getCommonLeadCorrectionHighestLevel(), //
-                        isReferenceMaterial,
+                        isReferenceMaterial, false,
                         fractionPeakTimeStamp, //
                         fractionPeakTimeStamp,
                         peakAcquisitions.size());

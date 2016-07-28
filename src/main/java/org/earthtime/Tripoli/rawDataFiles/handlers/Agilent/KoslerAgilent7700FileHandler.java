@@ -247,9 +247,10 @@ public class KoslerAgilent7700FileHandler extends AbstractRawDataFileHandler imp
 
                 TripoliFraction tripoliFraction
                         = new TripoliFraction( //
+                                //
                                 fractionID, //
                                 massSpec.getCommonLeadCorrectionHighestLevel(), //
-                                isStandard,
+                                isStandard, false,
                                 fractionBackgroundTimeStamp, //
                                 fractionPeakTimeStamp,
                                 peakAcquisitions.size());

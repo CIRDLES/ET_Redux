@@ -108,7 +108,7 @@ public class SampleFractionListDisplayPane extends JLayeredPane {
 
         this.projectManager = projectManager;
 
-        if (tripoliSample.isPrimaryStandard()) {
+        if (tripoliSample.isPrimaryReferenceMaterial()) {
 
             roleChooser = new JComboBox();
             ArrayList<AbstractRatiosDataModel> mineralStandardModels = ReduxLabData.getInstance().getMineralStandardModels();
@@ -146,7 +146,7 @@ public class SampleFractionListDisplayPane extends JLayeredPane {
             roleChooser = new JComboBox(
                     new String[]{"Unknown", "Secondary RM"});
 
-            if (tripoliSample.isSecondaryStandard()) {
+            if (tripoliSample.isSecondaryReferenceMaterial()) {
                 roleChooser.setSelectedItem("Secondary RM");
             }
 
@@ -189,7 +189,7 @@ public class SampleFractionListDisplayPane extends JLayeredPane {
         closeButton = new ET_JButton("X");
         closeButton.setEnabled(list.getModel().getSize() == 0);
         closeButton.addActionListener(closeButtonActionListener);
-        if (!tripoliSample.isPrimaryStandard()) {
+        if (!tripoliSample.isPrimaryReferenceMaterial()) {
             this.add(closeButton, DEFAULT_LAYER);
         }
 
@@ -266,11 +266,11 @@ public class SampleFractionListDisplayPane extends JLayeredPane {
 
         tripoliSample.setSampleName(sampleName);
 
-        if (!tripoliSample.isPrimaryStandard()) {
+        if (!tripoliSample.isPrimaryReferenceMaterial()) {
             if (((String) roleChooser.getSelectedItem()).compareToIgnoreCase("Secondary RM") == 0) {
-                tripoliSample.setSecondaryStandard(true);
+                tripoliSample.setSecondaryReferenceMaterial(true);
             } else {
-                tripoliSample.setSecondaryStandard(false);
+                tripoliSample.setSecondaryReferenceMaterial(false);
             }
         }
 

@@ -406,9 +406,10 @@ public class SantaBarbaraNUPlasmaMultiCollFaradayTRAFileHandler extends Abstract
 
                 TripoliFraction tripoliFraction
                         = new TripoliFraction( //
+                                //
                                 fractionID, //
                                 massSpec.getCommonLeadCorrectionHighestLevel(), //
-                                isReferenceMaterial,
+                                isReferenceMaterial, false,
                                 fractionBackgroundTimeStamp, //
                                 fractionPeakTimeStamp,
                                 peakAcquisitions.size());

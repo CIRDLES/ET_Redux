@@ -124,7 +124,7 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
 
         if (analysisFiles.length > 0) {
             Arrays.sort(analysisFiles, new FractionFileModifiedComparator());
-            
+
             String onPeakFileContents = URIHelper.getTextFromURI(analysisFiles[0].getAbsolutePath()).substring(0, 32);
             if (isValidRawDataFileType(analysisFiles[0]) //
                     && //
@@ -202,7 +202,8 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
      * @param leftShadeCount the value of leftShadeCount
      * @param ignoreFirstFractions the value of ignoreFirstFractions
      * @param inLiveMode the value of inLiveMode
-     * @return the java.util.SortedSet<org.earthtime.Tripoli.fractions.TripoliFraction>
+     * @return the
+     * java.util.SortedSet<org.earthtime.Tripoli.fractions.TripoliFraction>
      */
     @Override
     protected SortedSet<TripoliFraction> loadRawDataFile(//
@@ -212,7 +213,7 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
 
         // assume we are golden   
         // take first entry in fractionNames that came from scancsv file and confirm it is referenceMaterial (standard)
-        String referenceMaterialfractionID = fractionNames[0];
+        String primaryReferenceMaterialfractionID = fractionNames[0];
 
         // todo: need to confirm it is the standard - maybe do this at parameter manager
         for (int f = ignoreFirstFractions; f < analysisFiles.length; f++) {
@@ -230,16 +231,16 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
             }
 
             // needs to be more robust
-            boolean isReferenceMaterial = (fractionID.substring(0, 2).compareToIgnoreCase(referenceMaterialfractionID.substring(0, 2)) == 0);
-            // number the reference materials
-//            if (isReferenceMaterial) {
-//                fractionID = fractionID + "-" + String.valueOf(referenceMaterialIncrementer);
-//                referenceMaterialIncrementer++;
-//            }
+            boolean isPrimaryReferenceMaterial = (fractionID.substring(0, 2).compareToIgnoreCase(primaryReferenceMaterialfractionID.substring(0, 2)) == 0);
+            boolean isSecondaryReferenceMaterial = false;
+
+            // number the reference material
             if (referenceMaterialIncrementerMap.containsKey(fractionID)) {
                 int refMatIndex = referenceMaterialIncrementerMap.get(fractionID);
                 referenceMaterialIncrementerMap.put(fractionID, refMatIndex + 1);
                 fractionID = fractionID + "-" + String.valueOf(refMatIndex);
+
+                isSecondaryReferenceMaterial = !isPrimaryReferenceMaterial;
             }
 
             // ************************************************************************************************
@@ -276,10 +277,11 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
                 }  // i loop
 
                 TripoliFraction tripoliFraction
-                        = new TripoliFraction( //
+                        = new TripoliFraction(
                                 fractionID, //
                                 massSpec.getCommonLeadCorrectionHighestLevel(), //
-                                isReferenceMaterial,
+                                isPrimaryReferenceMaterial, 
+                                isSecondaryReferenceMaterial,
                                 fractionBackgroundTimeStamp, //
                                 fractionPeakTimeStamp,
                                 peakAcquisitions.size());
@@ -294,11 +296,11 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
                         backgroundAcquisitions, peakAcquisitions, usingFullPropagation, tripoliFraction, inLiveMode);
 
                 tripoliFraction.shadeDataActiveMapLeft(leftShadeCount);
-                System.out.println("\n**** Element II FractionID  " + fractionID + " refMat? " + isReferenceMaterial + "  livemode = " + inLiveMode + " <<<<<<<<<<<<<<<<<<\n");
+                System.out.println("\n**** Element II FractionID  " + fractionID + " refMat? " + isPrimaryReferenceMaterial + "  livemode = " + inLiveMode + " <<<<<<<<<<<<<<<<<<\n");
 
                 myTripoliFractions.add(tripoliFraction);
-                
-                if (isReferenceMaterial){
+
+                if (isPrimaryReferenceMaterial) {
                     loadDataTask.firePropertyChange("refMaterialLoaded", 0, 1);
                 }
 

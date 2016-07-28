@@ -268,9 +268,10 @@ public class WashStateElementIISingleCollFileHandler extends AbstractRawDataFile
 
                 TripoliFraction tripoliFraction
                         = new TripoliFraction( //
+                                //
                                 fractionID, //
                                 massSpec.getCommonLeadCorrectionHighestLevel(), //
-                                isStandard,
+                                isStandard, false,
                                 fractionBackgroundTimeStamp, //
                                 fractionPeakTimeStamp,
                                 peakAcquisitions.size());

@@ -271,9 +271,10 @@ public class UnivKansasElementIIFileHandler extends AbstractRawDataFileHandler {
                 TripoliFraction tripoliFraction
                         = //                           
                         new TripoliFraction( //
+                                //
                                 fractionID, //
                                 massSpec.getCommonLeadCorrectionHighestLevel(), //
-                                isReferenceMaterial,
+                                isReferenceMaterial, false,
                                 fractionBackgroundTimeStamp, //
                                 fractionPeakTimeStamp,
                                 peakAcquisitions.size());

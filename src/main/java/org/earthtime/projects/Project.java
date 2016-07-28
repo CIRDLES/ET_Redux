@@ -207,7 +207,7 @@ public class Project implements
         ArrayList<AbstractTripoliSample> tripoliSamples = tripoliSession.getTripoliSamples();
         for (AbstractTripoliSample tripoliSample : tripoliSamples) {
             // check for primary standard and leave it out
-            if (true) {//oct 2014 want to include standards now (!tripoliSample.isPrimaryStandard()) {
+            if (true) {//oct 2014 want to include standards now (!tripoliSample.isPrimaryReferenceMaterial()) {
 
                 // june 2016
                 // determine if sample already processed
