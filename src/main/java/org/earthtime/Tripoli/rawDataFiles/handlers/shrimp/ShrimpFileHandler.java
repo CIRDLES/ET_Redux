@@ -27,6 +27,7 @@ import java.util.TreeSet;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import javax.xml.bind.JAXBException;
+import org.cirdles.calamari.core.PrawnFileHandler;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.Tripoli.massSpecSetups.singleCollector.shrimp.ShrimpSetupUPb;
@@ -157,8 +158,9 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
 
         try {
             List<org.cirdles.calamari.shrimp.ShrimpFraction> myShrimpFractions = null;
-//            myShrimpFractions = org.cirdles.calamari.core.RawDataFileHandler.extractShrimpFractionsFromPrawnFile("/Users/sbowring/Google Drive/_ETRedux_ProjectData/SHRIMP/100142_G6147_10111109.43.xml");
-            myShrimpFractions = org.cirdles.calamari.core.RawDataFileHandler.extractShrimpFractionsFromPrawnFile(//
+            
+            PrawnFileHandler prawnFileHandler = new org.cirdles.calamari.core.PrawnFileHandler();
+            myShrimpFractions = prawnFileHandler.extractShrimpFractionsFromPrawnFile(//
                     "https://raw.githubusercontent.com/bowring/XSD/master/SHRIMP/EXAMPLE_100142_G6147_10111109.43_10.33.37%20AM.xml", true, false);
 
             // send name to project
