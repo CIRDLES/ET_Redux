@@ -224,7 +224,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
         saveMonitoredTime = 0L;
         tripoliFractions = new TreeSet<>();
 
-        parentDimension = new Dimension(2050, 1250);
+        parentDimension = new Dimension(2050, 1275);
 
         initView();
     }
@@ -413,7 +413,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
         ((TabbedReportViews) reportTableTabbedPane).initializeTabs();
         ((TabbedReportViews) reportTableTabbedPane).prepareTabs();
 
-        reportTableTabbedPane.setBounds(leftMargin, topMargin + 705, 1900, 500);
+        reportTableTabbedPane.setBounds(leftMargin, topMargin + 705, 1930, 500);
         this.add(reportTableTabbedPane, LAYER_FIVE);
 
     }
@@ -628,7 +628,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
 
         add(probabilityPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        kwikiPDFToolBar = new KwikiPDFToolBar(1350, concordiaGraphPanel.getHeight() + topMargin + 60, probabilityPanel, concordiaGraphPanel, project.getSuperSample(), dateTreeByAliquot);
+        kwikiPDFToolBar = new KwikiPDFToolBar(1350, concordiaGraphPanel.getHeight() + topMargin + 50, probabilityPanel, concordiaGraphPanel, project.getSuperSample(), dateTreeByAliquot);
         add(kwikiPDFToolBar, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
     }
@@ -710,7 +710,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
 
     }
 
-    private synchronized void  loadAndShowRawDataFinishUp() {
+    private synchronized void loadAndShowRawDataFinishUp() {
         SortedSet<TripoliFraction> tripoliFractionsCurrent;
 
         if (savedCountOfFractions == 0) {
@@ -927,10 +927,14 @@ public class AbstractDataMonitorView extends AbstractRawDataView
 
         dataMonitorViewDialog = new DataMonitorViewDialog(null, true);
         dataMonitorViewDialog.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-        dataMonitorViewDialog.setBounds( //
-                400, 400, //
-                (int) parentDimension.getWidth(),
-                (int) parentDimension.getHeight());
+//        dataMonitorViewDialog.setBounds( //
+//                400, 400, //
+//                (int) parentDimension.getWidth(),
+//                (int) parentDimension.getHeight());
+        dataMonitorViewDialog.setPreferredSize(new Dimension(
+                (int) parentDimension.getWidth() - 25,
+                (int) parentDimension.getHeight() - 25));
+
         dataMonitorViewDialog.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);//.HIDE_ON_CLOSE);
 
         //Get the screen size

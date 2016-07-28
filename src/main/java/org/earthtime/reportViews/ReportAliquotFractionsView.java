@@ -273,7 +273,9 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
     }
 
     private void reSizeScrollPanes() {
-        reportBodyScrollPane.setSize(getWidth() - fractionColumnWidth, getHeight() - DATATABLE_TOP_HEIGHT);
+//        reportBodyScrollPane.setSize(getWidth() - fractionColumnWidth, getHeight() - DATATABLE_TOP_HEIGHT);
+        //July 2016 adapted to handle narrow tables per LiveData 
+        reportBodyScrollPane.setSize(Math.min(reportWidth - fractionColumnWidth + fractionButtonMargin + 2 * (int)dividerWidth, getWidth() - fractionColumnWidth), getHeight() - DATATABLE_TOP_HEIGHT);
         reportBodyScrollPane.revalidate();
 
         // -15 compensates for hidden scrollbar when coordinating scrolls
@@ -281,6 +283,8 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
 
         reportFractionIDsScrollPane.setSize(fractionColumnWidth, getHeight() - DATATABLE_TOP_HEIGHT - offsetForScrollbar);
         reportFractionIDsScrollPane.revalidate();
+        
+        repaint();
     }
 
     private void reSizeSortButtons() {
@@ -296,6 +300,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
         }
     }
 
+    
     private class ViewListener implements ComponentListener {
 
         @Override
@@ -369,8 +374,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
 
         // column #2 is the fractionID column
         fractionColumnWidth
-                = //
-                leftMargin + (int) (calculateColumnWidth(2) * COLUMN_WIDTH_ADJUST_FACTOR) + (int) dividerWidth;
+                = leftMargin + (int) (calculateColumnWidth(2) * COLUMN_WIDTH_ADJUST_FACTOR) + (int) dividerWidth;
 
         fractionColumnWidth += fractionButtonMargin;
 
@@ -392,7 +396,8 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
         reportHeader = new ReportPainter(this, "HEADER", false);
         reportHeader.setBackground(Color.white);
         reportHeader.setOpaque(true);
-        reportHeader.setBounds(fractionColumnWidth, 0, reportWidth + 5 - fractionColumnWidth, DATATABLE_TOP_HEIGHT);
+        reportHeader.setBounds(fractionColumnWidth, 0, Math.min(reportWidth - fractionColumnWidth + fractionButtonMargin + (int)dividerWidth, getWidth() - fractionColumnWidth), DATATABLE_TOP_HEIGHT);
+        reportHeader.setPreferredSize(new Dimension( Math.min(reportWidth - fractionColumnWidth + fractionButtonMargin + (int)dividerWidth, getWidth() - fractionColumnWidth), DATATABLE_TOP_HEIGHT));
         add(reportHeader);
 
         // build sort buttons
@@ -853,15 +858,15 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                     accumulateDrawnHeight = 0;
 
                     overallWidth = drawnWidth - 3;
-                    reportWidth = (int) overallWidth;// + 200;
+//                    reportWidth = (int) overallWidth + (int) dividerWidth;// + 200;
 
                     // draw horizontal line under column titles
                     g2D.setColor(Color.black);
-                    g2D.drawLine(0, drawnHeight, reportWidth, drawnHeight);
+                    g2D.drawLine(0, drawnHeight, reportWidth - fractionColumnWidth + fractionButtonMargin + (int)dividerWidth, drawnHeight);
                     g2D.setColor(Color.black);
 
                     // section for sort arrows
-                    g2D.drawLine(0, drawnHeight + lineHeight, reportWidth, drawnHeight + lineHeight);
+                    g2D.drawLine(0, drawnHeight + lineHeight, reportWidth - fractionColumnWidth + fractionButtonMargin + (int)dividerWidth, drawnHeight + lineHeight);
                     g2D.setColor(Color.black);
                     drawnHeight -= 2;//5;
 
@@ -1054,8 +1059,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                                 // strip out footnote letter
                                 String[] footNote = item.split("&");
                                 String footNoteLine
-                                        = //
-                                        " " //
+                                        = " " //
                                         + footNote[0] //
                                         + "  " //
                                         + footNote[1];
