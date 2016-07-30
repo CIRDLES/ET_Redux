@@ -440,9 +440,10 @@ public class LaserChronNUPlasmaMultiCollFaradayTRAFileHandler extends AbstractRa
                     // nov 2014 broke into steps to provide cleaner logic
                     TripoliFraction tripoliFraction
                             = new TripoliFraction( //
+                                    //
                                     theFractionID, //
                                     massSpec.getCommonLeadCorrectionHighestLevel(), //
-                                    isStandard,
+                                    isStandard, false,
                                     fractionBackgroundStartTime, //
                                     fractionBackgroundStartTime + readCountBackgroundAcquisitions * massSpec.getCOLLECTOR_DATA_FREQUENCY_MILLISECS(),
                                     peakAcquisitions.size());

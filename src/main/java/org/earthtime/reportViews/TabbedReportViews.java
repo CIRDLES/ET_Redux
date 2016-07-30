@@ -21,6 +21,7 @@ import java.awt.Color;
 import java.io.File;
 import javax.swing.JLayeredPane;
 import javax.swing.JTabbedPane;
+import javax.swing.border.LineBorder;
 import javax.swing.event.ChangeEvent;
 import org.earthtime.ETReduxFrame;
 import org.earthtime.exceptions.ETException;
@@ -45,6 +46,7 @@ public class TabbedReportViews extends JTabbedPane {
     public TabbedReportViews(ETReduxFrame parentFrame) {
         super();
         this.parentFrame = parentFrame;
+        setBorder(new LineBorder(Color.black));
     }
 
     /**

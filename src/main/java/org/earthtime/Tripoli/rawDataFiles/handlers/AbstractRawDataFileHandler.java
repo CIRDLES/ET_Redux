@@ -169,7 +169,7 @@ public abstract class AbstractRawDataFileHandler implements //
      * @return the boolean
      */
     public abstract boolean getAndLoadRawIntensityDataForReview();
-    
+
     /**
      *
      * @param loadDataTask the value of loadDataTask
@@ -261,7 +261,8 @@ public abstract class AbstractRawDataFileHandler implements //
      * @param leftShadeCount the value of leftShadeCount
      * @param ignoreFirstFractions the value of indexgnoreFindexrstFractindexons
      * @param inLiveMode the value of inLiveMode
-     * @return the java.util.SortedSet<org.earthtime.Tripoli.fractions.TripoliFraction>
+     * @return the
+     * java.util.SortedSet<org.earthtime.Tripoli.fractions.TripoliFraction>
      */
     protected abstract SortedSet<TripoliFraction> loadRawDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions, boolean inLiveMode);
 
@@ -499,21 +500,24 @@ public abstract class AbstractRawDataFileHandler implements //
 //////                //replace first unknown sample with a standardSample as this is the default primary standard
 //////                // until / unless user changes on return      
 //////                firstSample = tripoliSamplesSorted.first();
-                AbstractTripoliSample primaryStandard = new TripoliPrimaryStandardSample(firstSample.getSampleName());
+                AbstractTripoliSample primaryReferenceMaterialSample = new TripoliPrimaryStandardSample(firstSample.getSampleName());
                 // use these fractions
-                primaryStandard.setSampleFractions(firstSample.getSampleFractions());
-                tripoliSamplesSorted.add(primaryStandard);
+                primaryReferenceMaterialSample.setSampleFractions(firstSample.getSampleFractions());
+                tripoliSamplesSorted.add(primaryReferenceMaterialSample);
 
                 // convert to ArrayList for storage and passing
                 tripoliSamples.addAll(tripoliSamplesSorted);
                 tripoliSamples.remove(firstSample);
 
-//////                // walk samples and set fraction standard flags 
-//////                for (int i = 0; i < tripoliSamples.size(); i++) {
-//////                    tripoliSamples.get(i).setFractionsSampleFlags();
-//////                }
+                // july 2106
+                // walk unknown samples and detect secondary reference materials
+                for (int i = 0; i < tripoliSamples.size(); i++) {
+                    // TODO: refactor Demeter law
+                    tripoliSamples.get(i).setSecondaryReferenceMaterial(tripoliSamples.get(i).getSampleFractions().first().isSecondaryReferenceMaterial());
+                }
             }
         }
+        
         return tripoliSamples;
 
     }
@@ -549,12 +553,12 @@ public abstract class AbstractRawDataFileHandler implements //
         if (index < 0) {
             index = fractionName.length();
         }
-        
+
         String retVal = fractionName.substring(0, index);
-        if (retVal.length() == 0){
+        if (retVal.length() == 0) {
             retVal = "Unknowns";
         }
-        
+
         return retVal;
     }
 

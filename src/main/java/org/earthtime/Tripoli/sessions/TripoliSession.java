@@ -171,11 +171,11 @@ public class TripoliSession implements
         tripoliSamples.stream().forEach((tripoliSample) -> {
             SortedSet<TripoliFraction> tripoliFractionsOfSample = tripoliSample.getSampleFractions();
             for (TripoliFraction tf : tripoliFractionsOfSample) {
-                tf.setStandard(tripoliSample.isPrimaryStandard());
+                tf.setStandard(tripoliSample.isPrimaryReferenceMaterial());
                 // nov 2014
                 tf.setSampleR238_235s(tripoliSample.getSampleR238_235s());
                 // april 2016
-                tf.setSecondaryReferenceMaterial(tripoliSample.isSecondaryStandard());
+                tf.setSecondaryReferenceMaterial(tripoliSample.isSecondaryReferenceMaterial());
             }
         });
     }

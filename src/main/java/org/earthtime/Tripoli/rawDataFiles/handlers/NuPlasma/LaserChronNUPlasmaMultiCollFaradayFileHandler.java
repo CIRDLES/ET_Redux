@@ -500,9 +500,10 @@ public class LaserChronNUPlasmaMultiCollFaradayFileHandler extends AbstractRawDa
                     TripoliFraction tripoliFraction
                             = //                           
                             new TripoliFraction( //
+                                    //
                                     theFractionID, //
                                     massSpec.getCommonLeadCorrectionHighestLevel(), //
-                                    isStandard,
+                                    isStandard, false,
                                     fractionDate.getTime(), //
                                     fractionDate.getTime(),//
                                     myBlockSize);//, 

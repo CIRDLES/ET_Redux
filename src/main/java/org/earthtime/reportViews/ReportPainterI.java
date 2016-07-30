@@ -29,8 +29,9 @@ public interface ReportPainterI {
 
     /**
      * 
+     * @param fractionIdToFocus the value of fractionIdToFocus
      */
-    public void loadAndShowReportTableData ();
+    public void loadAndShowReportTableData (String fractionIdToFocus);
     
     /**
      * 

@@ -119,17 +119,30 @@ public class TripoliFraction implements //
 
     private boolean currentlyFitted;
 
+    /**
+     *
+     * @param fractionID the value of fractionID
+     * @param commonLeadCorrectionHighestLevel the value of
+     * commonLeadCorrectionHighestLevel
+     * @param isPrimaryReferenceMaterial the value of isPrimaryReferenceMaterial
+     * @param isSecondaryReferenceMaterial the value of
+     * isSecondaryReferenceMaterial
+     * @param backgroundTimeStamp the value of backgroundTimeStamp
+     * @param peakTimeStamp the value of peakTimeStamp
+     * @param blockSize the value of blockSize
+     */
     public TripoliFraction( //
-            String fractionID, //
-            String commonLeadCorrectionHighestLevel, //
-            boolean standard, //
-            long backgroundTimeStamp, //
-            long peakTimeStamp,//
+            String fractionID,
+            String commonLeadCorrectionHighestLevel,
+            boolean isPrimaryReferenceMaterial,
+            boolean isSecondaryReferenceMaterial,
+            long backgroundTimeStamp,
+            long peakTimeStamp,
             int blockSize) {
 
         this.fractionID = fractionID;
-        this.standard = standard;
-        this.secondaryReferenceMaterial = false;
+        this.standard = isPrimaryReferenceMaterial;
+        this.secondaryReferenceMaterial = isSecondaryReferenceMaterial;
         this.backgroundTimeStamp = backgroundTimeStamp;
         this.peakTimeStamp = peakTimeStamp;
         this.zeroBasedTimeStamp = 0;
@@ -175,7 +188,7 @@ public class TripoliFraction implements //
 
         this.commonLeadCorrectionHighestLevel = commonLeadCorrectionHighestLevel;
         // default behavior
-        if (standard) {
+        if (isPrimaryReferenceMaterial) {
             this.commonLeadLossCorrectionScheme = CommonLeadLossCorrectionSchemeNONE.getInstance();
         } else {
             try {
@@ -220,7 +233,7 @@ public class TripoliFraction implements //
             long peakTimeStamp, //
             SortedSet<DataModelInterface> rawRatios) {
 
-        this(fractionID, commonLeadCorrectionHighestLevel, standard, backgroundTimeStamp, peakTimeStamp, ((RawRatioDataModel) rawRatios.first()).getRatios().length);
+        this(fractionID, commonLeadCorrectionHighestLevel, standard, false, backgroundTimeStamp, peakTimeStamp, ((RawRatioDataModel) rawRatios.first()).getRatios().length);
 
         this.rawRatios = rawRatios;
 

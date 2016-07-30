@@ -183,7 +183,7 @@ public class SantaBarbaraNUPlasmaMultiCollFaradayTRAFileHandler extends Abstract
                 // detect starts of onpeak
                 NumberFormat format = new DecimalFormat("+#0.00;-#0.00");
                 List<Integer> sessionTimeZeroIndices = new ArrayList<>();
-                double[] onPeak = ((RawIntensityDataModel) massSpec.getU238()).getOnPeakVirtualCollector().getIntensities();
+                double[] onPeak = getSumOfIntensities();//((RawIntensityDataModel) massSpec.getU238()).getOnPeakVirtualCollector().getIntensities();
                 boolean withinPeak = false;
                 int lastNegativeIndex = 0;
                 for (int i = 0; i < onPeak.length; i++) {
@@ -211,13 +211,24 @@ public class SantaBarbaraNUPlasmaMultiCollFaradayTRAFileHandler extends Abstract
                     }
                 }
                 retVal = true;
+
+                // calculate good right to graph
+                DescriptiveStatistics timeZeroDeltas = new DescriptiveStatistics();
+                for (int i = 0; i < sessionTimeZeroIndices.size() - 1; i++) {
+                    timeZeroDeltas.addValue(Math.abs(sessionTimeZeroIndices.get(i + 1) - sessionTimeZeroIndices.get(i)));
+                }
+                int timeToNextTimeZero = (int) timeZeroDeltas.getPercentile(95);
+
                 Map<IsotopesEnum, DataModelInterface> isotopeToRawIntensitiesMap = massSpec.getIsotopeMappingModel().getIsotopeToRawIntensitiesMap();
                 isotopeToRawIntensitiesMap.forEach((isotope, dataModel) -> {
                     ((RawIntensityDataModel) dataModel).setSessionTimeZeroIndices(sessionTimeZeroIndices);
+                    ((RawIntensityDataModel) dataModel).setTimeToNextTimeZero(timeToNextTimeZero);
                     // educated guesses
                     ((RawIntensityDataModel) dataModel).setPeakLeftShade(5);
-                    ((RawIntensityDataModel) dataModel).setPeakWidth(140);
-                    ((RawIntensityDataModel) dataModel).setTimeZeroRelativeIndex(75);
+                    ((RawIntensityDataModel) dataModel).setPeakWidth(timeToNextTimeZero / 2);//140
+                    ((RawIntensityDataModel) dataModel).setBackgroundRightShade(5);
+                    ((RawIntensityDataModel) dataModel).setBackgroundWidth(timeToNextTimeZero / 8);//25
+                    ((RawIntensityDataModel) dataModel).setTimeZeroRelativeIndex(timeToNextTimeZero / 4);//75
                 });
 
             } else {
@@ -228,6 +239,19 @@ public class SantaBarbaraNUPlasmaMultiCollFaradayTRAFileHandler extends Abstract
         }
 
         return retVal;
+    }
+
+    private double[] getSumOfIntensities() {
+        double[] sumOfIntensities = new double[((RawIntensityDataModel) massSpec.getU238()).getOnPeakVirtualCollector().getIntensities().length];
+        Map<IsotopesEnum, DataModelInterface> isotopeToRawIntensitiesMap = massSpec.getIsotopeMappingModel().getIsotopeToRawIntensitiesMap();
+        isotopeToRawIntensitiesMap.forEach((isotope, dataModel) -> {
+            double[] onPeak = ((RawIntensityDataModel) dataModel).getOnPeakVirtualCollector().getIntensities();
+            for (int i = 0; i < sumOfIntensities.length; i++) {
+                sumOfIntensities[i] += onPeak[i];
+            }
+        });
+
+        return sumOfIntensities;
     }
 
     /**
@@ -327,90 +351,97 @@ public class SantaBarbaraNUPlasmaMultiCollFaradayTRAFileHandler extends Abstract
         int backgroundWidth = ((RawIntensityDataModel) firstModel).getBackgroundWidth();
 
         // walk the zero-time indices - one for each fraction
+        int countIgnoredFractions = 0;
         for (int fractionIndex = 0; fractionIndex < sessionTimeZeroIndices.size(); fractionIndex++) {
-            if (loadDataTask.isCancelled()) {
-                break;
-            }
-            loadDataTask.firePropertyChange("progress", 0, ((100 * fractionIndex) / sessionTimeZeroIndices.size()));
-
-            // background 
-            List<double[]> backgroundAcquisitions = new ArrayList<>();
-
-            int startOfBackgroundIndex = sessionTimeZeroIndices.get(fractionIndex) - backgroundRightShade - backgroundWidth;
-            for (int acquisitionIndex = startOfBackgroundIndex; acquisitionIndex < sessionTimeZeroIndices.get(fractionIndex); acquisitionIndex++) {
-                // 238  232  208 207 206 204
-                double[] backgroundIntensities = new double[6];
-                backgroundAcquisitions.add(backgroundIntensities);
-
-                String[] acquisition = fractionData.get(dataFoundIndex + acquisitionIndex).split(",");
-                for (int index = 0; index < 6; index++) {
-                    backgroundIntensities[index] = Double.parseDouble(acquisition[index]);
+            // test for ignored
+            if (sessionTimeZeroIndices.get(fractionIndex) > 0) {
+                if (loadDataTask.isCancelled()) {
+                    break;
                 }
-            }
+                loadDataTask.firePropertyChange("progress", 0, ((100 * fractionIndex) / sessionTimeZeroIndices.size()));
 
-            // peak                       
-            List<double[]> peakAcquisitions = new ArrayList<>();
+                // background 
+                List<double[]> backgroundAcquisitions = new ArrayList<>();
 
-            int endOfPeakIndex = sessionTimeZeroIndices.get(fractionIndex) + peakLeftShade + peakWidth;
-            for (int acquisitionIndex = sessionTimeZeroIndices.get(fractionIndex); acquisitionIndex < endOfPeakIndex; acquisitionIndex++) {
-                // 238  232  208 207 206 204
-                double[] peakIntensities = new double[6];
-                peakAcquisitions.add(peakIntensities);
+                int startOfBackgroundIndex = sessionTimeZeroIndices.get(fractionIndex) - backgroundRightShade - backgroundWidth;
+                for (int acquisitionIndex = startOfBackgroundIndex; acquisitionIndex < sessionTimeZeroIndices.get(fractionIndex); acquisitionIndex++) {
+                    // 238  232  208 207 206 204
+                    double[] backgroundIntensities = new double[6];
+                    backgroundAcquisitions.add(backgroundIntensities);
 
-                String[] acquisition = fractionData.get(dataFoundIndex + acquisitionIndex).split(",");
-                for (int index = 0; index < 6; index++) {
-                    peakIntensities[index] = Double.parseDouble(acquisition[index]);
+                    String[] acquisition = fractionData.get(dataFoundIndex + acquisitionIndex).split(",");
+                    for (int index = 0; index < 6; index++) {
+                        backgroundIntensities[index] = Double.parseDouble(acquisition[index]);
+                    }
                 }
+
+                // peak                       
+                List<double[]> peakAcquisitions = new ArrayList<>();
+
+                int endOfPeakIndex = sessionTimeZeroIndices.get(fractionIndex) + peakLeftShade + peakWidth;
+                for (int acquisitionIndex = sessionTimeZeroIndices.get(fractionIndex); acquisitionIndex < endOfPeakIndex; acquisitionIndex++) {
+                    // 238  232  208 207 206 204
+                    double[] peakIntensities = new double[6];
+                    peakAcquisitions.add(peakIntensities);
+
+                    String[] acquisition = fractionData.get(dataFoundIndex + acquisitionIndex).split(",");
+                    for (int index = 0; index < 6; index++) {
+                        peakIntensities[index] = Double.parseDouble(acquisition[index]);
+                    }
+                }
+
+                // specify fraction and turn off data points at ends
+                // calculate dates
+                String fractionID = fractionNames[fractionIndex - countIgnoredFractions];
+                boolean isReferenceMaterial = (fractionID.toLowerCase().contains(referenceMaterialfractionID));
+                if (referenceMaterialIncrementerMap.containsKey(fractionID)) {
+                    int refMatIndex = referenceMaterialIncrementerMap.get(fractionID);
+                    referenceMaterialIncrementerMap.put(fractionID, refMatIndex + 1);
+                    fractionID = fractionID + "-" + String.valueOf(refMatIndex);
+                }
+
+                // peak stamp = timezero
+                long fractionPeakTimeStamp = runStartTime + 200l * sessionTimeZeroIndices.get(fractionIndex);
+                long fractionBackgroundTimeStamp = fractionPeakTimeStamp - 200l * (backgroundRightShade + backgroundWidth);
+
+                TripoliFraction tripoliFraction
+                        = new TripoliFraction( //
+                                //
+                                fractionID, //
+                                massSpec.getCommonLeadCorrectionHighestLevel(), //
+                                isReferenceMaterial, false,
+                                fractionBackgroundTimeStamp, //
+                                fractionPeakTimeStamp,
+                                peakAcquisitions.size());
+
+                SortedSet<DataModelInterface> rawRatios = massSpec.rawRatiosFactoryRevised();
+
+                tripoliFraction.setRawRatios(rawRatios);
+
+                massSpec.setCountOfAcquisitions(peakAcquisitions.size());
+
+                massSpec.processFractionRawRatiosII(//
+                        backgroundAcquisitions, peakAcquisitions, usingFullPropagation, tripoliFraction, inLiveMode);
+
+                tripoliFraction.shadeDataActiveMapLeft(0);
+
+                // turn off data point between time-zero and end background, start peak
+                for (int offDataIndex = 0; offDataIndex < peakLeftShade; offDataIndex++) {
+                    tripoliFraction.toggleOneDataAquisition(offDataIndex, false);
+                }
+                // don't have system for background yet
+
+                System.out.println("\n**** Element II FractionID  " + fractionID + " refMat? " + isReferenceMaterial + "  livemode = " + inLiveMode + " <<<<<<<<<<<<<<<<<<\n");
+
+                myTripoliFractions.add(tripoliFraction);
+
+                if (isReferenceMaterial) {
+                    loadDataTask.firePropertyChange("refMaterialLoaded", 0, 1);
+                }
+
+            } else {
+                countIgnoredFractions++;
             }
-
-            // specify fraction and turn off data points at ends
-            // calculate dates
-            String fractionID = fractionNames[fractionIndex];
-            boolean isReferenceMaterial = (fractionID.toLowerCase().contains(referenceMaterialfractionID));
-            if (referenceMaterialIncrementerMap.containsKey(fractionID)) {
-                int refMatIndex = referenceMaterialIncrementerMap.get(fractionID);
-                referenceMaterialIncrementerMap.put(fractionID, refMatIndex + 1);
-                fractionID = fractionID + "-" + String.valueOf(refMatIndex);
-            }
-
-            // peak stamp = timezero
-            long fractionPeakTimeStamp = runStartTime + 200l * sessionTimeZeroIndices.get(fractionIndex);
-            long fractionBackgroundTimeStamp = fractionPeakTimeStamp - 200l * (backgroundRightShade + backgroundWidth);
-
-            TripoliFraction tripoliFraction
-                    = new TripoliFraction( //
-                            fractionID, //
-                            massSpec.getCommonLeadCorrectionHighestLevel(), //
-                            isReferenceMaterial,
-                            fractionBackgroundTimeStamp, //
-                            fractionPeakTimeStamp,
-                            peakAcquisitions.size());
-
-            SortedSet<DataModelInterface> rawRatios = massSpec.rawRatiosFactoryRevised();
-
-            tripoliFraction.setRawRatios(rawRatios);
-
-            massSpec.setCountOfAcquisitions(peakAcquisitions.size());
-
-            massSpec.processFractionRawRatiosII(//
-                    backgroundAcquisitions, peakAcquisitions, usingFullPropagation, tripoliFraction, inLiveMode);
-
-            tripoliFraction.shadeDataActiveMapLeft(0);
-
-            // turn off data point between time-zero and end background, start peak
-            for (int offDataIndex = 0; offDataIndex < peakLeftShade; offDataIndex++) {
-                tripoliFraction.toggleOneDataAquisition(offDataIndex, false);
-            }
-            // don't have system for background yet
-
-            System.out.println("\n**** Element II FractionID  " + fractionID + " refMat? " + isReferenceMaterial + "  livemode = " + inLiveMode + " <<<<<<<<<<<<<<<<<<\n");
-
-            myTripoliFractions.add(tripoliFraction);
-
-            if (isReferenceMaterial) {
-                loadDataTask.firePropertyChange("refMaterialLoaded", 0, 1);
-            }
-
         }
 
         return myTripoliFractions;

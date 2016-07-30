@@ -860,7 +860,7 @@ private void apply_buttonActionPerformed (java.awt.event.ActionEvent evt) {//GEN
     
 ////    String[][] reportFractions = ((UPbReduxFrame) parent).getTheSample().reportAllFractionsByNumberStyle( false );
     
-    ((ReportPainterI) parent).loadAndShowReportTableData();//// reportFractions );
+    ((ReportPainterI) parent).loadAndShowReportTableData("");//// reportFractions );
     
     
 }//GEN-LAST:event_apply_buttonActionPerformed

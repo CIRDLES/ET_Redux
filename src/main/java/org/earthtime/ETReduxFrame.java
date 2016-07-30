@@ -1456,7 +1456,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
     public void rebuildFractionDisplays(boolean performReduction, boolean inLiveMode) {
         ((TabbedReportViews) getReportTableTabbedPane()).setSample(theSample);
 
-        updateReportTable(performReduction, inLiveMode);
+        updateReportTable(performReduction, inLiveMode, "");
     }
 
     /**
@@ -1464,16 +1464,17 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
      */
     @Override
     public void updateReportTable() {
-        updateReportTable(false, false);
+        updateReportTable(false, false, "");
     }
 
     /**
      *
      * @param performReduction
      * @param inLiveMode the value of inLiveMode
+     * @param fractionIdToFocus the value of fractionIdToFocus
      */
     @Override
-    public void updateReportTable(boolean performReduction, boolean inLiveMode) {
+    public void updateReportTable(boolean performReduction, boolean inLiveMode, String fractionIdToFocus) {
         // march 2013
         try {
             UPbFractionReducer.getInstance().setSessionCorrectedUnknownsSummaries(//
@@ -1485,7 +1486,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             theSample.reduceSampleData(inLiveMode);
         }
 
-        loadAndShowReportTableData();
+        loadAndShowReportTableData(fractionIdToFocus);
 
         // oct 2014
         // this statement makes a difference if user went back to project manager and changed things
@@ -1502,9 +1503,10 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
     /**
      *
+     * @param fractionIdToFocus the value of fractionIdToFocus
      */
     @Override
-    public void loadAndShowReportTableData() {
+    public void loadAndShowReportTableData(String fractionIdToFocus) {
 
         ((TabbedReportViews) getReportTableTabbedPane()).prepareTabs();
     }
@@ -3501,7 +3503,7 @@ private void LAICPMS_LegacyAnalysis_MC_UA_menuItemActionPerformed(java.awt.event
 }//GEN-LAST:event_LAICPMS_LegacyAnalysis_MC_UA_menuItemActionPerformed
 
 private void reduceAll_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reduceAll_buttonActionPerformed
-    updateReportTable(true, false);
+    updateReportTable(true, false, "");
 }//GEN-LAST:event_reduceAll_buttonActionPerformed
 
 private void reportResultsTableAsStringsInExcel_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reportResultsTableAsStringsInExcel_menuItemActionPerformed
@@ -3512,14 +3514,14 @@ private void loadReportSettingsModelFromLocalXMLFileActionPerformed(java.awt.eve
     myState.setMRUReportSettingsModelFolder(//
             setReportSettingsModelFromXMLFile(myState.getMRUReportSettingsModelFolder()));
 
-    updateReportTable(false, false);
+    updateReportTable(false, false, "");
 
 }//GEN-LAST:event_loadReportSettingsModelFromLocalXMLFileActionPerformed
 
 private void editCurrentReportSettingsModel_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editCurrentReportSettingsModel_menuItemActionPerformed
 
     ReportSettingsInterface.EditReportSettings(theSample.getReportSettingsModel(), this);
-    updateReportTable(false, false);
+    updateReportTable(false, false, "");
 }//GEN-LAST:event_editCurrentReportSettingsModel_menuItemActionPerformed
 
 private void reportResultsTableAsPDF_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reportResultsTableAsPDF_menuItemActionPerformed
@@ -3892,12 +3894,12 @@ private void updateData_buttonActionPerformed(java.awt.event.ActionEvent evt) {/
 
 private void selectAllFractions_menuItemActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectAllFractions_menuItemActionPerformed
     theSample.selectAllFractions();
-    updateReportTable(false, false);
+    updateReportTable(false, false, "");
 }//GEN-LAST:event_selectAllFractions_menuItemActionPerformed
 
 private void deSelectAllFractions_menuItemActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deSelectAllFractions_menuItemActionPerformed
     theSample.deSelectAllFractions();
-    updateReportTable(false, false);
+    updateReportTable(false, false, "");
 }//GEN-LAST:event_deSelectAllFractions_menuItemActionPerformed
 
 private void credits_menuItemActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_credits_menuItemActionPerformed
@@ -3916,7 +3918,7 @@ private void saveCurrentReportSettingsModelAsLocalXMLFileActionPerformed(java.aw
 private void loadDefaultReportSettingsModelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadDefaultReportSettingsModelActionPerformed
     theSample.restoreDefaultReportSettingsModel();
     theSample.setLegacyStatusForReportTable();
-    updateReportTable(false, false);
+    updateReportTable(false, false, "");
 }//GEN-LAST:event_loadDefaultReportSettingsModelActionPerformed
 
 private void writeCSVFileOfLAICPMSLegacyDataSampleFieldNames_SC_WSU_vBActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_writeCSVFileOfLAICPMSLegacyDataSampleFieldNames_SC_WSU_vBActionPerformed
@@ -4023,7 +4025,7 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     private void loadEARTHTIMEDefaultReportSettingsModel_menuItemActionPerformed ( java.awt.event.ActionEvent evt ) {//GEN-FIRST:event_loadEARTHTIMEDefaultReportSettingsModel_menuItemActionPerformed
         SampleInterface.loadDefaultEARTHTIMEReportSettingsModel(theSample);
         theSample.setLegacyStatusForReportTable();
-        updateReportTable(false, false);
+        updateReportTable(false, false, "");
     }//GEN-LAST:event_loadEARTHTIMEDefaultReportSettingsModel_menuItemActionPerformed
 
     private void exit_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exit_menuItemActionPerformed

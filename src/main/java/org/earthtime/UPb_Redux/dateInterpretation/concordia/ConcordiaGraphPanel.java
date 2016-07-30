@@ -2454,7 +2454,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
             if (changingBestDateDivider) {
                 ((AliquotForUPbInterface) curAliquot).setBestAgeDivider206_238(new BigDecimal(currentBestDate));
                 ((UPbReduxAliquot) curAliquot).updateBestAge();
-                reportUpdater.updateReportTable(false, false);
+                reportUpdater.updateReportTable(false, false, "");
             }
         }
 

@@ -129,7 +129,7 @@ public class SamplesCommonLeadPane extends JLayeredPane {
         while (tripoliSamplesIterator.hasNext()) {
             // april 2014 - leave out primary standards
             AbstractTripoliSample ts = tripoliSamplesIterator.next();
-            if (!ts.isPrimaryStandard()) {
+            if (!ts.isPrimaryReferenceMaterial()) {
                 listOfSamplesForPbCorrectionModel.addElement(ts);
             }
         }

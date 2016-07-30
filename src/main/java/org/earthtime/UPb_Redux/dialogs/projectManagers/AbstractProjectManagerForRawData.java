@@ -461,7 +461,7 @@ public abstract class AbstractProjectManagerForRawData extends DialogEditor impl
         // jan 2015 moved to calculate sessionfittripoliSession.applyCorrections();
 
         try {
-            uPbReduxFrame.updateReportTable(true, false);
+            uPbReduxFrame.updateReportTable(true, false, "");
         } catch (Exception e) {
         }
 

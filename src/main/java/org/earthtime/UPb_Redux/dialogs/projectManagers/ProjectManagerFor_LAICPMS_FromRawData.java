@@ -613,7 +613,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
         // jan 2015 moved to calcualte sessionfittripoliSession.applyCorrections();
 
         try {
-            uPbReduxFrame.updateReportTable(true, false);
+            uPbReduxFrame.updateReportTable(true, false, "");
         } catch (Exception e) {
         }
 

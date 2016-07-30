@@ -425,9 +425,10 @@ public class LaserChronNUPlasmaMultiCollIonCounterFileHandler extends AbstractRa
                     TripoliFraction tripoliFraction
                             = //                           
                             new TripoliFraction( //
+                                    //
                                     theFractionID, //
                                     massSpec.getCommonLeadCorrectionHighestLevel(), //
-                                    isStandard,
+                                    isStandard, false,
                                     fractionDate.getTime(), //
                                     fractionDate.getTime(),//
                                     myBlockSize);//, 

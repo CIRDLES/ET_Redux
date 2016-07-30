@@ -288,7 +288,7 @@ public class UPbFractionTableModel extends AbstractTableModel {
             if ((e != null)) {
                 // here we edit the fraction and refresh the table
                 parentFrame.editFraction(fraction, 8);// kwikitab
-                parentFrame.updateReportTable(false, false);
+                parentFrame.updateReportTable(false, false, "");
             }
         }
     }
@@ -387,7 +387,7 @@ public class UPbFractionTableModel extends AbstractTableModel {
                 getSample().getFractions().get(myRow).//
                         setRejected(!this.isSelected());
                 
-                getParentFrame().updateReportTable(false, false);//.rebuildFractionDisplays(false);
+                getParentFrame().updateReportTable(false, false, "");//.rebuildFractionDisplays(false);
             }
 //            getParentFrame().updateReportTable( false);//.rebuildFractionDisplays(false);
 

@@ -226,9 +226,10 @@ public class TexasAMElementIISingleCollFileHandler extends AbstractRawDataFileHa
 
                         TripoliFraction tripoliFraction
                                 = new TripoliFraction( //
+                                        //
                                         fractionID, //
                                         massSpec.getCommonLeadCorrectionHighestLevel(), //
-                                        isReferenceMaterial,
+                                        isReferenceMaterial, false,
                                         fractionBackgroundTimeStamp, //
                                         fractionPeakTimeStamp,
                                         peakAcquisitions.size());
