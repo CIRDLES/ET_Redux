@@ -146,8 +146,8 @@ public class UThFractionReducer extends FractionReducer {
         ValueModel r230Th_238Ufc = fraction.getRadiogenicIsotopeRatioByName(UThFractionationCorrectedIsotopicRatios.r230Th_238Ufc.getName());
         ValueModel r232Th_238Ufc = fraction.getRadiogenicIsotopeRatioByName(UThFractionationCorrectedIsotopicRatios.r232Th_238Ufc.getName());
 
-        // test for missing data
-        if (r234U_238Ufc.getValue().multiply(r230Th_238Ufc.getValue().multiply(r232Th_238Ufc.getValue())).compareTo(BigDecimal.ZERO) != 0) {
+        // test for missing data = need 2 of 3
+        if ((r234U_238Ufc.getValue().signum() + r234U_238Ufc.getValue().signum() + r234U_238Ufc.getValue().signum()) >=2){
 
             // matlab code meas.C
             Matrix covariance_fc = new Matrix(3, 3);
