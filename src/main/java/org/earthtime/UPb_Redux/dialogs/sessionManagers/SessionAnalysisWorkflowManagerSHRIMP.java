@@ -295,7 +295,7 @@ public class SessionAnalysisWorkflowManagerSHRIMP extends DialogEditor //
                     tripoliSession.applyCorrections(false);
 
                     // nov 2015 to update data
-                    uPbReduxFrame.updateReportTable(true, false);
+                    uPbReduxFrame.updateReportTable(true, false, "");
                 }
             } // This method is called whenever the selected tab changes
             );
@@ -559,7 +559,7 @@ public class SessionAnalysisWorkflowManagerSHRIMP extends DialogEditor //
             tripoliSession.calculateSessionFitFunctionsForPrimaryStandard(false);
         }
         try {
-            uPbReduxFrame.updateReportTable(true, false);
+            uPbReduxFrame.updateReportTable(true, false, "");
         } catch (Exception e) {
         }
 
@@ -622,7 +622,7 @@ public class SessionAnalysisWorkflowManagerSHRIMP extends DialogEditor //
         // jan 2015
         tripoliSession.calculateSessionFitFunctionsForPrimaryStandard(false);
         try {
-            uPbReduxFrame.updateReportTable(true, false);
+            uPbReduxFrame.updateReportTable(true, false, "");
         } catch (Exception e) {
         }
     }
@@ -636,7 +636,7 @@ public class SessionAnalysisWorkflowManagerSHRIMP extends DialogEditor //
         // jan 2015
         tripoliSession.calculateSessionFitFunctionsForPrimaryStandard(false);
         try {
-            uPbReduxFrame.updateReportTable(true, false);
+            uPbReduxFrame.updateReportTable(true, false, "");
         } catch (Exception e) {
         }
     }
@@ -1602,7 +1602,7 @@ private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.
         // for now we have to undo internal acquisition rejecttions allowed by intercept but not by downhole
         tripoliSession.refitAllFractionsForDownhole();
 
-        uPbReduxFrame.updateReportTable(true, false);
+        uPbReduxFrame.updateReportTable(true, false, "");
     }//GEN-LAST:event_downholeCalculateRhos_buttonActionPerformed
 
     private void downholeFitEachStandard_radioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downholeFitEachStandard_radioButtonActionPerformed
@@ -1616,7 +1616,7 @@ private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.
         } catch (Exception e) {
         }
 
-        uPbReduxFrame.updateReportTable(true, false);
+        uPbReduxFrame.updateReportTable(true, false, "");
     }//GEN-LAST:event_interceptCalculatePbcCorrAndRhos_button1ActionPerformed
 
     private void uniformYaxisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_uniformYaxisActionPerformed

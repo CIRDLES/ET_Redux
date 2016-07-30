@@ -39,6 +39,7 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.SortedSet;
@@ -52,12 +53,15 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JProgressBar;
+import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingWorker;
 import javax.swing.Timer;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
+import javax.swing.border.LineBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 import org.earthtime.ETReduxFrame;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
@@ -98,6 +102,7 @@ import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.projects.ProjectInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.reduxLabData.ReduxLabData;
+import org.earthtime.reportViews.ReportAliquotFractionsView;
 import org.earthtime.reportViews.TabbedReportViews;
 import org.earthtime.reports.ReportSettingsInterface;
 import org.earthtime.samples.SampleInterface;
@@ -183,6 +188,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
     private static JProgressBar loadDataTaskProgressBar;
 
     private static JTextArea rawDataFilePathTextArea;
+    private static JLabel mostRecentFractionData;
 
     private final static int pdfWidth = 625;
     private final static int pdfHeight = 575;
@@ -242,6 +248,8 @@ public class AbstractDataMonitorView extends AbstractRawDataView
 
             progressBarFactory();
 
+            showMostRecentFractionLabelFactory();
+
             dataMonitorTimer = new Timer(2500, (ActionEvent e) -> {
                 monitorDataFile();
             });
@@ -282,7 +290,11 @@ public class AbstractDataMonitorView extends AbstractRawDataView
         //loadAndShowRawData(rawDataFileHandler.getAcquisitionModel().isUsingFullPropagation(), 0);
     }
 
-    private void updateDisplays() {
+    /**
+     *
+     * @param fractionIdToFocus the value of fractionIdToFocus
+     */
+    private void updateDisplays(String fractionIdToFocus) {
         // need to decide when to fit sessions
         // initially let's just show the standards
 
@@ -305,7 +317,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
         }
 
         try {
-            getuPbReduxFrame().updateReportTable(true, true);
+            getuPbReduxFrame().updateReportTable(true, true, fractionIdToFocus);
         } catch (Exception e) {
         }
 
@@ -416,6 +428,8 @@ public class AbstractDataMonitorView extends AbstractRawDataView
         reportTableTabbedPane.setBounds(leftMargin, topMargin + 705, 1930, 500);
         this.add(reportTableTabbedPane, LAYER_FIVE);
 
+        this.add(mostRecentFractionData);
+
     }
 
     private void rawDataFilePathTextFactory() throws IOException {
@@ -431,9 +445,20 @@ public class AbstractDataMonitorView extends AbstractRawDataView
         this.add(rawDataFilePathTextArea, JLayeredPane.DEFAULT_LAYER);
     }
 
+    private void showMostRecentFractionLabelFactory() {
+        // show rawdatafile path
+        mostRecentFractionData = new JLabel("Most Recent");
+
+        mostRecentFractionData.setBounds(leftMargin + 25, topMargin + 647, 500, 22);
+        mostRecentFractionData.setBorder(new LineBorder(Color.black));
+
+        mostRecentFractionData.setForeground(Color.blue);
+        this.add(mostRecentFractionData, JLayeredPane.DEFAULT_LAYER);
+    }
+
     private void buttonFactory() {
         ET_JButton closeAndReviewButton = new ET_JButton("Halt Processing and Review Samples");
-        closeAndReviewButton.setBounds(leftMargin + 0, topMargin + 660, 450, 25);
+        closeAndReviewButton.setBounds(leftMargin + 0, topMargin + 670, 450, 22);
         closeAndReviewButton.addActionListener((ActionEvent ae) -> {
             try {
                 loadDataTask.cancel(true);
@@ -449,7 +474,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
         this.add(closeAndReviewButton, LAYER_FIVE);
 
         ET_JButton recalcButton = new ET_JButton("Update Sessions");
-        recalcButton.setBounds(leftMargin + 450, topMargin + 660, 120, 25);
+        recalcButton.setBounds(leftMargin + 450, topMargin + 670, 120, 22);
         recalcButton.addActionListener((ActionEvent ae) -> {
             try {
                 tripoliSession.resetAllUPbFractionReduction();
@@ -458,7 +483,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
             } catch (Exception e) {
             }
             try {
-                getuPbReduxFrame().updateReportTable(true, true);
+                getuPbReduxFrame().updateReportTable(true, true, "");
             } catch (Exception e) {
             }
             preparePanel(true, true);
@@ -468,7 +493,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
         this.add(recalcButton, LAYER_FIVE);
 
         ET_JButton refreshButton = new ET_JButton("Refresh Views");
-        refreshButton.setBounds(leftMargin + 570, topMargin + 660, 120, 25);
+        refreshButton.setBounds(leftMargin + 570, topMargin + 670, 120, 22);
         refreshButton.addActionListener((ActionEvent ae) -> {
             preparePanel(true, false);
         });
@@ -477,10 +502,10 @@ public class AbstractDataMonitorView extends AbstractRawDataView
         this.add(refreshButton, LAYER_FIVE);
 
         ET_JButton editReportSettingsButton = new ET_JButton("Edit Report Settings");
-        editReportSettingsButton.setBounds(602, topMargin + 600, 120, 25);
+        editReportSettingsButton.setBounds(602, topMargin + 600, 120, 22);
         editReportSettingsButton.addActionListener((ActionEvent ae) -> {
             ReportSettingsInterface.EditReportSettings(project.getSuperSample().getReportSettingsModel(), uPbReduxFrame);
-            uPbReduxFrame.updateReportTable(false, true);
+            uPbReduxFrame.updateReportTable(false, true, "");
             ((TabbedReportViews) reportTableTabbedPane).prepareTabs();
         });
 
@@ -488,7 +513,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
         this.add(editReportSettingsButton, LAYER_FIVE);
 
         ET_JButton concordiaSettingsButton = new ET_JButton("Concordia Settings");
-        concordiaSettingsButton.setBounds(602, topMargin + 550, 120, 25);
+        concordiaSettingsButton.setBounds(602, topMargin + 550, 120, 22);
         concordiaSettingsButton.addActionListener((ActionEvent ae) -> {
             ((AliquotDetailsDisplayInterface) concordiaGraphPanel).showConcordiaDisplayOptionsDialog();
         });
@@ -504,7 +529,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
         loadDataTaskProgressBar.setMaximum(100);
         loadDataTaskProgressBar.setMinimum(0);
         loadDataTaskProgressBar.setValue(0);
-        loadDataTaskProgressBar.setBounds(leftMargin + 0, 695, 450, 20);
+        loadDataTaskProgressBar.setBounds(leftMargin + 0, 700, 450, 20);
     }
 
     /**
@@ -770,7 +795,6 @@ public class AbstractDataMonitorView extends AbstractRawDataView
             tripoliSession.prepareFractionTimeStamps();
             tripoliSession.processRawData(true);
 
-//            tripoliSession.postProcessDataForCommonLeadLossPreparation();
             try {
                 loadDataTaskProgressBar.repaint();
 
@@ -781,7 +805,25 @@ public class AbstractDataMonitorView extends AbstractRawDataView
 
             getuPbReduxFrame().initializeProject(true);
 
-            updateDisplays();
+////            updateDisplays("");
+            // July 2016 
+            // TODO: refactor so more efficient
+            // find latest fraction and show in table
+            SortedSet<TripoliFraction> tripoliFractionsByDate = new TreeSet<>(new Comparator<TripoliFraction>() {
+                @Override
+                public int compare(TripoliFraction tf1, TripoliFraction tf2) {
+                    return Long.compare(tf2.getPeakTimeStamp(), tf1.getPeakTimeStamp());
+                }
+            });
+
+            tripoliFractionsByDate.addAll(tripoliFractions);
+            System.out.println("Latest = " + tripoliFractionsByDate.first().getFractionID());
+            mostRecentFractionData.setText(tripoliFractionsByDate.first().getFractionID());
+
+            updateDisplays(tripoliFractionsByDate.first().getFractionID());
+
+            ((ReportAliquotFractionsView) ((TabbedReportViews) reportTableTabbedPane).getViewTabulatedAliquotActiveFractions())
+                    .forceVerticalScrollToShowSpecificRow(tripoliFractionsByDate.first().getFractionID());
         }
 
     }
@@ -854,7 +896,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
             } else if ("refMaterialLoaded".equalsIgnoreCase(pce.getPropertyName())) {
                 try {
                     tripoliSession.setRefMaterialSessionFittedForLiveMode(false);
-                    System.out.println("ref material loaded <<<<");
+//                    System.out.println("ref material loaded <<<<");
                 } catch (Exception e) {
                 }
             }
@@ -873,6 +915,24 @@ public class AbstractDataMonitorView extends AbstractRawDataView
          */
         public DataMonitorViewDialog(Dialog owner, boolean modal) {
             super(owner, modal);
+
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Motif".equals(info.getName())) { //Nimbus (original), Motif, Metal
+                    try {
+                        javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException classNotFoundException) {
+                    }
+                    break;
+                }
+            }
+
+            initDialog();
+        }
+
+        private void initDialog() {
+            setUndecorated(false);
+            getRootPane().setWindowDecorationStyle(JRootPane.FRAME);
+            setTitle("Live Data Monitor");
         }
     }
 

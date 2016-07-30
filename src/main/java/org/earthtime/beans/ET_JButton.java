@@ -67,7 +67,7 @@ public class ET_JButton extends JButton {
                 super.mousePressed(evt);
                 if (((Component) evt.getSource()).isEnabled()) {
                     ((Component) evt.getSource()).setBackground(new Color(200, 200, 200));
-                    System.out.println("User clicked: " + getText());
+//                    System.out.println("User clicked: " + getText());
                 }
             }
 

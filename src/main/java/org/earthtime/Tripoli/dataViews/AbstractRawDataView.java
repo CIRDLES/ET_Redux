@@ -1173,7 +1173,7 @@ public abstract class AbstractRawDataView extends JLayeredPane implements MouseI
         if (uPbReduxFrame == null) {
             uPbReduxFrame = ((AbstractRawDataView) sampleSessionDataView).getuPbReduxFrame();
         }
-        uPbReduxFrame.updateReportTable(true, false);
+        uPbReduxFrame.updateReportTable(true, false, "");
 
     }
 

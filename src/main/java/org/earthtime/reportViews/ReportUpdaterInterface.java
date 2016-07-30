@@ -28,6 +28,7 @@ public interface ReportUpdaterInterface {
      *
      * @param performReduction
      * @param inLiveMode the value of inLiveMode
+     * @param fractionIdToFocus the value of fractionIdToFocus
      */
-    public void updateReportTable( boolean performReduction, boolean inLiveMode);
+    public void updateReportTable( boolean performReduction, boolean inLiveMode, String fractionIdToFocus);
 }
