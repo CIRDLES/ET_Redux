@@ -739,7 +739,7 @@ public class DateProbabilityDensityPanel extends JLayeredPane
     @Override
     public void preparePanel(boolean doReScale, boolean inLiveMode) {
 
-        System.out.println("========Probability Prep=======");
+//        System.out.println("========Probability Prep=======");
         this.removeAll();
 
         //nov 2011
