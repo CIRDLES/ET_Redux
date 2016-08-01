@@ -71,6 +71,10 @@
             <layout>default</layout>
         </repository>
         <repository>
+            <id>jcenter</id>
+            <url>http://jcenter.bintray.com/</url>
+        </repository>
+        <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
@@ -83,7 +87,7 @@
         <dependency>
             <groupId>org.netbeans.external</groupId>
             <artifactId>AbsoluteLayout</artifactId>
-            <version>RELEASE701</version>
+            <version>RELEASE731</version>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>

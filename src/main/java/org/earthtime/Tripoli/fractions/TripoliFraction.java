@@ -42,6 +42,7 @@ import org.earthtime.Tripoli.fitFunctions.AbstractFunctionOfX;
 import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.dataDictionaries.FractionationTechniquesEnum;
+import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.dataDictionaries.RadDatesForPbCorrSynchEnum;
 import org.earthtime.dataDictionaries.RawRatioNames;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
@@ -1623,5 +1624,18 @@ public class TripoliFraction implements //
      */
     public void setCurrentlyFitted(boolean currentlyFitted) {
         this.currentlyFitted = currentlyFitted;
+    }
+    
+    public String dateSummary(){
+        return fractionID 
+                + ">  206/238: "
+                + uPbFraction.getRadiogenicIsotopeDateByName(RadDates.age206_238r)
+                        .formatValueAndTwoSigmaForPublicationSigDigMode("ABS", -6, 2)
+                + ">  207/235: "
+                + uPbFraction.getRadiogenicIsotopeDateByName(RadDates.age207_235r)
+                        .formatValueAndTwoSigmaForPublicationSigDigMode("ABS", -6, 2)
+                + ">  207/206: "
+                + uPbFraction.getRadiogenicIsotopeDateByName(RadDates.age207_206r)
+                        .formatValueAndTwoSigmaForPublicationSigDigMode("ABS", -6, 2);
     }
 }

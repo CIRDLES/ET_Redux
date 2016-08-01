@@ -198,6 +198,8 @@ public class AbstractDataMonitorView extends AbstractRawDataView
 
     private SampleTreeI dateTreeByAliquot;
 
+    private static transient boolean showSessions = false;
+
     /**
      *
      */
@@ -333,83 +335,12 @@ public class AbstractDataMonitorView extends AbstractRawDataView
 
         this.add(rawDataFilePathTextArea, JLayeredPane.DEFAULT_LAYER);
 
-        int count = 0;
-
-        SortedSet<TripoliFraction> standardFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.STANDARD, IncludedTypeEnum.ALL);
-
         if (tripoliFractions.size() > 0) {
-            SortedSet<DataModelInterface> dataModels = tripoliFractions.first().getNonPbRatiosForFractionFitting();
-            Iterator<DataModelInterface> dataModelsIterator = dataModels.iterator();
 
-            while (dataModelsIterator.hasNext()) {
-                DataModelInterface dm = dataModelsIterator.next();
-
-                AbstractRawDataView rawDataModelView
-                        = new SessionOfStandardView( //
-                                this,//
-                                tripoliSession.getCurrentSessionForStandardsFractionation().get(dm.getRawRatioModelName()), //
-                                standardFractions,//
-                                dm, //
-                                DataPresentationModeEnum.RATIO,//
-                                new Rectangle(//
-                                        90, //
-                                        count * (160 + 50) + topMargin + 50, //
-                                        250,//
-                                        160));
-
-                rawDataModelView.preparePanel(doReScale, inLiveMode);
-
-                this.add(rawDataModelView, JLayeredPane.DEFAULT_LAYER);
-
-                double overallMinY = rawDataModelView.getMinY();
-                double overallMaxY = rawDataModelView.getMaxY();
-
-                // generate tics array for standards all
-                BigDecimal[] yAxisTics = null;
-
-                yAxisTics = TicGeneratorForAxes.generateTics(overallMinY, overallMaxY, (int) (160 / 20.0));
-                if (yAxisTics.length > 15) {
-                    yAxisTics = TicGeneratorForAxes.generateTics(overallMinY, overallMaxY, (int) (160 / 32.0));
-                }
-
-                // create margins for y-values after axis tics calculated
-                double yMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(overallMinY, overallMaxY, 12.0 / 160);
-                overallMinY -= yMarginStretch;
-                overallMaxY += yMarginStretch;
-
-                AbstractRawDataView yAxisPane = new YAxisView( //
-                        new AbstractRawDataView[]{rawDataModelView},
-                        this,//
-                        Color.white, //
-                        overallMinY,//
-                        overallMaxY,//
-                        new Rectangle( //
-                                5, count * (160 + 50) + topMargin + 50, //
-                                90, //
-                                160),//
-                        false, true);
-                yAxisPane.setTics(yAxisTics);
-
-                this.add(yAxisPane, JLayeredPane.DEFAULT_LAYER);
-
-                AbstractRawDataView sessionFitFunctionsPresentationView
-                        = new SessionFitFunctionsPresentationView( //
-                                this,//
-                                tripoliSession.getCurrentSessionForStandardsFractionation().get(dm.getRawRatioModelName()), //
-                                (FitFunctionDataInterface) rawDataModelView,//
-                                DataPresentationModeEnum.RATIO, //
-                                new Rectangle( //
-                                        345, //
-                                        count * (160 + 50) + topMargin + 50, //
-                                        250, //
-                                        180));
-
-                sessionFitFunctionsPresentationView.preparePanel(doReScale, inLiveMode);
-
-                this.add(sessionFitFunctionsPresentationView, JLayeredPane.DEFAULT_LAYER);
-
-                count++;
+            if (showSessions) {
+                prepareSessionViews(doReScale, inLiveMode);
             }
+
             prepareConcordia(inLiveMode);
 
             preparePDF();
@@ -432,6 +363,86 @@ public class AbstractDataMonitorView extends AbstractRawDataView
 
     }
 
+    private void prepareSessionViews(boolean doReScale, boolean inLiveMode) {
+        SortedSet<TripoliFraction> standardFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.STANDARD, IncludedTypeEnum.ALL);
+        int count = 0;
+        int unitHeight = 158;
+
+        SortedSet<DataModelInterface> dataModels = tripoliFractions.first().getNonPbRatiosForFractionFitting();
+        Iterator<DataModelInterface> dataModelsIterator = dataModels.iterator();
+
+        while (dataModelsIterator.hasNext()) {
+            DataModelInterface dm = dataModelsIterator.next();
+
+            AbstractRawDataView rawDataModelView
+                    = new SessionOfStandardView( //
+                            this,//
+                            tripoliSession.getCurrentSessionForStandardsFractionation().get(dm.getRawRatioModelName()), //
+                            standardFractions,//
+                            dm, //
+                            DataPresentationModeEnum.RATIO,//
+                            new Rectangle(//
+                                    90, //
+                                    count * (unitHeight + 50) + topMargin + 50, //
+                                    250,//
+                                    unitHeight));
+
+            rawDataModelView.preparePanel(doReScale, inLiveMode);
+
+            this.add(rawDataModelView, JLayeredPane.DEFAULT_LAYER);
+
+            double overallMinY = rawDataModelView.getMinY();
+            double overallMaxY = rawDataModelView.getMaxY();
+
+            // generate tics array for standards all
+            BigDecimal[] yAxisTics = null;
+
+            yAxisTics = TicGeneratorForAxes.generateTics(overallMinY, overallMaxY, (int) (unitHeight / 20.0));
+            if (yAxisTics.length > 15) {
+                yAxisTics = TicGeneratorForAxes.generateTics(overallMinY, overallMaxY, (int) (unitHeight / 32.0));
+            }
+
+            // create margins for y-values after axis tics calculated
+            double yMarginStretch = TicGeneratorForAxes.generateMarginAdjustment(overallMinY, overallMaxY, 12.0 / unitHeight);
+            overallMinY -= yMarginStretch;
+            overallMaxY += yMarginStretch;
+
+            AbstractRawDataView yAxisPane = new YAxisView( //
+                    new AbstractRawDataView[]{rawDataModelView},
+                    this,//
+                    Color.white, //
+                    overallMinY,//
+                    overallMaxY,//
+                    new Rectangle( //
+                            5, count * (unitHeight + 50) + topMargin + 50, //
+                            90, //
+                            unitHeight),//
+                    false, true);
+            yAxisPane.setTics(yAxisTics);
+
+            this.add(yAxisPane, JLayeredPane.DEFAULT_LAYER);
+
+            AbstractRawDataView sessionFitFunctionsPresentationView
+                    = new SessionFitFunctionsPresentationView( //
+                            this,//
+                            tripoliSession.getCurrentSessionForStandardsFractionation().get(dm.getRawRatioModelName()), //
+                            (FitFunctionDataInterface) rawDataModelView,//
+                            DataPresentationModeEnum.RATIO, //
+                            new Rectangle( //
+                                    345, //
+                                    count * (unitHeight + 50) + topMargin + 50, //
+                                    250, //
+                                    180));
+
+            sessionFitFunctionsPresentationView.preparePanel(doReScale, inLiveMode);
+
+            this.add(sessionFitFunctionsPresentationView, JLayeredPane.DEFAULT_LAYER);
+
+            count++;
+        }
+
+    }
+
     private void rawDataFilePathTextFactory() throws IOException {
         // show rawdatafile path
         rawDataFilePathTextArea = new JTextArea(//
@@ -447,9 +458,9 @@ public class AbstractDataMonitorView extends AbstractRawDataView
 
     private void showMostRecentFractionLabelFactory() {
         // show rawdatafile path
-        mostRecentFractionData = new JLabel("Most Recent");
+        mostRecentFractionData = new JLabel("Latest:");
 
-        mostRecentFractionData.setBounds(leftMargin + 25, topMargin + 647, 500, 22);
+        mostRecentFractionData.setBounds(leftMargin -10, topMargin + 648, 650, 21);
         mostRecentFractionData.setBorder(new LineBorder(Color.black));
 
         mostRecentFractionData.setForeground(Color.blue);
@@ -501,8 +512,18 @@ public class AbstractDataMonitorView extends AbstractRawDataView
         refreshButton.setEnabled(true);
         this.add(refreshButton, LAYER_FIVE);
 
+        ET_JButton showSessionButton = new ET_JButton("Toggle Show Sessions");
+        showSessionButton.setBounds(leftMargin + 690, topMargin + 670, 135, 22);
+        showSessionButton.addActionListener((ActionEvent ae) -> {
+            showSessions = !showSessions;
+            preparePanel(true, false);
+        });
+
+        showSessionButton.setEnabled(true);
+        this.add(showSessionButton, LAYER_FIVE);
+
         ET_JButton editReportSettingsButton = new ET_JButton("Edit Report Settings");
-        editReportSettingsButton.setBounds(602, topMargin + 600, 120, 22);
+        editReportSettingsButton.setBounds(showSessions ? 602 : leftMargin + 10, topMargin + 600, 120, 22);
         editReportSettingsButton.addActionListener((ActionEvent ae) -> {
             ReportSettingsInterface.EditReportSettings(project.getSuperSample().getReportSettingsModel(), uPbReduxFrame);
             uPbReduxFrame.updateReportTable(false, true, "");
@@ -513,7 +534,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
         this.add(editReportSettingsButton, LAYER_FIVE);
 
         ET_JButton concordiaSettingsButton = new ET_JButton("Concordia Settings");
-        concordiaSettingsButton.setBounds(602, topMargin + 550, 120, 22);
+        concordiaSettingsButton.setBounds(showSessions ? 602 : leftMargin + 10, topMargin + 550, 120, 22);
         concordiaSettingsButton.addActionListener((ActionEvent ae) -> {
             ((AliquotDetailsDisplayInterface) concordiaGraphPanel).showConcordiaDisplayOptionsDialog();
         });
@@ -550,8 +571,6 @@ public class AbstractDataMonitorView extends AbstractRawDataView
 
             ((ConcordiaGraphPanel) concordiaGraphPanel).setCurrentGraphAxesSetup(new GraphAxesSetup("C", 2));
 
-            setConcordiaBounds(725, 620, 625);
-
             ((ConcordiaGraphPanel) concordiaGraphPanel).setShowTitleBox(false);
 
             ((ConcordiaGraphPanel) concordiaGraphPanel).//
@@ -568,10 +587,12 @@ public class AbstractDataMonitorView extends AbstractRawDataView
 
             ((ConcordiaGraphPanel) concordiaGraphPanel).setShowTightToEdges(true);
 
-            kwikiConcordiaToolBar = new KwikiConcordiaToolBar(//
-                    940, topMargin + concordiaGraphPanel.getHeight() + topMargin + 50, concordiaGraphPanel, null);
-
         }
+
+        setConcordiaBounds(showSessions ? 725 : leftMargin + 135, showSessions ? 620 : 900, 625);
+        
+        kwikiConcordiaToolBar = new KwikiConcordiaToolBar(//
+                940, topMargin + concordiaGraphPanel.getHeight() + topMargin + 50, concordiaGraphPanel, null);
 
         ((ConcordiaGraphPanel) concordiaGraphPanel).setSample(project.getSuperSample());
         ((ConcordiaGraphPanel) concordiaGraphPanel).setViewOptions();
@@ -641,11 +662,11 @@ public class AbstractDataMonitorView extends AbstractRawDataView
         ((DateProbabilityDensityPanel) probabilityPanel).//
                 setSelectedFractions(filterActiveUPbFractions(project.getSuperSample().getUpbFractionsUnknown()));
 
-        probabilityPanel.setBounds(1355, topMargin + 60, pdfWidth, pdfHeight - 5);
+        probabilityPanel.setBounds(showSessions ? 1355: leftMargin + 1050 , topMargin + 60, showSessions ? pdfWidth: 875, pdfHeight - 5);
 
         ((DateProbabilityDensityPanel) probabilityPanel).setChosenDateName("age206_238r");
 
-        ((DateProbabilityDensityPanel) probabilityPanel).setGraphWidth(pdfWidth - 25);
+        ((DateProbabilityDensityPanel) probabilityPanel).setGraphWidth((showSessions ? pdfWidth : 875) - 25);
 
         ((DateProbabilityDensityPanel) probabilityPanel).setGraphHeight(pdfHeight - 25);
 
@@ -661,8 +682,9 @@ public class AbstractDataMonitorView extends AbstractRawDataView
     public void prepareDateTree() {
         // april 2016 TODO: move to own method
         JScrollPane dateTreeByAliquot_ScrollPane = new javax.swing.JScrollPane();
-        dateTreeByAliquot_ScrollPane.setBounds(600, topMargin + 50, 125, 500);
+        dateTreeByAliquot_ScrollPane.setBounds(showSessions ? 600 : leftMargin + 10, topMargin + 50, 125, 500);
         dateTreeByAliquot = new SampleTreeAnalysisMode(project.getSuperSample());
+        
         dateTreeByAliquot.setSampleTreeChange(this);
         dateTreeByAliquot.buildTree();
         dateTreeByAliquot.expandAllNodes();
@@ -817,10 +839,9 @@ public class AbstractDataMonitorView extends AbstractRawDataView
             });
 
             tripoliFractionsByDate.addAll(tripoliFractions);
-            System.out.println("Latest = " + tripoliFractionsByDate.first().getFractionID());
-            mostRecentFractionData.setText(tripoliFractionsByDate.first().getFractionID());
-
             updateDisplays(tripoliFractionsByDate.first().getFractionID());
+            System.out.println("Latest = " + tripoliFractionsByDate.first().dateSummary());
+            mostRecentFractionData.setText("** LATEST: " + tripoliFractionsByDate.first().dateSummary());
 
             ((ReportAliquotFractionsView) ((TabbedReportViews) reportTableTabbedPane).getViewTabulatedAliquotActiveFractions())
                     .forceVerticalScrollToShowSpecificRow(tripoliFractionsByDate.first().getFractionID());
@@ -976,7 +997,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
         paintInit(g2d);
 
         // draw box around possibly missing pdf
-        g2d.drawRect(1350, topMargin + 50, pdfWidth + 5, pdfHeight + 5);
+        g2d.drawRect(showSessions ? 1350: leftMargin + 1045, topMargin + 50, (showSessions ? pdfWidth : 875 ) + 5, pdfHeight + 5);
     }
 
     /**
