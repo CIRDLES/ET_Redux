@@ -107,6 +107,8 @@ public final class GeochronProjectExportManager extends DialogEditor {
     @Override
     public void initDialogContent() {
 
+        setTitle("Geochron Upload Manager");
+
         geoPassUserName_text.setDocument(new UnDoAbleDocument(geoPassUserName_text, true));
         geoPassUserName_text.setText(myState.getReduxPreferences().getGeochronUserName());
 
@@ -131,19 +133,21 @@ public final class GeochronProjectExportManager extends DialogEditor {
         int row = 0;
         int initialSampleHeight = 75;
         for (SampleInterface sample : project.getProjectSamples()) {
-            JPanel geochronAliquotManager
-                    = new GeochronAliquotManager(
-                            project,// needs to be interfaced
-                            sample, //
-                            myState.getReduxPreferences().getGeochronUserName(), //
-                            myState.getReduxPreferences().getGeochronPassWord(), //
-                            geoSamplesUserCode, //
-                            leftMargin, //
-                            topMarginForSampleDetails + row * initialSampleHeight, 1100, initialSampleHeight);
-            aliquotsLayeredPane.add(geochronAliquotManager, JLayeredPane.DEFAULT_LAYER);
-            geochronAliquotManager.repaint();
+            if (!sample.isReferenceMaterial()) {
+                JPanel geochronAliquotManager
+                        = new GeochronAliquotManager(
+                                project,// needs to be interfaced
+                                sample, //
+                                myState.getReduxPreferences().getGeochronUserName(), //
+                                myState.getReduxPreferences().getGeochronPassWord(), //
+                                geoSamplesUserCode, //
+                                leftMargin, //
+                                topMarginForSampleDetails + row * initialSampleHeight, 1100, initialSampleHeight);
+                aliquotsLayeredPane.add(geochronAliquotManager, JLayeredPane.DEFAULT_LAYER);
+                geochronAliquotManager.repaint();
 
-            row++;
+                row++;
+            }
         }
 
         aliquotsLayeredPane.setPreferredSize(new Dimension(1100, topMarginForSampleDetails + (row + 1) * 100));

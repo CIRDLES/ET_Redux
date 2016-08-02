@@ -3784,7 +3784,7 @@ private void startStopLiveUpdate_buttonActionPerformed(java.awt.event.ActionEven
 
         } else if (sample.isAnalysisTypeLAICPMS()) {
             if (sample.isSampleTypeAnalysis()) {
-                myEditor = new AliquotEditorForLAICPMS(this, true, theSample, aliquot);
+                myEditor = new AliquotEditorForLAICPMS(this, true, sample, aliquot);
             } else if (sample.isSampleTypeLegacy()) {
                 myEditor = new AliquotLegacyEditorForLAICPMS(this, true, theSample, aliquot);
             }

@@ -19,11 +19,15 @@ import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import org.earthtime.exceptions.ETWarningDialog;
 import org.geosamples.XMLDocumentInterface;
 import org.geosamples.samples.Samples;
+import static org.geosamples.samples.Samples.registerSampleMetaDataWithSesarTestService;
+import static org.geosamples.samples.Samples.serializeSamplesToCompliantXMLPrettyPrint;
 import org.xml.sax.SAXException;
 
 /**
@@ -31,9 +35,9 @@ import org.xml.sax.SAXException;
  * @author James F. Bowring <bowring at gmail.com>
  */
 public class GeoSamplesWebServices {
-    
-    public static String CURRENT_GEOSAMPLES_WEBSERVICE_FOR_DOWNLOAD_IGSN = 
-            org.geosamples.Constants.GEOSAMPLES_TEST_SAMPLES_SERVER + org.geosamples.Constants.GEOSAMPLES_SAMPLE_IGSN_WEBSERVICE_NAME;
+
+    public static String CURRENT_GEOSAMPLES_WEBSERVICE_FOR_DOWNLOAD_IGSN
+            = org.geosamples.Constants.GEOSAMPLES_TEST_SAMPLES_SERVER + org.geosamples.Constants.GEOSAMPLES_SAMPLE_IGSN_WEBSERVICE_NAME;
 
     /**
      * This class is used to control access to GeoSamples services, since we are
@@ -73,6 +77,26 @@ public class GeoSamplesWebServices {
         return samples;
     }
 
+    public static XMLDocumentInterface registerSampleAtGeoSamplesIGSN(Samples.Sample sesarSample, boolean isVerbose) {
+        XMLDocumentInterface mySamples = new Samples();
+        mySamples.getSample().add(sesarSample);
+
+        try {
+            System.out.println(serializeSamplesToCompliantXMLPrettyPrint(mySamples));
+        } catch (JAXBException jAXBException) {
+        }
+        
+        XMLDocumentInterface success = null;
+        try {
+            success = registerSampleMetaDataWithSesarTestService("bowring@gmail.com", "redux00", mySamples);
+            System.out.println("REGISTERED!!!");
+        } catch (JAXBException | NoSuchAlgorithmException | KeyStoreException | KeyManagementException | IOException ex) {
+            Logger.getLogger(Samples.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return success;
+    }
+
     public static boolean isSampleRegistered(String igsn) {
         XMLDocumentInterface downloadedSample = getSampleMetaDataFromGeoSamplesIGSN(igsn, false);
 
@@ -96,5 +120,20 @@ public class GeoSamplesWebServices {
         }
 
         return isRegistered;
+    }
+
+    public static boolean isWellFormedIGSN(String igsn, String userCode) {
+        boolean retval = (igsn.length() == 9);
+
+        if (userCode.length() == 3) {
+            retval = retval && igsn.substring(0, 3).toUpperCase().matches("^[A-Z]{3}");
+        } else { // assume length 5
+            retval = retval && igsn.substring(0, 5).toUpperCase().matches("^[A-Z]{5}");
+        }
+
+        retval = retval && igsn.substring(userCode.length(), 9).matches("^[A-Z0-9]{" + (igsn.length() - userCode.length()) + "}");
+
+        return retval;
+
     }
 }

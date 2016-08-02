@@ -32,22 +32,22 @@ import org.xml.sax.SAXException;
 public class GeoPassIDValidator {
 
     /**
-     * 
+     *
      * @param username
      * @param password
      * @param isVerbose
-     * @return 
+     * @return
      */
     public static String validateGeoPassID(String username, String password, boolean isVerbose) {
 
-        // using geochron as identifier since both are same and need backward compartibility for serialization
+        // using geochron as identifier since both are same and need backward compatibility for serialization
         ReduxPersistentState myState = ReduxPersistentState.getExistingPersistentState();
         myState.getReduxPreferences().setGeochronUserName(username);
         myState.getReduxPreferences().setGeochronPassWord(password);
         myState.serializeSelf();
 
         ArrayList<String> userCodes = null;
-        
+
         try {
             userCodes = org.geosamples.credentials.CredentialsValidator.validateUserCredentialsProductionServiceV2(username, password);
         } catch (IOException | ParserConfigurationException | SAXException | NoSuchAlgorithmException | KeyStoreException | KeyManagementException anException) {
