@@ -1876,9 +1876,9 @@ public final class ReduxLabData implements Serializable {
      * @return the analystName
      */
     public String getAnalystName() {
-        if (analystName == null) {
+        //if (analystName == null) {
             analystName = System.getProperty("user.name");
-        }
+       // }
         return analystName;
     }
 

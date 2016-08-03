@@ -77,7 +77,15 @@ public class GeoSamplesWebServices {
         return samples;
     }
 
-    public static XMLDocumentInterface registerSampleAtGeoSamplesIGSN(Samples.Sample sesarSample, boolean isVerbose) {
+    /**
+     *
+     * @param sesarSample the value of sesarSample
+     * @param isVerbose the value of isVerbose
+     * @param userName the value of userName
+     * @param password the value of password
+     * @return 
+     */
+    public static XMLDocumentInterface registerSampleAtGeoSamplesIGSN(Samples.Sample sesarSample, boolean isVerbose, String userName, String password) {
         XMLDocumentInterface mySamples = new Samples();
         mySamples.getSample().add(sesarSample);
 
@@ -85,12 +93,18 @@ public class GeoSamplesWebServices {
             System.out.println(serializeSamplesToCompliantXMLPrettyPrint(mySamples));
         } catch (JAXBException jAXBException) {
         }
-        
+
         XMLDocumentInterface success = null;
         try {
-            success = registerSampleMetaDataWithSesarTestService("bowring@gmail.com", "redux00", mySamples);
-            System.out.println("REGISTERED!!!");
+            success = registerSampleMetaDataWithSesarTestService(userName, password, mySamples);
+            if (success.getSample().size() > 0) {
+                System.out.println("REGISTERED!!!");
+            } else {
+                System.out.println("FAILURE!!!");
+                success = null;
+            }
         } catch (JAXBException | NoSuchAlgorithmException | KeyStoreException | KeyManagementException | IOException ex) {
+            success = null;
             Logger.getLogger(Samples.class.getName()).log(Level.SEVERE, null, ex);
         }
 

@@ -765,7 +765,10 @@ public class DateProbabilityDensityPanel extends JLayeredPane
 
         // one row for each aliquot even though some may be dummy aliquots, based on count
         // row zero for sample totals and [0][size -+ 1] stores max for plotting scale
-        stackedAliquotKernels = new double[sample.getAliquots().size() + 1][pdfPoints.size() + 1];
+        //stackedAliquotKernels = new double[sample.getAliquots().size() + 1][pdfPoints.size() + 1];
+        // aug 2016 hack to fix project problem
+        stackedAliquotKernels = new double[Math.max(sample.getAliquots().size(), 9) + 1][pdfPoints.size() + 1];
+
 
         // June 2013 experiment with Vermeesch KDE
         ArrayList<Double> X = new ArrayList<>();

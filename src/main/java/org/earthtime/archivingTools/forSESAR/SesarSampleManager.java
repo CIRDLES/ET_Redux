@@ -54,6 +54,8 @@ public class SesarSampleManager extends DialogEditor {
     private JTextField sampleIGSNText;
     private JCheckBox autoGenerateCheckBox;
     private String localSampleName;
+    private String userName;
+    private String password;
 
     /**
      * Creates new form SesarSampleManager
@@ -62,12 +64,17 @@ public class SesarSampleManager extends DialogEditor {
      * @param sesarSample
      * @param localSampleName
      * @param editable 
+     * @param userName the value of userName
+     * @param password the value of password 
      */
-    public SesarSampleManager(Frame parent, boolean modal, Samples.Sample sesarSample, String localSampleName, boolean editable) {
+    public SesarSampleManager(
+            Frame parent, boolean modal, Samples.Sample sesarSample, String localSampleName, boolean editable, String userName, String password) {
         super(parent, modal);
 
         this.sesarSample = sesarSample;
         this.localSampleName = localSampleName;
+        this.userName = userName;
+        this.password = password;
 
         initComponents();
 
@@ -261,7 +268,7 @@ public class SesarSampleManager extends DialogEditor {
                         doRegister = true;
                     }
                 } else {
-                    sesarSample.setIgsn("");
+                    sesarSample.setIgsn(null); // causes marshaller to ignore
                     doRegister = true;
                 }
                 if (doRegister) {
@@ -270,7 +277,7 @@ public class SesarSampleManager extends DialogEditor {
                     sesarSample.setLatitude(new BigDecimal(decimalLatitude.getText()));
                     sesarSample.setLongitude(new BigDecimal(decimalLongitude.getText()));
                     // register at SESAR
-                    XMLDocumentInterface success = registerSampleAtGeoSamplesIGSN(sesarSample, true);
+                    XMLDocumentInterface success = registerSampleAtGeoSamplesIGSN(sesarSample, true, userName, password);
                     if (success != null) {
                         sesarSample.setIgsn(success.getSample().get(0).getIgsn());
                         close();
