@@ -299,6 +299,9 @@ public class UnivKansasElementIIFileHandler extends AbstractRawDataFileHandler {
                 System.out.println("\n**** Element II FractionID  " + fractionID + "  " + fractionDateValue.toString() + "  is std: " + tripoliFraction.isStandard() + " >>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
 
                 myTripoliFractions.add(tripoliFraction);
+                if (tripoliFraction.getFractionID().compareToIgnoreCase("15YP12-018")==0){
+                    System.out.println("caution");
+                }
 
             } catch (ParseException parseException) {
                 // TODO: drop out here

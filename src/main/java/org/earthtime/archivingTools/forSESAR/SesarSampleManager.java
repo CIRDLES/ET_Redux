@@ -29,15 +29,18 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import static javax.swing.SwingConstants.RIGHT;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import static org.earthtime.archivingTools.GeoSamplesWebServices.CURRENT_GEOSAMPLES_WEBSERVICE_FOR_DOWNLOAD_IGSN;
+import static org.earthtime.archivingTools.GeoSamplesWebServices.isSampleRegistered;
+import static org.earthtime.archivingTools.GeoSamplesWebServices.isWellFormedIGSN;
+import static org.earthtime.archivingTools.GeoSamplesWebServices.registerSampleAtGeoSamplesIGSN;
 import org.earthtime.beans.ET_JButton;
-import org.earthtime.dataDictionaries.SESAR_MaterialTypesEnum;
-import org.earthtime.dataDictionaries.SESAR_ObjectTypesEnum;
 import org.earthtime.dialogs.DialogEditor;
+import org.geosamples.XMLDocumentInterface;
 import org.geosamples.samples.Samples;
 
 /**
@@ -51,15 +54,27 @@ public class SesarSampleManager extends DialogEditor {
     private JTextField sampleIGSNText;
     private JCheckBox autoGenerateCheckBox;
     private String localSampleName;
+    private String userName;
+    private String password;
 
     /**
      * Creates new form SesarSampleManager
+     * @param parent
+     * @param modal
+     * @param sesarSample
+     * @param localSampleName
+     * @param editable 
+     * @param userName the value of userName
+     * @param password the value of password 
      */
-    public SesarSampleManager(Frame parent, boolean modal, Samples.Sample sesarSample, String localSampleName, boolean editable) {
+    public SesarSampleManager(
+            Frame parent, boolean modal, Samples.Sample sesarSample, String localSampleName, boolean editable, String userName, String password) {
         super(parent, modal);
 
         this.sesarSample = sesarSample;
         this.localSampleName = localSampleName;
+        this.userName = userName;
+        this.password = password;
 
         initComponents();
 
@@ -129,29 +144,39 @@ public class SesarSampleManager extends DialogEditor {
 
         sesarSampleDetailsLayeredPane.add(labelFactory("Sample Type:", 10, 70, 100));
 
-        JComboBox<SESAR_ObjectTypesEnum> sesarObjectTypesCombo = new JComboBox<>();
-        sesarObjectTypesCombo.setEnabled(editable);
-        sesarObjectTypesCombo.setModel(new DefaultComboBoxModel<>(SESAR_ObjectTypesEnum.values()));
-        sesarObjectTypesCombo.setBounds(120, 70, 200, ROW_HEIGHT);
-        sesarObjectTypesCombo.setFont(ReduxConstants.sansSerif_12_Bold);
-        sesarSampleDetailsLayeredPane.add(sesarObjectTypesCombo);
-        sesarObjectTypesCombo.setSelectedItem(sesarSample.getSampleType());
+        JComboBox<org.geosamples.samples.SampleType> sesarSampleTypesCombo = new JComboBox<>();
+        sesarSampleTypesCombo.setEnabled(editable);
+        sesarSampleTypesCombo.setModel(new DefaultComboBoxModel<>(org.geosamples.samples.SampleType.values()));
+        sesarSampleTypesCombo.setBounds(120, 70, 200, ROW_HEIGHT);
+        sesarSampleTypesCombo.setFont(ReduxConstants.sansSerif_12_Bold);
+        sesarSampleDetailsLayeredPane.add(sesarSampleTypesCombo);
+        sesarSampleTypesCombo.setSelectedItem(org.geosamples.samples.SampleType.valueOf(sesarSample.getSampleType().toUpperCase().replaceAll(" ", "_")));
 
         sesarSampleDetailsLayeredPane.add(labelFactory("Material Type:", 10, 100, 100));
 
-        JComboBox<SESAR_MaterialTypesEnum> sesarMaterialTypesCombo = new JComboBox<>();
+        JComboBox<org.geosamples.samples.Material> sesarMaterialTypesCombo = new JComboBox<>();
         sesarMaterialTypesCombo.setEnabled(editable);
-        sesarMaterialTypesCombo.setModel(new DefaultComboBoxModel<>(SESAR_MaterialTypesEnum.values()));
+        sesarMaterialTypesCombo.setModel(new DefaultComboBoxModel<>(org.geosamples.samples.Material.values()));
         sesarMaterialTypesCombo.setBounds(120, 100, 200, ROW_HEIGHT);
         sesarMaterialTypesCombo.setFont(ReduxConstants.sansSerif_12_Bold);
         sesarSampleDetailsLayeredPane.add(sesarMaterialTypesCombo);
-        sesarMaterialTypesCombo.setSelectedItem(sesarSample.getMaterial());
+        sesarMaterialTypesCombo.setSelectedItem(org.geosamples.samples.Material.valueOf(sesarSample.getMaterial().toUpperCase().replaceAll(" ", "_")));
+        
+//        sesarSampleDetailsLayeredPane.add(labelFactory("Classification:", 10, 130, 100));
+//
+//        JComboBox<org.geosamples.samples.Classification> sesarClassificationCombo = new JComboBox<>();
+//        sesarClassificationCombo.setEnabled(editable);
+//        sesarClassificationCombo.setModel(new DefaultComboBoxModel<>(org.geosamples.samples.Classification.values()));
+//        sesarClassificationCombo.setBounds(120, 130, 200, ROW_HEIGHT);
+//        sesarClassificationCombo.setFont(ReduxConstants.sansSerif_12_Bold);
+//        sesarSampleDetailsLayeredPane.add(sesarClassificationCombo);
+//        sesarClassificationCombo.setSelectedItem(sesarSample.getClassification());
 
-        sesarSampleDetailsLayeredPane.add(labelFactory("decimal Lat:", 10, 130, 100));
+        sesarSampleDetailsLayeredPane.add(labelFactory("decimal Lat:", 10, 160, 100));
         JTextField decimalLatitude = new JTextField();
         decimalLatitude.setDocument(new BigDecimalDocument(decimalLatitude, editable));
         decimalLatitude.setText(sesarSample.getLatitude() == null ? "0" : sesarSample.getLatitude().setScale(6).toPlainString());
-        decimalLatitude.setBounds(120, 130, 100, ROW_HEIGHT);
+        decimalLatitude.setBounds(120, 160, 100, ROW_HEIGHT);
         decimalLatitude.setFont(ReduxConstants.sansSerif_12_Bold);
         sesarSampleDetailsLayeredPane.add(decimalLatitude);
         decimalLatitude.setInputVerifier(new InputVerifier() {
@@ -180,11 +205,11 @@ public class SesarSampleManager extends DialogEditor {
         }
         );
 
-        sesarSampleDetailsLayeredPane.add(labelFactory("decimal Long:", 10, 160, 100));
+        sesarSampleDetailsLayeredPane.add(labelFactory("decimal Long:", 10, 190, 100));
         JTextField decimalLongitude = new JTextField();
         decimalLongitude.setDocument(new BigDecimalDocument(decimalLongitude, editable));
         decimalLongitude.setText(sesarSample.getLongitude() == null ? "0" : sesarSample.getLongitude().setScale(6).toPlainString());
-        decimalLongitude.setBounds(120, 160, 100, ROW_HEIGHT);
+        decimalLongitude.setBounds(120, 190, 100, ROW_HEIGHT);
         decimalLongitude.setFont(ReduxConstants.sansSerif_12_Bold);
         sesarSampleDetailsLayeredPane.add(decimalLongitude);
         decimalLongitude.setInputVerifier(new InputVerifier() {
@@ -224,49 +249,49 @@ public class SesarSampleManager extends DialogEditor {
 
         if (editable) {
             JButton registerSampleButton = new ET_JButton("Register this Sample");
-            registerSampleButton.setBounds(120, 200, 200, 25);
+            registerSampleButton.setBounds(120, 230, 200, 25);
             registerSampleButton.setFont(ReduxConstants.sansSerif_12_Bold);
             sesarSampleDetailsLayeredPane.add(registerSampleButton);
             registerSampleButton.addActionListener((ActionEvent e) -> {
                 boolean doRegister = false;
                 String messageText = "";
-//                if (!autoGenerateCheckBox.isSelected()) {
-//                    String proposedIGSN = sampleIGSNText.getText();
-//                    if (!sesarSample.confirmUserCodeCompliance(proposedIGSN)) {
-//                        messageText = "User code prefix of IGSN should be: " + sesarSample.getUser_code();
-//                    } else if (isSampleRegistered(proposedIGSN)) {
-//                        messageText = "The IGSN: " + proposedIGSN + " is already in use.";
-//                    } else if (!SesarSample.isWellFormedIGSN(proposedIGSN, sesarSample.getUser_code())) {
-//                        messageText = "The IGSN: " + proposedIGSN + " is not of the form " + sesarSample.getUser_code() + "NNNNNNN\".substring(0, (9 - userCode.length())) + \", where N is any digit or any capital letter.";
-//                    } else {
-//                        sesarSample.setIgsn(proposedIGSN);
-//                        doRegister = true;
-//                    }
-//                } else {
-//                    sesarSample.setIgsn("");
-//                    doRegister = true;
-//                }
-//                if (doRegister) {
-//                    sesarSample.setSampleType(((SESAR_ObjectTypesEnum) sesarObjectTypesCombo.getSelectedItem()).getName());
-//                    sesarSample.setMaterial(((SESAR_MaterialTypesEnum) sesarMaterialTypesCombo.getSelectedItem()).getName());
-//                    sesarSample.setLatitude(new BigDecimal(decimalLatitude.getText()));
-//                    sesarSample.setLongitude(new BigDecimal(decimalLongitude.getText()));
-//                    // register at SESAR
-//                    String igsnValue = sesarSample.uploadAndRegisterSesarSample();
-//                    if (igsnValue.length() > 0) {
-//                        sesarSample.setIgsn(igsnValue);
-//                        close();
-//                    } else {
-//                        sesarSample.setIgsn("NONE");
-//                    }
-//                    
-//                } else {
-//                    JOptionPane.showMessageDialog(
-//                            null,
-//                            new String[]{messageText},
-//                            "ET Redux Warning",
-//                            JOptionPane.WARNING_MESSAGE);
-//                }
+                if (!autoGenerateCheckBox.isSelected()) {
+                    String proposedIGSN = sampleIGSNText.getText();
+                    if (!proposedIGSN.toUpperCase().startsWith(sesarSample.getUserCode().toUpperCase())) {
+                        messageText = "User code prefix of IGSN should be: " + sesarSample.getUserCode();
+                    } else if (isSampleRegistered(proposedIGSN)) {
+                        messageText = "The IGSN: " + proposedIGSN + " is already in use.";
+                    } else if (!isWellFormedIGSN(proposedIGSN, sesarSample.getUserCode())) {
+                        messageText = "The IGSN: " + proposedIGSN + " is not of the form " + sesarSample.getUserCode() + "NNNNNNN\".substring(0, (9 - userCode.length())) + \", where N is any digit or any capital letter.";
+                    } else {
+                        sesarSample.setIgsn(proposedIGSN);
+                        doRegister = true;
+                    }
+                } else {
+                    sesarSample.setIgsn(null); // causes marshaller to ignore
+                    doRegister = true;
+                }
+                if (doRegister) {
+                    sesarSample.setSampleType(((org.geosamples.samples.SampleType) sesarSampleTypesCombo.getSelectedItem()).value());
+                    sesarSample.setMaterial(((org.geosamples.samples.Material) sesarMaterialTypesCombo.getSelectedItem()).value());
+                    sesarSample.setLatitude(new BigDecimal(decimalLatitude.getText()));
+                    sesarSample.setLongitude(new BigDecimal(decimalLongitude.getText()));
+                    // register at SESAR
+                    XMLDocumentInterface success = registerSampleAtGeoSamplesIGSN(sesarSample, true, userName, password);
+                    if (success != null) {
+                        sesarSample.setIgsn(success.getSample().get(0).getIgsn());
+                        close();
+                    } else {
+                        sesarSample.setIgsn("NONE");
+                    }
+                    
+                } else {
+                    JOptionPane.showMessageDialog(
+                            null,
+                            new String[]{messageText},
+                            "ET Redux Warning",
+                            JOptionPane.WARNING_MESSAGE);
+                }
             });
         }
 

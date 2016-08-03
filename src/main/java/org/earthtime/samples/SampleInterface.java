@@ -469,6 +469,12 @@ public interface SampleInterface {
      * @return the calculateTWrhoForLegacyData
      */
     public abstract boolean isCalculateTWrhoForLegacyData();
+    
+    public default boolean isReferenceMaterial(){
+        boolean retVal = false;
+        retVal = (getFractions().get(0).isStandard() || getFractions().get(0).isSecondaryStandard());
+        return retVal;
+    }
 
     // Aliquots **************************************************************** Aliquots ****************************************************************
     /**

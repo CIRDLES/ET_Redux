@@ -855,8 +855,8 @@ public class AliquotEditorDialog extends DialogEditor {
                 + getMyAliquot().getAliquotName()//
                 + "_" //
                 + getSample().getSampleIGSN()//
-                //                + "_"//
-                //                + getMyAliquot().getAliquotIGSN()//
+                                + "_"//
+                                + getMyAliquot().getAliquotIGSN()//
                 + fileExtension;
 
         File selectedFile = null;

@@ -21,6 +21,8 @@ test_*
 *.ser
 *.zip
 *.log
+tempDataForAliquotUpload
+tempDataForAliquotUploadzip
 
 
 # Misc data files

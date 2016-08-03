@@ -60,8 +60,8 @@ public class UPbReduxAliquotXMLConverter implements Converter {
      * @return
      */
     @Override
-    public boolean canConvert ( Class clazz ) {
-        return clazz.equals( UPbReduxAliquot.class );
+    public boolean canConvert(Class clazz) {
+        return clazz.equals(UPbReduxAliquot.class);
     }
 
     /**
@@ -71,106 +71,105 @@ public class UPbReduxAliquotXMLConverter implements Converter {
      * @param context
      */
     @Override
-    public void marshal ( Object value, HierarchicalStreamWriter writer,
-            MarshallingContext context ) {
+    public void marshal(Object value, HierarchicalStreamWriter writer,
+            MarshallingContext context) {
         Aliquot uPbReduxAliquot = (UPbReduxAliquot) value;
 
-        writer.startNode( "keyWordsCSV" );
-        context.convertAnother( uPbReduxAliquot.getKeyWordsCSV() );
+        writer.startNode("keyWordsCSV");
+        context.convertAnother(uPbReduxAliquot.getKeyWordsCSV());
         writer.endNode();
 
-        writer.startNode( "mySESARSampleMetadata" );
-        context.convertAnother( ((UPbReduxAliquot) uPbReduxAliquot).getMySESARSampleMetadata() );
+        writer.startNode("mySESARSampleMetadata");
+        context.convertAnother(((UPbReduxAliquot) uPbReduxAliquot).getMySESARSampleMetadata());
         writer.endNode();
 
-        writer.startNode( "analysisPurpose" );
-        writer.setValue( uPbReduxAliquot.getAnalysisPurpose().toString() );
+        writer.startNode("analysisPurpose");
+        writer.setValue(uPbReduxAliquot.getAnalysisPurpose().toString());
         writer.endNode();
 
-        writer.startNode( "sampleIGSN" );
-        writer.setValue( uPbReduxAliquot.getSampleIGSN() );
+        writer.startNode("sampleIGSN");
+        writer.setValue(uPbReduxAliquot.getSampleIGSN());
         writer.endNode();
 
-        writer.startNode( "aliquotIGSN" );
-        writer.setValue( "Deprecated" );//uPbReduxAliquot.getAliquotIGSN() );
+        writer.startNode("aliquotIGSN");
+        writer.setValue(uPbReduxAliquot.getAliquotIGSN());
         writer.endNode();
 
-        writer.startNode( "aliquotName" );
-        writer.setValue( uPbReduxAliquot.getAliquotName() );
+        writer.startNode("aliquotName");
+        writer.setValue(uPbReduxAliquot.getAliquotName());
         writer.endNode();
 
-        writer.startNode( "laboratoryName" );
-        writer.setValue( uPbReduxAliquot.getLaboratoryName() );
+        writer.startNode("laboratoryName");
+        writer.setValue(uPbReduxAliquot.getLaboratoryName());
         writer.endNode();
 
-        writer.startNode( "analystName" );
-        writer.setValue( uPbReduxAliquot.getAnalystName() );
+        writer.startNode("analystName");
+        writer.setValue(uPbReduxAliquot.getAnalystName());
         writer.endNode();
 
-        writer.startNode( "aliquotComment" );
-        writer.setValue( uPbReduxAliquot.getAliquotComment() );
+        writer.startNode("aliquotComment");
+        writer.setValue(uPbReduxAliquot.getAliquotComment());
         writer.endNode();
 
-        writer.startNode( "aliquotReference" );
-        writer.setValue( uPbReduxAliquot.getAliquotReference() );
+        writer.startNode("aliquotReference");
+        writer.setValue(uPbReduxAliquot.getAliquotReference());
         writer.endNode();
 
-        writer.startNode( "aliquotInstrumentalMethod" );
-        writer.setValue( uPbReduxAliquot.getAliquotInstrumentalMethod() );
+        writer.startNode("aliquotInstrumentalMethod");
+        writer.setValue(uPbReduxAliquot.getAliquotInstrumentalMethod());
         writer.endNode();
 
-        writer.startNode( "aliquotInstrumentalMethodReference" );
-        writer.setValue( uPbReduxAliquot.getAliquotInstrumentalMethodReference() );
+        writer.startNode("aliquotInstrumentalMethodReference");
+        writer.setValue(uPbReduxAliquot.getAliquotInstrumentalMethodReference());
         writer.endNode();
 
-        writer.startNode( "calibrationUnct206-238" );
-        writer.setValue( uPbReduxAliquot.getCalibrationUnct206_238().toPlainString() );
+        writer.startNode("calibrationUnct206-238");
+        writer.setValue(uPbReduxAliquot.getCalibrationUnct206_238().toPlainString());
         writer.endNode();
 
-        writer.startNode( "calibrationUnct208-232" );
-        writer.setValue( uPbReduxAliquot.getCalibrationUnct208_232().toPlainString() );
+        writer.startNode("calibrationUnct208-232");
+        writer.setValue(uPbReduxAliquot.getCalibrationUnct208_232().toPlainString());
         writer.endNode();
 
-        writer.startNode( "calibrationUnct207-206" );
-        writer.setValue( uPbReduxAliquot.getCalibrationUnct207_206().toPlainString() );
+        writer.startNode("calibrationUnct207-206");
+        writer.setValue(uPbReduxAliquot.getCalibrationUnct207_206().toPlainString());
         writer.endNode();
 
         // nov 2010
-        writer.startNode( "analysisImages" );
-        context.convertAnother( ((UPbReduxAliquot) uPbReduxAliquot).getAnalysisImages() );
+        writer.startNode("analysisImages");
+        context.convertAnother(((UPbReduxAliquot) uPbReduxAliquot).getAnalysisImages());
         writer.endNode();
 
-
-        writer.startNode( "mineralStandardModels" );
-        context.convertAnother( uPbReduxAliquot.getMineralStandardModels() );
+        writer.startNode("mineralStandardModels");
+        context.convertAnother(uPbReduxAliquot.getMineralStandardModels());
         writer.endNode();
 
-        writer.startNode( "sampleDateModels" );
-        context.convertAnother( uPbReduxAliquot.legalizeSampleDateModels() );
+        writer.startNode("sampleDateModels");
+        context.convertAnother(uPbReduxAliquot.legalizeSampleDateModels());
         writer.endNode();
 
-        writer.startNode( "pbBlanks" );
-        context.convertAnother( uPbReduxAliquot.getPbBlanksForXMLSerialization() );
+        writer.startNode("pbBlanks");
+        context.convertAnother(uPbReduxAliquot.getPbBlanksForXMLSerialization());
         writer.endNode();
 
-        writer.startNode( "tracers" );
-        context.convertAnother( uPbReduxAliquot.getTracersForXMLSerialization() );
+        writer.startNode("tracers");
+        context.convertAnother(uPbReduxAliquot.getTracersForXMLSerialization());
         writer.endNode();
 
-        writer.startNode( "alphaPbModels" );
-        context.convertAnother( uPbReduxAliquot.getAlphaPbModelsForXMLSerialization() );
+        writer.startNode("alphaPbModels");
+        context.convertAnother(uPbReduxAliquot.getAlphaPbModelsForXMLSerialization());
         writer.endNode();
 
-        writer.startNode( "alphaUModels" );
-        context.convertAnother( uPbReduxAliquot.getAlphaUModelsForXMLSerialization() );
+        writer.startNode("alphaUModels");
+        context.convertAnother(uPbReduxAliquot.getAlphaUModelsForXMLSerialization());
         writer.endNode();
 
-        writer.startNode( "analysisFractions" );
-        context.convertAnother( uPbReduxAliquot.getAnalysisFractions() );
+        writer.startNode("analysisFractions");
+        context.convertAnother(uPbReduxAliquot.getAnalysisFractions());
         writer.endNode();
 
-        writer.startNode( "physicalConstantsModelII" );
-        context.convertAnother( uPbReduxAliquot.getPhysicalConstantsModel() );
+        writer.startNode("physicalConstantsModelII");
+        context.convertAnother(uPbReduxAliquot.getPhysicalConstantsModel());
         writer.endNode();
     }
 
@@ -181,261 +180,257 @@ public class UPbReduxAliquotXMLConverter implements Converter {
      * @return
      */
     @Override
-    public Object unmarshal ( HierarchicalStreamReader reader,
-            UnmarshallingContext context ) {
+    public Object unmarshal(HierarchicalStreamReader reader,
+            UnmarshallingContext context) {
         Aliquot uPbReduxAliquot = new UPbReduxAliquot();
 
         reader.moveDown();
 
-        if ( "keyWordsCSV".equalsIgnoreCase( reader.getNodeName() ) ) {
-            uPbReduxAliquot.setKeyWordsCSV( reader.getValue() );
+        if ("keyWordsCSV".equalsIgnoreCase(reader.getNodeName())) {
+            uPbReduxAliquot.setKeyWordsCSV(reader.getValue());
             reader.moveUp();
 
             reader.moveDown();
         } else {
-            uPbReduxAliquot.setKeyWordsCSV( "" );
+            uPbReduxAliquot.setKeyWordsCSV("");
         }
 
-
-        if ( "mySESARSampleMetadata".equalsIgnoreCase( reader.getNodeName() ) ) {
+        if ("mySESARSampleMetadata".equalsIgnoreCase(reader.getNodeName())) {
             // do nothing for now Oct 2010
             reader.moveUp();
             reader.moveDown();
         }
 
-        if ( "analysisPurpose".equalsIgnoreCase( reader.getNodeName() ) ) {
-            uPbReduxAliquot.setAnalysisPurpose( ANALYSIS_PURPOSE.valueOf( reader.getValue() ) );
+        if ("analysisPurpose".equalsIgnoreCase(reader.getNodeName())) {
+            uPbReduxAliquot.setAnalysisPurpose(ANALYSIS_PURPOSE.valueOf(reader.getValue()));
             reader.moveUp();
 
             reader.moveDown();
         } else {
-            uPbReduxAliquot.setAnalysisPurpose( ANALYSIS_PURPOSE.NONE );
+            uPbReduxAliquot.setAnalysisPurpose(ANALYSIS_PURPOSE.NONE);
         }
 
-        uPbReduxAliquot.setSampleIGSN( reader.getValue() );
+        uPbReduxAliquot.setSampleIGSN(reader.getValue());
         reader.moveUp();
 
         reader.moveDown();
-        uPbReduxAliquot.setAliquotIGSN( reader.getValue() );
+        uPbReduxAliquot.setAliquotIGSN(reader.getValue());
         reader.moveUp();
 
         reader.moveDown();
-        uPbReduxAliquot.setAliquotName( reader.getValue() );
+        uPbReduxAliquot.setAliquotName(reader.getValue());
         reader.moveUp();
 
         reader.moveDown();
-        uPbReduxAliquot.setLaboratoryName( reader.getValue() );
+        uPbReduxAliquot.setLaboratoryName(reader.getValue());
         reader.moveUp();
 
         reader.moveDown();
-        uPbReduxAliquot.setAnalystName( reader.getValue() );
+        uPbReduxAliquot.setAnalystName(reader.getValue());
         reader.moveUp();
 
         reader.moveDown();
-        uPbReduxAliquot.setAliquotComment( reader.getValue() );
+        uPbReduxAliquot.setAliquotComment(reader.getValue());
         reader.moveUp();
 
         reader.moveDown();
-        uPbReduxAliquot.setAliquotReference( reader.getValue() );
+        uPbReduxAliquot.setAliquotReference(reader.getValue());
         reader.moveUp();
 
         reader.moveDown();
-        uPbReduxAliquot.setAliquotInstrumentalMethod( reader.getValue() );
+        uPbReduxAliquot.setAliquotInstrumentalMethod(reader.getValue());
         reader.moveUp();
 
         reader.moveDown();
-        uPbReduxAliquot.setAliquotInstrumentalMethodReference( reader.getValue() );
+        uPbReduxAliquot.setAliquotInstrumentalMethodReference(reader.getValue());
         reader.moveUp();
 
         reader.moveDown();
-        uPbReduxAliquot.setCalibrationUnct206_238( new BigDecimal( reader.getValue() ) );
+        uPbReduxAliquot.setCalibrationUnct206_238(new BigDecimal(reader.getValue()));
         reader.moveUp();
 
         reader.moveDown();
-        uPbReduxAliquot.setCalibrationUnct208_232( new BigDecimal( reader.getValue() ) );
+        uPbReduxAliquot.setCalibrationUnct208_232(new BigDecimal(reader.getValue()));
         reader.moveUp();
 
         reader.moveDown();
-        uPbReduxAliquot.setCalibrationUnct207_206( new BigDecimal( reader.getValue() ) );
+        uPbReduxAliquot.setCalibrationUnct207_206(new BigDecimal(reader.getValue()));
         reader.moveUp();
 
         // nov 2010
         reader.moveDown();
-        if ( "analysisImages".equalsIgnoreCase( reader.getNodeName() ) ) {
+        if ("analysisImages".equalsIgnoreCase(reader.getNodeName())) {
             reader.moveUp(); /// ignore for now
             reader.moveDown();
         }
 
-        if ( "mineralStandardModels".equals( reader.getNodeName() ) ) {
+        if ("mineralStandardModels".equals(reader.getNodeName())) {
             Vector<AbstractRatiosDataModel> mineralStandardModels = new Vector<>();
             while (reader.hasMoreChildren()) {
                 reader.moveDown();
 
-                if ( "MineralStandardUPbModel".equals( reader.getNodeName() ) ) {
+                if ("MineralStandardUPbModel".equals(reader.getNodeName())) {
                     AbstractRatiosDataModel mineralStandardUPbModel = MineralStandardUPbModel.createNewInstance();
                     mineralStandardUPbModel = (AbstractRatiosDataModel) context.convertAnother(//
-                            mineralStandardUPbModel, MineralStandardUPbModel.class, new MineralStandardUPbModelXMLConverter() );
-                    mineralStandardModels.add( mineralStandardUPbModel );
+                            mineralStandardUPbModel, MineralStandardUPbModel.class, new MineralStandardUPbModelXMLConverter());
+                    mineralStandardModels.add(mineralStandardUPbModel);
                     reader.moveUp();
 
                     // pre may 2012
-                } else if ( "MineralStandardModel".equals( reader.getNodeName() ) ) {
+                } else if ("MineralStandardModel".equals(reader.getNodeName())) {
                     MineralStandardModel mineralStandardModel = new MineralStandardModel();
                     mineralStandardModel = (MineralStandardModel) context.convertAnother( //
-                            mineralStandardModel, MineralStandardModel.class, new MineralStandardModelXMLConverter() );
+                            mineralStandardModel, MineralStandardModel.class, new MineralStandardModelXMLConverter());
 
-                    AbstractRatiosDataModel mineralStandardUPbModel = MineralStandardModel.convertModel( mineralStandardModel );
-                    mineralStandardModels.add( mineralStandardUPbModel );
+                    AbstractRatiosDataModel mineralStandardUPbModel = MineralStandardModel.convertModel(mineralStandardModel);
+                    mineralStandardModels.add(mineralStandardUPbModel);
                     reader.moveUp();
                 }
 
             }
-            uPbReduxAliquot.setMineralStandardModels( mineralStandardModels );
+            uPbReduxAliquot.setMineralStandardModels(mineralStandardModels);
 
         }
         reader.moveUp();
 
         reader.moveDown();
-        if ( "sampleDateModels".equals( reader.getNodeName() ) ) {
+        if ("sampleDateModels".equals(reader.getNodeName())) {
             Vector<ValueModel> sampleDates = new Vector<>();
             while (reader.hasMoreChildren()) {
                 reader.moveDown();
                 SampleDateModel item = null;
-                if ( "SampleDateModel".equals( reader.getNodeName() ) ) {
+                if ("SampleDateModel".equals(reader.getNodeName())) {
                     item = new SampleDateModel();
-                    item = (SampleDateModel) context.convertAnother( item, SampleDateModel.class );
+                    item = (SampleDateModel) context.convertAnother(item, SampleDateModel.class);
                 } else {
                     // assume SampleDateInterceptModel
                     item = new SampleDateInterceptModel();
-                    item = (SampleDateModel) context.convertAnother( item, SampleDateInterceptModel.class );
+                    item = (SampleDateModel) context.convertAnother(item, SampleDateInterceptModel.class);
                 }
-                sampleDates.add( item );
+                sampleDates.add(item);
                 reader.moveUp();
             }
 
-            uPbReduxAliquot.setSampleDateModels( sampleDates );
+            uPbReduxAliquot.setSampleDateModels(sampleDates);
         }
         reader.moveUp();
 
         reader.moveDown();
-        if ( "pbBlanks".equals( reader.getNodeName() ) ) {
+        if ("pbBlanks".equals(reader.getNodeName())) {
             Vector<AbstractRatiosDataModel> pbBlankICModels = new Vector<AbstractRatiosDataModel>();
             while (reader.hasMoreChildren()) {
                 reader.moveDown();
 
-                if ( "PbBlankICModel".equals( reader.getNodeName() ) ) {
+                if ("PbBlankICModel".equals(reader.getNodeName())) {
                     AbstractRatiosDataModel pbBlankICModel = PbBlankICModel.createNewInstance();
-                    pbBlankICModel = (AbstractRatiosDataModel) context.convertAnother( pbBlankICModel, PbBlankICModel.class );
-                    pbBlankICModels.add( pbBlankICModel );
+                    pbBlankICModel = (AbstractRatiosDataModel) context.convertAnother(pbBlankICModel, PbBlankICModel.class);
+                    pbBlankICModels.add(pbBlankICModel);
                     reader.moveUp();
 
                     // pre may 2012
-                } else if ( "PbBlank".equals( reader.getNodeName() ) ) {
+                } else if ("PbBlank".equals(reader.getNodeName())) {
                     PbBlank pbBlank = new PbBlank();
                     pbBlank = (PbBlank) context.convertAnother( //
-                            pbBlank, PbBlank.class, new PbBlankXMLConverter() );
+                            pbBlank, PbBlank.class, new PbBlankXMLConverter());
 
-                    AbstractRatiosDataModel pbBlankModel = PbBlank.convertModel( pbBlank );
-                    pbBlankICModels.add( pbBlankModel );
+                    AbstractRatiosDataModel pbBlankModel = PbBlank.convertModel(pbBlank);
+                    pbBlankICModels.add(pbBlankModel);
                     reader.moveUp();
                 }
             }
 
-            uPbReduxAliquot.setPbBlanks( pbBlankICModels );
+            uPbReduxAliquot.setPbBlanks(pbBlankICModels);
         }
         reader.moveUp();
 
         reader.moveDown();
-        if ( "tracers".equals( reader.getNodeName() ) ) {
+        if ("tracers".equals(reader.getNodeName())) {
             Vector<AbstractRatiosDataModel> tracers = new Vector<AbstractRatiosDataModel>();
             while (reader.hasMoreChildren()) {
                 reader.moveDown();
 
-                if ( "TracerUPbModel".equals( reader.getNodeName() ) ) {
+                if ("TracerUPbModel".equals(reader.getNodeName())) {
                     AbstractRatiosDataModel tracerUPbModel = TracerUPbModel.createNewInstance();
-                    tracerUPbModel = (AbstractRatiosDataModel) context.convertAnother( tracerUPbModel, TracerUPbModel.class );
-                    tracers.add( tracerUPbModel );
+                    tracerUPbModel = (AbstractRatiosDataModel) context.convertAnother(tracerUPbModel, TracerUPbModel.class);
+                    tracers.add(tracerUPbModel);
                     reader.moveUp();
 
                     // pre may 2012
-                } else if ( "Tracer".equals( reader.getNodeName() ) ) {
+                } else if ("Tracer".equals(reader.getNodeName())) {
                     Tracer tracer = new Tracer();
                     tracer = (Tracer) context.convertAnother( //
-                            tracer, Tracer.class, new TracerXMLConverter() );
+                            tracer, Tracer.class, new TracerXMLConverter());
 
-                    AbstractRatiosDataModel tracerUPbModel = Tracer.convertModel( tracer );
-                    tracers.add( tracerUPbModel );
+                    AbstractRatiosDataModel tracerUPbModel = Tracer.convertModel(tracer);
+                    tracers.add(tracerUPbModel);
                     reader.moveUp();
                 }
             }
 
-            uPbReduxAliquot.setTracers( tracers );
+            uPbReduxAliquot.setTracers(tracers);
         }
         reader.moveUp();
 
         reader.moveDown();
-        if ( "alphaPbModels".equals( reader.getNodeName() ) ) {
+        if ("alphaPbModels".equals(reader.getNodeName())) {
             Vector<ValueModel> alphaPbModels = new Vector<ValueModel>();
             while (reader.hasMoreChildren()) {
                 reader.moveDown();
                 ValueModel item = new ValueModel();
-                item = (ValueModel) context.convertAnother( item, ValueModel.class );
-                alphaPbModels.add( item );
+                item = (ValueModel) context.convertAnother(item, ValueModel.class);
+                alphaPbModels.add(item);
                 reader.moveUp();
             }
 
-            uPbReduxAliquot.setAlphaPbModels( alphaPbModels );
+            uPbReduxAliquot.setAlphaPbModels(alphaPbModels);
         }
         reader.moveUp();
 
         reader.moveDown();
-        if ( "alphaUModels".equals( reader.getNodeName() ) ) {
+        if ("alphaUModels".equals(reader.getNodeName())) {
             Vector<ValueModel> alphaUModels = new Vector<ValueModel>();
             while (reader.hasMoreChildren()) {
                 reader.moveDown();
                 ValueModel item = new ValueModel();
-                item = (ValueModel) context.convertAnother( item, ValueModel.class );
-                alphaUModels.add( item );
+                item = (ValueModel) context.convertAnother(item, ValueModel.class);
+                alphaUModels.add(item);
                 reader.moveUp();
             }
 
-            uPbReduxAliquot.setAlphaUModels( alphaUModels );
+            uPbReduxAliquot.setAlphaUModels(alphaUModels);
         }
         reader.moveUp();
 
         reader.moveDown();
-        if ( "analysisFractions".equals( reader.getNodeName() ) ) {
+        if ("analysisFractions".equals(reader.getNodeName())) {
             Vector<FractionI> analysisFractions = new Vector<>();
             while (reader.hasMoreChildren()) {
                 reader.moveDown();
                 FractionI item = new AnalysisFraction();
-                item = (AnalysisFraction) context.convertAnother( item, AnalysisFraction.class );
-                analysisFractions.add( item );
+                item = (AnalysisFraction) context.convertAnother(item, AnalysisFraction.class);
+                analysisFractions.add(item);
                 reader.moveUp();
             }
 
-            uPbReduxAliquot.setAnalysisFractions( analysisFractions );
+            uPbReduxAliquot.setAnalysisFractions(analysisFractions);
         }
         reader.moveUp();
-
 
         reader.moveDown();
-        if ( "physicalConstantsModelII".equals( reader.getNodeName() ) ) {
+        if ("physicalConstantsModelII".equals(reader.getNodeName())) {
             AbstractRatiosDataModel physicalConstantsModel = PhysicalConstantsModel.createNewInstance();
-            physicalConstantsModel = (AbstractRatiosDataModel) context.convertAnother( physicalConstantsModel, PhysicalConstantsModel.class );
-            uPbReduxAliquot.setPhysicalConstantsModel( physicalConstantsModel );
+            physicalConstantsModel = (AbstractRatiosDataModel) context.convertAnother(physicalConstantsModel, PhysicalConstantsModel.class);
+            uPbReduxAliquot.setPhysicalConstantsModel(physicalConstantsModel);
 
             // pre may 2012
-        } else if ( "physicalConstantsModel".equals( reader.getNodeName() ) ) {
+        } else if ("physicalConstantsModel".equals(reader.getNodeName())) {
             PhysicalConstants physicalConstants = new PhysicalConstants();
-            physicalConstants = (PhysicalConstants) context.convertAnother( physicalConstants, PhysicalConstants.class, new PhysicalConstantsXMLConverter() );
+            physicalConstants = (PhysicalConstants) context.convertAnother(physicalConstants, PhysicalConstants.class, new PhysicalConstantsXMLConverter());
 
-            AbstractRatiosDataModel physicalConstantsModel = physicalConstants.convertModel( physicalConstants );
-            uPbReduxAliquot.setPhysicalConstantsModel( physicalConstantsModel );
+            AbstractRatiosDataModel physicalConstantsModel = physicalConstants.convertModel(physicalConstants);
+            uPbReduxAliquot.setPhysicalConstantsModel(physicalConstantsModel);
         }
         reader.moveUp();
-
-
 
         return uPbReduxAliquot;
     }

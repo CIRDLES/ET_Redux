@@ -451,20 +451,20 @@ public class SesarSample {
 //        return retVal;
 //    }
 
-    public static boolean isWellFormedIGSN(String igsn, String userCode) {
-        boolean retval = (igsn.length() == 9);
-
-        if (userCode.length() == 3) {
-            retval = retval && igsn.substring(0, 3).toUpperCase().matches("^[A-Z]{3}");
-        } else { // assume length 5
-            retval = retval && igsn.substring(0, 5).toUpperCase().matches("^[A-Z]{5}");
-        }
-
-        retval = retval && igsn.substring(userCode.length(), 9).matches("^[A-Z0-9]{" + (igsn.length() - userCode.length()) + "}");
-
-        return retval;
-
-    }
+//    public static boolean isWellFormedIGSN(String igsn, String userCode) {
+//        boolean retval = (igsn.length() == 9);
+//
+//        if (userCode.length() == 3) {
+//            retval = retval && igsn.substring(0, 3).toUpperCase().matches("^[A-Z]{3}");
+//        } else { // assume length 5
+//            retval = retval && igsn.substring(0, 5).toUpperCase().matches("^[A-Z]{5}");
+//        }
+//
+//        retval = retval && igsn.substring(userCode.length(), 9).matches("^[A-Z0-9]{" + (igsn.length() - userCode.length()) + "}");
+//
+//        return retval;
+//
+//    }
 
     /**
      * @return the user_code
