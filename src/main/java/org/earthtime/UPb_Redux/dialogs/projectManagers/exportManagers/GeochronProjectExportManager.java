@@ -53,11 +53,6 @@ public final class GeochronProjectExportManager extends DialogEditor {
     private String geoSamplesUserCode;
     private boolean userIsValidated;
     private boolean samplesAreLoaded;
-    private ArrayList<JButton> sampleShowConcordiaButtons;
-    private ArrayList<JButton> sampleShowPDFButtons;
-    private ArrayList<JCheckBox> samplePublicCheckBoxes;
-
-    private ArrayList<JButton> sampleUploadButtons;
 
     public static GeochronProjectExportManager getInstance(ReportPainterI parent, boolean modal, ProjectInterface project, ReduxPersistentState myState) {
 
@@ -122,18 +117,12 @@ public final class GeochronProjectExportManager extends DialogEditor {
     private void initSamplesDisplay() {
         aliquotsLayeredPane.removeAll();
 
-        sampleShowConcordiaButtons = new ArrayList<>();
-        sampleShowPDFButtons = new ArrayList<>();
-        samplePublicCheckBoxes = new ArrayList<>();
-        sampleUploadButtons = new ArrayList<>();
-
         int leftMargin = 40;
         int topMarginForSampleDetails = 10;
 
         int row = 0;
         int initialSampleHeight = 75;
         for (SampleInterface sample : project.getProjectSamples()) {
-////   does not work correctly for project's sub-samples        sample.repairAliquotNumberingDec2011();
             if (!sample.isReferenceMaterial()) {
                 JPanel geochronAliquotManager
                         = new GeochronAliquotManager(
