@@ -3824,7 +3824,7 @@ private void startStopLiveUpdate_buttonActionPerformed(java.awt.event.ActionEven
      * @param aliquot
      */
     public void editAliquotByProjectType(AliquotInterface aliquot) {
-        if (theSample.isSampleTypeProject()) {
+        if (theSample.isSampleTypeProject() && !theSample.getSampleAnalysisType().equalsIgnoreCase("TRIPOLIZED")) {
             // Project has a compiledSuperSample made up of actual projectSamples
             // we need the actual sample associated with this aliquot
             // this aliquot is a copy for compiled super sample and we need

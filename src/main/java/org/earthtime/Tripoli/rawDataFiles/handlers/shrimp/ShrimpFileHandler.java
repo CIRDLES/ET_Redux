@@ -18,7 +18,7 @@
 package org.earthtime.Tripoli.rawDataFiles.handlers.shrimp;
 
 import java.io.File;
-import java.net.MalformedURLException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -27,11 +27,13 @@ import java.util.TreeSet;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import javax.xml.bind.JAXBException;
+import org.cirdles.calamari.constants.CalamariConstants;
 import org.cirdles.calamari.core.PrawnFileHandler;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.Tripoli.massSpecSetups.singleCollector.shrimp.ShrimpSetupUPb;
 import org.earthtime.Tripoli.rawDataFiles.handlers.AbstractRawDataFileHandler;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -158,9 +160,9 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
 
         try {
             List<org.cirdles.calamari.shrimp.ShrimpFraction> myShrimpFractions = null;
-            
+
             PrawnFileHandler prawnFileHandler = new org.cirdles.calamari.core.PrawnFileHandler();
-            myShrimpFractions = prawnFileHandler.extractShrimpFractionsFromPrawnFile(//
+            myShrimpFractions = prawnFileHandler.extractShrimpFractionsFromPrawnFile(//"ILC-III-9peak-bkg3.xml", true, false);   //
                     "https://raw.githubusercontent.com/bowring/XSD/master/SHRIMP/EXAMPLE_100142_G6147_10111109.43_10.33.37%20AM.xml", true, false);
 
             // send name to project
@@ -186,7 +188,7 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
                 myTripoliFractions = null;
             }
 
-        } catch (JAXBException | MalformedURLException jAXBException) {
+        } catch (JAXBException | IOException | SAXException readingException) {
             JOptionPane.showMessageDialog(
                     null,
                     new String[]{"Selected Prawn file does not conform to schema."},
@@ -215,37 +217,46 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
         ArrayList<double[]> peakAcquisitions = new ArrayList<>();
         ArrayList<double[]> peakAcquisitionsVariances = new ArrayList<>();
 
+        // aug 2016
+        int countOfSpecies = shrimpFraction.getNamesOfSpecies().length - 1;
+        int backgroundIndex = CalamariConstants.HARD_WIRED_INDEX_OF_BACKGROUND;
+
         for (int scan = 0; scan < totalCounts.length; scan++) {
             // use these for now: 196  204  206 Pb207	Pb208	238 248 254 270
-            double[] peakCounts = new double[9];
-            double[] peakVariances = new double[9];
+
+            double[] peakCounts = new double[countOfSpecies];
+            double[] peakVariances = new double[countOfSpecies];
             peakAcquisitions.add(peakCounts);
             peakAcquisitionsVariances.add(peakVariances);
 
-            peakCounts[0] = totalCounts[scan][0];
-            peakCounts[1] = totalCounts[scan][1];
-            peakCounts[2] = totalCounts[scan][3];
-            peakCounts[3] = totalCounts[scan][4];
-            peakCounts[4] = totalCounts[scan][5];
-            peakCounts[5] = totalCounts[scan][6];
-            peakCounts[6] = totalCounts[scan][7];
-            peakCounts[7] = totalCounts[scan][8];
-            peakCounts[8] = totalCounts[scan][9];
+            for (int massIndex = 0; massIndex < countOfSpecies; massIndex++) {
+                peakCounts[massIndex] = totalCounts[scan][massIndex < backgroundIndex ? massIndex : massIndex + 1];
+                peakVariances[massIndex] = Math.pow(totalCountsOneSigmaAbs[scan][massIndex < backgroundIndex ? massIndex : massIndex + 1], 2);
+            }
+//            peakCounts[0] = totalCounts[scan][0];
+//            peakCounts[1] = totalCounts[scan][1];
+//            peakCounts[2] = totalCounts[scan][3];
+//            peakCounts[3] = totalCounts[scan][4];
+//            peakCounts[4] = totalCounts[scan][5];
+//            peakCounts[5] = totalCounts[scan][6];
+//            peakCounts[6] = totalCounts[scan][7];
+//            peakCounts[7] = totalCounts[scan][8];
+//            peakCounts[8] = totalCounts[scan][9];
+//
+//            peakVariances[0] = Math.pow(totalCountsOneSigmaAbs[scan][0], 2);
+//            peakVariances[1] = Math.pow(totalCountsOneSigmaAbs[scan][1], 2);
+//            peakVariances[2] = Math.pow(totalCountsOneSigmaAbs[scan][3], 2);
+//            peakVariances[3] = Math.pow(totalCountsOneSigmaAbs[scan][4], 2);
+//            peakVariances[4] = Math.pow(totalCountsOneSigmaAbs[scan][5], 2);
+//            peakVariances[5] = Math.pow(totalCountsOneSigmaAbs[scan][6], 2);
+//            peakVariances[6] = Math.pow(totalCountsOneSigmaAbs[scan][7], 2);
+//            peakVariances[7] = Math.pow(totalCountsOneSigmaAbs[scan][8], 2);
+//            peakVariances[8] = Math.pow(totalCountsOneSigmaAbs[scan][9], 2);
 
-            peakVariances[0] = Math.pow(totalCountsOneSigmaAbs[scan][0], 2);
-            peakVariances[1] = Math.pow(totalCountsOneSigmaAbs[scan][1], 2);
-            peakVariances[2] = Math.pow(totalCountsOneSigmaAbs[scan][3], 2);
-            peakVariances[3] = Math.pow(totalCountsOneSigmaAbs[scan][4], 2);
-            peakVariances[4] = Math.pow(totalCountsOneSigmaAbs[scan][5], 2);
-            peakVariances[5] = Math.pow(totalCountsOneSigmaAbs[scan][6], 2);
-            peakVariances[6] = Math.pow(totalCountsOneSigmaAbs[scan][7], 2);
-            peakVariances[7] = Math.pow(totalCountsOneSigmaAbs[scan][8], 2);
-            peakVariances[8] = Math.pow(totalCountsOneSigmaAbs[scan][9], 2);
         }
 
         TripoliFraction tripoliFraction
-                = new TripoliFraction( //
-                        //
+                = new TripoliFraction(
                         fractionID, //
                         massSpec.getCommonLeadCorrectionHighestLevel(), //
                         isReferenceMaterial, false,
