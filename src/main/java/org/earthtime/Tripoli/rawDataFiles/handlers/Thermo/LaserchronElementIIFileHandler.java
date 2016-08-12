@@ -130,6 +130,9 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
 
         // Laserchron produces file with numerical ordering tags
         Arrays.sort(analysisFiles, new FractionFileNameComparator());
+        
+        //load current values
+//        baselineStartIndex = acqu
 
         if (analysisFiles.length > 0) {
 //            this can be broken => depend on naming convention Arrays.sort(analysisFiles, new FractionFileModifiedComparator());

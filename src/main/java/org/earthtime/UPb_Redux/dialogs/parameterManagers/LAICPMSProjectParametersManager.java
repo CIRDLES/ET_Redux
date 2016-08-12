@@ -203,6 +203,14 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
      */
     protected JSpinner leftMaskSpinner;
 
+    protected JTextField baselineStartIndexTextBox;
+
+    protected JTextField baselineEndIndexTextBox;
+
+    protected JTextField peakStartIndexTextBox;
+
+    protected JTextField peakEndIndexTextBox;
+
     /**
      *
      * @param project
@@ -577,30 +585,60 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
             rawDataFileHandler.getAcquisitionModel().setLeftShadeCount(0);
 
             JLabel baselineStartIndexLabel = new JLabel("Baseline start index: ");
-            baselineStartIndexLabel.setHorizontalAlignment(SwingConstants.LEFT);
+            baselineStartIndexLabel.setHorizontalAlignment(SwingConstants.RIGHT);
             baselineStartIndexLabel.setFont(ReduxConstants.sansSerif_12_Bold);
-            baselineStartIndexLabel.setBounds(leftMargin, 425, 125, 25);
+            baselineStartIndexLabel.setBounds(leftMargin, 425, 150, 25);
             this.add(baselineStartIndexLabel);
 
-            final JTextField baselineStartIndex = new JTextField();
-            baselineStartIndex.setDocument(new DialogEditor.IntegerDocument(baselineStartIndex, editable));
-            baselineStartIndex.setText(String.valueOf(rawDataFileHandler.getAcquisitionModel().getBaselineStartIndex()));
-            baselineStartIndex.setFont(ReduxConstants.sansSerif_12_Bold);
-            baselineStartIndex.setBounds(leftMargin + 125, 425, 25, 25);
-            this.add(baselineStartIndex);
+            baselineStartIndexTextBox = new JTextField();
+            baselineStartIndexTextBox.setDocument(new DialogEditor.IntegerDocument(baselineStartIndexTextBox, editable));
+            baselineStartIndexTextBox.setText(String.valueOf(rawDataFileHandler.getAcquisitionModel().getBaselineStartIndex()));
+            baselineStartIndexTextBox.setFont(ReduxConstants.sansSerif_12_Bold);
+            baselineStartIndexTextBox.setHorizontalAlignment(SwingConstants.CENTER);
+            baselineStartIndexTextBox.setBounds(leftMargin + 150, 425, 30, 25);
+            this.add(baselineStartIndexTextBox);
 
             JLabel baselineEndIndexLabel = new JLabel("end: ");
-            baselineEndIndexLabel.setHorizontalAlignment(SwingConstants.LEFT);
+            baselineEndIndexLabel.setHorizontalAlignment(SwingConstants.RIGHT);
             baselineEndIndexLabel.setFont(ReduxConstants.sansSerif_12_Bold);
-            baselineEndIndexLabel.setBounds(leftMargin + 150, 425, 50, 25);
+            baselineEndIndexLabel.setBounds(leftMargin + 180, 425, 30, 25);
             this.add(baselineEndIndexLabel);
 
-            final JTextField baselineEndIndex = new JTextField();
-            baselineEndIndex.setDocument(new DialogEditor.IntegerDocument(baselineEndIndex, editable));
-            baselineEndIndex.setText(String.valueOf(rawDataFileHandler.getAcquisitionModel().getBaselineEndIndex()));
-            baselineEndIndex.setFont(ReduxConstants.sansSerif_12_Bold);
-            baselineEndIndex.setBounds(leftMargin + 200, 425, 25, 25);
-            this.add(baselineEndIndex);
+            baselineEndIndexTextBox = new JTextField();
+            baselineEndIndexTextBox.setDocument(new DialogEditor.IntegerDocument(baselineEndIndexTextBox, editable));
+            baselineEndIndexTextBox.setText(String.valueOf(rawDataFileHandler.getAcquisitionModel().getBaselineEndIndex()));
+            baselineEndIndexTextBox.setFont(ReduxConstants.sansSerif_12_Bold);
+            baselineStartIndexTextBox.setHorizontalAlignment(SwingConstants.CENTER);
+            baselineEndIndexTextBox.setBounds(leftMargin + 210, 425, 30, 25);
+            this.add(baselineEndIndexTextBox);
+
+            JLabel peakStartIndexLabel = new JLabel("Peak start index: ");
+            peakStartIndexLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+            peakStartIndexLabel.setFont(ReduxConstants.sansSerif_12_Bold);
+            peakStartIndexLabel.setBounds(leftMargin + 250, 425, 150, 25);
+            this.add(peakStartIndexLabel);
+
+            peakStartIndexTextBox = new JTextField();
+            peakStartIndexTextBox.setDocument(new DialogEditor.IntegerDocument(peakStartIndexTextBox, editable));
+            peakStartIndexTextBox.setText(String.valueOf(rawDataFileHandler.getAcquisitionModel().getPeakStartIndex()));
+            peakStartIndexTextBox.setFont(ReduxConstants.sansSerif_12_Bold);
+            peakStartIndexTextBox.setHorizontalAlignment(SwingConstants.CENTER);
+            peakStartIndexTextBox.setBounds(leftMargin + 400, 425, 30, 25);
+            this.add(peakStartIndexTextBox);
+
+            JLabel peakEndIndexLabel = new JLabel("end: ");
+            peakEndIndexLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+            peakEndIndexLabel.setFont(ReduxConstants.sansSerif_12_Bold);
+            peakEndIndexLabel.setBounds(leftMargin + 430, 425, 30, 25);
+            this.add(peakEndIndexLabel);
+
+            peakEndIndexTextBox = new JTextField();
+            peakEndIndexTextBox.setDocument(new DialogEditor.IntegerDocument(peakEndIndexTextBox, editable));
+            peakEndIndexTextBox.setText(String.valueOf(rawDataFileHandler.getAcquisitionModel().getPeakEndIndex()));
+            peakEndIndexTextBox.setFont(ReduxConstants.sansSerif_12_Bold);
+            peakEndIndexTextBox.setHorizontalAlignment(SwingConstants.CENTER);
+            peakEndIndexTextBox.setBounds(leftMargin + 460, 425, 30, 25);
+            this.add(peakEndIndexTextBox);
 
         } else {
             JLabel leftShadeLabel = new JLabel("Count of starting datapoints to ignore (4 max): ");
@@ -886,6 +924,18 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
         }
 
         acquisitionModel.updateMassSpec(massSpecSetup);
+
+        acquisitionModel.setBaselineStartIndex(Integer.parseInt(baselineStartIndexTextBox.getText()));
+        rawDataFileHandler.setBaselineStartIndex(Integer.parseInt(baselineStartIndexTextBox.getText()));
+
+        acquisitionModel.setBaselineEndIndex(Integer.parseInt(baselineEndIndexTextBox.getText()));
+        rawDataFileHandler.setBaselineEndIndex(Integer.parseInt(baselineEndIndexTextBox.getText()));
+
+        acquisitionModel.setPeakStartIndex(Integer.parseInt(peakStartIndexTextBox.getText()));
+        rawDataFileHandler.setPeakStartIndex(Integer.parseInt(peakStartIndexTextBox.getText()));
+
+        acquisitionModel.setPeakEndIndex(Integer.parseInt(peakEndIndexTextBox.getText()));
+        rawDataFileHandler.setPeakEndIndex(Integer.parseInt(peakEndIndexTextBox.getText()));
 
         readyToProcessData = loadData;
     }
