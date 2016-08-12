@@ -572,30 +572,62 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
             }
         }
 
-        JLabel leftShadeLabel = new JLabel("Number of datapoints to ignore at start of each fraction (4 max): ");
-        leftShadeLabel.setHorizontalAlignment(SwingConstants.LEFT);
-        leftShadeLabel.setFont(ReduxConstants.sansSerif_12_Bold);
-        leftShadeLabel.setBounds(leftMargin, 425, 450, 25);
-        this.add(leftShadeLabel);
+        // Aug 2016
+        if (acquisitionType.equals(AcquisitionTypesEnum.SINGLE_COLLECTOR)) {
+            rawDataFileHandler.getAcquisitionModel().setLeftShadeCount(0);
 
-        SpinnerModel leftMaskModel
-                = new SpinnerNumberModel(0, //initial value
-                        0, //min
-                        4, //max
-                        1); //step
-        leftMaskSpinner = new JSpinner(leftMaskModel);
-        leftMaskSpinner.setValue(rawDataFileHandler.getAcquisitionModel().getLeftShadeCount());
-        leftMaskSpinner.setBounds(leftMargin + 400, 425, 40, 25);
-        leftMaskSpinner.setValue(rawDataFileHandler.getAcquisitionModel().getLeftShadeCount());
-        leftMaskSpinner.setEnabled(editable);
-        leftMaskSpinner.addChangeListener(new ChangeListener() {
+            JLabel baselineStartIndexLabel = new JLabel("Baseline start index: ");
+            baselineStartIndexLabel.setHorizontalAlignment(SwingConstants.LEFT);
+            baselineStartIndexLabel.setFont(ReduxConstants.sansSerif_12_Bold);
+            baselineStartIndexLabel.setBounds(leftMargin, 425, 125, 25);
+            this.add(baselineStartIndexLabel);
 
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                rawDataFileHandler.getAcquisitionModel().setLeftShadeCount((int) leftMaskSpinner.getValue());
-            }
-        });
-        this.add(leftMaskSpinner);
+            final JTextField baselineStartIndex = new JTextField();
+            baselineStartIndex.setDocument(new DialogEditor.IntegerDocument(baselineStartIndex, editable));
+            baselineStartIndex.setText(String.valueOf(rawDataFileHandler.getAcquisitionModel().getBaselineStartIndex()));
+            baselineStartIndex.setFont(ReduxConstants.sansSerif_12_Bold);
+            baselineStartIndex.setBounds(leftMargin + 125, 425, 25, 25);
+            this.add(baselineStartIndex);
+
+            JLabel baselineEndIndexLabel = new JLabel("end: ");
+            baselineEndIndexLabel.setHorizontalAlignment(SwingConstants.LEFT);
+            baselineEndIndexLabel.setFont(ReduxConstants.sansSerif_12_Bold);
+            baselineEndIndexLabel.setBounds(leftMargin + 150, 425, 50, 25);
+            this.add(baselineEndIndexLabel);
+
+            final JTextField baselineEndIndex = new JTextField();
+            baselineEndIndex.setDocument(new DialogEditor.IntegerDocument(baselineEndIndex, editable));
+            baselineEndIndex.setText(String.valueOf(rawDataFileHandler.getAcquisitionModel().getBaselineEndIndex()));
+            baselineEndIndex.setFont(ReduxConstants.sansSerif_12_Bold);
+            baselineEndIndex.setBounds(leftMargin + 200, 425, 25, 25);
+            this.add(baselineEndIndex);
+
+        } else {
+            JLabel leftShadeLabel = new JLabel("Count of starting datapoints to ignore (4 max): ");
+            leftShadeLabel.setHorizontalAlignment(SwingConstants.LEFT);
+            leftShadeLabel.setFont(ReduxConstants.sansSerif_12_Bold);
+            leftShadeLabel.setBounds(leftMargin, 425, 300, 25);
+            this.add(leftShadeLabel);
+
+            SpinnerModel leftMaskModel
+                    = new SpinnerNumberModel(0, //initial value
+                            0, //min
+                            4, //max
+                            1); //step
+            leftMaskSpinner = new JSpinner(leftMaskModel);
+            leftMaskSpinner.setValue(rawDataFileHandler.getAcquisitionModel().getLeftShadeCount());
+            leftMaskSpinner.setBounds(leftMargin + 305, 425, 40, 25);
+            leftMaskSpinner.setValue(rawDataFileHandler.getAcquisitionModel().getLeftShadeCount());
+            leftMaskSpinner.setEnabled(editable);
+            leftMaskSpinner.addChangeListener(new ChangeListener() {
+
+                @Override
+                public void stateChanged(ChangeEvent e) {
+                    rawDataFileHandler.getAcquisitionModel().setLeftShadeCount((int) leftMaskSpinner.getValue());
+                }
+            });
+            this.add(leftMaskSpinner);
+        }
 
         ButtonGroup propagationSpeedGroup = new ButtonGroup();
 

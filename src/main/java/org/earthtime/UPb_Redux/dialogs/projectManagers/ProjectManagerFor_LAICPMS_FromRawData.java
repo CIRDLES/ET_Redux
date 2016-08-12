@@ -463,6 +463,10 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
         try {
             acquisitionModel.setPrimaryMineralStandardModel(ReduxLabData.getInstance().getDefaultLAICPMSPrimaryMineralStandardModel());
             acquisitionModel.setLeftShadeCount(ReduxLabData.getInstance().getDefaultLeftShadeCountForLAICPMSAquisitions());
+            acquisitionModel.setBaselineStartIndex(rawDataFileHandler.getBaselineStartIndex());
+            acquisitionModel.setBaselineEndIndex(rawDataFileHandler.getBaselineEndIndex());
+            acquisitionModel.setPeakStartIndex(rawDataFileHandler.getPeakStartIndex());
+            acquisitionModel.setPeakEndIndex(rawDataFileHandler.getPeakEndIndex());
 
         } catch (BadLabDataException ex) {
             new ETWarningDialog(ex).setVisible(true);

@@ -82,6 +82,11 @@ public abstract class AbstractRawDataFileHandler implements //
      */
     protected SortedSet<TripoliFraction> tripoliFractions;
 
+    protected int baselineStartIndex;
+    protected int baselineEndIndex;
+    protected int peakStartIndex;
+    protected int peakEndIndex;
+
     /**
      *
      */
@@ -222,6 +227,62 @@ public abstract class AbstractRawDataFileHandler implements //
         }
 
         return retVal;
+    }
+
+    /**
+     * @return the baselineStartIndex
+     */
+    public int getBaselineStartIndex() {
+        return baselineStartIndex;
+    }
+
+    /**
+     * @param baselineStartIndex the baselineStartIndex to set
+     */
+    public void setBaselineStartIndex(int baselineStartIndex) {
+        this.baselineStartIndex = baselineStartIndex;
+    }
+
+    /**
+     * @return the baselineEndIndex
+     */
+    public int getBaselineEndIndex() {
+        return baselineEndIndex;
+    }
+
+    /**
+     * @param baselineEndIndex the baselineEndIndex to set
+     */
+    public void setBaselineEndIndex(int baselineEndIndex) {
+        this.baselineEndIndex = baselineEndIndex;
+    }
+
+    /**
+     * @return the peakStartIndex
+     */
+    public int getPeakStartIndex() {
+        return peakStartIndex;
+    }
+
+    /**
+     * @param peakStartIndex the peakStartIndex to set
+     */
+    public void setPeakStartIndex(int peakStartIndex) {
+        this.peakStartIndex = peakStartIndex;
+    }
+
+    /**
+     * @return the peakEndIndex
+     */
+    public int getPeakEndIndex() {
+        return peakEndIndex;
+    }
+
+    /**
+     * @param peakEndIndex the peakEndIndex to set
+     */
+    public void setPeakEndIndex(int peakEndIndex) {
+        this.peakEndIndex = peakEndIndex;
     }
 
     public class FractionFileNameComparator implements Comparator<File> {
@@ -517,7 +578,7 @@ public abstract class AbstractRawDataFileHandler implements //
                 }
             }
         }
-        
+
         return tripoliSamples;
 
     }
