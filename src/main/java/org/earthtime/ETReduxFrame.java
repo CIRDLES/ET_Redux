@@ -166,7 +166,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
      */
     protected ImageIcon reduxIcon;
     // theSample is serialized as a *.redux file
-    private SampleInterface theSample = null;
+    private transient SampleInterface theSample = null;
     // theProject is serialized as a *.redux file
     private Project theProject = null;
     // updated July 2012
@@ -190,7 +190,6 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
     boolean MAC_OS_X = false;
     // lab data editor ==> to be sure only one copy exists
     private DialogEditor myLabDataEditor = null;
-    private DialogEditor myReportSettingsEditor = null;
     private DialogEditor myAboutBox = null;
     /**
      *
@@ -3824,7 +3823,7 @@ private void startStopLiveUpdate_buttonActionPerformed(java.awt.event.ActionEven
      * @param aliquot
      */
     public void editAliquotByProjectType(AliquotInterface aliquot) {
-        if (theSample.isSampleTypeProject()) {
+        if (theSample.isSampleTypeProject() && !theSample.getSampleAnalysisType().equalsIgnoreCase("TRIPOLIZED")) {
             // Project has a compiledSuperSample made up of actual projectSamples
             // we need the actual sample associated with this aliquot
             // this aliquot is a copy for compiled super sample and we need

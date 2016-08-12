@@ -430,8 +430,8 @@ public class GeochronAliquotManager extends JPanel {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            aliquot.setSampleIGSN("SSX." + sampleIGSN.trim());
-            aliquot.setAliquotIGSN("SSX." + aliquot.getAliquotIGSN().trim());
+            aliquot.setSampleIGSN("SSX." + sampleIGSN.trim().replaceAll("SSX.", ""));
+            aliquot.setAliquotIGSN("SSX." + aliquot.getAliquotIGSN().trim().replaceAll("SSX.", ""));
             GeochronUploaderUtility.uploadAliquotToGeochron(//
                     sample, //
                     aliquot, //

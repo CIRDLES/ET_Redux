@@ -51,24 +51,10 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
     // Class variables
     private static final long serialVersionUID = -2860923405769819758L;
     private static final LaserchronElementIIFileHandler instance = new LaserchronElementIIFileHandler();
-    private static int referenceMaterialIncrementer;
     private static Map<String, Integer> referenceMaterialIncrementerMap = null;
     // Instance variables
     private File[] analysisFiles;
     private String[] fractionNames;
-
-    // temp for july 2016 from Noah McLean eamil July 29 2016
-    /*
-    Thanks.  For the purposes of this comparison for George's C40 dataset from Dan,
-    can you please change the Arizona Laserchron Element2 parsing code?  
-    There should be 73 integrations in each analysis.  If the first integration 
-    is indexed 1, use integrations 3-15 for the baseline and 20-54 for the on-peak. 
-    Everything else can get rejected 
-     */
-    private static final int hardwiredStartOfBackground = 3-1;
-    private static final int hardwiredEndOfBackground = 15-1;
-    private static final int hardwiredStartOfPeak = 20-1;
-    private static final int hardwiredEndOfPeak = 54-1;
 
     /**
      *
@@ -84,6 +70,18 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
 
         analysisFiles = new File[0];
         fractionNames = new String[0];
+        // temp for july 2016 from Noah McLean eamil July 29 2016
+        /*
+        Thanks.  For the purposes of this comparison for George's C40 dataset from Dan,
+        can you please change the Arizona Laserchron Element2 parsing code?  
+        There should be 73 integrations in each analysis.  If the first integration 
+        is indexed 1, use integrations 3-15 for the baseline and 20-54 for the on-peak. 
+        Everything else can get rejected 
+         */
+        baselineStartIndex = 3;
+        baselineEndIndex = 15;
+        peakStartIndex = 20;
+        peakEndIndex = 54;
     }
 
     /**
@@ -91,8 +89,6 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
      * @return
      */
     public static LaserchronElementIIFileHandler getInstance() {
-        referenceMaterialIncrementer = 1;
-
         return instance;
     }
 
@@ -134,6 +130,9 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
 
         // Laserchron produces file with numerical ordering tags
         Arrays.sort(analysisFiles, new FractionFileNameComparator());
+        
+        //load current values
+//        baselineStartIndex = acqu
 
         if (analysisFiles.length > 0) {
 //            this can be broken => depend on naming convention Arrays.sort(analysisFiles, new FractionFileModifiedComparator());
@@ -276,7 +275,7 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
                 // process time stamp from first scan as time stamp of file and background
                 long fractionBackgroundTimeStamp = calculateTimeStamp(extractedData[0][1]);
                 // process time stamp of first peak reading
-                long fractionPeakTimeStamp = calculateTimeStamp(extractedData[hardwiredEndOfBackground + 1][1]);
+                long fractionPeakTimeStamp = calculateTimeStamp(extractedData[baselineEndIndex + 1][1]);
 
                 for (int i = rawDataFileTemplate.getBlockStartOffset(); i < rawDataFileTemplate.getBlockSize(); i++) {
                     if (rawDataFileTemplate instanceof LaserchronElementII_RawDataTemplate_A) {
@@ -324,13 +323,14 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
         return myTripoliFractions;
     }
 
-    private boolean legalBackgroundIndex(int i){
-        return ((i >= hardwiredStartOfBackground) && (i <= hardwiredEndOfBackground));
+    private boolean legalBaselineIndex(int i) {
+        return ((i >= (baselineStartIndex - 1)) && (i <= (baselineEndIndex -1)));
     }
-    private boolean legalPeakIndex(int i){
-        return ((i >= hardwiredStartOfPeak) && (i <= hardwiredEndOfPeak));
+
+    private boolean legalPeakIndex(int i) {
+        return ((i >= (peakStartIndex - 1)) && (i <= (peakEndIndex - 1)));
     }
-    
+
     /**
      *
      * @param i the value of i
@@ -342,7 +342,7 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
         // 202  204  206 Pb207	Pb208	Th232 U238
         double[] backgroundIntensities = new double[7];
         double[] peakIntensities = new double[7];
-        if (legalBackgroundIndex(i)) {
+        if (legalBaselineIndex(i)) {
             backgroundAcquisitions.add(backgroundIntensities);
             backgroundIntensities[0] = calcAvgPulseOrAnalog(3, 6, extractedData);
             backgroundIntensities[1] = calcAvgPulseOrAnalog(8, 11, extractedData);
@@ -379,7 +379,7 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
         // 202  204  206 Pb207	Pb208 Th232 U235 U238
         double[] backgroundIntensities = new double[8];
         double[] peakIntensities = new double[8];
-        if (legalBackgroundIndex(i)) {
+        if (legalBaselineIndex(i)) {
             backgroundAcquisitions.add(backgroundIntensities);
             backgroundIntensities[0] = calcAvgPulseOrAnalog(3, 6, extractedData);
             backgroundIntensities[1] = calcAvgPulseOrAnalog(12, 15, extractedData);
@@ -430,7 +430,7 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
         // 176 202  204  206 Pb207 Pb208 Th232 U235 U238
         double[] backgroundIntensities = new double[9];
         double[] peakIntensities = new double[9];
-        if (legalBackgroundIndex(i)) {
+        if (legalBaselineIndex(i)) {
             backgroundAcquisitions.add(backgroundIntensities);
             backgroundIntensities[0] = calcAvgPulseOrAnalog(3, 6, extractedData);
             backgroundIntensities[1] = calcAvgPulseOrAnalog(12, 15, extractedData);

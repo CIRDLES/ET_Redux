@@ -59,13 +59,14 @@ public class SesarSampleManager extends DialogEditor {
 
     /**
      * Creates new form SesarSampleManager
+     *
      * @param parent
      * @param modal
      * @param sesarSample
      * @param localSampleName
-     * @param editable 
+     * @param editable
      * @param userName the value of userName
-     * @param password the value of password 
+     * @param password the value of password
      */
     public SesarSampleManager(
             Frame parent, boolean modal, Samples.Sample sesarSample, String localSampleName, boolean editable, String userName, String password) {
@@ -78,9 +79,15 @@ public class SesarSampleManager extends DialogEditor {
 
         initComponents();
 
-        setSize(450, 300);
-
+        initDialogContent();
         initSesarSample(editable);
+    }
+
+    @Override
+    public void initDialogContent() {
+        setSize(450, 353);
+        setTitle("Sesar IGSN Manager");
+        close_button.setBackground(Color.WHITE);
     }
 
     private void initSesarSample(boolean editable) {
@@ -161,7 +168,7 @@ public class SesarSampleManager extends DialogEditor {
         sesarMaterialTypesCombo.setFont(ReduxConstants.sansSerif_12_Bold);
         sesarSampleDetailsLayeredPane.add(sesarMaterialTypesCombo);
         sesarMaterialTypesCombo.setSelectedItem(org.geosamples.samples.Material.valueOf(sesarSample.getMaterial().toUpperCase().replaceAll(" ", "_")));
-        
+
 //        sesarSampleDetailsLayeredPane.add(labelFactory("Classification:", 10, 130, 100));
 //
 //        JComboBox<org.geosamples.samples.Classification> sesarClassificationCombo = new JComboBox<>();
@@ -171,7 +178,6 @@ public class SesarSampleManager extends DialogEditor {
 //        sesarClassificationCombo.setFont(ReduxConstants.sansSerif_12_Bold);
 //        sesarSampleDetailsLayeredPane.add(sesarClassificationCombo);
 //        sesarClassificationCombo.setSelectedItem(sesarSample.getClassification());
-
         sesarSampleDetailsLayeredPane.add(labelFactory("decimal Lat:", 10, 160, 100));
         JTextField decimalLatitude = new JTextField();
         decimalLatitude.setDocument(new BigDecimalDocument(decimalLatitude, editable));
@@ -280,11 +286,15 @@ public class SesarSampleManager extends DialogEditor {
                     XMLDocumentInterface success = registerSampleAtGeoSamplesIGSN(sesarSample, true, userName, password);
                     if (success != null) {
                         sesarSample.setIgsn(success.getSample().get(0).getIgsn());
-                        close();
                     } else {
                         sesarSample.setIgsn("NONE");
+                        JOptionPane.showMessageDialog(
+                                null,
+                                new String[]{"There was a problem registering sample ... please inform developers."},
+                                "ET Redux Warning",
+                                JOptionPane.WARNING_MESSAGE);
                     }
-                    
+
                 } else {
                     JOptionPane.showMessageDialog(
                             null,
@@ -292,6 +302,8 @@ public class SesarSampleManager extends DialogEditor {
                             "ET Redux Warning",
                             JOptionPane.WARNING_MESSAGE);
                 }
+
+                close();
             });
         }
 
@@ -315,21 +327,51 @@ public class SesarSampleManager extends DialogEditor {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonBar_panel = new javax.swing.JPanel();
+        close_button = new ET_JButton();
         sesarSampleDetailsLayeredPane = new javax.swing.JLayeredPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setSize(new java.awt.Dimension(450, 300));
         getContentPane().setLayout(null);
 
+        buttonBar_panel.setBackground(new java.awt.Color(235, 255, 255));
+        buttonBar_panel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+        buttonBar_panel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        close_button.setBackground(new java.awt.Color(204, 204, 204));
+        close_button.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        close_button.setForeground(new java.awt.Color(255, 51, 0));
+        close_button.setText("Close");
+        close_button.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        close_button.setPreferredSize(new java.awt.Dimension(140, 23));
+        close_button.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                close_buttonActionPerformed(evt);
+            }
+        });
+        buttonBar_panel.add(close_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 3, 150, 25));
+
+        getContentPane().add(buttonBar_panel);
+        buttonBar_panel.setBounds(0, 300, 450, 28);
+
         sesarSampleDetailsLayeredPane.setBackground(new java.awt.Color(255, 255, 255));
+        sesarSampleDetailsLayeredPane.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         sesarSampleDetailsLayeredPane.setOpaque(true);
         getContentPane().add(sesarSampleDetailsLayeredPane);
-        sesarSampleDetailsLayeredPane.setBounds(0, 0, 630, 470);
+        sesarSampleDetailsLayeredPane.setBounds(0, 0, 450, 300);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void close_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_close_buttonActionPerformed
+        close();
+    }//GEN-LAST:event_close_buttonActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel buttonBar_panel;
+    private javax.swing.JButton close_button;
     private javax.swing.JLayeredPane sesarSampleDetailsLayeredPane;
     // End of variables declaration//GEN-END:variables
 }

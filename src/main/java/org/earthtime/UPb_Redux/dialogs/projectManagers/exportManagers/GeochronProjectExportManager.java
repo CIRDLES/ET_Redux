@@ -17,16 +17,14 @@
  */
 package org.earthtime.UPb_Redux.dialogs.projectManagers.exportManagers;
 
+import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.event.HyperlinkEvent;
@@ -91,8 +89,7 @@ public final class GeochronProjectExportManager extends DialogEditor {
         this.samplesAreLoaded = false;
 
         initComponents();
-        setSize(1200, 750);
-
+        
         initDialogContent();
 
         processUserValidation();
@@ -102,7 +99,10 @@ public final class GeochronProjectExportManager extends DialogEditor {
     @Override
     public void initDialogContent() {
 
+        setSize(1200, 753);
         setTitle("Geochron Upload Manager");
+        setResizable(true);
+        saveAndClose_button.setBackground(Color.WHITE);
 
         geoPassUserName_text.setDocument(new UnDoAbleDocument(geoPassUserName_text, true));
         geoPassUserName_text.setText(myState.getReduxPreferences().getGeochronUserName());
@@ -111,7 +111,6 @@ public final class GeochronProjectExportManager extends DialogEditor {
         geoPassPassword_passwordField.setText(myState.getReduxPreferences().getGeochronPassWord());
 
         validateGeoPassID(false);
-
     }
 
     private void initSamplesDisplay() {
@@ -216,6 +215,7 @@ public final class GeochronProjectExportManager extends DialogEditor {
         aliquotsScrollPane = new javax.swing.JScrollPane();
         aliquotsLayeredPane = new javax.swing.JLayeredPane();
         buttonBar_panel = new javax.swing.JPanel();
+        saveAndClose_button = new ET_JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -235,25 +235,25 @@ public final class GeochronProjectExportManager extends DialogEditor {
         exportManagerLayeredPane.setPreferredSize(new java.awt.Dimension(1000, 600));
         exportManagerLayeredPane.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        geoPassPassword_passwordField.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        geoPassPassword_passwordField.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         geoPassPassword_passwordField.setText("############");
-        exportManagerLayeredPane.add(geoPassPassword_passwordField, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 160, 150, -1));
+        exportManagerLayeredPane.add(geoPassPassword_passwordField, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 160, 210, -1));
 
-        geoPassUserName_text.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        geoPassUserName_text.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         geoPassUserName_text.setText("username");
-        exportManagerLayeredPane.add(geoPassUserName_text, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 130, 150, -1));
+        exportManagerLayeredPane.add(geoPassUserName_text, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 130, 210, -1));
 
         geoPassIDValidReport_label.setBackground(new java.awt.Color(255, 255, 255));
-        geoPassIDValidReport_label.setFont(new java.awt.Font("Tahoma", 3, 12)); // NOI18N
+        geoPassIDValidReport_label.setFont(new java.awt.Font("SansSerif", 3, 12)); // NOI18N
         geoPassIDValidReport_label.setForeground(new java.awt.Color(102, 204, 0));
         geoPassIDValidReport_label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         geoPassIDValidReport_label.setText("GeoChron credentials are NOT valid.");
         geoPassIDValidReport_label.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         geoPassIDValidReport_label.setOpaque(true);
         geoPassIDValidReport_label.setPreferredSize(new java.awt.Dimension(255, 25));
-        exportManagerLayeredPane.add(geoPassIDValidReport_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 130, 360, 55));
+        exportManagerLayeredPane.add(geoPassIDValidReport_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 130, 360, 55));
 
-        validateGeochronAndSesarCredentials_button.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        validateGeochronAndSesarCredentials_button.setFont(new java.awt.Font("SansSerif", 3, 12)); // NOI18N
         validateGeochronAndSesarCredentials_button.setForeground(new java.awt.Color(255, 51, 51));
         validateGeochronAndSesarCredentials_button.setText("<html><style>p{margin:10px;text-align:center;}</style> <p>Validate credentials at <b>GeoPass</b></p> </html>");
         validateGeochronAndSesarCredentials_button.setActionCommand("<html><style>p{margin:1px;text-align:center;}</style>\n<p>Validate credentials at <b>Geochron</b> and <b>SESAR</b></p>\n</html>");
@@ -264,7 +264,7 @@ public final class GeochronProjectExportManager extends DialogEditor {
                 validateGeochronAndSesarCredentials_buttonActionPerformed(evt);
             }
         });
-        exportManagerLayeredPane.add(validateGeochronAndSesarCredentials_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 130, 180, 55));
+        exportManagerLayeredPane.add(validateGeochronAndSesarCredentials_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 130, 180, 55));
 
         userNameGeochron_label.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         userNameGeochron_label.setText("user name:");
@@ -291,6 +291,7 @@ public final class GeochronProjectExportManager extends DialogEditor {
 
         instructionsTextPane.setEditable(false);
         instructionsTextPane.setContentType("text/html"); // NOI18N
+        instructionsTextPane.setFont(new java.awt.Font("SansSerif", 0, 13)); // NOI18N
         instructionsTextPane.setText("<html>\n  <head>\n\n  </head>\n  <body>\n    <p style=\"margin: 5px 0px 0px 5px; font-family:sansserif; font-size:14\">\n      <strong style=\"color:red\">Instructions: </strong>We want you to uniquely register your samples and aliquots by giving them an IGSN (International Geo Sample Number).  \n\tTo do so, you need credentials -<strong style=\"color:red\">username</strong> and <strong style=\"color:red\">password</strong> - established \n\tat <a href=\"https://geopass.iedadata.org\">GeoPass</a>.  \n\tYou use these credentials to register at <a href=\"http://geochron.org/\">Geochron</> and at <a href=\"http://geosamples.org\">SEASAR</a>.\n\tAt SESAR, you will choose a 5-letter user code (3-letter codes are grandfathered) that will be the prefix used for the IGSNs for every sample you register.\n\tFor each sample you register, you will specify (or ask SESAR to generate) a 4-character code (6 characters if you have 3-letter user code) using any combination\n\tof digits and capital letters.  For example, if your user code is JAMES, then an IGSN might be JAMES09AZ.  You will assign each <strong>Aliquot</strong> \n\tan IGSN in the same way and it will be a child of the parent sample's IGSN.  While you can specify any IGSN for the parent - say you have a piece of a sample from a colleague -\n\tyour Aliquot or child IGSNs will always have your user code as a prefix.\n    </p>\n  </body>\n</html>\n");
         instructionsScrollPane.setViewportView(instructionsTextPane);
 
@@ -305,6 +306,20 @@ public final class GeochronProjectExportManager extends DialogEditor {
         buttonBar_panel.setBackground(new java.awt.Color(235, 255, 255));
         buttonBar_panel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
         buttonBar_panel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        saveAndClose_button.setBackground(new java.awt.Color(204, 204, 204));
+        saveAndClose_button.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        saveAndClose_button.setForeground(new java.awt.Color(255, 51, 0));
+        saveAndClose_button.setText("Save and Close");
+        saveAndClose_button.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        saveAndClose_button.setPreferredSize(new java.awt.Dimension(140, 23));
+        saveAndClose_button.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveAndClose_buttonActionPerformed(evt);
+            }
+        });
+        buttonBar_panel.add(saveAndClose_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 3, 150, 25));
+
         exportManagerLayeredPane.add(buttonBar_panel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 700, 1200, 30));
 
         getContentPane().add(exportManagerLayeredPane);
@@ -325,6 +340,11 @@ public final class GeochronProjectExportManager extends DialogEditor {
         //parent.loadAndShowReportTableData();
     }//GEN-LAST:event_formWindowClosing
 
+    private void saveAndClose_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveAndClose_buttonActionPerformed
+        project.saveTheProjectAsSerializedReduxFile();
+        close();
+    }//GEN-LAST:event_saveAndClose_buttonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLayeredPane aliquotsLayeredPane;
     private javax.swing.JScrollPane aliquotsScrollPane;
@@ -337,6 +357,7 @@ public final class GeochronProjectExportManager extends DialogEditor {
     private javax.swing.JScrollPane instructionsScrollPane;
     private javax.swing.JTextPane instructionsTextPane;
     private javax.swing.JLabel passwordGeochron_label;
+    private javax.swing.JButton saveAndClose_button;
     private javax.swing.JLabel step1_label;
     private javax.swing.JLabel step2_label;
     private javax.swing.JLabel userNameGeochron_label;
