@@ -154,6 +154,7 @@ public final class GeochronProjectExportManager extends DialogEditor {
             }
         });
 
+        revalidate();
     }
 
     private void validateGeoPassID(boolean isVerbose) {
