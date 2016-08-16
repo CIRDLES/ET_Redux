@@ -414,6 +414,8 @@ public class GeochronAliquotManager extends JPanel {
 
         }
 
+        revalidate();
+        
     }
 
     private class aliquotUploadActionListener implements ActionListener {
