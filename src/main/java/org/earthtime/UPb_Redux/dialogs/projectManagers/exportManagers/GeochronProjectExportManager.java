@@ -239,11 +239,11 @@ public final class GeochronProjectExportManager extends DialogEditor {
 
         geoPassPassword_passwordField.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         geoPassPassword_passwordField.setText("############");
-        exportManagerLayeredPane.add(geoPassPassword_passwordField, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 160, 210, -1));
+        exportManagerLayeredPane.add(geoPassPassword_passwordField, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 170, 210, -1));
 
         geoPassUserName_text.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         geoPassUserName_text.setText("username");
-        exportManagerLayeredPane.add(geoPassUserName_text, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 130, 210, -1));
+        exportManagerLayeredPane.add(geoPassUserName_text, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 140, 210, -1));
 
         geoPassIDValidReport_label.setBackground(new java.awt.Color(255, 255, 255));
         geoPassIDValidReport_label.setFont(new java.awt.Font("SansSerif", 3, 12)); // NOI18N
@@ -253,7 +253,7 @@ public final class GeochronProjectExportManager extends DialogEditor {
         geoPassIDValidReport_label.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         geoPassIDValidReport_label.setOpaque(true);
         geoPassIDValidReport_label.setPreferredSize(new java.awt.Dimension(255, 25));
-        exportManagerLayeredPane.add(geoPassIDValidReport_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 130, 360, 55));
+        exportManagerLayeredPane.add(geoPassIDValidReport_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 140, 360, 55));
 
         validateGeochronAndSesarCredentials_button.setFont(new java.awt.Font("SansSerif", 3, 12)); // NOI18N
         validateGeochronAndSesarCredentials_button.setForeground(new java.awt.Color(255, 51, 51));
@@ -266,23 +266,23 @@ public final class GeochronProjectExportManager extends DialogEditor {
                 validateGeochronAndSesarCredentials_buttonActionPerformed(evt);
             }
         });
-        exportManagerLayeredPane.add(validateGeochronAndSesarCredentials_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 130, 180, 55));
+        exportManagerLayeredPane.add(validateGeochronAndSesarCredentials_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 140, 180, 55));
 
         userNameGeochron_label.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         userNameGeochron_label.setText("user name:");
-        exportManagerLayeredPane.add(userNameGeochron_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 130, -1, 25));
+        exportManagerLayeredPane.add(userNameGeochron_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 140, -1, 25));
 
         passwordGeochron_label.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         passwordGeochron_label.setText("password:");
-        exportManagerLayeredPane.add(passwordGeochron_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 160, -1, 25));
+        exportManagerLayeredPane.add(passwordGeochron_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 170, -1, 25));
 
         step1_label.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         step1_label.setText("Step 1) Validate GeoPass credentials:");
-        exportManagerLayeredPane.add(step1_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 130, 280, 25));
+        exportManagerLayeredPane.add(step1_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 140, 280, 25));
 
         credentialSummaryLabel.setFont(new java.awt.Font("SansSerif", 3, 14)); // NOI18N
         credentialSummaryLabel.setText("Note: your user code is XXXXX and your IGSNs will be of the form XXXXXNNNN, where N is any digit or any capital letter.");
-        exportManagerLayeredPane.add(credentialSummaryLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 190, 880, 25));
+        exportManagerLayeredPane.add(credentialSummaryLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 200, 880, 25));
 
         step2_label.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         step2_label.setText("Step 2) Confirm Sample Details and upload to Geochron.org with Public? and Update? options.  NOTE: Currently uses SESAR testbed for IGSNs (not real):");
@@ -297,13 +297,13 @@ public final class GeochronProjectExportManager extends DialogEditor {
         instructionsTextPane.setText("<html>\n  <head>\n\n  </head>\n  <body>\n    <p style=\"margin: 5px 0px 0px 5px; font-family:sansserif; font-size:14\">\n      <strong style=\"color:red\">Instructions: </strong>We want you to uniquely register your samples and aliquots by giving them an IGSN (International Geo Sample Number).  \n\tTo do so, you need credentials -<strong style=\"color:red\">username</strong> and <strong style=\"color:red\">password</strong> - established \n\tat <a href=\"https://geopass.iedadata.org\">GeoPass</a>.  \n\tYou use these credentials to register at <a href=\"http://geochron.org/\">Geochron</> and at <a href=\"http://geosamples.org\">SEASAR</a>.\n\tAt SESAR, you will choose a 5-letter user code (3-letter codes are grandfathered) that will be the prefix used for the IGSNs for every sample you register.\n\tFor each sample you register, you will specify (or ask SESAR to generate) a 4-character code (6 characters if you have 3-letter user code) using any combination\n\tof digits and capital letters.  For example, if your user code is JAMES, then an IGSN might be JAMES09AZ.  You will assign each <strong>Aliquot</strong> \n\tan IGSN in the same way and it will be a child of the parent sample's IGSN.  While you can specify any IGSN for the parent - say you have a piece of a sample from a colleague -\n\tyour Aliquot or child IGSNs will always have your user code as a prefix.\n    </p>\n  </body>\n</html>\n");
         instructionsScrollPane.setViewportView(instructionsTextPane);
 
-        exportManagerLayeredPane.add(instructionsScrollPane, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 1180, -1));
+        exportManagerLayeredPane.add(instructionsScrollPane, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, 1170, 120));
 
         aliquotsLayeredPane.setBackground(new java.awt.Color(245, 255, 255));
         aliquotsLayeredPane.setOpaque(true);
         aliquotsScrollPane.setViewportView(aliquotsLayeredPane);
 
-        exportManagerLayeredPane.add(aliquotsScrollPane, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 250, 1180, 450));
+        exportManagerLayeredPane.add(aliquotsScrollPane, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 250, 1170, 450));
 
         buttonBar_panel.setBackground(new java.awt.Color(235, 255, 255));
         buttonBar_panel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
