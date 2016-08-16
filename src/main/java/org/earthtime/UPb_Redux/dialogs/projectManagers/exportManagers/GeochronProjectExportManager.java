@@ -39,7 +39,7 @@ import org.earthtime.samples.SampleInterface;
 
 /**
  *
- * @author sbowring
+ * @author James F. Bowring <bowring at gmail.com>
  */
 public final class GeochronProjectExportManager extends DialogEditor {
 
@@ -54,6 +54,7 @@ public final class GeochronProjectExportManager extends DialogEditor {
 
     public static GeochronProjectExportManager getInstance(ReportPainterI parent, boolean modal, ProjectInterface project, ReduxPersistentState myState) {
 
+        removeInstance();
         instance = new GeochronProjectExportManager(parent, modal, project, myState);
         return instance;
     }
