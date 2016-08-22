@@ -20,6 +20,8 @@ analyses, as explained
 As of March 2015, we are migrating our content from CIRDLES.org to this site, with
 the goal of stimulating community involvement.
 
+This material is based upon work supported by the National Science Foundation under Grant Numbers [0930223](http://www.nsf.gov/awardsearch/showAward?AWD_ID=0930223) and [1443037](http://www.nsf.gov/awardsearch/showAward?AWD_ID=1443037).  Any opinions, findings, and conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of the National Science Foundation.
+
 Getting Started for Users:
 ---
 You will always find the latest release 
