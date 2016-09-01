@@ -90,8 +90,10 @@ public class GeochronAliquotManager extends JPanel {
     private JButton[] registerNewAliquotButtons;
     private JButton[] viewAliquotRecordButtons;
     private JLabel[] childStatusLabels;
-    private JButton[] showConcordiaButtons;
-    private JButton[] showPDFButtons;
+    private JCheckBox[] uploadConcordiaCheckBoxes;
+    private JButton[] viewConcordiaButtons;
+    private JCheckBox[] uploadPDFCheckBoxes;
+    private JButton[] viewPDFButtons;
     private JCheckBox[] publicOptionCheckBoxes;
     private JCheckBox[] updateOptionCheckBoxes;
 
@@ -263,8 +265,10 @@ public class GeochronAliquotManager extends JPanel {
         viewAliquotRecordButtons = new JButton[aliquotCount];
         sesarAliquots = new Samples.Sample[aliquotCount];
         childStatusLabels = new JLabel[aliquotCount];
-        showConcordiaButtons = new JButton[aliquotCount];
-        showPDFButtons = new JButton[aliquotCount];
+        uploadConcordiaCheckBoxes = new JCheckBox[aliquotCount];
+        viewConcordiaButtons = new JButton[aliquotCount];
+        uploadPDFCheckBoxes = new JCheckBox[aliquotCount];
+        viewPDFButtons = new JButton[aliquotCount];
         publicOptionCheckBoxes = new JCheckBox[aliquotCount];
         updateOptionCheckBoxes = new JCheckBox[aliquotCount];
 
@@ -355,7 +359,7 @@ public class GeochronAliquotManager extends JPanel {
             viewAliquotRecordButtons[i].addActionListener(
                     new aliquotReviewActionListener(activeAliquots.get(i), sesarAliquots[i], aliquotIGSN_TextFields[i], aliquotName_TextFields[i]));
 
-            cumulativeWidth += 140;
+            cumulativeWidth += 135;
 
             childStatusLabels[i] = new JLabel("Aliquot IGSN is not a valid child of Sample IGSN.");
             childStatusLabels[i].setBounds(cumulativeWidth, TOP_MARGIN + 30 * (i + 1), 300, 25);
@@ -364,35 +368,57 @@ public class GeochronAliquotManager extends JPanel {
             add(childStatusLabels[i]);
             //cumulativeWidth += 202;
 
-            showConcordiaButtons[i] = new ET_JButton("View Concordia in browser");
-            showConcordiaButtons[i].setBounds(cumulativeWidth, TOP_MARGIN + 30 * (i + 1), 150, 25);
-            showConcordiaButtons[i].setFont(ReduxConstants.sansSerif_10_Bold);
-            showConcordiaButtons[i].setVisible(false);
-            add(showConcordiaButtons[i], JLayeredPane.DEFAULT_LAYER);
-            showConcordiaButtons[i].addActionListener((ActionEvent e) -> {
+            uploadConcordiaCheckBoxes[i] = new JCheckBox("Upload Concordia");
+            uploadConcordiaCheckBoxes[i].setBounds(cumulativeWidth, TOP_MARGIN + 30 * (i + 1), 125, 25);
+            uploadConcordiaCheckBoxes[i].setFont(ReduxConstants.sansSerif_10_Bold);
+            uploadConcordiaCheckBoxes[i].setVisible(false);
+            add(uploadConcordiaCheckBoxes[i], JLayeredPane.DEFAULT_LAYER);
+            uploadConcordiaCheckBoxes[i].addActionListener((ActionEvent e) -> {
+                ;
+            });
+
+            cumulativeWidth += 125;
+            
+            viewConcordiaButtons[i] = new ET_JButton("View");
+            viewConcordiaButtons[i].setBounds(cumulativeWidth, TOP_MARGIN + 30 * (i + 1), 30, 25);
+            viewConcordiaButtons[i].setFont(ReduxConstants.sansSerif_10_Bold);
+            viewConcordiaButtons[i].setVisible(false);
+            add(viewConcordiaButtons[i], JLayeredPane.DEFAULT_LAYER);
+            viewConcordiaButtons[i].addActionListener((ActionEvent e) -> {
                 produceConcordiaGraph(sample);
             });
 
-            cumulativeWidth += 150;
+            cumulativeWidth += 30;
+            
+            uploadPDFCheckBoxes[i] = new JCheckBox("Upload PDF");
+            uploadPDFCheckBoxes[i].setBounds(cumulativeWidth, TOP_MARGIN + 30 * (i + 1), 95, 25);
+            uploadPDFCheckBoxes[i].setFont(ReduxConstants.sansSerif_10_Bold);
+            uploadPDFCheckBoxes[i].setVisible(false);
+            add(uploadPDFCheckBoxes[i], JLayeredPane.DEFAULT_LAYER);
+            uploadPDFCheckBoxes[i].addActionListener((ActionEvent e) -> {
+                ;
+            });
+            
+            cumulativeWidth += 95;
 
-            showPDFButtons[i] = new ET_JButton("View PDF in browser");
-            showPDFButtons[i].setBounds(cumulativeWidth, TOP_MARGIN + 30 * (i + 1), 150, 25);
-            showPDFButtons[i].setFont(ReduxConstants.sansSerif_10_Bold);
-            showPDFButtons[i].setVisible(false);
-            add(showPDFButtons[i], JLayeredPane.DEFAULT_LAYER);
-            showPDFButtons[i].addActionListener((ActionEvent e) -> {
+            viewPDFButtons[i] = new ET_JButton("View");
+            viewPDFButtons[i].setBounds(cumulativeWidth, TOP_MARGIN + 30 * (i + 1), 30, 25);
+            viewPDFButtons[i].setFont(ReduxConstants.sansSerif_10_Bold);
+            viewPDFButtons[i].setVisible(false);
+            add(viewPDFButtons[i], JLayeredPane.DEFAULT_LAYER);
+            viewPDFButtons[i].addActionListener((ActionEvent e) -> {
                 producePDFImage(sample);
             });
 
-            cumulativeWidth += 150;
+            cumulativeWidth += 35;
 
             publicOptionCheckBoxes[i] = new JCheckBox("Public?");
-            publicOptionCheckBoxes[i].setBounds(cumulativeWidth, TOP_MARGIN + 30 * (i + 1), 75, 25);
+            publicOptionCheckBoxes[i].setBounds(cumulativeWidth, TOP_MARGIN + 30 * (i + 1), 70, 25);
             publicOptionCheckBoxes[i].setFont(ReduxConstants.sansSerif_10_Bold);
             publicOptionCheckBoxes[i].setVisible(true);
             add(publicOptionCheckBoxes[i], JLayeredPane.DEFAULT_LAYER);
 
-            cumulativeWidth += 75;
+            cumulativeWidth += 70;
 
             updateOptionCheckBoxes[i] = new JCheckBox("Update?");
             updateOptionCheckBoxes[i].setBounds(cumulativeWidth, TOP_MARGIN + 30 * (i + 1), 75, 25);
@@ -403,7 +429,7 @@ public class GeochronAliquotManager extends JPanel {
             cumulativeWidth += 75;
 
             aliquotUploadButtons[i] = new ET_JButton("Upload");
-            aliquotUploadButtons[i].setBounds(cumulativeWidth, TOP_MARGIN + 30 * (i + 1), 75, 25);
+            aliquotUploadButtons[i].setBounds(saveButton.getX(), TOP_MARGIN + 30 * (i + 1), 73, 25);
             aliquotUploadButtons[i].setFont(ReduxConstants.sansSerif_12_Bold);
             aliquotUploadButtons[i].setVisible(true);
             add(aliquotUploadButtons[i]);
@@ -415,7 +441,7 @@ public class GeochronAliquotManager extends JPanel {
         }
 
         revalidate();
-        
+
     }
 
     private class aliquotUploadActionListener implements ActionListener {
@@ -566,8 +592,10 @@ public class GeochronAliquotManager extends JPanel {
         registerNewAliquotButtons[index].setVisible(!valid);
 
         childStatusLabels[index].setVisible(!valid);
-        showConcordiaButtons[index].setVisible(valid);
-        showPDFButtons[index].setVisible(valid);
+        uploadConcordiaCheckBoxes[index].setVisible(valid);
+        viewConcordiaButtons[index].setVisible(valid);
+        uploadPDFCheckBoxes[index].setVisible(valid);
+        viewPDFButtons[index].setVisible(valid);
         publicOptionCheckBoxes[index].setVisible(valid);
         updateOptionCheckBoxes[index].setVisible(valid);
         aliquotUploadButtons[index].setVisible(valid);
