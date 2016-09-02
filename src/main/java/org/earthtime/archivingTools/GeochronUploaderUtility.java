@@ -33,6 +33,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.utilities.ClientHttpRequest;
 import org.earthtime.aliquots.AliquotInterface;
+import org.earthtime.aliquots.ReduxAliquotInterface;
+import org.earthtime.dataDictionaries.AnalysisImageTypes;
 import org.earthtime.samples.SampleInterface;
 import org.xml.sax.SAXException;
 
@@ -42,13 +44,12 @@ import org.xml.sax.SAXException;
  */
 public class GeochronUploaderUtility {
 
-    
     public static void uploadAliquotToGeochron(SampleInterface sample, AliquotInterface aliquot, String userName, String password, boolean isPublic, boolean overWrite) {
         // feb 2015 part of refactoring effort ... this code duplicates code in AliquotManager
         //TODO: complete refactoring
-              
-        String content = ((UPbReduxAliquot)aliquot).serializeXMLObject();
-        
+
+        String content = ((UPbReduxAliquot) aliquot).serializeXMLObject();
+
         // Construct data
         String isPublicString = isPublic ? "yes" : "no";
         String overWriteString = overWrite ? "yes" : "no";
@@ -133,6 +134,18 @@ public class GeochronUploaderUtility {
                     !error.equalsIgnoreCase("no") ? "Failure!\n" : "Success!\n",
                     message + "   " + aliquot.getSampleIGSN() + "::" + aliquot.getAliquotName()
                 });
+    }
+
+    public static void uploadConcordiaImage(File tempConcordiaSVG, AliquotInterface aliquot, String userName, String password ) {
+        // april 2011 revise to check if concordia slot is already taken
+        AnalysisImageInterface concordiaImage = ((ReduxAliquotInterface)aliquot).getAnalysisImageByType(AnalysisImageTypes.CONCORDIA);
+
+        concordiaImage.setImageURL(//
+                GeochronUploadImagesHelper.uploadImage(//
+                        tempConcordiaSVG, //
+                        userName, //
+                        password,
+                        AnalysisImageTypes.CONCORDIA));
     }
 
 }

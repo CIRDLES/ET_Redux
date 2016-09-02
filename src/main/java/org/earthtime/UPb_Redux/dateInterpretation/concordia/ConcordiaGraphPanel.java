@@ -152,7 +152,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
     private JLayeredPane heatMapLegendPanel;
     //oct 2014
     private transient double currentBestDate;
-    private transient AliquotInterface curAliquot;
+    protected transient AliquotInterface curAliquot;
     private transient boolean changingBestDateDivider;
     private transient ReportUpdaterInterface reportUpdater;
 
@@ -189,8 +189,6 @@ public class ConcordiaGraphPanel extends JLayeredPane
         concordiaCursor = Cursor.getDefaultCursor();
         this.imageMode = "PAN";
 
-//        addMouseListener( this );
-//        addMouseMotionListener( this );
         this.showTitleBox = true;
         // set up title box
         concordiaTitlePanel = new TitleBoxPanel(sample.getSampleName());
@@ -814,7 +812,8 @@ public class ConcordiaGraphPanel extends JLayeredPane
                     Font.PLAIN,
                     14));
 
-            String myText = "SAMPLE = " + sample.getSampleName().trim();
+            determineCurrentAliquot();
+            String myText = "SAMPLE::ALIQUOT = " + sample.getSampleName().trim() + "::" + curAliquot.getAliquotName();
             TextLayout mLayout
                     = new TextLayout(
                             myText, g2d.getFont(), g2d.getFontRenderContext());
@@ -3283,6 +3282,13 @@ public class ConcordiaGraphPanel extends JLayeredPane
     @Override
     public void setFilteredFractions(Vector<ETFractionInterface> proposedFilteredFractions) {
         this.filteredFractions = proposedFilteredFractions;
+    }
+
+    /**
+     * @param curAliquot the curAliquot to set
+     */
+    public void setCurAliquot(AliquotInterface curAliquot) {
+        this.curAliquot = curAliquot;
     }
 
 }
