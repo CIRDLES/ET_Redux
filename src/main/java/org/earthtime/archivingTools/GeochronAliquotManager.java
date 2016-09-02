@@ -27,7 +27,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
-import java.util.Map;
 import java.util.Vector;
 import javax.swing.InputVerifier;
 import javax.swing.JButton;
@@ -39,16 +38,13 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.dateInterpretation.DateProbabilityDensityPanel;
-import org.earthtime.UPb_Redux.dateInterpretation.concordia.ConcordiaGraphPanel;
-import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetup;
 import org.earthtime.aliquots.AliquotInterface;
-import org.earthtime.aliquots.ReduxAliquotInterface;
 import static org.earthtime.archivingTools.GeoSamplesWebServices.isSampleRegistered;
 import static org.earthtime.archivingTools.GeoSamplesWebServices.isSampleRegisteredToParent;
+import static org.earthtime.archivingTools.GeochronUploaderUtility.produceConcordiaGraphForUploading;
+import static org.earthtime.archivingTools.GeochronUploaderUtility.producePDFImageForUploading;
 import org.earthtime.archivingTools.forSESAR.SesarSampleManager;
 import org.earthtime.beans.ET_JButton;
-import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.projects.ProjectInterface;
 import org.earthtime.samples.SampleInterface;
@@ -98,6 +94,7 @@ public class GeochronAliquotManager extends JPanel {
     private JCheckBox[] publicOptionCheckBoxes;
     private JCheckBox[] updateOptionCheckBoxes;
     private File tempConcordiaSVGforUploading;
+    private File tempProbabilitySVGforUploading;
 
     public GeochronAliquotManager(ProjectInterface project, SampleInterface sample, String userName, String password, String userCode, int x, int y, int width, int height) {
         this.project = project;
@@ -125,6 +122,23 @@ public class GeochronAliquotManager extends JPanel {
         setBounds(bounds);
 
         setLayout(null);
+
+        /* Set the Metal look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Metal is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Metal".equals(info.getName())) { //Nimbus (original), Motif, Metal
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(org.cirdles.calamari.userInterface.CalamariUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
 
     }
 
@@ -367,15 +381,17 @@ public class GeochronAliquotManager extends JPanel {
             childStatusLabels[i].setBounds(cumulativeWidth, TOP_MARGIN + 30 * (i + 1), 300, 25);
             childStatusLabels[i].setFont(ReduxConstants.sansSerif_12_Bold);
             childStatusLabels[i].setForeground(Color.red);
+            childStatusLabels[i].setOpaque(false);
             add(childStatusLabels[i]);
             //cumulativeWidth += 202;
 
-            produceConcordiaGraph(sample, aliquot);
+            tempConcordiaSVGforUploading = produceConcordiaGraphForUploading(sample, aliquot);
 
             uploadConcordiaCheckBoxes[i] = new JCheckBox("Upload Concordia");
             uploadConcordiaCheckBoxes[i].setBounds(cumulativeWidth, TOP_MARGIN + 30 * (i + 1), 125, 25);
             uploadConcordiaCheckBoxes[i].setFont(ReduxConstants.sansSerif_10_Bold);
             uploadConcordiaCheckBoxes[i].setVisible(false);
+            uploadConcordiaCheckBoxes[i].setOpaque(false);
             add(uploadConcordiaCheckBoxes[i], JLayeredPane.DEFAULT_LAYER);
 
             cumulativeWidth += 125;
@@ -384,6 +400,7 @@ public class GeochronAliquotManager extends JPanel {
             viewConcordiaButtons[i].setBounds(cumulativeWidth, TOP_MARGIN + 30 * (i + 1), 30, 25);
             viewConcordiaButtons[i].setFont(ReduxConstants.sansSerif_10_Bold);
             viewConcordiaButtons[i].setVisible(false);
+            viewConcordiaButtons[i].setOpaque(false);
             add(viewConcordiaButtons[i], JLayeredPane.DEFAULT_LAYER);
             viewConcordiaButtons[i].addActionListener((ActionEvent e) -> {
                 // show in a browser
@@ -401,6 +418,7 @@ public class GeochronAliquotManager extends JPanel {
             uploadPDFCheckBoxes[i].setBounds(cumulativeWidth, TOP_MARGIN + 30 * (i + 1), 95, 25);
             uploadPDFCheckBoxes[i].setFont(ReduxConstants.sansSerif_10_Bold);
             uploadPDFCheckBoxes[i].setVisible(false);
+            uploadPDFCheckBoxes[i].setOpaque(false);
             add(uploadPDFCheckBoxes[i], JLayeredPane.DEFAULT_LAYER);
             uploadPDFCheckBoxes[i].addActionListener((ActionEvent e) -> {
                 ;
@@ -408,13 +426,20 @@ public class GeochronAliquotManager extends JPanel {
 
             cumulativeWidth += 95;
 
+            tempProbabilitySVGforUploading = producePDFImageForUploading(sample, aliquot);
+
             viewPDFButtons[i] = new ET_JButton("View");
             viewPDFButtons[i].setBounds(cumulativeWidth, TOP_MARGIN + 30 * (i + 1), 30, 25);
             viewPDFButtons[i].setFont(ReduxConstants.sansSerif_10_Bold);
             viewPDFButtons[i].setVisible(false);
+            viewPDFButtons[i].setOpaque(false);
             add(viewPDFButtons[i], JLayeredPane.DEFAULT_LAYER);
             viewPDFButtons[i].addActionListener((ActionEvent e) -> {
-                producePDFImage(sample);
+                try {
+                    Desktop.getDesktop().browse(tempProbabilitySVGforUploading.toURI());
+                } catch (IOException iOException) {
+                    System.out.println("Browser issue " + iOException.getMessage());
+                }
             });
 
             cumulativeWidth += 35;
@@ -423,6 +448,7 @@ public class GeochronAliquotManager extends JPanel {
             publicOptionCheckBoxes[i].setBounds(cumulativeWidth, TOP_MARGIN + 30 * (i + 1), 70, 25);
             publicOptionCheckBoxes[i].setFont(ReduxConstants.sansSerif_10_Bold);
             publicOptionCheckBoxes[i].setVisible(true);
+            publicOptionCheckBoxes[i].setOpaque(false);
             add(publicOptionCheckBoxes[i], JLayeredPane.DEFAULT_LAYER);
 
             cumulativeWidth += 70;
@@ -431,6 +457,7 @@ public class GeochronAliquotManager extends JPanel {
             updateOptionCheckBoxes[i].setBounds(cumulativeWidth, TOP_MARGIN + 30 * (i + 1), 75, 25);
             updateOptionCheckBoxes[i].setFont(ReduxConstants.sansSerif_10_Bold);
             updateOptionCheckBoxes[i].setVisible(true);
+            updateOptionCheckBoxes[i].setOpaque(false);
             add(updateOptionCheckBoxes[i], JLayeredPane.DEFAULT_LAYER);
 
             cumulativeWidth += 75;
@@ -690,114 +717,6 @@ public class GeochronAliquotManager extends JPanel {
             updateValidAliquotDisplay(index, isValid);
             return true;
         }
-    }
-
-    /**
-     *
-     * @param sample the value of sample
-     * @param aliquot the value of aliquot
-     */
-    private void produceConcordiaGraph(SampleInterface sample, AliquotInterface aliquot) {
-        // feb 2015 code copied and modified from aliquot manager for user interface prototyping
-        // TODO: refactor both locations to sample and make more robust
-        // TODO: use create virtual file system
-
-        tempConcordiaSVGforUploading = new File(sample.getSampleName() + "-" + aliquot.getAliquotName() + "_tempConcordiaForUpload.svg");
-
-        ConcordiaGraphPanel concordiaGraphPanel = new ConcordiaGraphPanel(sample, null);
-        concordiaGraphPanel.setSelectedFractions(((ReduxAliquotInterface) aliquot).getAliquotFractions());
-        concordiaGraphPanel.setCurAliquot(aliquot);
-
-        sample.getSampleDateInterpretationGUISettings().//
-                setConcordiaOptions(concordiaGraphPanel.getConcordiaOptions());
-        concordiaGraphPanel.//
-                setFadedDeselectedFractions(false);
-
-        // set choices per options code copied (TODO: REFACTOR ME) from SampleDateInterpretations
-        Map<String, String> CGO = concordiaGraphPanel.getConcordiaOptions();
-        if (CGO.containsKey("showEllipseLabels")) {
-            concordiaGraphPanel.setShowEllipseLabels(false);
-        }
-        if (CGO.containsKey("showExcludedEllipses")) {
-            concordiaGraphPanel.setShowExcludedEllipses(true);
-        }
-
-        concordiaGraphPanel.setBounds(510, 0, 580, 405);
-        concordiaGraphPanel.setCurrentGraphAxesSetup(new GraphAxesSetup("C", 2));
-        concordiaGraphPanel.setGraphWidth(565 - GraphAxesSetup.DEFAULT_GRAPH_LEFT_MARGIN_VERTICAL_LABELS);
-        concordiaGraphPanel.setGraphHeight(385);
-
-        concordiaGraphPanel.setYorkFitLine(null);
-        concordiaGraphPanel.getDeSelectedFractions().clear();
-        concordiaGraphPanel.setPreferredDatePanel(null);
-
-        concordiaGraphPanel.setShowTightToEdges(true);
-
-        concordiaGraphPanel.refreshPanel(true, false);
-
-        concordiaGraphPanel.setShowTightToEdges(false);
-
-        boolean saveShowTitleBox = concordiaGraphPanel.isShowTitleBox();
-        // prepare for SVG output for uploading
-        concordiaGraphPanel.setShowTitleBox(false);
-        concordiaGraphPanel.setUploadToGeochronMode(true);
-
-        concordiaGraphPanel.outputToSVG(tempConcordiaSVGforUploading);
-
-        // restore state
-        concordiaGraphPanel.setShowTitleBox(saveShowTitleBox);
-        concordiaGraphPanel.setUploadToGeochronMode(false);
-
-//        // show in a browser
-//        try {
-//            Desktop.getDesktop().browse(tempConcordiaSVGforUploading.toURI());
-//        } catch (IOException iOException) {
-//            System.out.println("Browser issue " + iOException.getMessage());
-//        }
-    }
-
-    private void producePDFImage(SampleInterface sample) {
-        File tempProbabilitySVG = new File(sample.getSampleName() + "_tempProbabilityDensity.svg");
-
-        DateProbabilityDensityPanel probabilityPanel = new DateProbabilityDensityPanel(sample);
-
-        // use default if user has not initialized
-        if (probabilityPanel.getSelectedFractions().isEmpty()) {
-            probabilityPanel.//
-                    setSelectedFractions(sample.getUpbFractionsUnknown());
-            probabilityPanel.//
-                    getDeSelectedFractions().clear();
-
-            probabilityPanel.setGraphWidth(565);
-            probabilityPanel.setGraphHeight(385);
-
-            probabilityPanel.setSelectedHistogramBinCount(5);
-
-            if (sample.isSampleTypeLegacy() & sample.getAnalysisPurpose().equals(ReduxConstants.ANALYSIS_PURPOSE.DetritalSpectrum)) {
-                probabilityPanel.setChosenDateName(RadDates.bestAge.getName());
-            } else {
-                probabilityPanel.setChosenDateName(RadDates.age207_206r.getName());
-            }
-
-            probabilityPanel.refreshPanel(true, false);
-
-        } else {
-            probabilityPanel.setGraphWidth(565);
-            probabilityPanel.setGraphHeight(385);
-        }
-
-        probabilityPanel.setUploadToGeochronMode(true);
-
-        probabilityPanel.outputToSVG(tempProbabilitySVG);
-
-        probabilityPanel.setUploadToGeochronMode(false);
-
-        try {
-            Desktop.getDesktop().browse(tempProbabilitySVG.toURI());
-        } catch (IOException iOException) {
-            System.out.println("Browser issue " + iOException.getMessage());
-        }
-
     }
 
     /**

@@ -69,6 +69,7 @@ import org.earthtime.UPb_Redux.dateInterpretation.vermeeschKDE.OtherData;
 import org.earthtime.UPb_Redux.dateInterpretation.vermeeschKDE.Preferences;
 import org.earthtime.UPb_Redux.user.SampleDateInterpretationGUIOptions;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
+import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.aliquots.ReduxAliquotInterface;
 import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.fractions.ETFractionInterface;
@@ -154,6 +155,7 @@ public class DateProbabilityDensityPanel extends JLayeredPane
     private double[] timescale;
     private double maxKDE;
     private GraphPanelModeChangeI graphPanelModeChanger;
+    protected transient AliquotInterface curAliquot;
 
     /**
      *
@@ -474,17 +476,17 @@ public class DateProbabilityDensityPanel extends JLayeredPane
                     Font.PLAIN,
                     14));
 
-            String myText = "SAMPLE = " + sample.getSampleName().trim();
+            //String myText = "SAMPLE = " + sample.getSampleName().trim();
+            String myText = "SAMPLE::ALIQUOT = " + sample.getSampleName().trim() + "::" + curAliquot.getAliquotName();
             TextLayout mLayout
-                    = //
-                    new TextLayout(
+                    = new TextLayout(
                             myText, g2d.getFont(), g2d.getFontRenderContext());
 
             Rectangle2D bounds = mLayout.getBounds();
-            g2d.drawString(myText, (int) (graphWidth - bounds.getBounds().getWidth()), (int) bounds.getBounds().getHeight() + 5);
+            g2d.drawString(myText, (int) (graphWidth - bounds.getBounds().getWidth() - 25), (int) bounds.getBounds().getHeight() + 5);
             g2d.drawString( //
                     "Bin Width = " + new DecimalFormat("###0").format(adjustedScottsBinWidth)//
-                    + " Ma", (int) (graphWidth - bounds.getBounds().getWidth()), (int) bounds.getBounds().getHeight() + 20);
+                    + " Ma", (int) (graphWidth - bounds.getBounds().getWidth() - 25), (int) bounds.getBounds().getHeight() + 20);
 
             g2d.setFont(savedFont);
         }
@@ -769,7 +771,6 @@ public class DateProbabilityDensityPanel extends JLayeredPane
         // aug 2016 hack to fix project problem
         stackedAliquotKernels = new double[Math.max(sample.getAliquots().size(), 9) + 1][pdfPoints.size() + 1];
 
-
         // June 2013 experiment with Vermeesch KDE
         ArrayList<Double> X = new ArrayList<>();
         ArrayList<Double> Y = new ArrayList<>();
@@ -857,14 +858,12 @@ public class DateProbabilityDensityPanel extends JLayeredPane
                 }
 
             } else // downhill
-            {
-                if (stackedAliquotKernels[0][i] > stackedAliquotKernels[0][currentMinIndex]) {
+             if (stackedAliquotKernels[0][i] > stackedAliquotKernels[0][currentMinIndex]) {
                     uphill = true;
                     currentMaxIndex = i;
                 } else {
                     currentMinIndex++;
                 }
-            }
         }
 
     }
@@ -1014,6 +1013,13 @@ public class DateProbabilityDensityPanel extends JLayeredPane
      */
     public void setGraphPanelModeChanger(GraphPanelModeChangeI graphPanelModeChanger) {
         this.graphPanelModeChanger = graphPanelModeChanger;
+    }
+
+    /**
+     * @param curAliquot the curAliquot to set
+     */
+    public void setCurAliquot(AliquotInterface curAliquot) {
+        this.curAliquot = curAliquot;
     }
 
     class KernelF implements Comparable<KernelF> {
