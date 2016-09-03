@@ -212,31 +212,19 @@ public class GeochronUploaderUtility {
         DateProbabilityDensityPanel probabilityPanel = new DateProbabilityDensityPanel(sample);
         probabilityPanel.setSelectedFractions(((ReduxAliquotInterface) aliquot).getAliquotFractions());
         probabilityPanel.setCurAliquot(aliquot);
-        
-//        // use default if user has not initialized
-//        if (probabilityPanel.getSelectedFractions().isEmpty()) {
-//            probabilityPanel.//
-//                    setSelectedFractions(sample.getUpbFractionsUnknown());
-//            probabilityPanel.//
-//                    getDeSelectedFractions().clear();
 
-            probabilityPanel.setGraphWidth(565);
-            probabilityPanel.setGraphHeight(385);
+        probabilityPanel.setGraphWidth(565);
+        probabilityPanel.setGraphHeight(385);
 
-            probabilityPanel.setSelectedHistogramBinCount(5);
+        probabilityPanel.setSelectedHistogramBinCount(5);
 
-            if (sample.isSampleTypeLegacy() & sample.getAnalysisPurpose().equals(ReduxConstants.ANALYSIS_PURPOSE.DetritalSpectrum)) {
-                probabilityPanel.setChosenDateName(RadDates.bestAge.getName());
-            } else {
-                probabilityPanel.setChosenDateName(RadDates.age207_206r.getName());
-            }
+        if (sample.isSampleTypeLegacy() & sample.getAnalysisPurpose().equals(ReduxConstants.ANALYSIS_PURPOSE.DetritalSpectrum)) {
+            probabilityPanel.setChosenDateName(RadDates.bestAge.getName());
+        } else {
+            probabilityPanel.setChosenDateName(RadDates.age207_206r.getName());
+        }
 
-            probabilityPanel.refreshPanel(true, false);
-
-//        } else {
-//            probabilityPanel.setGraphWidth(565);
-//            probabilityPanel.setGraphHeight(385);
-//        }
+        probabilityPanel.refreshPanel(true, false);
 
         // prepare for upload
         probabilityPanel.setUploadToGeochronMode(true);
@@ -258,6 +246,17 @@ public class GeochronUploaderUtility {
                         userName, //
                         password,
                         AnalysisImageTypes.CONCORDIA));
+    }
+
+    public static void uploadPDFImage(File tempProbabilitySVGforUploading, AliquotInterface aliquot, String userName, String password) {
+        AnalysisImageInterface probabilityImage = ((ReduxAliquotInterface) aliquot).getAnalysisImageByType(AnalysisImageTypes.PROBABILITY_DENSITY);
+
+        probabilityImage.setImageURL(//
+                GeochronUploadImagesHelper.uploadImage(//
+                        tempProbabilitySVGforUploading, //
+                        userName, //
+                        password,
+                        AnalysisImageTypes.PROBABILITY_DENSITY));
     }
 
 }

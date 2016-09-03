@@ -383,7 +383,6 @@ public class GeochronAliquotManager extends JPanel {
             childStatusLabels[i].setForeground(Color.red);
             childStatusLabels[i].setOpaque(false);
             add(childStatusLabels[i]);
-            //cumulativeWidth += 202;
 
             tempConcordiaSVGforUploading = produceConcordiaGraphForUploading(sample, aliquot);
 
@@ -420,9 +419,6 @@ public class GeochronAliquotManager extends JPanel {
             uploadPDFCheckBoxes[i].setVisible(false);
             uploadPDFCheckBoxes[i].setOpaque(false);
             add(uploadPDFCheckBoxes[i], JLayeredPane.DEFAULT_LAYER);
-            uploadPDFCheckBoxes[i].addActionListener((ActionEvent e) -> {
-                ;
-            });
 
             cumulativeWidth += 95;
 
@@ -467,7 +463,8 @@ public class GeochronAliquotManager extends JPanel {
             aliquotUploadButtons[i].setFont(ReduxConstants.sansSerif_12_Bold);
             aliquotUploadButtons[i].setVisible(true);
             add(aliquotUploadButtons[i]);
-            aliquotUploadButtons[i].addActionListener(new AliquotUploadActionListener(aliquot, uploadConcordiaCheckBoxes[i], uploadPDFCheckBoxes[i], publicOptionCheckBoxes[i], updateOptionCheckBoxes[i]));
+            aliquotUploadButtons[i].addActionListener(new AliquotUploadActionListener(
+                    aliquot, uploadConcordiaCheckBoxes[i], uploadPDFCheckBoxes[i], publicOptionCheckBoxes[i], updateOptionCheckBoxes[i]));
 
             aliquotIGSN_TextFields[i].getInputVerifier().verify(aliquotIGSN_TextFields[i]);
 
@@ -508,6 +505,9 @@ public class GeochronAliquotManager extends JPanel {
 
             if (uploadConcordiaCheckBox.isSelected()) {
                 GeochronUploaderUtility.uploadConcordiaImage(tempConcordiaSVGforUploading, aliquot, userName, password);
+            }
+            if (uploadPDFCheckBox.isSelected()) {
+                GeochronUploaderUtility.uploadPDFImage(tempProbabilitySVGforUploading, aliquot, userName, password);
             }
 
             GeochronUploaderUtility.uploadAliquotToGeochron(//
