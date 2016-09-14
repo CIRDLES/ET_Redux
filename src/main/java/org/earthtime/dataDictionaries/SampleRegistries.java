@@ -33,7 +33,7 @@ public enum SampleRegistries {
     /**
      * 
      */
-    SESAR( "SESAR", "SSR", "http://app.geosamples.org/webservices/display.php?igsn=" ),
+    SESAR( "SESAR", "SSR", "https://app.geosamples.org/webservices/display.php?igsn=" ),
 
     /**
      *
