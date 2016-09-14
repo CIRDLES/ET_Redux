@@ -96,6 +96,7 @@ public class RawIntensityDataModel //
     private double[] diagonalOfMatrixSCorrectedIntensities;
 
     private double[] allItensities;
+    private double[] allAnalogCorrectionFactors;
     // nov 2014 - see validateOnPeakBaselineCorrectedIsotope inn abstractMassSpecSetup
     private boolean forceMeanForCommonLeadRatios;
     private double forcedMeanForCommonLeadRatios;
@@ -341,9 +342,16 @@ public class RawIntensityDataModel //
         allItensities = new double[baselineIntensities.length + ablationIntensities.length];
         System.arraycopy(baselineIntensities, 0, allItensities, 0, baselineIntensities.length);
         System.arraycopy(ablationIntensities, 0, allItensities, baselineIntensities.length, ablationIntensities.length);
+        
+        double[] baselineACFs = backgroundVirtualCollector.getAnalogCorrectionFactors();
+        double[] peakACFs = onPeakVirtualCollector.getAnalogCorrectionFactors();
 
-        diagonalOfMatrixSIntensities = collectorModel.calculateMeasuredCountsAndMatrixSIntensityDiagonal( //
-                baselineIntensities.length, allItensities, integrationTime).clone();
+        allAnalogCorrectionFactors = new double[baselineACFs.length + peakACFs.length];
+        System.arraycopy(baselineACFs, 0, allAnalogCorrectionFactors, 0, baselineACFs.length);
+        System.arraycopy(peakACFs, 0, allAnalogCorrectionFactors, baselineACFs.length, peakACFs.length);
+
+        diagonalOfMatrixSIntensities = collectorModel.calculateMeasuredCountsAndMatrixSIntensityDiagonal(//
+                baselineIntensities.length, allAnalogCorrectionFactors, allItensities, integrationTime).clone();
     }
 
     /**

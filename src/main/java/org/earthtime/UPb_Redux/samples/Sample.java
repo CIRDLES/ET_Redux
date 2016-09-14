@@ -1079,6 +1079,7 @@ public class Sample implements
         for (int aliquotIndex = 0; aliquotIndex
                 < aliquots.size(); aliquotIndex++) {
             aliquots.get(aliquotIndex).setSampleIGSN(sampleIGSN);
+            aliquots.get(aliquotIndex).setAnalysisPurpose(analysisPurpose);
         }
     }
 

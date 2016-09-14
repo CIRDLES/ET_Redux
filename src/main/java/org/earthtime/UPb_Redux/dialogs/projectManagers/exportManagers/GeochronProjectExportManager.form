@@ -52,7 +52,7 @@
         <Component class="javax.swing.JPasswordField" name="geoPassPassword_passwordField">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="SansSerif" size="12" style="0"/>
+              <Font name="Lucida Grande" size="12" style="0"/>
             </Property>
             <Property name="text" type="java.lang.String" value="############"/>
           </Properties>
@@ -65,7 +65,7 @@
         <Component class="javax.swing.JTextField" name="geoPassUserName_text">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="SansSerif" size="12" style="0"/>
+              <Font name="Lucida Grande" size="12" style="0"/>
             </Property>
             <Property name="text" type="java.lang.String" value="username"/>
           </Properties>
@@ -81,7 +81,7 @@
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="SansSerif" size="12" style="3"/>
+              <Font name="Lucida Grande" size="12" style="3"/>
             </Property>
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="0" green="cc" red="66" type="rgb"/>
@@ -107,7 +107,7 @@
         <Component class="javax.swing.JButton" name="validateGeochronAndSesarCredentials_button">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="SansSerif" size="12" style="3"/>
+              <Font name="Lucida Grande" size="12" style="3"/>
             </Property>
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="33" green="33" red="ff" type="rgb"/>
@@ -134,33 +134,35 @@
         <Component class="javax.swing.JLabel" name="userNameGeochron_label">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="SansSerif" size="12" style="1"/>
+              <Font name="Lucida Grande" size="12" style="1"/>
             </Property>
+            <Property name="horizontalAlignment" type="int" value="4"/>
             <Property name="text" type="java.lang.String" value="user name:"/>
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="300" y="140" width="-1" height="25"/>
+              <AbsoluteConstraints x="283" y="140" width="90" height="25"/>
             </Constraint>
           </Constraints>
         </Component>
         <Component class="javax.swing.JLabel" name="passwordGeochron_label">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="SansSerif" size="12" style="1"/>
+              <Font name="Lucida Grande" size="12" style="1"/>
             </Property>
+            <Property name="horizontalAlignment" type="int" value="4"/>
             <Property name="text" type="java.lang.String" value="password:"/>
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="300" y="170" width="-1" height="25"/>
+              <AbsoluteConstraints x="283" y="170" width="90" height="25"/>
             </Constraint>
           </Constraints>
         </Component>
         <Component class="javax.swing.JLabel" name="step1_label">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="SansSerif" size="14" style="1"/>
+              <Font name="Lucida Grande" size="14" style="1"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Step 1) Validate GeoPass credentials:"/>
           </Properties>
@@ -173,7 +175,7 @@
         <Component class="javax.swing.JLabel" name="credentialSummaryLabel">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="SansSerif" size="14" style="3"/>
+              <Font name="Lucida Grande" size="14" style="3"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Note: your user code is XXXXX and your IGSNs will be of the form XXXXXNNNN, where N is any digit or any capital letter."/>
           </Properties>
@@ -186,7 +188,7 @@
         <Component class="javax.swing.JLabel" name="step2_label">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="SansSerif" size="14" style="1"/>
+              <Font name="Lucida Grande" size="14" style="1"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Step 2) Confirm Sample Details and upload to Geochron.org with Public? and Update? options.  NOTE: Currently uses SESAR testbed for IGSNs (not real):"/>
           </Properties>
@@ -222,9 +224,6 @@
               <Properties>
                 <Property name="editable" type="boolean" value="false"/>
                 <Property name="contentType" type="java.lang.String" value="text/html" noResource="true"/>
-                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="SansSerif" size="13" style="0"/>
-                </Property>
                 <Property name="text" type="java.lang.String" value="&lt;html&gt;&#xa;  &lt;head&gt;&#xa;&#xa;  &lt;/head&gt;&#xa;  &lt;body&gt;&#xa;    &lt;p style=&quot;margin: 5px 0px 0px 5px; font-family:sansserif; font-size:14&quot;&gt;&#xa;      &lt;strong style=&quot;color:red&quot;&gt;Instructions: &lt;/strong&gt;We want you to uniquely register your samples and aliquots by giving them an IGSN (International Geo Sample Number).  &#xa;&#x9;To do so, you need credentials -&lt;strong style=&quot;color:red&quot;&gt;username&lt;/strong&gt; and &lt;strong style=&quot;color:red&quot;&gt;password&lt;/strong&gt; - established &#xa;&#x9;at &lt;a href=&quot;https://geopass.iedadata.org&quot;&gt;GeoPass&lt;/a&gt;.  &#xa;&#x9;You use these credentials to register at &lt;a href=&quot;http://geochron.org/&quot;&gt;Geochron&lt;/&gt; and at &lt;a href=&quot;http://geosamples.org&quot;&gt;SEASAR&lt;/a&gt;.&#xa;&#x9;At SESAR, you will choose a 5-letter user code (3-letter codes are grandfathered) that will be the prefix used for the IGSNs for every sample you register.&#xa;&#x9;For each sample you register, you will specify (or ask SESAR to generate) a 4-character code (6 characters if you have 3-letter user code) using any combination&#xa;&#x9;of digits and capital letters.  For example, if your user code is JAMES, then an IGSN might be JAMES09AZ.  You will assign each &lt;strong&gt;Aliquot&lt;/strong&gt; &#xa;&#x9;an IGSN in the same way and it will be a child of the parent sample&apos;s IGSN.  While you can specify any IGSN for the parent - say you have a piece of a sample from a colleague -&#xa;&#x9;your Aliquot or child IGSNs will always have your user code as a prefix.&#xa;    &lt;/p&gt;&#xa;  &lt;/body&gt;&#xa;&lt;/html&gt;&#xa;"/>
               </Properties>
             </Component>

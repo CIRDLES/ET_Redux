@@ -178,12 +178,15 @@ public class ProjectSample implements//
 
     @Override
     public ReduxConstants.ANALYSIS_PURPOSE getAnalysisPurpose() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return analysisPurpose;
     }
 
     @Override
     public void setAnalysisPurpose(ReduxConstants.ANALYSIS_PURPOSE analysisPurpose) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.analysisPurpose = analysisPurpose;
+        for (int i = 0; i < aliquots.size(); i ++){
+            aliquots.get(i).setAnalysisPurpose(analysisPurpose);
+        }
     }
 
     /**

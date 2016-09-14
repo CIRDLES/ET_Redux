@@ -420,7 +420,7 @@ public class SantaBarbaraNUPlasmaMultiCollFaradayTRAFileHandler extends Abstract
 
                 massSpec.setCountOfAcquisitions(peakAcquisitions.size());
 
-                massSpec.processFractionRawRatiosII(//
+                massSpec.processFractionRawRatiosII(null, null, //
                         backgroundAcquisitions, peakAcquisitions, usingFullPropagation, tripoliFraction, inLiveMode);
 
                 tripoliFraction.shadeDataActiveMapLeft(0);

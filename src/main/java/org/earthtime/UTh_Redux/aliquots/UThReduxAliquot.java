@@ -25,6 +25,7 @@ import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.aliquots.ReduxAliquotInterface;
 import org.earthtime.archivingTools.AnalysisImageInterface;
+import org.earthtime.dataDictionaries.AnalysisImageTypes;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.reduxLabData.ReduxLabData;
@@ -346,5 +347,10 @@ public class UThReduxAliquot implements //
     @Override
     public void reduceData(boolean inLiveMode) {
         //TODO: Reduce Useries
+    }
+
+    @Override
+    public AnalysisImageInterface getAnalysisImageByType(AnalysisImageTypes imageType) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

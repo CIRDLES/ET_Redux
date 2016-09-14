@@ -190,7 +190,7 @@ public class Project implements
     @Override
     public void prepareSamplesForRedux() {
         System.out.println("Preparing Samples for Redux");
-
+        
         // walk the tripolisamples and convert to samples
         // Redux will end up with a set of aliquots (aka compiled sample) each named for the sample (1-to-1)
         // and a set of fractions each associated with an aliquot
@@ -446,6 +446,10 @@ public class Project implements
     @Override
     public void setAnalysisPurpose(ReduxConstants.ANALYSIS_PURPOSE analysisPurpose) {
         this.analysisPurpose = analysisPurpose;
+        
+        for (int i = 0; i < projectSamples.size(); i ++){
+            projectSamples.get(i).setAnalysisPurpose(analysisPurpose);
+        }
     }
 
     /**

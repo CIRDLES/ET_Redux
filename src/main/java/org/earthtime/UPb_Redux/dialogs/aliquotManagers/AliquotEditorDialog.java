@@ -855,8 +855,8 @@ public class AliquotEditorDialog extends DialogEditor {
                 + getMyAliquot().getAliquotName()//
                 + "_" //
                 + getSample().getSampleIGSN()//
-                                + "_"//
-                                + getMyAliquot().getAliquotIGSN()//
+                + "_"//
+                + getMyAliquot().getAliquotIGSN()//
                 + fileExtension;
 
         File selectedFile = null;
@@ -4564,7 +4564,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
                 isVerbose);
 
         boolean valid = (userCode.trim().length() > 0) && (!userCode.equalsIgnoreCase("NONEXXXXX"));
-        
+
         showArchiveNote(getMyAliquot(), valid);
 
         if (valid) {
@@ -4624,7 +4624,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
         // nov 2010
         // decide which images to create and upload
         if (concordiaUpload_chkBox.isSelected()) {
-            File tempConcordiaSVG = new File("tempConcordia.svg");
+            File tempConcordiaSVGforUploading = new File("tempConcordia.svg");
 
             ConcordiaGraphPanel concordiaGraphPanel = ((ConcordiaGraphPanel) ((ETReduxFrame) parent).getMyConcordiaGraphPanel());
 
@@ -4671,25 +4671,26 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
             concordiaGraphPanel.setShowTitleBox(false);
             concordiaGraphPanel.setUploadToGeochronMode(true);
 
-            concordiaGraphPanel.outputToSVG(tempConcordiaSVG);
+            concordiaGraphPanel.outputToSVG(tempConcordiaSVGforUploading);
 
             concordiaGraphPanel.setShowTitleBox(saveShowTitleBox);
             concordiaGraphPanel.setUploadToGeochronMode(false);
 
-            // april 2011 revise to check if concordia slot is already taken
-            AnalysisImageInterface concordiaImage = getMyAliquot().getAnalysisImageByType(AnalysisImageTypes.CONCORDIA);
-
-            concordiaImage.setImageURL(//
-                    GeochronUploadImagesHelper.uploadImage(//
-                            tempConcordiaSVG, //
-                            userName, //
-                            password,
-                            AnalysisImageTypes.CONCORDIA));
+            GeochronUploaderUtility.uploadConcordiaImage(tempConcordiaSVGforUploading, myAliquot, userName, password);
+//            // april 2011 revise to check if concordia slot is already taken
+//            AnalysisImageInterface concordiaImage = getMyAliquot().getAnalysisImageByType(AnalysisImageTypes.CONCORDIA);
+//
+//            concordiaImage.setImageURL(//
+//                    GeochronUploadImagesHelper.uploadImage(//
+//                            tempConcordiaSVGforUploading, //
+//                            userName, //
+//                            password,
+//                            AnalysisImageTypes.CONCORDIA));
         }
 
         // nov 2011
         if (probabilityDensityUpload_chkBox.isSelected()) {
-            File tempProbabilitySVG = new File("tempProbabilityDensity.svg");
+            File tempProbabilitySVGforUploading = new File("tempProbabilityDensity.svg");
 
             DateProbabilityDensityPanel probabilityPanel = ((DateProbabilityDensityPanel) ((ETReduxFrame) parent).getMyNormedProbabilityPanel());
 
@@ -4720,18 +4721,19 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
 
             probabilityPanel.setUploadToGeochronMode(true);
 
-            probabilityPanel.outputToSVG(tempProbabilitySVG);
+            probabilityPanel.outputToSVG(tempProbabilitySVGforUploading);
 
             probabilityPanel.setUploadToGeochronMode(false);
 
-            AnalysisImageInterface probabilityImage = getMyAliquot().getAnalysisImageByType(AnalysisImageTypes.PROBABILITY_DENSITY);
-
-            probabilityImage.setImageURL(//
-                    GeochronUploadImagesHelper.uploadImage(//
-                            tempProbabilitySVG, //
-                            userName, //
-                            password,
-                            AnalysisImageTypes.PROBABILITY_DENSITY));
+            GeochronUploaderUtility.uploadPDFImage(tempProbabilitySVGforUploading, myAliquot, userName, password);
+//            AnalysisImageInterface probabilityImage = getMyAliquot().getAnalysisImageByType(AnalysisImageTypes.PROBABILITY_DENSITY);
+//
+//            probabilityImage.setImageURL(//
+//                    GeochronUploadImagesHelper.uploadImage(//
+//                            tempProbabilitySVGforUploading, //
+//                            userName, //
+//                            password,
+//                            AnalysisImageTypes.PROBABILITY_DENSITY));
 
         }
 

@@ -163,7 +163,7 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
 
             PrawnFileHandler prawnFileHandler = new org.cirdles.calamari.core.PrawnFileHandler();
             myShrimpFractions = prawnFileHandler.extractShrimpFractionsFromPrawnFile(//"ILC-III-9peak-bkg3.xml", true, false);   //
-                    "https://raw.githubusercontent.com/bowring/XSD/master/SHRIMP/EXAMPLE_100142_G6147_10111109.43_10.33.37%20AM.xml", true, false);
+                    "https://raw.githubusercontent.com/bowring/XSD/master/SHRIMP/EXAMPLE_100142_G6147_10111109.43_10.33.37%20AM.xml", true, false, "T");
 
             // send name to project
             loadDataTask.firePropertyChange("projectName", "", myShrimpFractions.get(0).getNameOfMount());
@@ -282,7 +282,7 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
         // supply calculated ratios and uncertainties
         ((ShrimpSetupUPb) massSpec).populateRawAndLogRatios(shrimpFraction.getIsotopicRatios());
 
-        massSpec.processFractionRawRatiosII(//
+        massSpec.processFractionRawRatiosII(null, null, //
                 backgroundAcquisitions, peakAcquisitions, true, tripoliFraction, false);
 
         tripoliFraction.shadeDataActiveMapLeft(0);

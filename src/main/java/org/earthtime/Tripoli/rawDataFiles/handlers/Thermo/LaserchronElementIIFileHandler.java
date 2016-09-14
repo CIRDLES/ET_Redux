@@ -130,10 +130,9 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
 
         // Laserchron produces file with numerical ordering tags
         Arrays.sort(analysisFiles, new FractionFileNameComparator());
-        
+
         //load current values
 //        baselineStartIndex = acqu
-
         if (analysisFiles.length > 0) {
 //            this can be broken => depend on naming convention Arrays.sort(analysisFiles, new FractionFileModifiedComparator());
 
@@ -271,6 +270,9 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
                 // later we will give user interactive tools to pick them out
                 List<double[]> backgroundAcquisitions = new ArrayList<>();
                 List<double[]> peakAcquisitions = new ArrayList<>();
+                // Sept 2016
+                List<double[]> backgroundAnalogCorrectionFactors = new ArrayList<>();
+                List<double[]> peakAnalogCorrectionFactors = new ArrayList<>();
 
                 // process time stamp from first scan as time stamp of file and background
                 long fractionBackgroundTimeStamp = calculateTimeStamp(extractedData[0][1]);
@@ -279,11 +281,11 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
 
                 for (int i = rawDataFileTemplate.getBlockStartOffset(); i < rawDataFileTemplate.getBlockSize(); i++) {
                     if (rawDataFileTemplate instanceof LaserchronElementII_RawDataTemplate_A) {
-                        processIntensities_A(i, backgroundAcquisitions, peakAcquisitions, extractedData[i]);
+                        processIntensities_A(i, backgroundAnalogCorrectionFactors, peakAnalogCorrectionFactors, backgroundAcquisitions, peakAcquisitions, extractedData[i]);
                     } else if (rawDataFileTemplate instanceof LaserchronElementII_RawDataTemplate_B) {
-                        processIntensities_B(i, backgroundAcquisitions, peakAcquisitions, extractedData[i]);
+                        processIntensities_B(i, backgroundAnalogCorrectionFactors, peakAnalogCorrectionFactors, backgroundAcquisitions, peakAcquisitions, extractedData[i]);
                     } else if (rawDataFileTemplate instanceof LaserchronElementII_RawDataTemplate_C) {
-                        processIntensities_C(i, backgroundAcquisitions, peakAcquisitions, extractedData[i]);
+                        processIntensities_C(i, backgroundAnalogCorrectionFactors, peakAnalogCorrectionFactors, backgroundAcquisitions, peakAcquisitions, extractedData[i]);
                     }
                 }  // i loop
 
@@ -303,7 +305,7 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
 
                 massSpec.setCountOfAcquisitions(peakAcquisitions.size());
 
-                massSpec.processFractionRawRatiosII(//
+                massSpec.processFractionRawRatiosII(backgroundAnalogCorrectionFactors, peakAnalogCorrectionFactors, //
                         backgroundAcquisitions, peakAcquisitions, usingFullPropagation, tripoliFraction, inLiveMode);
 
                 tripoliFraction.shadeDataActiveMapLeft(leftShadeCount);
@@ -324,7 +326,7 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
     }
 
     private boolean legalBaselineIndex(int i) {
-        return ((i >= (baselineStartIndex - 1)) && (i <= (baselineEndIndex -1)));
+        return ((i >= (baselineStartIndex - 1)) && (i <= (baselineEndIndex - 1)));
     }
 
     private boolean legalPeakIndex(int i) {
@@ -338,11 +340,21 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
      * @param peakAcquisitions the value of peakAcquisitions
      * @param extractedData the value of extractedData
      */
-    private void processIntensities_A(int i, List<double[]> backgroundAcquisitions, List<double[]> peakAcquisitions, String[] extractedData) {
+    private void processIntensities_A(int i, List<double[]> backgroundAnalogCorrectionFactors, List<double[]> peakAnalogCorrectionFactors, List<double[]> backgroundAcquisitions, List<double[]> peakAcquisitions, String[] extractedData) {
         // 202  204  206 Pb207	Pb208	Th232 U238
         double[] backgroundIntensities = new double[7];
         double[] peakIntensities = new double[7];
+        double[] backgroundACFs = new double[7];
+        double[] peakACFs = new double[7];
+        boolean isLegal = false;
         if (legalBaselineIndex(i)) {
+            isLegal = true;
+            backgroundAnalogCorrectionFactors.add(backgroundACFs);
+            double acf = Double.parseDouble(extractedData[2]);
+            for (int j = 0; j < 7; j++) {
+                backgroundACFs[j] = acf;
+            }
+
             backgroundAcquisitions.add(backgroundIntensities);
             backgroundIntensities[0] = calcAvgPulseOrAnalog(3, 6, extractedData);
             backgroundIntensities[1] = calcAvgPulseOrAnalog(8, 11, extractedData);
@@ -352,6 +364,13 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
             backgroundIntensities[5] = calcAvgPulseThenAnalog(40, 43, extractedData);
             backgroundIntensities[6] = calcAvgPulseThenAnalog(49, 52, extractedData);
         } else if (legalPeakIndex(i)) {
+            isLegal = true;
+            peakAnalogCorrectionFactors.add(peakACFs);
+            double acf = Double.parseDouble(extractedData[2]);
+            for (int j = 0; j < 7; j++) {
+                peakACFs[j] = acf;
+            }
+
             peakAcquisitions.add(peakIntensities);
             peakIntensities[0] = calcAvgPulseOrAnalog(3, 6, extractedData);
             peakIntensities[1] = calcAvgPulseOrAnalog(8, 11, extractedData);
@@ -361,10 +380,24 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
             peakIntensities[5] = calcAvgPulseThenAnalog(40, 43, extractedData);
             peakIntensities[6] = calcAvgPulseThenAnalog(49, 52, extractedData);
         }
-        // detect analog and remove negative flag
-        for (int j = 0; j < 7; j++) {
-            backgroundIntensities[j] = Math.abs(backgroundIntensities[j]);
-            peakIntensities[j] = Math.abs(peakIntensities[j]);
+
+        if (isLegal) {
+            // detect analog and remove negative flag and divide by acf
+            for (int j = 0; j < 7; j++) {
+                if (backgroundIntensities[j] < 0.0) {
+                    backgroundIntensities[j] = Math.abs(backgroundIntensities[j]) / backgroundACFs[j];
+                } else {
+                    // not analog mode so acf is 1.0
+                    backgroundACFs[j] = 1.0;
+                }
+
+                if (peakIntensities[j] < 0.0) {
+                    peakIntensities[j] = Math.abs(peakIntensities[j]) / peakACFs[j];
+                } else {
+                    // not analog mode so acf is 1.0
+                    peakACFs[j] = 1.0;
+                }
+            }
         }
     }
 
@@ -375,11 +408,21 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
      * @param peakAcquisitions the value of peakAcquisitions
      * @param extractedData the value of extractedData
      */
-    private void processIntensities_B(int i, List<double[]> backgroundAcquisitions, List<double[]> peakAcquisitions, String[] extractedData) {
+    private void processIntensities_B(int i, List<double[]> backgroundAnalogCorrectionFactors, List<double[]> peakAnalogCorrectionFactors, List<double[]> backgroundAcquisitions, List<double[]> peakAcquisitions, String[] extractedData) {
         // 202  204  206 Pb207	Pb208 Th232 U235 U238
         double[] backgroundIntensities = new double[8];
         double[] peakIntensities = new double[8];
+        double[] backgroundACFs = new double[8];
+        double[] peakACFs = new double[8];
+        boolean isLegal = false;
         if (legalBaselineIndex(i)) {
+            isLegal = true;
+            backgroundAnalogCorrectionFactors.add(backgroundACFs);
+            double acf = Double.parseDouble(extractedData[2]);
+            for (int j = 0; j < 8; j++) {
+                backgroundACFs[j] = acf;
+            }
+
             backgroundAcquisitions.add(backgroundIntensities);
             backgroundIntensities[0] = calcAvgPulseOrAnalog(3, 6, extractedData);
             backgroundIntensities[1] = calcAvgPulseOrAnalog(12, 15, extractedData);
@@ -390,6 +433,13 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
             backgroundIntensities[6] = calcAvgPulseThenAnalog(57, 60, extractedData);
             backgroundIntensities[7] = calcAvgPulseThenAnalog(66, 69, extractedData);
         } else if (legalPeakIndex(i)) {
+            isLegal = true;
+            peakAnalogCorrectionFactors.add(peakACFs);
+            double acf = Double.parseDouble(extractedData[2]);
+            for (int j = 0; j < 8; j++) {
+                peakACFs[j] = acf;
+            }
+
             peakAcquisitions.add(peakIntensities);
             peakIntensities[0] = calcAvgPulseOrAnalog(3, 6, extractedData);
             peakIntensities[1] = calcAvgPulseOrAnalog(12, 15, extractedData);
@@ -400,22 +450,36 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
             peakIntensities[6] = calcAvgPulseThenAnalog(57, 60, extractedData);
             peakIntensities[7] = calcAvgPulseThenAnalog(66, 69, extractedData);
         }
-        // detect analog and remove negative flag
-        for (int j = 0; j < 8; j++) {
-            // test for GG's special case per email31 Jan 2016
-            //TODO: use phys constants model
-            if (j == 7) {
-                if (backgroundIntensities[j] < 0.0) {
-                    // U238 is analog so use 235 * 137.82
-                    backgroundIntensities[7] = backgroundIntensities[6] * 137.82;
+        if (isLegal) {
+            // detect analog and remove negative flag
+            for (int j = 0; j < 8; j++) {
+                // test for GG's special case per email31 Jan 2016
+                //TODO: use phys constants model
+                if (j == 7) {
+                    if (backgroundIntensities[j] < 0.0) {
+                        // U238 is analog so use 235 * 137.82
+                        backgroundIntensities[7] = backgroundIntensities[6] * 137.82;
+                    }
+                    if (peakIntensities[j] < 0.0) {
+                        // U238 is analog so use 235 * 137.82
+                        peakIntensities[7] = peakIntensities[6] * 137.82;
+                    }
                 }
+
+                if (backgroundIntensities[j] < 0.0) {
+                    backgroundIntensities[j] = Math.abs(backgroundIntensities[j]) / backgroundACFs[j];
+                } else {
+                    // not analog mode so acf is 1.0
+                    backgroundACFs[j] = 1.0;
+                }
+
                 if (peakIntensities[j] < 0.0) {
-                    // U238 is analog so use 235 * 137.82
-                    peakIntensities[7] = peakIntensities[6] * 137.82;
+                    peakIntensities[j] = Math.abs(peakIntensities[j]) / peakACFs[j];
+                } else {
+                    // not analog mode so acf is 1.0
+                    peakACFs[j] = 1.0;
                 }
             }
-            backgroundIntensities[j] = Math.abs(backgroundIntensities[j]);
-            peakIntensities[j] = Math.abs(peakIntensities[j]);
         }
     }
 
@@ -426,11 +490,21 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
      * @param peakAcquisitions the value of peakAcquisitions
      * @param extractedData the value of extractedData
      */
-    private void processIntensities_C(int i, List<double[]> backgroundAcquisitions, List<double[]> peakAcquisitions, String[] extractedData) {
+    private void processIntensities_C(int i, List<double[]> backgroundAnalogCorrectionFactors, List<double[]> peakAnalogCorrectionFactors, List<double[]> backgroundAcquisitions, List<double[]> peakAcquisitions, String[] extractedData) {
         // 176 202  204  206 Pb207 Pb208 Th232 U235 U238
         double[] backgroundIntensities = new double[9];
         double[] peakIntensities = new double[9];
+        double[] backgroundACFs = new double[9];
+        double[] peakACFs = new double[9];
+        boolean isLegal = false;
         if (legalBaselineIndex(i)) {
+            isLegal = true;
+            backgroundAnalogCorrectionFactors.add(backgroundACFs);
+            double acf = Double.parseDouble(extractedData[2]);
+            for (int j = 0; j < 9; j++) {
+                backgroundACFs[j] = acf;
+            }
+
             backgroundAcquisitions.add(backgroundIntensities);
             backgroundIntensities[0] = calcAvgPulseOrAnalog(3, 6, extractedData);
             backgroundIntensities[1] = calcAvgPulseOrAnalog(12, 15, extractedData);
@@ -442,6 +516,13 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
             backgroundIntensities[7] = calcAvgPulseThenAnalog(66, 69, extractedData);
             backgroundIntensities[8] = calcAvgPulseThenAnalog(75, 78, extractedData);
         } else if (legalPeakIndex(i)) {
+            isLegal = true;
+            peakAnalogCorrectionFactors.add(peakACFs);
+            double acf = Double.parseDouble(extractedData[2]);
+            for (int j = 0; j < 9; j++) {
+                peakACFs[j] = acf;
+            }
+
             peakAcquisitions.add(peakIntensities);
             peakIntensities[0] = calcAvgPulseOrAnalog(3, 6, extractedData);
             peakIntensities[1] = calcAvgPulseOrAnalog(12, 15, extractedData);
@@ -453,23 +534,36 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
             peakIntensities[7] = calcAvgPulseThenAnalog(66, 69, extractedData);
             peakIntensities[8] = calcAvgPulseThenAnalog(75, 78, extractedData);
         }
-
-        // detect analog and remove negative flag
-        for (int j = 0; j < 9; j++) {
-            // test for GG's special case per email31 Jan 2016
-            //TODO: use phys constants model
-            if (j == 8) {
-                if (backgroundIntensities[j] < 0.0) {
-                    // U238 is analog so use 235 * 137.82
-                    backgroundIntensities[8] = backgroundIntensities[7] * 137.82;
+        if (isLegal) {
+            // detect analog and remove negative flag
+            for (int j = 0; j < 9; j++) {
+                // test for GG's special case per email31 Jan 2016
+                //TODO: use phys constants model
+                if (j == 8) {
+                    if (backgroundIntensities[j] < 0.0) {
+                        // U238 is analog so use 235 * 137.82
+                        backgroundIntensities[8] = backgroundIntensities[7] * 137.82;
+                    }
+                    if (peakIntensities[j] < 0.0) {
+                        // U238 is analog so use 235 * 137.82
+                        peakIntensities[8] = peakIntensities[7] * 137.82;
+                    }
                 }
+
+                if (backgroundIntensities[j] < 0.0) {
+                    backgroundIntensities[j] = Math.abs(backgroundIntensities[j]) / backgroundACFs[j];
+                } else {
+                    // not analog mode so acf is 1.0
+                    backgroundACFs[j] = 1.0;
+                }
+
                 if (peakIntensities[j] < 0.0) {
-                    // U238 is analog so use 235 * 137.82
-                    peakIntensities[8] = peakIntensities[7] * 137.82;
+                    peakIntensities[j] = Math.abs(peakIntensities[j]) / peakACFs[j];
+                } else {
+                    // not analog mode so acf is 1.0
+                    peakACFs[j] = 1.0;
                 }
             }
-            backgroundIntensities[j] = Math.abs(backgroundIntensities[j]);
-            peakIntensities[j] = Math.abs(peakIntensities[j]);
         }
     }
 

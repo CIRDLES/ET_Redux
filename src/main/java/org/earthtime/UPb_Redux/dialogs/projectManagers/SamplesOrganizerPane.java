@@ -30,6 +30,7 @@ import javax.swing.JScrollPane;
 import org.earthtime.Tripoli.samples.AbstractTripoliSample;
 import org.earthtime.Tripoli.samples.TripoliUnknownSample;
 import org.earthtime.beans.ET_JButton;
+import org.earthtime.samples.SampleInterface;
 import org.earthtime.utilities.DragAndDropListItemInterface;
 
 /**
@@ -87,7 +88,8 @@ public class SamplesOrganizerPane extends JLayeredPane implements ReduxDragAndDr
         // walk the samples
         for (int i = 0; i < tripoliSamples.size(); i++) {
             ActionListener closeButtonActionListener = new CloseSampleButtonActionListener();
-            SampleFractionListDisplayPane sampleDisplayPane =//
+            SampleFractionListDisplayPane sampleDisplayPane
+                    =//
                     new SampleFractionListDisplayPane( //
                             tripoliSamples.get(i), //
                             closeButtonActionListener, //
@@ -167,7 +169,8 @@ public class SamplesOrganizerPane extends JLayeredPane implements ReduxDragAndDr
             projectManager.updateDataChangeStatus(true);
 
             ActionListener closeButtonActionListener = new CloseSampleButtonActionListener();
-            SampleFractionListDisplayPane sampleDisplayPane =//
+            SampleFractionListDisplayPane sampleDisplayPane
+                    =//
                     new SampleFractionListDisplayPane( //
                             addedSample,//
                             closeButtonActionListener,//
@@ -196,6 +199,19 @@ public class SamplesOrganizerPane extends JLayeredPane implements ReduxDragAndDr
 
                 tripoliSamples.remove(((SampleFractionListDisplayPane) sampleDisplayPane).getTripoliSample());
                 tripoliSamples.trimToSize();
+
+                // sept 2016 discovered that project sample was not removed
+                ArrayList< SampleInterface> projectSamples = projectManager.getProject().getProjectSamples();
+                SampleInterface removedSample = null;
+                for (SampleInterface sample : projectSamples) {
+                    if (sample.getSampleName().compareToIgnoreCase(((SampleFractionListDisplayPane) sampleDisplayPane).getTripoliSample().getSampleName()) == 0) {
+                        removedSample = sample;
+                        break;
+                    }
+                }
+                if (removedSample != null) {
+                    projectSamples.remove(removedSample);
+                }
 
                 sampleDisplayPanes.remove(sampleDisplayPane);
                 sampleDisplayPanes.trimToSize();

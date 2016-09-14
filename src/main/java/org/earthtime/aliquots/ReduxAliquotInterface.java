@@ -18,6 +18,8 @@ package org.earthtime.aliquots;
 import java.util.Collections;
 import java.util.Vector;
 import org.earthtime.UPb_Redux.utilities.comparators.IntuitiveStringComparator;
+import org.earthtime.archivingTools.AnalysisImageInterface;
+import org.earthtime.dataDictionaries.AnalysisImageTypes;
 import org.earthtime.fractions.ETFractionInterface;
 
 /**
@@ -131,4 +133,11 @@ public interface ReduxAliquotInterface {
      * @param inLiveMode the value of inLiveMode
      */
     public void reduceData(boolean inLiveMode);
+    
+        /**
+     *
+     * @param imageType
+     * @return
+     */
+    public AnalysisImageInterface getAnalysisImageByType(AnalysisImageTypes imageType);
 }

@@ -848,16 +848,14 @@ public class TripoliSession implements
 
                         double primaryStdConcU = ((MineralStandardUPbModel) primaryMineralStandard).getConcentrationByName(MineralStandardUPbConcentrationsPPMEnum.concU238ppm.getName()).getValue().doubleValue();
                         double concUnknownU
-                                = //
-                                primaryStdConcU //
+                                = primaryStdConcU //
                                 * unkownIntensityU //
                                 / (leftStandardIntensityU //
                                 + ((double) (rightStandardTime - unknown.getZeroBasedTimeStamp()) / (double) (rightStandardTime - leftStandardTime)) * (rightStandardIntensityU - leftStandardIntensityU));
 
                         double primaryStdConcTh = ((MineralStandardUPbModel) primaryMineralStandard).getConcentrationByName(MineralStandardUPbConcentrationsPPMEnum.concTh232ppm.getName()).getValue().doubleValue();
                         double concUnknownTh
-                                = //
-                                primaryStdConcTh //
+                                = primaryStdConcTh //
                                 * unkownIntensityTh //
                                 / (leftStandardIntensityTh //
                                 + ((double) (rightStandardTime - unknown.getZeroBasedTimeStamp()) / (double) (rightStandardTime - leftStandardTime)) * (rightStandardIntensityTh - leftStandardIntensityTh));
@@ -866,7 +864,7 @@ public class TripoliSession implements
                         FractionI uPbFraction = unknown.getuPbFraction();
                         if (uPbFraction == null) {
                             System.out.println("Missing upbFraction for " + unknown.getFractionID());
-                        } else {
+                        } else if (Double.isFinite(concUnknownU) && Double.isFinite(concUnknownTh)) {
                             uPbFraction.getCompositionalMeasureByName(MineralStandardUPbConcentrationsPPMEnum.concU238ppm.getName()).setValue(new BigDecimal(concUnknownU / 1e6));
                             uPbFraction.getCompositionalMeasureByName(MineralStandardUPbConcentrationsPPMEnum.concTh232ppm.getName()).setValue(new BigDecimal(concUnknownTh / 1e6));
                             double rTh_Usample = 0.0;
@@ -874,7 +872,6 @@ public class TripoliSession implements
                                 rTh_Usample = concUnknownTh / concUnknownU;
                             }
                             uPbFraction.getCompositionalMeasureByName(MineralStandardUPbConcentrationsPPMEnum.rTh_Usample.getName()).setValue(new BigDecimal(rTh_Usample));
-//                    System.out.println(" >> " + unknown.getFractionID() + "  " + unknown.getZeroBasedTimeStamp() + "  " + unknown.isStandard() + "  " + concUnknownU + "  " + concUnknownTh);
                         }
                     }
 

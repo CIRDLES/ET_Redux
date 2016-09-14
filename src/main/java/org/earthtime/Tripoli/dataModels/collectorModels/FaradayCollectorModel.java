@@ -99,12 +99,13 @@ public class FaradayCollectorModel extends AbstractCollectorModel {
      *
      *
      * @param countOfBaselineIntensities the value of countOfBaselineIntensities
-     * @param allIntensities the value of allIntensities
+     * @param allAnalogCorrectionFactors the value of analogCorrectionFactors
+     * @param allItensities the value of allItensities
      * @param integrationTime the value of integrationTime
-     * @return
+     * @return the double[]
      */
     @Override
-    public double[] calculateMeasuredCountsAndMatrixSIntensityDiagonal(int countOfBaselineIntensities, double[] allIntensities, double integrationTime) {
+    public double[] calculateMeasuredCountsAndMatrixSIntensityDiagonal(int countOfBaselineIntensities, double[] analogCorrectionFactors, double[] allIntensities, double integrationTime) {
 
         double[] convertedIntensities = new double[allIntensities.length];
         for (int i = 0; i < allIntensities.length; i++) {

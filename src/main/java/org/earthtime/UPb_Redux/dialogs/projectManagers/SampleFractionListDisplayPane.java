@@ -56,6 +56,7 @@ import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataViews.AbstractRatiosDataView;
 import org.earthtime.ratioDataViews.ReferenceMaterialUPbRatiosDataViewNotEditable;
 import org.earthtime.reduxLabData.ReduxLabData;
+import org.earthtime.samples.SampleInterface;
 import org.earthtime.utilities.DragAndDropListItemInterface;
 
 /**
@@ -264,7 +265,16 @@ public class SampleFractionListDisplayPane extends JLayeredPane {
             sampleName = "NONE";
         }
 
+        String previousSampleName = tripoliSample.getSampleName();
         tripoliSample.setSampleName(sampleName);
+        // sept 2016 discovered that project sample was not renamed
+        ArrayList< SampleInterface> projectSamples = projectManager.getProject().getProjectSamples();
+        for (SampleInterface sample: projectSamples){
+            if (sample.getSampleName().compareToIgnoreCase(previousSampleName)==0){
+                sample.setSampleName(sampleName);
+                break;
+            }
+        }
 
         if (!tripoliSample.isPrimaryReferenceMaterial()) {
             if (((String) roleChooser.getSelectedItem()).compareToIgnoreCase("Secondary RM") == 0) {

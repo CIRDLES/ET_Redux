@@ -72,7 +72,7 @@ public final class LaserchronElementIISetupUPb_C extends AbstractMassSpecSetup {
                                 "ABS", //
                                 new BigDecimal(1.0e-9, ReduxConstants.mathContext10), //
                                 BigDecimal.ZERO), //
-                        IonCounterCollectorModel.CollectedDataStyle.COUNTS);
+                        IonCounterCollectorModel.CollectedDataStyle.SEM);
 
        // fro GG Feb 2016
 //        Dead Time should be 22 ns
