@@ -282,7 +282,7 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
         // supply calculated ratios and uncertainties
         ((ShrimpSetupUPb) massSpec).populateRawAndLogRatios(shrimpFraction.getIsotopicRatios());
 
-        massSpec.processFractionRawRatiosII(//
+        massSpec.processFractionRawRatiosII(null, null, //
                 backgroundAcquisitions, peakAcquisitions, true, tripoliFraction, false);
 
         tripoliFraction.shadeDataActiveMapLeft(0);

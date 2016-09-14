@@ -166,7 +166,7 @@ public abstract class AbstractMassSpecSetup implements //
     protected String commonLeadCorrectionHighestLevel;
 
     protected Map<DataModelInterface, Integer> virtualCollectorModelMapToFieldIndexes;
-    
+
     // july 2016 tra
     protected String[] fractionNames;
 
@@ -324,7 +324,7 @@ public abstract class AbstractMassSpecSetup implements //
     public void processFractionRawRatiosII(//
             List<double[]> backgroundAcquisitions, List<double[]> peakAcquisitions, boolean usingFullPropagation, TripoliFraction tripoliFraction, Map<DataModelInterface, Integer> virtualCollectorModelMapToFieldIndexes) {
 
-        initializeVirtualCollectorsWithData(backgroundAcquisitions, peakAcquisitions, virtualCollectorModelMapToFieldIndexes);
+        initializeVirtualCollectorsWithData(null, null, backgroundAcquisitions, peakAcquisitions, virtualCollectorModelMapToFieldIndexes);
 
         processFractionRawRatiosStageII(usingFullPropagation, tripoliFraction, false);
     }
@@ -332,6 +332,8 @@ public abstract class AbstractMassSpecSetup implements //
     /**
      * Intended to be final implementation
      *
+     * @param backgroundACFs the value of backgroundACFs
+     * @param peakACFs the value of peakACFs
      * @param backgroundAcquisitions
      * @param peakAcquisitions
      * @param usingFullPropagation
@@ -339,9 +341,9 @@ public abstract class AbstractMassSpecSetup implements //
      * @param inLiveMode the value of inLiveMode
      */
     public void processFractionRawRatiosII(//
-            List<double[]> backgroundAcquisitions, List<double[]> peakAcquisitions, boolean usingFullPropagation, TripoliFraction tripoliFraction, boolean inLiveMode) {
+            List<double[]> backgroundACFs, List<double[]> peakACFs, List<double[]> backgroundAcquisitions, List<double[]> peakAcquisitions, boolean usingFullPropagation, TripoliFraction tripoliFraction, boolean inLiveMode) {
 
-        initializeVirtualCollectorsWithData(backgroundAcquisitions, peakAcquisitions, virtualCollectorModelMapToFieldIndexes);
+        initializeVirtualCollectorsWithData(backgroundACFs, peakACFs, backgroundAcquisitions, peakAcquisitions, virtualCollectorModelMapToFieldIndexes);
 
         processFractionRawRatiosStageII(usingFullPropagation, tripoliFraction, inLiveMode);
     }
@@ -799,18 +801,21 @@ public abstract class AbstractMassSpecSetup implements //
             List<double[]> backgroundAcquisitions,//
             List<double[]> peakAcquisitions) {
 
-        initializeVirtualCollectorsWithData(backgroundAcquisitions, peakAcquisitions, virtualCollectorModelMapToFieldIndexes);
+        initializeVirtualCollectorsWithData(null, null, backgroundAcquisitions, peakAcquisitions, virtualCollectorModelMapToFieldIndexes);
     }
 
     /**
      * Designed to handle background and peak acquisitions in the general case
      *
-     * @param acquisitions
+     * @param backgroundACFs the value of backgroundACFs
+     * @param peakACFs the value of peakACFs
+     * @param backgroundAcquisitions the value of backgroundAcquisitions
+     * @param peakAcquisitions the value of peakAcquisitions
+     * @param virtualCollectorModelMapToFieldIndexes the value of
+     * virtualCollectorModelMapToFieldIndexes
      */
     private void initializeVirtualCollectorsWithData(//
-            List<double[]> backgroundAcquisitions,//
-            List<double[]> peakAcquisitions,//
-            Map<DataModelInterface, Integer> virtualCollectorModelMapToFieldIndexes) {
+            List<double[]> backgroundACFs, List<double[]> peakACFs, List<double[]> backgroundAcquisitions, List<double[]> peakAcquisitions, Map<DataModelInterface, Integer> virtualCollectorModelMapToFieldIndexes) {
 
         int countOfBackgroundAcquisitions = backgroundAcquisitions.size();
         int countOfPeakAcquisitions = peakAcquisitions.size();
@@ -839,6 +844,19 @@ public abstract class AbstractMassSpecSetup implements //
             peakAcquisitionsMatrix = new Matrix(peakAcquisitionsArray);
         }
 
+        Matrix backgroundACFsMatrix = null;
+        Matrix peakACFsMatrix = null;
+        if ((backgroundACFs != null) && (peakACFs != null)) {
+            double[][] backgroundACFsArray = backgroundACFs.toArray(new double[countOfBackgroundAcquisitions][]);
+            double[][] peakACFsArray = peakACFs.toArray(new double[countOfPeakAcquisitions][]);
+            if (countOfBackgroundAcquisitions > 0) {
+                backgroundACFsMatrix = new Matrix(backgroundACFsArray);
+            }
+            if (countOfPeakAcquisitions > 0) {
+                peakACFsMatrix = new Matrix(peakACFsArray);
+            }
+        }
+
         for (Map.Entry<DataModelInterface, Integer> vcmToIndex : virtualCollectorModelMapToFieldIndexes.entrySet()) {
             VirtualCollectorModel backgroundVCM = prepareVirtualCollector(((RawIntensityDataModel) vcmToIndex.getKey()).getBackgroundVirtualCollector(), countOfBackgroundAcquisitions);
             VirtualCollectorModel peakVCM = prepareVirtualCollector(((RawIntensityDataModel) vcmToIndex.getKey()).getOnPeakVirtualCollector(), countOfPeakAcquisitions);
@@ -850,6 +868,13 @@ public abstract class AbstractMassSpecSetup implements //
             }
             if (peakAcquisitionsMatrix != null) {
                 peakVCM.setIntensities(peakAcquisitionsMatrix.getMatrix(0, countOfPeakAcquisitions - 1, col, col).getColumnPackedCopy());
+            }
+
+            if (backgroundACFsMatrix != null) {
+                backgroundVCM.setAnalogCorrectionFactors(backgroundACFsMatrix.getMatrix(0, countOfBackgroundAcquisitions - 1, col, col).getColumnPackedCopy());
+            }
+            if (peakACFsMatrix != null) {
+                peakVCM.setAnalogCorrectionFactors(peakACFsMatrix.getMatrix(0, countOfPeakAcquisitions - 1, col, col).getColumnPackedCopy());
             }
 
             backgroundVCM.setAquireTimes(backgroundAquireTimes);

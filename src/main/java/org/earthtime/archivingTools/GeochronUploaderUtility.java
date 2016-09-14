@@ -138,7 +138,7 @@ public class GeochronUploaderUtility {
         JOptionPane.showMessageDialog(null,
                 new String[]{
                     !error.equalsIgnoreCase("no") ? "Failure!\n" : "Success!\n",
-                    message + "   " + aliquot.getSampleIGSN() + "::" + aliquot.getAliquotName()
+                    message + "   " + aliquot.getAliquotIGSN()+ "::" + aliquot.getAliquotName()
                 });
     }
 

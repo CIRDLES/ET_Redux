@@ -55,7 +55,7 @@ public class SampleRegistriesTest {
         ave=SampleRegistries.SESAR;
         assertEquals("SESAR",ave.getName());
         assertEquals("SSR",ave.getCode());
-        assertEquals("http://app.geosamples.org/webservices/display.php?igsn=",ave.getConnectionString());
+        assertEquals("https://app.geosamples.org/webservices/display.php?igsn=",ave.getConnectionString());
 
         String[] list=SampleRegistries.getNames();
 

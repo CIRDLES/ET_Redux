@@ -34,6 +34,7 @@ public class VirtualCollectorModel implements Serializable {
     private boolean background;
     // starts as measured intensities then are converted to counts
     private double[] intensities;
+    private double[] analogCorrectionFactors;
     private double[] aquireTimes;
     private double[] fitBackgroundIntensities;
     private double[] intensityCorrections;
@@ -50,6 +51,7 @@ public class VirtualCollectorModel implements Serializable {
         this.collectorNumber = collectorNumber;
         this.background = false;
         this.intensities = new double[0];
+        this.analogCorrectionFactors = new double[0];
         this.aquireTimes = new double[0];
         this.fitBackgroundIntensities = new double[0];
         this.intensityCorrections = new double[0];
@@ -279,5 +281,19 @@ public class VirtualCollectorModel implements Serializable {
      */
     public double getSumOfCorrectedOnPeakIntensities () {
         return sumOfCorrectedOnPeakIntensities;
+    }
+
+    /**
+     * @return the analogCorrectionFactors
+     */
+    public double[] getAnalogCorrectionFactors() {
+        return analogCorrectionFactors;
+    }
+
+    /**
+     * @param analogCorrectionFactors the analogCorrectionFactors to set
+     */
+    public void setAnalogCorrectionFactors(double[] analogCorrectionFactors) {
+        this.analogCorrectionFactors = analogCorrectionFactors;
     }
 }

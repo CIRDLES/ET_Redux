@@ -305,7 +305,7 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
 
                 massSpec.setCountOfAcquisitions(peakAcquisitions.size());
 
-                massSpec.processFractionRawRatiosII(//
+                massSpec.processFractionRawRatiosII(backgroundAnalogCorrectionFactors, peakAnalogCorrectionFactors, //
                         backgroundAcquisitions, peakAcquisitions, usingFullPropagation, tripoliFraction, inLiveMode);
 
                 tripoliFraction.shadeDataActiveMapLeft(leftShadeCount);

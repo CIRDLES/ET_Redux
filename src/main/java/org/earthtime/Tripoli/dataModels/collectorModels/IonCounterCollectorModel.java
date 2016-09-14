@@ -38,6 +38,7 @@ public class IonCounterCollectorModel extends AbstractCollectorModel {
      */
     private ValueModel deadTime;
     private CollectedDataStyle collectedDataStyle;
+    private double[] allAnalogCorrectionFactors;
 
     /**
      *
@@ -59,6 +60,7 @@ public class IonCounterCollectorModel extends AbstractCollectorModel {
                 "PCT", new BigDecimal(1.0, ReduxConstants.mathContext10), BigDecimal.ZERO);
         this.deadTime = deadTime;
         this.collectedDataStyle = collectedDataStyle;
+        this.allAnalogCorrectionFactors = new double[0];
     }
 
     /**
@@ -102,21 +104,29 @@ public class IonCounterCollectorModel extends AbstractCollectorModel {
      *
      *
      * @param countOfBaselineIntensities the value of countOfBaselineIntensities
+     * @param allAnalogCorrectionFactors the value of analogCorrectionFactors
      * @param allItensities the value of allItensities
      * @param integrationTime the value of integrationTime
-     * @return
+     * @return the double[]
      */
     @Override
-    public double[] calculateMeasuredCountsAndMatrixSIntensityDiagonal(int countOfBaselineIntensities, double[] allItensities, double integrationTime) {
+    public double[] calculateMeasuredCountsAndMatrixSIntensityDiagonal(int countOfBaselineIntensities, double[] allAnalogCorrectionFactors, double[] allItensities, double integrationTime) {
 
+        this.allAnalogCorrectionFactors = allAnalogCorrectionFactors;
         double[] measuredVarianceFromIonCounts = new double[allItensities.length];
 
         for (int i = 0; i < allItensities.length; i++) {
 
-            measuredVarianceFromIonCounts[i] = allItensities[i] / integrationTime; // march 2013 Noah's famous EFFING comment / integrationTime;
+            if ((collectedDataStyle.compareTo(collectedDataStyle.SEM) == 0) && (allAnalogCorrectionFactors[i] != 1.0)) {
+                measuredVarianceFromIonCounts[i] = Math.pow(allItensities[i] * 0.05 * allAnalogCorrectionFactors[i], 2);
+            } else {
+                measuredVarianceFromIonCounts[i] = allItensities[i] / integrationTime; // march 2013 Noah's famous EFFING comment / integrationTime;
+            }
         }
 
-        return buildDiagonalOfMatrixSi(countOfBaselineIntensities, measuredVarianceFromIonCounts);
+        double[] diagonalSI = buildDiagonalOfMatrixSi(countOfBaselineIntensities, measuredVarianceFromIonCounts);
+
+        return diagonalSI;
     }
 
     /**
@@ -144,13 +154,27 @@ public class IonCounterCollectorModel extends AbstractCollectorModel {
         double deadUnctSquared = deadTime.getOneSigmaAbs().movePointLeft(0).pow(2).doubleValue();
 
         Matrix measuredCountsSquaredTimesDeadTime
-                = //
-                columnVectorOfMeasuredCountsIntensityCountsSquared.//
+                = columnVectorOfMeasuredCountsIntensityCountsSquared.//
                 times(columnVectorOfMeasuredCountsIntensityCountsSquared.transpose());
 
         measuredCountsSquaredTimesDeadTime.timesEquals(deadUnctSquared);
 
         Si.plusEquals(measuredCountsSquaredTimesDeadTime);
+
+        if (collectedDataStyle.compareTo(collectedDataStyle.SEM) == 0) {
+            // zero out rows and columns with acf <> 1
+            // note pre-condition that diagonal is built and allAnalogCorrectionFactors exists
+            for (int i = 0; i < allAnalogCorrectionFactors.length; i++) {
+                if (allAnalogCorrectionFactors[i] != 1.0) {
+                    for (int j = 0; j < Si.getRowDimension(); j++) {
+                        if (j != i) {
+                            Si.set(j, i, 0.0);
+                            Si.set(i, j, 0.0);
+                        }
+                    }
+                }
+            }
+        }
 
         return Si;
     }
@@ -270,7 +294,9 @@ public class IonCounterCollectorModel extends AbstractCollectorModel {
         /**
          *
          */
-        COUNTS("COUNTS");
+        COUNTS("COUNTS"),
+        // added for use of analog corrections
+        SEM("SEM");
         private final String name;
 
         private CollectedDataStyle(String name) {

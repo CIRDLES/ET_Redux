@@ -57,11 +57,12 @@ public abstract class AbstractCollectorModel implements Serializable {
      *
      *
      * @param countOfBaselineIntensities the value of countOfBaselineIntensities
+     * @param allAnalogCorrectionFactors the value of analogCorrectionFactors
      * @param allItensities the value of allItensities
      * @param integrationTime the value of integrationTime
-     * @return
+     * @return the double[]
      */
-    public abstract double[] calculateMeasuredCountsAndMatrixSIntensityDiagonal(int countOfBaselineIntensities, double[] allItensities, double integrationTime);
+    public abstract double[] calculateMeasuredCountsAndMatrixSIntensityDiagonal(int countOfBaselineIntensities, double[] allAnalogCorrectionFactors, double[] allItensities, double integrationTime);
 
     /**
      *

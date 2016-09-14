@@ -85,7 +85,7 @@ public class SesarSampleManager extends DialogEditor {
 
     @Override
     public void initDialogContent() {
-        setSize(450, 353);
+        setSize(450, 360);
         setTitle("Sesar IGSN Manager");
         close_button.setBackground(Color.WHITE);
     }
@@ -332,7 +332,8 @@ public class SesarSampleManager extends DialogEditor {
         sesarSampleDetailsLayeredPane = new javax.swing.JLayeredPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setSize(new java.awt.Dimension(450, 300));
+        setPreferredSize(new java.awt.Dimension(450, 353));
+        setSize(new java.awt.Dimension(450, 353));
         getContentPane().setLayout(null);
 
         buttonBar_panel.setBackground(new java.awt.Color(235, 255, 255));
