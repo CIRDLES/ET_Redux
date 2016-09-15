@@ -91,6 +91,7 @@ import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.aliquots.ReduxAliquotInterface;
 import org.earthtime.archivingTools.AnalysisImageInterface;
 import org.earthtime.archivingTools.GeoPassIDValidator;
+import static org.earthtime.archivingTools.GeoSamplesWebServices.isSampleRegisteredToParentAtGeoSamples;
 import org.earthtime.archivingTools.GeochronUploadImagesHelper;
 import org.earthtime.archivingTools.GeochronUploaderUtility;
 import org.earthtime.archivingTools.URIHelper;
@@ -651,7 +652,19 @@ public class AliquotEditorDialog extends DialogEditor {
         keyWordsCSV_text.setDocument(new UnDoAbleDocument(//
                 keyWordsCSV_text, !isCompiled));
 
-        sampleIGSN_text.setDocument(new UnDoAbleDocument(sampleIGSN_text, false));//april 2011 ! isCompiled ) );
+        aliquotIGSN_text.setDocument(new UnDoAbleDocument(aliquotIGSN_text, true));// sept 2016 needs work//april 2011 ! isCompiled ) );
+//        aliquotIGSN_text.setInputVerifier(new GeochronAliquotManager.AliquotIGSNVerifier(i));
+//        aliquotIGSN_text.addKeyListener(new KeyAdapter() {
+//            @Override
+//            public void keyPressed(KeyEvent e) {
+//                JTextField textField = (JTextField) e.getSource();
+//                int key = e.getKeyCode();
+//                if ((key == KeyEvent.VK_ENTER) || (key == KeyEvent.VK_TAB)) {
+//                    textField.getInputVerifier().verify(textField);
+//                }
+//            }
+//        }
+//        );
 
         // oct 2011
         initializeFractionArchivingTab();
@@ -700,6 +713,15 @@ public class AliquotEditorDialog extends DialogEditor {
         geoPassPassword_passwordField.setCaretPosition(0);
 
     }
+
+//    private class AliquotIGSNVerifier extends InputVerifier {
+//
+//        @Override
+//        public boolean verify(JComponent input) {
+//            
+//        }
+//
+//    }
 
     // moved from fraction per Doug Walker october 2011
     private void initializeFractionArchivingTab() {
@@ -1125,7 +1147,7 @@ public class AliquotEditorDialog extends DialogEditor {
         instrumentalMethod_label = new javax.swing.JLabel();
         instrumentalMethod_jcombo = new javax.swing.JComboBox<>();
         instrumentalMethod_label1 = new javax.swing.JLabel();
-        sampleIGSN_text = new javax.swing.JTextField();
+        aliquotIGSN_text = new javax.swing.JTextField();
         details_tabbedPane = new javax.swing.JTabbedPane();
         fastEdits_scrollPane = new javax.swing.JScrollPane();
         fastEdits_panel = new javax.swing.JPanel();
@@ -1207,6 +1229,9 @@ public class AliquotEditorDialog extends DialogEditor {
         archiveNote_label = new javax.swing.JLabel();
         archivePanelTitle_label = new javax.swing.JLabel();
         archivePanelTitle_label1 = new javax.swing.JLabel();
+        aliquotIsRegistered_label = new javax.swing.JLabel();
+        checkMarkForValidAliquotIGSN_label = new javax.swing.JLabel();
+        xMarkForValidAliquotIGSN_label = new javax.swing.JLabel();
         buttonsPanel = new javax.swing.JPanel();
         saveAndClose_button = new javax.swing.JButton();
         save_button = new javax.swing.JButton();
@@ -1237,7 +1262,7 @@ public class AliquotEditorDialog extends DialogEditor {
 
         SampleIGSN_label.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         SampleIGSN_label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        SampleIGSN_label.setText("<html>Sample IGSN:</html>");
+        SampleIGSN_label.setText("<html>Aliquot IGSN:</html>");
         title_panel.add(SampleIGSN_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(233, 0, 60, 38));
 
         analystName_label.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
@@ -1263,10 +1288,10 @@ public class AliquotEditorDialog extends DialogEditor {
         instrumentalMethod_label1.setText("<html>Equipment Settings:</html>");
         title_panel.add(instrumentalMethod_label1, new org.netbeans.lib.awtextra.AbsoluteConstraints(645, 6, 68, 25));
 
-        sampleIGSN_text.setForeground(new java.awt.Color(255, 0, 0));
-        sampleIGSN_text.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        sampleIGSN_text.setText("IGSN");
-        title_panel.add(sampleIGSN_text, new org.netbeans.lib.awtextra.AbsoluteConstraints(299, 5, 114, -1));
+        aliquotIGSN_text.setForeground(new java.awt.Color(255, 0, 0));
+        aliquotIGSN_text.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        aliquotIGSN_text.setText("IGSN");
+        title_panel.add(aliquotIGSN_text, new org.netbeans.lib.awtextra.AbsoluteConstraints(299, 5, 114, -1));
 
         getContentPane().add(title_panel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1125, 42));
 
@@ -1674,11 +1699,25 @@ public class AliquotEditorDialog extends DialogEditor {
         archivePanelTitle_label.setText("To Archive this aliquot to the Geochron database:");
         geochronArchivePanel_panel.add(archivePanelTitle_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 470, -1));
 
-        publishAliquot_panel.add(geochronArchivePanel_panel, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 210, 1040, 310));
+        publishAliquot_panel.add(geochronArchivePanel_panel, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 230, 1040, 310));
 
         archivePanelTitle_label1.setFont(new java.awt.Font("Lucida Grande", 0, 18)); // NOI18N
         archivePanelTitle_label1.setText("Please enter the registered sample identifier by using the sample manager.");
         publishAliquot_panel.add(archivePanelTitle_label1, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 240, 710, -1));
+
+        aliquotIsRegistered_label.setFont(new java.awt.Font("Arial Black", 0, 14)); // NOI18N
+        aliquotIsRegistered_label.setText("Aliquot is not registered as child of Sample IGSN.");
+        aliquotIsRegistered_label.setName("Aliquot is"); // NOI18N
+        publishAliquot_panel.add(aliquotIsRegistered_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 190, 980, 30));
+
+        checkMarkForValidAliquotIGSN_label.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/earthtime/UPb_Redux/images/check_icon.png"))); // NOI18N
+        checkMarkForValidAliquotIGSN_label.setToolTipText("Geochron Credentials are VALID.");
+        checkMarkForValidAliquotIGSN_label.setIconTextGap(0);
+        publishAliquot_panel.add(checkMarkForValidAliquotIGSN_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 180, 40, 40));
+
+        xMarkForValidAliquotIGSN_label.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/earthtime/UPb_Redux/images/icon_red_x.png"))); // NOI18N
+        xMarkForValidAliquotIGSN_label.setToolTipText("Geochron Credentials are NOT valid.");
+        publishAliquot_panel.add(xMarkForValidAliquotIGSN_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 180, 40, 40));
 
         details_tabbedPane.addTab("Archive Aliquot to Database", publishAliquot_panel);
 
@@ -3734,7 +3773,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
         // general info
 
         // April 2011 now using xxx.sampleID for sampleIGSN and need to split off
-        sampleIGSN_text.setText(getMyAliquot().getSampleIGSNnoRegistry());
+        aliquotIGSN_text.setText(getMyAliquot().getAlliquotIGSNnoRegistry());
 
         if (sample.isValidatedSampleIGSN()) {
             checkMarkForValidSampleID_label.setVisible(true);
@@ -3754,6 +3793,26 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
             checkMarkForValidSampleID_label.setVisible(false);
             xMarkForValidSampleID_label.setVisible(true);
             sampleIsRegistered_label.setText(sampleIsRegistered_label.getName() + " NOT REGISTERED");
+            geochronArchivePanel_panel.setVisible(false);
+        }
+
+        if (isSampleRegisteredToParentAtGeoSamples(getMyAliquot().getAliquotIGSN(), getMyAliquot().getSampleIGSNnoRegistry())) {
+            checkMarkForValidAliquotIGSN_label.setVisible(true);
+            xMarkForValidAliquotIGSN_label.setVisible(false);
+            aliquotIsRegistered_label.setText(//
+                    "Aliquot IGSN " + getMyAliquot().getAliquotIGSN()//
+                    + " is REGISTERED"//
+                    + " as child " + sample.getSampleIGSNnoRegistry() //
+                    + " in " + sample.getSampleRegistry().getName());
+            geochronArchivePanel_panel.setVisible(true);
+            showArchiveNote(myAliquot, true);
+            concordiaUpload_chkBox.setSelected(getMyAliquot()//
+                    .getAnalysisImageByType(AnalysisImageTypes.CONCORDIA).getImageURL().equalsIgnoreCase(""));
+
+        } else {
+            checkMarkForValidAliquotIGSN_label.setVisible(false);
+            xMarkForValidAliquotIGSN_label.setVisible(true);
+            aliquotIsRegistered_label.setText("Aliquot IGSN " + getMyAliquot().getAliquotIGSN() + " is NOT REGISTERED as child of Sample IGSN");
             geochronArchivePanel_panel.setVisible(false);
         }
 
@@ -4211,7 +4270,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
     private void saveAliquot() {
 
         // in compilation, nothing to save
-        if (((UPbReduxAliquot) myAliquot).isCompiled()) {
+        if (((ReduxAliquotInterface) myAliquot).isCompiled()) {
             return;
         }
 
@@ -4220,7 +4279,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
         this.setTitle("Aliquot # " + getMyAliquot().getAliquotNumber() + " <> " + getMyAliquot().getAliquotName());
 
         getMyAliquot().setAnalystName(analystName_text.getText());
-        ((UPbReduxAliquot) getMyAliquot()).getMyReduxLabData().setAnalystName(analystName_text.getText());
+        getMyAliquot().getMyReduxLabData().setAnalystName(analystName_text.getText());
         getMyAliquot().setAliquotInstrumentalMethod(
                 instrumentalMethod_jcombo.getSelectedItem().toString());
         getMyAliquot().setAliquotInstrumentalMethodReference(instMethodRef_text.getText());
@@ -4234,10 +4293,10 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
 
         getMyAliquot().getMineralStandardModels().clear();
         for (JComponent cb : mineralStandardsCheckBoxes) {
-            if (((JCheckBox) cb).isSelected()) {
+            if (((AbstractButton) cb).isSelected()) {
                 try {
                     getMyAliquot().getMineralStandardModels().add(//
-                            ReduxLabData.getInstance().getAMineralStandardModel(((JCheckBox) cb).getText()));
+                            ReduxLabData.getInstance().getAMineralStandardModel(((AbstractButton) cb).getText()));
                 } catch (BadLabDataException ex) {
                     new ETWarningDialog(ex).setVisible(true);
                 }
@@ -4249,7 +4308,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
         // handle deleted fractions
         for (int f = 0; f
                 < deletedFractions.size(); f++) {
-            getSample().removeUPbReduxFraction((UPbFraction) deletedFractions.get(f));
+            getSample().removeUPbReduxFraction(deletedFractions.get(f));
             getMyAliquot().getAliquotFractions().remove(deletedFractions.get(f));
         }
 
@@ -4315,11 +4374,14 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
 
         // save the sample
         // april 2011 no longer provide edit of sample igsn in this window
-//        getMyAliquot().setSampleIGSN( sampleIGSN_text.getText().trim() );
-//        sample.setSampleIGSN( sampleIGSN_text.getText().trim() );
+//        getMyAliquot().setSampleIGSN( aliquotIGSN_text.getText().trim() );
+//        sample.setSampleIGSN( aliquotIGSN_text.getText().trim() );
 //
         // nov 2011 per Doug Walker, need to be sure lab name is correct
         myAliquot.setLaboratoryName(ReduxLabData.getInstance().getLabName());
+
+        // sept 2016
+        myAliquot.setAliquotIGSN(aliquotIGSN_text.getText());
 
         SampleInterface.saveSampleAsSerializedReduxFile(sample);
 
@@ -4412,7 +4474,9 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel SampleIGSN_label;
+    protected javax.swing.JTextField aliquotIGSN_text;
     private javax.swing.JLabel aliquotIName_label;
+    private javax.swing.JLabel aliquotIsRegistered_label;
     protected javax.swing.JTextField aliquotName_text;
     private javax.swing.JLabel analystName_label;
     protected javax.swing.JTextField analystName_text;
@@ -4428,6 +4492,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
     private javax.swing.JTextField calibrationUnct207_206_text;
     private javax.swing.JLabel calibrationUnct208_232_label;
     private javax.swing.JTextField calibrationUnct208_232_text;
+    private javax.swing.JLabel checkMarkForValidAliquotIGSN_label;
     private javax.swing.JLabel checkMarkForValidGeoPassID_label;
     private javax.swing.JLabel checkMarkForValidSampleID_label;
     private javax.swing.JCheckBox chemicallyPurifiedUPb_chkBox;
@@ -4494,7 +4559,6 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
     private javax.swing.JCheckBox reportAsCSV_chkBox;
     private javax.swing.JCheckBox reportSVGUpload_chkbox;
     protected javax.swing.JButton restore_button;
-    protected javax.swing.JTextField sampleIGSN_text;
     private javax.swing.JLabel sampleIsRegistered_label;
     protected javax.swing.JButton saveAndClose_button;
     protected javax.swing.JButton saveAndPreviewXMLAliquotAsHTML_button;
@@ -4507,6 +4571,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
     private javax.swing.JLabel userNameGeochron_label;
     private javax.swing.JButton validateGeoPassID_button;
     private javax.swing.JButton visitGeochron_button;
+    private javax.swing.JLabel xMarkForValidAliquotIGSN_label;
     private javax.swing.JLabel xMarkForValidGeoPassID_label;
     private javax.swing.JLabel xMarkForValidSampleID_label;
     // End of variables declaration//GEN-END:variables

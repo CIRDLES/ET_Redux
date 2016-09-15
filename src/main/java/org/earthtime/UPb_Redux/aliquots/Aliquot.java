@@ -153,6 +153,17 @@ public abstract class Aliquot implements AliquotInterface, AliquotForUPbInterfac
         return retVal;
     }
 
+    public String getAlliquotIGSNnoRegistry() {
+        String retVal = "";
+        String parse[] = aliquotIGSN.split("\\.");
+        if (parse.length > 0) {
+            // returns index 0 if no registry, 1 otherwise
+            retVal = parse[parse.length - 1];
+        }
+
+        return retVal;
+    }
+
     /**
      *
      * @param sampleIGSN

@@ -40,7 +40,6 @@ import javax.swing.JTextField;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.aliquots.AliquotInterface;
 import static org.earthtime.archivingTools.GeoSamplesWebServices.isSampleRegistered;
-import static org.earthtime.archivingTools.GeoSamplesWebServices.isSampleRegisteredToParent;
 import static org.earthtime.archivingTools.GeochronUploaderUtility.produceConcordiaGraphForUploading;
 import static org.earthtime.archivingTools.GeochronUploaderUtility.producePDFImageForUploading;
 import org.earthtime.archivingTools.forSESAR.SesarSampleManager;
@@ -49,6 +48,7 @@ import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.projects.ProjectInterface;
 import org.earthtime.samples.SampleInterface;
 import org.geosamples.samples.Samples;
+import static org.earthtime.archivingTools.GeoSamplesWebServices.isSampleRegisteredToParentAtTestGeoSamples;
 
 /**
  *
@@ -702,7 +702,7 @@ public class GeochronAliquotManager extends JPanel {
             boolean isValid = false;
             aliquotIGSNs[index] = "IGSN";
             if (proposedIGSN.length() == 9) {
-                isValid = isSampleRegisteredToParent(proposedIGSN, sample.getSampleIGSN());
+                isValid = isSampleRegisteredToParentAtTestGeoSamples(proposedIGSN, sample.getSampleIGSN());
                 if (isValid) {
                     aliquotIGSNs[index] = proposedIGSN.trim().toUpperCase();
                 } else if (userCode.trim().length() == 0) {
