@@ -70,7 +70,7 @@ public final class LaserchronElementIISetupUPb_A extends AbstractMassSpecSetup {
                                 new BigDecimal(22.0e-9, //
                                         ReduxConstants.mathContext10), //
                                 "ABS", //
-                                new BigDecimal(1.0e-9, ReduxConstants.mathContext10), //
+                                new BigDecimal(0.0e-9, ReduxConstants.mathContext10), //
                                 BigDecimal.ZERO), //
                         IonCounterCollectorModel.CollectedDataStyle.SEM);
 

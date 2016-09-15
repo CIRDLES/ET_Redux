@@ -941,8 +941,8 @@ public class AliquotEditorForLAICPMS extends AliquotEditorDialog {
 
         // save the sample
         // removed april 2011 as part of registry upgrade
-//        getMyAliquot().setSampleIGSN( sampleIGSN_text.getText().trim() );
-//        sample.setSampleIGSN( sampleIGSN_text.getText().trim() );
+//        getMyAliquot().setSampleIGSN( aliquotIGSN_text.getText().trim() );
+//        sample.setSampleIGSN( aliquotIGSN_text.getText().trim() );
         SampleInterface.saveSampleAsSerializedReduxFile(sample);
 
         System.out.println("**************** PRE-PUBLISH CHECKLIST FOR ALIQUOT");

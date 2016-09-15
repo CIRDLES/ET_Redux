@@ -63,11 +63,25 @@ public class GeoSamplesWebServices {
         return samples;
     }
 
-    public static XMLDocumentInterface getSampleMetaDataFromGeoSamplesIGSN(String igsn, boolean isVerbose) {
+    public static XMLDocumentInterface getSampleMetaDataFromTestGeoSamplesIGSN(String igsn, boolean isVerbose) {
         XMLDocumentInterface samples = new Samples();
 
         try {
             samples = Samples.downloadSampleMetadataFromTestSesarIGSN(igsn);
+        } catch (IOException | JAXBException | ParserConfigurationException | SAXException | NoSuchAlgorithmException | KeyStoreException | KeyManagementException anException) {
+            if (isVerbose) {
+                new ETWarningDialog(anException.getMessage()).setVisible(true);
+            }
+        }
+
+        return samples;
+    }
+
+    public static XMLDocumentInterface getSampleMetaDataFromGeoSamplesIGSN(String igsn, boolean isVerbose) {
+        XMLDocumentInterface samples = new Samples();
+
+        try {
+            samples = Samples.downloadSampleMetadataFromProductionSesarIGSN(igsn);
         } catch (IOException | JAXBException | ParserConfigurationException | SAXException | NoSuchAlgorithmException | KeyStoreException | KeyManagementException anException) {
             if (isVerbose) {
                 new ETWarningDialog(anException.getMessage()).setVisible(true);
@@ -83,7 +97,7 @@ public class GeoSamplesWebServices {
      * @param isVerbose the value of isVerbose
      * @param userName the value of userName
      * @param password the value of password
-     * @return 
+     * @return
      */
     public static XMLDocumentInterface registerSampleAtGeoSamplesIGSN(Samples.Sample sesarSample, boolean isVerbose, String userName, String password) {
         XMLDocumentInterface mySamples = new Samples();
@@ -112,7 +126,7 @@ public class GeoSamplesWebServices {
     }
 
     public static boolean isSampleRegistered(String igsn) {
-        XMLDocumentInterface downloadedSample = getSampleMetaDataFromGeoSamplesIGSN(igsn, false);
+        XMLDocumentInterface downloadedSample = getSampleMetaDataFromTestGeoSamplesIGSN(igsn, false);
 
         boolean isRegistered = false;
         try {
@@ -122,7 +136,21 @@ public class GeoSamplesWebServices {
         return isRegistered;
     }
 
-    public static boolean isSampleRegisteredToParent(String igsn, String parentIgsn) {
+    public static boolean isSampleRegisteredToParentAtTestGeoSamples(String igsn, String parentIgsn) {
+        XMLDocumentInterface downloadedSample = getSampleMetaDataFromTestGeoSamplesIGSN(igsn, false);
+        boolean isRegistered = false;
+        try {
+            isRegistered = (downloadedSample.getSample().get(0).getIgsn() != null) && (downloadedSample.getSample().get(0).getParentIgsn() != null);
+        } catch (Exception e) {
+        }
+        if (isRegistered) {
+            isRegistered = isRegistered && (downloadedSample.getSample().get(0).getParentIgsn().equalsIgnoreCase(parentIgsn));
+        }
+
+        return isRegistered;
+    }
+
+    public static boolean isSampleRegisteredToParentAtGeoSamples(String igsn, String parentIgsn) {
         XMLDocumentInterface downloadedSample = getSampleMetaDataFromGeoSamplesIGSN(igsn, false);
         boolean isRegistered = false;
         try {
