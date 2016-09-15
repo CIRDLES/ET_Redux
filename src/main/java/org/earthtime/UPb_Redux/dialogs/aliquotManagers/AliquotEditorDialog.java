@@ -722,7 +722,6 @@ public class AliquotEditorDialog extends DialogEditor {
 //        }
 //
 //    }
-
     // moved from fraction per Doug Walker october 2011
     private void initializeFractionArchivingTab() {
 
@@ -3802,7 +3801,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
             aliquotIsRegistered_label.setText(//
                     "Aliquot IGSN " + getMyAliquot().getAliquotIGSN()//
                     + " is REGISTERED"//
-                    + " as child " + sample.getSampleIGSNnoRegistry() //
+                    + " as child of sample IGSN " + sample.getSampleIGSNnoRegistry() //
                     + " in " + sample.getSampleRegistry().getName());
             geochronArchivePanel_panel.setVisible(true);
             showArchiveNote(myAliquot, true);
@@ -3812,7 +3811,8 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
         } else {
             checkMarkForValidAliquotIGSN_label.setVisible(false);
             xMarkForValidAliquotIGSN_label.setVisible(true);
-            aliquotIsRegistered_label.setText("Aliquot IGSN " + getMyAliquot().getAliquotIGSN() + " is NOT REGISTERED as child of Sample IGSN");
+            aliquotIsRegistered_label.setText(//
+                    "Aliquot IGSN " + getMyAliquot().getAliquotIGSN() + " is NOT REGISTERED as child of Sample IGSN " + sample.getSampleIGSNnoRegistry());
             geochronArchivePanel_panel.setVisible(false);
         }
 
