@@ -23,7 +23,6 @@ import Jama.Matrix;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Map;
@@ -43,7 +42,6 @@ import org.earthtime.dataDictionaries.FitFunctionTypeEnum;
 import org.earthtime.dataDictionaries.IsotopeNames;
 import org.earthtime.dataDictionaries.RawRatioNames;
 import org.earthtime.statistics.NonParametricStats;
-import org.earthtime.utilities.jamaHelpers.MatrixRemover;
 
 /**
  *
@@ -294,13 +292,11 @@ public class RawRatioDataModel //
                         hasTwoIdenticalIonCounters()) {
 
                     matrixSxyod
-                            = //
-                            ((RawIntensityDataModel) topIsotope).getColumnVectorOfCorrectedOnPeakIntensities()//
+                            = ((RawIntensityDataModel) topIsotope).getColumnVectorOfCorrectedOnPeakIntensities()//
                             .times(((RawIntensityDataModel) botIsotope).getColumnVectorOfCorrectedOnPeakIntensities().transpose());
 
                     double deadtimeOneSigmaAbsSqr
-                            = //
-                            ((IonCounterCollectorModel) botIsotope//
+                            = ((IonCounterCollectorModel) botIsotope//
                             .getCollectorModel()).getDeadTime().getOneSigmaAbs().movePointLeft(0).pow(2).doubleValue();
 
                     matrixSxyod.timesEquals(deadtimeOneSigmaAbsSqr);
@@ -936,10 +932,10 @@ public class RawRatioDataModel //
                     + "  USING " + (USING_FULL_PROPAGATION ? "FULL PROPAGATION" : "FAST PROPAGATION") + "  COUNT = " + countOfActiveData);
 
             // June 2016 in support of live mode
-            if (inLiveMode &&  rawRatioName.compareTo(RawRatioNames.r206_207w) == 0){
-                selectedFitFunctionType= FitFunctionTypeEnum.MEAN;
+            if (inLiveMode && rawRatioName.compareTo(RawRatioNames.r206_207w) == 0) {
+                selectedFitFunctionType = FitFunctionTypeEnum.MEAN;
             }
-            
+
             FitFunctionTypeEnum saveSelection = selectedFitFunctionType;
             // nov 2014
             if (isForceMeanForCommonLeadRatios()) {
@@ -1247,7 +1243,7 @@ public class RawRatioDataModel //
         if (sessionTechnique.compareToIgnoreCase("DOWNHOLE") == 0) {
             try {
                 AbstractFunctionOfX FofX = getSelectedDownHoleFitFunction();
-                retVal = Math.sqrt(Math.pow(FofX.getStdErrOfA(), 2) + FofX.getOverDispersion());//  updated june 2015                                  getStdErrOfmeanOfResidualsFromFittedFractionation();
+                retVal = Math.sqrt(Math.pow(FofX.getStdErrOfA(), 2) + FofX.getOverDispersion());//  updated june 2015   getStdErrOfmeanOfResidualsFromFittedFractionation();
             } catch (Exception e) {
             }
         }
@@ -1526,51 +1522,6 @@ public class RawRatioDataModel //
     }
 
     /**
-     * To support downhole
-     *
-     * @return
-     */
-    public Matrix getSlogRatioX_Y_withZeroesAtInactive() {
-        // ignore shades - shades will be false only at left end and right end, already ignored by downhole fit function
-        boolean[] shades = MaskingSingleton.getInstance().getMaskingArray();
-
-        // collect shade and inactive indices
-        ArrayList<Integer> shadeIndices = new ArrayList<>();
-        ArrayList<Integer> inactiveIndices = new ArrayList<>();
-        for (int i = 0; i < dataActiveMap.length; i++) {
-            if (!shades[i]) {
-                shadeIndices.add(i);
-            } else if (!dataActiveMap[i]) {
-                inactiveIndices.add(i);
-            }
-        }
-
-//////        // zero out rowcol for inactive acquisitions
-        Matrix slogRatioX_Y_withZeroesAtInactive = SlogRatioX_Yfull.copy();
-//////        for (Integer rowCol : inactiveIndices) {
-//////            for (int i = 0; i < SlogRatioX_Yfull.getRowDimension(); i++) {
-//////                if (i != rowCol) {
-//////                    slogRatioX_Y_withZeroesAtInactive.set(rowCol, i, 0.0);
-//////                    slogRatioX_Y_withZeroesAtInactive.set(i, rowCol, 0.0);
-//////                }
-//////            }
-//////        }
-
-        // remove row and col of matrix sf corresponding to shadeIndices
-        if (shadeIndices.size() > 0) {
-            // reverse list of indices to remove to avoid counting errors
-            Collections.sort(shadeIndices, (Integer i1, Integer i2) -> Integer.compare(i2, i1));
-            // walk the list of indices to remove and remove rows and cols before insertion
-            for (Integer indexToRemove : shadeIndices) {
-                slogRatioX_Y_withZeroesAtInactive = MatrixRemover.removeRow(slogRatioX_Y_withZeroesAtInactive, indexToRemove);
-                slogRatioX_Y_withZeroesAtInactive = MatrixRemover.removeCol(slogRatioX_Y_withZeroesAtInactive, indexToRemove);
-            }
-        }
-
-        return slogRatioX_Y_withZeroesAtInactive;
-    }
-
-    /**
      * @param SlogRatioX_Y the SlogRatioX_Y to set
      */
     public void setSlogRatioX_Y(Matrix SlogRatioX_Y) {
@@ -1608,55 +1559,20 @@ public class RawRatioDataModel //
     /**
      *
      * @param activeCount
-     * @return
+     * @param dataActiveCommonMap the value of dataActiveCommonMap
+     * @return the double[]
      */
-    public double[] getActiveLogRatios(int activeCount) {
+    public double[] getActiveLogRatios(int activeCount, boolean[] dataActiveCommonMap) {
         double[] activeLogatios = new double[activeCount];
         int index = 0;
-        for (int i = 0; i < dataActiveMap.length; i++) {
-            if (dataActiveMap[i]) {
+        for (int i = 0; i < dataActiveCommonMap.length; i++) {
+            if (dataActiveCommonMap[i]) {
                 activeLogatios[index] = logRatios[i];
-
                 index++;
             }
         }
 
         return activeLogatios;
-    }
-
-    public Matrix SlogRXYSolveLRWithZeroesAtInactive(boolean[] dataCommonActiveMap) {
-        // take the SLogRatioXYALL and solve it with logRatiosVector
-        /// then remove row for left and right shades
-        // then zero the row for inactive points for this fraction
-        ArrayList<Integer> shadeIndices = new ArrayList<>();
-        ArrayList<Integer> inactiveIndices = new ArrayList<>();
-        for (int i = 0; i < dataActiveMap.length; i++) {
-            if (!dataCommonActiveMap[i]) {
-                shadeIndices.add(i);
-            } else if (!dataActiveMap[i]) {
-                inactiveIndices.add(i);
-            }
-        }
-
-        // make a col vector from logratios
-        Matrix logRatioColVector = new Matrix(logRatios, logRatios.length);
-        // solve making another column vector
-        Matrix SlogRXYSolveLRWithZeroesAtInactive = SlogRatioX_Yfull.solve(logRatioColVector);
-//        //zero out missing points
-//        for (int index = 0; index < inactiveIndices.size(); index++) {
-//            SlogRXYSolveLRWithZeroesAtInactive.set(inactiveIndices.get(index), 0, 0.0);
-//        }
-        // remove shaded points
-        if (shadeIndices.size() > 0) {
-            // reverse list of indices to remove to avoid counting errors
-            Collections.sort(shadeIndices, (Integer i1, Integer i2) -> Integer.compare(i2, i1));
-            // walk the list of indices to remove and remove rows 
-            for (Integer indexToRemove : shadeIndices) {
-                SlogRXYSolveLRWithZeroesAtInactive = MatrixRemover.removeRow(SlogRXYSolveLRWithZeroesAtInactive, indexToRemove);
-            }
-        }
-
-        return SlogRXYSolveLRWithZeroesAtInactive;
     }
 
     /**

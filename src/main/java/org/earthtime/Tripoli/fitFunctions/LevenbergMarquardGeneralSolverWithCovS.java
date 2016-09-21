@@ -1412,10 +1412,11 @@ public class LevenbergMarquardGeneralSolverWithCovS implements FitFunctionInterf
                 Jf.set(i, 1, a * timesForMatrix[i] * Math.exp(b * timesForMatrix[i]));
                 Jf.set(i, 2, 1.0);
             }
-            double[] stdVariances = new double[matrixSf.getRowDimension()];
+            double[] stdVariances = new double[0];
 
             try {
                 matrixSf = Jf.times(fitParameterCovarianceMatrix.getMatrix(0, 2, 0, 2)).times(Jf.transpose());
+                stdVariances = new double[matrixSf.getRowDimension()];
                 for (int i = 0; i < stdVariances.length; i++) {
                     stdVariances[i] = matrixSf.get(i, i);
                 }
