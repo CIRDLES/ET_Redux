@@ -1616,7 +1616,7 @@ private void removeAllIndividualYAxisPanes_buttonActionPerformed(java.awt.event.
 
     private void downholeCalculateRhos_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downholeCalculateRhos_buttonActionPerformed
 
-        // for now we have to undo internal acquisition rejecttions allowed by intercept but not by downhole
+        // for now we have to undo internal acquisition rejections allowed by intercept but not by downhole
         tripoliSession.refitAllFractionsForDownhole();
 
         uPbReduxFrame.updateReportTable(true, false, "");
