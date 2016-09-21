@@ -266,7 +266,7 @@ public abstract class AbstractFunctionOfX implements Serializable {
      */
     public Matrix assembleMatrixJIntp(Matrix SlrXY) {
         Matrix Jabc = null;
-        
+
         try {
             Matrix Jpy = (matrixJyp.transpose().times(SlrXY.solve(matrixJyp)).solve(matrixJyp.transpose().solveTranspose(SlrXY)));
             Jabc = extractMatrixJIntpFromJpy(Jpy);
@@ -274,7 +274,7 @@ public abstract class AbstractFunctionOfX implements Serializable {
             System.out.println(this.shortName + " matrix mismatch where MatrixJyp is " + matrixJyp.getRowDimension()//
                     + " x " + matrixJyp.getColumnDimension() + "  SlrXY is " + SlrXY.getRowDimension() + " x " + SlrXY.getColumnDimension());
         }
- 
+
         return Jabc;
     }
 
@@ -796,7 +796,8 @@ public abstract class AbstractFunctionOfX implements Serializable {
     }
 
     /**
-     * @param diagonalOfSessionUnknownsAnalyticalCovarianceSu the diagonalOfSessionUnknownsAnalyticalCovarianceSu to set
+     * @param diagonalOfSessionUnknownsAnalyticalCovarianceSu the
+     * diagonalOfSessionUnknownsAnalyticalCovarianceSu to set
      */
     public void setDiagonalOfSessionUnknownsAnalyticalCovarianceSu(double[] diagonalOfSessionUnknownsAnalyticalCovarianceSu) {
         this.diagonalOfSessionUnknownsAnalyticalCovarianceSu = diagonalOfSessionUnknownsAnalyticalCovarianceSu;
@@ -810,7 +811,8 @@ public abstract class AbstractFunctionOfX implements Serializable {
     }
 
     /**
-     * @param diagonalOfSessionStandardsAnalyticalCovarianceSu the diagonalOfSessionStandardsAnalyticalCovarianceSu to set
+     * @param diagonalOfSessionStandardsAnalyticalCovarianceSu the
+     * diagonalOfSessionStandardsAnalyticalCovarianceSu to set
      */
     public void setDiagonalOfSessionStandardsAnalyticalCovarianceSu(double[] diagonalOfSessionStandardsAnalyticalCovarianceSu) {
         this.diagonalOfSessionStandardsAnalyticalCovarianceSu = diagonalOfSessionStandardsAnalyticalCovarianceSu;

@@ -143,7 +143,6 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
         // the problem is that we don't yet have math to deal with
         // un-alighed standard on peak data sets because of the matrix math used
         // so we proceed by un-rejecteting non-mask aquisitions
-        
         boolean[] dataCommonActiveMap = MaskingSingleton.getInstance().getMaskingArray();
         int countOfActiveData = 0;
         for (int i = 0; i < dataCommonActiveMap.length; i++) {
@@ -178,37 +177,51 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
         Matrix sumInvSlogRatioX_YTimeslr = new Matrix(countOfActiveData, 1);
 
         // assume fraction iterator is correct length as it was set on included fractions
-        Iterator<TripoliFraction> fractionIterator =//
+        Iterator<TripoliFraction> fractionIterator
+                =//
                 FractionsFilterInterface.getTripoliFractionsFiltered(//
                         tripoliFractions, FractionSelectionTypeEnum.STANDARD, IncludedTypeEnum.INCLUDED).iterator();
 
         while (fractionIterator.hasNext()) {
             TripoliFraction tf = fractionIterator.next();
 
-            RawRatioDataModel rawRatio = //
-                    ((RawRatioDataModel) tf.getRawRatioDataModelByName(rawRatioName));
+            RawRatioDataModel rawRatio
+                    = ((RawRatioDataModel) tf.getRawRatioDataModelByName(rawRatioName));
 
-            // calc SLogRatioXY
-////////            rawRatio.propagateUnctInRatios();
-            
             rawRatio.calculateSlogRatioX_Y(dataCommonActiveMap);
-            Matrix SlogRatioX_Y = rawRatio.getSlogRatioX_Y(false);//getSlogRatioX_Y_withZeroesAtInactive();//getSlogRatioX_Y();
+
+            Matrix SlogRatioX_Y_copy = rawRatio.getSlogRatioX_Y(false).copy();
+
+            // get active logratios from standard with any zero entries replaced with interposlated values
+            Matrix logRatiosVector = new Matrix(rawRatio.getActiveLogRatios(countOfActiveData, dataCommonActiveMap), countOfActiveData);
+
+            // Sept 2016 to support matrix math for downhole
+            // infill zeroes in logRatiosVector due to rejected points with interpolations 
+            // per Noah and multiply corresponding SlogRatioXY diagonal elements by 100
+            int lastGoodIndex = -1;
+            int nextGoodIndex = -1;
+            for (int i = 0; i < logRatiosVector.getRowDimension(); i++) {
+                if ((lastGoodIndex < 0) && (logRatiosVector.get(i, 0) == 0)) {
+                    lastGoodIndex = i - 1;
+                }
+                if ((lastGoodIndex >= 0) && (logRatiosVector.get(i, 0) > 0)) {
+                    nextGoodIndex = i;
+                    double average = (logRatiosVector.get(lastGoodIndex, 0) + logRatiosVector.get(nextGoodIndex, 0)) / 2.0;
+                    for (int j = lastGoodIndex + 1; j < nextGoodIndex; j++) {
+                        logRatiosVector.set(j, 0, average);
+                        SlogRatioX_Y_copy.set(j, j, SlogRatioX_Y_copy.get(j, j) * 100.0);
+                    }
+                    lastGoodIndex = -1;
+                    nextGoodIndex = -1;
+                }
+            }
 
             // sum of the inverses of all of the Slr_X_Y covariance matrices
-            sumInvSlogRatioX_Y.plusEquals(SlogRatioX_Y.inverse());
-
-            // get active logratios from standard
-            Matrix logRatiosVector = new Matrix(rawRatio.getActiveLogRatios(countOfActiveData), countOfActiveData);
+            sumInvSlogRatioX_Y.plusEquals(SlogRatioX_Y_copy.inverse());
 
             // column vector length count of aquisitions
-            sumInvSlogRatioX_YTimeslr.plusEquals(SlogRatioX_Y.solve(logRatiosVector));
+            sumInvSlogRatioX_YTimeslr.plusEquals(SlogRatioX_Y_copy.solve(logRatiosVector));
 
-//////            
-//////            
-//////            // JUNE 2015 - got to standard fraction and calculate SlogRatioX_Y.solve(logratiosVector) for that fraction's active
-//////            // return to here that solution with missing rows added back in with zeores to match the shape of this overall downhole
-//////            Matrix SlogRXYSolveLRWithZeroesAtInactive = rawRatio.SlogRXYSolveLRWithZeroesAtInactive(dataCommonActiveMap);
-//////            sumInvSlogRatioX_YTimeslr.plusEquals(SlogRXYSolveLRWithZeroesAtInactive);
         }
 
         // column vector for THICK BLACK LINE
@@ -510,7 +523,7 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
                 generateEXPONENTIALfitFunctionUsingLM();
             } catch (Exception e) {
             }
-            
+
             // turned off for now
 //            try {
 //                generateEXPONENTIALfitFunctionUsingLM();
@@ -547,7 +560,8 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
 
         for (int i = 0; i < fittedStandardsBeta.length; i++) {
             try {
-                fittedStandardsBeta[i] = //
+                fittedStandardsBeta[i]
+                        = //
                         Math.log(standardValueModel.getValue().doubleValue()) //
                         - fitFunc.f(activeXvalues[i]);
 //            } catch (RuntimeException e) {
@@ -575,7 +589,8 @@ public class DownholeFractionationDataModel implements Serializable, DataModelFi
         // stdVariances is diagonal of matrixSf
         double[] stdVariances = downHoleFitFunction.calculateInterpolatedVariances(matrixJfStandardsStandards, activeXvalues);
 
-        Iterator<TripoliFraction> fractionIterator =//
+        Iterator<TripoliFraction> fractionIterator
+                =//
                 FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, FractionSelectionTypeEnum.STANDARD, IncludedTypeEnum.INCLUDED).iterator();
 
         while (fractionIterator.hasNext()) {
