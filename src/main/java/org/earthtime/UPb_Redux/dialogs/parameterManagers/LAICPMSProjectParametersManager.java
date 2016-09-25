@@ -211,6 +211,8 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
 
     protected JTextField peakEndIndexTextBox;
 
+    protected AcquisitionTypesEnum acquisitionType;
+
     /**
      *
      * @param project
@@ -280,7 +282,7 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
         massSpecTypeLabel.setBounds(leftMargin, 45, parentDimension.width - 50, 25);
         this.add(massSpecTypeLabel);
 
-        AcquisitionTypesEnum acquisitionType = rawDataFileHandler.getAcquisitionType();
+        acquisitionType = rawDataFileHandler.getAcquisitionType();
 
         JLabel acquistionTypeLabel = new JLabel("Acquisition Type:   " + acquisitionType.getName());
         acquistionTypeLabel.setHorizontalAlignment(SwingConstants.LEFT);
@@ -924,19 +926,20 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
         }
 
         acquisitionModel.updateMassSpec(massSpecSetup);
+        // Aug 2016
+        if (acquisitionType.equals(AcquisitionTypesEnum.SINGLE_COLLECTOR)) {
+            acquisitionModel.setBaselineStartIndex(Integer.parseInt(baselineStartIndexTextBox.getText()));
+            rawDataFileHandler.setBaselineStartIndex(Integer.parseInt(baselineStartIndexTextBox.getText()));
 
-        acquisitionModel.setBaselineStartIndex(Integer.parseInt(baselineStartIndexTextBox.getText()));
-        rawDataFileHandler.setBaselineStartIndex(Integer.parseInt(baselineStartIndexTextBox.getText()));
+            acquisitionModel.setBaselineEndIndex(Integer.parseInt(baselineEndIndexTextBox.getText()));
+            rawDataFileHandler.setBaselineEndIndex(Integer.parseInt(baselineEndIndexTextBox.getText()));
 
-        acquisitionModel.setBaselineEndIndex(Integer.parseInt(baselineEndIndexTextBox.getText()));
-        rawDataFileHandler.setBaselineEndIndex(Integer.parseInt(baselineEndIndexTextBox.getText()));
+            acquisitionModel.setPeakStartIndex(Integer.parseInt(peakStartIndexTextBox.getText()));
+            rawDataFileHandler.setPeakStartIndex(Integer.parseInt(peakStartIndexTextBox.getText()));
 
-        acquisitionModel.setPeakStartIndex(Integer.parseInt(peakStartIndexTextBox.getText()));
-        rawDataFileHandler.setPeakStartIndex(Integer.parseInt(peakStartIndexTextBox.getText()));
-
-        acquisitionModel.setPeakEndIndex(Integer.parseInt(peakEndIndexTextBox.getText()));
-        rawDataFileHandler.setPeakEndIndex(Integer.parseInt(peakEndIndexTextBox.getText()));
-
+            acquisitionModel.setPeakEndIndex(Integer.parseInt(peakEndIndexTextBox.getText()));
+            rawDataFileHandler.setPeakEndIndex(Integer.parseInt(peakEndIndexTextBox.getText()));
+        }
         readyToProcessData = loadData;
     }
 
