@@ -1151,6 +1151,7 @@ public class RawRatioDataModel //
     /**
      * @return the dataActiveMap
      */
+    @Override
     public boolean[] getDataActiveMap() {
         return dataActiveMap;
     }
