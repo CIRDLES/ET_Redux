@@ -1398,33 +1398,22 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
     private void buildAliquotsMenu() {
         // aug 2010 provide aliquot management menu
+        boolean doActivate = (theSample.getActiveAliquots().size() > 0);
         aliquotsMenu.removeAll();
-        aliquotsMenu.setEnabled(false);
-        fractionsMenu.setEnabled(false);
-        selectAllFractions_menuItem.setEnabled(false);
-        deSelectAllFractions_menuItem.setEnabled(false);
+        aliquotsMenu.setEnabled(doActivate);
+        fractionsMenu.setEnabled(doActivate);
+        selectAllFractions_menuItem.setEnabled(doActivate);
+        deSelectAllFractions_menuItem.setEnabled(doActivate);
 
-        theSample.getActiveAliquots().stream().map((a) -> {
+        theSample.getActiveAliquots().stream().forEach((a) -> {
             JMenuItem menuItem = aliquotsMenu.add(new JMenuItem(a.getAliquotName()));
-            menuItem.addActionListener(new java.awt.event.ActionListener() {
-                @Override
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    editAliquotByNumber(((ReduxAliquotInterface) a).getAliquotNumber());
-                }
+            menuItem.addActionListener((java.awt.event.ActionEvent evt) -> {
+                editAliquotByNumber(((ReduxAliquotInterface) a).getAliquotNumber());
             });
-            return a;
-        }).map((_item) -> {
-            aliquotsMenu.setEnabled(true);
-            return _item;
-        }).map((_item) -> {
-            fractionsMenu.setEnabled(true);
-            return _item;
-        }).map((_item) -> {
-            selectAllFractions_menuItem.setEnabled(true);
-            return _item;
-        }).forEach((_item) -> {
-            deSelectAllFractions_menuItem.setEnabled(true);
         });
+
+        //forces menu update
+        pack();
     }
 
     private void customizeReduxSkin() {
@@ -2023,6 +2012,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         setTitle("EARTHTIME Redux");
         setBackground(new java.awt.Color(237, 242, 250));
         setLocationByPlatform(true);
+        setPreferredSize(new java.awt.Dimension(1160, 750));
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
                 formComponentResized(evt);
@@ -2589,13 +2579,11 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         mainMenuBar.add(sampleFileMenu);
 
         aliquotsMenu.setText("Aliquots");
-        aliquotsMenu.setEnabled(false);
         mainMenuBar.add(aliquotsMenu);
 
         fractionsMenu.setText("Fractions");
 
         selectAllFractions_menuItem.setText("Select All Fractions");
-        selectAllFractions_menuItem.setEnabled(false);
         selectAllFractions_menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 selectAllFractions_menuItemActionPerformed(evt);
@@ -2604,7 +2592,6 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         fractionsMenu.add(selectAllFractions_menuItem);
 
         deSelectAllFractions_menuItem.setText("De-select All Fractions");
-        deSelectAllFractions_menuItem.setEnabled(false);
         deSelectAllFractions_menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 deSelectAllFractions_menuItemActionPerformed(evt);
@@ -3823,7 +3810,8 @@ private void startStopLiveUpdate_buttonActionPerformed(java.awt.event.ActionEven
      * @param aliquot
      */
     public void editAliquotByProjectType(AliquotInterface aliquot) {
-        if (theSample.isSampleTypeProject() && !theSample.getSampleAnalysisType().equalsIgnoreCase("TRIPOLIZED")) {
+        if (theSample.isSampleTypeProject() //
+                && !theSample.getSampleAnalysisType().equalsIgnoreCase("TRIPOLIZED")) {
             // Project has a compiledSuperSample made up of actual projectSamples
             // we need the actual sample associated with this aliquot
             // this aliquot is a copy for compiled super sample and we need
