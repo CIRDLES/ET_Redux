@@ -252,35 +252,37 @@ public class URIHelper {
      */
     public static org.w3c.dom.Document RetrieveXMLfromServerAsDOMdocument(String connectionString) {
 
-        org.w3c.dom.Document doc = null;
-
+        Document convertedDocument = null;
         String tempSESARcontents = URIHelper.getTextFromURI(connectionString);
 
-        // write this to a file
-        String tempSESARFileName = "TempXMLfromServer.xml";
-        FileOutputStream fos = null;
-        try {
-            fos = new FileOutputStream(tempSESARFileName);
-        } catch (FileNotFoundException ex) {
-        }
+        // sept 2016 SESAR started returning 400 for bad igsn
+        if (tempSESARcontents.length() > 0) {
+            // write this to a file
+            String tempSESARFileName = "TempXMLfromServer.xml";
+            FileOutputStream fos = null;
+            try {
+                fos = new FileOutputStream(tempSESARFileName);
+            } catch (FileNotFoundException ex) {
+            }
 
-        OutputStreamWriter out = new OutputStreamWriter(fos);
-        try {
-            out.write(tempSESARcontents);
-            out.flush();
-            out.close();
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(null,
-                    new String[]{
-                        "Error reaching server: "//
-                        + ex.getMessage()
-                    });
-            ex.printStackTrace();
-        }
+            OutputStreamWriter out = new OutputStreamWriter(fos);
+            try {
+                out.write(tempSESARcontents);
+                out.flush();
+                out.close();
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(null,
+                        new String[]{
+                            "Error reaching server: "//
+                            + ex.getMessage()
+                        });
+                ex.printStackTrace();
+            }
 
-        File tempFile = new File(tempSESARFileName);
-        Document convertedDocument = convertXMLTextToDOMdocument(tempFile);
-        tempFile.delete();
+            File tempFile = new File(tempSESARFileName);
+            convertedDocument = convertXMLTextToDOMdocument(tempFile);
+            tempFile.delete();
+        }
 
         return convertedDocument;
     }

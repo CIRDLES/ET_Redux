@@ -30,9 +30,6 @@ public enum SampleRegistries {
     /**
      * 
      */
-    /**
-     * 
-     */
     SESAR( "SESAR", "SSR", "https://app.geosamples.org/webservices/display.php?igsn=" ),
 
     /**
@@ -126,7 +123,7 @@ public enum SampleRegistries {
     public static String updateSampleID ( String sampleID ) {
         String retVal = sampleID;
         if ( !sampleID.contains(".") ) {
-            retVal = GeochronID.code + "." + sampleID;
+            retVal = SESAR.code + "." + sampleID;
         }
 
         return retVal;
@@ -138,7 +135,7 @@ public enum SampleRegistries {
      * @return
      */
     public static boolean isSampleIdentifierValidAtRegistry ( String sampleID ) {
-        // if missing or bad registry code, default to SampleRegistries.GeochronID
+        // if missing or bad registry code, default to SampleRegistries.SESAR
         boolean retVal = false;
         String[] parsed = new String[2];
         SampleRegistries registry = null;
@@ -170,18 +167,6 @@ public enum SampleRegistries {
                                 retVal = doc.getElementsByTagName( "error" ).getLength() == 0;
                             }
                         }
-                        
-//                        
-//                        // As of Aug 15 2011 SESAR uses <results>, GeochronID uses <sample> for positive result
-//                        // however, both use <results><error> for negative result
-//                        boolean resultsElementPresent = doc.getFirstChild().getNodeName().equalsIgnoreCase( "results" );
-//                        // for now, take negative approach
-//                        if ( resultsElementPresent ) {
-//                            retVal = doc.getElementsByTagName( "error" ).getLength() == 0;
-//                        } else {
-//                            // got GeochronID <sample> 
-//                            retVal = true;
-//                        }
                     }
                 }
             }

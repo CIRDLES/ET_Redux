@@ -35,13 +35,13 @@ import static javax.swing.SwingConstants.RIGHT;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import static org.earthtime.archivingTools.GeoSamplesWebServices.CURRENT_GEOSAMPLES_WEBSERVICE_FOR_DOWNLOAD_IGSN;
-import static org.earthtime.archivingTools.GeoSamplesWebServices.isSampleRegistered;
 import static org.earthtime.archivingTools.GeoSamplesWebServices.isWellFormedIGSN;
-import static org.earthtime.archivingTools.GeoSamplesWebServices.registerSampleAtGeoSamplesIGSN;
+import static org.earthtime.archivingTools.GeoSamplesWebServices.registerSampleAtTestSesarIGSN;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.dialogs.DialogEditor;
 import org.geosamples.XMLDocumentInterface;
 import org.geosamples.samples.Samples;
+import static org.earthtime.archivingTools.GeoSamplesWebServices.isSampleRegisteredAtTestSesar;
 
 /**
  *
@@ -265,7 +265,7 @@ public class SesarSampleManager extends DialogEditor {
                     String proposedIGSN = sampleIGSNText.getText();
                     if (!proposedIGSN.toUpperCase().startsWith(sesarSample.getUserCode().toUpperCase())) {
                         messageText = "User code prefix of IGSN should be: " + sesarSample.getUserCode();
-                    } else if (isSampleRegistered(proposedIGSN)) {
+                    } else if (isSampleRegisteredAtTestSesar(proposedIGSN)) {
                         messageText = "The IGSN: " + proposedIGSN + " is already in use.";
                     } else if (!isWellFormedIGSN(proposedIGSN, sesarSample.getUserCode())) {
                         messageText = "The IGSN: " + proposedIGSN + " is not of the form " + sesarSample.getUserCode() + "NNNNNNN\".substring(0, (9 - userCode.length())) + \", where N is any digit or any capital letter.";
@@ -283,7 +283,7 @@ public class SesarSampleManager extends DialogEditor {
                     sesarSample.setLatitude(new BigDecimal(decimalLatitude.getText()));
                     sesarSample.setLongitude(new BigDecimal(decimalLongitude.getText()));
                     // register at SESAR
-                    XMLDocumentInterface success = registerSampleAtGeoSamplesIGSN(sesarSample, true, userName, password);
+                    XMLDocumentInterface success = registerSampleAtTestSesarIGSN(sesarSample, true, userName, password);
                     if (success != null) {
                         sesarSample.setIgsn(success.getSample().get(0).getIgsn());
                     } else {
