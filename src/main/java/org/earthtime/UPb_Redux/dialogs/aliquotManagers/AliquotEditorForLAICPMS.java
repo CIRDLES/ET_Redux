@@ -40,7 +40,6 @@ import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
-import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.renderers.EditFractionButton;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.aliquots.AliquotInterface;
@@ -49,6 +48,7 @@ import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.fractions.ETFractionInterface;
+import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.samples.SampleInterface;
 import org.earthtime.xmlUtilities.XMLSerializationI;
 import org.jdesktop.layout.GroupLayout.ParallelGroup;
@@ -662,7 +662,7 @@ public class AliquotEditorForLAICPMS extends AliquotEditorDialog {
         // Composition
         ((JTextComponent) fractionConcU_Text.get(row)).setText(tempFrac.getCompositionalMeasureByName("concU").getValue().
                 movePointRight(6).setScale(ReduxConstants.DEFAULT_CONSTANTS_SCALE,
-                        RoundingMode.HALF_UP).toPlainString());
+                RoundingMode.HALF_UP).toPlainString());
         ((JTextComponent) fractionConcU_Text.get(row)).setCaretPosition(0);
 
         ((JTextComponent) fractionRTh_Usample_Text.get(row)).setText(tempFrac.getCompositionalMeasureByName("rTh_Usample").getValue().
@@ -715,32 +715,32 @@ public class AliquotEditorForLAICPMS extends AliquotEditorDialog {
         // Isotopic Dates
         ((JTextComponent) fractionDate206_238r_Text.get(row)).setText(tempFrac.getRadiogenicIsotopeDateByName(RadDates.age206_238r).getValue().
                 movePointLeft(6).setScale(ReduxConstants.DEFAULT_CONSTANTS_SCALE,
-                        RoundingMode.HALF_UP).toPlainString());
+                RoundingMode.HALF_UP).toPlainString());
         ((JTextComponent) fractionDate206_238r_Text.get(row)).setCaretPosition(0);
 
         ((JTextComponent) fractionDate206_238r2SigmaAbs_Text.get(row)).setText(tempFrac.getRadiogenicIsotopeDateByName(RadDates.age206_238r).getOneSigmaAbs().
                 movePointLeft(6).setScale(ReduxConstants.DEFAULT_CONSTANTS_SCALE,
-                        RoundingMode.HALF_UP).toPlainString());
+                RoundingMode.HALF_UP).toPlainString());
         ((JTextComponent) fractionDate206_238r2SigmaAbs_Text.get(row)).setCaretPosition(0);
 
         ((JTextComponent) fractionDate207_235r_Text.get(row)).setText(tempFrac.getRadiogenicIsotopeDateByName(RadDates.age207_235r).getValue().
                 movePointLeft(6).setScale(ReduxConstants.DEFAULT_CONSTANTS_SCALE,
-                        RoundingMode.HALF_UP).toPlainString());
+                RoundingMode.HALF_UP).toPlainString());
         ((JTextComponent) fractionDate207_235r_Text.get(row)).setCaretPosition(0);
 
         ((JTextComponent) fractionDate207_235r2SigmaAbs_Text.get(row)).setText(tempFrac.getRadiogenicIsotopeDateByName(RadDates.age207_235r).getOneSigmaAbs().
                 movePointLeft(6).setScale(ReduxConstants.DEFAULT_CONSTANTS_SCALE,
-                        RoundingMode.HALF_UP).toPlainString());
+                RoundingMode.HALF_UP).toPlainString());
         ((JTextComponent) fractionDate207_235r2SigmaAbs_Text.get(row)).setCaretPosition(0);
 
         ((JTextComponent) fractionDate207_206r_Text.get(row)).setText(tempFrac.getRadiogenicIsotopeDateByName(RadDates.age207_206r).getValue().
                 movePointLeft(6).setScale(ReduxConstants.DEFAULT_CONSTANTS_SCALE,
-                        RoundingMode.HALF_UP).toPlainString());
+                RoundingMode.HALF_UP).toPlainString());
         ((JTextComponent) fractionDate207_206r_Text.get(row)).setCaretPosition(0);
 
         ((JTextComponent) fractionDate207_206r2SigmaAbs_Text.get(row)).setText(tempFrac.getRadiogenicIsotopeDateByName(RadDates.age207_206r).getOneSigmaAbs().
                 movePointLeft(6).setScale(ReduxConstants.DEFAULT_CONSTANTS_SCALE,
-                        RoundingMode.HALF_UP).toPlainString());
+                RoundingMode.HALF_UP).toPlainString());
         ((JTextComponent) fractionDate207_206r2SigmaAbs_Text.get(row)).setCaretPosition(0);
 
     }
@@ -890,7 +890,7 @@ public class AliquotEditorForLAICPMS extends AliquotEditorDialog {
     private void saveAliquot() {
 
         // general info
-        getMyAliquot().setAliquotName(aliquotName_text.getText());
+        myAliquot.setAliquotName(aliquotName_text.getText().trim());
         this.setTitle("Aliquot # " + getMyAliquot().getAliquotNumber() + " <> " + getMyAliquot().getAliquotName());
 
         getMyAliquot().setAnalystName(analystName_text.getText());
@@ -943,6 +943,12 @@ public class AliquotEditorForLAICPMS extends AliquotEditorDialog {
         // removed april 2011 as part of registry upgrade
 //        getMyAliquot().setSampleIGSN( aliquotIGSN_text.getText().trim() );
 //        sample.setSampleIGSN( aliquotIGSN_text.getText().trim() );
+
+       // sept 2016
+        myAliquot.setAliquotIGSN(aliquotIGSN_text.getText().trim());
+                      
+        validateIGSNs();
+
         SampleInterface.saveSampleAsSerializedReduxFile(sample);
 
         System.out.println("**************** PRE-PUBLISH CHECKLIST FOR ALIQUOT");
