@@ -117,4 +117,6 @@ public interface SampleTreeI extends MouseListener, TreeSelectionListener {
     public void expandToHistory(String expansionHistory);
     
     public void expandAllNodes();
+    
+    public void toggleSortByDateAsc();
 }

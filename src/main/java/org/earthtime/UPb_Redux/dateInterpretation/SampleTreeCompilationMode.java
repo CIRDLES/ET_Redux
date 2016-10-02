@@ -57,6 +57,7 @@ public class SampleTreeCompilationMode extends JTree implements SampleTreeI {
     private SampleInterface sample;
     private SampleTreeChangeI sampleTreeChange;
     private Object lastNodeSelected;
+    private static boolean sortByDateAsc = false;
 
     /**
      * Creates a new instance of SampleTreeCompilationMode
@@ -716,5 +717,10 @@ public class SampleTreeCompilationMode extends JTree implements SampleTreeI {
     @Override
     public void performLastUserSelectionOfSampleDate() {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void toggleSortByDateAsc() {
+        this.sortByDateAsc = !this.sortByDateAsc;
     }
 }

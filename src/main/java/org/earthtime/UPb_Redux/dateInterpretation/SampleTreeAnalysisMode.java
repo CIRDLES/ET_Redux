@@ -58,7 +58,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
     private SampleInterface sample;
     private SampleTreeChangeI sampleTreeChange;
     private Object lastNodeSelected;
-    private static transient boolean suppressSelectionEvent = false;
+    private static boolean sortByDateAsc = false;
 
     /**
      * Creates a new instance of SampleTreeAnalysisMode
@@ -113,9 +113,16 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
             ((DefaultMutableTreeNode) getModel().getRoot()).add(aliquotNode);
 
             // get a master vector of active fraction names
-            Vector<String> activeFractionIDs
-                    = ((ReduxAliquotInterface) tempAliquot).//
-                    getAliquotFractionIDs();
+            Vector<String> activeFractionIDs = new Vector<>();
+            if (sortByDateAsc) {
+                activeFractionIDs
+                        = ((ReduxAliquotInterface) tempAliquot).//
+                        getAliquotFractionIDsSortedByDateAsc();
+            } else {
+                activeFractionIDs
+                        = ((ReduxAliquotInterface) tempAliquot).//
+                        getAliquotFractionIDs();
+            }
 
             // now load the sample date interpretations
             for (int index = 0; index < tempAliquot.getSampleDateModels().size(); index++) {
@@ -415,8 +422,16 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
                     myEditor.setVisible(true);
 
                     // get a master vector of active fraction names
-                    Vector<String> activeFractionIDs = ((ReduxAliquotInterface) nodeInfo).//
-                            getAliquotFractionIDs();
+                    Vector<String> activeFractionIDs = new Vector<>();
+                    if (sortByDateAsc) {
+                        activeFractionIDs
+                                = ((ReduxAliquotInterface) nodeInfo).//
+                                getAliquotFractionIDsSortedByDateAsc();
+                    } else {
+                        activeFractionIDs
+                                = ((ReduxAliquotInterface) nodeInfo).//
+                                getAliquotFractionIDs();
+                    }
 
                     if (((SampleDateInterpretationChooserDialog) myEditor).getSelectedModels().size() > 0) {
                         DefaultMutableTreeNode sampleDateModelNode = null;
@@ -431,9 +446,10 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
                                     zeroFractionDates.add(activeFractionID);
                                 }
                             }
-                            zeroFractionDates.stream().forEach((zeroFractionDate) -> {
-                                activeFractionIDs.remove(zeroFractionDate);
-                            });
+
+                            for (int i = 0; i < zeroFractionDates.size(); i++) {
+                                activeFractionIDs.remove(zeroFractionDates.get(i));
+                            }
 
                             // use next two lines to pre-select all fractions
                             ((SampleDateModel) selectedSAM).setIncludedFractionIDsVector(activeFractionIDs);
@@ -618,10 +634,10 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
                             @Override
                             public void actionPerformed(ActionEvent arg0) {
                                 DefaultMutableTreeNode sampleDateNode
-                                        = (DefaultMutableTreeNode) ((DefaultMutableTreeNode) node).getParent();
+                                        = (DefaultMutableTreeNode) node.getParent();
                                 Object SampleDateNodeInfo = sampleDateNode.getUserObject();
                                 ((SampleDateModel) SampleDateNodeInfo).//
-                                        setIncludedFractionIDsVector(new Vector<String>());
+                                        setIncludedFractionIDsVector(new Vector<>());
 
                                 SampleInterface.updateAndSaveSampleDateModelsByAliquot(sample);
 
@@ -648,18 +664,22 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
                             @Override
                             public void actionPerformed(ActionEvent arg0) {
                                 DefaultMutableTreeNode sampleDateNode
-                                        = //
-                                        (DefaultMutableTreeNode) node.getParent();
+                                        = (DefaultMutableTreeNode) node.getParent();
                                 DefaultMutableTreeNode aliquotNode
-                                        = //
-                                        (DefaultMutableTreeNode) sampleDateNode.getParent();
+                                        = (DefaultMutableTreeNode) sampleDateNode.getParent();
 
                                 Object SampleDateNodeInfo = sampleDateNode.getUserObject();
                                 Object AliquotNodeInfo = aliquotNode.getUserObject();
 
-                                ((SampleDateModel) SampleDateNodeInfo).//
-                                        setIncludedFractionIDsVector(//
-                                                ((ReduxAliquotInterface) AliquotNodeInfo).getAliquotFractionIDs());
+                                if (sortByDateAsc) {
+                                    ((SampleDateModel) SampleDateNodeInfo).//
+                                            setIncludedFractionIDsVector(//
+                                                    ((ReduxAliquotInterface) AliquotNodeInfo).getAliquotFractionIDsSortedByDateAsc());
+                                } else {
+                                    ((SampleDateModel) SampleDateNodeInfo).//
+                                            setIncludedFractionIDsVector(//
+                                                    ((ReduxAliquotInterface) AliquotNodeInfo).getAliquotFractionIDs());
+                                }
 
                                 SampleInterface.updateAndSaveSampleDateModelsByAliquot(sample);
 
@@ -777,5 +797,12 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
      */
     public void setLastNodeSelected(Object lastNodeSelected) {
         this.lastNodeSelected = lastNodeSelected;
+    }
+
+    /**
+     * @param sortByDateAsc the sortByDateAsc to set
+     */
+    public void toggleSortByDateAsc() {
+        this.sortByDateAsc = !this.sortByDateAsc;
     }
 }
