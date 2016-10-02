@@ -339,12 +339,17 @@ public interface SampleInterface {
      * @return
      */
     public default boolean isAnalysisTypeLAICPMS() {
-        boolean retVal = false;
-        try {
-            retVal = SampleAnalysisTypesEnum.LAICPMS.equals(SampleAnalysisTypesEnum.valueOf(getSampleAnalysisType()));
-        } catch (Exception e) {
-        }
-        return retVal;
+//        boolean retVal = false;
+//        try {
+//            retVal = SampleAnalysisTypesEnum.LAICPMS.equals(SampleAnalysisTypesEnum.valueOf(getSampleAnalysisType()));
+//        } catch (Exception e) {
+//        }
+//
+//        return retVal;
+//        
+                
+        // sept 2016
+        return getSampleAnalysisType().startsWith("LAICPMS");
     }
 
     /**
