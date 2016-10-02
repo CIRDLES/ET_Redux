@@ -500,7 +500,7 @@ public class DateProbabilityDensityPanel extends JLayeredPane
         double dataRange = 0;
         try {
             dataRange = ((visibleSample.get(visibleSample.size() - 1)) - visibleSample.get(0));
-            dataRange *= 1.05;
+            dataRange +=100; // oct 2016 changed due to bug found by Matt Rioux *= 1.05;
         } catch (Exception e) {
         }
 
