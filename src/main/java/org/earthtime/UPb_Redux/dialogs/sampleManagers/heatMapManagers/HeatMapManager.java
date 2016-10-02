@@ -39,13 +39,12 @@ import static javax.swing.SwingConstants.RIGHT;
 import static org.earthtime.UPb_Redux.ReduxConstants.sansSerif_11_Plain;
 import static org.earthtime.UPb_Redux.ReduxConstants.sansSerif_12_Plain;
 import org.earthtime.UPb_Redux.dateInterpretation.DateInterpretationUpdateViewI;
-import org.earthtime.dialogs.DialogEditor;
-import org.earthtime.UPb_Redux.reports.ReportCategory;
 import org.earthtime.UPb_Redux.user.SampleDateInterpretationGUIOptions;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.colorViews.HeatMapMapper;
 import org.earthtime.colorViews.HeatMapView;
+import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.reports.ReportCategoryInterface;
 import org.earthtime.reports.ReportColumnInterface;
 import org.earthtime.reports.ReportSettingsInterface;
@@ -88,8 +87,8 @@ public class HeatMapManager extends DialogEditor {
 
         this.reportSettings = sample.getReportSettingsModel();
 
-        this.heatMapOptions =//
-                sample.getSampleDateInterpretationGUISettings().getHeatMapOptions();
+        this.heatMapOptions
+                = sample.getSampleDateInterpretationGUISettings().getHeatMapOptions();
 
         this.heatMapActive = Boolean.valueOf(getStringEntryFromHeatMapOptions("activateHeatMap", "false"));
 
@@ -252,6 +251,8 @@ public class HeatMapManager extends DialogEditor {
                 btn.setActionCommand(varName);
                 btn.setBounds(10, layoutRow * 20, 300, 25);
                 btn.setFont(sansSerif_11_Plain);
+                btn.setOpaque(true);
+                btn.setBackground(categoryPanel.getBackground());
                 btn.addItemListener(new ItemListener() {
 
                     @Override
@@ -278,6 +279,8 @@ public class HeatMapManager extends DialogEditor {
                         btn.setActionCommand(varNameUnct);
                         btn.setBounds(325, layoutRow * 20, 300, 25);
                         btn.setFont(sansSerif_11_Plain);
+                        btn.setOpaque(true);
+                        btn.setBackground(categoryPanel.getBackground());
                         btn.addItemListener(new ItemListener() {
 
                             @Override
@@ -322,7 +325,7 @@ public class HeatMapManager extends DialogEditor {
         NumberFormat formatter = new DecimalFormat("0.0000E0");
         minLabel.setText(formatter.format(min));
         maxLabel.setText(formatter.format(max));
-        
+
         variableLabel.setText(selectedReportColumn.getDisplayName());
 
         if (selectedReportColumn.getRetrieveMethodName().contains("Date")) {
@@ -419,6 +422,8 @@ public class HeatMapManager extends DialogEditor {
         variablesChart_tabbedPane.setFont(new java.awt.Font("Arial", 0, 11)); // NOI18N
         variablesChart_tabbedPane.setOpaque(true);
 
+        compositionPanel.setOpaque(true);
+
         javax.swing.GroupLayout compositionPanelLayout = new javax.swing.GroupLayout(compositionPanel);
         compositionPanel.setLayout(compositionPanelLayout);
         compositionPanelLayout.setHorizontalGroup(
@@ -431,6 +436,8 @@ public class HeatMapManager extends DialogEditor {
         );
 
         variablesChart_tabbedPane.addTab("Compostion", compositionPanel);
+
+        ratiosPanel.setOpaque(true);
 
         javax.swing.GroupLayout ratiosPanelLayout = new javax.swing.GroupLayout(ratiosPanel);
         ratiosPanel.setLayout(ratiosPanelLayout);
@@ -445,6 +452,8 @@ public class HeatMapManager extends DialogEditor {
 
         variablesChart_tabbedPane.addTab("Ratios", ratiosPanel);
 
+        rhosPanel.setOpaque(true);
+
         javax.swing.GroupLayout rhosPanelLayout = new javax.swing.GroupLayout(rhosPanel);
         rhosPanel.setLayout(rhosPanelLayout);
         rhosPanelLayout.setHorizontalGroup(
@@ -457,6 +466,8 @@ public class HeatMapManager extends DialogEditor {
         );
 
         variablesChart_tabbedPane.addTab("rhos", rhosPanel);
+
+        ratiosPbcCorrPanel.setOpaque(true);
 
         javax.swing.GroupLayout ratiosPbcCorrPanelLayout = new javax.swing.GroupLayout(ratiosPbcCorrPanel);
         ratiosPbcCorrPanel.setLayout(ratiosPbcCorrPanelLayout);
@@ -471,6 +482,8 @@ public class HeatMapManager extends DialogEditor {
 
         variablesChart_tabbedPane.addTab("Ratios PbcCorr", ratiosPbcCorrPanel);
 
+        datesPanel.setOpaque(true);
+
         javax.swing.GroupLayout datesPanelLayout = new javax.swing.GroupLayout(datesPanel);
         datesPanel.setLayout(datesPanelLayout);
         datesPanelLayout.setHorizontalGroup(
@@ -483,6 +496,8 @@ public class HeatMapManager extends DialogEditor {
         );
 
         variablesChart_tabbedPane.addTab("Dates", datesPanel);
+
+        datesPbcCorrPanel.setOpaque(true);
 
         javax.swing.GroupLayout datesPbcCorrPanelLayout = new javax.swing.GroupLayout(datesPbcCorrPanel);
         datesPbcCorrPanel.setLayout(datesPbcCorrPanelLayout);
@@ -497,6 +512,8 @@ public class HeatMapManager extends DialogEditor {
 
         variablesChart_tabbedPane.addTab("Dates PbcCorr", datesPbcCorrPanel);
 
+        traceElementsPanel.setOpaque(true);
+
         javax.swing.GroupLayout traceElementsPanelLayout = new javax.swing.GroupLayout(traceElementsPanel);
         traceElementsPanel.setLayout(traceElementsPanelLayout);
         traceElementsPanelLayout.setHorizontalGroup(
@@ -509,6 +526,8 @@ public class HeatMapManager extends DialogEditor {
         );
 
         variablesChart_tabbedPane.addTab("Trace Elements", traceElementsPanel);
+
+        customPanel.setOpaque(true);
 
         javax.swing.GroupLayout customPanelLayout = new javax.swing.GroupLayout(customPanel);
         customPanel.setLayout(customPanelLayout);

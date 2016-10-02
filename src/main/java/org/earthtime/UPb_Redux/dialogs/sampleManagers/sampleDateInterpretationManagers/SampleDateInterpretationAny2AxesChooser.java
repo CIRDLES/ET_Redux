@@ -19,6 +19,7 @@
 package org.earthtime.UPb_Redux.dialogs.sampleManagers.sampleDateInterpretationManagers;
 
 import java.util.Vector;
+import org.earthtime.beans.ET_JButton;
 import org.earthtime.dialogs.DialogEditor;
 
 /**
@@ -54,10 +55,10 @@ public class SampleDateInterpretationAny2AxesChooser extends DialogEditor {
     private void initComponents() {
 
         tracers_scrollPane = new javax.swing.JScrollPane();
-        axes_list = new javax.swing.JList<String>();
+        axes_list = new javax.swing.JList<>();
         buttonsPanel = new javax.swing.JPanel();
-        save_button = new javax.swing.JButton();
-        close_button = new javax.swing.JButton();
+        save_button = new ET_JButton();
+        close_button = new ET_JButton();
         chooseTracer_label = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -112,8 +113,8 @@ public class SampleDateInterpretationAny2AxesChooser extends DialogEditor {
         buttonsPanelLayout.setVerticalGroup(
             buttonsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(buttonsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                .add(save_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 28, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(close_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 28, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(save_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 25, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(close_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 25, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
 
         chooseTracer_label.setText("Testing list of available axes:");
@@ -138,7 +139,7 @@ public class SampleDateInterpretationAny2AxesChooser extends DialogEditor {
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(tracers_scrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 297, Short.MAX_VALUE)
                 .add(24, 24, 24)
-                .add(buttonsPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(buttonsPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();

@@ -28,22 +28,23 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Vector;
 import org.earthtime.UPb_Redux.ReduxConstants.ANALYSIS_PURPOSE;
-import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
-import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.exceptions.BadImportedCSVLegacyFileException;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
-import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.samples.UPbSampleInterface;
 import org.earthtime.UPb_Redux.samples.sampleImporters.AbstractSampleImporterFromLegacyCSVFile;
 import org.earthtime.aliquots.AliquotInterface;
+import org.earthtime.aliquots.ReduxAliquotInterface;
+import org.earthtime.beans.ET_JButton;
 import org.earthtime.dataDictionaries.MineralTypes;
 import org.earthtime.dataDictionaries.SampleRegistries;
+import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
+import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.samples.SampleInterface;
 
 /**
@@ -96,7 +97,8 @@ public abstract class AbstractSampleLegacyManagerDialog extends DialogEditor {
         this.converter = converter;
 
         // april 2011
-        validateSampleID();
+        // removed sept 2016
+        //       validateSampleID();
     }
 
     /**
@@ -124,17 +126,14 @@ public abstract class AbstractSampleLegacyManagerDialog extends DialogEditor {
 
     private void validateSampleID() {
 
-        try {
-            saveSampleData();
+        mySample.setSampleIGSN(((SampleRegistries) sampleRegistryChooser.getSelectedItem()).getCode() + "." + sampleIGSN_text.getText().trim());
+        mySample.setSampleRegistry((SampleRegistries) sampleRegistryChooser.getSelectedItem());
 
-            if (!mySample.isArchivedInRegistry()) {
-                boolean valid = SampleRegistries.isSampleIdentifierValidAtRegistry(//
-                        mySample.getSampleIGSN());
-                validSampleIGSN_label.setText((String) (valid ? "Sample IGSN is Valid at registry." : "Sample IGSN is NOT valid at registry."));
-                mySample.setValidatedSampleIGSN(valid);
-            }
-        } catch (ETException ex) {
-            new ETWarningDialog(ex).setVisible(true);
+        if (!mySample.isArchivedInRegistry()) {
+            boolean valid = SampleRegistries.isSampleIdentifierValidAtRegistry(//
+                    mySample.getSampleIGSN());
+            validSampleIGSN_label.setText((String) (valid ? "Sample IGSN is Valid at registry." : "Sample IGSN is NOT valid at registry."));
+            mySample.setValidatedSampleIGSN(valid);
         }
     }
 
@@ -276,8 +275,8 @@ public abstract class AbstractSampleLegacyManagerDialog extends DialogEditor {
         if (getMySample().getFractions().isEmpty()) {
             AliquotInterface myAliquot = getMySample().addNewAliquot(aliquotName_text.getText().trim());
             // May 2010 allows publication of legacy results
-            ((UPbReduxAliquot) myAliquot).setCompiled(false);
-            int myAliquotNumber = ((UPbReduxAliquot) myAliquot).getAliquotNumber();
+            ((ReduxAliquotInterface) myAliquot).setCompiled(false);
+            int myAliquotNumber = myAliquot.getAliquotNumber();
 
             // test for manual mode or bulk import from CSV file
             if (manualMode_radioBut.isSelected()) {
@@ -317,11 +316,11 @@ public abstract class AbstractSampleLegacyManagerDialog extends DialogEditor {
             try {
                 f.setPhysicalConstantsModel(getMySample().getPhysicalConstantsModel());
 
-                ((FractionI)f).setMineralName(mySample.getMineralName());
+                ((FractionI) f).setMineralName(mySample.getMineralName());
                 if (mySample.getMineralName().equalsIgnoreCase("zircon")) {
-                    ((FractionI)f).setZircon(true);
+                    ((FractionI) f).setZircon(true);
                 } else {
-                    ((FractionI)f).setZircon(false);
+                    ((FractionI) f).setZircon(false);
                 }
 
                 f.setLegacy(true);
@@ -422,25 +421,25 @@ public abstract class AbstractSampleLegacyManagerDialog extends DialogEditor {
         fractionDestinationPanel_panel = new javax.swing.JPanel();
         aliquotName_text = new javax.swing.JTextField();
         aliquotName_label = new javax.swing.JLabel();
-        physicalConstantsModelChooser = new javax.swing.JComboBox<String>();
+        physicalConstantsModelChooser = new javax.swing.JComboBox<>();
         defaultHeader_label = new javax.swing.JLabel();
         fractionSourcePanel_panel = new javax.swing.JPanel();
         manualMode_radioBut = new javax.swing.JRadioButton();
         bulkMode_radioBut = new javax.swing.JRadioButton();
-        standardMineralNameChooser = new javax.swing.JComboBox<String>();
+        standardMineralNameChooser = new javax.swing.JComboBox<>();
         chooseStandardMineral_label = new javax.swing.JLabel();
         chooseAnalysisPurpose_label = new javax.swing.JLabel();
-        analysisPurposeChooser = new javax.swing.JComboBox<String>();
+        analysisPurposeChooser = new javax.swing.JComboBox<>();
         chooseTWrho_label = new javax.swing.JLabel();
         TWZeroRho_radioBut = new javax.swing.JRadioButton();
         TWCalculateRho_radioBut = new javax.swing.JRadioButton();
         sampleIGSN_label1 = new javax.swing.JLabel();
-        sampleRegistryChooser = new javax.swing.JComboBox<SampleRegistries>();
+        sampleRegistryChooser = new javax.swing.JComboBox<>();
         validSampleIGSN_label = new javax.swing.JLabel();
-        validateIGSN = new javax.swing.JButton();
+        validateIGSN = new ET_JButton();
         jPanel2 = new javax.swing.JPanel();
-        close = new javax.swing.JButton();
-        saveAndClose = new javax.swing.JButton();
+        close = new ET_JButton();
+        saveAndClose = new ET_JButton();
         sampleType_panel = new javax.swing.JPanel();
         sampleType_label = new javax.swing.JLabel();
 
@@ -530,7 +529,8 @@ public abstract class AbstractSampleLegacyManagerDialog extends DialogEditor {
         jPanel1.add(fractionDestinationPanel_panel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 210, 450, -1));
 
         physicalConstantsModelChooser.setBackground(new java.awt.Color(245, 236, 206));
-        jPanel1.add(physicalConstantsModelChooser, new org.netbeans.lib.awtextra.AbsoluteConstraints(193, 115, 270, -1));
+        physicalConstantsModelChooser.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
+        jPanel1.add(physicalConstantsModelChooser, new org.netbeans.lib.awtextra.AbsoluteConstraints(183, 115, 290, -1));
 
         defaultHeader_label.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         defaultHeader_label.setForeground(new java.awt.Color(204, 51, 0));
@@ -617,7 +617,7 @@ public abstract class AbstractSampleLegacyManagerDialog extends DialogEditor {
                 validateIGSNActionPerformed(evt);
             }
         });
-        jPanel1.add(validateIGSN, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 85, 230, 32));
+        jPanel1.add(validateIGSN, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 85, 230, 25));
 
         jPanel2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
 
@@ -655,8 +655,8 @@ public abstract class AbstractSampleLegacyManagerDialog extends DialogEditor {
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                .add(saveAndClose, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 32, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(close, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 32, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(saveAndClose, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 25, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(close, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 25, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
 
         sampleType_panel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));

@@ -330,6 +330,9 @@
                     </Component>
                     <Component class="javax.swing.JCheckBox" name="ellipseCenters_checkbox">
                       <Properties>
+                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="e6" green="f1" red="ff" type="rgb"/>
+                        </Property>
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                           <Font name="SansSerif" size="10" style="1"/>
                         </Property>
@@ -347,6 +350,9 @@
                     </Component>
                     <Component class="javax.swing.JCheckBox" name="ellipseLabels_checkbox">
                       <Properties>
+                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="e6" green="f1" red="ff" type="rgb"/>
+                        </Property>
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                           <Font name="SansSerif" size="10" style="1"/>
                         </Property>
@@ -364,6 +370,9 @@
                     </Component>
                     <Component class="javax.swing.JCheckBox" name="concordiaErrors_checkbox">
                       <Properties>
+                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="e6" green="f1" red="ff" type="rgb"/>
+                        </Property>
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                           <Font name="SansSerif" size="10" style="1"/>
                         </Property>
@@ -456,7 +465,7 @@
                     <Component class="javax.swing.JRadioButton" name="concordiaFlavor_radioButton">
                       <Properties>
                         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                          <Color blue="ff" green="cc" red="cc" type="rgb"/>
+                          <Color blue="e6" green="f1" red="ff" type="rgb"/>
                         </Property>
                         <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                           <ComponentRef name="concordiaTeraW_buttonGroup"/>
@@ -479,7 +488,7 @@
                     <Component class="javax.swing.JRadioButton" name="terraWasserburgFlavor_radioButton">
                       <Properties>
                         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                          <Color blue="ff" green="cc" red="cc" type="rgb"/>
+                          <Color blue="e6" green="f1" red="ff" type="rgb"/>
                         </Property>
                         <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                           <ComponentRef name="concordiaTeraW_buttonGroup"/>
@@ -501,6 +510,9 @@
                     </Component>
                     <Component class="javax.swing.JCheckBox" name="thoriumCorrectionSelector_checkbox">
                       <Properties>
+                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="e6" green="f1" red="ff" type="rgb"/>
+                        </Property>
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                           <Font name="SansSerif" size="9" style="1"/>
                         </Property>
@@ -518,6 +530,9 @@
                     </Component>
                     <Component class="javax.swing.JCheckBox" name="protactiniumCorrectionSelector_checkbox">
                       <Properties>
+                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="e6" green="f1" red="ff" type="rgb"/>
+                        </Property>
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                           <Font name="SansSerif" size="9" style="1"/>
                         </Property>
@@ -535,6 +550,9 @@
                     </Component>
                     <Component class="javax.swing.JLabel" name="jLabel4">
                       <Properties>
+                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="e6" green="f1" red="ff" type="rgb"/>
+                        </Property>
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                           <Font name="SansSerif" size="9" style="1"/>
                         </Property>
@@ -588,6 +606,9 @@
                     </Component>
                     <Component class="javax.swing.JCheckBox" name="showExcludedFractions_checkbox">
                       <Properties>
+                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="e6" green="f1" red="ff" type="rgb"/>
+                        </Property>
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                           <Font name="SansSerif" size="10" style="1"/>
                         </Property>
@@ -606,7 +627,7 @@
                     <Component class="javax.swing.JRadioButton" name="thoriumConcordiaFlavor_radioButton">
                       <Properties>
                         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                          <Color blue="ff" green="cc" red="cc" type="rgb"/>
+                          <Color blue="e6" green="f1" red="ff" type="rgb"/>
                         </Property>
                         <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                           <ComponentRef name="concordiaTeraW_buttonGroup"/>
@@ -628,6 +649,9 @@
                     </Component>
                     <Component class="javax.swing.JCheckBox" name="showFilteredFractions_checkbox">
                       <Properties>
+                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="e6" green="f1" red="ff" type="rgb"/>
+                        </Property>
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                           <Font name="SansSerif" size="10" style="1"/>
                         </Property>
@@ -644,6 +668,9 @@
                     </Component>
                     <Component class="javax.swing.JCheckBox" name="commonLeadCorrectionSelector_checkbox">
                       <Properties>
+                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="e6" green="f1" red="ff" type="rgb"/>
+                        </Property>
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                           <Font name="SansSerif" size="9" style="1"/>
                         </Property>
@@ -824,6 +851,9 @@
                     </Component>
                     <Component class="javax.swing.JLabel" name="jLabel1">
                       <Properties>
+                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="e5" green="fa" red="e5" type="rgb"/>
+                        </Property>
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                           <Font name="SansSerif" size="12" style="0"/>
                         </Property>
@@ -837,6 +867,9 @@
                     </Component>
                     <Component class="javax.swing.JRadioButton" name="fractionOrderByName_radioButton">
                       <Properties>
+                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="e5" green="fa" red="e5" type="rgb"/>
+                        </Property>
                         <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                           <ComponentRef name="weightedMeanFractionOrderButtonGroup"/>
                         </Property>
@@ -858,6 +891,9 @@
                     </Component>
                     <Component class="javax.swing.JRadioButton" name="fractionOrderByWeight_radioButton">
                       <Properties>
+                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="e5" green="fa" red="e5" type="rgb"/>
+                        </Property>
                         <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                           <ComponentRef name="weightedMeanFractionOrderButtonGroup"/>
                         </Property>
@@ -878,6 +914,9 @@
                     </Component>
                     <Component class="javax.swing.JRadioButton" name="fractionOrderByRandom_radioButton">
                       <Properties>
+                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="e5" green="fa" red="e5" type="rgb"/>
+                        </Property>
                         <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                           <ComponentRef name="weightedMeanFractionOrderButtonGroup"/>
                         </Property>
@@ -899,6 +938,9 @@
                     </Component>
                     <Component class="javax.swing.JRadioButton" name="fractionOrderByDate_radioButton">
                       <Properties>
+                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="e5" green="fa" red="e5" type="rgb"/>
+                        </Property>
                         <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                           <ComponentRef name="weightedMeanFractionOrderButtonGroup"/>
                         </Property>
@@ -1268,6 +1310,9 @@
                     </Component>
                     <Component class="javax.swing.JRadioButton" name="ageR207_206r_radioB">
                       <Properties>
+                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="ff" green="e6" red="f1" type="rgb"/>
+                        </Property>
                         <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                           <ComponentRef name="probabilityDateButtonGroup"/>
                         </Property>
@@ -1285,6 +1330,9 @@
                     </Component>
                     <Component class="javax.swing.JRadioButton" name="ageR206_238r_radioB">
                       <Properties>
+                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="ff" green="e6" red="f1" type="rgb"/>
+                        </Property>
                         <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                           <ComponentRef name="probabilityDateButtonGroup"/>
                         </Property>
@@ -1302,6 +1350,9 @@
                     </Component>
                     <Component class="javax.swing.JSlider" name="positivePctDiscordance_slider">
                       <Properties>
+                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="ff" green="e6" red="f1" type="rgb"/>
+                        </Property>
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                           <Font name="Arial" size="10" style="1"/>
                         </Property>
@@ -1315,12 +1366,15 @@
                       </Properties>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="550" y="0" width="200" height="38"/>
+                          <AbsoluteConstraints x="550" y="5" width="200" height="38"/>
                         </Constraint>
                       </Constraints>
                     </Component>
                     <Component class="javax.swing.JSlider" name="percentUncertainty_slider">
                       <Properties>
+                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="ff" green="e6" red="f1" type="rgb"/>
+                        </Property>
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                           <Font name="Arial" size="10" style="1"/>
                         </Property>
@@ -1334,12 +1388,15 @@
                       </Properties>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="750" y="0" width="168" height="38"/>
+                          <AbsoluteConstraints x="750" y="5" width="168" height="38"/>
                         </Constraint>
                       </Constraints>
                     </Component>
                     <Component class="javax.swing.JSlider" name="negativePctDiscordance_slider">
                       <Properties>
+                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="ff" green="e6" red="f1" type="rgb"/>
+                        </Property>
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                           <Font name="Arial" size="10" style="1"/>
                         </Property>
@@ -1355,7 +1412,7 @@
                       </Properties>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="330" y="0" width="200" height="38"/>
+                          <AbsoluteConstraints x="330" y="5" width="200" height="38"/>
                         </Constraint>
                       </Constraints>
                     </Component>
@@ -1377,7 +1434,7 @@
                       </Properties>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="568" y="40" width="160" height="15"/>
+                          <AbsoluteConstraints x="568" y="45" width="160" height="15"/>
                         </Constraint>
                       </Constraints>
                     </Component>
@@ -1399,7 +1456,7 @@
                       </Properties>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="347" y="40" width="160" height="15"/>
+                          <AbsoluteConstraints x="347" y="45" width="160" height="15"/>
                         </Constraint>
                       </Constraints>
                     </Component>
@@ -1421,12 +1478,15 @@
                       </Properties>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="767" y="40" width="140" height="15"/>
+                          <AbsoluteConstraints x="767" y="45" width="140" height="15"/>
                         </Constraint>
                       </Constraints>
                     </Component>
                     <Component class="javax.swing.JRadioButton" name="ageBest_radio">
                       <Properties>
+                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="ff" green="e6" red="f1" type="rgb"/>
+                        </Property>
                         <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                           <ComponentRef name="probabilityDateButtonGroup"/>
                         </Property>
@@ -1479,7 +1539,7 @@
                       </Events>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="530" y="0" width="20" height="20"/>
+                          <AbsoluteConstraints x="530" y="5" width="20" height="20"/>
                         </Constraint>
                       </Constraints>
                     </Component>
@@ -1643,6 +1703,9 @@
                     </Component>
                     <Component class="javax.swing.JCheckBox" name="commonLeadCorrectionSelectorPDF_checkbox">
                       <Properties>
+                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="ff" green="e6" red="f1" type="rgb"/>
+                        </Property>
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                           <Font name="SansSerif" size="9" style="1"/>
                         </Property>
@@ -1660,6 +1723,9 @@
                     </Component>
                     <Component class="javax.swing.JRadioButton" name="DatePbCorrSchemeA_radio">
                       <Properties>
+                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="ff" green="e6" red="f1" type="rgb"/>
+                        </Property>
                         <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                           <ComponentRef name="probabilityDateButtonGroup"/>
                         </Property>

@@ -19,9 +19,10 @@
 package org.earthtime.UPb_Redux.dialogs.sampleManagers.sampleDateInterpretationManagers;
 
 import java.util.Vector;
-import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
+import org.earthtime.beans.ET_JButton;
+import org.earthtime.dialogs.DialogEditor;
 
 /**
  *
@@ -64,10 +65,10 @@ public class SampleDateInterpretationChooserDialog extends DialogEditor {
     private void initComponents() {
 
         tracers_scrollPane = new javax.swing.JScrollPane();
-        modelTypes_list = new javax.swing.JList<ValueModel>();
+        modelTypes_list = new javax.swing.JList<>();
         buttonsPanel = new javax.swing.JPanel();
-        save_button = new javax.swing.JButton();
-        close_button = new javax.swing.JButton();
+        save_button = new ET_JButton();
+        close_button = new ET_JButton();
         chooseTracer_label = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -101,7 +102,7 @@ public class SampleDateInterpretationChooserDialog extends DialogEditor {
                 save_buttonActionPerformed(evt);
             }
         });
-        buttonsPanel.add(save_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(38, 2, 115, 28));
+        buttonsPanel.add(save_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(38, 2, 115, 25));
 
         close_button.setForeground(new java.awt.Color(255, 51, 0));
         close_button.setText("Cancel");
@@ -112,7 +113,7 @@ public class SampleDateInterpretationChooserDialog extends DialogEditor {
                 close_buttonActionPerformed(evt);
             }
         });
-        buttonsPanel.add(close_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 2, 115, 28));
+        buttonsPanel.add(close_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 2, 115, 25));
 
         getContentPane().add(buttonsPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 343, 340, -1));
 

@@ -1112,6 +1112,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         });
         concordiaToolPanel.add(resetGraphDisplay_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 2, 35, 30));
 
+        ellipseCenters_checkbox.setBackground(new java.awt.Color(255, 241, 230));
         ellipseCenters_checkbox.setFont(new java.awt.Font("SansSerif", 1, 10)); // NOI18N
         ellipseCenters_checkbox.setSelected(true);
         ellipseCenters_checkbox.setText("<html>Ellipse<br> Centers</html>");
@@ -1122,6 +1123,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         });
         concordiaToolPanel.add(ellipseCenters_checkbox, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 2, 70, 25));
 
+        ellipseLabels_checkbox.setBackground(new java.awt.Color(255, 241, 230));
         ellipseLabels_checkbox.setFont(new java.awt.Font("SansSerif", 1, 10)); // NOI18N
         ellipseLabels_checkbox.setSelected(true);
         ellipseLabels_checkbox.setText("<html>Ellipse<br> Labels</html>");
@@ -1132,6 +1134,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         });
         concordiaToolPanel.add(ellipseLabels_checkbox, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 2, 70, 25));
 
+        concordiaErrors_checkbox.setBackground(new java.awt.Color(255, 241, 230));
         concordiaErrors_checkbox.setFont(new java.awt.Font("SansSerif", 1, 10)); // NOI18N
         concordiaErrors_checkbox.setSelected(true);
         concordiaErrors_checkbox.setText("<html>Concordia<br> Unct Env</html>");
@@ -1176,7 +1179,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         });
         concordiaToolPanel.add(zoomBox_toggleButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(125, 2, 55, 30));
 
-        concordiaFlavor_radioButton.setBackground(new java.awt.Color(204, 204, 255));
+        concordiaFlavor_radioButton.setBackground(new java.awt.Color(255, 241, 230));
         concordiaTeraW_buttonGroup.add(concordiaFlavor_radioButton);
         concordiaFlavor_radioButton.setFont(new java.awt.Font("SansSerif", 1, 9)); // NOI18N
         concordiaFlavor_radioButton.setText("C");
@@ -1188,7 +1191,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         });
         concordiaToolPanel.add(concordiaFlavor_radioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 1, -1, 28));
 
-        terraWasserburgFlavor_radioButton.setBackground(new java.awt.Color(204, 204, 255));
+        terraWasserburgFlavor_radioButton.setBackground(new java.awt.Color(255, 241, 230));
         concordiaTeraW_buttonGroup.add(terraWasserburgFlavor_radioButton);
         terraWasserburgFlavor_radioButton.setFont(new java.awt.Font("SansSerif", 1, 9)); // NOI18N
         terraWasserburgFlavor_radioButton.setText("TW");
@@ -1200,6 +1203,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         });
         concordiaToolPanel.add(terraWasserburgFlavor_radioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(295, 1, -1, 28));
 
+        thoriumCorrectionSelector_checkbox.setBackground(new java.awt.Color(255, 241, 230));
         thoriumCorrectionSelector_checkbox.setFont(new java.awt.Font("SansSerif", 1, 9)); // NOI18N
         thoriumCorrectionSelector_checkbox.setText("Th");
         thoriumCorrectionSelector_checkbox.setToolTipText("Correct for Thorium");
@@ -1210,6 +1214,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         });
         concordiaToolPanel.add(thoriumCorrectionSelector_checkbox, new org.netbeans.lib.awtextra.AbsoluteConstraints(435, 2, -1, 25));
 
+        protactiniumCorrectionSelector_checkbox.setBackground(new java.awt.Color(255, 241, 230));
         protactiniumCorrectionSelector_checkbox.setFont(new java.awt.Font("SansSerif", 1, 9)); // NOI18N
         protactiniumCorrectionSelector_checkbox.setText("Pa");
         protactiniumCorrectionSelector_checkbox.setToolTipText("Correct for Protactinium");
@@ -1220,6 +1225,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         });
         concordiaToolPanel.add(protactiniumCorrectionSelector_checkbox, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 2, -1, 25));
 
+        jLabel4.setBackground(new java.awt.Color(255, 241, 230));
         jLabel4.setFont(new java.awt.Font("SansSerif", 1, 9)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(255, 0, 51));
         jLabel4.setText("Correct:");
@@ -1242,6 +1248,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         });
         concordiaToolPanel.add(showTight_toggleButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 2, 30, 30));
 
+        showExcludedFractions_checkbox.setBackground(new java.awt.Color(255, 241, 230));
         showExcludedFractions_checkbox.setFont(new java.awt.Font("SansSerif", 1, 10)); // NOI18N
         showExcludedFractions_checkbox.setSelected(true);
         showExcludedFractions_checkbox.setText("<html>Excluded<br> Fractions</html>");
@@ -1252,7 +1259,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         });
         concordiaToolPanel.add(showExcludedFractions_checkbox, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 2, 75, 25));
 
-        thoriumConcordiaFlavor_radioButton.setBackground(new java.awt.Color(204, 204, 255));
+        thoriumConcordiaFlavor_radioButton.setBackground(new java.awt.Color(255, 241, 230));
         concordiaTeraW_buttonGroup.add(thoriumConcordiaFlavor_radioButton);
         thoriumConcordiaFlavor_radioButton.setFont(new java.awt.Font("SansSerif", 1, 9)); // NOI18N
         thoriumConcordiaFlavor_radioButton.setText("Th");
@@ -1264,6 +1271,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         });
         concordiaToolPanel.add(thoriumConcordiaFlavor_radioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 1, -1, 28));
 
+        showFilteredFractions_checkbox.setBackground(new java.awt.Color(255, 241, 230));
         showFilteredFractions_checkbox.setFont(new java.awt.Font("SansSerif", 1, 10)); // NOI18N
         showFilteredFractions_checkbox.setText("<html>Filtering ON<br> </html>");
         showFilteredFractions_checkbox.addActionListener(new java.awt.event.ActionListener() {
@@ -1273,6 +1281,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         });
         concordiaToolPanel.add(showFilteredFractions_checkbox, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 2, 80, 25));
 
+        commonLeadCorrectionSelector_checkbox.setBackground(new java.awt.Color(255, 241, 230));
         commonLeadCorrectionSelector_checkbox.setFont(new java.awt.Font("SansSerif", 1, 9)); // NOI18N
         commonLeadCorrectionSelector_checkbox.setText("Pbc");
         commonLeadCorrectionSelector_checkbox.setToolTipText("Correct for Common Lead");
@@ -1340,10 +1349,12 @@ public class SampleDateInterpretationsManager extends DialogEditor
         pan_WeightedMean_toggleButton.setOpaque(true);
         weightedMeanToolPanel.add(pan_WeightedMean_toggleButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(113, 2, 28, 30));
 
+        jLabel1.setBackground(new java.awt.Color(229, 250, 229));
         jLabel1.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         jLabel1.setText("Order:");
         weightedMeanToolPanel.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(369, 9, -1, -1));
 
+        fractionOrderByName_radioButton.setBackground(new java.awt.Color(229, 250, 229));
         weightedMeanFractionOrderButtonGroup.add(fractionOrderByName_radioButton);
         fractionOrderByName_radioButton.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         fractionOrderByName_radioButton.setSelected(true);
@@ -1352,6 +1363,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         fractionOrderByName_radioButton.setName("name"); // NOI18N
         weightedMeanToolPanel.add(fractionOrderByName_radioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(412, 6, -1, -1));
 
+        fractionOrderByWeight_radioButton.setBackground(new java.awt.Color(229, 250, 229));
         weightedMeanFractionOrderButtonGroup.add(fractionOrderByWeight_radioButton);
         fractionOrderByWeight_radioButton.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         fractionOrderByWeight_radioButton.setText("weight");
@@ -1359,6 +1371,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         fractionOrderByWeight_radioButton.setName("weight"); // NOI18N
         weightedMeanToolPanel.add(fractionOrderByWeight_radioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(476, 6, -1, -1));
 
+        fractionOrderByRandom_radioButton.setBackground(new java.awt.Color(229, 250, 229));
         weightedMeanFractionOrderButtonGroup.add(fractionOrderByRandom_radioButton);
         fractionOrderByRandom_radioButton.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         fractionOrderByRandom_radioButton.setText("RND");
@@ -1367,6 +1380,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         fractionOrderByRandom_radioButton.setName("random"); // NOI18N
         weightedMeanToolPanel.add(fractionOrderByRandom_radioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(555, 6, -1, -1));
 
+        fractionOrderByDate_radioButton.setBackground(new java.awt.Color(229, 250, 229));
         weightedMeanFractionOrderButtonGroup.add(fractionOrderByDate_radioButton);
         fractionOrderByDate_radioButton.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         fractionOrderByDate_radioButton.setText("date");
@@ -1560,18 +1574,21 @@ public class SampleDateInterpretationsManager extends DialogEditor
         });
         probabilityToolPanel.add(resetGraphProbability_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 40, 40, 25));
 
+        ageR207_206r_radioB.setBackground(new java.awt.Color(241, 230, 255));
         probabilityDateButtonGroup.add(ageR207_206r_radioB);
         ageR207_206r_radioB.setFont(new java.awt.Font("Arial", 1, 10)); // NOI18N
         ageR207_206r_radioB.setText("207/206");
         ageR207_206r_radioB.setName("age207_206r"); // NOI18N
         probabilityToolPanel.add(ageR207_206r_radioB, new org.netbeans.lib.awtextra.AbsoluteConstraints(175, 20, -1, -1));
 
+        ageR206_238r_radioB.setBackground(new java.awt.Color(241, 230, 255));
         probabilityDateButtonGroup.add(ageR206_238r_radioB);
         ageR206_238r_radioB.setFont(new java.awt.Font("Arial", 1, 10)); // NOI18N
         ageR206_238r_radioB.setText("206/238");
         ageR206_238r_radioB.setName("age206_238r"); // NOI18N
         probabilityToolPanel.add(ageR206_238r_radioB, new org.netbeans.lib.awtextra.AbsoluteConstraints(175, 0, -1, -1));
 
+        positivePctDiscordance_slider.setBackground(new java.awt.Color(241, 230, 255));
         positivePctDiscordance_slider.setFont(new java.awt.Font("Arial", 1, 10)); // NOI18N
         positivePctDiscordance_slider.setMajorTickSpacing(10);
         positivePctDiscordance_slider.setMinorTickSpacing(2);
@@ -1580,8 +1597,9 @@ public class SampleDateInterpretationsManager extends DialogEditor
         positivePctDiscordance_slider.setSnapToTicks(true);
         positivePctDiscordance_slider.setAutoscrolls(true);
         positivePctDiscordance_slider.setName("positivePerCentDiscordanceSliderValue"); // NOI18N
-        probabilityToolPanel.add(positivePctDiscordance_slider, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 0, 200, 38));
+        probabilityToolPanel.add(positivePctDiscordance_slider, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 5, 200, 38));
 
+        percentUncertainty_slider.setBackground(new java.awt.Color(241, 230, 255));
         percentUncertainty_slider.setFont(new java.awt.Font("Arial", 1, 10)); // NOI18N
         percentUncertainty_slider.setMajorTickSpacing(10);
         percentUncertainty_slider.setMinorTickSpacing(2);
@@ -1590,8 +1608,9 @@ public class SampleDateInterpretationsManager extends DialogEditor
         percentUncertainty_slider.setSnapToTicks(true);
         percentUncertainty_slider.setAutoscrolls(true);
         percentUncertainty_slider.setName("uncertaintyPerCentSliderValue"); // NOI18N
-        probabilityToolPanel.add(percentUncertainty_slider, new org.netbeans.lib.awtextra.AbsoluteConstraints(750, 0, 168, 38));
+        probabilityToolPanel.add(percentUncertainty_slider, new org.netbeans.lib.awtextra.AbsoluteConstraints(750, 5, 168, 38));
 
+        negativePctDiscordance_slider.setBackground(new java.awt.Color(241, 230, 255));
         negativePctDiscordance_slider.setFont(new java.awt.Font("Arial", 1, 10)); // NOI18N
         negativePctDiscordance_slider.setMajorTickSpacing(10);
         negativePctDiscordance_slider.setMaximum(0);
@@ -1602,7 +1621,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         negativePctDiscordance_slider.setSnapToTicks(true);
         negativePctDiscordance_slider.setValue(-50);
         negativePctDiscordance_slider.setName("negativePerCentDiscordanceSliderValue"); // NOI18N
-        probabilityToolPanel.add(negativePctDiscordance_slider, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 0, 200, 38));
+        probabilityToolPanel.add(negativePctDiscordance_slider, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 5, 200, 38));
 
         positivePctDiscordance_text.setBackground(new java.awt.Color(241, 230, 255));
         positivePctDiscordance_text.setFont(new java.awt.Font("Arial", 1, 10)); // NOI18N
@@ -1611,7 +1630,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         positivePctDiscordance_text.setAlignmentX(0.0F);
         positivePctDiscordance_text.setAlignmentY(0.0F);
         positivePctDiscordance_text.setBorder(null);
-        probabilityToolPanel.add(positivePctDiscordance_text, new org.netbeans.lib.awtextra.AbsoluteConstraints(568, 40, 160, 15));
+        probabilityToolPanel.add(positivePctDiscordance_text, new org.netbeans.lib.awtextra.AbsoluteConstraints(568, 45, 160, 15));
 
         negativePctDiscordance_text.setBackground(new java.awt.Color(241, 230, 255));
         negativePctDiscordance_text.setFont(new java.awt.Font("Arial", 1, 10)); // NOI18N
@@ -1620,7 +1639,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         negativePctDiscordance_text.setAlignmentX(0.0F);
         negativePctDiscordance_text.setAlignmentY(0.0F);
         negativePctDiscordance_text.setBorder(null);
-        probabilityToolPanel.add(negativePctDiscordance_text, new org.netbeans.lib.awtextra.AbsoluteConstraints(347, 40, 160, 15));
+        probabilityToolPanel.add(negativePctDiscordance_text, new org.netbeans.lib.awtextra.AbsoluteConstraints(347, 45, 160, 15));
 
         pctUncertainty_text.setBackground(new java.awt.Color(241, 230, 255));
         pctUncertainty_text.setFont(new java.awt.Font("Arial", 1, 10)); // NOI18N
@@ -1629,8 +1648,9 @@ public class SampleDateInterpretationsManager extends DialogEditor
         pctUncertainty_text.setAlignmentX(0.0F);
         pctUncertainty_text.setAlignmentY(0.0F);
         pctUncertainty_text.setBorder(null);
-        probabilityToolPanel.add(pctUncertainty_text, new org.netbeans.lib.awtextra.AbsoluteConstraints(767, 40, 140, 15));
+        probabilityToolPanel.add(pctUncertainty_text, new org.netbeans.lib.awtextra.AbsoluteConstraints(767, 45, 140, 15));
 
+        ageBest_radio.setBackground(new java.awt.Color(241, 230, 255));
         probabilityDateButtonGroup.add(ageBest_radio);
         ageBest_radio.setFont(new java.awt.Font("Arial", 1, 10)); // NOI18N
         ageBest_radio.setText("best");
@@ -1657,7 +1677,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
                 linkedUnlinkedDiscordanceActionPerformed(evt);
             }
         });
-        probabilityToolPanel.add(linkedUnlinkedDiscordance, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 0, 20, 20));
+        probabilityToolPanel.add(linkedUnlinkedDiscordance, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 5, 20, 20));
 
         showHistogram_button.setBackground(new java.awt.Color(241, 230, 255));
         showHistogram_button.setFont(new java.awt.Font("Braggadocio", 1, 24)); // NOI18N
@@ -1728,6 +1748,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         jLabel2.setText(" ?Hist    #Bins      ?WidthMa  ?Lock");
         probabilityToolPanel.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 170, 15));
 
+        commonLeadCorrectionSelectorPDF_checkbox.setBackground(new java.awt.Color(241, 230, 255));
         commonLeadCorrectionSelectorPDF_checkbox.setFont(new java.awt.Font("SansSerif", 1, 9)); // NOI18N
         commonLeadCorrectionSelectorPDF_checkbox.setText("PbcCorr");
         commonLeadCorrectionSelectorPDF_checkbox.setToolTipText("Correct for Common Lead");
@@ -1738,6 +1759,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         });
         probabilityToolPanel.add(commonLeadCorrectionSelectorPDF_checkbox, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 2, -1, 25));
 
+        DatePbCorrSchemeA_radio.setBackground(new java.awt.Color(241, 230, 255));
         probabilityDateButtonGroup.add(DatePbCorrSchemeA_radio);
         DatePbCorrSchemeA_radio.setFont(new java.awt.Font("Arial", 1, 10)); // NOI18N
         DatePbCorrSchemeA_radio.setText("<html>UPb Date PbcCorr</html>");

@@ -26,6 +26,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.aliquots.AliquotInterface;
+import org.earthtime.beans.ET_JButton;
 import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.samples.SampleInterface;
 import org.jdesktop.layout.GroupLayout.ParallelGroup;
@@ -454,8 +455,8 @@ public class WeightedMeanOptionsDialog extends DialogEditor {
     private void initComponents() {
 
         buttonsPanel = new javax.swing.JPanel();
-        save_button = new javax.swing.JButton();
-        close_button = new javax.swing.JButton();
+        save_button = new ET_JButton();
+        close_button = new ET_JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         wmAliquotArray_panel = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
@@ -503,13 +504,13 @@ public class WeightedMeanOptionsDialog extends DialogEditor {
         buttonsPanelLayout.setVerticalGroup(
             buttonsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(buttonsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                .add(save_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 28, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(close_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 28, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(save_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 25, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(close_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 25, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
 
         wmAliquotArray_panel.setBackground(new java.awt.Color(244, 255, 244));
 
-        jLabel8.setFont(new java.awt.Font("SansSerif", 1, 18));
+        jLabel8.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
         jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel8.setText("Weighted Mean Sample Date Interpretation");
 
@@ -543,7 +544,7 @@ public class WeightedMeanOptionsDialog extends DialogEditor {
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(363, Short.MAX_VALUE)
+                .addContainerGap(366, Short.MAX_VALUE)
                 .add(buttonsPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
             .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                 .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
