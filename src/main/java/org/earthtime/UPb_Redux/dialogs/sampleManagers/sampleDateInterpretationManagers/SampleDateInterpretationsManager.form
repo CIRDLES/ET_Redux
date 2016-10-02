@@ -57,6 +57,14 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="weightedMeansChooser_menuItemActionPerformed"/>
               </Events>
             </MenuItem>
+            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="sortFractionsDateAsc_menuItemCheckBox">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Sort Fractions by Date Ascending in Weighted Means Chooser"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="sortFractionsDateAsc_menuItemCheckBoxActionPerformed"/>
+              </Events>
+            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="weightedMeansLookAndFeel_menuItem">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Weighted Means Display Options"/>

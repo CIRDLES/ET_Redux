@@ -1021,6 +1021,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         aliquotSpecificOptions_menu = new javax.swing.JMenu();
         weightedMeansPlotOptions_menu = new javax.swing.JMenu();
         weightedMeansChooser_menuItem = new javax.swing.JMenuItem();
+        sortFractionsDateAsc_menuItemCheckBox = new javax.swing.JCheckBoxMenuItem();
         weightedMeansLookAndFeel_menuItem = new javax.swing.JMenuItem();
         choosePDFPeaks_menu = new javax.swing.JMenu();
         heatMap_Menu = new javax.swing.JMenu();
@@ -1879,6 +1880,14 @@ public class SampleDateInterpretationsManager extends DialogEditor
         });
         weightedMeansPlotOptions_menu.add(weightedMeansChooser_menuItem);
 
+        sortFractionsDateAsc_menuItemCheckBox.setText("Sort Fractions by Date Ascending in Weighted Means Chooser");
+        sortFractionsDateAsc_menuItemCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sortFractionsDateAsc_menuItemCheckBoxActionPerformed(evt);
+            }
+        });
+        weightedMeansPlotOptions_menu.add(sortFractionsDateAsc_menuItemCheckBox);
+
         weightedMeansLookAndFeel_menuItem.setText("Weighted Means Display Options");
         weightedMeansLookAndFeel_menuItem.setEnabled(false);
         weightedMeansPlotOptions_menu.add(weightedMeansLookAndFeel_menuItem);
@@ -2329,6 +2338,11 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
         ((PlottingDetailsDisplayInterface) concordiaGraphPanel).refreshPanel(true, false);
     }//GEN-LAST:event_commonLeadCorrectionSelector_checkboxActionPerformed
 
+    private void sortFractionsDateAsc_menuItemCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sortFractionsDateAsc_menuItemCheckBoxActionPerformed
+        dateTreeByAliquot.toggleSortByDateAsc();
+        refreshSampleDateInterpretations(false, false);
+    }//GEN-LAST:event_sortFractionsDateAsc_menuItemCheckBoxActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JRadioButton DatePbCorrSchemeA_radio;
     private javax.swing.JRadioButton ageBest_radio;
@@ -2397,6 +2411,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
     private javax.swing.JButton showHistogram_button;
     private javax.swing.JButton showTightGraphProbability_button;
     private javax.swing.JToggleButton showTight_toggleButton;
+    private javax.swing.JCheckBoxMenuItem sortFractionsDateAsc_menuItemCheckBox;
     private javax.swing.JRadioButton terraWasserburgFlavor_radioButton;
     private javax.swing.JRadioButton thoriumConcordiaFlavor_radioButton;
     private javax.swing.JCheckBox thoriumCorrectionSelector_checkbox;

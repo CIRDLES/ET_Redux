@@ -675,12 +675,16 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
         propagationSpeedGroup.add(fastPropagationRB);
         fastPropagationRB.setBounds(leftMargin, 450, 300, 25);
         fastPropagationRB.setSelected(!rawDataFileHandler.getAcquisitionModel().isUsingFullPropagation());
+        fastPropagationRB.setOpaque(true);
+        fastPropagationRB.setBackground(this.getBackground());
         this.add(fastPropagationRB);
 
         final JRadioButton fullPropagationRB = new JRadioButton("Full uncertainty propagation");
         propagationSpeedGroup.add(fullPropagationRB);
         fullPropagationRB.setBounds(leftMargin, 475, 300, 25);
         fullPropagationRB.setSelected(rawDataFileHandler.getAcquisitionModel().isUsingFullPropagation());
+        fullPropagationRB.setOpaque(true);
+        fullPropagationRB.setBackground(this.getBackground());
         this.add(fullPropagationRB);
 
         // primary reference material chooser
