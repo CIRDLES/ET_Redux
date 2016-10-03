@@ -78,7 +78,7 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
     public void assembleReportCategories();
 
     public ReportSettingsInterface deepCopy();
-    
+
     /**
      *
      * @return
@@ -167,15 +167,15 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
     @Override
     boolean equals(Object reportSettingsModel);
 
-    public default void toggleMeasuredRatiosInCompositionCategory(){
+    public default void toggleMeasuredRatiosInCompositionCategory() {
         ReportCategoryInterface composition = getCompositionCategory();
-        for (ReportColumnInterface column : composition.getCategoryColumns()){
-            if (column.getDisplayName1().contains("meas")){
+        for (ReportColumnInterface column : composition.getCategoryColumns()) {
+            if (column.getDisplayName1().contains("meas")) {
                 column.ToggleIsVisible();
             }
-        }      
+        }
     }
-    
+
     /**
      *
      * @return
@@ -415,11 +415,9 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
 
             // get first activityValue and first Th_Umagma value and set standard footnote entries
             BigDecimal savedActivityValue
-                    = //
-                    fractions.get(0).getAnalysisMeasure(AnalysisMeasures.ar231_235sample.getName()).getValue();
+                    = fractions.get(0).getAnalysisMeasure(AnalysisMeasures.ar231_235sample.getName()).getValue();
             BigDecimal savedMagmaValue
-                    = //
-                    fractions.get(0).getAnalysisMeasure(AnalysisMeasures.rTh_Umagma.getName()).getValue();
+                    = fractions.get(0).getAnalysisMeasure(AnalysisMeasures.rTh_Umagma.getName()).getValue();
 
             activityFootnoteEntry = "= " + savedActivityValue.toString();
             thU_MagmaFootnoteEntry = "= " + savedMagmaValue.toString();
@@ -650,8 +648,7 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
                                     }
 
                                     retVal[fractionRowCount][1]
-                                            = //
-                                            sample.getAliquotByNumber(f.getAliquotNumber()).getAliquotName();
+                                            = sample.getAliquotByNumber(f.getAliquotNumber()).getAliquotName();
                                 }
 
                                 // field contains the Value in field[0]
@@ -709,12 +706,10 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
             String lambda235Ref = "";
             try {
                 lambda238Ref
-                        = //
-                        " (" + ((ValueModelReferenced) sample.getPhysicalConstantsModel()//
+                        = " (" + ((ValueModelReferenced) sample.getPhysicalConstantsModel()//
                         .getDatumByName(Lambdas.lambda238.getName())).getReference() + ")";
                 lambda235Ref
-                        = //
-                        " (" + ((ValueModelReferenced) sample.getPhysicalConstantsModel()//
+                        = " (" + ((ValueModelReferenced) sample.getPhysicalConstantsModel()//
                         .getDatumByName(Lambdas.lambda235.getName())).getReference() + ")";
             } catch (BadLabDataException badLabDataException) {
             }

@@ -509,7 +509,7 @@ public class TripoliFraction implements //
 
                     if (matrixIndicesToRemove.size() > 0) {
 
-                        System.out.println("Matrix row col delete for fraction " + fractionID);
+//                        System.out.println("Matrix row col delete for fraction " + fractionID + " count = " + matrixIndicesToRemove.size());
                         // reverse list of indices to remove to avoid counting errors
                         Collections.sort(matrixIndicesToRemove, (Integer i1, Integer i2) -> Integer.compare(i2, i1));
 
@@ -522,15 +522,16 @@ public class TripoliFraction implements //
                             Sopbclr_207CorrectedCols = MatrixRemover.removeCol(Sopbclr_207CorrectedCols, indexToRemove);
                         }
                     }
-                    SlogRatioAll.setMatrix(0 + 3 * columnsCount, matrixIndex + 3 * columnsCount - 1, 0, columnsCount - 1, Sopbclr_206CorrectedRows);
-                    SlogRatioAll.setMatrix(0 + 3 * columnsCount, matrixIndex + 3 * columnsCount - 1, columnsCount, 2 * columnsCount - 1, Sopbclr_206CorrectedRows);
+                    int rowCount = matrixIndex - matrixIndicesToRemove.size() + 1;
+                    SlogRatioAll.setMatrix(0 + 3 * columnsCount, rowCount + 3 * columnsCount - 1, 0, columnsCount - 1, Sopbclr_206CorrectedRows);
+                    SlogRatioAll.setMatrix(0 + 3 * columnsCount, rowCount + 3 * columnsCount - 1, columnsCount, 2 * columnsCount - 1, Sopbclr_206CorrectedRows);
+                    
+                    SlogRatioAll.setMatrix(rowCount + 3 * columnsCount, 2 * rowCount + 3 * columnsCount - 1, 0, columnsCount - 1, Sopbclr_207CorrectedRows);
 
-                    SlogRatioAll.setMatrix(matrixIndex + 3 * columnsCount, 2 * matrixIndex + 3 * columnsCount - 1, 0, columnsCount - 1, Sopbclr_207CorrectedRows);
+                    SlogRatioAll.setMatrix(0, 0, 0 + 3 * columnsCount, +3 * columnsCount + rowCount - 1, Sopbclr_206CorrectedCols);
+                    SlogRatioAll.setMatrix(columnsCount, columnsCount, 0 + 3 * columnsCount, +3 * columnsCount + rowCount - 1, Sopbclr_206CorrectedCols);
 
-                    SlogRatioAll.setMatrix(0, 0, 0 + 3 * columnsCount, +3 * columnsCount + matrixIndex - 1, Sopbclr_206CorrectedCols);
-                    SlogRatioAll.setMatrix(columnsCount, columnsCount, 0 + 3 * columnsCount, +3 * columnsCount + matrixIndex - 1, Sopbclr_206CorrectedCols);
-
-                    SlogRatioAll.setMatrix(0, 0, matrixIndex + 3 * columnsCount, 2 * matrixIndex + 3 * columnsCount - 1, Sopbclr_207CorrectedCols);
+                    SlogRatioAll.setMatrix(0, 0, rowCount + 3 * columnsCount, 2 * rowCount + 3 * columnsCount - 1, Sopbclr_207CorrectedCols);
                 }
 
                 if (rr.getRawRatioModelName().compareTo(RawRatioNames.r208_232w) == 0) {
@@ -560,10 +561,13 @@ public class TripoliFraction implements //
                             Sopbclr_208CorrectedCols = MatrixRemover.removeCol(Sopbclr_208CorrectedCols, indexToRemove);
                         }
                     }
-                    SlogRatioAll.setMatrix(3 * columnsCount + 2 * matrixIndex, 3 * columnsCount + 3 * matrixIndex - 1, 2 * columnsCount, 3 * columnsCount - 1, Sopbclr_208CorrectedRows);
-
-                    SlogRatioAll.setMatrix(2 * columnsCount, 3 * columnsCount - 1, 3 * columnsCount + 2 * matrixIndex, 3 * columnsCount + 3 * matrixIndex - 1, Sopbclr_208CorrectedCols);
-
+                    
+                    int rowCount = matrixIndex - matrixIndicesToRemove.size() + 1;
+                    
+                    SlogRatioAll.setMatrix(3 * columnsCount + 2 * rowCount, 3 * columnsCount + 3 * rowCount - 1, 2 * columnsCount, 3 * columnsCount - 1, Sopbclr_208CorrectedRows);
+                    
+                    SlogRatioAll.setMatrix(2 * columnsCount, 3 * columnsCount - 1, 3 * columnsCount + 2 * rowCount, 3 * columnsCount + 3 * rowCount - 1, Sopbclr_208CorrectedCols);
+                    
                 }
             }
         }
@@ -1551,9 +1555,17 @@ public class TripoliFraction implements //
         // may 2015 per Noah, turn off all negative values - neg in a ratio turns off all in that position for fraction
         for (DataModelInterface rr : rawRatios) {
             double[] ratios = ((RawRatioDataModel) rr).getRatios();
+//            for (int i = 0; i < ratios.length; i++) {
+//                if (ratios[i] < 0.0) {
+//                    toggleOneDataAquisition(i, false);
+//                }
+//            }
+            // sept 2016 change in plans
+            // we want all */204 ratios to keep rejected bad (negative) values but those do NOT change non */204 ratios
             for (int i = 0; i < ratios.length; i++) {
-                if (ratios[i] < 0.0) {
-                    toggleOneDataAquisition(i, false);
+                // sept 2016 new condition
+                if (rr.isUsedForCommonLeadCorrections() && (ratios[i] < 0.0)) {
+                    toggleOneDataAquisitionForPbcOnly(i, false);
                 }
             }
         }
@@ -1625,17 +1637,17 @@ public class TripoliFraction implements //
     public void setCurrentlyFitted(boolean currentlyFitted) {
         this.currentlyFitted = currentlyFitted;
     }
-    
-    public String dateSummary(){
-        return fractionID 
+
+    public String dateSummary() {
+        return fractionID
                 + ">  206/238: "
                 + uPbFraction.getRadiogenicIsotopeDateByName(RadDates.age206_238r)
-                        .formatValueAndTwoSigmaForPublicationSigDigMode("ABS", -6, 2)
+                .formatValueAndTwoSigmaForPublicationSigDigMode("ABS", -6, 2)
                 + ">  207/235: "
                 + uPbFraction.getRadiogenicIsotopeDateByName(RadDates.age207_235r)
-                        .formatValueAndTwoSigmaForPublicationSigDigMode("ABS", -6, 2)
+                .formatValueAndTwoSigmaForPublicationSigDigMode("ABS", -6, 2)
                 + ">  207/206: "
                 + uPbFraction.getRadiogenicIsotopeDateByName(RadDates.age207_206r)
-                        .formatValueAndTwoSigmaForPublicationSigDigMode("ABS", -6, 2);
+                .formatValueAndTwoSigmaForPublicationSigDigMode("ABS", -6, 2);
     }
 }

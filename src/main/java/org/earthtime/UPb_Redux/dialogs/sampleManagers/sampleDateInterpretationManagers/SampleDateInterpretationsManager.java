@@ -199,8 +199,14 @@ public class SampleDateInterpretationsManager extends DialogEditor
     public void refreshSampleDateInterpretations(boolean doReScale, boolean inLiveMode) {
 
         String expansionHistory = "";
+        int selRow = 0;
+        int selRowX = 0;
+        int selRowY = 0;
         if (!doReScale) {
             expansionHistory = dateTreeByAliquot.collectExpansionHistory();
+            selRow = dateTreeByAliquot.getSelRow();
+            selRowX = dateTreeByAliquot.getSelRowX();
+            selRowY = dateTreeByAliquot.getSelRowY();
         }
         dateTreeByAliquot = new SampleTreeAnalysisMode(sample);
         dateTreeByAliquot.setSampleTreeChange(this);
@@ -208,6 +214,10 @@ public class SampleDateInterpretationsManager extends DialogEditor
         dateTreeByAliquot_ScrollPane.setViewportView((Component) dateTreeByAliquot);
         if (!doReScale) {
             dateTreeByAliquot.expandToHistory(expansionHistory);
+            ((JTree)dateTreeByAliquot).setSelectionRow(selRow);
+            ((JTree)dateTreeByAliquot).scrollRowToVisible(selRow);
+//            dateTreeByAliquot.mousePressed(new MouseEvent((Component)dateTreeByAliquot, 0, System.currentTimeMillis(), MouseEvent.BUTTON1, selRowX, selRowY, 1, false));
+//            ((PlottingDetailsDisplayInterface)concordiaGraphPanel).refreshPanel(true, false);
         }
 
         dateTreeBySample = new SampleTreeCompilationMode(sample);
@@ -514,31 +524,31 @@ public class SampleDateInterpretationsManager extends DialogEditor
             // zoom
             double rangeX = ((DateProbabilityDensityPanel) probabilityPanel).getRangeX_Display();
             //System.out.println( "RANGE OUT = " + rangeX + "   offset = " + ((DateProbabilityDensityPanel) probabilityPanel).getDisplayOffsetX());
-            
+
             double saveMinx = ((DateProbabilityDensityPanel) probabilityPanel).getMinX();
             double proposedMinX = saveMinx - rangeX / 2.0;
-            
+
             ((DateProbabilityDensityPanel) probabilityPanel).//
                     setMinX(//
                             Math.max(//
                                     proposedMinX, DateProbabilityDensityPanel.DEFAULT_DISPLAY_MINX));
-            
+
             // reset offset if hit the left wall
             double shiftMax = 0;
             if (proposedMinX <= DateProbabilityDensityPanel.DEFAULT_DISPLAY_MINX) {
                 ((DateProbabilityDensityPanel) probabilityPanel).setDisplayOffsetX(0);
                 shiftMax = DateProbabilityDensityPanel.DEFAULT_DISPLAY_MINX - proposedMinX;
             }
-            
+
             ((DateProbabilityDensityPanel) probabilityPanel).//
                     setMaxX(//
                             Math.min(//
                                     (((DateProbabilityDensityPanel) probabilityPanel).getMaxX()//
-                                            + rangeX / 2.0 + shiftMax), DateProbabilityDensityPanel.DEFAULT_DISPLAY_MAXX));
-            
+                                    + rangeX / 2.0 + shiftMax), DateProbabilityDensityPanel.DEFAULT_DISPLAY_MAXX));
+
             ((DateProbabilityDensityPanel) probabilityPanel).//
                     setSelectedHistogramBinCount(0);
-            
+
             probabilityPanel.repaint();
         });
 
@@ -1041,6 +1051,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
 
         interpretations_SplitPane.setDividerLocation(250);
 
+        dateTrees_tabs.setForeground(new java.awt.Color(255, 51, 51));
         dateTrees_tabs.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         dateTrees_tabs.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -2542,7 +2553,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
         } else if (nodeInfo instanceof ValueModel) { // sample date model *****************************
             // get aliquot and retrieve subset of fractions for this sample date
             Object aliquotNodeInfo
-                    = //
+                    = 
                     ((DefaultMutableTreeNode) ((TreeNode) node).getParent()).getUserObject();
 
             if (graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab("Concordia")) {
@@ -3019,8 +3030,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
 
             try {
                 selectedFileSVG
-                        = 
-                        new File(selectedFile.getCanonicalPath().replaceFirst(".pdf", ".svg"));
+                        = new File(selectedFile.getCanonicalPath().replaceFirst(".pdf", ".svg"));
 
             } catch (IOException iOException) {
             }

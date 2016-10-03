@@ -1012,8 +1012,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
             // set up a new empty sample based on sampleType
             theSample
-                    = //
-                    new Sample("NONE", sampleType, sampleAnalysisType, myState.getReduxPreferences().getDefaultSampleAnalysisPurpose(), isotopeStyle);
+                    = new Sample("NONE", sampleType, sampleAnalysisType, myState.getReduxPreferences().getDefaultSampleAnalysisPurpose(), isotopeStyle);
             SampleInterface.specializeNewSample(theSample);
 
             // manageTheSample sets up the correct form and returns whether it was successful
@@ -1482,7 +1481,6 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             ((SampleDateInterpretationsManager) sampleDateInterpDialog).setSample(theSample);
         }
 
-//      updated with rescaling april 2016
         try {
             ((SampleDateInterpretationsManager) sampleDateInterpDialog).refreshSampleDateInterpretations(false, inLiveMode);
         } catch (Exception e) {
