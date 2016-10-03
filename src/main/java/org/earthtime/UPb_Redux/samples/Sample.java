@@ -300,7 +300,7 @@ public class Sample implements
         // April 2011 we are altering SampleIGSN to be of form rrr.IGSN
         //  where rrr is registry as per enum SampleRegistries
         // this means that if sample is already flagged as validated - i.e. at SESAR
-        // we check that it is valid at GeochronID and change SampleIGSN and percolate it
+        // we check that it is valid at registry and change SampleIGSN and percolate it
         // down to all Aliquots
         updateWithRegistrySampleIGSN();
 

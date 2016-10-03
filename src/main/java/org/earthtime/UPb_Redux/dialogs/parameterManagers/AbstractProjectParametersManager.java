@@ -204,7 +204,7 @@ public abstract class AbstractProjectParametersManager extends JLayeredPane {
     protected JRadioButton fullPropagationRB;
 
     protected ET_JButton monitorButton;
-    
+
     protected ET_JButton repropagateButton;
 
     /**
@@ -603,12 +603,17 @@ public abstract class AbstractProjectParametersManager extends JLayeredPane {
         propagationSpeedGroup.add(fastPropagationRB);
         fastPropagationRB.setBounds(leftMargin, 450, 300, 25);
         fastPropagationRB.setSelected(!rawDataFileHandler.getAcquisitionModel().isUsingFullPropagation());
+        fastPropagationRB.setOpaque(true);
+        fastPropagationRB.setBackground(this.getBackground());
         this.add(fastPropagationRB);
 
         fullPropagationRB = new JRadioButton("Full uncertainty propagation");
         propagationSpeedGroup.add(fullPropagationRB);
         fullPropagationRB.setBounds(leftMargin, 475, 300, 25);
         fullPropagationRB.setSelected(rawDataFileHandler.getAcquisitionModel().isUsingFullPropagation());
+        fullPropagationRB.setOpaque(true);
+        fullPropagationRB.setBackground(this.getBackground());
+
         this.add(fullPropagationRB);
 
         initReferenceMaterialChooser();
@@ -643,11 +648,9 @@ public abstract class AbstractProjectParametersManager extends JLayeredPane {
         JButton viewStandardModelButton = new ET_JButton("View");
         viewStandardModelButton.addActionListener((ActionEvent e) -> {
             AbstractRatiosDataModel selectedModel
-                    = 
-                    ((AbstractRatiosDataModel) mineralStandardsComboBox.getSelectedItem());
+                    = ((AbstractRatiosDataModel) mineralStandardsComboBox.getSelectedItem());
             AbstractRatiosDataView modelView
-                    = 
-                    new ReferenceMaterialUPbRatiosDataViewNotEditable(selectedModel, null, false);
+                    = new ReferenceMaterialUPbRatiosDataViewNotEditable(selectedModel, null, false);
             modelView.displayModelInFrame();
         });
         viewStandardModelButton.setFont(ReduxConstants.sansSerif_10_Bold);

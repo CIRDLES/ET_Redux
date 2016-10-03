@@ -398,7 +398,6 @@
         <Menu class="javax.swing.JMenu" name="aliquotsMenu">
           <Properties>
             <Property name="text" type="java.lang.String" value="Aliquots"/>
-            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
         </Menu>
         <Menu class="javax.swing.JMenu" name="fractionsMenu">
@@ -409,7 +408,6 @@
             <MenuItem class="javax.swing.JMenuItem" name="selectAllFractions_menuItem">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Select All Fractions"/>
-                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="selectAllFractions_menuItemActionPerformed"/>
@@ -418,7 +416,6 @@
             <MenuItem class="javax.swing.JMenuItem" name="deSelectAllFractions_menuItem">
               <Properties>
                 <Property name="text" type="java.lang.String" value="De-select All Fractions"/>
-                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="deSelectAllFractions_menuItemActionPerformed"/>
@@ -840,6 +837,9 @@
       <Color blue="fa" green="f2" red="ed" type="rgb"/>
     </Property>
     <Property name="locationByPlatform" type="boolean" value="true"/>
+    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+      <Dimension value="[1160, 750]"/>
+    </Property>
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="menuBar" type="java.lang.String" value="mainMenuBar"/>

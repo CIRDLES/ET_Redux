@@ -319,8 +319,8 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
         dataSourceLabel = new javax.swing.JLabel();
         dataSourceNameLabel = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
-        close = new javax.swing.JButton();
-        saveAndClose = new javax.swing.JButton();
+        close = new ET_JButton();
+        saveAndClose = new ET_JButton();
         sampleType_panel = new javax.swing.JPanel();
         sampleType_label = new javax.swing.JLabel();
 
@@ -408,7 +408,7 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
                 closeActionPerformed(evt);
             }
         });
-        jPanel2.add(close, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 0, 168, 32));
+        jPanel2.add(close, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 0, 168, 25));
 
         saveAndClose.setForeground(new java.awt.Color(255, 51, 0));
         saveAndClose.setText("Save and Close");
@@ -420,7 +420,7 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
                 saveAndCloseActionPerformed(evt);
             }
         });
-        jPanel2.add(saveAndClose, new org.netbeans.lib.awtextra.AbsoluteConstraints(8, 2, 168, 32));
+        jPanel2.add(saveAndClose, new org.netbeans.lib.awtextra.AbsoluteConstraints(8, 2, 168, 25));
 
         sampleType_panel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
@@ -453,7 +453,7 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
             .add(layout.createSequentialGroup()
                 .add(sampleType_panel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(6, 6, 6)
-                .add(infoPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
+                .add(infoPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 387, Short.MAX_VALUE)
                 .add(6, 6, 6)
                 .add(jPanel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );

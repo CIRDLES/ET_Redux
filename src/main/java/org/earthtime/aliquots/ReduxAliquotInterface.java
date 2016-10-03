@@ -16,10 +16,12 @@
 package org.earthtime.aliquots;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Vector;
 import org.earthtime.UPb_Redux.utilities.comparators.IntuitiveStringComparator;
 import org.earthtime.archivingTools.AnalysisImageInterface;
 import org.earthtime.dataDictionaries.AnalysisImageTypes;
+import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.fractions.ETFractionInterface;
 
 /**
@@ -80,8 +82,30 @@ public interface ReduxAliquotInterface {
         getAliquotFractions().stream().filter((f) -> (!f.isRejected())).forEach((f) -> {
             retVal.add(f.getFractionID());
         });
-        
+
         Collections.sort(retVal, new IntuitiveStringComparator<>());
+        return retVal;
+    }
+
+    public default Vector<String> getAliquotFractionIDsSortedByDateAsc() {
+        Vector<ETFractionInterface> dateOrderedFractions = new Vector<>();
+        getAliquotFractions().stream().filter((f) -> (!f.isRejected())).forEach((f) -> {
+            dateOrderedFractions.add(f);
+        });
+
+        Collections.sort(dateOrderedFractions, new Comparator<ETFractionInterface>() {
+            @Override
+            public int compare(ETFractionInterface frac1, ETFractionInterface frac2) {
+                return frac1.getRadiogenicIsotopeDateByName(RadDates.age206_238r.getName()).getValue()//
+                        .compareTo(frac2.getRadiogenicIsotopeDateByName(RadDates.age206_238r.getName()).getValue());
+            }
+        });
+
+        Vector<String> retVal = new Vector<>();
+        for (int i = 0; i < dateOrderedFractions.size(); i ++){
+            retVal.add(dateOrderedFractions.get(i).getFractionID());
+        }
+        
         return retVal;
     }
 
@@ -133,8 +157,8 @@ public interface ReduxAliquotInterface {
      * @param inLiveMode the value of inLiveMode
      */
     public void reduceData(boolean inLiveMode);
-    
-        /**
+
+    /**
      *
      * @param imageType
      * @return

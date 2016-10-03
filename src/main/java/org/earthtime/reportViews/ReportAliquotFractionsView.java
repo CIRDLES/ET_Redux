@@ -474,6 +474,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
         reportFractionIDsScrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(0, 0));
         // eliminate default "crawl"
         reportFractionIDsScrollPane.getVerticalScrollBar().setUnitIncrement(64);
+        reportFractionIDsScrollPane.getVerticalScrollBar().setBlockIncrement(2);
         reportFractionIDsScrollPane.getHorizontalScrollBar().setUnitIncrement(64);
 
         reportFractionIDsScrollPane.setLocation(0, DATATABLE_TOP_HEIGHT);
@@ -503,6 +504,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
         reportBodyScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         // eliminate default "crawl"
         reportBodyScrollPane.getVerticalScrollBar().setUnitIncrement(64);
+        reportBodyScrollPane.getVerticalScrollBar().setBlockIncrement(2);
         reportBodyScrollPane.getHorizontalScrollBar().setUnitIncrement(64);
 
         reportBodyScrollPane.setLocation(fractionColumnWidth, DATATABLE_TOP_HEIGHT);

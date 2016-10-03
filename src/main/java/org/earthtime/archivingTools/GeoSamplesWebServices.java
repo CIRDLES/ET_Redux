@@ -26,6 +26,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.earthtime.exceptions.ETWarningDialog;
 import org.geosamples.XMLDocumentInterface;
 import org.geosamples.samples.Samples;
+import static org.geosamples.samples.Samples.registerSampleMetaDataWithSesarProductionService;
 import static org.geosamples.samples.Samples.registerSampleMetaDataWithSesarTestService;
 import static org.geosamples.samples.Samples.serializeSamplesToCompliantXMLPrettyPrint;
 import org.xml.sax.SAXException;
@@ -49,11 +50,35 @@ public class GeoSamplesWebServices {
      * @param isVerbose
      * @return
      */
-    public static XMLDocumentInterface getSampleMetaDataFromGeoSamplesIGSN(String igsn, String username, String password, boolean isVerbose) {
+    public static XMLDocumentInterface getSampleMetaDataFromTestSesarIGSN(String igsn, String username, String password, boolean isVerbose) {
         XMLDocumentInterface samples = new Samples();
 
         try {
             samples = Samples.downloadSampleMetadataFromTestSesarIGSN(igsn, username, password);
+        } catch (IOException | JAXBException | ParserConfigurationException | SAXException | NoSuchAlgorithmException | KeyStoreException | KeyManagementException anException) {
+            if (isVerbose) {
+                new ETWarningDialog(anException.getMessage()).setVisible(true);
+            }
+        }
+
+        return samples;
+    }
+
+    /**
+     * This class is used to control access to GeoSamples services, since we are
+     * experimenting with flavors.
+     *
+     * @param igsn
+     * @param username
+     * @param password
+     * @param isVerbose
+     * @return
+     */
+    public static XMLDocumentInterface getSampleMetaDataFromGeoSamplesIGSN(String igsn, String username, String password, boolean isVerbose) {
+        XMLDocumentInterface samples = new Samples();
+
+        try {
+            samples = Samples.downloadSampleMetadataFromProductionSesarIGSN(igsn, username, password);
         } catch (IOException | JAXBException | ParserConfigurationException | SAXException | NoSuchAlgorithmException | KeyStoreException | KeyManagementException anException) {
             if (isVerbose) {
                 new ETWarningDialog(anException.getMessage()).setVisible(true);
@@ -110,6 +135,40 @@ public class GeoSamplesWebServices {
 
         XMLDocumentInterface success = null;
         try {
+            success = registerSampleMetaDataWithSesarProductionService(userName, password, mySamples);
+            if (success.getSample().size() > 0) {
+                System.out.println("REGISTERED!!!");
+            } else {
+                System.out.println("FAILURE!!!");
+                success = null;
+            }
+        } catch (JAXBException | NoSuchAlgorithmException | KeyStoreException | KeyManagementException | IOException ex) {
+            success = null;
+            Logger.getLogger(Samples.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return success;
+    }
+
+    /**
+     *
+     * @param sesarSample the value of sesarSample
+     * @param isVerbose the value of isVerbose
+     * @param userName the value of userName
+     * @param password the value of password
+     * @return
+     */
+    public static XMLDocumentInterface registerSampleAtTestSesarIGSN(Samples.Sample sesarSample, boolean isVerbose, String userName, String password) {
+        XMLDocumentInterface mySamples = new Samples();
+        mySamples.getSample().add(sesarSample);
+
+        try {
+            System.out.println(serializeSamplesToCompliantXMLPrettyPrint(mySamples));
+        } catch (JAXBException jAXBException) {
+        }
+
+        XMLDocumentInterface success = null;
+        try {
             success = registerSampleMetaDataWithSesarTestService(userName, password, mySamples);
             if (success.getSample().size() > 0) {
                 System.out.println("REGISTERED!!!");
@@ -125,8 +184,19 @@ public class GeoSamplesWebServices {
         return success;
     }
 
-    public static boolean isSampleRegistered(String igsn) {
+    public static boolean isSampleRegisteredAtTestSesar(String igsn) {
         XMLDocumentInterface downloadedSample = getSampleMetaDataFromTestGeoSamplesIGSN(igsn, false);
+
+        boolean isRegistered = false;
+        try {
+            isRegistered = downloadedSample.getSample().get(0).getIgsn() != null;
+        } catch (Exception e) {
+        }
+        return isRegistered;
+    }
+
+    public static boolean isSampleRegisteredAtGeoSamples(String igsn) {
+        XMLDocumentInterface downloadedSample = getSampleMetaDataFromGeoSamplesIGSN(igsn, false);
 
         boolean isRegistered = false;
         try {

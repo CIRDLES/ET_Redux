@@ -79,6 +79,7 @@ import org.earthtime.UPb_Redux.utilities.comparators.IntuitiveStringComparator;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.aliquots.ReduxAliquotInterface;
+import org.earthtime.beans.ET_JButton;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.dataDictionaries.SampleRegistries;
 import org.earthtime.dialogs.DialogEditor;
@@ -1605,7 +1606,6 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
     }
 
     private void validateSampleID(String sampleID) {
-//        if (  ! mySample.isArchivedInRegistry() ) {
         boolean valid = SampleRegistries.isSampleIdentifierValidAtRegistry(//
                 sampleID);
         validSampleID_label.setText((String) (valid ? "Sample ID is Valid at registry." : "Sample ID is NOT valid at registry."));
@@ -2466,12 +2466,12 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
         sampleType_panel = new javax.swing.JPanel();
         sampleType_label = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
-        saveSampleWithDataStructure_button = new javax.swing.JButton();
-        setSampleMetaDataFolder_button = new javax.swing.JButton();
-        saveAsSampleWithDataStructure_button = new javax.swing.JButton();
-        saveAsSample_button = new javax.swing.JButton();
-        revertToSaved_button = new javax.swing.JButton();
-        closeAndSave_button = new javax.swing.JButton();
+        saveSampleWithDataStructure_button = new ET_JButton();
+        setSampleMetaDataFolder_button = new ET_JButton();
+        saveAsSampleWithDataStructure_button = new ET_JButton();
+        saveAsSample_button = new ET_JButton();
+        revertToSaved_button = new ET_JButton();
+        closeAndSave_button = new ET_JButton();
         jLayeredPane1 = new javax.swing.JLayeredPane();
         sampleIGSN_text = new javax.swing.JTextField();
         sampleID_label = new javax.swing.JLabel();
@@ -2480,11 +2480,11 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
         physicalConstantsModel_label = new javax.swing.JLabel();
         aliquotName_text = new javax.swing.JTextField();
         jScrollPane2 = new javax.swing.JScrollPane();
-        aliquotsList_jList = new javax.swing.JList<String>();
+        aliquotsList_jList = new javax.swing.JList<>();
         aliquotName_label = new javax.swing.JLabel();
         insertFractionCount_spinner = new javax.swing.JSpinner();
-        insertFraction_button = new javax.swing.JButton();
-        removeAliquot_button = new javax.swing.JButton();
+        insertFraction_button = new ET_JButton();
+        removeAliquot_button = new ET_JButton();
         aliquotFractionsArea_label = new javax.swing.JLabel();
         fastEdits_scrollPane = new javax.swing.JScrollPane();
         fastEdits_panel = new javax.swing.JPanel();
@@ -2496,8 +2496,8 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
         sampleMetaData_label = new javax.swing.JLabel();
         sampleMetaDataFolder_label = new javax.swing.JLabel();
         aliquotsArea_label = new javax.swing.JLabel();
-        addAliquot_button = new javax.swing.JButton();
-        importFractionFiles_button = new javax.swing.JButton();
+        addAliquot_button = new ET_JButton();
+        importFractionFiles_button = new ET_JButton();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jScrollPane1 = new javax.swing.JScrollPane();
         welcomeStatement_jTextArea = new javax.swing.JTextArea();
@@ -2513,16 +2513,16 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
         jTextArea3 = new javax.swing.JTextArea();
         moveAliquotDown_button = new javax.swing.JButton();
         moveAliquotUp_button = new javax.swing.JButton();
-        editAliquot_button = new javax.swing.JButton();
+        editAliquot_button = new ET_JButton();
         fractionTableHeader = new javax.swing.JLabel();
         chooseAnalysisPurpose_label = new javax.swing.JLabel();
-        analysisPurposeChooser = new javax.swing.JComboBox<String>();
-        physicalConstantsModelChooser = new javax.swing.JComboBox<String>();
+        analysisPurposeChooser = new javax.swing.JComboBox<>();
+        physicalConstantsModelChooser = new javax.swing.JComboBox<>();
         sampleRegistry_label = new javax.swing.JLabel();
-        sampleRegistryChooser = new javax.swing.JComboBox<SampleRegistries>();
+        sampleRegistryChooser = new javax.swing.JComboBox<>();
         validSampleID_label = new javax.swing.JLabel();
         allowTracerChange_checkbox = new javax.swing.JCheckBox();
-        validateSampleID_button = new javax.swing.JButton();
+        validateSampleID_button = new ET_JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -2577,7 +2577,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
                 saveSampleWithDataStructure_buttonActionPerformed(evt);
             }
         });
-        jPanel2.add(saveSampleWithDataStructure_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 2, 207, 30));
+        jPanel2.add(saveSampleWithDataStructure_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 2, 207, 25));
 
         setSampleMetaDataFolder_button.setBackground(new java.awt.Color(255, 255, 255));
         setSampleMetaDataFolder_button.setForeground(new java.awt.Color(255, 51, 0));
@@ -2601,7 +2601,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
                 setSampleMetaDataFolder_buttonActionPerformed(evt);
             }
         });
-        jPanel2.add(setSampleMetaDataFolder_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(823, 2, 205, 30));
+        jPanel2.add(setSampleMetaDataFolder_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(823, 2, 205, 25));
 
         saveAsSampleWithDataStructure_button.setBackground(new java.awt.Color(255, 255, 255));
         saveAsSampleWithDataStructure_button.setForeground(new java.awt.Color(255, 51, 0));
@@ -2625,7 +2625,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
                 saveAsSampleWithDataStructure_buttonActionPerformed(evt);
             }
         });
-        jPanel2.add(saveAsSampleWithDataStructure_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(577, 2, 246, 30));
+        jPanel2.add(saveAsSampleWithDataStructure_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(577, 2, 246, 25));
 
         saveAsSample_button.setBackground(new java.awt.Color(255, 255, 255));
         saveAsSample_button.setForeground(new java.awt.Color(255, 51, 0));
@@ -2649,7 +2649,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
                 saveAsSample_buttonActionPerformed(evt);
             }
         });
-        jPanel2.add(saveAsSample_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(467, 2, -1, 30));
+        jPanel2.add(saveAsSample_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(467, 2, -1, 25));
 
         revertToSaved_button.setBackground(new java.awt.Color(255, 255, 255));
         revertToSaved_button.setForeground(new java.awt.Color(255, 51, 0));
@@ -2673,7 +2673,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
                 revertToSaved_buttonActionPerformed(evt);
             }
         });
-        jPanel2.add(revertToSaved_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 2, -1, 30));
+        jPanel2.add(revertToSaved_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 2, -1, 25));
 
         closeAndSave_button.setBackground(new java.awt.Color(255, 255, 255));
         closeAndSave_button.setForeground(new java.awt.Color(255, 51, 0));
@@ -2697,7 +2697,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
                 closeAndSave_buttonActionPerformed(evt);
             }
         });
-        jPanel2.add(closeAndSave_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 2, 150, 30));
+        jPanel2.add(closeAndSave_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 2, 150, 25));
 
         jLayeredPane1.setBackground(new java.awt.Color(245, 236, 206));
         jLayeredPane1.setOpaque(true);
@@ -2712,7 +2712,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
             }
         });
         jLayeredPane1.add(sampleIGSN_text);
-        sampleIGSN_text.setBounds(270, 30, 100, 27);
+        sampleIGSN_text.setBounds(270, 30, 100, 25);
 
         sampleID_label.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         sampleID_label.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -2724,7 +2724,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
         sampleName_text.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         sampleName_text.setText("Sample Name");
         jLayeredPane1.add(sampleName_text);
-        sampleName_text.setBounds(130, 0, 190, 27);
+        sampleName_text.setBounds(130, 0, 190, 25);
 
         sampleName_label.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         sampleName_label.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
@@ -2742,7 +2742,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
         aliquotName_text.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         aliquotName_text.setText("Aliquot Name");
         jLayeredPane1.add(aliquotName_text);
-        aliquotName_text.setBounds(300, 100, 220, 27);
+        aliquotName_text.setBounds(300, 100, 220, 25);
 
         aliquotsList_jList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane2.setViewportView(aliquotsList_jList);
@@ -2757,7 +2757,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
 
         insertFractionCount_spinner.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         jLayeredPane1.add(insertFractionCount_spinner);
-        insertFractionCount_spinner.setBounds(460, 160, 52, 26);
+        insertFractionCount_spinner.setBounds(460, 160, 52, 24);
 
         insertFraction_button.setForeground(new java.awt.Color(255, 51, 0));
         insertFraction_button.setText("Insert Fractions:");
@@ -2767,7 +2767,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
             }
         });
         jLayeredPane1.add(insertFraction_button);
-        insertFraction_button.setBounds(330, 160, 130, 29);
+        insertFraction_button.setBounds(330, 160, 130, 25);
 
         removeAliquot_button.setText("Remove Selected Aliquot");
         removeAliquot_button.addActionListener(new java.awt.event.ActionListener() {
@@ -2776,7 +2776,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
             }
         });
         jLayeredPane1.add(removeAliquot_button);
-        removeAliquot_button.setBounds(300, 220, 220, 29);
+        removeAliquot_button.setBounds(300, 220, 220, 25);
 
         aliquotFractionsArea_label.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         aliquotFractionsArea_label.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -2858,7 +2858,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
             }
         });
         jLayeredPane1.add(addAliquot_button);
-        addAliquot_button.setBounds(300, 130, 100, 29);
+        addAliquot_button.setBounds(300, 130, 100, 25);
 
         importFractionFiles_button.setForeground(new java.awt.Color(255, 51, 0));
         importFractionFiles_button.setText("Import Fraction Files");
@@ -2868,7 +2868,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
             }
         });
         jLayeredPane1.add(importFractionFiles_button);
-        importFractionFiles_button.setBounds(330, 190, 190, 29);
+        importFractionFiles_button.setBounds(330, 190, 190, 25);
 
         welcomeStatement_jTextArea.setBackground(new java.awt.Color(238, 255, 255));
         welcomeStatement_jTextArea.setColumns(20);
@@ -2976,7 +2976,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
             }
         });
         jLayeredPane1.add(editAliquot_button);
-        editAliquot_button.setBounds(400, 130, 120, 29);
+        editAliquot_button.setBounds(400, 130, 120, 25);
 
         fractionTableHeader.setBackground(new java.awt.Color(238, 255, 255));
         fractionTableHeader.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
@@ -3049,7 +3049,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
             .add(layout.createSequentialGroup()
                 .add(sampleType_panel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jLayeredPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 674, Short.MAX_VALUE)
+                .add(jLayeredPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 679, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );

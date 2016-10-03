@@ -909,7 +909,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         fractionsShownLabel.setText("Fractions Shown:");
         controlPanel_panel.setLayer(fractionsShownLabel, javax.swing.JLayeredPane.PALETTE_LAYER);
         controlPanel_panel.add(fractionsShownLabel);
-        fractionsShownLabel.setBounds(0, 435, 110, 16);
+        fractionsShownLabel.setBounds(1, 435, 110, 16);
 
         rawIsotopes_radioButton.setBackground(new java.awt.Color(173, 204, 182));
         viewChooser_buttonGroup.add(rawIsotopes_radioButton);
@@ -926,7 +926,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
             }
         });
         controlPanel_panel.add(rawIsotopes_radioButton);
-        rawIsotopes_radioButton.setBounds(0, 70, 190, 20);
+        rawIsotopes_radioButton.setBounds(1, 70, 190, 20);
 
         correctedIsotopes_radioButton.setBackground(new java.awt.Color(204, 199, 173));
         viewChooser_buttonGroup.add(correctedIsotopes_radioButton);
@@ -943,7 +943,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
             }
         });
         controlPanel_panel.add(correctedIsotopes_radioButton);
-        correctedIsotopes_radioButton.setBounds(0, 90, 190, 20);
+        correctedIsotopes_radioButton.setBounds(1, 90, 190, 20);
 
         rawRatios_radioButton.setBackground(new java.awt.Color(204, 184, 173));
         viewChooser_buttonGroup.add(rawRatios_radioButton);
@@ -965,7 +965,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
             }
         });
         controlPanel_panel.add(rawRatios_radioButton);
-        rawRatios_radioButton.setBounds(0, 110, 190, 20);
+        rawRatios_radioButton.setBounds(1, 110, 190, 20);
 
         lockUnlockZoomSliders.setBackground(new java.awt.Color(51, 51, 51));
         lockUnlockZoomSliders.setFont(new java.awt.Font("Braggadocio", 1, 24)); // NOI18N
@@ -1032,7 +1032,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         });
         controlPanel_panel.setLayer(includeAllFractions_button, javax.swing.JLayeredPane.PALETTE_LAYER);
         controlPanel_panel.add(includeAllFractions_button);
-        includeAllFractions_button.setBounds(0, 480, 150, 20);
+        includeAllFractions_button.setBounds(1, 480, 150, 20);
 
         refreshView_button.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         refreshView_button.setText("Refresh View");
@@ -1042,7 +1042,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
             }
         });
         controlPanel_panel.add(refreshView_button);
-        refreshView_button.setBounds(0, 575, 150, 20);
+        refreshView_button.setBounds(1, 575, 150, 20);
 
         defaultZoom_button.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         defaultZoom_button.setText("Default Zoom");
@@ -1052,7 +1052,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
             }
         });
         controlPanel_panel.add(defaultZoom_button);
-        defaultZoom_button.setBounds(0, 595, 150, 20);
+        defaultZoom_button.setBounds(1, 595, 150, 20);
 
         removeAllIndividualYAxisPanes_button.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         removeAllIndividualYAxisPanes_button.setText("Remove all Local Y-Axis");
@@ -1063,19 +1063,19 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         });
         controlPanel_panel.setLayer(removeAllIndividualYAxisPanes_button, javax.swing.JLayeredPane.PALETTE_LAYER);
         controlPanel_panel.add(removeAllIndividualYAxisPanes_button);
-        removeAllIndividualYAxisPanes_button.setBounds(0, 540, 150, 20);
+        removeAllIndividualYAxisPanes_button.setBounds(1, 540, 150, 20);
 
         jLabel4.setFont(new java.awt.Font("SansSerif", 3, 10)); // NOI18N
         jLabel4.setText("   Select fractionation technique:");
         controlPanel_panel.add(jLabel4);
-        jLabel4.setBounds(0, 145, 190, 13);
+        jLabel4.setBounds(10, 145, 170, 13);
 
         yAxisZoomSlider.setMaximum(320);
         yAxisZoomSlider.setMinimum(64);
         yAxisZoomSlider.setOrientation(javax.swing.JSlider.VERTICAL);
         yAxisZoomSlider.setValue(128);
         controlPanel_panel.add(yAxisZoomSlider);
-        yAxisZoomSlider.setBounds(0, 420, 20, 190);
+        yAxisZoomSlider.setBounds(1, 420, 20, 190);
 
         fractionationTechniqueTabbedPane.setBackground(new java.awt.Color(250, 240, 230));
         fractionationTechniqueTabbedPane.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -1256,7 +1256,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         fractionationTechniqueTabbedPane.addTab("Intercept", interceptPanel);
 
         controlPanel_panel.add(fractionationTechniqueTabbedPane);
-        fractionationTechniqueTabbedPane.setBounds(0, 165, 190, 180);
+        fractionationTechniqueTabbedPane.setBounds(1, 165, 189, 180);
 
         restoreAllAquisitions.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         restoreAllAquisitions.setText("Restore all Aquisitions");
@@ -1267,7 +1267,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         });
         controlPanel_panel.setLayer(restoreAllAquisitions, javax.swing.JLayeredPane.PALETTE_LAYER);
         controlPanel_panel.add(restoreAllAquisitions);
-        restoreAllAquisitions.setBounds(0, 500, 150, 20);
+        restoreAllAquisitions.setBounds(1, 500, 150, 20);
 
         jPanel1.setBackground(new java.awt.Color(250, 240, 230));
         jPanel1.setPreferredSize(new java.awt.Dimension(191, 70));
@@ -1287,7 +1287,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
                 gridPlot_radioButtonActionPerformed(evt);
             }
         });
-        jPanel1.add(gridPlot_radioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 8, 50, -1));
+        jPanel1.add(gridPlot_radioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 8, 50, -1));
 
         graphPlot_radioButton.setBackground(new java.awt.Color(204, 255, 204));
         plotStyleFractions_buttonGroup.add(graphPlot_radioButton);
@@ -1303,7 +1303,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
                 graphPlot_radioButtonActionPerformed(evt);
             }
         });
-        jPanel1.add(graphPlot_radioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 8, 65, -1));
+        jPanel1.add(graphPlot_radioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(51, 8, 65, -1));
 
         overlayPlot_radioButton.setBackground(new java.awt.Color(204, 255, 204));
         plotStyleFractions_buttonGroup.add(overlayPlot_radioButton);
@@ -1319,7 +1319,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
                 overlayPlot_radioButtonActionPerformed(evt);
             }
         });
-        jPanel1.add(overlayPlot_radioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(115, 8, 75, -1));
+        jPanel1.add(overlayPlot_radioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(116, 8, 75, -1));
         jPanel1.add(samplesCompboBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 27, 185, -1));
 
         amPrimaryRefMaterial_label.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
@@ -1334,7 +1334,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         yAxisOptionsLabel.setFont(new java.awt.Font("SansSerif", 0, 13)); // NOI18N
         yAxisOptionsLabel.setText("Y-axis Scaling Options:");
         controlPanel_panel.add(yAxisOptionsLabel);
-        yAxisOptionsLabel.setBounds(0, 350, 160, 16);
+        yAxisOptionsLabel.setBounds(1, 350, 160, 16);
 
         yAxisScalingOptions.add(uniformYaxis);
         uniformYaxis.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
@@ -1349,7 +1349,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
             }
         });
         controlPanel_panel.add(uniformYaxis);
-        uniformYaxis.setBounds(0, 365, 75, 20);
+        uniformYaxis.setBounds(1, 365, 75, 20);
 
         yAxisScalingOptions.add(independentYaxis);
         independentYaxis.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
@@ -1363,7 +1363,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
             }
         });
         controlPanel_panel.add(independentYaxis);
-        independentYaxis.setBounds(75, 365, 115, 20);
+        independentYaxis.setBounds(76, 365, 115, 20);
 
         dataScalingOptions.add(allDataUsedForScaling);
         allDataUsedForScaling.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
@@ -1378,12 +1378,12 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
             }
         });
         controlPanel_panel.add(allDataUsedForScaling);
-        allDataUsedForScaling.setBounds(0, 405, 75, 20);
+        allDataUsedForScaling.setBounds(1, 405, 75, 20);
 
         dataScalingOptionsLabel.setFont(new java.awt.Font("SansSerif", 0, 13)); // NOI18N
         dataScalingOptionsLabel.setText("Data Scaling Options:");
         controlPanel_panel.add(dataScalingOptionsLabel);
-        dataScalingOptionsLabel.setBounds(0, 390, 150, 16);
+        dataScalingOptionsLabel.setBounds(1, 390, 150, 16);
 
         dataScalingOptions.add(includedDataUsedForScaling);
         includedDataUsedForScaling.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
@@ -1397,7 +1397,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
             }
         });
         controlPanel_panel.add(includedDataUsedForScaling);
-        includedDataUsedForScaling.setBounds(75, 405, 115, 20);
+        includedDataUsedForScaling.setBounds(76, 405, 115, 20);
 
         setAllIndividualYAxisPanes_button.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         setAllIndividualYAxisPanes_button.setText("Show all Local Y-Axis");
@@ -1408,7 +1408,7 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         });
         controlPanel_panel.setLayer(setAllIndividualYAxisPanes_button, javax.swing.JLayeredPane.PALETTE_LAYER);
         controlPanel_panel.add(setAllIndividualYAxisPanes_button);
-        setAllIndividualYAxisPanes_button.setBounds(0, 520, 150, 20);
+        setAllIndividualYAxisPanes_button.setBounds(1, 520, 150, 20);
 
         tripoliTab_layeredPane.add(controlPanel_panel);
         controlPanel_panel.setBounds(0, 0, 191, 620);

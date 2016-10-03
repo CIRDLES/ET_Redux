@@ -115,7 +115,7 @@ public class SampleRegistriesTest {
     public void test_UpdateSampleID() {
         System.out.println("Testing SampleRegistries's gupdateSampleID(String sampleId)");
         String sampleID = "hello";
-        String expResult = "GCH.hello";
+        String expResult = "SSR.hello";
         String result = SampleRegistries.updateSampleID(sampleID);
         assertEquals(expResult, result);
         

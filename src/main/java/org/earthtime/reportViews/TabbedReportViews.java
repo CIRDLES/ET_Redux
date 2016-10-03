@@ -67,6 +67,7 @@ public class TabbedReportViews extends JTabbedPane {
     public void initializeTabs() {
 
         setBackground(Color.white);
+        setForeground(Color.red);
 
         viewTabulatedAliquotActiveFractions = new ReportAliquotFractionsView(parentFrame, true);
         add("Active Fractions", viewTabulatedAliquotActiveFractions);

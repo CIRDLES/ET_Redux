@@ -101,7 +101,6 @@ import org.earthtime.dataDictionaries.DataDictionary;
 import org.earthtime.dataDictionaries.GeochronValidationResults;
 import org.earthtime.dataDictionaries.MineralTypes;
 import org.earthtime.dataDictionaries.RadDates;
-import org.earthtime.dataDictionaries.SampleRegistries;
 import org.earthtime.dataDictionaries.SampleTypesEnum;
 import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.exceptions.ETException;
@@ -120,9 +119,6 @@ import org.earthtime.utilities.FileHelper;
 import org.earthtime.xmlUtilities.SimpleTransform;
 import org.jdesktop.layout.GroupLayout.ParallelGroup;
 import org.jdesktop.layout.GroupLayout.SequentialGroup;
-import org.w3c.dom.DOMException;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  *
@@ -2092,7 +2088,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
         addedFractions = new Vector<>();
 
         // in compilation, leave everything blank
-        if (((UPbReduxAliquot) myAliquot).isCompiled()) {
+        if (((ReduxAliquotInterface) myAliquot).isCompiled()) {
             return;
         }
 
@@ -2381,8 +2377,8 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
             public void actionPerformed(ActionEvent e) {
                 for (int f = 0; f
                         < getMyAliquot().getAliquotFractions().size(); f++) {
-                    if (((JTextField) fractionTracerMassText.get(f)).isEnabled()) {
-                        ((JTextField) fractionTracerMassText.get(f)).setText(masterTracerMass.getText());
+                    if (fractionTracerMassText.get(f).isEnabled()) {
+                        ((JTextComponent) fractionTracerMassText.get(f)).setText(masterTracerMass.getText());
                     }
                 }
 
@@ -2404,8 +2400,8 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
             public void actionPerformed(ActionEvent e) {
                 for (int f = 0; f
                         < getMyAliquot().getAliquotFractions().size(); f++) {
-                    if (((JTextField) fractionMassText.get(f)).isEnabled()) {
-                        ((JTextField) fractionMassText.get(f)).setText(masterFractionMass.getText());
+                    if (fractionMassText.get(f).isEnabled()) {
+                        ((JTextComponent) fractionMassText.get(f)).setText(masterFractionMass.getText());
                     }
                 }
 
@@ -3771,6 +3767,50 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
     protected void showSavedDataI() {
         // general info
 
+        validateIGSNs();
+
+        aliquotName_text.setText(getMyAliquot().getAliquotName());
+        analystName_text.setText(getMyAliquot().getAnalystName());
+
+        instrumentalMethod_jcombo.removeAllItems();
+        for (int i = 0; i
+                < DataDictionary.AliquotInstrumentalMethod.length; i++) {
+            instrumentalMethod_jcombo.addItem(DataDictionary.AliquotInstrumentalMethod[i]);
+        }
+
+        instrumentalMethod_jcombo.setSelectedItem(getMyAliquot().
+                getAliquotInstrumentalMethod().toString());
+
+        instMethodRef_text.setText(getMyAliquot().getAliquotInstrumentalMethodReference());
+
+        reference_text.setText(getMyAliquot().getAliquotReference());
+
+        comment_textArea.setText(getMyAliquot().getAliquotComment());
+
+        calibrationUnct206_238_text.setText(//
+                getMyAliquot().getCalibrationUnct206_238()//
+                .setScale(ReduxConstants.DEFAULT_PARAMETERS_SCALE, RoundingMode.HALF_UP).toPlainString());
+
+        calibrationUnct208_232_text.setText(getMyAliquot().getCalibrationUnct208_232()//
+                .setScale(ReduxConstants.DEFAULT_PARAMETERS_SCALE, RoundingMode.HALF_UP).toPlainString());
+
+        calibrationUnct207_206_text.setText(getMyAliquot().getCalibrationUnct207_206()//
+                .setScale(ReduxConstants.DEFAULT_PARAMETERS_SCALE, RoundingMode.HALF_UP).toPlainString());
+
+        keyWordsCSV_text.setText( //
+                getMyAliquot().getKeyWordsCSV());
+
+        for (JComponent cb : mineralStandardsCheckBoxes) {
+            if (getMyAliquot().getAMineralStandardModelByName(((AbstractButton) cb).getText()) != null) {
+                ((AbstractButton) cb).setSelected(true);
+            } else {
+                ((AbstractButton) cb).setSelected(false);
+            }
+        }
+
+    }
+
+    protected void validateIGSNs() {
         // April 2011 now using xxx.sampleID for sampleIGSN and need to split off
         aliquotIGSN_text.setText(getMyAliquot().getAlliquotIGSNnoRegistry());
 
@@ -3815,46 +3855,6 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
                     "Aliquot IGSN " + getMyAliquot().getAliquotIGSN() + " is NOT REGISTERED as child of Sample IGSN " + sample.getSampleIGSNnoRegistry());
             geochronArchivePanel_panel.setVisible(false);
         }
-
-        aliquotName_text.setText(getMyAliquot().getAliquotName());
-        analystName_text.setText(getMyAliquot().getAnalystName());
-
-        instrumentalMethod_jcombo.removeAllItems();
-        for (int i = 0; i
-                < DataDictionary.AliquotInstrumentalMethod.length; i++) {
-            instrumentalMethod_jcombo.addItem(DataDictionary.AliquotInstrumentalMethod[i]);
-        }
-
-        instrumentalMethod_jcombo.setSelectedItem(getMyAliquot().
-                getAliquotInstrumentalMethod().toString());
-
-        instMethodRef_text.setText(getMyAliquot().getAliquotInstrumentalMethodReference());
-
-        reference_text.setText(getMyAliquot().getAliquotReference());
-
-        comment_textArea.setText(getMyAliquot().getAliquotComment());
-
-        calibrationUnct206_238_text.setText(//
-                getMyAliquot().getCalibrationUnct206_238()//
-                .setScale(ReduxConstants.DEFAULT_PARAMETERS_SCALE, RoundingMode.HALF_UP).toPlainString());
-
-        calibrationUnct208_232_text.setText(getMyAliquot().getCalibrationUnct208_232()//
-                .setScale(ReduxConstants.DEFAULT_PARAMETERS_SCALE, RoundingMode.HALF_UP).toPlainString());
-
-        calibrationUnct207_206_text.setText(getMyAliquot().getCalibrationUnct207_206()//
-                .setScale(ReduxConstants.DEFAULT_PARAMETERS_SCALE, RoundingMode.HALF_UP).toPlainString());
-
-        keyWordsCSV_text.setText( //
-                getMyAliquot().getKeyWordsCSV());
-
-        for (JComponent cb : mineralStandardsCheckBoxes) {
-            if (getMyAliquot().getAMineralStandardModelByName(((AbstractButton) cb).getText()) != null) {
-                ((AbstractButton) cb).setSelected(true);
-            } else {
-                ((AbstractButton) cb).setSelected(false);
-            }
-        }
-
     }
 
     /**
@@ -4275,7 +4275,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
         }
 
         // general info
-        getMyAliquot().setAliquotName(aliquotName_text.getText());
+        myAliquot.setAliquotName(aliquotName_text.getText().trim());
         this.setTitle("Aliquot # " + getMyAliquot().getAliquotNumber() + " <> " + getMyAliquot().getAliquotName());
 
         getMyAliquot().setAnalystName(analystName_text.getText());
@@ -4381,8 +4381,10 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
         myAliquot.setLaboratoryName(ReduxLabData.getInstance().getLabName());
 
         // sept 2016
-        myAliquot.setAliquotIGSN(aliquotIGSN_text.getText());
-
+        myAliquot.setAliquotIGSN(aliquotIGSN_text.getText().trim());
+               
+        validateIGSNs();
+        
         SampleInterface.saveSampleAsSerializedReduxFile(sample);
 
         System.out.println("**************** PRE-PUBLISH CHECKLIST FOR ALIQUOT");
@@ -4964,126 +4966,125 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
         }
     }
 
-    private ValidationFromRegistry queryRegistryWithSampleID(String SampleID) {
-        // april 2011 simple validation: is sampleID an ID in the specified registry
-        // reg.SampleID
-        return new ValidationFromRegistry( //
-                SampleID, //
-                SampleRegistries.isSampleIdentifierValidAtRegistry(SampleID));
-    }
-
-    private ValidationFromRegistry querySESAR(String SampleID) {
-        String connectionStringSESAR = "http://www.geosamples.org/display.php?igsn=";
-        org.w3c.dom.Document doc = URIHelper.RetrieveXMLfromServerAsDOMdocument(connectionStringSESAR + SampleID.trim());
-
-        ValidationFromRegistry retVal = new ValidationFromRegistry(SampleID, false);
-        String selectedSampleIGSN;
-
-        if (doc != null) {
-            if (doc.hasChildNodes()) {
-                Node SESARsample = doc.getFirstChild();
-
-                ArrayList<String> messageTop = new ArrayList<String>();
-                if (SESARsample.getNodeName().equalsIgnoreCase("sample")) {
-                    NodeList sampleDetails = SESARsample.getChildNodes();
-                    for (int i = 0; i < sampleDetails.getLength(); i++) {
-                        System.out.println(sampleDetails.item(i).getNodeName());
-                    }
-
-                    // check for child or parent type SampleID
-                    NodeList temp = doc.getElementsByTagName("ParentIGSN");
-                    if (temp.getLength() > 0) {
-                        doc = URIHelper.RetrieveXMLfromServerAsDOMdocument(connectionStringSESAR//
-                                + temp.item(0).getTextContent());
-
-                        selectedSampleIGSN = temp.item(0).getTextContent();
-
-                        messageTop.add(
-                                "SESAR reports that IGSN " + SampleID + " is a child of a sample.\n\n");
-                        messageTop.add(
-                                "You must choose a Sample IGSN, and SESAR reports that for this child, \n");
-                        messageTop.add(
-                                "the parent Sample has IGSN " //
-                                + selectedSampleIGSN //
-                                + ", identified as:\n\n");
-                    } else {
-                        // we have a sample SampleID
-                        selectedSampleIGSN = SampleID;
-                        messageTop.add(
-                                "SESAR reports that IGSN " + selectedSampleIGSN + " is a Sample identified as:\n\n");
-                    }
-
-                    // present the user with the sample SampleID and data and a confirm
-                    try {
-                        messageTop.add("IGSN = " + doc.getElementsByTagName("IGSN").item(0).getTextContent() + "\n");
-                    } catch (NullPointerException dOMException) {
-                    }
-                    try {
-                        messageTop.add("SampleID = " + doc.getElementsByTagName("SampleID").item(0).getTextContent() + "\n");
-                    } catch (NullPointerException dOMException) {
-                    }
-                    try {
-                        messageTop.add("SampleComment = " + doc.getElementsByTagName("SampleComment").item(0).getTextContent() + "\n");
-                    } catch (NullPointerException dOMException) {
-                    }
-                    try {
-                        messageTop.add("GeoObjectType = " + doc.getElementsByTagName("GeoObjectType").item(0).getTextContent() + "\n");
-                    } catch (NullPointerException dOMException) {
-                    }
-                    try {
-                        messageTop.add("Material = " + doc.getElementsByTagName("Material").item(0).getTextContent() + "\n");
-                    } catch (NullPointerException dOMException) {
-                    }
+//    private ValidationFromRegistry queryRegistryWithSampleID(String SampleID) {
+//        // april 2011 simple validation: is sampleID an ID in the specified registry
+//        // reg.SampleID
+//        return new ValidationFromRegistry( //
+//                SampleID, //
+//                SampleRegistries.isSampleIdentifierValidAtRegistry(SampleID));
+//    }
+//
+//    private ValidationFromRegistry querySESAR(String SampleID) {
+//        String connectionStringSESAR = "http://www.geosamples.org/display.php?igsn=";
+//        org.w3c.dom.Document doc = URIHelper.RetrieveXMLfromServerAsDOMdocument(connectionStringSESAR + SampleID.trim());
+//
+//        ValidationFromRegistry retVal = new ValidationFromRegistry(SampleID, false);
+//        String selectedSampleIGSN;
+//
+//        if (doc != null) {
+//            if (doc.hasChildNodes()) {
+//                Node SESARsample = doc.getFirstChild();
+//
+//                ArrayList<String> messageTop = new ArrayList<String>();
+//                if (SESARsample.getNodeName().equalsIgnoreCase("sample")) {
+//                    NodeList sampleDetails = SESARsample.getChildNodes();
+//                    for (int i = 0; i < sampleDetails.getLength(); i++) {
+//                        System.out.println(sampleDetails.item(i).getNodeName());
+//                    }
+//
+//                    // check for child or parent type SampleID
+//                    NodeList temp = doc.getElementsByTagName("ParentIGSN");
+//                    if (temp.getLength() > 0) {
+//                        doc = URIHelper.RetrieveXMLfromServerAsDOMdocument(connectionStringSESAR//
+//                                + temp.item(0).getTextContent());
+//
+//                        selectedSampleIGSN = temp.item(0).getTextContent();
+//
+//                        messageTop.add(
+//                                "SESAR reports that IGSN " + SampleID + " is a child of a sample.\n\n");
+//                        messageTop.add(
+//                                "You must choose a Sample IGSN, and SESAR reports that for this child, \n");
+//                        messageTop.add(
+//                                "the parent Sample has IGSN " //
+//                                + selectedSampleIGSN //
+//                                + ", identified as:\n\n");
+//                    } else {
+//                        // we have a sample SampleID
+//                        selectedSampleIGSN = SampleID;
+//                        messageTop.add(
+//                                "SESAR reports that IGSN " + selectedSampleIGSN + " is a Sample identified as:\n\n");
+//                    }
+//
+//                    // present the user with the sample SampleID and data and a confirm
 //                    try {
-//                        messageTop.add("PrimaryLocationName = " + doc.getElementsByTagName("PrimaryLocationName").item(0).getTextContent() + "\n");
+//                        messageTop.add("IGSN = " + doc.getElementsByTagName("IGSN").item(0).getTextContent() + "\n");
 //                    } catch (NullPointerException dOMException) {
 //                    }
 //                    try {
-//                        messageTop.add("MostRecentArchivalInstitution = " + doc.getElementsByTagName("MostRecentArchivalInstitution").item(0).getTextContent() + "\n");
+//                        messageTop.add("SampleID = " + doc.getElementsByTagName("SampleID").item(0).getTextContent() + "\n");
 //                    } catch (NullPointerException dOMException) {
 //                    }
-                    messageTop.add("\n     Do you accept this Sample as the parent of this Aliquot?");
-
-                    String[] message = new String[messageTop.size()];
-                    message = messageTop.toArray(message);
-
-                    int response = JOptionPane.showConfirmDialog(this,
-                            message,
-                            "U-Pb Redux Information",
-                            JOptionPane.YES_NO_OPTION,
-                            JOptionPane.INFORMATION_MESSAGE);
-                    if (response == JOptionPane.NO_OPTION) {
-                        retVal.selectedSampleID = SampleID;
-                        retVal.valid = false;
-                    } else {
-                        retVal.selectedSampleID = selectedSampleIGSN;
-                        retVal.valid = true;
-                    }
-
-                } else {
-                    // assume error received
-
-                    String SESAR_message = "SESAR failed to process this request - please contact SESAR.";
-
-                    try {
-                        SESAR_message = doc.getElementsByTagName("Error").item(0).getTextContent();
-                    } catch (DOMException dOMException) {
-                    }
-
-                    JOptionPane.showMessageDialog(this,
-                            new String[]{"SESAR responded: " + SESAR_message});
-
-                    retVal.selectedSampleID = SampleID;
-                    retVal.valid = false;
-
-                }
-
-            }
-        }
-
-        return retVal;
-    }
-
+//                    try {
+//                        messageTop.add("SampleComment = " + doc.getElementsByTagName("SampleComment").item(0).getTextContent() + "\n");
+//                    } catch (NullPointerException dOMException) {
+//                    }
+//                    try {
+//                        messageTop.add("GeoObjectType = " + doc.getElementsByTagName("GeoObjectType").item(0).getTextContent() + "\n");
+//                    } catch (NullPointerException dOMException) {
+//                    }
+//                    try {
+//                        messageTop.add("Material = " + doc.getElementsByTagName("Material").item(0).getTextContent() + "\n");
+//                    } catch (NullPointerException dOMException) {
+//                    }
+////                    try {
+////                        messageTop.add("PrimaryLocationName = " + doc.getElementsByTagName("PrimaryLocationName").item(0).getTextContent() + "\n");
+////                    } catch (NullPointerException dOMException) {
+////                    }
+////                    try {
+////                        messageTop.add("MostRecentArchivalInstitution = " + doc.getElementsByTagName("MostRecentArchivalInstitution").item(0).getTextContent() + "\n");
+////                    } catch (NullPointerException dOMException) {
+////                    }
+//                    messageTop.add("\n     Do you accept this Sample as the parent of this Aliquot?");
+//
+//                    String[] message = new String[messageTop.size()];
+//                    message = messageTop.toArray(message);
+//
+//                    int response = JOptionPane.showConfirmDialog(this,
+//                            message,
+//                            "U-Pb Redux Information",
+//                            JOptionPane.YES_NO_OPTION,
+//                            JOptionPane.INFORMATION_MESSAGE);
+//                    if (response == JOptionPane.NO_OPTION) {
+//                        retVal.selectedSampleID = SampleID;
+//                        retVal.valid = false;
+//                    } else {
+//                        retVal.selectedSampleID = selectedSampleIGSN;
+//                        retVal.valid = true;
+//                    }
+//
+//                } else {
+//                    // assume error received
+//
+//                    String SESAR_message = "SESAR failed to process this request - please contact SESAR.";
+//
+//                    try {
+//                        SESAR_message = doc.getElementsByTagName("Error").item(0).getTextContent();
+//                    } catch (DOMException dOMException) {
+//                    }
+//
+//                    JOptionPane.showMessageDialog(this,
+//                            new String[]{"SESAR responded: " + SESAR_message});
+//
+//                    retVal.selectedSampleID = SampleID;
+//                    retVal.valid = false;
+//
+//                }
+//
+//            }
+//        }
+//
+//        return retVal;
+//    }
     // refactor this stuff to reduce coupling
     private GeochronValidationResults confirmAliquotArchivedInGeochron(AliquotInterface aliquot) {
 
@@ -5091,8 +5092,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
         String password = ((ETReduxFrame) parent).getMyState().getReduxPreferences().getGeochronPassWord();
 
         String connectionString
-                = //
-                "http://www.geochron.org/getxml.php?sampleigsn="//
+                = "http://www.geochron.org/getxml.php?sampleigsn="//
                 + aliquot.getSampleIGSN() //
                 + "&aliquotname=" //
                 + aliquot.getAliquotName()//

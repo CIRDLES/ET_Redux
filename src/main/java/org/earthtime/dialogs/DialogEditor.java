@@ -65,14 +65,31 @@ public abstract class DialogEditor extends JDialog {
     public DialogEditor(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
 
-        JDialog.setDefaultLookAndFeelDecorated(true);
+//        JDialog.setDefaultLookAndFeelDecorated(true);
+        /* Set the Metal look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Metal is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Metal".equals(info.getName())) { //Nimbus (original), Motif, Metal
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(org.earthtime.dialogs.DialogEditor.class.getName()).log(java.util.logging.Level.WARNING, null, ex);
+        }
+        //</editor-fold>        
+
         initComponents();
     }
 
-    public void initDialogContent(){
-        
+    public void initDialogContent() {
+
     }
-    
+
     /**
      *
      * @param preferredWidth
@@ -146,16 +163,16 @@ public abstract class DialogEditor extends JDialog {
             textComp.getActionMap().put("Undo",
                     new AbstractAction("Undo") {
 
-                        @Override
-                        public void actionPerformed(ActionEvent evt) {
-                            try {
-                                if (undo.canUndo()) {
-                                    undo.undo();
-                                }
-                            } catch (CannotUndoException e) {
-                            }
+                @Override
+                public void actionPerformed(ActionEvent evt) {
+                    try {
+                        if (undo.canUndo()) {
+                            undo.undo();
                         }
-                    });
+                    } catch (CannotUndoException e) {
+                    }
+                }
+            });
 
             // Bind the undo action to ctl-Z
             textComp.getInputMap().put(KeyStroke.getKeyStroke("control Z"), "Undo");
@@ -164,16 +181,16 @@ public abstract class DialogEditor extends JDialog {
             textComp.getActionMap().put("Redo",
                     new AbstractAction("Redo") {
 
-                        @Override
-                        public void actionPerformed(ActionEvent evt) {
-                            try {
-                                if (undo.canRedo()) {
-                                    undo.redo();
-                                }
-                            } catch (CannotRedoException e) {
-                            }
+                @Override
+                public void actionPerformed(ActionEvent evt) {
+                    try {
+                        if (undo.canRedo()) {
+                            undo.redo();
                         }
-                    });
+                    } catch (CannotRedoException e) {
+                    }
+                }
+            });
 
             // Bind the redo action to ctl-Y
             textComp.getInputMap().put(KeyStroke.getKeyStroke("control Y"), "Redo");

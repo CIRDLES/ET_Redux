@@ -1274,7 +1274,7 @@ public class SampleDateModel extends ValueModel implements
 //
 //            logWMresults.setLogRatioMeanOneSigmaAnalyticalPlusInterStdPlusStdPlusLambda(logRatioMeanOneSigmaAnalyticalPlusInterStdPlusStdPlusLambda);
 //
-                System.out.println("Logratio based WM have ARRIVED !!");
+//                System.out.println("Logratio based WM have ARRIVED !!");
             } catch (Exception e) {
             }
         }

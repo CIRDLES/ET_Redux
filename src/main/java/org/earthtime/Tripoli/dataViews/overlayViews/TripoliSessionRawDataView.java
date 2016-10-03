@@ -708,10 +708,23 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
             double overallMaxY = -Double.MAX_VALUE;
             boolean atLeastOneStandard = true;
 
-            for (int f = 0; f < (fractionCountForHorizontalLayout); f++) {
-                if (Double.isFinite(rawDataModelViews[i][f].getMinY()) && Double.isFinite(rawDataModelViews[i][f].getMaxY())) {
-                    overallMinY = Math.min(overallMinY, rawDataModelViews[i][f].getMinY());
-                    overallMaxY = Math.max(overallMaxY, rawDataModelViews[i][f].getMaxY());
+            if (FRACTION_LAYOUT_VIEW_STYLE.equals(FractionLayoutViewStylesEnum.SESSION)) {
+                for (int f = 0; f < (fractionCountForHorizontalLayout); f++) {
+                    if (Double.isFinite(rawDataModelViews[i][f].getMinY()) && Double.isFinite(rawDataModelViews[i][f].getMaxY())) {
+                        overallMinY = Math.min(overallMinY, rawDataModelViews[i][f].getMinY());
+                        overallMaxY = Math.max(overallMaxY, rawDataModelViews[i][f].getMaxY());
+                    }
+                }
+            } else {
+                for (int f = 0; f < (fractionCountForHorizontalLayout); f++) {
+                    if (Double.isFinite(rawDataModelViews[i][f].getMinY()) //
+                            && Double.isFinite(rawDataModelViews[i][f].getMaxY())//
+                            && !rawDataModelViews[i][f].isNotShownDueToBelowDetectionFlag()//
+                            && !((SAVED_DATA_USED_FOR_SCALING.equals(IncludedTypeEnum.INCLUDED)//
+                            && !rawDataModelViews[i][f].getTripoliFraction().isIncluded()))) {
+                        overallMinY = Math.min(overallMinY, rawDataModelViews[i][f].getMinY());
+                        overallMaxY = Math.max(overallMaxY, rawDataModelViews[i][f].getMaxY());
+                    }
                 }
             }
 
@@ -933,8 +946,7 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
                 // TODO: dec 2012 check for missing ratio due to all belowDetection
                 if (rawDataModelViews[i][0] instanceof FitFunctionsOnRatioDataView) {
                     RawRatioNames rrName
-                            = //
-                            rawDataModelViews[i][0].getDataModel().getRawRatioModelName();
+                            = rawDataModelViews[i][0].getDataModel().getRawRatioModelName();
 
                     ((DataViewsOverlay) rawDataModelViewsOverlay).setFractionationDataModel(downholeFractionationDataModels.get(rrName));
 
@@ -972,7 +984,6 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
                     AbstractRawDataView residualsYAxisLabel = new ResidualsYAxisLabel(//
                             rawDataModelViews[0][0], //
                             new Rectangle(//
-                                    //
                                     1,//
                                     i * (dataModelHeight + HEIGHT_OF_OVERLAY_XAXIS_PANES + residualsHeight + verticalGraphSeparation) + topMargin + dataModelHeight + HEIGHT_OF_OVERLAY_XAXIS_PANES, //
                                     tripoliSessionRawDataViewYAxis.getWidth() - 1, //
@@ -1008,30 +1019,32 @@ public class TripoliSessionRawDataView extends AbstractRawDataView implements Tr
             }
         }
 
-        // establish graphWidth 
-        if (FRACTION_LAYOUT_VIEW_STYLE.equals(FractionLayoutViewStylesEnum.GRAPH)) {
-            minX = tripoliFractions.first().getPeakTimeStamp();
-            maxX = tripoliFractions.last().getPeakTimeStamp() //
-                    + (rawDataModelViews[0][0].getRangeX_Display() * rawDataModelViews[0][0].getDataModel().getCollectorDataFrequencyMillisecs());
-            graphWidth = (int) ((maxX - minX) * dataModelWidth //
-                    / rawDataModelViews[0][0].getRangeX_Display() / rawDataModelViews[0][0].getDataModel().getCollectorDataFrequencyMillisecs());
-
-        } else if (FRACTION_LAYOUT_VIEW_STYLE.equals(FractionLayoutViewStylesEnum.OVERLAY)) {
-            minX = 0;
-            maxX = dataModelWidth + horizontalGraphSeparation + WIDTH_OF_FIT_FUNCTION_PANES;
-            graphWidth = (int) (maxX - minX);
-
-        } else if (FRACTION_LAYOUT_VIEW_STYLE.equals(FractionLayoutViewStylesEnum.SESSION)) {
-            minX = 0;
-            maxX = fractionCountForHorizontalLayout * (sessionModelWidth + horizontalGraphSeparation);
-            graphWidth = (int) (maxX - minX);
-            graphWidth += countOfLocalYAxisPanes * WIDTH_OF_LOCAL_YAXIS_PANES + countOfInterceptFitFunctionsPresentationPanes * WIDTH_OF_FIT_FUNCTION_PANES;
-
-        } else {
-            minX = 0;
-            maxX = fractionCountForHorizontalLayout * (dataModelWidth + horizontalGraphSeparation);
-            graphWidth = (int) (maxX - minX);
-            graphWidth += countOfLocalYAxisPanes * WIDTH_OF_LOCAL_YAXIS_PANES + countOfInterceptFitFunctionsPresentationPanes * WIDTH_OF_FIT_FUNCTION_PANES;
+        // establish graphWidth
+        switch (FRACTION_LAYOUT_VIEW_STYLE) {
+            case GRAPH:
+                minX = tripoliFractions.first().getPeakTimeStamp();
+                maxX = tripoliFractions.last().getPeakTimeStamp() //
+                        + (rawDataModelViews[0][0].getRangeX_Display() * rawDataModelViews[0][0].getDataModel().getCollectorDataFrequencyMillisecs());
+                graphWidth = (int) ((maxX - minX) * dataModelWidth //
+                        / rawDataModelViews[0][0].getRangeX_Display() / rawDataModelViews[0][0].getDataModel().getCollectorDataFrequencyMillisecs());
+                break;
+            case OVERLAY:
+                minX = 0;
+                maxX = dataModelWidth + horizontalGraphSeparation + WIDTH_OF_FIT_FUNCTION_PANES;
+                graphWidth = (int) (maxX - minX);
+                break;
+            case SESSION:
+                minX = 0;
+                maxX = fractionCountForHorizontalLayout * (sessionModelWidth + horizontalGraphSeparation);
+                graphWidth = (int) (maxX - minX);
+                graphWidth += countOfLocalYAxisPanes * WIDTH_OF_LOCAL_YAXIS_PANES + countOfInterceptFitFunctionsPresentationPanes * WIDTH_OF_FIT_FUNCTION_PANES;
+                break;
+            default:
+                minX = 0;
+                maxX = fractionCountForHorizontalLayout * (dataModelWidth + horizontalGraphSeparation);
+                graphWidth = (int) (maxX - minX);
+                graphWidth += countOfLocalYAxisPanes * WIDTH_OF_LOCAL_YAXIS_PANES + countOfInterceptFitFunctionsPresentationPanes * WIDTH_OF_FIT_FUNCTION_PANES;
+                break;
         }
 
         // create vertical fraction panes for layout on x = time axis ********************************************************

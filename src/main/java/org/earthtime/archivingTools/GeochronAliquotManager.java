@@ -39,7 +39,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.aliquots.AliquotInterface;
-import static org.earthtime.archivingTools.GeoSamplesWebServices.isSampleRegistered;
+import static org.earthtime.archivingTools.GeoSamplesWebServices.isSampleRegisteredToParentAtTestGeoSamples;
 import static org.earthtime.archivingTools.GeochronUploaderUtility.produceConcordiaGraphForUploading;
 import static org.earthtime.archivingTools.GeochronUploaderUtility.producePDFImageForUploading;
 import org.earthtime.archivingTools.forSESAR.SesarSampleManager;
@@ -48,7 +48,7 @@ import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.projects.ProjectInterface;
 import org.earthtime.samples.SampleInterface;
 import org.geosamples.samples.Samples;
-import static org.earthtime.archivingTools.GeoSamplesWebServices.isSampleRegisteredToParentAtTestGeoSamples;
+import static org.earthtime.archivingTools.GeoSamplesWebServices.isSampleRegisteredAtTestSesar;
 
 /**
  *
@@ -236,7 +236,7 @@ public class GeochronAliquotManager extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 saveSample();
                 // get the igsn record and create a SesarSample to view
-                sesarSample = GeoSamplesWebServices.getSampleMetaDataFromGeoSamplesIGSN(sampleIGSN, userName, password, false).getSample().get(0);
+                sesarSample = GeoSamplesWebServices.getSampleMetaDataFromTestSesarIGSN(sampleIGSN, userName, password, false).getSample().get(0);
                 if (sesarSample != null) {
                     DialogEditor sesarSampleManager
                             = new SesarSampleManager(null, true, sesarSample, sample.getSampleName(), false, userName, password);
@@ -570,7 +570,7 @@ public class GeochronAliquotManager extends JPanel {
         public void actionPerformed(ActionEvent e) {
             saveAliquot(aliquot, aliquotIGSN_TextField.getText(), aliquotName_TextField);
             // get the igsn record and create a SesarSample to view
-            sesarAliquot = GeoSamplesWebServices.getSampleMetaDataFromGeoSamplesIGSN(aliquotIGSN_TextField.getText(), userName, password, false).getSample().get(0);
+            sesarAliquot = GeoSamplesWebServices.getSampleMetaDataFromTestSesarIGSN(aliquotIGSN_TextField.getText(), userName, password, false).getSample().get(0);
             if (sesarAliquot != null) {
                 DialogEditor sesarSampleManager
                         = new SesarSampleManager(null, true, sesarAliquot, aliquot.getAliquotName(), false, userName, password);
@@ -663,7 +663,7 @@ public class GeochronAliquotManager extends JPanel {
             boolean isValid = false;
             sampleIGSN = "IGSN";
             if (proposedIGSN.length() == 9) {
-                isValid = isSampleRegistered(proposedIGSN);
+                isValid = isSampleRegisteredAtTestSesar(proposedIGSN);
                 if (isValid) {
                     sampleIGSN = proposedIGSN.trim().toUpperCase();
                 } else if (userCode.trim().length() == 0) {
