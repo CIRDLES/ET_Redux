@@ -58,6 +58,9 @@ public class SampleTreeCompilationMode extends JTree implements SampleTreeI {
     private SampleTreeChangeI sampleTreeChange;
     private Object lastNodeSelected;
     private static boolean sortByDateAsc = false;
+    private int selRow;
+    private int selRowX;
+    private int selRowY;
 
     /**
      * Creates a new instance of SampleTreeCompilationMode
@@ -343,7 +346,9 @@ public class SampleTreeCompilationMode extends JTree implements SampleTreeI {
      */
     @Override
     public void mousePressed(MouseEvent e) {
-        int selRow = getRowForLocation(e.getX(), e.getY());
+        selRowX = e.getX();
+        selRowY = e.getY();
+        selRow = getRowForLocation(e.getX(), e.getY());
         TreePath selPath = getPathForLocation(e.getX(), e.getY());
 
         if (selRow != -1) {
@@ -722,5 +727,39 @@ public class SampleTreeCompilationMode extends JTree implements SampleTreeI {
     @Override
     public void toggleSortByDateAsc() {
         this.sortByDateAsc = !this.sortByDateAsc;
+    }
+
+    /**
+     * @return the selRow
+     */
+    public int getSelRow() {
+        return selRow;
+    }
+
+    /**
+     * @param selRow the selRow to set
+     */
+    public void setSelRow(int selRow) {
+        this.selRow = selRow;
+    }
+
+    @Override
+    public int getSelRowX() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setSelRowX(int selRowX) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int getSelRowY() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setSelRowY(int selRowY) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

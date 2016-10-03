@@ -59,6 +59,9 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
     private SampleTreeChangeI sampleTreeChange;
     private Object lastNodeSelected;
     private static boolean sortByDateAsc = false;
+    private int selRow;
+    private int selRowX;
+    private int selRowY;
 
     /**
      * Creates a new instance of SampleTreeAnalysisMode
@@ -97,17 +100,8 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
         this.removeAll();
 
         // populate tree
-        // todo: just walk aliquots now that ths mapping is fixed (may 2015)
-//        int saveAliquotNum = -1;
-//        for (int i = 0; i < sample.getFractions().size(); i++) {
         for (int i = 0; i < sample.getActiveAliquots().size(); i++) {
-//            ETFractionInterface tempFraction = sample.getFractions().get(i);
             AliquotInterface tempAliquot = sample.getActiveAliquots().get(i);
-
-//            if (!tempFraction.isRejected()) {
-//                if (saveAliquotNum != tempFraction.getAliquotNumber()) {
-//                    saveAliquotNum = tempFraction.getAliquotNumber();
-            //tempAliquot = sample.getAliquotByNumber(saveAliquotNum);
             aliquotNode = new DefaultMutableTreeNode(tempAliquot);
 
             ((DefaultMutableTreeNode) getModel().getRoot()).add(aliquotNode);
@@ -162,9 +156,6 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
                             tempAliquot.getSampleDateModels().get(index),
                             sampleDateModelNode);
                 }
-
-//                    }
-//                }
             }
         }
 
@@ -272,10 +263,8 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
     public void valueChanged(TreeSelectionEvent e) {
         //Returns the last path element of the selection.
         //This method is useful only when the selection model allows a single selection.
-//        if (!suppressSelectionEvent) {
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) getLastSelectedPathComponent();
-        // april 2016
-        TreePath lastSelected = getSelectionPath();//e.getOldLeadSelectionPath();//   
+        // april 2016 
 
         if (node == null) //Nothing is selected.
         {
@@ -284,10 +273,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
 
         setLastNodeSelected(node);
 
-        //System.out.println(e.getSource());
         Object nodeInfo = node.getUserObject();
-        //sampleTreeChange.sampleTreeChangeAnalysisMode(node);
-        //  see below setSelectionRow(-1);
 
         if (nodeInfo instanceof SampleInterface) {
             // System.out.println(((SampleInterface) nodeInfo).getSampleName());
@@ -305,12 +291,6 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
         }
 
         getSampleTreeChange().sampleTreeChangeAnalysisMode(node);
-
-//            // april 2016
-//            suppressSelectionEvent = true;
-//            setSelectionPath((nodeInfo instanceof CheckBoxNode) ? lastSelected.getParentPath() : e.getNewLeadSelectionPath());
-//            suppressSelectionEvent = false;
-//        }
     }
 
     /**
@@ -399,13 +379,16 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
      */
     @Override
     public void mousePressed(MouseEvent e) {
-        int selRow = getRowForLocation(e.getX(), e.getY());
+        selRowX = e.getX();
+        selRowY = e.getY();
+        selRow = getRowForLocation(e.getX(), e.getY());
         TreePath selPath = getPathForLocation(e.getX(), e.getY());
 
         if (selRow != -1) {
             final DefaultMutableTreeNode node = (DefaultMutableTreeNode) selPath.getLastPathComponent();
             final Object nodeInfo = node.getUserObject();
             if (!e.isPopupTrigger() && (e.getButton() == MouseEvent.BUTTON1)) {
+                
             } else if ((e.isPopupTrigger()) || (e.getButton() == MouseEvent.BUTTON3)) {
                 setSelectionPath(selPath);
                 if (nodeInfo instanceof AliquotInterface) {
@@ -804,5 +787,47 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
      */
     public void toggleSortByDateAsc() {
         this.sortByDateAsc = !this.sortByDateAsc;
+    }
+
+    /**
+     * @return the selRow
+     */
+    public int getSelRow() {
+        return selRow;
+    }
+
+    /**
+     * @param selRow the selRow to set
+     */
+    public void setSelRow(int selRow) {
+        this.selRow = selRow;
+    }
+
+    /**
+     * @return the selRowX
+     */
+    public int getSelRowX() {
+        return selRowX;
+    }
+
+    /**
+     * @param selRowX the selRowX to set
+     */
+    public void setSelRowX(int selRowX) {
+        this.selRowX = selRowX;
+    }
+
+    /**
+     * @return the selRowY
+     */
+    public int getSelRowY() {
+        return selRowY;
+    }
+
+    /**
+     * @param selRowY the selRowY to set
+     */
+    public void setSelRowY(int selRowY) {
+        this.selRowY = selRowY;
     }
 }

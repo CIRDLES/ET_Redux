@@ -115,8 +115,40 @@ public interface SampleTreeI extends MouseListener, TreeSelectionListener {
     public String collectExpansionHistory();
 
     public void expandToHistory(String expansionHistory);
-    
+
     public void expandAllNodes();
-    
+
     public void toggleSortByDateAsc();
+
+    /**
+     * @return the selRow
+     */
+    public int getSelRow();
+
+    /**
+     * @param selRow the selRow to set
+     */
+    public void setSelRow(int selRow);
+
+    /**
+     * @return the selRowX
+     */
+    public int getSelRowX();
+
+    /**
+     * @param selRowX the selRowX to set
+     */
+    public void setSelRowX(int selRowX);
+    
+    /**
+     * @return the selRowY
+     */
+    public int getSelRowY();
+
+    /**
+     * @param selRowY the selRowY to set
+     */
+    public void setSelRowY(int selRowY);
+    
+    
 }
