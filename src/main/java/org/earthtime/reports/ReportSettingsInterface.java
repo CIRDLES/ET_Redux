@@ -546,7 +546,8 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
         }
 
         // end of special case for units of date
-        int countOfAllColumns = getCountOfAllColumns() + 2;
+        // oct 2016 added another cell to flag whether fraction is filtered = true or false
+        int countOfAllColumns = getCountOfAllColumns() + 2 + 1;
 
         for (int i = 0; i < retVal.length; i++) {
             retVal[i] = new String[countOfAllColumns];
@@ -649,6 +650,13 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
 
                                     retVal[fractionRowCount][1]
                                             = sample.getAliquotByNumber(f.getAliquotNumber()).getAliquotName();
+                                    
+                                    // oct 2016 filtering true = not filtered out
+                                    if (sample.getFilteredFractionIDs().contains(f.getFractionID())){
+                                        retVal[fractionRowCount][countOfAllColumns - 1] = "true";
+                                    } else  {
+                                        retVal[fractionRowCount][countOfAllColumns - 1] = "false";
+                                    }
                                 }
 
                                 // field contains the Value in field[0]

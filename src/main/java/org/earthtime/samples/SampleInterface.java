@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.SortedSet;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -347,7 +348,7 @@ public interface SampleInterface {
 //
 //        return retVal;
 //        
-                
+
         // sept 2016
         return getSampleAnalysisType().startsWith("LAICPMS");
     }
@@ -474,8 +475,8 @@ public interface SampleInterface {
      * @return the calculateTWrhoForLegacyData
      */
     public abstract boolean isCalculateTWrhoForLegacyData();
-    
-    public default boolean isReferenceMaterial(){
+
+    public default boolean isReferenceMaterial() {
         boolean retVal = false;
         retVal = (getFractions().get(0).isStandard() || getFractions().get(0).isSecondaryStandard());
         return retVal;
@@ -1315,6 +1316,20 @@ public interface SampleInterface {
 
         return retval;
     }
+    
+        /**
+     *
+     * @return
+     */
+    public default Vector<ETFractionInterface> getUpbFractionsReferenceMaterial() {
+        Vector<ETFractionInterface> retval = new Vector<>();
+
+        getFractions().stream().filter((f) -> (f.isStandard())).forEach((f) -> {
+            retval.add(f);
+        });
+
+        return retval;
+    }
 
     /**
      *
@@ -2076,4 +2091,14 @@ public interface SampleInterface {
 
         return retVal;
     }
+
+    /**
+     * @return the filteredFractionIDs
+     */
+    public SortedSet<String> getFilteredFractionIDs();
+
+    /**
+     * @param filteredFractionIDs the filteredFractionIDs to set
+     */
+    public void setFilteredFractionIDs(SortedSet<String> filteredFractionIDs);
 }

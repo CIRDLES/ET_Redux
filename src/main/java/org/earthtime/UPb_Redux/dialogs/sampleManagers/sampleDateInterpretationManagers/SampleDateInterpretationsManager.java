@@ -28,9 +28,12 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.text.DecimalFormat;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.Vector;
 import javax.swing.Icon;
 import javax.swing.JCheckBoxMenuItem;
@@ -214,8 +217,8 @@ public class SampleDateInterpretationsManager extends DialogEditor
         dateTreeByAliquot_ScrollPane.setViewportView((Component) dateTreeByAliquot);
         if (!doReScale) {
             dateTreeByAliquot.expandToHistory(expansionHistory);
-            ((JTree)dateTreeByAliquot).setSelectionRow(selRow);
-            ((JTree)dateTreeByAliquot).scrollRowToVisible(selRow);
+            ((JTree) dateTreeByAliquot).setSelectionRow(selRow);
+            ((JTree) dateTreeByAliquot).scrollRowToVisible(selRow);
 //            dateTreeByAliquot.mousePressed(new MouseEvent((Component)dateTreeByAliquot, 0, System.currentTimeMillis(), MouseEvent.BUTTON1, selRowX, selRowY, 1, false));
 //            ((PlottingDetailsDisplayInterface)concordiaGraphPanel).refreshPanel(true, false);
         }
@@ -710,12 +713,24 @@ public class SampleDateInterpretationsManager extends DialogEditor
     public void performFilteringPerSliders() {
         Vector<ETFractionInterface> filteredFractions = filterActiveUPbFractions(sample.getUpbFractionsUnknown());
 
+        // oct 2016 collect filtered fractions (those that still count) so that report table can show filtered out
+        SortedSet<String> filteredFractionIDs = Collections.synchronizedSortedSet(new TreeSet<>());
+        for (int i = 0; i < filteredFractions.size(); i++) {
+            filteredFractionIDs.add(filteredFractions.get(i).getFractionID());
+        }
+        //need to also include reference material as all filtered in for report table
+        Vector<ETFractionInterface> filteredRefMats = sample.getUpbFractionsReferenceMaterial();
+        for (int i = 0; i < filteredRefMats.size(); i++) {
+            filteredFractionIDs.add(filteredRefMats.get(i).getFractionID());
+        }
+
+        sample.setFilteredFractionIDs(filteredFractionIDs);
+
         ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
                 setFilteredFractions(filteredFractions);
 
         ((DateProbabilityDensityPanel) probabilityPanel).//
                 setSelectedFractions(filteredFractions);
-//                probabilityChartOptions.put(slider.getName(), Integer.toString(slider.getValue()));
 
         // fire off date model to filter its deselected fractions
         try {
@@ -2553,8 +2568,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
         } else if (nodeInfo instanceof ValueModel) { // sample date model *****************************
             // get aliquot and retrieve subset of fractions for this sample date
             Object aliquotNodeInfo
-                    = 
-                    ((DefaultMutableTreeNode) ((TreeNode) node).getParent()).getUserObject();
+                    = ((DefaultMutableTreeNode) ((TreeNode) node).getParent()).getUserObject();
 
             if (graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab("Concordia")) {
 

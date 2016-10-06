@@ -21,6 +21,7 @@ package org.earthtime.projects;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.SortedSet;
 import java.util.Vector;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.ReduxConstants.ANALYSIS_PURPOSE;
@@ -472,6 +473,16 @@ public class ProjectSample implements//
             isotopeStyle = "UPb";
         }
         return isotopeStyle;
+    }
+
+    @Override
+    public SortedSet<String> getFilteredFractionIDs() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setFilteredFractionIDs(SortedSet<String> filteredFractionIDs) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

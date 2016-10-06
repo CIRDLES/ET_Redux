@@ -193,12 +193,12 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
     }
 
     public void forceVerticalScrollToShowSpecificRow(String lastAcquiredFractionID) {
-        ((ReportPainter)reportBody).setLastAcquiredFractionID(lastAcquiredFractionID);
+        ((ReportPainter) reportBody).setLastAcquiredFractionID(lastAcquiredFractionID);
         repaint();
-        
-        if (lastAquiredTableRowObject != null){
+
+        if (lastAquiredTableRowObject != null) {
             int bottomPixelCount = lastAquiredTableRowObject.getBottomPixelCount();
-            
+
             System.out.println("BOTTOM = " + bottomPixelCount);
         }
 //        reportFractionIDsScrollPane.getVerticalScrollBar().setValue(reportFractionIDsScrollPane.getVerticalScrollBar().getMaximum());
@@ -322,7 +322,8 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
         toggleMeasButton.setBounds(1, 2, fractionColumnWidth - 3, lineHeight - 3);
 
         int drawnWidth = 3;
-        for (int c = 3; c < reportFractions[0].length; c++) {
+        // oct 2016 added -1 for filtering cell added
+        for (int c = 3; c < reportFractions[0].length - 1; c++) {
             float colWidth = calculateColumnWidth(c) * COLUMN_WIDTH_ADJUST_FACTOR;
             sortButtons.get(c - 3).setBounds( //
                     drawnWidth + 2, DATATABLE_TOP_HEIGHT - lineHeight - 1, (int) colWidth + 4, lineHeight - 3);
@@ -395,11 +396,12 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
 
         // then pre-process to determine sizes of panels             
         float width = 0;
-        for (int i = 2; i < reportFractions[0].length; i++) {
+        // oct 2016 added -1 for filtering cell added
+        for (int i = 2; i < reportFractions[0].length - 1; i++) {
             width += calculateColumnWidth(i) * COLUMN_WIDTH_ADJUST_FACTOR + dividerWidth;
         }
 
-        reportWidth = (int) width + (int) dividerWidth;// + reportFractions[0].length + (int) dividerWidth;
+        reportWidth = (int) width + (int) dividerWidth;
 
         // column #2 is the fractionID column
         fractionColumnWidth
@@ -431,7 +433,8 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
 
         // build sort buttons
         sortButtons = new ArrayList<>();
-        for (int c = 3; c < reportFractions[0].length; c++) {
+        // oct 2016 added -1 for filtering cell added
+        for (int c = 3; c < reportFractions[0].length - 1; c++) {
 
             JButton sortButton = new ET_JButton("\u25B2 \u25BC");
             sortButton.setFont(ReduxConstants.sansSerif_10_Bold);
@@ -820,7 +823,8 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                     if (paintType.equalsIgnoreCase("HEADER")) {
                         colStart = 3;
                     }
-                    for (int c = colStart; c < getReportFractions()[0].length; c++) {
+                    // oct 2016 added -1 for filtering cell added
+                    for (int c = colStart; c < reportFractions[0].length - 1; c++) {
                         float colWidth = calculateColumnWidth(c) * COLUMN_WIDTH_ADJUST_FACTOR;
 
                         catName = getReportFractions()[0][c].trim();
@@ -847,19 +851,20 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                     drawnHeight += lineHeight;
                     int accumulateDrawnHeight = 0;
 
-                    for (int c = colStart; c < getReportFractions()[0].length; c++) {
+                    // oct 2016 added -1 for filtering cell added
+                    for (int c = colStart; c < reportFractions[0].length - 1; c++) {
                         float colWidth = calculateColumnWidth(c) * COLUMN_WIDTH_ADJUST_FACTOR;
 
                         accumulateDrawnHeight = 0;
 
-                        g2D.drawString(getReportFractions()[1][c],
+                        g2D.drawString(reportFractions[1][c],
                                 drawnWidth,
                                 drawnHeight + topMargin + lineHeight + accumulateDrawnHeight);
-                        g2D.drawString(getReportFractions()[2][c],
+                        g2D.drawString(reportFractions[2][c],
                                 drawnWidth,
                                 drawnHeight + topMargin + lineHeight + accumulateDrawnHeight + 11);
                         accumulateDrawnHeight += 11;
-                        g2D.drawString(getReportFractions()[3][c],
+                        g2D.drawString(reportFractions[3][c],
                                 drawnWidth,
                                 drawnHeight + topMargin + lineHeight + accumulateDrawnHeight + 11);
                         accumulateDrawnHeight += 11;
@@ -867,8 +872,8 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                         // handle footnote letters, which are stored in reportFractions[5]
                         if (!reportFractions[5][c].equalsIgnoreCase("")) {
                             g2D.setFont(footnoteFont);
-                            g2D.drawString(getReportFractions()[5][c],//superScript for footnote
-                                    drawnWidth + getReportFractions()[3][c].trim().length() * COLUMN_WIDTH_ADJUST_FACTOR,//6.8f,
+                            g2D.drawString(reportFractions[5][c],//superScript for footnote
+                                    drawnWidth + reportFractions[3][c].trim().length() * COLUMN_WIDTH_ADJUST_FACTOR,//6.8f,
                                     drawnHeight + topMargin + lineHeight + accumulateDrawnHeight - 4);//7);
                             g2D.setFont(numberFont);
                         }
@@ -892,7 +897,6 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                     accumulateDrawnHeight = 0;
 
                     overallWidth = drawnWidth - 3;
-//                    reportWidth = (int) overallWidth + (int) dividerWidth;// + 200;
 
                     // draw horizontal line under column titles
                     g2D.setColor(Color.black);
@@ -909,7 +913,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                 // paint fractions and set up interactivity
                 if (paintType.equalsIgnoreCase("BOTH") || paintType.equalsIgnoreCase("BODY") || paintType.equalsIgnoreCase("FRACTION")) {
 
-                    if ((getReportFractions().length < fractionDataStartRow + 1)//
+                    if ((reportFractions.length < fractionDataStartRow + 1)//
                             &&//
                             !paintType.equalsIgnoreCase("FRACTION")) {
                         g2D.drawString(
@@ -921,7 +925,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
 
                         int grayRow = 0;
 
-                        for (int row = fractionDataStartRow; row < getReportFractions().length; row++) {
+                        for (int row = fractionDataStartRow; row < reportFractions.length; row++) {
                             drawnWidth = leftMargin;
 
                             // april 2012 reportFractions will contain only accepted OR rejected, thus here check for printing fractions
@@ -929,7 +933,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                                 grayRow++;
                                 // for each aliquot                                
                                 if (!reportFractions[row][1].equalsIgnoreCase(saveAliquotName)) {
-                                    saveAliquotName = getReportFractions()[row][1];
+                                    saveAliquotName = reportFractions[row][1];
 
                                     g2D.setColor(ReduxConstants.myAliquotGrayColor);
 
@@ -939,14 +943,14 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
 
                                     if (!paintType.equalsIgnoreCase("FRACTION")) {
                                         // aliquot  name
-                                        g2D.drawString(getReportFractions()[row][1],
+                                        g2D.drawString(reportFractions[row][1],
                                                 leftMargin,
                                                 drawnHeight + topMargin + lineHeight);
                                     }
 
                                     // build map of row to fraction objects and aliquot objects
                                     if ((sample != null) && paintType.equalsIgnoreCase("FRACTION")) {
-                                        aliquot = sample.getAliquotByName(getReportFractions()[row][1].trim());
+                                        aliquot = sample.getAliquotByName(reportFractions[row][1].trim());
                                         verticalPixelFractionMap.add( //
                                                 new TableRowObject( //
                                                         drawnHeight + topMargin + lineHeight + 1,//
@@ -978,7 +982,9 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                                 }
 
                                 // fraction data
-                                int columnCount = getReportFractions()[0].length;
+                                // oct 2016 -1 added in to compensate for additional cell that records true/false filtering
+                                int columnCount = reportFractions[0].length - 1;
+                                boolean showAsFilteredOut = (reportFractions[row][columnCount].compareToIgnoreCase("false") == 0);
                                 int columnStart = 2;
                                 if (paintType.equalsIgnoreCase("FRACTION")) {
                                     columnCount = 3;
@@ -995,7 +1001,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
 
                                     ETFractionInterface fraction = null;
                                     try {
-                                        fraction = sample.getFractionByIDAndAliquotNumber(getReportFractions()[row][2].trim(), ((ReduxAliquotInterface) aliquot).getAliquotNumber());
+                                        fraction = sample.getFractionByIDAndAliquotNumber(reportFractions[row][2].trim(), ((ReduxAliquotInterface) aliquot).getAliquotNumber());
                                         TableRowObject currentFractionTableRowObject
                                                 = new TableRowObject( //
                                                         drawnHeight + topMargin + lineHeight + 1,//
@@ -1048,10 +1054,18 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                                 }
 
                                 g2D.setFont(numberFont);
-                                g2D.setColor(Color.BLACK);
+//                                g2D.setColor(Color.BLACK);
+
                                 for (int c = columnStart; c < columnCount; c++) {
+                                    // oct 2016 filtering
+                                    if (showAsFilteredOut) {
+                                        g2D.setColor(Color.LIGHT_GRAY);
+                                    } else {
+                                        g2D.setColor(Color.BLACK);
+                                    }
+
                                     try {
-                                        g2D.drawString(getReportFractions()[row][c],
+                                        g2D.drawString(reportFractions[row][c],
                                                 leftMargin + drawnWidth,
                                                 drawnHeight + topMargin + lineHeight);
 
@@ -1061,10 +1075,9 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                                                 drawnHeight + topMargin + lineHeight);
                                     }
 
-                                    drawnWidth += getReportFractions()[fractionDataStartRow][c].length() * COLUMN_WIDTH_ADJUST_FACTOR;
+                                    drawnWidth += (reportFractions[fractionDataStartRow][c].length()) * COLUMN_WIDTH_ADJUST_FACTOR;
 
                                     // vertical line
-                                    //if (  ! paintType.equalsIgnoreCase( "FRACTION" ) ) {
                                     g2D.setColor(Color.gray);
 
                                     g2D.drawLine(//
@@ -1072,8 +1085,6 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                                             drawnHeight + topMargin,// + lineHeight, //
                                             (int) (leftMargin + drawnWidth + 4), //
                                             drawnHeight + topMargin + lineHeight + 10);
-                                    //}
-                                    g2D.setColor(Color.black);
 
                                     drawnWidth += dividerWidth;
                                 }
@@ -1081,7 +1092,6 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                                 drawnHeight += lineHeight;
                             }
                         }
-
                     }
 
                     // list out footnotes
@@ -1089,7 +1099,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                         drawnHeight += lineHeight * 3;
                         drawnWidth = leftMargin;
 
-                        for (String item : getReportFractions()[6]) {
+                        for (String item : reportFractions[6]) {
                             if (!item.equals("")) {
                                 // strip out footnote letter
                                 String[] footNote = item.split("&");
@@ -1275,7 +1285,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
 
             Map<TranscodingHints.Key, Float> hints = new HashMap<>();
             hints.put(PDFTranscoder.KEY_WIDTH, new Float(reportWidth));
-            hints.put(PDFTranscoder.KEY_HEIGHT, getReportFractions().length * 20f + 150f);
+            hints.put(PDFTranscoder.KEY_HEIGHT, reportFractions.length * 20f + 150f);
             t.setTranscodingHints(hints);
 
             TranscoderInput input = null;
