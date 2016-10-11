@@ -34,7 +34,7 @@ public interface ReportPainterI {
     public void loadAndShowReportTableData (String fractionIdToFocus);
     
     /**
-     * 
+     *
      * @param performReduction
      * @param inLiveMode the value of inLiveMode
      */

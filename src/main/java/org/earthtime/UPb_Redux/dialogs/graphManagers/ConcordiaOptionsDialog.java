@@ -29,6 +29,7 @@ import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import org.earthtime.UPb_Redux.listeners.ColorChooserListener;
 import org.earthtime.UPb_Redux.user.SampleDateInterpretationGUIOptions;
+import org.earthtime.beans.ET_JButton;
 import org.earthtime.dialogs.DialogEditor;
 
 /**
@@ -382,10 +383,10 @@ public class ConcordiaOptionsDialog extends DialogEditor {
         concordiaTickShape_buttonGroup = new javax.swing.ButtonGroup();
         interceptErrorLineStyle_btnGroup = new javax.swing.ButtonGroup();
         buttonsPanel = new javax.swing.JPanel();
-        close_button = new javax.swing.JButton();
-        restoreDefaults_button = new javax.swing.JButton();
-        save_button = new javax.swing.JButton();
-        revert_button = new javax.swing.JButton();
+        close_button = new ET_JButton();
+        restoreDefaults_button = new ET_JButton();
+        save_button = new ET_JButton();
+        revert_button = new ET_JButton();
         jLabel19 = new javax.swing.JLabel();
         jLabel15 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -508,10 +509,10 @@ public class ConcordiaOptionsDialog extends DialogEditor {
         buttonsPanelLayout.setVerticalGroup(
             buttonsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(buttonsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                .add(save_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 28, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(close_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 28, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(restoreDefaults_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 28, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(revert_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 28, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(save_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 25, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(close_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 25, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(restoreDefaults_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 25, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(revert_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 25, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
 
         jLabel19.setFont(new java.awt.Font("Lucida Grande", 1, 16)); // NOI18N

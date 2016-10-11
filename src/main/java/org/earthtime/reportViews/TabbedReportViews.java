@@ -95,7 +95,6 @@ public class TabbedReportViews extends JTabbedPane {
     public void prepareTabs() {
 
         // default is active fractions
-
         if (sample != null) {
             ((ReportAliquotFractionsView) viewTabulatedAliquotActiveFractions).setSample(sample);
 
@@ -117,6 +116,13 @@ public class TabbedReportViews extends JTabbedPane {
 
             ((ReportAliquotFractionsView) viewTabulatedAliquotRejectedFractions).refreshPanel();
             this.setTitleAt(1, "Rejected Fractions (" + Integer.toString(((ReportAliquotFractionsView) viewTabulatedAliquotRejectedFractions).getReportFractions().length - ReportSettingsInterface.FRACTION_DATA_START_ROW) + ")");
+        }
+    }
+
+    public void repaintTabs() {
+        if (sample != null) {
+            viewTabulatedAliquotActiveFractions.repaint();
+            viewTabulatedAliquotRejectedFractions.repaint();
         }
     }
 

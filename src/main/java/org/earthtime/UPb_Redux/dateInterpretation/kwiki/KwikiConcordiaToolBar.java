@@ -24,7 +24,6 @@ import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import javax.swing.AbstractButton;
@@ -32,12 +31,12 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLayeredPane;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.ConcordiaGraphPanel;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.GraphPanelModeChangeI;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.PlottingDetailsDisplayInterface;
 import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetup;
+import org.earthtime.beans.ET_JButton;
 
 /**
  *
@@ -56,12 +55,13 @@ public class KwikiConcordiaToolBar extends JLayeredPane implements GraphPanelMod
     private JCheckBox concordiaErrorsToggle;
     private final JLayeredPane concordiaGraphPanel;
 
-
-    /** Creates a new instance of KwikiConcordiaToolBar
-     * @param x 
+    /**
+     * Creates a new instance of KwikiConcordiaToolBar
+     *
+     * @param x
      * @param kwikiDateModesSelectorListener
-     * @param concordiaGraphPanel 
-     * @param y  
+     * @param concordiaGraphPanel
+     * @param y
      */
     public KwikiConcordiaToolBar(
             int x,
@@ -85,18 +85,13 @@ public class KwikiConcordiaToolBar extends JLayeredPane implements GraphPanelMod
         SetupZoomToggleButtons();
         SetupOptionsCheckBoxes();
 
-        ((ConcordiaGraphPanel)concordiaGraphPanel).setGraphPanelModeChanger( this);
+        ((ConcordiaGraphPanel) concordiaGraphPanel).setGraphPanelModeChanger(this);
 
     }
 
     private void SetupZoomToggleButtons() {
-        zoomInX2 = new JButton("+");
-        zoomInX2.setOpaque(false);
-        zoomInX2.setForeground(Color.black);
-        zoomInX2.setFont(ReduxConstants.sansSerif_12_Bold);
-        zoomInX2.setBounds(1, 1, 55, 15);
-        zoomInX2.setMargin(new Insets(0, 0, 0, 0));
-
+        zoomInX2 = new ET_JButton("+");
+        zoomInX2.setBounds(1, 1, 55, 16);
 
         zoomInX2.addActionListener((ActionEvent arg0) -> {
             ((ConcordiaGraphPanel) concordiaGraphPanel).performZoom(4.0);
@@ -105,13 +100,8 @@ public class KwikiConcordiaToolBar extends JLayeredPane implements GraphPanelMod
 
         add(zoomInX2, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        zoomOutX2 = new JButton("-");
-        zoomOutX2.setOpaque(false);
-        zoomOutX2.setForeground(Color.black);
-        zoomOutX2.setFont(ReduxConstants.sansSerif_12_Bold);
-        zoomOutX2.setBounds(1, 17, 55, 15);
-        zoomOutX2.setMargin(new Insets(0, 0, 0, 0));
-
+        zoomOutX2 = new ET_JButton("-");
+        zoomOutX2.setBounds(1, 16, 55, 16);
 
         zoomOutX2.addActionListener((ActionEvent arg0) -> {
             ((ConcordiaGraphPanel) concordiaGraphPanel).performZoom(-2.0);
@@ -120,12 +110,8 @@ public class KwikiConcordiaToolBar extends JLayeredPane implements GraphPanelMod
 
         add(zoomOutX2, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        restoreZoom = new JButton("R");
-        restoreZoom.setOpaque(false);
-        restoreZoom.setForeground(Color.black);
-        restoreZoom.setFont(ReduxConstants.sansSerif_12_Bold);
-        restoreZoom.setBounds(1, 32, 55, 15);
-        restoreZoom.setMargin(new Insets(0, 0, 0, 0));
+        restoreZoom = new ET_JButton("Reset");
+        restoreZoom.setBounds(1, 31, 55, 16);
 
         restoreZoom.addActionListener((ActionEvent arg0) -> {
             ((PlottingDetailsDisplayInterface) concordiaGraphPanel).resetPanel(true, false);
@@ -133,14 +119,8 @@ public class KwikiConcordiaToolBar extends JLayeredPane implements GraphPanelMod
 
         add(restoreZoom, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-
-        panToggle = new JButton("Pan");
-        panToggle.setOpaque(false);
-        panToggle.setForeground(Color.black);
-        panToggle.setFont(ReduxConstants.sansSerif_12_Bold);
-        panToggle.setBounds(55, 1, 68, 24);
-        panToggle.setMargin(new Insets(0, 0, 0, 0));
-
+        panToggle = new ET_JButton("Pan");
+        panToggle.setBounds(55, 1, 65, 24);
 
         panToggle.addActionListener((ActionEvent arg0) -> {
             ((ConcordiaGraphPanel) concordiaGraphPanel).setImageMode("PAN");
@@ -149,13 +129,8 @@ public class KwikiConcordiaToolBar extends JLayeredPane implements GraphPanelMod
 
         add(panToggle, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        zoomBoxToggle = new JButton("Zbox");
-        zoomBoxToggle.setOpaque(false);
-        zoomBoxToggle.setForeground(Color.black);
-        zoomBoxToggle.setFont(ReduxConstants.sansSerif_12_Bold);
-        zoomBoxToggle.setBounds(55, 24, 68, 24);
-        zoomBoxToggle.setMargin(new Insets(0, 0, 0, 0));
-
+        zoomBoxToggle = new ET_JButton("Zbox");
+        zoomBoxToggle.setBounds(55, 24, 65, 24);
 
         zoomBoxToggle.addActionListener((ActionEvent arg0) -> {
             ((ConcordiaGraphPanel) concordiaGraphPanel).setImageMode("ZOOM");
@@ -216,9 +191,8 @@ public class KwikiConcordiaToolBar extends JLayeredPane implements GraphPanelMod
         add(concordiaErrorsToggle, javax.swing.JLayeredPane.DEFAULT_LAYER);
     }
 
-
     /**
-     * 
+     *
      * @param g
      */
     @Override
@@ -229,7 +203,7 @@ public class KwikiConcordiaToolBar extends JLayeredPane implements GraphPanelMod
     }
 
     /**
-     * 
+     *
      * @param g2d
      */
     public void paint(Graphics2D g2d) {
@@ -242,7 +216,6 @@ public class KwikiConcordiaToolBar extends JLayeredPane implements GraphPanelMod
 
         DrawBounds(g2d);
 
-
     }
 
     private void DrawBounds(Graphics2D g2d) {
@@ -252,7 +225,7 @@ public class KwikiConcordiaToolBar extends JLayeredPane implements GraphPanelMod
     }
 
     /**
-     * 
+     *
      * @param listener
      */
     @Override
@@ -261,7 +234,7 @@ public class KwikiConcordiaToolBar extends JLayeredPane implements GraphPanelMod
     }
 
     /**
-     * 
+     *
      * @param listener
      */
     @Override
@@ -270,15 +243,15 @@ public class KwikiConcordiaToolBar extends JLayeredPane implements GraphPanelMod
     }
 
     /**
-     * 
+     *
      */
     @Override
-    public void switchToPanMode () {
+    public void switchToPanMode() {
         panToggle.doClick();
     }
 
     /**
-     * 
+     *
      * @param currentGraphAxesSetup
      */
     @Override

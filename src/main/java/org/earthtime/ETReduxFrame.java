@@ -1493,8 +1493,15 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
      */
     @Override
     public void loadAndShowReportTableData(String fractionIdToFocus) {
-
         ((TabbedReportViews) getReportTableTabbedPane()).prepareTabs();
+    }
+
+    /**
+     *
+     */
+    @Override
+    public void refreshReportTableData() {
+        ((TabbedReportViews) getReportTableTabbedPane()).refreshTabs();
     }
 
     private void openTheSample(File selFile, boolean checkSavedStatus) {

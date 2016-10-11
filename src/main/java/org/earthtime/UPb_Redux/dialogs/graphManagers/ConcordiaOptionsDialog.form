@@ -375,10 +375,10 @@
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="103" alignment="0" groupAlignment="3" attributes="0">
-                  <Component id="save_button" alignment="3" min="-2" pref="28" max="-2" attributes="0"/>
-                  <Component id="close_button" alignment="3" min="-2" pref="28" max="-2" attributes="0"/>
-                  <Component id="restoreDefaults_button" alignment="3" min="-2" pref="28" max="-2" attributes="0"/>
-                  <Component id="revert_button" alignment="3" min="-2" pref="28" max="-2" attributes="0"/>
+                  <Component id="save_button" alignment="3" min="-2" pref="25" max="-2" attributes="0"/>
+                  <Component id="close_button" alignment="3" min="-2" pref="25" max="-2" attributes="0"/>
+                  <Component id="restoreDefaults_button" alignment="3" min="-2" pref="25" max="-2" attributes="0"/>
+                  <Component id="revert_button" alignment="3" min="-2" pref="25" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -400,6 +400,9 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="close_buttonActionPerformed"/>
           </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new ET_JButton()"/>
+          </AuxValues>
         </Component>
         <Component class="javax.swing.JButton" name="restoreDefaults_button">
           <Properties>
@@ -417,6 +420,9 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="restoreDefaults_buttonActionPerformed"/>
           </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new ET_JButton()"/>
+          </AuxValues>
         </Component>
         <Component class="javax.swing.JButton" name="save_button">
           <Properties>
@@ -434,6 +440,9 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="save_buttonActionPerformed"/>
           </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new ET_JButton()"/>
+          </AuxValues>
         </Component>
         <Component class="javax.swing.JButton" name="revert_button">
           <Properties>
@@ -451,6 +460,9 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="revert_buttonActionPerformed"/>
           </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new ET_JButton()"/>
+          </AuxValues>
         </Component>
       </SubComponents>
     </Container>

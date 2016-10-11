@@ -608,7 +608,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
 
         normedProbabilityLayeredPane.add(probabilityPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        performFilteringPerSliders();
+        performFilteringPerSliders(false);
 
     } // initNormedProbabilityPanel
 
@@ -645,7 +645,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
                 // test for linkage
                 updateSlidersStatus(slider);
 
-                performFilteringPerSliders();
+                performFilteringPerSliders(false);
 
 ////                ((DateProbabilityDensityPanel) probabilityPanel).//
 ////                        setSelectedFractions(filterActiveUPbFractions(sample.getUpbFractionsUnknown()));
@@ -682,36 +682,28 @@ public class SampleDateInterpretationsManager extends DialogEditor
 
                 probabilityChartOptions.put(slider.getName(), Integer.toString(slider.getValue()));
 
-                performFilteringPerSliders();
-////                // oct 2014 make choices stick to data table
-////                Vector<ETFractionInterface> filteredFractions = filterActiveUPbFractions(sample.getUpbFractionsUnknown());
-////                // April 2016 do not reject fractions, merely disappear them from plots
-////                // TODO: button that allows filtering to be on
-//////                sample.updateSetOfActiveFractions(filteredFractions);
-//////                // oct 2014 repaint table
-//////                parentFrame.updateReportTable();
-//////                Vector<ETFractionInterface> filteredFractions = filterActiveUPbFractions(((DateProbabilityDensityPanel) probabilityPanel).getSelectedFractions());
-////                
-////                ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
-////                        setFilteredFractions(filteredFractions);
-////
-////                ((DateProbabilityDensityPanel) probabilityPanel).//
-////                        setSelectedFractions(filteredFractions);
-////                probabilityChartOptions.put(slider.getName(), Integer.toString(slider.getValue()));
-////
-////                // fire off date model to filter its deselected fractions
-////                try {
-////                    dateTreeByAliquot.performLastUserSelectionOfSampleDate();
-////                } catch (Exception selectionError) {
-////                }
-////                ((DateProbabilityDensityPanel) probabilityPanel).prepareAndPaintPanel();
+                performFilteringPerSliders(false);
+
+                // oct 2016
+                parentFrame.refreshReportTableData();
+
                 wasChanging = false;
             }
         }
     }
 
-    public void performFilteringPerSliders() {
-        Vector<ETFractionInterface> filteredFractions = filterActiveUPbFractions(sample.getUpbFractionsUnknown());
+    /**
+     *
+     * @param clearFiltering the value of clearFiltering
+     */
+    public void performFilteringPerSliders(boolean clearFiltering) {
+
+        Vector<ETFractionInterface> filteredFractions;
+        if (clearFiltering) {
+            filteredFractions = sample.getUpbFractionsUnknown();
+        } else {
+            filteredFractions = filterActiveUPbFractions(sample.getUpbFractionsUnknown());
+        }
 
         // oct 2016 collect filtered fractions (those that still count) so that report table can show filtered out
         SortedSet<String> filteredFractionIDs = Collections.synchronizedSortedSet(new TreeSet<>());
@@ -1034,6 +1026,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         jLabel2 = new javax.swing.JLabel();
         commonLeadCorrectionSelectorPDF_checkbox = new javax.swing.JCheckBox();
         DatePbCorrSchemeA_radio = new javax.swing.JRadioButton();
+        clearFilters_button =  new ET_JButton();
         jPanel1 = new javax.swing.JPanel();
         writeConcordiaPDF_button =  new ET_JButton();
         close_button =  new ET_JButton();
@@ -1657,7 +1650,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         positivePctDiscordance_text.setAlignmentX(0.0F);
         positivePctDiscordance_text.setAlignmentY(0.0F);
         positivePctDiscordance_text.setBorder(null);
-        probabilityToolPanel.add(positivePctDiscordance_text, new org.netbeans.lib.awtextra.AbsoluteConstraints(568, 45, 160, 15));
+        probabilityToolPanel.add(positivePctDiscordance_text, new org.netbeans.lib.awtextra.AbsoluteConstraints(586, 45, 130, 15));
 
         negativePctDiscordance_text.setBackground(new java.awt.Color(241, 230, 255));
         negativePctDiscordance_text.setFont(new java.awt.Font("Arial", 1, 10)); // NOI18N
@@ -1666,7 +1659,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         negativePctDiscordance_text.setAlignmentX(0.0F);
         negativePctDiscordance_text.setAlignmentY(0.0F);
         negativePctDiscordance_text.setBorder(null);
-        probabilityToolPanel.add(negativePctDiscordance_text, new org.netbeans.lib.awtextra.AbsoluteConstraints(347, 45, 160, 15));
+        probabilityToolPanel.add(negativePctDiscordance_text, new org.netbeans.lib.awtextra.AbsoluteConstraints(365, 45, 130, 15));
 
         pctUncertainty_text.setBackground(new java.awt.Color(241, 230, 255));
         pctUncertainty_text.setFont(new java.awt.Font("Arial", 1, 10)); // NOI18N
@@ -1793,6 +1786,20 @@ public class SampleDateInterpretationsManager extends DialogEditor
         DatePbCorrSchemeA_radio.setActionCommand("bestAge");
         DatePbCorrSchemeA_radio.setName("PbcCorr_UPb_Date"); // NOI18N
         probabilityToolPanel.add(DatePbCorrSchemeA_radio, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 33, 80, 30));
+
+        clearFilters_button.setBackground(new java.awt.Color(255, 255, 255));
+        clearFilters_button.setFont(new java.awt.Font("Helvetica", 1, 10)); // NOI18N
+        clearFilters_button.setText("Clear Filters");
+        clearFilters_button.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        clearFilters_button.setContentAreaFilled(false);
+        clearFilters_button.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        clearFilters_button.setOpaque(true);
+        clearFilters_button.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                clearFilters_buttonActionPerformed(evt);
+            }
+        });
+        probabilityToolPanel.add(clearFilters_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(505, 45, 75, 20));
 
         normedProbabilityLayeredPane.add(probabilityToolPanel);
         probabilityToolPanel.setBounds(0, 560, 920, 70);
@@ -2200,12 +2207,15 @@ private void zoomInProbability_buttonActionPerformed (java.awt.event.ActionEvent
 }//GEN-LAST:event_zoomInProbability_buttonActionPerformed
 
 private void resetGraphProbability_buttonActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetGraphProbability_buttonActionPerformed
-    positivePctDiscordance_slider.setValue(100);
-    negativePctDiscordance_slider.setValue(-100);
-    percentUncertainty_slider.setValue(100);
 
-    ((DateProbabilityDensityPanel) probabilityPanel).//
-            setSelectedFractions(filterActiveUPbFractions(sample.getUpbFractionsUnknown()));
+// oct 2016 removed this behavior and moved it to new button "clear filters"
+
+//    positivePctDiscordance_slider.setValue(100);
+//    negativePctDiscordance_slider.setValue(-100);
+//    percentUncertainty_slider.setValue(100);
+//
+//    ((DateProbabilityDensityPanel) probabilityPanel).//
+//            setSelectedFractions(filterActiveUPbFractions(sample.getUpbFractionsUnknown()));
 
     ((PlottingDetailsDisplayInterface) probabilityPanel).refreshPanel(true, false);
 }//GEN-LAST:event_resetGraphProbability_buttonActionPerformed
@@ -2369,6 +2379,16 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
         refreshSampleDateInterpretations(false, false);
     }//GEN-LAST:event_sortFractionsDateAsc_menuItemCheckBoxActionPerformed
 
+    private void clearFilters_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearFilters_buttonActionPerformed
+        negativePctDiscordance_slider.setValue(-100);
+        positivePctDiscordance_slider.setValue(100);
+        percentUncertainty_slider.setValue(100);
+
+        performFilteringPerSliders(true);
+
+        parentFrame.refreshReportTableData();
+    }//GEN-LAST:event_clearFilters_buttonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JRadioButton DatePbCorrSchemeA_radio;
     private javax.swing.JRadioButton ageBest_radio;
@@ -2381,6 +2401,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
     private javax.swing.JLayeredPane any3LayeredPane;
     private javax.swing.JTextField binWidth_text;
     private javax.swing.JMenu choosePDFPeaks_menu;
+    private javax.swing.JButton clearFilters_button;
     private javax.swing.JButton close_button;
     private javax.swing.JCheckBox commonLeadCorrectionSelectorPDF_checkbox;
     private javax.swing.JCheckBox commonLeadCorrectionSelector_checkbox;
@@ -2946,35 +2967,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
     }
 
     private Vector<ETFractionInterface> filterActiveUPbFractions(Vector<ETFractionInterface> fractions) {
-//
-//        Vector<ETFractionInterface> filteredFractions = new Vector<>();
-//
-//        String dateName = ((DateProbabilityDensityPanel) probabilityPanel).getChosenDateName();
-//
-//        for (ETFractionInterface f : fractions) {
-//            boolean doAddFraction = !f.isRejected();
-//            double pctDiscordance = f.getRadiogenicIsotopeDateByName(RadDates.percentDiscordance).getValue().doubleValue();
-//
-//            if (pctDiscordance >= 0.0) {  //
-//                // positive percent discordance
-//                doAddFraction = doAddFraction && (pctDiscordance <= positivePctDiscordance_slider.getValue());
-//            } else {
-//                // negative percent discordance
-//                doAddFraction = doAddFraction && (pctDiscordance >= negativePctDiscordance_slider.getValue());
-//            }
-//
-//            doAddFraction = doAddFraction //
-//                    && f.getRadiogenicIsotopeDateByName(dateName).getOneSigmaPct().doubleValue() //
-//                    <= percentUncertainty_slider.getValue();
-//
-//            //oct 2014
-//            doAddFraction = doAddFraction //
-//                    && f.getRadiogenicIsotopeDateByName(dateName).getOneSigmaPct().doubleValue() != 0.0;
-//
-//            if (doAddFraction) {
-//                filteredFractions.add(f);
-//            }
-//        }
+
         return SampleDateInterpretationsUtilities.filterActiveUPbFractions(//
                 fractions,//
                 ((DateProbabilityDensityPanel) probabilityPanel).getChosenDateName(),//

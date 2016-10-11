@@ -198,12 +198,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
 
         if (lastAquiredTableRowObject != null) {
             int bottomPixelCount = lastAquiredTableRowObject.getBottomPixelCount();
-
-            System.out.println("BOTTOM = " + bottomPixelCount);
         }
-//        reportFractionIDsScrollPane.getVerticalScrollBar().setValue(reportFractionIDsScrollPane.getVerticalScrollBar().getMaximum());
-//        reportFractionIDsScrollPane.validate();
-//        repaint();
     }
 
     /**
@@ -303,7 +298,6 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
     }
 
     private void reSizeScrollPanes() {
-//        reportBodyScrollPane.setSize(getWidth() - fractionColumnWidth, getHeight() - DATATABLE_TOP_HEIGHT);
         //July 2016 adapted to handle narrow tables per LiveData 
         reportBodyScrollPane.setSize(Math.min(reportWidth - fractionColumnWidth + fractionButtonMargin + 2 * (int) dividerWidth, getWidth() - fractionColumnWidth), getHeight() - DATATABLE_TOP_HEIGHT);
         reportBodyScrollPane.revalidate();
@@ -1095,6 +1089,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                     }
 
                     // list out footnotes
+                    g2D.setColor(Color.BLACK);
                     if (!paintType.equalsIgnoreCase("FRACTION")) {
                         drawnHeight += lineHeight * 3;
                         drawnWidth = leftMargin;
