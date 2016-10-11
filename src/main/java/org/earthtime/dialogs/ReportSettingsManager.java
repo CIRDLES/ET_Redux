@@ -18,7 +18,6 @@
  */
 package org.earthtime.dialogs;
 
-import org.earthtime.dialogs.DialogEditor;
 import java.awt.Component;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
@@ -37,9 +36,10 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.earthtime.UPb_Redux.reports.ReportCategory;
 import org.earthtime.UPb_Redux.reports.ReportColumn;
+import org.earthtime.beans.ET_JButton;
+import org.earthtime.dataDictionaries.ReportSpecifications;
 import org.earthtime.reportViews.ReportListItemI;
 import org.earthtime.reportViews.ReportPainterI;
-import org.earthtime.dataDictionaries.ReportSpecifications;
 import org.earthtime.reports.ReportCategoryInterface;
 import org.earthtime.reports.ReportColumnInterface;
 import org.earthtime.reports.ReportSettingsInterface;
@@ -351,20 +351,20 @@ public class ReportSettingsManager extends DialogEditor {
         uncertaintyMode = new javax.swing.ButtonGroup();
         valueMode = new javax.swing.ButtonGroup();
         categories_scrollPane = new javax.swing.JScrollPane();
-        categories_list = new javax.swing.JList<ReportListItemI>();
+        categories_list = new javax.swing.JList<>();
         buttonsPanel = new javax.swing.JPanel();
-        close_button = new javax.swing.JButton();
-        apply_button = new javax.swing.JButton();
+        close_button = new ET_JButton();
+        apply_button = new ET_JButton();
         jLabel1 = new javax.swing.JLabel();
-        categoryMoveUp_button = new javax.swing.JButton();
-        categoryMoveDown_button = new javax.swing.JButton();
-        categoryHideShow_button = new javax.swing.JButton();
+        categoryMoveUp_button = new ET_JButton();
+        categoryMoveDown_button = new ET_JButton();
+        categoryHideShow_button = new ET_JButton();
         columns_scrollPane = new javax.swing.JScrollPane();
-        columns_list = new javax.swing.JList<ReportListItemI>();
+        columns_list = new javax.swing.JList<>();
         jLabel2 = new javax.swing.JLabel();
-        columnHideShow_button = new javax.swing.JButton();
-        columnMoveDown_button = new javax.swing.JButton();
-        columnMoveUp_button = new javax.swing.JButton();
+        columnHideShow_button = new ET_JButton();
+        columnMoveDown_button = new ET_JButton();
+        columnMoveUp_button = new ET_JButton();
         jLabel3 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jPanel1 = new javax.swing.JPanel();
@@ -379,9 +379,9 @@ public class ReportSettingsManager extends DialogEditor {
         unctModeArbitrary_rButton = new javax.swing.JRadioButton();
         valueModeSigFig_rButton = new javax.swing.JRadioButton();
         valueModeArbitrary_rButton = new javax.swing.JRadioButton();
-        unitsChooser_ComboBox = new javax.swing.JComboBox<String>();
-        categoryShowAllColumns_button = new javax.swing.JButton();
-        categoryHideAllColumns_button = new javax.swing.JButton();
+        unitsChooser_ComboBox = new javax.swing.JComboBox<>();
+        categoryShowAllColumns_button = new ET_JButton();
+        categoryHideAllColumns_button = new ET_JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Report Settings Manager");
@@ -439,8 +439,8 @@ public class ReportSettingsManager extends DialogEditor {
         buttonsPanelLayout.setVerticalGroup(
             buttonsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(buttonsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                .add(apply_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 28, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(close_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 28, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(apply_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 25, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(close_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 25, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
 
         jLabel1.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
@@ -712,11 +712,11 @@ public class ReportSettingsManager extends DialogEditor {
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, layout.createSequentialGroup()
-                        .add(categoryMoveUp_button)
+                        .add(categoryMoveUp_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 25, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(categoryMoveDown_button)
+                        .add(categoryMoveDown_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 25, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(categoryHideShow_button))
+                        .add(categoryHideShow_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 25, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                     .add(layout.createSequentialGroup()
                         .add(categories_scrollPane, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 120, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
@@ -727,15 +727,15 @@ public class ReportSettingsManager extends DialogEditor {
                         .add(columns_scrollPane, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 277, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED))
                     .add(layout.createSequentialGroup()
-                        .add(columnMoveUp_button)
+                        .add(columnMoveUp_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 25, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                        .add(columnMoveDown_button)
+                        .add(columnMoveDown_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 25, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .add(columnHideShow_button)
+                        .add(columnHideShow_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 25, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .add(63, 63, 63)
-                        .add(categoryShowAllColumns_button)
+                        .add(categoryShowAllColumns_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 25, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                        .add(categoryHideAllColumns_button)
+                        .add(categoryHideAllColumns_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 25, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .add(12, 12, 12)))
                 .add(jLabel3)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)

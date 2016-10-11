@@ -232,7 +232,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
         saveMonitoredTime = 0L;
         tripoliFractions = new TreeSet<>();
 
-        parentDimension = new Dimension(2050, 1275);
+        parentDimension = new Dimension(2050, 1300);
 
         initView();
     }
@@ -335,6 +335,13 @@ public class AbstractDataMonitorView extends AbstractRawDataView
 
         this.add(rawDataFilePathTextArea, JLayeredPane.DEFAULT_LAYER);
 
+        reportTableTabbedPane = new TabbedReportViews(uPbReduxFrame, project.getSuperSample());
+        ((TabbedReportViews) reportTableTabbedPane).initializeTabs();
+        ((TabbedReportViews) reportTableTabbedPane).prepareTabs();
+
+        reportTableTabbedPane.setBounds(leftMargin, topMargin + 705, 1930, 500);
+        this.add(reportTableTabbedPane, LAYER_FIVE);
+
         if (tripoliFractions.size() > 0) {
 
             if (showSessions) {
@@ -351,13 +358,6 @@ public class AbstractDataMonitorView extends AbstractRawDataView
         buttonFactory();
 
         savedCountOfFractions = tripoliFractions.size();
-
-        reportTableTabbedPane = new TabbedReportViews(uPbReduxFrame, project.getSuperSample());
-        ((TabbedReportViews) reportTableTabbedPane).initializeTabs();
-        ((TabbedReportViews) reportTableTabbedPane).prepareTabs();
-
-        reportTableTabbedPane.setBounds(leftMargin, topMargin + 705, 1930, 500);
-        this.add(reportTableTabbedPane, LAYER_FIVE);
 
         this.add(mostRecentFractionData);
 
@@ -460,7 +460,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
         // show rawdatafile path
         mostRecentFractionData = new JLabel("Latest:");
 
-        mostRecentFractionData.setBounds(leftMargin -10, topMargin + 648, 650, 21);
+        mostRecentFractionData.setBounds(leftMargin - 10, topMargin + 648, 650, 21);
         mostRecentFractionData.setBorder(new LineBorder(Color.black));
 
         mostRecentFractionData.setForeground(Color.blue);
@@ -590,7 +590,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
         }
 
         setConcordiaBounds(showSessions ? 725 : leftMargin + 135, showSessions ? 620 : 900, 625);
-        
+
         kwikiConcordiaToolBar = new KwikiConcordiaToolBar(//
                 940, topMargin + concordiaGraphPanel.getHeight() + topMargin + 50, concordiaGraphPanel, null);
 
@@ -616,6 +616,8 @@ public class AbstractDataMonitorView extends AbstractRawDataView
         showFilteredFractions_checkbox.setFont(new java.awt.Font("SansSerif", 1, 10));
         showFilteredFractions_checkbox.setText("<html>Filtering ON<br> </html>");
         showFilteredFractions_checkbox.setBounds(leftMargin + 1075, topMargin + 660, 120, 25);
+        showFilteredFractions_checkbox.setOpaque(true);
+        showFilteredFractions_checkbox.setBackground(Color.white);
         showFilteredFractions_checkbox.addActionListener((java.awt.event.ActionEvent evt) -> {
             boolean state = ((AliquotDetailsDisplayInterface) concordiaGraphPanel).isShowFilteredEllipses();
             ((AliquotDetailsDisplayInterface) concordiaGraphPanel).setShowFilteredEllipses(!state);
@@ -662,7 +664,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
         ((DateProbabilityDensityPanel) probabilityPanel).//
                 setSelectedFractions(filterActiveUPbFractions(project.getSuperSample().getUpbFractionsUnknown()));
 
-        probabilityPanel.setBounds(showSessions ? 1355: leftMargin + 1050 , topMargin + 60, showSessions ? pdfWidth: 875, pdfHeight - 5);
+        probabilityPanel.setBounds(showSessions ? 1355 : leftMargin + 1050, topMargin + 60, showSessions ? pdfWidth : 875, pdfHeight - 5);
 
         ((DateProbabilityDensityPanel) probabilityPanel).setChosenDateName("age206_238r");
 
@@ -674,7 +676,8 @@ public class AbstractDataMonitorView extends AbstractRawDataView
 
         add(probabilityPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        kwikiPDFToolBar = new KwikiPDFToolBar(1350, concordiaGraphPanel.getHeight() + topMargin + 50, probabilityPanel, concordiaGraphPanel, project.getSuperSample(), dateTreeByAliquot);
+        kwikiPDFToolBar = new KwikiPDFToolBar(//
+                1250, concordiaGraphPanel.getHeight() + topMargin + 52, probabilityPanel, concordiaGraphPanel, project.getSuperSample(), dateTreeByAliquot, reportTableTabbedPane);
         add(kwikiPDFToolBar, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
     }
@@ -684,7 +687,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
         JScrollPane dateTreeByAliquot_ScrollPane = new javax.swing.JScrollPane();
         dateTreeByAliquot_ScrollPane.setBounds(showSessions ? 600 : leftMargin + 10, topMargin + 50, 125, 500);
         dateTreeByAliquot = new SampleTreeAnalysisMode(project.getSuperSample());
-        
+
         dateTreeByAliquot.setSampleTreeChange(this);
         dateTreeByAliquot.buildTree();
         dateTreeByAliquot.expandAllNodes();
@@ -697,22 +700,8 @@ public class AbstractDataMonitorView extends AbstractRawDataView
 
         Vector<ETFractionInterface> filteredFractions = new Vector<>();
 
-        String dateName = ((DateProbabilityDensityPanel) probabilityPanel).getChosenDateName();
-
         for (ETFractionInterface f : fractions) {
             boolean doAddFraction = !f.isRejected();
-//            double pctDiscordance = f.getRadiogenicIsotopeDateByName(RadDates.percentDiscordance).getValue().doubleValue();
-//
-//            if (pctDiscordance >= 0.0) {  //
-//                // positive percent discordance
-//                doAddFraction = doAddFraction && (pctDiscordance <= positivePctDiscordance_slider.getValue());
-//            } else {
-//                // negative percent discordance
-//                doAddFraction = doAddFraction && (pctDiscordance >= negativePctDiscordance_slider.getValue());
-//            }
-//            doAddFraction = doAddFraction //
-//                    && f.getRadiogenicIsotopeDateByName(dateName).getOneSigmaPct().doubleValue() //
-//                    <= percentUncertainty_slider.getValue();
 
             if (doAddFraction) {
                 filteredFractions.add(f);
@@ -997,7 +986,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
         paintInit(g2d);
 
         // draw box around possibly missing pdf
-        g2d.drawRect(showSessions ? 1350: leftMargin + 1045, topMargin + 50, (showSessions ? pdfWidth : 875 ) + 5, pdfHeight + 5);
+        g2d.drawRect(showSessions ? 1350 : leftMargin + 1045, topMargin + 50, (showSessions ? pdfWidth : 875) + 5, pdfHeight + 5);
     }
 
     /**

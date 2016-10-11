@@ -17,6 +17,7 @@ package org.earthtime.UTh_Redux.samples;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.SortedSet;
 import java.util.Vector;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetup;
@@ -582,6 +583,16 @@ public class SampleUTh extends ETSample implements
             isotopeStyle = "UTh";
         }
         return isotopeStyle;
+    }
+
+    @Override
+    public SortedSet<String> getFilteredFractionIDs() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setFilteredFractionIDs(SortedSet<String> filteredFractionIDs) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

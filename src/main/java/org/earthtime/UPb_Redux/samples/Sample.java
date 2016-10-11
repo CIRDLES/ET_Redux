@@ -25,7 +25,10 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.Vector;
 import javax.swing.JOptionPane;
 import org.earthtime.Tripoli.sessions.TripoliSession;
@@ -193,6 +196,7 @@ public class Sample implements
     private SampleRegistries sampleRegistry;
     // July 2011
     private TripoliSession tripoliSession;
+    private SortedSet<String> filteredFractionIDs;
 
     /**
      *
@@ -263,6 +267,8 @@ public class Sample implements
         this.archivedInRegistry = false;
 
         this.sampleRegistry = SampleRegistries.SESAR;
+
+        this.filteredFractionIDs = Collections.synchronizedSortedSet(new TreeSet<>());
     }
 
     @Override
@@ -307,7 +313,8 @@ public class Sample implements
         if (!isSampleTypeLegacy()) {
             SampleInterface.registerSampleWithLabData(this);
         } else // dec 2012
-         if (getFractions().size() > 0) {
+        {
+            if (getFractions().size() > 0) {
                 // June 2010 fix for old legacy fractions
                 Vector<ETFractionInterface> convertedF = new Vector<>();
                 for (ETFractionInterface f : getFractions()) {
@@ -359,6 +366,7 @@ public class Sample implements
                     }
                 }
             }
+        }
 
         // June 2010 be sure lab name is updated to labdata labname when used in reduction
         if (isSampleTypeAnalysis() || isSampleTypeLiveWorkflow() || isSampleTypeLegacy()) {
@@ -603,7 +611,7 @@ public class Sample implements
                 aliquotFractionFiles = aliquotFolder.listFiles((File file) -> {
                     // want .xml files and only freshones in live-update, but all of them in auto-update
                     boolean isXML = file.getName().toLowerCase().endsWith(".xml");
-                    
+
                     if (getSampleType().equalsIgnoreCase(SampleTypesEnum.LIVEWORKFLOW.getName())) {
                         return ((file.lastModified() >= (aliquotFolder.lastModified() - 20000l))
                                 && isXML);
@@ -1601,5 +1609,24 @@ public class Sample implements
             isotopeStyle = "UPb";
         }
         return isotopeStyle;
+    }
+
+    /**
+     * @return the filteredFractionIDs
+     */
+    @Override
+    public SortedSet<String> getFilteredFractionIDs() {
+        if (filteredFractionIDs == null) {
+            this.filteredFractionIDs = Collections.synchronizedSortedSet(new TreeSet<>());
+        }
+        return filteredFractionIDs;
+    }
+
+    /**
+     * @param filteredFractionIDs the filteredFractionIDs to set
+     */
+    @Override
+    public void setFilteredFractionIDs(SortedSet<String> filteredFractionIDs) {
+        this.filteredFractionIDs = filteredFractionIDs;
     }
 }

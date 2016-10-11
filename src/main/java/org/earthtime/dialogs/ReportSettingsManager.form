@@ -85,11 +85,11 @@
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
                   <Group type="102" alignment="0" attributes="1">
-                      <Component id="categoryMoveUp_button" min="-2" max="-2" attributes="0"/>
+                      <Component id="categoryMoveUp_button" min="-2" pref="25" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="categoryMoveDown_button" min="-2" max="-2" attributes="0"/>
+                      <Component id="categoryMoveDown_button" min="-2" pref="25" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="categoryHideShow_button" min="-2" max="-2" attributes="0"/>
+                      <Component id="categoryHideShow_button" min="-2" pref="25" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="1" attributes="0">
                       <Component id="categories_scrollPane" min="-2" pref="120" max="-2" attributes="0"/>
@@ -104,15 +104,15 @@
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="0" attributes="1">
-                      <Component id="columnMoveUp_button" min="-2" max="-2" attributes="0"/>
+                      <Component id="columnMoveUp_button" min="-2" pref="25" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="columnMoveDown_button" min="-2" max="-2" attributes="0"/>
+                      <Component id="columnMoveDown_button" min="-2" pref="25" max="-2" attributes="0"/>
                       <EmptySpace max="32767" attributes="0"/>
-                      <Component id="columnHideShow_button" min="-2" max="-2" attributes="0"/>
+                      <Component id="columnHideShow_button" min="-2" pref="25" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="63" max="-2" attributes="0"/>
-                      <Component id="categoryShowAllColumns_button" min="-2" max="-2" attributes="0"/>
+                      <Component id="categoryShowAllColumns_button" min="-2" pref="25" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="categoryHideAllColumns_button" min="-2" max="-2" attributes="0"/>
+                      <Component id="categoryHideAllColumns_button" min="-2" pref="25" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -177,8 +177,8 @@
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="103" alignment="0" groupAlignment="3" attributes="0">
-                  <Component id="apply_button" alignment="3" min="-2" pref="28" max="-2" attributes="0"/>
-                  <Component id="close_button" alignment="3" min="-2" pref="28" max="-2" attributes="0"/>
+                  <Component id="apply_button" alignment="3" min="-2" pref="25" max="-2" attributes="0"/>
+                  <Component id="close_button" alignment="3" min="-2" pref="25" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -200,6 +200,9 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="close_buttonActionPerformed"/>
           </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new ET_JButton()"/>
+          </AuxValues>
         </Component>
         <Component class="javax.swing.JButton" name="apply_button">
           <Properties>
@@ -217,6 +220,9 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="apply_buttonActionPerformed"/>
           </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new ET_JButton()"/>
+          </AuxValues>
         </Component>
       </SubComponents>
     </Container>
@@ -240,6 +246,9 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="categoryMoveUp_buttonActionPerformed"/>
       </Events>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new ET_JButton()"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JButton" name="categoryMoveDown_button">
       <Properties>
@@ -253,6 +262,9 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="categoryMoveDown_buttonActionPerformed"/>
       </Events>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new ET_JButton()"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JButton" name="categoryHideShow_button">
       <Properties>
@@ -266,6 +278,9 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="categoryHideShow_buttonActionPerformed"/>
       </Events>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new ET_JButton()"/>
+      </AuxValues>
     </Component>
     <Container class="javax.swing.JScrollPane" name="columns_scrollPane">
       <AuxValues>
@@ -311,6 +326,9 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="columnHideShow_buttonActionPerformed"/>
       </Events>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new ET_JButton()"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JButton" name="columnMoveDown_button">
       <Properties>
@@ -324,6 +342,9 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="columnMoveDown_buttonActionPerformed"/>
       </Events>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new ET_JButton()"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JButton" name="columnMoveUp_button">
       <Properties>
@@ -337,6 +358,9 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="columnMoveUp_buttonActionPerformed"/>
       </Events>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new ET_JButton()"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel3">
       <Properties>
@@ -550,6 +574,9 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="categoryShowAllColumns_buttonActionPerformed"/>
       </Events>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new ET_JButton()"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JButton" name="categoryHideAllColumns_button">
       <Properties>
@@ -563,6 +590,9 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="categoryHideAllColumns_buttonActionPerformed"/>
       </Events>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new ET_JButton()"/>
+      </AuxValues>
     </Component>
   </SubComponents>
 </Form>

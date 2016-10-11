@@ -21,11 +21,13 @@ package org.earthtime.UPb_Redux.dateInterpretation.kwiki;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.Vector;
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
@@ -33,10 +35,10 @@ import javax.swing.JButton;
 import javax.swing.JLayeredPane;
 import javax.swing.JRadioButton;
 import javax.swing.JSlider;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.dateInterpretation.DateProbabilityDensityPanel;
 import org.earthtime.UPb_Redux.dateInterpretation.SampleTreeI;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.AliquotDetailsDisplayInterface;
@@ -46,6 +48,7 @@ import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetu
 import org.earthtime.UPb_Redux.dialogs.sampleManagers.sampleDateInterpretationManagers.SampleDateInterpretationsUtilities;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.fractions.ETFractionInterface;
+import org.earthtime.reportViews.TabbedReportViews;
 import org.earthtime.samples.SampleInterface;
 
 /**
@@ -75,6 +78,8 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
     private final JButton linkedUnlinkedDiscordance;
     private boolean doLinkDiscordances;
     private final SampleTreeI dateTreeByAliquot;
+    private JTabbedPane reportTableTabbedPane;
+    private final JButton clearFilters;
 
     /**
      * Creates a new instance of KwikiConcordiaToolBar
@@ -85,9 +90,10 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
      * @param aConcordiaGraphPanel
      * @param sample the value of sample
      * @param dateTreeByAliquot
+     * @param reportTableTabbedPane
      */
     public KwikiPDFToolBar(
-            int x, int y, JLayeredPane aPDFGraphPanel, JLayeredPane aConcordiaGraphPanel, SampleInterface sample, SampleTreeI dateTreeByAliquot) {
+            int x, int y, JLayeredPane aPDFGraphPanel, JLayeredPane aConcordiaGraphPanel, SampleInterface sample, SampleTreeI dateTreeByAliquot, JTabbedPane reportTableTabbedPane) {
 
         super();
 
@@ -95,7 +101,7 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
 
         setBackground(Color.white);
 
-        setBounds(x, y, aPDFGraphPanel.getWidth() + 7, 56);
+        setBounds(x, y, 700, 56);
 
         this.probabilityPanel = aPDFGraphPanel;
         this.concordiaGraphPanel = aConcordiaGraphPanel;
@@ -103,6 +109,9 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
         this.sample = sample;
 
         this.dateTreeByAliquot = dateTreeByAliquot;
+
+        this.reportTableTabbedPane = reportTableTabbedPane;
+
         probabilityChartOptions = sample.getSampleDateInterpretationGUISettings().getProbabilityChartOptions();
 
         doLinkDiscordances = true;
@@ -122,7 +131,10 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
         negativePctDiscordance_slider.setAutoscrolls(true);
         negativePctDiscordance_slider.setValue(Integer.parseInt(probabilityChartOptions.get("negativePerCentDiscordanceSliderValue")));
         negativePctDiscordance_slider.setName("negativePerCentDiscordanceSliderValue");
-        negativePctDiscordance_slider.setBounds(105, 1, 175, 38);
+        negativePctDiscordance_slider.setBounds(110, 1, 175, 38);
+        negativePctDiscordance_slider.setOpaque(true);
+        negativePctDiscordance_slider.setBackground(Color.white);
+
         negativePctDiscordance_slider.addChangeListener(new SliderChangeListener());
         add(negativePctDiscordance_slider);
 
@@ -134,7 +146,7 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
         negativePctDiscordance_text.setAlignmentX(0.0F);
         negativePctDiscordance_text.setAlignmentY(0.0F);
         negativePctDiscordance_text.setBorder(null);
-        negativePctDiscordance_text.setBounds(105, 38, 175, 17);
+        negativePctDiscordance_text.setBounds(110, 38, 175, 17);
         add(negativePctDiscordance_text);
 
         linkedUnlinkedDiscordance = new JButton();
@@ -152,7 +164,10 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
         linkedUnlinkedDiscordance.setOpaque(true);
         linkedUnlinkedDiscordance.setPressedIcon(new javax.swing.ImageIcon(getClass().getResource("/org/earthtime/images/linked.png")));
         linkedUnlinkedDiscordance.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        linkedUnlinkedDiscordance.setBounds(278, 5, 20, 20);
+        linkedUnlinkedDiscordance.setBounds(285, 5, 20, 20);
+        linkedUnlinkedDiscordance.setOpaque(true);
+        linkedUnlinkedDiscordance.setBackground(Color.white);
+
         linkedUnlinkedDiscordance.addActionListener((java.awt.event.ActionEvent evt) -> {
             linkedUnlinkedDiscordanceActionPerformed(evt);
         });
@@ -170,7 +185,10 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
         positivePctDiscordance_slider.setAutoscrolls(true);
         positivePctDiscordance_slider.setValue(Integer.parseInt(probabilityChartOptions.get("positivePerCentDiscordanceSliderValue")));
         positivePctDiscordance_slider.setName("positivePerCentDiscordanceSliderValue");
-        positivePctDiscordance_slider.setBounds(295, 1, 175, 38);
+        positivePctDiscordance_slider.setBounds(310, 1, 175, 38);
+        positivePctDiscordance_slider.setOpaque(true);
+        positivePctDiscordance_slider.setBackground(Color.white);
+
         positivePctDiscordance_slider.addChangeListener(new SliderChangeListener());
         add(positivePctDiscordance_slider);
 
@@ -182,7 +200,7 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
         positivePctDiscordance_text.setAlignmentX(0.0F);
         positivePctDiscordance_text.setAlignmentY(0.0F);
         positivePctDiscordance_text.setBorder(null);
-        positivePctDiscordance_text.setBounds(295, 38, 175, 17);
+        positivePctDiscordance_text.setBounds(310, 38, 175, 17);
         add(positivePctDiscordance_text);
 
         percentUncertainty_slider = new javax.swing.JSlider();
@@ -196,7 +214,10 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
         percentUncertainty_slider.setSnapToTicks(true);
         percentUncertainty_slider.setAutoscrolls(true);
         percentUncertainty_slider.setName("uncertaintyPerCentSliderValue");
-        percentUncertainty_slider.setBounds(460, 1, 175, 38);
+        percentUncertainty_slider.setBounds(490, 1, 175, 38);
+        percentUncertainty_slider.setOpaque(true);
+        percentUncertainty_slider.setBackground(Color.white);
+
         percentUncertainty_slider.addChangeListener(new SliderChangeListener());
         add(percentUncertainty_slider);
 
@@ -208,8 +229,27 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
         pctUncertainty_text.setAlignmentX(0.0F);
         pctUncertainty_text.setAlignmentY(0.0F);
         pctUncertainty_text.setBorder(null);
-        pctUncertainty_text.setBounds(460, 38, 175, 17);
+        pctUncertainty_text.setBounds(490, 38, 175, 17);
         add(pctUncertainty_text);
+
+        clearFilters = new ET_JButton("Clear");
+        clearFilters.setBounds(278, 37, 39, 16);
+
+        clearFilters.addActionListener((ActionEvent arg0) -> {
+            negativePctDiscordance_slider.setValue(-100);
+            positivePctDiscordance_slider.setValue(100);
+            percentUncertainty_slider.setValue(100);
+
+            performFilteringPerSliders(true);
+
+            try {
+                ((TabbedReportViews) reportTableTabbedPane).refreshTabs();
+            } catch (Exception noTabs) {
+            }
+        });
+
+        add(clearFilters, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        this.setComponentZOrder(clearFilters, 0);
 
         try {
             int uncertaintyPerCentSliderValue = Integer.parseInt(probabilityChartOptions.get("uncertaintyPerCentSliderValue"));
@@ -242,10 +282,10 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
             jrb.addActionListener((ActionEvent arg0) -> {
                 // oct 2014 handle new Pbc corrections
                 String chosenDateName = jrb.getName();
-                
+
                 ((DateProbabilityDensityPanel) probabilityPanel).setChosenDateName(chosenDateName);
                 probabilityChartOptions.put("chosenDateName", chosenDateName);
-                performFilteringPerSliders();
+                performFilteringPerSliders(false);
                 ((DateProbabilityDensityPanel) probabilityPanel).prepareAndPaintPanel();
             });
             if (((DateProbabilityDensityPanel) probabilityPanel).getChosenDateName().replace("r", "").startsWith(jrb.getName().replace("r", ""))) {
@@ -289,7 +329,13 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
 
                 probabilityChartOptions.put(slider.getName(), Integer.toString(slider.getValue()));
 
-                performFilteringPerSliders();
+                performFilteringPerSliders(false);
+
+                // oct 2016
+                try {
+                    ((TabbedReportViews) reportTableTabbedPane).refreshTabs();
+                } catch (Exception noTabs) {
+                }
 
                 wasChanging = false;
             }
@@ -332,14 +378,36 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
         }
     }
 
-    public void performFilteringPerSliders() {
+    /**
+     *
+     * @param clearFiltering the value of clearFiltering
+     */
+    public void performFilteringPerSliders(boolean clearFiltering) {
 
-        Vector<ETFractionInterface> filteredFractions = SampleDateInterpretationsUtilities.filterActiveUPbFractions(//
-                sample.getUpbFractionsUnknown(),//
-                ((DateProbabilityDensityPanel) probabilityPanel).getChosenDateName(),//
-                positivePctDiscordance_slider.getValue(), //
-                negativePctDiscordance_slider.getValue(), //
-                percentUncertainty_slider.getValue());
+        Vector<ETFractionInterface> filteredFractions;
+        if (clearFiltering) {
+            filteredFractions = sample.getUpbFractionsUnknown();
+        } else {
+            filteredFractions = SampleDateInterpretationsUtilities.filterActiveUPbFractions(//
+                    sample.getUpbFractionsUnknown(),//
+                    ((DateProbabilityDensityPanel) probabilityPanel).getChosenDateName(),//
+                    positivePctDiscordance_slider.getValue(), //
+                    negativePctDiscordance_slider.getValue(), //
+                    percentUncertainty_slider.getValue());
+        }
+
+        // oct 2016 collect filtered fractions (those that still count) so that report table can show filtered out
+        SortedSet<String> filteredFractionIDs = Collections.synchronizedSortedSet(new TreeSet<>());
+        for (int i = 0; i < filteredFractions.size(); i++) {
+            filteredFractionIDs.add(filteredFractions.get(i).getFractionID());
+        }
+        //need to also include reference material as all filtered in for report table
+        Vector<ETFractionInterface> filteredRefMats = sample.getUpbFractionsReferenceMaterial();
+        for (int i = 0; i < filteredRefMats.size(); i++) {
+            filteredFractionIDs.add(filteredRefMats.get(i).getFractionID());
+        }
+
+        sample.setFilteredFractionIDs(filteredFractionIDs);
 
         ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
                 setFilteredFractions(filteredFractions);
@@ -364,8 +432,10 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
         date206_238_radioButton.setFont(new java.awt.Font("Arial", 1, 10));
         date206_238_radioButton.setText("206/238");
         date206_238_radioButton.setName("age206_238r");
-        date206_238_radioButton.setBounds(40, 1, 75, 17);
+        date206_238_radioButton.setBounds(40, 1, 70, 17);
         date206_238_radioButton.setSelected(true);
+        date206_238_radioButton.setOpaque(true);
+        date206_238_radioButton.setBackground(Color.white);
         add(date206_238_radioButton);
 
         date207_206_radioButton = new JRadioButton("207/206");
@@ -373,7 +443,9 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
         date207_206_radioButton.setFont(new java.awt.Font("Arial", 1, 10));
         date207_206_radioButton.setText("207/206");
         date207_206_radioButton.setName("age207_206r");
-        date207_206_radioButton.setBounds(40, 19, 75, 17);
+        date207_206_radioButton.setBounds(40, 19, 70, 17);
+        date207_206_radioButton.setOpaque(true);
+        date207_206_radioButton.setBackground(Color.white);
         add(date207_206_radioButton);
 
         dateBest_radioButton = new JRadioButton("best");
@@ -381,7 +453,10 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
         dateBest_radioButton.setFont(new java.awt.Font("Arial", 1, 10));
         dateBest_radioButton.setText("best");
         dateBest_radioButton.setName("bestAge");
-        dateBest_radioButton.setBounds(40, 37, 75, 17);
+        dateBest_radioButton.setOpaque(true);
+        dateBest_radioButton.setBackground(Color.white);
+        dateBest_radioButton.setBounds(40, 37, 70, 17);
+
         add(dateBest_radioButton);
 
         // choose date
@@ -402,11 +477,7 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
 
     private void SetupZoomToggleButtons() {
         zoomInProbability_button = new ET_JButton("+");
-        zoomInProbability_button.setOpaque(false);
-        zoomInProbability_button.setForeground(Color.black);
-        zoomInProbability_button.setFont(ReduxConstants.sansSerif_12_Bold);
         zoomInProbability_button.setBounds(1, 1, 35, 17);
-        zoomInProbability_button.setMargin(new Insets(0, 0, 0, 0));
 
         zoomInProbability_button.addActionListener((ActionEvent arg0) -> {
             // zoom
@@ -416,16 +487,11 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
         add(zoomInProbability_button, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         zoomOutProbability_button = new ET_JButton("-");
-        zoomOutProbability_button.setOpaque(false);
-        zoomOutProbability_button.setForeground(Color.black);
-        zoomOutProbability_button.setFont(ReduxConstants.sansSerif_12_Bold);
         zoomOutProbability_button.setBounds(1, 19, 35, 17);
-        zoomOutProbability_button.setMargin(new Insets(0, 0, 0, 0));
 
         zoomOutProbability_button.addActionListener((ActionEvent arg0) -> {
             // zoom
             double rangeX = ((DateProbabilityDensityPanel) probabilityPanel).getRangeX_Display();
-            //System.out.println( "RANGE OUT = " + rangeX + "   offset = " + ((DateProbabilityDensityPanel) probabilityPanel).getDisplayOffsetX());
 
             double saveMinx = ((DateProbabilityDensityPanel) probabilityPanel).getMinX();
             double proposedMinX = saveMinx - rangeX / 2.0;
@@ -457,11 +523,7 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
         add(zoomOutProbability_button, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         restoreZoom = new ET_JButton("R");
-        restoreZoom.setOpaque(false);
-        restoreZoom.setForeground(Color.black);
-        restoreZoom.setFont(ReduxConstants.sansSerif_12_Bold);
         restoreZoom.setBounds(1, 37, 35, 17);
-        restoreZoom.setMargin(new Insets(0, 0, 0, 0));
 
         restoreZoom.addActionListener((ActionEvent arg0) -> {
             ((PlottingDetailsDisplayInterface) probabilityPanel).refreshPanel(true, false);
