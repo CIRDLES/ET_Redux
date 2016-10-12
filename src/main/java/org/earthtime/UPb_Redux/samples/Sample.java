@@ -313,8 +313,7 @@ public class Sample implements
         if (!isSampleTypeLegacy()) {
             SampleInterface.registerSampleWithLabData(this);
         } else // dec 2012
-        {
-            if (getFractions().size() > 0) {
+         if (getFractions().size() > 0) {
                 // June 2010 fix for old legacy fractions
                 Vector<ETFractionInterface> convertedF = new Vector<>();
                 for (ETFractionInterface f : getFractions()) {
@@ -366,7 +365,6 @@ public class Sample implements
                     }
                 }
             }
-        }
 
         // June 2010 be sure lab name is updated to labdata labname when used in reduction
         if (isSampleTypeAnalysis() || isSampleTypeLiveWorkflow() || isSampleTypeLegacy()) {
@@ -1618,6 +1616,9 @@ public class Sample implements
     public SortedSet<String> getFilteredFractionIDs() {
         if (filteredFractionIDs == null) {
             this.filteredFractionIDs = Collections.synchronizedSortedSet(new TreeSet<>());
+            for (int i = 0; i < UPbFractions.size(); i++) {
+                filteredFractionIDs.add(UPbFractions.get(i).getFractionID());
+            }
         }
         return filteredFractionIDs;
     }
