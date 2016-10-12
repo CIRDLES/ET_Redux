@@ -119,6 +119,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
     private transient SwingWorker loadDataTask;
     private boolean amChanged;
     private LAICPMSProjectParametersManager parametersView;
+    private transient AbstractRawDataFileHandler mruRawDataFileHandler;
 
     /**
      * Creates new form ProjectManagerFor_LAICPMS_FromRawData
@@ -144,6 +145,8 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
 
         loadDataTaskProgressBar.setVisible(false);
         rawDataFileChosen_scrollPane.setVisible(false);
+        
+        mruRawDataFileHandler = null;
     }
 
     @Override
@@ -153,6 +156,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
         // initialize all known machines and protocols etc
         // eventually move to xml external files
         knownRawDataFileHandlers = new ArrayList<>();
+        String nameOfLastUsedFileHandler = myState.getMruFileHandlingProtocolForLAICPMS();
 
         // LaserChron NU Plasma FARADAY
         AbstractRawDataFileHandler theNUPlasmaMultiCollFaradayFileHandler
@@ -244,13 +248,17 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
         for (int i = 0; i < knownRawDataFileHandlers.size(); i++) {
             fileHandlerComboBox.addItem( //
                     knownRawDataFileHandlers.get(i));
+            if (knownRawDataFileHandlers.get(i).getNAME().compareToIgnoreCase(nameOfLastUsedFileHandler) == 0) {
+                    mruRawDataFileHandler = knownRawDataFileHandlers.get(i);
+            }
         }
 
         fileHandlerComboBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 AbstractRawDataFileHandler fileHandler = ((AbstractRawDataFileHandler) fileHandlerComboBox.getSelectedItem());
-
+                myState.setMruFileHandlingProtocolForLAICPMS(fileHandler.getNAME());
+                
                 rawDataTemplateComboBox.removeAllItems();
                 SortedSet<AbstractRawDataFileTemplate> templates = fileHandler.getAvailableRawDataFileTemplates();
                 Iterator<AbstractRawDataFileTemplate> templatesIterator = templates.iterator();
@@ -341,7 +349,8 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
             rawDataTemplateComboBox.setSelectedItem(rawDataFileHandler.getRawDataFileTemplate());
         } else {
 
-            fileHandlerComboBox.setSelectedIndex(0);
+//            fileHandlerComboBox.setSelectedIndex(0);
+            fileHandlerComboBox.setSelectedItem((mruRawDataFileHandler == null ? knownRawDataFileHandlers.get(0) : mruRawDataFileHandler));
 
             rawDataTemplateComboBox.setSelectedIndex(0);
         }
@@ -501,7 +510,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
                 timeResolvedAnalysisDataView.getComponent(0).transferFocus();
                 timeResolvedAnalysisDataView.setVisible(true);
 
-            } 
+            }
             if (showParametersView()) {
                 fireLoadDataTask();
                 manageButtons(true, true, true);
@@ -820,7 +829,9 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
         mainPanel.add(projectName_label);
         projectName_label.setBounds(10, 7, 110, 17);
 
+        fileHandlerComboBox.setBackground(new java.awt.Color(255, 255, 255));
         fileHandlerComboBox.setFont(new java.awt.Font("SansSerif", 0, 13)); // NOI18N
+        fileHandlerComboBox.setOpaque(true);
         mainPanel.add(fileHandlerComboBox);
         fileHandlerComboBox.setBounds(220, 30, 380, 27);
 
@@ -860,7 +871,9 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
         mainPanel.add(jLabel6);
         jLabel6.setBounds(20, 65, 195, 16);
 
+        rawDataTemplateComboBox.setBackground(new java.awt.Color(255, 255, 255));
         rawDataTemplateComboBox.setFont(new java.awt.Font("SansSerif", 0, 13)); // NOI18N
+        rawDataTemplateComboBox.setOpaque(true);
         rawDataTemplateComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rawDataTemplateComboBoxActionPerformed(evt);
@@ -883,7 +896,9 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
         mainPanel.add(projectName_text);
         projectName_text.setBounds(120, 0, 230, 26);
 
+        analysisPurposeChooser.setBackground(new java.awt.Color(255, 255, 255));
         analysisPurposeChooser.setFont(new java.awt.Font("SansSerif", 0, 13)); // NOI18N
+        analysisPurposeChooser.setOpaque(true);
         mainPanel.add(analysisPurposeChooser);
         analysisPurposeChooser.setBounds(220, 90, 220, 27);
 
