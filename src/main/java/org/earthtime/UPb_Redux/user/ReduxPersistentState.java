@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import static org.earthtime.UPb_Redux.ReduxConstants.myUsersUPbReduxDataFolderName;
 import org.earthtime.UPb_Redux.utilities.ETSerializer;
 import org.earthtime.exceptions.ETException;
 
@@ -66,6 +65,8 @@ public class ReduxPersistentState implements Serializable {
     private File MRUProjectFile;
     private ArrayList<String> MRUProjectList;
     private String MRUProjectFolderPath;
+    // oct 2016 manage mru for LAICPMS file handling protocols - save name of last used
+    private String mruFileHandlingProtocolForLAICPMS;
 
     /**
      *
@@ -105,6 +106,8 @@ public class ReduxPersistentState implements Serializable {
         }
 
         MRUProjectFile = null;
+        
+        mruFileHandlingProtocolForLAICPMS = "";
 
         serializeSelf();
     }
@@ -462,5 +465,19 @@ public class ReduxPersistentState implements Serializable {
      */
     public void setMRUProjectFolderPath(String MRUProjectFolderPath) {
         this.MRUProjectFolderPath = MRUProjectFolderPath;
+    }
+
+    /**
+     * @return the mruFileHandlingProtocolForLAICPMS
+     */
+    public String getMruFileHandlingProtocolForLAICPMS() {
+        return mruFileHandlingProtocolForLAICPMS;
+    }
+
+    /**
+     * @param mruFileHandlingProtocolForLAICPMS the mruFileHandlingProtocolForLAICPMS to set
+     */
+    public void setMruFileHandlingProtocolForLAICPMS(String mruFileHandlingProtocolForLAICPMS) {
+        this.mruFileHandlingProtocolForLAICPMS = mruFileHandlingProtocolForLAICPMS;
     }
 }

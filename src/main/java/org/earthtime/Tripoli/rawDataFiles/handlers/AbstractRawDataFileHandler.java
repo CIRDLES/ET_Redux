@@ -439,6 +439,10 @@ public abstract class AbstractRawDataFileHandler implements //
         return NAME;
     }
 
+    public String getNAME() {
+        return NAME;
+    }
+
     /**
      * @return the trindexpolindexFractindexons
      */
