@@ -269,8 +269,8 @@ public class ValueModelTest {
         ValueModel blank = new ValueModel();
         boolean expResult=true;
         boolean result=instance.equals(blank);
-        //assertEquals(expResult,result);
-        assertEquals(instance, blank);
+        assertEquals(expResult,result);
+        //assertEquals(instance, blank);?
         
         //Sets up two identical models and compares using specified values
         instance=new ValueModel("r206_204b");
@@ -896,7 +896,7 @@ public class ValueModelTest {
         ValueModel instance =new ValueModel("r207_339",new BigDecimal("11e-25"),"ABS",new BigDecimal(".123456789"), BigDecimal.ZERO);
         boolean expResult = true;
         boolean result = instance.amPositiveAndLessThanTolerance();   
-        assertEquals(expResult, result);   
+        assertEquals(expResult, result);   //assertTrue(instance.amPositiveAndLessThanTolerance());?
         //positive and more than tolerance
         instance=new ValueModel("r207_339",new BigDecimal("12.34567890"),"ABS",new BigDecimal(".123456789"), BigDecimal.ZERO);
         expResult=false;
@@ -928,7 +928,9 @@ public class ValueModelTest {
         assertEquals(expResult, result);
         //If ValueModel has PCT    
         valueModel=new ValueModel("r207_339",new BigDecimal("112.34567890"),"PCT",new BigDecimal(".123456789"), BigDecimal.ZERO);
+        //Is oneSigmaAbs misnamed? Should be oneSigmaPct
         oneSigmaAbs=new BigDecimal(".1234567890");
+        //Is this good practice? This is exactly the same as the method.
         expResult=oneSigmaAbs.divide(valueModel.getValue(), ReduxConstants.mathContext15 ).movePointRight( 2);
         result = ValueModel.convertOneSigmaAbsToPctIfRequired(valueModel, oneSigmaAbs);
         assertEquals(expResult, result);  
@@ -1939,6 +1941,7 @@ public class ValueModelTest {
     
     /**
      * Test of serializeXMLObject method, of class ValueModel.
+     * @throws java.lang.Exception
      */
     @Test
     public void test_SerializeXMLObject() throws Exception {
