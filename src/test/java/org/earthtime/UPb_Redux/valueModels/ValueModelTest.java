@@ -159,14 +159,16 @@ public class ValueModelTest {
         ValueModel instance = new ValueModel();
         ValueModel expectedResult = instance;
         ValueModel result = instance.copy();
-        assertNotSame(expectedResult, result);
+        //instance.copy must be an equal, but different object
+        assertNotSame("Both ValueModels are pointing to the same object", expectedResult, result);
         assertEquals(expectedResult, result);
 
         //This tests the method with specified values.
         instance = new ValueModel("testing",new BigDecimal("12.34567890"),"ABS",new BigDecimal("0.987654321"), BigDecimal.ZERO);
         expectedResult = instance;
         result = instance.copy();
-        assertNotSame(expectedResult, result);
+        //instance.copy must be an equal, but different object
+        assertNotSame("Both ValueModels are pointing to the same object", expectedResult, result);
         assertEquals(expectedResult, result);
     }
 
@@ -181,7 +183,7 @@ public class ValueModelTest {
         ValueModel blank = new ValueModel("Blank");
 
         /**Initializing a Variable to test if names are equal before or after
-        * If this value is set to 1 in the following try catch block, then the
+        * If this value is set to 1 in the following conditional, then the
         * names were not equal beforehand and should not be equal afterwards.
         * If the variable remains at 0 then the names were equal beforehand and
         * therefore should remain the same afterwards.
@@ -198,7 +200,8 @@ public class ValueModelTest {
         assertEquals(instance0.oneSigma,blank.oneSigma);
         assertEquals(instance0.uncertaintyType,blank.uncertaintyType);
         
-        if(nameAfter==1){
+        if(nameAfter==1)
+        {
             assertNotEquals("the Name Field is being copied!", instance0.name, blank.name);
         }
         
@@ -215,7 +218,7 @@ public class ValueModelTest {
         blank = new ValueModel("Blank");
        
         /**Initializing a Variable to test if names are equal before or after
-        If this value is set to 1 in the following try catch block, then the
+        * If this value is set to 1 in the following conditional, then the
         * names were not equal beforehand and should not be equal afterwards.
         * If the variable remains at 0 then the names were equal beforehand and
         * therefore should remain the same afterwards.
@@ -233,7 +236,9 @@ public class ValueModelTest {
         assertEquals(instance0.uncertaintyType,blank.uncertaintyType);
         
         if(nameAfter==1)
+        {
             assertNotEquals("the Name Field is being copied!", instance0.name, blank.name);
+        }
     }
     
      /**
@@ -270,7 +275,6 @@ public class ValueModelTest {
         boolean expResult=true;
         boolean result=instance.equals(blank);
         assertEquals(expResult,result);
-        //assertEquals(instance, blank);?
         
         //Sets up two identical models and compares using specified values
         instance=new ValueModel("r206_204b");
@@ -922,13 +926,13 @@ public class ValueModelTest {
         System.out.println("Testing ValueModel's convertOneSigmaAbsToPctIfRequired(ValueModel valueModel ,BigDecimal oneSigmaAbs)");
         //If ValueModel has default OneSigma
         ValueModel valueModel = new ValueModel();
+        //Is oneSigmaAbs misnamed? Should be oneSigmaPct?
         BigDecimal oneSigmaAbs = new BigDecimal(".123456789");
         BigDecimal expResult =  new BigDecimal(".123456789");        
         BigDecimal result = ValueModel.convertOneSigmaAbsToPctIfRequired(valueModel, oneSigmaAbs); 
         assertEquals(expResult, result);
         //If ValueModel has PCT    
         valueModel=new ValueModel("r207_339",new BigDecimal("112.34567890"),"PCT",new BigDecimal(".123456789"), BigDecimal.ZERO);
-        //Is oneSigmaAbs misnamed? Should be oneSigmaPct
         oneSigmaAbs=new BigDecimal(".1234567890");
         //Is this good practice? This is exactly the same as the method.
         expResult=oneSigmaAbs.divide(valueModel.getValue(), ReduxConstants.mathContext15 ).movePointRight( 2);
