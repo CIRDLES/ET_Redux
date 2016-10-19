@@ -106,7 +106,7 @@ public class ValueModelTest {
      */  
     @Test
     public void test_constructor_2(){
-    	System.out.println("Testing ValueModel's ValueModel(String Name,String UncertaintyType)");    
+    	System.out.println("Testing ValueModel's ValueModel(String Name,String UncertaintyType)");
         //Tests if values are correct
         ValueModel instance=new ValueModel("pkb","ABS");
         String expResult="pkb";
@@ -119,7 +119,7 @@ public class ValueModelTest {
         BigDecimal actualResult=instance.getValue();
         assertEquals(expectedResult,actualResult);
         actualResult=instance.getOneSigma();
-        assertEquals(expectedResult,actualResult); 
+        assertEquals(expectedResult,actualResult);
     }
        
      /**
@@ -159,14 +159,16 @@ public class ValueModelTest {
         ValueModel instance = new ValueModel();
         ValueModel expectedResult = instance;
         ValueModel result = instance.copy();
+        assertNotSame(expectedResult, result);
         assertEquals(expectedResult, result);
 
         //This tests the method with specified values.
         instance = new ValueModel("testing",new BigDecimal("12.34567890"),"ABS",new BigDecimal("0.987654321"), BigDecimal.ZERO);
         expectedResult = instance;
         result = instance.copy();
+        assertNotSame(expectedResult, result);
         assertEquals(expectedResult, result);
-            }
+    }
 
      /**
      * Test of method "copyValuesFrom", in the file ValueModel.java.
@@ -185,13 +187,10 @@ public class ValueModelTest {
         * therefore should remain the same afterwards.
         */
         
-        int nameAfter=0;
-        try{
-            assertEquals(instance0.name,blank.name);
-        }
-        catch(org.junit.ComparisonFailure except1){
-           nameAfter=1;
-        }
+        int nameAfter = 0;
+        if(!instance0.name.equals(blank.name))
+            nameAfter++;
+        
         //Copying Values from Specific ValueModel to Default
         blank.copyValuesFrom(instance0);
         //Test if Expected is Equal to the Result
@@ -200,16 +199,9 @@ public class ValueModelTest {
         assertEquals(instance0.uncertaintyType,blank.uncertaintyType);
         
         if(nameAfter==1){
-        //The name field should not be equal between the two ValueModels.
-            try{
-                assertEquals(instance0.name,blank.name);
-                //Fail if expected Exception not Thrown
-                fail("org.junit.ComparisonFailure throwable not thrown - the Name Field is being copied!");
-                }
-            catch(org.junit.ComparisonFailure except0){
-       
-                  }
-                        }
+            assertNotEquals("the Name Field is being copied!", instance0.name, blank.name);
+        }
+        
         //This test uses default values.
         instance0 = new ValueModel();
         blank = new ValueModel();
@@ -230,12 +222,8 @@ public class ValueModelTest {
         */
         
         nameAfter=0;
-        try{
-            assertEquals(instance0.name,blank.name);
-        }
-        catch(org.junit.ComparisonFailure except1){
-           nameAfter=1;
-        }
+        if(!instance0.name.equals(blank.name))
+            nameAfter++;
         
         //Copying Values from Specific ValueModel to Default
         blank.copyValuesFrom(instance0);
@@ -244,17 +232,8 @@ public class ValueModelTest {
         assertEquals(instance0.oneSigma,blank.oneSigma);
         assertEquals(instance0.uncertaintyType,blank.uncertaintyType);
         
-        if(nameAfter==1){
-            //The name field should not be equal between the two ValueModels.
-            try{
-                assertEquals(instance0.name,blank.name);
-                //Fail if expected Exception not Thrown
-                fail("org.junit.ComparisonFailure throwable not thrown - the Name Field is being copied!");
-                }
-             catch(org.junit.ComparisonFailure except0){
-       
-                    }
-                    }
+        if(nameAfter==1)
+            assertNotEquals("the Name Field is being copied!", instance0.name, blank.name);
     }
     
      /**
@@ -269,14 +248,14 @@ public class ValueModelTest {
         int expResult = 0;
         int result = instance.compareTo(valueModel);
         //Case of Equal
-        assertEquals(expResult, result);
+        assertEquals("failure on Case of Equal", expResult, result);
         //Case of Greater
         ValueModel filledModel = new ValueModel("r206_204b", new BigDecimal( "12.34567890" ), "ABS", new BigDecimal( "0.987654321" ), BigDecimal.ZERO);
-        result = filledModel.compareTo(valueModel);   
-        if(result<=0) fail();
+        result = filledModel.compareTo(valueModel);
+        assertTrue("failure on Case of Greater Than", result > 0);
         //Case of Lesser
         result = valueModel.compareTo(filledModel);
-        if (result>=0) fail(); 
+        assertTrue("failure on Case of Less Than", result < 0); 
     }
     
      /**
@@ -290,7 +269,8 @@ public class ValueModelTest {
         ValueModel blank = new ValueModel();
         boolean expResult=true;
         boolean result=instance.equals(blank);
-        assertEquals(expResult,result);
+        //assertEquals(expResult,result);
+        assertEquals(instance, blank);
         
         //Sets up two identical models and compares using specified values
         instance=new ValueModel("r206_204b");
