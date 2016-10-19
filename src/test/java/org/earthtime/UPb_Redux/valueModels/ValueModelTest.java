@@ -934,7 +934,6 @@ public class ValueModelTest {
         //If ValueModel has PCT    
         valueModel=new ValueModel("r207_339",new BigDecimal("112.34567890"),"PCT",new BigDecimal(".123456789"), BigDecimal.ZERO);
         oneSigmaAbs=new BigDecimal(".1234567890");
-        //Is this good practice? This is exactly the same as the method.
         expResult=oneSigmaAbs.divide(valueModel.getValue(), ReduxConstants.mathContext15 ).movePointRight( 2);
         result = ValueModel.convertOneSigmaAbsToPctIfRequired(valueModel, oneSigmaAbs);
         assertEquals(expResult, result);  
