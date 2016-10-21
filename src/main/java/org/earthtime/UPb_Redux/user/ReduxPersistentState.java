@@ -471,6 +471,9 @@ public class ReduxPersistentState implements Serializable {
      * @return the mruFileHandlingProtocolForLAICPMS
      */
     public String getMruFileHandlingProtocolForLAICPMS() {
+        if (mruFileHandlingProtocolForLAICPMS == null){
+            mruFileHandlingProtocolForLAICPMS = "";
+        }
         return mruFileHandlingProtocolForLAICPMS;
     }
 
