@@ -65,6 +65,7 @@ public enum IsotopeNames {
      * 
      */
     Hg202( "Hg202", 202),
+    Hg201( "Hg201", 201),
     Zr2O196("Zr2O196", 196),
     Hf176( "Hf176", 176),
     BKGND("BKGND", 0);
