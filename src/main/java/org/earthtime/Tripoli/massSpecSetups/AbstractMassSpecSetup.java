@@ -132,6 +132,7 @@ public abstract class AbstractMassSpecSetup implements //
      *
      */
     protected DataModelInterface Hg202;
+    protected DataModelInterface Hg201;
 
     /**
      *
@@ -193,6 +194,7 @@ public abstract class AbstractMassSpecSetup implements //
                 "r202Hg_204Hg", new BigDecimal(4.346), "ABS", BigDecimal.ZERO, BigDecimal.ZERO);
         this.Hf176 = null;
         this.Hg202 = null;
+        this.Hg201 = null;
         this.Pb204 = null;
         this.Pb207 = null;
 

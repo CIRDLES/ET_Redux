@@ -37,7 +37,8 @@ public enum FileTypeEnum {
     
     fin2("fin2"),
     
-    dat("dat");
+    dat("dat"),
+    prn("prn");
     
     private String name;
 
