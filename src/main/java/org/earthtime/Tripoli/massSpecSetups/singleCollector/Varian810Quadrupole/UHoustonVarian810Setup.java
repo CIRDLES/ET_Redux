@@ -15,7 +15,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.earthtime.Tripoli.massSpecSetups.singleCollector.ThermoFinnigan;
+package org.earthtime.Tripoli.massSpecSetups.singleCollector.Varian810Quadrupole;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -42,17 +42,18 @@ import org.earthtime.isotopes.IsotopesEnum;
 /**
  *
  * @author James F. Bowring
+ * Specified by Kurt Sundell and Thomas Lage via email October 2016
  */
-public final class LaserchronElementIISetupUPb_C extends AbstractMassSpecSetup {
+public final class UHoustonVarian810Setup extends AbstractMassSpecSetup {
 
-    private static LaserchronElementIISetupUPb_C instance = new LaserchronElementIISetupUPb_C();
+    private static UHoustonVarian810Setup instance = new UHoustonVarian810Setup();
 
-    private LaserchronElementIISetupUPb_C() {
+    private UHoustonVarian810Setup() {
         super();
-        NAME = "Laserchron Element II Setup";
+        NAME = "U Houston Varian 810 Setup";
         massSpecType = MassSpecTypeEnum.SINGLE;
         VIRTUAL_COLLECTOR_COUNT = 18;
-        COLLECTOR_DATA_FREQUENCY_MILLISECS = 325;
+        COLLECTOR_DATA_FREQUENCY_MILLISECS = 143;
         countOfAcquisitions = 0;
 
         isotopeMappingModel = new IsotopeMappingModel();
@@ -67,74 +68,73 @@ public final class LaserchronElementIISetupUPb_C extends AbstractMassSpecSetup {
                 = new IonCounterCollectorModel(//
                         "Single", //
                         new ValueModel("DeadTime", //
-                                new BigDecimal(22.0e-9, //
+                                new BigDecimal(20.0e-9, //
                                         ReduxConstants.mathContext10), //
                                 "ABS", //
-                                new BigDecimal(0.0e-9, ReduxConstants.mathContext10), //
+                                new BigDecimal(1.0e-9, ReduxConstants.mathContext10), //
                                 BigDecimal.ZERO), //
                         IonCounterCollectorModel.CollectedDataStyle.SEM);
 
-       // fro GG Feb 2016
-//        Dead Time should be 22 ns
-//
-//      Not sure how you are counting the integration time. Note that values are measured four times on each peak. Values below are for each one of the four measurements:
-//      176 = 0.0050
-//      202 = 0.0052
-//      204 = 0.0078
-//      206 = 0.0202
-//      207 = 0.0284
-//      208 = 0.0026
-//      232 = 0.0026
-//      235 = 0.0154
-//      238 = 0.0104
-
-// Noah says times 4 each
-
+//Deadtime published in associated paper is 20 ns
+/* Dwell time (ms)
+202Hg n/a 10 = 0.01 seconds
+204Pb n/a 30
+206Pb n/a 10
+207Pb n/a 20
+208Pb n/a 10
+232Th n/a 10
+235U 20 n/a
+238U 10 10
+         */
+/// per Thomas Lapen
+// In the list of nuclides, below, "Hg204","Po208","U232","Pu238" machine outputs should be ignored.
+// Hg202","Hg201","Pb204","Pb206","Pb207","Pb208","Th232","U238","xxxHg204",xxx"Po208","xxxU232",xxx"Pu238"
 
         isotopeMappingModel.getIsotopeToCollectorMap().put(//
                 IsotopesEnum.U238, singleCollector);
         isotopeMappingModel.getIsotopeToIntegrationTimeMap().put( //
-                IsotopesEnum.U238, 0.0416);
+                IsotopesEnum.U238, 0.01);
 
+        // U235 is calculated from U238
         isotopeMappingModel.getIsotopeToCollectorMap().put(//
                 IsotopesEnum.U235, singleCollector);
         isotopeMappingModel.getIsotopeToIntegrationTimeMap().put( //
-                IsotopesEnum.U235, 0.0616);
-
+                IsotopesEnum.U235, 0.01);
+        
         isotopeMappingModel.getIsotopeToCollectorMap().put(//
                 IsotopesEnum.Th232, singleCollector);
         isotopeMappingModel.getIsotopeToIntegrationTimeMap().put( //
-                IsotopesEnum.Th232, 0.0104);
+                IsotopesEnum.Th232, 0.01);
 
         isotopeMappingModel.getIsotopeToCollectorMap().put(//
                 IsotopesEnum.Pb208, singleCollector);
         isotopeMappingModel.getIsotopeToIntegrationTimeMap().put( //
-                IsotopesEnum.Pb208, 0.0104);
+                IsotopesEnum.Pb208, 0.01);
 
         isotopeMappingModel.getIsotopeToCollectorMap().put(//
                 IsotopesEnum.Pb207, singleCollector);
         isotopeMappingModel.getIsotopeToIntegrationTimeMap().put( //
-                IsotopesEnum.Pb207, 0.1136);
+                IsotopesEnum.Pb207, 0.02);
 
         isotopeMappingModel.getIsotopeToCollectorMap().put(//
                 IsotopesEnum.Pb206, singleCollector);
         isotopeMappingModel.getIsotopeToIntegrationTimeMap().put( //
-                IsotopesEnum.Pb206, 0.0808);
+                IsotopesEnum.Pb206, 0.01);
 
         isotopeMappingModel.getIsotopeToCollectorMap().put(//
                 IsotopesEnum.Pb204, singleCollector);
         isotopeMappingModel.getIsotopeToIntegrationTimeMap().put( //
-                IsotopesEnum.Pb204, 0.0312);
+                IsotopesEnum.Pb204, 0.03);
 
         isotopeMappingModel.getIsotopeToCollectorMap().put(//
                 IsotopesEnum.Hg202, singleCollector);
         isotopeMappingModel.getIsotopeToIntegrationTimeMap().put( //
-                IsotopesEnum.Hg202, 0.0208);
+                IsotopesEnum.Hg202, 0.01);
 
         isotopeMappingModel.getIsotopeToCollectorMap().put(//
-                IsotopesEnum.Hf176, singleCollector);
+                IsotopesEnum.Hg201, singleCollector);
         isotopeMappingModel.getIsotopeToIntegrationTimeMap().put( //
-                IsotopesEnum.Hf176, 0.020);
+                IsotopesEnum.Hg201, 0.01);
 
         collectorNameToModelMap.put("Single", singleCollector);
 
@@ -144,7 +144,7 @@ public final class LaserchronElementIISetupUPb_C extends AbstractMassSpecSetup {
      *
      * @return
      */
-    public static LaserchronElementIISetupUPb_C getInstance() {
+    public static UHoustonVarian810Setup getInstance() {
         return instance;
     }
 
@@ -259,16 +259,16 @@ public final class LaserchronElementIISetupUPb_C extends AbstractMassSpecSetup {
         genericIsotopeModels.add(Hg202);
         isotopeToRawIntensitiesMap.put(IsotopesEnum.Hg202, Hg202);
 
-        Hf176 = new RawIntensityDataModel( //
-                IsotopeNames.Hf176, virtualCollectors.get(1 - 1), virtualCollectors.get(10 - 1), COLLECTOR_DATA_FREQUENCY_MILLISECS,//
-                isotopeMappingModel.getIsotopeToCollectorMap().get(IsotopesEnum.Hf176));
-        genericIsotopeModels.add(Hf176);
-        isotopeToRawIntensitiesMap.put(IsotopesEnum.Hf176, Hf176);
+        Hg201 = new RawIntensityDataModel( //
+                IsotopeNames.Hg201, virtualCollectors.get(1 - 1), virtualCollectors.get(10 - 1), COLLECTOR_DATA_FREQUENCY_MILLISECS,//
+                isotopeMappingModel.getIsotopeToCollectorMap().get(IsotopesEnum.Hg201));
+        genericIsotopeModels.add(Hg201);
+        isotopeToRawIntensitiesMap.put(IsotopesEnum.Hg201, Hg201);
 
         isotopeMappingModel.setIsotopeToRawIntensitiesMap(isotopeToRawIntensitiesMap);
 
         virtualCollectorModelMapToFieldIndexes = new HashMap<>();
-        getVirtualCollectorModelMapToFieldIndexes().put(Hf176, 0);
+        getVirtualCollectorModelMapToFieldIndexes().put(Hg201, 0);
         getVirtualCollectorModelMapToFieldIndexes().put(Hg202, 1);
         getVirtualCollectorModelMapToFieldIndexes().put(Pb204, 2);
         getVirtualCollectorModelMapToFieldIndexes().put(Pb206, 3);
@@ -297,11 +297,6 @@ public final class LaserchronElementIISetupUPb_C extends AbstractMassSpecSetup {
         rawRatios.add(r207_204w);
         DataModelInterface r208_204w = new RawRatioDataModel(RawRatioNames.r208_204w, Pb208, Pb204, false, true, COLLECTOR_DATA_FREQUENCY_MILLISECS);
         rawRatios.add(r208_204w);
-
-        // special case to handle 176 Halfnium isotope
-        rawRatios.add(new RawRatioDataModel(RawRatioNames.r176_176w, Hf176, Hf176, false, false, COLLECTOR_DATA_FREQUENCY_MILLISECS));
-        // special case to handle 235 Uranium isotope
-        rawRatios.add(new RawRatioDataModel(RawRatioNames.r235_235w, U235, U235, false, false, COLLECTOR_DATA_FREQUENCY_MILLISECS));
 
         return rawRatios;
     }
