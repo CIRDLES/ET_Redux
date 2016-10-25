@@ -268,7 +268,7 @@ public class Sample implements
 
         this.sampleRegistry = SampleRegistries.SESAR;
 
-        this.filteredFractionIDs = Collections.synchronizedSortedSet(new TreeSet<>());
+        this.filteredFractionIDs = null;
     }
 
     @Override
@@ -1615,10 +1615,7 @@ public class Sample implements
     @Override
     public SortedSet<String> getFilteredFractionIDs() {
         if (filteredFractionIDs == null) {
-            this.filteredFractionIDs = Collections.synchronizedSortedSet(new TreeSet<>());
-            for (int i = 0; i < UPbFractions.size(); i++) {
-                filteredFractionIDs.add(UPbFractions.get(i).getFractionID());
-            }
+            initFilteredFractionsToAll();
         }
         return filteredFractionIDs;
     }
@@ -1629,5 +1626,12 @@ public class Sample implements
     @Override
     public void setFilteredFractionIDs(SortedSet<String> filteredFractionIDs) {
         this.filteredFractionIDs = filteredFractionIDs;
+    }
+
+    private void initFilteredFractionsToAll() {
+        this.filteredFractionIDs = Collections.synchronizedSortedSet(new TreeSet<>());
+        for (int i = 0; i < UPbFractions.size(); i++) {
+            filteredFractionIDs.add(UPbFractions.get(i).getFractionID());
+        }
     }
 }

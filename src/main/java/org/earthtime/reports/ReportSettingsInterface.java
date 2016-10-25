@@ -28,6 +28,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.SortedSet;
 import java.util.Vector;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.FractionI;
@@ -638,6 +639,7 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
 
                             // walk all the fractions for each column
                             int fractionRowCount = FRACTION_DATA_START_ROW;
+                            SortedSet<String> filteredFractions = sample.getFilteredFractionIDs();
                             for (ETFractionInterface f : fractions) {
 
                                 // test for included fraction on first data pass col=2==>fractionID
@@ -652,7 +654,7 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
                                             = sample.getAliquotByNumber(f.getAliquotNumber()).getAliquotName();
                                     
                                     // oct 2016 filtering true = not filtered out
-                                    if (sample.getFilteredFractionIDs().contains(f.getFractionID())){
+                                    if (filteredFractions.contains(f.getFractionID())){
                                         retVal[fractionRowCount][countOfAllColumns - 1] = "true";
                                     } else  {
                                         retVal[fractionRowCount][countOfAllColumns - 1] = "false";
