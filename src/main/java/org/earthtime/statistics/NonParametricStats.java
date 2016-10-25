@@ -1,4 +1,4 @@
-/*
+ /*
  * NonParametricStats.java
  *
  * Created Jul 30, 2011
@@ -55,7 +55,7 @@ public class NonParametricStats {
      * @param sample
      */
     public void calculateStats ( boolean[] dataActiveMap, double[] sample ) {
-        ArrayList<Double> liveSample = new ArrayList<Double>();
+        ArrayList<Double> liveSample = new ArrayList<>();
         sampleMean = 0.0;
 
         if ( sample.length > 0 ) {
@@ -77,7 +77,8 @@ public class NonParametricStats {
         
                
         sampleMean = StatUtils.mean( liveSampleArray );
-        variance = StatUtils.variance( liveSampleArray );
+        //The mean can be supplied to the variance method to save on computation
+        variance = StatUtils.variance( liveSampleArray, sampleMean );
 
         stdErrSampleMean = Math.sqrt(variance) / Math.sqrt( liveSampleArray.length );
 
@@ -90,7 +91,7 @@ public class NonParametricStats {
      * @return
      */
     public boolean determineIfBelowDetectionLimitUsingTwoSigma(boolean[] dataActiveMap, double[] sample){
-        boolean belowDetection = false;
+        boolean belowDetection;
         
         calculateStats( dataActiveMap, sample );
         
@@ -111,7 +112,7 @@ public class NonParametricStats {
     
     public boolean determineIfTenPercentOrMoreAreNegative(boolean[] dataActiveMap, double[] sample){
         double countOfNegative = 0;
-        double countOfValues = 0;;
+        double countOfValues = 0;
         
         for (int i = 0; i < dataActiveMap.length; i ++){
             if (dataActiveMap[i]){
@@ -122,7 +123,7 @@ public class NonParametricStats {
             }
         }
         
-        return (countOfNegative / countOfValues) > 0.1;
+        return (countOfNegative / countOfValues) >= 0.1;
     }
 
     /**
