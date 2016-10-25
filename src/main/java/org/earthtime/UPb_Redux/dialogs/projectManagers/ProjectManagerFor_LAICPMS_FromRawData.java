@@ -35,6 +35,8 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.SortedSet;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JLayeredPane;
@@ -145,7 +147,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
 
         loadDataTaskProgressBar.setVisible(false);
         rawDataFileChosen_scrollPane.setVisible(false);
-        
+
         mruRawDataFileHandler = null;
     }
 
@@ -249,7 +251,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
             fileHandlerComboBox.addItem( //
                     knownRawDataFileHandlers.get(i));
             if (knownRawDataFileHandlers.get(i).getNAME().compareToIgnoreCase(nameOfLastUsedFileHandler) == 0) {
-                    mruRawDataFileHandler = knownRawDataFileHandlers.get(i);
+                mruRawDataFileHandler = knownRawDataFileHandlers.get(i);
             }
         }
 
@@ -258,7 +260,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
             public void actionPerformed(ActionEvent e) {
                 AbstractRawDataFileHandler fileHandler = ((AbstractRawDataFileHandler) fileHandlerComboBox.getSelectedItem());
                 myState.setMruFileHandlingProtocolForLAICPMS(fileHandler.getNAME());
-                
+
                 rawDataTemplateComboBox.removeAllItems();
                 SortedSet<AbstractRawDataFileTemplate> templates = fileHandler.getAvailableRawDataFileTemplates();
                 Iterator<AbstractRawDataFileTemplate> templatesIterator = templates.iterator();
@@ -702,10 +704,15 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
          */
         @Override
         public void done() {
-            loadDataTaskProgressBar.setVisible(false);
+            try {
+                get();
+                loadDataTaskProgressBar.setVisible(false);
 //            manageButtons(true, true, false);//true);
-            System.out.println("LOADING TASK DONE !!");
-            loadAndShowRawDataFinishUp();
+                System.out.println("LOADING TASK DONE !!");
+                loadAndShowRawDataFinishUp();
+            } catch (InterruptedException | ExecutionException ex) {
+                Logger.getLogger(ProjectManagerFor_LAICPMS_FromRawData.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 
