@@ -45,6 +45,7 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.Vector;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
@@ -88,6 +89,7 @@ import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetu
 import org.earthtime.UPb_Redux.dateInterpretation.kwiki.KwikiConcordiaToolBar;
 import org.earthtime.UPb_Redux.dateInterpretation.kwiki.KwikiPDFToolBar;
 import org.earthtime.UPb_Redux.dialogs.parameterManagers.LAICPMSProjectParametersManager;
+import org.earthtime.UPb_Redux.dialogs.projectManagers.ProjectManagerFor_LAICPMS_FromRawData;
 import org.earthtime.UPb_Redux.dialogs.projectManagers.ProjectManagerSubscribeInterface;
 import org.earthtime.UPb_Redux.fractions.FractionsFilterInterface;
 import org.earthtime.UPb_Redux.utilities.CustomIcon;
@@ -339,7 +341,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
         ((TabbedReportViews) reportTableTabbedPane).initializeTabs();
         ((TabbedReportViews) reportTableTabbedPane).prepareTabs();
 
-        reportTableTabbedPane.setBounds(leftMargin, topMargin + 705, 1930, 500);
+        reportTableTabbedPane.setBounds(leftMargin, topMargin + 710, 1930, 500);
         this.add(reportTableTabbedPane, LAYER_FIVE);
 
         if (tripoliFractions.size() > 0) {
@@ -875,14 +877,19 @@ public class AbstractDataMonitorView extends AbstractRawDataView
          */
         @Override
         public void done() {
+            try {
+                get();
+                remove(loadDataTaskProgressBar);
+                loadDataTaskProgressBar.setValue(0);
+                loadDataTaskProgressBar.repaint();
+                repaint();
 
-            remove(loadDataTaskProgressBar);
-            loadDataTaskProgressBar.setValue(0);
-            loadDataTaskProgressBar.repaint();
-            repaint();
+                System.out.println("LOADING TASK DONE !!");
+                loadAndShowRawDataFinishUp();
+            } catch (InterruptedException | ExecutionException ex) {
+                Logger.getLogger(ProjectManagerFor_LAICPMS_FromRawData.class.getName()).log(Level.SEVERE, null, ex);
+            }
 
-            System.out.println("LOADING TASK DONE !!");
-            loadAndShowRawDataFinishUp();
         }
     }
 
