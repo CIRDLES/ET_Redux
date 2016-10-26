@@ -365,6 +365,7 @@ public abstract class AbstractRawDataFileHandler implements //
             if (data[i].contains("*")) {
                 // set flag to show we used analog
                 retVal = -calcAvgPulseOrAnalog(startIndex + 4, endIndex + 4, data);
+                break;
             } else {
                 double val = Double.parseDouble(data[i]);
                 sumOfValues += val;
@@ -372,7 +373,7 @@ public abstract class AbstractRawDataFileHandler implements //
             }
         }
 
-        // retVal > 0 means analogs were used already
+        // retVal < 0 means analogs were used
         if ((retVal == 0) && (countOfValues > 0)) {
             retVal = sumOfValues / countOfValues;
         }

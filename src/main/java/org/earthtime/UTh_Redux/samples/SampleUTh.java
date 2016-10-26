@@ -17,7 +17,9 @@ package org.earthtime.UTh_Redux.samples;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.Vector;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetup;
@@ -128,6 +130,8 @@ public class SampleUTh extends ETSample implements
 
     private boolean changed;
 
+    private SortedSet<String> filteredFractionIDs;
+
     /**
      *
      */
@@ -188,6 +192,8 @@ public class SampleUTh extends ETSample implements
 //
 //        this.sampleRegistry = SampleRegistries.SESAR;
         this.changed = false;
+
+        initFilteredFractionsToAll();
 
     }
 
@@ -585,14 +591,30 @@ public class SampleUTh extends ETSample implements
         return isotopeStyle;
     }
 
+    /**
+     * @return the filteredFractionIDs
+     */
     @Override
     public SortedSet<String> getFilteredFractionIDs() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (filteredFractionIDs == null) {
+            initFilteredFractionsToAll();
+        }
+        return filteredFractionIDs;
     }
 
+    /**
+     * @param filteredFractionIDs the filteredFractionIDs to set
+     */
     @Override
     public void setFilteredFractionIDs(SortedSet<String> filteredFractionIDs) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.filteredFractionIDs = filteredFractionIDs;
+    }
+
+    private void initFilteredFractionsToAll() {
+        this.filteredFractionIDs = Collections.synchronizedSortedSet(new TreeSet<>());
+        for (int i = 0; i < UThFractions.size(); i++) {
+            filteredFractionIDs.add(UThFractions.get(i).getFractionID());
+        }
     }
 
 }
