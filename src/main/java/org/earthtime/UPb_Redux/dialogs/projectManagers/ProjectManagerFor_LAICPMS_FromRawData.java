@@ -36,7 +36,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JLayeredPane;
@@ -707,7 +706,6 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
             try {
                 get();
                 loadDataTaskProgressBar.setVisible(false);
-//            manageButtons(true, true, false);//true);
                 System.out.println("LOADING TASK DONE !!");
                 loadAndShowRawDataFinishUp();
             } catch (InterruptedException | ExecutionException ex) {

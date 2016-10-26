@@ -34,6 +34,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.SortedSet;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JLayeredPane;
@@ -315,7 +316,7 @@ public abstract class AbstractProjectManagerForRawData extends DialogEditor impl
 //                if (acquisitionModel.getPrimaryMineralStandardModel() == null) {
 //                    acquisitionModel.setPrimaryMineralStandardModel(ReduxLabData.getInstance().getDefaultLAICPMSPrimaryMineralStandardModel());
 //                }
-                acquisitionModel.setLeftShadeCount(ReduxLabData.getInstance().getDefaultLeftShadeCountForSHRIMPAquisitions());
+            acquisitionModel.setLeftShadeCount(ReduxLabData.getInstance().getDefaultLeftShadeCountForSHRIMPAquisitions());
 
         } else {
             try {
@@ -531,10 +532,14 @@ public abstract class AbstractProjectManagerForRawData extends DialogEditor impl
          */
         @Override
         public void done() {
-            loadDataTaskProgressBar.setVisible(false);
-//            manageButtons(true, true, false);//true);
-            System.out.println("LOADING TASK DONE !!");
-            loadAndShowRawDataFinishUp();
+            try {
+                get();
+                loadDataTaskProgressBar.setVisible(false);
+                System.out.println("LOADING TASK DONE !!");
+                loadAndShowRawDataFinishUp();
+            } catch (InterruptedException | ExecutionException ex) {
+                Logger.getLogger(ProjectManagerFor_LAICPMS_FromRawData.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 
