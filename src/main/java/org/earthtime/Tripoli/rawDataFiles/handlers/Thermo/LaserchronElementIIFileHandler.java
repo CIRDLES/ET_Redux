@@ -556,6 +556,9 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
         }
         if (isLegal) {
             // detect analog and remove negative flag
+            boolean backPb206IsAnalog = false;
+            boolean peakPb206IsAnalog = false;
+
             for (int j = 0; j < 9; j++) {
                 // test for GG's special case per email 31 Jan 2016
                 if (j == 8) {
