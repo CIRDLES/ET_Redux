@@ -39,6 +39,7 @@ import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.LaserchronElementII_R
 import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.LaserchronElementII_RawDataTemplate_C;
 import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.pythonUtilities.ElementII_DatFileConverter;
+import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.utilities.FileHelper;
 import org.python.core.PyException;
 
@@ -55,6 +56,7 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
     // Instance variables
     private File[] analysisFiles;
     private String[] fractionNames;
+    private static double r238_235s = ReduxLabData.getInstance().getDefaultR238_235s().getValue().doubleValue();
 
     /**
      *
@@ -385,14 +387,14 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
             // detect analog and remove negative flag and divide by acf
             for (int j = 0; j < 7; j++) {
                 if (backgroundIntensities[j] < 0.0) {
-                    backgroundIntensities[j] = Math.abs(backgroundIntensities[j]) / backgroundACFs[j];
+                    backgroundIntensities[j] = Math.abs(backgroundIntensities[j]);// oct 2016 off for now see IonCollectorModel / backgroundACFs[j];
                 } else {
                     // not analog mode so acf is 1.0
                     backgroundACFs[j] = 1.0;
                 }
 
                 if (peakIntensities[j] < 0.0) {
-                    peakIntensities[j] = Math.abs(peakIntensities[j]) / peakACFs[j];
+                    peakIntensities[j] = Math.abs(peakIntensities[j]);// oct 2016 off for now see IonCollectorModel / peakACFs[j];
                 } else {
                     // not analog mode so acf is 1.0
                     peakACFs[j] = 1.0;
@@ -452,29 +454,47 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
         }
         if (isLegal) {
             // detect analog and remove negative flag
+            boolean backPb206IsAnalog = false;
+            boolean peakPb206IsAnalog = false;
             for (int j = 0; j < 8; j++) {
-                // test for GG's special case per email31 Jan 2016
-                //TODO: use phys constants model
+                // test for GG's special case per email 31 Jan 2016
+
                 if (j == 7) {
                     if (backgroundIntensities[j] < 0.0) {
-                        // U238 is analog so use 235 * 137.82
-                        backgroundIntensities[7] = backgroundIntensities[6] * 137.82;
+                        if (backPb206IsAnalog) {
+                            backgroundIntensities[7] = Math.abs(backgroundIntensities[7]);
+                        } else {
+                            // U238 is analog and Pb206 is not analog so use 235 * 137.82 now 137.81846 +/- 0.0223
+                            backgroundIntensities[7] = backgroundIntensities[6] * r238_235s;//137.82;
+                        }
                     }
                     if (peakIntensities[j] < 0.0) {
-                        // U238 is analog so use 235 * 137.82
-                        peakIntensities[7] = peakIntensities[6] * 137.82;
+                        if (peakPb206IsAnalog) {
+                            peakIntensities[7] = Math.abs(peakIntensities[7]);
+                        } else {
+                            // U238 is analog so use 235 * 137.82
+                            peakIntensities[7] = peakIntensities[6] * r238_235s;
+                        }
                     }
                 }
 
                 if (backgroundIntensities[j] < 0.0) {
-                    backgroundIntensities[j] = Math.abs(backgroundIntensities[j]) / backgroundACFs[j];
+                    backgroundIntensities[j] = Math.abs(backgroundIntensities[j]);// oct 2016 off for now see IonCollectorModel / backgroundACFs[j];
+                    // oct 2016 revised by Noah
+                    if (j == 2) {
+                        backPb206IsAnalog = true;
+                    }
                 } else {
                     // not analog mode so acf is 1.0
                     backgroundACFs[j] = 1.0;
                 }
 
                 if (peakIntensities[j] < 0.0) {
-                    peakIntensities[j] = Math.abs(peakIntensities[j]) / peakACFs[j];
+                    peakIntensities[j] = Math.abs(peakIntensities[j]);// oct 2016 off for now see IonCollectorModel / peakACFs[j];
+                    // oct 2016 revised by Noah
+                    if (j == 2) {
+                        peakPb206IsAnalog = true;
+                    }
                 } else {
                     // not analog mode so acf is 1.0
                     peakACFs[j] = 1.0;
@@ -536,29 +556,47 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
         }
         if (isLegal) {
             // detect analog and remove negative flag
+            boolean backPb206IsAnalog = false;
+            boolean peakPb206IsAnalog = false;
+
             for (int j = 0; j < 9; j++) {
-                // test for GG's special case per email31 Jan 2016
-                //TODO: use phys constants model
+                // test for GG's special case per email 31 Jan 2016
                 if (j == 8) {
                     if (backgroundIntensities[j] < 0.0) {
-                        // U238 is analog so use 235 * 137.82
-                        backgroundIntensities[8] = backgroundIntensities[7] * 137.82;
+                        if (backPb206IsAnalog) {
+                            backgroundIntensities[8] = Math.abs(backgroundIntensities[8]);
+                        } else {
+                            // U238 is analog so use 235 * 137.82
+                            backgroundIntensities[8] = backgroundIntensities[7] * r238_235s;
+                        }
                     }
                     if (peakIntensities[j] < 0.0) {
-                        // U238 is analog so use 235 * 137.82
-                        peakIntensities[8] = peakIntensities[7] * 137.82;
+                        if (peakPb206IsAnalog) {
+                            peakIntensities[8] = Math.abs(peakIntensities[8]);
+                        } else {
+                            // U238 is analog so use 235 * 137.82
+                            peakIntensities[8] = peakIntensities[7] * r238_235s;
+                        }
                     }
                 }
 
                 if (backgroundIntensities[j] < 0.0) {
-                    backgroundIntensities[j] = Math.abs(backgroundIntensities[j]) / backgroundACFs[j];
+                    backgroundIntensities[j] = Math.abs(backgroundIntensities[j]);// oct 2016 off for now see IonCollectorModel / backgroundACFs[j];
+                    // oct 2016 revised by Noah
+                    if (j == 2) {
+                        backPb206IsAnalog = true;
+                    }
                 } else {
                     // not analog mode so acf is 1.0
                     backgroundACFs[j] = 1.0;
                 }
 
                 if (peakIntensities[j] < 0.0) {
-                    peakIntensities[j] = Math.abs(peakIntensities[j]) / peakACFs[j];
+                    peakIntensities[j] = Math.abs(peakIntensities[j]);// oct 2016 off for now see IonCollectorModel / peakACFs[j];
+                    // oct 2016 revised by Noah
+                    if (j == 2) {
+                        peakPb206IsAnalog = true;
+                    }
                 } else {
                     // not analog mode so acf is 1.0
                     peakACFs[j] = 1.0;
