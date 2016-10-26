@@ -563,17 +563,29 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
                 // test for GG's special case per email 31 Jan 2016
                 if (j == 8) {
                     if (backgroundIntensities[j] < 0.0) {
-                        // U238 is analog so use 235 * 137.82
-                        backgroundIntensities[8] = backgroundIntensities[7] * r238_235s;
+                        if (backPb206IsAnalog) {
+                            backgroundIntensities[8] = Math.abs(backgroundIntensities[8]);
+                        } else {
+                            // U238 is analog so use 235 * 137.82
+                            backgroundIntensities[8] = backgroundIntensities[7] * r238_235s;
+                        }
                     }
                     if (peakIntensities[j] < 0.0) {
-                        // U238 is analog so use 235 * 137.82
-                        peakIntensities[8] = peakIntensities[7] * r238_235s;
+                        if (peakPb206IsAnalog) {
+                            peakIntensities[8] = Math.abs(peakIntensities[8]);
+                        } else {
+                            // U238 is analog so use 235 * 137.82
+                            peakIntensities[8] = peakIntensities[7] * r238_235s;
+                        }
                     }
                 }
 
                 if (backgroundIntensities[j] < 0.0) {
                     backgroundIntensities[j] = Math.abs(backgroundIntensities[j]);// oct 2016 off for now see IonCollectorModel / backgroundACFs[j];
+                    // oct 2016 revised by Noah
+                    if (j == 2) {
+                        backPb206IsAnalog = true;
+                    }
                 } else {
                     // not analog mode so acf is 1.0
                     backgroundACFs[j] = 1.0;
@@ -581,6 +593,10 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
 
                 if (peakIntensities[j] < 0.0) {
                     peakIntensities[j] = Math.abs(peakIntensities[j]);// oct 2016 off for now see IonCollectorModel / peakACFs[j];
+                    // oct 2016 revised by Noah
+                    if (j == 2) {
+                        peakPb206IsAnalog = true;
+                    }
                 } else {
                     // not analog mode so acf is 1.0
                     peakACFs[j] = 1.0;
