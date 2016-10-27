@@ -117,8 +117,11 @@ public class IonCounterCollectorModel extends AbstractCollectorModel {
 
         for (int i = 0; i < allItensities.length; i++) {
 
+            // page 6 of LAICPMS Uncertainty https://docs.google.com/document/d/1zZaVt5EIxjnTjAeBCdsPIB3eNLLNiB0ymOvcXTkaajM/edit#heading=h.p0w9k6lx30r2
             if ((collectedDataStyle.compareTo(collectedDataStyle.SEM) == 0) && (allAnalogCorrectionFactors[i] != 1.0)) {
-                measuredVarianceFromIonCounts[i] = Math.pow(allItensities[i] * 0.05 * allAnalogCorrectionFactors[i], 2);
+                // octy 2016 temp hack until Noah finishes Math = both meanings of ACF are the same for now ... later will be ratio of the two
+                measuredVarianceFromIonCounts[i] = Math.pow(allItensities[i] * 0.05, 2);
+//                measuredVarianceFromIonCounts[i] = Math.pow(allItensities[i] * 0.05 * allAnalogCorrectionFactors[i], 2);
             } else {
                 measuredVarianceFromIonCounts[i] = allItensities[i] / integrationTime; // march 2013 Noah's famous EFFING comment / integrationTime;
             }
