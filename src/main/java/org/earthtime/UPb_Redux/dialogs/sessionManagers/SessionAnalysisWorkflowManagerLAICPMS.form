@@ -182,7 +182,11 @@
     </Container>
     <Container class="javax.swing.JTabbedPane" name="tripoliDataProcessing_tabbedPane">
       <Properties>
+        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="e6" green="f0" red="fa" type="rgb"/>
+        </Property>
         <Property name="tabPlacement" type="int" value="3"/>
+        <Property name="opaque" type="boolean" value="true"/>
       </Properties>
       <Events>
         <EventHandler event="componentResized" listener="java.awt.event.ComponentListener" parameters="java.awt.event.ComponentEvent" handler="tripoliDataProcessing_tabbedPaneComponentResized"/>
@@ -531,10 +535,14 @@
                 </Component>
                 <Component class="javax.swing.JSlider" name="yAxisZoomSlider">
                   <Properties>
+                    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                      <Color blue="e6" green="f0" red="fa" type="rgb"/>
+                    </Property>
                     <Property name="maximum" type="int" value="320"/>
                     <Property name="minimum" type="int" value="64"/>
                     <Property name="orientation" type="int" value="1"/>
                     <Property name="value" type="int" value="128"/>
+                    <Property name="opaque" type="boolean" value="true"/>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
@@ -1239,11 +1247,12 @@
             <Component class="javax.swing.JSlider" name="xAxisZoomSlider">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                  <Color blue="e4" green="e4" red="e6" type="rgb"/>
+                  <Color blue="e6" green="f0" red="fa" type="rgb"/>
                 </Property>
                 <Property name="maximum" type="int" value="640"/>
                 <Property name="minimum" type="int" value="4"/>
                 <Property name="value" type="int" value="128"/>
+                <Property name="opaque" type="boolean" value="true"/>
               </Properties>
               <AuxValues>
                 <AuxValue name="JLayeredPane.layer" type="java.lang.Integer" value="100"/>

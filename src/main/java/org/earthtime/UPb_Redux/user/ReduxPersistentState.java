@@ -65,8 +65,10 @@ public class ReduxPersistentState implements Serializable {
     private File MRUProjectFile;
     private ArrayList<String> MRUProjectList;
     private String MRUProjectFolderPath;
-    // oct 2016 manage mru for LAICPMS file handling protocols - save name of last used
-    private String mruFileHandlingProtocolForLAICPMS;
+    // oct 2016 manage mru for file handling protocols - save name of last used
+    private String mruFileHandlingProtocol;
+    private String mruRawDataTemplate;
+    private String mruPurpose;
 
     /**
      *
@@ -106,8 +108,10 @@ public class ReduxPersistentState implements Serializable {
         }
 
         MRUProjectFile = null;
-        
-        mruFileHandlingProtocolForLAICPMS = "";
+
+        mruFileHandlingProtocol = "";
+        mruRawDataTemplate = "";
+        mruPurpose = "";
 
         serializeSelf();
     }
@@ -468,19 +472,53 @@ public class ReduxPersistentState implements Serializable {
     }
 
     /**
-     * @return the mruFileHandlingProtocolForLAICPMS
+     * @return the mruFileHandlingProtocol
      */
-    public String getMruFileHandlingProtocolForLAICPMS() {
-        if (mruFileHandlingProtocolForLAICPMS == null){
-            mruFileHandlingProtocolForLAICPMS = "";
+    public String getMruFileHandlingProtocol() {
+        if (mruFileHandlingProtocol == null) {
+            mruFileHandlingProtocol = "";
         }
-        return mruFileHandlingProtocolForLAICPMS;
+        return mruFileHandlingProtocol;
     }
 
     /**
-     * @param mruFileHandlingProtocolForLAICPMS the mruFileHandlingProtocolForLAICPMS to set
+     * @param mruFileHandlingProtocol the mruFileHandlingProtocol to set
      */
-    public void setMruFileHandlingProtocolForLAICPMS(String mruFileHandlingProtocolForLAICPMS) {
-        this.mruFileHandlingProtocolForLAICPMS = mruFileHandlingProtocolForLAICPMS;
+    public void setMruFileHandlingProtocol(String mruFileHandlingProtocol) {
+        this.mruFileHandlingProtocol = mruFileHandlingProtocol;
+    }
+
+    /**
+     * @return the mruRawDataTemplate
+     */
+    public String getMruRawDataTemplate() {
+        if (mruRawDataTemplate == null) {
+            mruRawDataTemplate = "";
+        }
+        return mruRawDataTemplate;
+    }
+
+    /**
+     * @param mruRawDataTemplate the mruRawDataTemplate to set
+     */
+    public void setMruRawDataTemplate(String mruRawDataTemplate) {
+        this.mruRawDataTemplate = mruRawDataTemplate;
+    }
+
+    /**
+     * @return the mruPurpose
+     */
+    public String getMruPurpose() {
+        if (mruPurpose == null) {
+            mruPurpose = "";
+        }
+        return mruPurpose;
+    }
+
+    /**
+     * @param mruPurpose the mruPurpose to set
+     */
+    public void setMruPurpose(String mruPurpose) {
+        this.mruPurpose = mruPurpose;
     }
 }
