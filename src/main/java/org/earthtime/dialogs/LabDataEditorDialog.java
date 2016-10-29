@@ -297,12 +297,10 @@ public class LabDataEditorDialog extends DialogEditor {
                 tracersTab_panel.getWidth(), tracersTab_panel.getHeight() - VERTICAL_OFFSET_MODEL_VIEW);
         if (editable) {
             tracerModelView
-                    = //
-                    new TracerUPbRatiosDataViewEditable(tracerModel, tracerViewDimension, false);
+                    = new TracerUPbRatiosDataViewEditable(tracerModel, tracerViewDimension, false);
         } else {
             tracerModelView
-                    = //
-                    new TracerUPbRatiosDataViewNotEditable(tracerModel, tracerViewDimension, false);
+                    = new TracerUPbRatiosDataViewNotEditable(tracerModel, tracerViewDimension, false);
         }
 
         tracerModelView.setBackground(tracersTab_panel.getBackground());
@@ -1533,12 +1531,10 @@ public class LabDataEditorDialog extends DialogEditor {
 
         if (editable) {
             initialPbModelView
-                    = //
-                    new RatiosDataViewEditable(initialPbModel, initialPbModelsTab_panel.getSize(), false);
+                    = new RatiosDataViewEditable(initialPbModel, initialPbModelsTab_panel.getSize(), false);
         } else {
             initialPbModelView
-                    = //
-                    new RatiosDataViewNotEditable(initialPbModel, initialPbModelsTab_panel.getSize(), false);
+                    = new RatiosDataViewNotEditable(initialPbModel, initialPbModelsTab_panel.getSize(), false);
         }
 
         initialPbModelView.setBackground(initialPbModelsTab_panel.getBackground());
@@ -2134,12 +2130,10 @@ public class LabDataEditorDialog extends DialogEditor {
 
         if (editable) {
             mineralStandardModelView
-                    = //
-                    new ReferenceMaterialUPbRatiosDataViewEditable(mineralStandardModel, mineralStandard_panel.getSize(), false);
+                    = new ReferenceMaterialUPbRatiosDataViewEditable(mineralStandardModel, mineralStandard_panel.getSize(), false);
         } else {
             mineralStandardModelView
-                    = //
-                    new ReferenceMaterialUPbRatiosDataViewNotEditable(mineralStandardModel, mineralStandard_panel.getSize(), false);
+                    = new ReferenceMaterialUPbRatiosDataViewNotEditable(mineralStandardModel, mineralStandard_panel.getSize(), false);
         }
 
         mineralStandardModelView.setBounds(mineralStandard_panel.getBounds());
@@ -2901,7 +2895,7 @@ public class LabDataEditorDialog extends DialogEditor {
      *
      */
     public void setSize() {
-        setSize(1113, 765);
+        setSize(1113, 770);
     }
 
     private void exitLabData()
@@ -3219,6 +3213,7 @@ public class LabDataEditorDialog extends DialogEditor {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setAlwaysOnTop(true);
+        setPreferredSize(new java.awt.Dimension(1113, 770));
         setResizable(false);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
@@ -4336,6 +4331,7 @@ public class LabDataEditorDialog extends DialogEditor {
 
         buttonsPanel.setBackground(new java.awt.Color(252, 236, 235));
         buttonsPanel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+        buttonsPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         save_button.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         save_button.setForeground(new java.awt.Color(255, 51, 0));
@@ -4347,20 +4343,7 @@ public class LabDataEditorDialog extends DialogEditor {
                 save_buttonActionPerformed(evt);
             }
         });
-
-        org.jdesktop.layout.GroupLayout buttonsPanelLayout = new org.jdesktop.layout.GroupLayout(buttonsPanel);
-        buttonsPanel.setLayout(buttonsPanelLayout);
-        buttonsPanelLayout.setHorizontalGroup(
-            buttonsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(buttonsPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .add(save_button, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        buttonsPanelLayout.setVerticalGroup(
-            buttonsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(save_button, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 36, Short.MAX_VALUE)
-        );
+        buttonsPanel.add(save_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(8, 6, 1097, 25));
 
         labPane_layered.setLayer(details_pane, javax.swing.JLayeredPane.DEFAULT_LAYER);
         labPane_layered.setLayer(header_Panel, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -4377,12 +4360,13 @@ public class LabDataEditorDialog extends DialogEditor {
         labPane_layeredLayout.setVerticalGroup(
             labPane_layeredLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(labPane_layeredLayout.createSequentialGroup()
-                .add(header_Panel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(649, 649, 649)
-                .add(buttonsPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-            .add(labPane_layeredLayout.createSequentialGroup()
-                .add(24, 24, 24)
-                .add(details_pane, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 660, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(labPane_layeredLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(header_Panel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(labPane_layeredLayout.createSequentialGroup()
+                        .add(24, 24, 24)
+                        .add(details_pane, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 660, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(buttonsPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 35, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
 
         fileMenu_menu.setText("File");
