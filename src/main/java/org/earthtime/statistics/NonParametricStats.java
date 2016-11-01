@@ -23,13 +23,13 @@ import java.util.ArrayList;
 import org.apache.commons.math3.stat.StatUtils;
 
 /**
- *
+ * Singleton class for statistical calculations.
+ * 
  * @author James F. Bowring
  */
 public class NonParametricStats {
-
+    
     private static NonParametricStats instance = null;
-    //
     private double sampleMean;
     private double variance;
     private double stdErrSampleMean;
@@ -37,58 +37,85 @@ public class NonParametricStats {
     private NonParametricStats () {
         super();
     }
+    
+    /**
+     * Called during getInstance() to set the values of instance to null.
+     * @post All values are 0.0.
+     */
+    private void setToDefaultValues()
+    {
+        sampleMean = 0.0;
+        variance = 0.0;
+        stdErrSampleMean = 0.0;
+    }
 
     /**
+     * This returns the one instance of NonParametricStats. If one does not
+     * exist yet, one is created.
      * 
-     * @return
+     * @return the current instance of NonParametricStats
      */
     public static NonParametricStats getInstance () {
         if ( instance == null ) {
             instance = new NonParametricStats();
         }
+        instance.setToDefaultValues();
         return instance;
     }
 
     /**
+     * Calculates the sample mean, variance, and stdErrSample of a collection 
+     * of double values.
      * 
-     * @param dataActiveMap
-     * @param sample
+     * @post If the arrays are of different length or either is null, the 
+     * sample mean, variance, and stdErrSample are set to zero.
+     * @param sample The collection of doubles
+     * @param dataActiveMap Determines which of the doubles should be used in
+     * the calculations. Each false means the equivalent index of sample is
+     * ignored
      */
     public void calculateStats ( boolean[] dataActiveMap, double[] sample ) {
         ArrayList<Double> liveSample = new ArrayList<>();
         sampleMean = 0.0;
+        variance = 0.0;
+        stdErrSampleMean = 0.0;
 
-        if ( sample.length > 0 ) {
-
+        if (dataActiveMap != null && sample != null
+                && dataActiveMap.length == sample.length
+                && sample.length > 0)
+        {
             for (int i = 0; i < sample.length; i ++) {
                 if ( dataActiveMap[i] ) {
                     sampleMean += sample[i];
                     liveSample.add( sample[i] );
                 }
             }
-
             sampleMean /= liveSample.size();
-        }
-        
-        double[] liveSampleArray = new double[liveSample.size()];
-        for (int i = 0; i < liveSampleArray.length; i ++){
-            liveSampleArray[i] = (double)liveSample.get( i );
-        }
-        
-               
-        sampleMean = StatUtils.mean( liveSampleArray );
-        //The mean can be supplied to the variance method to save on computation
-        variance = StatUtils.variance( liveSampleArray, sampleMean );
+            
+            double[] liveSampleArray = new double[liveSample.size()];
+            for (int i = 0; i < liveSampleArray.length; i ++){
+                liveSampleArray[i] = (double)liveSample.get( i );
+            }
 
-        stdErrSampleMean = Math.sqrt(variance) / Math.sqrt( liveSampleArray.length );
+            sampleMean = StatUtils.mean( liveSampleArray );
+            //The mean can be supplied to the variance method to save on computation
+            variance = StatUtils.variance( liveSampleArray, sampleMean );
+            stdErrSampleMean = Math.sqrt(variance) / Math.sqrt( liveSampleArray.length );
+        }
 
     }
     
     /**
-     *
-     * @param dataActiveMap
-     * @param sample
-     * @return
+     * Calculates the sample mean and the standard error sample mean of only
+     * the points within two standard units of the mean, then returns true if
+     * the sample mean is less than or equal to 2 times the standard error
+     * sample mean
+     * 
+     * @param sample The collection of doubles
+     * @param dataActiveMap Determines which of the doubles should be used in
+     * the calculations. Each false means the equivalent index of sample is
+     * ignored
+     * @return true if below the detection limit
      */
     public boolean determineIfBelowDetectionLimitUsingTwoSigma(boolean[] dataActiveMap, double[] sample){
         boolean belowDetection;
@@ -110,6 +137,15 @@ public class NonParametricStats {
         return belowDetection;
     }
     
+    /**
+     * Determines if ten percent or more of the data points are negative.
+     * 
+     * @param sample The collection of doubles
+     * @param dataActiveMap Determines which of the doubles should be used in
+     * the calculations. Each false means the equivalent index of sample is
+     * ignored
+     * @return true if ten percent or more of the data points are negative.
+     */
     public boolean determineIfTenPercentOrMoreAreNegative(boolean[] dataActiveMap, double[] sample){
         double countOfNegative = 0;
         double countOfValues = 0;

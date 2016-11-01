@@ -19,50 +19,16 @@
  */
 package org.earthtime.statistics;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- *
+ * October 31, 2016
  * @author Griffin Hiers
  */
 public class NonParametricStatsTest
 {
     private NonParametricStats instance;
-    
-    public NonParametricStatsTest()
-    {
-    }
-    
-    @BeforeClass
-    public static void setUpClass()
-    {
-    }
-    
-    @AfterClass
-    public static void tearDownClass()
-    {
-    }
-    
-    @Before
-    public void setUp()
-    {
-        /*
-        instance = NonParametricStats.getInstance();
-        boolean[] dataActiveMap = {true};
-        double[] sample = {0};
-        instance.calculateStats(dataActiveMap, sample);
-        */
-    }
-    
-    @After
-    public void tearDown()
-    {
-    }
 
     /**
      * Test of getInstance method, of class NonParametricStats.
@@ -73,13 +39,43 @@ public class NonParametricStatsTest
         System.out.println("getInstance");
         
         //First tests that the first call to getInstace initializes instance
-        NonParametricStats result = NonParametricStats.getInstance();
-        assertNotNull("instance is not being initialized", result);
+        instance = NonParametricStats.getInstance();
+        assertNotNull("instance is not being initialized", instance);
+        
+        //tests that the values are 0 by default
+        double expectedSampleMean = 0.0;
+        double expectedVariance = 0.0;
+        double expectedStdErrSampleMean = 0.0;
+        assertEquals(expectedSampleMean, instance.getSampleMean(), 0.0);
+        assertEquals(expectedVariance, instance.getVariance(), 0.0);
+        assertEquals(expectedStdErrSampleMean, instance.getStdErrSampleMean(), 0.0);
         
         //Tests that subsequent calls to getInsance don't reinitialize instace
-        NonParametricStats expectedResult = result;
-        result = NonParametricStats.getInstance();
-        assertSame("instance is getting reinitialized", expectedResult, result);
+        NonParametricStats expectedResult = instance;
+        instance = NonParametricStats.getInstance();
+        assertSame("instance is getting reinitialized", expectedResult, instance);
+        
+        //sets the values to something other than zero
+        boolean[] dataActiveMap = {true, true};
+        double[] sample = {1, 10};
+        instance.calculateStats(dataActiveMap, sample);
+        
+        //tests that the values are 0 by default
+        instance = NonParametricStats.getInstance();
+        expectedSampleMean = 0.0;
+        expectedVariance = 0.0;
+        expectedStdErrSampleMean = 0.0;
+        assertEquals(expectedSampleMean, instance.getSampleMean(), 0.0);
+        assertEquals(expectedVariance, instance.getVariance(), 0.0);
+        assertEquals(expectedStdErrSampleMean, instance.getStdErrSampleMean(), 0.0);
+        
+        //tests that old references to instance also get reset
+        assertEquals(expectedSampleMean, expectedResult.getSampleMean(), 0.0);
+        assertEquals(expectedVariance, expectedResult.getVariance(), 0.0);
+        assertEquals(expectedStdErrSampleMean, expectedResult.getStdErrSampleMean(), 0.0);
+        
+        
+        
     }
 
     /**
@@ -214,7 +210,7 @@ public class NonParametricStatsTest
         dataActiveMap = new boolean[6];
         for(int i = 0; i < dataActiveMap.length; ++i) {dataActiveMap[i] = true;}
         sample[0] = 10; sample[1] = 10;
-        expectedSampleMean = 10;
+        expectedSampleMean = 0;
         expectedVariance = 0;
         expectedStdErrSampleMean = 0;
         instance.calculateStats(dataActiveMap, sample);
@@ -222,18 +218,49 @@ public class NonParametricStatsTest
         assertEquals(expectedVariance, instance.getVariance(), 0);
         assertEquals(expectedStdErrSampleMean, instance.getStdErrSampleMean(), 0);
         
-        /*
+        
         //the dataActiveMap array is smaller than sample array
         sample = new double[9];
         for(int i = 0; i < sample.length; ++i) {sample[i] = 10;}
-        expectedSampleMean = 10;
+        expectedSampleMean = 0;
         expectedVariance = 0;
         expectedStdErrSampleMean = 0;
         instance.calculateStats(dataActiveMap, sample);
         assertEquals(expectedSampleMean, instance.getSampleMean(), 0);
         assertEquals(expectedVariance, instance.getVariance(), 0);
         assertEquals(expectedStdErrSampleMean, instance.getStdErrSampleMean(), 0);
-        */
+        
+        //the dataActiveMap array is null
+        dataActiveMap = null;
+        expectedSampleMean = 0;
+        expectedVariance = 0;
+        expectedStdErrSampleMean = 0;
+        instance.calculateStats(dataActiveMap, sample);
+        assertEquals(expectedSampleMean, instance.getSampleMean(), 0);
+        assertEquals(expectedVariance, instance.getVariance(), 0);
+        assertEquals(expectedStdErrSampleMean, instance.getStdErrSampleMean(), 0);
+        
+        //the sample array is null
+        dataActiveMap = new boolean[9];
+        for(int i = 0; i < dataActiveMap.length; ++i) {dataActiveMap[i] = true;}
+        sample = null;
+        expectedSampleMean = 0;
+        expectedVariance = 0;
+        expectedStdErrSampleMean = 0;
+        instance.calculateStats(dataActiveMap, sample);
+        assertEquals(expectedSampleMean, instance.getSampleMean(), 0);
+        assertEquals(expectedVariance, instance.getVariance(), 0);
+        assertEquals(expectedStdErrSampleMean, instance.getStdErrSampleMean(), 0);
+        
+        //both arrays are null
+        dataActiveMap = null;
+        expectedSampleMean = 0;
+        expectedVariance = 0;
+        expectedStdErrSampleMean = 0;
+        instance.calculateStats(dataActiveMap, sample);
+        assertEquals(expectedSampleMean, instance.getSampleMean(), 0);
+        assertEquals(expectedVariance, instance.getVariance(), 0);
+        assertEquals(expectedStdErrSampleMean, instance.getStdErrSampleMean(), 0);
     }
 
     /**
