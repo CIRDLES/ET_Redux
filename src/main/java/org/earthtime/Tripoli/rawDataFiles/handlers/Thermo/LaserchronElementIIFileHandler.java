@@ -118,9 +118,11 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
     @Override
     public void getAndLoadRawIntensityDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions, boolean inLiveMode) {
 
-        referenceMaterialIncrementerMap = new ConcurrentHashMap<>();
-        for (int i = 0; i < rawDataFileTemplate.getStandardIDs().length; i++) {
-            referenceMaterialIncrementerMap.put(rawDataFileTemplate.getStandardIDs()[i], 1);
+        if ((referenceMaterialIncrementerMap == null) || !inLiveMode) {
+            referenceMaterialIncrementerMap = new ConcurrentHashMap<>();
+            for (String standardID : rawDataFileTemplate.getStandardIDs()) {
+                referenceMaterialIncrementerMap.put(standardID, 1);
+            }
         }
 
         // Laserchron ElementII has folder of .dat files 
