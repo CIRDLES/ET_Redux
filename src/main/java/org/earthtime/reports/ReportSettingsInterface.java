@@ -572,6 +572,8 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
         // FRACTION_DATA_START_ROW is stored in 0,0
         retVal[0][0] = Integer.toString(FRACTION_DATA_START_ROW);
 
+        SortedSet<String> filteredFractions = sample.getFilteredFractionIDs();
+
         int columnCount = 2;
 
         int footNoteCounter = 0;
@@ -639,7 +641,7 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
 
                             // walk all the fractions for each column
                             int fractionRowCount = FRACTION_DATA_START_ROW;
-                            SortedSet<String> filteredFractions = sample.getFilteredFractionIDs();
+//                            SortedSet<String> filteredFractions = sample.getFilteredFractionIDs();
                             for (ETFractionInterface f : fractions) {
 
                                 // test for included fraction on first data pass col=2==>fractionID
@@ -652,11 +654,11 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
 
                                     retVal[fractionRowCount][1]
                                             = sample.getAliquotByNumber(f.getAliquotNumber()).getAliquotName();
-                                    
+
                                     // oct 2016 filtering true = not filtered out
-                                    if (filteredFractions.contains(f.getFractionID())){
+                                    if (filteredFractions.contains(f.getFractionID())) {
                                         retVal[fractionRowCount][countOfAllColumns - 1] = "true";
-                                    } else  {
+                                    } else {
                                         retVal[fractionRowCount][countOfAllColumns - 1] = "false";
                                     }
                                 }
@@ -717,10 +719,10 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
             try {
                 lambda238Ref
                         = " (" + ((ValueModelReferenced) sample.getPhysicalConstantsModel()//
-                        .getDatumByName(Lambdas.lambda238.getName())).getReference() + ")";
+                                .getDatumByName(Lambdas.lambda238.getName())).getReference() + ")";
                 lambda235Ref
                         = " (" + ((ValueModelReferenced) sample.getPhysicalConstantsModel()//
-                        .getDatumByName(Lambdas.lambda235.getName())).getReference() + ")";
+                                .getDatumByName(Lambdas.lambda235.getName())).getReference() + ")";
             } catch (BadLabDataException badLabDataException) {
             }
 
@@ -759,7 +761,7 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
                         += //
                         " (" //
                         + ((ValueModelReferenced) sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda230.getName()))//
-                        .getReference() //
+                                .getReference() //
                         + ")";
             } catch (BadLabDataException badLabDataException) {
             }
@@ -774,7 +776,7 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
                         += //
                         " (" //
                         + ((ValueModelReferenced) sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda232.getName()))//
-                        .getReference() //
+                                .getReference() //
                         + ")";
             } catch (BadLabDataException badLabDataException) {
             }
@@ -788,7 +790,7 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
                         += //
                         " (" //
                         + ((ValueModelReferenced) sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda234.getName()))//
-                        .getReference() //
+                                .getReference() //
                         + ")";
             } catch (BadLabDataException badLabDataException) {
             }
