@@ -167,7 +167,7 @@ public class DateProbabilityDensityPanel extends JLayeredPane
         this.sample = sample;
 
         setOpaque(true);
-
+       
         setBackground(Color.white);
 
         selectedAliquotNumber = 0;
@@ -741,7 +741,6 @@ public class DateProbabilityDensityPanel extends JLayeredPane
     @Override
     public void preparePanel(boolean doReScale, boolean inLiveMode) {
 
-//        System.out.println("========Probability Prep=======");
         this.removeAll();
 
         //nov 2011
