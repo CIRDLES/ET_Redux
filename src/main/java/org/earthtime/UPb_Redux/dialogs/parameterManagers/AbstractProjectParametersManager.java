@@ -642,6 +642,8 @@ public abstract class AbstractProjectParametersManager extends JLayeredPane {
 
         mineralStandardsComboBox.setBounds(500, 475, 275, 25);
         mineralStandardsComboBox.setFont(ReduxConstants.sansSerif_10_Bold);
+        mineralStandardsComboBox.setOpaque(true);
+        mineralStandardsComboBox.setBackground(Color.white);
         this.add(mineralStandardsComboBox);
 
         // view standard model

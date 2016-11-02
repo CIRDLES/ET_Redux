@@ -219,6 +219,10 @@ public abstract class AbstractRawDataFileTemplate implements //
         return NAME;
     }
 
+    public String getNAME() {
+        return NAME;
+    }
+
     /**
      * @return the aboutInfo
      */

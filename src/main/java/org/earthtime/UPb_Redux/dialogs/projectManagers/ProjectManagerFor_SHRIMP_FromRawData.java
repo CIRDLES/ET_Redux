@@ -52,7 +52,7 @@ public class ProjectManagerFor_SHRIMP_FromRawData extends AbstractProjectManager
         // eventually move to xml external files
         knownRawDataFileHandlers = new ArrayList<>();
 
-        // LaserChron Element 2 
+        //SHRIMP
         AbstractRawDataFileHandler theSHRIMPFileHandler
                 = ShrimpFileHandler.getInstance();
         theSHRIMPFileHandler.getAvailableRawDataFileTemplates()//

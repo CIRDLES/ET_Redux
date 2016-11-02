@@ -1027,6 +1027,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         commonLeadCorrectionSelectorPDF_checkbox = new javax.swing.JCheckBox();
         DatePbCorrSchemeA_radio = new javax.swing.JRadioButton();
         clearFilters_button =  new ET_JButton();
+        defaultFilters_button =  new ET_JButton();
         jPanel1 = new javax.swing.JPanel();
         writeConcordiaPDF_button =  new ET_JButton();
         close_button =  new ET_JButton();
@@ -1611,7 +1612,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         positivePctDiscordance_slider.setBackground(new java.awt.Color(241, 230, 255));
         positivePctDiscordance_slider.setFont(new java.awt.Font("Arial", 1, 10)); // NOI18N
         positivePctDiscordance_slider.setMajorTickSpacing(10);
-        positivePctDiscordance_slider.setMinorTickSpacing(2);
+        positivePctDiscordance_slider.setMinorTickSpacing(1);
         positivePctDiscordance_slider.setPaintLabels(true);
         positivePctDiscordance_slider.setPaintTicks(true);
         positivePctDiscordance_slider.setSnapToTicks(true);
@@ -1622,7 +1623,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         percentUncertainty_slider.setBackground(new java.awt.Color(241, 230, 255));
         percentUncertainty_slider.setFont(new java.awt.Font("Arial", 1, 10)); // NOI18N
         percentUncertainty_slider.setMajorTickSpacing(10);
-        percentUncertainty_slider.setMinorTickSpacing(2);
+        percentUncertainty_slider.setMinorTickSpacing(1);
         percentUncertainty_slider.setPaintLabels(true);
         percentUncertainty_slider.setPaintTicks(true);
         percentUncertainty_slider.setSnapToTicks(true);
@@ -1635,7 +1636,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         negativePctDiscordance_slider.setMajorTickSpacing(10);
         negativePctDiscordance_slider.setMaximum(0);
         negativePctDiscordance_slider.setMinimum(-100);
-        negativePctDiscordance_slider.setMinorTickSpacing(2);
+        negativePctDiscordance_slider.setMinorTickSpacing(1);
         negativePctDiscordance_slider.setPaintLabels(true);
         negativePctDiscordance_slider.setPaintTicks(true);
         negativePctDiscordance_slider.setSnapToTicks(true);
@@ -1650,7 +1651,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         positivePctDiscordance_text.setAlignmentX(0.0F);
         positivePctDiscordance_text.setAlignmentY(0.0F);
         positivePctDiscordance_text.setBorder(null);
-        probabilityToolPanel.add(positivePctDiscordance_text, new org.netbeans.lib.awtextra.AbsoluteConstraints(586, 45, 130, 15));
+        probabilityToolPanel.add(positivePctDiscordance_text, new org.netbeans.lib.awtextra.AbsoluteConstraints(586, 45, 150, 15));
 
         negativePctDiscordance_text.setBackground(new java.awt.Color(241, 230, 255));
         negativePctDiscordance_text.setFont(new java.awt.Font("Arial", 1, 10)); // NOI18N
@@ -1659,7 +1660,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         negativePctDiscordance_text.setAlignmentX(0.0F);
         negativePctDiscordance_text.setAlignmentY(0.0F);
         negativePctDiscordance_text.setBorder(null);
-        probabilityToolPanel.add(negativePctDiscordance_text, new org.netbeans.lib.awtextra.AbsoluteConstraints(365, 45, 130, 15));
+        probabilityToolPanel.add(negativePctDiscordance_text, new org.netbeans.lib.awtextra.AbsoluteConstraints(345, 45, 150, 15));
 
         pctUncertainty_text.setBackground(new java.awt.Color(241, 230, 255));
         pctUncertainty_text.setFont(new java.awt.Font("Arial", 1, 10)); // NOI18N
@@ -1789,7 +1790,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
 
         clearFilters_button.setBackground(new java.awt.Color(255, 255, 255));
         clearFilters_button.setFont(new java.awt.Font("Helvetica", 1, 10)); // NOI18N
-        clearFilters_button.setText("Clear Filters");
+        clearFilters_button.setText("Clear");
         clearFilters_button.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         clearFilters_button.setContentAreaFilled(false);
         clearFilters_button.setMargin(new java.awt.Insets(0, 0, 0, 0));
@@ -1799,7 +1800,21 @@ public class SampleDateInterpretationsManager extends DialogEditor
                 clearFilters_buttonActionPerformed(evt);
             }
         });
-        probabilityToolPanel.add(clearFilters_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(505, 45, 75, 20));
+        probabilityToolPanel.add(clearFilters_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 50, 40, 18));
+
+        defaultFilters_button.setBackground(new java.awt.Color(255, 255, 255));
+        defaultFilters_button.setFont(new java.awt.Font("Helvetica", 1, 10)); // NOI18N
+        defaultFilters_button.setText("Default");
+        defaultFilters_button.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        defaultFilters_button.setContentAreaFilled(false);
+        defaultFilters_button.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        defaultFilters_button.setOpaque(true);
+        defaultFilters_button.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                defaultFilters_buttonActionPerformed(evt);
+            }
+        });
+        probabilityToolPanel.add(defaultFilters_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 50, 40, 18));
 
         normedProbabilityLayeredPane.add(probabilityToolPanel);
         probabilityToolPanel.setBounds(0, 560, 920, 70);
@@ -2209,14 +2224,12 @@ private void zoomInProbability_buttonActionPerformed (java.awt.event.ActionEvent
 private void resetGraphProbability_buttonActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetGraphProbability_buttonActionPerformed
 
 // oct 2016 removed this behavior and moved it to new button "clear filters"
-
 //    positivePctDiscordance_slider.setValue(100);
 //    negativePctDiscordance_slider.setValue(-100);
 //    percentUncertainty_slider.setValue(100);
 //
 //    ((DateProbabilityDensityPanel) probabilityPanel).//
 //            setSelectedFractions(filterActiveUPbFractions(sample.getUpbFractionsUnknown()));
-
     ((PlottingDetailsDisplayInterface) probabilityPanel).refreshPanel(true, false);
 }//GEN-LAST:event_resetGraphProbability_buttonActionPerformed
 
@@ -2235,19 +2248,23 @@ private void protactiniumCorrectionSelector_checkboxActionPerformed (java.awt.ev
 }//GEN-LAST:event_protactiniumCorrectionSelector_checkboxActionPerformed
 
 private void linkedUnlinkedDiscordanceActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_linkedUnlinkedDiscordanceActionPerformed
-    Icon oldPressed = linkedUnlinkedDiscordance.getPressedIcon();
-    linkedUnlinkedDiscordance.setPressedIcon(linkedUnlinkedDiscordance.getIcon());
-    linkedUnlinkedDiscordance.setIcon(oldPressed);
-    doLinkDiscordances = !doLinkDiscordances;
-    if (doLinkDiscordances) {
-        linkedUnlinkedDiscordance.setToolTipText("Click to Unlock sliders.");
-    } else {
-        linkedUnlinkedDiscordance.setToolTipText("Click to Lock sliders.");
-    }
+    toggleLinkLockDiscordanceSliders();
     // test for linkage
     updateSlidersStatus(positivePctDiscordance_slider);
+    performFilteringPerSliders(false);
 }//GEN-LAST:event_linkedUnlinkedDiscordanceActionPerformed
 
+    private void toggleLinkLockDiscordanceSliders() {
+        Icon oldPressed = linkedUnlinkedDiscordance.getPressedIcon();
+        linkedUnlinkedDiscordance.setPressedIcon(linkedUnlinkedDiscordance.getIcon());
+        linkedUnlinkedDiscordance.setIcon(oldPressed);
+        doLinkDiscordances = !doLinkDiscordances;
+        if (doLinkDiscordances) {
+            linkedUnlinkedDiscordance.setToolTipText("Click to Unlock sliders.");
+        } else {
+            linkedUnlinkedDiscordance.setToolTipText("Click to Lock sliders.");
+        }
+    }
 private void showHistogram_buttonActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showHistogram_buttonActionPerformed
     toggleShowHistogramButton();
 }//GEN-LAST:event_showHistogram_buttonActionPerformed
@@ -2293,7 +2310,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
 
     String currentBinWidth
             = (new DecimalFormat("###0").//
-            format(((DateProbabilityDensityPanel) probabilityPanel).getAdjustedScottsBinWidth()))//
+                    format(((DateProbabilityDensityPanel) probabilityPanel).getAdjustedScottsBinWidth()))//
             + " Ma";
     if (((DateProbabilityDensityPanel) probabilityPanel).isFreezeHistogramBinWidth()) {
         lockUnlockHistogramBins.setToolTipText("Click to Thaw Histogram bin width from current " //
@@ -2380,14 +2397,50 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
     }//GEN-LAST:event_sortFractionsDateAsc_menuItemCheckBoxActionPerformed
 
     private void clearFilters_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearFilters_buttonActionPerformed
+
+        if (!doLinkDiscordances) {
+            toggleLinkLockDiscordanceSliders();
+        }
+
         negativePctDiscordance_slider.setValue(-100);
-        positivePctDiscordance_slider.setValue(100);
+        updateSlidersStatus(negativePctDiscordance_slider);
+
         percentUncertainty_slider.setValue(100);
+        updateSlidersStatus(percentUncertainty_slider);
 
         performFilteringPerSliders(true);
 
         parentFrame.refreshReportTableData();
     }//GEN-LAST:event_clearFilters_buttonActionPerformed
+
+    private void defaultFilters_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_defaultFilters_buttonActionPerformed
+
+        int negPctDis = ReduxLabData.getInstance().getDefaultNegPctDiscordanceFilter();
+        int posPctDis = ReduxLabData.getInstance().getDefaultPosPctDiscordanceFilter();
+        boolean testDoLinkDiscordances = (Math.abs(negPctDis) == posPctDis);
+        if (doLinkDiscordances != testDoLinkDiscordances) {
+            toggleLinkLockDiscordanceSliders();
+        }
+
+        if (doLinkDiscordances) {
+            negativePctDiscordance_slider.setValue(ReduxLabData.getInstance().getDefaultNegPctDiscordanceFilter());
+            updateSlidersStatus(negativePctDiscordance_slider);
+
+        } else {
+            negativePctDiscordance_slider.setValue(ReduxLabData.getInstance().getDefaultNegPctDiscordanceFilter());
+            positivePctDiscordance_slider.setValue(ReduxLabData.getInstance().getDefaultPosPctDiscordanceFilter());
+            updateSlidersStatus(negativePctDiscordance_slider);
+            updateSlidersStatus(positivePctDiscordance_slider);
+        }
+
+        percentUncertainty_slider.setValue(ReduxLabData.getInstance().getDefaultPctUncertaintyFilter());
+        updateSlidersStatus(percentUncertainty_slider);
+
+        performFilteringPerSliders(false);
+
+        parentFrame.refreshReportTableData();
+
+    }//GEN-LAST:event_defaultFilters_buttonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JRadioButton DatePbCorrSchemeA_radio;
@@ -2415,6 +2468,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
     private javax.swing.JScrollPane dateTreeByAliquot_ScrollPane;
     private javax.swing.JScrollPane dateTreeBySample_ScrollPane;
     private javax.swing.JTabbedPane dateTrees_tabs;
+    private javax.swing.JButton defaultFilters_button;
     private javax.swing.JCheckBox ellipseCentersAny2OnToggle_checkbox;
     private javax.swing.JCheckBox ellipseCenters_checkbox;
     private javax.swing.JCheckBox ellipseLabelsAny2OnToggle_checkbox;
@@ -2637,8 +2691,8 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                 Vector<ETFractionInterface> tempDeselected
                         = //
                         ((ReduxAliquotInterface) aliquotNodeInfo).//
-                        getAliquotSampleDateModelDeSelectedFractions(((SampleDateModel) nodeInfo).//
-                                getIncludedFractionIDsVector());
+                                getAliquotSampleDateModelDeSelectedFractions(((SampleDateModel) nodeInfo).//
+                                        getIncludedFractionIDsVector());
                 ((DateProbabilityDensityPanel) probabilityPanel).//
                         setDeSelectedFractions(filterActiveUPbFractions(tempDeselected));
 
@@ -2655,12 +2709,12 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                 Object aliquotNodeInfo
                         = //
                         ((DefaultMutableTreeNode) //
-                        ((TreeNode) node).getParent().getParent()).getUserObject();
+                                ((TreeNode) node).getParent().getParent()).getUserObject();
 
                 Object sampleDateNodeInfo
                         = //
                         ((DefaultMutableTreeNode) //
-                        ((TreeNode) node).getParent()).getUserObject();
+                                ((TreeNode) node).getParent()).getUserObject();
 
                 if (graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab("Concordia")) {
 
@@ -2709,8 +2763,8 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                     Vector<ETFractionInterface> tempDeselected
                             = //
                             ((ReduxAliquotInterface) aliquotNodeInfo).//
-                            getAliquotSampleDateModelDeSelectedFractions(((SampleDateModel) sampleDateNodeInfo).//
-                                    getIncludedFractionIDsVector());
+                                    getAliquotSampleDateModelDeSelectedFractions(((SampleDateModel) sampleDateNodeInfo).//
+                                            getIncludedFractionIDsVector());
                     ((DateProbabilityDensityPanel) probabilityPanel).//
                             setDeSelectedFractions(filterActiveUPbFractions(tempDeselected));
                     probabilityPanel.repaint();
@@ -2741,8 +2795,8 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
             // oct 2014 modified to be sure to work no matter where text is clicked
             ((CheckBoxNode) nodeInfo).setSelected(//
                     ((SampleDateModel) sampleDateNodeInfo).//
-                    ToggleAliquotFractionByName(//
-                            temp[0].trim()));//,
+                            ToggleAliquotFractionByName(//
+                                    temp[0].trim()));//,
 
             SampleInterface.updateAndSaveSampleDateModelsByAliquot(sample);
 
@@ -2792,8 +2846,8 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                 Vector<ETFractionInterface> tempDeselected
                         = //
                         ((ReduxAliquotInterface) aliquotNodeInfo).//
-                        getAliquotSampleDateModelDeSelectedFractions(((SampleDateModel) sampleDateNodeInfo).//
-                                getIncludedFractionIDsVector());
+                                getAliquotSampleDateModelDeSelectedFractions(((SampleDateModel) sampleDateNodeInfo).//
+                                        getIncludedFractionIDsVector());
                 ((DateProbabilityDensityPanel) probabilityPanel).//
                         setDeSelectedFractions(filterActiveUPbFractions(tempDeselected));
                 probabilityPanel.repaint();
@@ -2870,12 +2924,12 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                 Object sampleNodeInfo
                         = //
                         ((DefaultMutableTreeNode) //
-                        ((TreeNode) node).getParent().getParent()).getUserObject();
+                                ((TreeNode) node).getParent().getParent()).getUserObject();
 
                 Object sampleDateNodeInfo
                         = //
                         ((DefaultMutableTreeNode) //
-                        ((TreeNode) node).getParent()).getUserObject();
+                                ((TreeNode) node).getParent()).getUserObject();
 
                 // check for special case interpretations: lower and upper intercepts
                 ((ConcordiaGraphPanel) concordiaGraphPanel).//
@@ -2928,8 +2982,8 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
             // oct 2014 modified to be sure to work no matter where text is clicked
             ((CheckBoxNode) nodeInfo).setSelected(//
                     ((SampleDateModel) sampleDateNodeInfo).//
-                    ToggleSampleFractionByName(//
-                            temp[0].trim()));//,
+                            ToggleSampleFractionByName(//
+                                    temp[0].trim()));//,
 
             sample.updateSampleDateModels();
 
