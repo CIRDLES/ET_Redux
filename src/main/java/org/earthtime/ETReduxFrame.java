@@ -155,7 +155,7 @@ import org.earthtime.utilities.FileHelper;
 public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, ReportUpdaterInterface, SampleDateInterpretationSubscribeInterface {
 
     // user-specific configurations
-    public final static int FRAME_WIDTH = 1180;
+    public final static int FRAME_WIDTH = 1175;
     private ReduxPersistentState myState;
     private final ClassLoader cldr;
     private final java.net.URL imageURL;
@@ -219,6 +219,24 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             throws BadLabDataException {
 
         this.myState = myState;
+
+        /* Set the Metal look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Metal is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Metal".equals(info.getName())) { //Nimbus (original), Motif, Metal
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(org.cirdles.calamari.userInterface.CalamariUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
         initComponents();
 
         announcementPane = new AnnouncementPane();
@@ -316,7 +334,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         // July 2012 upograde
         reportTableTabbedPane = new TabbedReportViews(this);
         ((TabbedReportViews) reportTableTabbedPane).initializeTabs();
-        reportTableTabbedPane.setSize(fractionsTabulatedResultsLayeredPane.getSize());
+        reportTableTabbedPane.setSize(calculateTabulatedResultsSize());
         fractionsTabulatedResultsLayeredPane.add(reportTableTabbedPane, JLayeredPane.DEFAULT_LAYER);
 
         // reduxfile may exist if supplied to command line
@@ -345,6 +363,11 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         reduceAll_button.setBackground(Color.WHITE);
         interpretSampleDates_button.setBackground(Color.WHITE);
 
+    }
+    
+    private Dimension calculateTabulatedResultsSize(){
+        Dimension mySize = fractionsTabulatedResultsLayeredPane.getSize();
+        return new Dimension((int)mySize.getWidth() - 3, (int)mySize.getHeight());
     }
 
     private void changeContentOfTopPanel(ReduxConstants.TOP_PANEL_CONTENTS contents) {
@@ -2017,7 +2040,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         setTitle("EARTHTIME Redux");
         setBackground(new java.awt.Color(237, 242, 250));
         setLocationByPlatform(true);
-        setPreferredSize(new java.awt.Dimension(1160, 750));
+        setPreferredSize(new java.awt.Dimension(1175, 750));
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
                 formComponentResized(evt);
@@ -2030,7 +2053,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         });
 
         buttonBar_panel.setBackground(new java.awt.Color(235, 255, 255));
-        buttonBar_panel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+        buttonBar_panel.setBorder(javax.swing.BorderFactory.createBevelBorder(1));
         buttonBar_panel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         saveAndQuit_button.setBackground(new java.awt.Color(204, 204, 204));
@@ -3948,8 +3971,8 @@ private void formComponentResized (java.awt.event.ComponentEvent evt) {//GEN-FIR
 
 private void fractionsTabulatedResultsLayeredPaneComponentResized (java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_fractionsTabulatedResultsLayeredPaneComponentResized
     try {
-        getReportTableTabbedPane().//
-                setSize(fractionsTabulatedResultsLayeredPane.getSize());
+        reportTableTabbedPane.//
+                setSize(calculateTabulatedResultsSize());
     } catch (Exception e) {
     }
 }//GEN-LAST:event_fractionsTabulatedResultsLayeredPaneComponentResized

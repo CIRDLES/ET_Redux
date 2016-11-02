@@ -1639,8 +1639,10 @@ public class TripoliFraction implements //
     }
 
     public String dateSummary() {
-        return fractionID
-                + ">  206/238: "
+        String retVal = fractionID;
+        
+        if (uPbFraction != null){
+        retVal += ">  206/238: "
                 + uPbFraction.getRadiogenicIsotopeDateByName(RadDates.age206_238r)
                 .formatValueAndTwoSigmaForPublicationSigDigMode("ABS", -6, 2)
                 + ">  207/235: "
@@ -1649,5 +1651,10 @@ public class TripoliFraction implements //
                 + ">  207/206: "
                 + uPbFraction.getRadiogenicIsotopeDateByName(RadDates.age207_206r)
                 .formatValueAndTwoSigmaForPublicationSigDigMode("ABS", -6, 2);
+        } else {
+            retVal += "  could not be processed at this time.";
+        }
+        
+        return retVal;
     }
 }

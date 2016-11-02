@@ -21,7 +21,9 @@ package org.earthtime.projects;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.Vector;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.ReduxConstants.ANALYSIS_PURPOSE;
@@ -70,6 +72,8 @@ public class ProjectSample implements//
 
     private transient ReduxLabData reduxLabData;
 
+    private SortedSet<String> filteredFractionIDs;
+
     /**
      *
      * @param sampleName the value of sampleName
@@ -108,6 +112,8 @@ public class ProjectSample implements//
         this.concordiaGraphAxesSetup = new GraphAxesSetup("C", 2);
         this.terraWasserburgGraphAxesSetup = new GraphAxesSetup("T-W", 2);
         this.sampleDateModels = new Vector<>();
+        
+        initFilteredFractionsToAll();
 
     }
 
@@ -185,7 +191,7 @@ public class ProjectSample implements//
     @Override
     public void setAnalysisPurpose(ReduxConstants.ANALYSIS_PURPOSE analysisPurpose) {
         this.analysisPurpose = analysisPurpose;
-        for (int i = 0; i < aliquots.size(); i ++){
+        for (int i = 0; i < aliquots.size(); i++) {
             aliquots.get(i).setAnalysisPurpose(analysisPurpose);
         }
     }
@@ -475,14 +481,30 @@ public class ProjectSample implements//
         return isotopeStyle;
     }
 
+    /**
+     * @return the filteredFractionIDs
+     */
     @Override
     public SortedSet<String> getFilteredFractionIDs() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (filteredFractionIDs == null) {
+            initFilteredFractionsToAll();
+        }
+        return filteredFractionIDs;
     }
 
+    /**
+     * @param filteredFractionIDs the filteredFractionIDs to set
+     */
     @Override
     public void setFilteredFractionIDs(SortedSet<String> filteredFractionIDs) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.filteredFractionIDs = filteredFractionIDs;
+    }
+
+    private void initFilteredFractionsToAll() {
+        this.filteredFractionIDs = Collections.synchronizedSortedSet(new TreeSet<>());
+        for (int i = 0; i < fractions.size(); i++) {
+            filteredFractionIDs.add(fractions.get(i).getFractionID());
+        }
     }
 
 }

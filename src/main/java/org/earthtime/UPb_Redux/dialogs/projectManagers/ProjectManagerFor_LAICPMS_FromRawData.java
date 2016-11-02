@@ -121,6 +121,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
     private boolean amChanged;
     private LAICPMSProjectParametersManager parametersView;
     private transient AbstractRawDataFileHandler mruRawDataFileHandler;
+    private transient AbstractRawDataFileTemplate mruRawDataFileTemplate;
 
     /**
      * Creates new form ProjectManagerFor_LAICPMS_FromRawData
@@ -148,6 +149,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
         rawDataFileChosen_scrollPane.setVisible(false);
 
         mruRawDataFileHandler = null;
+        mruRawDataFileTemplate = null;
     }
 
     @Override
@@ -157,7 +159,9 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
         // initialize all known machines and protocols etc
         // eventually move to xml external files
         knownRawDataFileHandlers = new ArrayList<>();
-        String nameOfLastUsedFileHandler = myState.getMruFileHandlingProtocolForLAICPMS();
+        String nameOfLastUsedFileHandler = myState.getMruFileHandlingProtocol();
+        String nameOfLastUsedFileTemplate = myState.getMruRawDataTemplate();
+        String valueOfMruPurpose = myState.getMruPurpose();
 
         // LaserChron NU Plasma FARADAY
         AbstractRawDataFileHandler theNUPlasmaMultiCollFaradayFileHandler
@@ -258,15 +262,23 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
             @Override
             public void actionPerformed(ActionEvent e) {
                 AbstractRawDataFileHandler fileHandler = ((AbstractRawDataFileHandler) fileHandlerComboBox.getSelectedItem());
-                myState.setMruFileHandlingProtocolForLAICPMS(fileHandler.getNAME());
+                myState.setMruFileHandlingProtocol(fileHandler.getNAME());
 
                 rawDataTemplateComboBox.removeAllItems();
                 SortedSet<AbstractRawDataFileTemplate> templates = fileHandler.getAvailableRawDataFileTemplates();
                 Iterator<AbstractRawDataFileTemplate> templatesIterator = templates.iterator();
+                mruRawDataFileTemplate = null;
                 while (templatesIterator.hasNext()) {
-                    rawDataTemplateComboBox.addItem(templatesIterator.next());
+                    AbstractRawDataFileTemplate template = templatesIterator.next();
+                    rawDataTemplateComboBox.addItem(template);
+                    if (template.getNAME().compareToIgnoreCase(nameOfLastUsedFileTemplate) == 0) {
+                        mruRawDataFileTemplate = template;
+                    }
                 }
-
+                if (mruRawDataFileTemplate == null) {
+                    mruRawDataFileTemplate = rawDataTemplateComboBox.getItemAt(0);
+                }
+                rawDataTemplateComboBox.setSelectedItem(mruRawDataFileTemplate);
             }
         });
 
@@ -275,7 +287,9 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
             public void actionPerformed(ActionEvent e) {
                 AbstractRawDataFileHandler fileHandler = ((AbstractRawDataFileHandler) fileHandlerComboBox.getSelectedItem());
                 AbstractRawDataFileTemplate filetemplate = ((AbstractRawDataFileTemplate) rawDataTemplateComboBox.getSelectedItem());
+
                 try {
+                    myState.setMruRawDataTemplate(filetemplate.getNAME());
                     aboutInfo_textPanel.setText(
                             fileHandler.getAboutInfo() //
                             + "  This handler will expect raw data files for "//
@@ -292,6 +306,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
             analysisPurposeChooser.addItem(ap.toString());
         }
 
+        analysisPurposeChooser.setSelectedItem(valueOfMruPurpose);
         analysisPurposeChooser.addItemListener(new AnalysisPurposeItemListener());
 
         loadProject();
@@ -316,7 +331,6 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
     }
 
     class AnalysisPurposeItemListener implements ItemListener {
-        // This method is called only if a new item has been selected.
 
         @Override
         public void itemStateChanged(ItemEvent evt) {
@@ -324,6 +338,7 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
             if (evt.getStateChange() == ItemEvent.SELECTED) {
                 // Item was just selected
                 project.setAnalysisPurpose(ANALYSIS_PURPOSE.valueOf((String) evt.getItem()));
+                myState.setMruPurpose((String) evt.getItem());
 
             } else if (evt.getStateChange() == ItemEvent.DESELECTED) {
                 // Item is no longer selected
@@ -353,7 +368,9 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
 //            fileHandlerComboBox.setSelectedIndex(0);
             fileHandlerComboBox.setSelectedItem((mruRawDataFileHandler == null ? knownRawDataFileHandlers.get(0) : mruRawDataFileHandler));
 
-            rawDataTemplateComboBox.setSelectedIndex(0);
+//            rawDataTemplateComboBox.setSelectedIndex(0);
+            rawDataTemplateComboBox.setSelectedItem((mruRawDataFileTemplate == null
+                    ? ((AbstractRawDataFileHandler) fileHandlerComboBox.getSelectedItem()).getAvailableRawDataFileTemplates().first() : mruRawDataFileTemplate));
         }
 
         try {

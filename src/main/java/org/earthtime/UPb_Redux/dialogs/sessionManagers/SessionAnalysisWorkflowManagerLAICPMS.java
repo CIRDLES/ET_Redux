@@ -891,7 +891,9 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         });
         toolBar_panel.add(switchToReductionManager_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(115, 3, 180, 20));
 
+        tripoliDataProcessing_tabbedPane.setBackground(new java.awt.Color(250, 240, 230));
         tripoliDataProcessing_tabbedPane.setTabPlacement(javax.swing.JTabbedPane.BOTTOM);
+        tripoliDataProcessing_tabbedPane.setOpaque(true);
         tripoliDataProcessing_tabbedPane.addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
                 tripoliDataProcessing_tabbedPaneComponentResized(evt);
@@ -1070,10 +1072,12 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         controlPanel_panel.add(jLabel4);
         jLabel4.setBounds(10, 145, 170, 13);
 
+        yAxisZoomSlider.setBackground(new java.awt.Color(250, 240, 230));
         yAxisZoomSlider.setMaximum(320);
         yAxisZoomSlider.setMinimum(64);
         yAxisZoomSlider.setOrientation(javax.swing.JSlider.VERTICAL);
         yAxisZoomSlider.setValue(128);
+        yAxisZoomSlider.setOpaque(true);
         controlPanel_panel.add(yAxisZoomSlider);
         yAxisZoomSlider.setBounds(1, 420, 20, 190);
 
@@ -1413,10 +1417,11 @@ public class SessionAnalysisWorkflowManagerLAICPMS extends DialogEditor //
         tripoliTab_layeredPane.add(controlPanel_panel);
         controlPanel_panel.setBounds(0, 0, 191, 620);
 
-        xAxisZoomSlider.setBackground(new java.awt.Color(230, 228, 228));
+        xAxisZoomSlider.setBackground(new java.awt.Color(250, 240, 230));
         xAxisZoomSlider.setMaximum(640);
         xAxisZoomSlider.setMinimum(4);
         xAxisZoomSlider.setValue(128);
+        xAxisZoomSlider.setOpaque(true);
         tripoliTab_layeredPane.setLayer(xAxisZoomSlider, javax.swing.JLayeredPane.PALETTE_LAYER);
         tripoliTab_layeredPane.add(xAxisZoomSlider);
         xAxisZoomSlider.setBounds(110, 600, 400, 20);
