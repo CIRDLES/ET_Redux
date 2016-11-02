@@ -694,26 +694,28 @@ public class LAICPMSProjectParametersManager extends JLayeredPane {
         defaultPrimaryReferenceMaterialLabel.setBounds(500, 450, 400, 25);
         this.add(defaultPrimaryReferenceMaterialLabel);
 
-        JComboBox referenceMagerialsComboBox = new JComboBox();
+        JComboBox referenceMaterialsComboBox = new JComboBox();
         ArrayList<AbstractRatiosDataModel> mineralStandardModels = ReduxLabData.getInstance().getMineralStandardModels();
         for (int i = (mineralStandardModels.size() > 1 ? 1 : 0); i < mineralStandardModels.size(); i++) {
-            referenceMagerialsComboBox.addItem(mineralStandardModels.get(i));
+            referenceMaterialsComboBox.addItem(mineralStandardModels.get(i));
         }
 
-        referenceMagerialsComboBox.setSelectedItem(rawDataFileHandler.getAcquisitionModel().getPrimaryMineralStandardModel());
-        referenceMagerialsComboBox.addActionListener((ActionEvent e) -> {
+        referenceMaterialsComboBox.setSelectedItem(rawDataFileHandler.getAcquisitionModel().getPrimaryMineralStandardModel());
+        referenceMaterialsComboBox.addActionListener((ActionEvent e) -> {
             rawDataFileHandler.getAcquisitionModel().setPrimaryMineralStandardModel((AbstractRatiosDataModel) ((JComboBox) e.getSource()).getSelectedItem());
         });
 
-        referenceMagerialsComboBox.setBounds(500, 475, 275, 25);
-        referenceMagerialsComboBox.setFont(ReduxConstants.sansSerif_10_Bold);
-        this.add(referenceMagerialsComboBox);
+        referenceMaterialsComboBox.setBounds(500, 475, 275, 25);
+        referenceMaterialsComboBox.setFont(ReduxConstants.sansSerif_10_Bold);
+        referenceMaterialsComboBox.setOpaque(true);
+        referenceMaterialsComboBox.setBackground(Color.white);
+        this.add(referenceMaterialsComboBox);
 
         // view reference material model
         JButton viewReferenceMaterialModelButton = new ET_JButton("View");
         viewReferenceMaterialModelButton.addActionListener((ActionEvent e) -> {
             AbstractRatiosDataModel selectedModel
-                    = ((AbstractRatiosDataModel) referenceMagerialsComboBox.getSelectedItem());
+                    = ((AbstractRatiosDataModel) referenceMaterialsComboBox.getSelectedItem());
             AbstractRatiosDataView modelView
                     = new ReferenceMaterialUPbRatiosDataViewNotEditable(selectedModel, null, false);
             modelView.displayModelInFrame();

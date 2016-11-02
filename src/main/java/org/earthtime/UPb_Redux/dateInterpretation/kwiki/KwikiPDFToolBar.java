@@ -48,6 +48,7 @@ import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetu
 import org.earthtime.UPb_Redux.dialogs.sampleManagers.sampleDateInterpretationManagers.SampleDateInterpretationsUtilities;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.fractions.ETFractionInterface;
+import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.reportViews.TabbedReportViews;
 import org.earthtime.samples.SampleInterface;
 
@@ -80,6 +81,7 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
     private final SampleTreeI dateTreeByAliquot;
     private JTabbedPane reportTableTabbedPane;
     private final JButton clearFilters;
+    private final JButton defaultFilters;
 
     /**
      * Creates a new instance of KwikiConcordiaToolBar
@@ -97,12 +99,6 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
 
         super();
 
-        setOpaque(true);
-
-        setBackground(Color.white);
-
-        setBounds(x, y, 700, 56);
-
         this.probabilityPanel = aPDFGraphPanel;
         this.concordiaGraphPanel = aConcordiaGraphPanel;
 
@@ -116,6 +112,12 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
 
         doLinkDiscordances = true;
 
+        setOpaque(true);
+
+        setBackground(Color.white);
+
+        setBounds(x, y, 720, 56);
+
         SetupZoomToggleButtons();
         SetupDateChooserButtons();
 
@@ -124,7 +126,7 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
         negativePctDiscordance_slider.setMaximum(0);
         negativePctDiscordance_slider.setMinimum(-100);
         negativePctDiscordance_slider.setMajorTickSpacing(10);
-        negativePctDiscordance_slider.setMinorTickSpacing(2);
+        negativePctDiscordance_slider.setMinorTickSpacing(1);
         negativePctDiscordance_slider.setPaintLabels(true);
         negativePctDiscordance_slider.setPaintTicks(true);
         negativePctDiscordance_slider.setSnapToTicks(true);
@@ -142,7 +144,7 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
         negativePctDiscordance_text.setOpaque(false);
         negativePctDiscordance_text.setFont(new java.awt.Font("Arial", 1, 10));
         negativePctDiscordance_text.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        negativePctDiscordance_text.setText("Negative % discordance");
+        negativePctDiscordance_text.setText("Neg % discordance");
         negativePctDiscordance_text.setAlignmentX(0.0F);
         negativePctDiscordance_text.setAlignmentY(0.0F);
         negativePctDiscordance_text.setBorder(null);
@@ -164,7 +166,7 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
         linkedUnlinkedDiscordance.setOpaque(true);
         linkedUnlinkedDiscordance.setPressedIcon(new javax.swing.ImageIcon(getClass().getResource("/org/earthtime/images/linked.png")));
         linkedUnlinkedDiscordance.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        linkedUnlinkedDiscordance.setBounds(285, 5, 20, 20);
+        linkedUnlinkedDiscordance.setBounds(300, 5, 20, 20);
         linkedUnlinkedDiscordance.setOpaque(true);
         linkedUnlinkedDiscordance.setBackground(Color.white);
 
@@ -178,14 +180,14 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
         positivePctDiscordance_slider.setMaximum(100);
         positivePctDiscordance_slider.setMinimum(0);
         positivePctDiscordance_slider.setMajorTickSpacing(10);
-        positivePctDiscordance_slider.setMinorTickSpacing(2);
+        positivePctDiscordance_slider.setMinorTickSpacing(1);
         positivePctDiscordance_slider.setPaintLabels(true);
         positivePctDiscordance_slider.setPaintTicks(true);
         positivePctDiscordance_slider.setSnapToTicks(true);
         positivePctDiscordance_slider.setAutoscrolls(true);
         positivePctDiscordance_slider.setValue(Integer.parseInt(probabilityChartOptions.get("positivePerCentDiscordanceSliderValue")));
         positivePctDiscordance_slider.setName("positivePerCentDiscordanceSliderValue");
-        positivePctDiscordance_slider.setBounds(310, 1, 175, 38);
+        positivePctDiscordance_slider.setBounds(335, 1, 175, 38);
         positivePctDiscordance_slider.setOpaque(true);
         positivePctDiscordance_slider.setBackground(Color.white);
 
@@ -196,11 +198,11 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
         positivePctDiscordance_text.setOpaque(false);
         positivePctDiscordance_text.setFont(new java.awt.Font("Arial", 1, 10));
         positivePctDiscordance_text.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        positivePctDiscordance_text.setText("Positive % discordance");
+        positivePctDiscordance_text.setText("Pos % discordance");
         positivePctDiscordance_text.setAlignmentX(0.0F);
         positivePctDiscordance_text.setAlignmentY(0.0F);
         positivePctDiscordance_text.setBorder(null);
-        positivePctDiscordance_text.setBounds(310, 38, 175, 17);
+        positivePctDiscordance_text.setBounds(335, 38, 175, 17);
         add(positivePctDiscordance_text);
 
         percentUncertainty_slider = new javax.swing.JSlider();
@@ -208,13 +210,13 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
         percentUncertainty_slider.setMaximum(100);
         percentUncertainty_slider.setMinimum(0);
         percentUncertainty_slider.setMajorTickSpacing(10);
-        percentUncertainty_slider.setMinorTickSpacing(2);
+        percentUncertainty_slider.setMinorTickSpacing(1);
         percentUncertainty_slider.setPaintLabels(true);
         percentUncertainty_slider.setPaintTicks(true);
         percentUncertainty_slider.setSnapToTicks(true);
         percentUncertainty_slider.setAutoscrolls(true);
         percentUncertainty_slider.setName("uncertaintyPerCentSliderValue");
-        percentUncertainty_slider.setBounds(490, 1, 175, 38);
+        percentUncertainty_slider.setBounds(515, 1, 175, 38);
         percentUncertainty_slider.setOpaque(true);
         percentUncertainty_slider.setBackground(Color.white);
 
@@ -229,16 +231,23 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
         pctUncertainty_text.setAlignmentX(0.0F);
         pctUncertainty_text.setAlignmentY(0.0F);
         pctUncertainty_text.setBorder(null);
-        pctUncertainty_text.setBounds(490, 38, 175, 17);
+        pctUncertainty_text.setBounds(515, 38, 175, 17);
         add(pctUncertainty_text);
 
         clearFilters = new ET_JButton("Clear");
-        clearFilters.setBounds(278, 37, 39, 16);
+        clearFilters.setBounds(310, 38, 39, 16);
+        clearFilters.setFont(new java.awt.Font("Arial", 1, 10));
 
         clearFilters.addActionListener((ActionEvent arg0) -> {
+            if (!doLinkDiscordances) {
+                toggleLinkLockDiscordanceSliders();
+            }
+
             negativePctDiscordance_slider.setValue(-100);
-            positivePctDiscordance_slider.setValue(100);
+            updateSlidersStatus(negativePctDiscordance_slider);
+
             percentUncertainty_slider.setValue(100);
+            updateSlidersStatus(percentUncertainty_slider);
 
             performFilteringPerSliders(true);
 
@@ -250,6 +259,43 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
 
         add(clearFilters, javax.swing.JLayeredPane.DEFAULT_LAYER);
         this.setComponentZOrder(clearFilters, 0);
+
+        defaultFilters = new ET_JButton("Default");
+        defaultFilters.setBounds(270, 38, 40, 16);
+        defaultFilters.setFont(new java.awt.Font("Arial", 1, 10));
+
+        defaultFilters.addActionListener((ActionEvent arg0) -> {
+            int negPctDis = ReduxLabData.getInstance().getDefaultNegPctDiscordanceFilter();
+            int posPctDis = ReduxLabData.getInstance().getDefaultPosPctDiscordanceFilter();
+            boolean testDoLinkDiscordances = (Math.abs(negPctDis) == posPctDis);
+            if (doLinkDiscordances != testDoLinkDiscordances) {
+                toggleLinkLockDiscordanceSliders();
+            }
+            
+            if (doLinkDiscordances) {
+                negativePctDiscordance_slider.setValue(ReduxLabData.getInstance().getDefaultNegPctDiscordanceFilter());
+                updateSlidersStatus(negativePctDiscordance_slider);
+
+            } else {
+                negativePctDiscordance_slider.setValue(ReduxLabData.getInstance().getDefaultNegPctDiscordanceFilter());
+                positivePctDiscordance_slider.setValue(ReduxLabData.getInstance().getDefaultPosPctDiscordanceFilter());
+                updateSlidersStatus(negativePctDiscordance_slider);
+                updateSlidersStatus(positivePctDiscordance_slider);
+            }
+
+            percentUncertainty_slider.setValue(ReduxLabData.getInstance().getDefaultPctUncertaintyFilter());
+            updateSlidersStatus(percentUncertainty_slider);
+
+            performFilteringPerSliders(false);
+
+            try {
+                ((TabbedReportViews) reportTableTabbedPane).refreshTabs();
+            } catch (Exception noTabs) {
+            }
+        });
+
+        add(defaultFilters, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        this.setComponentZOrder(defaultFilters, 0);
 
         try {
             int uncertaintyPerCentSliderValue = Integer.parseInt(probabilityChartOptions.get("uncertaintyPerCentSliderValue"));
@@ -298,6 +344,13 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
     }
 
     private void linkedUnlinkedDiscordanceActionPerformed(java.awt.event.ActionEvent evt) {
+        toggleLinkLockDiscordanceSliders();
+        // test for linkage
+        updateSlidersStatus(positivePctDiscordance_slider);
+        performFilteringPerSliders(false);
+    }
+
+    private void toggleLinkLockDiscordanceSliders() {
         Icon oldPressed = linkedUnlinkedDiscordance.getPressedIcon();
         linkedUnlinkedDiscordance.setPressedIcon(linkedUnlinkedDiscordance.getIcon());
         linkedUnlinkedDiscordance.setIcon(oldPressed);
@@ -307,8 +360,6 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
         } else {
             linkedUnlinkedDiscordance.setToolTipText("Click to Lock sliders.");
         }
-        // test for linkage
-        updateSlidersStatus(positivePctDiscordance_slider);
     }
 
     private class SliderChangeListener implements ChangeListener {
@@ -360,16 +411,16 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
         }
 
         if (slider.equals(negativePctDiscordance_slider)) {
-            negativePctDiscordance_text.setText("Negative % discordance = " + negativePctDiscordance_slider.getValue());
+            negativePctDiscordance_text.setText("Neg % discordance = " + negativePctDiscordance_slider.getValue());
             if (doLinkDiscordances) {
-                positivePctDiscordance_text.setText("Positive % discordance = " + positivePctDiscordance_slider.getValue());
+                positivePctDiscordance_text.setText("Pos % discordance = " + positivePctDiscordance_slider.getValue());
             }
         }
 
         if (slider.equals(positivePctDiscordance_slider)) {
-            positivePctDiscordance_text.setText("Positive % discordance = " + positivePctDiscordance_slider.getValue());
+            positivePctDiscordance_text.setText("Pos % discordance = " + positivePctDiscordance_slider.getValue());
             if (doLinkDiscordances) {
-                negativePctDiscordance_text.setText("Negative % discordance = " + negativePctDiscordance_slider.getValue());
+                negativePctDiscordance_text.setText("Neg % discordance = " + negativePctDiscordance_slider.getValue());
             }
         }
 
