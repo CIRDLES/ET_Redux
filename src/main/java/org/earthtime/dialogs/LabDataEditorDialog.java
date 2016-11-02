@@ -119,6 +119,10 @@ public class LabDataEditorDialog extends DialogEditor {
     private JTextField default206_207irmrText;
     private JTextField default208_232irmrText;
 
+    private JTextField defaultNegPctDiscordanceText;
+    private JTextField defaultPosPctDiscordanceText;
+    private JTextField defaultPctUncertaintyText;
+
     /**
      * Creates new form LabDataEditorDialog
      *
@@ -649,7 +653,7 @@ public class LabDataEditorDialog extends DialogEditor {
         alphaUName_label.setForeground(
                 (alphaU.getName().equalsIgnoreCase(
                         myLabData.getDefaultLabAlphaUModel().getName()))
-                        ? Color.RED : Color.BLACK);
+                ? Color.RED : Color.BLACK);
 
         alphaUName_text.setText(alphaU.getName());
 
@@ -937,7 +941,7 @@ public class LabDataEditorDialog extends DialogEditor {
         alphaPbName_label.setForeground(
                 (alphaPb.getName().equalsIgnoreCase(
                         myLabData.getDefaultLabAlphaPbModel().getName()))
-                        ? Color.RED : Color.BLACK);
+                ? Color.RED : Color.BLACK);
 
         alphaPbName_text.setText(alphaPb.getName());
 
@@ -2493,75 +2497,75 @@ public class LabDataEditorDialog extends DialogEditor {
         // default Pb Blank mass
         defaultPbBlankMass_text.setText(
                 myLabData.getDefaultPbBlankMassInGrams().getValue().//
-                multiply(ReduxConstants.PicoGramsPerGram).//
-                setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE, RoundingMode.HALF_UP).toPlainString());
+                        multiply(ReduxConstants.PicoGramsPerGram).//
+                        setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE, RoundingMode.HALF_UP).toPlainString());
         defaultPbBlankMassOneSigma_text.setText(
                 myLabData.getDefaultPbBlankMassInGrams().getOneSigma().//
-                multiply(ReduxConstants.PicoGramsPerGram).//
-                setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE, RoundingMode.HALF_UP).toPlainString());
+                        multiply(ReduxConstants.PicoGramsPerGram).//
+                        setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE, RoundingMode.HALF_UP).toPlainString());
 
         // assumed U Blank mass
         defaultUBlankMass_text.setText(
                 myLabData.getDefaultAssumedUBlankMassInGrams().getValue().//
-                multiply(ReduxConstants.PicoGramsPerGram).//
-                setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE, RoundingMode.HALF_UP).toPlainString());
+                        multiply(ReduxConstants.PicoGramsPerGram).//
+                        setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE, RoundingMode.HALF_UP).toPlainString());
         defaultUBlankMassOneSigma_text.setText(
                 myLabData.getDefaultAssumedUBlankMassInGrams().getOneSigma().
-                multiply(ReduxConstants.PicoGramsPerGram).//
-                setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE, RoundingMode.HALF_UP).toPlainString());
+                        multiply(ReduxConstants.PicoGramsPerGram).//
+                        setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE, RoundingMode.HALF_UP).toPlainString());
 
         // default r18O_16O
         default18O_16O_text.setText(
                 myLabData.getDefaultR18O_16O().getValue()//
-                .setScale(ReduxConstants.DEFAULT_DEFAULTS_SCALE, RoundingMode.HALF_UP).toPlainString());
+                        .setScale(ReduxConstants.DEFAULT_DEFAULTS_SCALE, RoundingMode.HALF_UP).toPlainString());
         default18O_16OOneSigma_text.setText(
                 myLabData.getDefaultR18O_16O().getOneSigma()//
-                .setScale(ReduxConstants.DEFAULT_DEFAULTS_SCALE, RoundingMode.HALF_UP).toPlainString());
+                        .setScale(ReduxConstants.DEFAULT_DEFAULTS_SCALE, RoundingMode.HALF_UP).toPlainString());
 
         // default r238_235b
         defaultR238_235b_text.setText(
                 myLabData.getDefaultR238_235b().getValue()//
-                .setScale(ReduxConstants.DEFAULT_PARAMETERS_SCALE, RoundingMode.HALF_UP).toPlainString());
+                        .setScale(ReduxConstants.DEFAULT_PARAMETERS_SCALE, RoundingMode.HALF_UP).toPlainString());
         defaultR238_235bOneSigma_text.setText(
                 myLabData.getDefaultR238_235b().getOneSigma()//
-                .setScale(ReduxConstants.DEFAULT_PARAMETERS_SCALE, RoundingMode.HALF_UP).toPlainString());
+                        .setScale(ReduxConstants.DEFAULT_PARAMETERS_SCALE, RoundingMode.HALF_UP).toPlainString());
 
         // default r238_235s
         defaultR238_235s_text.setText(
                 myLabData.getDefaultR238_235s().getValue()//
-                .setScale(ReduxConstants.DEFAULT_PARAMETERS_SCALE, RoundingMode.HALF_UP).toPlainString());
+                        .setScale(ReduxConstants.DEFAULT_PARAMETERS_SCALE, RoundingMode.HALF_UP).toPlainString());
         defaultR238_235sOneSigma_text.setText(
                 myLabData.getDefaultR238_235s().getOneSigma()//
-                .setScale(ReduxConstants.DEFAULT_PARAMETERS_SCALE, RoundingMode.HALF_UP).toPlainString());
+                        .setScale(ReduxConstants.DEFAULT_PARAMETERS_SCALE, RoundingMode.HALF_UP).toPlainString());
 
         // default tracerModel mass uncertainty
         defaultTracerMassOneSigma_text.setText(
                 myLabData.getDefaultTracerMass().getOneSigma()//
-                .setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE, RoundingMode.HALF_UP).toPlainString());
+                        .setScale(ReduxConstants.DEFAULT_MASS_DISPLAY_SCALE, RoundingMode.HALF_UP).toPlainString());
 
         // default rTh_Umagma
         defaultRTh_Umagma_text.setText(
                 myLabData.getDefaultRTh_Umagma().getValue()//
-                .setScale(ReduxConstants.DEFAULT_PARAMETERS_SCALE, RoundingMode.HALF_UP).toPlainString());
+                        .setScale(ReduxConstants.DEFAULT_PARAMETERS_SCALE, RoundingMode.HALF_UP).toPlainString());
         defaultRTh_UmagmaOneSigma_text.setText(
                 myLabData.getDefaultRTh_Umagma().getOneSigma()//
-                .setScale(ReduxConstants.DEFAULT_PARAMETERS_SCALE, RoundingMode.HALF_UP).toPlainString());
+                        .setScale(ReduxConstants.DEFAULT_PARAMETERS_SCALE, RoundingMode.HALF_UP).toPlainString());
 
         // default ar231_235sample
         defaultAr231_235sample_text.setText(
                 myLabData.getDefaultAr231_235sample().getValue()//
-                .setScale(ReduxConstants.DEFAULT_PARAMETERS_SCALE, RoundingMode.HALF_UP).toPlainString());
+                        .setScale(ReduxConstants.DEFAULT_PARAMETERS_SCALE, RoundingMode.HALF_UP).toPlainString());
         defaultAr231_235sampleOneSigma_text.setText(
                 myLabData.getDefaultAr231_235sample().getOneSigma()//
-                .setScale(ReduxConstants.DEFAULT_PARAMETERS_SCALE, RoundingMode.HALF_UP).toPlainString());
+                        .setScale(ReduxConstants.DEFAULT_PARAMETERS_SCALE, RoundingMode.HALF_UP).toPlainString());
 
         // default stacey kramers settings
         defaultStaceyKramersRelativeUnct_text.setText(
                 myLabData.getDefaultStaceyKramersOnePctUnct().//
-                setScale(ReduxConstants.DEFAULT_PARAMETERS_SCALE, RoundingMode.HALF_UP).toPlainString());
+                        setScale(ReduxConstants.DEFAULT_PARAMETERS_SCALE, RoundingMode.HALF_UP).toPlainString());
         defaultStaceyKramersCorrelationCoeff_text.setText(
                 myLabData.getDefaultStaceyKramersCorrelationCoeffs().//
-                setScale(ReduxConstants.DEFAULT_PARAMETERS_SCALE, RoundingMode.HALF_UP).toPlainString());
+                        setScale(ReduxConstants.DEFAULT_PARAMETERS_SCALE, RoundingMode.HALF_UP).toPlainString());
 
         // set up Mineral chooser
         mineralNameChooser.removeAllItems();
@@ -2649,6 +2653,8 @@ public class LabDataEditorDialog extends DialogEditor {
         viewStandardModelButton.setFont(ReduxConstants.sansSerif_10_Bold);
         viewStandardModelButton.setBounds(850, 60, 30, 23);
 
+        LAICPMSLabDefaultsPane.add(viewStandardModelButton);
+
         // feb 2016
         // add defaultInterReferenceMaterialReproducibility
         JLabel defaultInterReferenceMaterialReproducibilityLabel = new JLabel("Set default Inter-Reference Material Reproducibility: ");
@@ -2723,8 +2729,76 @@ public class LabDataEditorDialog extends DialogEditor {
         default208_232irmrNote.setBounds(700, 150, 75, 25);
         LAICPMSLabDefaultsPane.add(default208_232irmrNote);
 
-        LAICPMSLabDefaultsPane.add(viewStandardModelButton);
+        // Nov 2016
+        // add default filter values for discordance and uncertainty
+        JLabel defaultFilterSettingsForSlidersLabel = new JLabel("Set default Filter Settings for Sliders: ");
+        defaultFilterSettingsForSlidersLabel.setHorizontalAlignment(SwingConstants.LEFT);
+        defaultFilterSettingsForSlidersLabel.setFont(ReduxConstants.sansSerif_12_Bold);
+        defaultFilterSettingsForSlidersLabel.setBounds(25, 185, 450, 25);
+        LAICPMSLabDefaultsPane.add(defaultFilterSettingsForSlidersLabel);
 
+        JLabel defaultNegativeDiscordanceLabel = new JLabel("neg % discordance :");
+        defaultNegativeDiscordanceLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        defaultNegativeDiscordanceLabel.setFont(ReduxConstants.sansSerif_12_Bold);
+        defaultNegativeDiscordanceLabel.setBounds(475, 185, 125, 25);
+        LAICPMSLabDefaultsPane.add(defaultNegativeDiscordanceLabel);
+
+        defaultNegPctDiscordanceText = new JTextField();
+        defaultNegPctDiscordanceText.setDocument(new IntegerDocument(defaultNegPctDiscordanceText, true));
+        defaultNegPctDiscordanceText.setHorizontalAlignment(SwingConstants.CENTER);
+        defaultNegPctDiscordanceText.setFont(ReduxConstants.sansSerif_12_Bold);
+        defaultNegPctDiscordanceText.setBounds(610, 185, 65, 25);
+        text = String.valueOf(Math.abs(myLabData.getDefaultNegPctDiscordanceFilter()));
+        defaultNegPctDiscordanceText.setText(text);
+        LAICPMSLabDefaultsPane.add(defaultNegPctDiscordanceText);
+
+        JLabel defaultNegPctDiscordanceNote = new JLabel("pos integer");
+        defaultNegPctDiscordanceNote.setHorizontalAlignment(SwingConstants.LEFT);
+        defaultNegPctDiscordanceNote.setFont(ReduxConstants.sansSerif_12_Bold);
+        defaultNegPctDiscordanceNote.setBounds(700, 185, 75, 25);
+        LAICPMSLabDefaultsPane.add(defaultNegPctDiscordanceNote);
+
+        JLabel defaultPositiveDiscordanceLabel = new JLabel("pos % discordance :");
+        defaultPositiveDiscordanceLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        defaultPositiveDiscordanceLabel.setFont(ReduxConstants.sansSerif_12_Bold);
+        defaultPositiveDiscordanceLabel.setBounds(475, 215, 125, 25);
+        LAICPMSLabDefaultsPane.add(defaultPositiveDiscordanceLabel);
+
+        defaultPosPctDiscordanceText = new JTextField();
+        defaultPosPctDiscordanceText.setDocument(new IntegerDocument(defaultPosPctDiscordanceText, true));
+        defaultPosPctDiscordanceText.setHorizontalAlignment(SwingConstants.CENTER);
+        defaultPosPctDiscordanceText.setFont(ReduxConstants.sansSerif_12_Bold);
+        defaultPosPctDiscordanceText.setBounds(610, 215, 65, 25);
+        text = String.valueOf(Math.abs(myLabData.getDefaultPosPctDiscordanceFilter()));
+        defaultPosPctDiscordanceText.setText(text);
+        LAICPMSLabDefaultsPane.add(defaultPosPctDiscordanceText);
+
+        JLabel defaultPosPctDiscordanceNote = new JLabel("pos integer");
+        defaultPosPctDiscordanceNote.setHorizontalAlignment(SwingConstants.LEFT);
+        defaultPosPctDiscordanceNote.setFont(ReduxConstants.sansSerif_12_Bold);
+        defaultPosPctDiscordanceNote.setBounds(700, 215, 75, 25);
+        LAICPMSLabDefaultsPane.add(defaultPosPctDiscordanceNote);
+
+        JLabel defaultPctUncertaintyLabel = new JLabel("% uncertainty :");
+        defaultPctUncertaintyLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        defaultPctUncertaintyLabel.setFont(ReduxConstants.sansSerif_12_Bold);
+        defaultPctUncertaintyLabel.setBounds(475, 245, 125, 25);
+        LAICPMSLabDefaultsPane.add(defaultPctUncertaintyLabel);
+
+        defaultPctUncertaintyText = new JTextField();
+        defaultPctUncertaintyText.setDocument(new IntegerDocument(defaultPctUncertaintyText, true));
+        defaultPctUncertaintyText.setHorizontalAlignment(SwingConstants.CENTER);
+        defaultPctUncertaintyText.setFont(ReduxConstants.sansSerif_12_Bold);
+        defaultPctUncertaintyText.setBounds(610, 245, 65, 25);
+        text = String.valueOf(Math.abs(myLabData.getDefaultPctUncertaintyFilter()));
+        defaultPctUncertaintyText.setText(text);
+        LAICPMSLabDefaultsPane.add(defaultPctUncertaintyText);
+
+        JLabel defaultPctUncertaintyNote = new JLabel("pos integer");
+        defaultPctUncertaintyNote.setHorizontalAlignment(SwingConstants.LEFT);
+        defaultPctUncertaintyNote.setFont(ReduxConstants.sansSerif_12_Bold);
+        defaultPctUncertaintyNote.setBounds(700, 245, 75, 25);
+        LAICPMSLabDefaultsPane.add(defaultPctUncertaintyNote);
     }
 
     private synchronized boolean CheckIsSavedStatusOfDefaultsEdit()
@@ -2888,6 +2962,18 @@ public class LabDataEditorDialog extends DialogEditor {
                 .setValue(new BigDecimal(default206_207irmrText.getText()).movePointLeft(2));
         myLabData.getDefaultInterReferenceMaterialReproducibilityMap().get(RadRatios.r208_232r)//
                 .setValue(new BigDecimal(default208_232irmrText.getText()).movePointLeft(2));
+
+        // force to value between -100 and 0;
+        int value = -1 * Math.min(Math.abs(Integer.parseInt(defaultNegPctDiscordanceText.getText())), 100);
+        myLabData.setDefaultNegPctDiscordanceFilter(value);
+
+        // force to value between 100 and 0;
+        value = Math.min(Math.abs(Integer.parseInt(defaultPosPctDiscordanceText.getText())), 100);
+        myLabData.setDefaultPosPctDiscordanceFilter(value);
+
+        // force to value between 100 and 0;
+        value = Math.min(Math.abs(Integer.parseInt(defaultPctUncertaintyText.getText())), 100);
+        myLabData.setDefaultPctUncertaintyFilter(value);
 
     }
 
@@ -4292,8 +4378,12 @@ public class LabDataEditorDialog extends DialogEditor {
         details_pane.addTab("Lab Defaults II", labDefaultsCont_panel);
 
         LAICPMSLabDefaultsPane.setLayout(null);
+
+        defaultLAICPMSPrimaryMineralStandardModel_Chooser.setBackground(new java.awt.Color(255, 255, 255));
+        defaultLAICPMSPrimaryMineralStandardModel_Chooser.setFont(new java.awt.Font("Lucida Sans", 0, 12)); // NOI18N
+        defaultLAICPMSPrimaryMineralStandardModel_Chooser.setOpaque(true);
         LAICPMSLabDefaultsPane.add(defaultLAICPMSPrimaryMineralStandardModel_Chooser);
-        defaultLAICPMSPrimaryMineralStandardModel_Chooser.setBounds(475, 60, 350, 27);
+        defaultLAICPMSPrimaryMineralStandardModel_Chooser.setBounds(475, 60, 360, 27);
 
         developerNote.setText("Note: elements are programmatically generated here.");
         LAICPMSLabDefaultsPane.add(developerNote);

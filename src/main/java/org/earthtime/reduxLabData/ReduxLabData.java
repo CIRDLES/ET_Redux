@@ -116,6 +116,10 @@ public final class ReduxLabData implements Serializable {
     private AbstractRatiosDataModel defaultDetritalUraniumAndThoriumModel;
     // feb 2016
     private Map<RadRatios, ValueModel> defaultInterReferenceMaterialReproducibilityMap;
+    // oct 2016
+    private int defaultNegPctDiscordanceFilter;
+    private int defaultPosPctDiscordanceFilter;
+    private int defaultPctUncertaintyFilter;
 
     /**
      * Creates a new instance of ReduxLabData
@@ -222,6 +226,10 @@ public final class ReduxLabData implements Serializable {
         this.defaultLeftShadeCountForSHRIMPAquisitions = 0;
 
         initDefaultInterReferenceMaterialReproducibilityMap();
+
+        defaultNegPctDiscordanceFilter = -100;
+        defaultPosPctDiscordanceFilter = 100;
+        defaultPctUncertaintyFilter = 100;
 
     }
 
@@ -432,9 +440,9 @@ public final class ReduxLabData implements Serializable {
             addTracer(TracerUPbModel.getNoneInstance());
             defaultLabTracer = getFirstTracer();
         } else // detect if legacy default is none and change if possible
-         if (defaultLabTracer.equals(getNoneTracer())) {
-                defaultLabTracer = getFirstTracer();
-            }
+        if (defaultLabTracer.equals(getNoneTracer())) {
+            defaultLabTracer = getFirstTracer();
+        }
         return defaultLabTracer;
     }
 
@@ -550,9 +558,9 @@ public final class ReduxLabData implements Serializable {
             addAlphaUModel(new ValueModel(ReduxConstants.NONE));
             setDefaultLabAlphaUModel(getFirstAlphaUModel());
         } else // detect if legacy default is none and change if possible
-         if (defaultLabAlphaUModel.equals(getNoneAlphaUModel())) {
-                setDefaultLabAlphaUModel(getFirstAlphaUModel());
-            }
+        if (defaultLabAlphaUModel.equals(getNoneAlphaUModel())) {
+            setDefaultLabAlphaUModel(getFirstAlphaUModel());
+        }
         return defaultLabAlphaUModel;
     }
 
@@ -657,9 +665,9 @@ public final class ReduxLabData implements Serializable {
             addAlphaPbModel(new ValueModel(ReduxConstants.NONE));
             setDefaultLabAlphaPbModel(getFirstAlphaPbModel());
         } else // detect if legacy default is none and change if possible
-         if (defaultLabAlphaPbModel.equals(getNoneAlphaPbModel())) {
-                setDefaultLabAlphaPbModel(getFirstAlphaPbModel());
-            }
+        if (defaultLabAlphaPbModel.equals(getNoneAlphaPbModel())) {
+            setDefaultLabAlphaPbModel(getFirstAlphaPbModel());
+        }
         return defaultLabAlphaPbModel;
     }
 
@@ -766,9 +774,9 @@ public final class ReduxLabData implements Serializable {
             addBlank(PbBlankICModel.getNoneInstance());
             setDefaultLabPbBlank(getFirstPbBlank());
         } else // detect if legacy default is none and change if possible
-         if (defaultLabPbBlank.equals(getNonePbBlankModel())) {
-                setDefaultLabPbBlank(getFirstPbBlank());
-            }
+        if (defaultLabPbBlank.equals(getNonePbBlankModel())) {
+            setDefaultLabPbBlank(getFirstPbBlank());
+        }
         return defaultLabPbBlank;
     }
 
@@ -888,9 +896,9 @@ public final class ReduxLabData implements Serializable {
 
             defaultLabInitialPbModel = getFirstInitialPbModel();
         } else // detect if legacy default is none and change if possible
-         if (defaultLabInitialPbModel.equals(getNoneInitialPbModel())) {
-                defaultLabInitialPbModel = getFirstInitialPbModel();
-            }
+        if (defaultLabInitialPbModel.equals(getNoneInitialPbModel())) {
+            defaultLabInitialPbModel = getFirstInitialPbModel();
+        }
         return defaultLabInitialPbModel;
     }
 
@@ -1259,9 +1267,9 @@ public final class ReduxLabData implements Serializable {
             addRareEarthElementModel(RareEarthElementsModel.getNoneInstance());
             defaultRareEarthElementModel = getFirstRareEarthElementModel();
         } else // detect if legacy default is none and change if possible
-         if (defaultRareEarthElementModel.equals(getNoneRareEarthElementModel())) {
-                defaultRareEarthElementModel = getFirstRareEarthElementModel();
-            }
+        if (defaultRareEarthElementModel.equals(getNoneRareEarthElementModel())) {
+            defaultRareEarthElementModel = getFirstRareEarthElementModel();
+        }
         return defaultRareEarthElementModel;
     }
 
@@ -1366,9 +1374,9 @@ public final class ReduxLabData implements Serializable {
             addDetritalUraniumAndThoriumModel(DetritalUraniumAndThoriumModel.getNoneInstance());
             defaultDetritalUraniumAndThoriumModel = getFirstDetritalUraniumAndThoriumModel();
         } else // detect if legacy default is none and change if possible
-         if (defaultDetritalUraniumAndThoriumModel.equals(getNoneDetritalUraniumAndThoriumModel())) {
-                defaultDetritalUraniumAndThoriumModel = getFirstDetritalUraniumAndThoriumModel();
-            }
+        if (defaultDetritalUraniumAndThoriumModel.equals(getNoneDetritalUraniumAndThoriumModel())) {
+            defaultDetritalUraniumAndThoriumModel = getFirstDetritalUraniumAndThoriumModel();
+        }
         return defaultDetritalUraniumAndThoriumModel;
     }
 
@@ -1466,8 +1474,7 @@ public final class ReduxLabData implements Serializable {
      * @return the org.earthtime.reports.ReportSettingsInterface
      * @throws org.earthtime.UPb_Redux.exceptions.BadLabDataException
      */
-    public ReportSettingsInterface getDefaultReportSettingsModelByIsotopeStyle(String isotopeStyle)
-             {
+    public ReportSettingsInterface getDefaultReportSettingsModelByIsotopeStyle(String isotopeStyle) {
         if (defaultReportSettingsModel == null) {
             defaultReportSettingsModel = ReportSettings.EARTHTIMEReportSettingsUPb();
             addReportSettingsModel(defaultReportSettingsModel);
@@ -1767,11 +1774,11 @@ public final class ReduxLabData implements Serializable {
         String retVal = "<html>" + alphaModel.getName() + "<br>";
         retVal += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + alphaType + " = " //
                 + alphaModel.getValue().movePointRight(2)//
-                .setScale(ReduxConstants.DEFAULT_PARAMETERS_SCALE, RoundingMode.HALF_UP).toPlainString()//
+                        .setScale(ReduxConstants.DEFAULT_PARAMETERS_SCALE, RoundingMode.HALF_UP).toPlainString()//
                 + " % / amu" + "<br>"//
                 + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1-sigma abs = " //
                 + alphaModel.getOneSigma().movePointRight(2)//
-                .setScale(ReduxConstants.DEFAULT_PARAMETERS_SCALE, RoundingMode.HALF_UP).toPlainString()//
+                        .setScale(ReduxConstants.DEFAULT_PARAMETERS_SCALE, RoundingMode.HALF_UP).toPlainString()//
                 + " % / amu" + "</html>";
 
         return retVal;
@@ -1877,8 +1884,8 @@ public final class ReduxLabData implements Serializable {
      */
     public String getAnalystName() {
         //if (analystName == null) {
-            analystName = System.getProperty("user.name");
-       // }
+        analystName = System.getProperty("user.name");
+        // }
         return analystName;
     }
 
@@ -2036,10 +2043,64 @@ public final class ReduxLabData implements Serializable {
     }
 
     /**
-     * @param defaultLeftShadeCountForSHRIMPAquisitions the defaultLeftShadeCountForSHRIMPAquisitions to set
+     * @param defaultLeftShadeCountForSHRIMPAquisitions the
+     * defaultLeftShadeCountForSHRIMPAquisitions to set
      */
     public void setDefaultLeftShadeCountForSHRIMPAquisitions(int defaultLeftShadeCountForSHRIMPAquisitions) {
         this.defaultLeftShadeCountForSHRIMPAquisitions = defaultLeftShadeCountForSHRIMPAquisitions;
+    }
+
+    /**
+     * @return the defaultNegPctDiscordanceFilter
+     */
+    public int getDefaultNegPctDiscordanceFilter() {
+        if (defaultNegPctDiscordanceFilter == 0) {
+            defaultNegPctDiscordanceFilter = -100;
+        }
+        return defaultNegPctDiscordanceFilter;
+    }
+
+    /**
+     * @param defaultNegPctDiscordanceFilter the defaultNegPctDiscordanceFilter
+     * to set
+     */
+    public void setDefaultNegPctDiscordanceFilter(int defaultNegPctDiscordanceFilter) {
+        this.defaultNegPctDiscordanceFilter = defaultNegPctDiscordanceFilter;
+    }
+
+    /**
+     * @return the defaultPosPctDiscordanceFilter
+     */
+    public int getDefaultPosPctDiscordanceFilter() {
+        if (defaultPosPctDiscordanceFilter == 0) {
+            defaultPosPctDiscordanceFilter = 100;
+        }
+        return defaultPosPctDiscordanceFilter;
+    }
+
+    /**
+     * @param defaultPosPctDiscordanceFilter the defaultPosPctDiscordanceFilter
+     * to set
+     */
+    public void setDefaultPosPctDiscordanceFilter(int defaultPosPctDiscordanceFilter) {
+        this.defaultPosPctDiscordanceFilter = defaultPosPctDiscordanceFilter;
+    }
+
+    /**
+     * @return the defaultPctUncertaintyFilter
+     */
+    public int getDefaultPctUncertaintyFilter() {
+        if (defaultPctUncertaintyFilter == 0) {
+            defaultPctUncertaintyFilter = 100;
+        }
+        return defaultPctUncertaintyFilter;
+    }
+
+    /**
+     * @param defaultPctUncertaintyFilter the defaultPctUncertaintyFilter to set
+     */
+    public void setDefaultPctUncertaintyFilter(int defaultPctUncertaintyFilter) {
+        this.defaultPctUncertaintyFilter = defaultPctUncertaintyFilter;
     }
 
 }

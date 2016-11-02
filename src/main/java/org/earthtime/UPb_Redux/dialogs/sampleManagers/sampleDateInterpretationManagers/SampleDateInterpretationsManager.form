@@ -1368,7 +1368,7 @@
                           <Font name="Arial" size="10" style="1"/>
                         </Property>
                         <Property name="majorTickSpacing" type="int" value="10"/>
-                        <Property name="minorTickSpacing" type="int" value="2"/>
+                        <Property name="minorTickSpacing" type="int" value="1"/>
                         <Property name="paintLabels" type="boolean" value="true"/>
                         <Property name="paintTicks" type="boolean" value="true"/>
                         <Property name="snapToTicks" type="boolean" value="true"/>
@@ -1390,7 +1390,7 @@
                           <Font name="Arial" size="10" style="1"/>
                         </Property>
                         <Property name="majorTickSpacing" type="int" value="10"/>
-                        <Property name="minorTickSpacing" type="int" value="2"/>
+                        <Property name="minorTickSpacing" type="int" value="1"/>
                         <Property name="paintLabels" type="boolean" value="true"/>
                         <Property name="paintTicks" type="boolean" value="true"/>
                         <Property name="snapToTicks" type="boolean" value="true"/>
@@ -1414,7 +1414,7 @@
                         <Property name="majorTickSpacing" type="int" value="10"/>
                         <Property name="maximum" type="int" value="0"/>
                         <Property name="minimum" type="int" value="-100"/>
-                        <Property name="minorTickSpacing" type="int" value="2"/>
+                        <Property name="minorTickSpacing" type="int" value="1"/>
                         <Property name="paintLabels" type="boolean" value="true"/>
                         <Property name="paintTicks" type="boolean" value="true"/>
                         <Property name="snapToTicks" type="boolean" value="true"/>
@@ -1445,7 +1445,7 @@
                       </Properties>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="586" y="45" width="130" height="15"/>
+                          <AbsoluteConstraints x="586" y="45" width="150" height="15"/>
                         </Constraint>
                       </Constraints>
                     </Component>
@@ -1467,7 +1467,7 @@
                       </Properties>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="365" y="45" width="130" height="15"/>
+                          <AbsoluteConstraints x="345" y="45" width="150" height="15"/>
                         </Constraint>
                       </Constraints>
                     </Component>
@@ -1761,7 +1761,7 @@
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                           <Font name="Helvetica" size="10" style="1"/>
                         </Property>
-                        <Property name="text" type="java.lang.String" value="Clear Filters"/>
+                        <Property name="text" type="java.lang.String" value="Clear"/>
                         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                           <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
                             <LineBorder/>
@@ -1781,7 +1781,39 @@
                       </AuxValues>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                          <AbsoluteConstraints x="505" y="45" width="75" height="20"/>
+                          <AbsoluteConstraints x="540" y="50" width="40" height="18"/>
+                        </Constraint>
+                      </Constraints>
+                    </Component>
+                    <Component class="javax.swing.JButton" name="defaultFilters_button">
+                      <Properties>
+                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="ff" green="ff" red="ff" type="rgb"/>
+                        </Property>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Helvetica" size="10" style="1"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="Default"/>
+                        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                          <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
+                            <LineBorder/>
+                          </Border>
+                        </Property>
+                        <Property name="contentAreaFilled" type="boolean" value="false"/>
+                        <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
+                          <Insets value="[0, 0, 0, 0]"/>
+                        </Property>
+                        <Property name="opaque" type="boolean" value="true"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="defaultFilters_buttonActionPerformed"/>
+                      </Events>
+                      <AuxValues>
+                        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value=" new ET_JButton();"/>
+                      </AuxValues>
+                      <Constraints>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                          <AbsoluteConstraints x="500" y="50" width="40" height="18"/>
                         </Constraint>
                       </Constraints>
                     </Component>
