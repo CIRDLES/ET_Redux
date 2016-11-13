@@ -1437,7 +1437,7 @@ public class UPbFraction extends Fraction implements
                 // re-create reader
                 reader = URIHelper.getBufferedReader(filename);
                 try {
-                    myUPbReduxFraction = (UPbFraction) xstream.fromXML(reader);
+                    myUPbReduxFraction = (FractionI) xstream.fromXML(reader);
                 } catch (ConversionException e) {
                     throw new ETException(null, e.getMessage());
                 }
@@ -1448,7 +1448,7 @@ public class UPbFraction extends Fraction implements
             throw new FileNotFoundException("Missing XML data file.");
         }
 
-        return (UPbFraction) myUPbReduxFraction;
+        return myUPbReduxFraction;
 
     }
 
