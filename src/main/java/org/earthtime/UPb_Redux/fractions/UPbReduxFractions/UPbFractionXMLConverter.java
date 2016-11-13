@@ -28,8 +28,6 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
-import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
-import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.UPb_Redux.tracers.Tracer;
 import org.earthtime.UPb_Redux.tracers.TracerXMLConverter;
 import org.earthtime.UPb_Redux.valueModels.MeasuredRatioModel;
@@ -205,7 +203,7 @@ public class UPbFractionXMLConverter implements Converter {
 
         reader.moveDown();
         if ( "measuredRatios".equals( reader.getNodeName() ) ) {
-            ArrayList<ValueModel> ratios = new ArrayList<ValueModel>();
+            ArrayList<ValueModel> ratios = new ArrayList<>();
             while (reader.hasMoreChildren()) {
                 reader.moveDown();
                 ValueModel item = new MeasuredRatioModel();
