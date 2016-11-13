@@ -2053,7 +2053,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         });
 
         buttonBar_panel.setBackground(new java.awt.Color(235, 255, 255));
-        buttonBar_panel.setBorder(javax.swing.BorderFactory.createBevelBorder(1));
+        buttonBar_panel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
         buttonBar_panel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         saveAndQuit_button.setBackground(new java.awt.Color(204, 204, 204));

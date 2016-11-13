@@ -357,29 +357,31 @@ public class UPbReduxAliquot extends Aliquot
     public void updateBestAge() {
         // now set best age
         // april 2016 trumped if fractions are from primary standard
-        if (aliquotFractions.get(0).isStandard()){
-            bestAgeDivider206_238 = new BigDecimal(ReduxConstants.MAX_DATE_ANNUM);
-        }
-        for (ETFractionInterface f : aliquotFractions) {
-            if (f.getRadiogenicIsotopeDateByName(RadDates.age206_238r).getValue().compareTo(bestAgeDivider206_238) < 0) {
-                ValueModel bestDate = f.getRadiogenicIsotopeDateByName(RadDates.age206_238r).copy();
-                bestDate.setName(RadDates.bestAge.getName());
-                f.setRadiogenicIsotopeDateByName(RadDates.bestAge, bestDate);
-            } else {
-                ValueModel bestDate = f.getRadiogenicIsotopeDateByName(RadDates.age207_206r).copy();
-                bestDate.setName(RadDates.bestAge.getName());
-                f.setRadiogenicIsotopeDateByName(RadDates.bestAge, bestDate);
+        if (aliquotFractions.size() > 0) {
+            if (aliquotFractions.get(0).isStandard()) {
+                bestAgeDivider206_238 = new BigDecimal(ReduxConstants.MAX_DATE_ANNUM);
             }
+            for (ETFractionInterface f : aliquotFractions) {
+                if (f.getRadiogenicIsotopeDateByName(RadDates.age206_238r).getValue().compareTo(bestAgeDivider206_238) < 0) {
+                    ValueModel bestDate = f.getRadiogenicIsotopeDateByName(RadDates.age206_238r).copy();
+                    bestDate.setName(RadDates.bestAge.getName());
+                    f.setRadiogenicIsotopeDateByName(RadDates.bestAge, bestDate);
+                } else {
+                    ValueModel bestDate = f.getRadiogenicIsotopeDateByName(RadDates.age207_206r).copy();
+                    bestDate.setName(RadDates.bestAge.getName());
+                    f.setRadiogenicIsotopeDateByName(RadDates.bestAge, bestDate);
+                }
 
-            // Pbc Corrected
-            if (f.getRadiogenicIsotopeDateByName(RadDates.age206_238_PbcCorr).getValue().compareTo(bestAgeDivider206_238) < 0) {
-                ValueModel bestDate = f.getRadiogenicIsotopeDateByName(RadDates.age206_238_PbcCorr).copy();
-                bestDate.setName(RadDates.bestAge_PbcCorr.getName());
-                f.setRadiogenicIsotopeDateByName(RadDates.bestAge_PbcCorr, bestDate);
-            } else {
-                ValueModel bestDate = f.getRadiogenicIsotopeDateByName(RadDates.age207_206_PbcCorr).copy();
-                bestDate.setName(RadDates.bestAge_PbcCorr.getName());
-                f.setRadiogenicIsotopeDateByName(RadDates.bestAge_PbcCorr, bestDate);
+                // Pbc Corrected
+                if (f.getRadiogenicIsotopeDateByName(RadDates.age206_238_PbcCorr).getValue().compareTo(bestAgeDivider206_238) < 0) {
+                    ValueModel bestDate = f.getRadiogenicIsotopeDateByName(RadDates.age206_238_PbcCorr).copy();
+                    bestDate.setName(RadDates.bestAge_PbcCorr.getName());
+                    f.setRadiogenicIsotopeDateByName(RadDates.bestAge_PbcCorr, bestDate);
+                } else {
+                    ValueModel bestDate = f.getRadiogenicIsotopeDateByName(RadDates.age207_206_PbcCorr).copy();
+                    bestDate.setName(RadDates.bestAge_PbcCorr.getName());
+                    f.setRadiogenicIsotopeDateByName(RadDates.bestAge_PbcCorr, bestDate);
+                }
             }
         }
     }

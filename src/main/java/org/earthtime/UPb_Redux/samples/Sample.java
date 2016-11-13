@@ -19,6 +19,8 @@
  */
 package org.earthtime.UPb_Redux.samples;
 
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -27,6 +29,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.Vector;
@@ -313,58 +316,58 @@ public class Sample implements
         if (!isSampleTypeLegacy()) {
             SampleInterface.registerSampleWithLabData(this);
         } else // dec 2012
-         if (getFractions().size() > 0) {
-                // June 2010 fix for old legacy fractions
-                Vector<ETFractionInterface> convertedF = new Vector<>();
-                for (ETFractionInterface f : getFractions()) {
-                    if (f instanceof UPbFraction) {
-                        // convert to UPbLegacyFraction
-                        System.out.println("Converting legacy legacy");
-                        FractionI legacyF = new UPbLegacyFraction(f.getFractionID());
+        if (getFractions().size() > 0) {
+            // June 2010 fix for old legacy fractions
+            Vector<ETFractionInterface> convertedF = new Vector<>();
+            for (ETFractionInterface f : getFractions()) {
+                if (f instanceof UPbFraction) {
+                    // convert to UPbLegacyFraction
+                    System.out.println("Converting legacy legacy");
+                    FractionI legacyF = new UPbLegacyFraction(f.getFractionID());
 
-                        legacyF.setAnalysisMeasures(f.getAnalysisMeasures());
-                        // these two are legacy leftovers and need to be zeroed so report settings does not show columns
-                        legacyF.getAnalysisMeasure(AnalysisMeasures.ar231_235sample.getName()).setValue(BigDecimal.ZERO);
-                        legacyF.getAnalysisMeasure(AnalysisMeasures.rTh_Umagma.getName()).setValue(BigDecimal.ZERO);
+                    legacyF.setAnalysisMeasures(f.getAnalysisMeasures());
+                    // these two are legacy leftovers and need to be zeroed so report settings does not show columns
+                    legacyF.getAnalysisMeasure(AnalysisMeasures.ar231_235sample.getName()).setValue(BigDecimal.ZERO);
+                    legacyF.getAnalysisMeasure(AnalysisMeasures.rTh_Umagma.getName()).setValue(BigDecimal.ZERO);
 
-                        legacyF.setRadiogenicIsotopeRatios(f.getRadiogenicIsotopeRatios());
-                        legacyF.setIsotopeDates(f.getIsotopeDates());
-                        legacyF.setCompositionalMeasures(f.getCompositionalMeasures());
-                        legacyF.setSampleIsochronRatios(f.getSampleIsochronRatios());
+                    legacyF.setRadiogenicIsotopeRatios(f.getRadiogenicIsotopeRatios());
+                    legacyF.setIsotopeDates(f.getIsotopeDates());
+                    legacyF.setCompositionalMeasures(f.getCompositionalMeasures());
+                    legacyF.setSampleIsochronRatios(f.getSampleIsochronRatios());
 
-                        legacyF.setSampleName(f.getSampleName());
-                        legacyF.setZircon(((FractionI) f).isZircon());
+                    legacyF.setSampleName(f.getSampleName());
+                    legacyF.setZircon(((FractionI) f).isZircon());
 
-                        legacyF.setAliquotNumber(f.getAliquotNumber());
-                        legacyF.setRejected(f.isRejected());
-                        legacyF.setFractionNotes(f.getFractionNotes());
-                        legacyF.setPhysicalConstantsModel(f.getPhysicalConstantsModel());
-                        legacyF.setChanged(false);
+                    legacyF.setAliquotNumber(f.getAliquotNumber());
+                    legacyF.setRejected(f.isRejected());
+                    legacyF.setFractionNotes(f.getFractionNotes());
+                    legacyF.setPhysicalConstantsModel(f.getPhysicalConstantsModel());
+                    legacyF.setChanged(false);
 
-                        legacyF.setLegacy(true);
+                    legacyF.setLegacy(true);
 
-                        convertedF.add(legacyF);
-                    } else {
-                        f.setLegacy(true);
-                        convertedF.add(f);
-                    }
-                }
-
-                setFractions(convertedF);
-
-                // modified logic oct 2010 ... sample manager allows reset
-                // additional test for missing T-W rho calculation
-                // use first fraction to test for rho < -1 or 0  (both used as default for non-existent rho)
-                double twRho
-                        = getFractions().get(0).//
-                        getRadiogenicIsotopeRatioByName("rhoR207_206r__r238_206r").getValue().doubleValue();
-                if ((twRho < -1.0)) {
-                    for (ETFractionInterface f : getFractions()) {
-                        f.getRadiogenicIsotopeRatioByName("rhoR207_206r__r238_206r")//
-                                .setValue(BigDecimal.ZERO);
-                    }
+                    convertedF.add(legacyF);
+                } else {
+                    f.setLegacy(true);
+                    convertedF.add(f);
                 }
             }
+
+            setFractions(convertedF);
+
+            // modified logic oct 2010 ... sample manager allows reset
+            // additional test for missing T-W rho calculation
+            // use first fraction to test for rho < -1 or 0  (both used as default for non-existent rho)
+            double twRho
+                    = getFractions().get(0).//
+                            getRadiogenicIsotopeRatioByName("rhoR207_206r__r238_206r").getValue().doubleValue();
+            if ((twRho < -1.0)) {
+                for (ETFractionInterface f : getFractions()) {
+                    f.getRadiogenicIsotopeRatioByName("rhoR207_206r__r238_206r")//
+                            .setValue(BigDecimal.ZERO);
+                }
+            }
+        }
 
         // June 2010 be sure lab name is updated to labdata labname when used in reduction
         if (isSampleTypeAnalysis() || isSampleTypeLiveWorkflow() || isSampleTypeLegacy()) {
@@ -609,20 +612,41 @@ public class Sample implements
                 aliquotFractionFiles = aliquotFolder.listFiles((File file) -> {
                     // want .xml files and only freshones in live-update, but all of them in auto-update
                     boolean isXML = file.getName().toLowerCase().endsWith(".xml");
-
-                    if (getSampleType().equalsIgnoreCase(SampleTypesEnum.LIVEWORKFLOW.getName())) {
-                        return ((file.lastModified() >= (aliquotFolder.lastModified() - 20000l))
-                                && isXML);
-                    } else {
-                        return isXML;
+                    boolean isValidUPbFraction = false;
+                    if (isXML) {
+                        // nov 2016 need more robust test of file to be fraction file
+                        // contains "<UPbReduxFraction"
+                        List<String> fractionData;
+                        try {
+                            fractionData = Files.readLines(file, Charsets.ISO_8859_1);
+//                            System.out.println(fractionData.get(0));
+                            // check first 10 lines
+                            for (int line = 0; line < 10; line++) {
+                                if (fractionData.get(line).contains("<UPbReduxFraction")) {
+                                    isValidUPbFraction = true;
+                                    break;
+                                }
+                            }
+                        } catch (IOException iOException) {
+                        }
                     }
+
+                    if (isValidUPbFraction && getSampleType().equalsIgnoreCase(SampleTypesEnum.LIVEWORKFLOW.getName())) {
+                        return ((file.lastModified() >= (aliquotFolder.lastModified() - 20000l)));
+                    } else return isValidUPbFraction && getSampleType().equalsIgnoreCase(SampleTypesEnum.ANALYSIS.getName());
+
                 } // 20 second cushion
                 );
 
                 // assume xml files are in good shape with doValidate = false
-                updateSampleAliquot(aliquotFolder, aliquotFractionFiles, false, myFractionEditor);
+                if (aliquotFractionFiles.length > 0) {
+                    updateSampleAliquot(aliquotFolder, aliquotFractionFiles, false, myFractionEditor);
+                }
             }
         }
+
+        // Nov 2016
+        initFilteredFractionsToAll();
 
     }
 
