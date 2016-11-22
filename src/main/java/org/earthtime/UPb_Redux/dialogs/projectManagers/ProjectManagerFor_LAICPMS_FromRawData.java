@@ -63,6 +63,7 @@ import org.earthtime.Tripoli.rawDataFiles.handlers.Thermo.MemUnivNewfoundlandEle
 import org.earthtime.Tripoli.rawDataFiles.handlers.Thermo.TexasAMElementIISingleCollFileHandler;
 import org.earthtime.Tripoli.rawDataFiles.handlers.Thermo.UnivKansasElementIIFileHandler;
 import org.earthtime.Tripoli.rawDataFiles.handlers.Thermo.WashStateElementIISingleCollFileHandler;
+import org.earthtime.Tripoli.rawDataFiles.handlers.Variant810Quadrupole.UHoustonVarian810FileHandler;
 import org.earthtime.Tripoli.rawDataFiles.templates.AbstractRawDataFileTemplate;
 import org.earthtime.Tripoli.rawDataFiles.templates.Agilent.Kosler_Agilent7700_RawDataTemplate;
 import org.earthtime.Tripoli.rawDataFiles.templates.Agilent.Rittner_Agilent7700_RawDataTemplate;
@@ -79,6 +80,7 @@ import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.MoellerUnivKansasElem
 import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.ValenciaWashStateElementII_RawDataTemplate;
 import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.VervoortWashStateElementII_RawDataTemplate_Meth1;
 import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.VervoortWashStateElementII_RawDataTemplate_Meth2;
+import org.earthtime.Tripoli.rawDataFiles.templates.Varian810Quadrupole.UHoustonVarian810_RawDataTemplate;
 import org.earthtime.Tripoli.samples.AbstractTripoliSample;
 import org.earthtime.Tripoli.sessions.TripoliSession;
 import org.earthtime.Tripoli.sessions.TripoliSessionInterface;
@@ -215,6 +217,13 @@ public class ProjectManagerFor_LAICPMS_FromRawData extends DialogEditor implemen
         theSantaBarbaraNUPlasmaMultiCollFaradayTRAFileHandler.getAvailableRawDataFileTemplates()//
                 .add(SantaBarbaraNUPlasmaMultiCollFaradayTRARawDataTemplate.getInstance());
         knownRawDataFileHandlers.add(theSantaBarbaraNUPlasmaMultiCollFaradayTRAFileHandler);
+
+        // Houston Varian810
+        AbstractRawDataFileHandler theUHoustonVarian810FileHandler
+                = UHoustonVarian810FileHandler.getInstance();
+        theUHoustonVarian810FileHandler.getAvailableRawDataFileTemplates()//
+                .add(UHoustonVarian810_RawDataTemplate.getInstance());
+        knownRawDataFileHandlers.add(theUHoustonVarian810FileHandler);
 
         // Washington State Element 2 
         AbstractRawDataFileHandler theWashStateElement2SingleCollFileHandler

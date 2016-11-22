@@ -151,7 +151,7 @@ public class SantaBarbaraNUPlasmaMultiCollFaradayTRAFileHandler extends Abstract
             // TODO:
             //
             // build one giant set of rawratios
-            SortedSet<DataModelInterface> rawRatios = massSpec.rawRatiosFactoryRevised();
+//            SortedSet<DataModelInterface> rawRatios = massSpec.rawRatiosFactoryRevised();
 
             // walk file to find start of data            
             dataFoundIndex = -1;

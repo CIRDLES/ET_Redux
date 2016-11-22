@@ -194,9 +194,9 @@ public class TexasAMElementIISingleCollFileHandler extends AbstractRawDataFileHa
                         ArrayList<double[]> peakAcquisitions = new ArrayList<>();
 
                         // process time stamp from first scan as time stamp of file and background
-                        long fractionBackgroundTimeStamp = calculateTimeStamp(backgroundFileContents[0][1]);
+                        long fractionBackgroundTimeStamp = calculateTimeStampFromThermoDatFile(backgroundFileContents[0][1]);
                         // process time stamp of first peak reading
-                        long fractionPeakTimeStamp = calculateTimeStamp(onPeakFileContents[0][1]);
+                        long fractionPeakTimeStamp = calculateTimeStampFromThermoDatFile(onPeakFileContents[0][1]);
 
                         for (int i = 0; i < rawDataFileTemplate.getBlockSize(); i++) {
                             // 202  204  206	Pb207	Pb208	Th232	U235 U238
