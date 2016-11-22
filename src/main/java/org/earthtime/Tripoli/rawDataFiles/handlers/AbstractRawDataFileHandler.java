@@ -229,6 +229,14 @@ public abstract class AbstractRawDataFileHandler implements //
         return retVal;
     }
 
+    public boolean legalBaselineIndex(int i) {
+        return ((i >= (baselineStartIndex - 1)) && (i <= (baselineEndIndex - 1)));
+    }
+
+    public boolean legalPeakIndex(int i) {
+        return ((i >= (peakStartIndex - 1)) && (i <= (peakEndIndex - 1)));
+    }
+
     /**
      * @return the baselineStartIndex
      */
@@ -381,7 +389,7 @@ public abstract class AbstractRawDataFileHandler implements //
         return retVal;
     }
 
-    public static long calculateTimeStamp(String timeStamp) {
+    public static long calculateTimeStampFromThermoDatFile(String timeStamp) {
         // remove decimal point and take first 3 digits of 6 so timestamp can be converted to long
         String[] timeStampParts = timeStamp.split("\\.");
         return Long.parseLong(timeStampParts[0] + timeStampParts[1].substring(0, 3));

@@ -21,8 +21,10 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -30,20 +32,14 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileFilter;
 import org.earthtime.Tripoli.dataModels.DataModelInterface;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.Tripoli.rawDataFiles.handlers.AbstractRawDataFileHandler;
-import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.LaserchronElementII_RawDataTemplate_A;
-import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.LaserchronElementII_RawDataTemplate_B;
-import org.earthtime.Tripoli.rawDataFiles.templates.Thermo.LaserchronElementII_RawDataTemplate_C;
 import org.earthtime.UPb_Redux.filters.PrnFileFilter;
-import org.earthtime.archivingTools.URIHelper;
-import org.earthtime.pythonUtilities.ElementII_DatFileConverter;
+import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.utilities.FileHelper;
-import org.python.core.PyException;
 
 /**
  *
@@ -55,9 +51,9 @@ public class UHoustonVarian810FileHandler extends AbstractRawDataFileHandler {
     //private static final long serialVersionUID = -2860923405769819758L;
     private static final UHoustonVarian810FileHandler instance = new UHoustonVarian810FileHandler();
     private static Map<String, Integer> referenceMaterialIncrementerMap = null;
+
     // Instance variables
-    private File[] analysisFiles;
-    private String[] fractionNames;
+    private List<String> fractionData;
 
     /**
      *
@@ -68,14 +64,12 @@ public class UHoustonVarian810FileHandler extends AbstractRawDataFileHandler {
 
         super();
         NAME = "U Houston Varian810 '.prn' file";
-        aboutInfo = "Details: This is the U Houston single-file protocol for an Varian810. ";
+        aboutInfo = "Details: This is the U Houston single-file protocol for a Varian810. ";
 
-        analysisFiles = new File[0];
-        fractionNames = new String[0];
         baselineStartIndex = 3;
-        baselineEndIndex = 15;
-        peakStartIndex = 20;
-        peakEndIndex = 54;
+        baselineEndIndex = 65;
+        peakStartIndex = 85;
+        peakEndIndex = 200;
     }
 
     /**
@@ -93,13 +87,14 @@ public class UHoustonVarian810FileHandler extends AbstractRawDataFileHandler {
      */
     @Override
     public File validateAndGetHeaderDataFromRawIntensityFile(File tripoliRawDataFolder) {
-        String dialogTitle = "Select a U HOuston Varian810 '.prn' file:";
-        final String fileExtension = ".txt";
+        String dialogTitle = "Select a U Houston Varian810 '.prn' file:";
+        final String fileExtension = ".prn";
         FileFilter fileFilter = new PrnFileFilter();
 
         rawDataFile = FileHelper.AllPlatformGetFile(//
                 dialogTitle, tripoliRawDataFolder, fileExtension, fileFilter, true, new JFrame())[0];
 
+        // TODO: validate file contents
         return rawDataFile;
     }
 
@@ -114,63 +109,19 @@ public class UHoustonVarian810FileHandler extends AbstractRawDataFileHandler {
     @Override
     public void getAndLoadRawIntensityDataFile(SwingWorker loadDataTask, boolean usingFullPropagation, int leftShadeCount, int ignoreFirstFractions, boolean inLiveMode) {
 
-        if (referenceMaterialIncrementerMap == null) {
+        // U Houston Varian810 has single ".prn" file containing all data
+        // and include named fractions with each interna; data set
+        if ((referenceMaterialIncrementerMap == null) || !inLiveMode) {
             referenceMaterialIncrementerMap = new ConcurrentHashMap<>();
-            for (int i = 0; i < rawDataFileTemplate.getStandardIDs().length; i++) {
-                referenceMaterialIncrementerMap.put(rawDataFileTemplate.getStandardIDs()[i], 1);
+            for (String standardID : rawDataFileTemplate.getStandardIDs()) {
+                referenceMaterialIncrementerMap.put(standardID, 1);
             }
         }
 
-        // Laserchron ElementII has folder of .dat files 
-        analysisFiles = rawDataFile.listFiles((File dir, String name) -> {
-            return name.toLowerCase().endsWith(".dat");
-        });
-
-        // Laserchron produces file with numerical ordering tags
-        Arrays.sort(analysisFiles, new FractionFileNameComparator());
-
-        //load current values
-//        baselineStartIndex = acqu
-        if (analysisFiles.length > 0) {
-//            this can be broken => depend on naming convention Arrays.sort(analysisFiles, new FractionFileModifiedComparator());
-
-            String onPeakFileContents = URIHelper.getTextFromURI(analysisFiles[0].getAbsolutePath()).substring(0, 32);
-            if (isValidRawDataFileType(analysisFiles[0]) //
-                    && //
-                    areKeyWordsPresent(onPeakFileContents)) {
-
-                // open and process ".scancsv" file that has a fraction name for each file
-                File[] scancsvFiles = rawDataFile.listFiles((File dir, String name) -> {
-                    return name.toLowerCase().endsWith(".scancsv");
-                });
-
-                if (scancsvFiles.length == 0) {
-                    fractionNames = new String[0];
-                } else {
-                    // read the first (and assumedly only) scancsv file in the folder
-                    List<String> fractionData = null;
-                    try {
-                        fractionData = Files.readLines(scancsvFiles[0], Charsets.ISO_8859_1);
-                        // skip column names in row 0
-                        fractionNames = new String[fractionData.size() - 1];
-                        for (int i = 1; i < fractionData.size(); i++) {
-                            String[] lineContents = fractionData.get(i).replace("\"", "").split(",");
-                            fractionNames[i - 1] = lineContents[1];
-                        }
-                    } catch (IOException iOException) {
-                    }
-                }
-
-                // create fractions from raw data and perform corrections and calculate ratios
-                tripoliFractions = loadRawDataFile(loadDataTask, usingFullPropagation, leftShadeCount, ignoreFirstFractions, inLiveMode);
-            }
-        } else {
-            JOptionPane.showMessageDialog(
-                    null,
-                    new String[]{"Selected raw data file does not contain valid data."},
-                    "ET Redux Warning",
-                    JOptionPane.WARNING_MESSAGE);
-        }
+        if (rawDataFile != null) {
+            // create fractions from raw data and perform corrections and calculate ratios
+            tripoliFractions = loadRawDataFile(loadDataTask, usingFullPropagation, leftShadeCount, ignoreFirstFractions, inLiveMode);
+        };
     }
 
     /**
@@ -220,349 +171,140 @@ public class UHoustonVarian810FileHandler extends AbstractRawDataFileHandler {
 
         SortedSet myTripoliFractions = new TreeSet<>();
 
-        // assume we are golden   
-        // take first entry in fractionNames that came from scancsv file and confirm it is referenceMaterial (standard)
-        String primaryReferenceMaterialfractionID = fractionNames[0];
+        try {
+            fractionData = Files.readLines(rawDataFile, Charsets.ISO_8859_1);
 
-        // todo: need to confirm it is the standard - maybe do this at parameter manager
-        for (int f = ignoreFirstFractions; f < analysisFiles.length; f++) {
-
-            if (loadDataTask.isCancelled()) {
-                break;
-            }
-            loadDataTask.firePropertyChange("progress", 0, ((100 * f) / analysisFiles.length));
-
-            // TODO: need to test for empty fractionnames or not enough fraction names (= too many dat files)
-            // default value
-            String fractionID = analysisFiles[f].getName().replace(".dat", "");
-            if ((fractionNames.length > 0) && (fractionNames.length >= analysisFiles.length)) {
-                fractionID = fractionNames[f];
-            }
-
-            // needs to be more robust
-            boolean isPrimaryReferenceMaterial = (fractionID.substring(0, 2).compareToIgnoreCase(primaryReferenceMaterialfractionID.substring(0, 2)) == 0);
+            // walk the file
+            String fractionID = "";
+            int fractionStartLine = -1;
+            String primaryReferenceMaterialfractionID = "";
+            String fractionTimeStamp = "";
+            long fractionBackgroundTimeStamp = 0l;
+            long fractionPeakTimeStamp = 0l;
+            boolean isPrimaryReferenceMaterial = false;
             boolean isSecondaryReferenceMaterial = false;
+            List<double[]> backgroundAcquisitions = new ArrayList<>();
+            List<double[]> peakAcquisitions = new ArrayList<>();
+            
+            double r238_235s = ReduxLabData.getInstance().getDefaultR238_235s().getValue().doubleValue();
 
-            // number the reference material
-            if (referenceMaterialIncrementerMap.containsKey(fractionID)) {
-                int refMatIndex = referenceMaterialIncrementerMap.get(fractionID);
-                referenceMaterialIncrementerMap.put(fractionID, refMatIndex + 1);
-                fractionID = fractionID + "-" + String.valueOf(refMatIndex);
+            for (int i = 0; i < fractionData.size(); i++) {
 
-                isSecondaryReferenceMaterial = !isPrimaryReferenceMaterial;
-            }
+                if (loadDataTask.isCancelled()) {
+                    break;
+                }
+                loadDataTask.firePropertyChange("progress", 0, ((100 * i) / fractionData.size()));
 
-            // ************************************************************************************************
-            // Laserchron uses Philip Wenig's Python routine to extract data from
-            // ElementII .dat files and then pre-processes counts before passing to
-            // fraction intake below
-            String[][] extractedData;
+                String[] lineData = fractionData.get(i).replaceAll("\"", "").split(",");
 
-            try {
-                extractedData = ElementII_DatFileConverter.readDatFile5(analysisFiles[f], rawDataFileTemplate.getStringListOfElementsByIsotopicMass());
+                // detect new analysis fraction
+                if (lineData[0].startsWith("Processed")) {
+                    // beginning of analysis that ends with two blank lines
+                    fractionStartLine = i;
 
-                // within each row
-                // index 0 = scannumber; 1 = time stamp; 2 = ACF; followed by order of groups = 202  204  206	Pb207	Pb208	Th232	U238
-                // each acquisition file contains background followed by peak followed by background
-                // initial solution is to hard wire the first background and peak per Gehrels
-                // later we will give user interactive tools to pick them out
-                List<double[]> backgroundAcquisitions = new ArrayList<>();
-                List<double[]> peakAcquisitions = new ArrayList<>();
-                // Sept 2016
-                List<double[]> backgroundAnalogCorrectionFactors = new ArrayList<>();
-                List<double[]> peakAnalogCorrectionFactors = new ArrayList<>();
-
-                // process time stamp from first scan as time stamp of file and background
-                long fractionBackgroundTimeStamp = calculateTimeStamp(extractedData[0][1]);
-                // process time stamp of first peak reading
-                long fractionPeakTimeStamp = calculateTimeStamp(extractedData[baselineEndIndex + 1][1]);
-
-                for (int i = rawDataFileTemplate.getBlockStartOffset(); i < rawDataFileTemplate.getBlockSize(); i++) {
-                    if (rawDataFileTemplate instanceof LaserchronElementII_RawDataTemplate_A) {
-                        processIntensities_A(i, backgroundAnalogCorrectionFactors, peakAnalogCorrectionFactors, backgroundAcquisitions, peakAcquisitions, extractedData[i]);
-                    } else if (rawDataFileTemplate instanceof LaserchronElementII_RawDataTemplate_B) {
-                        processIntensities_B(i, backgroundAnalogCorrectionFactors, peakAnalogCorrectionFactors, backgroundAcquisitions, peakAcquisitions, extractedData[i]);
-                    } else if (rawDataFileTemplate instanceof LaserchronElementII_RawDataTemplate_C) {
-                        processIntensities_C(i, backgroundAnalogCorrectionFactors, peakAnalogCorrectionFactors, backgroundAcquisitions, peakAcquisitions, extractedData[i]);
+                    // next line is name of fraction with time stamp followed by line of headers and then data
+                    lineData = fractionData.get(i + 1).replaceAll("\"", "").split(",");
+                    fractionID = lineData[0].trim();
+                    if (i == 0) {
+                        primaryReferenceMaterialfractionID = fractionID;
                     }
-                }  // i loop
 
-                TripoliFraction tripoliFraction
-                        = new TripoliFraction(
-                                fractionID, //
-                                massSpec.getCommonLeadCorrectionHighestLevel(), //
-                                isPrimaryReferenceMaterial,
-                                isSecondaryReferenceMaterial,
-                                fractionBackgroundTimeStamp, //
-                                fractionPeakTimeStamp,
-                                peakAcquisitions.size());
+                    fractionTimeStamp = lineData[1].trim();
 
-                SortedSet<DataModelInterface> rawRatios = massSpec.rawRatiosFactoryRevised();
+                    // Get the default MEDIUM/SHORT DateFormat
+                    SimpleDateFormat fractionTimeFormat = new SimpleDateFormat();
+                    // match Thu Nov 19 23:19:48 2015
+                    fractionTimeFormat.applyPattern("EEE MMM dd HH:mm:ss yyyy");
 
-                tripoliFraction.setRawRatios(rawRatios);
+                    // Parse the fractionDateValue
+                    Date fractionDateValue = fractionTimeFormat.parse(fractionTimeStamp);
+                    fractionBackgroundTimeStamp = fractionDateValue.getTime();
 
-                massSpec.setCountOfAcquisitions(peakAcquisitions.size());
+                    // needs to be more robust
+                    isPrimaryReferenceMaterial = (fractionID.substring(0, 2).compareToIgnoreCase(primaryReferenceMaterialfractionID.substring(0, 2)) == 0);
+                    isSecondaryReferenceMaterial = referenceMaterialIncrementerMap.containsKey(fractionID.substring(0, 3)) && !isPrimaryReferenceMaterial;
 
-                massSpec.processFractionRawRatiosII(backgroundAnalogCorrectionFactors, peakAnalogCorrectionFactors, //
-                        backgroundAcquisitions, peakAcquisitions, usingFullPropagation, tripoliFraction, inLiveMode);
+                    backgroundAcquisitions = new ArrayList<>();
+                    peakAcquisitions = new ArrayList<>();
 
-                tripoliFraction.shadeDataActiveMapLeft(leftShadeCount);
-                System.out.println("\n**** Element II FractionID  " + fractionID + " refMat? " + isPrimaryReferenceMaterial + "  livemode = " + inLiveMode + " <<<<<<<<<<<<<<<<<<\n");
+                    // process time stamp of first peak reading
+                    fractionPeakTimeStamp = fractionBackgroundTimeStamp + baselineEndIndex * massSpec.getCOLLECTOR_DATA_FREQUENCY_MILLISECS();
 
-                myTripoliFractions.add(tripoliFraction);
+                } // end test for "Processed" keyword
 
-                if (isPrimaryReferenceMaterial) {
-                    loadDataTask.firePropertyChange("refMaterialLoaded", 0, 1);
+                // now reading lines of data until blanks found ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+                if (i > ((fractionStartLine + 2)) && (lineData[0].trim().length() > 0)) {
+                    // fields: Scan    Time(sec)	Hg202	Hg201	Pb204	Pb206	Pb207	Pb208	Th232	U238	Hg204	Po208	U232	Pu238
+                    int scanNumber = Integer.parseInt(lineData[0]);
+
+                    // Hg202	Hg201	Pb204	Pb206	Pb207	Pb208	Th232	calc U235 U238	XXXHg204	XXXPo208	XXXU232	     XXXPu238
+                    double[] backgroundIntensities = new double[9];
+                    double[] peakIntensities = new double[9];
+                    if (legalBaselineIndex(scanNumber)) {
+                        backgroundAcquisitions.add(backgroundIntensities);
+                        backgroundIntensities[0] = Integer.parseInt(lineData[2]);
+                        backgroundIntensities[1] = Integer.parseInt(lineData[3]);
+                        backgroundIntensities[2] = Integer.parseInt(lineData[4]);
+                        backgroundIntensities[3] = Integer.parseInt(lineData[5]);
+                        backgroundIntensities[4] = Integer.parseInt(lineData[6]);
+                        backgroundIntensities[5] = Integer.parseInt(lineData[7]);
+                        backgroundIntensities[6] = Integer.parseInt(lineData[8]);
+                        backgroundIntensities[8] = Integer.parseInt(lineData[9]);
+                        backgroundIntensities[7] = backgroundIntensities[8] / r238_235s;
+                    } else if (legalPeakIndex(scanNumber)) {
+                        peakAcquisitions.add(peakIntensities);
+                        peakIntensities[0] = Integer.parseInt(lineData[2]);
+                        peakIntensities[1] = Integer.parseInt(lineData[3]);
+                        peakIntensities[2] = Integer.parseInt(lineData[4]);
+                        peakIntensities[3] = Integer.parseInt(lineData[5]);
+                        peakIntensities[4] = Integer.parseInt(lineData[6]);
+                        peakIntensities[5] = Integer.parseInt(lineData[7]);
+                        peakIntensities[6] = Integer.parseInt(lineData[8]);
+                        peakIntensities[8] = Integer.parseInt(lineData[9]);
+                        peakIntensities[7] = peakIntensities[8] / r238_235s;                   }
                 }
 
-            } catch (PyException pyException) {
-                System.out.println("bad read of fraction " + analysisFiles[f].getName() + " message = " + pyException.getMessage());
-            }
-        } // end of files loop
+                // now create fraction from data  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+                if ((fractionStartLine > -1) && (lineData[0].trim().length() == 0)) {
+                    // flag that we are here
+                    fractionStartLine = -1;
+
+                    TripoliFraction tripoliFraction
+                            = new TripoliFraction(
+                                    fractionID, //
+                                    massSpec.getCommonLeadCorrectionHighestLevel(), //
+                                    isPrimaryReferenceMaterial,
+                                    isSecondaryReferenceMaterial,
+                                    fractionBackgroundTimeStamp, //
+                                    fractionPeakTimeStamp,
+                                    peakAcquisitions.size());
+
+                    SortedSet<DataModelInterface> rawRatios = massSpec.rawRatiosFactoryRevised();
+
+                    tripoliFraction.setRawRatios(rawRatios);
+
+                    massSpec.setCountOfAcquisitions(peakAcquisitions.size());
+
+                    massSpec.processFractionRawRatiosII(null, null, //
+                            backgroundAcquisitions, peakAcquisitions, usingFullPropagation, tripoliFraction, inLiveMode);
+
+                    tripoliFraction.shadeDataActiveMapLeft(leftShadeCount);
+                    
+                    System.out.println("\n**** Varian 810 FractionID  " + fractionID + " refMat? " + isPrimaryReferenceMaterial + "  livemode = " + inLiveMode + " <<<<<<<<<<<<<<<<<<\n");
+
+                    myTripoliFractions.add(tripoliFraction);
+
+                    if (isPrimaryReferenceMaterial) {
+                        loadDataTask.firePropertyChange("refMaterialLoaded", 0, 1);
+                    }
+                }
+
+            } // end loop walking file
+
+        } catch (IOException | ParseException iOException) {
+        }
 
         return myTripoliFractions;
-    }
-
-    private boolean legalBaselineIndex(int i) {
-        return ((i >= (baselineStartIndex - 1)) && (i <= (baselineEndIndex - 1)));
-    }
-
-    private boolean legalPeakIndex(int i) {
-        return ((i >= (peakStartIndex - 1)) && (i <= (peakEndIndex - 1)));
-    }
-
-    /**
-     *
-     * @param i the value of i
-     * @param backgroundAcquisitions the value of backgroundAcquisitions
-     * @param peakAcquisitions the value of peakAcquisitions
-     * @param extractedData the value of extractedData
-     */
-    private void processIntensities_A(int i, List<double[]> backgroundAnalogCorrectionFactors, List<double[]> peakAnalogCorrectionFactors, List<double[]> backgroundAcquisitions, List<double[]> peakAcquisitions, String[] extractedData) {
-        // 202  204  206 Pb207	Pb208	Th232 U238
-        double[] backgroundIntensities = new double[7];
-        double[] peakIntensities = new double[7];
-        double[] backgroundACFs = new double[7];
-        double[] peakACFs = new double[7];
-        boolean isLegal = false;
-        if (legalBaselineIndex(i)) {
-            isLegal = true;
-            backgroundAnalogCorrectionFactors.add(backgroundACFs);
-            double acf = Double.parseDouble(extractedData[2]);
-            for (int j = 0; j < 7; j++) {
-                backgroundACFs[j] = acf;
-            }
-
-            backgroundAcquisitions.add(backgroundIntensities);
-            backgroundIntensities[0] = calcAvgPulseOrAnalog(3, 6, extractedData);
-            backgroundIntensities[1] = calcAvgPulseOrAnalog(8, 11, extractedData);
-            backgroundIntensities[2] = calcAvgPulseThenAnalog(13, 16, extractedData);
-            backgroundIntensities[3] = calcAvgPulseThenAnalog(22, 25, extractedData);
-            backgroundIntensities[4] = calcAvgPulseThenAnalog(31, 34, extractedData);
-            backgroundIntensities[5] = calcAvgPulseThenAnalog(40, 43, extractedData);
-            backgroundIntensities[6] = calcAvgPulseThenAnalog(49, 52, extractedData);
-        } else if (legalPeakIndex(i)) {
-            isLegal = true;
-            peakAnalogCorrectionFactors.add(peakACFs);
-            double acf = Double.parseDouble(extractedData[2]);
-            for (int j = 0; j < 7; j++) {
-                peakACFs[j] = acf;
-            }
-
-            peakAcquisitions.add(peakIntensities);
-            peakIntensities[0] = calcAvgPulseOrAnalog(3, 6, extractedData);
-            peakIntensities[1] = calcAvgPulseOrAnalog(8, 11, extractedData);
-            peakIntensities[2] = calcAvgPulseThenAnalog(13, 16, extractedData);
-            peakIntensities[3] = calcAvgPulseThenAnalog(22, 25, extractedData);
-            peakIntensities[4] = calcAvgPulseThenAnalog(31, 34, extractedData);
-            peakIntensities[5] = calcAvgPulseThenAnalog(40, 43, extractedData);
-            peakIntensities[6] = calcAvgPulseThenAnalog(49, 52, extractedData);
-        }
-
-        if (isLegal) {
-            // detect analog and remove negative flag and divide by acf
-            for (int j = 0; j < 7; j++) {
-                if (backgroundIntensities[j] < 0.0) {
-                    backgroundIntensities[j] = Math.abs(backgroundIntensities[j]) / backgroundACFs[j];
-                } else {
-                    // not analog mode so acf is 1.0
-                    backgroundACFs[j] = 1.0;
-                }
-
-                if (peakIntensities[j] < 0.0) {
-                    peakIntensities[j] = Math.abs(peakIntensities[j]) / peakACFs[j];
-                } else {
-                    // not analog mode so acf is 1.0
-                    peakACFs[j] = 1.0;
-                }
-            }
-        }
-    }
-
-    /**
-     *
-     * @param i the value of i
-     * @param backgroundAcquisitions the value of backgroundAcquisitions
-     * @param peakAcquisitions the value of peakAcquisitions
-     * @param extractedData the value of extractedData
-     */
-    private void processIntensities_B(int i, List<double[]> backgroundAnalogCorrectionFactors, List<double[]> peakAnalogCorrectionFactors, List<double[]> backgroundAcquisitions, List<double[]> peakAcquisitions, String[] extractedData) {
-        // 202  204  206 Pb207	Pb208 Th232 U235 U238
-        double[] backgroundIntensities = new double[8];
-        double[] peakIntensities = new double[8];
-        double[] backgroundACFs = new double[8];
-        double[] peakACFs = new double[8];
-        boolean isLegal = false;
-        if (legalBaselineIndex(i)) {
-            isLegal = true;
-            backgroundAnalogCorrectionFactors.add(backgroundACFs);
-            double acf = Double.parseDouble(extractedData[2]);
-            for (int j = 0; j < 8; j++) {
-                backgroundACFs[j] = acf;
-            }
-
-            backgroundAcquisitions.add(backgroundIntensities);
-            backgroundIntensities[0] = calcAvgPulseOrAnalog(3, 6, extractedData);
-            backgroundIntensities[1] = calcAvgPulseOrAnalog(12, 15, extractedData);
-            backgroundIntensities[2] = calcAvgPulseThenAnalog(21, 24, extractedData);
-            backgroundIntensities[3] = calcAvgPulseThenAnalog(30, 33, extractedData);
-            backgroundIntensities[4] = calcAvgPulseThenAnalog(39, 42, extractedData);
-            backgroundIntensities[5] = calcAvgPulseThenAnalog(48, 51, extractedData);
-            backgroundIntensities[6] = calcAvgPulseThenAnalog(57, 60, extractedData);
-            backgroundIntensities[7] = calcAvgPulseThenAnalog(66, 69, extractedData);
-        } else if (legalPeakIndex(i)) {
-            isLegal = true;
-            peakAnalogCorrectionFactors.add(peakACFs);
-            double acf = Double.parseDouble(extractedData[2]);
-            for (int j = 0; j < 8; j++) {
-                peakACFs[j] = acf;
-            }
-
-            peakAcquisitions.add(peakIntensities);
-            peakIntensities[0] = calcAvgPulseOrAnalog(3, 6, extractedData);
-            peakIntensities[1] = calcAvgPulseOrAnalog(12, 15, extractedData);
-            peakIntensities[2] = calcAvgPulseThenAnalog(21, 24, extractedData);
-            peakIntensities[3] = calcAvgPulseThenAnalog(30, 33, extractedData);
-            peakIntensities[4] = calcAvgPulseThenAnalog(39, 42, extractedData);
-            peakIntensities[5] = calcAvgPulseThenAnalog(48, 51, extractedData);
-            peakIntensities[6] = calcAvgPulseThenAnalog(57, 60, extractedData);
-            peakIntensities[7] = calcAvgPulseThenAnalog(66, 69, extractedData);
-        }
-        if (isLegal) {
-            // detect analog and remove negative flag
-            for (int j = 0; j < 8; j++) {
-                // test for GG's special case per email31 Jan 2016
-                //TODO: use phys constants model
-                if (j == 7) {
-                    if (backgroundIntensities[j] < 0.0) {
-                        // U238 is analog so use 235 * 137.82
-                        backgroundIntensities[7] = backgroundIntensities[6] * 137.82;
-                    }
-                    if (peakIntensities[j] < 0.0) {
-                        // U238 is analog so use 235 * 137.82
-                        peakIntensities[7] = peakIntensities[6] * 137.82;
-                    }
-                }
-
-                if (backgroundIntensities[j] < 0.0) {
-                    backgroundIntensities[j] = Math.abs(backgroundIntensities[j]) / backgroundACFs[j];
-                } else {
-                    // not analog mode so acf is 1.0
-                    backgroundACFs[j] = 1.0;
-                }
-
-                if (peakIntensities[j] < 0.0) {
-                    peakIntensities[j] = Math.abs(peakIntensities[j]) / peakACFs[j];
-                } else {
-                    // not analog mode so acf is 1.0
-                    peakACFs[j] = 1.0;
-                }
-            }
-        }
-    }
-
-    /**
-     *
-     * @param i the value of i
-     * @param backgroundAcquisitions the value of backgroundAcquisitions
-     * @param peakAcquisitions the value of peakAcquisitions
-     * @param extractedData the value of extractedData
-     */
-    private void processIntensities_C(int i, List<double[]> backgroundAnalogCorrectionFactors, List<double[]> peakAnalogCorrectionFactors, List<double[]> backgroundAcquisitions, List<double[]> peakAcquisitions, String[] extractedData) {
-        // 176 202  204  206 Pb207 Pb208 Th232 U235 U238
-        double[] backgroundIntensities = new double[9];
-        double[] peakIntensities = new double[9];
-        double[] backgroundACFs = new double[9];
-        double[] peakACFs = new double[9];
-        boolean isLegal = false;
-        if (legalBaselineIndex(i)) {
-            isLegal = true;
-            backgroundAnalogCorrectionFactors.add(backgroundACFs);
-            double acf = Double.parseDouble(extractedData[2]);
-            for (int j = 0; j < 9; j++) {
-                backgroundACFs[j] = acf;
-            }
-
-            backgroundAcquisitions.add(backgroundIntensities);
-            backgroundIntensities[0] = calcAvgPulseOrAnalog(3, 6, extractedData);
-            backgroundIntensities[1] = calcAvgPulseOrAnalog(12, 15, extractedData);
-            backgroundIntensities[2] = calcAvgPulseOrAnalog(21, 24, extractedData);
-            backgroundIntensities[3] = calcAvgPulseThenAnalog(30, 33, extractedData);
-            backgroundIntensities[4] = calcAvgPulseThenAnalog(39, 42, extractedData);
-            backgroundIntensities[5] = calcAvgPulseThenAnalog(48, 51, extractedData);
-            backgroundIntensities[6] = calcAvgPulseThenAnalog(57, 60, extractedData);
-            backgroundIntensities[7] = calcAvgPulseThenAnalog(66, 69, extractedData);
-            backgroundIntensities[8] = calcAvgPulseThenAnalog(75, 78, extractedData);
-        } else if (legalPeakIndex(i)) {
-            isLegal = true;
-            peakAnalogCorrectionFactors.add(peakACFs);
-            double acf = Double.parseDouble(extractedData[2]);
-            for (int j = 0; j < 9; j++) {
-                peakACFs[j] = acf;
-            }
-
-            peakAcquisitions.add(peakIntensities);
-            peakIntensities[0] = calcAvgPulseOrAnalog(3, 6, extractedData);
-            peakIntensities[1] = calcAvgPulseOrAnalog(12, 15, extractedData);
-            peakIntensities[2] = calcAvgPulseOrAnalog(21, 24, extractedData);
-            peakIntensities[3] = calcAvgPulseThenAnalog(30, 33, extractedData);
-            peakIntensities[4] = calcAvgPulseThenAnalog(39, 42, extractedData);
-            peakIntensities[5] = calcAvgPulseThenAnalog(48, 51, extractedData);
-            peakIntensities[6] = calcAvgPulseThenAnalog(57, 60, extractedData);
-            peakIntensities[7] = calcAvgPulseThenAnalog(66, 69, extractedData);
-            peakIntensities[8] = calcAvgPulseThenAnalog(75, 78, extractedData);
-        }
-        if (isLegal) {
-            // detect analog and remove negative flag
-            for (int j = 0; j < 9; j++) {
-                // test for GG's special case per email31 Jan 2016
-                //TODO: use phys constants model
-                if (j == 8) {
-                    if (backgroundIntensities[j] < 0.0) {
-                        // U238 is analog so use 235 * 137.82
-                        backgroundIntensities[8] = backgroundIntensities[7] * 137.82;
-                    }
-                    if (peakIntensities[j] < 0.0) {
-                        // U238 is analog so use 235 * 137.82
-                        peakIntensities[8] = peakIntensities[7] * 137.82;
-                    }
-                }
-
-                if (backgroundIntensities[j] < 0.0) {
-                    backgroundIntensities[j] = Math.abs(backgroundIntensities[j]) / backgroundACFs[j];
-                } else {
-                    // not analog mode so acf is 1.0
-                    backgroundACFs[j] = 1.0;
-                }
-
-                if (peakIntensities[j] < 0.0) {
-                    peakIntensities[j] = Math.abs(peakIntensities[j]) / peakACFs[j];
-                } else {
-                    // not analog mode so acf is 1.0
-                    peakACFs[j] = 1.0;
-                }
-            }
-        }
     }
 
     /**

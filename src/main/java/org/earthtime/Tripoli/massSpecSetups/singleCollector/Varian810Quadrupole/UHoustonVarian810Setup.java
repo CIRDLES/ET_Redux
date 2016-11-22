@@ -41,8 +41,8 @@ import org.earthtime.isotopes.IsotopesEnum;
 
 /**
  *
- * @author James F. Bowring
- * Specified by Kurt Sundell and Thomas Lage via email October 2016
+ * @author James F. Bowring Specified by Kurt Sundell and Thomas Lage via email
+ * October 2016
  */
 public final class UHoustonVarian810Setup extends AbstractMassSpecSetup {
 
@@ -73,7 +73,7 @@ public final class UHoustonVarian810Setup extends AbstractMassSpecSetup {
                                 "ABS", //
                                 new BigDecimal(1.0e-9, ReduxConstants.mathContext10), //
                                 BigDecimal.ZERO), //
-                        IonCounterCollectorModel.CollectedDataStyle.SEM);
+                        IonCounterCollectorModel.CollectedDataStyle.COUNTS);
 
 //Deadtime published in associated paper is 20 ns
 /* Dwell time (ms)
@@ -88,8 +88,7 @@ public final class UHoustonVarian810Setup extends AbstractMassSpecSetup {
          */
 /// per Thomas Lapen
 // In the list of nuclides, below, "Hg204","Po208","U232","Pu238" machine outputs should be ignored.
-// Hg202","Hg201","Pb204","Pb206","Pb207","Pb208","Th232","U238","xxxHg204",xxx"Po208","xxxU232",xxx"Pu238"
-
+// "Hg202","Hg201","Pb204","Pb206","Pb207","Pb208","Th232","U238","xxxHg204",xxx"Po208","xxxU232",xxx"Pu238"
         isotopeMappingModel.getIsotopeToCollectorMap().put(//
                 IsotopesEnum.U238, singleCollector);
         isotopeMappingModel.getIsotopeToIntegrationTimeMap().put( //
@@ -100,7 +99,7 @@ public final class UHoustonVarian810Setup extends AbstractMassSpecSetup {
                 IsotopesEnum.U235, singleCollector);
         isotopeMappingModel.getIsotopeToIntegrationTimeMap().put( //
                 IsotopesEnum.U235, 0.01);
-        
+
         isotopeMappingModel.getIsotopeToCollectorMap().put(//
                 IsotopesEnum.Th232, singleCollector);
         isotopeMappingModel.getIsotopeToIntegrationTimeMap().put( //
@@ -127,14 +126,14 @@ public final class UHoustonVarian810Setup extends AbstractMassSpecSetup {
                 IsotopesEnum.Pb204, 0.03);
 
         isotopeMappingModel.getIsotopeToCollectorMap().put(//
-                IsotopesEnum.Hg202, singleCollector);
-        isotopeMappingModel.getIsotopeToIntegrationTimeMap().put( //
-                IsotopesEnum.Hg202, 0.01);
-
-        isotopeMappingModel.getIsotopeToCollectorMap().put(//
                 IsotopesEnum.Hg201, singleCollector);
         isotopeMappingModel.getIsotopeToIntegrationTimeMap().put( //
                 IsotopesEnum.Hg201, 0.01);
+
+        isotopeMappingModel.getIsotopeToCollectorMap().put(//
+                IsotopesEnum.Hg202, singleCollector);
+        isotopeMappingModel.getIsotopeToIntegrationTimeMap().put( //
+                IsotopesEnum.Hg202, 0.01);
 
         collectorNameToModelMap.put("Single", singleCollector);
 
@@ -252,24 +251,24 @@ public final class UHoustonVarian810Setup extends AbstractMassSpecSetup {
                 isotopeMappingModel.getIsotopeToCollectorMap().get(IsotopesEnum.Pb204));
         genericIsotopeModels.add(Pb204);
         isotopeToRawIntensitiesMap.put(IsotopesEnum.Pb204, Pb204);
-
+      
+        Hg201 = new RawIntensityDataModel( //
+                IsotopeNames.Hg201, virtualCollectors.get(2 - 1), virtualCollectors.get(11 - 1), COLLECTOR_DATA_FREQUENCY_MILLISECS,//
+                isotopeMappingModel.getIsotopeToCollectorMap().get(IsotopesEnum.Hg201));
+        genericIsotopeModels.add(Hg201);
+        isotopeToRawIntensitiesMap.put(IsotopesEnum.Hg201, Hg201);
+        
         Hg202 = new RawIntensityDataModel( //
-                IsotopeNames.Hg202, virtualCollectors.get(2 - 1), virtualCollectors.get(11 - 1), COLLECTOR_DATA_FREQUENCY_MILLISECS,//
+                IsotopeNames.Hg202, virtualCollectors.get(1 - 1), virtualCollectors.get(10 - 1), COLLECTOR_DATA_FREQUENCY_MILLISECS,//
                 isotopeMappingModel.getIsotopeToCollectorMap().get(IsotopesEnum.Hg202));
         genericIsotopeModels.add(Hg202);
         isotopeToRawIntensitiesMap.put(IsotopesEnum.Hg202, Hg202);
 
-        Hg201 = new RawIntensityDataModel( //
-                IsotopeNames.Hg201, virtualCollectors.get(1 - 1), virtualCollectors.get(10 - 1), COLLECTOR_DATA_FREQUENCY_MILLISECS,//
-                isotopeMappingModel.getIsotopeToCollectorMap().get(IsotopesEnum.Hg201));
-        genericIsotopeModels.add(Hg201);
-        isotopeToRawIntensitiesMap.put(IsotopesEnum.Hg201, Hg201);
-
         isotopeMappingModel.setIsotopeToRawIntensitiesMap(isotopeToRawIntensitiesMap);
 
         virtualCollectorModelMapToFieldIndexes = new HashMap<>();
-        getVirtualCollectorModelMapToFieldIndexes().put(Hg201, 0);
-        getVirtualCollectorModelMapToFieldIndexes().put(Hg202, 1);
+        getVirtualCollectorModelMapToFieldIndexes().put(Hg202, 0);
+        getVirtualCollectorModelMapToFieldIndexes().put(Hg201, 1);
         getVirtualCollectorModelMapToFieldIndexes().put(Pb204, 2);
         getVirtualCollectorModelMapToFieldIndexes().put(Pb206, 3);
         getVirtualCollectorModelMapToFieldIndexes().put(Pb207, 4);

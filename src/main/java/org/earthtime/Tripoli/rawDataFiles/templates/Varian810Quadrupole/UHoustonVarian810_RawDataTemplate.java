@@ -41,15 +41,15 @@ public final class UHoustonVarian810_RawDataTemplate extends AbstractRawDataFile
         this.aboutInfo = "analysis runs setup to process 201, 202, 204, 206, 207, 208, 232, 238";
         this.fileType = FileTypeEnum.prn;
         this.startOfFirstLine = "Processed Time/Date";
-        this.startOfDataSectionFirstLine = "Time";
-        this.startOfEachBlockFirstLine = "Time";
+        this.startOfDataSectionFirstLine = "";
+        this.startOfEachBlockFirstLine = "";
         this.blockStartOffset = 0;
-        this.blockSize = 55;
+        this.blockSize = 0;
         this.standardIDs = new String[]//
-        {"FC", "SL", "R33"};
+        {"PL", "FC", "SL", "R3"};
         this.timeZone = TimeZone.getTimeZone("GMT");
         this.defaultParsingOfFractionsBehavior = 1;
-        this.elementsByIsotopicMass = new String[]{"176", "202", "204", "206", "207", "208", "232", "235", "238"};
+        this.elementsByIsotopicMass = new String[]{};
         this.massSpecSetup = UHoustonVarian810Setup.getInstance();
     }
 

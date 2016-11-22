@@ -277,9 +277,9 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
                 List<double[]> peakAnalogCorrectionFactors = new ArrayList<>();
 
                 // process time stamp from first scan as time stamp of file and background
-                long fractionBackgroundTimeStamp = calculateTimeStamp(extractedData[0][1]);
+                long fractionBackgroundTimeStamp = calculateTimeStampFromThermoDatFile(extractedData[0][1]);
                 // process time stamp of first peak reading
-                long fractionPeakTimeStamp = calculateTimeStamp(extractedData[baselineEndIndex + 1][1]);
+                long fractionPeakTimeStamp = calculateTimeStampFromThermoDatFile(extractedData[baselineEndIndex + 1][1]);
 
                 for (int i = rawDataFileTemplate.getBlockStartOffset(); i < rawDataFileTemplate.getBlockSize(); i++) {
                     if (rawDataFileTemplate instanceof LaserchronElementII_RawDataTemplate_A) {
@@ -325,14 +325,6 @@ public class LaserchronElementIIFileHandler extends AbstractRawDataFileHandler {
         } // end of files loop
 
         return myTripoliFractions;
-    }
-
-    private boolean legalBaselineIndex(int i) {
-        return ((i >= (baselineStartIndex - 1)) && (i <= (baselineEndIndex - 1)));
-    }
-
-    private boolean legalPeakIndex(int i) {
-        return ((i >= (peakStartIndex - 1)) && (i <= (peakEndIndex - 1)));
     }
 
     /**
