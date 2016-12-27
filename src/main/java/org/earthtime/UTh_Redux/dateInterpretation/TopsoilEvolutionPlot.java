@@ -47,7 +47,7 @@ public final class TopsoilEvolutionPlot {
     private static final String SIGMA_Y = "sigma_y";
     private static final String RHO = "rho";
 
-    private TopsoilEvolutionPlot() {
+    public TopsoilEvolutionPlot() {
 
         myChart = new EvolutionPlot();
 

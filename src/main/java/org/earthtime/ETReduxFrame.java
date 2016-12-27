@@ -3408,9 +3408,10 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 //            if (topsoilEvolutionChart == null) {
 //                topsoilEvolutionChart = TopsoilEvolutionPlot.getInstance();
 //            }
-//            topsoilEvolutionChart.setSelectedFractions(theSample.getActiveFractionsSortedByAliquot());
-//            topsoilEvolutionChart.preparePanel();
-//            topsoilEvolutionChart.showPanel();
+            topsoilEvolutionChart = new TopsoilEvolutionPlot();
+            topsoilEvolutionChart.setSelectedFractions(theSample.getActiveFractionsSortedByAliquot());
+            topsoilEvolutionChart.preparePanel();
+            topsoilEvolutionChart.showPanel();
         } else {
 
             manageSampleDateInterpretation(//
