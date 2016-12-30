@@ -59,8 +59,8 @@ import org.earthtime.UPb_Redux.dateInterpretation.SampleTreeAnalysisMode;
 import org.earthtime.UPb_Redux.dateInterpretation.SampleTreeCompilationMode;
 import org.earthtime.UPb_Redux.dateInterpretation.SampleTreeI;
 import org.earthtime.UPb_Redux.dateInterpretation.WeightedMeanGraphPanel;
-import org.earthtime.UPb_Redux.dateInterpretation.concordia.AliquotDetailsDisplayInterface;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.ConcordiaGraphPanel;
+import org.earthtime.UPb_Redux.dateInterpretation.concordia.ConcordiaPlotDisplayInterface;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.PlottingDetailsDisplayInterface;
 import org.earthtime.UPb_Redux.dialogs.aliquotManagers.AliquotEditorDialog;
 import org.earthtime.UPb_Redux.dialogs.aliquotManagers.AliquotEditorForLAICPMS;
@@ -131,6 +131,7 @@ import org.earthtime.dialogs.projectManagers.projectLegacyManagers.ProjectOfLega
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.fractions.ETFractionInterface;
+import org.earthtime.plots.anyTwo.PlotAny2Panel;
 import org.earthtime.projects.EarthTimeSerializedFileInterface;
 import org.earthtime.projects.Project;
 import org.earthtime.projects.ProjectInterface;
@@ -173,6 +174,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
     private final JTabbedPane reportTableTabbedPane;
     private JLayeredPane myConcordiaGraphPanel;
 //    private JFXPanel concordiaGraphPanelIsoplot;
+    private JLayeredPane myPlotAnyPanel;
     /**
      *
      */
@@ -364,10 +366,10 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         interpretSampleDates_button.setBackground(Color.WHITE);
 
     }
-    
-    private Dimension calculateTabulatedResultsSize(){
+
+    private Dimension calculateTabulatedResultsSize() {
         Dimension mySize = fractionsTabulatedResultsLayeredPane.getSize();
-        return new Dimension((int)mySize.getWidth() - 3, (int)mySize.getHeight());
+        return new Dimension((int) mySize.getWidth() - 3, (int) mySize.getHeight());
     }
 
     private void changeContentOfTopPanel(ReduxConstants.TOP_PANEL_CONTENTS contents) {
@@ -763,6 +765,10 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         //as well as interpret date window and archiving
         myConcordiaGraphPanel = new ConcordiaGraphPanel(theSample, this);
         UPbFractionEditorDialog.setConcordiaGraphPanel(myConcordiaGraphPanel);
+
+        // set up plotAny2Panel for use on fraction details window
+        //as well as interpret date window and archiving
+        myPlotAnyPanel = new PlotAny2Panel(theSample, this);
 
         // set up probabilitydensity for archiving
         myNormedProbabilityPanel = new DateProbabilityDensityPanel(theSample);
@@ -1383,6 +1389,10 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         //as well as interpret date window and archiving
         myConcordiaGraphPanel = new ConcordiaGraphPanel(theSample, this);
         UPbFractionEditorDialog.setConcordiaGraphPanel(getMyConcordiaGraphPanel());
+
+        // set up plotAny2Panel for use on fraction details window
+        //as well as interpret date window and archiving
+        myPlotAnyPanel = new PlotAny2Panel(theSample, this);
 
         // march 2014
 //        concordiaGraphPanelIsoplot = new ConcordiaGraphPanelIsoplot(theSample);
@@ -3439,17 +3449,21 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             SampleInterface.saveSampleAsSerializedReduxFile(theSample);
             myWeightedMeanGraphPanel
                     = new WeightedMeanGraphPanel(theSample);
+            
+            myPlotAnyPanel = new PlotAny2Panel(theSample, this);
 
             theSample.getSampleDateInterpretationGUISettings().//
-                    setConcordiaOptions(((AliquotDetailsDisplayInterface) myConcordiaGraphPanel).getConcordiaOptions());
+                    setConcordiaOptions(((ConcordiaPlotDisplayInterface) myConcordiaGraphPanel).getConcordiaOptions());
             ((ConcordiaGraphPanel) myConcordiaGraphPanel).//
                     setFadedDeselectedFractions(false);
             theSample.setChanged(true);
 
             interpretSampleDates_button.setEnabled(false);
 
-            ((ConcordiaGraphPanel) myConcordiaGraphPanel).setShowTightToEdges(true);
+            ((PlottingDetailsDisplayInterface) myConcordiaGraphPanel).setShowTightToEdges(true);
             ((PlottingDetailsDisplayInterface) myConcordiaGraphPanel).resetPanel(true, false);
+            ((PlottingDetailsDisplayInterface) myPlotAnyPanel).setShowTightToEdges(true);
+            ((PlottingDetailsDisplayInterface) myPlotAnyPanel).resetPanel(true, false);
 
             if (sampleDateInterpDialog != null) {
                 sampleDateInterpDialog.dispose();
@@ -3458,7 +3472,8 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                     = new SampleDateInterpretationsManager(
                             this,
                             false,// try floating as of october 2014 true,
-                            myConcordiaGraphPanel,
+                            myConcordiaGraphPanel, 
+                            myPlotAnyPanel,
                             myWeightedMeanGraphPanel,
                             myNormedProbabilityPanel,
                             theSample,

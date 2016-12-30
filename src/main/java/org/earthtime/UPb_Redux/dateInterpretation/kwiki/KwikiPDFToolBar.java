@@ -44,10 +44,10 @@ import org.earthtime.UPb_Redux.dateInterpretation.SampleTreeI;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.AliquotDetailsDisplayInterface;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.GraphPanelModeChangeI;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.PlottingDetailsDisplayInterface;
-import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetup;
 import org.earthtime.UPb_Redux.dialogs.sampleManagers.sampleDateInterpretationManagers.SampleDateInterpretationsUtilities;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.fractions.ETFractionInterface;
+import org.earthtime.plots.PlotAxesSetupInterface;
 import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.reportViews.TabbedReportViews;
 import org.earthtime.samples.SampleInterface;
@@ -623,12 +623,8 @@ public class KwikiPDFToolBar extends JLayeredPane implements GraphPanelModeChang
     public void switchToPanMode() {
     }
 
-    /**
-     *
-     * @param currentGraphAxesSetup
-     */
     @Override
-    public void synchronizePanelSizes(GraphAxesSetup currentGraphAxesSetup) {
-        //throw new UnsupportedOperationException("Not supported yet.");
+    public void synchronizePanelSizes(PlotAxesSetupInterface currentGraphAxesSetup) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

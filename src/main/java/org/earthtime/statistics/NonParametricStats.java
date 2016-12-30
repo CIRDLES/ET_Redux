@@ -55,7 +55,7 @@ public class NonParametricStats {
      * @param sample
      */
     public void calculateStats ( boolean[] dataActiveMap, double[] sample ) {
-        ArrayList<Double> liveSample = new ArrayList<Double>();
+        ArrayList<Double> liveSample = new ArrayList<>();
         sampleMean = 0.0;
 
         if ( sample.length > 0 ) {

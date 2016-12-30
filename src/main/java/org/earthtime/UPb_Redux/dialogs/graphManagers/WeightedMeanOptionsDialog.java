@@ -95,11 +95,11 @@ public class WeightedMeanOptionsDialog extends DialogEditor {
         wm207_206CheckBox = new ArrayList<>();
         wm207_235CheckBox = new ArrayList<>();
         wm208_232CheckBox = new ArrayList<>();
-        wm206_238r_ThCheckBox = new ArrayList<JCheckBox>();
-        wm207_235r_PaCheckBox = new ArrayList<JCheckBox>();
-        wm207_206r_ThCheckBox = new ArrayList<JCheckBox>();
-        wm207_206r_PaCheckBox = new ArrayList<JCheckBox>();
-        wm207_206r_ThPaCheckBox = new ArrayList<JCheckBox>();
+        wm206_238r_ThCheckBox = new ArrayList<>();
+        wm207_235r_PaCheckBox = new ArrayList<>();
+        wm207_206r_ThCheckBox = new ArrayList<>();
+        wm207_206r_PaCheckBox = new ArrayList<>();
+        wm207_206r_ThPaCheckBox = new ArrayList<>();
 
         // build display
         org.jdesktop.layout.GroupLayout wmAliquotArrayLayout = new org.jdesktop.layout.GroupLayout(wmAliquotArray_panel);

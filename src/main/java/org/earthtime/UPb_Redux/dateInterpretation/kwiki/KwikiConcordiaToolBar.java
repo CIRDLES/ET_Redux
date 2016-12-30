@@ -35,8 +35,8 @@ import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.ConcordiaGraphPanel;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.GraphPanelModeChangeI;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.PlottingDetailsDisplayInterface;
-import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetup;
 import org.earthtime.beans.ET_JButton;
+import org.earthtime.plots.PlotAxesSetupInterface;
 
 /**
  *
@@ -250,12 +250,8 @@ public class KwikiConcordiaToolBar extends JLayeredPane implements GraphPanelMod
         panToggle.doClick();
     }
 
-    /**
-     *
-     * @param currentGraphAxesSetup
-     */
     @Override
-    public void synchronizePanelSizes(GraphAxesSetup currentGraphAxesSetup) {
-        //throw new UnsupportedOperationException("Not supported yet.");
+    public void synchronizePanelSizes(PlotAxesSetupInterface currentGraphAxesSetup) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

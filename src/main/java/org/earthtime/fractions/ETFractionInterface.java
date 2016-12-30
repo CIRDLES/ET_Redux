@@ -16,13 +16,19 @@
 package org.earthtime.fractions;
 
 import java.awt.geom.Path2D;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.Date;
 import org.earthtime.UPb_Redux.ReduxConstants;
+import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
+import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
+import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLegacyFraction;
 import org.earthtime.UPb_Redux.utilities.comparators.IntuitiveStringComparator;
 import org.earthtime.UPb_Redux.valueModels.MeasuredRatioModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
+import org.earthtime.dataDictionaries.DataDictionary;
 import org.earthtime.dataDictionaries.MeasuredRatios;
 import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.dataDictionaries.TraceElements;
@@ -69,9 +75,9 @@ public interface ETFractionInterface {
      * @param standard
      */
     public void setStandard(boolean standard);
-    
+
     public boolean isSecondaryStandard();
-    
+
     public void setSecondaryStandard(boolean secondaryStandard);
 
     /**
@@ -378,7 +384,8 @@ public interface ETFractionInterface {
 
         ValueModel rirModel
                 = new ValueModel(ratioName.trim(),
-                        ratioName.startsWith("rho") ?//
+                        ratioName.startsWith("rho")
+                        ?//
                         new BigDecimal(ReduxConstants.NO_RHO_FLAG, ReduxConstants.mathContext15) //
                         : BigDecimal.ZERO,// June 2010 to force out of range of legal cov [-1,,,1]0.0;
                         "ABS",
@@ -797,6 +804,59 @@ public interface ETFractionInterface {
         }
 
         return builtArray;
+    }
+
+    /**
+     *
+     * @param nameOfValueModel the value of nameOfValueModel
+     * @return 
+     */
+    public default ValueModel retrieveValueModelByName(String nameOfValueModel) {
+        ValueModel retVal = null;
+
+        // looks up the correct method and applies it to input
+        Method meth
+                = DataDictionary.retrieveMethodNameForInput(nameOfValueModel);
+        if (meth != null) {
+            try {
+                retVal = (ValueModel) meth.//
+                        invoke(this, new Object[]{nameOfValueModel});
+            } catch (IllegalAccessException | IllegalArgumentException illegalAccessException) {
+            } catch (InvocationTargetException invocationTargetException) {
+                System.out.println(invocationTargetException.getMessage() + "  AT retrieveValueModelByName");
+            }
+        }
+        return retVal;
+    }
+
+    public default ValueModel[] retrieveXYRho(String nameOfXaxisSourceValueModel, String nameOfYaxisSourceValueModel) {
+        ValueModel[] xyRho = new ValueModel[3];
+        ValueModel x = retrieveValueModelByName(nameOfXaxisSourceValueModel);
+        xyRho[0] = new ValueModel();
+        xyRho[0].copyValuesFrom(x);
+        if (nameOfXaxisSourceValueModel.toLowerCase().startsWith("age")) {
+            xyRho[0].setValue(xyRho[0].getValue().movePointLeft(6));
+            xyRho[0].setOneSigma(xyRho[0].getOneSigmaAbs().movePointLeft(6));
+        }
+        ValueModel y = retrieveValueModelByName(nameOfYaxisSourceValueModel);
+        xyRho[1] = new ValueModel();
+        xyRho[1].copyValuesFrom(y);
+        if (nameOfYaxisSourceValueModel.toLowerCase().startsWith("age")) {
+            xyRho[1].setValue(xyRho[1].getValue().movePointLeft(6));
+            xyRho[1].setOneSigma(xyRho[1].getOneSigmaAbs().movePointLeft(6));
+        }
+
+        xyRho[2] = new ValueModel("RHO",
+                BigDecimal.ZERO,
+                "NONE", BigDecimal.ZERO, BigDecimal.ZERO);
+        if (this instanceof UPbLegacyFraction) {
+            String rhoConcordia = "rhoR206_238r__r207_235r";
+            xyRho[2].copyValuesFrom(getRadiogenicIsotopeRatioByName(rhoConcordia));
+        } else if (this instanceof UPbFractionI) {
+            xyRho[2].setValue(((UPbFraction) this).getReductionHandler().calculateAnalyticalRho(nameOfXaxisSourceValueModel, nameOfYaxisSourceValueModel));
+        }
+
+        return xyRho;
     }
 
 }

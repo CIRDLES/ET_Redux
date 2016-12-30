@@ -83,6 +83,8 @@ import org.earthtime.dataDictionaries.Lambdas;
 import org.earthtime.dataDictionaries.RadRatiosPbcCorrected;
 import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.fractions.ETFractionInterface;
+import org.earthtime.plots.PlotAxesSetupInterface;
+import org.earthtime.plots.PlotInterface;
 import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.reportViews.ReportUpdaterInterface;
 import org.earthtime.samples.SampleInterface;
@@ -97,7 +99,9 @@ public class ConcordiaGraphPanel extends JLayeredPane
         implements
         MouseListener,
         MouseMotionListener,
+        PlotInterface,
         AliquotDetailsDisplayInterface,
+        ConcordiaPlotDisplayInterface,
         PlottingDetailsDisplayInterface {
 
     // Class Variables
@@ -133,7 +137,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
     private boolean fadedDeselectedFractions;
     private String concordiaFlavor;
     // May 2010 fields to refine saving and manipulation of views
-    private GraphAxesSetup currentGraphAxesSetup;
+    private PlotAxesSetupInterface currentGraphAxesSetup;
     private GraphPanelModeChangeI graphPanelModeChanger;
     private ConcordiaGraphPanel mySelf;
     //Sept 2010 reduxfest requirement
@@ -245,12 +249,12 @@ public class ConcordiaGraphPanel extends JLayeredPane
 
     private double mapX(double x) {
 
-        return getCurrentGraphAxesSetup().mapX(x);
+        return getCurrentPlotAxesSetup().mapX(x);
     }
 
     private double mapY(double y) {
 
-        return getCurrentGraphAxesSetup().mapY(y);
+        return getCurrentPlotAxesSetup().mapY(y);
     }
 
     /**
@@ -268,7 +272,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
             x = getMinX() + (rangeX / factor / 2);
         }
 
-        if (currentGraphAxesSetup.checkDateForInMaxBound(x, getMaxY() - rangeY / factor)) {
+        if (((GraphAxesSetup) currentGraphAxesSetup).checkDateForInMaxBound(x, getMaxY() - rangeY / factor)) {
             setMinX(getMinX() + rangeX / factor);
             setMinY(getMinY() + rangeY / factor);
             setMaxX(getMaxX() - rangeX / factor);
@@ -314,7 +318,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
         // http://www.developer.com/net/vb/article.php/626051
         //int screenRes = Toolkit.getDefaultToolkit().getScreenResolution();
         // g2d.scale((double) screenRes / 72, (double) screenRes / 72);
-        if (!getCurrentGraphAxesSetup().isDoPlotting()) {
+        if (!getCurrentPlotAxesSetup().isDoPlotting()) {
             g2d.drawString("NO VALID DATA!", 200, 300);
             g2d.drawString("Axis ratios must be > 0 and rho must be in [-1,...,1].", 200, 330);
             return; // need to paint no data warning
@@ -449,8 +453,8 @@ public class ConcordiaGraphPanel extends JLayeredPane
                     concordiaLineColor,
                     concordiaLineWeight);
 
-            currentGraphAxesSetup.setLambda235(lambda235.getValue().doubleValue());
-            currentGraphAxesSetup.plotConcordiaTicMarks(//
+            ((GraphAxesSetup) currentGraphAxesSetup).setLambda235(lambda235.getValue().doubleValue());
+            ((GraphAxesSetup) currentGraphAxesSetup).plotConcordiaTicMarks(//
                     g2d,
                     myConcordiaLine,
                     concordiaLabelFont,
@@ -470,8 +474,8 @@ public class ConcordiaGraphPanel extends JLayeredPane
                     concordiaLineColor,
                     concordiaLineWeight);
 
-            currentGraphAxesSetup.setLambda235(lambda232.getValue().doubleValue());
-            currentGraphAxesSetup.plotConcordiaTicMarks(//
+            ((GraphAxesSetup) currentGraphAxesSetup).setLambda235(lambda232.getValue().doubleValue());
+            ((GraphAxesSetup) currentGraphAxesSetup).plotConcordiaTicMarks(//
                     g2d,
                     myConcordiaLine,
                     concordiaLabelFont,
@@ -482,7 +486,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
         } else {
             // concordia line building ********************************************
             myConcordiaLine = buildConcordiaLine();
-            //   }
+
             drawConcordiaLineSegments(//
                     g2d,
                     myConcordiaLine,
@@ -490,8 +494,8 @@ public class ConcordiaGraphPanel extends JLayeredPane
                     concordiaLineColor,
                     concordiaLineWeight);
 
-            currentGraphAxesSetup.setLambda235(lambda235.getValue().doubleValue());
-            currentGraphAxesSetup.plotConcordiaTicMarks(//
+            ((GraphAxesSetup) currentGraphAxesSetup).setLambda235(lambda235.getValue().doubleValue());
+            ((GraphAxesSetup) currentGraphAxesSetup).plotConcordiaTicMarks(//
                     g2d,
                     myConcordiaLine,
                     concordiaLabelFont,
@@ -851,7 +855,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
 
         ConcordiaLine myConcordiaLine
                 = new ConcordiaLine(new TeraWasserburgLineSegment(//
-                        lambda235, lambda238, null, minT, maxT), currentGraphAxesSetup);
+                        lambda235, lambda238, null, minT, maxT), ((GraphAxesSetup) currentGraphAxesSetup));
 
         // curve the line
         myConcordiaLine.RefineLineByRecursiveHalving(5);//7 ); //10);
@@ -882,7 +886,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
 
         ConcordiaLine myConcordiaLine
                 = new ConcordiaLine(new ConcordiaLineSegment( //
-                        lambda235, lambda238, minT, maxT), currentGraphAxesSetup);
+                        lambda235, lambda238, minT, maxT), ((GraphAxesSetup) currentGraphAxesSetup));
 
         // curve the line
         // may 2010 bezier curve approach added
@@ -914,7 +918,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
 
         ConcordiaLine myConcordiaLine
                 = new ConcordiaLine(new ConcordiaLineSegment( //
-                        lambda232, lambda238, minT, maxT), currentGraphAxesSetup);
+                        lambda232, lambda238, minT, maxT), ((GraphAxesSetup) currentGraphAxesSetup));
 
         // curve the line
         // may 2010 bezier curve approach added
@@ -1482,7 +1486,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
         Font axisLabelAtomicNum = new Font(axesLabelFont, Font.BOLD, Integer.valueOf(axesLabelFontSize) - 6);
         Font axisLabelAtomicName = new Font(axesLabelFont, Font.BOLD, Integer.valueOf(axesLabelFontSize));
 
-        getCurrentGraphAxesSetup().plotXYaxes(//
+        getCurrentPlotAxesSetup().plotXYaxes(//
                 g2d, axisLabelAtomicNum, axisLabelAtomicName, isDisplay_r206_238r_Th(), isDisplay_r206_238r_Pa(), isDisplay_PbcCorr());
     }
 
@@ -1531,6 +1535,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
     /**
      *
      */
+    @Override
     public void determineCurrentAliquot() {
         try {
             curAliquot = sample.getAliquotByNumber(selectedFractions.get(0)//
@@ -1553,10 +1558,10 @@ public class ConcordiaGraphPanel extends JLayeredPane
         try {
             if (getConcordiaFlavor().equalsIgnoreCase("Th")) {
                 setLambda235(sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda232.getName()));
-                getCurrentGraphAxesSetup().setLambda235(lambda232.getValue().doubleValue());
+                ((GraphAxesSetup) getCurrentPlotAxesSetup()).setLambda235(lambda232.getValue().doubleValue());
             } else {
                 setLambda235(sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda235.getName()));
-                getCurrentGraphAxesSetup().setLambda235(lambda235.getValue().doubleValue());
+                ((GraphAxesSetup) getCurrentPlotAxesSetup()).setLambda235(lambda235.getValue().doubleValue());
             }
         } catch (BadLabDataException ex) {
             new ETWarningDialog(ex).setVisible(true);
@@ -1567,14 +1572,14 @@ public class ConcordiaGraphPanel extends JLayeredPane
 
         // allows for escape from a bad plot that is saved
         if (getMaxX() >= 6500) {
-            getCurrentGraphAxesSetup().setDoPlotting(false);
+            getCurrentPlotAxesSetup().setDoPlotting(false);
         }
 
-        if (!getCurrentGraphAxesSetup().isDoPlotting()// revisit if turned off = also handles legacy files where deseralize boolean = false
+        if (!getCurrentPlotAxesSetup().isDoPlotting()// revisit if turned off = also handles legacy files where deseralize boolean = false
                 ||//
                 (getMinX() + getMaxX() + getMinY() + getMaxY()) == 0) {
             if ((selectedFractions.size() + excludedFractions.size()) > 0) {
-                getCurrentGraphAxesSetup().setDoPlotting(false);
+                getCurrentPlotAxesSetup().setDoPlotting(false);
             }
 
             if (doReScale) {
@@ -1682,32 +1687,52 @@ public class ConcordiaGraphPanel extends JLayeredPane
                             && (correlationCoefficient.getValue().doubleValue() <= 1.0)) {
                         // June 2010 added check for correlation coeff
 
-                        getCurrentGraphAxesSetup().setDoPlotting(true);
+                        getCurrentPlotAxesSetup().setDoPlotting(true);
 
-                        ErrorEllipse ee = new ErrorEllipse(
-                                xAxisRatio,
-                                yAxisRatio,
-                                correlationCoefficient,
-                                getGraphHeight() / getGraphWidth(),
-                                2.5);
+                        // dec 2016 check for bad uncertainties
+                        if (xAxisRatio.hasPositiveVarUnct()
+                                && yAxisRatio.hasPositiveVarUnct()) {
+                            ErrorEllipse ee = new ErrorEllipse(
+                                    xAxisRatio,
+                                    yAxisRatio,
+                                    correlationCoefficient,
+                                    getGraphHeight() / getGraphWidth(),
+                                    2.5);
 
-                        if (doReScale) {
-                            if (ee.getbezierMinX() < getMinX()) {
-                                setMinX(ee.getbezierMinX());
+                            if (doReScale) {
+                                if (ee.getbezierMinX() < getMinX()) {
+                                    setMinX(ee.getbezierMinX());
+                                }
+
+                                if (ee.getbezierMaxX() > getMaxX()) {
+                                    setMaxX(ee.getbezierMaxX());
+                                }
+                                if (ee.getbezierMinY() < getMinY()) {
+                                    setMinY(ee.getbezierMinY());
+                                }
+
+                                if (ee.getbezierMaxY() > getMaxY()) {
+                                    setMaxY(ee.getbezierMaxY());
+                                }
                             }
+                        } else {
+                            if (doReScale) {
+                                if (xAxisRatio.getValue().doubleValue() < getMinX()) {
+                                    setMinX(xAxisRatio.getValue().doubleValue());
+                                }
 
-                            if (ee.getbezierMaxX() > getMaxX()) {
-                                setMaxX(ee.getbezierMaxX());
-                            }
-                            if (ee.getbezierMinY() < getMinY()) {
-                                setMinY(ee.getbezierMinY());
-                            }
+                                if (xAxisRatio.getValue().doubleValue() > getMaxX()) {
+                                    setMaxX(xAxisRatio.getValue().doubleValue());
+                                }
+                                if (yAxisRatio.getValue().doubleValue() < getMinY()) {
+                                    setMinY(yAxisRatio.getValue().doubleValue());
+                                }
 
-                            if (ee.getbezierMaxY() > getMaxY()) {
-                                setMaxY(ee.getbezierMaxY());
+                                if (yAxisRatio.getValue().doubleValue() > getMaxY()) {
+                                    setMaxY(yAxisRatio.getValue().doubleValue());
+                                }
                             }
                         }
-
                     } else {
                         // inconsistent data
                     }
@@ -1750,33 +1775,52 @@ public class ConcordiaGraphPanel extends JLayeredPane
                                 && (correlationCoefficient.getValue().doubleValue() <= 1.0)) {
                             // June 2010 added check for correlation coeff
 
-                            getCurrentGraphAxesSetup().setDoPlotting(true);
+                            getCurrentPlotAxesSetup().setDoPlotting(true);
 
-                            ErrorEllipse ee = new ErrorEllipse(
-                                    xAxisRatio,
-                                    yAxisRatio,
-                                    correlationCoefficient,
-                                    getGraphHeight() / getGraphWidth(),
-                                    2.5);
+                            // dec 2016 check for bad uncertainties
+                            if (xAxisRatio.hasPositiveVarUnct()
+                                    && yAxisRatio.hasPositiveVarUnct()) {
+                                ErrorEllipse ee = new ErrorEllipse(
+                                        xAxisRatio,
+                                        yAxisRatio,
+                                        correlationCoefficient,
+                                        getGraphHeight() / getGraphWidth(),
+                                        2.5);
 
-                            if (doReScale) {
-                                if (ee.getbezierMinX() < getMinX()) {
-                                    setMinX(ee.getbezierMinX());
+                                if (doReScale) {
+                                    if (ee.getbezierMinX() < getMinX()) {
+                                        setMinX(ee.getbezierMinX());
+                                    }
+
+                                    if (ee.getbezierMaxX() > getMaxX()) {
+                                        setMaxX(ee.getbezierMaxX());
+                                    }
+                                    if (ee.getbezierMinY() < getMinY()) {
+                                        setMinY(ee.getbezierMinY());
+                                    }
+
+                                    if (ee.getbezierMaxY() > getMaxY()) {
+                                        setMaxY(ee.getbezierMaxY());
+                                    }
                                 }
+                            } else {
+                                if (doReScale) {
+                                    if (xAxisRatio.getValue().doubleValue() < getMinX()) {
+                                        setMinX(xAxisRatio.getValue().doubleValue());
+                                    }
 
-                                if (ee.getbezierMinY() < getMinY()) {
-                                    setMinY(ee.getbezierMinY());
-                                }
+                                    if (xAxisRatio.getValue().doubleValue() > getMaxX()) {
+                                        setMaxX(xAxisRatio.getValue().doubleValue());
+                                    }
+                                    if (yAxisRatio.getValue().doubleValue() < getMinY()) {
+                                        setMinY(yAxisRatio.getValue().doubleValue());
+                                    }
 
-                                if (ee.getbezierMaxX() > getMaxX()) {
-                                    setMaxX(ee.getbezierMaxX());
-                                }
-
-                                if (ee.getbezierMaxY() > getMaxY()) {
-                                    setMaxY(ee.getbezierMaxY());
+                                    if (yAxisRatio.getValue().doubleValue() > getMaxY()) {
+                                        setMaxY(yAxisRatio.getValue().doubleValue());
+                                    }
                                 }
                             }
-
                         } else {
                             // inconsistent data
                         }
@@ -1942,7 +1986,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
      * @return
      */
     public int getTopMargin() {
-        return getCurrentGraphAxesSetup().getTopMargin();
+        return getCurrentPlotAxesSetup().getTopMargin();
     }
 
     /**
@@ -1950,7 +1994,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
      * @param topMargin
      */
     public void setTopMargin(int topMargin) {
-        getCurrentGraphAxesSetup().setTopMargin(topMargin);
+        getCurrentPlotAxesSetup().setTopMargin(topMargin);
     }
 
     /**
@@ -1958,7 +2002,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
      * @return
      */
     public int getLeftMargin() {
-        return getCurrentGraphAxesSetup().getLeftMargin();
+        return getCurrentPlotAxesSetup().getLeftMargin();
     }
 
     /**
@@ -1966,7 +2010,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
      * @param leftMargin
      */
     public void setLeftMargin(int leftMargin) {
-        getCurrentGraphAxesSetup().setLeftMargin(leftMargin);
+        getCurrentPlotAxesSetup().setLeftMargin(leftMargin);
     }
 
     /**
@@ -2022,7 +2066,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
      * @return
      */
     public double getMinX_Display() {
-        return getCurrentGraphAxesSetup().getXaxisSetup().getMin_Display();//           minX + displayOffsetX;
+        return getCurrentPlotAxesSetup().getXaxisSetup().getMin_Display();//           minX + displayOffsetX;
     }
 
     /**
@@ -2034,7 +2078,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
             minX = 0.0;
         }
         //this.minX = minX;
-        getCurrentGraphAxesSetup().getXaxisSetup().setMin(minX);
+        getCurrentPlotAxesSetup().getXaxisSetup().setMin(minX);
     }
 
     /**
@@ -2042,7 +2086,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
      * @return
      */
     public double getMaxX_Display() {
-        return getCurrentGraphAxesSetup().getXaxisSetup().getMax_Display();//    maxX + displayOffsetX;
+        return getCurrentPlotAxesSetup().getXaxisSetup().getMax_Display();//    maxX + displayOffsetX;
     }
 
     /**
@@ -2051,7 +2095,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
      */
     public void setMaxX(double maxX) {
         //this.maxX = maxX;
-        getCurrentGraphAxesSetup().getXaxisSetup().setMax(maxX);
+        getCurrentPlotAxesSetup().getXaxisSetup().setMax(maxX);
     }
 
     /**
@@ -2059,7 +2103,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
      * @return
      */
     public double getMinY_Display() {
-        return getCurrentGraphAxesSetup().getYaxisSetup().getMin_Display();//    minY + displayOffsetY;
+        return getCurrentPlotAxesSetup().getYaxisSetup().getMin_Display();//    minY + displayOffsetY;
     }
 
     /**
@@ -2071,7 +2115,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
             minY = 0.0;
         }
         //this.minY = minY;
-        getCurrentGraphAxesSetup().getYaxisSetup().setMin(minY);
+        getCurrentPlotAxesSetup().getYaxisSetup().setMin(minY);
     }
 
     /**
@@ -2079,7 +2123,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
      * @return
      */
     public double getMaxY_Display() {
-        return getCurrentGraphAxesSetup().getYaxisSetup().getMax_Display();//   maxY + displayOffsetY;
+        return getCurrentPlotAxesSetup().getYaxisSetup().getMax_Display();//   maxY + displayOffsetY;
     }
 
     /**
@@ -2088,7 +2132,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
      */
     public void setMaxY(double maxY) {
         //this.maxY = maxY;
-        getCurrentGraphAxesSetup().getYaxisSetup().setMax(maxY);
+        getCurrentPlotAxesSetup().getYaxisSetup().setMax(maxY);
     }
 
     /**
@@ -2096,7 +2140,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
      * @return
      */
     public double getDisplayOffsetY() {
-        return getCurrentGraphAxesSetup().getYaxisSetup().getDisplayOffset();//  displayOffsetY;
+        return getCurrentPlotAxesSetup().getYaxisSetup().getDisplayOffset();//  displayOffsetY;
     }
 
     /**
@@ -2106,7 +2150,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
     public void setDisplayOffsetY(double displayOffsetY) {
         // System.out.println("displayOffsetY  " + displayOffsetY);
         //this.displayOffsetY = displayOffsetY;
-        getCurrentGraphAxesSetup().getYaxisSetup().setDisplayOffset(displayOffsetY);
+        getCurrentPlotAxesSetup().getYaxisSetup().setDisplayOffset(displayOffsetY);
     }
 
     /**
@@ -2114,7 +2158,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
      * @return
      */
     public double getDisplayOffsetX() {
-        return getCurrentGraphAxesSetup().getXaxisSetup().getDisplayOffset();//  displayOffsetX;
+        return getCurrentPlotAxesSetup().getXaxisSetup().getDisplayOffset();//  displayOffsetX;
     }
 
     /**
@@ -2124,7 +2168,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
     public void setDisplayOffsetX(double displayOffsetX) {
         // System.out.println("displayOffsetX  " + displayOffsetX);
         //this.displayOffsetX = displayOffsetX;
-        getCurrentGraphAxesSetup().getXaxisSetup().setDisplayOffset(displayOffsetX);
+        getCurrentPlotAxesSetup().getXaxisSetup().setDisplayOffset(displayOffsetX);
     }
 
     /**
@@ -2132,7 +2176,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
      * @return
      */
     public double getRangeX() {
-        return getCurrentGraphAxesSetup().getXaxisSetup().getRange_Display();//       maxX - minX;
+        return getCurrentPlotAxesSetup().getXaxisSetup().getRange_Display();//       maxX - minX;
     }
 
     /**
@@ -2140,7 +2184,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
      * @return
      */
     public double getRangeY() {
-        return getCurrentGraphAxesSetup().getYaxisSetup().getRange_Display();//   maxY - minY;
+        return getCurrentPlotAxesSetup().getYaxisSetup().getRange_Display();//   maxY - minY;
     }
 
     /**
@@ -2148,7 +2192,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
      * @return
      */
     public double getRangeX_Display() {
-        return getCurrentGraphAxesSetup().getXaxisSetup().getRange_Display();//     getMaxX_Display() - getMinX_Display();
+        return getCurrentPlotAxesSetup().getXaxisSetup().getRange_Display();//     getMaxX_Display() - getMinX_Display();
     }
 
     /**
@@ -2156,7 +2200,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
      * @return
      */
     public double getRangeY_Display() {
-        return getCurrentGraphAxesSetup().getYaxisSetup().getRange_Display();//   getMaxY_Display() - getMinY_Display();
+        return getCurrentPlotAxesSetup().getYaxisSetup().getRange_Display();//   getMaxY_Display() - getMinY_Display();
     }
 
     /**
@@ -2164,7 +2208,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
      * @return
      */
     public double getMinX() {
-        return getCurrentGraphAxesSetup().getXaxisSetup().getMin(); // minX;
+        return getCurrentPlotAxesSetup().getXaxisSetup().getMin(); // minX;
     }
 
     /**
@@ -2172,7 +2216,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
      * @return
      */
     public double getMinY() {
-        return getCurrentGraphAxesSetup().getYaxisSetup().getMin();//   minY;
+        return getCurrentPlotAxesSetup().getYaxisSetup().getMin();//   minY;
     }
 
     /**
@@ -2180,7 +2224,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
      * @return
      */
     public double getMaxX() {
-        return getCurrentGraphAxesSetup().getXaxisSetup().getMax();//    maxX;
+        return getCurrentPlotAxesSetup().getXaxisSetup().getMax();//    maxX;
     }
 
     /**
@@ -2188,7 +2232,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
      * @return
      */
     public double getMaxY() {
-        return getCurrentGraphAxesSetup().getYaxisSetup().getMax();// maxY;
+        return getCurrentPlotAxesSetup().getYaxisSetup().getMax();// maxY;
     }
 
     /**
@@ -2356,7 +2400,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
                 menuItem.addActionListener(new ActionListener() {
 
                     public void actionPerformed(ActionEvent arg0) {
-                        getCurrentGraphAxesSetup().setUseAutomaticAxisTics(true);
+                        getCurrentPlotAxesSetup().setUseAutomaticAxisTics(true);
                         repaint();
                     }
                 });
@@ -2365,12 +2409,12 @@ public class ConcordiaGraphPanel extends JLayeredPane
                 mySelf = this;
                 menuItem = new JMenuItem("Manually configure axes");
                 menuItem.addActionListener((ActionEvent arg0) -> {
-                    getCurrentGraphAxesSetup().setUseAutomaticAxisTics(false);
+                    getCurrentPlotAxesSetup().setUseAutomaticAxisTics(false);
 
                     JDialog myGraphAxisDialog = new GraphAxesDialog( //
                             null, //
                             true,
-                            getCurrentGraphAxesSetup(),
+                            getCurrentPlotAxesSetup(),
                             mySelf);
                     myGraphAxisDialog.setVisible(true);
 
@@ -2558,7 +2602,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
                 if (((getMinX() + xOffsetValue) >= 0.0)// may 2010 zeroed - 1.0)
 
                         && ((getMinY() + yOffsetValue) >= 0.0)
-                        && currentGraphAxesSetup.checkDateForInMaxBound((x), (getMaxY() + yOffsetValue))) {
+                        && ((GraphAxesSetup) getCurrentPlotAxesSetup()).checkDateForInMaxBound((x), (getMaxY() + yOffsetValue))) {
 
                     setDisplayOffsetX(xOffsetValue);
                     setDisplayOffsetY(yOffsetValue);
@@ -2799,7 +2843,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
      * @return
      */
     public double getGraphWidth() {
-        return getCurrentGraphAxesSetup().getGraphWidth();
+        return getCurrentPlotAxesSetup().getGraphWidth();
     }
 
     /**
@@ -2807,7 +2851,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
      * @param graphWidth
      */
     public void setGraphWidth(double graphWidth) {
-        getCurrentGraphAxesSetup().setGraphWidth(graphWidth);
+        getCurrentPlotAxesSetup().setGraphWidth(graphWidth);
     }
 
     /**
@@ -2815,7 +2859,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
      * @return
      */
     public double getGraphHeight() {
-        return getCurrentGraphAxesSetup().getGraphHeight();
+        return getCurrentPlotAxesSetup().getGraphHeight();
     }
 
     /**
@@ -2823,7 +2867,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
      * @param graphHeight
      */
     public void setGraphHeight(double graphHeight) {
-        getCurrentGraphAxesSetup().setGraphHeight(graphHeight);
+        getCurrentPlotAxesSetup().setGraphHeight(graphHeight);
     }
 
     /**
@@ -2906,7 +2950,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
         if (preferredDatePanel != null) {
             String aliquotName
                     = ((SampleDateModel) ((DateInterpretationBoxPanel) preferredDatePanel).//
-                    getPreferredDateModel()).getAliquot().getAliquotName();
+                            getPreferredDateModel()).getAliquot().getAliquotName();
             Map<String, String> myAliquotOptions = getAliquotOptions().get(aliquotName);
 
             myAliquotOptions//
@@ -2938,7 +2982,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
     public Map<String, String> getSelectedAliquotOptions() {
         String aliquotName
                 = ((SampleDateModel) ((DateInterpretationBoxPanel) preferredDatePanel).//
-                getPreferredDateModel()).getAliquot().getAliquotName();
+                        getPreferredDateModel()).getAliquot().getAliquotName();
         return getAliquotOptions().get(aliquotName);
     }
 
@@ -2996,9 +3040,9 @@ public class ConcordiaGraphPanel extends JLayeredPane
 //            setCurrentGraphAxesSetup(sample.getTerraWasserburgGraphAxesSetup());
 //        }
 //
-//        getCurrentGraphAxesSetup().setLambda235( lambda235.getValue().doubleValue() );
-//        getCurrentGraphAxesSetup().setLambda238( lambda238.getValue().doubleValue() );
-//        getCurrentGraphAxesSetup().setDefaultR238_235s( //
+//        getCurrentPlotAxesSetup().setLambda235( lambda235.getValue().doubleValue() );
+//        getCurrentPlotAxesSetup().setLambda238( lambda238.getValue().doubleValue() );
+//        getCurrentPlotAxesSetup().setDefaultR238_235s( //
 //                getSample().getMyReduxLabData().getDefaultR238_235s().getValue().doubleValue() );
     }
 
@@ -3020,7 +3064,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
      * @return the zoomMinX
      */
     public int getZoomMinX() {
-        return getCurrentGraphAxesSetup().getXaxisSetup().getZoomMin();//   zoomMinX;
+        return getCurrentPlotAxesSetup().getXaxisSetup().getZoomMin();//   zoomMinX;
     }
 
     /**
@@ -3028,14 +3072,14 @@ public class ConcordiaGraphPanel extends JLayeredPane
      */
     public void setZoomMinX(int zoomMinX) {
         // this.zoomMinX = zoomMinX;
-        getCurrentGraphAxesSetup().getXaxisSetup().setZoomMin(zoomMinX);
+        getCurrentPlotAxesSetup().getXaxisSetup().setZoomMin(zoomMinX);
     }
 
     /**
      * @return the zoomMinY
      */
     public int getZoomMinY() {
-        return getCurrentGraphAxesSetup().getYaxisSetup().getZoomMin();//   zoomMinY;
+        return getCurrentPlotAxesSetup().getYaxisSetup().getZoomMin();//   zoomMinY;
     }
 
     /**
@@ -3043,14 +3087,14 @@ public class ConcordiaGraphPanel extends JLayeredPane
      */
     public void setZoomMinY(int zoomMinY) {
         //this.zoomMinY = zoomMinY;
-        getCurrentGraphAxesSetup().getYaxisSetup().setZoomMin(zoomMinY);
+        getCurrentPlotAxesSetup().getYaxisSetup().setZoomMin(zoomMinY);
     }
 
     /**
      * @return the zoomMaxX
      */
     public int getZoomMaxX() {
-        return getCurrentGraphAxesSetup().getXaxisSetup().getZoomMax();//  zoomMaxX;
+        return getCurrentPlotAxesSetup().getXaxisSetup().getZoomMax();//  zoomMaxX;
     }
 
     /**
@@ -3058,14 +3102,14 @@ public class ConcordiaGraphPanel extends JLayeredPane
      */
     public void setZoomMaxX(int zoomMaxX) {
         //this.zoomMaxX = zoomMaxX;
-        getCurrentGraphAxesSetup().getXaxisSetup().setZoomMax(zoomMaxX);
+        getCurrentPlotAxesSetup().getXaxisSetup().setZoomMax(zoomMaxX);
     }
 
     /**
      * @return the zoomMaxY
      */
     public int getZoomMaxY() {
-        return getCurrentGraphAxesSetup().getYaxisSetup().getZoomMax();//   zoomMaxY;
+        return getCurrentPlotAxesSetup().getYaxisSetup().getZoomMax();//   zoomMaxY;
     }
 
     /**
@@ -3073,13 +3117,13 @@ public class ConcordiaGraphPanel extends JLayeredPane
      */
     public void setZoomMaxY(int zoomMaxY) {
         //this.zoomMaxY = zoomMaxY;
-        getCurrentGraphAxesSetup().getYaxisSetup().setZoomMax(zoomMaxY);
+        getCurrentPlotAxesSetup().getYaxisSetup().setZoomMax(zoomMaxY);
     }
 
     /**
      * @return the currentGraphAxesSetup
      */
-    public GraphAxesSetup getCurrentGraphAxesSetup() {
+    public PlotAxesSetupInterface getCurrentPlotAxesSetup() {
         if (currentGraphAxesSetup == null) {
             currentGraphAxesSetup = new GraphAxesSetup();
         }

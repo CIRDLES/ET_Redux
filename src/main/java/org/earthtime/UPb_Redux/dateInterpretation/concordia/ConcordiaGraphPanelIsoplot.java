@@ -25,13 +25,14 @@ import javafx.collections.ObservableList;
 import javafx.embed.swing.JFXPanel;
 import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.fractions.ETFractionInterface;
+import org.earthtime.plots.PlotAxesSetupInterface;
 
 /**
  *
  * @author James F. Bowring
  */
 public class ConcordiaGraphPanelIsoplot extends JFXPanel
-        implements AliquotDetailsDisplayInterface, PlottingDetailsDisplayInterface {
+        implements AliquotDetailsDisplayInterface, ConcordiaPlotDisplayInterface, PlottingDetailsDisplayInterface {
 
     // Class Variables
     // Instance Variables
@@ -202,6 +203,26 @@ public class ConcordiaGraphPanelIsoplot extends JFXPanel
 
     @Override
     public void setShowFilteredEllipses(boolean showFilteredEllipses) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setDeSelectedFractions(Vector<ETFractionInterface> deSelectedFractions) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setShowTightToEdges(boolean showTightToEdges) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void performZoom(double factor) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public PlotAxesSetupInterface getCurrentPlotAxesSetup() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

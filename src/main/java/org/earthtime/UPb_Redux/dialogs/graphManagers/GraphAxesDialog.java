@@ -33,10 +33,11 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import org.earthtime.UPb_Redux.dateInterpretation.concordia.ConcordiaGraphPanel;
 import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetup;
 import org.earthtime.dialogs.DialogEditor.DoubleDocument;
 import org.earthtime.dialogs.DialogEditor.UnDoAbleDocument;
+import org.earthtime.plots.PlotAxesSetupInterface;
+import org.earthtime.plots.PlotInterface;
 
 /**
  *
@@ -45,7 +46,7 @@ import org.earthtime.dialogs.DialogEditor.UnDoAbleDocument;
 public class GraphAxesDialog extends javax.swing.JDialog {
 
     // instance variables
-    private GraphAxesSetup graphAxesSetup;
+    private PlotAxesSetupInterface graphAxesSetup;
     private int xDecimalPlaceCount;
     private int xTicIncrement;
     private int xTicLabelFrequency;
@@ -66,7 +67,7 @@ public class GraphAxesDialog extends javax.swing.JDialog {
     private int cTicLabelFrequency;
     private double min_T;
     private double max_T;
-    private ConcordiaGraphPanel concordiaGraphPanel;
+    private PlotInterface concordiaGraphPanel;
     private DocumentListener masterListener;
 
     private enum TextFields {
@@ -86,13 +87,13 @@ public class GraphAxesDialog extends javax.swing.JDialog {
     public GraphAxesDialog( //
             java.awt.Frame parent, //
             boolean modal,
-            GraphAxesSetup graphAxesSetup,
-            ConcordiaGraphPanel concordiaGraphPanel) {
+            PlotAxesSetupInterface graphAxesSetup,
+            PlotInterface concordiaGraphPanel) {
 
         super(parent, modal);
 
         this.graphAxesSetup = graphAxesSetup;
-        graphAxesSetup.calculateConcordiaDateBoundsFromRatiosBounds();
+        ((GraphAxesSetup)graphAxesSetup).calculateConcordiaDateBoundsFromRatiosBounds();
 
         this.xDecimalPlaceCount = graphAxesSetup.getXaxisSetup().getDecimalPlaceCount();
         this.xTicIncrement = graphAxesSetup.getXaxisSetup().getTicIncrement();
@@ -113,8 +114,8 @@ public class GraphAxesDialog extends javax.swing.JDialog {
         this.cDecimalPlaceCount = graphAxesSetup.getcDecimalPlaceCount();
         this.cTicIncrement = graphAxesSetup.getcTicIncrement();
         this.cTicLabelFrequency = graphAxesSetup.getcTicLabelFrequency();
-        this.min_T = graphAxesSetup.getMin_T();
-        this.max_T = graphAxesSetup.getMax_T();
+        this.min_T = ((GraphAxesSetup)graphAxesSetup).getMin_T();
+        this.max_T = ((GraphAxesSetup)graphAxesSetup).getMax_T();
 
         this.concordiaGraphPanel = concordiaGraphPanel;
 
@@ -154,9 +155,9 @@ public class GraphAxesDialog extends javax.swing.JDialog {
                 switch (TextFields.valueOf(textField.getName())) {
                     case xMin_text:
                         try {
-                            getGraphAxesSetup().getXaxisSetup().setMin(safeDoubleConversion(xMin_text.getText()));
-                            getGraphAxesSetup().calculateConcordiaDateBoundsFromRatiosBounds();
-                            if (!getGraphAxesSetup().isTerraWasserbergGraph()) {
+                            graphAxesSetup.getXaxisSetup().setMin(safeDoubleConversion(xMin_text.getText()));
+                            ((GraphAxesSetup)graphAxesSetup).calculateConcordiaDateBoundsFromRatiosBounds();
+                            if (!((GraphAxesSetup)graphAxesSetup).isTerraWasserbergGraph()) {
                                 xMin_T = getGraphAxesSetup().getXaxisSetup().getMin_T();
                                 xDateMin_text.getDocument().removeDocumentListener(this);
                                 try {
@@ -166,7 +167,7 @@ public class GraphAxesDialog extends javax.swing.JDialog {
                                 }
                                 xDateMin_text.getDocument().addDocumentListener(this);
                             } else {
-                                xMax_T = getGraphAxesSetup().getXaxisSetup().getMax_T();
+                                xMax_T = graphAxesSetup.getXaxisSetup().getMax_T();
                                 xDateMax_text.getDocument().removeDocumentListener(this);
                                 try {
                                     xDateMax_text.setText(formattedDateValue(xMax_T));
@@ -181,10 +182,10 @@ public class GraphAxesDialog extends javax.swing.JDialog {
                     case xDateMin_text:
                         try {
                             // convert to annum from Ma
-                            getGraphAxesSetup().getXaxisSetup().setMin_T(safeDoubleConversion(xDateMin_text.getText()) * 1e6);
-                            getGraphAxesSetup().calculateRatiosBoundsFromConcordiaDateBounds();
-                            if (!getGraphAxesSetup().isTerraWasserbergGraph()) {
-                                xMin = getGraphAxesSetup().getXaxisSetup().getMin();
+                            graphAxesSetup.getXaxisSetup().setMin_T(safeDoubleConversion(xDateMin_text.getText()) * 1e6);
+                            ((GraphAxesSetup)graphAxesSetup).calculateRatiosBoundsFromConcordiaDateBounds();
+                            if (!((GraphAxesSetup)graphAxesSetup).isTerraWasserbergGraph()) {
+                                xMin = graphAxesSetup.getXaxisSetup().getMin();
                                 xMin_text.getDocument().removeDocumentListener(this);
                                 try {
                                     xMin_text.setText(formattedRatioValue(xMin));
@@ -193,7 +194,7 @@ public class GraphAxesDialog extends javax.swing.JDialog {
                                 }
                                 xMin_text.getDocument().addDocumentListener(this);
                             } else {
-                                xMax = getGraphAxesSetup().getXaxisSetup().getMax();
+                                xMax = graphAxesSetup.getXaxisSetup().getMax();
                                 xMax_text.getDocument().removeDocumentListener(this);
                                 try {
                                     xMax_text.setText(formattedRatioValue(xMax));
@@ -208,9 +209,9 @@ public class GraphAxesDialog extends javax.swing.JDialog {
                         break;
                     case yMin_text:
                         try {
-                            getGraphAxesSetup().getYaxisSetup().setMin(safeDoubleConversion(yMin_text.getText()));
-                            getGraphAxesSetup().calculateConcordiaDateBoundsFromRatiosBounds();
-                            yMin_T = getGraphAxesSetup().getYaxisSetup().getMin_T();
+                            graphAxesSetup.getYaxisSetup().setMin(safeDoubleConversion(yMin_text.getText()));
+                            ((GraphAxesSetup)graphAxesSetup).calculateConcordiaDateBoundsFromRatiosBounds();
+                            yMin_T = graphAxesSetup.getYaxisSetup().getMin_T();
                             yDateMin_text.getDocument().removeDocumentListener(this);
                             try {
                                 yDateMin_text.setText(formattedDateValue(yMin_T));
@@ -224,9 +225,9 @@ public class GraphAxesDialog extends javax.swing.JDialog {
                     case yDateMin_text:
                         try {
                             // convert to annum from Ma
-                            getGraphAxesSetup().getYaxisSetup().setMin_T(safeDoubleConversion(yDateMin_text.getText()) * 1e6);
-                            getGraphAxesSetup().calculateRatiosBoundsFromConcordiaDateBounds();
-                            yMin = getGraphAxesSetup().getYaxisSetup().getMin();
+                            graphAxesSetup.getYaxisSetup().setMin_T(safeDoubleConversion(yDateMin_text.getText()) * 1e6);
+                            ((GraphAxesSetup)graphAxesSetup).calculateRatiosBoundsFromConcordiaDateBounds();
+                            yMin = graphAxesSetup.getYaxisSetup().getMin();
                             yMin_text.getDocument().removeDocumentListener(this);
                             try {
                                 yMin_text.setText(formattedRatioValue(yMin));
@@ -239,10 +240,10 @@ public class GraphAxesDialog extends javax.swing.JDialog {
                         break;
                     case xMax_text:
                         try {
-                            getGraphAxesSetup().getXaxisSetup().setMax(safeDoubleConversion(xMax_text.getText()));
-                            getGraphAxesSetup().calculateConcordiaDateBoundsFromRatiosBounds();
-                            if (!getGraphAxesSetup().isTerraWasserbergGraph()) {
-                                xMax_T = getGraphAxesSetup().getXaxisSetup().getMax_T();
+                            graphAxesSetup.getXaxisSetup().setMax(safeDoubleConversion(xMax_text.getText()));
+                            ((GraphAxesSetup)graphAxesSetup).calculateConcordiaDateBoundsFromRatiosBounds();
+                            if (!((GraphAxesSetup)graphAxesSetup).isTerraWasserbergGraph()) {
+                                xMax_T = graphAxesSetup.getXaxisSetup().getMax_T();
                                 xDateMax_text.getDocument().removeDocumentListener(this);
                                 try {
                                     xDateMax_text.setText(formattedDateValue(xMax_T));
@@ -251,7 +252,7 @@ public class GraphAxesDialog extends javax.swing.JDialog {
                                 }
                                 xDateMax_text.getDocument().addDocumentListener(this);
                             } else {
-                                xMin_T = getGraphAxesSetup().getXaxisSetup().getMin_T();
+                                xMin_T = graphAxesSetup.getXaxisSetup().getMin_T();
                                 xDateMin_text.getDocument().removeDocumentListener(this);
                                 try {
                                     xDateMin_text.setText(formattedDateValue(xMin_T));
@@ -266,10 +267,10 @@ public class GraphAxesDialog extends javax.swing.JDialog {
                     case xDateMax_text:
                         try {
                             // convert to annum from Ma
-                            getGraphAxesSetup().getXaxisSetup().setMax_T(safeDoubleConversion(xDateMax_text.getText()) * 1e6);
-                            getGraphAxesSetup().calculateRatiosBoundsFromConcordiaDateBounds();
-                            if (!getGraphAxesSetup().isTerraWasserbergGraph()) {
-                                xMax = getGraphAxesSetup().getXaxisSetup().getMax();
+                            graphAxesSetup.getXaxisSetup().setMax_T(safeDoubleConversion(xDateMax_text.getText()) * 1e6);
+                            ((GraphAxesSetup)graphAxesSetup).calculateRatiosBoundsFromConcordiaDateBounds();
+                            if (!((GraphAxesSetup)graphAxesSetup).isTerraWasserbergGraph()) {
+                                xMax = graphAxesSetup.getXaxisSetup().getMax();
                                 xMax_text.getDocument().removeDocumentListener(this);
                                 try {
                                     xMax_text.setText(formattedRatioValue(xMax));
@@ -278,7 +279,7 @@ public class GraphAxesDialog extends javax.swing.JDialog {
                                 }
                                 xMax_text.getDocument().addDocumentListener(this);
                             } else {
-                                xMin = getGraphAxesSetup().getXaxisSetup().getMin();
+                                xMin = graphAxesSetup.getXaxisSetup().getMin();
                                 xMin_text.getDocument().removeDocumentListener(this);
                                 try {
                                     xMin_text.setText(formattedRatioValue(xMin));
@@ -292,9 +293,9 @@ public class GraphAxesDialog extends javax.swing.JDialog {
                         break;
                     case yMax_text:
                         try {
-                            getGraphAxesSetup().getYaxisSetup().setMax(safeDoubleConversion(yMax_text.getText()));
-                            getGraphAxesSetup().calculateConcordiaDateBoundsFromRatiosBounds();
-                            yMax_T = getGraphAxesSetup().getYaxisSetup().getMax_T();
+                            graphAxesSetup.getYaxisSetup().setMax(safeDoubleConversion(yMax_text.getText()));
+                            ((GraphAxesSetup)graphAxesSetup).calculateConcordiaDateBoundsFromRatiosBounds();
+                            yMax_T = graphAxesSetup.getYaxisSetup().getMax_T();
                             yDateMax_text.getDocument().removeDocumentListener(this);
                             try {
                                 yDateMax_text.setText(formattedDateValue(yMax_T));
@@ -308,9 +309,9 @@ public class GraphAxesDialog extends javax.swing.JDialog {
                     case yDateMax_text:
                         try {
                             // convert to annum from Ma
-                            getGraphAxesSetup().getYaxisSetup().setMax_T(safeDoubleConversion(yDateMax_text.getText()) * 1e6);
-                            getGraphAxesSetup().calculateRatiosBoundsFromConcordiaDateBounds();
-                            yMax = getGraphAxesSetup().getYaxisSetup().getMax();
+                            graphAxesSetup.getYaxisSetup().setMax_T(safeDoubleConversion(yDateMax_text.getText()) * 1e6);
+                            ((GraphAxesSetup)graphAxesSetup).calculateRatiosBoundsFromConcordiaDateBounds();
+                            yMax = graphAxesSetup.getYaxisSetup().getMax();
                             yMax_text.getDocument().removeDocumentListener(this);
                             try {
                                 yMax_text.setText(formattedRatioValue(yMax));
@@ -403,7 +404,7 @@ public class GraphAxesDialog extends javax.swing.JDialog {
         yDateMax_text.setText(formattedDateValue(yMax_T));
         yDateMax_text.getDocument().addDocumentListener(masterListener);
 
-        if (getGraphAxesSetup().isyAxisHorizontalTicLabels()) {
+        if (graphAxesSetup.isyAxisHorizontalTicLabels()) {
             yHorizontalLabels_radio.setSelected(true);
         } else {
             yVerticalLabels_radio.setSelected(true);
@@ -991,17 +992,17 @@ public class GraphAxesDialog extends javax.swing.JDialog {
     private void saveSettings() {
 
         // x axis
-        getGraphAxesSetup().getXaxisSetup().setDecimalPlaceCount((Integer) xAxisDecimalPlaceCount_spinner.getValue());
+        graphAxesSetup.getXaxisSetup().setDecimalPlaceCount((Integer) xAxisDecimalPlaceCount_spinner.getValue());
 
         for (Enumeration e = xTicIncrement_group.getElements(); e.hasMoreElements();) {
             JRadioButton jrb = (JRadioButton) e.nextElement();
 
             if (jrb.isSelected()) {
-                getGraphAxesSetup().getXaxisSetup().setTicIncrement(Integer.parseInt(jrb.getName()));
+                graphAxesSetup.getXaxisSetup().setTicIncrement(Integer.parseInt(jrb.getName()));
             }
         }
 
-        getGraphAxesSetup().getXaxisSetup().setTicLabelFrequency((Integer) xTicLabelFrequency_spinner.getValue());
+        graphAxesSetup.getXaxisSetup().setTicLabelFrequency((Integer) xTicLabelFrequency_spinner.getValue());
 
         // setting axis bounds
         // first test for sanity
@@ -1012,47 +1013,47 @@ public class GraphAxesDialog extends javax.swing.JDialog {
             yMax_text.setText(yMin_text.getText());
         }
 
-        getGraphAxesSetup().getXaxisSetup().setMin(safeDoubleConversion(xMin_text.getText()));
-        getGraphAxesSetup().getXaxisSetup().setMax(safeDoubleConversion(xMax_text.getText()));
-        getGraphAxesSetup().getXaxisSetup().setMin_T(safeDoubleConversion(xDateMin_text.getText()));
-        getGraphAxesSetup().getXaxisSetup().setMax_T(safeDoubleConversion(xDateMax_text.getText()));
-        getGraphAxesSetup().getXaxisSetup().setDisplayOffset(0.0);
+        graphAxesSetup.getXaxisSetup().setMin(safeDoubleConversion(xMin_text.getText()));
+        graphAxesSetup.getXaxisSetup().setMax(safeDoubleConversion(xMax_text.getText()));
+        graphAxesSetup.getXaxisSetup().setMin_T(safeDoubleConversion(xDateMin_text.getText()));
+        graphAxesSetup.getXaxisSetup().setMax_T(safeDoubleConversion(xDateMax_text.getText()));
+        graphAxesSetup.getXaxisSetup().setDisplayOffset(0.0);
 
         // y axis
-        getGraphAxesSetup().getYaxisSetup().setDecimalPlaceCount((Integer) yAxisDecimalPlaceCount_spinner.getValue());
+        graphAxesSetup.getYaxisSetup().setDecimalPlaceCount((Integer) yAxisDecimalPlaceCount_spinner.getValue());
 
         for (Enumeration e = yTicIncrement_group.getElements(); e.hasMoreElements();) {
             JRadioButton jrb = (JRadioButton) e.nextElement();
 
             if (jrb.isSelected()) {
-                getGraphAxesSetup().getYaxisSetup().setTicIncrement(Integer.valueOf(jrb.getName()));
+                graphAxesSetup.getYaxisSetup().setTicIncrement(Integer.valueOf(jrb.getName()));
             }
         }
 
-        getGraphAxesSetup().getYaxisSetup().setTicLabelFrequency((Integer) yTicLabelFrequency_spinner.getValue());
+        graphAxesSetup.getYaxisSetup().setTicLabelFrequency((Integer) yTicLabelFrequency_spinner.getValue());
 
         // setting axis bounds
-        getGraphAxesSetup().getYaxisSetup().setMin(safeDoubleConversion(yMin_text.getText()));
-        getGraphAxesSetup().getYaxisSetup().setMax(safeDoubleConversion(yMax_text.getText()));
-        getGraphAxesSetup().getYaxisSetup().setMin_T(safeDoubleConversion(yDateMin_text.getText()));
-        getGraphAxesSetup().getYaxisSetup().setMax_T(safeDoubleConversion(yDateMax_text.getText()));
-        getGraphAxesSetup().getYaxisSetup().setDisplayOffset(0.0);
+        graphAxesSetup.getYaxisSetup().setMin(safeDoubleConversion(yMin_text.getText()));
+        graphAxesSetup.getYaxisSetup().setMax(safeDoubleConversion(yMax_text.getText()));
+        graphAxesSetup.getYaxisSetup().setMin_T(safeDoubleConversion(yDateMin_text.getText()));
+        graphAxesSetup.getYaxisSetup().setMax_T(safeDoubleConversion(yDateMax_text.getText()));
+        graphAxesSetup.getYaxisSetup().setDisplayOffset(0.0);
 
-        getGraphAxesSetup().setyAxisHorizontalTicLabels(yHorizontalLabels_radio.isSelected());
+        graphAxesSetup.setyAxisHorizontalTicLabels(yHorizontalLabels_radio.isSelected());
 
 
         // concordia axis
-        getGraphAxesSetup().setcDecimalPlaceCount((Integer) cLastDigit_slider.getValue() - 5);
+        graphAxesSetup.setcDecimalPlaceCount((Integer) cLastDigit_slider.getValue() - 5);
 
         for (Enumeration e = cTicIncrement_group.getElements(); e.hasMoreElements();) {
             JRadioButton jrb = (JRadioButton) e.nextElement();
 
             if (jrb.isSelected()) {
-                getGraphAxesSetup().setcTicIncrement(Integer.valueOf(jrb.getName()));
+                graphAxesSetup.setcTicIncrement(Integer.valueOf(jrb.getName()));
             }
         }
 
-        getGraphAxesSetup().setcTicLabelFrequency((Integer) cTicLabelFrequency_spinner.getValue());
+        graphAxesSetup.setcTicLabelFrequency((Integer) cTicLabelFrequency_spinner.getValue());
 
     }
 
@@ -1399,7 +1400,7 @@ public class GraphAxesDialog extends javax.swing.JDialog {
     /**
      * @return the graphAxesSetup
      */
-    public GraphAxesSetup getGraphAxesSetup() {
+    public PlotAxesSetupInterface getGraphAxesSetup() {
         return graphAxesSetup;
 
 
@@ -1408,7 +1409,7 @@ public class GraphAxesDialog extends javax.swing.JDialog {
     /**
      * @param graphAxesSetup the graphAxesSetup to set
      */
-    public void setGraphAxesSetup(GraphAxesSetup graphAxesSetup) {
+    public void setGraphAxesSetup(PlotAxesSetupInterface graphAxesSetup) {
         this.graphAxesSetup = graphAxesSetup;
 
     }

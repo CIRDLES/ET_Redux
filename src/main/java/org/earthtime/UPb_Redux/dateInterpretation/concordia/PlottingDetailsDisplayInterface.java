@@ -18,6 +18,8 @@
  */
 package org.earthtime.UPb_Redux.dateInterpretation.concordia;
 
+import org.earthtime.plots.PlotAxesSetupInterface;
+
 /**
  *
  * @author James F. Bowring
@@ -45,4 +47,11 @@ public interface PlottingDetailsDisplayInterface {
      */
     void resetPanel(boolean doReScale, boolean inLiveMode);
 
+    public void setShowTightToEdges(boolean showTightToEdges);
+    
+    public void performZoom(double factor);
+    
+    public PlotAxesSetupInterface getCurrentPlotAxesSetup();
+    
+    
 }

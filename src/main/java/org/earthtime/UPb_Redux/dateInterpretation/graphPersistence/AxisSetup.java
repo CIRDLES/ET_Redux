@@ -45,6 +45,7 @@ public class AxisSetup implements
     private double displayOffset;
     private int zoomMin;
     private int zoomMax;
+    private String axisLabel;
 
     /**
      * 
@@ -63,6 +64,11 @@ public class AxisSetup implements
         displayOffset = 0.0;
         zoomMin = 0;
         zoomMax = 0;
+        axisLabel = "NONE";
+    }
+    public AxisSetup (String axisLabel){
+        this();
+        this.axisLabel = axisLabel;
     }
 
     private void calculateAxisTicLimits () {
@@ -466,6 +472,20 @@ public class AxisSetup implements
                 (value >= getMin_Display())//
                 && //
                 (value <= getMax_Display());
+    }
+
+    /**
+     * @return the axisLabel
+     */
+    public String getAxisLabel() {
+        return axisLabel;
+    }
+
+    /**
+     * @param axisLabel the axisLabel to set
+     */
+    public void setAxisLabel(String axisLabel) {
+        this.axisLabel = axisLabel;
     }
 
    

@@ -19,7 +19,7 @@
 
 package org.earthtime.UPb_Redux.dateInterpretation.concordia;
 
-import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetup;
+import org.earthtime.plots.PlotAxesSetupInterface;
 
 /**
  *
@@ -35,6 +35,6 @@ public interface GraphPanelModeChangeI {
      * 
      * @param currentGraphAxesSetup
      */
-    abstract void synchronizePanelSizes(GraphAxesSetup currentGraphAxesSetup);
+    abstract void synchronizePanelSizes(PlotAxesSetupInterface currentGraphAxesSetup);
 
 }

@@ -66,7 +66,17 @@ public enum RadRatios {
     /**
      *
      */
-    r208_204r("r208_204r");
+    r208_204r("r208_204r"),
+    // added dec 2016 in move to cosolidate two sources of these (see datadictionary)
+    r208_206r("r208_206r"),
+    r206_238r_Th("r206_238r_Th"),
+    r207_235r_Pa("r207_235r_Pa"),
+    r207_206r_Th("r207_206r_Th"),
+    r207_206r_Pa("r207_206r_Pa"),
+    r207_206r_ThPa("r207_206r_ThPa"),
+    // TODO: list all rhos here
+    rhoR206_238r__r207_235r("rhoR206_238r__r207_235r"),
+    rhoR207_206r__r238_206r("rhoR207_206r__r238_206r");
 
     private String name;
 

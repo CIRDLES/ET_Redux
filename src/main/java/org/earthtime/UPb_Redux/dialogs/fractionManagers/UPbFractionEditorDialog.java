@@ -89,7 +89,7 @@ import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.fractions.ETFractionInterface;
-import org.earthtime.matrices.matrixModels.CovarianceMatrixWithSubMatricesModel;
+import org.earthtime.matrices.matrixModels.CovarianceMatrixModel;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.initialPbModelsET.StaceyKramersInitialPbModelET;
 import org.earthtime.ratioDataViews.AbstractRatiosDataView;
@@ -831,7 +831,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
                                 // CovarianceMatrixWithSubmatricesModel
                                 // secondly, we re-perform matrix math with altered covariance matrix
                                 Matrix oneSigmas =//
-                                ((CovarianceMatrixWithSubMatricesModel) ((UPbFraction) fraction).//
+                                ((CovarianceMatrixModel) ((UPbFraction) fraction).//
                                 getReductionHandler().getMatrices()[0]).recalculateSubCovariances(//
                                         ((ValueModelUncertSlider) evt.getSource()).getCovaryingTerms(),
                                         (BigDecimal) evt.getNewValue(), sliderLock);

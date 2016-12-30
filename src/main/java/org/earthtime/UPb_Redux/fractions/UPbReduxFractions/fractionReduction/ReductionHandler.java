@@ -24,7 +24,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -522,6 +521,29 @@ public class ReductionHandler {
 
     }
 
+    /**
+     * Returns rho if exists, 0 otherwise
+     * @param name1
+     * @param name2
+     * @return tho
+     */
+    public double calculateAnalyticalRho(String name1, String name2){
+        double rho = 0.0;
+        
+        double cov = ((CovarianceMatrixModel) analyticalMiniRatioCovMatModel).//
+                getCovarianceCell( name1, name2 );
+        double var1 = ((CovarianceMatrixModel) analyticalMiniRatioCovMatModel).//
+                getCovarianceCell( name1, name1 );
+        double var2 = ((CovarianceMatrixModel) analyticalMiniRatioCovMatModel).//
+                getCovarianceCell( name2, name2 );
+
+        if ( (var1 * var2) > 0.0 ) {
+            rho = cov / Math.sqrt( var1 * var2 );
+        }
+        
+        return rho;
+    }
+    
     private void calculateConcordiaRho ( String r206_238Name, String r207_235Name ) {
 
         double cov = ((CovarianceMatrixModel) analyticalMiniRatioCovMatModel).//
@@ -663,31 +685,29 @@ public class ReductionHandler {
 
     }
 
-    /**
-     * Uses reflection to get method associated with a specific input name,
-     * which is a rowForSpecificDate or column name in a matrix.
-     *
-     * @param inputName
-     * @return
-     */
-    public Method retrieveMethodNameForInput ( String inputName ) {
-        Method meth = null;
-        String methodName = DataDictionary.MapOfInputsToMethodNames.get( inputName );
-        if ( methodName != null ) {
-            try {
-                Class<?> fractionClass =//
-                        Class.forName( UPbFraction.class.getCanonicalName() );
-
-                meth = fractionClass.getMethod(//
-                        methodName,
-                        new Class[]{String.class} );
-            } catch (ClassNotFoundException classNotFoundException) {
-            } catch (NoSuchMethodException noSuchMethodException) {
-            } catch (SecurityException securityException) {
-            }
-        }
-        return meth;
-    }
+//    /**
+//     * Uses reflection to get method associated with a specific input name,
+//     * which is a rowForSpecificDate or column name in a matrix.
+//     *
+//     * @param inputName
+//     * @return
+//     */
+//    public Method retrieveMethodNameForInput ( String inputName ) {
+//        Method meth = null;
+//        String methodName = DataDictionary.MapOfInputsToMethodNames.get( inputName );
+//        if ( methodName != null ) {
+//            try {
+//                Class<?> fractionClass =//
+//                        Class.forName( UPbFraction.class.getCanonicalName() );
+//
+//                meth = fractionClass.getMethod(//
+//                        methodName,
+//                        new Class[]{String.class} );
+//            } catch (ClassNotFoundException | NoSuchMethodException | SecurityException classNotFoundException) {
+//            }
+//        }
+//        return meth;
+//    }
 
     /**
      * Serves data to UncertaintyZoomLayer

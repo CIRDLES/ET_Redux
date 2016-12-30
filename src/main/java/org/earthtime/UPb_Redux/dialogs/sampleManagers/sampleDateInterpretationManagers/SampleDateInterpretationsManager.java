@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.Vector;
+import javax.swing.AbstractButton;
 import javax.swing.Icon;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JDialog;
@@ -68,10 +69,10 @@ import org.earthtime.UPb_Redux.dateInterpretation.SampleTreeI;
 import org.earthtime.UPb_Redux.dateInterpretation.WeightedMeanGraphPanel;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.AliquotDetailsDisplayInterface;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.ConcordiaGraphPanel;
+import org.earthtime.UPb_Redux.dateInterpretation.concordia.ConcordiaPlotDisplayInterface;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.GraphPanelModeChangeI;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.PlottingDetailsDisplayInterface;
 import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.DateInterpretationBoxPanel;
-import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetup;
 import org.earthtime.UPb_Redux.dialogs.aliquotManagers.AliquotOptionsDialog;
 import org.earthtime.UPb_Redux.dialogs.graphManagers.WeightedMeanOptionsDialog;
 import org.earthtime.UPb_Redux.dialogs.sampleManagers.heatMapManagers.HeatMapManager;
@@ -91,6 +92,9 @@ import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.fractions.ETFractionInterface;
+import org.earthtime.plots.PlotAxesSetupInterface;
+import org.earthtime.plots.PlotInterface;
+import org.earthtime.plots.anyTwo.PlotAny2Panel;
 import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.samples.SampleInterface;
 import org.earthtime.utilities.CollectionHelpers;
@@ -109,7 +113,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
     // Fields
     private JLayeredPane concordiaGraphPanel;
     private JPanel weightedMeanGraphPanel;
-//    private JFXPanel ConcordiaGraphPanelIsoplot;
+    private JLayeredPane plotAny2Panel;
     /**
      *
      */
@@ -132,6 +136,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
      * @param parent
      * @param modal
      * @param concordiaGraphPanel
+     * @param plotAny2Panel the value of plotAny2Panel
      * @param weightedMeanGraphPanel
      * @param normedProbabilityPanel
      * @param sample
@@ -139,10 +144,15 @@ public class SampleDateInterpretationsManager extends DialogEditor
      * @param dateTreeBySample
      */
     public SampleDateInterpretationsManager( //
-            SampleDateInterpretationSubscribeInterface parent, //
-            boolean modal, JLayeredPane concordiaGraphPanel, //
-            JPanel weightedMeanGraphPanel, //
-            JLayeredPane normedProbabilityPanel, SampleInterface sample, SampleTreeI dateTreeByAliquot, SampleTreeI dateTreeBySample) {
+            SampleDateInterpretationSubscribeInterface parent,
+            boolean modal,
+            JLayeredPane concordiaGraphPanel,
+            JLayeredPane plotAny2Panel,
+            JPanel weightedMeanGraphPanel,
+            JLayeredPane normedProbabilityPanel,
+            SampleInterface sample,
+            SampleTreeI dateTreeByAliquot,
+            SampleTreeI dateTreeBySample) {
 
         super(null, modal);
 
@@ -156,6 +166,9 @@ public class SampleDateInterpretationsManager extends DialogEditor
 
         this.concordiaGraphPanel = concordiaGraphPanel;
         initConcordiaGraphPanel();
+
+        this.plotAny2Panel = plotAny2Panel;
+        initPlotAny2Panel();
 
 ////         march 2014 temp exploration using isoplot
 //        this.ConcordiaGraphPanelIsoplot = myConcordiaGraphPanelIsoplot;
@@ -191,6 +204,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
 
         // fire off a refresh to get things started
         ((PlottingDetailsDisplayInterface) concordiaGraphPanel).refreshPanel(true, false);
+        ((PlottingDetailsDisplayInterface) plotAny2Panel).refreshPanel(true, false);
 
     }
 
@@ -229,6 +243,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         dateTreeBySample_ScrollPane.setViewportView((Component) dateTreeBySample);
 
         ((PlottingDetailsDisplayInterface) concordiaGraphPanel).resetPanel(doReScale, inLiveMode);
+        ((PlottingDetailsDisplayInterface) plotAny2Panel).resetPanel(doReScale, inLiveMode);
 
         try {
             // June 2010 ensures backward compatibility with previous versions that used dummy aliquot in this list
@@ -311,17 +326,62 @@ public class SampleDateInterpretationsManager extends DialogEditor
 
         // zoom buttons
         zoomInX2_button.addActionListener((ActionEvent arg0) -> {
-            ((ConcordiaGraphPanel) concordiaGraphPanel).performZoom(4.0);
-            ((ConcordiaGraphPanel) concordiaGraphPanel).getCurrentGraphAxesSetup().setUseAutomaticAxisTics(true);
+            ((PlottingDetailsDisplayInterface) concordiaGraphPanel).performZoom(4.0);
+            ((PlottingDetailsDisplayInterface) concordiaGraphPanel).getCurrentPlotAxesSetup().setUseAutomaticAxisTics(true);
             concordiaGraphPanel.repaint();
         });
 
         zoomOutX2_button.addActionListener((ActionEvent arg0) -> {
-            ((ConcordiaGraphPanel) concordiaGraphPanel).performZoom(-2.0);
-            ((ConcordiaGraphPanel) concordiaGraphPanel).getCurrentGraphAxesSetup().setUseAutomaticAxisTics(true);
+            ((PlottingDetailsDisplayInterface) concordiaGraphPanel).performZoom(-2.0);
+            ((PlottingDetailsDisplayInterface) concordiaGraphPanel).getCurrentPlotAxesSetup().setUseAutomaticAxisTics(true);
             concordiaGraphPanel.repaint();
         });
 
+    }
+
+    private void initPlotAny2Panel() {
+        ((PlotAny2Panel) plotAny2Panel).setGraphPanelModeChanger(this);
+
+        // set toolbar choices per options
+        Map<String, String> CGO = sample.getSampleDateInterpretationGUISettings().getConcordiaOptions();
+
+        if (CGO.containsKey("showEllipseCenters")) {
+            ellipseCenters_checkbox.setSelected(Boolean.valueOf(CGO.get("showEllipseCenters")));
+            ((ConcordiaGraphPanel) concordiaGraphPanel).setShowEllipseCenters(ellipseCenters_checkbox.isSelected());
+        }
+        if (CGO.containsKey("showEllipseLabels")) {
+            ellipseLabels_checkbox.setSelected(Boolean.valueOf(CGO.get("showEllipseLabels")));
+            ((ConcordiaGraphPanel) concordiaGraphPanel).setShowEllipseLabels(ellipseLabels_checkbox.isSelected());
+        }
+
+        if (CGO.containsKey("showExcludedEllipses")) {
+            showExcludedFractions_checkbox.setSelected(Boolean.valueOf(CGO.get("showExcludedEllipses")));
+            ((ConcordiaGraphPanel) concordiaGraphPanel).setShowExcludedEllipses(showExcludedFractions_checkbox.isSelected());
+        }
+
+        if (CGO.containsKey("showFilteredEllipses")) {
+            showFilteredFractions_checkbox.setSelected(Boolean.valueOf(CGO.get("showFilteredEllipses")));
+            ((AliquotDetailsDisplayInterface) concordiaGraphPanel).setShowFilteredEllipses(showFilteredFractions_checkbox.isSelected());
+        }
+
+        if (CGO.containsKey("useUncertaintyCrosses")) {
+            ((ConcordiaGraphPanel) concordiaGraphPanel).setUseUncertaintyCrosses(Boolean.valueOf(CGO.get("useUncertaintyCrosses")));
+        }
+
+        any2LayeredPane.add(plotAny2Panel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        // zoom buttons
+        zoomInAny2X2_button.addActionListener((ActionEvent arg0) -> {
+            ((PlottingDetailsDisplayInterface) plotAny2Panel).performZoom(4.0);
+            ((PlottingDetailsDisplayInterface) plotAny2Panel).getCurrentPlotAxesSetup().setUseAutomaticAxisTics(true);
+            plotAny2Panel.repaint();
+        });
+
+        zoomOutAny2X2_button.addActionListener((ActionEvent arg0) -> {
+            ((PlottingDetailsDisplayInterface) plotAny2Panel).performZoom(-2.0);
+            ((PlottingDetailsDisplayInterface) plotAny2Panel).getCurrentPlotAxesSetup().setUseAutomaticAxisTics(true);
+            plotAny2Panel.repaint();
+        });
     }
 
     /**
@@ -330,6 +390,8 @@ public class SampleDateInterpretationsManager extends DialogEditor
     @Override
     public void repaintActiveTab() {
         concordiaGraphPanel.repaint();
+
+        plotAny2Panel.repaint();//refreshPanel(true, false);
 
         weightedMeanGraphPanel.repaint();
     }
@@ -370,7 +432,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
                 @Override
                 public void actionPerformed(ActionEvent arg0) {
                     weightedMeanOptions.put("fractionSortOrder", arg0.getActionCommand());
-                    ((WeightedMeanGraphPanel) weightedMeanGraphPanel).repaint();
+                    weightedMeanGraphPanel.repaint();
                 }
             });
 
@@ -721,6 +783,9 @@ public class SampleDateInterpretationsManager extends DialogEditor
         ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
                 setFilteredFractions(filteredFractions);
 
+        ((AliquotDetailsDisplayInterface) plotAny2Panel).//
+                setFilteredFractions(filteredFractions);
+
         ((DateProbabilityDensityPanel) probabilityPanel).//
                 setSelectedFractions(filteredFractions);
 
@@ -774,7 +839,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
      * @param currentGraphAxesSetup
      */
     @Override
-    public void synchronizePanelSizes(GraphAxesSetup currentGraphAxesSetup) {
+    public void synchronizePanelSizes(PlotAxesSetupInterface currentGraphAxesSetup) {
 
         // may 2010 added here to handle opening of an imported .redux file now that we persist size
         int ww = concordiaLayeredPane.getWidth();
@@ -782,10 +847,13 @@ public class SampleDateInterpretationsManager extends DialogEditor
         currentGraphAxesSetup.setGraphWidth(ww - 25.0);
         currentGraphAxesSetup.setGraphHeight(hh - 50.0);
 
+        ((PlotAny2Panel) plotAny2Panel).setGraphWidth(ww - 25);
+        ((PlotAny2Panel) plotAny2Panel).setGraphHeight(hh - 50);
+
         ((WeightedMeanGraphPanel) weightedMeanGraphPanel).setGraphWidth(ww - 25);
         ((WeightedMeanGraphPanel) weightedMeanGraphPanel).setGraphHeight(hh - 50);
-        ((DateProbabilityDensityPanel) probabilityPanel).setGraphWidth(ww - 25);
 
+        ((DateProbabilityDensityPanel) probabilityPanel).setGraphWidth(ww - 25);
         ((DateProbabilityDensityPanel) probabilityPanel).setGraphHeight(hh - 65);
 
     }
@@ -793,7 +861,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
     /**
      *
      */
-    public void setupWeightedMeansPanelForAliquots() {
+    private void setupWeightedMeansPanelForAliquots() {
         // TODO refactor
         // set up weighted means panel ******************************************
         // extract selected models for use by weighted mean visualization
@@ -885,7 +953,8 @@ public class SampleDateInterpretationsManager extends DialogEditor
 
     // June 2010 new sections for additional tabs
     // any 2 ratios plot tab
-    private void selectAny2Axes() {
+    // Revisited for first time in Dec 2016 now that McLeanRegression Library is available
+    private void selectAny2Variables() {
         // here we leverage the work of reductionhandler and Kwiki clumps to generate list of
         // possible axes;  need to be sure to include all possible from selected fractions
         // as tracers may vary
@@ -893,32 +962,34 @@ public class SampleDateInterpretationsManager extends DialogEditor
         // strategy = complete plan to have reduction handler use matrixspecname instead of matrixspecs
         // then here call a method to build set of all names of matrix components across all fractions chosen
         ETFractionInterface firstFraction = sample.getFractions().get(0);
-        Vector<String> axesListing = new Vector<>();
+        Vector<String> variablesListing = new Vector<>();
 
         if (firstFraction instanceof UPbFraction) {
-            axesListing
-                    = //
-                    CollectionHelpers.vectorSortedUniqueMembers( //
+            variablesListing
+                    = CollectionHelpers.vectorSortedUniqueMembers( //
                             MatrixSpecifications.getMatrixSpecsByName(//
-                                    ((UPbFraction) sample.getFractions().get(0)).getReductionHandler().getMatrixSpecsName()));// "mixed_202_205_233_235_Zircon_NotFcU_FcPb" ));
+                                    ((UPbFraction) firstFraction).getReductionHandler().getMatrixSpecsName()));// "mixed_202_205_233_235_Zircon_NotFcU_FcPb" ));
             // remove lambdas
-            axesListing.remove(Lambdas.lambda230.getName());
-            axesListing.remove(Lambdas.lambda231.getName());
-            axesListing.remove(Lambdas.lambda232.getName());
-            axesListing.remove(Lambdas.lambda234.getName());
-            axesListing.remove(Lambdas.lambda235.getName());
-            axesListing.remove(Lambdas.lambda238.getName());
+            variablesListing.remove(Lambdas.lambda230.getName());
+            variablesListing.remove(Lambdas.lambda231.getName());
+            variablesListing.remove(Lambdas.lambda232.getName());
+            variablesListing.remove(Lambdas.lambda234.getName());
+            variablesListing.remove(Lambdas.lambda235.getName());
+            variablesListing.remove(Lambdas.lambda238.getName());
 
         } else {
-            axesListing.add("NONE AVAILABLE");
+            variablesListing.add("NONE AVAILABLE");
         }
 
         DialogEditor myDialog
-                = //
-                new SampleDateInterpretationAny2AxesChooser(null, true, axesListing);
-        myDialog.setSize(350, 500);
+                = new SampleDateInterpretationAny2VariablesChooser(null, true, (PlotAny2Panel) plotAny2Panel, variablesListing);
+        myDialog.setSize(555, 460);
         JDialog.setDefaultLookAndFeelDecorated(true);
         myDialog.setVisible(true);
+
+        ((PlotAny2Panel) plotAny2Panel).fitMcLeanRegression();
+        ((PlottingDetailsDisplayInterface) plotAny2Panel).setShowTightToEdges(false);
+        ((PlottingDetailsDisplayInterface) plotAny2Panel).resetPanel(true, false);
     }
 
     /**
@@ -994,14 +1065,15 @@ public class SampleDateInterpretationsManager extends DialogEditor
         fractionOrderByDate_radioButton = new javax.swing.JRadioButton();
         any2LayeredPane = new javax.swing.JLayeredPane();
         any2ToolPanel = new javax.swing.JPanel();
-        zoomInAny2X2_button = new javax.swing.JButton();
-        zoomOutAny2X2_button = new javax.swing.JButton();
-        resetGraphAny2Display_button = new javax.swing.JButton();
+        zoomInAny2X2_button =  new ET_JButton();
+        zoomOutAny2X2_button =  new ET_JButton();
+        resetGraphAny2Display_button =  new ET_JButton();
         ellipseCentersAny2OnToggle_checkbox = new javax.swing.JCheckBox();
         ellipseLabelsAny2OnToggle_checkbox = new javax.swing.JCheckBox();
-        panAny2_toggleButton = new javax.swing.JToggleButton();
-        zoomBoxAny2_toggleButton = new javax.swing.JToggleButton();
-        selectAny2Axes_toggleButton = new javax.swing.JToggleButton();
+        panAny2_toggleButton =  new ET_JToggleButton();
+        zoomBoxAny2_toggleButton =  new ET_JToggleButton();
+        showTightAny2_toggleButton =  new ET_JToggleButton();
+        selectAny2_button =  new ET_JButton();
         any3LayeredPane = new javax.swing.JLayeredPane();
         normedProbabilityLayeredPane = new javax.swing.JLayeredPane();
         probabilityToolPanel = new javax.swing.JPanel();
@@ -1074,6 +1146,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
 
         graphPanels_TabbedPane.setTabPlacement(javax.swing.JTabbedPane.BOTTOM);
         graphPanels_TabbedPane.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
+        graphPanels_TabbedPane.setOpaque(true);
         graphPanels_TabbedPane.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 graphViewTabChanged(evt);
@@ -1104,11 +1177,6 @@ public class SampleDateInterpretationsManager extends DialogEditor
         zoomInX2_button.setMargin(new java.awt.Insets(0, 0, 0, 0));
         zoomInX2_button.setOpaque(true);
         zoomInX2_button.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        zoomInX2_button.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                zoomInX2_buttonActionPerformed(evt);
-            }
-        });
         concordiaToolPanel.add(zoomInX2_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 2, 30, 30));
 
         zoomOutX2_button.setBackground(new java.awt.Color(255, 255, 255));
@@ -1419,33 +1487,48 @@ public class SampleDateInterpretationsManager extends DialogEditor
 
         graphPanels_TabbedPane.addTab("Weighted Mean", weightedMeanLayeredPane);
 
+        any2LayeredPane.setOpaque(true);
+
         any2ToolPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         any2ToolPanel.setOpaque(false);
+        any2ToolPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        zoomInAny2X2_button.setBackground(new java.awt.Color(255, 255, 255));
         zoomInAny2X2_button.setFont(new java.awt.Font("Braggadocio", 1, 24)); // NOI18N
         zoomInAny2X2_button.setText("+");
         zoomInAny2X2_button.setAlignmentY(0.0F);
+        zoomInAny2X2_button.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         zoomInAny2X2_button.setFocusable(false);
         zoomInAny2X2_button.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         zoomInAny2X2_button.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        zoomInAny2X2_button.setOpaque(true);
         zoomInAny2X2_button.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         zoomInAny2X2_button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 zoomInAny2X2_buttonActionPerformed(evt);
             }
         });
+        any2ToolPanel.add(zoomInAny2X2_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 2, 30, 30));
 
+        zoomOutAny2X2_button.setBackground(new java.awt.Color(255, 255, 255));
         zoomOutAny2X2_button.setFont(new java.awt.Font("Braggadocio", 1, 24)); // NOI18N
         zoomOutAny2X2_button.setText("-");
+        zoomOutAny2X2_button.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        zoomOutAny2X2_button.setOpaque(true);
+        any2ToolPanel.add(zoomOutAny2X2_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 2, 30, 30));
 
-        resetGraphAny2Display_button.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
+        resetGraphAny2Display_button.setBackground(new java.awt.Color(255, 255, 255));
+        resetGraphAny2Display_button.setFont(new java.awt.Font("SansSerif", 1, 9)); // NOI18N
         resetGraphAny2Display_button.setText("Reset");
+        resetGraphAny2Display_button.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         resetGraphAny2Display_button.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        resetGraphAny2Display_button.setOpaque(true);
         resetGraphAny2Display_button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 resetGraphAny2Display_buttonActionPerformed(evt);
             }
         });
+        any2ToolPanel.add(resetGraphAny2Display_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 2, 35, 30));
 
         ellipseCentersAny2OnToggle_checkbox.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         ellipseCentersAny2OnToggle_checkbox.setSelected(true);
@@ -1455,6 +1538,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
                 ellipseCentersAny2OnToggle_checkboxActionPerformed(evt);
             }
         });
+        any2ToolPanel.add(ellipseCentersAny2OnToggle_checkbox, new org.netbeans.lib.awtextra.AbsoluteConstraints(556, 6, -1, -1));
 
         ellipseLabelsAny2OnToggle_checkbox.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         ellipseLabelsAny2OnToggle_checkbox.setSelected(true);
@@ -1464,76 +1548,71 @@ public class SampleDateInterpretationsManager extends DialogEditor
                 ellipseLabelsAny2OnToggle_checkboxActionPerformed(evt);
             }
         });
+        any2ToolPanel.add(ellipseLabelsAny2OnToggle_checkbox, new org.netbeans.lib.awtextra.AbsoluteConstraints(685, 6, -1, -1));
 
+        panAny2_toggleButton.setBackground(new java.awt.Color(255, 255, 255));
         concordiaPanZoom_buttonGroup.add(panAny2_toggleButton);
-        panAny2_toggleButton.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
+        panAny2_toggleButton.setFont(new java.awt.Font("SansSerif", 1, 9)); // NOI18N
         panAny2_toggleButton.setText("Pan");
+        panAny2_toggleButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         panAny2_toggleButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
         panAny2_toggleButton.setName("PAN"); // NOI18N
+        panAny2_toggleButton.setOpaque(true);
         panAny2_toggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 panAny2_toggleButtonActionPerformed(evt);
             }
         });
+        any2ToolPanel.add(panAny2_toggleButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(95, 2, 30, 30));
 
+        zoomBoxAny2_toggleButton.setBackground(new java.awt.Color(255, 255, 255));
         concordiaPanZoom_buttonGroup.add(zoomBoxAny2_toggleButton);
-        zoomBoxAny2_toggleButton.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
-        zoomBoxAny2_toggleButton.setText("Z-Box");
+        zoomBoxAny2_toggleButton.setFont(new java.awt.Font("SansSerif", 1, 9)); // NOI18N
+        zoomBoxAny2_toggleButton.setText("Zoom-Box");
+        zoomBoxAny2_toggleButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         zoomBoxAny2_toggleButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
         zoomBoxAny2_toggleButton.setName("ZOOM"); // NOI18N
+        zoomBoxAny2_toggleButton.setOpaque(true);
         zoomBoxAny2_toggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 zoomBoxAny2_toggleButtonActionPerformed(evt);
             }
         });
+        any2ToolPanel.add(zoomBoxAny2_toggleButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(125, 2, 55, 30));
 
-        concordiaPanZoom_buttonGroup.add(selectAny2Axes_toggleButton);
-        selectAny2Axes_toggleButton.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
-        selectAny2Axes_toggleButton.setText("Select Any 2 Axes");
-        selectAny2Axes_toggleButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        selectAny2Axes_toggleButton.setName("ZOOM"); // NOI18N
-        selectAny2Axes_toggleButton.addActionListener(new java.awt.event.ActionListener() {
+        showTightAny2_toggleButton.setBackground(new java.awt.Color(255, 255, 255));
+        concordiaPanZoom_buttonGroup.add(showTightAny2_toggleButton);
+        showTightAny2_toggleButton.setFont(new java.awt.Font("SansSerif", 1, 9)); // NOI18N
+        showTightAny2_toggleButton.setText("Tight");
+        showTightAny2_toggleButton.setToolTipText("Zooms in until ellipses touch borders.");
+        showTightAny2_toggleButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        showTightAny2_toggleButton.setContentAreaFilled(false);
+        showTightAny2_toggleButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        showTightAny2_toggleButton.setName("TIGHT"); // NOI18N
+        showTightAny2_toggleButton.setOpaque(true);
+        showTightAny2_toggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                selectAny2Axes_toggleButtonActionPerformed(evt);
+                showTightAny2_toggleButtonActionPerformed(evt);
             }
         });
+        any2ToolPanel.add(showTightAny2_toggleButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 2, 30, 30));
 
-        org.jdesktop.layout.GroupLayout any2ToolPanelLayout = new org.jdesktop.layout.GroupLayout(any2ToolPanel);
-        any2ToolPanel.setLayout(any2ToolPanelLayout);
-        any2ToolPanelLayout.setHorizontalGroup(
-            any2ToolPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(any2ToolPanelLayout.createSequentialGroup()
-                .add(zoomInAny2X2_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 57, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(zoomOutAny2X2_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 57, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(resetGraphAny2Display_button)
-                .add(2, 2, 2)
-                .add(panAny2_toggleButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 70, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(zoomBoxAny2_toggleButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 79, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(selectAny2Axes_toggleButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 154, Short.MAX_VALUE)
-                .add(18, 18, 18)
-                .add(ellipseCentersAny2OnToggle_checkbox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 117, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(ellipseLabelsAny2OnToggle_checkbox)
-                .add(34, 34, 34))
-        );
-        any2ToolPanelLayout.setVerticalGroup(
-            any2ToolPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(any2ToolPanelLayout.createSequentialGroup()
-                .add(any2ToolPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
-                    .add(zoomInAny2X2_button)
-                    .add(zoomOutAny2X2_button)
-                    .add(resetGraphAny2Display_button)
-                    .add(panAny2_toggleButton)
-                    .add(zoomBoxAny2_toggleButton)
-                    .add(ellipseCentersAny2OnToggle_checkbox)
-                    .add(ellipseLabelsAny2OnToggle_checkbox)
-                    .add(selectAny2Axes_toggleButton))
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        selectAny2_button.setBackground(new java.awt.Color(255, 255, 255));
+        selectAny2_button.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
+        selectAny2_button.setText("Select Any 2 Variables");
+        selectAny2_button.setAlignmentY(0.0F);
+        selectAny2_button.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        selectAny2_button.setFocusable(false);
+        selectAny2_button.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        selectAny2_button.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        selectAny2_button.setOpaque(true);
+        selectAny2_button.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        selectAny2_button.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAny2_buttonActionPerformed(evt);
+            }
+        });
+        any2ToolPanel.add(selectAny2_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 2, 150, 30));
 
         any2LayeredPane.add(any2ToolPanel);
         any2ToolPanel.setBounds(0, 605, 790, 36);
@@ -1987,7 +2066,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
     }// </editor-fold>//GEN-END:initComponents
 
     private void resetGraphDisplay_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetGraphDisplay_buttonActionPerformed
-        ((ConcordiaGraphPanel) concordiaGraphPanel).setShowTightToEdges(false);
+        ((PlottingDetailsDisplayInterface) concordiaGraphPanel).setShowTightToEdges(false);
         ((PlottingDetailsDisplayInterface) concordiaGraphPanel).resetPanel(true, false);
 }//GEN-LAST:event_resetGraphDisplay_buttonActionPerformed
     private void writeConcordiaPDF_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_writeConcordiaPDF_buttonActionPerformed
@@ -2003,7 +2082,7 @@ private void ellipseCenters_checkboxActionPerformed(java.awt.event.ActionEvent e
     ((ConcordiaGraphPanel) concordiaGraphPanel).setShowEllipseCenters(!state);
     ellipseCenters_checkbox.setSelected(!state);
 
-    ((AliquotDetailsDisplayInterface) concordiaGraphPanel).getConcordiaOptions()//
+    ((ConcordiaPlotDisplayInterface) concordiaGraphPanel).getConcordiaOptions()//
             .put("showEllipseCenters", Boolean.toString(!state));
 
     concordiaGraphPanel.repaint();
@@ -2013,7 +2092,7 @@ private void ellipseLabels_checkboxActionPerformed(java.awt.event.ActionEvent ev
     ((ConcordiaGraphPanel) concordiaGraphPanel).setShowEllipseLabels(!((ConcordiaGraphPanel) concordiaGraphPanel).isShowEllipseLabels());
     ellipseLabels_checkbox.setSelected(((ConcordiaGraphPanel) concordiaGraphPanel).isShowEllipseLabels());
 
-    ((AliquotDetailsDisplayInterface) concordiaGraphPanel).getConcordiaOptions()//
+    ((ConcordiaPlotDisplayInterface) concordiaGraphPanel).getConcordiaOptions()//
             .put("showEllipseLabels", Boolean.toString(((ConcordiaGraphPanel) concordiaGraphPanel).isShowEllipseLabels()));
 
     concordiaGraphPanel.repaint();
@@ -2023,7 +2102,7 @@ private void concordiaErrors_checkboxActionPerformed(java.awt.event.ActionEvent 
     ((ConcordiaGraphPanel) concordiaGraphPanel).setShowConcordiaErrorBars(!((ConcordiaGraphPanel) concordiaGraphPanel).isShowConcordiaErrorBars());
     concordiaErrors_checkbox.setSelected(((ConcordiaGraphPanel) concordiaGraphPanel).isShowConcordiaErrorBars());
 
-    ((AliquotDetailsDisplayInterface) concordiaGraphPanel).getConcordiaOptions()//
+    ((ConcordiaPlotDisplayInterface) concordiaGraphPanel).getConcordiaOptions()//
             .put("showConcordiaErrors", Boolean.toString(((ConcordiaGraphPanel) concordiaGraphPanel).isShowConcordiaErrorBars()));
 
     concordiaGraphPanel.repaint();
@@ -2033,7 +2112,14 @@ private void close_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
 }//GEN-LAST:event_close_buttonActionPerformed
 
 private void sampleConcordiaOptions_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sampleConcordiaOptions_menuItemActionPerformed
-    ((AliquotDetailsDisplayInterface) concordiaGraphPanel).showConcordiaDisplayOptionsDialog();
+
+    // if (graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab("Concordia")) {
+    ((ConcordiaPlotDisplayInterface) concordiaGraphPanel).showConcordiaDisplayOptionsDialog();
+    // } else if (graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab("Any 2")) {
+    //     ((ConcordiaPlotDisplayInterface) plotAny2Panel).showConcordiaDisplayOptionsDialog();
+    // }
+
+
 }//GEN-LAST:event_sampleConcordiaOptions_menuItemActionPerformed
 private void concordiaOptions_menuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_concordiaOptions_menuMouseClicked
     buildAliquotOptionsMenu();
@@ -2076,8 +2162,8 @@ private void graphPanelsTabbedPaneResized(java.awt.event.ComponentEvent evt) {//
     int ww = concordiaLayeredPane.getWidth();
     int hh = concordiaLayeredPane.getHeight();
 
-    ((ConcordiaGraphPanel) concordiaGraphPanel).setGraphWidth((double) ww - 25.0);
-    ((ConcordiaGraphPanel) concordiaGraphPanel).setGraphHeight((double) hh - 50.0);
+    ((ConcordiaGraphPanel) concordiaGraphPanel).setGraphWidth(ww - 25.0);
+    ((ConcordiaGraphPanel) concordiaGraphPanel).setGraphHeight(hh - 50.0);
 
     int widthCP = (int) ((ConcordiaGraphPanel) concordiaGraphPanel).getGraphWidth();
     int heightCP = (int) ((ConcordiaGraphPanel) concordiaGraphPanel).getGraphHeight();
@@ -2089,7 +2175,18 @@ private void graphPanelsTabbedPaneResized(java.awt.event.ComponentEvent evt) {//
     concordiaToolPanel.setBounds(
             1, heightCP + 16, widthCP + leftMarginCP, 35);
 
-    ((ConcordiaGraphPanel) concordiaGraphPanel).repaint();
+    concordiaGraphPanel.repaint();
+
+    ((PlotAny2Panel) plotAny2Panel).setGraphWidth(widthCP);
+    ((PlotAny2Panel) plotAny2Panel).setGraphHeight(heightCP);
+
+    plotAny2Panel.setBounds(
+            1, 1, widthCP + leftMarginCP, heightCP + 16);
+
+    any2ToolPanel.setBounds(
+            1, heightCP + 16, widthCP + leftMarginCP, 35);
+
+    ((PlottingDetailsDisplayInterface) plotAny2Panel).refreshPanel(true, false);
 
     ((WeightedMeanGraphPanel) weightedMeanGraphPanel).setGraphWidth(ww - 25);
 
@@ -2104,9 +2201,6 @@ private void graphPanelsTabbedPaneResized(java.awt.event.ComponentEvent evt) {//
     ((PlottingDetailsDisplayInterface) weightedMeanGraphPanel).refreshPanel(true, false);
 
     // june 2010 expansion to include additional panels
-    any2ToolPanel.setBounds(
-            1, heightCP + 16, widthCP + leftMarginCP, 35);
-
     ((DateProbabilityDensityPanel) probabilityPanel).setGraphWidth(ww - 25);
 
     ((DateProbabilityDensityPanel) probabilityPanel).setGraphHeight(hh - 85);
@@ -2119,12 +2213,9 @@ private void graphPanelsTabbedPaneResized(java.awt.event.ComponentEvent evt) {//
 
 
 }//GEN-LAST:event_graphPanelsTabbedPaneResized
-private void zoomInX2_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zoomInX2_buttonActionPerformed
-    // TODO add your handling code here:
-}//GEN-LAST:event_zoomInX2_buttonActionPerformed
 
 private void concordiaFlavor_radioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_concordiaFlavor_radioButtonActionPerformed
-    ((AliquotDetailsDisplayInterface) concordiaGraphPanel).getConcordiaOptions().//
+    ((ConcordiaPlotDisplayInterface) concordiaGraphPanel).getConcordiaOptions().//
             put("concordiaFlavor", "C");
 
     ((ConcordiaGraphPanel) concordiaGraphPanel).setConcordiaFlavor("C");
@@ -2132,7 +2223,7 @@ private void concordiaFlavor_radioButtonActionPerformed(java.awt.event.ActionEve
     ((PlottingDetailsDisplayInterface) concordiaGraphPanel).refreshPanel(true, false);
 }//GEN-LAST:event_concordiaFlavor_radioButtonActionPerformed
 private void terraWasserburgFlavor_radioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_terraWasserburgFlavor_radioButtonActionPerformed
-    ((AliquotDetailsDisplayInterface) concordiaGraphPanel).getConcordiaOptions().//
+    ((ConcordiaPlotDisplayInterface) concordiaGraphPanel).getConcordiaOptions().//
             put("concordiaFlavor", "T-W");
 
     ((ConcordiaGraphPanel) concordiaGraphPanel).setConcordiaFlavor("T-W");
@@ -2158,6 +2249,8 @@ private void dateTrees_tabsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FI
 
     concordiaGraphPanel.repaint();
 
+    plotAny2Panel.repaint();
+
     weightedMeanGraphPanel.repaint();
 
     probabilityPanel.repaint();
@@ -2180,28 +2273,39 @@ private void zoomInAny2X2_buttonActionPerformed (java.awt.event.ActionEvent evt)
 }//GEN-LAST:event_zoomInAny2X2_buttonActionPerformed
 
 private void resetGraphAny2Display_buttonActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetGraphAny2Display_buttonActionPerformed
-    // TODO add your handling code here:
+    ((PlottingDetailsDisplayInterface) plotAny2Panel).setShowTightToEdges(false);
+    ((PlottingDetailsDisplayInterface) plotAny2Panel).resetPanel(true, false);
 }//GEN-LAST:event_resetGraphAny2Display_buttonActionPerformed
 
 private void ellipseCentersAny2OnToggle_checkboxActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ellipseCentersAny2OnToggle_checkboxActionPerformed
-    // TODO add your handling code here:
+    boolean state = ((PlotAny2Panel) plotAny2Panel).isShowEllipseCenters();
+    ((PlotAny2Panel) plotAny2Panel).setShowEllipseCenters(!state);
+    ellipseCentersAny2OnToggle_checkbox.setSelected(!state);
+
+    ((ConcordiaPlotDisplayInterface) plotAny2Panel).getConcordiaOptions()//
+            .put("showEllipseCenters", Boolean.toString(!state));
+
+    plotAny2Panel.repaint();
 }//GEN-LAST:event_ellipseCentersAny2OnToggle_checkboxActionPerformed
 
 private void ellipseLabelsAny2OnToggle_checkboxActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ellipseLabelsAny2OnToggle_checkboxActionPerformed
-    // TODO add your handling code here:
+    ((PlotAny2Panel) plotAny2Panel).setShowEllipseLabels(!((PlotAny2Panel) plotAny2Panel).isShowEllipseLabels());
+    ellipseLabelsAny2OnToggle_checkbox.setSelected(((PlotAny2Panel) plotAny2Panel).isShowEllipseLabels());
+
+    ((ConcordiaPlotDisplayInterface) plotAny2Panel).getConcordiaOptions()//
+            .put("showEllipseLabels", Boolean.toString(((PlotAny2Panel) plotAny2Panel).isShowEllipseLabels()));
+
+    plotAny2Panel.repaint();
 }//GEN-LAST:event_ellipseLabelsAny2OnToggle_checkboxActionPerformed
 
 private void panAny2_toggleButtonActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_panAny2_toggleButtonActionPerformed
-    // TODO add your handling code here:
+    ((PlotAny2Panel) plotAny2Panel).setImageMode(panAny2_toggleButton.getName());
 }//GEN-LAST:event_panAny2_toggleButtonActionPerformed
 
 private void zoomBoxAny2_toggleButtonActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zoomBoxAny2_toggleButtonActionPerformed
-    // TODO add your handling code here:
+    ((PlotAny2Panel) plotAny2Panel).setImageMode(zoomBoxAny2_toggleButton.getName());
 }//GEN-LAST:event_zoomBoxAny2_toggleButtonActionPerformed
 
-private void selectAny2Axes_toggleButtonActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectAny2Axes_toggleButtonActionPerformed
-    selectAny2Axes();
-}//GEN-LAST:event_selectAny2Axes_toggleButtonActionPerformed
 private void graphViewTabChanged (java.awt.event.MouseEvent evt) {//GEN-FIRST:event_graphViewTabChanged
     if (graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab("Probability")) {
         if (((DateProbabilityDensityPanel) probabilityPanel).getSelectedFractions().isEmpty()) {
@@ -2322,7 +2426,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
 }//GEN-LAST:event_lockUnlockHistogramBinsMouseEntered
 
     private void showTight_toggleButtonActionPerformed ( java.awt.event.ActionEvent evt ) {//GEN-FIRST:event_showTight_toggleButtonActionPerformed
-        ((ConcordiaGraphPanel) concordiaGraphPanel).setShowTightToEdges(true);
+        ((PlottingDetailsDisplayInterface) concordiaGraphPanel).setShowTightToEdges(true);
         ((PlottingDetailsDisplayInterface) concordiaGraphPanel).resetPanel(true, false);
     }//GEN-LAST:event_showTight_toggleButtonActionPerformed
 
@@ -2334,7 +2438,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
         ((ConcordiaGraphPanel) concordiaGraphPanel).setShowExcludedEllipses(!((ConcordiaGraphPanel) concordiaGraphPanel).isShowExcludedEllipses());
         showExcludedFractions_checkbox.setSelected(((ConcordiaGraphPanel) concordiaGraphPanel).isShowExcludedEllipses());
 
-        ((AliquotDetailsDisplayInterface) concordiaGraphPanel).getConcordiaOptions()//
+        ((ConcordiaPlotDisplayInterface) concordiaGraphPanel).getConcordiaOptions()//
                 .put("showExcludedEllipses", Boolean.toString(((ConcordiaGraphPanel) concordiaGraphPanel).isShowExcludedEllipses()));
 
         concordiaGraphPanel.repaint();
@@ -2358,14 +2462,14 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
         ((AliquotDetailsDisplayInterface) concordiaGraphPanel).setShowFilteredEllipses(!state);
         showFilteredFractions_checkbox.setSelected(!state);
 
-        ((AliquotDetailsDisplayInterface) concordiaGraphPanel).getConcordiaOptions()//
+        ((ConcordiaPlotDisplayInterface) concordiaGraphPanel).getConcordiaOptions()//
                 .put("showFilteredEllipses", Boolean.toString(!state));
 
         concordiaGraphPanel.repaint();
     }//GEN-LAST:event_showFilteredFractions_checkboxActionPerformed
 
     private void thoriumConcordiaFlavor_radioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_thoriumConcordiaFlavor_radioButtonActionPerformed
-        ((AliquotDetailsDisplayInterface) concordiaGraphPanel).getConcordiaOptions().//
+        ((ConcordiaPlotDisplayInterface) concordiaGraphPanel).getConcordiaOptions().//
                 put("concordiaFlavor", "Th");
 
         ((ConcordiaGraphPanel) concordiaGraphPanel).setConcordiaFlavor("Th");
@@ -2442,6 +2546,19 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
 
     }//GEN-LAST:event_defaultFilters_buttonActionPerformed
 
+    private void showTightAny2_toggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showTightAny2_toggleButtonActionPerformed
+        ((PlottingDetailsDisplayInterface) plotAny2Panel).setShowTightToEdges(true);
+        ((PlottingDetailsDisplayInterface) plotAny2Panel).resetPanel(true, false);
+    }//GEN-LAST:event_showTightAny2_toggleButtonActionPerformed
+
+    private void selectAny2_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectAny2_buttonActionPerformed
+        try {
+            selectAny2Variables();
+        } catch (Exception e) {
+            System.out.println("HELP");
+        }
+    }//GEN-LAST:event_selectAny2_buttonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JRadioButton DatePbCorrSchemeA_radio;
     private javax.swing.JRadioButton ageBest_radio;
@@ -2506,10 +2623,11 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
     private javax.swing.JButton restoreGraphDisplay_WeightedMean_button;
     private javax.swing.JMenuBar sampleAgeGUIMenuBar;
     private javax.swing.JMenuItem sampleConcordiaOptions_menuItem;
-    private javax.swing.JToggleButton selectAny2Axes_toggleButton;
+    private javax.swing.JButton selectAny2_button;
     private javax.swing.JCheckBox showExcludedFractions_checkbox;
     private javax.swing.JCheckBox showFilteredFractions_checkbox;
     private javax.swing.JButton showHistogram_button;
+    private javax.swing.JToggleButton showTightAny2_toggleButton;
     private javax.swing.JButton showTightGraphProbability_button;
     private javax.swing.JToggleButton showTight_toggleButton;
     private javax.swing.JCheckBoxMenuItem sortFractionsDateAsc_menuItemCheckBox;
@@ -2565,7 +2683,8 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
 
         if (nodeInfo instanceof SampleInterface) {
 
-            if (graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab("Concordia")) {
+            if ((graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab("Concordia"))
+                    || (graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab("Any 2"))) {
 
                 ((ConcordiaGraphPanel) concordiaGraphPanel).//
                         setYorkFitLine(null);
@@ -2581,13 +2700,16 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                 // may 2014 show best date line
                 ((ConcordiaGraphPanel) concordiaGraphPanel).setShowingSingleAliquot(false);
 
-//            } else if (graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab("Isoplot")) {
-//
-//                // march 2014 isoplot experiment
-//                ((AliquotDetailsDisplayInterface) ConcordiaGraphPanelIsoplot).//
-//                        setSelectedFractions(sample.getFractions());
-//                ((AliquotDetailsDisplayInterface) ConcordiaGraphPanelIsoplot).//
-//                        refreshPanel();
+//            } else if (graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab("Any 2")) {
+                // dec 2016 plot any 2 experiment
+                ((AliquotDetailsDisplayInterface) plotAny2Panel).//
+                        setSelectedFractions(sample.getFractions());
+                plotAny2Panel.repaint();//.refreshPanel(true, false);
+
+                // zap deselected list as it is meaningless at level of aliquot or sample
+                ((AliquotDetailsDisplayInterface) plotAny2Panel).//
+                        getDeSelectedFractions().clear();
+
             } else {
 
                 ((DateProbabilityDensityPanel) probabilityPanel).//
@@ -2608,7 +2730,6 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                     setYorkFitLine(null);
             ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
                     setSelectedFractions(((ReduxAliquotInterface) nodeInfo).getAliquotFractions());
-            concordiaGraphPanel.repaint();
 
             // zap deselected list as it is meaningless at level of aliquot or sample
             ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
@@ -2617,13 +2738,19 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
 
             // may 2014 show best date line
             ((ConcordiaGraphPanel) concordiaGraphPanel).setShowingSingleAliquot(true);
-            ((ConcordiaGraphPanel) concordiaGraphPanel).determineCurrentAliquot();
+            ((PlotInterface) concordiaGraphPanel).determineCurrentAliquot();
 
-////////            // march 2014 isoplot experiment
-////////            ((AliquotDetailsDisplayInterface) ConcordiaGraphPanelIsoplot).//
-////////                    setSelectedFractions(((UPbReduxAliquot) nodeInfo).getAliquotFractions());
-////////            ((AliquotDetailsDisplayInterface) ConcordiaGraphPanelIsoplot).//
-////////                    refreshPanel();
+            concordiaGraphPanel.repaint();
+
+            // dec 2016 plot any 2 experiment
+            ((AliquotDetailsDisplayInterface) plotAny2Panel).//
+                    setSelectedFractions(((ReduxAliquotInterface) nodeInfo).getAliquotFractions());
+            // zap deselected list as it is meaningless at level of aliquot or sample
+            ((AliquotDetailsDisplayInterface) plotAny2Panel).//
+                    getDeSelectedFractions().clear();
+
+            plotAny2Panel.repaint();
+
             // update weighted means in case of delete or (oct 2010) add
             weightedMeanOptions = sample.getSampleDateInterpretationGUISettings().getWeightedMeanOptions();
             ((WeightedMeanGraphPanel) weightedMeanGraphPanel).setWeightedMeanOptions(weightedMeanOptions);
@@ -2648,7 +2775,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
             if (graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab("Concordia")) {
 
                 // in case user skipped over choosing aliquot
-                ((ConcordiaGraphPanel) concordiaGraphPanel).determineCurrentAliquot();
+                ((PlotInterface) concordiaGraphPanel).determineCurrentAliquot();
 
                 // check for special case interpretations: lower and upper intercepts
                 ((ConcordiaGraphPanel) concordiaGraphPanel).//
@@ -2657,27 +2784,35 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                         setSelectedFractions(((ReduxAliquotInterface) aliquotNodeInfo).//
                                 getAliquotSampleDateModelSelectedFractions(((SampleDateModel) nodeInfo).//
                                         getIncludedFractionIDsVector()));
-                ((ConcordiaGraphPanel) concordiaGraphPanel).//
+                ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
                         setDeSelectedFractions(((ReduxAliquotInterface) aliquotNodeInfo).//
                                 getAliquotSampleDateModelDeSelectedFractions(((SampleDateModel) nodeInfo).//
                                         getIncludedFractionIDsVector()));
 
                 // for sample date interpretation, display date title box
                 DateInterpretationBoxPanel dateInterpretationBoxPanel
-                        = //
-                        new DateInterpretationBoxPanel(((ValueModel) nodeInfo));
+                        = new DateInterpretationBoxPanel(((ValueModel) nodeInfo));
 
                 ((ConcordiaGraphPanel) concordiaGraphPanel).//
                         setPreferredDatePanel(dateInterpretationBoxPanel);
 
                 concordiaGraphPanel.repaint();
+            } else if (graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab("Any 2")) {
+                // dec 2016
+                // in case user skipped over choosing aliquot
+                ((PlotInterface) plotAny2Panel).determineCurrentAliquot();
 
-////////                // march 2014 for isoplot
-////////                ((AliquotDetailsDisplayInterface) ConcordiaGraphPanelIsoplot).//
-////////                        setSelectedFractions(((UPbReduxAliquot) aliquotNodeInfo).//
-////////                                getAliquotSampleDateModelSelectedFractions(((SampleDateModel) nodeInfo).//
-////////                                        getIncludedFractionIDsVector()));
-////////                ((AliquotDetailsDisplayInterface) ConcordiaGraphPanelIsoplot).refreshPanel();
+                ((AliquotDetailsDisplayInterface) plotAny2Panel).//
+                        setSelectedFractions(((ReduxAliquotInterface) aliquotNodeInfo).//
+                                getAliquotSampleDateModelSelectedFractions(((SampleDateModel) nodeInfo).//
+                                        getIncludedFractionIDsVector()));
+                ((AliquotDetailsDisplayInterface) plotAny2Panel).//
+                        setDeSelectedFractions(((ReduxAliquotInterface) aliquotNodeInfo).//
+                                getAliquotSampleDateModelDeSelectedFractions(((SampleDateModel) nodeInfo).//
+                                        getIncludedFractionIDsVector()));
+//                ((PlottingDetailsDisplayInterface) plotAny2Panel).refreshPanel(true, false);
+                plotAny2Panel.repaint();
+
             } else if (graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab("Weighted Mean")) {
                 weightedMeanGraphPanel.repaint();
 
@@ -2689,8 +2824,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                 // july 2010 refine this so that included fractions are filtered on the fly
                 // TODO: implement detrital sample date models that will actually have these removed from model based on filter
                 Vector<ETFractionInterface> tempDeselected
-                        = //
-                        ((ReduxAliquotInterface) aliquotNodeInfo).//
+                        = ((ReduxAliquotInterface) aliquotNodeInfo).//
                                 getAliquotSampleDateModelDeSelectedFractions(((SampleDateModel) nodeInfo).//
                                         getIncludedFractionIDsVector());
                 ((DateProbabilityDensityPanel) probabilityPanel).//
@@ -2727,7 +2861,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                                     getAliquotSampleDateModelSelectedFractions(((SampleDateModel) sampleDateNodeInfo).//
                                             getIncludedFractionIDsVector()));
 
-                    ((ConcordiaGraphPanel) concordiaGraphPanel).//
+                    ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
                             setDeSelectedFractions(((ReduxAliquotInterface) aliquotNodeInfo).//
                                     getAliquotSampleDateModelDeSelectedFractions(((SampleDateModel) sampleDateNodeInfo).//
                                             getIncludedFractionIDsVector()));
@@ -2741,12 +2875,16 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                             setPreferredDatePanel(dateInterpretationBoxPanel);
 
                     concordiaGraphPanel.repaint();
-//                } else if (graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab("Isoplot")) {
-//                    ((AliquotDetailsDisplayInterface) ConcordiaGraphPanelIsoplot).//
-//                            setSelectedFractions(((UPbReduxAliquot) aliquotNodeInfo).//
-//                                    getAliquotSampleDateModelSelectedFractions(((SampleDateModel) sampleDateNodeInfo).//
-//                                            getIncludedFractionIDsVector()));
-//                    ((AliquotDetailsDisplayInterface) ConcordiaGraphPanelIsoplot).refreshPanel();
+                } else if (graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab("Any 2")) {
+                    ((AliquotDetailsDisplayInterface) plotAny2Panel).//
+                            setSelectedFractions(((ReduxAliquotInterface) aliquotNodeInfo).//
+                                    getAliquotSampleDateModelSelectedFractions(((SampleDateModel) sampleDateNodeInfo).//
+                                            getIncludedFractionIDsVector()));
+                    ((AliquotDetailsDisplayInterface) plotAny2Panel).//
+                            setDeSelectedFractions(((ReduxAliquotInterface) aliquotNodeInfo).//
+                                    getAliquotSampleDateModelDeSelectedFractions(((SampleDateModel) sampleDateNodeInfo).//
+                                            getIncludedFractionIDsVector()));
+                    ((PlottingDetailsDisplayInterface) plotAny2Panel).refreshPanel(true, false);
 
                 } else {
 
@@ -2761,8 +2899,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                     // july 2010 refine this so that included fractions are filtered on the fly
                     // TODO: implement detrital sample date models that will actually have these removed from model based on filter
                     Vector<ETFractionInterface> tempDeselected
-                            = //
-                            ((ReduxAliquotInterface) aliquotNodeInfo).//
+                            = ((ReduxAliquotInterface) aliquotNodeInfo).//
                                     getAliquotSampleDateModelDeSelectedFractions(((SampleDateModel) sampleDateNodeInfo).//
                                             getIncludedFractionIDsVector());
                     ((DateProbabilityDensityPanel) probabilityPanel).//
@@ -2805,7 +2942,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                 ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
                         setSelectedFractions(((ReduxAliquotInterface) aliquotNodeInfo).//
                                 getAliquotSampleDateModelSelectedFractions(((SampleDateModel) sampleDateNodeInfo).getIncludedFractionIDsVector()));
-                ((ConcordiaGraphPanel) concordiaGraphPanel).//
+                ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
                         setDeSelectedFractions(((ReduxAliquotInterface) aliquotNodeInfo).//
                                 getAliquotSampleDateModelDeSelectedFractions(((SampleDateModel) sampleDateNodeInfo).getIncludedFractionIDsVector()));
 
@@ -2821,17 +2958,29 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                         setYorkFitLine(((SampleDateModel) sampleDateNodeInfo).getYorkLineFit());
                 // for sample date interpretation, display date title box
                 DateInterpretationBoxPanel dateInterpretationBoxPanel
-                        = //
-                        new DateInterpretationBoxPanel(((ValueModel) sampleDateNodeInfo));
+                        = new DateInterpretationBoxPanel(((ValueModel) sampleDateNodeInfo));
                 ((ConcordiaGraphPanel) concordiaGraphPanel).//
                         setPreferredDatePanel(dateInterpretationBoxPanel);
                 concordiaGraphPanel.repaint();
-//            } else if (graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab("Isoplot")) {
-//                // march 2104 for isoplot
-//                ((AliquotDetailsDisplayInterface) ConcordiaGraphPanelIsoplot).//
-//                        setSelectedFractions(((UPbReduxAliquot) aliquotNodeInfo).//
-//                                getAliquotSampleDateModelSelectedFractions(((SampleDateModel) sampleDateNodeInfo).getIncludedFractionIDsVector()));
-//                ((AliquotDetailsDisplayInterface) ConcordiaGraphPanelIsoplot).refreshPanel();
+            } else if (graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab("Any 2")) {
+                // dec 2016
+                ((AliquotDetailsDisplayInterface) plotAny2Panel).//
+                        setSelectedFractions(((ReduxAliquotInterface) aliquotNodeInfo).//
+                                getAliquotSampleDateModelSelectedFractions(((SampleDateModel) sampleDateNodeInfo).getIncludedFractionIDsVector()));
+                ((AliquotDetailsDisplayInterface) plotAny2Panel).//
+                        setDeSelectedFractions(((ReduxAliquotInterface) aliquotNodeInfo).//
+                                getAliquotSampleDateModelDeSelectedFractions(((SampleDateModel) sampleDateNodeInfo).getIncludedFractionIDsVector()));
+
+                // fix dateTreeByAliquot
+                ((DefaultTreeModel) ((JTree) dateTreeByAliquot).getModel()).//
+                        nodeChanged(((TreeNode) node).//
+                                getParent().//
+                                getParent().//
+                                getChildAt(0));
+
+//                ((PlottingDetailsDisplayInterface) plotAny2Panel).refreshPanel(true, false);
+                plotAny2Panel.repaint();
+
             } else if (graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab("Weighted Mean")) {
 
                 weightedMeanGraphPanel.repaint();
@@ -2844,8 +2993,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                 // july 2010 refine this so that included fractions are filtered on the fly
                 // TODO: implement detrital sample date models that will actually have these removed from model based on filter
                 Vector<ETFractionInterface> tempDeselected
-                        = //
-                        ((ReduxAliquotInterface) aliquotNodeInfo).//
+                        = ((ReduxAliquotInterface) aliquotNodeInfo).//
                                 getAliquotSampleDateModelDeSelectedFractions(((SampleDateModel) sampleDateNodeInfo).//
                                         getIncludedFractionIDsVector());
                 ((DateProbabilityDensityPanel) probabilityPanel).//
@@ -2872,8 +3020,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
             ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
                     setSelectedFractions(sample.getFractions());
 
-            concordiaGraphPanel.//
-                    repaint();
+            concordiaGraphPanel.repaint();
 
             // zap delselected list as it is meaningless at level of aliquot or sample
             ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
@@ -2900,7 +3047,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                             getSampleDateModelSelectedFractions(((SampleDateModel) nodeInfo).//
                                     getIncludedFractionIDsVector()));
 
-            ((ConcordiaGraphPanel) concordiaGraphPanel).//
+            ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
                     setDeSelectedFractions(((SampleInterface) sampleNodeInfo).//
                             getSampleDateModelDeSelectedFractions(((SampleDateModel) nodeInfo).//
                                     getIncludedFractionIDsVector()));
@@ -2938,15 +3085,14 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                         setSelectedFractions(((SampleInterface) sampleNodeInfo).//
                                 getSampleDateModelSelectedFractions(((SampleDateModel) sampleDateNodeInfo).//
                                         getIncludedFractionIDsVector()));
-                ((ConcordiaGraphPanel) concordiaGraphPanel).//
+                ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
                         setDeSelectedFractions(((SampleInterface) sampleNodeInfo).//
                                 getSampleDateModelDeSelectedFractions(((SampleDateModel) sampleDateNodeInfo).//
                                         getIncludedFractionIDsVector()));
 
                 // for sample date interpretation, display date title box
                 DateInterpretationBoxPanel dateInterpretationBoxPanel
-                        = //
-                        new DateInterpretationBoxPanel(((ValueModel) sampleDateNodeInfo));
+                        = new DateInterpretationBoxPanel(((ValueModel) sampleDateNodeInfo));
 
                 ((ConcordiaGraphPanel) concordiaGraphPanel).//
                         setPreferredDatePanel(null);
@@ -2992,7 +3138,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                     setSelectedFractions(((SampleInterface) sampleNodeInfo).//
                             getSampleDateModelSelectedFractions(//
                                     ((SampleDateModel) sampleDateNodeInfo).getIncludedFractionIDsVector()));
-            ((ConcordiaGraphPanel) concordiaGraphPanel).//
+            ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
                     setDeSelectedFractions(((SampleInterface) sampleNodeInfo).//
                             getSampleDateModelDeSelectedFractions(//
                                     ((SampleDateModel) sampleDateNodeInfo).getIncludedFractionIDsVector()));
@@ -3038,7 +3184,6 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
         File selectedFile = null;
         File selectedFileSVG = null;
 
-//        setAlwaysOnTop(false);
         String dialogTitle = "Save this Concordia as pdf (also as svg): *.pdf";
         final String fileExtension = ".pdf";
         String concordiaFileName
@@ -3066,7 +3211,6 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
             }
         }
 
-//        setAlwaysOnTop(false);
         return selectedFileSVG;
     }
 
@@ -3077,7 +3221,6 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
         File selectedFile = null;
         File selectedFileSVG = null;
 
-//        setAlwaysOnTop(false);
         String dialogTitle = "Save this WeightedMean as pdf (also as svg): *.pdf";
         final String fileExtension = ".pdf";
         String weightedMeanFileName
@@ -3102,8 +3245,6 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
             } catch (IOException ex) {
             }
         }
-
-//        setAlwaysOnTop(false);
     }
 
     /**
@@ -3113,7 +3254,6 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
         File selectedFile;
         File selectedFileSVG = null;
 
-//        setAlwaysOnTop(false);
         String dialogTitle = "Save this ProbabilityDensity as pdf (also as svg): *.pdf";
         final String fileExtension = ".pdf";
         String weightedMeanFileName
@@ -3127,8 +3267,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
 
             try {
                 selectedFileSVG
-                        = //
-                        new File(selectedFile.getCanonicalPath().replaceFirst(".pdf", ".svg"));
+                        = new File(selectedFile.getCanonicalPath().replaceFirst(".pdf", ".svg"));
 
             } catch (IOException iOException) {
             }
@@ -3141,8 +3280,6 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
             } catch (IOException ex) {
             }
         }
-
-//        setAlwaysOnTop(false);
     }
 
     /**
@@ -3341,8 +3478,8 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
 
                 @Override
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    maximaShown.put(maxDate, ((JCheckBoxMenuItem) evt.getSource()).isSelected());
-                    ((DateProbabilityDensityPanel) probabilityPanel).repaint();
+                    maximaShown.put(maxDate, ((AbstractButton) evt.getSource()).isSelected());
+                    probabilityPanel.repaint();
                 }
             });
 

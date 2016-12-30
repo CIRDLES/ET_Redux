@@ -525,7 +525,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
                         public void actionPerformed(ActionEvent arg0) {
                             // delete sample age from aliquot
                             DefaultMutableTreeNode aliquotNode
-                                    = (DefaultMutableTreeNode) ((DefaultMutableTreeNode) node).getParent();
+                                    = (DefaultMutableTreeNode) node.getParent();
                             Object aliquotNodeInfo = aliquotNode.getUserObject();
 
                             // remove from aliquot and save sample
@@ -689,7 +689,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
                     }
                 }
 
-            }
+            } // end popup menu logic
         } else {
             // do nothing
         }
@@ -785,6 +785,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
     /**
      * @param sortByDateAsc the sortByDateAsc to set
      */
+    @Override
     public void toggleSortByDateAsc() {
         this.sortByDateAsc = !this.sortByDateAsc;
     }
@@ -792,6 +793,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
     /**
      * @return the selRow
      */
+    @Override
     public int getSelRow() {
         return selRow;
     }
@@ -799,6 +801,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
     /**
      * @param selRow the selRow to set
      */
+    @Override
     public void setSelRow(int selRow) {
         this.selRow = selRow;
     }
@@ -806,6 +809,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
     /**
      * @return the selRowX
      */
+    @Override
     public int getSelRowX() {
         return selRowX;
     }
@@ -813,6 +817,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
     /**
      * @param selRowX the selRowX to set
      */
+    @Override
     public void setSelRowX(int selRowX) {
         this.selRowX = selRowX;
     }
@@ -820,6 +825,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
     /**
      * @return the selRowY
      */
+    @Override
     public int getSelRowY() {
         return selRowY;
     }
@@ -827,6 +833,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
     /**
      * @param selRowY the selRowY to set
      */
+    @Override
     public void setSelRowY(int selRowY) {
         this.selRowY = selRowY;
     }

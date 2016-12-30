@@ -38,6 +38,7 @@ import org.earthtime.UPb_Redux.dateInterpretation.concordia.ConcordiaLineSegment
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.TeraWasserburgLineSegment;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UPb_Redux.valueModels.definedValueModels.Age207_206r;
+import org.earthtime.plots.PlotAxesSetupInterface;
 import org.earthtime.utilities.TicGeneratorForAxes;
 
 /**
@@ -45,6 +46,7 @@ import org.earthtime.utilities.TicGeneratorForAxes;
  * @author James F. Bowring
  */
 public class GraphAxesSetup implements
+        PlotAxesSetupInterface,
         Serializable {
 
     // class variables
@@ -501,6 +503,7 @@ public class GraphAxesSetup implements
      * @param protactiniumCorrected
      * @param commonLeadCorrected
      */
+    @Override
     public void plotXYaxes( //
             Graphics2D g2d, Font axisLabelAtomicNum, Font axisLabelAtomicName, boolean thoriumCorrected, boolean protactiniumCorrected, boolean commonLeadCorrected) {
 
@@ -974,6 +977,7 @@ public class GraphAxesSetup implements
      *
      * @return
      */
+    @Override
     public AxisSetup getXaxisSetup() {
         return axes[0];
 
@@ -983,6 +987,7 @@ public class GraphAxesSetup implements
      *
      * @return
      */
+    @Override
     public AxisSetup getYaxisSetup() {
         return axes[1];
 
@@ -1038,7 +1043,7 @@ public class GraphAxesSetup implements
      * @param axes the axes to set
      */
     public void setAxes(AxisSetup[] axes) {
-        this.setAxes(axes);
+        this.axes = axes;
     }
 
     /**
@@ -1051,6 +1056,7 @@ public class GraphAxesSetup implements
     /**
      * @param useAutomaticAxisTics the useAutomaticAxisTics to set
      */
+    @Override
     public void setUseAutomaticAxisTics(boolean useAutomaticAxisTics) {
         this.useAutomaticAxisTics = useAutomaticAxisTics;
     }
@@ -1058,6 +1064,7 @@ public class GraphAxesSetup implements
     /**
      * @return the graphWidth
      */
+    @Override
     public double getGraphWidth() {
         return graphWidth - leftMargin + DEFAULT_GRAPH_LEFT_MARGIN_VERTICAL_LABELS;
     }
@@ -1065,6 +1072,7 @@ public class GraphAxesSetup implements
     /**
      * @param graphWidth the graphWidth to set
      */
+    @Override
     public void setGraphWidth(double graphWidth) {
         this.graphWidth = graphWidth;
     }
