@@ -767,9 +767,9 @@ public class UPbFractionEditorDialog extends DialogEditor {
 
         // now get all the other fractions and make them deselected
         Vector<ETFractionInterface> deSelectedFractions =//
-                ((UPbReduxAliquot) aliquot).getActiveAliquotFractions();
+                ((ReduxAliquotInterface) aliquot).getActiveAliquotFractions();
         deSelectedFractions.remove(fraction);
-        ((ConcordiaGraphPanel) concordiaGraphPanel).//
+        ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
                 setDeSelectedFractions(deSelectedFractions);
 
         ((KwikiDateModesSelectorPanel) kwikiDateModesSelectorPanel)//

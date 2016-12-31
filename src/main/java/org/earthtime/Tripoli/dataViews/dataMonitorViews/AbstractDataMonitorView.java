@@ -102,6 +102,7 @@ import org.earthtime.dataDictionaries.FractionSelectionTypeEnum;
 import org.earthtime.dataDictionaries.FractionationTechniquesEnum;
 import org.earthtime.dataDictionaries.IncludedTypeEnum;
 import org.earthtime.fractions.ETFractionInterface;
+import org.earthtime.plots.PlotInterface;
 import org.earthtime.projects.ProjectInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.reduxLabData.ReduxLabData;
@@ -1005,10 +1006,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
 
         dataMonitorViewDialog = new DataMonitorViewDialog(null, true);
         dataMonitorViewDialog.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-//        dataMonitorViewDialog.setBounds( //
-//                400, 400, //
-//                (int) parentDimension.getWidth(),
-//                (int) parentDimension.getHeight());
+
         dataMonitorViewDialog.setPreferredSize(new Dimension(
                 (int) parentDimension.getWidth() - 25,
                 (int) parentDimension.getHeight() - 25));
@@ -1132,7 +1130,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
 
             // may 2014 show best date line
             ((ConcordiaGraphPanel) concordiaGraphPanel).setShowingSingleAliquot(true);
-            ((ConcordiaGraphPanel) concordiaGraphPanel).determineCurrentAliquot();
+            ((PlotInterface) concordiaGraphPanel).determineCurrentAliquot();
 
             ((DateProbabilityDensityPanel) probabilityPanel).//
                     setSelectedAliquot(((ReduxAliquotInterface) nodeInfo).getAliquotNumber());

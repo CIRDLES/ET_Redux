@@ -466,7 +466,7 @@ public class PlotAny2Panel extends JLayeredPane
             if (!f.isRejected()) {
                 // determine aliquot for colors etc.
                 String aliquotName = sample.getNameOfAliquotFromSample(f.getAliquotNumber());
-                Map<String, String> myAliquotOptions = (Map<String, String>) getAliquotOptions().get(aliquotName);
+                Map<String, String> myAliquotOptions = getAliquotOptions().get(aliquotName);
 
                 Color includedFillColor = new Color(255, 255, 255);
                 if (myAliquotOptions.containsKey("includedFillColor")) {
@@ -631,7 +631,7 @@ public class PlotAny2Panel extends JLayeredPane
                 double tIncrement = (getRangeX_Display()) / 250.0;
                 StringBuilder csvOutput = new StringBuilder("xplus, yplus, xminus, yminus\n");
                 if (tIncrement > 0.0) {
-                    for (double tStep = (0.95 * minT); tStep <= (1.05 * maxT); tStep += tIncrement) {
+                    for (double tStep = (0.9 * minT); tStep <= (1.1 * maxT); tStep += tIncrement) {
 
                         Matrix subCov = new Matrix(mcLeanRegressionLine.getSav());
                         double dxda = 0;
@@ -652,26 +652,29 @@ public class PlotAny2Panel extends JLayeredPane
                         double xminus = aXvar + vXvar * tStep - xv;
                         double yminus = aYvar + vYvar * tStep - yv;
 
-                        csvOutput.append(xplus).append(", ");
-                        csvOutput.append(yplus).append(", ");
-                        csvOutput.append(xminus).append(", ");
-                        csvOutput.append(yminus).append(", ");
-                        csvOutput.append("\n");
+                        // test bounds
+                        if (isInVisibleBounds(xplus, yplus) && isInVisibleBounds(xminus, yminus)) {
+                            csvOutput.append(xplus).append(", ");
+                            csvOutput.append(yplus).append(", ");
+                            csvOutput.append(xminus).append(", ");
+                            csvOutput.append(yminus).append(", ");
+                            csvOutput.append("\n");
 
-                        if (uncertaintyAboveBounds.getCurrentPoint() == null) {
-                            uncertaintyAboveBounds.moveTo(
-                                    (float) mapX(xplus),
-                                    (float) mapY(yplus));
-                            uncertaintyBelowBounds.moveTo(
-                                    (float) mapX(xminus),
-                                    (float) mapY(yminus));
-                        } else {
-                            uncertaintyAboveBounds.lineTo(
-                                    (float) mapX(xplus),
-                                    (float) mapY(yplus));
-                            uncertaintyBelowBounds.lineTo(
-                                    (float) mapX(xminus),
-                                    (float) mapY(yminus));
+                            if (uncertaintyAboveBounds.getCurrentPoint() == null) {
+                                uncertaintyAboveBounds.moveTo(
+                                        (float) mapX(xplus),
+                                        (float) mapY(yplus));
+                                uncertaintyBelowBounds.moveTo(
+                                        (float) mapX(xminus),
+                                        (float) mapY(yminus));
+                            } else {
+                                uncertaintyAboveBounds.lineTo(
+                                        (float) mapX(xplus),
+                                        (float) mapY(yplus));
+                                uncertaintyBelowBounds.lineTo(
+                                        (float) mapX(xminus),
+                                        (float) mapY(yminus));
+                            }
                         }
                     }//tStep iteration
 
@@ -693,6 +696,11 @@ public class PlotAny2Panel extends JLayeredPane
                 }
             }
         }
+    }
+
+    private boolean isInVisibleBounds(double x, double y) {
+        return (x >= 0.9 * getMinX()) && (x <= 1.1 * getMaxX())
+                && (y >= 0.9 * getMinY()) && (y <= 1.1 * getMaxY());
     }
 
     private void plotAFraction(
@@ -730,14 +738,14 @@ public class PlotAny2Panel extends JLayeredPane
             g2d.setPaint(centerColor);
             g2d.setStroke(new BasicStroke(1.0f));
             g2d.fill(fractionbox);
-        } else if (isShowEllipseCenters() && useUncertaintyCrosses) {
+        } else if (isShowEllipseCenters()){
             ValueModel[] xyRho = fraction.retrieveXYRho(nameOfXaxisSourceValueModel, nameOfYaxisSourceValueModel);
             ValueModel xAxisRatio = xyRho[0];
             ValueModel yAxisRatio = xyRho[1];
 
             Ellipse2D fractionbox = new Ellipse2D.Double(
-                    xAxisRatio.getValue().doubleValue(),
-                    yAxisRatio.getValue().doubleValue(),
+                    mapX(xAxisRatio.getValue().doubleValue()) - centerSize / 2.0,
+                    mapY(yAxisRatio.getValue().doubleValue()) - centerSize / 2.0,
                     centerSize,
                     centerSize);
             g2d.setPaint(centerColor);
@@ -1179,6 +1187,19 @@ public class PlotAny2Panel extends JLayeredPane
 
             }
 
+            // test for constant
+            if (getMinX() == getMaxX()) {
+                double constant = getMinX();
+                setMinX(0.9 * constant);
+                setMaxX(1.1 * constant);
+            }
+
+            if (getMinY() == getMaxY()) {
+                double constant = getMinY();
+                setMinY(0.9 * constant);
+                setMaxY(1.1 * constant);
+            }
+            
             if (!showTightToEdges) {
                 performZoom(-2.0);
                 // performZoom(-2.0);
@@ -1794,9 +1815,6 @@ public class PlotAny2Panel extends JLayeredPane
 
                 // test for out of bounds
                 double x = getMaxX() - xOffsetValue;
-                if (concordiaFlavor.equalsIgnoreCase("T-W")) {
-                    x = getMinX() + xOffsetValue;
-                }
 
                 if (((getMinX() + xOffsetValue) >= 0.0)// may 2010 zeroed - 1.0)
 

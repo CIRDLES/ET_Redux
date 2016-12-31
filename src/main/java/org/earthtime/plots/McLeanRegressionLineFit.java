@@ -64,14 +64,12 @@ public class McLeanRegressionLineFit {
                 double y[] = new double[selectedFractions.size()];
                 double x1SigmaAbs[] = new double[selectedFractions.size()];
                 double y1SigmaAbs[] = new double[selectedFractions.size()];
+                double rhos[] = new double[selectedFractions.size()];
+
                 // in case of ordinary linear regression
                 double[][] xy = new double[selectedFractions.size()][2];
 
-                double rhos[] = new double[selectedFractions.size()];
-
                 int counter = 0;
-                double sumSigmasX = 0.0;
-                double sumSigmasY = 0.0;
                 for (ETFractionInterface fraction : selectedFractions) {
                     if (!fraction.isRejected()) {
                         ValueModel[] xyRho = fraction.retrieveXYRho(nameOfXaxisSourceValueModel, nameOfYaxisSourceValueModel);
@@ -79,40 +77,50 @@ public class McLeanRegressionLineFit {
                         yAxisRatio = xyRho[1];
                         ValueModel correlationCoefficient = xyRho[2];
 
-//                        xAxisRatio = fraction.retrieveValueModelByName(nameOfXaxisSourceValueModel);
-//                        yAxisRatio = fraction.retrieveValueModelByName(nameOfYaxisSourceValueModel);
                         x[counter] = xAxisRatio.getValue().doubleValue();
                         xy[counter][0] = x[counter];
                         x1SigmaAbs[counter] = xAxisRatio.getOneSigmaAbs().doubleValue();
-                        sumSigmasX += x1SigmaAbs[counter];
 
                         y[counter] = yAxisRatio.getValue().doubleValue();
                         xy[counter][1] = y[counter];
                         y1SigmaAbs[counter] = yAxisRatio.getOneSigmaAbs().doubleValue();
-                        sumSigmasY += y1SigmaAbs[counter];
 
-                        double covXY = correlationCoefficient.getValue().doubleValue();//   0.0;//((UPbFraction) fraction).getReductionHandler().calculateAnalyticalRho(nameOfXaxisSourceValueModel, nameOfYaxisSourceValueModel);
+                        double covXY = correlationCoefficient.getValue().doubleValue();
                         rhos[counter] = covXY;
 
                         counter++;
                     }
                 }
-//                if (sumSigmasX * sumSigmasY > 0) {
+
+                // trim arrays
+                double xF[] = partArray(x, counter - 1);
+                double yF[] = partArray(y, counter - 1);
+                double x1SigmaAbsF[] = partArray(x1SigmaAbs, counter - 1);
+                double y1SigmaAbsF[] = partArray(y1SigmaAbs, counter - 1);
+                double rhosF[] = partArray(rhos, counter - 1);
+
+                // in case of ordinary linear regression
+                double[][] xyF = new double[counter - 1][2];
+                for (int i = 0; i < (counter - 1); i++) {
+                    xyF[i][0] = xy[i][0];
+                    xyF[i][1] = xy[i][1];
+                }
+
                 try {
                     McLeanRegressionInterface mcLeanRegression = new McLeanRegression();
-                    mcLeanRegressionLine = mcLeanRegression.fitLineToDataFor2D(x, y, x1SigmaAbs, y1SigmaAbs, rhos);
+                    mcLeanRegressionLine = mcLeanRegression.fitLineToDataFor2D(xF, yF, x1SigmaAbsF, y1SigmaAbsF, rhosF);
 
                     // output to csv for testing with matlab
-                    Path path = Paths.get(nameOfXaxisSourceValueModel + "_" + nameOfYaxisSourceValueModel + ".csv");
+                    Path dir = Paths.get(".");
+                    Path path = dir.resolve(nameOfXaxisSourceValueModel + "_" + nameOfYaxisSourceValueModel + ".csv");
                     try (BufferedWriter writer = Files.newBufferedWriter(path, Charset.forName("UTF-8"))) {
-                        for (int i = 0; i < selectedFractions.size(); i++) {
-
+                        for (int i = 0; i < xF.length; i++) {
                             writer.write(
-                                    String.valueOf(x[i]) + ", "
-                                    + String.valueOf(y[i]) + ", "
-                                    + String.valueOf(x1SigmaAbs[i]) + ", "
-                                    + String.valueOf(y1SigmaAbs[i]) + ", "
-                                    + String.valueOf(rhos[i])
+                                    String.valueOf(xF[i]) + ", "
+                                    + String.valueOf(yF[i]) + ", "
+                                    + String.valueOf(x1SigmaAbsF[i]) + ", "
+                                    + String.valueOf(y1SigmaAbsF[i]) + ", "
+                                    + String.valueOf(rhosF[i])
                                     + "\n");
                         }
                     } catch (IOException ex) {
@@ -124,11 +132,14 @@ public class McLeanRegressionLineFit {
 
                     mcLeanRegressionLine = new McLeanOrdinaryLeastSquaresRegressionLine(regression);
                 }
-
-//                } else {
-//                }
             }
         }
+    }
+
+    private double[] partArray(double[] array, int size) {
+        double[] part = new double[size];
+        System.arraycopy(array, 0, part, 0, size);
+        return part;
     }
 
     /**

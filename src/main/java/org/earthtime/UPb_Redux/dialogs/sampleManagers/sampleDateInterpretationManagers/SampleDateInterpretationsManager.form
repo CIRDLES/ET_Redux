@@ -977,6 +977,9 @@
             </Container>
             <Container class="javax.swing.JLayeredPane" name="any2LayeredPane">
               <Properties>
+                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="fd" green="ff" red="e7" type="rgb"/>
+                </Property>
                 <Property name="opaque" type="boolean" value="true"/>
               </Properties>
               <Constraints>
@@ -993,6 +996,9 @@
               <SubComponents>
                 <Container class="javax.swing.JPanel" name="any2ToolPanel">
                   <Properties>
+                    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                      <Color blue="fd" green="ff" red="e7" type="rgb"/>
+                    </Property>
                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                       <Border info="org.netbeans.modules.form.compat2.border.EtchedBorderInfo">
                         <EtchetBorder/>
@@ -1103,6 +1109,9 @@
                     </Component>
                     <Component class="javax.swing.JCheckBox" name="ellipseCentersAny2OnToggle_checkbox">
                       <Properties>
+                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="fd" green="ff" red="e7" type="rgb"/>
+                        </Property>
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                           <Font name="SansSerif" size="12" style="0"/>
                         </Property>
@@ -1120,6 +1129,9 @@
                     </Component>
                     <Component class="javax.swing.JCheckBox" name="ellipseLabelsAny2OnToggle_checkbox">
                       <Properties>
+                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="fd" green="ff" red="e7" type="rgb"/>
+                        </Property>
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                           <Font name="SansSerif" size="12" style="0"/>
                         </Property>

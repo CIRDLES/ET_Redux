@@ -2338,6 +2338,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
      *
      * @param deSelectedFractions
      */
+    @Override
     public void setDeSelectedFractions(Vector<ETFractionInterface> deSelectedFractions) {
         this.excludedFractions = deSelectedFractions;
     }

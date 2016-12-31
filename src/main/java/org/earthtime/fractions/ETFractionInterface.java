@@ -23,7 +23,6 @@ import java.util.Comparator;
 import java.util.Date;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
-import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLegacyFraction;
 import org.earthtime.UPb_Redux.utilities.comparators.IntuitiveStringComparator;
 import org.earthtime.UPb_Redux.valueModels.MeasuredRatioModel;
@@ -852,7 +851,7 @@ public interface ETFractionInterface {
         if (this instanceof UPbLegacyFraction) {
             String rhoConcordia = "rhoR206_238r__r207_235r";
             xyRho[2].copyValuesFrom(getRadiogenicIsotopeRatioByName(rhoConcordia));
-        } else if (this instanceof UPbFractionI) {
+        } else if (this instanceof UPbFraction) {
             xyRho[2].setValue(((UPbFraction) this).getReductionHandler().calculateAnalyticalRho(nameOfXaxisSourceValueModel, nameOfYaxisSourceValueModel));
         }
 

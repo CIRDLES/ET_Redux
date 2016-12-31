@@ -28,9 +28,11 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -96,6 +98,7 @@ import org.earthtime.plots.PlotAxesSetupInterface;
 import org.earthtime.plots.PlotInterface;
 import org.earthtime.plots.anyTwo.PlotAny2Panel;
 import org.earthtime.reduxLabData.ReduxLabData;
+import org.earthtime.reports.ReportColumnInterface;
 import org.earthtime.samples.SampleInterface;
 import org.earthtime.utilities.CollectionHelpers;
 import org.earthtime.utilities.FileHelper;
@@ -233,8 +236,6 @@ public class SampleDateInterpretationsManager extends DialogEditor
             dateTreeByAliquot.expandToHistory(expansionHistory);
             ((JTree) dateTreeByAliquot).setSelectionRow(selRow);
             ((JTree) dateTreeByAliquot).scrollRowToVisible(selRow);
-//            dateTreeByAliquot.mousePressed(new MouseEvent((Component)dateTreeByAliquot, 0, System.currentTimeMillis(), MouseEvent.BUTTON1, selRowX, selRowY, 1, false));
-//            ((PlottingDetailsDisplayInterface)concordiaGraphPanel).refreshPanel(true, false);
         }
 
         dateTreeBySample = new SampleTreeCompilationMode(sample);
@@ -760,6 +761,10 @@ public class SampleDateInterpretationsManager extends DialogEditor
      */
     public void performFilteringPerSliders(boolean clearFiltering) {
 
+        if (sample.isSampleTypeLegacy()) {
+            clearFiltering = true;
+        }
+
         Vector<ETFractionInterface> filteredFractions;
         if (clearFiltering) {
             filteredFractions = sample.getUpbFractionsUnknown();
@@ -977,7 +982,34 @@ public class SampleDateInterpretationsManager extends DialogEditor
             variablesListing.remove(Lambdas.lambda235.getName());
             variablesListing.remove(Lambdas.lambda238.getName());
 
+            // remove variables with no values
+            List<String> removals = new ArrayList();
+            for (String variable : variablesListing) {
+                ValueModel variableValue = firstFraction.retrieveValueModelByName(variable);
+                if (variableValue == null) {
+                    removals.add(variable);
+                }
+            }
+
+            for (String variable : removals) {
+                variablesListing.remove(variable);
+            }
+
         } else {
+            SortedSet<String> varNames = new TreeSet<>();
+            ReportColumnInterface[] reportColumns = sample.getReportSettingsModel().getIsotopicRatiosCategory().getCategoryColumns();
+            for (ReportColumnInterface reportColumn : reportColumns) {
+                if (reportColumn.isVisible()) {
+                    varNames.add( reportColumn.getRetrieveVariableName());
+                }
+            }
+            
+            for (String var : varNames){
+                variablesListing.add(var);
+            }
+        }
+        
+        if (variablesListing.isEmpty()){
             variablesListing.add("NONE AVAILABLE");
         }
 
@@ -1487,8 +1519,10 @@ public class SampleDateInterpretationsManager extends DialogEditor
 
         graphPanels_TabbedPane.addTab("Weighted Mean", weightedMeanLayeredPane);
 
+        any2LayeredPane.setBackground(new java.awt.Color(231, 255, 253));
         any2LayeredPane.setOpaque(true);
 
+        any2ToolPanel.setBackground(new java.awt.Color(231, 255, 253));
         any2ToolPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         any2ToolPanel.setOpaque(false);
         any2ToolPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -1530,6 +1564,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         });
         any2ToolPanel.add(resetGraphAny2Display_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 2, 35, 30));
 
+        ellipseCentersAny2OnToggle_checkbox.setBackground(new java.awt.Color(231, 255, 253));
         ellipseCentersAny2OnToggle_checkbox.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         ellipseCentersAny2OnToggle_checkbox.setSelected(true);
         ellipseCentersAny2OnToggle_checkbox.setText("Ellipse Centers");
@@ -1540,6 +1575,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         });
         any2ToolPanel.add(ellipseCentersAny2OnToggle_checkbox, new org.netbeans.lib.awtextra.AbsoluteConstraints(556, 6, -1, -1));
 
+        ellipseLabelsAny2OnToggle_checkbox.setBackground(new java.awt.Color(231, 255, 253));
         ellipseLabelsAny2OnToggle_checkbox.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         ellipseLabelsAny2OnToggle_checkbox.setSelected(true);
         ellipseLabelsAny2OnToggle_checkbox.setText("Labels");
@@ -3035,8 +3071,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
         } else if (nodeInfo instanceof ValueModel) {
             // get aliquot and retrieve subset of fractions for this sample date
             Object sampleNodeInfo
-                    = //
-                    ((DefaultMutableTreeNode) ((TreeNode) node).getParent()).getUserObject();
+                    = ((DefaultMutableTreeNode) ((TreeNode) node).getParent()).getUserObject();
 
             // check for special case interpretations: lower and upper intercepts
             ((ConcordiaGraphPanel) concordiaGraphPanel).//
@@ -3145,7 +3180,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
 
             // fix dateTreeByAliquot
             ((DefaultTreeModel) ((JTree) dateTreeBySample).getModel()).//
-                    nodeChanged(((DefaultMutableTreeNode) node).//
+                    nodeChanged(((TreeNode) node).//
                             getParent().// aliquotnamenode
                             getParent().// aliquotfractionslabelnode
                             getParent().// sampledatenode
