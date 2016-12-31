@@ -629,7 +629,7 @@ public class PlotAny2Panel extends JLayeredPane
                 minT = getMinX_Display();
                 maxT = getMaxX_Display();
                 double tIncrement = (getRangeX_Display()) / 250.0;
-                StringBuilder csvOutput = new StringBuilder("xplus, yplus, xminus, yminus\n");
+                StringBuilder csvOutput = new StringBuilder("tstep, xplus, yplus, xminus, yminus\n");
                 if (tIncrement > 0.0) {
                     for (double tStep = (0.9 * minT); tStep <= (1.1 * maxT); tStep += tIncrement) {
 
@@ -654,6 +654,7 @@ public class PlotAny2Panel extends JLayeredPane
 
                         // test bounds
                         if (isInVisibleBounds(xplus, yplus) && isInVisibleBounds(xminus, yminus)) {
+                            csvOutput.append(tStep).append(", ");
                             csvOutput.append(xplus).append(", ");
                             csvOutput.append(yplus).append(", ");
                             csvOutput.append(xminus).append(", ");
