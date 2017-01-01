@@ -3449,7 +3449,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             SampleInterface.saveSampleAsSerializedReduxFile(theSample);
             myWeightedMeanGraphPanel
                     = new WeightedMeanGraphPanel(theSample);
-            
+
             myPlotAnyPanel = new PlotAny2Panel(theSample, this);
 
             theSample.getSampleDateInterpretationGUISettings().//
@@ -3472,7 +3472,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                     = new SampleDateInterpretationsManager(
                             this,
                             false,// try floating as of october 2014 true,
-                            myConcordiaGraphPanel, 
+                            myConcordiaGraphPanel,
                             myPlotAnyPanel,
                             myWeightedMeanGraphPanel,
                             myNormedProbabilityPanel,
@@ -3711,9 +3711,6 @@ private void startStopLiveUpdate_buttonActionPerformed(java.awt.event.ActionEven
     @Override
     public void editFraction(ETFractionInterface fraction, int selectedTab) {
 
-        // oct 2014
-        forceCloseOfSampleDateInterpretations();
-
         AliquotInterface aliquot = theSample.getAliquotByNumber(fraction.getAliquotNumber());
         myFractionEditor = null;
 
@@ -3753,6 +3750,9 @@ private void startStopLiveUpdate_buttonActionPerformed(java.awt.event.ActionEven
 
             } catch (BadLabDataException badLabDataException) {
             }
+
+            // oct 2014
+            forceCloseOfSampleDateInterpretations();
 
             myFractionEditor.setVisible(true);
 

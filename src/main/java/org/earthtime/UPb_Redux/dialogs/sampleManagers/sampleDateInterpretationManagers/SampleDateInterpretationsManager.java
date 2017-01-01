@@ -244,6 +244,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         dateTreeBySample_ScrollPane.setViewportView((Component) dateTreeBySample);
 
         ((PlottingDetailsDisplayInterface) concordiaGraphPanel).resetPanel(doReScale, inLiveMode);
+        ((PlotAny2Panel) plotAny2Panel).fitMcLeanRegression();
         ((PlottingDetailsDisplayInterface) plotAny2Panel).resetPanel(doReScale, inLiveMode);
 
         try {

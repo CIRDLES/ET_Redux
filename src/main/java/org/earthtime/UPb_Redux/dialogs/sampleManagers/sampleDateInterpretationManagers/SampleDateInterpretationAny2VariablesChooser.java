@@ -30,7 +30,7 @@ import org.earthtime.plots.anyTwo.PlotAny2Panel;
 public class SampleDateInterpretationAny2VariablesChooser extends DialogEditor {
 
     // Fields
-    private PlotAny2Panel plotAny2Panel;
+    private final PlotAny2Panel plotAny2Panel;
 
     /**
      * Creates new form SampleDateInterpretationChooserDialog
@@ -66,7 +66,7 @@ public class SampleDateInterpretationAny2VariablesChooser extends DialogEditor {
         xVariable_scrollPane = new javax.swing.JScrollPane();
         xVariablesList = new javax.swing.JList<>();
         buttonsPanel = new javax.swing.JPanel();
-        save_button = new ET_JButton();
+        ok_button = new ET_JButton();
         chooseTracer_label = new javax.swing.JLabel();
         yVariable_scrollPane = new javax.swing.JScrollPane();
         yVariablesList = new javax.swing.JList<>();
@@ -94,19 +94,19 @@ public class SampleDateInterpretationAny2VariablesChooser extends DialogEditor {
         buttonsPanel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
         buttonsPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        save_button.setBackground(new java.awt.Color(255, 255, 255));
-        save_button.setForeground(new java.awt.Color(255, 51, 0));
-        save_button.setText("OK");
-        save_button.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        save_button.setMargin(new java.awt.Insets(0, 1, 0, 1));
-        save_button.setOpaque(true);
-        save_button.setPreferredSize(new java.awt.Dimension(140, 23));
-        save_button.addActionListener(new java.awt.event.ActionListener() {
+        ok_button.setBackground(new java.awt.Color(255, 255, 255));
+        ok_button.setForeground(new java.awt.Color(255, 51, 0));
+        ok_button.setText("OK");
+        ok_button.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        ok_button.setMargin(new java.awt.Insets(0, 1, 0, 1));
+        ok_button.setOpaque(true);
+        ok_button.setPreferredSize(new java.awt.Dimension(140, 23));
+        ok_button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                save_buttonActionPerformed(evt);
+                ok_buttonActionPerformed(evt);
             }
         });
-        buttonsPanel.add(save_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(38, 2, 480, 30));
+        buttonsPanel.add(ok_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(38, 2, 480, 30));
 
         getContentPane().add(buttonsPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 400, 560, -1));
 
@@ -129,10 +129,10 @@ public class SampleDateInterpretationAny2VariablesChooser extends DialogEditor {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void save_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_save_buttonActionPerformed
+    private void ok_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ok_buttonActionPerformed
         OK();
         close();
-    }//GEN-LAST:event_save_buttonActionPerformed
+    }//GEN-LAST:event_ok_buttonActionPerformed
 
     private void xVariablesListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_xVariablesListMouseClicked
 //        if (evt.getClickCount() == 2) {
@@ -156,7 +156,7 @@ public class SampleDateInterpretationAny2VariablesChooser extends DialogEditor {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel buttonsPanel;
     private javax.swing.JLabel chooseTracer_label;
-    private javax.swing.JButton save_button;
+    private javax.swing.JButton ok_button;
     private javax.swing.JScrollPane xVariable_scrollPane;
     private javax.swing.JList<String> xVariablesList;
     private javax.swing.JScrollPane yVariable_scrollPane;
