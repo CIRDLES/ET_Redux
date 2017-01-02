@@ -64,9 +64,7 @@ import org.earthtime.UPb_Redux.beans.ReduxSuppressComponentEventsI;
 import org.earthtime.UPb_Redux.customJTrees.CheckBoxNode;
 import org.earthtime.UPb_Redux.dateInterpretation.DateInterpretationUpdateViewI;
 import org.earthtime.UPb_Redux.dateInterpretation.DateProbabilityDensityPanel;
-import org.earthtime.UPb_Redux.dateInterpretation.SampleTreeAnalysisMode;
 import org.earthtime.UPb_Redux.dateInterpretation.SampleTreeChangeI;
-import org.earthtime.UPb_Redux.dateInterpretation.SampleTreeCompilationMode;
 import org.earthtime.UPb_Redux.dateInterpretation.SampleTreeI;
 import org.earthtime.UPb_Redux.dateInterpretation.WeightedMeanGraphPanel;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.AliquotDetailsDisplayInterface;
@@ -173,12 +171,6 @@ public class SampleDateInterpretationsManager extends DialogEditor
         this.plotAny2Panel = plotAny2Panel;
         initPlotAny2Panel();
 
-////         march 2014 temp exploration using isoplot
-//        this.ConcordiaGraphPanelIsoplot = myConcordiaGraphPanelIsoplot;
-//        ConcordiaGraphPanelIsoplot.setBounds(0, 0, concordiaIsoplotLayeredPane.getWidth(), concordiaIsoplotLayeredPane.getHeight());
-//        concordiaIsoplotLayeredPane.add(ConcordiaGraphPanelIsoplot, javax.swing.JLayeredPane.DEFAULT_LAYER);
-//        concordiaIsoplotLayeredPane.validate();
-//        concordiaIsoplotLayeredPane.repaint();
         this.weightedMeanGraphPanel = weightedMeanGraphPanel;
         initWeightedMeanGraphPanel();
 
@@ -218,30 +210,15 @@ public class SampleDateInterpretationsManager extends DialogEditor
      */
     public void refreshSampleDateInterpretations(boolean doReScale, boolean inLiveMode) {
 
-        String expansionHistory = "";
-        int selRow = 0;
-        int selRowX = 0;
-        int selRowY = 0;
-        if (!doReScale) {
-            expansionHistory = dateTreeByAliquot.collectExpansionHistory();
-            selRow = dateTreeByAliquot.getSelRow();
-            selRowX = dateTreeByAliquot.getSelRowX();
-            selRowY = dateTreeByAliquot.getSelRowY();
-        }
-        dateTreeByAliquot = new SampleTreeAnalysisMode(sample);
-        dateTreeByAliquot.setSampleTreeChange(this);
+        String expansionHistory = dateTreeByAliquot.collectExpansionHistory();
+        int selRow = dateTreeByAliquot.getSelRow();
+        
         dateTreeByAliquot.buildTree();
-        dateTreeByAliquot_ScrollPane.setViewportView((Component) dateTreeByAliquot);
-        if (!doReScale) {
-            dateTreeByAliquot.expandToHistory(expansionHistory);
-            ((JTree) dateTreeByAliquot).setSelectionRow(selRow);
-            ((JTree) dateTreeByAliquot).scrollRowToVisible(selRow);
-        }
+        ((DefaultTreeModel) ((JTree) dateTreeByAliquot).getModel()).reload();
 
-        dateTreeBySample = new SampleTreeCompilationMode(sample);
-        dateTreeBySample.setSampleTreeChange(this);
-        dateTreeBySample.buildTree();
-        dateTreeBySample_ScrollPane.setViewportView((Component) dateTreeBySample);
+        dateTreeByAliquot.expandToHistory(expansionHistory);
+        ((JTree) dateTreeByAliquot).setSelectionRow(selRow);
+        ((JTree) dateTreeByAliquot).scrollRowToVisible(selRow);
 
         ((PlottingDetailsDisplayInterface) concordiaGraphPanel).resetPanel(doReScale, inLiveMode);
         ((PlotAny2Panel) plotAny2Panel).fitMcLeanRegression();
@@ -429,13 +406,9 @@ public class SampleDateInterpretationsManager extends DialogEditor
                 jrb.removeActionListener(jrb.getActionListeners()[0]);
             } catch (Exception e2) {
             }
-            jrb.addActionListener(new ActionListener() {
-
-                @Override
-                public void actionPerformed(ActionEvent arg0) {
-                    weightedMeanOptions.put("fractionSortOrder", arg0.getActionCommand());
-                    weightedMeanGraphPanel.repaint();
-                }
+            jrb.addActionListener((ActionEvent arg0) -> {
+                weightedMeanOptions.put("fractionSortOrder", arg0.getActionCommand());
+                weightedMeanGraphPanel.repaint();
             });
 
             if (jrb.getName().equalsIgnoreCase(fractionSortOrder)) {
@@ -461,47 +434,32 @@ public class SampleDateInterpretationsManager extends DialogEditor
                 35);
 
         // zoom buttons
-        zoomInX2_WeightedMean_button.addActionListener(new ActionListener() {
+        zoomInX2_WeightedMean_button.addActionListener((ActionEvent arg0) -> {
+            double rangeY = ((WeightedMeanGraphPanel) weightedMeanGraphPanel).getRangeY();
 
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                // zoom
-                double rangeY = ((WeightedMeanGraphPanel) weightedMeanGraphPanel).getRangeY();
+            ((WeightedMeanGraphPanel) weightedMeanGraphPanel).//
+                    setMinY(((WeightedMeanGraphPanel) weightedMeanGraphPanel).getMinY()//
+                            + rangeY / 4.0);
 
-                ((WeightedMeanGraphPanel) weightedMeanGraphPanel).//
-                        setMinY(//
-                                ((WeightedMeanGraphPanel) weightedMeanGraphPanel).getMinY()//
-                                + rangeY / 4.0);
+            ((WeightedMeanGraphPanel) weightedMeanGraphPanel).//
+                    setMaxY(((WeightedMeanGraphPanel) weightedMeanGraphPanel).getMaxY()//
+                            - rangeY / 4.0);
 
-                ((WeightedMeanGraphPanel) weightedMeanGraphPanel).//
-                        setMaxY(//
-                                ((WeightedMeanGraphPanel) weightedMeanGraphPanel).getMaxY()//
-                                - rangeY / 4.0);
-
-                weightedMeanGraphPanel.repaint();
-
-            }
+            weightedMeanGraphPanel.repaint();
         });
 
-        zoomOutX2_WeightedMean_button.addActionListener(new ActionListener() {
+        zoomOutX2_WeightedMean_button.addActionListener((ActionEvent arg0) -> {
+            double rangeY = ((WeightedMeanGraphPanel) weightedMeanGraphPanel).getRangeY();
 
-            public void actionPerformed(ActionEvent arg0) {
-                // zoom
-                double rangeY = ((WeightedMeanGraphPanel) weightedMeanGraphPanel).getRangeY();
+            ((WeightedMeanGraphPanel) weightedMeanGraphPanel).//
+                    setMinY(((WeightedMeanGraphPanel) weightedMeanGraphPanel).getMinY()//
+                            - rangeY / 2.0);
 
-                ((WeightedMeanGraphPanel) weightedMeanGraphPanel).//
-                        setMinY(//
-                                ((WeightedMeanGraphPanel) weightedMeanGraphPanel).getMinY()//
-                                - rangeY / 2.0);
+            ((WeightedMeanGraphPanel) weightedMeanGraphPanel).//
+                    setMaxY(((WeightedMeanGraphPanel) weightedMeanGraphPanel).getMaxY()//
+                            + rangeY / 2.0);
 
-                ((WeightedMeanGraphPanel) weightedMeanGraphPanel).//
-                        setMaxY(//
-                                ((WeightedMeanGraphPanel) weightedMeanGraphPanel).getMaxY()//
-                                + rangeY / 2.0);
-
-                weightedMeanGraphPanel.repaint();
-
-            }
+            weightedMeanGraphPanel.repaint();
         });
     }
 
@@ -578,27 +536,19 @@ public class SampleDateInterpretationsManager extends DialogEditor
         percentUncertainty_slider.addKeyListener(new SliderKeyListener());
 
         // zoom buttons
-        zoomInProbability_button.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                // zoom
-                ((DateProbabilityDensityPanel) probabilityPanel).zoomIn();
-            }
+        zoomInProbability_button.addActionListener((ActionEvent arg0) -> {
+            ((DateProbabilityDensityPanel) probabilityPanel).zoomIn();
         });
 
         zoomOutProbability_button.addActionListener((ActionEvent arg0) -> {
-            // zoom
             double rangeX = ((DateProbabilityDensityPanel) probabilityPanel).getRangeX_Display();
-            //System.out.println( "RANGE OUT = " + rangeX + "   offset = " + ((DateProbabilityDensityPanel) probabilityPanel).getDisplayOffsetX());
 
             double saveMinx = ((DateProbabilityDensityPanel) probabilityPanel).getMinX();
             double proposedMinX = saveMinx - rangeX / 2.0;
 
             ((DateProbabilityDensityPanel) probabilityPanel).//
-                    setMinX(//
-                            Math.max(//
-                                    proposedMinX, DateProbabilityDensityPanel.DEFAULT_DISPLAY_MINX));
+                    setMinX(Math.max(
+                            proposedMinX, DateProbabilityDensityPanel.DEFAULT_DISPLAY_MINX));
 
             // reset offset if hit the left wall
             double shiftMax = 0;
@@ -608,10 +558,9 @@ public class SampleDateInterpretationsManager extends DialogEditor
             }
 
             ((DateProbabilityDensityPanel) probabilityPanel).//
-                    setMaxX(//
-                            Math.min(//
-                                    (((DateProbabilityDensityPanel) probabilityPanel).getMaxX()//
-                                    + rangeX / 2.0 + shiftMax), DateProbabilityDensityPanel.DEFAULT_DISPLAY_MAXX));
+                    setMaxX(Math.min(
+                            (((DateProbabilityDensityPanel) probabilityPanel).getMaxX()//
+                            + rangeX / 2.0 + shiftMax), DateProbabilityDensityPanel.DEFAULT_DISPLAY_MAXX));
 
             ((DateProbabilityDensityPanel) probabilityPanel).//
                     setSelectedHistogramBinCount(0);
@@ -649,23 +598,19 @@ public class SampleDateInterpretationsManager extends DialogEditor
         ((DateProbabilityDensityPanel) probabilityPanel).setExternalBinCountIntegerSpinner((ReduxSuppressComponentEventsI) histogramBinCount_spinner);
 
         binWidth_text.setDocument(new IntegerDocument(binWidth_text, true));
-        binWidth_text.addActionListener(new ActionListener() {
-
-            // capture enter key
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (binWidth_text.getText().trim().length() == 0) {
-                    binWidth_text.setText("100");
-                }
-                Double binCountRead = Math.floor(Double.valueOf(histogramBinCount_spinner.getValue().toString()));
-                int binCount = binCountRead.intValue();
-                double binWidth = ((DateProbabilityDensityPanel) probabilityPanel).getAdjustedScottsBinWidth();
-                double revisedBinWidth = Double.parseDouble(binWidth_text.getText());
-                ((DateProbabilityDensityPanel) probabilityPanel).setAdjustedScottsBinWidth(revisedBinWidth);
-                histogramBinCount_spinner.setValue((binCount * (binWidth / revisedBinWidth)));
-                probabilityPanel.repaint();
+        binWidth_text.addActionListener((ActionEvent e) -> {
+            if (binWidth_text.getText().trim().length() == 0) {
+                binWidth_text.setText("100");
             }
-        });
+            Double binCountRead = Math.floor(Double.valueOf(histogramBinCount_spinner.getValue().toString()));
+            int binCount = binCountRead.intValue();
+            double binWidth = ((DateProbabilityDensityPanel) probabilityPanel).getAdjustedScottsBinWidth();
+            double revisedBinWidth = Double.parseDouble(binWidth_text.getText());
+            ((DateProbabilityDensityPanel) probabilityPanel).setAdjustedScottsBinWidth(revisedBinWidth);
+            histogramBinCount_spinner.setValue((binCount * (binWidth / revisedBinWidth)));
+            probabilityPanel.repaint();
+        } // capture enter key
+        );
 
         // pass bin width textField into panel
         ((DateProbabilityDensityPanel) probabilityPanel).setExternalBinWidthTextField((ReduxSuppressComponentEventsI) binWidth_text);
@@ -711,14 +656,6 @@ public class SampleDateInterpretationsManager extends DialogEditor
 
                 performFilteringPerSliders(false);
 
-////                ((DateProbabilityDensityPanel) probabilityPanel).//
-////                        setSelectedFractions(filterActiveUPbFractions(sample.getUpbFractionsUnknown()));
-////                // fire off date model to filter its deselected fractions
-////                try {
-////                    dateTreeByAliquot.performLastUserSelectionOfSampleDate();
-////                } catch (Exception selectionError) {
-////                }
-////                ((DateProbabilityDensityPanel) probabilityPanel).prepareAndPaintPanel();
                 validKey = false;
             }
         }
@@ -760,9 +697,15 @@ public class SampleDateInterpretationsManager extends DialogEditor
      *
      * @param clearFiltering the value of clearFiltering
      */
-    public void performFilteringPerSliders(boolean clearFiltering) {
+    public void performFilteringPerSliders(boolean myClearFiltering) {
+
+        boolean clearFiltering = myClearFiltering;
 
         if (sample.isSampleTypeLegacy()) {
+            clearFiltering = true;
+        }
+
+        if (sample.isAnalysisTypeUSERIES()) {
             clearFiltering = true;
         }
 
@@ -1001,16 +944,16 @@ public class SampleDateInterpretationsManager extends DialogEditor
             ReportColumnInterface[] reportColumns = sample.getReportSettingsModel().getIsotopicRatiosCategory().getCategoryColumns();
             for (ReportColumnInterface reportColumn : reportColumns) {
                 if (reportColumn.isVisible()) {
-                    varNames.add( reportColumn.getRetrieveVariableName());
+                    varNames.add(reportColumn.getRetrieveVariableName());
                 }
             }
-            
-            for (String var : varNames){
+
+            for (String var : varNames) {
                 variablesListing.add(var);
             }
         }
-        
-        if (variablesListing.isEmpty()){
+
+        if (variablesListing.isEmpty()) {
             variablesListing.add("NONE AVAILABLE");
         }
 

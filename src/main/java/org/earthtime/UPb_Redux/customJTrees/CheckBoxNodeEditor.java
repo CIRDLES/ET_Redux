@@ -16,6 +16,7 @@
 package org.earthtime.UPb_Redux.customJTrees;
 
 import java.awt.Component;
+import java.awt.ItemSelectable;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
@@ -23,35 +24,34 @@ import java.util.EventObject;
 import javax.swing.AbstractCellEditor;
 import javax.swing.JCheckBox;
 import javax.swing.JTree;
-import javax.swing.event.ChangeEvent;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeCellEditor;
 import javax.swing.tree.TreePath;
 
 /**
  *
- * @author http://www.java2s.com/Tutorial/Java/0240__Swing/CreatinganEditorJustforLeafNodes.htm
+ * @author
+ * http://www.java2s.com/Tutorial/Java/0240__Swing/CreatinganEditorJustforLeafNodes.htm
  */
 public class CheckBoxNodeEditor extends AbstractCellEditor implements TreeCellEditor {
 
     CheckBoxNodeRenderer renderer = new CheckBoxNodeRenderer();
-
-    ChangeEvent changeEvent = null;
-
     JTree tree;
 
     /**
-     * 
+     *
      * @param tree
      */
     public CheckBoxNodeEditor(JTree tree) {
+        changeEvent = null;
         this.tree = tree;
     }
 
     /**
-     * 
+     *
      * @return
      */
+    @Override
     public Object getCellEditorValue() {
         JCheckBox checkbox = renderer.getLeafRenderer();
         CheckBoxNode checkBoxNode = new CheckBoxNode(checkbox.getText(), checkbox.isSelected(), true);
@@ -59,7 +59,7 @@ public class CheckBoxNodeEditor extends AbstractCellEditor implements TreeCellEd
     }
 
     /**
-     * 
+     *
      * @param event
      * @return
      */
@@ -82,7 +82,7 @@ public class CheckBoxNodeEditor extends AbstractCellEditor implements TreeCellEd
     }
 
     /**
-     * 
+     *
      * @param tree
      * @param value
      * @param selected
@@ -91,22 +91,20 @@ public class CheckBoxNodeEditor extends AbstractCellEditor implements TreeCellEd
      * @param row
      * @return
      */
+    @Override
     public Component getTreeCellEditorComponent(JTree tree, Object value, boolean selected,
             boolean expanded, boolean leaf, int row) {
 
         Component editor = renderer.getTreeCellRendererComponent(tree, value, true, expanded, leaf,
                 row, true);
 
-        ItemListener itemListener = new ItemListener() {
-
-            public void itemStateChanged(ItemEvent itemEvent) {
-                if (stopCellEditing()) {
-                    fireEditingStopped();
-                }
+        ItemListener itemListener = (ItemEvent itemEvent) -> {
+            if (stopCellEditing()) {
+                fireEditingStopped();
             }
         };
         if (editor instanceof JCheckBox) {
-            ((JCheckBox) editor).addItemListener(itemListener);
+            ((ItemSelectable) editor).addItemListener(itemListener);
         }
         return editor;
     }

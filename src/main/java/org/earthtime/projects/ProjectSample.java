@@ -500,7 +500,8 @@ public class ProjectSample implements//
         this.filteredFractionIDs = filteredFractionIDs;
     }
 
-    private void initFilteredFractionsToAll() {
+    @Override
+    public void initFilteredFractionsToAll() {
         this.filteredFractionIDs = Collections.synchronizedSortedSet(new TreeSet<>());
         for (int i = 0; i < fractions.size(); i++) {
             filteredFractionIDs.add(fractions.get(i).getFractionID());

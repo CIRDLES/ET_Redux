@@ -2099,4 +2099,6 @@ public interface SampleInterface {
      * @param filteredFractionIDs the filteredFractionIDs to set
      */
     public void setFilteredFractionIDs(SortedSet<String> filteredFractionIDs);
+    
+    public void initFilteredFractionsToAll();
 }
