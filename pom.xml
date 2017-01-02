@@ -219,9 +219,9 @@
             <version>4.5.2</version>
         </dependency>
         <dependency>
-            <groupId>com.github.cirdles.topsoil</groupId>
-            <artifactId>core</artifactId>
-            <version>-SNAPSHOT</version>
+            <groupId>com.github.cirdles</groupId>
+            <artifactId>topsoil</artifactId>
+            <version>a21cbdd</version>
         </dependency>
         <dependency>
             <groupId>org.python</groupId>
@@ -238,6 +238,11 @@
             <artifactId>GeoSamples</artifactId>
             <version>-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.cirdles</groupId>
+            <artifactId>McLeanRegression</artifactId>
+            <version>a4fe4ff</version>
+        </dependency>        
         <dependency>
             <groupId>com.github.bowring</groupId>
             <artifactId>Calamari</artifactId>

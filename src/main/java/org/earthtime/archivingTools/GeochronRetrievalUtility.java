@@ -34,7 +34,7 @@ public class GeochronRetrievalUtility {
 
     /**
      *
-     * http://www.geochronportal.org/post_to_search_service.html
+     * http://www.geochron.org/post_to_search_service.html
      *
      * @param sample
      * @param username

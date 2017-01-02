@@ -54,7 +54,7 @@ public class CheckBoxNodeRenderer implements TreeCellRenderer {
         }
 
         Boolean booleanValue = (Boolean) UIManager.get("Tree.drawsFocusBorderAroundIcon");
-        leafRenderer.setFocusPainted((booleanValue != null) && (booleanValue.booleanValue()));
+        leafRenderer.setFocusPainted((booleanValue != null) && (booleanValue));
     }
 
     /**
@@ -68,6 +68,7 @@ public class CheckBoxNodeRenderer implements TreeCellRenderer {
      * @param hasFocus
      * @return
      */
+    @Override
     public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected,
             boolean expanded, boolean leaf, int row, boolean hasFocus) {
 

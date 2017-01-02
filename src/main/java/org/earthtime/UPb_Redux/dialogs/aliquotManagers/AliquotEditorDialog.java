@@ -4648,7 +4648,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
 
     /**
      *
-     * http://www.geochronportal.org/post_to_redux_service.html
+     * http://www.geochron.org/post_to_redux_service.html
      */
     public void uploadAliquotToGeochronZip() throws ETException {
 

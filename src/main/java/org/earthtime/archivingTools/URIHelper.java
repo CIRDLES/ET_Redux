@@ -167,7 +167,7 @@ public class URIHelper {
 
         if (CONNECTED_TO_INTERNET) {
             try {
-                URL url = new URL("http://geochron.org");
+                URL url = new URL("https://github.com");
                 //System.out.println(url.getHost());
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
                 con.setReadTimeout(5000);
@@ -222,29 +222,6 @@ public class URIHelper {
         return retVal;
     }
 
-//    /**
-//     *
-//     * @param reader
-//     * @param validator
-//     * @return
-//     * @throws ETException
-//     * @throws BadOrMissingXMLSchemaException
-//     */
-//    private static boolean validateXMLwithValidator(BufferedReader reader, Validator validator)
-//            throws ETException, BadOrMissingXMLSchemaException {
-//        boolean retval = false;
-//
-//        try {
-//            //Validate this instance document against the Instance document supplied
-//            validator.validate(new StreamSource(reader));
-//            retval = true;
-//        } catch (SAXException ex) {
-//            throw new BadOrMissingXMLSchemaException(null,
-//                    "XML schema file problem:\n" + ex.getMessage());
-//        } catch (IOException ex) {
-//        }
-//        return retval;
-//    }
     /**
      *
      * @param connectionString
@@ -276,7 +253,6 @@ public class URIHelper {
                             "Error reaching server: "//
                             + ex.getMessage()
                         });
-                ex.printStackTrace();
             }
 
             File tempFile = new File(tempSESARFileName);
@@ -287,48 +263,6 @@ public class URIHelper {
         return convertedDocument;
     }
 
-//    /**
-//     *
-//     * @param serviceURI
-//     * @param data
-//     * @return
-//     */
-//    public static File HTTP_PostAndResponse(String serviceURI, String data, String fileTag) {
-//        File fileOut = null;
-//        try {
-//            // Send data
-//            URL url = new URL(serviceURI);
-//            URLConnection conn = url.openConnection();
-//            conn.setDoOutput(true);
-//            conn.setDoInput(true);
-//
-//            // The POST line
-//            try (DataOutputStream dstream = new DataOutputStream(conn.getOutputStream())) {
-//                // The POST line
-//                dstream.writeBytes(data);
-//            }
-//
-//            fileOut = new File(fileTag + "HTTP_PostAndResponse_tempXML.xml");
-//            fileOut.delete();
-//
-//            FileOutputStream streamOut;
-//
-//            try ( // Read Response
-//                    InputStream in = conn.getInputStream()) {//
-//                streamOut = new FileOutputStream(fileOut);
-//                int x;
-//                while ((x = in.read()) != -1) {
-//                    streamOut.write(x);
-//                    //System.out.write(x);
-//                }
-//            }
-//            streamOut.close();
-//        } catch (Exception e) {
-//            return null;
-//        }
-//
-//        return fileOut;
-//    }
     /**
      *
      * @param XMLfile
@@ -364,25 +298,6 @@ public class URIHelper {
         return doc;
     }
 
-//    private static boolean isInternetReachable() {
-//        try {
-//            //make a URL to a known source
-//            URL url = new URL("http://www.google.com");
-//
-//            //open a connection to that source
-//            HttpURLConnection urlConnect = (HttpURLConnection) url.openConnection();
-//
-//            //trying to retrieve data from the source. If there
-//            //is no connection, this line will fail
-//            Object objData = urlConnect.getContent();
-//
-//        } catch (UnknownHostException e) {
-//            return false;
-//        } catch (IOException e) {
-//            return false;
-//        }
-//        return true;
-//    }
     static class SAXErrorHandler implements ErrorHandler {
 
         @Override

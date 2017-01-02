@@ -89,7 +89,7 @@ import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.fractions.ETFractionInterface;
-import org.earthtime.matrices.matrixModels.CovarianceMatrixWithSubMatricesModel;
+import org.earthtime.matrices.matrixModels.CovarianceMatrixModel;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.initialPbModelsET.StaceyKramersInitialPbModelET;
 import org.earthtime.ratioDataViews.AbstractRatiosDataView;
@@ -767,9 +767,9 @@ public class UPbFractionEditorDialog extends DialogEditor {
 
         // now get all the other fractions and make them deselected
         Vector<ETFractionInterface> deSelectedFractions =//
-                ((UPbReduxAliquot) aliquot).getActiveAliquotFractions();
+                ((ReduxAliquotInterface) aliquot).getActiveAliquotFractions();
         deSelectedFractions.remove(fraction);
-        ((ConcordiaGraphPanel) concordiaGraphPanel).//
+        ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
                 setDeSelectedFractions(deSelectedFractions);
 
         ((KwikiDateModesSelectorPanel) kwikiDateModesSelectorPanel)//
@@ -831,7 +831,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
                                 // CovarianceMatrixWithSubmatricesModel
                                 // secondly, we re-perform matrix math with altered covariance matrix
                                 Matrix oneSigmas =//
-                                ((CovarianceMatrixWithSubMatricesModel) ((UPbFraction) fraction).//
+                                ((CovarianceMatrixModel) ((UPbFraction) fraction).//
                                 getReductionHandler().getMatrices()[0]).recalculateSubCovariances(//
                                         ((ValueModelUncertSlider) evt.getSource()).getCovaryingTerms(),
                                         (BigDecimal) evt.getNewValue(), sliderLock);

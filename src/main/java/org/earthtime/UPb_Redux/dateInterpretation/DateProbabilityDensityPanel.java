@@ -73,6 +73,7 @@ import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.aliquots.ReduxAliquotInterface;
 import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.fractions.ETFractionInterface;
+import org.earthtime.plots.PlotAxesSetupInterface;
 import org.earthtime.samples.SampleInterface;
 import org.earthtime.utilities.TicGeneratorForAxes;
 import org.w3c.dom.DOMImplementation;
@@ -1019,6 +1020,21 @@ public class DateProbabilityDensityPanel extends JLayeredPane
      */
     public void setCurAliquot(AliquotInterface curAliquot) {
         this.curAliquot = curAliquot;
+    }
+
+    @Override
+    public void setShowTightToEdges(boolean showTightToEdges) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void performZoom(double factor) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public PlotAxesSetupInterface getCurrentPlotAxesSetup() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     class KernelF implements Comparable<KernelF> {

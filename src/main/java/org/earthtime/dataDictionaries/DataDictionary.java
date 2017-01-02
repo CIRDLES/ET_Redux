@@ -19,8 +19,10 @@
  */
 package org.earthtime.dataDictionaries;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 
 /**
  *
@@ -449,7 +451,9 @@ public final class DataDictionary {
         {"getCompositionalMeasureByName"}, earthTimeUPbCompositionalMeasuresNames,
         //        {"getTracerIsotopeConcByName"}, TracerIsotopes.getNames(),
         {"getPbBlankRatioByName"}, earthTimePbBlankICRatioNames,
-        {"getInitialPbModelRatioByName"}, earthTimeInitialPbModelRatioNames
+        {"getInitialPbModelRatioByName"}, earthTimeInitialPbModelRatioNames,
+        {"getRadiogenicIsotopeDateByName"}, RadDates.getNamesSorted(),
+        {"getRadiogenicIsotopeRatioByName"}, RadRatios.getNamesSorted()
     };
     /**
      *
@@ -537,5 +541,29 @@ public final class DataDictionary {
                         ArrayMapOfInputsToFractionClassMethodNames[i][0]);
             }
         }
+    }
+
+    /**
+     * Uses reflection to get method associated with a specific input name,
+     * which is a rowForSpecificDate or column name in a matrix.
+     *
+     * @param inputName
+     * @return
+     */
+    public static Method retrieveMethodNameForInput(String inputName) {
+        Method meth = null;
+        String methodName = MapOfInputsToMethodNames.get(inputName);
+        if (methodName != null) {
+            try {
+                Class<?> fractionClass
+                        = Class.forName(UPbFraction.class.getCanonicalName());
+
+                meth = fractionClass.getMethod(//
+                        methodName,
+                        new Class[]{String.class});
+            } catch (ClassNotFoundException | NoSuchMethodException | SecurityException classNotFoundException) {
+            }
+        }
+        return meth;
     }
 }

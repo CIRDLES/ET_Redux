@@ -19,6 +19,7 @@
 
 package org.earthtime.utilities;
 
+import java.util.Arrays;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.Vector;
@@ -35,18 +36,16 @@ public final class CollectionHelpers {
      * @return
      */
     public static Vector<String> vectorSortedUniqueMembers(String[][] sourceListing){
-        SortedSet<String> treeSet = new TreeSet<String>();
+        SortedSet<String> treeSet = new TreeSet<>();
 
-        for (int i = 0; i < sourceListing.length; i ++){
-            for (int j = 0; j < sourceListing[i].length; j ++){
-                treeSet.add( sourceListing[i][j]);
-            }
+        for (String[] sourceListing1 : sourceListing) {
+            treeSet.addAll(Arrays.asList(sourceListing1));
         }
 
-        Vector<String> retval = new Vector<String>();
-        for (String s : treeSet){
+        Vector<String> retval = new Vector<>();
+        treeSet.forEach((s) -> {
             retval.add( s );
-        }
+        });
 
         return retval;
     }

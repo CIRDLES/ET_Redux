@@ -24,6 +24,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
 import java.util.Vector;
 import javax.swing.JDialog;
 import javax.swing.JMenuItem;
@@ -32,6 +34,7 @@ import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
@@ -46,6 +49,7 @@ import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.aliquots.ReduxAliquotInterface;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.dialogs.DialogEditor;
+import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.samples.SampleInterface;
 
 /**
@@ -90,6 +94,39 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
 
     /**
      *
+     * @param fractionID the value of fractionID
+     */
+    public void removeFractionFromDateTree(String fractionID) {
+        Enumeration myEnum = ((DefaultMutableTreeNode) getModel().getRoot()).breadthFirstEnumeration();
+        List<Object> nodeObjs = new ArrayList();
+        List<Integer> indexObjs = new ArrayList();
+        while (myEnum.hasMoreElements()) {
+            Object myObj = myEnum.nextElement();
+            if (((DefaultMutableTreeNode) myObj).getUserObject() instanceof CheckBoxNode) {
+                if (((CheckBoxNode) ((DefaultMutableTreeNode) myObj).getUserObject()).getText().startsWith(fractionID)) {
+                    System.out.println("Checkbox  " + ((CheckBoxNode) ((DefaultMutableTreeNode) myObj).getUserObject()).getText()
+                            + " >> " + ((TreeNode) myObj).getParent().getIndex((TreeNode) myObj));
+
+                    int index = ((TreeNode) myObj).getParent().getIndex((TreeNode) myObj);
+                    nodeObjs.add(myObj);
+                    indexObjs.add(index);
+                }
+            }
+        }
+        
+        int count = 0;
+        for (Object obj: nodeObjs){
+            ((MutableTreeNode) obj).removeFromParent();
+            ((DefaultTreeModel) getModel()).nodesWereRemoved(((TreeNode) obj).getParent(), new int[]{indexObjs.get(count)}, new Object[]{obj});
+            count++;
+        }
+        
+        ((DefaultTreeModel) getModel()).reload();
+
+    }
+
+    /**
+     *
      */
     @Override
     public void buildTree() {
@@ -111,11 +148,11 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
             if (sortByDateAsc) {
                 activeFractionIDs
                         = ((ReduxAliquotInterface) tempAliquot).//
-                        getAliquotFractionIDsSortedByDateAsc();
+                                getAliquotFractionIDsSortedByDateAsc();
             } else {
                 activeFractionIDs
                         = ((ReduxAliquotInterface) tempAliquot).//
-                        getAliquotFractionIDs();
+                                getAliquotFractionIDs();
             }
 
             // now load the sample date interpretations
@@ -327,12 +364,12 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
         } else if ((o instanceof String) && (((String) o).startsWith("date"))) {
             return //                
                     ((SampleDateModel) ((DefaultMutableTreeNode) ((TreeNode) value).//
-                    getParent()).getUserObject()).ShowCustomDateNode();
+                            getParent()).getUserObject()).ShowCustomDateNode();
 
         } else if ((o instanceof String) && (((String) o).startsWith("MSWD"))) {
             return //                
                     ((SampleDateModel) ((DefaultMutableTreeNode) ((TreeNode) value).//
-                    getParent()).getUserObject()).ShowCustomMSWDwithN() + "              ";
+                            getParent()).getUserObject()).ShowCustomMSWDwithN() + "              ";
 
         } else {
             return super.convertValueToText(
@@ -388,7 +425,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
             final DefaultMutableTreeNode node = (DefaultMutableTreeNode) selPath.getLastPathComponent();
             final Object nodeInfo = node.getUserObject();
             if (!e.isPopupTrigger() && (e.getButton() == MouseEvent.BUTTON1)) {
-                
+
             } else if ((e.isPopupTrigger()) || (e.getButton() == MouseEvent.BUTTON3)) {
                 setSelectionPath(selPath);
                 if (nodeInfo instanceof AliquotInterface) {
@@ -409,11 +446,11 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
                     if (sortByDateAsc) {
                         activeFractionIDs
                                 = ((ReduxAliquotInterface) nodeInfo).//
-                                getAliquotFractionIDsSortedByDateAsc();
+                                        getAliquotFractionIDsSortedByDateAsc();
                     } else {
                         activeFractionIDs
                                 = ((ReduxAliquotInterface) nodeInfo).//
-                                getAliquotFractionIDs();
+                                        getAliquotFractionIDs();
                     }
 
                     if (((SampleDateInterpretationChooserDialog) myEditor).getSelectedModels().size() > 0) {
@@ -485,7 +522,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
                         }
 
                         ((DefaultTreeModel) getModel()).nodesWereInserted(
-                                node, newNodes);//new int[]{node.getChildCount() - 1});
+                                node, newNodes);
 
                         // collapse all and expand new date
                         int row = getRowCount() - 1;
@@ -496,7 +533,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
                         try {
                             expandPath(new TreePath(sampleDateModelNode.getPath()));
                         } catch (Exception eNoWM) {
-                            System.out.println("SampleTreeAnalysisMode line 462 = no WeightedMean available");
+                            new ETWarningDialog("This weighted mean is not avaialable for these data.").setVisible(true);
                         }
 
                         getSampleTreeChange().sampleTreeChangeAnalysisMode(node);
@@ -525,7 +562,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
                         public void actionPerformed(ActionEvent arg0) {
                             // delete sample age from aliquot
                             DefaultMutableTreeNode aliquotNode
-                                    = (DefaultMutableTreeNode) ((DefaultMutableTreeNode) node).getParent();
+                                    = (DefaultMutableTreeNode) node.getParent();
                             Object aliquotNodeInfo = aliquotNode.getUserObject();
 
                             // remove from aliquot and save sample
@@ -689,7 +726,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
                     }
                 }
 
-            }
+            } // end popup menu logic
         } else {
             // do nothing
         }
@@ -785,6 +822,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
     /**
      * @param sortByDateAsc the sortByDateAsc to set
      */
+    @Override
     public void toggleSortByDateAsc() {
         this.sortByDateAsc = !this.sortByDateAsc;
     }
@@ -792,6 +830,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
     /**
      * @return the selRow
      */
+    @Override
     public int getSelRow() {
         return selRow;
     }
@@ -799,6 +838,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
     /**
      * @param selRow the selRow to set
      */
+    @Override
     public void setSelRow(int selRow) {
         this.selRow = selRow;
     }
@@ -806,6 +846,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
     /**
      * @return the selRowX
      */
+    @Override
     public int getSelRowX() {
         return selRowX;
     }
@@ -813,6 +854,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
     /**
      * @param selRowX the selRowX to set
      */
+    @Override
     public void setSelRowX(int selRowX) {
         this.selRowX = selRowX;
     }
@@ -820,6 +862,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
     /**
      * @return the selRowY
      */
+    @Override
     public int getSelRowY() {
         return selRowY;
     }
@@ -827,6 +870,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
     /**
      * @param selRowY the selRowY to set
      */
+    @Override
     public void setSelRowY(int selRowY) {
         this.selRowY = selRowY;
     }

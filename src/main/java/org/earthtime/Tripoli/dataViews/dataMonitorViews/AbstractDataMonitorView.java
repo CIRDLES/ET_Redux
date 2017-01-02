@@ -84,6 +84,7 @@ import org.earthtime.UPb_Redux.dateInterpretation.SampleTreeChangeI;
 import org.earthtime.UPb_Redux.dateInterpretation.SampleTreeI;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.AliquotDetailsDisplayInterface;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.ConcordiaGraphPanel;
+import org.earthtime.UPb_Redux.dateInterpretation.concordia.ConcordiaPlotDisplayInterface;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.PlottingDetailsDisplayInterface;
 import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetup;
 import org.earthtime.UPb_Redux.dateInterpretation.kwiki.KwikiConcordiaToolBar;
@@ -101,6 +102,7 @@ import org.earthtime.dataDictionaries.FractionSelectionTypeEnum;
 import org.earthtime.dataDictionaries.FractionationTechniquesEnum;
 import org.earthtime.dataDictionaries.IncludedTypeEnum;
 import org.earthtime.fractions.ETFractionInterface;
+import org.earthtime.plots.PlotInterface;
 import org.earthtime.projects.ProjectInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.reduxLabData.ReduxLabData;
@@ -538,7 +540,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
         ET_JButton concordiaSettingsButton = new ET_JButton("Concordia Settings");
         concordiaSettingsButton.setBounds(showSessions ? 602 : leftMargin + 10, topMargin + 550, 120, 22);
         concordiaSettingsButton.addActionListener((ActionEvent ae) -> {
-            ((AliquotDetailsDisplayInterface) concordiaGraphPanel).showConcordiaDisplayOptionsDialog();
+            ((ConcordiaPlotDisplayInterface) concordiaGraphPanel).showConcordiaDisplayOptionsDialog();
         });
 
         concordiaSettingsButton.setEnabled(true);
@@ -581,7 +583,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
                     setFadedDeselectedFractions(true);
 
             project.getSuperSample().getSampleDateInterpretationGUISettings().//
-                    setConcordiaOptions(((AliquotDetailsDisplayInterface) concordiaGraphPanel).getConcordiaOptions());
+                    setConcordiaOptions(((ConcordiaPlotDisplayInterface) concordiaGraphPanel).getConcordiaOptions());
             probabilityChartOptions = project.getSuperSample().getSampleDateInterpretationGUISettings().getProbabilityChartOptions();
 
             ((ConcordiaGraphPanel) concordiaGraphPanel).//
@@ -1004,10 +1006,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
 
         dataMonitorViewDialog = new DataMonitorViewDialog(null, true);
         dataMonitorViewDialog.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-//        dataMonitorViewDialog.setBounds( //
-//                400, 400, //
-//                (int) parentDimension.getWidth(),
-//                (int) parentDimension.getHeight());
+
         dataMonitorViewDialog.setPreferredSize(new Dimension(
                 (int) parentDimension.getWidth() - 25,
                 (int) parentDimension.getHeight() - 25));
@@ -1131,7 +1130,7 @@ public class AbstractDataMonitorView extends AbstractRawDataView
 
             // may 2014 show best date line
             ((ConcordiaGraphPanel) concordiaGraphPanel).setShowingSingleAliquot(true);
-            ((ConcordiaGraphPanel) concordiaGraphPanel).determineCurrentAliquot();
+            ((PlotInterface) concordiaGraphPanel).determineCurrentAliquot();
 
             ((DateProbabilityDensityPanel) probabilityPanel).//
                     setSelectedAliquot(((ReduxAliquotInterface) nodeInfo).getAliquotNumber());

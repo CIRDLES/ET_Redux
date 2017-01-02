@@ -34,8 +34,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
-import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
+import org.earthtime.dataDictionaries.DataDictionary;
 import org.earthtime.fractions.ETFractionInterface;
 
 /**
@@ -105,8 +105,8 @@ public class ValueModelClump extends JLayeredPane
         for (int j = 0; j < clumpSpecs.length; j ++) {
             ValueModel vm = null;
             // looks up the correct method and applies it to input
-            Method meth = ((UPbFraction) fraction).getReductionHandler().//
-                    retrieveMethodNameForInput( clumpSpecs[j][0] );
+            Method meth = 
+                    DataDictionary.retrieveMethodNameForInput( clumpSpecs[j][0] );
             if ( meth != null ) {
                 try {
                     vm = (ValueModel) meth.//

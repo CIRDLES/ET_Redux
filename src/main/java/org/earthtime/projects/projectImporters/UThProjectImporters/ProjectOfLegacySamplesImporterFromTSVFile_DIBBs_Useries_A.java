@@ -213,7 +213,7 @@ public class ProjectOfLegacySamplesImporterFromTSVFile_DIBBs_Useries_A extends A
                             } else /* assume Secular Equilibrium*/ {
                                 myFraction.useLegacyPhysicalConstantsD3();
                             }
-                                
+
                             metaData.append("Spike Calib = ").append(spikeCalibration).append("\n");
                             metaData.append("Published % calcite = ").append(myFractionData.get(38).trim()).append("\n");
                             metaData.append("Interpreted % calcite = ").append(myFractionData.get(39).trim()).append("\n");
@@ -316,6 +316,7 @@ public class ProjectOfLegacySamplesImporterFromTSVFile_DIBBs_Useries_A extends A
             // end of file
             if ((currentSample != null) && (currentAliquot != null)) {
                 processSuperSample(project.getSuperSample(), currentSample, currentAliquot);
+                currentSample.initFilteredFractionsToAll();
             }
 
         } catch (IOException iOException) {
@@ -328,8 +329,7 @@ public class ProjectOfLegacySamplesImporterFromTSVFile_DIBBs_Useries_A extends A
         // this forces population of aliquot fractions
         // check if supersample already has this aliquot
         AliquotInterface existingSuperSampleAliquot
-                = //
-                superSample.getAliquotByNameForProjectSuperSample(currentSample.getSampleName() + "::" + currentAliquot.getAliquotName());
+                = superSample.getAliquotByNameForProjectSuperSample(currentSample.getSampleName() + "::" + currentAliquot.getAliquotName());
         if (existingSuperSampleAliquot == null) {
             SampleInterface.copyAliquotIntoSample(superSample, currentSample.getAliquotByNameForProjectSuperSample(currentAliquot.getAliquotName()), new UThReduxAliquot());
         } else {
@@ -339,6 +339,7 @@ public class ProjectOfLegacySamplesImporterFromTSVFile_DIBBs_Useries_A extends A
                     superSample.getFractions().add(fraction);
                 }
             }
+            superSample.initFilteredFractionsToAll();
         }
     }
 

@@ -1316,8 +1316,8 @@ public interface SampleInterface {
 
         return retval;
     }
-    
-        /**
+
+    /**
      *
      * @return
      */
@@ -1629,8 +1629,7 @@ public interface SampleInterface {
 
                 if (SampleDateTypes.getSampleDateType(i).endsWith("intercept")) {
                     tempModel
-                            = //
-                            new SampleDateInterceptModel(//
+                            = new SampleDateInterceptModel(//
                                     SampleDateTypes.getSampleDateType(i),
                                     SampleDateTypes.getSampleDateTypeMethod(i),
                                     SampleDateTypes.getSampleDateTypeName(i),
@@ -1641,8 +1640,7 @@ public interface SampleInterface {
                     ((SampleDateModel) tempModel).setSample(this);
                 } else {
                     tempModel
-                            = //
-                            new SampleDateModel(//
+                            = new SampleDateModel(//
                                     SampleDateTypes.getSampleDateType(i),
                                     SampleDateTypes.getSampleDateTypeMethod(i),
                                     SampleDateTypes.getSampleDateTypeName(i),
@@ -2101,4 +2099,6 @@ public interface SampleInterface {
      * @param filteredFractionIDs the filteredFractionIDs to set
      */
     public void setFilteredFractionIDs(SortedSet<String> filteredFractionIDs);
+    
+    public void initFilteredFractionsToAll();
 }
