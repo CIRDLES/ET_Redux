@@ -620,6 +620,8 @@ public class PlotAny2Panel extends JLayeredPane
             g2d.draw(line);
 
             if (mcLeanRegressionLine.getSav() != null) {
+                Matrix subCov = new Matrix(mcLeanRegressionLine.getSav());
+                
                 // uncertainty envelope
                 Path2D uncertaintyAboveBounds = new Path2D.Double(Path2D.WIND_EVEN_ODD);
                 Path2D uncertaintyBelowBounds = new Path2D.Double(Path2D.WIND_EVEN_ODD);
@@ -631,9 +633,7 @@ public class PlotAny2Panel extends JLayeredPane
                 double tIncrement = (getRangeX_Display()) / 250.0;
                 StringBuilder csvOutput = new StringBuilder("tstep, xplus, yplus, xminus, yminus\n");
                 if (tIncrement > 0.0) {
-                    for (double tStep = (0.9 * minT); tStep <= (1.1 * maxT); tStep += tIncrement) {
-
-                        Matrix subCov = new Matrix(mcLeanRegressionLine.getSav());
+                    for (double tStep = (0.9 * minT); tStep <= (1.1 * maxT); tStep += tIncrement) {                        
                         double dxda = 0;
                         double dxdb = 0;
                         double dyda = 1;
