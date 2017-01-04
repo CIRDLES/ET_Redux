@@ -15,12 +15,6 @@
  */
 package org.earthtime.plots;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Vector;
 import org.apache.commons.math3.stat.regression.SimpleRegression;
 import org.cirdles.mcLeanRegression.McLeanRegression;
@@ -110,21 +104,21 @@ public class McLeanRegressionLineFit {
                     McLeanRegressionInterface mcLeanRegression = new McLeanRegression();
                     mcLeanRegressionLine = mcLeanRegression.fitLineToDataFor2D(xF, yF, x1SigmaAbsF, y1SigmaAbsF, rhosF);
 
-                    // output to csv for testing with matlab
-                    Path dir = Paths.get(".");
-                    Path path = dir.resolve(nameOfXaxisSourceValueModel + "_" + nameOfYaxisSourceValueModel + ".csv");
-                    try (BufferedWriter writer = Files.newBufferedWriter(path, Charset.forName("UTF-8"))) {
-                        for (int i = 0; i < xF.length; i++) {
-                            writer.write(
-                                    String.valueOf(xF[i]) + ", "
-                                    + String.valueOf(x1SigmaAbsF[i]) + ", "
-                                    + String.valueOf(yF[i]) + ", "
-                                    + String.valueOf(y1SigmaAbsF[i]) + ", "
-                                    + String.valueOf(rhosF[i])
-                                    + "\n");
-                        }
-                    } catch (IOException ex) {
-                    }
+//                    // output to csv for testing with matlab
+//                    Path dir = Paths.get(".");
+//                    Path path = dir.resolve(nameOfXaxisSourceValueModel + "_" + nameOfYaxisSourceValueModel + ".csv");
+//                    try (BufferedWriter writer = Files.newBufferedWriter(path, Charset.forName("UTF-8"))) {
+//                        for (int i = 0; i < xF.length; i++) {
+//                            writer.write(
+//                                    String.valueOf(xF[i]) + ", "
+//                                    + String.valueOf(x1SigmaAbsF[i]) + ", "
+//                                    + String.valueOf(yF[i]) + ", "
+//                                    + String.valueOf(y1SigmaAbsF[i]) + ", "
+//                                    + String.valueOf(rhosF[i])
+//                                    + "\n");
+//                        }
+//                    } catch (IOException ex) {
+//                    }
                 } catch (Exception e) {
                     // we do an ordinary least squares (OLS)
                     SimpleRegression regression = new SimpleRegression();

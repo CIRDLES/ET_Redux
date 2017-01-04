@@ -37,7 +37,6 @@ import java.awt.event.MouseMotionListener;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -46,10 +45,6 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.math.BigDecimal;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Vector;
 import javax.swing.JLayeredPane;
@@ -688,12 +683,12 @@ public class PlotAny2Panel extends JLayeredPane
                     g2d.draw(uncertaintyAboveBounds);
                     g2d.draw(uncertaintyBelowBounds);
 
-                    // output to csv for testing with matlab
-                    Path path = Paths.get(nameOfXaxisSourceValueModel + "_" + nameOfYaxisSourceValueModel + "UNCT.csv");
-                    try (BufferedWriter writer = Files.newBufferedWriter(path, Charset.forName("UTF-8"))) {
-                        writer.write(csvOutput.toString());
-                    } catch (IOException ex) {
-                    }
+//                    // output to csv for testing with matlab
+//                    Path path = Paths.get(nameOfXaxisSourceValueModel + "_" + nameOfYaxisSourceValueModel + "UNCT.csv");
+//                    try (BufferedWriter writer = Files.newBufferedWriter(path, Charset.forName("UTF-8"))) {
+//                        writer.write(csvOutput.toString());
+//                    } catch (IOException ex) {
+//                    }
                 }
             }
         }
