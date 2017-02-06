@@ -70,6 +70,8 @@ public class UThFraction implements
     protected boolean deleted;
     protected String fractionNotes;
     protected boolean rejected;
+    
+    protected boolean filtered;
 
     public UThFraction() {
         this.fractionID = ReduxConstants.DEFAULT_OBJECT_NAME;
@@ -568,6 +570,16 @@ public class UThFraction implements
     @Override
     public Object readXMLObject(String filename, boolean doValidate) throws FileNotFoundException, ETException, FileNotFoundException, BadOrMissingXMLSchemaException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean isFiltered() {
+        return filtered;
+    }
+
+    @Override
+    public void setFiltered(boolean filtered) {
+        this.filtered = filtered;
     }
 
 }

@@ -39,6 +39,19 @@ import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
  */
 public interface ETFractionInterface {
 
+    
+    /**
+     *
+     * @return
+     */
+    abstract boolean isFiltered();
+
+    /**
+     *
+     * @param rejected
+     */
+    abstract void setFiltered(boolean rejected);
+    
     /**
      *
      * @return

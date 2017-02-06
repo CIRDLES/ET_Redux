@@ -193,7 +193,7 @@ public class SampleUTh extends ETSample implements
 //        this.sampleRegistry = SampleRegistries.SESAR;
         this.changed = false;
 
-        initFilteredFractionsToAll();
+//        initFilteredFractionsToAll();
 
     }
 
@@ -610,6 +610,7 @@ public class SampleUTh extends ETSample implements
         this.filteredFractionIDs = filteredFractionIDs;
     }
 
+    @Override
     public void initFilteredFractionsToAll() {
         this.filteredFractionIDs = Collections.synchronizedSortedSet(new TreeSet<>());
         for (int i = 0; i < UThFractions.size(); i++) {

@@ -1,5 +1,5 @@
 /*
- * ProjectOfLegacySamplesImporterFromTSVFile_DIBBs_Useries_A.java
+ * ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb.java
  *
  * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
  *
@@ -52,9 +52,9 @@ import org.earthtime.samples.SampleInterface;
  * @author James F. Bowring This importer services UC Santa Barbara Laser
  * Ablation Split Stream legacy data starting 20 June 2014.
  */
-public class ProjectOfLegacySamplesImporterFromTSVFile_DIBBs_Useries_A extends AbstractProjectImporterFromLegacyDelimitedTextFile {
+public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb extends AbstractProjectImporterFromLegacyDelimitedTextFile {
 
-    public ProjectOfLegacySamplesImporterFromTSVFile_DIBBs_Useries_A(FileDelimiterTypesEnum fileDelimiter) {
+    public ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb(FileDelimiterTypesEnum fileDelimiter) {
         super(fileDelimiter);
     }
 
@@ -124,7 +124,7 @@ public class ProjectOfLegacySamplesImporterFromTSVFile_DIBBs_Useries_A extends A
                                     currentSample = new SampleUTh(//
                                             sampleID, //
                                             SampleTypesEnum.LEGACY.getName(), //
-                                            SampleAnalysisTypesEnum.USERIES.getName(), //
+                                            SampleAnalysisTypesEnum.USERIES_CARB.getName(), //
                                             ReduxConstants.ANALYSIS_PURPOSE.SingleAge, "UPb");
 
                                     projectSamples.add(currentSample);
@@ -338,9 +338,11 @@ public class ProjectOfLegacySamplesImporterFromTSVFile_DIBBs_Useries_A extends A
                     ((ReduxAliquotInterface) existingSuperSampleAliquot).getAliquotFractions().add(fraction);
                     superSample.getFractions().add(fraction);
                 }
-            }
-            superSample.initFilteredFractionsToAll();
+            }            
         }
+        
+        superSample.initFilteredFractionsToAll();
+        
     }
 
 }

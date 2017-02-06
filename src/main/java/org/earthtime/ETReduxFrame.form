@@ -77,30 +77,52 @@
                 <Property name="text" type="java.lang.String" value="New Project from Legacy Data Table"/>
               </Properties>
               <SubComponents>
-                <MenuItem class="javax.swing.JMenuItem" name="dibbs_USeries">
+                <Menu class="javax.swing.JMenu" name="uPbLegacyDataMenu">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="U-Series Legacy Data Table from Single Source in tab-delimited format"/>
+                    <Property name="text" type="java.lang.String" value="UPb Legacy Data"/>
                   </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="dibbs_USeriesActionPerformed"/>
-                  </Events>
-                </MenuItem>
-                <MenuItem class="javax.swing.JMenuItem" name="genericUPbDataTableInCSV_menuItem">
+                  <SubComponents>
+                    <MenuItem class="javax.swing.JMenuItem" name="genericUPbDataTableInCSV_menuItem">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Generic UPb Legacy Data Table in .csv format"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="genericUPbDataTableInCSV_menuItemActionPerformed"/>
+                      </Events>
+                    </MenuItem>
+                    <MenuItem class="javax.swing.JMenuItem" name="ucsb_LASS_A_DataTableInCSV_menuItem">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="UCSB LASS A Legacy Data Table in .csv format"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ucsb_LASS_A_DataTableInCSV_menuItemActionPerformed"/>
+                      </Events>
+                    </MenuItem>
+                  </SubComponents>
+                </Menu>
+                <Menu class="javax.swing.JMenu" name="uSeriesLegacyData">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Generic UPb Legacy Data Table in .csv format"/>
+                    <Property name="text" type="java.lang.String" value="U-series Legacy Data"/>
                   </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="genericUPbDataTableInCSV_menuItemActionPerformed"/>
-                  </Events>
-                </MenuItem>
-                <MenuItem class="javax.swing.JMenuItem" name="ucsb_LASS_A_DataTableInCSV_menuItem">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="UCSB LASS A Legacy Data Table in .csv format"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ucsb_LASS_A_DataTableInCSV_menuItemActionPerformed"/>
-                  </Events>
-                </MenuItem>
+                  <SubComponents>
+                    <MenuItem class="javax.swing.JMenuItem" name="USeriesCarbonate">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Carbonate Data from Single Source in tab-delimited format"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="USeriesCarbonateActionPerformed"/>
+                      </Events>
+                    </MenuItem>
+                    <MenuItem class="javax.swing.JMenuItem" name="USeriesIgneous">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Igneous Data from Single Source in tab-delimited format"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="USeriesIgneousActionPerformed"/>
+                      </Events>
+                    </MenuItem>
+                  </SubComponents>
+                </Menu>
               </SubComponents>
             </Menu>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator9">
@@ -686,6 +708,14 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="visitGeoSamplesOrgActionPerformed"/>
               </Events>
             </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="visitUseriesRocks">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="USeries.rocks"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="visitUseriesRocksActionPerformed"/>
+              </Events>
+            </MenuItem>
           </SubComponents>
         </Menu>
         <Menu class="javax.swing.JMenu" name="toolsMenu">
@@ -871,7 +901,7 @@
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
-              <Component id="jSplitPane1" pref="528" max="32767" attributes="0"/>
+              <Component id="jSplitPane1" pref="576" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="buttonBar_panel" min="-2" pref="35" max="-2" attributes="0"/>
           </Group>

@@ -373,7 +373,7 @@ public interface SampleInterface {
     public default boolean isAnalysisTypeUSERIES() {
         boolean retVal = false;
         try {
-            retVal = SampleAnalysisTypesEnum.USERIES.equals(SampleAnalysisTypesEnum.valueOf(getSampleAnalysisType()));
+            retVal = SampleAnalysisTypesEnum.USERIES_CARB.equals(SampleAnalysisTypesEnum.valueOf(getSampleAnalysisType()));
         } catch (Exception e) {
         }
         return retVal;

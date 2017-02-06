@@ -1,5 +1,5 @@
 /*
- * ProjectOfLegacySamplesDataManagerDialogForDIBBsUseries_A.java
+ * ProjectOfLegacySamplesDataManagerUseries_Carb.java
  *
  *
  *
@@ -23,13 +23,13 @@ import java.awt.Frame;
 import java.io.File;
 import org.earthtime.dataDictionaries.FileDelimiterTypesEnum;
 import org.earthtime.projects.ProjectInterface;
-import org.earthtime.projects.projectImporters.UThProjectImporters.ProjectOfLegacySamplesImporterFromTSVFile_DIBBs_Useries_A;
+import org.earthtime.projects.projectImporters.UThProjectImporters.ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb;
 
 /**
  *
  * @author James F. Bowring
  */
-public class ProjectOfLegacySamplesDataManagerDialogForDIBBsUseries_A extends AbstractProjectOfLegacySamplesDataManagerDialog {
+public class ProjectOfLegacySamplesDataManagerUseries_Carb extends AbstractProjectOfLegacySamplesDataManagerDialog {
 
     /**
      * 
@@ -38,7 +38,7 @@ public class ProjectOfLegacySamplesDataManagerDialogForDIBBsUseries_A extends Ab
      * @param project
      * @param importFractionFolderMRU
      */
-    public ProjectOfLegacySamplesDataManagerDialogForDIBBsUseries_A (
+    public ProjectOfLegacySamplesDataManagerUseries_Carb (
             Frame parent,
             boolean modal,
             ProjectInterface project,
@@ -46,9 +46,9 @@ public class ProjectOfLegacySamplesDataManagerDialogForDIBBsUseries_A extends Ab
 
         super(parent,
                 modal,
-                "Legacy Useries Data tab-delimited",
+                "Legacy Useries Carbonate Data tab-delimited",
                 project,
-                new ProjectOfLegacySamplesImporterFromTSVFile_DIBBs_Useries_A(FileDelimiterTypesEnum.TAB),
+                new ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb(FileDelimiterTypesEnum.TAB),
                 importFractionFolderMRU);
     }
 }

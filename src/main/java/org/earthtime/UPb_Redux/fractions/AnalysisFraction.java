@@ -59,19 +59,21 @@ public class AnalysisFraction extends Fraction implements
     private static final long serialVersionUID = -8825197390767165841L;
     private transient String analysisFractionXMLSchemaURL;
 
+    private boolean filtered;
+
     /**
      * Creates a new instance of AnalysisFraction
      */
-    public AnalysisFraction () {
-        super( "Empty", "NONE" );
+    public AnalysisFraction() {
+        super("Empty", "NONE");
     }
 
     /**
      *
      * @param sampleName
      */
-    public AnalysisFraction ( String sampleName ) {
-        super( sampleName, "NONE" );
+    public AnalysisFraction(String sampleName) {
+        super(sampleName, "NONE");
     }
 
     // Used to create fraction for export and to elide Redux fields in XML
@@ -80,44 +82,44 @@ public class AnalysisFraction extends Fraction implements
      * @param fraction
      * @param analyzed
      */
-    public AnalysisFraction (
+    public AnalysisFraction(
             FractionI fraction,
-            boolean analyzed ) {
+            boolean analyzed) {
 
-        this( fraction.getSampleName() );
+        this(fraction.getSampleName());
 
-        this.setFractionID( fraction.getFractionID() );
-        this.setGrainID( fraction.getGrainID() );
+        this.setFractionID(fraction.getFractionID());
+        this.setGrainID(fraction.getGrainID());
 
-        this.getValuesFrom( fraction, true );
+        this.getValuesFrom(fraction, true);
 
         // april 2010 handle UPbLegacyFraction
-        if ( fraction instanceof UPbFraction ) {
-            setTracerID( fraction.getTracerID() );
-            setAlphaPbModelID( fraction.getAlphaPbModelID() );
-            setAlphaUModelID( fraction.getAlphaUModelID() );
-            setPbBlankID( ((UPbFractionI)fraction).getPbBlankID() );
-            setPhysicalConstantsModelID( fraction.getPhysicalConstantsModelID() );
+        if (fraction instanceof UPbFraction) {
+            setTracerID(fraction.getTracerID());
+            setAlphaPbModelID(fraction.getAlphaPbModelID());
+            setAlphaUModelID(fraction.getAlphaUModelID());
+            setPbBlankID(((UPbFractionI) fraction).getPbBlankID());
+            setPhysicalConstantsModelID(fraction.getPhysicalConstantsModelID());
         }
 
         setMeasuredRatios(fraction.copyMeasuredRatios());
     }
 
     @Override
-    public int compareTo ( Fraction fraction ) throws ClassCastException {
+    public int compareTo(Fraction fraction) throws ClassCastException {
         String FractionID = fraction.getFractionID();
-        return (this.getFractionID().compareTo( FractionID ));
+        return (this.getFractionID().compareTo(FractionID));
     }
 
     // XML Serialization *******************************************************
     /**
      *
      */
-    public void setClassXMLSchemaURL () {
+    public void setClassXMLSchemaURL() {
         UPbReduxConfigurator myConfigurator = new UPbReduxConfigurator();
 
-        analysisFractionXMLSchemaURL =
-                myConfigurator.getResourceURI( "URI_AnalysisFractionXMLSchemaURL" );
+        analysisFractionXMLSchemaURL
+                = myConfigurator.getResourceURI("URI_AnalysisFractionXMLSchemaURL");
     }
 
     /**
@@ -125,11 +127,11 @@ public class AnalysisFraction extends Fraction implements
      * @param filename
      */
     @Override
-    public void serializeXMLObject ( String filename ) {
+    public void serializeXMLObject(String filename) {
 
         XStream xstream = getXStreamWriter();
 
-        String xml = xstream.toXML( this );
+        String xml = xstream.toXML(this);
 
         xml = ReduxConstants.XML_Header + xml;
 
@@ -137,14 +139,14 @@ public class AnalysisFraction extends Fraction implements
                 "AnalysisFraction "//
                 + ReduxConstants.XML_ResourceHeader//
                 + analysisFractionXMLSchemaURL//
-                + "\"" );
+                + "\"");
 
         try {
-            try (FileWriter outFile = new FileWriter( filename )) {
-                PrintWriter out = new PrintWriter( outFile );
-                
+            try (FileWriter outFile = new FileWriter(filename)) {
+                PrintWriter out = new PrintWriter(outFile);
+
                 // Write xml to file
-                out.println( xml );
+                out.println(xml);
                 out.flush();
                 out.close();
             }
@@ -163,7 +165,7 @@ public class AnalysisFraction extends Fraction implements
      * @throws BadOrMissingXMLSchemaException
      */
     @Override
-    public Object readXMLObject ( String filename, boolean doValidate )
+    public Object readXMLObject(String filename, boolean doValidate)
             throws FileNotFoundException,
             ETException,
             FileNotFoundException,
@@ -171,21 +173,21 @@ public class AnalysisFraction extends Fraction implements
 
         FractionI myFraction = null;
 
-        BufferedReader reader = URIHelper.getBufferedReader( filename );
+        BufferedReader reader = URIHelper.getBufferedReader(filename);
 
-        if ( reader != null ) {
+        if (reader != null) {
             boolean isValidOrAirplaneMode = !doValidate;
-            
+
             XStream xstream = getXStreamReader();
 
-            isValidOrAirplaneMode = URIHelper.validateXML( reader, filename, analysisFractionXMLSchemaURL );
-            if ( isValidOrAirplaneMode ) {
+            isValidOrAirplaneMode = URIHelper.validateXML(reader, filename, analysisFractionXMLSchemaURL);
+            if (isValidOrAirplaneMode) {
                 // re-create reader
-                reader = URIHelper.getBufferedReader( filename );
+                reader = URIHelper.getBufferedReader(filename);
                 try {
-                    myFraction = (FractionI) xstream.fromXML( reader );
+                    myFraction = (FractionI) xstream.fromXML(reader);
                 } catch (ConversionException e) {
-                    throw new ETException( null, e.getMessage() );
+                    throw new ETException(null, e.getMessage());
                 }
 
 //                System.out.println( "This is your AnalysisFraction that was just read successfully:\n" );
@@ -195,10 +197,10 @@ public class AnalysisFraction extends Fraction implements
 //                System.out.println( xml2 );
 //                System.out.flush();
             } else {
-                throw new ETException( null, "XML data file does not conform to schema." );
+                throw new ETException(null, "XML data file does not conform to schema.");
             }
         } else {
-            throw new FileNotFoundException( "Missing XML data file." );
+            throw new FileNotFoundException("Missing XML data file.");
         }
 
         return myFraction;
@@ -208,11 +210,11 @@ public class AnalysisFraction extends Fraction implements
      *
      * @return
      */
-    public XStream getXStreamWriter () {
+    public XStream getXStreamWriter() {
 
         XStream xstream = new XStream();
 
-        customizeXstream( xstream );
+        customizeXstream(xstream);
 
         return xstream;
     }
@@ -221,20 +223,20 @@ public class AnalysisFraction extends Fraction implements
      *
      * @param xstream
      */
-    public void customizeXstream ( XStream xstream ) {
+    public void customizeXstream(XStream xstream) {
 
-        xstream.registerConverter( new AnalysisFractionXMLConverter() );
-        xstream.registerConverter( new MineralStandardModelXMLConverter() );
+        xstream.registerConverter(new AnalysisFractionXMLConverter());
+        xstream.registerConverter(new MineralStandardModelXMLConverter());
 
-        xstream.registerConverter( new InitialPbModelETXMLConverter() );
-        xstream.registerConverter( new ValueModelXMLConverter() );
-        xstream.registerConverter( new MeasuredRatioModelXMLConverter() );
+        xstream.registerConverter(new InitialPbModelETXMLConverter());
+        xstream.registerConverter(new ValueModelXMLConverter());
+        xstream.registerConverter(new MeasuredRatioModelXMLConverter());
 
         // alias necessary to elide fully qualified name in xml8
-        xstream.alias( "AnalysisFraction", AnalysisFraction.class );
-        xstream.alias( "MeasuredRatioModel", MeasuredRatioModel.class );
-        xstream.alias( "InitialPbModelET", InitialPbModelET.class );
-        xstream.alias( "ValueModel", ValueModel.class );
+        xstream.alias("AnalysisFraction", AnalysisFraction.class);
+        xstream.alias("MeasuredRatioModel", MeasuredRatioModel.class);
+        xstream.alias("InitialPbModelET", InitialPbModelET.class);
+        xstream.alias("ValueModel", ValueModel.class);
 
         setClassXMLSchemaURL();
     }
@@ -243,11 +245,11 @@ public class AnalysisFraction extends Fraction implements
      *
      * @return
      */
-    public XStream getXStreamReader () {
+    public XStream getXStreamReader() {
 
-        XStream xstream = new XStream( new DomDriver() );
+        XStream xstream = new XStream(new DomDriver());
 
-        customizeXstream( xstream );
+        customizeXstream(xstream);
 
         return xstream;
     }
@@ -257,22 +259,20 @@ public class AnalysisFraction extends Fraction implements
      * @param args
      * @throws Exception
      */
-    public static void main ( String[] args ) throws Exception {
+    public static void main(String[] args) throws Exception {
         UPbReduxConfigurator myConfigurator = new UPbReduxConfigurator();
 
-        FractionI analysisFraction = new UPbFraction( "NONE" );
+        FractionI analysisFraction = new UPbFraction("NONE");
         // new AnalysisFraction("Test Sample");
 
         UPbFractionReducer.getInstance().fullFractionReduce((UPbFraction) analysisFraction, true);
 
-        FractionI myAnalysisFraction = new AnalysisFraction( analysisFraction, false );
+        FractionI myAnalysisFraction = new AnalysisFraction(analysisFraction, false);
 
         String testFractionName = "AnalysisFractionTEST.xml";
 
-        ((XMLSerializationI) myAnalysisFraction).serializeXMLObject( testFractionName );
-        ((XMLSerializationI) myAnalysisFraction).readXMLObject( testFractionName, true );
-
-
+        ((XMLSerializationI) myAnalysisFraction).serializeXMLObject(testFractionName);
+        ((XMLSerializationI) myAnalysisFraction).readXMLObject(testFractionName, true);
 
     }
 
@@ -390,4 +390,16 @@ public class AnalysisFraction extends Fraction implements
     public void setSecondaryStandard(boolean secondaryStandard) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    @Override
+    public boolean isFiltered() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setFiltered(boolean rejected) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    
 }
