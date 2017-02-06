@@ -37,23 +37,28 @@ public class EditFractionButton extends JButton {
      *
      * @param szText Button title.
      * @param row table row number.
-     * @param isBold  
+     * @param isBold
      */
     public EditFractionButton(String szText, int row, boolean isBold) {
         super(szText);
-        setMyRow(row);
+        this.myRow = row;
+        init(isBold);
+    }
+
+    private void init(boolean isBold) {
         setMargin(new Insets(0, 0, 0, 0));
+
         if (isBold) {
-            setFont(new Font("SansSerif", Font.BOLD, 11));
+            setFont(new Font("Lucida Grande", Font.BOLD, 10));
         } else {
-            setFont(new Font("SansSerif", Font.PLAIN, 11));
+            setFont(new Font("Lucida Grande", Font.PLAIN, 10));
         }
 
         setToolTipText("Click to edit Fraction.");
     }
 
     /**
-     * 
+     *
      * @return
      */
     public int getMyRow() {
@@ -61,7 +66,7 @@ public class EditFractionButton extends JButton {
     }
 
     /**
-     * 
+     *
      * @param myRow
      */
     public void setMyRow(int myRow) {
