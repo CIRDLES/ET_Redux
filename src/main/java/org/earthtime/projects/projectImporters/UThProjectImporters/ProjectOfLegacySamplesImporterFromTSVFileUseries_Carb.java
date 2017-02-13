@@ -125,7 +125,7 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb extends Abstr
                                             sampleID, //
                                             SampleTypesEnum.LEGACY.getName(), //
                                             SampleAnalysisTypesEnum.USERIES_CARB.getName(), //
-                                            ReduxConstants.ANALYSIS_PURPOSE.SingleAge, "UPb");
+                                            ReduxConstants.ANALYSIS_PURPOSE.SingleAge, "UTh");
 
                                     projectSamples.add(currentSample);
 
@@ -239,8 +239,8 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb extends Abstr
                             // column AQ=42 is conc232Th uncertainty in ppb
                             // convert 2-sigma to 1-sigma
                             BigDecimal oneSigmaAbs = readDelimitedTextCell(myFractionData.get(42)).
-                                    divide(new BigDecimal(2.0).//
-                                            movePointLeft(9));
+                                    divide(new BigDecimal(2.0)).//
+                                            movePointLeft(9);
                             myFraction.getCompositionalMeasureByName(ratioName)//
                                     .setOneSigma(oneSigmaAbs);
 
@@ -264,8 +264,8 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb extends Abstr
                             // column AU=46 is conc238U uncertainty in ppm
                             // convert 2-sigma to 1-sigma
                             oneSigmaAbs = readDelimitedTextCell(myFractionData.get(46)).
-                                    divide(new BigDecimal(2.0).//
-                                            movePointLeft(6));
+                                    divide(new BigDecimal(2.0)).//
+                                            movePointLeft(6);
                             myFraction.getCompositionalMeasureByName(ratioName)//
                                     .setOneSigma(oneSigmaAbs);
 
@@ -341,8 +341,7 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb extends Abstr
             }            
         }
         
-        superSample.initFilteredFractionsToAll();
-        
+        superSample.initFilteredFractionsToAll();       
     }
 
 }

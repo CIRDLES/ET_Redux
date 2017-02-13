@@ -40,6 +40,7 @@ public enum UThAnalysisMeasures {
     ar231Pa_235Ufc("ar231Pa_235Ufc"),
     ar230Th_232Thfc("ar230Th_232Thfc"),
     ar232Th_238Ufc("ar232Th_238Ufc"),
+    ar238U_232Thfc("ar238U_232Thfc"),
     ar234U_238Ufc("ar234U_238Ufc");
 
     private String name;
