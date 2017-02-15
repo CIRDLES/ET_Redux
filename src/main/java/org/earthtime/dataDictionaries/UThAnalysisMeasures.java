@@ -18,6 +18,11 @@
  */
 package org.earthtime.dataDictionaries;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import static org.earthtime.dataDictionaries.AnalysisMeasures.getNames;
+
 /**
  *
  * @author James F. Bowring
@@ -67,6 +72,10 @@ public enum UThAnalysisMeasures {
             retVal[i] = UThAnalysisMeasures.values()[i].getName();
         }
         return retVal;
+    }
+
+    public static List<String> getNamesList() {
+        return new ArrayList<>(Arrays.asList(getNames()));
     }
 
     /**

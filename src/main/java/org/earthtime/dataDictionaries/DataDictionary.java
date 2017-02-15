@@ -446,7 +446,7 @@ public final class DataDictionary {
      */
     public final static String[][] ArrayMapOfInputsToFractionClassMethodNames = new String[][]{
         {"getMeasuredRatioByName"}, MeasuredRatios.getNames(),
-        {"getAnalysisMeasure"}, AnalysisMeasures.getNames(),
+        {"getAnalysisMeasure"}, AnalysisMeasures.getAllNames(),
         {"getTracerRatioByName"}, TracerUPbRatiosAndConcentrations.getNames(),
         {"getCompositionalMeasureByName"}, earthTimeUPbCompositionalMeasuresNames,
         //        {"getTracerIsotopeConcByName"}, TracerIsotopes.getNames(),

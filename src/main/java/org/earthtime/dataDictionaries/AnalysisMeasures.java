@@ -18,7 +18,9 @@
  */
 package org.earthtime.dataDictionaries;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  *
@@ -33,124 +35,131 @@ public enum AnalysisMeasures {
 
     // tracer ratios
     /**
-     * 
+     *
      */
-    fractionMass( "fractionMass" ),
+    fractionMass("fractionMass"),
     /**
-     * 
+     *
      */
-    tracerMassInGrams( "tracerMassInGrams" ),
+    tracerMassInGrams("tracerMassInGrams"),
     /**
-     * 
+     *
      */
-    uBlankMassInGrams( "uBlankMassInGrams" ),
+    uBlankMassInGrams("uBlankMassInGrams"),
     /**
-     * 
+     *
      */
-    pbBlankMassInGrams( "pbBlankMassInGrams" ),
+    pbBlankMassInGrams("pbBlankMassInGrams"),
     /**
-     * 
+     *
      */
-    alphaPb( "alphaPb" ),
+    alphaPb("alphaPb"),
     /**
-     * 
+     *
      */
-    alphaU( "alphaU" ),
+    alphaU("alphaU"),
     /**
-     * 
+     *
      */
-    r238_235b( "r238_235b" ),
+    r238_235b("r238_235b"),
     /**
-     * 
+     *
      */
-    r238_235s( "r238_235s" ),
+    r238_235s("r238_235s"),
     /**
-     * 
+     *
      */
-    r18O_16O( "r18O_16O" ),
+    r18O_16O("r18O_16O"),
     /**
-     * 
+     *
      */
-    r18O_16O_revised( "r18O_16O_revised" ),
+    r18O_16O_revised("r18O_16O_revised"),
     /**
-     * 
+     *
      */
-    rTh_Umagma( "rTh_Umagma" ),
+    rTh_Umagma("rTh_Umagma"),
     /**
-     * 
+     *
      */
-    ar231_235sample( "ar231_235sample" ),
+    ar231_235sample("ar231_235sample"),
     /**
-     * 
+     *
      */
-    r270_267m( "r270_267m" ),
+    r270_267m("r270_267m"),
     /**
-     * 
+     *
      */
-    r265_267m( "r265_267m" ),
+    r265_267m("r265_267m"),
     /**
-     * 
+     *
      */
-    r270_265m( "r270_265m" ),
+    r270_265m("r270_265m"),
     /**
-     * 
+     *
      */
-    r270_268m( "r270_268m" ),
+    r270_268m("r270_268m"),
     /**
-     * 
+     *
      */
-    r265_268m( "r265_268m" );
+    r265_268m("r265_268m");
 
     private String name;
 
-    private AnalysisMeasures ( String name ) {
+    private AnalysisMeasures(String name) {
         this.name = name;
     }
 
     /**
-     * 
+     *
      * @return
      */
-    public String getName () {
+    public String getName() {
         return name;
     }
 
     /**
-     * 
+     *
      * @return
      */
-    public static String[] getNames () {
+    public static String[] getNames() {
         String[] retVal = new String[AnalysisMeasures.values().length];
-        for (int i = 0; i < AnalysisMeasures.values().length; i ++) {
+        for (int i = 0; i < AnalysisMeasures.values().length; i++) {
             retVal[i] = AnalysisMeasures.values()[i].getName();
         }
         return retVal;
     }
 
+    public static String[] getAllNames() {       
+        List<String> allNamesList = new ArrayList<>(Arrays.asList(getNames()));
+        allNamesList.addAll(UThAnalysisMeasures.getNamesList());
+        
+        return allNamesList.toArray(new String[0]);
+    }
+
     /**
-     * 
+     *
      * @param checkString
      * @return
      */
-    public static boolean contains ( String checkString ) {
+    public static boolean contains(String checkString) {
         boolean retVal = true;
         try {
-            AnalysisMeasures.valueOf( checkString );
+            AnalysisMeasures.valueOf(checkString);
         } catch (IllegalArgumentException e) {
             retVal = false;
         }
 
         return retVal;
     }
-    
-     //*************************
+
+    //*************************
     /**
-     * 
+     *
      * @return
      */
-    public static String[] getNamesSorted () {
+    public static String[] getNamesSorted() {
         String[] retVal = new String[AnalysisMeasures.values().length];
-        for (int i = 0; i < AnalysisMeasures.values().length; i ++) {
+        for (int i = 0; i < AnalysisMeasures.values().length; i++) {
             retVal[i] = AnalysisMeasures.values()[i].getName();
         }
         Arrays.sort(retVal);

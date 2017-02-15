@@ -70,8 +70,12 @@ public class UThFraction implements
     protected boolean deleted;
     protected String fractionNotes;
     protected boolean rejected;
-    
+
     protected boolean filtered;
+
+    private int rgbColor;
+    private transient Path2D errorEllipsePath;
+    private transient double ellipseRho;
 
     public UThFraction() {
         this.fractionID = ReduxConstants.DEFAULT_OBJECT_NAME;
@@ -96,6 +100,8 @@ public class UThFraction implements
         this.deleted = false;
         this.fractionNotes = "";
         this.rejected = false;
+
+        rgbColor = 0;
 
         initializeTraceElements();
     }
@@ -447,7 +453,7 @@ public class UThFraction implements
     public void setStandard(boolean standard) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
     /**
      * @return the secondaryStandard
      */
@@ -528,33 +534,33 @@ public class UThFraction implements
     }
 
     @Override
-    public Path2D getErrorEllipsePath() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void setErrorEllipsePath(Path2D errorEllipsePath) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void setEllipseRho(double ellipseRho) {
+        this.ellipseRho = ellipseRho;
     }
 
     @Override
     public double getEllipseRho() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return ellipseRho;
     }
 
     @Override
-    public void setEllipseRho(double ellipseRho) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void setErrorEllipsePath(Path2D errorEllipsePath) {
+        this.errorEllipsePath = errorEllipsePath;
     }
 
     @Override
-    public int getRgbColor() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Path2D getErrorEllipsePath() {
+        return errorEllipsePath;
     }
 
     @Override
     public void setRgbColor(int rgbColor) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.rgbColor = rgbColor;
+    }
+
+    @Override
+    public int getRgbColor() {
+        return rgbColor;
     }
 
     @Override
