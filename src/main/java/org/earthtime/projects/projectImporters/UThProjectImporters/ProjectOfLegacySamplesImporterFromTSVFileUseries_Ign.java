@@ -1,7 +1,7 @@
 /*
  * ProjectOfLegacySamplesImporterFromTSVFileUseries_Ign.java
  *
- * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2017 James F. Bowring and www.Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -249,47 +249,18 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Ign extends Abstra
                         myFraction.getLegacyActivityRatioByName(ratioName)//
                                 .setOneSigma(oneSigmaAbs);
 
-//                        // column AR=43 is ar230Th_232Thfc 
-//                        ratioName = UThAnalysisMeasures.ar230Th_232Thfc.getName();
-//                        myFraction.getLegacyActivityRatioByName(ratioName)//
-//                                .setValue(readDelimitedTextCell(myFractionData.get(43)));
-//
-//                        // column AV=47 is ar230Th_234Ufc 
-//                        ratioName = UThAnalysisMeasures.ar230Th_234Ufc.getName();
-//                        myFraction.getLegacyActivityRatioByName(ratioName)//
-//                                .setValue(readDelimitedTextCell(myFractionData.get(47)));
-//
-//                        // column AW=48 is ar230Th_234Ufc uncertainty 
-//                        // convert 2-sigma to 1-sigma
-//                        oneSigmaAbs = readDelimitedTextCell(myFractionData.get(48)).
-//                                divide(new BigDecimal(2.0));
-//                        myFraction.getLegacyActivityRatioByName(ratioName)//
-//                                .setOneSigma(oneSigmaAbs);
-//
-//                        // column AX=49 is ar230Th_238Ufc 
-//                        ratioName = UThAnalysisMeasures.ar230Th_238Ufc.getName();
-//                        myFraction.getLegacyActivityRatioByName(ratioName)//
-//                                .setValue(readDelimitedTextCell(myFractionData.get(49)));
-//
-//                        // column AY=50 is ar230Th_238Ufc uncertainty 
-//                        // convert 2-sigma to 1-sigma
-//                        oneSigmaAbs = readDelimitedTextCell(myFractionData.get(50)).
-//                                divide(new BigDecimal(2.0));
-//                        myFraction.getLegacyActivityRatioByName(ratioName)//
-//                                .setOneSigma(oneSigmaAbs);
-//
-//                        // column AZ=51 is ar234U_238Ufc 
-//                        ratioName = UThAnalysisMeasures.ar234U_238Ufc.getName();
-//                        myFraction.getLegacyActivityRatioByName(ratioName)//
-//                                .setValue(readDelimitedTextCell(myFractionData.get(51)));
-//
-//                        // column BA=52 is ar234U_238Ufc uncertainty 
-//                        // convert 2-sigma to 1-sigma
-//                        oneSigmaAbs = readDelimitedTextCell(myFractionData.get(52)).
-//                                divide(new BigDecimal(2.0));
-//                        myFraction.getLegacyActivityRatioByName(ratioName)//
-//                                .setOneSigma(oneSigmaAbs);
-//
+                        // column i=8 is ar230Th_232Thfc 
+                        ratioName = UThAnalysisMeasures.ar230Th_232Thfc.getName();
+                        myFraction.getLegacyActivityRatioByName(ratioName)//
+                                .setValue(readDelimitedTextCell(myFractionData.get(8)));
+
+                        // column 9 is r238U_232Thfc uncertainty
+                        // convert 2-sigma to 1-sigma
+                        oneSigmaAbs = readDelimitedTextCell(myFractionData.get(9)).
+                                divide(new BigDecimal(2.0));
+                        myFraction.getLegacyActivityRatioByName(ratioName)//
+                                .setOneSigma(oneSigmaAbs);
+
                         UThFractionReducer.calculateMeasuredAtomRatiosFromLegacyActivityRatios(myFraction);
                     }
 
@@ -323,8 +294,8 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Ign extends Abstra
                     superSample.getFractions().add(fraction);
                 }
             }
-            superSample.initFilteredFractionsToAll();
         }
+        superSample.initFilteredFractionsToAll();
     }
 
 }

@@ -947,6 +947,13 @@ public class SampleDateInterpretationsManager extends DialogEditor
                     varNames.add(reportColumn.getRetrieveVariableName());
                 }
             }
+            
+            reportColumns = sample.getReportSettingsModel().getCompositionCategory().getCategoryColumns();
+            for (ReportColumnInterface reportColumn : reportColumns) {
+                if (reportColumn.isVisible()) {
+                    varNames.add(reportColumn.getRetrieveVariableName());
+                }
+            }
 
             for (String var : varNames) {
                 variablesListing.add(var);

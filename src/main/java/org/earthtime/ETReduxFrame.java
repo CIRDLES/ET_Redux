@@ -3446,7 +3446,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
     private void interpretSampleDates_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_interpretSampleDates_buttonActionPerformed
         // Dec 2015 experiment with customization of skins
-        if (theSample.getIsotopeStyle().compareToIgnoreCase("UTh") == 0) {
+        if (theSample.getIsotopeStyle().compareToIgnoreCase("UThxxx") == 0) {
 //            if (topsoilEvolutionChart != null) {
 //                topsoilEvolutionChart.close();
 //                topsoilEvolutionChart = null;

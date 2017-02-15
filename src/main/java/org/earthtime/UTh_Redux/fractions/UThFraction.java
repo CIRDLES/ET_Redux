@@ -440,7 +440,7 @@ public class UThFraction implements
 
     @Override
     public boolean isStandard() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return false;
     }
 
     @Override
@@ -453,7 +453,7 @@ public class UThFraction implements
      */
     @Override
     public boolean isSecondaryStandard() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return false;
     }
 
     /**
