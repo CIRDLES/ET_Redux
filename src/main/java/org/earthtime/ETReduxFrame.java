@@ -133,6 +133,7 @@ import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.plots.anyTwo.PlotAny2Panel;
+import org.earthtime.plots.isochrons.IsochronsPanel;
 import org.earthtime.projects.EarthTimeSerializedFileInterface;
 import org.earthtime.projects.Project;
 import org.earthtime.projects.ProjectInterface;
@@ -176,6 +177,8 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
     private JLayeredPane myConcordiaGraphPanel;
 //    private JFXPanel concordiaGraphPanelIsoplot;
     private JLayeredPane myPlotAnyPanel;
+    private JLayeredPane myUseriesIsochronPanel;
+
     /**
      *
      */
@@ -770,6 +773,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         // set up plotAny2Panel for use on fraction details window
         //as well as interpret date window and archiving
         myPlotAnyPanel = new PlotAny2Panel(theSample, this);
+        myUseriesIsochronPanel = new IsochronsPanel(theSample, this);
 
         // set up probabilitydensity for archiving
         myNormedProbabilityPanel = new DateProbabilityDensityPanel(theSample);
@@ -1401,6 +1405,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         // set up plotAny2Panel for use on fraction details window
         //as well as interpret date window and archiving
         myPlotAnyPanel = new PlotAny2Panel(theSample, this);
+        myUseriesIsochronPanel = new IsochronsPanel(theSample, this);
 
         // march 2014
 //        concordiaGraphPanelIsoplot = new ConcordiaGraphPanelIsoplot(theSample);
@@ -3487,6 +3492,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                     = new WeightedMeanGraphPanel(theSample);
 
             myPlotAnyPanel = new PlotAny2Panel(theSample, this);
+            myUseriesIsochronPanel = new IsochronsPanel(theSample, this);
 
             theSample.getSampleDateInterpretationGUISettings().//
                     setConcordiaOptions(((ConcordiaPlotDisplayInterface) myConcordiaGraphPanel).getConcordiaOptions());
@@ -3500,6 +3506,8 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             ((PlottingDetailsDisplayInterface) myConcordiaGraphPanel).resetPanel(true, false);
             ((PlottingDetailsDisplayInterface) myPlotAnyPanel).setShowTightToEdges(true);
             ((PlottingDetailsDisplayInterface) myPlotAnyPanel).resetPanel(true, false);
+            ((PlottingDetailsDisplayInterface) myUseriesIsochronPanel).setShowTightToEdges(true);
+            ((PlottingDetailsDisplayInterface) myUseriesIsochronPanel).resetPanel(true, false);
 
             if (sampleDateInterpDialog != null) {
                 sampleDateInterpDialog.dispose();
@@ -3510,6 +3518,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                             false,// try floating as of october 2014 true,
                             myConcordiaGraphPanel,
                             myPlotAnyPanel,
+                            myUseriesIsochronPanel,
                             myWeightedMeanGraphPanel,
                             myNormedProbabilityPanel,
                             theSample,

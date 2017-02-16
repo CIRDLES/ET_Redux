@@ -1,8 +1,5 @@
 /*
- * PlotAny2Panel.java
- *
- * Created on March 4, 2008, 3:08 PM
- * Revised for this use Decemebr 2016
+ * IsochronsPanel.java
  *
  * Copyright 2006-2017 James F. Bowring and www.Earth-Time.org
  *
@@ -18,9 +15,9 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.earthtime.plots.anyTwo;
+package org.earthtime.plots.isochrons;
 
-import org.earthtime.dataDictionaries.RadRatios;
+import org.earthtime.dataDictionaries.UThAnalysisMeasures;
 import org.earthtime.plots.AbstractPlot;
 import org.earthtime.reportViews.ReportUpdaterInterface;
 import org.earthtime.samples.SampleInterface;
@@ -29,20 +26,19 @@ import org.earthtime.samples.SampleInterface;
  *
  * @author James F. Bowring
  */
-public class PlotAny2Panel extends AbstractPlot {
+public class IsochronsPanel extends AbstractPlot {
+
 
     /**
-     * Creates a new instance of PlotAny2Panel
+     * Creates a new instance of IsochronsPanel
      *
      * @param mySample
      * @param reportUpdater the value of reportUpdater
      */
-    public PlotAny2Panel(SampleInterface mySample, ReportUpdaterInterface reportUpdater) {
+    public IsochronsPanel(SampleInterface mySample, ReportUpdaterInterface reportUpdater) {
         super(mySample, reportUpdater);
 
-        this.nameOfXaxisSourceValueModel = RadRatios.r207_235r.getName();
-        this.nameOfYaxisSourceValueModel = RadRatios.r206_238r.getName();
-
+        this.nameOfXaxisSourceValueModel = UThAnalysisMeasures.ar238U_232Thfc.getName();
+        this.nameOfYaxisSourceValueModel = UThAnalysisMeasures.ar230Th_232Thfc.getName();
     }
-
 }
