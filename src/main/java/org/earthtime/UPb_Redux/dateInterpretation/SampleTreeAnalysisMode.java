@@ -113,14 +113,14 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
                 }
             }
         }
-        
+
         int count = 0;
-        for (Object obj: nodeObjs){
+        for (Object obj : nodeObjs) {
             ((MutableTreeNode) obj).removeFromParent();
             ((DefaultTreeModel) getModel()).nodesWereRemoved(((TreeNode) obj).getParent(), new int[]{indexObjs.get(count)}, new Object[]{obj});
             count++;
         }
-        
+
         ((DefaultTreeModel) getModel()).reload();
 
     }
@@ -284,7 +284,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
 
                 fractionNode.setUserObject( //
                         new CheckBoxNode(
-                                ((SampleDateModel) SAM).showFractionIdWithDateAndUnct(((ReduxAliquotInterface) aliquot).getAliquotFractionByName(fracID), "Ma"),
+                                ((SampleDateModel) SAM).showFractionIdWithDateAndUnct(((ReduxAliquotInterface) aliquot).getAliquotFractionByName(fracID)),
                                 ((SampleDateModel) SAM).includesFractionByName(fracID),
                                 true));
                 sampleDateFractions.add(fractionNode);
@@ -362,14 +362,12 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
                 return ((ValueModelI) o).getName() + "        ";
             }
         } else if ((o instanceof String) && (((String) o).startsWith("date"))) {
-            return //                
-                    ((SampleDateModel) ((DefaultMutableTreeNode) ((TreeNode) value).//
-                            getParent()).getUserObject()).ShowCustomDateNode();
+            return ((SampleDateModel) ((DefaultMutableTreeNode) ((TreeNode) value).//
+                    getParent()).getUserObject()).ShowCustomDateNode();
 
         } else if ((o instanceof String) && (((String) o).startsWith("MSWD"))) {
-            return //                
-                    ((SampleDateModel) ((DefaultMutableTreeNode) ((TreeNode) value).//
-                            getParent()).getUserObject()).ShowCustomMSWDwithN() + "              ";
+            return ((SampleDateModel) ((DefaultMutableTreeNode) ((TreeNode) value).//
+                    getParent()).getUserObject()).ShowCustomMSWDwithN() + "              ";
 
         } else {
             return super.convertValueToText(

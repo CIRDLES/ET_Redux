@@ -40,6 +40,7 @@ public interface AliquotInterface {
 
     // Field accessors
     abstract int getAliquotNumber();
+
     /**
      *
      * @return
@@ -251,8 +252,8 @@ public interface AliquotInterface {
             if (getASampleDateModelByName(SampleDateTypes.getSampleDateType(i)) == null) {
                 ValueModel tempModel;
                 if (SampleDateTypes.getSampleDateType(i).endsWith("intercept")) {
-                    tempModel = //
-                            new SampleDateInterceptModel(//
+                    tempModel
+                            = new SampleDateInterceptModel(//
                                     SampleDateTypes.getSampleDateType(i),
                                     SampleDateTypes.getSampleDateTypeMethod(i),
                                     SampleDateTypes.getSampleDateTypeName(i),
@@ -260,8 +261,8 @@ public interface AliquotInterface {
                                     "ABS",
                                     BigDecimal.ZERO);
                 } else {
-                    tempModel = //
-                            new SampleDateModel(//
+                    tempModel
+                            = new SampleDateModel(//
                                     SampleDateTypes.getSampleDateType(i),
                                     SampleDateTypes.getSampleDateTypeMethod(i),
                                     SampleDateTypes.getSampleDateTypeName(i),
@@ -367,9 +368,9 @@ public interface AliquotInterface {
         for (ValueModel SAM : getSampleDateModels()) {
             ((SampleDateModel) SAM).getIncludedFractionIDsVector().stream().filter((fractionID) //
                     -> (!includedFractionIDs.contains(fractionID))).forEach((fractionID) //
-                            -> {
-                        excludedFractionIDs.add(fractionID);
-                    });
+                    -> {
+                excludedFractionIDs.add(fractionID);
+            });
             // remove found exclusions (these are ones that were rejected after processing
             excludedFractionIDs.stream().forEach((fractionID) -> {
                 ((SampleDateModel) SAM).getIncludedFractionIDsVector().remove(fractionID);

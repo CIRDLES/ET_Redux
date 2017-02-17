@@ -625,7 +625,7 @@ public class SampleDateModelTest {
         String dateUnit = "";
         SampleDateModel instance = new SampleDateModel();
         String expResult = "NONE";
-        String result = instance.showFractionIdWithDateAndUnct(fraction, dateUnit);
+        String result = instance.showFractionIdWithDateAndUnct(fraction);
         
         
         assertEquals(expResult, result);
@@ -634,7 +634,7 @@ public class SampleDateModelTest {
         dateUnit = "hell";
         expResult="hello";
         
-        result = instance.showFractionIdWithDateAndUnct(fraction, dateUnit);
+        result = instance.showFractionIdWithDateAndUnct(fraction);
         
         assertEquals(expResult, result);
 

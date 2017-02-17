@@ -1552,6 +1552,9 @@ public class SampleDateInterpretationsManager extends DialogEditor
 
         graphPanels_TabbedPane.addTab("Weighted Mean", weightedMeanLayeredPane);
 
+        useriesIsochronPane.setBackground(new java.awt.Color(255, 237, 255));
+        useriesIsochronPane.setOpaque(true);
+
         uSeriesIsochronToolPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         uSeriesIsochronToolPanel.setMinimumSize(new java.awt.Dimension(0, 0));
         uSeriesIsochronToolPanel.setOpaque(false);
@@ -1592,10 +1595,11 @@ public class SampleDateInterpretationsManager extends DialogEditor
         });
         uSeriesIsochronToolPanel.add(resetGraphDisplayIsochron_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 2, 35, 30));
 
-        ellipseCentersIsochron_Checkbox.setBackground(new java.awt.Color(255, 241, 230));
+        ellipseCentersIsochron_Checkbox.setBackground(new java.awt.Color(255, 237, 255));
         ellipseCentersIsochron_Checkbox.setFont(new java.awt.Font("SansSerif", 1, 10)); // NOI18N
         ellipseCentersIsochron_Checkbox.setSelected(true);
         ellipseCentersIsochron_Checkbox.setText("<html>Ellipse<br> Centers</html>");
+        ellipseCentersIsochron_Checkbox.setOpaque(true);
         ellipseCentersIsochron_Checkbox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ellipseCentersIsochron_CheckboxActionPerformed(evt);
@@ -1603,10 +1607,11 @@ public class SampleDateInterpretationsManager extends DialogEditor
         });
         uSeriesIsochronToolPanel.add(ellipseCentersIsochron_Checkbox, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 2, 70, 25));
 
-        ellipseLabelsIsochron_checkbox.setBackground(new java.awt.Color(255, 241, 230));
+        ellipseLabelsIsochron_checkbox.setBackground(new java.awt.Color(255, 237, 255));
         ellipseLabelsIsochron_checkbox.setFont(new java.awt.Font("SansSerif", 1, 10)); // NOI18N
         ellipseLabelsIsochron_checkbox.setSelected(true);
         ellipseLabelsIsochron_checkbox.setText("<html>Ellipse<br> Labels</html>");
+        ellipseLabelsIsochron_checkbox.setOpaque(true);
         ellipseLabelsIsochron_checkbox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ellipseLabelsIsochron_checkboxActionPerformed(evt);
@@ -1614,10 +1619,11 @@ public class SampleDateInterpretationsManager extends DialogEditor
         });
         uSeriesIsochronToolPanel.add(ellipseLabelsIsochron_checkbox, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 2, 70, 25));
 
-        oneToOneLineIsochron_checkbox.setBackground(new java.awt.Color(255, 241, 230));
+        oneToOneLineIsochron_checkbox.setBackground(new java.awt.Color(255, 237, 255));
         oneToOneLineIsochron_checkbox.setFont(new java.awt.Font("SansSerif", 1, 10)); // NOI18N
         oneToOneLineIsochron_checkbox.setSelected(true);
         oneToOneLineIsochron_checkbox.setText("<html>1:1<br> Line</html>");
+        oneToOneLineIsochron_checkbox.setOpaque(true);
         oneToOneLineIsochron_checkbox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 oneToOneLineIsochron_checkboxActionPerformed(evt);
@@ -1659,11 +1665,12 @@ public class SampleDateInterpretationsManager extends DialogEditor
         });
         uSeriesIsochronToolPanel.add(zoomBox_toggleIsochron_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(125, 2, 55, 30));
 
-        thoriumFlavorIsochron_radioButton.setBackground(new java.awt.Color(255, 241, 230));
+        thoriumFlavorIsochron_radioButton.setBackground(new java.awt.Color(255, 237, 255));
         concordiaTeraW_buttonGroup.add(thoriumFlavorIsochron_radioButton);
         thoriumFlavorIsochron_radioButton.setFont(new java.awt.Font("SansSerif", 1, 9)); // NOI18N
         thoriumFlavorIsochron_radioButton.setText("Th");
         thoriumFlavorIsochron_radioButton.setToolTipText("Wetherill Concordia");
+        thoriumFlavorIsochron_radioButton.setOpaque(true);
         thoriumFlavorIsochron_radioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 thoriumFlavorIsochron_radioButtonActionPerformed(evt);
@@ -1688,10 +1695,11 @@ public class SampleDateInterpretationsManager extends DialogEditor
         });
         uSeriesIsochronToolPanel.add(showTightIsochron_toggleButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 2, 30, 30));
 
-        showExcludedFractionsIsochron_checkbox.setBackground(new java.awt.Color(255, 241, 230));
+        showExcludedFractionsIsochron_checkbox.setBackground(new java.awt.Color(255, 237, 255));
         showExcludedFractionsIsochron_checkbox.setFont(new java.awt.Font("SansSerif", 1, 10)); // NOI18N
         showExcludedFractionsIsochron_checkbox.setSelected(true);
         showExcludedFractionsIsochron_checkbox.setText("<html>Excluded<br> Fractions</html>");
+        showExcludedFractionsIsochron_checkbox.setOpaque(true);
         showExcludedFractionsIsochron_checkbox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 showExcludedFractionsIsochron_checkboxActionPerformed(evt);
@@ -1699,11 +1707,12 @@ public class SampleDateInterpretationsManager extends DialogEditor
         });
         uSeriesIsochronToolPanel.add(showExcludedFractionsIsochron_checkbox, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 2, 75, 25));
 
-        radiumFlavorIsochron_radioButton.setBackground(new java.awt.Color(255, 241, 230));
+        radiumFlavorIsochron_radioButton.setBackground(new java.awt.Color(255, 237, 255));
         concordiaTeraW_buttonGroup.add(radiumFlavorIsochron_radioButton);
         radiumFlavorIsochron_radioButton.setFont(new java.awt.Font("SansSerif", 1, 9)); // NOI18N
         radiumFlavorIsochron_radioButton.setText("Ra");
         radiumFlavorIsochron_radioButton.setToolTipText("Thorium-based Wetherill Concordia");
+        radiumFlavorIsochron_radioButton.setOpaque(true);
         radiumFlavorIsochron_radioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 radiumFlavorIsochron_radioButtonActionPerformed(evt);
@@ -1711,9 +1720,10 @@ public class SampleDateInterpretationsManager extends DialogEditor
         });
         uSeriesIsochronToolPanel.add(radiumFlavorIsochron_radioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 1, -1, 28));
 
-        showFilteredFractionsIsochron_checkbox.setBackground(new java.awt.Color(255, 241, 230));
+        showFilteredFractionsIsochron_checkbox.setBackground(new java.awt.Color(255, 237, 255));
         showFilteredFractionsIsochron_checkbox.setFont(new java.awt.Font("SansSerif", 1, 10)); // NOI18N
         showFilteredFractionsIsochron_checkbox.setText("<html>Filtering ON<br> </html>");
+        showFilteredFractionsIsochron_checkbox.setOpaque(true);
         showFilteredFractionsIsochron_checkbox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 showFilteredFractionsIsochron_checkboxActionPerformed(evt);
@@ -2300,7 +2310,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                .add(interpretations_SplitPane)
+                .add(interpretations_SplitPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 686, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 31, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );

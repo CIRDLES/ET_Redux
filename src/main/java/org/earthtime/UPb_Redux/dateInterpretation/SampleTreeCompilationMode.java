@@ -229,7 +229,7 @@ public class SampleTreeCompilationMode extends JTree implements SampleTreeI {
                 fractionNode.setUserObject( //
                         new CheckBoxNode(
                                 ((SampleDateModel) SAM).showFractionIdWithDateAndUnct(//
-                                        sample.getSampleFractionByName(fracID), "Ma"),
+                                        sample.getSampleFractionByName(fracID)),
                                 ((SampleDateModel) SAM).includesFractionByName(fracID),
                                 true));
                 aliquotNameNode.add(fractionNode);

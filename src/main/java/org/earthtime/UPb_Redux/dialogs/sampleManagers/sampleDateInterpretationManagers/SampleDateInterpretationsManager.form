@@ -126,7 +126,7 @@
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
-              <Component id="interpretations_SplitPane" max="32767" attributes="0"/>
+              <Component id="interpretations_SplitPane" pref="686" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jPanel1" min="-2" pref="31" max="-2" attributes="0"/>
           </Group>
@@ -976,6 +976,12 @@
               </SubComponents>
             </Container>
             <Container class="javax.swing.JLayeredPane" name="useriesIsochronPane">
+              <Properties>
+                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="ff" green="ed" red="ff" type="rgb"/>
+                </Property>
+                <Property name="opaque" type="boolean" value="true"/>
+              </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
                   <JTabbedPaneConstraints tabName="USeries Isochrons">
@@ -1104,13 +1110,14 @@
                     <Component class="javax.swing.JCheckBox" name="ellipseCentersIsochron_Checkbox">
                       <Properties>
                         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                          <Color blue="e6" green="f1" red="ff" type="rgb"/>
+                          <Color blue="ff" green="ed" red="ff" type="rgb"/>
                         </Property>
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                           <Font name="SansSerif" size="10" style="1"/>
                         </Property>
                         <Property name="selected" type="boolean" value="true"/>
                         <Property name="text" type="java.lang.String" value="&lt;html&gt;Ellipse&lt;br&gt; Centers&lt;/html&gt;"/>
+                        <Property name="opaque" type="boolean" value="true"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ellipseCentersIsochron_CheckboxActionPerformed"/>
@@ -1124,13 +1131,14 @@
                     <Component class="javax.swing.JCheckBox" name="ellipseLabelsIsochron_checkbox">
                       <Properties>
                         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                          <Color blue="e6" green="f1" red="ff" type="rgb"/>
+                          <Color blue="ff" green="ed" red="ff" type="rgb"/>
                         </Property>
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                           <Font name="SansSerif" size="10" style="1"/>
                         </Property>
                         <Property name="selected" type="boolean" value="true"/>
                         <Property name="text" type="java.lang.String" value="&lt;html&gt;Ellipse&lt;br&gt; Labels&lt;/html&gt;"/>
+                        <Property name="opaque" type="boolean" value="true"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ellipseLabelsIsochron_checkboxActionPerformed"/>
@@ -1144,13 +1152,14 @@
                     <Component class="javax.swing.JCheckBox" name="oneToOneLineIsochron_checkbox">
                       <Properties>
                         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                          <Color blue="e6" green="f1" red="ff" type="rgb"/>
+                          <Color blue="ff" green="ed" red="ff" type="rgb"/>
                         </Property>
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                           <Font name="SansSerif" size="10" style="1"/>
                         </Property>
                         <Property name="selected" type="boolean" value="true"/>
                         <Property name="text" type="java.lang.String" value="&lt;html&gt;1:1&lt;br&gt; Line&lt;/html&gt;"/>
+                        <Property name="opaque" type="boolean" value="true"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="oneToOneLineIsochron_checkboxActionPerformed"/>
@@ -1238,7 +1247,7 @@
                     <Component class="javax.swing.JRadioButton" name="thoriumFlavorIsochron_radioButton">
                       <Properties>
                         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                          <Color blue="e6" green="f1" red="ff" type="rgb"/>
+                          <Color blue="ff" green="ed" red="ff" type="rgb"/>
                         </Property>
                         <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                           <ComponentRef name="concordiaTeraW_buttonGroup"/>
@@ -1248,6 +1257,7 @@
                         </Property>
                         <Property name="text" type="java.lang.String" value="Th"/>
                         <Property name="toolTipText" type="java.lang.String" value="Wetherill Concordia"/>
+                        <Property name="opaque" type="boolean" value="true"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="thoriumFlavorIsochron_radioButtonActionPerformed"/>
@@ -1298,13 +1308,14 @@
                     <Component class="javax.swing.JCheckBox" name="showExcludedFractionsIsochron_checkbox">
                       <Properties>
                         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                          <Color blue="e6" green="f1" red="ff" type="rgb"/>
+                          <Color blue="ff" green="ed" red="ff" type="rgb"/>
                         </Property>
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                           <Font name="SansSerif" size="10" style="1"/>
                         </Property>
                         <Property name="selected" type="boolean" value="true"/>
                         <Property name="text" type="java.lang.String" value="&lt;html&gt;Excluded&lt;br&gt; Fractions&lt;/html&gt;"/>
+                        <Property name="opaque" type="boolean" value="true"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="showExcludedFractionsIsochron_checkboxActionPerformed"/>
@@ -1318,7 +1329,7 @@
                     <Component class="javax.swing.JRadioButton" name="radiumFlavorIsochron_radioButton">
                       <Properties>
                         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                          <Color blue="e6" green="f1" red="ff" type="rgb"/>
+                          <Color blue="ff" green="ed" red="ff" type="rgb"/>
                         </Property>
                         <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                           <ComponentRef name="concordiaTeraW_buttonGroup"/>
@@ -1328,6 +1339,7 @@
                         </Property>
                         <Property name="text" type="java.lang.String" value="Ra"/>
                         <Property name="toolTipText" type="java.lang.String" value="Thorium-based Wetherill Concordia"/>
+                        <Property name="opaque" type="boolean" value="true"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="radiumFlavorIsochron_radioButtonActionPerformed"/>
@@ -1341,12 +1353,13 @@
                     <Component class="javax.swing.JCheckBox" name="showFilteredFractionsIsochron_checkbox">
                       <Properties>
                         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                          <Color blue="e6" green="f1" red="ff" type="rgb"/>
+                          <Color blue="ff" green="ed" red="ff" type="rgb"/>
                         </Property>
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                           <Font name="SansSerif" size="10" style="1"/>
                         </Property>
                         <Property name="text" type="java.lang.String" value="&lt;html&gt;Filtering ON&lt;br&gt; &lt;/html&gt;"/>
+                        <Property name="opaque" type="boolean" value="true"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="showFilteredFractionsIsochron_checkboxActionPerformed"/>

@@ -163,6 +163,7 @@ public class SampleDateModel extends ValueModel implements
     private SampleAnalysisTypesEnum sampleAnalysisType;
     // Feb 2017
     private transient McLeanRegressionLineInterface mcLeanRegressionLine;
+    private String unitsForYears;
 
     /**
      * creates a new instance of <code>SampleDateModel</code> with all of its
@@ -182,6 +183,8 @@ public class SampleDateModel extends ValueModel implements
 
         this.methodName = "";
         this.dateName = "";
+
+        this.unitsForYears = "Ma";
     }
 
     /**
@@ -686,8 +689,7 @@ public class SampleDateModel extends ValueModel implements
         }
         Collections.sort(getIncludedFractionIDsVector(), new IntuitiveStringComparator<String>());
 
-        CalculateDateInterpretationForAliquot();
-
+//        CalculateDateInterpretationForAliquot();
         return retval;
     }
 
@@ -2572,6 +2574,10 @@ public class SampleDateModel extends ValueModel implements
     public void ISO238_230(Vector<ETFractionInterface> myFractions) {
         ZeroAllValues();
 
+        // Feb 2017 in support of Useries isochrons
+        // TODO: make more robust
+        unitsForYears = "ka";
+
         if (myFractions.isEmpty()) {
             setValue(BigDecimal.ZERO);
 
@@ -2587,8 +2593,10 @@ public class SampleDateModel extends ValueModel implements
             ValueModel lambda230 = physicalConstants.getDatumByName(Lambdas.lambda230.getName()).copy();
 
             double myDate = -1.0 / lambda230.getValue().doubleValue() * StrictMath.log(1.0 - mcLeanRegressionLine.getV()[1][0]);
-            
+
             setValue(myDate);
+
+            setOneSigma(100.0);
         }
     }
 
@@ -2626,7 +2634,14 @@ public class SampleDateModel extends ValueModel implements
      * @return
      */
     public boolean fractionDateIsPositive(ETFractionInterface fraction) {
-        return fraction.getRadiogenicIsotopeDateByName(dateName).hasPositiveValue();
+        boolean retVal = false;
+        if (methodName.compareToIgnoreCase("ISO238_230") == 0) {
+            retVal = fraction.getAnalysisMeasure(dateName).hasPositiveValue();
+        } else {
+            retVal = fraction.getRadiogenicIsotopeDateByName(dateName).hasPositiveValue();
+        }
+
+        return retVal;
     }
 
     private double fractionVarianceForThisDate(ETFractionInterface fraction) {
@@ -2647,21 +2662,20 @@ public class SampleDateModel extends ValueModel implements
      * @return <code>String</code> - the name and date ( formatted with two
      * sigma ABS unct ) of argument <code>fraction</code>
      */
-    public String showFractionIdWithDateAndUnct(ETFractionInterface fraction, String dateUnit) {
+    public String showFractionIdWithDateAndUnct(ETFractionInterface fraction) {
 
         String contents = "";
-        if (dateName.length() > 0) {
+        if ((dateName.length() > 0) && (methodName.compareToIgnoreCase("ISO238_230")!=0)) {
             contents
                     = //
                     " : date = "//
                     + fraction.getRadiogenicIsotopeDateByName(dateName)//
                             .formatValueAndTwoSigmaForPublicationSigDigMode(//
-                                    "ABS", ReduxConstants.getUnitConversionMoveCount(dateUnit), 2)//
-                    + " Ma 2\u03C3";
+                                    "ABS", ReduxConstants.getUnitConversionMoveCount(unitsForYears), 2)//
+                    + " " + unitsForYears + " 2\u03C3";//               " Ma 2\u03C3";
         }
 
-        return //
-                fraction.getFractionID()//
+        return fraction.getFractionID()//
                 + contents;
     }
 
@@ -2680,7 +2694,7 @@ public class SampleDateModel extends ValueModel implements
     public String ShowCustomDateNode() {
         return //
                 "date = " //
-                + FormatValueAndTwoSigmaABSThreeWaysForPublication(6, 2) + " Ma 2\u03C3";
+                + FormatValueAndTwoSigmaABSThreeWaysForPublication(6, 2) + " " + unitsForYears + " 2\u03C3";
     }
 
     /**
@@ -2814,11 +2828,10 @@ public class SampleDateModel extends ValueModel implements
 
         // get the most precise (note this is broken if all unct istoleft of decimal point)
         int countOfDigitsAfterDecPointInUnct
-                = //
-                Math.max(Math.max(countOfDigitsAfterDec_A, countOfDigitsAfterDec_B), countOfDigitsAfterDec_C);
+                = Math.max(Math.max(countOfDigitsAfterDec_A, countOfDigitsAfterDec_B), countOfDigitsAfterDec_C);
 
         return formatValueAndTwoSigmaForPublicationSigDigMode(//
-                "ABS", ReduxConstants.getUnitConversionMoveCount("Ma"), 2) //+ " \u00B1 " //
+                "ABS", ReduxConstants.getUnitConversionMoveCount(unitsForYears), 2) //+ " \u00B1 " //
                 //+ twoSigAnalyticalUnct //
                 + (String) ((getSampleAnalysisType().compareTo(SampleAnalysisTypesEnum.TRIPOLIZED) == 0) ? ("/" + twoSigAnalyticalPlusStdRatioVariability) : "")
                 + "/" + twoSigAnalyticalPlusTracerUnct //
@@ -3012,5 +3025,19 @@ public class SampleDateModel extends ValueModel implements
      */
     public void setMcLeanRegressionLine(McLeanRegressionLineInterface mcLeanRegressionLine) {
         this.mcLeanRegressionLine = mcLeanRegressionLine;
+    }
+
+    /**
+     * @return the unitsForYears
+     */
+    public String getUnitsForYears() {
+        return unitsForYears;
+    }
+
+    /**
+     * @param unitsForYears the unitsForYears to set
+     */
+    public void setUnitsForYears(String unitsForYears) {
+        this.unitsForYears = unitsForYears;
     }
 }

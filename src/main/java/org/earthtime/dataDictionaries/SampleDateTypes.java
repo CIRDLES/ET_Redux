@@ -50,7 +50,7 @@ public final class SampleDateTypes {
         //{"232Th/208Pb isochron", "ISO232_208", ""},
         //{"Semi-TotalPb isochron", "ISO_SemiTotalPb", ""},
         //{"Total Pb isochron", "ISO_TotalPb", ""}
-        {"238U-230Th isochron", "ISO238_230", ""}
+        {"238U-230Th isochron", "ISO238_230", UThAnalysisMeasures.ar230Th_232Thfc.getName()}
     };
 
     /**
