@@ -44,48 +44,49 @@ public final class SampleDateTypes {
         //{"concordia", "Concordia", ""},
         // intercepts currently use this check for non zero values based on these dates
         {"lower intercept", "LowerIntercept", RadDates.age206_238r.getName()},
-        {"upper intercept", "UpperIntercept", RadDates.age206_238r.getName()} //
-    //{"238U/206Pb isochron", "ISO238_206", ""},
-    //{"235U/207Pb isochron", "ISO235_207", ""},
-    //{"232Th/208Pb isochron", "ISO232_208", ""},
-    //{"Semi-TotalPb isochron", "ISO_SemiTotalPb", ""},
-    //{"Total Pb isochron", "ISO_TotalPb", ""}
+        {"upper intercept", "UpperIntercept", RadDates.age206_238r.getName()}, //
+        //{"238U/206Pb isochron", "ISO238_206", ""},
+        //{"235U/207Pb isochron", "ISO235_207", ""},
+        //{"232Th/208Pb isochron", "ISO232_208", ""},
+        //{"Semi-TotalPb isochron", "ISO_SemiTotalPb", ""},
+        //{"Total Pb isochron", "ISO_TotalPb", ""}
+        {"238U-230Th isochron", "ISO238_230", ""}
     };
 
     /**
-     * 
+     *
      * @param index
      * @return
      */
-    public static String getSampleDateType (int index ) {
+    public static String getSampleDateType(int index) {
         return SampleDateTypes[index][0];
     }
 
     /**
-     * 
+     *
      * @param index
      * @return
      */
-    public static String getSampleDateTypeMethod (
-            int index ) {
+    public static String getSampleDateTypeMethod(
+            int index) {
         return SampleDateTypes[index][1];
     }
 
     /**
-     * 
+     *
      * @param index
      * @return
      */
-    public static String getSampleDateTypeName (
-            int index ) {
+    public static String getSampleDateTypeName(
+            int index) {
         return SampleDateTypes[index][2];
     }
 
     /**
-     * 
+     *
      * @return
      */
-    public static String[][] getSampleDateModelTypes () {
+    public static String[][] getSampleDateModelTypes() {
         return SampleDateTypes;
     }
 }

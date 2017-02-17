@@ -168,8 +168,6 @@ public abstract class AbstractPlot extends JLayeredPane
         // default is standard Concordia
         this.concordiaFlavor = "C";
 
-//        this.nameOfXaxisSourceValueModel = RadRatios.r206_238r.getName();
-//        this.nameOfYaxisSourceValueModel = RadRatios.r207_235r.getName();
     }
 
     /**

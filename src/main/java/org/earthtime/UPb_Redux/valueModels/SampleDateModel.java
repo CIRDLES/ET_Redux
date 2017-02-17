@@ -43,6 +43,7 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
+import org.cirdles.mcLeanRegression.core.McLeanRegressionLineInterface;
 import org.earthtime.Tripoli.dataModels.sessionModels.SessionCorrectedUnknownsSummary;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
@@ -58,6 +59,7 @@ import org.earthtime.UPb_Redux.valueModels.definedValueModels.Age207_206r;
 import org.earthtime.UPb_Redux.valueModels.definedValueModels.Age207_235r;
 import org.earthtime.UPb_Redux.valueModels.definedValueModels.Age208_232r;
 import org.earthtime.aliquots.AliquotInterface;
+import org.earthtime.aliquots.ReduxAliquotInterface;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.dataDictionaries.Lambdas;
 import org.earthtime.dataDictionaries.RadDates;
@@ -65,11 +67,13 @@ import org.earthtime.dataDictionaries.RadRatios;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.dataDictionaries.TracerUPbRatiosAndConcentrations;
 import org.earthtime.dataDictionaries.TracerUPbTypesEnum;
+import org.earthtime.dataDictionaries.UThAnalysisMeasures;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.matrices.matrixModels.AbstractMatrixModel;
 import org.earthtime.matrices.matrixModels.CovarianceMatrixModel;
 import org.earthtime.matrices.matrixModels.JacobianMatrixModel;
+import org.earthtime.plots.McLeanRegressionLineFit;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.samples.SampleInterface;
@@ -157,6 +161,8 @@ public class SampleDateModel extends ValueModel implements
     // feb 2013
     // allows to differentiate among types so LAICPMS can use log-based analysis until we fully transition
     private SampleAnalysisTypesEnum sampleAnalysisType;
+    // Feb 2017
+    private transient McLeanRegressionLineInterface mcLeanRegressionLine;
 
     /**
      * creates a new instance of <code>SampleDateModel</code> with all of its
@@ -753,7 +759,7 @@ public class SampleDateModel extends ValueModel implements
             // create vector of fractions based on sample date model fraction list
             Vector<ETFractionInterface> includedFractions = new Vector<>();
             for (String fID : includedFractionIDsVector) {
-                includedFractions.add(((UPbReduxAliquot) aliquot).getAliquotFractionByName(fID));
+                includedFractions.add(((ReduxAliquotInterface) aliquot).getAliquotFractionByName(fID));
             }
 
             // special case to detect upper/lower intercept
@@ -940,11 +946,11 @@ public class SampleDateModel extends ValueModel implements
 
         setInternalTwoSigmaUnctWithTracerCalibrationAndDecayConstantUnct(//
                 ((UPbFractionI) fraction).//
-                getRadiogenicIsotopeDateWithAllUnctByName(radiogenicIsotopeDateName).getTwoSigmaAbs());
+                        getRadiogenicIsotopeDateWithAllUnctByName(radiogenicIsotopeDateName).getTwoSigmaAbs());
 
         setInternalTwoSigmaUnctWithTracerCalibrationUnct(//
                 ((UPbFractionI) fraction).//
-                getRadiogenicIsotopeDateWithTracerUnctByName(radiogenicIsotopeDateName).getTwoSigmaAbs());
+                        getRadiogenicIsotopeDateWithTracerUnctByName(radiogenicIsotopeDateName).getTwoSigmaAbs());
 
         setInternalTwoSigmaUnct(fraction.//
                 getRadiogenicIsotopeDateByName(radiogenicIsotopeDateName).getTwoSigmaAbs());
@@ -1111,14 +1117,16 @@ public class SampleDateModel extends ValueModel implements
 
         LogWMresults logWMresults = new LogWMresults();
 
-        SortedMap<RadRatios, SessionCorrectedUnknownsSummary> sessionCorrectedUnknownsSummaries = //
+        SortedMap<RadRatios, SessionCorrectedUnknownsSummary> sessionCorrectedUnknownsSummaries
+                = //
                 UPbFractionReducer.getInstance().getSessionCorrectedUnknownsSummaries();
 
         if (sessionCorrectedUnknownsSummaries.size() > 0) {
             try {
                 RadRatios ratioName = RadRatios.valueOf(radiogenicIsotopeDateName.replace("age", "r"));
 
-                SessionCorrectedUnknownsSummary sessionCorrectedUnknownsSummary =//
+                SessionCorrectedUnknownsSummary sessionCorrectedUnknownsSummary
+                        =//
                         sessionCorrectedUnknownsSummaries.get(ratioName);
 
                 Matrix unknownsAnalyticalCovarianceSu = sessionCorrectedUnknownsSummary.getUnknownsAnalyticalCovarianceSu();
@@ -1172,14 +1180,15 @@ public class SampleDateModel extends ValueModel implements
                 double logRatioMSWD = 1.0 / (activeIndices.length - 1) * logRationResiduals.transpose().times(Su.solve(logRationResiduals)).get(0, 0);
 
                 logWMresults.setMSWD(logRatioMSWD);
-            // Section B
+                // Section B
                 //TODO: provide lab data with values of ratio variability for each ratio
                 // for now all = 2%
                 // feb 2016 finally!
-                double interReferenceMaterialReproducibility = //
+                double interReferenceMaterialReproducibility
+                        = //
                         ReduxLabData.getInstance().getDefaultInterReferenceMaterialReproducibilityMap()//
                                 .get(RadRatios.valueOf(radiogenicIsotopeDateName.replace("age", "r"))).getValue().doubleValue();
-                
+
                 Matrix SuInterStd = Su.plus(new Matrix(Su.getRowDimension(), Su.getColumnDimension(),//
                         interReferenceMaterialReproducibility * interReferenceMaterialReproducibility));
 
@@ -1317,7 +1326,7 @@ public class SampleDateModel extends ValueModel implements
                     i, //
                     0, //
                     myFractions.get(i).getRadiogenicIsotopeDateByName(radiogenicIsotopeDateName).//
-                    getValue().doubleValue());
+                            getValue().doubleValue());
         }
 
         Matrix sAnalyticalXbar = new Matrix(countOfFractions, countOfFractions);
@@ -1447,14 +1456,16 @@ public class SampleDateModel extends ValueModel implements
                 fractionAnalyticalDateCovariances[i] = dateCovMat.getMatrix().get(rowCol, rowCol);
 
                 // since major version numbers are identical, use minor version to identify
-                String tracerName = //
+                String tracerName
+                        = //
                         ((UPbFractionI) myFractions.get(i)).getTracer().getModelName() //
                         + "." + ((UPbFraction) myFractions.get(i)).getTracer().getMinorVersionNumber();
 
                 if (!savedTracerCovMats.containsKey(tracerName)) {
 
                     // new tracer, so add sensitivity matrix columns with name modifier for each tracer
-                    Map<Integer, String> cols =//
+                    Map<Integer, String> cols
+                            =//
                             AbstractMatrixModel.invertColMap(reductionHandlerI.getTracerDateSensitivityVectors().getCols());
 
                     for (int c = 0; c < cols.size(); c++) {
@@ -1464,7 +1475,8 @@ public class SampleDateModel extends ValueModel implements
                     savedTracerCovMats.put(tracerName, //
                             reductionHandlerI.getTracerMiniCovarianceMatrix().copy());
 
-                    String tracerType = //
+                    String tracerType
+                            = //
                             ((UPbFraction) myFractions.get(i)).getTracerType();
                     if (tracerType.equalsIgnoreCase(TracerUPbTypesEnum.mixed_205_233_235.getName())) {
                         savedET535Names.add(tracerName);
@@ -1551,7 +1563,8 @@ public class SampleDateModel extends ValueModel implements
             for (int i = 0; i < countOfFractions; i++) {
 
                 // since major version numbers are identical, use minor version to identify
-                String tracerName = //
+                String tracerName
+                        = //
                         ((UPbFractionI) myFractions.get(i)).getTracer().getModelName() //
                         + "." + ((UPbFraction) myFractions.get(i)).getTracer().getMinorVersionNumber();
 
@@ -1824,15 +1837,17 @@ public class SampleDateModel extends ValueModel implements
             // sAnalyticalXbar is defined as square zeroes matrix
             sAnalyticalXbar = new Matrix(countOfFractions, countOfFractions, 0.0);
 
-            sTracerXbar = //
+            sTracerXbar
+                    = //
                     jacobianTracerOnlySensitivityMatrix.getMatrix().//
-                    times(tracerSystematicCovMat.//
-                            times(jacobianTracerOnlySensitivityMatrix.getMatrix().transpose()));
+                            times(tracerSystematicCovMat.//
+                                    times(jacobianTracerOnlySensitivityMatrix.getMatrix().transpose()));
 
-            sLambdaXbar = //
+            sLambdaXbar
+                    = //
                     jacobianTracerAndLambdaSensitivityMatrix.getMatrix().//
-                    times(systematicCovMatModel.getMatrix().//
-                            times(jacobianTracerAndLambdaSensitivityMatrix.getMatrix().transpose()));
+                            times(systematicCovMatModel.getMatrix().//
+                                    times(jacobianTracerAndLambdaSensitivityMatrix.getMatrix().transpose()));
 
             /**
              * 4
@@ -1907,21 +1922,24 @@ public class SampleDateModel extends ValueModel implements
                     new String[]{"Date Uncertainties are ZERO ... Cannot calculate weighted mean.",});
         }
 
-        Matrix alphaAnalytical =//
+        Matrix alphaAnalytical
+                =//
                 sAnalyticalXbarInverseU.//
-                times(1.0 / U.transpose().times(sAnalyticalXbarInverseU).get(0, 0));
+                        times(1.0 / U.transpose().times(sAnalyticalXbarInverseU).get(0, 0));
         Matrix alphaTracer = null;
         Matrix alphaLambda = null;
         if (!analyticalOnly) {
             Matrix sTracerXbarInverseU = sTracerXbar.solve(U);
-            alphaTracer =//
+            alphaTracer
+                    =//
                     sTracerXbarInverseU.//
-                    times(1.0 / U.transpose().times(sTracerXbarInverseU).get(0, 0));
+                            times(1.0 / U.transpose().times(sTracerXbarInverseU).get(0, 0));
 
             sLambdaXbarInverse = sLambdaXbar.inverse();
-            alphaLambda =//
+            alphaLambda
+                    =//
                     sLambdaXbarInverse.times(U).//
-                    times(1.0 / U.transpose().times(sLambdaXbarInverse).times(U).get(0, 0));
+                            times(1.0 / U.transpose().times(sLambdaXbarInverse).times(U).get(0, 0));
         }
         // dot products
         double analyticalWM = 0.0;
@@ -1930,30 +1948,34 @@ public class SampleDateModel extends ValueModel implements
                 f++) {
             analyticalWM += vectorXBar.get(f, 0) * alphaAnalytical.get(f, 0);
         }
-        double analyticalOneSigma = //
+        double analyticalOneSigma
+                = //
                 Math.sqrt(//
                         alphaAnalytical.transpose().//
-                        times(sAnalyticalXbar).//
-                        times(alphaAnalytical).get(0, 0));
+                                times(sAnalyticalXbar).//
+                                times(alphaAnalytical).get(0, 0));
         Matrix analyticalR = vectorXBar.minus(new Matrix(countOfFractions, 1, analyticalWM));
         Matrix sAnalyticalXbarInvR = sAnalyticalXbar.solve(analyticalR);
-        double analyticalMSWD = //
+        double analyticalMSWD
+                = //
                 analyticalR.transpose().//
-                times(sAnalyticalXbarInvR).get(0, 0)//
+                        times(sAnalyticalXbarInvR).get(0, 0)//
                 / (double) (countOfFractions - 1);
         if (!analyticalOnly) {
 
-            double tracerOneSigma = //
+            double tracerOneSigma
+                    = //
                     Math.sqrt(//
                             alphaTracer.transpose().//
-                            times(sTracerXbar).//
-                            times(alphaTracer).get(0, 0));
+                                    times(sTracerXbar).//
+                                    times(alphaTracer).get(0, 0));
 
-            double lambdaOneSigma = //
+            double lambdaOneSigma
+                    = //
                     Math.sqrt(//
                             alphaLambda.transpose().//
-                            times(sLambdaXbar).//
-                            times(alphaLambda).get(0, 0));
+                                    times(sLambdaXbar).//
+                                    times(alphaLambda).get(0, 0));
 
             setInternalTwoSigmaUnctWithTracerCalibrationUnct(new BigDecimal(2.0 * tracerOneSigma));
             setInternalTwoSigmaUnctWithTracerCalibrationAndDecayConstantUnct(new BigDecimal(2.0 * lambdaOneSigma));
@@ -1978,14 +2000,16 @@ public class SampleDateModel extends ValueModel implements
         String ET535Minor = "ET535.0.";
 
         // determine row number for current date
-        Map<String, Integer> rows = //
+        Map<String, Integer> rows
+                = //
                 AbstractMatrixModel.invertRowMap(fractionDateSensitivityVectors.getRows());
 
         int calculatedDateRow = rows.get(radiogenicIsotopeDateName);
 
         // walk the vector columns and get the value at each cell of horizontal vector
         // this walk is safe for our special case of ET535 and ET2535
-        Map<Integer, String> cols =//
+        Map<Integer, String> cols
+                =//
                 AbstractMatrixModel.invertColMap(fractionDateSensitivityVectors.getCols());
 
         for (int c = 0; c < cols.size(); c++) {
@@ -2481,7 +2505,8 @@ public class SampleDateModel extends ValueModel implements
                             + (2.0 * sigmaYInterceptSlope * expLambda235xnMinus1)//
                             + sigmaSlope * sigmaSlope * expLambda235xnMinus1 * expLambda235xnMinus1);
 
-            double new11 = //
+            double new11
+                    = //
                     slope * lambda235.getValue().doubleValue() //
                     * (expLambda235xnMinus1 + 1.0)//
                     - lambda238.getValue().doubleValue() //
@@ -2544,6 +2569,29 @@ public class SampleDateModel extends ValueModel implements
         System.out.println("Successful call to ISO_TotalPb");
     }
 
+    public void ISO238_230(Vector<ETFractionInterface> myFractions) {
+        ZeroAllValues();
+
+        if (myFractions.isEmpty()) {
+            setValue(BigDecimal.ZERO);
+
+        } else {
+            McLeanRegressionLineFit mcLeanRegressionLineFit
+                    = new McLeanRegressionLineFit(myFractions,
+                            UThAnalysisMeasures.ar238U_232Thfc.getName(),
+                            UThAnalysisMeasures.ar230Th_232Thfc.getName());
+
+            mcLeanRegressionLine = mcLeanRegressionLineFit.getMcLeanRegressionLine();
+
+            AbstractRatiosDataModel physicalConstants = myFractions.get(0).getPhysicalConstantsModel();
+            ValueModel lambda230 = physicalConstants.getDatumByName(Lambdas.lambda230.getName()).copy();
+
+            double myDate = -1.0 / lambda230.getValue().doubleValue() * StrictMath.log(1.0 - mcLeanRegressionLine.getV()[1][0]);
+            
+            setValue(myDate);
+        }
+    }
+
     /**
      * gets the <code>methodName</code> of this <code>SampleDateModel</code>.
      *
@@ -2603,11 +2651,12 @@ public class SampleDateModel extends ValueModel implements
 
         String contents = "";
         if (dateName.length() > 0) {
-            contents = //
+            contents
+                    = //
                     " : date = "//
                     + fraction.getRadiogenicIsotopeDateByName(dateName)//
-                    .formatValueAndTwoSigmaForPublicationSigDigMode(//
-                            "ABS", ReduxConstants.getUnitConversionMoveCount(dateUnit), 2)//
+                            .formatValueAndTwoSigmaForPublicationSigDigMode(//
+                                    "ABS", ReduxConstants.getUnitConversionMoveCount(dateUnit), 2)//
                     + " Ma 2\u03C3";
         }
 
@@ -2752,10 +2801,11 @@ public class SampleDateModel extends ValueModel implements
 
         try {
             if (getInternalTwoSigmaUnctWithTracerCalibrationAndDecayConstantUnct().compareTo(BigDecimal.ZERO) != 0) {
-                twoSigAnalyticalPlusTracerUnctPlusLambdaUnct =//
+                twoSigAnalyticalPlusTracerUnctPlusLambdaUnct
+                        =//
                         getInternalTwoSigmaUnctWithTracerCalibrationAndDecayConstantUnct().//
-                        movePointLeft(divideByPowerOfTen).//
-                        round(new MathContext(uncertaintySigDigits, RoundingMode.HALF_UP)).toPlainString();
+                                movePointLeft(divideByPowerOfTen).//
+                                round(new MathContext(uncertaintySigDigits, RoundingMode.HALF_UP)).toPlainString();
             }
         } catch (Exception e) {
         }
@@ -2763,7 +2813,8 @@ public class SampleDateModel extends ValueModel implements
         int countOfDigitsAfterDec_C = calculateCountOfDigitsAfterDecPoint(twoSigAnalyticalPlusTracerUnctPlusLambdaUnct);
 
         // get the most precise (note this is broken if all unct istoleft of decimal point)
-        int countOfDigitsAfterDecPointInUnct = //
+        int countOfDigitsAfterDecPointInUnct
+                = //
                 Math.max(Math.max(countOfDigitsAfterDec_A, countOfDigitsAfterDec_B), countOfDigitsAfterDec_C);
 
         return formatValueAndTwoSigmaForPublicationSigDigMode(//
@@ -2943,8 +2994,23 @@ public class SampleDateModel extends ValueModel implements
     public void setSampleAnalysisType(SampleAnalysisTypesEnum sampleAnalysisType) {
         // to handle pre-march-2013 cases mainly differentiates from TRIPOLIZED = within Redux
         if (sampleAnalysisType == null) {
-            sampleAnalysisType = SampleAnalysisTypesEnum.COMPILED;
+            this.sampleAnalysisType = SampleAnalysisTypesEnum.COMPILED;
+        } else {
+            this.sampleAnalysisType = sampleAnalysisType;
         }
-        this.sampleAnalysisType = sampleAnalysisType;
+    }
+
+    /**
+     * @return the mcLeanRegressionLine
+     */
+    public McLeanRegressionLineInterface getMcLeanRegressionLine() {
+        return mcLeanRegressionLine;
+    }
+
+    /**
+     * @param mcLeanRegressionLine the mcLeanRegressionLine to set
+     */
+    public void setMcLeanRegressionLine(McLeanRegressionLineInterface mcLeanRegressionLine) {
+        this.mcLeanRegressionLine = mcLeanRegressionLine;
     }
 }

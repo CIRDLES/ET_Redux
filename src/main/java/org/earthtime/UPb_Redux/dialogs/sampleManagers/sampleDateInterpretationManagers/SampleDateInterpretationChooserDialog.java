@@ -115,7 +115,7 @@ public class SampleDateInterpretationChooserDialog extends DialogEditor {
         });
         buttonsPanel.add(close_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 2, 115, 25));
 
-        getContentPane().add(buttonsPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 343, 340, -1));
+        getContentPane().add(buttonsPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 343, 340, 30));
 
         chooseTracer_label.setText("Choose Sample Date Interpretation Models:");
         getContentPane().add(chooseTracer_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, 290, -1));

@@ -751,6 +751,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
 
     /**
      *
+     * @param myClearFiltering
      * @param clearFiltering the value of clearFiltering
      */
     public void performFilteringPerSliders(boolean myClearFiltering) {
@@ -761,7 +762,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
             clearFiltering = true;
         }
 
-        if (sample.isAnalysisTypeUSERIES()) {
+        if (sample.isAnalysisTypeCOMPILED()) {
             clearFiltering = true;
         }
 
