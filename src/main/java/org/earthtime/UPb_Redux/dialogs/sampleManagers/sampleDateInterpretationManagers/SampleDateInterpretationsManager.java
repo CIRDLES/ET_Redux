@@ -121,7 +121,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
      *
      */
     protected JLayeredPane probabilityPanel;
-    private SampleInterface sample;
+    protected SampleInterface sample;
     private JSVGCanvas svgConcordiaCanvas;
     private JSVGCanvas svgWeightedMeanCanvas;
     private SampleTreeI dateTreeByAliquot;
@@ -231,7 +231,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         ((PlottingDetailsDisplayInterface) concordiaGraphPanel).resetPanel(doReScale, inLiveMode);
         ((AbstractPlot) plotAny2Panel).fitMcLeanRegression();
         ((PlottingDetailsDisplayInterface) plotAny2Panel).resetPanel(doReScale, inLiveMode);
-        ((AbstractPlot) useriesIsochronPanel).fitMcLeanRegression();
+        ;
         ((PlottingDetailsDisplayInterface) useriesIsochronPanel).resetPanel(doReScale, inLiveMode);
 
         try {
@@ -1037,9 +1037,9 @@ public class SampleDateInterpretationsManager extends DialogEditor
         ((PlottingDetailsDisplayInterface) plotAny2Panel).setShowTightToEdges(false);
         ((PlottingDetailsDisplayInterface) plotAny2Panel).resetPanel(true, false);
 
-        ((AbstractPlot) useriesIsochronPanel).fitMcLeanRegression();
-        ((PlottingDetailsDisplayInterface) useriesIsochronPanel).setShowTightToEdges(false);
-        ((PlottingDetailsDisplayInterface) useriesIsochronPanel).resetPanel(true, false);
+//        ((AbstractPlot) useriesIsochronPanel).fitMcLeanRegression();
+//        ((PlottingDetailsDisplayInterface) useriesIsochronPanel).setShowTightToEdges(false);
+//        ((PlottingDetailsDisplayInterface) useriesIsochronPanel).resetPanel(true, false);
     }
 
     /**
@@ -3040,19 +3040,20 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                 // may 2014 show best date line
                 ((ConcordiaGraphPanel) concordiaGraphPanel).setShowingSingleAliquot(false);
 
-//            } else if (graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab("Any 2")) {
                 // dec 2016 plot any 2 experiment
-                ((AliquotDetailsDisplayInterface) plotAny2Panel).//
+                ((AliquotDetailsDisplayInterface) plotAny2Panel).
                         setSelectedFractions(sample.getFractions());
-                plotAny2Panel.repaint();//.refreshPanel(true, false);
+                plotAny2Panel.repaint();
 
                 // zap deselected list as it is meaningless at level of aliquot or sample
                 ((AliquotDetailsDisplayInterface) plotAny2Panel).//
                         getDeSelectedFractions().clear();
 
+                ((AbstractPlot) useriesIsochronPanel).//
+                        setMcLeanRegressionLine(null);
                 ((AliquotDetailsDisplayInterface) useriesIsochronPanel).//
                         setSelectedFractions(sample.getFractions());
-                useriesIsochronPanel.repaint();//.refreshPanel(true, false);
+                useriesIsochronPanel.repaint();
 
                 // zap deselected list as it is meaningless at level of aliquot or sample
                 ((AliquotDetailsDisplayInterface) useriesIsochronPanel).//
@@ -3099,6 +3100,8 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
 
             plotAny2Panel.repaint();
 
+            ((AbstractPlot) useriesIsochronPanel).//
+                    setMcLeanRegressionLine(null);
             ((AliquotDetailsDisplayInterface) useriesIsochronPanel).//
                     setSelectedFractions(((ReduxAliquotInterface) nodeInfo).getAliquotFractions());
             // zap deselected list as it is meaningless at level of aliquot or sample
@@ -3160,13 +3163,13 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
 
                 ((AliquotDetailsDisplayInterface) plotAny2Panel).//
                         setSelectedFractions(((ReduxAliquotInterface) aliquotNodeInfo).//
-                                getAliquotSampleDateModelSelectedFractions(((SampleDateModel) nodeInfo).//
+                                getAliquotSampleDateModelSelectedFractions(((SampleDateModel) nodeInfo).
                                         getIncludedFractionIDsVector()));
                 ((AliquotDetailsDisplayInterface) plotAny2Panel).//
-                        setDeSelectedFractions(((ReduxAliquotInterface) aliquotNodeInfo).//
-                                getAliquotSampleDateModelDeSelectedFractions(((SampleDateModel) nodeInfo).//
+                        setDeSelectedFractions(((ReduxAliquotInterface) aliquotNodeInfo).
+                                getAliquotSampleDateModelDeSelectedFractions(((SampleDateModel) nodeInfo).
                                         getIncludedFractionIDsVector()));
-//                ((PlottingDetailsDisplayInterface) plotAny2Panel).refreshPanel(true, false);
+
                 plotAny2Panel.repaint();
 
             } else if (graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab("USeries Isochrons")) {
@@ -3174,15 +3177,18 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                 // in case user skipped over choosing aliquot
                 ((PlotInterface) useriesIsochronPanel).determineCurrentAliquot();
 
-                ((AliquotDetailsDisplayInterface) useriesIsochronPanel).//
-                        setSelectedFractions(((ReduxAliquotInterface) aliquotNodeInfo).//
-                                getAliquotSampleDateModelSelectedFractions(((SampleDateModel) nodeInfo).//
+                ((AbstractPlot) useriesIsochronPanel).//
+                        setMcLeanRegressionLine(((SampleDateModel) nodeInfo).getMcLeanRegressionLine());
+
+                ((AliquotDetailsDisplayInterface) useriesIsochronPanel).
+                        setSelectedFractions(((ReduxAliquotInterface) aliquotNodeInfo).
+                                getAliquotSampleDateModelSelectedFractions(((SampleDateModel) nodeInfo).
                                         getIncludedFractionIDsVector()));
                 ((AliquotDetailsDisplayInterface) useriesIsochronPanel).//
                         setDeSelectedFractions(((ReduxAliquotInterface) aliquotNodeInfo).//
                                 getAliquotSampleDateModelDeSelectedFractions(((SampleDateModel) nodeInfo).//
                                         getIncludedFractionIDsVector()));
-//                ((PlottingDetailsDisplayInterface) plotAny2Panel).refreshPanel(true, false);
+
                 useriesIsochronPanel.repaint();
 
             } else if (graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab("Weighted Mean")) {
@@ -3213,13 +3219,11 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                 // perform date interpretation things for user (same as clicking on interpretation name)
                 // get aliquot and retrieve subset of fractions for this sample date
                 Object aliquotNodeInfo
-                        = //
-                        ((DefaultMutableTreeNode) //
+                        = ((DefaultMutableTreeNode) //
                                 ((TreeNode) node).getParent().getParent()).getUserObject();
 
                 Object sampleDateNodeInfo
-                        = //
-                        ((DefaultMutableTreeNode) //
+                        = ((DefaultMutableTreeNode) //
                                 ((TreeNode) node).getParent()).getUserObject();
 
                 if (graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab("Concordia")) {
@@ -3240,8 +3244,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
 
                     // for sample date interpretation, display date title box
                     DateInterpretationBoxPanel dateInterpretationBoxPanel
-                            = //
-                            new DateInterpretationBoxPanel(((ValueModel) sampleDateNodeInfo));
+                            = new DateInterpretationBoxPanel(((ValueModel) sampleDateNodeInfo));
 
                     ((ConcordiaGraphPanel) concordiaGraphPanel).//
                             setPreferredDatePanel(dateInterpretationBoxPanel);
@@ -3259,6 +3262,8 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                     ((PlottingDetailsDisplayInterface) plotAny2Panel).refreshPanel(true, false);
 
                 } else if (graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab("USeries Isochrons")) {
+                    ((AbstractPlot) useriesIsochronPanel).//
+                            setMcLeanRegressionLine(((SampleDateModel) sampleDateNodeInfo).getMcLeanRegressionLine());
                     ((AliquotDetailsDisplayInterface) useriesIsochronPanel).//
                             setSelectedFractions(((ReduxAliquotInterface) aliquotNodeInfo).//
                                     getAliquotSampleDateModelSelectedFractions(((SampleDateModel) sampleDateNodeInfo).//
@@ -3345,7 +3350,8 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                 ((ConcordiaGraphPanel) concordiaGraphPanel).//
                         setPreferredDatePanel(dateInterpretationBoxPanel);
                 concordiaGraphPanel.repaint();
-            } else if (graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab("Any 2")) {
+            } else if ((graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab("Any 2"))
+                    ||(graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab("USeries Isochrons"))){
                 // dec 2016
                 ((AliquotDetailsDisplayInterface) plotAny2Panel).//
                         setSelectedFractions(((ReduxAliquotInterface) aliquotNodeInfo).//
@@ -3361,11 +3367,12 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                                 getParent().//
                                 getChildAt(0));
 
-//                ((PlottingDetailsDisplayInterface) plotAny2Panel).refreshPanel(true, false);
                 plotAny2Panel.repaint();
 
-            } else if (graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab("USeries Isochrons")) {
+//            } else if (graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab("USeries Isochrons")) {
                 // dec 2016
+                ((AbstractPlot) useriesIsochronPanel).//
+                        setMcLeanRegressionLine(((SampleDateModel) sampleDateNodeInfo).getMcLeanRegressionLine());
                 ((AliquotDetailsDisplayInterface) useriesIsochronPanel).//
                         setSelectedFractions(((ReduxAliquotInterface) aliquotNodeInfo).//
                                 getAliquotSampleDateModelSelectedFractions(((SampleDateModel) sampleDateNodeInfo).getIncludedFractionIDsVector()));
@@ -3373,14 +3380,13 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                         setDeSelectedFractions(((ReduxAliquotInterface) aliquotNodeInfo).//
                                 getAliquotSampleDateModelDeSelectedFractions(((SampleDateModel) sampleDateNodeInfo).getIncludedFractionIDsVector()));
 
-                // fix dateTreeByAliquot
-                ((DefaultTreeModel) ((JTree) dateTreeByAliquot).getModel()).//
-                        nodeChanged(((TreeNode) node).//
-                                getParent().//
-                                getParent().//
-                                getChildAt(0));
+//                // fix dateTreeByAliquot
+//                ((DefaultTreeModel) ((JTree) dateTreeByAliquot).getModel()).//
+//                        nodeChanged(((TreeNode) node).//
+//                                getParent().//
+//                                getParent().//
+//                                getChildAt(0));
 
-//                ((PlottingDetailsDisplayInterface) plotAny2Panel).refreshPanel(true, false);
                 useriesIsochronPanel.repaint();
 
             } else if (graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab("Weighted Mean")) {

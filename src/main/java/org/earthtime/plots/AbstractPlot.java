@@ -124,7 +124,7 @@ public abstract class AbstractPlot extends JLayeredPane
 
     protected String nameOfXaxisSourceValueModel;
     protected String nameOfYaxisSourceValueModel;
-    protected McLeanRegressionLineFit mcLeanRegressionLineFit;
+    private McLeanRegressionLineInterface mcLeanRegressionLine;
 
     /**
      * Specifies a new abstract Plot
@@ -199,12 +199,12 @@ public abstract class AbstractPlot extends JLayeredPane
         paint((Graphics2D) g, false);
     }
 
-    private double mapX(double x) {
+    protected double mapX(double x) {
 
         return getCurrentPlotAxesSetup().mapX(x);
     }
 
-    private double mapY(double y) {
+    protected double mapY(double y) {
 
         return getCurrentPlotAxesSetup().mapY(y);
     }
@@ -227,7 +227,7 @@ public abstract class AbstractPlot extends JLayeredPane
         setMaxY(getMaxY() - rangeY / factor);
     }
 
-    private String getStringEntryFromConcordiaOptions(String key, String value) {
+    protected String getStringEntryFromConcordiaOptions(String key, String value) {
         if (getConcordiaOptions().containsKey(key)) {
             return getConcordiaOptions().get(key);
         } else {
@@ -287,7 +287,7 @@ public abstract class AbstractPlot extends JLayeredPane
         try {
             if (getConcordiaOptions().containsKey("ellipseSize")) {
                 ellipseSize
-                        = (float) Float.valueOf(getConcordiaOptions().get("ellipseSize"));
+                        = Float.valueOf(getConcordiaOptions().get("ellipseSize"));
             }
         } catch (NumberFormatException numberFormatException) {
         }
@@ -582,7 +582,6 @@ public abstract class AbstractPlot extends JLayeredPane
         g2d.setStroke(stroke);
         g2d.setPaint(interceptLineColor);
 
-        McLeanRegressionLineInterface mcLeanRegressionLine = mcLeanRegressionLineFit.getMcLeanRegressionLine();
         if (mcLeanRegressionLine != null) {
             double aXvar = mcLeanRegressionLine.getA()[0][0];
             double aYvar = mcLeanRegressionLine.getA()[1][0];
@@ -658,7 +657,6 @@ public abstract class AbstractPlot extends JLayeredPane
                             }
                         }//tStep iteration
 
-//                float dash1[] = {10.0f}; 
                         float[] dash1 = {6.0f, 4.0f, 2.0f, 4.0f, 2.0f, 4.0f};
                         stroke = new BasicStroke(interceptLineWeight, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 10.0f, dash1, 0.0f);
                         g2d.setStroke(stroke);
@@ -1272,14 +1270,15 @@ public abstract class AbstractPlot extends JLayeredPane
         if (filteredFractions == null) {
             filteredFractions = fractions;
         }
-        fitMcLeanRegression();
     }
 
     /**
      *
      */
     public void fitMcLeanRegression() {
-        mcLeanRegressionLineFit = new McLeanRegressionLineFit(selectedFractions, nameOfXaxisSourceValueModel, nameOfYaxisSourceValueModel);
+        McLeanRegressionLineFit mcLeanRegressionLineFit
+                = new McLeanRegressionLineFit(selectedFractions, nameOfXaxisSourceValueModel, nameOfYaxisSourceValueModel);
+        mcLeanRegressionLine = mcLeanRegressionLineFit.getMcLeanRegressionLine();
     }
 
     /**
@@ -1657,7 +1656,7 @@ public abstract class AbstractPlot extends JLayeredPane
                     repaint();
                 }
             }
-        } 
+        }
     }
 
     /**
@@ -1700,10 +1699,12 @@ public abstract class AbstractPlot extends JLayeredPane
         // this is not very sensitive, so have forced cursor at mode selection below
         if (preferredDatePanel == null) {
             return false;
-        } else return (evt.getX() >= preferredDatePanel.getX())
-                && (evt.getX() <= (preferredDatePanel.getX() + preferredDatePanel.getWidth()))
-                && (evt.getY() >= preferredDatePanel.getY())
-                && (evt.getY() <= (preferredDatePanel.getY() + preferredDatePanel.getHeight()));
+        } else {
+            return (evt.getX() >= preferredDatePanel.getX())
+                    && (evt.getX() <= (preferredDatePanel.getX() + preferredDatePanel.getWidth()))
+                    && (evt.getY() >= preferredDatePanel.getY())
+                    && (evt.getY() <= (preferredDatePanel.getY() + preferredDatePanel.getHeight()));
+        }
     }
 
     /**
@@ -2340,6 +2341,20 @@ public abstract class AbstractPlot extends JLayeredPane
     @Override
     public String getConcordiaFlavor() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    /**
+     * @return the mcLeanRegressionLine
+     */
+    public McLeanRegressionLineInterface getMcLeanRegressionLine() {
+        return mcLeanRegressionLine;
+    }
+
+    /**
+     * @param mcLeanRegressionLine the mcLeanRegressionLine to set
+     */
+    public void setMcLeanRegressionLine(McLeanRegressionLineInterface mcLeanRegressionLine) {
+        this.mcLeanRegressionLine = mcLeanRegressionLine;
     }
 
 }

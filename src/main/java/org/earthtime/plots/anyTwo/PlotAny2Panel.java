@@ -20,7 +20,9 @@
  */
 package org.earthtime.plots.anyTwo;
 
+import java.util.Vector;
 import org.earthtime.dataDictionaries.RadRatios;
+import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.plots.AbstractPlot;
 import org.earthtime.reportViews.ReportUpdaterInterface;
 import org.earthtime.samples.SampleInterface;
@@ -42,7 +44,11 @@ public class PlotAny2Panel extends AbstractPlot {
 
         this.nameOfXaxisSourceValueModel = RadRatios.r207_235r.getName();
         this.nameOfYaxisSourceValueModel = RadRatios.r206_238r.getName();
-
     }
 
+    @Override
+    public void setSelectedFractions(Vector<ETFractionInterface> selectedFractions) {
+        super.setSelectedFractions(selectedFractions);
+        fitMcLeanRegression();
+    }
 }
