@@ -270,7 +270,16 @@ public class IsochronsSelectorDialog extends DialogEditor {
     }//GEN-LAST:event_displayIsochron_buttonActionPerformed
 
     private void addIsochron_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addIsochron_buttonActionPerformed
-        // TODO add your handling code here:
+        // make and add isochron to available list
+        IsochronModel isochron = new IsochronModel(
+                Double.parseDouble(dateInKaText.getText()) * 1000.0,
+                Double.parseDouble(xCoordText.getText()),
+                Double.parseDouble(yCoordText.getText()),
+                "ka", false);
+
+        if (selectedIsochrons.add(isochron)) {
+            ((DefaultListModel) availableList.getModel()).addElement(isochron.presentationView());
+        }
     }//GEN-LAST:event_addIsochron_buttonActionPerformed
 
     private void hideIsochron_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hideIsochron_buttonActionPerformed

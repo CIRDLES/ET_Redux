@@ -638,17 +638,18 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
                         }
                     });
                     popup.add(menuItem);
-
-                    menuItem = new JMenuItem("Set Isochrons for this model");
-                    menuItem.addActionListener((ActionEvent arg0) -> {
-                        DialogEditor myIsochronDialog
-                                = new IsochronsSelectorDialog(null, true, ((SampleDateModel) nodeInfo).getIsochronModels());
-                        myIsochronDialog.setSize(325, 385);
-                        myIsochronDialog.setVisible(true);
-                        ((SampleDateModel) nodeInfo).setIsochronModels(((IsochronsSelectorDialog)myIsochronDialog).getSelectedIsochrons());
-                    });
-                    popup.add(menuItem);
-
+                    
+                    if (sample.getIsotopeStyle().compareToIgnoreCase("UTh") == 0) {
+                        menuItem = new JMenuItem("Set Isochrons for this model");
+                        menuItem.addActionListener((ActionEvent arg0) -> {
+                            DialogEditor myIsochronDialog
+                                    = new IsochronsSelectorDialog(null, true, ((SampleDateModel) nodeInfo).getIsochronModels());
+                            myIsochronDialog.setSize(325, 385);
+                            myIsochronDialog.setVisible(true);
+                            ((SampleDateModel) nodeInfo).setIsochronModels(((IsochronsSelectorDialog) myIsochronDialog).getSelectedIsochrons());
+                        });
+                        popup.add(menuItem);
+                    }
                     popup.show(e.getComponent(),
                             e.getX(), e.getY());
 

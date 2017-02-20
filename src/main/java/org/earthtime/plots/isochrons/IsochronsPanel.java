@@ -25,7 +25,11 @@ import java.awt.Stroke;
 import java.awt.geom.Line2D;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Iterator;
+import java.util.SortedSet;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
+import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
+import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.dataDictionaries.Lambdas;
 import org.earthtime.dataDictionaries.UThAnalysisMeasures;
 import org.earthtime.plots.AbstractPlot;
@@ -39,6 +43,7 @@ import org.earthtime.samples.SampleInterface;
 public class IsochronsPanel extends AbstractPlot {
 
     private double lambda230;
+    private ValueModel sampleDateModel;
 
     /**
      * Creates a new instance of IsochronsPanel
@@ -48,6 +53,9 @@ public class IsochronsPanel extends AbstractPlot {
      */
     public IsochronsPanel(SampleInterface mySample, ReportUpdaterInterface reportUpdater) {
         super(mySample, reportUpdater);
+        
+        // placeholder
+        sampleDateModel = new SampleDateModel();
 
         try {
             lambda230 = sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda230.getName()).getValue().doubleValue();
@@ -65,8 +73,22 @@ public class IsochronsPanel extends AbstractPlot {
         g2d.setClip(getLeftMargin(), getTopMargin(), (int) getGraphWidth(), (int) getGraphHeight());
 
         plot1to1Line(g2d);
-        plotIsochronDate(0.9, 1., 0, g2d);
-        plotIsochronDate(0.9, 1., 50000, g2d);
+
+        SortedSet<IsochronModel> isochronModels = ((SampleDateModel) sampleDateModel).getIsochronModels();
+        Iterator<IsochronModel> isochronIterator = isochronModels.iterator();
+        while (isochronIterator.hasNext()) {
+            IsochronModel im = isochronIterator.next();
+            if (im.isVisible()){
+                plotIsochron(im, g2d);
+            }
+        }
+
+//        plotIsochronDate(0.9, 1., 0, g2d);
+//        plotIsochronDate(0.9, 1., 50000, g2d);
+    }
+
+    private void plotIsochron(IsochronModel isochron, Graphics2D g2d) {
+        plotIsochronDate(isochron.getxCoord(), isochron.getyCoord(), isochron.getDateInAnnum(), g2d);
     }
 
     private void plotIsochronDate(double x, double y, double date, Graphics2D g2d) {
@@ -131,5 +153,12 @@ public class IsochronsPanel extends AbstractPlot {
 
     private void plot1to1Line(Graphics2D g2d) {
         plotIsochronLine(0., 0., 1.0, "Equiline", g2d);
+    }
+
+    /**
+     * @param sampleDateModel the sampleDateModel to set
+     */
+    public void setSampleDateModel(ValueModel sampleDateModel) {
+        this.sampleDateModel = sampleDateModel;
     }
 }
