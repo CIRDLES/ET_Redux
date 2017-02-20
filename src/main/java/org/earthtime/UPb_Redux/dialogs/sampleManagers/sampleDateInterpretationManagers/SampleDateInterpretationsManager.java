@@ -96,6 +96,8 @@ import org.earthtime.plots.AbstractPlot;
 import org.earthtime.plots.PlotAxesSetupInterface;
 import org.earthtime.plots.PlotInterface;
 import org.earthtime.plots.anyTwo.PlotAny2Panel;
+import org.earthtime.plots.isochrons.IsochronModel;
+import org.earthtime.plots.isochrons.IsochronsSelectorDialog;
 import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.reports.ReportColumnInterface;
 import org.earthtime.samples.SampleInterface;
@@ -394,8 +396,8 @@ public class SampleDateInterpretationsManager extends DialogEditor
         }
 
         if (CGO.containsKey("showFilteredEllipses")) {
-            showFilteredFractionsIsochron_checkbox.setSelected(Boolean.valueOf(CGO.get("showFilteredEllipses")));
-            ((AbstractPlot) useriesIsochronPanel).setShowFilteredEllipses(showFilteredFractionsIsochron_checkbox.isSelected());
+            showRegressionLineIsochron_checkbox.setSelected(Boolean.valueOf(CGO.get("showFilteredEllipses")));
+            ((AbstractPlot) useriesIsochronPanel).setShowFilteredEllipses(showRegressionLineIsochron_checkbox.isSelected());
         }
 
         if (CGO.containsKey("useUncertaintyCrosses")) {
@@ -1127,7 +1129,9 @@ public class SampleDateInterpretationsManager extends DialogEditor
         showTightIsochron_toggleButton =  new ET_JToggleButton();
         showExcludedFractionsIsochron_checkbox = new javax.swing.JCheckBox();
         radiumFlavorIsochron_radioButton = new javax.swing.JRadioButton();
-        showFilteredFractionsIsochron_checkbox = new javax.swing.JCheckBox();
+        showRegressionLineIsochron_checkbox = new javax.swing.JCheckBox();
+        showRegressionUnctIsochron_checkbox = new javax.swing.JCheckBox();
+        setIsochronsButton =  new ET_JToggleButton();
         any2LayeredPane = new javax.swing.JLayeredPane();
         any2ToolPanel = new javax.swing.JPanel();
         zoomInAny2X2_button =  new ET_JButton();
@@ -1622,7 +1626,8 @@ public class SampleDateInterpretationsManager extends DialogEditor
         oneToOneLineIsochron_checkbox.setBackground(new java.awt.Color(255, 237, 255));
         oneToOneLineIsochron_checkbox.setFont(new java.awt.Font("SansSerif", 1, 10)); // NOI18N
         oneToOneLineIsochron_checkbox.setSelected(true);
-        oneToOneLineIsochron_checkbox.setText("<html>1:1<br> Line</html>");
+        oneToOneLineIsochron_checkbox.setText("<html>Equi-<br>Line</html>");
+        oneToOneLineIsochron_checkbox.setName(""); // NOI18N
         oneToOneLineIsochron_checkbox.setOpaque(true);
         oneToOneLineIsochron_checkbox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1720,16 +1725,44 @@ public class SampleDateInterpretationsManager extends DialogEditor
         });
         uSeriesIsochronToolPanel.add(radiumFlavorIsochron_radioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 1, -1, 28));
 
-        showFilteredFractionsIsochron_checkbox.setBackground(new java.awt.Color(255, 237, 255));
-        showFilteredFractionsIsochron_checkbox.setFont(new java.awt.Font("SansSerif", 1, 10)); // NOI18N
-        showFilteredFractionsIsochron_checkbox.setText("<html>Filtering ON<br> </html>");
-        showFilteredFractionsIsochron_checkbox.setOpaque(true);
-        showFilteredFractionsIsochron_checkbox.addActionListener(new java.awt.event.ActionListener() {
+        showRegressionLineIsochron_checkbox.setBackground(new java.awt.Color(255, 237, 255));
+        showRegressionLineIsochron_checkbox.setFont(new java.awt.Font("SansSerif", 1, 10)); // NOI18N
+        showRegressionLineIsochron_checkbox.setText("<html>Regression<br>Line</html>");
+        showRegressionLineIsochron_checkbox.setOpaque(true);
+        showRegressionLineIsochron_checkbox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                showFilteredFractionsIsochron_checkboxActionPerformed(evt);
+                showRegressionLineIsochron_checkboxActionPerformed(evt);
             }
         });
-        uSeriesIsochronToolPanel.add(showFilteredFractionsIsochron_checkbox, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 2, 80, 25));
+        uSeriesIsochronToolPanel.add(showRegressionLineIsochron_checkbox, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 2, 90, 25));
+
+        showRegressionUnctIsochron_checkbox.setBackground(new java.awt.Color(255, 237, 255));
+        showRegressionUnctIsochron_checkbox.setFont(new java.awt.Font("SansSerif", 1, 10)); // NOI18N
+        showRegressionUnctIsochron_checkbox.setText("<html>Regression<br>Uncertainty</html>");
+        showRegressionUnctIsochron_checkbox.setOpaque(true);
+        showRegressionUnctIsochron_checkbox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showRegressionUnctIsochron_checkboxActionPerformed(evt);
+            }
+        });
+        uSeriesIsochronToolPanel.add(showRegressionUnctIsochron_checkbox, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 2, 90, 25));
+
+        setIsochronsButton.setBackground(new java.awt.Color(255, 255, 255));
+        concordiaPanZoom_buttonGroup.add(setIsochronsButton);
+        setIsochronsButton.setFont(new java.awt.Font("SansSerif", 1, 9)); // NOI18N
+        setIsochronsButton.setText("Set Isochrons");
+        setIsochronsButton.setToolTipText("Use mouse to define zoom-to box");
+        setIsochronsButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        setIsochronsButton.setContentAreaFilled(false);
+        setIsochronsButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        setIsochronsButton.setName("ZOOM"); // NOI18N
+        setIsochronsButton.setOpaque(true);
+        setIsochronsButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                setIsochronsButtonActionPerformed(evt);
+            }
+        });
+        uSeriesIsochronToolPanel.add(setIsochronsButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 2, 90, 30));
 
         useriesIsochronPane.add(uSeriesIsochronToolPanel);
         uSeriesIsochronToolPanel.setBounds(0, 604, 920, 36);
@@ -2879,9 +2912,23 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
         // TODO add your handling code here:
     }//GEN-LAST:event_radiumFlavorIsochron_radioButtonActionPerformed
 
-    private void showFilteredFractionsIsochron_checkboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showFilteredFractionsIsochron_checkboxActionPerformed
+    private void showRegressionLineIsochron_checkboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showRegressionLineIsochron_checkboxActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_showFilteredFractionsIsochron_checkboxActionPerformed
+    }//GEN-LAST:event_showRegressionLineIsochron_checkboxActionPerformed
+
+    private void showRegressionUnctIsochron_checkboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showRegressionUnctIsochron_checkboxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_showRegressionUnctIsochron_checkboxActionPerformed
+
+    private void setIsochronsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setIsochronsButtonActionPerformed
+        SortedSet<IsochronModel> temp = new TreeSet<>();
+        temp.add(new IsochronModel(25000));
+        DialogEditor myIsochronDialog = 
+                new IsochronsSelectorDialog(null, true, temp);
+        
+        myIsochronDialog.setSize(325,385);
+        myIsochronDialog.setVisible(true);
+    }//GEN-LAST:event_setIsochronsButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JRadioButton DatePbCorrSchemeA_radio;
@@ -2954,11 +3001,13 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
     private javax.swing.JMenuBar sampleAgeGUIMenuBar;
     private javax.swing.JMenuItem sampleConcordiaOptions_menuItem;
     private javax.swing.JButton selectAny2_button;
+    private javax.swing.JToggleButton setIsochronsButton;
     private javax.swing.JCheckBox showExcludedFractionsIsochron_checkbox;
     private javax.swing.JCheckBox showExcludedFractions_checkbox;
-    private javax.swing.JCheckBox showFilteredFractionsIsochron_checkbox;
     private javax.swing.JCheckBox showFilteredFractions_checkbox;
     private javax.swing.JButton showHistogram_button;
+    private javax.swing.JCheckBox showRegressionLineIsochron_checkbox;
+    private javax.swing.JCheckBox showRegressionUnctIsochron_checkbox;
     private javax.swing.JToggleButton showTightAny2_toggleButton;
     private javax.swing.JButton showTightGraphProbability_button;
     private javax.swing.JToggleButton showTightIsochron_toggleButton;

@@ -50,6 +50,7 @@ import org.earthtime.aliquots.ReduxAliquotInterface;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.exceptions.ETWarningDialog;
+import org.earthtime.plots.isochrons.IsochronsSelectorDialog;
 import org.earthtime.samples.SampleInterface;
 
 /**
@@ -554,6 +555,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
                         getSampleTreeChange().sampleTreeChangeAnalysisMode(node);
                     });
                     popup.add(menuItem);
+
                     menuItem = new JMenuItem("Delete Sample Date Interpretation");
                     menuItem.addActionListener(new ActionListener() {
 
@@ -634,6 +636,16 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
 
                             getSampleTreeChange().sampleTreeChangeAnalysisMode(aliquotNode);
                         }
+                    });
+                    popup.add(menuItem);
+
+                    menuItem = new JMenuItem("Set Isochrons for this model");
+                    menuItem.addActionListener((ActionEvent arg0) -> {
+                        DialogEditor myIsochronDialog
+                                = new IsochronsSelectorDialog(null, true, ((SampleDateModel) nodeInfo).getIsochronModels());
+                        myIsochronDialog.setSize(325, 385);
+                        myIsochronDialog.setVisible(true);
+                        ((SampleDateModel) nodeInfo).setIsochronModels(((IsochronsSelectorDialog)myIsochronDialog).getSelectedIsochrons());
                     });
                     popup.add(menuItem);
 

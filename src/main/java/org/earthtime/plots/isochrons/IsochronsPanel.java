@@ -65,7 +65,7 @@ public class IsochronsPanel extends AbstractPlot {
         g2d.setClip(getLeftMargin(), getTopMargin(), (int) getGraphWidth(), (int) getGraphHeight());
 
         plot1to1Line(g2d);
-        plotIsochronDate(0.9, 1., 25000, g2d);
+        plotIsochronDate(0.9, 1., 0, g2d);
         plotIsochronDate(0.9, 1., 50000, g2d);
     }
 

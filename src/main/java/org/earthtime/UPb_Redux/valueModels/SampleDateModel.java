@@ -74,6 +74,7 @@ import org.earthtime.matrices.matrixModels.AbstractMatrixModel;
 import org.earthtime.matrices.matrixModels.CovarianceMatrixModel;
 import org.earthtime.matrices.matrixModels.JacobianMatrixModel;
 import org.earthtime.plots.McLeanRegressionLineFit;
+import org.earthtime.plots.isochrons.IsochronModel;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.samples.SampleInterface;
@@ -164,6 +165,7 @@ public class SampleDateModel extends ValueModel implements
     // Feb 2017
     private transient McLeanRegressionLineInterface mcLeanRegressionLine;
     private String unitsForYears;
+    private SortedSet<IsochronModel> isochronModels;
 
     /**
      * creates a new instance of <code>SampleDateModel</code> with all of its
@@ -175,7 +177,7 @@ public class SampleDateModel extends ValueModel implements
         this.internalTwoSigmaUnct = BigDecimal.ZERO;
         this.internalTwoSigmaUnctWithTracerCalibrationUnct = BigDecimal.ZERO;
         this.internalTwoSigmaUnctWithTracerCalibrationAndDecayConstantUnct = BigDecimal.ZERO;
-        setIncludedFractionIDsVector(new Vector<String>());
+        setIncludedFractionIDsVector(new Vector<>());
         explanation = "Explanation";
         comment = "Comment";
         preferred = false;
@@ -185,6 +187,7 @@ public class SampleDateModel extends ValueModel implements
         this.dateName = "";
 
         this.unitsForYears = "Ma";
+        this.isochronModels = new TreeSet<>();
     }
 
     /**
@@ -3039,5 +3042,22 @@ public class SampleDateModel extends ValueModel implements
      */
     public void setUnitsForYears(String unitsForYears) {
         this.unitsForYears = unitsForYears;
+    }
+
+    /**
+     * @return the isochronModels
+     */
+    public SortedSet<IsochronModel> getIsochronModels() {
+        if (isochronModels == null){
+            this.isochronModels = new TreeSet<>();
+        }
+        return isochronModels;
+    }
+
+    /**
+     * @param isochronModels the isochronModels to set
+     */
+    public void setIsochronModels(SortedSet<IsochronModel> isochronModels) {
+        this.isochronModels = isochronModels;
     }
 }

@@ -258,17 +258,25 @@ public class PlotAxesSetup implements
 
         g2d.setFont(axisLabelAtomicName);
         g2d.drawString(xAxisLabel,
-                getLeftMargin() + (int) getGraphWidth() - 8 * axisLabelAtomicNum.getSize2D() - 12,
+                getLeftMargin() + (int) getGraphWidth() - (int) calculateLengthOfStringPlot(g2d, xAxisLabel) - 12,//    8 * axisLabelAtomicNum.getSize2D() - 12,
                 getTopMargin() + (int) getGraphHeight() - 18);
-
 
         g2d.rotate(-Math.PI / 2.0);
         g2d.drawString(yAxisLabel,
-                -(getTopMargin() + 8 * axisLabelAtomicNum.getSize2D()) - 10,
+                -(getTopMargin() + (int) calculateLengthOfStringPlot(g2d, yAxisLabel)) - 12,//             8 * axisLabelAtomicNum.getSize2D()) - 10,
                 getLeftMargin() + 24);
 
         g2d.rotate(Math.PI / 2.0);
 
+    }
+
+    private double calculateLengthOfStringPlot(Graphics2D g2d, String label) {
+        TextLayout mLayout
+                = new TextLayout(
+                        label, g2d.getFont(), g2d.getFontRenderContext());
+
+        Rectangle2D bounds = mLayout.getBounds();
+        return bounds.getWidth();
     }
 
     /**
