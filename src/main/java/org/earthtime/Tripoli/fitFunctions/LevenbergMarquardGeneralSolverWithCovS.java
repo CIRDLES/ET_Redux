@@ -1248,16 +1248,6 @@ public class LevenbergMarquardGeneralSolverWithCovS implements FitFunctionInterf
         public boolean fitFound() {
             throw new UnsupportedOperationException("Not supported yet.");
         }
-//  
-//        private void readObject (
-//                ObjectInputStream stream )
-//                throws IOException, ClassNotFoundException {
-//            stream.defaultReadObject();
-//            ObjectStreamClass myObject = ObjectStreamClass.lookup(
-//                    Class.forName( org.earthtime.Tripoli.fitFunctions.LevenbergMarquardGeneralSolverWithCovS.OdMeanFofX.class.getCanonicalName() ) );
-//            long theSUID = myObject.getSerialVersionUID();
-//            System.out.println( "Customized De-serialization of OdMeanFofX " + theSUID );
-//        }
 
         @Override
         protected Matrix extractMatrixJIntpFromJpy(Matrix Jpy) {

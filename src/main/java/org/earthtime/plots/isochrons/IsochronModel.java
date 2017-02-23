@@ -15,6 +15,7 @@
  */
 package org.earthtime.plots.isochrons;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import org.earthtime.UPb_Redux.ReduxConstants;
 
@@ -22,13 +23,25 @@ import org.earthtime.UPb_Redux.ReduxConstants;
  *
  * @author James F. Bowring
  */
-public class IsochronModel implements Comparable<IsochronModel> {
+public class IsochronModel implements Comparable<IsochronModel>, Serializable {
 
+    // Class variables
+    private static final long serialVersionUID = 6649500047671825154L;
     private double dateInAnnum;
     private double xCoord;
     private double yCoord;
     private String units;
     private boolean visible;
+
+//    private void readObject(
+//            ObjectInputStream stream)
+//            throws IOException, ClassNotFoundException {
+//        stream.defaultReadObject();
+//        ObjectStreamClass myObject = ObjectStreamClass.lookup(
+//                Class.forName(org.earthtime.plots.isochrons.IsochronModel.class.getCanonicalName()));
+//        long theSUID = myObject.getSerialVersionUID();
+//        System.out.println("Customized De-serialization of IsochronModel " + theSUID);
+//    }
 
     public IsochronModel() {
         this(0.0, 0.0, 0.0, "ka", false);
@@ -71,7 +84,8 @@ public class IsochronModel implements Comparable<IsochronModel> {
         return 0;
     }
 
-    public String presentationView() {
+    @Override
+    public String toString() {
         String retVal = new BigDecimal(dateInAnnum)
                 .movePointRight(ReduxConstants.getUnitConversionMoveCount(units))
                 .setScale(0).toPlainString() + " " + units;

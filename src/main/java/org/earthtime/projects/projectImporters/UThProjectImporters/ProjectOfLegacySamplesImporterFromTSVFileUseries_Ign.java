@@ -137,7 +137,7 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Ign extends Abstra
                         }
                     }
 
-                    if (currentSample != null) {
+                    if ((currentSample != null)&& (myFractionData.size() > 1)) {
                         // process fractions
                         UThLegacyFractionI myFraction = new UThLegacyFraction();
                         // column D

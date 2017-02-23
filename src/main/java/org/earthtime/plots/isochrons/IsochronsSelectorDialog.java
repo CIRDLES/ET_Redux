@@ -18,10 +18,13 @@
  */
 package org.earthtime.plots.isochrons;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import javax.swing.DefaultListModel;
+import javax.swing.AbstractListModel;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.dialogs.DialogEditor;
 
@@ -33,6 +36,8 @@ public class IsochronsSelectorDialog extends DialogEditor {
 
     // Fields    
     private SortedSet<IsochronModel> selectedIsochrons;
+    private AbstractListModel<IsochronModel> availableListModel;
+    private AbstractListModel<IsochronModel> displayedListModel;
 
     /**
      * Creates new form IsochronsSelectorDialog
@@ -58,17 +63,47 @@ public class IsochronsSelectorDialog extends DialogEditor {
 
     }
 
+    private class IsochronModelList extends AbstractListModel {
+
+        List<IsochronModel> isochronModels;
+
+        public IsochronModelList() {
+            isochronModels = new ArrayList<>();
+            isochronModels.add(new IsochronModel());
+        }
+
+        @Override
+        public int getSize() {
+            return isochronModels.size();
+        }
+
+        @Override
+        public IsochronModel getElementAt(int index) {
+            return isochronModels.get(index);
+        }
+
+        public void addElement(IsochronModel im) {
+            isochronModels.add(im);
+            Collections.sort(isochronModels);
+        }
+
+        public void removeElement(IsochronModel im) {
+            isochronModels.remove(im);
+            Collections.sort(isochronModels);
+        }
+    }
+
     private void initLists() {
-        DefaultListModel availableListModel = new DefaultListModel();
-        DefaultListModel displayedListModel = new DefaultListModel();
+        availableListModel = new IsochronModelList();
+        displayedListModel = new IsochronModelList();
 
         Iterator<IsochronModel> isochronIterator = selectedIsochrons.iterator();
         while (isochronIterator.hasNext()) {
             IsochronModel im = isochronIterator.next();
             if (im.isVisible()) {
-                displayedListModel.addElement(im.presentationView());
+                ((IsochronModelList) displayedListModel).addElement(im);
             } else {
-                availableListModel.addElement(im.presentationView());
+                ((IsochronModelList) availableListModel).addElement(im);
             }
         }
         availableList.setModel(availableListModel);
@@ -266,7 +301,18 @@ public class IsochronsSelectorDialog extends DialogEditor {
     }//GEN-LAST:event_apply_buttonActionPerformed
 
     private void displayIsochron_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_displayIsochron_buttonActionPerformed
-        // TODO add your handling code here:
+        IsochronModel im = availableList.getSelectedValue();
+        im.setVisible(true);
+        
+        availableList.setModel(new IsochronModelList());
+        ((IsochronModelList) availableListModel).removeElement(im);
+        availableList.setModel(availableListModel);
+        availableList.validate();
+
+        displayedList.setModel(new IsochronModelList());
+        ((IsochronModelList) displayedListModel).addElement(im);
+        displayedList.setModel(displayedListModel);
+        displayedList.validate();
     }//GEN-LAST:event_displayIsochron_buttonActionPerformed
 
     private void addIsochron_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addIsochron_buttonActionPerformed
@@ -278,7 +324,10 @@ public class IsochronsSelectorDialog extends DialogEditor {
                 "ka", false);
 
         if (selectedIsochrons.add(isochron)) {
-            ((DefaultListModel) availableList.getModel()).addElement(isochron.presentationView());
+            ((IsochronModelList) availableListModel).addElement(isochron);
+            availableList.setModel(new IsochronModelList());
+            availableList.setModel(availableListModel);
+            availableList.validate();
         }
     }//GEN-LAST:event_addIsochron_buttonActionPerformed
 
@@ -312,14 +361,14 @@ public class IsochronsSelectorDialog extends DialogEditor {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addIsochron_button;
     private javax.swing.JButton apply_button;
-    private javax.swing.JList<String> availableList;
+    private javax.swing.JList<IsochronModel> availableList;
     private javax.swing.JLabel availableListLabel;
     private javax.swing.JScrollPane availableScrollPane;
     private javax.swing.JPanel buttonsPanel;
     private javax.swing.JButton close_button;
     private javax.swing.JTextField dateInKaText;
     private javax.swing.JButton displayIsochron_button;
-    private javax.swing.JList<String> displayedList;
+    private javax.swing.JList<IsochronModel> displayedList;
     private javax.swing.JLabel displayedListLabel;
     private javax.swing.JScrollPane displayedScrollPane;
     private javax.swing.JButton hideIsochron_button;
