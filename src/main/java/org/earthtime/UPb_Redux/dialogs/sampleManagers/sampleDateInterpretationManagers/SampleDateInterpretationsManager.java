@@ -210,6 +210,31 @@ public class SampleDateInterpretationsManager extends DialogEditor
         ((PlottingDetailsDisplayInterface) plotAny2Panel).refreshPanel(true, false);
         ((PlottingDetailsDisplayInterface) useriesIsochronPanel).refreshPanel(true, false);
 
+        // feb 2017
+        // let's focus on the skin or at least the tab
+        // SampleAnalysisTypesEnum.USERIES_CARB.equals(SampleAnalysisTypesEnum.valueOf(getSampleAnalysisType()))
+        SampleAnalysisTypesEnum sampleAnalysisType = SampleAnalysisTypesEnum.IDTIMS;
+        try {
+            sampleAnalysisType = SampleAnalysisTypesEnum.valueOf(sample.getSampleAnalysisType());
+        } catch (Exception e) {
+        }
+
+        switch (SampleAnalysisTypesEnum.valueOf(sample.getSampleAnalysisType())) {
+            case IDTIMS:
+            case LAICPMS:
+                graphPanels_TabbedPane.setSelectedComponent(concordiaLayeredPane);
+                graphPanels_TabbedPane.remove(useriesIsochronLayeredPane);
+                break;
+            case USERIES_IGN:
+                graphPanels_TabbedPane.setSelectedComponent(useriesIsochronLayeredPane);
+                graphPanels_TabbedPane.remove(concordiaLayeredPane);
+                graphPanels_TabbedPane.remove(weightedMeanLayeredPane);
+                graphPanels_TabbedPane.remove(normedProbabilityLayeredPane);
+                break;
+
+            default:
+        }
+
     }
 
     /**
@@ -403,7 +428,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
             ((AbstractPlot) useriesIsochronPanel).setUseUncertaintyCrosses(Boolean.valueOf(CGO.get("useUncertaintyCrosses")));
         }
 
-        useriesIsochronPane.add(useriesIsochronPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        useriesIsochronLayeredPane.add(useriesIsochronPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         // zoom buttons
         zoomInX2Isochron_button.addActionListener((ActionEvent arg0) -> {
@@ -852,22 +877,26 @@ public class SampleDateInterpretationsManager extends DialogEditor
     public void synchronizePanelSizes(PlotAxesSetupInterface currentGraphAxesSetup) {
 
         // may 2010 added here to handle opening of an imported .redux file now that we persist size
-        int ww = concordiaLayeredPane.getWidth();
-        int hh = concordiaLayeredPane.getHeight();
-        currentGraphAxesSetup.setGraphWidth(ww - 25.0);
-        currentGraphAxesSetup.setGraphHeight(hh - 50.0);
+        int ww = graphPanels_TabbedPane.getWidth();
+        int hh = graphPanels_TabbedPane.getHeight();
 
-        ((AbstractPlot) plotAny2Panel).setGraphWidth(ww - 25);
-        ((AbstractPlot) plotAny2Panel).setGraphHeight(hh - 50);
+        int adjustedWidth = ww - 30;
+        int adjustedHeight = hh - 75;
 
-        ((AbstractPlot) useriesIsochronPanel).setGraphWidth(ww - 25);
-        ((AbstractPlot) useriesIsochronPanel).setGraphHeight(hh - 50);
+        currentGraphAxesSetup.setGraphWidth(adjustedWidth);
+        currentGraphAxesSetup.setGraphHeight(adjustedHeight);
 
-        ((WeightedMeanGraphPanel) weightedMeanGraphPanel).setGraphWidth(ww - 25);
-        ((WeightedMeanGraphPanel) weightedMeanGraphPanel).setGraphHeight(hh - 50);
+        ((AbstractPlot) plotAny2Panel).setGraphWidth(adjustedWidth);
+        ((AbstractPlot) plotAny2Panel).setGraphHeight(adjustedHeight);
 
-        ((DateProbabilityDensityPanel) probabilityPanel).setGraphWidth(ww - 25);
-        ((DateProbabilityDensityPanel) probabilityPanel).setGraphHeight(hh - 65);
+        ((AbstractPlot) useriesIsochronPanel).setGraphWidth(adjustedWidth);
+        ((AbstractPlot) useriesIsochronPanel).setGraphHeight(adjustedHeight);
+
+        ((WeightedMeanGraphPanel) weightedMeanGraphPanel).setGraphWidth(adjustedWidth);
+        ((WeightedMeanGraphPanel) weightedMeanGraphPanel).setGraphHeight(adjustedHeight);
+
+        ((DateProbabilityDensityPanel) probabilityPanel).setGraphWidth(adjustedWidth);
+        ((DateProbabilityDensityPanel) probabilityPanel).setGraphHeight(adjustedHeight - 15);
 
     }
 
@@ -1114,7 +1143,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         fractionOrderByWeight_radioButton = new javax.swing.JRadioButton();
         fractionOrderByRandom_radioButton = new javax.swing.JRadioButton();
         fractionOrderByDate_radioButton = new javax.swing.JRadioButton();
-        useriesIsochronPane = new javax.swing.JLayeredPane();
+        useriesIsochronLayeredPane = new javax.swing.JLayeredPane();
         uSeriesIsochronToolPanel = new javax.swing.JPanel();
         zoomInX2Isochron_button =  new ET_JButton();
         zoomOutX2Isochron_button =  new ET_JButton();
@@ -1142,7 +1171,6 @@ public class SampleDateInterpretationsManager extends DialogEditor
         zoomBoxAny2_toggleButton =  new ET_JToggleButton();
         showTightAny2_toggleButton =  new ET_JToggleButton();
         selectAny2_button =  new ET_JButton();
-        any3LayeredPane = new javax.swing.JLayeredPane();
         normedProbabilityLayeredPane = new javax.swing.JLayeredPane();
         probabilityToolPanel = new javax.swing.JPanel();
         zoomInProbability_button =  new ET_JButton();
@@ -1555,8 +1583,8 @@ public class SampleDateInterpretationsManager extends DialogEditor
 
         graphPanels_TabbedPane.addTab("Weighted Mean", weightedMeanLayeredPane);
 
-        useriesIsochronPane.setBackground(new java.awt.Color(255, 237, 255));
-        useriesIsochronPane.setOpaque(true);
+        useriesIsochronLayeredPane.setBackground(new java.awt.Color(255, 237, 255));
+        useriesIsochronLayeredPane.setOpaque(true);
 
         uSeriesIsochronToolPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         uSeriesIsochronToolPanel.setMinimumSize(new java.awt.Dimension(0, 0));
@@ -1758,10 +1786,10 @@ public class SampleDateInterpretationsManager extends DialogEditor
         });
         uSeriesIsochronToolPanel.add(showRegressionUnctIsochron_checkbox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 2, 90, 25));
 
-        useriesIsochronPane.add(uSeriesIsochronToolPanel);
+        useriesIsochronLayeredPane.add(uSeriesIsochronToolPanel);
         uSeriesIsochronToolPanel.setBounds(0, 604, 920, 36);
 
-        graphPanels_TabbedPane.addTab("USeries Isochrons", useriesIsochronPane);
+        graphPanels_TabbedPane.addTab("USeries Isochrons", useriesIsochronLayeredPane);
 
         any2LayeredPane.setBackground(new java.awt.Color(231, 255, 253));
         any2LayeredPane.setOpaque(true);
@@ -1898,7 +1926,6 @@ public class SampleDateInterpretationsManager extends DialogEditor
         any2ToolPanel.setBounds(0, 604, 790, 36);
 
         graphPanels_TabbedPane.addTab("Any 2", any2LayeredPane);
-        graphPanels_TabbedPane.addTab("Any 3", any3LayeredPane);
 
         normedProbabilityLayeredPane.setBackground(new java.awt.Color(241, 230, 255));
         normedProbabilityLayeredPane.setOpaque(true);
@@ -2439,11 +2466,14 @@ private void graphPanelsTabbedPaneResized(java.awt.event.ComponentEvent evt) {//
     // resize concordia and weighted means and additional tabbed panels with sample date window
     interpretations_SplitPane.repaint();
 
-    int ww = concordiaLayeredPane.getWidth();
-    int hh = concordiaLayeredPane.getHeight();
+    int ww = graphPanels_TabbedPane.getWidth();
+    int hh = graphPanels_TabbedPane.getHeight();
 
-    ((ConcordiaGraphPanel) concordiaGraphPanel).setGraphWidth(ww - 25.0);
-    ((ConcordiaGraphPanel) concordiaGraphPanel).setGraphHeight(hh - 50.0);
+    int adjustedWidth = ww - 30;
+    int adjustedHeight = hh - 75;
+
+    ((ConcordiaGraphPanel) concordiaGraphPanel).setGraphWidth(adjustedWidth);
+    ((ConcordiaGraphPanel) concordiaGraphPanel).setGraphHeight(adjustedHeight);
 
     int widthCP = (int) ((ConcordiaGraphPanel) concordiaGraphPanel).getGraphWidth();
     int heightCP = (int) ((ConcordiaGraphPanel) concordiaGraphPanel).getGraphHeight();
@@ -2479,9 +2509,9 @@ private void graphPanelsTabbedPaneResized(java.awt.event.ComponentEvent evt) {//
 
     ((PlottingDetailsDisplayInterface) useriesIsochronPanel).refreshPanel(true, false);
 
-    ((WeightedMeanGraphPanel) weightedMeanGraphPanel).setGraphWidth(ww - 25);
+    ((WeightedMeanGraphPanel) weightedMeanGraphPanel).setGraphWidth(adjustedWidth);
 
-    ((WeightedMeanGraphPanel) weightedMeanGraphPanel).setGraphHeight(hh - 50);
+    ((WeightedMeanGraphPanel) weightedMeanGraphPanel).setGraphHeight(adjustedHeight);
 
     weightedMeanGraphPanel.setBounds(
             1, 1, widthCP + leftMarginCP, heightCP + 16);
@@ -2492,9 +2522,9 @@ private void graphPanelsTabbedPaneResized(java.awt.event.ComponentEvent evt) {//
     ((PlottingDetailsDisplayInterface) weightedMeanGraphPanel).refreshPanel(true, false);
 
     // june 2010 expansion to include additional panels
-    ((DateProbabilityDensityPanel) probabilityPanel).setGraphWidth(ww - 25);
+    ((DateProbabilityDensityPanel) probabilityPanel).setGraphWidth(adjustedWidth);
 
-    ((DateProbabilityDensityPanel) probabilityPanel).setGraphHeight(hh - 85);
+    ((DateProbabilityDensityPanel) probabilityPanel).setGraphHeight(adjustedHeight - 35);
     probabilityPanel.setBounds(
             1, 1, widthCP + leftMarginCP, heightCP - 17);
     probabilityToolPanel.setBounds(
@@ -2927,7 +2957,6 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
     private javax.swing.JMenuItem aliquotsChooser_menuItem;
     private javax.swing.JLayeredPane any2LayeredPane;
     private javax.swing.JPanel any2ToolPanel;
-    private javax.swing.JLayeredPane any3LayeredPane;
     private javax.swing.JTextField binWidth_text;
     private javax.swing.JMenu choosePDFPeaks_menu;
     private javax.swing.JButton clearFilters_button;
@@ -3006,7 +3035,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
     private javax.swing.JCheckBox thoriumCorrectionSelector_checkbox;
     private javax.swing.JRadioButton thoriumFlavorIsochron_radioButton;
     private javax.swing.JPanel uSeriesIsochronToolPanel;
-    private javax.swing.JLayeredPane useriesIsochronPane;
+    private javax.swing.JLayeredPane useriesIsochronLayeredPane;
     private javax.swing.ButtonGroup weightedMeanFractionOrderButtonGroup;
     private javax.swing.JLayeredPane weightedMeanLayeredPane;
     private javax.swing.ButtonGroup weightedMeanPanZoom_buttonGroup;
@@ -3067,12 +3096,12 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                         setYorkFitLine(null);
                 ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
                         setSelectedFractions(sample.getFractions());
-                concordiaGraphPanel.repaint();
                 // zap deselected list as it is meaningless at level of aliquot or sample
                 ((AliquotDetailsDisplayInterface) concordiaGraphPanel).//
                         getDeSelectedFractions().clear();
                 ((ConcordiaGraphPanel) concordiaGraphPanel).//
                         setPreferredDatePanel(null);
+                concordiaGraphPanel.repaint();
 
                 // may 2014 show best date line
                 ((ConcordiaGraphPanel) concordiaGraphPanel).setShowingSingleAliquot(false);
@@ -3080,21 +3109,20 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                 // dec 2016 plot any 2 experiment
                 ((AliquotDetailsDisplayInterface) plotAny2Panel).
                         setSelectedFractions(sample.getFractions());
-                plotAny2Panel.repaint();
-
                 // zap deselected list as it is meaningless at level of aliquot or sample
                 ((AliquotDetailsDisplayInterface) plotAny2Panel).//
                         getDeSelectedFractions().clear();
+                plotAny2Panel.repaint();
 
                 ((AbstractPlot) useriesIsochronPanel).//
                         setMcLeanRegressionLine(null);
                 ((AliquotDetailsDisplayInterface) useriesIsochronPanel).//
                         setSelectedFractions(sample.getFractions());
-                useriesIsochronPanel.repaint();
-
                 // zap deselected list as it is meaningless at level of aliquot or sample
                 ((AliquotDetailsDisplayInterface) useriesIsochronPanel).//
                         getDeSelectedFractions().clear();
+                ((IsochronsPanel) useriesIsochronPanel).clearSetSampleDateModel();
+                useriesIsochronPanel.repaint();
 
             } else {
 
@@ -3226,7 +3254,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                                 getAliquotSampleDateModelDeSelectedFractions(((SampleDateModel) nodeInfo).//
                                         getIncludedFractionIDsVector()));
 
-                ((IsochronsPanel)useriesIsochronPanel).setSampleDateModel((ValueModel) nodeInfo);
+                ((IsochronsPanel) useriesIsochronPanel).setSampleDateModel((ValueModel) nodeInfo);
                 useriesIsochronPanel.repaint();
 
             } else if (graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab("Weighted Mean")) {
@@ -3389,7 +3417,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                         setPreferredDatePanel(dateInterpretationBoxPanel);
                 concordiaGraphPanel.repaint();
             } else if ((graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab("Any 2"))
-                    ||(graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab("USeries Isochrons"))){
+                    || (graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab("USeries Isochrons"))) {
                 // dec 2016
                 ((AliquotDetailsDisplayInterface) plotAny2Panel).//
                         setSelectedFractions(((ReduxAliquotInterface) aliquotNodeInfo).//
@@ -3424,7 +3452,6 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
 //                                getParent().//
 //                                getParent().//
 //                                getChildAt(0));
-
                 useriesIsochronPanel.repaint();
 
             } else if (graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab("Weighted Mean")) {
@@ -3799,7 +3826,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
             concordiaGraphPanel.remove(svgConcordiaCanvas);
             concordiaGraphPanel.validate();
 
-            ((ConcordiaGraphPanel) concordiaGraphPanel).repaint();
+            concordiaGraphPanel.repaint();
             svgConcordiaCanvas = null;
         }
     }
@@ -3812,9 +3839,9 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
             File file = createWeightedMeanSVG();
             svgWeightedMeanCanvas = new JSVGCanvas();
 
-            ((WeightedMeanGraphPanel) weightedMeanGraphPanel).removeAll();
+            weightedMeanGraphPanel.removeAll();
 
-            ((WeightedMeanGraphPanel) weightedMeanGraphPanel).setLayout(null);
+            weightedMeanGraphPanel.setLayout(null);
             svgWeightedMeanCanvas.setBounds(0, 0, weightedMeanGraphPanel.getWidth() - 1, weightedMeanGraphPanel.getHeight() - 1);
             weightedMeanGraphPanel.add(svgWeightedMeanCanvas);
             weightedMeanGraphPanel.validate();

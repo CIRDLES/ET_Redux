@@ -895,9 +895,9 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         try {
             theSample
                     = new ProjectSample(//
-                            SampleTypesEnum.PROJECT.getName(),//
-                            SampleTypesEnum.PROJECT.getName(), //
-                            SampleAnalysisTypesEnum.COMPILED.getName(), //
+                            SampleTypesEnum.PROJECT.getName(),
+                            SampleTypesEnum.COMPILATION.getName(), //
+                            sampleAnalysisType, //                           
                             myState.getReduxPreferences().getDefaultSampleAnalysisPurpose(),//
                             true, //
                             isotopeStyle);
@@ -3464,7 +3464,6 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             topsoilEvolutionChart.preparePanel();
             topsoilEvolutionChart.showPanel();
         } else {
-
             manageSampleDateInterpretation(//
                     new SampleTreeAnalysisMode(theSample),
                     new SampleTreeCompilationMode(theSample));

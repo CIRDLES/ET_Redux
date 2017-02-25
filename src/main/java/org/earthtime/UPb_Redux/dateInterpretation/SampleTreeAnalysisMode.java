@@ -647,6 +647,8 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
                             myIsochronDialog.setSize(325, 385);
                             myIsochronDialog.setVisible(true);
                             ((SampleDateModel) nodeInfo).setIsochronModels(((IsochronsSelectorDialog) myIsochronDialog).getSelectedIsochrons());
+                            
+                            getSampleTreeChange().sampleTreeChangeAnalysisMode(node);
                         });
                         popup.add(menuItem);
                     }

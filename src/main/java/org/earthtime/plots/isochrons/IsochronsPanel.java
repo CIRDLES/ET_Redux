@@ -53,7 +53,7 @@ public class IsochronsPanel extends AbstractPlot {
      */
     public IsochronsPanel(SampleInterface mySample, ReportUpdaterInterface reportUpdater) {
         super(mySample, reportUpdater);
-        
+
         // placeholder
         sampleDateModel = new SampleDateModel();
 
@@ -78,13 +78,10 @@ public class IsochronsPanel extends AbstractPlot {
         Iterator<IsochronModel> isochronIterator = isochronModels.iterator();
         while (isochronIterator.hasNext()) {
             IsochronModel im = isochronIterator.next();
-            if (im.isVisible()){
+            if (im.isVisible()) {
                 plotIsochron(im, g2d);
             }
         }
-
-//        plotIsochronDate(0.9, 1., 0, g2d);
-//        plotIsochronDate(0.9, 1., 50000, g2d);
     }
 
     private void plotIsochron(IsochronModel isochron, Graphics2D g2d) {
@@ -160,5 +157,9 @@ public class IsochronsPanel extends AbstractPlot {
      */
     public void setSampleDateModel(ValueModel sampleDateModel) {
         this.sampleDateModel = sampleDateModel;
+    }
+
+    public void clearSetSampleDateModel() {
+        this.sampleDateModel = new SampleDateModel();
     }
 }

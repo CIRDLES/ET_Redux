@@ -975,7 +975,7 @@
                 </Container>
               </SubComponents>
             </Container>
-            <Container class="javax.swing.JLayeredPane" name="useriesIsochronPane">
+            <Container class="javax.swing.JLayeredPane" name="useriesIsochronLayeredPane">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="ff" green="ed" red="ff" type="rgb"/>
@@ -1733,19 +1733,6 @@
                   </SubComponents>
                 </Container>
               </SubComponents>
-            </Container>
-            <Container class="javax.swing.JLayeredPane" name="any3LayeredPane">
-              <Constraints>
-                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                  <JTabbedPaneConstraints tabName="Any 3">
-                    <Property name="tabTitle" type="java.lang.String" value="Any 3"/>
-                  </JTabbedPaneConstraints>
-                </Constraint>
-              </Constraints>
-
-              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
-                <Property name="useNullLayout" type="boolean" value="true"/>
-              </Layout>
             </Container>
             <Container class="javax.swing.JLayeredPane" name="normedProbabilityLayeredPane">
               <Properties>

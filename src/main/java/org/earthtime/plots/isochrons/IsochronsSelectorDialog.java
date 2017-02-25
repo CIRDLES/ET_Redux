@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import javax.swing.AbstractListModel;
+import javax.swing.JList;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.dialogs.DialogEditor;
 
@@ -69,7 +70,6 @@ public class IsochronsSelectorDialog extends DialogEditor {
 
         public IsochronModelList() {
             isochronModels = new ArrayList<>();
-            isochronModels.add(new IsochronModel());
         }
 
         @Override
@@ -119,7 +119,6 @@ public class IsochronsSelectorDialog extends DialogEditor {
     private void initComponents() {
 
         buttonsPanel = new javax.swing.JPanel();
-        apply_button = new ET_JButton();
         close_button = new ET_JButton();
         jLayeredPane1 = new javax.swing.JLayeredPane();
         specifyIsochron_label = new javax.swing.JLabel();
@@ -154,19 +153,8 @@ public class IsochronsSelectorDialog extends DialogEditor {
         buttonsPanel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
         buttonsPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        apply_button.setForeground(new java.awt.Color(255, 51, 0));
-        apply_button.setText("Apply");
-        apply_button.setMargin(new java.awt.Insets(0, 1, 0, 1));
-        apply_button.setPreferredSize(new java.awt.Dimension(140, 23));
-        apply_button.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                apply_buttonActionPerformed(evt);
-            }
-        });
-        buttonsPanel.add(apply_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(38, 2, 115, 25));
-
         close_button.setForeground(new java.awt.Color(255, 51, 0));
-        close_button.setText("Close");
+        close_button.setText("Done");
         close_button.setMargin(new java.awt.Insets(0, 1, 0, 1));
         close_button.setPreferredSize(new java.awt.Dimension(140, 23));
         close_button.addActionListener(new java.awt.event.ActionListener() {
@@ -174,9 +162,9 @@ public class IsochronsSelectorDialog extends DialogEditor {
                 close_buttonActionPerformed(evt);
             }
         });
-        buttonsPanel.add(close_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 2, 115, 25));
+        buttonsPanel.add(close_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(35, 4, 270, 25));
 
-        getContentPane().add(buttonsPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 333, 340, 30));
+        getContentPane().add(buttonsPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 320, 340, 30));
 
         jLayeredPane1.setBackground(new java.awt.Color(255, 237, 255));
         jLayeredPane1.setOpaque(true);
@@ -195,6 +183,7 @@ public class IsochronsSelectorDialog extends DialogEditor {
         jLayeredPane1.add(displayedListLabel);
         displayedListLabel.setBounds(180, 40, 120, 16);
 
+        displayIsochron_button.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
         displayIsochron_button.setForeground(new java.awt.Color(255, 51, 0));
         displayIsochron_button.setText(">>");
         displayIsochron_button.setMargin(new java.awt.Insets(0, 1, 0, 1));
@@ -207,6 +196,7 @@ public class IsochronsSelectorDialog extends DialogEditor {
         jLayeredPane1.add(displayIsochron_button);
         displayIsochron_button.setBounds(145, 110, 30, 23);
 
+        hideIsochron_button.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
         hideIsochron_button.setForeground(new java.awt.Color(255, 51, 0));
         hideIsochron_button.setText("<<");
         hideIsochron_button.setMargin(new java.awt.Insets(0, 1, 0, 1));
@@ -219,6 +209,7 @@ public class IsochronsSelectorDialog extends DialogEditor {
         jLayeredPane1.add(hideIsochron_button);
         hideIsochron_button.setBounds(145, 140, 30, 23);
 
+        addIsochron_button.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
         addIsochron_button.setForeground(new java.awt.Color(255, 51, 0));
         addIsochron_button.setText("+");
         addIsochron_button.setMargin(new java.awt.Insets(0, 1, 0, 1));
@@ -231,6 +222,7 @@ public class IsochronsSelectorDialog extends DialogEditor {
         jLayeredPane1.add(addIsochron_button);
         addIsochron_button.setBounds(50, 220, 30, 23);
 
+        removeIsochron_button.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
         removeIsochron_button.setForeground(new java.awt.Color(255, 51, 0));
         removeIsochron_button.setText("-");
         removeIsochron_button.setMargin(new java.awt.Insets(0, 1, 0, 1));
@@ -287,7 +279,7 @@ public class IsochronsSelectorDialog extends DialogEditor {
         jLayeredPane1.add(displayedScrollPane);
         displayedScrollPane.setBounds(180, 70, 120, 150);
 
-        getContentPane().add(jLayeredPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 340, 330));
+        getContentPane().add(jLayeredPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 340, 320));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -295,24 +287,18 @@ public class IsochronsSelectorDialog extends DialogEditor {
         close();
     }//GEN-LAST:event_close_buttonActionPerformed
 
-    private void apply_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_apply_buttonActionPerformed
-        OK();
-        close();
-    }//GEN-LAST:event_apply_buttonActionPerformed
-
     private void displayIsochron_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_displayIsochron_buttonActionPerformed
         IsochronModel im = availableList.getSelectedValue();
-        im.setVisible(true);
-        
-        availableList.setModel(new IsochronModelList());
-        ((IsochronModelList) availableListModel).removeElement(im);
-        availableList.setModel(availableListModel);
-        availableList.validate();
+        if (im != null) {
+            im.setVisible(true);
 
-        displayedList.setModel(new IsochronModelList());
-        ((IsochronModelList) displayedListModel).addElement(im);
-        displayedList.setModel(displayedListModel);
-        displayedList.validate();
+            ((IsochronModelList) displayedListModel).addElement(im);
+            updateList(displayedList, displayedListModel);
+
+            ((IsochronModelList) availableListModel).removeElement(im);
+            updateList(availableList, availableListModel);
+        }
+
     }//GEN-LAST:event_displayIsochron_buttonActionPerformed
 
     private void addIsochron_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addIsochron_buttonActionPerformed
@@ -325,19 +311,39 @@ public class IsochronsSelectorDialog extends DialogEditor {
 
         if (selectedIsochrons.add(isochron)) {
             ((IsochronModelList) availableListModel).addElement(isochron);
-            availableList.setModel(new IsochronModelList());
-            availableList.setModel(availableListModel);
-            availableList.validate();
+            updateList(availableList, availableListModel);
         }
     }//GEN-LAST:event_addIsochron_buttonActionPerformed
 
     private void hideIsochron_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hideIsochron_buttonActionPerformed
-        // TODO add your handling code here:
+        IsochronModel im = displayedList.getSelectedValue();
+        if (im != null) {
+            im.setVisible(false);
+
+            ((IsochronModelList) displayedListModel).removeElement(im);
+            updateList(displayedList, displayedListModel);
+
+            ((IsochronModelList) availableListModel).addElement(im);
+            updateList(availableList, availableListModel);
+        }
     }//GEN-LAST:event_hideIsochron_buttonActionPerformed
 
     private void removeIsochron_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeIsochron_buttonActionPerformed
-        // TODO add your handling code here:
+        IsochronModel im = availableList.getSelectedValue();
+        if (im != null) {
+            im.setVisible(false);
+
+            selectedIsochrons.remove(im);
+            ((IsochronModelList) availableListModel).removeElement(im);
+            updateList(availableList, availableListModel);
+        }
     }//GEN-LAST:event_removeIsochron_buttonActionPerformed
+
+    private void updateList(JList<IsochronModel> jlist, AbstractListModel<IsochronModel> listModel) {
+        jlist.setModel(new IsochronModelList());
+        jlist.setModel(listModel);
+        jlist.validate();
+    }
 
     private void OK() {
 
@@ -360,7 +366,6 @@ public class IsochronsSelectorDialog extends DialogEditor {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addIsochron_button;
-    private javax.swing.JButton apply_button;
     private javax.swing.JList<IsochronModel> availableList;
     private javax.swing.JLabel availableListLabel;
     private javax.swing.JScrollPane availableScrollPane;

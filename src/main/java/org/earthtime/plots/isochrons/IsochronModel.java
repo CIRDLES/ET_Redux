@@ -27,6 +27,7 @@ public class IsochronModel implements Comparable<IsochronModel>, Serializable {
 
     // Class variables
     private static final long serialVersionUID = 6649500047671825154L;
+
     private double dateInAnnum;
     private double xCoord;
     private double yCoord;
@@ -42,7 +43,6 @@ public class IsochronModel implements Comparable<IsochronModel>, Serializable {
 //        long theSUID = myObject.getSerialVersionUID();
 //        System.out.println("Customized De-serialization of IsochronModel " + theSUID);
 //    }
-
     public IsochronModel() {
         this(0.0, 0.0, 0.0, "ka", false);
     }
@@ -88,7 +88,8 @@ public class IsochronModel implements Comparable<IsochronModel>, Serializable {
     public String toString() {
         String retVal = new BigDecimal(dateInAnnum)
                 .movePointRight(ReduxConstants.getUnitConversionMoveCount(units))
-                .setScale(0).toPlainString() + " " + units;
+                .setScale(0).toPlainString() + " " + units
+                + " (" + xCoord  + ", " + yCoord + ")";
         return retVal;
     }
 
