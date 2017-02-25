@@ -781,16 +781,12 @@ public class SampleDateInterpretationsManager extends DialogEditor
      * @param clearFiltering the value of clearFiltering
      */
     public void performFilteringPerSliders(boolean myClearFiltering) {
-
-        boolean clearFiltering = myClearFiltering;
-
-        if (sample.isSampleTypeLegacy()) {
-            clearFiltering = true;
-        }
-
-        if (sample.isAnalysisTypeCOMPILED()) {
-            clearFiltering = true;
-        }
+        
+        boolean clearFiltering = 
+                myClearFiltering 
+                || sample.isSampleTypeLegacy() 
+                || sample.isAnalysisTypeCOMPILED() 
+                || sample.isAnalysisTypeUSeries();
 
         Vector<ETFractionInterface> filteredFractions;
         if (clearFiltering) {
