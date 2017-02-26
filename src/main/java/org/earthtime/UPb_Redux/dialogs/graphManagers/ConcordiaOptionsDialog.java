@@ -56,7 +56,7 @@ public class ConcordiaOptionsDialog extends DialogEditor {
 
         super(parent, modal);
 
-        setLocationRelativeTo(parent);
+        setSizeAndCenter(531, 717 + 25);
         setAlwaysOnTop(modal);
 
         initComponents();
@@ -251,7 +251,7 @@ public class ConcordiaOptionsDialog extends DialogEditor {
             titleBoxShow_checkBox.setSelected(titleBoxShow);
 
 
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
             // during development, handles problems
             setConcordiaOptions(new SampleDateInterpretationGUIOptions().getConcordiaOptions());
         }
@@ -449,6 +449,7 @@ public class ConcordiaOptionsDialog extends DialogEditor {
         setBackground(new java.awt.Color(255, 255, 255));
         setForeground(new java.awt.Color(255, 255, 255));
         setResizable(false);
+        getContentPane().setLayout(null);
 
         buttonsPanel.setBackground(new java.awt.Color(252, 236, 235));
         buttonsPanel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
@@ -515,85 +516,160 @@ public class ConcordiaOptionsDialog extends DialogEditor {
                 .add(revert_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 25, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
 
+        getContentPane().add(buttonsPanel);
+        buttonsPanel.setBounds(0, 689, 532, 29);
+
         jLabel19.setFont(new java.awt.Font("Lucida Grande", 1, 16)); // NOI18N
         jLabel19.setText("Title box:");
+        getContentPane().add(jLabel19);
+        jLabel19.setBounds(6, 591, 75, 20);
 
         jLabel15.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel15.setText("choose tic label font:");
+        getContentPane().add(jLabel15);
+        jLabel15.setBounds(153, 453, 142, 16);
 
         jLabel3.setFont(new java.awt.Font("Lucida Grande", 1, 16)); // NOI18N
         jLabel3.setText("Concordia:");
+        getContentPane().add(jLabel3);
+        jLabel3.setBounds(10, 103, 259, 20);
 
         jLabel2.setFont(new java.awt.Font("Lucida Grande", 1, 16)); // NOI18N
         jLabel2.setText("Ellipses:");
+        getContentPane().add(jLabel2);
+        jLabel2.setBounds(10, 3, 109, 20);
 
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel5.setText("choose label font:");
+        getContentPane().add(jLabel5);
+        jLabel5.setBounds(137, 33, 164, 16);
 
         jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel6.setText("label font size:");
+        getContentPane().add(jLabel6);
+        jLabel6.setBounds(137, 67, 164, 16);
 
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel4.setText("error size:");
+        getContentPane().add(jLabel4);
+        jLabel4.setBounds(137, 6, 164, 16);
 
         jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel7.setText("show errors as:");
+        getContentPane().add(jLabel7);
+        jLabel7.setBounds(192, 106, 109, 16);
 
         jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel8.setText("line weight pixels; color:");
+        getContentPane().add(jLabel8);
+        jLabel8.setBounds(137, 136, 164, 16);
 
         jLabel9.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel9.setText("line color:");
+        getContentPane().add(jLabel9);
+        jLabel9.setBounds(137, 164, 164, 16);
 
         jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel10.setText("tic shape:");
+        getContentPane().add(jLabel10);
+        jLabel10.setBounds(137, 191, 164, 16);
 
         jLabel11.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel11.setText("tic weight:");
+        getContentPane().add(jLabel11);
+        jLabel11.setBounds(137, 221, 164, 16);
 
         jLabel13.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel13.setText("choose label font:");
+        getContentPane().add(jLabel13);
+        jLabel13.setBounds(137, 254, 164, 16);
 
         jLabel12.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel12.setText("label font size:");
+        getContentPane().add(jLabel12);
+        jLabel12.setBounds(199, 288, 102, 16);
 
         jLabel16.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel16.setText("tic label font size:");
+        getContentPane().add(jLabel16);
+        jLabel16.setBounds(182, 487, 113, 16);
 
         jLabel17.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel17.setText("choose axes label font:");
+        getContentPane().add(jLabel17);
+        jLabel17.setBounds(137, 518, 158, 16);
 
         jLabel18.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel18.setText("axes label font size:");
+        getContentPane().add(jLabel18);
+        jLabel18.setBounds(161, 552, 134, 16);
 
         jLabel20.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel20.setText("choose title font:");
+        getContentPane().add(jLabel20);
+        jLabel20.setBounds(174, 587, 108, 16);
 
         jLabel21.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel21.setText("title font size:");
+        getContentPane().add(jLabel21);
+        jLabel21.setBounds(194, 621, 88, 16);
 
         jLabel22.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel22.setText("subtitle text:");
+        getContentPane().add(jLabel22);
+        jLabel22.setBounds(201, 653, 81, 16);
+        getContentPane().add(titleFontSize_spinner);
+        titleFontSize_spinner.setBounds(288, 616, 79, 26);
+        getContentPane().add(titleFonts_comboBox);
+        titleFonts_comboBox.setBounds(288, 583, 207, 27);
+        getContentPane().add(axesLabelFontSize_spinner);
+        axesLabelFontSize_spinner.setBounds(301, 547, 76, 26);
+        getContentPane().add(axesLabelFonts_comboBox);
+        axesLabelFonts_comboBox.setBounds(301, 514, 207, 27);
+        getContentPane().add(axesTicLabelFontSize_spinner);
+        axesTicLabelFontSize_spinner.setBounds(301, 482, 77, 26);
+        getContentPane().add(axesTicLabelFonts_comboBox);
+        axesTicLabelFonts_comboBox.setBounds(301, 449, 207, 27);
+        getContentPane().add(concordiaLabelFontSize_spinner);
+        concordiaLabelFontSize_spinner.setBounds(307, 283, 102, 26);
+        getContentPane().add(concordiaLabelFonts_comboBox);
+        concordiaLabelFonts_comboBox.setBounds(307, 250, 207, 27);
+        getContentPane().add(concordiaTicWeight_spinner);
+        concordiaTicWeight_spinner.setBounds(307, 216, 102, 26);
 
         concordiaTickShape_buttonGroup.add(concordiaTicAsLine_rButton);
         concordiaTicAsLine_rButton.setText("line");
         concordiaTicAsLine_rButton.setName("line"); // NOI18N
+        getContentPane().add(concordiaTicAsLine_rButton);
+        concordiaTicAsLine_rButton.setBounds(307, 187, 55, 23);
 
         concordiaTickShape_buttonGroup.add(concordiaTicAsSquare_rButton);
         concordiaTicAsSquare_rButton.setText("square");
         concordiaTicAsSquare_rButton.setName("square"); // NOI18N
+        getContentPane().add(concordiaTicAsSquare_rButton);
+        concordiaTicAsSquare_rButton.setBounds(368, 187, 74, 23);
 
         concordiaTickShape_buttonGroup.add(concordiaTicAsCircle_rButton);
         concordiaTicAsCircle_rButton.setText("circle");
         concordiaTicAsCircle_rButton.setName("circle"); // NOI18N
+        getContentPane().add(concordiaTicAsCircle_rButton);
+        concordiaTicAsCircle_rButton.setBounds(448, 187, 78, 23);
+        getContentPane().add(concordiaLineWeight_spinner);
+        concordiaLineWeight_spinner.setBounds(307, 131, 102, 26);
 
         concordiaErrorStyle_buttonGroup.add(errorStyleDottedConcordia_rButton);
         errorStyleDottedConcordia_rButton.setText("dotted line");
         errorStyleDottedConcordia_rButton.setName("dotted"); // NOI18N
+        getContentPane().add(errorStyleDottedConcordia_rButton);
+        errorStyleDottedConcordia_rButton.setBounds(307, 102, 109, 23);
 
         concordiaErrorStyle_buttonGroup.add(errorStyleShadedConcordia_rButton);
         errorStyleShadedConcordia_rButton.setText("shaded");
         errorStyleShadedConcordia_rButton.setName("shaded"); // NOI18N
+        getContentPane().add(errorStyleShadedConcordia_rButton);
+        errorStyleShadedConcordia_rButton.setBounds(440, 102, 86, 23);
+        getContentPane().add(ellipseLabelFontSize_spinner);
+        ellipseLabelFontSize_spinner.setBounds(307, 62, 102, 26);
 
         ellipseSize_buttonGroup.add(oneSigmaEllipse_rButton);
         oneSigmaEllipse_rButton.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
@@ -604,16 +680,24 @@ public class ConcordiaOptionsDialog extends DialogEditor {
                 oneSigmaEllipse_rButtonActionPerformed(evt);
             }
         });
+        getContentPane().add(oneSigmaEllipse_rButton);
+        oneSigmaEllipse_rButton.setBounds(307, 0, 74, 23);
 
         ellipseSize_buttonGroup.add(twoSigmaEllipse_rButton);
         twoSigmaEllipse_rButton.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         twoSigmaEllipse_rButton.setText("2sigma");
         twoSigmaEllipse_rButton.setName("2"); // NOI18N
+        getContentPane().add(twoSigmaEllipse_rButton);
+        twoSigmaEllipse_rButton.setBounds(388, 0, 74, 23);
 
         ellipseSize_buttonGroup.add(ninetyFivePCTEllipse_rButton);
         ninetyFivePCTEllipse_rButton.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         ninetyFivePCTEllipse_rButton.setText("95%");
         ninetyFivePCTEllipse_rButton.setName("2.4477"); // NOI18N
+        getContentPane().add(ninetyFivePCTEllipse_rButton);
+        ninetyFivePCTEllipse_rButton.setBounds(468, 0, 58, 23);
+        getContentPane().add(ellipseFonts_comboBox);
+        ellipseFonts_comboBox.setBounds(307, 29, 207, 27);
 
         concordiaLineColor_label.setBackground(new java.awt.Color(255, 255, 255));
         concordiaLineColor_label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -621,18 +705,32 @@ public class ConcordiaOptionsDialog extends DialogEditor {
         concordiaLineColor_label.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         concordiaLineColor_label.setName("concordiaLineColor"); // NOI18N
         concordiaLineColor_label.setOpaque(true);
+        getContentPane().add(concordiaLineColor_label);
+        concordiaLineColor_label.setBounds(307, 163, 207, 18);
 
         jLabel14.setFont(new java.awt.Font("Lucida Grande", 1, 16)); // NOI18N
         jLabel14.setText("Axes:");
+        getContentPane().add(jLabel14);
+        jLabel14.setBounds(10, 449, 43, 20);
 
         jLabel23.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel23.setText("draw box outline:");
+        getContentPane().add(jLabel23);
+        jLabel23.setBounds(16, 661, 118, 16);
 
         titleBoxSubtitle_text.setText("Subtitle");
+        getContentPane().add(titleBoxSubtitle_text);
+        titleBoxSubtitle_text.setBounds(288, 648, 207, 26);
 
         titleBoxShow_checkBox.setSelected(true);
+        getContentPane().add(titleBoxShow_checkBox);
+        titleBoxShow_checkBox.setBounds(140, 658, 28, 23);
 
         jLabel24.setText("line weight in pixels; color:");
+        getContentPane().add(jLabel24);
+        jLabel24.setBounds(132, 353, 171, 16);
+        getContentPane().add(interceptLineWeight_spinner);
+        interceptLineWeight_spinner.setBounds(309, 348, 72, 26);
 
         interceptLineColor_label.setBackground(new java.awt.Color(255, 255, 255));
         interceptLineColor_label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -640,276 +738,49 @@ public class ConcordiaOptionsDialog extends DialogEditor {
         interceptLineColor_label.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         interceptLineColor_label.setName("interceptLineColor"); // NOI18N
         interceptLineColor_label.setOpaque(true);
+        getContentPane().add(interceptLineColor_label);
+        interceptLineColor_label.setBounds(387, 352, 134, 18);
 
         jLabel25.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel25.setText("show error lines as:");
+        getContentPane().add(jLabel25);
+        jLabel25.setBounds(143, 386, 160, 16);
 
         interceptErrorLineStyle_btnGroup.add(errorStyleDottedInterceptLine_rButton);
         errorStyleDottedInterceptLine_rButton.setSelected(true);
         errorStyleDottedInterceptLine_rButton.setText("dashed");
         errorStyleDottedInterceptLine_rButton.setName("dashed"); // NOI18N
+        getContentPane().add(errorStyleDottedInterceptLine_rButton);
+        errorStyleDottedInterceptLine_rButton.setBounds(309, 382, 77, 23);
 
         interceptErrorLineStyle_btnGroup.add(errorStyleSolidInterceptLine_rButton);
         errorStyleSolidInterceptLine_rButton.setText("shaded");
         errorStyleSolidInterceptLine_rButton.setName("shaded"); // NOI18N
+        getContentPane().add(errorStyleSolidInterceptLine_rButton);
+        errorStyleSolidInterceptLine_rButton.setBounds(398, 382, 77, 23);
 
         jLabel26.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel26.setText("truncate regression curves:");
+        getContentPane().add(jLabel26);
+        jLabel26.setBounds(98, 418, 205, 16);
 
         truncateRegressionCurves_chkBox.setText("below concordia");
+        getContentPane().add(truncateRegressionCurves_chkBox);
+        truncateRegressionCurves_chkBox.setBounds(309, 414, 135, 23);
 
         jLabel27.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel27.setText("choose label contents:");
+        getContentPane().add(jLabel27);
+        jLabel27.setBounds(131, 319, 172, 16);
 
         concordiaLabelContents_comboBox.setEnabled(false);
+        getContentPane().add(concordiaLabelContents_comboBox);
+        concordiaLabelContents_comboBox.setBounds(309, 315, 216, 27);
 
         useUncertaintyCrosses_checkbox.setFont(new java.awt.Font("SansSerif", 1, 13)); // NOI18N
         useUncertaintyCrosses_checkbox.setText("use Crosses");
-
-        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
-                .add(10, 10, 10)
-                .add(jLabel3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 259, Short.MAX_VALUE)
-                .addContainerGap(263, Short.MAX_VALUE))
-            .add(buttonsPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                .add(84, 84, 84)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(layout.createSequentialGroup()
-                        .add(47, 47, 47)
-                        .add(jLabel27, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE))
-                    .add(jLabel24)
-                    .add(jLabel26, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 205, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(jLabel25, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 160, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                                .add(interceptLineWeight_spinner, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 65, Short.MAX_VALUE)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(interceptLineColor_label))
-                            .add(truncateRegressionCurves_chkBox)
-                            .add(layout.createSequentialGroup()
-                                .add(errorStyleDottedInterceptLine_rButton)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                                .add(errorStyleSolidInterceptLine_rButton)))
-                        .add(11, 11, 11))
-                    .add(concordiaLabelContents_comboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 216, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
-            .add(layout.createSequentialGroup()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(layout.createSequentialGroup()
-                        .add(10, 10, 10)
-                        .add(jLabel14)
-                        .add(84, 84, 84)
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel15, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 142, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel16)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel17, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 158, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel18, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 134, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(axesLabelFontSize_spinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 76, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(axesTicLabelFonts_comboBox, 0, 207, Short.MAX_VALUE)
-                            .add(axesTicLabelFontSize_spinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 77, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(axesLabelFonts_comboBox, 0, 207, Short.MAX_VALUE)))
-                    .add(layout.createSequentialGroup()
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(layout.createSequentialGroup()
-                                .add(10, 10, 10)
-                                .add(jLabel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .add(layout.createSequentialGroup()
-                                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .add(useUncertaintyCrosses_checkbox)))
-                        .add(18, 18, 18)
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel6, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel7, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 109, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel8, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel9, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel10, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel11, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel13, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel12, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 102, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(concordiaLabelFonts_comboBox, 0, 207, Short.MAX_VALUE)
-                            .add(layout.createSequentialGroup()
-                                .add(concordiaTicAsLine_rButton)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(concordiaTicAsSquare_rButton)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(concordiaTicAsCircle_rButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 78, Short.MAX_VALUE))
-                            .add(layout.createSequentialGroup()
-                                .add(errorStyleDottedConcordia_rButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 109, Short.MAX_VALUE)
-                                .add(24, 24, 24)
-                                .add(errorStyleShadedConcordia_rButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE))
-                            .add(layout.createSequentialGroup()
-                                .add(oneSigmaEllipse_rButton)
-                                .add(7, 7, 7)
-                                .add(twoSigmaEllipse_rButton)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(ninetyFivePCTEllipse_rButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 58, Short.MAX_VALUE))
-                            .add(concordiaLineColor_label, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 207, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(ellipseFonts_comboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 202, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(layout.createSequentialGroup()
-                                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                    .add(concordiaLabelFontSize_spinner, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 102, Short.MAX_VALUE)
-                                    .add(concordiaTicWeight_spinner, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 102, Short.MAX_VALUE)
-                                    .add(concordiaLineWeight_spinner, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 102, Short.MAX_VALUE)
-                                    .add(ellipseLabelFontSize_spinner, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 102, Short.MAX_VALUE))
-                                .add(117, 117, 117)))))
-                .addContainerGap())
-            .add(layout.createSequentialGroup()
-                .addContainerGap()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(layout.createSequentialGroup()
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 10, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(jLabel23, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 118, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(titleBoxShow_checkBox))
-                    .add(jLabel19))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel20)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel22)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jLabel21))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(titleFontSize_spinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 79, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(titleFonts_comboBox, 0, 207, Short.MAX_VALUE)
-                    .add(titleBoxSubtitle_text, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 207, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(22, 22, 22))
-        );
-
-        layout.linkSize(new java.awt.Component[] {axesLabelFonts_comboBox, axesTicLabelFonts_comboBox, concordiaLabelFonts_comboBox, concordiaLineColor_label, ellipseFonts_comboBox, titleBoxSubtitle_text, titleFonts_comboBox}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
-
-        layout.setVerticalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                            .add(errorStyleDottedConcordia_rButton)
-                            .add(errorStyleShadedConcordia_rButton)
-                            .add(jLabel7)
-                            .add(jLabel3))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
-                            .add(jLabel8)
-                            .add(concordiaLineWeight_spinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                            .add(jLabel9)
-                            .add(concordiaLineColor_label))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                            .add(jLabel10)
-                            .add(concordiaTicAsLine_rButton)
-                            .add(concordiaTicAsSquare_rButton)
-                            .add(concordiaTicAsCircle_rButton))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
-                            .add(jLabel11)
-                            .add(concordiaTicWeight_spinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                        .add(8, 8, 8))
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(layout.createSequentialGroup()
-                                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                                    .add(oneSigmaEllipse_rButton)
-                                    .add(ninetyFivePCTEllipse_rButton)
-                                    .add(twoSigmaEllipse_rButton))
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                                    .add(jLabel5)
-                                    .add(ellipseFonts_comboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                                    .add(jLabel6)
-                                    .add(ellipseLabelFontSize_spinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                            .add(layout.createSequentialGroup()
-                                .add(3, 3, 3)
-                                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                                    .add(jLabel4)
-                                    .add(jLabel2))
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(useUncertaintyCrosses_checkbox)))
-                        .add(162, 162, 162)))
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(jLabel13)
-                    .add(concordiaLabelFonts_comboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
-                    .add(jLabel12)
-                    .add(concordiaLabelFontSize_spinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(jLabel27)
-                    .add(concordiaLabelContents_comboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
-                    .add(jLabel24)
-                    .add(interceptLineWeight_spinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(interceptLineColor_label))
-                .add(8, 8, 8)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(errorStyleDottedInterceptLine_rButton)
-                    .add(errorStyleSolidInterceptLine_rButton)
-                    .add(jLabel25))
-                .add(9, 9, 9)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(truncateRegressionCurves_chkBox)
-                    .add(jLabel26))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jLabel14)
-                    .add(layout.createSequentialGroup()
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                            .add(jLabel15)
-                            .add(axesTicLabelFonts_comboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
-                            .add(jLabel16)
-                            .add(axesTicLabelFontSize_spinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                            .add(jLabel17)
-                            .add(axesLabelFonts_comboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
-                            .add(jLabel18)
-                            .add(axesLabelFontSize_spinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(layout.createSequentialGroup()
-                        .add(18, 18, 18)
-                        .add(jLabel19)
-                        .add(47, 47, 47)
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
-                            .add(jLabel23)
-                            .add(titleBoxShow_checkBox)))
-                    .add(layout.createSequentialGroup()
-                        .add(10, 10, 10)
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                            .add(jLabel20)
-                            .add(titleFonts_comboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
-                            .add(jLabel21)
-                            .add(titleFontSize_spinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
-                            .add(jLabel22)
-                            .add(titleBoxSubtitle_text, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 8, Short.MAX_VALUE)
-                .add(buttonsPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-        );
+        getContentPane().add(useUncertaintyCrosses_checkbox);
+        useUncertaintyCrosses_checkbox.setBounds(7, 29, 112, 23);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents

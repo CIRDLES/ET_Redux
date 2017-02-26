@@ -44,6 +44,7 @@ import javax.swing.JDialog;
 import javax.swing.JLayeredPane;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSlider;
@@ -58,7 +59,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import org.apache.batik.swing.JSVGCanvas;
-import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.beans.ReduxSpinner;
 import org.earthtime.UPb_Redux.beans.ReduxSuppressComponentEventsI;
 import org.earthtime.UPb_Redux.customJTrees.CheckBoxNode;
@@ -781,11 +781,11 @@ public class SampleDateInterpretationsManager extends DialogEditor
      * @param clearFiltering the value of clearFiltering
      */
     public void performFilteringPerSliders(boolean myClearFiltering) {
-        
-        boolean clearFiltering = 
-                myClearFiltering 
-                || sample.isSampleTypeLegacy() 
-                || sample.isAnalysisTypeCOMPILED() 
+
+        boolean clearFiltering
+                = myClearFiltering
+                || sample.isSampleTypeLegacy()
+                || sample.isAnalysisTypeCOMPILED()
                 || sample.isAnalysisTypeUSeries();
 
         Vector<ETFractionInterface> filteredFractions;
@@ -1193,12 +1193,10 @@ public class SampleDateInterpretationsManager extends DialogEditor
         clearFilters_button =  new ET_JButton();
         defaultFilters_button =  new ET_JButton();
         jPanel1 = new javax.swing.JPanel();
-        writeConcordiaPDF_button =  new ET_JButton();
         close_button =  new ET_JButton();
-        writeWeightedMeanPDF_button =  new ET_JButton();
-        writeProbabilityDensityPDF_button =  new ET_JButton();
+        writeVisiblePlotSvgPdf_button =  new ET_JButton();
         sampleAgeGUIMenuBar = new javax.swing.JMenuBar();
-        concordiaOptions_menu = new javax.swing.JMenu();
+        displayOptions_menu = new javax.swing.JMenu();
         sampleConcordiaOptions_menuItem = new javax.swing.JMenuItem();
         aliquotsChooser_menuItem = new javax.swing.JMenuItem();
         aliquotSpecificOptions_menu = new javax.swing.JMenu();
@@ -1251,6 +1249,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         });
 
         concordiaLayeredPane.setBackground(new java.awt.Color(255, 241, 230));
+        concordiaLayeredPane.setName("Concordia"); // NOI18N
         concordiaLayeredPane.setOpaque(true);
 
         concordiaToolPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -1479,6 +1478,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         graphPanels_TabbedPane.addTab("Concordia", concordiaLayeredPane);
 
         weightedMeanLayeredPane.setBackground(new java.awt.Color(229, 250, 229));
+        weightedMeanLayeredPane.setName("WeightedMean"); // NOI18N
         weightedMeanLayeredPane.setOpaque(true);
 
         weightedMeanToolPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -1493,6 +1493,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         zoomInX2_WeightedMean_button.setFocusable(false);
         zoomInX2_WeightedMean_button.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         zoomInX2_WeightedMean_button.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        zoomInX2_WeightedMean_button.setOpaque(true);
         zoomInX2_WeightedMean_button.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         weightedMeanToolPanel.add(zoomInX2_WeightedMean_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 2, 30, 30));
 
@@ -1501,6 +1502,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         zoomOutX2_WeightedMean_button.setText("-");
         zoomOutX2_WeightedMean_button.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         zoomOutX2_WeightedMean_button.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        zoomOutX2_WeightedMean_button.setOpaque(true);
         zoomOutX2_WeightedMean_button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 zoomOutX2_WeightedMean_buttonActionPerformed(evt);
@@ -1513,6 +1515,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         restoreGraphDisplay_WeightedMean_button.setText("Reset");
         restoreGraphDisplay_WeightedMean_button.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         restoreGraphDisplay_WeightedMean_button.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        restoreGraphDisplay_WeightedMean_button.setOpaque(true);
         restoreGraphDisplay_WeightedMean_button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 restoreGraphDisplay_WeightedMean_buttonActionPerformed(evt);
@@ -1580,6 +1583,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         graphPanels_TabbedPane.addTab("Weighted Mean", weightedMeanLayeredPane);
 
         useriesIsochronLayeredPane.setBackground(new java.awt.Color(255, 237, 255));
+        useriesIsochronLayeredPane.setName("UseriesIsochrons"); // NOI18N
         useriesIsochronLayeredPane.setOpaque(true);
 
         uSeriesIsochronToolPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -1788,6 +1792,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         graphPanels_TabbedPane.addTab("USeries Isochrons", useriesIsochronLayeredPane);
 
         any2LayeredPane.setBackground(new java.awt.Color(231, 255, 253));
+        any2LayeredPane.setName("Any2"); // NOI18N
         any2LayeredPane.setOpaque(true);
 
         any2ToolPanel.setBackground(new java.awt.Color(231, 255, 253));
@@ -1924,6 +1929,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         graphPanels_TabbedPane.addTab("Any 2", any2LayeredPane);
 
         normedProbabilityLayeredPane.setBackground(new java.awt.Color(241, 230, 255));
+        normedProbabilityLayeredPane.setName("Probability"); // NOI18N
         normedProbabilityLayeredPane.setOpaque(true);
 
         probabilityToolPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -2199,7 +2205,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         probabilityToolPanel.add(defaultFilters_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 50, 40, 18));
 
         normedProbabilityLayeredPane.add(probabilityToolPanel);
-        probabilityToolPanel.setBounds(0, 560, 920, 70);
+        probabilityToolPanel.setBounds(0, 574, 920, 68);
 
         graphPanels_TabbedPane.addTab("Probability", normedProbabilityLayeredPane);
 
@@ -2207,16 +2213,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
 
         jPanel1.setBackground(new java.awt.Color(249, 237, 189));
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-
-        writeConcordiaPDF_button.setForeground(new java.awt.Color(255, 51, 0));
-        writeConcordiaPDF_button.setText("Write Concordia SVG and PDF");
-        writeConcordiaPDF_button.setAlignmentY(0.0F);
-        writeConcordiaPDF_button.setPreferredSize(new java.awt.Dimension(140, 23));
-        writeConcordiaPDF_button.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                writeConcordiaPDF_buttonActionPerformed(evt);
-            }
-        });
+        jPanel1.setLayout(null);
 
         close_button.setForeground(new java.awt.Color(255, 51, 0));
         close_button.setText("Close");
@@ -2227,59 +2224,28 @@ public class SampleDateInterpretationsManager extends DialogEditor
                 close_buttonActionPerformed(evt);
             }
         });
+        jPanel1.add(close_button);
+        close_button.setBounds(2, 2, 176, 25);
 
-        writeWeightedMeanPDF_button.setForeground(new java.awt.Color(255, 51, 0));
-        writeWeightedMeanPDF_button.setText("Write WeightedMean SVG and PDF");
-        writeWeightedMeanPDF_button.setAlignmentY(0.0F);
-        writeWeightedMeanPDF_button.setPreferredSize(new java.awt.Dimension(140, 23));
-        writeWeightedMeanPDF_button.addActionListener(new java.awt.event.ActionListener() {
+        writeVisiblePlotSvgPdf_button.setForeground(new java.awt.Color(255, 51, 0));
+        writeVisiblePlotSvgPdf_button.setText("Visible Plot - write SVG and PDF files");
+        writeVisiblePlotSvgPdf_button.setAlignmentY(0.0F);
+        writeVisiblePlotSvgPdf_button.setPreferredSize(new java.awt.Dimension(140, 23));
+        writeVisiblePlotSvgPdf_button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                writeWeightedMeanPDF_buttonActionPerformed(evt);
+                writeVisiblePlotSvgPdf_buttonActionPerformed(evt);
             }
         });
+        jPanel1.add(writeVisiblePlotSvgPdf_button);
+        writeVisiblePlotSvgPdf_button.setBounds(500, 2, 460, 25);
 
-        writeProbabilityDensityPDF_button.setForeground(new java.awt.Color(255, 51, 0));
-        writeProbabilityDensityPDF_button.setText("Write ProbabilityDensity SVG and PDF");
-        writeProbabilityDensityPDF_button.setAlignmentY(0.0F);
-        writeProbabilityDensityPDF_button.setPreferredSize(new java.awt.Dimension(140, 23));
-        writeProbabilityDensityPDF_button.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                writeProbabilityDensityPDF_buttonActionPerformed(evt);
-            }
-        });
-
-        org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel1Layout.createSequentialGroup()
-                .add(close_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 176, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(92, 92, 92)
-                .add(writeConcordiaPDF_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 270, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(writeWeightedMeanPDF_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 284, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(writeProbabilityDensityPDF_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 284, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(71, Short.MAX_VALUE))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel1Layout.createSequentialGroup()
-                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(close_button, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(writeConcordiaPDF_button, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(writeWeightedMeanPDF_button, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(writeProbabilityDensityPDF_button, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .add(17, 17, 17))
-        );
-
-        concordiaOptions_menu.setText("Concordia Plot");
-        concordiaOptions_menu.addMouseListener(new java.awt.event.MouseAdapter() {
+        displayOptions_menu.setText("Display Options");
+        displayOptions_menu.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                concordiaOptions_menuMouseClicked(evt);
+                displayOptions_menuMouseClicked(evt);
             }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                concordiaOptions_menuMouseEntered(evt);
+                displayOptions_menuMouseEntered(evt);
             }
         });
 
@@ -2289,16 +2255,16 @@ public class SampleDateInterpretationsManager extends DialogEditor
                 sampleConcordiaOptions_menuItemActionPerformed(evt);
             }
         });
-        concordiaOptions_menu.add(sampleConcordiaOptions_menuItem);
+        displayOptions_menu.add(sampleConcordiaOptions_menuItem);
 
         aliquotsChooser_menuItem.setText("Aliquots Chooser");
         aliquotsChooser_menuItem.setEnabled(false);
-        concordiaOptions_menu.add(aliquotsChooser_menuItem);
+        displayOptions_menu.add(aliquotsChooser_menuItem);
 
         aliquotSpecificOptions_menu.setText("Aliquots Display Options");
-        concordiaOptions_menu.add(aliquotSpecificOptions_menu);
+        displayOptions_menu.add(aliquotSpecificOptions_menu);
 
-        sampleAgeGUIMenuBar.add(concordiaOptions_menu);
+        sampleAgeGUIMenuBar.add(displayOptions_menu);
 
         weightedMeansPlotOptions_menu.setText("Weighted Means Plot");
 
@@ -2372,13 +2338,6 @@ public class SampleDateInterpretationsManager extends DialogEditor
         ((PlottingDetailsDisplayInterface) concordiaGraphPanel).setShowTightToEdges(false);
         ((PlottingDetailsDisplayInterface) concordiaGraphPanel).resetPanel(true, false);
 }//GEN-LAST:event_resetGraphDisplay_buttonActionPerformed
-    private void writeConcordiaPDF_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_writeConcordiaPDF_buttonActionPerformed
-        try {
-            createConcordiaSVGandPDF();
-        } catch (ETException ex) {
-            new ETWarningDialog(ex).setVisible(true);
-        }
-}//GEN-LAST:event_writeConcordiaPDF_buttonActionPerformed
 //todo clean up this code with a change listener
 private void ellipseCenters_checkboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ellipseCenters_checkboxActionPerformed
     boolean state = ((ConcordiaGraphPanel) concordiaGraphPanel).isShowEllipseCenters();
@@ -2424,12 +2383,12 @@ private void sampleConcordiaOptions_menuItemActionPerformed(java.awt.event.Actio
 
 
 }//GEN-LAST:event_sampleConcordiaOptions_menuItemActionPerformed
-private void concordiaOptions_menuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_concordiaOptions_menuMouseClicked
+private void displayOptions_menuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_displayOptions_menuMouseClicked
     buildAliquotOptionsMenu();
-}//GEN-LAST:event_concordiaOptions_menuMouseClicked
-private void concordiaOptions_menuMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_concordiaOptions_menuMouseEntered
+}//GEN-LAST:event_displayOptions_menuMouseClicked
+private void displayOptions_menuMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_displayOptions_menuMouseEntered
     buildAliquotOptionsMenu();
-}//GEN-LAST:event_concordiaOptions_menuMouseEntered
+}//GEN-LAST:event_displayOptions_menuMouseEntered
 private void pan_toggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pan_toggleButtonActionPerformed
     ((ConcordiaGraphPanel) concordiaGraphPanel).setImageMode(pan_toggleButton.getName());
 }//GEN-LAST:event_pan_toggleButtonActionPerformed
@@ -2445,9 +2404,6 @@ private void fractionOrderByDate_radioButtonActionPerformed(java.awt.event.Actio
     // TODO add your handling code here:
 }//GEN-LAST:event_fractionOrderByDate_radioButtonActionPerformed
 
-private void writeWeightedMeanPDF_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_writeWeightedMeanPDF_buttonActionPerformed
-    createWeightedMeanSVGandPDF();
-}//GEN-LAST:event_writeWeightedMeanPDF_buttonActionPerformed
 private void zoomOutX2_WeightedMean_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zoomOutX2_WeightedMean_buttonActionPerformed
     // TODO add your handling code here:
 }//GEN-LAST:event_zoomOutX2_WeightedMean_buttonActionPerformed
@@ -2715,10 +2671,6 @@ private void showHistogram_buttonActionPerformed (java.awt.event.ActionEvent evt
     }
 
 
-private void writeProbabilityDensityPDF_buttonActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_writeProbabilityDensityPDF_buttonActionPerformed
-    createProbabilityDensitySVGandPDF();
-}//GEN-LAST:event_writeProbabilityDensityPDF_buttonActionPerformed
-
 private void lockUnlockHistogramBinsActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lockUnlockHistogramBinsActionPerformed
     Icon oldPressed = lockUnlockHistogramBins.getPressedIcon();
     lockUnlockHistogramBins.setPressedIcon(lockUnlockHistogramBins.getIcon());
@@ -2944,6 +2896,10 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
         // TODO add your handling code here:
     }//GEN-LAST:event_showRegressionUnctIsochron_checkbox1ActionPerformed
 
+    private void writeVisiblePlotSvgPdf_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_writeVisiblePlotSvgPdf_buttonActionPerformed
+        delegatePlotFileWriting();
+    }//GEN-LAST:event_writeVisiblePlotSvgPdf_buttonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JRadioButton DatePbCorrSchemeA_radio;
     private javax.swing.JRadioButton ageBest_radio;
@@ -2962,7 +2918,6 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
     private javax.swing.JCheckBox concordiaErrors_checkbox;
     private javax.swing.JRadioButton concordiaFlavor_radioButton;
     private javax.swing.JLayeredPane concordiaLayeredPane;
-    private javax.swing.JMenu concordiaOptions_menu;
     private javax.swing.ButtonGroup concordiaPanZoom_buttonGroup;
     private javax.swing.ButtonGroup concordiaTeraW_buttonGroup;
     private javax.swing.JPanel concordiaToolPanel;
@@ -2970,6 +2925,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
     private javax.swing.JScrollPane dateTreeBySample_ScrollPane;
     private javax.swing.JTabbedPane dateTrees_tabs;
     private javax.swing.JButton defaultFilters_button;
+    private javax.swing.JMenu displayOptions_menu;
     private javax.swing.JCheckBox ellipseCentersAny2OnToggle_checkbox;
     private javax.swing.JCheckBox ellipseCentersIsochron_Checkbox;
     private javax.swing.JCheckBox ellipseCenters_checkbox;
@@ -3039,9 +2995,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
     private javax.swing.JMenuItem weightedMeansChooser_menuItem;
     private javax.swing.JMenuItem weightedMeansLookAndFeel_menuItem;
     private javax.swing.JMenu weightedMeansPlotOptions_menu;
-    private javax.swing.JButton writeConcordiaPDF_button;
-    private javax.swing.JButton writeProbabilityDensityPDF_button;
-    private javax.swing.JButton writeWeightedMeanPDF_button;
+    private javax.swing.JButton writeVisiblePlotSvgPdf_button;
     private javax.swing.JToggleButton zoomBoxAny2_toggleButton;
     private javax.swing.JToggleButton zoomBox_toggleButton;
     private javax.swing.JToggleButton zoomBox_toggleIsochron_button;
@@ -3644,6 +3598,33 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                 percentUncertainty_slider.getValue());
     }
 
+    private void delegatePlotFileWriting() {
+        switch (graphPanels_TabbedPane.getSelectedComponent().getName()) {
+            case "Concordia":
+                try {
+                    createConcordiaSVGandPDF();
+                } catch (ETException ex) {
+                    new ETWarningDialog(ex).setVisible(true);
+                }
+                break;
+            
+            case "WeightedMean":
+                createWeightedMeanSVGandPDF();
+                break;
+                
+            case "Probability":
+                createProbabilityDensitySVGandPDF();
+                break;
+                
+            default:
+                JOptionPane.showMessageDialog(null,
+                            new String[]{graphPanels_TabbedPane.getSelectedComponent().getName() + " " //
+                                +  " file output coming soon!"},
+                            "ET Redux Info",
+                            JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
     /**
      *
      * @return @throws ETException
@@ -3883,7 +3864,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
 
                 @Override
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    aliquotSpecificOptions_menuItemActionPerformed(evt, a.getAliquotName(), ((UPbReduxAliquot) a).getAliquotNumber());
+                    aliquotSpecificOptions_menuItemActionPerformed(evt, a.getAliquotName(), a.getAliquotNumber());
 
                 }
             });

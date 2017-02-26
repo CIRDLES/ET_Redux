@@ -174,7 +174,7 @@ public class ReduxLabDataList<listType> extends ArrayList<listType> {
                     JOptionPane.showMessageDialog(null,
                             new String[]{listTypeName + " " //
                                 + ((ReduxLabDataListElementI) element).getReduxLabDataElementName() + " is now registered with LabData."},
-                            "U-Pb Redux Info",
+                            "ET Redux Info",
                             JOptionPane.INFORMATION_MESSAGE);
                 }
             }

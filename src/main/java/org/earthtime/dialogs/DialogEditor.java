@@ -93,9 +93,10 @@ public abstract class DialogEditor extends JDialog {
     /**
      *
      * @param preferredWidth
-     * @param preferredHeight
+     * @param myPreferredHeight
      */
-    protected void setSizeAndCenter(int preferredWidth, int preferredHeight) {
+    protected void setSizeAndCenter(int preferredWidth, int myPreferredHeight) {
+        int preferredHeight = myPreferredHeight;
         preferredHeight += (BrowserControl.isMacOS() ? 0 : 25);
         super.setSize(preferredWidth, preferredHeight);
         super.setPreferredSize(new Dimension(preferredWidth, preferredHeight));

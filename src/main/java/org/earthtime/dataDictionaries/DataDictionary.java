@@ -22,7 +22,7 @@ package org.earthtime.dataDictionaries;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
+import org.earthtime.fractions.ETFractionInterface;
 
 /**
  *
@@ -294,7 +294,13 @@ public final class DataDictionary {
         "concPb206_ib",
         "totRadiogenicPbMass",
         "radToCommonTotal",
-        "totCommonPbMass",};
+        "totCommonPbMass",
+        // feb 2017 UTh here until enums finished
+        "conc238U",
+        "conc232Th",
+        "conc228Ra",
+        "conc231Pa",};
+
     // added march 2009
     /**
      *
@@ -556,7 +562,7 @@ public final class DataDictionary {
         if (methodName != null) {
             try {
                 Class<?> fractionClass
-                        = Class.forName(UPbFraction.class.getCanonicalName());
+                        = Class.forName(ETFractionInterface.class.getCanonicalName());
 
                 meth = fractionClass.getMethod(//
                         methodName,
