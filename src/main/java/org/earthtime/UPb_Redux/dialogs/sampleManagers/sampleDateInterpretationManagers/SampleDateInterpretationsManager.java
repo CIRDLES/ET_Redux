@@ -97,6 +97,7 @@ import org.earthtime.plots.PlotAxesSetupInterface;
 import org.earthtime.plots.PlotInterface;
 import org.earthtime.plots.anyTwo.PlotAny2Panel;
 import org.earthtime.plots.isochrons.IsochronsPanel;
+import org.earthtime.plots.isochrons.UseriesIsochronPlotDisplayInterface;
 import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.reports.ReportColumnInterface;
 import org.earthtime.samples.SampleInterface;
@@ -288,21 +289,21 @@ public class SampleDateInterpretationsManager extends DialogEditor
         }
 
         if (CGO.containsKey("showEllipseCenters")) {
-            ellipseCenters_checkbox.setSelected(Boolean.valueOf(CGO.get("showEllipseCenters")));
+            ellipseCenters_checkbox.setSelected(Boolean.parseBoolean(CGO.get("showEllipseCenters")));
             ((ConcordiaGraphPanel) concordiaGraphPanel).setShowEllipseCenters(ellipseCenters_checkbox.isSelected());
         }
         if (CGO.containsKey("showEllipseLabels")) {
-            ellipseLabels_checkbox.setSelected(Boolean.valueOf(CGO.get("showEllipseLabels")));
+            ellipseLabels_checkbox.setSelected(Boolean.parseBoolean(CGO.get("showEllipseLabels")));
             ((ConcordiaGraphPanel) concordiaGraphPanel).setShowEllipseLabels(ellipseLabels_checkbox.isSelected());
         }
 
         if (CGO.containsKey("showExcludedEllipses")) {
-            showExcludedFractions_checkbox.setSelected(Boolean.valueOf(CGO.get("showExcludedEllipses")));
+            showExcludedFractions_checkbox.setSelected(Boolean.parseBoolean(CGO.get("showExcludedEllipses")));
             ((ConcordiaGraphPanel) concordiaGraphPanel).setShowExcludedEllipses(showExcludedFractions_checkbox.isSelected());
         }
 
         if (CGO.containsKey("showFilteredEllipses")) {
-            showFilteredFractions_checkbox.setSelected(Boolean.valueOf(CGO.get("showFilteredEllipses")));
+            showFilteredFractions_checkbox.setSelected(Boolean.parseBoolean(CGO.get("showFilteredEllipses")));
             ((AliquotDetailsDisplayInterface) concordiaGraphPanel).setShowFilteredEllipses(showFilteredFractions_checkbox.isSelected());
         }
 
@@ -311,7 +312,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         }
 
         if (CGO.containsKey("showConcordiaErrors")) {
-            concordiaErrors_checkbox.setSelected(Boolean.valueOf(CGO.get("showConcordiaErrors")));
+            concordiaErrors_checkbox.setSelected(Boolean.parseBoolean(CGO.get("showConcordiaErrors")));
             ((ConcordiaGraphPanel) concordiaGraphPanel).setShowConcordiaErrorBars(concordiaErrors_checkbox.isSelected());
         }
         if (sample.isSampleTypeLegacy() && (!sample.getSampleAnalysisType().equalsIgnoreCase(SampleAnalysisTypesEnum.IDTIMS.getName()))) {
@@ -319,17 +320,17 @@ public class SampleDateInterpretationsManager extends DialogEditor
             protactiniumCorrectionSelector_checkbox.setEnabled(false);
         } else {
             if (CGO.containsKey("display_r206_238r_Th")) {
-                boolean display_r206_238r_Th = Boolean.valueOf(CGO.get("display_r206_238r_Th"));
+                boolean display_r206_238r_Th = Boolean.parseBoolean(CGO.get("display_r206_238r_Th"));
                 thoriumCorrectionSelector_checkbox.setSelected(display_r206_238r_Th);
                 ((ConcordiaGraphPanel) concordiaGraphPanel).setDisplay_r206_238r_Th(display_r206_238r_Th);
             }
             if (CGO.containsKey("display_r206_238r_Pa")) {
-                boolean display_r206_238r_Pa = Boolean.valueOf(CGO.get("display_r206_238r_Pa"));
+                boolean display_r206_238r_Pa = Boolean.parseBoolean(CGO.get("display_r206_238r_Pa"));
                 protactiniumCorrectionSelector_checkbox.setSelected(display_r206_238r_Pa);
                 ((ConcordiaGraphPanel) concordiaGraphPanel).setDisplay_r206_238r_Pa(display_r206_238r_Pa);
             }
             if (CGO.containsKey("display_PbcCorr")) {
-                boolean display_PbcCorr = Boolean.valueOf(CGO.get("display_PbcCorr"));
+                boolean display_PbcCorr = Boolean.parseBoolean(CGO.get("display_PbcCorr"));
                 commonLeadCorrectionSelector_checkbox.setSelected(display_PbcCorr);
                 ((ConcordiaGraphPanel) concordiaGraphPanel).setDisplay_PbcCorr(display_PbcCorr);
             }
@@ -361,26 +362,26 @@ public class SampleDateInterpretationsManager extends DialogEditor
         Map<String, String> CGO = sample.getSampleDateInterpretationGUISettings().getConcordiaOptions();
 
         if (CGO.containsKey("showEllipseCenters")) {
-            ellipseCenters_checkbox.setSelected(Boolean.valueOf(CGO.get("showEllipseCenters")));
+            ellipseCenters_checkbox.setSelected(Boolean.parseBoolean(CGO.get("showEllipseCenters")));
             ((AbstractPlot) plotAny2Panel).setShowEllipseCenters(ellipseCenters_checkbox.isSelected());
         }
         if (CGO.containsKey("showEllipseLabels")) {
-            ellipseLabels_checkbox.setSelected(Boolean.valueOf(CGO.get("showEllipseLabels")));
+            ellipseLabels_checkbox.setSelected(Boolean.parseBoolean(CGO.get("showEllipseLabels")));
             ((AbstractPlot) plotAny2Panel).setShowEllipseLabels(ellipseLabels_checkbox.isSelected());
         }
 
         if (CGO.containsKey("showExcludedEllipses")) {
-            showExcludedFractions_checkbox.setSelected(Boolean.valueOf(CGO.get("showExcludedEllipses")));
+            showExcludedFractions_checkbox.setSelected(Boolean.parseBoolean(CGO.get("showExcludedEllipses")));
             ((AbstractPlot) plotAny2Panel).setShowExcludedEllipses(showExcludedFractions_checkbox.isSelected());
         }
 
         if (CGO.containsKey("showFilteredEllipses")) {
-            showFilteredFractions_checkbox.setSelected(Boolean.valueOf(CGO.get("showFilteredEllipses")));
+            showFilteredFractions_checkbox.setSelected(Boolean.parseBoolean(CGO.get("showFilteredEllipses")));
             ((AbstractPlot) plotAny2Panel).setShowFilteredEllipses(showFilteredFractions_checkbox.isSelected());
         }
 
         if (CGO.containsKey("useUncertaintyCrosses")) {
-            ((AbstractPlot) plotAny2Panel).setUseUncertaintyCrosses(Boolean.valueOf(CGO.get("useUncertaintyCrosses")));
+            ((AbstractPlot) plotAny2Panel).setUseUncertaintyCrosses(Boolean.parseBoolean(CGO.get("useUncertaintyCrosses")));
         }
 
         any2LayeredPane.add(plotAny2Panel, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -403,29 +404,35 @@ public class SampleDateInterpretationsManager extends DialogEditor
         ((AbstractPlot) useriesIsochronPanel).setGraphPanelModeChanger(this);
 
         // set toolbar choices per options
-        Map<String, String> CGO = sample.getSampleDateInterpretationGUISettings().getConcordiaOptions();
+        Map<String, String> UIO = sample.getSampleDateInterpretationGUISettings().getuSeriesIsochronOptions();
 
-        if (CGO.containsKey("showEllipseCenters")) {
-            ellipseCentersIsochron_Checkbox.setSelected(Boolean.valueOf(CGO.get("showEllipseCenters")));
+        if (UIO.containsKey("showEllipseCenters")) {
+            ellipseCentersIsochron_Checkbox.setSelected(Boolean.parseBoolean(UIO.get("showEllipseCenters")));
             ((AbstractPlot) useriesIsochronPanel).setShowEllipseCenters(ellipseCentersIsochron_Checkbox.isSelected());
         }
-        if (CGO.containsKey("showEllipseLabels")) {
-            ellipseLabelsIsochron_checkbox.setSelected(Boolean.valueOf(CGO.get("showEllipseLabels")));
+        if (UIO.containsKey("showEllipseLabels")) {
+            ellipseLabelsIsochron_checkbox.setSelected(Boolean.parseBoolean(UIO.get("showEllipseLabels")));
             ((AbstractPlot) useriesIsochronPanel).setShowEllipseLabels(ellipseLabelsIsochron_checkbox.isSelected());
         }
-
-        if (CGO.containsKey("showExcludedEllipses")) {
-            showExcludedFractionsIsochron_checkbox.setSelected(Boolean.valueOf(CGO.get("showExcludedEllipses")));
+        if (UIO.containsKey("showExcludedEllipses")) {
+            showExcludedFractionsIsochron_checkbox.setSelected(Boolean.parseBoolean(UIO.get("showExcludedEllipses")));
             ((AbstractPlot) useriesIsochronPanel).setShowExcludedEllipses(showExcludedFractionsIsochron_checkbox.isSelected());
         }
-
-        if (CGO.containsKey("showFilteredEllipses")) {
-            showRegressionLineIsochron_checkbox.setSelected(Boolean.valueOf(CGO.get("showFilteredEllipses")));
-            ((AbstractPlot) useriesIsochronPanel).setShowFilteredEllipses(showRegressionLineIsochron_checkbox.isSelected());
+        if (UIO.containsKey("showEquiline")) {
+            showEquiLineIsochron_checkbox.setSelected(Boolean.parseBoolean(UIO.get("showEquiline")));
+            ((AbstractPlot) useriesIsochronPanel).setShowEquiline(showEquiLineIsochron_checkbox.isSelected());
         }
-
-        if (CGO.containsKey("useUncertaintyCrosses")) {
-            ((AbstractPlot) useriesIsochronPanel).setUseUncertaintyCrosses(Boolean.valueOf(CGO.get("useUncertaintyCrosses")));
+        if (UIO.containsKey("showRegressionLine")) {
+            showRegressionLineIsochron_checkbox.setSelected(Boolean.parseBoolean(UIO.get("showRegressionLine")));
+            ((AbstractPlot) useriesIsochronPanel).setShowExcludedEllipses(showRegressionLineIsochron_checkbox.isSelected());
+        }
+        if (UIO.containsKey("showRegressionUnct")) {
+            showRegressionUnctIsochron_checkbox.setSelected(Boolean.parseBoolean(UIO.get("showRegressionUnct")));
+            ((AbstractPlot) useriesIsochronPanel).setShowExcludedEllipses(showRegressionUnctIsochron_checkbox.isSelected());
+        }
+        if (UIO.containsKey("showIsochrons")) {
+            showIsochrons_checkbox.setSelected(Boolean.parseBoolean(UIO.get("showIsochrons")));
+            ((AbstractPlot) useriesIsochronPanel).setShowExcludedEllipses(showIsochrons_checkbox.isSelected());
         }
 
         useriesIsochronLayeredPane.add(useriesIsochronPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -1146,7 +1153,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         resetGraphDisplayIsochron_button =  new ET_JButton();
         ellipseCentersIsochron_Checkbox = new javax.swing.JCheckBox();
         ellipseLabelsIsochron_checkbox = new javax.swing.JCheckBox();
-        oneToOneLineIsochron_checkbox = new javax.swing.JCheckBox();
+        showEquiLineIsochron_checkbox = new javax.swing.JCheckBox();
         panIsochron_toggleButton =  new ET_JToggleButton();
         zoomBox_toggleIsochron_button =  new ET_JToggleButton();
         thoriumFlavorIsochron_radioButton = new javax.swing.JRadioButton();
@@ -1155,7 +1162,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         radiumFlavorIsochron_radioButton = new javax.swing.JRadioButton();
         showRegressionLineIsochron_checkbox = new javax.swing.JCheckBox();
         showIsochrons_checkbox = new javax.swing.JCheckBox();
-        showRegressionUnctIsochron_checkbox1 = new javax.swing.JCheckBox();
+        showRegressionUnctIsochron_checkbox = new javax.swing.JCheckBox();
         any2LayeredPane = new javax.swing.JLayeredPane();
         any2ToolPanel = new javax.swing.JPanel();
         zoomInAny2X2_button =  new ET_JButton();
@@ -1640,7 +1647,6 @@ public class SampleDateInterpretationsManager extends DialogEditor
 
         ellipseLabelsIsochron_checkbox.setBackground(new java.awt.Color(255, 237, 255));
         ellipseLabelsIsochron_checkbox.setFont(new java.awt.Font("SansSerif", 1, 10)); // NOI18N
-        ellipseLabelsIsochron_checkbox.setSelected(true);
         ellipseLabelsIsochron_checkbox.setText("<html>Ellipse<br> Labels</html>");
         ellipseLabelsIsochron_checkbox.setOpaque(true);
         ellipseLabelsIsochron_checkbox.addActionListener(new java.awt.event.ActionListener() {
@@ -1650,18 +1656,18 @@ public class SampleDateInterpretationsManager extends DialogEditor
         });
         uSeriesIsochronToolPanel.add(ellipseLabelsIsochron_checkbox, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 2, 70, 25));
 
-        oneToOneLineIsochron_checkbox.setBackground(new java.awt.Color(255, 237, 255));
-        oneToOneLineIsochron_checkbox.setFont(new java.awt.Font("SansSerif", 1, 10)); // NOI18N
-        oneToOneLineIsochron_checkbox.setSelected(true);
-        oneToOneLineIsochron_checkbox.setText("<html>Equi-<br>Line</html>");
-        oneToOneLineIsochron_checkbox.setName(""); // NOI18N
-        oneToOneLineIsochron_checkbox.setOpaque(true);
-        oneToOneLineIsochron_checkbox.addActionListener(new java.awt.event.ActionListener() {
+        showEquiLineIsochron_checkbox.setBackground(new java.awt.Color(255, 237, 255));
+        showEquiLineIsochron_checkbox.setFont(new java.awt.Font("SansSerif", 1, 10)); // NOI18N
+        showEquiLineIsochron_checkbox.setSelected(true);
+        showEquiLineIsochron_checkbox.setText("<html>Equi-<br>Line</html>");
+        showEquiLineIsochron_checkbox.setName(""); // NOI18N
+        showEquiLineIsochron_checkbox.setOpaque(true);
+        showEquiLineIsochron_checkbox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                oneToOneLineIsochron_checkboxActionPerformed(evt);
+                showEquiLineIsochron_checkboxActionPerformed(evt);
             }
         });
-        uSeriesIsochronToolPanel.add(oneToOneLineIsochron_checkbox, new org.netbeans.lib.awtextra.AbsoluteConstraints(830, 2, 77, 25));
+        uSeriesIsochronToolPanel.add(showEquiLineIsochron_checkbox, new org.netbeans.lib.awtextra.AbsoluteConstraints(830, 2, 77, 25));
 
         panIsochron_toggleButton.setBackground(new java.awt.Color(255, 255, 255));
         concordiaPanZoom_buttonGroup.add(panIsochron_toggleButton);
@@ -1766,6 +1772,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
 
         showIsochrons_checkbox.setBackground(new java.awt.Color(255, 237, 255));
         showIsochrons_checkbox.setFont(new java.awt.Font("SansSerif", 1, 10)); // NOI18N
+        showIsochrons_checkbox.setSelected(true);
         showIsochrons_checkbox.setText("<html>Isochrons</html>");
         showIsochrons_checkbox.setOpaque(true);
         showIsochrons_checkbox.addActionListener(new java.awt.event.ActionListener() {
@@ -1775,16 +1782,16 @@ public class SampleDateInterpretationsManager extends DialogEditor
         });
         uSeriesIsochronToolPanel.add(showIsochrons_checkbox, new org.netbeans.lib.awtextra.AbsoluteConstraints(325, 2, 90, 25));
 
-        showRegressionUnctIsochron_checkbox1.setBackground(new java.awt.Color(255, 237, 255));
-        showRegressionUnctIsochron_checkbox1.setFont(new java.awt.Font("SansSerif", 1, 10)); // NOI18N
-        showRegressionUnctIsochron_checkbox1.setText("<html>Regression<br>Uncertainty</html>");
-        showRegressionUnctIsochron_checkbox1.setOpaque(true);
-        showRegressionUnctIsochron_checkbox1.addActionListener(new java.awt.event.ActionListener() {
+        showRegressionUnctIsochron_checkbox.setBackground(new java.awt.Color(255, 237, 255));
+        showRegressionUnctIsochron_checkbox.setFont(new java.awt.Font("SansSerif", 1, 10)); // NOI18N
+        showRegressionUnctIsochron_checkbox.setText("<html>Regression<br>Uncertainty</html>");
+        showRegressionUnctIsochron_checkbox.setOpaque(true);
+        showRegressionUnctIsochron_checkbox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                showRegressionUnctIsochron_checkbox1ActionPerformed(evt);
+                showRegressionUnctIsochron_checkboxActionPerformed(evt);
             }
         });
-        uSeriesIsochronToolPanel.add(showRegressionUnctIsochron_checkbox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 2, 90, 25));
+        uSeriesIsochronToolPanel.add(showRegressionUnctIsochron_checkbox, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 2, 90, 25));
 
         useriesIsochronLayeredPane.add(uSeriesIsochronToolPanel);
         uSeriesIsochronToolPanel.setBounds(0, 604, 920, 36);
@@ -2840,7 +2847,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
         ((AbstractPlot) useriesIsochronPanel).setShowEllipseCenters(!state);
         ellipseCentersIsochron_Checkbox.setSelected(!state);
 
-        ((ConcordiaPlotDisplayInterface) useriesIsochronPanel).getConcordiaOptions()//
+        ((UseriesIsochronPlotDisplayInterface) useriesIsochronPanel).getUSeriesIsochronOptions()//
                 .put("showEllipseCenters", Boolean.toString(!state));
 
         useriesIsochronPanel.repaint();
@@ -2850,15 +2857,21 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
         ((AbstractPlot) useriesIsochronPanel).setShowEllipseLabels(!((AbstractPlot) useriesIsochronPanel).isShowEllipseLabels());
         ellipseLabelsAny2OnToggle_checkbox.setSelected(((AbstractPlot) useriesIsochronPanel).isShowEllipseLabels());
 
-        ((ConcordiaPlotDisplayInterface) useriesIsochronPanel).getConcordiaOptions()//
+        ((UseriesIsochronPlotDisplayInterface) useriesIsochronPanel).getUSeriesIsochronOptions()//
                 .put("showEllipseLabels", Boolean.toString(((AbstractPlot) useriesIsochronPanel).isShowEllipseLabels()));
 
         useriesIsochronPanel.repaint();
     }//GEN-LAST:event_ellipseLabelsIsochron_checkboxActionPerformed
 
-    private void oneToOneLineIsochron_checkboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_oneToOneLineIsochron_checkboxActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_oneToOneLineIsochron_checkboxActionPerformed
+    private void showEquiLineIsochron_checkboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showEquiLineIsochron_checkboxActionPerformed
+        ((AbstractPlot) useriesIsochronPanel).setShowEquiline(!((AbstractPlot) useriesIsochronPanel).isShowEquiline());
+        showEquiLineIsochron_checkbox.setSelected(((AbstractPlot) useriesIsochronPanel).isShowEquiline());
+
+        ((UseriesIsochronPlotDisplayInterface) useriesIsochronPanel).getUSeriesIsochronOptions()//
+                .put("showEquiline", Boolean.toString(((AbstractPlot) useriesIsochronPanel).isShowEquiline()));
+
+        useriesIsochronPanel.repaint();
+    }//GEN-LAST:event_showEquiLineIsochron_checkboxActionPerformed
 
     private void panIsochron_toggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_panIsochron_toggleButtonActionPerformed
         ((AbstractPlot) useriesIsochronPanel).setImageMode(panIsochron_toggleButton.getName());    }//GEN-LAST:event_panIsochron_toggleButtonActionPerformed
@@ -2877,7 +2890,13 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
     }//GEN-LAST:event_showTightIsochron_toggleButtonActionPerformed
 
     private void showExcludedFractionsIsochron_checkboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showExcludedFractionsIsochron_checkboxActionPerformed
-        // TODO add your handling code here:
+        ((AbstractPlot) useriesIsochronPanel).setShowExcludedEllipses(!((AbstractPlot) useriesIsochronPanel).isShowExcludedEllipses());
+        showExcludedFractionsIsochron_checkbox.setSelected(((AbstractPlot) useriesIsochronPanel).isShowExcludedEllipses());
+
+        ((UseriesIsochronPlotDisplayInterface) useriesIsochronPanel).getUSeriesIsochronOptions()//
+                .put("showExcludedEllipses", Boolean.toString(((AbstractPlot) useriesIsochronPanel).isShowExcludedEllipses()));
+
+        useriesIsochronPanel.repaint();
     }//GEN-LAST:event_showExcludedFractionsIsochron_checkboxActionPerformed
 
     private void radiumFlavorIsochron_radioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radiumFlavorIsochron_radioButtonActionPerformed
@@ -2885,16 +2904,36 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
     }//GEN-LAST:event_radiumFlavorIsochron_radioButtonActionPerformed
 
     private void showRegressionLineIsochron_checkboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showRegressionLineIsochron_checkboxActionPerformed
-        // TODO add your handling code here:
+        ((AbstractPlot) useriesIsochronPanel).setShowRegressionLine(!((AbstractPlot) useriesIsochronPanel).isShowRegressionLine());
+        showRegressionLineIsochron_checkbox.setSelected(((AbstractPlot) useriesIsochronPanel).isShowRegressionLine());
+
+        ((UseriesIsochronPlotDisplayInterface) useriesIsochronPanel).getUSeriesIsochronOptions()//
+                .put("showRegressionLine", Boolean.toString(((AbstractPlot) useriesIsochronPanel).isShowRegressionLine()));
+
+        useriesIsochronPanel.repaint();
+
     }//GEN-LAST:event_showRegressionLineIsochron_checkboxActionPerformed
 
     private void showIsochrons_checkboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showIsochrons_checkboxActionPerformed
-        // TODO add your handling code here:
+        ((AbstractPlot) useriesIsochronPanel).setShowIsochrons(!((AbstractPlot) useriesIsochronPanel).isShowIsochrons());
+        showIsochrons_checkbox.setSelected(((AbstractPlot) useriesIsochronPanel).isShowIsochrons());
+
+        ((UseriesIsochronPlotDisplayInterface) useriesIsochronPanel).getUSeriesIsochronOptions()//
+                .put("showIsochrons", Boolean.toString(((AbstractPlot) useriesIsochronPanel).isShowIsochrons()));
+
+        useriesIsochronPanel.repaint();
     }//GEN-LAST:event_showIsochrons_checkboxActionPerformed
 
-    private void showRegressionUnctIsochron_checkbox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showRegressionUnctIsochron_checkbox1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_showRegressionUnctIsochron_checkbox1ActionPerformed
+    private void showRegressionUnctIsochron_checkboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showRegressionUnctIsochron_checkboxActionPerformed
+        ((AbstractPlot) useriesIsochronPanel).setShowRegressionLineUnct(!((AbstractPlot) useriesIsochronPanel).isShowRegressionLineUnct());
+        showRegressionUnctIsochron_checkbox.setSelected(((AbstractPlot) useriesIsochronPanel).isShowRegressionLineUnct());
+
+        ((UseriesIsochronPlotDisplayInterface) useriesIsochronPanel).getUSeriesIsochronOptions()//
+                .put("showRegressionUnct", Boolean.toString(((AbstractPlot) useriesIsochronPanel).isShowRegressionLineUnct()));
+
+        useriesIsochronPanel.repaint();
+
+    }//GEN-LAST:event_showRegressionUnctIsochron_checkboxActionPerformed
 
     private void writeVisiblePlotSvgPdf_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_writeVisiblePlotSvgPdf_buttonActionPerformed
         delegatePlotFileWriting();
@@ -2949,7 +2988,6 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
     private javax.swing.JSlider negativePctDiscordance_slider;
     private javax.swing.JTextField negativePctDiscordance_text;
     private javax.swing.JLayeredPane normedProbabilityLayeredPane;
-    private javax.swing.JCheckBox oneToOneLineIsochron_checkbox;
     private javax.swing.JToggleButton panAny2_toggleButton;
     private javax.swing.JToggleButton panIsochron_toggleButton;
     private javax.swing.JToggleButton pan_WeightedMean_toggleButton;
@@ -2970,13 +3008,14 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
     private javax.swing.JMenuBar sampleAgeGUIMenuBar;
     private javax.swing.JMenuItem sampleConcordiaOptions_menuItem;
     private javax.swing.JButton selectAny2_button;
+    private javax.swing.JCheckBox showEquiLineIsochron_checkbox;
     private javax.swing.JCheckBox showExcludedFractionsIsochron_checkbox;
     private javax.swing.JCheckBox showExcludedFractions_checkbox;
     private javax.swing.JCheckBox showFilteredFractions_checkbox;
     private javax.swing.JButton showHistogram_button;
     private javax.swing.JCheckBox showIsochrons_checkbox;
     private javax.swing.JCheckBox showRegressionLineIsochron_checkbox;
-    private javax.swing.JCheckBox showRegressionUnctIsochron_checkbox1;
+    private javax.swing.JCheckBox showRegressionUnctIsochron_checkbox;
     private javax.swing.JToggleButton showTightAny2_toggleButton;
     private javax.swing.JButton showTightGraphProbability_button;
     private javax.swing.JToggleButton showTightIsochron_toggleButton;
@@ -3607,21 +3646,21 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                     new ETWarningDialog(ex).setVisible(true);
                 }
                 break;
-            
+
             case "WeightedMean":
                 createWeightedMeanSVGandPDF();
                 break;
-                
+
             case "Probability":
                 createProbabilityDensitySVGandPDF();
                 break;
-                
+
             default:
                 JOptionPane.showMessageDialog(null,
-                            new String[]{graphPanels_TabbedPane.getSelectedComponent().getName() + " " //
-                                +  " file output coming soon!"},
-                            "ET Redux Info",
-                            JOptionPane.INFORMATION_MESSAGE);
+                        new String[]{graphPanels_TabbedPane.getSelectedComponent().getName() + " " //
+                            + " file output coming soon!"},
+                        "ET Redux Info",
+                        JOptionPane.INFORMATION_MESSAGE);
         }
     }
 

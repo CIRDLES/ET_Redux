@@ -129,6 +129,7 @@ public class SampleDateInterpretationGUIOptions
 
         initializeHeatMapOptions();
         initializeProbabilityChartOptions();
+        initializeUSeriesIsochronOptions();
     }
 
     private void initializeUSeriesIsochronOptions(){
@@ -140,6 +141,7 @@ public class SampleDateInterpretationGUIOptions
         uSeriesIsochronOptions.put("showExcludedEllipses", "true");
         uSeriesIsochronOptions.put("showRegressionLine", "true");
         uSeriesIsochronOptions.put("showRegressionUnct", "false");
+        uSeriesIsochronOptions.put("showIsochrons", "true");
     }
     
     private void initializeHeatMapOptions() {
@@ -307,7 +309,7 @@ public class SampleDateInterpretationGUIOptions
      */
     public Map<String, Map<String, String>> getAliquotOptions() {
         if (aliquotOptions == null) {
-            setAliquotOptions(new HashMap<String, Map<String, String>>());
+            setAliquotOptions(new HashMap<>());
         }
 
         return aliquotOptions;
@@ -359,6 +361,9 @@ public class SampleDateInterpretationGUIOptions
      * @return the uSeriesIsochronOptions
      */
     public Map<String, String> getuSeriesIsochronOptions() {
+        if (uSeriesIsochronOptions == null) {
+            initializeUSeriesIsochronOptions();
+        }
         return uSeriesIsochronOptions;
     }
 

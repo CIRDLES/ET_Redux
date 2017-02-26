@@ -26,6 +26,7 @@ import java.awt.geom.Line2D;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.SortedSet;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
@@ -40,10 +41,12 @@ import org.earthtime.samples.SampleInterface;
  *
  * @author James F. Bowring
  */
-public class IsochronsPanel extends AbstractPlot {
+public class IsochronsPanel extends AbstractPlot implements UseriesIsochronPlotDisplayInterface {
 
     private double lambda230;
     private ValueModel sampleDateModel;
+
+    private Map<String, String> uSeriesIsochronOptions;
 
     /**
      * Creates a new instance of IsochronsPanel
@@ -64,6 +67,18 @@ public class IsochronsPanel extends AbstractPlot {
 
         this.nameOfXaxisSourceValueModel = UThAnalysisMeasures.ar238U_232Thfc.getName();
         this.nameOfYaxisSourceValueModel = UThAnalysisMeasures.ar230Th_232Thfc.getName();
+
+        this.uSeriesIsochronOptions
+                = sample.getSampleDateInterpretationGUISettings().getuSeriesIsochronOptions();
+
+        showEquiline = Boolean.parseBoolean(uSeriesIsochronOptions.get("showEquiline"));        
+        showEllipseCenters = Boolean.parseBoolean(uSeriesIsochronOptions.get("showEllipseCenters"));
+        showEllipseLabels = Boolean.parseBoolean(uSeriesIsochronOptions.get("showEllipseLabels"));
+        showExcludedEllipses = Boolean.parseBoolean(uSeriesIsochronOptions.get("showExcludedEllipses"));
+        showRegressionLine = Boolean.parseBoolean(uSeriesIsochronOptions.get("showRegressionLine"));
+        showRegressionLineUnct = Boolean.parseBoolean(uSeriesIsochronOptions.get("showRegressionLineUnct"));
+        showIsochrons = Boolean.parseBoolean(uSeriesIsochronOptions.get("showIsochrons"));
+
     }
 
     @Override
@@ -72,14 +87,18 @@ public class IsochronsPanel extends AbstractPlot {
 
         g2d.setClip(getLeftMargin(), getTopMargin(), (int) getGraphWidth(), (int) getGraphHeight());
 
-        plot1to1Line(g2d);
+        if (showEquiline) {
+            plotEquiLine(g2d);
+        }
 
-        SortedSet<IsochronModel> isochronModels = ((SampleDateModel) sampleDateModel).getIsochronModels();
-        Iterator<IsochronModel> isochronIterator = isochronModels.iterator();
-        while (isochronIterator.hasNext()) {
-            IsochronModel im = isochronIterator.next();
-            if (im.isVisible()) {
-                plotIsochron(im, g2d);
+        if (showIsochrons) {
+            SortedSet<IsochronModel> isochronModels = ((SampleDateModel) sampleDateModel).getIsochronModels();
+            Iterator<IsochronModel> isochronIterator = isochronModels.iterator();
+            while (isochronIterator.hasNext()) {
+                IsochronModel im = isochronIterator.next();
+                if (im.isVisible()) {
+                    plotIsochron(im, g2d);
+                }
             }
         }
     }
@@ -148,7 +167,7 @@ public class IsochronsPanel extends AbstractPlot {
 
     }
 
-    private void plot1to1Line(Graphics2D g2d) {
+    private void plotEquiLine(Graphics2D g2d) {
         plotIsochronLine(0., 0., 1.0, "Equiline", g2d);
     }
 
@@ -162,4 +181,19 @@ public class IsochronsPanel extends AbstractPlot {
     public void clearSetSampleDateModel() {
         this.sampleDateModel = new SampleDateModel();
     }
+
+    /**
+     * @return the uSeriesIsochronOptions
+     */
+    public Map<String, String> getUSeriesIsochronOptions() {
+        return uSeriesIsochronOptions;
+    }
+
+    /**
+     * @param uSeriesIsochronOptions the uSeriesIsochronOptions to set
+     */
+    public void setUSeriesIsochronOptions(Map<String, String> uSeriesIsochronOptions) {
+        this.uSeriesIsochronOptions = uSeriesIsochronOptions;
+    }
+
 }

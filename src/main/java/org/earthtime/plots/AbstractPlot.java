@@ -125,6 +125,11 @@ public abstract class AbstractPlot extends JLayeredPane
     protected String nameOfXaxisSourceValueModel;
     protected String nameOfYaxisSourceValueModel;
     private McLeanRegressionLineInterface mcLeanRegressionLine;
+    protected boolean showEquiline;
+    protected boolean showRegressionLine;
+    protected boolean showRegressionLineUnct;
+    protected boolean showIsochrons;
+    
 
     /**
      * Specifies a new abstract Plot
@@ -167,6 +172,12 @@ public abstract class AbstractPlot extends JLayeredPane
 
         // default is standard Concordia
         this.concordiaFlavor = "C";
+        
+        this.showEquiline = true;
+        this.showRegressionLine = true;
+        this.showRegressionLineUnct = false;
+        this.showIsochrons = true;
+
 
     }
 
@@ -309,13 +320,6 @@ public abstract class AbstractPlot extends JLayeredPane
             }
         } catch (Exception e) {
         }
-
-        String interceptErrorLineStyle
-                = getStringEntryFromAliquotOptions(getConcordiaOptions(), "interceptErrorLineStyle", "solid");
-
-        Boolean truncateRegressionCurves
-                = Boolean.valueOf(getStringEntryFromAliquotOptions(getConcordiaOptions(), //
-                        "truncateRegressionCurves", "false"));
 
         axesTicLabelFont = getStringEntryFromConcordiaOptions("axesTicLabelFont", axesTicLabelFont);
         axesTicLabelFontSize = getStringEntryFromConcordiaOptions("axesTicLabelFontSize", axesTicLabelFontSize);
@@ -529,7 +533,7 @@ public abstract class AbstractPlot extends JLayeredPane
             }
         }// END SELECTED FRACTIONS *******************************************
 
-        if (selectedFractions.size() > 0) {
+        if (showRegressionLine && (selectedFractions.size() > 0)) {
             plotMcLeanRegressionLine(g2d, interceptLineWeight, interceptLineColor);
         }
 
@@ -595,7 +599,7 @@ public abstract class AbstractPlot extends JLayeredPane
                     mapY(aYvar + vYvar * getMaxX_Display()));
             g2d.draw(line);
 
-            if (mcLeanRegressionLine.getSav() != null) {
+            if (showRegressionLineUnct && (mcLeanRegressionLine.getSav() != null)) {
 
                 try {
                     Matrix subCov = new Matrix(mcLeanRegressionLine.getSav());
@@ -2355,6 +2359,62 @@ public abstract class AbstractPlot extends JLayeredPane
      */
     public void setMcLeanRegressionLine(McLeanRegressionLineInterface mcLeanRegressionLine) {
         this.mcLeanRegressionLine = mcLeanRegressionLine;
+    }
+
+    /**
+     * @return the showEquiline
+     */
+    public boolean isShowEquiline() {
+        return showEquiline;
+    }
+
+    /**
+     * @param showEquiline the showEquiline to set
+     */
+    public void setShowEquiline(boolean showEquiline) {
+        this.showEquiline = showEquiline;
+    }
+
+    /**
+     * @return the showRegressionLine
+     */
+    public boolean isShowRegressionLine() {
+        return showRegressionLine;
+    }
+
+    /**
+     * @param showRegressionLine the showRegressionLine to set
+     */
+    public void setShowRegressionLine(boolean showRegressionLine) {
+        this.showRegressionLine = showRegressionLine;
+    }
+
+    /**
+     * @return the showRegressionLineUnct
+     */
+    public boolean isShowRegressionLineUnct() {
+        return showRegressionLineUnct;
+    }
+
+    /**
+     * @param showRegressionLineUnct the showRegressionLineUnct to set
+     */
+    public void setShowRegressionLineUnct(boolean showRegressionLineUnct) {
+        this.showRegressionLineUnct = showRegressionLineUnct;
+    }
+
+    /**
+     * @return the showIsochrons
+     */
+    public boolean isShowIsochrons() {
+        return showIsochrons;
+    }
+
+    /**
+     * @param showIsochrons the showIsochrons to set
+     */
+    public void setShowIsochrons(boolean showIsochrons) {
+        this.showIsochrons = showIsochrons;
     }
 
 }

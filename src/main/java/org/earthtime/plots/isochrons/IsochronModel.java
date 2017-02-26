@@ -33,16 +33,7 @@ public class IsochronModel implements Comparable<IsochronModel>, Serializable {
     private double yCoord;
     private String units;
     private boolean visible;
-
-//    private void readObject(
-//            ObjectInputStream stream)
-//            throws IOException, ClassNotFoundException {
-//        stream.defaultReadObject();
-//        ObjectStreamClass myObject = ObjectStreamClass.lookup(
-//                Class.forName(org.earthtime.plots.isochrons.IsochronModel.class.getCanonicalName()));
-//        long theSUID = myObject.getSerialVersionUID();
-//        System.out.println("Customized De-serialization of IsochronModel " + theSUID);
-//    }
+    
     public IsochronModel() {
         this(0.0, 0.0, 0.0, "ka", false);
     }
