@@ -6,90 +6,99 @@
     *****************************************************************************
 -->
 <PhysicalConstantsModel  xmlns="https://raw.githubusercontent.com/EARTHTIME/Schema"
-        xmlns:xs="http://www.w3.org/2001/XMLSchema"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="https://raw.githubusercontent.com/EARTHTIME/Schema
+                         xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                         xsi:schemaLocation="https://raw.githubusercontent.com/EARTHTIME/Schema
                             https://raw.githubusercontent.com/EARTHTIME/Schema/master/PhysicalConstantsModelXMLSchema.xsd">
-  <modelName>EARTHTIME Physical Constants Model</modelName>
-  <versionNumber>1</versionNumber>
-  <minorVersionNumber>0</minorVersionNumber>
-  <labName>EARTHTIME</labName>
-  <dateCertified>2008-01-01</dateCertified>
-  <reference>See individual constants for reference.</reference>
-  <comment>This Physical Constants Model is the accepted default as of 2008.</comment>
-  <ratios>
-    <ValueModelReferenced>
-      <name>lambda230</name>
-      <value>0.0000091577</value>
-      <uncertaintyType>PCT</uncertaintyType>
-      <oneSigma>0.15244</oneSigma>
-      <reference>Cheng et al. 2000</reference>
-    </ValueModelReferenced>
-    <ValueModelReferenced>
-      <name>lambda231</name>
-      <value>0.0000211887</value>
-      <uncertaintyType>PCT</uncertaintyType>
-      <oneSigma>0.33578</oneSigma>
-      <reference>Robert et al. 1969</reference>
-    </ValueModelReferenced>
-    <ValueModelReferenced>
-      <name>lambda232</name>
-      <value>0.0000000000493343</value>
-      <uncertaintyType>PCT</uncertaintyType>
-      <oneSigma>0.042769</oneSigma>
-      <reference>Holden 1990</reference>
-    </ValueModelReferenced>
-    <ValueModelReferenced>
-      <name>lambda234</name>
-      <value>0.0000028262</value>
-      <uncertaintyType>PCT</uncertaintyType>
-      <oneSigma>0.100842120161347</oneSigma>
-      <reference>Cheng et al. 2000</reference>
-    </ValueModelReferenced>
-    <ValueModelReferenced>
-      <name>lambda235</name>
-      <value>0.00000000098485</value>
-      <uncertaintyType>PCT</uncertaintyType>
-      <oneSigma>0.068031</oneSigma>
-      <reference>Jaffey et al. 1971</reference>
-    </ValueModelReferenced>
-    <ValueModelReferenced>
-      <name>lambda238</name>
-      <value>0.000000000155125</value>
-      <uncertaintyType>PCT</uncertaintyType>
-      <oneSigma>0.053505</oneSigma>
-      <reference>Jaffey et al. 1971</reference>
-    </ValueModelReferenced>
-  </ratios>
-  <rhos/>
-  <atomicMolarMasses>
-    <entry>
-      <string>gmol235</string>
-      <big-decimal>235.043922</big-decimal>
-    </entry>
-    <entry>
-      <string>gmol204</string>
-      <big-decimal>203.973028</big-decimal>
-    </entry>
-    <entry>
-      <string>gmol205</string>
-      <big-decimal>204.9737</big-decimal>
-    </entry>
-    <entry>
-      <string>gmol238</string>
-      <big-decimal>238.050785</big-decimal>
-    </entry>
-    <entry>
-      <string>gmol206</string>
-      <big-decimal>205.974449</big-decimal>
-    </entry>
-    <entry>
-      <string>gmol207</string>
-      <big-decimal>206.975880</big-decimal>
-    </entry>
-    <entry>
-      <string>gmol208</string>
-      <big-decimal>207.976636</big-decimal>
-    </entry>
-  </atomicMolarMasses>
+    <modelName>EARTHTIME Physical Constants Model</modelName>
+    <versionNumber>1</versionNumber>
+    <minorVersionNumber>0</minorVersionNumber>
+    <labName>EARTHTIME</labName>
+    <dateCertified>2008-01-01</dateCertified>
+    <reference>See individual constants for reference.</reference>
+    <comment>This Physical Constants Model is the accepted default as of 2008.</comment>
+    <ratios>
+        <!-- April 2017 added per Ken Rubin  -->
+        <ValueModelReferenced>
+            <name>lambda226</name>
+            <value>0.0004335</value>
+            <uncertaintyType>ABS</uncertaintyType>
+            <oneSigma>0.0000011</oneSigma>
+            <reference>Holden 1990</reference>
+        </ValueModelReferenced>
+
+        <ValueModelReferenced>
+            <name>lambda230</name>
+            <value>0.0000091577</value>
+            <uncertaintyType>PCT</uncertaintyType>
+            <oneSigma>0.15244</oneSigma>
+            <reference>Cheng et al. 2000</reference>
+        </ValueModelReferenced>
+        <ValueModelReferenced>
+            <name>lambda231</name>
+            <value>0.0000211887</value>
+            <uncertaintyType>PCT</uncertaintyType>
+            <oneSigma>0.33578</oneSigma>
+            <reference>Robert et al. 1969</reference>
+        </ValueModelReferenced>
+        <ValueModelReferenced>
+            <name>lambda232</name>
+            <value>0.0000000000493343</value>
+            <uncertaintyType>PCT</uncertaintyType>
+            <oneSigma>0.042769</oneSigma>
+            <reference>Holden 1990</reference>
+        </ValueModelReferenced>
+        <ValueModelReferenced>
+            <name>lambda234</name>
+            <value>0.0000028262</value>
+            <uncertaintyType>PCT</uncertaintyType>
+            <oneSigma>0.100842120161347</oneSigma>
+            <reference>Cheng et al. 2000</reference>
+        </ValueModelReferenced>
+        <ValueModelReferenced>
+            <name>lambda235</name>
+            <value>0.00000000098485</value>
+            <uncertaintyType>PCT</uncertaintyType>
+            <oneSigma>0.068031</oneSigma>
+            <reference>Jaffey et al. 1971</reference>
+        </ValueModelReferenced>
+        <ValueModelReferenced>
+            <name>lambda238</name>
+            <value>0.000000000155125</value>
+            <uncertaintyType>PCT</uncertaintyType>
+            <oneSigma>0.053505</oneSigma>
+            <reference>Jaffey et al. 1971</reference>
+        </ValueModelReferenced>
+    </ratios>
+    <rhos/>
+    <atomicMolarMasses>
+        <entry>
+            <string>gmol235</string>
+            <big-decimal>235.043922</big-decimal>
+        </entry>
+        <entry>
+            <string>gmol204</string>
+            <big-decimal>203.973028</big-decimal>
+        </entry>
+        <entry>
+            <string>gmol205</string>
+            <big-decimal>204.9737</big-decimal>
+        </entry>
+        <entry>
+            <string>gmol238</string>
+            <big-decimal>238.050785</big-decimal>
+        </entry>
+        <entry>
+            <string>gmol206</string>
+            <big-decimal>205.974449</big-decimal>
+        </entry>
+        <entry>
+            <string>gmol207</string>
+            <big-decimal>206.975880</big-decimal>
+        </entry>
+        <entry>
+            <string>gmol208</string>
+            <big-decimal>207.976636</big-decimal>
+        </entry>
+    </atomicMolarMasses>
 </PhysicalConstantsModel>

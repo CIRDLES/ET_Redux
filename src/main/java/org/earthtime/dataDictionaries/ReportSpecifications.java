@@ -101,7 +101,6 @@ public class ReportSpecifications {
         {"", "Th/U", "(magma)", "", "getAnalysisMeasure", AnalysisMeasures.rTh_Umagma.getName(), "",
             "FN-11", "false", "true", "3", "", "Th/U magma", "true", "false"
         },
-        
         {"meas.", "206Pb/", "204Pb", "", "getMeasuredRatioByName", "r206_204m", "PCT",
             "", "false", "false", "3", "true", "206/204 measured ratio", "true", "false"
         },
@@ -131,10 +130,7 @@ public class ReportSpecifications {
         },
         {"meas.", "233U/", "236U", "", "getMeasuredRatioByName", "r233_236m", "PCT",
             "", "false", "false", "3", "true", "233/236 measured ratio", "true", "false"
-        },
-    
-    
-    };
+        },};
 
     // Report column order =
     //  displayName1, displayName2, displayName3, units, retrieveMethodName, retrieveParameterName, uncertaintyType,
@@ -144,7 +140,7 @@ public class ReportSpecifications {
      *
      */
     public static final String[][] ReportCategory_CompositionUTh = new String[][]{
-        {"conc", "232Th", "", "ppb", "getCompositionalMeasureByName", "conc232Th", "ABS",
+        {"conc", "232Th", "", "ppm", "getCompositionalMeasureByName", "conc232Th", "ABS",
             "", "true", "true", "3", "", "concentration of 232Th", "true", "false"
         },
         {"conc", "238U", "", "ppm", "getCompositionalMeasureByName", "conc238U", "ABS",
@@ -164,6 +160,18 @@ public class ReportSpecifications {
         },
         {"", "[234U/", "238U]", "", "getAnalysisMeasure", UThAnalysisMeasures.ar234U_238Ufc.getName(), "ABS",
             "FN-20&FN-17", "true", "false", "3", "true", "[234U/238U] activity ratio", "false", "false"
+        },
+        {"", "", "[230Th]", "", "getAnalysisMeasure", UThAnalysisMeasures.a230Thfc.getName(), "ABS",
+            "FN-20&FN-17", "true", "false", "3", "true", "[230Th] activity", "false", "false"
+        },
+        {"", "", "[226Ra]", "", "getAnalysisMeasure", UThAnalysisMeasures.a226Rafc.getName(), "ABS",
+            "FN-20&FN-17", "true", "false", "3", "true", "[226Ra] activity", "false", "false"
+        },
+        {"", "[226Ra/", "230Th]", "", "getAnalysisMeasure", UThAnalysisMeasures.ar226Ra_230Thfc.getName(), "ABS",
+            "FN-20&FN-17", "true", "false", "3", "true", "[226Ra/230Th] activity ratio", "false", "false"
+        },
+        {"conc", "Ba", "", "ppm", "getCompositionalMeasureByName", UThCompositionalMeasures.concBa.getName(), "ABS",
+            "", "true", "true", "3", "", "concentration of Ba", "true", "false"
         },};
     // Report column order =
     //  displayName1, displayName2, displayName3, units, retrieveMethodName, retrieveParameterName, uncertaintyType,

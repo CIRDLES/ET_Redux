@@ -414,7 +414,7 @@ public class InitialPbModelETTest {
                     "ABS", //
                     new BigDecimal(0.00040104065069202200 / 2.0), BigDecimal.ZERO);
 
-            Map<String, BigDecimal> correlations = new HashMap<String, BigDecimal>();
+            Map<String, BigDecimal> correlations = new HashMap<>();
             correlations.put("rhoR206_204c__r207_204c", new BigDecimal(-0.0400671215735759));
             correlations.put("rhoR206_204c__r208_204c", new BigDecimal(-0.0400671215735759));
             correlations.put("rhoR207_204c__r208_204c", new BigDecimal(-0.0400671215735759));

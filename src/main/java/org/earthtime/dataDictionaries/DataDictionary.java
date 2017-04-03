@@ -58,6 +58,7 @@ public final class DataDictionary {
      *
      */
     public final static String[][] MeasuredConstants = new String[][]{
+        {Lambdas.lambda226.getName(), "0.0004335", "0.0000011", "Holden 1990"},
         {Lambdas.lambda230.getName(), "0.00000912516", "0.15244", "Cheng et al. 2000"},
         {Lambdas.lambda231.getName(), "0.0000211887", "0.33578", "Robert et al. 1969"},
         {Lambdas.lambda232.getName(), "0.0000000000493343", "0.042769", "Holden 1990"},

@@ -30,7 +30,10 @@ import org.earthtime.reduxLabData.ReduxLabData;
  */
 public class UThLegacyFraction extends UThFraction implements UThLegacyFractionI {
 
+    private static final long serialVersionUID = 6724938989157233250L;
+    
     protected ValueModel[] legacyActivityRatios;
+    protected ValueModel lambda226Legacy;
     protected ValueModel lambda230Legacy;
     protected ValueModel lambda232Legacy;
     protected ValueModel lambda234Legacy;
@@ -62,6 +65,7 @@ public class UThLegacyFraction extends UThFraction implements UThLegacyFractionI
     }
 
     private void extractLegacyLambdas(AbstractRatiosDataModel physicalConstantsModel) {
+        lambda226Legacy = physicalConstantsModel.getDatumByName(Lambdas.lambda226.getName());
         lambda230Legacy = physicalConstantsModel.getDatumByName(Lambdas.lambda230.getName());
         lambda232Legacy = physicalConstantsModel.getDatumByName(Lambdas.lambda232.getName());
         lambda234Legacy = physicalConstantsModel.getDatumByName(Lambdas.lambda234.getName());
@@ -74,6 +78,7 @@ public class UThLegacyFraction extends UThFraction implements UThLegacyFractionI
 
         legacyActivityRatios = valueModelArrayFactory(UThAnalysisMeasures.getNames(), UncertaintyTypesEnum.ABS.getName());
 
+        lambda226Legacy = new ValueModelReferenced();
         lambda230Legacy = new ValueModelReferenced();
         lambda232Legacy = new ValueModelReferenced();
         lambda234Legacy = new ValueModelReferenced();
@@ -97,6 +102,14 @@ public class UThLegacyFraction extends UThFraction implements UThLegacyFractionI
         this.legacyActivityRatios = legacyActivityRatios;
     }
 
+        /**
+     * @return the lambda226Legacy
+     */
+    @Override
+    public ValueModel getLambda226Legacy() {
+        return lambda226Legacy;
+    }
+    
     /**
      * @return the lambda230Legacy
      */
@@ -132,6 +145,7 @@ public class UThLegacyFraction extends UThFraction implements UThLegacyFractionI
     /**
      * @return the lambda238Legacy
      */
+    @Override
     public ValueModel getLambda238Legacy() {
         return lambda238Legacy;
     }

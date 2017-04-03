@@ -21,7 +21,6 @@ package org.earthtime.dataDictionaries;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import static org.earthtime.dataDictionaries.AnalysisMeasures.getNames;
 
 /**
  *
@@ -46,6 +45,8 @@ public enum UThAnalysisMeasures {
     ar230Th_232Thfc("ar230Th_232Thfc"),
     ar232Th_238Ufc("ar232Th_238Ufc"),
     ar238U_232Thfc("ar238U_232Thfc"),
+    a230Thfc("a230Thfc"),
+    a226Rafc("a226Rafc"),
     ar234U_238Ufc("ar234U_238Ufc");
 
     private String name;

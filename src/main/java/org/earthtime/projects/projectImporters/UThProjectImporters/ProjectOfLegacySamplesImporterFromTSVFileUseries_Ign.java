@@ -59,7 +59,7 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Ign extends Abstra
 
     /**
      * Reads tsv files generated from Ken Rubin's data set published in our
-     * standards paper 2017
+     * standards paper 2017 and establishing a template.
      *
      * @param project
      * @param file
@@ -85,20 +85,15 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Ign extends Abstra
             // ignore first line
             // we only allow one source ID for now
             // we allow multiple sampleIDs
-//            String savedSourceID = "none";
             String savedSampleID = "";
             for (int i = 1; i < fractionData.size(); i++) {
                 @SuppressWarnings("UseOfObsoleteCollectionType")
                 Vector<String> myFractionData = processLegacyTSVLine(fractionData.get(i));
-                if (!myFractionData.get(0).equals("0")) {
-//                    // column B
-//                    String sourceID = myFractionData.get(1);
-//                    if (savedSourceID.equalsIgnoreCase("")) {
-//                        savedSourceID = sourceID;
-//                    }
-//                    if (savedSourceID.equalsIgnoreCase(sourceID)) {
-                    // column A
-                    String sampleID = myFractionData.get(0);
+                // check for empty rows
+                if (!myFractionData.get(1).equals("")) {
+
+                    // column B
+                    String sampleID = myFractionData.get(1);
                     if (!savedSampleID.equalsIgnoreCase(sampleID)) {
                         savedSampleID = sampleID;
 
@@ -137,70 +132,17 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Ign extends Abstra
                         }
                     }
 
-                    if ((currentSample != null)&& (myFractionData.size() > 1)) {
+                    if ((currentSample != null) && (myFractionData.size() > 1)) {
                         // process fractions
                         UThLegacyFractionI myFraction = new UThLegacyFraction();
-                        // column D
-                        myFraction.setFractionID(myFractionData.get(1));
-                        myFraction.setGrainID(myFractionData.get(1));
+                        // column C = Phase
+                        myFraction.setFractionID(myFractionData.get(2));
+                        myFraction.setGrainID(myFractionData.get(2));
 
                         System.out.println("Reading legacy fraction " + myFraction.getFractionID());
 
-                        // Read in Lagacy MetaData as string in Notes columns E-Z = 4-24
-//                            StringBuilder metaData = new StringBuilder();
-//                            metaData.append("PublishedID = ").append(myFractionData.get(4).trim()).append("\n");
-//                            metaData.append("Location = ").append(myFractionData.get(5).trim()).append("\n");
-//                            metaData.append("Site = ").append(myFractionData.get(6).trim()).append("\n");
-//                            metaData.append("Additional Site Info = ").append(myFractionData.get(7).trim()).append("\n");
-//                            metaData.append("LatitudeWGS84 = ").append(myFractionData.get(8).trim()).append("\n");
-//                            metaData.append("LongitudeWGS84 = ").append(myFractionData.get(9).trim()).append("\n");
-//                            metaData.append("LatLongEstimated = ").append(myFractionData.get(10).trim()).append("\n");
-//                            metaData.append("Tectonic Category = ").append(myFractionData.get(11).trim()).append("\n");
-//                            metaData.append("Tectonic Category comments = ").append(myFractionData.get(12).trim()).append("\n");
-//                            metaData.append("Published Uplift rate m/ky = ").append(myFractionData.get(13).trim()).append("\n");
-//                            metaData.append("Published Uplift rate m/ky = ").append(myFractionData.get(14).trim()).append("\n");
-//                            metaData.append("Interpreted Uplift rate m/ky = ").append(myFractionData.get(15).trim()).append("\n");
-//                            metaData.append("Published Uplift rate Unct m/ky = ").append(myFractionData.get(16).trim()).append("\n");
-//                            metaData.append("Comments (uplift) = ").append(myFractionData.get(17).trim()).append("\n");
-//                            metaData.append("Original elevation datum = ").append(myFractionData.get(18).trim()).append("\n");
-//                            metaData.append("Published elevation (m) = ").append(myFractionData.get(19).trim()).append("\n");
-//                            metaData.append("Published elevation Unct (m) = ").append(myFractionData.get(20).trim()).append("\n");
-//                            metaData.append("Elevation from a different source = ").append(myFractionData.get(21).trim()).append("\n");
-//                            metaData.append("Elevation from a different source Unct = ").append(myFractionData.get(22).trim()).append("\n");
-//                            metaData.append("Interpreted Elevation (m) = ").append(myFractionData.get(23).trim()).append("\n");
-//                            metaData.append("Interpreted Elevation Unct (m) = ").append(myFractionData.get(24).trim()).append("\n");
-//                            metaData.append("Comments Elevation Unct = ").append(myFractionData.get(25).trim()).append("\n");
-//                            // columns AA-AO = 26-40
-//                            metaData.append("Facies = ").append(myFractionData.get(26).trim()).append("\n");
-//                            metaData.append("In situ or in growth position (strict) = ").append(myFractionData.get(27).trim()).append("\n");
-//                            metaData.append("Species = ").append(myFractionData.get(28).trim()).append("\n");
-//                            metaData.append("Comments (species) = ").append(myFractionData.get(29).trim()).append("\n");
-//                            metaData.append("Published assemblage description = ").append(myFractionData.get(30).trim()).append("\n");
-//                            metaData.append("Published paleodepth interpretation = ").append(myFractionData.get(31).trim()).append("\n");
-//                            metaData.append("Replicate = ").append(myFractionData.get(32).trim()).append("\n");
-//                            metaData.append("Pa/Th age? = ").append(myFractionData.get(33).trim()).append("\n");
-//                            metaData.append("14C age? = ").append(myFractionData.get(34).trim()).append("\n");
-//                            metaData.append("Instrument = ").append(myFractionData.get(35).trim()).append("\n");
-//                            metaData.append("Decay cnsts = ").append(myFractionData.get(36).trim()).append("\n");
-//                            String spikeCalibration = myFractionData.get(37).trim();
-//                            if (spikeCalibration.equalsIgnoreCase("G")) {
-//                                if (myFractionData.get(36).trim().compareToIgnoreCase("D1") == 0) {
-//                                    myFraction.useLegacyPhysicalConstantsD1();
-//                                } else if (myFractionData.get(36).trim().compareToIgnoreCase("D2") == 0) {
-//                                    myFraction.useLegacyPhysicalConstantsD2();
-//                                } else if (myFractionData.get(36).trim().compareToIgnoreCase("D3") == 0) {
-//                                    myFraction.useLegacyPhysicalConstantsD3();
-//                                }
-//                            } else /* assume Secular Equilibrium*/ {
                         myFraction.useLegacyPhysicalConstantsD3();
-//                            }
 
-//                            metaData.append("Spike Calib = ").append(spikeCalibration).append("\n");
-//                            metaData.append("Published % calcite = ").append(myFractionData.get(38).trim()).append("\n");
-//                            metaData.append("Interpreted % calcite = ").append(myFractionData.get(39).trim()).append("\n");
-//                            metaData.append("Method of mineralogy assessment = ").append(myFractionData.get(40).trim()).append("\n");
-//
-//                            myFraction.setFractionNotes(metaData.toString());
                         myFraction.setSampleName(currentSample.getSampleName());
                         // in case a sample occurs out of order
                         if (currentSample.getFractions().size() > 0) {
@@ -209,62 +151,114 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Ign extends Abstra
                         currentSample.addFraction(myFraction);
                         ((ReduxAliquotInterface) currentAliquot).getAliquotFractions().add(myFraction);
 
-                        // column C=2 is conc232Th in ppm
+                        // column D=3 is conc232Th in ppm
                         String ratioName = UThCompositionalMeasures.conc232Th.getName();
                         myFraction.getCompositionalMeasureByName(ratioName)//
-                                .setValue(readDelimitedTextCell(myFractionData.get(2)).//
+                                .setValue(readDelimitedTextCell(myFractionData.get(3)).//
                                         movePointLeft(6));
 
-                        // column D=3 is conc232Th uncertainty in ppm
+                        // column E=4 is conc232Th uncertainty in ppm
                         // convert 2-sigma to 1-sigma
-                        BigDecimal oneSigmaAbs = readDelimitedTextCell(myFractionData.get(3)).
+                        BigDecimal oneSigmaAbs = readDelimitedTextCell(myFractionData.get(4)).
                                 divide(new BigDecimal(2.0)).//
                                 movePointLeft(6);
                         myFraction.getCompositionalMeasureByName(ratioName)//
                                 .setOneSigma(oneSigmaAbs);
 
-                        // column E=4 is conc238U in ppm
+                        // column F=5 is conc238U in ppm
                         ratioName = UThCompositionalMeasures.conc238U.getName();
                         myFraction.getCompositionalMeasureByName(ratioName)//
-                                .setValue(readDelimitedTextCell(myFractionData.get(4)).//
+                                .setValue(readDelimitedTextCell(myFractionData.get(5)).//
                                         movePointLeft(6));
 
-                        // column F=5 is conc238U uncertainty in ppm
+                        // column G=6 is conc238U uncertainty in ppm
                         // convert 2-sigma to 1-sigma
-                        oneSigmaAbs = readDelimitedTextCell(myFractionData.get(5)).
+                        oneSigmaAbs = readDelimitedTextCell(myFractionData.get(6)).
                                 divide(new BigDecimal(2.0)).//
                                 movePointLeft(6);
                         myFraction.getCompositionalMeasureByName(ratioName)//
                                 .setOneSigma(oneSigmaAbs);
 
-                        // column G=6 is ar238U_232Thfc
+                        // column H=7 is ar238U_232Thfc
                         ratioName = UThAnalysisMeasures.ar238U_232Thfc.getName();
                         myFraction.getLegacyActivityRatioByName(ratioName)//
-                                .setValue(readDelimitedTextCell(myFractionData.get(6)));
+                                .setValue(readDelimitedTextCell(myFractionData.get(7)));
 
-                        // column H=7 is r238U_232Thfc uncertainty
+                        // column I=8 is r238U_232Thfc uncertainty
                         // convert 2-sigma to 1-sigma
-                        oneSigmaAbs = readDelimitedTextCell(myFractionData.get(7)).
+                        oneSigmaAbs = readDelimitedTextCell(myFractionData.get(8)).
                                 divide(new BigDecimal(2.0));
                         myFraction.getLegacyActivityRatioByName(ratioName)//
                                 .setOneSigma(oneSigmaAbs);
 
-                        // column i=8 is ar230Th_232Thfc 
+                        // column J=9 is ar230Th_232Thfc 
                         ratioName = UThAnalysisMeasures.ar230Th_232Thfc.getName();
                         myFraction.getLegacyActivityRatioByName(ratioName)//
-                                .setValue(readDelimitedTextCell(myFractionData.get(8)));
+                                .setValue(readDelimitedTextCell(myFractionData.get(9)));
 
-                        // column 9 is r238U_232Thfc uncertainty
+                        // column K=10 is r238U_232Thfc uncertainty
                         // convert 2-sigma to 1-sigma
-                        oneSigmaAbs = readDelimitedTextCell(myFractionData.get(9)).
+                        oneSigmaAbs = readDelimitedTextCell(myFractionData.get(10)).
                                 divide(new BigDecimal(2.0));
                         myFraction.getLegacyActivityRatioByName(ratioName)//
                                 .setOneSigma(oneSigmaAbs);
 
+                        // column L=11 is ar234U_238Ufc
+                        ratioName = UThAnalysisMeasures.ar234U_238Ufc.getName();
+                        myFraction.getLegacyActivityRatioByName(ratioName)//
+                                .setValue(readDelimitedTextCell(myFractionData.get(11)));
+                        
+                        // column M=12 is ar234U_238Ufc uncertainty
+                        // convert 2-sigma to 1-sigma
+                        oneSigmaAbs = readDelimitedTextCell(myFractionData.get(12)).
+                                divide(new BigDecimal(2.0));
+                        myFraction.getLegacyActivityRatioByName(ratioName)//
+                                .setOneSigma(oneSigmaAbs);
+                        
+                        // column N=13 is a230Thfc
+                        ratioName = UThAnalysisMeasures.a230Thfc.getName();
+                        myFraction.getLegacyActivityRatioByName(ratioName)//
+                                .setValue(readDelimitedTextCell(myFractionData.get(13)));
+                        
+                        // column O=14 is a230Thfc uncertainty
+                        // convert 2-sigma to 1-sigma
+                        oneSigmaAbs = readDelimitedTextCell(myFractionData.get(14)).
+                                divide(new BigDecimal(2.0));
+                        myFraction.getLegacyActivityRatioByName(ratioName)//
+                                .setOneSigma(oneSigmaAbs);
+                        
+                        // column P=15 is a226Rafc
+                        ratioName = UThAnalysisMeasures.a226Rafc.getName();
+                        myFraction.getLegacyActivityRatioByName(ratioName)//
+                                .setValue(readDelimitedTextCell(myFractionData.get(15)));
+                        
+                        // column Q=16 is a226Rafc uncertainty
+                        // convert 2-sigma to 1-sigma
+                        oneSigmaAbs = readDelimitedTextCell(myFractionData.get(16)).
+                                divide(new BigDecimal(2.0));
+                        myFraction.getLegacyActivityRatioByName(ratioName)//
+                                .setOneSigma(oneSigmaAbs);
+                        
+                        // column R=17 is ar226Ra_230Thfc
+                        ratioName = UThAnalysisMeasures.ar226Ra_230Thfc.getName();
+                        myFraction.getLegacyActivityRatioByName(ratioName)//
+                                .setValue(readDelimitedTextCell(myFractionData.get(17)));
+                        
+                        // column S=18 is ar226Ra_230Thfc uncertainty
+                        // convert 2-sigma to 1-sigma
+                        oneSigmaAbs = readDelimitedTextCell(myFractionData.get(18)).
+                                divide(new BigDecimal(2.0));
+                        myFraction.getLegacyActivityRatioByName(ratioName)//
+                                .setOneSigma(oneSigmaAbs);
+                        
+                        // column T=19 is concBa in ppm
+                        ratioName = UThCompositionalMeasures.concBa.getName();
+                        myFraction.getCompositionalMeasureByName(ratioName)//
+                                .setValue(readDelimitedTextCell(myFractionData.get(19)).//
+                                        movePointLeft(6));
+                        
                         UThFractionReducer.calculateMeasuredAtomRatiosFromLegacyActivityRatios(myFraction);
                     }
-
-//                    }// end of checking if same source
                 }
             }
 

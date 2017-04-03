@@ -33,6 +33,7 @@ public enum Lambdas {
     /**
      *
      */
+    lambda226( "lambda226", "lambda 226", 0 ),
     lambda230( "lambda230", "lambda 230", 0 ),
     /**
      *

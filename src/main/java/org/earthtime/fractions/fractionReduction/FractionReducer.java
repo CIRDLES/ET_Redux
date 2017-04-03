@@ -29,12 +29,14 @@ public abstract class FractionReducer {
 
     // 0. lab constants
     protected static AbstractRatiosDataModel currentPhysicalConstantsModel;
+    protected static ValueModel lambda226;
     protected static ValueModel lambda230;
     protected static ValueModel lambda231;
     protected static ValueModel lambda232;
     protected static ValueModel lambda234;
     protected static ValueModel lambda235;
     protected static ValueModel lambda238;
+    protected static double lambda226D;
     protected static double lambda230D;
     protected static double lambda231D;
     protected static double lambda232D;
@@ -58,6 +60,7 @@ public abstract class FractionReducer {
         if (!physicalConstantsModel.equals(currentPhysicalConstantsModel)) {
 
             currentPhysicalConstantsModel = physicalConstantsModel;
+            lambda226 = physicalConstantsModel.getDatumByName(Lambdas.lambda226.getName()).copy();
             lambda230 = physicalConstantsModel.getDatumByName(Lambdas.lambda230.getName()).copy();
             lambda231 = physicalConstantsModel.getDatumByName(Lambdas.lambda231.getName()).copy();
             lambda232 = physicalConstantsModel.getDatumByName(Lambdas.lambda232.getName()).copy();
@@ -65,6 +68,7 @@ public abstract class FractionReducer {
             lambda235 = physicalConstantsModel.getDatumByName(Lambdas.lambda235.getName()).copy();
             lambda238 = physicalConstantsModel.getDatumByName(Lambdas.lambda238.getName()).copy();
 
+            lambda226D = lambda226.getValue().doubleValue();
             lambda230D = lambda230.getValue().doubleValue();
             lambda231D = lambda231.getValue().doubleValue();
             lambda232D = lambda232.getValue().doubleValue();

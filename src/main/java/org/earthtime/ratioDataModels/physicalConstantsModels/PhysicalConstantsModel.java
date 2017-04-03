@@ -71,7 +71,7 @@ public class PhysicalConstantsModel extends AbstractRatiosDataModel {
                     "Placeholder model");
 
     static {
-        myRatios = new ValueModel[6];
+        myRatios = new ValueModel[DataDictionary.MeasuredConstants.length];
 
         correlations = new HashMap<>();
 
