@@ -2595,7 +2595,9 @@ public class SampleDateModel extends ValueModel implements
             AbstractRatiosDataModel physicalConstants = myFractions.get(0).getPhysicalConstantsModel();
             ValueModel lambda230 = physicalConstants.getDatumByName(Lambdas.lambda230.getName()).copy();
 
-            double myDate = -1.0 / lambda230.getValue().doubleValue() * StrictMath.log(1.0 - mcLeanRegressionLine.getV()[1][0]);
+            // getV()[1][0] = slope
+            double myDate = -1.0 / lambda230.getValue().doubleValue() 
+                    * StrictMath.log(1.0 - mcLeanRegressionLine.getV()[1][0]);
 
             setValue(myDate);
 
