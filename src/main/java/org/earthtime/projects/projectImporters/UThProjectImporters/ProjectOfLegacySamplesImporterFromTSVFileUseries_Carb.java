@@ -1,7 +1,7 @@
 /*
- * ProjectOfLegacySamplesImporterFromTSVFile_DIBBs_Useries_A.java
+ * ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb.java
  *
- * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2017 James F. Bowring and www.Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -52,9 +52,9 @@ import org.earthtime.samples.SampleInterface;
  * @author James F. Bowring This importer services UC Santa Barbara Laser
  * Ablation Split Stream legacy data starting 20 June 2014.
  */
-public class ProjectOfLegacySamplesImporterFromTSVFile_DIBBs_Useries_A extends AbstractProjectImporterFromLegacyDelimitedTextFile {
+public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb extends AbstractProjectImporterFromLegacyDelimitedTextFile {
 
-    public ProjectOfLegacySamplesImporterFromTSVFile_DIBBs_Useries_A(FileDelimiterTypesEnum fileDelimiter) {
+    public ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb(FileDelimiterTypesEnum fileDelimiter) {
         super(fileDelimiter);
     }
 
@@ -124,8 +124,8 @@ public class ProjectOfLegacySamplesImporterFromTSVFile_DIBBs_Useries_A extends A
                                     currentSample = new SampleUTh(//
                                             sampleID, //
                                             SampleTypesEnum.LEGACY.getName(), //
-                                            SampleAnalysisTypesEnum.USERIES.getName(), //
-                                            ReduxConstants.ANALYSIS_PURPOSE.SingleAge, "UPb");
+                                            SampleAnalysisTypesEnum.USERIES_CARB.getName(), //
+                                            ReduxConstants.ANALYSIS_PURPOSE.SingleAge, "UTh");
 
                                     projectSamples.add(currentSample);
 
@@ -239,8 +239,8 @@ public class ProjectOfLegacySamplesImporterFromTSVFile_DIBBs_Useries_A extends A
                             // column AQ=42 is conc232Th uncertainty in ppb
                             // convert 2-sigma to 1-sigma
                             BigDecimal oneSigmaAbs = readDelimitedTextCell(myFractionData.get(42)).
-                                    divide(new BigDecimal(2.0).//
-                                            movePointLeft(9));
+                                    divide(new BigDecimal(2.0)).//
+                                            movePointLeft(9);
                             myFraction.getCompositionalMeasureByName(ratioName)//
                                     .setOneSigma(oneSigmaAbs);
 
@@ -264,8 +264,8 @@ public class ProjectOfLegacySamplesImporterFromTSVFile_DIBBs_Useries_A extends A
                             // column AU=46 is conc238U uncertainty in ppm
                             // convert 2-sigma to 1-sigma
                             oneSigmaAbs = readDelimitedTextCell(myFractionData.get(46)).
-                                    divide(new BigDecimal(2.0).//
-                                            movePointLeft(6));
+                                    divide(new BigDecimal(2.0)).//
+                                            movePointLeft(6);
                             myFraction.getCompositionalMeasureByName(ratioName)//
                                     .setOneSigma(oneSigmaAbs);
 
@@ -338,9 +338,10 @@ public class ProjectOfLegacySamplesImporterFromTSVFile_DIBBs_Useries_A extends A
                     ((ReduxAliquotInterface) existingSuperSampleAliquot).getAliquotFractions().add(fraction);
                     superSample.getFractions().add(fraction);
                 }
-            }
-            superSample.initFilteredFractionsToAll();
+            }            
         }
+        
+        superSample.initFilteredFractionsToAll();       
     }
 
 }

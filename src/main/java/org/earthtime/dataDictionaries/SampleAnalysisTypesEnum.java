@@ -44,7 +44,8 @@ public enum SampleAnalysisTypesEnum {
      *
      */
     LASS("LASS"),
-    USERIES("USERIES"),
+    USERIES_CARB("USERIES_CARB"),
+    USERIES_IGN("USERIES_IGN"),
 
     /**
      *

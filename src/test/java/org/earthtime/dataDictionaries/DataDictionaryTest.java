@@ -225,12 +225,13 @@ public class DataDictionaryTest {
         assertEquals("gmol238",sieg[5][0]);               
         
         sieg=DataDictionary.MeasuredConstants;     
-        assertEquals("lambda230",sieg[0][0]);
-        assertEquals("lambda231",sieg[1][0]);
-        assertEquals("lambda232",sieg[2][0]);
-        assertEquals("lambda234",sieg[3][0]);            
-        assertEquals("lambda235",sieg[4][0]);            
-        assertEquals("lambda238",sieg[5][0]);                    
+        assertEquals("lambda226",sieg[0][0]);
+        assertEquals("lambda230",sieg[1][0]);
+        assertEquals("lambda231",sieg[2][0]);
+        assertEquals("lambda232",sieg[3][0]);
+        assertEquals("lambda234",sieg[4][0]);            
+        assertEquals("lambda235",sieg[5][0]);            
+        assertEquals("lambda238",sieg[6][0]);                    
         
        
         

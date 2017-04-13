@@ -15,12 +15,6 @@
  */
 package org.earthtime.plots;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Vector;
 import org.apache.commons.math3.stat.regression.SimpleRegression;
 import org.cirdles.mcLeanRegression.McLeanRegression;
@@ -93,15 +87,15 @@ public class McLeanRegressionLineFit {
                 }
 
                 // trim arrays
-                double xF[] = partArray(x, counter - 1);
-                double yF[] = partArray(y, counter - 1);
-                double x1SigmaAbsF[] = partArray(x1SigmaAbs, counter - 1);
-                double y1SigmaAbsF[] = partArray(y1SigmaAbs, counter - 1);
-                double rhosF[] = partArray(rhos, counter - 1);
+                double xF[] = partArray(x, counter);
+                double yF[] = partArray(y, counter);
+                double x1SigmaAbsF[] = partArray(x1SigmaAbs, counter);
+                double y1SigmaAbsF[] = partArray(y1SigmaAbs, counter);
+                double rhosF[] = partArray(rhos, counter);
 
                 // in case of ordinary linear regression
-                double[][] xyF = new double[counter - 1][2];
-                for (int i = 0; i < (counter - 1); i++) {
+                double[][] xyF = new double[counter][2];
+                for (int i = 0; i < (counter); i++) {
                     xyF[i][0] = xy[i][0];
                     xyF[i][1] = xy[i][1];
                 }
@@ -110,21 +104,21 @@ public class McLeanRegressionLineFit {
                     McLeanRegressionInterface mcLeanRegression = new McLeanRegression();
                     mcLeanRegressionLine = mcLeanRegression.fitLineToDataFor2D(xF, yF, x1SigmaAbsF, y1SigmaAbsF, rhosF);
 
-                    // output to csv for testing with matlab
-                    Path dir = Paths.get(".");
-                    Path path = dir.resolve(nameOfXaxisSourceValueModel + "_" + nameOfYaxisSourceValueModel + ".csv");
-                    try (BufferedWriter writer = Files.newBufferedWriter(path, Charset.forName("UTF-8"))) {
-                        for (int i = 0; i < xF.length; i++) {
-                            writer.write(
-                                    String.valueOf(xF[i]) + ", "
-                                    + String.valueOf(yF[i]) + ", "
-                                    + String.valueOf(x1SigmaAbsF[i]) + ", "
-                                    + String.valueOf(y1SigmaAbsF[i]) + ", "
-                                    + String.valueOf(rhosF[i])
-                                    + "\n");
-                        }
-                    } catch (IOException ex) {
-                    }
+//                    // output to csv for testing with matlab
+//                    Path dir = Paths.get(".");
+//                    Path path = dir.resolve(nameOfXaxisSourceValueModel + "_" + nameOfYaxisSourceValueModel + ".csv");
+//                    try (BufferedWriter writer = Files.newBufferedWriter(path, Charset.forName("UTF-8"))) {
+//                        for (int i = 0; i < xF.length; i++) {
+//                            writer.write(
+//                                    String.valueOf(xF[i]) + ", "
+//                                    + String.valueOf(x1SigmaAbsF[i]) + ", "
+//                                    + String.valueOf(yF[i]) + ", "
+//                                    + String.valueOf(y1SigmaAbsF[i]) + ", "
+//                                    + String.valueOf(rhosF[i])
+//                                    + "\n");
+//                        }
+//                    } catch (IOException ex) {
+//                    }
                 } catch (Exception e) {
                     // we do an ordinary least squares (OLS)
                     SimpleRegression regression = new SimpleRegression();

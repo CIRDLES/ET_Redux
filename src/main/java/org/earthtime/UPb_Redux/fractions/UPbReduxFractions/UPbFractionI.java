@@ -136,18 +136,18 @@ public interface UPbFractionI extends FractionI {
      * @return
      */
     abstract boolean hasMeasuredUranium();
-
-    /**
-     *
-     * @return
-     */
-    abstract boolean isFiltered();
-
-    /**
-     *
-     * @param rejected
-     */
-    abstract void setFiltered(boolean rejected);
+//
+//    /**
+//     *
+//     * @return
+//     */
+//    abstract boolean isFiltered();
+//
+//    /**
+//     *
+//     * @param rejected
+//     */
+//    abstract void setFiltered(boolean rejected);
 
     /**
      * @param fractionationCorrectedPb the fractionationCorrectedPb to set

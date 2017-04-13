@@ -39,6 +39,19 @@ import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
  */
 public interface ETFractionInterface {
 
+    
+    /**
+     *
+     * @return
+     */
+    abstract boolean isFiltered();
+
+    /**
+     *
+     * @param rejected
+     */
+    abstract void setFiltered(boolean rejected);
+    
     /**
      *
      * @return
@@ -848,11 +861,14 @@ public interface ETFractionInterface {
         xyRho[2] = new ValueModel("RHO",
                 BigDecimal.ZERO,
                 "NONE", BigDecimal.ZERO, BigDecimal.ZERO);
-        if (this instanceof UPbLegacyFraction) {
-            String rhoConcordia = "rhoR206_238r__r207_235r";
-            xyRho[2].copyValuesFrom(getRadiogenicIsotopeRatioByName(rhoConcordia));
-        } else if (this instanceof UPbFraction) {
-            xyRho[2].setValue(((UPbFraction) this).getReductionHandler().calculateAnalyticalRho(nameOfXaxisSourceValueModel, nameOfYaxisSourceValueModel));
+        try {
+            if (this instanceof UPbLegacyFraction) {
+                String rhoConcordia = "rhoR206_238r__r207_235r";
+                xyRho[2].copyValuesFrom(getRadiogenicIsotopeRatioByName(rhoConcordia));
+            } else if (this instanceof UPbFraction) {
+                xyRho[2].setValue(((UPbFraction) this).getReductionHandler().calculateAnalyticalRho(nameOfXaxisSourceValueModel, nameOfYaxisSourceValueModel));
+            }
+        } catch (Exception e) {
         }
 
         return xyRho;

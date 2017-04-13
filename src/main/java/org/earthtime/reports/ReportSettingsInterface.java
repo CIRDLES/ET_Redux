@@ -734,8 +734,7 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
             String lambda238 = "\u03BB238 = ";
             try {
                 lambda238
-                        += //
-                        formatter.format(sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda238.getName())//
+                        += formatter.format(sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda238.getName())//
                                 .getValue().doubleValue());
                 lambda238 += lambda238Ref;
             } catch (BadLabDataException badLabDataException) {
@@ -744,8 +743,7 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
             String lambda235 = "\u03BB235 = ";
             try {
                 lambda235
-                        += //
-                        formatter.format(sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda235.getName())//
+                        += formatter.format(sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda235.getName())//
                                 .getValue().doubleValue());
                 lambda235 += lambda235Ref;
             } catch (BadLabDataException badLabDataException) {

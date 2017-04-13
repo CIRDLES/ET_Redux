@@ -22,7 +22,7 @@ package org.earthtime.dataDictionaries;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
+import org.earthtime.fractions.ETFractionInterface;
 
 /**
  *
@@ -58,6 +58,7 @@ public final class DataDictionary {
      *
      */
     public final static String[][] MeasuredConstants = new String[][]{
+        {Lambdas.lambda226.getName(), "0.0004335", "0.0000011", "Holden 1990"},
         {Lambdas.lambda230.getName(), "0.00000912516", "0.15244", "Cheng et al. 2000"},
         {Lambdas.lambda231.getName(), "0.0000211887", "0.33578", "Robert et al. 1969"},
         {Lambdas.lambda232.getName(), "0.0000000000493343", "0.042769", "Holden 1990"},
@@ -294,7 +295,13 @@ public final class DataDictionary {
         "concPb206_ib",
         "totRadiogenicPbMass",
         "radToCommonTotal",
-        "totCommonPbMass",};
+        "totCommonPbMass",
+        // feb 2017 UTh here until enums finished
+        "conc238U",
+        "conc232Th",
+        "conc228Ra",
+        "conc231Pa",};
+
     // added march 2009
     /**
      *
@@ -446,7 +453,7 @@ public final class DataDictionary {
      */
     public final static String[][] ArrayMapOfInputsToFractionClassMethodNames = new String[][]{
         {"getMeasuredRatioByName"}, MeasuredRatios.getNames(),
-        {"getAnalysisMeasure"}, AnalysisMeasures.getNames(),
+        {"getAnalysisMeasure"}, AnalysisMeasures.getAllNames(),
         {"getTracerRatioByName"}, TracerUPbRatiosAndConcentrations.getNames(),
         {"getCompositionalMeasureByName"}, earthTimeUPbCompositionalMeasuresNames,
         //        {"getTracerIsotopeConcByName"}, TracerIsotopes.getNames(),
@@ -556,7 +563,7 @@ public final class DataDictionary {
         if (methodName != null) {
             try {
                 Class<?> fractionClass
-                        = Class.forName(UPbFraction.class.getCanonicalName());
+                        = Class.forName(ETFractionInterface.class.getCanonicalName());
 
                 meth = fractionClass.getMethod(//
                         methodName,

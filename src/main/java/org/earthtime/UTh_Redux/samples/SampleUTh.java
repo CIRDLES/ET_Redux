@@ -193,7 +193,7 @@ public class SampleUTh extends ETSample implements
 //        this.sampleRegistry = SampleRegistries.SESAR;
         this.changed = false;
 
-        initFilteredFractionsToAll();
+//        initFilteredFractionsToAll();
 
     }
 
@@ -423,9 +423,6 @@ public class SampleUTh extends ETSample implements
      * <code>UPbFractions</code>
      * @post this <code>Sample</code>'s <code>UPbFractions</code> is set to
      * argument <code>UPbFractions</code>
-     *
-     * @param UPbFractions value to which <code>UPbFractions</code> of this
-     * <code>Sample</code> will be set
      */
     @Override
     public void setFractions(Vector<ETFractionInterface> UThFractions) {
@@ -610,6 +607,7 @@ public class SampleUTh extends ETSample implements
         this.filteredFractionIDs = filteredFractionIDs;
     }
 
+    @Override
     public void initFilteredFractionsToAll() {
         this.filteredFractionIDs = Collections.synchronizedSortedSet(new TreeSet<>());
         for (int i = 0; i < UThFractions.size(); i++) {

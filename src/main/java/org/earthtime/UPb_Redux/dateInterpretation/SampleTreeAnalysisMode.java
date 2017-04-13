@@ -50,6 +50,7 @@ import org.earthtime.aliquots.ReduxAliquotInterface;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.exceptions.ETWarningDialog;
+import org.earthtime.plots.isochrons.IsochronsSelectorDialog;
 import org.earthtime.samples.SampleInterface;
 
 /**
@@ -113,14 +114,14 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
                 }
             }
         }
-        
+
         int count = 0;
-        for (Object obj: nodeObjs){
+        for (Object obj : nodeObjs) {
             ((MutableTreeNode) obj).removeFromParent();
             ((DefaultTreeModel) getModel()).nodesWereRemoved(((TreeNode) obj).getParent(), new int[]{indexObjs.get(count)}, new Object[]{obj});
             count++;
         }
-        
+
         ((DefaultTreeModel) getModel()).reload();
 
     }
@@ -284,7 +285,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
 
                 fractionNode.setUserObject( //
                         new CheckBoxNode(
-                                ((SampleDateModel) SAM).showFractionIdWithDateAndUnct(((ReduxAliquotInterface) aliquot).getAliquotFractionByName(fracID), "Ma"),
+                                ((SampleDateModel) SAM).showFractionIdWithDateAndUnct(((ReduxAliquotInterface) aliquot).getAliquotFractionByName(fracID)),
                                 ((SampleDateModel) SAM).includesFractionByName(fracID),
                                 true));
                 sampleDateFractions.add(fractionNode);
@@ -362,14 +363,12 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
                 return ((ValueModelI) o).getName() + "        ";
             }
         } else if ((o instanceof String) && (((String) o).startsWith("date"))) {
-            return //                
-                    ((SampleDateModel) ((DefaultMutableTreeNode) ((TreeNode) value).//
-                            getParent()).getUserObject()).ShowCustomDateNode();
+            return ((SampleDateModel) ((DefaultMutableTreeNode) ((TreeNode) value).//
+                    getParent()).getUserObject()).ShowCustomDateNode();
 
         } else if ((o instanceof String) && (((String) o).startsWith("MSWD"))) {
-            return //                
-                    ((SampleDateModel) ((DefaultMutableTreeNode) ((TreeNode) value).//
-                            getParent()).getUserObject()).ShowCustomMSWDwithN() + "              ";
+            return ((SampleDateModel) ((DefaultMutableTreeNode) ((TreeNode) value).//
+                    getParent()).getUserObject()).ShowCustomMSWDwithN() + "              ";
 
         } else {
             return super.convertValueToText(
@@ -556,6 +555,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
                         getSampleTreeChange().sampleTreeChangeAnalysisMode(node);
                     });
                     popup.add(menuItem);
+
                     menuItem = new JMenuItem("Delete Sample Date Interpretation");
                     menuItem.addActionListener(new ActionListener() {
 
@@ -638,7 +638,20 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
                         }
                     });
                     popup.add(menuItem);
-
+                    
+                    if (sample.getIsotopeStyle().compareToIgnoreCase("UTh") == 0) {
+                        menuItem = new JMenuItem("Set Isochrons for this model");
+                        menuItem.addActionListener((ActionEvent arg0) -> {
+                            DialogEditor myIsochronDialog
+                                    = new IsochronsSelectorDialog(null, true, ((SampleDateModel) nodeInfo).getIsochronModels());
+                            myIsochronDialog.setSize(325, 385);
+                            myIsochronDialog.setVisible(true);
+                            ((SampleDateModel) nodeInfo).setIsochronModels(((IsochronsSelectorDialog) myIsochronDialog).getSelectedIsochrons());
+                            
+                            getSampleTreeChange().sampleTreeChangeAnalysisMode(node);
+                        });
+                        popup.add(menuItem);
+                    }
                     popup.show(e.getComponent(),
                             e.getX(), e.getY());
 

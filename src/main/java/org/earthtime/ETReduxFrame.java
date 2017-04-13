@@ -125,13 +125,15 @@ import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.dialogs.LabDataEditorDialog;
 import org.earthtime.dialogs.PreferencesEditorDialog;
 import org.earthtime.dialogs.projectManagers.projectLegacyManagers.AbstractProjectOfLegacySamplesDataManagerDialog;
-import org.earthtime.dialogs.projectManagers.projectLegacyManagers.ProjectOfLegacySamplesDataManagerDialogForDIBBsUseries_A;
 import org.earthtime.dialogs.projectManagers.projectLegacyManagers.ProjectOfLegacySamplesDataManagerDialogForGenericUPb_A;
 import org.earthtime.dialogs.projectManagers.projectLegacyManagers.ProjectOfLegacySamplesDataManagerDialogForUCSB_LASS_A;
+import org.earthtime.dialogs.projectManagers.projectLegacyManagers.ProjectOfLegacySamplesDataManagerUseries_Carb;
+import org.earthtime.dialogs.projectManagers.projectLegacyManagers.ProjectOfLegacySamplesDataManagerUseries_Ign;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.plots.anyTwo.PlotAny2Panel;
+import org.earthtime.plots.isochrons.IsochronsPanel;
 import org.earthtime.projects.EarthTimeSerializedFileInterface;
 import org.earthtime.projects.Project;
 import org.earthtime.projects.ProjectInterface;
@@ -175,6 +177,8 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
     private JLayeredPane myConcordiaGraphPanel;
 //    private JFXPanel concordiaGraphPanelIsoplot;
     private JLayeredPane myPlotAnyPanel;
+    private JLayeredPane myUseriesIsochronPanel;
+
     /**
      *
      */
@@ -769,6 +773,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         // set up plotAny2Panel for use on fraction details window
         //as well as interpret date window and archiving
         myPlotAnyPanel = new PlotAny2Panel(theSample, this);
+        myUseriesIsochronPanel = new IsochronsPanel(theSample, this);
 
         // set up probabilitydensity for archiving
         myNormedProbabilityPanel = new DateProbabilityDensityPanel(theSample);
@@ -793,7 +798,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             String isotopeStyle = theProject.getSuperSample().getIsotopeStyle();
             if (isotopeStyle.equalsIgnoreCase("UTh")) {
                 myProjectManager
-                        = new ProjectOfLegacySamplesDataManagerDialogForDIBBsUseries_A(
+                        = new ProjectOfLegacySamplesDataManagerUseries_Carb(
                                 this,
                                 true,
                                 theProject,
@@ -890,9 +895,9 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         try {
             theSample
                     = new ProjectSample(//
-                            SampleTypesEnum.PROJECT.getName(),//
-                            SampleTypesEnum.PROJECT.getName(), //
-                            SampleAnalysisTypesEnum.COMPILED.getName(), //
+                            SampleTypesEnum.PROJECT.getName(),
+                            SampleTypesEnum.COMPILATION.getName(), //
+                            sampleAnalysisType, //                           
                             myState.getReduxPreferences().getDefaultSampleAnalysisPurpose(),//
                             true, //
                             isotopeStyle);
@@ -919,9 +924,16 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                             true,
                             theProject,
                             myState.getMRUImportFolderCompilationMode());
-        } else if (sampleAnalysisType.equalsIgnoreCase(SampleAnalysisTypesEnum.USERIES.getName())) {
+        } else if (sampleAnalysisType.equalsIgnoreCase(SampleAnalysisTypesEnum.USERIES_CARB.getName())) {
             myProjectManager
-                    = new ProjectOfLegacySamplesDataManagerDialogForDIBBsUseries_A(
+                    = new ProjectOfLegacySamplesDataManagerUseries_Carb(
+                            this,
+                            true,
+                            theProject,
+                            myState.getMRUImportFolderCompilationMode());
+        } else if (sampleAnalysisType.equalsIgnoreCase(SampleAnalysisTypesEnum.USERIES_IGN.getName())) {
+            myProjectManager
+                    = new ProjectOfLegacySamplesDataManagerUseries_Ign(
                             this,
                             true,
                             theProject,
@@ -1393,6 +1405,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         // set up plotAny2Panel for use on fraction details window
         //as well as interpret date window and archiving
         myPlotAnyPanel = new PlotAny2Panel(theSample, this);
+        myUseriesIsochronPanel = new IsochronsPanel(theSample, this);
 
         // march 2014
 //        concordiaGraphPanelIsoplot = new ConcordiaGraphPanelIsoplot(theSample);
@@ -1947,9 +1960,12 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         jMenuItem5 = new javax.swing.JMenuItem();
         jMenuItem9 = new javax.swing.JMenuItem();
         newProjectFromLegacyDataTable_menu = new javax.swing.JMenu();
-        dibbs_USeries = new javax.swing.JMenuItem();
+        uPbLegacyDataMenu = new javax.swing.JMenu();
         genericUPbDataTableInCSV_menuItem = new javax.swing.JMenuItem();
         ucsb_LASS_A_DataTableInCSV_menuItem = new javax.swing.JMenuItem();
+        uSeriesLegacyData = new javax.swing.JMenu();
+        USeriesCarbonate = new javax.swing.JMenuItem();
+        USeriesIgneous = new javax.swing.JMenuItem();
         jSeparator9 = new javax.swing.JPopupMenu.Separator();
         manageProject_menuItem = new javax.swing.JMenuItem();
         manageRawData_menuItem = new javax.swing.JMenuItem();
@@ -2028,6 +2044,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         visitEarthTimeOrg = new javax.swing.JMenuItem();
         visitGeochron = new javax.swing.JMenuItem();
         visitGeoSamplesOrg = new javax.swing.JMenuItem();
+        visitUseriesRocks = new javax.swing.JMenuItem();
         toolsMenu = new javax.swing.JMenu();
         reduxPreferences = new javax.swing.JMenuItem();
         templatesForLegacyProjects_menu = new javax.swing.JMenu();
@@ -2319,13 +2336,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
         newProjectFromLegacyDataTable_menu.setText("New Project from Legacy Data Table");
 
-        dibbs_USeries.setText("U-Series Legacy Data Table from Single Source in tab-delimited format");
-        dibbs_USeries.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                dibbs_USeriesActionPerformed(evt);
-            }
-        });
-        newProjectFromLegacyDataTable_menu.add(dibbs_USeries);
+        uPbLegacyDataMenu.setText("UPb Legacy Data");
 
         genericUPbDataTableInCSV_menuItem.setText("Generic UPb Legacy Data Table in .csv format");
         genericUPbDataTableInCSV_menuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -2333,7 +2344,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                 genericUPbDataTableInCSV_menuItemActionPerformed(evt);
             }
         });
-        newProjectFromLegacyDataTable_menu.add(genericUPbDataTableInCSV_menuItem);
+        uPbLegacyDataMenu.add(genericUPbDataTableInCSV_menuItem);
 
         ucsb_LASS_A_DataTableInCSV_menuItem.setText("UCSB LASS A Legacy Data Table in .csv format");
         ucsb_LASS_A_DataTableInCSV_menuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -2341,7 +2352,29 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                 ucsb_LASS_A_DataTableInCSV_menuItemActionPerformed(evt);
             }
         });
-        newProjectFromLegacyDataTable_menu.add(ucsb_LASS_A_DataTableInCSV_menuItem);
+        uPbLegacyDataMenu.add(ucsb_LASS_A_DataTableInCSV_menuItem);
+
+        newProjectFromLegacyDataTable_menu.add(uPbLegacyDataMenu);
+
+        uSeriesLegacyData.setText("U-series Legacy Data");
+
+        USeriesCarbonate.setText("Carbonate Data from Single Source in tab-delimited format");
+        USeriesCarbonate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                USeriesCarbonateActionPerformed(evt);
+            }
+        });
+        uSeriesLegacyData.add(USeriesCarbonate);
+
+        USeriesIgneous.setText("Igneous Data from Single Source in tab-delimited format");
+        USeriesIgneous.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                USeriesIgneousActionPerformed(evt);
+            }
+        });
+        uSeriesLegacyData.add(USeriesIgneous);
+
+        newProjectFromLegacyDataTable_menu.add(uSeriesLegacyData);
 
         project_menu.add(newProjectFromLegacyDataTable_menu);
         project_menu.add(jSeparator9);
@@ -2910,6 +2943,14 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         });
         earthTimeWebSiteMenu.add(visitGeoSamplesOrg);
 
+        visitUseriesRocks.setText("USeries.rocks");
+        visitUseriesRocks.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                visitUseriesRocksActionPerformed(evt);
+            }
+        });
+        earthTimeWebSiteMenu.add(visitUseriesRocks);
+
         mainMenuBar.add(earthTimeWebSiteMenu);
 
         toolsMenu.setText("Tools");
@@ -3059,7 +3100,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                .add(jSplitPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 528, Short.MAX_VALUE)
+                .add(jSplitPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(buttonBar_panel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 35, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
@@ -3410,7 +3451,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
     private void interpretSampleDates_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_interpretSampleDates_buttonActionPerformed
         // Dec 2015 experiment with customization of skins
-        if (theSample.getIsotopeStyle().compareToIgnoreCase("UTh") == 0) {
+        if (theSample.getSampleAnalysisType().compareToIgnoreCase(SampleAnalysisTypesEnum.USERIES_CARB.getName()) == 0) {
 //            if (topsoilEvolutionChart != null) {
 //                topsoilEvolutionChart.close();
 //                topsoilEvolutionChart = null;
@@ -3423,7 +3464,6 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             topsoilEvolutionChart.preparePanel();
             topsoilEvolutionChart.showPanel();
         } else {
-
             manageSampleDateInterpretation(//
                     new SampleTreeAnalysisMode(theSample),
                     new SampleTreeCompilationMode(theSample));
@@ -3451,6 +3491,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                     = new WeightedMeanGraphPanel(theSample);
 
             myPlotAnyPanel = new PlotAny2Panel(theSample, this);
+            myUseriesIsochronPanel = new IsochronsPanel(theSample, this);
 
             theSample.getSampleDateInterpretationGUISettings().//
                     setConcordiaOptions(((ConcordiaPlotDisplayInterface) myConcordiaGraphPanel).getConcordiaOptions());
@@ -3464,6 +3505,8 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             ((PlottingDetailsDisplayInterface) myConcordiaGraphPanel).resetPanel(true, false);
             ((PlottingDetailsDisplayInterface) myPlotAnyPanel).setShowTightToEdges(true);
             ((PlottingDetailsDisplayInterface) myPlotAnyPanel).resetPanel(true, false);
+            ((PlottingDetailsDisplayInterface) myUseriesIsochronPanel).setShowTightToEdges(true);
+            ((PlottingDetailsDisplayInterface) myUseriesIsochronPanel).resetPanel(true, false);
 
             if (sampleDateInterpDialog != null) {
                 sampleDateInterpDialog.dispose();
@@ -3474,6 +3517,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                             false,// try floating as of october 2014 true,
                             myConcordiaGraphPanel,
                             myPlotAnyPanel,
+                            myUseriesIsochronPanel,
                             myWeightedMeanGraphPanel,
                             myNormedProbabilityPanel,
                             theSample,
@@ -3804,7 +3848,7 @@ private void startStopLiveUpdate_buttonActionPerformed(java.awt.event.ActionEven
         // note also the flag analyzed = true means either compiled legacy or compiled from existing
         // aliquots and imported into compilation; while false means that analysis will occur within redux
         // June 2015 assume for now that we decide purely on sampleAnalysisType
-        // flavors: USERIES, IDTIMS, LAICPMS, LASS, GENERICUPB, and for superSamples of Projects: COMPILED, TRIPOLIZED
+        // flavors: USERIES_CARB, IDTIMS, LAICPMS, LASS, GENERICUPB, and for superSamples of Projects: COMPILED, TRIPOLIZED
         if (sample.isAnalysisTypeIDTIMS()) {
             if (sample.isSampleTypeAnalysis()) {
                 myEditor = new AliquotEditorDialog(this, true, theSample, aliquot);
@@ -4190,9 +4234,9 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
         loadLastSample_button.setToolTipText(myMRUs.isEmpty() ? "No recent samples" : myMRUs.get(0));
     }//GEN-LAST:event_loadLastSample_buttonMouseEntered
 
-    private void dibbs_USeriesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dibbs_USeriesActionPerformed
-        setUpNewCompiledLegacyProject(SampleAnalysisTypesEnum.USERIES.getName(), "UTh");
-    }//GEN-LAST:event_dibbs_USeriesActionPerformed
+    private void USeriesCarbonateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_USeriesCarbonateActionPerformed
+        setUpNewCompiledLegacyProject(SampleAnalysisTypesEnum.USERIES_CARB.getName(), "UTh");
+    }//GEN-LAST:event_USeriesCarbonateActionPerformed
 
     private void reportSettingsHelpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reportSettingsHelpActionPerformed
         BrowserControl.displayURL("http://cirdles.org/projects/et_redux/#reports-overview");
@@ -4201,6 +4245,14 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     private void newProjectRawDataSHRIMPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newProjectRawDataSHRIMPActionPerformed
         setUpNewTripolizedProject(SampleAnalysisTypesEnum.SHRIMP);
     }//GEN-LAST:event_newProjectRawDataSHRIMPActionPerformed
+
+    private void USeriesIgneousActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_USeriesIgneousActionPerformed
+        setUpNewCompiledLegacyProject(SampleAnalysisTypesEnum.USERIES_IGN.getName(), "UTh");
+    }//GEN-LAST:event_USeriesIgneousActionPerformed
+
+    private void visitUseriesRocksActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_visitUseriesRocksActionPerformed
+        BrowserControl.displayURL("https://sites.google.com/site/useriesrocks/");
+    }//GEN-LAST:event_visitUseriesRocksActionPerformed
 
     private void helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
         BrowserControl.displayURL("http://cirdles.org/projects/et_redux/");
@@ -4216,6 +4268,8 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     private javax.swing.JMenuItem LAICPMS_LegacyAnalysis_UH_menuItem;
     private javax.swing.JMenu MRUProject_menu;
     private javax.swing.JMenu MRUSampleMenu;
+    private javax.swing.JMenuItem USeriesCarbonate;
+    private javax.swing.JMenuItem USeriesIgneous;
     private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JMenu aliquotsMenu;
     private javax.swing.JPanel buttonBar_panel;
@@ -4225,7 +4279,6 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     private javax.swing.JMenuItem credits_menuItem;
     private javax.swing.JMenuItem customizeSampleMetadata_menuItem;
     private javax.swing.JMenuItem deSelectAllFractions_menuItem;
-    private javax.swing.JMenuItem dibbs_USeries;
     private javax.swing.JMenu earthTimeWebSiteMenu;
     private javax.swing.JMenuItem editCurrentReportSettingsModel_menuItem;
     private javax.swing.JMenuItem editInitialPbModels;
@@ -4320,6 +4373,8 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     private javax.swing.JTable theFractionTable;
     private javax.swing.JScrollPane theFractionTableScrollPane;
     private javax.swing.JMenu toolsMenu;
+    private javax.swing.JMenu uPbLegacyDataMenu;
+    private javax.swing.JMenu uSeriesLegacyData;
     private javax.swing.JMenuItem ucsb_LASS_A_DataTableInCSV_menuItem;
     private javax.swing.JMenuItem uncertaintyEllipses_menuItem;
     private javax.swing.JButton updateData_button;
@@ -4327,6 +4382,7 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     private javax.swing.JMenuItem visitEarthTimeOrg;
     private javax.swing.JMenuItem visitGeoSamplesOrg;
     private javax.swing.JMenuItem visitGeochron;
+    private javax.swing.JMenuItem visitUseriesRocks;
     private javax.swing.JMenuItem writeCSVFileOfGenericUPbIsotopicLegacyDataSampleFieldNames_A;
     private javax.swing.JMenuItem writeCSVFileOfIDTIMSLegacyDataSampleFieldNames_MIT;
     private javax.swing.JMenuItem writeCSVFileOfLAICPMSLegacyDataSampleFieldNames_MC_USA;

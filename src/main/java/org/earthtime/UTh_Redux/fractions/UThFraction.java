@@ -71,6 +71,12 @@ public class UThFraction implements
     protected String fractionNotes;
     protected boolean rejected;
 
+    protected boolean filtered;
+
+    private int rgbColor;
+    private transient Path2D errorEllipsePath;
+    private transient double ellipseRho;
+
     public UThFraction() {
         this.fractionID = ReduxConstants.DEFAULT_OBJECT_NAME;
         this.grainID = fractionID;
@@ -94,6 +100,8 @@ public class UThFraction implements
         this.deleted = false;
         this.fractionNotes = "";
         this.rejected = false;
+
+        rgbColor = 0;
 
         initializeTraceElements();
     }
@@ -438,20 +446,20 @@ public class UThFraction implements
 
     @Override
     public boolean isStandard() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return false;
     }
 
     @Override
     public void setStandard(boolean standard) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
     /**
      * @return the secondaryStandard
      */
     @Override
     public boolean isSecondaryStandard() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return false;
     }
 
     /**
@@ -526,33 +534,33 @@ public class UThFraction implements
     }
 
     @Override
-    public Path2D getErrorEllipsePath() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void setErrorEllipsePath(Path2D errorEllipsePath) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void setEllipseRho(double ellipseRho) {
+        this.ellipseRho = ellipseRho;
     }
 
     @Override
     public double getEllipseRho() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return ellipseRho;
     }
 
     @Override
-    public void setEllipseRho(double ellipseRho) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void setErrorEllipsePath(Path2D errorEllipsePath) {
+        this.errorEllipsePath = errorEllipsePath;
     }
 
     @Override
-    public int getRgbColor() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Path2D getErrorEllipsePath() {
+        return errorEllipsePath;
     }
 
     @Override
     public void setRgbColor(int rgbColor) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.rgbColor = rgbColor;
+    }
+
+    @Override
+    public int getRgbColor() {
+        return rgbColor;
     }
 
     @Override
@@ -568,6 +576,16 @@ public class UThFraction implements
     @Override
     public Object readXMLObject(String filename, boolean doValidate) throws FileNotFoundException, ETException, FileNotFoundException, BadOrMissingXMLSchemaException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean isFiltered() {
+        return filtered;
+    }
+
+    @Override
+    public void setFiltered(boolean filtered) {
+        this.filtered = filtered;
     }
 
 }

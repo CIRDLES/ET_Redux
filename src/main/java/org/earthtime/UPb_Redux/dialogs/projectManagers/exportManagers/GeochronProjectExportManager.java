@@ -157,6 +157,8 @@ public final class GeochronProjectExportManager extends DialogEditor {
             }
         }
 
+        aliquotsScrollPane.setPreferredSize(new Dimension(1100, topMarginForSampleDetails + (row + 1) * 100));
+        aliquotsScrollPane.validate();
         aliquotsLayeredPane.setPreferredSize(new Dimension(1100, topMarginForSampleDetails + (row + 1) * 100));
         aliquotsLayeredPane.validate();
 

@@ -40,6 +40,7 @@ public class SampleDateInterpretationGUIOptions
     private Map<String, Map<String, String>> aliquotOptions;
     private Map<String, String> heatMapOptions;
     private Map<String, String> probabilityChartOptions;
+    private Map<String, String> uSeriesIsochronOptions;
 
     /**
      *
@@ -128,8 +129,21 @@ public class SampleDateInterpretationGUIOptions
 
         initializeHeatMapOptions();
         initializeProbabilityChartOptions();
+        initializeUSeriesIsochronOptions();
     }
 
+    private void initializeUSeriesIsochronOptions(){
+        uSeriesIsochronOptions = new HashMap<>();
+
+        uSeriesIsochronOptions.put("showEquiline", "true");
+        uSeriesIsochronOptions.put("showEllipseLabels", "false");
+        uSeriesIsochronOptions.put("showEllipseCenters", "true");
+        uSeriesIsochronOptions.put("showExcludedEllipses", "true");
+        uSeriesIsochronOptions.put("showRegressionLine", "true");
+        uSeriesIsochronOptions.put("showRegressionUnct", "false");
+        uSeriesIsochronOptions.put("showIsochrons", "true");
+    }
+    
     private void initializeHeatMapOptions() {
         //heatMapOptions; see HeatMap class
         heatMapOptions = new HashMap<>();
@@ -295,7 +309,7 @@ public class SampleDateInterpretationGUIOptions
      */
     public Map<String, Map<String, String>> getAliquotOptions() {
         if (aliquotOptions == null) {
-            setAliquotOptions(new HashMap<String, Map<String, String>>());
+            setAliquotOptions(new HashMap<>());
         }
 
         return aliquotOptions;
@@ -341,6 +355,23 @@ public class SampleDateInterpretationGUIOptions
      */
     public void setProbabilityChartOptions(Map<String, String> probabilityChartOptions) {
         this.probabilityChartOptions = probabilityChartOptions;
+    }
+
+    /**
+     * @return the uSeriesIsochronOptions
+     */
+    public Map<String, String> getuSeriesIsochronOptions() {
+        if (uSeriesIsochronOptions == null) {
+            initializeUSeriesIsochronOptions();
+        }
+        return uSeriesIsochronOptions;
+    }
+
+    /**
+     * @param uSeriesIsochronOptions the uSeriesIsochronOptions to set
+     */
+    public void setuSeriesIsochronOptions(Map<String, String> uSeriesIsochronOptions) {
+        this.uSeriesIsochronOptions = uSeriesIsochronOptions;
     }
 
 }

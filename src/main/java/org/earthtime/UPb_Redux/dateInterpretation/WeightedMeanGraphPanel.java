@@ -154,12 +154,12 @@ public class WeightedMeanGraphPanel extends JPanel
 
     private double mapX(double x, double minX, double rangeX, int widthG) {
 
-        return (((x - minX) / rangeX) * (double) widthG) + (double) getLeftMargin();
+        return (((x - minX) / rangeX) * widthG) + getLeftMargin();
     }
 
     private double mapY(double y, double maxY, double rangeY, int heightG) {
 
-        return (((maxY - y) / rangeY) * (double) heightG) + (double) getTopMargin();
+        return (((maxY - y) / rangeY) * heightG) + getTopMargin();
     }
 
     /**

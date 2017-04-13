@@ -18,6 +18,10 @@
  */
 package org.earthtime.dataDictionaries;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  *
  * @author James F. Bowring
@@ -40,6 +44,11 @@ public enum UThAnalysisMeasures {
     ar231Pa_235Ufc("ar231Pa_235Ufc"),
     ar230Th_232Thfc("ar230Th_232Thfc"),
     ar232Th_238Ufc("ar232Th_238Ufc"),
+    ar238U_232Thfc("ar238U_232Thfc"),
+    a230Thfc("a230Thfc"),
+    a226Rafc("a226Rafc"),
+    ar226Ra_BaConc("ar226Ra_BaConc"),
+    ar230Th_BaConc("ar230Th_BaConc"),
     ar234U_238Ufc("ar234U_238Ufc");
 
     private String name;
@@ -66,6 +75,10 @@ public enum UThAnalysisMeasures {
             retVal[i] = UThAnalysisMeasures.values()[i].getName();
         }
         return retVal;
+    }
+
+    public static List<String> getNamesList() {
+        return new ArrayList<>(Arrays.asList(getNames()));
     }
 
     /**

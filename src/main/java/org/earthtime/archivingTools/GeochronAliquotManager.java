@@ -422,8 +422,12 @@ public class GeochronAliquotManager extends JPanel {
 
             cumulativeWidth += 95;
 
-            tempProbabilitySVGforUploading = producePDFImageForUploading(sample, aliquot);
-
+            //TODO: Add context check for isotope type
+            try {
+                tempProbabilitySVGforUploading = producePDFImageForUploading(sample, aliquot);
+            } catch (Exception e) {
+            }
+            
             viewPDFButtons[i] = new ET_JButton("View");
             viewPDFButtons[i].setBounds(cumulativeWidth, TOP_MARGIN + 30 * (i + 1), 30, 25);
             viewPDFButtons[i].setFont(ReduxConstants.sansSerif_10_Bold);

@@ -796,7 +796,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
 
         // nov 2009 Note button for fractions
         tempJB = new EditFractionButton("Note", row, true);
-        tuneNotesButton(tempJB, ((UPbFraction) tempFrac).getFractionNotes());
+        tuneNotesButton(tempJB, tempFrac.getFractionNotes());
         tempJB.setForeground(Color.red);
         //tempJB.setToolTipText("Click to Annotate Fraction.");
         tempJB.setMargin(new Insets(0, 0, 0, 0));
@@ -1382,11 +1382,14 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
     }
 
     private void tuneNotesButton(JButton tempJB, String notes) {
+        
+        Font font = tempJB.getFont();
+        
         if (notes.length() == 0) {
-            tempJB.setFont(new Font("SansSerif", Font.PLAIN, 11));
+            tempJB.setFont(font.deriveFont(font.getStyle() & ~Font.BOLD));
 
         } else {
-            tempJB.setFont(new Font("SansSerif", Font.BOLD, 11));
+            tempJB.setFont(font.deriveFont(font.getStyle() | Font.BOLD));
         }
         tempJB.setToolTipText(notes);
     }
