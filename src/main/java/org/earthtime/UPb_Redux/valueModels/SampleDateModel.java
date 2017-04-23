@@ -164,7 +164,7 @@ public class SampleDateModel extends ValueModel implements
     private SampleAnalysisTypesEnum sampleAnalysisType;
     // Feb 2017
     private transient McLeanRegressionLineInterface mcLeanRegressionLine;
-    private String unitsForYears;
+    private static String unitsForYears= "Ma";
     private SortedSet<IsochronModel> isochronModels;
 
     /**
@@ -186,7 +186,7 @@ public class SampleDateModel extends ValueModel implements
         this.methodName = "";
         this.dateName = "";
 
-        this.unitsForYears = "Ma";
+        //this.unitsForYears = "Ma";
         this.isochronModels = new TreeSet<>();
     }
 

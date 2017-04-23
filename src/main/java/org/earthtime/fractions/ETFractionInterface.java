@@ -39,7 +39,6 @@ import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
  */
 public interface ETFractionInterface {
 
-    
     /**
      *
      * @return
@@ -51,7 +50,7 @@ public interface ETFractionInterface {
      * @param rejected
      */
     abstract void setFiltered(boolean rejected);
-    
+
     /**
      *
      * @return
@@ -821,7 +820,7 @@ public interface ETFractionInterface {
     /**
      *
      * @param nameOfValueModel the value of nameOfValueModel
-     * @return 
+     * @return
      */
     public default ValueModel retrieveValueModelByName(String nameOfValueModel) {
         ValueModel retVal = null;
@@ -874,4 +873,11 @@ public interface ETFractionInterface {
         return xyRho;
     }
 
+    public ValueModel getTracerRatioByName(String trName);
+
+    public ValueModel getPbBlankRatioByName(String trName);
+
+    public ValueModel getInitialPbModelRatioByName(String trName);
+    
+    
 }

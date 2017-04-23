@@ -828,6 +828,7 @@ public class UPbFraction extends Fraction implements
      * @param trName
      * @return
      */
+    @Override
     public ValueModel getTracerRatioByName(String trName) {
         return getTracer().getDatumByName(trName);
     }

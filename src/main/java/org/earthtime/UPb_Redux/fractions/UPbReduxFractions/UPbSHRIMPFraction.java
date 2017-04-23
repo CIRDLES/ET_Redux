@@ -1469,6 +1469,7 @@ public class UPbSHRIMPFraction extends Fraction implements
     /**
      * @return the tripoliFraction
      */
+    @Override
     public TripoliFraction getTripoliFraction() {
         return tripoliFraction;
     }
@@ -1476,7 +1477,18 @@ public class UPbSHRIMPFraction extends Fraction implements
     /**
      * @param tripoliFraction the tripoliFraction to set
      */
+    @Override
     public void setTripoliFraction(TripoliFraction tripoliFraction) {
         this.tripoliFraction = tripoliFraction;
+    }
+
+    @Override
+    public ValueModel getTracerRatioByName(String trName) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ValueModel getPbBlankRatioByName(String trName) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
