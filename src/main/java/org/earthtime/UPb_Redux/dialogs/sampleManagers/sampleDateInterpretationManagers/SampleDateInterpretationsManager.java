@@ -178,8 +178,10 @@ public class SampleDateInterpretationsManager extends DialogEditor
         initPlotAny2Panel();
 
         this.useriesIsochronPanel = useriesIsochronPanel;
-        initUseriesIsochronPanel();
-
+        try {
+            initUseriesIsochronPanel();
+        } catch (Exception e) {
+        }
         this.weightedMeanGraphPanel = weightedMeanGraphPanel;
         initWeightedMeanGraphPanel();
 
@@ -209,8 +211,10 @@ public class SampleDateInterpretationsManager extends DialogEditor
         // fire off a refresh to get things started
         ((PlottingDetailsDisplayInterface) concordiaGraphPanel).refreshPanel(true, false);
         ((PlottingDetailsDisplayInterface) plotAny2Panel).refreshPanel(true, false);
-        ((PlottingDetailsDisplayInterface) useriesIsochronPanel).refreshPanel(true, false);
-
+        try {
+            ((PlottingDetailsDisplayInterface) useriesIsochronPanel).refreshPanel(true, false);
+        } catch (Exception e) {
+        }
         // feb 2017
         // let's focus on the skin or at least the tab
         // SampleAnalysisTypesEnum.USERIES_CARB.equals(SampleAnalysisTypesEnum.valueOf(getSampleAnalysisType()))
@@ -459,8 +463,10 @@ public class SampleDateInterpretationsManager extends DialogEditor
         concordiaGraphPanel.repaint();
 
         plotAny2Panel.repaint();
-        useriesIsochronPanel.repaint();
-
+        try {
+            useriesIsochronPanel.repaint();
+        } catch (Exception e) {
+        }
         weightedMeanGraphPanel.repaint();
     }
 
@@ -821,9 +827,11 @@ public class SampleDateInterpretationsManager extends DialogEditor
         ((AliquotDetailsDisplayInterface) plotAny2Panel).//
                 setFilteredFractions(filteredFractions);
 
-        ((AliquotDetailsDisplayInterface) useriesIsochronPanel).//
-                setFilteredFractions(filteredFractions);
-
+        try {
+            ((AliquotDetailsDisplayInterface) useriesIsochronPanel).//
+                    setFilteredFractions(filteredFractions);
+        } catch (Exception e) {
+        }
         ((DateProbabilityDensityPanel) probabilityPanel).//
                 setSelectedFractions(filteredFractions);
 
@@ -892,9 +900,11 @@ public class SampleDateInterpretationsManager extends DialogEditor
         ((AbstractPlot) plotAny2Panel).setGraphWidth(adjustedWidth);
         ((AbstractPlot) plotAny2Panel).setGraphHeight(adjustedHeight);
 
-        ((AbstractPlot) useriesIsochronPanel).setGraphWidth(adjustedWidth);
-        ((AbstractPlot) useriesIsochronPanel).setGraphHeight(adjustedHeight);
-
+        try {
+            ((AbstractPlot) useriesIsochronPanel).setGraphWidth(adjustedWidth);
+            ((AbstractPlot) useriesIsochronPanel).setGraphHeight(adjustedHeight);
+        } catch (Exception e) {
+        }
         ((WeightedMeanGraphPanel) weightedMeanGraphPanel).setGraphWidth(adjustedWidth);
         ((WeightedMeanGraphPanel) weightedMeanGraphPanel).setGraphHeight(adjustedHeight);
 
@@ -2456,18 +2466,21 @@ private void graphPanelsTabbedPaneResized(java.awt.event.ComponentEvent evt) {//
             1, heightCP + 16, widthCP + leftMarginCP, 35);
 
     ((PlottingDetailsDisplayInterface) plotAny2Panel).refreshPanel(true, false);
+    
+    try {
+        ((AbstractPlot) useriesIsochronPanel).setGraphWidth(widthCP);
+        ((AbstractPlot) useriesIsochronPanel).setGraphHeight(heightCP);
 
-    ((AbstractPlot) useriesIsochronPanel).setGraphWidth(widthCP);
-    ((AbstractPlot) useriesIsochronPanel).setGraphHeight(heightCP);
+        useriesIsochronPanel.setBounds(
+                1, 1, widthCP + leftMarginCP, heightCP + 16);
 
-    useriesIsochronPanel.setBounds(
-            1, 1, widthCP + leftMarginCP, heightCP + 16);
+        uSeriesIsochronToolPanel.setBounds(
+                1, heightCP + 16, widthCP + leftMarginCP, 35);
 
-    uSeriesIsochronToolPanel.setBounds(
-            1, heightCP + 16, widthCP + leftMarginCP, 35);
-
-    ((PlottingDetailsDisplayInterface) useriesIsochronPanel).refreshPanel(true, false);
-
+        ((PlottingDetailsDisplayInterface) useriesIsochronPanel).refreshPanel(true, false);
+    } catch (Exception e) {
+    }
+    
     ((WeightedMeanGraphPanel) weightedMeanGraphPanel).setGraphWidth(adjustedWidth);
 
     ((WeightedMeanGraphPanel) weightedMeanGraphPanel).setGraphHeight(adjustedHeight);
@@ -2531,8 +2544,10 @@ private void dateTrees_tabsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FI
 
     plotAny2Panel.repaint();
 
-    useriesIsochronPanel.repaint();
-
+    try {
+        useriesIsochronPanel.repaint();
+    } catch (Exception e) {
+    }
     weightedMeanGraphPanel.repaint();
 
     probabilityPanel.repaint();

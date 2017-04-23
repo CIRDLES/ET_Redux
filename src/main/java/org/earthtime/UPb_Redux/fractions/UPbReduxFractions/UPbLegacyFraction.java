@@ -760,4 +760,14 @@ public class UPbLegacyFraction extends Fraction implements
     public void setTripoliFraction(TripoliFraction tripoliFraction) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    @Override
+    public ValueModel getTracerRatioByName(String trName) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ValueModel getPbBlankRatioByName(String trName) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }
