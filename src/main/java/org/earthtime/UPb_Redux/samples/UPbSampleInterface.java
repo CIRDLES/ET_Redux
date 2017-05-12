@@ -67,7 +67,6 @@ public interface UPbSampleInterface {
      * @param validateSampleName
      * @param doValidate
      * @return
-     * @throws org.earthtime.XMLExceptions.ETException ETException
      */
     public String processXMLFractionFile(File fractionFile, int aliquotNumber, Boolean validateSampleName, boolean doValidate) throws ETException, BadLabDataException;
 

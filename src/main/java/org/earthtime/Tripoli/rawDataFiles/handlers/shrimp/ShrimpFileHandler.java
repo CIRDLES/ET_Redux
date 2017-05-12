@@ -159,7 +159,7 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
         loadDataTask.firePropertyChange("progress", 10, 33);
 
         try {
-            List<org.cirdles.calamari.shrimp.ShrimpFraction> myShrimpFractions = null;
+            List<org.cirdles.calamari.shrimp.ShrimpFractionExpressionInterface> myShrimpFractions = null;
 
             PrawnFileHandler prawnFileHandler = new org.cirdles.calamari.core.PrawnFileHandler();
             myShrimpFractions = prawnFileHandler.extractShrimpFractionsFromPrawnFile(//"ILC-III-9peak-bkg3.xml", true, false);   //
@@ -177,7 +177,7 @@ public class ShrimpFileHandler extends AbstractRawDataFileHandler {
 
                 loadDataTask.firePropertyChange("progress", 33, 33 + ((67 * f) / myShrimpFractions.size()));
 
-                TripoliFraction tripoliFraction = processRunFraction(myShrimpFractions.get(f));
+                TripoliFraction tripoliFraction = processRunFraction((org.cirdles.calamari.shrimp.ShrimpFraction)myShrimpFractions.get(f));
 
                 // determine if standard reference material
                 myTripoliFractions.add(tripoliFraction);
