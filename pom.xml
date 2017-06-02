@@ -244,7 +244,7 @@
             <version>master-SNAPSHOT</version>
         </dependency>        
         <dependency>
-            <groupId>com.github.bowring</groupId>
+            <groupId>com.github.cirdles</groupId>
             <artifactId>Calamari</artifactId>
             <version>-SNAPSHOT</version>
         </dependency>
