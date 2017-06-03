@@ -44,14 +44,14 @@ public class ValueModelSliderLabel extends JPanel implements Serializable {
 
     // Instance Variables
     private String sampleProperty;
-    private PropertyChangeSupport propertySupport;
+    private final PropertyChangeSupport propertySupport;
 
-    private String text;
-    private int boxWidth = 107;
-    private int boxHeight = 15;
-    private String fontName;
-    private String fontSize;
-    private Font textFont;
+    private final String text;
+    private final int boxWidth = 107;
+    private final int boxHeight = 15;
+    private final String fontName;
+    private final String fontSize;
+    private final Font textFont;
 
     /**
      * 
@@ -136,6 +136,7 @@ public class ValueModelSliderLabel extends JPanel implements Serializable {
      * 
      * @param listener
      */
+    @Override
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         propertySupport.addPropertyChangeListener(listener);
     }
@@ -144,6 +145,7 @@ public class ValueModelSliderLabel extends JPanel implements Serializable {
      * 
      * @param listener
      */
+    @Override
     public void removePropertyChangeListener(PropertyChangeListener listener) {
         propertySupport.removePropertyChangeListener(listener);
     }

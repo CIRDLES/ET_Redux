@@ -53,10 +53,13 @@ public final class TopsoilEvolutionPlot {
 
     public TopsoilEvolutionPlot() {
 
-        myChart = TopsoilPlotType.BASE_PLOT.getPlot();//   .EVOLUTION_PLOT.getPlot();
-        myChart.getProperties().put("Evolution", "true");
-        myChart.getProperties().put("Ellipses", "true");
-        myChart.getProperties().put("Isotope", "UTh");
+        myChart = TopsoilPlotType.BASE_PLOT.getPlot();
+        myChart.getProperties().put("Title", "Evolution Plot");
+        myChart.getProperties().put("X Axis", "[230Th/238U]");
+        myChart.getProperties().put("Y Axis", "[234U/238U]");
+        myChart.getProperties().put("Evolution", true);
+        myChart.getProperties().put("Ellipses", true);
+        myChart.getProperties().put("Isotope", "Uranium Thorium");
 
         topsoilEvolutionChartDialog = new EvolutionChartDialog(null, true);
         topsoilEvolutionChartDialog.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
@@ -108,7 +111,6 @@ public final class TopsoilEvolutionPlot {
         }
 
         myChart.setData(myData);
-        myChart.setProperties(FXCollections.observableMap(new BasePlotDefaultProperties()));//                            EvolutionPlotDefaultProperties()));
     }
 
     /**

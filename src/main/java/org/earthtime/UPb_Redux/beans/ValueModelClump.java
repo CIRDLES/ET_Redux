@@ -57,7 +57,6 @@ public class ValueModelClump extends JLayeredPane
     private final static int sliderVerticalGap = 1;
     private final static int clumpWidth = 325;
     // instance variables
-//    private String[][] clumpSpecs;
     private JPanel[] uncertaintySliders;
 
     /**
@@ -207,6 +206,7 @@ public class ValueModelClump extends JLayeredPane
      * 
      * @param e
      */
+    @Override
     public void mouseClicked ( MouseEvent e ) {
         throw new UnsupportedOperationException( "Not supported yet." );
     }
@@ -215,6 +215,7 @@ public class ValueModelClump extends JLayeredPane
      * 
      * @param e
      */
+    @Override
     public void mousePressed ( MouseEvent e ) {
         throw new UnsupportedOperationException( "Not supported yet." );
     }
@@ -223,6 +224,7 @@ public class ValueModelClump extends JLayeredPane
      * 
      * @param e
      */
+    @Override
     public void mouseReleased ( MouseEvent e ) {
         throw new UnsupportedOperationException( "Not supported yet." );
     }
@@ -231,6 +233,7 @@ public class ValueModelClump extends JLayeredPane
      * 
      * @param e
      */
+    @Override
     public void mouseEntered ( MouseEvent e ) {
         throw new UnsupportedOperationException( "Not supported yet." );
     }
@@ -239,6 +242,7 @@ public class ValueModelClump extends JLayeredPane
      * 
      * @param e
      */
+    @Override
     public void mouseExited ( MouseEvent e ) {
         throw new UnsupportedOperationException( "Not supported yet." );
     }
@@ -247,6 +251,7 @@ public class ValueModelClump extends JLayeredPane
      * 
      * @param e
      */
+    @Override
     public void mouseDragged ( MouseEvent e ) {
         throw new UnsupportedOperationException( "Not supported yet." );
     }
@@ -255,6 +260,7 @@ public class ValueModelClump extends JLayeredPane
      * 
      * @param e
      */
+    @Override
     public void mouseMoved ( MouseEvent e ) {
         throw new UnsupportedOperationException( "Not supported yet." );
     }

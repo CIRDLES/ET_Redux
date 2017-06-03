@@ -46,7 +46,7 @@ public class ValueModelUncertSlider extends JPanel
         Serializable {
 
     /**
-     * 
+     *
      */
     public static final String UNCERTAINTY_PROPERTY = "uncertainty";
     private BigDecimal uncertaintyProperty;
@@ -69,7 +69,7 @@ public class ValueModelUncertSlider extends JPanel
     private JPanel[] sisterSliders;
 
     /**
-     * 
+     *
      * @param name
      * @param covaryingTerms
      * @param sisterSliders
@@ -118,9 +118,10 @@ public class ValueModelUncertSlider extends JPanel
         addMouseMotionListener(this);
         setBounds(leftX, topY, width, height);
 
-        valueModelSliderBox = //
+        valueModelSliderBox
+                = //
                 new ValueModelSliderBox(//
-                width, height - 3, getCurrentUncertaintyShowValue());
+                        width, height - 3, getCurrentUncertaintyShowValue());
 
         setName(name);
         this.covaryingTerms = covaryingTerms;
@@ -129,7 +130,8 @@ public class ValueModelUncertSlider extends JPanel
         lastX = 0;
         nextX = 0;
 
-        pixelSlideRange = //
+        pixelSlideRange
+                = //
                 new BigDecimal(valueModel.getOneSigma().doubleValue() / ((width - valueModelSliderBox.getWidth()) / 2));
 
     }
@@ -146,7 +148,7 @@ public class ValueModelUncertSlider extends JPanel
     }
 
     /**
-     * 
+     *
      * @param g
      */
     @Override
@@ -157,7 +159,7 @@ public class ValueModelUncertSlider extends JPanel
     }
 
     /**
-     * 
+     *
      * @param g2d
      */
     public void paint(Graphics2D g2d) {
@@ -174,7 +176,6 @@ public class ValueModelUncertSlider extends JPanel
             g2d.setColor(Color.red);
             g2d.drawLine((width / 2), 0, (width / 2), height);
 
-
             ((ValueModelSliderBox) valueModelSliderBox).//
                     setValueString(getCurrentUncertaintyShowValue());
 
@@ -190,14 +191,14 @@ public class ValueModelUncertSlider extends JPanel
     }
 
     /**
-     * 
+     *
      * @param evt
      * @return
      */
     public boolean mouseInsideValueModelSliderBox(MouseEvent evt) {
         // this is not very sensitive
-        if ((evt.getX() >= valueModelSliderBox.getX()) &&
-                (evt.getX() <= (valueModelSliderBox.getX() + valueModelSliderBox.getWidth()))) {
+        if ((evt.getX() >= valueModelSliderBox.getX())
+                && (evt.getX() <= (valueModelSliderBox.getX() + valueModelSliderBox.getWidth()))) {
             return true;
         } else {
             return false;
@@ -205,7 +206,7 @@ public class ValueModelUncertSlider extends JPanel
     }
 
     /**
-     * 
+     *
      * @return
      */
     public BigDecimal getUncertaintyProperty() {
@@ -213,7 +214,7 @@ public class ValueModelUncertSlider extends JPanel
     }
 
     /**
-     * 
+     *
      * @param doFirePropertyChange
      */
     public void setUncertaintyProperty(Boolean doFirePropertyChange) {
@@ -226,7 +227,7 @@ public class ValueModelUncertSlider extends JPanel
 
         BigDecimal change;
         try {
-            change =getCurrentUncertainty().//
+            change = getCurrentUncertainty().//
                     subtract(valueModelCopy.getOneSigma()).//
                     divide(valueModelCopy.getOneSigma(), ReduxConstants.mathContext15);
         } catch (Exception e) {
@@ -235,14 +236,13 @@ public class ValueModelUncertSlider extends JPanel
 
         setToolTipText(//
                 ValueModel.formatBigDecimalForPublicationSigDigMode(//
-                getCurrentUncertainty(), sigDigits) //
+                        getCurrentUncertainty(), sigDigits) //
                 + " (current) = " //
                 + ValueModel.formatBigDecimalForPublicationSigDigMode(//
-                valueModelCopy.getOneSigma(), sigDigits) //
+                        valueModelCopy.getOneSigma(), sigDigits) //
                 + " (1-sigma) + " //
                 + change.setScale(1, RoundingMode.HALF_UP).toPlainString()//
                 + " sigma");
-
 
         if (doFirePropertyChange) {
             propertySupport.firePropertyChange(UNCERTAINTY_PROPERTY, oldValue, uncertaintyProperty);
@@ -250,7 +250,7 @@ public class ValueModelUncertSlider extends JPanel
     }
 
     /**
-     * 
+     *
      * @param listener
      */
     @Override
@@ -259,7 +259,7 @@ public class ValueModelUncertSlider extends JPanel
     }
 
     /**
-     * 
+     *
      * @param listener
      */
     @Override
@@ -269,16 +269,17 @@ public class ValueModelUncertSlider extends JPanel
 
     /**
      * single click outside valuebox will reset valuebox to original value
+     *
      * @param e
      */
     public void mouseClicked(MouseEvent e) {
         // if (!mouseInsideValueModelSliderBox) {
         resetSliderBox();
-    // }
+        // }
     }
 
     /**
-     * 
+     *
      */
     public void resetSliderBox() {
         // here avoid use of setter to prevent reset of true zero
@@ -286,12 +287,12 @@ public class ValueModelUncertSlider extends JPanel
         setUncertaintyProperty(true);
         ((ValueModelSliderBox) valueModelSliderBox).//
                 centerSliderBox(ValueModel.//
-                formatBigDecimalForPublicationSigDigMode(getCurrentUncertainty(), sigDigits));
+                        formatBigDecimalForPublicationSigDigMode(getCurrentUncertainty(), sigDigits));
         repaint();
     }
 
     /**
-     * 
+     *
      * @param e
      */
     public void mousePressed(MouseEvent e) {
@@ -300,7 +301,7 @@ public class ValueModelUncertSlider extends JPanel
     }
 
     /**
-     * 
+     *
      * @param e
      */
     public void mouseReleased(MouseEvent e) {
@@ -308,12 +309,13 @@ public class ValueModelUncertSlider extends JPanel
         if (mouseInsideValueModelSliderBox) {
             // recalculate fraction - fire property
             setUncertaintyProperty(true);
-            mouseInsideValueModelSliderBox = false;
+            // june 2017 workaround for broken java 1.8
+            ////           mouseInsideValueModelSliderBox = false;
         }
     }
 
     /**
-     * 
+     *
      * @param e
      */
     public void mouseEntered(MouseEvent e) {
@@ -321,7 +323,7 @@ public class ValueModelUncertSlider extends JPanel
     }
 
     /**
-     * 
+     *
      * @param e
      */
     public void mouseExited(MouseEvent e) {
@@ -329,12 +331,13 @@ public class ValueModelUncertSlider extends JPanel
         if (mouseInsideValueModelSliderBox) {
             // recalculate fraction - fire property
             setUncertaintyProperty(true);
-            mouseInsideValueModelSliderBox = false;
+            // june 2017 workaround for broken java 1.8
+            //           mouseInsideValueModelSliderBox = false;
         }
     }
 
     /**
-     * 
+     *
      * @param e
      */
     public void mouseDragged(MouseEvent e) {
@@ -343,8 +346,8 @@ public class ValueModelUncertSlider extends JPanel
         if (mouseInsideValueModelSliderBox) {
             // check for moving past limits of valueModelSlider
             int pos = valueModelSliderBox.getX() + (nextX - lastX);
-            if ((pos + valueModelSliderBox.getWidth()) <= (getWidth() + 1) &&
-                    (pos >= -1)) {
+            if ((pos + valueModelSliderBox.getWidth()) <= (getWidth() + 1)
+                    && (pos >= -1)) {
                 valueModelSliderBox.setLocation(//
                         pos,
                         valueModelSliderBox.getY());
@@ -360,7 +363,7 @@ public class ValueModelUncertSlider extends JPanel
 
     // used for moving co-varying uncertainty sliders
     /**
-     * 
+     *
      * @param oneSigmaAbs
      */
     public void forceCurrentUncertainty(BigDecimal oneSigmaAbs) {
@@ -376,7 +379,7 @@ public class ValueModelUncertSlider extends JPanel
     }
 
     /**
-     * 
+     *
      * @param e
      */
     public void mouseMoved(MouseEvent e) {
@@ -395,10 +398,11 @@ public class ValueModelUncertSlider extends JPanel
      */
     public void setCurrentUncertainty(BigDecimal currentUncertainty) {
         // prevent division by zero with sliders
-        this.currentUncertainty = //
+        this.currentUncertainty
+                = //
                 (BigDecimal) (currentUncertainty.compareTo(BigDecimal.ZERO) <= 0 //
                 ? new BigDecimal(0.000001) : currentUncertainty);
-    //  this.currentUncertainty = currentUncertainty;
+        //  this.currentUncertainty = currentUncertainty;
     }
 
     /**
