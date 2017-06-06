@@ -95,6 +95,7 @@ import static org.earthtime.archivingTools.GeoSamplesWebServices.isSampleRegiste
 import org.earthtime.archivingTools.GeochronUploadImagesHelper;
 import org.earthtime.archivingTools.GeochronUploaderUtility;
 import org.earthtime.archivingTools.URIHelper;
+import org.earthtime.beans.ET_JButton;
 import org.earthtime.dataDictionaries.AnalysisImageTypes;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.dataDictionaries.DataDictionary;
@@ -1228,11 +1229,11 @@ public class AliquotEditorDialog extends DialogEditor {
         checkMarkForValidAliquotIGSN_label = new javax.swing.JLabel();
         xMarkForValidAliquotIGSN_label = new javax.swing.JLabel();
         buttonsPanel = new javax.swing.JPanel();
-        saveAndClose_button = new javax.swing.JButton();
-        save_button = new javax.swing.JButton();
-        restore_button = new javax.swing.JButton();
-        close_button = new javax.swing.JButton();
-        exportXMLAliquot_button = new javax.swing.JButton();
+        saveAndClose_button = new ET_JButton();
+        save_button = new ET_JButton();
+        restore_button = new ET_JButton();
+        close_button = new ET_JButton();
+        exportXMLAliquot_button = new ET_JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -1730,7 +1731,7 @@ public class AliquotEditorDialog extends DialogEditor {
                 saveAndClose_buttonActionPerformed(evt);
             }
         });
-        buttonsPanel.add(saveAndClose_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(19, 2, 129, 28));
+        buttonsPanel.add(saveAndClose_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 2, 129, 25));
 
         save_button.setForeground(new java.awt.Color(255, 51, 0));
         save_button.setText("Save");
@@ -1741,7 +1742,7 @@ public class AliquotEditorDialog extends DialogEditor {
                 save_buttonActionPerformed(evt);
             }
         });
-        buttonsPanel.add(save_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(154, 2, 90, 28));
+        buttonsPanel.add(save_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 2, 90, 25));
 
         restore_button.setForeground(new java.awt.Color(255, 51, 0));
         restore_button.setText("Revert to Saved");
@@ -1752,7 +1753,7 @@ public class AliquotEditorDialog extends DialogEditor {
                 restore_buttonActionPerformed(evt);
             }
         });
-        buttonsPanel.add(restore_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(346, 2, 181, 28));
+        buttonsPanel.add(restore_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 2, 181, 25));
 
         close_button.setForeground(new java.awt.Color(255, 51, 0));
         close_button.setText("Close");
@@ -1763,7 +1764,7 @@ public class AliquotEditorDialog extends DialogEditor {
                 close_buttonActionPerformed(evt);
             }
         });
-        buttonsPanel.add(close_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 2, 90, 28));
+        buttonsPanel.add(close_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 2, 90, 25));
 
         exportXMLAliquot_button.setForeground(new java.awt.Color(255, 51, 0));
         exportXMLAliquot_button.setText("Save and Export Aliquot as local XML file");
@@ -1774,7 +1775,7 @@ public class AliquotEditorDialog extends DialogEditor {
                 exportXMLAliquot_buttonActionPerformed(evt);
             }
         });
-        buttonsPanel.add(exportXMLAliquot_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(533, 2, 338, 28));
+        buttonsPanel.add(exportXMLAliquot_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 2, 338, 25));
 
         getContentPane().add(buttonsPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 700, -1, -1));
 

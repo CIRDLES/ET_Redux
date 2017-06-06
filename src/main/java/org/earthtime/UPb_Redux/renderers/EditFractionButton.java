@@ -22,13 +22,13 @@ package org.earthtime.UPb_Redux.renderers;
 
 import java.awt.Font;
 import java.awt.Insets;
-import javax.swing.JButton;
+import org.earthtime.beans.ET_JButton;
 
 /**
  *
  * @author James F. Bowring
  */
-public class EditFractionButton extends JButton {
+public class EditFractionButton extends ET_JButton {
 
     private int myRow = 0;
 

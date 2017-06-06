@@ -25,20 +25,29 @@ import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.DirectoryIteratorException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import org.earthtime.UPb_Redux.aliquots.UPbReduxAliquot;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.user.ReduxPersistentState;
 import org.earthtime.UPb_Redux.user.ReduxPreferences;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
+import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.archivingTools.GeoPassIDValidator;
 import org.earthtime.archivingTools.GeochronRetrievalUtility;
+import org.earthtime.beans.ET_JButton;
 import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.samples.SampleInterface;
+import org.earthtime.utilities.FileHelper;
+import org.earthtime.xmlUtilities.XMLSerializationI;
 
 /**
  *
@@ -212,6 +221,58 @@ public class SampleCompilationManagerDialog extends DialogEditor {
                     }
                     break;
                 case FOLDER_LOCAL:
+                    // finally added june 2017
+                    String dialogTitle = "Select a Folder of Aliquot '.xml' files for import:";
+
+                    File aliquotXmlFolder = FileHelper.AllPlatformGetFolder(dialogTitle, null);
+                    Path dir = aliquotXmlFolder.toPath();
+
+                    try (DirectoryStream<Path> stream
+                            = Files.newDirectoryStream(dir, "*.{xml,XML}")) {
+                        for (Path entry : stream) {
+                            System.out.println(entry.getFileName());
+
+                            AliquotInterface myAliquotFile = new UPbReduxAliquot();
+                            try {
+                                myAliquotFile
+                                        = (AliquotInterface) ((XMLSerializationI) myAliquotFile).readXMLObject(
+                                                entry.toAbsolutePath().toString(), true);
+
+                                System.out.println(myAliquotFile.getAliquotName());
+
+                                if (myAliquotFile.usesIDTIMS() || myAliquotFile.usesMCIPMS()) {
+                                    // xml is added here for consistency and because we test whether aliquot source file is xml ... probably
+                                    // should get rid of xml test and just make it aliquot non-zero length string
+                                    try {
+                                        SampleInterface.importAliquotIntoSample(//
+                                                mySample, myAliquotFile, entry.toAbsolutePath().toString());
+                                        success = "Found";
+                                        System.out.println("got one " + entry.toAbsolutePath().toString());
+                                    } catch (IOException | ETException iOException) {
+                                        System.out.println("BAD one " + myAliquotFile.getAnalystName());
+                                    }
+                                } else {
+                                    throw new ETException("This sample is not TIMS or LAICPMS but is " + myAliquotFile.getAliquotInstrumentalMethod());
+                                }
+                            } catch (FileNotFoundException | ETException | BadOrMissingXMLSchemaException fileNotFoundException) {
+                                System.out.println("NOT one " + myAliquotFile.getAnalystName());
+                            }
+                        }
+
+                        if (success.contains("Found")) {
+                            mySample.setSampleName(sampleName_text.getText());
+
+                            mySample.setSampleAnnotations(sampleNotes_textArea.getText());
+
+                            setInitialized(true);
+                        }
+
+                    } catch (IOException x) {
+                        // IOException can never be thrown by the iteration.
+                        // In this snippet, it can // only be thrown by newDirectoryStream.
+                        System.err.println(x);
+                    }
+
                     break;
                 case ONE_OR_MORE_GEOCHRON:
                     success = GeochronRetrievalUtility.importOneOrMoreGeochronAliquotXMLDataFiles(//
@@ -219,9 +280,9 @@ public class SampleCompilationManagerDialog extends DialogEditor {
                             reduxPreferences.getGeochronUserName(),//
                             reduxPreferences.getGeochronPassWord());
                     if (success.contains("Found")) {
-                        getMySample().setSampleName(sampleName_text.getText());
+                        mySample.setSampleName(sampleName_text.getText());
 
-                        getMySample().setSampleAnnotations(sampleNotes_textArea.getText());
+                        mySample.setSampleAnnotations(sampleNotes_textArea.getText());
 
                         setInitialized(true);
                     }
@@ -293,16 +354,17 @@ public class SampleCompilationManagerDialog extends DialogEditor {
         sourceSingle_jRadioButton = new javax.swing.JRadioButton();
         sourceGeochron_jRadioButton = new javax.swing.JRadioButton();
         geochronUserName_text = new javax.swing.JTextField();
-        validateGeochronCredentials_button = new javax.swing.JButton();
+        validateGeochronCredentials_button = new ET_JButton();
         geochronPassword_passwordField = new javax.swing.JPasswordField();
-        visitGeochron_button = new javax.swing.JButton();
+        visitGeochron_button = new ET_JButton();
         userNameGeochron_label = new javax.swing.JLabel();
         passwordGeochron_label = new javax.swing.JLabel();
         credentialsValidReport_label = new javax.swing.JLabel();
+        jSeparator1 = new javax.swing.JSeparator();
         sampleName_label1 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
-        cancel_button = new javax.swing.JButton();
-        saveAndCloseAndProceedToAliquotChooser_button = new javax.swing.JButton();
+        cancel_button = new ET_JButton();
+        saveAndCloseAndProceedToAliquotChooser_button = new ET_JButton();
         sampleType_panel = new javax.swing.JPanel();
         sampleType_label = new javax.swing.JLabel();
 
@@ -317,13 +379,13 @@ public class SampleCompilationManagerDialog extends DialogEditor {
         sampleName_label.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         sampleName_label.setText("Lab's Name for this Compilation Sample:");
         jPanel1.add(sampleName_label);
-        sampleName_label.setBounds(8, 63, 224, 14);
+        sampleName_label.setBounds(10, 80, 224, 25);
 
         sampleName_text.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         sampleName_text.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         sampleName_text.setText("Sample Name");
         jPanel1.add(sampleName_text);
-        sampleName_text.setBounds(238, 56, 218, 25);
+        sampleName_text.setBounds(240, 80, 230, 25);
 
         sampleReduxFile_label.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         sampleReduxFile_label.setText("File path for this Sample:");
@@ -349,19 +411,20 @@ public class SampleCompilationManagerDialog extends DialogEditor {
 
         jPanel3.setBackground(new java.awt.Color(255, 255, 224));
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Source of Aliquots", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Lucida Grande", 0, 13), new java.awt.Color(204, 0, 0))); // NOI18N
+        jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         sourceFolder_jRadioButton.setBackground(new java.awt.Color(255, 255, 224));
         sourceOfFractionsOptions_buttonGroup.add(sourceFolder_jRadioButton);
         sourceFolder_jRadioButton.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        sourceFolder_jRadioButton.setText("<html>Local Aliquots folder</html>");
+        sourceFolder_jRadioButton.setText("<html>Local Aliquots folder <b><font color=\"red\"> New</b></html>");
         sourceFolder_jRadioButton.setActionCommand(fractionSource.FOLDER_LOCAL.toString());
         sourceFolder_jRadioButton.setContentAreaFilled(false);
-        sourceFolder_jRadioButton.setEnabled(false);
         sourceFolder_jRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 sourceFolder_jRadioButtonActionPerformed(evt);
             }
         });
+        jPanel3.add(sourceFolder_jRadioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(12, 42, 189, -1));
 
         sourceOfFractionsOptions_buttonGroup.add(sourceSingle_jRadioButton);
         sourceSingle_jRadioButton.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
@@ -374,6 +437,7 @@ public class SampleCompilationManagerDialog extends DialogEditor {
                 sourceSingle_jRadioButtonActionPerformed(evt);
             }
         });
+        jPanel3.add(sourceSingle_jRadioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(12, 18, 189, -1));
 
         sourceOfFractionsOptions_buttonGroup.add(sourceGeochron_jRadioButton);
         sourceGeochron_jRadioButton.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
@@ -385,9 +449,11 @@ public class SampleCompilationManagerDialog extends DialogEditor {
                 sourceGeochron_jRadioButtonActionPerformed(evt);
             }
         });
+        jPanel3.add(sourceGeochron_jRadioButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(12, 80, 401, -1));
 
         geochronUserName_text.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         geochronUserName_text.setText("username");
+        jPanel3.add(geochronUserName_text, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 110, 159, 25));
 
         validateGeochronCredentials_button.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         validateGeochronCredentials_button.setForeground(new java.awt.Color(255, 51, 51));
@@ -398,9 +464,11 @@ public class SampleCompilationManagerDialog extends DialogEditor {
                 validateGeochronCredentials_buttonActionPerformed(evt);
             }
         });
+        jPanel3.add(validateGeochronCredentials_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 140, 165, 25));
 
         geochronPassword_passwordField.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         geochronPassword_passwordField.setText("############");
+        jPanel3.add(geochronPassword_passwordField, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 140, 159, 25));
 
         visitGeochron_button.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         visitGeochron_button.setText("Visit Geochron");
@@ -409,12 +477,15 @@ public class SampleCompilationManagerDialog extends DialogEditor {
                 visitGeochron_buttonActionPerformed(evt);
             }
         });
+        jPanel3.add(visitGeochron_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 170, 325, 25));
 
         userNameGeochron_label.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         userNameGeochron_label.setText("user name:");
+        jPanel3.add(userNameGeochron_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 110, -1, 25));
 
         passwordGeochron_label.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         passwordGeochron_label.setText("password:");
+        jPanel3.add(passwordGeochron_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 140, -1, 25));
 
         credentialsValidReport_label.setBackground(new java.awt.Color(255, 255, 255));
         credentialsValidReport_label.setFont(new java.awt.Font("Tahoma", 3, 12)); // NOI18N
@@ -423,71 +494,16 @@ public class SampleCompilationManagerDialog extends DialogEditor {
         credentialsValidReport_label.setText("credentials are VALID");
         credentialsValidReport_label.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         credentialsValidReport_label.setOpaque(true);
-
-        org.jdesktop.layout.GroupLayout jPanel3Layout = new org.jdesktop.layout.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel3Layout.createSequentialGroup()
-                .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jPanel3Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                            .add(sourceGeochron_jRadioButton)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel3Layout.createSequentialGroup()
-                                .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                    .add(org.jdesktop.layout.GroupLayout.TRAILING, userNameGeochron_label)
-                                    .add(org.jdesktop.layout.GroupLayout.TRAILING, passwordGeochron_label))
-                                .add(2, 2, 2)
-                                .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                    .add(geochronPassword_passwordField)
-                                    .add(geochronUserName_text))
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                                    .add(credentialsValidReport_label, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 217, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                    .add(validateGeochronCredentials_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 226, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                            .add(jPanel3Layout.createSequentialGroup()
-                                .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                    .add(sourceSingle_jRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                    .add(sourceFolder_jRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                                .add(259, 259, 259))))
-                    .add(jPanel3Layout.createSequentialGroup()
-                        .add(102, 102, 102)
-                        .add(visitGeochron_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 208, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel3Layout.createSequentialGroup()
-                .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jPanel3Layout.createSequentialGroup()
-                        .add(sourceSingle_jRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(5, 5, 5)
-                        .add(sourceFolder_jRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(jPanel3Layout.createSequentialGroup()
-                        .add(54, 54, 54)
-                        .add(sourceGeochron_jRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(userNameGeochron_label)
-                    .add(geochronUserName_text, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(credentialsValidReport_label))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(validateGeochronCredentials_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(passwordGeochron_label)
-                    .add(geochronPassword_passwordField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .add(visitGeochron_button))
-        );
+        jPanel3.add(credentialsValidReport_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 110, 165, 25));
+        jPanel3.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 66, 400, -1));
 
         jPanel1.add(jPanel3);
-        jPanel3.setBounds(31, 109, 440, 208);
+        jPanel3.setBounds(31, 109, 440, 201);
 
-        sampleName_label1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        sampleName_label1.setText("<html>Note: Compilation mode provides a mechanism to load in various <br>  aliquots from the same or different Samples and to view and save them <br>as a single ET_Redux sample\n file.</html>");
+        sampleName_label1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        sampleName_label1.setText("<html>Note: Compilation mode provides a mechanism to load in various aliquots - that have been exported by ET_Redux into '.xml' files - from the same or different Samples and to view and save them as a single ET_Redux compiled sample\n file.</html>");
         jPanel1.add(sampleName_label1);
-        sampleName_label1.setBounds(8, 8, 448, 38);
+        sampleName_label1.setBounds(8, 8, 470, 60);
 
         jPanel2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
 
@@ -525,8 +541,8 @@ public class SampleCompilationManagerDialog extends DialogEditor {
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                .add(saveAndCloseAndProceedToAliquotChooser_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 32, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(cancel_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 32, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(saveAndCloseAndProceedToAliquotChooser_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(cancel_button, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 25, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
 
         sampleType_panel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -631,6 +647,7 @@ public class SampleCompilationManagerDialog extends DialogEditor {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JLabel passwordGeochron_label;
     private javax.swing.JLabel sampleName_label;
     private javax.swing.JLabel sampleName_label1;

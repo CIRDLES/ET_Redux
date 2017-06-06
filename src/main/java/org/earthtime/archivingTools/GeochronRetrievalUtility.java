@@ -44,7 +44,6 @@ public class GeochronRetrievalUtility {
      * @throws org.earthtime.UPb_Redux.exceptions.BadLabDataException
      * @throws java.io.IOException
      * @throws org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException
-     * @throws org.earthtime.XMLExceptions.ETException
      */
     public static String importOneOrMoreGeochronAliquotXMLDataFiles(SampleInterface sample, String username, String password)
             throws FileNotFoundException,
@@ -81,7 +80,7 @@ public class GeochronRetrievalUtility {
         AliquotInterface myDownAliquot = new UPbReduxAliquot();
 
         String downloadURL
-                = //
+                = 
                 "http://www.geochron.org/getxml.php?igsn="//
                 + aliquotIGSN.toUpperCase().trim()//
                 + "&username="//
