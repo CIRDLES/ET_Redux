@@ -110,6 +110,7 @@ public final class ReduxLabData implements Serializable {
     // dec 2014
     private AbstractRatiosDataModel defaultLAICPMSPrimaryMineralStandardModel;
     private AbstractRatiosDataModel defaultRareEarthElementModel;
+
     private int defaultLeftShadeCountForLAICPMSAquisitions;
     private int defaultLeftShadeCountForSHRIMPAquisitions;
     // nov 2015
@@ -1377,6 +1378,7 @@ public final class ReduxLabData implements Serializable {
         if (defaultDetritalUraniumAndThoriumModel.equals(getNoneDetritalUraniumAndThoriumModel())) {
             defaultDetritalUraniumAndThoriumModel = getFirstDetritalUraniumAndThoriumModel();
         }
+
         return defaultDetritalUraniumAndThoriumModel;
     }
 

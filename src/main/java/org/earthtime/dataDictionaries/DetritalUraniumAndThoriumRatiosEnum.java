@@ -30,15 +30,15 @@ public enum DetritalUraniumAndThoriumRatiosEnum {
     /**
      * 
      */
-    ar230Th_238Ufc( "ar230Th_238Ufc" ),
+    ar230Th_238Ufc( "ar230Th_238U" ),
     /**
      * 
      */
-    ar232Th_238Ufc( "ar232Th_238Ufc" ),
+    ar232Th_238Ufc( "ar232Th_238U" ),
     /**
      * 
      */
-    ar234U_238Ufc( "ar234U_238Ufc" );
+    ar234U_238Ufc( "ar234U_238U" );
     private String name;
 
     private DetritalUraniumAndThoriumRatiosEnum ( String name ) {

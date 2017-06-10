@@ -895,7 +895,6 @@ public abstract class AbstractRatiosDataModel implements
 
         ValueModel coeffModel
                 = new ValueModel(//
-                        //
                         coeffName,
                         myRhoValue,
                         "NONE",

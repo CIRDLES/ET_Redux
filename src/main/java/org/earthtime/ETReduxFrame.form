@@ -453,78 +453,108 @@
             <EventHandler event="menuDeselected" listener="javax.swing.event.MenuListener" parameters="javax.swing.event.MenuEvent" handler="labDataMenuMenuDeselected"/>
           </Events>
           <SubComponents>
-            <MenuItem class="javax.swing.JMenuItem" name="editLabTracers">
+            <Menu class="javax.swing.JMenu" name="labDataUPb">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Tracer Models"/>
+                <Property name="text" type="java.lang.String" value="UPb"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editLabTracersActionPerformed"/>
-              </Events>
-            </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="editLabFractionationModels">
+              <SubComponents>
+                <MenuItem class="javax.swing.JMenuItem" name="editLabTracers">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Tracer Models"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editLabTracersActionPerformed"/>
+                  </Events>
+                </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="editLabFractionationModels">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Fractionation Models"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editLabFractionationModelsActionPerformed"/>
+                  </Events>
+                </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="editPbBlanks">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Pb Blank IC Models"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editPbBlanksActionPerformed"/>
+                  </Events>
+                </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="editInitialPbModels">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Initial Pb Models"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editInitialPbModelsActionPerformed"/>
+                  </Events>
+                </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="editPhysicalConstantsModels">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Physical Constants Models"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editPhysicalConstantsModelsActionPerformed"/>
+                  </Events>
+                </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="editMineralStandardsModels">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Reference Material Models"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editMineralStandardsModelsActionPerformed"/>
+                  </Events>
+                </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="manageRareEarthElementModels">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Rare Earth Element Models"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="manageRareEarthElementModelsActionPerformed"/>
+                  </Events>
+                </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="manageTIMSLabDefaults">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Manage TIMS Lab Data Defaults"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="manageTIMSLabDefaultsActionPerformed"/>
+                  </Events>
+                </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="manageLAICPMSLabDefaults">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Manage LAICPMS Lab Data Defaults"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="manageLAICPMSLabDefaultsActionPerformed"/>
+                  </Events>
+                </MenuItem>
+              </SubComponents>
+            </Menu>
+            <Menu class="javax.swing.JMenu" name="labDataUTh">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Fractionation Models"/>
+                <Property name="text" type="java.lang.String" value="UTh"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editLabFractionationModelsActionPerformed"/>
-              </Events>
-            </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="editPbBlanks">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Pb Blank IC Models"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editPbBlanksActionPerformed"/>
-              </Events>
-            </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="editInitialPbModels">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Initial Pb Models"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editInitialPbModelsActionPerformed"/>
-              </Events>
-            </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="editPhysicalConstantsModels">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Physical Constants Models"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editPhysicalConstantsModelsActionPerformed"/>
-              </Events>
-            </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="editMineralStandardsModels">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Reference Material Models"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editMineralStandardsModelsActionPerformed"/>
-              </Events>
-            </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="manageRareEarthElementModels">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Rare Earth Element Models"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="manageRareEarthElementModelsActionPerformed"/>
-              </Events>
-            </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="manageTIMSLabDefaults">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Manage TIMS Lab Data Defaults"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="manageTIMSLabDefaultsActionPerformed"/>
-              </Events>
-            </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="manageLAICPMSLabDefaults">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Manage LAICPMS Lab Data Defaults"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="manageLAICPMSLabDefaultsActionPerformed"/>
-              </Events>
-            </MenuItem>
+              <SubComponents>
+                <MenuItem class="javax.swing.JMenuItem" name="editDetrritalUraniumthoriumModels">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Physical Constants Models"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editDetrritalUraniumthoriumModelsActionPerformed"/>
+                  </Events>
+                </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="editDetritalUraniumThoriumModels">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Detrital Uranium Thorium Models"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editDetritalUraniumThoriumModelsActionPerformed"/>
+                  </Events>
+                </MenuItem>
+              </SubComponents>
+            </Menu>
           </SubComponents>
         </Menu>
         <Menu class="javax.swing.JMenu" name="reportMenu">

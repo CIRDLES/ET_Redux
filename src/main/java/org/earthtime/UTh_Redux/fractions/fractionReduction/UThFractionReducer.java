@@ -433,12 +433,12 @@ public class UThFractionReducer extends FractionReducer {
             }
 
 //        outvec(12) = 2*sqrt(Cout(4,4)); % 2s abs ar48i
-            double initialCorrected234_238atomTatioOneSigmaAbs = Math.sqrt(Cout.get(3, 3));
-            if (!Double.isFinite(initialCorrected234_238atomTatioOneSigmaAbs)) {
-                initialCorrected234_238atomTatioOneSigmaAbs = 0.0;
+            double initialCorrected234_238atomRatioOneSigmaAbs = Math.sqrt(Cout.get(3, 3));
+            if (!Double.isFinite(initialCorrected234_238atomRatioOneSigmaAbs)) {
+                initialCorrected234_238atomRatioOneSigmaAbs = 0.0;
             }
 
-//        outvec(13) = Cout(1,4)/sqrt(Cout(1,1)*Cout(4,4));
+//        outvec(13) = Cout(1,4)/sqrt(Cout(1,1)*Cout(4,4)); rho between d234uinit and corrected age
             ValueModel dateCorr = new ValueModel(//
                     RadDates.dateCorr.getName(), //
                     new BigDecimal(timeCorrected), ///
@@ -463,7 +463,7 @@ public class UThFractionReducer extends FractionReducer {
                     = new BigDecimal(initialCorrected234_238atomTatio).subtract(secularEquilibrium)//
                             .divide(secularEquilibrium, ReduxConstants.mathContext15).movePointRight(3);
             BigDecimal delta234UInitialValueOneSigmaAbs
-                    = new BigDecimal(initialCorrected234_238atomTatioOneSigmaAbs).movePointRight(3);
+                    = new BigDecimal(initialCorrected234_238atomRatioOneSigmaAbs).movePointRight(3);
 
             ValueModel delta234U = new ValueModel(//
                     UThFractionationCorrectedIsotopicRatios.delta234U.getName(), //

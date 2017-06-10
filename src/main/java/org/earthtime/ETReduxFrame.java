@@ -122,7 +122,8 @@ import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.dataDictionaries.SampleTypesEnum;
 import org.earthtime.dialogs.AboutBox;
 import org.earthtime.dialogs.DialogEditor;
-import org.earthtime.dialogs.LabDataEditorDialog;
+import org.earthtime.dialogs.LabDataEditorDialogUPb;
+import org.earthtime.dialogs.LabDataEditorDialogUTh;
 import org.earthtime.dialogs.PreferencesEditorDialog;
 import org.earthtime.dialogs.projectManagers.projectLegacyManagers.AbstractProjectOfLegacySamplesDataManagerDialog;
 import org.earthtime.dialogs.projectManagers.projectLegacyManagers.ProjectOfLegacySamplesDataManagerDialogForGenericUPb_A;
@@ -239,7 +240,6 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                 }
             }
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(org.cirdles.calamari.userInterface.CalamariUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
@@ -470,20 +470,40 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             ETSerializer.SerializeObjectToFile(ReduxLabData.getInstance(), ReduxLabData.getMySerializedName());
         } catch (ETException ex) {
             new ETWarningDialog(ex).setVisible(true);
-//            System.out.println("LabData did not save");
         }
     }
 
-    private void editLabData(int selectedTab)
+    private void editLabDataUPb(int selectedTab)
             throws BadLabDataException {
-        if (!LabDataEditorDialog.amOpen) {
+        if (myLabDataEditor instanceof LabDataEditorDialogUTh) {
+            myLabDataEditor.close();
+            LabDataEditorDialogUTh.amOpen = false;
+        }
+
+        if (!LabDataEditorDialogUPb.amOpen) {
             myLabDataEditor
-                    = new LabDataEditorDialog(this, false, ReduxLabData.getInstance(), selectedTab);
-            ((LabDataEditorDialog) myLabDataEditor).setSize();
-            JDialog.setDefaultLookAndFeelDecorated(true);
+                    = new LabDataEditorDialogUPb(this, false, ReduxLabData.getInstance(), selectedTab);
+            ((LabDataEditorDialogUPb) myLabDataEditor).setSize();
             myLabDataEditor.setVisible(true);
         } else {
-            ((LabDataEditorDialog) myLabDataEditor).setDetailsPaneTab(selectedTab);
+            ((LabDataEditorDialogUPb) myLabDataEditor).setDetailsPaneTab(selectedTab);
+        }
+    }
+
+    private void editLabDataUTh(int selectedTab)
+            throws BadLabDataException {
+        if (myLabDataEditor instanceof LabDataEditorDialogUPb) {
+            myLabDataEditor.close();
+            LabDataEditorDialogUPb.amOpen = false;
+        }
+
+        if (!LabDataEditorDialogUTh.amOpen) {
+            myLabDataEditor
+                    = new LabDataEditorDialogUTh(this, false, ReduxLabData.getInstance(), selectedTab);
+            ((LabDataEditorDialogUTh) myLabDataEditor).setSize();
+            myLabDataEditor.setVisible(true);
+        } else {
+            ((LabDataEditorDialogUTh) myLabDataEditor).setDetailsPaneTab(selectedTab);
         }
     }
 
@@ -2010,6 +2030,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         selectAllFractions_menuItem = new javax.swing.JMenuItem();
         deSelectAllFractions_menuItem = new javax.swing.JMenuItem();
         labDataMenu = new javax.swing.JMenu();
+        labDataUPb = new javax.swing.JMenu();
         editLabTracers = new javax.swing.JMenuItem();
         editLabFractionationModels = new javax.swing.JMenuItem();
         editPbBlanks = new javax.swing.JMenuItem();
@@ -2019,6 +2040,9 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         manageRareEarthElementModels = new javax.swing.JMenuItem();
         manageTIMSLabDefaults = new javax.swing.JMenuItem();
         manageLAICPMSLabDefaults = new javax.swing.JMenuItem();
+        labDataUTh = new javax.swing.JMenu();
+        editDetrritalUraniumthoriumModels = new javax.swing.JMenuItem();
+        editDetritalUraniumThoriumModels = new javax.swing.JMenuItem();
         reportMenu = new javax.swing.JMenu();
         editCurrentReportSettingsModel_menuItem = new javax.swing.JMenuItem();
         jSeparator12 = new javax.swing.JPopupMenu.Separator();
@@ -2683,13 +2707,15 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             }
         });
 
+        labDataUPb.setText("UPb");
+
         editLabTracers.setText("Tracer Models");
         editLabTracers.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 editLabTracersActionPerformed(evt);
             }
         });
-        labDataMenu.add(editLabTracers);
+        labDataUPb.add(editLabTracers);
 
         editLabFractionationModels.setText("Fractionation Models");
         editLabFractionationModels.addActionListener(new java.awt.event.ActionListener() {
@@ -2697,7 +2723,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                 editLabFractionationModelsActionPerformed(evt);
             }
         });
-        labDataMenu.add(editLabFractionationModels);
+        labDataUPb.add(editLabFractionationModels);
 
         editPbBlanks.setText("Pb Blank IC Models");
         editPbBlanks.addActionListener(new java.awt.event.ActionListener() {
@@ -2705,7 +2731,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                 editPbBlanksActionPerformed(evt);
             }
         });
-        labDataMenu.add(editPbBlanks);
+        labDataUPb.add(editPbBlanks);
 
         editInitialPbModels.setText("Initial Pb Models");
         editInitialPbModels.addActionListener(new java.awt.event.ActionListener() {
@@ -2713,7 +2739,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                 editInitialPbModelsActionPerformed(evt);
             }
         });
-        labDataMenu.add(editInitialPbModels);
+        labDataUPb.add(editInitialPbModels);
 
         editPhysicalConstantsModels.setText("Physical Constants Models");
         editPhysicalConstantsModels.addActionListener(new java.awt.event.ActionListener() {
@@ -2721,7 +2747,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                 editPhysicalConstantsModelsActionPerformed(evt);
             }
         });
-        labDataMenu.add(editPhysicalConstantsModels);
+        labDataUPb.add(editPhysicalConstantsModels);
 
         editMineralStandardsModels.setText("Reference Material Models");
         editMineralStandardsModels.addActionListener(new java.awt.event.ActionListener() {
@@ -2729,7 +2755,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                 editMineralStandardsModelsActionPerformed(evt);
             }
         });
-        labDataMenu.add(editMineralStandardsModels);
+        labDataUPb.add(editMineralStandardsModels);
 
         manageRareEarthElementModels.setText("Rare Earth Element Models");
         manageRareEarthElementModels.addActionListener(new java.awt.event.ActionListener() {
@@ -2737,7 +2763,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                 manageRareEarthElementModelsActionPerformed(evt);
             }
         });
-        labDataMenu.add(manageRareEarthElementModels);
+        labDataUPb.add(manageRareEarthElementModels);
 
         manageTIMSLabDefaults.setText("Manage TIMS Lab Data Defaults");
         manageTIMSLabDefaults.addActionListener(new java.awt.event.ActionListener() {
@@ -2745,7 +2771,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                 manageTIMSLabDefaultsActionPerformed(evt);
             }
         });
-        labDataMenu.add(manageTIMSLabDefaults);
+        labDataUPb.add(manageTIMSLabDefaults);
 
         manageLAICPMSLabDefaults.setText("Manage LAICPMS Lab Data Defaults");
         manageLAICPMSLabDefaults.addActionListener(new java.awt.event.ActionListener() {
@@ -2753,7 +2779,29 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                 manageLAICPMSLabDefaultsActionPerformed(evt);
             }
         });
-        labDataMenu.add(manageLAICPMSLabDefaults);
+        labDataUPb.add(manageLAICPMSLabDefaults);
+
+        labDataMenu.add(labDataUPb);
+
+        labDataUTh.setText("UTh");
+
+        editDetrritalUraniumthoriumModels.setText("Physical Constants Models");
+        editDetrritalUraniumthoriumModels.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editDetrritalUraniumthoriumModelsActionPerformed(evt);
+            }
+        });
+        labDataUTh.add(editDetrritalUraniumthoriumModels);
+
+        editDetritalUraniumThoriumModels.setText("Detrital Uranium Thorium Models");
+        editDetritalUraniumThoriumModels.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editDetritalUraniumThoriumModelsActionPerformed(evt);
+            }
+        });
+        labDataUTh.add(editDetritalUraniumThoriumModels);
+
+        labDataMenu.add(labDataUTh);
 
         mainMenuBar.add(labDataMenu);
 
@@ -3158,7 +3206,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
     private void editLabTracersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editLabTracersActionPerformed
         try {
-            editLabData(0);
+            editLabDataUPb(0);
         } catch (BadLabDataException ex) {
             new ETWarningDialog(ex).setVisible(true);
         }
@@ -3379,7 +3427,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
     private void editLabFractionationModelsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editLabFractionationModelsActionPerformed
         try {
-            editLabData(1);
+            editLabDataUPb(1);
         } catch (BadLabDataException ex) {
             new ETWarningDialog(ex).setVisible(true);
         }
@@ -3387,7 +3435,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
     private void editPbBlanksActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editPbBlanksActionPerformed
         try {
-            editLabData(2);
+            editLabDataUPb(2);
         } catch (BadLabDataException ex) {
             new ETWarningDialog(ex).setVisible(true);
         }
@@ -3395,7 +3443,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
     private void editInitialPbModelsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editInitialPbModelsActionPerformed
         try {
-            editLabData(3);
+            editLabDataUPb(3);
         } catch (BadLabDataException ex) {
             new ETWarningDialog(ex).setVisible(true);
         }
@@ -3403,7 +3451,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
     private void editPhysicalConstantsModelsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editPhysicalConstantsModelsActionPerformed
         try {
-            editLabData(4);
+            editLabDataUPb(4);
         } catch (BadLabDataException ex) {
             new ETWarningDialog(ex).setVisible(true);
         }
@@ -3411,7 +3459,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
     private void manageTIMSLabDefaultsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_manageTIMSLabDefaultsActionPerformed
         try {
-            editLabData(7);
+            editLabDataUPb(7);
         } catch (BadLabDataException ex) {
             new ETWarningDialog(ex).setVisible(true);
         }
@@ -3419,7 +3467,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
     private void editMineralStandardsModelsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editMineralStandardsModelsActionPerformed
         try {
-            editLabData(5);
+            editLabDataUPb(5);
         } catch (BadLabDataException ex) {
             new ETWarningDialog(ex).setVisible(true);
         }
@@ -4202,7 +4250,7 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
 
     private void manageRareEarthElementModelsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_manageRareEarthElementModelsActionPerformed
         try {
-            editLabData(6);
+            editLabDataUPb(6);
         } catch (BadLabDataException ex) {
             new ETWarningDialog(ex).setVisible(true);
         }        // TODO add your handling code here:
@@ -4210,7 +4258,7 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
 
     private void manageLAICPMSLabDefaultsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_manageLAICPMSLabDefaultsActionPerformed
         try {
-            editLabData(9);
+            editLabDataUPb(9);
         } catch (BadLabDataException ex) {
             new ETWarningDialog(ex).setVisible(true);
         }        // TODO add your handling code here:
@@ -4254,6 +4302,22 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
         BrowserControl.displayURL("https://sites.google.com/site/useriesrocks/");
     }//GEN-LAST:event_visitUseriesRocksActionPerformed
 
+    private void editDetrritalUraniumthoriumModelsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editDetrritalUraniumthoriumModelsActionPerformed
+        try {
+            editLabDataUTh(0);
+        } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
+        }
+    }//GEN-LAST:event_editDetrritalUraniumthoriumModelsActionPerformed
+
+    private void editDetritalUraniumThoriumModelsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editDetritalUraniumThoriumModelsActionPerformed
+        try {
+            editLabDataUTh(1);
+        } catch (BadLabDataException ex) {
+            new ETWarningDialog(ex).setVisible(true);
+        }
+    }//GEN-LAST:event_editDetritalUraniumThoriumModelsActionPerformed
+
     private void helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
         BrowserControl.displayURL("http://cirdles.org/projects/et_redux/");
 
@@ -4281,6 +4345,8 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     private javax.swing.JMenuItem deSelectAllFractions_menuItem;
     private javax.swing.JMenu earthTimeWebSiteMenu;
     private javax.swing.JMenuItem editCurrentReportSettingsModel_menuItem;
+    private javax.swing.JMenuItem editDetritalUraniumThoriumModels;
+    private javax.swing.JMenuItem editDetrritalUraniumthoriumModels;
     private javax.swing.JMenuItem editInitialPbModels;
     private javax.swing.JMenuItem editLabFractionationModels;
     private javax.swing.JMenuItem editLabTracers;
@@ -4318,6 +4384,8 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     private javax.swing.JPopupMenu.Separator jSeparator9;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JMenu labDataMenu;
+    private javax.swing.JMenu labDataUPb;
+    private javax.swing.JMenu labDataUTh;
     private javax.swing.JMenuItem loadDefaultReportSettingsModel;
     private javax.swing.JMenuItem loadEARTHTIMEDefaultReportSettingsModel_menuItem;
     private javax.swing.JButton loadLastProject_button;

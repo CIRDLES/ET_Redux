@@ -137,6 +137,22 @@ public abstract class AbstractRatiosDataView extends JLayeredPane implements Dat
      */
     protected void initView(boolean editable) {
 
+        /* Set the Metal look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Metal is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Metal".equals(info.getName())) { //Nimbus (original), Motif, Metal
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
+        }
+        //</editor-fold>
+
         removeAll();
 
         Font DataFont = ReduxConstants.sansSerif_11_Bold;
@@ -147,7 +163,6 @@ public abstract class AbstractRatiosDataView extends JLayeredPane implements Dat
 //        modelTypeLabel.setFont(DataFont);
 //        modelTypeLabel.setBounds(5, 5, 250, 25);
 //        this.add(modelTypeLabel);
-
         JLabel canEditLabel = new JLabel(dataModel.isImmutable() ? "not editable" : "editable");
         canEditLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         canEditLabel.setFont(DataFont);

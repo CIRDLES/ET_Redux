@@ -71,8 +71,8 @@ public abstract class PhysicalConstantsAbstractDataView extends AbstractRatiosDa
 
             lambdaReferences[i] = new JTextField( ((ValueModelReferenced) dataModel.getData()[i]).getReference().trim() );
             lambdaReferences[i].setBounds( 95, countLines * 25, 400, 25 );
-            lambdaReferences[i].setFont(ReduxConstants.sansSerif_10_Plain );
-            lambdaReferences[i].setEnabled( editable );  //setEditable( editable );
+            lambdaReferences[i].setFont(ReduxConstants.sansSerif_10_Bold);
+            lambdaReferences[i].setEditable( editable );
             lambdaRefsPane.add( lambdaReferences[i] );
 
             countLines ++;
