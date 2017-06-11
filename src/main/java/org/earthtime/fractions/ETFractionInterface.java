@@ -103,6 +103,10 @@ public interface ETFractionInterface {
      */
     abstract void setPhysicalConstantsModel(AbstractRatiosDataModel physicalConstantsModel);
 
+    public AbstractRatiosDataModel getDetritalUThModel();
+
+    public void setDetritalUThModel(AbstractRatiosDataModel detritalUThModel);
+
     /**
      *
      * @return
@@ -878,6 +882,5 @@ public interface ETFractionInterface {
     public ValueModel getPbBlankRatioByName(String trName);
 
     public ValueModel getInitialPbModelRatioByName(String trName);
-    
-    
+
 }

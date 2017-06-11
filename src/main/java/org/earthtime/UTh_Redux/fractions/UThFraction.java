@@ -65,6 +65,8 @@ public class UThFraction implements
     protected ValueModel[] sampleIsochronRatios;
     protected ValueModel[] traceElements;
     protected AbstractRatiosDataModel physicalConstantsModel; // fraction class has physicalConstantsModelID
+    protected AbstractRatiosDataModel detritalUThModel;
+    protected long dateTimeMillisecondsOfAnalysis;
 
     protected boolean changed;
     protected boolean deleted;
@@ -497,6 +499,35 @@ public class UThFraction implements
 //                    + physicalConstantsModel.getNameAndVersion());
         }
     }
+ 
+    /**
+     *
+     * @return
+     */
+    @Override
+    public AbstractRatiosDataModel getDetritalUThModel() {
+        if (detritalUThModel == null) {
+            detritalUThModel = ReduxLabData.getInstance().getDefaultDetritalUraniumAndThoriumModel();
+        }
+        return detritalUThModel;
+    }
+
+    /**
+     *
+     * @param detritalUThModel
+     * @param physicalConstantsModel
+     */
+    @Override
+    public void setDetritalUThModel(AbstractRatiosDataModel detritalUThModel) {
+        if ((this.detritalUThModel == null)
+                || (!this.detritalUThModel.equals(detritalUThModel))) {
+            this.detritalUThModel = detritalUThModel;
+            this.setChanged(true);
+//            System.out.println(this.getFractionID() //
+//                    + "  is getting new physical constants model = "//
+//                    + physicalConstantsModel.getNameAndVersion());
+        }
+    }
 
     @Override
     public String getAnalysisFractionComment() {
@@ -601,6 +632,20 @@ public class UThFraction implements
     @Override
     public ValueModel getInitialPbModelRatioByName(String trName) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    /**
+     * @return the dateTimeMillisecondsOfAnalysis
+     */
+    public long getDateTimeMillisecondsOfAnalysis() {
+        return dateTimeMillisecondsOfAnalysis;
+    }
+
+    /**
+     * @param dateTimeMillisecondsOfAnalysis the dateTimeMillisecondsOfAnalysis to set
+     */
+    public void setDateTimeMillisecondsOfAnalysis(long dateTimeMillisecondsOfAnalysis) {
+        this.dateTimeMillisecondsOfAnalysis = dateTimeMillisecondsOfAnalysis;
     }
 
 }

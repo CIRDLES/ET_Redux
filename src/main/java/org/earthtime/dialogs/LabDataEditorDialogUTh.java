@@ -79,7 +79,6 @@ public class LabDataEditorDialogUTh extends DialogEditor {
     private AbstractRatiosDataView detritalUThModelView;
     private AbstractRatiosDataView physicalConstantsModelView;
 
-
     /**
      * Creates new form LabDataEditorDialog
      *
@@ -217,12 +216,10 @@ public class LabDataEditorDialogUTh extends DialogEditor {
                 detritalUTh_Tab_panel.getWidth(), detritalUTh_Tab_panel.getHeight() - VERTICAL_OFFSET_MODEL_VIEW);
         if (editable) {
             detritalUThModelView
-                    = 
-                    new RatiosDataViewEditable(detritalUThModel, detritalUThModelViewDimension, false);
+                    = new RatiosDataViewEditable(detritalUThModel, detritalUThModelViewDimension, false);
         } else {
             detritalUThModelView
-                    = 
-                    new RatiosDataViewNotEditable(detritalUThModel, detritalUThModelViewDimension, false);
+                    = new RatiosDataViewNotEditable(detritalUThModel, detritalUThModelViewDimension, false);
         }
 
         detritalUThModelView.setBackground(detritalUTh_Tab_panel.getBackground());
@@ -298,11 +295,7 @@ public class LabDataEditorDialogUTh extends DialogEditor {
         if (detritalUThChooser.getSelectedIndex() >= 0) {
             savedDetritalUThModelName = (String) detritalUThChooser.getSelectedItem();
         } else {
-            try {
-                savedDetritalUThModelName = myLabData.getDefaultDetritalUraniumAndThoriumModel().getReduxLabDataElementName();
-            } catch (BadLabDataException ex) {
-                new ETWarningDialog(ex).setVisible(true);
-            }
+            savedDetritalUThModelName = myLabData.getDefaultDetritalUraniumAndThoriumModel().getReduxLabDataElementName();
         }
     }
 
@@ -391,8 +384,7 @@ public class LabDataEditorDialogUTh extends DialogEditor {
 
         // Nov 2015
         AbstractRatiosDataModel selectedModel
-                =
-                myLabData.getADetritalUraniumAndThoriumModel(
+                = myLabData.getADetritalUraniumAndThoriumModel(
                         (String) detritalUThChooser.getSelectedItem());
 
         setAlwaysOnTop(false);
@@ -1079,7 +1071,6 @@ public class LabDataEditorDialogUTh extends DialogEditor {
         }
         defaultDetritalUThModel_Chooser.setSelectedItem(myLabData.getDefaultDetritalUraniumAndThoriumModel().getReduxLabDataElementName());
 
-
         // set up DefaultPhysicalConstantsModel chooser
         defaultPhysicalConstantsModel_Chooser.removeAllItems();
         ArrayList<AbstractRatiosDataModel> pmodels = myLabData.getPhysicalConstantsModels();
@@ -1089,7 +1080,6 @@ public class LabDataEditorDialogUTh extends DialogEditor {
         defaultPhysicalConstantsModel_Chooser.setSelectedItem(myLabData.getDefaultPhysicalConstantsModel().getNameAndVersion());
 
     }
-
 
     private synchronized boolean CheckIsSavedStatusOfDefaultsEdit()
             throws BadLabDataException {
@@ -1120,7 +1110,6 @@ public class LabDataEditorDialogUTh extends DialogEditor {
         } catch (BadLabDataException ex) {
             new ETWarningDialog(ex).setVisible(true);
         }
-
 
     }
 
@@ -2138,7 +2127,6 @@ public class LabDataEditorDialogUTh extends DialogEditor {
 }//GEN-LAST:event_mineralStdModels_menuMenuSelected
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-
 
         BrowserControl.displayURL("http://cirdles.org/projects/et_redux/#welcome");
     }//GEN-LAST:event_jMenuItem1ActionPerformed

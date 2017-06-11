@@ -34,7 +34,7 @@ import org.earthtime.reduxLabData.ReduxLabDataList;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModelXMLConverter;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
-import org.earthtime.dataDictionaries.DetritalUraniumAndThoriumRatiosEnum;
+import org.earthtime.dataDictionaries.DetritalUThRatiosEnum;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.utilities.DateHelpers;
@@ -129,7 +129,7 @@ public class DetritalUraniumAndThoriumModel extends AbstractRatiosDataModel {
     public final void initializeNewRatiosAndRhos(boolean updateOnly) {
         // DetritalUraniumAndThoriumModel has a defined set of ratios         
         ArrayList<ValueModel> holdRatios = new ArrayList<>();
-        for (DetritalUraniumAndThoriumRatiosEnum ratio : DetritalUraniumAndThoriumRatiosEnum.values()) {
+        for (DetritalUThRatiosEnum ratio : DetritalUThRatiosEnum.values()) {
             holdRatios.add( //
                     new ValueModel(ratio.getName(),
                             BigDecimal.ZERO,

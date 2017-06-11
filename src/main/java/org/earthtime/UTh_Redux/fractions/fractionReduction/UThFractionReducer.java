@@ -20,12 +20,16 @@ package org.earthtime.UTh_Redux.fractions.fractionReduction;
 import Jama.Matrix;
 import java.math.BigDecimal;
 import org.earthtime.UPb_Redux.ReduxConstants;
+import static org.earthtime.UPb_Redux.ReduxConstants.timeInMillisecondsOfYear1950Since1970;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
+import org.earthtime.UTh_Redux.fractions.UThFraction;
 import org.earthtime.UTh_Redux.fractions.UThLegacyFractionI;
+import org.earthtime.dataDictionaries.DetritalUThRatiosEnum;
 import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.dataDictionaries.UThAnalysisMeasures;
 import org.earthtime.dataDictionaries.UThFractionationCorrectedIsotopicRatios;
 import org.earthtime.fractions.fractionReduction.FractionReducer;
+import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 
 /* NOTES from Noah 28 October 2015
     So instead, here's a MATLAB file that goes with an Excel worksheet and VBA Add-In I created to calculate U-Th dates.  Here's what's going on in the code.
@@ -160,17 +164,36 @@ public class UThFractionReducer extends FractionReducer {
             // The detritus variable is not at present included in Andrea's worksheet.  
             // We'll have to add it, though, when we make UTh_Redux capable of handling more data.  
             // Here are some typical values:
+//            Matrix detritus = new Matrix(6, 2);
+//            detritus.set(0, 0, 1.2); //detritus(1,1) = 1.2; 
+//            detritus.set(0, 1, 0.6); //detritus(1,2) = 0.6;
+//            detritus.set(1, 0, 1.0); //detritus(2,1) = 1;
+//            detritus.set(1, 1, 0.5); //detritus(2,2) = 0.5;
+//            detritus.set(2, 0, 1.0); //detritus(3,1) = 1;
+//            detritus.set(2, 1, 0.5); //detritus(3,2) = 0.5;
+//            detritus.set(3, 0, 0.0); //detritus(4,1) = 0;
+//            detritus.set(4, 0, 0.0); //detritus(5,1) = 0;
+//            detritus.set(5, 0, 0.5); //detritus(6,1) = 0.5;
+//            detritus.set(5, 1, 65.0); //detritus(6,2) = 65;
+            AbstractRatiosDataModel detritalUThModel = fraction.getDetritalUThModel();
+            ValueModel ar232Th_238Ui = detritalUThModel.getDatumByName(DetritalUThRatiosEnum.ar232Th_238U.getName());
+            ValueModel ar230Th_238Ui = detritalUThModel.getDatumByName(DetritalUThRatiosEnum.ar230Th_238U.getName());
+            ValueModel ar234U_238Ui = detritalUThModel.getDatumByName(DetritalUThRatiosEnum.ar234U_238U.getName());
+
             Matrix detritus = new Matrix(6, 2);
-            detritus.set(0, 0, 1.2); //detritus(1,1) = 1.2; 
-            detritus.set(0, 1, 0.6); //detritus(1,2) = 0.6;
-            detritus.set(1, 0, 1.0); //detritus(2,1) = 1;
-            detritus.set(1, 1, 0.5); //detritus(2,2) = 0.5;
-            detritus.set(2, 0, 1.0); //detritus(3,1) = 1;
-            detritus.set(2, 1, 0.5); //detritus(3,2) = 0.5;
-            detritus.set(3, 0, 0.0); //detritus(4,1) = 0;
-            detritus.set(4, 0, 0.0); //detritus(5,1) = 0;
-            detritus.set(5, 0, 0.5); //detritus(6,1) = 0.5;
-            detritus.set(5, 1, 65.0); //detritus(6,2) = 65;
+            detritus.set(0, 0, ar232Th_238Ui.getValue().doubleValue());
+            detritus.set(0, 1, ar232Th_238Ui.getOneSigmaAbs().doubleValue());
+            detritus.set(1, 0, ar230Th_238Ui.getValue().doubleValue());
+            detritus.set(1, 1, ar230Th_238Ui.getOneSigmaAbs().doubleValue());
+            detritus.set(2, 0, ar234U_238Ui.getValue().doubleValue());
+            detritus.set(2, 1, ar234U_238Ui.getOneSigmaAbs().doubleValue());
+
+            ValueModel rhoAr232Th_238U__ar230Th_238Ui = detritalUThModel.getRhoVarUnctByName("rhoAr232Th_238U__ar230Th_238U");
+            ValueModel rhoAr232Th_238U__ar234U_238Ui = detritalUThModel.getRhoVarUnctByName("rhoAr232Th_238U__ar234U_238U");
+            ValueModel rhoAr230Th_238U__ar234U_238Ui = detritalUThModel.getRhoVarUnctByName("rhoAr230Th_238U__ar234U_238U");
+            detritus.set(3, 0, rhoAr232Th_238U__ar230Th_238Ui.getValue().doubleValue());
+            detritus.set(4, 0, rhoAr232Th_238U__ar234U_238Ui.getValue().doubleValue());
+            detritus.set(5, 0, rhoAr230Th_238U__ar234U_238Ui.getValue().doubleValue());
 
             // di = detrital initial isotopic ratio
             double r232Th_238Udi = detritus.get(0, 0) * lambda238D / lambda232D;
@@ -193,7 +216,7 @@ public class UThFractionReducer extends FractionReducer {
             covariance_di.set(2, 0, covariance_di.get(0, 2));
             covariance_di.set(2, 1, covariance_di.get(1, 2));
 
-            double yearsSince1950_di = detritus.get(5, 1);
+            double yearsSince1950_di = (((UThFraction)fraction).getDateTimeMillisecondsOfAnalysis() - timeInMillisecondsOfYear1950Since1970)/1000.0/60.0/60.0/24.0/365.0;
 
             Matrix covariance_in = new Matrix(6, 6);
             covariance_in.setMatrix(0, 2, 0, 2, covariance_fc);
@@ -377,6 +400,7 @@ public class UThFractionReducer extends FractionReducer {
 //        %% Arrange outputs
 //
 //        outvec(1)  = nat(3)/nat(1) * lambda.Th230/lambda.U238; % detrital-corrected 230Th/238U AR
+            // 230Th/238U, detrital Th-corrected ‡	[230Th/238U], 230Th/238U	activity, atom	--	nat(3)/nat(1)	2*sqrt(Cout(3,3))
             double ar230_238corrected = nat.get(2, 0) / nat.get(0, 0) * lambda230D / lambda238D;
             if (!Double.isFinite(ar230_238corrected)) {
                 ar230_238corrected = 0.0;
@@ -400,7 +424,9 @@ public class UThFractionReducer extends FractionReducer {
 
 //        outvec(6)  = tuncorr/1000; % uncorrected date, ka
 //        outvec(7) = 2*sqrt( d.t_ntUncorr(2:3)*meas.C(1:2,1:2)*d.t_ntUncorr(2:3)' )/1000 ; % 2s abs, ka
-            double uncorrectedDateOneSigmaABS = Math.sqrt(dT_ntUncorr.getMatrix(0, 0, 1, 2).times(covariance_fc.getMatrix(0, 1, 0, 1)).times(dT_ntUncorr.getMatrix(0, 0, 1, 2).transpose()).get(0, 0));//    ' )/1000 ; % 2s abs, ka
+            double uncorrectedDateOneSigmaABS = Math.sqrt(dT_ntUncorr.getMatrix(0, 0, 1, 2)
+                    .times(covariance_fc.getMatrix(0, 1, 0, 1))
+                    .times(dT_ntUncorr.getMatrix(0, 0, 1, 2).transpose()).get(0, 0));//    ' )/1000 ; % 2s abs, ka
             if (!Double.isFinite(uncorrectedDateOneSigmaABS)) {
                 uncorrectedDateOneSigmaABS = 0.0;
             }
@@ -650,7 +676,6 @@ public class UThFractionReducer extends FractionReducer {
         fraction.getRadiogenicIsotopeRatioByName(UThFractionationCorrectedIsotopicRatios.a230Thfc.getName())//
                 .setOneSigma(fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.a230Thfc.getName()).getOneSigmaAbs()//
                         .divide(myLambda230Value, ReduxConstants.mathContext15));
-
 
     }
 

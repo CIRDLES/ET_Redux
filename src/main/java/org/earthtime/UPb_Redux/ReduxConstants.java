@@ -499,4 +499,8 @@ final public class ReduxConstants {
         biMapOfIndexesToCommonLeadCorrectionSchemaNames.put(5, "C");
         biMapOfIndexesToCommonLeadCorrectionSchemaNames.put(6, "D");
     }
+    
+    
+    // June 2017 for UTh analysis
+    public static final long timeInMillisecondsOfYear1950Since1970 = -631152000;
 }

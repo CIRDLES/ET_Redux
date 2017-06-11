@@ -2797,4 +2797,14 @@ public class UPbFraction extends Fraction implements
     public void setTripoliFraction(TripoliFraction tripoliFraction) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    @Override
+    public AbstractRatiosDataModel getDetritalUThModel() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setDetritalUThModel(AbstractRatiosDataModel detritalUThModel) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

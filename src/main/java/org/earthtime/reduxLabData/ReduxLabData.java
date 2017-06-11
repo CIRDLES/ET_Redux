@@ -1369,14 +1369,17 @@ public final class ReduxLabData implements Serializable {
      * @return @throws BadLabDataException
      * @throws BadLabDataException
      */
-    public AbstractRatiosDataModel getDefaultDetritalUraniumAndThoriumModel()
-            throws BadLabDataException {
-        if (defaultDetritalUraniumAndThoriumModel == null) {
-            addDetritalUraniumAndThoriumModel(DetritalUraniumAndThoriumModel.getNoneInstance());
-            defaultDetritalUraniumAndThoriumModel = getFirstDetritalUraniumAndThoriumModel();
-        } else // detect if legacy default is none and change if possible
-        if (defaultDetritalUraniumAndThoriumModel.equals(getNoneDetritalUraniumAndThoriumModel())) {
-            defaultDetritalUraniumAndThoriumModel = getFirstDetritalUraniumAndThoriumModel();
+    public AbstractRatiosDataModel getDefaultDetritalUraniumAndThoriumModel() {
+        try {
+            if (defaultDetritalUraniumAndThoriumModel == null) {
+                addDetritalUraniumAndThoriumModel(DetritalUraniumAndThoriumModel.getNoneInstance());
+                defaultDetritalUraniumAndThoriumModel = getFirstDetritalUraniumAndThoriumModel();
+            } else // detect if legacy default is none and change if possible
+            if (defaultDetritalUraniumAndThoriumModel.equals(getNoneDetritalUraniumAndThoriumModel())) {
+                defaultDetritalUraniumAndThoriumModel = getFirstDetritalUraniumAndThoriumModel();
+            }
+        } catch (BadLabDataException badLabDataException) {
+            new ETWarningDialog(badLabDataException).setVisible(true);
         }
 
         return defaultDetritalUraniumAndThoriumModel;
