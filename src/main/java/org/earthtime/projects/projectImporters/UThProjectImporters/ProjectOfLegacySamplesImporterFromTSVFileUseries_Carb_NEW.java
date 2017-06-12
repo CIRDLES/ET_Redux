@@ -259,7 +259,6 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb_NEW extends A
                             myFraction.getCompositionalMeasureByName(ratioName)//
                                     .setOneSigma(oneSigmaAbs);
 
-
                             // column 19 is [230Th] ppt in ppt
                             ratioName = UThCompositionalMeasures.conc238U.getName();
                             myFraction.getCompositionalMeasureByName(ratioName)//
@@ -273,10 +272,6 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb_NEW extends A
                                     movePointLeft(12);
                             myFraction.getCompositionalMeasureByName(ratioName)//
                                     .setOneSigma(oneSigmaAbs);
-
-
-
-
 
                             // column 21 is ar230Th_234Ufc 
                             ratioName = UThAnalysisMeasures.ar230Th_234Ufc.getName();
@@ -311,11 +306,6 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb_NEW extends A
                                     divide(new BigDecimal(2.0));
                             myFraction.getLegacyActivityRatioByName(ratioName)//
                                     .setOneSigma(oneSigmaAbs);
-                            
-                            
-                            
-                            
-                            
 
                             // column 25 is ar234U_238Ufc 
                             // June 2017
@@ -338,8 +328,6 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb_NEW extends A
                                     divide(new BigDecimal(2.0));
                             myFraction.getLegacyActivityRatioByName(ratioName)//
                                     .setOneSigma(oneSigmaAbs);
-                            
-                            
 
                             metaData.append("Reported date (ka) = ").append(myFractionData.get(27).trim()).append("\n");
                             metaData.append("Reported date uncert. (±2_) = ").append(myFractionData.get(28).trim()).append("\n");
@@ -351,10 +339,7 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb_NEW extends A
 
                             metaData.append("Reference material name for 230Th/238U = ").append(myFractionData.get(33).trim()).append("\n");
                             metaData.append("Reference material name for 234U/238U = ").append(myFractionData.get(34).trim()).append("\n");
-                            
-                            
 
-// renumber
                             metaData.append("Detrital Th correction method = ").append(myFractionData.get(39).trim()).append("\n");
                             metaData.append("Detrital Th model = ").append(myFractionData.get(40).trim()).append("\n");
                             metaData.append("Comments- detrital Th correction = ").append(myFractionData.get(41).trim()).append("\n");
