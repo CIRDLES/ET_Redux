@@ -216,7 +216,7 @@ public class UThFractionReducer extends FractionReducer {
             covariance_di.set(2, 0, covariance_di.get(0, 2));
             covariance_di.set(2, 1, covariance_di.get(1, 2));
 
-            double yearsSince1950_di = (((UThFraction)fraction).getDateTimeMillisecondsOfAnalysis() - timeInMillisecondsOfYear1950Since1970)/1000.0/60.0/60.0/24.0/365.0;
+            double yearsSince1950_di = (((UThFraction) fraction).getDateTimeMillisecondsOfAnalysis() - timeInMillisecondsOfYear1950Since1970) / 1000.0 / 60.0 / 60.0 / 24.0 / 365.242;
 
             Matrix covariance_in = new Matrix(6, 6);
             covariance_in.setMatrix(0, 2, 0, 2, covariance_fc);

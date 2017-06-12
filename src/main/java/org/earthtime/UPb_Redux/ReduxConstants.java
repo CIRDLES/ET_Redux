@@ -502,5 +502,6 @@ final public class ReduxConstants {
     
     
     // June 2017 for UTh analysis
-    public static final long timeInMillisecondsOfYear1950Since1970 = -631152000;
+    public static final long timeInMillisecondsOfYear1950Since1970 = -631152000l;
+    public static final long timeInMillisecondsOfYear2000Since1970 = 946684800l;
 }

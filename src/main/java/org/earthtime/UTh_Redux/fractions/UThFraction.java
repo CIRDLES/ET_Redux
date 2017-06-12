@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import org.earthtime.UPb_Redux.ReduxConstants;
+import static org.earthtime.UPb_Redux.ReduxConstants.timeInMillisecondsOfYear2000Since1970;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
 import org.earthtime.dataDictionaries.MeasuredRatios;
@@ -63,10 +64,11 @@ public class UThFraction implements
     protected ValueModel[] isotopeDates;
     protected ValueModel[] compositionalMeasures;
     protected ValueModel[] sampleIsochronRatios;
-    protected ValueModel[] traceElements;
     protected AbstractRatiosDataModel physicalConstantsModel; // fraction class has physicalConstantsModelID
     protected AbstractRatiosDataModel detritalUThModel;
     protected long dateTimeMillisecondsOfAnalysis;
+    private boolean spikeCalibrationR230_238IsSecular;
+    private boolean spikeCalibrationR234_238IsSecular;
 
     protected boolean changed;
     protected boolean deleted;
@@ -98,6 +100,14 @@ public class UThFraction implements
         compositionalMeasures = valueModelArrayFactory(UThCompositionalMeasures.getNames(), UncertaintyTypesEnum.ABS.getName());
         sampleIsochronRatios = new ValueModel[0]; //valueModelArrayFactory(DataDictionary.SampleIsochronRatioNames, UncertaintyTypesEnum.ABS.getName());
 
+        physicalConstantsModel = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel();
+        detritalUThModel = ReduxLabData.getInstance().getDefaultDetritalUraniumAndThoriumModel();
+
+        dateTimeMillisecondsOfAnalysis = timeInMillisecondsOfYear2000Since1970;
+        
+        spikeCalibrationR230_238IsSecular = false;
+        spikeCalibrationR234_238IsSecular = false;
+
         this.changed = false;
         this.deleted = false;
         this.fractionNotes = "";
@@ -105,7 +115,6 @@ public class UThFraction implements
 
         rgbColor = 0;
 
-        initializeTraceElements();
     }
 
     /**
@@ -422,10 +431,7 @@ public class UThFraction implements
      */
     @Override
     public ValueModel[] getTraceElements() {
-        if (traceElements == null) {
-            initializeTraceElements();
-        }
-        return traceElements;
+        return new ValueModel[0];
     }
 
     /**
@@ -433,7 +439,6 @@ public class UThFraction implements
      */
     @Override
     public void setTraceElements(ValueModel[] traceElements) {
-        this.traceElements = traceElements;
     }
 
     @Override
@@ -499,7 +504,7 @@ public class UThFraction implements
 //                    + physicalConstantsModel.getNameAndVersion());
         }
     }
- 
+
     /**
      *
      * @return
@@ -642,10 +647,39 @@ public class UThFraction implements
     }
 
     /**
-     * @param dateTimeMillisecondsOfAnalysis the dateTimeMillisecondsOfAnalysis to set
+     * @param dateTimeMillisecondsOfAnalysis the dateTimeMillisecondsOfAnalysis
+     * to set
      */
     public void setDateTimeMillisecondsOfAnalysis(long dateTimeMillisecondsOfAnalysis) {
         this.dateTimeMillisecondsOfAnalysis = dateTimeMillisecondsOfAnalysis;
+    }
+
+    /**
+     * @return the spikeCalibrationR230_238IsSecular
+     */
+    public boolean isSpikeCalibrationR230_238IsSecular() {
+        return spikeCalibrationR230_238IsSecular;
+    }
+
+    /**
+     * @param spikeCalibrationR230_238IsSecular the spikeCalibrationR230_238IsSecular to set
+     */
+    public void setSpikeCalibrationR230_238IsSecular(boolean spikeCalibrationR230_238IsSecular) {
+        this.spikeCalibrationR230_238IsSecular = spikeCalibrationR230_238IsSecular;
+    }
+
+    /**
+     * @return the spikeCalibrationR234_238IsSecular
+     */
+    public boolean isSpikeCalibrationR234_238IsSecular() {
+        return spikeCalibrationR234_238IsSecular;
+    }
+
+    /**
+     * @param spikeCalibrationR234_238IsSecular the spikeCalibrationR234_238IsSecular to set
+     */
+    public void setSpikeCalibrationR234_238IsSecular(boolean spikeCalibrationR234_238IsSecular) {
+        this.spikeCalibrationR234_238IsSecular = spikeCalibrationR234_238IsSecular;
     }
 
 }

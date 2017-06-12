@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import static org.earthtime.UPb_Redux.ReduxConstants.timeInMillisecondsOfYear1950Since1970;
+import static org.earthtime.UPb_Redux.ReduxConstants.timeInMillisecondsOfYear2000Since1970;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UTh_Redux.aliquots.UThReduxAliquot;
 import org.earthtime.UTh_Redux.fractions.UThFraction;
@@ -153,60 +153,8 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb_NEW extends A
 
                             // Read in Lagacy MetaData as string in Notes 
                             StringBuilder metaData = new StringBuilder();
-
-                            metaData.append("Replicate = ").append(myFractionData.get(10).trim()).append("\n");
-
-                            metaData.append("Pa/Th age? = ").append(myFractionData.get(29).trim()).append("\n");
-                            metaData.append("14C age? = ").append(myFractionData.get(30).trim()).append("\n");
                             metaData.append("Instrument = ").append(myFractionData.get(2).trim()).append("\n");
-
                             metaData.append("Decay cnsts = ").append(myFractionData.get(3).trim()).append("\n");
-
-                            metaData.append("Reported date (ka) = ").append(myFractionData.get(25).trim()).append("\n");
-                            metaData.append("Reported date uncert. (±2_)s = ").append(myFractionData.get(26).trim()).append("\n");
-                            metaData.append("Reported d234U initial (‰) = ").append(myFractionData.get(27).trim()).append("\n");
-                            metaData.append("Reported d234U uncert. (±2_) = ").append(myFractionData.get(28).trim()).append("\n");
-
-                            metaData.append("PublishedID = ").append(myFractionData.get(9).trim()).append("\n");
-                            metaData.append("Location = ").append(myFractionData.get(52).trim()).append("\n");
-                            metaData.append("Site = ").append(myFractionData.get(53).trim()).append("\n");
-                            metaData.append("Additional Site Info = ").append(myFractionData.get(54).trim()).append("\n");
-                            metaData.append("LatitudeWGS84 = ").append(myFractionData.get(55).trim()).append("\n");
-                            metaData.append("LongitudeWGS84 = ").append(myFractionData.get(56).trim()).append("\n");
-                            metaData.append("LatLongEstimated = ").append(myFractionData.get(57).trim()).append("\n");
-                            metaData.append("Tectonic Category = ").append(myFractionData.get(58).trim()).append("\n");
-                            metaData.append("Tectonic Category comments = ").append(myFractionData.get(59).trim()).append("\n");
-                            metaData.append("Published Uplift rate m/ky = ").append(myFractionData.get(60).trim()).append("\n");
-                            metaData.append("Published Uplift rate Unct m/ky = ").append(myFractionData.get(61).trim()).append("\n");
-                            metaData.append("Interpreted Uplift rate m/ky = ").append(myFractionData.get(62).trim()).append("\n");
-//                            metaData.append("Published Uplift rate Unct m/ky = ").append(myFractionData.get(16).trim()).append("\n");
-                            metaData.append("Comments (uplift) = ").append(myFractionData.get(63).trim()).append("\n");
-                            metaData.append("Original elevation datum = ").append(myFractionData.get(64).trim()).append("\n");
-                            metaData.append("Elevation measurement methodology = ").append(myFractionData.get(65).trim()).append("\n");
-
-                            metaData.append("Published elevation (m) = ").append(myFractionData.get(66).trim()).append("\n");
-                            metaData.append("Published elevation Unct (m) = ").append(myFractionData.get(67).trim()).append("\n");
-                            metaData.append("Elevation from a different source = ").append(myFractionData.get(68).trim()).append("\n");
-                            metaData.append("Elevation from a different source Unct = ").append(myFractionData.get(69).trim()).append("\n");
-                            metaData.append("Interpreted Elevation rel to mean sea level (m) = ").append(myFractionData.get(70).trim()).append("\n");
-                            metaData.append("Interpreted Elevation Unct (m) = ").append(myFractionData.get(71).trim()).append("\n");
-                            metaData.append("Comments Elevation incl Unct = ").append(myFractionData.get(72).trim()).append("\n");
-
-                            metaData.append("Facies = ").append(myFractionData.get(73).trim()).append("\n");
-                            metaData.append("Reported as in situ = ").append(myFractionData.get(74).trim()).append("\n");
-
-                            metaData.append("Interpreted as in growth position = ").append(myFractionData.get(75).trim()).append("\n");
-                            metaData.append("Taxonomic ID = ").append(myFractionData.get(76).trim()).append("\n");
-                            metaData.append("Comments (taxon) = ").append(myFractionData.get(77).trim()).append("\n");
-
-//                            metaData.append("Species = ").append(myFractionData.get(28).trim()).append("\n");
-//                            metaData.append("Comments (species) = ").append(myFractionData.get(29).trim()).append("\n");
-                            metaData.append("Published assemblage description = ").append(myFractionData.get(78).trim()).append("\n");
-                            metaData.append("Published paleowater depth estimate = ").append(myFractionData.get(79).trim()).append("\n");
-                            metaData.append("Interpreted paleowater depth estimate = ").append(myFractionData.get(80).trim()).append("\n");
-
-                            metaData.append("Uncertainty in Interpreted paleowater depth estimate = ").append(myFractionData.get(81).trim()).append("\n");
-                            metaData.append("Comments-- paleowater depth interpretation = ").append(myFractionData.get(82).trim()).append("\n");
 
                             // June 2016 per Noah email 29 March 2016
                             /*
@@ -226,34 +174,37 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb_NEW extends A
                             decay constants to calculate the output date and del234Ui.  Note that you never have to use the input
                             (e.g. D1) set of decay constants in this calculation.  
                              */
-                            String spikeCalibration = myFractionData.get(4).trim();// june 2017 now for 230/238 ... waiting to hear about 234/238
-                            if (spikeCalibration.equalsIgnoreCase("G")) {
-                                if (myFractionData.get(3).trim().compareToIgnoreCase("D1") == 0) {
-                                    myFraction.useLegacyPhysicalConstantsD1();
-                                } else if (myFractionData.get(3).trim().compareToIgnoreCase("D2") == 0) {
-                                    myFraction.useLegacyPhysicalConstantsD2();
-                                } else if (myFractionData.get(3).trim().compareToIgnoreCase("D3") == 0) {
-                                    myFraction.useLegacyPhysicalConstantsD3();
-                                }
-                            } else /* assume Secular Equilibrium*/ {
+                            // new logic June 2017 - allows for chosen physical const model of output = D3 or some other
+                            // choose D1, D2, D3 and set flag for spike calibrations both
+                            if (myFractionData.get(3).trim().compareToIgnoreCase("D1") == 0) {
+                                myFraction.useLegacyPhysicalConstantsD1();
+                            } else if (myFractionData.get(3).trim().compareToIgnoreCase("D2") == 0) {
+                                myFraction.useLegacyPhysicalConstantsD2();
+                            } else if (myFractionData.get(3).trim().compareToIgnoreCase("D3") == 0) {
                                 myFraction.useLegacyPhysicalConstantsD3();
                             }
 
-                            metaData.append("Spike Calib = ").append(spikeCalibration).append("\n"); // ??? two dif ones?
+                            String spikeCalibration = myFractionData.get(4).trim();// 230/238 
+                            metaData.append("Calibration Method for 230Th/238U ratio = ").append(spikeCalibration).append("\n");
+                            ((UThFraction) myFraction).setSpikeCalibrationR230_238IsSecular(spikeCalibration.compareToIgnoreCase("SE") == 0);
 
-                            metaData.append("Method of mineralogy assessment = ").append(myFractionData.get(48).trim()).append("\n");
-                            metaData.append("Published % calcite = ").append(myFractionData.get(49).trim()).append("\n");
-                            metaData.append("Interpreted % calcite = ").append(myFractionData.get(50).trim()).append("\n");
+                            spikeCalibration = myFractionData.get(5).trim();// 234/238 
+                            metaData.append("Calibration Method for 234U/238U ratio = ").append(spikeCalibration).append("\n"); // ??? two dif ones?
+                            ((UThFraction) myFraction).setSpikeCalibrationR234_238IsSecular(spikeCalibration.compareToIgnoreCase("SE") == 0);
 
-                            myFraction.setFractionNotes(metaData.toString());
-
-                            myFraction.setSampleName(currentSample.getSampleName());
-                            // in case a sample occurs out of order
-                            if (currentSample.getFractions().size() > 0) {
-                                myFraction.setAliquotNumber(currentSample.getFractions().get(0).getAliquotNumber());
+                            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
+                            String dateAnalyzed = myFractionData.get(6).trim();
+                            long dateTimeMilliseconds = timeInMillisecondsOfYear2000Since1970;// per Noah 12 June 2017
+                            if (dateAnalyzed.length() >= 4) {
+                                try {
+                                    dateTimeMilliseconds = dateFormat.parse(dateAnalyzed).getTime();
+                                } catch (ParseException parseException) {
+                                }
                             }
-                            currentSample.addFraction(myFraction);
-                            ((ReduxAliquotInterface) currentAliquot).getAliquotFractions().add(myFraction);
+                            ((UThFraction) myFraction).setDateTimeMillisecondsOfAnalysis(dateTimeMilliseconds);
+
+                            metaData.append("PublishedID = ").append(myFractionData.get(9).trim()).append("\n");
+                            metaData.append("Replicate = ").append(myFractionData.get(10).trim()).append("\n");
 
                             // TODO: add uncertainty columns
                             // column 11 is conc232Th in ppb
@@ -308,54 +259,51 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb_NEW extends A
                             myFraction.getCompositionalMeasureByName(ratioName)//
                                     .setOneSigma(oneSigmaAbs);
 
-                            // column 19 is ar230Th_234Ufc 
-                            ratioName = UThAnalysisMeasures.ar230Th_234Ufc.getName();
-                            myFraction.getLegacyActivityRatioByName(ratioName)//
-                                    .setValue(readDelimitedTextCell(myFractionData.get(19)));
 
-                            // column 20 is ar230Th_234Ufc uncertainty 
+                            // column 19 is [230Th] ppt in ppt
+                            ratioName = UThCompositionalMeasures.conc238U.getName();
+                            myFraction.getCompositionalMeasureByName(ratioName)//
+                                    .setValue(readDelimitedTextCell(myFractionData.get(19)).//
+                                            movePointLeft(12));
+
+                            // column 20 is [230Th] ppt uncertainty in ppt
                             // convert 2-sigma to 1-sigma
                             oneSigmaAbs = readDelimitedTextCell(myFractionData.get(20)).
-                                    divide(new BigDecimal(2.0));
-                            myFraction.getLegacyActivityRatioByName(ratioName)//
+                                    divide(new BigDecimal(2.0)).//
+                                    movePointLeft(12);
+                            myFraction.getCompositionalMeasureByName(ratioName)//
                                     .setOneSigma(oneSigmaAbs);
 
-                            // column 21 is ar230Th_238Ufc 
-                            // June 2017
-                            // first get correction factor for ratio
-                            BigDecimal ar230Th_238Ufc_correction_factor = readDelimitedTextCell(myFractionData.get(41));
-                            // default value
-                            if (ar230Th_238Ufc_correction_factor.compareTo(BigDecimal.ZERO) == 0) {
-                                ar230Th_238Ufc_correction_factor = BigDecimal.ONE;
-                            }
-                            ratioName = UThAnalysisMeasures.ar230Th_238Ufc.getName();
-                            myFraction.getLegacyActivityRatioByName(ratioName)//
-                                    .setValue(readDelimitedTextCell(myFractionData.get(21))
-                                            .multiply(ar230Th_238Ufc_correction_factor));
 
-                            // column 22 is ar230Th_238Ufc uncertainty 
-                            // June 2017
-                            // TODO:  get correction factor for unct - IGNORE FOR NOW PER NOAH
+
+
+
+                            // column 21 is ar230Th_234Ufc 
+                            ratioName = UThAnalysisMeasures.ar230Th_234Ufc.getName();
+                            myFraction.getLegacyActivityRatioByName(ratioName)//
+                                    .setValue(readDelimitedTextCell(myFractionData.get(21)));
+
+                            // column 22 is ar230Th_234Ufc uncertainty 
                             // convert 2-sigma to 1-sigma
                             oneSigmaAbs = readDelimitedTextCell(myFractionData.get(22)).
                                     divide(new BigDecimal(2.0));
                             myFraction.getLegacyActivityRatioByName(ratioName)//
                                     .setOneSigma(oneSigmaAbs);
 
-                            // column 23 is ar234U_238Ufc 
+                            // column 23 is ar230Th_238Ufc 
                             // June 2017
                             // first get correction factor for ratio
-                            BigDecimal ar234U_238Ufc_correction_factor = readDelimitedTextCell(myFractionData.get(43));
+                            BigDecimal ar230Th_238Ufc_correction_factor = readDelimitedTextCell(myFractionData.get(35));
                             // default value
-                            if (ar234U_238Ufc_correction_factor.compareTo(BigDecimal.ZERO) == 0) {
-                                ar234U_238Ufc_correction_factor = BigDecimal.ONE;
+                            if (ar230Th_238Ufc_correction_factor.compareTo(BigDecimal.ZERO) == 0) {
+                                ar230Th_238Ufc_correction_factor = BigDecimal.ONE;
                             }
-                            ratioName = UThAnalysisMeasures.ar234U_238Ufc.getName();
+                            ratioName = UThAnalysisMeasures.ar230Th_238Ufc.getName();
                             myFraction.getLegacyActivityRatioByName(ratioName)//
                                     .setValue(readDelimitedTextCell(myFractionData.get(23))
-                                            .multiply(ar234U_238Ufc_correction_factor));
+                                            .multiply(ar230Th_238Ufc_correction_factor));
 
-                            // column 24 is ar234U_238Ufc uncertainty 
+                            // column 24 is ar230Th_238Ufc uncertainty 
                             // June 2017
                             // TODO:  get correction factor for unct - IGNORE FOR NOW PER NOAH
                             // convert 2-sigma to 1-sigma
@@ -363,20 +311,108 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb_NEW extends A
                                     divide(new BigDecimal(2.0));
                             myFraction.getLegacyActivityRatioByName(ratioName)//
                                     .setOneSigma(oneSigmaAbs);
+                            
+                            
+                            
+                            
+                            
 
-                            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
-                            String dateAnalyzed = myFractionData.get(6).trim();
-                            if (dateAnalyzed.length() == 0) {
-                                dateAnalyzed = "1950-01-01";
+                            // column 25 is ar234U_238Ufc 
+                            // June 2017
+                            // first get correction factor for ratio
+                            BigDecimal ar234U_238Ufc_correction_factor = readDelimitedTextCell(myFractionData.get(37));
+                            // default value
+                            if (ar234U_238Ufc_correction_factor.compareTo(BigDecimal.ZERO) == 0) {
+                                ar234U_238Ufc_correction_factor = BigDecimal.ONE;
                             }
+                            ratioName = UThAnalysisMeasures.ar234U_238Ufc.getName();
+                            myFraction.getLegacyActivityRatioByName(ratioName)//
+                                    .setValue(readDelimitedTextCell(myFractionData.get(25))
+                                            .multiply(ar234U_238Ufc_correction_factor));
 
-                            long dateTimeMilliseconds = timeInMillisecondsOfYear1950Since1970;
-                            try {
-                                dateTimeMilliseconds = dateFormat.parse(dateAnalyzed).getTime();
-                            } catch (ParseException parseException) {
+                            // column 26 is ar234U_238Ufc uncertainty 
+                            // June 2017
+                            // TODO:  get correction factor for unct - IGNORE FOR NOW PER NOAH
+                            // convert 2-sigma to 1-sigma
+                            oneSigmaAbs = readDelimitedTextCell(myFractionData.get(26)).
+                                    divide(new BigDecimal(2.0));
+                            myFraction.getLegacyActivityRatioByName(ratioName)//
+                                    .setOneSigma(oneSigmaAbs);
+                            
+                            
+
+                            metaData.append("Reported date (ka) = ").append(myFractionData.get(27).trim()).append("\n");
+                            metaData.append("Reported date uncert. (±2_) = ").append(myFractionData.get(28).trim()).append("\n");
+                            metaData.append("Reported d234U initial (‰) = ").append(myFractionData.get(29).trim()).append("\n");
+                            metaData.append("Reported d234U uncert. (±2_) = ").append(myFractionData.get(30).trim()).append("\n");
+
+                            metaData.append("Pa/Th age? = ").append(myFractionData.get(31).trim()).append("\n");
+                            metaData.append("14C age? = ").append(myFractionData.get(32).trim()).append("\n");
+
+                            metaData.append("Reference material name for 230Th/238U = ").append(myFractionData.get(33).trim()).append("\n");
+                            metaData.append("Reference material name for 234U/238U = ").append(myFractionData.get(34).trim()).append("\n");
+                            
+                            
+
+// renumber
+                            metaData.append("Detrital Th correction method = ").append(myFractionData.get(39).trim()).append("\n");
+                            metaData.append("Detrital Th model = ").append(myFractionData.get(40).trim()).append("\n");
+                            metaData.append("Comments- detrital Th correction = ").append(myFractionData.get(41).trim()).append("\n");
+
+                            metaData.append("Method of mineralogy assessment = ").append(myFractionData.get(42).trim()).append("\n");
+                            metaData.append("Published % calcite = ").append(myFractionData.get(43).trim()).append("\n");
+                            metaData.append("Interpreted % calcite = ").append(myFractionData.get(44).trim()).append("\n");
+
+                            metaData.append("Material = ").append(myFractionData.get(45).trim()).append("\n");
+
+                            metaData.append("Location = ").append(myFractionData.get(46).trim()).append("\n");
+                            metaData.append("Site = ").append(myFractionData.get(47).trim()).append("\n");
+                            metaData.append("Additional Site Info = ").append(myFractionData.get(48).trim()).append("\n");
+                            metaData.append("LatitudeWGS84 = ").append(myFractionData.get(49).trim()).append("\n");
+                            metaData.append("LongitudeWGS84 = ").append(myFractionData.get(50).trim()).append("\n");
+                            metaData.append("LatLongEstimated = ").append(myFractionData.get(51).trim()).append("\n");
+                            metaData.append("Tectonic Category = ").append(myFractionData.get(52).trim()).append("\n");
+                            metaData.append("Tectonic Category comments = ").append(myFractionData.get(53).trim()).append("\n");
+                            metaData.append("Published Uplift rate m/ky = ").append(myFractionData.get(54).trim()).append("\n");
+                            metaData.append("Published Uplift rate Unct m/ky = ").append(myFractionData.get(55).trim()).append("\n");
+                            metaData.append("Interpreted Uplift rate m/ky = ").append(myFractionData.get(56).trim()).append("\n");
+                            metaData.append("Comments (uplift) = ").append(myFractionData.get(57).trim()).append("\n");
+                            metaData.append("Original elevation datum = ").append(myFractionData.get(58).trim()).append("\n");
+                            metaData.append("Elevation measurement methodology = ").append(myFractionData.get(59).trim()).append("\n");
+
+                            metaData.append("Published elevation (m) = ").append(myFractionData.get(60).trim()).append("\n");
+                            metaData.append("Published elevation Unct (m) = ").append(myFractionData.get(61).trim()).append("\n");
+                            metaData.append("Elevation from a different source = ").append(myFractionData.get(62).trim()).append("\n");
+                            metaData.append("Elevation from a different source Unct = ").append(myFractionData.get(63).trim()).append("\n");
+                            metaData.append("Interpreted Elevation rel to mean sea level (m) = ").append(myFractionData.get(64).trim()).append("\n");
+                            metaData.append("Interpreted Elevation Unct (m) = ").append(myFractionData.get(65).trim()).append("\n");
+                            metaData.append("Comments Elevation incl Unct = ").append(myFractionData.get(66).trim()).append("\n");
+
+                            metaData.append("Facies = ").append(myFractionData.get(67).trim()).append("\n");
+                            metaData.append("Reported as in situ = ").append(myFractionData.get(68).trim()).append("\n");
+
+                            metaData.append("Interpreted as in growth position = ").append(myFractionData.get(69).trim()).append("\n");
+                            metaData.append("Taxonomic ID = ").append(myFractionData.get(70).trim()).append("\n");
+                            metaData.append("Comments (taxon) = ").append(myFractionData.get(71).trim()).append("\n");
+
+//                            metaData.append("Species = ").append(myFractionData.get(28).trim()).append("\n");
+//                            metaData.append("Comments (species) = ").append(myFractionData.get(29).trim()).append("\n");
+                            metaData.append("Published assemblage description = ").append(myFractionData.get(72).trim()).append("\n");
+                            metaData.append("Published paleowater depth estimate = ").append(myFractionData.get(73).trim()).append("\n");
+                            metaData.append("Interpreted paleowater depth estimate = ").append(myFractionData.get(74).trim()).append("\n");
+
+                            metaData.append("Uncertainty in Interpreted paleowater depth estimate = ").append(myFractionData.get(75).trim()).append("\n");
+                            metaData.append("Comments-- paleowater depth interpretation = ").append(myFractionData.get(76).trim()).append("\n");
+
+                            myFraction.setFractionNotes(metaData.toString());
+
+                            myFraction.setSampleName(currentSample.getSampleName());
+                            // in case a sample occurs out of order
+                            if (currentSample.getFractions().size() > 0) {
+                                myFraction.setAliquotNumber(currentSample.getFractions().get(0).getAliquotNumber());
                             }
-
-                            ((UThFraction) myFraction).setDateTimeMillisecondsOfAnalysis(dateTimeMilliseconds);
+                            currentSample.addFraction(myFraction);
+                            ((ReduxAliquotInterface) currentAliquot).getAliquotFractions().add(myFraction);
 
                             myFraction.setDetritalUThModel(ReduxLabData.getInstance().getDefaultDetritalUraniumAndThoriumModel());
 
