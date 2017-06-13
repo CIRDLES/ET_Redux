@@ -1490,12 +1490,12 @@ public final class ReduxLabData implements Serializable {
         }
 
         // new approach oct 2014
-        if (defaultReportSettingsModel.isOutOfDate()) {
+        if (defaultReportSettingsModel.isOutOfDateUPb()) {
             String myReportSettingsName = defaultReportSettingsModel.getName();
             defaultReportSettingsModel = new ReportSettings(myReportSettingsName, "UPb");
         }
 
-        if (defaultReportSettingsModelUTh.isOutOfDate()) {
+        if (defaultReportSettingsModelUTh.isOutOfDateUTh()) {
             String myReportSettingsName = defaultReportSettingsModelUTh.getName();
             defaultReportSettingsModelUTh = new ReportSettings(myReportSettingsName, "UTh");
         }

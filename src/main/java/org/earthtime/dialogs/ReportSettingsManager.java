@@ -37,7 +37,8 @@ import javax.swing.event.ListSelectionListener;
 import org.earthtime.UPb_Redux.reports.ReportCategory;
 import org.earthtime.UPb_Redux.reports.ReportColumn;
 import org.earthtime.beans.ET_JButton;
-import org.earthtime.dataDictionaries.ReportSpecifications;
+import org.earthtime.dataDictionaries.ReportSpecificationsUPb;
+import org.earthtime.dataDictionaries.ReportSpecificationsUTh;
 import org.earthtime.reportViews.ReportListItemI;
 import org.earthtime.reportViews.ReportPainterI;
 import org.earthtime.reports.ReportCategoryInterface;
@@ -46,7 +47,7 @@ import org.earthtime.reports.ReportSettingsInterface;
 
 /**
  *
- * @author  James F. Bowring
+ * @author James F. Bowring
  */
 public class ReportSettingsManager extends DialogEditor {
 
@@ -58,80 +59,84 @@ public class ReportSettingsManager extends DialogEditor {
     private Vector<ReportListItemI> colList;
     private UnitsActionListener unitsActionListener;
 
-    /** Creates new form ReportSettingsManager
+    /**
+     * Creates new form ReportSettingsManager
+     *
      * @param parent
-     * @param modal 
-     * @param reportSettings  
+     * @param modal
+     * @param reportSettings
      */
-    public ReportSettingsManager ( //
+    public ReportSettingsManager( //
             Frame parent,
             boolean modal,
-            ReportSettingsInterface reportSettings ) {
-        super( parent, modal );
+            ReportSettingsInterface reportSettings) {
+        super(parent, modal);
 
         // DialogEditor attribute
         amOpen = true;
 
         this.parent = parent;
 
-        setLocationRelativeTo( parent );
+        setLocationRelativeTo(parent);
         initComponents();
 
         this.reportSettings = reportSettings;
         populateCategoryList();
     }
 
-    private void populateCategoryList () {
+    private void populateCategoryList() {
         // extract category names
         Map<Integer, ReportCategoryInterface> cats = reportSettings.getReportCategoriesInOrder();
         catList = new Vector<>();
 
-        for (int c = 0; c < cats.size(); c ++) {
-            catList.add(cats.get( c ));
+        for (int c = 0; c < cats.size(); c++) {
+            catList.add(cats.get(c));
         }
 
-        categories_list.setCellRenderer( new ReportListRenderer() );
-        categories_list.setListData( catList );
-        categories_list.addListSelectionListener( new ReportListSelectionListener() );
-        categories_list.setSelectedIndex( 0 );
+        categories_list.setCellRenderer(new ReportListRenderer());
+        categories_list.setListData(catList);
+        categories_list.addListSelectionListener(new ReportListSelectionListener());
+        categories_list.setSelectedIndex(0);
     }
 
-    private void populateColumnList ( ReportCategoryInterface cat ) {
+    private void populateColumnList(ReportCategoryInterface cat) {
         // extract column names
         Map<Integer, ReportColumnInterface> cols = cat.getCategoryColumnOrder();
         colList = new Vector<>();
 
-        for (int c = 0; c < cols.size(); c ++) {
-            colList.add( cols.get( c ) );
+        for (int c = 0; c < cols.size(); c++) {
+            colList.add(cols.get(c));
         }
 
-        columns_list.setSelectedIndex( -1 );
-        columns_list.setCellRenderer( new ReportListRenderer() );
-        columns_list.setListData( colList );
-        columns_list.addListSelectionListener( new ReportListSelectionListener() );
+        columns_list.setSelectedIndex(-1);
+        columns_list.setCellRenderer(new ReportListRenderer());
+        columns_list.setListData(colList);
+        columns_list.addListSelectionListener(new ReportListSelectionListener());
         columns_list.grabFocus();
-        columns_list.setSelectedIndex( 0 );
+        columns_list.setSelectedIndex(0);
 
     }
 
     class ReportListRenderer extends DefaultListCellRenderer {
 
-        /** Creates a new instance of LocaleRenderer */
-        public ReportListRenderer () {
+        /**
+         * Creates a new instance of LocaleRenderer
+         */
+        public ReportListRenderer() {
         }
 
         @Override
-        public Component getListCellRendererComponent (
+        public Component getListCellRendererComponent(
                 JList list,
                 Object value,
                 int index, boolean isSelected,
-                boolean cellHasFocus ) {
+                boolean cellHasFocus) {
 
-            super.getListCellRendererComponent( list,
+            super.getListCellRendererComponent(list,
                     value,
                     index,
                     isSelected,
-                    cellHasFocus );
+                    cellHasFocus);
 
             ReportListItemI c = (ReportListItemI) value;
             try {
@@ -145,11 +150,11 @@ public class ReportSettingsManager extends DialogEditor {
             return this;
         }
 
-        private String prepareStringForHTML ( String text ) {
+        private String prepareStringForHTML(String text) {
             String retval = text;
 
-            retval = retval.replace( "<", "&lt;" );
-            retval = retval.replace( ">", "&gt;" );
+            retval = retval.replace("<", "&lt;");
+            retval = retval.replace(">", "&gt;");
 
             return retval;
         }
@@ -159,60 +164,58 @@ public class ReportSettingsManager extends DialogEditor {
         // This method is called each time the user changes the set of selected items
 
         @Override
-        public void valueChanged ( ListSelectionEvent evt ) {
+        public void valueChanged(ListSelectionEvent evt) {
             // When the user releases the mouse button and completes the selection,
             // getValueIsAdjusting() becomes false
 
             // save current
             try {
                 for (ReportListItemI li : colList) {
-                    li.setPositionIndex( colList.indexOf( li ) );
+                    li.setPositionIndex(colList.indexOf(li));
                 }
             } catch (Exception e) {
             }
 
-            if (  ! evt.getValueIsAdjusting() ) {
+            if (!evt.getValueIsAdjusting()) {
                 JList list = (JList) evt.getSource();
 
-                if ( list.getName().equalsIgnoreCase( "cat" ) ) {
+                if (list.getName().equalsIgnoreCase("cat")) {
                     // set buttons' enabled status
                     int selectedIndex = list.getSelectedIndex();
-                    if ( selectedIndex > -1 ) {
+                    if (selectedIndex > -1) {
                         for (Enumeration e = categoryChanges_buttonGroup.getElements(); e.hasMoreElements();) {
                             JButton jb = (JButton) e.nextElement();
-                            jb.setEnabled( true );
-                            if ( (jb.getName().equalsIgnoreCase( "up" )) && (selectedIndex <= 1) ) { //prevents fraction category from being displaced
-                                jb.setEnabled( false );
+                            jb.setEnabled(true);
+                            if ((jb.getName().equalsIgnoreCase("up")) && (selectedIndex <= 1)) { //prevents fraction category from being displaced
+                                jb.setEnabled(false);
                             }
-                            if ( ((jb.getName().equalsIgnoreCase( "down" )) && (selectedIndex == (catList.size() - 1)))
-                                    || (selectedIndex == 0) ) // this prevents movement of fraction category from first place
+                            if (((jb.getName().equalsIgnoreCase("down")) && (selectedIndex == (catList.size() - 1)))
+                                    || (selectedIndex == 0)) // this prevents movement of fraction category from first place
                             {
-                                jb.setEnabled( false );
+                                jb.setEnabled(false);
                             }
                         }
                     }
                     // populate columnList
-                    populateColumnList( (ReportCategory) list.getSelectedValue() );
-
-
+                    populateColumnList((ReportCategory) list.getSelectedValue());
 
                 } else { // columnsList
                     // set buttons' enabled status
                     int selectedIndex = list.getSelectedIndex();
-                    if ( selectedIndex > -1 ) {
+                    if (selectedIndex > -1) {
                         for (Enumeration e = columnChanges_buttonGroup.getElements(); e.hasMoreElements();) {
                             JButton jb = (JButton) e.nextElement();
-                            jb.setEnabled( true );
-                            if ( (jb.getName().equalsIgnoreCase( "up" )) && (selectedIndex == 0) ) {
-                                jb.setEnabled( false );
+                            jb.setEnabled(true);
+                            if ((jb.getName().equalsIgnoreCase("up")) && (selectedIndex == 0)) {
+                                jb.setEnabled(false);
                             }
-                            if ( (jb.getName().equalsIgnoreCase( "down" )) && (selectedIndex == (colList.size() - 1)) ) {
-                                jb.setEnabled( false );
+                            if ((jb.getName().equalsIgnoreCase("down")) && (selectedIndex == (colList.size() - 1))) {
+                                jb.setEnabled(false);
                             }
                         }
                     }
                     // populate columnDetails
-                    populateColumnsDetails( (ReportColumn) list.getSelectedValue() );
+                    populateColumnsDetails((ReportColumn) list.getSelectedValue());
 
                 }
             }
@@ -220,97 +223,109 @@ public class ReportSettingsManager extends DialogEditor {
     }
 
     /**
-     * 
+     *
      * @param reportColumn
      */
-    public void populateColumnsDetails ( ReportColumn reportColumn ) {
-        if ( reportColumn != null ) {
+    public void populateColumnsDetails(ReportColumn reportColumn) {
+        if (reportColumn != null) {
 
-            columnName_label.setText( reportColumn.getDisplayName() );
+            columnName_label.setText(reportColumn.getDisplayName());
 
             // oct 2009 added in functionality of units chooser
-            if (  ! reportColumn.getUnits().equalsIgnoreCase( "" ) ) {
-                unitsChooser_ComboBox.setVisible( true );
-                unitsChooser_ComboBox.removeActionListener( unitsActionListener );
+            if (!reportColumn.getUnits().equalsIgnoreCase("")) {
+                unitsChooser_ComboBox.setVisible(true);
+                unitsChooser_ComboBox.removeActionListener(unitsActionListener);
                 unitsChooser_ComboBox.removeAllItems();
                 // decide flavor of units
                 String[] unitsContents;
                 try {
-                    if ( ReportSpecifications.unitsType.get( reportColumn.getUnits() ).equalsIgnoreCase( "mass" ) ) {
-                        unitsContents = ReportSpecifications.massUnits;
-                    } else if ( ReportSpecifications.unitsType.get( reportColumn.getUnits() ).equalsIgnoreCase( "date" ) ) {
-                        unitsContents = ReportSpecifications.dateUnits;
+
+                    if (reportSettings.isIsotypeStyleUPb()) {
+                        if (ReportSpecificationsUPb.unitsType.get(reportColumn.getUnits()).equalsIgnoreCase("mass")) {
+                            unitsContents = ReportSpecificationsUPb.massUnits;
+                        } else if (ReportSpecificationsUPb.unitsType.get(reportColumn.getUnits()).equalsIgnoreCase("date")) {
+                            unitsContents = ReportSpecificationsUPb.dateUnits;
+                        } else {
+                            unitsContents = ReportSpecificationsUPb.concUnits;
+                        }
                     } else {
-                        unitsContents = ReportSpecifications.concUnits;
+                        if (ReportSpecificationsUTh.unitsType.get(reportColumn.getUnits()).equalsIgnoreCase("mass")) {
+                            unitsContents = ReportSpecificationsUTh.massUnits;
+                        } else if (ReportSpecificationsUTh.unitsType.get(reportColumn.getUnits()).equalsIgnoreCase("date")) {
+                            unitsContents = ReportSpecificationsUTh.dateUnits;
+                        } else {
+                            unitsContents = ReportSpecificationsUTh.concUnits;
+                        }
                     }
-                    for (int i = 0; i < unitsContents.length; i ++) {
-                        unitsChooser_ComboBox.addItem( unitsContents[i] );
+
+                    for (int i = 0; i < unitsContents.length; i++) {
+                        unitsChooser_ComboBox.addItem(unitsContents[i]);
                     }
-                    unitsChooser_ComboBox.setSelectedItem( reportColumn.getUnits() );
+                    unitsChooser_ComboBox.setSelectedItem(reportColumn.getUnits());
                     unitsActionListener = new UnitsActionListener();
-                    unitsChooser_ComboBox.addActionListener( unitsActionListener );
-                    unitsActionListener.setReportColumn( reportColumn );
+                    unitsChooser_ComboBox.addActionListener(unitsActionListener);
+                    unitsActionListener.setReportColumn(reportColumn);
                 } catch (Exception e) {
                 }
 
             } else {
-                unitsChooser_ComboBox.setVisible( false );
+                unitsChooser_ComboBox.setVisible(false);
             }
             // end added units functinality
 
-            if ( reportColumn.isDisplayedWithArbitraryDigitCount() ) {
-                valueModeArbitrary_rButton.setSelected( true );
+            if (reportColumn.isDisplayedWithArbitraryDigitCount()) {
+                valueModeArbitrary_rButton.setSelected(true);
             } else {
-                valueModeSigFig_rButton.setSelected( true );
+                valueModeSigFig_rButton.setSelected(true);
             }
 
-            SpinnerModel valueDigits_spinnerModel =
-                    new SpinnerNumberModel(//
-                    (Number) Integer.valueOf( reportColumn.getCountOfSignificantDigits() ),//
-                    0, 9, 1 );
-            valueDigits_spinner.setModel( valueDigits_spinnerModel );
+            SpinnerModel valueDigits_spinnerModel
+                    = new SpinnerNumberModel(//
+                            (Number) Integer.valueOf(reportColumn.getCountOfSignificantDigits()),//
+                            0, 9, 1);
+            valueDigits_spinner.setModel(valueDigits_spinnerModel);
 
-            valueDigitsCount_label.setText( "digit count = " );
-            valueDigits_spinner.setEnabled( true );
+            valueDigitsCount_label.setText("digit count = ");
+            valueDigits_spinner.setEnabled(true);
 
-            if ( reportColumn.getUncertaintyColumn() != null ) {
-                uncertaintyColName_label.setVisible( true );
-                uncertaintyDigitCount_label.setVisible( true );
-                uncertaintyDigits_spinner.setVisible( true );
+            if (reportColumn.getUncertaintyColumn() != null) {
+                uncertaintyColName_label.setVisible(true);
+                uncertaintyDigitCount_label.setVisible(true);
+                uncertaintyDigits_spinner.setVisible(true);
 
-                if ( reportColumn.getUncertaintyColumn().isDisplayedWithArbitraryDigitCount() ) {
-                    unctModeArbitrary_rButton.setSelected( true );
+                if (reportColumn.getUncertaintyColumn().isDisplayedWithArbitraryDigitCount()) {
+                    unctModeArbitrary_rButton.setSelected(true);
                 } else {
-                    unctModeSigFig_rButton.setSelected( true );
+                    unctModeSigFig_rButton.setSelected(true);
                     // check for both value and unct in sigfig mode
-                    if (  ! reportColumn.isDisplayedWithArbitraryDigitCount() ) {
-                        valueDigitsCount_label.setText( "digit count = n/a" );
-                        valueDigits_spinner.setEnabled( false );
+                    if (!reportColumn.isDisplayedWithArbitraryDigitCount()) {
+                        valueDigitsCount_label.setText("digit count = n/a");
+                        valueDigits_spinner.setEnabled(false);
                     }
                 }
-                unctModeArbitrary_rButton.setVisible( true );
-                unctModeSigFig_rButton.setVisible( true );
+                unctModeArbitrary_rButton.setVisible(true);
+                unctModeSigFig_rButton.setVisible(true);
 
-                uncertaintyVisible_chkBox.setVisible( true );
+                uncertaintyVisible_chkBox.setVisible(true);
 
-                uncertaintyColName_label.setText( reportColumn.getUncertaintyColumn().getDisplayName() );
-                uncertaintyVisible_chkBox.setSelected( reportColumn.getUncertaintyColumn().isVisible() );
+                uncertaintyColName_label.setText(reportColumn.getUncertaintyColumn().getDisplayName());
+                uncertaintyVisible_chkBox.setSelected(reportColumn.getUncertaintyColumn().isVisible());
 
-                SpinnerModel uncertaintyDigits_spinnerModel =
-                        new SpinnerNumberModel(//
-                        (Number) Integer.valueOf( reportColumn.getUncertaintyColumn().getCountOfSignificantDigits() ),//
-                        1, 9, 1 );
-                uncertaintyDigits_spinner.setModel( uncertaintyDigits_spinnerModel );
+                SpinnerModel uncertaintyDigits_spinnerModel
+                        = new SpinnerNumberModel(//
+                                (Number) Integer.valueOf(reportColumn.getUncertaintyColumn().getCountOfSignificantDigits()),//
+                                1, 9, 1);
+                uncertaintyDigits_spinner.setModel(uncertaintyDigits_spinnerModel);
 
             } else { // no uncertainty column
-                uncertaintyColName_label.setVisible( false );
-                uncertaintyDigitCount_label.setVisible( false );
-                uncertaintyDigits_spinner.setVisible( false );
-                valueDigits_spinner.setVisible( true );
-                valueDigits_spinner.setModel( valueDigits_spinnerModel );
-                unctModeArbitrary_rButton.setVisible( false );
-                unctModeSigFig_rButton.setVisible( false );
-                uncertaintyVisible_chkBox.setVisible( false );
+                uncertaintyColName_label.setVisible(false);
+                uncertaintyDigitCount_label.setVisible(false);
+                uncertaintyDigits_spinner.setVisible(false);
+                valueDigits_spinner.setVisible(true);
+                valueDigits_spinner.setModel(valueDigits_spinnerModel);
+                unctModeArbitrary_rButton.setVisible(false);
+                unctModeSigFig_rButton.setVisible(false);
+                uncertaintyVisible_chkBox.setVisible(false);
             }
         }
     }
@@ -319,29 +334,29 @@ public class ReportSettingsManager extends DialogEditor {
 
         private ReportColumn reportColumn;
 
-        public void actionPerformed ( ActionEvent e ) {
-            if ( (reportColumn != null)
-                    && (((JComboBox) e.getSource()).getSelectedItem() != null) ) {
-                reportColumn.setUnits( (String) ((JComboBox) e.getSource()).getSelectedItem() );
+        public void actionPerformed(ActionEvent e) {
+            if ((reportColumn != null)
+                    && (((JComboBox) e.getSource()).getSelectedItem() != null)) {
+                reportColumn.setUnits((String) ((JComboBox) e.getSource()).getSelectedItem());
             }
         }
 
-        public void setReportColumn ( ReportColumn reportColumn ) {
+        public void setReportColumn(ReportColumn reportColumn) {
             this.reportColumn = reportColumn;
         }
     }
 
-    private void setVisibleAllColumnsInCategory ( boolean visible ) {
-        for (int i = 0; i < columns_list.getModel().getSize(); i ++) {
-            columns_list.getModel().getElementAt( i ).setVisible( visible );
+    private void setVisibleAllColumnsInCategory(boolean visible) {
+        for (int i = 0; i < columns_list.getModel().getSize(); i++) {
+            columns_list.getModel().getElementAt(i).setVisible(visible);
         }
         columns_list.repaint();
     }
 
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
      */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -758,18 +773,18 @@ public class ReportSettingsManager extends DialogEditor {
 
     private void categoryMoveUp_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_categoryMoveUp_buttonActionPerformed
         catList.insertElementAt(//
-                catList.remove( categories_list.getSelectedIndex() ), //
-                categories_list.getSelectedIndex() - 1 );
+                catList.remove(categories_list.getSelectedIndex()), //
+                categories_list.getSelectedIndex() - 1);
         categories_list.repaint();
-        categories_list.setSelectedIndex( categories_list.getSelectedIndex() - 1 );
+        categories_list.setSelectedIndex(categories_list.getSelectedIndex() - 1);
     }//GEN-LAST:event_categoryMoveUp_buttonActionPerformed
 
     private void categoryMoveDown_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_categoryMoveDown_buttonActionPerformed
         catList.insertElementAt(//
-                catList.remove( categories_list.getSelectedIndex() ), //
-                categories_list.getSelectedIndex() + 1 );
+                catList.remove(categories_list.getSelectedIndex()), //
+                categories_list.getSelectedIndex() + 1);
         categories_list.repaint();
-        categories_list.setSelectedIndex( categories_list.getSelectedIndex() + 1 );
+        categories_list.setSelectedIndex(categories_list.getSelectedIndex() + 1);
     }//GEN-LAST:event_categoryMoveDown_buttonActionPerformed
 
     private void CloseDialog(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_CloseDialog
@@ -783,64 +798,64 @@ public class ReportSettingsManager extends DialogEditor {
 
     private void columnMoveDown_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_columnMoveDown_buttonActionPerformed
         colList.insertElementAt(//
-                colList.remove( columns_list.getSelectedIndex() ), //
-                columns_list.getSelectedIndex() + 1 );
+                colList.remove(columns_list.getSelectedIndex()), //
+                columns_list.getSelectedIndex() + 1);
         columns_list.repaint();
-        columns_list.setSelectedIndex( columns_list.getSelectedIndex() + 1 );
+        columns_list.setSelectedIndex(columns_list.getSelectedIndex() + 1);
 }//GEN-LAST:event_columnMoveDown_buttonActionPerformed
 
     private void columnMoveUp_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_columnMoveUp_buttonActionPerformed
         colList.insertElementAt(//
-                colList.remove( columns_list.getSelectedIndex() ), //
-                columns_list.getSelectedIndex() - 1 );
+                colList.remove(columns_list.getSelectedIndex()), //
+                columns_list.getSelectedIndex() - 1);
         columns_list.repaint();
-        columns_list.setSelectedIndex( columns_list.getSelectedIndex() - 1 );
+        columns_list.setSelectedIndex(columns_list.getSelectedIndex() - 1);
 }//GEN-LAST:event_columnMoveUp_buttonActionPerformed
 
     private void uncertaintyVisible_chkBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_uncertaintyVisible_chkBoxActionPerformed
         ((ReportColumnInterface) columns_list.getSelectedValue())//
-                .getUncertaintyColumn().setVisible( ((AbstractButton) evt.getSource()).isSelected() );
+                .getUncertaintyColumn().setVisible(((AbstractButton) evt.getSource()).isSelected());
     }//GEN-LAST:event_uncertaintyVisible_chkBoxActionPerformed
 
     private void uncertaintyDigits_spinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_uncertaintyDigits_spinnerStateChanged
         ((ReportColumnInterface) columns_list.getSelectedValue())//
-                .getUncertaintyColumn().setCountOfSignificantDigits( (Integer) uncertaintyDigits_spinner.getValue() );
+                .getUncertaintyColumn().setCountOfSignificantDigits((Integer) uncertaintyDigits_spinner.getValue());
     }//GEN-LAST:event_uncertaintyDigits_spinnerStateChanged
 
     private void valueDigits_spinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_valueDigits_spinnerStateChanged
         ((ReportColumnInterface) columns_list.getSelectedValue())//
-                .setCountOfSignificantDigits( (Integer) valueDigits_spinner.getValue() );
+                .setCountOfSignificantDigits((Integer) valueDigits_spinner.getValue());
 }//GEN-LAST:event_valueDigits_spinnerStateChanged
 
 private void valueModeArbitrary_rButtonunctModeArbitraryRButton_State_Changed(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_valueModeArbitrary_rButtonunctModeArbitraryRButton_State_Changed
     ((ReportColumnInterface) columns_list.getSelectedValue())//
-            .setDisplayedWithArbitraryDigitCount( valueModeArbitrary_rButton.isSelected() );
-    populateColumnsDetails( (ReportColumn) columns_list.getSelectedValue() );
+            .setDisplayedWithArbitraryDigitCount(valueModeArbitrary_rButton.isSelected());
+    populateColumnsDetails((ReportColumn) columns_list.getSelectedValue());
 }//GEN-LAST:event_valueModeArbitrary_rButtonunctModeArbitraryRButton_State_Changed
 
 private void categoryShowAllColumns_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_categoryShowAllColumns_buttonActionPerformed
-    setVisibleAllColumnsInCategory( true );
+    setVisibleAllColumnsInCategory(true);
 }//GEN-LAST:event_categoryShowAllColumns_buttonActionPerformed
 
 private void categoryHideAllColumns_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_categoryHideAllColumns_buttonActionPerformed
-    setVisibleAllColumnsInCategory( false );
+    setVisibleAllColumnsInCategory(false);
 }//GEN-LAST:event_categoryHideAllColumns_buttonActionPerformed
 
 private void unctModeArbitrary_rButtonStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_unctModeArbitrary_rButtonStateChanged
     ((ReportColumnInterface) columns_list.getSelectedValue())//
-            .getUncertaintyColumn().setDisplayedWithArbitraryDigitCount( unctModeArbitrary_rButton.isSelected() );
-    populateColumnsDetails( (ReportColumn) columns_list.getSelectedValue() );
+            .getUncertaintyColumn().setDisplayedWithArbitraryDigitCount(unctModeArbitrary_rButton.isSelected());
+    populateColumnsDetails((ReportColumn) columns_list.getSelectedValue());
 }//GEN-LAST:event_unctModeArbitrary_rButtonStateChanged
 
 private void categories_listMouseClicked (java.awt.event.MouseEvent evt) {//GEN-FIRST:event_categories_listMouseClicked
-    if ( (evt.getClickCount() == 2) && (categories_list.getSelectedIndex() >= 1) ) {
+    if ((evt.getClickCount() == 2) && (categories_list.getSelectedIndex() >= 1)) {
         categories_list.getSelectedValue().ToggleIsVisible();
         categories_list.repaint();
     }
 }//GEN-LAST:event_categories_listMouseClicked
 
 private void columns_listMouseClicked (java.awt.event.MouseEvent evt) {//GEN-FIRST:event_columns_listMouseClicked
-    if ( evt.getClickCount() == 2 ) {
+    if (evt.getClickCount() == 2) {
         columns_list.getSelectedValue().ToggleIsVisible();
         columns_list.repaint();
     }
@@ -850,19 +865,17 @@ private void apply_buttonActionPerformed (java.awt.event.ActionEvent evt) {//GEN
 
     // reorder categories
     for (ReportListItemI li : catList) {
-        li.setPositionIndex( catList.indexOf( li ) );
+        li.setPositionIndex(catList.indexOf(li));
     }
     for (ReportListItemI li : colList) {
-        li.setPositionIndex( colList.indexOf( li ) );
+        li.setPositionIndex(colList.indexOf(li));
     }
 
 //    String[][] reportFractions = reportSettings.reportAllFractionsByNumberStyle( ((UPbReduxFrame) parent).getTheSample(), false );
-    
 ////    String[][] reportFractions = ((UPbReduxFrame) parent).getTheSample().reportAllFractionsByNumberStyle( false );
-    
     ((ReportPainterI) parent).loadAndShowReportTableData("");//// reportFractions );
-    
-    
+
+
 }//GEN-LAST:event_apply_buttonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton apply_button;
@@ -904,29 +917,29 @@ private void apply_buttonActionPerformed (java.awt.event.ActionEvent evt) {//GEN
     // End of variables declaration//GEN-END:variables
 
     /**
-     * 
+     *
      * @return
      */
     public // Fields
-            ReportSettingsInterface getReportSettings () {
+            ReportSettingsInterface getReportSettings() {
         return reportSettings;
     }
 
     /**
-     * 
+     *
      * @param reportSettings
      */
-    public void setReportSettings ( ReportSettingsInterface reportSettings ) {
+    public void setReportSettings(ReportSettingsInterface reportSettings) {
         this.reportSettings = reportSettings;
     }
 
-    private void closeDialog () {
+    private void closeDialog() {
         // reorder categories
         for (ReportListItemI li : catList) {
-            li.setPositionIndex( catList.indexOf( li ) );
+            li.setPositionIndex(catList.indexOf(li));
         }
         for (ReportListItemI li : colList) {
-            li.setPositionIndex( colList.indexOf( li ) );
+            li.setPositionIndex(colList.indexOf(li));
         }
 
         amOpen = false;

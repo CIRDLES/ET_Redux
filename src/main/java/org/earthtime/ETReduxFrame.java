@@ -1173,7 +1173,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                             myState.getMRUImportedXMLFractionsFolder());
 
             ((SampleAnalysisWorkflowManagerInterface) mySampleManager).setSize();
-            JDialog.setDefaultLookAndFeelDecorated(true);
+//            JDialog.setDefaultLookAndFeelDecorated(true);
             // modal call to manager
             mySampleManager.setVisible(true);
 
@@ -1224,7 +1224,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                             theSample,
                             myState.getMRUImportFolderLegacyMode());
 
-            JDialog.setDefaultLookAndFeelDecorated(true);
+//            JDialog.setDefaultLookAndFeelDecorated(true);
 
             ((AbstractSampleFromProjectManagerDialog) mySampleManager).setSize();
             // modal call to manager
@@ -1303,7 +1303,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                                 myState.getMRUImportFolderLegacyMode());
             }
 
-            JDialog.setDefaultLookAndFeelDecorated(true);
+//            JDialog.setDefaultLookAndFeelDecorated(true);
 
             if (mySampleManager == null) {
                 return false;
@@ -3352,7 +3352,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             throws BadLabDataException {
         if (!AboutBox.amOpen) {
             myAboutBox = new AboutBox(this, true);
-            JDialog.setDefaultLookAndFeelDecorated(true);
+//            JDialog.setDefaultLookAndFeelDecorated(true);
             myAboutBox.setVisible(true);
         } else {
         }
@@ -3935,7 +3935,7 @@ private void startStopLiveUpdate_buttonActionPerformed(java.awt.event.ActionEven
         }
 
         if (myEditor != null) {
-            JDialog.setDefaultLookAndFeelDecorated(true);
+//            JDialog.setDefaultLookAndFeelDecorated(true);
 
             myEditor.setVisible(true);
         }
@@ -4107,7 +4107,7 @@ private void customizeSampleMetadata_menuItemActionPerformed (java.awt.event.Act
         DialogEditor mySESARSampleCustomMetadataDialog
                 = new GeochronSampleCustomMetadataDialog(this, true, theSample);
         ((GeochronSampleCustomMetadataDialog) mySESARSampleCustomMetadataDialog).setSize(440, 685);
-        JDialog.setDefaultLookAndFeelDecorated(true);
+//        JDialog.setDefaultLookAndFeelDecorated(true);
         mySESARSampleCustomMetadataDialog.setVisible(true);
     } else {
     }

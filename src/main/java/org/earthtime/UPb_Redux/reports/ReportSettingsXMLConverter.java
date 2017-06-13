@@ -103,33 +103,39 @@ public class ReportSettingsXMLConverter implements Converter {
         context.convertAnother(reportSettings.getFractionCategory());
         writer.endNode();
 
-        writer.startNode("compositionCategory");
-        context.convertAnother(reportSettings.getCompositionCategory());
-        writer.endNode();
+        if (reportSettings.isIsotypeStyleUPb()) {
+            writer.startNode("compositionCategory");
+            context.convertAnother(reportSettings.getCompositionCategory());
+            writer.endNode();
 
-        writer.startNode("isotopicRatiosCategory");
-        context.convertAnother(reportSettings.getIsotopicRatiosCategory());
-        writer.endNode();
+            writer.startNode("isotopicRatiosCategory");
+            context.convertAnother(reportSettings.getIsotopicRatiosCategory());
+            writer.endNode();
 
-        writer.startNode("isotopicRatiosPbcCorrCategory");
-        context.convertAnother(reportSettings.getIsotopicRatiosPbcCorrCategory());
-        writer.endNode();
+            writer.startNode("isotopicRatiosPbcCorrCategory");
+            context.convertAnother(reportSettings.getIsotopicRatiosPbcCorrCategory());
+            writer.endNode();
 
-        writer.startNode("datesCategory");
-        context.convertAnother(reportSettings.getDatesCategory());
-        writer.endNode();
+            writer.startNode("datesCategory");
+            context.convertAnother(reportSettings.getDatesCategory());
+            writer.endNode();
 
-        writer.startNode("datesPbcCorrCategory");
-        context.convertAnother(reportSettings.getDatesPbcCorrCategory());
-        writer.endNode();
+            writer.startNode("datesPbcCorrCategory");
+            context.convertAnother(reportSettings.getDatesPbcCorrCategory());
+            writer.endNode();
 
-        writer.startNode("rhosCategory");
-        context.convertAnother(reportSettings.getRhosCategory());
-        writer.endNode();
+            writer.startNode("rhosCategory");
+            context.convertAnother(reportSettings.getRhosCategory());
+            writer.endNode();
 
-        writer.startNode("traceElementsCategory");
-        context.convertAnother(reportSettings.getTraceElementsCategory());
-        writer.endNode();
+            writer.startNode("traceElementsCategory");
+            context.convertAnother(reportSettings.getTraceElementsCategory());
+            writer.endNode();
+        } else {
+            writer.startNode("datesCategory");
+            context.convertAnother(reportSettings.getDatesCategory());
+            writer.endNode();
+        }
 
         writer.startNode("fractionCategory2");
         context.convertAnother(reportSettings.getFractionCategory2());
@@ -184,48 +190,57 @@ public class ReportSettingsXMLConverter implements Converter {
         reportSettings.setFractionCategory(reportCategory);
         reader.moveUp();
 
-        reader.moveDown();
-        reportCategory = new ReportCategory();
-        reportCategory = (ReportCategory) context.convertAnother(reportCategory, ReportCategory.class);
-        reportSettings.setCompositionCategory(reportCategory);
-        reader.moveUp();
+        if (reportSettings.isIsotypeStyleUPb()) {
 
-        reader.moveDown();
-        reportCategory = new ReportCategory();
-        reportCategory = (ReportCategory) context.convertAnother(reportCategory, ReportCategory.class);
-        reportSettings.setIsotopicRatiosCategory(reportCategory);
-        reader.moveUp();
+            reader.moveDown();
+            reportCategory = new ReportCategory();
+            reportCategory = (ReportCategory) context.convertAnother(reportCategory, ReportCategory.class);
+            reportSettings.setCompositionCategory(reportCategory);
+            reader.moveUp();
 
-        reader.moveDown();
-        reportCategory = new ReportCategory();
-        reportCategory = (ReportCategory) context.convertAnother(reportCategory, ReportCategory.class);
-        reportSettings.setIsotopicRatiosPbcCorrCategory(reportCategory);
-        reader.moveUp();
+            reader.moveDown();
+            reportCategory = new ReportCategory();
+            reportCategory = (ReportCategory) context.convertAnother(reportCategory, ReportCategory.class);
+            reportSettings.setIsotopicRatiosCategory(reportCategory);
+            reader.moveUp();
 
-        reader.moveDown();
-        reportCategory = new ReportCategory();
-        reportCategory = (ReportCategory) context.convertAnother(reportCategory, ReportCategory.class);
-        reportSettings.setDatesCategory(reportCategory);
-        reader.moveUp();
+            reader.moveDown();
+            reportCategory = new ReportCategory();
+            reportCategory = (ReportCategory) context.convertAnother(reportCategory, ReportCategory.class);
+            reportSettings.setIsotopicRatiosPbcCorrCategory(reportCategory);
+            reader.moveUp();
 
-        reader.moveDown();
-        reportCategory = new ReportCategory();
-        reportCategory = (ReportCategory) context.convertAnother(reportCategory, ReportCategory.class);
-        reportSettings.setDatesPbcCorrCategory(reportCategory);
-        reader.moveUp();
+            reader.moveDown();
+            reportCategory = new ReportCategory();
+            reportCategory = (ReportCategory) context.convertAnother(reportCategory, ReportCategory.class);
+            reportSettings.setDatesCategory(reportCategory);
+            reader.moveUp();
 
-        reader.moveDown();
-        reportCategory = new ReportCategory();
-        reportCategory = (ReportCategory) context.convertAnother(reportCategory, ReportCategory.class);
-        reportSettings.setRhosCategory(reportCategory);
-        reader.moveUp();
+            reader.moveDown();
+            reportCategory = new ReportCategory();
+            reportCategory = (ReportCategory) context.convertAnother(reportCategory, ReportCategory.class);
+            reportSettings.setDatesPbcCorrCategory(reportCategory);
+            reader.moveUp();
 
-        reader.moveDown();
-        reportCategory = new ReportCategory();
-        reportCategory = (ReportCategory) context.convertAnother(reportCategory, ReportCategory.class);
-        reportSettings.setTraceElementsCategory(reportCategory);
-        reader.moveUp();
+            reader.moveDown();
+            reportCategory = new ReportCategory();
+            reportCategory = (ReportCategory) context.convertAnother(reportCategory, ReportCategory.class);
+            reportSettings.setRhosCategory(reportCategory);
+            reader.moveUp();
 
+            reader.moveDown();
+            reportCategory = new ReportCategory();
+            reportCategory = (ReportCategory) context.convertAnother(reportCategory, ReportCategory.class);
+            reportSettings.setTraceElementsCategory(reportCategory);
+            reader.moveUp();
+        } else {
+            reader.moveDown();
+            reportCategory = new ReportCategory();
+            reportCategory = (ReportCategory) context.convertAnother(reportCategory, ReportCategory.class);
+            reportSettings.setDatesCategory(reportCategory);
+            reader.moveUp();
+
+        }
         reader.moveDown();
         reportCategory = new ReportCategory();
         reportCategory = (ReportCategory) context.convertAnother(reportCategory, ReportCategory.class);

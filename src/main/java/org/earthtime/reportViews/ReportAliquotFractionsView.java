@@ -831,7 +831,8 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                             g2D.fillRect((int) drawnWidth - 5, topMargin + lineHeight / 4, (int) Math.ceil(colWidth + dividerWidth), lineHeight);
                             g2D.setColor(savedColor);
 
-                            g2D.drawString(getReportFractions()[0][c],
+                            // June 2017 special condition to hide categpry per Noah
+                            g2D.drawString((String)(catName.contains("USeries") ? "" : catName)    ,
                                     drawnWidth,
                                     drawnHeight + topMargin + lineHeight);
 

@@ -235,7 +235,7 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb_NEW extends A
 
                             // column 15 is r232Th_238Ufc * 10^5
                             ratioName = UThFractionationCorrectedIsotopicRatios.r232Th_238Ufc.getName();
-                            myFraction.getRadiogenicIsotopeRatioByName(ratioName)//
+                            myFraction.getLegacyActivityRatioByName(ratioName)//
                                     .setValue(readDelimitedTextCell(myFractionData.get(15)).//
                                             movePointLeft(5));
                             // column 16 is r232Th_238Ufc * 10^5 uncertainty 
@@ -260,7 +260,7 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb_NEW extends A
                                     .setOneSigma(oneSigmaAbs);
 
                             // column 19 is [230Th] ppt in ppt
-                            ratioName = UThCompositionalMeasures.conc238U.getName();
+                            ratioName = UThCompositionalMeasures.conc230Th.getName();
                             myFraction.getCompositionalMeasureByName(ratioName)//
                                     .setValue(readDelimitedTextCell(myFractionData.get(19)).//
                                             movePointLeft(12));
@@ -288,7 +288,7 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb_NEW extends A
                             // column 23 is ar230Th_238Ufc 
                             // June 2017
                             // first get correction factor for ratio
-                            BigDecimal ar230Th_238Ufc_correction_factor = readDelimitedTextCell(myFractionData.get(35));
+                            BigDecimal ar230Th_238Ufc_correction_factor = BigDecimal.ONE;//readDelimitedTextCell(myFractionData.get(35));
                             // default value
                             if (ar230Th_238Ufc_correction_factor.compareTo(BigDecimal.ZERO) == 0) {
                                 ar230Th_238Ufc_correction_factor = BigDecimal.ONE;
@@ -310,7 +310,7 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb_NEW extends A
                             // column 25 is ar234U_238Ufc 
                             // June 2017
                             // first get correction factor for ratio
-                            BigDecimal ar234U_238Ufc_correction_factor = readDelimitedTextCell(myFractionData.get(37));
+                            BigDecimal ar234U_238Ufc_correction_factor = BigDecimal.ONE;//readDelimitedTextCell(myFractionData.get(37));
                             // default value
                             if (ar234U_238Ufc_correction_factor.compareTo(BigDecimal.ZERO) == 0) {
                                 ar234U_238Ufc_correction_factor = BigDecimal.ONE;

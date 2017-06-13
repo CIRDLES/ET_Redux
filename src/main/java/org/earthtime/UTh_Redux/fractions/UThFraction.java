@@ -528,9 +528,6 @@ public class UThFraction implements
                 || (!this.detritalUThModel.equals(detritalUThModel))) {
             this.detritalUThModel = detritalUThModel;
             this.setChanged(true);
-//            System.out.println(this.getFractionID() //
-//                    + "  is getting new physical constants model = "//
-//                    + physicalConstantsModel.getNameAndVersion());
         }
     }
 
@@ -680,6 +677,16 @@ public class UThFraction implements
      */
     public void setSpikeCalibrationR234_238IsSecular(boolean spikeCalibrationR234_238IsSecular) {
         this.spikeCalibrationR234_238IsSecular = spikeCalibrationR234_238IsSecular;
+    }
+
+    @Override
+    public ValueModel[] getLegacyActivityRatios() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setLegacyActivityRatios(ValueModel[] compositionalMeasures) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

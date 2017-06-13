@@ -1524,4 +1524,9 @@ public class UPbLAICPMSFraction extends Fraction implements
     public void setDetritalUThModel(AbstractRatiosDataModel detritalUThModel) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    @Override
+    public ValueModel getLegacyActivityRatioByName(String arName) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

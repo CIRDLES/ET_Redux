@@ -282,6 +282,7 @@ final public class ReduxConstants {
         UnitConversions.put("\u2030", 3);
         UnitConversions.put("ppm", 6);
         UnitConversions.put("ppb", 9);
+        UnitConversions.put("ppt", 12);
         UnitConversions.put("g/g", 0);
         UnitConversions.put("*1e5", 5);
 

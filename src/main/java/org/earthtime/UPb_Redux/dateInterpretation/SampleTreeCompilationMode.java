@@ -365,7 +365,7 @@ public class SampleTreeCompilationMode extends JTree implements SampleTreeI {
                                     ((SampleInterface) nodeInfo).determineUnusedSampleDateModels(false));
 
                     myEditor.setSize(340, 395);
-                    DialogEditor.setDefaultLookAndFeelDecorated(true);
+//                    DialogEditor.setDefaultLookAndFeelDecorated(true);
 
                     myEditor.setVisible(true);
 

@@ -31,7 +31,8 @@ import javax.swing.JOptionPane;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.user.UPbReduxConfigurator;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
-import org.earthtime.dataDictionaries.ReportSpecifications;
+import org.earthtime.dataDictionaries.ReportSpecificationsUPb;
+import org.earthtime.dataDictionaries.ReportSpecificationsUTh;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.reports.ReportCategoryInterface;
@@ -51,7 +52,8 @@ public class ReportSettings implements
      * version number is advanced so that any existing analysis will update its
      * report models upon opening in ET_Redux.
      */
-    private static transient int CURRENT_VERSION_REPORT_SETTINGS = 354;
+    private static transient int CURRENT_VERSION_REPORT_SETTINGS_UPB = 354;
+    private static transient int CURRENT_VERSION_REPORT_SETTINGS_UTH = 503;
 
     // Fields
     private String name;
@@ -86,89 +88,73 @@ public class ReportSettings implements
     public ReportSettings(String name, String isotopeStyle) {
 
         this.name = name;
-        this.version = CURRENT_VERSION_REPORT_SETTINGS;
+
         this.isotopeStyle = isotopeStyle;
-        boolean isotypeStyleIsUPb = (isotopeStyle.compareToIgnoreCase("UPb") == 0);
+        if (isIsotypeStyleUPb()) {
+            this.version = CURRENT_VERSION_REPORT_SETTINGS_UPB;
+        } else {
+            this.version = CURRENT_VERSION_REPORT_SETTINGS_UTH;
+        }
 
         this.reportSettingsComment = "";
 
         this.fractionCategory
                 = new ReportCategory(//
                         "Fraction",
-                        ReportSpecifications.ReportCategory_Fraction, true);
-
-        this.datesCategory
-                = new ReportCategory(//
-                        "Dates",
-                        isotypeStyleIsUPb
-                                ? ReportSpecifications.ReportCategory_Dates//
-                                : ReportSpecifications.ReportCategory_DatesUTh, true);
-
-        this.datesPbcCorrCategory
-                = new ReportCategory(//
-                        "PbcCorr Dates",//
-                        isotypeStyleIsUPb
-                                ? ReportSpecifications.ReportCategory_PbcCorrDates//
-                                : ReportSpecifications.ReportCategory_PbcCorrDates, false);
-
-        this.compositionCategory
-                = new ReportCategory(//
-                        "Composition",//
-                        isotypeStyleIsUPb
-                                ? ReportSpecifications.ReportCategory_Composition//
-                                : ReportSpecifications.ReportCategory_CompositionUTh, true);
-
-        if (isotypeStyleIsUPb) {
-            this.isotopicRatiosCategory
-                    = new ReportCategory(//
-                            "Isotopic Ratios",//
-                            ReportSpecifications.ReportCategory_IsotopicRatios, true);
-        } else {
-            this.isotopicRatiosCategory
-                    = new ReportCategory(//
-                            "Frac-Corr Isotopic Ratios",//
-                            ReportSpecifications.ReportCategory_fractionationCorrectedIsotopicRatios, true);
-        }
-
-        this.isotopicRatiosPbcCorrCategory
-                = new ReportCategory(//
-                        "PbcCorr Isotopic Ratios",//
-                        ReportSpecifications.ReportCategory_PbcCorrIsotopicRatios, false);
-
-        this.rhosCategory
-                = new ReportCategory(//
-                        "Correlation Coefficients",//
-                        ReportSpecifications.ReportCategory_CorrelationCoefficients, true);
-
-        this.traceElementsCategory
-                = new ReportCategory(//
-                        "Trace Elements",//
-                        ReportSpecifications.ReportCategory_TraceElements, false);
+                        ReportSpecificationsUPb.ReportCategory_Fraction, true);
 
         this.fractionCategory2
                 = new ReportCategory(//
                         "Fraction",
-                        ReportSpecifications.ReportCategory_Fraction2, true);
+                        ReportSpecificationsUPb.ReportCategory_Fraction2, true);
+
+        if (isIsotypeStyleUPb()) {
+            this.datesCategory
+                    = new ReportCategory(//
+                            "Dates",
+                            ReportSpecificationsUPb.ReportCategory_Dates, true);
+
+            this.datesPbcCorrCategory
+                    = new ReportCategory(//
+                            "PbcCorr Dates",//
+                            ReportSpecificationsUPb.ReportCategory_PbcCorrDates, false);
+
+            this.compositionCategory
+                    = new ReportCategory(//
+                            "Composition",//
+                            ReportSpecificationsUPb.ReportCategory_Composition, true);
+
+            this.isotopicRatiosCategory
+                    = new ReportCategory(//
+                            "Isotopic Ratios",//
+                            ReportSpecificationsUPb.ReportCategory_IsotopicRatios, true);
+
+            this.isotopicRatiosPbcCorrCategory
+                    = new ReportCategory(//
+                            "PbcCorr Isotopic Ratios",//
+                            ReportSpecificationsUPb.ReportCategory_PbcCorrIsotopicRatios, false);
+
+            this.rhosCategory
+                    = new ReportCategory(//
+                            "Correlation Coefficients",//
+                            ReportSpecificationsUPb.ReportCategory_CorrelationCoefficients, true);
+
+            this.traceElementsCategory
+                    = new ReportCategory(//
+                            "Trace Elements",//
+                            ReportSpecificationsUPb.ReportCategory_TraceElements, false);
+        } else {
+            this.datesCategory
+                    = new ReportCategory(//
+                            "USeries Outputs", 
+                            ReportSpecificationsUTh.ReportCategory_USeriesReportTable, true);
+        }
 
         legacyData = false;
 
         assembleReportCategories();
         normalizeReportCategories();
 
-    }
-
-    @Override
-    public void assembleReportCategories() {
-        setReportCategories(new ArrayList<>());
-        getReportCategories().add(getFractionCategory());
-        getReportCategories().add(getDatesCategory());
-        getReportCategories().add(getDatesPbcCorrCategory());
-        getReportCategories().add(getCompositionCategory());
-        getReportCategories().add(getIsotopicRatiosCategory());
-        getReportCategories().add(getIsotopicRatiosPbcCorrCategory());
-        getReportCategories().add(getRhosCategory());
-        getReportCategories().add(getTraceElementsCategory());
-        getReportCategories().add(getFractionCategory2());
     }
 
     /**
@@ -526,7 +512,25 @@ public class ReportSettings implements
      */
     @Override
     public boolean isOutOfDate() {
-        return this.version < CURRENT_VERSION_REPORT_SETTINGS;
+        return isIsotypeStyleUPb() ? isOutOfDateUPb() : isOutOfDateUTh();
+    }
+
+    /**
+     *
+     * @return
+     */
+    @Override
+    public boolean isOutOfDateUPb() {
+        return this.version < CURRENT_VERSION_REPORT_SETTINGS_UPB;
+    }
+
+    /**
+     *
+     * @return
+     */
+    @Override
+    public boolean isOutOfDateUTh() {
+        return this.version < CURRENT_VERSION_REPORT_SETTINGS_UTH;
     }
 
     /**
@@ -662,5 +666,13 @@ public class ReportSettings implements
     @Override
     public void setIsotopeStyle(String isotopeStyle) {
         this.isotopeStyle = isotopeStyle;
+    }
+
+    /**
+     * @return the isotypeStyleUPb
+     */
+    @Override
+    public boolean isIsotypeStyleUPb() {
+        return (isotopeStyle.compareToIgnoreCase("UPb") == 0);
     }
 }

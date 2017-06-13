@@ -883,4 +883,5 @@ public interface ETFractionInterface {
 
     public ValueModel getInitialPbModelRatioByName(String trName);
 
+    public ValueModel getLegacyActivityRatioByName(String arName);
 }
