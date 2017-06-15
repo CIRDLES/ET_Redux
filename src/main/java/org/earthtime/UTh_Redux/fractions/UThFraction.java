@@ -69,6 +69,8 @@ public class UThFraction implements
     protected long dateTimeMillisecondsOfAnalysis;
     private boolean spikeCalibrationR230_238IsSecular;
     private boolean spikeCalibrationR234_238IsSecular;
+    private ValueModel r230Th_238Ufc_rectificationFactor;
+    private ValueModel r234U_238Ufc_rectificationFactor;
 
     protected boolean changed;
     protected boolean deleted;
@@ -104,9 +106,22 @@ public class UThFraction implements
         detritalUThModel = ReduxLabData.getInstance().getDefaultDetritalUraniumAndThoriumModel();
 
         dateTimeMillisecondsOfAnalysis = timeInMillisecondsOfYear2000Since1970;
-        
+
         spikeCalibrationR230_238IsSecular = false;
         spikeCalibrationR234_238IsSecular = false;
+        // see fraction reducer for multiplicative use
+        this.r230Th_238Ufc_rectificationFactor = new ValueModel(
+                "r230Th_238Ufc_rectificationFactor",
+                BigDecimal.ONE,
+                "ABS",
+                BigDecimal.ONE,
+                BigDecimal.ONE);
+        this.r234U_238Ufc_rectificationFactor = new ValueModel(
+                "r234U_238Ufc_rectificationFactor",
+                BigDecimal.ONE,
+                "ABS",
+                BigDecimal.ONE,
+                BigDecimal.ONE);
 
         this.changed = false;
         this.deleted = false;
@@ -659,7 +674,8 @@ public class UThFraction implements
     }
 
     /**
-     * @param spikeCalibrationR230_238IsSecular the spikeCalibrationR230_238IsSecular to set
+     * @param spikeCalibrationR230_238IsSecular the
+     * spikeCalibrationR230_238IsSecular to set
      */
     public void setSpikeCalibrationR230_238IsSecular(boolean spikeCalibrationR230_238IsSecular) {
         this.spikeCalibrationR230_238IsSecular = spikeCalibrationR230_238IsSecular;
@@ -673,7 +689,8 @@ public class UThFraction implements
     }
 
     /**
-     * @param spikeCalibrationR234_238IsSecular the spikeCalibrationR234_238IsSecular to set
+     * @param spikeCalibrationR234_238IsSecular the
+     * spikeCalibrationR234_238IsSecular to set
      */
     public void setSpikeCalibrationR234_238IsSecular(boolean spikeCalibrationR234_238IsSecular) {
         this.spikeCalibrationR234_238IsSecular = spikeCalibrationR234_238IsSecular;
@@ -687,6 +704,36 @@ public class UThFraction implements
     @Override
     public void setLegacyActivityRatios(ValueModel[] compositionalMeasures) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    /**
+     * @return the referenceMaterialRectificationFactor
+     */
+    public ValueModel getR230Th_238Ufc_rectificationFactor() {
+        return r230Th_238Ufc_rectificationFactor;
+    }
+
+    /**
+     * @param referenceMaterialRectificationFactor the
+     * referenceMaterialRectificationFactor to set
+     */
+    public void setR230Th_238Ufc_rectificationFactor(ValueModel r230Th_238Ufc_rectificationFactor) {
+        this.r230Th_238Ufc_rectificationFactor = r230Th_238Ufc_rectificationFactor;
+    }
+
+    /**
+     * @return the r234U_238Ufc_rectificationFactor
+     */
+    public ValueModel getR234U_238Ufc_rectificationFactor() {
+        return r234U_238Ufc_rectificationFactor;
+    }
+
+    /**
+     * @param r234U_238Ufc_rectificationFactor the
+ r234U_238Ufc_rectificationFactor to set
+     */
+    public void setR234U_238Ufc_rectificationFactor(ValueModel r234U_238Ufc_rectificationFactor) {
+        this.r234U_238Ufc_rectificationFactor = r234U_238Ufc_rectificationFactor;
     }
 
 }

@@ -31,6 +31,7 @@ import java.util.Vector;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import static org.earthtime.UPb_Redux.ReduxConstants.timeInMillisecondsOfYear2000Since1970;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
+import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UTh_Redux.aliquots.UThReduxAliquot;
 import org.earthtime.UTh_Redux.fractions.UThFraction;
 import org.earthtime.UTh_Redux.fractions.UThLegacyFraction;
@@ -189,7 +190,7 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb_NEW extends A
                             ((UThFraction) myFraction).setSpikeCalibrationR230_238IsSecular(spikeCalibration.compareToIgnoreCase("SE") == 0);
 
                             spikeCalibration = myFractionData.get(5).trim();// 234/238 
-                            metaData.append("Calibration Method for 234U/238U ratio = ").append(spikeCalibration).append("\n"); // ??? two dif ones?
+                            metaData.append("Calibration Method for 234U/238U ratio = ").append(spikeCalibration).append("\n");
                             ((UThFraction) myFraction).setSpikeCalibrationR234_238IsSecular(spikeCalibration.compareToIgnoreCase("SE") == 0);
 
                             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
@@ -233,16 +234,16 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb_NEW extends A
                             myFraction.getLegacyActivityRatioByName(ratioName)//
                                     .setOneSigma(oneSigmaAbs);
 
-                            // column 15 is r232Th_238Ufc * 10^5
+                            // column 15 is r232Th_238Ufc * 10^5  ATOM RATIO !
                             ratioName = UThFractionationCorrectedIsotopicRatios.r232Th_238Ufc.getName();
-                            myFraction.getLegacyActivityRatioByName(ratioName)//
+                            myFraction.getRadiogenicIsotopeRatioByName(ratioName)//
                                     .setValue(readDelimitedTextCell(myFractionData.get(15)).//
                                             movePointLeft(5));
-                            // column 16 is r232Th_238Ufc * 10^5 uncertainty 
+                            // column 16 is r232Th_238Ufc * 10^5 uncertainty ATOM RATIO !
                             // convert 2-sigma to 1-sigma
                             oneSigmaAbs = readDelimitedTextCell(myFractionData.get(16)).movePointLeft(5).
                                     divide(new BigDecimal(2.0));
-                            myFraction.getLegacyActivityRatioByName(ratioName)//
+                            myFraction.getRadiogenicIsotopeRatioByName(ratioName)//
                                     .setOneSigma(oneSigmaAbs);
 
                             // column 17 is conc238U in ppm
@@ -286,21 +287,11 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb_NEW extends A
                                     .setOneSigma(oneSigmaAbs);
 
                             // column 23 is ar230Th_238Ufc 
-                            // June 2017
-                            // first get correction factor for ratio
-                            BigDecimal ar230Th_238Ufc_correction_factor = BigDecimal.ONE;//readDelimitedTextCell(myFractionData.get(35));
-                            // default value
-                            if (ar230Th_238Ufc_correction_factor.compareTo(BigDecimal.ZERO) == 0) {
-                                ar230Th_238Ufc_correction_factor = BigDecimal.ONE;
-                            }
                             ratioName = UThAnalysisMeasures.ar230Th_238Ufc.getName();
                             myFraction.getLegacyActivityRatioByName(ratioName)//
-                                    .setValue(readDelimitedTextCell(myFractionData.get(23))
-                                            .multiply(ar230Th_238Ufc_correction_factor));
+                                    .setValue(readDelimitedTextCell(myFractionData.get(23)));
 
                             // column 24 is ar230Th_238Ufc uncertainty 
-                            // June 2017
-                            // TODO:  get correction factor for unct - IGNORE FOR NOW PER NOAH
                             // convert 2-sigma to 1-sigma
                             oneSigmaAbs = readDelimitedTextCell(myFractionData.get(24)).
                                     divide(new BigDecimal(2.0));
@@ -308,21 +299,11 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb_NEW extends A
                                     .setOneSigma(oneSigmaAbs);
 
                             // column 25 is ar234U_238Ufc 
-                            // June 2017
-                            // first get correction factor for ratio
-                            BigDecimal ar234U_238Ufc_correction_factor = BigDecimal.ONE;//readDelimitedTextCell(myFractionData.get(37));
-                            // default value
-                            if (ar234U_238Ufc_correction_factor.compareTo(BigDecimal.ZERO) == 0) {
-                                ar234U_238Ufc_correction_factor = BigDecimal.ONE;
-                            }
                             ratioName = UThAnalysisMeasures.ar234U_238Ufc.getName();
                             myFraction.getLegacyActivityRatioByName(ratioName)//
-                                    .setValue(readDelimitedTextCell(myFractionData.get(25))
-                                            .multiply(ar234U_238Ufc_correction_factor));
+                                    .setValue(readDelimitedTextCell(myFractionData.get(25)));
 
                             // column 26 is ar234U_238Ufc uncertainty 
-                            // June 2017
-                            // TODO:  get correction factor for unct - IGNORE FOR NOW PER NOAH
                             // convert 2-sigma to 1-sigma
                             oneSigmaAbs = readDelimitedTextCell(myFractionData.get(26)).
                                     divide(new BigDecimal(2.0));
@@ -340,6 +321,41 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb_NEW extends A
                             metaData.append("Reference material name for 230Th/238U = ").append(myFractionData.get(33).trim()).append("\n");
                             metaData.append("Reference material name for 234U/238U = ").append(myFractionData.get(34).trim()).append("\n");
 
+                            metaData.append("Rectification correction for 230Th/238U = ").append(myFractionData.get(35).trim()).append("\n");
+                            metaData.append("Rectification correction for 230Th/238U unct = ").append(myFractionData.get(36).trim()).append("\n");
+                            metaData.append("Rectification correction for 234U/238U = ").append(myFractionData.get(37).trim()).append("\n");
+                            metaData.append("Rectification correction for 234U/238U unct = ").append(myFractionData.get(38).trim()).append("\n");
+                            // reference material rectification correction factor for ratio  230Th_238U                          
+                            BigDecimal ar230Th_238Ufc_rectificationCorrectionFactor = readDelimitedTextCell(myFractionData.get(35));
+                            // default value
+                            if (ar230Th_238Ufc_rectificationCorrectionFactor.compareTo(BigDecimal.ZERO) == 0) {
+                                ar230Th_238Ufc_rectificationCorrectionFactor = BigDecimal.ONE;
+                            }
+                            // uncertainty rectification not used currently = June 2017
+                            BigDecimal ar230Th_238Ufc_rectificationCorrectionFactorUnct = readDelimitedTextCell(myFractionData.get(36));
+                            // default value
+                            if (ar230Th_238Ufc_rectificationCorrectionFactorUnct.compareTo(BigDecimal.ZERO) == 0) {
+                                ar230Th_238Ufc_rectificationCorrectionFactorUnct = BigDecimal.ONE;
+                            }                                                      
+                            ((UThFraction)myFraction).getR230Th_238Ufc_rectificationFactor().setValue(ar230Th_238Ufc_rectificationCorrectionFactor);
+                            ((UThFraction)myFraction).getR230Th_238Ufc_rectificationFactor().setOneSigma(ar230Th_238Ufc_rectificationCorrectionFactorUnct);
+
+                            // reference material rectification correction factor for ratio  234Th_238U                          
+                            BigDecimal ar234U_238Ufc_rectificationCorrectionFactor = readDelimitedTextCell(myFractionData.get(37));
+                            // default value
+                            if (ar234U_238Ufc_rectificationCorrectionFactor.compareTo(BigDecimal.ZERO) == 0) {
+                                ar234U_238Ufc_rectificationCorrectionFactor = BigDecimal.ONE;
+                            }
+                            // uncertainty rectification not used currently = June 2017
+                            BigDecimal ar234U_238Ufc_rectificationCorrectionFactorUnct = readDelimitedTextCell(myFractionData.get(38));
+                            // default value
+                            if (ar234U_238Ufc_rectificationCorrectionFactorUnct.compareTo(BigDecimal.ZERO) == 0) {
+                                ar234U_238Ufc_rectificationCorrectionFactorUnct = BigDecimal.ONE;
+                            }                                                      
+                            ((UThFraction)myFraction).getR234U_238Ufc_rectificationFactor().setValue(ar234U_238Ufc_rectificationCorrectionFactor);
+                            ((UThFraction)myFraction).getR234U_238Ufc_rectificationFactor().setOneSigma(ar234U_238Ufc_rectificationCorrectionFactorUnct);
+
+                            
                             metaData.append("Detrital Th correction method = ").append(myFractionData.get(39).trim()).append("\n");
                             metaData.append("Detrital Th model = ").append(myFractionData.get(40).trim()).append("\n");
                             metaData.append("Comments- detrital Th correction = ").append(myFractionData.get(41).trim()).append("\n");

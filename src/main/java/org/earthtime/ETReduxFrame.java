@@ -1225,7 +1225,6 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                             myState.getMRUImportFolderLegacyMode());
 
 //            JDialog.setDefaultLookAndFeelDecorated(true);
-
             ((AbstractSampleFromProjectManagerDialog) mySampleManager).setSize();
             // modal call to manager
             mySampleManager.setVisible(true);
@@ -1304,7 +1303,6 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             }
 
 //            JDialog.setDefaultLookAndFeelDecorated(true);
-
             if (mySampleManager == null) {
                 return false;
             } else {
