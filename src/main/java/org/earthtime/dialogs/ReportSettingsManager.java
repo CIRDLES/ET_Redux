@@ -253,6 +253,8 @@ public class ReportSettingsManager extends DialogEditor {
                             unitsContents = ReportSpecificationsUTh.massUnits;
                         } else if (ReportSpecificationsUTh.unitsType.get(reportColumn.getUnits()).equalsIgnoreCase("date")) {
                             unitsContents = ReportSpecificationsUTh.dateUnits;
+                        }else if (ReportSpecificationsUTh.unitsType.get(reportColumn.getUnits()).equalsIgnoreCase("mult")) {
+                            unitsContents = ReportSpecificationsUTh.multUnits;
                         } else {
                             unitsContents = ReportSpecificationsUTh.concUnits;
                         }

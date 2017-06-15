@@ -33,6 +33,7 @@ public enum UThFractionationCorrectedIsotopicRatios {
     r232Th_238Ufc("r232Th_238Ufc"),
     r238U_232Thfc("r238U_232Thfc"),
     r230Th_238Ufc("r230Th_238Ufc"),
+    r230Th_238Udc("r230Th_238Udc"),
     /**
      * 
      */

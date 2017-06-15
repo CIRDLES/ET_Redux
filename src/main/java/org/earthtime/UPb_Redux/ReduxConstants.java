@@ -285,6 +285,7 @@ final public class ReduxConstants {
         UnitConversions.put("ppt", 12);
         UnitConversions.put("g/g", 0);
         UnitConversions.put("*1e5", 5);
+        UnitConversions.put("*1", 0);
 
         // dates are stored in years
         UnitConversions.put("a", 0);

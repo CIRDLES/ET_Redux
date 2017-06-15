@@ -67,29 +67,44 @@ public class ReportSpecificationsUTh {
             "", "true", "true", "3", "", "232Th concentration", "true", "false"
         },
         {"conc", "230Th", "", "ppt", "getCompositionalMeasureByName", UThCompositionalMeasures.conc230Th.getName(), "ABS",
-            "", "true", "true", "3", "", "230Th concentration", "true", "false"
+            "", "true", "false", "3", "", "230Th concentration", "true", "false"
         },
         //
         {"", "[230Th/", "232Th]", "", "getAnalysisMeasure", UThAnalysisMeasures.ar230Th_232Thfc.getName(), "ABS",
-            "", "true", "true", "3", "true", "[230Th/232Th] activity ratio", "false", "false"
+            "", "true", "false", "3", "true", "[230Th/232Th]", "false", "false"
         },
         {"", "230Th/", "232Th", "", "getRadiogenicIsotopeRatioByName", UThFractionationCorrectedIsotopicRatios.r230Th_232Thfc.getName(), "ABS",
-            "", "true", "true", "3", "true", "[230Th/232Th] atom ratio", "false", "false"
+            "", "true", "false", "3", "true", "230Th/232Th", "false", "false"
         },
         //
         {"[232Th/", "238U]", "", "*1e5", "getAnalysisMeasure", UThAnalysisMeasures.ar232Th_238Ufc.getName(), "ABS",
-            "", "true", "true", "3", "true", "[232Th/238U] activity ratio", "false", "false"
+            "", "true", "false", "3", "true", "[232Th/238U]", "false", "false"
         },
-         {"232Th/", "238U", "", "*1e5", "getRadiogenicIsotopeRatioByName", UThFractionationCorrectedIsotopicRatios.r232Th_238Ufc.getName(), "ABS",
-            "", "true", "true", "3", "true", "[232Th/238U] atom ratio", "false", "false"
+        {"232Th/", "238U", "", "*1e5", "getRadiogenicIsotopeRatioByName", UThFractionationCorrectedIsotopicRatios.r232Th_238Ufc.getName(), "ABS",
+            "", "true", "false", "3", "true", "232Th/238U", "false", "false"
         },
-         //
-        {"", "[230Th/", "238U]", "", "getRadiogenicIsotopeRatioByName", UThFractionationCorrectedIsotopicRatios.r230Th_238Ufc.getName(), "ABS",
+        //
+        {"", "[230Th/", "238U]", "", "getAnalysisMeasure", UThAnalysisMeasures.ar230Th_238Ufc.getName(), "ABS",
+            "", "true", "false", "3", "true", "[230Th/238U] (not detrital Th-corr.)", "false", "false"
+        },
+        {"", "230Th/", "238U", "*1e5", "getRadiogenicIsotopeRatioByName", UThFractionationCorrectedIsotopicRatios.r230Th_238Ufc.getName(), "ABS",
             "", "true", "false", "3", "true", "230Th/238U (not detrital Th-corr.)", "false", "false"
         },
-        {"", "[234U/", "238U]", "", "getRadiogenicIsotopeRatioByName", UThFractionationCorrectedIsotopicRatios.r234U_238Ufc.getName(), "ABS",
+        //
+        {"", "[234U/", "238U]", "", "getAnalysisMeasure", UThAnalysisMeasures.ar234U_238Ufc.getName(), "ABS",
+            "", "true", "false", "3", "true", "[234U/238U] (not detrital Th-corr.)", "false", "false"
+        },
+        {"", "234U/", "238U", "*1e5", "getRadiogenicIsotopeRatioByName", UThFractionationCorrectedIsotopicRatios.r234U_238Ufc.getName(), "ABS",
             "", "true", "false", "3", "true", "234U/238U (not detrital Th-corr.)", "false", "false"
-        }, //        {"", "Corr", "Date", "ka", "getRadiogenicIsotopeDateByName", RadDates.dateCorr.getName(), "ABS",
+        },
+        //
+        {"", "[230Th/", "238U]", "", "getAnalysisMeasure", UThAnalysisMeasures.ar230Th_238Udc.getName(), "ABS",
+            "", "true", "false", "3", "true", "[230Th/238U] (detrital Th-corr.)", "false", "false"
+        },
+        {"", "230Th/", "238U", "", "getRadiogenicIsotopeRatioByName", UThFractionationCorrectedIsotopicRatios.r230Th_238Udc.getName(), "ABS",
+            "", "true", "false", "3", "true", "230Th/238U (detrital Th-corr.)", "false", "false"
+        }, //
+    //        {"", "Corr", "Date", "ka", "getRadiogenicIsotopeDateByName", RadDates.dateCorr.getName(), "ABS",
     //            "", "true", "false", "2", "true", "", "false", "false"
     //        },
     //        {"", "delta 234U", "initial", "", "getRadiogenicIsotopeRatioByName", UThFractionationCorrectedIsotopicRatios.delta234U.getName(), "ABS",
@@ -121,27 +136,37 @@ public class ReportSpecificationsUTh {
             "", "true", "true", "3", "", "concentration of Ba", "true", "false"
         },};
 
-    // mass units are referred to in units postion 4 of report column and converted by lookup in ReduxConstants
     /**
-     *
+     * mass units are referred to in units position 4 of report column and
+     * converted by lookup in ReduxConstants
      */
     public final static String[] massUnits = new String[]{
         "g", "mg", "\u03bcg", "ng", "pg", "fg"
     };
-    // concentration units are referred to in units postion 4 of report column and converted by lookup in ReduxConstants
+
     /**
-     *
+     * concentration units are referred to in units position 4 of report column
+     * and converted by lookup in ReduxConstants
      */
     public final static String[] concUnits = new String[]{
         "\u0025", "\u2030", "ppm", "ppb", "ppt"
     };
-    // date units are referred to in units postion 4 of report column and converted by lookup in ReduxConstants
+
     /**
-     *
+     * date units are referred to in units position 4 of report column and
+     * converted by lookup in ReduxConstants
      */
     public final static String[] dateUnits = new String[]{
         "auto", "Ma", "ka"
     };
+    /**
+     * mult units are referred to in units position 4 of report column and
+     * converted by lookup in ReduxConstants
+     */
+    public final static String[] multUnits = new String[]{
+        "*1e5", "*1"
+    };
+
     /**
      *
      */
@@ -161,6 +186,8 @@ public class ReportSpecificationsUTh {
         unitsType.put("ppt", "conc");
         unitsType.put("Ma", "date");
         unitsType.put("ka", "date");
+        unitsType.put("*1e5", "mult");
+        unitsType.put("*1", "mult");
 
     }
 
