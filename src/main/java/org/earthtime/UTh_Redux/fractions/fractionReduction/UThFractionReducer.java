@@ -159,22 +159,6 @@ public class UThFractionReducer extends FractionReducer {
             covariance_fc.set(1, 1, r230Th_238Ufc.getOneSigmaAbs().pow(2).doubleValue());
             covariance_fc.set(2, 2, r232Th_238Ufc.getOneSigmaAbs().pow(2).doubleValue());
 
-            // todo: make a model for handling     
-            // TOD Decide why not use one sigma in model as usual ???
-            // The detritus variable is not at present included in Andrea's worksheet.  
-            // We'll have to add it, though, when we make UTh_Redux capable of handling more data.  
-            // Here are some typical values:
-//            Matrix detritus = new Matrix(6, 2);
-//            detritus.set(0, 0, 1.2); //detritus(1,1) = 1.2; 
-//            detritus.set(0, 1, 0.6); //detritus(1,2) = 0.6;
-//            detritus.set(1, 0, 1.0); //detritus(2,1) = 1;
-//            detritus.set(1, 1, 0.5); //detritus(2,2) = 0.5;
-//            detritus.set(2, 0, 1.0); //detritus(3,1) = 1;
-//            detritus.set(2, 1, 0.5); //detritus(3,2) = 0.5;
-//            detritus.set(3, 0, 0.0); //detritus(4,1) = 0;
-//            detritus.set(4, 0, 0.0); //detritus(5,1) = 0;
-//            detritus.set(5, 0, 0.5); //detritus(6,1) = 0.5;
-//            detritus.set(5, 1, 65.0); //detritus(6,2) = 65;
             AbstractRatiosDataModel detritalUThModel = fraction.getDetritalUThModel();
             ValueModel ar232Th_238Ui = detritalUThModel.getDatumByName(DetritalUThRatiosEnum.ar232Th_238U.getName());
             ValueModel ar230Th_238Ui = detritalUThModel.getDatumByName(DetritalUThRatiosEnum.ar230Th_238U.getName());
@@ -397,9 +381,9 @@ public class UThFractionReducer extends FractionReducer {
                     = J6.times(J5).times(J4).times(J3).times(J2).times(J1).times(covariance_in)//
                             .times(J1.transpose()).times(J2.transpose()).times(J3.transpose()).times(J4.transpose()).times(J5.transpose()).times(J6.transpose());
 
-//        %% Arrange outputs
+// Arrange outputs
 //
-//        outvec(1)  = nat(3)/nat(1) * lambda.Th230/lambda.U238; % detrital-corrected 230Th/238U AR
+//          outvec(1)  = nat(3)/nat(1) * lambda.Th230/lambda.U238; % detrital-corrected 230Th/238U AR
             // 230Th/238U, detrital Th-corrected ‡	[230Th/238U], 230Th/238U	activity, atom	--	nat(3)/nat(1)	2*sqrt(Cout(3,3))
             // June 2017
             double r230_238corrected = nat.get(2, 0) / nat.get(0, 0);
@@ -412,25 +396,39 @@ public class UThFractionReducer extends FractionReducer {
             }
             double ar230_238corrected = r230_238corrected * lambda230D / lambda238D;
 
+            // atom ratio
             fraction.getRadiogenicIsotopeRatioByName(UThFractionationCorrectedIsotopicRatios.r230Th_238Udc.getName())//
                     .setValue(new BigDecimal(r230_238corrected));
             fraction.getRadiogenicIsotopeRatioByName(UThFractionationCorrectedIsotopicRatios.r230Th_238Udc.getName())//
+                    .setOneSigma(new BigDecimal(Math.sqrt(Cout.get(2, 2)) * lambda238D / lambda230D));
+            // activity ratio
+            fraction.getAnalysisMeasure(UThAnalysisMeasures.ar230Th_238Udc.getName())//
+                    .setValue(new BigDecimal(ar230_238corrected));
+            fraction.getAnalysisMeasure(UThAnalysisMeasures.ar230Th_238Udc.getName())//
                     .setOneSigma(new BigDecimal(Math.sqrt(Cout.get(2, 2))));
-            fraction.getAnalysisMeasure(UThAnalysisMeasures.ar230Th_238Udc.getName())//
-                    .setValue(new BigDecimal(r230_238corrected * lambda230D / lambda238D));
-            fraction.getAnalysisMeasure(UThAnalysisMeasures.ar230Th_238Udc.getName())//
-                    .setOneSigma(new BigDecimal(Math.sqrt(Cout.get(2, 2)) * lambda230D / lambda238D));
 
 //        outvec(3)  = nat(2)/nat(1) * lambda.U234/lambda.U238;  % detrital-corrected 234U/238U AR
-            double ar234_238corrected = nat.get(1, 0) / nat.get(0, 0) * lambda234D / lambda238D;
-            if (!Double.isFinite(ar234_238corrected)) {
-                ar234_238corrected = 0.0;
+            // June 2017
+            double r234_238corrected = nat.get(1, 0) / nat.get(0, 0);
+            if (!Double.isFinite(r234_238corrected)) {
+                r234_238corrected = 0.0;
             }
+            // test for danger zone
+            if ((r234_238corrected < -10.0) || (r234_238corrected > 10.0)) {
+                r234_238corrected = 0.0;
+            }
+            double ar234_238corrected = r234_238corrected * lambda234D / lambda238D;
 
-            // june 2016 test for danger zone
-            if ((ar234_238corrected < -10.0) || (ar234_238corrected > 10.0)) {
-                ar234_238corrected = 0.0;
-            }
+            // atom ratio
+            fraction.getRadiogenicIsotopeRatioByName(UThFractionationCorrectedIsotopicRatios.r234Th_238Udc.getName())//
+                    .setValue(new BigDecimal(r234_238corrected));
+            fraction.getRadiogenicIsotopeRatioByName(UThFractionationCorrectedIsotopicRatios.r234Th_238Udc.getName())//
+                    .setOneSigma(new BigDecimal(Math.sqrt(Cout.get(2, 2)) * lambda238D / lambda234D));
+            // activity ratio
+            fraction.getAnalysisMeasure(UThAnalysisMeasures.ar234Th_238Udc.getName())//
+                    .setValue(new BigDecimal(ar230_238corrected));
+            fraction.getAnalysisMeasure(UThAnalysisMeasures.ar234Th_238Udc.getName())//
+                    .setOneSigma(new BigDecimal(Math.sqrt(Cout.get(2, 2))));
 
 //        outvec(6)  = tuncorr/1000; % uncorrected date, ka
 //        outvec(7) = 2*sqrt( d.t_ntUncorr(2:3)*meas.C(1:2,1:2)*d.t_ntUncorr(2:3)' )/1000 ; % 2s abs, ka
@@ -440,6 +438,31 @@ public class UThFractionReducer extends FractionReducer {
             if (!Double.isFinite(uncorrectedDateOneSigmaABS)) {
                 uncorrectedDateOneSigmaABS = 0.0;
             }
+
+            ValueModel date = new ValueModel(//
+                    RadDates.date.getName(), //
+                    new BigDecimal(timeUncorrected), ///
+                    "ABS", //
+                    new BigDecimal(uncorrectedDateOneSigmaABS), //
+                    BigDecimal.ZERO);
+
+            fraction.setRadiogenicIsotopeDateByName(RadDates.dateCorr, date);
+
+//        outvec(13) = Cout(1,4)/sqrt(Cout(1,1)*Cout(4,4)); rho between d234uinit and corrected age
+//        outvec(10) = 2*sqrt(Cout(1,1))/1000; % 2s abs detrital-corrected date
+            double correctedDateOneSigmaAbs = Math.sqrt(Cout.get(0, 0));
+            if (!Double.isFinite(correctedDateOneSigmaAbs)) {
+                correctedDateOneSigmaAbs = 0.0;
+            }
+            
+            ValueModel dateCorr = new ValueModel(//
+                    RadDates.dateCorr.getName(), //
+                    new BigDecimal(timeCorrected), ///
+                    "ABS", //
+                    new BigDecimal(correctedDateOneSigmaAbs), //
+                    BigDecimal.ZERO);
+
+            fraction.setRadiogenicIsotopeDateByName(RadDates.dateCorr, dateCorr);
 
 //        outvec(8)  = tcorr/1000; % detrital-corrected date, ka
 //        outvec(9)  = (tcorr - di.yearsSince1950)/1000; % detrital-corrected date, ka BP (1950)
@@ -462,36 +485,11 @@ public class UThFractionReducer extends FractionReducer {
             }
 //        outvec(5) = Cout(2,3)/sqrt(Cout(2,2)*Cout(3,3)); % corr coef ar08t-ar48t
 
-//        outvec(10) = 2*sqrt(Cout(1,1))/1000; % 2s abs detrital-corrected date
-            double correctedDateOneSigmaAbs = Math.sqrt(Cout.get(0, 0));
-            if (!Double.isFinite(correctedDateOneSigmaAbs)) {
-                correctedDateOneSigmaAbs = 0.0;
-            }
-
 //        outvec(12) = 2*sqrt(Cout(4,4)); % 2s abs ar48i
             double initialCorrected234_238atomRatioOneSigmaAbs = Math.sqrt(Cout.get(3, 3));
             if (!Double.isFinite(initialCorrected234_238atomRatioOneSigmaAbs)) {
                 initialCorrected234_238atomRatioOneSigmaAbs = 0.0;
             }
-
-//        outvec(13) = Cout(1,4)/sqrt(Cout(1,1)*Cout(4,4)); rho between d234uinit and corrected age
-            ValueModel dateCorr = new ValueModel(//
-                    RadDates.dateCorr.getName(), //
-                    new BigDecimal(timeCorrected), ///
-                    "ABS", //
-                    new BigDecimal(correctedDateOneSigmaAbs), //
-                    BigDecimal.ZERO);
-
-            fraction.setRadiogenicIsotopeDateByName(RadDates.dateCorr, dateCorr);
-
-//            fraction.getAnalysisMeasure(UThAnalysisMeasures.ar230Th_238Ufc.getName())//
-//                    .setValue(ar230_238corrected);
-//            fraction.getAnalysisMeasure(UThAnalysisMeasures.ar230Th_238Ufc.getName())//
-//                    .setOneSigma(ar230_238correctedOneSigmaABS);
-            fraction.getAnalysisMeasure(UThAnalysisMeasures.ar234U_238Ufc.getName())//
-                    .setValue(ar234_238corrected);
-            fraction.getAnalysisMeasure(UThAnalysisMeasures.ar234U_238Ufc.getName())//
-                    .setOneSigma(ar234_238correctedOneSigmaABS);
 
             BigDecimal secularEquilibrium = lambda238.getValue().divide(lambda234.getValue(), ReduxConstants.mathContext15);
             BigDecimal delta234UInitialValue
@@ -681,17 +679,6 @@ public class UThFractionReducer extends FractionReducer {
         // so under gravimetric (G) atom ratios won't change activity and delta will change with physical constants
         // this method is only called upon import, so the secular equilibrium recalcalutions are done 
         // in calculateActivityRatios which is called whenver the physical constants change
-//        if (((UThFraction) fraction).isSpikeCalibrationR230_238IsSecular()) {
-//            fraction.getRadiogenicIsotopeRatioByName(UThFractionationCorrectedIsotopicRatios.r230Th_238Ufc.getName())//
-//                    .setValue(fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.ar230Th_238Ufc.getName()).getValue()//
-//                            .multiply(((UThFraction) fraction).getR230Th_238Ufc_rectificationFactor().getValue())
-//                            .multiply(lambda238.getValue())//
-//                            .divide(lambda230.getValue(), ReduxConstants.mathContext15));
-//            fraction.getRadiogenicIsotopeRatioByName(UThFractionationCorrectedIsotopicRatios.r230Th_238Ufc.getName())//
-//                    .setOneSigma(fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.ar230Th_238Ufc.getName()).getOneSigmaAbs()//
-//                            .multiply(lambda238.getValue())//
-//                            .divide(lambda230.getValue(), ReduxConstants.mathContext15));
-//        } else {
         fraction.getRadiogenicIsotopeRatioByName(UThFractionationCorrectedIsotopicRatios.r230Th_238Ufc.getName())//
                 .setValue(fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.ar230Th_238Ufc.getName()).getValue()//
                         .multiply(((UThFraction) fraction).getR230Th_238Ufc_rectificationFactor().getValue())
@@ -701,19 +688,7 @@ public class UThFractionReducer extends FractionReducer {
                 .setOneSigma(fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.ar230Th_238Ufc.getName()).getOneSigmaAbs()//
                         .multiply(myLambda238Value)//
                         .divide(myLambda230Value, ReduxConstants.mathContext15));
-//        }
 
-//        if (((UThFraction) fraction).isSpikeCalibrationR234_238IsSecular()) {
-//            fraction.getRadiogenicIsotopeRatioByName(UThFractionationCorrectedIsotopicRatios.r234U_238Ufc.getName())//
-//                    .setValue(fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.ar234U_238Ufc.getName()).getValue()//
-//                            .multiply(((UThFraction) fraction).getR234U_238Ufc_rectificationFactor().getValue())
-//                            .multiply(lambda238.getValue())//
-//                            .divide(lambda234.getValue(), ReduxConstants.mathContext15));
-//            fraction.getRadiogenicIsotopeRatioByName(UThFractionationCorrectedIsotopicRatios.r234U_238Ufc.getName())//
-//                    .setOneSigma(fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.ar234U_238Ufc.getName()).getOneSigmaAbs()//
-//                            .multiply(lambda238.getValue())//
-//                            .divide(lambda234.getValue(), ReduxConstants.mathContext15));
-//        } else {
         fraction.getRadiogenicIsotopeRatioByName(UThFractionationCorrectedIsotopicRatios.r234U_238Ufc.getName())//
                 .setValue(fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.ar234U_238Ufc.getName()).getValue()//
                         .multiply(((UThFraction) fraction).getR234U_238Ufc_rectificationFactor().getValue())
@@ -723,7 +698,6 @@ public class UThFractionReducer extends FractionReducer {
                 .setOneSigma(fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.ar234U_238Ufc.getName()).getOneSigmaAbs()//
                         .multiply(myLambda238Value)//
                         .divide(myLambda234Value, ReduxConstants.mathContext15));
-//        }
 
         // return to non-tracer sensitive math
         fraction.getRadiogenicIsotopeRatioByName(UThFractionationCorrectedIsotopicRatios.r230Th_232Thfc.getName())//
@@ -735,15 +709,7 @@ public class UThFractionReducer extends FractionReducer {
                         .multiply(myLambda232Value)//
                         .divide(myLambda230Value, ReduxConstants.mathContext15));
 
-        // DO NOT CALCULATE THIS AS IT IS INPUT AS ATOM RATIO
-//        fraction.getRadiogenicIsotopeRatioByName(UThFractionationCorrectedIsotopicRatios.r232Th_238Ufc.getName())//
-//                .setValue(fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.ar232Th_238Ufc.getName()).getValue()//
-//                        .multiply(myLambda238Value)//
-//                        .divide(myLambda232Value, ReduxConstants.mathContext15));
-//        fraction.getRadiogenicIsotopeRatioByName(UThFractionationCorrectedIsotopicRatios.r238U_232Thfc.getName())//
-//                .setOneSigma(fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.ar238U_232Thfc.getName()).getOneSigmaAbs()//
-//                        .multiply(myLambda238Value)//
-//                        .divide(myLambda232Value, ReduxConstants.mathContext15));
+        // DO NOT CALCULATE 232_238 AS IT IS ALREADY INPUT AS ATOM RATIO
         fraction.getRadiogenicIsotopeRatioByName(UThFractionationCorrectedIsotopicRatios.r238U_232Thfc.getName())//
                 .setValue(fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.ar238U_232Thfc.getName()).getValue()//
                         .multiply(myLambda232Value)//

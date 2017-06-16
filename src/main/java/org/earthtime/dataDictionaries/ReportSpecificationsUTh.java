@@ -101,13 +101,23 @@ public class ReportSpecificationsUTh {
         {"", "[230Th/", "238U]", "", "getAnalysisMeasure", UThAnalysisMeasures.ar230Th_238Udc.getName(), "ABS",
             "", "true", "false", "3", "true", "[230Th/238U] (detrital Th-corr.)", "false", "false"
         },
-        {"", "230Th/", "238U", "", "getRadiogenicIsotopeRatioByName", UThFractionationCorrectedIsotopicRatios.r230Th_238Udc.getName(), "ABS",
+        {"", "230Th/", "238U", "*1e5", "getRadiogenicIsotopeRatioByName", UThFractionationCorrectedIsotopicRatios.r230Th_238Udc.getName(), "ABS",
             "", "true", "false", "3", "true", "230Th/238U (detrital Th-corr.)", "false", "false"
-        }, //
-    //        {"", "Corr", "Date", "ka", "getRadiogenicIsotopeDateByName", RadDates.dateCorr.getName(), "ABS",
-    //            "", "true", "false", "2", "true", "", "false", "false"
-    //        },
-    //        {"", "delta 234U", "initial", "", "getRadiogenicIsotopeRatioByName", UThFractionationCorrectedIsotopicRatios.delta234U.getName(), "ABS",
+        },
+        //
+        {"", "[234Th/", "238U]", "", "getAnalysisMeasure", UThAnalysisMeasures.ar234Th_238Udc.getName(), "ABS",
+            "", "true", "false", "3", "true", "[234Th/238U] (detrital Th-corr.)", "false", "false"
+        },
+        {"", "234Th/", "238U", "*1e5", "getRadiogenicIsotopeRatioByName", UThFractionationCorrectedIsotopicRatios.r234Th_238Udc.getName(), "ABS",
+            "", "true", "false", "3", "true", "234Th/238U (detrital Th-corr.)", "false", "false"
+        },
+        //
+        {"", "", "Date", "ka", "getRadiogenicIsotopeDateByName", RadDates.date.getName(), "ABS",
+            "", "true", "false", "2", "true", "Date (not corrected for detrital Th)", "false", "false"
+        },
+        {"", "", "Date", "ka", "getRadiogenicIsotopeDateByName", RadDates.dateCorr.getName(), "ABS",
+            "", "true", "false", "2", "true", "Date (corrected for detrital Th)", "false", "false"
+        }, //        {"", "delta 234U", "initial", "", "getRadiogenicIsotopeRatioByName", UThFractionationCorrectedIsotopicRatios.delta234U.getName(), "ABS",
     //            "", "true", "false", "2", "true", "", "false", "false"
     //        }
     };
