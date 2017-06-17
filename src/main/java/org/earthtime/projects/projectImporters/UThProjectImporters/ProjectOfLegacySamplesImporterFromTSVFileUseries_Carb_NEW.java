@@ -340,7 +340,7 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb_NEW extends A
                             ((UThFraction)myFraction).getR230Th_238Ufc_rectificationFactor().setValue(ar230Th_238Ufc_rectificationCorrectionFactor);
                             ((UThFraction)myFraction).getR230Th_238Ufc_rectificationFactor().setOneSigma(ar230Th_238Ufc_rectificationCorrectionFactorUnct);
 
-                            // reference material rectification correction factor for ratio  234Th_238U                          
+                            // reference material rectification correction factor for ratio  234U_238U                          
                             BigDecimal ar234U_238Ufc_rectificationCorrectionFactor = readDelimitedTextCell(myFractionData.get(37));
                             // default value
                             if (ar234U_238Ufc_rectificationCorrectionFactor.compareTo(BigDecimal.ZERO) == 0) {

@@ -546,59 +546,81 @@ public class ReportSettingsManager extends DialogEditor {
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
         columnName_label.setText("col name");
+        columnName_label.setOpaque(true);
 
+        valueDigitsCount_label.setBackground(new java.awt.Color(255, 255, 255));
         valueDigitsCount_label.setText("digit count = ");
+        valueDigitsCount_label.setOpaque(true);
 
+        uncertaintyColName_label.setBackground(new java.awt.Color(255, 255, 255));
         uncertaintyColName_label.setText("unct col name");
+        uncertaintyColName_label.setOpaque(true);
 
+        uncertaintyVisible_chkBox.setBackground(new java.awt.Color(255, 255, 255));
         uncertaintyVisible_chkBox.setText("unct col visible for this value");
+        uncertaintyVisible_chkBox.setOpaque(true);
         uncertaintyVisible_chkBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 uncertaintyVisible_chkBoxActionPerformed(evt);
             }
         });
 
+        uncertaintyDigitCount_label.setBackground(new java.awt.Color(255, 255, 255));
         uncertaintyDigitCount_label.setText("digit count =");
+        uncertaintyDigitCount_label.setOpaque(true);
 
+        uncertaintyDigits_spinner.setOpaque(true);
         uncertaintyDigits_spinner.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 uncertaintyDigits_spinnerStateChanged(evt);
             }
         });
 
+        valueDigits_spinner.setOpaque(true);
         valueDigits_spinner.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 valueDigits_spinnerStateChanged(evt);
             }
         });
 
+        unctModeSigFig_rButton.setBackground(new java.awt.Color(255, 255, 255));
         uncertaintyMode.add(unctModeSigFig_rButton);
         unctModeSigFig_rButton.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
         unctModeSigFig_rButton.setSelected(true);
         unctModeSigFig_rButton.setText("sigfig");
+        unctModeSigFig_rButton.setOpaque(true);
 
+        unctModeArbitrary_rButton.setBackground(new java.awt.Color(255, 255, 255));
         uncertaintyMode.add(unctModeArbitrary_rButton);
         unctModeArbitrary_rButton.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
         unctModeArbitrary_rButton.setText("arbit.");
+        unctModeArbitrary_rButton.setOpaque(true);
         unctModeArbitrary_rButton.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 unctModeArbitrary_rButtonStateChanged(evt);
             }
         });
 
+        valueModeSigFig_rButton.setBackground(new java.awt.Color(255, 255, 255));
         valueMode.add(valueModeSigFig_rButton);
         valueModeSigFig_rButton.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
         valueModeSigFig_rButton.setSelected(true);
         valueModeSigFig_rButton.setText("sigfig");
+        valueModeSigFig_rButton.setOpaque(true);
 
+        valueModeArbitrary_rButton.setBackground(new java.awt.Color(255, 255, 255));
         valueMode.add(valueModeArbitrary_rButton);
         valueModeArbitrary_rButton.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
         valueModeArbitrary_rButton.setText("arbit.");
+        valueModeArbitrary_rButton.setOpaque(true);
         valueModeArbitrary_rButton.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 valueModeArbitrary_rButtonunctModeArbitraryRButton_State_Changed(evt);
             }
         });
+
+        unitsChooser_ComboBox.setBackground(new java.awt.Color(255, 255, 255));
+        unitsChooser_ComboBox.setOpaque(true);
 
         org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);

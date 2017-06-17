@@ -51,7 +51,13 @@ public enum UThAnalysisMeasures {
     ar226Ra_BaConc("ar226Ra_BaConc"),
     ar230Th_BaConc("ar230Th_BaConc"),
     ar234U_238Ufc("ar234U_238Ufc"),
-    ar234Th_238Udc("ar234Th_238Udc");
+    ar234U_238Udc("ar234U_238Udc"),
+    ar234U_238Uidc("ar234U_238Uidc"),
+    ar234U_238Ui("ar234U_238Ui"),
+    delta234U("delta234U"),
+    delta234Udc("delta234Udc"),
+    delta234Ui("delta234Ui"),
+    delta234Uidc("delta234Uidc");
 
     private String name;
 

@@ -312,16 +312,24 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
     }
 
     private void reSizeSortButtons() {
-        sortFractionsButton.setBounds(1, DATATABLE_TOP_HEIGHT - lineHeight - 1, fractionColumnWidth - 3, lineHeight - 3);
-        toggleMeasButton.setBounds(1, 2, fractionColumnWidth - 3, lineHeight - 3);
+        int fractionDataStartRow = Integer.parseInt(reportFractions[0][0]);
+        if (reportFractions.length >= fractionDataStartRow) {
+            sortFractionsButton.setBounds(1, DATATABLE_TOP_HEIGHT - lineHeight - 1, fractionColumnWidth - 3, lineHeight - 3);
+            toggleMeasButton.setBounds(1, 2, fractionColumnWidth - 3, lineHeight - 3);
 
-        int drawnWidth = 3;
-        // oct 2016 added -1 for filtering cell added
-        for (int c = 3; c < reportFractions[0].length - 1; c++) {
-            float colWidth = calculateColumnWidth(c) * COLUMN_WIDTH_ADJUST_FACTOR;
-            sortButtons.get(c - 3).setBounds( //
-                    drawnWidth + 2, DATATABLE_TOP_HEIGHT - lineHeight - 1, (int) colWidth + 4, lineHeight - 3);
-            drawnWidth += colWidth + dividerWidth * 1.02 + c * 0.0075;// + 0.495;
+            int drawnWidth = 3;
+            // oct 2016 added -1 for filtering cell added
+            for (int c = 3; c < reportFractions[0].length - 1; c++) {
+                float colWidth = calculateColumnWidth(c) * COLUMN_WIDTH_ADJUST_FACTOR;
+                sortButtons.get(c - 3).setBounds( //
+                        drawnWidth + 2, DATATABLE_TOP_HEIGHT - lineHeight - 1, (int) colWidth + 4, lineHeight - 3);
+                //drawnWidth += colWidth + dividerWidth * 1.02 + c * 0.0075;// + 0.495;
+
+                try {
+                    drawnWidth += (reportFractions[fractionDataStartRow][c].length()) * COLUMN_WIDTH_ADJUST_FACTOR + dividerWidth * 1.05 + (c - 3) * 0.008;
+                } catch (Exception e) {
+                }
+            }
         }
     }
 
@@ -832,7 +840,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                             g2D.setColor(savedColor);
 
                             // June 2017 special condition to hide categpry per Noah
-                            g2D.drawString((String)(catName.contains("USeries") ? "" : catName)    ,
+                            g2D.drawString((String) (catName.contains("USeries") ? "" : catName),
                                     drawnWidth,
                                     drawnHeight + topMargin + lineHeight);
 
