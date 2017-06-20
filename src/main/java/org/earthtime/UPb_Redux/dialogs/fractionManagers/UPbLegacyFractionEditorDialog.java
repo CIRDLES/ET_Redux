@@ -97,7 +97,7 @@ public class UPbLegacyFractionEditorDialog extends DialogEditor {
         myFraction = fraction;
 
         initComponents();
-        setDefaultLookAndFeelDecorated(true);
+//        setDefaultLookAndFeelDecorated(true);
         setSize();
 
         // setup info panels

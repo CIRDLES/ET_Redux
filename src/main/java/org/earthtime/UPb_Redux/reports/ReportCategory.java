@@ -74,7 +74,7 @@ public class ReportCategory implements ReportCategoryInterface {
     private ReportColumnInterface SetupReportColumn(int index, String[][] specs) {
         String displayName1 = specs[index][0];
         ReportColumnInterface retVal = new ReportColumn(//
-                displayName1, //specs[index][0], // displayname1
+                specs[index][0].contains("delta") ? specs[index][0].replace("delta", "\u03B4") : specs[index][0], //displayName1, //specs[index][0], // displayname1
                 specs[index][1].contains("delta") ? specs[index][1].replace("delta", "\u03B4") : specs[index][1], // displayname2
                 specs[index][2], // displayname3
                 index, // positionIndex

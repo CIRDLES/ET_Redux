@@ -38,6 +38,7 @@ import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.reportViews.ReportRowGUIInterface;
 import org.earthtime.xmlUtilities.XMLSerializationI;
+import static org.earthtime.UPb_Redux.ReduxConstants.TIME_IN_MILLISECONDS_FROM_1970_TO_2000;
 
 public class UThFraction implements
         UThFractionI,
@@ -63,8 +64,13 @@ public class UThFraction implements
     protected ValueModel[] isotopeDates;
     protected ValueModel[] compositionalMeasures;
     protected ValueModel[] sampleIsochronRatios;
-    protected ValueModel[] traceElements;
     protected AbstractRatiosDataModel physicalConstantsModel; // fraction class has physicalConstantsModelID
+    protected AbstractRatiosDataModel detritalUThModel;
+    protected long dateTimeMillisecondsOfAnalysis;
+    private boolean spikeCalibrationR230_238IsSecular;
+    private boolean spikeCalibrationR234_238IsSecular;
+    private ValueModel r230Th_238Ufc_rectificationFactor;
+    private ValueModel r234U_238Ufc_rectificationFactor;
 
     protected boolean changed;
     protected boolean deleted;
@@ -96,6 +102,27 @@ public class UThFraction implements
         compositionalMeasures = valueModelArrayFactory(UThCompositionalMeasures.getNames(), UncertaintyTypesEnum.ABS.getName());
         sampleIsochronRatios = new ValueModel[0]; //valueModelArrayFactory(DataDictionary.SampleIsochronRatioNames, UncertaintyTypesEnum.ABS.getName());
 
+        physicalConstantsModel = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel();
+        detritalUThModel = ReduxLabData.getInstance().getDefaultDetritalUraniumAndThoriumModel();
+
+        dateTimeMillisecondsOfAnalysis = TIME_IN_MILLISECONDS_FROM_1970_TO_2000;
+
+        spikeCalibrationR230_238IsSecular = false;
+        spikeCalibrationR234_238IsSecular = false;
+        // see fraction reducer for multiplicative use
+        this.r230Th_238Ufc_rectificationFactor = new ValueModel(
+                "r230Th_238Ufc_rectificationFactor",
+                BigDecimal.ONE,
+                "ABS",
+                BigDecimal.ONE,
+                BigDecimal.ONE);
+        this.r234U_238Ufc_rectificationFactor = new ValueModel(
+                "r234U_238Ufc_rectificationFactor",
+                BigDecimal.ONE,
+                "ABS",
+                BigDecimal.ONE,
+                BigDecimal.ONE);
+
         this.changed = false;
         this.deleted = false;
         this.fractionNotes = "";
@@ -103,7 +130,6 @@ public class UThFraction implements
 
         rgbColor = 0;
 
-        initializeTraceElements();
     }
 
     /**
@@ -420,10 +446,7 @@ public class UThFraction implements
      */
     @Override
     public ValueModel[] getTraceElements() {
-        if (traceElements == null) {
-            initializeTraceElements();
-        }
-        return traceElements;
+        return new ValueModel[0];
     }
 
     /**
@@ -431,7 +454,6 @@ public class UThFraction implements
      */
     @Override
     public void setTraceElements(ValueModel[] traceElements) {
-        this.traceElements = traceElements;
     }
 
     @Override
@@ -495,6 +517,32 @@ public class UThFraction implements
 //            System.out.println(this.getFractionID() //
 //                    + "  is getting new physical constants model = "//
 //                    + physicalConstantsModel.getNameAndVersion());
+        }
+    }
+
+    /**
+     *
+     * @return
+     */
+    @Override
+    public AbstractRatiosDataModel getDetritalUThModel() {
+        if (detritalUThModel == null) {
+            detritalUThModel = ReduxLabData.getInstance().getDefaultDetritalUraniumAndThoriumModel();
+        }
+        return detritalUThModel;
+    }
+
+    /**
+     *
+     * @param detritalUThModel
+     * @param physicalConstantsModel
+     */
+    @Override
+    public void setDetritalUThModel(AbstractRatiosDataModel detritalUThModel) {
+        if ((this.detritalUThModel == null)
+                || (!this.detritalUThModel.equals(detritalUThModel))) {
+            this.detritalUThModel = detritalUThModel;
+            this.setChanged(true);
         }
     }
 
@@ -601,6 +649,91 @@ public class UThFraction implements
     @Override
     public ValueModel getInitialPbModelRatioByName(String trName) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    /**
+     * @return the dateTimeMillisecondsOfAnalysis
+     */
+    public long getDateTimeMillisecondsOfAnalysis() {
+        return dateTimeMillisecondsOfAnalysis;
+    }
+
+    /**
+     * @param dateTimeMillisecondsOfAnalysis the dateTimeMillisecondsOfAnalysis
+     * to set
+     */
+    public void setDateTimeMillisecondsOfAnalysis(long dateTimeMillisecondsOfAnalysis) {
+        this.dateTimeMillisecondsOfAnalysis = dateTimeMillisecondsOfAnalysis;
+    }
+
+    /**
+     * @return the spikeCalibrationR230_238IsSecular
+     */
+    public boolean isSpikeCalibrationR230_238IsSecular() {
+        return spikeCalibrationR230_238IsSecular;
+    }
+
+    /**
+     * @param spikeCalibrationR230_238IsSecular the
+     * spikeCalibrationR230_238IsSecular to set
+     */
+    public void setSpikeCalibrationR230_238IsSecular(boolean spikeCalibrationR230_238IsSecular) {
+        this.spikeCalibrationR230_238IsSecular = spikeCalibrationR230_238IsSecular;
+    }
+
+    /**
+     * @return the spikeCalibrationR234_238IsSecular
+     */
+    public boolean isSpikeCalibrationR234_238IsSecular() {
+        return spikeCalibrationR234_238IsSecular;
+    }
+
+    /**
+     * @param spikeCalibrationR234_238IsSecular the
+     * spikeCalibrationR234_238IsSecular to set
+     */
+    public void setSpikeCalibrationR234_238IsSecular(boolean spikeCalibrationR234_238IsSecular) {
+        this.spikeCalibrationR234_238IsSecular = spikeCalibrationR234_238IsSecular;
+    }
+
+    @Override
+    public ValueModel[] getLegacyActivityRatios() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setLegacyActivityRatios(ValueModel[] compositionalMeasures) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    /**
+     * @return the referenceMaterialRectificationFactor
+     */
+    public ValueModel getR230Th_238Ufc_rectificationFactor() {
+        return r230Th_238Ufc_rectificationFactor;
+    }
+
+    /**
+     * @param referenceMaterialRectificationFactor the
+     * referenceMaterialRectificationFactor to set
+     */
+    public void setR230Th_238Ufc_rectificationFactor(ValueModel r230Th_238Ufc_rectificationFactor) {
+        this.r230Th_238Ufc_rectificationFactor = r230Th_238Ufc_rectificationFactor;
+    }
+
+    /**
+     * @return the r234U_238Ufc_rectificationFactor
+     */
+    public ValueModel getR234U_238Ufc_rectificationFactor() {
+        return r234U_238Ufc_rectificationFactor;
+    }
+
+    /**
+     * @param r234U_238Ufc_rectificationFactor the
+ r234U_238Ufc_rectificationFactor to set
+     */
+    public void setR234U_238Ufc_rectificationFactor(ValueModel r234U_238Ufc_rectificationFactor) {
+        this.r234U_238Ufc_rectificationFactor = r234U_238Ufc_rectificationFactor;
     }
 
 }

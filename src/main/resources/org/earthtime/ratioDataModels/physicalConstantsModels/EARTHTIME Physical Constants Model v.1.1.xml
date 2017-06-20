@@ -53,7 +53,7 @@
             <value>0.00000282206</value>
             <uncertaintyType>PCT</uncertaintyType>
             <oneSigma>0.05351</oneSigma>
-            <reference>Cheng et al. 20013</reference>
+            <reference>Cheng et al. 2013</reference>
         </ValueModelReferenced>
         <ValueModelReferenced>
             <name>lambda235</name>

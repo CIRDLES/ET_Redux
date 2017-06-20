@@ -197,7 +197,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
         toggleStartStopLiveUpdate_button.setText(((ETReduxFrame) parent).getupdateSample_buttonText());
 
         ((ETReduxFrame) parent).getupdateSample_buttonText();
-        setDefaultLookAndFeelDecorated(true);
+//        setDefaultLookAndFeelDecorated(true);
         setSize();
 
         // setup info panels

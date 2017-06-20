@@ -1,5 +1,5 @@
 /*
- * LabDataEditorDialog.java
+ * LabDataEditorDialogUPb.java
  *
  *
  * Copyright 2006-2017 James F. Bowring and www.Earth-Time.org
@@ -84,7 +84,7 @@ import org.earthtime.utilities.FileHelper;
  *
  * @author James F. Bowring
  */
-public class LabDataEditorDialog extends DialogEditor {
+public class LabDataEditorDialogUPb extends DialogEditor {
 
     // Fields
     //private boolean MAC_OS_X;
@@ -132,7 +132,7 @@ public class LabDataEditorDialog extends DialogEditor {
      * @param selectTab
      * @throws BadLabDataException
      */
-    public LabDataEditorDialog(
+    public LabDataEditorDialogUPb(
             java.awt.Frame parent,
             boolean modal,
             ReduxLabData labData,
@@ -356,7 +356,7 @@ public class LabDataEditorDialog extends DialogEditor {
                     // tracerNotes_text.setText(tracerModel.getTracerNotes());
                 } catch (BadLabDataException ex) {
                     new ETWarningDialog(ex).setVisible(true);
-                    Logger.getLogger(LabDataEditorDialog.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(LabDataEditorDialogUPb.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
             } else if (evt.getStateChange() == ItemEvent.DESELECTED) {
@@ -709,7 +709,7 @@ public class LabDataEditorDialog extends DialogEditor {
                     PopulateAlphaUFields(alphaUModel);
                 } catch (BadLabDataException ex) {
                     new ETWarningDialog(ex).setVisible(true);
-                    Logger.getLogger(LabDataEditorDialog.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(LabDataEditorDialogUPb.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
             } else if (evt.getStateChange() == ItemEvent.DESELECTED) {
@@ -997,7 +997,7 @@ public class LabDataEditorDialog extends DialogEditor {
                     populateAlphaPbFields(alphaPbModel);
                 } catch (BadLabDataException ex) {
                     new ETWarningDialog(ex).setVisible(true);
-                    Logger.getLogger(LabDataEditorDialog.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(LabDataEditorDialogUPb.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
             } else if (evt.getStateChange() == ItemEvent.DESELECTED) {
@@ -1269,7 +1269,7 @@ public class LabDataEditorDialog extends DialogEditor {
                     populatePbBlankModelFields(pbBlankModel, false);
                 } catch (BadLabDataException ex) {
                     new ETWarningDialog(ex).setVisible(true);
-                    Logger.getLogger(LabDataEditorDialog.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(LabDataEditorDialogUPb.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
             } else if (evt.getStateChange() == ItemEvent.DESELECTED) {
@@ -1600,7 +1600,7 @@ public class LabDataEditorDialog extends DialogEditor {
                     populateInitialPbModelFields(initialPbModel, false);
                 } catch (BadLabDataException ex) {
                     new ETWarningDialog(ex).setVisible(true);
-                    Logger.getLogger(LabDataEditorDialog.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(LabDataEditorDialogUPb.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
             } else if (evt.getStateChange() == ItemEvent.DESELECTED) {
@@ -1847,11 +1847,11 @@ public class LabDataEditorDialog extends DialogEditor {
                 physicalConstantsModels_panel.getWidth(), physicalConstantsModels_panel.getHeight() - VERTICAL_OFFSET_MODEL_VIEW);
         if (editable) {
             physicalConstantsModelView
-                    = //
+                    = 
                     new PhysicalConstantsDataViewEditable(physicalConstantsModel, physicalConstantsModelViewDimension, false);
         } else {
             physicalConstantsModelView
-                    = //
+                    = 
                     new PhysicalConstantsDataViewNotEditable(physicalConstantsModel, physicalConstantsModelViewDimension, false);
         }
 
@@ -1902,7 +1902,7 @@ public class LabDataEditorDialog extends DialogEditor {
 
                 } catch (BadLabDataException ex) {
                     new ETWarningDialog(ex).setVisible(true);
-                    Logger.getLogger(LabDataEditorDialog.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(LabDataEditorDialogUPb.class.getName()).log(Level.SEVERE, null, ex);
                 }
             } else if (evt.getStateChange() == ItemEvent.DESELECTED) {
                 // Item is no longer selected
@@ -2180,7 +2180,7 @@ public class LabDataEditorDialog extends DialogEditor {
                         populateMineralStandardModelFields(model, false);
                     } catch (BadLabDataException ex) {
                         new ETWarningDialog(ex).setVisible(true);
-                        Logger.getLogger(LabDataEditorDialog.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(LabDataEditorDialogUPb.class.getName()).log(Level.SEVERE, null, ex);
                     }
 
                 } else if (evt.getStateChange() == ItemEvent.DESELECTED) {
@@ -3299,7 +3299,6 @@ public class LabDataEditorDialog extends DialogEditor {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setAlwaysOnTop(true);
-        setPreferredSize(new java.awt.Dimension(1113, 770));
         setResizable(false);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
@@ -5708,7 +5707,7 @@ public class LabDataEditorDialog extends DialogEditor {
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
 //        this.setAlwaysOnTop(false);
 //        String id = null;
-//        LabDataEditorDialog.setDefaultLookAndFeelDecorated(false);
+//        LabDataEditorDialogUPb.setDefaultLookAndFeelDecorated(false);
 //        switch (currentTabIndex) {
 //            case 0:
 //                id = "LabData.Tracers";

@@ -22,79 +22,79 @@ package org.earthtime.dataDictionaries;
  *
  * @author James F. Bowring
  */
-
 public enum UThFractionationCorrectedIsotopicRatios {
 
     // measured UTh ratios
     /**
-     * 
+     *
      */
-    r234U_238Ufc( "r234U_238Ufc" ),
+    r234U_238Ufc("r234U_238Ufc"),
+    r234U_238Udc("r234U_238Udc"),
     r232Th_238Ufc("r232Th_238Ufc"),
     r238U_232Thfc("r238U_232Thfc"),
     r230Th_238Ufc("r230Th_238Ufc"),
+    r230Th_238Udc("r230Th_238Udc"),
     /**
-     * 
+     *
      */
-    r230Th_232Thfc( "r230Th_232Thfc" ),
+    r230Th_232Thfc("r230Th_232Thfc"),
     /**
-     * 
+     *
      */
-    r228Ra_226Rafc( "r228Ra_226Rafc" ),
+    r228Ra_226Rafc("r228Ra_226Rafc"),
     /**
-     * 
+     *
      */
-    r231Pa_233Pafc( "r231Pa_233Pafc" ),    
+    r231Pa_233Pafc("r231Pa_233Pafc"),
     /**
-     * 
+     *
      */
-    r238U_206Pbfc( "r238U_206Pbfc" ),
+    r238U_206Pbfc("r238U_206Pbfc"),
     /**
-     * 
+     *
      */
-    r207Pb_206Pbfc( "r207Pb_206Pbfc" ),
-    a230Thfc( "a230Thfc" ),
-    a226Rafc( "a226Rafc" ),
-    r226Ba_230Thfc( "r226Ba_230Thfc" ),
-    delta234U("delta234U")
-    ;
-
+    r207Pb_206Pbfc("r207Pb_206Pbfc"),
+    a230Thfc("a230Thfc"),
+    a226Rafc("a226Rafc"),
+    r226Ba_230Thfc("r226Ba_230Thfc"),
+    r234U_238Uidc("r234U_238Uidc"),
+    r234U_238Ui("r234U_238Ui");
 
     private String name;
 
-    private UThFractionationCorrectedIsotopicRatios ( String name ) {
+    private UThFractionationCorrectedIsotopicRatios(String name) {
         this.name = name;
     }
 
     /**
-     * 
+     *
      * @return
      */
-    public String getName () {
+    public String getName() {
         return name;
     }
 
     /**
-     * 
+     *
      * @return
      */
-    public static String[] getNames () {
+    public static String[] getNames() {
         String[] retVal = new String[UThFractionationCorrectedIsotopicRatios.values().length];
-        for (int i = 0; i < UThFractionationCorrectedIsotopicRatios.values().length; i ++) {
+        for (int i = 0; i < UThFractionationCorrectedIsotopicRatios.values().length; i++) {
             retVal[i] = UThFractionationCorrectedIsotopicRatios.values()[i].getName();
         }
         return retVal;
     }
 
     /**
-     * 
+     *
      * @param checkString
      * @return
      */
-    public static boolean contains ( String checkString ) {
+    public static boolean contains(String checkString) {
         boolean retVal = true;
         try {
-            UThFractionationCorrectedIsotopicRatios.valueOf( checkString );
+            UThFractionationCorrectedIsotopicRatios.valueOf(checkString);
         } catch (IllegalArgumentException e) {
             retVal = false;
         }

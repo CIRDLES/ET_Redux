@@ -34,6 +34,7 @@ public enum UThCompositionalMeasures {
      * 
      */
     conc232Th( "conc232Th" ),
+    conc230Th( "conc230Th" ),
     /**
      * 
      */

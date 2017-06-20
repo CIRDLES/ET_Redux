@@ -24,6 +24,7 @@ import java.io.File;
 import org.earthtime.dataDictionaries.FileDelimiterTypesEnum;
 import org.earthtime.projects.ProjectInterface;
 import org.earthtime.projects.projectImporters.UThProjectImporters.ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb;
+import org.earthtime.projects.projectImporters.UThProjectImporters.ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb_NEW;
 
 /**
  *
@@ -48,7 +49,7 @@ public class ProjectOfLegacySamplesDataManagerUseries_Carb extends AbstractProje
                 modal,
                 "Legacy Useries Carbonate Data tab-delimited",
                 project,
-                new ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb(FileDelimiterTypesEnum.TAB),
+                new ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb_NEW(FileDelimiterTypesEnum.TAB),
                 importFractionFolderMRU);
     }
 }

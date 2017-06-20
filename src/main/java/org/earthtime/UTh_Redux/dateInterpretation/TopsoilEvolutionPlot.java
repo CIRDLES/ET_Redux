@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import javax.swing.*;
+import org.cirdles.topsoil.app.plot.TopsoilPlotType;
 import org.cirdles.topsoil.plot.Plot;
-import org.cirdles.topsoil.plot.uth.evolution.EvolutionPlot;
 import org.earthtime.UTh_Redux.fractions.UThLegacyFractionI;
 import org.earthtime.dataDictionaries.UThAnalysisMeasures;
 import org.earthtime.fractions.ETFractionInterface;
@@ -46,10 +46,17 @@ public final class TopsoilEvolutionPlot {
     private static final String Y = "y";
     private static final String SIGMA_Y = "sigma_y";
     private static final String RHO = "rho";
+    private static final String SELECTED = "Selected";
 
     public TopsoilEvolutionPlot() {
 
-        myChart = new EvolutionPlot();
+        myChart = TopsoilPlotType.BASE_PLOT.getPlot();
+        myChart.getProperties().put("Title", "Evolution Plot");
+        myChart.getProperties().put("X Axis", "[230Th/238U]");
+        myChart.getProperties().put("Y Axis", "[234U/238U]");
+        myChart.getProperties().put("Evolution", true);
+        myChart.getProperties().put("Ellipses", true);
+        myChart.getProperties().put("Isotope", "Uranium Thorium");
 
         topsoilEvolutionChartDialog = new EvolutionChartDialog(null, true);
         topsoilEvolutionChartDialog.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
@@ -69,12 +76,11 @@ public final class TopsoilEvolutionPlot {
         public EvolutionChartDialog(javax.swing.JFrame owner, boolean modal) {
             super();
         }
-        
-        
+
     }
 
     public static TopsoilEvolutionPlot getInstance() {
-        return   new TopsoilEvolutionPlot();//instance;
+        return new TopsoilEvolutionPlot();//instance;
     }
 
     public void showPanel() {
@@ -90,14 +96,15 @@ public final class TopsoilEvolutionPlot {
             Map<String, Object> datum = new HashMap<>();
             myData.add(datum);
             datum.put(X, fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.ar230Th_238Ufc.getName())//
-                        .getValue().doubleValue());
+                    .getValue().doubleValue());
             datum.put(SIGMA_X, fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.ar230Th_238Ufc.getName())//
-                        .getOneSigmaAbs().doubleValue() * 2.0);
-            datum.put(Y,fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.ar234U_238Ufc.getName())//
-                        .getValue().doubleValue());
+                    .getOneSigmaAbs().doubleValue() * 2.0);
+            datum.put(Y, fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.ar234U_238Ufc.getName())//
+                    .getValue().doubleValue());
             datum.put(SIGMA_Y, fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.ar234U_238Ufc.getName())//
-                        .getOneSigmaAbs().doubleValue() * 2.0);
+                    .getOneSigmaAbs().doubleValue() * 2.0);
             datum.put(RHO, 0.0);
+            datum.put(SELECTED, "true");
         }
 
         myChart.setData(myData);
@@ -109,8 +116,8 @@ public final class TopsoilEvolutionPlot {
     public void setSelectedFractions(Vector<ETFractionInterface> selectedFractions) {
         this.selectedFractions = selectedFractions;
     }
-    
-    public void close(){
+
+    public void close() {
         topsoilEvolutionChartDialog.dispose();
         myChart = null;
     }

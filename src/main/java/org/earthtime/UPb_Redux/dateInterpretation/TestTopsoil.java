@@ -21,8 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.*;
+import org.cirdles.topsoil.app.plot.TopsoilPlotType;
 import org.cirdles.topsoil.plot.Plot;
-import org.cirdles.topsoil.plot.upb.uncertainty.UncertaintyEllipsePlot;
 
 /**
  *
@@ -59,7 +59,7 @@ public class TestTopsoil {
 
         Plot myChart = null;
         try {
-            myChart = new UncertaintyEllipsePlot();
+            myChart = TopsoilPlotType.BASE_PLOT.getPlot();
         } catch (Exception e) {
         }
 

@@ -1,5 +1,5 @@
 /*
- * DetritalUraniumAndThoriumRatiosEnum.java
+ * DetritalUThRatiosEnum.java
  *
  *
  * Copyright 2006-2017 James F. Bowring and www.Earth-Time.org
@@ -23,25 +23,25 @@ package org.earthtime.dataDictionaries;
  * @author James F. Bowring
  */
 
-public enum DetritalUraniumAndThoriumRatiosEnum {
+public enum DetritalUThRatiosEnum {
     /**
      * 
      */// DetritalUraniumAndThorium ratios
     /**
      * 
      */
-    ar230Th_238Ufc( "ar230Th_238Ufc" ),
+    ar230Th_238U( "ar230Th_238U" ),
     /**
      * 
      */
-    ar232Th_238Ufc( "ar232Th_238Ufc" ),
+    ar232Th_238U( "ar232Th_238U" ),
     /**
      * 
      */
-    ar234U_238Ufc( "ar234U_238Ufc" );
+    ar234U_238U( "ar234U_238U" );
     private String name;
 
-    private DetritalUraniumAndThoriumRatiosEnum ( String name ) {
+    private DetritalUThRatiosEnum ( String name ) {
         this.name = name;
     }
 
@@ -58,9 +58,9 @@ public enum DetritalUraniumAndThoriumRatiosEnum {
      * @return
      */
     public static String[] getNames () {
-        String[] retVal = new String[DetritalUraniumAndThoriumRatiosEnum.values().length];
-        for (int i = 0; i < DetritalUraniumAndThoriumRatiosEnum.values().length; i ++) {
-            retVal[i] = DetritalUraniumAndThoriumRatiosEnum.values()[i].getName();
+        String[] retVal = new String[DetritalUThRatiosEnum.values().length];
+        for (int i = 0; i < DetritalUThRatiosEnum.values().length; i ++) {
+            retVal[i] = DetritalUThRatiosEnum.values()[i].getName();
         }
         return retVal;
     }
@@ -73,7 +73,7 @@ public enum DetritalUraniumAndThoriumRatiosEnum {
     public static boolean contains ( String checkString ) {
         boolean retVal = true;
         try {
-            DetritalUraniumAndThoriumRatiosEnum.valueOf( checkString );
+            DetritalUThRatiosEnum.valueOf( checkString );
         } catch (IllegalArgumentException e) {
             retVal = false;
         }

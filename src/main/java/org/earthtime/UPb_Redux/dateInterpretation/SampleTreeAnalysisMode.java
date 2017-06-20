@@ -436,7 +436,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
                                     ((AliquotInterface) nodeInfo).determineUnusedSampleDateModels());
 
                     myEditor.setSize(340, 395);
-                    JDialog.setDefaultLookAndFeelDecorated(true);
+//                    JDialog.setDefaultLookAndFeelDecorated(true);
 
                     myEditor.setVisible(true);
 

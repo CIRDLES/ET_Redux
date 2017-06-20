@@ -37,12 +37,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
+import org.apache.commons.math3.analysis.interpolation.LinearInterpolator;
+import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
+import static org.apache.commons.math3.special.Erf.erf;
 import org.cirdles.mcLeanRegression.core.McLeanRegressionLineInterface;
 import org.earthtime.Tripoli.dataModels.sessionModels.SessionCorrectedUnknownsSummary;
 import org.earthtime.UPb_Redux.ReduxConstants;
@@ -164,7 +168,7 @@ public class SampleDateModel extends ValueModel implements
     private SampleAnalysisTypesEnum sampleAnalysisType;
     // Feb 2017
     private transient McLeanRegressionLineInterface mcLeanRegressionLine;
-    private static String unitsForYears= "Ma";
+    private static String unitsForYears = "Ma";
     private SortedSet<IsochronModel> isochronModels;
 
     /**
@@ -2595,8 +2599,116 @@ public class SampleDateModel extends ValueModel implements
             AbstractRatiosDataModel physicalConstants = myFractions.get(0).getPhysicalConstantsModel();
             ValueModel lambda230 = physicalConstants.getDatumByName(Lambdas.lambda230.getName()).copy();
 
+            // May 2017 new math from Noah
+            // McleanRegression a = vertical vector of [0][0] = 0.0, [1][0] = x-y y-intercept, [2][0] = x-z z-intercept 
+            // McleanRegression v = vertical vector of [0][0] = 1.0, [1][0] = x-y slope,       [2][0] = x-z slope 
+            // SAV is covariance sized 2*(d-1) where d is dimension (say x-y = 2, x-y-z = 3)
+            // SAV diagonal for d=2 >> (2 x 2) is [0][0] = variance of x-y y-intercept
+            //                                    [1][1] = variance of x-y slope
+            // SAV diagonal for d=3 >> (4 x 4) is [0][0] = variance of x-y y-intercept
+            //                                    [1][1] = variance of x-z z-intercept
+            //                                    [2][2] = variance of x-y slope
+            //                                    [3][3] = variance of x-z slope
+            // calculated slope from McleanRegression
+            double slopeMean = mcLeanRegressionLine.getV()[1][0];
+            // oneSigmaAbs for the slope
+            double slopeStdv = Math.sqrt(mcLeanRegressionLine.getSav()[1][1]);
+
+            // t is the age equation estimate of the age
+            double t;
+            if (slopeMean < 1.0) {
+                t = (-1.0 / lambda230.getValue().doubleValue()) * StrictMath.log(1.0 - slopeMean);
+            } else {
+                t = 5.0E5;
+            }
+
+            double tOneSigmaAbs = Math.abs(1.0 / (lambda230.getValue().doubleValue() * (1 - slopeMean))) * slopeStdv;
+
+            // the upper and lower limits of the probability distribution functions we’ll calculate for the age of the sample
+            double mint = StrictMath.max(0.0, t - 4.0 * tOneSigmaAbs);
+            double maxt = StrictMath.min(1.0e6, t + 4.0 * tOneSigmaAbs);
+
+            double slopeVar = slopeStdv * slopeStdv;
+            // number of vector elements for estimation: larger n >> longer calculation time
+            int nt = 1000;
+
+            // Create a vector named tvec that consists of nt = 1000 equally spaced values, 
+            // starting at mint and ending at maxt.  So if mint = 1 and maxt = 1000, 
+            // then tvec would be [1, 2, 3, 4… 998, 999, 1000].
+            double[] tvec = new double[nt];
+            double[] ptp = new double[nt];
+            double[] Ptp = new double[nt];
+            double[] ptnorm = new double[nt];
+
+            double tint = (maxt - mint) / (nt - 1);
+            int i = 0;
+            double sumPtp = 0.0;
+
+            for (double d = mint; d <= maxt; d += tint) {
+                tvec[i] = d;
+
+                ptp[i] = StrictMath.exp(-lambda230.getValue().doubleValue() * tvec[i])
+                        * StrictMath.exp(-Math.pow((1.0 - Math.exp(-lambda230.getValue().doubleValue() * tvec[i]) - slopeMean), 2) / (2.0 * slopeVar));
+                sumPtp += ptp[i];
+
+                Ptp[i] = -erf((slopeMean + StrictMath.exp(-lambda230.getValue().doubleValue() * tvec[i]) - 1.0) / StrictMath.sqrt(2 * slopeVar))
+                        + erf(slopeMean / StrictMath.sqrt(2 * slopeVar));
+
+                i++;
+            }
+
+            List<Double> ptList = new ArrayList<>();
+            List<Double> tzList = new ArrayList<>();
+            for (i = 0; i < ptp.length; i++) {
+                ptnorm[i] = StrictMath.abs(ptp[i] / (sumPtp * tint));
+
+                if ((Ptp[i] > 1.0e-15) && (Ptp[i] < Ptp[nt - 1])) {
+                    ptList.add(Ptp[i] / Ptp[nt - 1]);
+                    tzList.add(tvec[i]);
+                }
+            }
+
+            double[] ptArray = ptList.stream().mapToDouble(d -> d).toArray();
+            double[] tzArray = tzList.stream().mapToDouble(d -> d).toArray();
+
+            LinearInterpolator interp = new LinearInterpolator();
+            PolynomialSplineFunction interFunc = interp.interpolate(ptArray, tzArray);
+
+            // limsCV contains the lower and upper ages for the 95% confidence limit for the age.
+            double[] limsCV = new double[]{interFunc.value(0.025), interFunc.value(0.975)};
+            double medianCV = interFunc.value(0.5);
+
+            double meanCV = 0.0;
+            for (i = 0; i < nt; i++) {
+                meanCV += ptnorm[i] * tvec[i];
+            }
+
+            double modeCV = -1.0 / lambda230.getValue().doubleValue()
+                    * StrictMath.log((1.0 - slopeMean + StrictMath.sqrt((1.0 - slopeMean) * (1.0 - slopeMean) + 4.0 * slopeVar)) / 2.0);
+
+            /*
+             * Plus and minus uncertainties (2-sigma equivalent ). 
+             */
+            double minusUnct = modeCV - limsCV[0];
+            double plusUnct = limsCV[1] - modeCV;
+
+            /**
+             * We should report meanCV, medianCV, and modeCV as our outputs: the
+             * mean, median, and mode of the asymmetric probability distribution
+             * function, along with limsCV, the 95% confidence limit on these.
+             * You should use the modeCV in the data table as the age of the
+             * sample, and minusUnct and plusUnct as its plus and minus
+             * uncertainties. All of these calculations can be re-used for the
+             * radium isochrons as well (section B part a: “Simple Assumption:
+             * Ra = Ba” below), just use lambda226 instead of lambda230, and use
+             * the slope from that isochron. *
+             */
+            
+            
+            
+            // previous method  
             // getV()[1][0] = slope
-            double myDate = -1.0 / lambda230.getValue().doubleValue() 
+            double myDate = -1.0 / lambda230.getValue().doubleValue()
                     * StrictMath.log(1.0 - mcLeanRegressionLine.getV()[1][0]);
 
             setValue(myDate);
@@ -2670,7 +2782,7 @@ public class SampleDateModel extends ValueModel implements
     public String showFractionIdWithDateAndUnct(ETFractionInterface fraction) {
 
         String contents = "";
-        if ((dateName.length() > 0) && (methodName.compareToIgnoreCase("ISO238_230")!=0)) {
+        if ((dateName.length() > 0) && (methodName.compareToIgnoreCase("ISO238_230") != 0)) {
             contents
                     = //
                     " : date = "//
@@ -3050,7 +3162,7 @@ public class SampleDateModel extends ValueModel implements
      * @return the isochronModels
      */
     public SortedSet<IsochronModel> getIsochronModels() {
-        if (isochronModels == null){
+        if (isochronModels == null) {
             this.isochronModels = new TreeSet<>();
         }
         return isochronModels;

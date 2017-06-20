@@ -20,7 +20,7 @@
  */
 package org.earthtime.UPb_Redux.reports;
 
-import org.earthtime.dataDictionaries.ReportSpecifications;
+import org.earthtime.dataDictionaries.ReportSpecificationsUPb;
 import org.earthtime.reports.ReportColumnInterface;
 
 /**
@@ -217,7 +217,7 @@ public class ReportColumn implements
      */
     @Override
     public void setUnitsFromXML(String xmlCode) {
-        units = ReportSpecifications.unicodeConversionsFromXML.get(xmlCode);
+        units = ReportSpecificationsUPb.unicodeConversionsFromXML.get(xmlCode);
         if (units == null) {
             units = xmlCode;
         }

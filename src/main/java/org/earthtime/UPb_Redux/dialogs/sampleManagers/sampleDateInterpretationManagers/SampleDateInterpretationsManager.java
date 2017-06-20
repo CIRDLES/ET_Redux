@@ -1073,7 +1073,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         DialogEditor myDialog
                 = new SampleDateInterpretationAny2VariablesChooser(null, true, (PlotAny2Panel) plotAny2Panel, variablesListing);
         myDialog.setSize(555, 460);
-        JDialog.setDefaultLookAndFeelDecorated(true);
+//        JDialog.setDefaultLookAndFeelDecorated(true);
         myDialog.setVisible(true);
 
         ((AbstractPlot) plotAny2Panel).fitMcLeanRegression();

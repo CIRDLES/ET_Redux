@@ -21,7 +21,7 @@ import java.lang.reflect.Method;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
-import org.earthtime.dataDictionaries.ReportSpecifications;
+import org.earthtime.dataDictionaries.ReportSpecificationsUPb;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.reportViews.ReportListItemI;
 
@@ -150,7 +150,7 @@ public interface ReportColumnInterface extends Comparable<ReportColumnInterface>
      * @return
      */
     public default String getUnitsFoxXML() {
-        String retVal = ReportSpecifications.unicodeConversionsToXML.get(getUnits());
+        String retVal = ReportSpecificationsUPb.unicodeConversionsToXML.get(getUnits());
         if (retVal == null) {
             retVal = getUnits();
         }

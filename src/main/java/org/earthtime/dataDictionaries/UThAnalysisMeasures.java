@@ -33,6 +33,7 @@ public enum UThAnalysisMeasures {
      *
      */
     ar230Th_238Ufc("ar230Th_238Ufc"),
+    ar230Th_238Udc("ar230Th_238Udc"),
     ar230Th_234Ufc("ar230Th_234Ufc"),
     /**
      *
@@ -49,7 +50,15 @@ public enum UThAnalysisMeasures {
     a226Rafc("a226Rafc"),
     ar226Ra_BaConc("ar226Ra_BaConc"),
     ar230Th_BaConc("ar230Th_BaConc"),
-    ar234U_238Ufc("ar234U_238Ufc");
+    ar234U_238Ufc("ar234U_238Ufc"),
+    ar234U_238Udc("ar234U_238Udc"),
+    ar234U_238Uidc("ar234U_238Uidc"),
+    ar234U_238Ui("ar234U_238Ui"),
+    delta234U("delta234U"),
+    delta234Udc("delta234Udc"),
+    delta234Ui("delta234Ui"),
+    delta234Uidc("delta234Uidc"),
+    rhoDate__delta234Ui("rhoDate__delta234Ui");
 
     private String name;
 

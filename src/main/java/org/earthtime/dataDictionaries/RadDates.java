@@ -111,7 +111,10 @@ public enum RadDates {
      *
      */
     bestAge_PbcCorr( "bestAge_PbcCorr" ),
-    dateCorr("dateCorr");
+    date("date"),
+    dateCorr("dateCorr"),
+    dateBP("dateBP"),
+    dateCorrBP("dateCorrBP");
 
 
     private String name;

@@ -17,6 +17,8 @@
  */
 package org.earthtime.UTh_Redux.fractions;
 
+import java.math.BigDecimal;
+import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.fractions.ETFractionInterface;
 
 /**
@@ -25,4 +27,42 @@ import org.earthtime.fractions.ETFractionInterface;
  */
 public interface UThFractionI extends ETFractionInterface {
 
+    abstract ValueModel[] getLegacyActivityRatios();
+    
+    abstract void setLegacyActivityRatios(ValueModel[] compositionalMeasures);
+
+    public default ValueModel getLegacyActivityRatioByName(String arName) {
+        for (int i = 0; i < getLegacyActivityRatios().length; i++) {
+            if (getLegacyActivityRatios()[i].getName().equalsIgnoreCase(arName.trim())) {
+                return getLegacyActivityRatios()[i];
+            }
+        }
+        // return a new model - handles backwards compatible
+        // have to add element to array
+        ValueModel[] temp = new ValueModel[getLegacyActivityRatios().length + 1];
+        System.arraycopy(getLegacyActivityRatios(), 0, temp, 0, getLegacyActivityRatios().length);
+
+        ValueModel arModel
+                = new ValueModel(arName.trim(),
+                        BigDecimal.ZERO,
+                        "ABS",
+                        BigDecimal.ZERO, BigDecimal.ZERO);
+
+        temp[getLegacyActivityRatios().length] = arModel;
+
+        setLegacyActivityRatios(temp);
+
+        return arModel;
+    }
+
+    public default void setLegacyActivityRatioByName(String arName, ValueModel valueModel) {
+        // make sure it exists
+        getLegacyActivityRatioByName(arName.trim());
+        //find it
+        for (int i = 0; i < getLegacyActivityRatios().length; i++) {
+            if (getLegacyActivityRatios()[i].getName().equalsIgnoreCase(arName.trim())) {
+                getLegacyActivityRatios()[i] = valueModel;
+            }
+        }
+    }
 }

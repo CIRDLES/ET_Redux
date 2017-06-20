@@ -130,8 +130,9 @@ public class MineralStandardUPbModel extends AbstractRatiosDataModel {
                 new BigDecimal("10"), BigDecimal.ZERO);
 
     }
+    
     private static final AbstractRatiosDataModel EARTHTIMESriLankaStandardModel
-            = //
+            = 
             createInstance("EARTHTIME SriLanka Reference Material",
                     1, 0,//
                     "EARTHTIME",//
@@ -258,7 +259,7 @@ public class MineralStandardUPbModel extends AbstractRatiosDataModel {
 
     }
     private static final AbstractRatiosDataModel EARTHTIMEPlesoviceStandardModel
-            = //
+            = 
             createInstance("EARTHTIME Plesovice Reference Material",
                     1, 0,//
                     "EARTHTIME",//

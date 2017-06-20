@@ -38,7 +38,8 @@ import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.dataDictionaries.Lambdas;
 import org.earthtime.dataDictionaries.RadDates;
-import org.earthtime.dataDictionaries.ReportSpecifications;
+import org.earthtime.dataDictionaries.ReportSpecificationsUPb;
+import org.earthtime.dataDictionaries.ReportSpecificationsUTh;
 import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.dialogs.ReportSettingsManager;
 import org.earthtime.exceptions.ETException;
@@ -76,7 +77,22 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
         return retVal;
     }
 
-    public void assembleReportCategories();
+    public default void assembleReportCategories() {
+        setReportCategories(new ArrayList<>());
+        getReportCategories().add(getFractionCategory());
+        if (isIsotypeStyleUPb()) {
+            getReportCategories().add(getDatesCategory());
+            getReportCategories().add(getDatesPbcCorrCategory());
+            getReportCategories().add(getCompositionCategory());
+            getReportCategories().add(getIsotopicRatiosCategory());
+            getReportCategories().add(getIsotopicRatiosPbcCorrCategory());
+            getReportCategories().add(getRhosCategory());
+            getReportCategories().add(getTraceElementsCategory());
+        } else {
+            getReportCategories().add(getDatesCategory());
+        }
+        getReportCategories().add(getFractionCategory2());
+    }
 
     public ReportSettingsInterface deepCopy();
 
@@ -275,6 +291,18 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
 
     /**
      *
+     * @return
+     */
+    boolean isOutOfDateUPb();
+
+    /**
+     *
+     * @return
+     */
+    boolean isOutOfDateUTh();
+
+    /**
+     *
      */
     @Override
     void removeSelf();
@@ -411,138 +439,148 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
             // check whether all values are equal in displayed fractions
 
             // force to not visible
-            getCompositionCategory().setVisibleCategoryColumn(AnalysisMeasures.ar231_235sample.getName(), false);
-            getCompositionCategory().setVisibleCategoryColumn(AnalysisMeasures.rTh_Umagma.getName(), false);
+            if (getCompositionCategory() != null) {
+                getCompositionCategory().setVisibleCategoryColumn(AnalysisMeasures.ar231_235sample.getName(), false);
+                getCompositionCategory().setVisibleCategoryColumn(AnalysisMeasures.rTh_Umagma.getName(), false);
+            }
 
-            // get first activityValue and first Th_Umagma value and set standard footnote entries
-            BigDecimal savedActivityValue
-                    = fractions.get(0).getAnalysisMeasure(AnalysisMeasures.ar231_235sample.getName()).getValue();
-            BigDecimal savedMagmaValue
-                    = fractions.get(0).getAnalysisMeasure(AnalysisMeasures.rTh_Umagma.getName()).getValue();
+            if (isIsotypeStyleUPb()) {
+                // get first activityValue and first Th_Umagma value and set standard footnote entries
+                BigDecimal savedActivityValue
+                        = fractions.get(0).getAnalysisMeasure(AnalysisMeasures.ar231_235sample.getName()).getValue();
+                BigDecimal savedMagmaValue
+                        = fractions.get(0).getAnalysisMeasure(AnalysisMeasures.rTh_Umagma.getName()).getValue();
 
-            activityFootnoteEntry = "= " + savedActivityValue.toString();
-            thU_MagmaFootnoteEntry = "= " + savedMagmaValue.toString();
+                activityFootnoteEntry = "= " + savedActivityValue.toString();
+                thU_MagmaFootnoteEntry = "= " + savedMagmaValue.toString();
 
-            // modified april 2010 to account for zircon population
-            int zirconCount = 0;
-            int fractionCount = 0;
-            for (ETFractionInterface f : fractions) {
-                if (f instanceof FractionI) {
-                    // we have a UPb fraction with zircon property
-                    if (!f.isRejected()) {
+                // modified april 2010 to account for zircon population
+                int zirconCount = 0;
+                int fractionCount = 0;
+                for (ETFractionInterface f : fractions) {
+                    if (f instanceof FractionI) {
+                        // we have a UPb fraction with zircon property
+                        if (!f.isRejected()) {
 
-                        BigDecimal activityValue = f.getAnalysisMeasure(AnalysisMeasures.ar231_235sample.getName()).getValue();
-                        if (activityValue.compareTo(savedActivityValue) != 0) {
-                            getCompositionCategory().setVisibleCategoryColumn(AnalysisMeasures.ar231_235sample.getName(), true);
-                            // change footnote
-                            activityFootnoteEntry = "specified";
-                        }
-                        BigDecimal magmaValue = f.getAnalysisMeasure(AnalysisMeasures.rTh_Umagma.getName()).getValue();
-                        if (magmaValue.compareTo(savedMagmaValue) != 0) {
-                            getCompositionCategory().setVisibleCategoryColumn(AnalysisMeasures.rTh_Umagma.getName(), true);
-                            // change footnote
-                            thU_MagmaFootnoteEntry = "specified";
-                        }
+                            BigDecimal activityValue = f.getAnalysisMeasure(AnalysisMeasures.ar231_235sample.getName()).getValue();
+                            if (activityValue.compareTo(savedActivityValue) != 0) {
+                                getCompositionCategory().setVisibleCategoryColumn(AnalysisMeasures.ar231_235sample.getName(), true);
+                                // change footnote
+                                activityFootnoteEntry = "specified";
+                            }
+                            BigDecimal magmaValue = f.getAnalysisMeasure(AnalysisMeasures.rTh_Umagma.getName()).getValue();
+                            if (magmaValue.compareTo(savedMagmaValue) != 0) {
+                                getCompositionCategory().setVisibleCategoryColumn(AnalysisMeasures.rTh_Umagma.getName(), true);
+                                // change footnote
+                                thU_MagmaFootnoteEntry = "specified";
+                            }
 
-                        fractionCount++;
-                        if (((FractionI) f).isZircon()) {
-                            zirconCount++;
+                            fractionCount++;
+                            if (((FractionI) f).isZircon()) {
+                                zirconCount++;
+                            }
                         }
                     }
                 }
-            }
 
-            // zirconPopulationType = 0 is default condition = no zircons
-            zirconPopulationType = 0;
-            if ((zirconCount > 0) && (zirconCount < fractionCount)) {
-                zirconPopulationType = 2; // mixed
-            } else if (zirconCount == fractionCount) {
-                zirconPopulationType = 1; // zircon
-            }
+                // zirconPopulationType = 0 is default condition = no zircons
+                zirconPopulationType = 0;
+                if ((zirconCount > 0) && (zirconCount < fractionCount)) {
+                    zirconPopulationType = 2; // mixed
+                } else if (zirconCount == fractionCount) {
+                    zirconPopulationType = 1; // zircon
+                }
 
-        } // end special case **************************************************
+            } // end special case **************************************************
+        }
 
         // a special case oct 2009 to decide if units of dates is Ma or ka or auto
         // repeated oct 2014 to handle Pbc corrected dates category also
         if (fractions.size() > 0) {
-            if (getDatesCategory().getCategoryColumns().length > 0) {
-                // first get the unittype of the first date (all will be set the same so this is a flag)
-                String currentDateUnit = getDatesCategory().getCategoryColumns()[0].getUnits();
-                boolean isAuto = false;
-                // the default is ka, though it will usually be overwritten by Ma
-                if (currentDateUnit.equalsIgnoreCase("Auto")) {
-                    currentDateUnit = "ka";
-                    isAuto = true;
-                }
-                getDatesCategory().setDisplayName("Dates (" + currentDateUnit + ")");
-                for (ReportColumnInterface rc : getDatesCategory().getCategoryColumns()) {
-                    if (!rc.getUnits().equalsIgnoreCase("")) {
-                        rc.setUnits(currentDateUnit);
+            // June 2017 split by isotope type
+            if (isIsotypeStyleUPb()) {
+                if (getDatesCategory().getCategoryColumns().length > 0) {
+                    // first get the unittype of the first date (all will be set the same so this is a flag)
+                    String currentDateUnit = getDatesCategory().getCategoryColumns()[0].getUnits();
+                    boolean isAuto = false;
+                    // the default is ka, though it will usually be overwritten by Ma
+                    if (currentDateUnit.equalsIgnoreCase("Auto")) {
+                        currentDateUnit = "ka";
+                        isAuto = true;
                     }
-                }
+                    getDatesCategory().setDisplayName("Dates (" + currentDateUnit + ")");
+                    for (ReportColumnInterface rc : getDatesCategory().getCategoryColumns()) {
+                        if (!rc.getUnits().equalsIgnoreCase("")) {
+                            rc.setUnits(currentDateUnit);
+                        }
+                    }
 
-                if (isAuto) {
-                    // let's find out
-                    BigDecimal threshold = new BigDecimal(1000000);
-                    for (ETFractionInterface f : fractions) {
-                        if (!f.isRejected()) {
-                            BigDecimal date206_238Value = f.getRadiogenicIsotopeDateByName(RadDates.age206_238r).getValue();
-                            if (date206_238Value.compareTo(threshold) > 0) {
-                                // we have Ma when any value is greater than threshold
-                                getDatesCategory().setDisplayName("Dates (Ma)");
-                                // now set units correctly
-                                for (ReportColumnInterface rc : getDatesCategory().getCategoryColumns()) {
-                                    if (!rc.getUnits().equalsIgnoreCase("")) {
-                                        rc.setUnits("Ma");
+                    if (isAuto) {
+                        // let's find out
+                        BigDecimal threshold = new BigDecimal(1000000);
+                        for (ETFractionInterface f : fractions) {
+                            if (!f.isRejected()) {
+                                BigDecimal date206_238Value = f.getRadiogenicIsotopeDateByName(RadDates.age206_238r).getValue();
+                                if (date206_238Value.compareTo(threshold) > 0) {
+                                    // we have Ma when any value is greater than threshold
+                                    getDatesCategory().setDisplayName("Dates (Ma)");
+                                    // now set units correctly
+                                    for (ReportColumnInterface rc : getDatesCategory().getCategoryColumns()) {
+                                        if (!rc.getUnits().equalsIgnoreCase("")) {
+                                            rc.setUnits("Ma");
+                                        }
                                     }
+                                    break;
                                 }
-                                break;
+
                             }
 
                         }
-
-                    }
-                }
-            }
-
-            if (getDatesPbcCorrCategory().getCategoryColumns().length > 0) {
-                // first get the unittype of the first date (all will be set the same so this is a flag)
-                String currentDateUnit = getDatesPbcCorrCategory().getCategoryColumns()[1].getUnits();
-                boolean isAuto = false;
-                // the default is ka, though it will usually be overwritten by Ma
-                if (currentDateUnit.equalsIgnoreCase("Auto")) {
-                    currentDateUnit = "ka";
-                    isAuto = true;
-                }
-                getDatesPbcCorrCategory().setDisplayName("PbcCorr Dates (" + currentDateUnit + ")");
-                for (ReportColumnInterface rc : getDatesPbcCorrCategory().getCategoryColumns()) {
-                    if (!rc.getUnits().equalsIgnoreCase("")) {
-                        rc.setUnits(currentDateUnit);
                     }
                 }
 
-                if (isAuto) {
-                    // let's find out
-                    BigDecimal threshold = new BigDecimal(1000000);
-                    for (ETFractionInterface f : fractions) {
-                        if (!f.isRejected()) {
-                            BigDecimal date206_238Value = f.getRadiogenicIsotopeDateByName(RadDates.age206_238_PbcCorr).getValue();
-                            if (date206_238Value.compareTo(threshold) > 0) {
-                                // we have Ma when any value is greater than threshold
-                                getDatesPbcCorrCategory().setDisplayName("PbcCorr Dates (Ma)");
-                                // now set units correctly
-                                for (ReportColumnInterface rc : getDatesPbcCorrCategory().getCategoryColumns()) {
-                                    if (!rc.getUnits().equalsIgnoreCase("")) {
-                                        rc.setUnits("Ma");
+                if (getDatesPbcCorrCategory().getCategoryColumns().length > 0) {
+                    // first get the unittype of the first date (all will be set the same so this is a flag)
+                    String currentDateUnit = getDatesPbcCorrCategory().getCategoryColumns()[1].getUnits();
+                    boolean isAuto = false;
+                    // the default is ka, though it will usually be overwritten by Ma
+                    if (currentDateUnit.equalsIgnoreCase("Auto")) {
+                        currentDateUnit = "ka";
+                        isAuto = true;
+                    }
+                    getDatesPbcCorrCategory().setDisplayName("PbcCorr Dates (" + currentDateUnit + ")");
+                    for (ReportColumnInterface rc : getDatesPbcCorrCategory().getCategoryColumns()) {
+                        if (!rc.getUnits().equalsIgnoreCase("")) {
+                            rc.setUnits(currentDateUnit);
+                        }
+                    }
+
+                    if (isAuto) {
+                        // let's find out
+                        BigDecimal threshold = new BigDecimal(1000000);
+                        for (ETFractionInterface f : fractions) {
+                            if (!f.isRejected()) {
+                                BigDecimal date206_238Value = f.getRadiogenicIsotopeDateByName(RadDates.age206_238_PbcCorr).getValue();
+                                if (date206_238Value.compareTo(threshold) > 0) {
+                                    // we have Ma when any value is greater than threshold
+                                    getDatesPbcCorrCategory().setDisplayName("PbcCorr Dates (Ma)");
+                                    // now set units correctly
+                                    for (ReportColumnInterface rc : getDatesPbcCorrCategory().getCategoryColumns()) {
+                                        if (!rc.getUnits().equalsIgnoreCase("")) {
+                                            rc.setUnits("Ma");
+                                        }
                                     }
+                                    break;
                                 }
-                                break;
+
                             }
 
                         }
-
                     }
                 }
+            } else {
+                // UTh style
+                // special handling?
             }
         }
 
@@ -709,7 +747,8 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
         for (int i = 0;
                 i < footNotesMap.size();
                 i++) {
-            String footNote = ReportSpecifications.reportTableFootnotes.get(footNotesMap.get(i)).trim();
+            String footNote = isIsotypeStyleUPb() ?  ReportSpecificationsUPb.reportTableFootnotes.get(footNotesMap.get(i)).trim()
+                    : ReportSpecificationsUTh.reportTableFootnotes.get(footNotesMap.get(i)).trim();
 
             // test for known variables in footnote
             // since lambda235 and 238 appear in same footnote, we first check whether the
@@ -806,11 +845,11 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
             // april 2010 specialize footnote for zircons
             switch (zirconPopulationType) {
                 case 1:
-                    footNote = footNote.replaceFirst("<zirconPopulationChoice>", ReportSpecifications.reportTableFootnotes.get("FN-5zircon"));
+                    footNote = footNote.replaceFirst("<zirconPopulationChoice>", ReportSpecificationsUPb.reportTableFootnotes.get("FN-5zircon"));
                 case 2:
-                    footNote = footNote.replaceFirst("<zirconPopulationChoice>", ReportSpecifications.reportTableFootnotes.get("FN-5mixed"));
+                    footNote = footNote.replaceFirst("<zirconPopulationChoice>", ReportSpecificationsUPb.reportTableFootnotes.get("FN-5mixed"));
                 default:
-                    footNote = footNote.replaceFirst("<zirconPopulationChoice>", ReportSpecifications.reportTableFootnotes.get("FN-5noZircon"));
+                    footNote = footNote.replaceFirst("<zirconPopulationChoice>", ReportSpecificationsUPb.reportTableFootnotes.get("FN-5noZircon"));
             }
 
             retVal[6][i] = determineFootNoteLetter(i) + "&" + footNote;
@@ -941,6 +980,11 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
 
     public ArrayList<ReportCategoryInterface> getReportCategories();
 
+    /**
+     * @param reportCategories the reportCategories to set
+     */
+    public void setReportCategories(ArrayList<ReportCategoryInterface> reportCategories);
+
     public String getReportSettingsXMLSchemaURL();
 
     /**
@@ -954,6 +998,11 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
     public void setIsotopeStyle(String isotopeStyle);
 
     /**
+     * @return the isotypeStyleUPb
+     */
+    public boolean isIsotypeStyleUPb();
+
+    /**
      *
      * @param reportSettingsModel the value of reportSettingsModel
      * @param parent the value of parent
@@ -963,7 +1012,7 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
         DialogEditor myReportSettingsManager
                 = new ReportSettingsManager(parent, true, reportSettingsModel);
         myReportSettingsManager.setSize(455, 685);
-        DialogEditor.setDefaultLookAndFeelDecorated(true);
+//        DialogEditor.setDefaultLookAndFeelDecorated(true);
         myReportSettingsManager.setVisible(true);
     }
 }

@@ -34,51 +34,51 @@ public class ReportSpecificationsTest {
     ////Constructor Tests///&///Method Tests////
     ////////////////////////////////////////////      
     /**
-     * Test of ReportSpecifications() method, of class ReportSpecifications.
+     * Test of ReportSpecificationsUPb() method, of class ReportSpecificationsUPb.
      */
     @Test
     public void test_constructor_0() {
         System.out.println("Testing ReportSpecifications's enumerations and getters.");
         //Tests if values are correct for all enumerations, and tests the getters as well. You cannot instantiate new inumerations.
 
-        String[][] ave = ReportSpecifications.ReportCategory_Composition;
+        String[][] ave = ReportSpecificationsUPb.ReportCategory_Composition;
 
         assertEquals("", ave[3][0]);
 
-        ave = ReportSpecifications.ReportCategory_CorrelationCoefficients;
+        ave = ReportSpecificationsUPb.ReportCategory_CorrelationCoefficients;
 
         assertEquals("-", ave[5][1]);
 
-        ave = ReportSpecifications.ReportCategory_Dates;
+        ave = ReportSpecificationsUPb.ReportCategory_Dates;
 
         assertEquals("", ave[2][0]);
 
-        ave = ReportSpecifications.ReportCategory_Fraction;
+        ave = ReportSpecificationsUPb.ReportCategory_Fraction;
 
         assertEquals("", ave[1][0]);
 
-        ave = ReportSpecifications.ReportCategory_Fraction2;
+        ave = ReportSpecificationsUPb.ReportCategory_Fraction2;
 
         assertEquals("", ave[0][5]);
 
-        ave = ReportSpecifications.ReportCategory_IsotopicRatios;
+        ave = ReportSpecificationsUPb.ReportCategory_IsotopicRatios;
 
         assertEquals("", ave[2][0]);
 
-        String[] sieg = ReportSpecifications.concUnits;
+        String[] sieg = ReportSpecificationsUPb.concUnits;
 
         assertEquals("\u0025", sieg[0]);
         assertEquals("\u2030", sieg[1]);
         assertEquals("ppm", sieg[2]);
         assertEquals("ppb", sieg[3]);
 
-        sieg = ReportSpecifications.dateUnits;
+        sieg = ReportSpecificationsUPb.dateUnits;
 
         assertEquals("auto", sieg[0]);
         assertEquals("Ma", sieg[1]);
         assertEquals("ka", sieg[2]);
 
-        sieg = ReportSpecifications.massUnits;
+        sieg = ReportSpecificationsUPb.massUnits;
 
         assertEquals("g", sieg[0]);
         assertEquals("mg", sieg[1]);
@@ -87,7 +87,7 @@ public class ReportSpecificationsTest {
         assertEquals("pg", sieg[4]);
         assertEquals("fg", sieg[5]);
 
-        Map<String, String> ave1 = ReportSpecifications.reportTableFootnotes;
+        Map<String, String> ave1 = ReportSpecificationsUPb.reportTableFootnotes;
 
         assertEquals(true, ave1.containsKey("FN-1"));
         assertEquals(true, ave1.containsKey("FN-2"));
@@ -109,21 +109,21 @@ public class ReportSpecificationsTest {
         assertEquals(true, ave1.containsKey("FN-15"));
 //        assertEquals(false, ave1.containsKey("FN-16"));
 
-        ave1 = ReportSpecifications.unicodeConversionsFromXML;
+        ave1 = ReportSpecificationsUPb.unicodeConversionsFromXML;
 
         assertEquals(true, ave1.containsKey("MICROg"));
         assertEquals(true, ave1.containsKey("PERCENT"));
         assertEquals(true, ave1.containsKey("PERMILLE"));
         assertEquals(false, ave1.containsKey("FN-14"));
 
-        ave1 = ReportSpecifications.unicodeConversionsToXML;
+        ave1 = ReportSpecificationsUPb.unicodeConversionsToXML;
 
         assertEquals(true, ave1.containsKey("\u03bcg"));
         assertEquals(true, ave1.containsKey("\u0025"));
         assertEquals(true, ave1.containsKey("\u2030"));
         assertEquals(false, ave1.containsKey("FN-14"));
 
-        ave1 = ReportSpecifications.unitsType;
+        ave1 = ReportSpecificationsUPb.unitsType;
 
         assertEquals(true, ave1.containsKey("g"));
         assertEquals(true, ave1.containsKey("mg"));

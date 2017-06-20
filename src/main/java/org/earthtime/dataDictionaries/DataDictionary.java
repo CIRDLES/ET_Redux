@@ -296,11 +296,12 @@ public final class DataDictionary {
         "totRadiogenicPbMass",
         "radToCommonTotal",
         "totCommonPbMass",
-        // feb 2017 UTh here until enums finished
-        "conc238U",
-        "conc232Th",
-        "conc228Ra",
-        "conc231Pa",};
+//        // feb 2017 UTh here until enums finished
+//        "conc238U",
+//        "conc232Th",
+//        "conc228Ra",
+//        "conc231Pa",
+    };
 
     // added march 2009
     /**

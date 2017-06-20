@@ -1,5 +1,5 @@
 /*
- * ReportSpecifications.java
+ * ReportSpecificationsUPb.java
  *
  * Copyright 2006-2017 James F. Bowring and www.Earth-Time.org
  *
@@ -24,7 +24,7 @@ import java.util.Map;
  *
  * @author James F. Bowring
  */
-public class ReportSpecifications {
+public class ReportSpecificationsUPb {
     // Static
     // Report specifications
     // Report column order =
@@ -132,47 +132,47 @@ public class ReportSpecifications {
             "", "false", "false", "3", "true", "233/236 measured ratio", "true", "false"
         },};
 
-    // Report column order =
-    //  displayName1, displayName2, displayName3, units, retrieveMethodName, retrieveParameterName, uncertaintyType,
-    //     footnoteSpec, visible, useArbitrary? for value, digitcount value, unct visible (if required), description where needed,
-    //     needsLead, needsUranium
-    /**
-     *
-     */
-    public static final String[][] ReportCategory_CompositionUTh = new String[][]{
-        {"conc", "232Th", "", "ppm", "getCompositionalMeasureByName", "conc232Th", "ABS",
-            "", "true", "true", "3", "", "concentration of 232Th", "true", "false"
-        },
-        {"conc", "238U", "", "ppm", "getCompositionalMeasureByName", "conc238U", "ABS",
-            "", "true", "true", "3", "", "concentration of 238U", "false", "true"
-        },
-        {"", "[230Th/", "232Th]", "", "getAnalysisMeasure", UThAnalysisMeasures.ar230Th_232Thfc.getName(), "ABS",
-            "FN-18&FN-19", "false", "true", "3", "true", "[230Th/232Th] activity ratio", "false", "false"
-        },
-        {"[232Th/", "238U]", "", "*1e5", "getAnalysisMeasure", UThAnalysisMeasures.ar232Th_238Ufc.getName(), "ABS",
-            "FN-19&FN-17", "false", "true", "3", "true", "[232Th/238U] activity ratio", "false", "false"
-        },
-        {"[238U/", "232Th]", "", "", "getAnalysisMeasure", UThAnalysisMeasures.ar238U_232Thfc.getName(), "ABS",
-            "FN-19&FN-17", "false", "true", "3", "true", "[238U/232Th] activity ratio", "false", "false"
-        },
-        {"", "[230Th/", "238U]", "", "getAnalysisMeasure", UThAnalysisMeasures.ar230Th_238Ufc.getName(), "ABS",
-            "FN-18&FN-17", "true", "false", "3", "true", "[230Th/238U] activity ratio", "false", "false"
-        },
-        {"", "[234U/", "238U]", "", "getAnalysisMeasure", UThAnalysisMeasures.ar234U_238Ufc.getName(), "ABS",
-            "FN-20&FN-17", "true", "false", "3", "true", "[234U/238U] activity ratio", "false", "false"
-        },
-        {"", "", "[230Th]", "", "getAnalysisMeasure", UThAnalysisMeasures.a230Thfc.getName(), "ABS",
-            "FN-20&FN-17", "true", "false", "3", "true", "[230Th] activity", "false", "false"
-        },
-        {"", "", "[226Ra]", "", "getAnalysisMeasure", UThAnalysisMeasures.a226Rafc.getName(), "ABS",
-            "FN-20&FN-17", "true", "false", "3", "true", "[226Ra] activity", "false", "false"
-        },
-        {"", "[226Ra/", "230Th]", "", "getAnalysisMeasure", UThAnalysisMeasures.ar226Ra_230Thfc.getName(), "ABS",
-            "FN-20&FN-17", "true", "false", "3", "true", "[226Ra/230Th] activity ratio", "false", "false"
-        },
-        {"conc", "Ba", "", "ppm", "getCompositionalMeasureByName", UThCompositionalMeasures.concBa.getName(), "ABS",
-            "", "true", "true", "3", "", "concentration of Ba", "true", "false"
-        },};
+//    // Report column order =
+//    //  displayName1, displayName2, displayName3, units, retrieveMethodName, retrieveParameterName, uncertaintyType,
+//    //     footnoteSpec, visible, useArbitrary? for value, digitcount value, unct visible (if required), description where needed,
+//    //     needsLead, needsUranium
+//    /**
+//     *
+//     */
+//    public static final String[][] ReportCategory_CompositionUTh = new String[][]{
+//        {"conc", "232Th", "", "ppm", "getCompositionalMeasureByName", "conc232Th", "ABS",
+//            "", "true", "true", "3", "", "concentration of 232Th", "true", "false"
+//        },
+//        {"conc", "238U", "", "ppm", "getCompositionalMeasureByName", "conc238U", "ABS",
+//            "", "true", "true", "3", "", "concentration of 238U", "false", "true"
+//        },
+//        {"", "[230Th/", "232Th]", "", "getAnalysisMeasure", UThAnalysisMeasures.ar230Th_232Thfc.getName(), "ABS",
+//            "FN-18&FN-19", "false", "true", "3", "true", "[230Th/232Th] activity ratio", "false", "false"
+//        },
+//        {"[232Th/", "238U]", "", "*1e5", "getAnalysisMeasure", UThAnalysisMeasures.ar232Th_238Ufc.getName(), "ABS",
+//            "FN-19&FN-17", "false", "true", "3", "true", "[232Th/238U] activity ratio", "false", "false"
+//        },
+//        {"[238U/", "232Th]", "", "", "getAnalysisMeasure", UThAnalysisMeasures.ar238U_232Thfc.getName(), "ABS",
+//            "FN-19&FN-17", "false", "true", "3", "true", "[238U/232Th] activity ratio", "false", "false"
+//        },
+//        {"", "[230Th/", "238U]", "", "getAnalysisMeasure", UThAnalysisMeasures.ar230Th_238Ufc.getName(), "ABS",
+//            "FN-18&FN-17", "true", "false", "3", "true", "[230Th/238U] activity ratio", "false", "false"
+//        },
+//        {"", "[234U/", "238U]", "", "getAnalysisMeasure", UThAnalysisMeasures.ar234U_238Ufc.getName(), "ABS",
+//            "FN-20&FN-17", "true", "false", "3", "true", "[234U/238U] activity ratio", "false", "false"
+//        },
+//        {"", "", "[230Th]", "", "getAnalysisMeasure", UThAnalysisMeasures.a230Thfc.getName(), "ABS",
+//            "FN-20&FN-17", "true", "false", "3", "true", "[230Th] activity", "false", "false"
+//        },
+//        {"", "", "[226Ra]", "", "getAnalysisMeasure", UThAnalysisMeasures.a226Rafc.getName(), "ABS",
+//            "FN-20&FN-17", "true", "false", "3", "true", "[226Ra] activity", "false", "false"
+//        },
+//        {"", "[226Ra/", "230Th]", "", "getAnalysisMeasure", UThAnalysisMeasures.ar226Ra_230Thfc.getName(), "ABS",
+//            "FN-20&FN-17", "true", "false", "3", "true", "[226Ra/230Th] activity ratio", "false", "false"
+//        },
+//        {"conc", "Ba", "", "ppm", "getCompositionalMeasureByName", UThCompositionalMeasures.concBa.getName(), "ABS",
+//            "", "true", "true", "3", "", "concentration of Ba", "true", "false"
+//        },};
     // Report column order =
     //  displayName1, displayName2, displayName3, units, retrieveMethodName, retrieveParameterName, uncertaintyType,
     //     footnoteSpec, visible, useArbitrary? for value, digitcount value, unct visible (if required), description where needed,
@@ -322,22 +322,22 @@ public class ReportSpecifications {
         {"", "best", "date", "Ma", "getRadiogenicIsotopeDateByName", RadDates.bestAge.getName(), "ABS",
             "", "false", "false", "2", "true", "best date", "true", "true"
         },};
-
-    // Report column order =
-    //  displayName1, displayName2, displayName3, units, retrieveMethodName, retrieveParameterName, uncertaintyType,
-    //     footnoteSpec, visible, useArbitrary? for value, digitcount value, unct visible (if required), description where needed,
-    //     needsLead, needsUranium
-    /**
-     *
-     */
-    public static final String[][] ReportCategory_DatesUTh = new String[][]{
-        {"", "Corr", "Date", "ka", "getRadiogenicIsotopeDateByName", RadDates.dateCorr.getName(), "ABS",
-            "", "true", "false", "2", "true", "", "false", "false"
-        },
-        {"", "delta 234U", "initial", "", "getRadiogenicIsotopeRatioByName", UThFractionationCorrectedIsotopicRatios.delta234U.getName(), "ABS",
-            "", "true", "false", "2", "true", "", "false", "false"
-        }
-    };
+//
+//    // Report column order =
+//    //  displayName1, displayName2, displayName3, units, retrieveMethodName, retrieveParameterName, uncertaintyType,
+//    //     footnoteSpec, visible, useArbitrary? for value, digitcount value, unct visible (if required), description where needed,
+//    //     needsLead, needsUranium
+//    /**
+//     *
+//     */
+//    public static final String[][] ReportCategory_USeriesReportTable = new String[][]{
+//        {"", "Corr", "Date", "ka", "getRadiogenicIsotopeDateByName", RadDates.dateCorr.getName(), "ABS",
+//            "", "true", "false", "2", "true", "", "false", "false"
+//        },
+//        {"", "delta 234U", "initial", "", "getRadiogenicIsotopeRatioByName", UThFractionationCorrectedIsotopicRatios.delta234U.getName(), "ABS",
+//            "", "true", "false", "2", "true", "", "false", "false"
+//        }
+//    };
 
     // Report column order =
     //  displayName1, displayName2, displayName3, units, retrieveMethodName, retrieveParameterName, uncertaintyType,

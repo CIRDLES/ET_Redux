@@ -110,6 +110,7 @@ public final class ReduxLabData implements Serializable {
     // dec 2014
     private AbstractRatiosDataModel defaultLAICPMSPrimaryMineralStandardModel;
     private AbstractRatiosDataModel defaultRareEarthElementModel;
+
     private int defaultLeftShadeCountForLAICPMSAquisitions;
     private int defaultLeftShadeCountForSHRIMPAquisitions;
     // nov 2015
@@ -1368,15 +1369,19 @@ public final class ReduxLabData implements Serializable {
      * @return @throws BadLabDataException
      * @throws BadLabDataException
      */
-    public AbstractRatiosDataModel getDefaultDetritalUraniumAndThoriumModel()
-            throws BadLabDataException {
-        if (defaultDetritalUraniumAndThoriumModel == null) {
-            addDetritalUraniumAndThoriumModel(DetritalUraniumAndThoriumModel.getNoneInstance());
-            defaultDetritalUraniumAndThoriumModel = getFirstDetritalUraniumAndThoriumModel();
-        } else // detect if legacy default is none and change if possible
-        if (defaultDetritalUraniumAndThoriumModel.equals(getNoneDetritalUraniumAndThoriumModel())) {
-            defaultDetritalUraniumAndThoriumModel = getFirstDetritalUraniumAndThoriumModel();
+    public AbstractRatiosDataModel getDefaultDetritalUraniumAndThoriumModel() {
+        try {
+            if (defaultDetritalUraniumAndThoriumModel == null) {
+                addDetritalUraniumAndThoriumModel(DetritalUraniumAndThoriumModel.getNoneInstance());
+                defaultDetritalUraniumAndThoriumModel = getFirstDetritalUraniumAndThoriumModel();
+            } else // detect if legacy default is none and change if possible
+            if (defaultDetritalUraniumAndThoriumModel.equals(getNoneDetritalUraniumAndThoriumModel())) {
+                defaultDetritalUraniumAndThoriumModel = getFirstDetritalUraniumAndThoriumModel();
+            }
+        } catch (BadLabDataException badLabDataException) {
+            new ETWarningDialog(badLabDataException).setVisible(true);
         }
+
         return defaultDetritalUraniumAndThoriumModel;
     }
 
@@ -1485,12 +1490,12 @@ public final class ReduxLabData implements Serializable {
         }
 
         // new approach oct 2014
-        if (defaultReportSettingsModel.isOutOfDate()) {
+        if (defaultReportSettingsModel.isOutOfDateUPb()) {
             String myReportSettingsName = defaultReportSettingsModel.getName();
             defaultReportSettingsModel = new ReportSettings(myReportSettingsName, "UPb");
         }
 
-        if (defaultReportSettingsModelUTh.isOutOfDate()) {
+        if (defaultReportSettingsModelUTh.isOutOfDateUTh()) {
             String myReportSettingsName = defaultReportSettingsModelUTh.getName();
             defaultReportSettingsModelUTh = new ReportSettings(myReportSettingsName, "UTh");
         }

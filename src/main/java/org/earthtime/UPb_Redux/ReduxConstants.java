@@ -282,8 +282,10 @@ final public class ReduxConstants {
         UnitConversions.put("\u2030", 3);
         UnitConversions.put("ppm", 6);
         UnitConversions.put("ppb", 9);
+        UnitConversions.put("ppt", 12);
         UnitConversions.put("g/g", 0);
         UnitConversions.put("*1e5", 5);
+        UnitConversions.put("*1", 0);
 
         // dates are stored in years
         UnitConversions.put("a", 0);
@@ -499,4 +501,9 @@ final public class ReduxConstants {
         biMapOfIndexesToCommonLeadCorrectionSchemaNames.put(5, "C");
         biMapOfIndexesToCommonLeadCorrectionSchemaNames.put(6, "D");
     }
+    
+    
+    // June 2017 for UTh analysis
+    public static final long TIME_IN_MILLISECONDS_FROM_1970_TO_1950 = -631152000000l;
+    public static final long TIME_IN_MILLISECONDS_FROM_1970_TO_2000 = 946684800000l;
 }
