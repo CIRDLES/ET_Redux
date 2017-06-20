@@ -1107,15 +1107,37 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                             if (!item.equals("")) {
                                 // strip out footnote letter
                                 String[] footNote = item.split("&");
-                                String footNoteLine
-                                        = " " //
-                                        + footNote[0] //
-                                        + "  " //
-                                        + footNote[1];
-                                g2D.drawString(//
-                                        footNoteLine, drawnWidth, (drawnHeight + topMargin + lineHeight));
-                                drawnWidth = leftMargin;
-                                drawnHeight += lineHeight;
+                                // TODO - assuming on ly one \n for now
+                                if (footNote[1].contains("\n")) {
+                                    String[] footNoteBody = footNote[1].split("\n");
+                                    String footNoteLine
+                                            = " " //
+                                            + footNote[0] //
+                                            + "  " //
+                                            + footNoteBody[0];
+                                    g2D.drawString(//
+                                            footNoteLine, drawnWidth, (drawnHeight + topMargin + lineHeight));
+                                    drawnWidth = leftMargin;
+                                    drawnHeight += lineHeight;
+                                    
+                                    footNoteLine
+                                            = "     " //
+                                            + footNoteBody[1];
+                                    g2D.drawString(//
+                                            footNoteLine, drawnWidth, (drawnHeight + topMargin + lineHeight));
+                                    drawnWidth = leftMargin;
+                                    drawnHeight += lineHeight;
+                                } else {
+                                    String footNoteLine
+                                            = " " //
+                                            + footNote[0] //
+                                            + "  " //
+                                            + footNote[1];
+                                    g2D.drawString(//
+                                            footNoteLine, drawnWidth, (drawnHeight + topMargin + lineHeight));
+                                    drawnWidth = leftMargin;
+                                    drawnHeight += lineHeight;
+                                }
                             }
                         }
                     }

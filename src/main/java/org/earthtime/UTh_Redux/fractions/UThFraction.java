@@ -24,7 +24,6 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import static org.earthtime.UPb_Redux.ReduxConstants.timeInMillisecondsOfYear2000Since1970;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
 import org.earthtime.dataDictionaries.MeasuredRatios;
@@ -39,6 +38,7 @@ import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.reportViews.ReportRowGUIInterface;
 import org.earthtime.xmlUtilities.XMLSerializationI;
+import static org.earthtime.UPb_Redux.ReduxConstants.TIME_IN_MILLISECONDS_FROM_1970_TO_2000;
 
 public class UThFraction implements
         UThFractionI,
@@ -105,7 +105,7 @@ public class UThFraction implements
         physicalConstantsModel = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel();
         detritalUThModel = ReduxLabData.getInstance().getDefaultDetritalUraniumAndThoriumModel();
 
-        dateTimeMillisecondsOfAnalysis = timeInMillisecondsOfYear2000Since1970;
+        dateTimeMillisecondsOfAnalysis = TIME_IN_MILLISECONDS_FROM_1970_TO_2000;
 
         spikeCalibrationR230_238IsSecular = false;
         spikeCalibrationR234_238IsSecular = false;

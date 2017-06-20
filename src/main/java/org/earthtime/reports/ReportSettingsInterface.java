@@ -39,6 +39,7 @@ import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.dataDictionaries.Lambdas;
 import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.dataDictionaries.ReportSpecificationsUPb;
+import org.earthtime.dataDictionaries.ReportSpecificationsUTh;
 import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.dialogs.ReportSettingsManager;
 import org.earthtime.exceptions.ETException;
@@ -746,7 +747,8 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
         for (int i = 0;
                 i < footNotesMap.size();
                 i++) {
-            String footNote = ReportSpecificationsUPb.reportTableFootnotes.get(footNotesMap.get(i)).trim();
+            String footNote = isIsotypeStyleUPb() ?  ReportSpecificationsUPb.reportTableFootnotes.get(footNotesMap.get(i)).trim()
+                    : ReportSpecificationsUTh.reportTableFootnotes.get(footNotesMap.get(i)).trim();
 
             // test for known variables in footnote
             // since lambda235 and 238 appear in same footnote, we first check whether the

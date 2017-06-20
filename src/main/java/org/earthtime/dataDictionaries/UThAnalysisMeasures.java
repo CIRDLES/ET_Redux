@@ -57,7 +57,8 @@ public enum UThAnalysisMeasures {
     delta234U("delta234U"),
     delta234Udc("delta234Udc"),
     delta234Ui("delta234Ui"),
-    delta234Uidc("delta234Uidc");
+    delta234Uidc("delta234Uidc"),
+    rhoDate__delta234Ui("rhoDate__delta234Ui");
 
     private String name;
 

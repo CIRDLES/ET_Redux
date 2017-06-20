@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 import org.earthtime.UPb_Redux.ReduxConstants;
-import static org.earthtime.UPb_Redux.ReduxConstants.timeInMillisecondsOfYear2000Since1970;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UTh_Redux.aliquots.UThReduxAliquot;
@@ -52,6 +51,7 @@ import org.earthtime.projects.ProjectInterface;
 import org.earthtime.projects.projectImporters.AbstractProjectImporterFromLegacyDelimitedTextFile;
 import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.samples.SampleInterface;
+import static org.earthtime.UPb_Redux.ReduxConstants.TIME_IN_MILLISECONDS_FROM_1970_TO_2000;
 
 /**
  *
@@ -195,7 +195,13 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb_NEW extends A
 
                             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
                             String dateAnalyzed = myFractionData.get(6).trim();
-                            long dateTimeMilliseconds = timeInMillisecondsOfYear2000Since1970;// per Noah 12 June 2017
+                            metaData.append("Date of Analysis = ").append(dateAnalyzed).append("\n");
+                            long dateTimeMilliseconds = TIME_IN_MILLISECONDS_FROM_1970_TO_2000;// per Noah 12 June 2017
+                            if (dateAnalyzed.length()==4){
+                                dateFormat = new SimpleDateFormat("yyyy");
+                            } else if (dateAnalyzed.length()==7){
+                                dateFormat = new SimpleDateFormat("yyyy-mm");
+                            }                           
                             if (dateAnalyzed.length() >= 4) {
                                 try {
                                     dateTimeMilliseconds = dateFormat.parse(dateAnalyzed).getTime();
@@ -396,8 +402,6 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb_NEW extends A
                             metaData.append("Taxonomic ID = ").append(myFractionData.get(70).trim()).append("\n");
                             metaData.append("Comments (taxon) = ").append(myFractionData.get(71).trim()).append("\n");
 
-//                            metaData.append("Species = ").append(myFractionData.get(28).trim()).append("\n");
-//                            metaData.append("Comments (species) = ").append(myFractionData.get(29).trim()).append("\n");
                             metaData.append("Published assemblage description = ").append(myFractionData.get(72).trim()).append("\n");
                             metaData.append("Published paleowater depth estimate = ").append(myFractionData.get(73).trim()).append("\n");
                             metaData.append("Interpreted paleowater depth estimate = ").append(myFractionData.get(74).trim()).append("\n");
