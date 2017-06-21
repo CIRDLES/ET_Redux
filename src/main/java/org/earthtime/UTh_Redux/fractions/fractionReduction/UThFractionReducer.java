@@ -500,7 +500,7 @@ public class UThFractionReducer extends FractionReducer {
 
             ValueModel dateCorr = new ValueModel(//
                     RadDates.dateCorr.getName(), //
-                    new BigDecimal(timeCorrected - yearsSince1950_di), ///
+                    new BigDecimal(timeCorrected), ///
                     "ABS", //
                     new BigDecimal(correctedDateOneSigmaAbs), //
                     BigDecimal.ZERO);
@@ -509,7 +509,7 @@ public class UThFractionReducer extends FractionReducer {
 
             ValueModel dateCorrBP = new ValueModel(//
                     RadDates.dateCorrBP.getName(), //
-                    new BigDecimal(timeCorrected), ///
+                    new BigDecimal(timeCorrected - yearsSince1950_di), ///
                     "ABS", //
                     new BigDecimal(correctedDateOneSigmaAbs), //
                     BigDecimal.ZERO);
