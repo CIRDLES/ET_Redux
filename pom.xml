@@ -219,8 +219,8 @@
             <version>4.5.2</version>
         </dependency>
         <dependency>
-            <groupId>com.github.cirdles</groupId>
-            <artifactId>topsoil</artifactId>
+            <groupId>com.github.cirdles.topsoil</groupId>
+            <artifactId>app</artifactId>
             <version>master-SNAPSHOT</version>
         </dependency>
         <dependency>
