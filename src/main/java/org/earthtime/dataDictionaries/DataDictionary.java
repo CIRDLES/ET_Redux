@@ -52,8 +52,10 @@ public final class DataDictionary {
         {"gmol206", "205.974449"},
         {"gmol207", "206.975880"},
         {"gmol208", "207.976636"},
-        {"gmol238", "238.050785"},
-        {"gmol235", "235.043922"}};
+        {"gmol230", "230.033128"},
+        {"gmol232", "232.038051"},
+        {"gmol235", "235.043922"},
+        {"gmol238", "238.050785"}};
     /**
      *
      */
@@ -295,12 +297,11 @@ public final class DataDictionary {
         "concPb206_ib",
         "totRadiogenicPbMass",
         "radToCommonTotal",
-        "totCommonPbMass",
-//        // feb 2017 UTh here until enums finished
-//        "conc238U",
-//        "conc232Th",
-//        "conc228Ra",
-//        "conc231Pa",
+        "totCommonPbMass", //        // feb 2017 UTh here until enums finished
+    //        "conc238U",
+    //        "conc232Th",
+    //        "conc228Ra",
+    //        "conc231Pa",
     };
 
     // added march 2009
