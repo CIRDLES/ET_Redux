@@ -1107,7 +1107,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                             if (!item.equals("")) {
                                 // strip out footnote letter
                                 String[] footNote = item.split("&");
-                                // TODO - assuming on ly one \n for now
+                                // footnote may contain one or more new lines 
                                 if (footNote[1].contains("\n")) {
                                     String[] footNoteBody = footNote[1].split("\n");
                                     String footNoteLine
@@ -1119,14 +1119,16 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                                             footNoteLine, drawnWidth, (drawnHeight + topMargin + lineHeight));
                                     drawnWidth = leftMargin;
                                     drawnHeight += lineHeight;
-                                    
-                                    footNoteLine
-                                            = "     " //
-                                            + footNoteBody[1];
-                                    g2D.drawString(//
-                                            footNoteLine, drawnWidth, (drawnHeight + topMargin + lineHeight));
-                                    drawnWidth = leftMargin;
-                                    drawnHeight += lineHeight;
+
+                                    for (int l = 1; l < footNoteBody.length; l++) {
+                                        footNoteLine
+                                                = "    " //
+                                                + footNoteBody[l];
+                                        g2D.drawString(//
+                                                footNoteLine, drawnWidth, (drawnHeight + topMargin + lineHeight));
+                                        drawnWidth = leftMargin;
+                                        drawnHeight += lineHeight;
+                                    }
                                 } else {
                                     String footNoteLine
                                             = " " //

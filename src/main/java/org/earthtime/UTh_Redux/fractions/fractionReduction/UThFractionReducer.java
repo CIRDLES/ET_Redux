@@ -20,6 +20,8 @@ package org.earthtime.UTh_Redux.fractions.fractionReduction;
 import Jama.Matrix;
 import java.math.BigDecimal;
 import org.earthtime.UPb_Redux.ReduxConstants;
+import static org.earthtime.UPb_Redux.ReduxConstants.AVOGADROS_NUMBER;
+import static org.earthtime.UPb_Redux.ReduxConstants.MINUTES_PER_YEAR_FOR_USERIES_CONVERSIONS;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UTh_Redux.fractions.UThFraction;
 import org.earthtime.UTh_Redux.fractions.UThLegacyFractionI;
@@ -30,6 +32,7 @@ import org.earthtime.dataDictionaries.UThFractionationCorrectedIsotopicRatios;
 import org.earthtime.fractions.fractionReduction.FractionReducer;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import static org.earthtime.UPb_Redux.ReduxConstants.TIME_IN_MILLISECONDS_FROM_1970_TO_1950;
+import org.earthtime.dataDictionaries.UThCompositionalMeasures;
 
 /* NOTES from Noah 28 October 2015
     So instead, here's a MATLAB file that goes with an Excel worksheet and VBA Add-In I created to calculate U-Th dates.  Here's what's going on in the code.
@@ -137,6 +140,7 @@ public class UThFractionReducer extends FractionReducer {
 
     public static void reduceFraction(UThLegacyFractionI fraction) {
         initializeDecayConstants(fraction.getPhysicalConstantsModel());
+        initializeAtomicMolarMasses(fraction.getPhysicalConstantsModel());
 
         calculateActivityRatios(fraction);
 
@@ -636,6 +640,48 @@ public class UThFractionReducer extends FractionReducer {
     }
 
     private static void calculateActivityRatios(UThLegacyFractionI fraction) {
+        // July 2017 add in activity ratios for concentrations
+        fraction.getCompositionalMeasureByName(UThCompositionalMeasures.arConc238U.getName())
+                .setValue(fraction.getCompositionalMeasureByName(UThCompositionalMeasures.conc238U.getName()).getValue()
+                        .multiply(new BigDecimal(AVOGADROS_NUMBER))
+                        .multiply(lambda238.getValue())
+                        .divide(gmol238.getValue().multiply(new BigDecimal(MINUTES_PER_YEAR_FOR_USERIES_CONVERSIONS)),
+                                ReduxConstants.mathContext15));
+        fraction.getCompositionalMeasureByName(UThCompositionalMeasures.arConc238U.getName())
+                .setOneSigma(fraction.getCompositionalMeasureByName(UThCompositionalMeasures.conc238U.getName()).getOneSigmaAbs()
+                        .multiply(new BigDecimal(AVOGADROS_NUMBER))
+                        .multiply(lambda238.getValue())
+                        .divide(gmol238.getValue().multiply(new BigDecimal(MINUTES_PER_YEAR_FOR_USERIES_CONVERSIONS)),
+                                ReduxConstants.mathContext15));
+
+        // July 2017 add in activity ratios for concentrations
+        fraction.getCompositionalMeasureByName(UThCompositionalMeasures.arConc232Th.getName())
+                .setValue(fraction.getCompositionalMeasureByName(UThCompositionalMeasures.conc232Th.getName()).getValue()
+                        .multiply(new BigDecimal(AVOGADROS_NUMBER))
+                        .multiply(lambda232.getValue())
+                        .divide(gmol232.getValue().multiply(new BigDecimal(MINUTES_PER_YEAR_FOR_USERIES_CONVERSIONS)),
+                                ReduxConstants.mathContext15));
+        fraction.getCompositionalMeasureByName(UThCompositionalMeasures.arConc232Th.getName())
+                .setOneSigma(fraction.getCompositionalMeasureByName(UThCompositionalMeasures.conc232Th.getName()).getOneSigmaAbs()
+                        .multiply(new BigDecimal(AVOGADROS_NUMBER))
+                        .multiply(lambda232.getValue())
+                        .divide(gmol232.getValue().multiply(new BigDecimal(MINUTES_PER_YEAR_FOR_USERIES_CONVERSIONS)),
+                                ReduxConstants.mathContext15));
+
+        // July 2017 add in activity ratios for concentrations
+        fraction.getCompositionalMeasureByName(UThCompositionalMeasures.arConc230Th.getName())
+                .setValue(fraction.getCompositionalMeasureByName(UThCompositionalMeasures.conc230Th.getName()).getValue()
+                        .multiply(new BigDecimal(AVOGADROS_NUMBER))
+                        .multiply(lambda230.getValue())
+                        .divide(gmol230.getValue().multiply(new BigDecimal(MINUTES_PER_YEAR_FOR_USERIES_CONVERSIONS)),
+                                ReduxConstants.mathContext15));
+       fraction.getCompositionalMeasureByName(UThCompositionalMeasures.arConc230Th.getName())
+                .setOneSigma(fraction.getCompositionalMeasureByName(UThCompositionalMeasures.conc230Th.getName()).getOneSigmaAbs()
+                        .multiply(new BigDecimal(AVOGADROS_NUMBER))
+                        .multiply(lambda230.getValue())
+                        .divide(gmol230.getValue().multiply(new BigDecimal(MINUTES_PER_YEAR_FOR_USERIES_CONVERSIONS)),
+                                ReduxConstants.mathContext15));
+
         fraction.getAnalysisMeasure(UThAnalysisMeasures.ar230Th_232Thfc.getName())//
                 .setValue(//
                         fraction.getRadiogenicIsotopeRatioByName(UThFractionationCorrectedIsotopicRatios.r230Th_232Thfc.getName()).getValue()//

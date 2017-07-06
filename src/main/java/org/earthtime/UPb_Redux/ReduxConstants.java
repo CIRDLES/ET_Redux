@@ -27,6 +27,8 @@ import java.awt.Font;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.text.SimpleDateFormat;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
@@ -125,13 +127,15 @@ final public class ReduxConstants {
     /**
      *
      */
-    static public final Color dataModelGray = //
+    static public final Color dataModelGray
+            = //
             new Color(235, 235, 235);
 
     /**
      *
      */
-    static public final Color palePinkBelowDetection = //
+    static public final Color palePinkBelowDetection
+            = //
             new Color(255, 248, 248);//pale pink
     /**
      *
@@ -208,6 +212,8 @@ final public class ReduxConstants {
      *
      */
     static public MathContext mathContext10 = new MathContext(10, RoundingMode.HALF_UP);
+
+    static public double MINUTES_PER_YEAR_FOR_USERIES_CONVERSIONS = 525960;
 
     /**
      *
@@ -286,6 +292,9 @@ final public class ReduxConstants {
         UnitConversions.put("g/g", 0);
         UnitConversions.put("*1e5", 5);
         UnitConversions.put("*1", 0);
+        UnitConversions.put("dpm/g", 0);
+        UnitConversions.put("*1e6 dpm/g", 6);
+        UnitConversions.put("*1e9 dpm/g", 9);
 
         // dates are stored in years
         UnitConversions.put("a", 0);
@@ -501,9 +510,17 @@ final public class ReduxConstants {
         biMapOfIndexesToCommonLeadCorrectionSchemaNames.put(5, "C");
         biMapOfIndexesToCommonLeadCorrectionSchemaNames.put(6, "D");
     }
-    
-    
+
     // June 2017 for UTh analysis
     public static final long TIME_IN_MILLISECONDS_FROM_1970_TO_1950 = -631152000000l;
     public static final long TIME_IN_MILLISECONDS_FROM_1970_TO_2000 = 946684800000l;
+    public static final double AVOGADROS_NUMBER = 6.022140857e23;
+
+    public static String makeFormattedDate(long milliseconds) {
+        GregorianCalendar calendar = new GregorianCalendar();
+        calendar.setTimeInMillis(milliseconds);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("YYYY");
+
+        return dateFormat.format(calendar.getTime());
+    }
 }

@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Vector;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
-import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UTh_Redux.aliquots.UThReduxAliquot;
 import org.earthtime.UTh_Redux.fractions.UThFraction;
 import org.earthtime.UTh_Redux.fractions.UThLegacyFraction;
@@ -132,10 +131,15 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb_NEW extends A
                                             SampleTypesEnum.LEGACY.getName(), //
                                             SampleAnalysisTypesEnum.USERIES_CARB.getName(), //
                                             ReduxConstants.ANALYSIS_PURPOSE.SingleAge, "UTh");
+                                    
+                                    currentSample.setSampleIGSN(myFractionData.get(1).trim());
 
                                     projectSamples.add(currentSample);
 
                                     currentAliquot = currentSample.addNewAliquot(sampleID);
+                                    
+                                    //TODO: address this legacy hack - if IGSN is reported, we give it to sample and aliquot
+                                    currentAliquot.setAliquotIGSN(myFractionData.get(1).trim());
 
                                 } catch (BadLabDataException badLabDataException) {
                                 } catch (ETException eTException) {
@@ -154,6 +158,8 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb_NEW extends A
 
                             // Read in Lagacy MetaData as string in Notes 
                             StringBuilder metaData = new StringBuilder();
+                            metaData.append("Source = ").append(myFractionData.get(0).trim()).append("\n");
+                            metaData.append("IGSN = ").append(myFractionData.get(1).trim()).append("\n");
                             metaData.append("Instrument = ").append(myFractionData.get(2).trim()).append("\n");
                             metaData.append("Decay cnsts = ").append(myFractionData.get(3).trim()).append("\n");
 
@@ -213,7 +219,6 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb_NEW extends A
                             metaData.append("PublishedID = ").append(myFractionData.get(9).trim()).append("\n");
                             metaData.append("Replicate = ").append(myFractionData.get(10).trim()).append("\n");
 
-                            // TODO: add uncertainty columns
                             // column 11 is conc232Th in ppb
                             String ratioName = UThCompositionalMeasures.conc232Th.getName();
                             myFraction.getCompositionalMeasureByName(ratioName)//
@@ -325,7 +330,9 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb_NEW extends A
                             metaData.append("14C age? = ").append(myFractionData.get(32).trim()).append("\n");
 
                             metaData.append("Reference material name for 230Th/238U = ").append(myFractionData.get(33).trim()).append("\n");
+                            ((UThFraction) myFraction).setR230Th_238Ufc_referenceMaterialName(myFractionData.get(33).trim());
                             metaData.append("Reference material name for 234U/238U = ").append(myFractionData.get(34).trim()).append("\n");
+                            ((UThFraction) myFraction).setR234U_238Ufc_referenceMaterialName(myFractionData.get(34).trim());
 
                             metaData.append("Rectification correction for 230Th/238U = ").append(myFractionData.get(35).trim()).append("\n");
                             metaData.append("Rectification correction for 230Th/238U unct = ").append(myFractionData.get(36).trim()).append("\n");

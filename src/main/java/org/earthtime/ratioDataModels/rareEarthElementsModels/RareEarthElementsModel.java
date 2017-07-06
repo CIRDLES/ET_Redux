@@ -43,15 +43,10 @@ public final class RareEarthElementsModel extends AbstractRatiosDataModel {
 
     // class variables
     private static final long serialVersionUID = -2967979507667928974L;
-    private static Map<String, AbstractRatiosDataModel> modelInstances = //
+    private static Map<String, AbstractRatiosDataModel> modelInstances
+            = //
             new HashMap<String, AbstractRatiosDataModel>();
-    private static final AbstractRatiosDataModel noneModel = //
-            new RareEarthElementsModel( //
-                    ReduxConstants.NONE, //
-                    1, 0,//
-                    "No Lab", //
-                    "2000-01-01", //
-                    "Placeholder model", "Placeholder model");
+
     private static final ValueModel[] myRatios = new ValueModel[14];
     private static final Map<String, BigDecimal> correlations = new HashMap<>();
 
@@ -73,8 +68,16 @@ public final class RareEarthElementsModel extends AbstractRatiosDataModel {
         myRatios[12] = valueModelFactory(TraceElements.Yb.getName(), 0.161);
         myRatios[13] = valueModelFactory(TraceElements.Lu.getName(), 0.0246);
     }
-
-    private static final AbstractRatiosDataModel EARTHTIME_McDonoughSunREEModel = //
+    private static final AbstractRatiosDataModel noneModel
+            = //
+            new RareEarthElementsModel( //
+                    ReduxConstants.NONE, //
+                    1, 0,//
+                    "No Lab", //
+                    "2000-01-01", //
+                    "Placeholder model", "Placeholder model");
+    private static final AbstractRatiosDataModel EARTHTIME_McDonoughSunREEModel
+            = //
             createInstance("EARTHTIME McDonough and Sun REE Model",
                     1, 0,//
                     "EARTHTIME",//
@@ -294,7 +297,7 @@ public final class RareEarthElementsModel extends AbstractRatiosDataModel {
     @Override
     protected void customizeXstream(XStream xstream) {
         xstream.registerConverter(new ValueModelXMLConverter());
-    //    xstream.registerConverter(new MineralStandardUPbModelXMLConverter());
+        //    xstream.registerConverter(new MineralStandardUPbModelXMLConverter());
 
         xstream.alias("RareEarthElementsModel", RareEarthElementsModel.class);
         xstream.alias("ValueModel", ValueModel.class);
@@ -315,9 +318,8 @@ public final class RareEarthElementsModel extends AbstractRatiosDataModel {
 //        ETSerializer.SerializeObjectToFile(sriLanka1, "MineralStandardUPbModelTEST.ser");
 //        AbstractRatiosDataModel sriLanka2 = //
 //                (AbstractRatiosDataModel) ETSerializer.GetSerializedObjectFromFile("MineralStandardUPbModelTEST.ser");
-
     }
-    
+
 //    private void readObject(
 //            ObjectInputStream stream)
 //            throws IOException, ClassNotFoundException {

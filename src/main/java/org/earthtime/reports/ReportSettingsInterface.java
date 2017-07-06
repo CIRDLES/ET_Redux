@@ -30,9 +30,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.Vector;
+import static org.earthtime.UPb_Redux.ReduxConstants.makeFormattedDate;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.valueModels.ValueModelReferenced;
+import org.earthtime.UTh_Redux.fractions.UThFraction;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
 import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
@@ -747,7 +749,7 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
         for (int i = 0;
                 i < footNotesMap.size();
                 i++) {
-            String footNote = isIsotypeStyleUPb() ?  ReportSpecificationsUPb.reportTableFootnotes.get(footNotesMap.get(i)).trim()
+            String footNote = isIsotypeStyleUPb() ? ReportSpecificationsUPb.reportTableFootnotes.get(footNotesMap.get(i)).trim()
                     : ReportSpecificationsUTh.reportTableFootnotes.get(footNotesMap.get(i)).trim();
 
             // test for known variables in footnote
@@ -839,6 +841,33 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
             footNote = footNote.replaceFirst("<lambda234>", lambda234);
             footNote = footNote.replaceFirst("<ar231_235sample>", activityFootnoteEntry);
             footNote = footNote.replaceFirst("<rTh_Umagma>", thU_MagmaFootnoteEntry);
+
+            // JULY 2017 for UTh footnotes            
+            // ASSUMPTION - all fractions have same value for these fields
+            if (footNote.contains("<secularOrGravimetric230238>")) {
+                boolean isSecular = ((UThFraction) fractions.get(0)).isSpikeCalibrationR230_238IsSecular();
+                footNote = footNote.replace("<secularOrGravimetric230238>", isSecular
+                        ? "secular equilibrium reference material"
+                        : "gravimetric reference solution");
+                String refMatName = ((UThFraction) fractions.get(0)).getR230Th_238Ufc_referenceMaterialName();
+                footNote = footNote.replace("<named230Th238Umodel>", refMatName.length() > 0
+                        ? " (" + refMatName + ")."
+                        : ".");
+            }
+            if (footNote.contains("<secularOrGravimetric234238>")) {
+                boolean isSecular = ((UThFraction) fractions.get(0)).isSpikeCalibrationR234_238IsSecular();
+                footNote = footNote.replace("<secularOrGravimetric234238>", isSecular
+                        ? "secular equilibrium reference material"
+                        : "gravimetric reference solution");
+                String refMatName = ((UThFraction) fractions.get(0)).getR234U_238Ufc_referenceMaterialName();
+                footNote = footNote.replace("<named234U238Umodel>", refMatName.length() > 0
+                        ? " (" + refMatName + ")."
+                        : ".");
+            }
+            if (footNote.contains("<dateOfAnalysis>")) {
+                long dateOfAnalysisMS = ((UThFraction) fractions.get(0)).getDateTimeMillisecondsOfAnalysis();
+                footNote = footNote.replace("<dateOfAnalysis>", makeFormattedDate(dateOfAnalysisMS));
+            }
 
             //<r207_206c>
             //<bestDateDivider>

@@ -60,15 +60,6 @@ public class PhysicalConstantsModel extends AbstractRatiosDataModel {
     private static final ValueModel[] myRatios;
     private static final Map<String, BigDecimal> correlations;
     private static final Map<String, BigDecimal> EARTHTIMEatomicMolarMasses;
-    private static final AbstractRatiosDataModel noneModel
-            = //
-            new PhysicalConstantsModel( //
-                    ReduxConstants.NONE, //
-                    1, 1, //
-                    "No Lab",//
-                    "2000-01-01",//
-                    "Placeholder model",//
-                    "Placeholder model");
 
     static {
         myRatios = new ValueModel[DataDictionary.MeasuredConstants.length];
@@ -89,6 +80,16 @@ public class PhysicalConstantsModel extends AbstractRatiosDataModel {
 
     // instance variables
     private Map<String, BigDecimal> atomicMolarMasses;
+
+    private static final AbstractRatiosDataModel noneModel
+            = //
+            new PhysicalConstantsModel( //
+                    ReduxConstants.NONE, //
+                    1, 1, //
+                    "No Lab",//
+                    "2000-01-01",//
+                    "Placeholder model",//
+                    "Placeholder model");
 
     /**
      *

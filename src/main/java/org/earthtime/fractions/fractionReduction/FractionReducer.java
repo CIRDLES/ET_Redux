@@ -20,6 +20,7 @@ package org.earthtime.fractions.fractionReduction;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.dataDictionaries.Lambdas;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
+import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsModel;
 
 /**
  *
@@ -44,9 +45,12 @@ public abstract class FractionReducer {
     protected static double lambda235D;
     protected static double lambda238D;
     protected static ValueModel gmol204;
+    protected static ValueModel gmol205;
     protected static ValueModel gmol206;
     protected static ValueModel gmol207;
     protected static ValueModel gmol208;
+    protected static ValueModel gmol230;
+    protected static ValueModel gmol232;
     protected static ValueModel gmol235;
     protected static ValueModel gmol238;
 
@@ -77,6 +81,20 @@ public abstract class FractionReducer {
             lambda238D = lambda238.getValue().doubleValue();
 
         }
-
     }
+
+    protected static void initializeAtomicMolarMasses(
+            AbstractRatiosDataModel physicalConstants) {
+
+        gmol204 = ((PhysicalConstantsModel) physicalConstants).getAtomicMolarMassByName("gmol204");
+        gmol205 = ((PhysicalConstantsModel) physicalConstants).getAtomicMolarMassByName("gmol205");
+        gmol206 = ((PhysicalConstantsModel) physicalConstants).getAtomicMolarMassByName("gmol206");
+        gmol207 = ((PhysicalConstantsModel) physicalConstants).getAtomicMolarMassByName("gmol207");
+        gmol208 = ((PhysicalConstantsModel) physicalConstants).getAtomicMolarMassByName("gmol208");
+        gmol230 = ((PhysicalConstantsModel) physicalConstants).getAtomicMolarMassByName("gmol230");
+        gmol232 = ((PhysicalConstantsModel) physicalConstants).getAtomicMolarMassByName("gmol232");
+        gmol235 = ((PhysicalConstantsModel) physicalConstants).getAtomicMolarMassByName("gmol235");
+        gmol238 = ((PhysicalConstantsModel) physicalConstants).getAtomicMolarMassByName("gmol238");
+    }
+
 }
