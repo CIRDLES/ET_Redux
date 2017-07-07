@@ -138,13 +138,15 @@ public class UThFractionReducer extends FractionReducer {
         return instance;
     }
 
-    public static void reduceFraction(UThLegacyFractionI fraction) {
+    public static void reduceFraction(UThLegacyFractionI fraction, boolean isIgneous) {
         initializeDecayConstants(fraction.getPhysicalConstantsModel());
         initializeAtomicMolarMasses(fraction.getPhysicalConstantsModel());
 
         calculateActivityRatios(fraction);
 
-        calculateDatesFromLegacyData(fraction);
+        if (!isIgneous) {
+            calculateDatesFromLegacyData(fraction);
+        }
     }
 
     private static void calculateDatesFromLegacyData(UThLegacyFractionI fraction) {
@@ -675,7 +677,7 @@ public class UThFractionReducer extends FractionReducer {
                         .multiply(lambda230.getValue())
                         .divide(gmol230.getValue().multiply(new BigDecimal(MINUTES_PER_YEAR_FOR_USERIES_CONVERSIONS)),
                                 ReduxConstants.mathContext15));
-       fraction.getCompositionalMeasureByName(UThCompositionalMeasures.arConc230Th.getName())
+        fraction.getCompositionalMeasureByName(UThCompositionalMeasures.arConc230Th.getName())
                 .setOneSigma(fraction.getCompositionalMeasureByName(UThCompositionalMeasures.conc230Th.getName()).getOneSigmaAbs()
                         .multiply(new BigDecimal(AVOGADROS_NUMBER))
                         .multiply(lambda230.getValue())

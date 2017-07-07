@@ -32,10 +32,12 @@ import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UTh_Redux.fractions.UThLegacyFractionI;
 import org.earthtime.UTh_Redux.fractions.fractionReduction.UThFractionReducer;
 import org.earthtime.beans.ET_JButton;
+import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.projects.ProjectInterface;
+import org.earthtime.projects.ProjectSample;
 import org.earthtime.projects.projectImporters.AbstractProjectImporterFromLegacyDelimitedTextFile;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataViews.AbstractRatiosDataView;
@@ -226,6 +228,10 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
         AbstractRatiosDataModel chosenPhysicalConstantsModel
                 = (AbstractRatiosDataModel) physicalConstantsModelChooser.getSelectedItem();
         myProject.getSuperSample().setPhysicalConstantsModel(chosenPhysicalConstantsModel);
+        
+        boolean isIgneous = 
+                ((ProjectSample)myProject.getSuperSample()).getSampleAnalysisType()
+                        .compareToIgnoreCase(SampleAnalysisTypesEnum.USERIES_IGN.getName()) ==0;
 
         // set physical constant models of each fraction to current
         ArrayList<SampleInterface> mySamples = myProject.getProjectSamples();
@@ -237,7 +243,7 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
                 myFraction.setPhysicalConstantsModel(chosenPhysicalConstantsModel);
                 return myFraction;
             }).forEach((myFraction) -> {
-                UThFractionReducer.reduceFraction((UThLegacyFractionI) myFraction);
+                UThFractionReducer.reduceFraction((UThLegacyFractionI) myFraction, isIgneous);
             });
         });
 

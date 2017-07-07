@@ -124,7 +124,10 @@ public class UThFraction implements
                 "ABS",
                 BigDecimal.ONE,
                 BigDecimal.ONE);
-
+        
+        r230Th_238Ufc_referenceMaterialName = "";
+        r234U_238Ufc_referenceMaterialName = "";
+        
         this.changed = false;
         this.deleted = false;
         this.fractionNotes = "";

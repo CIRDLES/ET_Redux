@@ -373,8 +373,9 @@ public interface SampleInterface {
     public default boolean isAnalysisTypeUSERIES() {
         boolean retVal = false;
         try {
-            retVal = SampleAnalysisTypesEnum.USERIES_CARB.equals(SampleAnalysisTypesEnum.valueOf(getSampleAnalysisType()))
-                    || SampleAnalysisTypesEnum.USERIES_IGN.equals(SampleAnalysisTypesEnum.valueOf(getSampleAnalysisType()));
+            SampleAnalysisTypesEnum sampleAnalysisType = SampleAnalysisTypesEnum.valueOf(getSampleAnalysisType());
+            retVal = sampleAnalysisType.equals(SampleAnalysisTypesEnum.USERIES_CARB)
+                    || sampleAnalysisType.equals(SampleAnalysisTypesEnum.USERIES_IGN);
         } catch (Exception e) {
         }
         return retVal;
@@ -397,17 +398,6 @@ public interface SampleInterface {
         boolean retVal = false;
         try {
             retVal = SampleAnalysisTypesEnum.COMPILED.equals(SampleAnalysisTypesEnum.valueOf(getSampleAnalysisType()));
-        } catch (Exception e) {
-        }
-        return retVal;
-    }
-
-    public default boolean isAnalysisTypeUSeries() {
-        boolean retVal = false;
-        try {
-            SampleAnalysisTypesEnum sampleAnalysisType = SampleAnalysisTypesEnum.valueOf(getSampleAnalysisType());
-            retVal = sampleAnalysisType.equals(SampleAnalysisTypesEnum.USERIES_CARB)
-                    || sampleAnalysisType.equals(SampleAnalysisTypesEnum.USERIES_IGN);
         } catch (Exception e) {
         }
         return retVal;
