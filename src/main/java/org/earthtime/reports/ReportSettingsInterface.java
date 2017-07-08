@@ -141,11 +141,13 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
         BufferedReader reader = URIHelper.getBufferedReader(filename);
 
         if (reader != null) {
-            boolean isValidOrAirplaneMode = !doValidate;
+            boolean isValidOrAirplaneMode = true;
 
             XStream xstream = getXStreamReader();
 
-            isValidOrAirplaneMode = URIHelper.validateXML(reader, filename, getReportSettingsXMLSchemaURL());
+            if (doValidate) {
+                isValidOrAirplaneMode = URIHelper.validateXML(reader, filename, getReportSettingsXMLSchemaURL());
+            }
 
             if (isValidOrAirplaneMode) {
                 // re-create reader
@@ -793,14 +795,12 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
             String lambda230 = "\u03BB230 = ";
             try {
                 lambda230
-                        += 
-                        formatter.format(sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda230.getName())//
+                        += formatter.format(sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda230.getName())//
                                 .getValue().doubleValue());
                 lambda230
-                        += 
-                        " (" 
+                        += " ("
                         + ((ValueModelReferenced) sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda230.getName()))
-                                .getReference() 
+                                .getReference()
                         + ")";
             } catch (BadLabDataException badLabDataException) {
             }
@@ -808,12 +808,10 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
             String lambda232 = "\u03BB232 = ";
             try {
                 lambda232
-                        += 
-                        formatter.format(sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda232.getName())
+                        += formatter.format(sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda232.getName())
                                 .getValue().doubleValue());
                 lambda232
-                        += 
-                        " (" 
+                        += " ("
                         + ((ValueModelReferenced) sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda232.getName()))
                                 .getReference() //
                         + ")";
@@ -822,12 +820,10 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
             String lambda234 = "\u03BB234 = ";
             try {
                 lambda234
-                        += 
-                        formatter.format(sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda234.getName())
+                        += formatter.format(sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda234.getName())
                                 .getValue().doubleValue());
                 lambda234
-                        += 
-                        " (" 
+                        += " ("
                         + ((ValueModelReferenced) sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda234.getName()))
                                 .getReference() //
                         + ")";

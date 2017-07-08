@@ -18,7 +18,6 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package org.earthtime.UPb_Redux.samples;
 
 import com.thoughtworks.xstream.XStream;
@@ -41,10 +40,10 @@ import org.earthtime.xmlUtilities.XMLSerializationI;
  *
  * @author James F. Bowring
  */
-public class SESARSampleMetadata 
+public class SESARSampleMetadata
         implements XMLSerializationI, Serializable {
 
-     // Class variables
+    // Class variables
     /**
      * identifies object in binary serialization
      */
@@ -68,9 +67,9 @@ public class SESARSampleMetadata
     private String detritalType;
 
     /**
-     * 
+     *
      */
-    public SESARSampleMetadata(){
+    public SESARSampleMetadata() {
         stratigraphicFormationName = "NONE";
         stratigraphicGeologicAgeMa = "NONE ( 0 Ma - 0 Ma )";
         stratigraphicMinAbsoluteAgeMa = 0;
@@ -81,74 +80,76 @@ public class SESARSampleMetadata
     /**
      * @return the stratigraphicFormationName
      */
-    public String getStratigraphicFormationName () {
+    public String getStratigraphicFormationName() {
         return stratigraphicFormationName;
     }
 
     /**
      * @param stratigraphicFormationName the stratigraphicFormationName to set
      */
-    public void setStratigraphicFormationName ( String stratigraphicFormationName ) {
+    public void setStratigraphicFormationName(String stratigraphicFormationName) {
         this.stratigraphicFormationName = stratigraphicFormationName;
     }
 
     /**
      * @return the stratigraphicGeologicAgeMa
      */
-    public String getStratigraphicGeologicAgeMa () {
+    public String getStratigraphicGeologicAgeMa() {
         return stratigraphicGeologicAgeMa;
     }
 
     /**
      * @param stratigraphicGeologicAgeMa the stratigraphicGeologicAgeMa to set
      */
-    public void setStratigraphicGeologicAgeMa ( String stratigraphicGeologicAgeMa ) {
+    public void setStratigraphicGeologicAgeMa(String stratigraphicGeologicAgeMa) {
         this.stratigraphicGeologicAgeMa = stratigraphicGeologicAgeMa;
     }
 
     /**
      * @return the stratigraphicMinAbsoluteAgeMa
      */
-    public double getStratigraphicMinAbsoluteAgeMa () {
+    public double getStratigraphicMinAbsoluteAgeMa() {
         return stratigraphicMinAbsoluteAgeMa;
     }
 
     /**
-     * @param stratigraphicMinAbsoluteAgeMa the stratigraphicMinAbsoluteAgeMa to set
+     * @param stratigraphicMinAbsoluteAgeMa the stratigraphicMinAbsoluteAgeMa to
+     * set
      */
-    public void setStratigraphicMinAbsoluteAgeMa ( double stratigraphicMinAbsoluteAgeMa ) {
+    public void setStratigraphicMinAbsoluteAgeMa(double stratigraphicMinAbsoluteAgeMa) {
         this.stratigraphicMinAbsoluteAgeMa = stratigraphicMinAbsoluteAgeMa;
     }
 
     /**
      * @return the stratigraphicMaxAbsoluteAgeMa
      */
-    public double getStratigraphicMaxAbsoluteAgeMa () {
+    public double getStratigraphicMaxAbsoluteAgeMa() {
         return stratigraphicMaxAbsoluteAgeMa;
     }
 
     /**
-     * @param stratigraphicMaxAbsoluteAgeMa the stratigraphicMaxAbsoluteAgeMa to set
+     * @param stratigraphicMaxAbsoluteAgeMa the stratigraphicMaxAbsoluteAgeMa to
+     * set
      */
-    public void setStratigraphicMaxAbsoluteAgeMa ( double stratigraphicMaxAbsoluteAgeMa ) {
+    public void setStratigraphicMaxAbsoluteAgeMa(double stratigraphicMaxAbsoluteAgeMa) {
         this.stratigraphicMaxAbsoluteAgeMa = stratigraphicMaxAbsoluteAgeMa;
     }
 
     /**
      * @return the detritalType
      */
-    public String getDetritalType () {
+    public String getDetritalType() {
         return detritalType;
     }
 
     /**
      * @param detritalType the detritalType to set
      */
-    public void setDetritalType ( String detritalType ) {
+    public void setDetritalType(String detritalType) {
         this.detritalType = detritalType;
     }
 
- // XML Serialization
+    // XML Serialization
     /**
      * gets an <code>XStream</code> writer. Creates, customizes, and returns
      * <code>XStream</code> for XML serialization
@@ -186,17 +187,16 @@ public class SESARSampleMetadata
      * registers converter for argument <code>xstream</code> and sets aliases to
      * make the XML file more human-readable
      *
-     * @pre     argument <code>xstream</code> is a valid <code>XStream</code>
-     * @post    argument <code>xstream</code> is customized to produce a cleaner
-     *          output <code>file</code>
-     * @param   xstream     <code>XStream</code> to be customized
+     * @pre argument <code>xstream</code> is a valid <code>XStream</code>
+     * @post argument <code>xstream</code> is customized to produce a cleaner
+     * output <code>file</code>
+     * @param xstream     <code>XStream</code> to be customized
      */
     public void customizeXstream(XStream xstream) {
 
         xstream.registerConverter(new SESARSampleMetadataXMLConverter());
 
         xstream.alias("SESARSampleMetadata", SESARSampleMetadata.class);
-
 
         setClassXMLSchemaURL();
     }
@@ -211,17 +211,18 @@ public class SESARSampleMetadata
     public void setClassXMLSchemaURL() {
         UPbReduxConfigurator myConfigurator = new UPbReduxConfigurator();
 
-        SESARSampleMetadataSchemaURL =
-                myConfigurator.getResourceURI("URI_SESARSampleMetadataSchemaURLXMLSchema");
+        SESARSampleMetadataSchemaURL
+                = myConfigurator.getResourceURI("URI_SESARSampleMetadataSchemaURLXMLSchema");
     }
 
     /**
-     * encodes this <code>SESARSampleMetadata</code> to the <code>file</code> specified
-     * by the argument <code>filename</code>
+     * encodes this <code>SESARSampleMetadata</code> to the <code>file</code>
+     * specified by the argument <code>filename</code>
      *
-     * @pre     this <code>SESARSampleMetadata</code> exists
-     * @post    this <code>SESARSampleMetadata</code> is stored in the specified XML <code>file</code>
-     * @param   filename    location to store data to
+     * @pre this <code>SESARSampleMetadata</code> exists
+     * @post this <code>SESARSampleMetadata</code> is stored in the specified
+     * XML <code>file</code>
+     * @param filename location to store data to
      */
     public void serializeXMLObject(String filename) {
         XStream xstream = getXStreamWriter();
@@ -236,7 +237,6 @@ public class SESARSampleMetadata
                 + SESARSampleMetadataSchemaURL//
                 + "\"");
 
-
         try {
             FileWriter outFile = new FileWriter(filename);
             PrintWriter out = new PrintWriter(outFile);
@@ -248,21 +248,22 @@ public class SESARSampleMetadata
             outFile.close();
 
         } catch (IOException e) {
-         }
+        }
     }
 
     /**
-     * decodes <code>SESARSampleMetadata</code> from <code>file</code> specified by
-     * argument <code>filename</code>
+     * decodes <code>SESARSampleMetadata</code> from <code>file</code> specified
+     * by argument <code>filename</code>
      *
-     * @param filename    location to read data from
+     * @param filename location to read data from
      * @param doValidate the value of doValidate
-     * @return <code>Object</code> - the <code>SESARSampleMetadata</code> created from
-     * the specified XML <code>file</code>
+     * @return <code>Object</code> - the <code>SESARSampleMetadata</code>
+     * created from the specified XML <code>file</code>
      * @throws java.io.FileNotFoundException
      * @throws org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException
      * @pre <code>filename</code> references an XML <code>file</code>
-     * @post <code>SESARSampleMetadata</code> stored in <code>filename</code> is returned
+     * @post <code>SESARSampleMetadata</code> stored in <code>filename</code> is
+     * returned
      */
     public Object readXMLObject(String filename, boolean doValidate)
             throws FileNotFoundException, ETException, FileNotFoundException, BadOrMissingXMLSchemaException {
@@ -271,11 +272,13 @@ public class SESARSampleMetadata
         BufferedReader reader = URIHelper.getBufferedReader(filename);
 
         if (reader != null) {
-            boolean isValidOrAirplaneMode = !doValidate;
-            
+            boolean isValidOrAirplaneMode = true;
+
             XStream xstream = getXStreamReader();
 
-            isValidOrAirplaneMode = URIHelper.validateXML(reader, filename, SESARSampleMetadataSchemaURL);
+            if (doValidate) {
+                isValidOrAirplaneMode = URIHelper.validateXML(reader, filename, SESARSampleMetadataSchemaURL);
+            }
 
             if (isValidOrAirplaneMode) {
                 // re-create reader
@@ -287,35 +290,33 @@ public class SESARSampleMetadata
                 }
 
 //                System.out.println("This is your SESARSampleMetadata that was just read successfully:\n");
-
 //                String xml2 = getXStreamWriter().toXML(SESARSampleMetadata);
 //
 //                System.out.println(xml2);
 //                System.out.flush();
             } else {
-                throw new ETException( null, "XML data file does not conform to schema." );
+                throw new ETException(null, "XML data file does not conform to schema.");
             }
         } else {
-            throw new FileNotFoundException( "Missing XML data file." );
+            throw new FileNotFoundException("Missing XML data file.");
         }
 
         return SESARSampleMetadata;
     }
 
     /**
-     * 
+     *
      * @param args
      * @throws Exception
      */
     public static void main(String[] args) throws Exception {
 
-        SESARSampleMetadata SESARSampleMetadata =
-                new SESARSampleMetadata();
+        SESARSampleMetadata SESARSampleMetadata
+                = new SESARSampleMetadata();
         String testFileName = "SESARSampleMetadataTEST.xml";
 
         SESARSampleMetadata.serializeXMLObject(testFileName);
         SESARSampleMetadata.readXMLObject(testFileName, true);
-     
+
     }
 }
-

@@ -1128,7 +1128,7 @@ public abstract class AbstractRatiosDataModel implements
         if (reader != null) {
             XStream xstream = getXStream();
 
-            boolean isValidOrAirplaneMode = !doValidate;
+            boolean isValidOrAirplaneMode = true;
 
             if (doValidate) {
                 isValidOrAirplaneMode = URIHelper.validateXML(reader, filename, XMLSchemaURL);

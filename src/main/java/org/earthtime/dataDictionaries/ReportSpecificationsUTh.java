@@ -280,7 +280,7 @@ public class ReportSpecificationsUTh {
 
         reportTableFootnotes.put(//
                 "FN-1", //
-                "Square brackets denote activity ratios.");
+                "Square brackets denote activity ratios or of concentrations.");
         reportTableFootnotes.put(//
                 "FN-2", //
                 "Ratio determined using a Th-U spike calibrated to a <secularOrGravimetric230238><named230Th238Umodel>");

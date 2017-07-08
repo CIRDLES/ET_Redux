@@ -170,7 +170,7 @@ public class URIHelper {
                 URL url = new URL("http://cnn.com");
                 //System.out.println(url.getHost());
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                con.setReadTimeout(7500);
+                con.setReadTimeout(15000);
                 con.connect();
                 if (con.getResponseCode() == 200) {
 
