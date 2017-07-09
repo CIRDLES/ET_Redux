@@ -31,8 +31,9 @@ import javax.swing.JOptionPane;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.user.UPbReduxConfigurator;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
-import org.earthtime.dataDictionaries.ReportSpecificationsUPb;
-import org.earthtime.dataDictionaries.ReportSpecificationsUTh;
+import org.earthtime.dataDictionaries.reportSpecifications.ReportSpecificationsAbstract;
+import org.earthtime.dataDictionaries.reportSpecifications.ReportSpecificationsUPb;
+import org.earthtime.dataDictionaries.reportSpecifications.ReportSpecificationsUTh;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.reports.ReportCategoryInterface;
@@ -52,8 +53,8 @@ public class ReportSettings implements
      * version number is advanced so that any existing analysis will update its
      * report models upon opening in ET_Redux.
      */
-    private static transient int CURRENT_VERSION_REPORT_SETTINGS_UPB = 354;
-    private static transient int CURRENT_VERSION_REPORT_SETTINGS_UTH = 552;
+    private static transient int CURRENT_VERSION_REPORT_SETTINGS_UPB = 356;
+    private static transient int CURRENT_VERSION_REPORT_SETTINGS_UTH = 554;
 
     // Fields
     private String name;
@@ -101,12 +102,12 @@ public class ReportSettings implements
         this.fractionCategory
                 = new ReportCategory(//
                         "Fraction",
-                        ReportSpecificationsUPb.ReportCategory_Fraction, true);
+                        ReportSpecificationsAbstract.ReportCategory_Fraction, true);
 
         this.fractionCategory2
                 = new ReportCategory(//
                         "Fraction",
-                        ReportSpecificationsUPb.ReportCategory_Fraction2, true);
+                        ReportSpecificationsAbstract.ReportCategory_Fraction2, true);
 
         if (isIsotypeStyleUPb()) {
             this.datesCategory

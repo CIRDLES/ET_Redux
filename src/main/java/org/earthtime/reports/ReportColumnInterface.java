@@ -21,7 +21,7 @@ import java.lang.reflect.Method;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
-import org.earthtime.dataDictionaries.ReportSpecificationsUPb;
+import org.earthtime.dataDictionaries.reportSpecifications.ReportSpecificationsUPb;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.reportViews.ReportListItemI;
 

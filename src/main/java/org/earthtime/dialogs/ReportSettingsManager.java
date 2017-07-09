@@ -37,8 +37,9 @@ import javax.swing.event.ListSelectionListener;
 import org.earthtime.UPb_Redux.reports.ReportCategory;
 import org.earthtime.UPb_Redux.reports.ReportColumn;
 import org.earthtime.beans.ET_JButton;
-import org.earthtime.dataDictionaries.ReportSpecificationsUPb;
-import org.earthtime.dataDictionaries.ReportSpecificationsUTh;
+import org.earthtime.dataDictionaries.reportSpecifications.ReportSpecificationsAbstract;
+import org.earthtime.dataDictionaries.reportSpecifications.ReportSpecificationsUPb;
+import org.earthtime.dataDictionaries.reportSpecifications.ReportSpecificationsUTh;
 import org.earthtime.reportViews.ReportListItemI;
 import org.earthtime.reportViews.ReportPainterI;
 import org.earthtime.reports.ReportCategoryInterface;
@@ -240,24 +241,14 @@ public class ReportSettingsManager extends DialogEditor {
                 String[] unitsContents;
                 try {
 
-                    if (reportSettings.isIsotypeStyleUPb()) {
-                        if (ReportSpecificationsUPb.unitsType.get(reportColumn.getUnits()).equalsIgnoreCase("mass")) {
-                            unitsContents = ReportSpecificationsUPb.massUnits;
-                        } else if (ReportSpecificationsUPb.unitsType.get(reportColumn.getUnits()).equalsIgnoreCase("date")) {
-                            unitsContents = ReportSpecificationsUPb.dateUnits;
-                        } else {
-                            unitsContents = ReportSpecificationsUPb.concUnits;
-                        }
+                    if (ReportSpecificationsAbstract.unitsType.get(reportColumn.getUnits()).equalsIgnoreCase("mass")) {
+                        unitsContents = ReportSpecificationsAbstract.massUnits;
+                    } else if (ReportSpecificationsAbstract.unitsType.get(reportColumn.getUnits()).equalsIgnoreCase("date")) {
+                        unitsContents = ReportSpecificationsAbstract.dateUnits;
+                    } else if (ReportSpecificationsAbstract.unitsType.get(reportColumn.getUnits()).equalsIgnoreCase("mult")) {
+                        unitsContents = ReportSpecificationsAbstract.multUnits;
                     } else {
-                        if (ReportSpecificationsUTh.unitsType.get(reportColumn.getUnits()).equalsIgnoreCase("mass")) {
-                            unitsContents = ReportSpecificationsUTh.massUnits;
-                        } else if (ReportSpecificationsUTh.unitsType.get(reportColumn.getUnits()).equalsIgnoreCase("date")) {
-                            unitsContents = ReportSpecificationsUTh.dateUnits;
-                        }else if (ReportSpecificationsUTh.unitsType.get(reportColumn.getUnits()).equalsIgnoreCase("mult")) {
-                            unitsContents = ReportSpecificationsUTh.multUnits;
-                        } else {
-                            unitsContents = ReportSpecificationsUTh.concUnits;
-                        }
+                        unitsContents = ReportSpecificationsAbstract.concUnits;
                     }
 
                     for (int i = 0; i < unitsContents.length; i++) {
@@ -283,7 +274,7 @@ public class ReportSettingsManager extends DialogEditor {
 
             SpinnerModel valueDigits_spinnerModel
                     = new SpinnerNumberModel(//
-                            (Number) Integer.valueOf(reportColumn.getCountOfSignificantDigits()),//
+                            (Number) reportColumn.getCountOfSignificantDigits(),//
                             0, 9, 1);
             valueDigits_spinner.setModel(valueDigits_spinnerModel);
 
