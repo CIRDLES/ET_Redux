@@ -77,7 +77,7 @@ public abstract class ReportSpecificationsAbstract {
      * converted by lookup in ReduxConstants
      */
     public final static String[] multUnits = new String[]{
-        "*1e5", "*1"
+        "*1e5", "*1", "*1e3 dpm/g", "*1e6 dpm/g", "*1e9 dpm/g"
     };
 
     /**
@@ -101,6 +101,9 @@ public abstract class ReportSpecificationsAbstract {
         unitsType.put("ka", "date");
         unitsType.put("*1e5", "mult");
         unitsType.put("*1", "mult");
+        unitsType.put("*1e3 dpm/g", "mult");
+        unitsType.put("*1e6 dpm/g", "mult");
+        unitsType.put("*1e9 dpm/g", "mult");
 
     }
 

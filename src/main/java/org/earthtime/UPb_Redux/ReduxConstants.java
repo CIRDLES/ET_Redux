@@ -293,6 +293,7 @@ final public class ReduxConstants {
         UnitConversions.put("*1e5", 5);
         UnitConversions.put("*1", 0);
         UnitConversions.put("dpm/g", 0);
+        UnitConversions.put("*1e3 dpm/g", 3);
         UnitConversions.put("*1e6 dpm/g", 6);
         UnitConversions.put("*1e9 dpm/g", 9);
 

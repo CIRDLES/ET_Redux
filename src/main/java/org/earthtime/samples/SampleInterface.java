@@ -1654,26 +1654,22 @@ public interface SampleInterface {
      * @param reportSettingsModel
      */
     public abstract void setReportSettingsModel(ReportSettingsInterface reportSettingsModel);
-    
+
     /**
      * @return the defaultReportSpecsType
      */
     public abstract String getDefaultReportSpecsType();
 
-    public static void loadDefaultEARTHTIMEReportSettingsModel(SampleInterface sample) {
-        if (sample.getIsotopeSystem().compareToIgnoreCase("UPb") == 0) {
-            sample.setReportSettingsModel(ReportSettings.EARTHTIMEReportSettingsUPb());
-        } else {
-            sample.setReportSettingsModel(ReportSettings.EARTHTIMEReportSettingsUTh());
-        }
-    }
-
     public static void loadDefaultEARTHTIMEReportSettingsModel_UPb(SampleInterface sample) {
         sample.setReportSettingsModel(ReportSettings.EARTHTIMEReportSettingsUPb());
     }
 
-    public static void loadDefaultEARTHTIMEReportSettingsModel_UTh(SampleInterface sample) {
-        sample.setReportSettingsModel(ReportSettings.EARTHTIMEReportSettingsUTh());
+    public static void loadDefaultEARTHTIMEReportSettingsModel_UTh_Carb(SampleInterface sample) {
+        sample.setReportSettingsModel(ReportSettings.EARTHTIMEReportSettingsUTh_Carb());
+    }
+
+    public static void loadDefaultEARTHTIMEReportSettingsModel_UTh_Ign(SampleInterface sample) {
+        sample.setReportSettingsModel(ReportSettings.EARTHTIMEReportSettingsUTh_Ign());
     }
 
     /**

@@ -617,6 +617,8 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="loadDefaultReportSettingsModelActionPerformed"/>
               </Events>
             </MenuItem>
+            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator13">
+            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="loadEARTHTIMEDefaultReportSettingsModel_UPb_menuItem">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Load EARTHTIME Default Report Settings Model UPb"/>
@@ -625,12 +627,20 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="loadEARTHTIMEDefaultReportSettingsModel_UPb_menuItemActionPerformed"/>
               </Events>
             </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="loadEARTHTIMEDefaultReportSettingsModel_UTh_menuItem">
+            <MenuItem class="javax.swing.JMenuItem" name="loadEARTHTIMEDefaultReportSettingsModel_UTh_Carb_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Load EARTHTIME Default Report Settings Model UTh"/>
+                <Property name="text" type="java.lang.String" value="Load EARTHTIME Default Report Settings Model UTh_Carb"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="loadEARTHTIMEDefaultReportSettingsModel_UTh_menuItemActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="loadEARTHTIMEDefaultReportSettingsModel_UTh_Carb_menuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="loadEARTHTIMEDefaultReportSettingsModel_UTh_Ign_menuItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Load EARTHTIME Default Report Settings Model UTh_Ign"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="loadEARTHTIMEDefaultReportSettingsModel_UTh_Ign_menuItemActionPerformed"/>
               </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator4">
@@ -687,17 +697,25 @@
             <EventHandler event="menuDeselected" listener="javax.swing.event.MenuListener" parameters="javax.swing.event.MenuEvent" handler="referencesMenuMenuDeselected"/>
           </Events>
           <SubComponents>
-            <MenuItem class="javax.swing.JMenuItem" name="gCubedPaperSoftware_menuItem">
+            <MenuItem class="javax.swing.JMenuItem" name="gCubedPaperSoftwareLAICPMS_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="G-Cubed paper on this software"/>
+                <Property name="text" type="java.lang.String" value="G-Cubed paper on this software for LA-ICPMS"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="gCubedPaperSoftware_menuItemActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="gCubedPaperSoftwareLAICPMS_menuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="gCubedPaperSoftwareTIMS_menuItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="G-Cubed paper on this software for TIMS"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="gCubedPaperSoftwareTIMS_menuItemActionPerformed"/>
               </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="gCubedPaperReductionEquations_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="G-Cubed paper on reduction equations"/>
+                <Property name="text" type="java.lang.String" value="G-Cubed paper on UPb Isotope Dilution Reduction"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="gCubedPaperReductionEquations_menuItemActionPerformed"/>
@@ -710,6 +728,16 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="uncertaintyEllipses_menuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator14">
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="paperOnUSeriesDataReportingStandards_menuItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Paper on U-Series Data Reporting Standards"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="paperOnUSeriesDataReportingStandards_menuItemActionPerformed"/>
               </Events>
             </MenuItem>
           </SubComponents>

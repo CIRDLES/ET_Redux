@@ -46,8 +46,8 @@ public enum SampleAnalysisTypesEnum {
      *
      */
     LASS("LASS", "UPb", "UPb"),
-    USERIES_CARB("USERIES_CARB", "UTh", "UTh"),//Carbonate"),
-    USERIES_IGN("USERIES_IGN", "UTh", "UTh"),//Igneous"),
+    USERIES_CARB("USERIES_CARB", "UTh", "UTh_Carb"),//Carbonate"),
+    USERIES_IGN("USERIES_IGN", "UTh", "UTh_Ign"),//Igneous"),
     /**
      *
      */

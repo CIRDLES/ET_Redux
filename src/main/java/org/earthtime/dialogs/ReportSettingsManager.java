@@ -38,8 +38,6 @@ import org.earthtime.UPb_Redux.reports.ReportCategory;
 import org.earthtime.UPb_Redux.reports.ReportColumn;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.dataDictionaries.reportSpecifications.ReportSpecificationsAbstract;
-import org.earthtime.dataDictionaries.reportSpecifications.ReportSpecificationsUPb;
-import org.earthtime.dataDictionaries.reportSpecifications.ReportSpecificationsUTh;
 import org.earthtime.reportViews.ReportListItemI;
 import org.earthtime.reportViews.ReportPainterI;
 import org.earthtime.reports.ReportCategoryInterface;

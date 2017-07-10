@@ -619,9 +619,10 @@ public class SampleUTh extends ETSample implements
     /**
      * @return the defaultReportSpecsType
      */
+    @Override
     public String getDefaultReportSpecsType() {
         if (defaultReportSpecsType == null) {
-            defaultReportSpecsType = "UTh";
+            defaultReportSpecsType = "UTh_Carb";
         }
         return defaultReportSpecsType;
     }

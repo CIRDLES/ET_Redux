@@ -33,6 +33,7 @@ import java.util.Vector;
 import static org.earthtime.UPb_Redux.ReduxConstants.makeFormattedDate;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.FractionI;
+import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.valueModels.ValueModelReferenced;
 import org.earthtime.UTh_Redux.fractions.UThFraction;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
@@ -41,7 +42,8 @@ import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.dataDictionaries.Lambdas;
 import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.dataDictionaries.reportSpecifications.ReportSpecificationsUPb;
-import org.earthtime.dataDictionaries.reportSpecifications.ReportSpecificationsUTh;
+import org.earthtime.dataDictionaries.reportSpecifications.ReportSpecificationsUTh_Carb;
+import org.earthtime.dataDictionaries.reportSpecifications.ReportSpecificationsUTh_Ign;
 import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.dialogs.ReportSettingsManager;
 import org.earthtime.exceptions.ETException;
@@ -303,7 +305,9 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
      *
      * @return
      */
-    boolean isOutOfDateUTh();
+    boolean isOutOfDateUTh_Carb();
+
+    public boolean isOutOfDateUTh_Ign();
 
     /**
      *
@@ -753,11 +757,26 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
         if (fractions.size() > 0) {
             // write footNotesMap and prepend superscript letter with "&" delimiter
             // write full text of footnote with variables replaced with values
+
+            Map<String, String> reportTableFootnotes;
+            switch (retVal[1][0]) {
+                case "UPb":
+                    reportTableFootnotes = ReportSpecificationsUPb.reportTableFootnotes;
+                    break;
+                case "UTh_Carb":
+                    reportTableFootnotes = ReportSpecificationsUTh_Carb.reportTableFootnotes;
+                    break;
+                case "UTh_Ign":
+                    reportTableFootnotes = ReportSpecificationsUTh_Ign.reportTableFootnotes;
+                    break;
+                default:
+                    reportTableFootnotes = ReportSpecificationsUPb.reportTableFootnotes;
+            }
+
             for (int i = 0;
                     i < footNotesMap.size();
                     i++) {
-                String footNote = isdefaultReportSpecsType_UPb() ? ReportSpecificationsUPb.reportTableFootnotes.get(footNotesMap.get(i)).trim()
-                        : ReportSpecificationsUTh.reportTableFootnotes.get(footNotesMap.get(i)).trim();
+                String footNote = reportTableFootnotes.get(footNotesMap.get(i)).trim();
 
                 // test for known variables in footnote
                 // since lambda235 and 238 appear in same footnote, we first check whether the
@@ -869,16 +888,19 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
                     }
 
                 }
-                //<r207_206c>
-                //<bestDateDivider>
-                // april 2010 specialize footnote for zircons
-                switch (zirconPopulationType) {
-                    case 1:
-                        footNote = footNote.replaceFirst("<zirconPopulationChoice>", ReportSpecificationsUPb.reportTableFootnotes.get("FN-5zircon"));
-                    case 2:
-                        footNote = footNote.replaceFirst("<zirconPopulationChoice>", ReportSpecificationsUPb.reportTableFootnotes.get("FN-5mixed"));
-                    default:
-                        footNote = footNote.replaceFirst("<zirconPopulationChoice>", ReportSpecificationsUPb.reportTableFootnotes.get("FN-5noZircon"));
+
+                if (fractions.get(0) instanceof UPbFraction) {
+                    //<r207_206c>
+                    //<bestDateDivider>
+                    // april 2010 specialize footnote for zircons
+                    switch (zirconPopulationType) {
+                        case 1:
+                            footNote = footNote.replaceFirst("<zirconPopulationChoice>", ReportSpecificationsUPb.reportTableFootnotes.get("FN-5zircon"));
+                        case 2:
+                            footNote = footNote.replaceFirst("<zirconPopulationChoice>", ReportSpecificationsUPb.reportTableFootnotes.get("FN-5mixed"));
+                        default:
+                            footNote = footNote.replaceFirst("<zirconPopulationChoice>", ReportSpecificationsUPb.reportTableFootnotes.get("FN-5noZircon"));
+                    }
                 }
 
                 retVal[6][i] = determineFootNoteLetter(i) + "&" + footNote;
@@ -1030,6 +1052,10 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
      * @return the isdefaultReportSpecsType_UPb
      */
     public boolean isdefaultReportSpecsType_UPb();
+
+    public boolean isdefaultReportSpecsType_UTh_Carb();
+
+    public boolean isdefaultReportSpecsType_UTh_Ign();
 
     /**
      *
