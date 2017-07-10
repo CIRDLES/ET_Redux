@@ -82,7 +82,7 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
     public default void assembleReportCategories() {
         setReportCategories(new ArrayList<>());
         getReportCategories().add(getFractionCategory());
-        if (isIsotypeStyleUPb()) {
+        if (isdefaultReportSpecsType_UPb()) {
             getReportCategories().add(getDatesCategory());
             getReportCategories().add(getDatesPbcCorrCategory());
             getReportCategories().add(getCompositionCategory());
@@ -448,7 +448,7 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
                 getCompositionCategory().setVisibleCategoryColumn(AnalysisMeasures.rTh_Umagma.getName(), false);
             }
 
-            if (isIsotypeStyleUPb()) {
+            if (isdefaultReportSpecsType_UPb()) {
                 // get first activityValue and first Th_Umagma value and set standard footnote entries
                 BigDecimal savedActivityValue
                         = fractions.get(0).getAnalysisMeasure(AnalysisMeasures.ar231_235sample.getName()).getValue();
@@ -502,7 +502,7 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
         // repeated oct 2014 to handle Pbc corrected dates category also
         if (fractions.size() > 0) {
             // June 2017 split by isotope type
-            if (isIsotypeStyleUPb()) {
+            if (isdefaultReportSpecsType_UPb()) {
                 if (getDatesCategory().getCategoryColumns().length > 0) {
                     // first get the unittype of the first date (all will be set the same so this is a flag)
                     String currentDateUnit = getDatesCategory().getCategoryColumns()[0].getUnits();
@@ -613,6 +613,8 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
         // fraction data starts at col 2, row FRACTION_DATA_START_ROW
         // FRACTION_DATA_START_ROW is stored in 0,0
         retVal[0][0] = Integer.toString(FRACTION_DATA_START_ROW);
+        //July 2017
+        retVal[1][0] = getDefaultReportSpecsType();
 
         SortedSet<String> filteredFractions = sample.getFilteredFractionIDs();
 
@@ -746,140 +748,142 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
             }
 
         }
-        // write footNotesMap and prepend superscript letter with "&" delimiter
-        // write full text of footnote with variables replaced with values
-        for (int i = 0;
-                i < footNotesMap.size();
-                i++) {
-            String footNote = isIsotypeStyleUPb() ? ReportSpecificationsUPb.reportTableFootnotes.get(footNotesMap.get(i)).trim()
-                    : ReportSpecificationsUTh.reportTableFootnotes.get(footNotesMap.get(i)).trim();
 
-            // test for known variables in footnote
-            // since lambda235 and 238 appear in same footnote, we first check whether the
-            // references are the same so as to avoid repetition
-            String lambda238Ref = "";
-            String lambda235Ref = "";
-            try {
-                lambda238Ref
-                        = " (" + ((ValueModelReferenced) sample.getPhysicalConstantsModel()//
-                                .getDatumByName(Lambdas.lambda238.getName())).getReference() + ")";
-                lambda235Ref
-                        = " (" + ((ValueModelReferenced) sample.getPhysicalConstantsModel()//
-                                .getDatumByName(Lambdas.lambda235.getName())).getReference() + ")";
-            } catch (BadLabDataException badLabDataException) {
-            }
+        // July 2017 no footnotes with no fractions
+        if (fractions.size() > 0) {
+            // write footNotesMap and prepend superscript letter with "&" delimiter
+            // write full text of footnote with variables replaced with values
+            for (int i = 0;
+                    i < footNotesMap.size();
+                    i++) {
+                String footNote = isdefaultReportSpecsType_UPb() ? ReportSpecificationsUPb.reportTableFootnotes.get(footNotesMap.get(i)).trim()
+                        : ReportSpecificationsUTh.reportTableFootnotes.get(footNotesMap.get(i)).trim();
 
-//            if ((lambda235Ref.trim().equalsIgnoreCase(lambda238Ref.trim()))) {
-//                lambda238Ref = ""; // they appear in order 238, 235
-//            }
-            NumberFormat formatter = new DecimalFormat("0.000#####E0");
+                // test for known variables in footnote
+                // since lambda235 and 238 appear in same footnote, we first check whether the
+                // references are the same so as to avoid repetition
+                String lambda238Ref = "";
+                String lambda235Ref = "";
+                try {
+                    lambda238Ref
+                            = " (" + ((ValueModelReferenced) sample.getPhysicalConstantsModel()//
+                                    .getDatumByName(Lambdas.lambda238.getName())).getReference() + ")";
+                    lambda235Ref
+                            = " (" + ((ValueModelReferenced) sample.getPhysicalConstantsModel()//
+                                    .getDatumByName(Lambdas.lambda235.getName())).getReference() + ")";
+                } catch (BadLabDataException badLabDataException) {
+                }
 
-            String lambda238 = "\u03BB238 = ";
-            try {
-                lambda238
-                        += formatter.format(sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda238.getName())//
-                                .getValue().doubleValue());
-                lambda238 += lambda238Ref;
-            } catch (BadLabDataException badLabDataException) {
-            }
+                NumberFormat formatter = new DecimalFormat("0.000#####E0");
 
-            String lambda235 = "\u03BB235 = ";
-            try {
-                lambda235
-                        += formatter.format(sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda235.getName())//
-                                .getValue().doubleValue());
-                lambda235 += lambda235Ref;
-            } catch (BadLabDataException badLabDataException) {
-            }
+                String lambda238 = "\u03BB238 = ";
+                try {
+                    lambda238
+                            += formatter.format(sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda238.getName())//
+                                    .getValue().doubleValue());
+                    lambda238 += lambda238Ref;
+                } catch (BadLabDataException badLabDataException) {
+                }
 
-            String lambda230 = "\u03BB230 = ";
-            try {
-                lambda230
-                        += formatter.format(sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda230.getName())//
-                                .getValue().doubleValue());
-                lambda230
-                        += " ("
-                        + ((ValueModelReferenced) sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda230.getName()))
-                                .getReference()
-                        + ")";
-            } catch (BadLabDataException badLabDataException) {
-            }
+                String lambda235 = "\u03BB235 = ";
+                try {
+                    lambda235
+                            += formatter.format(sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda235.getName())//
+                                    .getValue().doubleValue());
+                    lambda235 += lambda235Ref;
+                } catch (BadLabDataException badLabDataException) {
+                }
 
-            String lambda232 = "\u03BB232 = ";
-            try {
-                lambda232
-                        += formatter.format(sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda232.getName())
-                                .getValue().doubleValue());
-                lambda232
-                        += " ("
-                        + ((ValueModelReferenced) sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda232.getName()))
-                                .getReference() //
-                        + ")";
-            } catch (BadLabDataException badLabDataException) {
-            }
-            String lambda234 = "\u03BB234 = ";
-            try {
-                lambda234
-                        += formatter.format(sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda234.getName())
-                                .getValue().doubleValue());
-                lambda234
-                        += " ("
-                        + ((ValueModelReferenced) sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda234.getName()))
-                                .getReference() //
-                        + ")";
-            } catch (BadLabDataException badLabDataException) {
-            }
-            // perform replacement of footnote parameters
-            footNote = footNote.replaceFirst("<lambda238>", lambda238);
-            footNote = footNote.replaceFirst("<lambda235>", lambda235);
-            footNote = footNote.replaceFirst("<lambda230>", lambda230);
-            footNote = footNote.replaceFirst("<lambda232>", lambda232);
-            footNote = footNote.replaceFirst("<lambda234>", lambda234);
-            footNote = footNote.replaceFirst("<ar231_235sample>", activityFootnoteEntry);
-            footNote = footNote.replaceFirst("<rTh_Umagma>", thU_MagmaFootnoteEntry);
+                String lambda230 = "\u03BB230 = ";
+                try {
+                    lambda230
+                            += formatter.format(sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda230.getName())//
+                                    .getValue().doubleValue());
+                    lambda230
+                            += " ("
+                            + ((ValueModelReferenced) sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda230.getName()))
+                                    .getReference()
+                            + ")";
+                } catch (BadLabDataException badLabDataException) {
+                }
 
-            // JULY 2017 for UTh footnotes            
-            // ASSUMPTION - all fractions have same value for these fields
-            if (footNote.contains("<secularOrGravimetric230238>")) {
-                boolean isSecular = ((UThFraction) fractions.get(0)).isSpikeCalibrationR230_238IsSecular();
-                footNote = footNote.replace("<secularOrGravimetric230238>", isSecular
-                        ? "secular equilibrium reference material"
-                        : "gravimetric reference solution");
-                String refMatName = ((UThFraction) fractions.get(0)).getR230Th_238Ufc_referenceMaterialName();
-                footNote = footNote.replace("<named230Th238Umodel>", refMatName.length() > 0
-                        ? " (" + refMatName + ")."
-                        : ".");
-            }
-            if (footNote.contains("<secularOrGravimetric234238>")) {
-                boolean isSecular = ((UThFraction) fractions.get(0)).isSpikeCalibrationR234_238IsSecular();
-                footNote = footNote.replace("<secularOrGravimetric234238>", isSecular
-                        ? "secular equilibrium reference material"
-                        : "gravimetric reference solution");
-                String refMatName = ((UThFraction) fractions.get(0)).getR234U_238Ufc_referenceMaterialName();
-                footNote = footNote.replace("<named234U238Umodel>", refMatName.length() > 0
-                        ? " (" + refMatName + ")."
-                        : ".");
-            }
-            if (footNote.contains("<dateOfAnalysis>")) {
-                long dateOfAnalysisMS = ((UThFraction) fractions.get(0)).getDateTimeMillisecondsOfAnalysis();
-                footNote = footNote.replace("<dateOfAnalysis>", makeFormattedDate(dateOfAnalysisMS));
-            }
+                String lambda232 = "\u03BB232 = ";
+                try {
+                    lambda232
+                            += formatter.format(sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda232.getName())
+                                    .getValue().doubleValue());
+                    lambda232
+                            += " ("
+                            + ((ValueModelReferenced) sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda232.getName()))
+                                    .getReference() //
+                            + ")";
+                } catch (BadLabDataException badLabDataException) {
+                }
+                String lambda234 = "\u03BB234 = ";
+                try {
+                    lambda234
+                            += formatter.format(sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda234.getName())
+                                    .getValue().doubleValue());
+                    lambda234
+                            += " ("
+                            + ((ValueModelReferenced) sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda234.getName()))
+                                    .getReference() //
+                            + ")";
+                } catch (BadLabDataException badLabDataException) {
+                }
+                // perform replacement of footnote parameters
+                footNote = footNote.replaceFirst("<lambda238>", lambda238);
+                footNote = footNote.replaceFirst("<lambda235>", lambda235);
+                footNote = footNote.replaceFirst("<lambda230>", lambda230);
+                footNote = footNote.replaceFirst("<lambda232>", lambda232);
+                footNote = footNote.replaceFirst("<lambda234>", lambda234);
+                footNote = footNote.replaceFirst("<ar231_235sample>", activityFootnoteEntry);
+                footNote = footNote.replaceFirst("<rTh_Umagma>", thU_MagmaFootnoteEntry);
 
-            //<r207_206c>
-            //<bestDateDivider>
-            // april 2010 specialize footnote for zircons
-            switch (zirconPopulationType) {
-                case 1:
-                    footNote = footNote.replaceFirst("<zirconPopulationChoice>", ReportSpecificationsUPb.reportTableFootnotes.get("FN-5zircon"));
-                case 2:
-                    footNote = footNote.replaceFirst("<zirconPopulationChoice>", ReportSpecificationsUPb.reportTableFootnotes.get("FN-5mixed"));
-                default:
-                    footNote = footNote.replaceFirst("<zirconPopulationChoice>", ReportSpecificationsUPb.reportTableFootnotes.get("FN-5noZircon"));
-            }
+                // JULY 2017 for UTh footnotes            
+                // ASSUMPTION - all fractions have same value for these fields
+                if (fractions.get(0) instanceof UThFraction) {
+                    if (footNote.contains("<secularOrGravimetric230238>")) {
+                        boolean isSecular = ((UThFraction) fractions.get(0)).isSpikeCalibrationR230_238IsSecular();
+                        footNote = footNote.replace("<secularOrGravimetric230238>", isSecular
+                                ? "secular equilibrium reference material"
+                                : "gravimetric reference solution");
+                        String refMatName = ((UThFraction) fractions.get(0)).getR230Th_238Ufc_referenceMaterialName();
+                        footNote = footNote.replace("<named230Th238Umodel>", refMatName.length() > 0
+                                ? " (" + refMatName + ")."
+                                : ".");
+                    }
+                    if (footNote.contains("<secularOrGravimetric234238>")) {
+                        boolean isSecular = ((UThFraction) fractions.get(0)).isSpikeCalibrationR234_238IsSecular();
+                        footNote = footNote.replace("<secularOrGravimetric234238>", isSecular
+                                ? "secular equilibrium reference material"
+                                : "gravimetric reference solution");
+                        String refMatName = ((UThFraction) fractions.get(0)).getR234U_238Ufc_referenceMaterialName();
+                        footNote = footNote.replace("<named234U238Umodel>", refMatName.length() > 0
+                                ? " (" + refMatName + ")."
+                                : ".");
+                    }
+                    if (footNote.contains("<dateOfAnalysis>")) {
+                        long dateOfAnalysisMS = ((UThFraction) fractions.get(0)).getDateTimeMillisecondsOfAnalysis();
+                        footNote = footNote.replace("<dateOfAnalysis>", makeFormattedDate(dateOfAnalysisMS));
+                    }
 
-            retVal[6][i] = determineFootNoteLetter(i) + "&" + footNote;
+                }
+                //<r207_206c>
+                //<bestDateDivider>
+                // april 2010 specialize footnote for zircons
+                switch (zirconPopulationType) {
+                    case 1:
+                        footNote = footNote.replaceFirst("<zirconPopulationChoice>", ReportSpecificationsUPb.reportTableFootnotes.get("FN-5zircon"));
+                    case 2:
+                        footNote = footNote.replaceFirst("<zirconPopulationChoice>", ReportSpecificationsUPb.reportTableFootnotes.get("FN-5mixed"));
+                    default:
+                        footNote = footNote.replaceFirst("<zirconPopulationChoice>", ReportSpecificationsUPb.reportTableFootnotes.get("FN-5noZircon"));
+                }
+
+                retVal[6][i] = determineFootNoteLetter(i) + "&" + footNote;
+            }
         }
-
         return retVal;
 
     }
@@ -1015,17 +1019,17 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
     /**
      * @return the isotopeStyle
      */
-    public String getIsotopeStyle();
+    public String getDefaultReportSpecsType();
 
     /**
      * @param isotopeStyle the isotopeStyle to set
      */
-    public void setIsotopeStyle(String isotopeStyle);
+    public void setDefaultReportSpecsType(String isotopeStyle);
 
     /**
-     * @return the isotypeStyleUPb
+     * @return the isdefaultReportSpecsType_UPb
      */
-    public boolean isIsotypeStyleUPb();
+    public boolean isdefaultReportSpecsType_UPb();
 
     /**
      *
@@ -1037,7 +1041,7 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
         DialogEditor myReportSettingsManager
                 = new ReportSettingsManager(parent, true, reportSettingsModel);
         myReportSettingsManager.setSize(455, 685);
-//        DialogEditor.setDefaultLookAndFeelDecorated(true);
+
         myReportSettingsManager.setVisible(true);
     }
 }

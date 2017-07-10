@@ -19,58 +19,78 @@
 package org.earthtime.dataDictionaries;
 
 /**
+ * Created July 2011 as part of major refactoring to control magic strings
  *
  * @author James F. Bowring
- */
-/*
- *
- *
- * Created July 2011 as part of major refactoring to control magic strings
  */
 public enum SampleAnalysisTypesEnum {
 
     // Analysis Types
     /**
-     * 
+     *
      */
-    IDTIMS( "IDTIMS" ),
-    /**
-     * 
-     */
-    LAICPMS( "LAICPMS" ),
-    SHRIMP("SHRIMP"),
-
+    IDTIMS("IDTIMS", "UPb", "UPb"),
     /**
      *
      */
-    LASS("LASS"),
-    USERIES_CARB("USERIES_CARB"),
-    USERIES_IGN("USERIES_IGN"),
-
+    LAICPMS("LAICPMS", "UPb", "UPb"),
+    LAICPMS_MCUA("LAICPMS_MCUA", "UPb", "UPb"),
+    LAICPMS_SCWSU_vB("LAICPMS_SCWSU_vB", "UPb", "UPb"),
+    LAICPMS_NIGL("LAICPMS_NIGL", "UPb", "UPb"),
+    LAICPMS_SCWSU_vA("LAICPMS_SCWSU_vA", "UPb", "UPb"),
+    LAICPMS_SCWSU_vV("LAICPMS_SCWSU_vV", "UPb", "UPb"),
+    LAICPMSMC("LAICPMSMC", "UPb", "UPb"),
+    LAICPMS_UH("LAICPMS_UH", "UPb", "UPb"),
+    SHRIMP("SHRIMP", "UPb", "UPb"),
     /**
      *
      */
-    GENERIC_UPB("GENERIC_UPB"),
+    LASS("LASS", "UPb", "UPb"),
+    USERIES_CARB("USERIES_CARB", "UTh", "UTh"),//Carbonate"),
+    USERIES_IGN("USERIES_IGN", "UTh", "UTh"),//Igneous"),
+    /**
+     *
+     */
+    GENERIC_UPB("GENERIC_UPB", "UPb", "UPb"),
     /**
      * Used for PROJECTs or COMPILATIONs samples
      */
-    COMPILED("COMPILED"),
+    COMPILED("COMPILED", "UPb", "UPb"),
     /**
      * Used for PROJECTs or COMPILATIONs samples
      */
-    TRIPOLIZED("TRIPOLIZED");
-    private String name;
+    TRIPOLIZED("TRIPOLIZED", "UPb", "UPb");
 
-    private SampleAnalysisTypesEnum ( String name ) {
+    private final String name;
+    private final String isotypeSystem;
+    private final String defaultReportSpecsType;
+
+    private SampleAnalysisTypesEnum(String name, String isotypeSystem, String defaultReportSpecsType) {
         this.name = name;
+        this.isotypeSystem = isotypeSystem;
+        this.defaultReportSpecsType = defaultReportSpecsType;
     }
 
     /**
-     * 
+     *
      * @return
      */
-    public String getName () {
+    public String getName() {
         return name;
+    }
+
+    /**
+     * @return the isotypeSystem
+     */
+    public String getIsotypeSystem() {
+        return isotypeSystem;
+    }
+
+    /**
+     * @return the defaultReportSpecsType
+     */
+    public String getDefaultReportSpecsType() {
+        return defaultReportSpecsType;
     }
 
 }

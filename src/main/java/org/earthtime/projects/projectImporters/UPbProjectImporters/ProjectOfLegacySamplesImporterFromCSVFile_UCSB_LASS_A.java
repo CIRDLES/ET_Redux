@@ -108,7 +108,7 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_UCSB_LASS_A extends Abstr
                                     myFractionData.get(0), //
                                     SampleTypesEnum.LEGACY.getName(), //
                                     SampleAnalysisTypesEnum.LASS.getName(), //
-                                    ReduxConstants.ANALYSIS_PURPOSE.NONE, "UPb");
+                                    ReduxConstants.ANALYSIS_PURPOSE.NONE, "UPb", "UPb");
 
                             projectSamples.add(currentSample);
 

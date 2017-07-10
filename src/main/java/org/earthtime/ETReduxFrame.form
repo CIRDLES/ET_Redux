@@ -573,6 +573,14 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editCurrentReportSettingsModel_menuItemActionPerformed"/>
               </Events>
             </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="showReportHeadings_menuItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Show / Hide Report Headings"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="showReportHeadings_menuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator12">
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="saveCurrentReportSettingsModelAsLocalXMLFile">
@@ -609,12 +617,20 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="loadDefaultReportSettingsModelActionPerformed"/>
               </Events>
             </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="loadEARTHTIMEDefaultReportSettingsModel_menuItem">
+            <MenuItem class="javax.swing.JMenuItem" name="loadEARTHTIMEDefaultReportSettingsModel_UPb_menuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Load EARTHTIME Default Report Settings Model"/>
+                <Property name="text" type="java.lang.String" value="Load EARTHTIME Default Report Settings Model UPb"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="loadEARTHTIMEDefaultReportSettingsModel_menuItemActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="loadEARTHTIMEDefaultReportSettingsModel_UPb_menuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="loadEARTHTIMEDefaultReportSettingsModel_UTh_menuItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Load EARTHTIME Default Report Settings Model UTh"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="loadEARTHTIMEDefaultReportSettingsModel_UTh_menuItemActionPerformed"/>
               </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator4">

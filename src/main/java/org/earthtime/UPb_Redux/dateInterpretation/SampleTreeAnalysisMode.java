@@ -639,7 +639,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
                     });
                     popup.add(menuItem);
                     
-                    if (sample.getIsotopeStyle().compareToIgnoreCase("UTh") == 0) {
+                    if (sample.getIsotopeSystem().compareToIgnoreCase("UTh") == 0) {
                         menuItem = new JMenuItem("Set Isochrons for this model");
                         menuItem.addActionListener((ActionEvent arg0) -> {
                             DialogEditor myIsochronDialog

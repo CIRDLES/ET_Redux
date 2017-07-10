@@ -53,13 +53,13 @@ public class ReportSettings implements
      * version number is advanced so that any existing analysis will update its
      * report models upon opening in ET_Redux.
      */
-    private static transient int CURRENT_VERSION_REPORT_SETTINGS_UPB = 356;
-    private static transient int CURRENT_VERSION_REPORT_SETTINGS_UTH = 554;
+    private static transient int CURRENT_VERSION_REPORT_SETTINGS_UPB = 359;
+    private static transient int CURRENT_VERSION_REPORT_SETTINGS_UTH = 557;
 
     // Fields
     private String name;
     private int version;
-    private String isotopeStyle;
+    private String defaultReportSpecsType;
     private ReportCategoryInterface fractionCategory;
     private ReportCategoryInterface compositionCategory;
     private ReportCategoryInterface isotopicRatiosCategory;
@@ -84,14 +84,14 @@ public class ReportSettings implements
      * Creates a new instance of ReportSettings
      *
      * @param name
-     * @param isotopeStyle the value of isotopeStyle
+     * @param defaultReportSpecsType the value of defaultReportSpecsType
      */
-    public ReportSettings(String name, String isotopeStyle) {
+    public ReportSettings(String name, String defaultReportSpecsType) {
 
         this.name = name;
 
-        this.isotopeStyle = isotopeStyle;
-        if (isIsotypeStyleUPb()) {
+        this.defaultReportSpecsType = defaultReportSpecsType;
+        if (isdefaultReportSpecsType_UPb()) {
             this.version = CURRENT_VERSION_REPORT_SETTINGS_UPB;
         } else {
             this.version = CURRENT_VERSION_REPORT_SETTINGS_UTH;
@@ -109,7 +109,7 @@ public class ReportSettings implements
                         "Fraction",
                         ReportSpecificationsAbstract.ReportCategory_Fraction2, true);
 
-        if (isIsotypeStyleUPb()) {
+        if (isdefaultReportSpecsType_UPb()) {
             this.datesCategory
                     = new ReportCategory(//
                             "Dates",
@@ -147,7 +147,7 @@ public class ReportSettings implements
         } else {
             this.datesCategory
                     = new ReportCategory(//
-                            "USeries Outputs", 
+                            "USeries Outputs",
                             ReportSpecificationsUTh.ReportCategory_USeriesReportTable, true);
         }
 
@@ -175,7 +175,7 @@ public class ReportSettings implements
      */
     public static ReportSettingsInterface EARTHTIMEReportSettingsUTh() {
         ReportSettingsInterface EARTHTIME
-                = new ReportSettings("EARTHTIME UPb", "UTh");
+                = new ReportSettings("EARTHTIME UTh", "UTh");
 
         return EARTHTIME;
     }
@@ -184,7 +184,7 @@ public class ReportSettings implements
         ReportSettingsInterface reportSettingsModel = myReportSettingsModel;
 
         if (myReportSettingsModel == null) {
-            reportSettingsModel = ReduxLabData.getInstance().getDefaultReportSettingsModelByIsotopeStyle(myReportSettingsModel.getIsotopeStyle());
+            reportSettingsModel = ReduxLabData.getInstance().getDefaultReportSettingsModelBySpecsType(myReportSettingsModel.getDefaultReportSpecsType());
         } else // new approach oct 2014
         {   // this provides for seamless updates to reportsettings implementation
             String myReportSettingsName = myReportSettingsModel.getName();
@@ -195,7 +195,7 @@ public class ReportSettings implements
                             "You may lose some report customizations. Thank you for your patience."//,
                         });
 
-                reportSettingsModel = new ReportSettings(myReportSettingsName, myReportSettingsModel.getIsotopeStyle());
+                reportSettingsModel = new ReportSettings(myReportSettingsName, myReportSettingsModel.getDefaultReportSpecsType());
             }
         }
 
@@ -513,7 +513,7 @@ public class ReportSettings implements
      */
     @Override
     public boolean isOutOfDate() {
-        return isIsotypeStyleUPb() ? isOutOfDateUPb() : isOutOfDateUTh();
+        return isdefaultReportSpecsType_UPb() ? isOutOfDateUPb() : isOutOfDateUTh();
     }
 
     /**
@@ -552,22 +552,6 @@ public class ReportSettings implements
         getReportCategories().stream().filter((rc) -> (rc != null)).forEach((rc) -> {
             rc.setLegacyData(legacyData);
         });
-    }
-
-    /**
-     *
-     * @param args
-     * @throws Exception
-     */
-    public static void main(String[] args) throws Exception {
-
-        ReportSettingsInterface reportSettings
-                = new ReportSettings("Test ReportSettings", "UPb");
-        String testFileName = "ReportSettingsTEST.xml";
-
-        reportSettings.serializeXMLObject(testFileName);
-        reportSettings.readXMLObject(testFileName, true);
-
     }
 
     /**
@@ -651,29 +635,32 @@ public class ReportSettings implements
     }
 
     /**
-     * @return the isotopeStyle
+     * @return the defaultReportSpecsType
      */
     @Override
-    public String getIsotopeStyle() {
-        if (isotopeStyle == null) {
-            isotopeStyle = "UPb";
+    public String getDefaultReportSpecsType() {
+        if (defaultReportSpecsType == null) {
+            defaultReportSpecsType = "UPb";
         }
-        return isotopeStyle;
+        return defaultReportSpecsType;
     }
 
     /**
-     * @param isotopeStyle the isotopeStyle to set
+     * @param defaultReportSpecsType the defaultReportSpecsType to set
      */
     @Override
-    public void setIsotopeStyle(String isotopeStyle) {
-        this.isotopeStyle = isotopeStyle;
+    public void setDefaultReportSpecsType(String defaultReportSpecsType) {
+        this.defaultReportSpecsType = defaultReportSpecsType;
     }
 
     /**
-     * @return the isotypeStyleUPb
+     * @return the isdefaultReportSpecsType_UPb
      */
     @Override
-    public boolean isIsotypeStyleUPb() {
-        return (isotopeStyle.compareToIgnoreCase("UPb") == 0);
+    public boolean isdefaultReportSpecsType_UPb() {
+        if (defaultReportSpecsType == null) {
+            defaultReportSpecsType = "UPb";
+        }
+        return (defaultReportSpecsType.compareToIgnoreCase("UPb") == 0);
     }
 }

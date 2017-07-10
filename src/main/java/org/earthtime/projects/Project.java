@@ -201,7 +201,7 @@ public class Project implements
                         projectName, //
                         SampleTypesEnum.PROJECT.getName(), //
                         SampleAnalysisTypesEnum.TRIPOLIZED.getName(), //
-                        ReduxConstants.ANALYSIS_PURPOSE.DetritalSpectrum, "UPb");
+                        ReduxConstants.ANALYSIS_PURPOSE.DetritalSpectrum, "UPb", "UPb");
         }
 
         ArrayList<AbstractTripoliSample> tripoliSamples = tripoliSession.getTripoliSamples();
@@ -225,7 +225,7 @@ public class Project implements
                             tripoliSample.getSampleName(), //
                             SampleTypesEnum.ANALYSIS.getName(), //
                             sampleAnalysisType.getName(), //
-                            analysisPurpose, "UPb");
+                            analysisPurpose, "UPb", "UPb");
 
                     projectSamples.add(sample);
 

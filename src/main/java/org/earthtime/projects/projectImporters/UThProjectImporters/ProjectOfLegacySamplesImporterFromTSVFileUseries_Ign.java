@@ -23,8 +23,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -40,7 +38,7 @@ import org.earthtime.UTh_Redux.samples.SampleUTh;
 import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.aliquots.ReduxAliquotInterface;
 import org.earthtime.dataDictionaries.FileDelimiterTypesEnum;
-import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
+import static org.earthtime.dataDictionaries.SampleAnalysisTypesEnum.USERIES_IGN;
 import org.earthtime.dataDictionaries.SampleTypesEnum;
 import org.earthtime.dataDictionaries.UThAnalysisMeasures;
 import org.earthtime.dataDictionaries.UThCompositionalMeasures;
@@ -123,8 +121,10 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Ign extends Abstra
                                 currentSample = new SampleUTh(//
                                         sampleID, //
                                         SampleTypesEnum.LEGACY.getName(), //
-                                        SampleAnalysisTypesEnum.USERIES_IGN.getName(), //
-                                        ReduxConstants.ANALYSIS_PURPOSE.SingleAge, "UTh");
+                                        USERIES_IGN.getName(), //
+                                        ReduxConstants.ANALYSIS_PURPOSE.SingleAge, 
+                                        USERIES_IGN.getIsotypeSystem(), 
+                                        USERIES_IGN.getDefaultReportSpecsType());
 
                                 projectSamples.add(currentSample);
 

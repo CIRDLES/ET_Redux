@@ -340,16 +340,6 @@ public interface SampleInterface {
      * @return
      */
     public default boolean isAnalysisTypeLAICPMS() {
-//        boolean retVal = false;
-//        try {
-//            retVal = SampleAnalysisTypesEnum.LAICPMS.equals(SampleAnalysisTypesEnum.valueOf(getSampleAnalysisType()));
-//        } catch (Exception e) {
-//        }
-//
-//        return retVal;
-//        
-
-        // sept 2016
         return getSampleAnalysisType().startsWith("LAICPMS");
     }
 
@@ -1664,13 +1654,26 @@ public interface SampleInterface {
      * @param reportSettingsModel
      */
     public abstract void setReportSettingsModel(ReportSettingsInterface reportSettingsModel);
+    
+    /**
+     * @return the defaultReportSpecsType
+     */
+    public abstract String getDefaultReportSpecsType();
 
     public static void loadDefaultEARTHTIMEReportSettingsModel(SampleInterface sample) {
-        if (sample.getIsotopeStyle().compareToIgnoreCase("UPb") == 0) {
+        if (sample.getIsotopeSystem().compareToIgnoreCase("UPb") == 0) {
             sample.setReportSettingsModel(ReportSettings.EARTHTIMEReportSettingsUPb());
         } else {
             sample.setReportSettingsModel(ReportSettings.EARTHTIMEReportSettingsUTh());
         }
+    }
+
+    public static void loadDefaultEARTHTIMEReportSettingsModel_UPb(SampleInterface sample) {
+        sample.setReportSettingsModel(ReportSettings.EARTHTIMEReportSettingsUPb());
+    }
+
+    public static void loadDefaultEARTHTIMEReportSettingsModel_UTh(SampleInterface sample) {
+        sample.setReportSettingsModel(ReportSettings.EARTHTIMEReportSettingsUTh());
     }
 
     /**
@@ -2058,7 +2061,7 @@ public interface SampleInterface {
         }
     }
 
-    public String getIsotopeStyle();
+    public String getIsotopeSystem();
 
     // april 2011 update to rrr.igsn
     /**
