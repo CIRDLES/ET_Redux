@@ -22,65 +22,67 @@ package org.earthtime.dataDictionaries;
  *
  * @author James F. Bowring
  */
-
 public enum UThCompositionalMeasures {
 
     // UThCompositionalMeasures
     /**
-     * 
+     *
      */
-    conc238U( "conc238U" ),
+    conc238U("conc238U"),
+    arConc238U("arConc238U"),
     /**
-     * 
+     *
      */
-    conc232Th( "conc232Th" ),
-    conc230Th( "conc230Th" ),
+    conc232Th("conc232Th"),
+    arConc232Th("arConc232Th"),
+    conc230Th("conc230Th"),
+    arConc230Th("arConc230Th"),
     /**
-     * 
+     *
      */
-    conc228Ra( "conc228Ra" ),
-    concBa( "concBa" ),
+    conc226Ra("conc226Ra"),
+    arConc226Ra("arConc226Ra"),
+    concBa("concBa"),
     /**
-     * 
+     *
      */
-    conc231Pa( "conc231Pa" );
-
+    conc231Pa("conc231Pa");
 
     private String name;
 
-    private UThCompositionalMeasures ( String name ) {
+    private UThCompositionalMeasures(String name) {
         this.name = name;
     }
 
     /**
-     * 
+     *
      * @return
      */
-    public String getName () {
+    public String getName() {
         return name;
     }
 
     /**
-     * 
+     *
      * @return
      */
-    public static String[] getNames () {
+    public static String[] getNames() {
         String[] retVal = new String[UThCompositionalMeasures.values().length];
-        for (int i = 0; i < UThCompositionalMeasures.values().length; i ++) {
+        for (int i = 0; i < UThCompositionalMeasures.values().length; i++) {
             retVal[i] = UThCompositionalMeasures.values()[i].getName();
         }
         return retVal;
     }
 
     /**
-     * 
+     *
      * @param checkString
      * @return
      */
-    public static boolean contains ( String checkString ) {
+    public static boolean contains(String checkString) {
         boolean retVal = true;
         try {
-            UThCompositionalMeasures.valueOf( checkString );
+            UThCompositionalMeasures.valueOf(checkString);
         } catch (IllegalArgumentException e) {
             retVal = false;
         }

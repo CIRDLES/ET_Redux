@@ -2524,20 +2524,7 @@ public class UPbFractionReducer extends FractionReducer {
         }
 
     }
-
-    private static void initializeAtomicMolarMasses(
-            AbstractRatiosDataModel physicalConstants) {
-
-        gmol204 = ((PhysicalConstantsModel) physicalConstants).getAtomicMolarMassByName("gmol204");
-//        gmol205 = physicalConstants.getAtomicMolarMassByName("gmol205");
-        gmol206 = ((PhysicalConstantsModel) physicalConstants).getAtomicMolarMassByName("gmol206");
-        gmol207 = ((PhysicalConstantsModel) physicalConstants).getAtomicMolarMassByName("gmol207");
-        gmol208 = ((PhysicalConstantsModel) physicalConstants).getAtomicMolarMassByName("gmol208");
-
-        gmol235 = ((PhysicalConstantsModel) physicalConstants).getAtomicMolarMassByName("gmol235");
-        gmol238 = ((PhysicalConstantsModel) physicalConstants).getAtomicMolarMassByName("gmol238");
-    }
-
+    
     /**
      * @return the sessionCorrectedUnknownsSummaries
      */

@@ -46,17 +46,9 @@ public class TracerUPbModel extends AbstractRatiosDataModel {
 
     // class variables
     private static final long serialVersionUID = -3351436105905394538L;
-    private static Map<String, AbstractRatiosDataModel> modelInstances = //
+    private static Map<String, AbstractRatiosDataModel> modelInstances
+            = //
             new HashMap<>();
-    private static final AbstractRatiosDataModel noneModel = //
-            new TracerUPbModel( //
-                    ReduxConstants.NONE, //
-                    1, 0, //
-                    ReduxConstants.NONE, //
-                    "No Lab", //
-                    "2000-01-01", //
-                    "Placeholder model", //
-                    "Placeholder model");
 
     // START ********** ET535Model  **************  ET535Model  ***********  ET535Model *******************
     private static final ValueModel[] myRatiosET535Model = new ValueModel[8];
@@ -129,7 +121,20 @@ public class TracerUPbModel extends AbstractRatiosDataModel {
         correlationsET535Model.put("rhoConcPb205t__concU235t", new BigDecimal("0.995699056887309"));
 
     }
-    private static final AbstractRatiosDataModel ET535Model = //
+
+    private static final AbstractRatiosDataModel noneModel
+            = //
+            new TracerUPbModel( //
+                    ReduxConstants.NONE, //
+                    1, 0, //
+                    ReduxConstants.NONE, //
+                    "No Lab", //
+                    "2000-01-01", //
+                    "Placeholder model", //
+                    "Placeholder model");
+
+    private static final AbstractRatiosDataModel ET535Model
+            = //
             createInstance(//
                     "ET535",
                     3, 0,//
@@ -226,7 +231,8 @@ public class TracerUPbModel extends AbstractRatiosDataModel {
 
         correlationsET2535Model.put("rhoConcPb205t__concU235t", new BigDecimal("0.995699056887309"));
     }
-    private static final AbstractRatiosDataModel ET2535Model = //
+    private static final AbstractRatiosDataModel ET2535Model
+            = //
             createInstance(//
                     "ET2535",
                     3, 0, //
@@ -409,7 +415,8 @@ public class TracerUPbModel extends AbstractRatiosDataModel {
 //        modelInstances.put( ET535Model.getNameAndVersion(), ET535Model );
 //        modelInstances.put( ET2535Model.getNameAndVersion(), ET2535Model );
 
-        ArrayList<AbstractRatiosDataModel> arrayListOfModels = //
+        ArrayList<AbstractRatiosDataModel> arrayListOfModels
+                = //
                 new ReduxLabDataList<>("Tracer");
         Iterator<String> modelsKeyInterator = modelInstances.keySet().iterator();
         while (modelsKeyInterator.hasNext()) {

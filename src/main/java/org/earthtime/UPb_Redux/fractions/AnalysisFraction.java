@@ -176,11 +176,14 @@ public class AnalysisFraction extends Fraction implements
         BufferedReader reader = URIHelper.getBufferedReader(filename);
 
         if (reader != null) {
-            boolean isValidOrAirplaneMode = !doValidate;
+            boolean isValidOrAirplaneMode = true;
 
             XStream xstream = getXStreamReader();
 
-            isValidOrAirplaneMode = URIHelper.validateXML(reader, filename, analysisFractionXMLSchemaURL);
+            if (doValidate) {
+                isValidOrAirplaneMode = URIHelper.validateXML(reader, filename, analysisFractionXMLSchemaURL);
+            }
+
             if (isValidOrAirplaneMode) {
                 // re-create reader
                 reader = URIHelper.getBufferedReader(filename);
@@ -430,6 +433,5 @@ public class AnalysisFraction extends Fraction implements
     public ValueModel getLegacyActivityRatioByName(String arName) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
-    
+
 }

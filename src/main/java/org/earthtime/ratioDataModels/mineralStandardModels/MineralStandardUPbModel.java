@@ -65,15 +65,6 @@ public class MineralStandardUPbModel extends AbstractRatiosDataModel {
     private static final long serialVersionUID = -5845209084226246480L;
     private static Map<String, AbstractRatiosDataModel> modelInstances
             = new HashMap<>();
-    private static final AbstractRatiosDataModel noneModel
-            = new MineralStandardUPbModel( //
-                    ReduxConstants.NONE, //
-                    1, 0,//
-                    "No Lab", //
-                    "2000-01-01", //
-                    "Placeholder model", "Placeholder model",//
-                    "Placeholder model", "Placeholder model",
-                    InitialPbModelET.getNoneInstance());
 
     private static final ValueModel[] myRatios = new ValueModel[5];
     private static final Map<String, BigDecimal> correlations = new HashMap<>();
@@ -130,10 +121,19 @@ public class MineralStandardUPbModel extends AbstractRatiosDataModel {
                 new BigDecimal("10"), BigDecimal.ZERO);
 
     }
-    
+
+    private static final AbstractRatiosDataModel noneModel
+            = new MineralStandardUPbModel( //
+                    ReduxConstants.NONE, //
+                    1, 0,//
+                    "No Lab", //
+                    "2000-01-01", //
+                    "Placeholder model", "Placeholder model",//
+                    "Placeholder model", "Placeholder model",
+                    InitialPbModelET.getNoneInstance());
+
     private static final AbstractRatiosDataModel EARTHTIMESriLankaStandardModel
-            = 
-            createInstance("EARTHTIME SriLanka Reference Material",
+            = createInstance("EARTHTIME SriLanka Reference Material",
                     1, 0,//
                     "EARTHTIME",//
                     "2012-04-01",
@@ -259,8 +259,7 @@ public class MineralStandardUPbModel extends AbstractRatiosDataModel {
 
     }
     private static final AbstractRatiosDataModel EARTHTIMEPlesoviceStandardModel
-            = 
-            createInstance("EARTHTIME Plesovice Reference Material",
+            = createInstance("EARTHTIME Plesovice Reference Material",
                     1, 0,//
                     "EARTHTIME",//
                     "2012-04-01",
@@ -691,8 +690,8 @@ public class MineralStandardUPbModel extends AbstractRatiosDataModel {
                     lambda238}, parDerivTerms);
         apparentDates[0].setOneSigma(//
                 parDerivTerms.get("dAge206_238r__dR206_238r") //
-                .abs()//
-                .multiply(r206_238r.getOneSigmaAbs()));
+                        .abs()//
+                        .multiply(r206_238r.getOneSigmaAbs()));
 
         apparentDates[1] = new Age207_206r();
         getApparentDates()[1].calculateValue(
@@ -704,8 +703,8 @@ public class MineralStandardUPbModel extends AbstractRatiosDataModel {
                     lambda238}, parDerivTerms);
         apparentDates[1].setOneSigma(//
                 parDerivTerms.get("dAge207_206r__dR207_206r")//
-                .abs()//
-                .multiply(r207_206r.getOneSigmaAbs()));
+                        .abs()//
+                        .multiply(r207_206r.getOneSigmaAbs()));
 
         apparentDates[2] = new Age207_235r();
         getApparentDates()[2].calculateValue(
@@ -714,8 +713,8 @@ public class MineralStandardUPbModel extends AbstractRatiosDataModel {
                     lambda235}, parDerivTerms);
         apparentDates[2].setOneSigma(//
                 parDerivTerms.get("dAge207_235r__dR207_235r")//
-                .abs()//
-                .multiply(r207_235r.getOneSigmaAbs()));//******************************calc this with matrices
+                        .abs()//
+                        .multiply(r207_235r.getOneSigmaAbs()));//******************************calc this with matrices
 
         apparentDates[3] = new Age208_232r();
         getApparentDates()[3].calculateValue(
@@ -724,8 +723,8 @@ public class MineralStandardUPbModel extends AbstractRatiosDataModel {
                     lambda232}, parDerivTerms);
         apparentDates[3].setOneSigma(//
                 parDerivTerms.get("dAge208_232r__dR208_232r")//
-                .abs()//
-                .multiply(r208_232r.getOneSigmaAbs()));
+                        .abs()//
+                        .multiply(r208_232r.getOneSigmaAbs()));
     }
 
     /**
@@ -741,7 +740,7 @@ public class MineralStandardUPbModel extends AbstractRatiosDataModel {
             if (apparentDates[i].hasPositiveValue()) {
                 retVal += "<br>" //
                         + apparentDates[i].getName() + " : " + apparentDates[i].formatValueAndTwoSigmaForPublicationSigDigMode( //
-                                "ABS", -6, 2) //
+                        "ABS", -6, 2) //
                         + " (2\u03C3)  Ma";
             }
         }

@@ -49,7 +49,9 @@ import org.earthtime.utilities.DateHelpers;
 import org.earthtime.xmlUtilities.XMLSerializationI;
 
 /**
- * Deprecated June 2012.  Needed for compatibility with legacy serializations (archives).
+ * Deprecated June 2012. Needed for compatibility with legacy serializations
+ * (archives).
+ *
  * @author James F. Bowring
  */
 public class MineralStandardModel implements
@@ -75,7 +77,7 @@ public class MineralStandardModel implements
     /**
      * Creates a new instance of MineralStandardModel
      */
-    public MineralStandardModel () {
+    public MineralStandardModel() {
         this.name = ReduxConstants.DEFAULT_OBJECT_NAME;
         this.mineralStandardName = ReduxConstants.DEFAULT_OBJECT_NAME;
         this.standardMineralName = ReduxConstants.DEFAULT_OBJECT_NAME;
@@ -84,74 +86,74 @@ public class MineralStandardModel implements
                 BigDecimal.ZERO,
                 "ABS",
                 BigDecimal.ZERO, BigDecimal.ZERO,
-                "Reference" );
+                "Reference");
         this.measuredAge = new ValueModelReferenced(
                 "MeasuredAge",
                 BigDecimal.ZERO,
                 "ABS",
                 BigDecimal.ZERO, BigDecimal.ZERO,
-                "Reference" );
+                "Reference");
         this.comment = "Comment";
 
         initializeRadiogenicRatios();
     }
 
     /**
-     * 
+     *
      * @return
      */
-    protected Object readResolve () {
+    protected Object readResolve() {
 
         // march 2012 conversion to new MineralStandardUPbModel
         AbstractRatiosDataModel mineralStandardUPbModel;
 
-        if ( (this.name.equalsIgnoreCase( "<none>" )) ) {
+        if ((this.name.equalsIgnoreCase("<none>"))) {
 
             mineralStandardUPbModel = MineralStandardUPbModel.getNoneInstance();//       convertModel( new MineralStandardModel( ReduxConstants.NONE ) );
         } else {
-            mineralStandardUPbModel = convertModel( this );
+            mineralStandardUPbModel = convertModel(this);
         }
 
         return mineralStandardUPbModel;
     }
 
     /**
-     * 
+     *
      * @param model
      * @return
      */
-    public static AbstractRatiosDataModel convertModel ( MineralStandardModel model ) {
+    public static AbstractRatiosDataModel convertModel(MineralStandardModel model) {
 
-        ValueModel[] ratios = new MineralStandardUPbRatioModel[ model.radiogenicIsotopeRatios.length];
-        for (int i = 0; i < ratios.length; i ++){
+        ValueModel[] ratios = new MineralStandardUPbRatioModel[model.radiogenicIsotopeRatios.length];
+        for (int i = 0; i < ratios.length; i++) {
             ratios[i] = new MineralStandardUPbRatioModel(model.radiogenicIsotopeRatios[i].getName());
             ratios[i].copyValuesFrom(model.radiogenicIsotopeRatios[i]);
         }
-        
+
         return//
                 MineralStandardUPbModel.createInstance(//
-                model.name,//
-                1, 0, //
-                "Unknown Lab",//
-                DateHelpers.defaultEarthTimeDateString(),//
-                "No reference", //
-                "No comment", //
-                ratios, //
-                null, null,//
-                model.mineralStandardName,//
-                model.standardMineralName,//
-                InitialPbModelET.getNoneInstance());
+                        model.name,//
+                        1, 0, //
+                        "Unknown Lab",//
+                        DateHelpers.defaultEarthTimeDateString(),//
+                        "No reference", //
+                        "No comment", //
+                        ratios, //
+                        null, null,//
+                        model.mineralStandardName,//
+                        model.standardMineralName,//
+                        InitialPbModelET.getNoneInstance());
 
     }
 
-    private void initializeRadiogenicRatios () {
+    private void initializeRadiogenicRatios() {
         radiogenicIsotopeRatios = new ValueModel[DataDictionary.RadiogenicIsotopeRatioTypes.length];
-        for (int i = 0; i < DataDictionary.RadiogenicIsotopeRatioTypes.length; i ++) {
-            radiogenicIsotopeRatios[i] =
-                    new ValueModel( DataDictionary.getRadiogenicIsotopeRatioTypes( i ),
-                    BigDecimal.ZERO,
-                    "PCT",
-                    BigDecimal.ZERO, BigDecimal.ZERO );
+        for (int i = 0; i < DataDictionary.RadiogenicIsotopeRatioTypes.length; i++) {
+            radiogenicIsotopeRatios[i]
+                    = new ValueModel(DataDictionary.getRadiogenicIsotopeRatioTypes(i),
+                            BigDecimal.ZERO,
+                            "PCT",
+                            BigDecimal.ZERO, BigDecimal.ZERO);
         }
     }
 
@@ -159,7 +161,7 @@ public class MineralStandardModel implements
      *
      * @param modelName
      */
-    public MineralStandardModel ( String modelName ) {
+    public MineralStandardModel(String modelName) {
         this();
         this.name = modelName.trim();
 
@@ -169,21 +171,21 @@ public class MineralStandardModel implements
      *
      * @return
      */
-    public MineralStandardModel Copy () {
-        MineralStandardModel tempModel = new MineralStandardModel( getName() );
+    public MineralStandardModel Copy() {
+        MineralStandardModel tempModel = new MineralStandardModel(getName());
 
-        tempModel.setMineralStandardName( getMineralStandardName() );
-        tempModel.setStandardMineralName( getStandardMineralName() );
-        tempModel.setTrueAge( getTrueAge().copy() );
-        tempModel.setMeasuredAge( getMeasuredAge().copy() );
-        tempModel.setComment( getComment() );
+        tempModel.setMineralStandardName(getMineralStandardName());
+        tempModel.setStandardMineralName(getStandardMineralName());
+        tempModel.setTrueAge(getTrueAge().copy());
+        tempModel.setMeasuredAge(getMeasuredAge().copy());
+        tempModel.setComment(getComment());
 
         ValueModel[] myCopy = new ValueModel[radiogenicIsotopeRatios.length];
-        for (int i = 0; i < myCopy.length; i ++) {
+        for (int i = 0; i < myCopy.length; i++) {
             myCopy[i] = radiogenicIsotopeRatios[i].copy();
         }
 
-        tempModel.setRadiogenicIsotopeRatios( myCopy );
+        tempModel.setRadiogenicIsotopeRatios(myCopy);
 
         return tempModel;
     }
@@ -195,9 +197,9 @@ public class MineralStandardModel implements
      * @throws ClassCastException
      */
     @Override
-    public int compareTo ( MineralStandardModel mineralStandardModel ) throws ClassCastException {
+    public int compareTo(MineralStandardModel mineralStandardModel) throws ClassCastException {
         String mineralStandardModelName = ((MineralStandardModel) mineralStandardModel).getName();
-        return this.getName().trim().compareToIgnoreCase( mineralStandardModelName.trim() );
+        return this.getName().trim().compareToIgnoreCase(mineralStandardModelName.trim());
     }
 
     /**
@@ -206,19 +208,19 @@ public class MineralStandardModel implements
      * @return
      */
     @Override
-    public boolean equals ( Object mineralStandardModel ) {
+    public boolean equals(Object mineralStandardModel) {
         //check for self-comparison
-        if ( this == mineralStandardModel ) {
+        if (this == mineralStandardModel) {
             return true;
         }
-        if (  ! (mineralStandardModel instanceof MineralStandardModel) ) {
+        if (!(mineralStandardModel instanceof MineralStandardModel)) {
             return false;
         }
 
         MineralStandardModel myMineralStandardModel = (MineralStandardModel) mineralStandardModel;
 
         return (this.getName().trim().
-                compareToIgnoreCase( myMineralStandardModel.getName().trim() ) == 0);
+                compareToIgnoreCase(myMineralStandardModel.getName().trim()) == 0);
 
     }
 
@@ -228,54 +230,47 @@ public class MineralStandardModel implements
      * @return
      */
     @Override
-    public int hashCode () {
+    public int hashCode() {
 
         return 0;
     }
 
     /**
-     * gets a single ratio from this
-     * <code>MineralStandardModel</code>'s
+     * gets a single ratio from this <code>MineralStandardModel</code>'s
      * <code>radiogenicIsotopeRatios</code> specified by argument
-     * <code>ratioName</code>. Returns a new, empty
-     * <code>
+     * <code>ratioName</code>. Returns a new, empty      <code>
      * ValueModel</code> if no matching radiogenicIsotopeRatios is found.
      *
-     * @pre argument
-     * <code>ratioName</code> is a valid
-     * <code>String</code> @post returns the
-     * <code>ValueModel</code> found in this
-     * <code>MineralStandardModel</code>'s
-     * <code>radiogenicIsotopeRatios</code> whose name matches argument
-     * <code>ratioName</code>
+     * @pre argument <code>ratioName</code> is a valid <code>String</code> @post
+     * returns the <code>ValueModel</code> found in this
+     * <code>MineralStandardModel</code>'s <code>radiogenicIsotopeRatios</code>
+     * whose name matches argument <code>ratioName</code>
      *
      * @param ratioName name of the radiogenicIsotopeRatios to search for
-     * @return
-     * <code>ValueModel</code> - ratio found in
+     * @return <code>ValueModel</code> - ratio found in
      * <code>radiogenicIsotopeRatios</code> whose name matches argument
-     * <code>ratioName</code> or a new
-     * <code>
+     * <code>ratioName</code> or a new      <code>
      *          ValueModel</code> if no match is found
      */
-    public ValueModel getRadiogenicRatioByName ( String ratioName ) {
+    public ValueModel getRadiogenicRatioByName(String ratioName) {
 
-        if ( radiogenicIsotopeRatios == null ) {
+        if (radiogenicIsotopeRatios == null) {
             initializeRadiogenicRatios();
         }
 
         ValueModel retVal = null;
-        for (int i = 0; i < radiogenicIsotopeRatios.length; i ++) {
-            if ( radiogenicIsotopeRatios[i].getName().equals( ratioName ) ) {
+        for (int i = 0; i < radiogenicIsotopeRatios.length; i++) {
+            if (radiogenicIsotopeRatios[i].getName().equals(ratioName)) {
                 retVal = radiogenicIsotopeRatios[i];
             }
         }
 
-        if ( retVal == null ) {
+        if (retVal == null) {
             // not found
-            retVal = new ValueModel( ratioName, "PCT" );
+            retVal = new ValueModel(ratioName, "PCT");
 
             ValueModel[] temp = new ValueModel[radiogenicIsotopeRatios.length + 1];
-            System.arraycopy( radiogenicIsotopeRatios, 0, temp, 0, radiogenicIsotopeRatios.length );
+            System.arraycopy(radiogenicIsotopeRatios, 0, temp, 0, radiogenicIsotopeRatios.length);
 
             temp[temp.length - 1] = retVal;
             radiogenicIsotopeRatios = temp;
@@ -289,10 +284,10 @@ public class MineralStandardModel implements
      *
      * @return
      */
-    private XStream getXStreamWriter () {
+    private XStream getXStreamWriter() {
         XStream xstream = new XStream();
 
-        customizeXstream( xstream );
+        customizeXstream(xstream);
 
         return xstream;
     }
@@ -301,10 +296,10 @@ public class MineralStandardModel implements
      *
      * @return
      */
-    private XStream getXStreamReader () {
-        XStream xstream = new XStream( new DomDriver() );
+    private XStream getXStreamReader() {
+        XStream xstream = new XStream(new DomDriver());
 
-        customizeXstream( xstream );
+        customizeXstream(xstream);
 
         return xstream;
     }
@@ -313,14 +308,14 @@ public class MineralStandardModel implements
      *
      * @param xstream
      */
-    private void customizeXstream ( XStream xstream ) {
-        xstream.registerConverter( new MineralStandardModelXMLConverter() );
-        xstream.registerConverter( new ValueModelReferencedXMLConverter() );
-        xstream.registerConverter( new ValueModelXMLConverter() );
+    private void customizeXstream(XStream xstream) {
+        xstream.registerConverter(new MineralStandardModelXMLConverter());
+        xstream.registerConverter(new ValueModelReferencedXMLConverter());
+        xstream.registerConverter(new ValueModelXMLConverter());
 
-        xstream.alias( "MineralStandardModel", MineralStandardModel.class );
-        xstream.alias( "ValueModelReferenced", ValueModelReferenced.class );
-        xstream.alias( "ValueModel", ValueModel.class );
+        xstream.alias("MineralStandardModel", MineralStandardModel.class);
+        xstream.alias("ValueModelReferenced", ValueModelReferenced.class);
+        xstream.alias("ValueModel", ValueModel.class);
 
         setClassXMLSchemaURL();
     }
@@ -328,11 +323,11 @@ public class MineralStandardModel implements
     /**
      *
      */
-    private void setClassXMLSchemaURL () {
+    private void setClassXMLSchemaURL() {
         UPbReduxConfigurator myConfigurator = new UPbReduxConfigurator();
 
-        mineralStandardModelXMLSchemaURL =
-                myConfigurator.getResourceURI( "URI_MineralStandardModelXMLSchemaURL" );
+        mineralStandardModelXMLSchemaURL
+                = myConfigurator.getResourceURI("URI_MineralStandardModelXMLSchemaURL");
     }
 
     /**
@@ -340,26 +335,26 @@ public class MineralStandardModel implements
      * @param filename
      */
     @Override
-    public void serializeXMLObject ( String filename ) {
+    public void serializeXMLObject(String filename) {
         XStream xstream = getXStreamWriter();
 
-        String xml = xstream.toXML( this );
+        String xml = xstream.toXML(this);
 
         xml = ReduxConstants.XML_Header + xml;
 
         xml = xml.replaceFirst("MineralStandardModel",
                 "MineralStandardModel "//
                 + ReduxConstants.XML_ResourceHeader//
-                + mineralStandardModelXMLSchemaURL +//
-                "\"" );
-
+                + mineralStandardModelXMLSchemaURL
+                +//
+                "\"");
 
         try {
-            FileWriter outFile = new FileWriter( filename );
-            PrintWriter out = new PrintWriter( outFile );
+            FileWriter outFile = new FileWriter(filename);
+            PrintWriter out = new PrintWriter(outFile);
 
             // Write xml to file
-            out.println( xml );
+            out.println(xml);
             out.flush();
             out.close();
             outFile.close();
@@ -380,7 +375,7 @@ public class MineralStandardModel implements
      * @throws BadOrMissingXMLSchemaException
      */
     @Override
-    public Object readXMLObject ( String filename, boolean doValidate )
+    public Object readXMLObject(String filename, boolean doValidate)
             throws FileNotFoundException,
             ETException,
             FileNotFoundException,
@@ -388,32 +383,32 @@ public class MineralStandardModel implements
 
         MineralStandardModel myMineralStandardModel = null;
 
-        BufferedReader reader = URIHelper.getBufferedReader( filename );
+        BufferedReader reader = URIHelper.getBufferedReader(filename);
 
-        if ( reader != null ) {
-            boolean temp = false;
+        if (reader != null) {
+            boolean temp = true;
             XStream xstream = getXStreamReader();
 
-            temp = URIHelper.validateXML( reader, filename, mineralStandardModelXMLSchemaURL );
+            if (doValidate) {
+                temp = URIHelper.validateXML(reader, filename, mineralStandardModelXMLSchemaURL);
+            }
 
-            if ( temp ) {
+            if (temp) {
                 // re-create reader
-                reader = URIHelper.getBufferedReader( filename );
+                reader = URIHelper.getBufferedReader(filename);
                 try {
-                    myMineralStandardModel = (MineralStandardModel) xstream.fromXML( reader );
+                    myMineralStandardModel = (MineralStandardModel) xstream.fromXML(reader);
                 } catch (ConversionException e) {
-                    throw new ETException( null, e.getMessage() );
+                    throw new ETException(null, e.getMessage());
                 }
 
             } else {
-                throw new FileNotFoundException( "Badly formed or unvalidated XML data file." );
+                throw new FileNotFoundException("Badly formed or unvalidated XML data file.");
             }
 
         } else {
-            throw new FileNotFoundException( "Missing XML data file." );
+            throw new FileNotFoundException("Missing XML data file.");
         }
-
-
 
         return myMineralStandardModel;
     }
@@ -424,7 +419,7 @@ public class MineralStandardModel implements
      * @return
      */
     @Override
-    public String getName () {
+    public String getName() {
         return name;
     }
 
@@ -433,7 +428,7 @@ public class MineralStandardModel implements
      * @return
      */
     @Override
-    public String getReduxLabDataElementName () {
+    public String getReduxLabDataElementName() {
         return getName();
     }
 
@@ -442,7 +437,7 @@ public class MineralStandardModel implements
      * @param modelName
      */
     @Override
-    public void setName ( String modelName ) {
+    public void setName(String modelName) {
         this.name = modelName.trim();
     }
 
@@ -451,7 +446,7 @@ public class MineralStandardModel implements
      * @return
      */
     @Override
-    public String getMineralStandardName () {
+    public String getMineralStandardName() {
         return mineralStandardName;
     }
 
@@ -460,7 +455,7 @@ public class MineralStandardModel implements
      * @param name
      */
     @Override
-    public void setMineralStandardName ( String name ) {
+    public void setMineralStandardName(String name) {
         this.mineralStandardName = name.trim();
     }
 
@@ -469,7 +464,7 @@ public class MineralStandardModel implements
      * @return
      */
     @Override
-    public String getStandardMineralName () {
+    public String getStandardMineralName() {
         return standardMineralName;
     }
 
@@ -478,7 +473,7 @@ public class MineralStandardModel implements
      * @param standardMineral
      */
     @Override
-    public void setStandardMineralName ( String standardMineral ) {
+    public void setStandardMineralName(String standardMineral) {
         this.standardMineralName = standardMineral.trim();
     }
 
@@ -487,7 +482,7 @@ public class MineralStandardModel implements
      * @return
      */
     @Override
-    public ValueModelReferenced getTrueAge () {
+    public ValueModelReferenced getTrueAge() {
         return trueAge;
     }
 
@@ -496,7 +491,7 @@ public class MineralStandardModel implements
      * @param trueAge
      */
     @Override
-    public void setTrueAge ( ValueModelReferenced trueAge ) {
+    public void setTrueAge(ValueModelReferenced trueAge) {
         this.trueAge = trueAge;
     }
 
@@ -505,7 +500,7 @@ public class MineralStandardModel implements
      * @return
      */
     @Override
-    public ValueModelReferenced getMeasuredAge () {
+    public ValueModelReferenced getMeasuredAge() {
         return measuredAge;
     }
 
@@ -514,7 +509,7 @@ public class MineralStandardModel implements
      * @param measuredAge
      */
     @Override
-    public void setMeasuredAge ( ValueModelReferenced measuredAge ) {
+    public void setMeasuredAge(ValueModelReferenced measuredAge) {
         this.measuredAge = measuredAge;
     }
 
@@ -523,7 +518,7 @@ public class MineralStandardModel implements
      * @return
      */
     @Override
-    public String getComment () {
+    public String getComment() {
         return comment;
     }
 
@@ -532,7 +527,7 @@ public class MineralStandardModel implements
      * @param comment
      */
     @Override
-    public void setComment ( String comment ) {
+    public void setComment(String comment) {
         this.comment = comment.trim();
     }
 
@@ -541,25 +536,25 @@ public class MineralStandardModel implements
      * @param args
      * @throws Exception
      */
-    public static void main ( String[] args ) throws Exception {
+    public static void main(String[] args) throws Exception {
 
         MineralStandardModel mineralStandardModel = new MineralStandardModel().Copy();
-        mineralStandardModel.getTrueAge().setValue( new BigDecimal( "1.1112" ) );
-        mineralStandardModel.getMeasuredAge().setValue( new BigDecimal( "1.444" ) );
+        mineralStandardModel.getTrueAge().setValue(new BigDecimal("1.1112"));
+        mineralStandardModel.getMeasuredAge().setValue(new BigDecimal("1.444"));
 
-        mineralStandardModel.setRadiogenicIsotopeRatios( new ValueModel[]{new ValueModel( "r207_235r", new BigDecimal( 1011 ), "PCT", new BigDecimal( 1 ), BigDecimal.ZERO )} );
+        mineralStandardModel.setRadiogenicIsotopeRatios(new ValueModel[]{new ValueModel("r207_235r", new BigDecimal(1011), "PCT", new BigDecimal(1), BigDecimal.ZERO)});
 
         String testFileName = "MineralStandardModelTEST.xml";
-        mineralStandardModel.serializeXMLObject( testFileName );
-        mineralStandardModel.readXMLObject( testFileName, true );
+        mineralStandardModel.serializeXMLObject(testFileName);
+        mineralStandardModel.readXMLObject(testFileName, true);
 
     }
 
     /**
      * @return the radiogenicIsotopeRatios
      */
-    public ValueModel[] getRadiogenicIsotopeRatios () {
-        if ( radiogenicIsotopeRatios == null ) {
+    public ValueModel[] getRadiogenicIsotopeRatios() {
+        if (radiogenicIsotopeRatios == null) {
             initializeRadiogenicRatios();
         }
         return radiogenicIsotopeRatios;
@@ -568,15 +563,15 @@ public class MineralStandardModel implements
     /**
      * @param radiogenicIsotopeRatios the radiogenicIsotopeRatios to set
      */
-    public void setRadiogenicIsotopeRatios ( ValueModel[] radiogenicIsotopeRatios ) {
+    public void setRadiogenicIsotopeRatios(ValueModel[] radiogenicIsotopeRatios) {
         this.radiogenicIsotopeRatios = radiogenicIsotopeRatios;
     }
 
     /**
-     * 
+     *
      */
     @Override
-    public void removeSelf () {
+    public void removeSelf() {
 //        throw new UnsupportedOperationException( "Not supported yet." );
     }
 }

@@ -48,16 +48,10 @@ public class PbBlankICModel extends AbstractRatiosDataModel {
     // class variables
     private static final long serialVersionUID = -5956272382837024475L;
     private static final String classNameAliasForXML = "PbBlankICModel";
-    private static Map<String, AbstractRatiosDataModel> modelInstances = //
+    private static Map<String, AbstractRatiosDataModel> modelInstances
+            = //
             new HashMap<>();
-    private static final AbstractRatiosDataModel noneModel = //
-            new PbBlankICModel( //
-                    ReduxConstants.NONE, //
-                    1, 0, //
-                    "No Lab",//
-                    "2000-01-01",//
-                    "Placeholder model",//
-                    "Placeholder model");
+
     private static final ValueModel[] myRatios;
     private static final Map<String, BigDecimal> correlations;
 
@@ -84,7 +78,18 @@ public class PbBlankICModel extends AbstractRatiosDataModel {
         correlations.put("rhoR206_204b__r208_204b", new BigDecimal("0.728547460722919"));
         correlations.put("rhoR207_204b__r208_204b", new BigDecimal("0.864401000690869"));
     }
-    private static final AbstractRatiosDataModel EARTHTIMEExamplePbBlankICModel = //
+    private static final AbstractRatiosDataModel noneModel
+            = //
+            new PbBlankICModel( //
+                    ReduxConstants.NONE, //
+                    1, 0, //
+                    "No Lab",//
+                    "2000-01-01",//
+                    "Placeholder model",//
+                    "Placeholder model");
+
+    private static final AbstractRatiosDataModel EARTHTIMEExamplePbBlankICModel
+            = //
             createInstance(//
                     "EARTHTIME Example Pb Blank IC",
                     3, 0,//

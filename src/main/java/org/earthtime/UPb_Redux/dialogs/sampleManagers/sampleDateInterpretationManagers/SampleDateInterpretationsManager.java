@@ -799,7 +799,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
                 = myClearFiltering
                 || sample.isSampleTypeLegacy()
                 || sample.isAnalysisTypeCOMPILED()
-                || sample.isAnalysisTypeUSeries();
+                || sample.isAnalysisTypeUSERIES();
 
         Vector<ETFractionInterface> filteredFractions;
         if (clearFiltering) {

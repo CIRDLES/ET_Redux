@@ -51,22 +51,15 @@ public class InitialPbModelET extends AbstractRatiosDataModel {
     // class variables
     private static final long serialVersionUID = 4304335957265082527L;
     private static final String classNameAliasForXML = "InitialPbModelET";
-    private static final Map<String, AbstractRatiosDataModel> modelInstances = //
-            new HashMap<>();
-    private static final AbstractRatiosDataModel placeholderModel =//
-            new PlaceholderInitialPbModel();
-    private static final AbstractRatiosDataModel placeholderModel76 =//
-            new PlaceholderInitialPb76Model();
-    private static final AbstractRatiosDataModel noneModel = //
-            new InitialPbModelET( //
-                    ReduxConstants.NONE, //
-                    1, 0, //
-                    "No Lab",//
-                    "2000-01-01",//
-                    "empty model",//
-                    "empty model");
-    private static final AbstractRatiosDataModel staceyKramersModel = //
-            new StaceyKramersInitialPbModelET();
+    private static final Map<String, AbstractRatiosDataModel> modelInstances
+            = new HashMap<>();
+    private static final AbstractRatiosDataModel placeholderModel
+            = new PlaceholderInitialPbModel();
+    private static final AbstractRatiosDataModel placeholderModel76
+            = new PlaceholderInitialPb76Model();
+
+    private static final AbstractRatiosDataModel staceyKramersModel
+            = new StaceyKramersInitialPbModelET();
     private static final ValueModel[] myRatios;
     private static final Map<String, BigDecimal> correlations;
 
@@ -93,8 +86,18 @@ public class InitialPbModelET extends AbstractRatiosDataModel {
         correlations.put("rhoR206_204c__r208_204c", new BigDecimal("0.5"));
         correlations.put("rhoR207_204c__r208_204c", new BigDecimal("0.5"));
     }
-    private static final AbstractRatiosDataModel EARTHTIMESriLankaInitialPbModel = //
-            createInstance(//
+
+    private static final AbstractRatiosDataModel noneModel
+            = new InitialPbModelET( //
+                    ReduxConstants.NONE, //
+                    1, 0, //
+                    "No Lab",//
+                    "2000-01-01",//
+                    "empty model",//
+                    "empty model");
+
+    private static final AbstractRatiosDataModel EARTHTIMESriLankaInitialPbModel
+            = createInstance(//
                     "EARTHTIME SriLanka InitialPb",
                     1, 0,//
                     "EARTHTIME",//
@@ -490,7 +493,8 @@ public class InitialPbModelET extends AbstractRatiosDataModel {
         correlations.put("rhoR206_204c__r208_204c", new BigDecimal(-0.0400671215735759));
         correlations.put("rhoR207_204c__r208_204c", new BigDecimal(-0.0400671215735759));
 
-        AbstractRatiosDataModel initialPbModel1 = //
+        AbstractRatiosDataModel initialPbModel1
+                = //
                 createInstance("initialPbModel1", 1, 0, "Test Lab", "2012-04-01", "NO REF", "NO COMMENT", myRatios, correlations);
 
         System.out.println(initialPbModel1.getDataCorrelationsVarUnct().ToStringWithLabels());
@@ -500,7 +504,8 @@ public class InitialPbModelET extends AbstractRatiosDataModel {
             ETSerializer.SerializeObjectToFile(initialPbModel1, "InitialPbModelET_TEST.ser");
         } catch (ETException eTException) {
         }
-        AbstractRatiosDataModel initialPbModel2 = //
+        AbstractRatiosDataModel initialPbModel2
+                = //
                 (AbstractRatiosDataModel) ETSerializer.GetSerializedObjectFromFile("InitialPbModelET_TEST.ser");
 
         String testFileName = "InitialPbModelET_TEST.xml";

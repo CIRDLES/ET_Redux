@@ -62,178 +62,144 @@ public class ValueModelReferenced extends ValueModel implements
     private String reference;
 
     /**
-     * creates a new instance of
-     * <code>ValueModelReferenced</code> with
-     * <code>
-     * name</code>,
-     * <code>value</code>,
-     * <code>uncertainty type</code>,
-     * <code>
-     * one sigma</code>, and
-     * <code>reference</code> fields initialized to "NONE", 0, "NONE", 0, and
-     * "NONE" respectively.
+     * creates a new instance of <code>ValueModelReferenced</code> with      <code>
+     * name</code>, <code>value</code>, <code>uncertainty type</code>,      <code>
+     * one sigma</code>, and <code>reference</code> fields initialized to
+     * "NONE", 0, "NONE", 0, and "NONE" respectively.
      */
-    public ValueModelReferenced () {
+    public ValueModelReferenced() {
         super();
-        setReference( "NONE" );
+        setReference("NONE");
     }
 
     /**
-     * Creates a new instance of
-     * <code>ValueModelReferenced</code> with a specified
-     * <code>name</code>,
-     * <code>value</code>,
-     * <code>uncertainty type
-     * </code>,
-     * <code>one sigma</code>, and
-     * <code>reference</code>.
+     * Creates a new instance of <code>ValueModelReferenced</code> with a
+     * specified <code>name</code>, <code>value</code>,      <code>uncertainty type
+     * </code>, <code>one sigma</code>, and <code>reference</code>.
      *
-     * @param name name of the ratio that this
-     * <code>ValueModel</code> represents
+     * @param name name of the ratio that this <code>ValueModel</code>
+     * represents
      * @param value numerical value of ratio
      * @param uncertaintyType type of uncertainty; ABS or PCT
      * @param oneSigma value of one standard deviation
      * @param oneSigmaSys the value of oneSigmaSys
      * @param reference related academic work
      */
-    public ValueModelReferenced (
+    public ValueModelReferenced(
             String name, BigDecimal value, String uncertaintyType, BigDecimal oneSigma, BigDecimal oneSigmaSys, String reference) {
 
-        super( name, value, uncertaintyType, oneSigma, oneSigmaSys );
+        super(name, value, uncertaintyType, oneSigma, oneSigmaSys);
         this.reference = reference;
     }
 
     /**
-     * Returns a deep copy of a
-     * <code>ValueModelReferenced</code>; a new
-     * <code>
+     * Returns a deep copy of a <code>ValueModelReferenced</code>; a new      <code>
      * ValueModelReferenced</code> whose fields are equal to those of this
      * <code>ValueModelReferenced</code>
      *
-     * @pre this
-     * <code>ValueModelReferenced</code> exists @post a new
+     * @pre this <code>ValueModelReferenced</code> exists @post a new
      * <code>ValueModelReferenced</code> with identical data to this
      * <code> ValueModelReferenced</code> is returned
      *
-     * @return
-     * <code>ValueModelReferenced</code> - a new
-     * <code>ValueModelReferenced
+     * @return <code>ValueModelReferenced</code> - a new      <code>ValueModelReferenced
      * </code> whose fields match those of this
      * <code>ValueModelReferenced</code>
      */
     @Override
-    public ValueModelReferenced copy () {
+    public ValueModelReferenced copy() {
         return new ValueModelReferenced(
                 getName(),
                 getValue(),
                 getUncertaintyType(),
                 getOneSigma(), getOneSigmaSys(),
-                getReference() );
+                getReference());
     }
 
     @Override
-    public void copyValuesFrom ( ValueModel valueModel ) {
-        this.setValue( valueModel.getValue() );
-        this.setUncertaintyType( valueModel.getUncertaintyType() );
-        this.setOneSigma( valueModel.getOneSigma() );
-        this.setOneSigmaSys( valueModel.getOneSigmaSys() );
-        this.setValueTree( valueModel.getValueTree() );
-        this.setReference( ((ValueModelReferenced) valueModel).reference );
+    public void copyValuesFrom(ValueModel valueModel) {
+        this.setValue(valueModel.getValue());
+        this.setUncertaintyType(valueModel.getUncertaintyType());
+        this.setOneSigma(valueModel.getOneSigma());
+        this.setOneSigmaSys(valueModel.getOneSigmaSys());
+        this.setValueTree(valueModel.getValueTree());
+        this.setReference(((ValueModelReferenced) valueModel).reference);
     }
 
     /**
-     * gets the value of the
-     * <code>reference</code> field
+     * gets the value of the <code>reference</code> field
      *
-     * @pre this
-     * <code>ValueModelReferenced</code> exists @post
-     * <code>reference</code> of this
-     * <code>ValueModelReferenced</code> is returned
+     * @pre this <code>ValueModelReferenced</code> exists @post
+     * <code>reference</code> of this <code>ValueModelReferenced</code> is
+     * returned
      *
-     * @return
-     * <code>String</code> -
-     * <code>reference</code> of this
-     * <code>
+     * @return <code>String</code> - <code>reference</code> of this      <code>
      *          ValueModelReferenced</code>
      */
-    public String getReference () {
+    public String getReference() {
         return reference;
     }
 
     /**
-     * sets the value of the
-     * <code>reference</code> field
+     * sets the value of the <code>reference</code> field
      *
-     * @pre argument
-     * <code>reference</code> is a valid
-     * <code>String</code> @post
-     * <code>reference</code> of this
-     * <code>ValueModelReferenced</code> is set to argument
-     * <code>reference</code>
+     * @pre argument <code>reference</code> is a valid <code>String</code> @post
+     * <code>reference</code> of this <code>ValueModelReferenced</code> is set
+     * to argument <code>reference</code>
      *
-     * @param reference value to which this
-     * <code>ValueModelReferenced</code>'s
+     * @param reference value to which this <code>ValueModelReferenced</code>'s
      * <code>reference</code> is set
      */
-    public void setReference ( String reference ) {
+    public void setReference(String reference) {
         this.reference = reference;
     }
 
     /**
-     * registers converter for argument
-     * <code>xstream</code> and sets aliases to make the XML file more
-     * human-readable
+     * registers converter for argument <code>xstream</code> and sets aliases to
+     * make the XML file more human-readable
      *
-     * @pre argument
-     * <code>xstream</code> is a valid
-     * <code>XStream</code> @post argument
-     * <code>xstream</code> is customized to produce a cleaner output
+     * @pre argument <code>xstream</code> is a valid <code>XStream</code> @post
+     * argument <code>xstream</code> is customized to produce a cleaner output
      * <code>file</code>
      *
-     * @param xstream
-     * <code>XStream</code> to be customized
+     * @param xstream <code>XStream</code> to be customized
      */
     @Override
-    public void customizeXstream ( XStream xstream ) {
+    public void customizeXstream(XStream xstream) {
 
-        xstream.registerConverter( new ValueModelReferencedXMLConverter() );
+        xstream.registerConverter(new ValueModelReferencedXMLConverter());
 
-        xstream.alias( "ValueModelReferenced", ValueModelReferenced.class );
+        xstream.alias("ValueModelReferenced", ValueModelReferenced.class);
 
         setClassXMLSchemaURL();
     }
 
     /**
-     * encodes this
-     * <code>ValueModelReferenced</code> to the
-     * <code>file</code> specified by the argument
-     * <code>filename</code>
+     * encodes this <code>ValueModelReferenced</code> to the <code>file</code>
+     * specified by the argument <code>filename</code>
      *
-     * @pre this
-     * <code>ValueModelReferenced</code> exists @post this
+     * @pre this <code>ValueModelReferenced</code> exists @post this
      * <code>ValueModelReferenced</code> is stored in the specified XML
      * <code>file</code>
      *
      * @param filename location to store data to
      */
     @Override
-    public void serializeXMLObject ( String filename ) {
+    public void serializeXMLObject(String filename) {
         XStream xstream = getXStreamWriter();
 
-        String xml = xstream.toXML( this );
+        String xml = xstream.toXML(this);
 
         xml = ReduxConstants.XML_Header + xml;
 
         xml = xml.replaceFirst("ValueModelReferenced",
-                "ValueModelReferenced " + ReduxConstants.XML_ResourceHeader + getValueModelXMLSchemaURL() + "\"" );
-
+                "ValueModelReferenced " + ReduxConstants.XML_ResourceHeader + getValueModelXMLSchemaURL() + "\"");
 
         try {
-            FileWriter outFile = new FileWriter( filename );
-            PrintWriter out = new PrintWriter( outFile );
+            FileWriter outFile = new FileWriter(filename);
+            PrintWriter out = new PrintWriter(outFile);
 
             // Write xml to file
-            out.println( xml );
+            out.println(xml);
             out.flush();
             out.close();
             outFile.close();
@@ -244,58 +210,54 @@ public class ValueModelReferenced extends ValueModel implements
     }
 
     /**
-     * decodes
-     * <code>ValueModelReferenced</code> from
-     * <code>file</code> specified by argument
-     * <code>filename</code>
+     * decodes <code>ValueModelReferenced</code> from <code>file</code>
+     * specified by argument <code>filename</code>
      *
      * @param filename location to read data from
      * @param doValidate the value of doValidate
-     * @return
-     * <code>Object</code> - the
-     * <code>ValueModelReferenced</code> created from the specified XML
-     * <code>file</code>
+     * @return <code>Object</code> - the <code>ValueModelReferenced</code>
+     * created from the specified XML <code>file</code>
      * @throws java.io.FileNotFoundException
      * @throws org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException @pre
-     * <code>filename</code> references an XML
-     * <code>file</code> @post
-     * <code>ValueModelReferenced</code> stored in
-     * <code>filename</code> is returned
+     * <code>filename</code> references an XML <code>file</code> @post
+     * <code>ValueModelReferenced</code> stored in <code>filename</code> is
+     * returned
      */
     @Override
-    public Object readXMLObject ( String filename, boolean doValidate )
+    public Object readXMLObject(String filename, boolean doValidate)
             throws FileNotFoundException, ETException, FileNotFoundException, BadOrMissingXMLSchemaException {
         ValueModel myValueModel = null;
 
-        BufferedReader reader = URIHelper.getBufferedReader( filename );
+        BufferedReader reader = URIHelper.getBufferedReader(filename);
 
-        if ( reader != null ) {
-            boolean isValidOrAirplaneMode = !doValidate;
-            
+        if (reader != null) {
+            boolean isValidOrAirplaneMode = true;
+
             XStream xstream = getXStreamReader();
 
-            isValidOrAirplaneMode = URIHelper.validateXML( reader, filename, getValueModelXMLSchemaURL() );
+            if (doValidate) {
+                isValidOrAirplaneMode = URIHelper.validateXML(reader, filename, getValueModelXMLSchemaURL());
+            }
 
-            if ( isValidOrAirplaneMode ) {
+            if (isValidOrAirplaneMode) {
                 // re-create reader
-                reader = URIHelper.getBufferedReader( filename );
+                reader = URIHelper.getBufferedReader(filename);
                 try {
-                    myValueModel = (ValueModelReferenced) xstream.fromXML( reader );
+                    myValueModel = (ValueModelReferenced) xstream.fromXML(reader);
                 } catch (ConversionException e) {
-                    throw new ETException( null, e.getMessage() );
+                    throw new ETException(null, e.getMessage());
                 }
 
 //                System.out.println( "\nThis is your ValueModelReferenced that was just read successfully:\n" );
-
 //                String xml2 = getXStreamWriter().toXML( myValueModel );
 //
 //                System.out.println( xml2 );
 //                System.out.flush();
             } else {
-                throw new ETException( null, "XML data file does not conform to schema." );
+                throw new ETException(null, "XML data file does not conform to schema.");
             }
         } else {
-            throw new FileNotFoundException( "Missing XML data file." );
+            throw new FileNotFoundException("Missing XML data file.");
         }
         return myValueModel;
     }
@@ -305,18 +267,17 @@ public class ValueModelReferenced extends ValueModel implements
      * @param args
      * @throws Exception
      */
-    public static void main ( String[] args ) throws Exception {
+    public static void main(String[] args) throws Exception {
 
-        ValueModel valueModel =
-                new ValueModelReferenced( "r206_204b", new BigDecimal( "1234567890" ), "ABS", new BigDecimal( "123000" ), BigDecimal.ZERO, "test reference" );
+        ValueModel valueModel
+                = new ValueModelReferenced("r206_204b", new BigDecimal("1234567890"), "ABS", new BigDecimal("123000"), BigDecimal.ZERO, "test reference");
         System.out.println(
-                "Format Test: " + valueModel.formatValueAndTwoSigmaForPublicationSigDigMode( "ABS", 6, 2 ) );
-
+                "Format Test: " + valueModel.formatValueAndTwoSigmaForPublicationSigDigMode("ABS", 6, 2));
 
         String testFileName = "ValueModelReferencedTEST.xml";
 
-        valueModel.serializeXMLObject( testFileName );
-        valueModel.readXMLObject( testFileName, true );
+        valueModel.serializeXMLObject(testFileName);
+        valueModel.readXMLObject(testFileName, true);
 
     }
 //        private void readObject(

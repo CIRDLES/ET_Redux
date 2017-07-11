@@ -71,6 +71,8 @@ public class UThFraction implements
     private boolean spikeCalibrationR234_238IsSecular;
     private ValueModel r230Th_238Ufc_rectificationFactor;
     private ValueModel r234U_238Ufc_rectificationFactor;
+    private String r230Th_238Ufc_referenceMaterialName;
+    private String r234U_238Ufc_referenceMaterialName;
 
     protected boolean changed;
     protected boolean deleted;
@@ -122,7 +124,10 @@ public class UThFraction implements
                 "ABS",
                 BigDecimal.ONE,
                 BigDecimal.ONE);
-
+        
+        r230Th_238Ufc_referenceMaterialName = "";
+        r234U_238Ufc_referenceMaterialName = "";
+        
         this.changed = false;
         this.deleted = false;
         this.fractionNotes = "";
@@ -734,6 +739,34 @@ public class UThFraction implements
      */
     public void setR234U_238Ufc_rectificationFactor(ValueModel r234U_238Ufc_rectificationFactor) {
         this.r234U_238Ufc_rectificationFactor = r234U_238Ufc_rectificationFactor;
+    }
+
+    /**
+     * @return the r230Th_238Ufc_referenceMaterialName
+     */
+    public String getR230Th_238Ufc_referenceMaterialName() {
+        return r230Th_238Ufc_referenceMaterialName;
+    }
+
+    /**
+     * @param r230Th_238Ufc_referenceMaterialName the r230Th_238Ufc_referenceMaterialName to set
+     */
+    public void setR230Th_238Ufc_referenceMaterialName(String r230Th_238Ufc_referenceMaterialName) {
+        this.r230Th_238Ufc_referenceMaterialName = r230Th_238Ufc_referenceMaterialName;
+    }
+
+    /**
+     * @return the r234U_238Ufc_referenceMaterialName
+     */
+    public String getR234U_238Ufc_referenceMaterialName() {
+        return r234U_238Ufc_referenceMaterialName;
+    }
+
+    /**
+     * @param r234U_238Ufc_referenceMaterialName the r234U_238Ufc_referenceMaterialName to set
+     */
+    public void setR234U_238Ufc_referenceMaterialName(String r234U_238Ufc_referenceMaterialName) {
+        this.r234U_238Ufc_referenceMaterialName = r234U_238Ufc_referenceMaterialName;
     }
 
 }

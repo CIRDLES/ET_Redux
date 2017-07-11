@@ -15,6 +15,8 @@
  */
 package org.earthtime.UTh_Redux.fractions;
 
+import static org.earthtime.UPb_Redux.ReduxConstants.AVOGADROS_NUMBER;
+import static org.earthtime.UPb_Redux.ReduxConstants.MINUTES_PER_YEAR_FOR_USERIES_CONVERSIONS;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModelReferenced;
@@ -22,6 +24,7 @@ import org.earthtime.dataDictionaries.Lambdas;
 import org.earthtime.dataDictionaries.UThAnalysisMeasures;
 import org.earthtime.dataDictionaries.UncertaintyTypesEnum;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
+import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsModel;
 import org.earthtime.reduxLabData.ReduxLabData;
 
 /**
@@ -31,7 +34,7 @@ import org.earthtime.reduxLabData.ReduxLabData;
 public class UThLegacyFraction extends UThFraction implements UThLegacyFractionI {
 
     private static final long serialVersionUID = 6724938989157233250L;
-    
+
     protected ValueModel[] legacyActivityRatios;
     protected ValueModel lambda226Legacy;
     protected ValueModel lambda230Legacy;
@@ -47,7 +50,7 @@ public class UThLegacyFraction extends UThFraction implements UThLegacyFractionI
         } catch (BadLabDataException badLabDataException) {
         }
     }
-    
+
     @Override
     public void useLegacyPhysicalConstantsD2() {
         try {
@@ -55,7 +58,7 @@ public class UThLegacyFraction extends UThFraction implements UThLegacyFractionI
         } catch (BadLabDataException badLabDataException) {
         }
     }
-    
+
     @Override
     public void useLegacyPhysicalConstantsD3() {
         try {
@@ -70,6 +73,24 @@ public class UThLegacyFraction extends UThFraction implements UThLegacyFractionI
         lambda232Legacy = physicalConstantsModel.getDatumByName(Lambdas.lambda232.getName());
         lambda234Legacy = physicalConstantsModel.getDatumByName(Lambdas.lambda234.getName());
         lambda238Legacy = physicalConstantsModel.getDatumByName(Lambdas.lambda238.getName());
+    }
+
+    public double calculateConcentrationOrUnct230ThFromActivityUsingLegacyLambda(double activityOrUnct) {
+
+        double gmol230 = ((PhysicalConstantsModel) ReduxLabData.getInstance().getDefaultPhysicalConstantsModel()).getAtomicMolarMassByName("gmol230").getValue().doubleValue();
+        double retVal = (activityOrUnct * gmol230 * MINUTES_PER_YEAR_FOR_USERIES_CONVERSIONS)
+                / (AVOGADROS_NUMBER * lambda230Legacy.getValue().doubleValue());
+
+        return retVal;
+    }
+
+    public double calculateConcentrationOrUnct226RaFromActivityUsingLegacyLambda(double activityOrUnct) {
+
+        double gmol226 = ((PhysicalConstantsModel) ReduxLabData.getInstance().getDefaultPhysicalConstantsModel()).getAtomicMolarMassByName("gmol226").getValue().doubleValue();
+        double retVal = (activityOrUnct * gmol226 * MINUTES_PER_YEAR_FOR_USERIES_CONVERSIONS)
+                / (AVOGADROS_NUMBER * lambda226Legacy.getValue().doubleValue());
+
+        return retVal;
     }
 
     public UThLegacyFraction() {
@@ -102,14 +123,14 @@ public class UThLegacyFraction extends UThFraction implements UThLegacyFractionI
         this.legacyActivityRatios = legacyActivityRatios;
     }
 
-        /**
+    /**
      * @return the lambda226Legacy
      */
     @Override
     public ValueModel getLambda226Legacy() {
         return lambda226Legacy;
     }
-    
+
     /**
      * @return the lambda230Legacy
      */

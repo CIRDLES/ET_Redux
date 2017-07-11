@@ -20,7 +20,7 @@
  */
 package org.earthtime.UPb_Redux.reports;
 
-import org.earthtime.dataDictionaries.ReportSpecificationsUPb;
+import org.earthtime.dataDictionaries.reportSpecifications.ReportSpecificationsUPb;
 import org.earthtime.reports.ReportColumnInterface;
 
 /**

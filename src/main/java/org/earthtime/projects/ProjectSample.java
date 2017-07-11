@@ -57,7 +57,8 @@ public class ProjectSample implements//
     private String sampleAnalysisType;
     private ANALYSIS_PURPOSE analysisPurpose;
     private boolean analyzed;
-    private String isotopeStyle;
+    private String isotopeSystem;
+    private String defaultReportSpecsType;
     private Vector<AliquotInterface> aliquots;
     private Vector<ETFractionInterface> fractions;
     private ReportSettingsInterface reportSettingsModel;
@@ -81,16 +82,12 @@ public class ProjectSample implements//
      * @param sampleAnalysisType the value of sampleAnalysisType
      * @param analysisPurpose the value of analysisPurpose
      * @param analyzed the value of analyzed
-     * @param isotopeStyle the value of isotopeStyle
+     * @param isotopeSystem the value of isotopeSystem
+     * @param defaultReportSpecsType
      * @throws BadLabDataException
      */
     public ProjectSample(
-            String sampleName, //
-            String sampleType, //
-            String sampleAnalysisType,//
-            ANALYSIS_PURPOSE analysisPurpose, //
-            boolean analyzed, //
-            String isotopeStyle)
+            String sampleName, String sampleType, String sampleAnalysisType, ANALYSIS_PURPOSE analysisPurpose, boolean analyzed, String isotopeSystem, String defaultReportSpecsType)
             throws BadLabDataException {
 
         this.sampleName = sampleName;
@@ -98,12 +95,13 @@ public class ProjectSample implements//
         this.sampleAnalysisType = sampleAnalysisType;
         this.analysisPurpose = analysisPurpose;
         this.analyzed = analyzed;
-        this.isotopeStyle = isotopeStyle;
+        this.isotopeSystem = isotopeSystem;
+        this.defaultReportSpecsType = defaultReportSpecsType;
         this.aliquots = new Vector<>();
         this.fractions = new Vector<>();
 
         this.reduxLabData = ReduxLabData.getInstance();
-        this.reportSettingsModel = reduxLabData.getDefaultReportSettingsModelByIsotopeStyle(isotopeStyle);
+        this.reportSettingsModel = reduxLabData.getDefaultReportSettingsModelBySpecsType(defaultReportSpecsType);
         this.physicalConstantsModel = reduxLabData.getDefaultPhysicalConstantsModel();
         this.sampleAgeInterpretationGUISettings = new SampleDateInterpretationGUIOptions();
         this.changed = false;
@@ -112,7 +110,7 @@ public class ProjectSample implements//
         this.concordiaGraphAxesSetup = new GraphAxesSetup("C", 2);
         this.terraWasserburgGraphAxesSetup = new GraphAxesSetup("T-W", 2);
         this.sampleDateModels = new Vector<>();
-        
+
         initFilteredFractionsToAll();
 
     }
@@ -467,18 +465,28 @@ public class ProjectSample implements//
      */
     @Override
     public void restoreDefaultReportSettingsModel() {
-        setReportSettingsModel(ReduxLabData.getInstance().getDefaultReportSettingsModelByIsotopeStyle(getIsotopeStyle()));
+        setReportSettingsModel(ReduxLabData.getInstance().getDefaultReportSettingsModelBySpecsType(getIsotopeSystem()));
     }
 
     /**
-     * @return the isotopeStyle
+     * @return the isotopeSystem
      */
     @Override
-    public String getIsotopeStyle() {
-        if (isotopeStyle == null) {
-            isotopeStyle = "UPb";
+    public String getIsotopeSystem() {
+        if (isotopeSystem == null) {
+            isotopeSystem = "UPb";
         }
-        return isotopeStyle;
+        return isotopeSystem;
+    }
+
+    /**
+     * @return the defaultReportSpecsType
+     */
+    public String getDefaultReportSpecsType() {
+        if (defaultReportSpecsType == null) {
+            defaultReportSpecsType = "UPb";
+        }
+        return defaultReportSpecsType;
     }
 
     /**

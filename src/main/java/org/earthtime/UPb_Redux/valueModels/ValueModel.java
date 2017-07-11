@@ -207,7 +207,8 @@ public class ValueModel implements
      */
     @Override
     public ValueModel copy() {
-        ValueModel retval =//
+        ValueModel retval
+                =//
                 new ValueModel(
                         getName(),
                         getValue(),
@@ -695,12 +696,14 @@ public class ValueModel implements
     public String formatValueAndOneSigmaABSForTesting() {
         NumberFormat formatter = new DecimalFormat("0.0000000000E0");
 
-        String retVal = //
+        String retVal
+                = //
                 String.format("   %1$-32s", getName()) + " = " //
                 + String.format("%1$-20s", formatter.format(getValue().doubleValue())); //
 
         if (!getUncertaintyType().equalsIgnoreCase(ValueModel.DEFAULT_UNCERTAINTY_TYPE)) {
-            retVal += //
+            retVal
+                    += //
                     "1-SigmaAbs = " //
                     + String.format("%1$-20s", formatter.format(getOneSigmaAbs().doubleValue()));
         }
@@ -711,12 +714,14 @@ public class ValueModel implements
     public String formatValueAndOneSigmaQuickLook() {
         NumberFormat formatter = new DecimalFormat("0.00000E0");
 
-        String retVal = //
+        String retVal
+                = //
                 getName() + " = " //
                 + formatter.format(getValue().doubleValue()); //
 
         if (!getUncertaintyType().equalsIgnoreCase(ValueModel.DEFAULT_UNCERTAINTY_TYPE)) {
-            retVal += //
+            retVal
+                    += //
                     " \u00B1 " //
                     + formatter.format(getOneSigmaAbs().doubleValue());
         }
@@ -735,12 +740,14 @@ public class ValueModel implements
 //        NumberFormat formatterPCT = new DecimalFormat("#0.0");
         NumberFormat formatterPCT = new DecimalFormat("#0.00");
 
-        String retVal = //
+        String retVal
+                = //
                 String.format("%1$-10s", RatioNamePrettyPrinter.makePrettyForHTMLString(getName())) + "=" //
                 + String.format("%1$-10s", formatter.format(getValue().doubleValue())); //
 
         if (!getUncertaintyType().equalsIgnoreCase(ValueModel.DEFAULT_UNCERTAINTY_TYPE)) {
-            retVal += //
+            retVal
+                    += //
                     " \u00B1 " //
                     + String.format("%1$-4s", formatterPCT.format(getOneSigmaAbs().doubleValue()))//
                     + "/"
@@ -762,7 +769,8 @@ public class ValueModel implements
         if (indexOfDecPoint < 0) {
             countOfDigitsAfterDecPointInError = 0;
         } else {
-            countOfDigitsAfterDecPointInError =//
+            countOfDigitsAfterDecPointInError
+                    =//
                     twoSigError.length() - (indexOfDecPoint + 1);
         }
 
@@ -793,12 +801,14 @@ public class ValueModel implements
 
         // sept 2009 modified to force use of ABS uncertainty for sigfig counting
         // first determine the shape of significant digits of ABS uncertainty
-        String twoSigmaUnct = //
+        String twoSigmaUnct
+                = //
                 formatTwoSigmaForPublicationSigDigMode(//
                         "ABS", movePointRightCount, uncertaintySigDigits);
 
         // then generate the ouput string based on uncertainty type
-        String twoSigmaUnctOutput = //
+        String twoSigmaUnctOutput
+                = //
                 formatTwoSigmaForPublicationSigDigMode(//
                         uncertaintyType, movePointRightCount, uncertaintySigDigits);
 
@@ -806,7 +816,8 @@ public class ValueModel implements
         int countOfDigitsAfterDecPointInError = calculateCountOfDigitsAfterDecPoint(twoSigmaUnct);
 
         // create string from value
-        String valueString = //
+        String valueString
+                = //
                 getValue().movePointRight(movePointRightCount).toPlainString();
 
         // revised feb 2008 to do rounding !!
@@ -1035,11 +1046,13 @@ public class ValueModel implements
         BufferedReader reader = URIHelper.getBufferedReader(filename);
 
         if (reader != null) {
-            boolean isValidOrAirplaneMode;
+            boolean isValidOrAirplaneMode = true;
 
             XStream xstream = getXStreamReader();
 
-            isValidOrAirplaneMode = validateXML(filename);
+            if (doValidate) {
+                isValidOrAirplaneMode = validateXML(filename);
+            }
 
             if (isValidOrAirplaneMode) {
                 // re-create reader
@@ -1089,7 +1102,7 @@ public class ValueModel implements
             // validate the DOM tree
             validator.validate(new DOMSource(document));
         } catch (ParserConfigurationException | SAXException | IOException ex) {
-            if ((ex instanceof UnknownHostException)|| (ex instanceof FileNotFoundException)) {
+            if ((ex instanceof UnknownHostException) || (ex instanceof FileNotFoundException)) {
                 return true;
             } else {
                 return false;
@@ -1324,12 +1337,12 @@ public class ValueModel implements
     public double varianceOfLogRatio() {
         // eventually check if this valuemodel is type log or RR2
         double variance = 0.0;
-       
+
         try {
             variance = getOneSigmaAbs().divide(value, ReduxConstants.mathContext15).pow(2).doubleValue();
         } catch (Exception e) {
         }
-        
+
         return variance;
     }
 }

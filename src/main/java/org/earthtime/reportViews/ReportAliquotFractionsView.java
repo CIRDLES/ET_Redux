@@ -72,6 +72,7 @@ import org.earthtime.UPb_Redux.dialogs.fractionManagers.FractionNotesDialog;
 import org.earthtime.UPb_Redux.filters.SVGFileFilter;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
+import org.earthtime.UPb_Redux.samples.Sample;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.UPb_Redux.utilities.comparators.IntuitiveStringComparator;
 import org.earthtime.aliquots.AliquotInterface;
@@ -420,12 +421,6 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
         upperLeftCorner.setBounds(0, 0, fractionColumnWidth, DATATABLE_TOP_HEIGHT);
         add(upperLeftCorner, JLayeredPane.PALETTE_LAYER);
 
-        // start with singleton
-        sortFractionsButton = new ET_JButton("Sort");
-        sortFractionsButton.setFont(ReduxConstants.sansSerif_10_Bold);
-        sortFractionsButton.addActionListener(new SortButtonActionListener(2));
-        upperLeftCorner.add(sortFractionsButton, JLayeredPane.PALETTE_LAYER);
-
         reportHeader = new ReportPainter(this, "HEADER", false);
         reportHeader.setBackground(Color.white);
         reportHeader.setOpaque(true);
@@ -433,36 +428,45 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
         reportHeader.setPreferredSize(new Dimension(Math.min(reportWidth - fractionColumnWidth + fractionButtonMargin + (int) dividerWidth, getWidth() - fractionColumnWidth), DATATABLE_TOP_HEIGHT));
         add(reportHeader);
 
-        // build sort buttons
-        sortButtons = new ArrayList<>();
-        // oct 2016 added -1 for filtering cell added
-        for (int c = 3; c < reportFractions[0].length - 1; c++) {
+        // july 2017 no buttons if empty report
+        if (reportFractions.length > Integer.parseInt(reportFractions[0][0])) {
+            // start with singleton
+            sortFractionsButton = new ET_JButton("Sort");
+            sortFractionsButton.setFont(ReduxConstants.sansSerif_10_Bold);
+            sortFractionsButton.addActionListener(new SortButtonActionListener(2));
+            upperLeftCorner.add(sortFractionsButton, JLayeredPane.PALETTE_LAYER);
 
-            JButton sortButton = new ET_JButton("\u25B2 \u25BC");
-            sortButton.setFont(ReduxConstants.sansSerif_10_Bold);
-            sortButton.addActionListener(new SortButtonActionListener(c));
-            sortButtons.add(sortButton);
+            // build sort buttons
+            sortButtons = new ArrayList<>();
+            // oct 2016 added -1 for filtering cell added
+            for (int c = 3; c < reportFractions[0].length - 1; c++) {
 
-            reportHeader.add(sortButton, DEFAULT_LAYER);
+                JButton sortButton = new ET_JButton("\u25B2 \u25BC");
+                sortButton.setFont(ReduxConstants.sansSerif_10_Bold);
+                sortButton.addActionListener(new SortButtonActionListener(c));
+                sortButtons.add(sortButton);
 
-        }
-
-        // June 2016 add button upper left to toggle meansure ratios inside compostion for Dan Condon et al issue
-        toggleMeasButton = new ET_JButton("Toggle Measured");
-        toggleMeasButton.setFont(ReduxConstants.sansSerif_10_Bold);
-        toggleMeasButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-                sample.getReportSettingsModel().toggleMeasuredRatiosInCompositionCategory();
-                parentFrame.loadAndShowReportTableData("");
+                reportHeader.add(sortButton, DEFAULT_LAYER);
             }
-        });
-        if (sample.isAnalysisTypeIDTIMS()) {
-            upperLeftCorner.add(toggleMeasButton, JLayeredPane.PALETTE_LAYER);
-        }
 
-        reSizeSortButtons();
+            // June 2016 add button upper left to toggle meansure ratios inside compostion for Dan Condon et al issue
+            toggleMeasButton = new ET_JButton("Toggle Measured");
+            toggleMeasButton.setFont(ReduxConstants.sansSerif_10_Bold);
+            toggleMeasButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+
+                    sample.getReportSettingsModel().toggleMeasuredRatiosInCompositionCategory();
+                    parentFrame.loadAndShowReportTableData("");
+                }
+            });
+            if (sample.isAnalysisTypeIDTIMS()) {
+                upperLeftCorner.add(toggleMeasButton, JLayeredPane.PALETTE_LAYER);
+            }
+
+            reSizeSortButtons();
+
+        }
 
         // report fractionIDs in scroll pane
         reportFractionIDs = new ReportPainter(this, "FRACTION", true);
@@ -920,7 +924,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                             &&//
                             !paintType.equalsIgnoreCase("FRACTION")) {
                         g2D.drawString(
-                                "There are no Fractions Selected.",
+                                "There are no Fractions Selected.  Displayed Report Headers are used for style " + reportFractions[1][0] + ".  Use Reports menu to customize.",
                                 12,
                                 (drawnHeight + topMargin + lineHeight));
                     } else {
@@ -1107,7 +1111,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                             if (!item.equals("")) {
                                 // strip out footnote letter
                                 String[] footNote = item.split("&");
-                                // TODO - assuming on ly one \n for now
+                                // footnote may contain one or more new lines 
                                 if (footNote[1].contains("\n")) {
                                     String[] footNoteBody = footNote[1].split("\n");
                                     String footNoteLine
@@ -1119,14 +1123,16 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                                             footNoteLine, drawnWidth, (drawnHeight + topMargin + lineHeight));
                                     drawnWidth = leftMargin;
                                     drawnHeight += lineHeight;
-                                    
-                                    footNoteLine
-                                            = "     " //
-                                            + footNoteBody[1];
-                                    g2D.drawString(//
-                                            footNoteLine, drawnWidth, (drawnHeight + topMargin + lineHeight));
-                                    drawnWidth = leftMargin;
-                                    drawnHeight += lineHeight;
+
+                                    for (int l = 1; l < footNoteBody.length; l++) {
+                                        footNoteLine
+                                                = "    " //
+                                                + footNoteBody[l];
+                                        g2D.drawString(//
+                                                footNoteLine, drawnWidth, (drawnHeight + topMargin + lineHeight));
+                                        drawnWidth = leftMargin;
+                                        drawnHeight += lineHeight;
+                                    }
                                 } else {
                                     String footNoteLine
                                             = " " //

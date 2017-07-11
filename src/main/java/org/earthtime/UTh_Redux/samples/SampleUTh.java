@@ -93,7 +93,8 @@ public class SampleUTh extends ETSample implements
     /**
      * UPb or UTh as of July 2015
      */
-    private String isotopeStyle;
+    private String isotopeSystem;
+    private String defaultReportSpecsType;
     /**
      * any comments or clarifications regarding this <code>Sample</code>.
      */
@@ -150,12 +151,12 @@ public class SampleUTh extends ETSample implements
      * <code>sampleType</code> will be set
      * @param sampleAnalysisType
      * @param defaultAnalysisPurpose
-     * @param isotopeStyle the value of isotopeStyle
+     * @param isotopeSystem the value of isotopeSystem
      * @throws org.earthtime.UPb_Redux.exceptions.BadLabDataException
      * BadLabDataException
      */
     public SampleUTh(
-            String sampleName, String sampleType, String sampleAnalysisType, ReduxConstants.ANALYSIS_PURPOSE defaultAnalysisPurpose, String isotopeStyle)
+            String sampleName, String sampleType, String sampleAnalysisType, ReduxConstants.ANALYSIS_PURPOSE defaultAnalysisPurpose, String isotopeSystem, String defaultReportSpecsType)
             throws BadLabDataException {
 
         this.myReduxLabData = ReduxLabData.getInstance();
@@ -169,11 +170,12 @@ public class SampleUTh extends ETSample implements
         this.validatedSampleIGSN = false;
         this.reduxSampleFileName = "";
         this.reduxSampleFilePath = "";
-        this.isotopeStyle = isotopeStyle;
+        this.isotopeSystem = isotopeSystem;
+        this.defaultReportSpecsType = defaultReportSpecsType;
 
         this.sampleAnnotations = "";
 
-        this.reportSettingsModel = myReduxLabData.getDefaultReportSettingsModelByIsotopeStyle(isotopeStyle);
+        this.reportSettingsModel = myReduxLabData.getDefaultReportSettingsModelBySpecsType(isotopeSystem);
         this.physicalConstantsModel = myReduxLabData.getDefaultPhysicalConstantsModel();
 
         this.aliquots = new Vector<>();
@@ -194,7 +196,6 @@ public class SampleUTh extends ETSample implements
         this.changed = false;
 
 //        initFilteredFractionsToAll();
-
     }
 
     @Override
@@ -574,18 +575,18 @@ public class SampleUTh extends ETSample implements
      */
     @Override
     public void restoreDefaultReportSettingsModel() {
-        setReportSettingsModel(ReduxLabData.getInstance().getDefaultReportSettingsModelByIsotopeStyle(getIsotopeStyle()));
+        setReportSettingsModel(ReduxLabData.getInstance().getDefaultReportSettingsModelBySpecsType(getIsotopeSystem()));
     }
 
     /**
-     * @return the isotopeStyle
+     * @return the isotopeSystem
      */
     @Override
-    public String getIsotopeStyle() {
-        if (isotopeStyle == null) {
-            isotopeStyle = "UTh";
+    public String getIsotopeSystem() {
+        if (isotopeSystem == null) {
+            isotopeSystem = "UTh";
         }
-        return isotopeStyle;
+        return isotopeSystem;
     }
 
     /**
@@ -613,6 +614,17 @@ public class SampleUTh extends ETSample implements
         for (int i = 0; i < UThFractions.size(); i++) {
             filteredFractionIDs.add(UThFractions.get(i).getFractionID());
         }
+    }
+
+    /**
+     * @return the defaultReportSpecsType
+     */
+    @Override
+    public String getDefaultReportSpecsType() {
+        if (defaultReportSpecsType == null) {
+            defaultReportSpecsType = "UTh_Carb";
+        }
+        return defaultReportSpecsType;
     }
 
 }

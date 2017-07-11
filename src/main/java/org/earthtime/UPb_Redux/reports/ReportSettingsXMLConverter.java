@@ -96,14 +96,14 @@ public class ReportSettingsXMLConverter implements Converter {
         writer.endNode();
 
         writer.startNode("isotopeStyle");
-        writer.setValue(reportSettings.getIsotopeStyle());
+        writer.setValue(reportSettings.getDefaultReportSpecsType());
         writer.endNode();
 
         writer.startNode("fractionCategory");
         context.convertAnother(reportSettings.getFractionCategory());
         writer.endNode();
 
-        if (reportSettings.isIsotypeStyleUPb()) {
+        if (reportSettings.isdefaultReportSpecsType_UPb()) {
             writer.startNode("compositionCategory");
             context.convertAnother(reportSettings.getCompositionCategory());
             writer.endNode();
@@ -180,7 +180,7 @@ public class ReportSettingsXMLConverter implements Converter {
 
         reader.moveDown();
         if ("isotopeStyle".equals(reader.getNodeName())) {
-            reportSettings.setIsotopeStyle(reader.getValue());
+            reportSettings.setDefaultReportSpecsType(reader.getValue());
             reader.moveUp();
             reader.moveDown();
         }
@@ -190,7 +190,7 @@ public class ReportSettingsXMLConverter implements Converter {
         reportSettings.setFractionCategory(reportCategory);
         reader.moveUp();
 
-        if (reportSettings.isIsotypeStyleUPb()) {
+        if (reportSettings.isdefaultReportSpecsType_UPb()) {
 
             reader.moveDown();
             reportCategory = new ReportCategory();

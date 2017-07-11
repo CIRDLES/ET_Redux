@@ -1426,7 +1426,7 @@ public class UPbFraction extends Fraction implements
         BufferedReader reader = URIHelper.getBufferedReader(filename);
 
         if (reader != null) {
-            boolean isValidOrAirplaneMode = !doValidate;
+            boolean isValidOrAirplaneMode = true;
 
             XStream xstream = getXStreamReader();
 

@@ -113,7 +113,8 @@ public class Sample implements
      * analyzed and <code>false</code> when it has not.
      */
     private boolean analyzed;
-    private String isotopeStyle;
+    private String isotopeSystem;
+    private String defaultReportSpecsType;
     /**
      * the path to which this <code>Sample</code> will be saved.
      */
@@ -219,12 +220,12 @@ public class Sample implements
      * <code>sampleType</code> will be set
      * @param sampleAnalysisType
      * @param defaultAnalysisPurpose
-     * @param isotopeStyle the value of isotopeStyle
+     * @param isotopeSystem the value of isotopeSystem
      * @throws org.earthtime.UPb_Redux.exceptions.BadLabDataException
      * BadLabDataException
      */
     public Sample(
-            String sampleName, String sampleType, String sampleAnalysisType, ANALYSIS_PURPOSE defaultAnalysisPurpose, String isotopeStyle) {
+            String sampleName, String sampleType, String sampleAnalysisType, ANALYSIS_PURPOSE defaultAnalysisPurpose, String isotopeSystem, String defaultReportSpecsType) {
         this.sampleName = sampleName;
         this.sampleType = sampleType;
         this.sampleAnalysisType = sampleAnalysisType;
@@ -234,12 +235,13 @@ public class Sample implements
         this.sampleAnnotations = "";
         this.reduxSampleFileName = "";
         this.reduxSampleFilePath = "";
-        this.isotopeStyle = isotopeStyle;
+        this.isotopeSystem = isotopeSystem;
+        this.defaultReportSpecsType = defaultReportSpecsType;
 
         Sample.saving = false;
 
         this.myReduxLabData = ReduxLabData.getInstance();
-        this.reportSettingsModel = myReduxLabData.getDefaultReportSettingsModelByIsotopeStyle(isotopeStyle);
+        this.reportSettingsModel = myReduxLabData.getDefaultReportSettingsModelBySpecsType(defaultReportSpecsType);
 
         this.sampleAgeInterpretationGUISettings = new SampleDateInterpretationGUIOptions();
 
@@ -633,7 +635,9 @@ public class Sample implements
 
                     if (isValidUPbFraction && getSampleType().equalsIgnoreCase(SampleTypesEnum.LIVEWORKFLOW.getName())) {
                         return ((file.lastModified() >= (aliquotFolder.lastModified() - 20000l)));
-                    } else return isValidUPbFraction && getSampleType().equalsIgnoreCase(SampleTypesEnum.ANALYSIS.getName());
+                    } else {
+                        return isValidUPbFraction && getSampleType().equalsIgnoreCase(SampleTypesEnum.ANALYSIS.getName());
+                    }
 
                 } // 20 second cushion
                 );
@@ -1602,7 +1606,7 @@ public class Sample implements
      */
     @Override
     public void restoreDefaultReportSettingsModel() {
-        setReportSettingsModel(ReduxLabData.getInstance().getDefaultReportSettingsModelByIsotopeStyle((getIsotopeStyle() == null) ? "UPb" : getIsotopeStyle()));
+        setReportSettingsModel(ReduxLabData.getInstance().getDefaultReportSettingsModelBySpecsType((getDefaultReportSpecsType() == null) ? "UPb" : getDefaultReportSpecsType()));
     }
 
     // used for deserialization to enforce backwards compatibility
@@ -1624,13 +1628,24 @@ public class Sample implements
     }
 
     /**
-     * @return the isotopeStyle
+     * @return the isotopeSystem
      */
-    public String getIsotopeStyle() {
-        if (isotopeStyle == null) {
-            isotopeStyle = "UPb";
+    @Override
+    public String getIsotopeSystem() {
+        if (isotopeSystem == null) {
+            isotopeSystem = "UPb";
         }
-        return isotopeStyle;
+        return isotopeSystem;
+    }
+
+    /**
+     * @return the defaultReportSpecsType
+     */
+    public String getDefaultReportSpecsType() {
+        if (defaultReportSpecsType == null) {
+            defaultReportSpecsType = "UPb";
+        }
+        return defaultReportSpecsType;
     }
 
     /**

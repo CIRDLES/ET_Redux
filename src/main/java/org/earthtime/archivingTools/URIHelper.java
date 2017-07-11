@@ -167,10 +167,10 @@ public class URIHelper {
 
         if (CONNECTED_TO_INTERNET) {
             try {
-                URL url = new URL("https://github.com");
+                URL url = new URL("http://cnn.com");
                 //System.out.println(url.getHost());
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                con.setReadTimeout(5000);
+                con.setReadTimeout(20000);
                 con.connect();
                 if (con.getResponseCode() == 200) {
 

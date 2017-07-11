@@ -20,6 +20,7 @@
  */
 package org.earthtime.dataDictionaries;
 
+import org.earthtime.dataDictionaries.reportSpecifications.ReportSpecificationsUPb;
 import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;

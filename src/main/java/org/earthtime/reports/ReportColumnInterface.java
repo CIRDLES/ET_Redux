@@ -21,7 +21,7 @@ import java.lang.reflect.Method;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
-import org.earthtime.dataDictionaries.ReportSpecificationsUPb;
+import org.earthtime.dataDictionaries.reportSpecifications.ReportSpecificationsUPb;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.reportViews.ReportListItemI;
 
@@ -436,7 +436,8 @@ public interface ReportColumnInterface extends Comparable<ReportColumnInterface>
                                 // use special algorithm to format value per the digits of
                                 // the formatted uncertainty column
                                 if (getUncertaintyColumn() != null) {
-                                    if (!getUncertaintyColumn().isDisplayedWithArbitraryDigitCount()) {
+                                    // added July 2017 to disable uncert column effect if it is not visible (making it behave as if arbitrary)
+                                    if (getUncertaintyColumn().isVisible() && !getUncertaintyColumn().isDisplayedWithArbitraryDigitCount()) {
                                         // uncertainty column is in sigfig mode
                                         retVal[0] = vm.formatValueFromTwoSigmaForPublicationSigDigMode(//
                                                 getUncertaintyType(), ReduxConstants.getUnitConversionMoveCount(getUnits()),//

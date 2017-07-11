@@ -21,7 +21,7 @@
     <groupId>org.cirdles</groupId>
     <artifactId>ET_Redux</artifactId>
     <name>ET_Redux</name>
-    <version>3.6.20</version>
+    <version>3.6.22</version>
     <description>Successor to U-Pb_Redux</description>
     <url>https://cirdles.org</url>
     <inceptionYear>2006</inceptionYear>
@@ -219,8 +219,8 @@
             <version>4.5.2</version>
         </dependency>
         <dependency>
-            <groupId>com.github.cirdles</groupId>
-            <artifactId>topsoil</artifactId>
+            <groupId>com.github.cirdles.topsoil</groupId>
+            <artifactId>app</artifactId>
             <version>master-SNAPSHOT</version>
         </dependency>
         <dependency>
@@ -254,7 +254,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.19.1</version>
+                <version>2.20</version>
 
                 <configuration>
                     <includes>
@@ -267,7 +267,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.5.1</version>
+                <version>3.6.1</version>
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
@@ -276,7 +276,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.6</version>
+                <version>3.0.2</version>
                 <configuration>
                     <archive>
                         <manifest>
@@ -289,7 +289,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.10.1</version>
+                <version>2.10.4</version>
                 <configuration>
                     <tags>
                         <tag>
@@ -313,7 +313,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>2.4.3</version>
+                <version>3.0.0</version>
                 <executions>
                     <execution>
                         <phase>package</phase>

@@ -15,42 +15,21 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.earthtime.dataDictionaries;
+package org.earthtime.dataDictionaries.reportSpecifications;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.earthtime.dataDictionaries.AnalysisMeasures;
+import org.earthtime.dataDictionaries.RadDates;
+import org.earthtime.dataDictionaries.RadRatiosPbcCorrected;
+import org.earthtime.dataDictionaries.UThFractionationCorrectedIsotopicRatios;
 
 /**
  *
  * @author James F. Bowring
  */
-public class ReportSpecificationsUPb {
-    // Static
-    // Report specifications
-    // Report column order =
-    //  displayName1, displayName2, displayName3, units, retrieveMethodName, retrieveParameterName, uncertaintyType,
-    //     footnoteSpec, visible, useArbitrary? for value, digitcount value, unct visible (if required), description where needed,
-    //     needsLead, needsUranium
+public class ReportSpecificationsUPb extends ReportSpecificationsAbstract{
 
-    /**
-     *
-     */
-    public static final String[][] ReportCategory_Fraction = new String[][]{
-        {"", "", "Fraction  ", "", "getFractionID", "", "",
-            "", "true", "false", "0", "", "", "false", "false"
-        },
-        {"", "No. of", "Grains", "", "getNumberOfGrains", "", "",
-            "", "false", "false", "0", "", "", "false", "false"
-        }
-    };
-    /**
-     *
-     */
-    public static final String[][] ReportCategory_Fraction2 = new String[][]{
-        {"", "", "Fraction  ", "", "getFractionID", "", "",
-            "", "true", "false", "0", "", "Fraction (customizable location)", "false", "false"
-        }
-    };
     // Report column order =
     //  displayName1, displayName2, displayName3, units, retrieveMethodName, retrieveParameterName, uncertaintyType,
     //     footnoteSpec, visible, useArbitrary? for value, digitcount value, unct visible (if required), description where needed,
@@ -132,47 +111,7 @@ public class ReportSpecificationsUPb {
             "", "false", "false", "3", "true", "233/236 measured ratio", "true", "false"
         },};
 
-//    // Report column order =
-//    //  displayName1, displayName2, displayName3, units, retrieveMethodName, retrieveParameterName, uncertaintyType,
-//    //     footnoteSpec, visible, useArbitrary? for value, digitcount value, unct visible (if required), description where needed,
-//    //     needsLead, needsUranium
-//    /**
-//     *
-//     */
-//    public static final String[][] ReportCategory_CompositionUTh = new String[][]{
-//        {"conc", "232Th", "", "ppm", "getCompositionalMeasureByName", "conc232Th", "ABS",
-//            "", "true", "true", "3", "", "concentration of 232Th", "true", "false"
-//        },
-//        {"conc", "238U", "", "ppm", "getCompositionalMeasureByName", "conc238U", "ABS",
-//            "", "true", "true", "3", "", "concentration of 238U", "false", "true"
-//        },
-//        {"", "[230Th/", "232Th]", "", "getAnalysisMeasure", UThAnalysisMeasures.ar230Th_232Thfc.getName(), "ABS",
-//            "FN-18&FN-19", "false", "true", "3", "true", "[230Th/232Th] activity ratio", "false", "false"
-//        },
-//        {"[232Th/", "238U]", "", "*1e5", "getAnalysisMeasure", UThAnalysisMeasures.ar232Th_238Ufc.getName(), "ABS",
-//            "FN-19&FN-17", "false", "true", "3", "true", "[232Th/238U] activity ratio", "false", "false"
-//        },
-//        {"[238U/", "232Th]", "", "", "getAnalysisMeasure", UThAnalysisMeasures.ar238U_232Thfc.getName(), "ABS",
-//            "FN-19&FN-17", "false", "true", "3", "true", "[238U/232Th] activity ratio", "false", "false"
-//        },
-//        {"", "[230Th/", "238U]", "", "getAnalysisMeasure", UThAnalysisMeasures.ar230Th_238Ufc.getName(), "ABS",
-//            "FN-18&FN-17", "true", "false", "3", "true", "[230Th/238U] activity ratio", "false", "false"
-//        },
-//        {"", "[234U/", "238U]", "", "getAnalysisMeasure", UThAnalysisMeasures.ar234U_238Ufc.getName(), "ABS",
-//            "FN-20&FN-17", "true", "false", "3", "true", "[234U/238U] activity ratio", "false", "false"
-//        },
-//        {"", "", "[230Th]", "", "getAnalysisMeasure", UThAnalysisMeasures.a230Thfc.getName(), "ABS",
-//            "FN-20&FN-17", "true", "false", "3", "true", "[230Th] activity", "false", "false"
-//        },
-//        {"", "", "[226Ra]", "", "getAnalysisMeasure", UThAnalysisMeasures.a226Rafc.getName(), "ABS",
-//            "FN-20&FN-17", "true", "false", "3", "true", "[226Ra] activity", "false", "false"
-//        },
-//        {"", "[226Ra/", "230Th]", "", "getAnalysisMeasure", UThAnalysisMeasures.ar226Ra_230Thfc.getName(), "ABS",
-//            "FN-20&FN-17", "true", "false", "3", "true", "[226Ra/230Th] activity ratio", "false", "false"
-//        },
-//        {"conc", "Ba", "", "ppm", "getCompositionalMeasureByName", UThCompositionalMeasures.concBa.getName(), "ABS",
-//            "", "true", "true", "3", "", "concentration of Ba", "true", "false"
-//        },};
+
     // Report column order =
     //  displayName1, displayName2, displayName3, units, retrieveMethodName, retrieveParameterName, uncertaintyType,
     //     footnoteSpec, visible, useArbitrary? for value, digitcount value, unct visible (if required), description where needed,
@@ -322,22 +261,6 @@ public class ReportSpecificationsUPb {
         {"", "best", "date", "Ma", "getRadiogenicIsotopeDateByName", RadDates.bestAge.getName(), "ABS",
             "", "false", "false", "2", "true", "best date", "true", "true"
         },};
-//
-//    // Report column order =
-//    //  displayName1, displayName2, displayName3, units, retrieveMethodName, retrieveParameterName, uncertaintyType,
-//    //     footnoteSpec, visible, useArbitrary? for value, digitcount value, unct visible (if required), description where needed,
-//    //     needsLead, needsUranium
-//    /**
-//     *
-//     */
-//    public static final String[][] ReportCategory_USeriesReportTable = new String[][]{
-//        {"", "Corr", "Date", "ka", "getRadiogenicIsotopeDateByName", RadDates.dateCorr.getName(), "ABS",
-//            "", "true", "false", "2", "true", "", "false", "false"
-//        },
-//        {"", "delta 234U", "initial", "", "getRadiogenicIsotopeRatioByName", UThFractionationCorrectedIsotopicRatios.delta234U.getName(), "ABS",
-//            "", "true", "false", "2", "true", "", "false", "false"
-//        }
-//    };
 
     // Report column order =
     //  displayName1, displayName2, displayName3, units, retrieveMethodName, retrieveParameterName, uncertaintyType,
@@ -490,69 +413,7 @@ public class ReportSpecificationsUPb {
             "", "false", "false", "3", "", "", "false", "false"
         }
     };
-    // mass units are referred to in units postion 4 of report column and converted by lookup in ReduxConstants
-    /**
-     *
-     */
-    public final static String[] massUnits = new String[]{
-        "g", "mg", "\u03bcg", "ng", "pg", "fg"
-    };
-    // concentration units are referred to in units postion 4 of report column and converted by lookup in ReduxConstants
-    /**
-     *
-     */
-    public final static String[] concUnits = new String[]{
-        "\u0025", "\u2030", "ppm", "ppb"
-    };
-    // date units are referred to in units postion 4 of report column and converted by lookup in ReduxConstants
-    /**
-     *
-     */
-    public final static String[] dateUnits = new String[]{
-        "auto", "Ma", "ka"
-    };
-    /**
-     *
-     */
-    public final static Map<String, String> unitsType = new HashMap<>();
 
-    static {
-        unitsType.put("g", "mass");
-        unitsType.put("mg", "mass");
-        unitsType.put("\u03bcg", "mass");
-        unitsType.put("ng", "mass");
-        unitsType.put("pg", "mass");
-        unitsType.put("fg", "mass");
-        unitsType.put("\u0025", "conc");
-        unitsType.put("\u2030", "conc");
-        unitsType.put("ppm", "conc");
-        unitsType.put("ppb", "conc");
-        unitsType.put("Ma", "date");
-        unitsType.put("ka", "date");
-
-    }
-
-    /**
-     *
-     */
-    public final static Map<String, String> unicodeConversionsToXML = new HashMap<String, String>();
-
-    static {
-        unicodeConversionsToXML.put("\u03bcg", "MICROg");
-        unicodeConversionsToXML.put("\u0025", "PERCENT");
-        unicodeConversionsToXML.put("\u2030", "PERMILLE");
-    }
-
-    /**
-     *
-     */
-    public final static Map<String, String> unicodeConversionsFromXML = new HashMap<String, String>();
-
-    static {
-        unicodeConversionsFromXML.put("MICROg", "\u03bcg");
-        unicodeConversionsFromXML.put("PERCENT", "\u0025");
-        unicodeConversionsFromXML.put("PERMILLE", "\u2030");
-    }
     /**
      *
      */

@@ -27,8 +27,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 import org.earthtime.UPb_Redux.ReduxConstants;
+import static org.earthtime.UPb_Redux.ReduxConstants.TIME_IN_MILLISECONDS_FROM_1970_TO_2000;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UTh_Redux.aliquots.UThReduxAliquot;
+import org.earthtime.UTh_Redux.fractions.UThFraction;
 import org.earthtime.UTh_Redux.fractions.UThLegacyFraction;
 import org.earthtime.UTh_Redux.fractions.UThLegacyFractionI;
 import org.earthtime.UTh_Redux.fractions.fractionReduction.UThFractionReducer;
@@ -36,7 +38,7 @@ import org.earthtime.UTh_Redux.samples.SampleUTh;
 import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.aliquots.ReduxAliquotInterface;
 import org.earthtime.dataDictionaries.FileDelimiterTypesEnum;
-import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
+import static org.earthtime.dataDictionaries.SampleAnalysisTypesEnum.USERIES_IGN;
 import org.earthtime.dataDictionaries.SampleTypesEnum;
 import org.earthtime.dataDictionaries.UThAnalysisMeasures;
 import org.earthtime.dataDictionaries.UThCompositionalMeasures;
@@ -119,8 +121,10 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Ign extends Abstra
                                 currentSample = new SampleUTh(//
                                         sampleID, //
                                         SampleTypesEnum.LEGACY.getName(), //
-                                        SampleAnalysisTypesEnum.USERIES_IGN.getName(), //
-                                        ReduxConstants.ANALYSIS_PURPOSE.SingleAge, "UTh");
+                                        USERIES_IGN.getName(), //
+                                        ReduxConstants.ANALYSIS_PURPOSE.SingleAge,
+                                        USERIES_IGN.getIsotypeSystem(),
+                                        USERIES_IGN.getDefaultReportSpecsType());
 
                                 projectSamples.add(currentSample);
 
@@ -141,7 +145,7 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Ign extends Abstra
 
                         System.out.println("Reading legacy fraction " + myFraction.getFractionID());
 
-                        myFraction.useLegacyPhysicalConstantsD3();
+                        myFraction.useLegacyPhysicalConstantsD1();
 
                         myFraction.setSampleName(currentSample.getSampleName());
                         // in case a sample occurs out of order
@@ -196,7 +200,7 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Ign extends Abstra
                         myFraction.getLegacyActivityRatioByName(ratioName)//
                                 .setValue(readDelimitedTextCell(myFractionData.get(9)));
 
-                        // column K=10 is r238U_232Thfc uncertainty
+                        // column K=10 is r230U_232Thfc uncertainty
                         // convert 2-sigma to 1-sigma
                         oneSigmaAbs = readDelimitedTextCell(myFractionData.get(10)).
                                 divide(new BigDecimal(2.0));
@@ -207,57 +211,87 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Ign extends Abstra
                         ratioName = UThAnalysisMeasures.ar234U_238Ufc.getName();
                         myFraction.getLegacyActivityRatioByName(ratioName)//
                                 .setValue(readDelimitedTextCell(myFractionData.get(11)));
-                        
+
                         // column M=12 is ar234U_238Ufc uncertainty
                         // convert 2-sigma to 1-sigma
                         oneSigmaAbs = readDelimitedTextCell(myFractionData.get(12)).
                                 divide(new BigDecimal(2.0));
                         myFraction.getLegacyActivityRatioByName(ratioName)//
                                 .setOneSigma(oneSigmaAbs);
-                        
-                        // column N=13 is a230Thfc
-                        ratioName = UThAnalysisMeasures.a230Thfc.getName();
-                        myFraction.getLegacyActivityRatioByName(ratioName)//
-                                .setValue(readDelimitedTextCell(myFractionData.get(13)));
-                        
-                        // column O=14 is a230Thfc uncertainty
+
+                        // column N=13 is activity of 230Th concentration ***********************************
+                        ratioName = UThCompositionalMeasures.arConc230Th.getName();
+                        BigDecimal activity = readDelimitedTextCell(myFractionData.get(13));
+                        myFraction.getCompositionalMeasureByName(ratioName)//
+                                .setValue(activity);
+
+                        // column O=14 is activity of 230Th concentration uncertainty
                         // convert 2-sigma to 1-sigma
                         oneSigmaAbs = readDelimitedTextCell(myFractionData.get(14)).
                                 divide(new BigDecimal(2.0));
-                        myFraction.getLegacyActivityRatioByName(ratioName)//
+                        myFraction.getCompositionalMeasureByName(ratioName)//
                                 .setOneSigma(oneSigmaAbs);
-                        
-                        // column P=15 is a226Rafc
-                        ratioName = UThAnalysisMeasures.a226Rafc.getName();
-                        myFraction.getLegacyActivityRatioByName(ratioName)//
-                                .setValue(readDelimitedTextCell(myFractionData.get(15)));
-                        
-                        // column Q=16 is a226Rafc uncertainty
+
+                        // now calculate and save concentration and uncertainty based on legacy Physical Constants
+                        ratioName = UThCompositionalMeasures.conc230Th.getName();
+                        myFraction.getCompositionalMeasureByName(ratioName)//
+                                .setValue(((UThLegacyFraction)myFraction).calculateConcentrationOrUnct230ThFromActivityUsingLegacyLambda(activity.doubleValue()));
+                        myFraction.getCompositionalMeasureByName(ratioName)//
+                                .setOneSigma(((UThLegacyFraction)myFraction).calculateConcentrationOrUnct230ThFromActivityUsingLegacyLambda(oneSigmaAbs.doubleValue()));
+                        // *************************************************************************************    
+
+                        // column P=15 is activity of 226Ra concentration ***********************************
+                        ratioName = UThCompositionalMeasures.arConc226Ra.getName();
+                        activity = readDelimitedTextCell(myFractionData.get(15));
+                        myFraction.getCompositionalMeasureByName(ratioName)//
+                                .setValue(activity);
+
+                        // column Q=16 is activity of 226Ra concentration uncertainty
                         // convert 2-sigma to 1-sigma
                         oneSigmaAbs = readDelimitedTextCell(myFractionData.get(16)).
                                 divide(new BigDecimal(2.0));
-                        myFraction.getLegacyActivityRatioByName(ratioName)//
+                        myFraction.getCompositionalMeasureByName(ratioName)//
                                 .setOneSigma(oneSigmaAbs);
                         
+                        // now calculate and save concentration and uncertainty based on legacy Physical Constants
+                        ratioName = UThCompositionalMeasures.conc226Ra.getName();
+                        myFraction.getCompositionalMeasureByName(ratioName)//
+                                .setValue(((UThLegacyFraction)myFraction).calculateConcentrationOrUnct226RaFromActivityUsingLegacyLambda(activity.doubleValue()));
+                        myFraction.getCompositionalMeasureByName(ratioName)//
+                                .setOneSigma(((UThLegacyFraction)myFraction).calculateConcentrationOrUnct226RaFromActivityUsingLegacyLambda(oneSigmaAbs.doubleValue()));
+
+                        // *************************************************************************************    
+
                         // column R=17 is ar226Ra_230Thfc
                         ratioName = UThAnalysisMeasures.ar226Ra_230Thfc.getName();
                         myFraction.getLegacyActivityRatioByName(ratioName)//
                                 .setValue(readDelimitedTextCell(myFractionData.get(17)));
-                        
+
                         // column S=18 is ar226Ra_230Thfc uncertainty
                         // convert 2-sigma to 1-sigma
                         oneSigmaAbs = readDelimitedTextCell(myFractionData.get(18)).
                                 divide(new BigDecimal(2.0));
                         myFraction.getLegacyActivityRatioByName(ratioName)//
                                 .setOneSigma(oneSigmaAbs);
-                        
+
                         // column T=19 is concBa in ppm
                         ratioName = UThCompositionalMeasures.concBa.getName();
                         myFraction.getCompositionalMeasureByName(ratioName)//
                                 .setValue(readDelimitedTextCell(myFractionData.get(19)).//
                                         movePointLeft(6));
-                        
+
+                        // JULY 2017 placeholders
+                        ((UThFraction) myFraction).setSpikeCalibrationR230_238IsSecular(false);
+                        ((UThFraction) myFraction).setSpikeCalibrationR234_238IsSecular(false);
+
+                        long dateTimeMilliseconds = TIME_IN_MILLISECONDS_FROM_1970_TO_2000;// per Noah 12 June 2017
+                        ((UThFraction) myFraction).setDateTimeMillisecondsOfAnalysis(dateTimeMilliseconds);
+
+                        ((UThFraction) myFraction).setR230Th_238Ufc_referenceMaterialName("");
+                        ((UThFraction) myFraction).setR234U_238Ufc_referenceMaterialName("");
+
                         UThFractionReducer.calculateMeasuredAtomRatiosFromLegacyActivityRatios(myFraction);
+
                     }
                 }
             }

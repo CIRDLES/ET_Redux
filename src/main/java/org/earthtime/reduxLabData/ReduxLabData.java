@@ -87,8 +87,9 @@ public final class ReduxLabData implements Serializable {
     private AbstractRatiosDataModel defaultLabInitialPbModel;
     private BigDecimal defaultStaceyKramersOnePctUnct;
     private BigDecimal defaultStaceyKramersCorrelationCoeffs;
-    private ReportSettingsInterface defaultReportSettingsModel;
-    private ReportSettingsInterface defaultReportSettingsModelUTh;
+    private ReportSettingsInterface defaultReportSettingsModelUPb;
+    private ReportSettingsInterface defaultReportSettingsModelUTh_Carb;
+    private ReportSettingsInterface defaultReportSettingsModelUTh_Ign;
     private ValueModel defaultPbBlankMassInGrams;
     private ValueModel assumedUBlankMassInGrams;
     private ValueModel defaultR18O_16O;
@@ -1475,36 +1476,55 @@ public final class ReduxLabData implements Serializable {
 
     /**
      *
-     * @param isotopeStyle the value of isotopeStyle @throws BadLabDataException
+     * @param defaultReportSpecsType the value of defaultReportSpecsType @throws
+     * BadLabDataException
      * @return the org.earthtime.reports.ReportSettingsInterface
      * @throws org.earthtime.UPb_Redux.exceptions.BadLabDataException
      */
-    public ReportSettingsInterface getDefaultReportSettingsModelByIsotopeStyle(String isotopeStyle) {
-        if (defaultReportSettingsModel == null) {
-            defaultReportSettingsModel = ReportSettings.EARTHTIMEReportSettingsUPb();
-            addReportSettingsModel(defaultReportSettingsModel);
+    public ReportSettingsInterface getDefaultReportSettingsModelBySpecsType(String defaultReportSpecsType) {
+        if (defaultReportSettingsModelUPb == null) {
+            defaultReportSettingsModelUPb = ReportSettings.EARTHTIMEReportSettingsUPb();
+            addReportSettingsModel(defaultReportSettingsModelUPb);
         }
-        if (defaultReportSettingsModelUTh == null) {
-            defaultReportSettingsModelUTh = ReportSettings.EARTHTIMEReportSettingsUTh();
-            addReportSettingsModel(defaultReportSettingsModelUTh);
+        if (defaultReportSettingsModelUTh_Carb == null) {
+            defaultReportSettingsModelUTh_Carb = ReportSettings.EARTHTIMEReportSettingsUTh_Carb();
+            addReportSettingsModel(defaultReportSettingsModelUTh_Carb);
+        }
+        if (defaultReportSettingsModelUTh_Ign == null) {
+            defaultReportSettingsModelUTh_Ign = ReportSettings.EARTHTIMEReportSettingsUTh_Ign();
+            addReportSettingsModel(defaultReportSettingsModelUTh_Ign);
         }
 
         // new approach oct 2014
-        if (defaultReportSettingsModel.isOutOfDateUPb()) {
-            String myReportSettingsName = defaultReportSettingsModel.getName();
-            defaultReportSettingsModel = new ReportSettings(myReportSettingsName, "UPb");
+        if (defaultReportSettingsModelUPb.isOutOfDateUPb()) {
+            String myReportSettingsName = defaultReportSettingsModelUPb.getName();
+            defaultReportSettingsModelUPb = new ReportSettings(myReportSettingsName, "UPb");
+        }
+        if (defaultReportSettingsModelUTh_Carb.isOutOfDateUTh_Carb()) {
+            String myReportSettingsName = defaultReportSettingsModelUTh_Carb.getName();
+            defaultReportSettingsModelUTh_Carb = new ReportSettings(myReportSettingsName, "UTh_Carb");
+        }
+        if (defaultReportSettingsModelUTh_Ign.isOutOfDateUTh_Ign()) {
+            String myReportSettingsName = defaultReportSettingsModelUTh_Ign.getName();
+            defaultReportSettingsModelUTh_Ign = new ReportSettings(myReportSettingsName, "UTh_Ign");
         }
 
-        if (defaultReportSettingsModelUTh.isOutOfDateUTh()) {
-            String myReportSettingsName = defaultReportSettingsModelUTh.getName();
-            defaultReportSettingsModelUTh = new ReportSettings(myReportSettingsName, "UTh");
-        }
+        ReportSettingsInterface retVal;
+        switch (defaultReportSpecsType) {
+            case "UPb":
+                retVal = defaultReportSettingsModelUPb.deepCopy();
+                break;
+            case "UTh_Carb":
+                retVal = defaultReportSettingsModelUTh_Carb.deepCopy();
+                break;
+            case "UTh_Ign":
+                retVal = defaultReportSettingsModelUTh_Ign.deepCopy();
+                break;
 
-        if (isotopeStyle.compareToIgnoreCase("UPb") == 0) {
-            return defaultReportSettingsModel.deepCopy();
-        } else {
-            return defaultReportSettingsModelUTh.deepCopy();
+            default:
+                retVal = defaultReportSettingsModelUPb.deepCopy();
         }
+        return retVal;
     }
 
     /**
@@ -1512,10 +1532,10 @@ public final class ReduxLabData implements Serializable {
      * @param model
      */
     public void setDefaultReportSettingsModelByIsotopeStyle(ReportSettingsInterface model) {
-        if (model.getIsotopeStyle().compareToIgnoreCase("UPb") == 0) {
-            this.defaultReportSettingsModel = model.deepCopy();
+        if (model.getDefaultReportSpecsType().compareToIgnoreCase("UPb") == 0) {
+            this.defaultReportSettingsModelUPb = model.deepCopy();
         } else {
-            this.defaultReportSettingsModelUTh = model.deepCopy();
+            this.defaultReportSettingsModelUTh_Carb = model.deepCopy();
         }
     }
 

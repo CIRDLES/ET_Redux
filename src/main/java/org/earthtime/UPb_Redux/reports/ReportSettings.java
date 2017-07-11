@@ -31,8 +31,10 @@ import javax.swing.JOptionPane;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.user.UPbReduxConfigurator;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
-import org.earthtime.dataDictionaries.ReportSpecificationsUPb;
-import org.earthtime.dataDictionaries.ReportSpecificationsUTh;
+import org.earthtime.dataDictionaries.reportSpecifications.ReportSpecificationsAbstract;
+import org.earthtime.dataDictionaries.reportSpecifications.ReportSpecificationsUPb;
+import org.earthtime.dataDictionaries.reportSpecifications.ReportSpecificationsUTh_Carb;
+import org.earthtime.dataDictionaries.reportSpecifications.ReportSpecificationsUTh_Ign;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.reports.ReportCategoryInterface;
@@ -52,13 +54,14 @@ public class ReportSettings implements
      * version number is advanced so that any existing analysis will update its
      * report models upon opening in ET_Redux.
      */
-    private static transient int CURRENT_VERSION_REPORT_SETTINGS_UPB = 354;
-    private static transient int CURRENT_VERSION_REPORT_SETTINGS_UTH = 538;
+    private static transient int CURRENT_VERSION_REPORT_SETTINGS_UPB = 362;
+    private static transient int CURRENT_VERSION_REPORT_SETTINGS_UTH_Carb = 575;
+    private static transient int CURRENT_VERSION_REPORT_SETTINGS_UTH_Ign = 575;
 
     // Fields
     private String name;
     private int version;
-    private String isotopeStyle;
+    private String defaultReportSpecsType;
     private ReportCategoryInterface fractionCategory;
     private ReportCategoryInterface compositionCategory;
     private ReportCategoryInterface isotopicRatiosCategory;
@@ -83,17 +86,23 @@ public class ReportSettings implements
      * Creates a new instance of ReportSettings
      *
      * @param name
-     * @param isotopeStyle the value of isotopeStyle
+     * @param defaultReportSpecsType the value of defaultReportSpecsType
      */
-    public ReportSettings(String name, String isotopeStyle) {
+    public ReportSettings(String name, String defaultReportSpecsType) {
 
         this.name = name;
+        this.defaultReportSpecsType = defaultReportSpecsType;
 
-        this.isotopeStyle = isotopeStyle;
-        if (isIsotypeStyleUPb()) {
-            this.version = CURRENT_VERSION_REPORT_SETTINGS_UPB;
-        } else {
-            this.version = CURRENT_VERSION_REPORT_SETTINGS_UTH;
+        switch (defaultReportSpecsType) {
+            case "UPb":
+                this.version = CURRENT_VERSION_REPORT_SETTINGS_UPB;
+                break;
+            case "UTh_Carb":
+                this.version = CURRENT_VERSION_REPORT_SETTINGS_UTH_Carb;
+                break;
+            case "UTh_Ign":
+                this.version = CURRENT_VERSION_REPORT_SETTINGS_UTH_Ign;
+                break;
         }
 
         this.reportSettingsComment = "";
@@ -101,14 +110,14 @@ public class ReportSettings implements
         this.fractionCategory
                 = new ReportCategory(//
                         "Fraction",
-                        ReportSpecificationsUPb.ReportCategory_Fraction, true);
+                        ReportSpecificationsAbstract.ReportCategory_Fraction, true);
 
         this.fractionCategory2
                 = new ReportCategory(//
                         "Fraction",
-                        ReportSpecificationsUPb.ReportCategory_Fraction2, true);
+                        ReportSpecificationsAbstract.ReportCategory_Fraction2, true);
 
-        if (isIsotypeStyleUPb()) {
+        if (isdefaultReportSpecsType_UPb()) {
             this.datesCategory
                     = new ReportCategory(//
                             "Dates",
@@ -143,11 +152,16 @@ public class ReportSettings implements
                     = new ReportCategory(//
                             "Trace Elements",//
                             ReportSpecificationsUPb.ReportCategory_TraceElements, false);
-        } else {
+        } else if (isdefaultReportSpecsType_UTh_Carb()) {
             this.datesCategory
                     = new ReportCategory(//
-                            "USeries Outputs", 
-                            ReportSpecificationsUTh.ReportCategory_USeriesReportTable, true);
+                            "USeries Carbonate Outputs",
+                            ReportSpecificationsUTh_Carb.ReportCategory_USeriesReportTable, true);
+        } else if (isdefaultReportSpecsType_UTh_Ign()) {
+            this.datesCategory
+                    = new ReportCategory(//
+                            "USeries Igneous Outputs",
+                            ReportSpecificationsUTh_Ign.ReportCategory_USeriesReportTable, true);
         }
 
         legacyData = false;
@@ -172,9 +186,20 @@ public class ReportSettings implements
      *
      * @return
      */
-    public static ReportSettingsInterface EARTHTIMEReportSettingsUTh() {
+    public static ReportSettingsInterface EARTHTIMEReportSettingsUTh_Carb() {
         ReportSettingsInterface EARTHTIME
-                = new ReportSettings("EARTHTIME UPb", "UTh");
+                = new ReportSettings("EARTHTIME UTh", "UTh_Carb");
+
+        return EARTHTIME;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public static ReportSettingsInterface EARTHTIMEReportSettingsUTh_Ign() {
+        ReportSettingsInterface EARTHTIME
+                = new ReportSettings("EARTHTIME UTh", "UTh_Ign");
 
         return EARTHTIME;
     }
@@ -183,7 +208,7 @@ public class ReportSettings implements
         ReportSettingsInterface reportSettingsModel = myReportSettingsModel;
 
         if (myReportSettingsModel == null) {
-            reportSettingsModel = ReduxLabData.getInstance().getDefaultReportSettingsModelByIsotopeStyle(myReportSettingsModel.getIsotopeStyle());
+            reportSettingsModel = ReduxLabData.getInstance().getDefaultReportSettingsModelBySpecsType(myReportSettingsModel.getDefaultReportSpecsType());
         } else // new approach oct 2014
         {   // this provides for seamless updates to reportsettings implementation
             String myReportSettingsName = myReportSettingsModel.getName();
@@ -194,7 +219,7 @@ public class ReportSettings implements
                             "You may lose some report customizations. Thank you for your patience."//,
                         });
 
-                reportSettingsModel = new ReportSettings(myReportSettingsName, myReportSettingsModel.getIsotopeStyle());
+                reportSettingsModel = new ReportSettings(myReportSettingsName, myReportSettingsModel.getDefaultReportSpecsType());
             }
         }
 
@@ -512,7 +537,20 @@ public class ReportSettings implements
      */
     @Override
     public boolean isOutOfDate() {
-        return isIsotypeStyleUPb() ? isOutOfDateUPb() : isOutOfDateUTh();
+        boolean retVal = false;
+        switch (defaultReportSpecsType) {
+            case "UPb":
+                retVal = isOutOfDateUPb();
+                break;
+            case "UTh_Carb":
+                retVal = isOutOfDateUTh_Carb();
+                break;
+            case "UTh_Ign":
+                retVal = isOutOfDateUTh_Ign();
+                break;
+        }
+
+        return retVal;
     }
 
     /**
@@ -529,8 +567,17 @@ public class ReportSettings implements
      * @return
      */
     @Override
-    public boolean isOutOfDateUTh() {
-        return this.version < CURRENT_VERSION_REPORT_SETTINGS_UTH;
+    public boolean isOutOfDateUTh_Carb() {
+        return this.version < CURRENT_VERSION_REPORT_SETTINGS_UTH_Carb;
+    }
+
+    /**
+     *
+     * @return
+     */
+    @Override
+    public boolean isOutOfDateUTh_Ign() {
+        return this.version < CURRENT_VERSION_REPORT_SETTINGS_UTH_Ign;
     }
 
     /**
@@ -551,22 +598,6 @@ public class ReportSettings implements
         getReportCategories().stream().filter((rc) -> (rc != null)).forEach((rc) -> {
             rc.setLegacyData(legacyData);
         });
-    }
-
-    /**
-     *
-     * @param args
-     * @throws Exception
-     */
-    public static void main(String[] args) throws Exception {
-
-        ReportSettingsInterface reportSettings
-                = new ReportSettings("Test ReportSettings", "UPb");
-        String testFileName = "ReportSettingsTEST.xml";
-
-        reportSettings.serializeXMLObject(testFileName);
-        reportSettings.readXMLObject(testFileName, true);
-
     }
 
     /**
@@ -650,29 +681,51 @@ public class ReportSettings implements
     }
 
     /**
-     * @return the isotopeStyle
+     * @return the defaultReportSpecsType
      */
     @Override
-    public String getIsotopeStyle() {
-        if (isotopeStyle == null) {
-            isotopeStyle = "UPb";
+    public String getDefaultReportSpecsType() {
+        if (defaultReportSpecsType == null) {
+            defaultReportSpecsType = "UPb";
         }
-        return isotopeStyle;
+        return defaultReportSpecsType;
     }
 
     /**
-     * @param isotopeStyle the isotopeStyle to set
+     * @param defaultReportSpecsType the defaultReportSpecsType to set
      */
     @Override
-    public void setIsotopeStyle(String isotopeStyle) {
-        this.isotopeStyle = isotopeStyle;
+    public void setDefaultReportSpecsType(String defaultReportSpecsType) {
+        this.defaultReportSpecsType = defaultReportSpecsType;
     }
 
     /**
-     * @return the isotypeStyleUPb
+     * @return the isdefaultReportSpecsType_UPb
      */
     @Override
-    public boolean isIsotypeStyleUPb() {
-        return (isotopeStyle.compareToIgnoreCase("UPb") == 0);
+    public boolean isdefaultReportSpecsType_UPb() {
+        if (defaultReportSpecsType == null) {
+            defaultReportSpecsType = "UPb";
+        }
+        return (defaultReportSpecsType.compareToIgnoreCase("UPb") == 0);
+    }
+
+    /**
+     * @return the isdefaultReportSpecsType_UPb
+     */
+    @Override
+    public boolean isdefaultReportSpecsType_UTh_Carb() {
+        if (defaultReportSpecsType == null) {
+            defaultReportSpecsType = "UTh_Carb";
+        }
+        return (defaultReportSpecsType.compareToIgnoreCase("UTh_Carb") == 0);
+    }
+
+    @Override
+    public boolean isdefaultReportSpecsType_UTh_Ign() {
+        if (defaultReportSpecsType == null) {
+            defaultReportSpecsType = "UTh_Ign";
+        }
+        return (defaultReportSpecsType.compareToIgnoreCase("UTh_Ign") == 0);
     }
 }

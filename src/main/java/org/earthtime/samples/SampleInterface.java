@@ -340,16 +340,6 @@ public interface SampleInterface {
      * @return
      */
     public default boolean isAnalysisTypeLAICPMS() {
-//        boolean retVal = false;
-//        try {
-//            retVal = SampleAnalysisTypesEnum.LAICPMS.equals(SampleAnalysisTypesEnum.valueOf(getSampleAnalysisType()));
-//        } catch (Exception e) {
-//        }
-//
-//        return retVal;
-//        
-
-        // sept 2016
         return getSampleAnalysisType().startsWith("LAICPMS");
     }
 
@@ -373,8 +363,9 @@ public interface SampleInterface {
     public default boolean isAnalysisTypeUSERIES() {
         boolean retVal = false;
         try {
-            retVal = SampleAnalysisTypesEnum.USERIES_CARB.equals(SampleAnalysisTypesEnum.valueOf(getSampleAnalysisType()))
-                    || SampleAnalysisTypesEnum.USERIES_IGN.equals(SampleAnalysisTypesEnum.valueOf(getSampleAnalysisType()));
+            SampleAnalysisTypesEnum sampleAnalysisType = SampleAnalysisTypesEnum.valueOf(getSampleAnalysisType());
+            retVal = sampleAnalysisType.equals(SampleAnalysisTypesEnum.USERIES_CARB)
+                    || sampleAnalysisType.equals(SampleAnalysisTypesEnum.USERIES_IGN);
         } catch (Exception e) {
         }
         return retVal;
@@ -397,17 +388,6 @@ public interface SampleInterface {
         boolean retVal = false;
         try {
             retVal = SampleAnalysisTypesEnum.COMPILED.equals(SampleAnalysisTypesEnum.valueOf(getSampleAnalysisType()));
-        } catch (Exception e) {
-        }
-        return retVal;
-    }
-
-    public default boolean isAnalysisTypeUSeries() {
-        boolean retVal = false;
-        try {
-            SampleAnalysisTypesEnum sampleAnalysisType = SampleAnalysisTypesEnum.valueOf(getSampleAnalysisType());
-            retVal = sampleAnalysisType.equals(SampleAnalysisTypesEnum.USERIES_CARB)
-                    || sampleAnalysisType.equals(SampleAnalysisTypesEnum.USERIES_IGN);
         } catch (Exception e) {
         }
         return retVal;
@@ -1675,12 +1655,21 @@ public interface SampleInterface {
      */
     public abstract void setReportSettingsModel(ReportSettingsInterface reportSettingsModel);
 
-    public static void loadDefaultEARTHTIMEReportSettingsModel(SampleInterface sample) {
-        if (sample.getIsotopeStyle().compareToIgnoreCase("UPb") == 0) {
-            sample.setReportSettingsModel(ReportSettings.EARTHTIMEReportSettingsUPb());
-        } else {
-            sample.setReportSettingsModel(ReportSettings.EARTHTIMEReportSettingsUTh());
-        }
+    /**
+     * @return the defaultReportSpecsType
+     */
+    public abstract String getDefaultReportSpecsType();
+
+    public static void loadDefaultEARTHTIMEReportSettingsModel_UPb(SampleInterface sample) {
+        sample.setReportSettingsModel(ReportSettings.EARTHTIMEReportSettingsUPb());
+    }
+
+    public static void loadDefaultEARTHTIMEReportSettingsModel_UTh_Carb(SampleInterface sample) {
+        sample.setReportSettingsModel(ReportSettings.EARTHTIMEReportSettingsUTh_Carb());
+    }
+
+    public static void loadDefaultEARTHTIMEReportSettingsModel_UTh_Ign(SampleInterface sample) {
+        sample.setReportSettingsModel(ReportSettings.EARTHTIMEReportSettingsUTh_Ign());
     }
 
     /**
@@ -2068,7 +2057,7 @@ public interface SampleInterface {
         }
     }
 
-    public String getIsotopeStyle();
+    public String getIsotopeSystem();
 
     // april 2011 update to rrr.igsn
     /**

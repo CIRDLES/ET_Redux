@@ -60,15 +60,6 @@ public class PhysicalConstantsModel extends AbstractRatiosDataModel {
     private static final ValueModel[] myRatios;
     private static final Map<String, BigDecimal> correlations;
     private static final Map<String, BigDecimal> EARTHTIMEatomicMolarMasses;
-    private static final AbstractRatiosDataModel noneModel
-            = //
-            new PhysicalConstantsModel( //
-                    ReduxConstants.NONE, //
-                    1, 0, //
-                    "No Lab",//
-                    "2000-01-01",//
-                    "Placeholder model",//
-                    "Placeholder model");
 
     static {
         myRatios = new ValueModel[DataDictionary.MeasuredConstants.length];
@@ -81,12 +72,24 @@ public class PhysicalConstantsModel extends AbstractRatiosDataModel {
         EARTHTIMEatomicMolarMasses.put("gmol206", new BigDecimal("205.974449"));
         EARTHTIMEatomicMolarMasses.put("gmol207", new BigDecimal("206.975880"));
         EARTHTIMEatomicMolarMasses.put("gmol208", new BigDecimal("207.976636"));
+        EARTHTIMEatomicMolarMasses.put("gmol230", new BigDecimal("230.033128"));
+        EARTHTIMEatomicMolarMasses.put("gmol232", new BigDecimal("232.038051"));
         EARTHTIMEatomicMolarMasses.put("gmol235", new BigDecimal("235.043922"));
         EARTHTIMEatomicMolarMasses.put("gmol238", new BigDecimal("238.050785"));
     }
 
     // instance variables
     private Map<String, BigDecimal> atomicMolarMasses;
+
+    private static final AbstractRatiosDataModel noneModel
+            = //
+            new PhysicalConstantsModel( //
+                    ReduxConstants.NONE, //
+                    1, 1, //
+                    "No Lab",//
+                    "2000-01-01",//
+                    "Placeholder model",//
+                    "Placeholder model");
 
     /**
      *

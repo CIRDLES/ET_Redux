@@ -50,14 +50,7 @@ public class DetritalUraniumAndThoriumModel extends AbstractRatiosDataModel {
     private static final String classNameAliasForXML = "DetritalUraniumAndThoriumModel";
     private static Map<String, AbstractRatiosDataModel> modelInstances
             = new HashMap<>();
-    private static final AbstractRatiosDataModel noneModel
-            = new DetritalUraniumAndThoriumModel( //
-                    ReduxConstants.NONE, //
-                    1, 0, //
-                    "No Lab",//
-                    "2000-01-01",//
-                    "Placeholder model",//
-                    "Placeholder model");
+
     private static final ValueModel[] myRatios = new ValueModel[3];
     private static final Map<String, BigDecimal> correlations = new HashMap<>();
 
@@ -82,7 +75,14 @@ public class DetritalUraniumAndThoriumModel extends AbstractRatiosDataModel {
         correlations.put("rhoAr232Th_238U__ar234U_238U", new BigDecimal(0.0));
         correlations.put("rhoAr230Th_238U__ar234U_238U", new BigDecimal(0.5));
     }
-
+    private static final AbstractRatiosDataModel noneModel
+            = new DetritalUraniumAndThoriumModel( //
+                    ReduxConstants.NONE, //
+                    1, 0, //
+                    "No Lab",//
+                    "2000-01-01",//
+                    "Placeholder model",//
+                    "Placeholder model");
     private static final AbstractRatiosDataModel SecularEquilibriumDetritalUraniumThoriumInitialModel
             = createInstance(
                     "Secular Equilibrium UTh=3.8",
