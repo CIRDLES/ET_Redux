@@ -122,8 +122,8 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Ign extends Abstra
                                         sampleID, //
                                         SampleTypesEnum.LEGACY.getName(), //
                                         USERIES_IGN.getName(), //
-                                        ReduxConstants.ANALYSIS_PURPOSE.SingleAge, 
-                                        USERIES_IGN.getIsotypeSystem(), 
+                                        ReduxConstants.ANALYSIS_PURPOSE.SingleAge,
+                                        USERIES_IGN.getIsotypeSystem(),
                                         USERIES_IGN.getDefaultReportSpecsType());
 
                                 projectSamples.add(currentSample);
@@ -145,7 +145,7 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Ign extends Abstra
 
                         System.out.println("Reading legacy fraction " + myFraction.getFractionID());
 
-                        myFraction.useLegacyPhysicalConstantsD3();
+                        myFraction.useLegacyPhysicalConstantsD1();
 
                         myFraction.setSampleName(currentSample.getSampleName());
                         // in case a sample occurs out of order
@@ -219,29 +219,48 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Ign extends Abstra
                         myFraction.getLegacyActivityRatioByName(ratioName)//
                                 .setOneSigma(oneSigmaAbs);
 
-                        // column N=13 is a230Thfc
-                        ratioName = UThAnalysisMeasures.a230Thfc.getName();
-                        myFraction.getLegacyActivityRatioByName(ratioName)//
-                                .setValue(readDelimitedTextCell(myFractionData.get(13)));
+                        // column N=13 is activity of 230Th concentration ***********************************
+                        ratioName = UThCompositionalMeasures.arConc230Th.getName();
+                        BigDecimal activity = readDelimitedTextCell(myFractionData.get(13));
+                        myFraction.getCompositionalMeasureByName(ratioName)//
+                                .setValue(activity);
 
-                        // column O=14 is a230Thfc uncertainty
+                        // column O=14 is activity of 230Th concentration uncertainty
                         // convert 2-sigma to 1-sigma
                         oneSigmaAbs = readDelimitedTextCell(myFractionData.get(14)).
                                 divide(new BigDecimal(2.0));
-                        myFraction.getLegacyActivityRatioByName(ratioName)//
+                        myFraction.getCompositionalMeasureByName(ratioName)//
                                 .setOneSigma(oneSigmaAbs);
 
-                        // column P=15 is a226Rafc
-                        ratioName = UThAnalysisMeasures.a226Rafc.getName();
-                        myFraction.getLegacyActivityRatioByName(ratioName)//
-                                .setValue(readDelimitedTextCell(myFractionData.get(15)));
+                        // now calculate and save concentration and uncertainty based on legacy Physical Constants
+                        ratioName = UThCompositionalMeasures.conc230Th.getName();
+                        myFraction.getCompositionalMeasureByName(ratioName)//
+                                .setValue(((UThLegacyFraction)myFraction).calculateConcentrationOrUnct230ThFromActivityUsingLegacyLambda(activity.doubleValue()));
+                        myFraction.getCompositionalMeasureByName(ratioName)//
+                                .setOneSigma(((UThLegacyFraction)myFraction).calculateConcentrationOrUnct230ThFromActivityUsingLegacyLambda(oneSigmaAbs.doubleValue()));
+                        // *************************************************************************************    
 
-                        // column Q=16 is a226Rafc uncertainty
+                        // column P=15 is activity of 226Ra concentration ***********************************
+                        ratioName = UThCompositionalMeasures.arConc226Ra.getName();
+                        activity = readDelimitedTextCell(myFractionData.get(15));
+                        myFraction.getCompositionalMeasureByName(ratioName)//
+                                .setValue(activity);
+
+                        // column Q=16 is activity of 226Ra concentration uncertainty
                         // convert 2-sigma to 1-sigma
                         oneSigmaAbs = readDelimitedTextCell(myFractionData.get(16)).
                                 divide(new BigDecimal(2.0));
-                        myFraction.getLegacyActivityRatioByName(ratioName)//
+                        myFraction.getCompositionalMeasureByName(ratioName)//
                                 .setOneSigma(oneSigmaAbs);
+                        
+                        // now calculate and save concentration and uncertainty based on legacy Physical Constants
+                        ratioName = UThCompositionalMeasures.conc226Ra.getName();
+                        myFraction.getCompositionalMeasureByName(ratioName)//
+                                .setValue(((UThLegacyFraction)myFraction).calculateConcentrationOrUnct226RaFromActivityUsingLegacyLambda(activity.doubleValue()));
+                        myFraction.getCompositionalMeasureByName(ratioName)//
+                                .setOneSigma(((UThLegacyFraction)myFraction).calculateConcentrationOrUnct226RaFromActivityUsingLegacyLambda(oneSigmaAbs.doubleValue()));
+
+                        // *************************************************************************************    
 
                         // column R=17 is ar226Ra_230Thfc
                         ratioName = UThAnalysisMeasures.ar226Ra_230Thfc.getName();
@@ -270,8 +289,6 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Ign extends Abstra
 
                         ((UThFraction) myFraction).setR230Th_238Ufc_referenceMaterialName("");
                         ((UThFraction) myFraction).setR234U_238Ufc_referenceMaterialName("");
-                        
-                        
 
                         UThFractionReducer.calculateMeasuredAtomRatiosFromLegacyActivityRatios(myFraction);
 

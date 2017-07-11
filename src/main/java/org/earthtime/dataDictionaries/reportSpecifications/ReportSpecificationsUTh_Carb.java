@@ -53,7 +53,7 @@ public class ReportSpecificationsUTh_Carb extends ReportSpecificationsAbstract {
             "", "true", "false", "3", "true", "230Th concentration", "false", "false"
         },
         {"", "[230Th]", "", "*1e9 dpm/g", "getCompositionalMeasureByName", UThCompositionalMeasures.arConc230Th.getName(), "ABS",
-            "FN-1", "false", "false", "3", "true", "230Th concentration activiry", "false", "false"
+            "FN-1", "false", "false", "3", "true", "230Th concentration activity", "false", "false"
         },
         //
         {"", "232Th", "", "ppb", "getCompositionalMeasureByName", UThCompositionalMeasures.conc232Th.getName(), "ABS",

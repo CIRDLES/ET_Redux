@@ -850,12 +850,25 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
                             + ")";
                 } catch (BadLabDataException badLabDataException) {
                 }
-                // perform replacement of footnote parameters
-                footNote = footNote.replaceFirst("<lambda238>", lambda238);
-                footNote = footNote.replaceFirst("<lambda235>", lambda235);
+                String lambda226 = "\u03BB226 = ";
+                try {
+                    lambda226
+                            += formatter.format(sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda226.getName())
+                                    .getValue().doubleValue());
+                    lambda226
+                            += " ("
+                            + ((ValueModelReferenced) sample.getPhysicalConstantsModel().getDatumByName(Lambdas.lambda226.getName()))
+                                    .getReference() //
+                            + ")";
+                } catch (BadLabDataException badLabDataException) {
+                }
+                // perform replacement of footnote parameters               
+                footNote = footNote.replaceFirst("<lambda226>", lambda226);
                 footNote = footNote.replaceFirst("<lambda230>", lambda230);
                 footNote = footNote.replaceFirst("<lambda232>", lambda232);
                 footNote = footNote.replaceFirst("<lambda234>", lambda234);
+                footNote = footNote.replaceFirst("<lambda235>", lambda235);
+                footNote = footNote.replaceFirst("<lambda238>", lambda238);
                 footNote = footNote.replaceFirst("<ar231_235sample>", activityFootnoteEntry);
                 footNote = footNote.replaceFirst("<rTh_Umagma>", thU_MagmaFootnoteEntry);
 

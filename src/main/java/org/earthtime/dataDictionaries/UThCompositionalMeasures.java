@@ -40,7 +40,8 @@ public enum UThCompositionalMeasures {
     /**
      *
      */
-    conc228Ra("conc228Ra"),
+    conc226Ra("conc226Ra"),
+    arConc226Ra("arConc226Ra"),
     concBa("concBa"),
     /**
      *

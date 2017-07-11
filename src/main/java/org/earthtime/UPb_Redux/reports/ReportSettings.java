@@ -55,8 +55,8 @@ public class ReportSettings implements
      * report models upon opening in ET_Redux.
      */
     private static transient int CURRENT_VERSION_REPORT_SETTINGS_UPB = 362;
-    private static transient int CURRENT_VERSION_REPORT_SETTINGS_UTH_Carb = 562;
-    private static transient int CURRENT_VERSION_REPORT_SETTINGS_UTH_Ign = 562;
+    private static transient int CURRENT_VERSION_REPORT_SETTINGS_UTH_Carb = 575;
+    private static transient int CURRENT_VERSION_REPORT_SETTINGS_UTH_Ign = 575;
 
     // Fields
     private String name;
@@ -155,12 +155,12 @@ public class ReportSettings implements
         } else if (isdefaultReportSpecsType_UTh_Carb()) {
             this.datesCategory
                     = new ReportCategory(//
-                            "USeries Outputs",
+                            "USeries Carbonate Outputs",
                             ReportSpecificationsUTh_Carb.ReportCategory_USeriesReportTable, true);
         } else if (isdefaultReportSpecsType_UTh_Ign()) {
             this.datesCategory
                     = new ReportCategory(//
-                            "USeries Outputs",
+                            "USeries Igneous Outputs",
                             ReportSpecificationsUTh_Ign.ReportCategory_USeriesReportTable, true);
         }
 

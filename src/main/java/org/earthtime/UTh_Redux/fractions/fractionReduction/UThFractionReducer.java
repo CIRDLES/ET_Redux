@@ -777,12 +777,12 @@ public class UThFractionReducer extends FractionReducer {
 
         fraction.getAnalysisMeasure(UThAnalysisMeasures.ar226Ra_230Thfc.getName())//
                 .setValue(//
-                        fraction.getRadiogenicIsotopeRatioByName(UThFractionationCorrectedIsotopicRatios.r226Ba_230Thfc.getName()).getValue()//
+                        fraction.getRadiogenicIsotopeRatioByName(UThFractionationCorrectedIsotopicRatios.r226Ra_230Thfc.getName()).getValue()//
                                 .multiply(lambda226.getValue())//
                                 .divide(lambda230.getValue(), ReduxConstants.mathContext15));
         fraction.getAnalysisMeasure(UThAnalysisMeasures.ar226Ra_230Thfc.getName())//
                 .setOneSigma(//
-                        fraction.getRadiogenicIsotopeRatioByName(UThFractionationCorrectedIsotopicRatios.r226Ba_230Thfc.getName()).getOneSigmaAbs()//
+                        fraction.getRadiogenicIsotopeRatioByName(UThFractionationCorrectedIsotopicRatios.r226Ra_230Thfc.getName()).getOneSigmaAbs()//
                                 .multiply(lambda226.getValue())//
                                 .divide(lambda230.getValue(), ReduxConstants.mathContext15));
 
@@ -864,28 +864,29 @@ public class UThFractionReducer extends FractionReducer {
                         .multiply(myLambda232Value)//
                         .divide(myLambda238Value, ReduxConstants.mathContext15));
 
-        fraction.getRadiogenicIsotopeRatioByName(UThFractionationCorrectedIsotopicRatios.r226Ba_230Thfc.getName())//
+        fraction.getRadiogenicIsotopeRatioByName(UThFractionationCorrectedIsotopicRatios.r226Ra_230Thfc.getName())//
                 .setValue(fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.ar226Ra_230Thfc.getName()).getValue()//
                         .multiply(myLambda230Value)//
                         .divide(myLambda226Value, ReduxConstants.mathContext15));
-        fraction.getRadiogenicIsotopeRatioByName(UThFractionationCorrectedIsotopicRatios.r226Ba_230Thfc.getName())//
+        fraction.getRadiogenicIsotopeRatioByName(UThFractionationCorrectedIsotopicRatios.r226Ra_230Thfc.getName())//
                 .setOneSigma(fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.ar226Ra_230Thfc.getName()).getOneSigmaAbs()//
                         .multiply(myLambda230Value)//
                         .divide(myLambda226Value, ReduxConstants.mathContext15));
 
-        fraction.getRadiogenicIsotopeRatioByName(UThFractionationCorrectedIsotopicRatios.a226Rafc.getName())//
-                .setValue(fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.a226Rafc.getName()).getValue()//
-                        .divide(myLambda226Value, ReduxConstants.mathContext15));
-        fraction.getRadiogenicIsotopeRatioByName(UThFractionationCorrectedIsotopicRatios.a226Rafc.getName())//
-                .setOneSigma(fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.a226Rafc.getName()).getOneSigmaAbs()//
-                        .divide(myLambda226Value, ReduxConstants.mathContext15));
-
-        fraction.getRadiogenicIsotopeRatioByName(UThFractionationCorrectedIsotopicRatios.a230Thfc.getName())//
-                .setValue(fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.a230Thfc.getName()).getValue()//
-                        .divide(myLambda230Value, ReduxConstants.mathContext15));
-        fraction.getRadiogenicIsotopeRatioByName(UThFractionationCorrectedIsotopicRatios.a230Thfc.getName())//
-                .setOneSigma(fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.a230Thfc.getName()).getOneSigmaAbs()//
-                        .divide(myLambda230Value, ReduxConstants.mathContext15));
+        // see importer for this (July 2017)
+//        fraction.getRadiogenicIsotopeRatioByName(UThFractionationCorrectedIsotopicRatios.a226Rafc.getName())//
+//                .setValue(fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.a226Rafc.getName()).getValue()//
+//                        .divide(myLambda226Value, ReduxConstants.mathContext15));
+//        fraction.getRadiogenicIsotopeRatioByName(UThFractionationCorrectedIsotopicRatios.a226Rafc.getName())//
+//                .setOneSigma(fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.a226Rafc.getName()).getOneSigmaAbs()//
+//                        .divide(myLambda226Value, ReduxConstants.mathContext15));
+//
+//        fraction.getRadiogenicIsotopeRatioByName(UThFractionationCorrectedIsotopicRatios.a230Thfc.getName())//
+//                .setValue(fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.a230Thfc.getName()).getValue()//
+//                        .divide(myLambda230Value, ReduxConstants.mathContext15));
+//        fraction.getRadiogenicIsotopeRatioByName(UThFractionationCorrectedIsotopicRatios.a230Thfc.getName())//
+//                .setOneSigma(fraction.getLegacyActivityRatioByName(UThAnalysisMeasures.a230Thfc.getName()).getOneSigmaAbs()//
+//                        .divide(myLambda230Value, ReduxConstants.mathContext15));
 
     }
 

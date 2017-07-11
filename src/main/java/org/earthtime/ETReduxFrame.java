@@ -175,7 +175,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
     private ReduxPersistentState myState;
     private final ClassLoader cldr;
     private final java.net.URL imageURL;
-    private final InputStream changeLogURL;
+//    private final InputStream changeLogURL;
     private final InputStream creditsURL;
     /**
      *
@@ -271,26 +271,29 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         ((CustomIcon) reduxIcon).setSize(25, 16);
         setIconImage(reduxIcon.getImage());
 
-        // persist changeLog
-        changeLogURL = cldr.getResourceAsStream("org/earthtime/UPb_Redux/resources/docs/ChangeLog.html");
-        File localChangeLogFile = new File("ChangeLog.html");
-        try {
-            InputStream in = changeLogURL;
-            // Overwrite the file.
-            OutputStream out = new FileOutputStream(localChangeLogFile);
+//        // persist changeLog
+//        changeLogURL = cldr.getResourceAsStream("org/earthtime/UPb_Redux/resources/docs/ChangeLog.html");
+//        File localChangeLogFile = new File("ChangeLog.html");
+//        try {
+//            InputStream in = changeLogURL;
+//            // Overwrite the file.
+//            OutputStream out = new FileOutputStream(localChangeLogFile);
+//
+//            while (in.available() > 0) {
+//                byte[] buf = new byte[1024];
+//                int len;
+//                while ((len = in.read(buf)) > 0) {
+//                    out.write(buf, 0, len);
+//                }
+//            }
+//            in.close();
+//            out.close();
+//
+//        } catch (IOException iOException) {
+//        }
 
-            while (in.available() > 0) {
-                byte[] buf = new byte[1024];
-                int len;
-                while ((len = in.read(buf)) > 0) {
-                    out.write(buf, 0, len);
-                }
-            }
-            in.close();
-            out.close();
-
-        } catch (IOException iOException) {
-        }
+        // July 2017 elided in favor of GitHub
+        changeLogMenuItem.setVisible(false);
 
         // persist credits
         creditsURL = cldr.getResourceAsStream("org/earthtime/UPb_Redux/resources/docs/Credits.html");
@@ -4074,7 +4077,7 @@ private void writeCSVFileOfLAICPMSLegacyDataSampleFieldNames_MC_USAActionPerform
 }//GEN-LAST:event_writeCSVFileOfLAICPMSLegacyDataSampleFieldNames_MC_USAActionPerformed
 
 private void changeLogMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_changeLogMenuItemActionPerformed
-    showChangeLog();
+    //showChangeLog();
 }//GEN-LAST:event_changeLogMenuItemActionPerformed
 
 private void writeCSVFileOfIDTIMSLegacyDataSampleFieldNames_MITActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_writeCSVFileOfIDTIMSLegacyDataSampleFieldNames_MITActionPerformed
