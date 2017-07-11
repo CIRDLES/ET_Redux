@@ -639,6 +639,10 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                         ReportSettings.getReportSettingsModelUpdatedToLatestVersion(theProject.getSuperSample().getReportSettingsModel()));
                 theProject.getSuperSample().setLegacyStatusForReportTable();
 
+                // July 2017
+                ReportAliquotFractionsView.showAliquotBars = !theProject.getSuperSample().isAnalysisTypeUSERIES();
+                
+                
                 theProject.saveTheProjectAsSerializedReduxFile();
 
                 // go straight to data table display

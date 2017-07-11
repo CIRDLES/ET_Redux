@@ -110,7 +110,9 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
     private int lineHeight = 17;
     private String displayMessage = "";
     private JButton sortFractionsButton;
-    private JButton toggleMeasButton;
+    private JButton toggleMeasuredRatiosButton;
+    private JButton toggleAliquotBarsButton;
+    public static boolean showAliquotBars = false;
     private ArrayList<JButton> sortButtons;
     private static TableRowObject lastAquiredTableRowObject;
 
@@ -316,7 +318,8 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
         int fractionDataStartRow = Integer.parseInt(reportFractions[0][0]);
         if (reportFractions.length >= fractionDataStartRow) {
             sortFractionsButton.setBounds(1, DATATABLE_TOP_HEIGHT - lineHeight - 1, fractionColumnWidth - 3, lineHeight - 3);
-            toggleMeasButton.setBounds(1, 2, fractionColumnWidth - 3, lineHeight - 3);
+            toggleMeasuredRatiosButton.setBounds(1, 2, fractionColumnWidth - 3, lineHeight - 3);
+            toggleAliquotBarsButton.setBounds(1, 2, fractionColumnWidth - 3, lineHeight - 3);
 
             int drawnWidth = 3;
             // oct 2016 added -1 for filtering cell added
@@ -392,6 +395,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
         // first get reportFractions from sample
         try {
             prepareReportFractionsArrayForDisplay();
+
         } catch (Exception e) {
         }
         // restore leftmargin
@@ -449,10 +453,10 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                 reportHeader.add(sortButton, DEFAULT_LAYER);
             }
 
-            // June 2016 add button upper left to toggle meansure ratios inside compostion for Dan Condon et al issue
-            toggleMeasButton = new ET_JButton("Toggle Measured");
-            toggleMeasButton.setFont(ReduxConstants.sansSerif_10_Bold);
-            toggleMeasButton.addActionListener(new ActionListener() {
+            // June 2016 add button upper left to toggle measured ratios inside compostion for Dan Condon et al issue
+            toggleMeasuredRatiosButton = new ET_JButton("Toggle Measured");
+            toggleMeasuredRatiosButton.setFont(ReduxConstants.sansSerif_10_Bold);
+            toggleMeasuredRatiosButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
 
@@ -461,7 +465,24 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                 }
             });
             if (sample.isAnalysisTypeIDTIMS()) {
-                upperLeftCorner.add(toggleMeasButton, JLayeredPane.PALETTE_LAYER);
+                upperLeftCorner.add(toggleMeasuredRatiosButton, JLayeredPane.PALETTE_LAYER);
+            }
+
+            // July 2017 add button upper left to toggle Aliquot Bars in support of USeries
+            toggleAliquotBarsButton = new ET_JButton((showAliquotBars ? "Hide " : "Show ") + "Aliquot Bars");
+            toggleAliquotBarsButton.setFont(ReduxConstants.sansSerif_10_Bold);
+            toggleAliquotBarsButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    showAliquotBars = !showAliquotBars;
+                    toggleAliquotBarsButton.setText((showAliquotBars ? "Hide " : "Show ") + "Aliquot Bars");
+                    parentFrame.loadAndShowReportTableData("");
+                }
+            });
+            if (reportFractions[1][0].contains("UTh")) {
+                upperLeftCorner.add(toggleAliquotBarsButton, JLayeredPane.PALETTE_LAYER);
+            } else {
+                showAliquotBars = true;
             }
 
             reSizeSortButtons();
@@ -924,54 +945,66 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                             &&//
                             !paintType.equalsIgnoreCase("FRACTION")) {
                         g2D.drawString(
-                                "There are no Fractions Selected.  Displayed Report Headers are used for style " + reportFractions[1][0] + ".  Use Reports menu to customize.",
+                                "There are no Fractions Selected.",
                                 12,
                                 (drawnHeight + topMargin + lineHeight));
+                        g2D.drawString(
+                                 "The displayed Report Headers are used for style " + reportFractions[1][0] + ".",
+                                12,
+                                (drawnHeight + topMargin + 2 * lineHeight));
+                        g2D.drawString(
+                                 "Use Reports menu to customize the table.",
+                                12,
+                                (drawnHeight + topMargin + 3 * lineHeight));
                     } else {
                         String saveAliquotName = "";
 
-                        int grayRow = 0;
+                        int grayBarRowCount = 0;
 
                         for (int row = fractionDataStartRow; row < reportFractions.length; row++) {
                             drawnWidth = leftMargin;
 
                             // april 2012 reportFractions will contain only accepted OR rejected, thus here check for printing fractions
-                            if (showFractions) {
-                                grayRow++;
+                            if (showFractions) {                          
+                                grayBarRowCount++;
                                 // for each aliquot                                
                                 if (!reportFractions[row][1].equalsIgnoreCase(saveAliquotName)) {
                                     saveAliquotName = reportFractions[row][1];
 
-                                    g2D.setColor(ReduxConstants.myAliquotGrayColor);
+                                    if (showAliquotBars) {
+                                        g2D.setColor(ReduxConstants.myAliquotGrayColor);
 
-                                    g2D.fillRect(0, drawnHeight + 2 + topMargin + 0, reportWidth - 1, lineHeight + 2);
+                                        g2D.fillRect(0, drawnHeight + 2 + topMargin + 0, reportWidth - 1, lineHeight + 2);
 
-                                    g2D.setColor(Color.BLACK);
+                                        g2D.setColor(Color.BLACK);
 
-                                    if (!paintType.equalsIgnoreCase("FRACTION")) {
-                                        // aliquot  name
-                                        g2D.drawString(reportFractions[row][1],
-                                                leftMargin,
-                                                drawnHeight + topMargin + lineHeight);
+                                        if (!paintType.equalsIgnoreCase("FRACTION")) {
+                                            // aliquot  name
+                                            g2D.drawString(reportFractions[row][1],
+                                                    leftMargin,
+                                                    drawnHeight + topMargin + lineHeight);
+                                        }
                                     }
 
                                     // build map of row to fraction objects and aliquot objects
                                     if ((sample != null) && paintType.equalsIgnoreCase("FRACTION")) {
                                         aliquot = sample.getAliquotByName(reportFractions[row][1].trim());
-                                        verticalPixelFractionMap.add( //
-                                                new TableRowObject( //
-                                                        drawnHeight + topMargin + lineHeight + 1,//
-                                                        aliquot));
+                                        if (showAliquotBars) {
+                                            verticalPixelFractionMap.add( //
+                                                    new TableRowObject( //
+                                                            drawnHeight + topMargin + lineHeight + 1,//
+                                                            aliquot));
 
-                                        if (((ReportRowGUIInterface) aliquot).isSelectedInDataTable()) {
-                                            // dec 2011 give some button characteristics for selected aliquot 
-                                            g2D.setColor(Color.red);
-                                            g2D.drawRoundRect( //
-                                                    leftMargin - 1,//
-                                                    drawnHeight + topMargin + 3, //
-                                                    fractionColumnWidth - 5,
-                                                    lineHeight - 2, 5, 5);
-                                            g2D.setColor(Color.BLACK);
+                                            if (((ReportRowGUIInterface) aliquot).isSelectedInDataTable()) {
+                                                // dec 2011 give some button characteristics for selected aliquot 
+                                                g2D.setColor(Color.red);
+                                                g2D.drawRoundRect( //
+                                                        leftMargin - 1,//
+                                                        drawnHeight + topMargin + 3, //
+                                                        fractionColumnWidth - 5,
+                                                        lineHeight - 2, 5, 5);
+                                                g2D.setColor(Color.BLACK);
+                                            }
                                         }
                                     }
 
@@ -979,15 +1012,18 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                                         leftMargin = 3;
                                     }
                                     drawnWidth = leftMargin;
-                                    drawnHeight += lineHeight + 5;
+
+                                    if (showAliquotBars) {
+                                        drawnHeight += lineHeight + 5;
+                                    }
                                 }
 
                                 // try gray bar style
-                                if (grayRow % 2 == 0) {
+                                if (grayBarRowCount % 2 == 0) {
                                     g2D.setColor(new Color(240, 240, 240));
                                     g2D.fillRect(leftMargin, drawnHeight + topMargin + 2, reportWidth - 5, lineHeight + 0);
                                 }
-
+                                
                                 // fraction data
                                 // oct 2016 -1 added in to compensate for additional cell that records true/false filtering
                                 int columnCount = reportFractions[0].length - 1;

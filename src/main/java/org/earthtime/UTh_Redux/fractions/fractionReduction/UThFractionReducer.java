@@ -595,7 +595,14 @@ public class UThFractionReducer extends FractionReducer {
             // outvec(5) = Cout(2,3)/sqrt(Cout(2,2)*Cout(3,3)); % corr coef ar08t-ar48t
             //
             // outvec(13) = Cout(1,4)/sqrt(Cout(1,1)*Cout(4,4)); rho between d234uinit and corrected age
-            double rhoDate__delta234Ui = Cout.get(0, 3) / Math.sqrt(Cout.get(0, 0) * Cout.get(3, 3));
+            double rhoDate__delta234Ui = 0.0;
+            try {
+                rhoDate__delta234Ui = Cout.get(0, 3) / Math.sqrt(Cout.get(0, 0) * Cout.get(3, 3));
+            } catch (Exception e) {
+            }
+            if (!Double.isFinite(rhoDate__delta234Ui)){
+                rhoDate__delta234Ui = 0.0;
+            }
             fraction.getAnalysisMeasure(UThAnalysisMeasures.rhoDate__delta234Ui.getName())//
                     .setValue(new BigDecimal(rhoDate__delta234Ui));
         }
