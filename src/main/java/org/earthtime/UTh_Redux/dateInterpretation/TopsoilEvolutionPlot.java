@@ -16,6 +16,7 @@
 package org.earthtime.UTh_Redux.dateInterpretation;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,8 +25,10 @@ import java.util.Vector;
 import javax.swing.*;
 import org.cirdles.topsoil.app.plot.TopsoilPlotType;
 import org.cirdles.topsoil.plot.Plot;
+import static org.cirdles.topsoil.plot.base.BasePlotProperties.*;
 
 import org.earthtime.UTh_Redux.fractions.UThLegacyFractionI;
+import org.earthtime.beans.ET_JButton;
 import org.earthtime.dataDictionaries.UThAnalysisMeasures;
 import org.earthtime.fractions.ETFractionInterface;
 
@@ -37,10 +40,10 @@ public final class TopsoilEvolutionPlot {
 
     private static final TopsoilEvolutionPlot instance = null;
     private Vector<ETFractionInterface> selectedFractions;
-    private Plot myChart;
-    private final JComponent plotAsComponent;
-    private final EvolutionChartDialog topsoilEvolutionChartDialog;
-    private final Container contentPane;
+    private Plot myEvolutionPlot;
+    private JComponent plotAsComponent;
+    private EvolutionPlotDialog topsoilEvolutionChartDialog;
+    // private final Container contentPane;
 
     private static final String X = "x";
     private static final String SIGMA_X = "sigma_x";
@@ -51,15 +54,15 @@ public final class TopsoilEvolutionPlot {
 
     public TopsoilEvolutionPlot() {
 
-        myChart = TopsoilPlotType.BASE_PLOT.getPlot();
-        myChart.getProperties().put("Title", "Evolution Plot");
-        myChart.getProperties().put("X Axis", "[230Th/238U]");
-        myChart.getProperties().put("Y Axis", "[234U/238U]");
-        myChart.getProperties().put("Evolution", true);
-        myChart.getProperties().put("Ellipses", true);
-        myChart.getProperties().put("Isotope", "Uranium Thorium");
+        myEvolutionPlot = TopsoilPlotType.BASE_PLOT.getPlot();
+        myEvolutionPlot.getProperties().put(TITLE, "Evolution Plot");
+        myEvolutionPlot.getProperties().put(X_AXIS, "[230Th/238U]");
+        myEvolutionPlot.getProperties().put(Y_AXIS, "[234U/238U]");
+        myEvolutionPlot.getProperties().put(EVOLUTION_MATRIX, true);
+        myEvolutionPlot.getProperties().put(ELLIPSES, true);
+        myEvolutionPlot.getProperties().put(ISOTOPE_TYPE, "Uranium Thorium");
 
-        topsoilEvolutionChartDialog = new EvolutionChartDialog(null, true);
+        topsoilEvolutionChartDialog = new EvolutionPlotDialog(null, true);
         topsoilEvolutionChartDialog.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         topsoilEvolutionChartDialog.setBounds( //
                 400,
@@ -67,15 +70,40 @@ public final class TopsoilEvolutionPlot {
                 820,
                 640);
 
-        contentPane = topsoilEvolutionChartDialog.getContentPane();
-        plotAsComponent = myChart.displayAsJComponent();
-        contentPane.add(plotAsComponent);
+//        contentPane = topsoilEvolutionChartDialog.getContentPane();
+        plotAsComponent = myEvolutionPlot.displayAsJComponent();
+        plotAsComponent.setBounds(0, 0, 820, 640);
+        topsoilEvolutionChartDialog.add(plotAsComponent);
+
+        JButton recenterButton = new ET_JButton("Re-center");
+        recenterButton.setBounds(0, 0, 150, 20);
+        recenterButton.addActionListener((ActionEvent ae) -> {
+            myEvolutionPlot.getProperties().put(EVOLUTION_MATRIX, !(Boolean) myEvolutionPlot.getProperties().get(EVOLUTION_MATRIX));
+            try {
+                myEvolutionPlot.recenter();
+            } catch (Exception e) {
+                //TODO solve threading issue
+            }
+        });
+        plotAsComponent.add(recenterButton);
+
+        plotAsComponent.validate();
     }
 
-    private class EvolutionChartDialog extends javax.swing.JFrame {
+    private class EvolutionPlotDialog extends javax.swing.JFrame {
 
-        public EvolutionChartDialog(javax.swing.JFrame owner, boolean modal) {
+        private JLayeredPane evolutionPlotPane;
+
+        public EvolutionPlotDialog(javax.swing.JFrame owner, boolean modal) {
             super();
+
+            evolutionPlotPane = new JLayeredPane();
+            add(evolutionPlotPane);
+
+        }
+
+        public void addCompnent(JComponent c) {
+            evolutionPlotPane.add(c);
         }
 
     }
@@ -108,7 +136,7 @@ public final class TopsoilEvolutionPlot {
             datum.put(SELECTED, "true");
         }
 
-        myChart.setData(myData);
+        myEvolutionPlot.setData(myData);
     }
 
     /**
@@ -120,6 +148,6 @@ public final class TopsoilEvolutionPlot {
 
     public void close() {
         topsoilEvolutionChartDialog.dispose();
-        myChart = null;
+        myEvolutionPlot = null;
     }
 }
