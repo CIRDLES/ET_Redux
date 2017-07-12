@@ -54,9 +54,9 @@ public class ReportSettings implements
      * version number is advanced so that any existing analysis will update its
      * report models upon opening in ET_Redux.
      */
-    private static transient int CURRENT_VERSION_REPORT_SETTINGS_UPB = 362;
-    private static transient int CURRENT_VERSION_REPORT_SETTINGS_UTH_Carb = 575;
-    private static transient int CURRENT_VERSION_REPORT_SETTINGS_UTH_Ign = 575;
+    private static transient int CURRENT_VERSION_REPORT_SETTINGS_UPB = 363;
+    private static transient int CURRENT_VERSION_REPORT_SETTINGS_UTH_Carb = 6002;
+    private static transient int CURRENT_VERSION_REPORT_SETTINGS_UTH_Ign = 6002;
 
     // Fields
     private String name;

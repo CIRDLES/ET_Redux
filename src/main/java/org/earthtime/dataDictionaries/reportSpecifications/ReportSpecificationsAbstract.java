@@ -70,7 +70,7 @@ public abstract class ReportSpecificationsAbstract {
      * converted by lookup in ReduxConstants
      */
     public final static String[] dateUnits = new String[]{
-        "auto", "Ma", "ka"
+        "auto", "Ma", "ka", "a"
     };
     /**
      * mult units are referred to in units position 4 of report column and
@@ -99,6 +99,7 @@ public abstract class ReportSpecificationsAbstract {
         unitsType.put("ppt", "conc");
         unitsType.put("Ma", "date");
         unitsType.put("ka", "date");
+        unitsType.put("a", "date");
         unitsType.put("*1e5", "mult");
         unitsType.put("*1", "mult");
         unitsType.put("*1e3 dpm/g", "mult");

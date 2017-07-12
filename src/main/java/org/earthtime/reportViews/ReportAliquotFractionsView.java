@@ -901,7 +901,8 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                         if (!reportFractions[5][c].equalsIgnoreCase("")) {
                             g2D.setFont(footnoteFont);
                             g2D.drawString(reportFractions[5][c],//superScript for footnote
-                                    drawnWidth + reportFractions[3][c].trim().length() * COLUMN_WIDTH_ADJUST_FACTOR,//6.8f,
+                                    //drawnWidth + reportFractions[3][c].trim().length() * COLUMN_WIDTH_ADJUST_FACTOR,//6.8f,
+                                    drawnWidth + reportFractions[3][c].length() * COLUMN_WIDTH_ADJUST_FACTOR,//6.8f,
                                     drawnHeight + topMargin + lineHeight + accumulateDrawnHeight - 4);//7);
                             g2D.setFont(numberFont);
                         }
