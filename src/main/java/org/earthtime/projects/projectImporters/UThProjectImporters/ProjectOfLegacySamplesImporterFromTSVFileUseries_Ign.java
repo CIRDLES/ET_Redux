@@ -140,7 +140,7 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Ign extends Abstra
                         // process fractions
                         UThLegacyFractionI myFraction = new UThLegacyFraction();
                         // column C = Phase
-                        myFraction.setFractionID(myFractionData.get(2));
+                        myFraction.setFractionID(savedSampleID + ":" + myFractionData.get(2));
                         myFraction.setGrainID(myFractionData.get(2));
 
                         System.out.println("Reading legacy fraction " + myFraction.getFractionID());

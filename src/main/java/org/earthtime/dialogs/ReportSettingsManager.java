@@ -139,10 +139,11 @@ public class ReportSettingsManager extends DialogEditor {
 
             ReportListItemI c = (ReportListItemI) value;
             try {
+                String text = c.getDisplayName().contains("delta") ? c.getDisplayName().replace("delta", "\u03B4") : c.getDisplayName();
                 if (c.isVisible()) {
-                    setText(c.getDisplayName());
+                    setText(text);
                 } else {
-                    setText("<html><strike>" + prepareStringForHTML(c.getDisplayName()) + "</strike></html>");
+                    setText("<html><strike>" + prepareStringForHTML(text) + "</strike></html>");
                 }
             } catch (Exception e) {
             }

@@ -648,7 +648,9 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
                             // and oct 2014 for Pbc corrected
                             if (!myCol.getUnits().equals("")
                                     && (!categories.get(c).getDisplayName().contains("Dates"))) {//.startsWith("Dates"))) {
-                                retVal[3][columnCount] += "(" + myCol.getUnits() + ")";
+                                // July 2017 provides for special case of BP in Useries, where BP is string in retVal[1]
+                                retVal[3][columnCount] += "(" + myCol.getUnits() + retVal[1][columnCount] + ")";
+                                retVal[1][columnCount] = "";
                             }
                             retVal[4][columnCount] = myCol.getUnits();
 
