@@ -131,10 +131,16 @@ public class ReportSettingsXMLConverter implements Converter {
             writer.startNode("traceElementsCategory");
             context.convertAnother(reportSettings.getTraceElementsCategory());
             writer.endNode();
-        } else {
+        } else if (reportSettings.isdefaultReportSpecsType_UTh_Carb()) {
+            writer.startNode("concentrationAndActivityCategory");
+            context.convertAnother(reportSettings.getConcentrationAndActivityCategory());
+            writer.endNode();
+
             writer.startNode("datesCategory");
             context.convertAnother(reportSettings.getDatesCategory());
             writer.endNode();
+        } else if (reportSettings.isdefaultReportSpecsType_UTh_Ign()) {
+
         }
 
         writer.startNode("fractionCategory2");
@@ -233,7 +239,21 @@ public class ReportSettingsXMLConverter implements Converter {
             reportCategory = (ReportCategory) context.convertAnother(reportCategory, ReportCategory.class);
             reportSettings.setTraceElementsCategory(reportCategory);
             reader.moveUp();
-        } else {
+
+        } else if (reportSettings.isdefaultReportSpecsType_UTh_Carb()) {
+            reader.moveDown();
+            reportCategory = new ReportCategory();
+            reportCategory = (ReportCategory) context.convertAnother(reportCategory, ReportCategory.class);
+            reportSettings.setConcentrationAndActivityCategory(reportCategory);
+            reader.moveUp();
+
+            reader.moveDown();
+            reportCategory = new ReportCategory();
+            reportCategory = (ReportCategory) context.convertAnother(reportCategory, ReportCategory.class);
+            reportSettings.setDatesCategory(reportCategory);
+            reader.moveUp();
+
+        } else if (reportSettings.isdefaultReportSpecsType_UTh_Ign()) {
             reader.moveDown();
             reportCategory = new ReportCategory();
             reportCategory = (ReportCategory) context.convertAnother(reportCategory, ReportCategory.class);

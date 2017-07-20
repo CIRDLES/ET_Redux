@@ -92,7 +92,12 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
             getReportCategories().add(getIsotopicRatiosPbcCorrCategory());
             getReportCategories().add(getRhosCategory());
             getReportCategories().add(getTraceElementsCategory());
-        } else {
+        } else if (isdefaultReportSpecsType_UTh_Carb()) {
+            getReportCategories().add(getConcentrationAndActivityCategory());
+            getReportCategories().add(getMeasuredAtomAndActivityRatiosCategory());
+            getReportCategories().add(getMeasuredCorrectedAtomAndActivityRatiosCategory());
+            getReportCategories().add(getDatesCategory());
+        } else if (isdefaultReportSpecsType_UTh_Ign()) {
             getReportCategories().add(getDatesCategory());
         }
         getReportCategories().add(getFractionCategory2());
@@ -340,6 +345,39 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
      * @param datesPbcCorrCategory the datesPbcCorrCategory to set
      */
     void setDatesPbcCorrCategory(ReportCategoryInterface datesPbcCorrCategory);
+
+    /**
+     * @return the concentrationAndActivityCategory
+     */
+    public ReportCategoryInterface getConcentrationAndActivityCategory();
+
+    /**
+     * @param concentrationAndActivityCategory the
+     * concentrationAndActivityCategory to set
+     */
+    public void setConcentrationAndActivityCategory(ReportCategoryInterface concentrationAndActivityCategory);
+
+    /**
+     * @return the measuredAtomAndActivityRatiosCategory
+     */
+    public ReportCategoryInterface getMeasuredAtomAndActivityRatiosCategory();
+
+    /**
+     * @param measuredAtomAndActivityRatiosCategory the
+     * measuredAtomAndActivityRatiosCategory to set
+     */
+    public void setMeasuredAtomAndActivityRatiosCategory(ReportCategoryInterface measuredAtomAndActivityRatiosCategory);
+
+    /**
+     * @return the measuredCorrectedAtomAndActivityRatiosCategory
+     */
+    public ReportCategoryInterface getMeasuredCorrectedAtomAndActivityRatiosCategory();
+
+    /**
+     * @param measuredCorrectedAtomAndActivityRatiosCategory the
+     * measuredCorrectedAtomAndActivityRatiosCategory to set
+     */
+    public void setMeasuredCorrectedAtomAndActivityRatiosCategory(ReportCategoryInterface measuredCorrectedAtomAndActivityRatiosCategory);
 
     /**
      *
