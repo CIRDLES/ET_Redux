@@ -3647,7 +3647,6 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             sampleDateInterpDialog
                     = new SampleDateInterpretationsManager(
                             this,
-                            false,// try floating as of october 2014 true,
                             myConcordiaGraphPanel,
                             myPlotAnyPanel,
                             myUseriesIsochronPanel,

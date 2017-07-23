@@ -139,6 +139,9 @@ public class SampleDateInterpretationsManager extends DialogEditor
      * Creates new form SampleDateInterpretations
      *
      * @param parent
+     * @param projectSampleAnalysisType
+     * @param sampleAnalysisType
+     * @param ampleAnalysisType
      * @param modal
      * @param concordiaGraphPanel
      * @param plotAny2Panel the value of plotAny2Panel
@@ -149,9 +152,8 @@ public class SampleDateInterpretationsManager extends DialogEditor
      * @param dateTreeByAliquot
      * @param dateTreeBySample
      */
-    public SampleDateInterpretationsManager( //
+    public SampleDateInterpretationsManager(
             SampleDateInterpretationSubscribeInterface parent,
-            boolean modal,
             JLayeredPane concordiaGraphPanel,
             JLayeredPane plotAny2Panel,
             JLayeredPane useriesIsochronPanel,
@@ -161,7 +163,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
             SampleTreeI dateTreeByAliquot,
             SampleTreeI dateTreeBySample) {
 
-        super(null, modal);
+        super(null, false);
 
         this.parentFrame = parent;
 
@@ -2466,7 +2468,7 @@ private void graphPanelsTabbedPaneResized(java.awt.event.ComponentEvent evt) {//
             1, heightCP + 16, widthCP + leftMarginCP, 35);
 
     ((PlottingDetailsDisplayInterface) plotAny2Panel).refreshPanel(true, false);
-    
+
     try {
         ((AbstractPlot) useriesIsochronPanel).setGraphWidth(widthCP);
         ((AbstractPlot) useriesIsochronPanel).setGraphHeight(heightCP);
@@ -2480,7 +2482,7 @@ private void graphPanelsTabbedPaneResized(java.awt.event.ComponentEvent evt) {//
         ((PlottingDetailsDisplayInterface) useriesIsochronPanel).refreshPanel(true, false);
     } catch (Exception e) {
     }
-    
+
     ((WeightedMeanGraphPanel) weightedMeanGraphPanel).setGraphWidth(adjustedWidth);
 
     ((WeightedMeanGraphPanel) weightedMeanGraphPanel).setGraphHeight(adjustedHeight);

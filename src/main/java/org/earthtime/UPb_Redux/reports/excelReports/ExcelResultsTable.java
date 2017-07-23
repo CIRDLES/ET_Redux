@@ -38,6 +38,8 @@ import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
 import org.earthtime.UPb_Redux.filters.XLSFileFilter;
+import static org.earthtime.UPb_Redux.reports.excelReports.ExcelReportConstants.EXCEL_FONT_FOR_NUMERIC_NUMBERS;
+import static org.earthtime.UPb_Redux.reports.excelReports.ExcelReportConstants.EXCEL_FONT_FOR_STRING_NUMBERS;
 import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.utilities.FileHelper;
 
@@ -148,7 +150,7 @@ public final class ExcelResultsTable {
 
                     // fraction data
                     WritableFont cellFont =
-                            new WritableFont( WritableFont.createFont( ExcelReportConstants.EXCEL_FONT ),
+                            new WritableFont( WritableFont.createFont(isNumeric ? EXCEL_FONT_FOR_NUMERIC_NUMBERS  : EXCEL_FONT_FOR_STRING_NUMBERS ),
                             ExcelReportConstants.EXCEL_FONT_SIZE );
                     WritableCellFormat cellFormat2 = new WritableCellFormat( cellFont );
                     cellFormat2.setAlignment( Alignment.RIGHT );

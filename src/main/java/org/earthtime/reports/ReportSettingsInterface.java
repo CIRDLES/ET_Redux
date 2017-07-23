@@ -34,6 +34,7 @@ import static org.earthtime.UPb_Redux.ReduxConstants.makeFormattedDate;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
+import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLAICPMSFraction;
 import org.earthtime.UPb_Redux.valueModels.ValueModelReferenced;
 import org.earthtime.UTh_Redux.fractions.UThFraction;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
@@ -971,6 +972,11 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
                         default:
                             footNote = footNote.replaceFirst("<zirconPopulationChoice>", ReportSpecificationsUPb.reportTableFootnotes.get("FN-5noZircon"));
                     }
+                }
+                
+                // july 2017
+                if (fractions.get(0) instanceof UPbLAICPMSFraction) {
+                    footNote = footNote.replaceFirst("<zirconPopulationChoice>", "Measured ratios corrected for fractionation.");
                 }
 
                 retVal[6][i] = determineFootNoteLetter(i) + "&" + footNote;

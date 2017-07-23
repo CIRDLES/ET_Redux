@@ -55,7 +55,7 @@ public class ReportSettings implements
      * report models upon opening in ET_Redux.
      */
     private static transient int CURRENT_VERSION_REPORT_SETTINGS_UPB = 364;
-    private static transient int CURRENT_VERSION_REPORT_SETTINGS_UTH_Carb = 6021;
+    private static transient int CURRENT_VERSION_REPORT_SETTINGS_UTH_Carb = 6022;
     private static transient int CURRENT_VERSION_REPORT_SETTINGS_UTH_Ign = 6003;
 
     // Fields
@@ -163,11 +163,11 @@ public class ReportSettings implements
                             ReportSpecificationsUTh_Carb.ReportCategory_USeriesConcentrationActivity, true);
             this.measuredAtomAndActivityRatiosCategory
                     = new ReportCategory(//
-                            "Measured Atom/Activity Ratios",
+                            "Meas. Atom/Activity Ratios",
                             ReportSpecificationsUTh_Carb.ReportCategory_USeriesMeasuredAtomAndActivityRatios, true);
              this.measuredCorrectedAtomAndActivityRatiosCategory
                     = new ReportCategory(//
-                            "Measured Detrital-Corrected Atom/Activity Ratios",
+                            "Meas. Detrital-Corr. Atom/Activity Ratios",
                             ReportSpecificationsUTh_Carb.ReportCategory_USeriesMeasuredDetritalCorrectedAtomAndActivityRatios, true);
            this.datesCategory
                     = new ReportCategory(//

@@ -92,5 +92,9 @@ public enum SampleAnalysisTypesEnum {
     public String getDefaultReportSpecsType() {
         return defaultReportSpecsType;
     }
+    
+    public boolean isFamilyLAICPMS(){
+        return name.startsWith("LAICPMS");
+    }
 
 }
