@@ -41,6 +41,7 @@ import org.earthtime.archivingTools.URIHelper;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.dataDictionaries.Lambdas;
 import org.earthtime.dataDictionaries.RadDates;
+import static org.earthtime.dataDictionaries.reportSpecifications.ReportSpecificationsAbstract.unitsType;
 import org.earthtime.dataDictionaries.reportSpecifications.ReportSpecificationsUPb;
 import org.earthtime.dataDictionaries.reportSpecifications.ReportSpecificationsUTh_Carb;
 import org.earthtime.dataDictionaries.reportSpecifications.ReportSpecificationsUTh_Ign;
@@ -685,10 +686,14 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
                             // modified oct 2009 for date units
                             // and oct 2014 for Pbc corrected
                             if (!myCol.getUnits().equals("")
-                                    && (!categories.get(c).getDisplayName().contains("Dates"))) {//.startsWith("Dates"))) {
-                                // July 2017 provides for special case of BP in Useries, where BP is string in retVal[1]
-                                retVal[3][columnCount] += "(" + myCol.getUnits() + retVal[1][columnCount] + ")";
-                                retVal[1][columnCount] = "";
+                                    && (!categories.get(c).getDisplayName().contains("Dates"))) {
+                                if ((unitsType.get(myCol.getUnits()) == "date")) {
+                                    // July 2017 provides for special case of BP in Useries, where BP is string in retVal[1]
+                                    retVal[3][columnCount] += "(" + myCol.getUnits() + retVal[1][columnCount] + ")";
+                                    retVal[1][columnCount] = "";
+                                } else {
+                                    retVal[3][columnCount] += "(" + myCol.getUnits() + ")";
+                                }
                             }
                             retVal[4][columnCount] = myCol.getUnits();
 
@@ -754,6 +759,18 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
                                 // field contains the Value in field[0]
                                 //and the uncertainty in field[1] if it exists/isvisible
                                 String[] field = myCol.getReportRecordByColumnSpec(f, numberStyleIsNumeric);
+
+                                // July 2017 for Useries
+                                if (myCol.getDisplayName3().contains("Date")) {
+//                                    System.out.println(field[0]);
+                                    if (field[0].contains("-")) {
+                                        field[0] = "         n/a";//\u221E"; // infinity
+                                        // check for uncertainty column in next cell unless last cell
+                                        if (!field[1].equals("") && (retVal[fractionRowCount].length > (columnCount + 1))) {
+                                            field[1] = "           -";
+                                        }
+                                    }
+                                }
 
                                 retVal[fractionRowCount][columnCount] = field[0];
                                 // check for uncertainty column in next cell unless last cell
@@ -1014,8 +1031,7 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
             if (retVal[f][columnCount] != null) {
                 retVal[f][columnCount] = retVal[f][columnCount].substring(minLeading);
                 retVal[f][columnCount]
-                        = //
-                        retVal[f][columnCount].substring(//
+                        = retVal[f][columnCount].substring(//
                                 0, retVal[f][columnCount].length() - minTrailing);
 
             }
@@ -1027,11 +1043,12 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
         int minWide = 3;
         if (!retVal[3][columnCount].trim().equalsIgnoreCase("Fraction")) {// (columnCount > 2) {
 
+            // July 2017 removed trim() calls here
             int padLeft
                     = Math.max(minWide,//
-                            Math.max(retVal[1][columnCount].trim().length(), //
-                                    Math.max(retVal[2][columnCount].trim().length(), //
-                                            retVal[3][columnCount].trim().length() + retVal[5][columnCount].trim().length() / 2)))//footnote length counts as half
+                            Math.max(retVal[1][columnCount].length(), //
+                                    Math.max(retVal[2][columnCount].length(), //
+                                            retVal[3][columnCount].length() + retVal[5][columnCount].length() / 2)))//footnote length counts as half
                     - retVal[FRACTION_DATA_START_ROW][columnCount].length();
 
             if (padLeft > 0) {

@@ -494,7 +494,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
         reportFractionIDs.setBackground(Color.white);
         reportFractionIDs.setOpaque(true);
         reportFractionIDs.setPreferredSize(new Dimension(//
-                fractionColumnWidth, (reportFractions.length + aliquotCount * 2) * lineHeight + 150));
+                fractionColumnWidth, (reportFractions.length + aliquotCount * (int)(showAliquotBars ? 2 : 0)) * lineHeight + 150));
 
         reportFractionIDsScrollPane = new JScrollPane(reportFractionIDs);
         reportFractionIDsScrollPane.setBorder(null);
@@ -526,7 +526,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
         reportBody.setOpaque(true);
         reportBody.setPreferredSize(new Dimension(//
                 reportWidth - fractionColumnWidth + fractionButtonMargin, //
-                (reportFractions.length + aliquotCount * 2) * lineHeight + 150));
+                (reportFractions.length + aliquotCount * (int)(showAliquotBars ? 2 : 0)) * lineHeight + 150));
 
         reportBodyScrollPane = new JScrollPane(reportBody);
         reportBodyScrollPane.setBorder(null);
@@ -985,7 +985,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                                                     leftMargin,
                                                     drawnHeight + topMargin + lineHeight);
                                         }
-                                    }
+                                    } 
 
                                     // build map of row to fraction objects and aliquot objects
                                     if ((sample != null) && paintType.equalsIgnoreCase("FRACTION")) {
