@@ -62,6 +62,8 @@ public final class TopsoilEvolutionPlot {
         myEvolutionPlot.getProperties().put(ELLIPSES, true);
         myEvolutionPlot.getProperties().put(ISOTOPE_TYPE, "Uranium Thorium");
 
+        myEvolutionPlot.setProperty(LAMBDA_U238, 0.00000000015512500000);
+
         topsoilEvolutionChartDialog = new EvolutionPlotDialog(null, true);
         topsoilEvolutionChartDialog.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         topsoilEvolutionChartDialog.setBounds( //
@@ -80,7 +82,23 @@ public final class TopsoilEvolutionPlot {
         recenterButton.addActionListener((ActionEvent ae) -> {
             myEvolutionPlot.getProperties().put(EVOLUTION_MATRIX, !(Boolean) myEvolutionPlot.getProperties().get(EVOLUTION_MATRIX));
             try {
-                myEvolutionPlot.recenter();
+
+                myEvolutionPlot.setProperty(EVOLUTION_MATRIX, false);
+
+                //myEvolutionPlot.setProperties(myEvolutionPlot.getProperties());
+                //myEvolutionPlot.recenter();
+            } catch (Exception e) {
+                //TODO solve threading issue
+            }
+
+            try {
+                myEvolutionPlot.setProperty(LAMBDA_U238, 0.000000025512500000);
+            } catch (Exception e) {
+                //TODO solve threading issue
+            }
+            
+             try {
+                myEvolutionPlot.setProperty(EVOLUTION_MATRIX, true);
             } catch (Exception e) {
                 //TODO solve threading issue
             }

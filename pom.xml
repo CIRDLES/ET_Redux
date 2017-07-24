@@ -218,11 +218,19 @@
             <artifactId>fluent-hc</artifactId>
             <version>4.5.2</version>
         </dependency>
+    <!--    
         <dependency>
             <groupId>com.github.cirdles.topsoil</groupId>
             <artifactId>app</artifactId>
             <version>master-SNAPSHOT</version>
         </dependency>
+    -->    
+        <dependency>
+            <groupId>com.github.marottajb</groupId>
+            <artifactId>topsoil</artifactId>
+            <version>8ba48ed</version>
+        </dependency>
+        
         <dependency>
             <groupId>org.python</groupId>
             <artifactId>jython-standalone</artifactId>
