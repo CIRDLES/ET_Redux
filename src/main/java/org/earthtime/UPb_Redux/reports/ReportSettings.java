@@ -54,9 +54,9 @@ public class ReportSettings implements
      * version number is advanced so that any existing analysis will update its
      * report models upon opening in ET_Redux.
      */
-    private static transient int CURRENT_VERSION_REPORT_SETTINGS_UPB = 364;
-    private static transient int CURRENT_VERSION_REPORT_SETTINGS_UTH_Carb = 6022;
-    private static transient int CURRENT_VERSION_REPORT_SETTINGS_UTH_Ign = 6003;
+    private static transient int CURRENT_VERSION_REPORT_SETTINGS_UPB = 367;
+    private static transient int CURRENT_VERSION_REPORT_SETTINGS_UTH_Carb = 6025;
+    private static transient int CURRENT_VERSION_REPORT_SETTINGS_UTH_Ign = 6007;
 
     // Fields
     private String name;
@@ -165,11 +165,11 @@ public class ReportSettings implements
                     = new ReportCategory(//
                             "Meas. Atom/Activity Ratios",
                             ReportSpecificationsUTh_Carb.ReportCategory_USeriesMeasuredAtomAndActivityRatios, true);
-             this.measuredCorrectedAtomAndActivityRatiosCategory
+            this.measuredCorrectedAtomAndActivityRatiosCategory
                     = new ReportCategory(//
                             "Meas. Detrital-Corr. Atom/Activity Ratios",
                             ReportSpecificationsUTh_Carb.ReportCategory_USeriesMeasuredDetritalCorrectedAtomAndActivityRatios, true);
-           this.datesCategory
+            this.datesCategory
                     = new ReportCategory(//
                             "Date and initial 234U",
                             ReportSpecificationsUTh_Carb.ReportCategory_USeriesReportTable, true);

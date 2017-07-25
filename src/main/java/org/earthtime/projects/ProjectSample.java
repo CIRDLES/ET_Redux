@@ -465,7 +465,7 @@ public class ProjectSample implements//
      */
     @Override
     public void restoreDefaultReportSettingsModel() {
-        setReportSettingsModel(ReduxLabData.getInstance().getDefaultReportSettingsModelBySpecsType(getIsotopeSystem()));
+        setReportSettingsModel(ReduxLabData.getInstance().getDefaultReportSettingsModelBySpecsType(getDefaultReportSpecsType()));
     }
 
     /**

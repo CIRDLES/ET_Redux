@@ -1128,6 +1128,9 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             // JULY 2012 start migration to project metaphor where project = super sample
 
             theProject = new Project();
+            // july 2017
+            theProject.setSampleAnalysisType(SampleAnalysisTypesEnum.valueOf(theSample.getSampleAnalysisType()));
+            
             theProject.setSuperSample(theSample);
             if (theSample.getSampleAnalysisType().equalsIgnoreCase(SampleAnalysisTypesEnum.COMPILED.getName())) {
                 mySampleManager
