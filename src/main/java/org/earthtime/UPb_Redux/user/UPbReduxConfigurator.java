@@ -54,6 +54,8 @@ public final class UPbReduxConfigurator {
      */
     public final static String URI_AliquotXMLSchema
             = "Schema/master/AliquotXMLSchema.xsd";
+    public final static String URI_AliquotUThXMLSchema
+            = "Schema/master/AliquotUThXMLSchema.xsd";
     /**
      *
      */
@@ -177,6 +179,7 @@ public final class UPbReduxConfigurator {
         myPreferences.put("URI_UPB_PUBLIC_DATA", URI_UPB_PUBLIC_DATA);
 
         myPreferences.put("URI_AliquotXMLSchema", URI_AliquotXMLSchema);
+        myPreferences.put("URI_AliquotUThXMLSchema", URI_AliquotUThXMLSchema);
 
         myPreferences.put("URI_UPbReduxFractionXMLSchemaURL", URI_UPbReduxFractionXMLSchemaURL);
 

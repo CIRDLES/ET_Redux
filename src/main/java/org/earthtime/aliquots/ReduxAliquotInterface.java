@@ -164,4 +164,6 @@ public interface ReduxAliquotInterface {
      * @return
      */
     public AnalysisImageInterface getAnalysisImageByType(AnalysisImageTypes imageType);
+    
+    public String serializeXMLObject();
 }
