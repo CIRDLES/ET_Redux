@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.embed.swing.JFXPanel;
 import javax.swing.AbstractButton;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -111,7 +112,7 @@ import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.UPb_Redux.utilities.CustomIcon;
 import org.earthtime.UPb_Redux.utilities.ETSerializer;
 import org.earthtime.UPb_Redux.utilities.MacOSAboutHandler;
-import org.earthtime.UTh_Redux.dateInterpretation.TopsoilEvolutionPlot;
+import org.earthtime.plots.evolution.TopsoilEvolutionPlot;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
 import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.aliquots.ReduxAliquotInterface;
@@ -146,6 +147,7 @@ import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.plots.anyTwo.PlotAny2Panel;
+import org.earthtime.plots.evolution.EvolutionPlotPanel;
 import org.earthtime.plots.isochrons.IsochronsPanel;
 import org.earthtime.projects.EarthTimeSerializedFileInterface;
 import org.earthtime.projects.Project;
@@ -191,6 +193,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 //    private JFXPanel concordiaGraphPanelIsoplot;
     private JLayeredPane myPlotAnyPanel;
     private JLayeredPane myUseriesIsochronPanel;
+    private JLayeredPane myEvolutionPlotPanel;
 
     /**
      *
@@ -291,7 +294,6 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 //
 //        } catch (IOException iOException) {
 //        }
-
         // July 2017 elided in favor of GitHub
         changeLogMenuItem.setVisible(false);
 
@@ -641,8 +643,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
                 // July 2017
                 ReportAliquotFractionsView.showAliquotBars = !theProject.getSuperSample().isAnalysisTypeUSERIES();
-                
-                
+
                 theProject.saveTheProjectAsSerializedReduxFile();
 
                 // go straight to data table display
@@ -1130,7 +1131,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             theProject = new Project();
             // july 2017
             theProject.setSampleAnalysisType(SampleAnalysisTypesEnum.valueOf(theSample.getSampleAnalysisType()));
-            
+
             theProject.setSuperSample(theSample);
             if (theSample.getSampleAnalysisType().equalsIgnoreCase(SampleAnalysisTypesEnum.COMPILED.getName())) {
                 mySampleManager
@@ -1441,6 +1442,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         //as well as interpret date window and archiving
         myPlotAnyPanel = new PlotAny2Panel(theSample, this);
         myUseriesIsochronPanel = new IsochronsPanel(theSample, this);
+//////        myEvolutionPlotPanel = new EvolutionPlotPanel(theSample, this);
 
         // march 2014
 //        concordiaGraphPanelIsoplot = new ConcordiaGraphPanelIsoplot(theSample);
@@ -3587,23 +3589,23 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
     private void interpretSampleDates_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_interpretSampleDates_buttonActionPerformed
         // Dec 2015 experiment with customization of skins
-        if (theSample.getSampleAnalysisType().compareToIgnoreCase(SampleAnalysisTypesEnum.USERIES_CARB.getName()) == 0) {
-//            if (topsoilEvolutionChart != null) {
-//                topsoilEvolutionChart.close();
-//                topsoilEvolutionChart = null;
-//            }
-//            if (topsoilEvolutionChart == null) {
-//                topsoilEvolutionChart = TopsoilEvolutionPlot.getInstance();
-//            }
-            topsoilEvolutionChart = new TopsoilEvolutionPlot();
-            topsoilEvolutionChart.setSelectedFractions(theSample.getActiveFractionsSortedByAliquot());
-            topsoilEvolutionChart.preparePanel();
-            topsoilEvolutionChart.showPanel();
-        } else {
-            manageSampleDateInterpretation(//
-                    new SampleTreeAnalysisMode(theSample),
-                    new SampleTreeCompilationMode(theSample));
-        }
+//        if (theSample.getSampleAnalysisType().compareToIgnoreCase(SampleAnalysisTypesEnum.USERIES_CARB.getName()) == 0) {
+////            if (topsoilEvolutionChart != null) {
+////                topsoilEvolutionChart.close();
+////                topsoilEvolutionChart = null;
+////            }
+////            if (topsoilEvolutionChart == null) {
+////                topsoilEvolutionChart = TopsoilEvolutionPlot.getInstance();
+////            }
+//            topsoilEvolutionChart = new TopsoilEvolutionPlot();
+//            topsoilEvolutionChart.setSelectedFractions(theSample.getActiveFractionsSortedByAliquot());
+//            topsoilEvolutionChart.preparePanel();
+//            topsoilEvolutionChart.showPanel();
+//        } else {
+        manageSampleDateInterpretation(//
+                new SampleTreeAnalysisMode(theSample),
+                new SampleTreeCompilationMode(theSample));
+//        }
 }//GEN-LAST:event_interpretSampleDates_buttonActionPerformed
 
     /**
@@ -3628,6 +3630,9 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
             myPlotAnyPanel = new PlotAny2Panel(theSample, this);
             myUseriesIsochronPanel = new IsochronsPanel(theSample, this);
+            if (myEvolutionPlotPanel == null) {
+                myEvolutionPlotPanel = new EvolutionPlotPanel(theSample, this);
+            }
 
             theSample.getSampleDateInterpretationGUISettings().//
                     setConcordiaOptions(((ConcordiaPlotDisplayInterface) myConcordiaGraphPanel).getConcordiaOptions());
@@ -3643,6 +3648,8 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             ((PlottingDetailsDisplayInterface) myPlotAnyPanel).resetPanel(true, false);
             ((PlottingDetailsDisplayInterface) myUseriesIsochronPanel).setShowTightToEdges(true);
             ((PlottingDetailsDisplayInterface) myUseriesIsochronPanel).resetPanel(true, false);
+            ((PlottingDetailsDisplayInterface) myEvolutionPlotPanel).setShowTightToEdges(true);
+            //((PlottingDetailsDisplayInterface) myEvolutionPlotPanel).resetPanel(true, false);
 
             if (sampleDateInterpDialog != null) {
                 sampleDateInterpDialog.dispose();
@@ -3653,6 +3660,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                             myConcordiaGraphPanel,
                             myPlotAnyPanel,
                             myUseriesIsochronPanel,
+                            myEvolutionPlotPanel,
                             myWeightedMeanGraphPanel,
                             myNormedProbabilityPanel,
                             theSample,
@@ -4429,7 +4437,7 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     private void paperOnUSeriesDataReportingStandards_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_paperOnUSeriesDataReportingStandards_menuItemActionPerformed
         BrowserControl.displayURL(
                 "http://cirdles.org/assets/documents/USeriesDataReportingStandardsPaper.pdf");
-        
+
     }//GEN-LAST:event_paperOnUSeriesDataReportingStandards_menuItemActionPerformed
 
     private void helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
