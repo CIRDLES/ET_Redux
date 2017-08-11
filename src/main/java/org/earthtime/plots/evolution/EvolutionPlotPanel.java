@@ -68,8 +68,8 @@ public final class EvolutionPlotPanel extends JLayeredPane implements AliquotDet
     private Vector<ETFractionInterface> filteredFractions;
     private Vector<ETFractionInterface> excludedFractions;
 
-    private  JComponent plotAsComponent;
-    private  Plot myEvolutionPlot ;//= TopsoilPlotType.BASE_PLOT.getPlot();
+    private JComponent plotAsComponent;
+    private Plot myEvolutionPlot;//= TopsoilPlotType.BASE_PLOT.getPlot();
 
     public EvolutionPlotPanel(SampleInterface mySample, ReportUpdaterInterface reportUpdater) {
         super();
@@ -109,8 +109,9 @@ public final class EvolutionPlotPanel extends JLayeredPane implements AliquotDet
     public void preparePanel(boolean doReScale, boolean inLiveMode) {
 
 //        removeAll();
-
         if (selectedFractions.size() > 0) {
+            myEvolutionPlot = TopsoilPlotType.BASE_PLOT.getPlot();
+
             myEvolutionPlot.getProperties().put(TITLE, "Evolution Plot");
             myEvolutionPlot.getProperties().put(X_AXIS, "[230Th/238U]");
             myEvolutionPlot.getProperties().put(Y_AXIS, "[234U/238U]");
@@ -146,14 +147,14 @@ public final class EvolutionPlotPanel extends JLayeredPane implements AliquotDet
                 plotAsComponent.setBounds(getBounds());
                 plotAsComponent.setBounds(0, 0, 820, 640);
 
-                add(plotAsComponent,JLayeredPane.DEFAULT_LAYER);
+                add(plotAsComponent, JLayeredPane.DEFAULT_LAYER);
             }
             remove(plotAsComponent);
             add(plotAsComponent, JLayeredPane.DEFAULT_LAYER);
-            
-            ((JFXPanel)plotAsComponent).revalidate();//   .repaint();
-            ((JFXPanel)plotAsComponent).repaint();
-            
+
+            ((JFXPanel) plotAsComponent).revalidate();//   .repaint();
+            ((JFXPanel) plotAsComponent).repaint();
+
             repaint();
             validate();
 
@@ -170,6 +171,14 @@ public final class EvolutionPlotPanel extends JLayeredPane implements AliquotDet
         } catch (Exception e) {
 //            TODO solve threading issue
         }
+    }
+
+    public void cancelFXThread() {
+        if (myEvolutionPlot != null) {
+            myEvolutionPlot.cancelFXApplicationThread();
+        }
+        plotAsComponent = null;
+        myEvolutionPlot = null;
     }
 
     @Override

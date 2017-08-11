@@ -38,7 +38,6 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.Vector;
-import javafx.embed.swing.JFXPanel;
 import javax.swing.AbstractButton;
 import javax.swing.Icon;
 import javax.swing.JCheckBoxMenuItem;
@@ -60,7 +59,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import org.apache.batik.swing.JSVGCanvas;
-import static org.cirdles.topsoil.plot.base.BasePlotProperties.EVOLUTION_MATRIX;
 import org.earthtime.UPb_Redux.beans.ReduxSpinner;
 import org.earthtime.UPb_Redux.beans.ReduxSuppressComponentEventsI;
 import org.earthtime.UPb_Redux.customJTrees.CheckBoxNode;
@@ -1156,6 +1154,11 @@ public class SampleDateInterpretationsManager extends DialogEditor
      */
     @Override
     public void close() {
+
+        if (evolutionPlotPanel != null) {
+            ((EvolutionPlotPanel) evolutionPlotPanel).cancelFXThread();
+            evolutionPlotPanel = null;
+        }
 
         // Save concordia options 
         ((ConcordiaGraphPanel) getConcordiaGraphPanel()).saveSettings();
@@ -3235,8 +3238,10 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                 ((AliquotDetailsDisplayInterface) evolutionPlotPanel).//
                         setSelectedFractions(sample.getFractions());
 
-                ((EvolutionPlotPanel) evolutionPlotPanel).refreshPanel(false, false);
-
+                try {
+                    ((EvolutionPlotPanel) evolutionPlotPanel).refreshPanel(false, false);
+                } catch (Exception e) {
+                }
             } else {
 
                 ((DateProbabilityDensityPanel) probabilityPanel).//

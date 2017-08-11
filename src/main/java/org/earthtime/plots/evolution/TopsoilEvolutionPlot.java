@@ -15,7 +15,6 @@
  */
 package org.earthtime.plots.evolution;
 
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.HashMap;

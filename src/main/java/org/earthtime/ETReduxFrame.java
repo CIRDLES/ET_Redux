@@ -3630,7 +3630,9 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
             myPlotAnyPanel = new PlotAny2Panel(theSample, this);
             myUseriesIsochronPanel = new IsochronsPanel(theSample, this);
+
             if (myEvolutionPlotPanel == null) {
+                myEvolutionPlotPanel = null;
                 myEvolutionPlotPanel = new EvolutionPlotPanel(theSample, this);
             }
 
