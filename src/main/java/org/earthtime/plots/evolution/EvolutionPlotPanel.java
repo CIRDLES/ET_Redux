@@ -39,6 +39,7 @@ import org.earthtime.UPb_Redux.dateInterpretation.concordia.ConcordiaPlotDisplay
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.PlottingDetailsDisplayInterface;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UTh_Redux.fractions.UThLegacyFractionI;
+import org.earthtime.dataDictionaries.Lambdas;
 import org.earthtime.dataDictionaries.UThAnalysisMeasures;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.plots.PlotAxesSetupInterface;
@@ -118,6 +119,16 @@ public final class EvolutionPlotPanel extends JLayeredPane implements AliquotDet
             myEvolutionPlot.getProperties().put(EVOLUTION_MATRIX, true);
             myEvolutionPlot.getProperties().put(ELLIPSES, true);
             myEvolutionPlot.getProperties().put(ISOTOPE_TYPE, "Uranium Thorium");
+            
+            lambda235 = selectedFractions.get(0)
+                    .getPhysicalConstantsModel().getDatumByName(Lambdas.lambda235.getName());
+            lambda238 = selectedFractions.get(0)
+                    .getPhysicalConstantsModel().getDatumByName(Lambdas.lambda238.getName());
+            lambda232 = selectedFractions.get(0)
+                    .getPhysicalConstantsModel().getDatumByName(Lambdas.lambda232.getName());
+            
+            myEvolutionPlot.getProperties().put("LAMBDA_235", lambda235.getValue().doubleValue());
+            myEvolutionPlot.getProperties().put("LAMBDA_238", lambda238.getValue().doubleValue());
 
             List<Map<String, Object>> myData = new ArrayList<>();
             for (int i = 0; i < selectedFractions.size(); i++) {
