@@ -31,6 +31,9 @@ import org.cirdles.topsoil.plot.Plot;
 import static org.cirdles.topsoil.plot.base.BasePlotProperties.ELLIPSES;
 import static org.cirdles.topsoil.plot.base.BasePlotProperties.EVOLUTION_MATRIX;
 import static org.cirdles.topsoil.plot.base.BasePlotProperties.ISOTOPE_TYPE;
+import static org.cirdles.topsoil.plot.base.BasePlotProperties.LAMBDA_Th230;
+import static org.cirdles.topsoil.plot.base.BasePlotProperties.LAMBDA_U235;
+import static org.cirdles.topsoil.plot.base.BasePlotProperties.LAMBDA_U238;
 import static org.cirdles.topsoil.plot.base.BasePlotProperties.TITLE;
 import static org.cirdles.topsoil.plot.base.BasePlotProperties.X_AXIS;
 import static org.cirdles.topsoil.plot.base.BasePlotProperties.Y_AXIS;
@@ -62,9 +65,10 @@ public final class EvolutionPlotPanel extends JLayeredPane implements AliquotDet
     private static final String SELECTED = "Selected";
 
     private static SampleInterface sample;
+    private static boolean showMatrix = true;
     private ValueModel lambda235;
     private ValueModel lambda238;
-    private ValueModel lambda232;
+    private ValueModel lambda230;
     private static Vector<ETFractionInterface> selectedFractions;
     private Vector<ETFractionInterface> filteredFractions;
     private Vector<ETFractionInterface> excludedFractions;
@@ -119,16 +123,17 @@ public final class EvolutionPlotPanel extends JLayeredPane implements AliquotDet
             myEvolutionPlot.getProperties().put(EVOLUTION_MATRIX, true);
             myEvolutionPlot.getProperties().put(ELLIPSES, true);
             myEvolutionPlot.getProperties().put(ISOTOPE_TYPE, "Uranium Thorium");
-            
+
             lambda235 = selectedFractions.get(0)
                     .getPhysicalConstantsModel().getDatumByName(Lambdas.lambda235.getName());
             lambda238 = selectedFractions.get(0)
                     .getPhysicalConstantsModel().getDatumByName(Lambdas.lambda238.getName());
-            lambda232 = selectedFractions.get(0)
-                    .getPhysicalConstantsModel().getDatumByName(Lambdas.lambda232.getName());
-            
-            myEvolutionPlot.getProperties().put("LAMBDA_235", lambda235.getValue().doubleValue());
-            myEvolutionPlot.getProperties().put("LAMBDA_238", lambda238.getValue().doubleValue());
+            lambda230 = selectedFractions.get(0)
+                    .getPhysicalConstantsModel().getDatumByName(Lambdas.lambda230.getName());
+
+            myEvolutionPlot.getProperties().put(LAMBDA_U235, lambda235.getValue().doubleValue());
+            myEvolutionPlot.getProperties().put(LAMBDA_U238, lambda238.getValue().doubleValue());
+            myEvolutionPlot.getProperties().put(LAMBDA_Th230, lambda230.getValue().doubleValue());
 
             List<Map<String, Object>> myData = new ArrayList<>();
             for (int i = 0; i < selectedFractions.size(); i++) {
@@ -176,9 +181,16 @@ public final class EvolutionPlotPanel extends JLayeredPane implements AliquotDet
 
     public void recenter() {
         try {
-            // myEvolutionPlot.setProperty(EVOLUTION_MATRIX, false);
-
             myEvolutionPlot.recenter();
+        } catch (Exception e) {
+//            TODO solve threading issue
+        }
+    }
+
+    public void toggleMatrix() {
+        showMatrix = !showMatrix;
+        try {
+            myEvolutionPlot.setProperty(EVOLUTION_MATRIX, showMatrix);
         } catch (Exception e) {
 //            TODO solve threading issue
         }

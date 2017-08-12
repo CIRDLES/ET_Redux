@@ -251,6 +251,12 @@ public class SampleDateInterpretationsManager extends DialogEditor
                 graphPanels_TabbedPane.remove(weightedMeanLayeredPane);
                 graphPanels_TabbedPane.remove(normedProbabilityLayeredPane);
                 graphPanels_TabbedPane.remove(evolutionLayeredPane);
+                graphPanels_TabbedPane.remove(any2LayeredPane);
+                
+                choosePDFPeaks_menu.setVisible(false);
+                weightedMeansPlotOptions_menu.setVisible(false);
+//                displayOptions_menu.setVisible(false);
+//                heatMap_Menu.setVisible(false);
                 break;
             case USERIES_CARB:
                 graphPanels_TabbedPane.setSelectedComponent(evolutionLayeredPane);
@@ -258,6 +264,12 @@ public class SampleDateInterpretationsManager extends DialogEditor
                 graphPanels_TabbedPane.remove(weightedMeanLayeredPane);
                 graphPanels_TabbedPane.remove(normedProbabilityLayeredPane);
                 graphPanels_TabbedPane.remove(useriesIsochronLayeredPane);
+                graphPanels_TabbedPane.remove(any2LayeredPane);
+                
+                choosePDFPeaks_menu.setVisible(false);
+                weightedMeansPlotOptions_menu.setVisible(false);
+                displayOptions_menu.setVisible(false);
+                heatMap_Menu.setVisible(false);
                 break;
 
             default:
@@ -1228,6 +1240,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         evolutionLayeredPane = new javax.swing.JLayeredPane();
         evolutionPlotToolPanel = new javax.swing.JPanel();
         reCenterEvolution_button =  new ET_JButton();
+        toggleMatrix_button =  new ET_JButton();
         useriesIsochronLayeredPane = new javax.swing.JLayeredPane();
         uSeriesIsochronToolPanel = new javax.swing.JPanel();
         zoomInX2Isochron_button =  new ET_JButton();
@@ -1684,7 +1697,20 @@ public class SampleDateInterpretationsManager extends DialogEditor
                 reCenterEvolution_buttonActionPerformed(evt);
             }
         });
-        evolutionPlotToolPanel.add(reCenterEvolution_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(3, 2, 110, 30));
+        evolutionPlotToolPanel.add(reCenterEvolution_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(114, 2, 110, 30));
+
+        toggleMatrix_button.setBackground(new java.awt.Color(255, 255, 255));
+        toggleMatrix_button.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
+        toggleMatrix_button.setText("Toggle Matrix");
+        toggleMatrix_button.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        toggleMatrix_button.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        toggleMatrix_button.setOpaque(true);
+        toggleMatrix_button.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                toggleMatrix_buttonActionPerformed(evt);
+            }
+        });
+        evolutionPlotToolPanel.add(toggleMatrix_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(3, 2, 110, 30));
 
         evolutionLayeredPane.add(evolutionPlotToolPanel);
         evolutionPlotToolPanel.setBounds(0, 604, 910, 36);
@@ -2435,7 +2461,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                .add(interpretations_SplitPane)
+                .add(interpretations_SplitPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 685, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 31, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
@@ -3058,6 +3084,10 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
         ((EvolutionPlotPanel) evolutionPlotPanel).recenter();
     }//GEN-LAST:event_reCenterEvolution_buttonActionPerformed
 
+    private void toggleMatrix_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toggleMatrix_buttonActionPerformed
+        ((EvolutionPlotPanel) evolutionPlotPanel).toggleMatrix();
+    }//GEN-LAST:event_toggleMatrix_buttonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JRadioButton DatePbCorrSchemeA_radio;
     private javax.swing.JRadioButton ageBest_radio;
@@ -3147,6 +3177,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
     private javax.swing.JRadioButton thoriumConcordiaFlavor_radioButton;
     private javax.swing.JCheckBox thoriumCorrectionSelector_checkbox;
     private javax.swing.JRadioButton thoriumFlavorIsochron_radioButton;
+    private javax.swing.JButton toggleMatrix_button;
     private javax.swing.JPanel uSeriesIsochronToolPanel;
     private javax.swing.JLayeredPane useriesIsochronLayeredPane;
     private javax.swing.ButtonGroup weightedMeanFractionOrderButtonGroup;
