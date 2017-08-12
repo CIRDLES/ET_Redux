@@ -152,6 +152,7 @@ public class SampleUTh extends ETSample implements
      * @param sampleAnalysisType
      * @param defaultAnalysisPurpose
      * @param isotopeSystem the value of isotopeSystem
+     * @param defaultReportSpecsType
      * @throws org.earthtime.UPb_Redux.exceptions.BadLabDataException
      * BadLabDataException
      */
@@ -175,7 +176,7 @@ public class SampleUTh extends ETSample implements
 
         this.sampleAnnotations = "";
 
-        this.reportSettingsModel = myReduxLabData.getDefaultReportSettingsModelBySpecsType(isotopeSystem);
+        this.reportSettingsModel = myReduxLabData.getDefaultReportSettingsModelBySpecsType(defaultReportSpecsType);
         this.physicalConstantsModel = myReduxLabData.getDefaultPhysicalConstantsModel();
 
         this.aliquots = new Vector<>();
@@ -575,7 +576,7 @@ public class SampleUTh extends ETSample implements
      */
     @Override
     public void restoreDefaultReportSettingsModel() {
-        setReportSettingsModel(ReduxLabData.getInstance().getDefaultReportSettingsModelBySpecsType(getIsotopeSystem()));
+        setReportSettingsModel(ReduxLabData.getInstance().getDefaultReportSettingsModelBySpecsType(getDefaultReportSpecsType()));
     }
 
     /**

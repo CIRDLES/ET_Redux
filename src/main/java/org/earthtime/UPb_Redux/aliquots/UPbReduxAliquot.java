@@ -483,6 +483,7 @@ public class UPbReduxAliquot extends Aliquot
      *
      * @return
      */
+    @Override
     public String serializeXMLObject() {
         prepareUPbReduxAliquotForXMLSerialization();
 
@@ -505,6 +506,7 @@ public class UPbReduxAliquot extends Aliquot
      *
      * @param filename
      */
+    @Override
     public void serializeXMLObject(String filename) {
 
         String xml = serializeXMLObject();

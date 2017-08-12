@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.earthtime.UTh_Redux.dateInterpretation;
+package org.earthtime.plots.evolution;
 
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,7 +42,7 @@ public final class TopsoilEvolutionPlot {
     private Plot myEvolutionPlot;
     private JComponent plotAsComponent;
     private EvolutionPlotDialog topsoilEvolutionChartDialog;
-    // private final Container contentPane;
+
 
     private static final String X = "x";
     private static final String SIGMA_X = "sigma_x";
@@ -62,6 +61,8 @@ public final class TopsoilEvolutionPlot {
         myEvolutionPlot.getProperties().put(ELLIPSES, true);
         myEvolutionPlot.getProperties().put(ISOTOPE_TYPE, "Uranium Thorium");
 
+        myEvolutionPlot.setProperty(LAMBDA_U238, 0.00000000015512500000);
+
         topsoilEvolutionChartDialog = new EvolutionPlotDialog(null, true);
         topsoilEvolutionChartDialog.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         topsoilEvolutionChartDialog.setBounds( //
@@ -78,12 +79,28 @@ public final class TopsoilEvolutionPlot {
         JButton recenterButton = new ET_JButton("Re-center");
         recenterButton.setBounds(0, 0, 150, 20);
         recenterButton.addActionListener((ActionEvent ae) -> {
-            myEvolutionPlot.getProperties().put(EVOLUTION_MATRIX, !(Boolean) myEvolutionPlot.getProperties().get(EVOLUTION_MATRIX));
+            //myEvolutionPlot.getProperties().put(EVOLUTION_MATRIX, !(Boolean) myEvolutionPlot.getProperties().get(EVOLUTION_MATRIX));
             try {
-                myEvolutionPlot.recenter();
+
+                myEvolutionPlot.setProperty(EVOLUTION_MATRIX, false);
+
+                //myEvolutionPlot.setProperties(myEvolutionPlot.getProperties());
+                //myEvolutionPlot.recenter();
             } catch (Exception e) {
                 //TODO solve threading issue
             }
+
+//            try {
+//                myEvolutionPlot.setProperty(LAMBDA_U238, 0.000000025512500000);
+//            } catch (Exception e) {
+//                //TODO solve threading issue
+//            }
+//            
+//             try {
+//                myEvolutionPlot.setProperty(EVOLUTION_MATRIX, true);
+//            } catch (Exception e) {
+//                //TODO solve threading issue
+//            }
         });
         plotAsComponent.add(recenterButton);
 
@@ -92,19 +109,19 @@ public final class TopsoilEvolutionPlot {
 
     private class EvolutionPlotDialog extends javax.swing.JFrame {
 
-        private JLayeredPane evolutionPlotPane;
+//        private JLayeredPane evolutionPlotPane;
 
         public EvolutionPlotDialog(javax.swing.JFrame owner, boolean modal) {
             super();
 
-            evolutionPlotPane = new JLayeredPane();
-            add(evolutionPlotPane);
+//            evolutionPlotPane = new JLayeredPane();
+//            add(evolutionPlotPane);
 
         }
 
-        public void addCompnent(JComponent c) {
-            evolutionPlotPane.add(c);
-        }
+//        public void addComponent(JComponent c) {
+//            evolutionPlotPane.add(c);
+//        }
 
     }
 

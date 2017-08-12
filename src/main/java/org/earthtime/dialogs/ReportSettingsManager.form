@@ -411,8 +411,8 @@
                                       <Component id="valueDigits_spinner" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <Group type="102" alignment="0" attributes="0">
-                                      <Component id="uncertaintyColName_label" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                      <Component id="uncertaintyColName_label" min="-2" pref="101" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
                                       <Component id="uncertaintyVisible_chkBox" min="-2" pref="239" max="-2" attributes="0"/>
                                   </Group>
                                   <Group type="102" alignment="0" attributes="0">
@@ -483,7 +483,8 @@
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="unct col name"/>
+                <Property name="text" type="java.lang.String" value="uncert col name"/>
+                <Property name="toolTipText" type="java.lang.String" value=""/>
                 <Property name="opaque" type="boolean" value="true"/>
               </Properties>
             </Component>
@@ -492,7 +493,7 @@
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="unct col visible for this value"/>
+                <Property name="text" type="java.lang.String" value="uncert col visible for this value"/>
                 <Property name="opaque" type="boolean" value="true"/>
               </Properties>
               <Events>

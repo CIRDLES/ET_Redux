@@ -35,6 +35,9 @@ public abstract class ReportSpecificationsAbstract {
         {"", "", "Fraction  ", "", "getFractionID", "", "",
             "", "true", "false", "0", "", "", "false", "false"
         },
+        {"", "", "Sample  ", "", "getSampleName", "", "",
+            "", "false", "false", "0", "", "", "false", "false"
+        },
         {"", "No. of", "Grains", "", "getNumberOfGrains", "", "",
             "", "false", "false", "0", "", "", "false", "false"
         }
@@ -105,6 +108,7 @@ public abstract class ReportSpecificationsAbstract {
         unitsType.put("*1e3 dpm/g", "mult");
         unitsType.put("*1e6 dpm/g", "mult");
         unitsType.put("*1e9 dpm/g", "mult");
+        unitsType.put("dpm/g", "activity");
 
     }
 

@@ -494,7 +494,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
         reportFractionIDs.setBackground(Color.white);
         reportFractionIDs.setOpaque(true);
         reportFractionIDs.setPreferredSize(new Dimension(//
-                fractionColumnWidth, (reportFractions.length + aliquotCount * 2) * lineHeight + 150));
+                fractionColumnWidth, (reportFractions.length + aliquotCount * (int)(showAliquotBars ? 1 : 0)) * lineHeight + 175));
 
         reportFractionIDsScrollPane = new JScrollPane(reportFractionIDs);
         reportFractionIDsScrollPane.setBorder(null);
@@ -526,7 +526,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
         reportBody.setOpaque(true);
         reportBody.setPreferredSize(new Dimension(//
                 reportWidth - fractionColumnWidth + fractionButtonMargin, //
-                (reportFractions.length + aliquotCount * 2) * lineHeight + 150));
+                (reportFractions.length + aliquotCount * (int)(showAliquotBars ? 1 : 0)) * lineHeight + 175));
 
         reportBodyScrollPane = new JScrollPane(reportBody);
         reportBodyScrollPane.setBorder(null);
@@ -864,8 +864,8 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                             g2D.fillRect((int) drawnWidth - 5, topMargin + lineHeight / 4, (int) Math.ceil(colWidth + dividerWidth), lineHeight);
                             g2D.setColor(savedColor);
 
-                            // June 2017 special condition to hide categpry per Noah
-                            g2D.drawString((String) (catName.contains("USeries") ? "" : catName),
+                            // June 2017 special condition to hide category per Noah
+                            g2D.drawString((String) (reportFractions[1][0].contains("UTh") ? "" : catName),
                                     drawnWidth,
                                     drawnHeight + topMargin + lineHeight);
 
@@ -985,7 +985,7 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
                                                     leftMargin,
                                                     drawnHeight + topMargin + lineHeight);
                                         }
-                                    }
+                                    } 
 
                                     // build map of row to fraction objects and aliquot objects
                                     if ((sample != null) && paintType.equalsIgnoreCase("FRACTION")) {

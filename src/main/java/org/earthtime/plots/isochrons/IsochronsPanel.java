@@ -142,9 +142,10 @@ public class IsochronsPanel extends AbstractPlot implements UseriesIsochronPlotD
 
         double yIntercept = y - slope * x;
 
+        // July 2017 - plot isochrons from axis
         Line2D line = new Line2D.Double(
-                mapX(x),
-                mapY(yIntercept + slope * x),
+                mapX(0),//x
+                mapY(yIntercept),// + slope * x),
                 mapX(getMaxX_Display()),
                 mapY(yIntercept + slope * getMaxX_Display()));
         g2d.draw(line);

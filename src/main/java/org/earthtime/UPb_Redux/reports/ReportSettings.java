@@ -54,9 +54,9 @@ public class ReportSettings implements
      * version number is advanced so that any existing analysis will update its
      * report models upon opening in ET_Redux.
      */
-    private static transient int CURRENT_VERSION_REPORT_SETTINGS_UPB = 363;
-    private static transient int CURRENT_VERSION_REPORT_SETTINGS_UTH_Carb = 6002;
-    private static transient int CURRENT_VERSION_REPORT_SETTINGS_UTH_Ign = 6002;
+    private static transient int CURRENT_VERSION_REPORT_SETTINGS_UPB = 367;
+    private static transient int CURRENT_VERSION_REPORT_SETTINGS_UTH_Carb = 6025;
+    private static transient int CURRENT_VERSION_REPORT_SETTINGS_UTH_Ign = 6007;
 
     // Fields
     private String name;
@@ -70,6 +70,10 @@ public class ReportSettings implements
     private ReportCategoryInterface datesPbcCorrCategory;
     private ReportCategoryInterface rhosCategory;
     private ReportCategoryInterface traceElementsCategory;
+    // 2017 new useries categories
+    protected ReportCategoryInterface concentrationAndActivityCategory;
+    protected ReportCategoryInterface measuredAtomAndActivityRatiosCategory;
+    protected ReportCategoryInterface measuredCorrectedAtomAndActivityRatiosCategory;
     private ReportCategoryInterface fractionCategory2;
     protected ArrayList<ReportCategoryInterface> reportCategories;
     private String reportSettingsComment;
@@ -153,10 +157,23 @@ public class ReportSettings implements
                             "Trace Elements",//
                             ReportSpecificationsUPb.ReportCategory_TraceElements, false);
         } else if (isdefaultReportSpecsType_UTh_Carb()) {
+            this.concentrationAndActivityCategory
+                    = new ReportCategory(//
+                            "Concentration/Activity",
+                            ReportSpecificationsUTh_Carb.ReportCategory_USeriesConcentrationActivity, true);
+            this.measuredAtomAndActivityRatiosCategory
+                    = new ReportCategory(//
+                            "Meas. Atom/Activity Ratios",
+                            ReportSpecificationsUTh_Carb.ReportCategory_USeriesMeasuredAtomAndActivityRatios, true);
+            this.measuredCorrectedAtomAndActivityRatiosCategory
+                    = new ReportCategory(//
+                            "Meas. Detrital-Corr. Atom/Activity Ratios",
+                            ReportSpecificationsUTh_Carb.ReportCategory_USeriesMeasuredDetritalCorrectedAtomAndActivityRatios, true);
             this.datesCategory
                     = new ReportCategory(//
-                            "USeries Carbonate Outputs",
+                            "Date and initial 234U",
                             ReportSpecificationsUTh_Carb.ReportCategory_USeriesReportTable, true);
+
         } else if (isdefaultReportSpecsType_UTh_Ign()) {
             this.datesCategory
                     = new ReportCategory(//
@@ -655,6 +672,51 @@ public class ReportSettings implements
     @Override
     public void setDatesPbcCorrCategory(ReportCategoryInterface datesPbcCorrCategory) {
         this.datesPbcCorrCategory = datesPbcCorrCategory;
+    }
+
+    /**
+     * @return the concentrationAndActivityCategory
+     */
+    public ReportCategoryInterface getConcentrationAndActivityCategory() {
+        return concentrationAndActivityCategory;
+    }
+
+    /**
+     * @param concentrationAndActivityCategory the
+     * concentrationAndActivityCategory to set
+     */
+    public void setConcentrationAndActivityCategory(ReportCategoryInterface concentrationAndActivityCategory) {
+        this.concentrationAndActivityCategory = concentrationAndActivityCategory;
+    }
+
+    /**
+     * @return the measuredAtomAndActivityRatiosCategory
+     */
+    public ReportCategoryInterface getMeasuredAtomAndActivityRatiosCategory() {
+        return measuredAtomAndActivityRatiosCategory;
+    }
+
+    /**
+     * @param measuredAtomAndActivityRatiosCategory the
+     * measuredAtomAndActivityRatiosCategory to set
+     */
+    public void setMeasuredAtomAndActivityRatiosCategory(ReportCategoryInterface measuredAtomAndActivityRatiosCategory) {
+        this.measuredAtomAndActivityRatiosCategory = measuredAtomAndActivityRatiosCategory;
+    }
+
+    /**
+     * @return the measuredCorrectedAtomAndActivityRatiosCategory
+     */
+    public ReportCategoryInterface getMeasuredCorrectedAtomAndActivityRatiosCategory() {
+        return measuredCorrectedAtomAndActivityRatiosCategory;
+    }
+
+    /**
+     * @param measuredCorrectedAtomAndActivityRatiosCategory the
+     * measuredCorrectedAtomAndActivityRatiosCategory to set
+     */
+    public void setMeasuredCorrectedAtomAndActivityRatiosCategory(ReportCategoryInterface measuredCorrectedAtomAndActivityRatiosCategory) {
+        this.measuredCorrectedAtomAndActivityRatiosCategory = measuredCorrectedAtomAndActivityRatiosCategory;
     }
 
     /**

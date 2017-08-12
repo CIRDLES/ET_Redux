@@ -543,11 +543,12 @@ public class ReportSettingsManager extends DialogEditor {
         valueDigitsCount_label.setOpaque(true);
 
         uncertaintyColName_label.setBackground(new java.awt.Color(255, 255, 255));
-        uncertaintyColName_label.setText("unct col name");
+        uncertaintyColName_label.setText("uncert col name");
+        uncertaintyColName_label.setToolTipText("");
         uncertaintyColName_label.setOpaque(true);
 
         uncertaintyVisible_chkBox.setBackground(new java.awt.Color(255, 255, 255));
-        uncertaintyVisible_chkBox.setText("unct col visible for this value");
+        uncertaintyVisible_chkBox.setText("uncert col visible for this value");
         uncertaintyVisible_chkBox.setOpaque(true);
         uncertaintyVisible_chkBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -634,8 +635,8 @@ public class ReportSettingsManager extends DialogEditor {
                                 .add(3, 3, 3)
                                 .add(valueDigits_spinner, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                             .add(jPanel1Layout.createSequentialGroup()
-                                .add(uncertaintyColName_label)
-                                .add(18, 18, 18)
+                                .add(uncertaintyColName_label, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 101, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                                 .add(uncertaintyVisible_chkBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 239, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                             .add(jPanel1Layout.createSequentialGroup()
                                 .add(unctModeSigFig_rButton)
