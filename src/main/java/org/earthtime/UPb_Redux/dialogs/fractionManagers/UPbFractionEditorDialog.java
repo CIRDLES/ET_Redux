@@ -66,6 +66,7 @@ import org.earthtime.UPb_Redux.dateInterpretation.kwiki.KwikiDateDisplayPanel;
 import org.earthtime.UPb_Redux.dateInterpretation.kwiki.KwikiDateModesSelectorPanel;
 import org.earthtime.UPb_Redux.dateInterpretation.kwiki.KwikiSynopticOutputPanel;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
+import org.earthtime.UPb_Redux.expressions.MathMachineII;
 import org.earthtime.UPb_Redux.filters.XMLFileFilter;
 import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
@@ -74,6 +75,7 @@ import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.Red
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.UPbFractionReducer;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.UncertaintyGraphPanel;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction.UncertaintyZoomLayer;
+import org.earthtime.UPb_Redux.utilities.BrowserControl;
 import org.earthtime.UPb_Redux.utilities.Thumbnail;
 import org.earthtime.UPb_Redux.valueModels.MeasuredRatioModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
@@ -4589,8 +4591,12 @@ private void r18O_16OUsed_textOnUTabKeyReleased (java.awt.event.KeyEvent evt) {/
 }//GEN-LAST:event_r18O_16OUsed_textOnUTabKeyReleased
 
 private void testMathMachineAlphaUActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_testMathMachineAlphaUActionPerformed
-//    MathMachineII.outputExpressionFilesXML( ((UPbFraction) myFraction).getAnalysisMeasure( AnalysisMeasures.alphaU.getName() ), "MathMachine", true );
-//    BrowserControl.displayURL( "./MathMachine/alphaU.html" );//xml" );
+    try {
+        MathMachineII.outputExpressionFilesXML(((UPbFraction) myFraction).getAnalysisMeasure(AnalysisMeasures.alphaPb.getName()), "MathMachine", true);
+        
+    } catch (IOException iOException) {
+    }
+BrowserControl.displayURL( "./MathMachine/alphaU.html" );//xml" );
 }//GEN-LAST:event_testMathMachineAlphaUActionPerformed
 
 private void r18O_16OUsed_textOnUTabFocusLost (java.awt.event.FocusEvent evt) {//GEN-FIRST:event_r18O_16OUsed_textOnUTabFocusLost

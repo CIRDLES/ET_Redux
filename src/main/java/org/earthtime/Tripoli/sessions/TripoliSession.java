@@ -1354,7 +1354,7 @@ public class TripoliSession implements
 
     private void fractionationCorrectFractionSetForDownholeSessionRatio(//
             FractionSelectionTypeEnum fractionSelectionTypeEnum, AbstractFunctionOfX sessionFofX, double sessionStandardValue, RawRatioNames rrName) {
-        
+
         if (prepareMatrixJfMapFractionsByType(fractionSelectionTypeEnum)) {
             SortedSet<TripoliFraction> selectedFractions = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, fractionSelectionTypeEnum, IncludedTypeEnum.INCLUDED);
 
@@ -1423,11 +1423,11 @@ public class TripoliSession implements
                     for (int i = 0; i < countOfSelectedFractions; i++) {
                         diagonalOfSessionUnknownsAnalyticalCovarianceSu[i] = selectedFractionsAnalyticalCovarianceSu.get(i, i);
                     }
-                    
+
                     if (fractionSelectionTypeEnum.compareTo(FractionSelectionTypeEnum.UNKNOWN) == 0) {
                         sessionFofX.setDiagonalOfSessionUnknownsAnalyticalCovarianceSu(diagonalOfSessionUnknownsAnalyticalCovarianceSu);
-                         applyDownholeFractionationCorrectionToUnknownRatios(FractionSelectionTypeEnum.UNKNOWN, //
-                                    sessionFofX, selectedFractionIDs, countOfSelectedFractions, selectedFractionsAnalyticalCovarianceSu, sessionStandardValue, rrName, rrName.getName());
+                        applyDownholeFractionationCorrectionToUnknownRatios(FractionSelectionTypeEnum.UNKNOWN, //
+                                sessionFofX, selectedFractionIDs, countOfSelectedFractions, selectedFractionsAnalyticalCovarianceSu, sessionStandardValue, rrName, rrName.getName());
                     } else {
                         sessionFofX.setDiagonalOfSessionStandardsAnalyticalCovarianceSu(diagonalOfSessionUnknownsAnalyticalCovarianceSu);
                     }
@@ -1438,7 +1438,6 @@ public class TripoliSession implements
 //                                    sessionFofX, selectedFractionIDs, countOfSelectedFractions, selectedFractionsAnalyticalCovarianceSu, sessionStandardValue, rrName, rrName.getName());
 //                      //  }
 //                    }
-
                 } // end test if any unknowns
             }
         }
@@ -1651,8 +1650,7 @@ public class TripoliSession implements
     @Override
     public void includeAllFractions(FractionSelectionTypeEnum fractionSelectionType) {
         SortedSet<TripoliFraction> excludedTripoliFractions
-                = //
-                FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, fractionSelectionType, IncludedTypeEnum.EXCLUDED);
+                = FractionsFilterInterface.getTripoliFractionsFiltered(tripoliFractions, fractionSelectionType, IncludedTypeEnum.EXCLUDED);
         excludedTripoliFractions.stream().forEach((f) -> {
             f.toggleAllDataExceptShaded(true);
         });

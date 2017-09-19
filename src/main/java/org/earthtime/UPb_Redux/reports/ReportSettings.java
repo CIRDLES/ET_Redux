@@ -555,6 +555,9 @@ public class ReportSettings implements
     @Override
     public boolean isOutOfDate() {
         boolean retVal = false;
+        if (defaultReportSpecsType == null){
+            defaultReportSpecsType = "UPb";
+        }
         switch (defaultReportSpecsType) {
             case "UPb":
                 retVal = isOutOfDateUPb();

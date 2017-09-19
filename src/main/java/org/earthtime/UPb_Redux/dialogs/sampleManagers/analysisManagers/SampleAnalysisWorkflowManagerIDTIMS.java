@@ -2207,6 +2207,9 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
 
         // dec 2011 update sample date models
         SampleInterface.updateAndSaveSampleDateModelsByAliquot(mySample);
+        
+        // Sept 2017
+        mySample.initFilteredFractionsToAll();
 
         close();
     }
