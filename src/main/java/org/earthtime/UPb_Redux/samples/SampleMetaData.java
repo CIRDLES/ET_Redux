@@ -23,11 +23,16 @@ package org.earthtime.UPb_Redux.samples;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.io.xml.DomDriver;
+import com.thoughtworks.xstream.security.AnyTypePermission;
+import com.thoughtworks.xstream.security.NoTypePermission;
+import com.thoughtworks.xstream.security.NullPermission;
+import com.thoughtworks.xstream.security.PrimitiveTypePermission;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collection;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.fractions.FractionMetaData;
 import org.earthtime.UPb_Redux.user.UPbReduxConfigurator;
@@ -51,7 +56,7 @@ public class SampleMetaData implements XMLSerializationI {
     private FractionMetaData[] fractionsMetaData;
 
     /**
-     * 
+     *
      * @param sampleName
      * @param sampleAnalysisFolderPath
      */
@@ -147,6 +152,16 @@ public class SampleMetaData implements XMLSerializationI {
 
         customizeXstream(xstream);
 
+        // http://x-stream.github.io/security.html
+        XStream.setupDefaultSecurity(xstream);
+        // clear out existing permissions and set own ones
+        xstream.addPermission(NoTypePermission.NONE);
+        // allow some basics
+        xstream.addPermission(NullPermission.NULL);
+        xstream.addPermission(PrimitiveTypePermission.PRIMITIVES);
+        xstream.allowTypeHierarchy(Collection.class);
+        xstream.addPermission(AnyTypePermission.ANY);
+
         return xstream;
     }
 
@@ -154,15 +169,14 @@ public class SampleMetaData implements XMLSerializationI {
      * registers converter for argument <code>xstream</code> and sets aliases to
      * make the XML file more human-readable
      *
-     * @pre     argument <code>xstream</code> is a valid <code>XStream</code>
-     * @post    argument <code>xstream</code> is customized to produce a cleaner
-     *          output <code>file</code>
-     * @param   xstream     <code>XStream</code> to be customized
+     * @pre argument <code>xstream</code> is a valid <code>XStream</code>
+     * @post argument <code>xstream</code> is customized to produce a cleaner
+     * output <code>file</code>
+     * @param xstream     <code>XStream</code> to be customized
      */
     public void customizeXstream(XStream xstream) {
 
         //xstream.registerConverter(new ValueModelXMLConverter());
-
         xstream.alias("SampleMetaData", SampleMetaData.class);
         xstream.alias("FractionMetaData", FractionMetaData.class);
 
@@ -186,9 +200,10 @@ public class SampleMetaData implements XMLSerializationI {
      * encodes this <code>ValueModel</code> to the <code>file</code> specified
      * by the argument <code>filename</code>
      *
-     * @pre     this <code>ValueModel</code> exists
-     * @post    this <code>ValueModel</code> is stored in the specified XML <code>file</code>
-     * @param   filename    location to store data to
+     * @pre this <code>ValueModel</code> exists
+     * @post this <code>ValueModel</code> is stored in the specified XML
+     * <code>file</code>
+     * @param filename location to store data to
      */
     public void serializeXMLObject(String filename) {
         XStream xstream = getXStreamWriter();
@@ -199,7 +214,6 @@ public class SampleMetaData implements XMLSerializationI {
 
         xml = xml.replaceFirst("SampleMetaData",
                 "SampleMetaData " + ReduxConstants.XML_ResourceHeader + getSampleMetaDataXMLSchemaURL() + "\"");
-
 
         try {
             FileWriter outFile = new FileWriter(filename);
@@ -220,7 +234,7 @@ public class SampleMetaData implements XMLSerializationI {
      * decodes <code>ValueModel</code> from <code>file</code> specified by
      * argument <code>filename</code>
      *
-     * @param filename    location to read data from
+     * @param filename location to read data from
      * @param doValidate the value of doValidate
      * @return <code>Object</code> - the <code>ValueModel</code> created from
      * the specified XML <code>file</code>
@@ -251,7 +265,6 @@ public class SampleMetaData implements XMLSerializationI {
                 }
 
 //                System.out.println("\nThis is your SampleMetaData that was just read successfully:\n");
-
 //                String xml2 = getXStreamWriter().toXML(mySampleMetaData);
 //
 //                System.out.println(xml2);
@@ -262,25 +275,23 @@ public class SampleMetaData implements XMLSerializationI {
             throw new FileNotFoundException("Badly formed or missing XML data file.");
         }
 
-
-
         return mySampleMetaData;
     }
 
     /**
-     * 
+     *
      * @param args
      * @throws Exception
      */
     public static void main(String[] args) throws Exception {
 
-        SampleMetaData sampleMetaData =
-                new SampleMetaData("SampleJim", "C:xyz/Sector54Data");
+        SampleMetaData sampleMetaData
+                = new SampleMetaData("SampleJim", "C:xyz/Sector54Data");
 
         sampleMetaData.setFractionsMetaData(new FractionMetaData[]//
-                {new FractionMetaData("F-1", "Aliquot1", "F-1_U.xml", "F-1_Pb.xml"),//
-                    new FractionMetaData("F-2", "Aliquot1", "F-2_U.xml", "F-2_Pb.xml")}//
-                );
+        {new FractionMetaData("F-1", "Aliquot1", "F-1_U.xml", "F-1_Pb.xml"),//
+            new FractionMetaData("F-2", "Aliquot1", "F-2_U.xml", "F-2_Pb.xml")}//
+        );
 
         String testFileName = "SampleMetaDataTEST.xml";
 

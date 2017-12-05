@@ -23,12 +23,17 @@ package org.earthtime.UPb_Redux.fractions;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.io.xml.DomDriver;
+import com.thoughtworks.xstream.security.AnyTypePermission;
+import com.thoughtworks.xstream.security.NoTypePermission;
+import com.thoughtworks.xstream.security.NullPermission;
+import com.thoughtworks.xstream.security.PrimitiveTypePermission;
 import java.awt.geom.Path2D;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collection;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFractionI;
@@ -253,6 +258,16 @@ public class AnalysisFraction extends Fraction implements
         XStream xstream = new XStream(new DomDriver());
 
         customizeXstream(xstream);
+
+        // http://x-stream.github.io/security.html
+        XStream.setupDefaultSecurity(xstream);
+        // clear out existing permissions and set own ones
+        xstream.addPermission(NoTypePermission.NONE);
+        // allow some basics
+        xstream.addPermission(NullPermission.NULL);
+        xstream.addPermission(PrimitiveTypePermission.PRIMITIVES);
+        xstream.allowTypeHierarchy(Collection.class);
+        xstream.addPermission(AnyTypePermission.ANY);
 
         return xstream;
     }

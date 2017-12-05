@@ -18,6 +18,10 @@ package org.earthtime.reports;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.io.xml.DomDriver;
+import com.thoughtworks.xstream.security.AnyTypePermission;
+import com.thoughtworks.xstream.security.NoTypePermission;
+import com.thoughtworks.xstream.security.NullPermission;
+import com.thoughtworks.xstream.security.PrimitiveTypePermission;
 import java.awt.Frame;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -26,6 +30,7 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedSet;
@@ -128,6 +133,16 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
         XStream xstream = new XStream(new DomDriver());
 
         customizeXstream(xstream);
+
+        // http://x-stream.github.io/security.html
+        XStream.setupDefaultSecurity(xstream);
+        // clear out existing permissions and set own ones
+        xstream.addPermission(NoTypePermission.NONE);
+        // allow some basics
+        xstream.addPermission(NullPermission.NULL);
+        xstream.addPermission(PrimitiveTypePermission.PRIMITIVES);
+        xstream.allowTypeHierarchy(Collection.class);
+        xstream.addPermission(AnyTypePermission.ANY);
 
         return xstream;
     }
@@ -973,7 +988,7 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
                             footNote = footNote.replaceFirst("<zirconPopulationChoice>", ReportSpecificationsUPb.reportTableFootnotes.get("FN-5noZircon"));
                     }
                 }
-                
+
                 // july 2017
                 if (fractions.get(0) instanceof UPbLAICPMSFraction) {
                     footNote = footNote.replaceFirst("<zirconPopulationChoice>", "Measured ratios corrected for fractionation.");

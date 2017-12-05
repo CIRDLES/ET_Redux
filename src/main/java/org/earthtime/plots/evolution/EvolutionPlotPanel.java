@@ -198,7 +198,10 @@ public final class EvolutionPlotPanel extends JLayeredPane implements AliquotDet
 
     public void cancelFXThread() {
         if (myEvolutionPlot != null) {
-            myEvolutionPlot.stop();//.cancelFXApplicationThread();
+            try {
+                myEvolutionPlot.stop();//.cancelFXApplicationThread();
+            } catch (Exception e) {
+            }
         }
         plotAsComponent = null;
         myEvolutionPlot = null;

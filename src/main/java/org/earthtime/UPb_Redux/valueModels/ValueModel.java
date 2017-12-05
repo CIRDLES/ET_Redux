@@ -23,6 +23,10 @@ package org.earthtime.UPb_Redux.valueModels;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.io.xml.DomDriver;
+import com.thoughtworks.xstream.security.AnyTypePermission;
+import com.thoughtworks.xstream.security.NoTypePermission;
+import com.thoughtworks.xstream.security.NullPermission;
+import com.thoughtworks.xstream.security.PrimitiveTypePermission;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -38,6 +42,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.concurrent.ConcurrentMap;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -968,6 +973,16 @@ public class ValueModel implements
         XStream xstream = new XStream(new DomDriver());
 
         customizeXstream(xstream);
+
+        // http://x-stream.github.io/security.html
+        XStream.setupDefaultSecurity(xstream);
+        // clear out existing permissions and set own ones
+        xstream.addPermission(NoTypePermission.NONE);
+        // allow some basics
+        xstream.addPermission(NullPermission.NULL);
+        xstream.addPermission(PrimitiveTypePermission.PRIMITIVES);
+        xstream.allowTypeHierarchy(Collection.class);
+        xstream.addPermission(AnyTypePermission.ANY);
 
         return xstream;
     }
