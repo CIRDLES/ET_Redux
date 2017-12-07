@@ -66,7 +66,7 @@ public class SampleManagerForLASS_LegacySamples //
 //        try {
 //            outputWriter = new PrintWriter( new FileWriter( CSVFile ) );
 //
-//            outputWriter.println( "LEGACY LA-ICP MS (Multi-Collector from UA) DATA SAMPLE FIELD NAMES FOR IMPORT INTO U-Pb_Redux\n" );
+//            outputWriter.println( "LEGACY LA-ICP MS (Multi-Collector from UA) DATA SAMPLE FIELD NAMES FOR IMPORT INTO ET_Redux\n" );
 //            outputWriter.println( "AnalysisName,,,,,,IsotopicRatios,,,,,ApparentIsotopicDates (Ma)" );
 //            outputWriter.println( fieldNames );
 //

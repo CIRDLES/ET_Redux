@@ -972,7 +972,7 @@ public class SampleDateModel extends ValueModel implements
 
     /**
      * Replacement method from N McLean dated 10.May.2011 "Evaluating Weighted
-     * Means with Systematic Uncertainties in U-Pb_Redux"
+     * Means with Systematic Uncertainties in ET_Redux"
      *
      * @param myFractions
      * @param radiogenicIsotopeDateName
@@ -1304,7 +1304,7 @@ public class SampleDateModel extends ValueModel implements
             String radiogenicIsotopeDateName) //
             throws ETException {
 
-        // document to reference "ReduxWeightdMeans" titled Evaluating Weighted Means with Systematic Uncertainties in U-Pb_Redux"
+        // document to reference "ReduxWeightdMeans" titled Evaluating Weighted Means with Systematic Uncertainties in ET_Redux"
         // by Noah McLean May 10 2011
         // remove zero ages from consideration
         // remove from activefractionIDs any fraction with 0 date

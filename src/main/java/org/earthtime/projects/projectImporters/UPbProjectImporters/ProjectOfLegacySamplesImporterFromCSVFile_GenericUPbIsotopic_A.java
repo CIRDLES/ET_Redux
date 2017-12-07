@@ -300,7 +300,7 @@ public class ProjectOfLegacySamplesImporterFromCSVFile_GenericUPbIsotopic_A exte
         try {
             outputWriter = new PrintWriter(new FileWriter(CSVFile));
 
-            outputWriter.println("GENERIC UPb Isotopic LEGACY DATA SAMPLE FIELD NAMES FOR IMPORT INTO U-Pb_Redux\n");
+            outputWriter.println("GENERIC UPb Isotopic LEGACY DATA SAMPLE FIELD NAMES FOR IMPORT INTO ET_Redux\n");
 //            outputWriter.println( "FractionName, IsotopicRatios, , , , , , , , , Composition, , , , , , , IsotopicDates (Ma)" );
             outputWriter.println(fieldNames);
 

@@ -631,14 +631,14 @@ public class AliquotEditorDialog extends DialogEditor {
         if (validityReport.length() > 0) {
             validityReport
                     = //
-                    "<html> U-Pb_Redux determines that some measured ratios in this aliquot "//
+                    "<html> ET_Redux determines that some measured ratios in this aliquot "//
                     + "have correlations outside of [-1.0,,,1.0] and advises against archiving.<br><br>"//
                     + validityReport//
                     + "</html>";
         } else {
             validityReport
                     = //
-                    "<html>U-Pb_Redux determines that the correlations between your measured ratios"//
+                    "<html>ET_Redux determines that the correlations between your measured ratios"//
                     + " are within the correct range of [-1,,,1].</html>";
         }
 

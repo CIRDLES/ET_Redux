@@ -219,7 +219,7 @@ public class SampleImporterFromLAICPMSLegacyCVSFile_NIGL extends AbstractSampleI
         try {
             outputWriter = new PrintWriter(new FileWriter(CSVFile));
 
-            outputWriter.println("LEGACY LA-ICP MS (NIGL) DATA SAMPLE FIELD NAMES FOR IMPORT INTO U-Pb_Redux\n");
+            outputWriter.println("LEGACY LA-ICP MS (NIGL) DATA SAMPLE FIELD NAMES FOR IMPORT INTO ET_Redux\n");
             outputWriter.println("AnalysisName,,,,,,IsotopicRatios,,,,,IsotopicDates (Ma)");
             outputWriter.println(fieldNames);
 

@@ -59,9 +59,8 @@ public class AnnouncementPane extends JLayeredPane {
 
         this.add(CIRDLESPanel);
 
-        // setup U-Pb_Redux icon
+        // setup ET_Redux icon
         cldr = this.getClass().getClassLoader();
-        //java.net.URL imageReduxURL = cldr.getResource("org/earthtime/UPb_Redux/images/U-Pb_Redux_Icon.png");
         java.net.URL imageReduxURL = cldr.getResource( "org/earthtime/images/uth-pb-redux-logo.png" );
         iconPanel = new JLabel();
         iconPanel.setBackground(Color.red);

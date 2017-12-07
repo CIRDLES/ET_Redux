@@ -268,7 +268,6 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
         // produce application icon
         // http://www.centerkey.com/mac/java/
-//        imageURL = cldr.getResource("org/earthtime/UPb_Redux/images/U-Pb_Redux_Icon.png");
         imageURL = cldr.getResource("org/earthtime/images/uth-pb-redux-logo.png");
         reduxIcon = new CustomIcon(imageURL);
         ((CustomIcon) reduxIcon).setSize(25, 16);

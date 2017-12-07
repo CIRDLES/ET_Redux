@@ -192,7 +192,7 @@ public class SampleImporterFromLAICPMSLegacyCVSFile_SC_WSU_vB extends AbstractSa
         try {
             outputWriter = new PrintWriter(new FileWriter(CSVFile));
 
-            outputWriter.println("LEGACY LA-ICP MS Version B (Single Collector from WSU) DATA SAMPLE FIELD NAMES FOR IMPORT INTO U-Pb_Redux\n");
+            outputWriter.println("LEGACY LA-ICP MS Version B (Single Collector from WSU) DATA SAMPLE FIELD NAMES FOR IMPORT INTO ET_Redux\n");
             outputWriter.println("AnalysisName,IsotopicRatios,,,,,,,Dates (Ma)");
             outputWriter.println(fieldNames);
 

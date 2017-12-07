@@ -2740,9 +2740,10 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
 
         physicalConstantsModel_label.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         physicalConstantsModel_label.setForeground(new java.awt.Color(204, 51, 0));
-        physicalConstantsModel_label.setText("Set Physical Constants Model :");
+        physicalConstantsModel_label.setText("Set Physical Constants:");
         jLayeredPane1.add(physicalConstantsModel_label);
-        physicalConstantsModel_label.setBounds(720, 30, 177, 30);
+        physicalConstantsModel_label.setBounds(670, 30, 140, 30);
+        physicalConstantsModel_label.getAccessibleContext().setAccessibleName("Set Physical Constants:");
 
         aliquotName_text.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         aliquotName_text.setHorizontalAlignment(javax.swing.JTextField.CENTER);
@@ -2997,13 +2998,13 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
         chooseAnalysisPurpose_label.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
         chooseAnalysisPurpose_label.setText("Analysis purpose:");
         jLayeredPane1.add(chooseAnalysisPurpose_label);
-        chooseAnalysisPurpose_label.setBounds(410, 30, 110, 30);
+        chooseAnalysisPurpose_label.setBounds(400, 30, 110, 30);
         jLayeredPane1.add(analysisPurposeChooser);
-        analysisPurposeChooser.setBounds(540, 30, 180, 27);
+        analysisPurposeChooser.setBounds(510, 30, 150, 27);
 
         physicalConstantsModelChooser.setBackground(new java.awt.Color(245, 236, 206));
         jLayeredPane1.add(physicalConstantsModelChooser);
-        physicalConstantsModelChooser.setBounds(898, 30, 200, 27);
+        physicalConstantsModelChooser.setBounds(808, 30, 300, 27);
 
         sampleRegistry_label.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         sampleRegistry_label.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);

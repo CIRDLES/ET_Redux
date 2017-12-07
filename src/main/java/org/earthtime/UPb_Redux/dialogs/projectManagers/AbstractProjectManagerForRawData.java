@@ -946,7 +946,7 @@ public abstract class AbstractProjectManagerForRawData extends DialogEditor impl
                     JOptionPane jopt = new JOptionPane();
                     int userChoice = JOptionPane.showConfirmDialog(//
                             this,//
-                            "U-Pb_Redux is still loading data, do you really want to quit?",//
+                            "ET_Redux is still loading data, do you really want to quit?",//
                             "Confirm close?",//
                             JOptionPane.YES_NO_OPTION);
                     if (userChoice == JOptionPane.YES_OPTION) {

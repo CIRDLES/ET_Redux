@@ -250,7 +250,7 @@ public class SampleImporterFromSHRIMPLegacyCSVFile_SIRCOMBE extends AbstractSamp
         try {
             outputWriter = new PrintWriter(new FileWriter(CSVFile));
 
-            outputWriter.println("LEGACY ID-TIMS (MIT) DATA SAMPLE FIELD NAMES FOR IMPORT INTO U-Pb_Redux\n");
+            outputWriter.println("LEGACY ID-TIMS (MIT) DATA SAMPLE FIELD NAMES FOR IMPORT INTO ET_Redux\n");
             outputWriter.println("FractionName, IsotopicRatios, , , , , , , , , Composition, , , , , , , IsotopicDates (Ma)");
             outputWriter.println(fieldNames);
 
