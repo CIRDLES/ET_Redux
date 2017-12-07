@@ -43,10 +43,10 @@
         </ValueModelReferenced>
         <ValueModelReferenced>
             <name>lambda232</name>
-            <value>0.0000000000492</value>
+            <value>0.0000000000493343</value>
             <uncertaintyType>PCT</uncertaintyType>
-            <oneSigma>0.04276900000000000000</oneSigma>
-            <reference>Schmorak 1991</reference>
+            <oneSigma>0.042769</oneSigma>
+            <reference>Holden 1990</reference>
         </ValueModelReferenced>
         <ValueModelReferenced>
             <name>lambda234</name>
@@ -72,41 +72,41 @@
     </ratios>
     <rhos/>
     <atomicMolarMasses>
-      <entry>
-          <string>gmol204</string>
-          <big-decimal>203.973028</big-decimal>
-      </entry>
-      <entry>
-          <string>gmol205</string>
-          <big-decimal>204.9737</big-decimal>
-      </entry>
-      <entry>
-          <string>gmol206</string>
-          <big-decimal>205.974449</big-decimal>
-      </entry>
-      <entry>
-          <string>gmol207</string>
-          <big-decimal>206.975880</big-decimal>
-      </entry>
-      <entry>
-          <string>gmol208</string>
-          <big-decimal>207.976636</big-decimal>
-      </entry>
-      <entry>
-          <string>gmol230</string>
-          <big-decimal>230.033128</big-decimal>
-      </entry>
-      <entry>
-          <string>gmol232</string>
-          <big-decimal>232.038051</big-decimal>
-      </entry>
-      <entry>
-          <string>gmol235</string>
-          <big-decimal>235.043922</big-decimal>
-      </entry>
-      <entry>
-          <string>gmol238</string>
-          <big-decimal>238.050785</big-decimal>
-      </entry>
+        <entry>
+            <string>gmol204</string>
+            <big-decimal>203.973028</big-decimal>
+        </entry>
+        <entry>
+            <string>gmol205</string>
+            <big-decimal>204.9737</big-decimal>
+        </entry>
+        <entry>
+            <string>gmol206</string>
+            <big-decimal>205.974449</big-decimal>
+        </entry>
+        <entry>
+            <string>gmol207</string>
+            <big-decimal>206.975880</big-decimal>
+        </entry>
+        <entry>
+            <string>gmol208</string>
+            <big-decimal>207.976636</big-decimal>
+        </entry>
+        <entry>
+            <string>gmol230</string>
+            <big-decimal>230.033128</big-decimal>
+        </entry>
+        <entry>
+            <string>gmol232</string>
+            <big-decimal>232.038051</big-decimal>
+        </entry>
+        <entry>
+            <string>gmol235</string>
+            <big-decimal>235.043922</big-decimal>
+        </entry>
+        <entry>
+            <string>gmol238</string>
+            <big-decimal>238.050785</big-decimal>
+        </entry>
     </atomicMolarMasses>
 </PhysicalConstantsModel>
