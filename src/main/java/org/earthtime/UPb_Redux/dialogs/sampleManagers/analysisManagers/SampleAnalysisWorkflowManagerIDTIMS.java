@@ -189,13 +189,13 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
         setMySample(sample);
 
         // set up arrow keys etc
-        Set<KeyStroke> forwardKeys = new HashSet<KeyStroke>();
+        Set<KeyStroke> forwardKeys = new HashSet<>();
         forwardKeys.add(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0));
         forwardKeys.add(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0));
         fastEdits_panel.setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, forwardKeys);
 
-        Set<KeyStroke> backwardKeys = new HashSet<KeyStroke>();
-        backwardKeys.add(KeyStroke.getKeyStroke("shift TAB"));//    (KeyEvent.VK_SHIFT & KeyEvent.VK_TAB), 0));
+        Set<KeyStroke> backwardKeys = new HashSet<>();
+        backwardKeys.add(KeyStroke.getKeyStroke("shift TAB"));
 
         backwardKeys.add(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0));
         fastEdits_panel.setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, backwardKeys);
@@ -1127,62 +1127,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
                         .add(masterPbBlankMassFiller)//, 22, 22, 22)//
                 );
 
-//        // UNDO fill buttons
-//
-//        myHorizFraction.add(jPanel2Layout.createSequentialGroup()//
-//                .add(395, 395, 395) // left margin
-//                .add(masterTracerMassUndoFiller, 65, 65, 65)//
-//                .add(20, 20, 20)//
-//                .add(masterFractionMassUndoFiller, 65, 65, 65)//
-//                .add(335, 335, 335)//
-//                .add(masterEstimatedDateUndoFiller, 65, 65, 65)//
-//                .add(25, 25, 25)//
-//                .add(masterPbBlankMassUndoFiller, 65, 65, 65)//
-//                );
-//
-//        myVerticalFraction.add(1, 1, 1) // top margin
-//                .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)//.BASELINE)//
-//                .add(masterTracerMassUndoFiller).add(masterFractionMassUndoFiller).add(masterEstimatedDateUndoFiller).add(masterPbBlankMassUndoFiller));
-//        myHorizFraction.add(jPanel2Layout.createSequentialGroup()//
-//                .add(4, 4, 4) // left margin
-//                .add(headDelete, 21, 21, 21)//
-//                .add(4, 4, 4)//
-//                .add(headNote, 25, 25, 25)//
-//                .add(10, 10, 10) //
-//                .add(headFraction, 95, 95, 95)//
-//                .add(20, 20, 20)//
-//                .add(headZircon, 65, 65, 65)//
-//                //.add(5, 5, 5)//
-//                .add(headTracer, 140, 140, 140)//
-//                .add(15, 15, 15)//
-//                .add(headTracerMass, 75, 75, 75)//
-//                .add(5, 5, 5)//
-//                .add(headFractionMass, 85, 85, 85)//
-//                .add(5, 5, 5)//
-//                .add(headPbBlank, 140, 140, 140)//
-//                .add(15, 15, 15)//
-//                .add(headInitialPb, 150, 150, 150)//
-//                .add(10, 10, 10)//
-//                .add(headEstDate, 75, 75, 75)//
-//                .add(12, 12, 12)//
-//                .add(headPbBlankMass, 85, 85, 85)//
-//                );
-//
-//        myVerticalFraction.add(10, 10, 10) // top margin
-//                .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)//.BASELINE)//
-//                .add(headDelete)//
-//                .add(headNote) //
-//                .add(headFraction)//
-//                .add(headZircon)//
-//                .add(headTracer)//
-//                .add(headTracerMass)//
-//                .add(headFractionMass)//
-//                .add(headPbBlank)//
-//                .add(headInitialPb)//
-//                .add(headEstDate)//
-//                .add(headPbBlankMass)//
-//                )//
-//                .add(2, 2, 2);
+
         // stop delete when only one fraction
         fractionDeleteButtons.get(0).setEnabled(fractionDeleteButtons.size() != 1);
 
@@ -1412,9 +1357,7 @@ public class SampleAnalysisWorkflowManagerIDTIMS extends DialogEditor implements
             AbstractButton abstractButton = (AbstractButton) e.getSource();
             boolean isZircon = abstractButton.getModel().isSelected();
 
-            //fractionInitialPbChoice.get( row ).setEnabled(  ! isZircon );
             fractionPbBlankMassText.get(row).setEnabled(!isZircon);
-            //fractionEstDateText.get( row ).setEnabled(  ! isZircon );
 
             // added aug 2010
             if (isZircon) {
