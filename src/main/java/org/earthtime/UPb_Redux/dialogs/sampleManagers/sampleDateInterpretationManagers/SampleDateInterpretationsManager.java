@@ -18,6 +18,7 @@
  */
 package org.earthtime.UPb_Redux.dialogs.sampleManagers.sampleDateInterpretationManagers;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
@@ -102,6 +103,7 @@ import org.earthtime.plots.isochrons.UseriesIsochronPlotDisplayInterface;
 import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.reports.ReportColumnInterface;
 import org.earthtime.samples.SampleInterface;
+import org.earthtime.plots.topsoil.TopsoilDisplayEvolutionPlot;
 import org.earthtime.utilities.CollectionHelpers;
 import org.earthtime.utilities.FileHelper;
 
@@ -189,14 +191,14 @@ public class SampleDateInterpretationsManager extends DialogEditor
         } catch (Exception e) {
         }
 
+        this.weightedMeanGraphPanel = weightedMeanGraphPanel;
+        initWeightedMeanGraphPanel();
+
         this.evolutionPlotPanel = evolutionPlotPanel;
         try {
             initEvolutionPlotPanel();
         } catch (Exception e) {
         }
-
-        this.weightedMeanGraphPanel = weightedMeanGraphPanel;
-        initWeightedMeanGraphPanel();
 
         this.probabilityPanel = normedProbabilityPanel;
         initNormedProbabilityPanel();
@@ -252,7 +254,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
                 graphPanels_TabbedPane.remove(normedProbabilityLayeredPane);
                 graphPanels_TabbedPane.remove(evolutionLayeredPane);
                 graphPanels_TabbedPane.remove(any2LayeredPane);
-                
+
                 choosePDFPeaks_menu.setVisible(false);
                 weightedMeansPlotOptions_menu.setVisible(false);
 //                displayOptions_menu.setVisible(false);
@@ -265,7 +267,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
                 graphPanels_TabbedPane.remove(normedProbabilityLayeredPane);
                 graphPanels_TabbedPane.remove(useriesIsochronLayeredPane);
                 graphPanels_TabbedPane.remove(any2LayeredPane);
-                
+
                 choosePDFPeaks_menu.setVisible(false);
                 weightedMeansPlotOptions_menu.setVisible(false);
                 displayOptions_menu.setVisible(false);
@@ -492,28 +494,17 @@ public class SampleDateInterpretationsManager extends DialogEditor
     }
 
     private void initEvolutionPlotPanel() {
-//        ((AbstractPlot) evolutionPlotPanel).setGraphPanelModeChanger(this);
 
         // set toolbar choices per options
         Map<String, String> UIO = sample.getSampleDateInterpretationGUISettings().getuSeriesIsochronOptions();
 
-        evolutionLayeredPane.add(evolutionPlotPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        evolutionLayeredPane.setLayout(new BorderLayout());
+        evolutionLayeredPane.add(evolutionPlotPanel, BorderLayout.CENTER);
 
-        int heightWP = ((WeightedMeanGraphPanel) weightedMeanGraphPanel).getGraphHeight();
-        int widthWP = ((WeightedMeanGraphPanel) weightedMeanGraphPanel).getGraphWidth();
-        evolutionPlotPanel.setBounds(
-                1,
-                1,
-                widthWP + ((WeightedMeanGraphPanel) weightedMeanGraphPanel).getLeftMargin(),
-                heightWP + 16);
+        ((AliquotDetailsDisplayInterface) evolutionPlotPanel).//
+                setSelectedFractions(sample.getFractions());
 
-        evolutionPlotToolPanel.setBounds(
-                1,
-                heightWP + 15,
-                widthWP + ((WeightedMeanGraphPanel) weightedMeanGraphPanel).getLeftMargin(),
-                35);
-
-//        evolutionLayeredPane.repaint();
+        ((TopsoilDisplayEvolutionPlot) evolutionPlotPanel).runme(evolutionLayeredPane.getSize());
     }
 
     /**
@@ -1167,11 +1158,6 @@ public class SampleDateInterpretationsManager extends DialogEditor
     @Override
     public void close() {
 
-        if (evolutionPlotPanel != null) {
-            ((EvolutionPlotPanel) evolutionPlotPanel).cancelFXThread();
-            evolutionPlotPanel = null;
-        }
-
         // Save concordia options 
         ((ConcordiaGraphPanel) getConcordiaGraphPanel()).saveSettings();
 
@@ -1238,9 +1224,6 @@ public class SampleDateInterpretationsManager extends DialogEditor
         fractionOrderByRandom_radioButton = new javax.swing.JRadioButton();
         fractionOrderByDate_radioButton = new javax.swing.JRadioButton();
         evolutionLayeredPane = new javax.swing.JLayeredPane();
-        evolutionPlotToolPanel = new javax.swing.JPanel();
-        reCenterEvolution_button =  new ET_JButton();
-        toggleMatrix_button =  new ET_JButton();
         useriesIsochronLayeredPane = new javax.swing.JLayeredPane();
         uSeriesIsochronToolPanel = new javax.swing.JPanel();
         zoomInX2Isochron_button =  new ET_JButton();
@@ -1681,40 +1664,6 @@ public class SampleDateInterpretationsManager extends DialogEditor
         weightedMeanToolPanel.setBounds(1, 604, 910, 36);
 
         graphPanels_TabbedPane.addTab("Weighted Mean", weightedMeanLayeredPane);
-
-        evolutionPlotToolPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        evolutionPlotToolPanel.setOpaque(false);
-        evolutionPlotToolPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        reCenterEvolution_button.setBackground(new java.awt.Color(255, 255, 255));
-        reCenterEvolution_button.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
-        reCenterEvolution_button.setText("Recenter");
-        reCenterEvolution_button.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        reCenterEvolution_button.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        reCenterEvolution_button.setOpaque(true);
-        reCenterEvolution_button.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                reCenterEvolution_buttonActionPerformed(evt);
-            }
-        });
-        evolutionPlotToolPanel.add(reCenterEvolution_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(114, 2, 110, 30));
-
-        toggleMatrix_button.setBackground(new java.awt.Color(255, 255, 255));
-        toggleMatrix_button.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
-        toggleMatrix_button.setText("Toggle Matrix");
-        toggleMatrix_button.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        toggleMatrix_button.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        toggleMatrix_button.setOpaque(true);
-        toggleMatrix_button.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                toggleMatrix_buttonActionPerformed(evt);
-            }
-        });
-        evolutionPlotToolPanel.add(toggleMatrix_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(3, 2, 110, 30));
-
-        evolutionLayeredPane.add(evolutionPlotToolPanel);
-        evolutionPlotToolPanel.setBounds(0, 604, 910, 36);
-
         graphPanels_TabbedPane.addTab("Evolution", evolutionLayeredPane);
 
         useriesIsochronLayeredPane.setBackground(new java.awt.Color(255, 237, 255));
@@ -2599,10 +2548,8 @@ private void graphPanelsTabbedPaneResized(java.awt.event.ComponentEvent evt) {//
     } catch (Exception e) {
     }
 
-    evolutionPlotPanel.setBounds(
-            1, 1, widthCP + leftMarginCP, heightCP + 16);
-    evolutionPlotToolPanel.setBounds(
-            1, heightCP + 16, widthCP + leftMarginCP, 35);
+    evolutionPlotPanel.setBounds(evolutionLayeredPane.getBounds());
+    evolutionPlotPanel.setSize(evolutionLayeredPane.getSize());
 
     ((WeightedMeanGraphPanel) weightedMeanGraphPanel).setGraphWidth(adjustedWidth);
 
@@ -3080,14 +3027,6 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
         delegatePlotFileWriting();
     }//GEN-LAST:event_writeVisiblePlotSvgPdf_buttonActionPerformed
 
-    private void reCenterEvolution_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reCenterEvolution_buttonActionPerformed
-        ((EvolutionPlotPanel) evolutionPlotPanel).recenter();
-    }//GEN-LAST:event_reCenterEvolution_buttonActionPerformed
-
-    private void toggleMatrix_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toggleMatrix_buttonActionPerformed
-        ((EvolutionPlotPanel) evolutionPlotPanel).toggleMatrix();
-    }//GEN-LAST:event_toggleMatrix_buttonActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JRadioButton DatePbCorrSchemeA_radio;
     private javax.swing.JRadioButton ageBest_radio;
@@ -3121,7 +3060,6 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
     private javax.swing.JCheckBox ellipseLabelsIsochron_checkbox;
     private javax.swing.JCheckBox ellipseLabels_checkbox;
     private javax.swing.JLayeredPane evolutionLayeredPane;
-    private javax.swing.JPanel evolutionPlotToolPanel;
     private javax.swing.JRadioButton fractionOrderByDate_radioButton;
     private javax.swing.JRadioButton fractionOrderByName_radioButton;
     private javax.swing.JRadioButton fractionOrderByRandom_radioButton;
@@ -3151,7 +3089,6 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
     private javax.swing.JPanel probabilityToolPanel;
     private javax.swing.JCheckBox protactiniumCorrectionSelector_checkbox;
     private javax.swing.JRadioButton radiumFlavorIsochron_radioButton;
-    private javax.swing.JButton reCenterEvolution_button;
     private javax.swing.JButton resetGraphAny2Display_button;
     private javax.swing.JButton resetGraphDisplayIsochron_button;
     private javax.swing.JButton resetGraphDisplay_button;
@@ -3177,7 +3114,6 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
     private javax.swing.JRadioButton thoriumConcordiaFlavor_radioButton;
     private javax.swing.JCheckBox thoriumCorrectionSelector_checkbox;
     private javax.swing.JRadioButton thoriumFlavorIsochron_radioButton;
-    private javax.swing.JButton toggleMatrix_button;
     private javax.swing.JPanel uSeriesIsochronToolPanel;
     private javax.swing.JLayeredPane useriesIsochronLayeredPane;
     private javax.swing.ButtonGroup weightedMeanFractionOrderButtonGroup;
@@ -3268,7 +3204,6 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
 
                 ((AliquotDetailsDisplayInterface) evolutionPlotPanel).//
                         setSelectedFractions(sample.getFractions());
-
                 try {
                     ((EvolutionPlotPanel) evolutionPlotPanel).refreshPanel(false, false);
                 } catch (Exception e) {
@@ -3326,7 +3261,6 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
 
             ((AliquotDetailsDisplayInterface) evolutionPlotPanel).//
                     setSelectedFractions(sample.getFractions());
-
             // update weighted means in case of delete or (oct 2010) add
             weightedMeanOptions = sample.getSampleDateInterpretationGUISettings().getWeightedMeanOptions();
             ((WeightedMeanGraphPanel) weightedMeanGraphPanel).setWeightedMeanOptions(weightedMeanOptions);

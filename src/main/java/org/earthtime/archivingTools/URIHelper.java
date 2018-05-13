@@ -167,7 +167,7 @@ public class URIHelper {
 
         if (CONNECTED_TO_INTERNET) {
             try {
-                URL url = new URL("http://cnn.com");
+                URL url = new URL("https://cnn.com");
                 //System.out.println(url.getHost());
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
                 con.setReadTimeout(20000);

@@ -126,9 +126,6 @@ public class ETRedux {
             theUPbReduxFrame.setVisible(true);
         }
 
-//        TopsoilEvolutionChart test = new TopsoilEvolutionChart();
-//        TestTopsoil test = new TestTopsoil();
-        // installer etc ref
         // http://www.centerkey.com/mac/java/
     }
     // installer etc ref
@@ -160,26 +157,33 @@ public class ETRedux {
 //        });
         // one argument allowed and it must be a .redux file
         // TODO check if it is .redux
-        if (args.length > 0) {
-            File reduxFile = new File(args[0]);
-            if (reduxFile.exists()) {
-                //  try {
-                new ETRedux(reduxFile);
-                //   } catch (IOException ex) {
-                //      ex.printStackTrace();
-                //  } catch (InvalidPreferencesFormatException ex) {
-                //      ex.printStackTrace();
-                //  }
+//        if (args.length > 0) {
+//            File reduxFile = new File(args[0]);
+//            if (reduxFile.exists()) {
+//                //  try {
+//                new ETRedux(reduxFile);
+//                //   } catch (IOException ex) {
+//                //      ex.printStackTrace();
+//                //  } catch (InvalidPreferencesFormatException ex) {
+//                //      ex.printStackTrace();
+//                //  }
+//            }
+//        } else {
+//            //try {
+//            new ETRedux(new File(""));
+//            //} catch (IOException ex) {
+//            //    ex.printStackTrace();
+//            //} catch (InvalidPreferencesFormatException ex) {
+//            //    ex.printStackTrace();
+//            //}
+//        }
+        
+        // dec 2017
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new ETRedux(new File(""));//.setVisible(true);
             }
-        } else {
-            //try {
-            new ETRedux(new File(""));
-            //} catch (IOException ex) {
-            //    ex.printStackTrace();
-            //} catch (InvalidPreferencesFormatException ex) {
-            //    ex.printStackTrace();
-            //}
-        }
+        });
 
     }
 }

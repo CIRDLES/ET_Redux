@@ -147,7 +147,6 @@ import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.plots.anyTwo.PlotAny2Panel;
-import org.earthtime.plots.evolution.EvolutionPlotPanel;
 import org.earthtime.plots.isochrons.IsochronsPanel;
 import org.earthtime.projects.EarthTimeSerializedFileInterface;
 import org.earthtime.projects.Project;
@@ -164,6 +163,8 @@ import org.earthtime.reportViews.ReportUpdaterInterface;
 import org.earthtime.reportViews.TabbedReportViews;
 import org.earthtime.reports.ReportSettingsInterface;
 import org.earthtime.samples.SampleInterface;
+import org.earthtime.plots.topsoil.TopsoilDisplayEvolutionPlot;
+import org.earthtime.plots.topsoil.PlaceHolderForJavaFxThread;
 import org.earthtime.utilities.FileHelper;
 
 /**
@@ -384,7 +385,6 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         startStopLiveUpdate_button.setBackground(Color.WHITE);
         reduceAll_button.setBackground(Color.WHITE);
         interpretSampleDates_button.setBackground(Color.WHITE);
-
     }
 
     private Dimension calculateTabulatedResultsSize() {
@@ -3631,8 +3631,10 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             myUseriesIsochronPanel = new IsochronsPanel(theSample, this);
 
             if (myEvolutionPlotPanel == null) {
-                myEvolutionPlotPanel = null;
-                myEvolutionPlotPanel = new EvolutionPlotPanel(theSample, this);
+//                myEvolutionPlotPanel = null;
+                myEvolutionPlotPanel = new TopsoilDisplayEvolutionPlot(theSample.getSampleName());//       EvolutionPlotPanel(theSample, this);
+                PlaceHolderForJavaFxThread placeHolderForJavaFXThread = new PlaceHolderForJavaFxThread();
+                placeHolderForJavaFXThread.runme();
             }
 
             theSample.getSampleDateInterpretationGUISettings().//
@@ -3649,7 +3651,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             ((PlottingDetailsDisplayInterface) myPlotAnyPanel).resetPanel(true, false);
             ((PlottingDetailsDisplayInterface) myUseriesIsochronPanel).setShowTightToEdges(true);
             ((PlottingDetailsDisplayInterface) myUseriesIsochronPanel).resetPanel(true, false);
-            ((PlottingDetailsDisplayInterface) myEvolutionPlotPanel).setShowTightToEdges(true);
+//            ((PlottingDetailsDisplayInterface) myEvolutionPlotPanel).setShowTightToEdges(true);
             //((PlottingDetailsDisplayInterface) myEvolutionPlotPanel).resetPanel(true, false);
 
             if (sampleDateInterpDialog != null) {
@@ -4063,9 +4065,9 @@ private void startStopLiveUpdate_buttonActionPerformed(java.awt.event.ActionEven
                 }
             }
         } else {
-            //TODO: confirm this in 2015  May 2010 backward compatibility
-            ((ReduxAliquotInterface) aliquot).setCompiled(false);
-            editAliquot(theSample, aliquot);
+//////            //TODO: confirm this in 2015  May 2010 backward compatibility
+//////            ((ReduxAliquotInterface) aliquot).setCompiled(false);
+//////            editAliquot(theSample, aliquot);
         }
 
     }
