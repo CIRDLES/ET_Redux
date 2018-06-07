@@ -60,6 +60,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import org.apache.batik.swing.JSVGCanvas;
+import org.earthtime.Tripoli.dataViews.AbstractRawDataView;
 import org.earthtime.UPb_Redux.beans.ReduxSpinner;
 import org.earthtime.UPb_Redux.beans.ReduxSuppressComponentEventsI;
 import org.earthtime.UPb_Redux.customJTrees.CheckBoxNode;
@@ -103,7 +104,6 @@ import org.earthtime.plots.isochrons.UseriesIsochronPlotDisplayInterface;
 import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.reports.ReportColumnInterface;
 import org.earthtime.samples.SampleInterface;
-import org.earthtime.plots.topsoil.TopsoilDisplayEvolutionPlot;
 import org.earthtime.utilities.CollectionHelpers;
 import org.earthtime.utilities.FileHelper;
 
@@ -496,15 +496,15 @@ public class SampleDateInterpretationsManager extends DialogEditor
     private void initEvolutionPlotPanel() {
 
         // set toolbar choices per options
-        Map<String, String> UIO = sample.getSampleDateInterpretationGUISettings().getuSeriesIsochronOptions();
+       // Map<String, String> UIO = sample.getSampleDateInterpretationGUISettings().getuSeriesIsochronOptions();
 
         evolutionLayeredPane.setLayout(new BorderLayout());
         evolutionLayeredPane.add(evolutionPlotPanel, BorderLayout.CENTER);
 
         ((AliquotDetailsDisplayInterface) evolutionPlotPanel).//
                 setSelectedFractions(sample.getFractions());
+        ((AbstractRawDataView) evolutionPlotPanel).refreshPanel(true, false);
 
-        ((TopsoilDisplayEvolutionPlot) evolutionPlotPanel).runme(evolutionLayeredPane.getSize());
     }
 
     /**
@@ -893,6 +893,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         try {
             ((AliquotDetailsDisplayInterface) evolutionPlotPanel).//
                     setFilteredFractions(filteredFractions);
+            ((AbstractRawDataView) evolutionPlotPanel).refreshPanel(true, false);
         } catch (Exception e) {
         }
 
@@ -2550,6 +2551,7 @@ private void graphPanelsTabbedPaneResized(java.awt.event.ComponentEvent evt) {//
 
     evolutionPlotPanel.setBounds(evolutionLayeredPane.getBounds());
     evolutionPlotPanel.setSize(evolutionLayeredPane.getSize());
+    ((AbstractRawDataView) evolutionPlotPanel).refreshPanel(true, false);
 
     ((WeightedMeanGraphPanel) weightedMeanGraphPanel).setGraphWidth(adjustedWidth);
 
@@ -3205,7 +3207,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                 ((AliquotDetailsDisplayInterface) evolutionPlotPanel).//
                         setSelectedFractions(sample.getFractions());
                 try {
-                    ((EvolutionPlotPanel) evolutionPlotPanel).refreshPanel(false, false);
+                    ((AbstractRawDataView) evolutionPlotPanel).refreshPanel(false, false);
                 } catch (Exception e) {
                 }
             } else {
@@ -3261,6 +3263,8 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
 
             ((AliquotDetailsDisplayInterface) evolutionPlotPanel).//
                     setSelectedFractions(sample.getFractions());
+            ((AbstractRawDataView) evolutionPlotPanel).refreshPanel(true, false);
+            
             // update weighted means in case of delete or (oct 2010) add
             weightedMeanOptions = sample.getSampleDateInterpretationGUISettings().getWeightedMeanOptions();
             ((WeightedMeanGraphPanel) weightedMeanGraphPanel).setWeightedMeanOptions(weightedMeanOptions);
@@ -3352,6 +3356,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                         setSelectedFractions(((ReduxAliquotInterface) aliquotNodeInfo).
                                 getAliquotSampleDateModelSelectedFractions(((SampleDateModel) nodeInfo).
                                         getIncludedFractionIDsVector()));
+                evolutionPlotPanel.repaint();
 //                ((AliquotDetailsDisplayInterface) useriesIsochronPanel).//
 //                        setDeSelectedFractions(((ReduxAliquotInterface) aliquotNodeInfo).//
 //                                getAliquotSampleDateModelDeSelectedFractions(((SampleDateModel) nodeInfo).//
@@ -3453,7 +3458,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
 //                            setDeSelectedFractions(((ReduxAliquotInterface) aliquotNodeInfo).//
 //                                    getAliquotSampleDateModelDeSelectedFractions(((SampleDateModel) sampleDateNodeInfo).//
 //                                            getIncludedFractionIDsVector()));
-                    ((PlottingDetailsDisplayInterface) evolutionPlotPanel).refreshPanel(true, false);
+                    ((AbstractRawDataView) evolutionPlotPanel).refreshPanel(true, false);
 
                 } else {
 

@@ -38,7 +38,6 @@ import java.util.ArrayList;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.embed.swing.JFXPanel;
 import javax.swing.AbstractButton;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -147,6 +146,7 @@ import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.plots.anyTwo.PlotAny2Panel;
+import org.earthtime.plots.evolution.EvolutionPlotPanelII;
 import org.earthtime.plots.isochrons.IsochronsPanel;
 import org.earthtime.projects.EarthTimeSerializedFileInterface;
 import org.earthtime.projects.Project;
@@ -163,7 +163,6 @@ import org.earthtime.reportViews.ReportUpdaterInterface;
 import org.earthtime.reportViews.TabbedReportViews;
 import org.earthtime.reports.ReportSettingsInterface;
 import org.earthtime.samples.SampleInterface;
-import org.earthtime.plots.topsoil.TopsoilDisplayEvolutionPlot;
 import org.earthtime.plots.topsoil.PlaceHolderForJavaFxThread;
 import org.earthtime.utilities.FileHelper;
 
@@ -3632,9 +3631,9 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
             if (myEvolutionPlotPanel == null) {
 //                myEvolutionPlotPanel = null;
-                myEvolutionPlotPanel = new TopsoilDisplayEvolutionPlot(theSample.getSampleName());//       EvolutionPlotPanel(theSample, this);
-                PlaceHolderForJavaFxThread placeHolderForJavaFXThread = new PlaceHolderForJavaFxThread();
-                placeHolderForJavaFXThread.runme();
+                myEvolutionPlotPanel = new EvolutionPlotPanelII(theSample, this);
+//                PlaceHolderForJavaFxThread placeHolderForJavaFXThread = new PlaceHolderForJavaFxThread();
+//                placeHolderForJavaFXThread.runme();
             }
 
             theSample.getSampleDateInterpretationGUISettings().//
