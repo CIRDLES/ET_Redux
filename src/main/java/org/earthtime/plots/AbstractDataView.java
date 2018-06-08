@@ -59,8 +59,6 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
 
     protected static final double ZOOM_FACTOR = 25.0;
 
-    protected double x;
-    protected double y;
     protected double width;
     protected double height;
 
@@ -145,8 +143,6 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
      */
     protected AbstractDataView(Rectangle bounds, int leftMargin, int topMargin) {
         super();
-        x = bounds.getX();
-        y = bounds.getY();
         this.leftMargin = leftMargin;
         this.topMargin = topMargin;
 

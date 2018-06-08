@@ -22,7 +22,10 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.CubicCurve2D;
+import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Map;
 import java.util.Vector;
 import org.earthtime.fractions.ETFractionInterface;
@@ -84,10 +87,6 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
         this.xy = new double[0][0][0];
         this.dardt = new double[0][0][0];
 
-        lambda238D = 1.55125e-10;//lambda238.getValue().doubleValue();
-        lambda234D = 2.82206e-6;//lambda234.getValue().doubleValue();
-        lambda230D = 9.1705e-6;//lambda230.getValue().doubleValue();
-
         addMouseListener(this);
         addMouseMotionListener(this);
         addMouseWheelListener(this);
@@ -110,19 +109,55 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
         g2d.drawRect(leftMargin, topMargin, (int) graphWidth, (int) graphHeight);
 
         // draw isochrons
-        g2d.setPaint(Color.red);
-        for (int i = 0; i < xEndPointsD[0].length; i++) {
-            Shape isochronLine = new Path2D.Double();            
-            g2d.setStroke(new BasicStroke(1.75f));
-            ((Path2D) isochronLine).moveTo(//
-                    mapX(xEndPointsD[0][i]), //
-                    mapY(yEndPointsD[0][i]));
-            ((Path2D) isochronLine).lineTo( //
-                    mapX(xEndPointsD[1][i]), //
-                    mapY(yEndPointsD[1][i]));
-            g2d.draw(isochronLine);
-        }
+//        g2d.setPaint(Color.red);
+//        for (int i = 0; i < xEndPointsD[0].length; i++) {
+//            Shape isochronLine = new Path2D.Double();
+//            g2d.setStroke(new BasicStroke(1.75f));
+//            ((Path2D) isochronLine).moveTo(//
+//                    mapX(xEndPointsD[0][i]), //
+//                    mapY(yEndPointsD[0][i]));
+//            ((Path2D) isochronLine).lineTo( //
+//                    mapX(xEndPointsD[1][i]), //
+//                    mapY(yEndPointsD[1][i]));
+//            g2d.draw(isochronLine);
+//        }
+        for (int i = 0; i < annumIsochrons.length; i++) {
+            double lowX = xEndPointsD[0][i];
+            double lowY = yEndPointsD[0][i];
 
+            double date = annumIsochrons[i];
+
+            double slope = 1.0 /Math.exp(date * lambda238D - 1.0);
+
+            String label = new BigDecimal(date).movePointLeft(3).setScale(0, RoundingMode.HALF_UP).toPlainString() + " ka";
+
+            double yIntercept = lowY - slope * lowX;
+
+            Line2D line = new Line2D.Double(
+                    mapX(lowX),
+                    mapY(yIntercept + slope * lowX),
+                    mapX(getMaxX_Display()),
+                    mapY(yIntercept + slope * getMaxX_Display()));
+            g2d.draw(line);
+
+            double printSlope
+                    = (mapY(yIntercept + slope * lowX) - mapY(yIntercept + slope * getMaxX_Display())) / (mapX(getMaxX_Display()) - mapX(lowX));
+            double displacementFactor = lowX * 0.05;
+
+            double rotateAngle = StrictMath.atan(printSlope);
+            g2d.rotate(-rotateAngle,
+                    (float) mapX(lowX + displacementFactor),
+                    (float) mapY(yIntercept + slope * (lowX + displacementFactor)));
+
+            g2d.drawString(label,
+                    (float) mapX((lowX + displacementFactor)),
+                    (float) mapY(yIntercept + slope * (lowX + displacementFactor)) - 2f);
+
+            g2d.rotate(rotateAngle,
+                    (float) mapX((lowX + displacementFactor)),
+                    (float) mapY(yIntercept + slope * (lowX + displacementFactor)));
+
+        }
         // draw contour lines
         g2d.setPaint(Color.blue);
         for (int i = 0; i < xy.length; i++) {
@@ -142,7 +177,7 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
             }
 
         }
-        
+
         g2d.setPaint(Color.black);
 
         Color excludedBorderColor = new Color(0, 0, 0);
