@@ -1387,8 +1387,7 @@ public class WeightedMeanGraphPanel extends JPanel
      */
     public void mousePressed(MouseEvent evt) {
         zoomMinX = evt.getX();
-        zoomMinY
-                = evt.getY();
+        zoomMinY = evt.getY();
     }
 
     /**

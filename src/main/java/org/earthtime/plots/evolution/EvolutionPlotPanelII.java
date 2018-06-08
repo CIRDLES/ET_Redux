@@ -25,8 +25,6 @@ import java.awt.geom.CubicCurve2D;
 import java.awt.geom.Path2D;
 import java.util.Map;
 import java.util.Vector;
-import org.earthtime.Tripoli.dataModels.DataModelInterface;
-import org.earthtime.Tripoli.dataViews.AbstractRawDataView;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.AliquotDetailsDisplayInterface;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.fractions.ETFractionInterface;
@@ -38,7 +36,7 @@ import org.earthtime.utilities.TicGeneratorForAxes;
  *
  * @author James F. Bowring
  */
-public final class EvolutionPlotPanelII extends AbstractRawDataView implements AliquotDetailsDisplayInterface {
+public final class EvolutionPlotPanelII extends org.earthtime.plots.AbstractDataView implements AliquotDetailsDisplayInterface {
 
     protected transient ReportUpdaterInterface reportUpdater;
 
@@ -63,6 +61,11 @@ public final class EvolutionPlotPanelII extends AbstractRawDataView implements A
     private Vector<ETFractionInterface> filteredFractions;
     private Vector<ETFractionInterface> excludedFractions;
 
+    private double[] annumIsochrons;
+    private double[] ar48icntrs;
+    private double xAxisMax;
+    private double yAxisMax;
+
     private double[][] xEndPointsD;
     private double[][] yEndPointsD;
 
@@ -73,22 +76,31 @@ public final class EvolutionPlotPanelII extends AbstractRawDataView implements A
     public EvolutionPlotPanelII(SampleInterface mySample, ReportUpdaterInterface reportUpdater) {
         super();
 
-        this.sample = mySample;
-        this.reportUpdater = reportUpdater;
-
-        selectedFractions = new Vector<>();
-        excludedFractions = new Vector<>();
-
-        leftMargin = 100;
-        topMargin = 100;
+        this.leftMargin = 100;
+        this.topMargin = 100;
 
         this.setBounds(leftMargin, topMargin, 500, 500);
-        graphWidth = getBounds().width - leftMargin;
-        graphHeight = getBounds().height - topMargin;
+        this.graphWidth = getBounds().width - leftMargin;
+        this.graphHeight = getBounds().height - topMargin;
 
         setOpaque(true);
 
         setBackground(Color.white);
+        this.sample = mySample;
+        this.reportUpdater = reportUpdater;
+
+        this.selectedFractions = new Vector<>();
+        this.excludedFractions = new Vector<>();
+
+        this.annumIsochrons = new double[]{};
+        this.ar48icntrs = new double[]{};
+        this.xAxisMax = 0;
+        this.yAxisMax = 0;
+        this.xEndPointsD = new double[][]{{}};
+        this.yEndPointsD = new double[][]{{}};
+        this.tv = new double[][]{{}};
+        this.xy = new double[0][0][0];
+        this.dardt = new double[0][0][0];
 
 //        lambda234 = selectedFractions.get(0)
 //                .getPhysicalConstantsModel().getDatumByName(Lambdas.lambda234.getName());
@@ -99,11 +111,10 @@ public final class EvolutionPlotPanelII extends AbstractRawDataView implements A
         lambda238D = 1.55125e-10;//lambda238.getValue().doubleValue();
         lambda234D = 2.82206e-6;//lambda234.getValue().doubleValue();
         lambda230D = 9.1705e-6;//lambda230.getValue().doubleValue();
-    }
 
-    public static void main(String[] args) {
-        EvolutionPlotPanelII evolutionPlotPanelII = new EvolutionPlotPanelII(null, null);
-        evolutionPlotPanelII.preparePanel(false, false);
+        addMouseListener(this);
+        addMouseMotionListener(this);
+        addMouseWheelListener(this);
 
     }
 
@@ -111,10 +122,10 @@ public final class EvolutionPlotPanelII extends AbstractRawDataView implements A
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        paint((Graphics2D) g);
+        paint((Graphics2D) g, false);
     }
 
-    public void paint(Graphics2D g2d) {
+    public void paint(Graphics2D g2d, boolean svgStyle) {
         paintInit(g2d);
 
         g2d.setPaint(Color.black);
@@ -122,8 +133,7 @@ public final class EvolutionPlotPanelII extends AbstractRawDataView implements A
         // draw border
         g2d.drawRect(leftMargin, topMargin, (int) graphWidth, (int) graphHeight);
 
-        drawTicsYAxisInBackground(g2d);
-
+        //drawTicsYAxisInBackground(g2d);
         for (int i = 0; i < xEndPointsD[0].length; i++) {
             Shape isochronLine = new Path2D.Double();
             g2d.setPaint(Color.black);
@@ -141,19 +151,49 @@ public final class EvolutionPlotPanelII extends AbstractRawDataView implements A
             for (int j = 1; j < tv[i].length; j++) {
                 double deltaTOver3 = (tv[i][j] - tv[i][j - 1]) / 3;
                 Shape ar48iContour = new CubicCurve2D.Double(
-                        mapX(xy[i][0][j-1]),
-                        mapY(xy[i][1][j-1]),
+                        mapX(xy[i][0][j - 1]),
+                        mapY(xy[i][1][j - 1]),
                         mapX(xy[i][0][j - 1] + deltaTOver3 * dardt[i][0][j - 1]),
                         mapY(xy[i][1][j - 1] + deltaTOver3 * dardt[i][1][j - 1]),
                         mapX(xy[i][0][j] - deltaTOver3 * dardt[i][0][j]),
                         mapY(xy[i][1][j] - deltaTOver3 * dardt[i][1][j]),
                         mapX(xy[i][0][j]),
                         mapY(xy[i][1][j]));
-                
+
                 g2d.draw(ar48iContour);
             }
 
         }
+
+        Color excludedBorderColor = new Color(0, 0, 0);
+        Color excludedCenterColor = new Color(0, 0, 0);
+        float excludedCenterSize = 3.0f;
+        String ellipseLabelFont = "Monospaced";
+        String ellipseLabelFontSize = "12";
+
+        for (ETFractionInterface f : selectedFractions) {
+            generateEllipsePathIII(//
+                    f,
+                    2.0f);
+            if (f.getErrorEllipsePath() != null) {
+                plotAFraction(
+                        g2d,
+                        svgStyle,
+                        f,
+                        excludedBorderColor,
+                        0.5f,
+                        excludedCenterColor,
+                        excludedCenterSize,
+                        ellipseLabelFont,
+                        ellipseLabelFontSize);
+
+            }
+        }
+
+        double rangeX = (getMaxX_Display() - getMinX_Display());
+        double rangeY = (getMaxY_Display() - getMinY_Display());
+
+        drawAxesAndTicks(g2d, rangeX, rangeY);
 
     }
 
@@ -207,20 +247,47 @@ public final class EvolutionPlotPanelII extends AbstractRawDataView implements A
     }
 
     @Override
-    public void preparePanel(boolean doReScale, boolean inLiveMode) {
-        removeAll();
+    public void preparePanel(boolean doReset) {
+        if (doReset) {
+            zoomMaxX = 0;
+            zoomMaxY = 0;
+            zoomMinX = 0;
+            zoomMinY = 0;
 
-        if (true) {;//selectedFractions.size() > 0) {
+            setDisplayOffsetY(0.0);
+            setDisplayOffsetX(0.0);
+
+            removeAll();
+
+//        if (doReset) {
+            minX = 0.0;
+            minY = 0.0;
+
+            maxX = (xAxisMax == 0) ? 1.5 : xAxisMax;
+            maxY = (yAxisMax == 0) ? 2.0 : yAxisMax;
+        }
+
+        if (doReset) {//selectedFractions.size() > 0) {
             // adapted from Noah's matlab code 
-            double[] tisochrons = new double[]{25.0e3, 50.0e3, 75.0e3, 100.0e3, 150.0e3, 200.0e3, 300.0e3, 10e13}; // plotted isochrons
-            double[] ar48icntrs = new double[]{0.0, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2.0, 2.25}; // contour lines of constant 234/238i
-            Matrix ar48lim = new Matrix(new double[][]{{0.0, 2.0}});
-            Matrix ar08lim = new Matrix(new double[][]{{0.0, 1.5}});
 
-            // %% Calculations for isochron line parameters and endpoints
-            int nisochrons = tisochrons.length;
-            Matrix r48lim = ar48lim.times(lambda238D / lambda234D);
-            Matrix r08lim = ar08lim.times(lambda238D / lambda230D);
+            if (annumIsochrons.length == 0) {
+                annumIsochrons = new double[]{25.0e3, 50.0e3, 75.0e3, 100.0e3, 150.0e3, 200.0e3, 300.0e3, 10e13}; // plotted isochrons
+            }
+
+            if (ar48icntrs.length == 0) {
+                ar48icntrs = new double[(int) maxY * 4 + 2];
+                for (int i = 0; i < (int) maxY * 4 + 2; i++) {
+                    ar48icntrs[i] = i * (0.25);
+                }
+            }
+
+            Matrix ar48limYaxis = new Matrix(new double[][]{{0.0, maxY}});
+            Matrix ar08limXaxis = new Matrix(new double[][]{{0.0, maxX}});
+
+            // % Calculations for isochron line parameters and endpoints
+            int nisochrons = annumIsochrons.length;
+            Matrix r48lim = ar48limYaxis.times(lambda238D / lambda234D);
+            Matrix r08lim = ar08limXaxis.times(lambda238D / lambda230D);
 
             // Calculations for isochron slope/y-intercept, in isotope ratio coordinates (not activity ratios)
             Matrix abmat = new Matrix(2, nisochrons, 0.0);
@@ -229,7 +296,7 @@ public final class EvolutionPlotPanelII extends AbstractRawDataView implements A
 
             int it = -1;
             for (int i = 0; i < nisochrons; i++) {
-                double t = tisochrons[i];
+                double t = annumIsochrons[i];
                 it++;
 
                 if (t >= 10e13) {
@@ -334,15 +401,14 @@ public final class EvolutionPlotPanelII extends AbstractRawDataView implements A
             repaint();
             validate();
 
-            // X-axis i
-            minX = 0.0;
-            maxX = 1.5;
-
-            // Y-axis 
-            minY = 0.0;
-            maxY = 2.0;
-
-            tics = TicGeneratorForAxes.generateTics(minY, maxY, (int) (graphHeight / 20.0));
+//            // X-axis 
+//            minX = 0.0;
+//            maxX = Math.max(maxX, xAxisMax);
+//
+//            // Y-axis 
+//            minY = 0.0;
+//            maxY = Math.max(maxY, yAxisMax);
+            tics = TicGeneratorForAxes.generateTics(minY, maxY, (int) (graphHeight / 25.0));
         }
 
         repaint();
@@ -393,9 +459,25 @@ public final class EvolutionPlotPanelII extends AbstractRawDataView implements A
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    @Override
-    public DataModelInterface getDataModel() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    /**
+     * @param annumIsochrons the annumIsochrons to set
+     */
+    public void setAnnumIsochrons(double[] annumIsochrons) {
+        this.annumIsochrons = annumIsochrons;
+    }
+
+    /**
+     * @param xAxisMax the xAxisMax to set
+     */
+    public void setxAxisMax(double xAxisMax) {
+        this.xAxisMax = xAxisMax;
+    }
+
+    /**
+     * @param yAxisMax the yAxisMax to set
+     */
+    public void setyAxisMax(double yAxisMax) {
+        this.yAxisMax = yAxisMax;
     }
 
 }
