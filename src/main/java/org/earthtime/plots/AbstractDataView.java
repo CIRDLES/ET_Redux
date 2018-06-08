@@ -37,21 +37,25 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import java.math.BigDecimal;
+import java.util.Map;
+import java.util.Vector;
 import javax.swing.JLayeredPane;
 import javax.swing.event.MouseInputListener;
-import org.earthtime.UPb_Redux.ReduxConstants;
+import org.earthtime.UPb_Redux.dateInterpretation.concordia.AliquotDetailsDisplayInterface;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.ErrorEllipse;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
-import org.earthtime.dataDictionaries.RadRatiosPbcCorrected;
+import org.earthtime.dataDictionaries.Lambdas;
 import org.earthtime.dataDictionaries.UThAnalysisMeasures;
 import org.earthtime.fractions.ETFractionInterface;
+import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
+import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.utilities.TicGeneratorForAxes;
 
 /**
  *
  * @author James F. Bowring
  */
-public abstract class AbstractDataView extends JLayeredPane implements MouseInputListener, MouseWheelListener {
+public abstract class AbstractDataView extends JLayeredPane implements AliquotDetailsDisplayInterface, MouseInputListener, MouseWheelListener {
 
     protected static final double ZOOM_FACTOR = 25.0;
 
@@ -116,6 +120,17 @@ public abstract class AbstractDataView extends JLayeredPane implements MouseInpu
      *
      */
     protected BigDecimal[] tics;
+
+    protected ValueModel lambda234;
+    protected ValueModel lambda238;
+    protected ValueModel lambda230;
+    protected double lambda238D;
+    protected double lambda234D;
+    protected double lambda230D;
+
+    protected static Vector<ETFractionInterface> selectedFractions;
+    protected Vector<ETFractionInterface> filteredFractions;
+    protected Vector<ETFractionInterface> excludedFractions;
 
     /**
      *
@@ -218,6 +233,21 @@ public abstract class AbstractDataView extends JLayeredPane implements MouseInpu
      * @param inLiveMode the value of inLiveMode
      */
     public void refreshPanel(boolean doReset) {
+        AbstractRatiosDataModel physicalConstantsModel;
+        if (selectedFractions.size() > 0) {
+            physicalConstantsModel = selectedFractions.get(0).getPhysicalConstantsModel();
+        } else {
+            physicalConstantsModel = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel();
+        }
+
+        lambda234 = physicalConstantsModel.getDatumByName(Lambdas.lambda234.getName());
+        lambda238 = physicalConstantsModel.getDatumByName(Lambdas.lambda238.getName());
+        lambda230 = physicalConstantsModel.getDatumByName(Lambdas.lambda230.getName());
+
+        lambda238D = lambda238.getValue().doubleValue();
+        lambda234D = lambda234.getValue().doubleValue();
+        lambda230D = lambda230.getValue().doubleValue();
+
         try {
             preparePanel(doReset);
         } catch (Exception e) {
@@ -244,14 +274,19 @@ public abstract class AbstractDataView extends JLayeredPane implements MouseInpu
         g2d.setStroke(new BasicStroke(2.0f));
 
         // determine the axis ticks
-        BigDecimal[] tics = TicGeneratorForAxes.generateTics(getMinY_Display(), getMaxY_Display(), 12);
+        BigDecimal[] tics = TicGeneratorForAxes.generateTics(getMinY_Display(), getMaxY_Display(), 15);
+
+        tics = new BigDecimal[(int) maxY * 4 + 2];
+        for (int i = 0; i < (int) maxY * 4 + 2; i++) {
+            tics[i] = new BigDecimal(i * (0.25));
+        }
         // trap for bad plot
         if (tics.length <= 1) {
             tics = new BigDecimal[0];
         }
         double minXDisplay = 0.0;
         int yAxisTicWidth = 8;
-        int yTicLabelFrequency = 2;
+        int yTicLabelFrequency = 1;
         int labeledTicCountYAxis = 0;
 
         g2d.setPaint(Color.black);
@@ -259,9 +294,8 @@ public abstract class AbstractDataView extends JLayeredPane implements MouseInpu
 
             double y = tics[i].doubleValue();
 
-            if ((y > getMinY_Display()) // dont print across mappedX axis
-                    && (y < getMaxY_Display())) // dont print across top border
-            {
+            if ((y >= getMinY_Display())
+                    && (y <= getMaxY_Display())) {
                 try {
                     Shape ticMark = new Line2D.Double( //
                             mapX(getMinX_Display()),
@@ -277,8 +311,7 @@ public abstract class AbstractDataView extends JLayeredPane implements MouseInpu
                         if (labeledTicCountYAxis % yTicLabelFrequency == 0) {
 
                             TextLayout mLayout
-                                    = //
-                                    new TextLayout(
+                                    = new TextLayout(
                                             tics[i].toPlainString(), g2d.getFont(), g2d.getFontRenderContext());
 
                             Rectangle2D bounds = mLayout.getBounds();
@@ -464,72 +497,7 @@ public abstract class AbstractDataView extends JLayeredPane implements MouseInpu
     public void mousePressed(MouseEvent evt) {
         zoomMinX = evt.getX();
         zoomMinY = evt.getY();
-//        if ((evt.getX() >= leftMargin)
-//                && (evt.getY() >= topMargin)
-//                && (evt.getY() <= graphHeight + topMargin)) {
-//
-//            if (evt.isPopupTrigger() || evt.getButton() == MouseEvent.BUTTON3) {
-//
-//                // reset to pan mode
-////                graphPanelModeChanger.switchToPanMode();
-//
-//                //Create the popup menu.
-//                JPopupMenu popup = new JPopupMenu();
-//
-//                // Jan 2011 show coordinates fyi
-//                double x = convertMouseXToValue(evt.getX());
-//                double y = convertMouseYToValue(evt.getY());
-//                DecimalFormat f = new DecimalFormat("0.0000E00");
-//
-//                JMenuItem menuItem = new JMenuItem("Automatically configure axes");
-//                menuItem.addActionListener(new ActionListener() {
-//
-//                    public void actionPerformed(ActionEvent arg0) {
-//                        getCurrentPlotAxesSetup().setUseAutomaticAxisTics(true);
-//                        repaint();
-//                    }
-//                });
-//                popup.add(menuItem);
-//
-//                mySelf = this;
-//                menuItem = new JMenuItem("Manually configure axes");
-//                menuItem.addActionListener((ActionEvent arg0) -> {
-//                    getCurrentPlotAxesSetup().setUseAutomaticAxisTics(false);
-//
-//                    JDialog myGraphAxisDialog = new GraphAxesDialog( //
-//                            null, //
-//                            true,
-//                            getCurrentPlotAxesSetup(),
-//                            mySelf);
-//                    myGraphAxisDialog.setVisible(true);
-//
-//                    // dialog closed
-//                    repaint();
-//                });
-//                popup.add(menuItem);
-//
-//                // may 2014
-//                // check if aliquot vs sample
-//                if (showingSingleAliquot) {
-//                    DecimalFormat d = new DecimalFormat("###0");
-//                    menuItem = new JMenuItem("Toggle Best Date Divider (currently = " + d.format(currentBestDate / 1e6) + " ma)");
-//                    menuItem.addActionListener((ActionEvent arg0) -> {
-//                        showBestDateDivider206_238 = !showBestDateDivider206_238;
-//
-//                        repaint();
-//                    });
-//                    popup.add(menuItem);
-//                }
-//
-//                popup.show(evt.getComponent(), evt.getX(), evt.getY());
-//            } else {
-//
-//                setZoomMinX(evt.getX());
-//                setZoomMinY(evt.getY());
-//            }
-//        } else {
-//
-//        }
+
     }
 
     /**
@@ -540,55 +508,6 @@ public abstract class AbstractDataView extends JLayeredPane implements MouseInpu
     public void mouseReleased(MouseEvent evt) {
         zoomMaxX = evt.getX();
         zoomMaxY = evt.getY();
-
-//        if ((evt.getX() >= getLeftMargin())
-//                && (evt.getY() >= getTopMargin())
-//                && (evt.getY() <= getGraphHeight() + getTopMargin()) && !changingBestDateDivider) {
-//
-//            setZoomMaxX(evt.getX());
-//            setZoomMaxY(evt.getY());
-//
-//            if (getImageMode().equalsIgnoreCase("ZOOM") //
-//                    && (getZoomMaxX() != getZoomMinX()) //using != provides for legal inverting of zoom box
-//                    && (getZoomMaxY() != getZoomMinY())) {
-//
-//                // may 2010 check for bad zooms
-//                double zMinX = convertMouseXToValue(Math.min(getZoomMinX(), getZoomMaxX()));
-//                double zMinY = convertMouseYToValue(Math.max(getZoomMinY(), getZoomMaxY()));
-//                // hack to correct a bug in the reported x,y from mouse release vs mouse click
-//                // june 2010 removed this hack
-//                double zMaxX = convertMouseXToValue(Math.max(getZoomMaxX(), getZoomMinX()) - 0 * 65);
-//                double zMaxY = convertMouseYToValue(Math.min(getZoomMaxY(), getZoomMinY()) + 0 * 60);
-//
-//                if ((zMaxX > zMinX) && (zMaxY > zMinY)) {
-//                    setMinX(zMinX);
-//                    setMinY(zMinY);
-//                    setMaxX(zMaxX);
-//                    setMaxY(zMaxY);
-//
-//                    setDisplayOffsetX(0.0);
-//                    setDisplayOffsetY(0.0);
-//
-//                    setZoomMaxX(getZoomMinX());
-//                    setZoomMaxY(getZoomMinY());
-//
-//                    // may 2010
-//                    currentGraphAxesSetup.setUseAutomaticAxisTics(true);
-//                    graphPanelModeChanger.switchToPanMode();
-//
-//                    repaint();
-//                }
-//            }
-//        } else // set best age divider
-//        {
-//            if (changingBestDateDivider) {
-//                ((AliquotForUPbInterface) curAliquot).setBestAgeDivider206_238(new BigDecimal(currentBestDate));
-//                ((UPbReduxAliquot) curAliquot).updateBestAge();
-//                reportUpdater.updateReportTable(false, false, "");
-//            }
-//        }
-//
-//        changingBestDateDivider = false;
     }
 
     /**
@@ -597,59 +516,14 @@ public abstract class AbstractDataView extends JLayeredPane implements MouseInpu
      */
     @Override
     public void mouseEntered(MouseEvent evt) {
-//        // this is not very sensitive, so have forced cursor at mode selection below
-//        if ((evt.getX() >= getLeftMargin())
-//                && (evt.getY() >= getTopMargin())
-//                && (evt.getY() <= getGraphHeight() + getTopMargin())) {
-//            setCursor(getConcordiaCursor());
-//        }
     }
 
-//    /**
-//     *
-//     * @param evt
-//     * @return
-//     */
-//    public boolean mouseEnteredTitleBox(MouseEvent evt) {
-//        boolean retval = false;
-//        if (isShowTitleBox()) {
-//            // this is not very sensitive, so have forced cursor at mode selection below
-//            if ((evt.getX() >= concordiaTitlePanel.getX())
-//                    && (evt.getX() <= (concordiaTitlePanel.getX() + concordiaTitlePanel.getWidth()))
-//                    && (evt.getY() >= concordiaTitlePanel.getY())
-//                    && (evt.getY() <= (concordiaTitlePanel.getY() + concordiaTitlePanel.getHeight()))) {
-//                retval = true;
-//            } else {
-//                retval = false;
-//            }
-//        }
-//        return retval;
-//    }
-//    /**
-//     *
-//     * @param evt
-//     * @return
-//     */
-//    public boolean mouseEnteredDateBox(MouseEvent evt) {
-//        // this is not very sensitive, so have forced cursor at mode selection below
-//        if (preferredDatePanel == null) {
-//            return false;
-//        } else if ((evt.getX() >= preferredDatePanel.getX())
-//                && (evt.getX() <= (preferredDatePanel.getX() + preferredDatePanel.getWidth()))
-//                && (evt.getY() >= preferredDatePanel.getY())
-//                && (evt.getY() <= (preferredDatePanel.getY() + preferredDatePanel.getHeight()))) {
-//            return true;
-//        } else {
-//            return false;
-//        }
-//    }
     /**
      *
      * @param evt
      */
     @Override
     public void mouseExited(MouseEvent evt) {
-
     }
 
     /**
@@ -667,103 +541,10 @@ public abstract class AbstractDataView extends JLayeredPane implements MouseInpu
         setDisplayOffsetY(Math.min(getDisplayOffsetY() //
                 + (convertMouseYToValue(zoomMinY) - convertMouseYToValue(zoomMaxY)), minY));
 
-        System.out.println(getDisplayOffsetY() + "\t" + convertMouseXToValue(zoomMinY) + "\t" + convertMouseXToValue(zoomMaxY));
         zoomMinX = zoomMaxX;
         zoomMinY = zoomMaxY;
 
         repaint();
-
-//        
-//        if ((evt.getX() >= leftMargin)
-//                && (evt.getY() >= topMargin)
-//                && (evt.getY() <= graphHeight + topMargin)) {
-//            setZoomMaxX(evt.getX());
-//            setZoomMaxY(evt.getY());
-//
-//            changingBestDateDivider = false;
-//            setCursor(concordiaCursor);
-//
-        // PANNING
-//        double xOffsetValue
-//                = getDisplayOffsetX() //
-//                + (convertMouseXToValue(0) - convertMouseXToValue(evt.getX()));
-//        double yOffsetValue
-//                = getDisplayOffsetY() //
-//                + (convertMouseYToValue(0) - convertMouseYToValue(evt.getY()));
-//
-//        // test for out of bounds
-//        double x = maxX - xOffsetValue;
-//        if (((minX + xOffsetValue) >= 0.0)// may 2010 zeroed - 1.0)
-//
-//                && ((minY + yOffsetValue) >= 0.0)) {
-//            setDisplayOffsetX(xOffsetValue);
-//            setDisplayOffsetY(yOffsetValue);
-        // System.out.println( "move from " + getZoomMinX() + ", " + getZoomMinY() + "  to  " + getZoomMaxX() + ", " + getZoomMaxY() );
-//            setZoomMinX(getZoomMaxX());
-//            setZoomMinY(getZoomMaxY());
-//        }
-//            else if (getImageMode().equalsIgnoreCase("TITLE")
-//                    && isShowTitleBox()) {
-//                int titleLocationX = concordiaTitlePanel.getX();
-//                int titleLocationY = concordiaTitlePanel.getY();
-//
-//                int nextTitleLocationX = titleLocationX + (getZoomMaxX() - getZoomMinX());
-//                int nextTitleLocationY = titleLocationY + (getZoomMaxY() - getZoomMinY());
-//
-//                setZoomMinX(getZoomMaxX());
-//                setZoomMinY(getZoomMaxY());
-//
-//                if (this.contains(
-//                        nextTitleLocationX,
-//                        nextTitleLocationY)
-//                        && this.contains(
-//                                (nextTitleLocationX + concordiaTitlePanel.getWidth()),
-//                                (nextTitleLocationY + concordiaTitlePanel.getHeight()))) {
-//                    concordiaTitlePanel.setLocation(
-//                            nextTitleLocationX,
-//                            nextTitleLocationY);
-//                    setSavedConcordiaTitlePanelX(nextTitleLocationX);
-//                    setSavedConcordiaTitlePanelY(nextTitleLocationY);
-//                }
-//
-//            } else if (getImageMode().equalsIgnoreCase("DATE")) {
-//                int dateLocationX = preferredDatePanel.getX();
-//                int dateLocationY = preferredDatePanel.getY();
-//
-//                int nextDateLocationX = dateLocationX + (getZoomMaxX() - getZoomMinX());
-//                int nextDateLocationY = dateLocationY + (getZoomMaxY() - getZoomMinY());
-//
-//                setZoomMinX(getZoomMaxX());
-//                setZoomMinY(getZoomMaxY());
-//
-//                if (this.contains(
-//                        nextDateLocationX,
-//                        nextDateLocationY)
-//                        && this.contains(
-//                                (nextDateLocationX + preferredDatePanel.getWidth()),
-//                                (nextDateLocationY + preferredDatePanel.getHeight()))) {
-//                    preferredDatePanel.setLocation(
-//                            nextDateLocationX,
-//                            nextDateLocationY);
-//                    setSavedPreferredDatePanelX(nextDateLocationX);
-//                    setSavedPreferredDatePanelY(nextDateLocationY);
-//                }
-//            }
-//
-////            repaint();
-//        } else if (mouseInBestAgeHandleArea(evt.getX(), evt.getY())) {
-//            if (showBestDateDivider206_238) {
-//                changingBestDateDivider = true;
-//                double nextBestRatio = convertMouseYToValue(evt.getY());
-//                double testBestDate = Math.log1p(nextBestRatio) / lambda238.getValue().doubleValue();
-//                if ((testBestDate > 0) && (testBestDate < ReduxConstants.MAX_DATE_ANNUM)) {
-//                    currentBestDate = testBestDate;
-//                }
-//                // System.out.println("Best Date = " + nextBestRatio + "  " + currentBestDate);
-//                setCursor(new Cursor(Cursor.N_RESIZE_CURSOR));//.WAIT_CURSOR));//.MOVE_CURSOR));
-//            }
-//        }
-//        repaint();
     }
 
     /**
@@ -772,30 +553,6 @@ public abstract class AbstractDataView extends JLayeredPane implements MouseInpu
      */
     @Override
     public void mouseMoved(MouseEvent evt) {
-//        if ((evt.getX() >= getLeftMargin())
-//                && (evt.getY() >= getTopMargin())
-//                && (evt.getY() <= getGraphHeight() + getTopMargin())) {
-//
-//            if (!getImageMode().equalsIgnoreCase("ZOOM")
-//                    && mouseEnteredTitleBox(evt)) {
-//                setImageMode("TITLE");
-//                //  System.out.println("TITLE");
-//            } else if (!getImageMode().equalsIgnoreCase("ZOOM")
-//                    && mouseEnteredDateBox(evt)) {
-//                setImageMode("DATE");
-//                //  System.out.println("DATE");
-//
-//            } else if (getImageMode().equalsIgnoreCase("TITLE")
-//                    || getImageMode().equalsIgnoreCase("DATE")) {
-//                setImageMode("PAN");
-//            } else {
-//                setCursor(concordiaCursor);
-//            }
-//        } else {
-//            setCursor(Cursor.getDefaultCursor());
-//        }
-//
-//        //System.out.println("mouse " + evt.getX());
     }
 
     public void mouseWheelMoved(MouseWheelEvent e) {
@@ -826,30 +583,6 @@ public abstract class AbstractDataView extends JLayeredPane implements MouseInpu
             }
         }
     }
-//
-//    /**
-//     *
-//     * @param x
-//     * @return
-//     */
-//    protected int convertMouseXToValue(int x) {
-//        return //
-//                (int) Math.round(
-//                        (((double) (x - leftMargin)) / (double) graphWidth) //
-//                        * getRangeX_Display()//
-//                        + getMinX_Display());
-//    }
-//
-//    /**
-//     *
-//     * @param y
-//     * @return
-//     */
-//    protected double convertMouseYToValue(double y) {
-//        return //
-//                -1 * (((y - topMargin - 1) * getRangeY_Display() / graphHeight) //
-//                - getMaxY_Display());
-//    }
 
     protected double convertMouseXToValue(int x) {
         return //
@@ -988,6 +721,51 @@ public abstract class AbstractDataView extends JLayeredPane implements MouseInpu
             // bad boy
             f.setErrorEllipsePath(null);
         }
+    }
+
+    @Override
+    public Map<String, Map<String, String>> getAliquotOptions() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Vector<ETFractionInterface> getDeSelectedFractions() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setDeSelectedFractions(Vector<ETFractionInterface> deSelectedFractions) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Map<String, String> getSelectedAliquotOptions() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setSelectedFractions(Vector<ETFractionInterface> fractions) {
+        selectedFractions = fractions;
+    }
+
+    @Override
+    public void setFilteredFractions(Vector<ETFractionInterface> filteredFractions) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Vector<ETFractionInterface> getSelectedFractions() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean isShowFilteredEllipses() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setShowFilteredEllipses(boolean showFilteredEllipses) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

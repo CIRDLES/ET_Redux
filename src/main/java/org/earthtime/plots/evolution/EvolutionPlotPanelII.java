@@ -25,41 +25,23 @@ import java.awt.geom.CubicCurve2D;
 import java.awt.geom.Path2D;
 import java.util.Map;
 import java.util.Vector;
-import org.earthtime.UPb_Redux.dateInterpretation.concordia.AliquotDetailsDisplayInterface;
-import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.fractions.ETFractionInterface;
+import org.earthtime.plots.AbstractDataView;
 import org.earthtime.reportViews.ReportUpdaterInterface;
 import org.earthtime.samples.SampleInterface;
 import org.earthtime.utilities.TicGeneratorForAxes;
+import static org.python.netty.util.concurrent.FastThreadLocal.removeAll;
 
 /**
  *
  * @author James F. Bowring
  */
-public final class EvolutionPlotPanelII extends org.earthtime.plots.AbstractDataView implements AliquotDetailsDisplayInterface {
+public final class EvolutionPlotPanelII extends AbstractDataView {
 
     protected transient ReportUpdaterInterface reportUpdater;
 
-    private static final String X = "x";
-    private static final String SIGMA_X = "sigma_x";
-    private static final String Y = "y";
-    private static final String SIGMA_Y = "sigma_y";
-    private static final String RHO = "rho";
-    private static final String SELECTED = "Selected";
-
     private static SampleInterface sample;
     private static boolean showMatrix = true;
-
-    private ValueModel lambda234;
-    private ValueModel lambda238;
-    private ValueModel lambda230;
-    private double lambda238D = 1.55125e-10;//lambda238.getValue().doubleValue();
-    private double lambda234D = 2.82206e-6;//lambda234.getValue().doubleValue();
-    private double lambda230D = 9.1705e-6;//lambda230.getValue().doubleValue();
-
-    private static Vector<ETFractionInterface> selectedFractions;
-    private Vector<ETFractionInterface> filteredFractions;
-    private Vector<ETFractionInterface> excludedFractions;
 
     private double[] annumIsochrons;
     private double[] ar48icntrs;
@@ -102,12 +84,6 @@ public final class EvolutionPlotPanelII extends org.earthtime.plots.AbstractData
         this.xy = new double[0][0][0];
         this.dardt = new double[0][0][0];
 
-//        lambda234 = selectedFractions.get(0)
-//                .getPhysicalConstantsModel().getDatumByName(Lambdas.lambda234.getName());
-//        lambda238 = selectedFractions.get(0)
-//                .getPhysicalConstantsModel().getDatumByName(Lambdas.lambda238.getName());
-//        lambda230 = selectedFractions.get(0)
-//                .getPhysicalConstantsModel().getDatumByName(Lambdas.lambda230.getName());
         lambda238D = 1.55125e-10;//lambda238.getValue().doubleValue();
         lambda234D = 2.82206e-6;//lambda234.getValue().doubleValue();
         lambda230D = 9.1705e-6;//lambda230.getValue().doubleValue();
@@ -133,10 +109,10 @@ public final class EvolutionPlotPanelII extends org.earthtime.plots.AbstractData
         // draw border
         g2d.drawRect(leftMargin, topMargin, (int) graphWidth, (int) graphHeight);
 
-        //drawTicsYAxisInBackground(g2d);
+        // draw isochrons
+        g2d.setPaint(Color.red);
         for (int i = 0; i < xEndPointsD[0].length; i++) {
-            Shape isochronLine = new Path2D.Double();
-            g2d.setPaint(Color.black);
+            Shape isochronLine = new Path2D.Double();            
             g2d.setStroke(new BasicStroke(1.75f));
             ((Path2D) isochronLine).moveTo(//
                     mapX(xEndPointsD[0][i]), //
@@ -147,6 +123,8 @@ public final class EvolutionPlotPanelII extends org.earthtime.plots.AbstractData
             g2d.draw(isochronLine);
         }
 
+        // draw contour lines
+        g2d.setPaint(Color.blue);
         for (int i = 0; i < xy.length; i++) {
             for (int j = 1; j < tv[i].length; j++) {
                 double deltaTOver3 = (tv[i][j] - tv[i][j - 1]) / 3;
@@ -164,6 +142,8 @@ public final class EvolutionPlotPanelII extends org.earthtime.plots.AbstractData
             }
 
         }
+        
+        g2d.setPaint(Color.black);
 
         Color excludedBorderColor = new Color(0, 0, 0);
         Color excludedCenterColor = new Color(0, 0, 0);
@@ -195,55 +175,6 @@ public final class EvolutionPlotPanelII extends org.earthtime.plots.AbstractData
 
         drawAxesAndTicks(g2d, rangeX, rangeY);
 
-    }
-
-    private double[][] diag(double zeroZero, double oneOne, double twoTwo) {
-        double[][] diag = new double[3][3];
-        diag[0][0] = zeroZero;
-        diag[1][1] = oneOne;
-        diag[2][2] = twoTwo;
-
-        return diag;
-    }
-
-    private Matrix matrixA() {
-        double[][] matrixAvals = new double[][]//
-        {{-lambda238D, 0.0, 0.0},
-        {lambda238D, -lambda234D, 0.0},
-        {0.0, lambda234D, -lambda230D}};
-        return new Matrix(matrixAvals);
-    }
-
-    private Matrix matrixQUTh() {
-        double[][] matrixQUThvals = new double[][]//
-        {{((lambda230D - lambda238D) * (lambda234D - lambda238D)) / (lambda234D * lambda238D), 0.0, 0.0},
-        {(lambda230D - lambda238D) / lambda234D, (lambda230D - lambda234D) / lambda234D, 0.0},
-        {1.0, 1.0, 1.0}};
-        return new Matrix(matrixQUThvals);
-    }
-
-    private Matrix matrixGUTh(double t) {
-        return new Matrix(diag(Math.exp(-lambda238D * t), Math.exp(-lambda234D * t), Math.exp(-lambda230D * t)));
-    }
-
-    private Matrix matrixQinvUTh() {
-        double[][] matrixQinvUThvals = new double[][]//
-        {{(lambda234D * lambda238D) / ((lambda230D - lambda238D) * (lambda234D - lambda238D)), 0.0, 0.0},
-        {-(lambda234D * lambda238D) / ((lambda230D - lambda234D) * (lambda234D - lambda238D)), lambda234D / (lambda230D - lambda234D), 0.0},
-        {(lambda234D * lambda238D) / ((lambda230D - lambda234D) * (lambda230D - lambda238D)), -lambda234D / (lambda230D - lambda234D), 1.0}};
-        return new Matrix(matrixQinvUThvals);
-    }
-
-    private Matrix matrixUTh(double t) {
-        return matrixQUTh().times(matrixGUTh(t)).times(matrixQinvUTh());
-    }
-
-    private Matrix matrixUTh0(double t) {
-        return matrixQUTh().getMatrix(2, 2, 0, 2).times(matrixGUTh(t)).times(matrixQinvUTh()); //For the 230 concentration only (to solve for root)
-    }
-
-    private Matrix matrixUTh4(double t) {
-        return matrixQUTh().getMatrix(1, 1, 0, 2).times(matrixGUTh(t)).times(matrixQinvUTh()); //For the 234 concentration only (to solve for root)
     }
 
     @Override
@@ -281,8 +212,8 @@ public final class EvolutionPlotPanelII extends org.earthtime.plots.AbstractData
                 }
             }
 
-            Matrix ar48limYaxis = new Matrix(new double[][]{{0.0, maxY}});
-            Matrix ar08limXaxis = new Matrix(new double[][]{{0.0, maxX}});
+            Matrix ar48limYaxis = new Matrix(new double[][]{{0.0, maxY * 2}});
+            Matrix ar08limXaxis = new Matrix(new double[][]{{0.0, maxX * 2}});
 
             // % Calculations for isochron line parameters and endpoints
             int nisochrons = annumIsochrons.length;
@@ -401,62 +332,59 @@ public final class EvolutionPlotPanelII extends org.earthtime.plots.AbstractData
             repaint();
             validate();
 
-//            // X-axis 
-//            minX = 0.0;
-//            maxX = Math.max(maxX, xAxisMax);
-//
-//            // Y-axis 
-//            minY = 0.0;
-//            maxY = Math.max(maxY, yAxisMax);
             tics = TicGeneratorForAxes.generateTics(minY, maxY, (int) (graphHeight / 25.0));
         }
 
         repaint();
     }
 
-    @Override
-    public Map<String, Map<String, String>> getAliquotOptions() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    private double[][] diag(double zeroZero, double oneOne, double twoTwo) {
+        double[][] diag = new double[3][3];
+        diag[0][0] = zeroZero;
+        diag[1][1] = oneOne;
+        diag[2][2] = twoTwo;
+
+        return diag;
     }
 
-    @Override
-    public Vector<ETFractionInterface> getDeSelectedFractions() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    private Matrix matrixA() {
+        double[][] matrixAvals = new double[][]//
+        {{-lambda238D, 0.0, 0.0},
+        {lambda238D, -lambda234D, 0.0},
+        {0.0, lambda234D, -lambda230D}};
+        return new Matrix(matrixAvals);
     }
 
-    @Override
-    public void setDeSelectedFractions(Vector<ETFractionInterface> deSelectedFractions) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    private Matrix matrixQUTh() {
+        double[][] matrixQUThvals = new double[][]//
+        {{((lambda230D - lambda238D) * (lambda234D - lambda238D)) / (lambda234D * lambda238D), 0.0, 0.0},
+        {(lambda230D - lambda238D) / lambda234D, (lambda230D - lambda234D) / lambda234D, 0.0},
+        {1.0, 1.0, 1.0}};
+        return new Matrix(matrixQUThvals);
     }
 
-    @Override
-    public Map<String, String> getSelectedAliquotOptions() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    private Matrix matrixGUTh(double t) {
+        return new Matrix(diag(Math.exp(-lambda238D * t), Math.exp(-lambda234D * t), Math.exp(-lambda230D * t)));
     }
 
-    @Override
-    public void setSelectedFractions(Vector<ETFractionInterface> fractions) {
-        selectedFractions = fractions;
+    private Matrix matrixQinvUTh() {
+        double[][] matrixQinvUThvals = new double[][]//
+        {{(lambda234D * lambda238D) / ((lambda230D - lambda238D) * (lambda234D - lambda238D)), 0.0, 0.0},
+        {-(lambda234D * lambda238D) / ((lambda230D - lambda234D) * (lambda234D - lambda238D)), lambda234D / (lambda230D - lambda234D), 0.0},
+        {(lambda234D * lambda238D) / ((lambda230D - lambda234D) * (lambda230D - lambda238D)), -lambda234D / (lambda230D - lambda234D), 1.0}};
+        return new Matrix(matrixQinvUThvals);
     }
 
-    @Override
-    public void setFilteredFractions(Vector<ETFractionInterface> filteredFractions) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    private Matrix matrixUTh(double t) {
+        return matrixQUTh().times(matrixGUTh(t)).times(matrixQinvUTh());
     }
 
-    @Override
-    public Vector<ETFractionInterface> getSelectedFractions() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    private Matrix matrixUTh0(double t) {
+        return matrixQUTh().getMatrix(2, 2, 0, 2).times(matrixGUTh(t)).times(matrixQinvUTh()); //For the 230 concentration only (to solve for root)
     }
 
-    @Override
-    public boolean isShowFilteredEllipses() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void setShowFilteredEllipses(boolean showFilteredEllipses) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    private Matrix matrixUTh4(double t) {
+        return matrixQUTh().getMatrix(1, 1, 0, 2).times(matrixGUTh(t)).times(matrixQinvUTh()); //For the 234 concentration only (to solve for root)
     }
 
     /**
