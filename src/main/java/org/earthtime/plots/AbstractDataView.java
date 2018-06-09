@@ -110,6 +110,8 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
      *
      */
     protected double displayOffsetX = 0;
+    protected double xAxisMax;
+    protected double yAxisMax;
     protected int zoomMinX;
     protected int zoomMinY;
     protected int zoomMaxX;
@@ -339,13 +341,10 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
                 }
             }
         }
-
-        // draw and label axes
-        g2d.setFont(
-                new Font("Monospaced", Font.BOLD, 20));
+        
+        
         g2d.drawRect(
                 leftMargin, topMargin, graphWidth - 1, graphHeight - 1);
-
     }
 
     /**
@@ -576,6 +575,11 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
                 maxY += getRangeY_Display() / ZOOM_FACTOR;
 
                 repaint();
+            } else {
+                minX = 0.0;
+                maxX = xAxisMax;
+                minY = 0.0;
+                maxY = yAxisMax;
             }
         }
     }

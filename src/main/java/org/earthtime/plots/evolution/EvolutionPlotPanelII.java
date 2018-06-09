@@ -18,6 +18,7 @@ package org.earthtime.plots.evolution;
 import Jama.Matrix;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Shape;
@@ -48,8 +49,6 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
 
     private double[] annumIsochrons;
     private double[] ar48icntrs;
-    private double xAxisMax;
-    private double yAxisMax;
 
     private double[][] xEndPointsD;
     private double[][] yEndPointsD;
@@ -109,53 +108,22 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
         g2d.drawRect(leftMargin, topMargin, (int) graphWidth, (int) graphHeight);
 
         // draw isochrons
-//        g2d.setPaint(Color.red);
-//        for (int i = 0; i < xEndPointsD[0].length; i++) {
-//            Shape isochronLine = new Path2D.Double();
-//            g2d.setStroke(new BasicStroke(1.75f));
-//            ((Path2D) isochronLine).moveTo(//
-//                    mapX(xEndPointsD[0][i]), //
-//                    mapY(yEndPointsD[0][i]));
-//            ((Path2D) isochronLine).lineTo( //
-//                    mapX(xEndPointsD[1][i]), //
-//                    mapY(yEndPointsD[1][i]));
-//            g2d.draw(isochronLine);
-//        }
+        double[] yItercepts = new double[xEndPointsD[0].length];
+        double[] slopes = new double[xEndPointsD[0].length];
+        g2d.setPaint(Color.red);
         for (int i = 0; i < annumIsochrons.length; i++) {
-            double lowX = xEndPointsD[0][i];
-            double lowY = yEndPointsD[0][i];
+            slopes[i] = (yEndPointsD[1][i] - yEndPointsD[0][i]) / (xEndPointsD[1][i] - xEndPointsD[0][i]);
+            yItercepts[i] = yEndPointsD[0][i] - slopes[i] * xEndPointsD[0][i];
 
-            double date = annumIsochrons[i];
-
-            double slope = 1.0 /Math.exp(date * lambda238D - 1.0);
-
-            String label = new BigDecimal(date).movePointLeft(3).setScale(0, RoundingMode.HALF_UP).toPlainString() + " ka";
-
-            double yIntercept = lowY - slope * lowX;
-
-            Line2D line = new Line2D.Double(
-                    mapX(lowX),
-                    mapY(yIntercept + slope * lowX),
-                    mapX(getMaxX_Display()),
-                    mapY(yIntercept + slope * getMaxX_Display()));
-            g2d.draw(line);
-
-            double printSlope
-                    = (mapY(yIntercept + slope * lowX) - mapY(yIntercept + slope * getMaxX_Display())) / (mapX(getMaxX_Display()) - mapX(lowX));
-            double displacementFactor = lowX * 0.05;
-
-            double rotateAngle = StrictMath.atan(printSlope);
-            g2d.rotate(-rotateAngle,
-                    (float) mapX(lowX + displacementFactor),
-                    (float) mapY(yIntercept + slope * (lowX + displacementFactor)));
-
-            g2d.drawString(label,
-                    (float) mapX((lowX + displacementFactor)),
-                    (float) mapY(yIntercept + slope * (lowX + displacementFactor)) - 2f);
-
-            g2d.rotate(rotateAngle,
-                    (float) mapX((lowX + displacementFactor)),
-                    (float) mapY(yIntercept + slope * (lowX + displacementFactor)));
+            Shape isochronLine = new Path2D.Double();
+            g2d.setStroke(new BasicStroke(1.75f));
+            ((Path2D) isochronLine).moveTo(//
+                    mapX(xEndPointsD[0][i]), //
+                    mapY(yItercepts[i] + slopes[i] * xEndPointsD[0][i]));
+            ((Path2D) isochronLine).lineTo( //
+                    mapX(getMaxX_Display()), //
+                    mapY(yItercepts[i] + slopes[i] * getMaxX_Display()));
+            g2d.draw(isochronLine);
 
         }
         // draw contour lines
@@ -210,6 +178,37 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
 
         drawAxesAndTicks(g2d, rangeX, rangeY);
 
+        
+        
+        // draw and label axes
+        g2d.setFont(
+                new Font("Monospaced", Font.BOLD, 12));
+
+
+        for (int i = 0; i < annumIsochrons.length; i++) {
+
+            String label = " " + new BigDecimal(annumIsochrons[i]).movePointLeft(3).setScale(0, RoundingMode.HALF_UP).toPlainString() + " ka";
+
+            double rotateAngle = StrictMath.atan(slopes[i]);
+
+            double labelX = ((yItercepts[i] + slopes[i] * getMaxX_Display()) < (getMaxY_Display() - 0.000)) ? getMaxX_Display() : (getMaxY_Display() - yItercepts[i]) / slopes[i];
+            float displacementFactorX = 0f;
+            float displacementFactorY = -6f;
+
+            if ((labelX >= getMinX_Display()) && (labelX <= getMaxX_Display())) {
+                g2d.rotate(-rotateAngle,
+                        (float) mapX(labelX) ,
+                        (float) mapY(yItercepts[i] + slopes[i] * (labelX)) );
+
+                g2d.drawString(label,
+                        (float) mapX(labelX) + displacementFactorX,
+                        (float) mapY(yItercepts[i] + slopes[i] * (labelX)) - displacementFactorY);
+
+                g2d.rotate(rotateAngle,
+                        (float) mapX(labelX) ,
+                        (float) mapY(yItercepts[i] + slopes[i] * (labelX)) );
+            }
+        }
     }
 
     @Override
@@ -230,7 +229,9 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
             minY = 0.0;
 
             maxX = (xAxisMax == 0) ? 1.5 : xAxisMax;
+            xAxisMax = maxX;
             maxY = (yAxisMax == 0) ? 2.0 : yAxisMax;
+            yAxisMax = maxY;
         }
 
         if (doReset) {//selectedFractions.size() > 0) {
@@ -247,8 +248,8 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
                 }
             }
 
-            Matrix ar48limYaxis = new Matrix(new double[][]{{0.0, maxY * 2}});
-            Matrix ar08limXaxis = new Matrix(new double[][]{{0.0, maxX * 2}});
+            Matrix ar48limYaxis = new Matrix(new double[][]{{0.0, maxY * 1}});
+            Matrix ar08limXaxis = new Matrix(new double[][]{{0.0, maxX * 1}});
 
             // % Calculations for isochron line parameters and endpoints
             int nisochrons = annumIsochrons.length;
