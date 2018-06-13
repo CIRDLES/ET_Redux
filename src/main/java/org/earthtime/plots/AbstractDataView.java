@@ -57,7 +57,7 @@ import org.earthtime.utilities.TicGeneratorForAxes;
  */
 public abstract class AbstractDataView extends JLayeredPane implements AliquotDetailsDisplayInterface, MouseInputListener, MouseWheelListener {
 
-    protected static final double ZOOM_FACTOR = 25.0;
+    protected static final double ZOOM_FACTOR = 50.0;
 
     protected double width;
     protected double height;
@@ -274,8 +274,9 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
         // determine the axis ticks
         BigDecimal[] tics = TicGeneratorForAxes.generateTics(getMinY_Display(), getMaxY_Display(), 15);
 
-        tics = new BigDecimal[(int) maxY * 4 + 2];
-        for (int i = 0; i < (int) maxY * 4 + 2; i++) {
+        // forced tics here temp for evolution
+        tics = new BigDecimal[(int) maxY * 4 + 4];
+        for (int i = 0; i < (int) maxY * 4 + 4; i++) {
             tics[i] = new BigDecimal(i * (0.25));
         }
         // trap for bad plot
@@ -341,8 +342,7 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
                 }
             }
         }
-        
-        
+
         g2d.drawRect(
                 leftMargin, topMargin, graphWidth - 1, graphHeight - 1);
     }
@@ -527,19 +527,22 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
      */
     @Override
     public void mouseDragged(MouseEvent evt) {
-        zoomMaxX = evt.getX();
-        zoomMaxY = evt.getY();
+        if (mouseInHouse(evt)) {
+            zoomMaxX = evt.getX();
+            zoomMaxY = evt.getY();
 
-        // prevent all but upper right quadrant
-        setDisplayOffsetX(Math.max(getDisplayOffsetX() //
-                + convertMouseXToValue(zoomMinX) - convertMouseXToValue(zoomMaxX), 0.0));
-        setDisplayOffsetY(Math.min(getDisplayOffsetY() //
-                + (convertMouseYToValue(zoomMinY) - convertMouseYToValue(zoomMaxY)), minY));
+            // prevent all but upper right quadrant
+            double calcDisplayOffsetXDelta = convertMouseXToValue(zoomMinX) - convertMouseXToValue(zoomMaxX);
+            displayOffsetX += (((minX + displayOffsetX + calcDisplayOffsetXDelta) > 0) ? calcDisplayOffsetXDelta : 0.0);
 
-        zoomMinX = zoomMaxX;
-        zoomMinY = zoomMaxY;
+            double calcDisplayOffsetYDelta = convertMouseYToValue(zoomMinY) - convertMouseYToValue(zoomMaxY);
+            displayOffsetY += (((minY + displayOffsetY + calcDisplayOffsetYDelta) > 0) ? calcDisplayOffsetYDelta : 0.0);
 
-        repaint();
+            zoomMinX = zoomMaxX;
+            zoomMinY = zoomMaxY;
+
+            repaint();
+        }
     }
 
     /**
@@ -550,37 +553,53 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
     public void mouseMoved(MouseEvent evt) {
     }
 
-    public void mouseWheelMoved(MouseWheelEvent e) {
-        // positive notches = zoom out negative = zoomin
+    protected boolean mouseInHouse(MouseEvent evt) {
+        return ((evt.getX() >= leftMargin)
+                && (evt.getY() >= topMargin)
+                && (evt.getY() <= graphHeight + topMargin)
+                && (evt.getX() <= (graphWidth + leftMargin)));
+    }
 
-        int notches = e.getWheelRotation();
-        if (notches < 0) {
-            minX += getRangeX_Display() / ZOOM_FACTOR;
-            maxX -= getRangeX_Display() / ZOOM_FACTOR;
-            minY += getRangeY_Display() / ZOOM_FACTOR;
-            maxY -= getRangeY_Display() / ZOOM_FACTOR;
+    @Override
+    public void mouseWheelMoved(MouseWheelEvent e) {
+        if (mouseInHouse(e)) {
+
+            zoomMaxX = e.getX();
+            zoomMaxY = e.getY();
+            zoomMinX = zoomMaxX;
+            zoomMinY = zoomMaxY;
+
+            int notches = e.getWheelRotation();
+            if (notches < 0) {// zoom in
+                minX += getRangeX_Display() / ZOOM_FACTOR;
+                maxX -= getRangeX_Display() / ZOOM_FACTOR;
+                minY += getRangeY_Display() / ZOOM_FACTOR;
+                maxY -= getRangeY_Display() / ZOOM_FACTOR;
+
+            } else {// zoom out
+                minX -= getRangeX_Display() / ZOOM_FACTOR;
+                minX = Math.max(minX, 0.0);
+
+                minY -= getRangeY_Display() / ZOOM_FACTOR;
+                minY = Math.max(minY, 0.0);
+
+                // stop zoom out
+                if (minX * minY > 0.0) {
+                    maxX += getRangeX_Display() / ZOOM_FACTOR;
+                    maxY += getRangeY_Display() / ZOOM_FACTOR;
+
+                    repaint();
+                } else {
+                    minX = 0.0;
+                    maxX = xAxisMax;
+                    minY = 0.0;
+                    maxY = yAxisMax;
+                }
+            }
+            double calcDisplayOffsetXDelta = convertMouseXToValue(zoomMinX) - convertMouseXToValue(zoomMaxX);
+            displayOffsetX += (((minX + displayOffsetX + calcDisplayOffsetXDelta) > 0) ? calcDisplayOffsetXDelta : 0.0);
 
             repaint();
-
-        } else {
-            minX -= getRangeX_Display() / ZOOM_FACTOR;
-            minX = Math.max(minX, 0.0);
-
-            minY -= getRangeY_Display() / ZOOM_FACTOR;
-            minY = Math.max(minY, 0.0);
-
-            // stop zoom out
-            if (minX * minY > 0.0) {
-                maxX += getRangeX_Display() / ZOOM_FACTOR;
-                maxY += getRangeY_Display() / ZOOM_FACTOR;
-
-                repaint();
-            } else {
-                minX = 0.0;
-                maxX = xAxisMax;
-                minY = 0.0;
-                maxY = yAxisMax;
-            }
         }
     }
 

@@ -126,6 +126,7 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
             g2d.draw(isochronLine);
 
         }
+        
         // draw contour lines
         g2d.setPaint(Color.blue);
         for (int i = 0; i < xy.length; i++) {
@@ -178,35 +179,36 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
 
         drawAxesAndTicks(g2d, rangeX, rangeY);
 
-        
-        
-        // draw and label axes
-        g2d.setFont(
-                new Font("Monospaced", Font.BOLD, 12));
-
+        // draw and label isochron axes - top and right
+        g2d.setFont( new Font("Monospaced", Font.BOLD, 12));
 
         for (int i = 0; i < annumIsochrons.length; i++) {
 
             String label = " " + new BigDecimal(annumIsochrons[i]).movePointLeft(3).setScale(0, RoundingMode.HALF_UP).toPlainString() + " ka";
+            // set infinity label
+            if (annumIsochrons[i] >= 10e10) {
+                label = " \u221E";
+            }
 
             double rotateAngle = StrictMath.atan(slopes[i]);
 
             double labelX = ((yItercepts[i] + slopes[i] * getMaxX_Display()) < (getMaxY_Display() - 0.000)) ? getMaxX_Display() : (getMaxY_Display() - yItercepts[i]) / slopes[i];
+            double labelY = slopes[i] * labelX + yItercepts[i];
             float displacementFactorX = 0f;
             float displacementFactorY = -6f;
 
-            if ((labelX >= getMinX_Display()) && (labelX <= getMaxX_Display())) {
+            if ((labelX >= getMinX_Display()) && (labelX <= getMaxX_Display()) && (labelY > getMinY_Display())) {
                 g2d.rotate(-rotateAngle,
-                        (float) mapX(labelX) ,
-                        (float) mapY(yItercepts[i] + slopes[i] * (labelX)) );
+                        (float) mapX(labelX),
+                        (float) mapY(yItercepts[i] + slopes[i] * (labelX)));
 
                 g2d.drawString(label,
                         (float) mapX(labelX) + displacementFactorX,
                         (float) mapY(yItercepts[i] + slopes[i] * (labelX)) - displacementFactorY);
 
                 g2d.rotate(rotateAngle,
-                        (float) mapX(labelX) ,
-                        (float) mapY(yItercepts[i] + slopes[i] * (labelX)) );
+                        (float) mapX(labelX),
+                        (float) mapY(yItercepts[i] + slopes[i] * (labelX)));
             }
         }
     }
@@ -224,7 +226,6 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
 
             removeAll();
 
-//        if (doReset) {
             minX = 0.0;
             minY = 0.0;
 
@@ -232,139 +233,8 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
             xAxisMax = maxX;
             maxY = (yAxisMax == 0) ? 2.0 : yAxisMax;
             yAxisMax = maxY;
-        }
 
-        if (doReset) {//selectedFractions.size() > 0) {
-            // adapted from Noah's matlab code 
-
-            if (annumIsochrons.length == 0) {
-                annumIsochrons = new double[]{25.0e3, 50.0e3, 75.0e3, 100.0e3, 150.0e3, 200.0e3, 300.0e3, 10e13}; // plotted isochrons
-            }
-
-            if (ar48icntrs.length == 0) {
-                ar48icntrs = new double[(int) maxY * 4 + 2];
-                for (int i = 0; i < (int) maxY * 4 + 2; i++) {
-                    ar48icntrs[i] = i * (0.25);
-                }
-            }
-
-            Matrix ar48limYaxis = new Matrix(new double[][]{{0.0, maxY * 1}});
-            Matrix ar08limXaxis = new Matrix(new double[][]{{0.0, maxX * 1}});
-
-            // % Calculations for isochron line parameters and endpoints
-            int nisochrons = annumIsochrons.length;
-            Matrix r48lim = ar48limYaxis.times(lambda238D / lambda234D);
-            Matrix r08lim = ar08limXaxis.times(lambda238D / lambda230D);
-
-            // Calculations for isochron slope/y-intercept, in isotope ratio coordinates (not activity ratios)
-            Matrix abmat = new Matrix(2, nisochrons, 0.0);
-            Matrix xminpoints = new Matrix(1, nisochrons, 0.0);
-            Matrix yminpoints = new Matrix(1, nisochrons, 0.0);
-
-            int it = -1;
-            for (int i = 0; i < nisochrons; i++) {
-                double t = annumIsochrons[i];
-                it++;
-
-                if (t >= 10e13) {
-                    abmat.set(1, it, lambda230D / lambda234D - 1.0); //% note: works, but not sure how to evaluate this limit
-                    abmat.set(0, it, lambda238D / (lambda230D - lambda238D)); // y-int with above slope through transient eqbm
-
-                    xminpoints.set(0, it, matrixQUTh().get(2, 0) / matrixQUTh().get(0, 0)); // limit is transient eqbm.  Lower starts all end up here after ~5 Myr
-                    yminpoints.set(0, it, matrixQUTh().get(1, 0) / matrixQUTh().get(0, 0));
-
-                } else {// finite t
-                    Matrix mxpNegAt = matrixUTh(-t);
-                    abmat.set(1, it, -mxpNegAt.get(2, 2) / mxpNegAt.get(2, 1));// slope
-
-                    Matrix mxpAt = matrixUTh(t);
-                    double XX = -mxpAt.get(2, 0) / mxpAt.get(2, 1);
-                    abmat.set(0, it, matrixUTh4(t).times((new Matrix(new double[][]{{1.0, XX, 0.0}})).transpose()).get(0, 0));   // y-int
-                    Matrix mxpAtmin = mxpAt.times((new Matrix(new double[][]{{1.0, 0.0, 0.0}})).transpose());
-
-                    xminpoints.set(0, it, mxpAtmin.get(2, 0) / mxpAtmin.get(0, 0));
-                    yminpoints.set(0, it, mxpAtmin.get(1, 0) / mxpAtmin.get(0, 0));
-                }
-            }
-
-            // y-coord of intersections with left boundary of box
-            Matrix leftBorder = abmat.getMatrix(0, 0, 0, nisochrons - 1).plus(abmat.getMatrix(1, 1, 0, nisochrons - 1).times(r08lim.get(0, 0)));
-            // y-coord of intersections with right boundary of box
-            Matrix rightBorder = abmat.getMatrix(0, 0, 0, nisochrons - 1).plus(abmat.getMatrix(1, 1, 0, nisochrons - 1).times(r08lim.get(0, 1)));
-            // x-coord of intersections with bottom boundary of box
-            Matrix bottomBorder = (new Matrix(1, nisochrons, r48lim.get(0, 0))).minus(abmat.getMatrix(0, 0, 0, nisochrons - 1)).arrayRightDivide(abmat.getMatrix(1, 1, 0, nisochrons - 1));
-            // x-coord of intersections with top boundary of box
-            Matrix topBorder = (new Matrix(1, nisochrons, r48lim.get(0, 1))).minus(abmat.getMatrix(0, 0, 0, nisochrons - 1)).arrayRightDivide(abmat.getMatrix(1, 1, 0, nisochrons - 1));
-
-            xEndPointsD = new double[2][nisochrons];
-            yEndPointsD = new double[2][nisochrons];
-            for (int col = 0; col < nisochrons; col++) {
-                xEndPointsD[0][col] = leftBorder.get(0, col) > r48lim.get(0, 0) ? r08lim.get(0, 0) : 0.0;
-                xEndPointsD[0][col] += (leftBorder.get(0, col) <= r48lim.get(0, 0) ? bottomBorder.get(0, col) : 0.0);
-                xEndPointsD[0][col] = Math.max(xEndPointsD[0][col], xminpoints.get(0, col));
-                xEndPointsD[0][col] *= lambda230D / lambda238D;
-
-                xEndPointsD[1][col] = rightBorder.get(0, col) < r48lim.get(0, 1) ? r08lim.get(0, 1) : 0.0;
-                xEndPointsD[1][col] += (rightBorder.get(0, col) >= r48lim.get(0, 1) ? topBorder.get(0, col) : 0.0);
-                xEndPointsD[1][col] *= lambda230D / lambda238D;
-
-                yEndPointsD[0][col] = leftBorder.get(0, col) > r48lim.get(0, 0) ? leftBorder.get(0, col) : 0.0;
-                yEndPointsD[0][col] += (leftBorder.get(0, col) <= r48lim.get(0, 0) ? r48lim.get(0, 0) : 0.0);
-                yEndPointsD[0][col] = Math.max(yEndPointsD[0][col], yminpoints.get(0, col));
-                yEndPointsD[0][col] *= lambda234D / lambda238D;
-
-                yEndPointsD[1][col] = rightBorder.get(0, col) < r48lim.get(0, 1) ? rightBorder.get(0, col) : 0.0;
-                yEndPointsD[1][col] += (rightBorder.get(0, col) >= r48lim.get(0, 1) ? r48lim.get(0, 1) : 0.0);
-                yEndPointsD[1][col] *= lambda234D / lambda238D;
-            }
-
-            // calculate ar48i contours
-            int nts = 10; // number of segments
-            // build array of vectors of evenly spaced values with last value = 2e6
-            tv = new double[ar48icntrs.length][nts];
-            for (int i = 0; i < (nts - 1); i++) {
-                double colVal = (double) (i * 1.0e6 / (double) (nts - 2));
-                for (double[] tv1 : tv) {
-                    tv1[i] = colVal;
-                }
-            }
-            for (double[] tv1 : tv) {
-                tv1[nts - 1] = 2e6;
-            }
-
-            xy = new double[ar48icntrs.length][2][nts];
-            dardt = new double[ar48icntrs.length][2][nts];
-
-            int iar48i = -1;
-
-            for (double ar48i : ar48icntrs) {
-                iar48i++;
-                it = -1;
-
-                for (double t : tv[iar48i]) {
-                    it++;
-                    Matrix n0 = new Matrix(new double[][]{{1, ar48i * lambda238D / lambda234D, 0}}).transpose();
-
-                    Matrix nt = matrixUTh(t).times(n0);
-
-                    xy[iar48i][0][it] = nt.get(2, 0) / nt.get(0, 0) * lambda230D / lambda238D;
-                    xy[iar48i][1][it] = nt.get(1, 0) / nt.get(0, 0) * lambda234D / lambda238D;
-
-                    double dar48dnt1 = -nt.get(1, 0) / nt.get(0, 0) / nt.get(0, 0) * lambda234D / lambda238D;
-                    double dar48dnt2 = 1.0 / nt.get(0, 0) * lambda234D / lambda238D;
-                    double dar48dnt3 = 0;
-                    double dar08dnt1 = -nt.get(2, 0) / nt.get(0, 0) / nt.get(0, 0) * lambda230D / lambda238D;
-                    double dar08dnt2 = 0;
-                    double dar08dnt3 = 1.0 / nt.get(0, 0) * lambda230D / lambda238D;
-
-                    Matrix dardnt = new Matrix(new double[][]{{dar08dnt1, dar08dnt2, dar08dnt3}, {dar48dnt1, dar48dnt2, dar48dnt3}});
-                    Matrix dntdt = matrixA().times(matrixUTh(t)).times(n0);
-
-                    dardt[iar48i][0][it] = dardnt.times(dntdt).get(0, 0);
-                    dardt[iar48i][1][it] = dardnt.times(dntdt).get(1, 0);
-                }
-            }
-
+            buildIsochronsAndContours();
             repaint();
             validate();
 
@@ -372,6 +242,138 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
         }
 
         repaint();
+    }
+
+    private void buildIsochronsAndContours() {
+        // adapted from Noah's matlab code 
+
+        if (annumIsochrons.length == 0) {
+            annumIsochrons = new double[]{25.0e3, 50.0e3, 75.0e3, 100.0e3, 150.0e3, 200.0e3, 300.0e3, 500.0e3, 10e16}; // plotted isochrons
+        }
+
+        if (ar48icntrs.length == 0) {
+            ar48icntrs = new double[(int) maxY * 4 + 4];
+            for (int i = 0; i < (int) maxY * 4 + 4; i++) {
+                ar48icntrs[i] = i * (0.25);
+            }
+        }
+
+        Matrix ar48limYaxis = new Matrix(new double[][]{{0.0, maxY * 1}});
+        Matrix ar08limXaxis = new Matrix(new double[][]{{0.0, maxX * 1}});
+
+        // % Calculations for isochron line parameters and endpoints
+        int nisochrons = annumIsochrons.length;
+        Matrix r48lim = ar48limYaxis.times(lambda238D / lambda234D);
+        Matrix r08lim = ar08limXaxis.times(lambda238D / lambda230D);
+
+        // Calculations for isochron slope/y-intercept, in isotope ratio coordinates (not activity ratios)
+        Matrix abmat = new Matrix(2, nisochrons, 0.0);
+        Matrix xminpoints = new Matrix(1, nisochrons, 0.0);
+        Matrix yminpoints = new Matrix(1, nisochrons, 0.0);
+
+        int it = -1;
+        for (int i = 0; i < nisochrons; i++) {
+            double t = annumIsochrons[i];
+            it++;
+
+            if (t >= 10e13) {
+                abmat.set(1, it, lambda230D / lambda234D - 1.0); //% note: works, but not sure how to evaluate this limit
+                abmat.set(0, it, lambda238D / (lambda230D - lambda238D)); // y-int with above slope through transient eqbm
+
+                xminpoints.set(0, it, matrixQUTh().get(2, 0) / matrixQUTh().get(0, 0)); // limit is transient eqbm.  Lower starts all end up here after ~5 Myr
+                yminpoints.set(0, it, matrixQUTh().get(1, 0) / matrixQUTh().get(0, 0));
+
+            } else {// finite t
+                Matrix mxpNegAt = matrixUTh(-t);
+                abmat.set(1, it, -mxpNegAt.get(2, 2) / mxpNegAt.get(2, 1));// slope
+
+                Matrix mxpAt = matrixUTh(t);
+                double XX = -mxpAt.get(2, 0) / mxpAt.get(2, 1);
+                abmat.set(0, it, matrixUTh4(t).times((new Matrix(new double[][]{{1.0, XX, 0.0}})).transpose()).get(0, 0));   // y-int
+                Matrix mxpAtmin = mxpAt.times((new Matrix(new double[][]{{1.0, 0.0, 0.0}})).transpose());
+
+                xminpoints.set(0, it, mxpAtmin.get(2, 0) / mxpAtmin.get(0, 0));
+                yminpoints.set(0, it, mxpAtmin.get(1, 0) / mxpAtmin.get(0, 0));
+            }
+        }
+
+        // y-coord of intersections with left boundary of box
+        Matrix leftBorder = abmat.getMatrix(0, 0, 0, nisochrons - 1).plus(abmat.getMatrix(1, 1, 0, nisochrons - 1).times(r08lim.get(0, 0)));
+        // y-coord of intersections with right boundary of box
+        Matrix rightBorder = abmat.getMatrix(0, 0, 0, nisochrons - 1).plus(abmat.getMatrix(1, 1, 0, nisochrons - 1).times(r08lim.get(0, 1)));
+        // x-coord of intersections with bottom boundary of box
+        Matrix bottomBorder = (new Matrix(1, nisochrons, r48lim.get(0, 0))).minus(abmat.getMatrix(0, 0, 0, nisochrons - 1)).arrayRightDivide(abmat.getMatrix(1, 1, 0, nisochrons - 1));
+        // x-coord of intersections with top boundary of box
+        Matrix topBorder = (new Matrix(1, nisochrons, r48lim.get(0, 1))).minus(abmat.getMatrix(0, 0, 0, nisochrons - 1)).arrayRightDivide(abmat.getMatrix(1, 1, 0, nisochrons - 1));
+
+        xEndPointsD = new double[2][nisochrons];
+        yEndPointsD = new double[2][nisochrons];
+        for (int col = 0; col < nisochrons; col++) {
+            xEndPointsD[0][col] = leftBorder.get(0, col) > r48lim.get(0, 0) ? r08lim.get(0, 0) : 0.0;
+            xEndPointsD[0][col] += (leftBorder.get(0, col) <= r48lim.get(0, 0) ? bottomBorder.get(0, col) : 0.0);
+            xEndPointsD[0][col] = Math.max(xEndPointsD[0][col], xminpoints.get(0, col));
+            xEndPointsD[0][col] *= lambda230D / lambda238D;
+
+            xEndPointsD[1][col] = rightBorder.get(0, col) < r48lim.get(0, 1) ? r08lim.get(0, 1) : 0.0;
+            xEndPointsD[1][col] += (rightBorder.get(0, col) >= r48lim.get(0, 1) ? topBorder.get(0, col) : 0.0);
+            xEndPointsD[1][col] *= lambda230D / lambda238D;
+
+            yEndPointsD[0][col] = leftBorder.get(0, col) > r48lim.get(0, 0) ? leftBorder.get(0, col) : 0.0;
+            yEndPointsD[0][col] += (leftBorder.get(0, col) <= r48lim.get(0, 0) ? r48lim.get(0, 0) : 0.0);
+            yEndPointsD[0][col] = Math.max(yEndPointsD[0][col], yminpoints.get(0, col));
+            yEndPointsD[0][col] *= lambda234D / lambda238D;
+
+            yEndPointsD[1][col] = rightBorder.get(0, col) < r48lim.get(0, 1) ? rightBorder.get(0, col) : 0.0;
+            yEndPointsD[1][col] += (rightBorder.get(0, col) >= r48lim.get(0, 1) ? r48lim.get(0, 1) : 0.0);
+            yEndPointsD[1][col] *= lambda234D / lambda238D;
+        }
+
+        // calculate ar48i contours
+        int nts = 10; // number of segments
+        // build array of vectors of evenly spaced values with last value = 2e6
+        tv = new double[ar48icntrs.length][nts];
+        for (int i = 0; i < (nts - 1); i++) {
+            double colVal = (double) (i * 1.0e6 / (double) (nts - 2));
+            for (double[] tv1 : tv) {
+                tv1[i] = colVal;
+            }
+        }
+        for (double[] tv1 : tv) {
+            tv1[nts - 1] = 2e6;
+        }
+
+        xy = new double[ar48icntrs.length][2][nts];
+        dardt = new double[ar48icntrs.length][2][nts];
+
+        int iar48i = -1;
+
+        for (double ar48i : ar48icntrs) {
+            iar48i++;
+            it = -1;
+
+            for (double t : tv[iar48i]) {
+                it++;
+                Matrix n0 = new Matrix(new double[][]{{1, ar48i * lambda238D / lambda234D, 0}}).transpose();
+
+                Matrix nt = matrixUTh(t).times(n0);
+
+                xy[iar48i][0][it] = nt.get(2, 0) / nt.get(0, 0) * lambda230D / lambda238D;
+                xy[iar48i][1][it] = nt.get(1, 0) / nt.get(0, 0) * lambda234D / lambda238D;
+
+                double dar48dnt1 = -nt.get(1, 0) / nt.get(0, 0) / nt.get(0, 0) * lambda234D / lambda238D;
+                double dar48dnt2 = 1.0 / nt.get(0, 0) * lambda234D / lambda238D;
+                double dar48dnt3 = 0;
+                double dar08dnt1 = -nt.get(2, 0) / nt.get(0, 0) / nt.get(0, 0) * lambda230D / lambda238D;
+                double dar08dnt2 = 0;
+                double dar08dnt3 = 1.0 / nt.get(0, 0) * lambda230D / lambda238D;
+
+                Matrix dardnt = new Matrix(new double[][]{{dar08dnt1, dar08dnt2, dar08dnt3}, {dar48dnt1, dar48dnt2, dar48dnt3}});
+                Matrix dntdt = matrixA().times(matrixUTh(t)).times(n0);
+
+                dardt[iar48i][0][it] = dardnt.times(dntdt).get(0, 0);
+                dardt[iar48i][1][it] = dardnt.times(dntdt).get(1, 0);
+            }
+        }
     }
 
     private double[][] diag(double zeroZero, double oneOne, double twoTwo) {
