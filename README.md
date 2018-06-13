@@ -1,3 +1,5 @@
+URGENT 2018 - ET_Redux will not run on Java 1.9 or higher
+==
 ET_Redux
 ========
 
