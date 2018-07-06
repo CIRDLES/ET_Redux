@@ -1,4 +1,4 @@
-URGENT 2018 - ET_Redux will not run on Java 1.9 or higher
+URGENT 2018 - ET_Redux will not YET run on Java 1.9 or higher - find Java 1.8 [here](http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html)
 ==
 ET_Redux
 ========
@@ -29,8 +29,8 @@ Getting Started for Users:
 You will always find the latest release 
 [here](https://github.com/CIRDLES/ET_Redux/releases) - it consists of one file that can be 
 saved and executed from anywhere on your 64-bit machine - Unix, Linux, Mac, and Windows.
-Be sure you have the latest Java Runtime Environment (JRE), found 
-[here](http://www.oracle.com/technetwork/java/javase/downloads/index.html).  We are building 
+Be sure you have the Java 1.8 Runtime Environment (JRE), found 
+[here](http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html).  We are building 
 help files for users [here](http://cirdles.org/projects/et_redux/).
 
 Getting Started for Developers:
