@@ -280,7 +280,7 @@ public abstract class AbstractRawDataView extends JLayeredPane implements MouseI
      * @param g2d
      */
     protected void paintInit(Graphics2D g2d) {
-        g2d.setClip(getLeftMargin(), getTopMargin(), (int) getGraphWidth(), (int) getGraphHeight());
+    // aug 2018 this line broke the functionality  of laicpms raw data session    g2d.setClip(getLeftMargin(), getTopMargin(), (int) getGraphWidth(), (int) getGraphHeight());
         RenderingHints rh = g2d.getRenderingHints();
         rh.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         rh.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);

@@ -52,7 +52,6 @@ import org.earthtime.Tripoli.fitFunctions.AbstractFunctionOfX;
 import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.Tripoli.massSpecSetups.AbstractMassSpecSetup;
 import org.earthtime.Tripoli.rawDataFiles.handlers.AbstractRawDataFileHandler;
-import org.earthtime.Tripoli.rawDataFiles.handlers.shrimp.ShrimpFileHandler;
 import org.earthtime.Tripoli.samples.AbstractTripoliSample;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
@@ -687,7 +686,7 @@ public class TripoliSession implements
     public void applyCorrections(boolean inLiveMode) {
 
         // feb 2016 temp hack for SHRIMP
-        if (rawDataFileHandler instanceof ShrimpFileHandler) {
+        if (false){//rawDataFileHandler instanceof ShrimpFileHandler) {
             //do nothing
         } else {
 

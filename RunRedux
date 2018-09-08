@@ -1,0 +1,5 @@
+#!/bin/bash
+
+echo Running ET_Redux
+
+java -jar ./target/ET_Redux-3.6.60.jar

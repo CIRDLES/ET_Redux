@@ -17,7 +17,6 @@
  */
 package org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction;
 
-import Jama.Matrix;
 import java.util.*;
 import org.earthtime.matrices.matrixModels.AbstractMatrixModel;
 import org.earthtime.matrices.matrixModels.CovarianceMatrixModel;

@@ -29,7 +29,8 @@ import org.earthtime.dataDictionaries.FitFunctionTypeEnum;
 public class ConstantFitFunctionWithCovS implements FitFunctionInterface, Serializable {
 
     // Class variables
-    //private static final long serialVersionUID = -4168711014938748918L;
+    private static final long serialVersionUID = -261607711664329699L;
+
     private static ConstantFitFunctionWithCovS instance = null;
 
     private ConstantFitFunctionWithCovS() {
@@ -75,16 +76,16 @@ public class ConstantFitFunctionWithCovS implements FitFunctionInterface, Serial
 
         // create function of x for mean
         AbstractFunctionOfX myFofX = new FofX(meanIntensity);
-        
+
         // create column vector filled with ones
         Matrix onesVector = new Matrix(countOfActiveData, 1, 1.0);
 
         Matrix MeasuredCovMatrixS_solveOnesVector = MeasuredCovMatrixS.solve(onesVector);
         double meanIntensityVariance = 1.0 / onesVector.transpose().times(MeasuredCovMatrixS_solveOnesVector).get(0, 0);
-        
+
         // nov 2014
-        myFofX.setMatrixJacobianYInterceptLogRatioXY(MeasuredCovMatrixS_solveOnesVector.transpose().times(meanIntensityVariance));      
-        
+        myFofX.setMatrixJacobianYInterceptLogRatioXY(MeasuredCovMatrixS_solveOnesVector.transpose().times(meanIntensityVariance));
+
         // set the variance
         myFofX.setFitParameterCovarianceMatrix(new Matrix( //
                 new double[][]{{meanIntensityVariance}}));

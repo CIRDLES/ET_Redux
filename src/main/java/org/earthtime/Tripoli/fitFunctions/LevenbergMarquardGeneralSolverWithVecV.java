@@ -20,6 +20,9 @@ package org.earthtime.Tripoli.fitFunctions;
 
 import Jama.EigenvalueDecomposition;
 import Jama.Matrix;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectStreamClass;
 import java.io.Serializable;
 import org.earthtime.dataDictionaries.FitFunctionTypeEnum;
 
@@ -32,6 +35,16 @@ public class LevenbergMarquardGeneralSolverWithVecV implements FitFunctionInterf
 
     // Class variables
     //private static final long serialVersionUID = -7497190229192384278L;
+    
+        private void readObject(
+            ObjectInputStream stream)
+            throws IOException, ClassNotFoundException {
+        stream.defaultReadObject();
+        ObjectStreamClass myObject = ObjectStreamClass.lookup(
+                Class.forName(LevenbergMarquardGeneralSolverWithVecV.class.getCanonicalName()));
+        long theSUID = myObject.getSerialVersionUID();
+        System.out.println("Customized De-serialization of LevenbergMarquardGeneralSolverWithVecV " + theSUID);
+    }
     private static LevenbergMarquardGeneralSolverWithVecV instance = null;
     private AbstractOverDispersionLMVecAlgorithm overDispersionLMAlgorithm;
 

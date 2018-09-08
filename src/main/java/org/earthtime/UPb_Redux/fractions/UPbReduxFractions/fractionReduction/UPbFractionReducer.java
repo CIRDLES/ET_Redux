@@ -138,7 +138,6 @@ import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.fractions.fractionReduction.FractionReducer;
 import org.earthtime.matrices.matrixModels.AbstractMatrixModel;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
-import org.earthtime.ratioDataModels.physicalConstantsModels.PhysicalConstantsModel;
 import org.earthtime.reduxLabData.ReduxLabData;
 
 /**

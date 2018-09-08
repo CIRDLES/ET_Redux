@@ -119,6 +119,8 @@ import org.earthtime.beans.ET_JButton;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import static org.earthtime.dataDictionaries.SampleAnalysisTypesEnum.COMPILED;
+import static org.earthtime.dataDictionaries.SampleAnalysisTypesEnum.GENERIC_GA_UPB;
+import static org.earthtime.dataDictionaries.SampleAnalysisTypesEnum.GENERIC_SQUID3_UPB;
 import static org.earthtime.dataDictionaries.SampleAnalysisTypesEnum.GENERIC_UPB;
 import static org.earthtime.dataDictionaries.SampleAnalysisTypesEnum.IDTIMS;
 import static org.earthtime.dataDictionaries.SampleAnalysisTypesEnum.LAICPMSMC;
@@ -139,9 +141,11 @@ import org.earthtime.dialogs.LabDataEditorDialogUTh;
 import org.earthtime.dialogs.PreferencesEditorDialog;
 import org.earthtime.dialogs.projectManagers.projectLegacyManagers.AbstractProjectOfLegacySamplesDataManagerDialog;
 import org.earthtime.dialogs.projectManagers.projectLegacyManagers.ProjectOfLegacySamplesDataManagerDialogForGenericUPb_A;
+import org.earthtime.dialogs.projectManagers.projectLegacyManagers.ProjectOfLegacySamplesDataManagerDialogForGenericUPb_GA;
 import org.earthtime.dialogs.projectManagers.projectLegacyManagers.ProjectOfLegacySamplesDataManagerDialogForUCSB_LASS_A;
 import org.earthtime.dialogs.projectManagers.projectLegacyManagers.ProjectOfLegacySamplesDataManagerUseries_Carb;
 import org.earthtime.dialogs.projectManagers.projectLegacyManagers.ProjectOfLegacySamplesDataManagerUseries_Ign;
+import org.earthtime.dialogs.projectManagers.projectLegacyManagers.ProjectOfSamplesDataManagerDialogForGenericUPb_Squid3;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.fractions.ETFractionInterface;
@@ -163,7 +167,6 @@ import org.earthtime.reportViews.ReportUpdaterInterface;
 import org.earthtime.reportViews.TabbedReportViews;
 import org.earthtime.reports.ReportSettingsInterface;
 import org.earthtime.samples.SampleInterface;
-import org.earthtime.plots.topsoil.PlaceHolderForJavaFxThread;
 import org.earthtime.utilities.FileHelper;
 
 /**
@@ -946,6 +949,20 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         if (sampleAnalysisType.equalsIgnoreCase(SampleAnalysisTypesEnum.GENERIC_UPB.getName())) {
             myProjectManager
                     = new ProjectOfLegacySamplesDataManagerDialogForGenericUPb_A(
+                            this,
+                            true,
+                            theProject,
+                            myState.getMRUImportFolderCompilationMode());
+        } else if (sampleAnalysisType.equalsIgnoreCase(SampleAnalysisTypesEnum.GENERIC_GA_UPB.getName())) {
+            myProjectManager
+                    = new ProjectOfLegacySamplesDataManagerDialogForGenericUPb_GA(
+                            this,
+                            true,
+                            theProject,
+                            myState.getMRUImportFolderCompilationMode());
+        } else if (sampleAnalysisType.equalsIgnoreCase(SampleAnalysisTypesEnum.GENERIC_SQUID3_UPB.getName())) {
+            myProjectManager
+                    = new ProjectOfSamplesDataManagerDialogForGenericUPb_Squid3(
                             this,
                             true,
                             theProject,
@@ -2014,14 +2031,16 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         newProjectFromRawData_menu = new javax.swing.JMenu();
         newProjectRawDataIDTIMS = new javax.swing.JMenuItem();
         newProjectRawDataLAICPMS = new javax.swing.JMenuItem();
-        newProjectRawDataSHRIMP = new javax.swing.JMenuItem();
         jMenuItem4 = new javax.swing.JMenuItem();
         jMenuItem5 = new javax.swing.JMenuItem();
         jMenuItem9 = new javax.swing.JMenuItem();
         newProjectFromLegacyDataTable_menu = new javax.swing.JMenu();
         uPbLegacyDataMenu = new javax.swing.JMenu();
         genericUPbDataTableInCSV_menuItem = new javax.swing.JMenuItem();
+        genericUPbGADataTableCSV_menuItem = new javax.swing.JMenuItem();
         ucsb_LASS_A_DataTableInCSV_menuItem = new javax.swing.JMenuItem();
+        uPbSquid3Data_menu = new javax.swing.JMenu();
+        genericUPbSquid3DataTableCSV_menuItem = new javax.swing.JMenuItem();
         uSeriesLegacyData = new javax.swing.JMenu();
         USeriesCarbonate = new javax.swing.JMenuItem();
         USeriesIgneous = new javax.swing.JMenuItem();
@@ -2382,14 +2401,6 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         });
         newProjectFromRawData_menu.add(newProjectRawDataLAICPMS);
 
-        newProjectRawDataSHRIMP.setText("SHRIMP - in development - DEMO only");
-        newProjectRawDataSHRIMP.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                newProjectRawDataSHRIMPActionPerformed(evt);
-            }
-        });
-        newProjectFromRawData_menu.add(newProjectRawDataSHRIMP);
-
         project_menu.add(newProjectFromRawData_menu);
 
         jMenuItem4.setText("New Project from Archived Aliquots");
@@ -2408,7 +2419,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
         uPbLegacyDataMenu.setText("UPb Legacy Data");
 
-        genericUPbDataTableInCSV_menuItem.setText("Generic UPb Legacy Data Table in .csv format");
+        genericUPbDataTableInCSV_menuItem.setText("Generic UPb Legacy Data Table in CSV UTF-8 format");
         genericUPbDataTableInCSV_menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 genericUPbDataTableInCSV_menuItemActionPerformed(evt);
@@ -2416,7 +2427,15 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         });
         uPbLegacyDataMenu.add(genericUPbDataTableInCSV_menuItem);
 
-        ucsb_LASS_A_DataTableInCSV_menuItem.setText("UCSB LASS A Legacy Data Table in .csv format");
+        genericUPbGADataTableCSV_menuItem.setText("Generic UPb GA Legacy Data Table in CSV UTF-8 format");
+        genericUPbGADataTableCSV_menuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                genericUPbGADataTableCSV_menuItemActionPerformed(evt);
+            }
+        });
+        uPbLegacyDataMenu.add(genericUPbGADataTableCSV_menuItem);
+
+        ucsb_LASS_A_DataTableInCSV_menuItem.setText("UCSB LASS A Legacy Data Table in CSV UTF-8 format");
         ucsb_LASS_A_DataTableInCSV_menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ucsb_LASS_A_DataTableInCSV_menuItemActionPerformed(evt);
@@ -2425,6 +2444,18 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         uPbLegacyDataMenu.add(ucsb_LASS_A_DataTableInCSV_menuItem);
 
         newProjectFromLegacyDataTable_menu.add(uPbLegacyDataMenu);
+
+        uPbSquid3Data_menu.setText("Squid3 UPb Data");
+
+        genericUPbSquid3DataTableCSV_menuItem.setText("Generic UPb Squid3 Data Table in CSV UTF-8 format");
+        genericUPbSquid3DataTableCSV_menuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                genericUPbSquid3DataTableCSV_menuItemActionPerformed(evt);
+            }
+        });
+        uPbSquid3Data_menu.add(genericUPbSquid3DataTableCSV_menuItem);
+
+        newProjectFromLegacyDataTable_menu.add(uPbSquid3Data_menu);
 
         uSeriesLegacyData.setText("U-series Legacy Data");
 
@@ -4387,10 +4418,6 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
         BrowserControl.displayURL("http://cirdles.org/projects/et_redux/#reports_overview");
     }//GEN-LAST:event_reportSettingsHelpActionPerformed
 
-    private void newProjectRawDataSHRIMPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newProjectRawDataSHRIMPActionPerformed
-        setUpNewTripolizedProject(SampleAnalysisTypesEnum.SHRIMP);
-    }//GEN-LAST:event_newProjectRawDataSHRIMPActionPerformed
-
     private void USeriesIgneousActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_USeriesIgneousActionPerformed
         setUpNewCompiledLegacyProject(USERIES_IGN.getName(), USERIES_IGN.getIsotypeSystem(), USERIES_IGN.getDefaultReportSpecsType());
     }//GEN-LAST:event_USeriesIgneousActionPerformed
@@ -4439,13 +4466,20 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     private void paperOnUSeriesDataReportingStandards_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_paperOnUSeriesDataReportingStandards_menuItemActionPerformed
         BrowserControl.displayURL(
                 "http://cirdles.org/assets/documents/USeriesDataReportingStandardsPaper.pdf");
-
     }//GEN-LAST:event_paperOnUSeriesDataReportingStandards_menuItemActionPerformed
+
+    private void genericUPbGADataTableCSV_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_genericUPbGADataTableCSV_menuItemActionPerformed
+        setUpNewCompiledLegacyProject(GENERIC_GA_UPB.getName(), GENERIC_UPB.getIsotypeSystem(), GENERIC_UPB.getDefaultReportSpecsType());
+    }//GEN-LAST:event_genericUPbGADataTableCSV_menuItemActionPerformed
+
+    private void genericUPbSquid3DataTableCSV_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_genericUPbSquid3DataTableCSV_menuItemActionPerformed
+        setUpNewCompiledLegacyProject(GENERIC_SQUID3_UPB.getName(), GENERIC_SQUID3_UPB.getIsotypeSystem(), GENERIC_SQUID3_UPB.getDefaultReportSpecsType());
+    }//GEN-LAST:event_genericUPbSquid3DataTableCSV_menuItemActionPerformed
 
     private void helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
         BrowserControl.displayURL("http://cirdles.org/projects/et_redux/");
-
     }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem ID_TIMSLegacyAnalysis_MIT_menuItem;
     private javax.swing.JMenuItem LAICPMS_LegacyAnalysis_MC_UA_menuItem;
@@ -4488,6 +4522,8 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     private javax.swing.JMenuItem gCubedPaperSoftwareLAICPMS_menuItem;
     private javax.swing.JMenuItem gCubedPaperSoftwareTIMS_menuItem;
     private javax.swing.JMenuItem genericUPbDataTableInCSV_menuItem;
+    private javax.swing.JMenuItem genericUPbGADataTableCSV_menuItem;
+    private javax.swing.JMenuItem genericUPbSquid3DataTableCSV_menuItem;
     private javax.swing.JMenu helpMenu;
     private javax.swing.JMenuItem helpMenuItem;
     private javax.swing.JButton interpretSampleDates_button;
@@ -4533,7 +4569,6 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     private javax.swing.JMenu newProjectFromRawData_menu;
     private javax.swing.JMenuItem newProjectRawDataIDTIMS;
     private javax.swing.JMenuItem newProjectRawDataLAICPMS;
-    private javax.swing.JMenuItem newProjectRawDataSHRIMP;
     private javax.swing.JMenuItem newSampleAnalysisForIDTIMS_menuItem;
     private javax.swing.JMenuItem newSampleAnalysisForLAICPMS_MC_menuItem;
     private javax.swing.JMenuItem newSampleCompilation_menuItem;
@@ -4573,6 +4608,7 @@ private void LAICPMS_LegacyAnalysis_UH_menuItemActionPerformed (java.awt.event.A
     private javax.swing.JScrollPane theFractionTableScrollPane;
     private javax.swing.JMenu toolsMenu;
     private javax.swing.JMenu uPbLegacyDataMenu;
+    private javax.swing.JMenu uPbSquid3Data_menu;
     private javax.swing.JMenu uSeriesLegacyData;
     private javax.swing.JMenuItem ucsb_LASS_A_DataTableInCSV_menuItem;
     private javax.swing.JMenuItem uncertaintyEllipses_menuItem;

@@ -17,9 +17,6 @@ package org.earthtime.UPb_Redux.dialogs.projectManagers;
 
 import java.util.ArrayList;
 import org.earthtime.ETReduxFrame;
-import org.earthtime.Tripoli.rawDataFiles.handlers.AbstractRawDataFileHandler;
-import org.earthtime.Tripoli.rawDataFiles.handlers.shrimp.ShrimpFileHandler;
-import org.earthtime.Tripoli.rawDataFiles.templates.shrimp.ShrimpPrawn_RawDataTemplate_GA;
 import org.earthtime.UPb_Redux.dialogs.parameterManagers.AbstractProjectParametersManager;
 import org.earthtime.UPb_Redux.dialogs.parameterManagers.ShrimpProjectParamaetersManager;
 import org.earthtime.UPb_Redux.dialogs.sessionManagers.SessionAnalysisWorkflowManagerSHRIMP;
@@ -52,12 +49,12 @@ public class ProjectManagerFor_SHRIMP_FromRawData extends AbstractProjectManager
         // eventually move to xml external files
         knownRawDataFileHandlers = new ArrayList<>();
 
-        //SHRIMP
-        AbstractRawDataFileHandler theSHRIMPFileHandler
-                = ShrimpFileHandler.getInstance();
-        theSHRIMPFileHandler.getAvailableRawDataFileTemplates()//
-                .add(ShrimpPrawn_RawDataTemplate_GA.getInstance());
-        knownRawDataFileHandlers.add(theSHRIMPFileHandler);
+//        //SHRIMP
+//        AbstractRawDataFileHandler theSHRIMPFileHandler
+//                = ShrimpFileHandler.getInstance();
+//        theSHRIMPFileHandler.getAvailableRawDataFileTemplates()//
+//                .add(ShrimpPrawn_RawDataTemplate_GA.getInstance());
+//        knownRawDataFileHandlers.add(theSHRIMPFileHandler);
 
         super.initDialogContent();
     }

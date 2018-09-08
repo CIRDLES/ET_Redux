@@ -52,6 +52,8 @@ public enum SampleAnalysisTypesEnum {
      *
      */
     GENERIC_UPB("GENERIC_UPB", "UPb", "UPb"),
+    GENERIC_GA_UPB("GENERIC_GA_UPB", "UPb", "UPb"),
+    GENERIC_SQUID3_UPB("GENERIC_SQUID3_UPB", "UPb", "UPb"),
     /**
      * Used for PROJECTs or COMPILATIONs samples
      */
