@@ -2,7 +2,7 @@
 <!--/*
 * pom.xml
 *
-* Copyright 2006-2017 James F. Bowring and www.Earth-Time.org
+* Copyright 2006-2018 James F. Bowring, CIRDLES.org, and Earth-Time.org
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@
     <groupId>org.cirdles</groupId>
     <artifactId>ET_Redux</artifactId>
     <name>ET_Redux</name>
-    <version>3.6.26</version>
+    <version>3.6.70</version>
     <description>Successor to U-Pb_Redux</description>
     <url>https://cirdles.org</url>
     <inceptionYear>2006</inceptionYear>
@@ -31,7 +31,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.target>1.10</maven.compiler.target>
 
         <timestamp>${maven.build.timestamp}</timestamp>
         <maven.build.timestamp.format>dd MMMM yyyy</maven.build.timestamp.format>
@@ -92,12 +92,12 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>19.0</version>
+            <version>23.5-jre</version>
         </dependency>
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>batik-svg-dom</artifactId>
-            <version>1.7</version>
+            <version>1.9.1</version>
             <exclusions>
                 <exclusion>
                     <groupId>xml-apis</groupId>
@@ -108,17 +108,18 @@
         <dependency>
             <groupId>gov.nist.math</groupId>
             <artifactId>jama</artifactId>
+            <!--ALERT - do not upgrade to 1.03 as Jama breaks serialization and backwards compatibility -->
             <version>1.0.2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>xmlgraphics-commons</artifactId>
-            <version>1.5</version>
+            <version>2.2</version>
         </dependency>
         <dependency>
             <groupId>com.thoughtworks.xstream</groupId>
             <artifactId>xstream</artifactId>
-            <version>1.4.9</version>
+            <version>1.4.10</version>
         </dependency>
         <dependency>
             <groupId>javax.help</groupId>
@@ -128,7 +129,7 @@
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>batik-rasterizer</artifactId>
-            <version>1.7</version>
+            <version>1.9.1</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.avalon.framework</groupId>
@@ -148,10 +149,11 @@
         </dependency>
 
         <dependency>
-            <groupId>jexcelapi</groupId>
+            <groupId>net.sourceforge.jexcelapi</groupId>
             <artifactId>jxl</artifactId>
-            <version>2.4.2</version>
+            <version>2.6.12</version>
         </dependency>
+
         <dependency>
             <groupId>org.netbeans.external</groupId>
             <artifactId>swing-layout-1.0.4</artifactId>
@@ -165,12 +167,12 @@
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>batik-awt-util</artifactId>
-            <version>1.7</version>
+            <version>1.9.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>batik-swing</artifactId>
-            <version>1.7</version>
+            <version>1.9.1</version>
             <exclusions>
                 <exclusion>
                     <groupId>xml-apis</groupId>
@@ -191,46 +193,44 @@
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>batik-transcoder</artifactId>
-            <version>1.7</version>
+            <version>1.9.1</version>
         </dependency>
         <dependency>
             <groupId>com.google.jimfs</groupId>
             <artifactId>jimfs</artifactId>
-            <version>1.0</version>
+            <version>1.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.5.2</version>
+            <version>4.5.4</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient-cache</artifactId>
-            <version>4.5.2</version>
+            <version>4.5.4</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpmime</artifactId>
-            <version>4.5.2</version>
+            <version>4.5.4</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>fluent-hc</artifactId>
-            <version>4.5.2</version>
+            <version>4.5.4</version>
         </dependency>
-    <!--    
+            
         <dependency>
             <groupId>com.github.cirdles.topsoil</groupId>
             <artifactId>app</artifactId>
-            <version>master-SNAPSHOT</version>
+            <version>v2.0.6</version>
         </dependency>
-    -->    
         <dependency>
-            <groupId>com.github.marottajb</groupId>
-            <artifactId>topsoil</artifactId>
-            <version>0fdde7b</version>
-        </dependency>
-        
+            <groupId>com.github.cirdles</groupId>
+            <artifactId>mcleanregression</artifactId>
+            <version>-SNAPSHOT</version>
+        </dependency>                          
         <dependency>
             <groupId>org.python</groupId>
             <artifactId>jython-standalone</artifactId>
@@ -245,16 +245,11 @@
             <groupId>com.github.cirdles</groupId>
             <artifactId>GeoSamples</artifactId>
             <version>-SNAPSHOT</version>
-        </dependency>
+        </dependency>      
         <dependency>
-            <groupId>com.github.cirdles</groupId>
-            <artifactId>McLeanRegression</artifactId>
-            <version>master-SNAPSHOT</version>
-        </dependency>        
-        <dependency>
-            <groupId>com.github.cirdles</groupId>
-            <artifactId>Calamari</artifactId>
-            <version>-SNAPSHOT</version>
+            <groupId>org.apache.xmlgraphics</groupId>
+            <artifactId>fop</artifactId>
+            <version>2.2</version>
         </dependency>
     </dependencies>
     <build>
@@ -262,9 +257,11 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.20</version>
+                <version>2.20.1</version>
 
                 <configuration>
+                    <skipTests>true</skipTests>
+
                     <includes>
                         <include>**/*Test.java</include>
                         <include>**/*IT.java</include>
@@ -275,7 +272,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.6.1</version>
+                <version>3.7.0</version>
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
@@ -321,7 +318,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.1.0</version>
                 <executions>
                     <execution>
                         <phase>package</phase>

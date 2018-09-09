@@ -60,7 +60,7 @@ public class GeochronRetrievalUtility {
                 "NOTE: If you need private records, set your GEOCHRON credentials\n"
                 + " in the Compilation Sample Manager. \n\n"//
                 + "Enter one or more Aliquot IGSN, separated by commas: \n",
-                "U-Pb_Redux for Geochron", 1);
+                "ET_Redux for Geochron", 1);
 
         if (aliquotIGSNs != null) {
             String aliquotList[] = aliquotIGSNs.split(",");

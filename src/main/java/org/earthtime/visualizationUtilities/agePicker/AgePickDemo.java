@@ -3,7 +3,7 @@
  *
  * Created on Oct 26, 2011, 2:27:01 PM
  * 
- * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2018 James F. Bowring, CIRDLES.org, and Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.

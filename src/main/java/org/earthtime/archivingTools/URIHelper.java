@@ -4,7 +4,7 @@
  * Created on April 28, 2007, 7:50 AM
  *
  *
- * Copyright 2006-2017 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2018 James F. Bowring, CIRDLES.org, and Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -167,7 +167,7 @@ public class URIHelper {
 
         if (CONNECTED_TO_INTERNET) {
             try {
-                URL url = new URL("http://cnn.com");
+                URL url = new URL("https://cnn.com");
                 //System.out.println(url.getHost());
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
                 con.setReadTimeout(20000);

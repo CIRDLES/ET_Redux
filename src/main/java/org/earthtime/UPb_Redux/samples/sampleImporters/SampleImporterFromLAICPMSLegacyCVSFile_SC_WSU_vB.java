@@ -1,7 +1,7 @@
 /*
  * SampleImporterFromLAICPMSLegacyCVSFile_SC_WSU_vB.java
  *
- * Copyright 2006-2017 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2018 James F. Bowring, CIRDLES.org, and Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -192,7 +192,7 @@ public class SampleImporterFromLAICPMSLegacyCVSFile_SC_WSU_vB extends AbstractSa
         try {
             outputWriter = new PrintWriter(new FileWriter(CSVFile));
 
-            outputWriter.println("LEGACY LA-ICP MS Version B (Single Collector from WSU) DATA SAMPLE FIELD NAMES FOR IMPORT INTO U-Pb_Redux\n");
+            outputWriter.println("LEGACY LA-ICP MS Version B (Single Collector from WSU) DATA SAMPLE FIELD NAMES FOR IMPORT INTO ET_Redux\n");
             outputWriter.println("AnalysisName,IsotopicRatios,,,,,,,Dates (Ma)");
             outputWriter.println(fieldNames);
 

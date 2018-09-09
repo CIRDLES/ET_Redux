@@ -2,7 +2,7 @@
  * AbstractProjectOfLegacySamplesDataManagerDialog.java
  *
  *
- * Copyright 2006-2017 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2018 James F. Bowring, CIRDLES.org, and Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -228,10 +228,10 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
         AbstractRatiosDataModel chosenPhysicalConstantsModel
                 = (AbstractRatiosDataModel) physicalConstantsModelChooser.getSelectedItem();
         myProject.getSuperSample().setPhysicalConstantsModel(chosenPhysicalConstantsModel);
-        
-        boolean isIgneous = 
-                ((ProjectSample)myProject.getSuperSample()).getSampleAnalysisType()
-                        .compareToIgnoreCase(SampleAnalysisTypesEnum.USERIES_IGN.getName()) ==0;
+
+        boolean isIgneous
+                = ((ProjectSample) myProject.getSuperSample()).getSampleAnalysisType()
+                        .compareToIgnoreCase(SampleAnalysisTypesEnum.USERIES_IGN.getName()) == 0;
 
         // set physical constant models of each fraction to current
         ArrayList<SampleInterface> mySamples = myProject.getProjectSamples();
@@ -243,7 +243,9 @@ public abstract class AbstractProjectOfLegacySamplesDataManagerDialog extends Di
                 myFraction.setPhysicalConstantsModel(chosenPhysicalConstantsModel);
                 return myFraction;
             }).forEach((myFraction) -> {
-                UThFractionReducer.reduceFraction((UThLegacyFractionI) myFraction, isIgneous);
+                if (myFraction instanceof UThLegacyFractionI) {
+                    UThFractionReducer.reduceFraction((UThLegacyFractionI) myFraction, isIgneous);
+                }
             });
         });
 

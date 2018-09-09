@@ -2,7 +2,7 @@
 /*
  * ChangeLog.html
  *
- * Copyright 2006-2015 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2018 James F. Bowring, CIRDLES.org, and Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -48,9 +48,9 @@
                     <li>
                         <b>Introduction:</b>
                         <ul>
-                            <li>A sample in U-Pb_Redux is composed of aliquots, or physical pieces of the sample
+                            <li>A sample in ET_Redux is composed of aliquots, or physical pieces of the sample
                                 (e.g. a zircon separate), which in turn are composed of fractions, or individual U/Pb analyses.
-                                For more information about each, see their entries here, or U-Pb_Redux Help.
+                                For more information about each, see their entries here, or ET_Redux Help.
                             </li>
                             <li>
                                 To create a new aliquot, type its name in the Aliquot Name dialog box, increment the counter
@@ -58,7 +58,7 @@
                                 ''Add Name''.  Add any number of aliquots in this way, and order them in the data table with the arrows to the left.
                                 After entering the requisite information for each fraction, press ''SaveAs Sample With Data Structure''.
                                 Navigate to the desired location, then create a new folder for your sample before saving the .redux file inside.
-                                U-Pb_Redux will create a sub-folder for each aliquot, populated with empty data files for each Pb and U measurement.
+                                ET_Redux will create a sub-folder for each aliquot, populated with empty data files for each Pb and U measurement.
                             </li>
                         </ul>
                     </li>
@@ -67,13 +67,13 @@
                         <ul>
                             <li>A sample is a single collection of a geologic material from one location.  This name is shared by each
                                 of the sample's fractions, or U/Pb analyses.  You don’t have to give the .redux file or the folder that
-                                contains it the exact same name as the sample.  However, when you export an analysis from Tripoli for Redux,
-                                you must provide the sample name correctly, or Redux won’t recognize it.  A sample name may not contain
+                                contains it the exact same name as the sample.  However, when you export an analysis from Tripoli for ET_Redux,
+                                you must provide the sample name correctly, or ET_Redux won’t recognize it.  A sample name may not contain
                                 spaces --- use hyphens or underscores instead.
                             </li>
                             <li>
                                 To upload your sample to the GeoChron database, you may request an IGSN, or International Geologic Sample Number,
-                                through SESAR ( www.geosamples.org ).  U-Pb_Redux will guide you through this process when you publish from the Aliquot page.
+                                through SESAR ( www.geosamples.org ).  ET_Redux will guide you through this process when you publish from the Aliquot page.
                             </li>
                         </ul>
                     </li>
@@ -113,8 +113,8 @@
                         <b>Live Workflow:</b>
                         <ul>
                             <li>
-                                The Live Workflow mode establishes a direct link between Tripoli and U-Pb_Redux. Clicking the ''START Live Workflow''
-                                button at the bottom of U-Pb_Redux’s main screen immediately imports data from Tripoli and prompts U-Pb_Redux to
+                                The Live Workflow mode establishes a direct link between Tripoli and ET_Redux. Clicking the ''START Live Workflow''
+                                button at the bottom of ET_Redux’s main screen immediately imports data from Tripoli and prompts ET_Redux to
                                 update its calculations.
                             </li>
                             <li>
@@ -157,12 +157,12 @@
                 <b>Report Settings Models</b> can be saved and imported to customize your experience.
             </li>
             <li>
-                <b>Publication of aliquots:</b>  U-Pb_Redux supports the publication of aliquots in a standard '.xml' format to a local drive or
+                <b>Publication of aliquots:</b>  ET_Redux supports the publication of aliquots in a standard '.xml' format to a local drive or
                 to the Geochron database.  See the aliquot window accessed by clicking on the gray aliquot button on the left of the fractions
-                listed on the top of the main U-Pb_Redux window.
+                listed on the top of the main ET_Redux window.
             </li>
             <li>
-                <b>Compilation of aliquots:</b>  U-Pb_Redux supports the compilation of aliquots from many sources into a ''Super-Sample'' that
+                <b>Compilation of aliquots:</b>  ET_Redux supports the compilation of aliquots from many sources into a ''Super-Sample'' that
                 can be explored using the sample date features including Concordia and weighted means across the compiled sample.   This
                 feature is not fully developed, but users are pushing us to do so, so stay tuned. Steps:
                 <ul>
@@ -171,7 +171,7 @@
                     </li>
                     <li>
                         Choose either the ''Single Local Aliquot'' or the ''Import one or more Aliquots from Geochron database'' option.
-                        U-Pb_Redux does not yet support importing from a local folder option.
+                        ET_Redux does not yet support importing from a local folder option.
                         However, you can import multiple local aliquots one-at-a-time by using the menu ''U-Pb Sample File / Manage Sample Model.''
                     </li>
                     <li>
@@ -182,7 +182,7 @@
             </li>
             <li>
                 <b>LA-ICP MS</b> legacy data can now be imported in bulk using .csv files, in a manner similar to that for ID-TIMS data.
-                Please note that development continues to incorporate LA-ICP MS - centered interpretative tools into U-Pb_Redux.
+                Please note that development continues to incorporate LA-ICP MS - centered interpretative tools into ET_Redux.
                 <p>
                 Instructions to generate CSV data format for LA-ICP MS:
                 <ol>
@@ -196,7 +196,7 @@
                     </li>
                 </ol>
                 <br>
-                Once you have populated and saved the CSV file, you can import it into U-Pb_Redux.
+                Once you have populated and saved the CSV file, you can import it into ET_Redux.
                 <br>
                 Follow these steps:
                 <ol>
@@ -212,9 +212,9 @@
                     </li>
                     <li>
                         Save your sample (.redux) file in the folder of your choice and click <b>Save</b>.
-                        Your reduced data appears in the data table in the bottom half of U-Pb_Redux.
+                        Your reduced data appears in the data table in the bottom half of ET_Redux.
                         To view / edit your data, click on one of the grey Aliquot buttons in the top
-                        frame of U-Pb_Redux.  Note that the table at top displays blanks for any
+                        frame of ET_Redux.  Note that the table at top displays blanks for any
                         missing ratio data.
                     </li>
                 </ol>
@@ -280,9 +280,9 @@
             <li>
                 Added bulk import of legacy ID-TIMS data.  Drew Coleman suggested this feature in May 2009.
                 To keep the architecture as open
-                as possible, U-Pb_Redux will import CSV (comma separated values) files.  These
+                as possible, ET_Redux will import CSV (comma separated values) files.  These
                 CSV files are easily opened and exported by all versions of Excel, Google Spreadsheets,
-                OpenOffice.org, etc.  To begin, U-Pb_Redux automatically writes 
+                OpenOffice.org, etc.  To begin, ET_Redux automatically writes 
                 and opens a CSV file with the appropriate column headings  NOTE: the
                 headings are for your information only and are not parsed (so you can change them)
                 -- the only requirement is that the order of the data fields remain the same.
@@ -303,7 +303,7 @@
                     </li>
                 </ol>
                 <br>
-                Once you have populated and saved the CSV file, you can import it into U-Pb_Redux.
+                Once you have populated and saved the CSV file, you can import it into ET_Redux.
                 <br>
                 Follow these steps:
                 <ol>
@@ -319,9 +319,9 @@
                     </li>
                     <li>
                         Save your sample (.redux) file in the folder of your choice and click <b>Save</b>.
-                        Your reduced data appears in the data table in the bottom half of U-Pb_Redux.
+                        Your reduced data appears in the data table in the bottom half of ET_Redux.
                         To view / edit your data, click on one of the grey Aliquot buttons in the top
-                        frame of U-Pb_Redux.  Note that the table at top displays blanks for any
+                        frame of ET_Redux.  Note that the table at top displays blanks for any
                         missing ratio data.
                     </li>
                 </ol>
@@ -338,7 +338,7 @@
                 <b>U-Pb Sample File / Open Sample File</b> will access this folder automatically.
             </li>
             <li>
-                Changed Fraction ratio data table (upper half of U-Pb_Redux main view) to use
+                Changed Fraction ratio data table (upper half of ET_Redux main view) to use
                 a check box to toggle the selection of fractions used in the analysis.  Previously,
                 the user clicked on fraction rows to do the same thing, but it was generally regarded as clunky.
             </li>
@@ -350,10 +350,10 @@
                 Refined button architecture at bottom of main window.
             </li>
             <li>
-                Report Table (bottom window main U-Pb_Redux window)
+                Report Table (bottom window main ET_Redux window)
                 <ol>
                     <li>
-                        Corrected tabulated data table (bottom of U-Pb_Redux main window) response to scroll-wheels:
+                        Corrected tabulated data table (bottom of ET_Redux main window) response to scroll-wheels:
                         eliminated ''crawling''.
                     </li>
                     <li>

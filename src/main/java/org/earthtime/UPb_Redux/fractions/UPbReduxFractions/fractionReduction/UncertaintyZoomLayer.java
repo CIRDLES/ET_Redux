@@ -1,7 +1,7 @@
 /*
  * Aggregation of IUnctContrib-s per depth
  * 
- * Copyright 2006-2017 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2018 James F. Bowring, CIRDLES.org, and Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
  */
 package org.earthtime.UPb_Redux.fractions.UPbReduxFractions.fractionReduction;
 
-import Jama.Matrix;
 import java.util.*;
 import org.earthtime.matrices.matrixModels.AbstractMatrixModel;
 import org.earthtime.matrices.matrixModels.CovarianceMatrixModel;

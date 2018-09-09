@@ -2,7 +2,7 @@
  * SampleAnalysisWorkflowManagerLAICPMS.java
  *
  *
- * Copyright 2006-2017 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2018 James F. Bowring, CIRDLES.org, and Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -2229,7 +2229,7 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
         physicalConstantsModel_label = new javax.swing.JLabel();
         aliquotName_text = new javax.swing.JTextField();
         jScrollPane2 = new javax.swing.JScrollPane();
-        aliquotsList_jList = new javax.swing.JList<String>();
+        aliquotsList_jList = new javax.swing.JList<>();
         aliquotName_label = new javax.swing.JLabel();
         insertFractionCount_spinner = new javax.swing.JSpinner();
         insertFraction_button = new javax.swing.JButton();
@@ -2265,10 +2265,10 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
         editAliquot_button = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         chooseAnalysisPurpose_label = new javax.swing.JLabel();
-        analysisPurposeChooser = new javax.swing.JComboBox<String>();
-        physicalConstantsModelChooser = new javax.swing.JComboBox<String>();
+        analysisPurposeChooser = new javax.swing.JComboBox<>();
+        physicalConstantsModelChooser = new javax.swing.JComboBox<>();
         sampleRegistry_label = new javax.swing.JLabel();
-        sampleRegistryChooser = new javax.swing.JComboBox<SampleRegistries>();
+        sampleRegistryChooser = new javax.swing.JComboBox<>();
         validSampleID_label = new javax.swing.JLabel();
         allowTracerChange_checkbox = new javax.swing.JCheckBox();
         validateSampleID_button = new javax.swing.JButton();
@@ -2461,7 +2461,7 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
             }
         });
         jLayeredPane1.add(sampleIGSN_text);
-        sampleIGSN_text.setBounds(270, 30, 100, 27);
+        sampleIGSN_text.setBounds(270, 30, 100, 25);
 
         sampleID_label.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         sampleID_label.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -2473,7 +2473,7 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
         sampleName_text.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         sampleName_text.setText("Sample Name");
         jLayeredPane1.add(sampleName_text);
-        sampleName_text.setBounds(130, 0, 190, 27);
+        sampleName_text.setBounds(130, 0, 190, 25);
 
         sampleName_label.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         sampleName_label.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
@@ -2491,7 +2491,7 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
         aliquotName_text.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         aliquotName_text.setText("Aliquot Name");
         jLayeredPane1.add(aliquotName_text);
-        aliquotName_text.setBounds(300, 100, 220, 27);
+        aliquotName_text.setBounds(300, 100, 220, 25);
 
         aliquotsList_jList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane2.setViewportView(aliquotsList_jList);
@@ -2506,7 +2506,7 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
 
         insertFractionCount_spinner.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         jLayeredPane1.add(insertFractionCount_spinner);
-        insertFractionCount_spinner.setBounds(460, 160, 52, 26);
+        insertFractionCount_spinner.setBounds(460, 160, 52, 24);
 
         insertFraction_button.setForeground(new java.awt.Color(255, 51, 0));
         insertFraction_button.setText("Insert Fractions:");
@@ -2624,7 +2624,7 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
         welcomeStatement_jTextArea.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         welcomeStatement_jTextArea.setLineWrap(true);
         welcomeStatement_jTextArea.setRows(5);
-        welcomeStatement_jTextArea.setText("A sample in U-Pb_Redux is composed of aliquots, or physical pieces of the sample (e.g. a zircon separate), which in turn are composed of fractions, or individual U/Pb analyses.  For more information about each, see their tabs here, or U-Pb_Redux Help.\n\nTo create a new aliquot, type its name in the Aliquot Name dialog box, increment the counter below to the number of fractions it contains (you can add more at any time), and then select ''Add Name''.  Add any number of aliquots in this way, and order them in the data table with the arrows to the left. After entering the requisite information for each fraction, press ''SaveAs Sample'' or \"SaveAs Sample for Live Workflow\".  Navigate to the desired location, then create a new folder for your sample before saving the .redux file inside.  U-Pb_Redux will create a sub-folder for each aliquot, populated with empty data files for each Pb and U measurement.");
+        welcomeStatement_jTextArea.setText("A sample in ET_Redux is composed of aliquots, or physical pieces of the sample (e.g. a zircon separate), which in turn are composed of fractions, or individual U/Pb analyses.  For more information about each, see their tabs here, or ET_Redux Help.\n\nTo create a new aliquot, type its name in the Aliquot Name dialog box, increment the counter below to the number of fractions it contains (you can add more at any time), and then select ''Add Name''.  Add any number of aliquots in this way, and order them in the data table with the arrows to the left. After entering the requisite information for each fraction, press ''SaveAs Sample'' or \"SaveAs Sample for Live Workflow\".  Navigate to the desired location, then create a new folder for your sample before saving the .redux file inside.  ET_Redux will create a sub-folder for each aliquot, populated with empty data files for each Pb and U measurement.");
         welcomeStatement_jTextArea.setWrapStyleWord(true);
         welcomeStatement_jTextArea.setMargin(new java.awt.Insets(0, 5, 0, 5));
         jScrollPane1.setViewportView(welcomeStatement_jTextArea);
@@ -2636,7 +2636,7 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
         samples_textArea.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         samples_textArea.setLineWrap(true);
         samples_textArea.setRows(5);
-        samples_textArea.setText("A sample is a single collection of a geologic material from one location.  This name is shared by each of the sample's fractions, or U/Pb analyses.  You don't have to give the .redux file or the folder that contains it the exact same name as the sample.  However, when you export an analysis from Tripoli for Redux, you must provide the sample name correctly, or Redux won't recognize it.  A sample name may not contain space--use hyphens or underscores instead.\n\nTo upload your sample to the GeoChron database, you may request an IGSN, or International Geologic Sample Number, through SESAR ( www.geosamples.org ).  U-Pb_Redux will guide you through this process when you publish from the Aliquot page.\n");
+        samples_textArea.setText("A sample is a single collection of a geologic material from one location.  This name is shared by each of the sample's fractions, or U/Pb analyses.  You don't have to give the .redux file or the folder that contains it the exact same name as the sample.  However, when you export an analysis from Tripoli for ET_Redux, you must provide the sample name correctly, or Redux won't recognize it.  A sample name may not contain space--use hyphens or underscores instead.\n\nTo upload your sample to the GeoChron database, you may request an IGSN, or International Geologic Sample Number, through SESAR ( www.geosamples.org ). ET_Redux will guide you through this process when you publish from the Aliquot page.\n");
         samples_textArea.setWrapStyleWord(true);
         samples_textArea.setMargin(new java.awt.Insets(0, 5, 0, 5));
         samples_scrollPane.setViewportView(samples_textArea);
@@ -2672,7 +2672,7 @@ public class SampleAnalysisWorkflowManagerLAICPMS extends DialogEditor implement
         jTextArea5.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         jTextArea5.setLineWrap(true);
         jTextArea5.setRows(5);
-        jTextArea5.setText("The Live Workflow mode establishes a direct link between Tripoli and U-Pb_Redux. Clicking the ''START Live Workflow'' button at the bottom of U-Pb_Redux’s main screen immediately imports data from Tripoli and prompts U-Pb_Redux to update its calculations. \n\nTo enable Live Workflow, you must create a folder called ''SampleMetaData'' and then click the ''Set SampleMetaData Folder'' button. \n\nTripoli must also be told the location of this SampleMetaData folder.  In Tripoli, point to this SampleMetaData folder with the ''Set Live Workflow Data Folder'' item from the Control Panel menu.\n");
+        jTextArea5.setText("The Live Workflow mode establishes a direct link between Tripoli and ET_Redux. Clicking the ''START Live Workflow'' button at the bottom of ET_Redux’s main screen immediately imports data from Tripoli and prompts ET_Redux to update its calculations. \n\nTo enable Live Workflow, you must create a folder called ''SampleMetaData'' and then click the ''Set SampleMetaData Folder'' button. \n\nTripoli must also be told the location of this SampleMetaData folder.  In Tripoli, point to this SampleMetaData folder with the ''Set Live Workflow Data Folder'' item from the Control Panel menu.\n");
         jTextArea5.setWrapStyleWord(true);
         jTextArea5.setMargin(new java.awt.Insets(0, 5, 0, 5));
         jScrollPane7.setViewportView(jTextArea5);

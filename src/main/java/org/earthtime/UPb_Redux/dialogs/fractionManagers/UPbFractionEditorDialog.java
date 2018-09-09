@@ -2,7 +2,7 @@
  * UPbFractionEditorDialog.java
  *
  *
- * Copyright 2006-2017 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2018 James F. Bowring, CIRDLES.org, and Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -2377,7 +2377,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
         r238_236_text = new javax.swing.JTextField();
         e238_236_text = new javax.swing.JTextField();
         tracerTab = new javax.swing.JPanel();
-        tracerChooser = new javax.swing.JComboBox<String>();
+        tracerChooser = new javax.swing.JComboBox<>();
         chooseTracer_label = new javax.swing.JLabel();
         tracerMass_label = new javax.swing.JLabel();
         tracerMass_text = new javax.swing.JTextField();
@@ -2427,7 +2427,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
         choosePbBlank_label = new javax.swing.JLabel();
         PbBlankChooser = new javax.swing.JComboBox<String>();
         initialPbModelsTab_panel = new javax.swing.JPanel();
-        InitialPbModelChooser = new javax.swing.JComboBox<String>();
+        InitialPbModelChooser = new javax.swing.JComboBox<>();
         chooseInitialPbModel_label = new javax.swing.JLabel();
         pbBlankMass_label = new javax.swing.JLabel();
         PbBlank_Mass_text = new javax.swing.JTextField();
@@ -2449,10 +2449,10 @@ public class UPbFractionEditorDialog extends DialogEditor {
         jButton1 = new javax.swing.JButton();
         testSingleDisplay = new javax.swing.JButton();
         archivingDetails_panel = new javax.swing.JPanel();
-        mineralNameChooser = new javax.swing.JComboBox<String>();
+        mineralNameChooser = new javax.swing.JComboBox<>();
         chooseMineral_label = new javax.swing.JLabel();
         chooseSettingType_label = new javax.swing.JLabel();
-        settingTypeChooser = new javax.swing.JComboBox<String>();
+        settingTypeChooser = new javax.swing.JComboBox<>();
         countOfGrains_label = new javax.swing.JLabel();
         physicallyAbraded_chkBox = new javax.swing.JCheckBox();
         leachedInHFAcid_chkBox = new javax.swing.JCheckBox();
@@ -2476,7 +2476,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
         fractionID_text = new javax.swing.JTextField();
         fractionMassInGrams_label = new javax.swing.JLabel();
         fractionIsZircon_CheckBox = new javax.swing.JCheckBox();
-        fraction_Chooser = new javax.swing.JComboBox<ETFractionInterface>();
+        fraction_Chooser = new javax.swing.JComboBox<>();
         fractionID_label1 = new javax.swing.JLabel();
         toggleStartStopLiveUpdate_button = new javax.swing.JButton();
         fractionID_label = new javax.swing.JLabel();
@@ -3410,7 +3410,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
 
         r18O_16ORevised_label.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         r18O_16ORevised_label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        r18O_16ORevised_label.setText("<html>18O/16O applied<br>by U-Pb_Redux <br>(same 1-sigma)</html>");
+        r18O_16ORevised_label.setText("<html>18O/16O applied<br>by ET_Redux <br>(same 1-sigma)</html>");
 
         r18O_16ORevised_text.setEditable(false);
         r18O_16ORevised_text.setFont(new java.awt.Font("Courier New", 1, 12)); // NOI18N
@@ -4237,7 +4237,7 @@ public class UPbFractionEditorDialog extends DialogEditor {
 
         export_button.setForeground(new java.awt.Color(255, 51, 0));
         export_button.setText("Export as XML");
-        export_button.setToolTipText("This function exports the UPbFraction according to the schema for inputs to U-Pb_Redux.  Here, a user can save fractions for use by others with U-Pb_Redux.");
+        export_button.setToolTipText("This function exports the UPbFraction according to the schema for inputs to ET_Redux.  Here, a user can save fractions for use by others with ET_Redux.");
         export_button.setPreferredSize(new java.awt.Dimension(140, 23));
         export_button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -4294,6 +4294,11 @@ public class UPbFractionEditorDialog extends DialogEditor {
             .add(aliquotName_label)
         );
 
+        jLayeredPane1.setLayer(details_Pane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jLayeredPane1.setLayer(fractionPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jLayeredPane1.setLayer(buttonsPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jLayeredPane1.setLayer(aliquotInfo_panel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
         org.jdesktop.layout.GroupLayout jLayeredPane1Layout = new org.jdesktop.layout.GroupLayout(jLayeredPane1);
         jLayeredPane1.setLayout(jLayeredPane1Layout);
         jLayeredPane1Layout.setHorizontalGroup(
@@ -4314,10 +4319,6 @@ public class UPbFractionEditorDialog extends DialogEditor {
                         .add(details_Pane, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 650, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
                 .add(buttonsPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 30, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
-        jLayeredPane1.setLayer(details_Pane, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        jLayeredPane1.setLayer(fractionPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        jLayeredPane1.setLayer(buttonsPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        jLayeredPane1.setLayer(aliquotInfo_panel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

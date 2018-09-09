@@ -2,7 +2,7 @@
  * AliquotEditorDialog.java
  *
  *
- * Copyright 2006-2017 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2018 James F. Bowring, CIRDLES.org, and Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -631,14 +631,14 @@ public class AliquotEditorDialog extends DialogEditor {
         if (validityReport.length() > 0) {
             validityReport
                     = //
-                    "<html> U-Pb_Redux determines that some measured ratios in this aliquot "//
+                    "<html> ET_Redux determines that some measured ratios in this aliquot "//
                     + "have correlations outside of [-1.0,,,1.0] and advises against archiving.<br><br>"//
                     + validityReport//
                     + "</html>";
         } else {
             validityReport
                     = //
-                    "<html>U-Pb_Redux determines that the correlations between your measured ratios"//
+                    "<html>ET_Redux determines that the correlations between your measured ratios"//
                     + " are within the correct range of [-1,,,1].</html>";
         }
 

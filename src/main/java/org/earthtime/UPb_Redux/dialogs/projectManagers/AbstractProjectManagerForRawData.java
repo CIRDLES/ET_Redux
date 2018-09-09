@@ -2,7 +2,7 @@
  * ProjectManagerFor_LAICPMS_FromRawData.java
  *
  *
- * Copyright 2006-2017 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2018 James F. Bowring, CIRDLES.org, and Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -51,7 +51,6 @@ import org.earthtime.Tripoli.fractions.TripoliFraction;
 import org.earthtime.Tripoli.massSpecSetups.AbstractMassSpecSetup;
 import org.earthtime.Tripoli.rawDataFiles.handlers.AbstractRawDataFileHandler;
 import org.earthtime.Tripoli.rawDataFiles.templates.AbstractRawDataFileTemplate;
-import org.earthtime.Tripoli.rawDataFiles.templates.shrimp.ShrimpPrawn_RawDataTemplate_GA;
 import org.earthtime.Tripoli.samples.AbstractTripoliSample;
 import org.earthtime.Tripoli.sessions.TripoliSession;
 import org.earthtime.Tripoli.sessions.TripoliSessionInterface;
@@ -312,11 +311,11 @@ public abstract class AbstractProjectManagerForRawData extends DialogEditor impl
 
         // may 2013 split task to allow for custom parameters ********************
         AbstractAcquisitionModel acquisitionModel = rawDataFileTemplate.makeNewAcquisitionModel();
-        if (rawDataFileTemplate instanceof ShrimpPrawn_RawDataTemplate_GA) {
+        if (false){//rawDataFileTemplate instanceof ShrimpPrawn_RawDataTemplate_GA) {
 //                if (acquisitionModel.getPrimaryMineralStandardModel() == null) {
 //                    acquisitionModel.setPrimaryMineralStandardModel(ReduxLabData.getInstance().getDefaultLAICPMSPrimaryMineralStandardModel());
 //                }
-            acquisitionModel.setLeftShadeCount(ReduxLabData.getInstance().getDefaultLeftShadeCountForSHRIMPAquisitions());
+//            acquisitionModel.setLeftShadeCount(ReduxLabData.getInstance().getDefaultLeftShadeCountForSHRIMPAquisitions());
 
         } else {
             try {
@@ -946,7 +945,7 @@ public abstract class AbstractProjectManagerForRawData extends DialogEditor impl
                     JOptionPane jopt = new JOptionPane();
                     int userChoice = JOptionPane.showConfirmDialog(//
                             this,//
-                            "U-Pb_Redux is still loading data, do you really want to quit?",//
+                            "ET_Redux is still loading data, do you really want to quit?",//
                             "Confirm close?",//
                             JOptionPane.YES_NO_OPTION);
                     if (userChoice == JOptionPane.YES_OPTION) {

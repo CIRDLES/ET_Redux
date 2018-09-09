@@ -23,6 +23,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.function.Supplier;
+import javafx.application.Platform;
+import static javafx.application.Platform.isFxApplicationThread;
+import javafx.concurrent.Task;
 import javafx.embed.swing.JFXPanel;
 import javax.swing.JComponent;
 import javax.swing.JLayeredPane;
@@ -198,10 +202,49 @@ public final class EvolutionPlotPanel extends JLayeredPane implements AliquotDet
 
     public void cancelFXThread() {
         if (myEvolutionPlot != null) {
-            myEvolutionPlot.cancelFXApplicationThread();
+
+            runOnFxApplicationThread(() -> {
+
+                try {
+                    myEvolutionPlot.stop();
+                    plotAsComponent = null;
+                    myEvolutionPlot = null;
+                } catch (Exception e) {
+                    plotAsComponent = null;
+                    myEvolutionPlot = null;
+                }
+
+            });
         }
         plotAsComponent = null;
         myEvolutionPlot = null;
+    }
+
+    private static <T> T supplyOnFxApplicationThread(Supplier<T> supplier) {
+        T result;
+
+        if (isFxApplicationThread()) {
+            result = supplier.get();
+        } else {
+            Task<T> supplierTask = new Task<T>() {
+                @Override
+                protected T call() throws Exception {
+                    return supplier.get();
+                }
+            };
+
+            Platform.runLater(supplierTask);
+            result = supplier.get();
+        }
+
+        return result;
+    }
+
+    private static void runOnFxApplicationThread(Runnable runnable) {
+        supplyOnFxApplicationThread(() -> {
+            runnable.run();
+            return null;
+        });
     }
 
     @Override

@@ -3,7 +3,7 @@
  *
  * Created Jul 6, 2011
  *
- * Copyright 2006-2017 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2018 James F. Bowring, CIRDLES.org, and Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -280,6 +280,7 @@ public abstract class AbstractRawDataView extends JLayeredPane implements MouseI
      * @param g2d
      */
     protected void paintInit(Graphics2D g2d) {
+    // aug 2018 this line broke the functionality  of laicpms raw data session    g2d.setClip(getLeftMargin(), getTopMargin(), (int) getGraphWidth(), (int) getGraphHeight());
         RenderingHints rh = g2d.getRenderingHints();
         rh.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         rh.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);

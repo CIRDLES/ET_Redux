@@ -44,14 +44,6 @@
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="newProjectRawDataLAICPMSActionPerformed"/>
                   </Events>
                 </MenuItem>
-                <MenuItem class="javax.swing.JMenuItem" name="newProjectRawDataSHRIMP">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="SHRIMP - in development - DEMO only"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="newProjectRawDataSHRIMPActionPerformed"/>
-                  </Events>
-                </MenuItem>
               </SubComponents>
             </Menu>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItem4">
@@ -84,18 +76,41 @@
                   <SubComponents>
                     <MenuItem class="javax.swing.JMenuItem" name="genericUPbDataTableInCSV_menuItem">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Generic UPb Legacy Data Table in .csv format"/>
+                        <Property name="text" type="java.lang.String" value="Generic UPb Legacy Data Table in CSV UTF-8 format"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="genericUPbDataTableInCSV_menuItemActionPerformed"/>
                       </Events>
                     </MenuItem>
+                    <MenuItem class="javax.swing.JMenuItem" name="genericUPbGADataTableCSV_menuItem">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Generic UPb GA Legacy Data Table in CSV UTF-8 format"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="genericUPbGADataTableCSV_menuItemActionPerformed"/>
+                      </Events>
+                    </MenuItem>
                     <MenuItem class="javax.swing.JMenuItem" name="ucsb_LASS_A_DataTableInCSV_menuItem">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="UCSB LASS A Legacy Data Table in .csv format"/>
+                        <Property name="text" type="java.lang.String" value="UCSB LASS A Legacy Data Table in CSV UTF-8 format"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ucsb_LASS_A_DataTableInCSV_menuItemActionPerformed"/>
+                      </Events>
+                    </MenuItem>
+                  </SubComponents>
+                </Menu>
+                <Menu class="javax.swing.JMenu" name="uPbSquid3Data_menu">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Squid3 UPb Data"/>
+                  </Properties>
+                  <SubComponents>
+                    <MenuItem class="javax.swing.JMenuItem" name="genericUPbSquid3DataTableCSV_menuItem">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Generic UPb Squid3 Data Table in CSV UTF-8 format"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="genericUPbSquid3DataTableCSV_menuItemActionPerformed"/>
                       </Events>
                     </MenuItem>
                   </SubComponents>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="vboxMaster" minHeight="-Infinity" minWidth="-Infinity" prefHeight="616.0" prefWidth="925.0" stylesheets="@css/projectManager.css" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.earthtime.plots.topsoil.TopsoilPlotController">
+   <children>
+      <AnchorPane fx:id="plotAndConfig" />
+      <ToolBar fx:id="plotToolBar" prefHeight="40.0" prefWidth="938.0" style="-fx-background-color: #67ccff #67ccff;" />
+   </children>
+</VBox>

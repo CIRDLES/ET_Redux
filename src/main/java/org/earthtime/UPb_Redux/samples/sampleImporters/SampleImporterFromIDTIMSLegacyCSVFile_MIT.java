@@ -1,7 +1,7 @@
 /*
  * SampleImporterFromIDTIMSLegacyCSVFile_MIT.java
  *
- * Copyright 2006-2017 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2018 James F. Bowring, CIRDLES.org, and Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -251,7 +251,7 @@ public class SampleImporterFromIDTIMSLegacyCSVFile_MIT extends AbstractSampleImp
         try {
             outputWriter = new PrintWriter(new FileWriter(CSVFile));
 
-            outputWriter.println("LEGACY ID-TIMS (MIT) DATA SAMPLE FIELD NAMES FOR IMPORT INTO U-Pb_Redux\n");
+            outputWriter.println("LEGACY ID-TIMS (MIT) DATA SAMPLE FIELD NAMES FOR IMPORT INTO ET_Redux\n");
             outputWriter.println("FractionName, IsotopicRatios, , , , , , , , , Composition, , , , , , , IsotopicDates (Ma)");
             outputWriter.println(fieldNames);
 

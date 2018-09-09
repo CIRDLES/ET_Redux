@@ -4,7 +4,7 @@
  * Created on April 22, 2007, 11:23 AM
  *
  *
- * Copyright 2006-2017 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2018 James F. Bowring, CIRDLES.org, and Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,6 +23,10 @@ package org.earthtime.UPb_Redux.fractions.UPbReduxFractions;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.io.xml.DomDriver;
+import com.thoughtworks.xstream.security.AnyTypePermission;
+import com.thoughtworks.xstream.security.NoTypePermission;
+import com.thoughtworks.xstream.security.NullPermission;
+import com.thoughtworks.xstream.security.PrimitiveTypePermission;
 import java.awt.geom.Path2D;
 import java.io.BufferedReader;
 import java.io.File;
@@ -35,6 +39,7 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -592,18 +597,18 @@ public class UPbFraction extends Fraction implements
             BigDecimal calcR238_235m
                     = //
                     BigDecimal.ONE.//
-                    divide(BigDecimal.ONE.//
-                            add(new BigDecimal(3.0).//
-                                    multiply(getInputAlphaU().getValue())), ReduxConstants.mathContext15).//
+                            divide(BigDecimal.ONE.//
+                                    add(new BigDecimal(3.0).//
+                                            multiply(getInputAlphaU().getValue())), ReduxConstants.mathContext15).//
 
-                    multiply(getOutputsByName("molU238b").getValue().//
-                            add(getOutputsByName("molU238t").getValue().//
-                                    add(getAnalysisMeasure(AnalysisMeasures.r238_235s.getName()).getValue().//
-                                            multiply(molU235s.getValue())))).//
+                            multiply(getOutputsByName("molU238b").getValue().//
+                                    add(getOutputsByName("molU238t").getValue().//
+                                            add(getAnalysisMeasure(AnalysisMeasures.r238_235s.getName()).getValue().//
+                                                    multiply(molU235s.getValue())))).//
 
-                    divide(molU235s.getValue().//
-                            add(getOutputsByName("molU235b").getValue().//
-                                    add(getOutputsByName("molU235t").getValue())), ReduxConstants.mathContext15);
+                            divide(molU235s.getValue().//
+                                    add(getOutputsByName("molU235b").getValue().//
+                                            add(getOutputsByName("molU235t").getValue())), ReduxConstants.mathContext15);
 
             getMeasuredRatioByName(MeasuredRatios.r238_235m.getName()).setValue(calcR238_235m);
             getMeasuredRatioByName(MeasuredRatios.r238_235m.getName()).setOneSigma(oneSigmaPct);
@@ -617,9 +622,9 @@ public class UPbFraction extends Fraction implements
                 BigDecimal calcR233_236m
                         = //
                         getTracer().getDatumByName(TracerUPbRatiosAndConcentrations.r233_236t.getName()).getValue().//
-                        divide(BigDecimal.ONE.//
-                                subtract(new BigDecimal(3.0).//
-                                        multiply(getInputAlphaU().getValue())), ReduxConstants.mathContext15);
+                                divide(BigDecimal.ONE.//
+                                        subtract(new BigDecimal(3.0).//
+                                                multiply(getInputAlphaU().getValue())), ReduxConstants.mathContext15);
 
                 getMeasuredRatioByName(MeasuredRatios.r233_236m.getName()).setValue(calcR233_236m);
                 getMeasuredRatioByName(MeasuredRatios.r233_236m.getName()).setOneSigma(oneSigmaPct);
@@ -634,13 +639,13 @@ public class UPbFraction extends Fraction implements
                 BigDecimal calcR233_235m
                         = //
                         getOutputsByName("molU233t").getValue().//
-                        divide(BigDecimal.ONE.//
-                                subtract(new BigDecimal(2.0).//
-                                        multiply(getInputAlphaU().getValue())), ReduxConstants.mathContext15).//
+                                divide(BigDecimal.ONE.//
+                                        subtract(new BigDecimal(2.0).//
+                                                multiply(getInputAlphaU().getValue())), ReduxConstants.mathContext15).//
 
-                        divide(molU235s.getValue().//
-                                add(getOutputsByName("molU235b").getValue().//
-                                        add(getOutputsByName("molU235t").getValue())), ReduxConstants.mathContext15);
+                                divide(molU235s.getValue().//
+                                        add(getOutputsByName("molU235b").getValue().//
+                                                add(getOutputsByName("molU235t").getValue())), ReduxConstants.mathContext15);
 
                 getMeasuredRatioByName(MeasuredRatios.r233_235m.getName()).setValue(calcR233_235m);
                 getMeasuredRatioByName(MeasuredRatios.r233_235m.getName()).setOneSigma(oneSigmaPct);
@@ -1273,7 +1278,7 @@ public class UPbFraction extends Fraction implements
         try {
             String tracerType
                     = ((TracerUPbModel) getMyLabData().//
-                    getATracerModel(getTracerID())).getTracerType();
+                            getATracerModel(getTracerID())).getTracerType();
 
             retVal = tracerType.contains("202");
 
@@ -1351,7 +1356,7 @@ public class UPbFraction extends Fraction implements
         try {
             String tracerType
                     = ((TracerUPbModel) getMyLabData().//
-                    getATracerModel(getTracerID())).getTracerType();
+                            getATracerModel(getTracerID())).getTracerType();
 
             retVal = tracerType.contains("233");
 
@@ -1523,6 +1528,16 @@ public class UPbFraction extends Fraction implements
         XStream xstream = new XStream(new DomDriver());
 
         customizeXstream(xstream);
+
+        // http://x-stream.github.io/security.html
+        XStream.setupDefaultSecurity(xstream);
+        // clear out existing permissions and set own ones
+        xstream.addPermission(NoTypePermission.NONE);
+        // allow some basics
+        xstream.addPermission(NullPermission.NULL);
+        xstream.addPermission(PrimitiveTypePermission.PRIMITIVES);
+        xstream.allowTypeHierarchy(Collection.class);
+        xstream.addPermission(AnyTypePermission.ANY);
 
         return xstream;
     }

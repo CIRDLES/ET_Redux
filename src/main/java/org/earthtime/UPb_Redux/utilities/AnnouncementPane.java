@@ -4,7 +4,7 @@
  * Created on 30 September 2009
  *
  *
- * Copyright 2006-2017 James F. Bowring and www.Earth-Time.org
+ * Copyright 2006-2018 James F. Bowring, CIRDLES.org, and Earth-Time.org
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -59,9 +59,8 @@ public class AnnouncementPane extends JLayeredPane {
 
         this.add(CIRDLESPanel);
 
-        // setup U-Pb_Redux icon
+        // setup ET_Redux icon
         cldr = this.getClass().getClassLoader();
-        //java.net.URL imageReduxURL = cldr.getResource("org/earthtime/UPb_Redux/images/U-Pb_Redux_Icon.png");
         java.net.URL imageReduxURL = cldr.getResource( "org/earthtime/images/uth-pb-redux-logo.png" );
         iconPanel = new JLabel();
         iconPanel.setBackground(Color.red);
