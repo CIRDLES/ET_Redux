@@ -22,6 +22,7 @@ package org.earthtime.plots;
 import Jama.Matrix;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -58,6 +59,7 @@ import org.earthtime.utilities.TicGeneratorForAxes;
 public abstract class AbstractDataView extends JLayeredPane implements AliquotDetailsDisplayInterface, MouseInputListener, MouseWheelListener {
 
     protected static final double ZOOM_FACTOR = 50.0;
+    protected static final int minGraphWidthHeight = 100;
 
     protected double width;
     protected double height;
@@ -132,6 +134,9 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
     protected Vector<ETFractionInterface> filteredFractions;
     protected Vector<ETFractionInterface> excludedFractions;
 
+    protected boolean eastResizing;
+    protected boolean southResizing;
+
     /**
      *
      */
@@ -142,6 +147,8 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
     /**
      *
      * @param bounds
+     * @param leftMargin
+     * @param topMargin
      */
     protected AbstractDataView(Rectangle bounds, int leftMargin, int topMargin) {
         super();
@@ -156,6 +163,9 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
         graphHeight = (int) height - topMargin;
 
         this.tics = null;
+
+        this.eastResizing = false;
+        this.southResizing = false;
 
         addMeAsMouseListener();
     }
@@ -492,7 +502,6 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
     public void mousePressed(MouseEvent evt) {
         zoomMinX = evt.getX();
         zoomMinY = evt.getY();
-
     }
 
     /**
@@ -503,6 +512,30 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
     public void mouseReleased(MouseEvent evt) {
         zoomMaxX = evt.getX();
         zoomMaxY = evt.getY();
+
+        int myX = evt.getX();
+        int myY = evt.getY();
+
+        if (eastResizing ^ southResizing) {
+            if (eastResizing) {
+                this.graphWidth = (myX - leftMargin > minGraphWidthHeight)?   myX - leftMargin : minGraphWidthHeight;
+            } else {
+                this.graphHeight = (myY - topMargin > minGraphWidthHeight)?   myY - topMargin : minGraphWidthHeight;
+            }
+            this.setBounds(leftMargin, topMargin, graphWidth, graphHeight);
+        }
+
+        if (eastResizing && southResizing) {
+            this.graphWidth = (myX - leftMargin > minGraphWidthHeight)?   myX - leftMargin : minGraphWidthHeight;
+            this.graphHeight = (myY - topMargin > minGraphWidthHeight)?   myY - topMargin : minGraphWidthHeight;
+            this.setBounds(leftMargin, topMargin, graphWidth, graphHeight);
+        }
+
+        eastResizing = false;
+        southResizing = false;
+        setCursor(Cursor.getDefaultCursor());
+        
+        repaint();
     }
 
     /**
@@ -527,7 +560,7 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
      */
     @Override
     public void mouseDragged(MouseEvent evt) {
-        if (mouseInHouse(evt)) {
+        if (mouseInHouse(evt) && !eastResizing && !southResizing) {
             zoomMaxX = evt.getX();
             zoomMaxY = evt.getY();
 
@@ -556,8 +589,8 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
     protected boolean mouseInHouse(MouseEvent evt) {
         return ((evt.getX() >= leftMargin)
                 && (evt.getY() >= topMargin)
-                && (evt.getY() <= graphHeight + topMargin)
-                && (evt.getX() <= (graphWidth + leftMargin)));
+                && (evt.getY() < graphHeight + topMargin - 2)
+                && (evt.getX() < (graphWidth + leftMargin - 2)));
     }
 
     @Override

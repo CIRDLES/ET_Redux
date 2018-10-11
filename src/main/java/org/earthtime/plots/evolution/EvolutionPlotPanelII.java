@@ -18,23 +18,22 @@ package org.earthtime.plots.evolution;
 import Jama.Matrix;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Shape;
+import java.awt.event.MouseEvent;
 import java.awt.geom.CubicCurve2D;
-import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Map;
 import java.util.Vector;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.plots.AbstractDataView;
 import org.earthtime.reportViews.ReportUpdaterInterface;
 import org.earthtime.samples.SampleInterface;
 import org.earthtime.utilities.TicGeneratorForAxes;
-import static org.python.netty.util.concurrent.FastThreadLocal.removeAll;
 
 /**
  *
@@ -62,10 +61,10 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
 
         this.leftMargin = 100;
         this.topMargin = 100;
+        this.graphWidth = 500;
+        this.graphHeight = 500;
 
-        this.setBounds(leftMargin, topMargin, 500, 500);
-        this.graphWidth = getBounds().width - leftMargin;
-        this.graphHeight = getBounds().height - topMargin;
+        this.setBounds(leftMargin, topMargin, graphWidth, graphHeight);
 
         setOpaque(true);
 
@@ -126,7 +125,7 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
             g2d.draw(isochronLine);
 
         }
-        
+
         // draw contour lines
         g2d.setPaint(Color.blue);
         for (int i = 0; i < xy.length; i++) {
@@ -180,7 +179,7 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
         drawAxesAndTicks(g2d, rangeX, rangeY);
 
         // draw and label isochron axes - top and right
-        g2d.setFont( new Font("Monospaced", Font.BOLD, 12));
+        g2d.setFont(new Font("Monospaced", Font.BOLD, 12));
 
         for (int i = 0; i < annumIsochrons.length; i++) {
 
@@ -444,6 +443,40 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
      */
     public void setyAxisMax(double yAxisMax) {
         this.yAxisMax = yAxisMax;
+    }
+
+    /**
+     *
+     * @param evt
+     */
+    @Override
+    public void mouseMoved(MouseEvent evt) {
+        int myX = evt.getX();
+        int myY = evt.getY();
+
+        eastResizing = isEastResize(myX);
+        southResizing = isSouthResize(myY);
+
+        setCursor(Cursor.getDefaultCursor());
+        if (eastResizing ^ southResizing) {
+            if (eastResizing) {
+                setCursor(Cursor.getPredefinedCursor(Cursor.E_RESIZE_CURSOR));
+            } else {
+                setCursor(Cursor.getPredefinedCursor(Cursor.S_RESIZE_CURSOR));
+            }
+        }
+
+        if (eastResizing && southResizing) {
+            setCursor(Cursor.getPredefinedCursor(Cursor.SE_RESIZE_CURSOR));
+        }
+    }
+
+    private boolean isEastResize(int myX) {
+        return ((myX >= (graphWidth + leftMargin - 2)) && (myX <= (graphWidth + leftMargin + 2)));
+    }
+
+    private boolean isSouthResize(int myY) {
+        return ((myY >= (graphHeight + leftMargin - 2)) && (myY <= (graphHeight + leftMargin + 2)));
     }
 
 }
