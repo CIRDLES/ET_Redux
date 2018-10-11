@@ -1,5 +1,9 @@
 URGENT 2018 - ET_Redux will not YET run on Java 1.9 or higher - find Java 1.8 [here](http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html)
 ==
+Note: If you have Java 1.8 as well as more recent versions, 
+1) write a text file named ".java-version" (no extension) containing only "1.8" (no quotes) and save it into the same folder as you have saved the ET_Redux .jar file, and 
+2) open a terminal window and change directory (CD) to the same folder and then execute java -jar [ET_Redux version].jar
+
 ET_Redux
 ========
 
