@@ -136,6 +136,9 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
 
     protected boolean eastResizing;
     protected boolean southResizing;
+    
+    // <0 = zoom out, 0 = original, >0 = zoom in
+    protected int zoomCount;
 
     /**
      *
@@ -166,6 +169,8 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
 
         this.eastResizing = false;
         this.southResizing = false;
+        
+        this.zoomCount = 0;
 
         addMeAsMouseListener();
     }
@@ -281,14 +286,14 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
         g2d.setPaint(Color.BLACK);
         g2d.setStroke(new BasicStroke(2.0f));
 
-        // determine the axis ticks
-        BigDecimal[] tics = TicGeneratorForAxes.generateTics(getMinY_Display(), getMaxY_Display(), 15);
-
-        // forced tics here temp for evolution
-        tics = new BigDecimal[(int) maxY * 4 + 4];
-        for (int i = 0; i < (int) maxY * 4 + 4; i++) {
-            tics[i] = new BigDecimal(i * (0.25));
-        }
+//        // determine the axis ticks
+//        BigDecimal[] tics = TicGeneratorForAxes.generateTics(getMinY_Display(), getMaxY_Display(), 15);
+//
+//        // forced tics here temp for evolution
+//        tics = new BigDecimal[(int) maxY * 4 + 4];
+//        for (int i = 0; i < (int) maxY * 4 + 4; i++) {
+//            tics[i] = new BigDecimal(i * (0.25));
+//        }
         // trap for bad plot
         if (tics.length <= 1) {
             tics = new BigDecimal[0];
@@ -574,6 +579,8 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
             zoomMinX = zoomMaxX;
             zoomMinY = zoomMaxY;
 
+            tics = TicGeneratorForAxes.generateTics(getMinY_Display(), getMaxY_Display(), 10);//(int) (graphHeight / 15.0));
+            
             repaint();
         }
     }
@@ -595,45 +602,6 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
-        if (mouseInHouse(e)) {
-
-            zoomMaxX = e.getX();
-            zoomMaxY = e.getY();
-            zoomMinX = zoomMaxX;
-            zoomMinY = zoomMaxY;
-
-            int notches = e.getWheelRotation();
-            if (notches < 0) {// zoom in
-                minX += getRangeX_Display() / ZOOM_FACTOR;
-                maxX -= getRangeX_Display() / ZOOM_FACTOR;
-                minY += getRangeY_Display() / ZOOM_FACTOR;
-                maxY -= getRangeY_Display() / ZOOM_FACTOR;
-
-            } else {// zoom out
-                minX -= getRangeX_Display() / ZOOM_FACTOR;
-                minX = Math.max(minX, 0.0);
-
-                minY -= getRangeY_Display() / ZOOM_FACTOR;
-                minY = Math.max(minY, 0.0);
-
-                // stop zoom out
-                if (minX * minY > 0.0) {
-                    maxX += getRangeX_Display() / ZOOM_FACTOR;
-                    maxY += getRangeY_Display() / ZOOM_FACTOR;
-
-                    repaint();
-                } else {
-                    minX = 0.0;
-                    maxX = xAxisMax;
-                    minY = 0.0;
-                    maxY = yAxisMax;
-                }
-            }
-            double calcDisplayOffsetXDelta = convertMouseXToValue(zoomMinX) - convertMouseXToValue(zoomMaxX);
-            displayOffsetX += (((minX + displayOffsetX + calcDisplayOffsetXDelta) > 0) ? calcDisplayOffsetXDelta : 0.0);
-
-            repaint();
-        }
     }
 
     protected double convertMouseXToValue(int x) {

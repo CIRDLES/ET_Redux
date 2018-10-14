@@ -24,11 +24,13 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
 import java.awt.geom.CubicCurve2D;
 import java.awt.geom.Path2D;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Vector;
+import org.earthtime.dataDictionaries.UThAnalysisMeasures;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.plots.AbstractDataView;
 import org.earthtime.reportViews.ReportUpdaterInterface;
@@ -122,15 +124,32 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
             ((Path2D) isochronLine).lineTo( //
                     mapX(getMaxX_Display()), //
                     mapY(yItercepts[i] + slopes[i] * getMaxX_Display()));
+
+            if (i == (annumIsochrons.length - 1)) {
+                g2d.setPaint(Color.black);
+            }
             g2d.draw(isochronLine);
 
         }
 
         // draw contour lines
         g2d.setPaint(Color.blue);
-        for (int i = 0; i < xy.length; i++) {
+        // determine what curves should plot
+        int lowIndex = 0;
+        int highIndex = ar48icntrs.length;
+        for (int index = 0; index < ar48icntrs.length; index++) {
+            if (ar48icntrs[index] < getMinY_Display()) {
+                lowIndex = index;
+            }
+            if (ar48icntrs[index] < getMaxY_Display()) {
+                highIndex = Math.min(ar48icntrs.length - 1, index + 6 + (zoomCount / 25) * 1);
+            }
+        }
+        for (int i = lowIndex; i < highIndex; i++) {
+            boolean labelPrinted = false;
             for (int j = 1; j < tv[i].length; j++) {
                 double deltaTOver3 = (tv[i][j] - tv[i][j - 1]) / 3;
+
                 Shape ar48iContour = new CubicCurve2D.Double(
                         mapX(xy[i][0][j - 1]),
                         mapY(xy[i][1][j - 1]),
@@ -142,8 +161,17 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
                         mapY(xy[i][1][j]));
 
                 g2d.draw(ar48iContour);
-            }
 
+                if (!labelPrinted && (xy[i][0][j - 1] > getMinX_Display()) && (ar48icntrs[i] > 0.0)) {
+                    double angleOfText = (Math.atan(xy[i][1][j - 1] - xy[i][1][j]) / (xy[i][0][j - 1] - xy[i][0][j]));
+//                    System.out.println(ar48icntrs[i] + "  >  " + angleOfText);
+                    g2d.rotate(-angleOfText, leftMargin + 20, mapY(xy[i][1][j - 1]));
+                    g2d.drawString(String.valueOf(ar48icntrs[i]), leftMargin + 10, (float) mapY(xy[i][1][j - 1]) - 5);
+                    g2d.rotate(angleOfText, leftMargin + 20, mapY(xy[i][1][j - 1]));
+                    labelPrinted = true;
+                }
+
+            }
         }
 
         g2d.setPaint(Color.black);
@@ -169,7 +197,6 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
                         excludedCenterSize,
                         ellipseLabelFont,
                         ellipseLabelFontSize);
-
             }
         }
 
@@ -233,28 +260,51 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
             maxY = (yAxisMax == 0) ? 2.0 : yAxisMax;
             yAxisMax = maxY;
 
+            // determine default zoom  
+            //todo: fix logic
+            minX = Double.MAX_VALUE;
+            maxX = -Double.MAX_VALUE;
+            minY = Double.MAX_VALUE;
+            maxY = -Double.MAX_VALUE;
+            for (ETFractionInterface f : selectedFractions) {
+                double xAxisRatio = f.getLegacyActivityRatioByName(UThAnalysisMeasures.ar230Th_238Ufc.getName()).getValue().doubleValue();
+                minX = Math.min(minX, xAxisRatio);
+                maxX = Math.max(maxX, xAxisRatio);
+
+                double yAxisRatio = f.getLegacyActivityRatioByName(UThAnalysisMeasures.ar234U_238Ufc.getName()).getValue().doubleValue();
+                minY = Math.min(minY, yAxisRatio);
+                maxY = Math.max(maxY, yAxisRatio);
+            }
+
+            zoomCount = 100 * (int) Math.round(1.5 / minX);
+
             buildIsochronsAndContours();
             repaint();
             validate();
 
-            tics = TicGeneratorForAxes.generateTics(minY, maxY, (int) (graphHeight / 25.0));
+            tics = TicGeneratorForAxes.generateTics(getMinY_Display(), getMaxY_Display(), 10);//(int) (graphHeight / 15.0));
         }
 
         repaint();
     }
 
     private void buildIsochronsAndContours() {
-        // adapted from Noah's matlab code 
+        // math adapted from Noah's matlab code 
 
-        if (annumIsochrons.length == 0) {
-            annumIsochrons = new double[]{25.0e3, 50.0e3, 75.0e3, 100.0e3, 150.0e3, 200.0e3, 300.0e3, 500.0e3, 10e16}; // plotted isochrons
+        annumIsochrons = new double[]{25.0e3, 50.0e3, 75.0e3, 100.0e3, 150.0e3, 200.0e3, 300.0e3, 500.0e3, 10e16}; // plotted isochrons
+
+        if (zoomCount >= 25) {
+            annumIsochrons = new double[]{25.0e3, 50.0e3, 75.0e3, 85.0e3, 100.0e3, 115.0e3, 140.0e3, 150.0e3, 175.0e3, 200.0e3, 300.0e3, 500.0e3, 10e16}; // plotted isochrons
         }
 
-        if (ar48icntrs.length == 0) {
-            ar48icntrs = new double[(int) maxY * 4 + 4];
-            for (int i = 0; i < (int) maxY * 4 + 4; i++) {
-                ar48icntrs[i] = i * (0.25);
-            }
+        if (zoomCount >= 50) {
+            annumIsochrons = new double[]{25.0e3, 50.0e3, 75.0e3, 85.0e3, 100.0e3, 115.0e3, 130.0e3, 140.0e3, 150.0e3, 160.0e3, 180.0e3, 200.0e3, 225.0e3, 250.0e3, 275.0e3, 300.0e3, 350.0e3, 400.0e3, 500.0e3, 10e16}; // plotted isochrons
+        }
+
+        int init48Density = (int) Math.pow(2, (2 + zoomCount / 25));
+        ar48icntrs = new double[(int) maxY * init48Density + init48Density + 1];
+        for (int i = 0; i < ar48icntrs.length; i++) {
+            ar48icntrs[i] = i * (double) (1.0 / (double) init48Density);
         }
 
         Matrix ar48limYaxis = new Matrix(new double[][]{{0.0, maxY * 1}});
@@ -328,7 +378,7 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
         }
 
         // calculate ar48i contours
-        int nts = 10; // number of segments
+        int nts = 200;//10; // number of segments - need 200 to position label well
         // build array of vectors of evenly spaced values with last value = 2e6
         tv = new double[ar48icntrs.length][nts];
         for (int i = 0; i < (nts - 1); i++) {
@@ -479,4 +529,68 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
         return ((myY >= (graphHeight + leftMargin - 2)) && (myY <= (graphHeight + leftMargin + 2)));
     }
 
+    @Override
+    public void mouseWheelMoved(MouseWheelEvent e) {
+        if (mouseInHouse(e)) {
+
+            zoomMaxX = e.getX();
+            zoomMaxY = e.getY();
+
+            int notches = e.getWheelRotation();
+            if (notches < 0) {// zoom in
+                minX += getRangeX_Display() / ZOOM_FACTOR;
+                maxX -= getRangeX_Display() / ZOOM_FACTOR;
+                minY += getRangeY_Display() / ZOOM_FACTOR;
+                maxY -= getRangeY_Display() / ZOOM_FACTOR;
+
+                zoomCount++;
+
+            } else {// zoom out
+                minX -= getRangeX_Display() / ZOOM_FACTOR;
+                minX = Math.max(minX, 0.0);
+
+                minY -= getRangeY_Display() / ZOOM_FACTOR;
+                minY = Math.max(minY, 0.0);
+
+                zoomCount--;
+                // stop zoom out
+                if (minX * minY > 0.0) {
+                    maxX += getRangeX_Display() / ZOOM_FACTOR;
+                    maxY += getRangeY_Display() / ZOOM_FACTOR;
+
+                } else {
+                    minX = 0.0;
+                    maxX = xAxisMax;
+                    minY = 0.0;
+                    maxY = yAxisMax;
+                    zoomCount = 0;
+                }
+            }
+            double calcDisplayOffsetXDelta = convertMouseXToValue(zoomMinX) - convertMouseXToValue(zoomMaxX);
+            double calcDisplayOffsetYDelta = convertMouseYToValue(zoomMaxY) - convertMouseYToValue(zoomMinY);
+
+//            System.out.println(minX + "   " + calcDisplayOffsetXDelta + "  " + displayOffsetX + "    "
+//                    + (((minX + displayOffsetX + calcDisplayOffsetXDelta) > 0) ? calcDisplayOffsetXDelta : 0.0));
+            System.out.println(minY + "   " + calcDisplayOffsetYDelta + "  " + displayOffsetY + "    "
+                    + (((minY + displayOffsetY + calcDisplayOffsetYDelta) > 0) ? calcDisplayOffsetYDelta : 0.0));
+
+            displayOffsetX += (((minX + displayOffsetX + calcDisplayOffsetXDelta) > 0) ? calcDisplayOffsetXDelta : 0.0);
+            displayOffsetY += (((minY + displayOffsetY + calcDisplayOffsetYDelta) > 0) ? calcDisplayOffsetYDelta : 0.0);
+
+            if ((displayOffsetX < 0.0) || (minX == 0.0)) {
+                displayOffsetX = 0.0;
+            }
+            if ((displayOffsetY < 0.0) || (minY == 0.0)) {
+                displayOffsetY = 0.0;
+            }
+
+            zoomMinX = zoomMaxX;
+            zoomMinY = zoomMaxY;
+
+            //System.out.println("ZoomClick   " + zoomCount);
+            buildIsochronsAndContours();
+            tics = TicGeneratorForAxes.generateTics(getMinY_Display(), getMaxY_Display(), 10);//(int) (graphHeight / 15.0));
+            repaint();
+        }
+    }
 }
