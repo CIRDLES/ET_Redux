@@ -27,6 +27,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.geom.CubicCurve2D;
 import java.awt.geom.Path2D;
+import java.awt.geom.Rectangle2D;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Vector;
@@ -176,9 +177,9 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
 
         g2d.setPaint(Color.black);
 
-        Color excludedBorderColor = new Color(0, 0, 0);
-        Color excludedCenterColor = new Color(0, 0, 0);
-        float excludedCenterSize = 3.0f;
+        Color includedBorderColor = Color.BLACK;
+        Color includedCenterColor = new Color(255, 0, 0);
+        float includedCenterSize = 3.0f;
         String ellipseLabelFont = "Monospaced";
         String ellipseLabelFontSize = "12";
 
@@ -187,14 +188,13 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
                     f,
                     2.0f);
             if (f.getErrorEllipsePath() != null) {
-                plotAFraction(
-                        g2d,
+                plotAFraction(g2d,
                         svgStyle,
                         f,
-                        excludedBorderColor,
+                        includedBorderColor,
                         0.5f,
-                        excludedCenterColor,
-                        excludedCenterSize,
+                        includedCenterColor,
+                        includedCenterSize,
                         ellipseLabelFont,
                         ellipseLabelFontSize);
             }
@@ -203,8 +203,10 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
         double rangeX = (getMaxX_Display() - getMinX_Display());
         double rangeY = (getMaxY_Display() - getMinY_Display());
 
-        drawAxesAndTicks(g2d, rangeX, rangeY);
-
+        try {
+            drawAxesAndTicks(g2d, rangeX, rangeY);
+        } catch (Exception e) {
+        }
         // draw and label isochron axes - top and right
         g2d.setFont(new Font("Monospaced", Font.BOLD, 12));
 
@@ -247,8 +249,8 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
             zoomMinX = 0;
             zoomMinY = 0;
 
-            setDisplayOffsetY(0.0);
-            setDisplayOffsetX(0.0);
+            displayOffsetX = 0.0;
+            displayOffsetY = 0.0;
 
             removeAll();
 
@@ -267,22 +269,41 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
             minY = Double.MAX_VALUE;
             maxY = -Double.MAX_VALUE;
             for (ETFractionInterface f : selectedFractions) {
+
                 double xAxisRatio = f.getLegacyActivityRatioByName(UThAnalysisMeasures.ar230Th_238Ufc.getName()).getValue().doubleValue();
-                minX = Math.min(minX, xAxisRatio);
-                maxX = Math.max(maxX, xAxisRatio);
+                double xAxis2Sigma = f.getLegacyActivityRatioByName(UThAnalysisMeasures.ar230Th_238Ufc.getName()).getTwoSigmaAbs().doubleValue();
+                minX = Math.min(minX, xAxisRatio - 2.0 * xAxis2Sigma);
+                maxX = Math.max(maxX, xAxisRatio + 2.0 * xAxis2Sigma);
 
                 double yAxisRatio = f.getLegacyActivityRatioByName(UThAnalysisMeasures.ar234U_238Ufc.getName()).getValue().doubleValue();
-                minY = Math.min(minY, yAxisRatio);
-                maxY = Math.max(maxY, yAxisRatio);
+                double yAxis2Sigma = f.getLegacyActivityRatioByName(UThAnalysisMeasures.ar234U_238Ufc.getName()).getTwoSigmaAbs().doubleValue();
+                minY = Math.min(minY, yAxisRatio - 2.0 * yAxis2Sigma);
+                maxY = Math.max(maxY, yAxisRatio + 2.0 * yAxis2Sigma);
             }
 
-            zoomCount = 100 * (int) Math.round(1.5 / minX);
+            // maintain 2/1.5 aspect ratio
+            if (getRangeY_Display() / getRangeX_Display() < 2.0 / 1.5) {
+                // increase Y
+                double yDelta = (2.0 / 1.5) * getRangeX_Display() - getRangeY_Display();
+                minY -= yDelta / 2.0;
+                maxY += yDelta / 2.0;
+
+                zoomCount = (int) Math.min(100.0, 10.0 / getRangeY_Display());
+            } else {
+                // increase x
+                double xDelta = (1.5 / 2.0) * getRangeY_Display();
+                minX -= xDelta / 2.0;
+                maxX += xDelta / 2.0;
+                
+                zoomCount = (int) Math.min(100.0, 10.0 / getRangeX_Display());
+            }
 
             buildIsochronsAndContours();
             repaint();
             validate();
 
-            tics = TicGeneratorForAxes.generateTics(getMinY_Display(), getMaxY_Display(), 10);//(int) (graphHeight / 15.0));
+            ticsYaxis = TicGeneratorForAxes.generateTics(getMinY_Display(), getMaxY_Display(), 10);
+            ticsXaxis = TicGeneratorForAxes.generateTics(getMinX_Display(), getMaxX_Display(), 10);
         }
 
         repaint();
@@ -566,30 +587,23 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
                     zoomCount = 0;
                 }
             }
-            double calcDisplayOffsetXDelta = convertMouseXToValue(zoomMinX) - convertMouseXToValue(zoomMaxX);
-            double calcDisplayOffsetYDelta = convertMouseYToValue(zoomMaxY) - convertMouseYToValue(zoomMinY);
 
-//            System.out.println(minX + "   " + calcDisplayOffsetXDelta + "  " + displayOffsetX + "    "
-//                    + (((minX + displayOffsetX + calcDisplayOffsetXDelta) > 0) ? calcDisplayOffsetXDelta : 0.0));
-            System.out.println(minY + "   " + calcDisplayOffsetYDelta + "  " + displayOffsetY + "    "
-                    + (((minY + displayOffsetY + calcDisplayOffsetYDelta) > 0) ? calcDisplayOffsetYDelta : 0.0));
-
-            displayOffsetX += (((minX + displayOffsetX + calcDisplayOffsetXDelta) > 0) ? calcDisplayOffsetXDelta : 0.0);
-            displayOffsetY += (((minY + displayOffsetY + calcDisplayOffsetYDelta) > 0) ? calcDisplayOffsetYDelta : 0.0);
-
-            if ((displayOffsetX < 0.0) || (minX == 0.0)) {
+            if (minX <= 0.0) {
+                minX = 0.0;
                 displayOffsetX = 0.0;
             }
-            if ((displayOffsetY < 0.0) || (minY == 0.0)) {
+            if (minY <= 0.0) {
+                minY = 0.0;
                 displayOffsetY = 0.0;
             }
 
             zoomMinX = zoomMaxX;
             zoomMinY = zoomMaxY;
 
-            //System.out.println("ZoomClick   " + zoomCount);
             buildIsochronsAndContours();
-            tics = TicGeneratorForAxes.generateTics(getMinY_Display(), getMaxY_Display(), 10);//(int) (graphHeight / 15.0));
+            ticsYaxis = TicGeneratorForAxes.generateTics(getMinY_Display(), getMaxY_Display(), 10);
+            ticsXaxis = TicGeneratorForAxes.generateTics(getMinX_Display(), getMaxX_Display(), 10);
+
             repaint();
         }
     }
