@@ -291,7 +291,7 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
                 zoomCount = (int) Math.min(100.0, 10.0 / getRangeY_Display());
             } else {
                 // increase x
-                double xDelta = (1.5 / 2.0) * getRangeY_Display();
+                double xDelta = (1.5 / 2.0) * getRangeY_Display() - getRangeX_Display();
                 minX -= xDelta / 2.0;
                 maxX += xDelta / 2.0;
                 
