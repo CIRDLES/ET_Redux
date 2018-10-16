@@ -3757,7 +3757,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
 
         archiveNote_label.setForeground((Color) ((validateAliquot.compareTo(GeochronValidationResults.success) == 0) ? Color.red : Color.black));
 
-        aliquotName_text.setEnabled((validateAliquot.compareTo(GeochronValidationResults.success) == 0) ? false : true);
+        aliquotName_text.setEnabled(validateAliquot.compareTo(GeochronValidationResults.success) == 0);
 
         saveAndUploadAliquotToGeochron_button.setEnabled(true);/////// ! (validateAliquot.compareTo( GeochronValidationResults.errorIsPrivate ) == 0) );
     }
@@ -5102,8 +5102,15 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
                 + "&password="//
                 + password//
                 + "&validateonly=yes";
-
-        return GeochronValidationResults.validateAliquot(connectionString);
+        
+        GeochronValidationResults checkValid = GeochronValidationResults.errorNotFound;
+        
+        try {
+            checkValid = GeochronValidationResults.validateAliquot(connectionString);
+        } catch (Exception e) {
+        }
+        
+        return checkValid;
     }
 
     /**
