@@ -398,7 +398,7 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
 
                             g2d.drawString(ticsXaxis[i].toPlainString(),
                                     (float) mapX(x) - xLabelCenterOffset,
-                                    (float) mapY(getMinY_Display()) + 8f);
+                                    (float) mapY(getMinY_Display()) + 12f);
                         }
 
                         labeledTicCountXAxis++;

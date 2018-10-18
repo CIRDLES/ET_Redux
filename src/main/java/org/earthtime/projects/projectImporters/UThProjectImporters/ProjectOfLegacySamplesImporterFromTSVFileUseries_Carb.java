@@ -442,6 +442,7 @@ public class ProjectOfLegacySamplesImporterFromTSVFileUseries_Carb extends Abstr
             if ((currentSample != null) && (currentAliquot != null)) {
                 processSuperSample(project.getSuperSample(), currentSample, currentAliquot);
                 currentSample.initFilteredFractionsToAll();
+                currentSample.getSampleDateModels().add(SampleUTh.generateDefaultSampleDateModel());
             }
 
         } catch (IOException iOException) {

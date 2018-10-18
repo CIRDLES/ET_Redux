@@ -26,6 +26,7 @@ import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetu
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.samples.SESARSampleMetadata;
 import org.earthtime.UPb_Redux.user.SampleDateInterpretationGUIOptions;
+import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.UTh_Redux.aliquots.UThReduxAliquot;
 import org.earthtime.aliquots.AliquotInterface;
@@ -33,6 +34,7 @@ import org.earthtime.dataDictionaries.SampleRegistries;
 import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.fractions.ETFractionInterface;
+import org.earthtime.plots.isochrons.IsochronModel;
 import org.earthtime.projects.EarthTimeSerializedFileInterface;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.reduxLabData.ReduxLabData;
@@ -133,6 +135,8 @@ public class SampleUTh extends ETSample implements
 
     private SortedSet<String> filteredFractionIDs;
 
+    private Vector<ValueModel> sampleDateModels;
+
     /**
      *
      */
@@ -186,7 +190,7 @@ public class SampleUTh extends ETSample implements
         this.sampleDateInterpretationGUISettings = new SampleDateInterpretationGUIOptions();
 //
 //        this.sampleFolderSaved = null;
-//        this.sampleDateModels = new Vector<>();
+        this.sampleDateModels = new Vector<>();
 //
 //        this.mineralName = "zircon";
         this.mySESARSampleMetadata = new SESARSampleMetadata();
@@ -511,14 +515,33 @@ public class SampleUTh extends ETSample implements
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+
+    /**
+     * @param sampleDateModels the sampleDateModels to set
+     */
     @Override
     public void setSampleDateModels(Vector<ValueModel> sampleDateModels) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.sampleDateModels = sampleDateModels;
     }
 
+    /**
+     * @return the sampleDateModels
+     */
     @Override
     public Vector<ValueModel> getSampleDateModels() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (sampleDateModels == null) {
+            sampleDateModels = new Vector<>();
+        }
+        return sampleDateModels;
+    }
+    
+    public static ValueModel generateDefaultSampleDateModel(){
+        ValueModel defaultSDM = new SampleDateModel();
+        
+        defaultSDM.setName("DEFAULT");
+        ((SampleDateModel)defaultSDM).setIsochronModels(IsochronModel.generateDefaultEvolutionIsochronModels());
+        
+        return defaultSDM;
     }
 
     @Override

@@ -53,6 +53,7 @@ import org.earthtime.UPb_Redux.utilities.comparators.IntuitiveStringComparator;
 import org.earthtime.UPb_Redux.valueModels.SampleDateInterceptModel;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
+import org.earthtime.UTh_Redux.samples.SampleUTh;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
 import org.earthtime.aliquots.AliquotForUPbInterface;
 import org.earthtime.aliquots.AliquotInterface;
@@ -1600,6 +1601,14 @@ public interface SampleInterface {
             if (sdm.getName().equalsIgnoreCase(sampleDateModelName)) {
                 retVal = sdm;
             }
+        }
+
+        // todo refactor to more general case
+        if ((sampleDateModelName.compareToIgnoreCase("DEFAULT") == 0)
+                && (retVal == null)
+                && (getSampleAnalysisType().compareToIgnoreCase(SampleAnalysisTypesEnum.USERIES_CARB.getName()) == 0)) {
+            retVal = SampleUTh.generateDefaultSampleDateModel();
+            getSampleDateModels().add(retVal);
         }
         return retVal;
     }

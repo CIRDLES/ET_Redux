@@ -27,13 +27,18 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.geom.CubicCurve2D;
 import java.awt.geom.Path2D;
-import java.awt.geom.Rectangle2D;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.SortedSet;
 import java.util.Vector;
+import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.dataDictionaries.UThAnalysisMeasures;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.plots.AbstractDataView;
+import org.earthtime.plots.isochrons.IsochronModel;
 import org.earthtime.reportViews.ReportUpdaterInterface;
 import org.earthtime.samples.SampleInterface;
 import org.earthtime.utilities.TicGeneratorForAxes;
@@ -294,7 +299,7 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
                 double xDelta = (1.5 / 2.0) * getRangeY_Display() - getRangeX_Display();
                 minX -= xDelta / 2.0;
                 maxX += xDelta / 2.0;
-                
+
                 zoomCount = (int) Math.min(100.0, 10.0 / getRangeX_Display());
             }
 
@@ -312,16 +317,28 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
     private void buildIsochronsAndContours() {
         // math adapted from Noah's matlab code 
 
-        annumIsochrons = new double[]{25.0e3, 50.0e3, 75.0e3, 100.0e3, 150.0e3, 200.0e3, 300.0e3, 500.0e3, 10e16}; // plotted isochrons
-
-        if (zoomCount >= 25) {
-            annumIsochrons = new double[]{25.0e3, 50.0e3, 75.0e3, 85.0e3, 100.0e3, 115.0e3, 140.0e3, 150.0e3, 175.0e3, 200.0e3, 300.0e3, 500.0e3, 10e16}; // plotted isochrons
+        SortedSet<IsochronModel> selectedIsochrons = ((SampleDateModel) sample.getSampleDateModelByName("DEFAULT")).getIsochronModels();
+        List<Double> annumList = new ArrayList<>();
+        Iterator<IsochronModel> isochronIterator = selectedIsochrons.iterator();
+        while (isochronIterator.hasNext()) {
+            IsochronModel isochronModel = isochronIterator.next();
+            isochronModel.setVisible(isochronModel.getDensityLevel()<= (zoomCount / 25));
+            if (isochronModel.isVisible()) {
+                annumList.add(isochronModel.getDateInAnnum());
+            }
         }
 
-        if (zoomCount >= 50) {
-            annumIsochrons = new double[]{25.0e3, 50.0e3, 75.0e3, 85.0e3, 100.0e3, 115.0e3, 130.0e3, 140.0e3, 150.0e3, 160.0e3, 180.0e3, 200.0e3, 225.0e3, 250.0e3, 275.0e3, 300.0e3, 350.0e3, 400.0e3, 500.0e3, 10e16}; // plotted isochrons
-        }
+        annumIsochrons = annumList.stream().mapToDouble(Double::doubleValue).toArray();
 
+//        annumIsochrons = new double[]{25.0e3, 50.0e3, 75.0e3, 100.0e3, 150.0e3, 200.0e3, 300.0e3, 500.0e3, 10e16}; // plotted isochrons
+//
+//        if (zoomCount >= 25) {
+//            annumIsochrons = new double[]{25.0e3, 50.0e3, 75.0e3, 85.0e3, 100.0e3, 115.0e3, 140.0e3, 150.0e3, 175.0e3, 200.0e3, 300.0e3, 500.0e3, 10e16}; // plotted isochrons
+//        }
+//
+//        if (zoomCount >= 50) {
+//            annumIsochrons = new double[]{25.0e3, 50.0e3, 75.0e3, 85.0e3, 100.0e3, 115.0e3, 130.0e3, 140.0e3, 150.0e3, 160.0e3, 180.0e3, 200.0e3, 225.0e3, 250.0e3, 275.0e3, 300.0e3, 350.0e3, 400.0e3, 500.0e3, 10e16}; // plotted isochrons
+//        }
         int init48Density = (int) Math.pow(2, (2 + zoomCount / 25));
         ar48icntrs = new double[(int) maxY * init48Density + init48Density + 1];
         for (int i = 0; i < ar48icntrs.length; i++) {

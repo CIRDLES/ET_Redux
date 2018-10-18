@@ -17,6 +17,8 @@ package org.earthtime.plots.isochrons;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import org.earthtime.UPb_Redux.ReduxConstants;
 
 /**
@@ -24,6 +26,13 @@ import org.earthtime.UPb_Redux.ReduxConstants;
  * @author James F. Bowring
  */
 public class IsochronModel implements Comparable<IsochronModel>, Serializable {
+
+    /**
+     * @return the densityLevel
+     */
+    public int getDensityLevel() {
+        return densityLevel;
+    }
 
     // Class variables
     private static final long serialVersionUID = 6649500047671825154L;
@@ -33,21 +42,23 @@ public class IsochronModel implements Comparable<IsochronModel>, Serializable {
     private double yCoord;
     private String units;
     private boolean visible;
-    
+    private int densityLevel;
+
     public IsochronModel() {
-        this(0.0, 0.0, 0.0, "ka", false);
+        this(0.0, 0.0, 0.0, "ka", false, 0);
     }
 
     public IsochronModel(double dateInAnnum) {
-        this(dateInAnnum, 0.0, 0.0, "ka", false);
+        this(dateInAnnum, 0.0, 0.0, "ka", false, 0);
     }
 
-    public IsochronModel(double dateInAnnum, double xCoord, double yCoord, String units, boolean visible) {
+    public IsochronModel(double dateInAnnum, double xCoord, double yCoord, String units, boolean visible, int densityLevel) {
         this.dateInAnnum = dateInAnnum;
         this.xCoord = xCoord;
         this.yCoord = yCoord;
         this.units = units;
         this.visible = visible;
+        this.densityLevel = densityLevel;
     }
 
     @Override
@@ -80,8 +91,40 @@ public class IsochronModel implements Comparable<IsochronModel>, Serializable {
         String retVal = new BigDecimal(dateInAnnum)
                 .movePointRight(ReduxConstants.getUnitConversionMoveCount(units))
                 .setScale(0).toPlainString() + " " + units
-                + " (" + xCoord  + ", " + yCoord + ")";
+                + " (" + xCoord + ", " + yCoord + ")";
         return retVal;
+    }
+
+    public String prettyPrintI() {
+        String retVal = new BigDecimal(dateInAnnum)
+                .movePointRight(ReduxConstants.getUnitConversionMoveCount(units))
+                .setScale(0).toPlainString() + " " + units;
+        return retVal;
+    }
+
+    public static SortedSet<IsochronModel> generateDefaultEvolutionIsochronModels() {
+        SortedSet<IsochronModel> isochronModels = new TreeSet<>();
+        // density level 0
+        double[] annumIsochrons
+                = new double[]{25.0e3, 50.0e3, 75.0e3, 100.0e3, 150.0e3, 200.0e3, 300.0e3, 500.0e3, 10e16};
+        for (int i = 0; i < annumIsochrons.length; i++) {
+            isochronModels.add(new IsochronModel(annumIsochrons[i], 0.0, 0.0, "ka", true, 0));
+        }
+        // density level 1
+        annumIsochrons
+                = new double[]{85.0e3, 115.0e3, 130.0e3, 140.0e3,
+                    160.0e3, 180.0e3};
+        for (int i = 0; i < annumIsochrons.length; i++) {
+            isochronModels.add(new IsochronModel(annumIsochrons[i], 0.0, 0.0, "ka", true, 1));
+        }
+        // density level 2
+        annumIsochrons
+                = new double[]{225.0e3, 250.0e3, 275.0e3,
+                    350.0e3, 400.0e3};
+        for (int i = 0; i < annumIsochrons.length; i++) {
+            isochronModels.add(new IsochronModel(annumIsochrons[i], 0.0, 0.0, "ka", true, 2));
+        }
+        return isochronModels;
     }
 
     /**
