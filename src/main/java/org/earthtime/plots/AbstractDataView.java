@@ -60,6 +60,7 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
 
     protected static final double ZOOM_FACTOR = 50.0;
     protected static final int minGraphWidthHeight = 100;
+    protected static final int maxGraphWidthHeight = 500;
 
     protected double width;
     protected double height;
@@ -579,17 +580,17 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
 
         if (eastResizing ^ southResizing) {
             if (eastResizing) {
-                this.graphWidth = (myX - leftMargin > minGraphWidthHeight) ? myX - leftMargin : minGraphWidthHeight;
+                this.graphWidth = Math.min(maxGraphWidthHeight, (myX - leftMargin > minGraphWidthHeight) ? myX - leftMargin : minGraphWidthHeight);
             } else {
-                this.graphHeight = (myY - topMargin > minGraphWidthHeight) ? myY - topMargin : minGraphWidthHeight;
+                this.graphHeight = Math.min(maxGraphWidthHeight, (myY - topMargin > minGraphWidthHeight) ? myY - topMargin : minGraphWidthHeight);
             }
-            this.setBounds(leftMargin, topMargin, graphWidth, graphHeight);
+            this.setBounds(0, 0, graphWidth + leftMargin * 2, graphHeight + topMargin * 2);
         }
 
         if (eastResizing && southResizing) {
-            this.graphWidth = (myX - leftMargin > minGraphWidthHeight) ? myX - leftMargin : minGraphWidthHeight;
-            this.graphHeight = (myY - topMargin > minGraphWidthHeight) ? myY - topMargin : minGraphWidthHeight;
-            this.setBounds(leftMargin, topMargin, graphWidth, graphHeight);
+            this.graphWidth = Math.min(maxGraphWidthHeight, (myX - leftMargin > minGraphWidthHeight) ? myX - leftMargin : minGraphWidthHeight);
+            this.graphHeight = Math.min(maxGraphWidthHeight, (myY - topMargin > minGraphWidthHeight) ? myY - topMargin : minGraphWidthHeight);
+            this.setBounds(0, 0, graphWidth + leftMargin * 2, graphHeight + topMargin * 2);
         }
 
         eastResizing = false;

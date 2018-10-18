@@ -498,8 +498,9 @@ public class SampleDateInterpretationsManager extends DialogEditor
         // set toolbar choices per options
        // Map<String, String> UIO = sample.getSampleDateInterpretationGUISettings().getuSeriesIsochronOptions();
 
-        evolutionLayeredPane.setLayout(new BorderLayout());
-        evolutionLayeredPane.add(evolutionPlotPanel, BorderLayout.CENTER);
+        //evolutionLayeredPane.setLayout(new BorderLayout());
+        evolutionLayeredPane.add(evolutionPlotPanel);
+     //   evolutionPlotPanel.setBounds(0, 0, evolutionLayeredPane.getWidth(), evolutionLayeredPane.getHeight() - 400);
 
         ((AliquotDetailsDisplayInterface) evolutionPlotPanel).//
                 setSelectedFractions(sample.getFractions());
@@ -971,7 +972,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         } catch (Exception e) {
         }
 
-        evolutionPlotPanel.setPreferredSize(new Dimension(adjustedWidth, adjustedHeight));
+       // evolutionPlotPanel.setPreferredSize(new Dimension(adjustedWidth, adjustedHeight - 400));
 
         ((WeightedMeanGraphPanel) weightedMeanGraphPanel).setGraphWidth(adjustedWidth);
         ((WeightedMeanGraphPanel) weightedMeanGraphPanel).setGraphHeight(adjustedHeight);
@@ -1225,6 +1226,16 @@ public class SampleDateInterpretationsManager extends DialogEditor
         fractionOrderByRandom_radioButton = new javax.swing.JRadioButton();
         fractionOrderByDate_radioButton = new javax.swing.JRadioButton();
         evolutionLayeredPane = new javax.swing.JLayeredPane();
+        evolutionToolPanel = new javax.swing.JPanel();
+        zoomInAny2X2_button1 =  new ET_JButton();
+        zoomOutAny2X2_button1 =  new ET_JButton();
+        resetGraphAny2Display_button1 =  new ET_JButton();
+        ellipseCentersAny2OnToggle_checkbox1 = new javax.swing.JCheckBox();
+        ellipseLabelsAny2OnToggle_checkbox1 = new javax.swing.JCheckBox();
+        panAny2_toggleButton1 =  new ET_JToggleButton();
+        zoomBoxAny2_toggleButton1 =  new ET_JToggleButton();
+        showTightAny2_toggleButton1 =  new ET_JToggleButton();
+        selectAny2_button1 =  new ET_JButton();
         useriesIsochronLayeredPane = new javax.swing.JLayeredPane();
         uSeriesIsochronToolPanel = new javax.swing.JPanel();
         zoomInX2Isochron_button =  new ET_JButton();
@@ -1665,6 +1676,138 @@ public class SampleDateInterpretationsManager extends DialogEditor
         weightedMeanToolPanel.setBounds(1, 604, 910, 36);
 
         graphPanels_TabbedPane.addTab("Weighted Mean", weightedMeanLayeredPane);
+
+        evolutionToolPanel.setBackground(new java.awt.Color(231, 255, 253));
+        evolutionToolPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        evolutionToolPanel.setOpaque(false);
+        evolutionToolPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        zoomInAny2X2_button1.setBackground(new java.awt.Color(255, 255, 255));
+        zoomInAny2X2_button1.setFont(new java.awt.Font("Braggadocio", 1, 24)); // NOI18N
+        zoomInAny2X2_button1.setText("+");
+        zoomInAny2X2_button1.setAlignmentY(0.0F);
+        zoomInAny2X2_button1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        zoomInAny2X2_button1.setFocusable(false);
+        zoomInAny2X2_button1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        zoomInAny2X2_button1.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        zoomInAny2X2_button1.setOpaque(true);
+        zoomInAny2X2_button1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        zoomInAny2X2_button1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                zoomInAny2X2_button1ActionPerformed(evt);
+            }
+        });
+        evolutionToolPanel.add(zoomInAny2X2_button1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 2, 30, 30));
+
+        zoomOutAny2X2_button1.setBackground(new java.awt.Color(255, 255, 255));
+        zoomOutAny2X2_button1.setFont(new java.awt.Font("Braggadocio", 1, 24)); // NOI18N
+        zoomOutAny2X2_button1.setText("-");
+        zoomOutAny2X2_button1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        zoomOutAny2X2_button1.setOpaque(true);
+        evolutionToolPanel.add(zoomOutAny2X2_button1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 2, 30, 30));
+
+        resetGraphAny2Display_button1.setBackground(new java.awt.Color(255, 255, 255));
+        resetGraphAny2Display_button1.setFont(new java.awt.Font("SansSerif", 1, 9)); // NOI18N
+        resetGraphAny2Display_button1.setText("Reset");
+        resetGraphAny2Display_button1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        resetGraphAny2Display_button1.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        resetGraphAny2Display_button1.setOpaque(true);
+        resetGraphAny2Display_button1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                resetGraphAny2Display_button1ActionPerformed(evt);
+            }
+        });
+        evolutionToolPanel.add(resetGraphAny2Display_button1, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 2, 35, 30));
+
+        ellipseCentersAny2OnToggle_checkbox1.setBackground(new java.awt.Color(231, 255, 253));
+        ellipseCentersAny2OnToggle_checkbox1.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
+        ellipseCentersAny2OnToggle_checkbox1.setSelected(true);
+        ellipseCentersAny2OnToggle_checkbox1.setText("Ellipse Centers");
+        ellipseCentersAny2OnToggle_checkbox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ellipseCentersAny2OnToggle_checkbox1ActionPerformed(evt);
+            }
+        });
+        evolutionToolPanel.add(ellipseCentersAny2OnToggle_checkbox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(556, 6, -1, -1));
+
+        ellipseLabelsAny2OnToggle_checkbox1.setBackground(new java.awt.Color(231, 255, 253));
+        ellipseLabelsAny2OnToggle_checkbox1.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
+        ellipseLabelsAny2OnToggle_checkbox1.setSelected(true);
+        ellipseLabelsAny2OnToggle_checkbox1.setText("Labels");
+        ellipseLabelsAny2OnToggle_checkbox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ellipseLabelsAny2OnToggle_checkbox1ActionPerformed(evt);
+            }
+        });
+        evolutionToolPanel.add(ellipseLabelsAny2OnToggle_checkbox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(685, 6, -1, -1));
+
+        panAny2_toggleButton1.setBackground(new java.awt.Color(255, 255, 255));
+        concordiaPanZoom_buttonGroup.add(panAny2_toggleButton1);
+        panAny2_toggleButton1.setFont(new java.awt.Font("SansSerif", 1, 9)); // NOI18N
+        panAny2_toggleButton1.setText("Pan");
+        panAny2_toggleButton1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        panAny2_toggleButton1.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        panAny2_toggleButton1.setName("PAN"); // NOI18N
+        panAny2_toggleButton1.setOpaque(true);
+        panAny2_toggleButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                panAny2_toggleButton1ActionPerformed(evt);
+            }
+        });
+        evolutionToolPanel.add(panAny2_toggleButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(95, 2, 30, 30));
+
+        zoomBoxAny2_toggleButton1.setBackground(new java.awt.Color(255, 255, 255));
+        concordiaPanZoom_buttonGroup.add(zoomBoxAny2_toggleButton1);
+        zoomBoxAny2_toggleButton1.setFont(new java.awt.Font("SansSerif", 1, 9)); // NOI18N
+        zoomBoxAny2_toggleButton1.setText("Zoom-Box");
+        zoomBoxAny2_toggleButton1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        zoomBoxAny2_toggleButton1.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        zoomBoxAny2_toggleButton1.setName("ZOOM"); // NOI18N
+        zoomBoxAny2_toggleButton1.setOpaque(true);
+        zoomBoxAny2_toggleButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                zoomBoxAny2_toggleButton1ActionPerformed(evt);
+            }
+        });
+        evolutionToolPanel.add(zoomBoxAny2_toggleButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(125, 2, 55, 30));
+
+        showTightAny2_toggleButton1.setBackground(new java.awt.Color(255, 255, 255));
+        concordiaPanZoom_buttonGroup.add(showTightAny2_toggleButton1);
+        showTightAny2_toggleButton1.setFont(new java.awt.Font("SansSerif", 1, 9)); // NOI18N
+        showTightAny2_toggleButton1.setText("Tight");
+        showTightAny2_toggleButton1.setToolTipText("Zooms in until ellipses touch borders.");
+        showTightAny2_toggleButton1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        showTightAny2_toggleButton1.setContentAreaFilled(false);
+        showTightAny2_toggleButton1.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        showTightAny2_toggleButton1.setName("TIGHT"); // NOI18N
+        showTightAny2_toggleButton1.setOpaque(true);
+        showTightAny2_toggleButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showTightAny2_toggleButton1ActionPerformed(evt);
+            }
+        });
+        evolutionToolPanel.add(showTightAny2_toggleButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 2, 30, 30));
+
+        selectAny2_button1.setBackground(new java.awt.Color(255, 255, 255));
+        selectAny2_button1.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
+        selectAny2_button1.setText("Isochrons");
+        selectAny2_button1.setAlignmentY(0.0F);
+        selectAny2_button1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        selectAny2_button1.setFocusable(false);
+        selectAny2_button1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        selectAny2_button1.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        selectAny2_button1.setOpaque(true);
+        selectAny2_button1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        selectAny2_button1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAny2_button1ActionPerformed(evt);
+            }
+        });
+        evolutionToolPanel.add(selectAny2_button1, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 2, 70, 30));
+
+        evolutionLayeredPane.add(evolutionToolPanel);
+        evolutionToolPanel.setBounds(0, 604, 790, 35);
+
         graphPanels_TabbedPane.addTab("Evolution", evolutionLayeredPane);
 
         useriesIsochronLayeredPane.setBackground(new java.awt.Color(255, 237, 255));
@@ -2549,8 +2692,8 @@ private void graphPanelsTabbedPaneResized(java.awt.event.ComponentEvent evt) {//
     } catch (Exception e) {
     }
 
-    evolutionPlotPanel.setBounds(evolutionLayeredPane.getBounds());
-    evolutionPlotPanel.setSize(evolutionLayeredPane.getSize());
+  //  evolutionPlotPanel.setBounds(0,0,evolutionLayeredPane.getWidth(), evolutionLayeredPane.getHeight() - 400);
+    //evolutionPlotPanel.setSize(evolutionLayeredPane.getSize());
     ((org.earthtime.plots.AbstractDataView) evolutionPlotPanel).refreshPanel(true);
 
     ((WeightedMeanGraphPanel) weightedMeanGraphPanel).setGraphWidth(adjustedWidth);
@@ -3029,6 +3172,38 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
         delegatePlotFileWriting();
     }//GEN-LAST:event_writeVisiblePlotSvgPdf_buttonActionPerformed
 
+    private void zoomInAny2X2_button1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zoomInAny2X2_button1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_zoomInAny2X2_button1ActionPerformed
+
+    private void resetGraphAny2Display_button1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetGraphAny2Display_button1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_resetGraphAny2Display_button1ActionPerformed
+
+    private void ellipseCentersAny2OnToggle_checkbox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ellipseCentersAny2OnToggle_checkbox1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ellipseCentersAny2OnToggle_checkbox1ActionPerformed
+
+    private void ellipseLabelsAny2OnToggle_checkbox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ellipseLabelsAny2OnToggle_checkbox1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ellipseLabelsAny2OnToggle_checkbox1ActionPerformed
+
+    private void panAny2_toggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_panAny2_toggleButton1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_panAny2_toggleButton1ActionPerformed
+
+    private void zoomBoxAny2_toggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zoomBoxAny2_toggleButton1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_zoomBoxAny2_toggleButton1ActionPerformed
+
+    private void showTightAny2_toggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showTightAny2_toggleButton1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_showTightAny2_toggleButton1ActionPerformed
+
+    private void selectAny2_button1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectAny2_button1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_selectAny2_button1ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JRadioButton DatePbCorrSchemeA_radio;
     private javax.swing.JRadioButton ageBest_radio;
@@ -3056,12 +3231,15 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
     private javax.swing.JButton defaultFilters_button;
     private javax.swing.JMenu displayOptions_menu;
     private javax.swing.JCheckBox ellipseCentersAny2OnToggle_checkbox;
+    private javax.swing.JCheckBox ellipseCentersAny2OnToggle_checkbox1;
     private javax.swing.JCheckBox ellipseCentersIsochron_Checkbox;
     private javax.swing.JCheckBox ellipseCenters_checkbox;
     private javax.swing.JCheckBox ellipseLabelsAny2OnToggle_checkbox;
+    private javax.swing.JCheckBox ellipseLabelsAny2OnToggle_checkbox1;
     private javax.swing.JCheckBox ellipseLabelsIsochron_checkbox;
     private javax.swing.JCheckBox ellipseLabels_checkbox;
     private javax.swing.JLayeredPane evolutionLayeredPane;
+    private javax.swing.JPanel evolutionToolPanel;
     private javax.swing.JRadioButton fractionOrderByDate_radioButton;
     private javax.swing.JRadioButton fractionOrderByName_radioButton;
     private javax.swing.JRadioButton fractionOrderByRandom_radioButton;
@@ -3080,6 +3258,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
     private javax.swing.JTextField negativePctDiscordance_text;
     private javax.swing.JLayeredPane normedProbabilityLayeredPane;
     private javax.swing.JToggleButton panAny2_toggleButton;
+    private javax.swing.JToggleButton panAny2_toggleButton1;
     private javax.swing.JToggleButton panIsochron_toggleButton;
     private javax.swing.JToggleButton pan_WeightedMean_toggleButton;
     private javax.swing.JToggleButton pan_toggleButton;
@@ -3092,6 +3271,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
     private javax.swing.JCheckBox protactiniumCorrectionSelector_checkbox;
     private javax.swing.JRadioButton radiumFlavorIsochron_radioButton;
     private javax.swing.JButton resetGraphAny2Display_button;
+    private javax.swing.JButton resetGraphAny2Display_button1;
     private javax.swing.JButton resetGraphDisplayIsochron_button;
     private javax.swing.JButton resetGraphDisplay_button;
     private javax.swing.JButton resetGraphProbability_button;
@@ -3099,6 +3279,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
     private javax.swing.JMenuBar sampleAgeGUIMenuBar;
     private javax.swing.JMenuItem sampleConcordiaOptions_menuItem;
     private javax.swing.JButton selectAny2_button;
+    private javax.swing.JButton selectAny2_button1;
     private javax.swing.JCheckBox showEquiLineIsochron_checkbox;
     private javax.swing.JCheckBox showExcludedFractionsIsochron_checkbox;
     private javax.swing.JCheckBox showExcludedFractions_checkbox;
@@ -3108,6 +3289,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
     private javax.swing.JCheckBox showRegressionLineIsochron_checkbox;
     private javax.swing.JCheckBox showRegressionUnctIsochron_checkbox;
     private javax.swing.JToggleButton showTightAny2_toggleButton;
+    private javax.swing.JToggleButton showTightAny2_toggleButton1;
     private javax.swing.JButton showTightGraphProbability_button;
     private javax.swing.JToggleButton showTightIsochron_toggleButton;
     private javax.swing.JToggleButton showTight_toggleButton;
@@ -3127,14 +3309,17 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
     private javax.swing.JMenu weightedMeansPlotOptions_menu;
     private javax.swing.JButton writeVisiblePlotSvgPdf_button;
     private javax.swing.JToggleButton zoomBoxAny2_toggleButton;
+    private javax.swing.JToggleButton zoomBoxAny2_toggleButton1;
     private javax.swing.JToggleButton zoomBox_toggleButton;
     private javax.swing.JToggleButton zoomBox_toggleIsochron_button;
     private javax.swing.JButton zoomInAny2X2_button;
+    private javax.swing.JButton zoomInAny2X2_button1;
     private javax.swing.JButton zoomInProbability_button;
     private javax.swing.JButton zoomInX2Isochron_button;
     private javax.swing.JButton zoomInX2_WeightedMean_button;
     private javax.swing.JButton zoomInX2_button;
     private javax.swing.JButton zoomOutAny2X2_button;
+    private javax.swing.JButton zoomOutAny2X2_button1;
     private javax.swing.JButton zoomOutProbability_button;
     private javax.swing.JButton zoomOutX2Isochron_button;
     private javax.swing.JButton zoomOutX2_WeightedMean_button;

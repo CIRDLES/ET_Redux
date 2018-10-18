@@ -67,12 +67,12 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
     public EvolutionPlotPanelII(SampleInterface mySample, ReportUpdaterInterface reportUpdater) {
         super();
 
-        this.leftMargin = 100;
-        this.topMargin = 100;
+        this.leftMargin = 50;
+        this.topMargin = 50;
         this.graphWidth = 500;
         this.graphHeight = 500;
 
-        this.setBounds(leftMargin, topMargin, graphWidth, graphHeight);
+        this.setBounds(0, 0, graphWidth + leftMargin * 2, graphHeight + topMargin * 2);
 
         setOpaque(true);
 
@@ -108,10 +108,13 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
 
     public void paint(Graphics2D g2d, boolean svgStyle) {
         paintInit(g2d);
-
+       
+        //draw component border
+        g2d.setPaint(Color.blue);
+        g2d.drawRect(0, 0, (int) graphWidth + leftMargin * 2 - 1, (int) graphHeight + topMargin * 2 - 1);
+        
+        // draw graph border
         g2d.setPaint(Color.black);
-
-        // draw border
         g2d.drawRect(leftMargin, topMargin, (int) graphWidth, (int) graphHeight);
 
         // draw isochrons
@@ -322,7 +325,7 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
         Iterator<IsochronModel> isochronIterator = selectedIsochrons.iterator();
         while (isochronIterator.hasNext()) {
             IsochronModel isochronModel = isochronIterator.next();
-            isochronModel.setVisible(isochronModel.getDensityLevel()<= (zoomCount / 25));
+            isochronModel.setVisible(isochronModel.getDensityLevel() <= (zoomCount / 25));
             if (isochronModel.isVisible()) {
                 annumList.add(isochronModel.getDateInAnnum());
             }
