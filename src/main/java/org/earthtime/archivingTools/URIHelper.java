@@ -282,9 +282,10 @@ public class URIHelper {
             // Create the builder and parse the file
             doc = factory.newDocumentBuilder().parse(XMLfile);
         } catch (SAXException e) {
-            JOptionPane.showMessageDialog(null,
-                    new String[]{"Document error: "//
-                        + e.getMessage()});
+            // removed oct 2018 due to changes at geochron and sesar
+////            JOptionPane.showMessageDialog(null,
+////                    new String[]{"Document error: "//
+////                        + e.getMessage()});
         } catch (ParserConfigurationException e) {
             JOptionPane.showMessageDialog(null,
                     new String[]{"Parsing error: "//

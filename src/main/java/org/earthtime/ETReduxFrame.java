@@ -4095,11 +4095,9 @@ private void startStopLiveUpdate_buttonActionPerformed(java.awt.event.ActionEven
                 }
             }
         } else {
-//////            //TODO: confirm this in 2015  May 2010 backward compatibility
-//////            ((ReduxAliquotInterface) aliquot).setCompiled(false);
-//////            editAliquot(theSample, aliquot);
+            ((ReduxAliquotInterface) aliquot).setCompiled(false);
+            editAliquot(theSample, aliquot);
         }
-
     }
 
 private void ID_TIMSLegacyAnalysis_MIT_menuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ID_TIMSLegacyAnalysis_MIT_menuItemActionPerformed

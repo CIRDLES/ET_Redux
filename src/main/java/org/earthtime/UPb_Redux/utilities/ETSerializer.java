@@ -40,23 +40,43 @@ public final class ETSerializer {
 
     /**
      *
-     * @param o
-     * @param filename
+     * @param serializableObject
+     * @param fileName
      * @throws org.earthtime.exceptions.ETException
      */
-    public static void SerializeObjectToFile(Object o, String filename) throws ETException {
-        try {
-            // Serialize to a file
-            FileOutputStream out = new FileOutputStream(filename);
-            try (ObjectOutputStream s = new ObjectOutputStream(out)) {
-                s.writeObject(o);
-                s.flush();
-            }
+    public static void SerializeObjectToFile(Object serializableObject, String fileName) throws ETException {
+//        try {
+//            // Serialize to a file
+//            FileOutputStream out = new FileOutputStream(fileName);
+//            try (ObjectOutputStream s = new ObjectOutputStream(out)) {
+//                s.writeObject(serializableObject);
+//                s.flush();
+//            }
+//
+//        } catch (FileNotFoundException ex) {
+//            throw new ETException(null, "Cannot serialize to: " + fileName);
+//        } catch (IOException ex) {
+//            throw new ETException(null, "Cannot serialize to: " + fileName);
+//        }
 
-        } catch (FileNotFoundException ex) {
-            throw new ETException(null, "Cannot serialize to: " + filename);
+        // https://dzone.com/articles/fast-java-file-serialization
+        // Sept 2018 speedup per Rayner request
+        ObjectOutputStream objectOutputStream = null;
+        try {
+            RandomAccessFile raf = new RandomAccessFile(fileName, "rw");
+            FileOutputStream fos = new FileOutputStream(raf.getFD());
+            objectOutputStream = new ObjectOutputStream(fos);
+            objectOutputStream.writeObject(serializableObject);
         } catch (IOException ex) {
-            throw new ETException(null, "Cannot serialize to: " + filename);
+            throw new ETException("Cannot serialize object of " + serializableObject.getClass().getSimpleName() + " to: " + fileName);
+
+        } finally {
+            if (objectOutputStream != null) {
+                try {
+                    objectOutputStream.close();
+                } catch (IOException iOException) {
+                }
+            }
         }
     }
 
@@ -75,19 +95,18 @@ public final class ETSerializer {
             s = new ObjectInputStream(in);
             o = s.readObject();
         } catch (FileNotFoundException ex) {
-            if ((!filename.endsWith(ReduxLabData.getLabDataFileName()))&& (!filename.endsWith(ReduxPersistentState.getPersistentStateFileName()))) {
+            if ((!filename.endsWith(ReduxLabData.getLabDataFileName())) && (!filename.endsWith(ReduxPersistentState.getPersistentStateFileName()))) {
                 JOptionPane.showMessageDialog(null,
                         new String[]{"The file you are attempting to open does not exist:\n"
                             + " " + filename //,
                     });
             }
-        } 
-        catch (IOException | ClassNotFoundException ex) {
+        } catch (IOException | ClassNotFoundException ex) {
             JOptionPane.showMessageDialog(null,
                     new String[]{"The file you are attempting to open is not compatible with this version of ET_Redux."//,
                     });
-            
-            System.out.println( ex.getMessage());
+
+            System.out.println(ex.getMessage());
         }
 
         return o;

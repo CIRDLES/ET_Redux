@@ -103,9 +103,6 @@ public class TicGeneratorForAxes {
         } catch (Exception e) {
         }
 
-
-
-
         return tics;
     }
 

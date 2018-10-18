@@ -307,7 +307,7 @@ public class IsochronsSelectorDialog extends DialogEditor {
                 Double.parseDouble(dateInKaText.getText()) * 1000.0,
                 Double.parseDouble(xCoordText.getText()),
                 Double.parseDouble(yCoordText.getText()),
-                "ka", false);
+                "ka", false, 0);
 
         if (selectedIsochrons.add(isochron)) {
             ((IsochronModelList) availableListModel).addElement(isochron);
