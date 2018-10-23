@@ -15,6 +15,7 @@ ET_Redux
 
 [![Build Status](https://travis-ci.org/CIRDLES/ET_Redux.svg?branch=master)](https://travis-ci.org/CIRDLES/ET_Redux)
 [![Join the chat at https://gitter.im/CIRDLES/ET_Redux](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/CIRDLES/ET_Redux?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 **ET_Redux** is the flagship cyber infrastructure product of [CIRDLES](http://cirdles.org),
 the Cyber Infrastructure Research and Development Lab for the Earth Sciences, 
