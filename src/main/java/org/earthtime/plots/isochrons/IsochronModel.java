@@ -99,6 +99,11 @@ public class IsochronModel implements Comparable<IsochronModel>, Serializable {
         String retVal = new BigDecimal(dateInAnnum)
                 .movePointRight(ReduxConstants.getUnitConversionMoveCount(units))
                 .setScale(0).toPlainString() + " " + units;
+        
+                if (dateInAnnum >= 10e10){
+            retVal = " \u221E" + " " + units;
+        }
+                
         return retVal;
     }
 

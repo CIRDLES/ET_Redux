@@ -1603,9 +1603,15 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             ((SampleDateInterpretationsManager) sampleDateInterpDialog).setSample(theSample);
         }
 
-        try {
-            ((SampleDateInterpretationsManager) sampleDateInterpDialog).refreshSampleDateInterpretations(false, inLiveMode);
-        } catch (Exception e) {
+        
+        if ((theSample.getSampleAnalysisType().length() == 0)
+                ||theSample.isAnalysisTypeUSERIES()) {
+            // oct 2018 problem of time sink involving setselectedrow of tree
+        } else {
+            try {
+                ((SampleDateInterpretationsManager) sampleDateInterpDialog).refreshSampleDateInterpretations(false, inLiveMode);
+            } catch (Exception e) {
+            }
         }
     }
 
@@ -3660,12 +3666,12 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             myPlotAnyPanel = new PlotAny2Panel(theSample, this);
             myUseriesIsochronPanel = new IsochronsPanel(theSample, this);
 
-            if (myEvolutionPlotPanel == null) {
+           // if (myEvolutionPlotPanel == null) {
 //                myEvolutionPlotPanel = null;
                 myEvolutionPlotPanel = new EvolutionPlotPanelII(theSample, this);
 //                PlaceHolderForJavaFxThread placeHolderForJavaFXThread = new PlaceHolderForJavaFxThread();
 //                placeHolderForJavaFXThread.runme();
-            }
+           // }
 
             theSample.getSampleDateInterpretationGUISettings().//
                     setConcordiaOptions(((ConcordiaPlotDisplayInterface) myConcordiaGraphPanel).getConcordiaOptions());

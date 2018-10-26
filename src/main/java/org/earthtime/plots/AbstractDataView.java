@@ -58,7 +58,7 @@ import org.earthtime.utilities.TicGeneratorForAxes;
  */
 public abstract class AbstractDataView extends JLayeredPane implements AliquotDetailsDisplayInterface, MouseInputListener, MouseWheelListener {
 
-    protected static final double ZOOM_FACTOR = 50.0;
+    protected static final double ZOOM_FACTOR = 10.0;
     protected static final int minGraphWidthHeight = 100;
     protected static final int maxGraphWidthHeight = 500;
 
