@@ -27,6 +27,13 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.geom.CubicCurve2D;
 import java.awt.geom.Path2D;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -35,6 +42,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.Vector;
+import org.apache.batik.apps.rasterizer.SVGConverter;
+import org.apache.batik.apps.rasterizer.SVGConverterException;
+import org.apache.batik.dom.GenericDOMImplementation;
+import org.apache.batik.svggen.SVGGraphics2D;
+import org.apache.batik.svggen.SVGGraphics2DIOException;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.dataDictionaries.UThAnalysisMeasures;
@@ -44,6 +56,8 @@ import org.earthtime.plots.isochrons.IsochronModel;
 import org.earthtime.reportViews.ReportUpdaterInterface;
 import org.earthtime.samples.SampleInterface;
 import org.earthtime.utilities.TicGeneratorForAxes;
+import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.Document;
 
 /**
  *
@@ -259,25 +273,12 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
 
             removeAll();
 
-//            zoomMaxX = 0;
-//            zoomMaxY = 0;
-//            zoomMinX = 0;
-//            zoomMinY = 0;
-//
-//            displayOffsetX = 0.0;
-//            displayOffsetY = 0.0;
-//            minX = 0.0;
-//            minY = 0.0;
-//
             maxX = (xAxisMax == 0) ? 1.5 : xAxisMax;
             xAxisMax = maxX;
             maxY = (yAxisMax == 0) ? 2.0 : yAxisMax;
             yAxisMax = maxY;
 
             showTight();
-
-            ticsYaxis = TicGeneratorForAxes.generateTics(getMinY_Display(), getMaxY_Display(), 10);
-            ticsXaxis = TicGeneratorForAxes.generateTics(getMinX_Display(), getMaxX_Display(), 10);
         }
 
         repaint();
@@ -327,6 +328,40 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
         }
 
         buildIsochronsAndContours();
+
+        ticsYaxis = TicGeneratorForAxes.generateTics(getMinY_Display(), getMaxY_Display(), 10);
+        ticsXaxis = TicGeneratorForAxes.generateTics(getMinX_Display(), getMaxX_Display(), 10);
+
+        repaint();
+        validate();
+
+    }
+
+    public void showLoose() {
+        // determine default zoom  
+        zoomMaxX = 0;
+        zoomMaxY = 0;
+        zoomMinX = 0;
+        zoomMinY = 0;
+
+        displayOffsetX = 0.0;
+        displayOffsetY = 0.0;
+
+        zoomCount = 0;
+
+        minX = 0.0;
+        maxX = 1.5;
+        xAxisMax = maxX;
+
+        minY = 0.0;
+        maxY = 2.0;
+        yAxisMax = maxY;
+
+        buildIsochronsAndContours();
+
+        ticsYaxis = TicGeneratorForAxes.generateTics(getMinY_Display(), getMaxY_Display(), 10);
+        ticsXaxis = TicGeneratorForAxes.generateTics(getMinX_Display(), getMaxX_Display(), 10);
+
         repaint();
         validate();
     }
@@ -341,8 +376,8 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
             IsochronModel isochronModel = isochronIterator.next();
             if (((SampleDateModel) sampleDateModel).isAutomaticIsochronSelection()) {
                 isochronModel.setVisible(
-                        (zoomCount >= 0) ? (isochronModel.getDensityLevel() <= (zoomCount / 4)) 
-                                : (isochronModel.getDensityLevel() == 0) );
+                        (zoomCount >= 0) ? (isochronModel.getDensityLevel() <= (zoomCount / 4))
+                                : (isochronModel.getDensityLevel() == 0));
             }
             if (isochronModel.isVisible()) {
                 annumList.add(isochronModel.getDateInAnnum());
@@ -647,5 +682,65 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
                 repaint();
             }
         }
+    }
+    
+    
+    /**
+     *
+     * @param file
+     */
+    public void outputToSVG(File file) {
+
+        // Get a DOMImplementation.
+        DOMImplementation domImpl
+                = GenericDOMImplementation.getDOMImplementation();
+
+        // Create an instance of org.w3c.dom.Document.
+        String svgNS = "http://www.w3.org/2000/svg";
+        Document document = domImpl.createDocument(svgNS, "svg", null);
+
+        // Create an instance of the SVG Generator.
+        SVGGraphics2D svgGenerator = new SVGGraphics2D(document);
+
+        // Ask the test to render into the SVG Graphics2D implementation.
+        paint(svgGenerator, false);
+
+        // Finally, stream out SVG to the standard output using
+        // UTF-8 encoding.
+        boolean useCSS = true; // we want to use CSS style attributes
+
+        Writer out = null;
+        try {
+            out = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
+        } catch (FileNotFoundException | UnsupportedEncodingException fileNotFoundException) {
+        }
+        try {
+            svgGenerator.stream(out, useCSS);
+        } catch (SVGGraphics2DIOException sVGGraphics2DIOException) {
+        }
+    }
+
+    /**
+     *
+     * @param file
+     */
+    public void outputToPDF(File file) {
+        SVGConverter myConv = new SVGConverter();
+        myConv.setDestinationType(org.apache.batik.apps.rasterizer.DestinationType.PDF);
+        try {
+            myConv.setSources(new String[]{file.getCanonicalPath()});
+
+        } catch (IOException iOException) {
+        }
+        myConv.setWidth((float) getWidth() + 2);
+        myConv.setHeight((float) getHeight() + 2);
+
+        try {
+            myConv.execute();
+
+        } catch (SVGConverterException sVGConverterException) {
+            System.out.println("Error in pdf conversion: " + sVGConverterException.getMessage());
+        }
+
     }
 }

@@ -43,17 +43,18 @@ import org.earthtime.utilities.CheckBoxList;
 public class IsochronsEvolutionSelectorDialog extends DialogEditor {
 
     // Fields    
-    private ValueModel sampleDateModel;
+    private final ValueModel sampleDateModel;
     private SortedSet<IsochronModel> selectedIsochrons;
 
     private CheckBoxList isochronCheckBoxes;
-    private boolean automaticIsochronSelection;
+    private final boolean automaticIsochronSelection;
 
     /**
      * Creates new form IsochronsSelectorDialog
      *
      * @param parent
      * @param modal
+     * @param sampleDateModel
      * @param selectedIsochrons
      */
     public IsochronsEvolutionSelectorDialog(//
@@ -63,64 +64,36 @@ public class IsochronsEvolutionSelectorDialog extends DialogEditor {
         super(parent, modal);
 
         this.sampleDateModel = sampleDateModel;
-        this.selectedIsochrons = ((SampleDateModel)sampleDateModel).getIsochronModels();
+        this.selectedIsochrons = ((SampleDateModel) sampleDateModel).getIsochronModels();
         if (this.selectedIsochrons == null) {
             this.selectedIsochrons = new TreeSet<>();
         }
-        
-        this.automaticIsochronSelection = 
-                ((SampleDateModel)sampleDateModel).isAutomaticIsochronSelection();
+
+        this.automaticIsochronSelection
+                = ((SampleDateModel) sampleDateModel).isAutomaticIsochronSelection();
 
         initComponents();
 
-        isochronCheckBoxes = new CheckBoxList();
-        isochronsLayeredPane.add(isochronCheckBoxes);
-
         initLists();
-
-    }
-
-    private class IsochronModelList extends AbstractListModel {
-
-        List<IsochronModel> isochronModels;
-
-        public IsochronModelList() {
-            isochronModels = new ArrayList<>();
-        }
-
-        @Override
-        public int getSize() {
-            return isochronModels.size();
-        }
-
-        @Override
-        public IsochronModel getElementAt(int index) {
-            return isochronModels.get(index);
-        }
-
-        public void addElement(IsochronModel im) {
-            isochronModels.add(im);
-            Collections.sort(isochronModels);
-        }
-
-        public void removeElement(IsochronModel im) {
-            isochronModels.remove(im);
-            Collections.sort(isochronModels);
-        }
     }
 
     private void initLists() {
-        
+        try {
+            isochronsLayeredPane.remove(isochronCheckBoxes);
+        } catch (Exception e) {
+        }
+        isochronCheckBoxes = new CheckBoxList();
+        isochronsLayeredPane.add(isochronCheckBoxes);
+
         automaticIsochronSelectionChoice.setSelected(automaticIsochronSelection);
         automaticIsochronSelectionChoice.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
-                ((SampleDateModel)sampleDateModel).setAutomaticIsochronSelection(
+                ((SampleDateModel) sampleDateModel).setAutomaticIsochronSelection(
                         automaticIsochronSelectionChoice.isSelected());
             }
         });
-        
-        
+
         JCheckBox[] isochronCheckBoxArray = new JCheckBox[selectedIsochrons.size()];
 
         // used to get quick access to isochrons
@@ -144,10 +117,8 @@ public class IsochronsEvolutionSelectorDialog extends DialogEditor {
         }
 
         isochronCheckBoxes.removeAll();
-        isochronCheckBoxes.setBounds(100, 50, 100, count * 20);
+        isochronCheckBoxes.setBounds(50, 50, 100, count * 18);
         isochronCheckBoxes.setListData(isochronCheckBoxArray);
-        
-        
 
     }
 
@@ -164,9 +135,11 @@ public class IsochronsEvolutionSelectorDialog extends DialogEditor {
         isochronsLayeredPane = new javax.swing.JLayeredPane();
         specifyIsochron_label = new javax.swing.JLabel();
         availableListLabel = new javax.swing.JLabel();
-        dateInKaText = new javax.swing.JTextField();
+        isochronDateInKaText = new javax.swing.JTextField();
         specifyDateka_label = new javax.swing.JLabel();
         automaticIsochronSelectionChoice = new javax.swing.JCheckBox();
+        addIsochronButton = new ET_JButton();
+        removeIsochronButton = new ET_JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Isochron Chooser");
@@ -206,13 +179,15 @@ public class IsochronsEvolutionSelectorDialog extends DialogEditor {
         isochronsLayeredPane.add(availableListLabel);
         availableListLabel.setBounds(20, 30, 300, 16);
 
-        dateInKaText.setText("0");
-        isochronsLayeredPane.add(dateInKaText);
-        dateInKaText.setBounds(150, 510, 50, 26);
+        isochronDateInKaText.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        isochronDateInKaText.setText("0");
+        isochronsLayeredPane.add(isochronDateInKaText);
+        isochronDateInKaText.setBounds(242, 310, 60, 26);
 
-        specifyDateka_label.setText("Enter Date in ka:");
+        specifyDateka_label.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        specifyDateka_label.setText("Specify Date in ka:");
         isochronsLayeredPane.add(specifyDateka_label);
-        specifyDateka_label.setBounds(40, 520, 110, 16);
+        specifyDateka_label.setBounds(210, 290, 120, 16);
 
         automaticIsochronSelectionChoice.setBackground(new java.awt.Color(255, 237, 255));
         automaticIsochronSelectionChoice.setSelected(true);
@@ -220,6 +195,24 @@ public class IsochronsEvolutionSelectorDialog extends DialogEditor {
         automaticIsochronSelectionChoice.setOpaque(true);
         isochronsLayeredPane.add(automaticIsochronSelectionChoice);
         automaticIsochronSelectionChoice.setBounds(30, 540, 230, 23);
+
+        addIsochronButton.setText("+");
+        addIsochronButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addIsochronButtonActionPerformed(evt);
+            }
+        });
+        isochronsLayeredPane.add(addIsochronButton);
+        addIsochronButton.setBounds(245, 340, 25, 25);
+
+        removeIsochronButton.setText("-");
+        removeIsochronButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeIsochronButtonActionPerformed(evt);
+            }
+        });
+        isochronsLayeredPane.add(removeIsochronButton);
+        removeIsochronButton.setBounds(275, 340, 25, 25);
 
         getContentPane().add(isochronsLayeredPane, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 340, 570));
 
@@ -229,15 +222,34 @@ public class IsochronsEvolutionSelectorDialog extends DialogEditor {
         close();
     }//GEN-LAST:event_close_buttonActionPerformed
 
-    private void updateList(JList<IsochronModel> jlist, AbstractListModel<IsochronModel> listModel) {
-        jlist.setModel(new IsochronModelList());
-        jlist.setModel(listModel);
-        jlist.validate();
-    }
+    private void addIsochronButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addIsochronButtonActionPerformed
+        double isoDateKa = 0;
+        try {
+            isoDateKa = Double.parseDouble(isochronDateInKaText.getText());
+        } catch (NumberFormatException numberFormatException) {
+        }
 
-    private void OK() {
+        if ((isoDateKa > 0) && (isoDateKa < 10000)) {
+            IsochronModel model = new IsochronModel(isoDateKa * 1000);
+            selectedIsochrons.add(model);
+            initLists();
+        }
 
-    }
+    }//GEN-LAST:event_addIsochronButtonActionPerformed
+
+    private void removeIsochronButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeIsochronButtonActionPerformed
+        double isoDateKa = 0;
+        try {
+            isoDateKa = Double.parseDouble(isochronDateInKaText.getText());
+        } catch (NumberFormatException numberFormatException) {
+        }
+
+        if ((isoDateKa > 0) && (isoDateKa < 10000)) {
+            IsochronModel model = new IsochronModel(isoDateKa * 1000);
+            selectedIsochrons.remove(model);
+            initLists();
+        }
+    }//GEN-LAST:event_removeIsochronButtonActionPerformed
 
     /**
      * @return the selectedIsochrons
@@ -255,12 +267,14 @@ public class IsochronsEvolutionSelectorDialog extends DialogEditor {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton addIsochronButton;
     private javax.swing.JCheckBox automaticIsochronSelectionChoice;
     private javax.swing.JLabel availableListLabel;
     private javax.swing.JPanel buttonsPanel;
     private javax.swing.JButton close_button;
-    private javax.swing.JTextField dateInKaText;
+    private javax.swing.JTextField isochronDateInKaText;
     private javax.swing.JLayeredPane isochronsLayeredPane;
+    private javax.swing.JButton removeIsochronButton;
     private javax.swing.JLabel specifyDateka_label;
     private javax.swing.JLabel specifyIsochron_label;
     // End of variables declaration//GEN-END:variables

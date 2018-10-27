@@ -90,6 +90,7 @@ public class FileHelper {
             fc.setSelectedFile(new File(directory + File.separator + fractionFileName));
             fc.setFileFilter(nonMacFileFilter);
             fc.setDialogTitle(dialogTitle);
+            fc.grabFocus();
 
             // Show save dialog; this method does not return until the dialog is closed
             int result = fc.showSaveDialog(new Frame());
@@ -99,7 +100,7 @@ public class FileHelper {
                 int response = 0;
                 if (selectedFile.exists()) {
                     // Modal dialog with OK/cancel and a text field
-                    response = JOptionPane.showConfirmDialog(null,
+                    response = JOptionPane.showConfirmDialog(parentFrame,
                             new String[]{"The file exists.",
                                 "Do you want to replace it?"
                             },

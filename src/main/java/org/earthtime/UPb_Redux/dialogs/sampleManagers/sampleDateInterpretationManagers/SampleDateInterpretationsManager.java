@@ -1087,7 +1087,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         myDialog.setVisible(true);
 
         myDialog.dispose();
-        
+
         ((EvolutionPlotPanelII) evolutionPlotPanel).buildIsochronsAndContours();
         evolutionPlotPanel.repaint();
     }
@@ -1244,7 +1244,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         fractionOrderByDate_radioButton = new javax.swing.JRadioButton();
         evolutionLayeredPane = new javax.swing.JLayeredPane();
         evolutionToolPanel = new javax.swing.JPanel();
-        resetGraphAny2Display_button1 =  new ET_JButton();
+        resetEvolution_button =  new ET_JButton();
         ellipseCentersAny2OnToggle_checkbox1 = new javax.swing.JCheckBox();
         ellipseLabelsAny2OnToggle_checkbox1 = new javax.swing.JCheckBox();
         panAny2_toggleButton1 =  new ET_JToggleButton();
@@ -1693,24 +1693,25 @@ public class SampleDateInterpretationsManager extends DialogEditor
         graphPanels_TabbedPane.addTab("Weighted Mean", weightedMeanLayeredPane);
 
         evolutionLayeredPane.setBackground(new java.awt.Color(231, 255, 253));
+        evolutionLayeredPane.setName("Evolution"); // NOI18N
         evolutionLayeredPane.setOpaque(true);
 
         evolutionToolPanel.setBackground(new java.awt.Color(231, 255, 253));
         evolutionToolPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         evolutionToolPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        resetGraphAny2Display_button1.setBackground(new java.awt.Color(255, 255, 255));
-        resetGraphAny2Display_button1.setFont(new java.awt.Font("SansSerif", 1, 9)); // NOI18N
-        resetGraphAny2Display_button1.setText("Reset");
-        resetGraphAny2Display_button1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        resetGraphAny2Display_button1.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        resetGraphAny2Display_button1.setOpaque(true);
-        resetGraphAny2Display_button1.addActionListener(new java.awt.event.ActionListener() {
+        resetEvolution_button.setBackground(new java.awt.Color(255, 255, 255));
+        resetEvolution_button.setFont(new java.awt.Font("SansSerif", 1, 9)); // NOI18N
+        resetEvolution_button.setText("Reset");
+        resetEvolution_button.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        resetEvolution_button.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        resetEvolution_button.setOpaque(true);
+        resetEvolution_button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                resetGraphAny2Display_button1ActionPerformed(evt);
+                resetEvolution_buttonActionPerformed(evt);
             }
         });
-        evolutionToolPanel.add(resetGraphAny2Display_button1, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 2, 35, 30));
+        evolutionToolPanel.add(resetEvolution_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 2, 35, 30));
 
         ellipseCentersAny2OnToggle_checkbox1.setBackground(new java.awt.Color(231, 255, 253));
         ellipseCentersAny2OnToggle_checkbox1.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
@@ -3167,9 +3168,9 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
         delegatePlotFileWriting();
     }//GEN-LAST:event_writeVisiblePlotSvgPdf_buttonActionPerformed
 
-    private void resetGraphAny2Display_button1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetGraphAny2Display_button1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_resetGraphAny2Display_button1ActionPerformed
+    private void resetEvolution_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetEvolution_buttonActionPerformed
+        ((EvolutionPlotPanelII) evolutionPlotPanel).showLoose();
+    }//GEN-LAST:event_resetEvolution_buttonActionPerformed
 
     private void ellipseCentersAny2OnToggle_checkbox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ellipseCentersAny2OnToggle_checkbox1ActionPerformed
         // TODO add your handling code here:
@@ -3188,7 +3189,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
     }//GEN-LAST:event_zoomBoxAny2_toggleButton1ActionPerformed
 
     private void showTightEvolution_toggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showTightEvolution_toggleButtonActionPerformed
-        ((EvolutionPlotPanelII)evolutionPlotPanel).showTight();
+        ((EvolutionPlotPanelII) evolutionPlotPanel).showTight();
     }//GEN-LAST:event_showTightEvolution_toggleButtonActionPerformed
 
     private void isochrons_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_isochrons_buttonActionPerformed
@@ -3262,8 +3263,8 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
     private javax.swing.JPanel probabilityToolPanel;
     private javax.swing.JCheckBox protactiniumCorrectionSelector_checkbox;
     private javax.swing.JRadioButton radiumFlavorIsochron_radioButton;
+    private javax.swing.JButton resetEvolution_button;
     private javax.swing.JButton resetGraphAny2Display_button;
-    private javax.swing.JButton resetGraphAny2Display_button1;
     private javax.swing.JButton resetGraphDisplayIsochron_button;
     private javax.swing.JButton resetGraphDisplay_button;
     private javax.swing.JButton resetGraphProbability_button;
@@ -3943,7 +3944,11 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
     }
 
     private void delegatePlotFileWriting() {
-        switch (graphPanels_TabbedPane.getSelectedComponent().getName()) {
+        String panelName = graphPanels_TabbedPane.getSelectedComponent().getName();
+        if (panelName == null){
+            panelName = "None";
+        }
+        switch (panelName) {
             case "Concordia":
                 try {
                     createConcordiaSVGandPDF();
@@ -3960,9 +3965,13 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                 createProbabilityDensitySVGandPDF();
                 break;
 
+            case "Evolution":
+                createEvolutionSVGandPDF();
+                break;
+
             default:
                 JOptionPane.showMessageDialog(null,
-                        new String[]{graphPanels_TabbedPane.getSelectedComponent().getName() + " " //
+                        new String[]{panelName + " " //
                             + " file output coming soon!"},
                         "ET Redux Info",
                         JOptionPane.INFORMATION_MESSAGE);
@@ -4074,6 +4083,43 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
             }
         }
     }
+    
+    
+    /**
+     *
+     */
+    public void createEvolutionSVGandPDF() {
+        File selectedFile;
+        File selectedFileSVG = null;
+
+        String dialogTitle = "Save this Evolution as pdf (also as svg): *.pdf";
+        final String fileExtension = ".pdf";
+        String weightedMeanFileName
+                = sample.getSampleName() + "_EVOLUTION" + fileExtension;
+        FileFilter nonMacFileFilter = new PDFFileFilter();
+
+        selectedFile = FileHelper.AllPlatformSaveAs(
+                new Frame(), dialogTitle, null, fileExtension, weightedMeanFileName, nonMacFileFilter);
+
+        if (selectedFile != null) {
+
+            try {
+                selectedFileSVG
+                        = new File(selectedFile.getCanonicalPath().replaceFirst(".pdf", ".svg"));
+
+            } catch (IOException iOException) {
+            }
+            try {
+                ((EvolutionPlotPanelII) evolutionPlotPanel).outputToSVG(selectedFileSVG);
+
+                ((EvolutionPlotPanelII) evolutionPlotPanel).outputToPDF(selectedFileSVG);
+                viewPDF(selectedFile.getCanonicalPath());
+
+            } catch (IOException ex) {
+            }
+        }
+    }
+
 
     /**
      *
