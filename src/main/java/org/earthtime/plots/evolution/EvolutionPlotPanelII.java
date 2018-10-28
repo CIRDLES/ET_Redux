@@ -109,6 +109,19 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
         this.xy = new double[0][0][0];
         this.dardt = new double[0][0][0];
 
+        this.ticsYaxis = new BigDecimal[0];
+        this.ticsXaxis = new BigDecimal[0];
+
+        this.eastResizing = false;
+        this.southResizing = false;
+
+        this.zoomCount = 0;
+
+        putInImageModePan();
+
+        this.showCenters = true;
+        this.showLabels = false;
+
         addMouseListener(this);
         addMouseMotionListener(this);
         addMouseWheelListener(this);
@@ -222,7 +235,9 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
                         includedCenterColor,
                         includedCenterSize,
                         ellipseLabelFont,
-                        ellipseLabelFontSize);
+                        ellipseLabelFontSize,
+                        showCenters,
+                        showLabels);
             }
         }
 
@@ -265,6 +280,18 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
                         (float) mapY(yItercepts[i] + slopes[i] * (labelX)));
             }
         }
+
+        // draw zoom box if in use
+        if (isInImageModeZoom()
+                && (Math.abs(zoomMaxX - zoomMinX) * Math.abs(zoomMinY - zoomMaxY)) > 0) {
+            g2d.setStroke(new BasicStroke(2.0f));
+            g2d.setColor(Color.red);
+            g2d.drawRect(//
+                    Math.min(zoomMinX, zoomMaxX),
+                    Math.min(zoomMaxY, zoomMinY),
+                    Math.abs(zoomMaxX - zoomMinX),
+                    Math.abs(zoomMinY - zoomMaxY));
+        }
     }
 
     @Override
@@ -281,6 +308,7 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
             showTight();
         }
 
+        putInImageModePan();
         repaint();
     }
 
@@ -683,8 +711,7 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
             }
         }
     }
-    
-    
+
     /**
      *
      * @param file

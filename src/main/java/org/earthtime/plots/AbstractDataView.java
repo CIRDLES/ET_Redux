@@ -20,8 +20,10 @@
 package org.earthtime.plots;
 
 import Jama.Matrix;
+import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -142,6 +144,11 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
     // <0 = zoom out, 0 = original, >0 = zoom in
     protected int zoomCount;
 
+    protected String imageMode;
+
+    protected boolean showCenters;
+    protected boolean showLabels;
+
     /**
      *
      */
@@ -174,6 +181,11 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
         this.southResizing = false;
 
         this.zoomCount = 0;
+
+        putInImageModePan();
+        
+        this.showCenters = true;
+        this.showLabels = false;
 
         addMeAsMouseListener();
     }
@@ -275,6 +287,7 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
 
     /**
      *
+     * @param doReset
      * @param doReScale the value of doReScale
      * @param inLiveMode the value of inLiveMode
      */
@@ -289,20 +302,6 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
         g2d.setPaint(Color.BLACK);
         g2d.setStroke(new BasicStroke(2.0f));
 
-//        // determine the axis ticks
-//        BigDecimal[] ticsYaxis = TicGeneratorForAxes.generateTics(getMinY_Display(), getMaxY_Display(), 15);
-//
-//        // forced ticsYaxis here temp for evolution
-//        ticsYaxis = new BigDecimal[(int) maxY * 4 + 4];
-//        for (int i = 0; i < (int) maxY * 4 + 4; i++) {
-//            ticsYaxis[i] = new BigDecimal(i * (0.25));
-//        }
-        // trap for bad plot
-        if (ticsYaxis.length <= 1) {
-            ticsYaxis = new BigDecimal[0];
-        }
-        double minXDisplay = 0.0;
-        int yAxisTicWidth = 8;
         int yTicLabelFrequency = 1;
         int labeledTicCountYAxis = 0;
 
@@ -417,6 +416,71 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
 
         g2d.drawRect(
                 leftMargin, topMargin, graphWidth - 1, graphHeight - 1);
+
+        // label axes
+        String xAxisLabel = "[230Th/238U]t";//axes[0].getAxisLabel();
+        g2d.setFont(new Font("Monospaced", Font.BOLD, 18));
+        double xAxisLabelLength = calculateLengthOfStringPlot(g2d, xAxisLabel);
+
+        String yAxisLabel = "[234U/238U]t";//axes[1].getAxisLabel();
+        double yAxisLabelLength = calculateLengthOfStringPlot(g2d, yAxisLabel);
+
+        g2d.setFont(new Font("Monospaced", Font.BOLD, 12));
+        g2d.drawString("230",
+                leftMargin + (int) (graphWidth / 2.0) - (int) (xAxisLabelLength / 2.0) + 10,
+                topMargin + (int) graphHeight + 30);
+        g2d.drawString("238",
+                leftMargin + (int) (graphWidth / 2.0) - (int) (xAxisLabelLength / 2.0) + 65,
+                topMargin + (int) graphHeight + 30);
+        g2d.drawString("t",
+                leftMargin + (int) (graphWidth / 2.0) - (int) (xAxisLabelLength / 2.0) + 105,
+                topMargin + (int) graphHeight + 40);
+
+        g2d.setFont(new Font("Monospaced", Font.BOLD, 18));
+        g2d.drawString("[",
+                leftMargin + (int) (graphWidth / 2.0) - (int) (xAxisLabelLength / 2.0),
+                topMargin + (int) graphHeight + 35);
+        g2d.drawString("Th/",
+                leftMargin + (int) (graphWidth / 2.0) - (int) (xAxisLabelLength / 2.0) + 30,
+                topMargin + (int) graphHeight + 35);
+        g2d.drawString("U]",
+                leftMargin + (int) (graphWidth / 2.0) - (int) (xAxisLabelLength / 2.0) + 85,
+                topMargin + (int) graphHeight + 35);
+
+        // y axis
+        g2d.rotate(-Math.PI / 2.0);
+        g2d.setFont(new Font("Monospaced", Font.BOLD, 12));
+        g2d.drawString("234",
+                -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0) - 10),
+                leftMargin - 30);
+        g2d.drawString("238",
+                -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0) - 55),
+                leftMargin - 30);
+        g2d.drawString("t",
+                -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0) - 95),
+                leftMargin - 20);
+
+        g2d.setFont(new Font("Monospaced", Font.BOLD, 18));
+        g2d.drawString("[",
+                -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0)),
+                leftMargin - 25);
+        g2d.drawString("U/",
+                -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0) - 30),
+                leftMargin - 25);
+        g2d.drawString("U]",
+                -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0) - 75),
+                leftMargin - 25);
+
+        g2d.rotate(Math.PI / 2.0);
+    }
+
+    private double calculateLengthOfStringPlot(Graphics2D g2d, String label) {
+        TextLayout mLayout
+                = new TextLayout(
+                        label, g2d.getFont(), g2d.getFontRenderContext());
+
+        Rectangle2D bounds = mLayout.getBounds();
+        return bounds.getWidth();
     }
 
     /**
@@ -578,6 +642,32 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
         int myX = evt.getX();
         int myY = evt.getY();
 
+        if (isInImageModeZoom() //
+                && (zoomMaxX != zoomMinX) //using != provides for legal inverting of zoom box
+                && (zoomMaxY != zoomMinY)) {
+
+            // may 2010 check for bad zooms
+            double zMinX = convertMouseXToValue(Math.min(zoomMinX, zoomMaxX));
+            double zMinY = convertMouseYToValue(Math.max(zoomMinY, zoomMaxY));
+            double zMaxX = convertMouseXToValue(Math.max(zoomMaxX, zoomMinX));
+            double zMaxY = convertMouseYToValue(Math.min(zoomMaxY, zoomMinY));
+
+            if ((zMaxX > zMinX) && (zMaxY > zMinY)) {
+                minX = zMinX;
+                minY = zMinY;
+                maxX = zMaxX;
+                maxY = zMaxY;
+
+                displayOffsetX = 0.0;
+                displayOffsetY = 0.0;
+
+                zoomMaxX = zoomMinX;
+                zoomMaxY = zoomMinY;
+
+                putInImageModePan();
+            }
+        }
+
         if (eastResizing ^ southResizing) {
             if (eastResizing) {
                 this.graphWidth = Math.min(maxGraphWidthHeight, (myX - leftMargin > minGraphWidthHeight) ? myX - leftMargin : minGraphWidthHeight);
@@ -626,18 +716,20 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
             zoomMaxX = evt.getX();
             zoomMaxY = evt.getY();
 
-            // prevent all but upper right quadrant
-            double calcDisplayOffsetXDelta = convertMouseXToValue(zoomMinX) - convertMouseXToValue(zoomMaxX);
-            displayOffsetX += (((minX + displayOffsetX + calcDisplayOffsetXDelta) > 0) ? calcDisplayOffsetXDelta : 0.0);
+            if (isInImageModePan()) {
+                // prevent all but upper right quadrant
+                double calcDisplayOffsetXDelta = convertMouseXToValue(zoomMinX) - convertMouseXToValue(zoomMaxX);
+                displayOffsetX += (((minX + displayOffsetX + calcDisplayOffsetXDelta) > 0) ? calcDisplayOffsetXDelta : 0.0);
 
-            double calcDisplayOffsetYDelta = convertMouseYToValue(zoomMinY) - convertMouseYToValue(zoomMaxY);
-            displayOffsetY += (((minY + displayOffsetY + calcDisplayOffsetYDelta) > 0) ? calcDisplayOffsetYDelta : 0.0);
+                double calcDisplayOffsetYDelta = convertMouseYToValue(zoomMinY) - convertMouseYToValue(zoomMaxY);
+                displayOffsetY += (((minY + displayOffsetY + calcDisplayOffsetYDelta) > 0) ? calcDisplayOffsetYDelta : 0.0);
 
-            zoomMinX = zoomMaxX;
-            zoomMinY = zoomMaxY;
+                zoomMinX = zoomMaxX;
+                zoomMinY = zoomMaxY;
 
-            ticsYaxis = TicGeneratorForAxes.generateTics(getMinY_Display(), getMaxY_Display(), 10);
-            ticsXaxis = TicGeneratorForAxes.generateTics(getMinX_Display(), getMaxX_Display(), 10);
+                ticsYaxis = TicGeneratorForAxes.generateTics(getMinY_Display(), getMaxY_Display(), 10);
+                ticsXaxis = TicGeneratorForAxes.generateTics(getMinX_Display(), getMaxX_Display(), 10);
+            }
 
             repaint();
         }
@@ -685,7 +777,9 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
             Color centerColor,
             float centerSize,
             String ellipseLabelFont,
-            String ellipseLabelFontSize) {
+            String ellipseLabelFontSize,
+            boolean showCenters,
+            boolean showLabels) {
 
         Path2D ellipse = f.getErrorEllipsePath();
         if (svgStyle) {
@@ -693,13 +787,20 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
         } else {
             // draw ellipse
             g2d.setStroke(new BasicStroke(borderWeight));
-            g2d.setPaint(borderColor);
+            g2d.setPaint(centerColor);
             g2d.draw(ellipse);
+
+            Composite originalComposite = g2d.getComposite();
+            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));
+//            g2d.setPaint(fillColor);
             g2d.fill(ellipse);
+            //restore composite
+            g2d.setComposite(originalComposite);
+//            g2d.fill(ellipse);
         }
 
         // draw ellipse centers
-        if (true) {// (isShowEllipseCenters()) {
+        if (showCenters) {
 
             float centerXbox = (float) (ellipse.getBounds().x + ellipse.getBounds().width / 2.0 - centerSize / 2.0);
             float centerYbox = (float) (ellipse.getBounds().y + ellipse.getBounds().height / 2.0 - centerSize / 2.0);
@@ -709,12 +810,12 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
                     centerYbox,
                     centerSize,
                     centerSize);
-            g2d.setPaint(centerColor);
+            g2d.setPaint(Color.BLACK);
             g2d.setStroke(new BasicStroke(1.0f));
             g2d.fill(fractionbox);
         }
 
-        if (false) {//(isShowEllipseLabels()) {
+        if (showLabels) {
             g2d.setPaint(borderColor);
             g2d.setFont(new Font(
                     ellipseLabelFont,
@@ -743,9 +844,9 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
             ETFractionInterface f,
             double ellipseSize) {
 
-        ValueModel xAxisRatio = null;
-        ValueModel yAxisRatio = null;
-        ValueModel correlationCoefficient = null;
+        ValueModel xAxisRatio;
+        ValueModel yAxisRatio;
+        ValueModel correlationCoefficient;
 
         xAxisRatio = f.getLegacyActivityRatioByName(UThAnalysisMeasures.ar230Th_238Ufc.getName());
         yAxisRatio = f.getLegacyActivityRatioByName(UThAnalysisMeasures.ar234U_238Ufc.getName());
@@ -847,4 +948,33 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    public boolean isInImageModePan() {
+        return imageMode.compareToIgnoreCase("PAN") == 0;
+    }
+
+    public boolean isInImageModeZoom() {
+        return imageMode.compareToIgnoreCase("ZOOM") == 0;
+    }
+
+    public final void putInImageModePan() {
+        imageMode = "PAN";
+    }
+
+    public void putInImageModeZoom() {
+        imageMode = "ZOOM";
+    }
+
+    /**
+     * @param showCenters the showCenters to set
+     */
+    public void setShowCenters(boolean showCenters) {
+        this.showCenters = showCenters;
+    }
+
+    /**
+     * @param showLabels the showLabels to set
+     */
+    public void setShowLabels(boolean showLabels) {
+        this.showLabels = showLabels;
+    }
 }

@@ -1245,10 +1245,9 @@ public class SampleDateInterpretationsManager extends DialogEditor
         evolutionLayeredPane = new javax.swing.JLayeredPane();
         evolutionToolPanel = new javax.swing.JPanel();
         resetEvolution_button =  new ET_JButton();
-        ellipseCentersAny2OnToggle_checkbox1 = new javax.swing.JCheckBox();
-        ellipseLabelsAny2OnToggle_checkbox1 = new javax.swing.JCheckBox();
-        panAny2_toggleButton1 =  new ET_JToggleButton();
-        zoomBoxAny2_toggleButton1 =  new ET_JToggleButton();
+        ellipseCentersEvolutionOnToggle_checkbox = new javax.swing.JCheckBox();
+        ellipseLabelsEvolutionOnToggle_checkbox = new javax.swing.JCheckBox();
+        zoomBoxEvolution_toggleButton =  new ET_JToggleButton();
         showTightEvolution_toggleButton =  new ET_JToggleButton();
         isochrons_button =  new ET_JButton();
         useriesIsochronLayeredPane = new javax.swing.JLayeredPane();
@@ -1713,59 +1712,43 @@ public class SampleDateInterpretationsManager extends DialogEditor
         });
         evolutionToolPanel.add(resetEvolution_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 2, 35, 30));
 
-        ellipseCentersAny2OnToggle_checkbox1.setBackground(new java.awt.Color(231, 255, 253));
-        ellipseCentersAny2OnToggle_checkbox1.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
-        ellipseCentersAny2OnToggle_checkbox1.setSelected(true);
-        ellipseCentersAny2OnToggle_checkbox1.setText("Ellipse Centers");
-        ellipseCentersAny2OnToggle_checkbox1.setOpaque(true);
-        ellipseCentersAny2OnToggle_checkbox1.addActionListener(new java.awt.event.ActionListener() {
+        ellipseCentersEvolutionOnToggle_checkbox.setBackground(new java.awt.Color(231, 255, 253));
+        ellipseCentersEvolutionOnToggle_checkbox.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
+        ellipseCentersEvolutionOnToggle_checkbox.setSelected(true);
+        ellipseCentersEvolutionOnToggle_checkbox.setText("Ellipse Centers");
+        ellipseCentersEvolutionOnToggle_checkbox.setOpaque(true);
+        ellipseCentersEvolutionOnToggle_checkbox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ellipseCentersAny2OnToggle_checkbox1ActionPerformed(evt);
+                ellipseCentersEvolutionOnToggle_checkboxActionPerformed(evt);
             }
         });
-        evolutionToolPanel.add(ellipseCentersAny2OnToggle_checkbox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(556, 6, -1, -1));
+        evolutionToolPanel.add(ellipseCentersEvolutionOnToggle_checkbox, new org.netbeans.lib.awtextra.AbsoluteConstraints(556, 6, -1, -1));
 
-        ellipseLabelsAny2OnToggle_checkbox1.setBackground(new java.awt.Color(231, 255, 253));
-        ellipseLabelsAny2OnToggle_checkbox1.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
-        ellipseLabelsAny2OnToggle_checkbox1.setSelected(true);
-        ellipseLabelsAny2OnToggle_checkbox1.setText("Labels");
-        ellipseLabelsAny2OnToggle_checkbox1.setOpaque(true);
-        ellipseLabelsAny2OnToggle_checkbox1.addActionListener(new java.awt.event.ActionListener() {
+        ellipseLabelsEvolutionOnToggle_checkbox.setBackground(new java.awt.Color(231, 255, 253));
+        ellipseLabelsEvolutionOnToggle_checkbox.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
+        ellipseLabelsEvolutionOnToggle_checkbox.setText("Labels");
+        ellipseLabelsEvolutionOnToggle_checkbox.setOpaque(true);
+        ellipseLabelsEvolutionOnToggle_checkbox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ellipseLabelsAny2OnToggle_checkbox1ActionPerformed(evt);
+                ellipseLabelsEvolutionOnToggle_checkboxActionPerformed(evt);
             }
         });
-        evolutionToolPanel.add(ellipseLabelsAny2OnToggle_checkbox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(685, 6, -1, -1));
+        evolutionToolPanel.add(ellipseLabelsEvolutionOnToggle_checkbox, new org.netbeans.lib.awtextra.AbsoluteConstraints(685, 6, -1, -1));
 
-        panAny2_toggleButton1.setBackground(new java.awt.Color(255, 255, 255));
-        concordiaPanZoom_buttonGroup.add(panAny2_toggleButton1);
-        panAny2_toggleButton1.setFont(new java.awt.Font("SansSerif", 1, 9)); // NOI18N
-        panAny2_toggleButton1.setText("Pan");
-        panAny2_toggleButton1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        panAny2_toggleButton1.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        panAny2_toggleButton1.setName("PAN"); // NOI18N
-        panAny2_toggleButton1.setOpaque(true);
-        panAny2_toggleButton1.addActionListener(new java.awt.event.ActionListener() {
+        zoomBoxEvolution_toggleButton.setBackground(new java.awt.Color(255, 255, 255));
+        concordiaPanZoom_buttonGroup.add(zoomBoxEvolution_toggleButton);
+        zoomBoxEvolution_toggleButton.setFont(new java.awt.Font("SansSerif", 1, 9)); // NOI18N
+        zoomBoxEvolution_toggleButton.setText("Zoom-Box");
+        zoomBoxEvolution_toggleButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        zoomBoxEvolution_toggleButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        zoomBoxEvolution_toggleButton.setName("ZOOM"); // NOI18N
+        zoomBoxEvolution_toggleButton.setOpaque(true);
+        zoomBoxEvolution_toggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                panAny2_toggleButton1ActionPerformed(evt);
+                zoomBoxEvolution_toggleButtonActionPerformed(evt);
             }
         });
-        evolutionToolPanel.add(panAny2_toggleButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(95, 2, 30, 30));
-
-        zoomBoxAny2_toggleButton1.setBackground(new java.awt.Color(255, 255, 255));
-        concordiaPanZoom_buttonGroup.add(zoomBoxAny2_toggleButton1);
-        zoomBoxAny2_toggleButton1.setFont(new java.awt.Font("SansSerif", 1, 9)); // NOI18N
-        zoomBoxAny2_toggleButton1.setText("Zoom-Box");
-        zoomBoxAny2_toggleButton1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        zoomBoxAny2_toggleButton1.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        zoomBoxAny2_toggleButton1.setName("ZOOM"); // NOI18N
-        zoomBoxAny2_toggleButton1.setOpaque(true);
-        zoomBoxAny2_toggleButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                zoomBoxAny2_toggleButton1ActionPerformed(evt);
-            }
-        });
-        evolutionToolPanel.add(zoomBoxAny2_toggleButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(125, 2, 55, 30));
+        evolutionToolPanel.add(zoomBoxEvolution_toggleButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(95, 2, 55, 30));
 
         showTightEvolution_toggleButton.setBackground(new java.awt.Color(255, 255, 255));
         concordiaPanZoom_buttonGroup.add(showTightEvolution_toggleButton);
@@ -1782,7 +1765,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
                 showTightEvolution_toggleButtonActionPerformed(evt);
             }
         });
-        evolutionToolPanel.add(showTightEvolution_toggleButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 2, 30, 30));
+        evolutionToolPanel.add(showTightEvolution_toggleButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 2, 30, 30));
 
         isochrons_button.setBackground(new java.awt.Color(255, 255, 255));
         isochrons_button.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
@@ -1799,7 +1782,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
                 isochrons_buttonActionPerformed(evt);
             }
         });
-        evolutionToolPanel.add(isochrons_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 2, 70, 30));
+        evolutionToolPanel.add(isochrons_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 2, 70, 30));
 
         evolutionLayeredPane.add(evolutionToolPanel);
         evolutionToolPanel.setBounds(0, 604, 790, 35);
@@ -3172,21 +3155,21 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
         ((EvolutionPlotPanelII) evolutionPlotPanel).showLoose();
     }//GEN-LAST:event_resetEvolution_buttonActionPerformed
 
-    private void ellipseCentersAny2OnToggle_checkbox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ellipseCentersAny2OnToggle_checkbox1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_ellipseCentersAny2OnToggle_checkbox1ActionPerformed
+    private void ellipseCentersEvolutionOnToggle_checkboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ellipseCentersEvolutionOnToggle_checkboxActionPerformed
+        ((EvolutionPlotPanelII)evolutionPlotPanel)
+                .setShowCenters(ellipseCentersEvolutionOnToggle_checkbox.isSelected());
+        ((EvolutionPlotPanelII)evolutionPlotPanel).repaint();
+    }//GEN-LAST:event_ellipseCentersEvolutionOnToggle_checkboxActionPerformed
 
-    private void ellipseLabelsAny2OnToggle_checkbox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ellipseLabelsAny2OnToggle_checkbox1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_ellipseLabelsAny2OnToggle_checkbox1ActionPerformed
+    private void ellipseLabelsEvolutionOnToggle_checkboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ellipseLabelsEvolutionOnToggle_checkboxActionPerformed
+        ((EvolutionPlotPanelII)evolutionPlotPanel)
+                .setShowLabels(ellipseLabelsEvolutionOnToggle_checkbox.isSelected());
+        ((EvolutionPlotPanelII)evolutionPlotPanel).repaint();
+    }//GEN-LAST:event_ellipseLabelsEvolutionOnToggle_checkboxActionPerformed
 
-    private void panAny2_toggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_panAny2_toggleButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_panAny2_toggleButton1ActionPerformed
-
-    private void zoomBoxAny2_toggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zoomBoxAny2_toggleButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_zoomBoxAny2_toggleButton1ActionPerformed
+    private void zoomBoxEvolution_toggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zoomBoxEvolution_toggleButtonActionPerformed
+        ((EvolutionPlotPanelII)evolutionPlotPanel).putInImageModeZoom();
+    }//GEN-LAST:event_zoomBoxEvolution_toggleButtonActionPerformed
 
     private void showTightEvolution_toggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showTightEvolution_toggleButtonActionPerformed
         ((EvolutionPlotPanelII) evolutionPlotPanel).showTight();
@@ -3223,11 +3206,11 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
     private javax.swing.JButton defaultFilters_button;
     private javax.swing.JMenu displayOptions_menu;
     private javax.swing.JCheckBox ellipseCentersAny2OnToggle_checkbox;
-    private javax.swing.JCheckBox ellipseCentersAny2OnToggle_checkbox1;
+    private javax.swing.JCheckBox ellipseCentersEvolutionOnToggle_checkbox;
     private javax.swing.JCheckBox ellipseCentersIsochron_Checkbox;
     private javax.swing.JCheckBox ellipseCenters_checkbox;
     private javax.swing.JCheckBox ellipseLabelsAny2OnToggle_checkbox;
-    private javax.swing.JCheckBox ellipseLabelsAny2OnToggle_checkbox1;
+    private javax.swing.JCheckBox ellipseLabelsEvolutionOnToggle_checkbox;
     private javax.swing.JCheckBox ellipseLabelsIsochron_checkbox;
     private javax.swing.JCheckBox ellipseLabels_checkbox;
     private javax.swing.JLayeredPane evolutionLayeredPane;
@@ -3251,7 +3234,6 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
     private javax.swing.JTextField negativePctDiscordance_text;
     private javax.swing.JLayeredPane normedProbabilityLayeredPane;
     private javax.swing.JToggleButton panAny2_toggleButton;
-    private javax.swing.JToggleButton panAny2_toggleButton1;
     private javax.swing.JToggleButton panIsochron_toggleButton;
     private javax.swing.JToggleButton pan_WeightedMean_toggleButton;
     private javax.swing.JToggleButton pan_toggleButton;
@@ -3301,7 +3283,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
     private javax.swing.JMenu weightedMeansPlotOptions_menu;
     private javax.swing.JButton writeVisiblePlotSvgPdf_button;
     private javax.swing.JToggleButton zoomBoxAny2_toggleButton;
-    private javax.swing.JToggleButton zoomBoxAny2_toggleButton1;
+    private javax.swing.JToggleButton zoomBoxEvolution_toggleButton;
     private javax.swing.JToggleButton zoomBox_toggleButton;
     private javax.swing.JToggleButton zoomBox_toggleIsochron_button;
     private javax.swing.JButton zoomInAny2X2_button;
