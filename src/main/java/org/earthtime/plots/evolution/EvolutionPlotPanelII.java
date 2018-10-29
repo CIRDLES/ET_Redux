@@ -27,27 +27,45 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.geom.CubicCurve2D;
 import java.awt.geom.Path2D;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.Vector;
+import org.apache.batik.apps.rasterizer.SVGConverter;
+import org.apache.batik.apps.rasterizer.SVGConverterException;
+import org.apache.batik.dom.GenericDOMImplementation;
+import org.apache.batik.svggen.SVGGraphics2D;
+import org.apache.batik.svggen.SVGGraphics2DIOException;
+import org.earthtime.UPb_Redux.dateInterpretation.concordia.PlottingDetailsDisplayInterface;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
+import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.dataDictionaries.UThAnalysisMeasures;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.plots.AbstractDataView;
+import org.earthtime.plots.PlotAxesSetupInterface;
 import org.earthtime.plots.isochrons.IsochronModel;
 import org.earthtime.reportViews.ReportUpdaterInterface;
 import org.earthtime.samples.SampleInterface;
 import org.earthtime.utilities.TicGeneratorForAxes;
+import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.Document;
 
 /**
  *
  * @author James F. Bowring
  */
-public final class EvolutionPlotPanelII extends AbstractDataView {
+public final class EvolutionPlotPanelII extends AbstractDataView implements PlottingDetailsDisplayInterface {
 
     protected transient ReportUpdaterInterface reportUpdater;
 
@@ -67,12 +85,12 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
     public EvolutionPlotPanelII(SampleInterface mySample, ReportUpdaterInterface reportUpdater) {
         super();
 
-        this.leftMargin = 100;
-        this.topMargin = 100;
+        this.leftMargin = 50;
+        this.topMargin = 50;
         this.graphWidth = 500;
         this.graphHeight = 500;
 
-        this.setBounds(leftMargin, topMargin, graphWidth, graphHeight);
+        this.setBounds(0, 0, graphWidth + leftMargin * 2, graphHeight + topMargin * 2);
 
         setOpaque(true);
 
@@ -93,6 +111,19 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
         this.xy = new double[0][0][0];
         this.dardt = new double[0][0][0];
 
+        this.ticsYaxis = new BigDecimal[0];
+        this.ticsXaxis = new BigDecimal[0];
+
+        this.eastResizing = false;
+        this.southResizing = false;
+
+        this.zoomCount = 0;
+
+        putInImageModePan();
+
+        this.showCenters = true;
+        this.showLabels = false;
+
         addMouseListener(this);
         addMouseMotionListener(this);
         addMouseWheelListener(this);
@@ -109,9 +140,12 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
     public void paint(Graphics2D g2d, boolean svgStyle) {
         paintInit(g2d);
 
-        g2d.setPaint(Color.black);
+        //draw component border
+        g2d.setPaint(Color.blue);
+        g2d.drawRect(0, 0, (int) graphWidth + leftMargin * 2 - 1, (int) graphHeight + topMargin * 2 - 1);
 
-        // draw border
+        // draw graph border
+        g2d.setPaint(Color.black);
         g2d.drawRect(leftMargin, topMargin, (int) graphWidth, (int) graphHeight);
 
         // draw isochrons
@@ -131,7 +165,8 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
                     mapX(getMaxX_Display()), //
                     mapY(yItercepts[i] + slopes[i] * getMaxX_Display()));
 
-            if (i == (annumIsochrons.length - 1)) {
+            if ((i == (annumIsochrons.length - 1))
+                    && annumIsochrons[i] >= 10e10) {
                 g2d.setPaint(Color.black);
             }
             g2d.draw(isochronLine);
@@ -148,7 +183,7 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
                 lowIndex = index;
             }
             if (ar48icntrs[index] < getMaxY_Display()) {
-                highIndex = Math.min(ar48icntrs.length - 1, index + 6 + (zoomCount / 25) * 1);
+                highIndex = Math.min(ar48icntrs.length - 1, index + 6 + (zoomCount / 10) * 1);
             }
         }
         for (int i = lowIndex; i < highIndex; i++) {
@@ -168,11 +203,12 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
 
                 g2d.draw(ar48iContour);
 
+                DecimalFormat myFormatter = new DecimalFormat("#.##");
                 if (!labelPrinted && (xy[i][0][j - 1] > getMinX_Display()) && (ar48icntrs[i] > 0.0)) {
                     double angleOfText = (Math.atan(xy[i][1][j - 1] - xy[i][1][j]) / (xy[i][0][j - 1] - xy[i][0][j]));
 //                    System.out.println(ar48icntrs[i] + "  >  " + angleOfText);
                     g2d.rotate(-angleOfText, leftMargin + 20, mapY(xy[i][1][j - 1]));
-                    g2d.drawString(String.valueOf(ar48icntrs[i]), leftMargin + 10, (float) mapY(xy[i][1][j - 1]) - 5);
+                    g2d.drawString(myFormatter.format(ar48icntrs[i]), leftMargin + 10, (float) mapY(xy[i][1][j - 1]) - 5);
                     g2d.rotate(angleOfText, leftMargin + 20, mapY(xy[i][1][j - 1]));
                     labelPrinted = true;
                 }
@@ -189,19 +225,23 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
         String ellipseLabelFontSize = "12";
 
         for (ETFractionInterface f : selectedFractions) {
-            generateEllipsePathIII(//
-                    f,
-                    2.0f);
-            if (f.getErrorEllipsePath() != null) {
-                plotAFraction(g2d,
-                        svgStyle,
+            if (!f.isRejected()) {
+                generateEllipsePathIII(//
                         f,
-                        includedBorderColor,
-                        0.5f,
-                        includedCenterColor,
-                        includedCenterSize,
-                        ellipseLabelFont,
-                        ellipseLabelFontSize);
+                        2.0f);
+                if (f.getErrorEllipsePath() != null) {
+                    plotAFraction(g2d,
+                            svgStyle,
+                            f,
+                            includedBorderColor,
+                            0.5f,
+                            includedCenterColor,
+                            includedCenterSize,
+                            ellipseLabelFont,
+                            ellipseLabelFontSize,
+                            showCenters,
+                            showLabels);
+                }
             }
         }
 
@@ -244,36 +284,53 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
                         (float) mapY(yItercepts[i] + slopes[i] * (labelX)));
             }
         }
+
+        // draw zoom box if in use
+        if (isInImageModeZoom()
+                && (Math.abs(zoomMaxX - zoomMinX) * Math.abs(zoomMinY - zoomMaxY)) > 0) {
+            g2d.setStroke(new BasicStroke(2.0f));
+            g2d.setColor(Color.red);
+            g2d.drawRect(//
+                    Math.min(zoomMinX, zoomMaxX),
+                    Math.min(zoomMaxY, zoomMinY),
+                    Math.abs(zoomMaxX - zoomMinX),
+                    Math.abs(zoomMinY - zoomMaxY));
+        }
     }
 
     @Override
     public void preparePanel(boolean doReset) {
         if (doReset) {
-            zoomMaxX = 0;
-            zoomMaxY = 0;
-            zoomMinX = 0;
-            zoomMinY = 0;
-
-            displayOffsetX = 0.0;
-            displayOffsetY = 0.0;
 
             removeAll();
-
-            minX = 0.0;
-            minY = 0.0;
 
             maxX = (xAxisMax == 0) ? 1.5 : xAxisMax;
             xAxisMax = maxX;
             maxY = (yAxisMax == 0) ? 2.0 : yAxisMax;
             yAxisMax = maxY;
 
-            // determine default zoom  
-            //todo: fix logic
-            minX = Double.MAX_VALUE;
-            maxX = -Double.MAX_VALUE;
-            minY = Double.MAX_VALUE;
-            maxY = -Double.MAX_VALUE;
-            for (ETFractionInterface f : selectedFractions) {
+            showTight();
+        }
+
+        putInImageModePan();
+        repaint();
+    }
+
+    public void showTight() {
+        // determine default zoom  
+        zoomMaxX = 0;
+        zoomMaxY = 0;
+        zoomMinX = 0;
+        zoomMinY = 0;
+
+        displayOffsetX = 0.0;
+        displayOffsetY = 0.0;
+        minX = Double.MAX_VALUE;
+        maxX = -Double.MAX_VALUE;
+        minY = Double.MAX_VALUE;
+        maxY = -Double.MAX_VALUE;
+        for (ETFractionInterface f : selectedFractions) {
+            if (!f.isRejected()) {
 
                 double xAxisRatio = f.getLegacyActivityRatioByName(UThAnalysisMeasures.ar230Th_238Ufc.getName()).getValue().doubleValue();
                 double xAxis2Sigma = f.getLegacyActivityRatioByName(UThAnalysisMeasures.ar230Th_238Ufc.getName()).getTwoSigmaAbs().doubleValue();
@@ -285,44 +342,77 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
                 minY = Math.min(minY, yAxisRatio - 2.0 * yAxis2Sigma);
                 maxY = Math.max(maxY, yAxisRatio + 2.0 * yAxis2Sigma);
             }
-
-            // maintain 2/1.5 aspect ratio
-            if (getRangeY_Display() / getRangeX_Display() < 2.0 / 1.5) {
-                // increase Y
-                double yDelta = (2.0 / 1.5) * getRangeX_Display() - getRangeY_Display();
-                minY -= yDelta / 2.0;
-                maxY += yDelta / 2.0;
-
-                zoomCount = (int) Math.min(100.0, 10.0 / getRangeY_Display());
-            } else {
-                // increase x
-                double xDelta = (1.5 / 2.0) * getRangeY_Display() - getRangeX_Display();
-                minX -= xDelta / 2.0;
-                maxX += xDelta / 2.0;
-
-                zoomCount = (int) Math.min(100.0, 10.0 / getRangeX_Display());
-            }
-
-            buildIsochronsAndContours();
-            repaint();
-            validate();
-
-            ticsYaxis = TicGeneratorForAxes.generateTics(getMinY_Display(), getMaxY_Display(), 10);
-            ticsXaxis = TicGeneratorForAxes.generateTics(getMinX_Display(), getMaxX_Display(), 10);
         }
 
+        // maintain 2/1.5 aspect ratio
+        if (getRangeY_Display() / getRangeX_Display() < 2.0 / 1.5) {
+            // increase Y
+            double yDelta = (2.0 / 1.5) * getRangeX_Display() - getRangeY_Display();
+            minY -= yDelta / 2.0;
+            maxY += yDelta / 2.0;
+
+            zoomCount = (int) Math.min(10.0, 10.0 / getRangeY_Display());
+        } else {
+            // increase x
+            double xDelta = (1.5 / 2.0) * getRangeY_Display() - getRangeX_Display();
+            minX -= xDelta / 2.0;
+            maxX += xDelta / 2.0;
+
+            zoomCount = (int) Math.min(10.0, 10.0 / getRangeX_Display());
+        }
+
+        buildIsochronsAndContours();
+
+        ticsYaxis = TicGeneratorForAxes.generateTics(getMinY_Display(), getMaxY_Display(), 10);
+        ticsXaxis = TicGeneratorForAxes.generateTics(getMinX_Display(), getMaxX_Display(), 10);
+
         repaint();
+        validate();
+
     }
 
-    private void buildIsochronsAndContours() {
-        // math adapted from Noah's matlab code 
+    public void showLoose() {
+        // determine default zoom  
+        zoomMaxX = 0;
+        zoomMaxY = 0;
+        zoomMinX = 0;
+        zoomMinY = 0;
 
-        SortedSet<IsochronModel> selectedIsochrons = ((SampleDateModel) sample.getSampleDateModelByName("DEFAULT")).getIsochronModels();
+        displayOffsetX = 0.0;
+        displayOffsetY = 0.0;
+
+        zoomCount = 0;
+
+        minX = 0.0;
+        maxX = 1.5;
+        xAxisMax = maxX;
+
+        minY = 0.0;
+        maxY = 2.0;
+        yAxisMax = maxY;
+
+        buildIsochronsAndContours();
+
+        ticsYaxis = TicGeneratorForAxes.generateTics(getMinY_Display(), getMaxY_Display(), 10);
+        ticsXaxis = TicGeneratorForAxes.generateTics(getMinX_Display(), getMaxX_Display(), 10);
+
+        repaint();
+        validate();
+    }
+
+    public void buildIsochronsAndContours() {
+        // math adapted from Noah's matlab code 
+        ValueModel sampleDateModel = ((SampleDateModel) sample.getSampleDateModelByName("DEFAULT"));
+        SortedSet<IsochronModel> selectedIsochrons = ((SampleDateModel) sampleDateModel).getIsochronModels();
         List<Double> annumList = new ArrayList<>();
         Iterator<IsochronModel> isochronIterator = selectedIsochrons.iterator();
         while (isochronIterator.hasNext()) {
             IsochronModel isochronModel = isochronIterator.next();
-            isochronModel.setVisible(isochronModel.getDensityLevel()<= (zoomCount / 25));
+            if (((SampleDateModel) sampleDateModel).isAutomaticIsochronSelection()) {
+                isochronModel.setVisible(
+                        (zoomCount >= 0) ? (isochronModel.getDensityLevel() <= (zoomCount / 4))
+                                : (isochronModel.getDensityLevel() == 0));
+            }
             if (isochronModel.isVisible()) {
                 annumList.add(isochronModel.getDateInAnnum());
             }
@@ -339,7 +429,7 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
 //        if (zoomCount >= 50) {
 //            annumIsochrons = new double[]{25.0e3, 50.0e3, 75.0e3, 85.0e3, 100.0e3, 115.0e3, 130.0e3, 140.0e3, 150.0e3, 160.0e3, 180.0e3, 200.0e3, 225.0e3, 250.0e3, 275.0e3, 300.0e3, 350.0e3, 400.0e3, 500.0e3, 10e16}; // plotted isochrons
 //        }
-        int init48Density = (int) Math.pow(2, (2 + zoomCount / 25));
+        int init48Density = (int) Math.pow(2, (2 + zoomCount / 10));
         ar48icntrs = new double[(int) maxY * init48Density + init48Density + 1];
         for (int i = 0; i < ar48icntrs.length; i++) {
             ar48icntrs[i] = i * (double) (1.0 / (double) init48Density);
@@ -574,54 +664,146 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
             zoomMaxX = e.getX();
             zoomMaxY = e.getY();
 
-            int notches = e.getWheelRotation();
-            if (notches < 0) {// zoom in
-                minX += getRangeX_Display() / ZOOM_FACTOR;
-                maxX -= getRangeX_Display() / ZOOM_FACTOR;
-                minY += getRangeY_Display() / ZOOM_FACTOR;
-                maxY -= getRangeY_Display() / ZOOM_FACTOR;
+            // https://java.com/en/download/faq/release_changes.xml
+            double notches = e.getPreciseWheelRotation();
+            if (notches == Math.rint(notches)) {
+                if (notches < 0) {// zoom in
+                    minX += getRangeX_Display() / ZOOM_FACTOR;
+                    maxX -= getRangeX_Display() / ZOOM_FACTOR;
+                    minY += getRangeY_Display() / ZOOM_FACTOR;
+                    maxY -= getRangeY_Display() / ZOOM_FACTOR;
 
-                zoomCount++;
+                    zoomCount++;
 
-            } else {// zoom out
-                minX -= getRangeX_Display() / ZOOM_FACTOR;
-                minX = Math.max(minX, 0.0);
+                } else {// zoom out
+                    minX -= getRangeX_Display() / ZOOM_FACTOR;
+                    minX = Math.max(minX, 0.0);
 
-                minY -= getRangeY_Display() / ZOOM_FACTOR;
-                minY = Math.max(minY, 0.0);
+                    minY -= getRangeY_Display() / ZOOM_FACTOR;
+                    minY = Math.max(minY, 0.0);
 
-                zoomCount--;
-                // stop zoom out
-                if (minX * minY > 0.0) {
-                    maxX += getRangeX_Display() / ZOOM_FACTOR;
-                    maxY += getRangeY_Display() / ZOOM_FACTOR;
+                    zoomCount--;
+                    // stop zoom out
+                    if (minX * minY > 0.0) {
+                        maxX += getRangeX_Display() / ZOOM_FACTOR;
+                        maxY += getRangeY_Display() / ZOOM_FACTOR;
 
-                } else {
-                    minX = 0.0;
-                    maxX = xAxisMax;
-                    minY = 0.0;
-                    maxY = yAxisMax;
-                    zoomCount = 0;
+                    } else {
+                        minX = 0.0;
+                        maxX = xAxisMax;
+                        minY = 0.0;
+                        maxY = yAxisMax;
+                        zoomCount = 0;
+                    }
                 }
+
+                if (minX <= 0.0) {
+                    minX = 0.0;
+                    displayOffsetX = 0.0;
+                }
+                if (minY <= 0.0) {
+                    minY = 0.0;
+                    displayOffsetY = 0.0;
+                }
+
+                zoomMinX = zoomMaxX;
+                zoomMinY = zoomMaxY;
+
+                buildIsochronsAndContours();
+                ticsYaxis = TicGeneratorForAxes.generateTics(getMinY_Display(), getMaxY_Display(), 10);
+                ticsXaxis = TicGeneratorForAxes.generateTics(getMinX_Display(), getMaxX_Display(), 10);
+
+                repaint();
             }
-
-            if (minX <= 0.0) {
-                minX = 0.0;
-                displayOffsetX = 0.0;
-            }
-            if (minY <= 0.0) {
-                minY = 0.0;
-                displayOffsetY = 0.0;
-            }
-
-            zoomMinX = zoomMaxX;
-            zoomMinY = zoomMaxY;
-
-            buildIsochronsAndContours();
-            ticsYaxis = TicGeneratorForAxes.generateTics(getMinY_Display(), getMaxY_Display(), 10);
-            ticsXaxis = TicGeneratorForAxes.generateTics(getMinX_Display(), getMaxX_Display(), 10);
-
-            repaint();
         }
+    }
+
+    /**
+     *
+     * @param file
+     */
+    public void outputToSVG(File file) {
+
+        // Get a DOMImplementation.
+        DOMImplementation domImpl
+                = GenericDOMImplementation.getDOMImplementation();
+
+        // Create an instance of org.w3c.dom.Document.
+        String svgNS = "http://www.w3.org/2000/svg";
+        Document document = domImpl.createDocument(svgNS, "svg", null);
+
+        // Create an instance of the SVG Generator.
+        SVGGraphics2D svgGenerator = new SVGGraphics2D(document);
+
+        // Ask the test to render into the SVG Graphics2D implementation.
+        paint(svgGenerator, false);
+
+        // Finally, stream out SVG to the standard output using
+        // UTF-8 encoding.
+        boolean useCSS = true; // we want to use CSS style attributes
+
+        Writer out = null;
+        try {
+            out = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
+        } catch (FileNotFoundException | UnsupportedEncodingException fileNotFoundException) {
+        }
+        try {
+            svgGenerator.stream(out, useCSS);
+        } catch (SVGGraphics2DIOException sVGGraphics2DIOException) {
+        }
+    }
+
+    /**
+     *
+     * @param file
+     */
+    public void outputToPDF(File file) {
+        SVGConverter myConv = new SVGConverter();
+        myConv.setDestinationType(org.apache.batik.apps.rasterizer.DestinationType.PDF);
+        try {
+            myConv.setSources(new String[]{file.getCanonicalPath()});
+
+        } catch (IOException iOException) {
+        }
+        myConv.setWidth((float) getWidth() + 2);
+        myConv.setHeight((float) getHeight() + 2);
+
+        try {
+            myConv.execute();
+
+        } catch (SVGConverterException sVGConverterException) {
+            System.out.println("Error in pdf conversion: " + sVGConverterException.getMessage());
+        }
+
+    }
+
+    @Override
+    public void preparePanel(boolean doReScale, boolean inLiveMode) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void refreshPanel(boolean doReScale, boolean inLiveMode) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void resetPanel(boolean doReScale, boolean inLiveMode) {
+        refreshPanel(doReScale);
+    }
+
+    @Override
+    public void setShowTightToEdges(boolean showTightToEdges) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void performZoom(double factor) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public PlotAxesSetupInterface getCurrentPlotAxesSetup() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

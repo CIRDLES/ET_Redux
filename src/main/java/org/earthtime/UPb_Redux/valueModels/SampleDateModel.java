@@ -170,6 +170,7 @@ public class SampleDateModel extends ValueModel implements
     private transient McLeanRegressionLineInterface mcLeanRegressionLine;
     private static String unitsForYears = "Ma";
     private SortedSet<IsochronModel> isochronModels;
+    private boolean automaticIsochronSelection;
 
     /**
      * creates a new instance of <code>SampleDateModel</code> with all of its
@@ -192,6 +193,7 @@ public class SampleDateModel extends ValueModel implements
 
         //this.unitsForYears = "Ma";
         this.isochronModels = new TreeSet<>();
+        this.automaticIsochronSelection = true;
     }
 
     /**
@@ -3173,5 +3175,19 @@ public class SampleDateModel extends ValueModel implements
      */
     public void setIsochronModels(SortedSet<IsochronModel> isochronModels) {
         this.isochronModels = isochronModels;
+    }
+
+    /**
+     * @return the automaticIsochronSelection
+     */
+    public boolean isAutomaticIsochronSelection() {
+        return automaticIsochronSelection;
+    }
+
+    /**
+     * @param automaticIsochronSelection the automaticIsochronSelection to set
+     */
+    public void setAutomaticIsochronSelection(boolean automaticIsochronSelection) {
+        this.automaticIsochronSelection = automaticIsochronSelection;
     }
 }

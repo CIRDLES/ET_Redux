@@ -539,7 +539,9 @@ public class SampleUTh extends ETSample implements
         ValueModel defaultSDM = new SampleDateModel();
         
         defaultSDM.setName("DEFAULT");
-        ((SampleDateModel)defaultSDM).setIsochronModels(IsochronModel.generateDefaultEvolutionIsochronModels());
+        ((SampleDateModel)defaultSDM).setIsochronModels(
+                IsochronModel.generateDefaultEvolutionIsochronModels());
+        ((SampleDateModel)defaultSDM).setAutomaticIsochronSelection(true);
         
         return defaultSDM;
     }

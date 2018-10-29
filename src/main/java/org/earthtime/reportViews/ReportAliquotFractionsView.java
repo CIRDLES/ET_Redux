@@ -1044,7 +1044,8 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
 
                                     ETFractionInterface fraction = null;
                                     try {
-                                        fraction = sample.getFractionByIDAndAliquotNumber(reportFractions[row][2].trim(), ((ReduxAliquotInterface) aliquot).getAliquotNumber());
+                                        fraction = sample.getFractionByIDAndAliquotNumber(reportFractions[row][2].trim(), 
+                                                ((ReduxAliquotInterface) aliquot).getAliquotNumber());
                                         TableRowObject currentFractionTableRowObject
                                                 = new TableRowObject( //
                                                         drawnHeight + topMargin + lineHeight + 1,//

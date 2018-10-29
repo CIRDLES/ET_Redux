@@ -74,6 +74,8 @@ public class ProjectOfSamplesImporterFromCSVFile_Squid3 extends AbstractProjectI
             throws FileNotFoundException {
 
         ArrayList<SampleInterface> projectSamples = new ArrayList<>();
+        
+        int columnStartReduxData = -1;
 
         SampleInterface currentSample = null;
         AliquotInterface currentAliquot = null;
@@ -91,6 +93,17 @@ public class ProjectOfSamplesImporterFromCSVFile_Squid3 extends AbstractProjectI
                 @SuppressWarnings("UseOfObsoleteCollectionType")
                 Vector<String> myFractionData = processLegacyCSVLine(scanner.nextLine());
                 if (myFractionData.size() > 1) {
+                    
+                    // use first line to determine starting column of "Correction-Independent Data"
+                    if (myFractionData.get(1).startsWith("Spot Fundamentals")) {
+                        // walk vector to find entry
+                        for (int i = 0; i < myFractionData.size(); i ++){
+                            if (myFractionData.get(i).compareToIgnoreCase("Correction-Independent Data") ==0){
+                                columnStartReduxData = i;
+                                break;
+                            }
+                        }
+                    }
 
                     if (myFractionData.get(0).startsWith("Fraction")) {
                         // the next line(s) contain fraction data or are blank
@@ -136,17 +149,6 @@ public class ProjectOfSamplesImporterFromCSVFile_Squid3 extends AbstractProjectI
                             }
 
                         }
-//                    else if (myFractionData.get(7).compareTo(savedAliquotName) != 0) {
-//                        SampleInterface.copyAliquotIntoSample(project.getSuperSample(),
-//                                currentSample.getAliquotByName(currentAliquot.getAliquotName()), new UPbReduxAliquot());
-//
-//                        savedAliquotName = myFractionData.get(7);
-//                        try {
-//                            currentAliquot = currentSample.addNewAliquot(myFractionData.get(7));
-//                            aliquotCounter++;
-//                        } catch (ETException eTException) {
-//                        }
-//                    }
                     }
 
                     if (readingFractions) {
@@ -166,21 +168,21 @@ public class ProjectOfSamplesImporterFromCSVFile_Squid3 extends AbstractProjectI
 
                         ratioName = "concU";
                         myFraction.getCompositionalMeasureByName(ratioName)//
-                                .setValue(readDelimitedTextCell(myFractionData.get(48)).//
+                                .setValue(readDelimitedTextCell(myFractionData.get(columnStartReduxData + 4)).//
                                         movePointLeft(6));
 
                         ratioName = "concTh";
                         myFraction.getCompositionalMeasureByName(ratioName)//
-                                .setValue(readDelimitedTextCell(myFractionData.get(49)).//
+                                .setValue(readDelimitedTextCell(myFractionData.get(columnStartReduxData + 5)).//
                                         movePointLeft(6));
 
                         ratioName = "rTh_Usample";
                         myFraction.getCompositionalMeasureByName(ratioName)//
-                                .setValue(readDelimitedTextCell(myFractionData.get(50)));
+                                .setValue(readDelimitedTextCell(myFractionData.get(columnStartReduxData + 6)));
 
                         ratioName = "radToCommonTotal"; // Pb*/Pb
                         myFraction.getCompositionalMeasureByName(ratioName)//
-                                .setValue(readDelimitedTextCell(myFractionData.get(62)));
+                                .setValue(readDelimitedTextCell(myFractionData.get(columnStartReduxData + 18)));
 
 //                    ratioName = "totCommonPbMass"; //Pbc
 //                    myFraction.getCompositionalMeasureByName(ratioName)//
@@ -195,50 +197,50 @@ public class ProjectOfSamplesImporterFromCSVFile_Squid3 extends AbstractProjectI
 //                            .setValue(readDelimitedTextCell(myFractionData.get(index++)));
                         ratioName = "r207_206r";
                         myFraction.getRadiogenicIsotopeRatioByName(ratioName)//
-                                .setValue(readDelimitedTextCell(myFractionData.get(77)));
+                                .setValue(readDelimitedTextCell(myFractionData.get(columnStartReduxData + 33)));
                         ValueModel ratio = myFraction.getRadiogenicIsotopeRatioByName(ratioName);
 
                         // convert 1-sigma to 1-sigma
-                        BigDecimal oneSigmaPct = readDelimitedTextCell(myFractionData.get(78)).//
+                        BigDecimal oneSigmaPct = readDelimitedTextCell(myFractionData.get(columnStartReduxData + 34)).//
                                 divide(new BigDecimal(1.0));
                         myFraction.getRadiogenicIsotopeRatioByName(ratioName)//
                                 .setOneSigma(ValueModel.convertOneSigmaPctToAbsIfRequired(ratio, oneSigmaPct));
 
                         ratioName = "r207_235r";
                         myFraction.getRadiogenicIsotopeRatioByName(ratioName)//
-                                .setValue(readDelimitedTextCell(myFractionData.get(79)));
+                                .setValue(readDelimitedTextCell(myFractionData.get(columnStartReduxData + 35)));
                         ratio = myFraction.getRadiogenicIsotopeRatioByName(ratioName);
 
                         // convert 2-sigma to 1-sigma
-                        oneSigmaPct = readDelimitedTextCell(myFractionData.get(80)).//
+                        oneSigmaPct = readDelimitedTextCell(myFractionData.get(columnStartReduxData + 36)).//
                                 divide(new BigDecimal(1.0));
                         myFraction.getRadiogenicIsotopeRatioByName(ratioName)//
                                 .setOneSigma(ValueModel.convertOneSigmaPctToAbsIfRequired(ratio, oneSigmaPct));
 
                         ratioName = "r206_238r";
                         myFraction.getRadiogenicIsotopeRatioByName(ratioName)//
-                                .setValue(readDelimitedTextCell(myFractionData.get(81)));
+                                .setValue(readDelimitedTextCell(myFractionData.get(columnStartReduxData + 37)));
                         ratio = myFraction.getRadiogenicIsotopeRatioByName(ratioName);
 
                         // convert 2-sigma to 1-sigma
-                        oneSigmaPct = readDelimitedTextCell(myFractionData.get(82)).//
+                        oneSigmaPct = readDelimitedTextCell(myFractionData.get(columnStartReduxData + 38)).//
                                 divide(new BigDecimal(1.0));
                         myFraction.getRadiogenicIsotopeRatioByName(ratioName)//
                                 .setOneSigma(ValueModel.convertOneSigmaPctToAbsIfRequired(ratio, oneSigmaPct));
 
                         ratioName = "rhoR206_238r__r207_235r";
                         myFraction.getRadiogenicIsotopeRatioByName(ratioName)//
-                                .setValue(readDelimitedTextCell(myFractionData.get(83)));
+                                .setValue(readDelimitedTextCell(myFractionData.get(columnStartReduxData + 39)));
 
                         ((UPbFractionI) myFraction).calculateTeraWasserburgRho();
 
                         // Isotopic Dates
                         ratioName = RadDates.age207_206r.getName();
                         myFraction.getRadiogenicIsotopeDateByName(ratioName)//
-                                .setValue(readDelimitedTextCell(myFractionData.get(68)).//
+                                .setValue(readDelimitedTextCell(myFractionData.get(columnStartReduxData + 24)).//
                                         movePointRight(6));
                         myFraction.getRadiogenicIsotopeDateByName(ratioName)//
-                                .setOneSigma(readDelimitedTextCell(myFractionData.get(69)).//
+                                .setOneSigma(readDelimitedTextCell(myFractionData.get(columnStartReduxData + 25)).//
                                         divide(new BigDecimal(1.0)).movePointRight(6));
 
 //                    ratioName = RadDates.age207_235r.getName();
@@ -250,10 +252,10 @@ public class ProjectOfSamplesImporterFromCSVFile_Squid3 extends AbstractProjectI
 //                                    divide(new BigDecimal(2.0)).movePointRight(6));
                         ratioName = RadDates.age206_238r.getName();
                         myFraction.getRadiogenicIsotopeDateByName(ratioName)//
-                                .setValue(readDelimitedTextCell(myFractionData.get(66)).//
+                                .setValue(readDelimitedTextCell(myFractionData.get(columnStartReduxData + 22)).//
                                         movePointRight(6));
                         myFraction.getRadiogenicIsotopeDateByName(ratioName)//
-                                .setOneSigma(readDelimitedTextCell(myFractionData.get(67)).//
+                                .setOneSigma(readDelimitedTextCell(myFractionData.get(columnStartReduxData + 23)).//
                                         divide(new BigDecimal(1.0)).movePointRight(6));
 
                         // calculate percentDiscordance
