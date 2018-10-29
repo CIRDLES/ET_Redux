@@ -47,11 +47,13 @@ import org.apache.batik.apps.rasterizer.SVGConverterException;
 import org.apache.batik.dom.GenericDOMImplementation;
 import org.apache.batik.svggen.SVGGraphics2D;
 import org.apache.batik.svggen.SVGGraphics2DIOException;
+import org.earthtime.UPb_Redux.dateInterpretation.concordia.PlottingDetailsDisplayInterface;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.dataDictionaries.UThAnalysisMeasures;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.plots.AbstractDataView;
+import org.earthtime.plots.PlotAxesSetupInterface;
 import org.earthtime.plots.isochrons.IsochronModel;
 import org.earthtime.reportViews.ReportUpdaterInterface;
 import org.earthtime.samples.SampleInterface;
@@ -63,7 +65,7 @@ import org.w3c.dom.Document;
  *
  * @author James F. Bowring
  */
-public final class EvolutionPlotPanelII extends AbstractDataView {
+public final class EvolutionPlotPanelII extends AbstractDataView implements PlottingDetailsDisplayInterface {
 
     protected transient ReportUpdaterInterface reportUpdater;
 
@@ -223,21 +225,23 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
         String ellipseLabelFontSize = "12";
 
         for (ETFractionInterface f : selectedFractions) {
-            generateEllipsePathIII(//
-                    f,
-                    2.0f);
-            if (f.getErrorEllipsePath() != null) {
-                plotAFraction(g2d,
-                        svgStyle,
+            if (!f.isRejected()) {
+                generateEllipsePathIII(//
                         f,
-                        includedBorderColor,
-                        0.5f,
-                        includedCenterColor,
-                        includedCenterSize,
-                        ellipseLabelFont,
-                        ellipseLabelFontSize,
-                        showCenters,
-                        showLabels);
+                        2.0f);
+                if (f.getErrorEllipsePath() != null) {
+                    plotAFraction(g2d,
+                            svgStyle,
+                            f,
+                            includedBorderColor,
+                            0.5f,
+                            includedCenterColor,
+                            includedCenterSize,
+                            ellipseLabelFont,
+                            ellipseLabelFontSize,
+                            showCenters,
+                            showLabels);
+                }
             }
         }
 
@@ -326,16 +330,18 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
         minY = Double.MAX_VALUE;
         maxY = -Double.MAX_VALUE;
         for (ETFractionInterface f : selectedFractions) {
+            if (!f.isRejected()) {
 
-            double xAxisRatio = f.getLegacyActivityRatioByName(UThAnalysisMeasures.ar230Th_238Ufc.getName()).getValue().doubleValue();
-            double xAxis2Sigma = f.getLegacyActivityRatioByName(UThAnalysisMeasures.ar230Th_238Ufc.getName()).getTwoSigmaAbs().doubleValue();
-            minX = Math.min(minX, xAxisRatio - 2.0 * xAxis2Sigma);
-            maxX = Math.max(maxX, xAxisRatio + 2.0 * xAxis2Sigma);
+                double xAxisRatio = f.getLegacyActivityRatioByName(UThAnalysisMeasures.ar230Th_238Ufc.getName()).getValue().doubleValue();
+                double xAxis2Sigma = f.getLegacyActivityRatioByName(UThAnalysisMeasures.ar230Th_238Ufc.getName()).getTwoSigmaAbs().doubleValue();
+                minX = Math.min(minX, xAxisRatio - 2.0 * xAxis2Sigma);
+                maxX = Math.max(maxX, xAxisRatio + 2.0 * xAxis2Sigma);
 
-            double yAxisRatio = f.getLegacyActivityRatioByName(UThAnalysisMeasures.ar234U_238Ufc.getName()).getValue().doubleValue();
-            double yAxis2Sigma = f.getLegacyActivityRatioByName(UThAnalysisMeasures.ar234U_238Ufc.getName()).getTwoSigmaAbs().doubleValue();
-            minY = Math.min(minY, yAxisRatio - 2.0 * yAxis2Sigma);
-            maxY = Math.max(maxY, yAxisRatio + 2.0 * yAxis2Sigma);
+                double yAxisRatio = f.getLegacyActivityRatioByName(UThAnalysisMeasures.ar234U_238Ufc.getName()).getValue().doubleValue();
+                double yAxis2Sigma = f.getLegacyActivityRatioByName(UThAnalysisMeasures.ar234U_238Ufc.getName()).getTwoSigmaAbs().doubleValue();
+                minY = Math.min(minY, yAxisRatio - 2.0 * yAxis2Sigma);
+                maxY = Math.max(maxY, yAxisRatio + 2.0 * yAxis2Sigma);
+            }
         }
 
         // maintain 2/1.5 aspect ratio
@@ -769,5 +775,35 @@ public final class EvolutionPlotPanelII extends AbstractDataView {
             System.out.println("Error in pdf conversion: " + sVGConverterException.getMessage());
         }
 
+    }
+
+    @Override
+    public void preparePanel(boolean doReScale, boolean inLiveMode) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void refreshPanel(boolean doReScale, boolean inLiveMode) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void resetPanel(boolean doReScale, boolean inLiveMode) {
+        refreshPanel(doReScale);
+    }
+
+    @Override
+    public void setShowTightToEdges(boolean showTightToEdges) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void performZoom(double factor) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public PlotAxesSetupInterface getCurrentPlotAxesSetup() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

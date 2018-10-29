@@ -3156,19 +3156,19 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
     }//GEN-LAST:event_resetEvolution_buttonActionPerformed
 
     private void ellipseCentersEvolutionOnToggle_checkboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ellipseCentersEvolutionOnToggle_checkboxActionPerformed
-        ((EvolutionPlotPanelII)evolutionPlotPanel)
+        ((EvolutionPlotPanelII) evolutionPlotPanel)
                 .setShowCenters(ellipseCentersEvolutionOnToggle_checkbox.isSelected());
-        ((EvolutionPlotPanelII)evolutionPlotPanel).repaint();
+        ((EvolutionPlotPanelII) evolutionPlotPanel).repaint();
     }//GEN-LAST:event_ellipseCentersEvolutionOnToggle_checkboxActionPerformed
 
     private void ellipseLabelsEvolutionOnToggle_checkboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ellipseLabelsEvolutionOnToggle_checkboxActionPerformed
-        ((EvolutionPlotPanelII)evolutionPlotPanel)
+        ((EvolutionPlotPanelII) evolutionPlotPanel)
                 .setShowLabels(ellipseLabelsEvolutionOnToggle_checkbox.isSelected());
-        ((EvolutionPlotPanelII)evolutionPlotPanel).repaint();
+        ((EvolutionPlotPanelII) evolutionPlotPanel).repaint();
     }//GEN-LAST:event_ellipseLabelsEvolutionOnToggle_checkboxActionPerformed
 
     private void zoomBoxEvolution_toggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zoomBoxEvolution_toggleButtonActionPerformed
-        ((EvolutionPlotPanelII)evolutionPlotPanel).putInImageModeZoom();
+        ((EvolutionPlotPanelII) evolutionPlotPanel).putInImageModeZoom();
     }//GEN-LAST:event_zoomBoxEvolution_toggleButtonActionPerformed
 
     private void showTightEvolution_toggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showTightEvolution_toggleButtonActionPerformed
@@ -3513,7 +3513,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                         setSelectedFractions(((ReduxAliquotInterface) aliquotNodeInfo).
                                 getAliquotSampleDateModelSelectedFractions(((SampleDateModel) nodeInfo).
                                         getIncludedFractionIDsVector()));
-                evolutionPlotPanel.repaint();
+                ((AbstractDataView) evolutionPlotPanel).refreshPanel(true);
 //                ((AliquotDetailsDisplayInterface) useriesIsochronPanel).//
 //                        setDeSelectedFractions(((ReduxAliquotInterface) aliquotNodeInfo).//
 //                                getAliquotSampleDateModelDeSelectedFractions(((SampleDateModel) nodeInfo).//
@@ -3694,7 +3694,8 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                         setPreferredDatePanel(dateInterpretationBoxPanel);
                 concordiaGraphPanel.repaint();
             } else if ((graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab("Any 2"))
-                    || (graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab("USeries Isochrons"))) {
+                    || (graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab("USeries Isochrons"))
+                    || (graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab("Evolution"))) {
                 // dec 2016
                 ((AliquotDetailsDisplayInterface) plotAny2Panel).//
                         setSelectedFractions(((ReduxAliquotInterface) aliquotNodeInfo).//
@@ -3722,14 +3723,22 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                 ((AliquotDetailsDisplayInterface) useriesIsochronPanel).//
                         setDeSelectedFractions(((ReduxAliquotInterface) aliquotNodeInfo).//
                                 getAliquotSampleDateModelDeSelectedFractions(((SampleDateModel) sampleDateNodeInfo).getIncludedFractionIDsVector()));
+                useriesIsochronPanel.repaint();
 
+                ((AliquotDetailsDisplayInterface) evolutionPlotPanel).//
+                        setSelectedFractions(((ReduxAliquotInterface) aliquotNodeInfo).//
+                                getAliquotSampleDateModelSelectedFractions(((SampleDateModel) sampleDateNodeInfo).getIncludedFractionIDsVector()));
+//                ((AliquotDetailsDisplayInterface) evolutionToolPanel).//
+//                        setDeSelectedFractions(((ReduxAliquotInterface) aliquotNodeInfo).//
+//                                getAliquotSampleDateModelDeSelectedFractions(((SampleDateModel) sampleDateNodeInfo).getIncludedFractionIDsVector()));
+                ((AbstractDataView) evolutionPlotPanel).refreshPanel(true);
+                
 //                // fix dateTreeByAliquot
 //                ((DefaultTreeModel) ((JTree) dateTreeByAliquot).getModel()).//
 //                        nodeChanged(((TreeNode) node).//
 //                                getParent().//
 //                                getParent().//
 //                                getChildAt(0));
-                useriesIsochronPanel.repaint();
 
             } else if (graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab("Weighted Mean")) {
 
@@ -3927,7 +3936,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
 
     private void delegatePlotFileWriting() {
         String panelName = graphPanels_TabbedPane.getSelectedComponent().getName();
-        if (panelName == null){
+        if (panelName == null) {
             panelName = "None";
         }
         switch (panelName) {
@@ -4065,8 +4074,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
             }
         }
     }
-    
-    
+
     /**
      *
      */
@@ -4101,7 +4109,6 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
             }
         }
     }
-
 
     /**
      *

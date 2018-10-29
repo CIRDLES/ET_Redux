@@ -29,6 +29,8 @@ import javax.swing.JCheckBox;
 import javax.swing.JList;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
 import org.earthtime.beans.ET_JButton;
@@ -111,6 +113,9 @@ public class IsochronsEvolutionSelectorDialog extends DialogEditor {
             checkBox.addChangeListener((ChangeEvent e) -> {
                 isochrons[Integer.parseInt(((JCheckBox) e.getSource()).getName())]
                         .setVisible(((JCheckBox) e.getSource()).isSelected());
+                isochronDateInKaText.setText(
+                        isochrons[Integer.parseInt(((JCheckBox) e.getSource()).getName())]
+                                .prettyPrintINoUnits());
             });
             isochronCheckBoxArray[count] = checkBox;
             count++;
@@ -119,6 +124,14 @@ public class IsochronsEvolutionSelectorDialog extends DialogEditor {
         isochronCheckBoxes.removeAll();
         isochronCheckBoxes.setBounds(50, 50, 100, count * 18);
         isochronCheckBoxes.setListData(isochronCheckBoxArray);
+        isochronCheckBoxes.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                isochronDateInKaText.setText(
+                        ((JCheckBox)((CheckBoxList)e.getSource())
+                                .getSelectedValue()).getText().split(" ka")[0]);
+            }
+        });
 
     }
 
