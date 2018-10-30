@@ -666,7 +666,7 @@ public final class EvolutionPlotPanelII extends AbstractDataView implements Plot
 
             // https://java.com/en/download/faq/release_changes.xml
             double notches = e.getPreciseWheelRotation();
-            if (notches == Math.rint(notches)) {
+            if (true){//(notches == Math.rint(notches)) {
                 if (notches < 0) {// zoom in
                     minX += getRangeX_Display() / ZOOM_FACTOR;
                     maxX -= getRangeX_Display() / ZOOM_FACTOR;
