@@ -78,17 +78,19 @@ public class UPbLegacyFraction extends Fraction implements
     private boolean filtered;
     private boolean standard;
     private boolean secondaryStandard;
+    //Nov 2018
+    private boolean squidLegacy;
 
     /**
      *
      */
     public UPbLegacyFraction() {
         super(ReduxConstants.DEFAULT_OBJECT_NAME, ReduxConstants.DEFAULT_OBJECT_NAME);
-        setLegacy(true);
+        this.isLegacy = true;
         this.ratioType = "UPb";
 
         this.physicalConstantsModel = ReduxLabData.getInstance().getDefaultPhysicalConstantsModel();
-        
+
         this.aliquotNumber = 1;
 
         this.changed = true;
@@ -102,16 +104,18 @@ public class UPbLegacyFraction extends Fraction implements
         setAnalysisMeasures(new ValueModel[0]);
         setRadiogenicIsotopeRatios(new ValueModel[0]);
         setIsotopeDates(new ValueModel[0]);
-        setCompositionalMeasures(new ValueModel[0]);
-        setSampleIsochronRatios(new ValueModel[0]);
+        this.compositionalMeasures = new ValueModel[0];
+        this.sampleIsochronRatios = new ValueModel[0];
 
-        setInitialPbModel(null);
+        this.initialPbModel = null;
 
         hasMeasuredLead = false;
 
         hasMeasuredUranium = false;
 
         this.standard = false;
+        
+        this.squidLegacy = false;
 
     }
 
@@ -218,6 +222,7 @@ public class UPbLegacyFraction extends Fraction implements
      * @param ipmName
      * @return
      */
+    @Override
     public ValueModel getInitialPbModelRatioByName(String ipmName) {
         return getInitialPbModel().getDatumByName(ipmName);
     }
@@ -422,6 +427,7 @@ public class UPbLegacyFraction extends Fraction implements
     /**
      *
      */
+    @Override
     public void calculateTeraWasserburgRho() {
         // created to handle legacy data
 
@@ -444,9 +450,9 @@ public class UPbLegacyFraction extends Fraction implements
                 rawJ[0][1] = 0.0;
                 rawJ[1][0] = -1.0 //
                         * (getRadiogenicIsotopeRatioByName("r207_235r").getValue().//
-                        divide(getRadiogenicIsotopeRatioByName("r206_238r").getValue().pow(2), ReduxConstants.mathContext15).//
-                        // missing from legacy data as of oct 2010 divide( getAnalysisMeasure( AnalysisMeasures.r238_235s.getName() ).getValue(), ReduxConstants.mathContext15 ).doubleValue());
-                        divide(new BigDecimal(137.88), ReduxConstants.mathContext15).doubleValue());
+                                divide(getRadiogenicIsotopeRatioByName("r206_238r").getValue().pow(2), ReduxConstants.mathContext15).//
+                                // missing from legacy data as of oct 2010 divide( getAnalysisMeasure( AnalysisMeasures.r238_235s.getName() ).getValue(), ReduxConstants.mathContext15 ).doubleValue());
+                                divide(new BigDecimal(137.88), ReduxConstants.mathContext15).doubleValue());
                 rawJ[1][1] = BigDecimal.ONE.//
                         divide(getRadiogenicIsotopeRatioByName("r206_238r").getValue(), ReduxConstants.mathContext15).//
                         //divide( getAnalysisMeasure( AnalysisMeasures.r238_235s.getName() ).getValue(), ReduxConstants.mathContext15 ).doubleValue();
@@ -499,6 +505,7 @@ public class UPbLegacyFraction extends Fraction implements
     /**
      * @return the hasMeasuredLead
      */
+    @Override
     public boolean hasMeasuredLead() {
         return hasMeasuredLead;
     }
@@ -513,6 +520,7 @@ public class UPbLegacyFraction extends Fraction implements
     /**
      * @return the hasMeasuredUranium
      */
+    @Override
     public boolean hasMeasuredUranium() {
         return hasMeasuredUranium;
     }
@@ -712,8 +720,8 @@ public class UPbLegacyFraction extends Fraction implements
     public void setStandard(boolean standard) {
         this.standard = standard;
     }
-    
-       /**
+
+    /**
      * @return the secondaryStandard
      */
     @Override
@@ -728,8 +736,6 @@ public class UPbLegacyFraction extends Fraction implements
     public void setSecondaryStandard(boolean secondaryStandard) {
         this.secondaryStandard = secondaryStandard;
     }
-
-
 
     @Override
     public boolean isCommonLeadLossCorrected() {
@@ -784,5 +790,19 @@ public class UPbLegacyFraction extends Fraction implements
     @Override
     public ValueModel getLegacyActivityRatioByName(String arName) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    /**
+     * @return the squidLegacy
+     */
+    public boolean isSquidLegacy() {
+        return squidLegacy;
+    }
+
+    /**
+     * @param squidLegacy the squidLegacy to set
+     */
+    public void setSquidLegacy(boolean squidLegacy) {
+        this.squidLegacy = squidLegacy;
     }
 }

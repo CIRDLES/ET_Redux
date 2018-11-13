@@ -97,9 +97,10 @@ import org.earthtime.plots.PlotAxesSetupInterface;
 import org.earthtime.plots.PlotInterface;
 import org.earthtime.plots.anyTwo.PlotAny2Panel;
 import org.earthtime.plots.evolution.EvolutionPlotPanelII;
+import org.earthtime.plots.evolution.InitialDelta234UEvolutionSelectorDialog;
 import org.earthtime.plots.isochrons.IsochronsPanel;
 import org.earthtime.plots.isochrons.UseriesIsochronPlotDisplayInterface;
-import org.earthtime.plots.isochrons.evolution.IsochronsEvolutionSelectorDialog;
+import org.earthtime.plots.evolution.IsochronsEvolutionSelectorDialog;
 import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.reports.ReportColumnInterface;
 import org.earthtime.samples.SampleInterface;
@@ -1088,7 +1089,22 @@ public class SampleDateInterpretationsManager extends DialogEditor
 
         myDialog.dispose();
 
-        ((EvolutionPlotPanelII) evolutionPlotPanel).buildIsochronsAndContours();
+        ((EvolutionPlotPanelII) evolutionPlotPanel).buildIsochronsAndInitDelta234UContours();
+        evolutionPlotPanel.repaint();
+    }
+
+    private void selectEvolutionInitDelta234U() {
+        DialogEditor myDialog
+                = new InitialDelta234UEvolutionSelectorDialog(
+                        null,
+                        true,
+                        ((SampleDateModel) sample.getSampleDateModelByName("DEFAULT")));
+        myDialog.setSize(340, 625);
+        myDialog.setVisible(true);
+
+        myDialog.dispose();
+
+        ((EvolutionPlotPanelII) evolutionPlotPanel).buildIsochronsAndInitDelta234UContours();
         evolutionPlotPanel.repaint();
     }
 
@@ -1250,6 +1266,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         zoomBoxEvolution_toggleButton =  new ET_JToggleButton();
         showTightEvolution_toggleButton =  new ET_JToggleButton();
         isochrons_button =  new ET_JButton();
+        initDelta234U_button =  new ET_JButton();
         useriesIsochronLayeredPane = new javax.swing.JLayeredPane();
         uSeriesIsochronToolPanel = new javax.swing.JPanel();
         zoomInX2Isochron_button =  new ET_JButton();
@@ -1768,7 +1785,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         evolutionToolPanel.add(showTightEvolution_toggleButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 2, 30, 30));
 
         isochrons_button.setBackground(new java.awt.Color(255, 255, 255));
-        isochrons_button.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
+        isochrons_button.setFont(new java.awt.Font("SansSerif", 1, 9)); // NOI18N
         isochrons_button.setText("Isochrons");
         isochrons_button.setAlignmentY(0.0F);
         isochrons_button.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -1782,7 +1799,24 @@ public class SampleDateInterpretationsManager extends DialogEditor
                 isochrons_buttonActionPerformed(evt);
             }
         });
-        evolutionToolPanel.add(isochrons_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 2, 70, 30));
+        evolutionToolPanel.add(isochrons_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 2, 55, 30));
+
+        initDelta234U_button.setBackground(new java.awt.Color(255, 255, 255));
+        initDelta234U_button.setFont(new java.awt.Font("SansSerif", 1, 9)); // NOI18N
+        initDelta234U_button.setText("InitDelta234U");
+        initDelta234U_button.setAlignmentY(0.0F);
+        initDelta234U_button.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        initDelta234U_button.setFocusable(false);
+        initDelta234U_button.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        initDelta234U_button.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        initDelta234U_button.setOpaque(true);
+        initDelta234U_button.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        initDelta234U_button.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                initDelta234U_buttonActionPerformed(evt);
+            }
+        });
+        evolutionToolPanel.add(initDelta234U_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(235, 2, 75, 30));
 
         evolutionLayeredPane.add(evolutionToolPanel);
         evolutionToolPanel.setBounds(0, 604, 790, 35);
@@ -3179,6 +3213,10 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
         selectEvolutionIsochrons();
     }//GEN-LAST:event_isochrons_buttonActionPerformed
 
+    private void initDelta234U_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_initDelta234U_buttonActionPerformed
+        selectEvolutionInitDelta234U();
+    }//GEN-LAST:event_initDelta234U_buttonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JRadioButton DatePbCorrSchemeA_radio;
     private javax.swing.JRadioButton ageBest_radio;
@@ -3222,6 +3260,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
     private javax.swing.JTabbedPane graphPanels_TabbedPane;
     private javax.swing.JMenu heatMap_Menu;
     private javax.swing.JSpinner histogramBinCount_spinner;
+    private javax.swing.JButton initDelta234U_button;
     private javax.swing.JSplitPane interpretations_SplitPane;
     private javax.swing.JButton isochrons_button;
     private javax.swing.JLabel jLabel1;
@@ -3732,14 +3771,13 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
 //                        setDeSelectedFractions(((ReduxAliquotInterface) aliquotNodeInfo).//
 //                                getAliquotSampleDateModelDeSelectedFractions(((SampleDateModel) sampleDateNodeInfo).getIncludedFractionIDsVector()));
                 ((AbstractDataView) evolutionPlotPanel).refreshPanel(true);
-                
+
 //                // fix dateTreeByAliquot
 //                ((DefaultTreeModel) ((JTree) dateTreeByAliquot).getModel()).//
 //                        nodeChanged(((TreeNode) node).//
 //                                getParent().//
 //                                getParent().//
 //                                getChildAt(0));
-
             } else if (graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab("Weighted Mean")) {
 
                 weightedMeanGraphPanel.repaint();

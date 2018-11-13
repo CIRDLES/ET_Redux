@@ -82,6 +82,9 @@ public final class EvolutionPlotPanelII extends AbstractDataView implements Plot
     private double[][][] xy;
     private double[][][] dardt;
 
+    double[][] tvLabels;
+    private double[][][] xyLabels;
+
     public EvolutionPlotPanelII(SampleInterface mySample, ReportUpdaterInterface reportUpdater) {
         super();
 
@@ -110,6 +113,8 @@ public final class EvolutionPlotPanelII extends AbstractDataView implements Plot
         this.tv = new double[][]{{}};
         this.xy = new double[0][0][0];
         this.dardt = new double[0][0][0];
+        this.tvLabels = new double[][]{{}};
+        this.xyLabels = new double[0][0][0];
 
         this.ticsYaxis = new BigDecimal[0];
         this.ticsXaxis = new BigDecimal[0];
@@ -173,46 +178,52 @@ public final class EvolutionPlotPanelII extends AbstractDataView implements Plot
 
         }
 
-        // draw contour lines
+        // draw initDelta234U contour lines
         g2d.setPaint(Color.blue);
         // determine what curves should plot
         int lowIndex = 0;
         int highIndex = ar48icntrs.length;
         for (int index = 0; index < ar48icntrs.length; index++) {
-            if (ar48icntrs[index] < getMinY_Display()) {
+            if (Math.abs(ar48icntrs[index]) < getMinY_Display()) {
                 lowIndex = index;
             }
-            if (ar48icntrs[index] < getMaxY_Display()) {
+            if (Math.abs(ar48icntrs[index]) < getMaxY_Display()) {
                 highIndex = Math.min(ar48icntrs.length - 1, index + 6 + (zoomCount / 10) * 1);
             }
         }
         for (int i = lowIndex; i < highIndex; i++) {
             boolean labelPrinted = false;
-            for (int j = 1; j < tv[i].length; j++) {
-                double deltaTOver3 = (tv[i][j] - tv[i][j - 1]) / 3;
 
-                Shape ar48iContour = new CubicCurve2D.Double(
-                        mapX(xy[i][0][j - 1]),
-                        mapY(xy[i][1][j - 1]),
-                        mapX(xy[i][0][j - 1] + deltaTOver3 * dardt[i][0][j - 1]),
-                        mapY(xy[i][1][j - 1] + deltaTOver3 * dardt[i][1][j - 1]),
-                        mapX(xy[i][0][j] - deltaTOver3 * dardt[i][0][j]),
-                        mapY(xy[i][1][j] - deltaTOver3 * dardt[i][1][j]),
-                        mapX(xy[i][0][j]),
-                        mapY(xy[i][1][j]));
+            if (ar48icntrs[i] >= 0.0) {
+                Path2D curvedP = new Path2D.Double(Path2D.WIND_NON_ZERO);
+                curvedP.moveTo(
+                        (float) mapX(xy[i][0][0]),
+                        (float) mapY(xy[i][1][0]));
 
-                g2d.draw(ar48iContour);
+                for (int j = 1; j < tv[i].length; j++) {
+                    double deltaTOver3 = (tv[i][j] - tv[i][j - 1]) / 3;
 
-                DecimalFormat myFormatter = new DecimalFormat("#.##");
-                if (!labelPrinted && (xy[i][0][j - 1] > getMinX_Display()) && (ar48icntrs[i] > 0.0)) {
-                    double angleOfText = (Math.atan(xy[i][1][j - 1] - xy[i][1][j]) / (xy[i][0][j - 1] - xy[i][0][j]));
-//                    System.out.println(ar48icntrs[i] + "  >  " + angleOfText);
-                    g2d.rotate(-angleOfText, leftMargin + 20, mapY(xy[i][1][j - 1]));
-                    g2d.drawString(myFormatter.format(ar48icntrs[i]), leftMargin + 10, (float) mapY(xy[i][1][j - 1]) - 5);
-                    g2d.rotate(angleOfText, leftMargin + 20, mapY(xy[i][1][j - 1]));
-                    labelPrinted = true;
+                    curvedP.curveTo(//
+                            (float) mapX(xy[i][0][j - 1] + deltaTOver3 * dardt[i][0][j - 1]),
+                            (float) mapY(xy[i][1][j - 1] + deltaTOver3 * dardt[i][1][j - 1]),
+                            (float) mapX(xy[i][0][j] - deltaTOver3 * dardt[i][0][j]),
+                            (float) mapY(xy[i][1][j] - deltaTOver3 * dardt[i][1][j]),
+                            (float) mapX(xy[i][0][j]),
+                            (float) mapY(xy[i][1][j]));
                 }
+                g2d.draw(curvedP);
 
+                for (int j = 1; j < tvLabels[i].length; j++) {
+                    DecimalFormat myFormatter = new DecimalFormat("#.##");
+                    if (!labelPrinted && (xyLabels[i][0][j - 1] > getMinX_Display()) && (ar48icntrs[i] > 0.0)) {
+                        double angleOfText = (Math.atan(xyLabels[i][1][j - 1] - xyLabels[i][1][j]) / (xyLabels[i][0][j - 1] - xyLabels[i][0][j]));
+//                    System.out.println(ar48icntrs[i] + "  >  " + angleOfText);
+                        g2d.rotate(-angleOfText, leftMargin + 20, mapY(xyLabels[i][1][j - 1]));
+                        g2d.drawString(myFormatter.format(ar48icntrs[i]), leftMargin + 10, (float) mapY(xyLabels[i][1][j - 1]) - 5);
+                        g2d.rotate(angleOfText, leftMargin + 20, mapY(xyLabels[i][1][j - 1]));
+                        labelPrinted = true;
+                    }
+                }
             }
         }
 
@@ -361,7 +372,7 @@ public final class EvolutionPlotPanelII extends AbstractDataView implements Plot
             zoomCount = (int) Math.min(10.0, 10.0 / getRangeX_Display());
         }
 
-        buildIsochronsAndContours();
+        buildIsochronsAndInitDelta234UContours();
 
         ticsYaxis = TicGeneratorForAxes.generateTics(getMinY_Display(), getMaxY_Display(), 10);
         ticsXaxis = TicGeneratorForAxes.generateTics(getMinX_Display(), getMaxX_Display(), 10);
@@ -391,7 +402,7 @@ public final class EvolutionPlotPanelII extends AbstractDataView implements Plot
         maxY = 2.0;
         yAxisMax = maxY;
 
-        buildIsochronsAndContours();
+        buildIsochronsAndInitDelta234UContours();
 
         ticsYaxis = TicGeneratorForAxes.generateTics(getMinY_Display(), getMaxY_Display(), 10);
         ticsXaxis = TicGeneratorForAxes.generateTics(getMinX_Display(), getMaxX_Display(), 10);
@@ -400,7 +411,7 @@ public final class EvolutionPlotPanelII extends AbstractDataView implements Plot
         validate();
     }
 
-    public void buildIsochronsAndContours() {
+    public void buildIsochronsAndInitDelta234UContours() {
         // math adapted from Noah's matlab code 
         ValueModel sampleDateModel = ((SampleDateModel) sample.getSampleDateModelByName("DEFAULT"));
         SortedSet<IsochronModel> selectedIsochrons = ((SampleDateModel) sampleDateModel).getIsochronModels();
@@ -420,21 +431,16 @@ public final class EvolutionPlotPanelII extends AbstractDataView implements Plot
 
         annumIsochrons = annumList.stream().mapToDouble(Double::doubleValue).toArray();
 
-//        annumIsochrons = new double[]{25.0e3, 50.0e3, 75.0e3, 100.0e3, 150.0e3, 200.0e3, 300.0e3, 500.0e3, 10e16}; // plotted isochrons
-//
-//        if (zoomCount >= 25) {
-//            annumIsochrons = new double[]{25.0e3, 50.0e3, 75.0e3, 85.0e3, 100.0e3, 115.0e3, 140.0e3, 150.0e3, 175.0e3, 200.0e3, 300.0e3, 500.0e3, 10e16}; // plotted isochrons
-//        }
-//
-//        if (zoomCount >= 50) {
-//            annumIsochrons = new double[]{25.0e3, 50.0e3, 75.0e3, 85.0e3, 100.0e3, 115.0e3, 130.0e3, 140.0e3, 150.0e3, 160.0e3, 180.0e3, 200.0e3, 225.0e3, 250.0e3, 275.0e3, 300.0e3, 350.0e3, 400.0e3, 500.0e3, 10e16}; // plotted isochrons
-//        }
-        int init48Density = (int) Math.pow(2, (2 + zoomCount / 10));
-        ar48icntrs = new double[(int) maxY * init48Density + init48Density + 1];
-        for (int i = 0; i < ar48icntrs.length; i++) {
-            ar48icntrs[i] = i * (double) (1.0 / (double) init48Density);
+        if (((SampleDateModel) sampleDateModel).isAutomaticInitDelta234USelection()) {
+            ((SampleDateModel)sampleDateModel).setAr48icntrs(IsochronModel.generateDefaultEvolutionAr48icntrs());
         }
-
+        ar48icntrs = ((SampleDateModel) sampleDateModel).getAr48icntrs();
+        
+//        int init48Density = (int) Math.pow(2, (2 + zoomCount / 10));
+//        ar48icntrs = new double[(int) maxY * init48Density + init48Density + 1];
+//        for (int i = 0; i < ar48icntrs.length; i++) {
+//            ar48icntrs[i] = i * (double) (1.0 / (double) init48Density);
+//        }
         Matrix ar48limYaxis = new Matrix(new double[][]{{0.0, maxY * 1}});
         Matrix ar08limXaxis = new Matrix(new double[][]{{0.0, maxX * 1}});
 
@@ -506,7 +512,7 @@ public final class EvolutionPlotPanelII extends AbstractDataView implements Plot
         }
 
         // calculate ar48i contours
-        int nts = 200;//10; // number of segments - need 200 to position label well
+        int nts = 10;
         // build array of vectors of evenly spaced values with last value = 2e6
         tv = new double[ar48icntrs.length][nts];
         for (int i = 0; i < (nts - 1); i++) {
@@ -549,6 +555,39 @@ public final class EvolutionPlotPanelII extends AbstractDataView implements Plot
 
                 dardt[iar48i][0][it] = dardnt.times(dntdt).get(0, 0);
                 dardt[iar48i][1][it] = dardnt.times(dntdt).get(1, 0);
+            }
+        }
+
+        // repeat for labels
+        nts = 200;//10; // number of segments - need 200 to position label well
+        // build array of vectors of evenly spaced values with last value = 2e6
+        tvLabels = new double[ar48icntrs.length][nts];
+        for (int i = 0; i < (nts - 1); i++) {
+            double colVal = (double) (i * 1.0e6 / (double) (nts - 2));
+            for (double[] tv1 : tvLabels) {
+                tv1[i] = colVal;
+            }
+        }
+        for (double[] tv1 : tvLabels) {
+            tv1[nts - 1] = 2e6;
+        }
+
+        xyLabels = new double[ar48icntrs.length][2][nts];
+
+        iar48i = -1;
+
+        for (double ar48i : ar48icntrs) {
+            iar48i++;
+            it = -1;
+
+            for (double t : tvLabels[iar48i]) {
+                it++;
+                Matrix n0 = new Matrix(new double[][]{{1, ar48i * lambda238D / lambda234D, 0}}).transpose();
+
+                Matrix nt = matrixUTh(t).times(n0);
+
+                xyLabels[iar48i][0][it] = nt.get(2, 0) / nt.get(0, 0) * lambda230D / lambda238D;
+                xyLabels[iar48i][1][it] = nt.get(1, 0) / nt.get(0, 0) * lambda234D / lambda238D;
             }
         }
     }
@@ -666,7 +705,7 @@ public final class EvolutionPlotPanelII extends AbstractDataView implements Plot
 
             // https://java.com/en/download/faq/release_changes.xml
             double notches = e.getPreciseWheelRotation();
-            if (true){//(notches == Math.rint(notches)) {
+            if (true) {//(notches == Math.rint(notches)) {
                 if (notches < 0) {// zoom in
                     minX += getRangeX_Display() / ZOOM_FACTOR;
                     maxX -= getRangeX_Display() / ZOOM_FACTOR;
@@ -709,7 +748,7 @@ public final class EvolutionPlotPanelII extends AbstractDataView implements Plot
                 zoomMinX = zoomMaxX;
                 zoomMinY = zoomMaxY;
 
-                buildIsochronsAndContours();
+                buildIsochronsAndInitDelta234UContours();
                 ticsYaxis = TicGeneratorForAxes.generateTics(getMinY_Display(), getMaxY_Display(), 10);
                 ticsXaxis = TicGeneratorForAxes.generateTics(getMinX_Display(), getMaxX_Display(), 10);
 

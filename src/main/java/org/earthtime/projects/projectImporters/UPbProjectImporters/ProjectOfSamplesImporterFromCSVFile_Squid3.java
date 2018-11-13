@@ -156,6 +156,7 @@ public class ProjectOfSamplesImporterFromCSVFile_Squid3 extends AbstractProjectI
                         myFraction.setAliquotNumber(aliquotCounter);
 
                         myFraction.setRatioType("UPb");
+                        ((UPbLegacyFraction)myFraction).setSquidLegacy(true);
 
                         myFraction.setFractionID(myFractionData.get(0));
                         myFraction.setGrainID(myFraction.getFractionID());

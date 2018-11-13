@@ -70,6 +70,7 @@ public class ReportSettings implements
     private ReportCategoryInterface datesPbcCorrCategory;
     private ReportCategoryInterface rhosCategory;
     private ReportCategoryInterface traceElementsCategory;
+    private ReportCategoryInterface qaQcParametersCategory;
     // 2017 new useries categories
     protected ReportCategoryInterface concentrationAndActivityCategory;
     protected ReportCategoryInterface measuredAtomAndActivityRatiosCategory;
@@ -156,6 +157,11 @@ public class ReportSettings implements
                     = new ReportCategory(//
                             "Trace Elements",//
                             ReportSpecificationsUPb.ReportCategory_TraceElements, false);
+            
+            this.qaQcParametersCategory
+                    = new ReportCategory(//
+                            "QA/QC Parameters",//
+                            ReportSpecificationsUPb.ReportCategory_QA_QC_Parameters, false);
         } else if (isdefaultReportSpecsType_UTh_Carb()) {
             this.concentrationAndActivityCategory
                     = new ReportCategory(//
