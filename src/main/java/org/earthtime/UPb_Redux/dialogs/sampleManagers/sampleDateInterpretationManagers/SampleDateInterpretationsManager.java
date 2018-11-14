@@ -96,7 +96,7 @@ import org.earthtime.plots.AbstractPlot;
 import org.earthtime.plots.PlotAxesSetupInterface;
 import org.earthtime.plots.PlotInterface;
 import org.earthtime.plots.anyTwo.PlotAny2Panel;
-import org.earthtime.plots.evolution.EvolutionPlotPanelII;
+import org.earthtime.plots.evolution.EvolutionPlotPanel;
 import org.earthtime.plots.evolution.InitialDelta234UEvolutionSelectorDialog;
 import org.earthtime.plots.isochrons.IsochronsPanel;
 import org.earthtime.plots.isochrons.UseriesIsochronPlotDisplayInterface;
@@ -123,6 +123,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
     private JLayeredPane plotAny2Panel;
     private JLayeredPane useriesIsochronPanel;
     private JLayeredPane evolutionPlotPanel;
+    private JLayeredPane ageDelta234PlotPanel;
     /**
      *
      */
@@ -163,6 +164,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
             JLayeredPane plotAny2Panel,
             JLayeredPane useriesIsochronPanel,
             JLayeredPane evolutionPlotPanel,
+            JLayeredPane ageDelta234PlotPanel,
             JPanel weightedMeanGraphPanel,
             JLayeredPane normedProbabilityPanel,
             SampleInterface sample,
@@ -197,6 +199,12 @@ public class SampleDateInterpretationsManager extends DialogEditor
         this.evolutionPlotPanel = evolutionPlotPanel;
         try {
             initEvolutionPlotPanel();
+        } catch (Exception e) {
+        }
+
+        this.ageDelta234PlotPanel = ageDelta234PlotPanel;
+        try {
+            initAgeDelta234UPlotPanel();
         } catch (Exception e) {
         }
 
@@ -509,6 +517,16 @@ public class SampleDateInterpretationsManager extends DialogEditor
         ((AliquotDetailsDisplayInterface) evolutionPlotPanel).//
                 setSelectedFractions(sample.getFractions());
         ((AbstractDataView) evolutionPlotPanel).refreshPanel(true);
+
+    }
+
+    private void initAgeDelta234UPlotPanel() {
+
+        evolutionLayeredPane.add(ageDelta234PlotPanel);
+
+        ((AliquotDetailsDisplayInterface) ageDelta234PlotPanel).//
+                setSelectedFractions(sample.getFractions());
+        ((AbstractDataView) ageDelta234PlotPanel).refreshPanel(true);
 
     }
 
@@ -1089,7 +1107,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
 
         myDialog.dispose();
 
-        ((EvolutionPlotPanelII) evolutionPlotPanel).buildIsochronsAndInitDelta234UContours();
+        ((EvolutionPlotPanel) evolutionPlotPanel).buildIsochronsAndInitDelta234UContours();
         evolutionPlotPanel.repaint();
     }
 
@@ -1104,7 +1122,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
 
         myDialog.dispose();
 
-        ((EvolutionPlotPanelII) evolutionPlotPanel).buildIsochronsAndInitDelta234UContours();
+        ((EvolutionPlotPanel) evolutionPlotPanel).buildIsochronsAndInitDelta234UContours();
         evolutionPlotPanel.repaint();
     }
 
@@ -3186,27 +3204,27 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
     }//GEN-LAST:event_writeVisiblePlotSvgPdf_buttonActionPerformed
 
     private void resetEvolution_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetEvolution_buttonActionPerformed
-        ((EvolutionPlotPanelII) evolutionPlotPanel).showLoose();
+        ((EvolutionPlotPanel) evolutionPlotPanel).showLoose();
     }//GEN-LAST:event_resetEvolution_buttonActionPerformed
 
     private void ellipseCentersEvolutionOnToggle_checkboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ellipseCentersEvolutionOnToggle_checkboxActionPerformed
-        ((EvolutionPlotPanelII) evolutionPlotPanel)
+        ((EvolutionPlotPanel) evolutionPlotPanel)
                 .setShowCenters(ellipseCentersEvolutionOnToggle_checkbox.isSelected());
-        ((EvolutionPlotPanelII) evolutionPlotPanel).repaint();
+        ((EvolutionPlotPanel) evolutionPlotPanel).repaint();
     }//GEN-LAST:event_ellipseCentersEvolutionOnToggle_checkboxActionPerformed
 
     private void ellipseLabelsEvolutionOnToggle_checkboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ellipseLabelsEvolutionOnToggle_checkboxActionPerformed
-        ((EvolutionPlotPanelII) evolutionPlotPanel)
+        ((EvolutionPlotPanel) evolutionPlotPanel)
                 .setShowLabels(ellipseLabelsEvolutionOnToggle_checkbox.isSelected());
-        ((EvolutionPlotPanelII) evolutionPlotPanel).repaint();
+        ((EvolutionPlotPanel) evolutionPlotPanel).repaint();
     }//GEN-LAST:event_ellipseLabelsEvolutionOnToggle_checkboxActionPerformed
 
     private void zoomBoxEvolution_toggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zoomBoxEvolution_toggleButtonActionPerformed
-        ((EvolutionPlotPanelII) evolutionPlotPanel).putInImageModeZoom();
+        ((EvolutionPlotPanel) evolutionPlotPanel).putInImageModeZoom();
     }//GEN-LAST:event_zoomBoxEvolution_toggleButtonActionPerformed
 
     private void showTightEvolution_toggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showTightEvolution_toggleButtonActionPerformed
-        ((EvolutionPlotPanelII) evolutionPlotPanel).showTight();
+        ((EvolutionPlotPanel) evolutionPlotPanel).showTight();
     }//GEN-LAST:event_showTightEvolution_toggleButtonActionPerformed
 
     private void isochrons_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_isochrons_buttonActionPerformed
@@ -4138,9 +4156,9 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
             } catch (IOException iOException) {
             }
             try {
-                ((EvolutionPlotPanelII) evolutionPlotPanel).outputToSVG(selectedFileSVG);
+                ((EvolutionPlotPanel) evolutionPlotPanel).outputToSVG(selectedFileSVG);
 
-                ((EvolutionPlotPanelII) evolutionPlotPanel).outputToPDF(selectedFileSVG);
+                ((EvolutionPlotPanel) evolutionPlotPanel).outputToPDF(selectedFileSVG);
                 viewPDF(selectedFile.getCanonicalPath());
 
             } catch (IOException ex) {

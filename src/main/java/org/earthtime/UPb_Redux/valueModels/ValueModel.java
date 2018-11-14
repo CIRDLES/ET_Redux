@@ -213,8 +213,7 @@ public class ValueModel implements
     @Override
     public ValueModel copy() {
         ValueModel retval
-                =//
-                new ValueModel(
+                = new ValueModel(
                         getName(),
                         getValue(),
                         getUncertaintyType(),

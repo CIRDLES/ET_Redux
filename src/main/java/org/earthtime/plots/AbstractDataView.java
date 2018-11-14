@@ -842,14 +842,14 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
 
     protected void generateEllipsePathIII(
             ETFractionInterface f,
+            ValueModel xAxisRatio,
+            ValueModel yAxisRatio,
             double ellipseSize) {
 
-        ValueModel xAxisRatio;
-        ValueModel yAxisRatio;
         ValueModel correlationCoefficient;
-
-        xAxisRatio = f.getLegacyActivityRatioByName(UThAnalysisMeasures.ar230Th_238Ufc.getName());
-        yAxisRatio = f.getLegacyActivityRatioByName(UThAnalysisMeasures.ar234U_238Ufc.getName());
+//
+//        xAxisRatio = f.getLegacyActivityRatioByName(UThAnalysisMeasures.ar230Th_238Ufc.getName());
+//        yAxisRatio = f.getLegacyActivityRatioByName(UThAnalysisMeasures.ar234U_238Ufc.getName());
 
         correlationCoefficient = new ValueModel(); // fake zero for now
 
