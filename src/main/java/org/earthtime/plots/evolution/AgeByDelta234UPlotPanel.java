@@ -80,8 +80,9 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
         this.topMargin = 40;
         this.graphWidth = 500;
         this.graphHeight = 500;
+        xLocation = 600;
 
-        this.setBounds(600, 0, graphWidth + leftMargin * 2, graphHeight + topMargin * 2);
+        this.setBounds(xLocation, 0, graphWidth + leftMargin * 2, graphHeight + topMargin * 2);
 
         setOpaque(true);
 
@@ -130,7 +131,7 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
 
         // draw graph border
         g2d.setPaint(Color.black);
-        g2d.drawRect(leftMargin, topMargin, (int) graphWidth, (int) graphHeight);
+        g2d.drawRect(leftMargin, topMargin, (int) graphWidth - 1, (int) graphHeight - 1);
 
         g2d.setPaint(Color.black);
 
@@ -359,36 +360,21 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
 
                 } else {// zoom out
                     minX -= getRangeX_Display() / ZOOM_FACTOR;
-                    // minX = Math.max(minX, 0.0);
+                    minX = Math.max(minX, 0.0);
 
                     minY -= getRangeY_Display() / ZOOM_FACTOR;
-                    // minY = Math.max(minY, 0.0);
+                    minY = Math.max(minY, 0.0);
 
                     zoomCount--;
                     // stop zoom out
-//                    if (minX * minY > 0.0) {
-                    minX -= getRangeX_Display() / ZOOM_FACTOR;
-                    maxX += getRangeX_Display() / ZOOM_FACTOR;
-                    minY -= getRangeY_Display() / ZOOM_FACTOR;
-                    maxY += getRangeY_Display() / ZOOM_FACTOR;
+                    if (minX * minY > 0.0) {
 
-//                    } else {
-//                        minX = 0.0;
-//                        maxX = xAxisMax;
-//                        minY = 0.0;
-//                        maxY = yAxisMax;
-//                        zoomCount = 0;
-//                    }
+                        maxX += getRangeX_Display() / ZOOM_FACTOR;
+
+                        maxY += getRangeY_Display() / ZOOM_FACTOR;
+                    }
+
                 }
-//
-//                if (minX <= 0.0) {
-//                    minX = 0.0;
-//                    displayOffsetX = 0.0;
-//                }
-//                if (minY <= 0.0) {
-//                    minY = 0.0;
-//                    displayOffsetY = 0.0;
-//                }
 
                 zoomMinX = zoomMaxX;
                 zoomMinY = zoomMaxY;

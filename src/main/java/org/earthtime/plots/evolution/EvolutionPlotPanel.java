@@ -92,8 +92,9 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
         this.topMargin = 40;
         this.graphWidth = 500;
         this.graphHeight = 500;
+        this.xLocation = 0;
 
-        this.setBounds(0, 0, graphWidth + leftMargin * 2, graphHeight + topMargin * 2);
+        this.setBounds(xLocation, 0, graphWidth + leftMargin * 2, graphHeight + topMargin * 2);
 
         setOpaque(true);
 
@@ -297,6 +298,62 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
                         (float) mapY(yItercepts[i] + slopes[i] * (labelX)));
             }
         }
+
+        // label axes
+        String xAxisLabel = "[230Th/238U]t";//axes[0].getAxisLabel();
+        g2d.setFont(new Font("Monospaced", Font.BOLD, 18));
+        double xAxisLabelLength = calculateLengthOfStringPlot(g2d, xAxisLabel);
+
+        String yAxisLabel = "[234U/238U]t";//axes[1].getAxisLabel();
+        double yAxisLabelLength = calculateLengthOfStringPlot(g2d, yAxisLabel);
+
+        g2d.setFont(new Font("Monospaced", Font.BOLD, 12));
+        g2d.drawString("230",
+                leftMargin + (int) (graphWidth / 2.0) - (int) (xAxisLabelLength / 2.0) + 10,
+                topMargin + (int) graphHeight + 30);
+        g2d.drawString("238",
+                leftMargin + (int) (graphWidth / 2.0) - (int) (xAxisLabelLength / 2.0) + 65,
+                topMargin + (int) graphHeight + 30);
+        g2d.drawString("t",
+                leftMargin + (int) (graphWidth / 2.0) - (int) (xAxisLabelLength / 2.0) + 105,
+                topMargin + (int) graphHeight + 40);
+
+        g2d.setFont(new Font("Monospaced", Font.BOLD, 18));
+        g2d.drawString("[",
+                leftMargin + (int) (graphWidth / 2.0) - (int) (xAxisLabelLength / 2.0),
+                topMargin + (int) graphHeight + 35);
+        g2d.drawString("Th/",
+                leftMargin + (int) (graphWidth / 2.0) - (int) (xAxisLabelLength / 2.0) + 30,
+                topMargin + (int) graphHeight + 35);
+        g2d.drawString("U]",
+                leftMargin + (int) (graphWidth / 2.0) - (int) (xAxisLabelLength / 2.0) + 85,
+                topMargin + (int) graphHeight + 35);
+
+        // y axis
+        g2d.rotate(-Math.PI / 2.0);
+        g2d.setFont(new Font("Monospaced", Font.BOLD, 12));
+        g2d.drawString("234",
+                -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0) - 10),
+                leftMargin - 30);
+        g2d.drawString("238",
+                -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0) - 55),
+                leftMargin - 30);
+        g2d.drawString("t",
+                -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0) - 95),
+                leftMargin - 20);
+
+        g2d.setFont(new Font("Monospaced", Font.BOLD, 18));
+        g2d.drawString("[",
+                -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0)),
+                leftMargin - 25);
+        g2d.drawString("U/",
+                -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0) - 30),
+                leftMargin - 25);
+        g2d.drawString("U]",
+                -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0) - 75),
+                leftMargin - 25);
+
+        g2d.rotate(Math.PI / 2.0);
 
         // draw zoom box if in use
         if (isInImageModeZoom()
