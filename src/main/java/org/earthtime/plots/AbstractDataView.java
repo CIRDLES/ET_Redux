@@ -62,7 +62,8 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
 
     protected static final double ZOOM_FACTOR = 10.0;
     protected static final int minGraphWidthHeight = 100;
-    protected static final int maxGraphWidthHeight = 500;
+    protected int maxGraphWidth = 500;
+    protected static final int maxGraphHeight = 750;
 
     protected double width;
     protected double height;
@@ -148,14 +149,18 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
 
     protected boolean showCenters;
     protected boolean showLabels;
-    
+
     protected int xLocation;
+
+    protected boolean showMe;
 
     /**
      *
      */
     public AbstractDataView() {
         super();
+        
+        this.showMe = true;
     }
 
     /**
@@ -185,9 +190,11 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
         this.zoomCount = 0;
 
         putInImageModePan();
-        
+
         this.showCenters = true;
         this.showLabels = false;
+
+        this.showMe = true;
 
         addMeAsMouseListener();
     }
@@ -223,9 +230,11 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
      * @param g2d
      */
     public void paint(Graphics2D g2d) {
-        paintInit(g2d);
+        if (showMe) {
+            paintInit(g2d);
 
-        drawBorder(g2d);
+            drawBorder(g2d);
+        }
     }
 
     protected void drawBorder(Graphics2D g2d) {
@@ -617,16 +626,16 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
 
         if (eastResizing ^ southResizing) {
             if (eastResizing) {
-                this.graphWidth = Math.min(maxGraphWidthHeight, (myX - leftMargin > minGraphWidthHeight) ? myX - leftMargin : minGraphWidthHeight);
+                this.graphWidth = Math.min(maxGraphWidth, (myX - leftMargin > minGraphWidthHeight) ? myX - leftMargin : minGraphWidthHeight);
             } else {
-                this.graphHeight = Math.min(maxGraphWidthHeight, (myY - topMargin > minGraphWidthHeight) ? myY - topMargin : minGraphWidthHeight);
+                this.graphHeight = Math.min(maxGraphHeight, (myY - topMargin > minGraphWidthHeight) ? myY - topMargin : minGraphWidthHeight);
             }
             this.setBounds(xLocation, 0, graphWidth + leftMargin * 2, graphHeight + topMargin * 2);
         }
 
         if (eastResizing && southResizing) {
-            this.graphWidth = Math.min(maxGraphWidthHeight, (myX - leftMargin > minGraphWidthHeight) ? myX - leftMargin : minGraphWidthHeight);
-            this.graphHeight = Math.min(maxGraphWidthHeight, (myY - topMargin > minGraphWidthHeight) ? myY - topMargin : minGraphWidthHeight);
+            this.graphWidth = Math.min(maxGraphWidth, (myX - leftMargin > minGraphWidthHeight) ? myX - leftMargin : minGraphWidthHeight);
+            this.graphHeight = Math.min(maxGraphHeight, (myY - topMargin > minGraphWidthHeight) ? myY - topMargin : minGraphWidthHeight);
             this.setBounds(xLocation, 0, graphWidth + leftMargin * 2, graphHeight + topMargin * 2);
         }
 
@@ -923,5 +932,33 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
      */
     public void setShowLabels(boolean showLabels) {
         this.showLabels = showLabels;
+    }
+
+    /**
+     * @return the showMe
+     */
+    public boolean isShowMe() {
+        return showMe;
+    }
+
+    /**
+     * @param showMe the showMe to set
+     */
+    public void setShowMe(boolean showMe) {
+        this.showMe = showMe;
+    }
+
+    /**
+     * @param xLocation the xLocation to set
+     */
+    public void setxLocation(int xLocation) {
+        this.xLocation = xLocation;
+    }
+
+    /**
+     * @param maxGraphWidth the maxGraphWidth to set
+     */
+    public void setMaxGraphWidth(int maxGraphWidth) {
+        this.maxGraphWidth = maxGraphWidth;
     }
 }

@@ -94,6 +94,8 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
         this.graphHeight = 500;
         this.xLocation = 0;
 
+        this.showMe = true;
+        
         this.setBounds(xLocation, 0, graphWidth + leftMargin * 2, graphHeight + topMargin * 2);
 
         setOpaque(true);
@@ -144,227 +146,229 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
     }
 
     public void paint(Graphics2D g2d, boolean svgStyle) {
-        paintInit(g2d);
+        if (showMe) {
+            paintInit(g2d);
 
-        //draw component border
-        g2d.setPaint(Color.blue);
-        g2d.drawRect(0, 0, (int) graphWidth + leftMargin * 2 - 1, (int) graphHeight + topMargin * 2 - 1);
+            //draw component border
+            g2d.setPaint(Color.blue);
+            g2d.drawRect(0, 0, (int) graphWidth + leftMargin * 2 - 1, (int) graphHeight + topMargin * 2 - 1);
 
-        // draw graph border
-        g2d.setPaint(Color.black);
-        g2d.drawRect(leftMargin, topMargin, (int) graphWidth, (int) graphHeight);
+            // draw graph border
+            g2d.setPaint(Color.black);
+            g2d.drawRect(leftMargin, topMargin, (int) graphWidth, (int) graphHeight);
 
-        // draw isochrons
-        double[] yItercepts = new double[xEndPointsD[0].length];
-        double[] slopes = new double[xEndPointsD[0].length];
-        g2d.setPaint(Color.red);
-        for (int i = 0; i < annumIsochrons.length; i++) {
-            slopes[i] = (yEndPointsD[1][i] - yEndPointsD[0][i]) / (xEndPointsD[1][i] - xEndPointsD[0][i]);
-            yItercepts[i] = yEndPointsD[0][i] - slopes[i] * xEndPointsD[0][i];
+            // draw isochrons
+            double[] yItercepts = new double[xEndPointsD[0].length];
+            double[] slopes = new double[xEndPointsD[0].length];
+            g2d.setPaint(Color.red);
+            for (int i = 0; i < annumIsochrons.length; i++) {
+                slopes[i] = (yEndPointsD[1][i] - yEndPointsD[0][i]) / (xEndPointsD[1][i] - xEndPointsD[0][i]);
+                yItercepts[i] = yEndPointsD[0][i] - slopes[i] * xEndPointsD[0][i];
 
-            Shape isochronLine = new Path2D.Double();
-            g2d.setStroke(new BasicStroke(1.75f));
-            ((Path2D) isochronLine).moveTo(//
-                    mapX(xEndPointsD[0][i]), //
-                    mapY(yItercepts[i] + slopes[i] * xEndPointsD[0][i]));
-            ((Path2D) isochronLine).lineTo( //
-                    mapX(getMaxX_Display()), //
-                    mapY(yItercepts[i] + slopes[i] * getMaxX_Display()));
+                Shape isochronLine = new Path2D.Double();
+                g2d.setStroke(new BasicStroke(1.75f));
+                ((Path2D) isochronLine).moveTo(//
+                        mapX(xEndPointsD[0][i]), //
+                        mapY(yItercepts[i] + slopes[i] * xEndPointsD[0][i]));
+                ((Path2D) isochronLine).lineTo( //
+                        mapX(getMaxX_Display()), //
+                        mapY(yItercepts[i] + slopes[i] * getMaxX_Display()));
 
-            if ((i == (annumIsochrons.length - 1))
-                    && annumIsochrons[i] >= 10e10) {
-                g2d.setPaint(Color.black);
-            }
-            g2d.draw(isochronLine);
-
-        }
-
-        // draw initDelta234U contour lines
-        g2d.setPaint(Color.blue);
-        // determine what curves should plot
-        int lowIndex = 0;
-        int highIndex = ar48icntrs.length;
-        for (int index = 0; index < ar48icntrs.length; index++) {
-            if (Math.abs(ar48icntrs[index]) < getMinY_Display()) {
-                lowIndex = index;
-            }
-            if (Math.abs(ar48icntrs[index]) < getMaxY_Display()) {
-                highIndex = Math.min(ar48icntrs.length - 1, index + 6 + (zoomCount / 10) * 1);
-            }
-        }
-        for (int i = lowIndex; i < highIndex; i++) {
-            boolean labelPrinted = false;
-
-            if (ar48icntrs[i] >= 0.0) {
-                Path2D curvedP = new Path2D.Double(Path2D.WIND_NON_ZERO);
-                curvedP.moveTo(
-                        (float) mapX(xy[i][0][0]),
-                        (float) mapY(xy[i][1][0]));
-
-                for (int j = 1; j < tv[i].length; j++) {
-                    double deltaTOver3 = (tv[i][j] - tv[i][j - 1]) / 3;
-
-                    curvedP.curveTo(//
-                            (float) mapX(xy[i][0][j - 1] + deltaTOver3 * dardt[i][0][j - 1]),
-                            (float) mapY(xy[i][1][j - 1] + deltaTOver3 * dardt[i][1][j - 1]),
-                            (float) mapX(xy[i][0][j] - deltaTOver3 * dardt[i][0][j]),
-                            (float) mapY(xy[i][1][j] - deltaTOver3 * dardt[i][1][j]),
-                            (float) mapX(xy[i][0][j]),
-                            (float) mapY(xy[i][1][j]));
+                if ((i == (annumIsochrons.length - 1))
+                        && annumIsochrons[i] >= 10e10) {
+                    g2d.setPaint(Color.black);
                 }
-                g2d.draw(curvedP);
+                g2d.draw(isochronLine);
 
-                for (int j = 1; j < tvLabels[i].length; j++) {
-                    DecimalFormat myFormatter = new DecimalFormat("#.##");
-                    if (!labelPrinted && (xyLabels[i][0][j - 1] > getMinX_Display()) && (ar48icntrs[i] > 0.0)) {
-                        double angleOfText = (Math.atan(xyLabels[i][1][j - 1] - xyLabels[i][1][j]) / (xyLabels[i][0][j - 1] - xyLabels[i][0][j]));
+            }
+
+            // draw initDelta234U contour lines
+            g2d.setPaint(Color.blue);
+            // determine what curves should plot
+            int lowIndex = 0;
+            int highIndex = ar48icntrs.length;
+            for (int index = 0; index < ar48icntrs.length; index++) {
+                if (Math.abs(ar48icntrs[index]) < getMinY_Display()) {
+                    lowIndex = index;
+                }
+                if (Math.abs(ar48icntrs[index]) < getMaxY_Display()) {
+                    highIndex = Math.min(ar48icntrs.length - 1, index + 6 + (zoomCount / 10) * 1);
+                }
+            }
+            for (int i = lowIndex; i < highIndex; i++) {
+                boolean labelPrinted = false;
+
+                if (ar48icntrs[i] >= 0.0) {
+                    Path2D curvedP = new Path2D.Double(Path2D.WIND_NON_ZERO);
+                    curvedP.moveTo(
+                            (float) mapX(xy[i][0][0]),
+                            (float) mapY(xy[i][1][0]));
+
+                    for (int j = 1; j < tv[i].length; j++) {
+                        double deltaTOver3 = (tv[i][j] - tv[i][j - 1]) / 3;
+
+                        curvedP.curveTo(//
+                                (float) mapX(xy[i][0][j - 1] + deltaTOver3 * dardt[i][0][j - 1]),
+                                (float) mapY(xy[i][1][j - 1] + deltaTOver3 * dardt[i][1][j - 1]),
+                                (float) mapX(xy[i][0][j] - deltaTOver3 * dardt[i][0][j]),
+                                (float) mapY(xy[i][1][j] - deltaTOver3 * dardt[i][1][j]),
+                                (float) mapX(xy[i][0][j]),
+                                (float) mapY(xy[i][1][j]));
+                    }
+                    g2d.draw(curvedP);
+
+                    for (int j = 1; j < tvLabels[i].length; j++) {
+                        DecimalFormat myFormatter = new DecimalFormat("#.##");
+                        if (!labelPrinted && (xyLabels[i][0][j - 1] > getMinX_Display()) && (ar48icntrs[i] > 0.0)) {
+                            double angleOfText = (Math.atan(xyLabels[i][1][j - 1] - xyLabels[i][1][j]) / (xyLabels[i][0][j - 1] - xyLabels[i][0][j]));
 //                    System.out.println(ar48icntrs[i] + "  >  " + angleOfText);
-                        g2d.rotate(-angleOfText, leftMargin + 20, mapY(xyLabels[i][1][j - 1]));
-                        g2d.drawString(myFormatter.format(ar48icntrs[i]), leftMargin + 10, (float) mapY(xyLabels[i][1][j - 1]) - 5);
-                        g2d.rotate(angleOfText, leftMargin + 20, mapY(xyLabels[i][1][j - 1]));
-                        labelPrinted = true;
+                            g2d.rotate(-angleOfText, leftMargin + 20, mapY(xyLabels[i][1][j - 1]));
+                            g2d.drawString(myFormatter.format(ar48icntrs[i]), leftMargin + 10, (float) mapY(xyLabels[i][1][j - 1]) - 5);
+                            g2d.rotate(angleOfText, leftMargin + 20, mapY(xyLabels[i][1][j - 1]));
+                            labelPrinted = true;
+                        }
                     }
                 }
             }
-        }
 
-        g2d.setPaint(Color.black);
+            g2d.setPaint(Color.black);
 
-        Color includedBorderColor = Color.BLACK;
-        Color includedCenterColor = new Color(255, 0, 0);
-        float includedCenterSize = 3.0f;
-        String ellipseLabelFont = "Monospaced";
-        String ellipseLabelFontSize = "12";
+            Color includedBorderColor = Color.BLACK;
+            Color includedCenterColor = new Color(255, 0, 0);
+            float includedCenterSize = 3.0f;
+            String ellipseLabelFont = "Monospaced";
+            String ellipseLabelFontSize = "12";
 
-        for (ETFractionInterface f : selectedFractions) {
-            if (!f.isRejected()) {
-                generateEllipsePathIII(//
-                        f,
-                        f.getLegacyActivityRatioByName(UThAnalysisMeasures.ar230Th_238Ufc.getName()),
-                        f.getLegacyActivityRatioByName(UThAnalysisMeasures.ar234U_238Ufc.getName()),
-                        2.0f);
-                if (f.getErrorEllipsePath() != null) {
-                    plotAFraction(g2d,
-                            svgStyle,
+            for (ETFractionInterface f : selectedFractions) {
+                if (!f.isRejected()) {
+                    generateEllipsePathIII(//
                             f,
-                            includedBorderColor,
-                            0.5f,
-                            includedCenterColor,
-                            includedCenterSize,
-                            ellipseLabelFont,
-                            ellipseLabelFontSize,
-                            showCenters,
-                            showLabels);
+                            f.getLegacyActivityRatioByName(UThAnalysisMeasures.ar230Th_238Ufc.getName()),
+                            f.getLegacyActivityRatioByName(UThAnalysisMeasures.ar234U_238Ufc.getName()),
+                            2.0f);
+                    if (f.getErrorEllipsePath() != null) {
+                        plotAFraction(g2d,
+                                svgStyle,
+                                f,
+                                includedBorderColor,
+                                0.5f,
+                                includedCenterColor,
+                                includedCenterSize,
+                                ellipseLabelFont,
+                                ellipseLabelFontSize,
+                                showCenters,
+                                showLabels);
+                    }
                 }
             }
-        }
 
-        double rangeX = (getMaxX_Display() - getMinX_Display());
-        double rangeY = (getMaxY_Display() - getMinY_Display());
+            double rangeX = (getMaxX_Display() - getMinX_Display());
+            double rangeY = (getMaxY_Display() - getMinY_Display());
 
-        try {
-            drawAxesAndTicks(g2d, rangeX, rangeY);
-        } catch (Exception e) {
-        }
-        // draw and label isochron axes - top and right
-        g2d.setFont(new Font("Monospaced", Font.BOLD, 12));
+            try {
+                drawAxesAndTicks(g2d, rangeX, rangeY);
+            } catch (Exception e) {
+            }
+            // draw and label isochron axes - top and right
+            g2d.setFont(new Font("Monospaced", Font.BOLD, 12));
 
-        for (int i = 0; i < annumIsochrons.length; i++) {
+            for (int i = 0; i < annumIsochrons.length; i++) {
 
-            String label = " " + new BigDecimal(annumIsochrons[i]).movePointLeft(3).setScale(0, RoundingMode.HALF_UP).toPlainString() + " ka";
-            // set infinity label
-            if (annumIsochrons[i] >= 10e10) {
-                label = " \u221E";
+                String label = " " + new BigDecimal(annumIsochrons[i]).movePointLeft(3).setScale(0, RoundingMode.HALF_UP).toPlainString() + " ka";
+                // set infinity label
+                if (annumIsochrons[i] >= 10e10) {
+                    label = " \u221E";
+                }
+
+                double rotateAngle = StrictMath.atan(slopes[i]);
+
+                double labelX = ((yItercepts[i] + slopes[i] * getMaxX_Display()) < (getMaxY_Display() - 0.000)) ? getMaxX_Display() : (getMaxY_Display() - yItercepts[i]) / slopes[i];
+                double labelY = slopes[i] * labelX + yItercepts[i];
+                float displacementFactorX = 0f;
+                float displacementFactorY = -6f;
+
+                if ((labelX >= getMinX_Display()) && (labelX <= getMaxX_Display()) && (labelY > getMinY_Display())) {
+                    g2d.rotate(-rotateAngle,
+                            (float) mapX(labelX),
+                            (float) mapY(yItercepts[i] + slopes[i] * (labelX)));
+
+                    g2d.drawString(label,
+                            (float) mapX(labelX) + displacementFactorX,
+                            (float) mapY(yItercepts[i] + slopes[i] * (labelX)) - displacementFactorY);
+
+                    g2d.rotate(rotateAngle,
+                            (float) mapX(labelX),
+                            (float) mapY(yItercepts[i] + slopes[i] * (labelX)));
+                }
             }
 
-            double rotateAngle = StrictMath.atan(slopes[i]);
+            // label axes
+            String xAxisLabel = "[230Th/238U]t";//axes[0].getAxisLabel();
+            g2d.setFont(new Font("Monospaced", Font.BOLD, 18));
+            double xAxisLabelLength = calculateLengthOfStringPlot(g2d, xAxisLabel);
 
-            double labelX = ((yItercepts[i] + slopes[i] * getMaxX_Display()) < (getMaxY_Display() - 0.000)) ? getMaxX_Display() : (getMaxY_Display() - yItercepts[i]) / slopes[i];
-            double labelY = slopes[i] * labelX + yItercepts[i];
-            float displacementFactorX = 0f;
-            float displacementFactorY = -6f;
+            String yAxisLabel = "[234U/238U]t";//axes[1].getAxisLabel();
+            double yAxisLabelLength = calculateLengthOfStringPlot(g2d, yAxisLabel);
 
-            if ((labelX >= getMinX_Display()) && (labelX <= getMaxX_Display()) && (labelY > getMinY_Display())) {
-                g2d.rotate(-rotateAngle,
-                        (float) mapX(labelX),
-                        (float) mapY(yItercepts[i] + slopes[i] * (labelX)));
+            g2d.setFont(new Font("Monospaced", Font.BOLD, 12));
+            g2d.drawString("230",
+                    leftMargin + (int) (graphWidth / 2.0) - (int) (xAxisLabelLength / 2.0) + 10,
+                    topMargin + (int) graphHeight + 30);
+            g2d.drawString("238",
+                    leftMargin + (int) (graphWidth / 2.0) - (int) (xAxisLabelLength / 2.0) + 65,
+                    topMargin + (int) graphHeight + 30);
+            g2d.drawString("t",
+                    leftMargin + (int) (graphWidth / 2.0) - (int) (xAxisLabelLength / 2.0) + 105,
+                    topMargin + (int) graphHeight + 40);
 
-                g2d.drawString(label,
-                        (float) mapX(labelX) + displacementFactorX,
-                        (float) mapY(yItercepts[i] + slopes[i] * (labelX)) - displacementFactorY);
+            g2d.setFont(new Font("Monospaced", Font.BOLD, 18));
+            g2d.drawString("[",
+                    leftMargin + (int) (graphWidth / 2.0) - (int) (xAxisLabelLength / 2.0),
+                    topMargin + (int) graphHeight + 35);
+            g2d.drawString("Th/",
+                    leftMargin + (int) (graphWidth / 2.0) - (int) (xAxisLabelLength / 2.0) + 30,
+                    topMargin + (int) graphHeight + 35);
+            g2d.drawString("U]",
+                    leftMargin + (int) (graphWidth / 2.0) - (int) (xAxisLabelLength / 2.0) + 85,
+                    topMargin + (int) graphHeight + 35);
 
-                g2d.rotate(rotateAngle,
-                        (float) mapX(labelX),
-                        (float) mapY(yItercepts[i] + slopes[i] * (labelX)));
+            // y axis
+            g2d.rotate(-Math.PI / 2.0);
+            g2d.setFont(new Font("Monospaced", Font.BOLD, 12));
+            g2d.drawString("234",
+                    -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0) - 10),
+                    leftMargin - 30);
+            g2d.drawString("238",
+                    -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0) - 55),
+                    leftMargin - 30);
+            g2d.drawString("t",
+                    -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0) - 95),
+                    leftMargin - 20);
+
+            g2d.setFont(new Font("Monospaced", Font.BOLD, 18));
+            g2d.drawString("[",
+                    -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0)),
+                    leftMargin - 25);
+            g2d.drawString("U/",
+                    -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0) - 30),
+                    leftMargin - 25);
+            g2d.drawString("U]",
+                    -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0) - 75),
+                    leftMargin - 25);
+
+            g2d.rotate(Math.PI / 2.0);
+
+            // draw zoom box if in use
+            if (isInImageModeZoom()
+                    && (Math.abs(zoomMaxX - zoomMinX) * Math.abs(zoomMinY - zoomMaxY)) > 0) {
+                g2d.setStroke(new BasicStroke(2.0f));
+                g2d.setColor(Color.red);
+                g2d.drawRect(//
+                        Math.min(zoomMinX, zoomMaxX),
+                        Math.min(zoomMaxY, zoomMinY),
+                        Math.abs(zoomMaxX - zoomMinX),
+                        Math.abs(zoomMinY - zoomMaxY));
             }
-        }
-
-        // label axes
-        String xAxisLabel = "[230Th/238U]t";//axes[0].getAxisLabel();
-        g2d.setFont(new Font("Monospaced", Font.BOLD, 18));
-        double xAxisLabelLength = calculateLengthOfStringPlot(g2d, xAxisLabel);
-
-        String yAxisLabel = "[234U/238U]t";//axes[1].getAxisLabel();
-        double yAxisLabelLength = calculateLengthOfStringPlot(g2d, yAxisLabel);
-
-        g2d.setFont(new Font("Monospaced", Font.BOLD, 12));
-        g2d.drawString("230",
-                leftMargin + (int) (graphWidth / 2.0) - (int) (xAxisLabelLength / 2.0) + 10,
-                topMargin + (int) graphHeight + 30);
-        g2d.drawString("238",
-                leftMargin + (int) (graphWidth / 2.0) - (int) (xAxisLabelLength / 2.0) + 65,
-                topMargin + (int) graphHeight + 30);
-        g2d.drawString("t",
-                leftMargin + (int) (graphWidth / 2.0) - (int) (xAxisLabelLength / 2.0) + 105,
-                topMargin + (int) graphHeight + 40);
-
-        g2d.setFont(new Font("Monospaced", Font.BOLD, 18));
-        g2d.drawString("[",
-                leftMargin + (int) (graphWidth / 2.0) - (int) (xAxisLabelLength / 2.0),
-                topMargin + (int) graphHeight + 35);
-        g2d.drawString("Th/",
-                leftMargin + (int) (graphWidth / 2.0) - (int) (xAxisLabelLength / 2.0) + 30,
-                topMargin + (int) graphHeight + 35);
-        g2d.drawString("U]",
-                leftMargin + (int) (graphWidth / 2.0) - (int) (xAxisLabelLength / 2.0) + 85,
-                topMargin + (int) graphHeight + 35);
-
-        // y axis
-        g2d.rotate(-Math.PI / 2.0);
-        g2d.setFont(new Font("Monospaced", Font.BOLD, 12));
-        g2d.drawString("234",
-                -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0) - 10),
-                leftMargin - 30);
-        g2d.drawString("238",
-                -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0) - 55),
-                leftMargin - 30);
-        g2d.drawString("t",
-                -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0) - 95),
-                leftMargin - 20);
-
-        g2d.setFont(new Font("Monospaced", Font.BOLD, 18));
-        g2d.drawString("[",
-                -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0)),
-                leftMargin - 25);
-        g2d.drawString("U/",
-                -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0) - 30),
-                leftMargin - 25);
-        g2d.drawString("U]",
-                -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0) - 75),
-                leftMargin - 25);
-
-        g2d.rotate(Math.PI / 2.0);
-
-        // draw zoom box if in use
-        if (isInImageModeZoom()
-                && (Math.abs(zoomMaxX - zoomMinX) * Math.abs(zoomMinY - zoomMaxY)) > 0) {
-            g2d.setStroke(new BasicStroke(2.0f));
-            g2d.setColor(Color.red);
-            g2d.drawRect(//
-                    Math.min(zoomMinX, zoomMaxX),
-                    Math.min(zoomMaxY, zoomMinY),
-                    Math.abs(zoomMaxX - zoomMinX),
-                    Math.abs(zoomMinY - zoomMaxY));
         }
     }
 
