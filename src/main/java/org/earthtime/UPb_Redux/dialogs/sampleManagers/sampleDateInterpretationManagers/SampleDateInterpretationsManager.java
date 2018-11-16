@@ -96,10 +96,12 @@ import org.earthtime.plots.AbstractPlot;
 import org.earthtime.plots.PlotAxesSetupInterface;
 import org.earthtime.plots.PlotInterface;
 import org.earthtime.plots.anyTwo.PlotAny2Panel;
-import org.earthtime.plots.evolution.EvolutionPlotPanelII;
+import org.earthtime.plots.evolution.AgeByDelta234UPlotPanel;
+import org.earthtime.plots.evolution.EvolutionPlotPanel;
+import org.earthtime.plots.evolution.InitialDelta234UEvolutionSelectorDialog;
 import org.earthtime.plots.isochrons.IsochronsPanel;
 import org.earthtime.plots.isochrons.UseriesIsochronPlotDisplayInterface;
-import org.earthtime.plots.isochrons.evolution.IsochronsEvolutionSelectorDialog;
+import org.earthtime.plots.evolution.IsochronsEvolutionSelectorDialog;
 import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.reports.ReportColumnInterface;
 import org.earthtime.samples.SampleInterface;
@@ -122,6 +124,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
     private JLayeredPane plotAny2Panel;
     private JLayeredPane useriesIsochronPanel;
     private JLayeredPane evolutionPlotPanel;
+    private JLayeredPane ageDelta234PlotPanel;
     /**
      *
      */
@@ -146,6 +149,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
      * @param sampleAnalysisType
      * @param ampleAnalysisType
      * @param evolutionPlotPanel
+     * @param ageDelta234PlotPanel
      * @param modal
      * @param concordiaGraphPanel
      * @param plotAny2Panel the value of plotAny2Panel
@@ -162,6 +166,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
             JLayeredPane plotAny2Panel,
             JLayeredPane useriesIsochronPanel,
             JLayeredPane evolutionPlotPanel,
+            JLayeredPane ageDelta234PlotPanel,
             JPanel weightedMeanGraphPanel,
             JLayeredPane normedProbabilityPanel,
             SampleInterface sample,
@@ -196,6 +201,12 @@ public class SampleDateInterpretationsManager extends DialogEditor
         this.evolutionPlotPanel = evolutionPlotPanel;
         try {
             initEvolutionPlotPanel();
+        } catch (Exception e) {
+        }
+
+        this.ageDelta234PlotPanel = ageDelta234PlotPanel;
+        try {
+            initAgeDelta234UPlotPanel();
         } catch (Exception e) {
         }
 
@@ -508,6 +519,16 @@ public class SampleDateInterpretationsManager extends DialogEditor
         ((AliquotDetailsDisplayInterface) evolutionPlotPanel).//
                 setSelectedFractions(sample.getFractions());
         ((AbstractDataView) evolutionPlotPanel).refreshPanel(true);
+
+    }
+
+    private void initAgeDelta234UPlotPanel() {
+
+        evolutionLayeredPane.add(ageDelta234PlotPanel);
+
+        ((AliquotDetailsDisplayInterface) ageDelta234PlotPanel).//
+                setSelectedFractions(sample.getFractions());
+        ((AbstractDataView) ageDelta234PlotPanel).refreshPanel(true);
 
     }
 
@@ -1088,7 +1109,22 @@ public class SampleDateInterpretationsManager extends DialogEditor
 
         myDialog.dispose();
 
-        ((EvolutionPlotPanelII) evolutionPlotPanel).buildIsochronsAndContours();
+        ((EvolutionPlotPanel) evolutionPlotPanel).buildIsochronsAndInitDelta234UContours();
+        evolutionPlotPanel.repaint();
+    }
+
+    private void selectEvolutionInitDelta234U() {
+        DialogEditor myDialog
+                = new InitialDelta234UEvolutionSelectorDialog(
+                        null,
+                        true,
+                        ((SampleDateModel) sample.getSampleDateModelByName("DEFAULT")));
+        myDialog.setSize(340, 625);
+        myDialog.setVisible(true);
+
+        myDialog.dispose();
+
+        ((EvolutionPlotPanel) evolutionPlotPanel).buildIsochronsAndInitDelta234UContours();
         evolutionPlotPanel.repaint();
     }
 
@@ -1250,6 +1286,11 @@ public class SampleDateInterpretationsManager extends DialogEditor
         zoomBoxEvolution_toggleButton =  new ET_JToggleButton();
         showTightEvolution_toggleButton =  new ET_JToggleButton();
         isochrons_button =  new ET_JButton();
+        initDelta234U_button =  new ET_JButton();
+        zoomBoxInitdelta_toggleButton =  new ET_JToggleButton();
+        showTightInitDelta_toggleButton =  new ET_JToggleButton();
+        showEvolutionOnToggle_checkbox = new javax.swing.JCheckBox();
+        showInitDelta234UOnToggle_checkbox = new javax.swing.JCheckBox();
         useriesIsochronLayeredPane = new javax.swing.JLayeredPane();
         uSeriesIsochronToolPanel = new javax.swing.JPanel();
         zoomInX2Isochron_button =  new ET_JButton();
@@ -1691,7 +1732,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
 
         graphPanels_TabbedPane.addTab("Weighted Mean", weightedMeanLayeredPane);
 
-        evolutionLayeredPane.setBackground(new java.awt.Color(231, 255, 253));
+        evolutionLayeredPane.setBackground(new java.awt.Color(255, 255, 255));
         evolutionLayeredPane.setName("Evolution"); // NOI18N
         evolutionLayeredPane.setOpaque(true);
 
@@ -1710,7 +1751,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
                 resetEvolution_buttonActionPerformed(evt);
             }
         });
-        evolutionToolPanel.add(resetEvolution_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 2, 35, 30));
+        evolutionToolPanel.add(resetEvolution_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 2, 35, 30));
 
         ellipseCentersEvolutionOnToggle_checkbox.setBackground(new java.awt.Color(231, 255, 253));
         ellipseCentersEvolutionOnToggle_checkbox.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
@@ -1722,7 +1763,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
                 ellipseCentersEvolutionOnToggle_checkboxActionPerformed(evt);
             }
         });
-        evolutionToolPanel.add(ellipseCentersEvolutionOnToggle_checkbox, new org.netbeans.lib.awtextra.AbsoluteConstraints(556, 6, -1, -1));
+        evolutionToolPanel.add(ellipseCentersEvolutionOnToggle_checkbox, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 6, 120, -1));
 
         ellipseLabelsEvolutionOnToggle_checkbox.setBackground(new java.awt.Color(231, 255, 253));
         ellipseLabelsEvolutionOnToggle_checkbox.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
@@ -1733,7 +1774,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
                 ellipseLabelsEvolutionOnToggle_checkboxActionPerformed(evt);
             }
         });
-        evolutionToolPanel.add(ellipseLabelsEvolutionOnToggle_checkbox, new org.netbeans.lib.awtextra.AbsoluteConstraints(685, 6, -1, -1));
+        evolutionToolPanel.add(ellipseLabelsEvolutionOnToggle_checkbox, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 6, -1, -1));
 
         zoomBoxEvolution_toggleButton.setBackground(new java.awt.Color(255, 255, 255));
         concordiaPanZoom_buttonGroup.add(zoomBoxEvolution_toggleButton);
@@ -1748,7 +1789,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
                 zoomBoxEvolution_toggleButtonActionPerformed(evt);
             }
         });
-        evolutionToolPanel.add(zoomBoxEvolution_toggleButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(95, 2, 55, 30));
+        evolutionToolPanel.add(zoomBoxEvolution_toggleButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(115, 2, 55, 30));
 
         showTightEvolution_toggleButton.setBackground(new java.awt.Color(255, 255, 255));
         concordiaPanZoom_buttonGroup.add(showTightEvolution_toggleButton);
@@ -1765,10 +1806,10 @@ public class SampleDateInterpretationsManager extends DialogEditor
                 showTightEvolution_toggleButtonActionPerformed(evt);
             }
         });
-        evolutionToolPanel.add(showTightEvolution_toggleButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 2, 30, 30));
+        evolutionToolPanel.add(showTightEvolution_toggleButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 2, 30, 30));
 
         isochrons_button.setBackground(new java.awt.Color(255, 255, 255));
-        isochrons_button.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
+        isochrons_button.setFont(new java.awt.Font("SansSerif", 1, 9)); // NOI18N
         isochrons_button.setText("Isochrons");
         isochrons_button.setAlignmentY(0.0F);
         isochrons_button.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -1782,10 +1823,83 @@ public class SampleDateInterpretationsManager extends DialogEditor
                 isochrons_buttonActionPerformed(evt);
             }
         });
-        evolutionToolPanel.add(isochrons_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 2, 70, 30));
+        evolutionToolPanel.add(isochrons_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 2, 55, 30));
+
+        initDelta234U_button.setBackground(new java.awt.Color(255, 255, 255));
+        initDelta234U_button.setFont(new java.awt.Font("SansSerif", 1, 9)); // NOI18N
+        initDelta234U_button.setText("InitDelta234U");
+        initDelta234U_button.setAlignmentY(0.0F);
+        initDelta234U_button.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        initDelta234U_button.setFocusable(false);
+        initDelta234U_button.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        initDelta234U_button.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        initDelta234U_button.setOpaque(true);
+        initDelta234U_button.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        initDelta234U_button.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                initDelta234U_buttonActionPerformed(evt);
+            }
+        });
+        evolutionToolPanel.add(initDelta234U_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(255, 2, 75, 30));
+
+        zoomBoxInitdelta_toggleButton.setBackground(new java.awt.Color(255, 255, 255));
+        concordiaPanZoom_buttonGroup.add(zoomBoxInitdelta_toggleButton);
+        zoomBoxInitdelta_toggleButton.setFont(new java.awt.Font("SansSerif", 1, 9)); // NOI18N
+        zoomBoxInitdelta_toggleButton.setText("Zoom-Box");
+        zoomBoxInitdelta_toggleButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        zoomBoxInitdelta_toggleButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        zoomBoxInitdelta_toggleButton.setName("ZOOM"); // NOI18N
+        zoomBoxInitdelta_toggleButton.setOpaque(true);
+        zoomBoxInitdelta_toggleButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                zoomBoxInitdelta_toggleButtonActionPerformed(evt);
+            }
+        });
+        evolutionToolPanel.add(zoomBoxInitdelta_toggleButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(700, 2, 55, 30));
+
+        showTightInitDelta_toggleButton.setBackground(new java.awt.Color(255, 255, 255));
+        concordiaPanZoom_buttonGroup.add(showTightInitDelta_toggleButton);
+        showTightInitDelta_toggleButton.setFont(new java.awt.Font("SansSerif", 1, 9)); // NOI18N
+        showTightInitDelta_toggleButton.setText("Tight");
+        showTightInitDelta_toggleButton.setToolTipText("Zooms in until ellipses touch borders.");
+        showTightInitDelta_toggleButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        showTightInitDelta_toggleButton.setContentAreaFilled(false);
+        showTightInitDelta_toggleButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        showTightInitDelta_toggleButton.setName("TIGHT"); // NOI18N
+        showTightInitDelta_toggleButton.setOpaque(true);
+        showTightInitDelta_toggleButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showTightInitDelta_toggleButtonActionPerformed(evt);
+            }
+        });
+        evolutionToolPanel.add(showTightInitDelta_toggleButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(755, 2, 30, 30));
+
+        showEvolutionOnToggle_checkbox.setBackground(new java.awt.Color(231, 255, 253));
+        showEvolutionOnToggle_checkbox.setFont(new java.awt.Font("SansSerif", 1, 9)); // NOI18N
+        showEvolutionOnToggle_checkbox.setSelected(true);
+        showEvolutionOnToggle_checkbox.setText("Evolution");
+        showEvolutionOnToggle_checkbox.setOpaque(true);
+        showEvolutionOnToggle_checkbox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showEvolutionOnToggle_checkboxActionPerformed(evt);
+            }
+        });
+        evolutionToolPanel.add(showEvolutionOnToggle_checkbox, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 6, 76, -1));
+
+        showInitDelta234UOnToggle_checkbox.setBackground(new java.awt.Color(231, 255, 253));
+        showInitDelta234UOnToggle_checkbox.setFont(new java.awt.Font("SansSerif", 1, 9)); // NOI18N
+        showInitDelta234UOnToggle_checkbox.setSelected(true);
+        showInitDelta234UOnToggle_checkbox.setText("Age vs Init Delta");
+        showInitDelta234UOnToggle_checkbox.setOpaque(true);
+        showInitDelta234UOnToggle_checkbox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showInitDelta234UOnToggle_checkboxActionPerformed(evt);
+            }
+        });
+        evolutionToolPanel.add(showInitDelta234UOnToggle_checkbox, new org.netbeans.lib.awtextra.AbsoluteConstraints(585, 6, 110, -1));
 
         evolutionLayeredPane.add(evolutionToolPanel);
-        evolutionToolPanel.setBounds(0, 604, 790, 35);
+        evolutionToolPanel.setBounds(0, 604, 920, 35);
 
         graphPanels_TabbedPane.addTab("Evolution", evolutionLayeredPane);
 
@@ -2675,6 +2789,20 @@ private void graphPanelsTabbedPaneResized(java.awt.event.ComponentEvent evt) {//
     //evolutionPlotPanel.setSize(evolutionLayeredPane.getSize());
     ((org.earthtime.plots.AbstractDataView) evolutionPlotPanel).refreshPanel(true);
 
+    try {
+//        ((AbstractPlot) evolutionLayeredPane).setGraphWidth(widthCP);
+//        ((AbstractPlot) evolutionLayeredPane).setGraphHeight(heightCP);
+
+        evolutionLayeredPane.setBounds(
+                1, 1, widthCP + leftMarginCP, heightCP + 16);
+
+        evolutionToolPanel.setBounds(
+                1, heightCP + 16, widthCP + leftMarginCP, 35);
+
+        ((PlottingDetailsDisplayInterface) useriesIsochronPanel).refreshPanel(true, false);
+    } catch (Exception e) {
+    }
+
     ((WeightedMeanGraphPanel) weightedMeanGraphPanel).setGraphWidth(adjustedWidth);
 
     ((WeightedMeanGraphPanel) weightedMeanGraphPanel).setGraphHeight(adjustedHeight);
@@ -3152,32 +3280,78 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
     }//GEN-LAST:event_writeVisiblePlotSvgPdf_buttonActionPerformed
 
     private void resetEvolution_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetEvolution_buttonActionPerformed
-        ((EvolutionPlotPanelII) evolutionPlotPanel).showLoose();
+        ((EvolutionPlotPanel) evolutionPlotPanel).showLoose();
     }//GEN-LAST:event_resetEvolution_buttonActionPerformed
 
     private void ellipseCentersEvolutionOnToggle_checkboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ellipseCentersEvolutionOnToggle_checkboxActionPerformed
-        ((EvolutionPlotPanelII) evolutionPlotPanel)
+        ((EvolutionPlotPanel) evolutionPlotPanel)
                 .setShowCenters(ellipseCentersEvolutionOnToggle_checkbox.isSelected());
-        ((EvolutionPlotPanelII) evolutionPlotPanel).repaint();
+        ((EvolutionPlotPanel) evolutionPlotPanel).repaint();
+
+        ((AgeByDelta234UPlotPanel) ageDelta234PlotPanel)
+                .setShowCenters(ellipseCentersEvolutionOnToggle_checkbox.isSelected());
+        ((AgeByDelta234UPlotPanel) ageDelta234PlotPanel).repaint();
     }//GEN-LAST:event_ellipseCentersEvolutionOnToggle_checkboxActionPerformed
 
     private void ellipseLabelsEvolutionOnToggle_checkboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ellipseLabelsEvolutionOnToggle_checkboxActionPerformed
-        ((EvolutionPlotPanelII) evolutionPlotPanel)
+        ((EvolutionPlotPanel) evolutionPlotPanel)
                 .setShowLabels(ellipseLabelsEvolutionOnToggle_checkbox.isSelected());
-        ((EvolutionPlotPanelII) evolutionPlotPanel).repaint();
+        ((EvolutionPlotPanel) evolutionPlotPanel).repaint();
+
+        ((AgeByDelta234UPlotPanel) ageDelta234PlotPanel)
+                .setShowLabels(ellipseLabelsEvolutionOnToggle_checkbox.isSelected());
+        ((AgeByDelta234UPlotPanel) ageDelta234PlotPanel).repaint();
     }//GEN-LAST:event_ellipseLabelsEvolutionOnToggle_checkboxActionPerformed
 
     private void zoomBoxEvolution_toggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zoomBoxEvolution_toggleButtonActionPerformed
-        ((EvolutionPlotPanelII) evolutionPlotPanel).putInImageModeZoom();
+        ((EvolutionPlotPanel) evolutionPlotPanel).putInImageModeZoom();
     }//GEN-LAST:event_zoomBoxEvolution_toggleButtonActionPerformed
 
     private void showTightEvolution_toggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showTightEvolution_toggleButtonActionPerformed
-        ((EvolutionPlotPanelII) evolutionPlotPanel).showTight();
+        ((EvolutionPlotPanel) evolutionPlotPanel).showTight();
     }//GEN-LAST:event_showTightEvolution_toggleButtonActionPerformed
 
     private void isochrons_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_isochrons_buttonActionPerformed
         selectEvolutionIsochrons();
     }//GEN-LAST:event_isochrons_buttonActionPerformed
+
+    private void initDelta234U_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_initDelta234U_buttonActionPerformed
+        selectEvolutionInitDelta234U();
+    }//GEN-LAST:event_initDelta234U_buttonActionPerformed
+
+    private void zoomBoxInitdelta_toggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zoomBoxInitdelta_toggleButtonActionPerformed
+        ((AgeByDelta234UPlotPanel) ageDelta234PlotPanel).putInImageModeZoom();
+    }//GEN-LAST:event_zoomBoxInitdelta_toggleButtonActionPerformed
+
+    private void showTightInitDelta_toggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showTightInitDelta_toggleButtonActionPerformed
+        ((AgeByDelta234UPlotPanel) ageDelta234PlotPanel).showTight();
+    }//GEN-LAST:event_showTightInitDelta_toggleButtonActionPerformed
+
+    private void showEvolutionOnToggle_checkboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showEvolutionOnToggle_checkboxActionPerformed
+        ((EvolutionPlotPanel) evolutionPlotPanel)
+                .setShowMe(showEvolutionOnToggle_checkbox.isSelected());
+        ((EvolutionPlotPanel) evolutionPlotPanel).repaint();
+
+        evolutionLayeredPane.moveToFront(ageDelta234PlotPanel);
+
+        ((AgeByDelta234UPlotPanel) ageDelta234PlotPanel)
+                .setxLocation(showEvolutionOnToggle_checkbox.isSelected() ? 600 : 0);
+        ((AgeByDelta234UPlotPanel) ageDelta234PlotPanel)
+                .setMaxGraphWidth(showEvolutionOnToggle_checkbox.isSelected() ? 500 : 1000);
+        ((AgeByDelta234UPlotPanel) ageDelta234PlotPanel).repaint();
+
+    }//GEN-LAST:event_showEvolutionOnToggle_checkboxActionPerformed
+
+    private void showInitDelta234UOnToggle_checkboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showInitDelta234UOnToggle_checkboxActionPerformed
+        ((AgeByDelta234UPlotPanel) ageDelta234PlotPanel)
+                .setShowMe(showInitDelta234UOnToggle_checkbox.isSelected());
+        ((AgeByDelta234UPlotPanel) ageDelta234PlotPanel).repaint();
+
+        evolutionLayeredPane.moveToFront(evolutionPlotPanel);
+
+        ((EvolutionPlotPanel) evolutionPlotPanel)
+                .setMaxGraphWidth(showInitDelta234UOnToggle_checkbox.isSelected() ? 500 : 1000);
+    }//GEN-LAST:event_showInitDelta234UOnToggle_checkboxActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JRadioButton DatePbCorrSchemeA_radio;
@@ -3222,6 +3396,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
     private javax.swing.JTabbedPane graphPanels_TabbedPane;
     private javax.swing.JMenu heatMap_Menu;
     private javax.swing.JSpinner histogramBinCount_spinner;
+    private javax.swing.JButton initDelta234U_button;
     private javax.swing.JSplitPane interpretations_SplitPane;
     private javax.swing.JButton isochrons_button;
     private javax.swing.JLabel jLabel1;
@@ -3255,16 +3430,19 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
     private javax.swing.JMenuItem sampleConcordiaOptions_menuItem;
     private javax.swing.JButton selectAny2_button;
     private javax.swing.JCheckBox showEquiLineIsochron_checkbox;
+    private javax.swing.JCheckBox showEvolutionOnToggle_checkbox;
     private javax.swing.JCheckBox showExcludedFractionsIsochron_checkbox;
     private javax.swing.JCheckBox showExcludedFractions_checkbox;
     private javax.swing.JCheckBox showFilteredFractions_checkbox;
     private javax.swing.JButton showHistogram_button;
+    private javax.swing.JCheckBox showInitDelta234UOnToggle_checkbox;
     private javax.swing.JCheckBox showIsochrons_checkbox;
     private javax.swing.JCheckBox showRegressionLineIsochron_checkbox;
     private javax.swing.JCheckBox showRegressionUnctIsochron_checkbox;
     private javax.swing.JToggleButton showTightAny2_toggleButton;
     private javax.swing.JToggleButton showTightEvolution_toggleButton;
     private javax.swing.JButton showTightGraphProbability_button;
+    private javax.swing.JToggleButton showTightInitDelta_toggleButton;
     private javax.swing.JToggleButton showTightIsochron_toggleButton;
     private javax.swing.JToggleButton showTight_toggleButton;
     private javax.swing.JCheckBoxMenuItem sortFractionsDateAsc_menuItemCheckBox;
@@ -3284,6 +3462,7 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
     private javax.swing.JButton writeVisiblePlotSvgPdf_button;
     private javax.swing.JToggleButton zoomBoxAny2_toggleButton;
     private javax.swing.JToggleButton zoomBoxEvolution_toggleButton;
+    private javax.swing.JToggleButton zoomBoxInitdelta_toggleButton;
     private javax.swing.JToggleButton zoomBox_toggleButton;
     private javax.swing.JToggleButton zoomBox_toggleIsochron_button;
     private javax.swing.JButton zoomInAny2X2_button;
@@ -3732,14 +3911,13 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
 //                        setDeSelectedFractions(((ReduxAliquotInterface) aliquotNodeInfo).//
 //                                getAliquotSampleDateModelDeSelectedFractions(((SampleDateModel) sampleDateNodeInfo).getIncludedFractionIDsVector()));
                 ((AbstractDataView) evolutionPlotPanel).refreshPanel(true);
-                
+
 //                // fix dateTreeByAliquot
 //                ((DefaultTreeModel) ((JTree) dateTreeByAliquot).getModel()).//
 //                        nodeChanged(((TreeNode) node).//
 //                                getParent().//
 //                                getParent().//
 //                                getChildAt(0));
-
             } else if (graphPanels_TabbedPane.getSelectedIndex() == graphPanels_TabbedPane.indexOfTab("Weighted Mean")) {
 
                 weightedMeanGraphPanel.repaint();
@@ -3957,7 +4135,12 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
                 break;
 
             case "Evolution":
-                createEvolutionSVGandPDF();
+                if (((EvolutionPlotPanel) evolutionPlotPanel).isShowMe()) {
+                    createEvolutionSVGandPDF();
+                }
+                if (((AgeByDelta234UPlotPanel) ageDelta234PlotPanel).isShowMe()) {
+                    createAgeByInitDeltaSVGandPDF();
+                }
                 break;
 
             default:
@@ -4100,9 +4283,41 @@ private void lockUnlockHistogramBinsMouseEntered (java.awt.event.MouseEvent evt)
             } catch (IOException iOException) {
             }
             try {
-                ((EvolutionPlotPanelII) evolutionPlotPanel).outputToSVG(selectedFileSVG);
+                ((EvolutionPlotPanel) evolutionPlotPanel).outputToSVG(selectedFileSVG);
 
-                ((EvolutionPlotPanelII) evolutionPlotPanel).outputToPDF(selectedFileSVG);
+                ((EvolutionPlotPanel) evolutionPlotPanel).outputToPDF(selectedFileSVG);
+                viewPDF(selectedFile.getCanonicalPath());
+
+            } catch (IOException ex) {
+            }
+        }
+    }
+
+    public void createAgeByInitDeltaSVGandPDF() {
+        File selectedFile;
+        File selectedFileSVG = null;
+
+        String dialogTitle = "Save this Age by InitDelta234U as pdf (also as svg): *.pdf";
+        final String fileExtension = ".pdf";
+        String weightedMeanFileName
+                = sample.getSampleName() + "_AGExINITDELTA234U" + fileExtension;
+        FileFilter nonMacFileFilter = new PDFFileFilter();
+
+        selectedFile = FileHelper.AllPlatformSaveAs(
+                new Frame(), dialogTitle, null, fileExtension, weightedMeanFileName, nonMacFileFilter);
+
+        if (selectedFile != null) {
+
+            try {
+                selectedFileSVG
+                        = new File(selectedFile.getCanonicalPath().replaceFirst(".pdf", ".svg"));
+
+            } catch (IOException iOException) {
+            }
+            try {
+                ((AgeByDelta234UPlotPanel) ageDelta234PlotPanel).outputToSVG(selectedFileSVG);
+
+                ((AgeByDelta234UPlotPanel) ageDelta234PlotPanel).outputToPDF(selectedFileSVG);
                 viewPDF(selectedFile.getCanonicalPath());
 
             } catch (IOException ex) {

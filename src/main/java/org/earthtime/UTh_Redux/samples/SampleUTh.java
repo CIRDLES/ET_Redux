@@ -543,6 +543,9 @@ public class SampleUTh extends ETSample implements
                 IsochronModel.generateDefaultEvolutionIsochronModels());
         ((SampleDateModel)defaultSDM).setAutomaticIsochronSelection(true);
         
+        ((SampleDateModel)defaultSDM).setAr48icntrs(IsochronModel.generateDefaultEvolutionAr48icntrs());
+        ((SampleDateModel)defaultSDM).setAutomaticInitDelta234USelection(true);
+        
         return defaultSDM;
     }
 

@@ -170,7 +170,11 @@ public class SampleDateModel extends ValueModel implements
     private transient McLeanRegressionLineInterface mcLeanRegressionLine;
     private static String unitsForYears = "Ma";
     private SortedSet<IsochronModel> isochronModels;
+    // Oct 2018
     private boolean automaticIsochronSelection;
+    private double[] ar48icntrs;
+    private boolean automaticInitDelta234USelection;
+
 
     /**
      * creates a new instance of <code>SampleDateModel</code> with all of its
@@ -194,6 +198,8 @@ public class SampleDateModel extends ValueModel implements
         //this.unitsForYears = "Ma";
         this.isochronModels = new TreeSet<>();
         this.automaticIsochronSelection = true;
+        this.ar48icntrs = new double[0];
+        this.automaticInitDelta234USelection = true;
     }
 
     /**
@@ -3154,10 +3160,10 @@ public class SampleDateModel extends ValueModel implements
     }
 
     /**
-     * @param unitsForYears the unitsForYears to set
+     * @param myUnitsForYears
      */
-    public void setUnitsForYears(String unitsForYears) {
-        this.unitsForYears = unitsForYears;
+    public static void setUnitsForYears(String myUnitsForYears) {
+        unitsForYears = myUnitsForYears;
     }
 
     /**
@@ -3190,4 +3196,39 @@ public class SampleDateModel extends ValueModel implements
     public void setAutomaticIsochronSelection(boolean automaticIsochronSelection) {
         this.automaticIsochronSelection = automaticIsochronSelection;
     }
+
+    /**
+     * 
+     * @return 
+     */
+    public boolean isAutomaticInitDelta234USelection() {
+        return automaticInitDelta234USelection;
+    }
+
+    /**
+     * 
+     * @param automaticInitDelta234USelection 
+     */
+    public void setAutomaticInitDelta234USelection(boolean automaticInitDelta234USelection) {
+        this.automaticInitDelta234USelection = automaticInitDelta234USelection;
+    }
+
+    /**
+     * @return the ar48icntrs
+     */
+    public double[] getAr48icntrs() {
+        if (ar48icntrs == null){
+            ar48icntrs = new double[0];
+        }
+        return ar48icntrs;
+    }
+
+    /**
+     * @param ar48icntrs the ar48icntrs to set
+     */
+    public void setAr48icntrs(double[] ar48icntrs) {
+        this.ar48icntrs = ar48icntrs;
+    }
+    
+    
 }

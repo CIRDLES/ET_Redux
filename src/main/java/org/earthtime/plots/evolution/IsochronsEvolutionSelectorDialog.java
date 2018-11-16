@@ -16,17 +16,12 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.earthtime.plots.isochrons.evolution;
+package org.earthtime.plots.evolution;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import javax.swing.AbstractListModel;
 import javax.swing.JCheckBox;
-import javax.swing.JList;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
@@ -76,6 +71,15 @@ public class IsochronsEvolutionSelectorDialog extends DialogEditor {
 
         initComponents();
 
+        automaticIsochronSelectionChoice.setSelected(automaticIsochronSelection);
+        automaticIsochronSelectionChoice.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                ((SampleDateModel) sampleDateModel).setAutomaticIsochronSelection(
+                        automaticIsochronSelectionChoice.isSelected());
+            }
+        });
+
         initLists();
     }
 
@@ -87,15 +91,14 @@ public class IsochronsEvolutionSelectorDialog extends DialogEditor {
         isochronCheckBoxes = new CheckBoxList();
         isochronsLayeredPane.add(isochronCheckBoxes);
 
-        automaticIsochronSelectionChoice.setSelected(automaticIsochronSelection);
-        automaticIsochronSelectionChoice.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                ((SampleDateModel) sampleDateModel).setAutomaticIsochronSelection(
-                        automaticIsochronSelectionChoice.isSelected());
-            }
-        });
-
+//        automaticIsochronSelectionChoice.setSelected(automaticIsochronSelection);
+//        automaticIsochronSelectionChoice.addChangeListener(new ChangeListener() {
+//            @Override
+//            public void stateChanged(ChangeEvent e) {
+//                ((SampleDateModel) sampleDateModel).setAutomaticIsochronSelection(
+//                        automaticIsochronSelectionChoice.isSelected());
+//            }
+//        });
         JCheckBox[] isochronCheckBoxArray = new JCheckBox[selectedIsochrons.size()];
 
         // used to get quick access to isochrons
@@ -128,7 +131,7 @@ public class IsochronsEvolutionSelectorDialog extends DialogEditor {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 isochronDateInKaText.setText(
-                        ((JCheckBox)((CheckBoxList)e.getSource())
+                        ((JCheckBox) ((CheckBoxList) e.getSource())
                                 .getSelectedValue()).getText().split(" ka")[0]);
             }
         });
@@ -244,6 +247,7 @@ public class IsochronsEvolutionSelectorDialog extends DialogEditor {
 
         if ((isoDateKa > 0) && (isoDateKa < 10000)) {
             IsochronModel model = new IsochronModel(isoDateKa * 1000);
+            model.setVisible(true);
             selectedIsochrons.add(model);
             initLists();
         }

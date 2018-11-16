@@ -413,6 +413,19 @@ public class ReportSpecificationsUPb extends ReportSpecificationsAbstract{
             "", "false", "false", "3", "", "", "false", "false"
         }
     };
+    
+        // Report column order =
+    //  displayName1, displayName2, displayName3, units, retrieveMethodName, retrieveParameterName, uncertaintyType,
+    //     footnoteSpec, visible, useArbitrary? for value, digitcount value, unct visible (if required), description where needed,
+    //     needsLead, needsUranium
+    /**
+     *
+     */
+    public static final String[][] ReportCategory_QA_QC_Parameters = new String[][]{
+        {"206Pb/238U", "-", "207Pb/235U", "", "getRadiogenicIsotopeRatioByName", "rhoR206_238r__r207_235r", "",
+            "", "false", "false", "2", "", "", "true", "true"
+        },
+    };
 
     /**
      *

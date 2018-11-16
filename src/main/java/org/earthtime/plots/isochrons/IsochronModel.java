@@ -27,13 +27,6 @@ import org.earthtime.UPb_Redux.ReduxConstants;
  */
 public class IsochronModel implements Comparable<IsochronModel>, Serializable {
 
-    /**
-     * @return the densityLevel
-     */
-    public int getDensityLevel() {
-        return densityLevel;
-    }
-
     // Class variables
     private static final long serialVersionUID = 6649500047671825154L;
 
@@ -99,23 +92,23 @@ public class IsochronModel implements Comparable<IsochronModel>, Serializable {
         String retVal = new BigDecimal(dateInAnnum)
                 .movePointRight(ReduxConstants.getUnitConversionMoveCount(units))
                 .setScale(0).toPlainString() + " " + units;
-        
-                if (dateInAnnum >= 10e10){
+
+        if (dateInAnnum >= 10e10) {
             retVal = " \u221E" + " " + units;
         }
-                
+
         return retVal;
     }
-    
-        public String prettyPrintINoUnits() {
+
+    public String prettyPrintINoUnits() {
         String retVal = new BigDecimal(dateInAnnum)
                 .movePointRight(ReduxConstants.getUnitConversionMoveCount(units))
                 .setScale(0).toPlainString();
-        
-                if (dateInAnnum >= 10e10){
+
+        if (dateInAnnum >= 10e10) {
             retVal = " \u221E" + " " + units;
         }
-                
+
         return retVal;
     }
 
@@ -142,6 +135,15 @@ public class IsochronModel implements Comparable<IsochronModel>, Serializable {
             isochronModels.add(new IsochronModel(annumIsochrons[i], 0.0, 0.0, "ka", true, 2));
         }
         return isochronModels;
+    }
+
+    public static double[] generateDefaultEvolutionAr48icntrs() {
+        int init48Density = (int) Math.pow(2, (2 + 8 / 10));
+        double [] ar48icntrs = new double[(int) 2 * init48Density + init48Density + 1];
+        for (int i = 0; i < ar48icntrs.length; i++) {
+            ar48icntrs[i] = i * (double) (1.0 / (double) init48Density);
+        }
+        return ar48icntrs;
     }
 
     /**
@@ -213,4 +215,12 @@ public class IsochronModel implements Comparable<IsochronModel>, Serializable {
     public void setVisible(boolean visible) {
         this.visible = visible;
     }
+
+    /**
+     * @return the densityLevel
+     */
+    public int getDensityLevel() {
+        return densityLevel;
+    }
+
 }

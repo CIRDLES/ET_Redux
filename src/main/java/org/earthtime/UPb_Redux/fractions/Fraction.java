@@ -50,7 +50,7 @@ public abstract class Fraction implements
 
     private static final long serialVersionUID = -6610176652253689201L;
     // Instance variables
-    private boolean isLegacy;
+    protected boolean isLegacy;
     private String sampleName;
     private String fractionID;
     private String grainID;
@@ -96,12 +96,12 @@ public abstract class Fraction implements
     private String pbCollectorType;
     private String uCollectorType;
     // results of analysis
-    private ValueModel[] analysisMeasures;
-    private ValueModel[] measuredRatios;
-    private ValueModel[] radiogenicIsotopeRatios;
-    private ValueModel[] radiogenicIsotopeDates;
-    private ValueModel[] compositionalMeasures;
-    private ValueModel[] sampleIsochronRatios;
+    protected ValueModel[] analysisMeasures;
+    protected ValueModel[] measuredRatios;
+    protected ValueModel[] radiogenicIsotopeRatios;
+    protected ValueModel[] radiogenicIsotopeDates;
+    protected ValueModel[] compositionalMeasures;
+    protected ValueModel[] sampleIsochronRatios;
 
 
     /**

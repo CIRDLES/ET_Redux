@@ -62,7 +62,8 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
 
     protected static final double ZOOM_FACTOR = 10.0;
     protected static final int minGraphWidthHeight = 100;
-    protected static final int maxGraphWidthHeight = 500;
+    protected int maxGraphWidth = 500;
+    protected static final int maxGraphHeight = 750;
 
     protected double width;
     protected double height;
@@ -149,11 +150,17 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
     protected boolean showCenters;
     protected boolean showLabels;
 
+    protected int xLocation;
+
+    protected boolean showMe;
+
     /**
      *
      */
     public AbstractDataView() {
         super();
+        
+        this.showMe = true;
     }
 
     /**
@@ -183,9 +190,11 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
         this.zoomCount = 0;
 
         putInImageModePan();
-        
+
         this.showCenters = true;
         this.showLabels = false;
+
+        this.showMe = true;
 
         addMeAsMouseListener();
     }
@@ -221,9 +230,11 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
      * @param g2d
      */
     public void paint(Graphics2D g2d) {
-        paintInit(g2d);
+        if (showMe) {
+            paintInit(g2d);
 
-        drawBorder(g2d);
+            drawBorder(g2d);
+        }
     }
 
     protected void drawBorder(Graphics2D g2d) {
@@ -417,64 +428,9 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
         g2d.drawRect(
                 leftMargin, topMargin, graphWidth - 1, graphHeight - 1);
 
-        // label axes
-        String xAxisLabel = "[230Th/238U]t";//axes[0].getAxisLabel();
-        g2d.setFont(new Font("Monospaced", Font.BOLD, 18));
-        double xAxisLabelLength = calculateLengthOfStringPlot(g2d, xAxisLabel);
-
-        String yAxisLabel = "[234U/238U]t";//axes[1].getAxisLabel();
-        double yAxisLabelLength = calculateLengthOfStringPlot(g2d, yAxisLabel);
-
-        g2d.setFont(new Font("Monospaced", Font.BOLD, 12));
-        g2d.drawString("230",
-                leftMargin + (int) (graphWidth / 2.0) - (int) (xAxisLabelLength / 2.0) + 10,
-                topMargin + (int) graphHeight + 30);
-        g2d.drawString("238",
-                leftMargin + (int) (graphWidth / 2.0) - (int) (xAxisLabelLength / 2.0) + 65,
-                topMargin + (int) graphHeight + 30);
-        g2d.drawString("t",
-                leftMargin + (int) (graphWidth / 2.0) - (int) (xAxisLabelLength / 2.0) + 105,
-                topMargin + (int) graphHeight + 40);
-
-        g2d.setFont(new Font("Monospaced", Font.BOLD, 18));
-        g2d.drawString("[",
-                leftMargin + (int) (graphWidth / 2.0) - (int) (xAxisLabelLength / 2.0),
-                topMargin + (int) graphHeight + 35);
-        g2d.drawString("Th/",
-                leftMargin + (int) (graphWidth / 2.0) - (int) (xAxisLabelLength / 2.0) + 30,
-                topMargin + (int) graphHeight + 35);
-        g2d.drawString("U]",
-                leftMargin + (int) (graphWidth / 2.0) - (int) (xAxisLabelLength / 2.0) + 85,
-                topMargin + (int) graphHeight + 35);
-
-        // y axis
-        g2d.rotate(-Math.PI / 2.0);
-        g2d.setFont(new Font("Monospaced", Font.BOLD, 12));
-        g2d.drawString("234",
-                -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0) - 10),
-                leftMargin - 30);
-        g2d.drawString("238",
-                -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0) - 55),
-                leftMargin - 30);
-        g2d.drawString("t",
-                -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0) - 95),
-                leftMargin - 20);
-
-        g2d.setFont(new Font("Monospaced", Font.BOLD, 18));
-        g2d.drawString("[",
-                -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0)),
-                leftMargin - 25);
-        g2d.drawString("U/",
-                -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0) - 30),
-                leftMargin - 25);
-        g2d.drawString("U]",
-                -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0) - 75),
-                leftMargin - 25);
-
-        g2d.rotate(Math.PI / 2.0);
     }
 
-    private double calculateLengthOfStringPlot(Graphics2D g2d, String label) {
+    protected double calculateLengthOfStringPlot(Graphics2D g2d, String label) {
         TextLayout mLayout
                 = new TextLayout(
                         label, g2d.getFont(), g2d.getFontRenderContext());
@@ -670,17 +626,17 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
 
         if (eastResizing ^ southResizing) {
             if (eastResizing) {
-                this.graphWidth = Math.min(maxGraphWidthHeight, (myX - leftMargin > minGraphWidthHeight) ? myX - leftMargin : minGraphWidthHeight);
+                this.graphWidth = Math.min(maxGraphWidth, (myX - leftMargin > minGraphWidthHeight) ? myX - leftMargin : minGraphWidthHeight);
             } else {
-                this.graphHeight = Math.min(maxGraphWidthHeight, (myY - topMargin > minGraphWidthHeight) ? myY - topMargin : minGraphWidthHeight);
+                this.graphHeight = Math.min(maxGraphHeight, (myY - topMargin > minGraphWidthHeight) ? myY - topMargin : minGraphWidthHeight);
             }
-            this.setBounds(0, 0, graphWidth + leftMargin * 2, graphHeight + topMargin * 2);
+            this.setBounds(xLocation, 0, graphWidth + leftMargin * 2, graphHeight + topMargin * 2);
         }
 
         if (eastResizing && southResizing) {
-            this.graphWidth = Math.min(maxGraphWidthHeight, (myX - leftMargin > minGraphWidthHeight) ? myX - leftMargin : minGraphWidthHeight);
-            this.graphHeight = Math.min(maxGraphWidthHeight, (myY - topMargin > minGraphWidthHeight) ? myY - topMargin : minGraphWidthHeight);
-            this.setBounds(0, 0, graphWidth + leftMargin * 2, graphHeight + topMargin * 2);
+            this.graphWidth = Math.min(maxGraphWidth, (myX - leftMargin > minGraphWidthHeight) ? myX - leftMargin : minGraphWidthHeight);
+            this.graphHeight = Math.min(maxGraphHeight, (myY - topMargin > minGraphWidthHeight) ? myY - topMargin : minGraphWidthHeight);
+            this.setBounds(xLocation, 0, graphWidth + leftMargin * 2, graphHeight + topMargin * 2);
         }
 
         eastResizing = false;
@@ -842,14 +798,14 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
 
     protected void generateEllipsePathIII(
             ETFractionInterface f,
+            ValueModel xAxisRatio,
+            ValueModel yAxisRatio,
             double ellipseSize) {
 
-        ValueModel xAxisRatio;
-        ValueModel yAxisRatio;
         ValueModel correlationCoefficient;
-
-        xAxisRatio = f.getLegacyActivityRatioByName(UThAnalysisMeasures.ar230Th_238Ufc.getName());
-        yAxisRatio = f.getLegacyActivityRatioByName(UThAnalysisMeasures.ar234U_238Ufc.getName());
+//
+//        xAxisRatio = f.getLegacyActivityRatioByName(UThAnalysisMeasures.ar230Th_238Ufc.getName());
+//        yAxisRatio = f.getLegacyActivityRatioByName(UThAnalysisMeasures.ar234U_238Ufc.getName());
 
         correlationCoefficient = new ValueModel(); // fake zero for now
 
@@ -976,5 +932,33 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
      */
     public void setShowLabels(boolean showLabels) {
         this.showLabels = showLabels;
+    }
+
+    /**
+     * @return the showMe
+     */
+    public boolean isShowMe() {
+        return showMe;
+    }
+
+    /**
+     * @param showMe the showMe to set
+     */
+    public void setShowMe(boolean showMe) {
+        this.showMe = showMe;
+    }
+
+    /**
+     * @param xLocation the xLocation to set
+     */
+    public void setxLocation(int xLocation) {
+        this.xLocation = xLocation;
+    }
+
+    /**
+     * @param maxGraphWidth the maxGraphWidth to set
+     */
+    public void setMaxGraphWidth(int maxGraphWidth) {
+        this.maxGraphWidth = maxGraphWidth;
     }
 }

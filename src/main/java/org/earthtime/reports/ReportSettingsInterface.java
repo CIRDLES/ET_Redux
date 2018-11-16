@@ -40,6 +40,7 @@ import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
 import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbFraction;
 import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLAICPMSFraction;
+import org.earthtime.UPb_Redux.fractions.UPbReduxFractions.UPbLegacyFraction;
 import org.earthtime.UPb_Redux.valueModels.ValueModelReferenced;
 import org.earthtime.UTh_Redux.fractions.UThFraction;
 import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
@@ -995,6 +996,15 @@ public interface ReportSettingsInterface extends Comparable<ReportSettingsInterf
                 }
 
                 retVal[6][i] = determineFootNoteLetter(i) + "&" + footNote;
+
+                // nov 2018
+                if (fractions.get(0) instanceof UPbLegacyFraction) {
+                    if (((UPbLegacyFraction) fractions.get(0)).isSquidLegacy()) {
+                        if (footNote.contains("<zirconPopulationChoice>")) {
+                            retVal[6][i] = "";
+                        }
+                    }
+                }
             }
         }
         return retVal;

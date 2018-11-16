@@ -150,7 +150,8 @@ import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.plots.anyTwo.PlotAny2Panel;
-import org.earthtime.plots.evolution.EvolutionPlotPanelII;
+import org.earthtime.plots.evolution.AgeByDelta234UPlotPanel;
+import org.earthtime.plots.evolution.EvolutionPlotPanel;
 import org.earthtime.plots.isochrons.IsochronsPanel;
 import org.earthtime.projects.EarthTimeSerializedFileInterface;
 import org.earthtime.projects.Project;
@@ -197,6 +198,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
     private JLayeredPane myPlotAnyPanel;
     private JLayeredPane myUseriesIsochronPanel;
     private JLayeredPane myEvolutionPlotPanel;
+    private JLayeredPane myAgeDelta234PlotPanel;
 
     /**
      *
@@ -1457,10 +1459,8 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
         //as well as interpret date window and archiving
         myPlotAnyPanel = new PlotAny2Panel(theSample, this);
         myUseriesIsochronPanel = new IsochronsPanel(theSample, this);
-//////        myEvolutionPlotPanel = new EvolutionPlotPanel(theSample, this);
 
         // march 2014
-//        concordiaGraphPanelIsoplot = new ConcordiaGraphPanelIsoplot(theSample);
         // set up probabilitydensity for archiving
         myNormedProbabilityPanel = new DateProbabilityDensityPanel(theSample);
 
@@ -1603,9 +1603,8 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             ((SampleDateInterpretationsManager) sampleDateInterpDialog).setSample(theSample);
         }
 
-        
         if ((theSample.getSampleAnalysisType().length() == 0)
-                ||theSample.isAnalysisTypeUSERIES()) {
+                || theSample.isAnalysisTypeUSERIES()) {
             // oct 2018 problem of time sink involving setselectedrow of tree
         } else {
             try {
@@ -3666,12 +3665,8 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             myPlotAnyPanel = new PlotAny2Panel(theSample, this);
             myUseriesIsochronPanel = new IsochronsPanel(theSample, this);
 
-           // if (myEvolutionPlotPanel == null) {
-//                myEvolutionPlotPanel = null;
-                myEvolutionPlotPanel = new EvolutionPlotPanelII(theSample, this);
-//                PlaceHolderForJavaFxThread placeHolderForJavaFXThread = new PlaceHolderForJavaFxThread();
-//                placeHolderForJavaFXThread.runme();
-           // }
+            myEvolutionPlotPanel = new EvolutionPlotPanel(theSample, this);
+            myAgeDelta234PlotPanel = new AgeByDelta234UPlotPanel(theSample, this);
 
             theSample.getSampleDateInterpretationGUISettings().//
                     setConcordiaOptions(((ConcordiaPlotDisplayInterface) myConcordiaGraphPanel).getConcordiaOptions());
@@ -3687,8 +3682,6 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
             ((PlottingDetailsDisplayInterface) myPlotAnyPanel).resetPanel(true, false);
             ((PlottingDetailsDisplayInterface) myUseriesIsochronPanel).setShowTightToEdges(true);
             ((PlottingDetailsDisplayInterface) myUseriesIsochronPanel).resetPanel(true, false);
-//            ((PlottingDetailsDisplayInterface) myEvolutionPlotPanel).setShowTightToEdges(true);
-            //((PlottingDetailsDisplayInterface) myEvolutionPlotPanel).resetPanel(true, false);
 
             if (sampleDateInterpDialog != null) {
                 sampleDateInterpDialog.dispose();
@@ -3700,6 +3693,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                             myPlotAnyPanel,
                             myUseriesIsochronPanel,
                             myEvolutionPlotPanel,
+                            myAgeDelta234PlotPanel,
                             myWeightedMeanGraphPanel,
                             myNormedProbabilityPanel,
                             theSample,
