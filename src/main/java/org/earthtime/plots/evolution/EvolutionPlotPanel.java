@@ -243,8 +243,8 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
                 if (!f.isRejected()) {
                     generateEllipsePathIII(//
                             f,
-                            f.getLegacyActivityRatioByName(UThAnalysisMeasures.ar230Th_238Ufc.getName()),
-                            f.getLegacyActivityRatioByName(UThAnalysisMeasures.ar234U_238Ufc.getName()),
+                            f.getAnalysisMeasure(UThAnalysisMeasures.ar230Th_238Ufc.getName()),
+                            f.getAnalysisMeasure(UThAnalysisMeasures.ar234U_238Ufc.getName()),
                             2.0f);
                     if (f.getErrorEllipsePath() != null) {
                         plotAFraction(g2d,
