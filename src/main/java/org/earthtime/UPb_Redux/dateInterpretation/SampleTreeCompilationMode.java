@@ -45,6 +45,7 @@ import org.earthtime.UPb_Redux.valueModels.ValueModelI;
 import org.earthtime.aliquots.AliquotInterface;
 import org.earthtime.dataDictionaries.SampleAnalysisTypesEnum;
 import org.earthtime.dialogs.DialogEditor;
+import org.earthtime.projects.ProjectSample;
 import org.earthtime.samples.SampleInterface;
 
 /**
@@ -192,13 +193,13 @@ public class SampleTreeCompilationMode extends JTree implements SampleTreeI {
             DefaultMutableTreeNode SAMnode) {
 
         DefaultMutableTreeNode sampleDateValue
-                = //
+                = 
                 new DefaultMutableTreeNode(//
                         ((SampleDateModel) SAM).ShowCustomDateNode());
         SAMnode.add(sampleDateValue);
 
         DefaultMutableTreeNode sampleDateMSWD
-                = //
+                = 
                 new DefaultMutableTreeNode(//
                         ((SampleDateModel) SAM).ShowCustomMSWDwithN());
         SAMnode.add(sampleDateMSWD);
@@ -313,12 +314,12 @@ public class SampleTreeCompilationMode extends JTree implements SampleTreeI {
         } else if ((o instanceof String) && (((String) o).startsWith("date"))) {
             return //                
                     ((SampleDateModel) ((DefaultMutableTreeNode) ((TreeNode) value).//
-                    getParent()).getUserObject()).ShowCustomDateNode();
+                            getParent()).getUserObject()).ShowCustomDateNode();
 
         } else if ((o instanceof String) && (((String) o).startsWith("MSWD"))) {
             return //                
                     ((SampleDateModel) ((DefaultMutableTreeNode) ((TreeNode) value).//
-                    getParent()).getUserObject()).ShowCustomMSWDwithN() + "              ";
+                            getParent()).getUserObject()).ShowCustomMSWDwithN() + "              ";
 
         } else {
             return super.convertValueToText(
@@ -357,7 +358,7 @@ public class SampleTreeCompilationMode extends JTree implements SampleTreeI {
             if (!e.isPopupTrigger() && (e.getButton() == MouseEvent.BUTTON1)) {
             } else if ((e.isPopupTrigger()) || (e.getButton() == MouseEvent.BUTTON3)) {
                 setSelectionPath(selPath);
-                if (nodeInfo instanceof Sample) {
+                if ((nodeInfo instanceof Sample) || (nodeInfo instanceof ProjectSample)) {
                     DialogEditor myEditor
                             = new SampleDateInterpretationChooserDialog(
                                     null,
@@ -371,13 +372,12 @@ public class SampleTreeCompilationMode extends JTree implements SampleTreeI {
 
                     // get a master vector of active fraction names
                     Vector<String> activeFractionIDs
-                            =//
-                            ((SampleInterface) nodeInfo).getSampleFractionIDs();
+                            = ((SampleInterface) nodeInfo).getSampleFractionIDs();
 
                     if (((SampleDateInterpretationChooserDialog) myEditor).getSelectedModels().size() > 0) {
                         DefaultMutableTreeNode sampleDateModelNode = null;
 
-                        ArrayList<Integer> tempNewNodes = new ArrayList<Integer>();
+                        ArrayList<Integer> tempNewNodes = new ArrayList<>();
                         for (ValueModel selectedSAM : ((SampleDateInterpretationChooserDialog) myEditor).getSelectedModels()) {
 
                             ((SampleInterface) nodeInfo).getSampleDateModels().add(selectedSAM);
@@ -390,8 +390,7 @@ public class SampleTreeCompilationMode extends JTree implements SampleTreeI {
                             // remove from activefractionIDs any fraction with 0 date
                             Vector<String> zeroFractionDates = new Vector<>();
                             for (String activeFractionID : activeFractionIDs) {
-                                if (! //
-                                        ((SampleDateModel) selectedSAM).fractionDateIsPositive(sample.getSampleFractionByName(activeFractionID))) {
+                                if (!((SampleDateModel) selectedSAM).fractionDateIsPositive(sample.getSampleFractionByName(activeFractionID))) {
                                     zeroFractionDates.add(activeFractionID);
                                 }
                             }
