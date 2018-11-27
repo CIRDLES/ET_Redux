@@ -25,7 +25,6 @@ import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
-import java.awt.geom.CubicCurve2D;
 import java.awt.geom.Path2D;
 import java.io.File;
 import java.io.FileNotFoundException;

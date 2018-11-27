@@ -49,8 +49,12 @@ public final class SampleDateTypes {
         //{"235U/207Pb isochron", "ISO235_207", ""},
         //{"232Th/208Pb isochron", "ISO232_208", ""},
         //{"Semi-TotalPb isochron", "ISO_SemiTotalPb", ""},
-        //{"Total Pb isochron", "ISO_TotalPb", ""}
-        {"238U-230Th isochron", "ISO238_230", UThAnalysisMeasures.ar230Th_232Thfc.getName()}
+        //{"Total Pb isochron", "ISO_TotalPb", ""},
+        // USeries volcanic Aug 2017
+        {"238U-230Th isochron", "ISO238_230", UThAnalysisMeasures.ar230Th_232Thfc.getName()},
+        // USeries carbonate Nov 2018
+        {"weighted mean Corrected Date", "WMDate", RadDates.dateCorr.getName()},
+        {"weighted mean UnCorrected Date", "WMDate", RadDates.date.getName()},
     };
 
     /**

@@ -175,7 +175,6 @@ public class SampleDateModel extends ValueModel implements
     private double[] ar48icntrs;
     private boolean automaticInitDelta234USelection;
 
-
     /**
      * creates a new instance of <code>SampleDateModel</code> with all of its
      * fields initialized to default values
@@ -2072,6 +2071,14 @@ public class SampleDateModel extends ValueModel implements
         }
     }
 
+    // Nov 2018 adapting WM206_238 to Useries dates weighted means
+    public void WMDate(Vector<ETFractionInterface> myFractions)
+            throws ETException {
+        ZeroAllValues();
+
+        calculateWeightedMeansWithMSWDforRatioBasedData(myFractions, dateName);
+    }
+
     /**
      * zeroes all values, sets this <code>SampleDateModel</code>'s fields to
      * those of the first <code>Fraction</code> found in argument
@@ -2088,7 +2095,7 @@ public class SampleDateModel extends ValueModel implements
      * @param myFractions the collection of <code>Fractions</code> that will be
      * used to set this      <code>SampleDateModel</code>'s fields
      */
-    public void WM206_238(Vector<ETFractionInterface> myFractions) //
+    public void WM206_238(Vector<ETFractionInterface> myFractions)
             throws ETException {
         ZeroAllValues();
 
@@ -2097,7 +2104,7 @@ public class SampleDateModel extends ValueModel implements
 
         LogWMresults logWMresults = calculateWeightedMeansWithMSWD(
                 myFractions, //
-                RadDates.age206_238r.getName(), //
+                RadDates.age206_238r.getName(),
                 partialDerivativeNames);
 
         if (logWMresults != null) {
@@ -2122,7 +2129,7 @@ public class SampleDateModel extends ValueModel implements
             setInternalTwoSigmaUnctWithStandardRatioVarUnct(new BigDecimal(meanDate.getValue().doubleValue() * logWMresults.getLogRatioMeanOneSigmaAnalyticalPlusInterStd() * 2.0));
 
             // Section C
-            meanDate = UPbFractionReducer//
+            meanDate = UPbFractionReducer
                     .calculateDate206_238r( //
                             new Age206_238r(),
                             Math.exp(logWMresults.getLogRatioMean()),
@@ -2160,7 +2167,7 @@ public class SampleDateModel extends ValueModel implements
      * @param myFractions the collection of <code>Fractions</code> that will be
      * used to set this      <code>SampleDateModel</code>'s fields
      */
-    public void WM207_235(Vector<ETFractionInterface> myFractions) //
+    public void WM207_235(Vector<ETFractionInterface> myFractions)
             throws ETException {
         ZeroAllValues();
 
@@ -2170,7 +2177,7 @@ public class SampleDateModel extends ValueModel implements
         if (logWMresults != null) {
             //we have a post feb 2013 logratio solution
             ValueModel meanDate = UPbFractionReducer//
-                    .calculateDate207_235r( //
+                    .calculateDate207_235r(
                             new Age207_235r(),
                             Math.exp(logWMresults.getLogRatioMean()),
                             Math.exp(logWMresults.getLogRatioMean() + logWMresults.getLogRatioMeanOneSigmaAnalytical() * 2.0));
@@ -2711,9 +2718,6 @@ public class SampleDateModel extends ValueModel implements
              * Ra = Ba” below), just use lambda226 instead of lambda230, and use
              * the slope from that isochron. *
              */
-            
-            
-            
             // previous method  
             // getV()[1][0] = slope
             double myDate = -1.0 / lambda230.getValue().doubleValue()
@@ -3198,16 +3202,16 @@ public class SampleDateModel extends ValueModel implements
     }
 
     /**
-     * 
-     * @return 
+     *
+     * @return
      */
     public boolean isAutomaticInitDelta234USelection() {
         return automaticInitDelta234USelection;
     }
 
     /**
-     * 
-     * @param automaticInitDelta234USelection 
+     *
+     * @param automaticInitDelta234USelection
      */
     public void setAutomaticInitDelta234USelection(boolean automaticInitDelta234USelection) {
         this.automaticInitDelta234USelection = automaticInitDelta234USelection;
@@ -3217,7 +3221,7 @@ public class SampleDateModel extends ValueModel implements
      * @return the ar48icntrs
      */
     public double[] getAr48icntrs() {
-        if (ar48icntrs == null){
+        if (ar48icntrs == null) {
             ar48icntrs = new double[0];
         }
         return ar48icntrs;
@@ -3229,6 +3233,5 @@ public class SampleDateModel extends ValueModel implements
     public void setAr48icntrs(double[] ar48icntrs) {
         this.ar48icntrs = ar48icntrs;
     }
-    
-    
+
 }

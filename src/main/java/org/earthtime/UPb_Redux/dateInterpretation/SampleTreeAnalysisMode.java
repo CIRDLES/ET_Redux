@@ -532,7 +532,7 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
                         try {
                             expandPath(new TreePath(sampleDateModelNode.getPath()));
                         } catch (Exception eNoWM) {
-                            new ETWarningDialog("This weighted mean is not avaialable for these data.").setVisible(true);
+                            new ETWarningDialog("This weighted mean is not availalable for these data.").setVisible(true);
                         }
 
                         getSampleTreeChange().sampleTreeChangeAnalysisMode(node);
