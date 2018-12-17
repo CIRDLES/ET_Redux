@@ -739,7 +739,7 @@ public class UPbLegacyFraction extends Fraction implements
 
     @Override
     public boolean isCommonLeadLossCorrected() {
-        return false; // dec 2014 until we learn that this is the case
+        return true;//false; // dec 2014 until we learn that this is the case
     }
 
     @Override
