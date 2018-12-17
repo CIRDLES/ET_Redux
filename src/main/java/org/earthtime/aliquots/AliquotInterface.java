@@ -28,6 +28,7 @@ import org.earthtime.UPb_Redux.fractions.FractionI;
 import org.earthtime.UPb_Redux.valueModels.SampleDateInterceptModel;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
+import org.earthtime.UTh_Redux.aliquots.UThReduxAliquot;
 import org.earthtime.dataDictionaries.SampleDateTypes;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.reduxLabData.ReduxLabData;
@@ -248,30 +249,53 @@ public interface AliquotInterface {
     public default Vector<ValueModel> determineUnusedSampleDateModels() {
         Vector<ValueModel> retVal = new Vector<>();
         // choose models not already in use by Aliquot
-        for (int i = 0; i < SampleDateTypes.getSampleDateModelTypes().length; i++) {
-            if (getASampleDateModelByName(SampleDateTypes.getSampleDateType(i)) == null) {
-                ValueModel tempModel;
-                if (SampleDateTypes.getSampleDateType(i).endsWith("intercept")) {
-                    tempModel
-                            = new SampleDateInterceptModel(//
-                                    SampleDateTypes.getSampleDateType(i),
-                                    SampleDateTypes.getSampleDateTypeMethod(i),
-                                    SampleDateTypes.getSampleDateTypeName(i),
-                                    BigDecimal.ZERO,
-                                    "ABS",
-                                    BigDecimal.ZERO);
-                } else {
-                    tempModel
-                            = new SampleDateModel(//
-                                    SampleDateTypes.getSampleDateType(i),
-                                    SampleDateTypes.getSampleDateTypeMethod(i),
-                                    SampleDateTypes.getSampleDateTypeName(i),
-                                    BigDecimal.ZERO,
-                                    "ABS",
-                                    BigDecimal.ZERO);
+        if (this instanceof UThReduxAliquot) {
+            for (int i = 0; i < SampleDateTypes.getSampleDateModelTypes().length; i++) {
+                if (getASampleDateModelByName(SampleDateTypes.getSampleDateType(i)) == null) {
+                    ValueModel tempModel = null;
+                    if (SampleDateTypes.getSampleDateType(i).endsWith("Date")) {
+                        tempModel
+                                = new SampleDateModel(//
+                                        SampleDateTypes.getSampleDateType(i),
+                                        SampleDateTypes.getSampleDateTypeMethod(i),
+                                        SampleDateTypes.getSampleDateTypeName(i),
+                                        BigDecimal.ZERO,
+                                        "ABS",
+                                        BigDecimal.ZERO);
+                    }
+                    if (tempModel != null) {
+                        ((SampleDateModel) tempModel).setAliquot(this);
+                        retVal.add(tempModel);
+                    }
                 }
-                ((SampleDateModel) tempModel).setAliquot(this);
-                retVal.add(tempModel);
+            }
+        } else {
+
+            for (int i = 0; i < SampleDateTypes.getSampleDateModelTypes().length; i++) {
+                if (getASampleDateModelByName(SampleDateTypes.getSampleDateType(i)) == null) {
+                    ValueModel tempModel;
+                    if (SampleDateTypes.getSampleDateType(i).endsWith("intercept")) {
+                        tempModel
+                                = new SampleDateInterceptModel(//
+                                        SampleDateTypes.getSampleDateType(i),
+                                        SampleDateTypes.getSampleDateTypeMethod(i),
+                                        SampleDateTypes.getSampleDateTypeName(i),
+                                        BigDecimal.ZERO,
+                                        "ABS",
+                                        BigDecimal.ZERO);
+                    } else {
+                        tempModel
+                                = new SampleDateModel(//
+                                        SampleDateTypes.getSampleDateType(i),
+                                        SampleDateTypes.getSampleDateTypeMethod(i),
+                                        SampleDateTypes.getSampleDateTypeName(i),
+                                        BigDecimal.ZERO,
+                                        "ABS",
+                                        BigDecimal.ZERO);
+                    }
+                    ((SampleDateModel) tempModel).setAliquot(this);
+                    retVal.add(tempModel);
+                }
             }
         }
         return retVal;

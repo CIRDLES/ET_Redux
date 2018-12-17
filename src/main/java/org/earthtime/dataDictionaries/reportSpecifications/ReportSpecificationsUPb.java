@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.earthtime.dataDictionaries.AnalysisMeasures;
 import org.earthtime.dataDictionaries.RadDates;
+import org.earthtime.dataDictionaries.RadRatios;
 import org.earthtime.dataDictionaries.RadRatiosPbcCorrected;
 import org.earthtime.dataDictionaries.UThFractionationCorrectedIsotopicRatios;
 
@@ -72,7 +73,13 @@ public class ReportSpecificationsUPb extends ReportSpecificationsAbstract{
             "", "false", "false", "6", "", "Pb concentration (total)", "true", "false"
         },
         {"", "Pb*/", "Pbc", "", "getCompositionalMeasureByName", "radToCommonTotal", "",
-            "FN-2", "true", "true", "0", "", "", "true", "false"
+            "FN-2", "true", "true", "6", "", "", "true", "false"
+        },
+        {"", "%comm", "206", "", "getCompositionalMeasureByName", "pctComm206", "",
+            "", "true", "true", "6", "", "", "true", "false"
+        },
+        {"", "%comm", "208", "", "getCompositionalMeasureByName", "pctComm208", "",
+            "", "true", "true", "6", "", "", "true", "false"
         },
         {"", "[231Pa/", "235U]", "", "getAnalysisMeasure", AnalysisMeasures.ar231_235sample.getName(), "",
             "FN-10", "false", "true", "3", "", "[231Pa/235U] activity ratio", "false", "false"
@@ -127,6 +134,9 @@ public class ReportSpecificationsUPb extends ReportSpecificationsAbstract{
             "FN-5", "false", "true", "3", "false", "", "true", "false"
         },
         {"", "206Pb/", "238U", "", "getRadiogenicIsotopeRatioByName", "r206_238r", "PCT",
+            "FN-5", "true", "false", "2", "true", "", "true", "true"
+        },
+        {"", "238U/", "206Pb", "", "getRadiogenicIsotopeRatioByName", RadRatios.r238_206r.getName(), "PCT",
             "FN-5", "true", "false", "2", "true", "", "true", "true"
         },
         {"", "207Pb/", "235U", "", "getRadiogenicIsotopeRatioByName", "r207_235r", "PCT",
@@ -201,6 +211,9 @@ public class ReportSpecificationsUPb extends ReportSpecificationsAbstract{
      */
     public static final String[][] ReportCategory_PbcCorrIsotopicRatios = new String[][]{
         {"207Pb/", "206Pb", "PbcCorr", "", "getRadiogenicIsotopeRatioByName", RadRatiosPbcCorrected.r207_206_PbcCorr.getName(), "PCT",
+            "", "true", "false", "2", "true", "", "true", "false"
+        },
+        {"238U/", "206Pb", "PbcCorr", "", "getRadiogenicIsotopeRatioByName", RadRatiosPbcCorrected.r238_206_PbcCorr.getName(), "PCT",
             "", "true", "false", "2", "true", "", "true", "false"
         },
         {"206Pb/", "238U", "PbcCorr", "", "getRadiogenicIsotopeRatioByName", RadRatiosPbcCorrected.r206_238_PbcCorr.getName(), "PCT",

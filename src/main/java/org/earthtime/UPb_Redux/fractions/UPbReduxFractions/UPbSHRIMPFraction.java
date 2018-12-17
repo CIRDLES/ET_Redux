@@ -1420,7 +1420,7 @@ public class UPbSHRIMPFraction extends Fraction implements
 
     @Override
     public boolean isCommonLeadLossCorrected() {
-        return !(commonLeadLossCorrectionScheme instanceof CommonLeadLossCorrectionSchemeNONE);
+        return true;//!(commonLeadLossCorrectionScheme instanceof CommonLeadLossCorrectionSchemeNONE);
     }
 
     /**

@@ -33,32 +33,27 @@ public enum RadRatiosPbcCorrected {
 
     // radiogenic ratios PbcCorrected for schme B1 and B2
     // added oct 2014 for laicpms
-
     /**
      *
      */
-        r207_206_PbcCorr("r207_206_PbcCorr"),
-
+    r207_206_PbcCorr("r207_206_PbcCorr"),
     /**
      *
      */
     r206_238_PbcCorr("r206_238_PbcCorr"),
-
     /**
      *
      */
     r238_206_PbcCorr("r238_206_PbcCorr"),
-
     /**
      *
      */
     r208_232_PbcCorr("r208_232_PbcCorr"),
-
     /**
      *
      */
     r207_235_PbcCorr("r207_235_PbcCorr");
-    
+
     private String name;
 
     private RadRatiosPbcCorrected(String name) {

@@ -25,7 +25,6 @@ import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
-import java.awt.geom.CubicCurve2D;
 import java.awt.geom.Path2D;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -243,8 +242,8 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
                 if (!f.isRejected()) {
                     generateEllipsePathIII(//
                             f,
-                            f.getLegacyActivityRatioByName(UThAnalysisMeasures.ar230Th_238Ufc.getName()),
-                            f.getLegacyActivityRatioByName(UThAnalysisMeasures.ar234U_238Ufc.getName()),
+                            f.getAnalysisMeasure(UThAnalysisMeasures.ar230Th_238Ufc.getName()),
+                            f.getAnalysisMeasure(UThAnalysisMeasures.ar234U_238Ufc.getName()),
                             2.0f);
                     if (f.getErrorEllipsePath() != null) {
                         plotAFraction(g2d,

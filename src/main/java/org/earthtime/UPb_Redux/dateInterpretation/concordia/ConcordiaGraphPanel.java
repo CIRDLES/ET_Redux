@@ -1270,6 +1270,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
         String r206_238r_corrected = "r206_238r";
         String r207_235r_corrected = "r207_235r";
         String r207_206r_corrected = "r207_206r";
+        String r238_206r_corrected = "r238_206r";
         String r208_232r_corrected = "r208_232r";
 
         String rhoTW = "rhoR207_206r__r238_206r";
@@ -1296,22 +1297,27 @@ public class ConcordiaGraphPanel extends JLayeredPane
             r206_238r_corrected = RadRatiosPbcCorrected.r206_238_PbcCorr.getName();
             r207_235r_corrected = RadRatiosPbcCorrected.r207_235_PbcCorr.getName();
             r207_206r_corrected = RadRatiosPbcCorrected.r207_206_PbcCorr.getName();
+            r238_206r_corrected = RadRatiosPbcCorrected.r238_206_PbcCorr.getName();
             rhoConcordia = "rhoR206_238PbcCorr__r207_235PbcCorr";
             rhoTW = "rhoR207_206PbcCorr__r238_206PbcCorr";
         }
 
         if (getConcordiaFlavor().equalsIgnoreCase("T-W")) {
-            xAxisRatio = new ValueModel(r206_238r_corrected);
-            try {
-                xAxisRatio.setValue(BigDecimal.ONE.//
-                        divide(f.getRadiogenicIsotopeRatioByName(r206_238r_corrected).getValue(),//
-                                ReduxConstants.mathContext15));
-                xAxisRatio.setUncertaintyType("ABS");
-                xAxisRatio.setOneSigma(f.getRadiogenicIsotopeRatioByName(r206_238r_corrected).getOneSigmaAbs().//
-                        divide(f.getRadiogenicIsotopeRatioByName(r206_238r_corrected).getValue().pow(2),//
-                                ReduxConstants.mathContext15));
-            } catch (Exception e) {
-                xAxisRatio = new ValueModel(r206_238r_corrected);
+            if (f.getRadiogenicIsotopeRatioByName(r238_206r_corrected).getValue().signum() == 1) {
+                xAxisRatio = f.getRadiogenicIsotopeRatioByName(r238_206r_corrected);
+            } else {
+                xAxisRatio = new ValueModel("r238_206r");//          r206_238r_corrected);
+                try {
+                    xAxisRatio.setValue(BigDecimal.ONE.//
+                            divide(f.getRadiogenicIsotopeRatioByName(r206_238r_corrected).getValue(),//
+                                    ReduxConstants.mathContext15));
+                    xAxisRatio.setUncertaintyType("ABS");
+                    xAxisRatio.setOneSigma(f.getRadiogenicIsotopeRatioByName(r206_238r_corrected).getOneSigmaAbs().//
+                            divide(f.getRadiogenicIsotopeRatioByName(r206_238r_corrected).getValue().pow(2),//
+                                    ReduxConstants.mathContext15));
+                } catch (Exception e) {
+                    xAxisRatio = new ValueModel("r238_206r");//r206_238r_corrected);
+                }
             }
 
             yAxisRatio = f.getRadiogenicIsotopeRatioByName(r207_206r_corrected);
@@ -1620,6 +1626,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
             String r206_238r_corrected = "r206_238r";
             String r207_235r_corrected = "r207_235r";
             String r207_206r_corrected = "r207_206r";
+            String r238_206r_corrected = "r238_206r";
             String r208_232r_corrected = "r208_232r";
 
             String rhoTW = "rhoR207_206r__r238_206r";
@@ -1646,6 +1653,7 @@ public class ConcordiaGraphPanel extends JLayeredPane
                 r206_238r_corrected = RadRatiosPbcCorrected.r206_238_PbcCorr.getName();
                 r207_235r_corrected = RadRatiosPbcCorrected.r207_235_PbcCorr.getName();
                 r207_206r_corrected = RadRatiosPbcCorrected.r207_206_PbcCorr.getName();
+                r238_206r_corrected = RadRatiosPbcCorrected.r238_206_PbcCorr.getName();
                 rhoConcordia = "rhoR206_238PbcCorr__r207_235PbcCorr";
                 rhoTW = "rhoR207_206PbcCorr__r238_206PbcCorr";
             }
@@ -1654,18 +1662,21 @@ public class ConcordiaGraphPanel extends JLayeredPane
 
                 if (!f.isRejected() && !(isDisplay_PbcCorr() && !((UPbFractionI) f).isCommonLeadLossCorrected())) {
                     if (getConcordiaFlavor().equalsIgnoreCase("T-W")) {
-                        xAxisRatio = new ValueModel("r238_206r");
-                        try {
-                            xAxisRatio.setValue(BigDecimal.ONE.//
-                                    divide(f.getRadiogenicIsotopeRatioByName(r206_238r_corrected).getValue(),//
-                                            ReduxConstants.mathContext15));
-                            xAxisRatio.setUncertaintyType("ABS");
-                            xAxisRatio.setOneSigma(f.getRadiogenicIsotopeRatioByName(r206_238r_corrected).getOneSigmaAbs().//
-                                    divide(f.getRadiogenicIsotopeRatioByName(r206_238r_corrected).getValue().pow(2),//
-                                            ReduxConstants.mathContext15));
-                        } catch (Exception e) {
+                        if (f.getRadiogenicIsotopeRatioByName(r238_206r_corrected).getValue().signum() == 1) {
+                            xAxisRatio = f.getRadiogenicIsotopeRatioByName(r238_206r_corrected);
+                        } else {
+                            xAxisRatio = new ValueModel("r238_206r");
+                            try {
+                                xAxisRatio.setValue(BigDecimal.ONE.//
+                                        divide(f.getRadiogenicIsotopeRatioByName(r206_238r_corrected).getValue(),//
+                                                ReduxConstants.mathContext15));
+                                xAxisRatio.setUncertaintyType("ABS");
+                                xAxisRatio.setOneSigma(f.getRadiogenicIsotopeRatioByName(r206_238r_corrected).getOneSigmaAbs().//
+                                        divide(f.getRadiogenicIsotopeRatioByName(r206_238r_corrected).getValue().pow(2),//
+                                                ReduxConstants.mathContext15));
+                            } catch (Exception e) {
+                            }
                         }
-
                         yAxisRatio = f.getRadiogenicIsotopeRatioByName(r207_206r_corrected);
                         correlationCoefficient = f.getRadiogenicIsotopeRatioByName(rhoTW);
 
@@ -1744,16 +1755,20 @@ public class ConcordiaGraphPanel extends JLayeredPane
                 for (ETFractionInterface f : excludedFractions) {
                     if (!f.isRejected() && !(isDisplay_PbcCorr() && !((UPbFractionI) f).isCommonLeadLossCorrected())) {
                         if (getConcordiaFlavor().equalsIgnoreCase("T-W")) {
-                            xAxisRatio = new ValueModel("r238_206r");
-                            try {
-                                xAxisRatio.setValue(BigDecimal.ONE.//
-                                        divide(f.getRadiogenicIsotopeRatioByName(r206_238r_corrected).getValue(),//
-                                                ReduxConstants.mathContext15));
-                                xAxisRatio.setUncertaintyType("ABS");
-                                xAxisRatio.setOneSigma(f.getRadiogenicIsotopeRatioByName(r206_238r_corrected).getOneSigmaAbs().//
-                                        divide(f.getRadiogenicIsotopeRatioByName(r206_238r_corrected).getValue().pow(2),//
-                                                ReduxConstants.mathContext15));
-                            } catch (Exception e) {
+                            if (f.getRadiogenicIsotopeRatioByName(r238_206r_corrected).getValue().signum() == 1) {
+                                xAxisRatio = f.getRadiogenicIsotopeRatioByName(r238_206r_corrected);
+                            } else {
+                                xAxisRatio = new ValueModel("r238_206r");
+                                try {
+                                    xAxisRatio.setValue(BigDecimal.ONE.//
+                                            divide(f.getRadiogenicIsotopeRatioByName(r206_238r_corrected).getValue(),//
+                                                    ReduxConstants.mathContext15));
+                                    xAxisRatio.setUncertaintyType("ABS");
+                                    xAxisRatio.setOneSigma(f.getRadiogenicIsotopeRatioByName(r206_238r_corrected).getOneSigmaAbs().//
+                                            divide(f.getRadiogenicIsotopeRatioByName(r206_238r_corrected).getValue().pow(2),//
+                                                    ReduxConstants.mathContext15));
+                                } catch (Exception e) {
+                                }
                             }
                             yAxisRatio = f.getRadiogenicIsotopeRatioByName(r207_206r_corrected);
 

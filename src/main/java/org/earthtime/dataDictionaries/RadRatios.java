@@ -52,6 +52,10 @@ public enum RadRatios {
     /**
      *
      */
+    r238_206r("r238_206r"),
+    /**
+     *
+     */
     r208_232r("r208_232r"),
     // oct 2014 added for common lead correction
 
