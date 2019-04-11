@@ -123,6 +123,7 @@ public class ETRedux {
         ToolTipManager.sharedInstance().setDismissDelay(10000);
 
         if (theUPbReduxFrame != null) {
+            theUPbReduxFrame.pack();
             theUPbReduxFrame.setVisible(true);
         }
 

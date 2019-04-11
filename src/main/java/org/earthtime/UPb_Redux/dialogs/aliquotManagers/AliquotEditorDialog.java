@@ -3812,6 +3812,7 @@ private void publishAliquot_panelMouseClicked(java.awt.event.MouseEvent evt) {//
     }
 
     protected void validateIGSNs() {
+        
         // April 2011 now using xxx.sampleID for sampleIGSN and need to split off
         aliquotIGSN_text.setText(getMyAliquot().getAlliquotIGSNnoRegistry());
 

@@ -1939,22 +1939,20 @@ public class SampleDateModel extends ValueModel implements
         }
 
         Matrix alphaAnalytical
-                =//
-                sAnalyticalXbarInverseU.//
+                = sAnalyticalXbarInverseU.
                         times(1.0 / U.transpose().times(sAnalyticalXbarInverseU).get(0, 0));
         Matrix alphaTracer = null;
         Matrix alphaLambda = null;
         if (!analyticalOnly) {
             Matrix sTracerXbarInverseU = sTracerXbar.solve(U);
             alphaTracer
-                    =//
-                    sTracerXbarInverseU.//
+                    = sTracerXbarInverseU.
                             times(1.0 / U.transpose().times(sTracerXbarInverseU).get(0, 0));
 
             sLambdaXbarInverse = sLambdaXbar.inverse();
             alphaLambda
                     =//
-                    sLambdaXbarInverse.times(U).//
+                    sLambdaXbarInverse.times(U).
                             times(1.0 / U.transpose().times(sLambdaXbarInverse).times(U).get(0, 0));
         }
         // dot products
@@ -1965,32 +1963,28 @@ public class SampleDateModel extends ValueModel implements
             analyticalWM += vectorXBar.get(f, 0) * alphaAnalytical.get(f, 0);
         }
         double analyticalOneSigma
-                = //
-                Math.sqrt(//
-                        alphaAnalytical.transpose().//
-                                times(sAnalyticalXbar).//
+                = Math.sqrt(
+                        alphaAnalytical.transpose().
+                                times(sAnalyticalXbar).
                                 times(alphaAnalytical).get(0, 0));
         Matrix analyticalR = vectorXBar.minus(new Matrix(countOfFractions, 1, analyticalWM));
         Matrix sAnalyticalXbarInvR = sAnalyticalXbar.solve(analyticalR);
         double analyticalMSWD
-                = //
-                analyticalR.transpose().//
-                        times(sAnalyticalXbarInvR).get(0, 0)//
+                = analyticalR.transpose().
+                        times(sAnalyticalXbarInvR).get(0, 0)
                 / (double) (countOfFractions - 1);
         if (!analyticalOnly) {
 
             double tracerOneSigma
-                    = //
-                    Math.sqrt(//
-                            alphaTracer.transpose().//
-                                    times(sTracerXbar).//
+                    = Math.sqrt(
+                            alphaTracer.transpose().
+                                    times(sTracerXbar).
                                     times(alphaTracer).get(0, 0));
 
             double lambdaOneSigma
-                    = //
-                    Math.sqrt(//
-                            alphaLambda.transpose().//
-                                    times(sLambdaXbar).//
+                    = Math.sqrt(
+                            alphaLambda.transpose().
+                                    times(sLambdaXbar).
                                     times(alphaLambda).get(0, 0));
 
             setInternalTwoSigmaUnctWithTracerCalibrationUnct(new BigDecimal(2.0 * tracerOneSigma));
@@ -2004,8 +1998,13 @@ public class SampleDateModel extends ValueModel implements
         setInternalTwoSigmaUnct(
                 new BigDecimal(2.0 * analyticalOneSigma));
 
-        setMeanSquaredWeightedDeviation(
-                new BigDecimal(analyticalMSWD));
+        try {
+            setMeanSquaredWeightedDeviation(
+                    new BigDecimal(analyticalMSWD));
+        } catch (Exception e) {
+            setMeanSquaredWeightedDeviation(
+                    BigDecimal.ZERO);
+        }
 
     }
 

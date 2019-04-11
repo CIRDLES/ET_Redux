@@ -22,17 +22,20 @@ package org.earthtime;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Vector;
@@ -1931,7 +1934,7 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
                 File pbcCorrReportFile = new File("LAICPMS_Pbc_Correction_Report_for_" + theProject.getProjectName() + ".txt");
                 PrintWriter outputWriter = null;
                 try {
-                    outputWriter = new PrintWriter(new FileWriter(pbcCorrReportFile));
+                    outputWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(pbcCorrReportFile), StandardCharsets.UTF_8));//new FileWriter(pbcCorrReportFile));
                     for (AliquotInterface activeAliquot : theProject.getSuperSample().getActiveAliquots()) {
                         outputWriter.println("Fractions from " + activeAliquot.getAliquotName() + "\n");
                         outputWriter.println(PbcCorrectionDetails.headerString() + "\n");
