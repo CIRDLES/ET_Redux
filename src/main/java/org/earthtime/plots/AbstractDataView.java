@@ -40,6 +40,7 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Map;
 import java.util.Vector;
 import javax.swing.JLayeredPane;
@@ -159,7 +160,7 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
      */
     public AbstractDataView() {
         super();
-        
+
         this.showMe = true;
     }
 
@@ -304,7 +305,12 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
      */
     public abstract void preparePanel(boolean doReset);
 
-    protected void drawAxesAndTicks(Graphics2D g2d, double rangeX, double rangeY) {
+    /**
+     *
+     * @param g2d the value of g2d
+     * @param specialYaxisDelta the value of specialYaxisDelta
+     */
+    protected void drawAxesAndTics(Graphics2D g2d, boolean specialYaxisDelta) {
 
         // reset the clip bounds to paint axis and numbers
         g2d.setClip(0, 0, getWidth(), getHeight());
@@ -345,11 +351,18 @@ public abstract class AbstractDataView extends JLayeredPane implements AliquotDe
 
                             float yLabelCenterOffset = (float) mLayout.getBounds().getWidth() / 2f;
 
+                            String ticLabel = "";
+                            if (specialYaxisDelta) {
+                                ticLabel = ticsYaxis[i].subtract(BigDecimal.ONE).movePointRight(3).setScale(1, RoundingMode.HALF_UP).toPlainString();
+                            } else {
+                                ticLabel = ticsYaxis[i].toPlainString();
+                            }
+
                             g2d.rotate(
                                     -Math.PI / 2.0,
                                     (float) mapX(getMinX_Display()) - 4f,
                                     (float) mapY(y) + yLabelCenterOffset);
-                            g2d.drawString(ticsYaxis[i].toPlainString(),
+                            g2d.drawString(ticLabel,
                                     (float) mapX(getMinX_Display()) - 4f,
                                     (float) mapY(y) + yLabelCenterOffset);
                             g2d.rotate(

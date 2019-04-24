@@ -198,7 +198,7 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
             double rangeY = (getMaxY_Display() - getMinY_Display());
 
             try {
-                drawAxesAndTicks(g2d, rangeX, rangeY);
+                drawAxesAndTics(g2d, false);
             } catch (Exception e) {
             }
 

@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
-import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JTree;
@@ -436,8 +436,8 @@ public class SampleTreeAnalysisMode extends JTree implements SampleTreeI {
                                     ((AliquotInterface) nodeInfo).determineUnusedSampleDateModels());
 
                     myEditor.setSize(340, 395);
-//                    JDialog.setDefaultLookAndFeelDecorated(true);
-
+                    myEditor.setLocationRelativeTo(this);
+                    
                     myEditor.setVisible(true);
 
                     // get a master vector of active fraction names

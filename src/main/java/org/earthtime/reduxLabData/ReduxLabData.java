@@ -43,6 +43,7 @@ import org.earthtime.dataDictionaries.RadRatios;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
 import org.earthtime.fractions.ETFractionInterface;
+import org.earthtime.plots.evolution.seaWater.SeaWaterInitialDelta234UTableModel;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.detritalUraniumAndThoriumModels.DetritalUraniumAndThoriumModel;
 import org.earthtime.ratioDataModels.initialPbModelsET.InitialPbModelET;
@@ -122,6 +123,9 @@ public final class ReduxLabData implements Serializable {
     private int defaultNegPctDiscordanceFilter;
     private int defaultPosPctDiscordanceFilter;
     private int defaultPctUncertaintyFilter;
+    
+    // April 2019
+    private SeaWaterInitialDelta234UTableModel defaultSeaWaterInitialDelta234UTableModel;
 
     /**
      * Creates a new instance of ReduxLabData
@@ -2126,6 +2130,23 @@ public final class ReduxLabData implements Serializable {
      */
     public void setDefaultPctUncertaintyFilter(int defaultPctUncertaintyFilter) {
         this.defaultPctUncertaintyFilter = defaultPctUncertaintyFilter;
+    }
+
+    /**
+     * @return the defaultSeaWaterInitialDelta234UTableModel
+     */
+    public SeaWaterInitialDelta234UTableModel getDefaultSeaWaterInitialDelta234UTableModel() {
+        if (defaultSeaWaterInitialDelta234UTableModel == null){
+            defaultSeaWaterInitialDelta234UTableModel = new SeaWaterInitialDelta234UTableModel();
+        }
+        return defaultSeaWaterInitialDelta234UTableModel;
+    }
+
+    /**
+     * @param defaultSeaWaterInitialDelta234UTableModel the defaultSeaWaterInitialDelta234UTableModel to set
+     */
+    public void setDefaultSeaWaterInitialDelta234UTableModel(SeaWaterInitialDelta234UTableModel defaultSeaWaterInitialDelta234UTableModel) {
+        this.defaultSeaWaterInitialDelta234UTableModel = defaultSeaWaterInitialDelta234UTableModel;
     }
 
 }

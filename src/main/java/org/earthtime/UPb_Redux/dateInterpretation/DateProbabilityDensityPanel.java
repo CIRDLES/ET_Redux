@@ -251,7 +251,7 @@ public class DateProbabilityDensityPanel extends JLayeredPane
 
             // draw sample curve as backdrop
             Path2D sampleProbabilities = new Path2D.Double(Path2D.WIND_NON_ZERO);
-            Path2D sampleKDE = new Path2D.Double(Path2D.WIND_NON_ZERO);
+//            Path2D sampleKDE = new Path2D.Double(Path2D.WIND_NON_ZERO);
 
             // handle zoom
             int startX = 0;
@@ -275,7 +275,7 @@ public class DateProbabilityDensityPanel extends JLayeredPane
 
 //            sampleProbabilities.moveTo( mapX( getMinX_Display() ), mapY( 0.01 ) );
             sampleProbabilities.moveTo(Math.max(leftMargin, mapX(pdfPoints.get(startX))), mapY(0.01));
-            sampleKDE.moveTo(Math.max(leftMargin, mapX(timescale[startX])), mapY(0.01));
+//            sampleKDE.moveTo(Math.max(leftMargin, mapX(timescale[startX])), mapY(0.01));
 
             double scale = 0.96/*
                      * 8
@@ -289,12 +289,12 @@ public class DateProbabilityDensityPanel extends JLayeredPane
                         Math.max(leftMargin, mapX(pdfPoints.get(i))),//
                         mapY(stackedAliquotKernels[0][i] * scale + .01));
 
-                try {
-                    sampleKDE.lineTo(//
-                            Math.max(leftMargin, mapX(timescale[i])),//
-                            mapY(pdfOfKDE[i] * scaleKDE + .01));
-                } catch (Exception e) {
-                }
+//                try {
+//                    sampleKDE.lineTo(//
+//                            Math.max(leftMargin, mapX(timescale[i])),//
+//                            mapY(pdfOfKDE[i] * scaleKDE + .01));
+//                } catch (Exception e) {
+//                }
             }
 
             sampleProbabilities.lineTo(mapX(pdfPoints.get(endX)), mapY(0.01));
@@ -770,29 +770,29 @@ public class DateProbabilityDensityPanel extends JLayeredPane
         //stackedAliquotKernels = new double[sample.getAliquots().size() + 1][pdfPoints.size() + 1];
         // aug 2016 hack to fix project problem
         stackedAliquotKernels = new double[Math.max(sample.getAliquots().size(), 9) + 1][pdfPoints.size() + 1];
-
-        // June 2013 experiment with Vermeesch KDE
-        ArrayList<Double> X = new ArrayList<>();
-        ArrayList<Double> Y = new ArrayList<>();
-        ArrayList<Double> Z = new ArrayList<>();
-
-        // 4096 = 2^12
-        timescale = new double[4096];
-        for (int i = 0; i < timescale.length; i++) {
-            timescale[i] = i;
-        }
-        // end June 2013 experiment with Vermeesch KDE
+//////
+//////        // June 2013 experiment with Vermeesch KDE
+//////        ArrayList<Double> X = new ArrayList<>();
+//////        ArrayList<Double> Y = new ArrayList<>();
+//////        ArrayList<Double> Z = new ArrayList<>();
+//////
+//////        // 4096 = 2^12
+//////        timescale = new double[4096];
+//////        for (int i = 0; i < timescale.length; i++) {
+//////            timescale[i] = i;
+//////        }
+//////        // end June 2013 experiment with Vermeesch KDE
 
         for (ETFractionInterface f : selectedFractions) {
             // April 2016 remove primary standard
             if (!f.isStandard() && !f.isSecondaryStandard()) {
                 ValueModel date = f.getRadiogenicIsotopeDateByName(chosenDateName);
 
-                // June 2013 experiment with Vermeesch KDE
-                X.add(date.getValue().movePointLeft(6).doubleValue());
-                Y.add(Math.pow(date.getOneSigmaAbs().movePointLeft(6).doubleValue(), 2));
-                Z.add(Double.NaN);
-                // end June 2013 experiment with Vermeesch KDE
+//////                // June 2013 experiment with Vermeesch KDE
+//////                X.add(date.getValue().movePointLeft(6).doubleValue());
+//////                Y.add(Math.pow(date.getOneSigmaAbs().movePointLeft(6).doubleValue(), 2));
+//////                Z.add(Double.NaN);
+//////                // end June 2013 experiment with Vermeesch KDE
 
                 int aliquotNumber = f.getAliquotNumber();
                 KernelF myKernel = new KernelF(date);
@@ -804,22 +804,22 @@ public class DateProbabilityDensityPanel extends JLayeredPane
             }
         }
 
-        // more vermeesch ************************
-        try {
-            OtherData otherData = new OtherData(X, Y, Z, new Preferences(true));
-            double[][] ae = otherData.getDataErrArray(otherData.preferences.logarithmic());
-
-            KDE kde = new KDE();
-            pdfOfKDE = kde.pdf(ae[0], timescale, true);
-
-            maxKDE = 0.0;
-            for (int i = 0; i < pdfOfKDE.length; i++) {
-                maxKDE = Math.max(maxKDE, pdfOfKDE[i]);
-            }
-
-        } catch (Exception ex) {
-        }
-        // end vermeesch ************************
+//////        // more vermeesch ************************
+//////        try {
+//////            OtherData otherData = new OtherData(X, Y, Z, new Preferences(true));
+//////            double[][] ae = otherData.getDataErrArray(otherData.preferences.logarithmic());
+//////
+//////            KDE kde = new KDE();
+//////            pdfOfKDE = kde.pdf(ae[0], timescale, true);
+//////
+//////            maxKDE = 0.0;
+//////            for (int i = 0; i < pdfOfKDE.length; i++) {
+//////                maxKDE = Math.max(maxKDE, pdfOfKDE[i]);
+//////            }
+//////
+//////        } catch (Exception ex) {
+//////        }
+//////        // end vermeesch ************************
 
         double maxDateProb = 0.0;
         for (int i = 0; i < pdfPoints.size(); i++) {

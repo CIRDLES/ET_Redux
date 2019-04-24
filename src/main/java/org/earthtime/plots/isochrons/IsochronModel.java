@@ -17,8 +17,13 @@ package org.earthtime.plots.isochrons;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
 import org.earthtime.UPb_Redux.ReduxConstants;
 
 /**
@@ -139,10 +144,33 @@ public class IsochronModel implements Comparable<IsochronModel>, Serializable {
 
     public static double[] generateDefaultEvolutionAr48icntrs() {
         int init48Density = (int) Math.pow(2, (2 + 8 / 10));
-        double [] ar48icntrs = new double[(int) 2 * init48Density + init48Density + 1];
+        double[] ar48icntrs = new double[(int) 2 * init48Density + init48Density + 1];
         for (int i = 0; i < ar48icntrs.length; i++) {
             ar48icntrs[i] = i * (double) (1.0 / (double) init48Density);
         }
+        return ar48icntrs;
+    }
+
+    public static double[] generateDefaultEvolutionAr48icntrs(double[] currentAr48icntrs) {
+        double[] ar48icntrs = generateDefaultEvolutionAr48icntrs();
+        List<Double> arList = DoubleStream.of(ar48icntrs).boxed().collect(Collectors.toList());
+        for (int i = 0; i < currentAr48icntrs.length; i++) {
+            if (!(arList.contains(currentAr48icntrs[i])
+                    || arList.contains(Math.abs(currentAr48icntrs[i])))){
+                arList.add(currentAr48icntrs[i]);
+            }
+        }
+        Collections.sort(arList,new Comparator<Double>() {
+            @Override
+            public int compare(Double o1, Double o2) {
+                return Double.compare(Math.abs(o1), Math.abs(o2));
+            }
+        });
+        ar48icntrs = new double[arList.size()];
+        for (int i = 0; i < arList.size(); i++) {
+            ar48icntrs[i] = arList.get(i);
+        }
+        
         return ar48icntrs;
     }
 

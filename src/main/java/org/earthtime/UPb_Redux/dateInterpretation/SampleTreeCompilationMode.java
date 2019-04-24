@@ -193,14 +193,12 @@ public class SampleTreeCompilationMode extends JTree implements SampleTreeI {
             DefaultMutableTreeNode SAMnode) {
 
         DefaultMutableTreeNode sampleDateValue
-                = 
-                new DefaultMutableTreeNode(//
+                = new DefaultMutableTreeNode(//
                         ((SampleDateModel) SAM).ShowCustomDateNode());
         SAMnode.add(sampleDateValue);
 
         DefaultMutableTreeNode sampleDateMSWD
-                = 
-                new DefaultMutableTreeNode(//
+                = new DefaultMutableTreeNode(//
                         ((SampleDateModel) SAM).ShowCustomMSWDwithN());
         SAMnode.add(sampleDateMSWD);
 
@@ -366,7 +364,7 @@ public class SampleTreeCompilationMode extends JTree implements SampleTreeI {
                                     ((SampleInterface) nodeInfo).determineUnusedSampleDateModels(false));
 
                     myEditor.setSize(340, 395);
-//                    DialogEditor.setDefaultLookAndFeelDecorated(true);
+                    myEditor.setLocationRelativeTo(this);
 
                     myEditor.setVisible(true);
 

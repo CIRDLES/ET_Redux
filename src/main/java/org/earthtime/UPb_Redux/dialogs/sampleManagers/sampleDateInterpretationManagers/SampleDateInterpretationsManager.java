@@ -40,6 +40,7 @@ import java.util.Vector;
 import javax.swing.AbstractButton;
 import javax.swing.Icon;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -145,12 +146,8 @@ public class SampleDateInterpretationsManager extends DialogEditor
      * Creates new form SampleDateInterpretations
      *
      * @param parent
-     * @param projectSampleAnalysisType
-     * @param sampleAnalysisType
-     * @param ampleAnalysisType
      * @param evolutionPlotPanel
      * @param ageDelta234PlotPanel
-     * @param modal
      * @param concordiaGraphPanel
      * @param plotAny2Panel the value of plotAny2Panel
      * @param useriesIsochronPanel
@@ -181,7 +178,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
 
         initComponents();
         setSize(1200, 750);
-        setLocation(getX() + 100, getY());
+        setLocation(((JFrame) parent).getX() + 100, ((JFrame) parent).getY());
 
         this.concordiaGraphPanel = concordiaGraphPanel;
         initConcordiaGraphPanel();
@@ -303,8 +300,11 @@ public class SampleDateInterpretationsManager extends DialogEditor
         ((DefaultTreeModel) ((JTree) dateTreeByAliquot).getModel()).reload();
 
         dateTreeByAliquot.expandToHistory(expansionHistory);
-        ((JTree) dateTreeByAliquot).setSelectionRow(selRow);
-        ((JTree) dateTreeByAliquot).scrollRowToVisible(selRow);
+
+        if (selRow > 0) {
+            ((JTree) dateTreeByAliquot).setSelectionRow(selRow);
+            ((JTree) dateTreeByAliquot).scrollRowToVisible(selRow);
+        }
 
         ((PlottingDetailsDisplayInterface) concordiaGraphPanel).resetPanel(doReScale, inLiveMode);
         ((AbstractPlot) plotAny2Panel).fitMcLeanRegression();
@@ -1105,6 +1105,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
                         true,
                         ((SampleDateModel) sample.getSampleDateModelByName("DEFAULT")));
         myDialog.setSize(340, 625);
+        myDialog.setLocationRelativeTo(this);
         myDialog.setVisible(true);
 
         myDialog.dispose();
@@ -1120,6 +1121,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
                         true,
                         ((SampleDateModel) sample.getSampleDateModelByName("DEFAULT")));
         myDialog.setSize(340, 625);
+        myDialog.setLocationRelativeTo(this);
         myDialog.setVisible(true);
 
         myDialog.dispose();
@@ -1195,7 +1197,7 @@ public class SampleDateInterpretationsManager extends DialogEditor
         DialogEditor myDialog
                 = new SampleDateInterpretationAny2VariablesChooser(null, true, (PlotAny2Panel) plotAny2Panel, variablesListing);
         myDialog.setSize(555, 460);
-//        JDialog.setDefaultLookAndFeelDecorated(true);
+        myDialog.setLocationRelativeTo(this);
         myDialog.setVisible(true);
 
         ((AbstractPlot) plotAny2Panel).fitMcLeanRegression();
@@ -1215,6 +1217,17 @@ public class SampleDateInterpretationsManager extends DialogEditor
 
         // Save concordia options 
         ((ConcordiaGraphPanel) getConcordiaGraphPanel()).saveSettings();
+
+        concordiaGraphPanel = null;
+        weightedMeanGraphPanel = null;
+        plotAny2Panel = null;
+        useriesIsochronPanel = null;
+        evolutionPlotPanel = null;
+        ageDelta234PlotPanel = null;
+        probabilityPanel = null;
+        
+        removeAll();
+        dispose();
 
         // oct 2014 send signal to main frame to enable sampledate button
         parentFrame.publishClosingOfSampleDateInterpretation();

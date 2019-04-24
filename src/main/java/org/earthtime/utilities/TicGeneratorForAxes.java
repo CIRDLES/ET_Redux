@@ -29,18 +29,18 @@ import java.math.RoundingMode;
 public class TicGeneratorForAxes {
 
     /**
-     * 
+     *
      */
     public static int indexOfFirstMajorTic = 0;
 
     /**
-     * 
+     *
      * @param axisMin
      * @param axisMax
      * @param numberTics
      * @return
      */
-    public static BigDecimal[] generateTics ( double axisMin, double axisMax, int numberTics ) {
+    public static BigDecimal[] generateTics(double axisMin, double axisMax, int numberTics) {
         /* Adapted from
          * Nice Numbers for Graph Labels
          * by Paul Heckbert
@@ -53,12 +53,12 @@ public class TicGeneratorForAxes {
         double ticMax;
         double ticRange;
 
-        ticRange = niceNum( axisMax - axisMin, true );
-        d = niceNum( ticRange / (numberTics - 1), false );
-        ticMin = Math.floor( axisMin / d ) * d;
-        ticMax = Math.ceil( axisMax / d ) * d;
+        ticRange = niceNum(axisMax - axisMin, true);
+        d = niceNum(ticRange / (numberTics - 1), false);
+        ticMin = Math.floor(axisMin / d) * d;
+        ticMax = Math.ceil(axisMax / d) * d;
 
-        nfrac = (int) Math.max(  - Math.floor( Math.log10( d ) ), 0 );
+        nfrac = (int) Math.max(-Math.floor(Math.log10(d)), 0);
 
         BigDecimal[] tics = new BigDecimal[0];
 
@@ -66,34 +66,34 @@ public class TicGeneratorForAxes {
             tics = new BigDecimal[(int) ((ticMax + 0.5 * d - ticMin) / d) + 1];
             int index = 0;
             for (double x = ticMin; x < ticMax + 0.5 * d; x += d) {
-                tics[index] = new BigDecimal( Double.toString( x) ).setScale( nfrac, RoundingMode.HALF_UP );
-                index ++;
+                tics[index] = new BigDecimal(Double.toString(x)).setScale(nfrac, RoundingMode.HALF_UP);
+                index++;
             }
 
             // find index of tic ending with most zeroes (3 2 1 or 0)
             indexOfFirstMajorTic = 0;
-            for (int i = 0; i < tics.length; i ++) {
+            for (int i = 0; i < tics.length; i++) {
                 String val = tics[i].toPlainString();
-                if ( (val.length() > 2) && val.endsWith( "000" ) ) {
+                if ((val.length() > 2) && val.endsWith("000")) {
                     indexOfFirstMajorTic = i;
 //                System.out.println("val3  " + val + "   " + indexOfFirstMajorTic);
                     break;
                 }
             }
-            if ( indexOfFirstMajorTic == 0 ) {
-                for (int i = 0; i < tics.length; i ++) {
+            if (indexOfFirstMajorTic == 0) {
+                for (int i = 0; i < tics.length; i++) {
                     String val = tics[i].toPlainString();
-                    if ( (val.length() > 1) && val.endsWith( "00" ) ) {
+                    if ((val.length() > 1) && val.endsWith("00")) {
                         indexOfFirstMajorTic = i;
 //                    System.out.println("val2  " + val + "   " + indexOfFirstMajorTic);
                         break;
                     }
                 }
             }
-            if ( indexOfFirstMajorTic == 0 ) {
-                for (int i = 0; i < tics.length; i ++) {
+            if (indexOfFirstMajorTic == 0) {
+                for (int i = 0; i < tics.length; i++) {
                     String val = tics[i].toPlainString();
-                    if ( (val.length() > 1) && val.endsWith( "0" ) ) {
+                    if ((val.length() > 1) && val.endsWith("0")) {
                         indexOfFirstMajorTic = i;
 //                    System.out.println("val1  " + val + "   " + indexOfFirstMajorTic);
                         break;
@@ -107,47 +107,51 @@ public class TicGeneratorForAxes {
     }
 
     /**
-     * 
+     *
      * @param min
      * @param max
      * @param marginStretchFactor
      * @return
      */
-    public static double generateMarginAdjustment ( double min, double max, double marginStretchFactor ) {
+    public static double generateMarginAdjustment(double min, double max, double marginStretchFactor) {
 
-        return marginStretchFactor * (max - min);
+        return marginStretchFactor * ((max == min) ? 1.0 : (max - min));
 
     }
 
-    private static double niceNum ( double x, boolean round ) {
+    private static double niceNum(double x, boolean round) {
         /* Adapted from
          * Nice Numbers for Graph Labels
          * by Paul Heckbert
          * from "Graphics Gems", Academic Press, 1990
          */
 
-        int expv;				/* exponent of x */
-        double f;				/* fractional part of x */
-        double nf;				/* nice, rounded fraction */
+        int expv;
+        /* exponent of x */
+        double f;
+        /* fractional part of x */
+        double nf;
+        /* nice, rounded fraction */
 
-        expv = (int) Math.floor( Math.log10( x ) );
-        f = x / Math.pow( 10.0, expv );		/* between 1 and 10 */
-        if ( round ) {
-            if ( f < 1.5 ) {
+        expv = (int) Math.floor(Math.log10(x));
+        f = x / Math.pow(10.0, expv);
+        /* between 1 and 10 */
+        if (round) {
+            if (f < 1.5) {
                 nf = 1.;
-            } else if ( f < 3. ) {
+            } else if (f < 3.) {
                 nf = 2.;
-            } else if ( f < 7. ) {
+            } else if (f < 7.) {
                 nf = 5.;
             } else {
                 nf = 10.;
             }
         } else {
-            if ( f <= 1. ) {
+            if (f <= 1.) {
                 nf = 1.;
-            } else if ( f <= 2. ) {
+            } else if (f <= 2.) {
                 nf = 2.;
-            } else if ( f <= 5. ) {
+            } else if (f <= 5.) {
                 nf = 5.;
             } else {
                 nf = 10.;
@@ -155,6 +159,6 @@ public class TicGeneratorForAxes {
 
         }
 
-        return nf * Math.pow( 10.0, expv );
+        return nf * Math.pow(10.0, expv);
     }
 }

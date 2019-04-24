@@ -18,12 +18,18 @@
  */
 package org.earthtime.dialogs;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.HeadlessException;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,7 +37,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.help.CSH;
 import javax.swing.JFrame;
+import javax.swing.JLayeredPane;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.event.CellEditorListener;
+import javax.swing.event.ChangeEvent;
 import javax.swing.filechooser.FileFilter;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.exceptions.BadLabDataException;
@@ -41,6 +54,9 @@ import org.earthtime.XMLExceptions.BadOrMissingXMLSchemaException;
 import org.earthtime.beans.ET_JButton;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.exceptions.ETWarningDialog;
+import org.earthtime.plots.AbstractDataView;
+import org.earthtime.plots.evolution.seaWater.SeaWaterDelta234UGraph;
+import org.earthtime.plots.evolution.seaWater.SeaWaterInitialDelta234UTableModel;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.ratioDataModels.detritalUraniumAndThoriumModels.DetritalUraniumAndThoriumModel;
 import org.earthtime.ratioDataModels.mineralStandardModels.MineralStandardUPbModel;
@@ -78,6 +94,12 @@ public class LabDataEditorDialogUTh extends DialogEditor {
     private AbstractRatiosDataView mineralStandardModelView;
     private AbstractRatiosDataView detritalUThModelView;
     private AbstractRatiosDataView physicalConstantsModelView;
+
+    private JPopupMenu seaWaterInitialDelta234UTablePopup;
+    private JTable seaWaterInitialDelta234UTable;
+    private JScrollPane seaWaterInitialDelta234UTablePane;
+    private SeaWaterInitialDelta234UTableModel seaWaterInitialDelta234UTableModel;
+    private AbstractDataView seaWaterDelta234UGraph;
 
     /**
      * Creates new form LabDataEditorDialog
@@ -120,6 +142,8 @@ public class LabDataEditorDialogUTh extends DialogEditor {
         // Lab Default tab
         InitializeLabDefaultsTabTextBoxes(true);
 
+        initializeSeaWaterDelta();
+
         // set up tabs
         detritalUTh_Tab_panel.setBackground(ReduxConstants.dataModelGray);
 
@@ -128,6 +152,84 @@ public class LabDataEditorDialogUTh extends DialogEditor {
         physicalConstantsModels_panel.setBackground(ReduxConstants.mySampleYellowColor);
 
         showSavedLabData(selectTab);
+
+    }
+
+    private void initializeSeaWaterDelta() {
+        this.seaWaterInitialDelta234UTableModel = myLabData.getDefaultSeaWaterInitialDelta234UTableModel();
+
+        //create the seaWaterInitialDelta234UTable
+        seaWaterInitialDelta234UTable = new JTable(seaWaterInitialDelta234UTableModel);
+        seaWaterInitialDelta234UTable.setShowGrid(true);
+        seaWaterInitialDelta234UTable.setGridColor(Color.blue);
+        seaWaterInitialDelta234UTable.setFillsViewportHeight(true);
+
+        seaWaterInitialDelta234UTablePopup = new JPopupMenu();
+        JMenuItem menuItemAdd = new JMenuItem("Add Age row");
+        menuItemAdd.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                seaWaterInitialDelta234UTableModel.addRow();
+                seaWaterInitialDelta234UTableModel.fireTableDataChanged();
+            }
+        });
+        seaWaterInitialDelta234UTablePopup.add(menuItemAdd);
+
+        JMenuItem menuItemDelete = new JMenuItem("Delete Age row");
+        menuItemDelete.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                seaWaterInitialDelta234UTableModel.removeRow(seaWaterInitialDelta234UTable.getSelectedRow());
+                seaWaterInitialDelta234UTableModel.fireTableDataChanged();
+                seaWaterDelta234UGraph.refreshPanel(true);
+            }
+        });
+        seaWaterInitialDelta234UTablePopup.add(menuItemDelete);
+
+        seaWaterInitialDelta234UTable.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                if (e.getButton() != MouseEvent.BUTTON1) {
+                    JTable source = (JTable) e.getSource();
+                    int row = source.rowAtPoint(e.getPoint());
+                    int column = source.columnAtPoint(e.getPoint());
+
+                    if (!source.isRowSelected(row)) {
+                        source.changeSelection(row, column, false, false);
+                    }
+
+                    seaWaterInitialDelta234UTablePopup.show(e.getComponent(), e.getX(), e.getY());
+                }
+
+            }
+        });
+
+        seaWaterInitialDelta234UTable.getDefaultEditor(Double.class).addCellEditorListener(new CellEditorListener() {
+            @Override
+            public void editingStopped(ChangeEvent e) {
+                seaWaterDelta234UGraph.refreshPanel(true);
+            }
+
+            @Override
+            public void editingCanceled(ChangeEvent e) {
+                seaWaterDelta234UGraph.refreshPanel(true);
+            }
+        });
+
+        seaWaterInitialDelta234UTable.setPreferredSize(new Dimension(1000, 250));
+        seaWaterInitialDelta234UTable.setPreferredScrollableViewportSize(seaWaterInitialDelta234UTable.getPreferredSize());
+        seaWaterInitialDelta234UTablePane = new JScrollPane(seaWaterInitialDelta234UTable);
+
+        seaWaterDelta234LayeredPane.setLayout(new BorderLayout(10, 10));
+
+        seaWaterDelta234LayeredPane.add(seaWaterInitialDelta234UTablePane, BorderLayout.NORTH);
+
+        seaWaterDelta234UGraph = new SeaWaterDelta234UGraph(seaWaterInitialDelta234UTableModel);
+        seaWaterDelta234UGraph.setPreferredSize(new Dimension(1000, 300));
+        seaWaterDelta234UGraph.preparePanel(true);
+        seaWaterDelta234UGraph.repaint();
+        seaWaterDelta234LayeredPane.add(seaWaterDelta234UGraph, BorderLayout.SOUTH);
 
     }
 
@@ -1153,6 +1255,7 @@ public class LabDataEditorDialogUTh extends DialogEditor {
         // hide all menu items
         detritalUTh_menu.setVisible(false);
         physicalConstantsModels_menu.setVisible(false);
+        seaWaterModels_menu.setVisible(false);
         MineralStdModels_menu.setVisible(false);
 
         // refresh tabs
@@ -1173,6 +1276,9 @@ public class LabDataEditorDialogUTh extends DialogEditor {
                 initMineralStandardModelChooser();
                 break;
             case 3:
+                seaWaterModels_menu.setVisible(true);
+                break;
+            case 4:
                 showSavedLabDefaults();
                 CSH.setHelpIDString(this, "LabData.Managing LabData Default");
 
@@ -1199,6 +1305,7 @@ public class LabDataEditorDialogUTh extends DialogEditor {
         mineralStandard_panel = new javax.swing.JPanel();
         chooseMineralStandardModel_label = new javax.swing.JLabel();
         MineralStandardModelChooser = new javax.swing.JComboBox<>();
+        seaWaterDelta234LayeredPane = new javax.swing.JLayeredPane();
         labDefaults_panel = new javax.swing.JPanel();
         defaultDetritalUThModel_label = new javax.swing.JLabel();
         defaultDetritalUThModel_Chooser = new javax.swing.JComboBox<>();
@@ -1241,6 +1348,8 @@ public class LabDataEditorDialogUTh extends DialogEditor {
         cancelNewEditDetritalUThModel_menuItem = new javax.swing.JMenuItem();
         jSeparator22 = new javax.swing.JPopupMenu.Separator();
         saveAndRegisterCurrentEditOfDetritalUThModel_menuItem = new javax.swing.JMenuItem();
+        seaWaterModels_menu = new javax.swing.JMenu();
+        defaultDelta234U = new javax.swing.JMenuItem();
         MineralStdModels_menu = new javax.swing.JMenu();
         importLocalMineralStdModelXML_menuItem = new javax.swing.JMenuItem();
         saveMineralStdModelAsXML_menuItem = new javax.swing.JMenuItem();
@@ -1348,6 +1457,19 @@ public class LabDataEditorDialogUTh extends DialogEditor {
         );
 
         details_pane.addTab("Ref Material Models", mineralStandard_panel);
+
+        org.jdesktop.layout.GroupLayout seaWaterDelta234LayeredPaneLayout = new org.jdesktop.layout.GroupLayout(seaWaterDelta234LayeredPane);
+        seaWaterDelta234LayeredPane.setLayout(seaWaterDelta234LayeredPaneLayout);
+        seaWaterDelta234LayeredPaneLayout.setHorizontalGroup(
+            seaWaterDelta234LayeredPaneLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 1092, Short.MAX_VALUE)
+        );
+        seaWaterDelta234LayeredPaneLayout.setVerticalGroup(
+            seaWaterDelta234LayeredPaneLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 617, Short.MAX_VALUE)
+        );
+
+        details_pane.addTab("SeaWater Model", seaWaterDelta234LayeredPane);
 
         labDefaults_panel.setBackground(new java.awt.Color(212, 231, 232));
 
@@ -1686,6 +1808,18 @@ public class LabDataEditorDialogUTh extends DialogEditor {
 
         labData_menuBar.add(detritalUTh_menu);
         detritalUTh_menu.getAccessibleContext().setAccessibleName("");
+
+        seaWaterModels_menu.setText("SeaWater Models");
+
+        defaultDelta234U.setText("Default delta 234U");
+        defaultDelta234U.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                defaultDelta234UActionPerformed(evt);
+            }
+        });
+        seaWaterModels_menu.add(defaultDelta234U);
+
+        labData_menuBar.add(seaWaterModels_menu);
 
         MineralStdModels_menu.setText("Reference Material Models");
         MineralStdModels_menu.addMenuListener(new javax.swing.event.MenuListener() {
@@ -2179,6 +2313,10 @@ public class LabDataEditorDialogUTh extends DialogEditor {
         }
     }//GEN-LAST:event_saveAndRegisterCurrentEditOfDetritalUThModel_menuItemActionPerformed
 
+    private void defaultDelta234UActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_defaultDelta234UActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_defaultDelta234UActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem ImportPhysicalConstantsModelXML_menuItem;
     private javax.swing.JComboBox<String> MineralStandardModelChooser;
@@ -2191,6 +2329,7 @@ public class LabDataEditorDialogUTh extends DialogEditor {
     private javax.swing.JLabel chooseMineralStandardModel_label;
     private javax.swing.JLabel choosePhysicalConstants_label;
     private javax.swing.JMenuItem closeDialog_menuItem;
+    private javax.swing.JMenuItem defaultDelta234U;
     private javax.swing.JComboBox<String> defaultDetritalUThModel_Chooser;
     private javax.swing.JLabel defaultDetritalUThModel_label;
     private javax.swing.JLabel defaultMineralStandardModel_label;
@@ -2247,5 +2386,7 @@ public class LabDataEditorDialogUTh extends DialogEditor {
     private javax.swing.JMenuItem saveMineralStdModelAsXML_menuItem;
     private javax.swing.JMenuItem savePhysicalConstantsModelAsXML_menuItem;
     private javax.swing.JButton save_button;
+    private javax.swing.JLayeredPane seaWaterDelta234LayeredPane;
+    private javax.swing.JMenu seaWaterModels_menu;
     // End of variables declaration//GEN-END:variables
 }

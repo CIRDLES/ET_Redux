@@ -174,6 +174,7 @@ public class SampleDateModel extends ValueModel implements
     private boolean automaticIsochronSelection;
     private double[] ar48icntrs;
     private boolean automaticInitDelta234USelection;
+    private boolean ar48icntrsDsplayAsDeltaUnits;
 
     /**
      * creates a new instance of <code>SampleDateModel</code> with all of its
@@ -199,6 +200,7 @@ public class SampleDateModel extends ValueModel implements
         this.automaticIsochronSelection = true;
         this.ar48icntrs = new double[0];
         this.automaticInitDelta234USelection = true;
+        this.ar48icntrsDsplayAsDeltaUnits = true;
     }
 
     /**
@@ -3231,6 +3233,20 @@ public class SampleDateModel extends ValueModel implements
      */
     public void setAr48icntrs(double[] ar48icntrs) {
         this.ar48icntrs = ar48icntrs;
+    }
+
+    /**
+     * @return the ar48icntrsDsplayAsDeltaUnits
+     */
+    public boolean isAr48icntrsDsplayAsDeltaUnits() {
+        return ar48icntrsDsplayAsDeltaUnits;
+    }
+
+    /**
+     * @param ar48icntrsDsplayAsDeltaUnits the ar48icntrsDsplayAsDeltaUnits to set
+     */
+    public void setAr48icntrsDsplayAsDeltaUnits(boolean ar48icntrsDsplayAsDeltaUnits) {
+        this.ar48icntrsDsplayAsDeltaUnits = ar48icntrsDsplayAsDeltaUnits;
     }
 
 }
