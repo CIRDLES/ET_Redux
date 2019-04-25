@@ -284,6 +284,8 @@ public class SampleDateInterpretationsManager extends DialogEditor
 
             default:
         }
+        
+        seaDelta234U_button.setVisible(false);
 
     }
 

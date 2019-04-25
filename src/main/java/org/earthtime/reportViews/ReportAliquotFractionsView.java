@@ -218,6 +218,11 @@ public class ReportAliquotFractionsView extends JLayeredPane implements ReportUp
         return reportFractions;
     }
 
+    @Override
+    public void updateEvolutionPlot() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
     class TableRowObject implements Comparable<TableRowObject> {
 
         private final int bottomPixelCount;

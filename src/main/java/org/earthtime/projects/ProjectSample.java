@@ -21,12 +21,16 @@ package org.earthtime.projects;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
+import math.geom2d.Point2D;
 import org.earthtime.UPb_Redux.ReduxConstants;
 import org.earthtime.UPb_Redux.ReduxConstants.ANALYSIS_PURPOSE;
 import org.earthtime.UPb_Redux.dateInterpretation.graphPersistence.GraphAxesSetup;
@@ -118,12 +122,52 @@ public class ProjectSample implements//
         this.concordiaGraphAxesSetup = new GraphAxesSetup("C", 2);
         this.terraWasserburgGraphAxesSetup = new GraphAxesSetup("T-W", 2);
         this.sampleDateModels = new Vector<>();
-        
+
         this.upperBoundary = new TreeMap<>(new UpperBoundaryComparator());
         this.lowerBoundary = new TreeMap<>(new LowerBoundaryComparator());
 
         initFilteredFractionsToAll();
 
+    }
+
+    /**
+     *
+     * @param x
+     * @param y
+     * @return
+     */
+    public boolean calculateIfEllipseIncluded(double x, double y) {
+        boolean retVal = true;
+        if (upperBoundary == null) {
+            upperBoundary = new TreeMap<>(new UpperBoundaryComparator());
+        }
+        if (lowerBoundary == null) {
+            lowerBoundary = new TreeMap<>(new LowerBoundaryComparator());
+        }
+
+        if (upperBoundary.size() > 1 && lowerBoundary.size() > 1) {
+            // build polygon
+            List<Point2D> polygon = new ArrayList<>();
+
+            Iterator<Double> upperKeys = upperBoundary.keySet().iterator();
+            while (upperKeys.hasNext()) {
+                double age = upperKeys.next();
+                double initDelta = upperBoundary.get(age);
+                Point2D point = new Point2D(age, initDelta);
+                polygon.add(point);
+            }
+
+            Iterator<Double> lowerKeys = lowerBoundary.keySet().iterator();
+            while (lowerKeys.hasNext()) {
+                double age = lowerKeys.next();
+                double initDelta = lowerBoundary.get(age);
+                Point2D point = new Point2D(age, initDelta);
+                polygon.add(point);
+            }
+
+            retVal = (math.geom2d.polygon.Polygons2D.windingNumber(polygon, new Point2D(x, y)) != 0);
+        }
+        return retVal;
     }
 
     @Override
@@ -531,6 +575,10 @@ public class ProjectSample implements//
      * @return the upperBoundary
      */
     public Map<Double, Double> getUpperBoundary() {
+        if (upperBoundary == null) {
+            upperBoundary = new TreeMap<>(new UpperBoundaryComparator());
+        }
+
         return upperBoundary;
     }
 
@@ -545,6 +593,9 @@ public class ProjectSample implements//
      * @return the lowerBoundary
      */
     public Map<Double, Double> getLowerBoundary() {
+        if (lowerBoundary == null) {
+            lowerBoundary = new TreeMap<>(new LowerBoundaryComparator());
+        }
         return lowerBoundary;
     }
 

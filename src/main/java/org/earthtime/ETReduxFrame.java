@@ -22,8 +22,6 @@ package org.earthtime;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -3715,6 +3713,10 @@ public class ETReduxFrame extends javax.swing.JFrame implements ReportPainterI, 
 
         }
 
+    }
+    
+    public void updateEvolutionPlot(){
+        ((EvolutionPlotPanel)myEvolutionPlotPanel).repaint();
     }
 
     /**

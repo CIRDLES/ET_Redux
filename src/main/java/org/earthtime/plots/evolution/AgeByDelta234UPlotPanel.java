@@ -33,10 +33,7 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.Vector;
@@ -60,7 +57,7 @@ import org.earthtime.utilities.TicGeneratorForAxes;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 
-import math.geom2d.Point2D;
+import org.earthtime.projects.ProjectSample;
 
 /**
  *
@@ -70,12 +67,16 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
 
     protected transient ReportUpdaterInterface reportUpdater;
 
+    SampleInterface mySample;
+
     // maps age to delta
     private Map<Double, Double> upperBoundary;
     private Map<Double, Double> lowerBoundary;
 
     public AgeByDelta234UPlotPanel(SampleInterface mySample, ReportUpdaterInterface reportUpdater) {
         super();
+
+        this.mySample = mySample;
 
         this.leftMargin = 40;
         this.topMargin = 40;
@@ -153,7 +154,8 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
                 ageInKa.setOneSigma(ageInKa.getOneSigmaAbs().movePointLeft(3));
                 if (!f.isRejected()) {
                     boolean included
-                            = calculateIfEllipseIncluded(ageInKa.getValue().doubleValue(),
+                            = ((ProjectSample) mySample).calculateIfEllipseIncluded(
+                                    ageInKa.getValue().doubleValue(),
                                     f.getAnalysisMeasure(UThAnalysisMeasures.delta234Ui.getName()).getValue().doubleValue());
                     generateEllipsePathIII(//
                             f,
@@ -166,7 +168,7 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
                                 f,
                                 includedBorderColor,
                                 0.5f,
-                                included ? includedCenterColor : new Color(211, 211, 211),
+                                included ? includedCenterColor : new Color(222, 222, 222),
                                 includedCenterSize,
                                 ellipseLabelFont,
                                 ellipseLabelFontSize,
@@ -248,6 +250,8 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
             drawAxesAndTics(g2d, false);
         } catch (Exception e) {
         }
+
+        reportUpdater.updateEvolutionPlot();
 
     }
 
@@ -560,34 +564,33 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
         }
     }
 
-    private boolean calculateIfEllipseIncluded(double x, double y) {
-        boolean retVal = true;
-
-        if (upperBoundary.size() > 1 && lowerBoundary.size() > 1) {
-            // build polygon
-            List<Point2D> polygon = new ArrayList<>();
-
-            Iterator<Double> upperKeys = upperBoundary.keySet().iterator();
-            while (upperKeys.hasNext()) {
-                double age = upperKeys.next();
-                double initDelta = upperBoundary.get(age);
-                Point2D point = new Point2D(age, initDelta);
-                polygon.add(point);
-            }
-
-            Iterator<Double> lowerKeys = lowerBoundary.keySet().iterator();
-            while (lowerKeys.hasNext()) {
-                double age = lowerKeys.next();
-                double initDelta = lowerBoundary.get(age);
-                Point2D point = new Point2D(age, initDelta);
-                polygon.add(point);
-            }
-
-            retVal = (math.geom2d.polygon.Polygons2D.windingNumber(polygon, new Point2D(x, y)) != 0);
-        }
-        return retVal;
-    }
-
+//    private boolean calculateIfEllipseIncluded(double x, double y) {
+//        boolean retVal = true;
+//
+//        if (upperBoundary.size() > 1 && lowerBoundary.size() > 1) {
+//            // build polygon
+//            List<Point2D> polygon = new ArrayList<>();
+//
+//            Iterator<Double> upperKeys = upperBoundary.keySet().iterator();
+//            while (upperKeys.hasNext()) {
+//                double age = upperKeys.next();
+//                double initDelta = upperBoundary.get(age);
+//                Point2D point = new Point2D(age, initDelta);
+//                polygon.add(point);
+//            }
+//
+//            Iterator<Double> lowerKeys = lowerBoundary.keySet().iterator();
+//            while (lowerKeys.hasNext()) {
+//                double age = lowerKeys.next();
+//                double initDelta = lowerBoundary.get(age);
+//                Point2D point = new Point2D(age, initDelta);
+//                polygon.add(point);
+//            }
+//
+//            retVal = (math.geom2d.polygon.Polygons2D.windingNumber(polygon, new Point2D(x, y)) != 0);
+//        }
+//        return retVal;
+//    }
     /**
      *
      * @param file

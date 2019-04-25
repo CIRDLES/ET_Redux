@@ -27,6 +27,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
+import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -55,11 +56,13 @@ import org.apache.batik.svggen.SVGGraphics2DIOException;
 import org.earthtime.UPb_Redux.dateInterpretation.concordia.PlottingDetailsDisplayInterface;
 import org.earthtime.UPb_Redux.valueModels.SampleDateModel;
 import org.earthtime.UPb_Redux.valueModels.ValueModel;
+import org.earthtime.dataDictionaries.RadDates;
 import org.earthtime.dataDictionaries.UThAnalysisMeasures;
 import org.earthtime.fractions.ETFractionInterface;
 import org.earthtime.plots.AbstractDataView;
 import org.earthtime.plots.PlotAxesSetupInterface;
 import org.earthtime.plots.isochrons.IsochronModel;
+import org.earthtime.projects.ProjectSample;
 import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.reportViews.ReportUpdaterInterface;
 import org.earthtime.samples.SampleInterface;
@@ -267,12 +270,16 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
                             f.getAnalysisMeasure(UThAnalysisMeasures.ar234U_238Ufc.getName()),
                             2.0f);
                     if (f.getErrorEllipsePath() != null) {
+                        boolean included
+                                = ((ProjectSample) sample).calculateIfEllipseIncluded(
+                                        f.getRadiogenicIsotopeDateByName(RadDates.date.getName()).getValue().movePointLeft(3).doubleValue(),
+                                        f.getAnalysisMeasure(UThAnalysisMeasures.delta234Ui.getName()).getValue().doubleValue());
                         plotAFraction(g2d,
                                 svgStyle,
                                 f,
                                 includedBorderColor,
                                 0.5f,
-                                includedCenterColor,
+                                included ? includedCenterColor : new Color(211, 211, 211),
                                 includedCenterSize,
                                 ellipseLabelFont,
                                 ellipseLabelFontSize,
@@ -284,43 +291,6 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
 
             double rangeX = (getMaxX_Display() - getMinX_Display());
             double rangeY = (getMaxY_Display() - getMinY_Display());
-
-            try {
-                drawAxesAndTics(g2d, yAxisDisplayAsDeltaUnits);
-            } catch (Exception e) {
-            }
-            // draw and label isochron axes - top and right
-            g2d.setFont(new Font("Monospaced", Font.BOLD, 12));
-
-            for (int i = 0; i < annumIsochrons.length; i++) {
-
-                String label = " " + new BigDecimal(annumIsochrons[i]).movePointLeft(3).setScale(0, RoundingMode.HALF_UP).toPlainString() + " ka";
-                // set infinity label
-                if (annumIsochrons[i] >= 10e10) {
-                    label = " \u221E";
-                }
-
-                double rotateAngle = StrictMath.atan(slopes[i]);
-
-                double labelX = ((yItercepts[i] + slopes[i] * getMaxX_Display()) < (getMaxY_Display() - 0.000)) ? getMaxX_Display() : (getMaxY_Display() - yItercepts[i]) / slopes[i];
-                double labelY = slopes[i] * labelX + yItercepts[i];
-                float displacementFactorX = 0f;
-                float displacementFactorY = -6f;
-
-                if ((labelX >= getMinX_Display()) && (labelX <= getMaxX_Display()) && (labelY > getMinY_Display())) {
-                    g2d.rotate(-rotateAngle,
-                            (float) mapX(labelX),
-                            (float) mapY(yItercepts[i] + slopes[i] * (labelX)));
-
-                    g2d.drawString(label,
-                            (float) mapX(labelX) + displacementFactorX,
-                            (float) mapY(yItercepts[i] + slopes[i] * (labelX)) - displacementFactorY);
-
-                    g2d.rotate(rotateAngle,
-                            (float) mapX(labelX),
-                            (float) mapY(yItercepts[i] + slopes[i] * (labelX)));
-                }
-            }
 
             // label axes
             String xAxisLabel = "[230Th/238U]t";
@@ -397,32 +367,71 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
                         Math.abs(zoomMaxX - zoomMinX),
                         Math.abs(zoomMinY - zoomMaxY));
             }
-        }
 
-        // experiment
-        // spring green
-        g2d.setPaint(new Color(0, 255, 127));
+            // experiment
+            // spring green
+            g2d.setPaint(new Color(0, 255, 127));
 
-        if (showSeaWaterModel) {
-            for (int i = 0; i < seaWaterDateIsochronIndexArray.length; i++) {
-                Shape rawRatioPoint = new java.awt.geom.Ellipse2D.Double( //
-                        mapX(xy[seaWaterDeltaContourIndexArray[i]][0][seaWaterDateIsochronIndexArray[i]]) - 5,
-                        mapY(xy[seaWaterDeltaContourIndexArray[i]][1][seaWaterDateIsochronIndexArray[i]]) - 5, 10, 10);
+            if (showSeaWaterModel) {
+                for (int i = 0; i < seaWaterDateIsochronIndexArray.length; i++) {
+                    Shape rawRatioPoint = new java.awt.geom.Ellipse2D.Double( //
+                            mapX(xy[seaWaterDeltaContourIndexArray[i]][0][seaWaterDateIsochronIndexArray[i]]) - 5,
+                            mapY(xy[seaWaterDeltaContourIndexArray[i]][1][seaWaterDateIsochronIndexArray[i]]) - 5, 10, 10);
 
-                g2d.draw(rawRatioPoint);
-                g2d.fill(rawRatioPoint);
+                    g2d.draw(rawRatioPoint);
+                    g2d.fill(rawRatioPoint);
 
-//            if (i > 0) {
-//                // draw line
-//                Line2D line = new Line2D.Double(
-//                        mapX(xy[seaWaterDeltaContourIndexArray[i - 1]][0][seaWaterDateIsochronIndexArray[i - 1]]),
-//                        mapY(xy[seaWaterDeltaContourIndexArray[i - 1]][1][seaWaterDateIsochronIndexArray[i - 1]]),
-//                        mapX(xy[seaWaterDeltaContourIndexArray[i]][0][seaWaterDateIsochronIndexArray[i]]),
-//                        mapY(xy[seaWaterDeltaContourIndexArray[i]][1][seaWaterDateIsochronIndexArray[i]]));
-//
-//                g2d.draw(line);
-//            }
+                    if (i > 0) {
+                        // draw line
+                        Line2D line = new Line2D.Double(
+                                mapX(xy[seaWaterDeltaContourIndexArray[i - 1]][0][seaWaterDateIsochronIndexArray[i - 1]]),
+                                mapY(xy[seaWaterDeltaContourIndexArray[i - 1]][1][seaWaterDateIsochronIndexArray[i - 1]]),
+                                mapX(xy[seaWaterDeltaContourIndexArray[i]][0][seaWaterDateIsochronIndexArray[i]]),
+                                mapY(xy[seaWaterDeltaContourIndexArray[i]][1][seaWaterDateIsochronIndexArray[i]]));
+                        g2d.setStroke(new BasicStroke(2.0f));
+                        g2d.draw(line);
+                    }
+                }
             }
+
+            // resets clipping
+            try {
+                drawAxesAndTics(g2d, yAxisDisplayAsDeltaUnits);
+            } catch (Exception e) {
+            }
+            // draw and label isochron axes - top and right
+            g2d.setFont(new Font("Monospaced", Font.BOLD, 12));
+
+            for (int i = 0; i < annumIsochrons.length; i++) {
+
+                String label = " " + new BigDecimal(annumIsochrons[i]).movePointLeft(3).setScale(0, RoundingMode.HALF_UP).toPlainString() + " ka";
+                // set infinity label
+                if (annumIsochrons[i] >= 10e10) {
+                    label = " \u221E";
+                }
+
+                double rotateAngle = StrictMath.atan(slopes[i]);
+
+                double labelX = ((yItercepts[i] + slopes[i] * getMaxX_Display()) < (getMaxY_Display() - 0.000)) ? getMaxX_Display() : (getMaxY_Display() - yItercepts[i]) / slopes[i];
+                double labelY = slopes[i] * labelX + yItercepts[i];
+                float displacementFactorX = 0f;
+                float displacementFactorY = -6f;
+
+                if ((labelX >= getMinX_Display()) && (labelX <= getMaxX_Display()) && (labelY > getMinY_Display())) {
+                    g2d.rotate(-rotateAngle,
+                            (float) mapX(labelX),
+                            (float) mapY(yItercepts[i] + slopes[i] * (labelX)));
+
+                    g2d.drawString(label,
+                            (float) mapX(labelX) + displacementFactorX,
+                            (float) mapY(yItercepts[i] + slopes[i] * (labelX)) - displacementFactorY);
+
+                    g2d.rotate(rotateAngle,
+                            (float) mapX(labelX),
+                            (float) mapY(yItercepts[i] + slopes[i] * (labelX)));
+                }
+            }
+
         }
 
     }
@@ -556,7 +565,7 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
                     annumList.add(arrayOfSeaWaterModelDates[i] * 1000.0);
                 }
             }
-            
+
             // need sort to get indices correctly
             Collections.sort(annumList);
             for (int i = 0; i < arrayOfSeaWaterModelDates.length; i++) {
