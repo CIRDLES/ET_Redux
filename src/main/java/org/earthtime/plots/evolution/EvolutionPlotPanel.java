@@ -95,6 +95,7 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
 
     private int[] seaWaterDateIsochronIndexArray;
     private int[] seaWaterDeltaContourIndexArray;
+    private boolean showSeaWaterModel;
 
     public EvolutionPlotPanel(SampleInterface mySample, ReportUpdaterInterface reportUpdater) {
         super();
@@ -144,6 +145,8 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
         this.showLabels = false;
 
         this.yAxisDisplayAsDeltaUnits = false;
+
+        this.showSeaWaterModel = false;
 
         addMouseListener(this);
         addMouseMotionListener(this);
@@ -361,24 +364,24 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
                 g2d.setFont(new Font("Monospaced", Font.BOLD, 12));
                 g2d.drawString("234",
                         -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0) - 10),
-                        leftMargin - 30);
+                        leftMargin - 25);
                 g2d.drawString("238",
                         -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0) - 55),
-                        leftMargin - 30);
+                        leftMargin - 25);
                 g2d.drawString("t",
                         -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0) - 95),
-                        leftMargin - 20);
+                        leftMargin - 15);
 
                 g2d.setFont(new Font("Monospaced", Font.BOLD, 18));
                 g2d.drawString("[",
                         -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0)),
-                        leftMargin - 25);
+                        leftMargin - 20);
                 g2d.drawString("U/",
                         -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0) - 30),
-                        leftMargin - 25);
+                        leftMargin - 20);
                 g2d.drawString("U]",
                         -(topMargin / 2 + (int) (graphHeight / 2.0) + (int) (yAxisLabelLength / 2.0) - 75),
-                        leftMargin - 25);
+                        leftMargin - 20);
             }
 
             g2d.rotate(Math.PI / 2.0);
@@ -400,13 +403,14 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
         // spring green
         g2d.setPaint(new Color(0, 255, 127));
 
-        for (int i = 0; i < seaWaterDateIsochronIndexArray.length; i++) {
-            Shape rawRatioPoint = new java.awt.geom.Ellipse2D.Double( //
-                    mapX(xy[seaWaterDeltaContourIndexArray[i]][0][seaWaterDateIsochronIndexArray[i]]) - 5,
-                    mapY(xy[seaWaterDeltaContourIndexArray[i]][1][seaWaterDateIsochronIndexArray[i]]) - 5, 10, 10);
+        if (showSeaWaterModel) {
+            for (int i = 0; i < seaWaterDateIsochronIndexArray.length; i++) {
+                Shape rawRatioPoint = new java.awt.geom.Ellipse2D.Double( //
+                        mapX(xy[seaWaterDeltaContourIndexArray[i]][0][seaWaterDateIsochronIndexArray[i]]) - 5,
+                        mapY(xy[seaWaterDeltaContourIndexArray[i]][1][seaWaterDateIsochronIndexArray[i]]) - 5, 10, 10);
 
-            g2d.draw(rawRatioPoint);
-            g2d.fill(rawRatioPoint);
+                g2d.draw(rawRatioPoint);
+                g2d.fill(rawRatioPoint);
 
 //            if (i > 0) {
 //                // draw line
@@ -418,6 +422,7 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
 //
 //                g2d.draw(line);
 //            }
+            }
         }
 
     }
@@ -540,47 +545,60 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
             }
         }
 
-        // add in sea water dates        
-        double[] arrayOfDates = ReduxLabData.getInstance()
-                .getDefaultSeaWaterInitialDelta234UTableModel().getArrayOfDates();
-        seaWaterDateIsochronIndexArray = new int[arrayOfDates.length];
+        if (showSeaWaterModel) {
+            // add in sea water dates        
+            double[] arrayOfSeaWaterModelDates = ReduxLabData.getInstance()
+                    .getDefaultSeaWaterInitialDelta234UTableModel().getArrayOfDates();
+            seaWaterDateIsochronIndexArray = new int[arrayOfSeaWaterModelDates.length];
 
-        for (int i = 0; i < arrayOfDates.length; i++) {
-            if ((!annumList.contains(arrayOfDates[i] * 1000.0)) && (arrayOfDates[i] > 0.0)) {
-                annumList.add(arrayOfDates[i] * 1000.0);
+            for (int i = 0; i < arrayOfSeaWaterModelDates.length; i++) {
+                if ((!annumList.contains(arrayOfSeaWaterModelDates[i] * 1000.0)) && (arrayOfSeaWaterModelDates[i] > 0.0)) {
+                    annumList.add(arrayOfSeaWaterModelDates[i] * 1000.0);
+                }
+            }
+            
+            // need sort to get indices correctly
+            Collections.sort(annumList);
+            for (int i = 0; i < arrayOfSeaWaterModelDates.length; i++) {
+                // offset by 1 because of array start
+                seaWaterDateIsochronIndexArray[i] = annumList.indexOf(arrayOfSeaWaterModelDates[i] * 1000.0) + 1;
             }
         }
         Collections.sort(annumList);
-        for (int i = 0; i < arrayOfDates.length; i++) {
-            // offset by 1 because of array start
-            seaWaterDateIsochronIndexArray[i] = annumList.indexOf(arrayOfDates[i] * 1000.0) + 1;
-        }
+
         annumIsochrons = annumList.stream().mapToDouble(Double::doubleValue).toArray();
 
         if (((SampleDateModel) sampleDateModel).isAutomaticInitDelta234USelection()) {
             ((SampleDateModel) sampleDateModel).setAr48icntrs(IsochronModel.generateDefaultEvolutionAr48icntrs(((SampleDateModel) sampleDateModel).getAr48icntrs()));
         }
 
-        // add in sea water deltas  as ratios      
-        double[] arrayOfDeltasAsRatios = ReduxLabData.getInstance()
-                .getDefaultSeaWaterInitialDelta234UTableModel().getArrayOfDeltasAsRatios();
-        seaWaterDeltaContourIndexArray = new int[arrayOfDeltasAsRatios.length];
-
         double[] ar48icntrsBase = ((SampleDateModel) sampleDateModel).getAr48icntrs();
         List<Double> ar48icntrsList = new ArrayList<>();
         for (int i = 0; i < ar48icntrsBase.length; i++) {
             ar48icntrsList.add(ar48icntrsBase[i]);
         }
-        for (int i = 0; i < arrayOfDeltasAsRatios.length; i++) {
-            if (!ar48icntrsList.contains(arrayOfDeltasAsRatios[i])) {
-                ar48icntrsList.add(arrayOfDeltasAsRatios[i]);
+
+        if (showSeaWaterModel) {
+            // add in sea water deltas  as ratios      
+            double[] arrayOfSeaWaterModelDeltasAsRatios = ReduxLabData.getInstance()
+                    .getDefaultSeaWaterInitialDelta234UTableModel().getArrayOfDeltasAsRatios();
+            seaWaterDeltaContourIndexArray = new int[arrayOfSeaWaterModelDeltasAsRatios.length];
+
+            for (int i = 0; i < arrayOfSeaWaterModelDeltasAsRatios.length; i++) {
+                if (!ar48icntrsList.contains(arrayOfSeaWaterModelDeltasAsRatios[i])) {
+                    ar48icntrsList.add(arrayOfSeaWaterModelDeltasAsRatios[i]);
+                }
+            }
+
+            // need sort to get indices correctly
+            Collections.sort(ar48icntrsList);
+            for (int i = 0; i < arrayOfSeaWaterModelDeltasAsRatios.length; i++) {
+                seaWaterDeltaContourIndexArray[i] = ar48icntrsList.indexOf(arrayOfSeaWaterModelDeltasAsRatios[i]);
             }
         }
 
         Collections.sort(ar48icntrsList);
-        for (int i = 0; i < arrayOfDeltasAsRatios.length; i++) {
-            seaWaterDeltaContourIndexArray[i] = ar48icntrsList.indexOf(arrayOfDeltasAsRatios[i]);
-        }
+
         ar48icntrs = ar48icntrsList.stream().mapToDouble(Double::doubleValue).toArray();
         ar48icntrsDsplayAsDeltaUnits = ((SampleDateModel) sampleDateModel).isAr48icntrsDsplayAsDeltaUnits();
 
@@ -843,7 +861,17 @@ public final class EvolutionPlotPanel extends AbstractDataView implements Plotti
 
                     public void actionPerformed(ActionEvent arg0) {
                         yAxisDisplayAsDeltaUnits = !yAxisDisplayAsDeltaUnits;
-                        generateCustomTics();
+                        repaint();
+                    }
+                });
+                popup.add(menuItem);
+
+                menuItem = new JMenuItem("Toggle Show Sea Water Model");
+                menuItem.addActionListener(new ActionListener() {
+
+                    public void actionPerformed(ActionEvent arg0) {
+                        showSeaWaterModel = !showSeaWaterModel;
+                        buildIsochronsAndInitDelta234UContours();
                         repaint();
                     }
                 });
