@@ -111,34 +111,8 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
         this.showCenters = true;
         this.showLabels = false;
 
-        this.upperBoundary = new TreeMap<>(new Comparator<Double>() {
-            @Override
-            public int compare(Double age1, Double age2) {
-                int retVal = 0;
-
-                // allow some slop
-                if (Math.abs(age1 - age2) > 5.0) {
-                    retVal = Double.compare(age1, age2);
-                }
-
-                return retVal;
-            }
-        });
-
-        this.lowerBoundary = new TreeMap<>(new Comparator<Double>() {
-            @Override
-            public int compare(Double age1, Double age2) {
-                int retVal = 0;
-
-                // allow some slop
-                // sorts in descending to help with polygon
-                if (Math.abs(age1 - age2) > 5.0) {
-                    retVal = Double.compare(age2, age1);
-                }
-
-                return retVal;
-            }
-        });
+        this.upperBoundary = new TreeMap<>(new UpperBoundaryComparator());
+        this.lowerBoundary = new TreeMap<>(new LowerBoundaryComparator());
 
         addMouseListener(this);
         addMouseMotionListener(this);
@@ -707,6 +681,20 @@ public final class AgeByDelta234UPlotPanel extends AbstractDataView implements P
     public void setxLocation(int xLocation) {
         super.setxLocation(xLocation);
         this.setBounds(xLocation, 0, graphWidth + leftMargin * 2, graphHeight + topMargin * 2);
+    }
+
+    /**
+     * @param upperBoundary the upperBoundary to set
+     */
+    public void setUpperBoundary(Map<Double, Double> upperBoundary) {
+        this.upperBoundary = upperBoundary;
+    }
+
+    /**
+     * @param lowerBoundary the lowerBoundary to set
+     */
+    public void setLowerBoundary(Map<Double, Double> lowerBoundary) {
+        this.lowerBoundary = lowerBoundary;
     }
 
 }

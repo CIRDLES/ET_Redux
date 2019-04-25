@@ -103,6 +103,7 @@ import org.earthtime.plots.evolution.InitialDelta234UEvolutionSelectorDialog;
 import org.earthtime.plots.isochrons.IsochronsPanel;
 import org.earthtime.plots.isochrons.UseriesIsochronPlotDisplayInterface;
 import org.earthtime.plots.evolution.IsochronsEvolutionSelectorDialog;
+import org.earthtime.projects.ProjectSample;
 import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.reports.ReportColumnInterface;
 import org.earthtime.samples.SampleInterface;
@@ -528,6 +529,9 @@ public class SampleDateInterpretationsManager extends DialogEditor
 
         ((AliquotDetailsDisplayInterface) ageDelta234PlotPanel).//
                 setSelectedFractions(sample.getFractions());
+        ((AgeByDelta234UPlotPanel)ageDelta234PlotPanel).setUpperBoundary(((ProjectSample)sample).getUpperBoundary());
+        ((AgeByDelta234UPlotPanel)ageDelta234PlotPanel).setLowerBoundary(((ProjectSample)sample).getLowerBoundary());
+        
         ((AbstractDataView) ageDelta234PlotPanel).refreshPanel(true);
 
     }

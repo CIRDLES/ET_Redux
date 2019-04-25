@@ -22,7 +22,9 @@ package org.earthtime.projects;
 import java.io.File;
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.Map;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
 import org.earthtime.UPb_Redux.ReduxConstants;
@@ -37,6 +39,8 @@ import org.earthtime.dataDictionaries.SampleRegistries;
 import org.earthtime.dialogs.DialogEditor;
 import org.earthtime.exceptions.ETException;
 import org.earthtime.fractions.ETFractionInterface;
+import org.earthtime.plots.evolution.LowerBoundaryComparator;
+import org.earthtime.plots.evolution.UpperBoundaryComparator;
 import org.earthtime.ratioDataModels.AbstractRatiosDataModel;
 import org.earthtime.reduxLabData.ReduxLabData;
 import org.earthtime.reports.ReportSettingsInterface;
@@ -75,6 +79,10 @@ public class ProjectSample implements//
 
     private SortedSet<String> filteredFractionIDs;
 
+    // maps age to delta
+    private Map<Double, Double> upperBoundary;
+    private Map<Double, Double> lowerBoundary;
+
     /**
      *
      * @param sampleName the value of sampleName
@@ -110,6 +118,9 @@ public class ProjectSample implements//
         this.concordiaGraphAxesSetup = new GraphAxesSetup("C", 2);
         this.terraWasserburgGraphAxesSetup = new GraphAxesSetup("T-W", 2);
         this.sampleDateModels = new Vector<>();
+        
+        this.upperBoundary = new TreeMap<>(new UpperBoundaryComparator());
+        this.lowerBoundary = new TreeMap<>(new LowerBoundaryComparator());
 
         initFilteredFractionsToAll();
 
@@ -514,6 +525,34 @@ public class ProjectSample implements//
         for (int i = 0; i < fractions.size(); i++) {
             filteredFractionIDs.add(fractions.get(i).getFractionID());
         }
+    }
+
+    /**
+     * @return the upperBoundary
+     */
+    public Map<Double, Double> getUpperBoundary() {
+        return upperBoundary;
+    }
+
+    /**
+     * @param upperBoundary the upperBoundary to set
+     */
+    public void setUpperBoundary(Map<Double, Double> upperBoundary) {
+        this.upperBoundary = upperBoundary;
+    }
+
+    /**
+     * @return the lowerBoundary
+     */
+    public Map<Double, Double> getLowerBoundary() {
+        return lowerBoundary;
+    }
+
+    /**
+     * @param lowerBoundary the lowerBoundary to set
+     */
+    public void setLowerBoundary(Map<Double, Double> lowerBoundary) {
+        this.lowerBoundary = lowerBoundary;
     }
 
 }
